@@ -9,14 +9,14 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 * This function sets up the lessons, quizes and their questions. This function runs before
 	 * every single test in this class
 	 */
-	public function setUp() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		Sensei()->grading = new WooThemes_Sensei_Grading( '' );
 		$this->factory    = new Sensei_Factory();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -56,10 +56,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		global $submenu;
 
-		$this->assertEquals( 'Grading', end( $submenu['edit.php?post_type=course'] )[0], 'Should not have indicator when there are no ungraded quizzes' );
+		$this->assertEquals( 'Grading', end( $submenu['sensei'] )[0], 'Should not have indicator when there are no ungraded quizzes' );
 
 		// Clean up the submenu.
-		unset( $submenu['edit.php?post_type=course'] );
+		unset( $submenu['sensei'] );
 	}
 
 	/**
@@ -87,10 +87,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		global $submenu;
 
-		$this->assertEquals( 'Grading <span class="awaiting-mod">2</span>', end( $submenu['edit.php?post_type=course'] )[0], 'Should display 2 ungraded quizzes' );
+		$this->assertEquals( 'Grading <span class="awaiting-mod">2</span>', end( $submenu['sensei'] )[0], 'Should display 2 ungraded quizzes' );
 
 		// Clean up the submenu.
-		unset( $submenu['edit.php?post_type=course'] );
+		unset( $submenu['sensei'] );
 	}
 
 	/**

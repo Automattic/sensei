@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { InnerBlocks } from '@wordpress/block-editor';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -16,10 +15,9 @@ import icon from '../../../icons/question.svg';
  */
 export default {
 	...metadata,
-	title: __( 'Description', 'sensei-lms' ),
+	metadata,
 	icon,
 	usesContext: [ 'sensei-lms/quizId' ],
-	description: __( 'Question Description.', 'sensei-lms' ),
 	edit,
 	save: () => <InnerBlocks.Content />,
 };

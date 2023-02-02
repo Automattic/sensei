@@ -1,4 +1,7 @@
 <?php
+
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -114,8 +117,8 @@ class Sensei_Utils {
 			$args['count'] = true;
 		}
 
-		// A user ID of 0 is in valid, so shortcut this
-		if ( isset( $args['user_id'] ) && 0 == intval( $args['user_id'] ) ) {
+		// A user ID of 0 is invalid, so shortcut this.
+		if ( isset( $args['user_id'] ) && 0 === intval( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
 			return false;
 		}
@@ -124,17 +127,17 @@ class Sensei_Utils {
 			$args['status'] = 'any';
 		}
 
-		// Get the comments
 		/**
 		 * This filter runs inside Sensei_Utils::sensei_check_for_activity
 		 *
 		 * It runs while getting the comments for the given request.
 		 *
 		 * @param int|array $comments
+		 * @param array $args Search arguments.
 		 */
-		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ) );
+		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ), $args );
 
-		// Return comments
+		// Return comments.
 		if ( $return_comments ) {
 			// Could check for array of 1 and just return the 1 item?
 			if ( is_array( $comments ) && 1 == count( $comments ) ) {
@@ -143,8 +146,8 @@ class Sensei_Utils {
 
 			return $comments;
 		}
-		// Count comments
-		return intval( $comments ); // This is the count, check the return from WP_Comment_Query
+		// Count comments.
+		return intval( $comments ); // This is the count, check the return from WP_Comment_Query.
 	}
 
 
@@ -363,29 +366,33 @@ class Sensei_Utils {
 	/**
 	 * Grade quiz
 	 *
-	 * @param  integer $quiz_id ID of quiz
-	 * @param  integer $grade   Grade received
-	 * @param  integer $user_id ID of user being graded
-	 * @param  string  $quiz_grade_type default 'auto'
+	 * @param  integer $quiz_id ID of quiz.
+	 * @param  float   $grade   Grade received.
+	 * @param  integer $user_id ID of user being graded.
+	 * @param  string  $quiz_grade_type default 'auto'.
+	 *
 	 * @return boolean
 	 */
-	public static function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0, $quiz_grade_type = 'auto' ) {
-		if ( intval( $user_id ) == 0 ) {
-			$user_id = get_current_user_id();
+	public static function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0, $quiz_grade_type = 'auto' ): bool {
+		$user_id = $user_id ? $user_id : get_current_user_id();
+
+		if ( ! $quiz_id || ! $user_id ) {
+			return false;
 		}
 
-		$activity_logged = false;
-		if ( intval( $quiz_id ) > 0 && intval( $user_id ) > 0 ) {
-			$lesson_id          = get_post_meta( $quiz_id, '_quiz_lesson', true );
-			$user_lesson_status = self::user_lesson_status( $lesson_id, $user_id );
-			$activity_logged    = update_comment_meta( $user_lesson_status->comment_ID, 'grade', $grade );
-
-			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-
-			do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_submission ) {
+			return false;
 		}
 
-		return $activity_logged;
+		$quiz_submission->set_final_grade( $grade );
+		Sensei()->quiz_submission_repository->save( $quiz_submission );
+
+		$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
+
+		do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
+
+		return true;
 	}
 
 	/**
@@ -477,70 +484,45 @@ class Sensei_Utils {
 	 */
 	public static function sensei_start_lesson( $lesson_id = 0, $user_id = 0, $complete = false ) {
 
-		if ( intval( $user_id ) == 0 ) {
+		if ( 0 === (int) $user_id ) {
 			$user_id = get_current_user_id();
 		}
 
-		$activity_logged = false;
+		if ( 0 >= (int) $lesson_id ) {
+			return false;
+		}
 
-		if ( intval( $lesson_id ) > 0 ) {
-
-			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-			if ( $course_id ) {
-				$is_user_taking_course = self::has_started_course( $course_id, $user_id );
-				if ( ! $is_user_taking_course ) {
-					self::user_start_course( $user_id, $course_id );
-				}
-			}
-
-			$metadata = array();
-			$status   = 'in-progress';
-
-			// Note: When this action runs the lesson status may not yet exist
-			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
-
-			if ( $complete ) {
-
-				$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
-				if ( $has_questions ) {
-					$status            = 'passed'; // Force a pass
-					$metadata['grade'] = 0;
-				} else {
-					$status = 'complete';
-				}
-			}
-
-			// Check if user is already taking the lesson
-			$activity_logged = self::user_started_lesson( $lesson_id, $user_id );
-			if ( ! $activity_logged ) {
-
-				$metadata['start'] = current_time( 'mysql' );
-				$activity_logged   = self::update_lesson_status( $user_id, $lesson_id, $status, $metadata );
-
-			} else {
-
-				// if users is already taking the lesson  and the status changes to complete update it
-				$current_user_activity = get_comment( $activity_logged );
-				if ( in_array( $status, array( 'complete', 'passed' ), true ) &&
-					$status != $current_user_activity->comment_approved ) {
-
-					$comment                     = array();
-					$comment['comment_ID']       = $activity_logged;
-					$comment['comment_approved'] = $status;
-					$comment['comment_date']     = current_time( 'mysql' );
-					wp_update_comment( $comment );
-
-					Sensei()->flush_comment_counts_cache( $lesson_id );
-				}
-			}
-
-			if ( $complete ) {
-				// Run this *after* the lesson status has been created/updated
-				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
+		$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+		if ( $course_id ) {
+			$is_user_taking_course = self::has_started_course( $course_id, $user_id );
+			if ( ! $is_user_taking_course ) {
+				self::user_start_course( $user_id, $course_id );
 			}
 		}
 
-		return $activity_logged;
+		// Note: When this action runs the lesson status may not yet exist.
+		do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
+
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+		if ( ! $lesson_progress ) {
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			$has_questions   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
+			if ( $complete && $has_questions ) {
+				update_comment_meta( $lesson_progress->get_id(), 'grade', 0 );
+			}
+		}
+
+		if ( $complete && ! $lesson_progress->is_complete() ) {
+			$lesson_progress->complete();
+			Sensei()->lesson_progress_repository->save( $lesson_progress );
+		}
+
+		if ( $complete ) {
+			// Run this *after* the lesson status has been created/updated.
+			do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
+		}
+
+		return $lesson_progress->get_id();
 	}
 
 	/**
@@ -569,14 +551,11 @@ class Sensei_Utils {
 		// Delete quiz saved answers
 		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
-		// Delete lesson status
-		$args = array(
-			'post_id' => $lesson_id,
-			'type'    => 'sensei_lesson_status',
-			'user_id' => $user_id,
-		);
-		// This auto deletes the corresponding meta data, such as the quiz grade, and questions asked
-		self::sensei_delete_activities( $args );
+		// Delete lesson progress.
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+		if ( $lesson_progress ) {
+			Sensei()->lesson_progress_repository->delete( $lesson_progress );
+		}
 
 		if ( ! $from_course ) {
 			do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
@@ -608,14 +587,11 @@ class Sensei_Utils {
 			self::sensei_remove_user_from_lesson( $lesson_id, $user_id, true );
 		}
 
-		// Delete course status
-		$args = array(
-			'post_id' => $course_id,
-			'type'    => 'sensei_course_status',
-			'user_id' => $user_id,
-		);
-
-		self::sensei_delete_activities( $args );
+		// Delete course progress.
+		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
+		if ( $course_progress ) {
+			Sensei()->course_progress_repository->delete( $course_progress );
+		}
 
 		do_action( 'sensei_user_course_reset', $user_id, $course_id );
 
@@ -705,19 +681,32 @@ class Sensei_Utils {
 		return $delete_answers;
 	}
 
-	public static function sensei_delete_quiz_grade( $quiz_id = 0, $user_id = 0 ) {
-		if ( intval( $user_id ) == 0 ) {
+	/**
+	 * Delete the quiz submission grade.
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The user ID. Defaults to the current user ID.
+	 *
+	 * @return bool
+	 */
+	public static function sensei_delete_quiz_grade( $quiz_id = 0, $user_id = 0 ): bool {
+		if ( intval( $user_id ) === 0 ) {
 			$user_id = get_current_user_id();
 		}
 
-		$delete_grade = false;
-		if ( intval( $quiz_id ) > 0 ) {
-			$lesson_id          = get_post_meta( $quiz_id, '_quiz_lesson', true );
-			$user_lesson_status = self::user_lesson_status( $lesson_id, $user_id );
-			$delete_grade       = delete_comment_meta( $user_lesson_status->comment_ID, 'grade' );
+		if ( ! $quiz_id || ! $user_id ) {
+			return false;
 		}
 
-		return $delete_grade;
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_submission ) {
+			return false;
+		}
+
+		$quiz_submission->set_final_grade( null );
+		Sensei()->quiz_submission_repository->save( $quiz_submission );
+
+		return true;
 	}
 
 	/**
@@ -1304,25 +1293,18 @@ class Sensei_Utils {
 
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
-			if ( ! $user_id ) {
-				return false;
-			}
 		}
 
-		$activity_args = array(
-			'post_id' => $course_id,
-			'user_id' => $user_id,
-			'type'    => 'sensei_course_status',
-			'field'   => 'comment_ID',
-		);
-
-		$course_progress_comment_id = self::sensei_get_activity_value( $activity_args );
-
-		if ( empty( $course_progress_comment_id ) ) {
+		if ( ! $user_id ) {
 			return false;
 		}
 
-		return $course_progress_comment_id;
+		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
+		if ( ! $course_progress ) {
+			return false;
+		}
+
+		return $course_progress->get_id();
 	}
 
 	/**
@@ -1359,76 +1341,89 @@ class Sensei_Utils {
 	 * @return mixed boolean or comment_ID
 	 */
 	public static function user_complete_course( $course_id = 0, $user_id = 0, $trigger_completion_action = true ) {
-		if ( $course_id ) {
-			if ( ! $user_id ) {
-				$user_id = get_current_user_id();
-			}
-
-			$course_status      = 'in-progress';
-			$course_metadata    = array();
-			$course_completion  = Sensei()->settings->settings['course_completion'];
-			$lessons_completed  = $total_lessons = 0;
-			$lesson_status_args = array(
-				'user_id' => $user_id,
-				'status'  => 'any',
-				'type'    => 'sensei_lesson_status', /* FIELD SIZE 20 */
-			);
-
-			// Grab all of this Courses' lessons, looping through each...
-			$lesson_ids    = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
-			$total_lessons = count( $lesson_ids );
-				// ...if course completion not set to 'passed', and all lessons are complete or graded,
-				// ......then all lessons are 'passed'
-				// ...else if course completion is set to 'passed', check if each lesson has questions...
-				// ......if no questions yet the status is 'complete'
-				// .........then the lesson is 'passed'
-				// ......else if questions check the lesson status has a grade and that the grade is greater than the lesson passmark
-				// .........then the lesson is 'passed'
-				// ...if all lessons 'passed' then update the course status to complete
-			// The below checks if a lesson is fully completed, though maybe should be Utils::user_completed_lesson()
-			$lesson_status_args['post__in'] = $lesson_ids;
-			$all_lesson_statuses            = self::sensei_check_for_activity( $lesson_status_args, true );
-			// Need to always return an array, even with only 1 item
-			if ( ! is_array( $all_lesson_statuses ) ) {
-				$all_lesson_statuses = array( $all_lesson_statuses );
-			}
-
-			foreach ( $all_lesson_statuses as $lesson_status ) {
-				// If lessons are complete without needing quizzes to be passed
-				if ( 'passed' != $course_completion ) {
-					// A user cannot 'complete' a course if a lesson...
-					// ...is still in progress
-					// ...hasn't yet been graded
-					$lesson_not_complete_stati = array( 'in-progress', 'ungraded' );
-					if ( ! in_array( $lesson_status->comment_approved, $lesson_not_complete_stati, true ) ) {
-						$lessons_completed++;
-					}
-				} else {
-					$lesson_complete_stati = array( 'complete', 'graded', 'passed' );
-					if ( in_array( $lesson_status->comment_approved, $lesson_complete_stati, true ) ) {
-						$lessons_completed++;
-					}
-				}
-			} // Each lesson
-			if ( $lessons_completed == $total_lessons ) {
-				$course_status = 'complete';
-			}
-
-			// Update meta data on how many lessons have been completed
-			$course_metadata['complete'] = $lessons_completed;
-			// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
-			$course_metadata['percent'] = self::quotient_as_absolute_rounded_percentage( $lessons_completed, $total_lessons );
-
-			$activity_logged = self::update_course_status( $user_id, $course_id, $course_status, $course_metadata );
-
-			// Allow further actions
-			if ( 'complete' == $course_status && true === $trigger_completion_action ) {
-				do_action( 'sensei_user_course_end', $user_id, $course_id );
-			}
-			return $activity_logged;
+		if ( ! $course_id ) {
+			return false;
 		}
 
-		return false;
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
+		if ( ! $course_progress ) {
+			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+		}
+		if ( ! $course_progress->get_started_at() ) {
+			$course_progress->start();
+		}
+
+		$course_completion  = Sensei()->settings->settings['course_completion'];
+		$lessons_completed  = 0;
+		$lesson_status_args = array(
+			'user_id' => $user_id,
+			'status'  => 'any',
+			'type'    => 'sensei_lesson_status', /* FIELD SIZE 20 */
+		);
+
+		// Grab all of this Courses' lessons, looping through each...
+		$lesson_ids    = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+		$total_lessons = count( $lesson_ids );
+			// ...if course completion not set to 'passed', and all lessons are complete or graded,
+			// ......then all lessons are 'passed'
+			// ...else if course completion is set to 'passed', check if each lesson has questions...
+			// ......if no questions yet the status is 'complete'
+			// .........then the lesson is 'passed'
+			// ......else if questions check the lesson status has a grade and that the grade is greater than the lesson passmark
+			// .........then the lesson is 'passed'
+			// ...if all lessons 'passed' then update the course status to complete
+		// The below checks if a lesson is fully completed, though maybe should be Utils::user_completed_lesson()
+		$lesson_status_args['post__in'] = $lesson_ids;
+		$all_lesson_statuses            = self::sensei_check_for_activity( $lesson_status_args, true );
+		// Need to always return an array, even with only 1 item.
+		if ( ! is_array( $all_lesson_statuses ) ) {
+			$all_lesson_statuses = array( $all_lesson_statuses );
+		}
+
+		foreach ( $all_lesson_statuses as $lesson_status ) {
+			// If lessons are complete without needing quizzes to be passed
+			if ( 'passed' !== $course_completion ) {
+				// A user cannot 'complete' a course if a lesson...
+				// ...is still in progress
+				// ...hasn't yet been graded.
+				$lesson_not_complete_stati = array( 'in-progress', 'ungraded' );
+				if ( ! in_array( $lesson_status->comment_approved, $lesson_not_complete_stati, true ) ) {
+					$lessons_completed++;
+				}
+			} else {
+				$lesson_complete_stati = array( 'complete', 'graded', 'passed' );
+				if ( in_array( $lesson_status->comment_approved, $lesson_complete_stati, true ) ) {
+					$lessons_completed++;
+				}
+			}
+		} // Each lesson
+
+		if ( $lessons_completed === $total_lessons ) {
+			$course_progress->complete();
+		}
+
+		Sensei()->course_progress_repository->save( $course_progress );
+
+		$course_progress_metadata = [
+			// How many lessons have been completed.
+			'complete' => $lessons_completed,
+			// Overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above.
+			'percent'  => self::quotient_as_absolute_rounded_percentage( $lessons_completed, $total_lessons ),
+		];
+		foreach ( $course_progress_metadata as $key => $value ) {
+			update_comment_meta( $course_progress->get_id(), $key, $value );
+		}
+
+		// Allow further actions.
+		if ( 'complete' === $course_progress->get_status() && true === $trigger_completion_action ) {
+			do_action( 'sensei_user_course_end', $user_id, $course_id );
+		}
+
+		return $course_progress->get_id();
 	}
 
 	/**
@@ -1459,44 +1454,46 @@ class Sensei_Utils {
 	 * Check if a user has completed a course or not
 	 *
 	 * @param int | WP_Post | WP_Comment $course course_id or sensei_course_status entry
-	 *
-	 * @param int                        $user_id
+	 * @param int                        $user_id User ID.
 	 * @return boolean
 	 */
 	public static function user_completed_course( $course, $user_id = 0 ) {
 
-		if ( $course ) {
-			if ( is_object( $course ) && is_a( $course, 'WP_Comment' ) ) {
-				$user_course_status = $course->comment_approved;
-			} elseif ( ! is_numeric( $course ) && ! is_a( $course, 'WP_Post' ) ) {
-				$user_course_status = $course;
+		if ( ! $course ) {
+			return false;
+		}
+
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $user_id ) ) {
+			return false;
+		}
+
+		$user_course_status = null;
+		if ( is_object( $course ) && is_a( $course, 'WP_Comment' ) ) {
+			$user_course_status = $course->comment_approved;
+		} elseif ( ! is_numeric( $course ) && ! is_a( $course, 'WP_Post' ) ) {
+			$user_course_status = $course;
+		} else {
+
+			if ( is_a( $course, 'WP_Post' ) ) {
+				$course = $course->ID;
 			} else {
-
-				// check the user_id
-				if ( ! $user_id ) {
-
-					$user_id = get_current_user_id();
-
-					if ( empty( $user_id ) ) {
-
-						return false;
-
-					}
-				}
-
-				if ( is_a( $course, 'WP_Post' ) ) {
-					$course = $course->ID;
-				}
-
-				$user_course_status = self::user_course_status( $course, $user_id );
-				if ( isset( $user_course_status->comment_approved ) ) {
-					$user_course_status = $user_course_status->comment_approved;
-				}
+				$course = (int) $course;
 			}
-			if ( $user_course_status && 'complete' == $user_course_status ) {
-				return true;
+
+			$course_progress = Sensei()->course_progress_repository->get( $course, $user_id );
+			if ( $course_progress ) {
+				$user_course_status = $course_progress->get_status();
 			}
 		}
+
+		if ( $user_course_status && Course_Progress::STATUS_COMPLETE === $user_course_status ) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -1509,25 +1506,20 @@ class Sensei_Utils {
 	 * @return mixed false or comment_ID
 	 */
 	public static function user_started_lesson( $lesson_id = 0, $user_id = 0 ) {
-
-		if ( $lesson_id ) {
-			if ( ! $user_id ) {
-				$user_id = get_current_user_id();
-			}
-
-			$activity_args = array(
-				'post_id' => $lesson_id,
-				'user_id' => $user_id,
-				'type'    => 'sensei_lesson_status',
-				'field'   => 'comment_ID',
-			);
-
-			$user_lesson_status_id = self::sensei_get_activity_value( $activity_args );
-			if ( $user_lesson_status_id ) {
-				return $user_lesson_status_id;
-			}
+		if ( ! $lesson_id ) {
+			return false;
 		}
-		return false;
+
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+		if ( ! $lesson_progress ) {
+			return false;
+		}
+
+		return $lesson_progress->get_id();
 	}
 
 	/**
@@ -1541,19 +1533,7 @@ class Sensei_Utils {
 	 * @return int Lesson count.
 	 */
 	public static function user_started_lesson_count( int $course_id, int $user_id ) : int {
-		$lessons = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
-
-		if ( empty( $lessons ) ) {
-			return 0;
-		}
-
-		$activity_args = array(
-			'post__in' => $lessons,
-			'user_id'  => $user_id,
-			'type'     => 'sensei_lesson_status',
-		);
-
-		return self::sensei_check_for_activity( $activity_args );
+		return Sensei()->lesson_progress_repository->count( $course_id, $user_id );
 	}
 
 	/**
@@ -1578,7 +1558,7 @@ class Sensei_Utils {
 				}
 
 				// the user is not logged in
-				if ( ! $user_id > 0 ) {
+				if ( 0 >= (int) $user_id ) {
 					return false;
 				}
 				$_user_lesson_status = self::user_lesson_status( $lesson, $user_id );
@@ -1673,7 +1653,7 @@ class Sensei_Utils {
 	 * @since 1.7.0
 	 * @param int $lesson_id
 	 * @param int $user_id
-	 * @return object | bool
+	 * @return WP_Comment|false
 	 */
 	public static function user_lesson_status( $lesson_id = 0, $user_id = 0 ) {
 
@@ -1752,6 +1732,7 @@ class Sensei_Utils {
 		if ( ! empty( $status ) ) {
 			$args = array(
 				'user_id'   => $user_id,
+				'username'  => get_userdata( $user_id )->user_login ?? null,
 				'post_id'   => $lesson_id,
 				'status'    => $status,
 				'type'      => 'sensei_lesson_status', /* FIELD SIZE 20 */
@@ -1789,11 +1770,12 @@ class Sensei_Utils {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$args = array(
-				'user_id' => $user_id,
-				'post_id' => $course_id,
-				'status'  => $status,
-				'type'    => 'sensei_course_status', /* FIELD SIZE 20 */
-				'action'  => 'update', // Update the existing status...
+				'user_id'  => $user_id,
+				'username' => get_userdata( $user_id )->user_login ?? null,
+				'post_id'  => $course_id,
+				'status'   => $status,
+				'type'     => 'sensei_course_status', /* FIELD SIZE 20 */
+				'action'   => 'update', // Update the existing status...
 			);
 
 			$comment_id = self::sensei_log_activity( $args );
@@ -1940,7 +1922,7 @@ class Sensei_Utils {
 		if ( empty( $post_id ) || empty( $data_key )
 			|| ! is_int( $post_id ) || ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
 			|| ! get_userdata( $user_id )
-			|| ! in_array( $post_type, $supported_post_types ) ) {
+			|| ! in_array( $post_type, $supported_post_types, true ) ) {
 
 			return false;
 		}
@@ -1993,7 +1975,7 @@ class Sensei_Utils {
 		if ( empty( $post_id ) || empty( $data_key )
 			|| ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
 			|| ! get_userdata( $user_id )
-			|| ! in_array( $post_type, $supported_post_types ) ) {
+			|| ! in_array( $post_type, $supported_post_types, true ) ) {
 
 			return false;
 		}
@@ -2034,7 +2016,7 @@ class Sensei_Utils {
 		if ( empty( $post_id ) || empty( $data_key )
 			|| ! is_int( $post_id ) || ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
 			|| ! get_userdata( $user_id )
-			|| ! in_array( $post_type, $supported_post_types ) ) {
+			|| ! in_array( $post_type, $supported_post_types, true ) ) {
 
 			return false;
 		}
@@ -2232,7 +2214,7 @@ class Sensei_Utils {
 				break;
 		}
 
-		return $course_id ? $course_id : null;
+		return $course_id ? absint( $course_id ) : null;
 	}
 
 
@@ -2327,26 +2309,38 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * @param $user_id
-	 * @param $course_id
-	 * @return mixed
+	 * Check if this is a REST API request.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public static function is_rest_request(): bool {
+		return defined( 'REST_REQUEST' ) && REST_REQUEST;
+	}
+
+	/**
+	 * Add user to course.
+	 *
+	 * @param int $user_id The user ID.
+	 * @param int $course_id The course ID.
+	 * @return int Returns the ID of the user course progress or false on failure. The progress ID might have different meanings depending on the underlying implementation.
 	 */
 	public static function start_user_on_course( $user_id, $course_id ) {
-		// Add user to course
-		$course_metadata = array(
-			'start'    => current_time( 'mysql' ),
-			'percent'  => 0, // No completed lessons yet
+		$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+
+		// Allow further actions.
+		$course_metadata = [
+			'percent'  => 0,
 			'complete' => 0,
-		);
-
-		$activity_logged = self::update_course_status( $user_id, $course_id, 'in-progress', $course_metadata );
-
-		// Allow further actions
-		if ( $activity_logged ) {
-			do_action( 'sensei_user_course_start', $user_id, $course_id );
-			return $activity_logged;
+		];
+		foreach ( $course_metadata as $key => $value ) {
+			update_comment_meta( $course_progress->get_id(), $key, $value );
 		}
-		return $activity_logged;
+
+		do_action( 'sensei_user_course_start', $user_id, $course_id );
+
+		return $course_progress->get_id();
 	}
 
 	public static function is_plugin_present_and_activated( $plugin_class_to_look_for, $plugin_registered_path ) {
@@ -2405,58 +2399,60 @@ class Sensei_Utils {
 	public static function get_woocommerce_plugin_information() {
 		$wc_information = get_transient( self::WC_INFORMATION_TRANSIENT );
 
-		if ( false !== $wc_information ) {
-			return $wc_information;
+		if ( false === $wc_information ) {
+			if ( ! function_exists( 'plugins_api' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+			}
+
+			$wc_slug            = 'woocommerce';
+			$plugin_information = plugins_api(
+				'plugin_information',
+				[
+					'slug'   => $wc_slug,
+					'fields' => [
+						'short_description' => true,
+						'description'       => false,
+						'sections'          => false,
+						'tested'            => false,
+						'requires'          => false,
+						'requires_php'      => false,
+						'rating'            => false,
+						'ratings'           => false,
+						'downloaded'        => false,
+						'downloadlink'      => false,
+						'last_updated'      => false,
+						'added'             => false,
+						'tags'              => false,
+						'compatibility'     => false,
+						'homepage'          => false,
+						'versions'          => false,
+						'donate_link'       => false,
+						'reviews'           => false,
+						'banners'           => false,
+						'icons'             => false,
+						'active_installs'   => false,
+						'group'             => false,
+						'contributors'      => false,
+					],
+				]
+			);
+
+			$wc_information = (object) [
+				'product_slug' => $wc_slug,
+				'title'        => $plugin_information->name,
+				'excerpt'      => $plugin_information->short_description,
+				'plugin_file'  => 'woocommerce/woocommerce.php',
+				'link'         => 'https://wordpress.org/plugins/' . $wc_slug,
+				'unselectable' => true,
+				'version'      => $plugin_information->version,
+			];
+
+			set_transient( self::WC_INFORMATION_TRANSIENT, $wc_information, DAY_IN_SECONDS );
 		}
 
-		if ( ! function_exists( 'plugins_api' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-		}
-
-		$wc_slug            = 'woocommerce';
-		$plugin_information = plugins_api(
-			'plugin_information',
-			[
-				'slug'   => $wc_slug,
-				'fields' => [
-					'short_description' => true,
-					'description'       => false,
-					'sections'          => false,
-					'tested'            => false,
-					'requires'          => false,
-					'requires_php'      => false,
-					'rating'            => false,
-					'ratings'           => false,
-					'downloaded'        => false,
-					'downloadlink'      => false,
-					'last_updated'      => false,
-					'added'             => false,
-					'tags'              => false,
-					'compatibility'     => false,
-					'homepage'          => false,
-					'versions'          => false,
-					'donate_link'       => false,
-					'reviews'           => false,
-					'banners'           => false,
-					'icons'             => false,
-					'active_installs'   => false,
-					'group'             => false,
-					'contributors'      => false,
-				],
-			]
-		);
-
-		$wc_information = (object) [
-			'product_slug' => $wc_slug,
-			'title'        => $plugin_information->name,
-			'excerpt'      => $plugin_information->short_description,
-			'plugin_file'  => 'woocommerce/woocommerce.php',
-			'link'         => 'https://wordpress.org/plugins/' . $wc_slug,
-			'unselectable' => true,
-			'version'      => $plugin_information->version,
-		];
-
-		set_transient( self::WC_INFORMATION_TRANSIENT, $wc_information, DAY_IN_SECONDS );
+		// Add installed properties to the object.
+		$wc_information = Sensei_Extensions::instance()->add_installed_extensions_properties( [ $wc_information ] );
+		$wc_information = $wc_information[0];
 
 		return $wc_information;
 	}
@@ -2464,9 +2460,13 @@ class Sensei_Utils {
 	/**
 	 * Get data used for WooCommerce.com purchase redirect.
 	 *
+	 * @deprecated 4.8.0
+	 *
 	 * @return array The data.
 	 */
 	public static function get_woocommerce_connect_data() {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
 		$wc_params                = [];
 		$is_woocommerce_installed = self::is_woocommerce_active( '3.7.0' ) && class_exists( 'WC_Admin_Addons' );
 
@@ -2625,6 +2625,128 @@ class Sensei_Utils {
 		}
 
 		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
+	}
+
+	/**
+	 * Render a video embed.
+	 *
+	 * @param string $url The URL for the video embed.
+	 *
+	 * @return string an embeddable HTML string.
+	 */
+	public static function render_video_embed( $url ) {
+		$allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'title'           => array(),
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array(),
+			),
+			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes(),
+		);
+
+		if ( 'http' === substr( $url, 0, 4 ) ) {
+			// V2 - make width and height a setting for video embed.
+			$url = wp_oembed_get( esc_url( $url ) );
+			$url = do_shortcode( html_entity_decode( $url ) );
+		}
+		return Sensei_Wp_Kses::maybe_sanitize( $url, $allowed_html );
+	}
+
+	/**
+	 * Gets the HTML content from the Featured Video for a lesson.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param string $post_id the post ID.
+	 *
+	 * @return string|null The featured video HTML output if it exists.
+	 */
+	public static function get_featured_video_html( $post_id = null ) {
+		$post = get_post( $post_id );
+
+		if ( empty( $post ) ) {
+			return null;
+		}
+
+		if ( has_block( 'sensei-lms/featured-video', $post ) ) {
+			$blocks = parse_blocks( $post->post_content );
+			foreach ( $blocks as $block ) {
+				if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
+					return render_block( $block );
+				}
+			}
+		}
+		$video_embed = get_post_meta( $post->ID, '_lesson_video_embed', true );
+		return $video_embed ? self::render_video_embed( $video_embed ) : null;
+
+	}
+
+	/**
+	 * Get the featured video thumbnail URL from a Post's metadata.
+	 *
+	 * @param int $post_id The Post ID.
+	 * @return string The video thumbnail URL.
+	 */
+	public static function get_featured_video_thumbnail_url( $post_id ) {
+		return get_post_meta( $post_id, '_featured_video_thumbnail', true );
+	}
+
+	/**
+	 * Tells if the website is hosted on the wp.com atomic site.
+	 */
+	public static function is_atomic_platform(): bool {
+		return defined( 'ATOMIC_SITE_ID' ) && ATOMIC_SITE_ID && defined( 'ATOMIC_CLIENT_ID' ) && ATOMIC_CLIENT_ID;
+	}
+
+	/**
+	 * Get count of users for a provided role.
+	 *
+	 * @param  string $role Slug of the Role.
+	 * @return int    Count of users having the provided role.
+	 */
+	public static function get_user_count_for_role( $role ) {
+		return count(
+			Sensei_Temporary_User::get_all_users(
+				[
+					'fields' => 'ID',
+					'role'   => $role,
+				]
+			)
+		);
+	}
+
+	/**
+	 * Tells if the current site is hosted in wordpress.com and the
+	 * plan includes an active subscription for a paid Sensei product.
+	 *
+	 * @return bool {bool} If there is an active WPCOM subscription or not.
+	 * @since 4.11.0
+	 */
+	public static function has_wpcom_subscription(): bool {
+		$subscriptions = get_option( 'wpcom_active_subscriptions', [] );
+
+		/**
+		 * Filter to allow adding products slugs to check if it has an active WPCOM subscription.
+		 *
+		 * @hook sensei_wpcom_product_slugs
+		 * @since 4.11.0
+		 *
+		 * @param {Array} $products Array of products slugs to check if it has an active WPCOM subscription.
+		 *
+		 * @return {array}
+		 */
+		$product_slugs = apply_filters( 'sensei_wpcom_product_slugs', [] );
+		foreach ( $product_slugs as $product_slug ) {
+			if ( array_key_exists( $product_slug, $subscriptions ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
 

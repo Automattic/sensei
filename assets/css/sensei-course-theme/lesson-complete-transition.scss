@@ -1,19 +1,24 @@
 @keyframes sensei-course-theme-lesson-completion-notice-fadein {
-	from { opacity: 0; }
-	to { opacity: 1; }
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
 .sensei-course-theme-lesson-completion-notice {
-	position: fixed;
+	position: sticky;
 	z-index: 90;
 	height: calc(100vh - var(--full-header-height));
-	left: var(--sidebar-width);
+	top: var(--full-header-height);
 	right: 0;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-color: var(--bg-color);
+	background-color: var(--sensei-background-color);
+	max-width: var(--content-size) fit-content !important;
 
 	&__text {
 		margin: 25px 0;
@@ -24,7 +29,7 @@
 	> svg {
 		width: 70px;
 		height: 70px;
-		color: var(--primary-color);
+		color: var(--sensei-primary-color);
 	}
 
 	.sensei-course-theme--focus-mode & {

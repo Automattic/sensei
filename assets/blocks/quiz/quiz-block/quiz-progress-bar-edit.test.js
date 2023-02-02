@@ -9,6 +9,10 @@ import { render } from '@testing-library/react';
 import QuizProgressBarEdit from './quiz-progress-bar-edit';
 import ProgressBar from '../../../shared/blocks/progress-bar';
 
+jest.mock( '@wordpress/block-editor', () => ( {
+	useBlockProps: jest.fn(),
+} ) );
+
 describe( 'Testing Quiz Progress Bar Edit', () => {
 	it( 'Test ProgressBar is rendered with expected properties', () => {
 		const pagination = {

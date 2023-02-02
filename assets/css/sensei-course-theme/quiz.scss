@@ -6,7 +6,6 @@ $tablet-breakpoint: 768px;
 @import '../../shared/blocks/progress-bar/progress-bar';
 
 .sensei-course-theme__quiz {
-
 	&__main-content {
 		padding: 32px;
 		margin-bottom: 100px !important;
@@ -35,7 +34,7 @@ $tablet-breakpoint: 768px;
 	&__header {
 		position: sticky;
 		top: var(--top-offset);
-		background-color: var(--bg-color);
+		background-color: var(--sensei-background-color);
 		z-index: 100;
 
 		.wp-block-post-title {
@@ -57,11 +56,22 @@ $tablet-breakpoint: 768px;
 	}
 
 	&__footer {
-		padding: 24px;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		max-width: var(--content-size);
+		margin: 0 auto;
+		padding: 24px 0;
 
 		&__wrapper {
 			margin: 0 !important;
 			display: block;
+		}
+
+		.wp-block-group__inner-container {
+			margin: unset;
+			width: 100%;
 		}
 
 		.sensei-quiz-actions {
@@ -73,14 +83,25 @@ $tablet-breakpoint: 768px;
 		.sensei-quiz-pagination {
 			flex: 1;
 			margin: 0;
-			.sensei-quiz-pagination__list ul.page-numbers{
+
+			&__list {
+				margin-right: auto;
+			}
+
+			.sensei-quiz-pagination__list ul.page-numbers {
 				gap: 1rem;
 			}
 		}
 	}
 }
 
-@media only screen and (min-width: $tablet-breakpoint ) {
+[class*="__inner-container"] {
+	.sensei-course-theme__quiz__footer {
+		max-width: var(--content-size);
+	}
+}
+
+@media only screen and (min-width: $tablet-breakpoint) {
 	.sensei-course-theme__quiz {
 		&__footer {
 			&__wrapper {
@@ -89,17 +110,19 @@ $tablet-breakpoint: 768px;
 				left: 0;
 				right: 0;
 				z-index: 100;
-				background-color: var(--bg-color);
-				box-shadow: 2px 10px 30px 5px rgba(0,0,0, 0.1);
+				background-color: var(--sensei-background-color);
+				box-shadow: 2px 10px 30px 5px rgba(0, 0, 0, 0.1);
 			}
 
 			.sensei-quiz-actions {
 				width: auto;
 				flex-direction: row-reverse;
+
 				.sensei-quiz-action {
 					flex: unset;
 				}
 			}
+
 			.sensei-quiz-pagination {
 				.sensei-quiz-actions {
 					flex-direction: row;
@@ -122,6 +145,6 @@ $tablet-breakpoint: 768px;
 	}
 
 	&__progress {
-		background-color: var(--primary-color);
+		background-color: var(--sensei-primary-color);
 	}
 }

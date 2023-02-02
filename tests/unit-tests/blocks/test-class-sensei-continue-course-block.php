@@ -27,7 +27,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		self::resetEnrolmentProviders();
 		$this->prepareEnrolmentManager();
@@ -39,12 +39,12 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $this->course;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-continue-course' );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}
@@ -66,7 +66,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 	 * Doesn't render the block if the student is enrolled and has already completed the course.
 	 *
 	 * @covers Sensei_Continue_Course_Block::render
-	 */
+	*/
 	public function testRender_EnrolledAndCourseCompleted_ReturnsEmptyString() {
 		$user_id = $this->factory->user->create();
 		$this->manuallyEnrolStudentInCourse( $user_id, $this->course->ID );
@@ -90,7 +90,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		$result = $this->block->render( [], self::CONTENT );
 
-		$this->assertRegExp( '|<a href="http://example.org/\?course=continue-course-block".*>Continue</a>|', $result );
+		$this->assertRegExp( '|<form action="http://example.org/\?course=continue-course-block" method="get".*>|', $result );
 	}
 
 	public function testRender_EnrolledAndStartedLesson_ReturnsModifiedBlockContentWithLessonUrl() {
@@ -108,6 +108,41 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$lesson_title = get_post( $course_lesson_ids[0] )->post_name;
-		$this->assertRegExp( '|<a href="http://example.org/\?lesson=' . $lesson_title . '".*>Continue</a>|', $result );
+		$this->assertRegExp( '|<form action="http://example.org/\?lesson=' . $lesson_title . '" method="get".*>|', $result );
+	}
+
+
+	public function testRender_WhenTheCourseDoesntHaveALesson_ReturnsLinkToTheCourse() {
+		/* Arrange */
+		$user_id = $this->factory->user->create();
+
+		$this->login_as( $user_id );
+
+		$this->manuallyEnrolStudentInCourse( $user_id, $this->course->ID );
+
+		/* Act */
+		$result = $this->block->render( [], self::CONTENT );
+
+		/* Assert */
+		$course_title = $this->course->post_name;
+		$this->assertRegExp( '|<form action="http://example.org/\?course=' . $course_title . '" method="get".*>|', $result );
+	}
+
+	public function testRender_WhenTheStudentDoesntHaveStartedALesson_ReturnsLinkToFirstLesson() {
+		/* Arrange */
+		$user_id           = $this->factory->user->create();
+		$course_lesson_ids = $this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $this->course->ID ] ] );
+
+		$this->login_as( $user_id );
+
+		$this->manuallyEnrolStudentInCourse( $user_id, $this->course->ID );
+		Sensei_Utils::user_start_lesson( $user_id, $course_lesson_ids[0], true );
+
+		/* Act */
+		$result = $this->block->render( [], self::CONTENT );
+
+		/* Assert */
+		$lesson_title = get_post( $course_lesson_ids[1] )->post_name;
+		$this->assertRegExp( '|<form action="http://example.org/\?lesson=' . $lesson_title . '" method="get".*>|', $result );
 	}
 }

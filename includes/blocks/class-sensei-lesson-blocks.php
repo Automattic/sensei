@@ -18,6 +18,8 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 */
 	public function __construct() {
 		parent::__construct( [ 'lesson' ] );
+
+		add_action( 'template_redirect', [ $this, 'remove_block_related_content' ] );
 	}
 
 	/**
@@ -48,17 +50,16 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			true
 		);
 
-		$course_id = Sensei_Utils::get_current_course();
-		if ( ! empty( $course_id ) ) {
-			wp_add_inline_script(
-				'sensei-single-lesson-blocks',
-				sprintf(
-					'window.sensei = window.sensei || {}; window.sensei.courseThemeEnabled = %s;',
-					Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ? 'true' : 'false'
-				),
-				'before'
-			);
-		}
+		$course_id         = Sensei_Utils::get_current_course();
+		$has_learning_mode = ! empty( $course_id ) && Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+
+		wp_add_inline_script(
+			'sensei-single-lesson-blocks',
+			'window.sensei = window.sensei || {}; ' .
+			sprintf( 'window.sensei.courseThemeEnabled = %s;', $has_learning_mode ? 'true' : 'false' ) .
+			sprintf( 'window.sensei.assetUrl = "%s";', Sensei()->assets->asset_url( '' ) ),
+			'before'
+		);
 
 		Sensei()->assets->enqueue(
 			'sensei-single-lesson-blocks-editor-style',
@@ -99,31 +100,30 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		$post_type_object->template = apply_filters( 'sensei_lesson_block_template', $block_template, $post_type_object->template ?? [] );
 
 		new Sensei_Conditional_Content_Block();
-
-		if ( ! Sensei()->lesson->has_sensei_blocks() ) {
-			return;
-		}
-
 		new Sensei_Lesson_Actions_Block();
 		new Sensei_Lesson_Properties_Block();
 		new Sensei_Next_Lesson_Block();
 		new Sensei_Complete_Lesson_Block();
 		new Sensei_Reset_Lesson_Block();
 		new Sensei_View_Quiz_Block();
+		new Sensei_Featured_Video_Block();
 		new Sensei_Block_Contact_Teacher();
-
-		$this->remove_block_related_content();
-
 	}
 
 	/**
-	 * Helper method to remove functionality which is provided by blocks.
+	 * Remove functionality which is provided by blocks.
+	 *
+	 * @access private
 	 */
-	private function remove_block_related_content() {
-		// Remove contact teacher button.
-		remove_action( 'sensei_single_lesson_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 30 );
+	public function remove_block_related_content() {
 
-		// Remove footer buttons.
-		remove_action( 'sensei_single_lesson_content_inside_after', [ 'Sensei_Lesson', 'footer_quiz_call_to_action' ] );
+		if ( has_block( 'sensei-lms/lesson-actions' ) ) {
+			remove_action( 'sensei_single_lesson_content_inside_after', [ 'Sensei_Lesson', 'footer_quiz_call_to_action' ] );
+		}
+
+		if ( Sensei()->lesson->has_sensei_blocks() ) {
+			remove_action( 'sensei_single_lesson_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 30 );
+		}
+
 	}
 }

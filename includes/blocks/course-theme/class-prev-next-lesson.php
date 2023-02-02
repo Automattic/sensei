@@ -19,14 +19,22 @@ use \Sensei_Blocks;
  */
 class Prev_Next_Lesson {
 	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/lesson-blocks/course-theme-prev-next-lesson.block.json';
+
+	/**
 	 * Prev_Next_Lesson constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-prev-next-lesson',
 			[
 				'render_callback' => [ $this, 'render' ],
-			]
+				'style'           => 'sensei-theme-blocks',
+			],
+			$block_json_path
 		);
 	}
 
@@ -89,6 +97,12 @@ class Prev_Next_Lesson {
 		$prev = $this->get_link( $urls, 'previous', __( 'Previous', 'sensei-lms' ), 'chevron-left', __( 'Previous Lesson', 'sensei-lms' ) );
 		$next = $this->get_link( $urls, 'next', __( 'Next', 'sensei-lms' ), 'chevron-right', __( 'Next Lesson', 'sensei-lms' ) );
 
-		return '<nav class="sensei-course-theme-prev-next-lesson-container">' . $prev . $next . '</nav>';
+		$wrapper_attr = get_block_wrapper_attributes(
+			[
+				'class' => 'sensei-course-theme-prev-next-lesson-container',
+			]
+		);
+
+		return sprintf( '<nav %s>%s %s</nav>', $wrapper_attr, $prev, $next );
 	}
 }

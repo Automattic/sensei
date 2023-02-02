@@ -1,7 +1,10 @@
 {
   "name": "sensei-lms/quiz-category-question",
+  "title": "Category Question",
+  "description": "Pull questions from a question category.",
   "parent": [ "sensei-lms/quiz" ],
   "category": "sensei-lms",
+  "textdomain": "sensei-lms",
   "supports": {
     "html": false
   },

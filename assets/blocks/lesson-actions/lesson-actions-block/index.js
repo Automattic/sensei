@@ -1,9 +1,4 @@
 /**
- * WordPress dependencies
- */
-import { __ } from '@wordpress/i18n';
-
-/**
  * Internal dependencies
  */
 import metadata from './block.json';
@@ -12,19 +7,8 @@ import save from './lesson-actions-save';
 import icon from '../../../icons/buttons.svg';
 
 export default {
-	title: __( 'Lesson Actions', 'sensei-lms' ),
-	description: __(
-		'Enable a student to perform specific actions for a lesson.',
-		'sensei-lms'
-	),
-	keywords: [
-		__( 'Lesson', 'sensei-lms' ),
-		__( 'Actions', 'sensei-lms' ),
-		__( 'Buttons', 'sensei-lms' ),
-		__( 'Complete', 'sensei-lms' ),
-		__( 'Next', 'sensei-lms' ),
-		__( 'Reset', 'sensei-lms' ),
-	],
+	...metadata,
+	metadata,
 	example: {
 		innerBlocks: [
 			{ name: 'sensei-lms/button-complete-lesson' },
@@ -32,7 +16,6 @@ export default {
 			{ name: 'sensei-lms/button-reset-lesson' },
 		],
 	},
-	...metadata,
 	icon,
 	edit,
 	save,

@@ -1,6 +1,8 @@
 name: Plugin Build
 
-on: pull_request
+on: 
+    - pull_request
+    - workflow_call
 
 jobs:
     build:
@@ -11,7 +13,7 @@ jobs:
             - name: Get npm cache directory
               id: npm-cache
               run: |
-                  echo "::set-output name=dir::$(npm config get cache)"
+                  echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
             - uses: actions/cache@v3
               with:
                   path: ${{ steps.npm-cache.outputs.dir }}
@@ -25,10 +27,10 @@ jobs:
                   coverage: none
             - name: Get composer cache directory
               id: composer-cache
-              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+              run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
             - name: Updates the npm version
-              run: npm install -g npm@8.9.0
+              run: npm install -g npm@^8
 
             - uses: actions/cache@v3
               with:
@@ -45,7 +47,7 @@ jobs:
             - name: Decompress plugin
               run: unzip sensei-lms.zip -d sensei-lms
             - name: Store Artifact
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v3
               with:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
                   path: ${{ github.workspace }}/sensei-lms/

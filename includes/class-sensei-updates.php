@@ -80,6 +80,7 @@ class Sensei_Updates {
 		$this->v3_7_add_comment_indexes();
 		$this->v3_9_fix_question_author();
 		$this->v3_9_remove_abandoned_multiple_question();
+		$this->v4_10_update_install_time();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
@@ -95,6 +96,13 @@ class Sensei_Updates {
 		}
 
 		Sensei_Scheduler::instance()->schedule_job( new Sensei_Update_Remove_Abandoned_Multiple_Question() );
+	}
+
+	/**
+	 * Set new option to save when Sensei was installed/updated.
+	 */
+	private function v4_10_update_install_time() {
+		add_option( 'sensei_installed_at', time() );
 	}
 
 	/**

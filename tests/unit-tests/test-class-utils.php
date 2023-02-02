@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class for testing Sensei_Utils class.
+ *
+ * @group utils
+ *
+ * phpcs:disable Generic.Commenting.DocComment.MissingShort
+ */
 class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	/**
@@ -8,8 +15,8 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 	 * This function sets up the lessons, quizzes and their questions. This function runs before
 	 * every single test in this class
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 
@@ -18,7 +25,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -246,8 +253,8 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$output = ob_get_clean();
 
 		/* Assert. */
-		$this->assertContains( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
-		$this->assertNotContains( 'param_2', $output, 'Output should not contain the excluded query param input.' );
+		$this->assertStringContainsString( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
+		$this->assertStringNotContainsString( 'param_2', $output, 'Output should not contain the excluded query param input.' );
 	}
 
 	/**
@@ -268,6 +275,53 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		self::assertEquals( $expected, $actual, 'Last activity date is not being formatted correctly' );
 	}
 
+	public function testSenseiGradeQuiz_WhenCalled_UpdatesTheFinalGrade() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		/* Act. */
+		Sensei_Utils::sensei_grade_quiz( $quiz_id, 12.34, $user_id );
+
+		/* Assert. */
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+
+		$this->assertSame( 12.34, $quiz_submission->get_final_grade() );
+	}
+
+	public function testIsRestRequest_WhenNotRestRequest_ReturnsFalse() {
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertFalse( $is_rest_request );
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function testIsRestRequest_WhenRestRequest_ReturnsTrue() {
+		/* Arrange. */
+		define( 'REST_REQUEST', true );
+
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertTrue( $is_rest_request );
+	}
+
 	/**
 	 * Returns an associative array with parameters needed to run lesson completion test.
 	 *
@@ -281,5 +335,14 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 			'seconds' => [ 20, '20 seconds ago' ],
 			'date'    => [ 8 * 24 * 60 * 60, null ],
 		];
+	}
+
+	public function testUserCountByRole_WhenCalled_ReturnsCorrectNumberOfStudents() {
+		$this->factory->user->create_many( 3 );
+		$this->factory->user->create_many( 2, array( 'role' => 'student' ) );
+
+		$result = Sensei_Utils::get_user_count_for_role( 'student' );
+
+		$this->assertEquals( 2, $result );
 	}
 }

@@ -20,10 +20,20 @@ class Quiz_Back_To_Lesson_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+
+		WP_Block_Supports::$block_to_render = [
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/quiz-back-to-lesson',
+		];
+	}
+
+	public static function tearDownAfterClass(): void {
+		parent::tearDownAfterClass();
+		WP_Block_Supports::$block_to_render = null;
 	}
 
 	/**
@@ -45,7 +55,7 @@ class Quiz_Back_To_Lesson_Test extends WP_UnitTestCase {
 		$block = new Quiz_Back_To_Lesson();
 		$html  = $block->render();
 
-		$this->assertContains( get_permalink( $lesson_id ), $html );
+		$this->assertStringContainsString( get_permalink( $lesson_id ), $html );
 	}
 
 	/**

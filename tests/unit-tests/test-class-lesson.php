@@ -70,8 +70,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	 * This function sets up the lessons, quizes and their questions. This function runs before
 	 * every single test in this class
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
@@ -88,7 +88,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$this->initial_notices  = Sensei()->notices;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 
@@ -759,50 +759,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that highlight_menu_item returns expected value.
-	 *
-	 * @dataProvider providerHighlightMenuItem_WhenSubmenuGiven_ReturnsMatchingSubmenuFile
-	 */
-	public function testHighlightMenuItem_WhenSubmenuGiven_ReturnsMatchingSubmenuFile( $submenu_file, $screen_id, $expected ): void {
-		/* Arrange */
-		$screen = WP_Screen::get( $screen_id );
-		$screen->set_current_screen();
-
-		$lesson = new Sensei_Lesson();
-
-		/* Act */
-		$actual = $lesson->highlight_menu_item( $submenu_file );
-
-		/* Assert */
-		self::assertSame( $expected, $actual );
-	}
-
-	public function providerHighlightMenuItem_WhenSubmenuGiven_ReturnsMatchingSubmenuFile(): array {
-		return [
-			'edit lesson'              => [
-				'edit.php',
-				'edit-lesson',
-				'edit.php?post_type=lesson',
-			],
-			'edit lesson tag'          => [
-				'edit.php',
-				'edit-lesson-tag',
-				'edit.php?post_type=lesson',
-			],
-			'course page lesson order' => [
-				'edit.php',
-				'course_page_lesson-order',
-				'edit.php?post_type=lesson',
-			],
-			'other id'                 => [
-				'edit.php',
-				'other-id',
-				'edit.php',
-			],
-		];
-	}
-
-	/**
 	 * Test that add_custom_navigation doesn't have output when there is a wrong scree.
 	 *
 	 * @dataProvider providerAddCustomNavigation_WhenWrongScreen_DoesntHaveOutput
@@ -867,8 +823,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				</div>
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="http://example.org/wp-admin/post-new.php?post_type=lesson">New Lesson</a>
-					<a href="http://example.org/wp-admin/edit.php?post_type=course&#038;page=lesson-order">Order Lessons</a>
-					<a href="http://example.org/wp-admin/edit.php?post_type=course&#038;page=sensei-settings#lesson-settings">Lesson Settings</a>
+					<a href="http://example.org/wp-admin/admin.php?page=lesson-order">Order Lessons</a>
+					<a href="http://example.org/wp-admin/admin.php?page=sensei-settings#lesson-settings">Lesson Settings</a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
@@ -1599,6 +1555,61 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		self::assertStringContainsString( 'Test Question', $result );
+	}
+
+	public function testLessonQuizQuestions_WhenCalled_ReturnsTheQuizQuestions(): void {
+		/* Arrange */
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		$question_1 = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+		$question_2 = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+
+		/* Act */
+		$questions    = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
+		$question_ids = wp_list_pluck( $questions, 'ID' );
+
+		/* Assert */
+		$this->assertSame( [ $question_1, $question_2 ], $question_ids );
+	}
+
+	public function testLessonQuizQuestions_WhenUserAlreadySubmittedTheQuizButQuestionsHaveChanged_ReturnsTheInitiallyAskedQuestions(): void {
+		/* Arrange. */
+		$user_id = $this->factory->user->create();
+		wp_set_current_user( $user_id );
+
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		// Submit the quiz with two question.
+		$question_1 = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+		$question_2 = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+		$answers    = $this->factory->generate_user_quiz_answers( $quiz_id );
+		Sensei_Quiz::submit_answers_for_grading( $answers, [], $lesson_id, $user_id );
+
+		// Add another question.
+		$question_3 = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+
+		/* Act. */
+		$questions    = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
+		$question_ids = wp_list_pluck( $questions, 'ID' );
+
+		/* Assert. */
+		$this->assertSame( [ $question_1, $question_2 ], $question_ids );
 	}
 }
 

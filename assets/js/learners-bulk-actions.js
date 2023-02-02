@@ -125,6 +125,7 @@ jQuery( document ).ready( function () {
 	} )();
 
 	( function ( bulkUserActions ) {
+		const { __ } = wp.i18n;
 		var $hiddenSelectedUserIdsField = $( '#bulk-action-user-ids' ),
 			$actionSelector = $( '#bulk-action-selector-top' ),
 			$courseSelect = $( '.sensei-course-select' ),
@@ -199,11 +200,42 @@ jQuery( document ).ready( function () {
 		$moreLink.on( 'click', function ( event ) {
 			event.preventDefault();
 			event.stopPropagation();
-
 			$( event.target )
 				.addClass( 'hidden' )
 				.prev()
 				.removeClass( 'hidden' );
+
+			let $userId = $( event.target ).attr( 'data-user-id' );
+			let $dataNonce = $( event.target ).attr( 'data-nonce' );
+			let $hiddenPosts = $( event.target ).prev();
+
+			let data = {
+				action: 'get_course_list',
+				user_id: $userId,
+				nonce: $dataNonce,
+			};
+
+			$.ajax( {
+				type: 'POST',
+				url: ajax_object.ajax_url,
+				data: data,
+				success: function ( data ) {
+					$hiddenPosts.append( data.data );
+				},
+				error: function ( errorThrown ) {
+					$hiddenPosts.append(
+						'<p>' +
+							__(
+								'There was an error fetching courses: ',
+								'sensei-lms'
+							) +
+							errorThrown.statusText +
+							': ' +
+							errorThrown.status +
+							'</p>'
+					);
+				},
+			} );
 		} );
 
 		$actionSelector.on( 'change', function () {

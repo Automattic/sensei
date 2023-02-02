@@ -108,7 +108,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		 * the students report.
 		 *
 		 * @hook  sensei_students_report_last_activity_filter_enabled
-		 * @since $$next-version$$
+		 * @since 4.6.4
 		 *
 		 * @param {boolean} $enabled Whether the students last activity filter is enabled.
 		 *
@@ -141,7 +141,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	/**
 	 * Filter the users to ones enrolled in a course.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.6.4
 	 *
 	 * @since  4.4.1
 	 * @access private
@@ -149,7 +149,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 * @param WP_User_Query $query The user query.
 	 */
 	public function only_course_enrolled_users( WP_User_Query $query ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.6.4' );
 
 		global $wpdb;
 
@@ -165,7 +165,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	/**
 	 * Group query by users.
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.6.4
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
@@ -201,6 +201,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		$query->query_fields .= ", (
 			SELECT MAX({$wpdb->comments}.comment_date_gmt)
 			FROM {$wpdb->comments}
+			USE INDEX (sensei_comment_type_user_id)
 			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
 			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
 			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'

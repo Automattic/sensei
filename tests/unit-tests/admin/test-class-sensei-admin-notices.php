@@ -299,6 +299,102 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'with-woocommerce', $notices_with_both );
 	}
 
+
+	/**
+	 * Test the `installed_since` condition.
+	 */
+	public function testGetNoticesToDisplay_GivenInstalledSince_ValidatesStrings() {
+		// Arrange.
+		$this->login_as_admin();
+		update_option( 'sensei_installed_at', 10 );
+		$all_notices = [
+			'hide-since-9'  => [
+				'message'    => 'Hide since 9',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => 9,
+					],
+				],
+			],
+			'show-since-10' => [
+				'message'    => 'Show since 10',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => 10,
+					],
+				],
+			],
+			'show-since-11' => [
+				'message'    => 'Show since 11',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => 11,
+					],
+				],
+			],
+		];
+
+		// Act.
+		$instance = $this->getMockInstance( [ 'notices' => $all_notices ] );
+		$notices  = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'hide-since-9', $notices );
+		$this->assertArrayHasKey( 'show-since-10', $notices );
+		$this->assertArrayHasKey( 'show-since-11', $notices );
+	}
+
+
+	/**
+	 * Test the `installed_since` condition with relative times.
+	 */
+	public function testGetNoticesToDisplay_GivenInstalledSinceString_ValidatesStrings() {
+		// Arrange.
+		$this->login_as_admin();
+		update_option( 'sensei_installed_at', time() - 10 );
+		$all_notices = [
+			'show-since-9'  => [
+				'message'    => 'Show since 9',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => '9 seconds',
+					],
+				],
+			],
+			'show-since-10' => [
+				'message'    => 'Show since 10',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => '10 seconds',
+					],
+				],
+			],
+			'hide-since-11' => [
+				'message'    => 'Hide since 11',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => '11 seconds',
+					],
+				],
+			],
+		];
+
+		// Act.
+		$instance = $this->getMockInstance( [ 'notices' => $all_notices ] );
+		$notices  = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayHasKey( 'show-since-9', $notices );
+		$this->assertArrayHasKey( 'show-since-10', $notices );
+		$this->assertArrayNotHasKey( 'hide-since-11', $notices );
+	}
+
 	/**
 	 * Tests plugin conditions with version checks.
 	 */
@@ -396,6 +492,7 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 		);
 
 		$mock = $this->getMockBuilder( 'Sensei_Admin_Notices' )
+			->disableOriginalConstructor()
 			->setMethods( [ 'get_notices', 'get_screen_id', 'get_active_plugins' ] )
 			->getMock();
 

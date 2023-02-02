@@ -30,35 +30,24 @@ class Sensei_Learner_Management {
 	 * @var string $name
 	 */
 	public $name;
-
 	/**
 	 * Main plugin file name.
 	 *
 	 * @var string $file
 	 */
 	public $file;
-
 	/**
 	 * Menu slug name.
 	 *
 	 * @var string $page_slug
 	 */
 	public $page_slug;
-
-	/**
-	 * Post type that the Student Management menu is associated with.
-	 *
-	 * @var string $menu_post_type
-	 */
-	public $menu_post_type;
-
 	/**
 	 * Reference to the class responsible for Bulk Learner Actions.
 	 *
 	 * @var Sensei_Learners_Admin_Bulk_Actions_Controller $bulk_actions_controller
 	 */
 	public $bulk_actions_controller;
-
 	/**
 	 * Per page screen option ID.
 	 *
@@ -74,10 +63,9 @@ class Sensei_Learner_Management {
 	 * @param string $file Main plugin file name.
 	 */
 	public function __construct( $file ) {
-		$this->name           = __( 'Students', 'sensei-lms' );
-		$this->file           = $file;
-		$this->page_slug      = 'sensei_learners';
-		$this->menu_post_type = 'course';
+		$this->name      = __( 'Students', 'sensei-lms' );
+		$this->file      = $file;
+		$this->page_slug = 'sensei_learners';
 
 		$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this, Sensei_Learner::instance() );
 
@@ -124,7 +112,7 @@ class Sensei_Learner_Management {
 			return;
 		}
 
-		if ( in_array( $screen->id, [ 'course_page_sensei_learners' ], true ) && ( 'term' !== $screen->base ) ) {
+		if ( in_array( $screen->id, [ 'sensei-lms_page_sensei_learners' ], true ) && ( 'term' !== $screen->base ) ) {
 			$this->display_students_navigation( $screen );
 		}
 	}
@@ -159,7 +147,7 @@ class Sensei_Learner_Management {
 	public function learners_admin_menu() {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			$learners_page = add_submenu_page(
-				'edit.php?post_type=course',
+				'sensei',
 				$this->name,
 				$this->name,
 				'manage_sensei_grades',
@@ -222,6 +210,11 @@ class Sensei_Learner_Management {
 		Sensei()->assets->enqueue( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-student-action-menu', 'admin/students/student-action-menu/index.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-student-bulk-action-button', 'admin/students/student-bulk-action-button/index.js', [], true );
+		Sensei()->assets->enqueue(
+			'sensei-student-bulk-action-button-style',
+			'admin/students/student-bulk-action-button/student-bulk-action-button.css',
+			[ 'sensei-wp-components', 'sensei-editor-components-style' ]
+		);
 
 		wp_localize_script(
 			'sensei-learners-general',
@@ -374,20 +367,18 @@ class Sensei_Learner_Management {
 		if ( 0 < $course_id && 0 < $lesson_id ) {
 			$back_url = add_query_arg(
 				array(
-					'post_type' => $this->menu_post_type,
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
 					'view'      => 'lessons',
 				),
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			);
 		} else {
 			$back_url = add_query_arg(
 				[
-					'post_type' => 'course',
-					'page'      => 'sensei_learners',
+					'page' => 'sensei_learners',
 				],
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			);
 		}
 
@@ -436,11 +427,10 @@ class Sensei_Learner_Management {
 			'sensei_ajax_redirect_url',
 			add_query_arg(
 				array(
-					'post_type'  => $this->menu_post_type,
 					'page'       => $this->page_slug,
 					'course_cat' => $course_cat,
 				),
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			)
 		);
 
@@ -818,9 +808,8 @@ class Sensei_Learner_Management {
 
 		// Set redirect URL after adding user to course/lesson.
 		$query_args = array(
-			'post_type' => $this->menu_post_type,
-			'page'      => $this->page_slug,
-			'view'      => 'learners',
+			'page' => $this->page_slug,
+			'view' => 'learners',
 		);
 
 		if ( $course_id ) {
@@ -841,7 +830,7 @@ class Sensei_Learner_Management {
 			$query_args['message'] .= '_multiple';
 		}
 
-		$redirect_url = apply_filters( 'sensei_learners_add_learner_redirect_url', add_query_arg( $query_args, admin_url( 'edit.php' ) ) );
+		$redirect_url = apply_filters( 'sensei_learners_add_learner_redirect_url', add_query_arg( $query_args, admin_url( 'admin.php' ) ) );
 
 		wp_safe_redirect( esc_url_raw( $redirect_url ) );
 		exit;
@@ -923,13 +912,7 @@ class Sensei_Learner_Management {
 	 * @return string URL query string.
 	 */
 	public function get_url() {
-		return add_query_arg(
-			array(
-				'post_type' => $this->menu_post_type,
-				'page'      => $this->page_slug,
-			),
-			admin_url( 'edit.php' )
-		);
+		return add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) );
 	}
 
 	/**

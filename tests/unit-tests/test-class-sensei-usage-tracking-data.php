@@ -12,14 +12,16 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	/**
 	 * Sets up the factory.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+
 		self::resetCourseEnrolmentManager();
+		self::resetLearnerTerms();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -1595,7 +1597,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * Tests getting courses using course theme count.
 	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
-	 * @covers Sensei_Usage_Tracking_Data::get_courses_using_course_theme_count
+	 * @covers Sensei_Usage_Tracking_Data::get_courses_using_learning_mode_count
 	 */
 	public function testGetCoursesUsingCourseThemeCount() {
 		$this->factory->course->create_many(
@@ -1618,47 +1620,104 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'courses_using_course_theme', $usage_data, 'Key' );
-		$this->assertEquals( 2, $usage_data['courses_using_course_theme'], 'Count' );
+		$this->assertArrayHasKey( 'courses_using_learning_mode', $usage_data, 'Key' );
+		$this->assertEquals( 2, $usage_data['courses_using_learning_mode'], 'Count' );
 	}
 
 	/**
 	 * Tests getting if course theme is enabled globally.
 	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
-	 * @covers Sensei_Usage_Tracking_Data::get_is_course_theme_enabled_globally
+	 * @covers Sensei_Usage_Tracking_Data::get_is_learning_mode_enabled_globally
 	 */
 	public function testGetIsCourseThemeEnabledGlobally() {
 		Sensei()->settings->set( 'sensei_learning_mode_all', false );
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'course_theme_enabled_globally', $usage_data, 'Key' );
-		$this->assertEquals( 0, $usage_data['course_theme_enabled_globally'], 'Boolean int' );
+		$this->assertArrayHasKey( 'learning_mode_enabled_globally', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['learning_mode_enabled_globally'], 'Boolean int' );
 
 		Sensei()->settings->set( 'sensei_learning_mode_all', true );
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'course_theme_enabled_globally', $usage_data, 'Key' );
-		$this->assertEquals( 1, $usage_data['course_theme_enabled_globally'], 'Boolean int' );
+		$this->assertArrayHasKey( 'learning_mode_enabled_globally', $usage_data, 'Key' );
+		$this->assertEquals( 1, $usage_data['learning_mode_enabled_globally'], 'Boolean int' );
 	}
 
 	/**
-	 * Tests getting if course theme is enabled globally.
+	 * Tests getting selected course theme template.
 	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
-	 * @covers Sensei_Usage_Tracking_Data::get_course_theme_has_theme_styles_enabled
+	 * @covers Sensei_Usage_Tracking_Data::get_selected_learning_mode_template
 	 */
-	public function testGetDoesCourseThemeHasThemeStyles() {
-		Sensei()->settings->set( 'sensei_learning_mode_theme', false );
+	public function testGetCourseThemeTemplate() {
+		Sensei()->settings->set( 'sensei_learning_mode_template', 'default' );
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'course_theme_theme_styles', $usage_data, 'Key' );
-		$this->assertEquals( 0, $usage_data['course_theme_theme_styles'], 'Boolean int' );
+		$this->assertArrayHasKey( 'learning_mode_template', $usage_data, 'Key' );
+		$this->assertEquals( 'default', $usage_data['learning_mode_template'], 'String' );
 
-		Sensei()->settings->set( 'sensei_learning_mode_theme', true );
+		Sensei()->settings->set( 'sensei_learning_mode_template', 'modern' );
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'course_theme_theme_styles', $usage_data, 'Key' );
-		$this->assertEquals( 1, $usage_data['course_theme_theme_styles'], 'Boolean int' );
+		$this->assertArrayHasKey( 'learning_mode_template', $usage_data, 'Key' );
+		$this->assertEquals( 'modern', $usage_data['learning_mode_template'], 'Boolean int' );
+	}
+
+	/**
+	 * Tests getting if the course theme is customised.
+	 *
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_learning_mode_is_customized
+	 */
+	public function testIsCourseThemeCustomised() {
+		Sensei()->settings->set( 'sensei_learning_mode_all', true );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'learning_mode_is_customized', $usage_data, 'Key' );
+		$this->assertEquals( false, $usage_data['learning_mode_is_customized'], 'Boolean int' );
+	}
+
+	/**
+	 * Tests getting the course theme template version.
+	 *
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_template_version
+	 */
+	public function testCourseThemeTemplateVersion() {
+		Sensei()->settings->set( 'sensei_learning_mode_all', true );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'learning_mode_template_version', $usage_data, 'Key' );
+	}
+
+	public function testGetUsageData_WhenCalled_TriggersHook() {
+		if ( ! version_compare( get_bloginfo( 'version' ), '6.1.0', '>=' ) ) {
+			$this->markTestSkipped( 'Requires `did_filter()` which was introduced in WordPress 6.1.0.' );
+		}
+
+		/* Arrange. */
+		global $wp_filters;
+
+		// Manually reset the filter counter. See https://core.trac.wordpress.org/ticket/57236.
+		$wp_filters['sensei_usage_tracking_data'] = 0;
+
+		/* Act. */
+		Sensei_Usage_Tracking_Data::get_usage_data();
+
+		/* Assert. */
+		$this->assertSame( 1, did_filter( 'sensei_usage_tracking_data' ) );
+	}
+
+	public function testGetCourseOpenAccessCount_WhenCalled_ReturnsCorrectNumberOfCourses() {
+		/* Arrange */
+		$course_ids = $this->factory->course->create_many( 2 );
+		update_post_meta( $course_ids[0], '_open_access', 1 );
+
+		/* Act */
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		/* Assert */
+		$this->assertEquals( 1, $usage_data['course_open_access'] );
 	}
 }

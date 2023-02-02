@@ -76,6 +76,9 @@ class Sensei_Messages {
 		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
 		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
 		add_action( 'comment_form', [ $this, 'add_nonce_to_comment_form' ] );
+
+		// Redirect and show a success notice.
+		add_action( 'sensei_new_private_message', [ $this, 'show_success_notice' ], 999 );
 	}
 
 	public function only_show_messages_to_owner( $query ) {
@@ -125,7 +128,7 @@ class Sensei_Messages {
 		if ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
 
 			add_submenu_page(
-				'edit.php?post_type=course',
+				'sensei',
 				__( 'Messages', 'sensei-lms' ),
 				__( 'Messages', 'sensei-lms' ),
 				'edit_courses',
@@ -373,11 +376,7 @@ class Sensei_Messages {
 			? ''
 			: sanitize_text_field( wp_unslash( $_POST['contact_message'] ) );
 
-		$message_id = $this->save_new_message_post( $current_user->ID, $post->post_author, $message, $post->ID );
-
-		if ( $message_id ) {
-			do_action( 'sensei_new_private_message', $message_id );
-		}
+		$this->save_new_message_post( $current_user->ID, $post->post_author, $message, $post->ID );
 	}
 
 	public function message_reply_received( $comment_id = 0 ) {
@@ -523,6 +522,16 @@ class Sensei_Messages {
 				add_post_meta( $message_id, '_posttype', $post->post_type );
 				add_post_meta( $message_id, '_post', $post->ID );
 
+				/**
+				 * Fires when a new private message is sent.
+				 *
+				 * @since 1.8.0
+				 * @hook  sensei_new_private_message
+				 *
+				 * @param {int} $message_id The message ID.
+				 */
+				do_action( 'sensei_new_private_message', $message_id );
+
 			} else {
 
 				$message_id = false;
@@ -654,13 +663,13 @@ class Sensei_Messages {
 		if ( is_single() && is_singular( $this->post_type )
 			|| is_post_type_archive( $this->post_type ) ) {
 
-			if ( isset( $my_courses_url ) ) {
+			$permalink = get_permalink();
 
-				wp_redirect( $my_courses_url, 303 );
+			if ( isset( $my_courses_url ) ) {
+				wp_safe_redirect( add_query_arg( 'redirect_to', $permalink, $my_courses_url ), 303 );
 				exit;
 			} else {
-
-				wp_redirect( home_url( '/wp-login.php' ), 303 );
+				wp_safe_redirect( home_url( '/wp-login.php' ), 303 );
 				exit;
 			}
 		}
@@ -731,13 +740,17 @@ class Sensei_Messages {
 	 */
 	public function message_title( $title = '', $post_id = null ) {
 
-		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() && get_post_type( $post_id ) == $this->post_type ) {
+		if ( get_post_type( $post_id ) !== $this->post_type ) {
+			return $title;
+		}
+
+		if ( is_single() && is_singular() && in_the_loop() ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post_id ) ) {
-				$title = __( 'You are not allowed to view this message.', 'sensei-lms' );
+				return __( 'You are not allowed to view this message.', 'sensei-lms' );
 			}
 		}
 
-		return $title;
+		return strip_shortcodes( $title );
 	}
 
 	/**
@@ -749,13 +762,17 @@ class Sensei_Messages {
 	public function message_content( $content ) {
 		global $post;
 
-		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() ) {
+		if ( ! $post || get_post_type( $post->ID ) !== $this->post_type ) {
+			return $content;
+		}
+
+		if ( is_single() && is_singular() && in_the_loop() ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post->ID ) ) {
-				$content = __( 'Please log in to view your messages.', 'sensei-lms' );
+				return __( 'Please log in to view your messages.', 'sensei-lms' );
 			}
 		}
 
-		return $content;
+		return strip_shortcodes( $content );
 	}
 
 	/**
@@ -993,6 +1010,20 @@ class Sensei_Messages {
 				</a>
 			</p>
 			<?php
+		}
+	}
+
+	/**
+	 * Redirect to a URL that will handle showing a success notice.
+	 *
+	 * @internal
+	 *
+	 * @since 4.10.0
+	 */
+	public function show_success_notice(): void {
+		if ( ! Sensei_Utils::is_rest_request() ) {
+			wp_safe_redirect( esc_url_raw( add_query_arg( [ 'send' => 'complete' ] ) ) );
+			exit;
 		}
 	}
 

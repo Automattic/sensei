@@ -257,16 +257,14 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		$title = Sensei_Learner::get_full_name( $item->user_id );
 
-		// QuizID to be deprecated
 		$quiz_id   = Sensei()->lesson->lesson_quizzes( $item->comment_post_ID, 'any' );
 		$quiz_link = add_query_arg(
 			array(
-				'post_type' => 'course',
-				'page'      => $this->page_slug,
-				'user'      => $item->user_id,
-				'quiz_id'   => $quiz_id,
+				'page'    => $this->page_slug,
+				'user'    => $item->user_id,
+				'quiz_id' => $quiz_id,
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 
 		$grade_link = '';
@@ -289,11 +287,10 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			$course_title = '<a href="' . esc_url(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
 						'page'      => $this->page_slug,
 						'course_id' => $course_id,
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			) . '">' . esc_html( get_the_title( $course_id ) ) . '</a>';
 		}
@@ -301,11 +298,10 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$lesson_title = '<a href="' . esc_url(
 			add_query_arg(
 				array(
-					'post_type' => 'course',
 					'page'      => $this->page_slug,
 					'lesson_id' => $item->comment_post_ID,
 				),
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			)
 		) . '">' . esc_html( get_the_title( $item->comment_post_ID ) ) . '</a>';
 
@@ -315,11 +311,10 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				'title'       => '<strong><a class="row-title" href="' . esc_url(
 					add_query_arg(
 						array(
-							'post_type' => 'course',
-							'page'      => $this->page_slug,
-							'user_id'   => $item->user_id,
+							'page'    => $this->page_slug,
+							'user_id' => $item->user_id,
 						),
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					)
 				) . '">' . esc_html( $title ) . '</a></strong>',
 				'course'      => $course_title,
@@ -436,8 +431,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			'type' => 'lesson',
 		);
 		$query_args = array(
-			'post_type' => 'course',
-			'page'      => $this->page_slug,
+			'page' => $this->page_slug,
 		);
 		if ( $this->course_id ) {
 			$query_args['course_id'] = $this->course_id;
@@ -497,28 +491,28 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$menu['all']         = sprintf(
 			$format,
 			$all_class,
-			esc_url( add_query_arg( $all_args, admin_url( 'edit.php' ) ) ),
+			esc_url( add_query_arg( $all_args, admin_url( 'admin.php' ) ) ),
 			__( 'All', 'sensei-lms' ),
 			number_format( (int) $all_lessons_count )
 		);
 		$menu['ungraded']    = sprintf(
 			$format,
 			$ungraded_class,
-			esc_url( add_query_arg( $ungraded_args, admin_url( 'edit.php' ) ) ),
+			esc_url( add_query_arg( $ungraded_args, admin_url( 'admin.php' ) ) ),
 			__( 'Ungraded', 'sensei-lms' ),
 			number_format( (int) $ungraded_lessons_count )
 		);
 		$menu['graded']      = sprintf(
 			$format,
 			$graded_class,
-			esc_url( add_query_arg( $graded_args, admin_url( 'edit.php' ) ) ),
+			esc_url( add_query_arg( $graded_args, admin_url( 'admin.php' ) ) ),
 			__( 'Graded', 'sensei-lms' ),
 			number_format( (int) $graded_lessons_count )
 		);
 		$menu['in-progress'] = sprintf(
 			$format,
 			$inprogress_class,
-			esc_url( add_query_arg( $inprogress_args, admin_url( 'edit.php' ) ) ),
+			esc_url( add_query_arg( $inprogress_args, admin_url( 'admin.php' ) ) ),
 			__( 'In Progress', 'sensei-lms' ),
 			number_format( (int) $inprogress_lessons_count )
 		);

@@ -4,4 +4,8 @@
 import metadata from './block.json';
 import edit from './edit';
 
-export default { ...metadata, edit };
+export default {
+	...metadata,
+	metadata,
+	edit,
+};

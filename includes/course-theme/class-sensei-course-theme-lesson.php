@@ -57,6 +57,31 @@ class Sensei_Course_Theme_Lesson {
 	}
 
 	/**
+	 * Intercepts the notices and prints them out later via 'sensei-lms/course-theme-notices' block.
+	 *
+	 * @param array $notice The notice to intercept.
+	 */
+	public static function intercept_notice( array $notice ) {
+		// Do nothing if it is not lesson or quiz post.
+		$post_type = get_post_type();
+		if ( ! in_array( $post_type, [ 'lesson', 'quiz' ], true ) ) {
+			return $notice;
+		}
+
+		// Do nothing if learning mode is not used.
+		$course_id = \Sensei_Utils::get_current_course();
+		if ( ! $course_id || ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+			return $notice;
+		}
+
+		// Add the notice to lesson notices.
+		$notices = \Sensei_Context_Notices::instance( 'course_theme_lesson_regular' );
+		$notices->add_notice( $notice['content'], $notice['content'], null, [], $notice['type'] );
+
+		return null;
+	}
+
+	/**
 	 * Maybe add lesson quiz results notice.
 	 */
 	private function maybe_add_quiz_results_notice() {
@@ -68,8 +93,8 @@ class Sensei_Course_Theme_Lesson {
 		}
 
 		$quiz_permalink = Sensei()->lesson->get_quiz_permalink( $lesson_id );
-
-		if ( empty( $quiz_permalink ) ) {
+		// Don't show notice if this is the quiz page.
+		if ( empty( $quiz_permalink ) || get_permalink() === $quiz_permalink ) {
 			return;
 		}
 

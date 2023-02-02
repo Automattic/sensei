@@ -29,9 +29,9 @@ class Quiz_Content {
 		// So we need to remove them from here, otherwise they are repeated.
 		remove_action( 'sensei_single_quiz_questions_before', [ Sensei()->post_types->messages, 'send_message_link' ], 10 );
 		remove_action( 'sensei_single_quiz_questions_after', [ 'Sensei_Quiz', 'action_buttons' ], 10 );
-		remove_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_user_status_message' ), 40 );
-		remove_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_title' ), 20 );
-		remove_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'the_quiz_progress_bar' ), 20 );
+		remove_action( 'sensei_single_quiz_content_inside_before', [ 'Sensei_Quiz', 'the_user_status_message' ], 40 );
+		remove_action( 'sensei_single_quiz_content_inside_before', [ 'Sensei_Quiz', 'the_title' ], 20 );
+		remove_action( 'sensei_single_quiz_questions_before', [ 'Sensei_Quiz', 'the_quiz_progress_bar' ], 20 );
 
 		ob_start();
 
@@ -80,7 +80,7 @@ class Quiz_Content {
 		// In "Learning Mode" we do not want the quiz pagination as part
 		// of the quiz post content. Because we will render it separately
 		// in the footer of the "Learning Mode" screen.
-		remove_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'the_quiz_pagination' ), 9 );
+		remove_action( 'sensei_single_quiz_questions_after', [ 'Sensei_Quiz', 'the_quiz_pagination' ], 9 );
 		do_action( 'sensei_single_quiz_questions_after', get_the_id() );
 	}
 

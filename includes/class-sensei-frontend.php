@@ -106,6 +106,9 @@ class Sensei_Frontend {
 
 		// Hide Sensei activity comments from lesson and course pages.
 		add_filter( 'wp_list_comments_args', array( $this, 'hide_sensei_activity' ) );
+
+		new Sensei_Guest_User();
+		new Sensei_Preview_User();
 	}
 
 	/**
@@ -744,39 +747,34 @@ class Sensei_Frontend {
 			// Handle submit data.
 			switch ( $sanitized_submit ) {
 				case __( 'Mark as Complete', 'sensei-lms' ):
-					// Add user to course.
-					$course_metadata = array(
-						'start'    => current_time( 'mysql' ),
-						'percent'  => 0, // No completed lessons yet.
-						'complete' => 0,
-					);
-					$activity_logged = Sensei_Utils::update_course_status( $current_user->ID, $sanitized_course_id, 'in-progress', $course_metadata );
-
-					if ( $activity_logged ) {
-						// Get all course lessons.
-						$course_lesson_ids = Sensei()->course->course_lessons( $sanitized_course_id, 'any', 'ids' );
-						// Mark all quiz user meta lessons as complete.
-						foreach ( $course_lesson_ids as $lesson_item_id ) {
-							// Mark lesson as complete.
-							$activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_item_id, $current_user->ID, true );
-						}
-
-						// Update with final stats.
-						$course_metadata = array(
-							'percent'  => 100,
-							'complete' => count( $course_lesson_ids ),
-						);
-						$activity_logged = Sensei_Utils::update_course_status( $current_user->ID, $sanitized_course_id, 'complete', $course_metadata );
-
-						do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
-
-						// Success message.
-						$this->messages = '<header class="archive-header"><div class="sensei-message tick">'
-							// translators: Placeholder is the Course title.
-							. sprintf( __( '%1$s marked as complete.', 'sensei-lms' ), get_the_title( $sanitized_course_id ) )
-							. '</div></header>';
+					$course_progress = Sensei()->course_progress_repository->get( $sanitized_course_id, $current_user->ID );
+					if ( null === $course_progress ) {
+						$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
 					}
 
+					$course_lesson_ids = Sensei()->course->course_lessons( $sanitized_course_id, 'any', 'ids' );
+					foreach ( $course_lesson_ids as $lesson_id ) {
+						Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true );
+					}
+
+					$course_progress->complete();
+					Sensei()->course_progress_repository->save( $course_progress );
+
+					$course_metadata = [
+						'percent'  => 100,
+						'complete' => count( $course_lesson_ids ),
+					];
+					foreach ( $course_metadata as $key => $value ) {
+						update_comment_meta( $course_progress->get_id(), $key, $value );
+					}
+
+					do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
+
+					// Success message.
+					$this->messages = '<header class="archive-header"><div class="sensei-message tick">'
+						// translators: Placeholder is the Course title.
+						. sprintf( __( '%1$s marked as complete.', 'sensei-lms' ), get_the_title( $sanitized_course_id ) )
+						. '</div></header>';
 					break;
 
 				default:
@@ -837,13 +835,7 @@ class Sensei_Frontend {
 	public function sensei_lesson_video( $post_id = 0 ) {
 		if ( 0 < intval( $post_id ) && sensei_can_user_view_lesson( $post_id ) ) {
 			$lesson_video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
-			if ( 'http' == substr( $lesson_video_embed, 0, 4 ) ) {
-				// V2 - make width and height a setting for video embed.
-				$lesson_video_embed = wp_oembed_get( esc_url( $lesson_video_embed ) );
-			}
-
-			$lesson_video_embed = do_shortcode( html_entity_decode( $lesson_video_embed ) );
-			$lesson_video_embed = Sensei_Wp_Kses::maybe_sanitize( $lesson_video_embed, $this->allowed_html );
+			$lesson_video_embed = Sensei_Utils::render_video_embed( $lesson_video_embed );
 
 			if ( '' != $lesson_video_embed ) {
 				?>
@@ -1180,6 +1172,8 @@ class Sensei_Frontend {
 			&& isset( $_POST['course_start'] )
 			&& wp_verify_nonce( $_POST['woothemes_sensei_start_course_noonce'], 'woothemes_sensei_start_course_noonce' )
 			&& Sensei_Course::can_current_user_manually_enrol( $post->ID )
+			&& Sensei_Course::is_prerequisite_complete( $post->ID )
+			&& ! post_password_required( $post->ID )
 		) {
 
 			/**
@@ -1219,6 +1213,10 @@ class Sensei_Frontend {
 				 */
 				$redirect_url = apply_filters( 'sensei_start_course_redirect_url', get_permalink( $post->ID ), $post );
 
+				if ( 'publish' !== get_post_status( $post ) ) {
+					wp_safe_redirect( add_query_arg( 'draftcourse', 'true', $redirect_url ) );
+					exit();
+				}
 				if ( false !== $redirect_url ) {
 					?>
 

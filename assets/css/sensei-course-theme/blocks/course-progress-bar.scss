@@ -1,0 +1,15 @@
+.sensei-course-theme-course-progress-bar {
+	height: var(--header-progress-bar-height, 4px);
+	background-color: var(--border-color);
+	margin: 0 !important;
+	width: 100%;
+
+	&-inner {
+		height: var(--header-progress-bar-height, 4px);
+		background-color: var(--sensei-primary-color);
+	}
+
+	&.wp-block:not(.has-background) {
+		background-color: var(--border-color);
+	}
+}

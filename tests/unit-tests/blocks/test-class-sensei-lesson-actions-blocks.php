@@ -20,7 +20,7 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
@@ -28,7 +28,7 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 		$this->prepareEnrolmentManager();
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}

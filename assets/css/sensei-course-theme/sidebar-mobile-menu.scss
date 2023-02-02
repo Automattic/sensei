@@ -1,0 +1,83 @@
+/**
+ * Turn the sidebar into an openable overlay menu on mobile when the menu toggle block is added.
+ *
+ */
+
+$breakpoint: 783px;
+
+.sensei-course-theme__sidebar-toggle {
+	display: block;
+	width: 24px;
+	height: 24px;
+	border: none;
+	padding: 0;
+
+	&:not(.has-background-color) {
+		background: none !important;
+	}
+
+	&:not(.has-text-color):not(:hover):not(:focus) {
+		color: inherit !important;
+	}
+
+	svg {
+		width: 24px;
+		height: 24px;
+		fill: currentColor;
+	}
+
+	&:hover, &:focus {
+		color: var(--sensei-primary-color);
+		background: none;
+	}
+}
+
+@media screen and (min-width: ($breakpoint)) {
+	.sensei-course-theme__sidebar-toggle {
+		display: none;
+	}
+}
+
+@media screen and (max-width: ($breakpoint - 1)) {
+	.sensei-course-theme {
+
+		&--sidebar-open {
+			overflow: hidden;
+
+			.sensei-course-theme__sidebar {
+				padding: 24px !important;
+				transition: all 400ms, padding-top 0ms 0ms;
+			}
+		}
+
+		&__sidebar {
+			position: fixed;
+			z-index: 90;
+			background: var(--sensei-background-color, #fff);
+			top: var(--full-header-height);
+			bottom: 0;
+			left: 0 !important;
+			right: 0 !important;
+			margin: 0 !important;
+			border: unset !important;
+			width: unset;
+			transition: all 300ms;
+			overflow: auto;
+			overscroll-behavior: contain;
+			display: flex;
+			flex-direction: column;
+			scrollbar-gutter: stable both-edges;
+		}
+
+		&__secondary-sidebar {
+			top: unset;
+		}
+
+		&:not(&--sidebar-open) &__sidebar {
+			bottom: 100vh;
+			top: -100vh !important;
+			padding: 0;
+		}
+
+	}
+}

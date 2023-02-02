@@ -20,12 +20,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Setup_Wizard {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
-	const WCCOM_INSTALLING_TRANSIENT  = 'sensei_setup_wizard_wccom_installing';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
 	const MC_LIST_ID                  = '4fa225a515';
 	const MC_USER_ID                  = '7a061a9141b0911d6d9bafe3a';
 	const MC_GDPR_FIELD               = '23563';
-	const MC_URL                      = 'https://senseilms.us19.list-manage.com/subscribe/post?u=' . self::MC_USER_ID . '&id=' . self::MC_LIST_ID;
+	const MC_URL                      = 'https://senseilms.us19.list-manage.com/subscribe/post-json?u=' . self::MC_USER_ID . '&id=' . self::MC_LIST_ID;
 
 	/**
 	 * Default value for setup wizard user data.
@@ -36,12 +35,14 @@ class Sensei_Setup_Wizard {
 		'features'  => [
 			'selected' => [],
 		],
+		'theme'     => [
+			'install_sensei_theme' => false,
+		],
 		'purpose'   => [
 			'selected' => [],
 			'other'    => '',
 		],
-		'steps'     => [],
-		'__version' => '1',
+		'__version' => '3',
 	];
 
 	/**
@@ -89,11 +90,11 @@ class Sensei_Setup_Wizard {
 		if ( is_admin() ) {
 
 			add_action( 'admin_menu', [ $this, 'register_wizard_page' ], 20 );
+			add_action( 'current_screen', [ $this, 'remove_notices_from_setup_wizard' ] );
 			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
 			add_action( 'admin_init', [ $this, 'skip_setup_wizard' ] );
 			add_action( 'admin_init', [ $this, 'activation_redirect' ] );
 			add_action( 'current_screen', [ $this, 'add_setup_wizard_help_tab' ] );
-			add_action( 'admin_init', [ $this, 'close_wccom_install' ] );
 
 			// Maybe prevent WooCommerce help tab.
 			add_filter( 'woocommerce_enable_admin_help_tab', [ $this, 'should_enable_woocommerce_help_tab' ] );
@@ -124,6 +125,19 @@ class Sensei_Setup_Wizard {
 	}
 
 	/**
+	 * Remove notices from Sensei Setup Wizard.
+	 *
+	 * @access private
+	 *
+	 * @param WP_Screen $current_screen Current screen object.
+	 */
+	public function remove_notices_from_setup_wizard( $current_screen ) {
+		if ( strpos( $current_screen->id, $this->page_slug ) !== false ) {
+			remove_all_actions( 'admin_notices' );
+		}
+	}
+
+	/**
 	 * Enqueue JS for Setup Wizard page.
 	 *
 	 * @access private
@@ -132,12 +146,6 @@ class Sensei_Setup_Wizard {
 		$handle = 'sensei-setup-wizard';
 		Sensei()->assets->enqueue( $handle, 'setup-wizard/index.js', [ 'sensei-event-logging' ], true );
 		Sensei()->assets->preload_data( [ '/sensei-internal/v1/setup-wizard' ] );
-
-		wp_localize_script(
-			$handle,
-			'sensei_setup_wizard',
-			[ 'nonce' => wp_create_nonce( $handle ) ]
-		);
 	}
 
 	/**
@@ -166,8 +174,8 @@ class Sensei_Setup_Wizard {
 	 * Set up hooks for loading Setup Wizard page assets.
 	 */
 	public function prepare_wizard_page() {
-		add_action( 'admin_print_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'admin_print_styles', [ $this, 'enqueue_styles' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		add_action( 'admin_body_class', [ $this, 'filter_body_class' ] );
 
 		add_filter( 'show_admin_bar', '__return_false' );
@@ -229,7 +237,7 @@ class Sensei_Setup_Wizard {
 	private function should_current_page_display_wizard() {
 		$screen = get_current_screen();
 
-		if ( false !== strpos( $screen->id, 'course_page_sensei' ) ) {
+		if ( false !== strpos( $screen->id, 'sensei-lms_page_sensei' ) ) {
 			return true;
 		}
 
@@ -239,12 +247,12 @@ class Sensei_Setup_Wizard {
 			'edit-sensei_message',
 			'edit-course',
 			'edit-course-category',
-			'course_page_course-order',
+			'admin_page_course-order',
 			'edit-module',
-			'course_page_module-order',
+			'admin_page_module-order',
 			'edit-lesson',
 			'edit-lesson-tag',
-			'course_page_lesson-order',
+			'admin_page_lesson-order',
 			'edit-question',
 			'question',
 			'edit-question-category',
@@ -267,26 +275,16 @@ class Sensei_Setup_Wizard {
 			return;
 		}
 
-		$setup_wizard_user_data   = get_option( self::USER_DATA_OPTION, false );
-		$setup_wizard_in_progress = $setup_wizard_user_data && ! empty( $setup_wizard_user_data['steps'] );
-
 		$setup_url = admin_url( 'admin.php?page=' . $this->page_slug );
-
-		$skip_url = add_query_arg( 'sensei_skip_setup_wizard', '1' );
-		$skip_url = wp_nonce_url( $skip_url, 'sensei_skip_setup_wizard' );
+		$skip_url  = add_query_arg( 'sensei_skip_setup_wizard', '1' );
+		$skip_url  = wp_nonce_url( $skip_url, 'sensei_skip_setup_wizard' );
 		?>
 		<div id="message" class="updated sensei-message sensei-connect">
 			<p><?php echo wp_kses_post( __( '<strong>Welcome to Sensei LMS</strong> &#8211; You\'re almost ready to start creating online courses!', 'sensei-lms' ) ); ?></p>
 
 			<p class="submit">
 				<a href="<?php echo esc_url( $setup_url ); ?>" class="button-primary">
-					<?php
-					if ( $setup_wizard_in_progress ) {
-						esc_html_e( 'Complete Setup', 'sensei-lms' );
-					} else {
-						esc_html_e( 'Run the Setup Wizard', 'sensei-lms' );
-					}
-					?>
+					<?php esc_html_e( 'Run the Setup Wizard', 'sensei-lms' ); ?>
 				</a>
 
 				<a class="button" href="<?php echo esc_url( $skip_url ); ?>">
@@ -440,6 +438,8 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Get feature with status.
 	 *
+	 * @deprecated 4.8.0
+	 *
 	 * @param stdClass   $extension          Extension object.
 	 * @param stdClass[] $installing_plugins Plugins which are installing.
 	 * @param stdClass[] $selected_plugins   Plugins selected for installation.
@@ -447,11 +447,10 @@ class Sensei_Setup_Wizard {
 	 * @return stdClass Extension with status.
 	 */
 	private function get_feature_with_status( $extension, $installing_plugins, $selected_plugins ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
 		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
-		if ( in_array( $extension->product_slug, $selected_plugins, true ) && isset( $extension->wccom_product_id ) ) {
-			$extension->status = 'external';
-		}
 		if ( false !== $installing_key ) {
 			if ( isset( $installing_plugins[ $installing_key ]->error ) ) {
 				$extension->error  = $installing_plugins[ $installing_key ]->error;
@@ -471,11 +470,15 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Get Sensei extensions for setup wizard.
 	 *
+	 * @deprecated 4.8.0
+	 *
 	 * @param boolean $clear_active_plugins_cache Clear cache for `is_plugin_active`.
 	 *
 	 * @return array Sensei extensions.
 	 */
 	public function get_sensei_extensions( $clear_active_plugins_cache = false ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
 		if ( $clear_active_plugins_cache ) {
 			wp_cache_delete( 'alloptions', 'options' );
 		}
@@ -510,47 +513,42 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Filter extensions to install and call installation.
 	 *
+	 * @deprecated 4.8.0
+	 *
 	 * @param string[] $extension_slugs Extension slugs to install.
 	 */
 	public function install_extensions( $extension_slugs ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$extensions_to_install = [];
-		$wccom_extensions      = [];
 
 		foreach ( $this->get_sensei_extensions() as $extension ) {
 			if ( ! in_array( $extension->product_slug, $extension_slugs, true ) ) {
 				continue;
 			}
 
-			if ( isset( $extension->wccom_product_id ) ) {
-				$wccom_extensions[] = $extension->product_slug;
-			} else {
-				$extensions_to_install[] = $extension;
-			}
+			$extensions_to_install[] = $extension;
 		}
-
-		if ( ! empty( $wccom_extensions ) ) {
-			$event_name       = 'setup_wizard_features_install_paid';
-			$event_properties = [ 'slug' => join( ',', $wccom_extensions ) ];
-
-			sensei_log_jetpack_event( $event_name, $event_properties );
-		}
-
-		set_transient( self::WCCOM_INSTALLING_TRANSIENT, $wccom_extensions, 10 * 60 );
 
 		Sensei_Plugins_Installation::instance()->install_plugins( $extensions_to_install );
 	}
 
 	/**
 	 * Close the browser tab if it's a redirect from WooCommerce.com after a successful extension install.
+	 *
+	 * @deprecated 4.8.0
 	 */
 	public static function close_wccom_install() {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
+		$wccom_installing_transient = 'sensei_setup_wizard_wccom_installing';
+
 		if (
 			isset( $_SERVER['HTTP_REFERER'] ) &&
 			0 === strpos( $_SERVER['HTTP_REFERER'], 'https://woocommerce.com/checkout' ) && // phpcs:ignore sanitization ok.
-			false !== get_transient( self::WCCOM_INSTALLING_TRANSIENT )
+			false !== get_transient( $wccom_installing_transient )
 		) {
-			delete_transient( self::WCCOM_INSTALLING_TRANSIENT );
+			delete_transient( $wccom_installing_transient );
 
 			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion -- Inline script.
 			wp_register_script( 'sensei-close-window', '', [], false, false );

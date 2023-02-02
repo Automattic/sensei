@@ -188,8 +188,13 @@ function sensei_get_modules_and_lessons( $course_id ) {
  * @return array Other lessons not part of a module
  */
 function sensei_get_other_lessons( $course_id, $lesson_ids ) {
+
+	global $wp_query;
+	$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+
 	$args = array(
 		'post_type'        => 'lesson',
+		'post_status'      => $course_lessons_post_status,
 		'posts_per_page'   => -1,
 		'suppress_filters' => 0,
 		'meta_key'         => '_order_' . $course_id,

@@ -1,10 +1,36 @@
 name: JS Linting and Tests
 
-on: pull_request
+on:
+    pull_request:
+    workflow_call:
 
 jobs:
     lint:
         name: JS Linting
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Updates the CI npm
+              run: npm install -g npm@^8
+
+            - uses: actions/cache@v3
+              with:
+                  path: ~/.npm/
+                  key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+            - uses: actions/cache@v3
+              with:
+                  path: node_modules/
+                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+            - name: Install JS dependencies
+              run: npm ci
+            - name: Lint JS
+              run: npm run lint-js
+            - name: Lint TS e2e
+              run: npm run lint-e2e
+
+    type-check:
+        name: TypeScript Checking
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
@@ -23,8 +49,8 @@ jobs:
             - name: Install JS dependencies
               run: npm ci
             - name: Lint JS
-              run: npm run lint-js
-
+              run: npm run lint-types
+              
     test:
         name: JS Testing
         runs-on: ubuntu-latest
@@ -33,7 +59,7 @@ jobs:
             - uses: actions/checkout@v3
 
             - name: Updates the npm version
-              run: npm install -g npm@8.9.0
+              run: npm install -g npm@^8
 
             - uses: actions/cache@v3
               with:
@@ -45,3 +71,4 @@ jobs:
               run: npm ci
             - name: Test JS
               run: npm run test-js
+    

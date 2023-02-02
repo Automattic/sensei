@@ -56,13 +56,13 @@ class Sensei_Admin_Notices {
 		'edit-question-type',
 		'edit-question-category',
 		'edit-lesson-tag',
-		'course_page_' . Sensei_Analysis::PAGE_SLUG,
-		'course_page_sensei_learners',
-		'course_page_sensei-settings',
-		'course_page_sensei_grading',
-		'course_page_sensei-extensions',
-		'course_page_sensei-tools',
-		'course_page_lesson-order',
+		Sensei_Home::SCREEN_ID,
+		'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG,
+		'sensei-lms_page_sensei_learners',
+		'sensei-lms_page_sensei-settings',
+		'sensei-lms_page_sensei_grading',
+		'sensei-lms_page_sensei-tools',
+		'admin_page_lesson-order',
 	];
 
 	const OTHER_ALLOWED_SCREEN_IDS = [
@@ -79,9 +79,35 @@ class Sensei_Admin_Notices {
 	];
 
 	/**
+	 * Instance of class.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
+	 * Fetches an instance of the class.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
 	 * Class constructor.
 	 */
-	public function __construct() {
+	private function __construct() {
+		// Silence is golden.
+	}
+
+	/**
+	 * Initialize hooks.
+	 */
+	public function init() {
 		if ( ! is_admin() ) {
 			return;
 		}
@@ -96,6 +122,10 @@ class Sensei_Admin_Notices {
 	 * @return string|null
 	 */
 	protected function get_screen_id() {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return null;
+		}
+
 		$screen = get_current_screen();
 
 		return $screen ? $screen->id : null;
@@ -104,11 +134,27 @@ class Sensei_Admin_Notices {
 	/**
 	 * Get notices.
 	 *
+	 * @param int|null $max_age The max age (seconds) of the source data.
+	 *
 	 * @return array
 	 */
-	protected function get_notices() {
+	protected function get_notices( $max_age = null ) {
 		$transient_key = implode( '_', [ 'sensei_notices', Sensei()->version, determine_locale() ] );
-		$notices       = get_transient( $transient_key );
+		$data          = get_transient( $transient_key );
+		$notices       = false;
+
+		// If the data is too old, fetch it again.
+		if ( $max_age && is_array( $data ) ) {
+			$age = time() - ( $data['_fetched'] ?? 0 );
+			if ( $age > $max_age ) {
+				$data = false;
+			}
+		}
+
+		if ( isset( $data['notices'] ) ) {
+			$notices = $data['notices'];
+		}
+
 		if ( false === $notices ) {
 			$notices_response = wp_safe_remote_get(
 				add_query_arg(
@@ -123,8 +169,12 @@ class Sensei_Admin_Notices {
 			if ( ! is_wp_error( $notices_response ) && 200 === wp_remote_retrieve_response_code( $notices_response ) ) {
 				$notices_response_body = json_decode( wp_remote_retrieve_body( $notices_response ), true );
 				if ( $notices_response_body && isset( $notices_response_body['notices'] ) ) {
-					$notices = $notices_response_body['notices'];
-					set_transient( $transient_key, $notices, HOUR_IN_SECONDS );
+					$notices     = $notices_response_body['notices'];
+					$cached_data = [
+						'_fetched' => time(),
+						'notices'  => $notices,
+					];
+					set_transient( $transient_key, $cached_data, DAY_IN_SECONDS );
 				}
 			}
 		}
@@ -138,10 +188,12 @@ class Sensei_Admin_Notices {
 		 *
 		 * @hook sensei_admin_notices
 		 *
-		 * @param {array} $notices The admin notices.
+		 * @param {array}    $notices The admin notices.
+		 * @param {int|null} $max_age The max age (seconds) of the source data.
+		 *
 		 * @return {array} The admin notices.
 		 */
-		$notices = apply_filters( 'sensei_admin_notices', $notices );
+		$notices = apply_filters( 'sensei_admin_notices', $notices, $max_age );
 
 		return $notices;
 	}
@@ -152,6 +204,22 @@ class Sensei_Admin_Notices {
 	 * @access private
 	 */
 	public function add_admin_notices() {
+		$screen_id = $this->get_screen_id();
+
+		/**
+		 * Adds the ability to hide notices on a specific screen.
+		 *
+		 * @hook sensei_show_admin_notices_{$screen_id}
+		 * @since 4.8.0
+		 *
+		 * @param {bool} $hide_notices_on_screen Whether to hide notices on the screen.
+		 *
+		 * @return {bool} Whether to hide notices on the screen.
+		 */
+		if ( ! apply_filters( "sensei_show_admin_notices_{$screen_id}", true ) ) {
+			return;
+		}
+
 		foreach ( $this->get_notices_to_display() as $notice_id => $notice ) {
 			$this->add_admin_notice( $notice_id, $notice );
 		}
@@ -173,11 +241,20 @@ class Sensei_Admin_Notices {
 			$notice_class = 'sensei-notice-' . $notice['style'];
 		}
 
-		wp_enqueue_script( 'sensei-dismiss-notices' );
-
+		$is_dismissible       = $notice['dismissible'];
+		$notice_wrapper_extra = '';
+		if ( $is_dismissible ) {
+			wp_enqueue_script( 'sensei-dismiss-notices' );
+			$notice_class        .= ' is-dismissible';
+			$notice_wrapper_extra = sprintf( ' data-dismiss-action="sensei_dismiss_notice" data-dismiss-notice="%1$s" data-dismiss-nonce="%2$s"', esc_attr( $notice_id ), esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ) );
+		}
 		?>
-		<div class="notice sensei-notice <?php echo esc_attr( $notice_class ); ?> is-dismissible" data-dismiss-action="sensei_dismiss_notice" data-dismiss-notice="<?php echo esc_attr( $notice_id ); ?>"
-				data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
+		<div class="notice sensei-notice <?php echo esc_attr( $notice_class ); ?>"
+			<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
+			echo $notice_wrapper_extra;
+			?>
+		>
 			<?php
 			if ( ! empty( $notice['icon'] ) ) {
 				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
@@ -196,12 +273,17 @@ class Sensei_Admin_Notices {
 			if ( ! empty( $notice['actions'] ) ) {
 				echo '<div class="sensei-notice__actions">';
 				foreach ( $notice['actions'] as $action ) {
-					if ( ! isset( $action['label'], $action['url'] ) ) {
+					if ( ! isset( $action['label'] ) || ( ! isset( $action['url'] ) && ! isset( $action['tasks'] ) ) ) {
 						continue;
 					}
 
 					$button_class = ! isset( $action['primary'] ) || $action['primary'] ? 'button-primary' : 'button-secondary';
-					echo '<a href="' . esc_url( $action['url'] ) . '" target="' . esc_attr( $action['target'] ?? '_self' ) . '" rel="noopener noreferrer" class="button ' . esc_attr( $button_class ) . '">';
+					$extra_attrs  = '';
+					if ( isset( $action['tasks'] ) ) {
+						wp_enqueue_script( 'sensei-dismiss-notices' );
+						$extra_attrs = ' data-sensei-notice-tasks="' . esc_attr( wp_json_encode( $action['tasks'] ) ) . '"';
+					}
+					echo '<a href="' . esc_url( $action['url'] ) . '" target="' . esc_attr( $action['target'] ?? '_self' ) . '" rel="noopener noreferrer" class="button ' . esc_attr( $button_class ) . '"' . $extra_attrs . '>';
 					echo esc_html( $action['label'] );
 					echo '</a>';
 				}
@@ -217,16 +299,23 @@ class Sensei_Admin_Notices {
 	 *
 	 * @access private
 	 *
+	 * @param string   $screen_id The screen ID.
+	 * @param int|null $max_age   The max age (seconds) of the source data.
+	 *
 	 * @return array
 	 */
-	public function get_notices_to_display() {
+	public function get_notices_to_display( $screen_id = null, $max_age = null ) {
 		$notices = [];
-		foreach ( $this->get_notices() as $notice_id => $notice ) {
+		foreach ( $this->get_notices( $max_age ) as $notice_id => $notice ) {
 			$notice = $this->normalize_notice( $notice );
 
 			$is_user_notification = 'user' === $notice['type'];
 
-			if ( ! isset( $notice['message'] ) || $this->is_notice_dismissed( $notice_id, $is_user_notification ) || ! $this->check_notice_conditions( $notice ) ) {
+			if (
+				! isset( $notice['message'] )
+				|| ( $notice['dismissible'] && $this->is_notice_dismissed( $notice_id, $is_user_notification ) )
+				|| ! $this->check_notice_conditions( $notice, $screen_id )
+			) {
 				continue;
 			}
 
@@ -239,11 +328,12 @@ class Sensei_Admin_Notices {
 	/**
 	 * Check notice conditions.
 	 *
-	 * @param array $notice The notice configuration.
+	 * @param array  $notice The notice configuration.
+	 * @param string $screen_id The screen ID.
 	 *
 	 * @return bool
 	 */
-	private function check_notice_conditions( $notice ) {
+	private function check_notice_conditions( $notice, $screen_id = null ) {
 		if ( ! isset( $notice['conditions'] ) || ! is_array( $notice['conditions'] ) ) {
 			$notice['conditions'] = [];
 		}
@@ -296,7 +386,7 @@ class Sensei_Admin_Notices {
 					}
 
 					$has_screen_condition = true;
-					if ( ! $this->condition_check_screen( $condition['screens'] ) ) {
+					if ( ! $this->condition_check_screen( $condition['screens'], $screen_id ) ) {
 						$can_see_notice = false;
 						break 2;
 					}
@@ -312,11 +402,22 @@ class Sensei_Admin_Notices {
 						break 2;
 					}
 					break;
+
+				case 'installed_since':
+					if ( ! isset( $condition['installed_since'] ) ) {
+						break;
+					}
+
+					if ( ! $this->condition_installed_since( $condition['installed_since'] ) ) {
+						$can_see_notice = false;
+						break 2;
+					}
+					break;
 			}
 		}
 
 		// If no screens condition was set, only show this message on Sensei screens.
-		if ( $can_see_notice && ! $has_screen_condition && ! $this->condition_check_screen( [ self::ALL_SENSEI_SCREENS_PLACEHOLDER ] ) ) {
+		if ( $can_see_notice && ! $has_screen_condition && ! $this->condition_check_screen( [ self::ALL_SENSEI_SCREENS_PLACEHOLDER ], $screen_id ) ) {
 			$can_see_notice = false;
 		}
 
@@ -369,10 +470,12 @@ class Sensei_Admin_Notices {
 	/**
 	 * Check a screen condition.
 	 *
-	 * @param array $allowed_screens Array of allowed screen IDs. `sensei*` is a special screen ID for any Sensei screen.
+	 * @param array  $allowed_screens Array of allowed screen IDs. `sensei*` is a special screen ID for any Sensei screen.
+	 * @param string $screen_id       The screen ID.
+	 *
 	 * @return bool
 	 */
-	private function condition_check_screen( array $allowed_screens ) : bool {
+	private function condition_check_screen( array $allowed_screens, $screen_id = null ) : bool {
 		$allowed_screen_ids = array_merge( self::SENSEI_SCREEN_IDS, self::OTHER_ALLOWED_SCREEN_IDS );
 		$condition_pass     = true;
 
@@ -381,12 +484,31 @@ class Sensei_Admin_Notices {
 		}
 
 		$screens   = array_intersect( $allowed_screen_ids, $allowed_screens );
-		$screen_id = $this->get_screen_id();
+		$screen_id = $screen_id ?? $this->get_screen_id();
+
 		if ( ! $screen_id || ! in_array( $screen_id, $screens, true ) ) {
 			$condition_pass = false;
 		}
 
 		return $condition_pass;
+	}
+
+	/**
+	 * Check an "installed since" condition
+	 *
+	 * @param int|string $installed_since Time to check the installation time for.
+	 *
+	 * @return bool
+	 */
+	private function condition_installed_since( $installed_since ) : bool {
+		$installed_at = get_option( 'sensei_installed_at' );
+		if ( $installed_since && is_string( $installed_since ) ) {
+			$installed_since = strtotime( '-' . $installed_since );
+		}
+		if ( ! $installed_at || ! $installed_since ) {
+			return false;
+		}
+		return $installed_at <= $installed_since;
 	}
 
 	/**
@@ -447,7 +569,7 @@ class Sensei_Admin_Notices {
 	 */
 	protected function get_active_plugins() {
 		if ( ! function_exists( 'get_plugins' ) ) {
-			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
 		$plugins = get_plugins();
@@ -482,6 +604,10 @@ class Sensei_Admin_Notices {
 				'type'         => 'user_cap',
 				'capabilities' => [ 'manage_options' ],
 			];
+		}
+
+		if ( ! isset( $notice['dismissible'] ) ) {
+			$notice['dismissible'] = true;
 		}
 
 		return $notice;
@@ -549,8 +675,13 @@ class Sensei_Admin_Notices {
 			return;
 		}
 
-		$is_user_notification = 'user' === $notices[ $notice_id ]['type'];
-		if ( ! $is_user_notification && ! current_user_can( 'manage_options' ) ) {
+		$notice = $this->normalize_notice( $notices[ $notice_id ] );
+
+		$is_user_notification = 'user' === $notice['type'];
+		if (
+			! $notice['dismissible']
+			|| ( ! $is_user_notification && ! current_user_can( 'manage_options' ) )
+		) {
 			wp_die( '', '', 403 );
 		}
 

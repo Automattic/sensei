@@ -18,7 +18,7 @@ class Sensei_Export_Package_Tests extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		if ( ! class_exists( 'ZipArchive' ) ) {

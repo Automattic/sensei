@@ -1,8 +1,10 @@
-@mixin text-gray() {
-	opacity: 0.7;
-}
-
 @import 'sensei-course-theme/modal';
-@import 'sensei-course-theme/prev-next-lesson';
-@import 'sensei-course-theme/course-navigation';
-@import 'sensei-course-theme/lesson-actions';
+@import 'sensei-course-theme/blocks/prev-next-lesson';
+@import 'sensei-course-theme/blocks/course-navigation';
+@import 'sensei-course-theme/blocks/lesson-actions';
+@import 'sensei-course-theme/blocks/course-progress-bar';
+
+@import 'sensei-course-theme/blocks/course-title';
+@import 'sensei-course-theme/blocks/contact-teacher';
+@import 'sensei-course-theme/blocks/lesson-module';
+@import 'sensei-course-theme/blocks/lesson-video';

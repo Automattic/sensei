@@ -1,13 +1,13 @@
 <?php
 
 class Sensei_Template_Functions_Test extends WP_UnitTestCase {
-	public function setup() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}

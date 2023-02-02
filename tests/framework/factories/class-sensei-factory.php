@@ -147,7 +147,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	/**
 	 * Teardown data that the factory creates.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		if ( empty( $this->basic_test_course_ids ) ) {
 			return;
 		}
@@ -174,6 +174,15 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			wp_remove_object_terms( $lesson_id, $this->basic_test_module_term['term_id'], 'module' );
 			wp_delete_post( $lesson_id, true );
 		}
+	}
+
+	/**
+	 * Generate multiple courses.
+	 *
+	 * @param int $number
+	 */
+	public function generate_many_courses( $number = 1 ) {
+		$this->basic_test_course_ids = $this->course->create_many( $number );
 	}
 
 	/**

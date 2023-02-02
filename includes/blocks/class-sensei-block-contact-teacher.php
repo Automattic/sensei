@@ -38,6 +38,7 @@ class Sensei_Block_Contact_Teacher {
 
 	/**
 	 * Check if a notice should be displayed.
+	 * Currently, it's also handling notices for legacy lessons (using templates).
 	 *
 	 * @access private
 	 */
@@ -67,7 +68,7 @@ class Sensei_Block_Contact_Teacher {
 		}
 
 		if ( ! $content ) {
-			$content = '<a class="sensei-course-theme-contact-teacher__button">' . __( 'Contact Teacher', 'sensei-lms' ) . '</a>';
+			$content = '<a class="sensei-course-theme-contact-teacher__button">' . esc_html__( 'Contact Teacher', 'sensei-lms' ) . '</a>';
 		}
 
 		$contact_form_link = add_query_arg( array( 'contact' => $post->post_type ) );
@@ -77,14 +78,14 @@ class Sensei_Block_Contact_Teacher {
 		$contact_form_open = isset( $_GET['contact'] ) && ! ( isset( $_GET['send'] ) && 'complete' === $_GET['send'] );
 
 		$contact_form = $this->teacher_contact_form( $post );
-		$text_close   = __( 'Close', 'sensei-lms' );
+		$text_close   = esc_html__( 'Close', 'sensei-lms' );
 
-		return '<div id="private_message" class="sensei-block-wrapper sensei-collapsible" data-sensei-modal ' . ( $contact_form_open ? 'data-sensei-modal-is-open' : '' ) . '>
+		return '<div id="private_message" class="sensei-block-wrapper sensei-contact-teacher-wrapper sensei-collapsible" data-sensei-modal ' . ( $contact_form_open ? 'data-sensei-modal-is-open' : '' ) . '>
 				' . ( $this->add_button_attributes( $content, $contact_form_link ) ) . '
-				<a href="' . $post_link . '" data-sensei-modal-overlay aria-label="' . $text_close . '"></a>
-				<div data-sensei-modal-content>
+				<a href="' . esc_url( $post_link ) . '" data-sensei-modal-overlay aria-label="' . $text_close . '"></a>
+				<div data-sensei-modal-content class="sensei-course-theme__frame">
 					' . $contact_form . '
-					<a class="sensei-contact-teacher-close" href="' . $post_link . '" data-sensei-modal-close title="' . $text_close . '">
+					<a class="sensei-contact-teacher-close" href="' . esc_url( $post_link ) . '" data-sensei-modal-close title="' . $text_close . '">
 						' . \Sensei()->assets->get_icon( 'close' ) . '
 					</a>
 				</div>

@@ -12,15 +12,15 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 		$this->factory = new Sensei_Factory();
 	}
 
 	/**
 	 * Tear down function.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->factory->tearDown();
 		parent::tearDown();
 	}

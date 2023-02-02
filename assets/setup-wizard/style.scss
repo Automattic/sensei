@@ -1,394 +1,336 @@
-@import '../shared/styles/variables';
+$small-header-height: 80px;
+$big-header-height: 88px;
+
+$small-screen-break: 600px;
+$small-vertical-padding: 20px;
+$small-horizontal-padding: 20px;
+$big-vertical-padding: 60px;
+$big-horizontal-padding: 80px;
+
+$page-background: #b7c9be;
+
+@import '../css/font-recoleta';
 @import 'fullscreen';
-@import '../shared/components/list/style';
-@import '../shared/components/stepper/style';
+@import 'animations';
+@import 'navigation-bar/style';
+@import 'purpose/style';
+@import 'theme/style';
+@import 'usage-tracking/style';
+@import 'newsletter/style';
+@import 'features/style';
+
+.sensei-setup-wizard-page {
+	overflow-x: hidden;
+	background-color: $page-background;
+}
 
 .sensei-setup-wizard {
-	&__main-loader {
-		position: fixed;
-		left: 50%;
-		top: 50%;
-		transform: translate( -50%, -50% );
+	display: flex;
+	min-height: 100vh;
+	color: #000;
+	font-size: 16px;
+
+	a {
+		color: inherit;
+		text-decoration: underline;
 	}
 
-	&__page {
-		background: #f6f7f7;
-		color: $text_secondary;
+	p {
+		font-size: 16px;
+		line-height: 1.4;
+		margin: 0 0 40px;
+	}
 
-		* {
-			box-sizing: border-box;
-		}
-
-		.sensei-setup-wizard__learn-more {
-			white-space: nowrap;
-		}
-
-		.sensei-setup-wizard__feature-observation {
-			display: block;
-			font-style: italic;
-		}
+	h2, h3 {
+		color: #000;
 	}
 
 	&__header {
-		border-bottom: 1px solid #dcdcde;
 		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: #fff;
-		padding: 8px;
+		flex-direction: column;
+		width: 100%;
+		height: $small-header-height;
+		position: fixed;
+		z-index: 1;
+		background-color: $page-background;
 
-		.sensei-stepper {
-			width: 100%;
+		@media (min-width: $small-screen-break) {
+			height: $big-header-height;
+		}
 
-			&__steps {
-				margin: 0;
+		@at-root {
+			.sensei-setup-wizard-page--features &,
+			.sensei-setup-wizard-page--welcome & {
+				background-color: transparent;
 			}
 		}
 	}
 
-	&__container {
-		max-width: 476px;
-		margin-left: auto;
-		margin-right: auto;
-		font-size: 16px;
+	&__sensei-logo {
+		flex: 1;
+		display: flex;
+		margin: 0 $small-horizontal-padding;
+		align-items: center;
+		font-family: $recoleta-font-family;
+		font-size: 18px;
 
-		.components-card {
-			margin-bottom: 24px;
+		@media (min-width: $small-screen-break) {
+			margin: 0 24px;
+		}
+
+		> svg {
+			width: 32px;
+			height: 32px;
+			margin-right: 8px;
 		}
 	}
 
-	&__button.components-button {
-		display: flex;
+	&__step-title,
+	&__subsection-title {
+		font-family: $recoleta-font-family;
+		font-size: 28px;
+		font-weight: 400;
+		line-height: 1.1;
 
-		max-width: 100%;
-		justify-content: center;
+		@media (min-width: $small-screen-break) {
+			font-size: 44px;
+		}
+	}
 
-		height: 42px;
-		padding-left: 25px;
-		padding-right: 25px;
+	&__step-title {
+		margin: 0 0 12px;
+	}
+
+	&__subsection-title {
+		max-width: 724px;
+		margin: 0 auto 64px;
 		text-align: center;
-		font-size: 14px;
-		font-weight: 500;
-		align-items: center;
 	}
 
-	&__button-card.components-button {
-		margin: 8px auto 0;
-		width: 310px;
+	// Container.
+	&__container {
+		flex: 1;
+		padding: ( $small-vertical-padding + $small-header-height ) $small-horizontal-padding $small-vertical-padding;
 
-		body.sensei-color &.is-primary.is-busy {
-			background-size: 200px 100%;
-		}
-	}
-
-	&__button-modal.components-button {
-		margin-left: auto;
-		margin-right: 0;
-	}
-
-	&__group-buttons {
 		display: flex;
+		flex-direction: column;
 
-		&.group-right {
-			justify-content: flex-end;
+		@media (min-width: $small-screen-break) {
+			padding: ( $big-vertical-padding + $big-header-height ) $big-horizontal-padding $big-vertical-padding;
+		}
+	}
 
-			.components-button {
-				margin-left: 8px;
+	// Main loader.
+	&__main-loader {
+		flex: 1;
+		align-self: center;
+	}
+
+	// Button styles.
+	&__button {
+		border-radius: 4px;
+		padding: 10px 24px;
+		font-size: 14px;
+		cursor: pointer;
+		transition: 0.3s opacity;
+
+		&--primary {
+			background-color: #101517;
+			color: #ffffff;
+			border: none;
+		}
+
+		&--secondary {
+			color: #101517;
+			border: solid 1px currentColor;
+			background-color: transparent
+		}
+
+		&--link {
+			padding: 0;
+			border: none;
+			background: transparent;
+			text-decoration: underline;
+		}
+
+		&--only-medium {
+			display: none;
+
+			@media (min-width: $small-screen-break) {
+				display: revert;
 			}
 		}
 
-		&.group-center {
-			justify-content: center;
+		&:disabled,
+		&[disabled] {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+	}
 
-			.components-button {
-				margin-left: 4px;
-				margin-right: 4px;
-			}
+	// Text control.
+	&__text-control {
+		.components-base-control__label {
+			font-size: 14px;
 		}
 
-		.components-button {
-			margin-right: 0;
+		.components-text-control__input {
+			height: 36px;
+			border-radius: 5px;
+			margin: 0;
+		}
+
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+	}
+
+	// Actions.
+	&__actions {
+		&--full-width {
+			text-align: center;
+
+			> * {
+				width: 100%;
+			}
+		}
+	}
+
+	&__action-skip {
+		padding-top: 18px;
+		display: block;
+
+		a {
+			font-size: 14px;
+		}
+	}
+
+	&__error-notice {
+		text-align: left;
+		margin: 0 0 32px;
+		animation: 0.5s slideDown;
+
+		.components-notice__actions {
+			margin-top: 5px;
+		}
+
+		.components-notice__action.components-button {
 			margin-left: 0;
 		}
 	}
 
-	&__bottom-actions {
+	// Content centered in full size.
+	&__full-centered-step {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		min-height: 440px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		text-align: center;
-		font-size: 14px;
-	}
+		animation: 0.5s fadeIn;
+		padding: $small-vertical-padding $small-horizontal-padding;
+		box-sizing: border-box;
 
-	&__title {
-		text-align: center;
-		margin: 40px 0 20px 0;
-
-		h2 {
-			color: $text_primary;
-			font-weight: normal;
-			font-size: 24px;
-			line-height: 32px;
-			margin: 0;
-			margin-bottom: 8px;
-		}
-
-		p {
-			font-size: 16px;
+		@media (min-width: $small-screen-break) {
+			padding: $big-vertical-padding $big-horizontal-padding;
 		}
 	}
 
-	&__card {
-		p {
-			font-size: 14px;
-			line-height: 1.65;
-		}
-
-		h4 {
-			font-size: 1.2em;
-			margin: 0.8em 0;
-			color: $text_primary;
-		}
+	&__full-centered-content {
+		width: 100%;
+		max-width: 520px;
 	}
 
-	&__usage-modal {
-		width: 600px;
-		max-width: 100%;
+	// Columns.
+	&__content {
+		margin: 0 auto;
+		animation: 0.5s fadeIn;
 
-		.components-modal__header {
-			border-bottom: none;
-			margin-bottom: 0;
-		}
-	}
-
-	&__tracking {
-		margin: 1rem 0;
-	}
-
-	&__checkbox-list {
-		margin-bottom: 26px;
-
-		.sensei-setup-wizard__checkbox {
-			position: relative;
-
-			&.status-installed {
-				.components-checkbox-control__label,
-				.components-base-control__help {
-					color: $gray-10;
-				}
-
-				.sensei-setup-wizard__learn-more {
-					color: lighten( $primary, 30% );
-				}
-			}
-
-			.components-checkbox-control__label {
-				color: $text_primary;
-				font-size: 16px;
-				margin-left: 8px;
-				padding-right: 20px;
-			}
-
-			.components-base-control__help {
-				font-style: normal;
-				margin-left: 40px;
-				padding-top: 4px;
-				padding-right: 20px;
-				padding-bottom: 14px;
-				border-bottom: 1px solid $gray-5;
-			}
-
-			&:last-child .components-base-control__help {
-				border-bottom: none;
-				padding-bottom: 0;
-			}
-		}
-
-		.sensei-setup-wizard__textcontrol-other {
-			margin-left: 40px;
-			margin-right: 20px;
-
-			.components-text-control__input {
-				padding: 8px 12px;
-			}
-		}
-	}
-
-	&__modal-footer {
-		position: sticky;
-		bottom: 0;
-		padding: 16px 0;
-		margin-bottom: -24px;
-		background: #fff;
-		border-top: 1px solid #e2e4e7;
-	}
-
-	&__features-confirmation-modal {
-		width: 520px;
-		max-width: 100%;
-
-		@media ( max-width: 600px ) {
-			width: 100%;
-		}
-
-		@media ( max-height: 500px ) {
-			.components-modal__content {
-				.components-modal__header, .sensei-setup-wizard__modal-footer {
-					position: static;
-				}
-			}
-		}
-
-		.sensei-list__item:last-child {
-			border-bottom: 0;
-		}
-
-		&.components-modal__frame {
-			overflow: auto;
-
-			@media ( min-width: 768px ) {
-				max-height: 90%;
-			}
-		}
-
-		.components-modal__content {
-			margin-top: 0;
-			overflow: visible;
-
-			&::before {
-				content: none;
-			}
-		}
-
-		.components-modal__header {
-			padding: 25px 0;
-			margin: 0;
-			height: auto;
-			position: sticky;
-			background: #fff;
-
-			.components-modal__header-heading {
-				font-size: 20px;
-			}
-		}
-
-		.sensei-list {
-			margin-top: 0;
-		}
-
-		.sensei-list__item {
-			border-bottom: 1px solid $gray-5;
-		}
-	}
-
-	&__features-installation-feedback {
-		.sensei-list {
-			margin-top: 0;
-
-			&__item-inner {
-				align-items: flex-start;
-			}
-		}
-
-		.components-spinner {
-			margin: 0;
-		}
-
-		.sensei-setup-wizard__error-message {
-			margin: 0;
-			color: $alert-red;
-
-			.sensei-setup-wizard__retry-button {
-				color: inherit;
-				background: transparent;
-				border: 0;
-				padding: 0;
-				text-decoration: underline;
-				cursor: pointer;
-			}
-		}
-
-		.sensei-setup-wizard__icon-status {
-			padding-top: 2px;
-		}
-
-		.sensei-setup-wizard__circle-icon-wrapper {
-			display: inline-block;
-			width: 18px;
-			height: 18px;
-			line-height: 18px;
+		@media (min-width: $small-screen-break) {
 			text-align: center;
-			color: $white;
-			border-radius: 100%;
-			font-style: normal;
+			max-width: 414px;
 
-			&.success-icon-wrapper {
-				background-color: $primary;
+			&--large {
+				max-width: 564px;
+				padding-right: 20px;
+				padding-left: 20px;
 			}
-			&.error-icon-wrapper {
-				background-color: $alert-red;
+		}
+
+		&--sticky {
+			position: sticky;
+			top: $small-vertical-padding + $small-header-height;
+
+			@media (min-width: $small-screen-break) {
+				top: $big-vertical-padding + $big-header-height;
 			}
-			&.alert-icon {
-				&::before {
-					display: inherit;
-					width: inherit;
-					height: inherit;
-					content: '!';
-				}
-			}
+		}
+
+		&--hidden {
+			visibility: hidden;
+			pointer-events: none;
 		}
 	}
 
-	&__item-list {
-		.sensei-list__item-title {
-			font-weight: 500;
+	&__illustration {
+		flex: 1;
+		animation: 0.5s slideInFromBottom;
+		background-repeat: no-repeat;
+		background-position: 50% 0;
+		background-size: 100% auto;
+		margin: 64px 0 (-$small-vertical-padding);
+
+		@media (min-width: $small-screen-break) {
+			margin-bottom: -$big-vertical-padding;
 		}
 
-		.sensei-list__item-inner {
-			padding-left: 0;
-			padding-right: 0;
+		@media (min-width: 1010px) {
+			background-size: auto;
 		}
 
-		.sensei-list__item-content {
-			margin-top: 0;
+		&--tracking {
+			background-image: url("../images/onboarding-improve-experience-illustration.png");
 		}
 
-		.sensei-list__item-after {
-			.components-button {
-				width: 205px;
-				margin-left: 10px;
-				justify-content: center;
-			}
-
-			.sensei-setup-wizard__error-message {
-				width: 205px;
-				margin-left: 10px;
-				padding: 6px;
-				color: red;
-				font-size: 12px;
-			}
+		&--newsletter {
+			background-image: url("../images/onboarding-newsletter-illustration.png");
+			margin-left: -$small-horizontal-padding;
+			margin-right: -$small-horizontal-padding;
 		}
 	}
 
-	&__mailinglist-signup-form {
-		.sensei-list__item-text {
-			flex: 1;
-		}
-		.components-base-control__field {
-			margin-bottom: 0;
-		}
+	&__fade-in {
+		animation: 0.5s fadeIn;
+	}
+}
 
-		.components-text-control {
-			&__input {
-				height: 42px;
+// Background animation with the books illustration.
+.sensei-setup-wizard {
+	background-image: url("../images/onboarding-bottom-left-illustration.png"), url("../images/onboarding-top-right-illustration.png");
+	background-position: -358px 100%, calc( 100% + 355px ) 0;
+	background-repeat: no-repeat;
+	transition: 0.5s background-position;
+	background-size: auto 270px;
+
+	@media (min-width: 1100px) and (min-height: 700px) {
+		background-size: auto;
+	}
+
+	@at-root {
+		.sensei-setup-wizard-page--welcome &,
+		.sensei-setup-wizard-page--features & {
+			@media (min-height: 615px) {
+				background-position: -83px 100%, calc( 100% + 81px ) 0;
+			}
+
+			@media (min-width: 1100px) and (min-height: 700px) {
+				background-position: 0 100%, 100% 0;
 			}
 		}
-		.sensei-list__item-inner {
-			padding: 0;
-		}
-	}
-	&__mailinglist-signup {
-		margin-bottom: 40px;
-	}
-
-	&__submit-error {
-		margin: 0;
 	}
 }

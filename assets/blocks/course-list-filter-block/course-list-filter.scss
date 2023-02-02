@@ -1,5 +1,17 @@
 .wp-block-sensei-lms-course-list-filter {
 	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
+	gap: 5px;
+	padding-bottom: 10px;
+
+	&.alignright {
+		max-width: none;
+	}
+
+	@media (max-width: 480px) {
+		flex-wrap: wrap;
+	}
+
+	& + * {
+		clear: both;
+	}
 }
