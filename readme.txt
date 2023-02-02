@@ -164,3 +164,4 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 ### 4.9.1 - 2022-12-09
 - Fix: Always initialize question blocks in frontend [#6258](https://github.com/Automattic/sensei/pull/6258)
 - Fix: Fix global admin styles for Groups badge and landing page [#6260](https://github.com/Automattic/sensei/pull/6260)
+
