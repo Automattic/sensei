@@ -67,4 +67,4 @@ runs:
               cd $PATH
               MERGE_BASE=$( /usr/bin/git merge-base "$HEAD" "$BRANCH" )
               echo "Merge base is $MERGE_BASE"
-              echo "::set-output name=merge-base::$MERGE_BASE"
+              echo "merge-base=$MERGE_BASE" >> $GITHUB_OUTPUT
