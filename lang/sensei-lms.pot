@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-01-26T19:55:30+00:00\n"
+"POT-Creation-Date: 2023-02-02T11:57:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: sensei-lms\n"
@@ -252,6 +252,7 @@ msgstr ""
 msgid "Students (%d)"
 msgstr ""
 
+#. translators: Placeholder value is total count of students.
 #: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:138
 #: includes/class-sensei-analysis-course-list-table.php:104
 #: includes/class-sensei-analysis-overview-list-table.php:121
@@ -759,7 +760,7 @@ msgid "Course Completed"
 msgstr ""
 
 #: includes/admin/class-sensei-setup-wizard-pages.php:131
-#: includes/admin/class-sensei-setup-wizard-pages.php:237
+#: includes/admin/class-sensei-setup-wizard-pages.php:233
 #: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:100
 #: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:160
 #: assets/blocks/course-actions-block/course-actions/course-actions-edit.js:29
@@ -770,7 +771,7 @@ msgid "Start Course"
 msgstr ""
 
 #: includes/admin/class-sensei-setup-wizard-pages.php:135
-#: includes/admin/class-sensei-setup-wizard-pages.php:241
+#: includes/admin/class-sensei-setup-wizard-pages.php:237
 #: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:104
 #: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:166
 #: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:221
@@ -796,7 +797,7 @@ msgid "Continue"
 msgstr ""
 
 #: includes/admin/class-sensei-setup-wizard-pages.php:139
-#: includes/admin/class-sensei-setup-wizard-pages.php:245
+#: includes/admin/class-sensei-setup-wizard-pages.php:241
 #: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:108
 #: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:172
 #: assets/blocks/course-actions-block/course-actions/course-actions-edit.js:36
@@ -804,11 +805,11 @@ msgstr ""
 msgid "Visit Results"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard-pages.php:304
+#: includes/admin/class-sensei-setup-wizard-pages.php:300
 msgid "Congratulations on completing this course! 🥳"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard-pages.php:320
+#: includes/admin/class-sensei-setup-wizard-pages.php:316
 #: assets/blocks/course-completed-actions/index.js:11
 #: assets/blocks/course-completed-actions/index.js:27
 #: assets/blocks/course-completed-actions/index.js:43
@@ -1979,6 +1980,7 @@ msgstr ""
 msgid "Cannot register for an unpublished course.  Please publish the course first."
 msgstr ""
 
+#. Translators: placeholder is the lesson title.
 #: includes/blocks/class-sensei-course-outline-lesson-block.php:47
 #: includes/blocks/course-theme/class-course-navigation.php:256
 #: includes/class-sensei-frontend.php:1125
@@ -2118,6 +2120,7 @@ msgstr ""
 msgid "View quiz for %s"
 msgstr ""
 
+#. Translators: placeholder is the lesson title.
 #: includes/blocks/course-theme/class-course-navigation.php:260
 #: includes/class-sensei-posttypes.php:800
 #: assets/blocks/lesson-actions/view-quiz-block/index.js:21
@@ -3034,6 +3037,7 @@ msgstr ""
 msgid "Part of: %s"
 msgstr ""
 
+#. translators: Placeholder is a link to the Course permalink.
 #: includes/class-sensei-frontend.php:1111
 #: widgets/class-sensei-lesson-component-widget.php:223
 msgid "View course"
@@ -4526,6 +4530,7 @@ msgstr ""
 msgid "%1$s updated. %2$sView %1$s%3$s."
 msgstr ""
 
+#. translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
 #: includes/class-sensei-posttypes.php:896
 msgid "Custom field updated."
 msgstr ""
@@ -5535,6 +5540,7 @@ msgstr ""
 msgid "Lesson (Learning Mode - %1$s)"
 msgstr ""
 
+#. translators: %1$s is the block template name.
 #: includes/course-theme/class-sensei-course-theme-templates.php:199
 msgid "Displays course content."
 msgstr ""
@@ -5544,6 +5550,7 @@ msgstr ""
 msgid "Quiz (Learning Mode - %1$s)"
 msgstr ""
 
+#. translators: %1$s is the block template name.
 #: includes/course-theme/class-sensei-course-theme-templates.php:211
 msgid "Displays a lesson quiz."
 msgstr ""
@@ -5805,6 +5812,7 @@ msgstr ""
 msgid "[%1$s] You have completed a course"
 msgstr ""
 
+#. translators: Placeholder is the blog name.
 #: includes/emails/class-sensei-email-learner-completed-course.php:64
 msgid "You have completed a course"
 msgstr ""
@@ -5826,6 +5834,7 @@ msgstr ""
 msgid "[%1$s] Your quiz has been graded"
 msgstr ""
 
+#. translators: Placeholder is the blog name.
 #: includes/emails/class-sensei-email-learner-graded-quiz.php:66
 msgid "Your quiz has been graded"
 msgstr ""
@@ -5835,6 +5844,7 @@ msgstr ""
 msgid "[%1$s] You have completed a quiz"
 msgstr ""
 
+#. translators: Placeholder is the blog name.
 #: includes/emails/class-sensei-email-learner-graded-quiz.php:80
 msgid "You have completed a quiz"
 msgstr ""
@@ -5844,6 +5854,7 @@ msgstr ""
 msgid "[%1$s] You have a new message"
 msgstr ""
 
+#. translators: Placeholder is the blog name.
 #: includes/emails/class-sensei-email-new-message-reply.php:98
 msgid "You have received a reply to your private message"
 msgstr ""
@@ -5853,6 +5864,7 @@ msgstr ""
 msgid "[%1$s] Your student has completed a course"
 msgstr ""
 
+#. translators: Placeholder is the blog name.
 #: includes/emails/class-sensei-email-teacher-completed-course.php:65
 msgid "Your student has completed a course"
 msgstr ""
@@ -5862,6 +5874,7 @@ msgstr ""
 msgid "[%1$s] Your student has completed a lesson"
 msgstr ""
 
+#. translators: Placeholder is the blog name.
 #: includes/emails/class-sensei-email-teacher-completed-lesson.php:35
 msgid "Your student has completed a lesson"
 msgstr ""
@@ -5879,6 +5892,7 @@ msgstr ""
 msgid "[%1$s] You have received a new private message"
 msgstr ""
 
+#. translators: Placeholder is the blog name.
 #: includes/emails/class-sensei-email-teacher-new-message.php:61
 msgid "Your student has sent you a private message"
 msgstr ""
@@ -5888,6 +5902,7 @@ msgstr ""
 msgid "[%1$s] Your student has submitted a quiz for grading"
 msgstr ""
 
+#. translators: Placeholder is the blog name.
 #: includes/emails/class-sensei-email-teacher-quiz-submitted.php:67
 msgid "Your student has submitted a quiz for grading"
 msgstr ""
@@ -5897,6 +5912,7 @@ msgstr ""
 msgid "[%1$s] Your student has started a course"
 msgstr ""
 
+#. translators: Placeholder is the blog name.
 #: includes/emails/class-sensei-email-teacher-started-course.php:60
 msgid "Your student has started a course"
 msgstr ""
