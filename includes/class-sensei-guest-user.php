@@ -421,7 +421,7 @@ class Sensei_Guest_User {
 		 * Filters the list of supported actions for Guest Users.
 		 *
 		 * @hook  sensei_guest_user_supported_actions
-		 * @since $$next-version$$
+		 * @since 4.11
 		 *
 		 * @param {array} List of supported actions for guest users.
 		 *
