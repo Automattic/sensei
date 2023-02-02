@@ -1,7 +1,6 @@
 *** Changelog ***
 
 ## 4.11.0 - 2023-02-02
-
 * New: Guest users and teachers preview [#6421](https://github.com/Automattic/sensei/pull/6421)
 * Add: Add Course List block to My Courses and course archive on page creation [#6343](https://github.com/Automattic/sensei/pull/6343) [#6354](https://github.com/Automattic/sensei/pull/6354) [#6414](https://github.com/Automattic/sensei/pull/6416)
 * Add: Curate list of installed plugins that are logged [#6424](https://github.com/Automattic/sensei/pull/6424)
@@ -16,7 +15,6 @@
 * Tweak: Change reset progress copy by [#6371](https://github.com/Automattic/sensei/pull/6371)
 
 ## 4.10.0 - 2023-01-12
-
 * New: Course theme installation through the onboarding wizard
 	* Add onboarding theme step [#6182](https://github.com/Automattic/sensei/pull/6182), [#6251](https://github.com/Automattic/sensei/pull/6251), [#6273](https://github.com/Automattic/sensei/pull/6273)
 	* Add onboarding theme step backend [#6211](https://github.com/Automattic/sensei/pull/6211)
@@ -48,12 +46,10 @@
 * Tweak: Display warning in the editor when adding the lesson properties block if Learning Mode is enabled [#6078](https://github.com/Automattic/sensei/pull/6078)
 
 ## 4.9.1 - 2022-12-09
-
 * Fix: Always initialize question blocks in frontend [#6258](https://github.com/Automattic/sensei/pull/6258)
 * Fix: Fix global admin styles for Groups badge and landing page [#6260](https://github.com/Automattic/sensei/pull/6260)
 
 ## 4.9.0 - 2022-12-06
-
 * New: Co-teacher
     * Add/coteachers metabox hook [#6115](https://github.com/Automattic/sensei/pull/6115)
     * Remove unused terms after course structure update. [#6118](https://github.com/Automattic/sensei/pull/6118)
@@ -102,7 +98,6 @@
 * Fix: Fix double query when calling `WP_Query::get_posts` [#6168](https://github.com/Automattic/sensei/pull/6168)
 
 ## 4.8.1 - 2022-11-10
-
 * New: Course Overview block for the Course List block [#5996](https://github.com/Automattic/sensei/pull/5996)
 * Add: Message for users without JavaScript enabled on Sensei Home [#6059](https://github.com/Automattic/sensei/pull/6059)
 * Fix: Course start date reset on lesson completion [#6079](https://github.com/Automattic/sensei/pull/6079)
@@ -117,12 +112,10 @@
 * Fix: Minor cosmetic changes to task list in Sensei Home [#6083](https://github.com/Automattic/sensei/pull/6083)
 
 ## 4.8.0 - 2022-10-27
-
 * New: Onboarding Wizard - replaces the older onboarding with a modern flow to help new users get started.
 * New: Sensei Home - replaces the older 'Extensions' menu item with links to support, documentation, and a checklist for new users.
 
 ## 4.7.2 - 2022-10-24
-
 * Fix: Change admin bar visibility only in lesson pages [#5909](https://github.com/Automattic/sensei/pull/5909)
 * Fix container sizing in Video Template [#5926](https://github.com/Automattic/sensei/pull/5926)
 * Fix: Prevent course enrollment if user did not complete prerequisites or if course requires a password [#5957](https://github.com/Automattic/sensei/pull/5957)
@@ -133,11 +126,9 @@
 * Fix: Validate colors when saving email template options. [#5959](https://github.com/Automattic/sensei/pull/5959)
 
 ## 4.7.1 - 2022-10-11
-
 * Fix: Prevent Learning Mode styles from overriding global styles. [#5903](https://github.com/Automattic/sensei/pull/5903)
 
 ## 4.7.0 - 2022-10-11
-
 * New: Learning Mode version 2
     * Do not show the exceprt in post content if it exists in the template [#5871](https://github.com/Automattic/sensei/pull/5871)
     * Fix content padding on mobile [#5863](https://github.com/Automattic/sensei/pull/5863)
@@ -186,7 +177,6 @@
 * Fix: Move blocks title, description, keywords to block.json and fix localization [#5782](https://github.com/Automattic/sensei/pull/5558com/Automattic/sensei/pull/5782)
 
 ## 4.6.4 - 2022-09-26
-
 * Add: Show Course Categories preview [#5513](https://github.com/Automattic/sensei/pull/5513)
 * Add: Learning Mode - Add a prerequisite notice to the quiz page. [#5476](https://github.com/Automattic/sensei/pull/5476)
 * Add: Add course list filter block [#5567](https://github.com/Automattic/sensei/pull/5567)
@@ -214,7 +204,6 @@
 * Tweak: Remove "Beta" label from Course List block [#5593](https://github.com/Automattic/sensei/pull/5593)
 
 ## 4.6.3 - 2022-08-24
-
 * New: Course List block (beta)
     * Add the Course List block [#5419](https://github.com/Automattic/sensei/pull/5419)
     * Add the Course Categories block [#5455](https://github.com/Automattic/sensei/pull/5455)
@@ -231,7 +220,6 @@
 * Tweak: Modify title for course theme lesson actions block to avoid confusion [#5470](https://github.com/Automattic/sensei/pull/5470)
 
 ## 4.6.2 - 2022-08-17
-
 * Fix: Learning Mode - Do not filter templates for query slugs if it is indexing. [#5460](https://github.com/Automattic/sensei/pull/5460)
 * Fix: Do not save -1 values on quiz meta [#5461](https://github.com/Automattic/sensei/pull/5461)
 * Fix: Revert "Change className prop to not use classnames" [#5464](https://github.com/Automattic/sensei/pull/5464)
@@ -242,7 +230,6 @@
 * Add: Fix set current time to keep the same behavior for all players [#5416](https://github.com/Automattic/sensei/pull/5416)
 
 ## 4.6.1 - 2022-08-09
-
 * Fix: Fix lesson quick edit and bulk edit for quiz settings [#4404](https://github.com/Automattic/sensei/pull/4404)
 * Fix: Use standard approach of displaying filters for list tables [#5174](https://github.com/Automattic/sensei/pull/5174)
 * Fix: Improve test coverage for Sensei_Lesson [#5389](https://github.com/Automattic/sensei/pull/5389)
@@ -253,7 +240,6 @@
 * Fix: Fix loading issue where the player wasn't detected correctly on the editor [#5421](https://github.com/Automattic/sensei/pull/5421)
 
 ## 4.6.0 - 2022-07-25
-
 * Add: Add custom slug in module block [#5207](https://github.com/Automattic/sensei/pull/5207)
 * Add: Add Confirm Dialog component [#5361](https://github.com/Automattic/sensei/pull/5361)
 * Add: Enable _lesson_preview show-in-rest meta settings [#5369](https://github.com/Automattic/sensei/pull/5369)
@@ -268,7 +254,6 @@
 * Tweak: Hide action buttons' notification [#5386](https://github.com/Automattic/sensei/pull/5386)
 
 ## 4.5.2 - 2022-07-14
-
 * Add: New upsells students group page
 * Add: `sensei_user_course_end' hook before redirecting to completed page
 * Add: Bump the minimum required PHP version to 7.2
@@ -283,12 +268,10 @@
 * Fix: Errors on the students admin area
 
 ## 4.5.1 - 2022-06-20
-
 * Fix: remove upsell from wizard when woothemes-sensei is installed [#5282](https://github.com/Automattic/sensei/pull/5282)
 * Fix: Guarantee that the wizard link will stay as white after visiting it [#5281](https://github.com/Automattic/sensei/pull/5281)
 
 ## 4.5.0 - 2022-06-16
-
 * New: Course and Lesson Wizard
     * Add editor wizard modal for courses and lessons [#5149](https://github.com/Automattic/sensei/pull/5149)
     * Add editor wizard usage tracking [#5274](https://github.com/Automattic/sensei/pull/5274)
@@ -326,7 +309,6 @@
 * Tweak: Do not auto-add Quiz blocks on the lessons anymore [#5177](https://github.com/Automattic/sensei/pull/5177)
 
 ## 4.4.3 - 2022-05-31
-
 * Fix: The "import" docs link. [#5201](https://github.com/Automattic/sensei/pull/5201)
 * Fix: Module order not preserved after teacher update. [#5198](https://github.com/Automattic/sensei/pull/5198)
 * Tweak: Redirect the quiz if the lesson is password protected. [#5195](https://github.com/Automattic/sensei/pull/5195)
@@ -334,7 +316,6 @@
 * Tweak: Update Course Video Progression to support customization via hooks. [#5100](https://github.com/Automattic/sensei/pull/5100), [#5175](https://github.com/Automattic/sensei/pull/5175)
 
 ## 4.4.2 - 2022-05-23
-
 * Fix: Modules page not found error in learning mode [#5144](https://github.com/Automattic/sensei/pull/5144) 👏 @jeremyfelt
 * Fix: Teacher name getting appended and duplicated in module title in course edit [#5114](https://github.com/Automattic/sensei/pull/5114)
 * Fix: Lessons not getting assigned to modules if the course is assigned to a teacher [#5151](https://github.com/Automattic/sensei/pull/5151)
@@ -342,7 +323,6 @@
 * Fix: Deprecated warnings on the students report screen [#5153](https://github.com/Automattic/sensei/pull/5153)
 
 ## 4.4.1 - 2022-05-16
-
 * New: Add a "Date Started" reports filter for students on a course [#5076](https://github.com/Automattic/sensei/pull/5076)
 * New: Show a notice if future PHP requirements aren't met in preparation for increasing the minimum requirements to PHP 7.2 [#5088](https://github.com/Automattic/sensei/pull/5088)
 * New: Add lesson notices filters [#5087](https://github.com/Automattic/sensei/pull/5087)
@@ -366,7 +346,6 @@
 * Fix: Student name appearing twice on student report title [#5111](https://github.com/Automattic/sensei/pull/5111)
 
 ## 4.4.0 - 2022-05-04
-
 * New: Add modal to add or remove a student from a course [#4979](https://github.com/Automattic/sensei/pull/4979), [#5038](https://github.com/Automattic/sensei/pull/5038), [#5004](https://github.com/Automattic/sensei/pull/5004), [#5040](https://github.com/Automattic/sensei/pull/5040), [#4999](https://github.com/Automattic/sensei/pull/4999), [#5023](https://github.com/Automattic/sensei/pull/5023), [#5003](https://github.com/Automattic/sensei/pull/5003), [#5029](https://github.com/Automattic/sensei/pull/5029), [#5017](https://github.com/Automattic/sensei/pull/5017), [#5046](https://github.com/Automattic/sensei/pull/5046), [#5059](https://github.com/Automattic/sensei/pull/5059)
 * New: Add student action menu to Student Management page [#4961](https://github.com/Automattic/sensei/pull/4961), [#5031](https://github.com/Automattic/sensei/pull/5031), [#5072](https://github.com/Automattic/sensei/pull/5072)
 * New: Display Enrolled Courses instead of Course Progress [#5043](https://github.com/Automattic/sensei/pull/5043)
@@ -403,7 +382,6 @@
 * Fix: Spacing issues in filters on the Students page [#5070](https://github.com/Automattic/sensei/pull/5070)
 
 ## 4.3.0 - 2022-04-04
-
 * New: Add a database seed WP-CLI command [#4882](https://github.com/Automattic/sensei/pull/4882)
 * New: Add Average Progress to courses report [#4917](https://github.com/Automattic/sensei/pull/4917)
 * New: Add Date Registered column to students report [#4952](https://github.com/Automattic/sensei/pull/4952)
@@ -428,7 +406,6 @@
 * Fix: "Days to Completion" and "Module" columns are swapped when exporting lessons [#4978](https://github.com/Automattic/sensei/pull/4978)
 
 ## 4.2.0 - 2022-03-22
-
 * New: Replace `Date Registered` column with `Last Activity` [#4863](https://github.com/Automattic/sensei/pull/4863)
 * New: Add totals to Students report [#4865](https://github.com/Automattic/sensei/pull/4865)
 * New: Add new lesson report default view and course filter [#4878](https://github.com/Automattic/sensei/pull/4878)
@@ -458,11 +435,9 @@
 * Fix: PHP notices when exporting the courses or lessons reports [#4901](https://github.com/Automattic/sensei/pull/4901)
 
 ## 4.1.1 - 2022-03-02
-
 * New: Add question subtitle support [#4872](https://github.com/Automattic/sensei/pull/4872)
 
 ## 4.1.0 - 2022-02-23
-
 * New: Order lessons between modules [#4727](https://github.com/Automattic/sensei/pull/4727)
 * New: Add upgrade header to Extensions page [#4794](https://github.com/Automattic/sensei/pull/4794)
 * New: Add optional 'style' option for admin notices [#4797](https://github.com/Automattic/sensei/pull/4797)
@@ -485,7 +460,6 @@
 * Fix: addEventListener when no element is found [#4858](https://github.com/Automattic/sensei/pull/4858)
 
 ## 4.0.2 - 2022-02-17
-
 * New: Add theme style support to Learning Mode [#4775](https://github.com/Automattic/sensei/pull/4775)
 * Tweak: Redirect logged-out user to the course after login when clicking on Take Course button in the Course page [#4792](https://github.com/Automattic/sensei/pull/4792)
 * Tweak: Update Take course button from lesson notices to redirect to course [#4793](https://github.com/Automattic/sensei/pull/4793)
@@ -509,12 +483,10 @@
 * Fix: Course outline and quiz appenders on 5.9 [#4825](https://github.com/Automattic/sensei/pull/4825)
 
 ## 4.0.1 - 2022-02-03
-
 * Fix: Link styles in Learning Mode  [#4730](https://github.com/Automattic/sensei/pull/4730)
 * Fix: Learning mode with localized post type slugs  [#4745](https://github.com/Automattic/sensei/pull/4745)
 
 ## 4.0.0 - 2022-02-01
-
 Sensei 4.0 is here! This is a major release, which includes a new theme for your courses and a rework of the WordPress dashboard menu navigation. [Read the announcement post here.](https://senseilms.com/wordpress-course-theme/)
 
 * New: The menus for Courses, Lessons and all Sensei-related pages in the WordPress dashboard have been combined into one Sensei menu.
@@ -563,16 +535,13 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix quiz answer notes issues  [#4685](https://github.com/Automattic/sensei/pull/4685)
 
 ## 3.15.2 - 2022-01-20
-
 * Fix: Quiz block not rendering in certain cases  [#4657](https://github.com/Automattic/sensei/pull/4657)
 * Fix: PHP notice when retrieving some of the settings  [#4658](https://github.com/Automattic/sensei/pull/4658/files)
 
 ## 3.15.1 - 2022-01-19
-
 * Fix: Fix PHP 7.0 and 7.1 compatibility
 
 ## 3.15.0 - 2022-01-18
-
 * New: Quiz Pagination
     * Add toolbar pagination settings  [#4429](https://github.com/Automattic/sensei/pull/4429)
     * Implement the quiz pagination backend  [#4492](https://github.com/Automattic/sensei/pull/4492)
@@ -632,7 +601,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Return wp_nonce_field result instead of outputting it immediately  [#4641](https://github.com/Automattic/sensei/pull/4641)
 
 ## 3.14.0 - 2021-11-25
-
 * New: Answer feedback improvements
   * Add answer feedback editor settings  [#4344](https://github.com/Automattic/sensei/pull/4344)
   * Update answer feedback display to use new options  [#4349](https://github.com/Automattic/sensei/pull/4349)
@@ -667,7 +635,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Fix course complete emails not being sent  [#4425](https://github.com/Automattic/sensei/pull/4425)
 
 ## 3.13.3 - 2021-10-12
-
 * New: Additional hooks for course expiration
     * Add clock notice type  [#4302](https://github.com/Automattic/sensei/pull/4302)
     * Add filters to show enrollment actions and view results block  [#4318](https://github.com/Automattic/sensei/pull/4318)
@@ -683,11 +650,9 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Learner Courses block styling issues  [#4298](https://github.com/Automattic/sensei/pull/4298)
 
 ## 3.13.2 - 2021-10-01
-
 * Fix: Handle extensions fetch error  [#4324](https://github.com/Automattic/sensei/pull/4324)
 
 ## 3.13.1 - 2021-08-26
-
 * New: Add filters to customize the My Courses and Course Completed page content  [#4286](https://github.com/Automattic/sensei/pull/4286),  [#4290](https://github.com/Automattic/sensei/pull/4290)
 * New: Add "Find More Courses" block variation  [#4293](https://github.com/Automattic/sensei/pull/4293)
 * Tweak: Rename Take Course block to Course Sign Up  [#4288](https://github.com/Automattic/sensei/pull/4288)
@@ -697,7 +662,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Custom color selector in Learner Courses block  [#4289](https://github.com/Automattic/sensei/pull/4289)
 
 ## 3.13.0 - 2021-08-12
-
 * New: Course Completed Page
     * Add Course Completed page  [#4254](https://github.com/Automattic/sensei/pull/4254),  [#4280](https://github.com/Automattic/sensei/pull/4280)
     * Add Course Completed Actions block  [#4266](https://github.com/Automattic/sensei/pull/4266)
@@ -707,7 +671,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Use new filter for block categories in WordPress 5.8  [#4264](https://github.com/Automattic/sensei/pull/4264)
 
 ## 3.12.0 - 2021-07-19
-
 * New: Add grid view to Learner Courses block and update list view  [#4243](https://github.com/Automattic/sensei/pull/4243)
 * New: PHP 8 compatibility  [#4244](https://github.com/Automattic/sensei/pull/4244)
 * Tweak: Don't set minimum width for course progress bar on front end  [#4247](https://github.com/Automattic/sensei/pull/4247)
@@ -716,11 +679,9 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Use standard way of getting quiz ID on grading page  [#4240](https://github.com/Automattic/sensei/pull/4240)
 
 ## 3.11.1 - 2021-06-23
-
 * Tweak: Update SenseiLMS.com notices integration  [#4233](https://github.com/Automattic/sensei/pull/4233)
 
 ## 3.11.0 - 2021-05-10
-
 * New: Extensions Page Redesign
     * Add counter to Extensions menu to display the number of available plugin updates  [#4156](https://github.com/Automattic/sensei/pull/4156)
     * Add missing WooCommerce.com connection notice  [#4161](https://github.com/Automattic/sensei/pull/4161)
@@ -754,7 +715,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Fix sporadic unit test failure  [#4195](https://github.com/Automattic/sensei/pull/4195)
 
 ## 3.10.0 - 2021-04-14
-
 * New: Learner Courses block (My Courses)  [#4126](https://github.com/Automattic/sensei/pull/4126)
 * New: Add View Results block  [#4155](https://github.com/Automattic/sensei/pull/4155)
 * New: Add blocks to My Courses page on setup  [#4137](https://github.com/Automattic/sensei/pull/4137)
@@ -765,7 +725,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Tweak: Show teacher's questions only when using category questions  [#4148](https://github.com/Automattic/sensei/pull/4148)
 
 ## 3.9.1 - 2021-03-31
-
 * New: Show validation in single question editor  [#4087](https://github.com/Automattic/sensei/pull/4087)
 * New: Log template overrides  [#4113](https://github.com/Automattic/sensei/pull/4113)
 * Tweak: Add input as answer when unfocusing gap fill question  [#4119](https://github.com/Automattic/sensei/pull/4119)
@@ -780,7 +739,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Error when manually adding course outline block  [#4141](https://github.com/Automattic/sensei/pull/4141)
 
 ## 3.9.0 - 2021-03-25
-
 * New: Quiz Block
     * Add Quiz and Question blocks  [#3936](https://github.com/Automattic/sensei/pull/3936)
     * Prepare structure store for quiz block  [#3950](https://github.com/Automattic/sensei/pull/3950)
@@ -882,7 +840,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Email not sending when a learner starts a course  [#4089](https://github.com/Automattic/sensei/pull/4089)
 
 ## 3.8.1 - 2021-02-17
-
 * Fix: Fix lesson module metabox saving with Yoast installed  [#3982](https://github.com/Automattic/sensei/pull/3982)
 * Fix: Fix course lessons in modules not appearing on analysis screen  [#3971](https://github.com/Automattic/sensei/pull/3971)
 * Fix: Allow template field to be edited by teachers  [#3985](https://github.com/Automattic/sensei/pull/3985)
@@ -893,7 +850,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Hide REST API lesson content and remove lesson and question feeds  [#3984](https://github.com/Automattic/sensei/pull/3984)
 
 ## 3.8.0 - 2021-02-09
-
 * New: Conditional Content block
     * Add Restricted Course Content block  [#3849](https://github.com/Automattic/sensei/pull/3849)
     * Rename Restricted Content block to Conditional Content  [#3939](https://github.com/Automattic/sensei/pull/3939)
@@ -933,7 +889,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Fix block translations  [#3962](https://github.com/Automattic/sensei/pull/3962)
 
 ## 3.7.0 - 2021-01-21
-
 * New: Add filter to only allow some mime types to quiz file upload answers  [#3828](https://github.com/Automattic/sensei/pull/3828)
 * New: Remove REST API Test Harness code  [#3475](https://github.com/Automattic/sensei/pull/3475)
 * New: Show admin notice if Sensei hasn't been built correctly  [#3775](https://github.com/Automattic/sensei/pull/3775) 👏 @merkushin
@@ -964,12 +919,10 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Hide Modules metabox after changing course teacher to prevent module conflicts  [#3869](https://github.com/Automattic/sensei/pull/3869)
 
 ## 3.6.1 - 2021-01-06
-
 * Fix: Fix not being able to save course when Yoast SEO is activated  [#3866](https://github.com/Automattic/sensei/pull/3866)
 * Fix: Ensure exit survey is displayed after deactivating Sensei with WooCommerce Paid Courses  [#3871](https://github.com/Automattic/sensei/pull/3871)
 
 ## 3.6.0 - 2020-12-10
-
 * New: Course Outline block
     * Add "Edit lesson" link to lesson block settings  [#3637](https://github.com/Automattic/sensei/pull/3637)
     * Add "Not Started" option to module block status setting  [#3678](https://github.com/Automattic/sensei/pull/3678)
@@ -1098,13 +1051,11 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Fix incorrect rounding of maximum file size for file upload questions  [#3673](https://github.com/Automattic/sensei/pull/3673)
 
 ## 3.5.3 - 2020-10-29
-
 * Fix: Visibility of quiz passmark percentage field  [#3715](https://github.com/Automattic/sensei/pull/3715)
 * Fix: PHP notices on taxonomy pages for unsupported themes  [#3704](https://github.com/Automattic/sensei/pull/3704)
 * New: Exit survey when the plugin is deactivated  [#3729](https://github.com/Automattic/sensei/pull/3729)
 
 ## 3.5.2 - 2020-09-30
-
 * Fix: Fix course being duplicated when lesson has no quiz and teacher is updated   [#3654](https://github.com/Automattic/sensei/pull/3654)
 * Fix: Fix resetting a learner's lesson progress removes learner from list  [#3626](https://github.com/Automattic/sensei/pull/3626)
 * Fix: Target the correct element when resetting input fields in quiz questions  [#3604](https://github.com/Automattic/sensei/pull/3604)
@@ -1123,14 +1074,12 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * New: Show scheduled lessons in Prerequisite dropdown  [#3609](https://github.com/Automattic/sensei/pull/3609)
 
 ## 3.5.1 - 2020-09-10
-
 * Tweak: Update usage tracking for sample courses
     * Add sample_course property to publish event  [#3596](https://github.com/Automattic/sensei/pull/3596)
     * Include flag for sample data on import events  [#3588](https://github.com/Automattic/sensei/pull/3588)
 * Tweak: Only add "first" and "last" CSS classes for grid layouts on course archive page  [#3467](https://github.com/Automattic/sensei/pull/3467)
 
 ## 3.5.0 - 2020-08-27
-
 * New: Exporter
     * Add error handling to exporter  [#3541](https://github.com/Automattic/sensei/pull/3541)
     * Export multiple choice answers in correct order  [#3558](https://github.com/Automattic/sensei/pull/3558)
@@ -1168,12 +1117,10 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Tweak: Show courses with any status in Course Prerequisite dropdown  [#3555](https://github.com/Automattic/sensei/pull/3555)
 
 ## 3.4.1 - 2020-08-11
-
 * Fix: Question editor compatibility with WordPress 5.5  [#3510](https://github.com/Automattic/sensei/pull/3510)
 * Fix: Trigger setting updated events only when changed  [#3503](https://github.com/Automattic/sensei/pull/3503)
 
 ## 3.4.0 - 2020-08-06
-
 * New: Remove / Restore Enrollments
     * Add meta handler for removing and restoring a learner's enrollment  [#3402](https://github.com/Automattic/sensei/pull/3402)
     * Change learner management actions from buttons to links  [#3404](https://github.com/Automattic/sensei/pull/3404)
@@ -1185,11 +1132,9 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
     * Log enrollment and progress actions in Learner Management  [#3465](https://github.com/Automattic/sensei/pull/3465)
 
 ## 3.3.1 - 2020-07-30
-
 * Fix: Setup wizard and importer in WordPress 5.0 - 5.3  [#3482](https://github.com/Automattic/sensei/pull/3482)
 
 ## 3.3.0 - 2020-07-23
-
 * New: Importer
     * Add byte order mark removal  [#3365](https://github.com/Automattic/sensei/pull/3365)
     * Add delimiter detection  [#3364](https://github.com/Automattic/sensei/pull/3364)
@@ -1275,7 +1220,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix linter issues with full-screen setup wizard code  [#3418](https://github.com/Automattic/sensei/pull/3418)
 
 ## 3.2.0 - 2020-06-30
-
 * New: Add paid extensions to the setup wizard  [#3297](https://github.com/Automattic/sensei/pull/3297),  [#3309](https://github.com/Automattic/sensei/pull/3309),  [#3323](https://github.com/Automattic/sensei/pull/3323),  [#3322](https://github.com/Automattic/sensei/pull/3322),  [#3326](https://github.com/Automattic/sensei/pull/3326),  [#3329](https://github.com/Automattic/sensei/pull/3329),  [#3332](https://github.com/Automattic/sensei/pull/3332),  [#3331](https://github.com/Automattic/sensei/pull/3331),  [#3330](https://github.com/Automattic/sensei/pull/3330)
 * New: Enable admins and lesson author to view quiz for lesson with an unmet prerequisite  [#3080](https://github.com/Automattic/sensei/pull/3080) 👏 @JuanchoPestana
 * New: Deprecate sensei_the_excerpt function  [#3248](https://github.com/Automattic/sensei/pull/3248) 👏 @truongwp
@@ -1288,12 +1232,10 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Fix incorrect parameter being passed to has_term function  [#3274](https://github.com/Automattic/sensei/pull/3274) 👏 @hansschuijff
 
 ## 3.1.1 - 2020-06-05
-
 * Fix: Clear setup wizard user data option on uninstall  [#3263](https://github.com/Automattic/sensei/pull/3263)
 * Fix: Mark setup wizard as completed at the "Ready" step  [#3265](https://github.com/Automattic/sensei/pull/3265)
 
 ## 3.1.0 - 2020-06-04
-
 * New: Setup wizard for new users -  [#3066](https://github.com/Automattic/sensei/pull/3066),  [#3085](https://github.com/Automattic/sensei/pull/3085),  [#3093](https://github.com/Automattic/sensei/pull/3093),  [#3082](https://github.com/Automattic/sensei/pull/3082),  [#3101](https://github.com/Automattic/sensei/pull/3101),  [#3103](https://github.com/Automattic/sensei/pull/3103),  [#3096](https://github.com/Automattic/sensei/pull/3096),  [#3117](https://github.com/Automattic/sensei/pull/3117),  [#3118](https://github.com/Automattic/sensei/pull/3118),  [#3119](https://github.com/Automattic/sensei/pull/3119),  [#3102](https://github.com/Automattic/sensei/pull/3102),  [#3157](https://github.com/Automattic/sensei/pull/3157),  [#3106](https://github.com/Automattic/sensei/pull/3106),  [#3121](https://github.com/Automattic/sensei/pull/3121),  [#3172](https://github.com/Automattic/sensei/pull/3172),  [#3175](https://github.com/Automattic/sensei/pull/3175),  [#3174](https://github.com/Automattic/sensei/pull/3174),  [#3176](https://github.com/Automattic/sensei/pull/3176),  [#3189](https://github.com/Automattic/sensei/pull/3189),  [#3184](https://github.com/Automattic/sensei/pull/3184),  [#3156](https://github.com/Automattic/sensei/pull/3156),  [#3181](https://github.com/Automattic/sensei/pull/3181),  [#3190](https://github.com/Automattic/sensei/pull/3190),  [#3239](https://github.com/Automattic/sensei/pull/3239),  [#3227](https://github.com/Automattic/sensei/pull/3227),  [#3198](https://github.com/Automattic/sensei/pull/3198),  [#3241](https://github.com/Automattic/sensei/pull/3241),  [#3194](https://github.com/Automattic/sensei/pull/3194),  [#3250](https://github.com/Automattic/sensei/pull/3250),  [#3246](https://github.com/Automattic/sensei/pull/3246),  [#3258](https://github.com/Automattic/sensei/pull/3258)
 * New: Filter for enabling/disabling enrolment related background jobs  [#3182](https://github.com/Automattic/sensei/pull/3182)
 * New: Add "Date Completed" field to the Learner Management page  [#3064](https://github.com/Automattic/sensei/pull/3064) 👏 @timwiel
@@ -1313,12 +1255,10 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Course dropdown width on the lessons page  [#3223](https://github.com/Automattic/sensei/pull/3136)
 
 ## 3.0.1 - 2020-04-29
-
 * Tweak: Prevent some queries from running unnecessarily  [#3022](https://github.com/Automattic/sensei/pull/3022)
 * Fix: Skip enrollment checking completely for guests  [#3086](https://github.com/Automattic/sensei/pull/3086)
 
 ## 3.0.0 - 2020-04-27
-
 * New: Add Recalculate Enrolment data update  [#2998](https://github.com/Automattic/sensei/pull/2998)
 * New: Add a filter for the course archive page URL  [#2899](https://github.com/Automattic/sensei/pull/2899)
 * New: Add course enrollment indicator to learner management  [#2838](https://github.com/Automattic/sensei/pull/2838)
@@ -1404,14 +1344,12 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Fix comment template not displaying for messages  [#3024](https://github.com/Automattic/sensei/pull/3024)
 
 ## 2.4.0 - 2020-01-23
-
 * New: Replace Twitter button with Create Course button after activation - #2850
 * Fix: PHP warning for multiple choice questions - #2843
 * Fix: Default settings cleared after clicking "Install Sensei LMS Pages" button - #2847
 * Fix: Add transparent background to TinyMCE editor buttons for multi line questions (@JuanchoPestana) - #2855
 
 ## 2.3.0 - 2020-01-14
-
 * New: Configure Renovate - #2805
 * New: Remove Sensei_WP_Cli class - #2814
 * New: Upgrade WPCS to 2.2 - #2793
@@ -1424,7 +1362,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Lesson order when duplicating course with lessons - #2827
 
 ## 2.2.1 - 2019-10-23
-
 * New: Allow HTML in question titles - #2780
 * Tweak: Optimize loading of teacher dropdown on Courses page (@mostafaabd) - #2750
 * Tweak: Update extension parameters passed to Google Analytics - #2783
@@ -1435,7 +1372,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Do not limit message comments on single post comment feeds - #2776
 
 ## 2.2.0 - 2019-09-03
-
 * New: Add `sensei_course_meta_before_save` and `sensei_course_meta_default_save` hooks for saving course meta - #2761
 * New: Add `sensei_course_show_lessons` filter to conditionally hide lessons on single course page - #2763
 * New: Add `sensei_modules_title` filter for modifying the module title HTML - #2737
@@ -1454,13 +1390,11 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Alignment issue on single course page when lesson has a featured image (@mostafaabd) - #2719
 
 ## 2.1.2 - 2019-06-26
-
 * Fix: Modules not displaying in WP admin - #2742
 * Fix: Multiple correct answers being removed from question editor - #2743
 * Fix: Filtering of allowed CSS attributes for bulk learner actions - #2744
 
 ## 2.1.1 - 2019-06-25
-
 * New: Bump minimum supported WordPress version to 4.9 - #2725
 * Tweak: Rename event logging JS file to match file naming standards - #2730
 * Tweak: Fix PHPCS issues with undefined variables - #2731
@@ -1471,7 +1405,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: PHP fatal error on WordPress versions < 5.0 - #2736
 
 ## 2.1.0 - 2019-06-17
-
 * New: Add "Edit Course" button when in classic editor - #2514
 * New: Add `sensei_complete_lesson_redirect_url` filter for disabling the redirect after completing a lesson - #2510
 * New: Add event logging to the WordPress dashboard - #2672, #2673, #2675, #2686, #2696, #2695, #2700, #2697, #2702, #2684, #2687, #2707, #2706, #2709, #2715
@@ -1490,7 +1423,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Hide private messages from comment feed - #2726
 
 ## 2.0.1 - 2019-05-01
-
 * New: Rename plugin to Sensei LMS - #2511, #2516
 * New: Deprecate `manage_sensei_page_sensei_learners_sortable_columns` in favour of `manage_sensei-lms_page_sensei_learners_sortable_columns` - #2516
 * New: Deprecate `manage_sensei_page_sensei_grading_sortable_columns` in favour of `manage_sensei-lms_page_sensei_grading_sortable_columns` - #2516
@@ -1500,7 +1432,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Allow "Learner Admin" link to be translated - #2516
 
 ## 2.0.0 - 2019-04-02
-
 * New: Extract all WooCommerce integration functionality
 * New: Add dependency check for minimum PHP version (5.6)
 * New: Email signup modal appears on initial activation
@@ -1575,7 +1506,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Fix issues with coding standards
 
 ## 1.12.3 - 2019-03-27
-
 * New: Restrict future updates for sites running a version of PHP less than 5.6 - #2502
 * Fix: Conflict with Jetpack shortcodes module and Sensei videos - #2426
 * Fix: Change progress status to "Completed" in modules (@tonytettinger) - #2342
@@ -1583,7 +1513,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Update version number on plugin update - #2503
 
 ## 1.12.2 - 2018-11-29
-
 * New: Add usage tracking for course enrolments
 * Fix: PHP warnings when ordering courses, modules or lessons
 * Fix: PHP warnings on Sensei Analysis page
@@ -1597,14 +1526,12 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Tweak: Removed underscores from filenames
 
 ## 1.12.1 - 2018-11-01
-
 * Fix: Comments not displaying on Lesson page on unsupported themes
 * Fix: I18n problems
 * Fix: AJAX requests sent too frequently
 * Fix: Comments displaying where they shouldn't on some unsupported themes
 
 ## 1.12.0 - 2018-10-22
-
 * New: Better support for non-Sensei themes
 * New: Redirect to next lesson after completing a lesson
 * New: Show comments for preview lessons
@@ -1617,7 +1544,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: JavaScript error on Lessons page
 
 ## 1.11.0 - 2018-06-13
-
 * Fix: Fix display of all other lessons after module is removed
 * Fix: Fix when force completing lessons with quizzes with questions
 * Fix: Course score based on quizzes that have graded questions
@@ -1632,12 +1558,10 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * New: Add email column to Analysis screen
 
 ## 1.10.1 - 2018-04-11
-
 * Fix: Fix error in data updates when there are no quizzes
 * Tweak: Add setting for data deletion
 
 ## 1.10.0 - 2018-04-04
-
 * Fix: Fixes associating courses after purchase of a variable subscription product
 * Fix: Allow certain HTML tags on quiz correct answer result
 * Fix: ​Fix number parameter not working for [sensei_user_courses] shortcode
@@ -1663,7 +1587,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * New: Add usage tracking for system info
 
 ## 1.9.20 - 2018-02-06
-
 * New: Course navigation moves between both lessons and modules
 * New: Page template for modules
 * New: Filters for customizing quiz answer text and CSS class names
@@ -1676,12 +1599,10 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix: Only users with appropriate permissions can duplicate courses and lessons
 
 ## 1.9.19 - 2017-11-07
-
 * Fix: Fix JS bugs introduced by minification process
 * Add: ESLint support
 
 ## 1.9.18 - 2017-11-01
-
 * Fix: Can't preview draft lessons in draft course
 * Fix: Show Draft Lessons when Previewing course draft
 * Fix: Issue with lesson excerpts
@@ -1733,7 +1654,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * And many more fixes and improvements
 
 ## 1.9.17 - 2017-09-07
-
 * Fix Add learner to course and complete course sends two duplicate emails
 * Fix Modules: WooCommerce 2.6.x Select2 compatibility fix
 * Fix Incorrect heading structure: Use proper headings hierarchy for settings and data updates
@@ -1749,7 +1669,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix Unable to add Existing Questions to Quiz with Search Filter (PHP 7.1.4)
 
 ## 1.9.16 - 2017-07-10
-
 * Fix - Prevent multiple emails being sent to learners already started on a course.
 * Fix - Course content disappears
 * Fix - Prevent certain scenarios where course start date was resetting when visiting my-courses
@@ -1759,7 +1678,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Admins can now edit learner course start dates
 
 ## 1.9.15 - 2017-06-20
-
 * Improve handling of get_bloginfo( ‘admin_email’ ) #1809
 * Fix With [sensei_courses] short code on product page, up-sells disappear #1800
 * Fix Users not being added to purchased courses again #1808 1810
@@ -1769,7 +1687,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Other small bugfixes and improvements
 
 ## 1.9.14 - 2017-04-25
-
 * Fix minor syntax in course categories widget #1786
 * Add filter for permitted data update functions #1783
 * WC 3.0 Compat: Fix admin course notices #1788
@@ -1779,7 +1696,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * use $wpdb->users and $wpdb->comments instead of $wpdb->prefix on Bulk Learner Action Query
 
 ## 1.9.13 - 2017-04-07
-
 * Add Experimental Course Admin REST API (disabled by default)
 * Add Allow user to change question points text formatting
 * Add support for `source` tag for videos
@@ -1801,7 +1717,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Various fixes and improvements
 
 ## 1.9.12 - 2017-03-01
-
 * Bulk Learner Actions - Initial version. You can now assign, unassign and reset multiple users on (multiple) courses.
 * Compatibility with Woocommerce 2.7
 * Initial support for the new user defined locale settings on wp 4.7
@@ -1813,7 +1728,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Bugfixes, improvements
 
 ## 1.9.11 - 2017-01-10
-
 * Improved WC Memberships integration. Added option to "Auto-start" courses belonging to memberships when activated
 * Improved robustness of quiz save/submit when using random questions
 * Added option to disable HTML sanitization on video embeds to support legacy video providers
@@ -1826,15 +1740,12 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix - correctly assign free subscription courses
 
 ## 1.9.10 - 2016-12-20
-
 * WordPress 4.7 Compatibility release
 
 ## 1.9.9 - 2016-10-19
-
 * Hotfix - Address possible fatal on older PHP versions
 
 ## 1.9.8 - 2016-10-18
-
 * Fix - Removed HTML output on lesson complete message
 * Fix - The video HTML tag now works properly in the video embed field
 * Fix - Deleted/non-existant courses showing in course order list
@@ -1849,7 +1760,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix - Conflict with Wishlist Member
 
 ## 1.9.7 - 2016-09-29
-
 * Improve Module taxonomy labels
 * Fix - Lesson doesn't appear on Course archive until ordering is resaved
 * Fix - Errors when duplicating course with lessons
@@ -1862,7 +1772,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Various security fixes
 
 ## 1.9.6 - 2016-05-05
-
 * Fix - Fixed an issue prevent Modern Tribe's The Event Calendar from functioning properly.
 * Fix - Ensure the question grade is shown inline with questions.
 * Fix - Prevent a PHP notice when calling question results.
@@ -1870,7 +1779,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Fix - Use the course ID when building the permalink for the start course form.
 
 ## 1.9.5 - 2016-04-26
-
 * Fix   - The purchase course button wasn't showing up on some courses.
 * Fix   - Ensure courses are activated when order status is processing or completed.
 * Fix   - Ensure course linked to a subscription is activated immediately after purchase.
@@ -1907,7 +1815,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * New   - Added "menu_order" as an orderby parameter on [sensei_courses] to order courses as specified in Courses > Order Courses
 
 ## 1.9.4 - 2016-04-04
-
 * Fix   - Ensure current quiz grade is displayed when submitting autograded quizzes.
 * Fix   - Ensure grading notes are always displayed when quiz is manually graded.
 * Fix   - Prevent fatal error when adding learner to a course.
@@ -1922,7 +1829,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Tweak - Updated support link in Plugins page.
 
 ## 1.9.3 - 2016-03-03
-
 * Fix   - Message titles now link to the individual messages.
 * Fix   - Make sure Sensei does not affect the display of blog posts.
 * Fix   - Fixed a few php warnings.
@@ -1935,7 +1841,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * New   - Added 'Configure', 'Docs', and 'Support' links to Sensei on Plugins page.
 
 ## 1.9.2 - 2016-02-11
-
 * Fix   - Access permissions restored to the way it worked in version 1.8.8, totally removing the no-permissions templates.
 * Fix   - Using $wpdb to prefix mysql queries, missed one instance in version 1.9.1
 * Fix   - Use the correct wc statuses when checking if an order is acceptable.
@@ -1956,7 +1861,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * New   - Introduce a new function for checking if a course is purchasable.
 
 ## 1.9.1 - 2016-02-07
-
 * Fix   - Use strtolower function on hosts that do not support mb_stringtolower.
 * Fix   - Use $wpdb prefix for mysql queries where it wasn't added.
 * Fix   - Avoid division by zero error.
@@ -1978,7 +1882,6 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
 * Tweak - Remove the delete course button from my-course while still allowing developers to show it with a filter.
 
 ## 1.9 - 2016-01-02
-
 For a list of files changed please see: https://github.com/woothemes/sensei/compare/version/1.8.9-beta-1...master#files_bucket
 
 * New   - Templates system completely overhauled. The templates now contain almost no logic, just hooks and html. Most functionality
@@ -2041,12 +1944,10 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Tweak - General code cleanup.
 
 ## 1.8.8 - 2015-09-09
-
 * Fixed - Administrator does not have access to the Sensei settings on new installs
 * Fixed - Drop downs not working correctly on certain admin screens.
 
 ## 1.8.7 - 2015-09-07
-
 * Fixed - Course created email sent twice
 * Fixed - Error notices on the lesson edit screen
 * Fixed - WP_Widget constructors updated as within WordPress Core
@@ -2067,7 +1968,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Tweak - Show admin bar to users who can 'edit_courses'
 
 ## 1.8.6 - 2015-07-15
-
 * Fix   - Failure to load the JS in admin page because there was an extra dot in the file name.
 * Fix   - a few Typos in comments and strings
 * Fix   - Remove special character and replace with \' instead
@@ -2076,7 +1976,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Tweak - Output course order via php instead of relying on JS to re-order on the front-end.
 
 ## 1.8.5 - 2015-06-18
-
 * Fix   - Save the lesson preview checkbox unchecked state as well. The bug was that unchecked boxes does not get passed via $_POST in certain cases.
 * Tweak - Allow the quiz results rounding to be filtered. So you can now have decimal points shown to the user instead of the rounded up amount.
 * Fix   - Module order screen now working. The fix is to remove chosen from the select box. This will be replaced by select2.
@@ -2085,7 +1984,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix   - Allow gap-fill questions to be auto graded again.
 
 ## 1.8.4 - 2015-06-11
-
 * Fix   - Query post type changes for non Sensei queries. Added better checking to ensure this
           query filter only applies to teachers.
 * Fix   - Performance issues on the all courses page with a large user base.
@@ -2094,24 +1992,20 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
         limit as '-1' (unlimited) is not good.
 
 ## 1.8.3 - 2015-06-05
-
 * Fix   - Fixed an issue where only 10 questions could be seen in quizzes
 * Tweak - Correctly pluralise the string 'Currently completed x lesson(s) of y in total'
 
 ## 1.8.2 - 2015-06-02
-
 * Fix   - Sensei quiz settings not retrieved correctly
 * Fix   - Modules management course selection Javascript error causing courses to be unselectable
 * Fix   - Error notices showing up on the front end for non logged in users
 
 ## 1.8.1 - 2015-05-28
-
 * Tweak - Teacher role have to submit courses for review by default
 * Tweak - Language file updated.
 * Fix   - Internal calls to WooCommerce active checking function changed to static
 
 ## 1.8.0 - 2015-05-28
-
 * New   - Update the teacher role to give teachers more control. Also added further notifications for course ownership changes.
 * New   - Sensei Modules extensions merged into Sensei Core
 * New   - Disable notification on a per course basis
@@ -2139,16 +2033,13 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix   - Fix error on the WP login page
 
 ## 1.7.7 - 2015-04-23
-
 * Fix - Security loophole introduce in WP. Escaping all urls.
 
 ## 1.7.6 - 2015-04-20
-
 * Fix - Missing learner management search missing.
 * Fix - Remove learner from course popup message missing.
 
 ## 1.7.5 - 2015-04-14
-
 * Fix - Admin learner course completion no longer redirects to the lesson screen.
 * Tweak - Use update meta instead of add meta for the quiz lesson meta
 * Fix - Edit single question answer feedback is now saved the first time
@@ -2163,14 +2054,12 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Tweak - The single course register button links to my courses and not WP register screen.
 
 ## 1.7.4 - 2015-03-31
-
 * Fix - Allow users to save their answers uniquely for questions shared across multiple quizzes
 * Fix - Bug that blocked teacher to access the admin area when WooCommerce is active
 * Tweak - Allow contact teach button to be localized
 * Fix - Sensei start lesson function error if the data argument is not passed in.
 
 ## 1.7.3 - 2015-03-03
-
 * Tweak - Removing Canvas them wrappers (this will now be handled in the theme directly)
 * Tweak - Decapitalising 'Total Grade' text on Course Results page
 * Tweak - Moving course logic from frontend class to its proper place in the course class
@@ -2187,7 +2076,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix - Ensures course component widget works correctly when 'limit' is not set
 
 ## 1.7.2 - 2015-02-17
-
 * Update - Adding database table indexes to comments table to improve performance
 * Update - Adding manual update to allow removal of legacy Sensei activity data
 * Tweak - Removing localisation from empty strings
@@ -2205,13 +2093,11 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix - Updating for WooCommerce 2.3 compatibility
 
 ## 1.7.1 - 2015-02-04
-
 * Tweak - Improving detection for whether critical updates are needed or not
 * Tweak - Updating code for WooCommerce 2.2+
 * Fix - Fixing display of 'Delete Course' button on paid courses
 
 ## 1.7.0 - 2015-02-02
-
 * New - Completely new data structure that improves site performace and fixes numerous data-consistency issues
 * New - Multiple choice questions can now accept multiple correct answers
 * New - LaTeX support for all questions, answers and answer notes (requires Jetpack's Beautiful Math module)
@@ -2220,7 +2106,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * New - Loads of new actions and filters to make Sensei more extensible
 
 ## 1.6.9 - 2014-12-18
-
 * Fix - Fixing Chosen drop down menus on course edit screen
 * Fix - Fixing Analysis export to select entire data set
 * Fix - Fixing quiz duplication when lessons are published
@@ -2230,13 +2115,11 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Tweak - Updating 'course' post type so that it shows in the admin bar
 
 ## 1.6.8 - 2014-12-05
-
 * Fix   - The “View Quiz” button now shows up for all lessons that have a quiz attached.
 * Fix   - When a learner submits a quiz the email will now be sent to the course teacher and not the admin account.
 * Fix   - The login|logout now accounts for all languages where login/logout each can be multiple words.
 
 ## 1.6.7 - 2014-11-06
-
 * Fix   - Lesson complete class assigned to the right lessons.
 * Fix   - Remove pagination from the courses widget component
 * Fix   - Remove php notice on accessing lesson_completion and using undefined variables
@@ -2246,7 +2129,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Tweak - Hide reset and view quiz button for non logged in users and Update the access settings text to reflect the correct logic
 
 ## 1.6.6 - 2014-10-09
-
 * Fix - bug where in certain cases the next lesson doesn't become available when the pre requisite is completed
 * Fix - Resolved php notices and warnings
 * Fix - My Courses login issues on certain server setup
@@ -2262,7 +2144,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * New - Sensei theme notices for theme unsupported themes and a link to the documentation theme page
 
 ## 1.6.5 - 2014-08-21
-
 * Fix - Fixing chosen input width in New Course panel in Lesson edit screen
 * Fix - Adds a missing sensei_please_purchase_course_text filter
 * Fix - Fixes a potential error in the page titles of course results and learner profiles
@@ -2271,11 +2152,9 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Tweak - Prevents Sensei settings from being deleted when the plugin is uninstalled
 
 ## 1.6.4 - 2014-08-13
-
 * Fix - Fixing chosen input width in Category Questions tab
 
 ## 1.6.3 - 2014-08-05
-
 * New - Single class to manage Sensei notices
 * Tweak - Adding missing text filter
 * Tweak - Adding 'button' class to course results link for more consistent display
@@ -2297,7 +2176,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
  /templates/single-course/course-lessons.php
 
 ## 1.6.2 - 2014-07-28
-
 * New - Adding WPML compatibility
 * Tweak - Hide the 'You have already added this Course to your cart' message if the user is enrolled in the course and add a new 'hide_sensei_woocommerce_in_cart_message' filter to remove the notice completely
 * Fix - Fixing incorrect text domain references
@@ -2312,7 +2190,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix - Fixing Analysis export to export correct page
 
 ## 1.6.1 - 2014-06-30
-
 * Fix - Making sure Learner Management page shows for users with 'manage_sensei_grades' capability
 * Fix - Fixing bug that prevented all email notifications from being deactivated
 * Fix - Fixing lesson order in single lesson next/previous lesson navigation
@@ -2320,7 +2197,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix - Making sure learner management user search works without WooCommerce activated
 
 ## 1.6.0 - 2014-06-25
-
 * New - Comprehensive question bank functionality including question categories, the ability to re-use questions in multiple quizzes and bulk adding questions from a category
 * New - New Learner Management dashboard that allows administrators to add/remove learners to/from any course or lesson
 * New - Secure private message functionality that allows learners to contact and interact with course & lesson teachers
@@ -2339,7 +2215,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix - Fixing filter for quiz results link
 
 ## 1.5.4 - 2014-03-21
-
 * Fix - Fixing content formatting in TwentyTwelve theme
 * Fix - Fixing warning when number of questions to show is 1
 * Fix - Start a Course link on My Courses page now links to custom Course Archive page if specified in settings.
@@ -2348,7 +2223,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix - Ensuring that all ungraded quizzes show up in the grading dashboard
 
 ## 1.5.3 - 2014-03-21
-
 * New - Moving global Sensei functions to new file to make them accessible everywhere
 * Fix - Fixing CSS conflict with WooCommerce forms
 * Fix - Fixing login form on My Courses page
@@ -2356,7 +2230,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix - Fixing occasional WooCommerce error on single course pages
 
 ## 1.5.2 - 2014-03-12
-
 * New - Adding support for RTL languages in the dashboard
 * New - Minifying all Javascript files and enabling SCRIPT_DEBUG script expansion
 * Tweak - Updating Chosen Javascript & CSS libraries to v1.1
@@ -2364,13 +2237,11 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix - Fixing all queries so that other page queries are not affected by Sensei settings
 
 ## 1.5.1 - 2014-03-07
-
 * New - Adding utility function to check if a user has completed a lesson
 * Fix - Fixing PHP errors on My Courses page
 * Fix - Fixing course progress bars on My Courses page
 
 ## 1.5.0 - 2014-03-04
-
 * New - Completely refactored the quiz edit panel
 * New - Adding 'File Upload' question type
 * New - Adding ability to manually order quiz questions via drag-and-drop along with option to randomly order questions
@@ -2410,14 +2281,12 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix - Ensuring that user Sensei activity is deleted when a user is deleted from WordPress
 
 ## 1.4.9 - 2014-02-13
-
 * Fix - Fixing WooCommerce taxonomy templates when Sensei is active
 * Fix - Fixing bug that was causing grades to be higher than 100%
 * Fix - Clearing floats on Sensei front-end messages
 * Fix - Making sure chosen drop down is always used on course product selection
 
 ## 1.4.8 - 2014-01-23
-
 * New - Allowing access to courses when WooCommerce order is marked as processing
 * Fix - Ensuring that all purchased courses show up on the My Courses page
 * Fix - Fixing auto grading when all user's answers are incorrect
@@ -2430,11 +2299,9 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Tweak - General CSS tweaks
 
 ## 1.4.7 - 2013-12-13
-
 * Fix - Fixing add question function for WordPress 3.8+
 
 ## 1.4.6 - 2013-12-12
-
 * New - Adding Chosen Ajax library
 * Tweak - Updating Chosen CSS
 * Tweak - Moving nav arrows from markup to CSS (affects pagination wrappers)
@@ -2446,7 +2313,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * Fix - Fixing course excerpt display on Courses page
 
 ## 1.4.5 - 2013-12-04
-
 * /classes/class-woothemes-sensei-frontend.php - Ensures course content displays when user starts taking course
 * /classes/class-woothemes-sensei-course.php,
    /classes/class-woothemes-sensei-frontend.php,
@@ -2491,7 +2357,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * /classes/class-woothemes-sensei-frontend.php - Only display excerpts for lessons/courses in search results
 
 ## 1.4.4 - 2013-11-20
-
 * /templates/course-results/course-info.php - Updating markup for course results page
 * /templates/learner-profile/learner-info.php - Updating markup for learner profile page
 * /templates/content-single-lesson.php - Fixing lesson prerequisite check
@@ -2504,13 +2369,11 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * /classes/class-woothemes-sensei.php - Fixing rewrite rules for learner profiles and course results page & improving guest checkout check
 
 ## 1.4.3 - 2013-10-24
-
 * /assets/css/frontend.css - Responsive layout tweaks & fixes.
 * /classes/class-woothemes-sensei-frontend.php - fixes missing complete course hook, fixes missing lesson complete message and reset lesson buttons, fixes 'delete course' function.
 * /classes/class-woothemes-sensei-utils.php - fixes lesson complete message on single lesson page if there are no quiz questions.
 
 ## 1.4.2 - 2013-10-15
-
 * /assets/js/lesson-metadata.js - fixes post issues with multiline and boolean add and edit ajax functions.
 * /templates/woocommerce/add-to-cart.php - fixes adding of variable subscription courses to cart.
 * /templates/single-quiz/question_type-boolean.php,
@@ -2527,7 +2390,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * /classes/class-woothemes-sensei-lesson.php - fixes save function to handle changes made in lessons ajax.
 
 ## 1.4.1 - 2013-10-10
-
 * /templates/single-course/course-lessons.php - Fixing typo in lessons template
 * /assets/css/frontend.less,
    /assets/css/frontend.css - Updating layout of lesson buttons
@@ -2542,7 +2404,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
    /classes/class-woothemes-sensei-grading-main.php - fixes user query for scaling
 
 ## 1.4.0 - 2013-09-24
-
 * /templates/learner-profile.php,
    /templates/learner-profile/learner-info.php - Adding new templates to display learner profiles
 * /templates/course-results.php,
@@ -2597,23 +2458,19 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * /assets/images/woothemes.png - Updating WooThemes logo
 
 ## 1.3.7 - 2013-07-05
-
 * /assets/js/lesson-metadata.js - fix for javascript removing special chars in ajax posting for question types
 * /classes/class-woothemes-sensei-updates.php - adds hidden manual updates screen in /wp-admin/options-general.php?page=sensei-manual-update-hidden-page
 
 ## 1.3.6 - 2013-07-01
-
 * /templates/single-quiz/question_type-multiple-choice.php - handles apostrophes in answers bugfix
 * /classes/class-woothemes-sensei-utils.php - handles apostrophes in answers bugfix
 
 ## 1.3.5 - 2013-06-10
-
 * /assets/js/lesson-metadata.js - fix for true false question type selector problems
 * /classes/class-woothemes-sensei-lesson.php - fix for true false question type selector problems
 * /widgets/widget-woothemes-sensei-course-component.php - fix for featured courses output
 
 ## 1.3.4 - 2013-06-04
-
 * /assets/css/global.css - updated styling for grading notices
 * /classes/class-woothemes-sensei.php,
    /classes/class-woothemes-sensei-analysis-course.php,
@@ -2625,12 +2482,10 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
    /templates/user/my-courses.php - fixes bug in completed courses logic
 
 ## 1.3.3 - 2013-05-30
-
 * /assets/css/frontend.css - fixes Twenty Twelve CSS conflict for lesson navigation next and previous links
 * /classes/class-woothemes-sensei.php - adds support for more WC subscriptions actions
 
 ## 1.3.2 - 2013-05-28
-
 * /classes/class-woothemes-sensei-grading.php,
    /classes/class-woothemes-sensei-utils.php - Fixing grading bug that was causing grade totals to not be saved, added function for lesson_quiz_questions()
 * /classes/class-woothemes-sensei-frontend.php - Adding logic to fix message for lessons without quiz questions that have been completed
@@ -2638,11 +2493,9 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * /templates/single-quiz/quiz-questions.php - Improving check for manual/auto quiz grading on front-end
 
 ## 1.3.1 - 2013-05-27
-
 * /classes/class-woothemes-sensei-grading.php - Fixing bug that prevented non-admin users from being graded
 
 ## 1.3.0 - 2013-05-23
-
 * /assets/css/global.css,
    /assets/css/frontend.css,
    /assets/css/settings.css - question types and grading styling
@@ -2675,34 +2528,28 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
    /templates/single-quiz/quiz-questions.php - question types modifications, added new template files for new question types
 
 ## 1.2.6 - 2013-05-16
-
 * /classes/class-woothemes-sensei-frontend.php - modified the course signup link to handle purchaseable courses
 * /classes/class-woothemes-sensei.php - permissions modification for user access
 * /templates/content-single-lesson.php - added notice for course signup if the user doesnt have access
 * /templates/single-quiz/quiz-questions.php - disabled quiz fields for when user is not taking the course, and added signup notice
 
 ## 1.2.5 - 2013-05-13
-
 * /classes/class-woothemes-sensei-frontend.php - fix for access permissions settings on Lessons and Quiz pages
 * /templates/content-single-lesson.php - fix for access permissions settings on Lessons page
 
 ## 1.2.4 - 2013-05-08
-
 * /widgets/widget-woothemes-sensei-course-component.php - fix for no active and completed courses in widget
 
 ## 1.2.3 - 2013-04-30
-
 * /assets/css/frontend.css - fix for FontAwesome issue in Firefox
 * /classes/class-woothemes-sensei-frontend.php - warning message fix
 
 ## 1.2.2 - 2013-04-29
-
 * /classes/class-woothemes-sensei-frontend.php - fix for get_comments_number filter
 * /classes/class-woothemes-sensei.php - fix for access permissions settings
 * /templates/single-lesson/lesson-meta.php - fix for access permissions settings
 
 ## 1.2.1 - 2013-04-25
-
 * /assets/js/lesson-metadata.js - security improvements
 * /classes/class-woothemes-sensei-admin.php,
     /classes/class-woothemes-sensei-analysis.php,
@@ -2733,7 +2580,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
     /widgets/widget-woothemes-sensei-lesson-component.php - security improvements
 
 ## 1.2.0 - 2013-04-04
-
 * /assets/css/settings.css - styling changes for Analysis
 * /assets/js/lesson-metadata.js - fix for media upload button not firing
 * /classes/class-woothemes-sensei.php - refactor for loading of classes, added subscriptions hooks, added logic for woocommerce order cancellation
@@ -2762,18 +2608,15 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * /widgets/widget-woothemes-sensei-lesson-component.php - uses new frontend hooks
 
 ## 1.1.2 - 2013-03-11
-
 * classes/class-woothemes-sensei-utils.php - fix to check if product was purchased
 * classes/class-woothemes-sensei.php - fix for checking product id
 
 ## 1.1.1 - 2013-03-10
-
 * classes/class-woothemes-sensei.php - modify function call to use global object, added new product object function
 * inc/woothemes-sensei-template.php - modify function call to use global object, removed old function
 * templates/woocommerce/add-to-cart.php - modify function call to use global object
 
 ## 1.1.0 - 2013-03-04
-
 * assets/chosen/* - added chosen library for improved dropdown usability
 * assets/css/frontend.css - frontend course category meta styling
 * assets/css/global.css - admin chosen drop down styling, admin add question button styling
@@ -2803,23 +2646,19 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * widgets/widget-woothemes-sensei-course-categories.php - added file to display a list of Course Categories
 
 ## 1.0.11 - 2013-02-25
-
 * /assets/css/frontend.css - Adjusted 'Complete Lesson' button margin on the Lessons page.
 * /templates/single-lesson/lesson-meta.php - fixed missing class on Take the Lesson Quiz link.
 * /templates/single-quiz/quiz-questions.php - fixed logic bug for showing the current status of the completed quiz.
 
 ## 1.0.10 - 2013-02-14
-
 * /assets/css/frontend.css - Fixed buttons and shortcodes styles that were conflicting with theme styles.
 
 ## 1.0.9 - 2013-02-12
-
 * templates/content-single-lesson.php - Fix for access permissions setting logic
 * templates/single-lesson/lesson-mega.php - Fix for access permissions setting logic
 * templates/single-quiz/quiz-questions.php - Fix for access permissions setting logic
 
 ## 1.0.8 - 2013-02-11
-
 * assets/js/lesson-metadata.js - added htmlentities function for backend validation on raw HTML input
 * classes/class-woothemes-sensei-utils.php - validation for not logged in user data
 * classes/class-woothemes-sensei-settings.php - rewording of setting for access permissions
@@ -2827,20 +2666,16 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * templates/* - stripped trailing spaces
 
 ## 1.0.7 - 2013-02-08
-
 * templates/content-single-lesson.php - Fixing bug that prevented the lesson content from showing for some users
 
 ## 1.0.6 - 2013-02-06
-
 * templates/content-single-lesson.php - Ensuring lesson content does not show until pre-requisite lesson is completed
 
 ## 1.0.5 - 2013-01-31
-
 * /inc/woo-functions.php - Add WooCommerce checks. Fixes compatibility when running Sensei and WooCommerce extensions, regarding updates.
 * /inc/class-wc-dependencies.php - ADDED.
 
 ## 1.0.4 - 2013-01-30
-
 * classes/class-woothemes-sensei-course.php - added function to find product courses
 * classes/class-woothemes-sensei-utils.php - moved customer bought product function check
 * classes/class-woothemes-sensei.php - added WooCommerce hooks for completing a payment to add the Course to a users My Courses page
@@ -2849,7 +2684,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * templates/woocommerce/add-to-cart.php - updated call to customer bought product function
 
 ## 1.0.3 - 2013-01-29
-
 * classes/class-woothemes-sensei-settings-api.php - fix for conflict with Groups plugin
 * classes/class-woothemes-sensei-settings.php - options to switch of js and css, and options for complete lesson button, reset lesson button, and to remove No Quiz warning message
 * classes/class-woothemes-sensei-frontend.php - logic to switch of js and css
@@ -2858,7 +2692,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * inc/woothemes-sensei-template.php - output functions for complete lesson and reset lesson buttons
 
 ## 1.0.2 - 2013-01-25
-
 * templates/archive-course.php - fixed localization typo
 * templates/archive-lesson.php - fixed localization typo
 * classes/class-woothemes-sensei-settings.php - fixed woocommerce detection code
@@ -2866,7 +2699,6 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * classes/class-woothemes-sensei-posttypes.php - added filters for content type slugs
 
 ## 1.0.1 - 2013-01-22
-
 * /inc/woo-functions.php - Include the woo-functions file, for integration with the WooThemes Updater plugin.
 * /classes/class-woothemes-sensei.php - Add "public" scope to methods missing a scope. Remove call to old plugin updater code.
 * /classes/class-woothemes-plugin-updater.php - REMOVED.
@@ -2875,5 +2707,4 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * woothemes-sensei.php - Include the woo-functions file.
 
 ## 1.0.0 - 2013-01-21
-
 * First release. Woo!
