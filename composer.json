@@ -61,5 +61,10 @@
 			"dealerdirect/phpcodesniffer-composer-installer": true,
 			"bamarni/composer-bin-plugin": true
 		}
+	},
+	"extra": {
+		"changelogger": {
+			"changelog": "changelog.txt"
+		}
 	}
 }
