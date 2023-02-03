@@ -67,3 +67,9 @@
 .student-action-menu .components-popover:not(.is-without-arrow)::after {
 	content: none;
 }
+
+@media screen and (max-width: 782px) {
+	.wp_list_table_sensei_learner_admins .is-expanded td:not(.hidden) {
+		overflow: visible;
+	}
+}
