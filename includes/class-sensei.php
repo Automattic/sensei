@@ -568,6 +568,9 @@ class Sensei_Main {
 
 		// Cron for periodically cleaning guest user related data.
 		Sensei_Temporary_User_Cleaner::instance()->init();
+
+		// MailPoet integration.
+		new Sensei_MailPoet();
 	}
 
 	/**
