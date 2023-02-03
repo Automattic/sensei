@@ -102,7 +102,7 @@ class Course_Content {
 	 *
 	 * @return string
 	 */
-	private function render_lesson_content( string $content ): string {
+	private function render_lesson_content( $content ) {
 		global $_wp_current_template_content;
 
 		if ( ! in_the_loop() && have_posts() ) {
