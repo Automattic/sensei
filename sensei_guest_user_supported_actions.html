@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_can_use_users_relationship - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_guest_user_supported_actions - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_can_use_users_relationship</h1>
+	<h1 class="page-title">Filter: sensei_guest_user_supported_actions</h1>
 	
 
 	
@@ -43,15 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_can_use_users_relationship">apply_filters( 'sensei_can_use_users_relationship', <span class="signature">$can_use_users_relationship )</span><span class="type-signature"> &rarr; {boolean|null}</span></h4>
+    <h4 class="name" id="sensei_guest_user_supported_actions">apply_filters( 'sensei_guest_user_supported_actions', <span class="signature">List )</span><span class="type-signature"> &rarr; {array}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filters if site environment is able to make queries including a relationship between users
-table and others.</p>
+    <p>Filters the list of supported actions for Guest Users.</p>
 </div>
 
 
@@ -85,13 +84,13 @@ table and others.</p>
 
         <tr>
             
-                <td class="name"><code>$can_use_users_relationship</code></td>
+                <td class="name"><code>List</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">null</span>
+<span class="param-type">array</span>
 
 
             
@@ -101,8 +100,7 @@ table and others.</p>
 
             
 
-            <td class="description last"><p>Default value is <code>null</code>. With this value the
-filter is ignored.</p></td>
+            <td class="description last"><p>of supported actions for guest users.</p></td>
         </tr>
 
     
@@ -120,7 +118,7 @@ filter is ignored.</p></td>
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>4.6.4</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>4.11</li></ul></dd>
     
 
     
@@ -146,7 +144,7 @@ filter is ignored.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_reports_class-sensei-no-users-table-relationship.php.html">includes/reports/class-sensei-no-users-table-relationship.php</a>, <a href="includes_reports_class-sensei-no-users-table-relationship.php.html#line63">line 63</a>
+        <a href="includes_class-sensei-guest-user.php.html">includes/class-sensei-guest-user.php</a>, <a href="includes_class-sensei-guest-user.php.html#line420">line 420</a>
     </li></ul></dd>
     
 
@@ -173,8 +171,7 @@ filter is ignored.</p></td>
 
         
 <div class="param-desc">
-    <p>Whether the site environment is able to make queries including a
-relationship between users table and others..</p>
+    <p>List of supported actions for guest users.</p>
 </div>
 
 
@@ -185,10 +182,7 @@ relationship between users table and others..</p>
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
-|
-
-<span class="param-type">null</span>
+<span class="param-type">array</span>
 
 
     </dd>
