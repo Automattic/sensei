@@ -1,5 +1,15 @@
 *** Changelog ***
 
+## 4.11.1 - 2023-02-03
+- Add: Auto select course template depending on selected course pattern [#6200](https://github.com/Automattic/sensei/pull/6200)
+- Fix: Prevent html entities from showing up in module titles in editor [#6372](https://github.com/Automattic/sensei/pull/6372)
+- Fix: Remove separator from course list pattern [#6435](https://github.com/Automattic/sensei/pull/6435)
+- Fix: Alignment of url buttons for Blockbase/Astra themes [#5814](https://github.com/Automattic/sensei/pull/5814)
+- Fix: Type error when `the_content` is not a string [#6484](https://github.com/Automattic/sensei/pull/6484)
+- Fix: `the_content` hook called twice when viewing a lesson in learning mode [#6438](https://github.com/Automattic/sensei/pull/6438)
+- Tweak: Suppress theme without comments.php deprecation message [#6453](https://github.com/Automattic/sensei/pull/6453)
+- Tweak: Round course progress to integer [#6232](https://github.com/Automattic/sensei/pull/6232)
+
 ## 4.11.0 - 2023-02-02
 - New: Guest users and teachers preview [#6421](https://github.com/Automattic/sensei/pull/6421)
 - Add: Add Course List block to My Courses and course archive on page creation [#6343](https://github.com/Automattic/sensei/pull/6343) [#6354](https://github.com/Automattic/sensei/pull/6354) [#6414](https://github.com/Automattic/sensei/pull/6416)
