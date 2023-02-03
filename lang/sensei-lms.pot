@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 4.11.0\n"
+"Project-Id-Version: Sensei LMS 4.11.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-02-02T11:57:49+00:00\n"
+"POT-Creation-Date: 2023-02-03T17:19:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: sensei-lms\n"
@@ -651,7 +651,7 @@ msgstr ""
 #: includes/class-sensei-settings.php:162
 #: templates/course-results/lessons.php:39
 #: templates/single-course/modules.php:102
-#: assets/blocks/course-outline/module-block/module-edit.js:235
+#: assets/blocks/course-outline/module-block/module-edit.js:236
 #: assets/dist/blocks/single-course.js:381
 #: assets/dist/data-port/export.js:187
 #: assets/dist/data-port/import.js:625
@@ -761,8 +761,8 @@ msgstr ""
 
 #: includes/admin/class-sensei-setup-wizard-pages.php:131
 #: includes/admin/class-sensei-setup-wizard-pages.php:233
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:100
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:160
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:96
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:156
 #: assets/blocks/course-actions-block/course-actions/course-actions-edit.js:29
 #: assets/blocks/course-actions-block/course-actions/index.js:22
 #: assets/dist/blocks/global-blocks.js:224
@@ -772,10 +772,10 @@ msgstr ""
 
 #: includes/admin/class-sensei-setup-wizard-pages.php:135
 #: includes/admin/class-sensei-setup-wizard-pages.php:237
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:104
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:166
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:221
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:274
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:100
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:162
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:217
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:270
 #: includes/block-patterns/page/templates/landing-page-grid.php:72
 #: includes/block-patterns/page/templates/landing-page-list.php:82
 #: assets/admin/editor-wizard/steps/course-details-step.js:85
@@ -798,8 +798,8 @@ msgstr ""
 
 #: includes/admin/class-sensei-setup-wizard-pages.php:139
 #: includes/admin/class-sensei-setup-wizard-pages.php:241
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:108
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:172
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:104
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:168
 #: assets/blocks/course-actions-block/course-actions/course-actions-edit.js:36
 #: assets/dist/blocks/global-blocks.js:224
 msgid "Visit Results"
@@ -1424,34 +1424,34 @@ msgstr ""
 msgid "This tool is not currently available"
 msgstr ""
 
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:58
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:54
 msgid "Courses displayed in a list"
 msgstr ""
 
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:125
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:121
 msgid "Courses displayed in a grid"
 msgstr ""
 
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:187
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:183
 msgid "Course List - Grid"
 msgstr ""
 
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:192
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:240
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:188
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:236
 #: includes/block-patterns/page/templates/landing-page-grid.php:40
 #: includes/block-patterns/page/templates/landing-page-list.php:40
 msgid "Course list"
 msgstr ""
 
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:196
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:244
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:192
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:240
 #: includes/block-patterns/page/templates/landing-page-grid.php:44
 #: includes/block-patterns/page/templates/landing-page-list.php:44
 msgid "Explore all courses"
 msgstr ""
 
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:217
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:270
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:213
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:266
 #: includes/block-patterns/page/templates/landing-page-grid.php:68
 #: includes/block-patterns/page/templates/landing-page-list.php:78
 #: assets/blocks/take-course-block/index.js:25
@@ -1459,14 +1459,14 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:225
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:278
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:221
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:274
 #: includes/block-patterns/page/templates/landing-page-grid.php:76
 #: includes/block-patterns/page/templates/landing-page-list.php:86
 msgid "Results"
 msgstr ""
 
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:235
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:231
 #: assets/blocks/course-list-block/index.js:36
 #: assets/dist/blocks/global-blocks.js:368
 #: assets/dist/blocks/shared.js:239
@@ -1997,7 +1997,7 @@ msgid "(Draft)"
 msgstr ""
 
 #: includes/blocks/class-sensei-course-outline-module-block.php:91
-#: assets/blocks/course-outline/module-block/module-edit.js:211
+#: assets/blocks/course-outline/module-block/module-edit.js:212
 #: assets/dist/blocks/single-course.js:381
 msgid "Toggle module content"
 msgstr ""
@@ -5991,7 +5991,7 @@ msgid "Module title"
 msgstr ""
 
 #: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:287
-#: assets/blocks/course-outline/module-block/module-edit.js:226
+#: assets/blocks/course-outline/module-block/module-edit.js:227
 #: assets/dist/blocks/single-course.js:381
 msgid "Module description"
 msgstr ""
@@ -6715,14 +6715,14 @@ msgstr ""
 msgid "Learn more."
 msgstr ""
 
-#: assets/admin/editor-wizard/steps/patterns-step.js:68
-#: assets/dist/admin/editor-wizard/index.js:132
+#: assets/admin/editor-wizard/steps/patterns-step.js:80
+#: assets/dist/admin/editor-wizard/index.js:133
 msgid "Start with default layout"
 msgstr ""
 
 #. translators: %1$d Current step number, %2$d Number of steps.
 #: assets/admin/editor-wizard/wizard.js:52
-#: assets/dist/admin/editor-wizard/index.js:156
+#: assets/dist/admin/editor-wizard/index.js:157
 msgid "Step %1$d of %2$d"
 msgstr ""
 
@@ -6937,7 +6937,7 @@ msgstr ""
 #: assets/blocks/button/color-hooks.js:47
 #: assets/blocks/course-categories-block/course-categories-edit.js:127
 #: assets/blocks/course-outline/lesson-block/lesson-edit.js:127
-#: assets/blocks/course-outline/module-block/module-edit.js:254
+#: assets/blocks/course-outline/module-block/module-edit.js:255
 #: assets/blocks/course-progress-block/course-progress-edit.js:131
 #: assets/dist/blocks/global-blocks.js:182
 #: assets/dist/blocks/global-blocks.js:297
@@ -7181,17 +7181,17 @@ msgstr ""
 msgid "Minimal"
 msgstr ""
 
-#: assets/blocks/course-outline/module-block/module-edit.js:185
+#: assets/blocks/course-outline/module-block/module-edit.js:186
 #: assets/dist/blocks/single-course.js:381
 msgid "Module name"
 msgstr ""
 
-#: assets/blocks/course-outline/module-block/module-edit.js:252
+#: assets/blocks/course-outline/module-block/module-edit.js:253
 #: assets/dist/blocks/single-course.js:370
 msgid "Main color"
 msgstr ""
 
-#: assets/blocks/course-outline/module-block/module-edit.js:257
+#: assets/blocks/course-outline/module-block/module-edit.js:258
 #: assets/dist/blocks/single-course.js:370
 msgid "Border color"
 msgstr ""
@@ -7358,7 +7358,7 @@ msgstr ""
 
 #. translators: %1$d number of characters introduced, %2$d number of total characters allowed.
 #: assets/blocks/editor-components/limited-text-control/index.js:27
-#: assets/dist/admin/editor-wizard/index.js:166
+#: assets/dist/admin/editor-wizard/index.js:167
 msgid "Characters: %1$d/%2$d"
 msgstr ""
 
@@ -8594,27 +8594,27 @@ msgstr ""
 msgid "Choose one or more CSV files to upload from your computer."
 msgstr ""
 
-#: assets/dist/admin/editor-wizard/index.js:206
+#: assets/dist/admin/editor-wizard/index.js:207
 #: assets/dist/home/index.js:249
 #: assets/extensions/store.js:139
 msgid "Update completed successfully!"
 msgstr ""
 
 #. translators: Placeholder is the underlying error message.
-#: assets/dist/admin/editor-wizard/index.js:207
+#: assets/dist/admin/editor-wizard/index.js:208
 #: assets/dist/home/index.js:250
 #: assets/extensions/store.js:144
 msgid "There was an error while updating the plugin: %1$s"
 msgstr ""
 
-#: assets/dist/admin/editor-wizard/index.js:207
+#: assets/dist/admin/editor-wizard/index.js:208
 #: assets/dist/home/index.js:250
 #: assets/extensions/store.js:150
 msgid "Installation completed successfully!"
 msgstr ""
 
 #. translators: Placeholder is the underlying error message.
-#: assets/dist/admin/editor-wizard/index.js:208
+#: assets/dist/admin/editor-wizard/index.js:209
 #: assets/dist/home/index.js:251
 #: assets/extensions/store.js:155
 msgid "There was an error while installing the plugin: %1$s"
