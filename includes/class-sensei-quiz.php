@@ -125,7 +125,7 @@ class Sensei_Quiz {
 	/**
 	 * Disable block based editor when custom question types have been registered.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @param bool $is_block_based_editor_enabled Whether the block based editor is enabled.
 	 *

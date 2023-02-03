@@ -163,7 +163,7 @@ class Sensei_Db_Query_Learners {
 		 * Filter the query to get learners based on the current search arguments.
 		 *
 		 * @hook sensei_learners_query
-		 * @since $$next-version$$
+		 * @since 4.11.0
 		 *
 		 * @param {string} $sql SQL query
 		 *

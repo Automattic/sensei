@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @author  Automattic
  *
- * @since   $$next-version$$
+ * @since   4.11.0
  * @package Core
  */
 class Sensei_Temporary_User {
@@ -25,7 +25,7 @@ class Sensei_Temporary_User {
 	/**
 	 * Initialize the hooks for hiding temporary users and roles.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	public static function init() {
 		add_filter( 'editable_roles', [ static::class, 'filter_out_temporary_user_roles' ], 11 );
@@ -83,7 +83,7 @@ class Sensei_Temporary_User {
 	/**
 	 * Remove guest users from user queries.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
@@ -104,7 +104,7 @@ class Sensei_Temporary_User {
 	/**
 	 * Remove guest users from user queries.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param string $query The user query.
@@ -124,7 +124,7 @@ class Sensei_Temporary_User {
 	 * Make sure temporary users are not counted.
 	 * When the user has an ungraded quiz, they are still counted, since they will show up in the grading list, as per self::filter_sensei_activity.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param array $args Original sensei_count_statuses arguments.
@@ -143,7 +143,7 @@ class Sensei_Temporary_User {
 	/**
 	 * Filter out temporary users from grading lists, except when the lesson needs grading.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param array $comments Sensei activity comments.
@@ -169,7 +169,7 @@ class Sensei_Temporary_User {
 	/**
 	 * Filter out Guest Student role tab from Users page in Settings.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param array $views List of tabs.
@@ -183,7 +183,7 @@ class Sensei_Temporary_User {
 	/**
 	 * Remove Guest Student role from showing up Settings.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param array $roles List of roles.
