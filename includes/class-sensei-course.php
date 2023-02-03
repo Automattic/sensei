@@ -2902,7 +2902,7 @@ class Sensei_Course {
 	 *
 	 * Hooked into pre_get_posts
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @param WP_Query $query Incoming WP_Query object.
 	 *
@@ -2931,7 +2931,7 @@ class Sensei_Course {
 	 *
 	 * Hooked into pre_get_posts
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @param WP_Query $query Incoming WP_Query object.
 	 *
@@ -4142,7 +4142,7 @@ class Sensei_Course {
 	/**
 	 * Determines if course archive page has content.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @return bool
 	 */
 	public function course_archive_page_has_query_block() {
@@ -4157,7 +4157,7 @@ class Sensei_Course {
 	/**
 	 * Render course archive page content.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	public function archive_page_content() {
 		$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );

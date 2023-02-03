@@ -81,7 +81,7 @@ class Sensei_Usage_Tracking_Data {
 	/**
 	 * Get the number of courses using the Open Access feature.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @return int Number of courses using the learning mode.
 	 **/

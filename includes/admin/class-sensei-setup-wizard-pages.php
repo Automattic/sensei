@@ -144,10 +144,6 @@ class Sensei_Setup_Wizard_Pages {
 <!-- /wp:group -->
 <!-- /wp:post-template -->
 
-<!-- wp:separator {"opacity":"css","align":"center","className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator aligncenter has-css-opacity alignwide is-style-wide"/>
-<!-- /wp:separator -->
-
 <!-- wp:query-pagination {"paginationArrow":"arrow","align":"center","layout":{"type":"flex","justifyContent":"space-between"}} -->
 <!-- wp:query-pagination-previous {"fontSize":"small"} /-->
 
@@ -196,7 +192,7 @@ class Sensei_Setup_Wizard_Pages {
 			 * through setup wizard.
 			 *
 			 * @hook  sensei_courses_page_template
-			 * @since $$next-version$$
+			 * @since 4.11.0
 			 *
 			 * @param {array} $blocks Blocks array.
 			 *

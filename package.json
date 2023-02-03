@@ -1,7 +1,7 @@
 {
   "name": "sensei-lms",
   "title": "Sensei LMS",
-  "version": "4.10.0",
+  "version": "4.11.0",
   "description": "Sensei LMS",
   "author": "Automattic",
   "license": "GPL-2.0-or-later",
@@ -43,7 +43,6 @@
     "@wordpress/plugins": "wp-5.9",
     "@wordpress/token-list": "wp-5.9",
     "@wordpress/url": "wp-5.9",
-    "axios": "0.26.1",
     "classnames": "2.3.1",
     "interpolate-components": "1.1.1",
     "lodash": "4.17.21",
