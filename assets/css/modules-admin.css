@@ -57,7 +57,7 @@
 }
 
 .student-action-menu .components-popover__content {
-	left: -185px;
+	transform:translateX(-90%);
 }
 
 .student-action-menu .components-dropdown-menu__menu {
