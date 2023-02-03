@@ -156,7 +156,7 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 - Fix: Fix editor wizard header style [#6335](https://github.com/Automattic/sensei/pull/6335)
 - Fix: Update question post type to not be publicly queryable [#6347](https://github.com/Automattic/sensei/pull/6347)
 - Fix: Fix conflict by disabling Yoast initialization on Divi preview [#6342](https://github.com/Automattic/sensei/pull/6342)
-- Fix: Security fixes 👏 foobar7
+- Fix: Security fixes
 - Tweak: Remove the "source" property from events data [#6310](https://github.com/Automattic/sensei/pull/6310)
 - Tweak: Update Sensei logo [#6336](https://github.com/Automattic/sensei/pull/6336)
 - Tweak: Display warning in the editor when adding the lesson properties block if Learning Mode is enabled [#6078](https://github.com/Automattic/sensei/pull/6078)
