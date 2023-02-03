@@ -185,7 +185,7 @@ class Sensei_Notices {
 	 *
 	 * @return string The modified content.
 	 */
-	public function prepend_notices_to_content( string $content ) : string {
+	public function prepend_notices_to_content( $content ) {
 		if ( in_the_loop() && is_main_query() ) {
 
 			ob_start();
