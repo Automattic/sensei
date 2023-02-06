@@ -101,7 +101,7 @@ class Sensei_Home_Help_Provider {
 		if ( apply_filters( 'sensei_home_support_ticket_creation_upsell_show', true ) ) {
 			$extra_link = $this->create_extra_link( __( 'Upgrade to Sensei Pro', 'sensei-lms' ), 'https://senseilms.com/pricing/' );
 			$icon       = 'lock';
-		} elseif ( Sensei_Utils::is_atomic_platform() ) {
+		} elseif ( Sensei_Utils::has_wpcom_subscription() ) {
 			$url = 'https://wordpress.com/help/contact';
 		} else {
 			$url = 'https://senseilms.com/contact/';

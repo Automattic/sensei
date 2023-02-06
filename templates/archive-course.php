@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     3.0.0
+ * @version     4.11.0
  */
 ?>
 
@@ -31,26 +31,31 @@
 		?>
 	</div>
 
-	<?php if ( have_posts() ) : ?>
+	<?php
 
-		<?php sensei_load_template( 'loop-course.php' ); ?>
+	if ( Sensei()->course->course_archive_page_has_query_block() ) {
 
-	<?php else : ?>
+		Sensei()->course->archive_page_content();
+
+	} elseif ( have_posts() ) {
+
+		sensei_load_template( 'loop-course.php' );
+
+	} else {
+		?>
 
 		<p><?php esc_html_e( 'No courses found that match your selection.', 'sensei-lms' ); ?></p>
 
-	<?php endif; ?>
+		<?php
+	}
 
-	<?php
+	/**
+	 * This action runs after including the course archive loop. This hook fires within the archive-course.php
+	 * It fires even if the current archive has no posts.
+	 *
+	 * @since 1.9.0
+	 */
+	do_action( 'sensei_archive_after_course_loop' );
 
-		/**
-		 * This action runs after including the course archive loop. This hook fires within the archive-course.php
-		 * It fires even if the current archive has no posts.
-		 *
-		 * @since 1.9.0
-		 */
-		do_action( 'sensei_archive_after_course_loop' );
-
+	get_sensei_footer();
 	?>
-
-<?php get_sensei_footer(); ?>

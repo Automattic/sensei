@@ -426,4 +426,13 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 			'date'    => [ 8 * 24 * 60 * 60, null ],
 		];
 	}
+
+	public function testUserCountByRole_WhenCalled_ReturnsCorrectNumberOfStudents() {
+		$this->factory->user->create_many( 3 );
+		$this->factory->user->create_many( 2, array( 'role' => 'student' ) );
+
+		$result = Sensei_Utils::get_user_count_for_role( 'student' );
+
+		$this->assertEquals( 2, $result );
+	}
 }
