@@ -1,6 +1,6 @@
 <?php
 
-namespace SenesiTest\Internal\Emails;
+namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Post_Type;
 
