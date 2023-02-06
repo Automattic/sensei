@@ -4975,7 +4975,10 @@ class Sensei_Lesson {
 		$lesson_allow_comments = $allow_comments && $user_can_view_lesson;
 
 		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
+			// Borrowed solution from https://github.com/WordPress/gutenberg/pull/28128.
+			add_filter( 'deprecated_file_trigger_error', '__return_false' );
 			comments_template( '', true );
+			remove_filter( 'deprecated_file_trigger_error', '__return_false' );
 		}
 	}
 

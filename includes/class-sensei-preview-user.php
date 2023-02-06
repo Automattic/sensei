@@ -5,7 +5,7 @@
  * Handles operations related to teachers switching to a preview user.
  *
  * @package Sensei\Frontend
- * @since   $$next-version$$
+ * @since   4.11.0
  */
 
 /**
@@ -13,7 +13,7 @@
  *
  * @author  Automattic
  *
- * @since   $$next-version$$
+ * @since   4.11.0
  * @package Core
  */
 class Sensei_Preview_User {
@@ -38,7 +38,7 @@ class Sensei_Preview_User {
 	/**
 	 * Preview user login name prefix.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @var string
 	 */
@@ -47,7 +47,7 @@ class Sensei_Preview_User {
 	/**
 	 * Preview user class constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	public function __construct() {
 
@@ -58,7 +58,7 @@ class Sensei_Preview_User {
 	/**
 	 * Initialize preview user feature.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	public function init() {
 
@@ -66,7 +66,7 @@ class Sensei_Preview_User {
 		 * Enable or disable 'preview as student' feature.
 		 *
 		 * @hook sensei_feature_preview_students
-		 * @since $$next-version$$
+		 * @since 4.11.0
 		 *
 		 * @param {bool} $enable Enable feature. Default true.
 		 *
@@ -106,7 +106,7 @@ class Sensei_Preview_User {
 	/**
 	 * Change the current user to the preview user if its set for the teacher.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 */
 	public function override_user() {
@@ -134,7 +134,7 @@ class Sensei_Preview_User {
 	/**
 	 * Create and switch to a preview user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 */
 	public function switch_to_preview_user() {
@@ -155,7 +155,7 @@ class Sensei_Preview_User {
 	/**
 	 * Switch back to original user and delete preview user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 */
 	public function switch_off_preview_user() {
@@ -173,7 +173,7 @@ class Sensei_Preview_User {
 	/**
 	 * Add switch to user link to admin bar.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar The WordPress Admin Bar object.
@@ -218,7 +218,7 @@ class Sensei_Preview_User {
 	/**
 	 * Enable admin bar for preview user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param bool $show Initial state.
@@ -305,7 +305,7 @@ class Sensei_Preview_User {
 	/**
 	 * Create the Guest Student role if it does not exist.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	private function create_role() {
 		$role = get_role( self::ROLE );
@@ -370,7 +370,7 @@ class Sensei_Preview_User {
 	 *
 	 * @note This hook should only run when the preview user is active, it does not do checks on its own.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param WP_Query $query Lesson query.

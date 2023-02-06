@@ -60,7 +60,7 @@ export const StudentActionMenu = ( {
 	/**
 	 * Filters controls for the single student action menu.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @param {Array}    controls     Controls for the single student action menu.
 	 * @param {Function} setAction    Selected action.
