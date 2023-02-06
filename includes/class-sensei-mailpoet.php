@@ -155,25 +155,32 @@ class Sensei_MailPoet {
 			if ( class_exists( 'Sensei_Pro_Student_Groups\Repositories\Group_Student_Repository', true ) ) {
 				$group_student_repo = new Sensei_Pro_Student_Groups\Repositories\Group_Student_Repository( $wpdb );
 				$student_ids        = $group_student_repo->find_group_students( $id );
-
-				$args = array(
-					'include' => $student_ids,
-					'fields'  => array( 'id', 'user_email', 'display_name', 'user_nicename' ),
-				);
-				return get_users( $args );
 			}
 		}
 		if ( 'course' === $post_type ) {
-			$students_count = get_comments(
+			$students    = get_comments(
 				array(
 					'post_id' => $id,
 					'type'    => 'sensei_course_status',
 					'status'  => 'any',
-				),
-				true
+				)
+			);
+			$student_ids = array_map(
+				static function( $student ) {
+					return $student->user_id;
+				},
+				$students
 			);
 		}
-		return array();
+		if ( ! $student_ids ) {
+			return array();
+		}
+
+		$args = array(
+			'include' => $student_ids,
+			'fields'  => array( 'id', 'user_email', 'display_name', 'user_nicename' ),
+		);
+		return get_users( $args );
 	}
 
 	/**
