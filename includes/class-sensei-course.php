@@ -124,8 +124,14 @@ class Sensei_Course {
 		// attach the filter links to the course archive
 		add_action( 'sensei_archive_before_course_loop', [ 'Sensei_Course', 'course_archive_filters' ] );
 
-		// filter the course query when featured filter is applied
-		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_featured_filter' ], 10, 1 );
+		// Filter the course query when featured filter is applied.
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_featured_filter' ] );
+
+		// Filter by course category when category filter is applied.
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_category_filter' ] );
+
+		// Filter by student course state when student course filter is applied.
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_student_course_state_filter' ] );
 
 		// Handle the ordering for the courses archive page.
 		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_set_order_by' ], 10, 1 );
@@ -149,6 +155,17 @@ class Sensei_Course {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+	}
+
+	/**
+	 * Check user permission for editing a course.
+	 *
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return bool Whether the user can edit the course.
+	 */
+	public static function can_current_user_edit_course( $course_id ) {
+		return current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course_id );
 	}
 
 	/**
@@ -266,6 +283,9 @@ class Sensei_Course {
 			'nonce_value' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
 			'nonce_name'  => Sensei()->teacher::NONCE_FIELD_NAME,
 			'teachers'    => Sensei()->teacher->get_teachers_and_authors_with_fields( [ 'ID', 'display_name' ] ),
+			'features'    => [
+				'open_access' => apply_filters( 'sensei_feature_open_access_courses', true ),
+			],
 			'courses'     => get_posts(
 				[
 					'post_type'        => 'course',
@@ -433,6 +453,18 @@ class Sensei_Course {
 		register_post_meta(
 			'course',
 			'disable_notification',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			]
+		);
+		register_post_meta(
+			'course',
+			Sensei_Guest_User::COURSE_OPEN_ACCESS_META,
 			[
 				'show_in_rest'  => true,
 				'single'        => true,
@@ -2854,12 +2886,81 @@ class Sensei_Course {
 	 * @return WP_Query $query
 	 */
 	public static function course_archive_featured_filter( $query ) {
-
 		if ( isset( $_GET['course_filter'] ) && 'featured' == $_GET['course_filter'] && $query->is_main_query() ) {
 			// setup meta query for featured courses
 			$query->set( 'meta_value', 'featured' );
 			$query->set( 'meta_key', '_course_featured' );
 			$query->set( 'meta_compare', '=' );
+		}
+
+		return $query;
+	}
+
+	/**
+	 * If the category filter is used on the course archive page
+	 * filter the courses returned to only show those in that category.
+	 *
+	 * Hooked into pre_get_posts
+	 *
+	 * @since 4.11.0
+	 *
+	 * @param WP_Query $query Incoming WP_Query object.
+	 *
+	 * @return WP_Query $query
+	 */
+	public static function course_archive_category_filter( $query ) {
+		if ( isset( $_GET['course_category_filter'] ) && intval( $_GET['course_category_filter'] ) > 0 && $query->is_main_query() ) {
+			$query->set(
+				'tax_query',
+				[
+					[
+						'taxonomy' => 'course-category',
+						'field'    => 'id',
+						'terms'    => intval( $_GET['course_category_filter'] ),
+					],
+				]
+			);
+		}
+
+		return $query;
+	}
+
+	/**
+	 * If the student course filter is used on the course archive page
+	 * filter the courses returned to only show those in that student course state.
+	 *
+	 * Hooked into pre_get_posts
+	 *
+	 * @since 4.11.0
+	 *
+	 * @param WP_Query $query Incoming WP_Query object.
+	 *
+	 * @return WP_Query $query
+	 */
+	public static function course_archive_student_course_state_filter( $query ) {
+		if ( isset( $_GET['student_course_filter'] ) && $query->is_main_query() && is_user_logged_in() ) {
+			$learner_manager = Sensei_Learner::instance();
+			$user_id         = get_current_user_id();
+			$selected_option = sanitize_text_field( wp_unslash( $_GET['student_course_filter'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+			$args            = [
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			];
+
+			switch ( $selected_option ) {
+				case 'active':
+					$courses_query = $learner_manager->get_enrolled_active_courses_query( $user_id, $args );
+					$course_ids    = $courses_query->posts;
+					break;
+				case 'completed':
+					$courses_query = $learner_manager->get_enrolled_completed_courses_query( $user_id, $args );
+					$course_ids    = $courses_query->posts;
+					break;
+				default:
+					return $query;
+			}
+
+			$query->set( 'post__in', $course_ids );
 		}
 
 		return $query;
@@ -3346,14 +3447,11 @@ class Sensei_Course {
 	 * @return bool
 	 */
 	public static function can_current_user_manually_enrol( $course_id ) {
-		if ( ! is_user_logged_in() ) {
-			return false;
-		}
 
 		// Check if the user is already enrolled through any provider.
 		$is_user_enrolled = self::is_user_enrolled( $course_id, get_current_user_id() );
 
-		$default_can_user_manually_enrol = ! $is_user_enrolled;
+		$default_can_user_manually_enrol = is_user_logged_in() && ! $is_user_enrolled;
 
 		$can_user_manually_enrol = apply_filters_deprecated(
 			'sensei_display_start_course_form',
@@ -3391,15 +3489,12 @@ class Sensei_Course {
 			'3.0.0',
 			null
 		);
+		if ( is_user_logged_in() && $is_course_content_restricted ) {
+			self::add_course_access_permission_message( '' );
+		}
 
-		if ( is_user_logged_in() ) {
-			$should_display_start_course_form = self::can_current_user_manually_enrol( $post->ID );
-			if ( $is_course_content_restricted && false == $should_display_start_course_form ) {
-				self::add_course_access_permission_message( '' );
-			}
-			if ( $should_display_start_course_form ) {
+		if ( self::can_current_user_manually_enrol( $post->ID ) ) {
 				sensei_start_course_form( $post->ID );
-			}
 		} else {
 			if ( get_option( 'users_can_register' ) ) {
 
@@ -4042,6 +4137,63 @@ class Sensei_Course {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		return (float) $wpdb->get_var( $query );
+	}
+
+	/**
+	 * Determines if course archive page has content.
+	 *
+	 * @since 4.11.0
+	 * @return bool
+	 */
+	public function course_archive_page_has_query_block() {
+		$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
+
+		return is_a( $sensei_settings_course_page, 'WP_Post' ) &&
+			! Sensei()->post_types->has_old_shortcodes( $sensei_settings_course_page->post_content ) &&
+			! empty( $sensei_settings_course_page->post_content ) &&
+			has_block( 'core/query', $sensei_settings_course_page->post_content );
+	}
+
+	/**
+	 * Render course archive page content.
+	 *
+	 * @since 4.11.0
+	 */
+	public function archive_page_content() {
+		$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
+
+		if (
+			$this->course_archive_page_has_query_block()
+		) {
+			echo wp_kses(
+				do_blocks( $sensei_settings_course_page->post_content ),
+				array_merge(
+					wp_kses_allowed_html( 'post' ),
+					[
+						'option' => [
+							'selected' => [],
+							'value'    => [],
+						],
+						'select' => [
+							'class'          => [],
+							'id'             => [],
+							'name'           => [],
+							'data-param-key' => [],
+						],
+						'form'   => [
+							'action' => [],
+							'method' => [],
+						],
+						'input'  => [
+							'type'  => [],
+							'name'  => [],
+							'value' => [],
+						],
+					]
+				)
+			);
+			remove_all_actions( 'sensei_pagination' );
+		}
 	}
 }
 

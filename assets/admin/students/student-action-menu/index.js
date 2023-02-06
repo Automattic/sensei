@@ -4,6 +4,7 @@
 import { DropdownMenu } from '@wordpress/components';
 import { render, useState } from '@wordpress/element';
 import { moreVertical } from '@wordpress/icons';
+import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -33,7 +34,7 @@ export const StudentActionMenu = ( {
 		setModalOpen( false );
 	};
 
-	const controls = [
+	const defaultControls = [
 		{
 			title: __( 'Add to Course', 'sensei-lms' ),
 			onClick: () => addToCourse(),
@@ -56,6 +57,24 @@ export const StudentActionMenu = ( {
 		},
 	];
 
+	/**
+	 * Filters controls for the single student action menu.
+	 *
+	 * @since 4.11.0
+	 *
+	 * @param {Array}    controls     Controls for the single student action menu.
+	 * @param {Function} setAction    Selected action.
+	 * @param {Function} setModalOpen The callback to run when the modal is closed.
+	 *
+	 * @return {Array} Filtered controls.
+	 */
+	const controls = applyFilters(
+		'senseiStudentActionMenuControls',
+		defaultControls,
+		setAction,
+		setModalOpen
+	);
+
 	const addToCourse = () => {
 		setAction( 'add' );
 		setModalOpen( true );
@@ -71,6 +90,25 @@ export const StudentActionMenu = ( {
 		setModalOpen( true );
 	};
 
+	const defaultStudentModal = (
+		<StudentModal
+			action={ action }
+			onClose={ closeModal }
+			students={ [ studentId ] }
+			studentDisplayName={ studentDisplayName }
+		/>
+	);
+
+	/** This filter is documented in ../student-bulk-action-button/index.js */
+	const modal = applyFilters(
+		'senseiStudentBulkActionModal',
+		defaultStudentModal,
+		action,
+		closeModal,
+		[ studentId ],
+		studentDisplayName
+	);
+
 	return (
 		<>
 			<DropdownMenu
@@ -79,14 +117,7 @@ export const StudentActionMenu = ( {
 				controls={ controls }
 			/>
 
-			{ isModalOpen && (
-				<StudentModal
-					action={ action }
-					onClose={ closeModal }
-					students={ [ studentId ] }
-					studentDisplayName={ studentDisplayName }
-				/>
-			) }
+			{ isModalOpen && modal }
 		</>
 	);
 };

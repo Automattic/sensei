@@ -51,6 +51,7 @@ const CourseGeneralSidebar = () => {
 	const featured = meta._course_featured;
 	const prerequisite = meta._course_prerequisite;
 	const notification = meta.disable_notification;
+	const openAccess = meta._open_access;
 
 	useEffect( () =>
 		editorLifecycle( {
@@ -169,6 +170,25 @@ const CourseGeneralSidebar = () => {
 					}
 				/>
 			) : null }
+
+			{ window.sensei.courseSettingsSidebar.features?.open_access && (
+				<>
+					<HorizontalRule />
+
+					<h3>{ __( 'Access', 'sensei-lms' ) }</h3>
+					<CheckboxControl
+						label={ __( 'Open Access', 'sensei-lms' ) }
+						checked={ openAccess }
+						onChange={ ( checked ) =>
+							setMeta( { ...meta, _open_access: checked } )
+						}
+						help={ __(
+							'Visitors can take this course without signing up. Not available for paid courses.',
+							'sensei-lms'
+						) }
+					/>
+				</>
+			) }
 
 			<HorizontalRule />
 

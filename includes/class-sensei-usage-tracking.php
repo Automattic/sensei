@@ -97,21 +97,24 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		if ( 1 === preg_match( '/(^sensei|\-sensei$)/', $plugin_slug ) ) {
 			return true;
 		}
+
 		$third_party_plugins = array(
+			'automatewoo',
 			'classic-editor',
 			'jetpack',
+			'mailpoet',
 			'polylang',
-			'sitepress-multilingual-cms',
+			'sitepress-multilingual-cms', // WPML.
 			'woocommerce',
+			'woocommerce-follow-up-emails',
 			'woocommerce-memberships',
-			'woocommerce-product-vendors',
 			'woocommerce-subscriptions',
-			'woothemes-updater',
-			'wp-quicklatex',
 		);
+
 		if ( in_array( $plugin_slug, $third_party_plugins, true ) ) {
 			return true;
 		}
+
 		return false;
 	}
 

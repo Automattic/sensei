@@ -55,6 +55,7 @@ class Sensei_Feature_Flags {
 			[
 				'enrolment_provider_tooltip' => false,
 				'tables_based_progress'      => false,
+				'email_customization'        => false,
 			]
 		);
 	}
