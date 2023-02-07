@@ -20,6 +20,7 @@ import { withBlockValidation } from '../../../shared/blocks/block-validation';
 import {
 	answerFeedbackCorrectBlock,
 	answerFeedbackIncorrectBlock,
+	answerFeedbackGenericBlock,
 } from '../answer-feedback-block';
 import questionDescriptionBlock from '../question-description-block';
 import questionAnswersBlock from '../question-answers-block';
@@ -162,6 +163,7 @@ const QuestionEdit = ( props ) => {
 				? [
 						[ answerFeedbackCorrectBlock.name, {} ],
 						[ answerFeedbackIncorrectBlock.name, {} ],
+						[ answerFeedbackGenericBlock.name, {} ],
 				  ]
 				: [] ),
 		],

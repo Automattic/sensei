@@ -24,6 +24,19 @@ const sharedMetadata = {
 };
 
 /**
+ * Generic Answer Feedback block definition.
+ */
+export const answerFeedbackGenericBlock = {
+	...sharedMetadata,
+	name: 'sensei-lms/quiz-question-feedback-generic',
+	title: __( 'Generic Answer Feedback', 'sensei-lms' ),
+	icon,
+	description: __( 'Display generic answer feedback.', 'sensei-lms' ),
+	edit: ( props ) => edit( { ...props, type: 'generic' } ),
+	save: () => <InnerBlocks.Content />,
+};
+
+/**
  * Correct Answer Feedback block definition.
  */
 export const answerFeedbackCorrectBlock = {
