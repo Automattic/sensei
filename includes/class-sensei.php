@@ -1,5 +1,6 @@
 <?php
 
+use Sensei\Internal\Emails\Email_Post_Type;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
@@ -569,7 +570,11 @@ class Sensei_Main {
 		// Cron for periodically cleaning guest user related data.
 		Sensei_Temporary_User_Cleaner::instance()->init();
 
-		// MailPoet integration.
+		$email_customization_enabled = $this->feature_flags->is_enabled( 'email_customization' );
+		if ( $email_customization_enabled ) {
+			( new Email_Post_Type() )->init();
+		}
+    // MailPoet integration.
 		new Sensei_MailPoet();
 	}
 

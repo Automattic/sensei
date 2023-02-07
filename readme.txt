@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 7.2
-Stable tag: 4.11.0
+Stable tag: 4.11.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,16 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2023-02-03 - version 4.11.1
+* Add: Auto select course template depending on selected course pattern [#6200](https://github.com/Automattic/sensei/pull/6200)
+* Fix: Prevent html entities from showing up in module titles in editor [#6372](https://github.com/Automattic/sensei/pull/6372)
+* Fix: Remove separator from course list pattern [#6435](https://github.com/Automattic/sensei/pull/6435)
+* Fix: Alignment of url buttons for Blockbase/Astra themes [#5814](https://github.com/Automattic/sensei/pull/5814)
+* Fix: Type error when `the_content` is not a string [#6484](https://github.com/Automattic/sensei/pull/6484)
+* Fix: `the_content` hook called twice when viewing a lesson in learning mode [#6438](https://github.com/Automattic/sensei/pull/6438)
+* Tweak: Suppress theme without comments.php deprecation message [#6453](https://github.com/Automattic/sensei/pull/6453)
+* Tweak: Round course progress to integer [#6232](https://github.com/Automattic/sensei/pull/6232)
+
 2023-02-02 - version 4.11.0
 * New: Guest users and teachers preview [#6421](https://github.com/Automattic/sensei/pull/6421)
 * Add: Add Course List block to My Courses and course archive on page creation [#6343](https://github.com/Automattic/sensei/pull/6343) [#6354](https://github.com/Automattic/sensei/pull/6354) [#6414](https://github.com/Automattic/sensei/pull/6416)
@@ -160,7 +170,3 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Tweak: Remove the "source" property from events data [#6310](https://github.com/Automattic/sensei/pull/6310)
 * Tweak: Update Sensei logo [#6336](https://github.com/Automattic/sensei/pull/6336)
 * Tweak: Display warning in the editor when adding the lesson properties block if Learning Mode is enabled [#6078](https://github.com/Automattic/sensei/pull/6078)
-
-2022-12-09 - version 4.9.1
-* Fix: Always initialize question blocks in frontend [#6258](https://github.com/Automattic/sensei/pull/6258)
-* Fix: Fix global admin styles for Groups badge and landing page [#6260](https://github.com/Automattic/sensei/pull/6260)

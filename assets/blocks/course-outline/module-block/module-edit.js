@@ -203,7 +203,7 @@ export const ModuleEdit = ( props ) => {
 							type="button"
 							className={ classnames(
 								'wp-block-sensei-lms-course-outline__arrow',
-								{ collapsed: ! isExpanded }
+								{ 'sensei-collapsed': ! isExpanded }
 							) }
 							onClick={ () => setExpanded( ! isExpanded ) }
 						>
