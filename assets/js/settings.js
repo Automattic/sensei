@@ -65,7 +65,12 @@ jQuery( document ).ready( function ( $ ) {
 	}
 
 	$senseiSettings.find( 'a.tab' ).on( 'click', function () {
-		const sectionId = $( this ).attr( 'href' )?.replace( '#', '' );
+		const href = $( this ).attr( 'href' );
+		if ( ! href?.startsWith( '#' ) ) {
+			return true;
+		}
+
+		const sectionId = href?.replace( '#', '' );
 		window.location.hash = '#' + sectionId;
 		hideAllSections();
 		show( sectionId );
