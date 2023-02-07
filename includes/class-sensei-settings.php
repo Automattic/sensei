@@ -1,4 +1,7 @@
 <?php
+
+use Sensei\Internal\Emails\Email_List_Table;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -102,6 +105,23 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'manage_sensei',
 			$this->page_slug,
 			array( $this, 'settings_screen' )
+		);
+
+		add_submenu_page(
+			'sensei',
+			'Emails Listing',
+			'Emails Listing',
+			'manage_sensei',
+			'emails-listing',
+			function() {
+				?>
+				<h1>Emails Listing</h1>
+				<?php
+
+				$list_table = new Email_List_Table();
+				$list_table->prepare_items();
+				$list_table->display();
+			}
 		);
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
