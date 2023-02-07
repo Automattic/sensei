@@ -67,10 +67,11 @@ class Sensei_MailPoet {
 		$mailpoet_lists = $this->get_mailpoet_lists();
 
 		foreach ( $sensei_lists as $list ) {
-			// find list in mailpoet lists array. if not exists, create one.
-			if ( ! array_key_exists( $list['name'], $mailpoet_lists ) ) {
+			$list_name = $this->get_list_name( $list['name'], $list['post_type'] );
+			// find list in MailPoet lists array. if not exists, create one.
+			if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
 				$new_list = array(
-					'name'        => $list['name'],
+					'name'        => $list_name,
 					'description' => $list['description'],
 				);
 				try {
@@ -227,5 +228,18 @@ class Sensei_MailPoet {
 		foreach ( $list_ids as $list_id ) {
 			$this->mailpoet_api->deleteList( $list_id );
 		}
+	}
+
+	/**
+	 * Generates a Sensei LMS prefixed name for a MailPoet list.
+	 *
+	 * @param string $name The name of the course or group.
+	 *
+	 * @param string $post_type The post type: course or group.
+	 *
+	 * @return string
+	 */
+	private function get_list_name( $name, $post_type ) {
+		return 'Sensei LMS ' . ucfirst( $post_type ) . ': ' . $name;
 	}
 }
