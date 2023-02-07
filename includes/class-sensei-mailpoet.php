@@ -54,9 +54,37 @@ class Sensei_MailPoet {
 		if ( class_exists( \MailPoet\API\API::class ) ) {
 			$this->mailpoet_api = \MailPoet\API\API::MP( 'v1' );
 			if ( $this->mailpoet_api->isSetupComplete() ) {
-				add_action( 'plugins_loaded', array( $this, 'sync_subscribers' ) );
+				add_action( 'init', array( $this, 'maybe_schedule_cron_job' ), 101 );
+				add_action( 'sensei_sync_mailpoet_subscribers', array( $this, 'sync_subscribers' ) );
+				register_deactivation_hook( SENSEI_LMS_PLUGIN_FILE, array( $this, 'deactivate_sync_job' ) );
 			}
 		}
+	}
+
+	/**
+	 * Attach job to cron.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @access private
+	 * @return void
+	 */
+	public function maybe_schedule_cron_job() {
+		if ( ! wp_next_scheduled( 'sensei_sync_mailpoet_subscribers' ) ) {
+			wp_schedule_event( time(), 'daily', 'sensei_sync_mailpoet_subscribers' );
+		}
+	}
+
+	/**
+	 * Remove MailPoet sync cron job.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return void
+	 */
+	public function deactivate_sync_job() {
+		$timestamp = wp_next_scheduled( 'sensei_sync_mailpoet_subscribers' );
+		wp_unschedule_event( $timestamp, 'sensei_sync_mailpoet_subscribers' );
 	}
 
 	/**

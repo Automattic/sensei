@@ -574,7 +574,7 @@ class Sensei_Main {
 		if ( $email_customization_enabled ) {
 			( new Email_Post_Type() )->init();
 		}
-    // MailPoet integration.
+        // MailPoet integration.
 		new Sensei_MailPoet();
 	}
 
