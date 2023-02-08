@@ -29,7 +29,7 @@ class Settings_Menu {
 		$sections['email-notification-settings'] = array(
 			'name'        => __( 'Emails', 'sensei-lms' ),
 			'description' => __( 'Settings for email notifications sent from your site.', 'sensei-lms' ),
-			'href'        => admin_url( 'edit.php?post_type=' . Email_Post_Type::POST_TYPE ),
+			'href'        => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' ),
 		);
 		return $sections;
 	}

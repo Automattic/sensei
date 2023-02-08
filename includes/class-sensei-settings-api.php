@@ -212,7 +212,9 @@ class Sensei_Settings_API {
 				}
 
 				$sections[ $k ] = array(
-					'href'  => isset( $v['href'] ) ? esc_attr( $v['href'] ) : '#' . esc_attr( $k ),
+					'href'  => isset( $v['href'] ) 
+						? esc_attr( $v['href'] ) 
+						: admin_url('admin.php?page=' . $this->token . '#' . esc_attr( $k ) ),
 					'name'  => esc_attr( $v['name'] ),
 					'class' => esc_attr( $classes ),
 				);

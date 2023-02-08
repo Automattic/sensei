@@ -64,13 +64,17 @@ jQuery( document ).ready( function ( $ ) {
 		show( defaultSectionId );
 	}
 
-	$senseiSettings.find( 'a.tab' ).on( 'click', function () {
+	$senseiSettings.find( 'a.tab' ).on( 'click', function ( e ) {
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams( queryString );
+
 		const href = $( this ).attr( 'href' );
-		if ( ! href?.startsWith( '#' ) ) {
+		if ( urlParams.has( 'tab' ) || ! href?.includes( '#' ) ) {
 			return true;
 		}
 
-		const sectionId = href?.replace( '#', '' );
+		e.preventDefault();
+		const sectionId = href.split( '#' )[ 1 ];
 		window.location.hash = '#' + sectionId;
 		hideAllSections();
 		show( sectionId );

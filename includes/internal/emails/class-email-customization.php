@@ -52,6 +52,7 @@ class Email_Customization {
 	public function init(): void {
 		( new Email_Post_Type() )->init();
 		( new Settings_Menu() )->init();
+		( new Email_Settings_Tab() )->init();
 	}
 
 }
