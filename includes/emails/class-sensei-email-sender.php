@@ -1,8 +1,13 @@
 <?php
+/**
+ * File containing the Sensei_Email_Sender class.
+ *
+ * @package sensei
+ */
 
 // phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis -- Prevent "Unused global variable $sensei_email_data"
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 require plugin_dir_path( __DIR__ ) . '../vendor/autoload.php';
@@ -46,7 +51,7 @@ class Sensei_Email_Sender {
 
 		$headers[] = 'Content-Type: text/html; charset=UTF-8';
 
-		wp_mail( 'test-email@senseitestemailcheck.com', 'Dummy text', $html_output_with_inlined_css, $headers, null );
+		wp_mail( apply_filters( 'sensei_test_email_address', 'test-email@senseitestemailcheck.com' ), 'Dummy text', $html_output_with_inlined_css, $headers, null );
 	}
 
 	/**
