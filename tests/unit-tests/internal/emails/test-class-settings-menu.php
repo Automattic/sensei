@@ -20,7 +20,7 @@ class Settings_Menu_Test extends \WP_UnitTestCase {
 			'email-notification-settings' => [
 				'name'        => 'Emails',
 				'description' => 'Settings for email notifications sent from your site.',
-				'href'        => admin_url( 'edit.php?post_type=sensei_email' ),
+				'href'        => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' ),
 			],
 		];
 		self::assertSame( $expected, $sections );
