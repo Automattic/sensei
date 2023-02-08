@@ -115,9 +115,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Output the settings screen.
 	 */
 	public function settings_screen() {
-		$tab_name = wp_unslash( $_GET['tab'] ?? '' );
-		$tab_name = esc_attr( $tab_name );
-		 /**
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification not required.
+		$tab_name = sanitize_key( wp_unslash( $_GET['tab'] ?? '' ) );
+		/**
 		 * Filters settings tab content.
 		 *
 		 * @hook  sensei_settings_tab_content
