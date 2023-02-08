@@ -111,6 +111,7 @@ const QuestionEdit = ( props ) => {
 	const AnswerBlock = type && types[ type ];
 
 	const canHaveFeedback = AnswerBlock?.feedback;
+	const canHaveContextualFeedback = AnswerBlock?.hasContextualFeedback;
 
 	const hasSelected = useHasSelected( props );
 	const isSingle = context && ! ( 'sensei-lms/quizId' in context );
@@ -161,13 +162,16 @@ const QuestionEdit = ( props ) => {
 			[ questionAnswersBlock.name, {} ],
 			...( canHaveFeedback
 				? [
-						[ answerFeedbackCorrectBlock.name, {} ],
-						[ answerFeedbackIncorrectBlock.name, {} ],
-						[ answerFeedbackGenericBlock.name, {} ],
+						...( canHaveContextualFeedback
+							? [
+									[ answerFeedbackCorrectBlock.name, {} ],
+									[ answerFeedbackIncorrectBlock.name, {} ],
+							  ]
+							: [ [ answerFeedbackGenericBlock.name, {} ] ] ),
 				  ]
 				: [] ),
 		],
-		[ canHaveFeedback ]
+		[ canHaveFeedback, canHaveContextualFeedback ]
 	);
 
 	if ( ! editable ) {

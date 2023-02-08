@@ -42,6 +42,7 @@ const questionTypes = {
 		view: MultipleChoiceAnswer.view,
 		settings: [ QuestionMultipleChoiceSettings ],
 		feedback: true,
+		hasContextualFeedback: true,
 		validate: ( { answers = [] } = {} ) => {
 			return {
 				noAnswers: answers.filter( ( a ) => a.label ).length < 2,
@@ -89,6 +90,7 @@ const questionTypes = {
 		edit: TrueFalseAnswer,
 		view: TrueFalseAnswer.view,
 		feedback: true,
+		hasContextualFeedback: true,
 		settings: [],
 	},
 	'gap-fill': {
@@ -97,6 +99,7 @@ const questionTypes = {
 		edit: GapFillAnswer,
 		view: GapFillAnswer.view,
 		feedback: true,
+		hasContextualFeedback: true,
 		settings: [],
 		validate: ( { before, after, gap } = {} ) => {
 			return {
@@ -130,6 +133,7 @@ const questionTypes = {
 			'Short answer to an open-ended question.',
 			'sensei-lms'
 		),
+		feedback: true,
 		edit: SingleLineAnswer,
 		view: SingleLineAnswer,
 		settings: [ QuestionGradingNotesSettings ],
@@ -140,6 +144,7 @@ const questionTypes = {
 			'Long answer to an open-ended question.',
 			'sensei-lms'
 		),
+		feedback: true,
 		edit: MultiLineAnswer,
 		view: MultiLineAnswer,
 		settings: [ QuestionGradingNotesSettings ],
