@@ -60,5 +60,8 @@
 			"dealerdirect/phpcodesniffer-composer-installer": true,
 			"bamarni/composer-bin-plugin": true
 		}
+	},
+	"require": {
+		"pelago/emogrifier": "^6.0"
 	}
 }
