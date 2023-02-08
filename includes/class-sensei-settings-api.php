@@ -207,10 +207,6 @@ class Sensei_Settings_API {
 					$classes .= ' current';
 				}
 
-				if ( isset( $v['class'] ) ) {
-					$classes .= ' ' . $v['class'];
-				}
-
 				$sections[ $k ] = array(
 					'href'  => isset( $v['href'] )
 						? esc_attr( $v['href'] )
