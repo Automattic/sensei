@@ -18,9 +18,9 @@ class Settings_Menu_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$expected = [
 			'email-notification-settings' => [
-				'name' 	  => 'Emails', 
+				'name'        => 'Emails',
 				'description' => 'Settings for email notifications sent from your site.',
-				'href' => admin_url( 'edit.php?post_type=sensei_email' ),
+				'href'        => admin_url( 'edit.php?post_type=sensei_email' ),
 			],
 		];
 		self::assertSame( $expected, $sections );

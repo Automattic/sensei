@@ -114,9 +114,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	/**
 	 * Output the settings screen.
 	 */
-	public function settings_screen()
-	{
-		/**
+	public function settings_screen() {
+		$tab_name = wp_unslash( $_GET['tab'] ?? '' );
+		$tab_name = esc_attr( $tab_name );
+		 /**
 		 * Filters settings tab content.
 		 *
 		 * @hook  sensei_settings_tab_content
@@ -127,7 +128,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		 *
 		 * @return {string} Filtered tab content.
 		 */
-		$tab_content = apply_filters( 'sensei_settings_tab_content', '', ( $_GET['tab'] ?? '' ) );
+		$tab_content = apply_filters( 'sensei_settings_tab_content', '', $tab_name );
 		if ( empty( $tab_content ) ) {
 			parent::settings_screen();
 			return;
@@ -138,13 +139,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<h1>
 				<?php echo esc_html( $this->name ); ?>
 				<?php
-				if ( '' != $this->settings_version ) {
+				if ( '' !== $this->settings_version ) {
 					echo ' <span class="version">' . esc_html( $this->settings_version ) . '</span>';
 				}
 				?>
 			</h1>
 			<?php $this->settings_tabs(); ?>
-			<?php echo $tab_content; ?>
+			<?php echo $tab_content; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
 		<?php
 	}

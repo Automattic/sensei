@@ -37,10 +37,11 @@ class Email_Settings_Tab {
 	 *
 	 * @param string $content  Existing content.
 	 * @param string $tab_name The current tab name.
+	 * @return string
 	 */
-	public function tab_content(string $contet, string $tab_name ): string {
+	public function tab_content( string $content, string $tab_name ): string {
 		if ( 'email-notification-settings' !== $tab_name ) {
-			return $contet;
+			return $content;
 		}
 
 		ob_start();

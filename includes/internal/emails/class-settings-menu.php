@@ -19,12 +19,26 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 class Settings_Menu {
-	
 
+	/**
+	 * Initialize the class and add hooks.
+	 *
+	 * @internal
+	 */
 	public function init() {
 		add_action( 'sensei_settings_tabs', [ $this, 'replace_email_tab' ] );
 	}
 
+
+	/**
+	 * Replace the email tab with a link to new settings.
+	 *
+	 * @internal
+	 * @access private
+	 *
+	 * @param array $sections The existing sections.
+	 * @return array
+	 */
 	public function replace_email_tab( array $sections ) {
 		$sections['email-notification-settings'] = array(
 			'name'        => __( 'Emails', 'sensei-lms' ),
@@ -33,5 +47,5 @@ class Settings_Menu {
 		);
 		return $sections;
 	}
-
 }
+

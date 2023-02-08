@@ -20,6 +20,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Email_Customization {
 
+	/**
+	 * Class instance.
+	 *
+	 * @var self
+	 */
 	private static $instance;
 
 	/**
