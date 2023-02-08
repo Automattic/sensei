@@ -336,6 +336,8 @@ class Sensei_Main {
 		 * @param {Sensei_Main} $sensei Sensei object.
 		 */
 		do_action( 'sensei_loaded', $this );
+
+		new Sensei_Email_Sender();
 	}
 
 	/**
