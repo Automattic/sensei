@@ -84,7 +84,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 					'post_type'      => Email_Post_Type::POST_TYPE,
 					'posts_per_page' => 20,
 					'offset'         => 0,
-					'meta_query'     => [
+					'meta_query'     => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 						[
 							'key'   => 'sensei_email_group',
 							'value' => 'student',

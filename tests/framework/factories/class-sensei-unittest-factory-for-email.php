@@ -2,7 +2,7 @@
 
 use Sensei\Internal\Emails\Email_Post_Type;
 
-class WP_UnitTest_Factory_For_Email extends WP_UnitTest_Factory_For_Post_Sensei {
+class Sensei_UnitTest_Factory_For_Email extends WP_UnitTest_Factory_For_Post_Sensei {
 	public function __construct( $factory = null ) {
 		parent::__construct( $factory );
 		$this->default_generation_definitions = array(
