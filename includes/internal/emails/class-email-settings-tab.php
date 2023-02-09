@@ -45,17 +45,54 @@ class Email_Settings_Tab {
 		}
 
 		ob_start();
-		?>
-			<?php
-			// For demo purposes.
-			require_once ABSPATH . 'wp-admin/includes/class-wp-posts-list-table.php';
-			set_current_screen( 'edit-sensei_email' );
-			$list_table = new \WP_Posts_List_Table( [ 'screen' => get_current_screen() ] );
-			$list_table->prepare_items();
-			$list_table->display();
-			?>
-		<?php
+		$this->render_submenu();
+
+		// For demo purposes.
+		require_once ABSPATH . 'wp-admin/includes/class-wp-posts-list-table.php';
+		set_current_screen( 'edit-sensei_email' );
+		$list_table = new \WP_Posts_List_Table( [ 'screen' => get_current_screen() ] );
+		$list_table->prepare_items();
+		$list_table->display();
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Render the submenu.
+	 */
+	private function render_submenu() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$current_subtab = sanitize_key( wp_unslash( $_GET['subtab'] ?? 'student' ) );
+
+		$tabs = [
+			[
+				'name' => __( 'Student Emails', 'sensei-lms' ),
+				'href' => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' ),
+				'key'  => 'student',
+			],
+			[
+				'name' => __( 'Teacher Emails', 'sensei-lms' ),
+				'href' => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings&subtab=teacher' ),
+				'key'  => 'teacher',
+			],
+			[
+				'name' => __( 'Settings', 'sensei-lms' ),
+				'href' => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings&subtab=settings' ),
+				'key'  => 'settings',
+			],
+		];
+
+		?>
+		<div class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__tabbar">
+				<?php foreach ( $tabs as $tab ) : ?>
+					<a class="sensei-custom-navigation__tab <?php echo $tab['key'] === $current_subtab ? 'active' : ''; ?>"
+						href="<?php echo esc_url( $tab['href'] ); ?>">
+						<?php echo esc_html( $tab['name'] ); ?>
+					</a>
+				<?php endforeach; ?>
+			</div>
+		</div>
+		<?php
 	}
 }
