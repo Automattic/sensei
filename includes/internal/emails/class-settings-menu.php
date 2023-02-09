@@ -26,7 +26,7 @@ class Settings_Menu {
 	 * @internal
 	 */
 	public function init() {
-		add_action( 'sensei_settings_tabs', [ $this, 'replace_email_tab' ] );
+		add_filter( 'sensei_settings_tabs', [ $this, 'replace_email_tab' ] );
 	}
 
 
