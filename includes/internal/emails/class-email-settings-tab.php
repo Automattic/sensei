@@ -45,12 +45,10 @@ class Email_Settings_Tab {
 		}
 
 		ob_start();
+
 		$this->render_submenu();
 
-		// For demo purposes.
-		require_once ABSPATH . 'wp-admin/includes/class-wp-posts-list-table.php';
-		set_current_screen( 'edit-sensei_email' );
-		$list_table = new \WP_Posts_List_Table( [ 'screen' => get_current_screen() ] );
+		$list_table = new Email_List_Table();
 		$list_table->prepare_items();
 		$list_table->display();
 
