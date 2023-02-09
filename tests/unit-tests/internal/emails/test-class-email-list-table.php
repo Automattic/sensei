@@ -35,6 +35,10 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	}
 
 	public function testGetColumns_WhenCalled_AppliesHook() {
+		if ( ! version_compare( get_bloginfo( 'version' ), '6.1.0', '>=' ) ) {
+			$this->markTestSkipped( 'Requires `did_filter()` which was introduced in WordPress 6.1.0.' );
+		}
+
 		/* Arrange. */
 		$list_table = new Email_List_Table();
 
@@ -159,6 +163,10 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	}
 
 	public function testGetRowData_WhenCalled_AppliesHook() {
+		if ( ! version_compare( get_bloginfo( 'version' ), '6.1.0', '>=' ) ) {
+			$this->markTestSkipped( 'Requires `did_filter()` which was introduced in WordPress 6.1.0.' );
+		}
+
 		/* Arrange. */
 		$list_table = new Email_List_Table();
 		$post_id    = $this->factory->email->create();
