@@ -22,3 +22,46 @@ function sensei_fix_divi_yoast_conflict() {
 	}
 }
 add_action( 'wp', 'sensei_fix_divi_yoast_conflict', 13 );
+
+/**
+ * Unsets the layout for Divi Builder.
+ * This code was provided by a Divi developer in https://github.com/Automattic/sensei/issues/6414#issuecomment-1406665650.
+ *
+ * @param array $layouts Divi's theme builder layouts.
+ * @return array
+ */
+function sensei_disable_divi_theme_builder( $layouts ) {
+	// Early return if layouts is empty, or we are not in the view of a singular lesson.
+	if ( empty( $layouts ) || ! is_singular( 'lesson' ) ) {
+		return $layouts;
+	}
+
+	// Disable Divi Theme Builder header layout.
+	$layouts['et_header_layout']['id']       = 0;
+	$layouts['et_header_layout']['enabled']  = false;
+	$layouts['et_header_layout']['override'] = false;
+
+	// Disable Divi Theme Builder body layout.
+	$layouts['et_body_layout']['id']       = 0;
+	$layouts['et_body_layout']['enabled']  = false;
+	$layouts['et_body_layout']['override'] = false;
+
+	// Disable Divi Theme Builder footer layout.
+	$layouts['et_footer_layout']['id']       = 0;
+	$layouts['et_footer_layout']['enabled']  = false;
+	$layouts['et_footer_layout']['override'] = false;
+
+	return $layouts;
+}
+
+/**
+ * If learning mode is enabled for the current course we disable the Divi Theme Builder.
+ */
+function sensei_fix_divi_theme_builder_and_learning_mode_conflict() {
+	$course_id = Sensei_Utils::get_current_course();
+	if ( ! is_null( $course_id ) && Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+		add_filter( 'et_theme_builder_template_layouts', 'sensei_disable_divi_theme_builder', 11, 1 );
+	}
+
+}
+add_action( 'wp', 'sensei_fix_divi_theme_builder_and_learning_mode_conflict' );

@@ -203,7 +203,7 @@ class Course_Navigation {
 		$classes   = [ 'sensei-lms-course-navigation-module sensei-collapsible' ];
 		$collapsed = '';
 		if ( ! $is_current_module ) {
-			$collapsed = 'collapsed';
+			$collapsed = 'sensei-collapsed';
 		}
 
 		$content_id = esc_attr( 'sensei-course-navigation-module-' . $module_id . '-' . wp_generate_uuid4() );
