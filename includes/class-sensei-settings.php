@@ -112,6 +112,45 @@ class Sensei_Settings extends Sensei_Settings_API {
 	}
 
 	/**
+	 * Output the settings screen.
+	 */
+	public function settings_screen() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification not required.
+		$tab_name = sanitize_key( wp_unslash( $_GET['tab'] ?? '' ) );
+		/**
+		 * Filters settings tab content.
+		 *
+		 * @hook  sensei_settings_tab_content
+		 * @since $$next-version$$
+		 *
+		 * @param {string} $content The tab content.
+		 * @param {string} $tab     The tab slug.
+		 *
+		 * @return {string} Filtered tab content.
+		 */
+		$tab_content = apply_filters( 'sensei_settings_tab_content', '', $tab_name );
+		if ( empty( $tab_content ) ) {
+			parent::settings_screen();
+			return;
+		}
+
+		?>
+		<div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>">
+			<h1>
+				<?php echo esc_html( $this->name ); ?>
+				<?php
+				if ( '' !== $this->settings_version ) {
+					echo ' <span class="version">' . esc_html( $this->settings_version ) . '</span>';
+				}
+				?>
+			</h1>
+			<?php $this->settings_tabs(); ?>
+			<?php echo $tab_content; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Add legacy options to alloptions if they don't exist.
 	 *
 	 * @since 3.0.1
