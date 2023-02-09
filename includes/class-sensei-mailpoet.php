@@ -57,6 +57,14 @@ class Sensei_MailPoet {
 				add_action( 'init', array( $this, 'maybe_schedule_cron_job' ), 101 );
 				add_action( 'sensei_sync_mailpoet_subscribers', array( $this, 'sync_subscribers' ) );
 				register_deactivation_hook( SENSEI_LMS_PLUGIN_FILE, array( $this, 'deactivate_sync_job' ) );
+
+				add_action( 'sensei_pro_student_groups_group_student_added', array( $this, 'add_student_subscriber' ), 10, 2 );
+				add_action( 'sensei_pro_student_groups_group_students_removed', array( $this, 'remove_student_subscribers' ), 10, 2 );
+
+				add_action( 'sensei_course_enrolment_status_changed', array( $this, 'maybe_add_student_course_subscriber' ), 10, 3 );
+				add_action( 'sensei_admin_enrol_user', array( $this, 'add_student_subscriber' ), 10, 2 );
+				add_action( 'sensei_manual_enrolment_learner_enrolled', array( $this, 'add_student_course_subscriber' ), 10, 2 );
+				add_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'remove_student_course_subscriber' ), 10, 2 );
 			}
 		}
 	}
@@ -98,27 +106,12 @@ class Sensei_MailPoet {
 			$list_name = $this->get_list_name( $list['name'], $list['post_type'] );
 			// find list in MailPoet lists array. if not exists, create one.
 			if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
-				$new_list = array(
-					'name'        => $list_name,
-					'description' => $list['description'],
-				);
-				try {
-					$new_list_resp = $this->mailpoet_api->addList( $new_list );
-					if ( isset( $new_list_resp['id'] ) ) {
-						$mp_list_id = $new_list_resp['id'];
-					}
-				} catch ( \MailPoet\API\MP\v1\APIException $exception ) {
-					if ( $exception->getCode() !== 15 ) {
-						// 15 means list already exists, other codes mean list was not inserted.
-						// see https://github.com/mailpoet/mailpoet/blob/trunk/doc/api_methods/AddList.md#error-handling.
-						continue;
-					}
-				}
+				$mp_list_id = $this->create_list( $list_name, $list['description'] );
 			} else {
-				$mp_list_id = $mailpoet_lists[ $list['name'] ]['id'];
+				$mp_list_id = $mailpoet_lists[ $list_name ]['id'];
 			}
 
-			if ( ! empty( $mp_list_id ) ) {
+			if ( null === $mp_list_id ) {
 				$students = $this->get_students( $list['id'], $list['post_type'] );
 				$this->add_subscribers( $students, $mp_list_id );
 			}
@@ -246,6 +239,25 @@ class Sensei_MailPoet {
 	}
 
 	/**
+	 * Remove students as subscribers from lists on MailPoet for courses/groups.
+	 *
+	 * @param array      $subscribers A list of students to remove.
+	 *
+	 * @param string|int $list_id ID of the list on MailPoet.
+	 * @return void
+	 */
+	private function remove_subscribers( $subscribers, $list_id ) {
+		foreach ( $subscribers as $subscriber ) {
+			try {
+				$mp_subscriber = $this->mailpoet_api->getSubscriber( $subscriber->user_email );
+				$this->mailpoet_api->unsubscribeFromList( $mp_subscriber['id'], $list_id );
+			} catch ( \MailPoet\API\MP\v1\APIException $exception ) {
+				continue;
+			}
+		}
+	}
+
+	/**
 	 * Delete lists on MailPoet for courses/groups that don't exist on Sensei anymore.
 	 *
 	 * @param array $list_ids An array of list IDs to be removed from MailPoet.
@@ -269,5 +281,125 @@ class Sensei_MailPoet {
 	 */
 	private function get_list_name( $name, $post_type ) {
 		return 'Sensei LMS ' . ucfirst( $post_type ) . ': ' . $name;
+	}
+
+	/**
+	 * Creates a Sensei LMS MailPoet list with name and description.
+	 *
+	 * @param string $list_name The name of the list.
+	 * @param string $list_description The description of the list.
+	 *
+	 * @return int|string|null
+	 */
+	public function create_list( $list_name, $list_description ) {
+		$new_list = array(
+			'name'        => $list_name,
+			'description' => $list_description,
+		);
+		try {
+			$new_list = $this->mailpoet_api->addList( $new_list );
+			return $new_list['id'];
+		} catch ( \MailPoet\API\MP\v1\APIException $exception ) {
+			// see https://github.com/mailpoet/mailpoet/blob/trunk/doc/api_methods/AddList.md#error-handling.
+			return null;
+		}
+	}
+
+	/**
+	 * Add a student as a subscriber to a list on MailPoet for a course or group.
+	 * If the list does not exist, it will be created.
+	 *
+	 * @param int $post_id Post ID.
+	 * @param int $user_id User ID.
+	 *
+	 * @return void
+	 */
+	public function add_student_subscriber( $post_id, $user_id ) {
+		$student = get_user_by( 'id', $user_id );
+		$post    = get_post( $post_id );
+		if ( ! $student || ! $post ) {
+			return;
+		}
+
+		$mailpoet_lists = $this->get_mailpoet_lists();
+		$list_name      = $this->get_list_name( $post->post_title, 'group' );
+		if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
+			$mp_list_id = $this->create_list( $list_name, $post->post_excerpt );
+		} else {
+			$mp_list_id = $mailpoet_lists[ $list_name ]['id'];
+		}
+		if ( null !== $mp_list_id ) {
+			$this->add_subscribers( array( $student ), $mp_list_id );
+		}
+	}
+
+	/**
+	 * Remove students as subscribers from lists on MailPoet for courses/groups.
+	 * This function is used when a student is removed from a group or course.
+	 *
+	 * @param int   $post_id Post ID.
+	 * @param array $user_ids Array of User IDs.
+	 *
+	 * @return void
+	 */
+	public function remove_student_subscribers( $post_id, $user_ids ) {
+		$students = get_users( array( 'include' => $user_ids ) );
+		$post     = get_post( $post_id );
+		if ( ! $students || ! $post ) {
+			return;
+		}
+
+		$mailpoet_lists = $this->get_mailpoet_lists();
+		$list_name      = $this->get_list_name( $post->post_title, 'group' );
+
+		if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
+			$mp_list_id = $this->create_list( $list_name, $post->post_excerpt );
+		} else {
+			$mp_list_id = $mailpoet_lists[ $list_name ]['id'];
+		}
+		if ( null !== $mp_list_id ) {
+			$this->remove_subscribers( $students, $mp_list_id );
+		}
+	}
+
+	/**
+	 * Decides whether to add or remove a student as subscriber to a course list on MailPoet. A proxy to SenseiMailPoet::add_student_subscriber and SenseiMailPoet::remove_student_subscribers.
+	 *
+	 * @param int  $user_id User ID.
+	 * @param int  $course_id Post ID.
+	 * @param bool $is_enrolled Enrollment status.
+	 *
+	 * @return void
+	 */
+	public function maybe_add_student_course_subscriber( $user_id, $course_id, $is_enrolled ) {
+		if ( $is_enrolled ) {
+			$this->add_student_subscriber( $course_id, $user_id );
+		} else {
+			$this->remove_student_subscribers( $course_id, array( $user_id ) );
+		}
+	}
+
+	/**
+	 * Remove student as subscriber to a course list on MailPoet. A proxy to SenseiMailPoet::remove_student_subscribers.
+	 *
+	 * @param int $user_id User ID.
+	 * @param int $course_id Post ID.
+	 *
+	 * @return void
+	 */
+	public function remove_student_course_subscriber( $user_id, $course_id ) {
+		$this->remove_student_subscribers( $course_id, array( $user_id ) );
+	}
+
+	/**
+	 * Add student as subscriber to a course list on MailPoet. A proxy to SenseiMailPoet::add_student_subscriber.
+	 *
+	 * @param int $user_id User ID.
+	 * @param int $course_id Post ID.
+	 *
+	 * @return void
+	 */
+	public function add_student_course_subscriber( $user_id, $course_id ) {
+		$this->add_student_subscriber( $course_id, $user_id );
 	}
 }
