@@ -28,11 +28,36 @@ class Email_Customization {
 	private static $instance;
 
 	/**
+	 * Email post type.
+	 *
+	 * @var Email_Post_Type
+	 */
+	private $post_type;
+
+	/**
+	 * Settings_Menu instance.
+	 *
+	 * @var Settings_Menu
+	 */
+	private $settings_menu;
+
+	/**
+	 * Email_Settings_Tab instance.
+	 *
+	 * @var Email_Settings_Tab
+	 */
+	private $settings_tab;
+
+	/**
 	 * Email_Customization constructor.
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
 	 */
-	private function __construct() {}
+	private function __construct() {
+		$this->post_type     = new Email_Post_Type();
+		$this->settings_menu = new Settings_Menu();
+		$this->settings_tab  = new Email_Settings_Tab();
+	}
 
 	/**
 	 * Get the singleton instance.
@@ -55,9 +80,8 @@ class Email_Customization {
 	 * @internal
 	 */
 	public function init(): void {
-		( new Email_Post_Type() )->init();
-		( new Settings_Menu() )->init();
-		( new Email_Settings_Tab() )->init();
+		$this->post_type->init();
+		$this->settings_menu->init();
+		$this->settings_tab->init();
 	}
-
 }
