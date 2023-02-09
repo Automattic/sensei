@@ -115,6 +115,7 @@ class Email_List_Table extends Sensei_List_Table {
 	protected function get_row_data( $post ) {
 		$title = _draft_or_post_title( $post );
 
+		$actions         = [];
 		$actions['edit'] = sprintf(
 			'<a href="%s" aria-label="%s">%s</a>',
 			get_edit_post_link( $post->ID ),
