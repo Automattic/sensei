@@ -111,7 +111,7 @@ class Sensei_MailPoet {
 				$mp_list_id = $mailpoet_lists[ $list_name ]['id'];
 			}
 
-			if ( null === $mp_list_id ) {
+			if ( ! empty( $mp_list_id ) ) {
 				$students = $this->get_students( $list['id'], $list['post_type'] );
 				$this->add_subscribers( $students, $mp_list_id );
 			}
