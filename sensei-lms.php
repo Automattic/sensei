@@ -136,3 +136,5 @@ if ( ! function_exists( 'activate_sensei' ) ) {
 		Sensei()->activate();
 	}
 }
+
+error_log( 'this is just a test' );
