@@ -23,9 +23,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Email_List_Table extends Sensei_List_Table {
 	/**
-	 * The constructor.
+	 * The email group that will be listed.
+	 *
+	 * @var string|null
 	 */
-	public function __construct() {
+	private $group;
+
+	/**
+	 * The constructor.
+	 *
+	 * @param string|null $group The email group.
+	 */
+	public function __construct( string $group = null ) {
+		$this->group = $group;
+
 		parent::__construct( 'emails' );
 
 		// Remove the search form.
@@ -60,8 +71,6 @@ class Email_List_Table extends Sensei_List_Table {
 
 	/**
 	 * Prepares the list of items for displaying.
-	 *
-	 * @param array $query_args The WP_Query arguments.
 	 */
 	public function prepare_items() {
 		$per_page = $this->get_items_per_page( 'sensei_emails_per_page' );
@@ -73,6 +82,15 @@ class Email_List_Table extends Sensei_List_Table {
 			'posts_per_page' => $per_page,
 			'offset'         => $offset,
 		];
+
+		if ( $this->group ) {
+			$query_args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Query limited by pagination.
+				[
+					'key'   => 'sensei_email_group', // TODO: Replace the meta key by a constant defined elsewhere.
+					'value' => $this->group,
+				],
+			];
+		}
 
 		$query = new WP_Query( $query_args );
 
