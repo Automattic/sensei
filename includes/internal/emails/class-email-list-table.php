@@ -23,13 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Email_List_Table extends Sensei_List_Table {
 	/**
-	 * The email group that will be listed.
-	 *
-	 * @var string|null
-	 */
-	private $group;
-
-	/**
 	 * The WP_Query instance.
 	 *
 	 * @var WP_Query
@@ -41,11 +34,9 @@ class Email_List_Table extends Sensei_List_Table {
 	 *
 	 * @internal
 	 *
-	 * @param string|null   $group The email group.
 	 * @param WP_Query|null $query The WP_Query instance.
 	 */
-	public function __construct( string $group = null, WP_Query $query = null ) {
-		$this->group = $group;
+	public function __construct( WP_Query $query = null ) {
 		$this->query = $query ? $query : new WP_Query();
 
 		parent::__construct( 'emails' );
@@ -85,9 +76,11 @@ class Email_List_Table extends Sensei_List_Table {
 	/**
 	 * Prepares the list of items for displaying.
 	 *
+	 * @param string|null $group The email group that will be listed.
+	 *
 	 * @internal
 	 */
-	public function prepare_items() {
+	public function prepare_items( string $group = null ) {
 		$per_page = $this->get_items_per_page( 'sensei_emails_per_page' );
 		$pagenum  = $this->get_pagenum();
 		$offset   = $pagenum > 1 ? $per_page * ( $pagenum - 1 ) : 0;
@@ -98,11 +91,11 @@ class Email_List_Table extends Sensei_List_Table {
 			'offset'         => $offset,
 		];
 
-		if ( $this->group ) {
+		if ( $group ) {
 			$query_args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Query limited by pagination.
 				[
 					'key'   => 'sensei_email_group', // TODO: Replace the meta key by a constant defined elsewhere.
-					'value' => $this->group,
+					'value' => $group,
 				],
 			];
 		}

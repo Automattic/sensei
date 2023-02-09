@@ -19,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 class Email_Settings_Tab {
-
 	/**
 	 * Initialize the class and add hooks.
 	 *
@@ -137,8 +136,8 @@ class Email_Settings_Tab {
 	 * Render the student emails subtab.
 	 */
 	private function render_student_subtab(): void {
-		$list_table = new Email_List_Table( 'student' );
-		$list_table->prepare_items();
+		$list_table = new Email_List_Table();
+		$list_table->prepare_items( 'student' );
 		$list_table->display();
 	}
 
@@ -146,8 +145,8 @@ class Email_Settings_Tab {
 	 * Render the teacher emails subtab.
 	 */
 	private function render_teacher_subtab(): void {
-		$list_table = new Email_List_Table( 'teacher' );
-		$list_table->prepare_items();
+		$list_table = new Email_List_Table();
+		$list_table->prepare_items( 'teacher' );
 		$list_table->display();
 	}
 

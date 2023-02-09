@@ -49,7 +49,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	public function testPrepareItems_WhenPaginated_SetsTheCorrectOffset() {
 		/* Arrange. */
 		$query      = $this->createMock( \WP_Query::class );
-		$list_table = new Email_List_Table( null, $query );
+		$list_table = new Email_List_Table( $query );
 
 		$_REQUEST['paged'] = 2;
 
@@ -73,7 +73,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	public function testPrepareItems_WhenGroupSet_SetsTheMetaQuery() {
 		/* Arrange. */
 		$query      = $this->createMock( \WP_Query::class );
-		$list_table = new Email_List_Table( 'student', $query );
+		$list_table = new Email_List_Table( $query );
 
 		/* Assert. */
 		$query
@@ -95,13 +95,13 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 			->willReturn( [] );
 
 		/* Act. */
-		$list_table->prepare_items();
+		$list_table->prepare_items( 'student' );
 	}
 
 	public function testPrepareItems_WhenNoGroupSet_DoesntSetTheMetaQuery() {
 		/* Arrange. */
 		$query      = $this->createMock( \WP_Query::class );
-		$list_table = new Email_List_Table( null, $query );
+		$list_table = new Email_List_Table( $query );
 
 		/* Assert. */
 		$query
@@ -125,7 +125,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$query                = $this->createMock( \WP_Query::class );
 		$query->found_posts   = 50;
 		$query->max_num_pages = 5;
-		$list_table           = new Email_List_Table( null, $query );
+		$list_table           = new Email_List_Table( $query );
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -149,7 +149,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$posts        = [ new WP_Post( new stdClass() ), new WP_Post( new stdClass() ) ];
 		$query        = $this->createMock( \WP_Query::class );
 		$query->posts = $posts;
-		$list_table   = new Email_List_Table( null, $query );
+		$list_table   = new Email_List_Table( $query );
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -161,7 +161,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	public function testGetRowData_WhenCalled_AppliesHook() {
 		/* Arrange. */
 		$list_table = new Email_List_Table();
-		$post       = $this->factory->email->create();
+		$post_id    = $this->factory->email->create();
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -199,7 +199,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	public function testGetRowData_WhenHasItemWithNoTitle_ReturnsNoTitleText() {
 		/* Arrange. */
 		$list_table = new Email_List_Table();
-		$post       = $this->factory->email->create( [ 'post_title' => '' ] );
+		$post_id    = $this->factory->email->create( [ 'post_title' => '' ] );
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -215,9 +215,9 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	public function testGetRowData_WhenHasDescription_ReturnsTheDescription() {
 		/* Arrange. */
 		$list_table = new Email_List_Table();
-		$post       = $this->factory->email->create();
+		$post_id    = $this->factory->email->create();
 
-		update_post_meta( $post, 'sensei_email_description', 'Welcome Student' );
+		update_post_meta( $post_id, 'sensei_email_description', 'Welcome Student' );
 
 		/* Act. */
 		$list_table->prepare_items();
