@@ -134,6 +134,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			return;
 		}
 
+		Sensei()->assets->enqueue_style( 'wp-components' );
 		?>
 		<div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>">
 			<h1>
