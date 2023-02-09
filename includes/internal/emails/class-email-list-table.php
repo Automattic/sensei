@@ -56,7 +56,7 @@ class Email_List_Table extends Sensei_List_Table {
 		];
 
 		/**
-		 * Filter the columns that are displayed in email list.
+		 * Filter the columns that are displayed in the email list.
 		 *
 		 * @since $$next-version$$
 		 * @hook sensei_email_list_columns
@@ -108,16 +108,16 @@ class Email_List_Table extends Sensei_List_Table {
 	/**
 	 * Get the data for each row.
 	 *
-	 * @param \WP_Post $item The email post.
+	 * @param \WP_Post $post The email post.
 	 *
 	 * @return array
 	 */
-	protected function get_row_data( $item ) {
-		$title = _draft_or_post_title( $item );
+	protected function get_row_data( $post ) {
+		$title = _draft_or_post_title( $post );
 
 		$actions['edit'] = sprintf(
 			'<a href="%s" aria-label="%s">%s</a>',
-			get_edit_post_link( $item->ID ),
+			get_edit_post_link( $post->ID ),
 			/* translators: %s: Post title. */
 			esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), $title ) ),
 			__( 'Edit', 'sensei-lms' )
@@ -127,17 +127,17 @@ class Email_List_Table extends Sensei_List_Table {
 
 		$subject = sprintf(
 			'<strong><a href="%s" class="row-title">%s</a></strong>%s',
-			esc_url( get_edit_post_link( $item ) ),
+			esc_url( get_edit_post_link( $post ) ),
 			esc_html( $title ),
 			$this->row_actions( $actions )
 		);
 
-		$description = get_post_meta( $item->ID, 'sensei_email_description', true );
+		$description = get_post_meta( $post->ID, 'sensei_email_description', true );
 
 		$last_modified = sprintf(
 			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
 			__( '%s ago', 'sensei-lms' ),
-			human_time_diff( strtotime( $item->post_modified_gmt ) )
+			human_time_diff( strtotime( $post->post_modified_gmt ) )
 		);
 
 		$row_data = [
@@ -147,17 +147,17 @@ class Email_List_Table extends Sensei_List_Table {
 		];
 
 		/**
-		 * Filter sensei_learner_admin_get_row_data, for adding/removing row data.
+		 * Filter the row data displayed in the email list.
 		 *
 		 * @since $$next-version$$
 		 * @hook sensei_email_list_row_data
 		 *
-		 * @param {array}  $row_data The Row Data.
-		 * @param {object} $post The post instance.
+		 * @param {array}  $row_data The row data.
+		 * @param {object} $post The post.
 		 * @param {object} $list_table Email_List_Table instance.
 		 *
 		 * @return {array}
 		 */
-		return apply_filters( 'sensei_email_list_row_data', $row_data, $item, $this );
+		return apply_filters( 'sensei_email_list_row_data', $row_data, $post, $this );
 	}
 }
