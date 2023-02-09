@@ -44,7 +44,7 @@
 			height: 24px;
 		}
 
-		&.collapsed .sensei-lms-course-navigation-module__collapsible-icon {
+		&.sensei-collapsed .sensei-lms-course-navigation-module__collapsible-icon {
 			transform: rotate(180deg);
 		}
 	}
@@ -76,7 +76,7 @@
 		transition-delay: 150ms;
 	}
 
-	&__lessons.collapsed ~ &__summary {
+	&__lessons.sensei-collapsed ~ &__summary {
 		visibility: visible;
 		max-height: 50px;
 	}
