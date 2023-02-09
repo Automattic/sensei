@@ -30,14 +30,23 @@ class Email_List_Table extends Sensei_List_Table {
 	private $group;
 
 	/**
+	 * The WP_Query instance.
+	 *
+	 * @var WP_Query
+	 */
+	private $query;
+
+	/**
 	 * The constructor.
 	 *
 	 * @internal
 	 *
-	 * @param string|null $group The email group.
+	 * @param string|null   $group The email group.
+	 * @param WP_Query|null $query The WP_Query instance.
 	 */
-	public function __construct( string $group = null ) {
+	public function __construct( string $group = null, WP_Query $query = null ) {
 		$this->group = $group;
+		$this->query = $query ? $query : new WP_Query();
 
 		parent::__construct( 'emails' );
 
@@ -98,14 +107,14 @@ class Email_List_Table extends Sensei_List_Table {
 			];
 		}
 
-		$query = new WP_Query( $query_args );
+		$this->query->query( $query_args );
 
-		$this->items = $query->posts;
+		$this->items = $this->query->posts;
 
 		$this->set_pagination_args(
 			[
-				'total_items' => $query->found_posts,
-				'total_pages' => $query->max_num_pages,
+				'total_items' => $this->query->found_posts,
+				'total_pages' => $this->query->max_num_pages,
 				'per_page'    => $per_page,
 			]
 		);
