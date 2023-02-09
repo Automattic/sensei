@@ -32,6 +32,8 @@ class Email_List_Table extends Sensei_List_Table {
 	/**
 	 * The constructor.
 	 *
+	 * @internal
+	 *
 	 * @param string|null $group The email group.
 	 */
 	public function __construct( string $group = null ) {
@@ -45,6 +47,8 @@ class Email_List_Table extends Sensei_List_Table {
 
 	/**
 	 * Define the columns that are going to be used in the table.
+	 *
+	 * @internal
 	 *
 	 * @return array
 	 */
@@ -71,6 +75,8 @@ class Email_List_Table extends Sensei_List_Table {
 
 	/**
 	 * Prepares the list of items for displaying.
+	 *
+	 * @internal
 	 */
 	public function prepare_items() {
 		$per_page = $this->get_items_per_page( 'sensei_emails_per_page' );
