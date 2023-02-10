@@ -19,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 class Email_Settings_Tab {
-
 	/**
 	 * Initialize the class and add hooks.
 	 *
@@ -44,55 +43,117 @@ class Email_Settings_Tab {
 			return $content;
 		}
 
-		ob_start();
-		$this->render_submenu();
+		$current_subtab = $this->get_current_subtab();
 
-		// For demo purposes.
-		require_once ABSPATH . 'wp-admin/includes/class-wp-posts-list-table.php';
-		set_current_screen( 'edit-sensei_email' );
-		$list_table = new \WP_Posts_List_Table( [ 'screen' => get_current_screen() ] );
-		$list_table->prepare_items();
-		$list_table->display();
+		ob_start();
+
+		$this->render_submenu( $current_subtab );
+		$this->render_subtab( $current_subtab );
 
 		return ob_get_clean();
 	}
 
 	/**
-	 * Render the submenu.
+	 * Get the currently selected subtab.
+	 * Defaults to the first defined if none is selected.
+	 *
+	 * @return array
 	 */
-	private function render_submenu() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$current_subtab = sanitize_key( wp_unslash( $_GET['subtab'] ?? 'student' ) );
+	private function get_current_subtab(): array {
+		$subtabs        = $this->get_subtabs();
+		$default_subtab = $subtabs[0];
 
-		$tabs = [
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$current_subtab_key = sanitize_key( wp_unslash( $_GET['subtab'] ?? $default_subtab['key'] ) );
+
+		foreach ( $subtabs as $subtab ) {
+			if ( $subtab['key'] === $current_subtab_key ) {
+				return $subtab;
+			}
+		}
+
+		return $default_subtab;
+	}
+
+	/**
+	 * Get all available subtabs.
+	 *
+	 * @return array[]
+	 */
+	private function get_subtabs(): array {
+		return [
 			[
-				'name' => __( 'Student Emails', 'sensei-lms' ),
-				'href' => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' ),
-				'key'  => 'student',
+				'name'            => __( 'Student Emails', 'sensei-lms' ),
+				'href'            => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' ),
+				'key'             => 'student',
+				'render_callback' => [ $this, 'render_student_subtab' ],
 			],
 			[
-				'name' => __( 'Teacher Emails', 'sensei-lms' ),
-				'href' => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings&subtab=teacher' ),
-				'key'  => 'teacher',
+				'name'            => __( 'Teacher Emails', 'sensei-lms' ),
+				'href'            => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings&subtab=teacher' ),
+				'key'             => 'teacher',
+				'render_callback' => [ $this, 'render_teacher_subtab' ],
 			],
 			[
-				'name' => __( 'Settings', 'sensei-lms' ),
-				'href' => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings&subtab=settings' ),
-				'key'  => 'settings',
+				'name'            => __( 'Settings', 'sensei-lms' ),
+				'href'            => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings&subtab=settings' ),
+				'key'             => 'settings',
+				'render_callback' => [ $this, 'render_settings_subtab' ],
 			],
 		];
+	}
 
+	/**
+	 * Render the submenu.
+	 *
+	 * @param array $current_subtab The selected subtab.
+	 */
+	private function render_submenu( array $current_subtab ): void {
 		?>
 		<div class="sensei-custom-navigation">
 			<div class="sensei-custom-navigation__tabbar">
-				<?php foreach ( $tabs as $tab ) : ?>
-					<a class="sensei-custom-navigation__tab <?php echo $tab['key'] === $current_subtab ? 'active' : ''; ?>"
-						href="<?php echo esc_url( $tab['href'] ); ?>">
-						<?php echo esc_html( $tab['name'] ); ?>
+				<?php foreach ( $this->get_subtabs() as $subtab ) : ?>
+					<a class="sensei-custom-navigation__tab <?php echo $subtab['key'] === $current_subtab['key'] ? 'active' : ''; ?>"
+						href="<?php echo esc_url( $subtab['href'] ); ?>">
+						<?php echo esc_html( $subtab['name'] ); ?>
 					</a>
 				<?php endforeach; ?>
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Render the subtab by calling the render callback.
+	 *
+	 * @param array $subtab The subtab to render.
+	 */
+	private function render_subtab( array $subtab ): void {
+		call_user_func( $subtab['render_callback'] );
+	}
+
+	/**
+	 * Render the student emails subtab.
+	 */
+	private function render_student_subtab(): void {
+		$list_table = new Email_List_Table();
+		$list_table->prepare_items( 'student' );
+		$list_table->display();
+	}
+
+	/**
+	 * Render the teacher emails subtab.
+	 */
+	private function render_teacher_subtab(): void {
+		$list_table = new Email_List_Table();
+		$list_table->prepare_items( 'teacher' );
+		$list_table->display();
+	}
+
+	/**
+	 * Render the settings subtab.
+	 */
+	private function render_settings_subtab(): void {
+		echo 'TODO';
 	}
 }
