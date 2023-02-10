@@ -290,6 +290,9 @@ class Sensei_Autoloader {
 			 * Email Customization
 			 */
 			\Sensei\Internal\Emails\Email_Post_Type::class => 'internal/emails/class-email-post-type.php',
+			\Sensei\Internal\Emails\Email_Customization::class => 'internal/emails/class-email-customization.php',
+			\Sensei\Internal\Emails\Settings_Menu::class   => 'internal/emails/class-settings-menu.php',
+			\Sensei\Internal\Emails\Email_Settings_Tab::class => 'internal/emails/class-email-settings-tab.php',
 		);
 	}
 
