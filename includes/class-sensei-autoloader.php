@@ -294,6 +294,7 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Settings_Menu::class   => 'internal/emails/class-settings-menu.php',
 			\Sensei\Internal\Emails\Email_Settings_Tab::class => 'internal/emails/class-email-settings-tab.php',
 			\Sensei\Internal\Emails\Email_List_Table::class => 'internal/emails/class-email-list-table.php',
+			\Sensei\Internal\Emails\Email_List_Table_Actions::class => 'internal/emails/class-email-list-table-actions.php',
 		);
 	}
 
