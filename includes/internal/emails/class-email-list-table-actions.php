@@ -38,6 +38,7 @@ class Email_List_Table_Actions {
 	 */
 	public function enable_email( $post_id ): void {
 		check_admin_referer( 'enable-email-post_' . $post_id );
+		$this->validate_request( $post_id );
 
 		wp_publish_post( $post_id );
 
@@ -53,6 +54,7 @@ class Email_List_Table_Actions {
 	 */
 	public function disable_email( $post_id ): void {
 		check_admin_referer( 'disable-email-post_' . $post_id );
+		$this->validate_request( $post_id );
 
 		wp_update_post(
 			[
@@ -65,10 +67,32 @@ class Email_List_Table_Actions {
 	}
 
 	/**
+	 * Ensures the request is valid and the user has permission.
+	 * If the request is not valid, the method will exit with a message.
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	private function validate_request( $post_id ): void {
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
+		}
+
+		if ( Email_Post_Type::POST_TYPE !== get_post_type( $post_id ) ) {
+			wp_die( esc_html__( 'Invalid request', 'sensei-lms' ) );
+		}
+	}
+
+	/**
 	 * Redirect the user back to where it came from.
+	 * If the action link was accessed directly, redirect to the emails list.
 	 */
 	private function redirect_back(): void {
-		wp_safe_redirect( wp_get_referer() );
+		$referer  = wp_get_referer();
+		$location = $referer
+			? $referer
+			: admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' );
+
+		wp_safe_redirect( $location );
 		exit;
 	}
 }
