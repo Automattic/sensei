@@ -117,6 +117,7 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 == Changelog ==
 
 ### 4.11.1 - 2023-02-03
+
 - Add: Auto select course template depending on selected course pattern [#6200](https://github.com/Automattic/sensei/pull/6200)
 - Fix: Prevent html entities from showing up in module titles in editor [#6372](https://github.com/Automattic/sensei/pull/6372)
 - Fix: Remove separator from course list pattern [#6435](https://github.com/Automattic/sensei/pull/6435)
@@ -127,6 +128,7 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 - Tweak: Round course progress to integer [#6232](https://github.com/Automattic/sensei/pull/6232)
 
 ### 4.11.0 - 2023-02-02
+
 - New: Guest users and teachers preview [#6421](https://github.com/Automattic/sensei/pull/6421)
 - Add: Add Course List block to My Courses and course archive on page creation [#6343](https://github.com/Automattic/sensei/pull/6343) [#6354](https://github.com/Automattic/sensei/pull/6354) [#6414](https://github.com/Automattic/sensei/pull/6416)
 - Add: Curate list of installed plugins that are logged [#6424](https://github.com/Automattic/sensei/pull/6424)
@@ -141,12 +143,13 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 - Tweak: Change reset progress copy by [#6371](https://github.com/Automattic/sensei/pull/6371)
 
 ### 4.10.0 - 2023-01-12
+
 - New: Course theme installation through the onboarding wizard
-	- Add onboarding theme step [#6182](https://github.com/Automattic/sensei/pull/6182), [#6251](https://github.com/Automattic/sensei/pull/6251), [#6273](https://github.com/Automattic/sensei/pull/6273)
-	- Add onboarding theme step backend [#6211](https://github.com/Automattic/sensei/pull/6211)
-	- Install Course theme [#6231](https://github.com/Automattic/sensei/pull/6231)
-	- Add usage tracking for Setup Wizard Course Theme step [#6252](https://github.com/Automattic/sensei/pull/6252)
-	- Add Sensei Home task to customize the Course theme [#6250](https://github.com/Automattic/sensei/pull/6250)
+    - Add onboarding theme step [#6182](https://github.com/Automattic/sensei/pull/6182), [#6251](https://github.com/Automattic/sensei/pull/6251), [#6273](https://github.com/Automattic/sensei/pull/6273)
+    - Add onboarding theme step backend [#6211](https://github.com/Automattic/sensei/pull/6211)
+    - Install Course theme [#6231](https://github.com/Automattic/sensei/pull/6231)
+    - Add usage tracking for Setup Wizard Course Theme step [#6252](https://github.com/Automattic/sensei/pull/6252)
+    - Add Sensei Home task to customize the Course theme [#6250](https://github.com/Automattic/sensei/pull/6250)
 - Add: Add `sensei_usage_tracking_data` filter hook [#6262](https://github.com/Automattic/sensei/pull/6262)
 - Add: Log sent emails [#6228](https://github.com/Automattic/sensei/pull/6228)
 - Add: Notice asking user for reviews/feedback [#6274](https://github.com/Automattic/sensei/pull/6274)
