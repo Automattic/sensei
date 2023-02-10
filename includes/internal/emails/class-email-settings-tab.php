@@ -55,7 +55,7 @@ class Email_Settings_Tab {
 
 	/**
 	 * Get the currently selected subtab.
-	 * Defaults to the first defined in none is selected.
+	 * Defaults to the first defined if none is selected.
 	 *
 	 * @return array
 	 */

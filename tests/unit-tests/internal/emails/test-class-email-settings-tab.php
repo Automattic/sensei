@@ -55,7 +55,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertSame( 'a', $content );
 	}
 
-	public function testTabContent_WhenInStudentSubtabAndHasAnEmailOfThatGroup_ReturnsContantWithTheEmail() {
+	public function testTabContent_WhenInStudentSubtabAndHasAnEmailOfThatGroup_ReturnsContentWithTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
 		$email_settings_tab = new Email_Settings_Tab();
@@ -85,7 +85,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertStringNotContainsString( $post->post_title, $content );
 	}
 
-	public function testTabContent_WhenInTeacherSubtabAndHasAnEmailOfThatGroup_ReturnsContantWithTheEmail() {
+	public function testTabContent_WhenInTeacherSubtabAndHasAnEmailOfThatGroup_ReturnsContentWithTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
 		$email_settings_tab = new Email_Settings_Tab();

@@ -11,7 +11,7 @@ use WP_Post;
 /**
  * Tests for Sensei\Internal\Emails\Email_List_Table.
  *
- * @covers \Sensei\Internal\Emails\Email_Settings_Tab
+ * @covers \Sensei\Internal\Emails\Email_List_Table
  */
 class Email_List_Table_Test extends \WP_UnitTestCase {
 
