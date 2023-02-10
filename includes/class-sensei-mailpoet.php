@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( \MailPoet\API\API::class ) ) {
-	exit;
+	return;
 }
 
 /**
@@ -48,7 +48,7 @@ class Sensei_MailPoet {
 			$this->mailpoet_api = \MailPoet\API\API::MP( 'v1' );
 			if ( $this->mailpoet_api->isSetupComplete() ) {
 				// Todo: maybe exit here?
-				exit;
+				return;
 			}
 		}
 	}
