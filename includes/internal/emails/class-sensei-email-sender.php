@@ -79,6 +79,8 @@ class Sensei_Email_Sender {
 			return;
 		}
 
+		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_type, $email_post, $this );
+
 		$templated_output = $this->get_templated_post_content( $email_post );
 
 		$style_string = apply_filters( 'sensei_email_styles', $this->get_header_styles(), $email_type, $email_post );
