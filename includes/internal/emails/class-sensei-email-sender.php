@@ -141,13 +141,15 @@ class Sensei_Email_Sender {
 	/**
 	 * Get the post content rendered with the email template.
 	 *
-	 * @param WP_Post $post The post object.
+	 * @param WP_Post $email_post The post object.
 	 *
 	 * @return string
 	 */
-	private function get_templated_post_content( $post ) {
-		global $sensei_email_data;
-		$sensei_email_data['email_body'] = do_blocks( get_the_content( null, false, $post ) );
+	private function get_templated_post_content( $email_post ) {
+		global $sensei_email_data, $post;
+		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- This is a temporary override for the email template.
+
+		$sensei_email_data['email_body'] = do_blocks( $email_post->post_content );
 		$sensei_email_data['body_class'] = '';
 
 		ob_start();
