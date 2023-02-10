@@ -74,7 +74,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$list_table->prepare_items();
 	}
 
-	public function testPrepareItems_WhenGroupSet_SetsTheMetaQuery() {
+	public function testPrepareItems_WhenEmailTypeSet_SetsTheMetaQuery() {
 		/* Arrange. */
 		$query      = $this->createMock( \WP_Query::class );
 		$list_table = new Email_List_Table( $query );
@@ -90,7 +90,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 					'offset'         => 0,
 					'meta_query'     => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 						[
-							'key'   => 'sensei_email_group',
+							'key'   => 'sensei_email_type',
 							'value' => 'student',
 						],
 					],
@@ -102,7 +102,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$list_table->prepare_items( 'student' );
 	}
 
-	public function testPrepareItems_WhenNoGroupSet_DoesntSetTheMetaQuery() {
+	public function testPrepareItems_WhenNoEmailTypeSet_DoesntSetTheMetaQuery() {
 		/* Arrange. */
 		$query      = $this->createMock( \WP_Query::class );
 		$list_table = new Email_List_Table( $query );

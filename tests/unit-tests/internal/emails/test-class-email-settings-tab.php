@@ -55,13 +55,13 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertSame( 'a', $content );
 	}
 
-	public function testTabContent_WhenInStudentSubtabAndHasAnEmailOfThatGroup_ReturnsContentWithTheEmail() {
+	public function testTabContent_WhenInStudentSubtabAndHasAnEmailOfThatType_ReturnsContentWithTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
 		$email_settings_tab = new Email_Settings_Tab();
 		$_GET['subtab']     = 'student';
 
-		update_post_meta( $post->ID, 'sensei_email_group', 'student' );
+		update_post_meta( $post->ID, 'sensei_email_type', 'student' );
 
 		/* Act. */
 		$content = $email_settings_tab->tab_content( '', 'email-notification-settings' );
@@ -70,13 +70,13 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( $post->post_title, $content );
 	}
 
-	public function testTabContent_WhenInStudentSubtabAndHasAnEmailOfAnotherGroup_ReturnsContentWithoutTheEmail() {
+	public function testTabContent_WhenInStudentSubtabAndHasAnEmailOfAnotherType_ReturnsContentWithoutTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
 		$email_settings_tab = new Email_Settings_Tab();
 		$_GET['subtab']     = 'student';
 
-		update_post_meta( $post->ID, 'sensei_email_group', 'teacher' );
+		update_post_meta( $post->ID, 'sensei_email_type', 'teacher' );
 
 		/* Act. */
 		$content = $email_settings_tab->tab_content( '', 'email-notification-settings' );
@@ -85,13 +85,13 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertStringNotContainsString( $post->post_title, $content );
 	}
 
-	public function testTabContent_WhenInTeacherSubtabAndHasAnEmailOfThatGroup_ReturnsContentWithTheEmail() {
+	public function testTabContent_WhenInTeacherSubtabAndHasAnEmailOfThatType_ReturnsContentWithTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
 		$email_settings_tab = new Email_Settings_Tab();
 		$_GET['subtab']     = 'teacher';
 
-		update_post_meta( $post->ID, 'sensei_email_group', 'teacher' );
+		update_post_meta( $post->ID, 'sensei_email_type', 'teacher' );
 
 		/* Act. */
 		$content = $email_settings_tab->tab_content( '', 'email-notification-settings' );
@@ -100,13 +100,13 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( $post->post_title, $content );
 	}
 
-	public function testTabContent_WhenInTeacherSubtabAndHasAnEmailOfAnotherGroup_ReturnsContentWithoutTheEmail() {
+	public function testTabContent_WhenInTeacherSubtabAndHasAnEmailOfAnotherType_ReturnsContentWithoutTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
 		$email_settings_tab = new Email_Settings_Tab();
 		$_GET['subtab']     = 'teacher';
 
-		update_post_meta( $post->ID, 'sensei_email_group', 'student' );
+		update_post_meta( $post->ID, 'sensei_email_type', 'student' );
 
 		/* Act. */
 		$content = $email_settings_tab->tab_content( '', 'email-notification-settings' );

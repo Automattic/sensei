@@ -76,11 +76,11 @@ class Email_List_Table extends Sensei_List_Table {
 	/**
 	 * Prepares the list of items for displaying.
 	 *
-	 * @param string|null $group The email group that will be listed.
+	 * @param string|null $type The email group that will be listed.
 	 *
 	 * @internal
 	 */
-	public function prepare_items( string $group = null ) {
+	public function prepare_items( string $type = null ) {
 		$per_page = $this->get_items_per_page( 'sensei_emails_per_page' );
 		$pagenum  = $this->get_pagenum();
 		$offset   = $pagenum > 1 ? $per_page * ( $pagenum - 1 ) : 0;
@@ -91,11 +91,11 @@ class Email_List_Table extends Sensei_List_Table {
 			'offset'         => $offset,
 		];
 
-		if ( $group ) {
+		if ( $type ) {
 			$query_args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Query limited by pagination.
 				[
-					'key'   => 'sensei_email_group', // TODO: Replace the meta key by a constant defined elsewhere.
-					'value' => $group,
+					'key'   => 'sensei_email_type', // TODO: Replace the meta key by a constant defined elsewhere.
+					'value' => $type,
 				],
 			];
 		}
