@@ -115,6 +115,7 @@ class Sensei_Autoloader {
 			'Sensei_Email_Learner_Completed_Course'        => 'emails/class-sensei-email-learner-completed-course.php',
 			'Sensei_Email_Learner_Graded_Quiz'             => 'emails/class-sensei-email-learner-graded-quiz.php',
 			'Sensei_Email_Sender'                          => 'emails/class-sensei-email-sender.php',
+			'Sensei_Email_Generator'                       => 'emails/class-sensei-email-sender.php',
 			'Sensei_Email_New_Message_Reply'               => 'emails/class-sensei-email-new-message-reply.php',
 			'Sensei_Email_Teacher_Completed_Course'        => 'emails/class-sensei-email-teacher-completed-course.php',
 			'Sensei_Email_Teacher_Completed_Lesson'        => 'emails/class-sensei-email-teacher-completed-lesson.php',
@@ -291,6 +292,8 @@ class Sensei_Autoloader {
 			 * Email Customization
 			 */
 			\Sensei\Internal\Emails\Email_Post_Type::class => 'internal/emails/class-email-post-type.php',
+			\Sensei\Internal\Emails\Sensei_Email_Sender::class => 'internal/emails/class-sensei-email-sender.php',
+			\Sensei\Internal\Emails\Sensei_Email_Generator::class => 'internal/emails/class-sensei-email-generator.php',
 		);
 	}
 
