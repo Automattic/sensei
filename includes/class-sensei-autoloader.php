@@ -289,12 +289,12 @@ class Sensei_Autoloader {
 			/**
 			 * Email Customization
 			 */
-			\Sensei\Internal\Emails\Sensei_Email_Blocks::class    => 'internal/emails/class-sensei-email-blocks.php',
+			\Sensei\Internal\Emails\Sensei_Email_Blocks::class => 'internal/emails/class-sensei-email-blocks.php',
 			\Sensei\Internal\Emails\Sensei_Email_Customization::class => 'internal/emails/class-sensei-email-customization.php',
 			\Sensei\Internal\Emails\Sensei_Email_List_Table::class => 'internal/emails/class-sensei-email-list-table.php',
 			\Sensei\Internal\Emails\Sensei_Email_Post_Type::class => 'internal/emails/class-sensei-email-post-type.php',
 			\Sensei\Internal\Emails\Sensei_Email_Settings_Tab::class => 'internal/emails/class-sensei-email-settings-tab.php',
-			\Sensei\Internal\Emails\Sensei_Settings_Menu::class   => 'internal/emails/class-sensei-settings-menu.php',
+			\Sensei\Internal\Emails\Sensei_Settings_Menu::class => 'internal/emails/class-sensei-settings-menu.php',
 		);
 	}
 
