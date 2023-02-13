@@ -29,7 +29,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		$sections = $email_settings_tab->init();
 
 		/* Assert. */
-		$priority = has_filter( 'sensei_settings_tab_content', [ $email_settings_tab, 'tab_content' ] );
+		$priority = has_filter( 'sensei_settings_content', [ $email_settings_tab, 'get_content' ] );
 		self::assertSame( 10, $priority );
 	}
 
@@ -38,21 +38,21 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		$email_settings_tab = new Email_Settings_Tab();
 
 		/* Act. */
-		$content = $email_settings_tab->tab_content( 'a', 'email-notification-settings' );
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
 
 		/* Assert. */
 		self::assertStringContainsString( '<table', $content );
 	}
 
-	public function testTabContent_WhenCalledWithAnotherTab_ReturnsDefaultContent() {
+	public function testTabContent_WhenCalledWithAnotherTab_ReturnsEmptyContent() {
 		/* Arrange. */
 		$email_settings_tab = new Email_Settings_Tab();
 
 		/* Act. */
-		$content = $email_settings_tab->tab_content( 'a', 'other-tab' );
+		$content = $email_settings_tab->get_content( 'other-tab' );
 
 		/* Assert. */
-		self::assertSame( 'a', $content );
+		self::assertSame( '', $content );
 	}
 
 	public function testTabContent_WhenInStudentSubtabAndHasAnEmailOfThatType_ReturnsContentWithTheEmail() {
@@ -64,7 +64,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		update_post_meta( $post->ID, 'sensei_email_type', 'student' );
 
 		/* Act. */
-		$content = $email_settings_tab->tab_content( '', 'email-notification-settings' );
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
 
 		/* Assert. */
 		self::assertStringContainsString( $post->post_title, $content );
@@ -79,7 +79,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		update_post_meta( $post->ID, 'sensei_email_type', 'teacher' );
 
 		/* Act. */
-		$content = $email_settings_tab->tab_content( '', 'email-notification-settings' );
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
 
 		/* Assert. */
 		self::assertStringNotContainsString( $post->post_title, $content );
@@ -94,7 +94,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		update_post_meta( $post->ID, 'sensei_email_type', 'teacher' );
 
 		/* Act. */
-		$content = $email_settings_tab->tab_content( '', 'email-notification-settings' );
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
 
 		/* Assert. */
 		self::assertStringContainsString( $post->post_title, $content );
@@ -109,7 +109,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		update_post_meta( $post->ID, 'sensei_email_type', 'student' );
 
 		/* Act. */
-		$content = $email_settings_tab->tab_content( '', 'email-notification-settings' );
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
 
 		/* Assert. */
 		self::assertStringNotContainsString( $post->post_title, $content );
