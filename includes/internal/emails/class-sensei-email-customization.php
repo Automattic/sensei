@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Email_Customization class.
+ * File containing the Sensei_Email_Customization class.
  *
  * @package sensei
  */
@@ -12,13 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Email_Customization
+ * Class Sensei_Email_Customization
  *
  * @internal
  *
  * @since $$next-version$$
  */
-class Email_Customization {
+class Sensei_Email_Customization {
 
 	/**
 	 * Class instance.
@@ -30,41 +30,41 @@ class Email_Customization {
 	/**
 	 * Email post type.
 	 *
-	 * @var Email_Post_Type
+	 * @var Sensei_Email_Post_Type
 	 */
 	private $post_type;
 
 	/**
 	 * Email blocks configurations.
 	 *
-	 * @var Email_Blocks
+	 * @var Sensei_Email_Blocks
 	 */
 	private $blocks;
 
 	/**
-	 * Settings_Menu instance.
+	 * Sensei_Settings_Menu instance.
 	 *
-	 * @var Settings_Menu
+	 * @var Sensei_Settings_Menu
 	 */
 	private $settings_menu;
 
 	/**
-	 * Email_Settings_Tab instance.
+	 * Sensei_Email_Settings_Tab instance.
 	 *
-	 * @var Email_Settings_Tab
+	 * @var Sensei_Email_Settings_Tab
 	 */
 	private $settings_tab;
 
 	/**
-	 * Email_Customization constructor.
+	 * Sensei_Email_Customization constructor.
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
-		$this->post_type     = new Email_Post_Type();
-		$this->settings_menu = new Settings_Menu();
-		$this->settings_tab  = new Email_Settings_Tab();
-		$this->blocks        = new Email_Blocks();
+		$this->post_type     = new Sensei_Email_Post_Type();
+		$this->settings_menu = new Sensei_Settings_Menu();
+		$this->settings_tab  = new Sensei_Email_Settings_Tab();
+		$this->blocks        = new Sensei_Email_Blocks();
 	}
 
 	/**

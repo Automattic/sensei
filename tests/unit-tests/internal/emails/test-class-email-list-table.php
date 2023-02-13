@@ -2,18 +2,18 @@
 
 namespace SenseiTest\Internal\Emails;
 
-use Sensei\Internal\Emails\Email_List_Table;
-use Sensei\Internal\Emails\Email_Post_Type;
+use Sensei\Internal\Emails\Sensei_Email_List_Table;
+use Sensei\Internal\Emails\Sensei_Email_Post_Type;
 use Sensei_Factory;
 use stdClass;
 use WP_Post;
 
 /**
- * Tests for Sensei\Internal\Emails\Email_List_Table.
+ * Tests for Sensei\Internal\Emails\Sensei_Email_List_Table.
  *
- * @covers \Sensei\Internal\Emails\Email_List_Table
+ * @covers \Sensei\Internal\Emails\Sensei_Email_List_Table
  */
-class Email_List_Table_Test extends \WP_UnitTestCase {
+class Sensei_Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function setUp(): void {
 		parent::setUp();
@@ -27,7 +27,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testConstruct_WhenCalled_RemovesTableSearchFormHook() {
 		/* Act. */
-		$list_table = new Email_List_Table();
+		$list_table = new Sensei_Email_List_Table();
 
 		/* Assert. */
 		$priority = has_action( 'sensei_before_list_table', [ $list_table, 'table_search_form' ] );
@@ -40,7 +40,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		}
 
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Sensei_Email_List_Table();
 
 		/* Act. */
 		$columns = $list_table->get_columns();
@@ -53,7 +53,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	public function testPrepareItems_WhenPaginated_SetsTheCorrectOffset() {
 		/* Arrange. */
 		$query      = $this->createMock( \WP_Query::class );
-		$list_table = new Email_List_Table( $query );
+		$list_table = new Sensei_Email_List_Table( $query );
 
 		$_REQUEST['paged'] = 2;
 
@@ -63,7 +63,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 			->method( 'query' )
 			->with(
 				[
-					'post_type'      => Email_Post_Type::POST_TYPE,
+					'post_type'      => Sensei_Email_Post_Type::POST_TYPE,
 					'posts_per_page' => 20,
 					'offset'         => 20,
 				]
@@ -77,7 +77,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	public function testPrepareItems_WhenEmailTypeSet_SetsTheMetaQuery() {
 		/* Arrange. */
 		$query      = $this->createMock( \WP_Query::class );
-		$list_table = new Email_List_Table( $query );
+		$list_table = new Sensei_Email_List_Table( $query );
 
 		/* Assert. */
 		$query
@@ -85,7 +85,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 			->method( 'query' )
 			->with(
 				[
-					'post_type'      => Email_Post_Type::POST_TYPE,
+					'post_type'      => Sensei_Email_Post_Type::POST_TYPE,
 					'posts_per_page' => 20,
 					'offset'         => 0,
 					'meta_query'     => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
@@ -105,7 +105,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	public function testPrepareItems_WhenNoEmailTypeSet_DoesntSetTheMetaQuery() {
 		/* Arrange. */
 		$query      = $this->createMock( \WP_Query::class );
-		$list_table = new Email_List_Table( $query );
+		$list_table = new Sensei_Email_List_Table( $query );
 
 		/* Assert. */
 		$query
@@ -113,7 +113,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 			->method( 'query' )
 			->with(
 				[
-					'post_type'      => Email_Post_Type::POST_TYPE,
+					'post_type'      => Sensei_Email_Post_Type::POST_TYPE,
 					'posts_per_page' => 20,
 					'offset'         => 0,
 				]
@@ -129,7 +129,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$query                = $this->createMock( \WP_Query::class );
 		$query->found_posts   = 50;
 		$query->max_num_pages = 5;
-		$list_table           = new Email_List_Table( $query );
+		$list_table           = new Sensei_Email_List_Table( $query );
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -153,7 +153,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$posts        = [ new WP_Post( new stdClass() ), new WP_Post( new stdClass() ) ];
 		$query        = $this->createMock( \WP_Query::class );
 		$query->posts = $posts;
-		$list_table   = new Email_List_Table( $query );
+		$list_table   = new Sensei_Email_List_Table( $query );
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -168,7 +168,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		}
 
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Sensei_Email_List_Table();
 		$post_id    = $this->factory->email->create();
 
 		/* Act. */
@@ -185,7 +185,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testGetRowData_WhenHasItem_ReturnsTheItemRowData() {
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Sensei_Email_List_Table();
 		$post       = $this->factory->email->create_and_get();
 
 		/* Act. */
@@ -206,7 +206,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testGetRowData_WhenHasItemWithNoTitle_ReturnsNoTitleText() {
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Sensei_Email_List_Table();
 		$post_id    = $this->factory->email->create( [ 'post_title' => '' ] );
 
 		/* Act. */
@@ -222,7 +222,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testGetRowData_WhenHasDescription_ReturnsTheDescription() {
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Sensei_Email_List_Table();
 		$post_id    = $this->factory->email->create();
 
 		update_post_meta( $post_id, 'sensei_email_description', 'Welcome Student' );
@@ -240,7 +240,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testGetRowData_WhenWasModified1HourAgo_ReturnsTheCorrectModifiedTime() {
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Sensei_Email_List_Table();
 		$post       = $this->factory->email->create_and_get(
 			[
 				'post_date_gmt' => gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),

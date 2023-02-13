@@ -2,15 +2,15 @@
 
 namespace SenseiTest\Internal\Emails;
 
-use Sensei\Internal\Emails\Email_Settings_Tab;
+use Sensei\Internal\Emails\Sensei_Email_Settings_Tab;
 use Sensei_Factory;
 
 /**
- * Tests for Sensei\Internal\Emails\Email_Settings_Tab.
+ * Tests for Sensei\Internal\Emails\Sensei_Email_Settings_Tab.
  *
- * @covers \Sensei\Internal\Emails\Email_Settings_Tab
+ * @covers \Sensei\Internal\Emails\Sensei_Email_Settings_Tab
  */
-class Email_Settings_Tab_Test extends \WP_UnitTestCase {
+class Sensei_Email_Settings_Tab_Test extends \WP_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
@@ -23,7 +23,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 
 	public function testInit_WhenCalled_AddsFilter() {
 		/* Arrange. */
-		$email_settings_tab = new Email_Settings_Tab();
+		$email_settings_tab = new Sensei_Email_Settings_Tab();
 
 		/* Act. */
 		$sections = $email_settings_tab->init();
@@ -35,7 +35,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 
 	public function testTabContent_WhenCalledWithEmailNotificationSettings_ReturnsContentWithTable() {
 		/* Arrange. */
-		$email_settings_tab = new Email_Settings_Tab();
+		$email_settings_tab = new Sensei_Email_Settings_Tab();
 
 		/* Act. */
 		$content = $email_settings_tab->tab_content( 'a', 'email-notification-settings' );
@@ -46,7 +46,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 
 	public function testTabContent_WhenCalledWithAnotherTab_ReturnsDefaultContent() {
 		/* Arrange. */
-		$email_settings_tab = new Email_Settings_Tab();
+		$email_settings_tab = new Sensei_Email_Settings_Tab();
 
 		/* Act. */
 		$content = $email_settings_tab->tab_content( 'a', 'other-tab' );
@@ -58,7 +58,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 	public function testTabContent_WhenInStudentSubtabAndHasAnEmailOfThatType_ReturnsContentWithTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
-		$email_settings_tab = new Email_Settings_Tab();
+		$email_settings_tab = new Sensei_Email_Settings_Tab();
 		$_GET['subtab']     = 'student';
 
 		update_post_meta( $post->ID, 'sensei_email_type', 'student' );
@@ -73,7 +73,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 	public function testTabContent_WhenInStudentSubtabAndHasAnEmailOfAnotherType_ReturnsContentWithoutTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
-		$email_settings_tab = new Email_Settings_Tab();
+		$email_settings_tab = new Sensei_Email_Settings_Tab();
 		$_GET['subtab']     = 'student';
 
 		update_post_meta( $post->ID, 'sensei_email_type', 'teacher' );
@@ -88,7 +88,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 	public function testTabContent_WhenInTeacherSubtabAndHasAnEmailOfThatType_ReturnsContentWithTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
-		$email_settings_tab = new Email_Settings_Tab();
+		$email_settings_tab = new Sensei_Email_Settings_Tab();
 		$_GET['subtab']     = 'teacher';
 
 		update_post_meta( $post->ID, 'sensei_email_type', 'teacher' );
@@ -103,7 +103,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 	public function testTabContent_WhenInTeacherSubtabAndHasAnEmailOfAnotherType_ReturnsContentWithoutTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
-		$email_settings_tab = new Email_Settings_Tab();
+		$email_settings_tab = new Sensei_Email_Settings_Tab();
 		$_GET['subtab']     = 'teacher';
 
 		update_post_meta( $post->ID, 'sensei_email_type', 'student' );

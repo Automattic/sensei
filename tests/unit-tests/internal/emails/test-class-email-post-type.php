@@ -2,17 +2,17 @@
 
 namespace SenseiTest\Internal\Emails;
 
-use Sensei\Internal\Emails\Email_Post_Type;
+use Sensei\Internal\Emails\Sensei_Email_Post_Type;
 
 /**
- * Tests for the Email_Post_Type class.
+ * Tests for the Sensei_Email_Post_Type class.
  *
- * @covers \Sensei\Internal\Emails\Email_Post_Type
+ * @covers \Sensei\Internal\Emails\Sensei_Email_Post_Type
  */
-class Email_Post_Type_Test extends \WP_UnitTestCase {
+class Sensei_Email_Post_Type_Test extends \WP_UnitTestCase {
 	public function testRegisterPostType_WhenCalled_RegistersEmailPostType() {
 		/* Arrange. */
-		$email_post_type = new Email_Post_Type();
+		$email_post_type = new Sensei_Email_Post_Type();
 
 		/* Act. */
 		$email_post_type->register_post_type();
@@ -23,7 +23,7 @@ class Email_Post_Type_Test extends \WP_UnitTestCase {
 
 	public function testInit_WhenCalled_AddsInitAction() {
 		/* Arrange. */
-		$email_post_type = new Email_Post_Type();
+		$email_post_type = new Sensei_Email_Post_Type();
 
 		/* Act. */
 		$email_post_type->init();

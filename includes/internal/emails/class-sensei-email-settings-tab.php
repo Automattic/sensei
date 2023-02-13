@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Email_Settings_Tab class.
+ * File containing the Sensei_Email_Settings_Tab class.
  *
  * @package sensei
  */
@@ -12,13 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Email_Settings_Tab
+ * Class Sensei_Email_Settings_Tab
  *
  * @internal
  *
  * @since $$next-version$$
  */
-class Email_Settings_Tab {
+class Sensei_Email_Settings_Tab {
 	/**
 	 * Initialize the class and add hooks.
 	 *
@@ -136,7 +136,7 @@ class Email_Settings_Tab {
 	 * Render the student emails subtab.
 	 */
 	private function render_student_subtab(): void {
-		$list_table = new Email_List_Table();
+		$list_table = new Sensei_Email_List_Table();
 		$list_table->prepare_items( 'student' );
 		$list_table->display();
 	}
@@ -145,7 +145,7 @@ class Email_Settings_Tab {
 	 * Render the teacher emails subtab.
 	 */
 	private function render_teacher_subtab(): void {
-		$list_table = new Email_List_Table();
+		$list_table = new Sensei_Email_List_Table();
 		$list_table->prepare_items( 'teacher' );
 		$list_table->display();
 	}

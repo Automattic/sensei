@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since $$next-version$$
  */
-class Email_Post_Type {
+class Sensei_Email_Post_Type {
 	/**
 	 * Post type name.
 	 */

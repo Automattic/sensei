@@ -1,20 +1,20 @@
 <?php
 namespace SenseiTest\Internal\Emails;
 
-use Sensei\Internal\Emails\Email_Customization;
-use Sensei\Internal\Emails\Email_Post_Type;
+use Sensei\Internal\Emails\Sensei_Email_Customization;
+use Sensei\Internal\Emails\Sensei_Email_Post_Type;
 
 /**
- * Tests for the Email_Customization class.
+ * Tests for the Sensei_Email_Customization class.
  *
- * @covers \Sensei\Internal\Emails\Email_Customization
+ * @covers \Sensei\Internal\Emails\Sensei_Email_Customization
  */
-class Email_Customization_Test extends \WP_UnitTestCase {
+class Sensei_Email_Customization_Test extends \WP_UnitTestCase {
 	public function testInstance_WhenCalled_ReturnsInstance() {
 		/* Act. */
-		$result = Email_Customization::instance();
+		$result = Sensei_Email_Customization::instance();
 
 		/* Assert. */
-		$this->assertInstanceOf( Email_Customization::class, $result );
+		$this->assertInstanceOf( Sensei_Email_Customization::class, $result );
 	}
 }

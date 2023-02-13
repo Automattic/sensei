@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Settings_Menu class.
+ * File containing the Sensei_Settings_Menu class.
  *
  * @package sensei
  */
@@ -12,13 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Settings_Menu
+ * Class Sensei_Settings_Menu
  *
  * @internal
  *
  * @since $$next-version$$
  */
-class Settings_Menu {
+class Sensei_Settings_Menu {
 
 	/**
 	 * Initialize the class and add hooks.

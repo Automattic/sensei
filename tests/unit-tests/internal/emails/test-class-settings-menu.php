@@ -2,15 +2,15 @@
 
 namespace SenseiTest\Internal\Emails;
 
-use Sensei\Internal\Emails\Settings_Menu;
+use Sensei\Internal\Emails\Sensei_Settings_Menu;
 
-class Settings_Menu_Test extends \WP_UnitTestCase {
+class Sensei_Settings_Menu_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that the email tab is replaced.
 	 */
 	public function testReplaceEmailTab() {
 		/* Arrange. */
-		$settings_menu = new Settings_Menu();
+		$settings_menu = new Sensei_Settings_Menu();
 
 		/* Act. */
 		$sections = $settings_menu->replace_email_tab( [] );

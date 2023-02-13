@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Email_List_Table class.
+ * File containing the Sensei_Email_List_Table class.
  *
  * @package sensei
  */
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since $$next-version$$
  */
-class Email_List_Table extends Sensei_List_Table {
+class Sensei_Email_List_Table extends Sensei_List_Table {
 	/**
 	 * The WP_Query instance.
 	 *
@@ -66,7 +66,7 @@ class Email_List_Table extends Sensei_List_Table {
 		 * @hook sensei_email_list_columns
 		 *
 		 * @param {array}  $columns    The table columns.
-		 * @param {object} $list_table Email_List_Table instance.
+		 * @param {object} $list_table Sensei_Email_List_Table instance.
 		 *
 		 * @return {array} The modified table columns.
 		 */
@@ -86,7 +86,7 @@ class Email_List_Table extends Sensei_List_Table {
 		$offset   = $pagenum > 1 ? $per_page * ( $pagenum - 1 ) : 0;
 
 		$query_args = [
-			'post_type'      => Email_Post_Type::POST_TYPE,
+			'post_type'      => Sensei_Email_Post_Type::POST_TYPE,
 			'posts_per_page' => $per_page,
 			'offset'         => $offset,
 		];
@@ -163,7 +163,7 @@ class Email_List_Table extends Sensei_List_Table {
 		 *
 		 * @param {array}  $row_data The row data.
 		 * @param {object} $post The post.
-		 * @param {object} $list_table Email_List_Table instance.
+		 * @param {object} $list_table Sensei_Email_List_Table instance.
 		 *
 		 * @return {array}
 		 */

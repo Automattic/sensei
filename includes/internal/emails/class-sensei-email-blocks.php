@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Email_Blocks class.
+ * File containing the Sensei_Email_Blocks class.
  *
  * @package sensei
  */
@@ -12,13 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Email_Blocks
+ * Class Sensei_Email_Blocks
  *
  * @internal
  *
  * @since $$next-version$$
  */
-class Email_Blocks {
+class Sensei_Email_Blocks {
 
 	/**
 	 *  List of allowed blocks.
@@ -52,7 +52,7 @@ class Email_Blocks {
 	 * @return bool|string[]
 	 */
 	public function set_allowed_blocks( $default_allowed_blocks, $context ) {
-		if ( Email_Post_Type::POST_TYPE === $context->post->post_type ) {
+		if ( Sensei_Email_Post_Type::POST_TYPE === $context->post->post_type ) {
 			return self::ALLOWED_BLOCKS;
 		}
 
