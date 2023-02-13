@@ -35,6 +35,13 @@ class Email_Customization {
 	private $post_type;
 
 	/**
+	 * Email blocks configurations.
+	 *
+	 * @var Email_Blocks
+	 */
+	private $blocks;
+
+	/**
 	 * Settings_Menu instance.
 	 *
 	 * @var Settings_Menu
@@ -57,6 +64,7 @@ class Email_Customization {
 		$this->post_type     = new Email_Post_Type();
 		$this->settings_menu = new Settings_Menu();
 		$this->settings_tab  = new Email_Settings_Tab();
+		$this->blocks        = new Email_Blocks();
 	}
 
 	/**
@@ -83,5 +91,6 @@ class Email_Customization {
 		$this->post_type->init();
 		$this->settings_menu->init();
 		$this->settings_tab->init();
+		$this->blocks->init();
 	}
 }
