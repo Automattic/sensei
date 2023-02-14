@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( \MailPoet\API\API::class ) ) {
-	exit;
+	return;
 }
 
 /**
@@ -30,6 +30,13 @@ class Sensei_MailPoet {
 	 * @var object
 	 */
 	private $mailpoet_api;
+
+	/**
+	 * Instance of the current handler.
+	 *
+	 * @var Sensei_MailPoet
+	 */
+	private static $instance;
 
 	/**
 	 * A list of Sensei Courses and Groups.
@@ -55,8 +62,6 @@ class Sensei_MailPoet {
 			$this->mailpoet_api = \MailPoet\API\API::MP( 'v1' );
 			if ( $this->mailpoet_api->isSetupComplete() ) {
 				add_action( 'init', array( $this, 'maybe_schedule_cron_job' ), 101 );
-				add_action( 'sensei_sync_mailpoet_subscribers', array( $this, 'sync_subscribers' ) );
-				register_deactivation_hook( SENSEI_LMS_PLUGIN_FILE, array( $this, 'deactivate_sync_job' ) );
 
 				add_action( 'sensei_pro_student_groups_group_student_added', array( $this, 'add_student_subscriber' ), 10, 2 );
 				add_action( 'sensei_pro_student_groups_group_students_removed', array( $this, 'remove_student_subscribers' ), 10, 2 );
@@ -70,6 +75,19 @@ class Sensei_MailPoet {
 	}
 
 	/**
+	 * Get the instance of the class.
+	 *
+	 * @return Sensei_MailPoet
+	 */
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
 	 * Attach job to cron.
 	 *
 	 * @since $$next-version$$
@@ -78,21 +96,7 @@ class Sensei_MailPoet {
 	 * @return void
 	 */
 	public function maybe_schedule_cron_job() {
-		if ( ! wp_next_scheduled( 'sensei_sync_mailpoet_subscribers' ) ) {
-			wp_schedule_event( time(), 'daily', 'sensei_sync_mailpoet_subscribers' );
-		}
-	}
-
-	/**
-	 * Remove MailPoet sync cron job.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @return void
-	 */
-	public function deactivate_sync_job() {
-		$timestamp = wp_next_scheduled( 'sensei_sync_mailpoet_subscribers' );
-		wp_unschedule_event( $timestamp, 'sensei_sync_mailpoet_subscribers' );
+		Sensei_Scheduler::instance()->schedule_job( new Sensei_MailPoet_Sync_Job() );
 	}
 
 	/**
@@ -213,7 +217,7 @@ class Sensei_MailPoet {
 	 * @param string|int $list_id ID of the list on MailPoet.
 	 * @return void
 	 */
-	private function add_subscribers( $subscribers, $list_id ) {
+	public function add_subscribers( $subscribers, $list_id ) {
 		$options = array(
 			'send_confirmation_email'      => false,
 			'schedule_welcome_email'       => false,
@@ -279,7 +283,7 @@ class Sensei_MailPoet {
 	 *
 	 * @return string
 	 */
-	private function get_list_name( $name, $post_type ) {
+	public function get_list_name( $name, $post_type ) {
 		return 'Sensei LMS ' . ucfirst( $post_type ) . ': ' . $name;
 	}
 
