@@ -119,7 +119,9 @@ class Email_Sender {
 
 		$subject_text = wp_strip_all_tags( $email_post->post_title );
 
-		$headers[] = 'Content-Type: text/html; charset=UTF-8';
+		$headers = [
+			'Content-Type: text/html; charset=UTF-8',
+		];
 
 		foreach ( $replacements as $recipient => $replacement ) {
 			$email_body    = $html_output_with_inlined_css;
