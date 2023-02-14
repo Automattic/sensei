@@ -179,7 +179,7 @@ class Email_Sender {
 		global $sensei_email_data, $post;
 		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- This is a temporary override for the email template.
 
-		$sensei_email_data['email_body'] = wp_kses_post( do_blocks( $email_post->post_content ) );
+		$sensei_email_data['email_body'] = do_blocks( $email_post->post_content );
 		$sensei_email_data['body_class'] = '';
 
 		ob_start();

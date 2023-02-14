@@ -1,5 +1,12 @@
 <!doctype html>
 <?php
+/**
+ * Email template
+ *
+ * @since $$next-version$$
+ * @package sensei
+ */
+
 	global $sensei_email_data;
 ?>
 <html>
@@ -684,7 +691,7 @@
 											<tr>
 												<td>
 													<div class="post-body">
-														<?php echo $sensei_email_data['email_body']; ?>
+														<?php echo wp_kses_post( $sensei_email_data['email_body'] ); ?>
 													</div>
 												</td>
 											</tr>
