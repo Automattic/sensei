@@ -7,13 +7,11 @@ jQuery( document ).ready( function ( $ ) {
 		$senseiSettings.find( 'a.tab' ).removeClass( 'current' );
 	}
 
-	function show( sectionId = '' ) {
-		$senseiSettings.find( `section#${ sectionId }` ).show();
-		$senseiSettings
-			.find( `[href="#${ sectionId }"]` )
-			.addClass( 'current' );
-		sensei_log_event( 'settings_view', { view: sectionId } );
-		markSectionAsVisited( sectionId );
+	function show( section = '' ) {
+		$senseiSettings.find( `section#${ section }` ).show();
+		$senseiSettings.find( `[href$="${ section }"]` ).addClass( 'current' );
+		sensei_log_event( 'settings_view', { view: section } );
+		markSectionAsVisited( section );
 	}
 
 	// Hide header and submit on page load if needed
@@ -73,8 +71,7 @@ jQuery( document ).ready( function ( $ ) {
 			return true;
 		}
 
-		e.preventDefault();
-		const sectionId = href.split( '#' )[ 1 ];
+		const sectionId = href.split( '#' )[ 1 ] || defaultSectionId;
 		window.location.hash = '#' + sectionId;
 		hideAllSections();
 		show( sectionId );
