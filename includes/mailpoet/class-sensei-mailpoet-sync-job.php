@@ -49,7 +49,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 		$remaining = count( $sensei_lists ) - $offset;
 
 		foreach ( $current_batch as $list ) {
-			$list_name = $sensei_mp_instance->get_list_name( $list['name'], $list['post_type'] );
+			$list_name = Sensei_MailPoet_Repository::get_list_name( $list['name'], $list['post_type'] );
 			// find list in MailPoet lists array. if not exists, create one.
 			if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
 				$mp_list_id = $sensei_mp_instance->create_list( $list_name, $list['description'] );
@@ -58,7 +58,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 			}
 
 			if ( ! empty( $mp_list_id ) ) {
-				$students = $sensei_mp_instance->get_students( $list['id'], $list['post_type'] );
+				$students = Sensei_MailPoet_Repository::get_students( $list['id'], $list['post_type'] );
 				$sensei_mp_instance->add_subscribers( $students, $mp_list_id );
 			}
 		}

@@ -61,7 +61,7 @@ class Sensei_MailPoet {
 		if ( class_exists( \MailPoet\API\API::class ) ) {
 			$this->mailpoet_api = \MailPoet\API\API::MP( 'v1' );
 			if ( $this->mailpoet_api->isSetupComplete() ) {
-				add_action( 'init', array( $this, 'maybe_schedule_cron_job' ), 101 );
+				add_action( 'init', array( $this, 'maybe_schedule_cron_job' ), 10 );
 
 				add_action( 'sensei_pro_student_groups_group_student_added', array( $this, 'add_student_subscriber' ), 10, 2 );
 				add_action( 'sensei_pro_student_groups_group_students_removed', array( $this, 'remove_student_subscribers' ), 10, 2 );
@@ -100,54 +100,11 @@ class Sensei_MailPoet {
 	}
 
 	/**
-	 * Sync MailPoet list students with Sensei site courses and groups students.
-	 */
-	public function sync_subscribers() {
-		$sensei_lists   = $this->get_sensei_lists();
-		$mailpoet_lists = $this->get_mailpoet_lists();
-
-		foreach ( $sensei_lists as $list ) {
-			$list_name = $this->get_list_name( $list['name'], $list['post_type'] );
-			// find list in MailPoet lists array. if not exists, create one.
-			if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
-				$mp_list_id = $this->create_list( $list_name, $list['description'] );
-			} else {
-				$mp_list_id = $mailpoet_lists[ $list_name ]['id'];
-			}
-
-			if ( ! empty( $mp_list_id ) ) {
-				$students = $this->get_students( $list['id'], $list['post_type'] );
-				$this->add_subscribers( $students, $mp_list_id );
-			}
-		}
-	}
-
-	/**
 	 * Get all groups and courses in Sensei.
 	 */
 	public function get_sensei_lists() {
 		if ( empty( $this->sensei_lists ) ) {
-			$args = array(
-				'post_type'        => array( 'group', 'course' ),
-				'posts_per_page'   => -1,
-				'orderby'          => 'title',
-				'order'            => 'ASC',
-				'post_status'      => 'any',
-				'suppress_filters' => 0,
-			);
-
-			$wp_query_obj       = new WP_Query( $args );
-			$this->sensei_lists = array_map(
-				static function( $post ) {
-					return array(
-						'id'          => $post->ID,
-						'post_type'   => $post->post_type,
-						'name'        => $post->post_title,
-						'description' => $post->post_excerpt,
-					);
-				},
-				$wp_query_obj->posts
-			);
+			$this->sensei_lists = Sensei_MailPoet_Repository::fetch_sensei_lists();
 		}
 
 		return $this->sensei_lists;
@@ -158,55 +115,10 @@ class Sensei_MailPoet {
 	 */
 	public function get_mailpoet_lists() {
 		if ( empty( $this->mail_poet_lists ) ) {
-			$lists                 = $this->mailpoet_api->getLists();
-			$this->mail_poet_lists = array();
-			foreach ( $lists as $list ) {
-				$this->mail_poet_lists[ $list['name'] ] = $list;
-			}
+			$lists = $this->mailpoet_api->getLists();
+			$this->mail_poet_lists = Sensei_MailPoet_Repository::index_lists_by_key( $lists, 'name' );
 		}
 		return $this->mail_poet_lists;
-	}
-
-	/**
-	 * Get all enrolled students in a course or group.
-	 *
-	 * @param int    $id The post ID.
-	 * @param string $post_type The post type.
-	 *
-	 * @return array
-	 */
-	public function get_students( $id, $post_type ) {
-		global $wpdb;
-		if ( 'group' === $post_type ) {
-			if ( class_exists( 'Sensei_Pro_Student_Groups\Repositories\Group_Student_Repository', true ) ) {
-				$group_student_repo = new Sensei_Pro_Student_Groups\Repositories\Group_Student_Repository( $wpdb );
-				$student_ids        = $group_student_repo->find_group_students( $id );
-			}
-		}
-		if ( 'course' === $post_type ) {
-			$students    = get_comments(
-				array(
-					'post_id' => $id,
-					'type'    => 'sensei_course_status',
-					'status'  => 'any',
-				)
-			);
-			$student_ids = array_map(
-				static function( $student ) {
-					return $student->user_id;
-				},
-				$students
-			);
-		}
-		if ( ! $student_ids ) {
-			return array();
-		}
-
-		$args = array(
-			'include' => $student_ids,
-			'fields'  => array( 'id', 'user_email', 'display_name', 'user_nicename' ),
-		);
-		return get_users( $args );
 	}
 
 	/**
@@ -262,32 +174,6 @@ class Sensei_MailPoet {
 	}
 
 	/**
-	 * Delete lists on MailPoet for courses/groups that don't exist on Sensei anymore.
-	 *
-	 * @param array $list_ids An array of list IDs to be removed from MailPoet.
-	 *
-	 * @return void
-	 */
-	private function delete_lists( $list_ids ) {
-		foreach ( $list_ids as $list_id ) {
-			$this->mailpoet_api->deleteList( $list_id );
-		}
-	}
-
-	/**
-	 * Generates a Sensei LMS prefixed name for a MailPoet list.
-	 *
-	 * @param string $name The name of the course or group.
-	 *
-	 * @param string $post_type The post type: course or group.
-	 *
-	 * @return string
-	 */
-	public function get_list_name( $name, $post_type ) {
-		return 'Sensei LMS ' . ucfirst( $post_type ) . ': ' . $name;
-	}
-
-	/**
 	 * Creates a Sensei LMS MailPoet list with name and description.
 	 *
 	 * @param string $list_name The name of the list.
@@ -326,7 +212,7 @@ class Sensei_MailPoet {
 		}
 
 		$mailpoet_lists = $this->get_mailpoet_lists();
-		$list_name      = $this->get_list_name( $post->post_title, 'group' );
+		$list_name      = Sensei_MailPoet_Repository::get_list_name( $post->post_title, 'group' );
 		if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
 			$mp_list_id = $this->create_list( $list_name, $post->post_excerpt );
 		} else {
@@ -354,7 +240,7 @@ class Sensei_MailPoet {
 		}
 
 		$mailpoet_lists = $this->get_mailpoet_lists();
-		$list_name      = $this->get_list_name( $post->post_title, 'group' );
+		$list_name      = Sensei_MailPoet_Repository::get_list_name( $post->post_title, 'group' );
 
 		if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
 			$mp_list_id = $this->create_list( $list_name, $post->post_excerpt );
