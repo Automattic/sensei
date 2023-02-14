@@ -1,7 +1,6 @@
 <?php
 
 use Sensei\Internal\Emails\Email_Customization;
-use Sensei\Internal\Emails\Email_Post_Type;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
@@ -573,7 +572,7 @@ class Sensei_Main {
 
 		$email_customization_enabled = $this->feature_flags->is_enabled( 'email_customization' );
 		if ( $email_customization_enabled ) {
-			Email_Customization::instance()->init();
+			Email_Customization::instance( $this->settings )->init();
 		}
 	}
 
