@@ -106,7 +106,7 @@ class Sensei_Import_Job_CLI extends WP_CLI_Command {
 					WP_CLI::error(
 						sprintf(
 							// translators: Placeholder %1$s is the name of the file; %2$s is the path provided.
-							__( 'File provided for "%1$s" (%1$s) was not found', 'sensei-lms' ),
+							__( 'File provided for "%1$s" (%2$s) was not found', 'sensei-lms' ),
 							$file_key,
 							$file_path
 						)
