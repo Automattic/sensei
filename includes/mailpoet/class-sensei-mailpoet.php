@@ -61,7 +61,7 @@ class Sensei_MailPoet {
 		if ( class_exists( \MailPoet\API\API::class ) ) {
 			$this->mailpoet_api = \MailPoet\API\API::MP( 'v1' );
 			if ( $this->mailpoet_api->isSetupComplete() ) {
-				add_action( 'init', array( $this, 'maybe_schedule_cron_job' ), 10 );
+				add_action( 'init', array( $this, 'maybe_schedule_sync_job' ), 10 );
 
 				add_action( 'sensei_pro_student_groups_group_student_added', array( $this, 'add_student_subscriber' ), 10, 2 );
 				add_action( 'sensei_pro_student_groups_group_students_removed', array( $this, 'remove_student_subscribers' ), 10, 2 );
@@ -95,7 +95,7 @@ class Sensei_MailPoet {
 	 * @access private
 	 * @return void
 	 */
-	public function maybe_schedule_cron_job() {
+	public function maybe_schedule_sync_job() {
 		Sensei_Scheduler::instance()->schedule_job( new Sensei_MailPoet_Sync_Job() );
 	}
 
@@ -115,7 +115,7 @@ class Sensei_MailPoet {
 	 */
 	public function get_mailpoet_lists() {
 		if ( empty( $this->mail_poet_lists ) ) {
-			$lists = $this->mailpoet_api->getLists();
+			$lists                 = $this->mailpoet_api->getLists();
 			$this->mail_poet_lists = Sensei_MailPoet_Repository::index_lists_by_key( $lists, 'name' );
 		}
 		return $this->mail_poet_lists;
@@ -162,7 +162,7 @@ class Sensei_MailPoet {
 	 * @param string|int $list_id ID of the list on MailPoet.
 	 * @return void
 	 */
-	private function remove_subscribers( $subscribers, $list_id ) {
+	public function remove_subscribers( $subscribers, $list_id ) {
 		foreach ( $subscribers as $subscriber ) {
 			try {
 				$mp_subscriber = $this->mailpoet_api->getSubscriber( $subscriber->user_email );
@@ -291,5 +291,79 @@ class Sensei_MailPoet {
 	 */
 	public function add_student_course_subscriber( $user_id, $course_id ) {
 		$this->add_student_subscriber( $course_id, $user_id );
+	}
+
+	/**
+	 * Get subscribers of a MailPoet list.
+	 * Returns null if the list does not exist.
+	 *
+	 * @param int $mp_list_id MailPoet list ID.
+	 *
+	 * @return array
+	 */
+	public function get_mailpoet_subscribers( $mp_list_id ) {
+		try {
+			return $this->mailpoet_api->getSubscribers( array( 'listId' => (int) $mp_list_id ) );
+		} catch ( \MailPoet\API\MP\v1\APIException $exception ) {
+			return array();
+		}
+	}
+
+	/**
+	 * Figure out which students to add as subscribers to lists on MailPoet for courses/groups.
+	 *
+	 * @param array      $students A list of students belonging to this group/course list.
+	 * @param string|int $list_id ID of the list on MailPoet.
+	 * @param array      $mp_subscribers A list of subscribers already on MailPoet.
+	 *
+	 * @return void
+	 */
+	public function maybe_add_subscribers( $students, $list_id, $mp_subscribers ) {
+		$options = array(
+			'send_confirmation_email'      => false,
+			'schedule_welcome_email'       => false,
+			'skip_subscriber_notification' => false,
+		);
+		foreach ( $students as $student ) {
+			if ( ! array_key_exists( $student->user_email, $mp_subscribers ) ) {
+				$subscriber_data = array(
+					'email'      => $student->user_email,
+					'first_name' => $student->display_name,
+				);
+
+				try {
+					// All WordPress users are already on a list 'WordPress Users' on MailPoet.
+					$mp_subscriber = $this->mailpoet_api->getSubscriber( $student->user_email );
+					$this->mailpoet_api->subscribeToList( $mp_subscriber['id'], $list_id, $options );
+				} catch ( \MailPoet\API\MP\v1\APIException $exception ) {
+					if ( 4 === $exception->getCode() ) {
+						// subscriber does not exist.
+						$this->mailpoet_api->addSubscriber( $subscriber_data, array( $list_id ), $options );
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Figure out which subscribers to remove from lists on MailPoet for courses/groups.
+	 *
+	 * @param array      $subscribers A list of subscribers already on MailPoet.
+	 * @param string|int $list_id ID of the list on MailPoet.
+	 * @param array      $students A list of students belonging to this group/course list.
+	 *
+	 * @return void
+	 */
+	public function maybe_remove_subscribers( $subscribers, $list_id, $students ) {
+		foreach ( $subscribers as $subscriber ) {
+			if ( ! array_key_exists( $subscriber['email'], $students ) ) {
+				try {
+					$mp_subscriber = $this->mailpoet_api->getSubscriber( $subscriber['email'] );
+					$this->mailpoet_api->unsubscribeFromList( $mp_subscriber['id'], $list_id );
+				} catch ( \MailPoet\API\MP\v1\APIException $exception ) {
+					continue;
+				}
+			}
+		}
 	}
 }

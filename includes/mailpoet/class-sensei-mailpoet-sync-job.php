@@ -19,7 +19,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 	 *
 	 * @return int
 	 */
-	protected function get_batch_size() : int {
+	protected function get_batch_size() {
 		return 20;
 	}
 
@@ -28,7 +28,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 	 *
 	 * @return bool
 	 */
-	protected function allow_multiple_instances() : bool {
+	protected function allow_multiple_instances() {
 		return true;
 	}
 
@@ -39,7 +39,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 	 *
 	 * @return bool Returns true if there is more to do.
 	 */
-	protected function run_batch( int $offset ) : bool {
+	protected function run_batch( int $offset ) {
 		$sensei_mp_instance = Sensei_MailPoet::instance();
 
 		$mailpoet_lists = $sensei_mp_instance->get_mailpoet_lists();
@@ -58,8 +58,19 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 			}
 
 			if ( ! empty( $mp_list_id ) ) {
-				$students = Sensei_MailPoet_Repository::get_students( $list['id'], $list['post_type'] );
-				$sensei_mp_instance->add_subscribers( $students, $mp_list_id );
+				$students    = Sensei_MailPoet_Repository::get_students( $list['id'], $list['post_type'] );
+				$subscribers = array_filter(
+					$sensei_mp_instance->get_mailpoet_subscribers( $mp_list_id ),
+					static function( $subscriber ) {
+						return $subscriber['status'] !== 'unsubscribed';
+					}
+				);
+
+				$students    = Sensei_MailPoet_Repository::index_lists_by_key( $students, 'user_email' );
+				$subscribers = Sensei_MailPoet_Repository::index_lists_by_key( $subscribers, 'email' );
+
+				$sensei_mp_instance->maybe_add_subscribers( $students, $mp_list_id, $subscribers );
+				$sensei_mp_instance->maybe_remove_subscribers( $subscribers, $mp_list_id, $students );
 			}
 		}
 

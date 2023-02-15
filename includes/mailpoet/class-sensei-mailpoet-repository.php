@@ -82,7 +82,7 @@ class Sensei_MailPoet_Repository {
 			'suppress_filters' => 0,
 		);
 
-		$wp_query_obj       = new WP_Query( $args );
+		$wp_query_obj = new WP_Query( $args );
 		return array_map(
 			static function( $post ) {
 				return array(
@@ -96,6 +96,14 @@ class Sensei_MailPoet_Repository {
 		);
 	}
 
+	/**
+	 * For any given list, index it by a key.
+	 *
+	 * @param array  $list A list to reindex.
+	 * @param string $key The key to index by.
+	 *
+	 * @return array
+	 */
 	public static function index_lists_by_key( $list, $key ) {
 		$hash = array();
 		foreach ( $list as $item ) {
