@@ -39,7 +39,7 @@ class Email_List_Table extends Sensei_List_Table {
 	public function __construct( WP_Query $query = null ) {
 		$this->query = $query ? $query : new WP_Query();
 
-		parent::__construct( 'emails' );
+		parent::__construct( 'email' );
 
 		// Remove the search form.
 		remove_action( 'sensei_before_list_table', [ $this, 'table_search_form' ], 5 );
@@ -158,6 +158,21 @@ class Email_List_Table extends Sensei_List_Table {
 		 * @return {array}
 		 */
 		return apply_filters( 'sensei_email_list_row_data', $row_data, $post, $this );
+	}
+
+	/**
+	 * Get the CSS class of the row.
+	 *
+	 * @param \WP_Post $post The current item.
+	 *
+	 * @return string
+	 */
+	protected function get_row_class( $post ): string {
+		$is_published = 'publish' === get_post_status( $post );
+
+		return $is_published
+			? 'sensei-wp-list-table-row--enabled'
+			: 'sensei-wp-list-table-row--disabled';
 	}
 
 	/**
