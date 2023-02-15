@@ -33,6 +33,13 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 	 */
 	protected $email_sender;
 
+	/**
+	 * Skip did_filter check.
+	 *
+	 * @var bool
+	 */
+	protected $skip_did_filter = false;
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -41,6 +48,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		$this->email_sender->init();
 
 		$this->create_test_email_template();
+
+		$this->skip_did_filter = ! version_compare( get_bloginfo( 'version' ), '6.1.0', '>=' );
 
 		add_action( 'wp_mail_succeeded', [ $this, 'wp_mail_succeeded' ] );
 	}
@@ -56,6 +65,10 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 	}
 
 	public function testSendEmail_WhenCalledWithoutExistingTemplate_DoesNotProceed() {
+		if ( $this->skip_did_filter ) {
+			$this->markTestSkipped( 'Requires `did_filter()` which was introduced in WordPress 6.1.0.' );
+		}
+
 		/* Act. */
 		$this->email_sender->send_email( 'non-existing-template', [] );
 
@@ -64,6 +77,10 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 	}
 
 	public function testSendEmail_WhenCalledWithExistingTemplate_ProceedsFarther() {
+		if ( $this->skip_did_filter ) {
+			$this->markTestSkipped( 'Requires `did_filter()` which was introduced in WordPress 6.1.0.' );
+		}
+
 		/* Act. */
 		$this->email_sender->send_email( 'student_started_course_to_teacher', [] );
 
