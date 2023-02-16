@@ -172,8 +172,8 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		return [
 			[ "<input type='hidden' name='option_page' value='sensei-settings' />" ],
 			[ '<input type="hidden" name="action" value="update" />' ],
-			[ '<input id="hidden_field1" name="sensei-settings[hidden_field1]" type="hidden" value="c" />' ],
-			[ '<input id="hidden_field2" name="sensei-settings[hidden_field2]" type="hidden" value="d" />' ],
+			[ '<input name="sensei-settings[hidden_field1]" type="hidden" value="c" />' ],
+			[ '<input name="sensei-settings[hidden_field2]" type="hidden" value="d" />' ],
 		];
 	}
 
@@ -208,8 +208,8 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 
 	public function provideTabContent_WhenInSettingsSubtab_ReturnsContentWithHiddenEmailFields(): array {
 		return [
-			[ '<input id="email_from_name" name="sensei-settings[email_from_name]" type="hidden"' ],
-			[ '<input id="email_from_address" name="sensei-settings[email_from_address]" type="hidden"' ],
+			[ '<input name="sensei-settings[email_from_name]" type="hidden"' ],
+			[ '<input name="sensei-settings[email_from_address]" type="hidden"' ],
 		];
 	}
 
