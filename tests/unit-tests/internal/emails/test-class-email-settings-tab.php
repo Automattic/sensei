@@ -155,6 +155,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 					'email_from_address' => 'b',
 					'hidden_field1'      => 'c',
 					'hidden_field2'      => 'd',
+					'hidden_field3'      => [ 'e', 'f' ],
 				]
 			);
 
@@ -174,6 +175,8 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 			[ '<input type="hidden" name="action" value="update" />' ],
 			[ '<input name="sensei-settings[hidden_field1]" type="hidden" value="c" />' ],
 			[ '<input name="sensei-settings[hidden_field2]" type="hidden" value="d" />' ],
+			[ '<input name="sensei-settings[hidden_field3][]" type="hidden" value="e" />' ],
+			[ '<input name="sensei-settings[hidden_field3][]" type="hidden" value="f" />' ],
 		];
 	}
 
