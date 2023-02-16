@@ -26,7 +26,7 @@ class Email_Settings_Tab {
 	 */
 	public function init() {
 		add_action( 'sensei_settings_after_links', [ $this, 'render_tabs' ] );
-		add_filter( 'sensei_settings_content', [ $this, 'get_content' ] );
+		add_filter( 'sensei_settings_content', [ $this, 'get_content' ], 10, 2 );
 	}
 
 	/**
@@ -57,11 +57,12 @@ class Email_Settings_Tab {
 	 * @access private
 	 *
 	 * @param string $tab_name The current tab name.
+	 * @param string $content  Tab content.
 	 * @return string
 	 */
-	public function get_content( string $tab_name ): string {
+	public function get_content( string $tab_name, string $content = '' ): string {
 		if ( 'email-notification-settings' !== $tab_name ) {
-			return '';
+			return $content;
 		}
 
 		$current_subtab = $this->get_current_subtab();
