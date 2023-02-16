@@ -3,6 +3,7 @@
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
 	"require-dev": {
 		"php": "^7.2.5 || ^8",
+		"automattic/jetpack-changelogger": "v3.3.1",
 		"bamarni/composer-bin-plugin": "1.8.2",
 		"dealerdirect/phpcodesniffer-composer-installer": "0.7.2",
 		"dms/phpunit-arraysubset-asserts": "0.4.0",
@@ -59,6 +60,14 @@
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true,
 			"bamarni/composer-bin-plugin": true
+		}
+	},
+	"require": {
+		"pelago/emogrifier": "^6.0"
+	},
+	"extra": {
+		"changelogger": {
+			"changelog": "changelog.txt"
 		}
 	}
 }
