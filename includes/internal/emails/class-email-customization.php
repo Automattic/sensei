@@ -56,16 +56,16 @@ class Email_Customization {
 	private $settings_tab;
 
 	/**
-	 * Sensei_Email_Sender instance.
+	 * Email_Sender instance.
 	 *
 	 * @var Email_Sender
 	 */
 	private $email_sender;
 
 	/**
-	 * Sensei_Email_Generator instance.
+	 * Email_Generator instance.
 	 *
-	 * @var Sensei_Email_Generator
+	 * @var Email_Generator
 	 */
 	private $email_generator;
 

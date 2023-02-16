@@ -17,7 +17,7 @@ require plugin_dir_path( __DIR__ ) . '../../vendor/autoload.php';
 use \Pelago\Emogrifier\CssInliner;
 
 /**
- * Class Sensei_Email_Sender
+ * Class Email_Sender
  *
  * @package Sensei\Internal\Emails
  */
