@@ -1,10 +1,14 @@
 Resolves #
 
 ## Proposed Changes
-
-
+*
 
 ## Testing Instructions
+<!--
+Add as many details as possible to help others reproduce the issue and test the fix.
+"Before / After" screenshots can also be very helpful when the change is visual.
+-->
+
 1.
 2.
 3.
@@ -12,13 +16,12 @@ Resolves #
 ## New/Updated Hooks
 <!-- Add the following only if there are new/updated actions or filters. Please provide a brief description of what they do and any arguments they may take. Be sure to also add the "Hooks" label to this PR. -->
 
+*
 
 ## Deprecated Code
 <!-- Add the following only if there is any code that is being deprecated. Please list the replacement function or hook that should be called instead, if applicable. Be sure to also add the "Deprecation" label to this PR. -->
 
-
-## Screenshot / Video
-
+*
 
 ## Pre-Merge Checklist
 <!-- Complete applicable items on this checklist **before** merging. Items that are not applicable can be left unchecked.
