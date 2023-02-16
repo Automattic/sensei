@@ -56,6 +56,20 @@ class Email_Customization {
 	private $settings_tab;
 
 	/**
+	 * Email_Sender instance.
+	 *
+	 * @var Email_Sender
+	 */
+	private $email_sender;
+
+	/**
+	 * Email_Generator instance.
+	 *
+	 * @var Email_Generator
+	 */
+	private $email_generator;
+
+	/**
 	 * Email_List_Table_Actions instance.
 	 *
 	 * @var Email_List_Table_Actions
@@ -72,6 +86,8 @@ class Email_Customization {
 		$this->settings_menu      = new Settings_Menu();
 		$this->settings_tab       = new Email_Settings_Tab();
 		$this->blocks             = new Email_Blocks();
+		$this->email_sender       = new Email_Sender();
+		$this->email_generator    = new Email_Generator();
 		$this->list_table_actions = new Email_List_Table_Actions();
 	}
 
@@ -100,6 +116,8 @@ class Email_Customization {
 		$this->settings_menu->init();
 		$this->settings_tab->init();
 		$this->blocks->init();
+		$this->email_sender->init();
+		$this->email_generator->init();
 		$this->list_table_actions->init();
 	}
 }

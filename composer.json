@@ -62,6 +62,9 @@
 			"bamarni/composer-bin-plugin": true
 		}
 	},
+	"require": {
+		"pelago/emogrifier": "^6.0"
+	},
 	"extra": {
 		"changelogger": {
 			"changelog": "changelog.txt"
