@@ -19,8 +19,8 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 	 *
 	 * @return int
 	 */
-	protected function get_batch_size() {
-		return 20;
+	protected function get_batch_size() : int {
+		return 15;
 	}
 
 	/**
@@ -28,7 +28,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 	 *
 	 * @return bool
 	 */
-	protected function allow_multiple_instances() {
+	protected function allow_multiple_instances() : bool {
 		return true;
 	}
 
@@ -39,7 +39,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 	 *
 	 * @return bool Returns true if there is more to do.
 	 */
-	protected function run_batch( int $offset ) {
+	protected function run_batch( int $offset ) : bool {
 		$sensei_mp_instance = Sensei_MailPoet::instance();
 
 		$mailpoet_lists = $sensei_mp_instance->get_mailpoet_lists();
@@ -62,7 +62,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 				$subscribers = array_filter(
 					$sensei_mp_instance->get_mailpoet_subscribers( $mp_list_id ),
 					static function( $subscriber ) {
-						return $subscriber['status'] !== 'unsubscribed';
+						return 'unsubscribed' !== $subscriber['status'];
 					}
 				);
 
