@@ -651,7 +651,9 @@ class Sensei_Question {
 
 		$title_html  = '<span class="question question-title">';
 		$title_html .= esc_html( $title );
-		$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
+		if ( $question_grade > 0 ) {
+			$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
+		}
 		$title_html .= '</span>';
 
 		return $title_html;
@@ -863,6 +865,11 @@ class Sensei_Question {
 	 */
 	public static function the_answer_feedback( $question_id ) {
 
+		$hide_answer_feedback = get_post_meta( $question_id, '_hide_answer_feedback', true );
+		if ( $hide_answer_feedback ) {
+			return;
+		}
+
 		$quiz_id   = get_the_ID();
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
@@ -999,7 +1006,7 @@ class Sensei_Question {
 					<span class="sensei-lms-question__answer-feedback__icon"></span>
 					<span
 						class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
-					<?php if ( $grade ) { ?>
+					<?php if ( $grade && $question_grade > 0 ) { ?>
 						<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $grade ); ?></span>
 					<?php } ?>
 				</div>

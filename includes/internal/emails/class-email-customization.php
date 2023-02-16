@@ -58,6 +58,20 @@ class Email_Customization {
 	private $settings_tab;
 
 	/**
+	 * Email_Sender instance.
+	 *
+	 * @var Email_Sender
+	 */
+	private $email_sender;
+
+	/**
+	 * Email_Generator instance.
+	 *
+	 * @var Email_Generator
+	 */
+	private $email_generator;
+
+	/**
 	 * Email_Customization constructor.
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
@@ -69,6 +83,8 @@ class Email_Customization {
 		$this->settings_menu = new Settings_Menu();
 		$this->settings_tab  = new Email_Settings_Tab( $settings );
 		$this->blocks        = new Email_Blocks();
+		$this->email_sender    = new Email_Sender();
+		$this->email_generator = new Email_Generator();
 	}
 
 	/**
@@ -97,5 +113,7 @@ class Email_Customization {
 		$this->settings_menu->init();
 		$this->settings_tab->init();
 		$this->blocks->init();
+		$this->email_sender->init();
+		$this->email_generator->init();
 	}
 }
