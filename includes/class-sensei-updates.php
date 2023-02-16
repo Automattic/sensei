@@ -335,7 +335,12 @@ class Sensei_Updates {
 			$version_match = preg_quote( $version, '/' );
 		}
 
-		preg_match_all( "/((?'year'\d{4})[\-\.](?'month'\d{1,2})[\-\.](?'day'\d{1,2}).*version\s+(?'version'{$version_match}))[^\S]/", $changelog, $releases_raw, PREG_SET_ORDER );
+		preg_match_all(
+			"/## (?'version'{$version_match}) - ((?'year'\d{4})[\-\.](?'month'\d{1,2})[\-\.](?'day'\d{1,2}))[^\S]/",
+			$changelog,
+			$releases_raw,
+			PREG_SET_ORDER
+		);
 
 		foreach ( $releases_raw as $release ) {
 			if ( empty( $release['version'] ) || empty( $release['year'] ) || empty( $release['month'] ) || empty( $release['day'] ) ) {
