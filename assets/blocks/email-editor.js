@@ -3,6 +3,11 @@
  */
 import { addFilter } from '@wordpress/hooks';
 
+/**
+ * External dependencies
+ */
+import { has } from 'lodash';
+
 export default function handleEmailBlocksEditor() {
 	addFilter(
 		'blocks.registerBlockType',
@@ -18,10 +23,8 @@ export default function handleEmailBlocksEditor() {
 	 */
 	function removeIrrelevantSettings( settings ) {
 		if (
-			settings &&
-			settings.supports &&
-			settings.supports.typography &&
-			settings.supports.typography.__experimentalFontFamily
+			has( settings, 'supports.typography.fontFamily' ) ||
+			has( settings, 'supports.typography.__experimentalFontFamily' )
 		) {
 			settings = {
 				...settings,
@@ -30,6 +33,7 @@ export default function handleEmailBlocksEditor() {
 					typography: {
 						...settings.supports.typography,
 						__experimentalFontFamily: false,
+						fontFamily: false,
 					},
 				},
 			};
