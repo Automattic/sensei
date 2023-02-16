@@ -2,7 +2,6 @@ Resolves #
 
 ## Proposed Changes
 
-*
 
 ## Testing Instructions
 1.
@@ -28,8 +27,8 @@ Both the PR author and reviewer are responsible for ensuring the checklist is co
 - [ ] Adheres to coding standards ([PHP](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/), [JavaScript](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/), [CSS](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/css/), [HTML](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/html/))
 - [ ] All strings are translatable (without concatenation, handles plurals)
 - [ ] Data is [sanitized](https://developer.wordpress.org/apis/security/sanitizing/) / [escaped](https://developer.wordpress.org/apis/security/escaping/)
-- [ ] Follows our [naming conventions](https://senseip2.wordpress.com/programming-standards-best-practices/naming-conventions/)
-- [ ] [Hooks](https://senseip2.wordpress.com/2020/07/06/sensei-lms-hook-docs/) and functions are documented
+- [ ] Follows our [naming conventions](https://wp.me/P6rkRX-4oA)
+- [ ] [Hooks](https://wp.me/p6rkRX-1uS) and functions are documented
 - [ ] New UIs are responsive and use a [mobile-first approach](https://zellwk.com/blog/how-to-write-mobile-first-css/)
 - [ ] New UIs match the designs or explanations are provided when that is not possible
 - [ ] Test cases are written and passing (including feature flags)
