@@ -31,12 +31,12 @@ $options           = isset( $options ) ? $options : [];
 				<?php if ( ! empty( $field['args']['label_for'] ) ) { ?>
 					<th scope="row">
 						<label for="<?php echo esc_attr( $field['args']['label_for'] ); ?>">
-							<?php echo $field['title']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							<?php echo esc_html( $field['title'] ); ?>
 						</label>
 					</th>
 				<?php } else { ?>
 					<th scope="row">
-						<?php echo $field['title']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo esc_html( $field['title'] ); ?>
 					</th>
 				<?php } ?>
 				<td>
