@@ -89,6 +89,9 @@ class Email_List_Table extends Sensei_List_Table {
 			'post_type'      => Email_Post_Type::POST_TYPE,
 			'posts_per_page' => $per_page,
 			'offset'         => $offset,
+			'meta_key'       => 'sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Query limited by pagination.
+			'orderby'        => 'meta_value',
+			'order'          => 'ASC',
 		];
 
 		if ( $type ) {
