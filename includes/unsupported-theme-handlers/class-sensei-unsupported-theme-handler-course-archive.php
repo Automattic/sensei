@@ -59,6 +59,9 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 
 		// Disable pagination.
 		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
+
+		// Fix infinite loop issue on Astra.
+		add_filter( 'astra_remove_entry_header_content', '__return_true' );
 	}
 
 	/**

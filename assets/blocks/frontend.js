@@ -25,7 +25,7 @@ window.addEventListener( 'load', () => {
 
 		let originalHeight = content.offsetHeight + 'px';
 
-		if ( content.classList.contains( 'collapsed' ) ) {
+		if ( content.classList.contains( 'sensei-collapsed' ) ) {
 			const transition = content.style.transition;
 			content.style.transition = 'unset';
 			content.style.maxHeight = 'unset';
@@ -39,8 +39,8 @@ window.addEventListener( 'load', () => {
 
 		toggleButton.addEventListener( 'click', ( e ) => {
 			e.preventDefault();
-			const collapsed = content.classList.toggle( 'collapsed' );
-			toggleButton.classList.toggle( 'collapsed', collapsed );
+			const collapsed = content.classList.toggle( 'sensei-collapsed' );
+			toggleButton.classList.toggle( 'sensei-collapsed', collapsed );
 			toggleButton.setAttribute( 'aria-expanded', ! collapsed );
 
 			if ( ! collapsed ) {
@@ -54,7 +54,7 @@ window.addEventListener( 'load', () => {
 		content.addEventListener( 'transitionend', ( e ) => {
 			if (
 				'max-height' === e.propertyName &&
-				content.classList.contains( 'collapsed' )
+				content.classList.contains( 'sensei-collapsed' )
 			) {
 				content.style.visibility = 'hidden';
 			}

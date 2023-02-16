@@ -240,6 +240,11 @@ class Sensei_Admin {
 			$_wp_real_parent_file[''] = 'sensei';
 			$submenu_file             = 'edit.php?post_type=sensei_message';
 
+		} elseif ( in_array( $screen->id, [ 'sensei_email', 'edit-sensei_email' ], true ) ) {
+			// Message pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'sensei-settings';
 		}
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 	}

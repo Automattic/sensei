@@ -21,11 +21,7 @@ class Sensei_Course_List_Block_Patterns {
 	 */
 	public function register_course_list_block_patterns() {
 		$pagination =
-			'<!-- wp:separator {"align":"wide","className":"is-style-wide"} -->
-				<hr class="wp-block-separator alignwide is-style-wide"/>
-			<!-- /wp:separator -->
-
-			<!-- wp:query-pagination {"paginationArrow":"arrow","align":"wide","layout":{"type":"flex","justifyContent":"space-between"}} -->
+			'<!-- wp:query-pagination {"paginationArrow":"arrow","align":"wide","layout":{"type":"flex","justifyContent":"space-between"}} -->
 				<!-- wp:query-pagination-previous {"fontSize":"small"} /-->
 
 				<!-- wp:query-pagination-numbers /-->

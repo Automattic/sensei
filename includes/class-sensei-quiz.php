@@ -125,7 +125,7 @@ class Sensei_Quiz {
 	/**
 	 * Disable block based editor when custom question types have been registered.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @param bool $is_block_based_editor_enabled Whether the block based editor is enabled.
 	 *
@@ -1518,10 +1518,6 @@ class Sensei_Quiz {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
-
-		if ( ! $user_id ) {
-			return false;
-		}
 
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 		$course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
