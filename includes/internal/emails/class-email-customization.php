@@ -79,7 +79,7 @@ class Email_Customization {
 		$this->settings_menu   = new Settings_Menu();
 		$this->settings_tab    = new Email_Settings_Tab();
 		$this->blocks          = new Email_Blocks();
-		$this->email_sender    = Email_Sender::instance();
+		$this->email_sender    = new Email_Sender();
 		$this->email_generator = new Email_Generator();
 	}
 

@@ -44,7 +44,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory      = new Sensei_Factory();
-		$this->email_sender = Email_Sender::instance();
+		$this->email_sender = new Email_Sender();
 		$this->email_sender->init();
 
 		$this->create_test_email_template();

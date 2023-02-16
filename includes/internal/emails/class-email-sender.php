@@ -29,33 +29,6 @@ class Email_Sender {
 	public const EMAIL_ID_META_KEY = '_sensei_email_name';
 
 	/**
-	 * Instance of class.
-	 *
-	 * @var self
-	 */
-	private static $instance;
-
-	/**
-	 * The constructor.
-	 *
-	 * @var array
-	 */
-	private function __construct() {}
-
-	/**
-	 * Fetches an instance of the class.
-	 *
-	 * @return self
-	 */
-	public static function instance() {
-		if ( ! self::$instance ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
-	}
-
-	/**
 	 * Adds all filters and actions.
 	 */
 	public function init() {
