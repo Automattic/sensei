@@ -202,10 +202,16 @@ class Email_Settings_Tab {
 	/**
 	 * Display hidden field.
 	 *
-	 * @param array $key   Field arguments.
-	 * @param array $value Settings.
+	 * @param array $key   Field key.
+	 * @param mixed $value Field value.
 	 */
 	private function form_field_hidden( $key, $value ) {
-		echo '<input id="' . esc_attr( $key ) . '" name="sensei-settings[' . esc_attr( $key ) . ']" type="hidden" value="' . esc_attr( $value ) . '" />' . "\n";
+		if ( ! is_array( $value ) ) {
+			echo '<input name="sensei-settings[' . esc_attr( $key ) . ']" type="hidden" value="' . esc_attr( $value ) . '" />' . "\n";
+		} else {
+			foreach ( $value as $v ) {
+				echo '<input name="sensei-settings[' . esc_attr( $key ) . '][]" type="hidden" value="' . esc_attr( $v ) . '" />' . "\n";
+			}
+		}
 	}
 }
