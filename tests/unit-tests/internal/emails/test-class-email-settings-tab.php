@@ -38,7 +38,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		$email_settings_tab = new Email_Settings_Tab();
 
 		/* Act. */
-		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+		$content = $email_settings_tab->get_content( 'email-notification-settings', 'a' );
 
 		/* Assert. */
 		self::assertStringContainsString( '<table', $content );
