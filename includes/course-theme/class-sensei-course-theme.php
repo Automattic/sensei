@@ -326,7 +326,7 @@ class Sensei_Course_Theme {
 	 * @return string[] $classes
 	 */
 	public function add_sensei_theme_body_class( $classes ) {
-		return array_merge( $classes, [ self::THEME_NAME, Sensei_Course_Theme_Template_Selection::get_active_template_name() ] );
+		return array_merge( $classes, [ self::THEME_NAME, 'sensei-' . Sensei_Course_Theme_Template_Selection::get_active_template_name() ] );
 	}
 
 	/**
