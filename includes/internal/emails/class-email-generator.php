@@ -43,9 +43,14 @@ class Email_Generator {
 
 		$email_name = 'student_started_course_to_teacher';
 		$course     = get_post( $course_id );
-		$teacher    = new \WP_User( $course->post_author );
-		$student    = new \WP_User( $student_id );
-		$recipient  = stripslashes( $teacher->user_email );
+
+		if ( ! $course || 'publish' !== $course->post_status ) {
+			return;
+		}
+
+		$teacher   = new \WP_User( $course->post_author );
+		$student   = new \WP_User( $student_id );
+		$recipient = stripslashes( $teacher->user_email );
 
 		$this->send_email_action(
 			$email_name,
