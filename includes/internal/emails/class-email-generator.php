@@ -110,20 +110,24 @@ class Email_Generator {
 			[
 				'post_type'    => Email_Post_Type::POST_TYPE,
 				'post_title'   => '[student:displayname] started [course.name]',
-				'post_content' => '<!-- wp:post-title {"style":{"typography":{"textTransform":"capitalize","fontStyle":"normal","fontWeight":"600"},"color":{"text":"#151515"}},"fontSize":"x-large","fontFamily":"inter"} /-->
+				'post_content' => '<!-- wp:post-title {"style":{"typography":{"textTransform":"capitalize","fontStyle":"normal","fontWeight":"700","fontSize":"40px"},"color":{"text":"#151515"}},"fontFamily":"inter"} /-->
 
-<!-- wp:group {"style":{"color":{"background":"#e6e6e6","text":"#404040"},"spacing":{"padding":{"top":"40px","right":"40px","bottom":"40px","left":"40px"}}},"layout":{"type":"constrained"}} -->
-<div class="wp-block-group has-text-color has-background" style="color:#404040;background-color:#e6e6e6;padding-top:40px;padding-right:40px;padding-bottom:40px;padding-left:40px"><!-- wp:paragraph {"style":{"color":{"text":"#0b0b0b"},"typography":{"fontSize":"44px","fontStyle":"normal","fontWeight":"600"}}} -->
-<p class="has-text-color" style="color:#0b0b0b;font-size:44px;font-style:normal;font-weight:600">[student:displayname]</p>
+<!-- wp:group {"style":{"color":{"background":"#e6e6e6","text":"#404040"},"spacing":{"padding":{"top":"40px","right":"40px","bottom":"40px","left":"40px"},"blockGap":"0px","margin":{"top":"48px","bottom":"0"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-text-color has-background" style="color:#404040;background-color:#e6e6e6;margin-top:48px;margin-bottom:0;padding-top:40px;padding-right:40px;padding-bottom:40px;padding-left:40px"><!-- wp:paragraph {"style":{"color":{"text":"#0b0b0b"},"typography":{"fontSize":"32px","fontStyle":"normal","fontWeight":"600"},"spacing":{"margin":{"top":"0","right":"0","bottom":"0","left":"0"}}}} -->
+<p class="has-text-color" style="color:#0b0b0b;margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;font-size:32px;font-style:normal;font-weight:600"><strong>[student:displayname]</strong></p>
 <!-- /wp:paragraph -->
 
-<!-- wp:paragraph {"style":{"color":{"text":"#030303"}}} -->
-<p class="has-text-color" style="color:#030303"><strong>Course Name</strong><br><sub>[course.name]</sub></p>
+<!-- wp:paragraph {"style":{"color":{"text":"#030303"},"typography":{"fontSize":"16px"},"spacing":{"padding":{"top":"0","right":"0","bottom":"0","left":"0"},"margin":{"top":"24px","right":"0","bottom":"0","left":"0"}}}} -->
+<p class="has-text-color" style="color:#030303;margin-top:24px;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;font-size:16px"><strong>Course Name</strong></p>
 <!-- /wp:paragraph -->
 
-<!-- wp:buttons -->
-<div class="wp-block-buttons"><!-- wp:button {"style":{"typography":{"fontStyle":"normal","fontWeight":"400","textTransform":"capitalize"},"border":{"radius":"3px"},"spacing":{"padding":{"top":"14px","right":"20px","bottom":"14px","left":"20px"}},"color":{"background":"#090909","text":"#fafafa"}},"fontSize":"x-small"} -->
-<div class="wp-block-button has-custom-font-size has-x-small-font-size" style="font-style:normal;font-weight:400;text-transform:capitalize"><a class="wp-block-button__link has-text-color has-background wp-element-button" style="border-radius:3px;color:#fafafa;background-color:#090909;padding-top:14px;padding-right:20px;padding-bottom:14px;padding-left:20px">Manage students</a></div>
+<!-- wp:paragraph {"style":{"spacing":{"margin":{"top":"0","right":"0","bottom":"0","left":"0"}}}} -->
+<p style="margin-top:0;margin-right:0;margin-bottom:0;margin-left:0">[course.name]</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px"}}}} -->
+<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"typography":{"fontStyle":"normal","fontWeight":"400","textTransform":"capitalize","fontSize":"16px"},"border":{"radius":"3px"},"spacing":{"padding":{"top":"16px","right":"20px","bottom":"16px","left":"20px"}},"color":{"background":"#090909","text":"#fafafa"}}} -->
+<div class="wp-block-button has-custom-font-size" style="font-size:16px;font-style:normal;font-weight:400;text-transform:capitalize"><a class="wp-block-button__link has-text-color has-background wp-element-button" style="border-radius:3px;color:#fafafa;background-color:#090909;padding-top:16px;padding-right:20px;padding-bottom:16px;padding-left:20px">Manage students</a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons --></div>
 <!-- /wp:group -->',
