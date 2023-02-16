@@ -2,6 +2,7 @@ name: Changelogger checks
 
 on:
   pull_request:
+    types: [opened, reopened, labeled, unlabeled]
     branches-ignore:
       - 'release/**'
       - 'feature/**'
