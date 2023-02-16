@@ -47,8 +47,7 @@ class Email_Generator {
 		$student    = new \WP_User( $student_id );
 		$recipient  = stripslashes( $teacher->user_email );
 
-		do_action(
-			'sensei_send_html_email',
+		$this->send_email_action(
 			$email_name,
 			[
 				$recipient => [
@@ -57,6 +56,26 @@ class Email_Generator {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Invokes the sensei_send_html_email action.
+	 *
+	 * @param string $email_name    The email name.
+	 * @param array  $replacements  The replacements.
+	 *
+	 * @access private
+	 */
+	private function send_email_action( $email_name, $replacements ) {
+		/**
+		 * Send HTML email.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param string $email_name    The email name.
+		 * @param array  $replacements  The replacements.
+		 */
+		do_action( 'sensei_send_html_email', $email_name, $replacements );
 	}
 
 	/**
