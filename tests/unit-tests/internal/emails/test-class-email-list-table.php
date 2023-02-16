@@ -2,6 +2,7 @@
 
 namespace SenseiTest\Internal\Emails;
 
+use ReflectionMethod;
 use Sensei\Internal\Emails\Email_List_Table;
 use Sensei\Internal\Emails\Email_Post_Type;
 use Sensei_Factory;
@@ -258,5 +259,33 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertStringContainsString( '1 hour ago', $result );
+	}
+
+	public function testGetRowClass_WhenItemIsPublished_ReturnsEnabledClass() {
+		/* Arrange. */
+		$post       = $this->factory->email->create_and_get();
+		$list_table = new Email_List_Table();
+		$method     = new ReflectionMethod( $list_table, 'get_row_class' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$result = $method->invokeArgs( $list_table, [ $post ] );
+
+		/* Assert. */
+		$this->assertSame( 'sensei-wp-list-table-row--enabled', $result );
+	}
+
+	public function testGetRowClass_WhenItemIsNotPublished_ReturnsDisabledClass() {
+		/* Arrange. */
+		$post       = $this->factory->email->create_and_get( [ 'post_status' => 'draft' ] );
+		$list_table = new Email_List_Table();
+		$method     = new ReflectionMethod( $list_table, 'get_row_class' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$result = $method->invokeArgs( $list_table, [ $post ] );
+
+		/* Assert. */
+		$this->assertSame( 'sensei-wp-list-table-row--disabled', $result );
 	}
 }
