@@ -79,10 +79,10 @@ class Email_Customization {
 	 * @param \Sensei_Settings $settings Sensei_Settings instance.
 	 */
 	private function __construct( \Sensei_Settings $settings ) {
-		$this->post_type     = new Email_Post_Type();
-		$this->settings_menu = new Settings_Menu();
-		$this->settings_tab  = new Email_Settings_Tab( $settings );
-		$this->blocks        = new Email_Blocks();
+		$this->post_type       = new Email_Post_Type();
+		$this->settings_menu   = new Settings_Menu();
+		$this->settings_tab    = new Email_Settings_Tab( $settings );
+		$this->blocks          = new Email_Blocks();
 		$this->email_sender    = new Email_Sender();
 		$this->email_generator = new Email_Generator();
 	}
