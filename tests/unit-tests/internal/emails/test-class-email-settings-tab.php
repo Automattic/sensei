@@ -33,7 +33,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertSame( 10, $priority );
 	}
 
-	public function testTabContent_WhenCalledWithEmailNotificationSettings_ReturnsContentWithTable() {
+	public function testGetContent_WhenCalledWithEmailNotificationSettings_ReturnsContentWithTable() {
 		/* Arrange. */
 		$email_settings_tab = new Email_Settings_Tab();
 
@@ -44,7 +44,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( '<table', $content );
 	}
 
-	public function testTabContent_WhenCalledWithAnotherTab_ReturnsEmptyContent() {
+	public function testGetContent_WhenCalledWithAnotherTab_ReturnsEmptyContent() {
 		/* Arrange. */
 		$email_settings_tab = new Email_Settings_Tab();
 
@@ -55,7 +55,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertSame( '', $content );
 	}
 
-	public function testTabContent_WhenInStudentSubtabAndHasAnEmailOfThatType_ReturnsContentWithTheEmail() {
+	public function testGetContent_WhenInStudentSubtabAndHasAnEmailOfThatType_ReturnsContentWithTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
 		$email_settings_tab = new Email_Settings_Tab();
@@ -70,7 +70,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( $post->post_title, $content );
 	}
 
-	public function testTabContent_WhenInStudentSubtabAndHasAnEmailOfAnotherType_ReturnsContentWithoutTheEmail() {
+	public function testGetContent_WhenInStudentSubtabAndHasAnEmailOfAnotherType_ReturnsContentWithoutTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
 		$email_settings_tab = new Email_Settings_Tab();
@@ -85,7 +85,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertStringNotContainsString( $post->post_title, $content );
 	}
 
-	public function testTabContent_WhenInTeacherSubtabAndHasAnEmailOfThatType_ReturnsContentWithTheEmail() {
+	public function testGetContent_WhenInTeacherSubtabAndHasAnEmailOfThatType_ReturnsContentWithTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
 		$email_settings_tab = new Email_Settings_Tab();
@@ -100,7 +100,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( $post->post_title, $content );
 	}
 
-	public function testTabContent_WhenInTeacherSubtabAndHasAnEmailOfAnotherType_ReturnsContentWithoutTheEmail() {
+	public function testGetContent_WhenInTeacherSubtabAndHasAnEmailOfAnotherType_ReturnsContentWithoutTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
 		$email_settings_tab = new Email_Settings_Tab();
