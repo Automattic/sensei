@@ -32,6 +32,7 @@ class Email_Blocks {
 		'core/heading',
 		'core/buttons',
 	];
+
 	/**
 	 * Initialize the class and add hooks.
 	 *
@@ -50,10 +51,11 @@ class Email_Blocks {
 	 *
 	 * @param bool|string[]            $default_allowed_blocks List of default allowed blocks.
 	 * @param \WP_Block_Editor_Context $context     Block Editor Context.
+	 *
 	 * @return bool|string[]
 	 */
 	public function set_allowed_blocks( $default_allowed_blocks, $context ) {
-		if ( Email_Post_Type::POST_TYPE === $context->post->post_type ) {
+		if ( Email_Post_Type::POST_TYPE === ( $context->post->post_type ?? '' ) ) {
 			return self::ALLOWED_BLOCKS;
 		}
 
