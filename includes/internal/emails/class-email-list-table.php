@@ -41,6 +41,7 @@ class Email_List_Table extends Sensei_List_Table {
 
 		parent::__construct( 'emails' );
 
+		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		// Remove the search form.
 		remove_action( 'sensei_before_list_table', [ $this, 'table_search_form' ], 5 );
 	}
@@ -94,7 +95,7 @@ class Email_List_Table extends Sensei_List_Table {
 		if ( $type ) {
 			$query_args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Query limited by pagination.
 				[
-					'key'   => 'sensei_email_type', // TODO: Replace the meta key by a constant defined elsewhere.
+					'key'   => '_sensei_email_type', // TODO: Replace the meta key by a constant defined elsewhere.
 					'value' => $type,
 				],
 			];
