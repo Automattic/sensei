@@ -2,6 +2,7 @@ name: Changelogger checks
 
 on:
   pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
     branches-ignore:
       - 'release/**'
       - 'feature/**'
@@ -16,6 +17,7 @@ defaults:
 
 jobs:
     changelogger_used:
+        if: ${{ !contains( github.event.pull_request.labels.*.name, 'No Changelog') }}
         name: Changelogger used
         runs-on: ubuntu-latest
         steps:

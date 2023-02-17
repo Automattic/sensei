@@ -21,7 +21,12 @@ import { QuestionContext } from '../question-block/question-context';
 export const AnswerFeedbackToggle = () => {
 	const {
 		answerFeedback: { showAnswerFeedback, toggleAnswerFeedback },
+		options: { hideAnswerFeedback },
 	} = useContext( QuestionContext );
+
+	if ( hideAnswerFeedback ) {
+		return '';
+	}
 
 	return (
 		<div
