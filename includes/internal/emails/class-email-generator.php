@@ -76,9 +76,10 @@ class Email_Generator {
 		 * Send HTML email.
 		 *
 		 * @since $$next-version$$
+		 * @hook sensei_send_html_email
 		 *
-		 * @param string $email_name    The email name.
-		 * @param array  $replacements  The replacements.
+		 * @param {string} $email_name    The email name.
+		 * @param {Array}  $replacements  The replacements.
 		 */
 		do_action( 'sensei_send_html_email', $email_name, $replacements );
 	}
