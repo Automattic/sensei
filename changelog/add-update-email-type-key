@@ -1,0 +1,4 @@
+Significance: minor
+Type: changed
+
+Added underscore prefix in sensei_email_type key
