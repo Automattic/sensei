@@ -40,6 +40,7 @@ class Email_Blocks {
 	 */
 	public function init(): void {
 		add_filter( 'allowed_block_types_all', [ $this, 'set_allowed_blocks' ], 25, 2 );
+		add_action( 'current_screen', [ $this, 'load_admin_assets' ] );
 	}
 
 	/**
@@ -59,6 +60,23 @@ class Email_Blocks {
 		}
 
 		return $default_allowed_blocks;
+	}
+
+	/**
+	 * Load admin assets.
+	 *
+	 * @internal
+	 * @access private
+	 */
+	public function load_admin_assets() {
+		$screen = get_current_screen();
+
+		if ( ! is_admin() || ! $screen || 'sensei_email' !== $screen->post_type || ! $screen->is_block_editor ) {
+			return;
+		}
+
+		Sensei()->assets->enqueue( 'sensei-email-editor-setup', 'blocks/email-editor.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-email-editor-style', 'blocks/email-editor-style.css' );
 	}
 }
 
