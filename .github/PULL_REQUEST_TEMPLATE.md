@@ -36,7 +36,7 @@ Both the PR author and reviewer are responsible for ensuring the checklist is co
 - [ ] Follows our [naming conventions](https://wp.me/P6rkRX-4oA)
 - [ ] [Hooks](https://wp.me/p6rkRX-1uS) and functions are documented
 - [ ] New UIs are responsive and use a [mobile-first approach](https://zellwk.com/blog/how-to-write-mobile-first-css/)
-- [ ] New UIs match the designs or explanations are provided when that is not possible
+- [ ] New UIs match the designs
 - [ ] Test cases are written and passing (including feature flags)
 - [ ] Different user privileges (admin, teacher, subscriber) are tested as appropriate
 - [ ] Code is tested on the minimum supported PHP and WordPress versions
