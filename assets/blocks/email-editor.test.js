@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import {} from './email-editor';
+import './email-editor';
 /**
  * WordPress dependencies
  */
