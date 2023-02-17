@@ -135,6 +135,6 @@ class Email_Generator {
 			]
 		);
 		update_post_meta( $id, Email_Sender::EMAIL_ID_META_KEY, 'student_started_course_to_teacher' );
-		update_post_meta( $id, 'sensei_email_type', 'teacher' );
+		update_post_meta( $id, '_sensei_email_type', 'teacher' );
 	}
 }
