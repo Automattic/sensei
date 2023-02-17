@@ -62,12 +62,12 @@ class Email_Sender {
 		 * @since $$next-version$$
 		 * @hook sensei_email_replacements
 		 *
-		 * @param array   $replacements The email replacements.
-		 * @param string  $email_name   The email name.
-		 * @param WP_Post $email_post   The email post.
-		 * @param self    $email_sender The email sender class instance.
+		 * @param {Array}        $replacements The email replacements.
+		 * @param {string}       $email_name   The email name.
+		 * @param {WP_Post}      $email_post   The email post.
+		 * @param {Email_Sender} $email_sender The email sender class instance.
 		 *
-		 * @return array The email replacements.
+		 * @return {Array} The email replacements.
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
 
@@ -79,12 +79,12 @@ class Email_Sender {
 		 * @since $$next-version$$
 		 * @hook sensei_email_styles
 		 *
-		 * @param string  $style_string The email styles.
-		 * @param string  $email_name   The email name.
-		 * @param WP_Post $email_post   The email post.
-		 * @param self    $email_sender The email sender class instance.
+		 * @param {string}       $style_string The email styles.
+		 * @param {string}       $email_name   The email name.
+		 * @param {WP_Post}      $email_post   The email post.
+		 * @param {Email_Sender} $email_sender The email sender class instance.
 		 *
-		 * @return string
+		 * @return {string}
 		 */
 		$style_string = apply_filters( 'sensei_email_styles', $this->get_header_styles(), $email_name, $email_post, $this );
 
@@ -205,10 +205,10 @@ class Email_Sender {
 		 * @since $$next-version$$
 		 * @hook sensei_email_allowed_stylesheets
 		 *
-		 * @param string[] $allowed_stylesheets Parts of paths to uniquely identify allowed stylesheets.
-		 * @param string[] $stylesheets         All the stylesheets found in the header.
+		 * @param {string[]} $allowed_stylesheets Parts of paths to uniquely identify allowed stylesheets.
+		 * @param {string[]} $stylesheets         All the stylesheets found in the header.
 		 *
-		 * @return string[]
+		 * @return {string[]}
 		 */
 		$allowed_stylesheets = apply_filters( 'sensei_email_allowed_stylesheets', [ 'block-library/style.min.css' ], $stylesheets );
 
@@ -230,7 +230,9 @@ class Email_Sender {
 		 * @since $$next-version$$
 		 * @hook sensei_email_stylesheets
 		 *
-		 * @param string[] $stylesheets Stylesheets to be included in the email.
+		 * @param {string[]} $stylesheets Stylesheets to be included in the email.
+		 *
+		 * @return {string[]}
 		 */
 		$stylesheets = apply_filters( 'sensei_email_stylesheets', $stylesheets );
 

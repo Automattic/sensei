@@ -67,6 +67,9 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 					'post_type'      => Email_Post_Type::POST_TYPE,
 					'posts_per_page' => 20,
 					'offset'         => 20,
+					'meta_key'       => 'sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'orderby'        => 'meta_value',
+					'order'          => 'ASC',
 				]
 			)
 			->willReturn( [] );
@@ -95,6 +98,9 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 							'value' => 'student',
 						],
 					],
+					'meta_key'       => 'sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'orderby'        => 'meta_value',
+					'order'          => 'ASC',
 				]
 			)
 			->willReturn( [] );
@@ -117,6 +123,9 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 					'post_type'      => Email_Post_Type::POST_TYPE,
 					'posts_per_page' => 20,
 					'offset'         => 0,
+					'meta_key'       => 'sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'orderby'        => 'meta_value',
+					'order'          => 'ASC',
 				]
 			)
 			->willReturn( [] );
@@ -172,6 +181,8 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$list_table = new Email_List_Table();
 		$post_id    = $this->factory->email->create();
 
+		update_post_meta( $post_id, 'sensei_email_description', 'description' );
+
 		/* Act. */
 		$list_table->prepare_items();
 
@@ -189,6 +200,8 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$list_table = new Email_List_Table();
 		$post       = $this->factory->email->create_and_get();
 
+		update_post_meta( $post->ID, 'sensei_email_description', 'description' );
+
 		/* Act. */
 		$list_table->prepare_items();
 
@@ -198,11 +211,12 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = sprintf(
-			'<td class=\'subject column-subject column-primary\' data-colname="Subject" ><strong><a href="" class="row-title">%s</a></strong><div class="row-actions"><span class=\'edit\'><a href="" aria-label="Edit &#8220;%s&#8221;">Edit</a> | </span><span class=\'disable-email\'><a href="%s" aria-label="Disable &#8220;%s&#8221;">Disable</a></span></div><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td><td class=\'description column-description\' data-colname="Description" ></td><td class=\'last_modified column-last_modified\' data-colname="Last Modified" >1 second ago</td></tr>',
+			'<td class=\'subject column-subject column-primary\' data-colname="Subject" ><strong><a href="" class="row-title">%s</a></strong><div class="row-actions"><span class=\'edit\'><a href="" aria-label="Edit &#8220;%s&#8221;">Edit</a> | </span><span class=\'disable-email\'><a href="%s" aria-label="Disable &#8220;%s&#8221;">Disable</a></span></div><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td><td class=\'description column-description\' data-colname="Description" >%s</td><td class=\'last_modified column-last_modified\' data-colname="Last Modified" >1 second ago</td></tr>',
 			$post->post_title,
 			$post->post_title,
 			wp_nonce_url( "post.php?action=disable-email&amp;post=$post->ID", 'disable-email-post_' . $post->ID ),
-			$post->post_title
+			$post->post_title,
+			'description'
 		);
 		$this->assertStringContainsString( $expected, $result );
 	}
@@ -211,6 +225,8 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$list_table = new Email_List_Table();
 		$post_id    = $this->factory->email->create( [ 'post_title' => '' ] );
+
+		update_post_meta( $post_id, 'sensei_email_description', 'description' );
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -249,6 +265,8 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 				'post_date_gmt' => gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 			]
 		);
+
+		update_post_meta( $post->ID, 'sensei_email_description', 'description' );
 
 		/* Act. */
 		$list_table->prepare_items();

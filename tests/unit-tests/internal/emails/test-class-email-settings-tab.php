@@ -62,6 +62,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		$_GET['subtab']     = 'student';
 
 		update_post_meta( $post->ID, 'sensei_email_type', 'student' );
+		update_post_meta( $post->ID, 'sensei_email_description', 'description' );
 
 		/* Act. */
 		$content = $email_settings_tab->get_content( 'email-notification-settings' );
@@ -92,6 +93,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		$_GET['subtab']     = 'teacher';
 
 		update_post_meta( $post->ID, 'sensei_email_type', 'teacher' );
+		update_post_meta( $post->ID, 'sensei_email_description', 'description' );
 
 		/* Act. */
 		$content = $email_settings_tab->get_content( 'email-notification-settings' );
