@@ -2,6 +2,7 @@
 
 namespace SenseiTest\Internal\Emails;
 
+use ReflectionMethod;
 use Sensei\Internal\Emails\Email_List_Table;
 use Sensei\Internal\Emails\Email_Post_Type;
 use Sensei_Factory;
@@ -210,8 +211,10 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = sprintf(
-			'<td class=\'subject column-subject column-primary\' data-colname="Subject" ><strong><a href="" class="row-title">%s</a></strong><div class="row-actions"><span class=\'edit\'><a href="" aria-label="Edit &#8220;%s&#8221;">Edit</a></span></div><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td><td class=\'description column-description\' data-colname="Description" >%s</td><td class=\'last_modified column-last_modified\' data-colname="Last Modified" >1 second ago</td>',
+			'<td class=\'subject column-subject column-primary\' data-colname="Subject" ><strong><a href="" class="row-title">%s</a></strong><div class="row-actions"><span class=\'edit\'><a href="" aria-label="Edit &#8220;%s&#8221;">Edit</a> | </span><span class=\'disable-email\'><a href="%s" aria-label="Disable &#8220;%s&#8221;">Disable</a></span></div><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td><td class=\'description column-description\' data-colname="Description" >%s</td><td class=\'last_modified column-last_modified\' data-colname="Last Modified" >1 second ago</td></tr>',
 			$post->post_title,
+			$post->post_title,
+			wp_nonce_url( "post.php?action=disable-email&amp;post=$post->ID", 'disable-email-post_' . $post->ID ),
 			$post->post_title,
 			'description'
 		);
@@ -274,5 +277,33 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertStringContainsString( '1 hour ago', $result );
+	}
+
+	public function testGetRowClass_WhenItemIsPublished_ReturnsEnabledClass() {
+		/* Arrange. */
+		$post       = $this->factory->email->create_and_get();
+		$list_table = new Email_List_Table();
+		$method     = new ReflectionMethod( $list_table, 'get_row_class' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$result = $method->invokeArgs( $list_table, [ $post ] );
+
+		/* Assert. */
+		$this->assertSame( 'sensei-wp-list-table-row--enabled', $result );
+	}
+
+	public function testGetRowClass_WhenItemIsNotPublished_ReturnsDisabledClass() {
+		/* Arrange. */
+		$post       = $this->factory->email->create_and_get( [ 'post_status' => 'draft' ] );
+		$list_table = new Email_List_Table();
+		$method     = new ReflectionMethod( $list_table, 'get_row_class' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$result = $method->invokeArgs( $list_table, [ $post ] );
+
+		/* Assert. */
+		$this->assertSame( 'sensei-wp-list-table-row--disabled', $result );
 	}
 }
