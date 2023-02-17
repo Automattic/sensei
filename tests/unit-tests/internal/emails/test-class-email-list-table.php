@@ -90,7 +90,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 					'offset'         => 0,
 					'meta_query'     => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 						[
-							'key'   => 'sensei_email_type',
+							'key'   => '_sensei_email_type',
 							'value' => 'student',
 						],
 					],

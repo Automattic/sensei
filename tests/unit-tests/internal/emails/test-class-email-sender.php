@@ -173,7 +173,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 <!-- /wp:paragraph -->';
 
 		wp_update_post( $post );
-		update_post_meta( $post->ID, 'sensei_email_type', 'teacher' );
+		update_post_meta( $post->ID, '_sensei_email_type', 'teacher' );
 		update_post_meta( $post->ID, Email_Sender::EMAIL_ID_META_KEY, 'student_started_course_to_teacher' );
 
 		return $post;
