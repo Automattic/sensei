@@ -290,6 +290,13 @@ class Sensei_Autoloader {
 			 * Email Customization
 			 */
 			\Sensei\Internal\Emails\Email_Post_Type::class => 'internal/emails/class-email-post-type.php',
+			\Sensei\Internal\Emails\Email_Customization::class => 'internal/emails/class-email-customization.php',
+			\Sensei\Internal\Emails\Email_Blocks::class    => 'internal/emails/class-email-blocks.php',
+			\Sensei\Internal\Emails\Settings_Menu::class   => 'internal/emails/class-settings-menu.php',
+			\Sensei\Internal\Emails\Email_Settings_Tab::class => 'internal/emails/class-email-settings-tab.php',
+			\Sensei\Internal\Emails\Email_List_Table::class => 'internal/emails/class-email-list-table.php',
+			\Sensei\Internal\Emails\Email_Sender::class    => 'internal/emails/class-email-sender.php',
+			\Sensei\Internal\Emails\Email_Generator::class => 'internal/emails/class-email-generator.php',
 		);
 	}
 
