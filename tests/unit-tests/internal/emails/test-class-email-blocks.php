@@ -51,4 +51,17 @@ class Email_Blocks_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( $allowed_blocks, Email_Blocks::ALLOWED_BLOCKS );
 	}
+
+	public function testSetAllowedBlocks_WhenCalledWithoutAnyPostInContext_ThrowsNoException() {
+		/* Arrange. */
+		$blocks               = new Email_Blocks();
+		$default_block        = [ 'core/block-a', 'core/block-b', 'core/block-c' ];
+		$block_editor_context = new \WP_Block_Editor_Context( [] );
+
+		/* Assert. */
+		$this->expectNotToPerformAssertions();
+
+		/* Act. */
+		$blocks->set_allowed_blocks( $default_block, $block_editor_context );
+	}
 }
