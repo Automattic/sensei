@@ -63,7 +63,7 @@
     "@babel/cli": "7.13.14",
     "@babel/core": "7.17.12",
     "@babel/preset-env": "7.17.12",
-    "@babel/runtime": "7.17.9",
+    "@babel/runtime": "7.20.0",
     "@es-joy/jsdoccomment": "0.36.1",
     "@lifeomic/attempt": "3.0.3",
     "@playwright/test": "1.28.0",
