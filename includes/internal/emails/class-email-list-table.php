@@ -41,7 +41,6 @@ class Email_List_Table extends Sensei_List_Table {
 
 		parent::__construct( 'emails' );
 
-		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		// Remove the search form.
 		remove_action( 'sensei_before_list_table', [ $this, 'table_search_form' ], 5 );
 	}
