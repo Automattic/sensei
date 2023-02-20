@@ -17,8 +17,8 @@
     "url": "https://github.com/Automattic/sensei/issues"
   },
   "engines": {
-    "npm": "^8.9.0",
-    "node": "^16.14.0"
+    "npm": "^9.5.0",
+    "node": "^18.14.0"
   },
   "dependencies": {
     "@wordpress/api-fetch": "wp-5.9",
@@ -54,7 +54,9 @@
   "overrides": {
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "@wordpress/element": "$@wordpress/element"
+    "@wordpress/element": "$@wordpress/element",
+    "@es-joy/jsdoccomment": "0.36.1",
+    "eslint-plugin-jsdoc": "39.3.1"
   },
   "devDependencies": {
     "@automattic/calypso-build": "10.0.0",
@@ -62,7 +64,7 @@
     "@babel/core": "7.17.12",
     "@babel/preset-env": "7.17.12",
     "@babel/runtime": "7.17.9",
-    "@es-joy/jsdoccomment": "0.8.0",
+    "@es-joy/jsdoccomment": "0.36.1",
     "@lifeomic/attempt": "3.0.3",
     "@playwright/test": "1.28.0",
     "@svgr/webpack": "6.1.2",
@@ -90,7 +92,7 @@
     "eslint-config-prettier": "8.1.0",
     "eslint-import-resolver-typescript": "3.5.2",
     "eslint-plugin-import": "2.26.0",
-    "eslint-plugin-jsdoc": "35.4.1",
+    "eslint-plugin-jsdoc": "39.3.1",
     "eslint-plugin-playwright": "0.11.1",
     "expect-puppeteer": "4.4.0",
     "gettext-parser": "4.0.4",
