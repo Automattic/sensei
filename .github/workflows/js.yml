@@ -10,10 +10,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-
-            - name: Updates the CI npm
-              run: npm install -g npm@^8
-
             - uses: actions/cache@v3
               with:
                   path: ~/.npm/
