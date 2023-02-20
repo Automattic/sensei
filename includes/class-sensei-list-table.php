@@ -212,10 +212,8 @@ class Sensei_List_Table extends WP_List_Table {
 	 * @param object $item The current item
 	 */
 	function single_row( $item ) {
-		static $row_class = '';
-
-		$row_class   = ( $row_class == '' ? 'alternate' : '' );
 		$column_data = $this->get_row_data( $item );
+		$row_class   = $this->get_row_class( $item );
 
 		echo '<tr class="' . esc_attr( $row_class ) . '">';
 
@@ -278,6 +276,21 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	protected function get_row_data( $item ) {
 		die( 'either function Sensei_List_Table::get_row_data() must be over-ridden in a sub-class or Sensei_List_Table::single_row() should be.' );
+	}
+
+	/**
+	 * Get the CSS class of the row.
+	 *
+	 * @param object|array $item The current item.
+	 *
+	 * @return string
+	 */
+	protected function get_row_class( $item ): string {
+		static $row_class = '';
+
+		$row_class = '' === $row_class ? 'alternate' : '';
+
+		return $row_class;
 	}
 
 	/**

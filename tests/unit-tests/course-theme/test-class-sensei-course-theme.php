@@ -19,6 +19,7 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+	use Sensei_Test_Redirect_Helpers;
 
 	/**
 	 * Sensei Factory helper class - useful to create objects for testing.
@@ -141,28 +142,18 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 		add_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
 
 		$this->go_to( sensei_get_navigation_url( $course_id, $module ) );
+		$this->prevent_wp_redirect();
 
 		/* Act. */
-		$halt_redirect = function( $location, $status ) {
-			throw new \Exception(
-				wp_json_encode(
-					[
-						'location' => $location,
-						'status'   => $status,
-					]
-				)
-			);
-		};
-		add_filter( 'wp_redirect', $halt_redirect, 1, 2 );
 		try {
 			$this->instance->redirect_modules_to_first_lesson();
-		} catch ( \Exception $e ) {
-			$redirect = json_decode( $e->getMessage(), true );
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status   = $e->getCode();
+			$redirect_location = $e->getMessage();
 		}
-		remove_filter( 'wp_redirect', $halt_redirect, 1, 2 );
 
 		/* Assert. */
-		$this->assertEquals( 302, $redirect['status'] );
-		$this->assertEquals( get_permalink( $lesson_id ), $redirect['location'] );
+		$this->assertEquals( 302, $redirect_status );
+		$this->assertEquals( get_permalink( $lesson_id ), $redirect_location );
 	}
 }
