@@ -77,6 +77,13 @@ class Email_Customization {
 	private $list_table_actions;
 
 	/**
+	 * Email_Preview instance.
+	 *
+	 * @var Email_Preview
+	 */
+	private $preview;
+
+	/**
 	 * Email_Customization constructor.
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
@@ -89,6 +96,7 @@ class Email_Customization {
 		$this->email_sender       = new Email_Sender();
 		$this->email_generator    = new Email_Generator();
 		$this->list_table_actions = new Email_List_Table_Actions();
+		$this->preview            = new Email_Preview();
 	}
 
 	/**
@@ -119,5 +127,6 @@ class Email_Customization {
 		$this->email_sender->init();
 		$this->email_generator->init();
 		$this->list_table_actions->init();
+		$this->preview->init();
 	}
 }

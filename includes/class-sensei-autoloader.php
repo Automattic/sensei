@@ -298,6 +298,7 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Email_Sender::class    => 'internal/emails/class-email-sender.php',
 			\Sensei\Internal\Emails\Email_Generator::class => 'internal/emails/class-email-generator.php',
 			\Sensei\Internal\Emails\Email_List_Table_Actions::class => 'internal/emails/class-email-list-table-actions.php',
+			\Sensei\Internal\Emails\Email_Preview::class   => 'internal/emails/class-email-preview.php',
 		);
 	}
 
