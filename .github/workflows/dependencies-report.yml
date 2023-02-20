@@ -64,8 +64,6 @@ jobs:
                     key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
                     restore-keys: |
                         ${{ runner.os }}-node-
-            -   name: Updates the npm version
-                run: npm install -g npm@^8
             -   name: Install JS dependencies
                 run: npm ci
             -   name: Build Combined Assets
