@@ -29,9 +29,6 @@ jobs:
               id: composer-cache
               run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-            - name: Updates the npm version
-              run: npm install -g npm@^8
-
             - uses: actions/cache@v3
               with:
                   path: ${{ steps.composer-cache.outputs.dir }}
