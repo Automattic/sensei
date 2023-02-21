@@ -471,4 +471,26 @@ class Email_List_Table_Actions_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( $referer, $redirect_location );
 	}
+
+	public function testBulkDisableEmail_WhenNoReferer_RedirectsToTheEmailSettingsURL() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$this->prevent_wp_redirect();
+
+		$post_id              = $this->factory->email->create();
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id ];
+
+		/* Act. */
+		try {
+			$list_table_actions->bulk_disable_emails();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert. */
+		$expected = admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' );
+		$this->assertSame( $expected, $redirect_location );
+	}
 }
