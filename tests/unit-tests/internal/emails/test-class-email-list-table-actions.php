@@ -320,4 +320,19 @@ class Email_List_Table_Actions_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$list_table_actions->bulk_enable_emails();
 	}
+
+	public function testBulkEnableEmail_WhenUserHasInsufficientPermissions_ThrowsError() {
+		/* Arrange. */
+		$this->login_as_teacher();
+
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+
+		/* Assert. */
+		$this->expectException( WPDieException::class );
+		$this->expectExceptionMessage( 'Insufficient permissions' );
+
+		/* Act. */
+		$list_table_actions->bulk_enable_emails();
+	}
 }
