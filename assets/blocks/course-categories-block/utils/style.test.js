@@ -1,7 +1,6 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
-
 import { getStyleAndClassesFromAttributes } from './style';
 
 describe( 'useCourseCategoriesProps', () => {
