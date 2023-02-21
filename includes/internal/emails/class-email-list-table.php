@@ -313,4 +313,35 @@ class Email_List_Table extends Sensei_List_Table {
 
 		return $output;
 	}
+
+	/**
+	 * Display table content wrapped inside a form
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return void
+	 */
+	public function display() {
+		$allowed_html = [
+			'form'  => [
+				'id'     => [],
+				'action' => [],
+				'method' => [],
+			],
+			'input' => [
+				'type'  => [],
+				'name'  => [],
+				'value' => [],
+			],
+		];
+
+		echo wp_kses( '<form id="posts-filter" action="' . admin_url( 'edit.php' ) . '" method="get">', $allowed_html );
+		parent::display();
+		echo wp_kses(
+			'<input type="hidden" name="post_type" value="' . Email_Post_Type::POST_TYPE . '">' .
+			wp_nonce_field( 'sensei_email_bulk_action', '_wpnonce', true, false ) .
+			'</form>',
+			$allowed_html
+		);
+	}
 }
