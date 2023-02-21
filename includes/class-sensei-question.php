@@ -799,23 +799,38 @@ class Sensei_Question {
 	 * @return array CSS classes
 	 */
 	private static function get_answer_feedback_classes( $question_id, bool $answer_correct ): array {
-		if ( $answer_correct ) {
-			$feedback_block = Sensei_Quiz::get_correct_answer_feedback_block( $question_id );
+		$generic_feedback = Sensei_Quiz::get_generic_answer_feedback( $question_id );
 
-			return [
-				'sensei-lms-question__answer-feedback--correct',
-				isset( $feedback_block['attrs']['className'] ) ? $feedback_block['attrs']['className'] : '',
-			];
+		if($generic_feedback) {
+			$feedback_block = Sensei_Quiz::get_generic_answer_feedback_block( $question_id );
+
+				return [
+					'sensei-lms-question__answer-feedback--generic',
+					isset( $feedback_block['attrs']['className'] ) ? $feedback_block['attrs']['className'] : '',
+				];
 
 		} else {
-			$feedback_block = Sensei_Quiz::get_incorrect_answer_feedback_block( $question_id );
-			return [
-				'sensei-lms-question__answer-feedback--incorrect',
-				isset( $feedback_block['attrs']['className'] ) ? $feedback_block['attrs']['className'] : '',
 
-			];
-		}
+			if ( $answer_correct ) {
+				$feedback_block = Sensei_Quiz::get_correct_answer_feedback_block( $question_id );
+
+
+				return [
+					'sensei-lms-question__answer-feedback--correct',
+					isset( $feedback_block['attrs']['className'] ) ? $feedback_block['attrs']['className'] : '',
+				];
+
+			} else {
+				$feedback_block = Sensei_Quiz::get_incorrect_answer_feedback_block( $question_id );
+				return [
+					'sensei-lms-question__answer-feedback--incorrect',
+					isset( $feedback_block['attrs']['className'] ) ? $feedback_block['attrs']['className'] : '',
+
+				];
+			}
+		};
 	}
+
 
 	/**
 	 * Special kses processing for media output to allow 'source' video tag.
@@ -864,6 +879,9 @@ class Sensei_Question {
 	 * @param $question_id
 	 */
 	public static function the_answer_feedback( $question_id ) {
+
+		$generic_feedback = Sensei_Quiz::get_generic_answer_feedback( $question_id );
+
 
 		$hide_answer_feedback = get_post_meta( $question_id, '_hide_answer_feedback', true );
 		if ( $hide_answer_feedback ) {
@@ -918,14 +936,21 @@ class Sensei_Question {
 		$answer_correct = $answer_grade > 0;
 
 		$answer_notes_classnames = [];
-		$answer_feedback_title   = '';
+		$answer_feedback_title   = 'Feedback';
 
-		if ( $indicate_incorrect ) {
+		if ( $indicate_incorrect) {
 			$answer_notes_classnames = self::get_answer_feedback_classes( $question_id, $answer_correct );
-			if ( $answer_correct ) {
-				$answer_feedback_title = __( 'Correct', 'sensei-lms' );
+			if($generic_feedback) {
+
+				$answer_feedback_title = __( 'Feedback', 'sensei-lms' );
+
 			} else {
-				$answer_feedback_title = __( 'Incorrect', 'sensei-lms' );
+
+				if ( $answer_correct ) {
+					$answer_feedback_title = __( 'Correct', 'sensei-lms' );
+				} else {
+					$answer_feedback_title = __( 'Incorrect', 'sensei-lms' );
+				}
 			}
 		}
 
