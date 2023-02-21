@@ -283,4 +283,28 @@ class Email_List_Table_Actions_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( $referer, $redirect_location );
 	}
+
+	public function testInit_WhenCalled_AddsBulkEnableEmailHook() {
+		/* Arrange. */
+		$list_table_actions = new Email_List_Table_Actions();
+
+		/* Act. */
+		$list_table_actions->init();
+
+		/* Assert. */
+		$priority = has_action( 'admin_action_bulk-enable-email', [ $list_table_actions, 'bulk_enable_emails' ] );
+		$this->assertSame( 10, $priority );
+	}
+
+	public function testInit_WhenCalled_AddsBulkDisableEmailHook() {
+		/* Arrange. */
+		$list_table_actions = new Email_List_Table_Actions();
+
+		/* Act. */
+		$list_table_actions->init();
+
+		/* Assert. */
+		$priority = has_action( 'admin_action_bulk-disable-email', [ $list_table_actions, 'bulk_disable_emails' ] );
+		$this->assertSame( 10, $priority );
+	}
 }
