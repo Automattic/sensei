@@ -72,6 +72,13 @@ class Email_Customization {
 	private $email_generator;
 
 	/**
+	 * Email_List_Table_Actions instance.
+	 *
+	 * @var Email_List_Table_Actions
+	 */
+	private $list_table_actions;
+
+	/**
 	 * Email_Customization constructor.
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
@@ -79,12 +86,13 @@ class Email_Customization {
 	 * @param \Sensei_Settings $settings Sensei_Settings instance.
 	 */
 	private function __construct( \Sensei_Settings $settings ) {
-		$this->post_type       = new Email_Post_Type();
-		$this->settings_menu   = new Settings_Menu();
-		$this->settings_tab    = new Email_Settings_Tab( $settings );
-		$this->blocks          = new Email_Blocks();
-		$this->email_sender    = new Email_Sender();
-		$this->email_generator = new Email_Generator();
+		$this->post_type          = new Email_Post_Type();
+		$this->settings_menu      = new Settings_Menu();
+		$this->settings_tab       = new Email_Settings_Tab( $settings );
+		$this->blocks             = new Email_Blocks();
+		$this->email_sender       = new Email_Sender();
+		$this->email_generator    = new Email_Generator();
+		$this->list_table_actions = new Email_List_Table_Actions();
 	}
 
 	/**
@@ -115,5 +123,6 @@ class Email_Customization {
 		$this->blocks->init();
 		$this->email_sender->init();
 		$this->email_generator->init();
+		$this->list_table_actions->init();
 	}
 }

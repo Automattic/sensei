@@ -8,6 +8,7 @@
  */
 
 	global $sensei_email_data;
+	$sensei_font_family = 'font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;';
 ?>
 <html>
 
@@ -23,7 +24,7 @@
 
 		body {
 			background-color: #f3f3f3;
-			font-family: -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-family: <?php echo esc_attr( $sensei_font_family ); ?>;
 			-webkit-font-smoothing: antialiased;
 			-moz-osx-font-smoothing: grayscale;
 			font-size: 15px;
@@ -43,7 +44,7 @@
 		}
 
 		table td {
-			font-family: -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-family: <?php echo esc_attr( $sensei_font_family ); ?>;
 			font-size: 16px;
 		}
 
@@ -223,7 +224,7 @@
 		p,
 		ul,
 		ol {
-			font-family: -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-family: <?php echo esc_attr( $sensei_font_family ); ?>;
 			font-size: 16px;
 			font-weight: 400;
 			margin: 0;
@@ -233,7 +234,7 @@
 		}
 
 		li {
-			font-family: -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-family: <?php echo esc_attr( $sensei_font_family ); ?>;
 			font-size: 16px;
 			font-weight: 400;
 			line-height: 1.7;

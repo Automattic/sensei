@@ -80,6 +80,8 @@ const files = [
 	'blocks/shared-style-editor.scss',
 	'blocks/frontend.js',
 	'blocks/core-pattern-polyfill/core-pattern-polyfill.js',
+	'blocks/email-editor.js',
+	'blocks/email-editor-style.scss',
 	'admin/editor-wizard/index.js',
 	'admin/editor-wizard/style.scss',
 	'admin/exit-survey/index.js',

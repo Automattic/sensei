@@ -51,4 +51,49 @@ class Email_Blocks_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( $allowed_blocks, Email_Blocks::ALLOWED_BLOCKS );
 	}
+
+	public function testLoadAdminAssets_WhenCalledWithNonEmailPostType_DoesNotEnqueueScripts() {
+		/* Arrange. */
+		$blocks = new Email_Blocks();
+		$blocks->init();
+		set_current_screen( 'any_post_type' );
+
+		/* Act. */
+		$blocks->load_admin_assets();
+
+		/* Assert. */
+		self::assertFalse( wp_script_is( 'sensei-email-editor-setup' ) );
+	}
+
+	public function testLoadAdminAssets_WhenCalledWithEmailPostType_EnqueuesScripts() {
+		/* Arrange. */
+		$blocks = new Email_Blocks();
+		$blocks->init();
+
+		$screen                  = \WP_Screen::get( 'edit-sensei_email' );
+		$screen->base            = 'edit-sensei_email';
+		$screen->post_type       = 'sensei_email';
+		$screen->is_block_editor = true;
+		$screen->set_current_screen();
+
+		/* Act. */
+		$blocks->load_admin_assets();
+
+		/* Assert. */
+		self::assertTrue( wp_script_is( 'sensei-email-editor-setup' ) );
+		self::assertTrue( wp_style_is( 'sensei-email-editor-style' ) );
+	}
+
+	public function testSetAllowedBlocks_WhenCalledWithoutAnyPostInContext_ThrowsNoException() {
+		/* Arrange. */
+		$blocks               = new Email_Blocks();
+		$default_block        = [ 'core/block-a', 'core/block-b', 'core/block-c' ];
+		$block_editor_context = new \WP_Block_Editor_Context( [] );
+
+		/* Assert. */
+		$this->expectNotToPerformAssertions();
+
+		/* Act. */
+		$blocks->set_allowed_blocks( $default_block, $block_editor_context );
+	}
 }

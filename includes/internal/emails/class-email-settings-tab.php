@@ -42,20 +42,42 @@ class Email_Settings_Tab {
 	 * @internal
 	 */
 	public function init() {
-		add_filter( 'sensei_settings_tab_content', [ $this, 'tab_content' ], 10, 2 );
+		add_action( 'sensei_settings_after_links', [ $this, 'render_tabs' ] );
+		add_filter( 'sensei_settings_content', [ $this, 'get_content' ], 10, 2 );
 	}
 
 	/**
-	 * Render the email settings tab.
+	 * Render tabs on the Emails settings page.
 	 *
 	 * @internal
 	 * @access private
 	 *
-	 * @param string $content  Existing content.
 	 * @param string $tab_name The current tab name.
+	 */
+	public function render_tabs( string $tab_name ) {
+		if ( 'email-notification-settings' !== $tab_name ) {
+			return;
+		}
+
+		$current_subtab = $this->get_current_subtab();
+
+		ob_start();
+		$this->render_submenu( $current_subtab );
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in render_submenu function.
+		echo ob_get_clean();
+	}
+
+	/**
+	 * Get the content on the Emails settings page.
+	 *
+	 * @internal
+	 * @access private
+	 *
+	 * @param string $tab_name The current tab name.
+	 * @param string $content  Tab content.
 	 * @return string
 	 */
-	public function tab_content( string $content, string $tab_name ): string {
+	public function get_content( string $tab_name, string $content = '' ): string {
 		if ( 'email-notification-settings' !== $tab_name ) {
 			return $content;
 		}
@@ -63,10 +85,7 @@ class Email_Settings_Tab {
 		$current_subtab = $this->get_current_subtab();
 
 		ob_start();
-
-		$this->render_submenu( $current_subtab );
 		$this->render_subtab( $current_subtab );
-
 		return ob_get_clean();
 	}
 
@@ -127,7 +146,6 @@ class Email_Settings_Tab {
 	 */
 	private function render_submenu( array $current_subtab ): void {
 		?>
-		<div class="sensei-custom-navigation">
 			<div class="sensei-custom-navigation__tabbar">
 				<?php foreach ( $this->get_subtabs() as $subtab ) : ?>
 					<a class="sensei-custom-navigation__tab <?php echo $subtab['key'] === $current_subtab['key'] ? 'active' : ''; ?>"
@@ -136,7 +154,6 @@ class Email_Settings_Tab {
 					</a>
 				<?php endforeach; ?>
 			</div>
-		</div>
 		<?php
 	}
 

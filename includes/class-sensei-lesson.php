@@ -1073,7 +1073,6 @@ class Sensei_Lesson {
 	 * @access private
 	 * @param string $post_key (default: '')
 	 * @param int    $post_id (default: 0)
-	 * @return int|bool meta id or saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		/*
@@ -1117,7 +1116,7 @@ class Sensei_Lesson {
 		}
 
 		// Check if the user has permission to edit the target course.
-		if ( 'lesson_course' === $post_key && ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $new_meta_value ) ) {
+		if ( 'lesson_course' === $post_key && ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $new_meta_value ) && '' !== $new_meta_value ) {
 			return;
 		}
 
