@@ -8,8 +8,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-            - name: Updates the npm version
-              run: npm install -g npm@^8
             - name: npm install, and build docs
               run: |
                   npm ci
