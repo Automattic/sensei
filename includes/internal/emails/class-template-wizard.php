@@ -118,7 +118,7 @@ class Template_Wizard {
 
 		$email_id = $this->email_repository->create( $identifier, $types, $subject, $description, $content );
 
-		return is_int( $email_id) && $email_id > 0;
+		return is_int( $email_id ) && $email_id > 0;
 	}
 
 	/**

@@ -122,7 +122,7 @@ class Email_Repository {
 		}
 
 		$result = true;
-		foreach ($query->posts as $post) {
+		foreach ( $query->posts as $post ) {
 			$last_result = wp_delete_post( $post->ID, true );
 			if ( ! $last_result ) {
 				$result = false;
@@ -188,7 +188,7 @@ class Email_Repository {
 	public function has_emails() {
 		$query = new WP_Query(
 			[
-				'post_type' => Email_Post_Type::POST_TYPE,
+				'post_type'      => Email_Post_Type::POST_TYPE,
 				'posts_per_page' => 1,
 			]
 		);
