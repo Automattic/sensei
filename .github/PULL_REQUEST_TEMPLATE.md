@@ -33,8 +33,8 @@ Both the PR author and reviewer are responsible for ensuring the checklist is co
 - [ ] Adheres to coding standards ([PHP](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/), [JavaScript](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/), [CSS](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/css/), [HTML](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/html/))
 - [ ] All strings are translatable (without concatenation, handles plurals)
 - [ ] Data is [sanitized](https://developer.wordpress.org/apis/security/sanitizing/) / [escaped](https://developer.wordpress.org/apis/security/escaping/)
-- [ ] Follows our naming conventions P6rkRX-4oA-p2
-- [ ] Hooks and functions are documented p6rkRX-1uS-p2
+- [ ] Follows our naming conventions (P6rkRX-4oA-p2)
+- [ ] Hooks (p6rkRX-1uS-p2) and functions are documented
 - [ ] New UIs are responsive and use a [mobile-first approach](https://zellwk.com/blog/how-to-write-mobile-first-css/)
 - [ ] New UIs match the designs
 - [ ] Test cases are written and passing (including feature flags)
