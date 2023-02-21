@@ -27,6 +27,8 @@ class Email_List_Table_Actions {
 	public function init(): void {
 		add_action( 'post_action_enable-email', [ $this, 'enable_email' ] );
 		add_action( 'post_action_disable-email', [ $this, 'disable_email' ] );
+		add_action( 'admin_action_bulk-disable-email', [ $this, 'bulk_disable_emails' ] );
+		add_action( 'admin_action_bulk-enable-email', [ $this, 'bulk_enable_emails' ] );
 	}
 
 	/**
