@@ -84,6 +84,25 @@ class Email_List_Table_Actions {
 	}
 
 	/**
+	 * Bulk disable the emails.
+	 *
+	 * @internal
+	 */
+	public function bulk_disable_emails(): void {
+		$email_ids = $this->get_validated_email_ids();
+
+		foreach ( $email_ids as $email_id ) {
+			wp_update_post(
+				[
+					'ID'          => $email_id,
+					'post_status' => 'draft',
+				]
+			);
+		}
+		$this->redirect_back();
+	}
+
+	/**
 	 * Ensures the request is valid and the user has permission.
 	 * If the request is not valid, the method will exit with a message.
 	 *
