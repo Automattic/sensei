@@ -69,6 +69,21 @@ class Email_List_Table_Actions {
 	}
 
 	/**
+	 * Bulk enable the emails.
+	 *
+	 * @access private
+	 * @internal
+	 */
+	public function bulk_enable_emails(): void {
+		$email_ids = $this->get_validated_email_ids();
+
+		foreach ( $email_ids as $email_id ) {
+			wp_publish_post( $email_id );
+		}
+		$this->redirect_back();
+	}
+
+	/**
 	 * Ensures the request is valid and the user has permission.
 	 * If the request is not valid, the method will exit with a message.
 	 *
