@@ -423,4 +423,52 @@ class Email_List_Table_Actions_Test extends \WP_UnitTestCase {
 		$this->assertSame( 'draft', get_post( $post_id_3 )->post_status );
 		$this->assertSame( 'publish', get_post( $post_id_4 )->post_status );
 	}
+
+	public function testBulkDisableEmail_WhenHasReferer_RedirectsToRefererURL() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$this->prevent_wp_redirect();
+
+		$post_id              = $this->factory->email->create();
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id ];
+
+		$referer                      = admin_url( 'test.php' );
+		$_REQUEST['_wp_http_referer'] = $referer;
+
+		/* Act. */
+		try {
+			$list_table_actions->bulk_disable_emails();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert. */
+		$this->assertSame( $referer, $redirect_location );
+	}
+
+	public function testBulkEnableEmail_WhenHasReferer_RedirectsToRefererURL() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$this->prevent_wp_redirect();
+
+		$post_id              = $this->factory->email->create();
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id ];
+
+		$referer                      = admin_url( 'test.php' );
+		$_REQUEST['_wp_http_referer'] = $referer;
+
+		/* Act. */
+		try {
+			$list_table_actions->bulk_disable_emails();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert. */
+		$this->assertSame( $referer, $redirect_location );
+	}
 }
