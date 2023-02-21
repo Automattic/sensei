@@ -67,7 +67,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 					'post_type'      => Email_Post_Type::POST_TYPE,
 					'posts_per_page' => 20,
 					'offset'         => 20,
-					'meta_key'       => 'sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_key'       => '_sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 					'orderby'        => 'meta_value',
 					'order'          => 'ASC',
 				]
@@ -94,11 +94,11 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 					'offset'         => 0,
 					'meta_query'     => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 						[
-							'key'   => 'sensei_email_type',
+							'key'   => '_sensei_email_type',
 							'value' => 'student',
 						],
 					],
-					'meta_key'       => 'sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_key'       => '_sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 					'orderby'        => 'meta_value',
 					'order'          => 'ASC',
 				]
@@ -123,7 +123,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 					'post_type'      => Email_Post_Type::POST_TYPE,
 					'posts_per_page' => 20,
 					'offset'         => 0,
-					'meta_key'       => 'sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_key'       => '_sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 					'orderby'        => 'meta_value',
 					'order'          => 'ASC',
 				]
@@ -181,7 +181,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$list_table = new Email_List_Table();
 		$post_id    = $this->factory->email->create();
 
-		update_post_meta( $post_id, 'sensei_email_description', 'description' );
+		update_post_meta( $post_id, '_sensei_email_description', 'description' );
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -200,7 +200,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$list_table = new Email_List_Table();
 		$post       = $this->factory->email->create_and_get();
 
-		update_post_meta( $post->ID, 'sensei_email_description', 'description' );
+		update_post_meta( $post->ID, '_sensei_email_description', 'description' );
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -226,7 +226,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$list_table = new Email_List_Table();
 		$post_id    = $this->factory->email->create( [ 'post_title' => '' ] );
 
-		update_post_meta( $post_id, 'sensei_email_description', 'description' );
+		update_post_meta( $post_id, '_sensei_email_description', 'description' );
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -244,7 +244,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$list_table = new Email_List_Table();
 		$post_id    = $this->factory->email->create();
 
-		update_post_meta( $post_id, 'sensei_email_description', 'Welcome Student' );
+		update_post_meta( $post_id, '_sensei_email_description', 'Welcome Student' );
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -266,7 +266,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 			]
 		);
 
-		update_post_meta( $post->ID, 'sensei_email_description', 'description' );
+		update_post_meta( $post->ID, '_sensei_email_description', 'description' );
 
 		/* Act. */
 		$list_table->prepare_items();
