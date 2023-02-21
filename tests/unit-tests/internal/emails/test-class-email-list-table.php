@@ -51,6 +51,18 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $applied );
 	}
 
+	public function testGetColumns_WhenCalled_ContainsCheckboxColumn() {
+		/* Arrange. */
+		$list_table = new Email_List_Table();
+
+		/* Act. */
+		$columns = $list_table->get_columns();
+
+		/* Assert. */
+		$this->assertArrayHasKey( 'cb', $columns );
+		$this->assertEquals( '<input type="checkbox" />', $columns['cb'] );
+	}
+
 	public function testPrepareItems_WhenPaginated_SetsTheCorrectOffset() {
 		/* Arrange. */
 		$query      = $this->createMock( \WP_Query::class );
