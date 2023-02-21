@@ -54,6 +54,7 @@ class Email_List_Table extends Sensei_List_Table {
 	 */
 	public function get_columns() {
 		$columns = [
+			'cb'            => '<input type="checkbox" />',
 			'subject'       => __( 'Subject', 'sensei-lms' ),
 			'description'   => __( 'Description', 'sensei-lms' ),
 			'last_modified' => __( 'Last Modified', 'sensei-lms' ),
@@ -127,6 +128,14 @@ class Email_List_Table extends Sensei_List_Table {
 		$title   = _draft_or_post_title( $post );
 		$actions = $this->get_row_actions( $post );
 
+		$checkbox = sprintf(
+			// translators: %1s: Title of the Email.
+			'<label class="screen-reader-text">' . __( 'Select %1s', 'sensei-lms' ) . '</label>' .
+			'<input id="cb-select-%2$s" type="checkbox" name="email[]" value="%2$s" />',
+			$post->post_title,
+			$post->ID
+		);
+
 		$subject = sprintf(
 			'<strong><a href="%s" class="row-title">%s</a></strong>%s',
 			esc_url( get_edit_post_link( $post ) ),
@@ -143,6 +152,7 @@ class Email_List_Table extends Sensei_List_Table {
 		);
 
 		$row_data = [
+			'cb'            => $checkbox,
 			'subject'       => $subject,
 			'description'   => $description,
 			'last_modified' => $last_modified,
