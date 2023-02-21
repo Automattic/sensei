@@ -21,8 +21,6 @@ jobs:
                 with:
                     path: ${{ github.workspace }}/assets/dist
                     key: ${{ runner.os }}-dist-${{ steps.trunk-commit.outputs.commit }}
-            -   name: Updates the npm version
-                run: npm install -g npm@^8
                 if: steps.dist-cache.outputs.cache-hit != 'true'
             -   name: Get npm cache directory
                 id: npm-cache
@@ -66,8 +64,6 @@ jobs:
                     key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
                     restore-keys: |
                         ${{ runner.os }}-node-
-            -   name: Updates the npm version
-                run: npm install -g npm@^8
             -   name: Install JS dependencies
                 run: npm ci
             -   name: Build Combined Assets
