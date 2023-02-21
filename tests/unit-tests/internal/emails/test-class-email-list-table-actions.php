@@ -307,4 +307,17 @@ class Email_List_Table_Actions_Test extends \WP_UnitTestCase {
 		$priority = has_action( 'admin_action_bulk-disable-email', [ $list_table_actions, 'bulk_disable_emails' ] );
 		$this->assertSame( 10, $priority );
 	}
+
+	public function testBulkEnableEmail_WhenIncorrectNonce_ThrowsError() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$list_table_actions = new Email_List_Table_Actions();
+
+		/* Assert. */
+		$this->expectException( WPDieException::class );
+		$this->expectExceptionMessage( 'The link you followed has expired.' );
+
+		/* Act. */
+		$list_table_actions->bulk_enable_emails();
+	}
 }
