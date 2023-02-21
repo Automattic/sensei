@@ -335,4 +335,36 @@ class Email_List_Table_Actions_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$list_table_actions->bulk_enable_emails();
 	}
+
+	public function testBulkEnableEmail_WhenWrongPostType_ThrowsError() {
+		/* Arrange. */
+		$this->login_as_admin();
+
+		$post_id              = $this->factory->post->create();
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id ];
+
+		/* Assert. */
+		$this->expectException( WPDieException::class );
+		$this->expectExceptionMessage( 'Invalid request' );
+
+		/* Act. */
+		$list_table_actions->bulk_enable_emails();
+	}
+
+	public function testBulkEnableEmail_WhenRequestedWithoutLoggingIn_DiesWithoutProcessing() {
+		/* Arrange. */
+		$this->prevent_wp_redirect();
+
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+
+		/* Assert. */
+		$this->expectException( WPDieException::class );
+		$this->expectExceptionMessage( 'Insufficient permissions' );
+
+		/* Act. */
+		$list_table_actions->bulk_enable_emails();
+	}
 }
