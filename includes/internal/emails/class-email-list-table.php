@@ -240,4 +240,77 @@ class Email_List_Table extends Sensei_List_Table {
 		 */
 		return apply_filters( 'sensei_email_list_row_actions', $actions, $post, $this );
 	}
+
+	/**
+	 * Render the bulk actions.
+	 *
+	 * @param string $which The location of the bulk actions: 'top' or 'bottom'.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string The bulk actions HTML.
+	 */
+	public function bulk_actions( $which = '' ) {
+		if ( 'top' !== $which ) {
+			return '';
+		}
+
+		/**
+		 * Filter the bulk actions displayed on the email list.
+		 *
+		 * @since $$next-version$$
+		 * @hook sensei_email_list_bulk_actions
+		 *
+		 * @param {array} $bulk_actions The bulk actions.
+		 *
+		 * @return {array}
+		 */
+		$bulk_actions = apply_filters(
+			'sensei_email_list_bulk_actions',
+			[
+				'bulk-disable-email' => __( 'Disable', 'sensei-lms' ),
+				'bulk-enable-email'  => __( 'Enable', 'sensei-lms' ),
+			]
+		);
+
+		$output = '<label for="bulk-action-selector-top" class="screen-reader-text">' . __( 'Bulk Email Actions', 'sensei-lms' ) . '</label>'
+		. '<select name="action" id="bulk-action-selector-top">'
+		. '<option value="-1">' . __( 'Bulk Email Actions', 'sensei-lms' ) . '</option>';
+
+		foreach ( $bulk_actions as $key => $value ) {
+			$output .= '<option value="' . esc_attr( $key ) . '">' . $value . '</option>';
+		}
+
+		$output .= '</select>';
+
+		$output .= get_submit_button( __( 'Select Action', 'sensei-lms' ), 'action', '', false, array( 'id' => 'doaction' ) );
+
+		echo wp_kses(
+			$output,
+			[
+				'select' => [
+					'id'    => [],
+					'name'  => [],
+					'class' => [],
+				],
+				'option' => [
+					'value' => [],
+					'class' => [],
+				],
+				'input'  => [
+					'type'  => [],
+					'id'    => [],
+					'name'  => [],
+					'value' => [],
+					'class' => [],
+				],
+				'label'  => [
+					'for'   => [],
+					'class' => [],
+				],
+			]
+		);
+
+		return $output;
+	}
 }
