@@ -105,6 +105,7 @@ class Email_List_Table_Actions {
 	/**
 	 * Ensures the request is valid and the user has permission.
 	 * If the request is not valid, the method will exit with a message.
+	 * Return the list of valid email IDs that passes the checks.
 	 *
 	 * @param int $post_id The post ID.
 	 */
@@ -116,6 +117,38 @@ class Email_List_Table_Actions {
 		if ( Email_Post_Type::POST_TYPE !== get_post_type( $post_id ) ) {
 			wp_die( esc_html__( 'Invalid request', 'sensei-lms' ) );
 		}
+	}
+
+	/**
+	 * Ensures the bulk request is valid and the user has permission.
+	 * If the request is not valid, the method will exit with a message.
+	 *
+	 * @return int[] The validated email IDs.
+	 */
+	private function get_validated_email_ids() {
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
+		}
+
+		check_admin_referer( 'sensei_email_bulk_action' );
+
+		$post_ids = array_map( 'intval', $_REQUEST['email'] ?? [] );
+
+		$args = [
+			'fields'         => 'ids',
+			'post__in'       => $post_ids,
+			'post_type'      => Email_Post_Type::POST_TYPE,
+			'posts_per_page' => -1,
+			'post_status'    => [ 'draft', 'publish' ],
+		];
+
+		$emails = get_posts( $args );
+
+		if ( count( $emails ) !== count( $post_ids ) ) {
+			wp_die( esc_html__( 'Invalid request', 'sensei-lms' ) );
+		}
+
+		return $emails;
 	}
 
 	/**
