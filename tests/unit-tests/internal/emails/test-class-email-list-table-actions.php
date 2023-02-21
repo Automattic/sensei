@@ -367,4 +367,60 @@ class Email_List_Table_Actions_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$list_table_actions->bulk_enable_emails();
 	}
+
+	public function testBulkEnableEmail_WhenRequestIsValid_ChangesTheSelectedEmailStatusesToPublish() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$this->prevent_wp_redirect();
+
+		$post_id_1 = $this->factory->email->create( [ 'post_status' => 'draft' ] );
+		$post_id_2 = $this->factory->email->create( [ 'post_status' => 'publish' ] );
+		$post_id_3 = $this->factory->email->create( [ 'post_status' => 'draft' ] );
+		$post_id_4 = $this->factory->email->create( [ 'post_status' => 'draft' ] );
+
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id_1, $post_id_2, $post_id_3 ];
+
+		/* Act. */
+		try {
+			$list_table_actions->bulk_enable_emails();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status = $e->getCode();
+		}
+
+		/* Assert. */
+		$this->assertSame( 'publish', get_post( $post_id_1 )->post_status );
+		$this->assertSame( 'publish', get_post( $post_id_2 )->post_status );
+		$this->assertSame( 'publish', get_post( $post_id_3 )->post_status );
+		$this->assertSame( 'draft', get_post( $post_id_4 )->post_status );
+	}
+
+	public function testBulkDisableEmail_WhenRequestIsValid_ChangesTheSelectedEmailStatusesToDisabled() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$this->prevent_wp_redirect();
+
+		$post_id_1 = $this->factory->email->create( [ 'post_status' => 'publish' ] );
+		$post_id_2 = $this->factory->email->create( [ 'post_status' => 'draft' ] );
+		$post_id_3 = $this->factory->email->create( [ 'post_status' => 'draft' ] );
+		$post_id_4 = $this->factory->email->create( [ 'post_status' => 'publish' ] );
+
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id_1, $post_id_2, $post_id_3 ];
+
+		/* Act. */
+		try {
+			$list_table_actions->bulk_disable_emails();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status = $e->getCode();
+		}
+
+		/* Assert. */
+		$this->assertSame( 'draft', get_post( $post_id_1 )->post_status );
+		$this->assertSame( 'draft', get_post( $post_id_2 )->post_status );
+		$this->assertSame( 'draft', get_post( $post_id_3 )->post_status );
+		$this->assertSame( 'publish', get_post( $post_id_4 )->post_status );
+	}
 }
