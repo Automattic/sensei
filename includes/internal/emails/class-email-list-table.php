@@ -335,7 +335,7 @@ class Email_List_Table extends Sensei_List_Table {
 			],
 		];
 
-		echo wp_kses( '<form id="posts-filter" action="' . admin_url( 'edit.php' ) . '" method="get">', $allowed_html );
+		echo wp_kses( '<form id="posts-filter" action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">', $allowed_html );
 		parent::display();
 		echo wp_kses(
 			'<input type="hidden" name="post_type" value="' . Email_Post_Type::POST_TYPE . '">' .
