@@ -46,4 +46,3 @@ Both the PR author and reviewer are responsible for ensuring the checklist is co
 - [ ] "Needs Documentation" label is added if this change requires updates to documentation
 - [ ] Known issues are created as new GitHub issues
 - [ ] Continuous Integration build is passing
-- [ ] Code is peer reviewed
