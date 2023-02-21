@@ -89,7 +89,7 @@ class Email_List_Table extends Sensei_List_Table {
 			'post_type'      => Email_Post_Type::POST_TYPE,
 			'posts_per_page' => $per_page,
 			'offset'         => $offset,
-			'meta_key'       => 'sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Query limited by pagination.
+			'meta_key'       => '_sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Query limited by pagination.
 			'orderby'        => 'meta_value',
 			'order'          => 'ASC',
 		];
@@ -134,7 +134,7 @@ class Email_List_Table extends Sensei_List_Table {
 			$this->row_actions( $actions )
 		);
 
-		$description = get_post_meta( $post->ID, 'sensei_email_description', true );
+		$description = get_post_meta( $post->ID, '_sensei_email_description', true );
 
 		$last_modified = sprintf(
 			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
