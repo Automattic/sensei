@@ -45,10 +45,7 @@ export default function handleEmailBlocksEditor() {
 		}
 
 		// Remove wide from align options.
-		if (
-			has( settings, 'supports.align.length' ) &&
-			settings.supports.align.length > 0
-		) {
+		if ( has( settings, 'supports.align.length' ) ) {
 			supports.align = supports.align.filter( ( item ) => {
 				return item !== 'wide';
 			} );
