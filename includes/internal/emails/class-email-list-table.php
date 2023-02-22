@@ -249,27 +249,11 @@ class Email_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function display() {
-		$allowed_html = [
-			'form'  => [
-				'id'     => [],
-				'action' => [],
-				'method' => [],
-			],
-			'input' => [
-				'type'  => [],
-				'name'  => [],
-				'value' => [],
-			],
-		];
-
-		echo wp_kses( '<form id="posts-filter" action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">', $allowed_html );
+		echo '<form id="posts-filter" action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">';
 		parent::display();
-		echo wp_kses(
-			'<input type="hidden" name="post_type" value="' . Email_Post_Type::POST_TYPE . '">' .
-			wp_nonce_field( 'sensei_email_bulk_action', '_wpnonce', true, false ) .
-			'</form>',
-			$allowed_html
-		);
+		echo '<input type="hidden" name="post_type" value="' . esc_attr( Email_Post_Type::POST_TYPE ) . '">';
+		wp_nonce_field( 'sensei_email_bulk_action' );
+		echo '</form>';
 	}
 
 	/**
