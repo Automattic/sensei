@@ -108,4 +108,26 @@ describe( 'handleEmailBlocksEditor', () => {
 
 		expect( settingsOutput.supports.align ).toEqual( [ 'full' ] );
 	} );
+
+	it( 'should not throw any error if align is not there', () => {
+		let settingsOutput = {};
+
+		addFilter(
+			'blocks.registerBlockType',
+			'sensei-lms/email-blocks-test',
+			( settings ) => {
+				settingsOutput = settings;
+				return settings;
+			},
+			20
+		);
+
+		registerTestBlock( {
+			supports: {
+				align: undefined,
+			},
+		} );
+
+		expect( settingsOutput.supports.align ).toEqual( undefined );
+	} );
 } );
