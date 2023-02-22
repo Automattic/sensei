@@ -22,24 +22,42 @@ export default function handleEmailBlocksEditor() {
 	 * @param {Object} settings Block settings.
 	 */
 	function removeIrrelevantSettings( settings ) {
+		const supports = { ...( settings.supports ? settings.supports : {} ) };
+
+		// Remove font family setting.
 		if (
 			has( settings, 'supports.typography.fontFamily' ) ||
 			has( settings, 'supports.typography.__experimentalFontFamily' )
 		) {
-			settings = {
-				...settings,
-				supports: {
-					...settings.supports,
-					typography: {
-						...settings.supports.typography,
-						__experimentalFontFamily: false,
-						fontFamily: false,
-					},
-				},
+			supports.typography = {
+				...supports.typography,
+				__experimentalFontFamily: false,
+				fontFamily: false,
 			};
 		}
 
-		return settings;
+		// Remove alignWide setting.
+		if (
+			has( settings, 'supports.alignWide' ) &&
+			settings.supports.alignWide
+		) {
+			supports.alignWide = false;
+		}
+
+		// Remove wide from align options.
+		if (
+			has( settings, 'supports.align.length' ) &&
+			settings.supports.align.length > 0
+		) {
+			supports.align = supports.align.filter( ( item ) => {
+				return item !== 'wide';
+			} );
+		}
+
+		return {
+			...settings,
+			supports,
+		};
 	}
 }
 
