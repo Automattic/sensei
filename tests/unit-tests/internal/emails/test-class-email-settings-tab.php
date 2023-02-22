@@ -276,4 +276,25 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertStringContainsString( '<input id="email_reply_to_address" name="sensei-settings[email_reply_to_address]" size="40" type="email"', $content );
 	}
+
+	public function testTabContent_WhenInSettingsSubtab_HasEmailFromAddressAsTypeEmail() {
+		/* Arrange. */
+		$settings = $this->createMock( Sensei_Settings::class );
+		$settings
+			->method( 'get_settings' )
+			->willReturn(
+				[
+					'email_from_address' => 'a',
+				]
+			);
+
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+
+		/* Assert. */
+		self::assertStringContainsString( '<input id="email_from_address" name="sensei-settings[email_from_address]" size="40" type="email"', $content );
+	}
 }
