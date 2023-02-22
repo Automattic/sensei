@@ -21,6 +21,8 @@ const registerTestBlock = ( settings = {} ) => {
 			typography: {
 				__experimentalFontFamily: true,
 			},
+			alignWide: true,
+			align: [ 'wide', 'full' ],
 		},
 		...settings,
 	} );
@@ -69,5 +71,23 @@ describe( 'handleEmailBlocksEditor', () => {
 		expect(
 			settingsOutput.supports.typography.__experimentalFontFamily
 		).toBe( true );
+	} );
+
+	it( 'should change alignWide to false in supports', () => {
+		let settingsOutput = {};
+
+		addFilter(
+			'blocks.registerBlockType',
+			'sensei-lms/email-blocks-test',
+			( settings ) => {
+				settingsOutput = settings;
+				return settings;
+			},
+			20
+		);
+
+		registerTestBlock();
+
+		expect( settingsOutput.supports.alignWide ).toBe( false );
 	} );
 } );
