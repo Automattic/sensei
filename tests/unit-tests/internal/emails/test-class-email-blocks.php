@@ -20,9 +20,16 @@ class Email_Blocks_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$blocks->init();
 
+		$filters = array(
+			'allowed_block_types_all'  => 'set_allowed_blocks',
+			'wp_theme_json_data_theme' => 'set_email_css_units',
+		);
+
 		/* Assert. */
-		$priority = has_filter( 'allowed_block_types_all', [ $blocks, 'set_allowed_blocks' ] );
-		self::assertSame( 25, $priority );
+		foreach ( $filters as $name => $callback ) {
+			$priority = has_filter( $name, [ $blocks, $callback ] );
+			self::assertTrue( $priority > 0, 'has the filter' . $name );
+		}
 	}
 
 
@@ -95,5 +102,39 @@ class Email_Blocks_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$blocks->set_allowed_blocks( $default_block, $block_editor_context );
+	}
+
+
+	public function testSetEmailCssUnits_WhenCalledWithTheEmailPostType_ReturnsTheUpdatedTheme() {
+		/* Arrange. */
+		$blocks     = new Email_Blocks();
+		$theme_json = $this->createMock( 'WP_Theme_JSON_Data' );
+
+		$screen                  = \WP_Screen::get( 'edit-sensei_email' );
+		$screen->base            = 'edit-sensei_email';
+		$screen->post_type       = Email_Post_Type::POST_TYPE;
+		$screen->is_block_editor = true;
+		$screen->set_current_screen();
+
+		$theme_json->expects( $this->once() )
+			->method( 'update_with' )
+			->with( Email_Blocks::EMAIL_THEME_SETTINGS )
+			->willReturn( 'updated' );
+
+		/* Act. */
+		$this->assertSame( 'updated', $blocks->set_email_css_units( $theme_json ) );
+	}
+
+	public function testSetEmailCssUnits_WhenCalledWithTheOtherPostType_ReturnsTheOriginalTheme() {
+		/* Arrange. */
+		$blocks     = new Email_Blocks();
+		$theme_json = $this->createMock( 'WP_Theme_JSON_Data' );
+
+		$theme_json
+			->method( 'update_with' )
+			->willReturn( 'updated' );
+
+		/* Act. */
+		$this->assertNotSame( 'updated', $blocks->set_email_css_units( $theme_json ) );
 	}
 }
