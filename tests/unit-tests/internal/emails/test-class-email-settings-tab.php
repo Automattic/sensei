@@ -238,7 +238,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( '<input type="submit" name="submit" ', $content );
 	}
 
-	public function testSetting_WhenLoaded_AddsTheReplyToSettingFilterHook() {
+	public function testInit_WhenLoaded_AddsTheReplyToSettingFilterHook() {
 		/* Arrange. */
 		$settings           = $this->createMock( Sensei_Settings::class );
 		$email_settings_tab = new Email_Settings_Tab( $settings );
