@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Email_Data class.
+ * File containing the Email_Seeder_Data class.
  *
  * @package sensei
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Email_Data class.
+ * Email_Seeder_Data class.
  *
  * Contains all available email data.
  *
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since $$next-version$$
  */
-class Email_Data {
+class Email_Seeder_Data {
 
 	/**
 	 * Email data.
@@ -31,6 +31,8 @@ class Email_Data {
 
 	/**
 	 * Get all available emails with corresponding data.
+	 *
+	 * @internal
 	 *
 	 * @return array
 	 */

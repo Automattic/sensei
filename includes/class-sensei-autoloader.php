@@ -298,8 +298,8 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Email_Sender::class    => 'internal/emails/class-email-sender.php',
 			\Sensei\Internal\Emails\Email_Generator::class => 'internal/emails/class-email-generator.php',
 			\Sensei\Internal\Emails\Email_List_Table_Actions::class => 'internal/emails/class-email-list-table-actions.php',
-			\Sensei\Internal\Emails\Email_Data::class      => 'internal/emails/class-email-data.php',
-			\Sensei\Internal\Emails\Template_Wizard::class => 'internal/emails/class-template-wizard.php',
+			\Sensei\Internal\Emails\Email_Seeder_Data::class => 'internal/emails/class-email-seeder-data.php',
+			\Sensei\Internal\Emails\Email_Seeder::class => 'internal/emails/class-email-seeder.php',
 			\Sensei\Internal\Emails\Recreate_Emails_Tool::class => 'internal/emails/class-recreate-emails-tool.php',
 			\Sensei\Internal\Emails\Email_Repository::class => 'internal/emails/class-email-repository.php',
 		);

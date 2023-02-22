@@ -22,9 +22,9 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 	/**
 	 * Template_Wizard instance.
 	 *
-	 * @var Template_Wizard
+	 * @var Email_Seeder
 	 */
-	private $template_wizard;
+	private $seeder;
 
 
 	/**
@@ -32,8 +32,8 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 	 *
 	 * @param Template_Wizard $template_wizard Template_Wizard instance.
 	 */
-	public function __construct( Template_Wizard $template_wizard ) {
-		$this->template_wizard = $template_wizard;
+	public function __construct( Email_Seeder $seeder ) {
+		$this->seeder = $seeder;
 	}
 
 	/**
@@ -89,8 +89,8 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 	 * Run the tool.
 	 */
 	public function process() {
-		$this->template_wizard->init();
-		$result = $this->template_wizard->create_all( true );
+		$this->seeder->init();
+		$result = $this->seeder->create_all( true );
 
 		$message = $result
 			? __( 'Emails were recreated successfully.', 'sensei-lms' )
