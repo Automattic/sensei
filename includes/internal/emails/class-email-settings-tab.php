@@ -19,6 +19,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 class Email_Settings_Tab {
+
+	/**
+	 * Sensei_Settings instance.
+	 *
+	 * @var \Sensei_Settings
+	 */
+	private $settings;
+
+	/**
+	 * Email_Settings_Tab constructor.
+	 *
+	 * @param \Sensei_Settings $settings Sensei_Settings instance.
+	 */
+	public function __construct( \Sensei_Settings $settings ) {
+		$this->settings = $settings;
+	}
+
 	/**
 	 * Initialize the class and add hooks.
 	 *
@@ -171,6 +188,47 @@ class Email_Settings_Tab {
 	 * Render the settings subtab.
 	 */
 	private function render_settings_subtab(): void {
-		echo 'TODO';
+		global $wp_settings_fields;
+
+		$fields_to_display = array_filter(
+			$wp_settings_fields['sensei-settings']['email-notification-settings'] ?? [],
+			function( $field_key ) {
+				return in_array( $field_key, [ 'email_from_name', 'email_from_address' ], true );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+		$fields_to_display = array_map(
+			function( $field ) {
+				unset( $field['args']['data']['description'] );
+				$class = $field['args']['class'] ?? '';
+				if ( $class ) {
+					$class = ' class="' . esc_attr( $field['args']['class'] ) . '"';
+				}
+				$field['args']['class'] = $class;
+				return $field;
+			},
+			$fields_to_display
+		);
+
+		$options = $this->settings->get_settings() ?? [];
+		unset( $options['email_from_name'], $options['email_from_address'] );
+
+		include dirname( __FILE__ ) . '/views/html-settings.php';
+	}
+
+	/**
+	 * Display hidden field.
+	 *
+	 * @param array $key   Field key.
+	 * @param mixed $value Field value.
+	 */
+	private function form_field_hidden( $key, $value ) {
+		if ( ! is_array( $value ) ) {
+			echo '<input name="sensei-settings[' . esc_attr( $key ) . ']" type="hidden" value="' . esc_attr( $value ) . '" />' . "\n";
+		} else {
+			foreach ( $value as $v ) {
+				echo '<input name="sensei-settings[' . esc_attr( $key ) . '][]" type="hidden" value="' . esc_attr( $v ) . '" />' . "\n";
+			}
+		}
 	}
 }

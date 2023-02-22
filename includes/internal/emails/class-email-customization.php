@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Emails;
 
+use Sensei_Settings;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -87,11 +89,13 @@ class Email_Customization {
 	 * Email_Customization constructor.
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
+	 *
+	 * @param \Sensei_Settings $settings Sensei_Settings instance.
 	 */
-	private function __construct() {
+	private function __construct( \Sensei_Settings $settings ) {
 		$this->post_type          = new Email_Post_Type();
 		$this->settings_menu      = new Settings_Menu();
-		$this->settings_tab       = new Email_Settings_Tab();
+		$this->settings_tab       = new Email_Settings_Tab( $settings );
 		$this->blocks             = new Email_Blocks();
 		$this->email_sender       = new Email_Sender();
 		$this->email_generator    = new Email_Generator();
@@ -106,11 +110,12 @@ class Email_Customization {
 	 *
 	 * @internal
 	 *
+	 * @param \Sensei_Settings $settings Sensei_Settings instance.
 	 * @return self
 	 */
-	public static function instance(): self {
+	public static function instance( Sensei_Settings $settings ): self {
 		if ( ! self::$instance ) {
-			self::$instance = new self();
+			self::$instance = new self( $settings );
 		}
 
 		return self::$instance;
