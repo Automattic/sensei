@@ -37,10 +37,7 @@ export default function handleEmailBlocksEditor() {
 		}
 
 		// Remove alignWide setting.
-		if (
-			has( settings, 'supports.alignWide' ) &&
-			settings.supports.alignWide
-		) {
+		if ( has( settings, 'supports.alignWide' ) ) {
 			supports.alignWide = false;
 		}
 
