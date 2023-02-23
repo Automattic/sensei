@@ -36,7 +36,8 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 	/**
 	 * Recreate_Emails_Tool constructor.
 	 *
-	 * @param Template_Wizard $template_wizard Template_Wizard instance.
+	 * @param Email_Seeder  $seeder Email_Seeder instance.
+	 * @param \Sensei_Tools $tools Sensei_Tools instance.
 	 */
 	public function __construct( Email_Seeder $seeder, \Sensei_Tools $tools ) {
 		$this->seeder = $seeder;

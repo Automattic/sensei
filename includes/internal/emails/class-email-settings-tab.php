@@ -181,6 +181,11 @@ class Email_Settings_Tab {
 		$this->render_list_table_for_type( 'teacher' );
 	}
 
+	/**
+	 * Reder list table for given type.
+	 *
+	 * @param string $type Type of emails to render.
+	 */
 	private function render_list_table_for_type( string $type ): void {
 		$list_table = new Email_List_Table( new Email_Repository() );
 		$list_table->prepare_items( $type );

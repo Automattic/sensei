@@ -10,7 +10,7 @@ use Sensei\Internal\Emails\Email_Repository;
  * @covers \Sensei\Internal\Emails\Email_Repository
  */
 class Email_Repository_Test extends \WP_UnitTestCase {
-	
+
 	public function testHas_EmailNotInRepository_ReturnsFalse() {
 		/* Arrange. */
 		$repository = new Email_Repository();
@@ -102,7 +102,11 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 		$result = $repository->get_all();
 
 		/* Assert. */
-		$expected = [ 'items' => [], 'total_items' => 0, 'total_pages' => 0 ];
+		$expected = [
+			'items'       => [],
+			'total_items' => 0,
+			'total_pages' => 0,
+		];
 		$this->assertSame( $expected, (array) $result );
 	}
 
@@ -119,7 +123,11 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 		$result = $repository->get_all();
 
 		/* Assert. */
-		$expected = [ 'items' => [ $email_a, $email_f ], 'total_items' => 2, 'total_pages' => 1 ];
+		$expected = [
+			'items'       => [ $email_a, $email_f ],
+			'total_items' => 2,
+			'total_pages' => 1,
+		];
 		$this->assertEquals( $expected, (array) $result );
 	}
 
@@ -134,7 +142,11 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 		$result = $repository->get_all( 'b' );
 
 		/* Assert. */
-		$expected = [ 'items' => [ $email_a ], 'total_items' => 1, 'total_pages' => 1 ];
+		$expected = [
+			'items'       => [ $email_a ],
+			'total_items' => 1,
+			'total_pages' => 1,
+		];
 		$this->assertEquals( $expected, (array) $result );
 	}
 
@@ -149,7 +161,11 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 		$result = $repository->get_all( null, 1, 1 );
 
 		/* Assert. */
-		$expected = [ 'items' => [ $email_f ], 'total_items' => 2, 'total_pages' => 2 ];
+		$expected = [
+			'items'       => [ $email_f ],
+			'total_items' => 2,
+			'total_pages' => 2,
+		];
 		$this->assertEquals( $expected, (array) $result );
 	}
 }

@@ -54,7 +54,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testGetColumns_WhenCalled_ContainsCheckboxColumn() {
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Email_List_Table( new Email_Repository() );
 
 		/* Act. */
 		$columns = $list_table->get_columns();
@@ -76,12 +76,16 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 			->expects( $this->once() )
 			->method( 'get_all' )
 			->with( null, 20, 20 )
-			->willReturn( $this->get_empty_items() ); 
+			->willReturn( $this->get_empty_items() );
 		$list_table->prepare_items();
 	}
 
 	private function get_empty_items() {
-		return (object) [ 'items' => [], 'total_items' => 0, 'total_pages' => 0 ];
+		return (object) [
+			'items'       => [],
+			'total_items' => 0,
+			'total_pages' => 0,
+		];
 	}
 
 	public function testPrepareItems_WhenEmailTypeSet_SetsTheMetaQuery() {
@@ -102,8 +106,14 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$posts      = [ new WP_Post( new stdClass() ), new WP_Post( new stdClass() ) ];
 		$repository = $this->createMock( Email_Repository::class );
-		$repository->method( 'get_all' )->willReturn( (object) [ 'items' => $posts, 'total_items' => 2,  'total_pages' => 1 ] );
-		$list_table = new Email_List_Table( $repository  );
+		$repository->method( 'get_all' )->willReturn(
+			(object) [
+				'items'       => $posts,
+				'total_items' => 2,
+				'total_pages' => 1,
+			]
+		);
+		$list_table = new Email_List_Table( $repository );
 
 		/* Act. */
 		$list_table->prepare_items();

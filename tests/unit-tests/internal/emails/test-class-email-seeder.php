@@ -23,7 +23,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 		$seeder = new Email_Seeder( $data, $repository );
 
 		$changed_value = false;
-		$filter = function( $value ) use ( &$changed_value ) {
+		$filter        = function( $value ) use ( &$changed_value ) {
 			$changed_value = true;
 			return $value;
 		};
@@ -113,7 +113,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 		$seeder->create_email( 'test', true );
 	}
 
-	
+
 	/**
 	 * Tests that it returns false when the email data is incomplete.
 	 *
@@ -139,31 +139,31 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 
 	public function providerCreateEmail_WhenIncomleteData_ReturnsFalse(): array {
 		return [
-			'no data' => [],
-			'no types' => [
-					'test' => [
-						'subject'     => 'a',
-						'content'     => 'b',
-						'description' => 'c',
-					],
+			'no data'    => [],
+			'no types'   => [
+				'test' => [
+					'subject'     => 'a',
+					'content'     => 'b',
+					'description' => 'c',
 				],
+			],
 			'no subject' => [
-					'test' => [
-						'types'       => [ 'a' ],
-						'content'     => 'b',
-						'description' => 'c',
-					],
+				'test' => [
+					'types'       => [ 'a' ],
+					'content'     => 'b',
+					'description' => 'c',
 				],
+			],
 			'no content' => [
-					'test' => [
-						'types'       => [ 'a' ],
-						'subject'     => 'b',
-						'description' => 'c',
-					],
+				'test' => [
+					'types'       => [ 'a' ],
+					'subject'     => 'b',
+					'description' => 'c',
 				],
+			],
 		];
 	}
-	
+
 	public function testCreateEmail_WhenDataIsComplete_CreatesEmail() {
 		/* Arrange. */
 		$data = $this->createMock( Email_Seeder_Data::class );
@@ -177,7 +177,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 						'content'     => 'c',
 						'description' => 'd',
 					],
-				] 
+				]
 			);
 
 		$repository = $this->createMock( Email_Repository::class );
@@ -200,7 +200,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 			->willReturn( 1 );
 		$seeder->create_email( 'test' );
 	}
-	
+
 	public function testCreateEmail_WhenEmailCreated_ReturnsTrue() {
 		/* Arrange. */
 		$data = $this->createMock( Email_Seeder_Data::class );
@@ -214,7 +214,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 						'content'     => 'c',
 						'description' => 'd',
 					],
-				] 
+				]
 			);
 
 		$repository = $this->createMock( Email_Repository::class );
@@ -248,7 +248,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 			->method( 'get_email_data' )
 			->willReturn(
 				[
-					'test' => [
+					'test'  => [
 						'types'       => [ 'a' ],
 						'subject'     => 'b',
 						'content'     => 'c',
@@ -260,7 +260,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 						'content'     => 'g',
 						'description' => 'h',
 					],
-				] 
+				]
 			);
 
 		$repository = $this->createMock( Email_Repository::class );
@@ -302,7 +302,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 			->method( 'get_email_data' )
 			->willReturn(
 				[
-					'test' => [
+					'test'  => [
 						'types'       => [ 'a' ],
 						'subject'     => 'b',
 						'content'     => 'c',
@@ -314,7 +314,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 						'content'     => 'g',
 						'description' => 'h',
 					],
-				] 
+				]
 			);
 
 		$repository = $this->createMock( Email_Repository::class );
@@ -337,7 +337,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 			->method( 'get_email_data' )
 			->willReturn(
 				[
-					'test' => [
+					'test'  => [
 						'types'       => [ 'a' ],
 						'subject'     => 'b',
 						'content'     => 'c',
@@ -349,7 +349,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 						'content'     => 'g',
 						'description' => 'h',
 					],
-				] 
+				]
 			);
 
 		$repository = $this->createMock( Email_Repository::class );

@@ -107,8 +107,8 @@ class Recreate_Emails_Tool_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$seeder = $this->createMock( Email_Seeder::class );
 		$seeder->method( 'create_all' )->willReturn( true );
-		$tools  = $this->createMock( \Sensei_Tools::class );
-		$tool   = new Recreate_Emails_Tool( $seeder, $tools );
+		$tools = $this->createMock( \Sensei_Tools::class );
+		$tool  = new Recreate_Emails_Tool( $seeder, $tools );
 
 		/* Expect & Act. */
 		$tools
@@ -117,13 +117,13 @@ class Recreate_Emails_Tool_Test extends \WP_UnitTestCase {
 			->with( 'Emails were recreated successfully.' );
 		$tool->process();
 	}
-	
+
 	public function testProcess_CreatedWithIssues_AddsMatchingMessage(): void {
 		/* Arrange. */
 		$seeder = $this->createMock( Email_Seeder::class );
 		$seeder->method( 'create_all' )->willReturn( false );
-		$tools  = $this->createMock( \Sensei_Tools::class );
-		$tool   = new Recreate_Emails_Tool( $seeder, $tools );
+		$tools = $this->createMock( \Sensei_Tools::class );
+		$tool  = new Recreate_Emails_Tool( $seeder, $tools );
 
 		/* Expect & Act. */
 		$tools

@@ -164,8 +164,8 @@ class Email_Repository {
 	 * @param string|null $type Email type.
 	 * @param int         $per_page Posts per page. Default 10.
 	 * @param int         $offset Offset. Default 0.
-	 * @return object Object with results. 
-	 *                `items` is an array of `WP_Post` objects. 
+	 * @return object Object with results.
+	 *                `items` is an array of `WP_Post` objects.
 	 *                `total_items` is the total number of results.
 	 *                `total_pages` is the total number of pages.
 	 */
@@ -174,7 +174,7 @@ class Email_Repository {
 			'post_type'      => Email_Post_Type::POST_TYPE,
 			'posts_per_page' => $per_page,
 			'offset'         => $offset,
-			'meta_key'       => self::META_DESCRIPTION,
+			'meta_key'       => self::META_DESCRIPTION, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 			'orderby'        => 'meta_value',
 			'order'          => 'ASC',
 		];
@@ -189,9 +189,9 @@ class Email_Repository {
 		}
 
 		$query = new WP_Query( $query_args );
-		
+
 		$result = (object) [
-			'items' => $query->posts,
+			'items'       => $query->posts,
 			'total_items' => $query->found_posts,
 			'total_pages' => $query->max_num_pages,
 		];
