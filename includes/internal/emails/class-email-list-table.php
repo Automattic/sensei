@@ -54,6 +54,7 @@ class Email_List_Table extends Sensei_List_Table {
 	 */
 	public function get_columns() {
 		$columns = [
+			'cb'            => '<input type="checkbox" />',
 			'subject'       => __( 'Subject', 'sensei-lms' ),
 			'description'   => __( 'Description', 'sensei-lms' ),
 			'last_modified' => __( 'Last Modified', 'sensei-lms' ),
@@ -127,6 +128,14 @@ class Email_List_Table extends Sensei_List_Table {
 		$title   = _draft_or_post_title( $post );
 		$actions = $this->get_row_actions( $post );
 
+		$checkbox = sprintf(
+			// translators: %1s: Title of the Email.
+			'<label class="screen-reader-text">' . __( 'Select %1s', 'sensei-lms' ) . '</label>' .
+			'<input id="cb-select-%2$s" type="checkbox" name="email[]" value="%2$s" />',
+			$post->post_title,
+			$post->ID
+		);
+
 		$subject = sprintf(
 			'<strong><a href="%s" class="row-title">%s</a></strong>%s',
 			esc_url( get_edit_post_link( $post ) ),
@@ -143,6 +152,7 @@ class Email_List_Table extends Sensei_List_Table {
 		);
 
 		$row_data = [
+			'cb'            => $checkbox,
 			'subject'       => $subject,
 			'description'   => $description,
 			'last_modified' => $last_modified,
@@ -229,5 +239,32 @@ class Email_List_Table extends Sensei_List_Table {
 		 * @return {array}
 		 */
 		return apply_filters( 'sensei_email_list_row_actions', $actions, $post, $this );
+	}
+
+	/**
+	 * Display table content wrapped inside a form
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return void
+	 */
+	public function display() {
+		echo '<form id="posts-filter" action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">';
+		parent::display();
+		echo '<input type="hidden" name="post_type" value="' . esc_attr( Email_Post_Type::POST_TYPE ) . '">';
+		wp_nonce_field( 'sensei_email_bulk_action' );
+		echo '</form>';
+	}
+
+	/**
+	 * Get the bulk actions that are available for the table.
+	 *
+	 * @return array
+	 */
+	public function get_bulk_actions() {
+		return [
+			'bulk-disable-email' => __( 'Disable', 'sensei-lms' ),
+			'bulk-enable-email'  => __( 'Enable', 'sensei-lms' ),
+		];
 	}
 }

@@ -283,4 +283,214 @@ class Email_List_Table_Actions_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( $referer, $redirect_location );
 	}
+
+	public function testInit_WhenCalled_AddsBulkEnableEmailHook() {
+		/* Arrange. */
+		$list_table_actions = new Email_List_Table_Actions();
+
+		/* Act. */
+		$list_table_actions->init();
+
+		/* Assert. */
+		$priority = has_action( 'admin_action_bulk-enable-email', [ $list_table_actions, 'bulk_enable_emails' ] );
+		$this->assertSame( 10, $priority );
+	}
+
+	public function testInit_WhenCalled_AddsBulkDisableEmailHook() {
+		/* Arrange. */
+		$list_table_actions = new Email_List_Table_Actions();
+
+		/* Act. */
+		$list_table_actions->init();
+
+		/* Assert. */
+		$priority = has_action( 'admin_action_bulk-disable-email', [ $list_table_actions, 'bulk_disable_emails' ] );
+		$this->assertSame( 10, $priority );
+	}
+
+	public function testBulkEnableEmail_WhenIncorrectNonce_ThrowsError() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$list_table_actions = new Email_List_Table_Actions();
+
+		/* Assert. */
+		$this->expectException( WPDieException::class );
+		$this->expectExceptionMessage( 'The link you followed has expired.' );
+
+		/* Act. */
+		$list_table_actions->bulk_enable_emails();
+	}
+
+	public function testBulkEnableEmail_WhenUserHasInsufficientPermissions_ThrowsError() {
+		/* Arrange. */
+		$this->login_as_teacher();
+
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+
+		/* Assert. */
+		$this->expectException( WPDieException::class );
+		$this->expectExceptionMessage( 'Insufficient permissions' );
+
+		/* Act. */
+		$list_table_actions->bulk_enable_emails();
+	}
+
+	public function testBulkEnableEmail_WhenWrongPostType_ThrowsError() {
+		/* Arrange. */
+		$this->login_as_admin();
+
+		$post_id              = $this->factory->post->create();
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id ];
+
+		/* Assert. */
+		$this->expectException( WPDieException::class );
+		$this->expectExceptionMessage( 'Invalid request' );
+
+		/* Act. */
+		$list_table_actions->bulk_enable_emails();
+	}
+
+	public function testBulkEnableEmail_WhenRequestedWithoutLoggingIn_DiesWithoutProcessing() {
+		/* Arrange. */
+		$this->prevent_wp_redirect();
+
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+
+		/* Assert. */
+		$this->expectException( WPDieException::class );
+		$this->expectExceptionMessage( 'Insufficient permissions' );
+
+		/* Act. */
+		$list_table_actions->bulk_enable_emails();
+	}
+
+	public function testBulkEnableEmail_WhenRequestIsValid_ChangesTheSelectedEmailStatusesToPublish() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$this->prevent_wp_redirect();
+
+		$post_id_1 = $this->factory->email->create( [ 'post_status' => 'draft' ] );
+		$post_id_2 = $this->factory->email->create( [ 'post_status' => 'publish' ] );
+		$post_id_3 = $this->factory->email->create( [ 'post_status' => 'draft' ] );
+		$post_id_4 = $this->factory->email->create( [ 'post_status' => 'draft' ] );
+
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id_1, $post_id_2, $post_id_3 ];
+
+		/* Act. */
+		try {
+			$list_table_actions->bulk_enable_emails();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status = $e->getCode();
+		}
+
+		/* Assert. */
+		$this->assertSame( 'publish', get_post( $post_id_1 )->post_status );
+		$this->assertSame( 'publish', get_post( $post_id_2 )->post_status );
+		$this->assertSame( 'publish', get_post( $post_id_3 )->post_status );
+		$this->assertSame( 'draft', get_post( $post_id_4 )->post_status );
+	}
+
+	public function testBulkDisableEmail_WhenRequestIsValid_ChangesTheSelectedEmailStatusesToDisabled() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$this->prevent_wp_redirect();
+
+		$post_id_1 = $this->factory->email->create( [ 'post_status' => 'publish' ] );
+		$post_id_2 = $this->factory->email->create( [ 'post_status' => 'draft' ] );
+		$post_id_3 = $this->factory->email->create( [ 'post_status' => 'draft' ] );
+		$post_id_4 = $this->factory->email->create( [ 'post_status' => 'publish' ] );
+
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id_1, $post_id_2, $post_id_3 ];
+
+		/* Act. */
+		try {
+			$list_table_actions->bulk_disable_emails();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status = $e->getCode();
+		}
+
+		/* Assert. */
+		$this->assertSame( 'draft', get_post( $post_id_1 )->post_status );
+		$this->assertSame( 'draft', get_post( $post_id_2 )->post_status );
+		$this->assertSame( 'draft', get_post( $post_id_3 )->post_status );
+		$this->assertSame( 'publish', get_post( $post_id_4 )->post_status );
+	}
+
+	public function testBulkDisableEmail_WhenHasReferer_RedirectsToRefererURL() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$this->prevent_wp_redirect();
+
+		$post_id              = $this->factory->email->create();
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id ];
+
+		$referer                      = admin_url( 'test.php' );
+		$_REQUEST['_wp_http_referer'] = $referer;
+
+		/* Act. */
+		try {
+			$list_table_actions->bulk_disable_emails();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert. */
+		$this->assertSame( $referer, $redirect_location );
+	}
+
+	public function testBulkEnableEmail_WhenHasReferer_RedirectsToRefererURL() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$this->prevent_wp_redirect();
+
+		$post_id              = $this->factory->email->create();
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id ];
+
+		$referer                      = admin_url( 'test.php' );
+		$_REQUEST['_wp_http_referer'] = $referer;
+
+		/* Act. */
+		try {
+			$list_table_actions->bulk_disable_emails();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert. */
+		$this->assertSame( $referer, $redirect_location );
+	}
+
+	public function testBulkDisableEmail_WhenNoReferer_RedirectsToTheEmailSettingsURL() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$this->prevent_wp_redirect();
+
+		$post_id              = $this->factory->email->create();
+		$list_table_actions   = new Email_List_Table_Actions();
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_email_bulk_action' );
+		$_REQUEST['email']    = [ $post_id ];
+
+		/* Act. */
+		try {
+			$list_table_actions->bulk_disable_emails();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert. */
+		$expected = admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' );
+		$this->assertSame( $expected, $redirect_location );
+	}
 }

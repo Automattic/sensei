@@ -237,4 +237,64 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertStringContainsString( '<input type="submit" name="submit" ', $content );
 	}
+
+	public function testInit_WhenLoaded_AddsTheReplyToSettingFilterHook() {
+		/* Arrange. */
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+
+		/* Act. */
+		$email_settings_tab->init();
+
+		/* Assert. */
+		self::assertEquals( 10, has_filter( 'sensei_settings_fields', [ $email_settings_tab, 'add_reply_to_setting' ] ) );
+	}
+
+	public function testTabContent_WhenInSettingsSubtab_HasReplyToInContent() {
+		/* Arrange. */
+		$settings = $this->createMock( Sensei_Settings::class );
+		$settings
+			->method( 'get_settings' )
+			->willReturn(
+				[
+					'email_reply_to_address' => [
+						'name' => __( '"Reply To" Address', 'sensei-lms' ),
+						'type' => 'email',
+					],
+				]
+			);
+
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$email_settings_tab->init();
+		Sensei()->settings->general_init();
+		Sensei()->settings->settings_fields();
+		$_GET['subtab'] = 'settings';
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+
+		/* Assert. */
+		self::assertStringContainsString( '<input id="email_reply_to_address" name="sensei-settings[email_reply_to_address]" size="40" type="email"', $content );
+	}
+
+	public function testTabContent_WhenInSettingsSubtab_HasEmailFromAddressAsTypeEmail() {
+		/* Arrange. */
+		$settings = $this->createMock( Sensei_Settings::class );
+		$settings
+			->method( 'get_settings' )
+			->willReturn(
+				[
+					'email_from_address' => 'a',
+				]
+			);
+
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+
+		/* Assert. */
+		self::assertStringContainsString( '<input id="email_from_address" name="sensei-settings[email_from_address]" size="40" type="email"', $content );
+	}
 }
