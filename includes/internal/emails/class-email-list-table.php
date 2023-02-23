@@ -257,23 +257,6 @@ class Email_List_Table extends Sensei_List_Table {
 	}
 
 	/**
-	 * Display the bulk actions.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param string $which The location of the bulk actions: 'top' or 'bottom'.
-	 *
-	 * @return void
-	 */
-	public function bulk_actions( $which = '' ) {
-		if ( 'top' !== $which ) {
-			return;
-		}
-
-		parent::bulk_actions( $which );
-	}
-
-	/**
 	 * Get the bulk actions that are available for the table.
 	 *
 	 * @return array
