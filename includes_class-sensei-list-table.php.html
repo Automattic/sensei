@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Source: includes/reports/class-sensei-no-users-table-relationship.php - Sensei LMS Hook Docs</title>
+	<title>Source: includes/class-sensei-list-table.php - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Source: includes/reports/class-sensei-no-users-table-relationship.php</h1>
+	<h1 class="page-title">Source: includes/class-sensei-list-table.php</h1>
 	
 
 	
@@ -32,184 +32,408 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>&lt;?php
-/**
- * File containing the Sensei_No_Users_Table_Relationship class.
- *
- * @package sensei
- */
-
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit; // Exit if accessed directly
 }
 
 /**
- * Class that handles a special case of environments that have the users table in a separate
- * database from the other tables.
+ * Generic Data Table parent Class in Sensei.
  *
- * @since 4.6.4
+ * @author Automattic
+ *
+ * @since 1.2.0
+ * @package Core
  */
-class Sensei_No_Users_Table_Relationship {
-	/**
-	 * Instance of singleton.
-	 *
-	 * @var self
-	 */
-	private static $instance;
+class Sensei_List_Table extends WP_List_Table {
+	public $token;
 
 	/**
-	 * Sensei_No_Users_Table_Relationship constructor. Private so it can only be initialized internally.
+	 * Used for indicating if the output is for csv or not
+	 *
+	 * @var bool $csv_output
+	 * @access public
 	 */
-	private function __construct() {}
+	public $csv_output = false;
 
 	/**
-	 * Fetches an instance of the class.
+	 * Used for storing the string of a search for passing between functions
 	 *
-	 * @return self
+	 * @var string $search
+	 * @access public
 	 */
-	public static function instance() : self {
-		if ( ! self::$instance ) {
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
+	public $search = false;
 
 	/**
-	 * Initializes the class.
+	 * Used for storing the total number of items available for the given query
+	 * also used for generating the pagination.
+	 *
+	 * @var int $total_items
+	 * @access public
 	 */
-	public function init() : void {
-		// Students report.
-		add_filter( 'sensei_students_report_last_activity_filter_enabled', [ $this, 'can_use_users_relationship' ] );
-		add_filter( 'sensei_analysis_overview_users_columns_sortable', [ $this, 'filter_analysis_overview_users_columns_sortable' ] );
-		add_filter( 'sensei_analysis_overview_column_data', [ $this, 'filter_analysis_overview_column_data' ], 10, 3 );
-	}
+	public $total_items = 0;
+
 
 	/**
-	 * Check if it's possible to use a relationship between users and posts table. It's used to
-	 * check environments where the users table lives in a different places and the relationship
-	 * doesn't work.
-	 *
-	 * @access private
-	 *
-	 * @return boolean Whether the users relationship is possible.
+	 * @var array $sortable_columns
 	 */
-	public function can_use_users_relationship() : bool {
-		/**
-		 * Filters if site environment is able to make queries including a relationship between users
-		 * table and others.
-		 *
-		 * @hook  sensei_can_use_users_relationship
-		 * @since 4.6.4
-		 *
-		 * @param {null} $can_use_users_relationship Default value is `null`. With this value the
-		 *                                           filter is ignored.
-		 *
-		 * @return {boolean|null} Whether the site environment is able to make queries including a
-		 *                        relationship between users table and others..
-		 */
-		$filtered_can_use_users_relationship = apply_filters( 'sensei_can_use_users_relationship', null );
-
-		if ( null !== $filtered_can_use_users_relationship ) {
-			return $filtered_can_use_users_relationship;
-		}
-
-		$can_use_users_relationship = wp_cache_get( 'sensei_can_use_users_relationship' );
-
-		if ( false === $can_use_users_relationship ) {
-			global $wpdb;
-
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Database relationship check.
-			$result     = $wpdb->get_var( "SELECT p.ID FROM {$wpdb->posts} p LIMIT 1;" );
-			$have_posts = null !== $result;
-
-			/**
-			 * If site doesn't have posts yet, it considers that we can't use the user relationship,
-			 * but it might not be true because we can't check it. This case is not cached, in case
-			 * it changes.
-			 */
-			if ( ! $have_posts ) {
-				return false;
-			}
-
-			// Temporarily suppress errors for this DB check.
-			$previous_suppress_errors = $wpdb->suppress_errors;
-			$wpdb->suppress_errors( true );
-
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Database relationship check.
-			$result                     = $wpdb->get_var( "SELECT u.ID FROM {$wpdb->users} u INNER JOIN {$wpdb->posts} p ON u.ID = p.post_author LIMIT 1;" );
-			$can_use_users_relationship = null !== $result ? 1 : 0;
-
-			$wpdb->suppress_errors( $previous_suppress_errors );
-			wp_cache_set( 'sensei_can_use_users_relationship', $can_use_users_relationship );
-		}
-
-		return 1 === $can_use_users_relationship;
-	}
+	public $sortable_columns = array();
 
 	/**
-	 * Filters the sortable columns from students report.
-	 *
-	 * @access private
-	 *
-	 * @param array $columns Sortable columns object.
-	 *
-	 * @return array Filtered columns.
+	 * @var array columns
 	 */
-	public function filter_analysis_overview_users_columns_sortable( $columns ) {
-		if ( ! $this->can_use_users_relationship() ) {
-			unset( $columns['last_activity'] );
-		}
-
-		return $columns;
-	}
+	public $columns = array();
 
 	/**
-	 * Undocumented function
+	 * Constructor
 	 *
-	 * @access private
-	 *
-	 * @param array                               $columns Data columns.
-	 * @param object                              $item    Item data object.
-	 * @param Sensei_Analysis_Overview_List_Table $object  Class instance.
-	 *
-	 * @return array Filtered columns.
+	 * @since  1.2.0
+	 * @return  void
 	 */
-	public function filter_analysis_overview_column_data( $columns, $item, $object ) {
-		if ( ! $this->can_use_users_relationship() ) {
-			$last_activity_date = $this->get_user_last_activity_date( $item->ID );
+	public function __construct( $token ) {
+		// Class Variables
+		$this->token = $token;
 
-			if ( $last_activity_date ) {
-				$columns['last_activity'] = $object->csv_output ? $last_activity_date : Sensei_Utils::format_last_activity_date( $last_activity_date );
-			}
-		}
-
-		return $columns;
-	}
-
-	/**
-	 * Get the last activity date from a user.
-	 *
-	 * @param int $user_id User ID.
-	 *
-	 * @return string Last activity date string from the database.
-	 */
-	private function get_user_last_activity_date( $user_id ) {
-		global $wpdb;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query to get last activity date.
-		return $wpdb->get_var(
-			$wpdb->prepare(
-				"
-				SELECT MAX({$wpdb->comments}.comment_date_gmt)
-				FROM {$wpdb->comments}
-				WHERE {$wpdb->comments}.user_id = %d
-				AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
-				AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-				ORDER BY {$wpdb->comments}.comment_date_gmt DESC",
-				$user_id
+		parent::__construct(
+			array(
+				'singular' => 'wp_list_table_' . $this->token, // Singular label
+				'plural'   => 'wp_list_table_' . $this->token . 's', // Plural label
+				'ajax'     => false, // No Ajax for this table
 			)
 		);
+
+		// Actions
+		add_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
+
+	}
+
+	/**
+	 * remove_sortable_columns removes all sortable columns by returning an empty array
+	 *
+	 * @param  array $columns Existing columns
+	 * @return array          Modified columns
+	 */
+	public function remove_sortable_columns( $columns ) {
+		return array();
+	}
+
+	/**
+	 * Makes the table non-fixed to display action buttons properly.
+	 *
+	 * @access protected
+	 *
+	 * @return array List of CSS classes for the table tag.
+	 */
+	protected function get_table_classes() {
+		return array_diff( parent::get_table_classes(), array( 'fixed' ) );
+	}
+
+	/**
+	 * extra_tablenav adds extra markup in the toolbars before or after the list
+	 *
+	 * @since  1.2.0
+	 * @param string $which, helps you decide if you add the markup after (bottom) or before (top) the list
+	 */
+	public function extra_tablenav( $which ) {
+		if ( $which == 'top' ) {
+			// The code that goes before the table is here
+			do_action( 'sensei_before_list_table' );
+		}
+		if ( $which == 'bottom' ) {
+			// The code that goes after the table is there
+			do_action( 'sensei_after_list_table' );
+		}
+	}
+
+	/**
+	 * table_search_form outputs search form for table
+	 *
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function table_search_form() {
+		if ( empty( $_REQUEST['s'] ) &amp;&amp; ! $this->has_items() ) {
+			return;
+		}
+		?>&lt;form method="get">
+			&lt;?php
+			Sensei_Utils::output_query_params_as_inputs( [ 's' ] );
+			$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
+			?>
+		&lt;/form>
+		&lt;?php
+	}
+
+	/**
+	 * get_columns Define the columns that are going to be used in the table
+	 *
+	 * @since  1.2.0
+	 * @return array $columns, the array of columns to use with the table
+	 */
+	public function get_columns() {
+		return $this->columns;
+	}
+
+	/**
+	 * get_sortable_columns Decide which columns to activate the sorting functionality on
+	 *
+	 * @since  1.2.0
+	 * @return array $sortable, the array of columns that can be sorted by the user
+	 */
+	public function get_sortable_columns() {
+		return $this->sortable_columns;
+	}
+
+	/**
+	 * Overriding parent WP-List-Table get_column_info()
+	 *
+	 * @since  1.7.0
+	 * @return array
+	 */
+	function get_column_info() {
+		if ( isset( $this->_column_headers ) ) {
+			return $this->_column_headers;
+		}
+
+		$columns = $this->get_columns();
+		$hidden  = get_hidden_columns( $this->screen );
+
+		$sortable_columns = $this->get_sortable_columns();
+
+		$legacy_screen_id = preg_replace( '/^sensei\-lms\_/', 'sensei_', $this->screen->id );
+		if ( has_filter( "manage_{$legacy_screen_id}_sortable_columns" ) ) {
+			_deprecated_hook( esc_html( "manage_{$legacy_screen_id}_sortable_columns" ), '2.0.1', esc_html( "manage_{$this->screen->id}_sortable_columns" ) );
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			$sortable_columns = apply_filters( "manage_{$legacy_screen_id}_sortable_columns", $sortable_columns );
+		}
+
+		/**
+		 * Filter the list table sortable columns for a specific screen.
+		 *
+		 * The dynamic portion of the hook name, $this->screen->id, refers
+		 * to the ID of the current screen, usually a string.
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param array $sortable_columns An array of sortable columns.
+		 */
+		$_sortable = apply_filters( "manage_{$this->screen->id}_sortable_columns", $sortable_columns );
+
+		$sortable = array();
+		foreach ( $_sortable as $id => $data ) {
+			if ( empty( $data ) ) {
+				continue;
+			}
+
+			$data = (array) $data;
+			if ( ! isset( $data[1] ) ) {
+				$data[1] = false;
+			}
+
+			$sortable[ $id ] = $data;
+		}
+
+		$primary               = $this->get_primary_column_name();
+		$this->_column_headers = array( $columns, $hidden, $sortable, $primary );
+
+		return $this->_column_headers;
+	}
+
+	/**
+	 * Called by WP-List-Table and wrapping get_row_data() (needs overriding) with the elements needed for HTML output
+	 *
+	 * @since  1.7.0
+	 * @param object $item The current item
+	 */
+	function single_row( $item ) {
+		$column_data = $this->get_row_data( $item );
+		$row_class   = $this->get_row_class( $item );
+
+		echo '&lt;tr class="' . esc_attr( $row_class ) . '">';
+
+		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
+
+		foreach ( $columns as $column_name => $column_display_name ) {
+			$classes = esc_attr( $column_name ) . ' column-' . esc_attr( $column_name );
+			$data    = '';
+			$style   = '';
+
+			if ( $primary === $column_name ) {
+				$classes .= ' column-primary';
+			} elseif ( 'cb' === $column_name ) {
+				$classes .= ' check-column';
+			}
+
+			if ( 'cb' !== $column_name ) {
+				$data = 'data-colname="' . esc_attr( $column_display_name ) . '"';
+			}
+
+			if ( in_array( $column_name, $hidden ) ) {
+				$style = 'style="display: none;"';
+			}
+
+			$attributes = "class='$classes' $data $style";
+
+			if ( 'cb' === $column_name ) {
+				// Checkbox element needs to be wrapped in a table header cell to have proper WordPress styles applied.
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attributes escaped when prepared.
+				echo "&lt;th $attributes>";
+			} else {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attributes escaped when prepared.
+				echo "&lt;td $attributes>";
+			}
+
+			if ( isset( $column_data[ $column_name ] ) ) {
+				// $column_data is escaped in the individual get_row_data functions.
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in `get_row_data` method implementations.
+				echo $column_data[ $column_name ];
+			}
+
+			if ( $column_name === $primary ) {
+				echo '&lt;button type="button" class="toggle-row">&lt;span class="screen-reader-text">' . esc_html__( 'Show more details', 'sensei-lms' ) . '&lt;/span>&lt;/button>';
+			}
+
+			if ( 'cb' === $column_name ) {
+				echo '&lt;/th>';
+			} else {
+				echo '&lt;/td>';
+			}
+		}
+
+		echo '&lt;/tr>';
+	}
+
+	/**
+	 * @since 1.7.0
+	 * @access public
+	 * @abstract
+	 */
+	protected function get_row_data( $item ) {
+		die( 'either function Sensei_List_Table::get_row_data() must be over-ridden in a sub-class or Sensei_List_Table::single_row() should be.' );
+	}
+
+	/**
+	 * Get the CSS class of the row.
+	 *
+	 * @param object|array $item The current item.
+	 *
+	 * @return string
+	 */
+	protected function get_row_class( $item ): string {
+		static $row_class = '';
+
+		$row_class = '' === $row_class ? 'alternate' : '';
+
+		return $row_class;
+	}
+
+	/**
+	 * no_items sets output when no items are found
+	 * Overloads the parent method
+	 *
+	 * @since  1.2.0
+	 * @return void
+	 */
+	function no_items() {
+
+		esc_html_e( 'No items found.', 'sensei-lms' );
+
+	}
+
+	/**
+	 * get_bulk_actions sets the bulk actions list
+	 *
+	 * @since  1.2.0
+	 * @return array action list
+	 */
+	public function get_bulk_actions() {
+		return array();
+	}
+
+	/**
+	 * Bulk_actions output for the bulk actions area.
+	 *
+	 * @param string $which The location of the bulk actions: 'top' or 'bottom'. Default 'top'.
+	 *
+	 * @since  1.2.0
+	 */
+	public function bulk_actions( $which = '' ) {
+		ob_start();
+
+		parent::bulk_actions( $which );
+
+		$bulk_action_html = ob_get_clean();
+
+		// This will be output Above the table headers on the left.
+		echo wp_kses(
+			/**
+			 * Filter the output of bulk action for sensei list table.
+			 *
+			 * @hook sensei_list_bulk_actions
+			 *
+			 * @param {string} $bulk_action_html Output of bulk action function.
+			 *
+			 * @return {string} Filtered output of bulk action function.
+			 */
+			apply_filters( 'sensei_list_bulk_actions', $bulk_action_html ),
+			[
+				'div'    => [
+					'class' => [],
+				],
+				'label'  => [
+					'for'   => [],
+					'class' => [],
+				],
+				'select' => [
+					'name'  => [],
+					'id'    => [],
+					'class' => [],
+				],
+				'option' => [
+					'value' => [],
+				],
+				'input'  => [
+					'type'  => [],
+					'id'    => [],
+					'name'  => [],
+					'value' => [],
+					'class' => [],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Generates the table navigation above or below the table.
+	 *
+	 * @param string $which Which type of navigation to generate: top or bottom.
+	 */
+	protected function display_tablenav( $which ) {
+		?>
+		&lt;div class="tablenav &lt;?php echo esc_attr( $which ); ?>">
+
+			&lt;?php if ( $this->has_items() ) : ?>
+				&lt;div class="alignleft actions bulkactions">
+					&lt;?php $this->bulk_actions( $which ); ?>
+				&lt;/div>
+				&lt;?php
+			endif;
+			$this->extra_tablenav( $which );
+			$this->pagination( $which );
+			?>
+
+			&lt;br class="clear" />
+		&lt;/div>
+		&lt;?php
 	}
 }
+
+/**
+ * Class WooThemes_Sensei_List_Table
+ *
+ * @ignore only for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_List_Table extends Sensei_List_Table {}
 </code></pre>
         </article>
     </section>
