@@ -4,6 +4,7 @@ namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Settings_Tab;
 use Sensei_Factory;
+use Sensei_Settings;
 
 /**
  * Tests for Sensei\Internal\Emails\Email_Settings_Tab.
@@ -30,7 +31,8 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 
 	public function testInit_WhenCalled_AddsFilter() {
 		/* Arrange. */
-		$email_settings_tab = new Email_Settings_Tab();
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
 
 		/* Act. */
 		$sections = $email_settings_tab->init();
@@ -42,7 +44,8 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 
 	public function testGetContent_WhenCalledWithEmailNotificationSettings_ReturnsContentWithTable() {
 		/* Arrange. */
-		$email_settings_tab = new Email_Settings_Tab();
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
 
 		/* Act. */
 		$content = $email_settings_tab->get_content( 'email-notification-settings', 'a' );
@@ -53,10 +56,11 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 
 	public function testGetContent_WhenCalledWithAnotherTab_ReturnsEmptyContent() {
 		/* Arrange. */
-		$email_settings_tab = new Email_Settings_Tab();
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
 
 		/* Act. */
-		$content = $email_settings_tab->get_content( 'other-tab' );
+		$content = $email_settings_tab->get_content( 'other-tab', '' );
 
 		/* Assert. */
 		self::assertSame( '', $content );
@@ -65,14 +69,15 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 	public function testGetContent_WhenInStudentSubtabAndHasAnEmailOfThatType_ReturnsContentWithTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
-		$email_settings_tab = new Email_Settings_Tab();
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
 		$_GET['subtab']     = 'student';
 
 		update_post_meta( $post->ID, '_sensei_email_type', 'student' );
 		update_post_meta( $post->ID, '_sensei_email_description', 'description' );
 
 		/* Act. */
-		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+		$content = $email_settings_tab->get_content( 'email-notification-settings', '' );
 
 		/* Assert. */
 		self::assertStringContainsString( $post->post_title, $content );
@@ -81,13 +86,14 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 	public function testGetContent_WhenInStudentSubtabAndHasAnEmailOfAnotherType_ReturnsContentWithoutTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
-		$email_settings_tab = new Email_Settings_Tab();
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
 		$_GET['subtab']     = 'student';
 
 		update_post_meta( $post->ID, '_sensei_email_type', 'teacher' );
 
 		/* Act. */
-		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+		$content = $email_settings_tab->get_content( 'email-notification-settings', '' );
 
 		/* Assert. */
 		self::assertStringNotContainsString( $post->post_title, $content );
@@ -96,14 +102,15 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 	public function testGetContent_WhenInTeacherSubtabAndHasAnEmailOfThatType_ReturnsContentWithTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
-		$email_settings_tab = new Email_Settings_Tab();
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
 		$_GET['subtab']     = 'teacher';
 
 		update_post_meta( $post->ID, '_sensei_email_type', 'teacher' );
 		update_post_meta( $post->ID, '_sensei_email_description', 'description' );
 
 		/* Act. */
-		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+		$content = $email_settings_tab->get_content( 'email-notification-settings', '' );
 
 		/* Assert. */
 		self::assertStringContainsString( $post->post_title, $content );
@@ -112,15 +119,122 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 	public function testGetContent_WhenInTeacherSubtabAndHasAnEmailOfAnotherType_ReturnsContentWithoutTheEmail() {
 		/* Arrange. */
 		$post               = $this->factory->email->create_and_get();
-		$email_settings_tab = new Email_Settings_Tab();
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
 		$_GET['subtab']     = 'teacher';
 
 		update_post_meta( $post->ID, '_sensei_email_type', 'student' );
 
 		/* Act. */
-		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+		$content = $email_settings_tab->get_content( 'email-notification-settings', '' );
 
 		/* Assert. */
 		self::assertStringNotContainsString( $post->post_title, $content );
+	}
+
+	public function testGetContent_WhenInSettingsSubtab_ReturnsContentWithSettingsForm() {
+		/* Arrange. */
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings', '' );
+
+		/* Assert. */
+		self::assertStringContainsString(
+			'<form id="email-notification-settings-form" action="options.php" method="post">',
+			$content
+		);
+	}
+
+	/**
+	 * Test hidden fields are added to the form.
+	 *
+	 * @dataProvider provideGetContent_WhenInSettingsSubtab_ReturnsContentWithHiddenFields
+	 */
+	public function testGetContent_WhenInSettingsSubtab_ReturnsContentWithHiddenFields( $expected_field ) {
+		/* Arrange. */
+		$settings = $this->createMock( Sensei_Settings::class );
+		$settings
+			->method( 'get_settings' )
+			->willReturn(
+				[
+					'email_from_name'    => 'a',
+					'email_from_address' => 'b',
+					'hidden_field1'      => 'c',
+					'hidden_field2'      => 'd',
+					'hidden_field3'      => [ 'e', 'f' ],
+				]
+			);
+
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings', '' );
+
+		/* Assert. */
+		self::assertStringContainsString( $expected_field, $content );
+	}
+
+	public function provideGetContent_WhenInSettingsSubtab_ReturnsContentWithHiddenFields(): array {
+		return [
+			[ "<input type='hidden' name='option_page' value='sensei-settings' />" ],
+			[ '<input type="hidden" name="action" value="update" />' ],
+			[ '<input name="sensei-settings[hidden_field1]" type="hidden" value="c" />' ],
+			[ '<input name="sensei-settings[hidden_field2]" type="hidden" value="d" />' ],
+			[ '<input name="sensei-settings[hidden_field3][]" type="hidden" value="e" />' ],
+			[ '<input name="sensei-settings[hidden_field3][]" type="hidden" value="f" />' ],
+		];
+	}
+
+	/**
+	 * Test email hidden fields are not added to the form.
+	 *
+	 * @dataProvider provideGetContent_WhenInSettingsSubtab_ReturnsContentWithHiddenEmailFields
+	 */
+	public function testGetContent_WhenInSettingsSubtab_ReturnsContentWithoutHiddenEmailFields( $expected_field ) {
+		/* Arrange. */
+		$settings = $this->createMock( Sensei_Settings::class );
+		$settings
+			->method( 'get_settings' )
+			->willReturn(
+				[
+					'email_from_name'    => 'a',
+					'email_from_address' => 'b',
+					'hidden_field1'      => 'c',
+					'hidden_field2'      => 'd',
+				]
+			);
+
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings', '' );
+
+		/* Assert. */
+		self::assertStringNotContainsString( $expected_field, $content );
+	}
+
+	public function provideGetContent_WhenInSettingsSubtab_ReturnsContentWithHiddenEmailFields(): array {
+		return [
+			[ '<input name="sensei-settings[email_from_name]" type="hidden"' ],
+			[ '<input name="sensei-settings[email_from_address]" type="hidden"' ],
+		];
+	}
+
+	public function testGetContent_WhenInSettingsSubtab_ReturnsContentWithSubmitButton() {
+		/* Arrange. */
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings', '' );
+
+		/* Assert. */
+		self::assertStringContainsString( '<input type="submit" name="submit" ', $content );
 	}
 }
