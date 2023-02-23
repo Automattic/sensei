@@ -602,7 +602,9 @@ class Sensei_Settings_API {
 	public function form_field_text( $args ) {
 		$options = $this->get_settings();
 
-		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="text" value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
+		$type = in_array( $args['data']['type'] ?? '', [ 'email', 'text' ], true ) ? $args['data']['type'] : 'text';
+
+		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
 		if ( isset( $args['data']['description'] ) ) {
 			echo '<span class="description">' . wp_kses_post( $args['data']['description'] ) . '</span>' . "\n";
 		}

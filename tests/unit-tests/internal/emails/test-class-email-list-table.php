@@ -52,6 +52,18 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $applied );
 	}
 
+	public function testGetColumns_WhenCalled_ContainsCheckboxColumn() {
+		/* Arrange. */
+		$list_table = new Email_List_Table();
+
+		/* Act. */
+		$columns = $list_table->get_columns();
+
+		/* Assert. */
+		$this->assertArrayHasKey( 'cb', $columns );
+		$this->assertEquals( '<input type="checkbox" />', $columns['cb'] );
+	}
+
 	public function testPrepareItems_WhenPaginated_SetsTheCorrectOffset() {
 		/* Arrange. */
 		$repository = $this->createMock( Email_Repository::class );
@@ -139,13 +151,14 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = sprintf(
-			'<td class=\'subject column-subject column-primary\' data-colname="Subject" ><strong><a href="" class="row-title">%s</a></strong><div class="row-actions"><span class=\'edit\'><a href="" aria-label="Edit &#8220;%s&#8221;">Edit</a> | </span><span class=\'disable-email\'><a href="%s" aria-label="Disable &#8220;%s&#8221;">Disable</a></span></div><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td><td class=\'description column-description\' data-colname="Description" >%s</td><td class=\'last_modified column-last_modified\' data-colname="Last Modified" >1 second ago</td></tr>',
-			$post->post_title,
+			'<tr class="sensei-wp-list-table-row--enabled"><th class=\'cb column-cb check-column\'  ><label class="screen-reader-text">Select %2$s</label><input id="cb-select-%1$s" type="checkbox" name="email[]" value="%1$s" /></th>' .
+			'<td class=\'subject column-subject column-primary\' data-colname="Subject" ><strong><a href="" class="row-title">%2$s</a></strong><div class="row-actions"><span class=\'edit\'><a href="" aria-label="Edit &#8220;%2$s&#8221;">Edit</a> | </span><span class=\'disable-email\'><a href="%3$s" aria-label="Disable &#8220;%2$s&#8221;">Disable</a></span></div><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td><td class=\'description column-description\' data-colname="Description" >%4$s</td><td class=\'last_modified column-last_modified\' data-colname="Last Modified" >1 second ago</td></tr>',
+			$post->ID,
 			$post->post_title,
 			wp_nonce_url( "post.php?action=disable-email&amp;post=$post->ID", 'disable-email-post_' . $post->ID ),
-			$post->post_title,
 			'description'
 		);
+
 		$this->assertStringContainsString( $expected, $result );
 	}
 

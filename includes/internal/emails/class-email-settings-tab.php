@@ -44,6 +44,7 @@ class Email_Settings_Tab {
 	public function init() {
 		add_action( 'sensei_settings_after_links', [ $this, 'render_tabs' ] );
 		add_filter( 'sensei_settings_content', [ $this, 'get_content' ], 10, 2 );
+		add_filter( 'sensei_settings_fields', [ $this, 'add_reply_to_setting' ] );
 	}
 
 	/**
@@ -195,10 +196,11 @@ class Email_Settings_Tab {
 		$fields_to_display = array_filter(
 			$wp_settings_fields['sensei-settings']['email-notification-settings'] ?? [],
 			function( $field_key ) {
-				return in_array( $field_key, [ 'email_from_name', 'email_from_address' ], true );
+				return in_array( $field_key, [ 'email_from_name', 'email_from_address', 'email_reply_to_address' ], true );
 			},
 			ARRAY_FILTER_USE_KEY
 		);
+
 		$fields_to_display = array_map(
 			function( $field ) {
 				unset( $field['args']['data']['description'] );
@@ -206,6 +208,7 @@ class Email_Settings_Tab {
 				if ( $class ) {
 					$class = ' class="' . esc_attr( $field['args']['class'] ) . '"';
 				}
+
 				$field['args']['class'] = $class;
 				return $field;
 			},
@@ -213,7 +216,7 @@ class Email_Settings_Tab {
 		);
 
 		$options = $this->settings->get_settings() ?? [];
-		unset( $options['email_from_name'], $options['email_from_address'] );
+		unset( $options['email_from_name'], $options['email_from_address'], $options['email_reply_to_address'] );
 
 		include dirname( __FILE__ ) . '/views/html-settings.php';
 	}
@@ -232,5 +235,27 @@ class Email_Settings_Tab {
 				echo '<input name="sensei-settings[' . esc_attr( $key ) . '][]" type="hidden" value="' . esc_attr( $v ) . '" />' . "\n";
 			}
 		}
+	}
+
+	/**
+	 * Add the Reply To email address setting field.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param array $fields The fields to add to.
+	 *
+	 * @return array The fields with the Reply To email address field added.
+	 */
+	public function add_reply_to_setting( $fields ) {
+		$fields['email_reply_to_address'] = [
+			'name'     => __( '"Reply To" Address', 'sensei-lms' ),
+			'type'     => 'email',
+			'default'  => get_bloginfo( 'admin_email' ),
+			'section'  => 'email-notification-settings',
+			'required' => 0,
+		];
+
+		return $fields;
 	}
 }
