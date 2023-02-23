@@ -102,7 +102,7 @@ class Email_Customization {
 		$this->list_table_actions = new Email_List_Table_Actions();
 
 		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), new Email_Repository() );
-		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder );
+		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
 	}
 
 	/**

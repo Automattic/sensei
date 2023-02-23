@@ -161,21 +161,42 @@ class Email_Repository {
 	 *
 	 * @internal
 	 *
-	 * @param string $type Email type.
-	 * @param int    $limit Limit. Default 10.
-	 * @param int    $offset Offset. Default 0.
-	 * @return \WP_Post[]
+	 * @param string|null $type Email type.
+	 * @param int         $per_page Posts per page. Default 10.
+	 * @param int         $offset Offset. Default 0.
+	 * @return object Object with results. 
+	 *                `items` is an array of `WP_Post` objects. 
+	 *                `total_items` is the total number of results.
+	 *                `total_pages` is the total number of pages.
 	 */
-	public function get_all( string $type, $limit = 10, $offset = 0 ): array {
-		return get_posts(
-			[
-				'post_type'      => Email_Post_Type::POST_TYPE,
-				'meta_key'       => self::META_TYPE, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				'meta_value'     => $type, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
-				'posts_per_page' => $limit,
-				'offset'         => $offset,
-			]
-		);
+	public function get_all( string $type = null, $per_page = 10, $offset = 0 ) {
+		$query_args = [
+			'post_type'      => Email_Post_Type::POST_TYPE,
+			'posts_per_page' => $per_page,
+			'offset'         => $offset,
+			'meta_key'       => self::META_DESCRIPTION,
+			'orderby'        => 'meta_value',
+			'order'          => 'ASC',
+		];
+
+		if ( $type ) {
+			$query_args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Query limited by pagination.
+				[
+					'key'   => self::META_TYPE,
+					'value' => $type,
+				],
+			];
+		}
+
+		$query = new WP_Query( $query_args );
+		
+		$result = (object) [
+			'items' => $query->posts,
+			'total_items' => $query->found_posts,
+			'total_pages' => $query->max_num_pages,
+		];
+
+		return $result;
 	}
 
 	/**
@@ -193,7 +214,7 @@ class Email_Repository {
 			]
 		);
 
-		return 0 === (int) $query->post_count;
+		return 0 < (int) $query->post_count;
 	}
 }
 
