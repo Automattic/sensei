@@ -118,8 +118,13 @@ class Email_Blocks {
 			return $theme;
 		}
 
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return $theme;
+		}
+
 		$screen = get_current_screen();
-		if ( Email_Post_Type::POST_TYPE !== $screen->post_type ) {
+
+		if ( Email_Post_Type::POST_TYPE !== $screen->post_type || ! $screen->is_block_editor() ) {
 			return $theme;
 		}
 

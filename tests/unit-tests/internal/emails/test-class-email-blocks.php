@@ -107,8 +107,9 @@ class Email_Blocks_Test extends \WP_UnitTestCase {
 
 	public function testSetEmailCssUnits_WhenCalledWithTheEmailPostType_ReturnsTheUpdatedTheme() {
 		/* Arrange. */
-		$blocks     = new Email_Blocks();
-		$theme_json = $this->createMock( 'WP_Theme_JSON_Data' );
+		$blocks             = new Email_Blocks();
+		$theme_json         = $this->createMock( 'WP_Theme_JSON_Data' );
+		$updated_theme_json = $this->createMock( 'WP_Theme_JSON_Data' );
 
 		$screen                  = \WP_Screen::get( 'edit-sensei_email' );
 		$screen->base            = 'edit-sensei_email';
@@ -119,22 +120,23 @@ class Email_Blocks_Test extends \WP_UnitTestCase {
 		$theme_json->expects( $this->once() )
 			->method( 'update_with' )
 			->with( Email_Blocks::EMAIL_THEME_SETTINGS )
-			->willReturn( 'updated' );
+			->willReturn( $updated_theme_json );
 
 		/* Act. */
-		$this->assertSame( 'updated', $blocks->set_email_css_units( $theme_json ) );
+		$this->assertSame( $updated_theme_json, $blocks->set_email_css_units( $theme_json ) );
 	}
 
 	public function testSetEmailCssUnits_WhenCalledWithTheOtherPostType_ReturnsTheOriginalTheme() {
 		/* Arrange. */
-		$blocks     = new Email_Blocks();
-		$theme_json = $this->createMock( 'WP_Theme_JSON_Data' );
+		$blocks             = new Email_Blocks();
+		$theme_json         = $this->createMock( 'WP_Theme_JSON_Data' );
+		$updated_theme_json = $this->createMock( 'WP_Theme_JSON_Data' );
 
 		$theme_json
 			->method( 'update_with' )
-			->willReturn( 'updated' );
+			->willReturn( $updated_theme_json );
 
 		/* Act. */
-		$this->assertNotSame( 'updated', $blocks->set_email_css_units( $theme_json ) );
+		$this->assertSame( $theme_json, $blocks->set_email_css_units( $theme_json ) );
 	}
 }
