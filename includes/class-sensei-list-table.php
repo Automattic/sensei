@@ -317,13 +317,56 @@ class Sensei_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * bulk_actions output for the bulk actions area
+	 * Bulk_actions output for the bulk actions area.
+	 *
+	 * @param string $which The location of the bulk actions: 'top' or 'bottom'. Default 'top'.
 	 *
 	 * @since  1.2.0
 	 */
 	public function bulk_actions( $which = '' ) {
-		// This will be output Above the table headers on the left
-		echo wp_kses_post( apply_filters( 'sensei_list_bulk_actions', '' ) );
+		ob_start();
+
+		parent::bulk_actions( $which );
+
+		$bulk_action_html = ob_get_clean();
+
+		// This will be output Above the table headers on the left.
+		echo wp_kses(
+			/**
+			 * Filter the output of bulk action for sensei list table.
+			 *
+			 * @hook sensei_list_bulk_actions
+			 *
+			 * @param {string} $bulk_action_html Output of bulk action function.
+			 *
+			 * @return {string} Filtered output of bulk action function.
+			 */
+			apply_filters( 'sensei_list_bulk_actions', $bulk_action_html ),
+			[
+				'div'    => [
+					'class' => [],
+				],
+				'label'  => [
+					'for'   => [],
+					'class' => [],
+				],
+				'select' => [
+					'name'  => [],
+					'id'    => [],
+					'class' => [],
+				],
+				'option' => [
+					'value' => [],
+				],
+				'input'  => [
+					'type'  => [],
+					'id'    => [],
+					'name'  => [],
+					'value' => [],
+					'class' => [],
+				],
+			]
+		);
 	}
 
 	/**
