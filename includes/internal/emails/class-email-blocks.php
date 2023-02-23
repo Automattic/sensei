@@ -36,6 +36,7 @@ class Email_Blocks {
 	];
 
 	public const EMAIL_THEME_SETTINGS = [
+		'version'  => 2,
 		'settings' => [
 			'typography' => [
 				'fluid'     => false,
