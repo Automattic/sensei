@@ -17,6 +17,7 @@ class Sensei_MailPoet_Repository {
 	/**
 	 * Get all enrolled students in a course or group.
 	 *
+	 * @since $$next-version$$
 	 * @param int    $id The post ID.
 	 * @param string $post_type The post type.
 	 *
@@ -59,18 +60,23 @@ class Sensei_MailPoet_Repository {
 	/**
 	 * Generates a Sensei LMS prefixed name for a MailPoet list.
 	 *
+	 * @since $$next-version$$
 	 * @param string $name The name of the course or group.
-	 *
 	 * @param string $post_type The post type: course or group.
 	 *
 	 * @return string
 	 */
 	public static function get_list_name( $name, $post_type ) {
-		return 'Sensei LMS ' . ucfirst( $post_type ) . ': ' . $name;
+		// translators: Placeholder is the post type singular name: Course or Group. The second placeholder is the Course or Group name.
+		return sprintf( __( 'Sensei LMS %1$s: %2$s', 'sensei-lms' ), get_post_type_object( $post_type )->labels->singular, $name );
 	}
 
 	/**
 	 * Get all groups and courses in Sensei.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return array
 	 */
 	public static function fetch_sensei_lists() {
 		$args = array(
@@ -94,27 +100,5 @@ class Sensei_MailPoet_Repository {
 			},
 			$wp_query_obj->posts
 		);
-	}
-
-	/**
-	 * For any given list, index it by a key.
-	 *
-	 * @param array  $list A list to reindex.
-	 * @param string $key The key to index by.
-	 *
-	 * @return array
-	 */
-	public static function index_lists_by_key( $list, $key ) {
-		$hash = array();
-		foreach ( $list as $item ) {
-			if ( gettype( $item ) === 'array' && array_key_exists( $key, $item ) ) {
-				$hash[ $item[ $key ] ] = $item;
-			} elseif ( gettype( $item ) === 'object' && property_exists( $item, $key ) ) {
-				$hash[ $item->$key ] = $item;
-			} else {
-				$hash[ $item ] = $item;
-			}
-		}
-		return $hash;
 	}
 }

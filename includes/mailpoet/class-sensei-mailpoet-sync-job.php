@@ -66,11 +66,10 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 					}
 				);
 
-				$students    = Sensei_MailPoet_Repository::index_lists_by_key( $students, 'user_email' );
-				$subscribers = Sensei_MailPoet_Repository::index_lists_by_key( $subscribers, 'email' );
+				$students    = array_column( $students, null, 'user_email' );
+				$subscribers = array_column( $subscribers, null, 'email' );
 
-				$sensei_mp_instance->maybe_add_subscribers( $students, $mp_list_id, $subscribers );
-				$sensei_mp_instance->maybe_remove_subscribers( $subscribers, $mp_list_id, $students );
+				$sensei_mp_instance->sync_subscribers( $students, $subscribers, $mp_list_id );
 			}
 		}
 
