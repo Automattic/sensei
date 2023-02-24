@@ -79,18 +79,18 @@ class Email_Customization {
 	private $list_table_actions;
 
 	/**
-	 * Email_Preview instance.
-	 *
-	 * @var Email_Preview
-	 */
-	private $preview;
-
-	/**
 	 * Recreate_Emails_Tool instance.
 	 *
 	 * @var Recreate_Emails_Tool
 	 */
 	private $recreate_emails_tool;
+
+	/**
+	 * Email_Preview instance.
+	 *
+	 * @var Email_Preview
+	 */
+	private $preview;
 
 	/**
 	 * Email_Customization constructor.
@@ -100,17 +100,17 @@ class Email_Customization {
 	 * @param \Sensei_Settings $settings Sensei_Settings instance.
 	 */
 	private function __construct( \Sensei_Settings $settings ) {
-		$repository               = new Email_Repository();
-		$this->post_type          = new Email_Post_Type();
-		$this->settings_menu      = new Settings_Menu();
-		$this->settings_tab       = new Email_Settings_Tab( $settings );
-		$this->blocks             = new Email_Blocks();
-		$this->email_sender       = new Email_Sender( $repository );
-		$this->email_generator    = new Email_Generator();
-		$this->list_table_actions = new Email_List_Table_Actions();
-		$this->preview            = new Email_Preview( $this->email_sender );
+		$repository                 = new Email_Repository();
+		$this->post_type            = new Email_Post_Type();
+		$this->settings_menu        = new Settings_Menu();
+		$this->settings_tab         = new Email_Settings_Tab( $settings );
+		$this->blocks               = new Email_Blocks();
+		$this->email_sender         = new Email_Sender( $repository );
+		$this->email_generator      = new Email_Generator();
+		$this->list_table_actions   = new Email_List_Table_Actions();
 		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $repository );
 		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
+		$this->preview              = new Email_Preview( $this->email_sender );
 	}
 
 	/**
@@ -142,7 +142,7 @@ class Email_Customization {
 		$this->email_sender->init();
 		$this->email_generator->init();
 		$this->list_table_actions->init();
-		$this->preview->init();
 		$this->recreate_emails_tool->init();
+		$this->preview->init();
 	}
 }

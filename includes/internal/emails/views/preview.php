@@ -9,7 +9,7 @@
  * @var string $from_name
  * @var string $from_address
  *
- * phpcs:disable WordPress.WP.EnqueuedResources
+ * phpcs:disable WordPress.WP.EnqueuedResources, VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
