@@ -1,13 +1,13 @@
 <?php
 /**
- * File containing the Template_Wizard class.
+ * File containing the Email_Seeder class.
  *
  * @package sensei
  */
 
 namespace Sensei\Internal\Emails;
 
-use Sensei\Internal\Emails\Email_Data;
+use Sensei\Internal\Emails\Email_Seeder_Data;
 use Sensei\Internal\Emails\Email_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,17 +15,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Template_Wizard class.
+ * Email_Seeder class.
  *
  * @internal
  *
  * @since $$next-version$$
  */
-class Template_Wizard {
+class Email_Seeder {
 	/**
-	 * Email_Data instance.
+	 * Email_Seeder_Data instance.
 	 *
-	 * @var Email_Data
+	 * @var Email_Seeder_Data
 	 */
 	private $email_data;
 
@@ -48,10 +48,10 @@ class Template_Wizard {
 	 *
 	 * @internal
 	 *
-	 * @param Email_Data       $email_data Email_Data instance. Keeps information about all default emails.
-	 * @param Email_Repository $email_repository Email repository.
+	 * @param Email_Seeder_Data $email_data Email_Seeder_Data instance. Keeps information about all default emails.
+	 * @param Email_Repository  $email_repository Email repository.
 	 */
-	public function __construct( Email_Data $email_data, Email_Repository $email_repository ) {
+	public function __construct( Email_Seeder_Data $email_data, Email_Repository $email_repository ) {
 		$this->email_data       = $email_data;
 		$this->email_repository = $email_repository;
 		$this->emails           = [];
@@ -71,7 +71,7 @@ class Template_Wizard {
 		 * @param array $emails Email data.
 		 * @return array Filtered array of email data.
 		 */
-		$this->emails = apply_filters( 'sensei_emails_email_data', $this->email_data->get_email_data() );
+		$this->emails = apply_filters( 'sensei_emails_seeder_data', $this->email_data->get_email_data() );
 	}
 
 	/**

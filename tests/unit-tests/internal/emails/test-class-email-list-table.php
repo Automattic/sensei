@@ -5,6 +5,7 @@ namespace SenseiTest\Internal\Emails;
 use ReflectionMethod;
 use Sensei\Internal\Emails\Email_List_Table;
 use Sensei\Internal\Emails\Email_Post_Type;
+use Sensei\Internal\Emails\Email_Repository;
 use Sensei_Factory;
 use stdClass;
 use WP_Post;
@@ -28,7 +29,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testConstruct_WhenCalled_RemovesTableSearchFormHook() {
 		/* Act. */
-		$list_table = new Email_List_Table();
+		$list_table = new Email_List_Table( new Email_Repository() );
 
 		/* Assert. */
 		$priority = has_action( 'sensei_before_list_table', [ $list_table, 'table_search_form' ] );
@@ -41,7 +42,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		}
 
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Email_List_Table( new Email_Repository() );
 
 		/* Act. */
 		$columns = $list_table->get_columns();
@@ -53,7 +54,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testGetColumns_WhenCalled_ContainsCheckboxColumn() {
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Email_List_Table( new Email_Repository() );
 
 		/* Act. */
 		$columns = $list_table->get_columns();
@@ -65,117 +66,54 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testPrepareItems_WhenPaginated_SetsTheCorrectOffset() {
 		/* Arrange. */
-		$query      = $this->createMock( \WP_Query::class );
-		$list_table = new Email_List_Table( $query );
+		$repository = $this->createMock( Email_Repository::class );
+		$list_table = new Email_List_Table( $repository );
 
 		$_REQUEST['paged'] = 2;
 
-		/* Assert. */
-		$query
+		/* Expect & Act. */
+		$repository
 			->expects( $this->once() )
-			->method( 'query' )
-			->with(
-				[
-					'post_type'      => Email_Post_Type::POST_TYPE,
-					'posts_per_page' => 20,
-					'offset'         => 20,
-					'meta_key'       => '_sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-					'orderby'        => 'meta_value',
-					'order'          => 'ASC',
-				]
-			)
-			->willReturn( [] );
-
-		/* Act. */
+			->method( 'get_all' )
+			->with( null, 20, 20 )
+			->willReturn( $this->get_empty_items() );
 		$list_table->prepare_items();
+	}
+
+	private function get_empty_items() {
+		return (object) [
+			'items'       => [],
+			'total_items' => 0,
+			'total_pages' => 0,
+		];
 	}
 
 	public function testPrepareItems_WhenEmailTypeSet_SetsTheMetaQuery() {
 		/* Arrange. */
-		$query      = $this->createMock( \WP_Query::class );
-		$list_table = new Email_List_Table( $query );
+		$repository = $this->createMock( Email_Repository::class );
+		$list_table = new Email_List_Table( $repository );
 
-		/* Assert. */
-		$query
+		/* Expect & Act. */
+		$repository
 			->expects( $this->once() )
-			->method( 'query' )
-			->with(
-				[
-					'post_type'      => Email_Post_Type::POST_TYPE,
-					'posts_per_page' => 20,
-					'offset'         => 0,
-					'meta_query'     => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-						[
-							'key'   => '_sensei_email_type',
-							'value' => 'student',
-						],
-					],
-					'meta_key'       => '_sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-					'orderby'        => 'meta_value',
-					'order'          => 'ASC',
-				]
-			)
-			->willReturn( [] );
-
-		/* Act. */
+			->method( 'get_all' )
+			->with( 'student', 20, 0 )
+			->willReturn( $this->get_empty_items() );
 		$list_table->prepare_items( 'student' );
-	}
-
-	public function testPrepareItems_WhenNoEmailTypeSet_DoesntSetTheMetaQuery() {
-		/* Arrange. */
-		$query      = $this->createMock( \WP_Query::class );
-		$list_table = new Email_List_Table( $query );
-
-		/* Assert. */
-		$query
-			->expects( $this->once() )
-			->method( 'query' )
-			->with(
-				[
-					'post_type'      => Email_Post_Type::POST_TYPE,
-					'posts_per_page' => 20,
-					'offset'         => 0,
-					'meta_key'       => '_sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-					'orderby'        => 'meta_value',
-					'order'          => 'ASC',
-				]
-			)
-			->willReturn( [] );
-
-		/* Act. */
-		$list_table->prepare_items();
-	}
-
-	public function testPrepareItems_WhenPaginated_SetsTheCorrectPaginationArgs() {
-		/* Arrange. */
-		$query                = $this->createMock( \WP_Query::class );
-		$query->found_posts   = 50;
-		$query->max_num_pages = 5;
-		$list_table           = new Email_List_Table( $query );
-
-		/* Act. */
-		$list_table->prepare_items();
-
-		$result = [
-			'total_items' => $list_table->get_pagination_arg( 'total_items' ),
-			'total_pages' => $list_table->get_pagination_arg( 'total_pages' ),
-		];
-
-		/* Assert. */
-		$expected = [
-			'total_items' => 50,
-			'total_pages' => 5,
-		];
-
-		$this->assertSame( $expected, $result );
 	}
 
 	public function testPrepareItems_WhenHasItems_SetsTheItems() {
 		/* Arrange. */
-		$posts        = [ new WP_Post( new stdClass() ), new WP_Post( new stdClass() ) ];
-		$query        = $this->createMock( \WP_Query::class );
-		$query->posts = $posts;
-		$list_table   = new Email_List_Table( $query );
+		$posts      = [ new WP_Post( new stdClass() ), new WP_Post( new stdClass() ) ];
+		$repository = $this->createMock( Email_Repository::class );
+		$repository->method( 'get_all' )->willReturn(
+			(object) [
+				'items'       => $posts,
+				'total_items' => 2,
+				'total_pages' => 1,
+			]
+		);
+		$list_table = new Email_List_Table( $repository );
 
 		/* Act. */
 		$list_table->prepare_items();
@@ -190,7 +128,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		}
 
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Email_List_Table( new Email_Repository() );
 		$post_id    = $this->factory->email->create();
 
 		update_post_meta( $post_id, '_sensei_email_description', 'description' );
@@ -209,7 +147,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testGetRowData_WhenHasItem_ReturnsTheItemRowData() {
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Email_List_Table( new Email_Repository() );
 		$post       = $this->factory->email->create_and_get();
 
 		update_post_meta( $post->ID, '_sensei_email_description', 'description' );
@@ -236,7 +174,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testGetRowData_WhenHasItemWithNoTitle_ReturnsNoTitleText() {
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Email_List_Table( new Email_Repository() );
 		$post_id    = $this->factory->email->create( [ 'post_title' => '' ] );
 
 		update_post_meta( $post_id, '_sensei_email_description', 'description' );
@@ -254,7 +192,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testGetRowData_WhenHasDescription_ReturnsTheDescription() {
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Email_List_Table( new Email_Repository() );
 		$post_id    = $this->factory->email->create();
 
 		update_post_meta( $post_id, '_sensei_email_description', 'Welcome Student' );
@@ -272,7 +210,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testGetRowData_WhenWasModified1HourAgo_ReturnsTheCorrectModifiedTime() {
 		/* Arrange. */
-		$list_table = new Email_List_Table();
+		$list_table = new Email_List_Table( new Email_Repository() );
 		$post       = $this->factory->email->create_and_get(
 			[
 				'post_date_gmt' => gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
@@ -295,7 +233,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	public function testGetRowClass_WhenItemIsPublished_ReturnsEnabledClass() {
 		/* Arrange. */
 		$post       = $this->factory->email->create_and_get();
-		$list_table = new Email_List_Table();
+		$list_table = new Email_List_Table( new Email_Repository() );
 		$method     = new ReflectionMethod( $list_table, 'get_row_class' );
 		$method->setAccessible( true );
 
@@ -309,7 +247,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 	public function testGetRowClass_WhenItemIsNotPublished_ReturnsDisabledClass() {
 		/* Arrange. */
 		$post       = $this->factory->email->create_and_get( [ 'post_status' => 'draft' ] );
-		$list_table = new Email_List_Table();
+		$list_table = new Email_List_Table( new Email_Repository() );
 		$method     = new ReflectionMethod( $list_table, 'get_row_class' );
 		$method->setAccessible( true );
 
