@@ -24,4 +24,24 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 		self::assertSame( 10, $category_priority );
 		self::assertSame( 10, $patterns_priority );
 	}
+
+	public function testPatternRegistration_WhenCalledWithANonEmailPostType_DoesNotRegisterPattern() {
+		/* Arrange. */
+		$patterns = new Email_Patterns();
+		$patterns->init();
+
+		$registry = \WP_Block_Patterns_Registry::get_instance();
+
+		$pattern_items = [
+			'sensei-lms/student-completes-course',
+		];
+
+		/* Act. */
+		set_current_screen( 'edit-post' );
+
+		/* Assert. */
+		foreach ( $pattern_items as $pattern_item ) {
+			self::assertFalse( $registry->is_registered( $pattern_item ) );
+		}
+	}
 }
