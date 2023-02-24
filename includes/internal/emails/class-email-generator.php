@@ -52,7 +52,7 @@ class Email_Generator {
 			[
 				$recipient => [
 					'student:displayname' => $student->display_name,
-					'course.name'         => $course->post_title,
+					'course:name'         => $course->post_title,
 				],
 			]
 		);
