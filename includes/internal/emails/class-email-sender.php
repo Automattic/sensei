@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require plugin_dir_path( __DIR__ ) . '../../vendor/autoload.php';
 
-use \Pelago\Emogrifier\CssInliner;
+use Pelago\Emogrifier\CssInliner;
+use WP_Post;
 
 /**
  * Class Email_Sender
@@ -71,25 +72,6 @@ class Email_Sender {
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
 
-		$templated_output = $this->get_templated_post_content( $email_post );
-
-		/**
-		 * Filter the email styles.
-		 *
-		 * @since $$next-version$$
-		 * @hook sensei_email_styles
-		 *
-		 * @param {string}       $style_string The email styles.
-		 * @param {string}       $email_name   The email name.
-		 * @param {WP_Post}      $email_post   The email post.
-		 * @param {Email_Sender} $email_sender The email sender class instance.
-		 *
-		 * @return {string}
-		 */
-		$style_string = apply_filters( 'sensei_email_styles', $this->get_header_styles(), $email_name, $email_post, $this );
-
-		$html_output_with_inlined_css = CssInliner::fromHtml( $templated_output )->inlineCss( $style_string )->render();
-
 		$subject_text = wp_strip_all_tags( $email_post->post_title );
 
 		$headers = [
@@ -97,13 +79,15 @@ class Email_Sender {
 		];
 
 		foreach ( $replacements as $recipient => $replacement ) {
-			$email_body    = $html_output_with_inlined_css;
-			$email_subject = $subject_text;
+			$email_subject = $this->replace_placeholders(
+				$subject_text,
+				$replacement
+			);
 
-			foreach ( $replacement as $key => $value ) {
-				$email_body    = str_replace( '[' . $key . ']', $value, $email_body );
-				$email_subject = str_replace( '[' . $key . ']', $value, $email_subject );
-			}
+			$email_body = $this->replace_placeholders(
+				$this->get_email_body( $email_post ),
+				$replacement
+			);
 
 			wp_mail(
 				$recipient,
@@ -113,6 +97,40 @@ class Email_Sender {
 				null
 			);
 		}
+	}
+
+	/**
+	 * Get the email body.
+	 *
+	 * @internal
+	 *
+	 * @param WP_Post $post The email post.
+	 *
+	 * @return string
+	 */
+	public function get_email_body( WP_Post $post ): string {
+		$style_string     = $this->get_header_styles();
+		$templated_output = $this->get_templated_post_content( $post );
+
+		return CssInliner::fromHtml( $templated_output )->inlineCss( $style_string )->render();
+	}
+
+	/**
+	 * Replace the placeholders in the provided string.
+	 *
+	 * @internal
+	 *
+	 * @param string $string The string.
+	 * @param array  $placeholders The placeholders.
+	 *
+	 * @return string
+	 */
+	public function replace_placeholders( string $string, array $placeholders ): string {
+		foreach ( $placeholders as $placeholder => $value ) {
+			$string = str_replace( '[' . $placeholder . ']', $value, $string );
+		}
+
+		return $string;
 	}
 
 	/**

@@ -4,34 +4,12 @@
  *
  * @package sensei
  *
- * phpcs:disable WordPress.NamingConventions.PrefixAllGlobals, WordPress.WP.GlobalVariablesOverride, WordPress.WP.EnqueuedResources
+ * phpcs:disable WordPress.WP.EnqueuedResources
  */
-
-use Sensei\Internal\Emails\Email_Post_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
-// phpcs:ignore WordPress.Security.NonceVerification -- Nonce validated at a later point.
-$post_id = isset( $_GET['sensei_email_preview_id'] ) ? (int) $_GET['sensei_email_preview_id'] : 0;
-
-check_admin_referer( 'preview-email-post_' . $post_id );
-
-if ( ! current_user_can( 'manage_sensei' ) ) {
-	wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
-}
-
-$post = get_post( $post_id );
-
-if ( ! $post || ! Email_Post_Type::POST_TYPE === $post->post_type ) {
-	wp_die( esc_html__( 'Invalid request', 'sensei-lms' ) );
-}
-
-$subject      = get_the_title( $post );
-$from_address = Sensei()->emails->get_from_address();
-$from_name    = Sensei()->emails->get_from_name();
-$avatar       = get_avatar( $from_address, 40, '', '', [ 'force_display' => true ] );
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -43,9 +21,9 @@ $avatar       = get_avatar( $from_address, 40, '', '', [ 'force_display' => true
 
 		<style>
 			body {
-				margin: 20px;
+				margin: 0;
 				padding: 0;
-				background: #f6f7f7;
+				background: #f3f3f3;
 				color: rgba(0, 0, 0, 0.54);
 				font-size: 12px;
 				font-weight: 500;
@@ -61,13 +39,13 @@ $avatar       = get_avatar( $from_address, 40, '', '', [ 'force_display' => true
 				line-height: 24px;
 			}
 
-			.container {
-				max-width: 800px;
-				margin: 0 auto;
+			.wrapper {
+				margin: 40px 20px;
 			}
 
-			.headers {
-				margin-bottom: 48px;
+			.container {
+				max-width: 752px;
+				margin: 0 auto;
 			}
 
 			.avatar {
@@ -86,9 +64,19 @@ $avatar       = get_avatar( $from_address, 40, '', '', [ 'force_display' => true
 				margin-left: 5px;
 			}
 
+			.content {
+				margin: 0 -20px;
+			}
+
+			.content iframe {
+				width: 100%;
+				border: none;
+				overflow: hidden;
+			}
+
 			@media screen and (min-width: 1024px) {
-				.container {
-					margin: 120px auto;
+				.wrapper {
+					margin: 120px 20px;
 				}
 			}
 		</style>
@@ -98,22 +86,31 @@ $avatar       = get_avatar( $from_address, 40, '', '', [ 'force_display' => true
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
 	</head>
 	<body>
-		<div class="container">
-			<h2><?php echo esc_html( $subject ); ?></h2>
+		<div class="wrapper">
+			<div class="container">
+				<h2><?php echo esc_html( $subject ); ?></h2>
 
-			<div class="headers">
-				<?php echo wp_kses_post( $avatar ); ?>
+				<div class="headers">
+					<?php echo wp_kses_post( $avatar ); ?>
 
-				<div class="from">
-					<strong><?php echo esc_html( $from_name ); ?></strong>
-					&#60;<?php echo esc_html( $from_address ); ?>&#62;
+					<div class="from">
+						<strong><?php echo esc_html( $from_name ); ?></strong>
+						&#60;<?php echo esc_html( $from_address ); ?>&#62;
+					</div>
+
+					<div class="to"><?php esc_html_e( 'to me', 'sensei-lms' ); ?></div>
 				</div>
-
-				<div class="to"><?php esc_html_e( 'to me', 'sensei-lms' ); ?></div>
 			</div>
 
 			<div class="content">
-				<!-- TODO -->
+				<iframe
+					src="<?php echo esc_url( add_query_arg( 'render_email', 1 ) ); ?>"
+					sandbox="allow-same-origin"
+					onload="this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';"
+					frameborder="0"
+					scrolling="no"
+				>
+				</iframe>
 			</div>
 		</div>
 	</body>

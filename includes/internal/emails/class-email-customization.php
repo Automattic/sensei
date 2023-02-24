@@ -96,7 +96,7 @@ class Email_Customization {
 		$this->email_sender       = new Email_Sender();
 		$this->email_generator    = new Email_Generator();
 		$this->list_table_actions = new Email_List_Table_Actions();
-		$this->preview            = new Email_Preview();
+		$this->preview            = new Email_Preview( $this->email_sender );
 	}
 
 	/**
