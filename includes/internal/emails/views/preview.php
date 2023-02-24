@@ -4,6 +4,11 @@
  *
  * @package sensei
  *
+ * @var string $subject
+ * @var string $avatar
+ * @var string $from_name
+ * @var string $from_address
+ *
  * phpcs:disable WordPress.WP.EnqueuedResources
  */
 
