@@ -169,4 +169,42 @@ class Email_Generator_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertEmpty( $email_data['name'] );
 	}
+
+	public function testGenerateEmail_WhenCalledByStudentUpdatedCourseEvent_DoesNotCallEmailIfStudentNotEnrolled() {
+		/* Arrange. */
+		$student_id = $this->factory->user->create();
+		$teacher_id = $this->factory->user->create(
+			[
+				'user_email' => 'test@a.com',
+			]
+		);
+		$course     = $this->factory->course->create_and_get(
+			[
+				'post_author' => $teacher_id,
+			]
+		);
+
+		( new Email_Generator() )->init();
+
+		$email_data = [
+			'name' => '',
+			'data' => null,
+		];
+
+		add_action(
+			'sensei_send_html_email',
+			function ( $email_name, $replacements ) use ( &$email_data ) {
+				$email_data['name'] = $email_name;
+				$email_data['data'] = $replacements;
+			},
+			10,
+			2
+		);
+
+		/* Act. */
+		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID );
+
+		/* Assert. */
+		self::assertEmpty( $email_data['name'] );
+	}
 }
