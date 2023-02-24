@@ -61,14 +61,15 @@ class Email_Preview {
 
 		$this->validate_request();
 
+		// Prevent the current request from loading the theme.
+		add_filter( 'wp_using_themes', '__return_false' );
+
 		// phpcs:disable WordPress.Security.NonceVerification -- Nonce already validated.
 		if ( ! empty( $_GET['render_email'] ) ) {
 			$this->render_email();
 		} else {
 			$this->render_page();
 		}
-
-		exit;
 	}
 
 	/**
@@ -91,15 +92,12 @@ class Email_Preview {
 	 * Render the email body.
 	 */
 	private function render_email(): void {
-		$this->validate_request();
-
 		// TODO: Remove the error control operator when the warnings are fixed.
 		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 		$email_body = @$this->email_sender->get_email_body( $this->get_email_post() );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $this->email_sender->replace_placeholders( $email_body, $this->get_placeholders() );
-		exit;
 	}
 
 	/**
