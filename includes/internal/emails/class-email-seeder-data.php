@@ -140,7 +140,7 @@ class Email_Seeder_Data {
 <p class="has-text-color" style="color:#030303;margin-top:24px;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;font-size:16px"><strong>Course Name</strong></p>
 <!-- /wp:paragraph -->
 <!-- wp:paragraph {"style":{"spacing":{"margin":{"top":"0","right":"0","bottom":"0","left":"0"}},"typography":{"fontSize":"16px"}}} -->
-<p style="margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;font-size:16px">[course.name]</p>
+<p style="margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;font-size:16px">[course:name]</p>
 <!-- /wp:paragraph -->
 <!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px"}}},"fontFamily":"inter"} -->
 <div class="wp-block-buttons has-inter-font-family" style="margin-top:40px"><!-- wp:button {"style":{"typography":{"fontStyle":"normal","fontWeight":"400","textTransform":"capitalize","fontSize":"16px"},"border":{"radius":"3px"},"spacing":{"padding":{"top":"16px","right":"20px","bottom":"16px","left":"20px"}},"color":{"background":"#090909","text":"#fafafa"}},"className":"has-inter-font-family","fontFamily":"inter"} -->
