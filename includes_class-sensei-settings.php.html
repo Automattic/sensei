@@ -749,7 +749,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$fields['email_from_address'] = array(
 			'name'        => __( '"From" Address', 'sensei-lms' ),
 			'description' => __( 'The address from which all emails will be sent.', 'sensei-lms' ),
-			'type'        => 'text',
+			'type'        => 'email',
 			'default'     => get_bloginfo( 'admin_email' ),
 			'section'     => 'email-notification-settings',
 			'required'    => 1,
