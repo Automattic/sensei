@@ -3,11 +3,12 @@
  * The template used for the email preview.
  *
  * @package sensei
+ * @since $$next-version$$
  *
- * @var string $subject
- * @var string $avatar
- * @var string $from_name
- * @var string $from_address
+ * @var string $subject The email subject.
+ * @var string $avatar The avatar image.
+ * @var string $from_name The email from name.
+ * @var string $from_address The email from address.
  *
  * phpcs:disable WordPress.WP.EnqueuedResources, VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
  */
