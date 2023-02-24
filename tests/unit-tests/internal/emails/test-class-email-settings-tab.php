@@ -297,4 +297,30 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertStringContainsString( '<input id="email_from_address" name="sensei-settings[email_from_address]" size="40" type="email"', $content );
 	}
+
+	public function testRenderTabs_NonEmailTabGiven_RendersNothing() {
+
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+
+		ob_start();
+		$email_settings_tab->render_tabs( 'a' );
+		$rendered = ob_get_clean();
+
+		self::assertEmpty( $rendered );
+	}
+
+	public function testRenderTabs_EmailTabGiven_RendersTabs() {
+
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+
+		ob_start();
+		$email_settings_tab->render_tabs( 'email-notification-settings' );
+		$rendered = ob_get_clean();
+
+		self::assertStringContainsString( 'Student Emails', $rendered );
+		self::assertStringContainsString( 'Teacher Emails', $rendered );
+		self::assertStringContainsString( 'Settings', $rendered );
+	}
 }
