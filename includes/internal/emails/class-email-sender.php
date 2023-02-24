@@ -29,6 +29,22 @@ class Email_Sender {
 	public const EMAIL_ID_META_KEY = '_sensei_email_identifier';
 
 	/**
+	 * Email repository instance.
+	 *
+	 * @var Email_Repository
+	 */
+	private $repository;
+
+	/**
+	 * Email_Sender constructor.
+	 *
+	 * @param Email_Repository $repository Email repository instance.
+	 */
+	public function __construct( Email_Repository $repository ) {
+		$this->repository = $repository;
+	}
+
+	/**
 	 * Adds all filters and actions.
 	 */
 	public function init() {
@@ -122,29 +138,18 @@ class Email_Sender {
 	/**
 	 * Get the email post by name meta.
 	 *
-	 * @param string $email_name The email's name.
+	 * @param string $email_identifier The email's unique name.
 	 *
 	 * @return WP_Post|null
 	 */
-	private function get_email_post_by_name( $email_name ) {
-		$email_post = get_posts(
-			[
-				'post_type'      => Email_Post_Type::POST_TYPE,
-				'posts_per_page' => 1,
-				'meta_query'     => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-					[
-						'key'   => self::EMAIL_ID_META_KEY,
-						'value' => $email_name,
-					],
-				],
-			]
-		);
+	private function get_email_post_by_name( $email_identifier ) {
+		$email_post = $this->repository->get( $email_identifier );
 
 		if ( ! $email_post ) {
 			return;
 		}
 
-		return $email_post[0];
+		return $email_post;
 	}
 
 	/**

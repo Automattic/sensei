@@ -100,17 +100,18 @@ class Email_Customization {
 	 * @param \Sensei_Settings $settings Sensei_Settings instance.
 	 */
 	private function __construct( \Sensei_Settings $settings ) {
+		$repository               = new Email_Repository();
 		$this->post_type          = new Email_Post_Type();
 		$this->settings_menu      = new Settings_Menu();
 		$this->settings_tab       = new Email_Settings_Tab( $settings );
 		$this->blocks             = new Email_Blocks();
-		$this->email_sender       = new Email_Sender();
+		$this->email_sender       = new Email_Sender( $repository );
 		$this->email_generator    = new Email_Generator();
 		$this->list_table_actions = new Email_List_Table_Actions();
 		$this->patterns           = new Email_Patterns();
 
-		$wizrard                    = new Template_Wizard( new Email_Data(), new Email_Repository() );
-		$this->recreate_emails_tool = new Recreate_Emails_Tool( $wizrard );
+		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $repository );
+		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
 	}
 
 	/**

@@ -5,15 +5,29 @@ namespace SenseiTest\Internal\Emails;
 use Sensei\Internal\Emails\Settings_Menu;
 
 class Settings_Menu_Test extends \WP_UnitTestCase {
-	/**
-	 * Tests that the email tab is replaced.
-	 */
-	public function testReplaceEmailTab() {
+	public function testInit_WhenCalled_AddsFilter() {
 		/* Arrange. */
 		$settings_menu = new Settings_Menu();
 
 		/* Act. */
-		$sections = $settings_menu->replace_email_tab( [] );
+		$settings_menu->init();
+
+		/* Assert. */
+		$actual_priority = has_filter( 'sensei_settings_tabs', [ $settings_menu, 'replace_email_tab' ] );
+		self::assertSame( 10, $actual_priority );
+	}
+
+
+	public function testReplaceEmailTab_SectionsGiven_ReplacesEmailNoficationSettings() {
+		/* Arrange. */
+		$settings_menu = new Settings_Menu();
+
+		/* Act. */
+		$sections = $settings_menu->replace_email_tab(
+			[
+				'email-notification-settings' => 'a',
+			]
+		);
 
 		/* Assert. */
 		$expected = [
