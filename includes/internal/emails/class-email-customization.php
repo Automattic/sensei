@@ -86,6 +86,13 @@ class Email_Customization {
 	private $recreate_emails_tool;
 
 	/**
+	 * Email_Patterns instance.
+	 *
+	 * @var Email_Patterns
+	 */
+	public $patterns;
+
+	/**
 	 * Email_Customization constructor.
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
@@ -100,6 +107,7 @@ class Email_Customization {
 		$this->email_sender       = new Email_Sender();
 		$this->email_generator    = new Email_Generator();
 		$this->list_table_actions = new Email_List_Table_Actions();
+		$this->patterns           = new Email_Patterns();
 
 		$wizrard                    = new Template_Wizard( new Email_Data(), new Email_Repository() );
 		$this->recreate_emails_tool = new Recreate_Emails_Tool( $wizrard );
@@ -135,5 +143,6 @@ class Email_Customization {
 		$this->email_generator->init();
 		$this->list_table_actions->init();
 		$this->recreate_emails_tool->init();
+		$this->patterns->init();
 	}
 }
