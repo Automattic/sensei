@@ -108,7 +108,7 @@ class Email_Generator {
 					'course:id'           => $course_id,
 					'course:name'         => get_the_title( $course_id ),
 					'grade:percentage'    => $grade,
-					'manage.students'     => $manage_url, // Emogrifier breaks the URL if : is used.
+					'manage:students'     => $manage_url,
 				],
 			]
 		);

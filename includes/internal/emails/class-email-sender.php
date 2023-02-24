@@ -40,7 +40,6 @@ class Email_Sender {
 		 */
 		add_action( 'sensei_send_html_email', [ $this, 'send_email' ], 10, 2 );
 	}
-
 	/**
 	 * Send email of type.
 	 *
@@ -55,6 +54,9 @@ class Email_Sender {
 		if ( ! $email_post ) {
 			return;
 		}
+
+		global $post;
+		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
 
 		// In case patterns are not registered.
 		Email_Customization::instance( \Sensei()->settings )->patterns->register_email_block_patterns();
@@ -74,8 +76,6 @@ class Email_Sender {
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
 
-		$templated_output = $this->get_templated_post_content( $email_post );
-
 		/**
 		 * Filter the email styles.
 		 *
@@ -91,8 +91,6 @@ class Email_Sender {
 		 */
 		$style_string = apply_filters( 'sensei_email_styles', $this->get_header_styles(), $email_name, $email_post, $this );
 
-		$html_output_with_inlined_css = CssInliner::fromHtml( $templated_output )->inlineCss( $style_string )->render();
-
 		$subject_text = wp_strip_all_tags( $email_post->post_title );
 
 		$headers = [
@@ -100,14 +98,16 @@ class Email_Sender {
 		];
 
 		foreach ( $replacements as $recipient => $replacement ) {
-			$email_body    = $html_output_with_inlined_css;
+			$email_body    = do_blocks( $email_post->post_content );
 			$email_subject = $subject_text;
 
 			foreach ( $replacement as $key => $value ) {
 				$email_body    = str_replace( '[' . $key . ']', $value, $email_body );
-				$email_body    = str_replace( '%5B' . $key . '%5D', $value, $email_body ); // If the brackets get encoded in the email body, specially in attributes.
 				$email_subject = str_replace( '[' . $key . ']', $value, $email_subject );
 			}
+
+			$email_body = $this->get_templated_post_content( $email_body );
+			$email_body     = CssInliner::fromHtml( $email_body )->inlineCss( $style_string )->render();
 
 			wp_mail(
 				$recipient,
@@ -148,17 +148,16 @@ class Email_Sender {
 	}
 
 	/**
-	 * Get the post content rendered with the email template.
+	 * Get the email body rendered in the email template.
 	 *
-	 * @param WP_Post $email_post The post object.
+	 * @param string $email_content The placeholder replaced email content.
 	 *
 	 * @return string
 	 */
-	private function get_templated_post_content( $email_post ) {
-		global $sensei_email_data, $post;
-		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- This is a temporary override for the email template.
+	private function get_templated_post_content( $email_content ) {
+		global $sensei_email_data;
 
-		$sensei_email_data['email_body'] = do_blocks( $email_post->post_content );
+		$sensei_email_data['email_body'] = $email_content;
 		$sensei_email_data['body_class'] = '';
 
 		ob_start();
