@@ -26,7 +26,7 @@ class Email_Sender {
 	/**
 	 * Email unique identifier meta key.
 	 */
-	public const EMAIL_ID_META_KEY = '_sensei_email_name';
+	public const EMAIL_ID_META_KEY = '_sensei_email_identifier';
 
 	/**
 	 * Adds all filters and actions.
@@ -55,6 +55,9 @@ class Email_Sender {
 		if ( ! $email_post ) {
 			return;
 		}
+
+		// In case patterns are not registered.
+		Email_Customization::instance( \Sensei()->settings )->patterns->register_email_block_patterns();
 
 		/**
 		 * Filter the email replacements.
@@ -102,6 +105,7 @@ class Email_Sender {
 
 			foreach ( $replacement as $key => $value ) {
 				$email_body    = str_replace( '[' . $key . ']', $value, $email_body );
+				$email_body    = str_replace( '%5B' . $key . '%5D', $value, $email_body ); // If the brackets get encoded in the email body, specially in attributes.
 				$email_subject = str_replace( '[' . $key . ']', $value, $email_subject );
 			}
 
