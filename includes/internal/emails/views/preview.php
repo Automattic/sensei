@@ -16,8 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // phpcs:ignore WordPress.Security.NonceVerification -- Nonce validated at a later point.
 $post_id = isset( $_GET['sensei_email_preview_id'] ) ? (int) $_GET['sensei_email_preview_id'] : 0;
 
-// TODO: Enable the nonce check once we have it working.
-// check_admin_referer( 'preview-email-post_' . $post_id );.
+check_admin_referer( 'preview-email-post_' . $post_id );
 
 if ( ! current_user_can( 'manage_sensei' ) ) {
 	wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
