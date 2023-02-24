@@ -3,6 +3,7 @@
 namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Sender;
+use Sensei\Internal\Emails\Email_Post_Type;
 use Sensei_Factory;
 
 /**
@@ -111,6 +112,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 				return [
 					'a@a.test' => [
 						'student:displayname' => 'Test Student',
+						'student:manage'      => 'http://www.example.com/manage',
 					],
 				];
 			}
@@ -124,6 +126,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertStringContainsString( 'Test Student', $this->email_data['message'] );
+		self::assertStringContainsString( 'http://www.example.com/manage', $this->email_data['message'] );
 	}
 
 	public function testSendEmail_WhenCssInPresent_MovesCssToInline() {
@@ -166,16 +169,21 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 	}
 
 	private function create_test_email_template() {
-		$post               = $this->factory->email->create_and_get();
-		$post->post_title   = 'Test Email Template [teacher:displayname]';
-		$post->post_content = '<!-- wp:paragraph {"style":{"color":{"text":"#0b0b0b"},"typography":{"fontSize":"44px","fontStyle":"normal","fontWeight":"600"}}} -->
+		$email_data = [
+			'post_status'  => 'publish',
+			'post_type'    => Email_Post_Type::POST_TYPE,
+			'post_title'   => 'Test Email Template [teacher:displayname]',
+			'post_content' => '<!-- wp:paragraph {"style":{"color":{"text":"#0b0b0b"},"typography":{"fontSize":"44px","fontStyle":"normal","fontWeight":"600"}}} -->
 <p class="has-text-color" style="color:#0b0b0b;font-size:44px;font-style:normal;font-weight:600">[student:displayname]</p>
-<!-- /wp:paragraph -->';
+<!-- /wp:paragraph --><!-- wp:paragraph {"style":{"color":{"text":"#0b0b0b"},"typography":{"fontSize":"44px","fontStyle":"normal","fontWeight":"600"}}} -->
+<p class="has-text-color" style="color:#0b0b0b;font-size:44px;font-style:normal;font-weight:600">[student:manage]</p>
+<!-- /wp:paragraph -->',
+			'meta_input'   => [
+				'_sensei_email_type'            => 'teacher',
+				Email_Sender::EMAIL_ID_META_KEY => 'student_started_course_to_teacher',
+			],
+		];
 
-		wp_update_post( $post );
-		update_post_meta( $post->ID, '_sensei_email_type', 'teacher' );
-		update_post_meta( $post->ID, Email_Sender::EMAIL_ID_META_KEY, 'student_started_course_to_teacher' );
-
-		return $post;
+		wp_insert_post( $email_data );
 	}
 }

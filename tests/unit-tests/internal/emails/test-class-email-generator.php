@@ -128,8 +128,8 @@ class Email_Generator_Test extends \WP_UnitTestCase {
 		self::assertArrayHasKey( 'test@a.com', $email_data['data'] );
 		self::assertEquals( 'Test Student', $email_data['data']['test@a.com']['student:displayname'] );
 		self::assertEquals( 'Test Course', $email_data['data']['test@a.com']['course:name'] );
-		self::assertArrayHasKey( 'manage.students', $email_data['data']['test@a.com'] );
-		self::assertNotEmpty( $email_data['data']['test@a.com']['manage.students'] );
+		self::assertArrayHasKey( 'manage:students', $email_data['data']['test@a.com'] );
+		self::assertNotEmpty( $email_data['data']['test@a.com']['manage:students'] );
 	}
 
 	public function testGenerateEmail_WhenCalledByStudentUpdatedCourseEvent_DoesNotCallEmailIfCourseNotCompleted() {
