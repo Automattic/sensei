@@ -120,10 +120,17 @@ class Email_Preview {
 	 * @return string[]
 	 */
 	private function get_placeholders(): array {
-		// TODO: Add all placeholders.
 		return [
-			'course.name'         => __( 'Learn Photography', 'sensei-lms' ),
-			'student:displayname' => __( 'James S', 'sensei-lms' ),
+			'course:name'            => __( 'Photography Class', 'sensei-lms' ),
+			'lesson:name'            => __( 'Learning about macro', 'sensei-lms' ),
+			'student:displayname'    => __( 'James S.', 'sensei-lms' ),
+			'author:displayname'     => __( 'Pedro T.', 'sensei-lms' ),
+			'teacher:displayname'    => __( 'Pedro T.', 'sensei-lms' ),
+			'subject:displaysubject' => __( 'Hello from your new student', 'sensei-lms' ),
+			'message:displaymessage' => __( 'Hello! Can I ask a question?', 'sensei-lms' ),
+			'date:dtext'             => __( 'today', 'sensei-lms' ),
+			'grade:validation'       => __( 'You Passed!', 'sensei-lms' ),
+			'grade:percentage'       => '89%',
 		];
 	}
 
