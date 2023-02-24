@@ -123,7 +123,7 @@ class Email_Sender {
 			}
 
 			$email_body = $this->get_templated_post_content( $email_body );
-			$email_body     = CssInliner::fromHtml( $email_body )->inlineCss( $style_string )->render();
+			$email_body = CssInliner::fromHtml( $email_body )->inlineCss( $style_string )->render();
 
 			wp_mail(
 				$recipient,

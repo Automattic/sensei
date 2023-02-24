@@ -16,6 +16,11 @@ namespace Sensei\Internal\Emails;
  */
 class Email_Patterns {
 
+	/**
+	 * Email_Patterns constructor.
+	 *
+	 * @internal
+	 */
 	public function __construct() {}
 
 	/**
