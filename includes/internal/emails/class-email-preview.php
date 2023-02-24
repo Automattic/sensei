@@ -140,7 +140,7 @@ class Email_Preview {
 	private function validate_request(): void {
 		$post = $this->get_email_post();
 
-		if ( ! $post || ! Email_Post_Type::POST_TYPE === $post->post_type ) {
+		if ( ! $post || Email_Post_Type::POST_TYPE !== $post->post_type ) {
 			wp_die( esc_html__( 'Invalid request', 'sensei-lms' ) );
 		}
 
