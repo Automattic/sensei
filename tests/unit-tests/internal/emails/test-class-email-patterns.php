@@ -44,4 +44,25 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 			self::assertFalse( $registry->is_registered( $pattern_item ) );
 		}
 	}
+
+	public function testPatternRegistration_WhenCalledWithEmailPostType_RegistersPatternAsExpected() {
+		/* Arrange. */
+		$patterns = new Email_Patterns();
+		$patterns->init();
+		$screen            = \WP_Screen::get( 'edit-sensei_email' );
+		$screen->base      = 'edit-sensei_email';
+		$screen->post_type = 'sensei_email';
+		$registry          = \WP_Block_Patterns_Registry::get_instance();
+		$pattern_items     = [
+			'sensei-lms/student-completes-course',
+		];
+
+		/* Act. */
+		$screen->set_current_screen();
+
+		/* Assert. */
+		foreach ( $pattern_items as $pattern_item ) {
+			self::assertTrue( $registry->is_registered( $pattern_item ) );
+		}
+	}
 }
