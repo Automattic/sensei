@@ -171,17 +171,24 @@ class Email_Settings_Tab {
 	 * Render the student emails subtab.
 	 */
 	private function render_student_subtab(): void {
-		$list_table = new Email_List_Table();
-		$list_table->prepare_items( 'student' );
-		$list_table->display();
+		$this->render_list_table_for_type( 'student' );
 	}
 
 	/**
 	 * Render the teacher emails subtab.
 	 */
 	private function render_teacher_subtab(): void {
-		$list_table = new Email_List_Table();
-		$list_table->prepare_items( 'teacher' );
+		$this->render_list_table_for_type( 'teacher' );
+	}
+
+	/**
+	 * Reder list table for given type.
+	 *
+	 * @param string $type Type of emails to render.
+	 */
+	private function render_list_table_for_type( string $type ): void {
+		$list_table = new Email_List_Table( new Email_Repository() );
+		$list_table->prepare_items( $type );
 		$list_table->display();
 	}
 

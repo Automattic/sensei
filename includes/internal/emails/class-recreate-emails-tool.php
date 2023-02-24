@@ -22,18 +22,26 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 	/**
 	 * Template_Wizard instance.
 	 *
-	 * @var Template_Wizard
+	 * @var Email_Seeder
 	 */
-	private $template_wizard;
+	private $seeder;
 
+	/**
+	 * Sensei_Tools instance.
+	 *
+	 * @var \Sensei_Tools
+	 */
+	private $tools;
 
 	/**
 	 * Recreate_Emails_Tool constructor.
 	 *
-	 * @param Template_Wizard $template_wizard Template_Wizard instance.
+	 * @param Email_Seeder  $seeder Email_Seeder instance.
+	 * @param \Sensei_Tools $tools Sensei_Tools instance.
 	 */
-	public function __construct( Template_Wizard $template_wizard ) {
-		$this->template_wizard = $template_wizard;
+	public function __construct( Email_Seeder $seeder, \Sensei_Tools $tools ) {
+		$this->seeder = $seeder;
+		$this->tools  = $tools;
 	}
 
 	/**
@@ -89,13 +97,13 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 	 * Run the tool.
 	 */
 	public function process() {
-		$this->template_wizard->init();
-		$result = $this->template_wizard->create_all( true );
+		$this->seeder->init();
+		$result = $this->seeder->create_all( true );
 
 		$message = $result
 			? __( 'Emails were recreated successfully.', 'sensei-lms' )
 			: __( 'There were errors while recreating emails.', 'sensei-lms' );
-		\Sensei_Tools::instance()->add_user_message( $message, ! $result );
+		$this->tools->add_user_message( $message, ! $result );
 	}
 
 	/**
