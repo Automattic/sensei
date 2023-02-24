@@ -23,23 +23,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Email_List_Table extends Sensei_List_Table {
 	/**
-	 * The WP_Query instance.
+	 * The Email_Repository instance.
 	 *
-	 * @var WP_Query
+	 * @var Email_Repository
 	 */
-	private $query;
+	private $repository;
 
 	/**
 	 * The constructor.
 	 *
 	 * @internal
 	 *
-	 * @param WP_Query|null $query The WP_Query instance.
+	 * @param Email_Repository $repository The Email_Repository instance.
 	 */
-	public function __construct( WP_Query $query = null ) {
-		$this->query = $query ? $query : new WP_Query();
-
+	public function __construct( Email_Repository $repository ) {
 		parent::__construct( 'email' );
+		$this->repository = $repository;
 
 		// Remove the search form.
 		remove_action( 'sensei_before_list_table', [ $this, 'table_search_form' ], 5 );
@@ -54,6 +53,7 @@ class Email_List_Table extends Sensei_List_Table {
 	 */
 	public function get_columns() {
 		$columns = [
+			'cb'            => '<input type="checkbox" />',
 			'subject'       => __( 'Subject', 'sensei-lms' ),
 			'description'   => __( 'Description', 'sensei-lms' ),
 			'last_modified' => __( 'Last Modified', 'sensei-lms' ),
@@ -84,33 +84,13 @@ class Email_List_Table extends Sensei_List_Table {
 		$per_page = $this->get_items_per_page( 'sensei_emails_per_page' );
 		$pagenum  = $this->get_pagenum();
 		$offset   = $pagenum > 1 ? $per_page * ( $pagenum - 1 ) : 0;
+		$results  = $this->repository->get_all( $type, $per_page, $offset );
 
-		$query_args = [
-			'post_type'      => Email_Post_Type::POST_TYPE,
-			'posts_per_page' => $per_page,
-			'offset'         => $offset,
-			'meta_key'       => 'sensei_email_description', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Query limited by pagination.
-			'orderby'        => 'meta_value',
-			'order'          => 'ASC',
-		];
-
-		if ( $type ) {
-			$query_args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Query limited by pagination.
-				[
-					'key'   => 'sensei_email_type', // TODO: Replace the meta key by a constant defined elsewhere.
-					'value' => $type,
-				],
-			];
-		}
-
-		$this->query->query( $query_args );
-
-		$this->items = $this->query->posts;
-
+		$this->items = $results->items;
 		$this->set_pagination_args(
 			[
-				'total_items' => $this->query->found_posts,
-				'total_pages' => $this->query->max_num_pages,
+				'total_items' => $results->total_items,
+				'total_pages' => $results->total_pages,
 				'per_page'    => $per_page,
 			]
 		);
@@ -127,6 +107,14 @@ class Email_List_Table extends Sensei_List_Table {
 		$title   = _draft_or_post_title( $post );
 		$actions = $this->get_row_actions( $post );
 
+		$checkbox = sprintf(
+			// translators: %1s: Title of the Email.
+			'<label class="screen-reader-text">' . __( 'Select %1s', 'sensei-lms' ) . '</label>' .
+			'<input id="cb-select-%2$s" type="checkbox" name="email[]" value="%2$s" />',
+			$post->post_title,
+			$post->ID
+		);
+
 		$subject = sprintf(
 			'<strong><a href="%s" class="row-title">%s</a></strong>%s',
 			esc_url( get_edit_post_link( $post ) ),
@@ -134,7 +122,7 @@ class Email_List_Table extends Sensei_List_Table {
 			$this->row_actions( $actions )
 		);
 
-		$description = get_post_meta( $post->ID, 'sensei_email_description', true );
+		$description = get_post_meta( $post->ID, '_sensei_email_description', true );
 
 		$last_modified = sprintf(
 			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
@@ -143,6 +131,7 @@ class Email_List_Table extends Sensei_List_Table {
 		);
 
 		$row_data = [
+			'cb'            => $checkbox,
 			'subject'       => $subject,
 			'description'   => $description,
 			'last_modified' => $last_modified,
@@ -237,5 +226,32 @@ class Email_List_Table extends Sensei_List_Table {
 		 * @return {array}
 		 */
 		return apply_filters( 'sensei_email_list_row_actions', $actions, $post, $this );
+	}
+
+	/**
+	 * Display table content wrapped inside a form
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return void
+	 */
+	public function display() {
+		echo '<form id="posts-filter" action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">';
+		parent::display();
+		echo '<input type="hidden" name="post_type" value="' . esc_attr( Email_Post_Type::POST_TYPE ) . '">';
+		wp_nonce_field( 'sensei_email_bulk_action' );
+		echo '</form>';
+	}
+
+	/**
+	 * Get the bulk actions that are available for the table.
+	 *
+	 * @return array
+	 */
+	public function get_bulk_actions() {
+		return [
+			'bulk-disable-email' => __( 'Disable', 'sensei-lms' ),
+			'bulk-enable-email'  => __( 'Enable', 'sensei-lms' ),
+		];
 	}
 }

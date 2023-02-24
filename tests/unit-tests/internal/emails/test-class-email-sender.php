@@ -2,6 +2,9 @@
 
 namespace SenseiTest\Internal\Emails;
 
+use Sensei\Internal\Emails\Email_Repository;
+use Sensei\Internal\Emails\Email_Seeder;
+use Sensei\Internal\Emails\Email_Seeder_Data;
 use Sensei\Internal\Emails\Email_Sender;
 use Sensei_Factory;
 
@@ -44,7 +47,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory      = new Sensei_Factory();
-		$this->email_sender = new Email_Sender();
+		$this->email_sender = new Email_Sender( new Email_Repository() );
 		$this->email_sender->init();
 
 		$this->create_test_email_template();
@@ -82,7 +85,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		}
 
 		/* Act. */
-		$this->email_sender->send_email( 'student_started_course_to_teacher', [] );
+		$this->email_sender->send_email( 'student_starts_course', [] );
 
 		/* Assert. */
 		self::assertEquals( 1, did_filter( 'sensei_email_replacements' ) );
@@ -91,7 +94,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 	public function testSendEmail_WhenCalledWithReplacements_ReplacesPlaceholders() {
 		/* Act. */
 		$this->email_sender->send_email(
-			'student_started_course_to_teacher',
+			'student_starts_course',
 			[
 				'a@a.test' => [
 					'student:displayname' => 'Test Student',
@@ -118,7 +121,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$this->email_sender->send_email(
-			'student_started_course_to_teacher',
+			'student_starts_course',
 			[]
 		);
 
@@ -137,7 +140,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$this->email_sender->send_email(
-			'student_started_course_to_teacher',
+			'student_starts_course',
 			[
 				'a@a.test' => [
 					'student:displayname' => 'Test Student',
@@ -152,30 +155,26 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 	public function testSendEmail_WhenSubjectHasPlaceholders_ReplacesThePlaceholder() {
 		/* Act. */
 		$this->email_sender->send_email(
-			'student_started_course_to_teacher',
+			'student_starts_course',
 			[
 				'a@a.test' => [
 					'student:displayname' => 'Test Student',
-					'teacher:displayname' => 'Test Teacher',
+					'course:name'         => 'Test Course',
 				],
 			]
 		);
 
 		/* Assert. */
-		self::assertStringContainsString( 'Test Teacher', $this->email_data['subject'] );
+		self::assertStringContainsString( 'Test Course', $this->email_data['subject'] );
 	}
 
 	private function create_test_email_template() {
-		$post               = $this->factory->email->create_and_get();
-		$post->post_title   = 'Test Email Template [teacher:displayname]';
-		$post->post_content = '<!-- wp:paragraph {"style":{"color":{"text":"#0b0b0b"},"typography":{"fontSize":"44px","fontStyle":"normal","fontWeight":"600"}}} -->
-<p class="has-text-color" style="color:#0b0b0b;font-size:44px;font-style:normal;font-weight:600">[student:displayname]</p>
-<!-- /wp:paragraph -->';
+		$repository = new Email_Repository();
 
-		wp_update_post( $post );
-		update_post_meta( $post->ID, 'sensei_email_type', 'teacher' );
-		update_post_meta( $post->ID, Email_Sender::EMAIL_ID_META_KEY, 'student_started_course_to_teacher' );
+		$seeder = new Email_Seeder( new Email_Seeder_Data(), $repository );
+		$seeder->init();
+		$seeder->create_email( 'student_starts_course' );
 
-		return $post;
+		return $repository->get( 'student_starts_course' );
 	}
 }

@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Emails;
 
+use Sensei_Settings;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -84,19 +86,31 @@ class Email_Customization {
 	private $preview;
 
 	/**
+	 * Recreate_Emails_Tool instance.
+	 *
+	 * @var Recreate_Emails_Tool
+	 */
+	private $recreate_emails_tool;
+
+	/**
 	 * Email_Customization constructor.
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
+	 *
+	 * @param \Sensei_Settings $settings Sensei_Settings instance.
 	 */
-	private function __construct() {
+	private function __construct( \Sensei_Settings $settings ) {
+		$repository               = new Email_Repository();
 		$this->post_type          = new Email_Post_Type();
 		$this->settings_menu      = new Settings_Menu();
-		$this->settings_tab       = new Email_Settings_Tab();
+		$this->settings_tab       = new Email_Settings_Tab( $settings );
 		$this->blocks             = new Email_Blocks();
-		$this->email_sender       = new Email_Sender();
+		$this->email_sender       = new Email_Sender( $repository );
 		$this->email_generator    = new Email_Generator();
 		$this->list_table_actions = new Email_List_Table_Actions();
 		$this->preview            = new Email_Preview( $this->email_sender );
+		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $repository );
+		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
 	}
 
 	/**
@@ -104,11 +118,12 @@ class Email_Customization {
 	 *
 	 * @internal
 	 *
+	 * @param \Sensei_Settings $settings Sensei_Settings instance.
 	 * @return self
 	 */
-	public static function instance(): self {
+	public static function instance( Sensei_Settings $settings ): self {
 		if ( ! self::$instance ) {
-			self::$instance = new self();
+			self::$instance = new self( $settings );
 		}
 
 		return self::$instance;
@@ -128,5 +143,6 @@ class Email_Customization {
 		$this->email_generator->init();
 		$this->list_table_actions->init();
 		$this->preview->init();
+		$this->recreate_emails_tool->init();
 	}
 }
