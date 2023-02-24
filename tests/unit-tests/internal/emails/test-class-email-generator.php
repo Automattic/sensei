@@ -67,6 +67,6 @@ class Email_Generator_Test extends \WP_UnitTestCase {
 		self::assertEquals( 'student_starts_course', $email_data['name'] );
 		self::assertArrayHasKey( 'test@a.com', $email_data['data'] );
 		self::assertEquals( 'Test Student', $email_data['data']['test@a.com']['student:displayname'] );
-		self::assertEquals( 'Test Course', $email_data['data']['test@a.com']['course.name'] );
+		self::assertEquals( 'Test Course', $email_data['data']['test@a.com']['course:name'] );
 	}
 }
