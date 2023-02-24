@@ -51,7 +51,7 @@ class Email_Generator_Test extends \WP_UnitTestCase {
 		];
 
 		add_action(
-			'sensei_send_html_email',
+			'sensei_email_send',
 			function ( $email_name, $replacements ) use ( &$email_data ) {
 				$email_data['name'] = $email_name;
 				$email_data['data'] = $replacements;

@@ -60,7 +60,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 	public function testInit_WhenCalled_AddsFilter() {
 		/* Assert. */
-		$priority = has_action( 'sensei_send_html_email', [ $this->email_sender, 'send_email' ] );
+		$priority = has_action( 'sensei_email_send', [ $this->email_sender, 'send_email' ] );
 		self::assertSame( 10, $priority );
 	}
 
