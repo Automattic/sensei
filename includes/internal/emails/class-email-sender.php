@@ -125,7 +125,20 @@ class Email_Sender {
 	 * @return string
 	 */
 	public function get_email_body( WP_Post $post ): string {
-		$style_string     = $this->get_header_styles();
+		/**
+		 * Filter the email styles.
+		 *
+		 * @since $$next-version$$
+		 * @hook sensei_email_styles
+		 *
+		 * @param {string}       $style_string The email styles.
+		 * @param {WP_Post}      $email_post   The email post.
+		 * @param {Email_Sender} $email_sender The email sender class instance.
+		 *
+		 * @return {string}
+		 */
+		$style_string = apply_filters( 'sensei_email_styles', $this->get_header_styles(), $post, $this );
+
 		$templated_output = $this->get_templated_post_content( $post );
 
 		return CssInliner::fromHtml( $templated_output )->inlineCss( $style_string )->render();

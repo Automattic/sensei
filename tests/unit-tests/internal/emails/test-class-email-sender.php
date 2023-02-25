@@ -7,6 +7,7 @@ use Sensei\Internal\Emails\Email_Seeder;
 use Sensei\Internal\Emails\Email_Seeder_Data;
 use Sensei\Internal\Emails\Email_Sender;
 use Sensei_Factory;
+use WP_Post;
 
 /**
  * Tests for Sensei\Internal\Emails\Email_Sender class.
@@ -166,6 +167,32 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertStringContainsString( 'Test Course', $this->email_data['subject'] );
+	}
+
+	public function testGetEmailBody_WhenCalled_ReturnsTheEmailBody() {
+		/* Arrange. */
+		$post = new WP_Post( (object) [ 'post_content' => 'test content' ] );
+
+		/* Act. */
+		$email_body = $this->email_sender->get_email_body( $post );
+
+		/* Assert. */
+		self::assertStringContainsString( 'test content', $email_body );
+	}
+
+	public function testReplacePlaceholders_WhenCalled_ReplacesThePlaceholders() {
+		/* Arrange. */
+		$string       = '[course:name] - [student:displayname]';
+		$placeholders = [
+			'student:displayname' => 'Test Student',
+			'course:name'         => 'Test Course',
+		];
+
+		/* Act. */
+		$result = $this->email_sender->replace_placeholders( $string, $placeholders );
+
+		/* Assert. */
+		self::assertSame( 'Test Course - Test Student', $result );
 	}
 
 	private function create_test_email_template() {
