@@ -122,8 +122,8 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$this->login_as_admin();
 
-		$post_id      = $this->factory->email->create( [ 'post_title' => 'Welcome' ] );
-		$email_sender = $this->createMock( Email_Sender::class );
+		$post_id       = $this->factory->email->create( [ 'post_title' => 'Welcome' ] );
+		$email_sender  = $this->createMock( Email_Sender::class );
 		$email_preview = new Email_Preview( $email_sender );
 
 		$email_sender
