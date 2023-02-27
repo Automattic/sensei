@@ -34,6 +34,7 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 
 		$pattern_items = [
 			'sensei-lms/student-completes-course',
+			'sensei-lms/student-starts-course',
 		];
 
 		/* Act. */
@@ -55,6 +56,7 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 		$registry          = \WP_Block_Patterns_Registry::get_instance();
 		$pattern_items     = [
 			'sensei-lms/student-completes-course',
+			'sensei-lms/student-starts-course',
 		];
 
 		/* Act. */
