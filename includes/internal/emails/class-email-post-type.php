@@ -31,6 +31,7 @@ class Email_Post_Type {
 	 */
 	public function init(): void {
 		add_action( 'init', [ $this, 'register_post_type' ] );
+		add_action( 'load-edit.php', [ $this, 'maybe_redirect_to_listing' ] );
 	}
 
 	/**
@@ -70,6 +71,21 @@ class Email_Post_Type {
 				'supports'     => [ 'title', 'editor', 'author', 'revisions' ],
 			]
 		);
+	}
+
+	/**
+	 * Redirect to the Email settings page if the user is trying to access the Email post type listing.
+	 *
+	 * @internal
+	 * @access private
+	 */
+	public function maybe_redirect_to_listing(): void {
+		if ( ! isset( $_GET['post_type'] ) || self::POST_TYPE !== $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+
+		wp_safe_redirect( admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' ), 301 );
+		exit;
 	}
 }
 
