@@ -228,7 +228,7 @@ class Email_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function display() {
-		echo '<form id="posts-filter" action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">';
+		echo '<form id="posts-filter" method="get">';
 		parent::display();
 		echo '<input type="hidden" name="post_type" value="' . esc_attr( Email_Post_Type::POST_TYPE ) . '">';
 		wp_nonce_field( 'sensei_email_bulk_action' );
