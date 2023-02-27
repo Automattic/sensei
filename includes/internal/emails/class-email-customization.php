@@ -156,5 +156,6 @@ class Email_Customization {
 	 */
 	public function disable_legacy_emails() {
 		remove_action( 'sensei_course_status_updated', [ \Sensei()->emails, 'teacher_completed_course' ] );
+		remove_action( 'sensei_user_course_start', [ \Sensei()->emails, 'teacher_started_course' ] );
 	}
 }
