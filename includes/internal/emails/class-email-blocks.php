@@ -33,6 +33,8 @@ class Email_Blocks {
 		'core/group',
 		'core/heading',
 		'core/buttons',
+		'core/post-title',
+		'core/button',
 	];
 
 	public const EMAIL_THEME_SETTINGS = [
