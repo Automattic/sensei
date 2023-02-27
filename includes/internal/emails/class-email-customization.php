@@ -145,5 +145,16 @@ class Email_Customization {
 		$this->list_table_actions->init();
 		$this->recreate_emails_tool->init();
 		$this->patterns->init();
+
+		add_action( 'init', [ $this, 'disable_legacy_emails' ] );
+	}
+
+	/**
+	 * Disable legacy emails.
+	 *
+	 * @access private
+	 */
+	public function disable_legacy_emails() {
+		remove_action( 'sensei_course_status_updated', [ \Sensei()->emails, 'teacher_completed_course' ] );
 	}
 }
