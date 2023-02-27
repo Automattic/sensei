@@ -257,4 +257,20 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 'sensei-wp-list-table-row--disabled', $result );
 	}
+
+	public function testTableDisplay_WhenCalled_ReturnsContentWrappedInFormWithoutAction() {
+		/* Arrange. */
+		$list_table = new Email_List_Table( new Email_Repository() );
+
+		/* Act. */
+		$list_table->prepare_items();
+
+		ob_start();
+		$list_table->display();
+		$result = ob_get_clean();
+
+		/* Assert. */
+		$this->assertStringStartsWith( '<form id="posts-filter" method="get">', $result );
+		$this->assertStringEndsWith( '</form>', $result );
+	}
 }
