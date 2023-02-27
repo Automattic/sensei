@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Emails;
 
+use \WP_Theme_JSON_Data;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -31,6 +33,27 @@ class Email_Blocks {
 		'core/group',
 		'core/heading',
 		'core/buttons',
+		'core/post-title',
+		'core/button',
+	];
+
+	public const EMAIL_THEME_SETTINGS = [
+		'version'  => 2,
+		'settings' => [
+			'typography' => [
+				'fluid'     => false,
+				'fontSizes' => [
+					'theme' => null,
+				],
+			],
+			'spacing'    =>
+				[
+					'units'        => 'px',
+					'spacingScale' => [
+						'steps' => 0,
+					],
+				],
+		],
 	];
 
 	/**
@@ -40,6 +63,8 @@ class Email_Blocks {
 	 */
 	public function init(): void {
 		add_filter( 'allowed_block_types_all', [ $this, 'set_allowed_blocks' ], 25, 2 );
+		add_filter( 'wp_theme_json_data_theme', [ $this, 'set_email_css_units' ], 25, 2 );
+
 		add_action( 'current_screen', [ $this, 'load_admin_assets' ] );
 	}
 
@@ -77,6 +102,37 @@ class Email_Blocks {
 
 		Sensei()->assets->enqueue( 'sensei-email-editor-setup', 'blocks/email-editor.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-email-editor-style', 'blocks/email-editor-style.css' );
+	}
+
+	/**
+	 * Set the allowed blocks.
+	 *
+	 * @internal
+	 * @access private
+	 *
+	 * @param WP_Theme_JSON_Data $theme       Original theme settings.
+	 *
+	 * @return WP_Theme_JSON_Data Updated theme settings.
+	 */
+	public function set_email_css_units( $theme ):\WP_Theme_JSON_Data {
+
+		if ( ! is_admin() ) {
+			return $theme;
+		}
+
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return $theme;
+		}
+
+		$screen = get_current_screen();
+
+		if ( Email_Post_Type::POST_TYPE !== $screen->post_type || ! $screen->is_block_editor() ) {
+			return $theme;
+		}
+
+		$updated = $theme->update_with( self::EMAIL_THEME_SETTINGS );
+
+		return $updated;
 	}
 }
 

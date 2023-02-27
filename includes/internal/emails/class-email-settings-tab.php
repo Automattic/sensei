@@ -19,6 +19,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 class Email_Settings_Tab {
+
+	/**
+	 * Sensei_Settings instance.
+	 *
+	 * @var \Sensei_Settings
+	 */
+	private $settings;
+
+	/**
+	 * Email_Settings_Tab constructor.
+	 *
+	 * @param \Sensei_Settings $settings Sensei_Settings instance.
+	 */
+	public function __construct( \Sensei_Settings $settings ) {
+		$this->settings = $settings;
+	}
+
 	/**
 	 * Initialize the class and add hooks.
 	 *
@@ -27,6 +44,7 @@ class Email_Settings_Tab {
 	public function init() {
 		add_action( 'sensei_settings_after_links', [ $this, 'render_tabs' ] );
 		add_filter( 'sensei_settings_content', [ $this, 'get_content' ], 10, 2 );
+		add_filter( 'sensei_settings_fields', [ $this, 'add_reply_to_setting' ] );
 	}
 
 	/**
@@ -153,17 +171,24 @@ class Email_Settings_Tab {
 	 * Render the student emails subtab.
 	 */
 	private function render_student_subtab(): void {
-		$list_table = new Email_List_Table();
-		$list_table->prepare_items( 'student' );
-		$list_table->display();
+		$this->render_list_table_for_type( 'student' );
 	}
 
 	/**
 	 * Render the teacher emails subtab.
 	 */
 	private function render_teacher_subtab(): void {
-		$list_table = new Email_List_Table();
-		$list_table->prepare_items( 'teacher' );
+		$this->render_list_table_for_type( 'teacher' );
+	}
+
+	/**
+	 * Reder list table for given type.
+	 *
+	 * @param string $type Type of emails to render.
+	 */
+	private function render_list_table_for_type( string $type ): void {
+		$list_table = new Email_List_Table( new Email_Repository() );
+		$list_table->prepare_items( $type );
 		$list_table->display();
 	}
 
@@ -171,6 +196,71 @@ class Email_Settings_Tab {
 	 * Render the settings subtab.
 	 */
 	private function render_settings_subtab(): void {
-		echo 'TODO';
+		global $wp_settings_fields;
+
+		$fields_to_display = array_filter(
+			$wp_settings_fields['sensei-settings']['email-notification-settings'] ?? [],
+			function( $field_key ) {
+				return in_array( $field_key, [ 'email_from_name', 'email_from_address', 'email_reply_to_address' ], true );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+
+		$fields_to_display = array_map(
+			function( $field ) {
+				unset( $field['args']['data']['description'] );
+				$class = $field['args']['class'] ?? '';
+				if ( $class ) {
+					$class = ' class="' . esc_attr( $field['args']['class'] ) . '"';
+				}
+
+				$field['args']['class'] = $class;
+				return $field;
+			},
+			$fields_to_display
+		);
+
+		$options = $this->settings->get_settings() ?? [];
+		unset( $options['email_from_name'], $options['email_from_address'], $options['email_reply_to_address'] );
+
+		include dirname( __FILE__ ) . '/views/html-settings.php';
+	}
+
+	/**
+	 * Display hidden field.
+	 *
+	 * @param array $key   Field key.
+	 * @param mixed $value Field value.
+	 */
+	private function form_field_hidden( $key, $value ) {
+		if ( ! is_array( $value ) ) {
+			echo '<input name="sensei-settings[' . esc_attr( $key ) . ']" type="hidden" value="' . esc_attr( $value ) . '" />' . "\n";
+		} else {
+			foreach ( $value as $v ) {
+				echo '<input name="sensei-settings[' . esc_attr( $key ) . '][]" type="hidden" value="' . esc_attr( $v ) . '" />' . "\n";
+			}
+		}
+	}
+
+	/**
+	 * Add the Reply To email address setting field.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param array $fields The fields to add to.
+	 *
+	 * @return array The fields with the Reply To email address field added.
+	 */
+	public function add_reply_to_setting( $fields ) {
+		$fields['email_reply_to_address'] = [
+			'name'     => __( '"Reply To" Address', 'sensei-lms' ),
+			'type'     => 'email',
+			'default'  => get_bloginfo( 'admin_email' ),
+			'section'  => 'email-notification-settings',
+			'required' => 0,
+		];
+
+		return $fields;
 	}
 }

@@ -6,6 +6,10 @@
  * @since 1.1.0
  */
 
+use Sensei\Internal\Emails\Email_Seeder_Data;
+use Sensei\Internal\Emails\Email_Repository;
+use Sensei\Internal\Emails\Email_Seeder;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -81,9 +85,30 @@ class Sensei_Updates {
 		$this->v3_9_fix_question_author();
 		$this->v3_9_remove_abandoned_multiple_question();
 		$this->v4_10_update_install_time();
+		$this->v4_12_create_default_emails();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Create default emails.
+	 *
+	 * @return void
+	 */
+	private function v4_12_create_default_emails() {
+		if ( ! Sensei()->feature_flags->is_enabled( 'email_customization' ) ) {
+			return;
+		}
+
+		$repository = new Email_Repository();
+		if ( $repository->has_emails() ) {
+			return;
+		}
+
+		$seeder = new Email_Seeder( new Email_Seeder_Data(), $repository );
+		$seeder->init();
+		$seeder->create_all();
 	}
 
 	/**
