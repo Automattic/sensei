@@ -123,13 +123,12 @@ class Email_Sender {
 			'Content-Type: text/html; charset=UTF-8',
 		];
 
-		list(
-			'email_reply_to_address' => $reply_to_address,
-			'email_reply_to_name' => $reply_to_name
-		) = $this->settings->get_settings();
+		$settings = $this->settings->get_settings();
 
-		if ( ! empty( $reply_to_address ) ) {
-			$headers[] = "Reply-To: $reply_to_name <$reply_to_address>";
+		if ( ! empty( $settings['email_reply_to_address'] ) ) {
+			$reply_to_address = $settings['email_reply_to_address'];
+			$reply_to_name    = $settings['email_reply_to_name'] || '';
+			$headers[]        = "Reply-To: $reply_to_name <$reply_to_address>";
 		}
 
 		foreach ( $replacements as $recipient => $replacement ) {
