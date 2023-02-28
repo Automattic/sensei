@@ -56,7 +56,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		parent::setUp();
 		reset_phpmailer_instance();
 
-		$this->settings = new Sensei_Settings();
+		$this->settings     = new Sensei_Settings();
 		$this->factory      = new Sensei_Factory();
 		$this->email_sender = new Email_Sender( new Email_Repository(), $this->settings );
 		$this->email_sender->init();
@@ -182,30 +182,9 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 	public function testSendEmail_WhenTheReplyToIsSet_SetReplyTo() {
 		/* Arrange. */
-		$this->settings->set('email_reply_to_address', 'address_to_be_replied@gmail.com');
-		$this->settings->set('email_reply_to_name', 'John Reply');
+		$this->settings->set( 'email_reply_to_address', 'address_to_be_replied@gmail.com' );
+		$this->settings->set( 'email_reply_to_name', 'John Reply' );
 		$mailer = tests_retrieve_phpmailer_instance();
-
-		/* Act */
-		$this->email_sender->send_email(
-			'student_starts_course',
-				[
-					'a@a.test' => [
-						'student:displayname' => 'Test Student',
-					],
-				]
-
-		);
-
-		/* Assert. */
-		$last_email = $mailer->get_sent(0);
-		self::assertStringContainsString( 'Reply-To: John Reply <address_to_be_replied@gmail.com>', $last_email->header );
-	}
-
-	public function testSendEmail_WhenTheReplyToIsNotSet_SetReplyTo() {
-		/* Arrange. */
-		$this->settings->set('email_reply_to_address', null);
-
 
 		/* Act */
 		$this->email_sender->send_email(
@@ -218,31 +197,48 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$email_sent = tests_retrieve_phpmailer_instance()->get_sent(0);
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringContainsString( 'Reply-To: John Reply <address_to_be_replied@gmail.com>', $last_email->header );
+	}
+
+	public function testSendEmail_WhenTheReplyToIsNotSet_SetReplyTo() {
+		/* Arrange. */
+		$this->settings->set( 'email_reply_to_address', null );
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			]
+		);
+
+		/* Assert. */
+		$email_sent = tests_retrieve_phpmailer_instance()->get_sent( 0 );
 		self::assertStringNotContainsString( 'Reply-To', $email_sent->header );
 	}
 
 	public function testSendEmail_WhenTheReplyToNameIsNotSet_SetReplyTo() {
 		/* Arrange. */
-		$this->settings->set('email_reply_to_address', 'address_to_be_replied@gmail.com');
-		$this->settings->set('email_reply_to_name', null);
+		$this->settings->set( 'email_reply_to_address', 'address_to_be_replied@gmail.com' );
+		$this->settings->set( 'email_reply_to_name', null );
 		$mailer = tests_retrieve_phpmailer_instance();
 
 		/* Act */
 		$this->email_sender->send_email(
 			'student_starts_course',
-				[
-					'a@a.test' => [
-						'student:displayname' => 'Test Student',
-					],
-				]
-
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			]
 		);
 
 		/* Assert. */
-		$last_email = $mailer->get_sent(0);
+		$last_email = $mailer->get_sent( 0 );
 		self::assertStringContainsString( 'Reply-To: address_to_be_replied@gmail.com', $last_email->header );
-
 	}
 
 	private function create_test_email_template() {
