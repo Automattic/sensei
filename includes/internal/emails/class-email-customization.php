@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Emails;
 
+use Sensei_Assets;
 use Sensei_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -104,9 +105,10 @@ class Email_Customization {
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
 	 *
-	 * @param \Sensei_Settings $settings Sensei_Settings instance.
+	 * @param Sensei_Settings $settings Sensei_Settings instance.
+	 * @param Sensei_Assets   $assets Sensei_Assets instance.
 	 */
-	private function __construct( \Sensei_Settings $settings ) {
+	private function __construct( Sensei_Settings $settings, Sensei_Assets $assets ) {
 		$repository = new Email_Repository();
 		$seeder     = new Email_Seeder( new Email_Seeder_Data(), $repository );
 
@@ -119,7 +121,7 @@ class Email_Customization {
 		$this->list_table_actions   = new Email_List_Table_Actions();
 		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
 		$this->patterns             = new Email_Patterns();
-		$this->preview              = new Email_Preview( $this->email_sender );
+		$this->preview              = new Email_Preview( $this->email_sender, $assets );
 	}
 
 	/**
@@ -127,12 +129,14 @@ class Email_Customization {
 	 *
 	 * @internal
 	 *
-	 * @param \Sensei_Settings $settings Sensei_Settings instance.
+	 * @param Sensei_Settings $settings Sensei_Settings instance.
+	 * @param Sensei_Assets   $assets Sensei_Assets instance.
+	 *
 	 * @return self
 	 */
-	public static function instance( Sensei_Settings $settings ): self {
+	public static function instance( Sensei_Settings $settings, Sensei_Assets $assets ): self {
 		if ( ! self::$instance ) {
-			self::$instance = new self( $settings );
+			self::$instance = new self( $settings, $assets );
 		}
 
 		return self::$instance;

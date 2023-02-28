@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Emails;
 
+use Sensei_Assets;
 use WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,14 +30,23 @@ class Email_Preview {
 	private $email_sender;
 
 	/**
+	 * The assets instance.
+	 *
+	 * @var Sensei_Assets
+	 */
+	private $assets;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @internal
 	 *
-	 * @param Email_Sender $email_sender The email sender instance.
+	 * @param Email_Sender  $email_sender The email sender instance.
+	 * @param Sensei_Assets $assets The assets instance.
 	 */
-	public function __construct( Email_Sender $email_sender ) {
+	public function __construct( Email_Sender $email_sender, Sensei_Assets $assets ) {
 		$this->email_sender = $email_sender;
+		$this->assets       = $assets;
 	}
 
 	/**
@@ -46,6 +56,7 @@ class Email_Preview {
 	 */
 	public function init(): void {
 		add_action( 'template_redirect', [ $this, 'render_preview' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'register_admin_scripts' ] );
 	}
 
 	/**
@@ -70,6 +81,44 @@ class Email_Preview {
 		} else {
 			$this->render_page();
 		}
+	}
+
+	/**
+	 * Register and enqueue scripts and styles that are needed in the backend.
+	 *
+	 * @internal
+	 */
+	public function register_admin_scripts(): void {
+		$screen = get_current_screen();
+		if ( ! $screen || Email_Post_Type::POST_TYPE !== $screen->id ) {
+			return;
+		}
+
+		$this->assets->enqueue( 'sensei-admin-email-edit', 'js/admin/email-edit.js', [], true );
+
+		wp_localize_script(
+			'sensei-admin-email-edit',
+			'sensei_email_preview',
+			[
+				'link' => self::get_preview_link( get_the_ID() ),
+			]
+		);
+	}
+
+	/**
+	 * Get the preview link.
+	 *
+	 * @internal
+	 *
+	 * @param int $post_id The post ID.
+	 *
+	 * @return string
+	 */
+	public static function get_preview_link( int $post_id ): string {
+		return wp_nonce_url(
+			get_home_url() . "?sensei_email_preview_id=$post_id",
+			'preview-email-post_' . $post_id
+		);
 	}
 
 	/**

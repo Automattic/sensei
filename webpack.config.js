@@ -39,6 +39,7 @@ const files = [
 	'js/admin/sensei-notice-dismiss.js',
 	'js/admin/custom-navigation.js',
 	'js/admin/reports.js',
+	'js/admin/email-edit.js',
 	'js/frontend/course-archive.js',
 	'js/frontend/course-video/video-blocks-extension.js',
 	'js/grading-general.js',

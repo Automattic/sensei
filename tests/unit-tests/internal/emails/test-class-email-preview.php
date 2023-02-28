@@ -4,6 +4,7 @@ namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Preview;
 use Sensei\Internal\Emails\Email_Sender;
+use Sensei_Assets;
 use Sensei_Factory;
 use Sensei_Test_Login_Helpers;
 use WPDieException;
@@ -18,7 +19,9 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 
 	public function setUp(): void {
 		parent::setUp();
-		$this->factory = new Sensei_Factory();
+		$this->factory      = new Sensei_Factory();
+		$this->email_sender = $this->createMock( Email_Sender::class );
+		$this->assets       = $this->createMock( Sensei_Assets::class );
 	}
 
 	public function tearDown(): void {
@@ -28,8 +31,7 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 
 	public function testInit_WhenCalled_AddsRenderPreviewHook() {
 		/* Arrange. */
-		$email_sender  = $this->createMock( Email_Sender::class );
-		$email_preview = new Email_Preview( $email_sender );
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
 		/* Act. */
 		$email_preview->init();
@@ -39,10 +41,21 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->assertSame( 10, $priority );
 	}
 
+	public function testInit_WhenCalled_AddsRegisterAdminScriptsHook() {
+		/* Arrange. */
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
+
+		/* Act. */
+		$email_preview->init();
+
+		/* Assert. */
+		$priority = has_action( 'admin_enqueue_scripts', [ $email_preview, 'register_admin_scripts' ] );
+		$this->assertSame( 10, $priority );
+	}
+
 	public function testRenderPreview_WhenNoPreviewID_DoesNothing() {
 		/* Arrange. */
-		$email_sender  = $this->createMock( Email_Sender::class );
-		$email_preview = new Email_Preview( $email_sender );
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
 		/* Act. */
 		$result = $email_preview->render_preview();
@@ -53,8 +66,7 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 
 	public function testRenderPreview_WhenPostDoesNotExist_ThrowsError() {
 		/* Arrange. */
-		$email_sender  = $this->createMock( Email_Sender::class );
-		$email_preview = new Email_Preview( $email_sender );
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
 		$_GET['sensei_email_preview_id'] = 42;
 
@@ -69,8 +81,7 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 	public function testRenderPreview_WhenIncorrectPostType_ThrowsError() {
 		/* Arrange. */
 		$post_id       = $this->factory->post->create();
-		$email_sender  = $this->createMock( Email_Sender::class );
-		$email_preview = new Email_Preview( $email_sender );
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
 		$_GET['sensei_email_preview_id'] = $post_id;
 
@@ -87,8 +98,7 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->login_as_teacher();
 
 		$post_id       = $this->factory->email->create();
-		$email_sender  = $this->createMock( Email_Sender::class );
-		$email_preview = new Email_Preview( $email_sender );
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
 		$_GET['sensei_email_preview_id'] = $post_id;
 
@@ -105,8 +115,7 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->login_as_admin();
 
 		$post_id       = $this->factory->email->create();
-		$email_sender  = $this->createMock( Email_Sender::class );
-		$email_preview = new Email_Preview( $email_sender );
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
 		$_GET['sensei_email_preview_id'] = $post_id;
 
@@ -123,10 +132,9 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->login_as_admin();
 
 		$post          = $this->factory->email->create_and_get( [ 'post_title' => 'Welcome' ] );
-		$email_sender  = $this->createMock( Email_Sender::class );
-		$email_preview = new Email_Preview( $email_sender );
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
-		$email_sender
+		$this->email_sender
 			->expects( $this->once() )
 			->method( 'get_email_subject' )
 			->with( $post )
@@ -149,8 +157,7 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->login_as_admin();
 
 		$post_id       = $this->factory->email->create();
-		$email_sender  = $this->createMock( Email_Sender::class );
-		$email_preview = new Email_Preview( $email_sender );
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
 		$_GET['sensei_email_preview_id'] = $post_id;
 		$_REQUEST['_wpnonce']            = wp_create_nonce( 'preview-email-post_' . $post_id );
@@ -169,8 +176,7 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->login_as_admin();
 
 		$post_id       = $this->factory->email->create();
-		$email_sender  = $this->createMock( Email_Sender::class );
-		$email_preview = new Email_Preview( $email_sender );
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
 		$_GET['sensei_email_preview_id'] = $post_id;
 		$_REQUEST['_wpnonce']            = wp_create_nonce( 'preview-email-post_' . $post_id );
@@ -189,8 +195,7 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->login_as_admin();
 
 		$post_id       = $this->factory->email->create();
-		$email_sender  = $this->createMock( Email_Sender::class );
-		$email_preview = new Email_Preview( $email_sender );
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
 		$_GET['sensei_email_preview_id'] = $post_id;
 		$_REQUEST['_wpnonce']            = wp_create_nonce( 'preview-email-post_' . $post_id );
@@ -209,10 +214,9 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->login_as_admin();
 
 		$post          = $this->factory->email->create_and_get( [ 'post_content' => 'content' ] );
-		$email_sender  = $this->createMock( Email_Sender::class );
-		$email_preview = new Email_Preview( $email_sender );
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
-		$email_sender
+		$this->email_sender
 			->expects( $this->once() )
 			->method( 'get_email_body' )
 			->with( $post )
@@ -229,5 +233,63 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( 'content', $content );
+	}
+
+	public function testRegisterAdminScripts_WhenNoScreen_DoesNothing() {
+		/* Arrange. */
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
+
+		/* Assert. */
+		$this->assets
+			->expects( $this->never() )
+			->method( 'enqueue' );
+
+		/* Act. */
+		$email_preview->register_admin_scripts();
+	}
+
+	public function testRegisterAdminScripts_WhenNotOnTheEmailEditScreen_DoesNothing() {
+		/* Arrange. */
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
+
+		set_current_screen( 'test' );
+
+		/* Assert. */
+		$this->assets
+			->expects( $this->never() )
+			->method( 'enqueue' );
+
+		/* Act. */
+		$email_preview->register_admin_scripts();
+	}
+
+	public function testRegisterAdminScripts_WhenOnTheEmailEditScreen_EnqueuesTheScript() {
+		/* Arrange. */
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
+
+		set_current_screen( 'sensei_email' );
+
+		/* Assert. */
+		$this->assets
+			->expects( $this->once() )
+			->method( 'enqueue' )
+			->with( 'sensei-admin-email-edit', 'js/admin/email-edit.js', [], true );
+
+		/* Act. */
+		$email_preview->register_admin_scripts();
+	}
+
+	public function testGetPreviewLink_WhenCalled_ReturnsThePreviewLink() {
+		/* Arrange. */
+		$post_id = 1;
+
+		/* Act. */
+		$link = Email_Preview::get_preview_link( $post_id );
+
+		/* Assert. */
+		$this->assertSame(
+			wp_nonce_url( get_home_url() . "?sensei_email_preview_id=$post_id", 'preview-email-post_' . $post_id ),
+			$link
+		);
 	}
 }

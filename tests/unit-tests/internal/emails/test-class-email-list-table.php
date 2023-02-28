@@ -4,6 +4,7 @@ namespace SenseiTest\Internal\Emails;
 
 use ReflectionMethod;
 use Sensei\Internal\Emails\Email_List_Table;
+use Sensei\Internal\Emails\Email_Preview;
 use Sensei\Internal\Emails\Email_Repository;
 use Sensei_Factory;
 use stdClass;
@@ -165,7 +166,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 			$post->ID,
 			$post->post_title,
 			wp_nonce_url( "post.php?action=disable-email&amp;post=$post->ID", 'disable-email-post_' . $post->ID ),
-			wp_nonce_url( get_home_url() . "?sensei_email_preview_id=$post->ID", 'preview-email-post_' . $post->ID ),
+			Email_Preview::get_preview_link( $post->ID ),
 			'description'
 		);
 
