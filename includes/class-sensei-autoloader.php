@@ -306,6 +306,7 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Email_Generators_Abstract::class  => 'internal/emails/generators/class-email-generators-abstract.php',
 			\Sensei\Internal\Emails\Student_Starts_Course::class  => 'internal/emails/generators/class-student-starts-course.php',
 			\Sensei\Internal\Emails\Student_Completes_Course::class  => 'internal/emails/generators/class-student-completes-course.php',
+			\Sensei\Internal\Emails\Student_Submits_Quiz::class  => 'internal/emails/generators/class-student-submits-quiz.php',
 		);
 	}
 
