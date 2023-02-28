@@ -207,13 +207,13 @@ class Sensei_Course {
 
 		$tabs = [
 			[
-				'label'     => esc_html__( 'All Courses', 'sensei-lms' ),
+				'label'     => __( 'All Courses', 'sensei-lms' ),
 				'url'       => admin_url( 'edit.php?post_type=course' ),
 				'screen_id' => 'edit-course',
 			],
 
 			[
-				'label'     => esc_html__( 'Course Categories', 'sensei-lms' ),
+				'label'     => __( 'Course Categories', 'sensei-lms' ),
 				'url'       => admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ),
 				'screen_id' => 'edit-course-category',
 			],
@@ -261,7 +261,7 @@ class Sensei_Course {
 				<?php
 				foreach ( $tabs as $tab ) {
 					?>
-					<a class="sensei-custom-navigation__tab <?php echo $screen->id === $tab['screen_id'] ? 'active' : ''; ?>" href="<?php echo esc_url( $tab['url'] ); ?>"><?php echo $tab['label']; ?></a>
+					<a class="sensei-custom-navigation__tab <?php echo $screen->id === $tab['screen_id'] ? 'active' : ''; ?>" href="<?php echo esc_url( $tab['url'] ); ?>"><?php echo esc_html( $tab['label'] ); ?></a>
 					<?php
 				}
 				?>
