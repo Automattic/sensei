@@ -58,13 +58,13 @@ class Email_Seeder_Data {
 				'types'       => [ 'teacher' ],
 				'subject'     => __( '[student:displayname] started [course:name]', 'sensei-lms' ),
 				'description' => __( 'Course Started', 'sensei-lms' ),
-				'content'     => $this->student_starts_course_content(),
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-starts-course"} /-->',
 			],
 			'student_completes_course' => [
 				'types'       => [ 'teacher' ],
 				'subject'     => __( '[student:displayname] completed [course:name]', 'sensei-lms' ),
 				'description' => __( 'Course Completed', 'sensei-lms' ),
-				'content'     => '<!-- wp:pattern {"slug":"sensei-emails/footer"} /-->',
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-completes-course"} /-->',
 			],
 			'student_completes_lesson' => [
 				'types'       => [ 'teacher' ],

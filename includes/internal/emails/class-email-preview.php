@@ -77,10 +77,7 @@ class Email_Preview {
 	 */
 	private function render_page(): void {
 		$post         = $this->get_email_post();
-		$subject      = $this->email_sender->replace_placeholders(
-			get_the_title( $post ),
-			$this->get_placeholders()
-		);
+		$subject      = $this->email_sender->get_email_subject( $post, $this->get_placeholders() );
 		$from_address = Sensei()->emails->get_from_address();
 		$from_name    = Sensei()->emails->get_from_name();
 		$avatar       = get_avatar( $from_address, 40, '', '', [ 'force_display' => true ] );
@@ -94,10 +91,10 @@ class Email_Preview {
 	private function render_email(): void {
 		// TODO: Remove the error control operator when the warnings are fixed.
 		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-		$email_body = @$this->email_sender->get_email_body( $this->get_email_post() );
+		$email_body = @$this->email_sender->get_email_body( $this->get_email_post(), $this->get_placeholders() );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $this->email_sender->replace_placeholders( $email_body, $this->get_placeholders() );
+		echo $email_body;
 	}
 
 	/**

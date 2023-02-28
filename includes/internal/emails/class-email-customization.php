@@ -86,6 +86,13 @@ class Email_Customization {
 	private $recreate_emails_tool;
 
 	/**
+	 * Email_Patterns instance.
+	 *
+	 * @var Email_Patterns
+	 */
+	public $patterns;
+
+	/**
 	 * Email_Preview instance.
 	 *
 	 * @var Email_Preview
@@ -100,7 +107,9 @@ class Email_Customization {
 	 * @param \Sensei_Settings $settings Sensei_Settings instance.
 	 */
 	private function __construct( \Sensei_Settings $settings ) {
-		$repository                 = new Email_Repository();
+		$repository = new Email_Repository();
+		$seeder     = new Email_Seeder( new Email_Seeder_Data(), $repository );
+
 		$this->post_type            = new Email_Post_Type();
 		$this->settings_menu        = new Settings_Menu();
 		$this->settings_tab         = new Email_Settings_Tab( $settings );
@@ -108,8 +117,8 @@ class Email_Customization {
 		$this->email_sender         = new Email_Sender( $repository );
 		$this->email_generator      = new Email_Generator();
 		$this->list_table_actions   = new Email_List_Table_Actions();
-		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $repository );
 		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
+		$this->patterns             = new Email_Patterns();
 		$this->preview              = new Email_Preview( $this->email_sender );
 	}
 
@@ -143,6 +152,19 @@ class Email_Customization {
 		$this->email_generator->init();
 		$this->list_table_actions->init();
 		$this->recreate_emails_tool->init();
+		$this->patterns->init();
 		$this->preview->init();
+
+		add_action( 'init', [ $this, 'disable_legacy_emails' ] );
+	}
+
+	/**
+	 * Disable legacy emails.
+	 *
+	 * @access private
+	 */
+	public function disable_legacy_emails() {
+		remove_action( 'sensei_course_status_updated', [ \Sensei()->emails, 'teacher_completed_course' ] );
+		remove_action( 'sensei_user_course_start', [ \Sensei()->emails, 'teacher_started_course' ] );
 	}
 }

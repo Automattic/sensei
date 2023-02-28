@@ -27,7 +27,7 @@ class Email_Sender {
 	/**
 	 * Email unique identifier meta key.
 	 */
-	public const EMAIL_ID_META_KEY = '_sensei_email_name';
+	public const EMAIL_ID_META_KEY = '_sensei_email_identifier';
 
 	/**
 	 * Email repository instance.
@@ -57,7 +57,6 @@ class Email_Sender {
 		 */
 		add_action( 'sensei_send_html_email', [ $this, 'send_email' ], 10, 2 );
 	}
-
 	/**
 	 * Send email of type.
 	 *
@@ -72,6 +71,12 @@ class Email_Sender {
 		if ( ! $email_post ) {
 			return;
 		}
+
+		global $post;
+		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
+
+		// In case patterns are not registered.
+		Email_Customization::instance( \Sensei()->settings )->patterns->register_email_block_patterns();
 
 		/**
 		 * Filter the email replacements.
@@ -88,31 +93,36 @@ class Email_Sender {
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
 
-		$subject_text = wp_strip_all_tags( $email_post->post_title );
-
 		$headers = [
 			'Content-Type: text/html; charset=UTF-8',
 		];
 
 		foreach ( $replacements as $recipient => $replacement ) {
-			$email_subject = $this->replace_placeholders(
-				$subject_text,
-				$replacement
-			);
-
-			$email_body = $this->replace_placeholders(
-				$this->get_email_body( $email_post ),
-				$replacement
-			);
-
 			wp_mail(
 				$recipient,
-				$email_subject,
-				$email_body,
+				$this->get_email_subject( $email_post, $replacement ),
+				$this->get_email_body( $email_post, $replacement ),
 				$headers,
 				null
 			);
 		}
+	}
+
+	/**
+	 * Get the email subject.
+	 *
+	 * @internal
+	 *
+	 * @param WP_Post $post The email post.
+	 * @param array   $placeholders The placeholders.
+	 *
+	 * @return string
+	 */
+	public function get_email_subject( WP_Post $post, array $placeholders = [] ): string {
+		return $this->replace_placeholders(
+			wp_strip_all_tags( $post->post_title ),
+			$placeholders
+		);
 	}
 
 	/**
@@ -121,27 +131,21 @@ class Email_Sender {
 	 * @internal
 	 *
 	 * @param WP_Post $post The email post.
+	 * @param array   $placeholders The placeholders.
 	 *
 	 * @return string
 	 */
-	public function get_email_body( WP_Post $post ): string {
-		/**
-		 * Filter the email styles.
-		 *
-		 * @since $$next-version$$
-		 * @hook sensei_email_styles
-		 *
-		 * @param {string}       $style_string The email styles.
-		 * @param {WP_Post}      $email_post   The email post.
-		 * @param {Email_Sender} $email_sender The email sender class instance.
-		 *
-		 * @return {string}
-		 */
-		$style_string = apply_filters( 'sensei_email_styles', $this->get_header_styles(), $post, $this );
+	public function get_email_body( WP_Post $post, array $placeholders = [] ): string {
+		$post_content = $this->replace_placeholders(
+			do_blocks( $post->post_content ),
+			$placeholders
+		);
 
-		$templated_output = $this->get_templated_post_content( $post );
+		$templated_output = $this->get_templated_post_content( $post_content );
 
-		return CssInliner::fromHtml( $templated_output )->inlineCss( $style_string )->render();
+		return CssInliner::fromHtml( $templated_output )
+			->inlineCss( $this->get_header_styles() )
+			->render();
 	}
 
 	/**
@@ -154,7 +158,7 @@ class Email_Sender {
 	 *
 	 * @return string
 	 */
-	public function replace_placeholders( string $string, array $placeholders ): string {
+	private function replace_placeholders( string $string, array $placeholders ): string {
 		foreach ( $placeholders as $placeholder => $value ) {
 			$string = str_replace( '[' . $placeholder . ']', $value, $string );
 		}
@@ -180,17 +184,16 @@ class Email_Sender {
 	}
 
 	/**
-	 * Get the post content rendered with the email template.
+	 * Get the email body rendered in the email template.
 	 *
-	 * @param WP_Post $email_post The post object.
+	 * @param string $email_content The placeholder replaced email content.
 	 *
 	 * @return string
 	 */
-	private function get_templated_post_content( $email_post ) {
-		global $sensei_email_data, $post;
-		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- This is a temporary override for the email template.
+	private function get_templated_post_content( $email_content ) {
+		global $sensei_email_data;
 
-		$sensei_email_data['email_body'] = do_blocks( $email_post->post_content );
+		$sensei_email_data['email_body'] = $email_content;
 		$sensei_email_data['body_class'] = '';
 
 		ob_start();
@@ -282,6 +285,16 @@ class Email_Sender {
 			$header_styles .= $style_node->nodeValue; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- PHP property.
 		}
 
-		return $header_styles;
+		/**
+		 * Filter the email styles.
+		 *
+		 * @since $$next-version$$
+		 * @hook sensei_email_styles
+		 *
+		 * @param {string} $header_styles The email header styles.
+		 *
+		 * @return {string}
+		 */
+		return apply_filters( 'sensei_email_styles', $header_styles );
 	}
 }
