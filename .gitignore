@@ -18,3 +18,4 @@ coverage.xml
 tests/e2e-playwright/contexts/*
 *.tsbuildinfo
 playwright-report/
+.vscode
