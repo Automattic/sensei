@@ -83,6 +83,12 @@ class Email_Patterns {
 					'categories' => [ 'sensei-emails' ],
 					'content'    => $this->get_pattern_content_from_file( 'student-starts-course' ),
 				],
+			'student-submits-quiz'     =>
+				[
+					'title'      => __( 'Email sent to teacher when a student submits a quiz', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'student-submits-quiz' ),
+				],
 		];
 
 		foreach ( $patterns as $key => $pattern ) {
