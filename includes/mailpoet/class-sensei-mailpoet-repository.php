@@ -50,11 +50,22 @@ class Sensei_MailPoet_Repository {
 			return array();
 		}
 
-		$args = array(
+		$args  = array(
 			'include' => $student_ids,
 			'fields'  => array( 'id', 'user_email', 'display_name', 'user_nicename' ),
 		);
-		return get_users( $args );
+		$users = get_users( $args );
+		return array_map(
+			static function( $user ) {
+				return array(
+					'id'            => $user->ID,
+					'email'         => strtolower( $user->user_email ),
+					'display_name'  => $user->display_name,
+					'wp_user_login' => $user->user_nicename,
+				);
+			},
+			$users
+		);
 	}
 
 	/**
@@ -68,7 +79,7 @@ class Sensei_MailPoet_Repository {
 	 */
 	public static function get_list_name( $name, $post_type ) {
 		// translators: Placeholder is the post type singular name: Course or Group. The second placeholder is the Course or Group name.
-		return sprintf( __( 'Sensei LMS %1$s: %2$s', 'sensei-lms' ), get_post_type_object( $post_type )->labels->singular, $name );
+		return sprintf( __( 'Sensei LMS %1$s: %2$s', 'sensei-lms' ), get_post_type_object( $post_type )->labels->singular_name, $name );
 	}
 
 	/**

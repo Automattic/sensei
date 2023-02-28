@@ -133,26 +133,26 @@ class Sensei_MailPoet {
 	 * Add students as subscribers to lists on MailPoet for courses/groups.
 	 *
 	 * @since $$next-version$$
-	 * @param array      $subscribers A list of students belonging to this group/course.
+	 * @param array      $students A list of students belonging to this group/course.
 	 * @param string|int $list_id ID of the list on MailPoet.
 	 *
 	 * @return void
 	 */
-	public function add_subscribers( $subscribers, $list_id ) {
+	public function add_subscribers( $students, $list_id ) {
 		$options = array(
 			'send_confirmation_email'      => false,
 			'schedule_welcome_email'       => false,
 			'skip_subscriber_notification' => true,
 		);
-		foreach ( $subscribers as $subscriber ) {
+		foreach ( $students as $student ) {
 			$subscriber_data = array(
-				'email'      => $subscriber->user_email,
-				'first_name' => $subscriber->display_name,
+				'email'      => $student['email'],
+				'first_name' => $student['display_name'],
 			);
 
 			try {
 				// All WordPress users are already on a list 'WordPress Users' on MailPoet.
-				$mp_subscriber = $this->mailpoet_api->getSubscriber( $subscriber->user_email );
+				$mp_subscriber = $this->mailpoet_api->getSubscriber( $student['email'] );
 				$this->mailpoet_api->subscribeToList( $mp_subscriber['id'], $list_id, $options );
 			} catch ( \MailPoet\API\MP\v1\APIException $exception ) {
 				if ( 4 === $exception->getCode() ) {
@@ -175,7 +175,7 @@ class Sensei_MailPoet {
 	public function remove_subscribers( $subscribers, $list_id ) {
 		foreach ( $subscribers as $subscriber ) {
 			try {
-				$mp_subscriber = $this->mailpoet_api->getSubscriber( $subscriber->user_email );
+				$mp_subscriber = $this->mailpoet_api->getSubscriber( $subscriber['email'] );
 				$this->mailpoet_api->unsubscribeFromList( $mp_subscriber['id'], $list_id );
 			} catch ( \MailPoet\API\MP\v1\APIException $exception ) {
 				continue;
@@ -343,14 +343,14 @@ class Sensei_MailPoet {
 			'skip_subscriber_notification' => true,
 		);
 		foreach ( $students as $student ) {
-			if ( ! array_key_exists( $student->user_email, $subscribers ) ) {
+			if ( ! array_key_exists( $student['email'], $subscribers ) ) {
 				$subscriber_data = array(
-					'email'      => $student->user_email,
-					'first_name' => $student->display_name,
+					'email'      => $student['email'],
+					'first_name' => $student['display_name'],
 				);
 
 				try {
-					$mp_subscriber = $this->mailpoet_api->getSubscriber( $student->user_email );
+					$mp_subscriber = $this->mailpoet_api->getSubscriber( $student['email'] );
 					$this->mailpoet_api->subscribeToList( $mp_subscriber['id'], $list_id, $options );
 				} catch ( \MailPoet\API\MP\v1\APIException $exception ) {
 					if ( 4 === $exception->getCode() ) {

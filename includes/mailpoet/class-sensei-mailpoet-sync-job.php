@@ -66,7 +66,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 					}
 				);
 
-				$students    = array_column( $students, null, 'user_email' );
+				$students    = array_column( $students, null, 'email' );
 				$subscribers = array_column( $subscribers, null, 'email' );
 
 				$sensei_mp_instance->sync_subscribers( $students, $subscribers, $mp_list_id );
