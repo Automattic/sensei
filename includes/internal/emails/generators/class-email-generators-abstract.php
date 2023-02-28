@@ -94,6 +94,6 @@ abstract class Email_Generators_Abstract {
 		 * @param {string} $email_name    The email name.
 		 * @param {Array}  $replacements  The replacements.
 		 */
-		do_action( 'sensei_send_html_email', static::IDENTIFIER_NAME, $replacements );
+		do_action( 'sensei_email_send', static::IDENTIFIER_NAME, $replacements );
 	}
 }
