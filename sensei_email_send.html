@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_login_url - Sensei LMS Hook Docs</title>
+	<title>Action: sensei_email_send - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_login_url</h1>
+	<h1 class="page-title">Action: sensei_email_send</h1>
 	
 
 	
@@ -43,14 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_login_url">apply_filters( 'sensei_login_url', <span class="signature">$login_url, $redirect )</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="sensei_email_send">do_action( 'sensei_email_send', <span class="signature">$email_name, $replacements )</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter the login URL.</p>
+    <p>Send HTML email.</p>
 </div>
 
 
@@ -84,7 +84,7 @@
 
         <tr>
             
-                <td class="name"><code>$login_url</code></td>
+                <td class="name"><code>$email_name</code></td>
             
 
             <td class="type">
@@ -100,20 +100,20 @@
 
             
 
-            <td class="description last"><p>Login URL.</p></td>
+            <td class="description last"><p>The email name.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>$redirect</code></td>
+                <td class="name"><code>$replacements</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Array</span>
 
 
             
@@ -123,7 +123,7 @@
 
             
 
-            <td class="description last"><p>Redirect url after login.</p></td>
+            <td class="description last"><p>The replacements.</p></td>
         </tr>
 
     
@@ -141,7 +141,7 @@
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>4.4.1</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -167,7 +167,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_sensei-functions.php.html">includes/sensei-functions.php</a>, <a href="includes_sensei-functions.php.html#line415">line 415</a>
+        <a href="includes_internal_emails_class-email-generator.php.html">includes/internal/emails/class-email-generator.php</a>, <a href="includes_internal_emails_class-email-generator.php.html#line134">line 134</a>
     </li></ul></dd>
     
 
@@ -190,28 +190,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Returns filtered login URL.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
