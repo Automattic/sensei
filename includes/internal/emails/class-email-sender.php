@@ -55,7 +55,7 @@ class Email_Sender {
 		 * @param string $email_name   The name of the email template.
 		 * @param array  $replacements The placeholder replacements.
 		 */
-		add_action( 'sensei_send_html_email', [ $this, 'send_email' ], 10, 2 );
+		add_action( 'sensei_email_send', [ $this, 'send_email' ], 10, 2 );
 	}
 	/**
 	 * Send email of type.
