@@ -52,6 +52,7 @@ class Email_Generator {
 		$this->email_generators = [
 			Student_Starts_Course::IDENTIFIER_NAME    => new Student_Starts_Course( $this->email_repository ),
 			Student_Completes_Course::IDENTIFIER_NAME => new Student_Completes_Course( $this->email_repository ),
+			Student_Submits_Quiz::IDENTIFIER_NAME     => new Student_Submits_Quiz( $this->email_repository ),
 		];
 
 		add_action( 'init', [ $this, 'init_email_generators' ] );
@@ -63,6 +64,7 @@ class Email_Generator {
 	 * @access private
 	 */
 	public function init_email_generators(): void {
+
 		/**
 		 * Filter the individual email generators.
 		 *
