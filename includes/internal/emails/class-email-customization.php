@@ -106,7 +106,7 @@ class Email_Customization {
 		$this->settings_tab       = new Email_Settings_Tab( $settings );
 		$this->blocks             = new Email_Blocks();
 		$this->email_sender       = new Email_Sender( $repository );
-		$this->email_generator    = new Email_Generator();
+		$this->email_generator    = new Email_Generator( $repository );
 		$this->list_table_actions = new Email_List_Table_Actions();
 		$this->patterns           = new Email_Patterns();
 
