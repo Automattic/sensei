@@ -3,6 +3,7 @@ namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Customization;
 use Sensei\Internal\Emails\Email_Post_Type;
+use Sensei_Assets;
 use Sensei_Settings;
 
 /**
@@ -11,12 +12,15 @@ use Sensei_Settings;
  * @covers \Sensei\Internal\Emails\Email_Customization
  */
 class Email_Customization_Test extends \WP_UnitTestCase {
-	public function testInstance_WhenCalled_ReturnsInstance() {
-		/* Arrange. */
-		$settings = $this->createMock( Sensei_Settings::class );
+	public function setUp(): void {
+		parent::setUp();
+		$this->settings = $this->createMock( Sensei_Settings::class );
+		$this->assets   = $this->createMock( Sensei_Assets::class );
+	}
 
+	public function testInstance_WhenCalled_ReturnsInstance() {
 		/* Act. */
-		$result = Email_Customization::instance( $settings );
+		$result = Email_Customization::instance( $this->settings, $this->assets );
 
 		/* Assert. */
 		$this->assertInstanceOf( Email_Customization::class, $result );
@@ -24,8 +28,7 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 
 	public function testInstace_WhenInitiated_AddsHookForRemovingLegacyEmail() {
 		/* Arrange. */
-		$settings = $this->createMock( Sensei_Settings::class );
-		$instance = Email_Customization::instance( $settings );
+		$instance = Email_Customization::instance( $this->settings, $this->assets );
 
 		/* Act. */
 		$instance->init();
@@ -44,8 +47,7 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 	 */
 	public function testDisableLegacy_WhenCalled_RemovesLegacyEmailHooks( $action_name, $function_name ) {
 		/* Arrange. */
-		$settings        = $this->createMock( Sensei_Settings::class );
-		$instance        = Email_Customization::instance( $settings );
+		$instance        = Email_Customization::instance( $this->settings, $this->assets );
 		$priority_before = has_action( $action_name, [ \Sensei()->emails, $function_name ] );
 
 		/* Act. */

@@ -76,7 +76,7 @@ class Email_Sender {
 		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
 
 		// In case patterns are not registered.
-		Email_Customization::instance( \Sensei()->settings )->patterns->register_email_block_patterns();
+		Email_Customization::instance( Sensei()->settings, Sensei()->assets )->patterns->register_email_block_patterns();
 
 		/**
 		 * Filter the email replacements.
