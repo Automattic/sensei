@@ -1,5 +1,4 @@
 <?php
-
 /**
  * File containing the Email_Generators_Abstract class.
  *
@@ -19,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since $$next-version$$
  */
-
 abstract class Email_Generators_Abstract {
 
 	/**

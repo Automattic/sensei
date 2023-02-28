@@ -86,7 +86,7 @@ class Student_Submits_Quiz_Test extends \WP_UnitTestCase {
 
 		$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
 
-		$grade_url  = esc_url(
+		$grade_url = esc_url(
 			add_query_arg(
 				array(
 					'page'    => 'sensei_grading',
