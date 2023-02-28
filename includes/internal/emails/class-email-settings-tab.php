@@ -201,7 +201,7 @@ class Email_Settings_Tab {
 		$fields_to_display = array_filter(
 			$wp_settings_fields['sensei-settings']['email-notification-settings'] ?? [],
 			function( $field_key ) {
-				return in_array( $field_key, [ 'email_from_name', 'email_from_address', 'email_reply_to_address' ], true );
+				return in_array( $field_key, [ 'email_from_name', 'email_from_address', 'email_reply_to_name' , 'email_reply_to_address' ], true );
 			},
 			ARRAY_FILTER_USE_KEY
 		);
@@ -253,6 +253,16 @@ class Email_Settings_Tab {
 	 * @return array The fields with the Reply To email address field added.
 	 */
 	public function add_reply_to_setting( $fields ) {
+
+		$fields['email_reply_to_name'] = [
+			'name'     => __( '"Reply To" Name', 'sensei-lms' ),
+			'type'     => 'input',
+			'default'  => '',
+			'section'  => 'email-notification-settings',
+			'required' => 0,
+		];
+
+
 		$fields['email_reply_to_address'] = [
 			'name'     => __( '"Reply To" Address', 'sensei-lms' ),
 			'type'     => 'email',

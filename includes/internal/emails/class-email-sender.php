@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require plugin_dir_path( __DIR__ ) . '../../vendor/autoload.php';
 
 use \Pelago\Emogrifier\CssInliner;
+use Sensei_Settings;
 
 /**
  * Class Email_Sender
@@ -35,13 +36,22 @@ class Email_Sender {
 	 */
 	private $repository;
 
+
+	/**
+	 * Email repository instance.
+	 *
+	 * @var Sensei_Settings
+	 */
+	private $settings;
+
 	/**
 	 * Email_Sender constructor.
 	 *
 	 * @param Email_Repository $repository Email repository instance.
 	 */
-	public function __construct( Email_Repository $repository ) {
+	public function __construct( Email_Repository $repository, Sensei_Settings $settings ) {
 		$this->repository = $repository;
+		$this->settings = $settings;
 	}
 
 	/**
@@ -75,7 +85,7 @@ class Email_Sender {
 		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
 
 		// In case patterns are not registered.
-		Email_Customization::instance( \Sensei()->settings )->patterns->register_email_block_patterns();
+		Email_Customization::instance( $this->settings )->patterns->register_email_block_patterns();
 
 		/**
 		 * Filter the email replacements.
@@ -112,6 +122,15 @@ class Email_Sender {
 		$headers = [
 			'Content-Type: text/html; charset=UTF-8',
 		];
+
+		list(
+			'email_reply_to_address' => $reply_to_address,
+			'email_reply_to_name' => $reply_to_name
+		  ) = $this->settings->get_settings();
+
+		if( !empty($reply_to_address) ) {
+			$headers[] = "Reply-To: $reply_to_name <$reply_to_address>";
+		}
 
 		foreach ( $replacements as $recipient => $replacement ) {
 			$email_body    = do_blocks( $email_post->post_content );
