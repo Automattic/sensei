@@ -201,7 +201,7 @@ class Email_Settings_Tab {
 		$fields_to_display = array_filter(
 			$wp_settings_fields['sensei-settings']['email-notification-settings'] ?? [],
 			function( $field_key ) {
-				return in_array( $field_key, [ 'email_from_name', 'email_from_address', 'email_reply_to_name' , 'email_reply_to_address' ], true );
+				return in_array( $field_key, [ 'email_from_name', 'email_from_address', 'email_reply_to_name', 'email_reply_to_address' ], true );
 			},
 			ARRAY_FILTER_USE_KEY
 		);
