@@ -6,6 +6,7 @@ use Sensei\Internal\Emails\Email_Repository;
 use Sensei\Internal\Emails\Email_Seeder;
 use Sensei\Internal\Emails\Email_Seeder_Data;
 use Sensei\Internal\Emails\Email_Sender;
+use Sensei\Internal\Emails\Email_Post_Type;
 use Sensei_Factory;
 
 /**
