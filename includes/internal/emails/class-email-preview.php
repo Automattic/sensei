@@ -76,8 +76,7 @@ class Email_Preview {
 	 * Render the preview page.
 	 */
 	private function render_page(): void {
-		$post         = $this->get_email_post();
-		$subject      = $this->email_sender->get_email_subject( $post, $this->get_placeholders() );
+		$subject      = $this->email_sender->get_email_subject( $this->get_email_post(), $this->get_placeholders() );
 		$from_address = Sensei()->emails->get_from_address();
 		$from_name    = Sensei()->emails->get_from_name();
 		$avatar       = get_avatar( $from_address, 40, '', '', [ 'force_display' => true ] );
