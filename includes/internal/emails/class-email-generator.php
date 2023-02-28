@@ -123,7 +123,7 @@ class Email_Generator {
 	}
 
 	/**
-	 * Invokes the sensei_send_html_email action.
+	 * Invokes the sensei_email_send action.
 	 *
 	 * @param string $email_name    The email name.
 	 * @param array  $replacements  The replacements.
@@ -135,11 +135,11 @@ class Email_Generator {
 		 * Send HTML email.
 		 *
 		 * @since $$next-version$$
-		 * @hook sensei_send_html_email
+		 * @hook sensei_email_send
 		 *
 		 * @param {string} $email_name    The email name.
 		 * @param {Array}  $replacements  The replacements.
 		 */
-		do_action( 'sensei_send_html_email', $email_name, $replacements );
+		do_action( 'sensei_email_send', $email_name, $replacements );
 	}
 }
