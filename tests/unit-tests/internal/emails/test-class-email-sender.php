@@ -174,15 +174,26 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( 'Test Course', $this->email_data['subject'] );
 	}
 
-	public function testGetEmailBody_WhenCalled_ReturnsTheEmailBody() {
+	public function testGetEmailSubject_WhenCalled_ReturnsTheEmailSubjectWithReplacedPlaceholders() {
 		/* Arrange. */
-		$post = new WP_Post( (object) [ 'post_content' => 'test content' ] );
+		$post = new WP_Post( (object) [ 'post_title' => 'Welcome - [name]' ] );
 
 		/* Act. */
-		$email_body = $this->email_sender->get_email_body( $post );
+		$email_body = $this->email_sender->get_email_subject( $post, [ 'name' => 'John' ] );
 
 		/* Assert. */
-		self::assertStringContainsString( 'test content', $email_body );
+		self::assertStringContainsString( 'Welcome - John', $email_body );
+	}
+
+	public function testGetEmailBody_WhenCalled_ReturnsTheEmailBodyWithReplacedPlaceholders() {
+		/* Arrange. */
+		$post = new WP_Post( (object) [ 'post_content' => 'Welcome - [name]' ] );
+
+		/* Act. */
+		$email_body = $this->email_sender->get_email_body( $post, [ 'name' => 'John' ] );
+
+		/* Assert. */
+		self::assertStringContainsString( 'Welcome - John', $email_body );
 	}
 
 	private function create_test_email_template() {
