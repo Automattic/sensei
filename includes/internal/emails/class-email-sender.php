@@ -127,7 +127,7 @@ class Email_Sender {
 
 		if ( ! empty( $settings['email_reply_to_address'] ) ) {
 			$reply_to_address = $settings['email_reply_to_address'];
-			$reply_to_name    = $settings['email_reply_to_name'] || '';
+			$reply_to_name    = isset( $settings['email_reply_to_name'] ) ? $settings['email_reply_to_name'] : '';
 			$headers[]        = "Reply-To: $reply_to_name <$reply_to_address>";
 		}
 
