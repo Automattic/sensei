@@ -122,18 +122,18 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$this->login_as_admin();
 
-		$post_id       = $this->factory->email->create( [ 'post_title' => 'Welcome' ] );
+		$post          = $this->factory->email->create_and_get( [ 'post_title' => 'Welcome' ] );
 		$email_sender  = $this->createMock( Email_Sender::class );
 		$email_preview = new Email_Preview( $email_sender );
 
 		$email_sender
 			->expects( $this->once() )
-			->method( 'replace_placeholders' )
-			->with( 'Welcome' )
+			->method( 'get_email_subject' )
+			->with( $post )
 			->willReturn( 'Welcome' );
 
-		$_GET['sensei_email_preview_id'] = $post_id;
-		$_REQUEST['_wpnonce']            = wp_create_nonce( 'preview-email-post_' . $post_id );
+		$_GET['sensei_email_preview_id'] = $post->ID;
+		$_REQUEST['_wpnonce']            = wp_create_nonce( 'preview-email-post_' . $post->ID );
 
 		/* Act. */
 		ob_start();
@@ -216,11 +216,6 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 			->expects( $this->once() )
 			->method( 'get_email_body' )
 			->with( $post )
-			->willReturn( 'content' );
-		$email_sender
-			->expects( $this->once() )
-			->method( 'replace_placeholders' )
-			->with( 'content' )
 			->willReturn( 'content' );
 
 		$_GET['sensei_email_preview_id'] = $post->ID;

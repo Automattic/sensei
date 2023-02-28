@@ -6,7 +6,6 @@ use Sensei\Internal\Emails\Email_Repository;
 use Sensei\Internal\Emails\Email_Seeder;
 use Sensei\Internal\Emails\Email_Seeder_Data;
 use Sensei\Internal\Emails\Email_Sender;
-use Sensei\Internal\Emails\Email_Post_Type;
 use Sensei_Factory;
 use WP_Post;
 
@@ -57,10 +56,15 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		$this->skip_did_filter = ! version_compare( get_bloginfo( 'version' ), '6.1.0', '>=' );
 
 		add_action( 'wp_mail_succeeded', [ $this, 'wp_mail_succeeded' ] );
+		add_action( 'get_header', [ $this, 'get_header' ] );
 	}
 
 	public function wp_mail_succeeded( $result ) {
 		$this->email_data = $result;
+	}
+
+	public function get_header() {
+		echo 'Header';
 	}
 
 	public function testInit_WhenCalled_AddsFilter() {
@@ -179,21 +183,6 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertStringContainsString( 'test content', $email_body );
-	}
-
-	public function testReplacePlaceholders_WhenCalled_ReplacesThePlaceholders() {
-		/* Arrange. */
-		$string       = '[course:name] - [student:displayname]';
-		$placeholders = [
-			'student:displayname' => 'Test Student',
-			'course:name'         => 'Test Course',
-		];
-
-		/* Act. */
-		$result = $this->email_sender->replace_placeholders( $string, $placeholders );
-
-		/* Assert. */
-		self::assertSame( 'Test Course - Test Student', $result );
 	}
 
 	private function create_test_email_template() {
