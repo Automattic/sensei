@@ -52,14 +52,6 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 	 */
 	protected $skip_did_filter = false;
 
-
-	protected $mailer = null;
-
-
-	function set_mailer( $mailer  ) {
-		$this->mailer = $mailer;
-	}
-
 	public function setUp(): void {
 		parent::setUp();
 		reset_phpmailer_instance();

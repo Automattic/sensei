@@ -221,7 +221,7 @@ class Email_Settings_Tab {
 		);
 
 		$options = $this->settings->get_settings() ?? [];
-		unset( $options['email_from_name'], $options['email_from_address'], $options['email_reply_to_address'] );
+		unset( $options['email_fropm_name'], $options['email_from_address'], $options['email_reply_to_address'] );
 
 		include dirname( __FILE__ ) . '/views/html-settings.php';
 	}
@@ -261,7 +261,6 @@ class Email_Settings_Tab {
 			'section'  => 'email-notification-settings',
 			'required' => 0,
 		];
-
 
 		$fields['email_reply_to_address'] = [
 			'name'     => __( '"Reply To" Address', 'sensei-lms' ),

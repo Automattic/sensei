@@ -36,9 +36,8 @@ class Email_Sender {
 	 */
 	private $repository;
 
-
 	/**
-	 * Email repository instance.
+	 * Email settings instance.
 	 *
 	 * @var Sensei_Settings
 	 */
@@ -48,10 +47,11 @@ class Email_Sender {
 	 * Email_Sender constructor.
 	 *
 	 * @param Email_Repository $repository Email repository instance.
+	 * @param Sensei_Settings  $settings Sensei settings instance.
 	 */
 	public function __construct( Email_Repository $repository, Sensei_Settings $settings ) {
 		$this->repository = $repository;
-		$this->settings = $settings;
+		$this->settings   = $settings;
 	}
 
 	/**
@@ -126,9 +126,9 @@ class Email_Sender {
 		list(
 			'email_reply_to_address' => $reply_to_address,
 			'email_reply_to_name' => $reply_to_name
-		  ) = $this->settings->get_settings();
+		) = $this->settings->get_settings();
 
-		if( !empty($reply_to_address) ) {
+		if ( ! empty( $reply_to_address ) ) {
 			$headers[] = "Reply-To: $reply_to_name <$reply_to_address>";
 		}
 
