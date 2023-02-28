@@ -44,9 +44,19 @@ class Email_Generator {
 			return;
 		}
 
-		$teacher   = new \WP_User( $course->post_author );
-		$student   = new \WP_User( $student_id );
-		$recipient = stripslashes( $teacher->user_email );
+		$teacher    = new \WP_User( $course->post_author );
+		$student    = new \WP_User( $student_id );
+		$recipient  = stripslashes( $teacher->user_email );
+		$manage_url = esc_url(
+			add_query_arg(
+				array(
+					'page'      => 'sensei_learners',
+					'course_id' => $course_id,
+					'view'      => 'learners',
+				),
+				admin_url( 'admin.php' )
+			)
+		);
 
 		$this->send_email_action(
 			$email_name,
@@ -54,6 +64,7 @@ class Email_Generator {
 				$recipient => [
 					'student:displayname' => $student->display_name,
 					'course:name'         => $course->post_title,
+					'manage:students'     => $manage_url,
 				],
 			]
 		);

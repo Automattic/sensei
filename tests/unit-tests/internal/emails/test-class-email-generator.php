@@ -54,6 +54,16 @@ class Email_Generator_Test extends \WP_UnitTestCase {
 				'post_author' => $teacher_id,
 			]
 		);
+		$manage_url = esc_url(
+			add_query_arg(
+				array(
+					'page'      => 'sensei_learners',
+					'course_id' => $course->ID,
+					'view'      => 'learners',
+				),
+				admin_url( 'admin.php' )
+			)
+		);
 
 		( new Email_Generator() )->init();
 
@@ -80,6 +90,7 @@ class Email_Generator_Test extends \WP_UnitTestCase {
 		self::assertArrayHasKey( 'test@a.com', $email_data['data'] );
 		self::assertEquals( 'Test Student', $email_data['data']['test@a.com']['student:displayname'] );
 		self::assertEquals( 'Test Course', $email_data['data']['test@a.com']['course:name'] );
+		self::assertEquals( $manage_url, $email_data['data']['test@a.com']['manage:students'] );
 	}
 
 	public function testGenerateEmail_WhenCalledByStudentCompletedCourseEvent_CallsEmailSendingActionWithRightData() {

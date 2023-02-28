@@ -59,6 +59,7 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 	public function legacyHooksDataProvider() {
 		return [
 			'student_completes_course' => [ 'sensei_course_status_updated', 'teacher_completed_course' ],
+			'student_starts_course'    => [ 'sensei_user_course_start', 'teacher_started_course' ],
 		];
 	}
 }
