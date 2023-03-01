@@ -119,18 +119,6 @@ class Email_Sender {
 
 		$subject_text = wp_strip_all_tags( $email_post->post_title );
 
-		$headers = [
-			'Content-Type: text/html; charset=UTF-8',
-		];
-
-		$settings = $this->settings->get_settings();
-
-		if ( ! empty( $settings['email_reply_to_address'] ) ) {
-			$reply_to_address = $settings['email_reply_to_address'];
-			$reply_to_name    = isset( $settings['email_reply_to_name'] ) ? $settings['email_reply_to_name'] : '';
-			$headers[]        = "Reply-To: $reply_to_name <$reply_to_address>";
-		}
-
 		foreach ( $replacements as $recipient => $replacement ) {
 			$email_body    = do_blocks( $email_post->post_content );
 			$email_subject = $subject_text;
@@ -147,7 +135,7 @@ class Email_Sender {
 				$recipient,
 				$email_subject,
 				$email_body,
-				$headers,
+				$this->get_email_headers(),
 				null
 			);
 		}
@@ -273,5 +261,25 @@ class Email_Sender {
 		}
 
 		return $header_styles;
+	}
+
+	/**
+	 * Return the email headers.
+	 *
+	 * @return array Headers.
+	 */
+	private function get_email_headers():array {
+		$settings = $this->settings->get_settings();
+		$headers  = [
+			'Content-Type: text/html; charset=UTF-8',
+		];
+
+		if ( ! empty( $settings['email_reply_to_address'] ) ) {
+			$reply_to_address = $settings['email_reply_to_address'];
+			$reply_to_name    = isset( $settings['email_reply_to_name'] ) ? $settings['email_reply_to_name'] : '';
+			$headers[]        = "Reply-To: $reply_to_name <$reply_to_address>";
+		}
+
+		return $headers;
 	}
 }
