@@ -192,6 +192,11 @@ class Email_Preview {
 			'date:dtext'             => __( 'today', 'sensei-lms' ),
 			'grade:validation'       => __( 'You Passed!', 'sensei-lms' ),
 			'grade:percentage'       => '89%',
+			'grade:quiz'             => '#',
+			'manage:students'        => '#',
+			'results:url'            => '#',
+			'certificate:url'        => '#',
+			'editcourse:url'         => '#',
 		];
 	}
 
