@@ -48,7 +48,7 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 	public function testDisableLegacy_WhenCalled_RemovesLegacyEmailHooks( $action_name, $function_name, $hook_instance ) {
 		/* Arrange. */
 		$instance        = Email_Customization::instance( $this->settings, $this->assets );
-		$priority_before = has_action( $action_name, [ \Sensei()->emails, $function_name ] );
+		$priority_before = has_action( $action_name, [ $hook_instance, $function_name ] );
 
 		/* Act. */
 		$instance->disable_legacy_emails();
