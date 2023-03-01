@@ -43,7 +43,7 @@ const CourseGeneralSidebar = () => {
 	let teachers = window.sensei.courseSettingsSidebar.teachers;
 	if ( teachers && teachers.length ) {
 		teachers = teachers.map( ( usr ) => {
-			return { label: usr.display_name, value: usr.id };
+			return { label: usr.display_name, value: usr.ID };
 		} );
 	}
 

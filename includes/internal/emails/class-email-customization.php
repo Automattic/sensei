@@ -107,19 +107,19 @@ class Email_Customization {
 	 * @param \Sensei_Settings $settings Sensei_Settings instance.
 	 */
 	private function __construct( \Sensei_Settings $settings ) {
-		$repository = new Email_Repository();
-		$seeder     = new Email_Seeder( new Email_Seeder_Data(), $repository );
+		$repository               = new Email_Repository();
+		$this->post_type          = new Email_Post_Type();
+		$this->settings_menu      = new Settings_Menu();
+		$this->settings_tab       = new Email_Settings_Tab( $settings );
+		$this->blocks             = new Email_Blocks();
+		$this->email_sender       = new Email_Sender( $repository );
+		$this->email_generator    = new Email_Generator( $repository );
+		$this->list_table_actions = new Email_List_Table_Actions();
+		$this->patterns           = new Email_Patterns();
+		$this->preview            = new Email_Preview( $this->email_sender );
 
-		$this->post_type            = new Email_Post_Type();
-		$this->settings_menu        = new Settings_Menu();
-		$this->settings_tab         = new Email_Settings_Tab( $settings );
-		$this->blocks               = new Email_Blocks();
-		$this->email_sender         = new Email_Sender( $repository );
-		$this->email_generator      = new Email_Generator();
-		$this->list_table_actions   = new Email_List_Table_Actions();
+		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $repository );
 		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
-		$this->patterns             = new Email_Patterns();
-		$this->preview              = new Email_Preview( $this->email_sender );
 	}
 
 	/**
@@ -166,5 +166,8 @@ class Email_Customization {
 	public function disable_legacy_emails() {
 		remove_action( 'sensei_course_status_updated', [ \Sensei()->emails, 'teacher_completed_course' ] );
 		remove_action( 'sensei_user_course_start', [ \Sensei()->emails, 'teacher_started_course' ] );
+		remove_action( 'sensei_user_quiz_submitted', [ \Sensei()->emails, 'teacher_quiz_submitted' ] );
+		remove_action( 'sensei_course_status_updated', [ \Sensei()->emails, 'learner_completed_course' ] );
+		remove_action( 'sensei_course_new_teacher_assigned', [ \Sensei()->teacher, 'teacher_course_assigned_notification' ] );
 	}
 }
