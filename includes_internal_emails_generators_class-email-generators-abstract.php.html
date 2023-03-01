@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_analysis_sub_menu - Sensei LMS Hook Docs</title>
+	<title>Source: includes/internal/emails/generators/class-email-generators-abstract.php - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,184 +21,116 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_analysis_sub_menu</h1>
+	<h1 class="page-title">Source: includes/internal/emails/generators/class-email-generators-abstract.php</h1>
 	
 
 	
 
 
 
-
-<section>
-
-<header>
-    <h2></h2>
     
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    <h4 class="name" id="sensei_analysis_sub_menu">apply_filters( 'sensei_analysis_sub_menu', <span class="signature">$menu )</span><span class="type-signature"> &rarr; {array}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Filter the Reports navigation menu items.</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>$menu</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The menu items.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-    <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>4.2.0</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-analysis.php.html">includes/class-sensei-analysis.php</a>, <a href="includes_class-sensei-analysis.php.html#line126">line 126</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Returns filtered menu items.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">array</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-    
-    </div>
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;?php
+/**
+ * File containing the Email_Generators_Abstract class.
+ *
+ * @package sensei
+ */
+
+namespace Sensei\Internal\Emails;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Class Email_Generators_Abstract
+ *
+ * @internal
+ *
+ * @since $$next-version$$
+ */
+abstract class Email_Generators_Abstract {
+
+	/**
+	 * Identifier of the email.
+	 *
+	 * @var string
+	 */
+	const IDENTIFIER_NAME = '';
+
+	/**
+	 * Email_Repository instance.
+	 *
+	 * @var Email_Repository
+	 */
+	protected $repository;
+
+	/**
+	 * Email_Generators_Abstract constructor.
+	 *
+	 * @param Email_Repository $repository Email_Repository instance.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 */
+	public function __construct( $repository ) {
+		$this->repository = $repository;
+	}
+
+	/**
+	 * Initialize the email hooks.
+	 *
+	 * @access public
+	 * @since $$next-version$$
+	 *
+	 * @return void
+	 */
+	abstract public function init();
+
+	/**
+	 * Check if email exists and is published.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @return boolean Indicates if the email is published or not
+	 */
+	public function is_email_active() {
+		$email = $this->repository->get( static::IDENTIFIER_NAME );
+		return $email &amp;&amp; 'publish' === $email->post_status;
+	}
+
+	/**
+	 * Invokes the sensei_send_html_email action.
+	 *
+	 * @param array $replacements The replacements.
+	 *
+	 * @access protected
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 */
+	protected function send_email_action( $replacements ) {
+		/**
+		 * Send HTML email.
+		 *
+		 * @since $$next-version$$
+		 * @hook sensei_send_html_email
+		 *
+		 * @param {string} $email_name    The email name.
+		 * @param {Array}  $replacements  The replacements.
+		 */
+		do_action( 'sensei_email_send', static::IDENTIFIER_NAME, $replacements );
+	}
+}
+</code></pre>
+        </article>
+    </section>
 
 
 

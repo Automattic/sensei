@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_analysis_sub_menu - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_email_generators - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_analysis_sub_menu</h1>
+	<h1 class="page-title">Filter: sensei_email_generators</h1>
 	
 
 	
@@ -43,14 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_analysis_sub_menu">apply_filters( 'sensei_analysis_sub_menu', <span class="signature">$menu )</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id="sensei_email_generators">apply_filters( 'sensei_email_generators', <span class="signature">$email_generators )</span><span class="type-signature"> &rarr; {Array.&lt;Email_Generators_Abstract>}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter the Reports navigation menu items.</p>
+    <p>Filter the individual email generators.</p>
 </div>
 
 
@@ -84,13 +84,13 @@
 
         <tr>
             
-                <td class="name"><code>$menu</code></td>
+                <td class="name"><code>$email_generators</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">Array.&lt;Email_Generators_Abstract></span>
 
 
             
@@ -100,7 +100,7 @@
 
             
 
-            <td class="description last"><p>The menu items.</p></td>
+            <td class="description last"><p>The email generators.</p></td>
         </tr>
 
     
@@ -118,7 +118,7 @@
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>4.2.0</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -144,7 +144,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-analysis.php.html">includes/class-sensei-analysis.php</a>, <a href="includes_class-sensei-analysis.php.html#line126">line 126</a>
+        <a href="includes_internal_emails_class-email-generator.php.html">includes/internal/emails/class-email-generator.php</a>, <a href="includes_internal_emails_class-email-generator.php.html#line69">line 69</a>
     </li></ul></dd>
     
 
@@ -171,7 +171,7 @@
 
         
 <div class="param-desc">
-    <p>Returns filtered menu items.</p>
+    <p>The email generators.</p>
 </div>
 
 
@@ -182,7 +182,7 @@
     </dt>
     <dd>
         
-<span class="param-type">array</span>
+<span class="param-type">Array.&lt;Email_Generators_Abstract></span>
 
 
     </dd>
