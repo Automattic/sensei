@@ -64,8 +64,8 @@ class Course_Completed extends Email_Generators_Abstract {
 					'student:displayname' => $student->display_name,
 					'course:id'           => $course_id,
 					'course:name'         => get_the_title( $course_id ),
-					'certificate:url'     => \Sensei_Course::get_course_completed_page_url( $course_id ) ?? '',
-					'results:url'         => $result_url,
+					'certificate:url'     => esc_url( \Sensei_Course::get_course_completed_page_url( $course_id ) ?? '' ),
+					'results:url'         => esc_url( $result_url ),
 				],
 			]
 		);
