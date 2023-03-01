@@ -35,7 +35,7 @@ class Email_Generator_Test extends \WP_UnitTestCase {
 		$this->email_repository = new Email_Repository();
 	}
 
-	public function testEmailGenerator_WhenInitIsCalled_AddsHooksForInitializingIndividualEmails() {
+	public function testInit_WhenCalled_AddsHooksForInitializingIndividualEmails() {
 		/* Arrange. */
 		$generator = new Email_Generator( $this->email_repository );
 

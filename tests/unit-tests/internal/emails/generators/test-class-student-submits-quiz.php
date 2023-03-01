@@ -45,7 +45,7 @@ class Student_Submits_Quiz_Test extends \WP_UnitTestCase {
 		self::resetEnrolmentProviders();
 	}
 
-	public function testGenerateEmail_WhenCalledByStudentSubmittedQuizEvent_CallsEmailSendingActionWithRightData() {
+	public function testStudentSubmitsQuizMailToTeacher_WhenCalled_CallsEmailSendingActionWithRightData() {
 		/* Arrange. */
 		$student_id = $this->factory->user->create(
 			[
