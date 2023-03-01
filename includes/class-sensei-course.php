@@ -205,8 +205,36 @@ class Sensei_Course {
 			return;
 		}
 
-		if ( in_array( $screen->id, [ 'edit-course', 'edit-course-category' ], true ) && ( 'term' !== $screen->base ) ) {
-			$this->display_courses_navigation( $screen );
+		$tabs = [
+			[
+				'label'     => __( 'All Courses', 'sensei-lms' ),
+				'url'       => admin_url( 'edit.php?post_type=course' ),
+				'screen_id' => 'edit-course',
+			],
+
+			[
+				'label'     => __( 'Course Categories', 'sensei-lms' ),
+				'url'       => admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ),
+				'screen_id' => 'edit-course-category',
+			],
+		];
+
+		/**
+		 * Filters the tabs that the user can see on the Courses page.
+		 *
+		 * @since $$next-version$$
+		 * @hook sensei_course_custom_navigation_tabs
+		 *
+		 * @param {Array}   $tabs The list of tabs that the user should see on the Courses page.
+
+		 * @return {Array} The list of tabs to render for the user on the Courses page.
+		 */
+		$tabs = apply_filters( 'sensei_course_custom_navigation_tabs', $tabs );
+
+		$screen_ids = wp_list_pluck( $tabs, 'screen_id' );
+
+		if ( in_array( $screen->id, $screen_ids, true ) && ( 'term' !== $screen->base ) ) {
+			$this->display_courses_navigation( $screen, $tabs );
 		}
 	}
 
@@ -214,8 +242,9 @@ class Sensei_Course {
 	 * Display the courses' navigation.
 	 *
 	 * @param WP_Screen $screen WordPress current screen object.
+	 * @param array     $tabs List of tabs to show.
 	 */
-	private function display_courses_navigation( WP_Screen $screen ) {
+	private function display_courses_navigation( WP_Screen $screen, array $tabs ) {
 		?>
 		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
 			<div class="sensei-custom-navigation__heading">
@@ -229,8 +258,13 @@ class Sensei_Course {
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
-				<a class="sensei-custom-navigation__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=course' ) ); ?>"><?php esc_html_e( 'All Courses', 'sensei-lms' ); ?></a>
-				<a class="sensei-custom-navigation__tab <?php echo 'course-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ); ?>"><?php esc_html_e( 'Course Categories', 'sensei-lms' ); ?></a>
+				<?php
+				foreach ( $tabs as $tab ) {
+					?>
+					<a class="sensei-custom-navigation__tab <?php echo $screen->id === $tab['screen_id'] ? 'active' : ''; ?>" href="<?php echo esc_url( $tab['url'] ); ?>"><?php echo esc_html( $tab['label'] ); ?></a>
+					<?php
+				}
+				?>
 			</div>
 		</div>
 		<?php
