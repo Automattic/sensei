@@ -271,9 +271,12 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assets
-			->expects( $this->once() )
+			->expects( $this->exactly( 2 ) )
 			->method( 'enqueue' )
-			->with( 'sensei-admin-email-edit', 'js/admin/email-edit.js', [], true );
+			->withConsecutive(
+				[ 'sensei-email-preview-link', 'admin/emails/email-preview-link/index.js', [], true ],
+				[ 'sensei-email-preview-link', 'admin/emails/email-preview-link/email-preview-link.css' ]
+			);
 
 		/* Act. */
 		$email_preview->register_admin_scripts();

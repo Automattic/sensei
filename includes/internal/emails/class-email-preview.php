@@ -94,10 +94,11 @@ class Email_Preview {
 			return;
 		}
 
-		$this->assets->enqueue( 'sensei-admin-email-edit', 'js/admin/email-edit.js', [], true );
+		$this->assets->enqueue( 'sensei-email-preview-link', 'admin/emails/email-preview-link/index.js', [], true );
+		$this->assets->enqueue( 'sensei-email-preview-link', 'admin/emails/email-preview-link/email-preview-link.css' );
 
 		wp_localize_script(
-			'sensei-admin-email-edit',
+			'sensei-email-preview-link',
 			'sensei_email_preview',
 			[
 				'link' => self::get_preview_link( get_the_ID() ),
@@ -125,7 +126,7 @@ class Email_Preview {
 	 * Render the preview page.
 	 */
 	private function render_page(): void {
-		$subject      = $this->email_sender->get_email_subject( $this->get_email_post(), $this->get_placeholders() );
+		$subject      = $this->email_sender->get_email_subject( $this->get_email_post_for_preview(), $this->get_placeholders() );
 		$from_address = Sensei()->emails->get_from_address();
 		$from_name    = Sensei()->emails->get_from_name();
 		$avatar       = get_avatar( $from_address, 40, '', '', [ 'force_display' => true ] );
@@ -139,7 +140,7 @@ class Email_Preview {
 	private function render_email(): void {
 		// TODO: Remove the error control operator when the warnings are fixed.
 		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-		$email_body = @$this->email_sender->get_email_body( $this->get_email_post(), $this->get_placeholders() );
+		$email_body = @$this->email_sender->get_email_body( $this->get_email_post_for_preview(), $this->get_placeholders() );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $email_body;
@@ -155,6 +156,23 @@ class Email_Preview {
 		$post_id = isset( $_GET['sensei_email_preview_id'] ) ? (int) $_GET['sensei_email_preview_id'] : 0;
 
 		return get_post( $post_id );
+	}
+
+	/**
+	 * Get the email post that should be displayed for preview.
+	 * This might be the latest post revision.
+	 *
+	 * @return WP_Post|null
+	 */
+	private function get_email_post_for_preview(): ?WP_Post {
+		$post = $this->get_email_post();
+		if ( ! $post ) {
+			return null;
+		}
+
+		$autosave = wp_get_post_autosave( $post->ID );
+
+		return $autosave ? $autosave : $post;
 	}
 
 	/**
