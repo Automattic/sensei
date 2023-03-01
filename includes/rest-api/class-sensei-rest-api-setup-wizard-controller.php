@@ -72,6 +72,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		$this->register_submit_tracking_route();
 		$this->register_submit_features_route();
 		$this->register_complete_wizard_route();
+		$this->register_setup_wizard_settings();
 	}
 
 	/**
@@ -113,6 +114,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * Register /purpose endpoint.
 	 */
 	public function register_submit_purpose_route() {
+
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/purpose',
@@ -294,6 +296,43 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
 				],
 				'schema' => [ $this, 'get_schema' ],
+			]
+		);
+	}
+
+	/**
+	 * Register setup wizard option in the settings REST API endpoint.
+	 */
+	public function register_setup_wizard_settings() {
+
+		register_setting(
+			'options',
+			Sensei_Setup_Wizard::USER_DATA_OPTION,
+			[
+				'type'         => 'object',
+				'show_in_rest' => [
+					'schema' => [
+						'properties' => [
+							'purpose' => [
+								'type'       => 'object',
+								'properties' => [
+									'selected' => [
+										'required' => true,
+										'type'     => 'array',
+										'items'    => [
+											'type' => 'string',
+											'enum' => self::PURPOSES,
+										],
+									],
+									'other'    => [
+										'required' => true,
+										'type'     => 'string',
+									],
+								],
+							],
+						],
+					],
+				],
 			]
 		);
 	}
