@@ -61,6 +61,7 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 			'student_completes_course' => [ 'sensei_course_status_updated', 'teacher_completed_course' ],
 			'student_starts_course'    => [ 'sensei_user_course_start', 'teacher_started_course' ],
 			'student_quiz_submitted'   => [ 'sensei_user_quiz_submitted', 'teacher_quiz_submitted' ],
+			'course_completed'         => [ 'sensei_course_status_updated', 'learner_completed_course' ],
 		];
 	}
 }
