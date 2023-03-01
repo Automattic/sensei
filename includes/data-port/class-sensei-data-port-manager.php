@@ -346,6 +346,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		);
 	}
 
+	#[\ReturnTypeWillChange]
 	/**
 	 * Serialize the port jobs to JSON.
 	 *
