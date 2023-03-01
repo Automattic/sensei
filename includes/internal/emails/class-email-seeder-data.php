@@ -88,7 +88,7 @@ class Email_Seeder_Data {
 				'types'       => [ 'teacher' ],
 				'subject'     => __( 'New Course Assigned: [course:name]', 'sensei-lms' ),
 				'description' => __( 'Course Assigned', 'sensei-lms' ),
-				'content'     => '<!-- wp:pattern {"slug":"sensei-emails/footer"} /-->',
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/new-course-assigned"} /-->',
 			],
 			'new_message_reply'        => [
 				'types'       => [ 'student', 'teacher' ],
