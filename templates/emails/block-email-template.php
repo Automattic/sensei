@@ -16,6 +16,9 @@
 	<meta name="viewport" content="width=device-width" />
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<style>
+		.inline-block {
+			display: inline-block;
+		}
 		img {
 			border: none;
 			-ms-interpolation-mode: bicubic;
