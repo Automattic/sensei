@@ -39,26 +39,31 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 	 *
 	 * @param string $action_name The name of the action.
 	 * @param string $function_name The name of the function.
+	 * @param object $hook_instance The instance of the hook's class.
 	 *
 	 * @dataProvider legacyHooksDataProvider
 	 */
-	public function testDisableLegacy_WhenCalled_RemovesLegacyEmailHooks( $action_name, $function_name ) {
+	public function testDisableLegacy_WhenCalled_RemovesLegacyEmailHooks( $action_name, $function_name, $hook_instance ) {
 		/* Arrange. */
 		$settings        = $this->createMock( Sensei_Settings::class );
 		$instance        = Email_Customization::instance( $settings );
-		$priority_before = has_action( $action_name, [ \Sensei()->emails, $function_name ] );
+		$priority_before = has_action( $action_name, [ $hook_instance, $function_name ] );
 
 		/* Act. */
 		$instance->disable_legacy_emails();
 
 		/* Assert. */
-		$priority_after = has_action( $action_name, [ \Sensei()->emails, $function_name ] );
+		$priority_after = has_action( $action_name, [ $hook_instance, $function_name ] );
 		$this->assertNotEquals( $priority_before, $priority_after );
 	}
 
 	public function legacyHooksDataProvider() {
 		return [
-			'student_completes_course' => [ 'sensei_course_status_updated', 'teacher_completed_course' ],
+			'student_completes_course' => [ 'sensei_course_status_updated', 'teacher_completed_course', \Sensei()->emails ],
+			'student_starts_course'    => [ 'sensei_user_course_start', 'teacher_started_course', \Sensei()->emails ],
+			'student_quiz_submitted'   => [ 'sensei_user_quiz_submitted', 'teacher_quiz_submitted', \Sensei()->emails ],
+			'course_completed'         => [ 'sensei_course_status_updated', 'learner_completed_course', \Sensei()->emails ],
+			'teacher_course_assigned'  => [ 'sensei_course_new_teacher_assigned', 'teacher_course_assigned_notification', \Sensei()->teacher ],
 		];
 	}
 }

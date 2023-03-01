@@ -106,7 +106,7 @@ class Email_Customization {
 		$this->settings_tab       = new Email_Settings_Tab( $settings );
 		$this->blocks             = new Email_Blocks();
 		$this->email_sender       = new Email_Sender( $repository );
-		$this->email_generator    = new Email_Generator();
+		$this->email_generator    = new Email_Generator( $repository );
 		$this->list_table_actions = new Email_List_Table_Actions();
 		$this->patterns           = new Email_Patterns();
 
@@ -156,5 +156,9 @@ class Email_Customization {
 	 */
 	public function disable_legacy_emails() {
 		remove_action( 'sensei_course_status_updated', [ \Sensei()->emails, 'teacher_completed_course' ] );
+		remove_action( 'sensei_user_course_start', [ \Sensei()->emails, 'teacher_started_course' ] );
+		remove_action( 'sensei_user_quiz_submitted', [ \Sensei()->emails, 'teacher_quiz_submitted' ] );
+		remove_action( 'sensei_course_status_updated', [ \Sensei()->emails, 'learner_completed_course' ] );
+		remove_action( 'sensei_course_new_teacher_assigned', [ \Sensei()->teacher, 'teacher_course_assigned_notification' ] );
 	}
 }

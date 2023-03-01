@@ -50,15 +50,15 @@ class Email_Seeder_Data {
 			],
 			'course_completed'         => [
 				'types'       => [ 'student' ],
-				'subject'     => __( '[student:displayname] completed [course:name]', 'sensei-lms' ),
+				'subject'     => __( 'You have completed [course:name]', 'sensei-lms' ),
 				'description' => __( 'Course Complete', 'sensei-lms' ),
-				'content'     => '<!-- wp:pattern {"slug":"sensei-emails/footer"} /-->',
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/course-completed"} /-->',
 			],
 			'student_starts_course'    => [
 				'types'       => [ 'teacher' ],
 				'subject'     => __( '[student:displayname] started [course:name]', 'sensei-lms' ),
 				'description' => __( 'Course Started', 'sensei-lms' ),
-				'content'     => $this->student_starts_course_content(),
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-starts-course"} /-->',
 			],
 			'student_completes_course' => [
 				'types'       => [ 'teacher' ],
@@ -76,7 +76,7 @@ class Email_Seeder_Data {
 				'types'       => [ 'teacher' ],
 				'subject'     => __( '[student:displayname] has submitted a quiz', 'sensei-lms' ),
 				'description' => __( 'Quiz Submitted', 'sensei-lms' ),
-				'content'     => '<!-- wp:pattern {"slug":"sensei-emails/footer"} /-->',
+				'content'     => '<!-- wp:pattern {"slug":"sensei-emails/student-submits-quiz"} /-->',
 			],
 			'student_sends_message'    => [
 				'types'       => [ 'teacher' ],
@@ -88,7 +88,7 @@ class Email_Seeder_Data {
 				'types'       => [ 'teacher' ],
 				'subject'     => __( 'New Course Assigned: [course:name]', 'sensei-lms' ),
 				'description' => __( 'Course Assigned', 'sensei-lms' ),
-				'content'     => '<!-- wp:pattern {"slug":"sensei-emails/footer"} /-->',
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/new-course-assigned"} /-->',
 			],
 			'new_message_reply'        => [
 				'types'       => [ 'student', 'teacher' ],
