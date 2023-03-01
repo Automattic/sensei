@@ -11,6 +11,17 @@ use Sensei\Internal\Emails\Email_Patterns;
  */
 class Email_Patterns_Test extends \WP_UnitTestCase {
 
+	public function tearDown(): void {
+		parent::tearDown();
+
+		$registry = \WP_Block_Patterns_Registry::get_instance();
+		foreach ( $this->get_pattern_items() as $pattern_item ) {
+			if ( $registry->is_registered( $pattern_item ) ) {
+				$registry->unregister( $pattern_item );
+			}
+		}
+	}
+
 	public function testInit_WhenCalled_AddsFilter() {
 		/* Arrange. */
 		$patterns = new Email_Patterns();
@@ -59,34 +70,34 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 		$screen->base      = 'edit-sensei_email';
 		$screen->post_type = 'sensei_email';
 		$registry          = \WP_Block_Patterns_Registry::get_instance();
-		$pattern_items     = [
-			'sensei-lms/student-completes-course',
-			'sensei-lms/student-starts-course',
-			'sensei-lms/student-submits-quiz',
-			'sensei-lms/course-completed',
-			'sensei-lms/new-course-assigned',
-		];
 
 		/* Act. */
 		$screen->set_current_screen();
 
 		/* Assert. */
-		foreach ( $pattern_items as $pattern_item ) {
+		foreach ( $this->get_pattern_items() as $pattern_item ) {
 			self::assertTrue( $registry->is_registered( $pattern_item ) );
+		}
+	}
+
+	public function testRegisterEmailPreviewBlockPatterns_WhenCalledNotInPreview_DoesNotRegisterPattern() {
+		/* Arrange. */
+		$patterns = new Email_Patterns();
+		$registry = \WP_Block_Patterns_Registry::get_instance();
+
+		/* Act. */
+		$patterns->register_email_preview_block_patterns();
+
+		/* Assert. */
+		foreach ( $this->get_pattern_items() as $pattern_item ) {
+			self::assertFalse( $registry->is_registered( $pattern_item ) );
 		}
 	}
 
 	public function testRegisterEmailPreviewBlockPatterns_WhenCalledInPreview_RegistersPatternAsExpected() {
 		/* Arrange. */
-		$patterns      = new Email_Patterns();
-		$registry      = \WP_Block_Patterns_Registry::get_instance();
-		$pattern_items = [
-			'sensei-lms/student-completes-course',
-			'sensei-lms/student-starts-course',
-			'sensei-lms/student-submits-quiz',
-			'sensei-lms/course-completed',
-			'sensei-lms/new-course-assigned',
-		];
+		$patterns = new Email_Patterns();
+		$registry = \WP_Block_Patterns_Registry::get_instance();
 
 		$_GET['sensei_email_preview_id'] = 1;
 
@@ -94,29 +105,18 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 		$patterns->register_email_preview_block_patterns();
 
 		/* Assert. */
-		foreach ( $pattern_items as $pattern_item ) {
+		foreach ( $this->get_pattern_items() as $pattern_item ) {
 			self::assertTrue( $registry->is_registered( $pattern_item ) );
 		}
 	}
 
-	public function testRegisterEmailPreviewBlockPatterns_WhenCalledNotInPreview_DoesNotRegisterPattern() {
-		/* Arrange. */
-		$patterns      = new Email_Patterns();
-		$registry      = \WP_Block_Patterns_Registry::get_instance();
-		$pattern_items = [
+	private function get_pattern_items() {
+		return [
 			'sensei-lms/student-completes-course',
 			'sensei-lms/student-starts-course',
 			'sensei-lms/student-submits-quiz',
 			'sensei-lms/course-completed',
 			'sensei-lms/new-course-assigned',
 		];
-
-		/* Act. */
-		$patterns->register_email_preview_block_patterns();
-
-		/* Assert. */
-		foreach ( $pattern_items as $pattern_item ) {
-			self::assertFalse( $registry->is_registered( $pattern_item ) );
-		}
 	}
 }
