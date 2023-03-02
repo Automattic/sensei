@@ -346,9 +346,10 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return array The sanitized settings.
 	 */
 	public function sanitize_setup_wizard_settings( $settings ) {
-		$default = Sensei_Setup_Wizard::instance()->get_wizard_user_data();
-
-		$settings = wp_parse_args( $settings, $default );
+		if ( ! empty( $settings ) ) {
+			$default  = Sensei_Setup_Wizard::instance()->get_wizard_user_data();
+			$settings = wp_parse_args( $settings, $default );
+		}
 
 		return $settings;
 	}
