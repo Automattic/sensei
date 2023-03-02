@@ -9,7 +9,7 @@ import { store as editorStore } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 
 /**
- * The email preview link.
+ * The email preview button component.
  *
  * @param {Object}  props
  * @param {string}  props.previewLink    The preview link.
