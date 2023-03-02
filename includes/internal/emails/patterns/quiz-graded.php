@@ -19,8 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- /wp:paragraph -->
 
 	<!-- wp:group -->
-	<div class="wp-block-group"><!-- wp:paragraph {"style":{"typography":{"fontSize":"16px","lineHeight":"1"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#020202"}}} -->
-		<p class="has-text-color" style="color:#020202;font-size:16px;line-height:1;margin-top:24px;margin-bottom:0px"><strong>Course Name</strong></p>
+	<div class="wp-block-group"><!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#020202"}}} -->
+		<p class="has-text-color" style="color:#020202;font-size:16px;margin-top:24px;margin-bottom:0px"><strong>Course Name</strong></p>
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px","lineHeight":"1"},"color":{"text":"#020202"}}} -->
@@ -29,8 +29,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- /wp:group -->
 
 	<!-- wp:group {"style":{"spacing":{"padding":{"top":"5px","right":"0px","bottom":"0px","left":"0px"},"blockGap":"10px"},"border":{"width":"0px","style":"none"}}} -->
-	<div class="wp-block-group" style="border-style:none;border-width:0px;padding-top:5px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:paragraph {"style":{"typography":{"fontSize":"16px","lineHeight":"1"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#020202"}}} -->
-		<p class="has-text-color" style="color:#020202;font-size:16px;line-height:1;margin-top:24px;margin-bottom:0px"><strong>Lesson Name</strong></p>
+	<div class="wp-block-group" style="border-style:none;border-width:0px;padding-top:5px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#020202"}}} -->
+		<p class="has-text-color" style="color:#020202;font-size:16px;margin-top:24px;margin-bottom:0px"><strong>Lesson Name</strong></p>
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px","lineHeight":"1"},"color":{"text":"#020202"}}} -->
@@ -49,8 +49,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- /wp:group -->
 
 	<!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px"}}}} -->
-	<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"spacing":{"padding":{"top":"16px","bottom":"16px","left":"20px","right":"20px"}},"color":{"background":"#020202","text":"#fefefe"}}} -->
-		<div class="wp-block-button"><a class="wp-block-button__link has-text-color has-background" href="[quiz:url]" style="background-color:#020202;color:#fefefe;padding-top:16px;padding-right:20px;padding-bottom:16px;padding-left:20px">Review Quiz</a></div>
+	<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"spacing":{"padding":{"top":"16px","bottom":"16px","left":"20px","right":"20px"}},"color":{"background":"#020202","text":"#fefefe"},"border":{"radius":"4px"}}} -->
+		<div class="wp-block-button"><a class="wp-block-button__link has-text-color has-background" href="[quiz:url]" style="border-radius:4px;background-color:#020202;color:#fefefe;padding-top:16px;padding-right:20px;padding-bottom:16px;padding-left:20px">Review Quiz</a></div>
 		<!-- /wp:button --></div>
 	<!-- /wp:buttons --></div>
 <!-- /wp:group -->
