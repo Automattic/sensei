@@ -94,11 +94,11 @@ class Email_Preview {
 			return;
 		}
 
-		$this->assets->enqueue( 'sensei-email-preview-link', 'admin/emails/email-preview-link/index.js', [], true );
-		$this->assets->enqueue( 'sensei-email-preview-link', 'admin/emails/email-preview-link/email-preview-link.css' );
+		$this->assets->enqueue( 'sensei-email-preview-button', 'admin/emails/email-preview-button/index.js', [], true );
+		$this->assets->enqueue( 'sensei-email-preview-button', 'admin/emails/email-preview-button/email-preview-button.css' );
 
 		wp_localize_script(
-			'sensei-email-preview-link',
+			'sensei-email-preview-button',
 			'sensei_email_preview',
 			[
 				'link' => self::get_preview_link( get_the_ID() ),

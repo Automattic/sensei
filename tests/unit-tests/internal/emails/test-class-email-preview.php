@@ -274,8 +274,8 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 			->expects( $this->exactly( 2 ) )
 			->method( 'enqueue' )
 			->withConsecutive(
-				[ 'sensei-email-preview-link', 'admin/emails/email-preview-link/index.js', [], true ],
-				[ 'sensei-email-preview-link', 'admin/emails/email-preview-link/email-preview-link.css' ]
+				[ 'sensei-email-preview-button', 'admin/emails/email-preview-button/index.js', [], true ],
+				[ 'sensei-email-preview-button', 'admin/emails/email-preview-button/email-preview-button.css' ]
 			);
 
 		/* Act. */
