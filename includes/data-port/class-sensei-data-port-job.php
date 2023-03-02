@@ -354,6 +354,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		return new $task_class( $this );
 	}
 
+	#[\ReturnTypeWillChange]
 	/**
 	 * Serialize state to JSON.
 	 *

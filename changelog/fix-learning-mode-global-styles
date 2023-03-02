@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix progress bar and modules in Learning Mode not adhering to global colors
