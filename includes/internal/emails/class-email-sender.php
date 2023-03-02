@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require plugin_dir_path( __DIR__ ) . '../../vendor/autoload.php';
 
 use Pelago\Emogrifier\CssInliner;
+use Sensei_Settings;
 use WP_Post;
 
 /**
@@ -37,12 +38,21 @@ class Email_Sender {
 	private $repository;
 
 	/**
+	 * Email settings instance.
+	 *
+	 * @var Sensei_Settings
+	 */
+	private $settings;
+
+	/**
 	 * Email_Sender constructor.
 	 *
 	 * @param Email_Repository $repository Email repository instance.
+	 * @param Sensei_Settings  $settings Sensei settings instance.
 	 */
-	public function __construct( Email_Repository $repository ) {
+	public function __construct( Email_Repository $repository, Sensei_Settings $settings ) {
 		$this->repository = $repository;
+		$this->settings   = $settings;
 	}
 
 	/**
@@ -76,7 +86,7 @@ class Email_Sender {
 		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
 
 		// In case patterns are not registered.
-		Email_Customization::instance( \Sensei()->settings )->patterns->register_email_block_patterns();
+		Email_Customization::instance( $this->settings )->patterns->register_email_block_patterns();
 
 		/**
 		 * Filter the email replacements.
@@ -93,16 +103,12 @@ class Email_Sender {
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
 
-		$headers = [
-			'Content-Type: text/html; charset=UTF-8',
-		];
-
 		foreach ( $replacements as $recipient => $replacement ) {
 			wp_mail(
 				$recipient,
 				$this->get_email_subject( $email_post, $replacement ),
 				$this->get_email_body( $email_post, $replacement ),
-				$headers,
+				$this->get_email_headers(),
 				null
 			);
 		}
@@ -296,5 +302,25 @@ class Email_Sender {
 		 * @return {string}
 		 */
 		return apply_filters( 'sensei_email_styles', $header_styles );
+	}
+
+	/**
+	 * Return the email headers.
+	 *
+	 * @return array Headers.
+	 */
+	private function get_email_headers():array {
+		$settings = $this->settings->get_settings();
+		$headers  = [
+			'Content-Type: text/html; charset=UTF-8',
+		];
+
+		if ( ! empty( $settings['email_reply_to_address'] ) ) {
+			$reply_to_address = $settings['email_reply_to_address'];
+			$reply_to_name    = isset( $settings['email_reply_to_name'] ) ? $settings['email_reply_to_name'] : '';
+			$headers[]        = "Reply-To: $reply_to_name <$reply_to_address>";
+		}
+
+		return $headers;
 	}
 }
