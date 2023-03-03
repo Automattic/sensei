@@ -17,10 +17,6 @@ body {
 	--content-size: min(var(--wp--custom--layout--content-size), var(--max-content-size));
 	--wide-size: min(var(--wp--custom--layout--wide-size), var(--max-content-size));
 
-	h1, h2, h3, h4, h5, h6 {
-		color: var(--sensei-text-color);
-	}
-
 	.wp-site-blocks {
 		background-color: var(--sensei-background-color);
 	}

@@ -257,6 +257,12 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 			->method( 'get_settings' )
 			->willReturn(
 				[
+					'email_reply_to_name' => [
+						'name' => __( '"Reply To" Name', 'sensei-lms' ),
+						'type' => 'email',
+					],
+				],
+				[
 					'email_reply_to_address' => [
 						'name' => __( '"Reply To" Address', 'sensei-lms' ),
 						'type' => 'email',
@@ -275,6 +281,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertStringContainsString( '<input id="email_reply_to_address" name="sensei-settings[email_reply_to_address]" size="40" type="email"', $content );
+		self::assertStringContainsString( '<input id="email_reply_to_name" name="sensei-settings[email_reply_to_name]" size="40" ', $content );
 	}
 
 	public function testTabContent_WhenInSettingsSubtab_HasEmailFromAddressAsTypeEmail() {
