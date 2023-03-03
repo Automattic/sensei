@@ -301,7 +301,9 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Register setup wizard option in the settings REST API endpoint.
+	 * Register setup wizard user data option in the settings REST API endpoint.
+	 *
+	 * @since $$next-version$$
 	 */
 	public function register_setup_wizard_settings() {
 
@@ -309,8 +311,8 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			'options',
 			Sensei_Setup_Wizard::USER_DATA_OPTION,
 			[
-				'type'              => 'object',
-				'show_in_rest'      => [
+				'type'         => 'object',
+				'show_in_rest' => [
 					'schema' => [
 						'properties' => [
 							'purpose' => [
@@ -333,25 +335,36 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 						],
 					],
 				],
-				'sanitize_callback' => [ $this, 'sanitize_setup_wizard_settings' ],
 			]
 		);
+
+		add_filter( 'rest_pre_update_setting', 'update_setup_wizard_settings', 10, 3 );
 	}
 
 	/**
-	 * Sanitize setup wizard settings.
+	 * Update setup wizard user data option when it's set via the REST API.
+	 * Ensures the option is complete with the default values if not set.
 	 *
-	 * @param array $settings The settings to sanitize.
+	 * @hooked rest_pre_update_setting
+	 * @access private
 	 *
-	 * @return array The sanitized settings.
+	 * @param bool   $updated Whether to override the default behavior for updating the
+	 *                        value of a setting.
+	 * @param string $name   Setting name (as shown in REST API responses).
+	 * @param mixed  $value  Updated setting value.
 	 */
-	public function sanitize_setup_wizard_settings( $settings ) {
+	public function update_setup_wizard_settings( $updated, $name, $value ) {
+		if ( Sensei_Setup_Wizard::USER_DATA_OPTION !== $name ) {
+			return $updated;
+		}
 		if ( ! empty( $settings ) ) {
-			$default  = Sensei_Setup_Wizard::instance()->get_wizard_user_data();
-			$settings = wp_parse_args( $settings, $default );
+			$default = Sensei_Setup_Wizard::instance()->get_wizard_user_data();
+			$value   = wp_parse_args( $value, $default );
+
+			update_option( Sensei_Setup_Wizard::USER_DATA_OPTION, $value );
 		}
 
-		return $settings;
+		return true;
 	}
 
 	/**
