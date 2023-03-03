@@ -309,6 +309,7 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Student_Submits_Quiz::class => 'internal/emails/generators/class-student-submits-quiz.php',
 			\Sensei\Internal\Emails\Course_Completed::class => 'internal/emails/generators/class-course-completed.php',
 			\Sensei\Internal\Emails\New_Course_Assigned::class => 'internal/emails/generators/class-new-course-assigned.php',
+			\Sensei\Internal\Emails\Teacher_Message_Reply::class => 'internal/emails/generators/class-teacher-message-reply.php',
 		);
 	}
 
