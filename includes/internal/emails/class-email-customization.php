@@ -114,7 +114,7 @@ class Email_Customization {
 		$this->settings_menu        = new Settings_Menu();
 		$this->settings_tab         = new Email_Settings_Tab( $settings );
 		$this->blocks               = new Email_Blocks();
-		$this->email_sender         = new Email_Sender( $repository, $settings, $assets );
+		$this->email_sender         = new Email_Sender( $repository, $settings );
 		$this->email_generator      = new Email_Generator( $repository );
 		$this->list_table_actions   = new Email_List_Table_Actions();
 		$this->patterns             = new Email_Patterns();
@@ -128,14 +128,17 @@ class Email_Customization {
 	 *
 	 * @internal
 	 *
-	 * @param Sensei_Settings $settings Sensei_Settings instance.
-	 * @param Sensei_Assets   $assets Sensei_Assets instance.
+	 * @param Sensei_Settings|null $settings Sensei_Settings instance.
+	 * @param Sensei_Assets|null   $assets Sensei_Assets instance.
 	 *
 	 * @return self
 	 */
-	public static function instance( Sensei_Settings $settings, Sensei_Assets $assets ): self {
+	public static function instance( Sensei_Settings $settings = null, Sensei_Assets $assets = null ): self {
 		if ( ! self::$instance ) {
-			self::$instance = new self( $settings, $assets );
+			self::$instance = new self(
+				$settings ?? Sensei()->settings,
+				$assets ?? Sensei()->assets
+			);
 		}
 
 		return self::$instance;
