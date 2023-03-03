@@ -64,6 +64,7 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 			'student_quiz_submitted'   => [ 'sensei_user_quiz_submitted', 'teacher_quiz_submitted', \Sensei()->emails ],
 			'course_completed'         => [ 'sensei_course_status_updated', 'learner_completed_course', \Sensei()->emails ],
 			'teacher_course_assigned'  => [ 'sensei_course_new_teacher_assigned', 'teacher_course_assigned_notification', \Sensei()->teacher ],
+			'teacher_message_reply'    => [ 'sensei_private_message_reply', 'new_message_reply', \Sensei()->emails ],
 		];
 	}
 }
