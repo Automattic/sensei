@@ -1,9 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { compose } from '@wordpress/compose';
-import { withSelect, withDispatch } from '@wordpress/data';
-import { useState, useEffect, useRef, createPortal } from '@wordpress/element';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { useState, useEffect, createPortal } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { store as editorStore } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
@@ -11,38 +10,40 @@ import { __ } from '@wordpress/i18n';
 /**
  * The email preview button component.
  *
- * @param {Object}  props
- * @param {string}  props.previewLink    The preview link.
- * @param {number}  props.postId         The post ID.
- * @param {boolean} props.isSaveable     If the post is savable.
- * @param {boolean} props.isAutosaveable If the post can be autosaved.
- * @param {boolean} props.isLocked       If the post is locked.
- * @param {boolean} props.isDraft        If the post is a draft.
- * @param {Object}  props.autosave       The autosave action.
- * @param {Object}  props.savePost       The save post action.
- *
  * @return {Object|null} A portal element or null if the container is not available.
  */
-export const EmailPreviewButton = ( {
-	previewLink,
-	postId,
-	isSaveable,
-	isAutosaveable,
-	isLocked,
-	isDraft,
-	autosave,
-	savePost,
-} ) => {
+export const EmailPreviewButton = () => {
+	const {
+		postId,
+		isSaveable,
+		isAutosaveable,
+		isLocked,
+		isDraft,
+		previewLink,
+	} = useSelect( ( select ) => {
+		return {
+			postId: select( editorStore ).getCurrentPostId(),
+			isSaveable: select( editorStore ).isEditedPostSaveable(),
+			isAutosaveable: select( editorStore ).isEditedPostAutosaveable(),
+			isLocked: select( editorStore ).isPostLocked(),
+			isDraft:
+				[ 'draft', 'auto-draft' ].indexOf(
+					select( editorStore ).getEditedPostAttribute( 'status' )
+				) !== -1,
+			previewLink: window.sensei_email_preview.link,
+		};
+	} );
+	const { savePost, autosave } = useDispatch( editorStore );
 	const [ isSaving, setIsSaving ] = useState( false );
-	const containerEl = useRef( null );
+	const [ container, setContainer ] = useState( null );
 
 	useEffect( () => {
-		containerEl.current = document.querySelector(
-			'.block-editor-post-preview__dropdown'
+		setContainer(
+			document.querySelector( '.block-editor-post-preview__dropdown' )
 		);
-	} );
+	}, [] );
 
-	if ( ! containerEl.current ) {
+	if ( ! container ) {
 		return null;
 	}
 
@@ -82,26 +83,8 @@ export const EmailPreviewButton = ( {
 		>
 			{ __( 'Preview', 'sensei-lms' ) }
 		</Button>,
-		containerEl.current
+		container
 	);
 };
 
-export default compose( [
-	withSelect( ( select ) => {
-		return {
-			postId: select( editorStore ).getCurrentPostId(),
-			isSaveable: select( editorStore ).isEditedPostSaveable(),
-			isAutosaveable: select( editorStore ).isEditedPostAutosaveable(),
-			isLocked: select( editorStore ).isPostLocked(),
-			isDraft:
-				[ 'draft', 'auto-draft' ].indexOf(
-					select( editorStore ).getEditedPostAttribute( 'status' )
-				) !== -1,
-			previewLink: window.sensei_email_preview.link,
-		};
-	} ),
-	withDispatch( ( dispatch ) => ( {
-		autosave: dispatch( editorStore ).autosave,
-		savePost: dispatch( editorStore ).savePost,
-	} ) ),
-] )( EmailPreviewButton );
+export default EmailPreviewButton;

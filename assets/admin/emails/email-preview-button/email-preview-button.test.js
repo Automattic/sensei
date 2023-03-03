@@ -4,20 +4,28 @@
 import { fireEvent, render, screen, act } from '@testing-library/react';
 
 /**
+ * WordPress dependencies
+ */
+import { useSelect, useDispatch } from '@wordpress/data';
+
+/**
  * Internal dependencies
  */
 import { EmailPreviewButton } from './email-preview-button';
 
-const defaultProps = {
+jest.mock( '@wordpress/data' );
+
+const defaults = {
 	previewLink: 'https://example.com/',
 	postId: 1,
 	isSaveable: true,
 	isAutosaveable: true,
 	isLocked: false,
 	isDraft: false,
-	autosave: jest.fn(),
-	savePost: jest.fn(),
 };
+
+useSelect.mockReturnValue( defaults );
+useDispatch.mockReturnValue( { autosave: jest.fn(), savePost: jest.fn() } );
 
 describe( '<EmailPreviewButton />', () => {
 	const { getByText, queryByText } = screen;
@@ -27,7 +35,7 @@ describe( '<EmailPreviewButton />', () => {
 	} );
 
 	it( 'Should display the preview button', async () => {
-		render( <EmailPreviewButton { ...defaultProps } /> );
+		render( <EmailPreviewButton /> );
 
 		expect( getByText( 'Preview' ) ).toBeInTheDocument();
 	} );
@@ -35,7 +43,7 @@ describe( '<EmailPreviewButton />', () => {
 	it( "Shouldn't display the preview button when the container is missing", async () => {
 		document.body.innerHTML = '';
 
-		render( <EmailPreviewButton { ...defaultProps } /> );
+		render( <EmailPreviewButton /> );
 
 		expect( queryByText( 'Preview' ) ).toBeNull();
 	} );
@@ -43,24 +51,24 @@ describe( '<EmailPreviewButton />', () => {
 	it( 'Should open a new window when the button is clicked', async () => {
 		global.open = jest.fn();
 
-		render( <EmailPreviewButton { ...defaultProps } /> );
+		render( <EmailPreviewButton /> );
 
 		await act( async () => {
 			fireEvent.click( getByText( 'Preview' ) );
 		} );
 
 		expect( global.open ).toBeCalledWith(
-			defaultProps.previewLink,
-			'sensei-email-preview-' + defaultProps.postId
+			defaults.previewLink,
+			'sensei-email-preview-' + defaults.postId
 		);
 	} );
 
 	it( 'Should call autosave when the post is not a draft', async () => {
 		const autosaveMock = jest.fn();
 
-		render(
-			<EmailPreviewButton { ...defaultProps } autosave={ autosaveMock } />
-		);
+		useDispatch.mockReturnValue( { autosave: autosaveMock } );
+
+		render( <EmailPreviewButton /> );
 
 		await act( async () => {
 			fireEvent.click( getByText( 'Preview' ) );
@@ -72,13 +80,10 @@ describe( '<EmailPreviewButton />', () => {
 	it( 'Should call savePost when the post is a draft', async () => {
 		const savePostMock = jest.fn();
 
-		render(
-			<EmailPreviewButton
-				{ ...defaultProps }
-				isDraft={ true }
-				savePost={ savePostMock }
-			/>
-		);
+		useSelect.mockReturnValue( { ...defaults, isDraft: true } );
+		useDispatch.mockReturnValue( { savePost: savePostMock } );
+
+		render( <EmailPreviewButton /> );
 
 		await act( async () => {
 			fireEvent.click( getByText( 'Preview' ) );
@@ -90,13 +95,10 @@ describe( '<EmailPreviewButton />', () => {
 	it( 'Should not save when not autosaveable', async () => {
 		const autosaveMock = jest.fn();
 
-		render(
-			<EmailPreviewButton
-				{ ...defaultProps }
-				isAutosaveable={ false }
-				autosave={ autosaveMock }
-			/>
-		);
+		useSelect.mockReturnValue( { ...defaults, isAutosaveable: false } );
+		useDispatch.mockReturnValue( { autosave: autosaveMock } );
+
+		render( <EmailPreviewButton /> );
 
 		await act( async () => {
 			fireEvent.click( getByText( 'Preview' ) );
@@ -106,9 +108,9 @@ describe( '<EmailPreviewButton />', () => {
 	} );
 
 	it( 'Should be disabled if not saveable', async () => {
-		render(
-			<EmailPreviewButton { ...defaultProps } isSaveable={ false } />
-		);
+		useSelect.mockReturnValue( { ...defaults, isSaveable: false } );
+
+		render( <EmailPreviewButton /> );
 
 		expect( getByText( 'Preview' ) ).toBeDisabled();
 	} );
