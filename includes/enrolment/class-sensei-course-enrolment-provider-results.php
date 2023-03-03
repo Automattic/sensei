@@ -68,6 +68,7 @@ final class Sensei_Course_Enrolment_Provider_Results implements JsonSerializable
 		return new self( $provider_results, $version, $time );
 	}
 
+	#[\ReturnTypeWillChange]
 	/**
 	 * Return object that can be serialized by `json_encode()`.
 	 *
