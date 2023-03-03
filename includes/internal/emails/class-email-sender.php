@@ -82,9 +82,6 @@ class Email_Sender {
 			return;
 		}
 
-		global $post;
-		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
-
 		// In case patterns are not registered.
 		Email_Customization::instance( $this->settings )->patterns->register_email_block_patterns();
 
@@ -119,14 +116,14 @@ class Email_Sender {
 	 *
 	 * @internal
 	 *
-	 * @param WP_Post $post The email post.
+	 * @param WP_Post $email_post The email post.
 	 * @param array   $placeholders The placeholders.
 	 *
 	 * @return string
 	 */
-	public function get_email_subject( WP_Post $post, array $placeholders = [] ): string {
+	public function get_email_subject( WP_Post $email_post, array $placeholders = [] ): string {
 		return $this->replace_placeholders(
-			wp_strip_all_tags( $post->post_title ),
+			wp_strip_all_tags( $email_post->post_title ),
 			$placeholders
 		);
 	}
@@ -136,16 +133,23 @@ class Email_Sender {
 	 *
 	 * @internal
 	 *
-	 * @param WP_Post $post The email post.
+	 * @param WP_Post $email_post The email post.
 	 * @param array   $placeholders The placeholders.
 	 *
 	 * @return string
 	 */
-	public function get_email_body( WP_Post $post, array $placeholders = [] ): string {
+	public function get_email_body( WP_Post $email_post, array $placeholders = [] ): string {
+		global $post;
+
+		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
+		setup_postdata( $post );
+
 		$post_content = $this->replace_placeholders(
-			do_blocks( $post->post_content ),
+			do_blocks( $email_post->post_content ),
 			$placeholders
 		);
+
+		wp_reset_postdata();
 
 		$templated_output = $this->get_templated_post_content( $post_content );
 
