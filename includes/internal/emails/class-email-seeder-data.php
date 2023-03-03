@@ -44,9 +44,9 @@ class Email_Seeder_Data {
 		$this->emails = [
 			'quiz_graded'              => [
 				'types'       => [ 'student' ],
-				'subject'     => __( 'Quiz Qraded - [lesson:name]', 'sensei-lms' ),
+				'subject'     => __( 'Quiz Graded - [lesson:name]', 'sensei-lms' ),
 				'description' => __( 'Quiz Graded', 'sensei-lms' ),
-				'content'     => '<!-- wp:pattern {"slug":"sensei-emails/footer"} /-->',
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/quiz-graded"} /-->',
 			],
 			'course_completed'         => [
 				'types'       => [ 'student' ],
