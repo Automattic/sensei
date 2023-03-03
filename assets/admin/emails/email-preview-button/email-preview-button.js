@@ -3,7 +3,7 @@
  */
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
-import { useState, createPortal } from '@wordpress/element';
+import { useState, useEffect, useRef, createPortal } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { store as editorStore } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
@@ -34,10 +34,15 @@ export const EmailPreviewButton = ( {
 	savePost,
 } ) => {
 	const [ isSaving, setIsSaving ] = useState( false );
-	const container = document.querySelector(
-		'.block-editor-post-preview__dropdown'
-	);
-	if ( ! container ) {
+	const containerEl = useRef( null );
+
+	useEffect( () => {
+		containerEl.current = document.querySelector(
+			'.block-editor-post-preview__dropdown'
+		);
+	} );
+
+	if ( ! containerEl.current ) {
 		return null;
 	}
 
@@ -77,7 +82,7 @@ export const EmailPreviewButton = ( {
 		>
 			{ __( 'Preview', 'sensei-lms' ) }
 		</Button>,
-		container
+		containerEl.current
 	);
 };
 
