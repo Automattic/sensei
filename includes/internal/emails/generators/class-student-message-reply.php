@@ -75,7 +75,6 @@ class Student_Message_Reply extends Email_Generators_Abstract {
 
 		$recipient = stripslashes( get_userdata( $recipient_id )->user_email );
 
-
 		$this->send_email_action(
 			[
 				$recipient => [
