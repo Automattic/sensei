@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { fireEvent, render, screen, act } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 /**
  * WordPress dependencies
@@ -54,7 +55,7 @@ describe( '<EmailPreviewButton />', () => {
 		render( <EmailPreviewButton /> );
 
 		await act( async () => {
-			fireEvent.click( getByText( 'Preview' ) );
+			userEvent.click( getByText( 'Preview' ) );
 		} );
 
 		expect( global.open ).toBeCalledWith(
@@ -71,7 +72,7 @@ describe( '<EmailPreviewButton />', () => {
 		render( <EmailPreviewButton /> );
 
 		await act( async () => {
-			fireEvent.click( getByText( 'Preview' ) );
+			userEvent.click( getByText( 'Preview' ) );
 		} );
 
 		expect( autosaveMock ).toBeCalled();
@@ -86,7 +87,7 @@ describe( '<EmailPreviewButton />', () => {
 		render( <EmailPreviewButton /> );
 
 		await act( async () => {
-			fireEvent.click( getByText( 'Preview' ) );
+			userEvent.click( getByText( 'Preview' ) );
 		} );
 
 		expect( savePostMock ).toBeCalled();
@@ -101,7 +102,7 @@ describe( '<EmailPreviewButton />', () => {
 		render( <EmailPreviewButton /> );
 
 		await act( async () => {
-			fireEvent.click( getByText( 'Preview' ) );
+			userEvent.click( getByText( 'Preview' ) );
 		} );
 
 		expect( autosaveMock ).not.toBeCalled();
