@@ -5,6 +5,7 @@ namespace SenseiTest\Internal\Emails;
 use Sensei\Internal\Emails\Email_Generator;
 use Sensei\Internal\Emails\Email_Generators_Abstract;
 use Sensei\Internal\Emails\Email_Repository;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei_Factory;
 
 /**
@@ -13,14 +14,6 @@ use Sensei_Factory;
  * @covers \Sensei\Internal\Emails\Email_Generator
  */
 class Email_Generator_Test extends \WP_UnitTestCase {
-
-	/**
-	 * Factory for creating test data.
-	 *
-	 * @var Sensei_Factory
-	 */
-	protected $factory;
-
 	/**
 	 * Email repository instance.
 	 *
@@ -28,16 +21,23 @@ class Email_Generator_Test extends \WP_UnitTestCase {
 	 */
 	protected $email_repository;
 
+	/**
+	 * Lesson progress repository mock.
+	 *
+	 * @var Lesson_Progress_Repository_Interface
+	 */
+	private $lesson_progress_repository;
+
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->factory          = new Sensei_Factory();
-		$this->email_repository = new Email_Repository();
+		$this->email_repository           = $this->createMock( Email_Repository::class );
+		$this->lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 	}
 
 	public function testInit_WhenCalled_AddsHooksForInitializingIndividualEmails() {
 		/* Arrange. */
-		$generator = new Email_Generator( $this->email_repository );
+		$generator = new Email_Generator( $this->email_repository, $this->lesson_progress_repository );
 
 		/* Act. */
 		$generator->init();
@@ -48,7 +48,7 @@ class Email_Generator_Test extends \WP_UnitTestCase {
 
 	public function testEmailGenerator_WhenInitHookCallsEmailGeneratorFunction_InitializesTheActiveEmails() {
 		/* Arrange. */
-		$generator = new Email_Generator( $this->email_repository );
+		$generator = new Email_Generator( $this->email_repository, $this->lesson_progress_repository );
 		$generator->init();
 
 		$test_generator1 = $this->getMockBuilder( Email_Generators_Abstract::class )
