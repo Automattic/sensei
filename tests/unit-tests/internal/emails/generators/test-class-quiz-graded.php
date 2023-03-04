@@ -3,7 +3,7 @@
 namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Repository;
-use Sensei\Internal\Emails\Quiz_Graded;
+use Sensei\Internal\Emails\Generators\Quiz_Graded;
 use Sensei_Factory;
 
 /**

@@ -9,6 +9,7 @@ namespace Sensei\Internal\Emails;
 
 use Sensei\Internal\Emails\Generators\Course_Completed;
 use Sensei\Internal\Emails\Generators\New_Course_Assigned;
+use Sensei\Internal\Emails\Generators\Quiz_Graded;
 use Sensei\Internal\Emails\Generators\Student_Completes_Course;
 use Sensei\Internal\Emails\Generators\Student_Completes_Lesson;
 use Sensei\Internal\Emails\Generators\Student_Starts_Course;
@@ -51,7 +52,7 @@ class Email_Generator {
 	 *
 	 * @internal
 	 *
-	 * @param Email_Repository $email_repository Email repository instance.
+	 * @param Email_Repository                     $email_repository Email repository instance.
 	 * @param Lesson_Progress_Repository_Interface $lesson_progress_repository Lesson progress repository.
 	 */
 	public function __construct( Email_Repository $email_repository, Lesson_Progress_Repository_Interface $lesson_progress_repository ) {
