@@ -56,7 +56,7 @@ class Email_Sender {
 	 *
 	 * @param Email_Repository $repository Email repository instance.
 	 * @param Sensei_Settings  $settings Sensei settings instance.
-	 * @param Email_Patterns   $patterns Email patterns instance.
+	 * @param Email_Patterns   $email_patterns Email patterns instance.
 	 */
 	public function __construct( Email_Repository $repository, Sensei_Settings $settings, Email_Patterns $email_patterns ) {
 		$this->repository     = $repository;
