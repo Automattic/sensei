@@ -3,10 +3,9 @@
 namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Generator;
-use Sensei\Internal\Emails\Email_Generators_Abstract;
 use Sensei\Internal\Emails\Email_Repository;
+use Sensei\Internal\Emails\Generators\Email_Generators_Abstract;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
-use Sensei_Factory;
 
 /**
  * Tests for Sensei\Internal\Emails\Email_Generator class.
