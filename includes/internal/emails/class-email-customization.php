@@ -107,7 +107,7 @@ class Email_Customization {
 		$this->settings_menu      = new Settings_Menu();
 		$this->settings_tab       = new Email_Settings_Tab( $settings );
 		$this->blocks             = new Email_Blocks();
-		$this->email_sender       = new Email_Sender( $repository );
+		$this->email_sender       = new Email_Sender( $repository, $settings );
 		$this->email_generator    = new Email_Generator( $repository, $lesson_progress_repository );
 		$this->list_table_actions = new Email_List_Table_Actions();
 		$this->patterns           = new Email_Patterns();
