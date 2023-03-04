@@ -85,9 +85,6 @@ abstract class Email_Generators_Abstract {
 	 * @since $$next-version$$
 	 */
 	protected function send_email_action( $replacements ) {
-error_log('send_email_action()');
-error_log(var_export($replacements, true));
-error_log(var_export(static::IDENTIFIER_NAME, true));
 		/**
 		 * Send HTML email.
 		 *
