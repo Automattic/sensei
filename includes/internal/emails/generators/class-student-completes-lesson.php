@@ -41,7 +41,8 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	/**
 	 * Email_Generators_Abstract constructor.
 	 *
-	 * @param Email_Repository $repository Email_Repository instance.
+	 * @param Email_Repository                     $repository Email_Repository instance.
+	 * @param Lesson_Progress_Repository_Interface $lesson_progress_repository Lesson progress repository.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -51,7 +52,7 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 		Email_Repository $repository,
 		Lesson_Progress_Repository_Interface $lesson_progress_repository
 	) {
-		$this->repository = $repository;
+		$this->repository                 = $repository;
 		$this->lesson_progress_repository = $lesson_progress_repository;
 	}
 
@@ -72,13 +73,12 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	 *
 	 * @access private
 	 *
-	 * @param string $status     The status.
-	 * @param int    $student_id The learner ID.
-	 * @param int    $course_id  The course ID.
+	 * @param int $student_id The student ID.
+	 * @param int $lesson_id  The lesson ID.
 	 */
 	public function student_completed_lesson_mail_to_teacher( $student_id, $lesson_id ) {
 		$lesson_progress = $this->lesson_progress_repository->get( $lesson_id, $student_id );
-		if ( ! $lesson_progress || ! in_array( $lesson_progress->get_status(), [ Lesson_Progress::STATUS_COMPLETE, Quiz_Progress::STATUS_PASSED ], true) ) {
+		if ( ! $lesson_progress || ! in_array( $lesson_progress->get_status(), [ Lesson_Progress::STATUS_COMPLETE, Quiz_Progress::STATUS_PASSED ], true ) ) {
 			return;
 		}
 
@@ -107,7 +107,7 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 					'course:id'           => (int) $course_id,
 					'course:name'         => get_the_title( $course_id ),
 					'lesson:id'           => (int) $lesson_id,
-					'lesson:name'		  => get_the_title( $lesson_id ),
+					'lesson:name'         => get_the_title( $lesson_id ),
 					'manage:students'     => $manage_url,
 				],
 			]

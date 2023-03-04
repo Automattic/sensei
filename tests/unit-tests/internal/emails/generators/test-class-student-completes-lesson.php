@@ -18,7 +18,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$email_repository = $this->createMock( Email_Repository::class );
 		$email_repository->method( 'get' )->with( 'student_completes_lesson' )->willReturn( null );
-		
+
 		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 
 		$generator = new Student_Completes_Lesson( $email_repository, $lesson_progress_repository );
@@ -36,7 +36,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 
 		$email_repository = $this->createMock( Email_Repository::class );
 		$email_repository->method( 'get' )->with( 'student_completes_lesson' )->willReturn( $email );
-		
+
 		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 
 		$generator = new Student_Completes_Lesson( $email_repository, $lesson_progress_repository );
@@ -54,7 +54,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 
 		$email_repository = $this->createMock( Email_Repository::class );
 		$email_repository->method( 'get' )->with( 'student_completes_lesson' )->willReturn( $email );
-		
+
 		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 
 		$generator = new Student_Completes_Lesson( $email_repository, $lesson_progress_repository );
@@ -65,12 +65,12 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertTrue( $is_active );
 	}
-	
+
 	public function testInit_WhenCalled_AddsHooksForInitializingIndividualEmails() {
 		/* Arrange. */
-		$email_repository = $this->createMock( Email_Repository::class );
+		$email_repository           = $this->createMock( Email_Repository::class );
 		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
-		$generator = new Student_Completes_Lesson( $email_repository, $lesson_progress_repository );
+		$generator                  = new Student_Completes_Lesson( $email_repository, $lesson_progress_repository );
 
 		/* Act. */
 		$generator->init();
@@ -82,12 +82,12 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 
 	public function testStudentCompletedLessonMailToTeacher_LessonProgressNotFound_DoesntCallSendEmailFilter() {
 		/* Arrange. */
-		$email_repository = $this->createMock( Email_Repository::class );
+		$email_repository           = $this->createMock( Email_Repository::class );
 		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
-		$generator = new Student_Completes_Lesson( $email_repository, $lesson_progress_repository );
+		$generator                  = new Student_Completes_Lesson( $email_repository, $lesson_progress_repository );
 
 		$filter_called = false;
-		$filter = function() use ( &$filter_called ) {
+		$filter        = function() use ( &$filter_called ) {
 			$filter_called = true;
 		};
 		add_filter( 'sensei_email_send', $filter, 10, 2 );
@@ -99,7 +99,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		self::assertFalse( $filter_called );
 
 		/* Cleanup. */
-		remove_filter( 'sensei_email_send', $filter, 10);
+		remove_filter( 'sensei_email_send', $filter, 10 );
 	}
 
 	public function testStudentCompletedLessonMailToTeacher_LessonNotCompleted_DoesntCallSendEmailFilter() {
@@ -115,7 +115,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		$generator = new Student_Completes_Lesson( $email_repository, $lesson_progress_repository );
 
 		$filter_called = false;
-		$filter = function() use ( &$filter_called ) {
+		$filter        = function() use ( &$filter_called ) {
 			$filter_called = true;
 		};
 		add_filter( 'sensei_email_send', $filter, 10, 2 );
@@ -127,32 +127,32 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		self::assertFalse( $filter_called );
 
 		/* Cleanup. */
-		remove_filter( 'sensei_email_send', $filter, 10);
+		remove_filter( 'sensei_email_send', $filter, 10 );
 	}
 
 	public function testStudentCompletedLessonMailToTeacher_LessonCompleted_CallsSendEmailFilterWithMathchingArguments() {
 		/* Arrange. */
-		$factory = new \Sensei_Factory();
-		$student_id = $factory->user->create(
+		$factory          = new \Sensei_Factory();
+		$student_id       = $factory->user->create(
 			[
 				'display_name' => 'Test Student',
 			]
 		);
-		$teacher_id = $factory->user->create(
+		$teacher_id       = $factory->user->create(
 			[
 				'user_email' => 'test@a.com',
 			]
 		);
-		$course_id  = $factory->course->create(
+		$course_id        = $factory->course->create(
 			[
-				'post_title'  => 'Test Course',
+				'post_title' => 'Test Course',
 			]
 		);
-		$lesson_id = $factory->lesson->create(
+		$lesson_id        = $factory->lesson->create(
 			[
-				'post_title' => 'Test Lesson',
+				'post_title'  => 'Test Lesson',
 				'post_author' => $teacher_id,
-				'meta_input' => [
+				'meta_input'  => [
 					'_lesson_course' => $course_id,
 				],
 			]
@@ -168,9 +168,9 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		$generator = new Student_Completes_Lesson( $email_repository, $lesson_progress_repository );
 
 		$actual_data = [];
-		$filter = function( $email, $options ) use ( &$actual_data ) {
+		$filter      = function( $email, $options ) use ( &$actual_data ) {
 			$actual_data = [
-				'email' => $email,
+				'email'   => $email,
 				'options' => $options,
 			];
 		};
@@ -181,7 +181,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = [
-			'email' => 'student_completes_lesson',
+			'email'   => 'student_completes_lesson',
 			'options' => [
 				'test@a.com' => [
 					'student:id'          => $student_id,
@@ -189,7 +189,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 					'course:id'           => $course_id,
 					'course:name'         => 'Test Course',
 					'lesson:id'           => $lesson_id,
-					'lesson:name'		  => 'Test Lesson',
+					'lesson:name'         => 'Test Lesson',
 					'manage:students'     => esc_url(
 						admin_url( "admin.php?page=sensei_learners&course_id={$course_id}&lesson_id={$lesson_id}&view=learners" )
 					),
@@ -199,7 +199,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		self::assertSame( $expected, $actual_data );
 
 		/* Cleanup. */
-		remove_filter( 'sensei_email_send', $filter, 10);
+		remove_filter( 'sensei_email_send', $filter, 10 );
 		$factory->tearDown();
 	}
 }

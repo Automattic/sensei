@@ -88,7 +88,7 @@ class Email_Patterns {
 					'categories' => [ 'sensei-emails' ],
 					'content'    => $this->get_pattern_content_from_file( 'student-submits-quiz' ),
 				],
-			'student-completes-lesson'   =>
+			'student-completes-lesson' =>
 				[
 					'title'      => __( 'Email sent to teacher when a student completes a lesson', 'sensei-lms' ),
 					'categories' => [ 'sensei-emails' ],

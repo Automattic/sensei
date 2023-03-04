@@ -98,7 +98,8 @@ class Email_Customization {
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
 	 *
-	 * @param \Sensei_Settings $settings Sensei_Settings instance.
+	 * @param \Sensei_Settings                     $settings Sensei_Settings instance.
+	 * @param Lesson_Progress_Repository_Interface $lesson_progress_repository Lesson_Progress_Repository_Interface instance.
 	 */
 	private function __construct( \Sensei_Settings $settings, Lesson_Progress_Repository_Interface $lesson_progress_repository ) {
 		$repository               = new Email_Repository();
@@ -120,7 +121,8 @@ class Email_Customization {
 	 *
 	 * @internal
 	 *
-	 * @param \Sensei_Settings $settings Sensei_Settings instance.
+	 * @param \Sensei_Settings                     $settings Sensei_Settings instance.
+	 * @param Lesson_Progress_Repository_Interface $lesson_progress_repository Lesson_Progress_Repository_Interface instance.
 	 * @return self
 	 */
 	public static function instance(

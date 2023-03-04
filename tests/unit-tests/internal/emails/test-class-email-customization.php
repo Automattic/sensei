@@ -12,13 +12,12 @@ use Sensei_Settings;
  * @covers \Sensei\Internal\Emails\Email_Customization
  */
 class Email_Customization_Test extends \WP_UnitTestCase {
-	protected function setUp(): void
-	{
+	protected function setUp(): void {
 		add_action( 'sensei_course_status_updated', [ \Sensei()->emails, 'teacher_completed_course' ] );
 		add_action( 'sensei_user_course_start', [ \Sensei()->emails, 'teacher_started_course' ] );
 		add_action( 'sensei_user_lesson_end', [ \Sensei()->emails, 'teacher_completed_lesson' ] );
 		add_action( 'sensei_user_quiz_submitted', [ \Sensei()->emails, 'teacher_quiz_submitted' ] );
-		add_action(  'sensei_course_status_updated', [ \Sensei()->emails, 'learner_completed_course' ] );
+		add_action( 'sensei_course_status_updated', [ \Sensei()->emails, 'learner_completed_course' ] );
 		add_action( 'sensei_course_new_teacher_assigned', [ Sensei()->teacher, 'teacher_course_assigned_notification' ] );
 	}
 
