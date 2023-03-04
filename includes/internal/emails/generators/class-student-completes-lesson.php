@@ -5,8 +5,9 @@
  * @package sensei
  */
 
-namespace Sensei\Internal\Emails;
+namespace Sensei\Internal\Emails\Generators;
 
+use Sensei\Internal\Emails\Email_Repository;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
@@ -69,15 +70,13 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	/**
 	 * Send email to teacher when a student completes a lesson.
 	 *
+	 * @access private
+	 *
 	 * @param string $status     The status.
 	 * @param int    $student_id The learner ID.
 	 * @param int    $course_id  The course ID.
-	 *
-	 * @access private
 	 */
-	private function student_completed_lesson_mail_to_teacher( $student_id, $lesson_id ) {
-		$email_name = 'student_completes_lesson';
-
+	public function student_completed_lesson_mail_to_teacher( $student_id, $lesson_id ) {
 		$lesson_progress = $this->lesson_progress_repository->get( $lesson_id, $student_id );
 		if ( ! $lesson_progress || ! in_array( $lesson_progress->get_status(), [ Lesson_Progress::STATUS_COMPLETE, Quiz_Progress::STATUS_PASSED ], true) ) {
 			return;
@@ -101,14 +100,13 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 		);
 
 		$this->send_email_action(
-			$email_name,
 			[
 				$recipient => [
-					'student:id'          => $student_id,
+					'student:id'          => (int) $student_id,
 					'student:displayname' => $student->display_name,
-					'course:id'           => $course_id,
+					'course:id'           => (int) $course_id,
 					'course:name'         => get_the_title( $course_id ),
-					'lesson:id'           => $lesson_id,
+					'lesson:id'           => (int) $lesson_id,
 					'lesson:name'		  => get_the_title( $lesson_id ),
 					'manage:students'     => $manage_url,
 				],

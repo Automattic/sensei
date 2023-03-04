@@ -94,20 +94,13 @@ class Email_Customization {
 	public $patterns;
 
 	/**
-	 * Legacy email instances.
-	 *
-	 * @var \Sensei_Emails
-	 */
-	private $legacy_emails;
-
-	/**
 	 * Email_Customization constructor.
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
 	 *
 	 * @param \Sensei_Settings $settings Sensei_Settings instance.
 	 */
-	private function __construct( \Sensei_Settings $settings, \Sensei_Emails $legacy_emails, Lesson_Progress_Repository_Interface $lesson_progress_repository ) {
+	private function __construct( \Sensei_Settings $settings, Lesson_Progress_Repository_Interface $lesson_progress_repository ) {
 		$repository               = new Email_Repository();
 		$this->post_type          = new Email_Post_Type();
 		$this->settings_menu      = new Settings_Menu();
@@ -117,7 +110,6 @@ class Email_Customization {
 		$this->email_generator    = new Email_Generator( $repository, $lesson_progress_repository );
 		$this->list_table_actions = new Email_List_Table_Actions();
 		$this->patterns           = new Email_Patterns();
-		$this->legacy_emails      = $legacy_emails;
 
 		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $repository );
 		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
@@ -133,11 +125,10 @@ class Email_Customization {
 	 */
 	public static function instance(
 		Sensei_Settings $settings,
-		\Sensei_Emails $legacy_emails,
 		Lesson_Progress_Repository_Interface $lesson_progress_repository
 	): self {
 		if ( ! self::$instance ) {
-			self::$instance = new self( $settings, $legacy_emails, $lesson_progress_repository );
+			self::$instance = new self( $settings, $lesson_progress_repository );
 		}
 
 		return self::$instance;
@@ -168,12 +159,12 @@ class Email_Customization {
 	 * @access private
 	 */
 	public function disable_legacy_emails() {
-		remove_action( 'sensei_course_status_updated', [ $this->legacy_emails, 'teacher_completed_course' ] );
-		remove_action( 'sensei_user_course_start', [ $this->legacy_emails, 'teacher_started_course' ] );
-		remove_action( 'sensei_user_quiz_submitted', [ $this->legacy_emails, 'teacher_quiz_submitted' ] );
-		remove_action( 'sensei_course_status_updated', [ $this->legacy_emails, 'learner_completed_course' ] );
+		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'teacher_completed_course' ] );
+		remove_action( 'sensei_user_course_start', [ Sensei()->emails, 'teacher_started_course' ] );
+		remove_action( 'sensei_user_quiz_submitted', [ Sensei()->emails, 'teacher_quiz_submitted' ] );
+		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'learner_completed_course' ] );
 		remove_action( 'sensei_course_new_teacher_assigned', [ \Sensei()->teacher, 'teacher_course_assigned_notification' ] );
-		remove_action( 'sensei_user_lesson_end', [ $this->legacy_emails, 'teacher_completed_lesson' ] );
+		remove_action( 'sensei_user_lesson_end', [ Sensei()->emails, 'teacher_completed_lesson' ] );
 		remove_action( 'sensei_user_quiz_grade', [ \Sensei()->emails, 'learner_graded_quiz' ] );
 	}
 }

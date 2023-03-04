@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Course_Completed class.
+ * File containing the Lesson_Completed class.
  *
  * @package sensei
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Course_Completed
+ * Class Lesson_Completed
  *
  * @internal
  *
@@ -24,7 +24,7 @@ class Course_Completed extends Email_Generators_Abstract {
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER_NAME = 'course_completed';
+	const IDENTIFIER_NAME = 'lesson_completed';
 
 	/**
 	 * Initialize the email hooks.

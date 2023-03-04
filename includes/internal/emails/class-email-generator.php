@@ -7,6 +7,12 @@
 
 namespace Sensei\Internal\Emails;
 
+use Sensei\Internal\Emails\Generators\Course_Completed;
+use Sensei\Internal\Emails\Generators\New_Course_Assigned;
+use Sensei\Internal\Emails\Generators\Student_Completes_Course;
+use Sensei\Internal\Emails\Generators\Student_Completes_Lesson;
+use Sensei\Internal\Emails\Generators\Student_Starts_Course;
+use Sensei\Internal\Emails\Generators\Student_Submits_Quiz;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
