@@ -3,13 +3,13 @@
 namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Repository;
-use Sensei\Internal\Emails\Teacher_Message_Reply;
+use Sensei\Internal\Emails\Generators\Teacher_Message_Reply;
 use Sensei_Factory;
 
 /**
  * Tests for Sensei\Internal\Emails\Teacher_Message_Reply class.
  *
- * @covers \Sensei\Internal\Emails\Teacher_Message_Reply
+ * @covers \Sensei\Internal\Emails\Generators\Teacher_Message_Reply
  */
 class Teacher_Message_Reply_Test extends \WP_UnitTestCase {
 
