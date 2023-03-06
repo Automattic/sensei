@@ -160,5 +160,6 @@ class Email_Customization {
 		remove_action( 'sensei_course_status_updated', [ \Sensei()->emails, 'learner_completed_course' ] );
 		remove_action( 'sensei_course_new_teacher_assigned', [ \Sensei()->teacher, 'teacher_course_assigned_notification' ] );
 		remove_action( 'sensei_private_message_reply', [ \Sensei()->emails, 'new_message_reply' ] );
+		remove_action( 'sensei_new_private_message', [ \Sensei()->emails, 'teacher_new_message' ] );
 	}
 }
