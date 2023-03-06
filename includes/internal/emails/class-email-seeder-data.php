@@ -92,9 +92,9 @@ class Email_Seeder_Data {
 			],
 			'student_message_reply'    => [
 				'types'       => [ 'student' ],
-				'subject'     => __( '[author:displayname] - [subject:displaysubject]', 'sensei-lms' ),
+				'subject'     => __( '[teacher:displayname] - [subject:displaysubject]', 'sensei-lms' ),
 				'description' => __( 'Message Reply Received', 'sensei-lms' ),
-				'content'     => '<!-- wp:pattern {"slug":"sensei-emails/footer"} /-->',
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-message-reply"} /-->',
 			],
 			'teacher_message_reply'    => [
 				'types'       => [ 'teacher' ],
