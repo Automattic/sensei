@@ -168,5 +168,6 @@ class Email_Customization {
 		remove_action( 'sensei_course_new_teacher_assigned', [ \Sensei()->teacher, 'teacher_course_assigned_notification' ] );
 		remove_action( 'sensei_user_lesson_end', [ Sensei()->emails, 'teacher_completed_lesson' ] );
 		remove_action( 'sensei_user_quiz_grade', [ \Sensei()->emails, 'learner_graded_quiz' ] );
+		remove_action( 'sensei_private_message_reply', [ \Sensei()->emails, 'new_message_reply' ] );
 	}
 }

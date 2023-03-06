@@ -90,11 +90,17 @@ class Email_Seeder_Data {
 				'description' => __( 'Course Assigned', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/new-course-assigned"} /-->',
 			],
-			'new_message_reply'        => [
-				'types'       => [ 'student', 'teacher' ],
+			'student_message_reply'    => [
+				'types'       => [ 'student' ],
 				'subject'     => __( '[author:displayname] - [subject:displaysubject]', 'sensei-lms' ),
 				'description' => __( 'Message Reply Received', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-emails/footer"} /-->',
+			],
+			'teacher_message_reply'    => [
+				'types'       => [ 'teacher' ],
+				'subject'     => __( '[student:displayname] - [subject:displaysubject]', 'sensei-lms' ),
+				'description' => __( 'Message Reply Received', 'sensei-lms' ),
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/teacher-message-reply"} /-->',
 			],
 			'content_drip'             => [
 				'types'       => [ 'student' ],

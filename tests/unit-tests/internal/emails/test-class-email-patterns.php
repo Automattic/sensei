@@ -40,6 +40,7 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 			'sensei-lms/course-completed',
 			'sensei-lms/new-course-assigned',
 			'sensei-lms/quiz-graded',
+			'sensei-lms/teacher-message-reply',
 		];
 
 		/* Act. */
@@ -67,6 +68,7 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 			'sensei-lms/course-completed',
 			'sensei-lms/new-course-assigned',
 			'sensei-lms/quiz-graded',
+			'sensei-lms/teacher-message-reply',
 		];
 
 		/* Act. */
