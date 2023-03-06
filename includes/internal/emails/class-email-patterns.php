@@ -15,7 +15,6 @@ namespace Sensei\Internal\Emails;
  * @since $$next-version$$
  */
 class Email_Patterns {
-
 	/**
 	 * Email_Patterns constructor.
 	 *
@@ -89,6 +88,12 @@ class Email_Patterns {
 					'categories' => [ 'sensei-emails' ],
 					'content'    => $this->get_pattern_content_from_file( 'student-submits-quiz' ),
 				],
+			'student-completes-lesson' =>
+				[
+					'title'      => __( 'Email sent to teacher when a student completes a lesson', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'student-completes-lesson' ),
+				],
 			'course-completed'         =>
 				[
 					'title'      => __( 'Email sent to the student after completing a course', 'sensei-lms' ),
@@ -100,6 +105,12 @@ class Email_Patterns {
 					'title'      => __( 'Email sent to the teacher if a new course is assigned', 'sensei-lms' ),
 					'categories' => [ 'sensei-emails' ],
 					'content'    => $this->get_pattern_content_from_file( 'new-course-assigned' ),
+				],
+			'quiz-graded'              =>
+				[
+					'title'      => __( 'Email sent to the student when a quiz is graded', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'quiz-graded' ),
 				],
 			'teacher-message-reply'    =>
 				[
