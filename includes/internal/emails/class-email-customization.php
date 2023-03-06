@@ -94,6 +94,13 @@ class Email_Customization {
 	public $patterns;
 
 	/**
+	 * Email_Preview instance.
+	 *
+	 * @var Email_Preview
+	 */
+	private $preview;
+
+	/**
 	 * Email_Customization constructor.
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
@@ -114,6 +121,7 @@ class Email_Customization {
 
 		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $repository );
 		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
+		$this->preview              = new Email_Preview( $this->email_sender );
 	}
 
 	/**
@@ -151,6 +159,7 @@ class Email_Customization {
 		$this->list_table_actions->init();
 		$this->recreate_emails_tool->init();
 		$this->patterns->init();
+		$this->preview->init();
 
 		add_action( 'init', [ $this, 'disable_legacy_emails' ] );
 	}

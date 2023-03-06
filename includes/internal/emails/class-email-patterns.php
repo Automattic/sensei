@@ -29,6 +29,7 @@ class Email_Patterns {
 	 */
 	public function init() {
 		add_action( 'current_screen', [ $this, 'register_email_editor_block_patterns' ] );
+		add_action( 'init', [ $this, 'register_email_preview_block_patterns' ] );
 		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
 	}
 
@@ -45,7 +46,7 @@ class Email_Patterns {
 	}
 
 	/**
-	 * Register block patterns.
+	 * Register block patterns for the email edit screen.
 	 *
 	 * @access private
 	 *
@@ -57,6 +58,20 @@ class Email_Patterns {
 		$post_type = $current_screen->post_type;
 
 		if ( 'sensei_email' === $post_type ) {
+			$this->register_email_block_patterns();
+		}
+	}
+
+	/**
+	 * Register block patterns when previewing the email.
+	 *
+	 * @access private
+	 *
+	 * @since $$next-version$$
+	 */
+	public function register_email_preview_block_patterns() {
+		// phpcs:ignore WordPress.Security.NonceVerification -- Used for comparison.
+		if ( ! empty( $_GET['sensei_email_preview_id'] ) ) {
 			$this->register_email_block_patterns();
 		}
 	}
