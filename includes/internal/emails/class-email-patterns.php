@@ -15,7 +15,6 @@ namespace Sensei\Internal\Emails;
  * @since $$next-version$$
  */
 class Email_Patterns {
-
 	/**
 	 * Email_Patterns constructor.
 	 *
@@ -104,6 +103,12 @@ class Email_Patterns {
 					'categories' => [ 'sensei-emails' ],
 					'content'    => $this->get_pattern_content_from_file( 'student-submits-quiz' ),
 				],
+			'student-completes-lesson' =>
+				[
+					'title'      => __( 'Email sent to teacher when a student completes a lesson', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'student-completes-lesson' ),
+				],
 			'course-completed'         =>
 				[
 					'title'      => __( 'Email sent to the student after completing a course', 'sensei-lms' ),
@@ -121,6 +126,24 @@ class Email_Patterns {
 					'title'      => __( 'Email sent to the student when a quiz is graded', 'sensei-lms' ),
 					'categories' => [ 'sensei-emails' ],
 					'content'    => $this->get_pattern_content_from_file( 'quiz-graded' ),
+				],
+			'teacher-message-reply'    =>
+				[
+					'title'      => __( 'Email sent to the teacher when a student replies a private message', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'teacher-message-reply' ),
+				],
+			'student-message-reply'    =>
+				[
+					'title'      => __( 'Email sent to the student when the teacher replies a private message', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'student-message-reply' ),
+				],
+			'student-sends-message'    =>
+				[
+					'title'      => __( 'Email sent to the teacher when a student sends a new message', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'student-sends-message' ),
 				],
 		];
 

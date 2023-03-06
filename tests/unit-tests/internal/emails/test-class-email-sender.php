@@ -2,6 +2,7 @@
 
 namespace SenseiTest\Internal\Emails;
 
+use Sensei\Internal\Emails\Email_Patterns;
 use Sensei\Internal\Emails\Email_Repository;
 use Sensei\Internal\Emails\Email_Seeder;
 use Sensei\Internal\Emails\Email_Seeder_Data;
@@ -59,7 +60,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 		$this->settings     = new Sensei_Settings();
 		$this->factory      = new Sensei_Factory();
-		$this->email_sender = new Email_Sender( new Email_Repository(), $this->settings );
+		$this->email_sender = new Email_Sender( new Email_Repository(), $this->settings, new Email_Patterns() );
 		$this->email_sender->init();
 
 		$this->create_test_email_template();

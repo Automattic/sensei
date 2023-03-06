@@ -49,9 +49,13 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 			'sensei-lms/student-completes-course',
 			'sensei-lms/student-starts-course',
 			'sensei-lms/student-submits-quiz',
+			'sensei-lms/student-completes-lesson',
 			'sensei-lms/course-completed',
 			'sensei-lms/new-course-assigned',
 			'sensei-lms/quiz-graded',
+			'sensei-lms/teacher-message-reply',
+			'sensei-lms/student-message-reply',
+			'sensei-lms/student-sends-message',
 		];
 
 		/* Act. */
@@ -115,10 +119,14 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 		return [
 			'sensei-lms/student-completes-course',
 			'sensei-lms/student-starts-course',
+			'sensei-lms/student-completes-lesson',
 			'sensei-lms/student-submits-quiz',
 			'sensei-lms/course-completed',
 			'sensei-lms/new-course-assigned',
 			'sensei-lms/quiz-graded',
+			'sensei-lms/teacher-message-reply',
+			'sensei-lms/student-message-reply',
+			'sensei-lms/student-sends-message',
 		];
 	}
 }

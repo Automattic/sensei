@@ -45,14 +45,23 @@ class Email_Sender {
 	private $settings;
 
 	/**
+	 * Email patterns instance.
+	 *
+	 * @var Email_Patterns
+	 */
+	private $email_patterns;
+
+	/**
 	 * Email_Sender constructor.
 	 *
 	 * @param Email_Repository $repository Email repository instance.
 	 * @param Sensei_Settings  $settings Sensei settings instance.
+	 * @param Email_Patterns   $email_patterns Email patterns instance.
 	 */
-	public function __construct( Email_Repository $repository, Sensei_Settings $settings ) {
-		$this->repository = $repository;
-		$this->settings   = $settings;
+	public function __construct( Email_Repository $repository, Sensei_Settings $settings, Email_Patterns $email_patterns ) {
+		$this->repository     = $repository;
+		$this->settings       = $settings;
+		$this->email_patterns = $email_patterns;
 	}
 
 	/**
@@ -83,7 +92,7 @@ class Email_Sender {
 		}
 
 		// In case patterns are not registered.
-		Email_Customization::instance( $this->settings )->patterns->register_email_block_patterns();
+		$this->email_patterns->register_email_block_patterns();
 
 		/**
 		 * Filter the email replacements.
