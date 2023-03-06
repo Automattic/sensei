@@ -78,7 +78,7 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 	 * @return string
 	 */
 	public function get_name() {
-		return __( 'Re-create Emails', 'sensei-lms' );
+		return __( 'Recreate Emails', 'sensei-lms' );
 	}
 
 	/**
@@ -88,7 +88,7 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 	 */
 	public function get_description() {
 		return __(
-			'Forcefully recreate all emails. If you have any changes in default templates those change will be lost.',
+			'Recreate all emails. Existing customizations will be lost.',
 			'sensei-lms'
 		);
 	}
