@@ -54,8 +54,8 @@ class Email_List_Table extends Sensei_List_Table {
 	public function get_columns() {
 		$columns = [
 			'cb'            => '<input type="checkbox" />',
+			'description'   => __( 'Email', 'sensei-lms' ),
 			'subject'       => __( 'Subject', 'sensei-lms' ),
-			'description'   => __( 'Description', 'sensei-lms' ),
 			'last_modified' => __( 'Last Modified', 'sensei-lms' ),
 		];
 
