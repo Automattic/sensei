@@ -311,6 +311,7 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\New_Course_Assigned::class => 'internal/emails/generators/class-new-course-assigned.php',
 			\Sensei\Internal\Emails\Teacher_Message_Reply::class => 'internal/emails/generators/class-teacher-message-reply.php',
 			\Sensei\Internal\Emails\Student_Message_Reply::class => 'internal/emails/generators/class-student-message-reply.php',
+			\Sensei\Internal\Emails\Student_Sends_Message::class => 'internal/emails/generators/class-student-sends-message.php',
 		);
 	}
 
