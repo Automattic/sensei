@@ -212,6 +212,7 @@ class Email_Sender {
 		}
 
 		$dom = new \DOMDocument();
+		libxml_use_internal_errors( true );
 		$dom->loadHTML( $header_content );
 
 		$header_styles = '';
