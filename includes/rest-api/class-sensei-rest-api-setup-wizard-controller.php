@@ -357,7 +357,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		if ( Sensei_Setup_Wizard::USER_DATA_OPTION !== $name ) {
 			return $updated;
 		}
-		if ( ! empty( $settings ) ) {
+		if ( ! empty( $value ) ) {
 			$default = Sensei_Setup_Wizard::instance()->get_wizard_user_data();
 			$value   = wp_parse_args( $value, $default );
 
