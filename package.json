@@ -121,6 +121,7 @@
     "build:analyzer": "npm run --silent build:assets -- --json > node_modules/.cache/sensei-lms/build-stats.json && npx webpack-bundle-analyzer node_modules/.cache/sensei-lms/build-stats.json assets/dist",
     "build:docs": "rm -rf hookdocs/ && jsdoc -c hookdoc-conf.json",
     "build:vendor": "cp ./node_modules/select2/dist/css/select2.min.css ./node_modules/select2/dist/js/select2.full.js ./node_modules/select2/dist/js/select2.full.min.js ./assets/vendor/select2",
+    "changelog": "./vendor/bin/changelogger add",
     "archive": "composer archive --file=$npm_package_name --format=zip",
     "postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",
     "i18n:build": "npm run build:assets && wp i18n make-pot --exclude=build,lib,vendor,node_modules,assets/vendor --headers='{\"Last-Translator\":null,\"Language-Team\":null,\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/sensei-lms\"}' . lang/sensei-lms.pot",
