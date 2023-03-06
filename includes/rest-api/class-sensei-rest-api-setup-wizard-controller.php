@@ -338,7 +338,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			]
 		);
 
-		add_filter( 'rest_pre_update_setting', 'update_setup_wizard_settings', 10, 3 );
+		add_filter( 'rest_pre_update_setting', [ $this, 'update_setup_wizard_settings' ], 10, 3 );
 	}
 
 	/**
