@@ -57,6 +57,7 @@ class Email_Generator {
 			New_Course_Assigned::IDENTIFIER_NAME      => new New_Course_Assigned( $this->email_repository ),
 			Teacher_Message_Reply::IDENTIFIER_NAME    => new Teacher_Message_Reply( $this->email_repository ),
 			Student_Message_Reply::IDENTIFIER_NAME    => new Student_Message_Reply( $this->email_repository ),
+			Student_Sends_Message::IDENTIFIER_NAME    => new Student_Sends_Message( $this->email_repository ),
 		];
 
 		add_action( 'init', [ $this, 'init_email_generators' ] );
