@@ -572,7 +572,7 @@ class Sensei_Main {
 
 		$email_customization_enabled = $this->feature_flags->is_enabled( 'email_customization' );
 		if ( $email_customization_enabled ) {
-			Email_Customization::instance( $this->settings, $this->assets )->init();
+			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
 		}
 	}
 

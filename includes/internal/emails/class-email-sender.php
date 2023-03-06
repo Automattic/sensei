@@ -45,14 +45,23 @@ class Email_Sender {
 	private $settings;
 
 	/**
+	 * Email patterns instance.
+	 *
+	 * @var Email_Patterns
+	 */
+	private $email_patterns;
+
+	/**
 	 * Email_Sender constructor.
 	 *
 	 * @param Email_Repository $repository Email repository instance.
 	 * @param Sensei_Settings  $settings Sensei settings instance.
+	 * @param Email_Patterns   $email_patterns Email patterns instance.
 	 */
-	public function __construct( Email_Repository $repository, Sensei_Settings $settings ) {
-		$this->repository = $repository;
-		$this->settings   = $settings;
+	public function __construct( Email_Repository $repository, Sensei_Settings $settings, Email_Patterns $email_patterns ) {
+		$this->repository     = $repository;
+		$this->settings       = $settings;
+		$this->email_patterns = $email_patterns;
 	}
 
 	/**
@@ -82,11 +91,8 @@ class Email_Sender {
 			return;
 		}
 
-		global $post;
-		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
-
 		// In case patterns are not registered.
-		Email_Customization::instance()->patterns->register_email_block_patterns();
+		$this->email_patterns->register_email_block_patterns();
 
 		/**
 		 * Filter the email replacements.
@@ -119,14 +125,14 @@ class Email_Sender {
 	 *
 	 * @internal
 	 *
-	 * @param WP_Post $post The email post.
+	 * @param WP_Post $email_post The email post.
 	 * @param array   $placeholders The placeholders.
 	 *
 	 * @return string
 	 */
-	public function get_email_subject( WP_Post $post, array $placeholders = [] ): string {
+	public function get_email_subject( WP_Post $email_post, array $placeholders = [] ): string {
 		return $this->replace_placeholders(
-			wp_strip_all_tags( $post->post_title ),
+			wp_strip_all_tags( $email_post->post_title ),
 			$placeholders
 		);
 	}
@@ -136,16 +142,23 @@ class Email_Sender {
 	 *
 	 * @internal
 	 *
-	 * @param WP_Post $post The email post.
+	 * @param WP_Post $email_post The email post.
 	 * @param array   $placeholders The placeholders.
 	 *
 	 * @return string
 	 */
-	public function get_email_body( WP_Post $post, array $placeholders = [] ): string {
+	public function get_email_body( WP_Post $email_post, array $placeholders = [] ): string {
+		global $post;
+
+		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
+		setup_postdata( $post );
+
 		$post_content = $this->replace_placeholders(
-			do_blocks( $post->post_content ),
+			do_blocks( $email_post->post_content ),
 			$placeholders
 		);
+
+		wp_reset_postdata();
 
 		$templated_output = $this->get_templated_post_content( $post_content );
 
