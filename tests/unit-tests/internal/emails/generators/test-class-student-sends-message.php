@@ -40,8 +40,8 @@ class Student_Sends_Message_Test extends \WP_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->factory              = new Sensei_Factory();
-		$this->email_repository     = new Email_Repository();
+		$this->factory                    = new Sensei_Factory();
+		$this->email_repository           = new Email_Repository();
 		$this->lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 		Email_Customization::instance( $this->createMock( \Sensei_Settings::class ), $this->lesson_progress_repository )->disable_legacy_emails();
 		$this->prevent_wp_redirect();
