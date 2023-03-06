@@ -303,13 +303,14 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Recreate_Emails_Tool::class => 'internal/emails/class-recreate-emails-tool.php',
 			\Sensei\Internal\Emails\Email_Repository::class => 'internal/emails/class-email-repository.php',
 			\Sensei\Internal\Emails\Email_Patterns::class  => 'internal/emails/class-email-patterns.php',
-			\Sensei\Internal\Emails\Email_Generators_Abstract::class => 'internal/emails/generators/class-email-generators-abstract.php',
-			\Sensei\Internal\Emails\Student_Starts_Course::class => 'internal/emails/generators/class-student-starts-course.php',
-			\Sensei\Internal\Emails\Student_Completes_Course::class => 'internal/emails/generators/class-student-completes-course.php',
-			\Sensei\Internal\Emails\Student_Submits_Quiz::class => 'internal/emails/generators/class-student-submits-quiz.php',
-			\Sensei\Internal\Emails\Course_Completed::class => 'internal/emails/generators/class-course-completed.php',
-			\Sensei\Internal\Emails\New_Course_Assigned::class => 'internal/emails/generators/class-new-course-assigned.php',
-			\Sensei\Internal\Emails\Quiz_Graded::class     => 'internal/emails/generators/class-quiz-graded.php',
+			\Sensei\Internal\Emails\Generators\Quiz_Graded::class => 'internal/emails/generators/class-quiz-graded.php',
+			\Sensei\Internal\Emails\Generators\Email_Generators_Abstract::class => 'internal/emails/generators/class-email-generators-abstract.php',
+			\Sensei\Internal\Emails\Generators\Student_Starts_Course::class => 'internal/emails/generators/class-student-starts-course.php',
+			\Sensei\Internal\Emails\Generators\Student_Completes_Course::class => 'internal/emails/generators/class-student-completes-course.php',
+			\Sensei\Internal\Emails\Generators\Student_Completes_Lesson::class => 'internal/emails/generators/class-student-completes-lesson.php',
+			\Sensei\Internal\Emails\Generators\Student_Submits_Quiz::class => 'internal/emails/generators/class-student-submits-quiz.php',
+			\Sensei\Internal\Emails\Generators\Course_Completed::class => 'internal/emails/generators/class-course-completed.php',
+			\Sensei\Internal\Emails\Generators\New_Course_Assigned::class => 'internal/emails/generators/class-new-course-assigned.php',
 		);
 	}
 

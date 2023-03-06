@@ -1,9 +1,9 @@
 <?php
 
-namespace SenseiTest\Internal\Emails;
+namespace SenseiTest\Internal\Emails\Generators;
 
 use Sensei\Internal\Emails\Email_Repository;
-use Sensei\Internal\Emails\Course_Completed;
+use Sensei\Internal\Emails\Generators\Course_Completed;
 use Sensei_Factory;
 
 /**
