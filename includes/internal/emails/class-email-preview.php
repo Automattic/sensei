@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Emails;
 
+use Sensei_Assets;
 use WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,14 +30,23 @@ class Email_Preview {
 	private $email_sender;
 
 	/**
+	 * The assets instance.
+	 *
+	 * @var Sensei_Assets
+	 */
+	private $assets;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @internal
 	 *
-	 * @param Email_Sender $email_sender The email sender instance.
+	 * @param Email_Sender  $email_sender The email sender instance.
+	 * @param Sensei_Assets $assets The assets instance.
 	 */
-	public function __construct( Email_Sender $email_sender ) {
+	public function __construct( Email_Sender $email_sender, Sensei_Assets $assets ) {
 		$this->email_sender = $email_sender;
+		$this->assets       = $assets;
 	}
 
 	/**
@@ -46,6 +56,7 @@ class Email_Preview {
 	 */
 	public function init(): void {
 		add_action( 'template_redirect', [ $this, 'render_preview' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'register_admin_scripts' ] );
 	}
 
 	/**
@@ -73,10 +84,49 @@ class Email_Preview {
 	}
 
 	/**
+	 * Register and enqueue scripts and styles that are needed in the backend.
+	 *
+	 * @internal
+	 */
+	public function register_admin_scripts(): void {
+		$screen = get_current_screen();
+		if ( ! $screen || Email_Post_Type::POST_TYPE !== $screen->id ) {
+			return;
+		}
+
+		$this->assets->enqueue( 'sensei-email-preview-button', 'admin/emails/email-preview-button/index.js', [], true );
+		$this->assets->enqueue( 'sensei-email-preview-button', 'admin/emails/email-preview-button/email-preview-button.css' );
+
+		wp_localize_script(
+			'sensei-email-preview-button',
+			'sensei_email_preview',
+			[
+				'link' => self::get_preview_link( get_the_ID() ),
+			]
+		);
+	}
+
+	/**
+	 * Get the preview link.
+	 *
+	 * @internal
+	 *
+	 * @param int $post_id The post ID.
+	 *
+	 * @return string
+	 */
+	public static function get_preview_link( int $post_id ): string {
+		return wp_nonce_url(
+			get_home_url() . "?sensei_email_preview_id=$post_id",
+			'preview-email-post_' . $post_id
+		);
+	}
+
+	/**
 	 * Render the preview page.
 	 */
 	private function render_page(): void {
-		$subject      = $this->email_sender->get_email_subject( $this->get_email_post(), $this->get_placeholders() );
+		$subject      = $this->email_sender->get_email_subject( $this->get_email_post_for_preview(), $this->get_placeholders() );
 		$from_address = Sensei()->emails->get_from_address();
 		$from_name    = Sensei()->emails->get_from_name();
 		$avatar       = get_avatar( $from_address, 40, '', '', [ 'force_display' => true ] );
@@ -90,7 +140,7 @@ class Email_Preview {
 	private function render_email(): void {
 		// TODO: Remove the error control operator when the warnings are fixed.
 		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-		$email_body = @$this->email_sender->get_email_body( $this->get_email_post(), $this->get_placeholders() );
+		$email_body = @$this->email_sender->get_email_body( $this->get_email_post_for_preview(), $this->get_placeholders() );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $email_body;
@@ -106,6 +156,23 @@ class Email_Preview {
 		$post_id = isset( $_GET['sensei_email_preview_id'] ) ? (int) $_GET['sensei_email_preview_id'] : 0;
 
 		return get_post( $post_id );
+	}
+
+	/**
+	 * Get the email post that should be displayed for preview.
+	 * This might be the latest post revision.
+	 *
+	 * @return WP_Post|null
+	 */
+	private function get_email_post_for_preview(): ?WP_Post {
+		$post = $this->get_email_post();
+		if ( ! $post ) {
+			return null;
+		}
+
+		$autosave = wp_get_post_autosave( $post->ID );
+
+		return $autosave ? $autosave : $post;
 	}
 
 	/**

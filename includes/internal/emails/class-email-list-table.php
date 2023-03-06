@@ -207,7 +207,7 @@ class Email_List_Table extends Sensei_List_Table {
 
 		$actions['preview-email'] = sprintf(
 			'<a href="%s" aria-label="%s">%s</a>',
-			wp_nonce_url( get_home_url() . "?sensei_email_preview_id=$post->ID", 'preview-email-post_' . $post->ID ),
+			Email_Preview::get_preview_link( $post->ID ),
 			/* translators: %s: Post title. */
 				esc_attr( sprintf( __( 'Preview &#8220;%s&#8221;', 'sensei-lms' ), $title ) ),
 			__( 'Preview', 'sensei-lms' )
