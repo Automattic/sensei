@@ -231,7 +231,15 @@ class Sensei_MailPoet {
 			$mp_list_id = $mailpoet_lists[ $list_name ]['id'];
 		}
 		if ( null !== $mp_list_id ) {
-			$this->add_subscribers( array( $student ), $mp_list_id );
+			$students = array(
+				array(
+					'id'            => $student->ID,
+					'email'         => strtolower( $student->user_email ),
+					'display_name'  => $student->display_name,
+					'wp_user_login' => $student->user_nicename,
+				),
+			);
+			$this->add_subscribers( $students, $mp_list_id );
 		}
 	}
 
