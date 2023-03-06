@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require plugin_dir_path( __DIR__ ) . '../../vendor/autoload.php';
 
 use \Pelago\Emogrifier\CssInliner;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei_Settings;
 
 /**
@@ -44,14 +45,23 @@ class Email_Sender {
 	private $settings;
 
 	/**
+	 * Email patterns instance.
+	 *
+	 * @var Email_Patterns
+	 */
+	private $email_patterns;
+
+	/**
 	 * Email_Sender constructor.
 	 *
 	 * @param Email_Repository $repository Email repository instance.
 	 * @param Sensei_Settings  $settings Sensei settings instance.
+	 * @param Email_Patterns   $email_patterns Email patterns instance.
 	 */
-	public function __construct( Email_Repository $repository, Sensei_Settings $settings ) {
-		$this->repository = $repository;
-		$this->settings   = $settings;
+	public function __construct( Email_Repository $repository, Sensei_Settings $settings, Email_Patterns $email_patterns ) {
+		$this->repository     = $repository;
+		$this->settings       = $settings;
+		$this->email_patterns = $email_patterns;
 	}
 
 	/**
@@ -85,7 +95,7 @@ class Email_Sender {
 		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
 
 		// In case patterns are not registered.
-		Email_Customization::instance( $this->settings )->patterns->register_email_block_patterns();
+		$this->email_patterns->register_email_block_patterns();
 
 		/**
 		 * Filter the email replacements.

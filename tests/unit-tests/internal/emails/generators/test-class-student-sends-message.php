@@ -1,16 +1,17 @@
 <?php
 
-namespace SenseiTest\Internal\Emails;
+namespace SenseiTest\Internal\Emails\Generators;
 
 use Sensei\Internal\Emails\Email_Repository;
-use Sensei\Internal\Emails\Student_Sends_Message;
+use Sensei\Internal\Emails\Generators\Student_Sends_Message;
 use Sensei\Internal\Emails\Email_Customization;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei_Factory;
 
 /**
  * Tests for Sensei\Internal\Emails\Student_Sends_Message class.
  *
- * @covers \Sensei\Internal\Emails\Student_Sends_Message
+ * @covers \Sensei\Internal\Emails\Generators\Student_Sends_Message
  */
 class Student_Sends_Message_Test extends \WP_UnitTestCase {
 	use \Sensei_Test_Redirect_Helpers;
@@ -29,12 +30,20 @@ class Student_Sends_Message_Test extends \WP_UnitTestCase {
 	 */
 	protected $email_repository;
 
+	/**
+	 * Lesson progress repository instance.
+	 *
+	 * @var Lesson_Progress_Repository_Interface
+	 */
+	protected $lesson_progress_repository;
+
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->factory          = new Sensei_Factory();
-		$this->email_repository = new Email_Repository();
-		Email_Customization::instance( $this->createMock( \Sensei_Settings::class ) )->disable_legacy_emails();
+		$this->factory              = new Sensei_Factory();
+		$this->email_repository     = new Email_Repository();
+		$this->lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
+		Email_Customization::instance( $this->createMock( \Sensei_Settings::class ), $this->lesson_progress_repository )->disable_legacy_emails();
 		$this->prevent_wp_redirect();
 	}
 
@@ -85,7 +94,7 @@ class Student_Sends_Message_Test extends \WP_UnitTestCase {
 			10,
 			2
 		);
-		Email_Customization::instance( $this->createMock( \Sensei_Settings::class ) )->disable_legacy_emails();
+		Email_Customization::instance( $this->createMock( \Sensei_Settings::class ), $this->lesson_progress_repository )->disable_legacy_emails();
 
 		/* Act. */
 		$this->expectException( \Sensei_WP_Redirect_Exception::class );

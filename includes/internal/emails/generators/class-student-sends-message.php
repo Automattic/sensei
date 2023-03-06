@@ -5,7 +5,7 @@
  * @package sensei
  */
 
-namespace Sensei\Internal\Emails;
+namespace Sensei\Internal\Emails\Generators;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

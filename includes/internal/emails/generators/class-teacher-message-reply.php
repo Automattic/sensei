@@ -5,7 +5,7 @@
  * @package sensei
  */
 
-namespace Sensei\Internal\Emails;
+namespace Sensei\Internal\Emails\Generators;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -53,7 +53,7 @@ class Teacher_Message_Reply extends Email_Generators_Abstract {
 		$course_id = get_post_meta( $message->ID, '_post', true );
 		$course    = get_post( $course_id );
 
-		if ( ! $course || 'course' !== $course->post_type ) {
+		if ( ! $course ) {
 			return;
 		}
 

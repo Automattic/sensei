@@ -3,7 +3,7 @@
 namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Repository;
-use Sensei\Internal\Emails\New_Course_Assigned;
+use Sensei\Internal\Emails\Generators\New_Course_Assigned;
 use Sensei_Factory;
 
 /**
