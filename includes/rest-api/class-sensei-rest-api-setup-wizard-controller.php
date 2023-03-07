@@ -315,22 +315,13 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 				'show_in_rest' => [
 					'schema' => [
 						'properties' => [
-							'purpose' => [
-								'type'       => 'object',
-								'properties' => [
-									'selected' => [
-										'required' => true,
-										'type'     => 'array',
-										'items'    => [
-											'type' => 'string',
-											'enum' => self::PURPOSES,
-										],
-									],
-									'other'    => [
-										'required' => true,
-										'type'     => 'string',
-									],
-								],
+							'features'  => $this->get_features_schema(),
+							'theme'     => $this->get_theme_schema(),
+							'purpose'   => $this->get_purpose_schema(),
+							'tracking'  => $this->get_tracking_schema(),
+							'__version' => [
+								'type'     => 'integer',
+								'required' => false,
 							],
 						],
 					],
@@ -481,6 +472,66 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Get themes schema.
+	 *
+	 * @return array Schema object.
+	 */
+	public function get_theme_schema() {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'install_sensei_theme' => [
+					'description' => __( 'Whether user wants to install Sensei theme.', 'sensei-lms' ),
+					'type'        => 'boolean',
+				],
+			],
+		];
+	}
+
+	/**
+	 * Get purpose schema.
+	 *
+	 * @return array Schema object.
+	 */
+	public function get_purpose_schema() {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'selected' => [
+					'required' => true,
+					'type'     => 'array',
+					'items'    => [
+						'type' => 'string',
+						'enum' => self::PURPOSES,
+					],
+				],
+				'other'    => [
+					'required' => true,
+					'type'     => 'string',
+				],
+			],
+		];
+	}
+
+	/**
+	 * Get tracking schema.
+	 *
+	 * @return array Schema object.
+	 */
+	public function get_tracking_schema() {
+		return [
+			'required'   => false,
+			'type'       => 'object',
+			'properties' => [
+				'usage_tracking' => [
+					'description' => __( 'Usage tracking preference given by the site owner.', 'sensei-lms' ),
+					'type'        => 'boolean',
+				],
+			],
+		];
+	}
+
+	/**
 	 * Schema for the endpoint.
 	 *
 	 * @return array Schema object.
@@ -490,37 +541,9 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			'type'       => 'object',
 			'properties' => [
 				'features' => $this->get_features_schema(),
-				'purpose'  => [
-					'type'       => 'object',
-					'properties' => [
-						'selected' => [
-							'description' => __( 'Purposes selected by the site owner.', 'sensei-lms' ),
-							'type'        => 'array',
-						],
-						'other'    => [
-							'description' => __( 'Other free-text purpose.', 'sensei-lms' ),
-							'type'        => 'string',
-						],
-					],
-				],
-				'theme'    => [
-					'type'       => 'object',
-					'properties' => [
-						'install_sensei_theme' => [
-							'description' => __( 'Whether user wants to install Sensei theme.', 'sensei-lms' ),
-							'type'        => 'boolean',
-						],
-					],
-				],
-				'tracking' => [
-					'type'       => 'object',
-					'properties' => [
-						'usage_tracking' => [
-							'description' => __( 'Usage tracking preference given by the site owner.', 'sensei-lms' ),
-							'type'        => 'boolean',
-						],
-					],
-				],
+				'purpose'  => $this->get_purpose_schema(),
+				'theme'    => $this->get_theme_schema(),
+				'tracking' => $this->get_tracking_schema(),
 			],
 		];
 	}
