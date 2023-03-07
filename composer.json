@@ -70,6 +70,8 @@
 			"!/widgets",
 			"!/sensei-lms.php",
 			"!/wpml-config.xml",
+			"!/vendor",
+			"!/vendor_prefixed",
 			".DS_Store",
 			".*",
 			"*.test.js",
