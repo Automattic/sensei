@@ -23,6 +23,23 @@
 			"vendor_prefixed/"
 		]
 	},
+	"autoload-dev": {
+		"classmap": [
+			"config/"
+		]
+	},
+	"scripts": {
+		"prefix-dependencies": [
+			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --output-dir=vendor_prefixed --config=config/scoper.inc.php --force --quiet"
+		],
+		"pre-autoload-dump": [
+			"mkdir -p vendor_prefixed"
+		],
+		"post-autoload-dump": [
+			"Sensei\\Config\\Composer\\Actions::prefix_dependencies",
+			"composer dump-autoload --no-scripts"
+		]
+	},
 	"archive": {
 		"exclude": [
 			"/*",
