@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Run activation hooks when plugin is activated in the background.
