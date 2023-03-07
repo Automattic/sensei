@@ -85,7 +85,7 @@ class Email_Patterns {
 	 */
 	public function register_email_block_patterns() {
 		$patterns = [
-			'course-created' =>
+			'course-created'           =>
 				[
 					'title'      => __( 'Email sent to the admin after a teacher created a course', 'sensei-lms' ),
 					'categories' => [ 'sensei-emails' ],

@@ -41,17 +41,13 @@ class Course_Created extends Email_Generators_Abstract {
 	/**
 	 * Send email to admin when a teacher created a course.
 	 *
-	 * @param string $new_status      The status.
-	 * @param string $old_status  The learner ID.
-	 * @param object $course_id   The course ID.
+	 * @param string   $new_status New status.
+	 * @param string   $old_status Old status.
+	 * @param \WP_Post $post       The post.
 	 *
 	 * @access private
 	 */
 	public function course_created_to_admin( $new_status, $old_status, $post ) {
-		error_log( 'transition_post_status' );
-		error_log( 'new status: ' . $new_status );
-		error_log( 'old status: ' . $old_status );
-		error_log( 'post type: ' . var_export( $post, true ) );
 		$course_id = $post->ID;
 
 		if ( 'publish' === $old_status || 'course' !== get_post_type( $course_id ) || 'auto-draft' === $new_status
@@ -65,7 +61,7 @@ class Course_Created extends Email_Generators_Abstract {
 		$recipient  = get_option( 'admin_email', true );
 
 		// Don't send if the course is created by admin.
-		if ( $recipient == $teacher->user_email || current_user_can( 'manage_options' ) ) {
+		if ( $recipient === $teacher->user_email || current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
@@ -86,7 +82,7 @@ class Course_Created extends Email_Generators_Abstract {
 					'teacher:displayname' => $teacher->display_name,
 					'course:id'           => $course_id,
 					'course:name'         => get_the_title( $course_id ),
-					'manage:course'     => $manage_url,
+					'manage:course'       => $manage_url,
 				],
 			]
 		);
