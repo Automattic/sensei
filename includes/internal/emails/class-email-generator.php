@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Emails;
 
 use Sensei\Internal\Emails\Generators\Course_Completed;
+use Sensei\Internal\Emails\Generators\Course_Created;
 use Sensei\Internal\Emails\Generators\New_Course_Assigned;
 use Sensei\Internal\Emails\Generators\Quiz_Graded;
 use Sensei\Internal\Emails\Generators\Student_Completes_Course;
@@ -70,6 +71,7 @@ class Email_Generator {
 	 */
 	public function init(): void {
 		$this->email_generators = [
+			Course_Created::IDENTIFIER_NAME           => new Course_Created( $this->email_repository ),
 			Student_Starts_Course::IDENTIFIER_NAME    => new Student_Starts_Course( $this->email_repository ),
 			Student_Completes_Course::IDENTIFIER_NAME => new Student_Completes_Course( $this->email_repository ),
 			Student_Completes_Lesson::IDENTIFIER_NAME => new Student_Completes_Lesson( $this->email_repository, $this->lesson_progress_repository ),
