@@ -1,4 +1,9 @@
 <?php
+/**
+ * File containing the composer actions class.
+ *
+ * @package sensei
+ */
 
 namespace Sensei\Config\Composer;
 

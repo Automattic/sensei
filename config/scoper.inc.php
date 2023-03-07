@@ -1,4 +1,9 @@
 <?php
+/**
+ * File containing the php-scoper config.
+ *
+ * @package sensei
+ */
 
 declare(strict_types=1);
 
