@@ -39,13 +39,14 @@ class Sensei_List_Table_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = '<tr class="alternate"><td class=\'foo column-foo column-primary\' data-colname="Foo" >bar</td></tr>';
-		
+
 		self::assertSame( $expected, $actual );
 	}
 }
 
+// phpcs:ignore Generic.Files.OneObjectStructurePerFile.MultipleFound -- This implementation needed only for testing here.
 class List_Table_Implementation extends Sensei_List_Table {
-	static $has_native_row_actions;
+	public static $has_native_row_actions;
 
 	public function __construct() {
 		parent::__construct( 'a' );
@@ -56,16 +57,14 @@ class List_Table_Implementation extends Sensei_List_Table {
 	}
 
 	protected function get_row_data( $item ) {
-		return [ 'foo' => 'bar'];
+		return [ 'foo' => 'bar' ];
 	}
-	
-	protected function has_native_row_actions()
-	{
+
+	protected function has_native_row_actions() {
 		return self::$has_native_row_actions;
 	}
-	
-	protected function get_row_class($item): string
-	{
+
+	protected function get_row_class( $item ): string {
 		return 'alternate';
 	}
 }
