@@ -11,10 +11,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-defaults:
-    run:
-        working-directory: sensei
-
 jobs:
     changelogger_used:
         if: ${{ !contains( github.event.pull_request.labels.*.name, 'No Changelog') }}
@@ -22,15 +18,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-              with:
-                  path: sensei
-            - uses: ./sensei/.github/actions/deepen-to-merge-base
-              with:
-                  path: sensei
-            - uses: ./sensei/.github/actions/install-php
+            - uses: ./.github/actions/deepen-to-merge-base
+            - uses: ./.github/actions/install-php
             - name: Check change files are touched for touched projects
               env:
                   BASE: ${{ github.event.pull_request.base.sha }}
                   HEAD: ${{ github.event.pull_request.head.sha }}
               run: ./scripts/check-changelogger-use.php --debug "$BASE" "$HEAD"
-              working-directory: sensei

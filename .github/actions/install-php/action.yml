@@ -23,7 +23,6 @@ runs:
         - shell: bash
           name: Get composer cache directory
           id: composer-cache
-          working-directory: sensei
           run: |
               echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
         - uses: actions/cache@v3
@@ -35,4 +34,3 @@ runs:
         - shell: bash
           name: Install PHP dependencies
           run: composer install --no-ansi --no-interaction --prefer-dist --no-progress
-          working-directory: sensei
