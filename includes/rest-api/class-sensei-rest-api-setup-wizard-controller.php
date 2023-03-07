@@ -462,10 +462,16 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 				'selected' => [
 					'description' => __( 'Slug of extensions to be installed.', 'sensei-lms' ),
 					'type'        => 'array',
+					'items'       => [
+						'type' => 'string',
+					],
 				],
 				'options'  => [
 					'description' => __( 'Sensei extensions.', 'sensei-lms' ),
 					'type'        => 'array',
+					'items'       => [
+						'type' => 'string',
+					],
 				],
 			],
 		];
