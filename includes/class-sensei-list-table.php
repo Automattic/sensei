@@ -274,7 +274,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @return bool 
+	 * @return bool
 	 */
 	protected function has_native_row_actions() {
 		return false;
