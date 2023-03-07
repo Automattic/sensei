@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Pelago\Emogrifier\CssInliner;
+use Sensei_Vendor\Pelago\Emogrifier\CssInliner;
 use Sensei_Settings;
 use WP_Post;
 
