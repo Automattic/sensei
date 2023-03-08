@@ -77,6 +77,31 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 		$this->assertNotEquals( $priority_before, $priority_after );
 	}
 
+	public function testDisableLegacyHook_WhenCalled_RemovesLegacyEmailsModifiedByHooks() {
+		/* Arrange. */
+		$settings                   = $this->createMock( Sensei_Settings::class );
+		$assets                     = $this->createMock( Sensei_Assets::class );
+		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
+		$instance                   = Email_Customization::instance( $settings, $assets, $lesson_progress_repository );
+		$to_be_disabled_list        = [];
+
+		add_filter(
+			'sensei_disable_legacy_emails',
+			function ( $mails ) use ( &$to_be_disabled_list ) {
+				$to_be_disabled_list = $mails;
+				unset( $mails[0] );
+				return $mails;
+			}
+		);
+
+		/* Act. */
+		$instance->disable_legacy_emails();
+
+		/* Assert. */
+		$this->assertEquals( 10, has_action( $to_be_disabled_list[0][0], [ $to_be_disabled_list[0][1], $to_be_disabled_list[0][2] ] ) );
+		$this->assertFalse( has_action( $to_be_disabled_list[1][0], [ $to_be_disabled_list[1][1], $to_be_disabled_list[1][2] ] ) );
+	}
+
 	public function legacyHooksDataProvider() {
 		return [
 			'student_completes_course' => [ 'sensei_course_status_updated', 'teacher_completed_course', Sensei()->emails ],
