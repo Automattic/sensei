@@ -77,13 +77,16 @@ const Features = () => {
 		error: submitError,
 	} = useSetupWizardStep( 'features' );
 	const { stepData: themeData } = useSetupWizardStep( 'theme' );
-	const { install_sensei_theme: installSenseiTheme } = themeData;
+	const {
+		install_sensei_theme: installSenseiTheme,
+		is_sensei_theme_already_installed: isSenseiThemeAlreadyInstalled,
+	} = themeData;
 
 	// Create list of actions to install.
 	const installActions = useMemo( () => {
 		const list = getFeatureActions( featuresData );
 
-		if ( installSenseiTheme ) {
+		if ( ! isSenseiThemeAlreadyInstalled && installSenseiTheme ) {
 			list.push( getThemeAction() );
 		}
 

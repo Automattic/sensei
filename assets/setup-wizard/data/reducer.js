@@ -28,6 +28,7 @@ const DEFAULT_STATE = {
 		},
 		theme: {
 			install_sensei_theme: false,
+			is_sensei_theme_already_installed: false,
 		},
 		tracking: {
 			usage_tracking: false,

@@ -7,7 +7,12 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useLayoutEffect, useState, useRef } from '@wordpress/element';
+import {
+	useLayoutEffect,
+	useState,
+	useRef,
+	useEffect,
+} from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -28,9 +33,12 @@ const Theme = () => {
 	const themeContentRef = useRef();
 	const scrollOffset = 70;
 
-	const { submitStep, isSubmitting, errorNotice } = useSetupWizardStep(
-		'theme'
-	);
+	const {
+		stepData,
+		submitStep,
+		isSubmitting,
+		errorNotice,
+	} = useSetupWizardStep( 'theme' );
 
 	useLayoutEffect( () => {
 		const w = themeContentRef.current?.ownerDocument.defaultView;
@@ -82,6 +90,12 @@ const Theme = () => {
 			{ onSuccess: goToNextStep }
 		);
 	};
+
+	useEffect( () => {
+		if ( stepData?.is_sensei_theme_already_installed ) {
+			goToNextStep();
+		}
+	}, [] );
 
 	return (
 		<>

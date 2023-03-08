@@ -341,8 +341,8 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 *
 	 * @param bool   $updated Whether to override the default behavior for updating the
 	 *                        value of a setting.
-	 * @param string $name   Setting name (as shown in REST API responses).
-	 * @param mixed  $value  Updated setting value.
+	 * @param string $name    Setting name (as shown in REST API responses).
+	 * @param mixed  $value   Updated setting value.
 	 */
 	public function update_setup_wizard_settings( $updated, $name, $value ) {
 		if ( Sensei_Setup_Wizard::USER_DATA_OPTION !== $name ) {
@@ -388,13 +388,17 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	public function get_data() {
 		$user_data = $this->setup_wizard->get_wizard_user_data();
 
+		// Check if the Sensei theme is already installed.
+		$is_sensei_theme_installed = $this->is_sensei_theme_installed();
+
 		return [
 			'purpose'    => [
 				'selected' => $user_data['purpose']['selected'],
 				'other'    => $user_data['purpose']['other'],
 			],
 			'theme'      => [
-				'install_sensei_theme' => $user_data['theme']['install_sensei_theme'],
+				'install_sensei_theme'              => $user_data['theme']['install_sensei_theme'],
+				'is_sensei_theme_already_installed' => $is_sensei_theme_installed,
 			],
 			'tracking'   => [
 				'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
@@ -675,6 +679,21 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		$this->setup_wizard->finish_setup_wizard();
 
 		return true;
+	}
+
+	/**
+	 * Calculate if the Sensei theme is already installed or not.
+	 *
+	 * @return bool Whether the sensei theme is already installed or not.
+	 */
+	private function is_sensei_theme_installed() {
+		$is_sensei_theme_already_installed = false;
+		$theme                             = wp_get_theme( 'course' );
+		if ( $theme->exists() ) {
+			$is_sensei_theme_already_installed = true;
+		}
+
+		return $is_sensei_theme_already_installed;
 	}
 
 }
