@@ -20,7 +20,7 @@
 	"prefer-stable": true,
 	"autoload": {
 		"classmap": [
-			"vendor_prefixed/"
+			"third-party/"
 		]
 	},
 	"autoload-dev": {
@@ -30,10 +30,13 @@
 	},
 	"scripts": {
 		"prefix-dependencies": [
-			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --output-dir=vendor_prefixed --config=config/scoper.inc.php --force --quiet"
+			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --output-dir=third-party --config=config/scoper.inc.php --force --quiet"
 		],
-		"pre-autoload-dump": [
-			"mkdir -p vendor_prefixed"
+		"pre-install-cmd": [
+			"mkdir -p third-party"
+		],
+		"pre-update-cmd": [
+			"mkdir -p third-party"
 		],
 		"post-autoload-dump": [
 			"Sensei\\Config\\Composer\\Actions::prefix_dependencies",
@@ -71,7 +74,7 @@
 			"!/sensei-lms.php",
 			"!/wpml-config.xml",
 			"!/vendor",
-			"!/vendor_prefixed",
+			"!/third-party",
 			".DS_Store",
 			".*",
 			"*.test.js",

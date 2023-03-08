@@ -22,7 +22,7 @@ jobs:
                       ${{ runner.os }}-node-
             - name: Install JS dependencies
               run: npm ci
-            - name: Install PHP dependencies and generate the vendor_prefixed directory
+            - name: Install PHP dependencies and generate the third-party directory
               uses: ./.github/actions/install-php
             - name: Remove the PHP dev dependencies
               run: composer install --no-dev --no-ansi --no-interaction --prefer-dist --no-progress

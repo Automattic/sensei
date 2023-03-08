@@ -11,7 +11,7 @@ hookdocs
 node_modules/
 tests/images/test-*
 vendor/
-vendor_prefixed/
+third-party/
 tests/e2e/screenshots
 /*.zip
 /coverage/
