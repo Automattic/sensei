@@ -345,4 +345,88 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( 2, $result );
 	}
+
+	public function testGetTargetResumeId_WhenCalled_ReturnsNextLessonIdIfPreviousLessonIsCompleted() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count' => 3,
+			)
+		);
+		$user_id        = $this->factory->user->create();
+
+		Sensei_Utils::sensei_start_lesson( $course_lessons['lesson_ids'][0], $user_id, true );
+
+		/* Act */
+		$result = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_lessons['course_id'], $user_id );
+
+		/* Assert */
+		$this->assertEquals( $course_lessons['lesson_ids'][1], $result );
+	}
+
+	public function testGetTargetResumeId_WhenCalled_ReturnsLastLessonIdIfNotCompleted() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count' => 3,
+			)
+		);
+		$user_id        = $this->factory->user->create();
+
+		Sensei_Utils::sensei_start_lesson( $course_lessons['lesson_ids'][0], $user_id, false );
+
+		/* Act */
+		$result = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_lessons['course_id'], $user_id );
+
+		/* Assert */
+		$this->assertEquals( $course_lessons['lesson_ids'][0], $result );
+	}
+
+	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfNoLessonIsCompleted() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count' => 3,
+			)
+		);
+		$user_id        = $this->factory->user->create();
+
+		/* Act */
+		$result = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_lessons['course_id'], $user_id );
+
+		/* Assert */
+		$this->assertEquals( $course_lessons['course_id'], $result );
+	}
+
+	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfAllLessonsAreCompleted() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count' => 3,
+			)
+		);
+		$user_id        = $this->factory->user->create();
+
+		foreach ( $course_lessons['lesson_ids'] as $lesson_id ) {
+			Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+		}
+
+		/* Act */
+		$result = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_lessons['course_id'], $user_id );
+
+		/* Assert */
+		$this->assertEquals( $course_lessons['course_id'], $result );
+	}
+
+	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfItHasNoLessons() {
+		/* Arrange */
+		$course_id = $this->factory->course->create();
+		$user_id   = $this->factory->user->create();
+
+		/* Act */
+		$result = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_id, $user_id );
+
+		/* Assert */
+		$this->assertEquals( $course_id, $result );
+	}
 }
