@@ -55,17 +55,7 @@ class Sensei_MailPoet_Repository {
 			'fields'  => array( 'id', 'user_email', 'display_name', 'user_nicename' ),
 		);
 		$users = get_users( $args );
-		return array_map(
-			static function( $user ) {
-				return array(
-					'id'            => $user->ID,
-					'email'         => strtolower( $user->user_email ),
-					'display_name'  => $user->display_name,
-					'wp_user_login' => $user->user_nicename,
-				);
-			},
-			$users
-		);
+		return self::user_objects_to_array( $users );
 	}
 
 	/**
@@ -110,6 +100,28 @@ class Sensei_MailPoet_Repository {
 				);
 			},
 			$wp_query_obj->posts
+		);
+	}
+
+	/**
+	 * Convert array of user objects to array of arrays.
+	 *
+	 * @since $$next-version$$
+	 * @param array $users Array of user objects.
+	 *
+	 * @return array Array of user arrays.
+	 */
+	public static function user_objects_to_array( $users ) {
+		return array_map(
+			static function( $user ) {
+				return array(
+					'id'            => $user->ID,
+					'email'         => strtolower( $user->user_email ),
+					'display_name'  => $user->display_name,
+					'wp_user_login' => $user->user_nicename,
+				);
+			},
+			$users
 		);
 	}
 }

@@ -269,6 +269,7 @@ class Sensei_MailPoet {
 			$mp_list_id = $mailpoet_lists[ $list_name ]['id'];
 		}
 		if ( null !== $mp_list_id ) {
+			$students = Sensei_MailPoet_Repository::user_objects_to_array( $students );
 			$this->remove_subscribers( $students, $mp_list_id );
 		}
 	}
