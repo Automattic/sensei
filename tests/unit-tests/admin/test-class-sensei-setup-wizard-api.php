@@ -259,26 +259,27 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests that theme get endpoint returns the install sensei theme option.
+	 * Tests that theme get endpoint returns the set `install_sensei_theme` option.
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
 	 */
-	public function testGetThemeReturnsUserData() {
+	public function testGetThemeReturnsSavedUserDataOption() {
 
 		Sensei()->setup_wizard->update_wizard_user_data(
-			[ 'theme' => [ 'install_sensei_theme' => true ] ]
+			[
+				'theme' => [
+					'install_sensei_theme' => true,
+				],
+			]
 		);
 
 		$data = $this->request( 'GET', '' );
 
-		$this->assertEquals(
-			[ 'install_sensei_theme' => true ],
-			$data['theme']
-		);
+		$this->assertTrue( $data['theme']['install_sensei_theme'] );
 	}
 
 	/**
-	 * Tests that submitting to theme endpoint updates the install sensei theme option.
+	 * Tests that submitting to theme endpoint updates the `install_sensei_theme` option.
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_theme
 	 */
@@ -289,10 +290,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = $this->request( 'GET', '' );
 
-		$this->assertEquals(
-			[ 'install_sensei_theme' => true ],
-			$data['theme']
-		);
+		$this->assertTrue( $data['theme']['install_sensei_theme'] );
 	}
 
 	/**
