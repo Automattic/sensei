@@ -151,6 +151,12 @@ class Email_Patterns {
 					'categories' => [ 'sensei-emails' ],
 					'content'    => $this->get_pattern_content_from_file( 'course-expiration-today' ),
 				],
+			'course-expiration-x-days' =>
+				[
+					'title'      => __( 'Email sent to student to remind that a course will expire in x days', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'course-expiration-x-days' ),
+				],
 		];
 
 		foreach ( $patterns as $key => $pattern ) {
