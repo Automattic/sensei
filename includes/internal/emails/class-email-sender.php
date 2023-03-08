@@ -14,9 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require plugin_dir_path( __DIR__ ) . '../../vendor/autoload.php';
 
-use \Pelago\Emogrifier\CssInliner;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
+use Pelago\Emogrifier\CssInliner;
 use Sensei_Settings;
+use WP_Post;
 
 /**
  * Class Email_Sender
@@ -91,9 +91,6 @@ class Email_Sender {
 			return;
 		}
 
-		global $post;
-		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
-
 		// In case patterns are not registered.
 		$this->email_patterns->register_email_block_patterns();
 
@@ -112,43 +109,80 @@ class Email_Sender {
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
 
-		/**
-		 * Filter the email styles.
-		 *
-		 * @since $$next-version$$
-		 * @hook sensei_email_styles
-		 *
-		 * @param {string}       $style_string The email styles.
-		 * @param {string}       $email_name   The email name.
-		 * @param {WP_Post}      $email_post   The email post.
-		 * @param {Email_Sender} $email_sender The email sender class instance.
-		 *
-		 * @return {string}
-		 */
-		$style_string = apply_filters( 'sensei_email_styles', $this->get_header_styles(), $email_name, $email_post, $this );
-
-		$subject_text = wp_strip_all_tags( $email_post->post_title );
-
 		foreach ( $replacements as $recipient => $replacement ) {
-			$email_body    = do_blocks( $email_post->post_content );
-			$email_subject = $subject_text;
-
-			foreach ( $replacement as $key => $value ) {
-				$email_body    = str_replace( '[' . $key . ']', $value, $email_body );
-				$email_subject = str_replace( '[' . $key . ']', $value, $email_subject );
-			}
-
-			$email_body = $this->get_templated_post_content( $email_body );
-			$email_body = CssInliner::fromHtml( $email_body )->inlineCss( $style_string )->render();
-
 			wp_mail(
 				$recipient,
-				$email_subject,
-				$email_body,
+				$this->get_email_subject( $email_post, $replacement ),
+				$this->get_email_body( $email_post, $replacement ),
 				$this->get_email_headers(),
 				null
 			);
 		}
+	}
+
+	/**
+	 * Get the email subject.
+	 *
+	 * @internal
+	 *
+	 * @param WP_Post $email_post The email post.
+	 * @param array   $placeholders The placeholders.
+	 *
+	 * @return string
+	 */
+	public function get_email_subject( WP_Post $email_post, array $placeholders = [] ): string {
+		return $this->replace_placeholders(
+			wp_strip_all_tags( $email_post->post_title ),
+			$placeholders
+		);
+	}
+
+	/**
+	 * Get the email body.
+	 *
+	 * @internal
+	 *
+	 * @param WP_Post $email_post The email post.
+	 * @param array   $placeholders The placeholders.
+	 *
+	 * @return string
+	 */
+	public function get_email_body( WP_Post $email_post, array $placeholders = [] ): string {
+		global $post;
+
+		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
+		setup_postdata( $post );
+
+		$post_content = $this->replace_placeholders(
+			do_blocks( $email_post->post_content ),
+			$placeholders
+		);
+
+		wp_reset_postdata();
+
+		$templated_output = $this->get_templated_post_content( $post_content );
+
+		return CssInliner::fromHtml( $templated_output )
+			->inlineCss( $this->get_header_styles() )
+			->render();
+	}
+
+	/**
+	 * Replace the placeholders in the provided string.
+	 *
+	 * @internal
+	 *
+	 * @param string $string The string.
+	 * @param array  $placeholders The placeholders.
+	 *
+	 * @return string
+	 */
+	private function replace_placeholders( string $string, array $placeholders ): string {
+		foreach ( $placeholders as $placeholder => $value ) {
+			$string = str_replace( '[' . $placeholder . ']', $value, $string );
+		}
+
+		return $string;
 	}
 
 	/**
@@ -271,7 +305,17 @@ class Email_Sender {
 			$header_styles .= $style_node->nodeValue; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- PHP property.
 		}
 
-		return $header_styles;
+		/**
+		 * Filter the email styles.
+		 *
+		 * @since $$next-version$$
+		 * @hook sensei_email_styles
+		 *
+		 * @param {string} $header_styles The email header styles.
+		 *
+		 * @return {string}
+		 */
+		return apply_filters( 'sensei_email_styles', $header_styles );
 	}
 
 	/**

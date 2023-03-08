@@ -90,6 +90,8 @@ const files = [
 	'admin/students/student-bulk-action-button/index.js',
 	'admin/students/student-bulk-action-button/student-bulk-action-button.scss',
 	'admin/students/student-modal/student-modal.scss',
+	'admin/emails/email-preview-button/index.js',
+	'admin/emails/email-preview-button/email-preview-button.scss',
 	'css/block-patterns.scss',
 	'css/page-block-patterns.scss',
 	'css/tools.scss',

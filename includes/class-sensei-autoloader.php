@@ -303,6 +303,7 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Recreate_Emails_Tool::class => 'internal/emails/class-recreate-emails-tool.php',
 			\Sensei\Internal\Emails\Email_Repository::class => 'internal/emails/class-email-repository.php',
 			\Sensei\Internal\Emails\Email_Patterns::class  => 'internal/emails/class-email-patterns.php',
+			\Sensei\Internal\Emails\Email_Preview::class   => 'internal/emails/class-email-preview.php',
 			\Sensei\Internal\Emails\Generators\Quiz_Graded::class => 'internal/emails/generators/class-quiz-graded.php',
 			\Sensei\Internal\Emails\Generators\Email_Generators_Abstract::class => 'internal/emails/generators/class-email-generators-abstract.php',
 			\Sensei\Internal\Emails\Generators\Student_Starts_Course::class => 'internal/emails/generators/class-student-starts-course.php',
@@ -313,6 +314,7 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Generators\New_Course_Assigned::class => 'internal/emails/generators/class-new-course-assigned.php',
 			\Sensei\Internal\Emails\Generators\Teacher_Message_Reply::class => 'internal/emails/generators/class-teacher-message-reply.php',
 			\Sensei\Internal\Emails\Generators\Student_Message_Reply::class => 'internal/emails/generators/class-student-message-reply.php',
+			\Sensei\Internal\Emails\Generators\Student_Sends_Message::class => 'internal/emails/generators/class-student-sends-message.php',
 		);
 	}
 

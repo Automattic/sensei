@@ -9,6 +9,7 @@ use Sensei\Internal\Emails\Email_Seeder_Data;
 use Sensei\Internal\Emails\Email_Sender;
 use Sensei_Factory;
 use Sensei_Settings;
+use WP_Post;
 
 /**
  * Tests for Sensei\Internal\Emails\Email_Sender class.
@@ -67,10 +68,15 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		$this->skip_did_filter = ! version_compare( get_bloginfo( 'version' ), '6.1.0', '>=' );
 
 		add_action( 'wp_mail_succeeded', [ $this, 'wp_mail_succeeded' ] );
+		add_action( 'get_header', [ $this, 'get_header' ] );
 	}
 
 	public function wp_mail_succeeded( $result ) {
 		$this->email_data = $result;
+	}
+
+	public function get_header() {
+		echo 'Header';
 	}
 
 	public function testInit_WhenCalled_AddsFilter() {
@@ -161,7 +167,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		self::assertStringContainsString( 'style="background-color: yellow;', $this->email_data['message'] );
+		self::assertStringContainsString( 'background-color: yellow;', $this->email_data['message'] );
 	}
 
 	public function testSendEmail_WhenSubjectHasPlaceholders_ReplacesThePlaceholder() {
@@ -180,6 +186,27 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( 'Test Course', $this->email_data['subject'] );
 	}
 
+	public function testGetEmailSubject_WhenCalled_ReturnsTheEmailSubjectWithReplacedPlaceholders() {
+		/* Arrange. */
+		$post = new WP_Post( (object) [ 'post_title' => 'Welcome - [name]' ] );
+
+		/* Act. */
+		$email_body = $this->email_sender->get_email_subject( $post, [ 'name' => 'John' ] );
+
+		/* Assert. */
+		self::assertStringContainsString( 'Welcome - John', $email_body );
+	}
+
+	public function testGetEmailBody_WhenCalled_ReturnsTheEmailBodyWithReplacedPlaceholders() {
+		/* Arrange. */
+		$post = new WP_Post( (object) [ 'post_content' => 'Welcome - [name]' ] );
+
+		/* Act. */
+		$email_body = $this->email_sender->get_email_body( $post, [ 'name' => 'John' ] );
+
+		/* Assert. */
+		self::assertStringContainsString( 'Welcome - John', $email_body );
+	}
 
 	public function testSendEmail_WhenTheReplyToIsSet_SetReplyTo() {
 		/* Arrange. */

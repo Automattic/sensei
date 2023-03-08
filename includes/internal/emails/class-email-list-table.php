@@ -205,6 +205,14 @@ class Email_List_Table extends Sensei_List_Table {
 			);
 		}
 
+		$actions['preview-email'] = sprintf(
+			'<a href="%s" aria-label="%s">%s</a>',
+			Email_Preview::get_preview_link( $post->ID ),
+			/* translators: %s: Post title. */
+				esc_attr( sprintf( __( 'Preview &#8220;%s&#8221;', 'sensei-lms' ), $title ) ),
+			__( 'Preview', 'sensei-lms' )
+		);
+
 		/**
 		 * Filter the row actions displayed on the email list.
 		 *
