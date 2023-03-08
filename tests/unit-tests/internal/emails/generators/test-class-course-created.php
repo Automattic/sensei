@@ -77,18 +77,18 @@ class Course_Created_Test extends \WP_UnitTestCase {
 		$admin_email      = get_option( 'admin_email', true );
 		$teacher_id       = $factory->user->create(
 			[
-				'user_email' => 'test@a.com',
+				'user_email'   => 'test@a.com',
 				'display_name' => 'Test Teacher',
 			]
 		);
 		$course_id        = $factory->course->create(
 			[
-				'post_title' => 'Test Course',
+				'post_title'  => 'Test Course',
 				'post_author' => $teacher_id,
 			]
 		);
 		$email_repository = $this->createMock( Email_Repository::class );
-		$generator = new Course_Created( $email_repository );
+		$generator        = new Course_Created( $email_repository );
 
 		$actual_data = [];
 		$filter      = function( $email, $options ) use ( &$actual_data ) {
