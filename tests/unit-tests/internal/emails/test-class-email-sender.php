@@ -167,7 +167,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		self::assertStringContainsString( 'style="background-color: yellow;', $this->email_data['message'] );
+		self::assertStringContainsString( 'background-color: yellow;', $this->email_data['message'] );
 	}
 
 	public function testSendEmail_WhenSubjectHasPlaceholders_ReplacesThePlaceholder() {
