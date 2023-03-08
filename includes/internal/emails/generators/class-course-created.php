@@ -78,9 +78,9 @@ class Course_Created extends Email_Generators_Abstract {
 		$this->send_email_action(
 			[
 				$recipient => [
-					'teacher:id'          => $teacher_id,
+					'teacher:id'          => (int) $teacher_id,
 					'teacher:displayname' => $teacher->display_name,
-					'course:id'           => $course_id,
+					'course:id'           => (int) $course_id,
 					'course:name'         => get_the_title( $course_id ),
 					'manage:course'       => $manage_url,
 				],
