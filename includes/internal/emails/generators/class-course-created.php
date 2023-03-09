@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Student_Completes_Course class.
+ * File containing the Course_Created class.
  *
  * @package sensei
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Student_Completes_Course
+ * Class Course_Created
  *
  * @internal
  *
@@ -29,7 +29,6 @@ class Course_Created extends Email_Generators_Abstract {
 	/**
 	 * Initialize the email hooks.
 	 *
-	 * @access public
 	 * @since $$next-version$$
 	 *
 	 * @return void
@@ -41,11 +40,11 @@ class Course_Created extends Email_Generators_Abstract {
 	/**
 	 * Send email to admin when a teacher created a course.
 	 *
+	 * @access private
+	 *
 	 * @param string   $new_status New status.
 	 * @param string   $old_status Old status.
 	 * @param \WP_Post $post       The post.
-	 *
-	 * @access private
 	 */
 	public function course_created_to_admin( $new_status, $old_status, $post ) {
 		$course_id = $post->ID;
