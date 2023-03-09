@@ -91,6 +91,12 @@ class Email_Patterns {
 					'categories' => [ 'sensei-emails' ],
 					'content'    => $this->get_pattern_content_from_file( 'course-created' ),
 				],
+			'course-welcome'           =>
+				[
+					'title'      => __( 'Email sent to the student when the student starts a course', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'course-welcome' ),
+				],
 			'student-completes-course' =>
 				[
 					'title'      => __( 'Email sent to teacher after a student completes a course', 'sensei-lms' ),
