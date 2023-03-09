@@ -69,27 +69,18 @@ class Email_Generator {
 	 * @internal
 	 */
 	public function init(): void {
-		$generator_instances = [
-			new Student_Starts_Course( $this->email_repository ),
-			new Student_Completes_Course( $this->email_repository ),
-			new Student_Completes_Lesson( $this->email_repository, $this->lesson_progress_repository ),
-			new Student_Submits_Quiz( $this->email_repository ),
-			new Course_Completed( $this->email_repository ),
-			new New_Course_Assigned( $this->email_repository ),
-			new Quiz_Graded( $this->email_repository ),
-			new Teacher_Message_Reply( $this->email_repository ),
-			new Student_Message_Reply( $this->email_repository ),
-			new Student_Sends_Message( $this->email_repository ),
+		$this->email_generators = [
+			Student_Starts_Course::IDENTIFIER_NAME    => new Student_Starts_Course( $this->email_repository ),
+			Student_Completes_Course::IDENTIFIER_NAME => new Student_Completes_Course( $this->email_repository ),
+			Student_Completes_Lesson::IDENTIFIER_NAME => new Student_Completes_Lesson( $this->email_repository, $this->lesson_progress_repository ),
+			Student_Submits_Quiz::IDENTIFIER_NAME     => new Student_Submits_Quiz( $this->email_repository ),
+			Course_Completed::IDENTIFIER_NAME         => new Course_Completed( $this->email_repository ),
+			New_Course_Assigned::IDENTIFIER_NAME      => new New_Course_Assigned( $this->email_repository ),
+			Quiz_Graded::IDENTIFIER_NAME              => new Quiz_Graded( $this->email_repository ),
+			Teacher_Message_Reply::IDENTIFIER_NAME    => new Teacher_Message_Reply( $this->email_repository ),
+			Student_Message_Reply::IDENTIFIER_NAME    => new Student_Message_Reply( $this->email_repository ),
+			Student_Sends_Message::IDENTIFIER_NAME    => new Student_Sends_Message( $this->email_repository ),
 		];
-
-		$this->email_generators = array_reduce(
-			$generator_instances,
-			function( $carry, $generator ) {
-				$carry[ $generator->get_identifier() ] = $generator;
-				return $carry;
-			},
-			[]
-		);
 
 		add_action( 'init', [ $this, 'init_email_generators' ] );
 	}
