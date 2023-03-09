@@ -110,11 +110,15 @@ export default [
 		edit() {
 			return (
 				<div className="sensei-course-theme-lesson-actions">
-					<div className="sensei-course-theme__button is-primary">
-						{ __( 'Take Quiz', 'sensei-lms' ) }
+					<div className="wp-block-button">
+						<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-primary">
+							{ __( 'Take Quiz', 'sensei-lms' ) }
+						</div>
 					</div>
-					<div className="sensei-course-theme__button is-secondary">
-						{ __( 'Complete Course', 'sensei-lms' ) }
+					<div className="wp-block-button is-style-outline">
+						<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-secondary">
+							{ __( 'Complete Lesson', 'sensei-lms' ) }
+						</div>
 					</div>
 				</div>
 			);
