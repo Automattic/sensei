@@ -82,7 +82,7 @@ class Email_Seeder_Data {
 				'types'       => [ 'teacher' ],
 				'subject'     => __( '[student:displayname] has submitted a quiz', 'sensei-lms' ),
 				'description' => __( 'Quiz Submitted', 'sensei-lms' ),
-				'content'     => '<!-- wp:pattern {"slug":"sensei-emails/student-submits-quiz"} /-->',
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-submits-quiz"} /-->',
 			],
 			'student_sends_message'    => [
 				'types'       => [ 'teacher' ],
