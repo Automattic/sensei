@@ -186,33 +186,23 @@ class Email_Customization {
 	 * @access private
 	 */
 	public function disable_legacy_emails() {
-		$emails_to_be_disabled = [
-			[ 'sensei_course_status_updated', Sensei()->emails, 'teacher_completed_course', 10 ],
-			[ 'sensei_user_course_start', Sensei()->emails, 'teacher_started_course', 10 ],
-			[ 'sensei_user_quiz_submitted', Sensei()->emails, 'teacher_quiz_submitted', 10 ],
-			[ 'sensei_course_status_updated', Sensei()->emails, 'learner_completed_course', 10 ],
-			[ 'sensei_course_new_teacher_assigned', Sensei()->teacher, 'teacher_course_assigned_notification', 10 ],
-			[ 'sensei_user_lesson_end', Sensei()->emails, 'teacher_completed_lesson', 10 ],
-			[ 'sensei_user_quiz_grade', Sensei()->emails, 'learner_graded_quiz', 10 ],
-			[ 'sensei_private_message_reply', Sensei()->emails, 'new_message_reply', 10 ],
-			[ 'sensei_new_private_message', Sensei()->emails, 'teacher_new_message', 10 ],
-		];
+		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'teacher_completed_course' ] );
+		remove_action( 'sensei_user_course_start', [ Sensei()->emails, 'teacher_started_course' ] );
+		remove_action( 'sensei_user_quiz_submitted', [ Sensei()->emails, 'teacher_quiz_submitted' ] );
+		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'learner_completed_course' ] );
+		remove_action( 'sensei_course_new_teacher_assigned', [ Sensei()->teacher, 'teacher_course_assigned_notification' ] );
+		remove_action( 'sensei_user_lesson_end', [ Sensei()->emails, 'teacher_completed_lesson' ] );
+		remove_action( 'sensei_user_quiz_grade', [ Sensei()->emails, 'learner_graded_quiz' ] );
+		remove_action( 'sensei_private_message_reply', [ Sensei()->emails, 'new_message_reply' ] );
+		remove_action( 'sensei_new_private_message', [ Sensei()->emails, 'teacher_new_message' ] );
 
 		/**
-		 * Filter the list of legacy emails to be disabled.
+		 * Action done after disabling legacy emails.
 		 *
 		 * @hook sensei_disable_legacy_emails
 		 *
 		 * @since $$next-version$$
-		 *
-		 * @param {array} $emails_to_be_disabled List of legacy emails to be disabled.
-		 *
-		 * @return {array} List of legacy emails to be disabled.
 		 */
-		$emails_to_be_disabled = apply_filters( 'sensei_disable_legacy_emails', $emails_to_be_disabled );
-
-		foreach ( $emails_to_be_disabled as $email ) {
-			remove_action( $email[0], [ $email[1], $email[2] ], $email[3] );
-		}
+		do_action( 'sensei_disable_legacy_emails' );
 	}
 }
