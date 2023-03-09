@@ -60,7 +60,7 @@ class Recreate_Emails_Tool_Test extends \WP_UnitTestCase {
 		$result = $tool->get_name();
 
 		/* Assert. */
-		self::assertSame( 'Re-create Emails', $result );
+		self::assertSame( 'Recreate Emails', $result );
 	}
 
 	public function testGetDescription_Always_ReturnsExpectedDescription(): void {
@@ -73,7 +73,7 @@ class Recreate_Emails_Tool_Test extends \WP_UnitTestCase {
 		$result = $tool->get_description();
 
 		/* Assert. */
-		$expected = 'Forcefully recreate all emails. If you have any changes in default templates those change will be lost.';
+		$expected = 'Recreate all emails. Existing customizations will be lost.';
 		self::assertSame( $expected, $result );
 	}
 
