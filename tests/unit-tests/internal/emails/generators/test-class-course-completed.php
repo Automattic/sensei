@@ -47,17 +47,18 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 
 	public function testGenerateEmail_WhenCalledByStudentCompletedCourseEvent_CallsStudentEmailSendingActionWithRightData() {
 		/* Arrange. */
-		$student_id = $this->factory->user->create(
+		$student_id    = $this->factory->user->create(
 			[
 				'display_name' => 'Test Student',
 				'user_email'   => 'test@a.com',
 			]
 		);
-		$course     = $this->factory->course->create_and_get(
+		$course        = $this->factory->course->create_and_get(
 			[
 				'post_title' => 'Test Course',
 			]
 		);
+		$completed_url = \Sensei_Course::get_course_completed_page_url( $course->ID );
 
 		\Sensei_Setup_Wizard::instance()->pages->create_pages();
 		remove_action( 'sensei_course_status_updated', [ \Sensei()->frontend, 'redirect_to_course_completed_page' ], 1000 );
@@ -89,8 +90,8 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		self::assertArrayHasKey( 'test@a.com', $email_data['data'] );
 		self::assertEquals( 'Test Student', $email_data['data']['test@a.com']['student:displayname'] );
 		self::assertEquals( 'Test Course', $email_data['data']['test@a.com']['course:name'] );
-		self::assertNotEmpty( $email_data['data']['test@a.com']['certificate:url'] );
-		self::assertArrayHasKey( 'results:url', $email_data['data']['test@a.com'] );
+		self::assertArrayHasKey( 'completed:url', $email_data['data']['test@a.com'] );
+		self::assertNotEmpty( $email_data['data']['test@a.com']['completed:url'] );
 	}
 
 	public function testGenerateEmail_WhenCalledByStudentUpdatedCourseEvent_DoesNotCallStudentEmailIfCourseNotCompleted() {
