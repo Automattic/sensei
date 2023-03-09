@@ -104,9 +104,9 @@ class Email_Seeder_Data {
 			],
 			'content_drip'             => [
 				'types'       => [ 'student' ],
-				'subject'     => __( 'Get ready - [lesson:name] - starts [date:dtext]', 'sensei-lms' ),
+				'subject'     => __( 'Get ready - [lesson:name] - starts [date:dtext]!', 'sensei-lms' ),
 				'description' => __( 'Lessons Available (Content Drip)', 'sensei-lms' ),
-				'content'     => '<!-- wp:pattern {"slug":"sensei-emails/footer"} /-->',
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/content-drip"} /-->',
 			],
 			'course_expiration_today'  => [
 				'types'       => [ 'student' ],
