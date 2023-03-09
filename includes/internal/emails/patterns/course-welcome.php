@@ -42,5 +42,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- /wp:button -->
 	</div>
 	<!-- /wp:buttons -->
+
+	<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"20px"}},"color":{"text":"#020202"}}} -->
+	<p class="has-text-color" style="color:#020202;font-size:16px;margin-top:24px;margin-bottom:0px">Please login to start learning.</p>
+	<!-- /wp:paragraph -->
 </div>
 <!-- /wp:group -->
