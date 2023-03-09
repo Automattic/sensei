@@ -288,7 +288,7 @@ class Sensei_List_Table extends WP_List_Table {
 				echo $column_data[ $column_name ];
 			}
 
-			if ( $column_name === $primary ) {
+			if ( ! $this->has_native_row_actions() &amp;&amp; $column_name === $primary ) {
 				echo '&lt;button type="button" class="toggle-row">&lt;span class="screen-reader-text">' . esc_html__( 'Show more details', 'sensei-lms' ) . '&lt;/span>&lt;/button>';
 			}
 
@@ -300,6 +300,17 @@ class Sensei_List_Table extends WP_List_Table {
 		}
 
 		echo '&lt;/tr>';
+	}
+
+	/**
+	 * Returns if current implementation uses native row actions.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return bool
+	 */
+	protected function has_native_row_actions() {
+		return false;
 	}
 
 	/**
