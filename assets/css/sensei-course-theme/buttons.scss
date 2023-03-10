@@ -11,8 +11,9 @@
 	}
 }
 
-.sensei-course-theme__button,
+.editor-styles-wrapper .wp-block-button .wp-block-button__link.sensei-course-theme__button,
 .sensei-course-theme .wp-block-button,
+.sensei-course-theme__button,
 .sensei-course-theme__button[type=submit],
 .sensei-course-theme__button[type=button] {
 	.wp-block-button__link {
@@ -104,7 +105,6 @@
 			}
 		}
 	}
-
 
 	&.is-link {
 		font-weight: 600;
