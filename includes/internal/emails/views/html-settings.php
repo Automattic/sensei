@@ -57,12 +57,18 @@ $options           = isset( $options ) ? $options : [];
 					<?php esc_html_e( 'Send an email to all students in a course or a group.', 'sensei-lms' ); ?>
 				</p>
 				<div class="sensei-link-navigation">
-					<a href="<?php echo esc_url( admin_url( 'plugin-install.php?s=mailpoet&tab=search&type=term' ) ); ?>" target="_blank">
-						<?php esc_html_e( 'Install MailPoet', 'sensei-lms' ); ?>
-					</a>
-					<a href="https://www.mailpoet.com/" target="_blank">
-						<?php esc_html_e( 'Learn More', 'sensei-lms' ); ?>
-					</a>
+					<?php if ( is_plugin_active( 'mailpoet/mailpoet.php' ) ) : ?>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=mailpoet-settings' ) ); ?>" target="_blank">
+							<?php esc_html_e( 'MailPoet Settings', 'sensei-lms' ); ?>
+						</a>
+					<?php else : ?>
+						<a href="<?php echo esc_url( admin_url( 'plugin-install.php?s=mailpoet&tab=search&type=term' ) ); ?>" target="_blank">
+							<?php esc_html_e( 'Install MailPoet', 'sensei-lms' ); ?>
+						</a>
+						<a href="https://www.mailpoet.com/" target="_blank">
+							<?php esc_html_e( 'Learn More', 'sensei-lms' ); ?>
+						</a>
+					<?php endif ?>
 				</div>
 			</td>
 		</tr>
@@ -78,12 +84,18 @@ $options           = isset( $options ) ? $options : [];
 					<?php esc_html_e( 'Create automated marketing email flows based on course progress and WooCommerce transactions.', 'sensei-lms' ); ?>
 				</p>
 				<div class="sensei-link-navigation">
-					<a href="https://woocommerce.com/products/automatewoo/?utm_source=sensei&utm_medium=referral" target="_blank">
-						<?php esc_html_e( 'Get AutomateWoo', 'sensei-lms' ); ?>
-					</a>
-					<a href="https://automatewoo.com/" target="_blank">
-						<?php esc_html_e( 'Learn More', 'sensei-lms' ); ?>
-					</a>
+					<?php if ( is_plugin_active( 'automatewoo/automatewoo.php' ) ) : ?>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=automatewoo-settings' ) ); ?>" target="_blank">
+							<?php esc_html_e( 'AutomateWoo Settings', 'sensei-lms' ); ?>
+						</a>
+					<?php else : ?>
+						<a href="https://woocommerce.com/products/automatewoo/?utm_source=sensei&utm_medium=referral" target="_blank">
+							<?php esc_html_e( 'Get AutomateWoo', 'sensei-lms' ); ?>
+						</a>
+						<a href="https://automatewoo.com/" target="_blank">
+							<?php esc_html_e( 'Learn More', 'sensei-lms' ); ?>
+						</a>
+					<?php endif ?>
 				</div>
 			</td>
 		</tr>
