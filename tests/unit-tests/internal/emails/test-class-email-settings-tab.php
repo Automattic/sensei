@@ -305,6 +305,62 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( '<input id="email_from_address" name="sensei-settings[email_from_address]" size="40" type="email"', $content );
 	}
 
+	public function testTabContent_WhenInSettingsSubtabAndMailPoetIsActive_HasMailPoetSettingsLink() {
+		/* Arrange. */
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		update_option( 'active_plugins', [ 'mailpoet/mailpoet.php' ] );
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+
+		/* Assert. */
+		self::assertStringContainsString( 'MailPoet Settings', $content );
+	}
+
+	public function testTabContent_WhenInSettingsSubtabAndMailPoetIsNotActive_HasInstallMailPoetLink() {
+		/* Arrange. */
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+
+		/* Assert. */
+		self::assertStringContainsString( 'Install MailPoet', $content );
+	}
+
+	public function testTabContent_WhenInSettingsSubtabAndAutomateWooIsActive_HasAutomateWooSettingsLink() {
+		/* Arrange. */
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		update_option( 'active_plugins', [ 'automatewoo/automatewoo.php' ] );
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+
+		/* Assert. */
+		self::assertStringContainsString( 'AutomateWoo Settings', $content );
+	}
+
+	public function testTabContent_WhenInSettingsSubtabAndAutomateWooIsNotActive_HasGetAutomateWooLink() {
+		/* Arrange. */
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+
+		/* Assert. */
+		self::assertStringContainsString( 'Get AutomateWoo', $content );
+	}
+
 	public function testRenderTabs_NonEmailTabGiven_RendersNothing() {
 
 		$settings           = $this->createMock( Sensei_Settings::class );
