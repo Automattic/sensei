@@ -303,7 +303,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register setup wizard user data option in the settings REST API endpoint.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.2
 	 */
 	public function register_setup_wizard_settings() {
 
