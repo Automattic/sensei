@@ -1121,3 +1121,35 @@ $promo_highlight: #43af99;
 		padding: 1px 5px 3px;
 	}
 }
+
+.sensei-settings {
+	&__description--small {
+		max-width: 320px;
+	}
+
+	.sensei-link-navigation {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 20px;
+		margin-top: 10px;
+		font-size: 13px;
+
+		a {
+			text-decoration: none;
+		}
+	}
+
+	.sensei-mailpoet-icon {
+		width: 20px;
+		height: 20px;
+		margin-left: 10px;
+		position: absolute;
+	}
+
+	.sensei-woo-icon {
+		width: 29px;
+		height: 20px;
+		margin-left: 10px;
+		position: absolute;
+	}
+}

@@ -51,6 +51,7 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 			'sensei-lms/student-submits-quiz',
 			'sensei-lms/student-completes-lesson',
 			'sensei-lms/course-completed',
+			'sensei-lms/course-created',
 			'sensei-lms/new-course-assigned',
 			'sensei-lms/quiz-graded',
 			'sensei-lms/teacher-message-reply',
@@ -115,6 +116,19 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 		}
 	}
 
+	public function testRegisteredCourseCompletedEmail_WhenRetrieved_HasViewResultsButton() {
+		/* Arrange. */
+		$patterns = new Email_Patterns();
+		$registry = \WP_Block_Patterns_Registry::get_instance();
+
+		/* Act. */
+		$patterns->register_email_block_patterns();
+
+		/* Assert. */
+		$this->assertStringContainsString( 'View Results', $registry->get_registered( 'sensei-lms/course-completed' )['content'] );
+		$this->assertStringNotContainsString( 'Certificate', $registry->get_registered( 'sensei-lms/course-completed' )['content'] );
+	}
+
 	private function get_pattern_items() {
 		return [
 			'sensei-lms/student-completes-course',
@@ -122,6 +136,7 @@ class Email_Patterns_Test extends \WP_UnitTestCase {
 			'sensei-lms/student-completes-lesson',
 			'sensei-lms/student-submits-quiz',
 			'sensei-lms/course-completed',
+			'sensei-lms/course-created',
 			'sensei-lms/new-course-assigned',
 			'sensei-lms/quiz-graded',
 			'sensei-lms/teacher-message-reply',

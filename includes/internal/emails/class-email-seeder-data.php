@@ -42,6 +42,12 @@ class Email_Seeder_Data {
 		}
 
 		$this->emails = [
+			'course_created'           => [
+				'types'       => [ 'teacher' ],
+				'subject'     => __( 'Course created by [teacher:displayname]', 'sensei-lms' ),
+				'description' => __( 'Course Created', 'sensei-lms' ),
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/course-created"} /-->',
+			],
 			'quiz_graded'              => [
 				'types'       => [ 'student' ],
 				'subject'     => __( 'Quiz Graded - [lesson:name]', 'sensei-lms' ),
@@ -51,7 +57,7 @@ class Email_Seeder_Data {
 			'course_completed'         => [
 				'types'       => [ 'student' ],
 				'subject'     => __( 'You have completed [course:name]', 'sensei-lms' ),
-				'description' => __( 'Course Complete', 'sensei-lms' ),
+				'description' => __( 'Course Completed', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/course-completed"} /-->',
 			],
 			'student_starts_course'    => [

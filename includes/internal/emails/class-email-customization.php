@@ -188,5 +188,6 @@ class Email_Customization {
 		remove_action( 'sensei_user_quiz_grade', [ Sensei()->emails, 'learner_graded_quiz' ] );
 		remove_action( 'sensei_private_message_reply', [ Sensei()->emails, 'new_message_reply' ] );
 		remove_action( 'sensei_new_private_message', [ Sensei()->emails, 'teacher_new_message' ] );
+		remove_action( 'transition_post_status', [ Sensei()->teacher, 'notify_admin_teacher_course_creation' ] );
 	}
 }
