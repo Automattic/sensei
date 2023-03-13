@@ -20,25 +20,12 @@ jobs:
                   key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-node-
-            - uses: shivammathur/setup-php@v2
-              with:
-                  php-version: '7.4'
-                  tools: composer
-                  coverage: none
-            - name: Get composer cache directory
-              id: composer-cache
-              run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-            - uses: actions/cache@v3
-              with:
-                  path: ${{ steps.composer-cache.outputs.dir }}
-                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-                  restore-keys: |
-                      ${{ runner.os }}-composer-
             - name: Install JS dependencies
               run: npm ci
-            - name: Install PHP dependencies
-              run: composer install --no-ansi --no-interaction --prefer-dist --no-progress
+            - name: Install PHP dependencies and generate the third-party directory
+              uses: ./.github/actions/install-php
+            - name: Remove the PHP dev dependencies
+              run: composer install --no-dev --no-ansi --no-interaction --prefer-dist --no-progress
             - name: Build Plugin
               run: npm run build
             - name: Decompress plugin
