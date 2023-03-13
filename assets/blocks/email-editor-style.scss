@@ -1,5 +1,6 @@
 :root .editor-styles-wrapper {
 	--wp--preset--color--background: #f3f3f3;
+	background-color: var(--wp--preset--color--background);
 
 	.wp-block-post-content *, .block-editor-block-list__layout * {
 		font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
