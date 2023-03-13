@@ -52,7 +52,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 		}
 
 		$student    = new \WP_User( $student_id );
-		$teacher_id = get_post_field( 'post_author', $course_id, 'raw' );
+		$teacher_id = $course->post_author;
 		$teacher    = new \WP_User( $teacher_id );
 		$recipient  = stripslashes( $student->user_email );
 		$course_url = get_permalink( $course_id );
