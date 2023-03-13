@@ -43,6 +43,10 @@ if ( ! defined( 'SENSEI_LMS_PLUGIN_FILE' ) ) {
 	define( 'SENSEI_LMS_PLUGIN_FILE', __FILE__ );
 }
 
+if ( ! defined( 'SENSEI_LMS_PLUGIN_PATH' ) ) {
+	define( 'SENSEI_LMS_PLUGIN_PATH', plugin_dir_path( SENSEI_LMS_PLUGIN_FILE ) );
+}
+
 if ( class_exists( 'Sensei_Main' ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
 		/**
@@ -78,6 +82,11 @@ if ( class_exists( 'Sensei_Main' ) ) {
 		die( esc_html__( 'Deactivate other instances of Sensei LMS before activating this plugin.', 'sensei-lms' ) );
 	}
 }
+
+/**
+ * Autoload the vendor dependencies. This includes the prefixed vendor dependencies as well.
+ */
+require SENSEI_LMS_PLUGIN_PATH . 'vendor/autoload.php';
 
 require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
 if ( ! Sensei_Dependency_Checker::check_php_requirement() ) {
