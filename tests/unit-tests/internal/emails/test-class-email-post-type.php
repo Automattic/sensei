@@ -119,4 +119,23 @@ class Email_Post_Type_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertFalse( current_user_can( 'delete_post', $email_id ) );
 	}
+
+	public function testUserCap_WhenCalledForEditorUser_DoesNotAllowToDelete() {
+		/* Arrange. */
+		$this->login_as_editor();
+		$email_post_type = new Email_Post_Type();
+		$email_post_type->register_post_type();
+		$email_id = $this->factory->post->create(
+			[
+				'post_type'   => 'sensei_email',
+				'post_status' => 'publish',
+			]
+		);
+
+		/* Act. */
+		$email_post_type->init();
+
+		/* Assert. */
+		$this->assertFalse( current_user_can( 'delete_post', $email_id ) );
+	}
 }
