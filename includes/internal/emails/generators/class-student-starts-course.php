@@ -27,6 +27,13 @@ class Student_Starts_Course extends Email_Generators_Abstract {
 	const IDENTIFIER_NAME = 'student_starts_course';
 
 	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	const USAGE_TRACKING_TYPE = 'teacher-started-course';
+
+	/**
 	 * Initialize the email hooks.
 	 *
 	 * @access public

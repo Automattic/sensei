@@ -28,6 +28,13 @@ class Student_Message_Reply extends Email_Generators_Abstract {
 	const IDENTIFIER_NAME = 'student_message_reply';
 
 	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	const USAGE_TRACKING_TYPE = 'learner-new-message-reply';
+
+	/**
 	 * Initialize the email hooks.
 	 *
 	 * @access public
