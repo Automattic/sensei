@@ -57,20 +57,18 @@ class Sensei_MailPoet {
 	 *
 	 * @since $$next-version$$
 	 */
-	public function __construct() {
-		if ( class_exists( \MailPoet\API\API::class ) ) {
-			$this->mailpoet_api = \MailPoet\API\API::MP( 'v1' );
-			if ( $this->mailpoet_api->isSetupComplete() ) {
-				add_action( 'init', array( $this, 'maybe_schedule_sync_job' ), 10 );
+	public function __construct( $mailpoet_api ) {
+		$this->mailpoet_api = $mailpoet_api;
+		if ( $this->mailpoet_api->isSetupComplete() ) {
+			add_action( 'init', array( $this, 'maybe_schedule_sync_job' ), 10 );
 
-				add_action( 'sensei_pro_student_groups_group_student_added', array( $this, 'add_student_subscriber' ), 10, 2 );
-				add_action( 'sensei_pro_student_groups_group_students_removed', array( $this, 'remove_student_subscribers' ), 10, 2 );
+			add_action( 'sensei_pro_student_groups_group_student_added', array( $this, 'add_student_subscriber' ), 10, 2 );
+			add_action( 'sensei_pro_student_groups_group_students_removed', array( $this, 'remove_student_subscribers' ), 10, 2 );
 
-				add_action( 'sensei_course_enrolment_status_changed', array( $this, 'maybe_add_student_course_subscriber' ), 10, 3 );
-				add_action( 'sensei_admin_enrol_user', array( $this, 'add_student_subscriber' ), 10, 2 );
-				add_action( 'sensei_manual_enrolment_learner_enrolled', array( $this, 'add_student_course_subscriber' ), 10, 2 );
-				add_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'remove_student_course_subscriber' ), 10, 2 );
-			}
+			add_action( 'sensei_course_enrolment_status_changed', array( $this, 'maybe_add_student_course_subscriber' ), 10, 3 );
+			add_action( 'sensei_admin_enrol_user', array( $this, 'add_student_subscriber' ), 10, 2 );
+			add_action( 'sensei_manual_enrolment_learner_enrolled', array( $this, 'add_student_course_subscriber' ), 10, 2 );
+			add_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'remove_student_course_subscriber' ), 10, 2 );
 		}
 	}
 
@@ -79,9 +77,9 @@ class Sensei_MailPoet {
 	 *
 	 * @return Sensei_MailPoet
 	 */
-	public static function instance() {
+	public static function instance( $mailpoet_api ) {
 		if ( ! isset( self::$instance ) ) {
-			self::$instance = new self();
+			self::$instance = new self( $mailpoet_api );
 		}
 
 		return self::$instance;

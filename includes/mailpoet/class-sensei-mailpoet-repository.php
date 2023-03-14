@@ -68,8 +68,9 @@ class Sensei_MailPoet_Repository {
 	 * @return string
 	 */
 	public static function get_list_name( $name, $post_type ) {
+		$singular_name = get_post_type_object( $post_type )->labels->singular_name ?? ucfirst( $post_type );
 		// translators: Placeholder is the post type singular name: Course or Group. The second placeholder is the Course or Group name.
-		return sprintf( __( 'Sensei LMS %1$s: %2$s', 'sensei-lms' ), get_post_type_object( $post_type )->labels->singular_name, $name );
+		return sprintf( __( 'Sensei LMS %1$s: %2$s', 'sensei-lms' ), $singular_name, $name );
 	}
 
 	/**

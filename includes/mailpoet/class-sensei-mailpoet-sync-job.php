@@ -40,7 +40,8 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 	 * @return bool Returns true if there is more to do.
 	 */
 	protected function run_batch( int $offset ) : bool {
-		$sensei_mp_instance = Sensei_MailPoet::instance();
+		$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
+		$sensei_mp_instance = Sensei_MailPoet::instance( $mailpoet_api );
 
 		$mailpoet_lists = $sensei_mp_instance->get_mailpoet_lists();
 		$sensei_lists   = $sensei_mp_instance->get_sensei_lists();

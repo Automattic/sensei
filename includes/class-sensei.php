@@ -575,7 +575,10 @@ class Sensei_Main {
 			( new Email_Post_Type() )->init();
 		}
         // MailPoet integration.
-		new Sensei_MailPoet();
+		if ( class_exists( \MailPoet\API\API::class ) ) {
+			$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
+			new Sensei_MailPoet( $mailpoet_api );
+		}
 	}
 
 	/**
