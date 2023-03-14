@@ -116,7 +116,7 @@ class Email_Sender {
 				null
 			);
 
-			log_sent_email( $usage_tracking_type );
+			$this->log_sent_email( $usage_tracking_type );
 		}
 	}
 
