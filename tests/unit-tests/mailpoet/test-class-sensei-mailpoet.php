@@ -5,7 +5,7 @@
  * @package sensei-tests
  */
 
-// phpcs:disable WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Using PHPUnit conventions.
+// phpcs:disable WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Mocking an external library.
 // phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound -- Using PHPUnit conventions.
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- Using PHPUnit conventions.
 
