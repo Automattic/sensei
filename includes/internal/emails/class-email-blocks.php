@@ -43,6 +43,7 @@ class Email_Blocks {
 			'layout'     => [
 				'contentSize' => '800px',
 			],
+			'color'      => [ 'palette' => null ],
 			'typography' => [
 				'fluid'     => false,
 				'fontSizes' => [
