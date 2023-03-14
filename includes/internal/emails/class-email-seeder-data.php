@@ -48,6 +48,12 @@ class Email_Seeder_Data {
 				'description' => __( 'Course Created', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/course-created"} /-->',
 			],
+			'course_welcome'           => [
+				'types'       => [ 'student' ],
+				'subject'     => __( 'Welcome to [course:name]', 'sensei-lms' ),
+				'description' => __( 'Welcome to Course', 'sensei-lms' ),
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/course-welcome"} /-->',
+			],
 			'quiz_graded'              => [
 				'types'       => [ 'student' ],
 				'subject'     => __( 'Quiz Graded - [lesson:name]', 'sensei-lms' ),
