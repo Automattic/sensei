@@ -35,8 +35,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- /wp:paragraph -->
 
 		<!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px"}}}} -->
-		<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"backgroundColor":"black","textColor":"white","style":{"spacing":{"padding":{"top":"16px","bottom":"16px","left":"20px","right":"20px"}},"typography":{"fontSize":"16px"}}} -->
-			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-white-color has-black-background-color has-text-color has-background" href="[manage:students]" style="padding-top:16px;padding-right:20px;padding-bottom:16px;padding-left:20px">Manage Students</a></div>
+		<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"spacing":{"padding":{"top":"16px","bottom":"16px","left":"20px","right":"20px"}},"typography":{"fontSize":"16px"},"color":{"background":"#101517","text":"#ffffff"}}} -->
+			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-text-color has-background" href="[manage:students]" style="background-color:#101517;color:#ffffff;padding-top:16px;padding-right:20px;padding-bottom:16px;padding-left:20px">Manage Students</a></div>
 			<!-- /wp:button -->
 		</div>
 		<!-- /wp:buttons -->
