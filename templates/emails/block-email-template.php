@@ -26,6 +26,12 @@
 		.inline-block {
 			display: inline-block;
 		}
+		.wp-block-button__link{
+			text-decoration: none;
+		}
+		.wp-block-post-title {
+			font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+		}
 		img {
 			-ms-interpolation-mode: bicubic;
 			max-width: 100%;
