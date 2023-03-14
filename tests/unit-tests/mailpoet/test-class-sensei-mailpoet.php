@@ -5,6 +5,10 @@
  * @package sensei-tests
  */
 
+// phpcs:disable WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Using PHPUnit conventions.
+// phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound -- Using PHPUnit conventions.
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- Using PHPUnit conventions.
+
 /**
  * Class for testing Sensei_MailPoet class.
  *
@@ -71,6 +75,9 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
  * @since $$next-version$$
  */
 class MailPoetAPIMockFactory {
+	/**
+	 * Mock MP static method.
+	 */
 	public static function MP() {
 		return new MailPoetMockAPI();
 	}
@@ -84,6 +91,9 @@ class MailPoetAPIMockFactory {
 class MailPoetMockAPI {
 	public $lists;
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		$this->lists = array(
 			'Sensei LMS Course: A new course'     =>
@@ -129,14 +139,23 @@ class MailPoetMockAPI {
 		);
 	}
 
+	/**
+	 * Mock isSetupComplete method.
+	 */
 	public function isSetupComplete() {
 		return true;
 	}
 
+	/**
+	 * Mock getLists method.
+	 */
 	public function getLists() {
 		return $this->lists;
 	}
 
+	/**
+	 * Mock addList method.
+	 */
 	public function addList( $list ) {
 		$new_list      = array(
 			'id'          => 122,
@@ -147,14 +166,23 @@ class MailPoetMockAPI {
 		return $new_list;
 	}
 
+	/**
+	 * Mock getSubscriber method.
+	 */
 	public function getSubscriber( $email ) {
 		return array( 'id' => 12 );
 	}
 
+	/**
+	 * Mock subscribeToList method.
+	 */
 	public function subscribeToList( $id, $list_id, $options ) {
 		return true;
 	}
 
+	/**
+	 * Mock unsubscribeFromList method.
+	 */
 	public function unsubscribeFromList( $subscriber_id, $list_id ) {
 		return true;
 	}
