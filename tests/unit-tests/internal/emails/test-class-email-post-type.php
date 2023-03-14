@@ -89,4 +89,15 @@ class Email_Post_Type_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0, $redirect_status );
 		$this->assertSame( '', $redirect_location );
 	}
+
+	public function testInit_WhenCalled_AddsHookForRemovingEmailDeletingCap() {
+		/* Arrange. */
+		$email_post_type = new Email_Post_Type();
+
+		/* Act. */
+		$email_post_type->init();
+
+		/* Assert. */
+		$this->assertEquals( 10, has_action( 'map_meta_cap', [ $email_post_type, 'remove_cap_of_deleting_email' ] ) );
+	}
 }
