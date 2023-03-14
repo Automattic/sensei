@@ -7,7 +7,6 @@
 
 // phpcs:disable WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Mocking an external library.
 // phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound -- Using PHPUnit conventions.
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- Using PHPUnit conventions.
 
 /**
  * Class for testing Sensei_MailPoet class.
@@ -30,7 +29,7 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
-		$mailpoet_api  = MailPoetAPIMockFactory::MP();
+		$mailpoet_api  = Sensei_MailPoetAPIMockFactory::MP();
 		new Sensei_MailPoet( $mailpoet_api );
 	}
 
@@ -74,12 +73,12 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
  *
  * @since $$next-version$$
  */
-class MailPoetAPIMockFactory {
+class Sensei_MailPoetAPIMockFactory {
 	/**
 	 * Mock MP static method.
 	 */
 	public static function MP() {
-		return new MailPoetMockAPI();
+		return new Sensei_MailPoetMockAPI_Test();
 	}
 }
 
@@ -88,7 +87,7 @@ class MailPoetAPIMockFactory {
  *
  * @since $$next-version$$
  */
-class MailPoetMockAPI {
+class Sensei_MailPoetMockAPI_Test {
 	public $lists;
 
 	/**
