@@ -27,6 +27,13 @@ class Course_Created extends Email_Generators_Abstract {
 	const IDENTIFIER_NAME = 'course_created';
 
 	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	const USAGE_TRACKING_TYPE = 'admin-created-course';
+
+	/**
 	 * Initialize the email hooks.
 	 *
 	 * @since $$next-version$$
