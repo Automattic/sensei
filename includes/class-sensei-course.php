@@ -13,6 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Sensei_Course {
+	/**
+	 * The showcase courses upsell page slug.
+	 */
+	const SHOWCASE_COURSES_SLUG = 'sensei_showcase_courses';
 
 	/**
 	 * @var $token
@@ -206,7 +210,7 @@ class Sensei_Course {
 			__( 'Showcase Courses', 'sensei-lms' ),
 			__( 'Showcase Courses', 'sensei-lms' ),
 			'edit_courses',
-			'showcase-courses',
+			self::SHOWCASE_COURSES_SLUG,
 			[ $this, 'showcase_courses_screen' ]
 		);
 	}
@@ -250,8 +254,8 @@ class Sensei_Course {
 			],
 			'showcase-courses'  => [
 				'label'     => __( 'Showcase Courses', 'sensei-lms' ),
-				'url'       => admin_url( 'admin.php?page=showcase-courses' ),
-				'screen_id' => 'admin_page_showcase-courses',
+				'url'       => admin_url( 'admin.php?page=' . self::SHOWCASE_COURSES_SLUG ),
+				'screen_id' => 'admin_page_' . self::SHOWCASE_COURSES_SLUG,
 			],
 		];
 
