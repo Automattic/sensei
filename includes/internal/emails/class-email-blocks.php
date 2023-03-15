@@ -40,6 +40,10 @@ class Email_Blocks {
 	public const EMAIL_THEME_SETTINGS = [
 		'version'  => 2,
 		'settings' => [
+			'layout'     => [
+				'contentSize' => '800px',
+			],
+			'color'      => [ 'palette' => null ],
 			'typography' => [
 				'fluid'     => false,
 				'fontSizes' => [

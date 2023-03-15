@@ -18,8 +18,19 @@
 		* {
 			font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
 		}
+
+		.wp-element-button, .editor-styles-wrapper .wp-block-button__link {
+			text-transform: capitalize;
+		}
+
 		.inline-block {
 			display: inline-block;
+		}
+		.wp-block-button__link{
+			text-decoration: none;
+		}
+		.wp-block-post-title {
+			font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
 		}
 		img {
 			-ms-interpolation-mode: bicubic;
@@ -72,54 +83,6 @@
 			display: block;
 			margin: 0 auto;
 			padding: 40px 24px 24px;
-		}
-
-		.narrow .content {
-			max-width: 800px;
-		}
-
-		/* -------------------------------------
-				HEADER, FOOTER, MAIN
-		------------------------------------- */
-		.main {
-			background: #ffffff;
-			width: 100%;
-			border-radius: 2px;
-		}
-
-		.wrapper {
-			box-sizing: border-box;
-			padding: 40px 56px 0;
-		}
-
-		.content-block {
-			padding-bottom: 16px;
-			padding-top: 16px;
-		}
-
-		.narrow .wrapper {
-			padding: 40px 48px 0;
-		}
-
-		.narrow .person {
-			margin-top: 0;
-		}
-
-		.actions {
-			margin: 24px 0 64px;
-			width: 100%;
-		}
-		.actions .btn-primary > tbody > tr > td > table {
-			margin-right: 16px;
-			border-radius: 100px;
-		}
-
-		.main-content p,
-		.main-content div,
-		.main-content ul,
-		.main-content ol,
-		.main-content img {
-			margin-bottom: 24px;
 		}
 
 
