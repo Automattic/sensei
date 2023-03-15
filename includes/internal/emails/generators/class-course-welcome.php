@@ -27,6 +27,13 @@ class Course_Welcome extends Email_Generators_Abstract {
 	const IDENTIFIER_NAME = 'course_welcome';
 
 	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	const USAGE_TRACKING_TYPE = 'learner-welcome-course';
+
+	/**
 	 * Initialize the email hooks.
 	 *
 	 * @since $$next-version$$
