@@ -206,13 +206,12 @@ class Sensei_Course {
 		}
 
 		$tabs = [
-			[
+			'all-courses'       => [
 				'label'     => __( 'All Courses', 'sensei-lms' ),
 				'url'       => admin_url( 'edit.php?post_type=course' ),
 				'screen_id' => 'edit-course',
 			],
-
-			[
+			'course-categories' => [
 				'label'     => __( 'Course Categories', 'sensei-lms' ),
 				'url'       => admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ),
 				'screen_id' => 'edit-course-category',
