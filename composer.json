@@ -7,6 +7,8 @@
 		"bamarni/composer-bin-plugin": "1.8.2",
 		"dealerdirect/phpcodesniffer-composer-installer": "0.7.2",
 		"dms/phpunit-arraysubset-asserts": "0.4.0",
+		"humbug/php-scoper": "0.13.9",
+		"pelago/emogrifier": "6.0.0",
 		"phpcompatibility/phpcompatibility-wp": "2.1.4",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
 		"sirbrillig/phpcs-variable-analysis": "2.11.9",
@@ -14,7 +16,33 @@
 		"wp-coding-standards/wpcs": "2.3.0",
 		"yoast/phpunit-polyfills": "1.0.4"
 	},
+	"minimum-stability": "dev",
 	"prefer-stable": true,
+	"autoload": {
+		"classmap": [
+			"third-party/"
+		]
+	},
+	"autoload-dev": {
+		"classmap": [
+			"config/"
+		]
+	},
+	"scripts": {
+		"prefix-dependencies": [
+			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --output-dir=third-party --config=config/scoper.inc.php --force --quiet"
+		],
+		"pre-install-cmd": [
+			"mkdir -p third-party"
+		],
+		"pre-update-cmd": [
+			"mkdir -p third-party"
+		],
+		"post-autoload-dump": [
+			"Sensei\\Config\\Composer\\Actions::prefix_dependencies",
+			"composer dump-autoload --no-scripts"
+		]
+	},
 	"archive": {
 		"exclude": [
 			"/*",
@@ -45,6 +73,8 @@
 			"!/widgets",
 			"!/sensei-lms.php",
 			"!/wpml-config.xml",
+			"!/vendor",
+			"!/third-party",
 			".DS_Store",
 			".*",
 			"*.test.js",
@@ -61,9 +91,6 @@
 			"dealerdirect/phpcodesniffer-composer-installer": true,
 			"bamarni/composer-bin-plugin": true
 		}
-	},
-	"require": {
-		"pelago/emogrifier": "^6.0"
 	},
 	"extra": {
 		"changelogger": {

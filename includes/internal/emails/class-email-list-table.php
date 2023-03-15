@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Emails;
 
 use Sensei_List_Table;
+use WP_Post;
 use WP_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -54,8 +55,8 @@ class Email_List_Table extends Sensei_List_Table {
 	public function get_columns() {
 		$columns = [
 			'cb'            => '<input type="checkbox" />',
+			'description'   => __( 'Email', 'sensei-lms' ),
 			'subject'       => __( 'Subject', 'sensei-lms' ),
-			'description'   => __( 'Description', 'sensei-lms' ),
 			'last_modified' => __( 'Last Modified', 'sensei-lms' ),
 		];
 
@@ -97,6 +98,15 @@ class Email_List_Table extends Sensei_List_Table {
 	}
 
 	/**
+	 * Returns if current implementation uses native row actions.
+	 *
+	 * @return bool
+	 */
+	protected function has_native_row_actions() {
+		return true;
+	}
+
+	/**
 	 * Get the data for each row.
 	 *
 	 * @param \WP_Post $post The email post.
@@ -115,14 +125,14 @@ class Email_List_Table extends Sensei_List_Table {
 			$post->ID
 		);
 
-		$subject = sprintf(
-			'<strong><a href="%s" class="row-title">%s</a></strong>%s',
+		$description = sprintf(
+			'<strong><a href="%1$s" class="row-title">%2$s</a></strong>%3$s',
 			esc_url( get_edit_post_link( $post ) ),
-			esc_html( $title ),
+			get_post_meta( $post->ID, '_sensei_email_description', true ),
 			$this->row_actions( $actions )
 		);
 
-		$description = get_post_meta( $post->ID, '_sensei_email_description', true );
+		$subject = esc_html( $title );
 
 		$last_modified = sprintf(
 			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
@@ -132,8 +142,8 @@ class Email_List_Table extends Sensei_List_Table {
 
 		$row_data = [
 			'cb'            => $checkbox,
-			'subject'       => $subject,
 			'description'   => $description,
+			'subject'       => $subject,
 			'last_modified' => $last_modified,
 		];
 
