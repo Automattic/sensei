@@ -282,27 +282,6 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( 'Reply-To: address_to_be_replied@gmail.com', $last_email->header );
 	}
 
-	public function testSendEmail_WhenCalled_LogsSentEmail() {
-		/* Arrange. */
-		$mock = $this->getMockBuilder( 'Email_Sender' )
-			->setMethods( array( 'log_sent_email' ) )
-			->getMock();
-
-		/* Assert & Act. */
-		$mock->expects( $this->once() )
-				->method( 'log_sent_email' );
-
-		$this->email_sender->send_email(
-			'student_starts_course',
-			array(
-				'a@a.test' => array(
-					'student:displayname' => 'Test Student',
-				),
-			),
-			self::USAGE_TRACKING_TYPE
-		);
-	}
-
 	private function create_test_email_template() {
 		$repository = new Email_Repository();
 

@@ -115,8 +115,7 @@ class Email_Sender {
 				$this->get_email_headers(),
 				null
 			);
-
-			$this->log_sent_email( $usage_tracking_type );
+			sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
 		}
 	}
 
@@ -165,19 +164,6 @@ class Email_Sender {
 		return CssInliner::fromHtml( $templated_output )
 			->inlineCss( $this->get_header_styles() )
 			->render();
-	}
-
-	/**
-	 * Log that an email was sent.
-	 *
-	 * This is put into a separate method to support unit test mocking.
-	 *
-	 * @internal
-	 *
-	 * @param string $usage_tracking_type Usage tracking type.
-	 */
-	public function log_sent_email( $usage_tracking_type ) {
-		sensei_log_event( 'email_send', array( 'type' => $usage_tracking_type ) );
 	}
 
 	/**
