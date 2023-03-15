@@ -12,6 +12,7 @@ use Sensei\Internal\Emails\Email_Post_Type;
 class Email_Post_Type_Test extends \WP_UnitTestCase {
 
 	use \Sensei_Test_Redirect_Helpers;
+	use \Sensei_Test_Login_Helpers;
 
 	public function testRegisterPostType_WhenCalled_RegistersEmailPostType() {
 		/* Arrange. */
@@ -88,5 +89,91 @@ class Email_Post_Type_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 0, $redirect_status );
 		$this->assertSame( '', $redirect_location );
+	}
+
+	public function testInit_WhenCalled_AddsHookForRemovingEmailDeletingCap() {
+		/* Arrange. */
+		$email_post_type = new Email_Post_Type();
+
+		/* Act. */
+		$email_post_type->init();
+
+		/* Assert. */
+		$this->assertEquals( 10, has_action( 'map_meta_cap', [ $email_post_type, 'remove_cap_of_deleting_email' ] ) );
+	}
+
+	public function testUserCap_WhenCalledForAdminUserForEmailPost_DoesNotAllowToDelete() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$email_post_type = new Email_Post_Type();
+		$email_post_type->register_post_type();
+		$email_id = $this->factory->post->create(
+			[
+				'post_type'   => 'sensei_email',
+				'post_status' => 'publish',
+			]
+		);
+
+		/* Act. */
+		$email_post_type->init();
+
+		/* Assert. */
+		$this->assertFalse( current_user_can( 'delete_post', $email_id ) );
+	}
+
+	public function testUserCap_WhenCalledForEditorUser_DoesNotAllowToDelete() {
+		/* Arrange. */
+		$this->login_as_editor();
+		$email_post_type = new Email_Post_Type();
+		$email_post_type->register_post_type();
+		$email_id = $this->factory->post->create(
+			[
+				'post_type'   => 'sensei_email',
+				'post_status' => 'publish',
+			]
+		);
+
+		/* Act. */
+		$email_post_type->init();
+
+		/* Assert. */
+		$this->assertFalse( current_user_can( 'delete_post', $email_id ) );
+	}
+
+	public function testUserCap_WhenCalled_AllowsDeletingUnlessHookIsAttached() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$email_post_type = new Email_Post_Type();
+		$email_post_type->register_post_type();
+		$email_id = $this->factory->post->create(
+			[
+				'post_type'   => 'sensei_email',
+				'post_status' => 'publish',
+			]
+		);
+
+		/* Act. */
+		remove_action( 'map_meta_cap', [ $email_post_type, 'map_meta_cap' ], 10 );
+
+		/* Assert. */
+		$this->assertTrue( current_user_can( 'delete_post', $email_id ) );
+	}
+
+	public function testEmailDeleteCapHook_WhenCalled_DoesNotAffectOtherPostTypes() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$email_post_type = new Email_Post_Type();
+		$email_post_type->register_post_type();
+		$post_id = $this->factory->post->create(
+			[
+				'post_status' => 'publish',
+			]
+		);
+
+		/* Act. */
+		$email_post_type->init();
+
+		/* Assert. */
+		$this->assertTrue( current_user_can( 'delete_post', $post_id ) );
 	}
 }
