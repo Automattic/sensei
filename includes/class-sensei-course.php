@@ -154,6 +154,7 @@ class Sensei_Course {
 		add_action( 'sensei_loaded', [ $this, 'add_legacy_course_hooks' ] );
 
 		// Add custom navigation.
+		add_action( 'admin_menu', array( $this, 'add_showcase_courses_upsell' ) );
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 	}
 
@@ -193,6 +194,37 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Add showcase courses upsell page.
+	 *
+	 * @since $$next-version$$
+	 * @internal
+	 * @access private
+	 */
+	public function add_showcase_courses_upsell() {
+		add_submenu_page(
+			null,
+			__( 'Showcase Courses', 'sensei-lms' ),
+			__( 'Showcase Courses', 'sensei-lms' ),
+			'edit_courses',
+			'showcase-courses',
+			[ $this, 'showcase_courses_screen' ]
+		);
+	}
+
+	/**
+	 * Add showcase courses upsell screen.
+	 *
+	 * @since $$next-version$$
+	 * @internal
+	 * @access private
+	 */
+	public function showcase_courses_screen() {
+		?>
+		<div>Upsell here.</div>
+		<?php
+	}
+
+	/**
 	 * Add custom navigation to the admin pages.
 	 *
 	 * @since 4.0.0
@@ -215,6 +247,11 @@ class Sensei_Course {
 				'label'     => __( 'Course Categories', 'sensei-lms' ),
 				'url'       => admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ),
 				'screen_id' => 'edit-course-category',
+			],
+			'showcase-courses'  => [
+				'label'     => __( 'Showcase Courses', 'sensei-lms' ),
+				'url'       => admin_url( 'admin.php?page=showcase-courses' ),
+				'screen_id' => 'admin_page_showcase-courses',
 			],
 		];
 
