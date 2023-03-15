@@ -157,8 +157,12 @@ class Sensei_Course {
 		add_action( 'template_redirect', [ $this, 'setup_single_course_page' ] );
 		add_action( 'sensei_loaded', [ $this, 'add_legacy_course_hooks' ] );
 
+		// Showcase courses upsell.
+		add_action( 'admin_menu', [ $this, 'add_showcase_courses_upsell' ] );
+		add_action( 'in_admin_header', [ $this, 'open_showcase_courses_upsell_wrapper' ], 5 );
+		add_action( 'admin_footer', [ $this, 'close_showcase_courses_upsell_wrapper' ] );
+
 		// Add custom navigation.
-		add_action( 'admin_menu', array( $this, 'add_showcase_courses_upsell' ) );
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 	}
 
@@ -226,6 +230,39 @@ class Sensei_Course {
 		?>
 		<div>Upsell here.</div>
 		<?php
+	}
+
+	/**
+	 * Open showcase courses upsell wrapper.
+	 *
+	 * @since $$next-version$$
+	 * @internal
+	 * @access private
+	 */
+	public function open_showcase_courses_upsell_wrapper() {
+		if ( $this->is_showcase_courses_upsell_page() ) {
+			echo '<div class="wrap">';
+		}
+	}
+
+	/**
+	 * Close showcase courses upsell wrapper.
+	 *
+	 * @since $$next-version$$
+	 * @internal
+	 * @access private
+	 */
+	public function close_showcase_courses_upsell_wrapper() {
+		if ( $this->is_showcase_courses_upsell_page() ) {
+			echo '</div>';
+		}
+	}
+
+	/**
+	 * Check if the current page is the showcase courses upsell page.
+	 */
+	private function is_showcase_courses_upsell_page() {
+		return isset( $_GET['page'] ) && self::SHOWCASE_COURSES_SLUG === $_GET['page']; // phpcs:ignore WordPress.Security.NonceVerification
 	}
 
 	/**
