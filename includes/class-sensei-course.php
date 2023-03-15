@@ -161,6 +161,7 @@ class Sensei_Course {
 		add_action( 'admin_menu', [ $this, 'add_showcase_courses_upsell' ] );
 		add_action( 'in_admin_header', [ $this, 'open_showcase_courses_upsell_wrapper' ], 5 );
 		add_action( 'admin_footer', [ $this, 'close_showcase_courses_upsell_wrapper' ] );
+		add_filter( 'admin_title', [ $this, 'showcase_courses_upsell_title' ] );
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
@@ -230,6 +231,26 @@ class Sensei_Course {
 		?>
 		<div>Upsell here.</div>
 		<?php
+	}
+
+	/**
+	 * Filter the showcase courses page title. It's needed because submenu pages
+	 * without a parent menu item don't have a title.
+	 *
+	 * @since $$next-version$$
+	 * @internal
+	 * @access private
+	 *
+	 * @param string $admin_title The page title, with extra context added.
+	 *
+	 * @return string The page title.
+	 */
+	public function showcase_courses_upsell_title( $admin_title ) {
+		if ( $this->is_showcase_courses_upsell_page() ) {
+			return __( 'Showcase Courses', 'sensei-lms' ) . $admin_title;
+		}
+
+		return $admin_title;
 	}
 
 	/**
