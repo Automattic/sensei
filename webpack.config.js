@@ -114,6 +114,7 @@ const files = [
 	'css/learning-mode.theme.scss',
 	'css/sensei-theme-blocks.scss',
 	'css/sensei-course-theme/sidebar-mobile-menu.scss',
+	'css/showcase-upsell.scss',
 	'course-theme/learning-mode.js',
 	'course-theme/course-theme.editor.js',
 	'course-theme/blocks/index.js',
