@@ -11,10 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-
-require plugin_dir_path( __DIR__ ) . '../../vendor/autoload.php';
-
-use Pelago\Emogrifier\CssInliner;
+use Sensei\ThirdParty\Pelago\Emogrifier\CssInliner;
 use Sensei_Settings;
 use WP_Post;
 
@@ -246,7 +243,9 @@ class Email_Sender {
 		}
 
 		$dom = new \DOMDocument();
+		libxml_use_internal_errors( true );
 		$dom->loadHTML( $header_content );
+		libxml_clear_errors();
 
 		$header_styles = '';
 		$stylesheets   = [];

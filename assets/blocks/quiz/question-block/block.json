@@ -45,7 +45,7 @@
 			"type": "object",
 			"default": {
 				"grade": 1,
-				"hideAnswerFeedback": true
+				"hideAnswerFeedback": ""
 			}
 		},
 		"editable": {

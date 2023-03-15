@@ -22,6 +22,7 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 		add_action( 'sensei_user_quiz_grade', [ Sensei()->emails, 'learner_graded_quiz' ] );
 		add_action( 'sensei_private_message_reply', [ Sensei()->emails, 'new_message_reply' ] );
 		add_action( 'sensei_new_private_message', [ Sensei()->emails, 'teacher_new_message' ] );
+		add_action( 'transition_post_status', [ Sensei()->teacher, 'notify_admin_teacher_course_creation' ] );
 	}
 
 	public function testInstance_WhenCalled_ReturnsInstance() {
@@ -102,6 +103,7 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 			'quiz_graded'              => [ 'sensei_user_quiz_grade', 'learner_graded_quiz', Sensei()->emails ],
 			'teacher_message_reply'    => [ 'sensei_private_message_reply', 'new_message_reply', Sensei()->emails ],
 			'teacher_new_message'      => [ 'sensei_new_private_message', 'teacher_new_message', Sensei()->emails ],
+			'course_created'           => [ 'transition_post_status', 'notify_admin_teacher_course_creation', Sensei()->teacher ],
 		];
 	}
 }

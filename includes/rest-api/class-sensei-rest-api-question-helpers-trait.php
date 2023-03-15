@@ -779,7 +779,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 					'hideAnswerFeedback' => [
 						'type'        => 'string',
 						'description' => 'Hide/show answer feedback for the question',
-						'default'     => false,
+						'default'     => '',
 					],
 				],
 			],
