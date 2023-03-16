@@ -62,7 +62,7 @@ class Sensei_Continue_Course_Block {
 			return '';
 		}
 
-		$target_post_id = $this->get_target_page_post_id_for_continue_url( $course_id, $user_id );
+		$target_post_id = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_id, $user_id );
 
 		return '<form action="' . esc_url( get_permalink( absint( $target_post_id ?? $course_id ) ) ) . '" method="get" class="sensei-block-wrapper sensei-cta">' .
 			preg_replace(
@@ -72,49 +72,5 @@ class Sensei_Continue_Course_Block {
 				1
 			) .
 		'</form>';
-	}
-
-	/**
-	 * Gets the id for the last lesson the user was working on, or the next lesson, or
-	 * the course id as fallback for fresh users or courses with no lessons.
-	 *
-	 * @access private
-	 *
-	 * @param int $course_id Id of the course.
-	 * @param int $user_id   Id of the user.
-	 *
-	 * @return int
-	 */
-	private function get_target_page_post_id_for_continue_url( $course_id, $user_id ) {
-		$course_lessons = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
-
-		if ( empty( $course_lessons ) ) {
-			return $course_id;
-		}
-		// First try to get the lesson the user started or updated last.
-		$activity_args = [
-			'post__in' => $course_lessons,
-			'user_id'  => $user_id,
-			'type'     => 'sensei_lesson_status',
-			'number'   => 1,
-			'orderby'  => 'comment_date',
-			'order'    => 'DESC',
-			'status'   => [ 'in-progress', 'ungraded' ],
-		];
-
-		$last_lesson_activity = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-
-		if ( ! empty( $last_lesson_activity ) ) {
-			return $last_lesson_activity->comment_post_ID;
-		} else {
-			// If there is no such lesson, get the first lesson that the user has not yet started.
-			$completed_lessons     = Sensei()->course->get_completed_lesson_ids( $course_id, $user_id );
-			$not_completed_lessons = array_diff( $course_lessons, $completed_lessons );
-
-			if ( count( $course_lessons ) !== count( $not_completed_lessons ) && ! empty( $not_completed_lessons ) ) {
-				return current( $not_completed_lessons );
-			}
-		}
-		return $course_id;
 	}
 }
