@@ -104,17 +104,18 @@ class Email_Sender {
 		 * @param string $email_name   The name of the email template.
 		 * @param array  $replacements The placeholder replacements.
 		 */
-		add_action( 'sensei_email_send', [ $this, 'send_email' ], 10, 2 );
+		add_action( 'sensei_email_send', [ $this, 'send_email' ], 10, 3 );
 	}
 	/**
 	 * Send email of type.
 	 *
 	 * @param string $email_name The email type.
 	 * @param array  $replacements The placeholder replacements.
+	 * @param string $usage_tracking_type Usage tracking type.
 	 *
 	 * @access private
 	 */
-	public function send_email( $email_name, $replacements ) {
+	public function send_email( $email_name, $replacements, $usage_tracking_type ) {
 		$email_post = $this->get_email_post_by_name( $email_name );
 
 		if ( ! $email_post ) {
@@ -147,6 +148,7 @@ class Email_Sender {
 				$this->get_email_headers(),
 				null
 			);
+			sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
 		}
 	}
 

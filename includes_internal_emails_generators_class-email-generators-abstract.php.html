@@ -63,6 +63,13 @@ abstract class Email_Generators_Abstract {
 	const IDENTIFIER_NAME = '';
 
 	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	const USAGE_TRACKING_TYPE = '';
+
+	/**
 	 * Email_Repository instance.
 	 *
 	 * @var Email_Repository
@@ -124,10 +131,11 @@ abstract class Email_Generators_Abstract {
 		 * @since $$next-version$$
 		 * @hook sensei_send_html_email
 		 *
-		 * @param {string} $email_name    The email name.
-		 * @param {Array}  $replacements  The replacements.
+		 * @param {string} $email_name          The email name.
+		 * @param {Array}  $replacements        The replacements.
+		 * @param {string} $usage_tracking_type Usage tracking type.
 		 */
-		do_action( 'sensei_email_send', static::IDENTIFIER_NAME, $replacements );
+		do_action( 'sensei_email_send', static::IDENTIFIER_NAME, $replacements, static::USAGE_TRACKING_TYPE );
 	}
 }
 </code></pre>
