@@ -130,7 +130,7 @@ class Email_Blocks {
 
 		$screen = get_current_screen();
 
-		if ( Email_Post_Type::POST_TYPE !== $screen->post_type || ! $screen->is_block_editor() ) {
+		if ( Email_Post_Type::POST_TYPE !== ( $screen->post_type ?? '' ) || ! $screen->is_block_editor() ) {
 			return $theme;
 		}
 
