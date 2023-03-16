@@ -30,6 +30,8 @@ class Email_Seeder_Data_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$expected_keys = [
+			'course_created',
+			'course_welcome',
 			'quiz_graded',
 			'course_completed',
 			'student_starts_course',
@@ -38,7 +40,8 @@ class Email_Seeder_Data_Test extends \WP_UnitTestCase {
 			'student_submits_quiz',
 			'student_sends_message',
 			'new_course_assigned',
-			'new_message_reply',
+			'student_message_reply',
+			'teacher_message_reply',
 			'content_drip',
 			'course_expiration_today',
 			'course_expiration_3_days',

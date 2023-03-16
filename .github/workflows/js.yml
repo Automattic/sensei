@@ -58,5 +58,7 @@ jobs:
             - name: Install JS dependencies
               run: npm ci
             - name: Test JS
+              env:
+                  NODE_OPTIONS: "--max_old_space_size=4096"
               run: npm run test-js
     

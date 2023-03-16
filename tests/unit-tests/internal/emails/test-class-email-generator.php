@@ -3,7 +3,9 @@
 namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Generator;
-use Sensei_Factory;
+use Sensei\Internal\Emails\Email_Repository;
+use Sensei\Internal\Emails\Generators\Email_Generators_Abstract;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 
 /**
  * Tests for Sensei\Internal\Emails\Email_Generator class.
@@ -11,200 +13,75 @@ use Sensei_Factory;
  * @covers \Sensei\Internal\Emails\Email_Generator
  */
 class Email_Generator_Test extends \WP_UnitTestCase {
-	use \Sensei_Course_Enrolment_Test_Helpers;
-	use \Sensei_Course_Enrolment_Manual_Test_Helpers;
+	/**
+	 * Email repository instance.
+	 *
+	 * @var Email_Repository
+	 */
+	protected $email_repository;
 
 	/**
-	 * Factory for creating test data.
+	 * Lesson progress repository mock.
 	 *
-	 * @var Sensei_Factory
+	 * @var Lesson_Progress_Repository_Interface
 	 */
-	protected $factory;
+	private $lesson_progress_repository;
 
 	public function setUp(): void {
 		parent::setUp();
-		$this->prepareEnrolmentManager();
 
-		$this->factory = new Sensei_Factory();
+		$this->email_repository           = $this->createMock( Email_Repository::class );
+		$this->lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 	}
 
-	/**
-	 * Clean up after all tests.
-	 */
-	public static function tearDownAfterClass(): void {
-		parent::tearDownAfterClass();
-		self::resetEnrolmentProviders();
-	}
-
-	public function testGenerateEmail_WhenCalledByStudentStartCourseEvent_CallsEmailSendingActionWithRightData() {
+	public function testInit_WhenCalled_AddsHooksForInitializingIndividualEmails() {
 		/* Arrange. */
-		$student_id = $this->factory->user->create(
-			[
-				'display_name' => 'Test Student',
-			]
-		);
-		$teacher_id = $this->factory->user->create(
-			[
-				'user_email' => 'test@a.com',
-			]
-		);
-		$course     = $this->factory->course->create_and_get(
-			[
-				'post_title'  => 'Test Course',
-				'post_author' => $teacher_id,
-			]
-		);
+		$generator = new Email_Generator( $this->email_repository, $this->lesson_progress_repository );
 
-		( new Email_Generator() )->init();
+		/* Act. */
+		$generator->init();
 
-		$email_data = [
-			'name' => '',
-			'data' => null,
-		];
+		/* Assert. */
+		$this->assertEquals( 10, has_action( 'init', [ $generator, 'init_email_generators' ] ) );
+	}
 
-		add_action(
-			'sensei_send_html_email',
-			function ( $email_name, $replacements ) use ( &$email_data ) {
-				$email_data['name'] = $email_name;
-				$email_data['data'] = $replacements;
-			},
-			10,
-			2
+	public function testEmailGenerator_WhenInitHookCallsEmailGeneratorFunction_InitializesTheActiveEmails() {
+		/* Arrange. */
+		$generator = new Email_Generator( $this->email_repository, $this->lesson_progress_repository );
+		$generator->init();
+
+		$test_generator1 = $this->getMockBuilder( Email_Generators_Abstract::class )
+			->setMethods( [ 'is_email_active' ] )
+			->setConstructorArgs( [ $this->email_repository ] )
+			->getMockForAbstractClass();
+
+		$test_generator1->method( 'is_email_active' )
+			->willReturn( true );
+
+		$test_generator1->expects( $this->once() )->method( 'init' );
+
+		$test_generator2 = $this->getMockBuilder( Email_Generators_Abstract::class )
+			->setMethods( [ 'is_email_active' ] )
+			->setConstructorArgs( [ $this->email_repository ] )
+			->getMockForAbstractClass();
+
+		$test_generator2->method( 'is_email_active' )
+			->willReturn( false );
+
+		$test_generator2->expects( $this->never() )->method( 'init' );
+
+		/* Assert */
+		add_filter(
+			'sensei_email_generators',
+			function () use ( $test_generator1, $test_generator2 ) {
+				return [
+					'test1' => $test_generator1,
+					'test2' => $test_generator2,
+				];
+			}
 		);
 
 		/* Act. */
-		do_action( 'sensei_user_course_start', $student_id, $course->ID );
-
-		/* Assert. */
-		self::assertEquals( 'student_starts_course', $email_data['name'] );
-		self::assertArrayHasKey( 'test@a.com', $email_data['data'] );
-		self::assertEquals( 'Test Student', $email_data['data']['test@a.com']['student:displayname'] );
-		self::assertEquals( 'Test Course', $email_data['data']['test@a.com']['course:name'] );
-	}
-
-	public function testGenerateEmail_WhenCalledByStudentCompletedCourseEvent_CallsEmailSendingActionWithRightData() {
-		/* Arrange. */
-		$student_id = $this->factory->user->create(
-			[
-				'display_name' => 'Test Student',
-			]
-		);
-		$teacher_id = $this->factory->user->create(
-			[
-				'user_email' => 'test@a.com',
-			]
-		);
-		$course     = $this->factory->course->create_and_get(
-			[
-				'post_title'  => 'Test Course',
-				'post_author' => $teacher_id,
-			]
-		);
-
-		$this->manuallyEnrolStudentInCourse( $student_id, $course->ID );
-
-		( new Email_Generator() )->init();
-
-		$email_data = [
-			'name' => '',
-			'data' => null,
-		];
-
-		add_action(
-			'sensei_send_html_email',
-			function ( $email_name, $replacements ) use ( &$email_data ) {
-				$email_data['name'] = $email_name;
-				$email_data['data'] = $replacements;
-			},
-			10,
-			2
-		);
-
-		/* Act. */
-		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID );
-
-		/* Assert. */
-		self::assertEquals( 'student_completes_course', $email_data['name'] );
-		self::assertArrayHasKey( 'test@a.com', $email_data['data'] );
-		self::assertEquals( 'Test Student', $email_data['data']['test@a.com']['student:displayname'] );
-		self::assertEquals( 'Test Course', $email_data['data']['test@a.com']['course:name'] );
-		self::assertArrayHasKey( 'manage:students', $email_data['data']['test@a.com'] );
-		self::assertNotEmpty( $email_data['data']['test@a.com']['manage:students'] );
-	}
-
-	public function testGenerateEmail_WhenCalledByStudentUpdatedCourseEvent_DoesNotCallEmailIfCourseNotCompleted() {
-		/* Arrange. */
-		$student_id = $this->factory->user->create();
-		$teacher_id = $this->factory->user->create(
-			[
-				'user_email' => 'test@a.com',
-			]
-		);
-		$course     = $this->factory->course->create_and_get(
-			[
-				'post_author' => $teacher_id,
-			]
-		);
-
-		( new Email_Generator() )->init();
-
-		$email_data = [
-			'name' => '',
-			'data' => null,
-		];
-
-		add_action(
-			'sensei_send_html_email',
-			function ( $email_name, $replacements ) use ( &$email_data ) {
-				$email_data['name'] = $email_name;
-				$email_data['data'] = $replacements;
-			},
-			10,
-			2
-		);
-
-		/* Act. */
-		do_action( 'sensei_course_status_updated', 'in-progress', $student_id, $course->ID );
-
-		/* Assert. */
-		self::assertEmpty( $email_data['name'] );
-	}
-
-	public function testGenerateEmail_WhenCalledByStudentUpdatedCourseEvent_DoesNotCallEmailIfStudentNotEnrolled() {
-		/* Arrange. */
-		$student_id = $this->factory->user->create();
-		$teacher_id = $this->factory->user->create(
-			[
-				'user_email' => 'test@a.com',
-			]
-		);
-		$course     = $this->factory->course->create_and_get(
-			[
-				'post_author' => $teacher_id,
-			]
-		);
-
-		( new Email_Generator() )->init();
-
-		$email_data = [
-			'name' => '',
-			'data' => null,
-		];
-
-		add_action(
-			'sensei_send_html_email',
-			function ( $email_name, $replacements ) use ( &$email_data ) {
-				$email_data['name'] = $email_name;
-				$email_data['data'] = $replacements;
-			},
-			10,
-			2
-		);
-
-		/* Act. */
-		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID );
-
-		/* Assert. */
-		self::assertEmpty( $email_data['name'] );
+		$generator->init_email_generators();
 	}
 }

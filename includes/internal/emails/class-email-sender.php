@@ -11,10 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-
-require plugin_dir_path( __DIR__ ) . '../../vendor/autoload.php';
-
-use \Pelago\Emogrifier\CssInliner;
+use Sensei\ThirdParty\Pelago\Emogrifier\CssInliner;
+use Sensei_Settings;
+use WP_Post;
 
 /**
  * Class Email_Sender
@@ -36,12 +35,30 @@ class Email_Sender {
 	private $repository;
 
 	/**
+	 * Email settings instance.
+	 *
+	 * @var Sensei_Settings
+	 */
+	private $settings;
+
+	/**
+	 * Email patterns instance.
+	 *
+	 * @var Email_Patterns
+	 */
+	private $email_patterns;
+
+	/**
 	 * Email_Sender constructor.
 	 *
 	 * @param Email_Repository $repository Email repository instance.
+	 * @param Sensei_Settings  $settings Sensei settings instance.
+	 * @param Email_Patterns   $email_patterns Email patterns instance.
 	 */
-	public function __construct( Email_Repository $repository ) {
-		$this->repository = $repository;
+	public function __construct( Email_Repository $repository, Sensei_Settings $settings, Email_Patterns $email_patterns ) {
+		$this->repository     = $repository;
+		$this->settings       = $settings;
+		$this->email_patterns = $email_patterns;
 	}
 
 	/**
@@ -54,28 +71,26 @@ class Email_Sender {
 		 * @param string $email_name   The name of the email template.
 		 * @param array  $replacements The placeholder replacements.
 		 */
-		add_action( 'sensei_send_html_email', [ $this, 'send_email' ], 10, 2 );
+		add_action( 'sensei_email_send', [ $this, 'send_email' ], 10, 3 );
 	}
 	/**
 	 * Send email of type.
 	 *
 	 * @param string $email_name The email type.
 	 * @param array  $replacements The placeholder replacements.
+	 * @param string $usage_tracking_type Usage tracking type.
 	 *
 	 * @access private
 	 */
-	public function send_email( $email_name, $replacements ) {
+	public function send_email( $email_name, $replacements, $usage_tracking_type ) {
 		$email_post = $this->get_email_post_by_name( $email_name );
 
 		if ( ! $email_post ) {
 			return;
 		}
 
-		global $post;
-		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
-
 		// In case patterns are not registered.
-		Email_Customization::instance( \Sensei()->settings )->patterns->register_email_block_patterns();
+		$this->email_patterns->register_email_block_patterns();
 
 		/**
 		 * Filter the email replacements.
@@ -92,47 +107,81 @@ class Email_Sender {
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
 
-		/**
-		 * Filter the email styles.
-		 *
-		 * @since $$next-version$$
-		 * @hook sensei_email_styles
-		 *
-		 * @param {string}       $style_string The email styles.
-		 * @param {string}       $email_name   The email name.
-		 * @param {WP_Post}      $email_post   The email post.
-		 * @param {Email_Sender} $email_sender The email sender class instance.
-		 *
-		 * @return {string}
-		 */
-		$style_string = apply_filters( 'sensei_email_styles', $this->get_header_styles(), $email_name, $email_post, $this );
-
-		$subject_text = wp_strip_all_tags( $email_post->post_title );
-
-		$headers = [
-			'Content-Type: text/html; charset=UTF-8',
-		];
-
 		foreach ( $replacements as $recipient => $replacement ) {
-			$email_body    = do_blocks( $email_post->post_content );
-			$email_subject = $subject_text;
-
-			foreach ( $replacement as $key => $value ) {
-				$email_body    = str_replace( '[' . $key . ']', $value, $email_body );
-				$email_subject = str_replace( '[' . $key . ']', $value, $email_subject );
-			}
-
-			$email_body = $this->get_templated_post_content( $email_body );
-			$email_body = CssInliner::fromHtml( $email_body )->inlineCss( $style_string )->render();
-
 			wp_mail(
 				$recipient,
-				$email_subject,
-				$email_body,
-				$headers,
+				$this->get_email_subject( $email_post, $replacement ),
+				$this->get_email_body( $email_post, $replacement ),
+				$this->get_email_headers(),
 				null
 			);
+			sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
 		}
+	}
+
+	/**
+	 * Get the email subject.
+	 *
+	 * @internal
+	 *
+	 * @param WP_Post $email_post The email post.
+	 * @param array   $placeholders The placeholders.
+	 *
+	 * @return string
+	 */
+	public function get_email_subject( WP_Post $email_post, array $placeholders = [] ): string {
+		return $this->replace_placeholders(
+			wp_strip_all_tags( $email_post->post_title ),
+			$placeholders
+		);
+	}
+
+	/**
+	 * Get the email body.
+	 *
+	 * @internal
+	 *
+	 * @param WP_Post $email_post The email post.
+	 * @param array   $placeholders The placeholders.
+	 *
+	 * @return string
+	 */
+	public function get_email_body( WP_Post $email_post, array $placeholders = [] ): string {
+		global $post;
+
+		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
+		setup_postdata( $post );
+
+		$post_content = $this->replace_placeholders(
+			do_blocks( $email_post->post_content ),
+			$placeholders
+		);
+
+		wp_reset_postdata();
+
+		$templated_output = $this->get_templated_post_content( $post_content );
+
+		return CssInliner::fromHtml( $templated_output )
+			->inlineCss( $this->get_header_styles() )
+			->render();
+	}
+
+	/**
+	 * Replace the placeholders in the provided string.
+	 *
+	 * @internal
+	 *
+	 * @param string $string The string.
+	 * @param array  $placeholders The placeholders.
+	 *
+	 * @return string
+	 */
+	private function replace_placeholders( string $string, array $placeholders ): string {
+		foreach ( $placeholders as $placeholder => $value ) {
+			$string = str_replace( '[' . $placeholder . ']', $value, $string );
+		}
+
+		return $string;
 	}
 
 	/**
@@ -196,7 +245,9 @@ class Email_Sender {
 		}
 
 		$dom = new \DOMDocument();
+		libxml_use_internal_errors( true );
 		$dom->loadHTML( $header_content );
+		libxml_clear_errors();
 
 		$header_styles = '';
 		$stylesheets   = [];
@@ -254,6 +305,36 @@ class Email_Sender {
 			$header_styles .= $style_node->nodeValue; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- PHP property.
 		}
 
-		return $header_styles;
+		/**
+		 * Filter the email styles.
+		 *
+		 * @since $$next-version$$
+		 * @hook sensei_email_styles
+		 *
+		 * @param {string} $header_styles The email header styles.
+		 *
+		 * @return {string}
+		 */
+		return apply_filters( 'sensei_email_styles', $header_styles );
+	}
+
+	/**
+	 * Return the email headers.
+	 *
+	 * @return array Headers.
+	 */
+	private function get_email_headers():array {
+		$settings = $this->settings->get_settings();
+		$headers  = [
+			'Content-Type: text/html; charset=UTF-8',
+		];
+
+		if ( ! empty( $settings['email_reply_to_address'] ) ) {
+			$reply_to_address = $settings['email_reply_to_address'];
+			$reply_to_name    = isset( $settings['email_reply_to_name'] ) ? $settings['email_reply_to_name'] : '';
+			$headers[]        = "Reply-To: $reply_to_name <$reply_to_address>";
+		}
+
+		return $headers;
 	}
 }

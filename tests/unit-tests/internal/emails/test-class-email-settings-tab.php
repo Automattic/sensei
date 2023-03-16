@@ -257,6 +257,12 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 			->method( 'get_settings' )
 			->willReturn(
 				[
+					'email_reply_to_name' => [
+						'name' => __( '"Reply To" Name', 'sensei-lms' ),
+						'type' => 'email',
+					],
+				],
+				[
 					'email_reply_to_address' => [
 						'name' => __( '"Reply To" Address', 'sensei-lms' ),
 						'type' => 'email',
@@ -275,6 +281,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertStringContainsString( '<input id="email_reply_to_address" name="sensei-settings[email_reply_to_address]" size="40" type="email"', $content );
+		self::assertStringContainsString( '<input id="email_reply_to_name" name="sensei-settings[email_reply_to_name]" size="40" ', $content );
 	}
 
 	public function testTabContent_WhenInSettingsSubtab_HasEmailFromAddressAsTypeEmail() {
@@ -296,6 +303,62 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertStringContainsString( '<input id="email_from_address" name="sensei-settings[email_from_address]" size="40" type="email"', $content );
+	}
+
+	public function testTabContent_WhenInSettingsSubtabAndMailPoetIsActive_HasMailPoetSettingsLink() {
+		/* Arrange. */
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		update_option( 'active_plugins', [ 'mailpoet/mailpoet.php' ] );
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+
+		/* Assert. */
+		self::assertStringContainsString( 'MailPoet Settings', $content );
+	}
+
+	public function testTabContent_WhenInSettingsSubtabAndMailPoetIsNotActive_HasInstallMailPoetLink() {
+		/* Arrange. */
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+
+		/* Assert. */
+		self::assertStringContainsString( 'Install MailPoet', $content );
+	}
+
+	public function testTabContent_WhenInSettingsSubtabAndAutomateWooIsActive_HasAutomateWooSettingsLink() {
+		/* Arrange. */
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		update_option( 'active_plugins', [ 'automatewoo/automatewoo.php' ] );
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+
+		/* Assert. */
+		self::assertStringContainsString( 'AutomateWoo Settings', $content );
+	}
+
+	public function testTabContent_WhenInSettingsSubtabAndAutomateWooIsNotActive_HasGetAutomateWooLink() {
+		/* Arrange. */
+		$settings           = $this->createMock( Sensei_Settings::class );
+		$email_settings_tab = new Email_Settings_Tab( $settings );
+		$_GET['subtab']     = 'settings';
+
+		/* Act. */
+		$content = $email_settings_tab->get_content( 'email-notification-settings' );
+
+		/* Assert. */
+		self::assertStringContainsString( 'Get AutomateWoo', $content );
 	}
 
 	public function testRenderTabs_NonEmailTabGiven_RendersNothing() {

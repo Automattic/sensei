@@ -15,7 +15,6 @@ namespace Sensei\Internal\Emails;
  * @since $$next-version$$
  */
 class Email_Patterns {
-
 	/**
 	 * Email_Patterns constructor.
 	 *
@@ -30,6 +29,7 @@ class Email_Patterns {
 	 */
 	public function init() {
 		add_action( 'current_screen', [ $this, 'register_email_editor_block_patterns' ] );
+		add_action( 'init', [ $this, 'register_email_preview_block_patterns' ] );
 		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
 	}
 
@@ -46,7 +46,7 @@ class Email_Patterns {
 	}
 
 	/**
-	 * Register block patterns.
+	 * Register block patterns for the email edit screen.
 	 *
 	 * @access private
 	 *
@@ -63,6 +63,20 @@ class Email_Patterns {
 	}
 
 	/**
+	 * Register block patterns when previewing the email.
+	 *
+	 * @access private
+	 *
+	 * @since $$next-version$$
+	 */
+	public function register_email_preview_block_patterns() {
+		// phpcs:ignore WordPress.Security.NonceVerification -- Used for comparison.
+		if ( ! empty( $_GET['sensei_email_preview_id'] ) ) {
+			$this->register_email_block_patterns();
+		}
+	}
+
+	/**
 	 * Register email block patterns.
 	 *
 	 * @access private
@@ -71,39 +85,95 @@ class Email_Patterns {
 	 */
 	public function register_email_block_patterns() {
 		$patterns = [
+			'course-created'           =>
+				[
+					'title'      => __( 'Email sent to the admin after a teacher created a course', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'course-created' ),
+				],
+			'course-welcome'           =>
+				[
+					'title'      => __( 'Email sent to the student when the student starts a course', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'course-welcome' ),
+				],
 			'student-completes-course' =>
 				[
 					'title'      => __( 'Email sent to teacher after a student completes a course', 'sensei-lms' ),
 					'categories' => [ 'sensei-emails' ],
-					'content'    => '<!-- wp:post-title {"style":{"typography":{"textTransform":"capitalize","fontStyle":"normal","fontWeight":"700","fontSize":"40px"},"color":{"text":"#020202"}}} /-->
-
-<!-- wp:group {"style":{"color":{"background":"#f6f7f7"},"spacing":{"padding":{"top":"32px","right":"32px","bottom":"32px","left":"32px"}}}} -->
-<div class="wp-block-group has-background" style="background-color:#f6f7f7;padding-top:32px;padding-right:32px;padding-bottom:32px;padding-left:32px"><!-- wp:paragraph {"style":{"typography":{"fontSize":"32px","lineHeight":"1"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"},"margin":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}},"color":{"text":"#010101"}}} -->
-<p class="has-text-color" style="color:#010101;font-size:32px;line-height:1;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px"><strong>[student:displayname]</strong></p>
-<!-- /wp:paragraph -->
-
-<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#020202"}}} -->
-<p class="has-text-color" style="color:#020202;font-size:16px;margin-top:24px;margin-bottom:0px"><strong>Course Name</strong></p>
-<!-- /wp:paragraph -->
-
-<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"color":{"text":"#020202"}}} -->
-<p class="has-text-color" style="color:#020202;font-size:16px">[course:name]</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#020202"}}} -->
-<p class="has-text-color" style="color:#020202;font-size:16px;margin-top:24px;margin-bottom:0px"><strong>Your Grade</strong></p>
-<!-- /wp:paragraph -->
-
-<!-- wp:paragraph {"style":{"typography":{"fontSize":"24px"},"spacing":{"margin":{"bottom":"40px"}},"color":{"text":"#020202"}}} -->
-<p class="has-text-color" style="color:#020202;font-size:24px;margin-bottom:40px"><strong>[grade:percentage]</strong></p>
-<!-- /wp:paragraph -->
-
-<!-- wp:buttons -->
-<div class="wp-block-buttons"><!-- wp:button {"style":{"spacing":{"padding":{"top":"16px","bottom":"16px","left":"20px","right":"20px"}},"color":{"background":"#020202","text":"#fefefe"}}} -->
-<div class="wp-block-button"><a class="wp-block-button__link has-text-color has-background" href="[manage:students]" style="background-color:#020202;color:#fefefe;padding-top:16px;padding-right:20px;padding-bottom:16px;padding-left:20px">Manage Students</a></div>
-<!-- /wp:button --></div>
-<!-- /wp:buttons --></div>
-<!-- /wp:group -->',
+					'content'    => $this->get_pattern_content_from_file( 'student-completes-course' ),
+				],
+			'student-starts-course'    =>
+				[
+					'title'      => __( 'Email sent to teacher when a student starts a course', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'student-starts-course' ),
+				],
+			'student-submits-quiz'     =>
+				[
+					'title'      => __( 'Email sent to teacher when a student submits a quiz', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'student-submits-quiz' ),
+				],
+			'student-completes-lesson' =>
+				[
+					'title'      => __( 'Email sent to teacher when a student completes a lesson', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'student-completes-lesson' ),
+				],
+			'course-completed'         =>
+				[
+					'title'      => __( 'Email sent to the student after completing a course', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'course-completed' ),
+				],
+			'new-course-assigned'      =>
+				[
+					'title'      => __( 'Email sent to the teacher if a new course is assigned', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'new-course-assigned' ),
+				],
+			'quiz-graded'              =>
+				[
+					'title'      => __( 'Email sent to the student when a quiz is graded', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'quiz-graded' ),
+				],
+			'teacher-message-reply'    =>
+				[
+					'title'      => __( 'Email sent to the teacher when a student replies a private message', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'teacher-message-reply' ),
+				],
+			'student-message-reply'    =>
+				[
+					'title'      => __( 'Email sent to the student when the teacher replies a private message', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'student-message-reply' ),
+				],
+			'student-sends-message'    =>
+				[
+					'title'      => __( 'Email sent to the teacher when a student sends a new message', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'student-sends-message' ),
+				],
+			'course-expiration-today'  =>
+				[
+					'title'      => __( 'Email sent to student to remind that a course will expire that day', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'course-expiration-today' ),
+				],
+			'course-expiration-x-days' =>
+				[
+					'title'      => __( 'Email sent to student to remind that a course will expire in x days', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'course-expiration-x-days' ),
+				],
+			'content-drip'             =>
+				[
+					'title'      => __( 'Email sent to student the day a lesson becomes available by content drip', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'content-drip' ),
 				],
 		];
 
@@ -114,4 +184,24 @@ class Email_Patterns {
 			);
 		}
 	}
+
+	/**
+	 * Get the pattern content from a file.
+	 *
+	 * @param string $file The file name.
+	 *
+	 * @return string The pattern content.
+	 */
+	public function get_pattern_content_from_file( $file ) {
+		$pattern_file = __DIR__ . '/patterns/' . $file . '.php';
+
+		if ( ! file_exists( $pattern_file ) ) {
+			return '';
+		}
+
+		ob_start();
+		require $pattern_file;
+		return ob_get_clean();
+	}
+
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace SenseiTest\Internal\Emails;
+namespace SenseiTest\Internal\Emails\Generators;
 
 use Sensei\Internal\Emails\Email_Blocks;
 use Sensei\Internal\Emails\Email_Post_Type;

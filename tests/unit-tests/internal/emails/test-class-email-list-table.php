@@ -4,7 +4,7 @@ namespace SenseiTest\Internal\Emails;
 
 use ReflectionMethod;
 use Sensei\Internal\Emails\Email_List_Table;
-use Sensei\Internal\Emails\Email_Post_Type;
+use Sensei\Internal\Emails\Email_Preview;
 use Sensei\Internal\Emails\Email_Repository;
 use Sensei_Factory;
 use stdClass;
@@ -161,11 +161,16 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = sprintf(
-			'<tr class="sensei-wp-list-table-row--enabled"><th class=\'cb column-cb check-column\'  ><label class="screen-reader-text">Select %2$s</label><input id="cb-select-%1$s" type="checkbox" name="email[]" value="%1$s" /></th>' .
-			'<td class=\'subject column-subject column-primary\' data-colname="Subject" ><strong><a href="" class="row-title">%2$s</a></strong><div class="row-actions"><span class=\'edit\'><a href="" aria-label="Edit &#8220;%2$s&#8221;">Edit</a> | </span><span class=\'disable-email\'><a href="%3$s" aria-label="Disable &#8220;%2$s&#8221;">Disable</a></span></div><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td><td class=\'description column-description\' data-colname="Description" >%4$s</td><td class=\'last_modified column-last_modified\' data-colname="Last Modified" >1 second ago</td></tr>',
+			'<tr class="sensei-wp-list-table-row--enabled">' .
+			'<th class=\'cb column-cb check-column\'  ><label class="screen-reader-text">Select %2$s</label><input id="cb-select-%1$s" type="checkbox" name="email[]" value="%1$s" /></th>' .
+			'<td class=\'description column-description column-primary\' data-colname="Email" ><strong><a href="" class="row-title">%5$s</a></strong><div class="row-actions"><span class=\'edit\'><a href="" aria-label="Edit &#8220;%2$s&#8221;">Edit</a> | </span><span class=\'disable-email\'><a href="%3$s" aria-label="Disable &#8220;%2$s&#8221;">Disable</a> | </span><span class=\'preview-email\'><a href="%4$s" aria-label="Preview &#8220;%2$s&#8221;">Preview</a></span></div><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td>' .
+			'<td class=\'subject column-subject\' data-colname="Subject" >%2$s</td>' .
+			'<td class=\'last_modified column-last_modified\' data-colname="Last Modified" >1 second ago</td>' .
+			'</tr>',
 			$post->ID,
 			$post->post_title,
 			wp_nonce_url( "post.php?action=disable-email&amp;post=$post->ID", 'disable-email-post_' . $post->ID ),
+			Email_Preview::get_preview_link( $post->ID ),
 			'description'
 		);
 

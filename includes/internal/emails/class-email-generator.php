@@ -7,6 +7,20 @@
 
 namespace Sensei\Internal\Emails;
 
+use Sensei\Internal\Emails\Generators\Course_Completed;
+use Sensei\Internal\Emails\Generators\Course_Created;
+use Sensei\Internal\Emails\Generators\Course_Welcome;
+use Sensei\Internal\Emails\Generators\New_Course_Assigned;
+use Sensei\Internal\Emails\Generators\Quiz_Graded;
+use Sensei\Internal\Emails\Generators\Student_Completes_Course;
+use Sensei\Internal\Emails\Generators\Student_Completes_Lesson;
+use Sensei\Internal\Emails\Generators\Student_Starts_Course;
+use Sensei\Internal\Emails\Generators\Student_Submits_Quiz;
+use Sensei\Internal\Emails\Generators\Teacher_Message_Reply;
+use Sensei\Internal\Emails\Generators\Student_Message_Reply;
+use Sensei\Internal\Emails\Generators\Student_Sends_Message;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -17,6 +31,39 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package Sensei\Internal\Emails
  */
 class Email_Generator {
+	/**
+	 * Lesson progress repository.
+	 *
+	 * @var Lesson_Progress_Repository_Interface
+	 */
+	private $lesson_progress_repository;
+
+	/**
+	 * List of individual email generator instances.
+	 *
+	 * @var Email_Generators_Abstract[]
+	 */
+	private $email_generators;
+
+	/**
+	 * Email repository instance.
+	 *
+	 * @var Email_Repository
+	 */
+	private $email_repository;
+
+	/**
+	 * Email_Generator constructor.
+	 *
+	 * @internal
+	 *
+	 * @param Email_Repository                     $email_repository Email repository instance.
+	 * @param Lesson_Progress_Repository_Interface $lesson_progress_repository Lesson progress repository.
+	 */
+	public function __construct( Email_Repository $email_repository, Lesson_Progress_Repository_Interface $lesson_progress_repository ) {
+		$this->email_repository           = $email_repository;
+		$this->lesson_progress_repository = $lesson_progress_repository;
+	}
 
 	/**
 	 * Initialize the class and add hooks.
@@ -24,111 +71,47 @@ class Email_Generator {
 	 * @internal
 	 */
 	public function init(): void {
-		add_action( 'sensei_user_course_start', [ $this, 'student_started_course_mail_to_teacher' ], 10, 2 );
-		add_action( 'sensei_course_status_updated', [ $this, 'student_completed_course_mail_to_teacher' ], 10, 3 );
+		$this->email_generators = [
+			Course_Created::IDENTIFIER_NAME           => new Course_Created( $this->email_repository ),
+			Course_Welcome::IDENTIFIER_NAME           => new Course_Welcome( $this->email_repository ),
+			Student_Starts_Course::IDENTIFIER_NAME    => new Student_Starts_Course( $this->email_repository ),
+			Student_Completes_Course::IDENTIFIER_NAME => new Student_Completes_Course( $this->email_repository ),
+			Student_Completes_Lesson::IDENTIFIER_NAME => new Student_Completes_Lesson( $this->email_repository, $this->lesson_progress_repository ),
+			Student_Submits_Quiz::IDENTIFIER_NAME     => new Student_Submits_Quiz( $this->email_repository ),
+			Course_Completed::IDENTIFIER_NAME         => new Course_Completed( $this->email_repository ),
+			New_Course_Assigned::IDENTIFIER_NAME      => new New_Course_Assigned( $this->email_repository ),
+			Quiz_Graded::IDENTIFIER_NAME              => new Quiz_Graded( $this->email_repository ),
+			Teacher_Message_Reply::IDENTIFIER_NAME    => new Teacher_Message_Reply( $this->email_repository ),
+			Student_Message_Reply::IDENTIFIER_NAME    => new Student_Message_Reply( $this->email_repository ),
+			Student_Sends_Message::IDENTIFIER_NAME    => new Student_Sends_Message( $this->email_repository ),
+		];
+
+		add_action( 'init', [ $this, 'init_email_generators' ] );
 	}
 
 	/**
-	 * Send email to teacher when a student starts a course.
-	 *
-	 * @param int $student_id The student ID.
-	 * @param int $course_id  The course ID.
+	 * Initialize the email generators.
 	 *
 	 * @access private
 	 */
-	public function student_started_course_mail_to_teacher( $student_id, $course_id ) {
-		$email_name = 'student_starts_course';
-		$course     = get_post( $course_id );
+	public function init_email_generators(): void {
 
-		if ( ! $course || 'publish' !== $course->post_status ) {
-			return;
-		}
-
-		$teacher   = new \WP_User( $course->post_author );
-		$student   = new \WP_User( $student_id );
-		$recipient = stripslashes( $teacher->user_email );
-
-		$this->send_email_action(
-			$email_name,
-			[
-				$recipient => [
-					'student:displayname' => $student->display_name,
-					'course:name'         => $course->post_title,
-				],
-			]
-		);
-	}
-
-	/**
-	 * Send email to teacher when a student completes a course.
-	 *
-	 * @param string $status      The status.
-	 * @param int    $student_id  The learner ID.
-	 * @param int    $course_id   The course ID.
-	 *
-	 * @access private
-	 */
-	public function student_completed_course_mail_to_teacher( $status = 'in-progress', $student_id = 0, $course_id = 0 ) {
-
-		if ( 'complete' !== $status || ! \Sensei_Course::is_user_enrolled( $course_id, $student_id ) ) {
-			return;
-		}
-
-		$email_type = 'student_completes_course';
-		$student    = new \WP_User( $student_id );
-		$teacher_id = get_post_field( 'post_author', $course_id, 'raw' );
-		$teacher    = new \WP_User( $teacher_id );
-		$recipient  = stripslashes( $teacher->user_email );
-		$grade      = __( 'N/A', 'sensei-lms' );
-		$lesson_ids = \Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
-		$manage_url = esc_url(
-			add_query_arg(
-				array(
-					'page'      => 'sensei_learners',
-					'course_id' => $course_id,
-					'view'      => 'learners',
-				),
-				admin_url( 'admin.php' )
-			)
-		);
-
-		if ( ! empty( $lesson_ids ) && \Sensei()->course->course_quizzes( $course_id, true ) ) {
-			$grade = \Sensei_Utils::sensei_course_user_grade( $course_id, $student_id ) . '%';
-		}
-
-		$this->send_email_action(
-			$email_type,
-			[
-				$recipient => [
-					'student:id'          => $student_id,
-					'student:displayname' => $student->display_name,
-					'course:id'           => $course_id,
-					'course:name'         => get_the_title( $course_id ),
-					'grade:percentage'    => $grade,
-					'manage:students'     => $manage_url,
-				],
-			]
-		);
-	}
-
-	/**
-	 * Invokes the sensei_send_html_email action.
-	 *
-	 * @param string $email_name    The email name.
-	 * @param array  $replacements  The replacements.
-	 *
-	 * @access private
-	 */
-	private function send_email_action( $email_name, $replacements ) {
 		/**
-		 * Send HTML email.
+		 * Filter the individual email generators.
 		 *
 		 * @since $$next-version$$
-		 * @hook sensei_send_html_email
+		 * @hook sensei_email_generators
 		 *
-		 * @param {string} $email_name    The email name.
-		 * @param {Array}  $replacements  The replacements.
+		 * @param {Email_Generators_Abstract[]} $email_generators The email generators.
+		 *
+		 * @return {Email_Generators_Abstract[]} The email generators.
 		 */
-		do_action( 'sensei_send_html_email', $email_name, $replacements );
+		$email_generators = apply_filters( 'sensei_email_generators', $this->email_generators );
+
+		foreach ( $email_generators as $email_generator ) {
+			if ( $email_generator->is_email_active() ) {
+				$email_generator->init();
+			}
+		}
 	}
 }

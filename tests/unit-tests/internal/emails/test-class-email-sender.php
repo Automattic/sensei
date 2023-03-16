@@ -2,12 +2,14 @@
 
 namespace SenseiTest\Internal\Emails;
 
+use Sensei\Internal\Emails\Email_Patterns;
 use Sensei\Internal\Emails\Email_Repository;
 use Sensei\Internal\Emails\Email_Seeder;
 use Sensei\Internal\Emails\Email_Seeder_Data;
 use Sensei\Internal\Emails\Email_Sender;
-use Sensei\Internal\Emails\Email_Post_Type;
 use Sensei_Factory;
+use Sensei_Settings;
+use WP_Post;
 
 /**
  * Tests for Sensei\Internal\Emails\Email_Sender class.
@@ -15,6 +17,13 @@ use Sensei_Factory;
  * @covers \Sensei\Internal\Emails\Email_Sender
  */
 class Email_Sender_Test extends \WP_UnitTestCase {
+
+	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	private const USAGE_TRACKING_TYPE = 'teacher-started-course';
 
 	/**
 	 * Factory for creating test data.
@@ -29,6 +38,13 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 	 * @var array
 	 */
 	protected $email_data;
+
+	/**
+	 * The sensei settings.
+	 *
+	 * @var Sensei_Settings
+	 */
+	protected $settings;
 
 	/**
 	 * The email sender.
@@ -46,9 +62,11 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 	public function setUp(): void {
 		parent::setUp();
+		reset_phpmailer_instance();
 
+		$this->settings     = new Sensei_Settings();
 		$this->factory      = new Sensei_Factory();
-		$this->email_sender = new Email_Sender( new Email_Repository() );
+		$this->email_sender = new Email_Sender( new Email_Repository(), $this->settings, new Email_Patterns() );
 		$this->email_sender->init();
 
 		$this->create_test_email_template();
@@ -56,15 +74,20 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		$this->skip_did_filter = ! version_compare( get_bloginfo( 'version' ), '6.1.0', '>=' );
 
 		add_action( 'wp_mail_succeeded', [ $this, 'wp_mail_succeeded' ] );
+		add_action( 'get_header', [ $this, 'get_header' ] );
 	}
 
 	public function wp_mail_succeeded( $result ) {
 		$this->email_data = $result;
 	}
 
+	public function get_header() {
+		echo 'Header';
+	}
+
 	public function testInit_WhenCalled_AddsFilter() {
 		/* Assert. */
-		$priority = has_action( 'sensei_send_html_email', [ $this->email_sender, 'send_email' ] );
+		$priority = has_action( 'sensei_email_send', [ $this->email_sender, 'send_email' ] );
 		self::assertSame( 10, $priority );
 	}
 
@@ -74,7 +97,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		}
 
 		/* Act. */
-		$this->email_sender->send_email( 'non-existing-template', [] );
+		$this->email_sender->send_email( 'non-existing-template', [], '' );
 
 		/* Assert. */
 		self::assertEquals( 0, did_filter( 'sensei_email_replacements' ) );
@@ -86,7 +109,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		}
 
 		/* Act. */
-		$this->email_sender->send_email( 'student_starts_course', [] );
+		$this->email_sender->send_email( 'student_starts_course', [], self::USAGE_TRACKING_TYPE );
 
 		/* Assert. */
 		self::assertEquals( 1, did_filter( 'sensei_email_replacements' ) );
@@ -100,7 +123,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 				'a@a.test' => [
 					'student:displayname' => 'Test Student',
 				],
-			]
+			],
+			self::USAGE_TRACKING_TYPE
 		);
 
 		/* Assert. */
@@ -123,7 +147,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$this->email_sender->send_email(
 			'student_starts_course',
-			[]
+			[],
+			self::USAGE_TRACKING_TYPE
 		);
 
 		/* Assert. */
@@ -146,11 +171,12 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 				'a@a.test' => [
 					'student:displayname' => 'Test Student',
 				],
-			]
+			],
+			self::USAGE_TRACKING_TYPE
 		);
 
 		/* Assert. */
-		self::assertStringContainsString( 'style="background-color: yellow;', $this->email_data['message'] );
+		self::assertStringContainsString( 'background-color: yellow;', $this->email_data['message'] );
 	}
 
 	public function testSendEmail_WhenSubjectHasPlaceholders_ReplacesThePlaceholder() {
@@ -162,11 +188,98 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 					'student:displayname' => 'Test Student',
 					'course:name'         => 'Test Course',
 				],
-			]
+			],
+			self::USAGE_TRACKING_TYPE
 		);
 
 		/* Assert. */
 		self::assertStringContainsString( 'Test Course', $this->email_data['subject'] );
+	}
+
+	public function testGetEmailSubject_WhenCalled_ReturnsTheEmailSubjectWithReplacedPlaceholders() {
+		/* Arrange. */
+		$post = new WP_Post( (object) [ 'post_title' => 'Welcome - [name]' ] );
+
+		/* Act. */
+		$email_body = $this->email_sender->get_email_subject( $post, [ 'name' => 'John' ] );
+
+		/* Assert. */
+		self::assertStringContainsString( 'Welcome - John', $email_body );
+	}
+
+	public function testGetEmailBody_WhenCalled_ReturnsTheEmailBodyWithReplacedPlaceholders() {
+		/* Arrange. */
+		$post = new WP_Post( (object) [ 'post_content' => 'Welcome - [name]' ] );
+
+		/* Act. */
+		$email_body = $this->email_sender->get_email_body( $post, [ 'name' => 'John' ] );
+
+		/* Assert. */
+		self::assertStringContainsString( 'Welcome - John', $email_body );
+	}
+
+	public function testSendEmail_WhenTheReplyToIsSet_SetReplyTo() {
+		/* Arrange. */
+		$this->settings->set( 'email_reply_to_address', 'address_to_be_replied@gmail.com' );
+		$this->settings->set( 'email_reply_to_name', 'John Reply' );
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringContainsString( 'Reply-To: John Reply <address_to_be_replied@gmail.com>', $last_email->header );
+	}
+
+	public function testSendEmail_WhenTheReplyToIsNotSet_SetReplyTo() {
+		/* Arrange. */
+		$this->settings->set( 'email_reply_to_address', null );
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$email_sent = tests_retrieve_phpmailer_instance()->get_sent( 0 );
+		self::assertStringNotContainsString( 'Reply-To', $email_sent->header );
+	}
+
+	public function testSendEmail_WhenTheReplyToNameIsNotSet_SetReplyTo() {
+		/* Arrange. */
+		$this->settings->set( 'email_reply_to_address', 'address_to_be_replied@gmail.com' );
+		$this->settings->set( 'email_reply_to_name', null );
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringContainsString( 'Reply-To: address_to_be_replied@gmail.com', $last_email->header );
 	}
 
 	private function create_test_email_template() {
