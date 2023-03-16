@@ -78,6 +78,20 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 		$this->assertNotEquals( $priority_before, $priority_after );
 	}
 
+	public function testDisableLegacyHook_WhenCalled_CallsTheDisableLegacyActionHook() {
+		/* Arrange. */
+		$settings                   = $this->createMock( Sensei_Settings::class );
+		$assets                     = $this->createMock( Sensei_Assets::class );
+		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
+		$instance                   = Email_Customization::instance( $settings, $assets, $lesson_progress_repository );
+
+		/* Act. */
+		$instance->disable_legacy_emails();
+
+		/* Assert. */
+		$this->assertEquals( 1, did_action( 'sensei_disable_legacy_emails' ) );
+	}
+
 	public function legacyHooksDataProvider() {
 		return [
 			'student_completes_course' => [ 'sensei_course_status_updated', 'teacher_completed_course', Sensei()->emails ],

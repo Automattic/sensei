@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
+
 <!-- wp:group {"style":{"spacing":{"padding":{"top":"40px","right":"56px","bottom":"56px","left":"56px"}},"color":{"background":"#ffffff"}}} -->
 <div class="wp-block-group has-background" style="background-color:#ffffff;padding-top:40px;padding-right:56px;padding-bottom:56px;padding-left:56px"><!-- wp:post-title {"style":{"typography":{"textTransform":"capitalize","fontStyle":"normal","fontWeight":"700","fontSize":"40px"},"color":{"text":"#101517"}}} /-->
 
@@ -27,12 +28,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- /wp:paragraph -->
 
 		<!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px"}}}} -->
-		<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"spacing":{"padding":{"top":"16px","bottom":"16px","left":"20px","right":"20px"}},"typography":{"fontSize":"16px"},"color":{"background":"#101517","text":"#ffffff", ,"border":{"radius":"0px"}}}} -->
-			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-text-color has-background" href="[manage:students]" style="border-radius:0px;background-color:#101517;color:#ffffff;padding-top:16px;padding-right:20px;padding-bottom:16px;padding-left:20px">Manage Students</a></div>
-			<!-- /wp:button -->
-		</div>
-		<!-- /wp:buttons -->
-	</div>
-	<!-- /wp:group -->
-</div>
+		<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"color":{"text":"#fefefe","background":"#020202"}},"className":"has-custom-font-size"} -->
+			<div class="wp-block-button has-custom-font-size"><a class="wp-block-button__link has-text-color has-background" href="[manage:students]" style="background-color:#020202;color:#fefefe">Manage Students</a></div>
+			<!-- /wp:button --></div>
+		<!-- /wp:buttons --></div>
+	<!-- /wp:group --></div>
 <!-- /wp:group -->
