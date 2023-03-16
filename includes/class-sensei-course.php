@@ -355,8 +355,8 @@ class Sensei_Course {
 		 * @since $$next-version$$
 		 * @hook sensei_course_custom_navigation_tabs
 		 *
-		 * @param {Array}   $tabs The list of tabs that the user should see on the Courses page.
-
+		 * @param {Array} $tabs The list of tabs that the user should see on the Courses page.
+		 *
 		 * @return {Array} The list of tabs to render for the user on the Courses page.
 		 */
 		$tabs = apply_filters( 'sensei_course_custom_navigation_tabs', $tabs );
