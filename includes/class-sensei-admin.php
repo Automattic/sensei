@@ -216,7 +216,7 @@ class Sensei_Admin {
 			$_wp_real_parent_file[''] = 'sensei';
 			$submenu_file             = 'edit-tags.php?taxonomy=module&post_type=course';
 
-		} elseif ( in_array( $screen->id, [ 'course', 'edit-course-category', 'admin_page_course-order' ], true ) ) {
+		} elseif ( in_array( $screen->id, [ 'course', 'edit-course-category', 'admin_page_course-order', 'admin_page_' . Sensei_Course::SHOWCASE_COURSES_SLUG ], true ) ) {
 			// Course pages.
 			$parent_file              = 'sensei';
 			$_wp_real_parent_file[''] = 'sensei';
