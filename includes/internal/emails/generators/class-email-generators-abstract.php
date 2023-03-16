@@ -76,8 +76,21 @@ abstract class Email_Generators_Abstract {
 	 * @return boolean Indicates if the email is published or not
 	 */
 	public function is_email_active() {
-		$email = $this->repository->get( static::IDENTIFIER_NAME );
+		$email = $this->repository->get( $this->get_identifier() );
 		return $email && 'publish' === $email->post_status;
+	}
+
+	/**
+	 * Get name of the identifier of the Email.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @return string Identifier name.
+	 */
+	public function get_identifier() {
+		return static::IDENTIFIER_NAME;
 	}
 
 	/**
@@ -102,6 +115,6 @@ abstract class Email_Generators_Abstract {
 		 * @param {Array}  $replacements        The replacements.
 		 * @param {string} $usage_tracking_type Usage tracking type.
 		 */
-		do_action( 'sensei_email_send', static::IDENTIFIER_NAME, $replacements, static::USAGE_TRACKING_TYPE );
+		do_action( 'sensei_email_send', $this->get_identifier(), $replacements, static::USAGE_TRACKING_TYPE );
 	}
 }
