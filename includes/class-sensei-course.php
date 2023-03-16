@@ -159,8 +159,6 @@ class Sensei_Course {
 
 		// Showcase courses upsell.
 		add_action( 'admin_menu', [ $this, 'add_showcase_courses_upsell' ] );
-		add_action( 'in_admin_header', [ $this, 'open_showcase_courses_upsell_wrapper' ], 5 );
-		add_action( 'admin_footer', [ $this, 'close_showcase_courses_upsell_wrapper' ] );
 		add_filter( 'admin_title', [ $this, 'showcase_courses_upsell_title' ] );
 
 		// Add custom navigation.
@@ -232,34 +230,36 @@ class Sensei_Course {
 		Sensei()->assets->enqueue( 'sensei-showcase-upsell', 'css/showcase-upsell.css' );
 
 		$illustration = Sensei()->assets->get_image( 'showcase-courses-upsell-illustration.png' );
-
 		?>
-		<div class="sensei-showcase-upsell">
-			<div class="sensei-showcase-upsell__content">
-				<h1 class="sensei-showcase-upsell__title"><?php esc_html_e( 'Showcase your course with Sensei Pro!', 'sensei-lms' ); ?></h1>
-				<p class="sensei-showcase-upsell__description"><?php esc_html_e( 'Gain visibility by promoting your post on Sensei Showcase Gallery page.', 'sensei-lms' ); ?></p>
+		<div class="wrap">
+			<?php $this->add_custom_navigation( true ); ?>
+			<div class="sensei-showcase-upsell">
+				<div class="sensei-showcase-upsell__content">
+					<h1 class="sensei-showcase-upsell__title"><?php esc_html_e( 'Showcase your course with Sensei Pro!', 'sensei-lms' ); ?></h1>
+					<p class="sensei-showcase-upsell__description"><?php esc_html_e( 'Gain visibility by promoting your post on Sensei Showcase Gallery page.', 'sensei-lms' ); ?></p>
 
-				<ul class="sensei-showcase-upsell__list">
-					<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Free traffic redirected to your site', 'sensei-lms' ); ?></li>
-					<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'WooCommerce integration', 'sensei-lms' ); ?></li>
-					<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Schedule ‘drip’ content', 'sensei-lms' ); ?></li>
-					<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Set expiration date of courses', 'sensei-lms' ); ?></li>
-					<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Interactive Blocks', 'sensei-lms' ); ?></li>
-				</ul>
+					<ul class="sensei-showcase-upsell__list">
+						<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Free traffic redirected to your site', 'sensei-lms' ); ?></li>
+						<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'WooCommerce integration', 'sensei-lms' ); ?></li>
+						<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Schedule ‘drip’ content', 'sensei-lms' ); ?></li>
+						<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Set expiration date of courses', 'sensei-lms' ); ?></li>
+						<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Interactive Blocks', 'sensei-lms' ); ?></li>
+					</ul>
 
-				<div class="sensei-showcase-upsell__price-wrapper">
-					<span class="sensei-showcase-upsell__price"><?php esc_html_e( '$13 USD', 'sensei-lms' ); ?></span>
-					<span class="sensei-showcase-upsell__price-period"><?php esc_html_e( 'per month, billed yearly', 'sensei-lms' ); ?></span>
+					<div class="sensei-showcase-upsell__price-wrapper">
+						<span class="sensei-showcase-upsell__price"><?php esc_html_e( '$13 USD', 'sensei-lms' ); ?></span>
+						<span class="sensei-showcase-upsell__price-period"><?php esc_html_e( 'per month, billed yearly', 'sensei-lms' ); ?></span>
+					</div>
+
+					<ul class="sensei-showcase-upsell__buttons">
+						<li><a href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=showcase" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--primary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Get Sensei Pro', 'sensei-lms' ); ?></a></li>
+						<li><a href="#" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--secondary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a></li>
+					</ul>
 				</div>
 
-				<ul class="sensei-showcase-upsell__buttons">
-					<li><a href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=showcase" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--primary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Get Sensei Pro', 'sensei-lms' ); ?></a></li>
-					<li><a href="#" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--secondary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a></li>
-				</ul>
-			</div>
-
-			<div class="sensei-showcase-upsell__illustration-wrapper">
-				<img class="sensei-showcase-upsell__illustration" src="<?php echo esc_url( $illustration ); ?>" alt="Illustration for Showcase Courses" />
+				<div class="sensei-showcase-upsell__illustration-wrapper">
+					<img class="sensei-showcase-upsell__illustration" src="<?php echo esc_url( $illustration ); ?>" alt="Illustration for Showcase Courses" />
+				</div>
 			</div>
 		</div>
 		<?php
@@ -295,9 +295,14 @@ class Sensei_Course {
 	 * Add custom navigation to the admin pages.
 	 *
 	 * @since 4.0.0
+	 * @since $$next-version$$ Added the `$skip_screen_check` parameter.
+	 *
+	 * @internal
 	 * @access private
+	 *
+	 * @param bool $skip_screen_check Skip the screen check. Default false.
 	 */
-	public function add_custom_navigation() {
+	public function add_custom_navigation( $skip_screen_check = false ) {
 		$screen = get_current_screen();
 
 		if ( ! $screen ) {
@@ -336,9 +341,28 @@ class Sensei_Course {
 
 		$screen_ids = wp_list_pluck( $tabs, 'screen_id' );
 
-		if ( in_array( $screen->id, $screen_ids, true ) && ( 'term' !== $screen->base ) ) {
+		// Exclude admin pages because admin.php has a different structure, and
+		// `in_admin_header` doesn't work properly to receive the menu.
+		$screen_ids = array_filter( $screen_ids, [ $this, 'not_admin_page' ] );
+
+		if (
+			$skip_screen_check
+			|| ( in_array( $screen->id, $screen_ids, true ) && 'term' !== $screen->base )
+		) {
 			$this->display_courses_navigation( $screen, $tabs );
 		}
+	}
+
+	/**
+	 * Check if the screen ID is not an admin page.
+	 * Used to filter array, excluding admin pages.
+	 *
+	 * @param string $screen_id The screen ID.
+	 *
+	 * @return boolean Whether the screen ID shou
+	 */
+	private function not_admin_page( $screen_id ) {
+		return 0 !== strpos( $screen_id, 'admin_page_' );
 	}
 
 	/**
