@@ -161,7 +161,7 @@ class Sensei_Course {
 		add_action( 'admin_menu', [ $this, 'add_showcase_courses_upsell' ] );
 		add_filter( 'admin_title', [ $this, 'showcase_courses_upsell_title' ] );
 
-		// Add custom navigation.
+		// Add custom navigation to edit pages.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 	}
 
@@ -232,7 +232,12 @@ class Sensei_Course {
 		$illustration = Sensei()->assets->get_image( 'showcase-courses-upsell-illustration.png' );
 		?>
 		<div class="wrap">
-			<?php $this->add_custom_navigation( true ); ?>
+			<?php
+				$screen = get_current_screen();
+				$tabs   = $this->get_course_custom_navigation_tabs();
+
+				$this->display_courses_navigation( $screen, $tabs );
+			?>
 			<div class="sensei-showcase-upsell">
 				<div class="sensei-showcase-upsell__content">
 					<h1 class="sensei-showcase-upsell__title"><?php esc_html_e( 'Showcase your course with Sensei Pro!', 'sensei-lms' ); ?></h1>
@@ -292,23 +297,39 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Add custom navigation to the admin pages.
+	 * Add custom navigation to the edit pages.
+	 * It ignores admin pages (admin.php) because it has a different structure.
 	 *
 	 * @since 4.0.0
-	 * @since $$next-version$$ Added the `$skip_screen_check` parameter.
 	 *
 	 * @internal
 	 * @access private
-	 *
-	 * @param bool $skip_screen_check Skip the screen check. Default false.
 	 */
-	public function add_custom_navigation( $skip_screen_check = false ) {
+	public function add_custom_navigation() {
 		$screen = get_current_screen();
 
 		if ( ! $screen ) {
 			return;
 		}
 
+		$tabs       = $this->get_course_custom_navigation_tabs();
+		$screen_ids = wp_list_pluck( $tabs, 'screen_id' );
+
+		// Exclude admin pages (admin.php) because `in_admin_header` hook
+		// doesn't work properly for this case.
+		$screen_ids = array_filter( $screen_ids, [ $this, 'not_admin_page' ] );
+
+		if ( in_array( $screen->id, $screen_ids, true ) && 'term' !== $screen->base ) {
+			$this->display_courses_navigation( $screen, $tabs );
+		}
+	}
+
+	/**
+	 * Get course custom navigation tabs.
+	 *
+	 * @return array Array of tabs.
+	 */
+	private function get_course_custom_navigation_tabs() {
 		$tabs = [
 			'all-courses'       => [
 				'label'     => __( 'All Courses', 'sensei-lms' ),
@@ -339,18 +360,7 @@ class Sensei_Course {
 		 */
 		$tabs = apply_filters( 'sensei_course_custom_navigation_tabs', $tabs );
 
-		$screen_ids = wp_list_pluck( $tabs, 'screen_id' );
-
-		// Exclude admin pages because admin.php has a different structure, and
-		// `in_admin_header` doesn't work properly to receive the menu.
-		$screen_ids = array_filter( $screen_ids, [ $this, 'not_admin_page' ] );
-
-		if (
-			$skip_screen_check
-			|| ( in_array( $screen->id, $screen_ids, true ) && 'term' !== $screen->base )
-		) {
-			$this->display_courses_navigation( $screen, $tabs );
-		}
+		return $tabs;
 	}
 
 	/**
