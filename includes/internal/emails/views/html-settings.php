@@ -62,7 +62,7 @@ $options           = isset( $options ) ? $options : [];
 							<?php esc_html_e( 'MailPoet Settings', 'sensei-lms' ); ?>
 						</a>
 					<?php else : ?>
-						<a href="<?php echo esc_url( admin_url( 'plugin-install.php?s=mailpoet&tab=search&type=term' ) ); ?>" target="_blank">
+						<a href="<?php echo esc_url( admin_url( 'plugin-install.php?s=mailpoet&tab=search&type=term' ) ); ?>">
 							<?php esc_html_e( 'Install MailPoet', 'sensei-lms' ); ?>
 						</a>
 						<a href="https://www.mailpoet.com/" target="_blank">
