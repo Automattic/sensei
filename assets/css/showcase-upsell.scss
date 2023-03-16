@@ -1,5 +1,12 @@
 $breakpoint: 1350px;
 
+@font-face {
+	font-family: 'Inter';
+	src: url('../css/fonts/Inter.otf');
+	font-weight: normal;
+	font-style: normal;
+}
+
 .sensei-showcase-upsell {
 	padding-top: 64px;
 	background-color: #26212e;
