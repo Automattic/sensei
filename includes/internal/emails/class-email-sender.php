@@ -34,6 +34,14 @@ class Email_Sender {
 	 */
 	private $repository;
 
+
+	/**
+	 * Email template repository instance.
+	 *
+	 * @var Email_Template_Repository
+	 */
+	private $template_repository;
+
 	/**
 	 * Email settings instance.
 	 *

@@ -9,6 +9,7 @@
 use Sensei\Internal\Emails\Email_Seeder_Data;
 use Sensei\Internal\Emails\Email_Repository;
 use Sensei\Internal\Emails\Email_Seeder;
+use Sensei\Internal\Emails\Email_Template_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -106,7 +107,7 @@ class Sensei_Updates {
 			return;
 		}
 
-		$seeder = new Email_Seeder( new Email_Seeder_Data(), $repository );
+		$seeder = new Email_Seeder( new Email_Seeder_Data(), $repository, new Email_Template_Repository() );
 		$seeder->init();
 		$seeder->create_all();
 	}

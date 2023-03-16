@@ -302,6 +302,7 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Email_Seeder::class    => 'internal/emails/class-email-seeder.php',
 			\Sensei\Internal\Emails\Recreate_Emails_Tool::class => 'internal/emails/class-recreate-emails-tool.php',
 			\Sensei\Internal\Emails\Email_Repository::class => 'internal/emails/class-email-repository.php',
+			\Sensei\Internal\Emails\Email_Template_Repository::class => 'internal/emails/class-email-template-repository.php',
 			\Sensei\Internal\Emails\Email_Patterns::class  => 'internal/emails/class-email-patterns.php',
 			\Sensei\Internal\Emails\Email_Preview::class   => 'internal/emails/class-email-preview.php',
 			\Sensei\Internal\Emails\Generators\Course_Created::class => 'internal/emails/generators/class-course-created.php',

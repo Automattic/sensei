@@ -41,6 +41,14 @@ class Email_Repository {
 	 */
 	private const META_DESCRIPTION = '_sensei_email_description';
 
+
+	/**
+	 * Email description meta key.
+	 *
+	 * @param string
+	 */
+	private const META_TEMPLATE = '_wp_page_template';
+
 	/**
 	 * Check if email exists for identifier.
 	 *
@@ -74,7 +82,7 @@ class Email_Repository {
 	 *
 	 * @return int|false Email post ID. Returns false if email already exists. Returns WP_Error on failure.
 	 */
-	public function create( string $identifier, array $types, string $subject, string $description, string $content ) {
+	public function create( string $identifier, array $types, string $subject, string $description, string $content, string $template  ) {
 		if ( $this->has( $identifier ) ) {
 			return false;
 		}
@@ -94,6 +102,7 @@ class Email_Repository {
 
 		foreach ( $types as $type ) {
 			add_post_meta( $email_id, self::META_TYPE, $type );
+			add_post_meta($email_id, self::META_TEMPLATE, $template);
 		}
 
 		return $email_id;

@@ -5,6 +5,7 @@ namespace SenseiTest\Internal\Emails;
 use Sensei\Internal\Emails\Email_Repository;
 use Sensei\Internal\Emails\Email_Seeder;
 use Sensei\Internal\Emails\Email_Seeder_Data;
+use Sensei\Internal\Emails\Email_Template_Repository;
 
 /**
  * Tests for Sensei\Internal\Emails\Email_Seeder class.
@@ -19,8 +20,9 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 		$data->method( 'get_email_data' )->willReturn( [] );
 
 		$repository = $this->createMock( Email_Repository::class );
+		$template_repository = $this->createMock( Email_Template_Repository::class );
 
-		$seeder = new Email_Seeder( $data, $repository );
+		$seeder = new Email_Seeder( $data, $repository, $template_repository );
 
 		$changed_value = false;
 		$filter        = function( $value ) use ( &$changed_value ) {
@@ -45,8 +47,9 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 		$data->method( 'get_email_data' )->willReturn( [] );
 
 		$repository = $this->createMock( Email_Repository::class );
+		$template_repository = $this->createMock( Email_Template_Repository::class );
 
-		$seeder = new Email_Seeder( $data, $repository );
+		$seeder = new Email_Seeder( $data, $repository, $template_repository );
 		$seeder->init();
 
 		/* Expect & Act. */
@@ -64,9 +67,10 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 		$data->method( 'get_email_data' )->willReturn( [] );
 
 		$repository = $this->createMock( Email_Repository::class );
+		$template_repository = $this->createMock( Email_Template_Repository::class );
 		$repository->method( 'has' )->with( 'test' )->willReturn( true );
 
-		$seeder = new Email_Seeder( $data, $repository );
+		$seeder = new Email_Seeder( $data, $repository, $template_repository );
 		$seeder->init();
 
 		/* Act. */
@@ -82,9 +86,10 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 		$data->method( 'get_email_data' )->willReturn( [] );
 
 		$repository = $this->createMock( Email_Repository::class );
+		$template_repository = $this->createMock( Email_Template_Repository::class );
 		$repository->method( 'has' )->with( 'test' )->willReturn( true );
 
-		$seeder = new Email_Seeder( $data, $repository );
+		$seeder = new Email_Seeder( $data, $repository, $template_repository );
 		$seeder->init();
 
 		/* Expect & Act. */
@@ -101,8 +106,8 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 
 		$repository = $this->createMock( Email_Repository::class );
 		$repository->method( 'has' )->with( 'test' )->willReturn( true );
-
-		$seeder = new Email_Seeder( $data, $repository );
+		$template_repository = $this->createMock( Email_Template_Repository::class );
+		$seeder = new Email_Seeder( $data, $repository,  $template_repository );
 		$seeder->init();
 
 		/* Expect & Act. */
@@ -125,9 +130,10 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 		$data->method( 'get_email_data' )->willReturn( [] );
 
 		$repository = $this->createMock( Email_Repository::class );
+		$template_repository = $this->createMock( Email_Template_Repository::class );
 		$repository->method( 'has' )->with( 'test' )->willReturn( false );
 
-		$seeder = new Email_Seeder( $data, $repository );
+		$seeder = new Email_Seeder( $data, $repository, $template_repository );
 		$seeder->init();
 
 		/* Act. */
@@ -181,9 +187,11 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 			);
 
 		$repository = $this->createMock( Email_Repository::class );
+		$template_repository = $this->createMock( Email_Template_Repository::class );
 		$repository->method( 'has' )->with( 'test' )->willReturn( false );
 
-		$seeder = new Email_Seeder( $data, $repository );
+		$template_repository->method('get_default_template_name')->willReturn('some-template-name');
+		$seeder = new Email_Seeder( $data, $repository, $template_repository );
 		$seeder->init();
 
 		/* Expect & Act. */
@@ -195,11 +203,14 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 				[ 'a' ],
 				'b',
 				'd',
-				'c'
+				'c',
+				'some-template-name'
 			)
 			->willReturn( 1 );
 		$seeder->create_email( 'test' );
 	}
+
+
 
 	public function testCreateEmail_WhenEmailCreated_ReturnsTrue() {
 		/* Arrange. */
@@ -227,11 +238,14 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 				[ 'a' ],
 				'b',
 				'd',
-				'c'
+				'c',
+				'some-template-name'
 			)
 			->willReturn( 1 );
+		$template_repository = $this->createMock( Email_Template_Repository::class );
+		$template_repository->method('get_default_template_name')->willReturn('some-template-name');
 
-		$seeder = new Email_Seeder( $data, $repository );
+		$seeder = new Email_Seeder( $data, $repository, $template_repository );
 		$seeder->init();
 
 		/* Act. */
@@ -265,7 +279,17 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 
 		$repository = $this->createMock( Email_Repository::class );
 
-		$seeder = new Email_Seeder( $data, $repository );
+		$template_repository = $this->createMock( Email_Template_Repository::class );
+		$template_repository
+			->expects( $this->exactly( 1 ) )
+			->method( 'create' )
+			->willReturn( 1 );
+
+		$template_repository
+			->method('get_default_template_name')
+			->willReturn('some-template-name');
+
+		$seeder = new Email_Seeder( $data, $repository, $template_repository );
 		$seeder->init();
 
 		/* Expect & Act. */
@@ -281,6 +305,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 						'd',
 						'c',
 						1,
+						'some-template-name'
 					],
 					[
 						'test2',
@@ -289,6 +314,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 						'h',
 						'g',
 						2,
+						'some-template-name'
 					],
 				]
 			);
@@ -318,9 +344,15 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 			);
 
 		$repository = $this->createMock( Email_Repository::class );
-		$repository->method( 'create' )->willReturnOnConsecutiveCalls( 1, 2 );
+		$template_repository = $this->createMock( Email_Template_Repository::class );
 
-		$seeder = new Email_Seeder( $data, $repository );
+		$template_repository->method( 'create' )->willReturn( 1 );
+		$template_repository
+			->method('get_default_template_name')
+			->willReturn('some-template-name');
+
+		$repository->method( 'create' )->willReturnOnConsecutiveCalls( 1, 2 );
+		$seeder = new Email_Seeder( $data, $repository, $template_repository );
 		$seeder->init();
 
 		/* Act. */
@@ -353,9 +385,10 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 			);
 
 		$repository = $this->createMock( Email_Repository::class );
+		$template_repository = $this->createMock( Email_Template_Repository::class );
 		$repository->method( 'create' )->willReturnOnConsecutiveCalls( 1, false );
 
-		$seeder = new Email_Seeder( $data, $repository );
+		$seeder = new Email_Seeder( $data, $repository, $template_repository );
 		$seeder->init();
 
 		/* Act. */

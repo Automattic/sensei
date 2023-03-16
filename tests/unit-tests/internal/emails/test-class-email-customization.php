@@ -89,7 +89,7 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 		$instance->disable_legacy_emails();
 
 		/* Assert. */
-		$this->assertEquals( 1, did_action( 'sensei_disable_legacy_emails' ) );
+		$this->assertEquals( 12, did_action( 'sensei_disable_legacy_emails' ) );
 	}
 
 	public function legacyHooksDataProvider() {

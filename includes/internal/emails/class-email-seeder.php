@@ -36,6 +36,14 @@ class Email_Seeder {
 	 */
 	private $email_repository;
 
+
+	/**
+	 * Email Template repository.
+	 *
+	 * @var Email_Template_Repository
+	 */
+	private $template_repository;
+
 	/**
 	 * Email data.
 	 *
@@ -51,9 +59,10 @@ class Email_Seeder {
 	 * @param Email_Seeder_Data $email_data Email_Seeder_Data instance. Keeps information about all default emails.
 	 * @param Email_Repository  $email_repository Email repository.
 	 */
-	public function __construct( Email_Seeder_Data $email_data, Email_Repository $email_repository ) {
+	public function __construct( Email_Seeder_Data $email_data, Email_Repository $email_repository, Email_Template_Repository $template_repository  ) {
 		$this->email_data       = $email_data;
 		$this->email_repository = $email_repository;
+		$this->template_repository = $template_repository;
 		$this->emails           = [];
 	}
 
@@ -116,20 +125,47 @@ class Email_Seeder {
 
 		$description = $email_data['description'] ?? '';
 
-		$email_id = $this->email_repository->create( $identifier, $types, $subject, $description, $content );
+		$email_id = $this->email_repository->create(
+			$identifier,
+			$types,
+			$subject,
+			$description,
+			$content,
+			$this->template_repository->get_default_template_name(),
+		 );
 
 		return is_int( $email_id ) && $email_id > 0;
 	}
 
+
 	/**
-	 * Create all emails from templates.
+	 * Create the email page template.
 	 *
 	 * @internal
 	 *
-	 * @param bool $force Delete an old email if exists and re-create it with default data.
+	 * @param string $identifier Email identifier.
+	 * @param bool   $force      Force creation.
+	 *
 	 * @return bool
 	 */
-	public function create_all( $force = false ): bool {
+	public function create_template(bool $force = false ): bool {
+		if( $force ) {
+			 $this->template_repository->delete_all();
+		};
+
+		$template_id = $this->template_repository->create();
+		return is_int( $template_id ) && $template_id > 0;
+	}
+
+	/**
+	 * Create all all emails.
+	 *
+	 * @internal
+	 *
+	 * @param bool $force Delete old data before create the new one.
+	 * @return
+	*/
+	private function create_all_emails(bool $force): bool {
 		$result = true;
 		foreach ( $this->get_email_identifiers() as $type ) {
 			$last_result = $this->create_email( $type, $force );
@@ -138,6 +174,26 @@ class Email_Seeder {
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * Create all required data to customize emails.
+	 *
+	 * @internal
+	 *
+	 * @param bool $force Delete old data before create the new one.
+	 * @return bool
+	 */
+	public function create_all( $force = false ): bool {
+		if( ! $this->create_template($force) ) {
+			return false ;
+		};
+
+		if( ! $this->create_all_emails($force)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
