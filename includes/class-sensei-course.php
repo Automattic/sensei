@@ -345,6 +345,7 @@ class Sensei_Course {
 				'label'     => __( 'Showcase Courses', 'sensei-lms' ),
 				'url'       => admin_url( 'admin.php?page=' . self::SHOWCASE_COURSES_SLUG ),
 				'screen_id' => 'admin_page_' . self::SHOWCASE_COURSES_SLUG,
+				'badge'     => __( 'Pro', 'sensei-lms' ),
 			],
 		];
 
@@ -398,7 +399,16 @@ class Sensei_Course {
 				<?php
 				foreach ( $tabs as $tab ) {
 					?>
-					<a class="sensei-custom-navigation__tab <?php echo $screen->id === $tab['screen_id'] ? 'active' : ''; ?>" href="<?php echo esc_url( $tab['url'] ); ?>"><?php echo esc_html( $tab['label'] ); ?></a>
+					<a class="sensei-custom-navigation__tab <?php echo $screen->id === $tab['screen_id'] ? 'active' : ''; ?>" href="<?php echo esc_url( $tab['url'] ); ?>">
+						<?php echo esc_html( $tab['label'] ); ?>
+						<?php
+						if ( isset( $tab['badge'] ) ) {
+							?>
+							<span class="sensei-custom-navigation__badge"><?php echo esc_html( $tab['badge'] ); ?></span>
+							<?php
+						}
+						?>
+					</a>
 					<?php
 				}
 				?>
