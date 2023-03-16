@@ -56,6 +56,7 @@ class Sensei_MailPoet {
 	 * Constructor
 	 *
 	 * @since $$next-version$$
+	 * @param object $mailpoet_api MailPoet API handle.
 	 */
 	public function __construct( $mailpoet_api ) {
 		$this->mailpoet_api = $mailpoet_api;
@@ -74,6 +75,8 @@ class Sensei_MailPoet {
 
 	/**
 	 * Get the instance of the class.
+	 *
+	 * @param object $mailpoet_api MailPoet API handle.
 	 *
 	 * @return Sensei_MailPoet
 	 */
@@ -120,10 +123,8 @@ class Sensei_MailPoet {
 	 * @return array
 	 */
 	public function get_mailpoet_lists() {
-		if ( empty( $this->mail_poet_lists ) ) {
-			$lists                 = $this->mailpoet_api->getLists();
-			$this->mail_poet_lists = array_column( $lists, null, 'name' );
-		}
+		$lists                 = $this->mailpoet_api->getLists();
+		$this->mail_poet_lists = array_column( $lists, null, 'name' );
 		return $this->mail_poet_lists;
 	}
 
@@ -259,7 +260,7 @@ class Sensei_MailPoet {
 		}
 
 		$mailpoet_lists = $this->get_mailpoet_lists();
-		$list_name      = Sensei_MailPoet_Repository::get_list_name( $post->post_title, 'group' );
+		$list_name      = Sensei_MailPoet_Repository::get_list_name( $post->post_title, $post->post_type );
 
 		if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
 			return;
