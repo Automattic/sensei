@@ -19,6 +19,13 @@ use WP_Post;
 class Email_Sender_Test extends \WP_UnitTestCase {
 
 	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	private const USAGE_TRACKING_TYPE = 'teacher-started-course';
+
+	/**
 	 * Factory for creating test data.
 	 *
 	 * @var Sensei_Factory
@@ -31,7 +38,6 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 	 * @var array
 	 */
 	protected $email_data;
-
 
 	/**
 	 * The sensei settings.
@@ -91,7 +97,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		}
 
 		/* Act. */
-		$this->email_sender->send_email( 'non-existing-template', [] );
+		$this->email_sender->send_email( 'non-existing-template', [], '' );
 
 		/* Assert. */
 		self::assertEquals( 0, did_filter( 'sensei_email_replacements' ) );
@@ -103,7 +109,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		}
 
 		/* Act. */
-		$this->email_sender->send_email( 'student_starts_course', [] );
+		$this->email_sender->send_email( 'student_starts_course', [], self::USAGE_TRACKING_TYPE );
 
 		/* Assert. */
 		self::assertEquals( 1, did_filter( 'sensei_email_replacements' ) );
@@ -117,7 +123,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 				'a@a.test' => [
 					'student:displayname' => 'Test Student',
 				],
-			]
+			],
+			self::USAGE_TRACKING_TYPE
 		);
 
 		/* Assert. */
@@ -140,7 +147,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$this->email_sender->send_email(
 			'student_starts_course',
-			[]
+			[],
+			self::USAGE_TRACKING_TYPE
 		);
 
 		/* Assert. */
@@ -163,7 +171,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 				'a@a.test' => [
 					'student:displayname' => 'Test Student',
 				],
-			]
+			],
+			self::USAGE_TRACKING_TYPE
 		);
 
 		/* Assert. */
@@ -179,7 +188,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 					'student:displayname' => 'Test Student',
 					'course:name'         => 'Test Course',
 				],
-			]
+			],
+			self::USAGE_TRACKING_TYPE
 		);
 
 		/* Assert. */
@@ -221,7 +231,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 				'a@a.test' => [
 					'student:displayname' => 'Test Student',
 				],
-			]
+			],
+			self::USAGE_TRACKING_TYPE
 		);
 
 		/* Assert. */
@@ -240,7 +251,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 				'a@a.test' => [
 					'student:displayname' => 'Test Student',
 				],
-			]
+			],
+			self::USAGE_TRACKING_TYPE
 		);
 
 		/* Assert. */
@@ -261,7 +273,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 				'a@a.test' => [
 					'student:displayname' => 'Test Student',
 				],
-			]
+			],
+			self::USAGE_TRACKING_TYPE
 		);
 
 		/* Assert. */

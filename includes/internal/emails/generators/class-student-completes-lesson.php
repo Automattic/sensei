@@ -39,6 +39,13 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	const IDENTIFIER_NAME = 'student_completes_lesson';
 
 	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	const USAGE_TRACKING_TYPE = 'teacher-completed-lesson';
+
+	/**
 	 * Email_Generators_Abstract constructor.
 	 *
 	 * @param Email_Repository                     $repository Email_Repository instance.

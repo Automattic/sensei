@@ -27,6 +27,13 @@ class Quiz_Graded extends Email_Generators_Abstract {
 	const IDENTIFIER_NAME = 'quiz_graded';
 
 	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	const USAGE_TRACKING_TYPE = 'learner-graded-quiz';
+
+	/**
 	 * Initialize the email hooks.
 	 *
 	 * @access public
