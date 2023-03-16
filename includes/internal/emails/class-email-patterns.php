@@ -169,6 +169,12 @@ class Email_Patterns {
 					'categories' => [ 'sensei-emails' ],
 					'content'    => $this->get_pattern_content_from_file( 'course-expiration-x-days' ),
 				],
+			'content-drip'             =>
+				[
+					'title'      => __( 'Email sent to student the day a lesson becomes available by content drip', 'sensei-lms' ),
+					'categories' => [ 'sensei-emails' ],
+					'content'    => $this->get_pattern_content_from_file( 'content-drip' ),
+				],
 		];
 
 		foreach ( $patterns as $key => $pattern ) {
