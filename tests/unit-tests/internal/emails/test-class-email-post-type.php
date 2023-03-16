@@ -70,7 +70,7 @@ class Email_Post_Type_Test extends \WP_UnitTestCase {
 		$this->assertSame( admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' ), $redirect_location );
 	}
 
-	public function testMaybeRedirectToListing_WhenCalledWithNonEmailPostType_RedirectsToEmailsPage() {
+	public function testMaybeRedirectToListing_WhenCalledWithNonEmailPostType_DoesNotRedirectToEmailsPage() {
 		/* Arrange. */
 		$email_post_type   = new Email_Post_Type();
 		$_GET['post_type'] = 'non_sensei_email';
