@@ -115,6 +115,6 @@ abstract class Email_Generators_Abstract {
 		 * @param {Array}  $replacements        The replacements.
 		 * @param {string} $usage_tracking_type Usage tracking type.
 		 */
-		do_action( 'sensei_email_send', $this->get_identifier(), $replacements, static::USAGE_TRACKING_TYPE );
+    do_action( 'sensei_email_send', $this->get_identifier(), $replacements, static::USAGE_TRACKING_TYPE );
 	}
 }
