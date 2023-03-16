@@ -263,7 +263,7 @@ class Sensei_Course {
 				</div>
 
 				<div class="sensei-showcase-upsell__illustration-wrapper">
-					<img class="sensei-showcase-upsell__illustration" src="<?php echo esc_url( $illustration ); ?>" alt="Illustration for Showcase Courses" />
+					<img class="sensei-showcase-upsell__illustration" src="<?php echo esc_url( $illustration ); ?>" alt="<?php echo esc_attr( __( 'Illustration for Showcase Courses', 'sensei-lms' ) ); ?>" />
 				</div>
 			</div>
 		</div>
