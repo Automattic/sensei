@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Source: includes/class-sensei-db-query-learners.php - Sensei LMS Hook Docs</title>
+	<title>Source: includes/internal/emails/class-email-customization.php - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Source: includes/class-sensei-db-query-learners.php</h1>
+	<h1 class="page-title">Source: includes/internal/emails/class-email-customization.php</h1>
 	
 
 	
@@ -32,197 +32,212 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>&lt;?php
+/**
+ * File containing the Email_Customization class.
+ *
+ * @package sensei
+ */
+
+namespace Sensei\Internal\Emails;
+
+use Sensei_Assets;
+use Sensei_Settings;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
- * Class Sensei_Db_Query_Learners
+ * Class Email_Customization
  *
- * Helper to fetch learners.
+ * @internal
+ *
+ * @since $$next-version$$
  */
-class Sensei_Db_Query_Learners {
+class Email_Customization {
 
 	/**
-	 * Sensei_Db_Query_Learners constructor.
+	 * Class instance.
 	 *
-	 * @param array $args Arguments to build query.
+	 * @var self
 	 */
-	public function __construct( $args ) {
-		$this->per_page            = isset( $args['per_page'] ) ? absint( $args['per_page'] ) : 25;
-		$this->offset              = isset( $args['offset'] ) ? absint( $args['offset'] ) : 0;
-		$this->course_id           = isset( $args['course_id'] ) ? intval( $args['course_id'] ) : 0;
-		$this->lesson_id           = isset( $args['lesson_id'] ) ? intval( $args['lesson_id'] ) : 0;
-		$this->order_by            = isset( $args['orderby'] ) ? $args['orderby'] : 'learner';
-		$this->order_type          = isset( $args['order'] ) ? strtoupper( $args['order'] ) : 'ASC';
-		$this->search              = isset( $args['search'] ) ? $args['search'] : '';
-		$this->filter_by_course_id = isset( $args['filter_by_course_id'] ) ? absint( $args['filter_by_course_id'] ) : 0;
-		$this->filter_type         = isset( $args['filter_type'] ) ? $args['filter_type'] : 'inc';
+	private static $instance;
 
-		$this->total_items = 0;
+	/**
+	 * Email post type.
+	 *
+	 * @var Email_Post_Type
+	 */
+	private $post_type;
+
+	/**
+	 * Email blocks configurations.
+	 *
+	 * @var Email_Blocks
+	 */
+	private $blocks;
+
+	/**
+	 * Settings_Menu instance.
+	 *
+	 * @var Settings_Menu
+	 */
+	private $settings_menu;
+
+	/**
+	 * Email_Settings_Tab instance.
+	 *
+	 * @var Email_Settings_Tab
+	 */
+	private $settings_tab;
+
+	/**
+	 * Email_Sender instance.
+	 *
+	 * @var Email_Sender
+	 */
+	private $email_sender;
+
+	/**
+	 * Email_Generator instance.
+	 *
+	 * @var Email_Generator
+	 */
+	private $email_generator;
+
+	/**
+	 * Email_List_Table_Actions instance.
+	 *
+	 * @var Email_List_Table_Actions
+	 */
+	private $list_table_actions;
+
+	/**
+	 * Recreate_Emails_Tool instance.
+	 *
+	 * @var Recreate_Emails_Tool
+	 */
+	private $recreate_emails_tool;
+
+	/**
+	 * Email_Patterns instance.
+	 *
+	 * @var Email_Patterns
+	 */
+	public $patterns;
+
+	/**
+	 * Email_Preview instance.
+	 *
+	 * @var Email_Preview
+	 */
+	private $preview;
+
+	/**
+	 * Email_Repository instance.
+	 *
+	 * @var Email_Repository
+	 */
+	public $repository;
+
+	/**
+	 * Email_Customization constructor.
+	 *
+	 * Prevents other instances from being created outside of `self::instance()`.
+	 *
+	 * @param Sensei_Settings                      $settings Sensei_Settings instance.
+	 * @param Sensei_Assets                        $assets Sensei_Assets instance.
+	 * @param Lesson_Progress_Repository_Interface $lesson_progress_repository Lesson_Progress_Repository_Interface instance.
+	 */
+	private function __construct( Sensei_Settings $settings, Sensei_Assets $assets, Lesson_Progress_Repository_Interface $lesson_progress_repository ) {
+		$this->repository         = new Email_Repository();
+		$this->patterns           = new Email_Patterns();
+		$this->post_type          = new Email_Post_Type();
+		$this->settings_menu      = new Settings_Menu();
+		$this->settings_tab       = new Email_Settings_Tab( $settings );
+		$this->blocks             = new Email_Blocks();
+		$this->email_sender       = new Email_Sender( $this->repository, $settings, $this->patterns );
+		$this->email_generator    = new Email_Generator( $this->repository, $lesson_progress_repository );
+		$this->list_table_actions = new Email_List_Table_Actions();
+		$this->preview            = new Email_Preview( $this->email_sender, $assets );
+
+		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $this->repository );
+		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
 	}
 
 	/**
-	 * Build the SQL query for getting users.
+	 * Get the singleton instance.
 	 *
-	 * @return string
+	 * @internal
+	 *
+	 * @param Sensei_Settings|null                      $settings Sensei_Settings instance.
+	 * @param Sensei_Assets|null                        $assets Sensei_Assets instance.
+	 * @param Lesson_Progress_Repository_Interface|null $lesson_progress_repository Lesson_Progress_Repository_Interface instance.
+	 *
+	 * @return self
 	 */
-	private function build_query() {
-		global $wpdb;
-
-		$matching_user_ids = null;
-		if ( is_multisite() || ! empty( $this->search ) ) {
-			$user_query_args = array();
-			if ( ! empty( $this->search ) ) {
-				$user_query_args['search'] = '*' . sanitize_text_field( $this->search ) . '*';
-			}
-
-			$user_query_args['fields'] = 'ids';
-			$user_query_args['number'] = -1;
-
-			$user_query        = new WP_User_Query( $user_query_args );
-			$matching_user_ids = $user_query->get_results();
+	public static function instance(
+		Sensei_Settings $settings = null,
+		Sensei_Assets $assets = null,
+		Lesson_Progress_Repository_Interface $lesson_progress_repository = null
+	): self {
+		if ( ! self::$instance ) {
+			self::$instance = new self(
+				$settings ?? Sensei()->settings,
+				$assets ?? Sensei()->assets,
+				$lesson_progress_repository ?? Sensei()->lesson_progress_repository
+			);
 		}
 
-		if ( ! empty( $this->filter_by_course_id ) ) {
-			$eq = ( 'inc' === $this->filter_type ) ? '=' : '!=';
-
-			$sql = "
-				SELECT
-					`cf`.`user_id`
-				FROM `{$wpdb->comments}` AS `cf`
-					WHERE `cf`.`comment_type` = 'sensei_course_status'
-					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id}
-					AND `cf`.comment_approved IS NOT NULL";
-
-			$results  = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
-			$user_ids = wp_list_pluck( $results, 'user_id' );
-
-			if ( ! empty( $matching_user_ids ) ) {
-				$matching_user_ids = array_intersect( $user_ids, $matching_user_ids );
-			} else {
-				$matching_user_ids = $user_ids;
-			}
-		}
-
-		/*
-		 * Return empty string for `course_statuses` and zero for `course_count` for backward compatibility.
-		 */
-		$sql = "
-			SELECT SQL_CALC_FOUND_ROWS
-				`u`.`ID` AS 'user_id',
-				`u`.`user_nicename`,
-				`u`.`user_login`,
-				`u`.`user_email`,
-				'' AS 'course_statuses',
-				0 AS 'course_count'
-			FROM `{$wpdb->users}` AS `u`";
-
-		$sql .= ' WHERE 1=1';
-
-		if ( null !== $matching_user_ids ) {
-			$matching_user_ids = array_map( 'absint', $matching_user_ids );
-			$user_id_in        = empty( $matching_user_ids ) ? 'false' : implode( ',', $matching_user_ids );
-			$sql              .= " AND u.ID IN ({$user_id_in})";
-		}
-
-		$sql .= ' GROUP BY `u`.`ID`';
-		if ( ! empty( $this->order_by ) &amp;&amp; in_array( $this->order_type, array( 'ASC', 'DESC' ), true ) ) {
-			$order_type = $this->order_type;
-			$order_by   = $this->order_by;
-			// Switch case to be used when the value in the 'order_by' param needs modifying to work in the db.
-			switch ( $this->order_by ) {
-				case 'learner':
-					$order_by = 'u.user_login';
-					break;
-				default:
-					break;
-			}
-			$sql .= " ORDER BY {$order_by} {$order_type}";
-		}
-
-		$sql .= $wpdb->prepare( ' LIMIT %d OFFSET %d ', array( $this->per_page, $this->offset ) );
-
-		return $sql;
+		return self::$instance;
 	}
 
 	/**
-	 * Get last activity date by users.
+	 * Initialize the class and add hooks.
 	 *
-	 * @param int[] $user_ids User IDs to get the last activity date.
-	 *
-	 * @return array Last activity date array.
+	 * @internal
 	 */
-	private function get_last_activity_date_by_users( $user_ids ) {
-		global $wpdb;
+	public function init(): void {
+		$this->post_type->init();
+		$this->settings_menu->init();
+		$this->settings_tab->init();
+		$this->blocks->init();
+		$this->email_sender->init();
+		$this->email_generator->init();
+		$this->list_table_actions->init();
+		$this->recreate_emails_tool->init();
+		$this->patterns->init();
+		$this->preview->init();
 
-		if ( empty( $user_ids ) ) {
-			return [];
-		}
-
-		$in_placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%s' ) );
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$results = $wpdb->get_results(
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Placeholders created dinamically.
-			$wpdb->prepare(
-				"
-				SELECT cm.user_id, MAX(cm.comment_date_gmt) AS last_activity_date
-				FROM {$wpdb->comments} cm
-				WHERE cm.user_id IN ( {$in_placeholders} )
-				AND cm.comment_approved IN ('complete', 'passed', 'graded')
-				AND cm.comment_type = 'sensei_lesson_status'
-				GROUP BY user_id", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dinamically.
-				$user_ids
-			),
-			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			OBJECT_K
-		);
-
-		if ( ! $results ) {
-			return [];
-		}
-
-		return $results;
+		add_action( 'init', [ $this, 'disable_legacy_emails' ] );
 	}
 
 	/**
-	 * Get the results of the query.
+	 * Disable legacy emails.
 	 *
-	 * @return array
+	 * @access private
 	 */
-	public function get_all() {
-		global $wpdb;
-		$sql = $this->build_query();
+	public function disable_legacy_emails() {
+		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'teacher_completed_course' ] );
+		remove_action( 'sensei_user_course_start', [ Sensei()->emails, 'teacher_started_course' ] );
+		remove_action( 'sensei_user_quiz_submitted', [ Sensei()->emails, 'teacher_quiz_submitted' ] );
+		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'learner_completed_course' ] );
+		remove_action( 'sensei_course_new_teacher_assigned', [ Sensei()->teacher, 'teacher_course_assigned_notification' ] );
+		remove_action( 'sensei_user_lesson_end', [ Sensei()->emails, 'teacher_completed_lesson' ] );
+		remove_action( 'sensei_user_quiz_grade', [ Sensei()->emails, 'learner_graded_quiz' ] );
+		remove_action( 'sensei_private_message_reply', [ Sensei()->emails, 'new_message_reply' ] );
+		remove_action( 'sensei_new_private_message', [ Sensei()->emails, 'teacher_new_message' ] );
+		remove_action( 'transition_post_status', [ Sensei()->teacher, 'notify_admin_teacher_course_creation' ] );
 
 		/**
-		 * Filter the query to get learners based on the current search arguments.
+		 * Action done after disabling legacy emails.
 		 *
-		 * @hook sensei_learners_query
-		 * @since 4.11.0
+		 * @hook sensei_disable_legacy_emails
 		 *
-		 * @param {string} $sql SQL query
-		 *
-		 * @return {Sensei_Db_Query_Learners} Query builder instance.
+		 * @since $$next-version$$
 		 */
-		$sql = apply_filters( 'sensei_learners_query', $sql, $this );
-
-		$results                     = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery -- Created inside the build_query method.
-		$this->total_items           = intval( $wpdb->get_var( 'SELECT FOUND_ROWS()' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$user_ids                    = wp_list_pluck( $results, 'user_id' );
-		$last_activity_date_by_users = $this->get_last_activity_date_by_users( $user_ids );
-
-		$results = array_map(
-			function( $row ) use ( $last_activity_date_by_users ) {
-				$user_id = $row->user_id;
-
-				$row->last_activity_date = ! empty( $last_activity_date_by_users[ $user_id ] )
-					? $last_activity_date_by_users[ $user_id ]->last_activity_date
-					: null;
-
-				return $row;
-			},
-			$results
-		);
-
-		return $results;
+		do_action( 'sensei_disable_legacy_emails' );
 	}
 }
 </code></pre>
