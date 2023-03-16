@@ -278,44 +278,17 @@ class Sensei_Course {
 	 * @return string The page title.
 	 */
 	public function showcase_courses_upsell_title( $admin_title ) {
-		if ( $this->is_showcase_courses_upsell_page() ) {
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return $admin_title;
+		}
+
+		if ( 'admin_page_' . self::SHOWCASE_COURSES_SLUG === $screen->id ) {
 			return __( 'Showcase Courses', 'sensei-lms' ) . $admin_title;
 		}
 
 		return $admin_title;
-	}
-
-	/**
-	 * Open showcase courses upsell wrapper.
-	 *
-	 * @since $$next-version$$
-	 * @internal
-	 * @access private
-	 */
-	public function open_showcase_courses_upsell_wrapper() {
-		if ( $this->is_showcase_courses_upsell_page() ) {
-			echo '<div class="wrap">';
-		}
-	}
-
-	/**
-	 * Close showcase courses upsell wrapper.
-	 *
-	 * @since $$next-version$$
-	 * @internal
-	 * @access private
-	 */
-	public function close_showcase_courses_upsell_wrapper() {
-		if ( $this->is_showcase_courses_upsell_page() ) {
-			echo '</div>';
-		}
-	}
-
-	/**
-	 * Check if the current page is the showcase courses upsell page.
-	 */
-	private function is_showcase_courses_upsell_page() {
-		return isset( $_GET['page'] ) && self::SHOWCASE_COURSES_SLUG === $_GET['page']; // phpcs:ignore WordPress.Security.NonceVerification
 	}
 
 	/**
