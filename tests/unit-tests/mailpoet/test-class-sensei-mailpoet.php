@@ -31,13 +31,6 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Clean up after all tests.
-	 */
-	public static function tearDownAfterClass(): void {
-		parent::tearDownAfterClass();
-	}
-
-	/**
 	 * Tests manual enrolment, we are not testing anything specific to the MailPoet API.
 	 * This general test ensures the hook 'sensei_manual_enrolment_learner_enrolled' throws no error in the MailPoet class.
 	 */
@@ -114,27 +107,30 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 	 */
 	public function testSyncSubscribers() {
 		$course_id = $this->factory->course->create();
-		$user_ids  = $this->factory->user->create_many( 2 );
-		$students  = Sensei_MailPoet_Repository::user_objects_to_array( get_users( array( 'include' => $user_ids ) ) );
 
 		$post      = get_post( $course_id );
 		$list_name = Sensei_MailPoet_Repository::get_list_name( $post->post_title, $post->post_type );
+
+		// First add some subscribers(2) to the list for the course.
+		$user_ids = $this->factory->user->create_many( 2 );
+		$students = Sensei_MailPoet_Repository::user_objects_to_array( get_users( array( 'include' => $user_ids ) ) );
 
 		$mailpoet_api       = Sensei_MailPoetAPIFactory::MP();
 		$sensei_mp_instance = Sensei_MailPoet::instance( $mailpoet_api );
 		foreach ( $students as $student ) {
 			$sensei_mp_instance->add_student_subscriber( $course_id, $student['id'] );
 		}
-
+		// Check that we have 2 subscribers.
 		$lists        = $mailpoet_api->getLists();
 		$updated_list = array_column( $lists, null, 'name' );
 		$list_id      = $updated_list[ $list_name ]['id'];
 		$subscribers  = $mailpoet_api->getSubscribers( array( 'listId' => $list_id ) );
 		$this->assertCount( 2, $subscribers );
-
+		// now attempt to sync with 3 new students as subscribers.
 		$other_user_ids = $this->factory->user->create_many( 3 );
 		$other_students = Sensei_MailPoet_Repository::user_objects_to_array( get_users( array( 'include' => $other_user_ids ) ) );
 		$sensei_mp_instance->sync_subscribers( $other_students, array(), $list_id );
+		// Check that we now have 5 subscribers after sync.
 		$subscribers = $mailpoet_api->getSubscribers( array( 'listId' => $list_id ) );
 		$this->assertCount( 5, $subscribers );
 	}
