@@ -3,6 +3,8 @@
  * This file contains the Sensei_Course_Theme_Editor_Test class.
  *
  * @package sensei
+ *
+ * phpcs:disable Generic.Commenting.DocComment.MissingShort
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
