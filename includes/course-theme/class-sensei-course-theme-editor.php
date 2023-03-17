@@ -30,20 +30,33 @@ class Sensei_Course_Theme_Editor {
 	private static $instance;
 
 	/**
-	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Instance of Sensei_Course_Theme.
+	 *
+	 * @var Sensei_Course_Theme
 	 */
-	private function __construct() {
+	private $course_theme;
 
+	/**
+	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
+	 *
+	 * @param Sensei_Course_Theme $course_theme The course theme instance.
+	 */
+	public function __construct( Sensei_Course_Theme $course_theme ) {
+		$this->course_theme = $course_theme;
 	}
 
 	/**
 	 * Fetches an instance of the class.
 	 *
+	 * @param Sensei_Course_Theme|null $course_theme The course theme instance.
+	 *
 	 * @return self
 	 */
-	public static function instance() {
+	public static function instance( Sensei_Course_Theme $course_theme = null ) {
 		if ( ! self::$instance ) {
-			self::$instance = new self();
+			self::$instance = new self(
+				$course_theme ?? Sensei_Course_Theme::instance()
+			);
 		}
 
 		return self::$instance;
@@ -53,13 +66,12 @@ class Sensei_Course_Theme_Editor {
 	 * Initializes the Course Theme Editor.
 	 */
 	public function init() {
+		add_action( 'setup_theme', [ $this, 'override_site_editor_theme_for_non_block_themes' ], 1 );
 		add_action( 'setup_theme', [ $this, 'maybe_add_site_editor_hooks' ], 1 );
 		add_action( 'setup_theme', [ $this, 'maybe_override_lesson_theme' ], 1 );
 		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_site_editor_assets' ] );
-
 		add_action( 'admin_menu', [ $this, 'add_admin_menu_site_editor_item' ], 20 );
-
 	}
 
 	/**
@@ -87,6 +99,24 @@ class Sensei_Course_Theme_Editor {
 	}
 
 	/**
+	 * Overrides the theme for the site editor if the active theme is not a block theme.
+	 * This is needed because the site editor is not compatible with non-block themes.
+	 */
+	public function override_site_editor_theme_for_non_block_themes(): void {
+
+		if ( ! self::is_site_editor_request() ) {
+			return;
+		}
+
+		// Do nothing if the active theme is a block theme.
+		if ( ! function_exists( 'wp_is_block_theme' ) || wp_is_block_theme() ) {
+			return;
+		}
+
+		$this->course_theme->override_theme();
+	}
+
+	/**
 	 * Load the course theme for the lesson editor if it has Learning Mode enabled.
 	 */
 	public function maybe_override_lesson_theme() {
@@ -105,7 +135,7 @@ class Sensei_Course_Theme_Editor {
 			$this->add_editor_styles();
 
 			if ( Sensei_Course_Theme_Option::should_override_theme() ) {
-				Sensei_Course_Theme::instance()->override_theme();
+				$this->course_theme->override_theme();
 			}
 		}
 
@@ -170,7 +200,7 @@ class Sensei_Course_Theme_Editor {
 	public function override_theme_block_template_file( $path, $file ) {
 
 		if ( 'index.html' === substr( $file, -1 * strlen( 'index.html' ) ) ) {
-			return Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates/index.html';
+			return $this->course_theme->get_course_theme_root() . '/templates/index.html';
 		}
 
 		return $path;
@@ -187,7 +217,7 @@ class Sensei_Course_Theme_Editor {
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/index.js', [ 'sensei-shared-blocks' ] );
 			Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
 			Sensei()->assets->enqueue_style( 'sensei-learning-mode-editor' );
-			Sensei_Course_Theme::instance()->enqueue_fonts();
+			$this->course_theme->enqueue_fonts();
 
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'course-theme/course-theme.editor.js' );
 
