@@ -641,4 +641,28 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertFalse( isset( $redirect_status ) );
 	}
+
+	public function testCompletionRedirect_WhenCompletionPageExistsLoggedOut_PerformsRedirection() {
+		/* Arrange. */
+		$this->prevent_wp_redirect();
+		$page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			]
+		);
+		Sensei()->settings->set( 'course_completed_page', $page_id );
+
+		$this->go_to( get_permalink( Sensei()->settings->get( 'course_completed_page' ) ) );
+
+		/* Act. */
+		try {
+			Sensei()->course->maybe_redirect_to_login_from_course_completion();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status = $e->getCode();
+		}
+
+		/* Assert. */
+		$this->assertTrue( isset( $redirect_status ) );
+	}
 }
