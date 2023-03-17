@@ -13,6 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Sensei_Course {
+	/**
+	 * The showcase courses upsell page slug.
+	 */
+	const SHOWCASE_COURSES_SLUG = 'sensei_showcase_courses';
 
 	/**
 	 * @var $token
@@ -153,7 +157,11 @@ class Sensei_Course {
 		add_action( 'template_redirect', [ $this, 'setup_single_course_page' ] );
 		add_action( 'sensei_loaded', [ $this, 'add_legacy_course_hooks' ] );
 
-		// Add custom navigation.
+		// Showcase courses upsell.
+		add_action( 'admin_menu', [ $this, 'add_showcase_courses_upsell' ] );
+		add_filter( 'admin_title', [ $this, 'showcase_courses_upsell_title' ] );
+
+		// Add custom navigation to edit pages.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 	}
 
@@ -193,10 +201,105 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Add custom navigation to the admin pages.
+	 * Add showcase courses upsell page.
+	 *
+	 * @since $$next-version$$
+	 * @internal
+	 */
+	public function add_showcase_courses_upsell() {
+		add_submenu_page(
+			null,
+			__( 'Showcase Courses', 'sensei-lms' ),
+			__( 'Showcase Courses', 'sensei-lms' ),
+			'edit_courses',
+			self::SHOWCASE_COURSES_SLUG,
+			[ $this, 'showcase_courses_screen' ]
+		);
+	}
+
+	/**
+	 * Add showcase courses upsell screen.
+	 *
+	 * @since $$next-version$$
+	 * @internal
+	 */
+	public function showcase_courses_screen() {
+		// Enqueue styles.
+		Sensei()->assets->enqueue( 'sensei-showcase-upsell', 'css/showcase-upsell.css' );
+
+		$illustration = Sensei()->assets->get_image( 'showcase-courses-upsell-illustration.png' );
+		?>
+		<div class="wrap">
+			<?php
+				$screen = get_current_screen();
+				$tabs   = $this->get_course_custom_navigation_tabs();
+
+				$this->display_courses_navigation( $screen, $tabs );
+			?>
+			<div class="sensei-showcase-upsell">
+				<div class="sensei-showcase-upsell__content">
+					<h1 class="sensei-showcase-upsell__title"><?php esc_html_e( 'Showcase your course with Sensei Pro!', 'sensei-lms' ); ?></h1>
+					<p class="sensei-showcase-upsell__description"><?php esc_html_e( 'Gain visibility by promoting your post on Sensei Showcase Gallery page.', 'sensei-lms' ); ?></p>
+
+					<ul class="sensei-showcase-upsell__list">
+						<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Free traffic redirected to your site', 'sensei-lms' ); ?></li>
+						<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'WooCommerce integration', 'sensei-lms' ); ?></li>
+						<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Schedule ‘drip’ content', 'sensei-lms' ); ?></li>
+						<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Set expiration date of courses', 'sensei-lms' ); ?></li>
+						<li class="sensei-showcase-upsell__list-item dashicons-before"><?php esc_html_e( 'Interactive Blocks', 'sensei-lms' ); ?></li>
+					</ul>
+
+					<div class="sensei-showcase-upsell__price-wrapper">
+						<span class="sensei-showcase-upsell__price"><?php esc_html_e( '$13 USD', 'sensei-lms' ); ?></span>
+						<span class="sensei-showcase-upsell__price-period"><?php esc_html_e( 'per month, billed yearly', 'sensei-lms' ); ?></span>
+					</div>
+
+					<ul class="sensei-showcase-upsell__buttons">
+						<li><a href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=showcase" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--primary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Get Sensei Pro', 'sensei-lms' ); ?></a></li>
+						<li><a href="#" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--secondary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a></li>
+					</ul>
+				</div>
+
+				<div class="sensei-showcase-upsell__illustration-wrapper">
+					<img class="sensei-showcase-upsell__illustration" src="<?php echo esc_url( $illustration ); ?>" alt="<?php echo esc_attr( __( 'Illustration for Showcase Courses', 'sensei-lms' ) ); ?>" />
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Filter the showcase courses page title. It's needed because submenu pages
+	 * without a parent menu item don't have a title.
+	 *
+	 * @since $$next-version$$
+	 * @internal
+	 *
+	 * @param string $admin_title The page title, with extra context added.
+	 *
+	 * @return string The page title.
+	 */
+	public function showcase_courses_upsell_title( $admin_title ) {
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return $admin_title;
+		}
+
+		if ( 'admin_page_' . self::SHOWCASE_COURSES_SLUG === $screen->id ) {
+			return __( 'Showcase Courses', 'sensei-lms' ) . $admin_title;
+		}
+
+		return $admin_title;
+	}
+
+	/**
+	 * Add custom navigation to the edit pages.
+	 * It ignores admin pages (admin.php) because it has a different structure.
 	 *
 	 * @since 4.0.0
-	 * @access private
+	 *
+	 * @internal
 	 */
 	public function add_custom_navigation() {
 		$screen = get_current_screen();
@@ -205,17 +308,40 @@ class Sensei_Course {
 			return;
 		}
 
+		$tabs       = $this->get_course_custom_navigation_tabs();
+		$screen_ids = wp_list_pluck( $tabs, 'screen_id' );
+
+		// Exclude admin pages (admin.php) because `in_admin_header` hook
+		// doesn't work properly for this case.
+		$screen_ids = array_filter( $screen_ids, [ $this, 'not_admin_page' ] );
+
+		if ( in_array( $screen->id, $screen_ids, true ) && 'term' !== $screen->base ) {
+			$this->display_courses_navigation( $screen, $tabs );
+		}
+	}
+
+	/**
+	 * Get course custom navigation tabs.
+	 *
+	 * @return array Array of tabs.
+	 */
+	private function get_course_custom_navigation_tabs() {
 		$tabs = [
-			[
+			'all-courses'       => [
 				'label'     => __( 'All Courses', 'sensei-lms' ),
 				'url'       => admin_url( 'edit.php?post_type=course' ),
 				'screen_id' => 'edit-course',
 			],
-
-			[
+			'course-categories' => [
 				'label'     => __( 'Course Categories', 'sensei-lms' ),
 				'url'       => admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ),
 				'screen_id' => 'edit-course-category',
+			],
+			'showcase-courses'  => [
+				'label'     => __( 'Showcase Courses', 'sensei-lms' ),
+				'url'       => admin_url( 'admin.php?page=' . self::SHOWCASE_COURSES_SLUG ),
+				'screen_id' => 'admin_page_' . self::SHOWCASE_COURSES_SLUG,
+				'badge'     => __( 'Pro', 'sensei-lms' ),
 			],
 		];
 
@@ -225,17 +351,25 @@ class Sensei_Course {
 		 * @since $$next-version$$
 		 * @hook sensei_course_custom_navigation_tabs
 		 *
-		 * @param {Array}   $tabs The list of tabs that the user should see on the Courses page.
-
+		 * @param {Array} $tabs The list of tabs that the user should see on the Courses page.
+		 *
 		 * @return {Array} The list of tabs to render for the user on the Courses page.
 		 */
 		$tabs = apply_filters( 'sensei_course_custom_navigation_tabs', $tabs );
 
-		$screen_ids = wp_list_pluck( $tabs, 'screen_id' );
+		return $tabs;
+	}
 
-		if ( in_array( $screen->id, $screen_ids, true ) && ( 'term' !== $screen->base ) ) {
-			$this->display_courses_navigation( $screen, $tabs );
-		}
+	/**
+	 * Check if the screen ID is not an admin page.
+	 * Used to filter array, excluding admin pages.
+	 *
+	 * @param string $screen_id The screen ID.
+	 *
+	 * @return boolean Whether the screen ID should show.
+	 */
+	private function not_admin_page( $screen_id ) {
+		return 0 !== strpos( $screen_id, 'admin_page_' );
 	}
 
 	/**
@@ -261,7 +395,16 @@ class Sensei_Course {
 				<?php
 				foreach ( $tabs as $tab ) {
 					?>
-					<a class="sensei-custom-navigation__tab <?php echo $screen->id === $tab['screen_id'] ? 'active' : ''; ?>" href="<?php echo esc_url( $tab['url'] ); ?>"><?php echo esc_html( $tab['label'] ); ?></a>
+					<a class="sensei-custom-navigation__tab <?php echo $screen->id === $tab['screen_id'] ? 'active' : ''; ?>" href="<?php echo esc_url( $tab['url'] ); ?>">
+						<?php echo esc_html( $tab['label'] ); ?>
+						<?php
+						if ( isset( $tab['badge'] ) ) {
+							?>
+							<span class="sensei-custom-navigation__badge"><?php echo esc_html( $tab['badge'] ); ?></span>
+							<?php
+						}
+						?>
+					</a>
 					<?php
 				}
 				?>
