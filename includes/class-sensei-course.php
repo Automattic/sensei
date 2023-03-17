@@ -366,7 +366,7 @@ class Sensei_Course {
 	 *
 	 * @param string $screen_id The screen ID.
 	 *
-	 * @return boolean Whether the screen ID shou
+	 * @return boolean Whether the screen ID should show.
 	 */
 	private function not_admin_page( $screen_id ) {
 		return 0 !== strpos( $screen_id, 'admin_page_' );
