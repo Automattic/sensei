@@ -33,7 +33,6 @@
 .header {
 	display: flex !important;
 	flex-wrap: nowrap !important;
-	align-items: start !important;
 	justify-content: space-between !important;
 	&> * {
 		flex-grow: 1 !important;
