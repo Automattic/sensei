@@ -107,7 +107,7 @@ class Sensei_Updates {
 			return;
 		}
 
-		$seeder = new Email_Seeder( new Email_Seeder_Data(), $repository, new Email_Template_Repository() );
+		$seeder = new Email_Seeder( new Email_Seeder_Data(), $repository );
 		$seeder->init();
 		$seeder->create_all();
 	}
