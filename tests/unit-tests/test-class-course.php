@@ -665,4 +665,38 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertTrue( isset( $redirect_status ) );
 	}
+
+	public function testCompletionRedirect_WhenMyCoursesIsThere_PerformsRedirectionToMyCoursesPage() {
+		/* Arrange. */
+		$this->prevent_wp_redirect();
+		$completion_page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			]
+		);
+
+		$my_courses_page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'My Courses',
+			]
+		);
+		Sensei()->settings->set( 'course_completed_page', $completion_page_id );
+		Sensei()->settings->set( 'my_course_page', $my_courses_page_id );
+
+		$this->go_to( get_permalink( Sensei()->settings->get( 'course_completed_page' ) ) );
+
+		/* Act. */
+		try {
+			Sensei()->course->maybe_redirect_to_login_from_course_completion();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status   = $e->getCode();
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert. */
+		$this->assertTrue( isset( $redirect_status ) );
+		$this->assertStringContainsString( get_permalink( $my_courses_page_id ), $redirect_location );
+	}
 }
