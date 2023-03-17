@@ -11,6 +11,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	private $biography_ids;
 	private $course_ids;
 	private $lesson_ids;
+	private $email_ids;
 
 	// Pages.
 	private $regular_page_ids;
@@ -79,6 +80,15 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			array(
 				'post_status' => 'publish',
 				'post_type'   => 'lesson',
+			)
+		);
+
+		// Create some Sensei emails.
+		$this->email_ids = $this->factory->post->create_many(
+			16,
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'sensei_email',
 			)
 		);
 	}
@@ -266,7 +276,8 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	public function testSenseiPostsTrashed() {
 		Sensei_Data_Cleaner::cleanup_all();
 
-		$ids = array_merge( $this->course_ids, $this->lesson_ids );
+		$ids = array_merge( $this->course_ids, $this->lesson_ids, $this->email_ids );
+
 		foreach ( $ids as $id ) {
 			$post = get_post( $id );
 			$this->assertEquals( 'trash', $post->post_status, 'Sensei post should be trashed' );
