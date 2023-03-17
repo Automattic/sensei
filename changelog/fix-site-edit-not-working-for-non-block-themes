@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix site editor not working for non-block themes
