@@ -4217,7 +4217,7 @@ class Sensei_Course {
 
 		$completed_page_id = intval( $settings['course_completed_page'] ?? 0 );
 
-		if ( $completed_page_id < 1 || $completed_page_id !== get_the_ID() ) {
+		if ( $completed_page_id < 1 || get_the_ID() !== $completed_page_id ) {
 			return;
 		}
 
