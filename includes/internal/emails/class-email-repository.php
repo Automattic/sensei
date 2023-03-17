@@ -43,11 +43,12 @@ class Email_Repository {
 
 
 	/**
-	 * Email description meta key.
+	 * Email default page template
 	 *
 	 * @param string
 	 */
-	private const META_TEMPLATE = '_wp_page_template';
+	private const META_PAGE_TEMPLATE = '_wp_page_template';
+
 
 	/**
 	 * Check if email exists for identifier.
@@ -82,7 +83,7 @@ class Email_Repository {
 	 *
 	 * @return int|false Email post ID. Returns false if email already exists. Returns WP_Error on failure.
 	 */
-	public function create( string $identifier, array $types, string $subject, string $description, string $content, string $template  ) {
+	public function create( string $identifier, array $types, string $subject, string $description, string $content ) {
 		if ( $this->has( $identifier ) ) {
 			return false;
 		}
@@ -93,8 +94,9 @@ class Email_Repository {
 			'post_title'   => $subject,
 			'post_content' => $content,
 			'meta_input'   => [
-				self::META_IDENTIFIER  => $identifier,
-				self::META_DESCRIPTION => $description,
+				self::META_IDENTIFIER    => $identifier,
+				self::META_DESCRIPTION   => $description,
+				self::META_PAGE_TEMPLATE => Email_Page_Template::SLUG,
 			],
 		];
 
@@ -102,7 +104,6 @@ class Email_Repository {
 
 		foreach ( $types as $type ) {
 			add_post_meta( $email_id, self::META_TYPE, $type );
-			add_post_meta($email_id, self::META_TEMPLATE, $template);
 		}
 
 		return $email_id;
@@ -226,4 +227,3 @@ class Email_Repository {
 		return 0 < (int) $query->post_count;
 	}
 }
-
