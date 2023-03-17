@@ -126,20 +126,20 @@ class Email_Customization {
 	 * @param Lesson_Progress_Repository_Interface $lesson_progress_repository Lesson_Progress_Repository_Interface instance.
 	 */
 	private function __construct( Sensei_Settings $settings, Sensei_Assets $assets, Lesson_Progress_Repository_Interface $lesson_progress_repository ) {
-		$this->repository         = new Email_Repository();
-		$template_repository      = new Email_Page_Template_Repository();
-		$this->patterns           = new Email_Patterns();
-		$this->post_type          = new Email_Post_Type();
-		$this->settings_menu      = new Settings_Menu();
-		$this->settings_tab       = new Email_Settings_Tab( $settings );
-		$this->blocks             = new Email_Blocks();
-		$this->email_sender       = new Email_Sender( $this->repository, $settings, $this->patterns );
-		$this->email_generator    = new Email_Generator( $this->repository, $lesson_progress_repository );
-		$this->list_table_actions = new Email_List_Table_Actions();
-		$this->preview            = new Email_Preview( $this->email_sender, $assets );
+		$this->repository           = new Email_Repository();
+		$template_repository        = new Email_Page_Template_Repository();
+		$this->patterns             = new Email_Patterns();
+		$this->post_type            = new Email_Post_Type();
+		$this->settings_menu        = new Settings_Menu();
+		$this->settings_tab         = new Email_Settings_Tab( $settings );
+		$this->blocks               = new Email_Blocks();
+		$this->email_sender         = new Email_Sender( $this->repository, $settings, $this->patterns );
+		$this->email_generator      = new Email_Generator( $this->repository, $lesson_progress_repository );
+		$this->list_table_actions   = new Email_List_Table_Actions();
+		$this->preview              = new Email_Preview( $this->email_sender, $assets );
 		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $this->repository, $template_repository );
 		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
-		$this->page_template = new Email_Page_Template($template_repository);
+		$this->page_template        = new Email_Page_Template( $template_repository );
 	}
 
 	/**

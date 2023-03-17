@@ -87,7 +87,6 @@ class Email_Page_Template {
 		}
 	}
 
-
 	/**
 	 * Return sensei email's template from file when there is no template on the database. It is used specially by the pre_get_block_file_template hook
 	 *
