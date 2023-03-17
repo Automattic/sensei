@@ -5,9 +5,6 @@
  * @package sensei-tests
  */
 
-// phpcs:disable WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Mocking an external library.
-// phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound -- Using PHPUnit conventions.
-
 /**
  * Class for testing Sensei_MailPoet class.
  *
@@ -29,7 +26,7 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
-		$mailpoet_api  = Sensei_MailPoetAPIMockFactory::MP();
+		$mailpoet_api  = Sensei_MailPoetAPIFactory::MP();
 		new Sensei_MailPoet( $mailpoet_api );
 	}
 
@@ -84,7 +81,7 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 		$post      = get_post( $course_id );
 		$list_name = Sensei_MailPoet_Repository::get_list_name( $post->post_title, $post->post_type );
 
-		$mailpoet_api       = Sensei_MailPoetAPIMockFactory::MP();
+		$mailpoet_api       = Sensei_MailPoetAPIFactory::MP();
 		$sensei_mp_instance = Sensei_MailPoet::instance( $mailpoet_api );
 		$sensei_mp_instance->add_student_subscriber( $course_id, $student_id1 );
 
@@ -123,7 +120,7 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 		$post      = get_post( $course_id );
 		$list_name = Sensei_MailPoet_Repository::get_list_name( $post->post_title, $post->post_type );
 
-		$mailpoet_api       = Sensei_MailPoetAPIMockFactory::MP();
+		$mailpoet_api       = Sensei_MailPoetAPIFactory::MP();
 		$sensei_mp_instance = Sensei_MailPoet::instance( $mailpoet_api );
 		foreach ( $students as $student ) {
 			$sensei_mp_instance->add_student_subscriber( $course_id, $student['id'] );
@@ -140,175 +137,5 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 		$sensei_mp_instance->sync_subscribers( $other_students, array(), $list_id );
 		$subscribers = $mailpoet_api->getSubscribers( array( 'listId' => $list_id ) );
 		$this->assertCount( 5, $subscribers );
-	}
-
-}
-
-/**
- * Stub to instantiate the MailPoet API object.
- *
- * @since $$next-version$$
- */
-class Sensei_MailPoetAPIMockFactory {
-	/**
-	 * Instance of the current handler.
-	 */
-	private static $instance;
-	/**
-	 * Mock MP static method.
-	 */
-	public static function MP() {
-		return self::get_instance();
-	}
-
-	/**
-	 * Get the singleton instance of MailPoet API.
-	 *
-	 * @return Sensei_MailPoetMockAPI_Test
-	 */
-	public static function get_instance() {
-		if ( ! isset( self::$instance ) ) {
-			self::$instance = new Sensei_MailPoetMockAPI_Test();
-		}
-
-		return self::$instance;
-	}
-}
-
-/**
- * Stub to mock the MailPoet API object.
- *
- * @since $$next-version$$
- */
-class Sensei_MailPoetMockAPI_Test {
-	public $lists;
-	public $subscribers;
-
-	/**
-	 * Constructor.
-	 */
-	public function __construct() {
-		$this->lists       = array(
-			0 =>
-				array(
-					'id'          => '533',
-					'name'        => 'Sensei LMS Course: A new course',
-					'type'        => 'default',
-					'description' => '',
-					'created_at'  => '2023-03-14 13:42:54',
-					'updated_at'  => '2023-03-14 13:42:54',
-					'deleted_at'  => null,
-				),
-			1 =>
-				array(
-					'id'          => '534',
-					'name'        => 'Sensei LMS Course: Becoming a Content Creator',
-					'type'        => 'default',
-					'description' => '',
-					'created_at'  => '2023-03-14 13:42:54',
-					'updated_at'  => '2023-03-14 13:42:54',
-					'deleted_at'  => null,
-				),
-			2 =>
-				array(
-					'id'          => '536',
-					'name'        => 'Sensei LMS Course: How to be famous',
-					'type'        => 'default',
-					'description' => '',
-					'created_at'  => '2023-03-14 13:42:54',
-					'updated_at'  => '2023-03-14 13:42:54',
-					'deleted_at'  => null,
-				),
-			3 =>
-				array(
-					'id'          => '537',
-					'name'        => 'Sensei LMS Course: Life 101',
-					'type'        => 'default',
-					'description' => '',
-					'created_at'  => '2023-03-14 13:42:54',
-					'updated_at'  => '2023-03-14 13:42:54',
-					'deleted_at'  => null,
-				),
-		);
-		$this->subscribers = array();
-	}
-
-	/**
-	 * Mock isSetupComplete method.
-	 */
-	public function isSetupComplete() {
-		return true;
-	}
-
-	/**
-	 * Mock getLists method.
-	 */
-	public function getLists() {
-		return $this->lists;
-	}
-
-	/**
-	 * Mock addList method.
-	 */
-	public function addList( $list ) {
-		$new_list      = array(
-			'id'          => rand( 100, 500 ),
-			'name'        => $list['name'],
-			'description' => $list['description'],
-		);
-		$this->lists[] = $new_list;
-		return $new_list;
-	}
-
-	/**
-	 * Mock getSubscriber method.
-	 */
-	public function getSubscriber( $email ) {
-		foreach ( $this->subscribers as $subscriber ) {
-			if ( $subscriber['email'] == $email ) {
-				return $subscriber;
-			}
-		}
-
-		$id                       = rand( 10, 50 );
-		$subscriber               = array(
-			'id'         => $id,
-			'email'      => $email,
-			'first_name' => 'John',
-			'last_name'  => 'Doe',
-			'list_ids'   => array(),
-		);
-		$this->subscribers[ $id ] = $subscriber;
-		return $subscriber;
-	}
-
-	/**
-	 * Mock subscribeToList method.
-	 */
-	public function subscribeToList( $id, $list_id, $options ) {
-		$this->subscribers[ $id ]['list_ids'][ $list_id ] = true;
-		return true;
-	}
-
-	/**
-	 * Mock unsubscribeFromList method.
-	 */
-	public function unsubscribeFromList( $id, $list_id ) {
-		$this->subscribers[ $id ]['list_ids'][ $list_id ] = false;
-		return true;
-	}
-
-	/**
-	 * Mock getSubscribers method.
-	 */
-	public function getSubscribers( $args ) {
-		$list_id     = $args['listId'];
-		$subscribers = array();
-		foreach ( $this->subscribers as $subscriber ) {
-			if ( isset( $subscriber['list_ids'][ $list_id ] ) && $subscriber['list_ids'][ $list_id ] ) {
-				$subscribers[] = $subscriber;
-			}
-		}
-		return $subscribers;
 	}
 }

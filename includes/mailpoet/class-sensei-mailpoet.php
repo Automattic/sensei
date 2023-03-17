@@ -97,7 +97,7 @@ class Sensei_MailPoet {
 	 * @return void
 	 */
 	public function maybe_schedule_sync_job() {
-		Sensei_Scheduler::instance()->schedule_job( new Sensei_MailPoet_Sync_Job() );
+		Sensei_Scheduler::instance()->schedule_job( new Sensei_MailPoet_Sync_Job( $this->mailpoet_api ) );
 	}
 
 	/**
