@@ -155,19 +155,15 @@ class Email_Sender {
 	 * @return string
 	 */
 	public function get_email_body( WP_Post $email_post, array $placeholders = [] ): string {
-		global $post;
 
-		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
-		setup_postdata( $post );
+		$post_id =  $email_post->post_type === 'revision' ? $email_post->post_parent : $email_post->ID;
 
-		$post_content = $this->replace_placeholders(
-			do_blocks( $email_post->post_content ),
-			$placeholders
-		);
+		// We need to modify the global query object in order to render templates
+		query_posts( [ 'posts_per_page' => 1, 'p' => $post_id, 'post_type' => $email_post->post_type] );
+		the_post();
 
-		wp_reset_postdata();
-
-		$templated_output = $this->get_templated_post_content( $post_content );
+		$templated_output = $this->get_templated_post_content( $placeholders );
+		wp_reset_query();
 
 		return CssInliner::fromHtml( $templated_output )
 			->inlineCss( $this->get_header_styles() )
@@ -208,7 +204,6 @@ class Email_Sender {
 
 		return $email_post;
 	}
-
 	/**
 	 * Get the email body rendered in the email template.
 	 *
@@ -216,17 +211,33 @@ class Email_Sender {
 	 *
 	 * @return string
 	 */
-	private function get_templated_post_content( $email_content ) {
+	private function get_templated_post_content( $placeholders ) {
 		global $sensei_email_data;
-
-		$sensei_email_data['email_body'] = $email_content;
 		$sensei_email_data['body_class'] = '';
+
+		// Force use the default template usage
+		$template = do_blocks(  get_block_template( Email_Page_Template::ID , 'wp_template' )->content );
+
+		//
+		$post_content = $this->replace_placeholders(
+			$template,
+			$placeholders
+		);
+
+		//
+		$post_content = $this->add_base_url_for_images($post_content);
+		$sensei_email_data['email_body'] = $post_content;
 
 		ob_start();
 
 		require dirname( __FILE__ ) . '/../../../templates/emails/block-email-template.php';
 
-		return ltrim( ob_get_clean() );
+		return ltrim( ob_get_clean() ) ;
+	}
+
+	private function add_base_url_for_images($content) {
+		$image_path = '/wp-content/plugins/sensei/assets/dist/images/';
+		return str_replace(	$image_path, site_url('/') . $image_path , $content);
 	}
 
 	/**
@@ -311,6 +322,13 @@ class Email_Sender {
 		// Fetch the internal styles from the <style></style> tags.
 		foreach ( $dom->getElementsByTagName( 'style' ) as $style_node ) {
 			$header_styles .= $style_node->nodeValue; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- PHP property.
+		}
+
+		$list = $dom->getElementsByTagName("style");
+
+		while ($list->length > 0) {
+			$p = $list->item(0);
+			$p->parentNode->removeChild($p);
 		}
 
 		/**
