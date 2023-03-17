@@ -205,7 +205,6 @@ class Sensei_Course {
 	 *
 	 * @since $$next-version$$
 	 * @internal
-	 * @access private
 	 */
 	public function add_showcase_courses_upsell() {
 		add_submenu_page(
@@ -223,7 +222,6 @@ class Sensei_Course {
 	 *
 	 * @since $$next-version$$
 	 * @internal
-	 * @access private
 	 */
 	public function showcase_courses_screen() {
 		// Enqueue styles.
@@ -276,7 +274,6 @@ class Sensei_Course {
 	 *
 	 * @since $$next-version$$
 	 * @internal
-	 * @access private
 	 *
 	 * @param string $admin_title The page title, with extra context added.
 	 *
@@ -303,7 +300,6 @@ class Sensei_Course {
 	 * @since 4.0.0
 	 *
 	 * @internal
-	 * @access private
 	 */
 	public function add_custom_navigation() {
 		$screen = get_current_screen();
