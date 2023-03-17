@@ -3,6 +3,8 @@
 class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+	use Sensei_Test_Login_Helpers;
+	use Sensei_Test_Redirect_Helpers;
 
 	/**
 	 * Helper class to create testing data.
@@ -548,5 +550,37 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			'Order set and alphabetical option selected' => array( array( 'course-orderby' => 'title' ), 'anything', 'title', 'ASC' ),
 			'Order set and default option selected'      => array( array( 'course-orderby' => 'default' ), 'anything', 'menu_order', 'ASC' ),
 		);
+	}
+
+	public function testCourseClass_WhenInitialized_AddsHookToCompletionRedirect() {
+		/* Assert. */
+		$priority = has_action( 'template_redirect', [ Sensei()->course, 'maybe_redirect_to_login_from_course_completion' ] );
+		$this->assertSame( 10, $priority );
+	}
+
+	public function testCompletionRedirect_WhenCalled_DoesNotRedirectIfLoggedIn() {
+		/* Arrange. */
+		$this->login_as_student();
+		$this->prevent_wp_redirect();
+
+		$page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			]
+		);
+		Sensei()->settings->set( 'course_completed_page', $page_id );
+
+		$this->go_to( get_permalink( Sensei()->settings->get( 'course_completed_page' ) ) );
+
+		/* Act. */
+		try {
+			Sensei()->course->maybe_redirect_to_login_from_course_completion();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status = $e->getCode();
+		}
+
+		/* Assert. */
+		$this->assertFalse( isset( $redirect_status ) );
 	}
 }
