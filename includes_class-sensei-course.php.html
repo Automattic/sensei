@@ -188,6 +188,8 @@ class Sensei_Course {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+
+		add_action( 'template_redirect', array( $this, 'maybe_redirect_to_login_from_course_completion' ) );
 	}
 
 	/**
@@ -4227,6 +4229,43 @@ class Sensei_Course {
 			);
 			remove_all_actions( 'sensei_pagination' );
 		}
+	}
+
+	/**
+	 * Take the user to login page if trying to access course completion page without being logged in.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @access private
+	 */
+	public function maybe_redirect_to_login_from_course_completion() {
+
+		if ( is_user_logged_in() ) {
+			return;
+		}
+
+		$settings = Sensei()->settings->get_settings();
+
+		$completed_page_id = intval( $settings['course_completed_page'] ?? 0 );
+
+		if ( $completed_page_id &lt; 1 || get_the_ID() !== $completed_page_id ) {
+			return;
+		}
+
+		$my_courses_url = null;
+
+		if ( isset( $settings['my_course_page'] ) &amp;&amp; 0 &lt; intval( $settings['my_course_page'] ) ) {
+			$my_courses_url = get_permalink( $settings['my_course_page'] );
+		}
+
+		$redirect_to_url = $my_courses_url ?? home_url( '/wp-login.php' );
+
+		$redirect_after_login_url = remove_query_arg(
+			array( '_wp_http_referer', '_wpnonce' ),
+			isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : ''
+		);
+
+		wp_safe_redirect( add_query_arg( 'redirect_to', $redirect_after_login_url, $redirect_to_url ), 303 );
 	}
 }
 
