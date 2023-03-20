@@ -248,8 +248,8 @@ class Email_Sender {
 	 * @return string
 	 */
 	private function add_base_url_for_images( $content ) {
-		$image_path = '/wp-content/plugins/sensei/assets/dist/images/';
-		return str_replace( $image_path, site_url( '/' ) . $image_path, $content );
+
+		return str_replace( 'src="/wp-content', 'src="' . site_url( '/' ) . 'wp-content', $content );
 	}
 
 	/**
