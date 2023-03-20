@@ -44,6 +44,18 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 		$provider->enrol_learner( $student_id, $course_id );
 
 		$this->assertTrue( $provider->is_enrolled( $student_id, $course_id ), 'Student should now be enrolled without any errors from the MailPoet class.' );
+
+		$post      = get_post( $course_id );
+		$list_name = Sensei_MailPoet_Repository::get_list_name( $post->post_title, $post->post_type );
+
+		$mailpoet_api = Sensei_MailPoetAPIFactory::MP();
+		$lists        = $mailpoet_api->getLists();
+		$updated_list = array_column( $lists, null, 'name' );
+		$this->assertArrayHasKey( $list_name, $updated_list );
+		//Check that subscriber has been added.
+		$list_id     = $updated_list[ $list_name ]['id'];
+		$subscribers = $mailpoet_api->getSubscribers( array( 'listId' => $list_id ) );
+		$this->assertCount( 1, $subscribers );
 	}
 
 	/**
@@ -61,6 +73,18 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 		$provider->withdraw_learner( $student_id, $course_id );
 
 		$this->assertFalse( $provider->is_enrolled( $student_id, $course_id ), 'Student should not be enrolled after withdrawing them from the course.' );
+
+		$post      = get_post( $course_id );
+		$list_name = Sensei_MailPoet_Repository::get_list_name( $post->post_title, $post->post_type );
+
+		$mailpoet_api = Sensei_MailPoetAPIFactory::MP();
+		$lists        = $mailpoet_api->getLists();
+		$updated_list = array_column( $lists, null, 'name' );
+		$this->assertArrayHasKey( $list_name, $updated_list );
+		//Check that subscriber has been removed.
+		$list_id     = $updated_list[ $list_name ]['id'];
+		$subscribers = $mailpoet_api->getSubscribers( array( 'listId' => $list_id ) );
+		$this->assertCount( 0, $subscribers );
 	}
 
 	/**
