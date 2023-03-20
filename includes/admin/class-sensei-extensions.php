@@ -108,6 +108,32 @@ final class Sensei_Extensions {
 	}
 
 	/**
+	 * Fetch a specific Sensei extension.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $slug Extension slug.
+	 *
+	 * @return object|null
+	 */
+	public function get_extension( $slug ) {
+		$extensions = $this->get_extensions( 'plugin' );
+
+		$extensions = array_filter(
+			$extensions,
+			function( $extension ) use ( $slug ) {
+				return $slug === $extension->product_slug;
+			}
+		);
+
+		if ( empty( $extensions ) ) {
+			return null;
+		}
+
+		return array_shift( $extensions );
+	}
+
+	/**
 	 * Get Sensei extensions and WooCommerce.
 	 *
 	 * @since 4.8.0
