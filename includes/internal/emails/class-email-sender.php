@@ -166,6 +166,7 @@ class Email_Sender {
 				'post_type'      => Email_Post_Type::POST_TYPE,
 			]
 		);
+
 		the_post();
 
 		$templated_output = $this->get_templated_post_content( $placeholders );
