@@ -572,6 +572,11 @@ class Sensei_Main {
 		if ( $email_customization_enabled ) {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
 		}
+        // MailPoet integration.
+		if ( class_exists( \MailPoet\API\API::class ) ) {
+			$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
+			new Sensei_MailPoet( $mailpoet_api );
+		}
 	}
 
 	/**
