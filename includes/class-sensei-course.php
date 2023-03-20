@@ -256,7 +256,7 @@ class Sensei_Course {
 
 					<ul class="sensei-showcase-upsell__buttons">
 						<li><a href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=showcase" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--primary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Get Sensei Pro', 'sensei-lms' ); ?></a></li>
-						<li><a href="#" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--secondary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a></li>
+						<li><a href="https://senseilms.com/documentation/showcase/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=showcase" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--secondary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a></li>
 					</ul>
 				</div>
 
