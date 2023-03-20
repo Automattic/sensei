@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Logged out users are redirected to login page if tries to access course completion page

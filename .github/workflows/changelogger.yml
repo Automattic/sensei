@@ -1,0 +1,27 @@
+name: Changelogger checks
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+    branches-ignore:
+      - 'release/**'
+      - 'feature/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+    changelogger_used:
+        if: ${{ !contains( github.event.pull_request.labels.*.name, 'No Changelog') }}
+        name: Changelogger used
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: ./.github/actions/deepen-to-merge-base
+            - uses: ./.github/actions/install-php
+            - name: Check change files are touched for touched projects
+              env:
+                  BASE: ${{ github.event.pull_request.base.sha }}
+                  HEAD: ${{ github.event.pull_request.head.sha }}
+              run: ./scripts/check-changelogger-use.php --debug "$BASE" "$HEAD"

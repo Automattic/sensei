@@ -3,7 +3,7 @@
  * Plugin Name: Sensei LMS
  * Plugin URI: https://senseilms.com/
  * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
- * Version: 4.11.1
+ * Version: 4.11.2
  * Author: Automattic
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -36,11 +36,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'SENSEI_LMS_VERSION' ) ) {
-	define( 'SENSEI_LMS_VERSION', '4.11.1' ); // WRCS: DEFINED_VERSION.
+	define( 'SENSEI_LMS_VERSION', '4.11.2' ); // WRCS: DEFINED_VERSION.
 }
 
 if ( ! defined( 'SENSEI_LMS_PLUGIN_FILE' ) ) {
 	define( 'SENSEI_LMS_PLUGIN_FILE', __FILE__ );
+}
+
+if ( ! defined( 'SENSEI_LMS_PLUGIN_PATH' ) ) {
+	define( 'SENSEI_LMS_PLUGIN_PATH', plugin_dir_path( SENSEI_LMS_PLUGIN_FILE ) );
 }
 
 if ( class_exists( 'Sensei_Main' ) ) {
@@ -78,6 +82,11 @@ if ( class_exists( 'Sensei_Main' ) ) {
 		die( esc_html__( 'Deactivate other instances of Sensei LMS before activating this plugin.', 'sensei-lms' ) );
 	}
 }
+
+/**
+ * Autoload the vendor dependencies. This includes the prefixed vendor dependencies as well.
+ */
+require SENSEI_LMS_PLUGIN_PATH . 'vendor/autoload.php';
 
 require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
 if ( ! Sensei_Dependency_Checker::check_php_requirement() ) {

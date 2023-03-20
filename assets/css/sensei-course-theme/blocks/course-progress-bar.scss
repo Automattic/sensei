@@ -5,8 +5,8 @@
 	width: 100%;
 
 	&-inner {
+		background-color: currentcolor;
 		height: var(--header-progress-bar-height, 4px);
-		background-color: var(--sensei-primary-color);
 	}
 
 	&.wp-block:not(.has-background) {
