@@ -295,4 +295,38 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 		$this->assertStringContainsString( $expected, $result );
 	}
+
+	public function testGetRowData_WhenHasProItemButHookIsSetToTrue_ReturnsTheProEmailEnabledAsFreeEmails() {
+		/* Arrange. */
+		$list_table = new Email_List_Table( new Email_Repository() );
+		$post       = $this->factory->email->create_and_get();
+
+		update_post_meta( $post->ID, '_sensei_email_description', 'description' );
+		update_post_meta( $post->ID, '_sensei_email_is_pro', true );
+		add_filter( 'sensei_email_is_available', '__return_true' );
+
+		/* Act. */
+		$list_table->prepare_items();
+
+		ob_start();
+		$list_table->display_rows();
+		$result = ob_get_clean();
+
+		/* Assert. */
+		$expected = sprintf(
+			'<tr class="sensei-wp-list-table-row--enabled">' .
+			'<th class=\'cb column-cb check-column\'  ><label class="screen-reader-text">Select %2$s</label><input id="cb-select-%1$s" type="checkbox" name="email[]" value="%1$s" /></th>' .
+			'<td class=\'description column-description column-primary\' data-colname="Email" ><strong><a href="" class="row-title">%5$s</a></strong><div class="row-actions"><span class=\'edit\'><a href="" aria-label="Edit &#8220;%2$s&#8221;">Edit</a> | </span><span class=\'disable-email\'><a href="%3$s" aria-label="Disable &#8220;%2$s&#8221;">Disable</a> | </span><span class=\'preview-email\'><a href="%4$s" aria-label="Preview &#8220;%2$s&#8221;">Preview</a></span></div><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td>' .
+			'<td class=\'subject column-subject\' data-colname="Subject" >%2$s</td>' .
+			'<td class=\'last_modified column-last_modified\' data-colname="Last Modified" >1 second ago</td>' .
+			'</tr>',
+			$post->ID,
+			$post->post_title,
+			wp_nonce_url( "post.php?action=disable-email&amp;post=$post->ID", 'disable-email-post_' . $post->ID ),
+			Email_Preview::get_preview_link( $post->ID ),
+			'description'
+		);
+
+		$this->assertStringContainsString( $expected, $result );
+	}
 }
