@@ -134,7 +134,7 @@ class Email_List_Table extends Sensei_List_Table {
 				get_post_meta( $post->ID, '_sensei_email_description', true ),
 				$this->row_actions( $actions )
 			) : sprintf(
-				'<strong>%1$s</strong><span class="awaiting-mod sensei-upsell-pro-badge">%2$s</span>%3$s',
+				'<strong class="sensei-email-unavailable">%1$s</strong><span class="awaiting-mod sensei-upsell-pro-badge">%2$s</span>%3$s',
 				get_post_meta( $post->ID, '_sensei_email_description', true ),
 				__( 'Pro', 'sensei-lms' ),
 				$this->row_actions( $actions )
