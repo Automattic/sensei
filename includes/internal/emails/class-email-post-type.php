@@ -109,6 +109,10 @@ class Email_Post_Type {
 			return;
 		}
 
+		if ( isset( $_GET['action'] ) && '-1' !== $_GET['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+
 		wp_safe_redirect( admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' ), 301 );
 		exit;
 	}
