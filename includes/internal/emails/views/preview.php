@@ -72,6 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			.content {
 				margin: 0 -20px;
+				background: #f3f3f3;
 			}
 
 			.content iframe {
