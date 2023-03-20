@@ -256,7 +256,7 @@ class Sensei_Course {
 
 					<ul class="sensei-showcase-upsell__buttons">
 						<li><a href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=showcase" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--primary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Get Sensei Pro', 'sensei-lms' ); ?></a></li>
-						<li><a href="#" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--secondary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a></li>
+						<li><a href="https://senseilms.com/documentation/showcase/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=showcase" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--secondary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a></li>
 					</ul>
 				</div>
 
@@ -379,6 +379,19 @@ class Sensei_Course {
 	 * @param array     $tabs List of tabs to show.
 	 */
 	private function display_courses_navigation( WP_Screen $screen, array $tabs ) {
+		/**
+		 * Filter courses navigation sidebar content.
+		 *
+		 * @hook  sensei_courses_navigation_sidebar
+		 * @since $$next-version$$
+		 *
+		 * @param {string}    $content The content to be displayed in the sidebar.
+		 * @param {WP_Screen} $screen  The current screen.
+		 *
+		 * @return {string} The content to be displayed in the sidebar.
+		 */
+		$navigation_sidebar = apply_filters( 'sensei_courses_navigation_sidebar', '', $screen );
+
 		?>
 		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
 			<div class="sensei-custom-navigation__heading">
@@ -406,6 +419,14 @@ class Sensei_Course {
 						?>
 					</a>
 					<?php
+				}
+				?>
+				<?php
+				if ( ! empty( $navigation_sidebar ) ) {
+					?>
+					<div class="sensei-custom-navigation__separator"></div>
+					<?php
+					echo $navigation_sidebar; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content escaped in filter.
 				}
 				?>
 			</div>
