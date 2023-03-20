@@ -262,4 +262,37 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 'sensei-wp-list-table-row--disabled', $result );
 	}
+
+	public function testGetRowData_WhenHasProItem_ReturnsDataWithDisabledProEmailStructure() {
+		/* Arrange. */
+		$list_table = new Email_List_Table( new Email_Repository() );
+		$post       = $this->factory->email->create_and_get();
+
+		update_post_meta( $post->ID, '_sensei_email_description', 'description' );
+		update_post_meta( $post->ID, '_sensei_email_is_pro', true );
+
+		/* Act. */
+		$list_table->prepare_items();
+
+		ob_start();
+		$list_table->display_rows();
+		$result = ob_get_clean();
+
+		/* Assert. */
+		$expected = sprintf(
+			'<tr class="sensei-wp-list-table-row--disabled">' .
+			'<th class=\'cb column-cb check-column\'  ><label class="screen-reader-text">Select %2$s</label><input id="cb-select-%1$s" type="checkbox" name="email[]" value="%1$s" /></th>' .
+			'<td class=\'description column-description column-primary\' data-colname="Email" ><strong>description</strong><span class="awaiting-mod sensei-upsell-pro-badge">Pro</span><div class="row-actions"><span class=\'upgrade-to-pro\'><a href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&#038;utm_medium=upsell&#038;utm_campaign=email_customization_pro" aria-label="Upgrade to Sensei Pro">Upgrade to Sensei Pro</a></span></div><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td>' .
+			'<td class=\'subject column-subject\' data-colname="Subject" >%2$s</td>' .
+			'<td class=\'last_modified column-last_modified\' data-colname="Last Modified" >1 second ago</td>' .
+			'</tr>',
+			$post->ID,
+			$post->post_title,
+			wp_nonce_url( "post.php?action=disable-email&amp;post=$post->ID", 'disable-email-post_' . $post->ID ),
+			Email_Preview::get_preview_link( $post->ID ),
+			'description'
+		);
+
+		$this->assertStringContainsString( $expected, $result );
+	}
 }
