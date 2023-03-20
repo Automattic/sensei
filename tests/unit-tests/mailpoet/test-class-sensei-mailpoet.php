@@ -26,8 +26,13 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
-		$mailpoet_api  = Sensei_MailPoetAPIFactory::MP();
+		$mailpoet_api  = Sensei_MailPoet_API_Factory::MP();
 		new Sensei_MailPoet( $mailpoet_api );
+
+		self::resetSiteWideLegacyEnrolmentFlag();
+		self::resetCourseEnrolmentProviders();
+		self::resetLegacyFilters();
+		self::resetCourseEnrolmentManager();
 	}
 
 	/**
@@ -74,7 +79,7 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 		$post      = get_post( $course_id );
 		$list_name = Sensei_MailPoet_Repository::get_list_name( $post->post_title, $post->post_type );
 
-		$mailpoet_api       = Sensei_MailPoetAPIFactory::MP();
+		$mailpoet_api       = Sensei_MailPoet_API_Factory::MP();
 		$sensei_mp_instance = Sensei_MailPoet::instance( $mailpoet_api );
 		$sensei_mp_instance->add_student_subscriber( $course_id, $student_id1 );
 
@@ -115,7 +120,7 @@ class Sensei_MailPoet_Test extends WP_UnitTestCase {
 		$user_ids = $this->factory->user->create_many( 2 );
 		$students = Sensei_MailPoet_Repository::user_objects_to_array( get_users( array( 'include' => $user_ids ) ) );
 
-		$mailpoet_api       = Sensei_MailPoetAPIFactory::MP();
+		$mailpoet_api       = Sensei_MailPoet_API_Factory::MP();
 		$sensei_mp_instance = Sensei_MailPoet::instance( $mailpoet_api );
 		foreach ( $students as $student ) {
 			$sensei_mp_instance->add_student_subscriber( $course_id, $student['id'] );

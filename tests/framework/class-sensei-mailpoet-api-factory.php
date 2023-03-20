@@ -12,7 +12,7 @@
  *
  * @since $$next-version$$
  */
-class Sensei_MailPoetAPIFactory {
+class Sensei_MailPoet_API_Factory {
 	/**
 	 * Instance of the current handler.
 	 */
@@ -115,7 +115,7 @@ class Sensei_MailPoetMockAPI_Test {
 	 */
 	public function addList( $list ) {
 		$new_list      = array(
-			'id'          => rand( 100, 500 ),
+			'id'          => wp_rand( 100, 500 ),
 			'name'        => $list['name'],
 			'description' => $list['description'],
 		);
@@ -128,12 +128,12 @@ class Sensei_MailPoetMockAPI_Test {
 	 */
 	public function getSubscriber( $email ) {
 		foreach ( $this->subscribers as $subscriber ) {
-			if ( $subscriber['email'] == $email ) {
+			if ( $subscriber['email'] === $email ) {
 				return $subscriber;
 			}
 		}
 
-		$id                       = rand( 10, 50 );
+		$id                       = wp_rand( 10, 50 );
 		$subscriber               = array(
 			'id'         => $id,
 			'email'      => $email,
