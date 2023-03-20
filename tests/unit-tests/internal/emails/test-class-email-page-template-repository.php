@@ -25,7 +25,7 @@ class Email_Page_Template_Repository_Test extends \WP_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->factory      = new \Sensei_Factory();
+		$this->factory = new \Sensei_Factory();
 	}
 
 	public function testHas_RepositoryGet_ReturnsTemplate() {
@@ -35,12 +35,12 @@ class Email_Page_Template_Repository_Test extends \WP_UnitTestCase {
 			[
 				'post_type'  => 'wp_template',
 				'post_title' => 'My template',
-				'post_name' => 'some-template-name',
-				]
-			);
+				'post_name'  => 'some-template-name',
+			]
+		);
 
 		/* Act. */
-		$result = $repository->get('theme//some-template-name');
+		$result = $repository->get( 'theme//some-template-name' );
 
 		/* Assert. */
 		$this->assertNotNull( $result->wp_id );
@@ -51,10 +51,10 @@ class Email_Page_Template_Repository_Test extends \WP_UnitTestCase {
 		$repository = new Email_Page_Template_Repository();
 
 		/* Act. */
-		$result = $repository->get('theme//some-no-existent-template');
+		$result = $repository->get( 'theme//some-no-existent-template' );
 
 		/* Assert. */
-		$this->assertNull( $result);
+		$this->assertNull( $result );
 	}
 
 	public function testHas_RepositoryGetFromFile_ReturnsTemplate() {
@@ -62,10 +62,10 @@ class Email_Page_Template_Repository_Test extends \WP_UnitTestCase {
 		$repository = new Email_Page_Template_Repository();
 
 		/* Act. */
-		$result = $repository->get_from_file(Email_Page_Template::TEMPLATE_PATH, 'theme//some-identifer');
+		$result = $repository->get_from_file( Email_Page_Template::TEMPLATE_PATH, 'theme//some-identifer' );
 
 		/* Assert. */
-		$this->assertNotNull( $result->content);
+		$this->assertNotNull( $result->content );
 	}
 
 	public function testHas_RepositoryGetFromFile_WhenThereIsNoTemplate_ReturnsNull() {
@@ -73,9 +73,9 @@ class Email_Page_Template_Repository_Test extends \WP_UnitTestCase {
 		$repository = new Email_Page_Template_Repository();
 
 		/* Act. */
-		$result = $repository->get_from_file('some-random_path', 'theme//some-identifer');
+		$result = $repository->get_from_file( 'some-random_path', 'theme//some-identifer' );
 
 		/* Assert. */
-		$this->assertNull( $result);
+		$this->assertNull( $result );
 	}
 }
