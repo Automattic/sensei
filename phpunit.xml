@@ -29,6 +29,7 @@
 				<directory suffix=".php">./includes/3rd-party/</directory>
 				<directory suffix=".php">./includes/block-patterns/</directory>
 				<directory suffix=".php">./includes/internal/emails/patterns/</directory>
+				<directory suffix=".php">./includes/internal/emails/views/</directory>
 				<file>./includes/data-port/class-sensei-import-job-cli.php</file>
 				<file>./includes/email-signup/template.php</file>
 

@@ -133,11 +133,11 @@ class Email_Seeder_Data {
 				'description' => __( 'No Progress Reminder - 7 days', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-no-progress-7-days"} /-->',
 			],
-			'student_no_progress_30_days' => [
+			'student_no_progress_28_days' => [
 				'types'       => [ 'student' ],
 				'subject'     => __( 'It has been a month', 'sensei-lms' ),
-				'description' => __( 'No Progress Reminder - 30 days', 'sensei-lms' ),
-				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-no-progress-30-days"} /-->',
+				'description' => __( 'No Progress Reminder - 28 days', 'sensei-lms' ),
+				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-no-progress-28-days"} /-->',
 			],
 			'course_expiration_today'     => [
 				'types'       => [ 'student' ],

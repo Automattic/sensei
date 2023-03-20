@@ -60,7 +60,7 @@ class Email_Seeder_Data_Test extends \WP_UnitTestCase {
 			'content_drip',
 			'student_no_progress_3_days',
 			'student_no_progress_7_days',
-			'student_no_progress_30_days',
+			'student_no_progress_28_days',
 			'course_expiration_today',
 			'course_expiration_3_days',
 			'course_expiration_7_days',

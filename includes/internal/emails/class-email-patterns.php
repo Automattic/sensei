@@ -169,11 +169,11 @@ class Email_Patterns {
 					'categories' => [ 'sensei-emails' ],
 					'content'    => $this->get_pattern_content_from_file( 'student-no-progress-7-days' ),
 				],
-			'student-no-progress-30-days' =>
+			'student-no-progress-28-days' =>
 				[
 					'title'      => __( 'It has been a month', 'sensei-lms' ),
 					'categories' => [ 'sensei-emails' ],
-					'content'    => $this->get_pattern_content_from_file( 'student-no-progress-30-days' ),
+					'content'    => $this->get_pattern_content_from_file( 'student-no-progress-28-days' ),
 				],
 			'course-expiration-today'     =>
 				[
