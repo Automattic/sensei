@@ -174,6 +174,7 @@ class Email_Sender {
 
 		return CssInliner::fromHtml( $templated_output )
 			->inlineCss( $this->get_header_styles() )
+			->inlineCss( $this->load_email_styles() )
 			->render();
 	}
 
@@ -193,6 +194,19 @@ class Email_Sender {
 		}
 
 		return $string;
+	}
+
+	/**
+	 * Load the emails styles that should overwrite the Gutebenrg styles
+	 *
+	 * @internal
+	 *
+	 * @return string
+	 */
+	private function load_email_styles(): string {
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
+		return file_get_contents( __DIR__ . '/css/email-style.css' );
 	}
 
 	/**

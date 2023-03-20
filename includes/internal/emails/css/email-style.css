@@ -1,0 +1,131 @@
+
+/**
+ THIS STYLE SHOULD NOT INCLUDED IN A REGULAR PAGE.
+ IT IS USED TO SET GENERAL EMAILS STYLES FOR THE SENSEI NOTIFICATIONS
+**/
+
+html {
+	margin: 0 !important;
+	background-color: #f3f3f3;
+	padding-top: 32px;
+}
+
+.wp-block-site-title a {
+	text-decoration: none;
+}
+
+.wp-element-button, .editor-styles-wrapper .wp-block-button__link {
+	text-transform: capitalize;
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.wp-block-button__link{
+	text-decoration: none;
+	border-radius: 4px !important;
+}
+
+.wp-block-site-logo img{
+	border: none !important;
+}
+
+.header {
+	display: flex !important;
+	flex-wrap: nowrap !important;
+	align-items: center !important;
+	justify-content: space-between !important;
+}
+
+img {
+	-ms-interpolation-mode: bicubic;
+	max-width: 100%;
+	border-style: solid;
+}
+
+body {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	color: #00101C;
+	line-height: 1.7;
+	margin: 0;
+	padding: 0;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+}
+
+table {
+	border-collapse: collapse;
+	mso-table-lspace: 0pt;
+	mso-table-rspace: 0pt;
+	width: 100%;
+}
+
+/* -------------------------------------
+		BODY & CONTAINER
+------------------------------------- */
+
+.body {
+	background-color: #f3f3f3;
+	width: 100%;
+}
+
+.container {
+	display: block;
+	margin: 0 auto !important;
+	max-width: 800px;
+	width: 100%;
+}
+.content {
+	box-sizing: border-box;
+	display: block;
+	margin: 0 auto;
+	padding: 0;
+	font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+}
+.content * {
+	font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+}
+
+.has-global-padding{
+	padding: 0px !important;
+}
+
+@media only screen and (max-width: 800px) {
+	.wp-block-site-logo img {
+		width: 32px;
+	}
+	.email__wrapper {
+		padding: 0 !important;
+	}
+	.wp-block-buttons {
+		margin-bottom: 0 !important;
+		width: 100% !important;
+	}
+	.wp-block-button, .wp-block-button a {
+		width: 100% !important;
+	}
+
+	.email-notification__header, .email-notification__footer, .email-notification__content {
+		padding-left: 24px !important;
+		padding-right: 24px !important;
+	}
+
+	.email-notification__title {
+		margin-bottom: 32px !important;
+		padding-top: 0px !important;
+		font-size: 28px !important;
+	}
+
+	.email-notification__content {
+		margin-top: 0 !important;
+		padding: 24px !important;
+	}
+	.info__extra {
+		margin-top: 24px !important;
+	}
+	.email-notification__footer {
+		margin-top: 32px!important;
+	}
+}
