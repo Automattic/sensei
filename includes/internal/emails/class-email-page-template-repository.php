@@ -66,7 +66,7 @@ class Email_Page_Template_Repository {
 		if ( empty( $path ) ) {
 			return null;
 		}
-
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$content = file_get_contents( $path );
 		return $this->build_from_content( $content, $identifier );
 	}
