@@ -65,8 +65,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		parent::setUp();
 		reset_phpmailer_instance();
 
-		$this->settings     = new Sensei_Settings();
-		$this->factory      = new Sensei_Factory();
+		$this->settings = new Sensei_Settings();
+		$this->factory  = new Sensei_Factory();
 
 		$this->create_test_email_template();
 
@@ -74,17 +74,17 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 		add_action( 'wp_mail_succeeded', [ $this, 'wp_mail_succeeded' ] );
 		add_action( 'get_header', [ $this, 'get_header' ] );
-		add_filter('pre_get_block_template', [ $this, 'get_fake_template' ], 10, 3);
+		add_filter( 'pre_get_block_template', [ $this, 'get_fake_template' ], 10, 3 );
 
 		$this->email_sender = new Email_Sender( new Email_Repository(), $this->settings, new Email_Patterns() );
 		$this->email_sender->init();
 
 	}
 
-	public function get_fake_template($block_template, $id, $template_type) {
+	public function get_fake_template( $block_template, $id, $template_type ) {
 
-		$template = new \WP_Block_Template();
-		$template ->content = '
+		$template          = new \WP_Block_Template();
+		$template->content = '
 			Some Content from page template
 			<!-- wp:post-content /-->
 		';
@@ -251,11 +251,11 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 	public function testGetEmailBody_WhenCalled_ReturnsTheEmailBodyWithReplacedPlaceholders() {
 		$post = $this->factory->post->create_and_get(
-			 [
-				'post_type'  => Email_Post_Type::POST_TYPE,
-				'post_title' => 'My template',
-				'post_name'  => 'Welcome - [name]',
-				'post_content'  => 'Welcome - [name]',
+			[
+				'post_type'    => Email_Post_Type::POST_TYPE,
+				'post_title'   => 'My template',
+				'post_name'    => 'Welcome - [name]',
+				'post_content' => 'Welcome - [name]',
 			]
 		);
 
