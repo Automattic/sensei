@@ -4204,8 +4204,6 @@ class Sensei_Course {
 	 * @since $$next-version$$
 	 *
 	 * @access private
-	 *
-	 * @return void
 	 */
 	public function maybe_redirect_to_login_from_course_completion() {
 
