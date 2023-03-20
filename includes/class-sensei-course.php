@@ -4199,7 +4199,7 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Take the user to login page if trying to access course results page without being logged in.
+	 * Take the user to login page if trying to access course completion page without being logged in.
 	 *
 	 * @since $$next-version$$
 	 *
