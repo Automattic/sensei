@@ -12,7 +12,7 @@ use Sensei\Internal\Emails\Email_Page_Template_Repository;
  */
 class Email_Page_Template_Test extends \WP_UnitTestCase {
 
-	public function testHasInit_RegisterFilters() {
+	public function testHasInit_Always_RegistersFilters() {
 
 		/* Arrange. */
 		$repository    = $this->createMock( Email_Page_Template_Repository::class );
@@ -32,7 +32,7 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 		self::assertSame( 10, $get_block_templates_priority );
 	}
 
-	public function testGetFromFile_ReturnCorrectTemplate() {
+	public function testGetFromFile_FoundTemplateInRepository_ReturnsTemplateFromRepository() {
 
 		/* Arrange. */
 		$repository        = $this->createMock( Email_Page_Template_Repository::class );
@@ -54,7 +54,7 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 	}
 
 
-	public function testGetFromFile_WhenTheIdentifierIsIncorrect_ReturnDefaultTemplate() {
+	public function testGetFromFile_WhenTheIdentifierIsIncorrect_ReturnsDefaultTemplate() {
 
 		/* Arrange. */
 		$repository       = $this->createMock( Email_Page_Template_Repository::class );
@@ -68,7 +68,7 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 		self::assertSame( $result, $default_template );
 	}
 
-	public function testGetFromFile_WhenThePostTypeIsIncorrect_ReturnDefaultTemplate() {
+	public function testGetFromFile_WhenThePostTypeIsIncorrect_ReturnsDefaultTemplate() {
 
 		/* Arrange. */
 		$repository       = $this->createMock( Email_Page_Template_Repository::class );
@@ -83,7 +83,7 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 	}
 
 
-	public function testAddEmailTemplate_ReturnUpdatedList() {
+	public function testAddEmailTemplate_TemplateGiven_ReturnsUpdatedList() {
 
 		/* Arrange. */
 		$repository           = $this->createMock( Email_Page_Template_Repository::class );
@@ -102,7 +102,7 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 		self::assertSame( $template_to_be_added, $result[1] );
 	}
 
-	public function testAddEmailTemplate_WhenPostTypeIsIncorrect_ReturnDefaultList() {
+	public function testAddEmailTemplate_WhenPostTypeIsIncorrect_ReturnsDefaultList() {
 
 		/* Arrange. */
 		$repository           = $this->createMock( Email_Page_Template_Repository::class );
@@ -121,7 +121,7 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 		self::assertSame( $default_list, $result );
 	}
 
-	public function testAddEmailTemplate_WhenThemeIsSet_ReturnDefaultList() {
+	public function testAddEmailTemplate_WhenThemeIsSet_ReturnsDefaultList() {
 
 		/* Arrange. */
 		$repository           = $this->createMock( Email_Page_Template_Repository::class );
@@ -140,7 +140,7 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 		self::assertSame( $default_list, $result );
 	}
 
-	public function testAddEmailTemplate_WhenThereIsNoTemplateStoredOnDB_ReturnFromFile() {
+	public function testAddEmailTemplate_WhenThereIsNoTemplateStoredOnDB_ReturnsFromFile() {
 
 		/* Arrange. */
 		$repository           = $this->createMock( Email_Page_Template_Repository::class );
