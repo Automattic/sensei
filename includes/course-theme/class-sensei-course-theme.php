@@ -326,11 +326,8 @@ class Sensei_Course_Theme {
 	 * @return string[] $classes
 	 */
 	public function add_sensei_theme_body_class( $classes ) {
-		$classes[] = self::THEME_NAME;
-
-		return $classes;
+		return array_merge( $classes, [ self::THEME_NAME, 'sensei-' . Sensei_Course_Theme_Template_Selection::get_active_template_name() ] );
 	}
-
 
 	/**
 	 * Get the version of the active Learning Mode template.

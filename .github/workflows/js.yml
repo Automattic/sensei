@@ -10,10 +10,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-
-            - name: Updates the CI npm
-              run: npm install -g npm@^8
-
             - uses: actions/cache@v3
               with:
                   path: ~/.npm/
@@ -34,10 +30,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-
-            - name: Updates the CI npm
-              run: npm install -g npm@8.9.0
-
             - uses: actions/cache@v3
               with:
                   path: ~/.npm/
@@ -57,10 +49,6 @@ jobs:
         steps:
             # clone the repository
             - uses: actions/checkout@v3
-
-            - name: Updates the npm version
-              run: npm install -g npm@^8
-
             - uses: actions/cache@v3
               with:
                   path: ~/.npm
@@ -70,5 +58,7 @@ jobs:
             - name: Install JS dependencies
               run: npm ci
             - name: Test JS
+              env:
+                  NODE_OPTIONS: "--max_old_space_size=4096"
               run: npm run test-js
     

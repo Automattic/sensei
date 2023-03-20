@@ -31,6 +31,32 @@ class Email_Post_Type {
 	 */
 	public function init(): void {
 		add_action( 'init', [ $this, 'register_post_type' ] );
+		add_action( 'load-edit.php', [ $this, 'maybe_redirect_to_listing' ] );
+		add_action( 'map_meta_cap', [ $this, 'remove_cap_of_deleting_email' ], 10, 4 );
+	}
+
+	/**
+	 * Remove the capability of deleting emails.
+	 *
+	 * @param string[] $caps    The user's actual capabilities.
+	 * @param string   $cap     Capability name.
+	 * @param int      $user_id The user ID.
+	 * @param array    $args    Adds the context to the cap. Typically the object ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @access private
+	 *
+	 * @internal
+	 *
+	 * @return string[]
+	 */
+	public function remove_cap_of_deleting_email( $caps, $cap, $user_id, $args ) {
+		if ( 'delete_post' === $cap && isset( $args[0] ) && self::POST_TYPE === get_post_type( $args[0] ) ) {
+			$caps[] = 'do_not_allow';
+		}
+
+		return $caps;
 	}
 
 	/**
@@ -70,6 +96,25 @@ class Email_Post_Type {
 				'supports'     => [ 'title', 'editor', 'author', 'revisions' ],
 			]
 		);
+	}
+
+	/**
+	 * Redirect to the Email settings page if the user is trying to access the Email post type listing.
+	 *
+	 * @internal
+	 * @access private
+	 */
+	public function maybe_redirect_to_listing(): void {
+		if ( ! isset( $_GET['post_type'] ) || self::POST_TYPE !== $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+
+		if ( isset( $_GET['action'] ) && '-1' !== $_GET['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+
+		wp_safe_redirect( admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' ), 301 );
+		exit;
 	}
 }
 

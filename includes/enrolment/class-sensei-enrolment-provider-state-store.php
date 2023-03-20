@@ -105,6 +105,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 		$this->set_provider_states( $provider_states );
 	}
 
+	#[\ReturnTypeWillChange]
 	/**
 	 * Return object that can be serialized by `json_encode()`.
 	 *

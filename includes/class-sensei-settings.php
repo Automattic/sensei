@@ -117,36 +117,61 @@ class Sensei_Settings extends Sensei_Settings_API {
 	public function settings_screen() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification not required.
 		$tab_name = sanitize_key( wp_unslash( $_GET['tab'] ?? '' ) );
+
 		/**
-		 * Filters settings tab content.
+		 * Filters content for the settings page.
 		 *
-		 * @hook  sensei_settings_tab_content
+		 * @hook  sensei_settings_content
 		 * @since $$next-version$$
 		 *
-		 * @param {string} $content The tab content.
-		 * @param {string} $tab     The tab slug.
+		 * @param {string} $tab_name The tab slug.
 		 *
 		 * @return {string} Filtered tab content.
 		 */
-		$tab_content = apply_filters( 'sensei_settings_tab_content', '', $tab_name );
-		if ( empty( $tab_content ) ) {
+		$content = apply_filters( 'sensei_settings_content', $tab_name );
+
+		if ( empty( $content ) ) {
 			parent::settings_screen();
 			return;
 		}
 
+		// Render content on the Emails settings page.
 		Sensei()->assets->enqueue_style( 'wp-components' );
 		?>
 		<div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>">
-			<h1>
-				<?php echo esc_html( $this->name ); ?>
+			<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+				<div class="sensei-custom-navigation__heading">
+					<div class="sensei-custom-navigation__title">
+						<h1>
+							<?php
+							echo esc_html( $this->name );
+
+							if ( '' !== $this->settings_version ) {
+								echo ' <span class="version">' . esc_html( $this->settings_version ) . '</span>';
+							}
+							?>
+						</h1>
+					</div>
+					<div class="sensei-custom-navigation__links">
+						<?php $this->settings_tabs(); ?>
+					</div>
+				</div>
 				<?php
-				if ( '' !== $this->settings_version ) {
-					echo ' <span class="version">' . esc_html( $this->settings_version ) . '</span>';
-				}
+					/**
+					 * Fires after the navigation links are displayed.
+					 *
+					 * @hook  sensei_settings_after_links
+					 * @since $$next-version$$
+					 *
+					 * @param {string} $tab_name The tab slug.
+					 */
+					do_action( 'sensei_settings_after_links', $tab_name );
 				?>
-			</h1>
-			<?php $this->settings_tabs(); ?>
-			<?php echo $tab_content; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
+			<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo $content;
+			?>
 		</div>
 		<?php
 	}
@@ -691,7 +716,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$fields['email_from_address'] = array(
 			'name'        => __( '"From" Address', 'sensei-lms' ),
 			'description' => __( 'The address from which all emails will be sent.', 'sensei-lms' ),
-			'type'        => 'text',
+			'type'        => 'email',
 			'default'     => get_bloginfo( 'admin_email' ),
 			'section'     => 'email-notification-settings',
 			'required'    => 1,

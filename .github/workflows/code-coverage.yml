@@ -55,9 +55,6 @@ jobs:
             -   name: Run tests with coverage
                 run: php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover ./coverage.xml
 
-            -   name: Updates the npm version
-                run: npm install -g npm@^8
-
             -   uses: actions/cache@v3
                 with:
                     path: ~/.npm
@@ -69,6 +66,8 @@ jobs:
                 run: npm ci
 
             -   name: Test JS
+                env:
+                    NODE_OPTIONS: "--max_old_space_size=4096"
                 run: npm run test-js:coverage
 
             -   name: Upload coverage reports to Codecov with GitHub Action

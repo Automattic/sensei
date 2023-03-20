@@ -1,11 +1,11 @@
 
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
-Contributors: automattic, aaronfc, alexsanford1, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, guzluis, imranh920, jakeom, lavagolem, luchad0res, merkushin, m1r0, nurguly, onubrooks, renathoc, yscik
+Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, imranh920, jakeom, luchad0res, merkushin, m1r0, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 7.2
-Stable tag: 4.11.1
+Stable tag: 4.11.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,57 +116,45 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
-2023-02-03 - version 4.11.1
-* Add: Auto select course template depending on selected course pattern [#6200](https://github.com/Automattic/sensei/pull/6200)
-* Fix: Prevent html entities from showing up in module titles in editor [#6372](https://github.com/Automattic/sensei/pull/6372)
-* Fix: Remove separator from course list pattern [#6435](https://github.com/Automattic/sensei/pull/6435)
-* Fix: Alignment of url buttons for Blockbase/Astra themes [#5814](https://github.com/Automattic/sensei/pull/5814)
-* Fix: Type error when `the_content` is not a string [#6484](https://github.com/Automattic/sensei/pull/6484)
-* Fix: `the_content` hook called twice when viewing a lesson in learning mode [#6438](https://github.com/Automattic/sensei/pull/6438)
-* Tweak: Suppress theme without comments.php deprecation message [#6453](https://github.com/Automattic/sensei/pull/6453)
-* Tweak: Round course progress to integer [#6232](https://github.com/Automattic/sensei/pull/6232)
+### 4.12.0 - 2023-03-07
+#### Added
+- Register setup wizard option in settings endpoint.
+- Add template name as CSS class to body element in Learning Mode
+- Prepend sensei in CSS collapsed class
+- Add support for customizing the tabs on the wp-admin Courses page
 
-2023-02-02 - version 4.11.0
-* New: Guest users and teachers preview [#6421](https://github.com/Automattic/sensei/pull/6421)
-* Add: Add Course List block to My Courses and course archive on page creation [#6343](https://github.com/Automattic/sensei/pull/6343) [#6354](https://github.com/Automattic/sensei/pull/6354) [#6414](https://github.com/Automattic/sensei/pull/6416)
-* Add: Curate list of installed plugins that are logged [#6424](https://github.com/Automattic/sensei/pull/6424)
-* Add: Add filter for the student bulk action modal [#6366](https://github.com/Automattic/sensei/pull/6366)
-* Fix: Redirect to correct contact form if the user has a WPCOM subscription [#6407](https://github.com/Automattic/sensei/pull/6407)
-* Fix: Fix archive page going on infinite loop in Astra theme [#6431](https://github.com/Automattic/sensei/pull/6431)
-* Fix: Do not show quiz notice if it is the quiz page [#6313](https://github.com/Automattic/sensei/pull/6313)
-* Fix: Fix error when calling `the_content` filter with no post context [#6406](https://github.com/Automattic/sensei/pull/6406)
-* Fix: Fix issue where Quiz Timer options would appear only when the Random Question Order is enabled [#6377](https://github.com/Automattic/sensei/pull/6377)
-* Fix: Fix block editor check [#6359](https://github.com/Automattic/sensei/pull/6359)
-* Fix: Fix Twenty Fifteen and Learning Mode layout issue [#6360](https://github.com/Automattic/sensei/pull/6360)
-* Tweak: Change reset progress copy by [#6371](https://github.com/Automattic/sensei/pull/6371)
+#### Fixed
+- Run activation hooks when plugin is activated in the background.
+- Fix global heading colors not working in Learning Mode
+- Fix deprecation warnings due to missmatching return type in PHP 8.1.
+- Fix progress bar and modules in Learning Mode not adhering to global colors
+- Fix students context menu
+- Disable Divi Theme Builder when Learning Mode enabled.
+- Fix error in import job
+- Auto select specific template for pattern at course creation if specified
 
-2023-01-12 - version 4.10.0
-* New: Course theme installation through the onboarding wizard
-	* Add onboarding theme step [#6182](https://github.com/Automattic/sensei/pull/6182), [#6251](https://github.com/Automattic/sensei/pull/6251), [#6273](https://github.com/Automattic/sensei/pull/6273)
-	* Add onboarding theme step backend [#6211](https://github.com/Automattic/sensei/pull/6211)
-	* Install Course theme [#6231](https://github.com/Automattic/sensei/pull/6231)
-	* Add usage tracking for Setup Wizard Course Theme step [#6252](https://github.com/Automattic/sensei/pull/6252)
-	* Add Sensei Home task to customize the Course theme [#6250](https://github.com/Automattic/sensei/pull/6250)
-* Add: Add `sensei_usage_tracking_data` filter hook [#6262](https://github.com/Automattic/sensei/pull/6262)
-* Add: Log sent emails [#6228](https://github.com/Automattic/sensei/pull/6228)
-* Add: Notice asking user for reviews/feedback [#6274](https://github.com/Automattic/sensei/pull/6274)
-* Add: Log when reports are run [#6319](https://github.com/Automattic/sensei/pull/6319)
-* Add: Add  `Sensei_Data_Port_Utilities::get_demo_course_id()` helper method [#6328](https://github.com/Automattic/sensei/pull/6328)
-* Add: Add filters for course actions buttons [#6296](https://github.com/Automattic/sensei/pull/6296)
-* Add: Course list button editing [#6324](https://github.com/Automattic/sensei/pull/6324)
-* Fix: Fix sidebar position for learning mode [#6210](https://github.com/Automattic/sensei/pull/6210)
-* Fix: Fix testimonial margin for block patterns [#6216](https://github.com/Automattic/sensei/pull/6216)
-* Fix: Ensure passing an integer module id [#6229](https://github.com/Automattic/sensei/pull/6229)
-* Fix: Ensure `is_plugin_active` call doesn't give an error [#6249](https://github.com/Automattic/sensei/pull/6249)
-* Fix: Always initialize question blocks in frontend [#6258](https://github.com/Automattic/sensei/pull/6258)
-* Fix: Fix global admin styles for Groups badge and landing page [#6260](https://github.com/Automattic/sensei/pull/6260)
-* Fix: Add empty checks to avoid warnings [#6270](https://github.com/Automattic/sensei/pull/6270)
-* Fix: Fix private message emails not being sent [#6257](https://github.com/Automattic/sensei/pull/6257)
-* Fix: Ensure all strings in block pattern templates are translated and escaped [#6322](https://github.com/Automattic/sensei/pull/6322)
-* Fix: Fix editor wizard header style [#6335](https://github.com/Automattic/sensei/pull/6335)
-* Fix: Update question post type to not be publicly queryable [#6347](https://github.com/Automattic/sensei/pull/6347)
-* Fix: Fix conflict by disabling Yoast initialization on Divi preview [#6342](https://github.com/Automattic/sensei/pull/6342)
-* Fix: Security fixes
-* Tweak: Remove the "source" property from events data [#6310](https://github.com/Automattic/sensei/pull/6310)
-* Tweak: Update Sensei logo [#6336](https://github.com/Automattic/sensei/pull/6336)
-* Tweak: Display warning in the editor when adding the lesson properties block if Learning Mode is enabled [#6078](https://github.com/Automattic/sensei/pull/6078)
+### 4.11.1 - 2023-02-03
+
+- Add: Auto select course template depending on selected course pattern [#6200](https://github.com/Automattic/sensei/pull/6200)
+- Fix: Prevent html entities from showing up in module titles in editor [#6372](https://github.com/Automattic/sensei/pull/6372)
+- Fix: Remove separator from course list pattern [#6435](https://github.com/Automattic/sensei/pull/6435)
+- Fix: Alignment of url buttons for Blockbase/Astra themes [#5814](https://github.com/Automattic/sensei/pull/5814)
+- Fix: Type error when `the_content` is not a string [#6484](https://github.com/Automattic/sensei/pull/6484)
+- Fix: `the_content` hook called twice when viewing a lesson in learning mode [#6438](https://github.com/Automattic/sensei/pull/6438)
+- Tweak: Suppress theme without comments.php deprecation message [#6453](https://github.com/Automattic/sensei/pull/6453)
+- Tweak: Round course progress to integer [#6232](https://github.com/Automattic/sensei/pull/6232)
+
+### 4.11.0 - 2023-02-02
+
+- New: Guest users and teachers preview [#6421](https://github.com/Automattic/sensei/pull/6421)
+- Add: Add Course List block to My Courses and course archive on page creation [#6343](https://github.com/Automattic/sensei/pull/6343) [#6354](https://github.com/Automattic/sensei/pull/6354) [#6414](https://github.com/Automattic/sensei/pull/6416)
+- Add: Curate list of installed plugins that are logged [#6424](https://github.com/Automattic/sensei/pull/6424)
+- Add: Add filter for the student bulk action modal [#6366](https://github.com/Automattic/sensei/pull/6366)
+- Fix: Redirect to correct contact form if the user has a WPCOM subscription [#6407](https://github.com/Automattic/sensei/pull/6407)
+- Fix: Fix archive page going on infinite loop in Astra theme [#6431](https://github.com/Automattic/sensei/pull/6431)
+- Fix: Do not show quiz notice if it is the quiz page [#6313](https://github.com/Automattic/sensei/pull/6313)
+- Fix: Fix error when calling `the_content` filter with no post context [#6406](https://github.com/Automattic/sensei/pull/6406)
+- Fix: Fix issue where Quiz Timer options would appear only when the Random Question Order is enabled [#6377](https://github.com/Automattic/sensei/pull/6377)
+- Fix: Fix block editor check [#6359](https://github.com/Automattic/sensei/pull/6359)
+- Fix: Fix Twenty Fifteen and Learning Mode layout issue [#6360](https://github.com/Automattic/sensei/pull/6360)
+- Tweak: Change reset progress copy by [#6371](https://github.com/Automattic/sensei/pull/6371)
