@@ -55,42 +55,46 @@ class Sensei_MailPoetMockAPI_Test {
 			0 =>
 				array(
 					'id'          => '533',
-					'name'        => 'Sensei LMS Course: A new course',
+					'name'        => 'A new course',
 					'type'        => 'default',
 					'description' => '',
 					'created_at'  => '2023-03-14 13:42:54',
 					'updated_at'  => '2023-03-14 13:42:54',
 					'deleted_at'  => null,
+					'subscribers' => array(),
 				),
 			1 =>
 				array(
 					'id'          => '534',
-					'name'        => 'Sensei LMS Course: Becoming a Content Creator',
+					'name'        => 'Becoming a Content Creator',
 					'type'        => 'default',
 					'description' => '',
 					'created_at'  => '2023-03-14 13:42:54',
 					'updated_at'  => '2023-03-14 13:42:54',
 					'deleted_at'  => null,
+					'subscribers' => array(),
 				),
 			2 =>
 				array(
 					'id'          => '536',
-					'name'        => 'Sensei LMS Course: How to be famous',
+					'name'        => 'How to be famous',
 					'type'        => 'default',
 					'description' => '',
 					'created_at'  => '2023-03-14 13:42:54',
 					'updated_at'  => '2023-03-14 13:42:54',
 					'deleted_at'  => null,
+					'subscribers' => array(),
 				),
 			3 =>
 				array(
 					'id'          => '537',
-					'name'        => 'Sensei LMS Course: Life 101',
+					'name'        => 'Life 101',
 					'type'        => 'default',
 					'description' => '',
 					'created_at'  => '2023-03-14 13:42:54',
 					'updated_at'  => '2023-03-14 13:42:54',
 					'deleted_at'  => null,
+					'subscribers' => array(),
 				),
 		);
 		$this->subscribers = array();
@@ -118,6 +122,7 @@ class Sensei_MailPoetMockAPI_Test {
 			'id'          => wp_rand( 100, 500 ),
 			'name'        => $list['name'],
 			'description' => $list['description'],
+			'subscribers' => array(),
 		);
 		$this->lists[] = $new_list;
 		return $new_list;
@@ -149,7 +154,10 @@ class Sensei_MailPoetMockAPI_Test {
 	 * Mock subscribeToList method.
 	 */
 	public function subscribeToList( $id, $list_id, $options ) {
-		$this->subscribers[ $id ]['list_ids'][ $list_id ] = true;
+		$list_index = $this->getListIndex( $list_id );
+		if ( ! in_array( $id, $this->lists[ $list_index ]['subscribers'], true ) ) {
+			$this->lists[ $list_index ]['subscribers'][] = $id;
+		}
 		return true;
 	}
 
@@ -157,7 +165,13 @@ class Sensei_MailPoetMockAPI_Test {
 	 * Mock unsubscribeFromList method.
 	 */
 	public function unsubscribeFromList( $id, $list_id ) {
-		$this->subscribers[ $id ]['list_ids'][ $list_id ] = false;
+		$list_index  = $this->getListIndex( $list_id );
+		$subscribers = $this->lists[ $list_index ]['subscribers'];
+		foreach ( $subscribers as $index => $item ) {
+			if ( $item === $id ) {
+				unset( $this->lists[ $list_index ]['subscribers'][ $index ] );
+			}
+		}
 		return true;
 	}
 
@@ -165,13 +179,20 @@ class Sensei_MailPoetMockAPI_Test {
 	 * Mock getSubscribers method.
 	 */
 	public function getSubscribers( $args ) {
-		$list_id     = $args['listId'];
-		$subscribers = array();
-		foreach ( $this->subscribers as $subscriber ) {
-			if ( isset( $subscriber['list_ids'][ $list_id ] ) && $subscriber['list_ids'][ $list_id ] ) {
-				$subscribers[] = $subscriber;
+		$list_id    = $args['listId'];
+		$list_index = $this->getListIndex( $list_id );
+		return $this->lists[ $list_index ]['subscribers'];
+	}
+
+	/**
+	 * Get the index of a list.
+	 */
+	public function getListIndex( $list_id ) {
+		foreach ( $this->lists as $index => $list ) {
+			if ( $list['id'] === $list_id ) {
+				return $index;
 			}
 		}
-		return $subscribers;
+		return 0;
 	}
 }
