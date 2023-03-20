@@ -71,7 +71,7 @@ class Email_Seeder {
 		 * @param array $emails Email data.
 		 * @return array Filtered array of email data.
 		 */
-		$this->emails = apply_filters( 'sensei_emails_seeder_data', $this->email_data->get_email_data() );
+		$this->emails = apply_filters( 'sensei_email_seeder_data', $this->email_data->get_email_data() );
 	}
 
 	/**
