@@ -67,11 +67,13 @@ class Email_Seeder {
 		 * Filter the email data.
 		 *
 		 * @since $$next-version$$
+		 * @hook sensei_email_seeder_data
 		 *
-		 * @param array $emails Email data.
-		 * @return array Filtered array of email data.
+		 * @param {array} $emails Email data.
+		 *
+		 * @return {array} Filtered array of email data.
 		 */
-		$this->emails = apply_filters( 'sensei_emails_seeder_data', $this->email_data->get_email_data() );
+		$this->emails = apply_filters( 'sensei_email_seeder_data', $this->email_data->get_email_data() );
 	}
 
 	/**
