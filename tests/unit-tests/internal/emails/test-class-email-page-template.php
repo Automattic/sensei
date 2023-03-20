@@ -12,6 +12,15 @@ use Sensei\Internal\Emails\Email_Page_Template_Repository;
  */
 class Email_Page_Template_Test extends \WP_UnitTestCase {
 
+
+	public function setUp(): void {
+		parent::setUp();
+
+		add_filter( 'pre_get_block_file_template', [ $this, 'pre_get_block_file_template' ], 10, 3 );
+		add_filter( 'get_block_templates', [ $this, 'get_block_templates' ], 10, 3 );
+	}
+
+
 	public function testHasInit_Always_RegistersFilters() {
 
 		/* Arrange. */
@@ -20,9 +29,6 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$page_template->init();
-
-		add_filter( 'pre_get_block_file_template', [ $this, 'pre_get_block_file_template' ], 10, 3 );
-		add_filter( 'get_block_templates', [ $this, 'get_block_templates' ], 10, 3 );
 
 		/* Assert. */
 		$get_file_block_priorty       = has_filter( 'pre_get_block_file_template', [ $page_template, 'get_from_file' ] );
