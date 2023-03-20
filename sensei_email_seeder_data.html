@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Action: sensei_new_private_message - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_email_seeder_data - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Action: sensei_new_private_message</h1>
+	<h1 class="page-title">Filter: sensei_email_seeder_data</h1>
 	
 
 	
@@ -43,14 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_new_private_message">do_action( 'sensei_new_private_message', <span class="signature">$message_id )</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="sensei_email_seeder_data">apply_filters( 'sensei_email_seeder_data', <span class="signature">$emails )</span><span class="type-signature"> &rarr; {array}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Fires when a new private message is sent.</p>
+    <p>Filter the email data.</p>
 </div>
 
 
@@ -84,13 +84,13 @@
 
         <tr>
             
-                <td class="name"><code>$message_id</code></td>
+                <td class="name"><code>$emails</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">int</span>
+<span class="param-type">array</span>
 
 
             
@@ -100,7 +100,7 @@
 
             
 
-            <td class="description last"><p>The message ID.</p></td>
+            <td class="description last"><p>Email data.</p></td>
         </tr>
 
     
@@ -118,7 +118,7 @@
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>1.8.0</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -144,7 +144,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-messages.php.html">includes/class-sensei-messages.php</a>, <a href="includes_class-sensei-messages.php.html#line525">line 525</a>
+        <a href="includes_internal_emails_class-email-seeder.php.html">includes/internal/emails/class-email-seeder.php</a>, <a href="includes_internal_emails_class-email-seeder.php.html#line66">line 66</a>
     </li></ul></dd>
     
 
@@ -167,6 +167,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Filtered array of email data.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">array</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 

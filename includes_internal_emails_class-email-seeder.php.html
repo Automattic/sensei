@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Action: sensei_new_private_message - Sensei LMS Hook Docs</title>
+	<title>Source: includes/internal/emails/class-email-seeder.php - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,162 +21,172 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Action: sensei_new_private_message</h1>
+	<h1 class="page-title">Source: includes/internal/emails/class-email-seeder.php</h1>
 	
 
 	
 
 
 
-
-<section>
-
-<header>
-    <h2></h2>
     
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    <h4 class="name" id="sensei_new_private_message">do_action( 'sensei_new_private_message', <span class="signature">$message_id )</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Fires when a new private message is sent.</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>$message_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The message ID.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-    <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>1.8.0</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-messages.php.html">includes/class-sensei-messages.php</a>, <a href="includes_class-sensei-messages.php.html#line525">line 525</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    </div>
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;?php
+/**
+ * File containing the Email_Seeder class.
+ *
+ * @package sensei
+ */
+
+namespace Sensei\Internal\Emails;
+
+use Sensei\Internal\Emails\Email_Seeder_Data;
+use Sensei\Internal\Emails\Email_Repository;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Email_Seeder class.
+ *
+ * @internal
+ *
+ * @since $$next-version$$
+ */
+class Email_Seeder {
+	/**
+	 * Email_Seeder_Data instance.
+	 *
+	 * @var Email_Seeder_Data
+	 */
+	private $email_data;
+
+	/**
+	 * Email repository.
+	 *
+	 * @var Email_Repository
+	 */
+	private $email_repository;
+
+	/**
+	 * Email data.
+	 *
+	 * @var array
+	 */
+	private $emails;
+
+	/**
+	 * Template_Wizard constructor.
+	 *
+	 * @internal
+	 *
+	 * @param Email_Seeder_Data $email_data Email_Seeder_Data instance. Keeps information about all default emails.
+	 * @param Email_Repository  $email_repository Email repository.
+	 */
+	public function __construct( Email_Seeder_Data $email_data, Email_Repository $email_repository ) {
+		$this->email_data       = $email_data;
+		$this->email_repository = $email_repository;
+		$this->emails           = [];
+	}
+
+	/**
+	 * Initialize the wizard.
+	 *
+	 * @internal
+	 */
+	public function init() {
+		/**
+		 * Filter the email data.
+		 *
+		 * @since $$next-version$$
+		 * @hook sensei_email_seeder_data
+		 *
+		 * @param {array} $emails Email data.
+		 *
+		 * @return {array} Filtered array of email data.
+		 */
+		$this->emails = apply_filters( 'sensei_email_seeder_data', $this->email_data->get_email_data() );
+	}
+
+	/**
+	 * Create email.
+	 *
+	 * @internal
+	 *
+	 * @param string $identifier Email identifier.
+	 * @param bool   $force      Force creation.
+	 *
+	 * @return bool
+	 */
+	public function create_email( string $identifier, bool $force = false ): bool {
+		$email_exists = $this->email_repository->has( $identifier );
+		if ( $email_exists ) {
+			if ( ! $force ) {
+				return false;
+			}
+
+			$this->email_repository->delete( $identifier );
+		}
+
+		$email_data = $this->emails[ $identifier ] ?? [];
+		if ( empty( $email_data ) ) {
+			return false;
+		}
+
+		$types = $email_data['types'] ?? [];
+		if ( empty( $types ) ) {
+			return false;
+		}
+
+		$subject = $email_data['subject'] ?? '';
+		if ( empty( $subject ) ) {
+			return false;
+		}
+
+		$content = $email_data['content'] ?? '';
+		if ( empty( $content ) ) {
+			return false;
+		}
+
+		$description = $email_data['description'] ?? '';
+
+		$email_id = $this->email_repository->create( $identifier, $types, $subject, $description, $content );
+
+		return is_int( $email_id ) &amp;&amp; $email_id > 0;
+	}
+
+	/**
+	 * Create all emails from templates.
+	 *
+	 * @internal
+	 *
+	 * @param bool $force Delete an old email if exists and re-create it with default data.
+	 * @return bool
+	 */
+	public function create_all( $force = false ): bool {
+		$result = true;
+		foreach ( $this->get_email_identifiers() as $type ) {
+			$last_result = $this->create_email( $type, $force );
+			if ( ! $last_result ) {
+				$result = false;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Get all available email identifiers.
+	 *
+	 * @return array
+	 */
+	private function get_email_identifiers(): array {
+		return array_keys( $this->emails );
+	}
+}
+</code></pre>
+        </article>
+    </section>
 
 
 
