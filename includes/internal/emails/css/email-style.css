@@ -10,10 +10,6 @@ html {
 	padding-top: 32px;
 }
 
-.wp-block-site-title a {
-	text-decoration: none;
-}
-
 .wp-element-button, .editor-styles-wrapper .wp-block-button__link {
 	text-transform: capitalize;
 }
@@ -22,20 +18,23 @@ html {
 	display: inline-block;
 }
 
-.wp-block-button__link{
+.wp-block-button__link {
 	text-decoration: none;
 	border-radius: 4px !important;
+	padding: 16px 20px !important;
 }
 
+.site-logo {
+	margin-top: -24px;
+}
 .wp-block-site-logo img{
 	border: none !important;
+	max-height: 48px !important;
+	width: auto !important;
 }
 
-.header {
-	display: flex !important;
-	flex-wrap: nowrap !important;
-	align-items: center !important;
-	justify-content: space-between !important;
+.wp-block-site-title a {
+	text-decoration: none;
 }
 
 img {
@@ -84,6 +83,16 @@ table {
 	padding: 0;
 	font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
 }
+
+.wp-block-site-logo {
+	max-height: 48px !important;
+	width: auto !important;
+}
+
+.wp-block-site-title {
+	float: right;
+}
+
 .content * {
 	font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
 }
@@ -92,10 +101,12 @@ table {
 	padding: 0px !important;
 }
 
+.inline-block {
+	display: inline-block;
+}
+
+
 @media only screen and (max-width: 800px) {
-	.wp-block-site-logo img {
-		width: 32px;
-	}
 	.email__wrapper {
 		padding: 0 !important;
 	}
@@ -122,13 +133,21 @@ table {
 		margin-top: 0 !important;
 		padding: 24px !important;
 	}
+
 	.info__extra {
 		margin-top: 24px !important;
 	}
+
 	.email-notification__footer {
+		padding-left: 24px;
+	}
+
+	/* .email-notification__footer {
 		margin-top: 32px!important;
 	}
-	.footer .sensei-logo  {
-		width: 32px !important ;
-	}
+
+	.footer .sensei-logo img  {
+		max-height: 32px !important;
+		width: auto !important;
+	} */
 }

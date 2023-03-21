@@ -50,7 +50,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			}
 
 			.container {
-				max-width: 752px;
+				max-width: 800px;
 				margin: 0 auto;
 			}
 
