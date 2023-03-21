@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Sensei_Extensions {
 	const SENSEILMS_PRODUCTS_API_BASE_URL = 'https://senseilms.com/wp-json/senseilms-products/1.0';
+	const PRODUCT_SENSEI_PRO_SLUG = 'sensei-pro';
 
 	/**
 	 * Instance of class.
