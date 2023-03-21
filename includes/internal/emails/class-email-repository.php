@@ -42,6 +42,13 @@ class Email_Repository {
 	private const META_DESCRIPTION = '_sensei_email_description';
 
 	/**
+	 * Email pro meta key.
+	 *
+	 * @param string
+	 */
+	private const META_IS_PRO = '_sensei_email_is_pro';
+
+	/**
 	 * Check if email exists for identifier.
 	 *
 	 * @internal
@@ -71,10 +78,11 @@ class Email_Repository {
 	 * @param string $subject     Email subject.
 	 * @param string $description Email description.
 	 * @param string $content     Email content.
+	 * @param bool   $is_pro      Is pro email.
 	 *
 	 * @return int|false Email post ID. Returns false if email already exists. Returns WP_Error on failure.
 	 */
-	public function create( string $identifier, array $types, string $subject, string $description, string $content ) {
+	public function create( string $identifier, array $types, string $subject, string $description, string $content, bool $is_pro = false ) {
 		if ( $this->has( $identifier ) ) {
 			return false;
 		}
@@ -87,6 +95,7 @@ class Email_Repository {
 			'meta_input'   => [
 				self::META_IDENTIFIER  => $identifier,
 				self::META_DESCRIPTION => $description,
+				self::META_IS_PRO      => $is_pro,
 			],
 		];
 

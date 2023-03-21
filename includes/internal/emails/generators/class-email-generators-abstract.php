@@ -109,7 +109,7 @@ abstract class Email_Generators_Abstract {
 		 * Send HTML email.
 		 *
 		 * @since $$next-version$$
-		 * @hook sensei_send_html_email
+		 * @hook sensei_email_send
 		 *
 		 * @param {string} $email_name          The email name.
 		 * @param {Array}  $replacements        The replacements.

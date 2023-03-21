@@ -27,7 +27,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 			$changed_value = true;
 			return $value;
 		};
-		add_filter( 'sensei_emails_seeder_data', $filter );
+		add_filter( 'sensei_email_seeder_data', $filter );
 
 		/* Act. */
 		$seeder->init();
@@ -36,7 +36,7 @@ class Email_Seeder_Test extends \WP_UnitTestCase {
 		$this->assertTrue( $changed_value );
 
 		/* Cleanup. */
-		remove_filter( 'sensei_emails_seeder_data', $filter );
+		remove_filter( 'sensei_email_seeder_data', $filter );
 	}
 
 	public function testCreateEmail_Always_ChecksIfEmailExists() {
