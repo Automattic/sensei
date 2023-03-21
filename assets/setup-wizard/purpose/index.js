@@ -175,7 +175,7 @@ const Purpose = () => {
 							] }
 						>
 							{ __(
-								'An error happened while loading the Sensei extensions',
+								'An error happened while loading the Sensei extensions.',
 								'sensei-lms'
 							) }
 						</Notice>
