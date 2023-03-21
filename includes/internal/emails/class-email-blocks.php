@@ -114,11 +114,11 @@ class Email_Blocks {
 	 * @internal
 	 * @access private
 	 *
-	 * @param WP_Theme_JSON_Data $theme       Original theme settings.
+	 * @param WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg $theme       Original theme settings.
 	 *
-	 * @return WP_Theme_JSON_Data Updated theme settings.
+	 * @return WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg Updated theme settings.
 	 */
-	public function set_email_css_units( $theme ):\WP_Theme_JSON_Data {
+	public function set_email_css_units( $theme ) {
 
 		if ( ! is_admin() ) {
 			return $theme;
