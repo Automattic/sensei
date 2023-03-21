@@ -128,4 +128,7 @@ table {
 	.email-notification__footer {
 		margin-top: 32px!important;
 	}
+	.footer .sensei-logo  {
+		width: 32px !important ;
+	}
 }

@@ -114,7 +114,7 @@ class Email_Customization {
 	 *
 	 * @var Email_Page_Template
 	 */
-	public $page_template;
+	private $page_template;
 
 	/**
 	 * Email_Customization constructor.
