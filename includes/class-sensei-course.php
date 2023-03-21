@@ -226,11 +226,7 @@ class Sensei_Course {
 	public function showcase_courses_screen() {
 		// Get the price of Pro. Return if it's not available.
 		$sensei_pro_product = Sensei_Extensions::instance()->get_extension( 'sensei-pro' );
-		if ( ! $sensei_pro_product ) {
-			return;
-		}
-
-		$sensei_pro_price = str_replace( '.00', '', $sensei_pro_product->price );
+		$sensei_pro_price   = $sensei_pro_product ? str_replace( '.00', '', $sensei_pro_product->price ) : '-';
 
 		// Enqueue styles.
 		Sensei()->assets->enqueue( 'sensei-showcase-upsell', 'css/showcase-upsell.css' );
