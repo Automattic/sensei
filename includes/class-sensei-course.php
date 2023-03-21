@@ -224,6 +224,10 @@ class Sensei_Course {
 	 * @internal
 	 */
 	public function showcase_courses_screen() {
+		// Get the price of Pro. Return if it's not available.
+		$sensei_pro_product = Sensei_Extensions::instance()->get_extension( Sensei_Extensions::PRODUCT_SENSEI_PRO_SLUG );
+		$sensei_pro_price   = $sensei_pro_product ? str_replace( '.00', '', $sensei_pro_product->price ) : '-';
+
 		// Enqueue styles.
 		Sensei()->assets->enqueue( 'sensei-showcase-upsell', 'css/showcase-upsell.css' );
 
@@ -250,8 +254,13 @@ class Sensei_Course {
 					</ul>
 
 					<div class="sensei-showcase-upsell__price-wrapper">
-						<span class="sensei-showcase-upsell__price"><?php esc_html_e( '$13 USD', 'sensei-lms' ); ?></span>
-						<span class="sensei-showcase-upsell__price-period"><?php esc_html_e( 'per month, billed yearly', 'sensei-lms' ); ?></span>
+						<span class="sensei-showcase-upsell__price">
+							<?php
+							// translators: Placeholder is the price of Sensei Pro.
+							echo esc_html( sprintf( __( '%s USD', 'sensei-lms' ), $sensei_pro_price ) );
+							?>
+						</span>
+						<span class="sensei-showcase-upsell__price-period"><?php esc_html_e( 'per year, 1 site', 'sensei-lms' ); ?></span>
 					</div>
 
 					<ul class="sensei-showcase-upsell__buttons">
