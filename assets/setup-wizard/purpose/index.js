@@ -45,7 +45,7 @@ const purposes = [
 const getInstallDescription = ( slug, features ) => {
 	const feature = features.find( ( i ) => i.product_slug === slug );
 
-	if ( ! feature.is_activated ) {
+	if ( feature && ! feature.is_activated ) {
 		const action = feature.is_installed
 			? __( 'activated', 'sensei-lms' )
 			: __( 'installed for free', 'sensei-lms' );
