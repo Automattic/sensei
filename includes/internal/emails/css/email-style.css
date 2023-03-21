@@ -4,18 +4,20 @@
  IT IS USED TO SET GENERAL EMAILS STYLES FOR THE SENSEI NOTIFICATIONS
 **/
 
+
 html {
-	margin: 0 !important;
 	background-color: #f3f3f3;
 	padding-top: 32px;
 }
 
-.wp-element-button, .editor-styles-wrapper .wp-block-button__link {
-	text-transform: capitalize;
-}
 
 .inline-block {
 	display: inline-block;
+}
+
+
+.wp-element-button, .editor-styles-wrapper .wp-block-button__link {
+	text-transform: capitalize;
 }
 
 .wp-block-button__link {
@@ -27,6 +29,7 @@ html {
 .site-logo {
 	margin-top: -24px;
 }
+
 .wp-block-site-logo img{
 	border: none !important;
 	max-height: 48px !important;
@@ -61,10 +64,6 @@ table {
 	width: 100%;
 }
 
-/* -------------------------------------
-		BODY & CONTAINER
-------------------------------------- */
-
 .body {
 	background-color: #f3f3f3;
 	width: 100%;
@@ -76,12 +75,12 @@ table {
 	max-width: 800px;
 	width: 100%;
 }
+
 .content {
 	box-sizing: border-box;
 	display: block;
 	margin: 0 auto;
 	padding: 0;
-	font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
 }
 
 .wp-block-site-logo {
@@ -93,7 +92,7 @@ table {
 	float: right;
 }
 
-.content * {
+.content, .content * {
 	font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
 }
 
@@ -102,20 +101,44 @@ table {
 }
 
 .inline-block {
-	display: inline-block;
+	display: inline-block !important;
+}
+
+figure {
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.email-notification__footer figure {
+	float: left !important;
+}
+
+.email-notification__footer p {
+	margin-top: 5px !important;
+}
+
+.powered {
+	position: relative;
+	top: -10px;
 }
 
 
-@media only screen and (max-width: 800px) {
-	.email__wrapper {
-		padding: 0 !important;
+@media (max-width: 800px) {
+	.wp-block-site-title {
+		font-size: 15px !important;
+		margin-top: 10px !important;
 	}
+
 	.wp-block-buttons {
 		margin-bottom: 0 !important;
 		width: 100% !important;
 	}
-	.wp-block-button, .wp-block-button a {
+
+	.wp-block-button a {
+		display: inline-block !important;
 		width: 100% !important;
+		box-sizing: border-box !important;
+		text-align: center;
 	}
 
 	.email-notification__header, .email-notification__footer, .email-notification__content {
@@ -137,17 +160,4 @@ table {
 	.info__extra {
 		margin-top: 24px !important;
 	}
-
-	.email-notification__footer {
-		padding-left: 24px;
-	}
-
-	/* .email-notification__footer {
-		margin-top: 32px!important;
-	}
-
-	.footer .sensei-logo img  {
-		max-height: 32px !important;
-		width: auto !important;
-	} */
 }
