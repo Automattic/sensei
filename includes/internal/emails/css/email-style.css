@@ -114,12 +114,7 @@ figure {
 }
 
 .email-notification__footer p {
-	margin-top: 5px !important;
-}
-
-.powered {
-	position: relative;
-	top: -10px;
+	margin-top: 2px !important;
 }
 
 
