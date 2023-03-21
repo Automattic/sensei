@@ -126,18 +126,21 @@ class Email_Seeder_Data {
 				'subject'     => __( 'Where have you been?', 'sensei-lms' ),
 				'description' => __( 'No Progress Reminder - 3 days', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-no-progress-3-days"} /-->',
+				'is_pro'      => true,
 			],
 			'student_no_progress_7_days'  => [
 				'types'       => [ 'student' ],
 				'subject'     => __( 'We missed you this week', 'sensei-lms' ),
 				'description' => __( 'No Progress Reminder - 7 days', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-no-progress-7-days"} /-->',
+				'is_pro'      => true,
 			],
 			'student_no_progress_28_days' => [
 				'types'       => [ 'student' ],
 				'subject'     => __( 'It has been a month', 'sensei-lms' ),
 				'description' => __( 'No Progress Reminder - 28 days', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-no-progress-28-days"} /-->',
+				'is_pro'      => true,
 			],
 			'course_expiration_today'     => [
 				'types'       => [ 'student' ],
