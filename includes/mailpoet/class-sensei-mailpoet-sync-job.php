@@ -15,16 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 	/**
-	 * Constructor: Sets up the job.
-	 *
-	 * @param object $mailpoet_api_handle MailPoet API handle.
-	 */
-	public function __construct( $mailpoet_api_handle ) {
-		parent::__construct();
-		$this->mailpoet_api_handle = $mailpoet_api_handle;
-	}
-
-	/**
 	 * Get the job batch size.
 	 *
 	 * @return int
@@ -50,7 +40,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 	 * @return bool Returns true if there is more to do.
 	 */
 	protected function run_batch( int $offset ) : bool {
-		$sensei_mp_instance = Sensei_MailPoet::instance( $this->mailpoet_api_handle );
+		$sensei_mp_instance = Sensei_MailPoet::get_instance();
 
 		$mailpoet_lists = $sensei_mp_instance->get_mailpoet_lists();
 		$sensei_lists   = $sensei_mp_instance->get_sensei_lists();

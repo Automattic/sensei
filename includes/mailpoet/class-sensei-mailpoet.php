@@ -80,7 +80,10 @@ class Sensei_MailPoet {
 	 *
 	 * @return Sensei_MailPoet
 	 */
-	public static function instance( $mailpoet_api ) {
+	public static function get_instance( $mailpoet_api = null ) {
+		if ( is_null( $mailpoet_api ) ) {
+			$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
+		}
 		if ( ! isset( self::$instance ) ) {
 			self::$instance = new self( $mailpoet_api );
 		}
@@ -97,7 +100,7 @@ class Sensei_MailPoet {
 	 * @return void
 	 */
 	public function maybe_schedule_sync_job() {
-		Sensei_Scheduler::instance()->schedule_job( new Sensei_MailPoet_Sync_Job( $this->mailpoet_api ) );
+		Sensei_Scheduler::instance()->schedule_job( new Sensei_MailPoet_Sync_Job() );
 	}
 
 	/**
