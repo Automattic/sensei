@@ -70,6 +70,23 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 		$this->assertEquals( 'c', $result->post_title );
 	}
 
+	public function testGet_EmailCreatedWithIsProParam_SavesIsProMetaAsExpected() {
+		/* Arrange. */
+		$repository = new Email_Repository();
+		$repository->create( 'a', [ 'b' ], 'c', 'd', 'e' );
+		$repository->create( 'x', [ 'b' ], 'y', 'd', 'e', true );
+
+		/* Act. */
+		$result1 = $repository->get( 'a' );
+		$result2 = $repository->get( 'x' );
+
+		/* Assert. */
+		$this->assertEquals( 'c', $result1->post_title );
+		$this->assertEquals( '', get_post_meta( $result1->ID, '_sensei_email_is_pro', true ) );
+		$this->assertEquals( 'y', $result2->post_title );
+		$this->assertEquals( 1, get_post_meta( $result2->ID, '_sensei_email_is_pro', true ) );
+	}
+
 	public function testHasEmails_EmailsNotInRepository_ReturnsFalse() {
 		/* Arrange. */
 		$repository = new Email_Repository();
