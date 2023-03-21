@@ -1,6 +1,6 @@
 <?php
 /**
- * Student did't have progress for 30 days email pattern.
+ * Student didn't have progress for 30 days email pattern.
  *
  * @package sensei
  */
