@@ -84,11 +84,13 @@ final class Sensei_Extensions {
 			);
 
 			$raw_extensions = wp_safe_remote_get( $url );
-			if ( ! is_wp_error( $raw_extensions ) ) {
-				$json       = json_decode( wp_remote_retrieve_body( $raw_extensions ) );
-				$extensions = isset( $json->products ) ? $json->products : [];
+			if ( ! is_wp_error( $raw_extensions ) && 200 === wp_remote_retrieve_response_code( $raw_extensions ) ) {
+				$json = json_decode( wp_remote_retrieve_body( $raw_extensions ) );
 
-				set_transient( 'sensei_extensions_' . $extension_request_key, $extensions, DAY_IN_SECONDS );
+				if ( isset( $json->products ) && is_array( $json->products ) && ! empty( $json->products ) ) {
+					$extensions = $json->products;
+					set_transient( 'sensei_extensions_' . $extension_request_key, $extensions, DAY_IN_SECONDS );
+				}
 			}
 		}
 
