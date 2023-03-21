@@ -119,24 +119,28 @@ class Email_Seeder_Data {
 				'subject'     => __( 'Get ready - [lesson:name] - starts [date:dtext]!', 'sensei-lms' ),
 				'description' => __( 'Lessons Available (Content Drip)', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/content-drip"} /-->',
+				'is_pro'      => true,
 			],
 			'course_expiration_today'  => [
 				'types'       => [ 'student' ],
 				'subject'     => __( '[course:name] expires today!', 'sensei-lms' ),
 				'description' => __( 'Course Expiration - Today', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/course-expiration-today"} /-->',
+				'is_pro'      => true,
 			],
 			'course_expiration_3_days' => [
 				'types'       => [ 'student' ],
 				'subject'     => __( '[course:name] expires in 3 days!', 'sensei-lms' ),
 				'description' => __( 'Course Expiration - in 3 days', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/course-expiration-x-days"} /-->',
+				'is_pro'      => true,
 			],
 			'course_expiration_7_days' => [
 				'types'       => [ 'student' ],
 				'subject'     => __( '[course:name] expires in 7 days!', 'sensei-lms' ),
 				'description' => __( 'Course Expiration - in 7 days', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/course-expiration-x-days"} /-->',
+				'is_pro'      => true,
 			],
 		];
 

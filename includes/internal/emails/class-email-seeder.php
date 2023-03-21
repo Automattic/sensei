@@ -67,11 +67,13 @@ class Email_Seeder {
 		 * Filter the email data.
 		 *
 		 * @since $$next-version$$
+		 * @hook sensei_email_seeder_data
 		 *
-		 * @param array $emails Email data.
-		 * @return array Filtered array of email data.
+		 * @param {array} $emails Email data.
+		 *
+		 * @return {array} Filtered array of email data.
 		 */
-		$this->emails = apply_filters( 'sensei_emails_seeder_data', $this->email_data->get_email_data() );
+		$this->emails = apply_filters( 'sensei_email_seeder_data', $this->email_data->get_email_data() );
 	}
 
 	/**
@@ -116,7 +118,9 @@ class Email_Seeder {
 
 		$description = $email_data['description'] ?? '';
 
-		$email_id = $this->email_repository->create( $identifier, $types, $subject, $description, $content );
+		$is_pro = $email_data['is_pro'] ?? false;
+
+		$email_id = $this->email_repository->create( $identifier, $types, $subject, $description, $content, $is_pro );
 
 		return is_int( $email_id ) && $email_id > 0;
 	}
