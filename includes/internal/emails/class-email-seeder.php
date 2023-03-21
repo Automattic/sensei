@@ -118,7 +118,9 @@ class Email_Seeder {
 
 		$description = $email_data['description'] ?? '';
 
-		$email_id = $this->email_repository->create( $identifier, $types, $subject, $description, $content );
+		$is_pro = $email_data['is_pro'] ?? false;
+
+		$email_id = $this->email_repository->create( $identifier, $types, $subject, $description, $content, $is_pro );
 
 		return is_int( $email_id ) && $email_id > 0;
 	}
