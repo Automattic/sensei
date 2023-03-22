@@ -140,7 +140,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertEquals( 1, did_filter( 'sensei_email_replacements' ) );
 	}
 
-	public function testSendEmail_RenderPage_Template() {
+	public function testSendEmail_WhenCalled_RendersMessageWithTemplate() {
 		/* Act. */
 		$this->email_sender->send_email(
 			'student_starts_course',
