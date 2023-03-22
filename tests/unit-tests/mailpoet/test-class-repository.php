@@ -68,7 +68,7 @@ class Repository_Test extends WP_UnitTestCase {
 	public function testFetchSenseiLists_Courses() {
 		$this->factory->course->create_many( 4 );
 
-		$lists     = Sensei\Emails\MailPoet\Repository::fetch_sensei_lists();
+		$lists = Sensei\Emails\MailPoet\Repository::fetch_sensei_lists();
 
 		$this->assertCount( 4, $lists );
 		foreach ( $lists as $item ) {
@@ -81,9 +81,9 @@ class Repository_Test extends WP_UnitTestCase {
 	 */
 	public function testUserObjectsToArray_Success() {
 		$user_ids = $this->factory->user->create_many( 3 );
-		$users    = get_users( [ 'userIds' => $user_ids ] );
+		$users    = get_users( array( 'userIds' => $user_ids ) );
 
-		$array_of_user_arrays     = Sensei\Emails\MailPoet\Repository::user_objects_to_array( $users );
+		$array_of_user_arrays = Sensei\Emails\MailPoet\Repository::user_objects_to_array( $users );
 
 		foreach ( $array_of_user_arrays as $item ) {
 			$this->assertIsArray( $item );
