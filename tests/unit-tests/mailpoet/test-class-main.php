@@ -10,7 +10,7 @@
  *
  * @group Sensei MailPoet
  */
-class Sensei_Emails_MailPoet_Test extends WP_UnitTestCase {
+class Main_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	/**
 	 * Factory object.
@@ -39,7 +39,7 @@ class Sensei_Emails_MailPoet_Test extends WP_UnitTestCase {
 	 * Tests manual enrolment, we are not testing anything specific to the MailPoet API.
 	 * This general test ensures the hook 'sensei_manual_enrolment_learner_enrolled' throws no error in the MailPoet class.
 	 */
-	public function testEnrolStudentNoErrors() {
+	public function testAddStudentSubscriber_StudentEnrolled_Success() {
 		$provider   = $this->getManualEnrolmentProvider();
 		$course_id  = $this->factory->course->create();
 		$student_id = $this->factory->user->create();
@@ -67,7 +67,7 @@ class Sensei_Emails_MailPoet_Test extends WP_UnitTestCase {
 	 * Tests manual unenrolment, we are not testing anything specific to the MailPoet API.
 	 * This general test ensures the hook 'sensei_manual_enrolment_learner_withdrawn' throws no error in the MailPoet class.
 	 */
-	public function testWithdrawStudentNoErrors() {
+	public function testRemoveStudentSubscribers_StudentUnenrolled_Success() {
 		$provider   = $this->getManualEnrolmentProvider();
 		$course_id  = $this->factory->course->create();
 		$student_id = $this->factory->user->create();
@@ -83,13 +83,12 @@ class Sensei_Emails_MailPoet_Test extends WP_UnitTestCase {
 	/**
 	 * Tests adding and removing subscribers to/from MailPoet.
 	 */
-	public function testAddRemoveSubscribers() {
+	public function testAddRemoveSubscribers_Success() {
 		$course_id   = $this->factory->course->create();
 		$student_id1 = $this->factory->user->create();
 		$student_id2 = $this->factory->user->create();
-
-		$post      = get_post( $course_id );
-		$list_name = Sensei\Emails\MailPoet\Repository::get_list_name( $post->post_title, $post->post_type );
+		$post        = get_post( $course_id );
+		$list_name   = Sensei\Emails\MailPoet\Repository::get_list_name( $post->post_title, $post->post_type );
 
 		$mailpoet_api       = Sensei_MailPoet_API_Factory::MP();
 		$sensei_mp_instance = Sensei\Emails\MailPoet\Main::get_instance( $mailpoet_api );
@@ -122,18 +121,16 @@ class Sensei_Emails_MailPoet_Test extends WP_UnitTestCase {
 	/**
 	 * Tests syncing subscribers to/from MailPoet.
 	 */
-	public function testSyncSubscribers() {
-		$course_id = $this->factory->course->create();
-
-		$post      = get_post( $course_id );
-		$list_name = Sensei\Emails\MailPoet\Repository::get_list_name( $post->post_title, $post->post_type );
+	public function testSyncSubscribers_StudentsAdded_Synced() {
+		$course_id          = $this->factory->course->create();
+		$post               = get_post( $course_id );
+		$list_name          = Sensei\Emails\MailPoet\Repository::get_list_name( $post->post_title, $post->post_type );
+		$mailpoet_api       = Sensei_MailPoet_API_Factory::MP();
+		$sensei_mp_instance = Sensei\Emails\MailPoet\Main::get_instance( $mailpoet_api );
 
 		// First add some subscribers(2) to the list for the course.
 		$user_ids = $this->factory->user->create_many( 2 );
 		$students = Sensei\Emails\MailPoet\Repository::user_objects_to_array( get_users( array( 'include' => $user_ids ) ) );
-
-		$mailpoet_api       = Sensei_MailPoet_API_Factory::MP();
-		$sensei_mp_instance = Sensei\Emails\MailPoet\Main::get_instance( $mailpoet_api );
 		foreach ( $students as $student ) {
 			$sensei_mp_instance->add_student_subscriber( $course_id, $student['id'] );
 		}

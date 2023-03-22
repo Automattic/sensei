@@ -7,6 +7,7 @@
  */
 
 namespace Sensei\Emails\MailPoet;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -40,7 +41,7 @@ class Sync_Job extends \Sensei_Background_Job_Batch {
 	 *
 	 * @return bool Returns true if there is more to do.
 	 */
-	protected function run_batch( int $offset ) : bool {
+	public function run_batch( int $offset ) : bool {
 		$sensei_mp_instance = Main::get_instance();
 
 		$mailpoet_lists = $sensei_mp_instance->get_mailpoet_lists();

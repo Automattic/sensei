@@ -321,9 +321,9 @@ class Sensei_Autoloader {
 			/**
 			 * MailPoet
 			 */
-			\Sensei\Emails\MailPoet\Main::class => 'mailpoet/class-main.php',
-			\Sensei\Emails\MailPoet\Sync_Job::class => 'mailpoet/class-sync-job.php',
-			\Sensei\Emails\MailPoet\Repository::class => 'mailpoet/class-repository.php',
+			\Sensei\Emails\MailPoet\Main::class            => 'mailpoet/class-main.php',
+			\Sensei\Emails\MailPoet\Sync_Job::class        => 'mailpoet/class-sync-job.php',
+			\Sensei\Emails\MailPoet\Repository::class      => 'mailpoet/class-repository.php',
 
 		);
 	}

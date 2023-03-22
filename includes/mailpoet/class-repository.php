@@ -7,6 +7,7 @@
  */
 
 namespace Sensei\Emails\MailPoet;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
