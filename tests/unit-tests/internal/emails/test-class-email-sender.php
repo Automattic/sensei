@@ -3,6 +3,7 @@
 namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Patterns;
+use Sensei\Internal\Emails\Email_Post_Type;
 use Sensei\Internal\Emails\Email_Repository;
 use Sensei\Internal\Emails\Email_Seeder;
 use Sensei\Internal\Emails\Email_Seeder_Data;
@@ -64,10 +65,8 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		parent::setUp();
 		reset_phpmailer_instance();
 
-		$this->settings     = new Sensei_Settings();
-		$this->factory      = new Sensei_Factory();
-		$this->email_sender = new Email_Sender( new Email_Repository(), $this->settings, new Email_Patterns() );
-		$this->email_sender->init();
+		$this->settings = new Sensei_Settings();
+		$this->factory  = new Sensei_Factory();
 
 		$this->create_test_email_template();
 
@@ -75,6 +74,22 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 
 		add_action( 'wp_mail_succeeded', [ $this, 'wp_mail_succeeded' ] );
 		add_action( 'get_header', [ $this, 'get_header' ] );
+		add_filter( 'pre_get_block_template', [ $this, 'get_fake_template' ], 10, 3 );
+
+		$this->email_sender = new Email_Sender( new Email_Repository(), $this->settings, new Email_Patterns() );
+		$this->email_sender->init();
+
+	}
+
+	public function get_fake_template( $block_template, $id, $template_type ) {
+
+		$template          = new \WP_Block_Template();
+		$template->content = '
+			Some Content from page template
+			<!-- wp:post-content /-->
+		';
+
+		return $template;
 	}
 
 	public function wp_mail_succeeded( $result ) {
@@ -89,6 +104,16 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$priority = has_action( 'sensei_email_send', [ $this->email_sender, 'send_email' ] );
 		self::assertSame( 10, $priority );
+	}
+
+	private function create_test_email_template() {
+		$repository = new Email_Repository();
+
+		$seeder = new Email_Seeder( new Email_Seeder_Data(), $repository );
+		$seeder->init();
+		$seeder->create_email( 'student_starts_course' );
+
+		return $repository->get( 'student_starts_course' );
 	}
 
 	public function testSendEmail_WhenCalledWithoutExistingTemplate_DoesNotProceed() {
@@ -114,6 +139,23 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertEquals( 1, did_filter( 'sensei_email_replacements' ) );
 	}
+
+	public function testSendEmail_WhenCalled_RendersMessageWithTemplate() {
+		/* Act. */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		self::assertStringContainsString( 'Some Content from page template', $this->email_data['message'] );
+	}
+
 
 	public function testSendEmail_WhenCalledWithReplacements_ReplacesPlaceholders() {
 		/* Act. */
@@ -208,14 +250,20 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 	}
 
 	public function testGetEmailBody_WhenCalled_ReturnsTheEmailBodyWithReplacedPlaceholders() {
-		/* Arrange. */
-		$post = new WP_Post( (object) [ 'post_content' => 'Welcome - [name]' ] );
+		$post = $this->factory->post->create_and_get(
+			[
+				'post_type'    => Email_Post_Type::POST_TYPE,
+				'post_title'   => 'My template',
+				'post_name'    => 'Welcome - [name]',
+				'post_content' => 'Welcome - [name]',
+			]
+		);
 
 		/* Act. */
 		$email_body = $this->email_sender->get_email_body( $post, [ 'name' => 'John' ] );
 
 		/* Assert. */
-		self::assertStringContainsString( 'Welcome - John', $email_body );
+		self::assertStringContainsString( 'Welcome – John', $email_body );
 	}
 
 	public function testSendEmail_WhenTheReplyToIsSet_SetReplyTo() {
@@ -282,13 +330,4 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( 'Reply-To: address_to_be_replied@gmail.com', $last_email->header );
 	}
 
-	private function create_test_email_template() {
-		$repository = new Email_Repository();
-
-		$seeder = new Email_Seeder( new Email_Seeder_Data(), $repository );
-		$seeder->init();
-		$seeder->create_email( 'student_starts_course' );
-
-		return $repository->get( 'student_starts_course' );
-	}
 }

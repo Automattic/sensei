@@ -15,8 +15,11 @@
 	<meta name="viewport" content="width=device-width" />
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<style>
-		* {
+		body * {
 			font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+		}
+		.wp-block-site-title a {
+			text-decoration: none;
 		}
 
 		.wp-element-button, .editor-styles-wrapper .wp-block-button__link {
@@ -28,10 +31,24 @@
 		}
 		.wp-block-button__link{
 			text-decoration: none;
+			border-radius: 4px !important;
 		}
+
+		.wp-block-site-logo img{
+			border: none !important;
+		}
+
 		.wp-block-post-title {
 			font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
 		}
+
+		.header {
+			display: flex !important;
+			flex-wrap: nowrap !important;
+			align-items: center !important;
+			justify-content: space-between !important;
+		}
+
 		img {
 			-ms-interpolation-mode: bicubic;
 			max-width: 100%;
@@ -72,17 +89,11 @@
 			max-width: 800px;
 			width: 100%;
 		}
-
-		.narrow .container {
-			max-width: 528px;
-			width: 528px;
-		}
-
 		.content {
 			box-sizing: border-box;
 			display: block;
 			margin: 0 auto;
-			padding: 40px 24px 24px;
+			padding: 0;
 		}
 
 

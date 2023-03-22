@@ -9,6 +9,7 @@
 use Sensei\Internal\Emails\Email_Seeder_Data;
 use Sensei\Internal\Emails\Email_Repository;
 use Sensei\Internal\Emails\Email_Seeder;
+use Sensei\Internal\Emails\Email_Template_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
