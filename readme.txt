@@ -2,8 +2,8 @@
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
 Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, imranh920, jakeom, luchad0res, merkushin, m1r0, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 5.9
-Tested up to: 6.1
+Requires at least: 6.0
+Tested up to: 6.2
 Requires PHP: 7.2
 Stable tag: 4.11.2
 License: GPLv2 or later
