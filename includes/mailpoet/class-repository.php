@@ -54,7 +54,7 @@ class Repository {
 
 		$args  = array(
 			'include' => $student_ids,
-			'fields'  => array( 'id', 'user_email', 'display_name', 'user_nicename' ),
+			'fields'  => array( 'ID', 'user_email', 'display_name', 'user_nicename' ),
 		);
 		$users = get_users( $args );
 		return self::user_objects_to_array( $users );
