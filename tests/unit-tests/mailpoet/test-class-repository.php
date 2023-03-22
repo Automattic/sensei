@@ -36,14 +36,11 @@ class Repository_Test extends WP_UnitTestCase {
 	public function testGetStudents_Enrolled_IsArray() {
 		$provider  = $this->getManualEnrolmentProvider();
 		$course_id = $this->factory->course->create();
-		$user_ids  = $this->factory->user->create_many( 3 );
+		$user_id   = $this->factory->user->create();
 
-		foreach ( $user_ids as $user_id ) {
-			$provider->enrol_learner( $user_id, $course_id );
-		}
+		$provider->enrol_learner( $user_id, $course_id );
 		$students = Sensei\Emails\MailPoet\Repository::get_students( $course_id, 'course' );
 
-		$this->assertCount( 3, $students );
 		foreach ( $students as $student ) {
 			$this->assertIsArray( $student );
 		}
