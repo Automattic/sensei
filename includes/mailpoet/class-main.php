@@ -6,6 +6,7 @@
  */
 
 namespace Sensei\Emails\MailPoet;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -62,6 +63,15 @@ class Main {
 		$this->mailpoet_api = $mailpoet_api;
 		if ( $this->mailpoet_api->isSetupComplete() ) {
 			add_action( 'init', array( $this, 'maybe_schedule_sync_job' ), 10 );
+			/**
+			 * Schedule job to synchronise students in courses and groups with MailPoet subscribers list.
+			 *
+			 * @hook  sensei_email_mailpoet_sync_subscribers
+			 * @since $$next-version$$
+			 */
+			add_action( 'sensei_email_mailpoet_sync_subscribers', array( $this, 'schedule_sync_job' ) );
+			register_deactivation_hook( SENSEI_LMS_PLUGIN_FILE, array( $this, 'deactivate_sync_job' ) );
+			register_deactivation_hook( WP_PLUGIN_DIR . '/mailpoet/mailpoet.php', array( $this, 'deactivate_sync_job' ) );
 
 			add_action( 'sensei_pro_student_groups_group_student_added', array( $this, 'add_student_subscriber' ), 10, 2 );
 			add_action( 'sensei_pro_student_groups_group_students_removed', array( $this, 'remove_student_subscribers' ), 10, 2 );
@@ -92,7 +102,7 @@ class Main {
 	}
 
 	/**
-	 * Attach job to cron.
+	 * Determines whether to attach job to cron.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -100,7 +110,33 @@ class Main {
 	 * @return void
 	 */
 	public function maybe_schedule_sync_job() {
+		if ( ! wp_next_scheduled( 'sensei_email_mailpoet_sync_subscribers' ) ) {
+			wp_schedule_event( time(), 'daily', 'sensei_email_mailpoet_sync_subscribers' );
+		}
+	}
+
+	/**
+	 * Attach job to cron.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @access private
+	 * @return void
+	 */
+	public function schedule_sync_job() {
 		\Sensei_Scheduler::instance()->schedule_job( new Sync_Job() );
+	}
+
+	/**
+	 * Remove MailPoet sync cron job when MailPoet plugin is uninstalled.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return void
+	 */
+	public function deactivate_sync_job() {
+		$timestamp = wp_next_scheduled( 'sensei_email_mailpoet_sync_subscribers' );
+		wp_unschedule_event( $timestamp, 'sensei_email_mailpoet_sync_subscribers' );
 	}
 
 	/**

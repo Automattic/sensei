@@ -30,7 +30,7 @@ class Sync_Job extends \Sensei_Background_Job_Batch {
 	 * @return bool
 	 */
 	protected function allow_multiple_instances() : bool {
-		return true;
+		return false;
 	}
 
 	/**
