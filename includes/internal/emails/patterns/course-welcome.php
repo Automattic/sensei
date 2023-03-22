@@ -34,8 +34,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<!-- /wp:buttons -->
 
-		<!-- wp:paragraph {"style":{"color":{"text":"#101517"},"typography":{"fontSize":"16px"}},"className":"info__extra"} -->
-		<p class="info__extra has-text-color" style="color:#101517;font-size:16px">Please login to start learning.</p>
+		<!-- wp:paragraph {"style":{"color":{"text":"#101517"},"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","right":"0px","bottom":"0px","left":"0px"}}},"className":"info__extra"} -->
+		<p class="info__extra has-text-color" style="color:#101517;margin-top:24px;margin-right:0px;margin-bottom:0px;margin-left:0px;font-size:16px">Please login to start learning.</p>
 		<!-- /wp:paragraph -->
 	</div>
 	<!-- /wp:group -->
