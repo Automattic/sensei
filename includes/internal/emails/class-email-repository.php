@@ -105,7 +105,7 @@ class Email_Repository {
 				self::META_IDENTIFIER    => $identifier,
 				self::META_DESCRIPTION   => $description,
 				self::META_PAGE_TEMPLATE => Email_Page_Template::SLUG,
-				self::META_IS_PRO      => $is_pro,
+				self::META_IS_PRO        => $is_pro,
 			],
 		];
 
