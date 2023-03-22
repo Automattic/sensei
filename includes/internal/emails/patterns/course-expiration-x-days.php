@@ -33,8 +33,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- /wp:button --></div>
 		<!-- /wp:buttons -->
 
-		<!-- wp:paragraph {"style":{"typography":{"lineHeight":"1"},"spacing":{"padding":{"top":"24px"}}}} -->
-		<p style="line-height:1;padding-top:24px">You can enjoy access to all the course materials and quizzes until midnight on [date:dtext].</p>
+		<!-- wp:paragraph {"style":{"color":{"text":"#101517"},"typography":{"fontSize":"16px"}},"className":"info__extra"} -->
+		<p class="info__extra has-text-color" style="color:#101517;font-size:16px">You can enjoy access to all the course materials and quizzes until midnight on [date:dtext].</p>
 		<!-- /wp:paragraph --></div>
 	<!-- /wp:group --></div>
 <!-- /wp:group -->
