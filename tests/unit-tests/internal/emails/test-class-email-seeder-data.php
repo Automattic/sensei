@@ -26,6 +26,9 @@ class Email_Seeder_Data_Test extends \WP_UnitTestCase {
 		'student_message_reply',
 		'teacher_message_reply',
 		'content_drip',
+		'student_no_progress_3_days',
+		'student_no_progress_7_days',
+		'student_no_progress_28_days',
 		'course_expiration_today',
 		'course_expiration_3_days',
 		'course_expiration_7_days',
@@ -58,6 +61,9 @@ class Email_Seeder_Data_Test extends \WP_UnitTestCase {
 		$email_seeder_data = new Email_Seeder_Data();
 		$pro_email_keys    = [
 			'content_drip',
+			'student_no_progress_3_days',
+			'student_no_progress_7_days',
+			'student_no_progress_28_days',
 			'course_expiration_today',
 			'course_expiration_3_days',
 			'course_expiration_7_days',
