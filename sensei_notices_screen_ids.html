@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_quiz_panel_add - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_notices_screen_ids - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_quiz_panel_add</h1>
+	<h1 class="page-title">Filter: sensei_notices_screen_ids</h1>
 	
 
 	
@@ -43,14 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_quiz_panel_add">apply_filters( 'sensei_quiz_panel_add', <span class="signature">$html, $context )</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="sensei_notices_screen_ids">apply_filters( 'sensei_notices_screen_ids', <span class="signature">Array )</span><span class="type-signature"> &rarr; {array}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter the quiz panel add html.</p>
+    <p>Filter the array of screen IDs that are part of Sensei, and where we should show Sensei notices on.</p>
 </div>
 
 
@@ -84,13 +84,13 @@
 
         <tr>
             
-                <td class="name"><code>$html</code></td>
+                <td class="name"><code>Array</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">array</span>
 
 
             
@@ -100,31 +100,7 @@
 
             
 
-            <td class="description last"><p>HTML for adding a question.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>$context</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>'quiz' if the question is being added on the lesson screen.
-Any other value if it's being added on the question screen.</p></td>
+            <td class="description last"><p>of Screen IDs that are part of Sensei.</p></td>
         </tr>
 
     
@@ -142,7 +118,7 @@ Any other value if it's being added on the question screen.</p></td>
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>1.9.7</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -168,7 +144,7 @@ Any other value if it's being added on the question screen.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-lesson.php.html">includes/class-sensei-lesson.php</a>, <a href="includes_class-sensei-lesson.php.html#line1842">line 1842</a>
+        <a href="includes_admin_class-sensei-admin-notices.php.html">includes/admin/class-sensei-admin-notices.php</a>, <a href="includes_admin_class-sensei-admin-notices.php.html#line479">line 479</a>
     </li></ul></dd>
     
 
@@ -195,7 +171,7 @@ Any other value if it's being added on the question screen.</p></td>
 
         
 <div class="param-desc">
-    <p>HTML for adding a question.</p>
+    <p>Updated array of screen IDs that are part of Sensei.</p>
 </div>
 
 
@@ -206,7 +182,7 @@ Any other value if it's being added on the question screen.</p></td>
     </dt>
     <dd>
         
-<span class="param-type">string</span>
+<span class="param-type">array</span>
 
 
     </dd>
