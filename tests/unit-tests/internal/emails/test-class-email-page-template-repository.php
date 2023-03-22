@@ -46,7 +46,7 @@ class Email_Page_Template_Repository_Test extends \WP_UnitTestCase {
 		$this->assertNotNull( $result->wp_id );
 	}
 
-	public function testHas_RepositoryGet_WhenThereIsNoTemplates_ReturnsNull() {
+	public function testGet_WhenThereIsNoTemplates_ReturnsNull() {
 		/* Arrange. */
 		$repository = new Email_Page_Template_Repository();
 
