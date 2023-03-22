@@ -1078,6 +1078,11 @@ $promo_highlight: #43af99;
 		margin: 0;
 	}
 
+	&__price-period {
+		display: block;
+		font-size: 14px;
+	}
+
 	&__actions {
 		display: flex;
 		gap: 14px;

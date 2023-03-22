@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Sensei_Extensions {
 	const SENSEILMS_PRODUCTS_API_BASE_URL = 'https://senseilms.com/wp-json/senseilms-products/1.0';
+	const PRODUCT_SENSEI_PRO_SLUG         = 'sensei-pro';
 
 	/**
 	 * Instance of class.
@@ -107,6 +108,32 @@ final class Sensei_Extensions {
 		}
 
 		return $extensions;
+	}
+
+	/**
+	 * Fetch a specific Sensei extension.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $slug Extension slug.
+	 *
+	 * @return object|null
+	 */
+	public function get_extension( $slug ) {
+		$extensions = $this->get_extensions( 'plugin' );
+
+		$extensions = array_filter(
+			$extensions,
+			function( $extension ) use ( $slug ) {
+				return $slug === $extension->product_slug;
+			}
+		);
+
+		if ( empty( $extensions ) ) {
+			return null;
+		}
+
+		return array_shift( $extensions );
 	}
 
 	/**
