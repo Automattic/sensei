@@ -45,12 +45,15 @@ class Email_Blocks {
 			'layout'     => [
 				'contentSize' => '800px',
 			],
-			'color'      => [ 'palette' => null ],
+			'color'      => [
+				'palette' =>
+									[
+										'theme'  => [],
+										'custom' => [],
+									],
+			],
 			'typography' => [
-				'fluid'     => false,
-				'fontSizes' => [
-					'theme' => null,
-				],
+				'fluid' => false,
 			],
 			'spacing'    =>
 				[

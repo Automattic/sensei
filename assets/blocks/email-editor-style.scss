@@ -26,15 +26,25 @@
 	text-decoration: none;
 }
 
+.wp-block-site-logo {
+	max-height: 48px !important;
+	width: auto !important;
+}
+
+.wp-block-site-title {
+	float: right;
+}
+
+.wp-block-site-title a {
+	text-decoration: none;
+}
+
 .inline-block {
 	display: inline-block;
 }
 
-.header {
-	display: flex !important;
-	flex-wrap: nowrap !important;
-	justify-content: space-between !important;
-	&> * {
-		flex-grow: 1 !important;
-	}
+.align-right {
+	width: 100%;
+	text-align: right;
 }
+
