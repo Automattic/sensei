@@ -6,6 +6,7 @@
  * @package sensei
  */
 
+namespace Sensei\Emails\MailPoet;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -13,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Background Job to sync MailPoet list students with Sensei site courses and groups students.
  */
-class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
+class Sync_Job extends \Sensei_Background_Job_Batch {
 	/**
 	 * Get the job batch size.
 	 *
@@ -40,7 +41,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 	 * @return bool Returns true if there is more to do.
 	 */
 	protected function run_batch( int $offset ) : bool {
-		$sensei_mp_instance = Sensei_MailPoet::get_instance();
+		$sensei_mp_instance = Main::get_instance();
 
 		$mailpoet_lists = $sensei_mp_instance->get_mailpoet_lists();
 		$sensei_lists   = $sensei_mp_instance->get_sensei_lists();
@@ -49,7 +50,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 		$remaining = count( $sensei_lists ) - $offset;
 
 		foreach ( $current_batch as $list ) {
-			$list_name = Sensei_MailPoet_Repository::get_list_name( $list['name'], $list['post_type'] );
+			$list_name = Repository::get_list_name( $list['name'], $list['post_type'] );
 			// find list in MailPoet lists array. if not exists, create one.
 			if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
 				$mp_list_id = $sensei_mp_instance->create_list( $list_name, $list['description'] );
@@ -58,7 +59,7 @@ class Sensei_MailPoet_Sync_Job extends Sensei_Background_Job_Batch {
 			}
 
 			if ( ! empty( $mp_list_id ) ) {
-				$students    = Sensei_MailPoet_Repository::get_students( $list['id'], $list['post_type'] );
+				$students    = Repository::get_students( $list['id'], $list['post_type'] );
 				$subscribers = array_filter(
 					$sensei_mp_instance->get_mailpoet_subscribers( $mp_list_id ),
 					static function( $subscriber ) {

@@ -576,17 +576,17 @@ class Sensei_Main {
 		/**
 		 * Integrate MailPoet by adding lists for courses and groups.
 		 *
-		 * @hook  sensei_integrate_mailpoet
+		 * @hook  sensei_email_mailpoet_feature
 		 * @since $$next-version$$
 		 *
 		 * @param {bool} $enable Enable feature. Default true.
 		 *
 		 * @return {bool} Whether to enable feature.
 		 */
-		if ( apply_filters( 'sensei_integrate_mailpoet', true ) ) {
+		if ( apply_filters( 'sensei_email_mailpoet_feature', true ) ) {
 			if ( class_exists( \MailPoet\API\API::class ) ) {
 				$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
-				new Sensei_MailPoet( $mailpoet_api );
+				new Sensei\Emails\MailPoet\Main( $mailpoet_api );
 			}
 		}
 	}

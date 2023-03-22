@@ -5,6 +5,7 @@
  * @package sensei
  */
 
+namespace Sensei\Emails\MailPoet;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -19,10 +20,9 @@ if ( ! class_exists( \MailPoet\API\API::class ) ) {
  * Handles the integration with the MailPoet plugin,
  * creates a list for each course and group, adds enrolled students.
  *
- * @package Core
  * @since $$next-version$$
  */
-class Sensei_MailPoet {
+class Main {
 
 	/**
 	 * MailPoet API handle.
@@ -100,7 +100,7 @@ class Sensei_MailPoet {
 	 * @return void
 	 */
 	public function maybe_schedule_sync_job() {
-		Sensei_Scheduler::instance()->schedule_job( new Sensei_MailPoet_Sync_Job() );
+		\Sensei_Scheduler::instance()->schedule_job( new Sync_Job() );
 	}
 
 	/**
@@ -112,7 +112,7 @@ class Sensei_MailPoet {
 	 */
 	public function get_sensei_lists() {
 		if ( empty( $this->sensei_lists ) ) {
-			$this->sensei_lists = Sensei_MailPoet_Repository::fetch_sensei_lists();
+			$this->sensei_lists = Repository::fetch_sensei_lists();
 		}
 
 		return $this->sensei_lists;
@@ -226,7 +226,7 @@ class Sensei_MailPoet {
 		}
 
 		$mailpoet_lists = $this->get_mailpoet_lists();
-		$list_name      = Sensei_MailPoet_Repository::get_list_name( $post->post_title, $post->post_type );
+		$list_name      = Repository::get_list_name( $post->post_title, $post->post_type );
 		if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
 			$mp_list_id = $this->create_list( $list_name, $post->post_excerpt );
 		} else {
@@ -263,7 +263,7 @@ class Sensei_MailPoet {
 		}
 
 		$mailpoet_lists = $this->get_mailpoet_lists();
-		$list_name      = Sensei_MailPoet_Repository::get_list_name( $post->post_title, $post->post_type );
+		$list_name      = Repository::get_list_name( $post->post_title, $post->post_type );
 
 		if ( ! array_key_exists( $list_name, $mailpoet_lists ) ) {
 			return;
@@ -271,7 +271,7 @@ class Sensei_MailPoet {
 			$mp_list_id = $mailpoet_lists[ $list_name ]['id'];
 		}
 		if ( null !== $mp_list_id ) {
-			$students = Sensei_MailPoet_Repository::user_objects_to_array( $students );
+			$students = Repository::user_objects_to_array( $students );
 			$this->remove_subscribers( $students, $mp_list_id );
 		}
 	}
@@ -355,29 +355,17 @@ class Sensei_MailPoet {
 		);
 		foreach ( $students as $student ) {
 			if ( ! array_key_exists( $student['email'], $subscribers ) ) {
-				$subscriber_data = array(
-					'email'      => $student['email'],
-					'first_name' => $student['display_name'],
-				);
-
-				try {
-					$mp_subscriber = $this->mailpoet_api->getSubscriber( $student['email'] );
+				$mp_subscriber = $this->mailpoet_api->getSubscriber( $student['email'] );
+				if ( ! empty( $mp_subscriber['id'] ) ) {
 					$this->mailpoet_api->subscribeToList( $mp_subscriber['id'], $list_id, $options );
-				} catch ( \MailPoet\API\MP\v1\APIException $exception ) {
-					if ( 4 === $exception->getCode() ) {
-						// subscriber does not exist.
-						$this->mailpoet_api->addSubscriber( $subscriber_data, array( $list_id ), $options );
-					}
 				}
 			}
 		}
 		foreach ( $subscribers as $subscriber ) {
 			if ( ! array_key_exists( $subscriber['email'], $students ) ) {
-				try {
-					$mp_subscriber = $this->mailpoet_api->getSubscriber( $subscriber['email'] );
+				$mp_subscriber = $this->mailpoet_api->getSubscriber( $subscriber['email'] );
+				if ( ! empty( $mp_subscriber['id'] ) ) {
 					$this->mailpoet_api->unsubscribeFromList( $mp_subscriber['id'], $list_id );
-				} catch ( \MailPoet\API\MP\v1\APIException $exception ) {
-					continue;
 				}
 			}
 		}

@@ -6,6 +6,7 @@
  * @package sensei
  */
 
+namespace Sensei\Emails\MailPoet;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -13,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Some Helper methods to fetch Sensei data: courses, groups and students.
  */
-class Sensei_MailPoet_Repository {
+class Repository {
 	/**
 	 * Get all enrolled students in a course or group.
 	 *
@@ -27,7 +28,7 @@ class Sensei_MailPoet_Repository {
 		global $wpdb;
 		if ( 'group' === $post_type ) {
 			if ( class_exists( 'Sensei_Pro_Student_Groups\Repositories\Group_Student_Repository', true ) ) {
-				$group_student_repo = new Sensei_Pro_Student_Groups\Repositories\Group_Student_Repository( $wpdb );
+				$group_student_repo = new \Sensei_Pro_Student_Groups\Repositories\Group_Student_Repository( $wpdb );
 				$student_ids        = $group_student_repo->find_group_students( $id );
 			}
 		}
@@ -90,7 +91,7 @@ class Sensei_MailPoet_Repository {
 			'suppress_filters' => 0,
 		);
 
-		$wp_query_obj = new WP_Query( $args );
+		$wp_query_obj = new \WP_Query( $args );
 		return array_map(
 			static function( $post ) {
 				return array(
