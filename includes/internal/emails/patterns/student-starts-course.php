@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#101517"}}} -->
-		<p class="has-text-color" style="color:#101517;font-size:16px;margin-top:24px;margin-bottom:0px"><strong>Course Name</strong></p>
+		<p class="has-text-color" style="color:#101517;font-size:16px;margin-top:24px;margin-bottom:0px"><strong><?php echo esc_html__( 'Course Name', 'sensei-lms' ); ?></strong></p>
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"color":{"text":"#101517"},"spacing":{"margin":{"top":"0","bottom":"0"}}}} -->
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px"}}}} -->
 		<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"color":{"text":"#fefefe","background":"#020202"}},"className":"has-custom-font-size"} -->
-			<div class="wp-block-button has-custom-font-size"><a class="wp-block-button__link has-text-color has-background" href="[manage:students]" style="background-color:#020202;color:#fefefe">Manage Students</a></div>
+			<div class="wp-block-button has-custom-font-size"><a class="wp-block-button__link has-text-color has-background" href="[manage:students]" style="background-color:#020202;color:#fefefe"><?php echo esc_html__( 'Manage Students', 'sensei-lms' ); ?></a></div>
 			<!-- /wp:button --></div>
 		<!-- /wp:buttons --></div>
 	<!-- /wp:group --></div>
