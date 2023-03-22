@@ -57,14 +57,28 @@ class Student_Message_Reply extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function message_reply_mail_to_student( $comment, $message ) {
-		$course_id = get_post_meta( $message->ID, '_post', true );
-		$course    = get_post( $course_id );
+		$post_id = get_post_meta( $message->ID, '_post', true );
+		$post    = get_post( $post_id );
 
-		if ( ! $course || 'course' !== $course->post_type ) {
+		if ( ! $post || ! in_array( $post->post_type, array( 'course', 'lesson', 'quiz' ), true ) ) {
 			return;
 		}
 
-		$teacher_id = $course->post_author;
+		if ( 'lesson' === $post->post_type ) {
+			$course_id = intval( get_post_meta( $post_id, '_lesson_course', true ) );
+		} elseif ( 'quiz' === $post->post_type ) {
+			$lesson_id = Sensei()->quiz->get_lesson_id( $post_id );
+
+			if ( ! $lesson_id ) {
+				return;
+			}
+
+			$course_id = intval( get_post_meta( $lesson_id, '_lesson_course', true ) );
+		} else { // Message sent from course page.
+			$course_id = $post_id;
+		}
+
+		$teacher_id = $post->post_author;
 
 		if ( $comment->user_id !== $teacher_id ) {
 			return;
@@ -86,7 +100,7 @@ class Student_Message_Reply extends Email_Generators_Abstract {
 			[
 				$recipient => [
 					'teacher:displayname'    => esc_html( $teacher->display_name ),
-					'course:name'            => esc_html( get_the_title( $course->ID ) ),
+					'course:name'            => esc_html( get_the_title( $course_id ) ),
 					'message:displaymessage' => esc_html( $comment->comment_content ),
 					'subject:displaysubject' => esc_html( $message->post_title ),
 					'reply:url'              => esc_url( get_comment_link( $comment ) ),
