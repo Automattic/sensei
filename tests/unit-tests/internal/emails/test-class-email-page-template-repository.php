@@ -28,7 +28,7 @@ class Email_Page_Template_Repository_Test extends \WP_UnitTestCase {
 		$this->factory = new \Sensei_Factory();
 	}
 
-	public function testHas_RepositoryGet_ReturnsTemplate() {
+	public function testGet_FoundInDatabase_ReturnsTemplate() {
 		/* Arrange. */
 		$repository = new Email_Page_Template_Repository();
 		$this->factory->post->create(
