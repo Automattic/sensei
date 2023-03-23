@@ -47,8 +47,6 @@ if ( ! defined( 'SENSEI_LMS_PLUGIN_PATH' ) ) {
 	define( 'SENSEI_LMS_PLUGIN_PATH', plugin_dir_path( SENSEI_LMS_PLUGIN_FILE ) );
 }
 
-add_filter( 'sensei_feature_flag_email_customization', '__return_true' );
-
 if ( class_exists( 'Sensei_Main' ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
 		/**
