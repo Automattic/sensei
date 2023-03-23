@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#101517"}}} -->
-		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong>Course Name</strong></p>
+		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong><?php echo esc_html__( 'Course Name', 'sensei-lms' ); ?></strong></p>
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"color":{"text":"#101517"},"spacing":{"margin":{"top":"0","bottom":"0"}}}} -->
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px"}}}} -->
 		<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"color":{"text":"#fefefe","background":"#101517"},"typography":{"fontSize":"16px"}},"className":"has-custom-font-size"} -->
-			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-text-color has-background wp-element-button" href="[manage:students]" style="color:#fefefe;background-color:#101517">Manage Students</a></div>
+			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-text-color has-background wp-element-button" href="[manage:students]" style="color:#fefefe;background-color:#101517"><?php echo esc_html__( 'Manage Students', 'sensei-lms' ); ?></a></div>
 			<!-- /wp:button -->
 		</div>
 		<!-- /wp:buttons -->
