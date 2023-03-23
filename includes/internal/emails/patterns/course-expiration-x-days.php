@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					esc_html__( 'You can enjoy access to all the course materials and quizzes until midnight on %s.', 'sensei-lms' ),
 					'[date:dtext]'
 				);
-			?>
+				?>
 			</p>
 		<!-- /wp:paragraph --></div>
 	<!-- /wp:group --></div>
