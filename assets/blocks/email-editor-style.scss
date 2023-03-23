@@ -7,10 +7,44 @@
 	}
 	.wp-element-button, .editor-styles-wrapper .wp-block-button__link {
 		text-transform: capitalize;
+		border-radius: 4px;
 	}
+
+}
+
+.wp-block-button__link {
+	text-transform: capitalize;
+	border-radius: 4px;
 }
 
 
 .edit-post-visual-editor__post-title-wrapper, .editor-post-title {
 	visibility: hidden;
 }
+
+.wp-block-site-title a {
+	text-decoration: none;
+}
+
+.wp-block-site-logo {
+	max-height: 48px !important;
+	width: auto !important;
+}
+
+.wp-block-site-title {
+	float: right;
+}
+
+.wp-block-site-title a {
+	text-decoration: none;
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.align-right {
+	width: 100%;
+	text-align: right;
+}
+

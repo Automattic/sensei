@@ -34,6 +34,14 @@ class Email_Sender {
 	 */
 	private $repository;
 
+
+	/**
+	 * Email template repository instance.
+	 *
+	 * @var Email_Template_Repository
+	 */
+	private $template_repository;
+
 	/**
 	 * Email settings instance.
 	 *
@@ -147,22 +155,26 @@ class Email_Sender {
 	 * @return string
 	 */
 	public function get_email_body( WP_Post $email_post, array $placeholders = [] ): string {
-		global $post;
 
-		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
-		setup_postdata( $post );
+		$post_id = 'revision' === $email_post->post_type ? $email_post->post_parent : $email_post->ID;
 
-		$post_content = $this->replace_placeholders(
-			do_blocks( $email_post->post_content ),
-			$placeholders
+		// phpcs:ignore WordPress.WP.DiscouragedFunctions.query_posts_query_posts -- We need to modify the global query object in order to render templates.
+		query_posts(
+			[
+				'posts_per_page' => 1,
+				'p'              => $post_id,
+				'post_type'      => Email_Post_Type::POST_TYPE,
+			]
 		);
 
-		wp_reset_postdata();
+		the_post();
 
-		$templated_output = $this->get_templated_post_content( $post_content );
+		$templated_output = $this->get_templated_post_content( $placeholders );
+		wp_reset_postdata();
 
 		return CssInliner::fromHtml( $templated_output )
 			->inlineCss( $this->get_header_styles() )
+			->inlineCss( $this->load_email_styles() )
 			->render();
 	}
 
@@ -185,6 +197,19 @@ class Email_Sender {
 	}
 
 	/**
+	 * Load the emails styles that should overwrite the Gutebenrg styles
+	 *
+	 * @internal
+	 *
+	 * @return string
+	 */
+	private function load_email_styles(): string {
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
+		return file_get_contents( __DIR__ . '/css/email-style.css' );
+	}
+
+	/**
 	 * Get the email post by name meta.
 	 *
 	 * @param string $email_identifier The email's unique name.
@@ -200,25 +225,45 @@ class Email_Sender {
 
 		return $email_post;
 	}
-
 	/**
 	 * Get the email body rendered in the email template.
 	 *
-	 * @param string $email_content The placeholder replaced email content.
+	 * @param array $placeholders The placeholder replaced email content.
 	 *
 	 * @return string
 	 */
-	private function get_templated_post_content( $email_content ) {
+	private function get_templated_post_content( $placeholders ) {
 		global $sensei_email_data;
-
-		$sensei_email_data['email_body'] = $email_content;
 		$sensei_email_data['body_class'] = '';
+
+		// Force use the default template usage.
+		$template = do_blocks( get_block_template( Email_Page_Template::ID, 'wp_template' )->content );
+
+		$post_content = $this->replace_placeholders(
+			$template,
+			$placeholders
+		);
+
+		$post_content                    = $this->add_base_url_for_images( $post_content );
+		$sensei_email_data['email_body'] = $post_content;
 
 		ob_start();
 
 		require dirname( __FILE__ ) . '/../../../templates/emails/block-email-template.php';
 
 		return ltrim( ob_get_clean() );
+	}
+
+	/**
+	 * Append the site URL on all images before send the email.
+	 *
+	 * @param string $content The email content that should be updated.
+	 *
+	 * @return string
+	 */
+	private function add_base_url_for_images( $content ) {
+
+		return str_replace( 'src="/wp-content', 'src="' . site_url( '/' ) . 'wp-content', $content );
 	}
 
 	/**

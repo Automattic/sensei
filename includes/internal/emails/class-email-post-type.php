@@ -87,7 +87,7 @@ class Email_Post_Type {
 					'menu_name'          => __( 'Emails', 'sensei-lms' ),
 					'name_admin_bar'     => __( 'Email', 'sensei-lms' ),
 				],
-				'public'       => false,
+				'public'       => true,
 				'show_ui'      => true,
 				'show_in_menu' => false,
 				'show_in_rest' => true, // Enables the Gutenberg editor.

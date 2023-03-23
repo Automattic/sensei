@@ -35,6 +35,8 @@ class Email_Blocks {
 		'core/buttons',
 		'core/post-title',
 		'core/button',
+		'core/site-logo',
+		'core/site-title',
 	];
 
 	public const EMAIL_THEME_SETTINGS = [
@@ -43,12 +45,15 @@ class Email_Blocks {
 			'layout'     => [
 				'contentSize' => '800px',
 			],
-			'color'      => [ 'palette' => null ],
+			'color'      => [
+				'palette' =>
+									[
+										'theme'  => [],
+										'custom' => [],
+									],
+			],
 			'typography' => [
-				'fluid'     => false,
-				'fontSizes' => [
-					'theme' => null,
-				],
+				'fluid' => false,
 			],
 			'spacing'    =>
 				[
@@ -114,11 +119,11 @@ class Email_Blocks {
 	 * @internal
 	 * @access private
 	 *
-	 * @param WP_Theme_JSON_Data $theme       Original theme settings.
+	 * @param WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg $theme       Original theme settings.
 	 *
-	 * @return WP_Theme_JSON_Data Updated theme settings.
+	 * @return WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg Updated theme settings.
 	 */
-	public function set_email_css_units( $theme ):\WP_Theme_JSON_Data {
+	public function set_email_css_units( $theme ) {
 
 		if ( ! is_admin() ) {
 			return $theme;

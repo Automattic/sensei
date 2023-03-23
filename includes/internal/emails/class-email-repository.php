@@ -41,6 +41,15 @@ class Email_Repository {
 	 */
 	private const META_DESCRIPTION = '_sensei_email_description';
 
+
+	/**
+	 * Email default page template
+	 *
+	 * @param string
+	 */
+	private const META_PAGE_TEMPLATE = '_wp_page_template';
+
+
 	/**
 	 * Email pro meta key.
 	 *
@@ -93,9 +102,10 @@ class Email_Repository {
 			'post_title'   => $subject,
 			'post_content' => $content,
 			'meta_input'   => [
-				self::META_IDENTIFIER  => $identifier,
-				self::META_DESCRIPTION => $description,
-				self::META_IS_PRO      => $is_pro,
+				self::META_IDENTIFIER    => $identifier,
+				self::META_DESCRIPTION   => $description,
+				self::META_PAGE_TEMPLATE => Email_Page_Template::SLUG,
+				self::META_IS_PRO        => $is_pro,
 			],
 		];
 
@@ -226,4 +236,3 @@ class Email_Repository {
 		return 0 < (int) $query->post_count;
 	}
 }
-
