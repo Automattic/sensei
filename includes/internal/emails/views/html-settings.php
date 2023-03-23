@@ -3,7 +3,7 @@
  * File containing view for the tools page.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.12.0
  *
  * @var array              $options Array of Sensei settings and corresponding values.
  * @var array              $fields_to_display Array of Email settings to display.

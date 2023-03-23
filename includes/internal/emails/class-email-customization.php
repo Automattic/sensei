@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Email_Customization {
 
@@ -212,7 +212,7 @@ class Email_Customization {
 		 *
 		 * @hook sensei_disable_legacy_emails
 		 *
-		 * @since $$next-version$$
+		 * @since 4.12.0
 		 */
 		do_action( 'sensei_disable_legacy_emails' );
 	}

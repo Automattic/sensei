@@ -2756,7 +2756,7 @@ class Sensei_Utils {
 	 * @param int $course_id Id of the course.
 	 * @param int $user_id   Id of the user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.12.0
 	 *
 	 * @return int
 	 */
