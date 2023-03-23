@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'SENSEI_LMS_VERSION' ) ) {
-	define( 'SENSEI_LMS_VERSION', '4.11.2' ); // WRCS: DEFINED_VERSION.
+	define( 'SENSEI_LMS_VERSION', '4.12.0' ); // WRCS: DEFINED_VERSION.
 }
 
 if ( ! defined( 'SENSEI_LMS_PLUGIN_FILE' ) ) {
