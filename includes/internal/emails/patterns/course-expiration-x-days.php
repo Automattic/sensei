@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#101517"}}} -->
-		<p class="has-text-color" style="color:#101517;font-size:16px;margin-top:24px;margin-bottom:0px"><strong>Course Name</strong></p>
+		<p class="has-text-color" style="color:#101517;font-size:16px;margin-top:24px;margin-bottom:0px"><strong><strong><?php echo esc_html__( 'Course Name', 'sensei-lms' ); ?></strong></p>
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"color":{"text":"#101517"},"spacing":{"margin":{"top":"0","bottom":"0"}}}} -->
@@ -29,12 +29,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px","bottom":"20px"}}}} -->
 		<div class="wp-block-buttons" style="margin-top:40px;margin-bottom:20px"><!-- wp:button {"style":{"color":{"background":"#101517","text":"#fefefe"},"typography":{"fontSize":"16px"}},"className":"has-custom-font-size"} -->
-			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-text-color has-background" href="[resume:url]" style="color:#fefefe;background-color:#101517">Resume Course</a></div>
+			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-text-color has-background" href="[resume:url]" style="color:#fefefe;background-color:#101517"><strong><?php echo esc_html__( 'Resume Course', 'sensei-lms' ); ?></a></div>
 			<!-- /wp:button --></div>
 		<!-- /wp:buttons -->
 
 		<!-- wp:paragraph {"style":{"color":{"text":"#101517"},"typography":{"fontSize":"16px"}},"className":"info__extra"} -->
-		<p class="info__extra has-text-color" style="color:#101517;font-size:16px">You can enjoy access to all the course materials and quizzes until midnight on [date:dtext].</p>
+		<p class="info__extra has-text-color" style="color:#101517;font-size:16px">
+			<?php
+				echo sprintf(
+					// translators: %s is the date until which the student has access to the course.
+					esc_html__( 'You can enjoy access to all the course materials and quizzes until midnight on %s.', 'sensei-lms' ),
+					'[date:dtext]'
+				);
+			?>
+			</p>
 		<!-- /wp:paragraph --></div>
 	<!-- /wp:group --></div>
 <!-- /wp:group -->

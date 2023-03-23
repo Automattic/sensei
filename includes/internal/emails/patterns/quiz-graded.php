@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#101517"}}} -->
-		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong>Course Name</strong></p>
+		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong><?php echo esc_html__( 'Course Name', 'sensei-lms' ); ?></strong></p>
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"color":{"text":"#101517"},"spacing":{"margin":{"top":"0","bottom":"0"}}}} -->
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#101517"}}} -->
-		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong>Lesson Name</strong></p>
+		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong><?php echo esc_html__( 'Lesson Name', 'sensei-lms' ); ?></strong></p>
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"color":{"text":"#101517"},"spacing":{"margin":{"top":"0","bottom":"0"}}}} -->
@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#101517"}}} -->
-		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong>Your Grade</strong></p>
+		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong><?php echo esc_html__( 'Your Grade', 'sensei-lms' ); ?></strong></p>
 			<!-- /wp:paragraph -->
 
 			<!-- wp:paragraph {"style":{"typography":{"fontSize":"24px","lineHeight":"1"},"spacing":{"margin":{"top":"0px","bottom":"40px"}},"color":{"text":"#101517"}}} -->
@@ -45,7 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px"}}}} -->
 		<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"color":{"text":"#fefefe","background":"#101517"},"typography":{"fontSize":"16px"}},"className":"has-custom-font-size"} -->
-			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-text-color has-background" href="[quiz:url]" style="color:#fefefe;background-color:#101517">Review Quiz</a></div>
+			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-text-color has-background" href="[quiz:url]" style="color:#fefefe;background-color:#101517"><?php echo esc_html__( 'Review Quiz', 'sensei-lms' ); ?></a></div>
 			<!-- /wp:button -->
 		</div>
 		<!-- /wp:buttons -->
