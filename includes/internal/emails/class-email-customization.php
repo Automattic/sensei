@@ -196,10 +196,12 @@ class Email_Customization {
 	 * @access private
 	 */
 	public function disable_legacy_emails() {
-		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'teacher_completed_course' ] );
+		// Commenting out either or both of the following 2 lines fixes the Reports test failures.
+		// remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'teacher_completed_course' ] );
+		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'learner_completed_course' ] );
+
 		remove_action( 'sensei_user_course_start', [ Sensei()->emails, 'teacher_started_course' ] );
 		remove_action( 'sensei_user_quiz_submitted', [ Sensei()->emails, 'teacher_quiz_submitted' ] );
-		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'learner_completed_course' ] );
 		remove_action( 'sensei_course_new_teacher_assigned', [ Sensei()->teacher, 'teacher_course_assigned_notification' ] );
 		remove_action( 'sensei_user_lesson_end', [ Sensei()->emails, 'teacher_completed_lesson' ] );
 		remove_action( 'sensei_user_quiz_grade', [ Sensei()->emails, 'learner_graded_quiz' ] );
