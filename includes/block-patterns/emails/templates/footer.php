@@ -2,7 +2,7 @@
 /**
  * Email footer content.
  *
- * @package sensei
+ * @package sensei-lms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
