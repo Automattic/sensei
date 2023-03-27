@@ -18,7 +18,6 @@ a {
 img {
 	-ms-interpolation-mode: bicubic;
 	max-width: 100%;
-	border-style: solid;
 }
 
 body {
@@ -95,6 +94,10 @@ table {
 
 .inline-block {
 	display: inline-block;
+}
+
+.has-border-color, .has-border {
+ 	border-style: solid;
 }
 
 
