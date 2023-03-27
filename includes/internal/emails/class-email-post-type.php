@@ -24,7 +24,7 @@ class Email_Post_Type {
 	 *
 	 * @var self
 	 */
-	static private $instance = null;
+	private static $instance = null;
 
 	/**
 	 * Get class instance.
@@ -44,7 +44,7 @@ class Email_Post_Type {
 	 */
 	private function __construct() {}
 
-	
+
 	/**
 	 * Post type name.
 	 */
