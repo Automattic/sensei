@@ -40,6 +40,7 @@ class Sensei_Block_Patterns {
 		add_action( 'init', [ $this, 'maybe_register_pattern_block_polyfill' ], 99 );
 		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
 		add_action( 'init', [ $this, 'register_course_list_block_patterns' ] );
+		add_action( 'init', [ $this, 'register_email_footer_block_pattern' ] );
 		add_action( 'current_screen', [ $this, 'register_block_patterns' ] );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_scripts' ] );
 	}
@@ -71,6 +72,20 @@ class Sensei_Block_Patterns {
 		require __DIR__ . '/course-list/class-sensei-course-list-block-patterns.php';
 		( new Sensei_Course_List_Block_Patterns() )->register_course_list_block_patterns();
 	}
+
+	/**
+	 * Register email footer pattern in site editor.
+	 *
+	 * @since 4.12.0
+	 * @access private
+	 */
+	public function register_email_footer_block_pattern() {
+		register_block_pattern(
+			'sensei-lms/email-footer',
+			require __DIR__ . '/emails/footer.php'
+		);
+	}
+
 	/**
 	 * Register block patterns.
 	 *
@@ -117,12 +132,6 @@ class Sensei_Block_Patterns {
 				require __DIR__ . "/{$post_type}/{$block_pattern}.php"
 			);
 		}
-
-		// Show email footer in site editor.
-		register_block_pattern(
-			'sensei-lms/email-footer',
-			require __DIR__ . '/emails/footer.php'
-		);
 	}
 
 	/**
