@@ -100,6 +100,8 @@ class Email_Post_Type_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that the `remove_cap_of_deleting_email` method returns the expected caps.
+	 *
 	 * @dataProvider providerRemoveCapOfDeletingEmail_ArgumentsGiven_ReturnsMatchingCaps
 	 */
 	public function testRemoveCapOfDeletingEmail_ArgumentsGiven_ReturnsMatchingCaps( $caps, $cap, $post_type, $expected_caps ) {
