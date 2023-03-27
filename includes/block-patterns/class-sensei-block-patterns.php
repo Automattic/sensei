@@ -117,6 +117,12 @@ class Sensei_Block_Patterns {
 				require __DIR__ . "/{$post_type}/{$block_pattern}.php"
 			);
 		}
+
+		// Show email footer in site editor.
+		register_block_pattern(
+			'sensei-lms/email-footer',
+			require __DIR__ . '/emails/footer.php'
+		);
 	}
 
 	/**

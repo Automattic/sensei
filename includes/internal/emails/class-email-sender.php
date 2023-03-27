@@ -249,7 +249,7 @@ class Email_Sender {
 
 		ob_start();
 
-		require dirname( __FILE__ ) . '/../../../templates/emails/block-email-template.php';
+		require Sensei()->plugin_path() . 'templates/emails/block-email-template.php';
 
 		return ltrim( ob_get_clean() );
 	}
