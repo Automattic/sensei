@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Course Completed email pattern.
  *

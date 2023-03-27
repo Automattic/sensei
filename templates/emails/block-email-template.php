@@ -74,7 +74,7 @@ global $sensei_email_data;
 	}
 </style>
 
-<body class="<?php echo esc_attr($sensei_email_data['body_class']); ?>">
+<body class="<?php echo esc_attr( $sensei_email_data['body_class'] ); ?>">
 	<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
 		<tr>
 			<td class="container">
@@ -90,7 +90,7 @@ global $sensei_email_data;
 													<tr>
 														<td>
 															<div class="post-body">
-																<?php echo wp_kses_post($sensei_email_data['email_body']); ?>
+																<?php echo wp_kses_post( $sensei_email_data['email_body'] ); ?>
 															</div>
 														</td>
 													</tr>

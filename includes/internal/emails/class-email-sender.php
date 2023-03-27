@@ -205,7 +205,7 @@ class Email_Sender {
 	private function load_email_styles(): string {
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-		return file_get_contents( Sensei()->assets->dist_path('css/email-notifications/email-style.css') );
+		return file_get_contents( Sensei()->assets->dist_path( 'css/email-notifications/email-style.css' ) );
 	}
 
 	/**
