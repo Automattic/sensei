@@ -87,7 +87,6 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'admin/home/promo-banner' ),
 			new Sensei_Autoloader_Bundle( 'admin/home/tasks' ),
 			new Sensei_Autoloader_Bundle( 'admin/home/tasks/task' ),
-			new Sensei_Autoloader_Bundle( 'mailpoet' ),
 		);
 
 		// Add Sensei custom auto loader.

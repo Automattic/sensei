@@ -2,7 +2,6 @@
 /**
  * File containing the class Sensei_MailPoet_Repository.
  *
- * @since $$next-version$$
  * @package sensei
  */
 
@@ -14,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Some Helper methods to fetch Sensei data: courses, groups and students.
+ *
+ * @since $$next-version$$
  */
 class Repository {
 	/**

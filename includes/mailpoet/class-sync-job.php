@@ -1,8 +1,6 @@
 <?php
 /**
  * File containing the class Sensei_MailPoet_Sync_Job.
- *
- * @since $$next-version$$
  * @package sensei
  */
 
@@ -14,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Background Job to sync MailPoet list students with Sensei site courses and groups students.
+ *
+ * @since $$next-version$$
  */
 class Sync_Job extends \Sensei_Background_Job_Batch {
 	/**
