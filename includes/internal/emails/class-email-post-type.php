@@ -20,6 +20,32 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Email_Post_Type {
 	/**
+	 * Class instance.
+	 *
+	 * @var self
+	 */
+	static private $instance = null;
+
+	/**
+	 * Get class instance.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Email_Post_Type constructor.
+	 */
+	private function __construct() {}
+
+	
+	/**
 	 * Post type name.
 	 */
 	public const POST_TYPE = 'sensei_email';
