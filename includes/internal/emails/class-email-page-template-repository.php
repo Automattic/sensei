@@ -126,7 +126,7 @@ class Email_Page_Template_Repository {
 		$template->status         = 'publish';
 		$template->theme          = $theme;
 		$template->type           = 'wp_template';
-		$template->description    = __( 'Default template for Sensei Email, only this template will be used to modify the e-mail templates', 'sensei-lms' );
+		$template->description    = __( 'Displays a Sensei email.', 'sensei-lms' );
 		$template->content        = $content;
 		$template->author         = 0;
 		$template->is_custom      = true;
