@@ -173,7 +173,6 @@ class Email_Sender {
 		wp_reset_postdata();
 
 		return CssInliner::fromHtml( $templated_output )
-			->inlineCss( $this->get_header_styles() )
 			->inlineCss( $this->load_email_styles() )
 			->render();
 	}
@@ -264,103 +263,6 @@ class Email_Sender {
 	private function add_base_url_for_images( $content ) {
 
 		return str_replace( 'src="/wp-content', 'src="' . site_url( '/' ) . 'wp-content', $content );
-	}
-
-	/**
-	 * Get the styles from the header.
-	 *
-	 * @return string
-	 */
-	private function get_header_styles() {
-		remove_action( 'wp_body_open', 'wp_global_styles_render_svg_filters' );
-
-		// Enqueue block library styles in case it already isn't.
-		if ( wp_script_is( 'wp-block-library', 'registered' ) && ! wp_script_is( 'wp-block-library', 'enqueued' ) ) {
-			wp_enqueue_style( 'wp-block-library' );
-		}
-
-		ob_start() &&
-
-		get_header();
-
-		$header_content = ltrim( ob_get_clean() );
-
-		if ( ! $header_content ) {
-			return '';
-		}
-
-		$dom = new \DOMDocument();
-		libxml_use_internal_errors( true );
-		$dom->loadHTML( $header_content );
-		libxml_clear_errors();
-
-		$header_styles = '';
-		$stylesheets   = [];
-
-		foreach ( $dom->getElementsByTagName( 'link' ) as $style_node ) {
-			if ( 'stylesheet' === $style_node->attributes->getNamedItem( 'rel' )->value ) {
-				$stylesheets[] = $style_node->attributes->getNamedItem( 'href' )->value;
-			}
-		}
-
-		/**
-		 * Filter the allowed stylesheets to be included in the email.
-		 *
-		 * @since 4.12.0
-		 * @hook sensei_email_allowed_stylesheets
-		 *
-		 * @param {string[]} $allowed_stylesheets Parts of paths to uniquely identify allowed stylesheets.
-		 * @param {string[]} $stylesheets         All the stylesheets found in the header.
-		 *
-		 * @return {string[]}
-		 */
-		$allowed_stylesheets = apply_filters( 'sensei_email_allowed_stylesheets', [ 'block-library/style.min.css' ], $stylesheets );
-
-		$stylesheets = array_filter(
-			$stylesheets,
-			function( $stylesheet ) use ( $allowed_stylesheets ) {
-				foreach ( $allowed_stylesheets as $allowed_stylesheet ) {
-					if ( false !== strpos( $stylesheet, $allowed_stylesheet ) ) {
-						return true;
-					}
-				}
-				return false;
-			}
-		);
-
-		/**
-		 * Filter the stylesheets to be included in the email.
-		 *
-		 * @since 4.12.0
-		 * @hook sensei_email_stylesheets
-		 *
-		 * @param {string[]} $stylesheets Stylesheets to be included in the email.
-		 *
-		 * @return {string[]}
-		 */
-		$stylesheets = apply_filters( 'sensei_email_stylesheets', $stylesheets );
-
-		// Fetch the styles from the scripts.
-		foreach ( array_reverse( $stylesheets ) as $stylesheet ) {
-			$header_styles .= file_get_contents( $stylesheet ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Get css file contents.
-		}
-
-		// Fetch the internal styles from the <style></style> tags.
-		foreach ( $dom->getElementsByTagName( 'style' ) as $style_node ) {
-			$header_styles .= $style_node->nodeValue; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- PHP property.
-		}
-
-		/**
-		 * Filter the email styles.
-		 *
-		 * @since 4.12.0
-		 * @hook sensei_email_styles
-		 *
-		 * @param {string} $header_styles The email header styles.
-		 *
-		 * @return {string}
-		 */
-		return apply_filters( 'sensei_email_styles', $header_styles );
 	}
 
 	/**
