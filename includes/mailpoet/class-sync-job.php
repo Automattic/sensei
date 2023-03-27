@@ -1,6 +1,7 @@
 <?php
 /**
  * File containing the class Sensei_MailPoet_Sync_Job.
+ *
  * @package sensei
  */
 
