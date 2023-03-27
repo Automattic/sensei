@@ -10,9 +10,8 @@ html {
 	padding-top: 32px;
 }
 
-
 a {
-    color: currentColor;
+	color: currentColor;
 }
 
 img {
@@ -113,7 +112,7 @@ figure {
 
 /* CUSTOM CLASSES */
 .email-notification__footer .footer_info {
-    height: 32px;
+	height: 32px;
 }
 
 .email-notification__footer figure {
@@ -121,15 +120,15 @@ figure {
 }
 
 .email-notification__footer p {
-    line-height: 32px;
+	line-height: 32px;
 }
 
 .email-notification__header {
-    height: 48px;
+	height: 48px;
 }
 
 .email-notification__header .wp-block-site-title {
-    line-height: 48px;
+	line-height: 48px;
 }
 
 .site-logo {
@@ -140,39 +139,39 @@ figure {
 /* MOBILE VERSION */
 @media (max-width: 800px) {
 	.wp-block-site-title {
-		font-size: 15px;
-		margin-top: 10px;
+		font-size: 15px !important;
+		margin-top: 10px !important;
 	}
 
 	.wp-block-buttons {
-		margin-bottom: 0;
-		width: 100%;
+		margin-bottom: 0 !important;
+		width: 100% !important;
 	}
 
 	.wp-block-button a {
-		display: inline-block;
+		display: inline-block !important;
 		width: 100%;
-		box-sizing: border-box;
-		text-align: center;
+		box-sizing: border-box !important;
+		text-align: center !important;
 	}
 
 	.email-notification__header, .email-notification__footer, .email-notification__content {
-		padding-left: 24px;
-		padding-right: 24px;
+		padding-left: 24px !important;
+		padding-right: 24px !important;
 	}
 
 	.email-notification__title {
-		margin-bottom: 32px;
-		padding-top: 0px;
-		font-size: 28px;
+		margin-bottom: 32px !important;
+		padding-top: 0px !important;
+		font-size: 28px !important;
 	}
 
 	.email-notification__content {
-		margin-top: 0;
-		padding: 24px;
+		margin-top: 0 !important;
+		padding: 24px !important;
 	}
 
 	.info__extra {
-		margin-top: 24px;
+		margin-top: 24px !important;
 	}
 }
