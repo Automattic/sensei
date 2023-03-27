@@ -23,6 +23,19 @@ jobs:
             -   name: Checkout code
                 uses: actions/checkout@v3
 
+            -   uses: actions/cache@v3
+                with:
+                    path: ~/.npm
+                    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                    restore-keys: |
+                        ${{ runner.os }}-node-
+
+            -   name: Install JS dependencies
+                run: npm ci
+
+            -   name: Build assets
+                run: npm run build:assets
+
             -   name: Get cached composer directories
                 uses: actions/cache@v3
                 with:
@@ -54,16 +67,6 @@ jobs:
 
             -   name: Run tests with coverage
                 run: php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover ./coverage.xml
-
-            -   uses: actions/cache@v3
-                with:
-                    path: ~/.npm
-                    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-                    restore-keys: |
-                        ${{ runner.os }}-node-
-
-            -   name: Install JS dependencies
-                run: npm ci
 
             -   name: Test JS
                 env:
