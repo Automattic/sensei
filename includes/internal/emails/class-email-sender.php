@@ -203,9 +203,14 @@ class Email_Sender {
 	 * @return string
 	 */
 	private function load_email_styles(): string {
+		$css_dist_path = Sensei()->assets->dist_path( 'css/email-notifications/email-style.css' );
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-		return file_get_contents( Sensei()->assets->dist_path( 'css/email-notifications/email-style.css' ) );
+		if ( file_exists( $css_dist_path ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
+			return file_get_contents( $css_dist_path );
+		}
+
+		return '';
 	}
 
 	/**
