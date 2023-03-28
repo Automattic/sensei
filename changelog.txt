@@ -1,5 +1,45 @@
 *** Changelog ***
 
+## 4.12.0 - 2023-03-28
+### Added
+- Add default email templates
+- Added bulk actions to enable and disable emails
+- Added email to be sent to teacher when a reply is received to a private message
+- Add Email Settings screen inside Email Customization
+- Add support for custom tabs on the Course page
+- Disable pro emails by default and allow enabling from pro
+- Email sent to student on course completion
+- Email sent to student upon grading of quiz
+- Email to be sent to student when a lesson becomes available
+- Email to be sent to teacher when a student sends a new message
+- Email to notify student before course expires
+- Functionality to add pattern as email template and student course complete mail
+- Hide font family settings from blocks when used in GB editor for sensei_email post type
+- Log when emails are sent
+- Reply To setting for email
+- Send email to student when the teacher replies to a private message
+- Send email to teacher when a student submits a quiz
+- Send email to teacher when new course is assigned
+- Sending email to teacher on student starting a course using GB email template
+- Trash emails on plugin uninstall
+
+### Changed
+- Open Install MailPoet page in same tab
+- Update language used in email functionality
+
+### Removed
+- Support for align wide in blocks inside email editor
+- Trash button from the editor of the posts of email type
+
+### Fixed
+- Fix fatal error on Gutenberg when customizable emails enabled
+- Fix showing error message when block editor opened in non post context
+- Fix student "Message Reply Received" email not sending from lesson or quiz page
+- Logged out users are redirected to login page if tries to access course completion page
+- Update email hook name to match naming conventions
+- Update filter name to match other email hooks
+- Use dynamic pricing for Sensei Pro upsells
+
 ## 4.11.2 - 2023-03-07
 ### Added
 - Register setup wizard option in settings endpoint.
