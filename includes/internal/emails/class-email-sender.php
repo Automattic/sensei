@@ -103,7 +103,7 @@ class Email_Sender {
 		/**
 		 * Filter the email replacements.
 		 *
-		 * @since $$next-version$$
+		 * @since 8.8.8
 		 * @hook sensei_email_replacements
 		 *
 		 * @param {Array}        $replacements The email replacements.
@@ -306,7 +306,7 @@ class Email_Sender {
 		/**
 		 * Filter the allowed stylesheets to be included in the email.
 		 *
-		 * @since $$next-version$$
+		 * @since 8.8.8
 		 * @hook sensei_email_allowed_stylesheets
 		 *
 		 * @param {string[]} $allowed_stylesheets Parts of paths to uniquely identify allowed stylesheets.
@@ -331,7 +331,7 @@ class Email_Sender {
 		/**
 		 * Filter the stylesheets to be included in the email.
 		 *
-		 * @since $$next-version$$
+		 * @since 8.8.8
 		 * @hook sensei_email_stylesheets
 		 *
 		 * @param {string[]} $stylesheets Stylesheets to be included in the email.
@@ -353,7 +353,7 @@ class Email_Sender {
 		/**
 		 * Filter the email styles.
 		 *
-		 * @since $$next-version$$
+		 * @since 8.8.8
 		 * @hook sensei_email_styles
 		 *
 		 * @param {string} $header_styles The email header styles.

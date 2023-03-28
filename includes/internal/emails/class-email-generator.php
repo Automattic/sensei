@@ -99,7 +99,7 @@ class Email_Generator {
 		/**
 		 * Filter the individual email generators.
 		 *
-		 * @since $$next-version$$
+		 * @since 8.8.8
 		 * @hook sensei_email_generators
 		 *
 		 * @param {Email_Generators_Abstract[]} $email_generators The email generators.

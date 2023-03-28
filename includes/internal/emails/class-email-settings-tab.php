@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 8.8.8
  */
 class Email_Settings_Tab {
 
@@ -245,7 +245,7 @@ class Email_Settings_Tab {
 	/**
 	 * Add the Reply To email address setting field.
 	 *
-	 * @since $$next-version$$
+	 * @since 8.8.8
 	 * @access private
 	 *
 	 * @param array $fields The fields to add to.

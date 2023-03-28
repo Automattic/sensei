@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 8.8.8
  */
 class Student_Completes_Lesson extends Email_Generators_Abstract {
 	/**
@@ -51,7 +51,7 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	 * @param Email_Repository                     $repository Email_Repository instance.
 	 * @param Lesson_Progress_Repository_Interface $lesson_progress_repository Lesson progress repository.
 	 *
-	 * @since $$next-version$$
+	 * @since 8.8.8
 	 *
 	 * @internal
 	 */
@@ -67,7 +67,7 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	 * Initialize the email hooks.
 	 *
 	 * @access public
-	 * @since $$next-version$$
+	 * @since 8.8.8
 	 *
 	 * @return void
 	 */

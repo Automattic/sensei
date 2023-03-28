@@ -12,7 +12,7 @@ namespace Sensei\Internal\Emails;
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 8.8.8
  */
 class Email_Patterns {
 	/**
@@ -50,7 +50,7 @@ class Email_Patterns {
 	 *
 	 * @access private
 	 *
-	 * @since $$next-version$$
+	 * @since 8.8.8
 	 *
 	 * @param WP_Screen $current_screen Current screen.
 	 */
@@ -67,7 +67,7 @@ class Email_Patterns {
 	 *
 	 * @access private
 	 *
-	 * @since $$next-version$$
+	 * @since 8.8.8
 	 */
 	public function register_email_preview_block_patterns() {
 		// phpcs:ignore WordPress.Security.NonceVerification -- Used for comparison.
@@ -81,7 +81,7 @@ class Email_Patterns {
 	 *
 	 * @access private
 	 *
-	 * @since $$next-version$$
+	 * @since 8.8.8
 	 */
 	public function register_email_block_patterns() {
 		$patterns = [

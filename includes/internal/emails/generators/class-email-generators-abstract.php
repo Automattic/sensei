@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 8.8.8
  */
 abstract class Email_Generators_Abstract {
 
@@ -48,7 +48,7 @@ abstract class Email_Generators_Abstract {
 	 *
 	 * @param Email_Repository $repository Email_Repository instance.
 	 *
-	 * @since $$next-version$$
+	 * @since 8.8.8
 	 *
 	 * @internal
 	 */
@@ -60,7 +60,7 @@ abstract class Email_Generators_Abstract {
 	 * Initialize the email hooks.
 	 *
 	 * @access public
-	 * @since $$next-version$$
+	 * @since 8.8.8
 	 *
 	 * @return void
 	 */
@@ -69,7 +69,7 @@ abstract class Email_Generators_Abstract {
 	/**
 	 * Check if email exists and is published.
 	 *
-	 * @since $$next-version$$
+	 * @since 8.8.8
 	 *
 	 * @internal
 	 *
@@ -83,7 +83,7 @@ abstract class Email_Generators_Abstract {
 	/**
 	 * Get name of the identifier of the Email.
 	 *
-	 * @since $$next-version$$
+	 * @since 8.8.8
 	 *
 	 * @internal
 	 *
@@ -102,13 +102,13 @@ abstract class Email_Generators_Abstract {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 8.8.8
 	 */
 	protected function send_email_action( $replacements ) {
 		/**
 		 * Send HTML email.
 		 *
-		 * @since $$next-version$$
+		 * @since 8.8.8
 		 * @hook sensei_email_send
 		 *
 		 * @param {string} $email_name          The email name.

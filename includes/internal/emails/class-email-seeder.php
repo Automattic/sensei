@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 8.8.8
  */
 class Email_Seeder {
 	/**
@@ -66,7 +66,7 @@ class Email_Seeder {
 		/**
 		 * Filter the email data.
 		 *
-		 * @since $$next-version$$
+		 * @since 8.8.8
 		 * @hook sensei_email_seeder_data
 		 *
 		 * @param {array} $emails Email data.
