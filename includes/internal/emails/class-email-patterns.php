@@ -201,12 +201,6 @@ class Email_Patterns {
 				$pattern
 			);
 		}
-
-		// Show footer in emails and email preview.
-		register_block_pattern(
-			'sensei-lms/email-footer',
-			require Sensei()->plugin_path() . 'includes/block-patterns/emails/footer.php'
-		);
 	}
 
 	/**
