@@ -82,6 +82,7 @@ const files = [
 	'blocks/core-pattern-polyfill/core-pattern-polyfill.js',
 	'blocks/email-editor.js',
 	'css/email-notifications/email-editor-style.scss',
+	'css/email-notifications/email-editor-page-style.scss',
 	'css/email-notifications/email-style.scss',
 	'admin/editor-wizard/index.js',
 	'admin/editor-wizard/style.scss',

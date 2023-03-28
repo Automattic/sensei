@@ -74,9 +74,25 @@ class Email_Blocks {
 		add_filter( 'allowed_block_types_all', [ $this, 'set_allowed_blocks' ], 25, 2 );
 		add_filter( 'wp_theme_json_data_theme', [ $this, 'set_email_css_units' ], 25, 2 );
 
+		add_action('enqueue_block_editor_assets', [$this, 'add_site_editor_page_style']);
 		add_action( 'current_screen', [ $this, 'load_admin_assets' ] );
 	}
 
+	/**
+	 * Set a site only the the WordPress site editor page
+	 *
+	 * @internal
+	 * @access private
+	 *
+	 *
+	 * @return void
+	 */
+	public function add_site_editor_page_style () {
+		if( is_admin() &&  Email_Page_Template::ID === $_GET['postId'] ) {
+			Sensei()->assets->enqueue( 'sensei-email-editor-style', 'css/email-notifications/email-editor-style.css' );
+			Sensei()->assets->enqueue( 'sensei-email-editor-page-style', 'css/email-notifications/email-editor-page-style.css' );
+		}
+	}
 	/**
 	 * Set the allowed blocks.
 	 *
