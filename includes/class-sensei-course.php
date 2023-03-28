@@ -205,7 +205,7 @@ class Sensei_Course {
 	/**
 	 * Add showcase courses upsell page.
 	 *
-	 * @since $$next-version$$
+	 * @since 9.9.9
 	 * @internal
 	 */
 	public function add_showcase_courses_upsell() {
@@ -222,7 +222,7 @@ class Sensei_Course {
 	/**
 	 * Add showcase courses upsell screen.
 	 *
-	 * @since $$next-version$$
+	 * @since 9.9.9
 	 * @internal
 	 */
 	public function showcase_courses_screen() {
@@ -283,7 +283,7 @@ class Sensei_Course {
 	 * Filter the showcase courses page title. It's needed because submenu pages
 	 * without a parent menu item don't have a title.
 	 *
-	 * @since $$next-version$$
+	 * @since 9.9.9
 	 * @internal
 	 *
 	 * @param string $admin_title The page title, with extra context added.
@@ -359,7 +359,7 @@ class Sensei_Course {
 		/**
 		 * Filters the tabs that the user can see on the Courses page.
 		 *
-		 * @since $$next-version$$
+		 * @since 9.9.9
 		 * @hook sensei_course_custom_navigation_tabs
 		 *
 		 * @param {Array} $tabs The list of tabs that the user should see on the Courses page.
@@ -394,7 +394,7 @@ class Sensei_Course {
 		 * Filter courses navigation sidebar content.
 		 *
 		 * @hook  sensei_courses_navigation_sidebar
-		 * @since $$next-version$$
+		 * @since 9.9.9
 		 *
 		 * @param {string}    $content The content to be displayed in the sidebar.
 		 * @param {WP_Screen} $screen  The current screen.
@@ -4408,7 +4408,7 @@ class Sensei_Course {
 	/**
 	 * Take the user to login page if trying to access course completion page without being logged in.
 	 *
-	 * @since $$next-version$$
+	 * @since 9.9.9
 	 *
 	 * @access private
 	 */

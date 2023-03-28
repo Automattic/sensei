@@ -113,7 +113,7 @@ final class Sensei_Extensions {
 	/**
 	 * Fetch a specific Sensei extension.
 	 *
-	 * @since $$next-version$$
+	 * @since 9.9.9
 	 *
 	 * @param string $slug Extension slug.
 	 *
