@@ -67,7 +67,9 @@ class Email_Page_Template_Repository {
 			return null;
 		}
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		$content = file_get_contents( $path );
+		ob_start();
+		require $path;
+		$content = ob_get_clean();
 		return $this->build_from_content( $content, $identifier );
 	}
 
