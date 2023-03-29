@@ -24,8 +24,6 @@ jobs:
               run: npm ci
             - name: Install PHP dependencies and generate the third-party directory
               uses: ./.github/actions/install-php
-            - name: Remove the PHP dev dependencies
-              run: composer install --no-dev --no-ansi --no-interaction --prefer-dist --no-progress
             - name: Build Plugin
               run: npm run build
             - name: Decompress plugin
