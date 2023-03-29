@@ -1,6 +1,6 @@
 *** Changelog ***
 
-## 4.12.0 - 2023-03-23
+## 4.12.0 - 2023-03-29
 ### Added
 - Default Email templates
 - Bulk actions to enable and disable Emails
@@ -24,7 +24,6 @@
 ### Changed
 - Open Install MailPoet page in same tab
 - Update language used in email functionality
-
 
 ### Fixed
 - Fix student "Message Reply Received" email not sending from lesson or quiz page
