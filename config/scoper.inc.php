@@ -22,6 +22,5 @@ return [
 		Finder::create()->files()->in( 'vendor/pelago/emogrifier' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()->files()->in( 'vendor/sabberworm/php-css-parser' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()->files()->in( 'vendor/symfony/css-selector' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
-		Finder::create()->files()->in( 'vendor/symfony/polyfill-php80' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 	],
 ];
