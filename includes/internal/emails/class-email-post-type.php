@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since X.Y.Z
  */
 class Email_Post_Type {
 	/**
@@ -43,7 +43,7 @@ class Email_Post_Type {
 	 * @param int      $user_id The user ID.
 	 * @param array    $args    Adds the context to the cap. Typically the object ID.
 	 *
-	 * @since $$next-version$$
+	 * @since X.Y.Z
 	 *
 	 * @access private
 	 *

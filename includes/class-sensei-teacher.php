@@ -429,7 +429,7 @@ class Sensei_Teacher {
 		/**
 		 * Fires when a new teacher is assigned to a course.
 		 *
-		 * @since $$next-version$$
+		 * @since X.Y.Z
 		 *
 		 * @hook sensei_course_new_teacher_assigned
 		 *

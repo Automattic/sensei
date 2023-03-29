@@ -3,7 +3,7 @@
 /**
  * Email template
  *
- * @since $$next-version$$
+ * @since X.Y.Z
  * @package sensei
  */
 

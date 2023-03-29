@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since X.Y.Z
  */
 class Email_List_Table extends Sensei_List_Table {
 	/**
@@ -63,7 +63,7 @@ class Email_List_Table extends Sensei_List_Table {
 		/**
 		 * Filter the columns that are displayed on the email list.
 		 *
-		 * @since $$next-version$$
+		 * @since X.Y.Z
 		 * @hook sensei_email_list_columns
 		 *
 		 * @param {array}  $columns    The table columns.
@@ -158,7 +158,7 @@ class Email_List_Table extends Sensei_List_Table {
 		/**
 		 * Filter the row data displayed on the email list.
 		 *
-		 * @since $$next-version$$
+		 * @since X.Y.Z
 		 * @hook sensei_email_list_row_data
 		 *
 		 * @param {array}  $row_data The row data.
@@ -245,7 +245,7 @@ class Email_List_Table extends Sensei_List_Table {
 		/**
 		 * Filter the row actions displayed on the email list.
 		 *
-		 * @since $$next-version$$
+		 * @since X.Y.Z
 		 * @hook sensei_email_list_row_actions
 		 *
 		 * @param {array}  $actions The row actions.
@@ -260,7 +260,7 @@ class Email_List_Table extends Sensei_List_Table {
 	/**
 	 * Display table content wrapped inside a form
 	 *
-	 * @since $$next-version$$
+	 * @since X.Y.Z
 	 *
 	 * @return void
 	 */
@@ -297,7 +297,7 @@ class Email_List_Table extends Sensei_List_Table {
 		/**
 		 * Filter if the email is available.
 		 *
-		 * @since $$next-version$$
+		 * @since X.Y.Z
 		 * @hook sensei_email_is_available
 		 *
 		 * @param {boolean} $available True if the email is available, false otherwise.

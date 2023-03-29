@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Recreate_Emails_Tool class.
  *
- * @since $$next-version$$
+ * @since X.Y.Z
  */
 class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 

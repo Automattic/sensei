@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Email_Page_Template_Repository class.
  *
- * @since $$next-version$$
+ * @since X.Y.Z
  */
 class Email_Page_Template_Repository {
 

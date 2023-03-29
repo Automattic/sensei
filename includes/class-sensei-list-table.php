@@ -272,7 +272,7 @@ class Sensei_List_Table extends WP_List_Table {
 	/**
 	 * Returns if current implementation uses native row actions.
 	 *
-	 * @since $$next-version$$
+	 * @since X.Y.Z
 	 *
 	 * @return bool
 	 */

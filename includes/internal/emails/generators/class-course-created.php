@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since X.Y.Z
  */
 class Course_Created extends Email_Generators_Abstract {
 	/**
@@ -36,7 +36,7 @@ class Course_Created extends Email_Generators_Abstract {
 	/**
 	 * Initialize the email hooks.
 	 *
-	 * @since $$next-version$$
+	 * @since X.Y.Z
 	 *
 	 * @return void
 	 */
