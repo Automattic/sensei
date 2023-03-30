@@ -572,6 +572,23 @@ class Sensei_Main {
 		if ( $email_customization_enabled ) {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
 		}
+		// MailPoet integration.
+		/**
+		 * Integrate MailPoet by adding lists for courses and groups.
+		 *
+		 * @hook  sensei_email_mailpoet_feature
+		 * @since $$next-version$$
+		 *
+		 * @param {bool} $enable Enable feature. Default true.
+		 *
+		 * @return {bool} Whether to enable feature.
+		 */
+		if ( apply_filters( 'sensei_email_mailpoet_feature', true ) ) {
+			if ( class_exists( \MailPoet\API\API::class ) ) {
+				$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
+				new Sensei\Emails\MailPoet\Main( $mailpoet_api );
+			}
+		}
 	}
 
 	/**
