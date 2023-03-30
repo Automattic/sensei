@@ -319,6 +319,13 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Generators\Teacher_Message_Reply::class => 'internal/emails/generators/class-teacher-message-reply.php',
 			\Sensei\Internal\Emails\Generators\Student_Message_Reply::class => 'internal/emails/generators/class-student-message-reply.php',
 			\Sensei\Internal\Emails\Generators\Student_Sends_Message::class => 'internal/emails/generators/class-student-sends-message.php',
+			/**
+			 * MailPoet
+			 */
+			\Sensei\Emails\MailPoet\Main::class            => 'mailpoet/class-main.php',
+			\Sensei\Emails\MailPoet\Sync_Job::class        => 'mailpoet/class-sync-job.php',
+			\Sensei\Emails\MailPoet\Repository::class      => 'mailpoet/class-repository.php',
+
 		);
 	}
 
