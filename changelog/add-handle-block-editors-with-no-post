@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix showing error message when block editor opened in non post context

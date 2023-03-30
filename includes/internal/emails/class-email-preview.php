@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Email_Preview {
 	/**
@@ -182,21 +182,28 @@ class Email_Preview {
 	 */
 	private function get_placeholders(): array {
 		return [
-			'course:name'            => __( 'Photography Class', 'sensei-lms' ),
-			'lesson:name'            => __( 'Learning about macro', 'sensei-lms' ),
-			'student:displayname'    => __( 'James S.', 'sensei-lms' ),
 			'author:displayname'     => __( 'Pedro T.', 'sensei-lms' ),
-			'teacher:displayname'    => __( 'Pedro T.', 'sensei-lms' ),
-			'subject:displaysubject' => __( 'Hello from your new student', 'sensei-lms' ),
-			'message:displaymessage' => __( 'Hello! Can I ask a question?', 'sensei-lms' ),
+			'certificate:url'        => '#',
+			'completed:url'          => '#',
+			'course:name'            => __( 'Photography Class', 'sensei-lms' ),
+			'course:url'             => '#',
 			'date:dtext'             => __( 'today', 'sensei-lms' ),
-			'grade:validation'       => __( 'You Passed!', 'sensei-lms' ),
+			'editcourse:url'         => '#',
 			'grade:percentage'       => '89%',
 			'grade:quiz'             => '#',
+			'grade:validation'       => __( 'You Passed!', 'sensei-lms' ),
+			'lesson:name'            => __( 'Learning about macro', 'sensei-lms' ),
+			'lesson:url'             => '#',
+			'manage:course'          => '#',
 			'manage:students'        => '#',
+			'message:displaymessage' => __( 'Hello! Can I ask a question?', 'sensei-lms' ),
+			'quiz:url'               => '#',
+			'reply:url'              => '#',
 			'results:url'            => '#',
-			'certificate:url'        => '#',
-			'editcourse:url'         => '#',
+			'resume:url'             => '#',
+			'student:displayname'    => __( 'James S.', 'sensei-lms' ),
+			'subject:displaysubject' => __( 'Hello from your new student', 'sensei-lms' ),
+			'teacher:displayname'    => __( 'Pedro T.', 'sensei-lms' ),
 		];
 	}
 

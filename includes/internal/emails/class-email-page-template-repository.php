@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Email_Page_Template_Repository class.
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Email_Page_Template_Repository {
 
@@ -67,7 +67,9 @@ class Email_Page_Template_Repository {
 			return null;
 		}
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		$content = file_get_contents( $path );
+		ob_start();
+		require $path;
+		$content = ob_get_clean();
 		return $this->build_from_content( $content, $identifier );
 	}
 
@@ -126,7 +128,7 @@ class Email_Page_Template_Repository {
 		$template->status         = 'publish';
 		$template->theme          = $theme;
 		$template->type           = 'wp_template';
-		$template->description    = __( 'Default template for Sensei Email, only this template will be used to modify the e-mail templates', 'sensei-lms' );
+		$template->description    = __( 'Displays a Sensei email.', 'sensei-lms' );
 		$template->content        = $content;
 		$template->author         = 0;
 		$template->is_custom      = true;

@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Email_Customization {
 
@@ -129,7 +129,7 @@ class Email_Customization {
 		$this->repository           = new Email_Repository();
 		$template_repository        = new Email_Page_Template_Repository();
 		$this->patterns             = new Email_Patterns();
-		$this->post_type            = new Email_Post_Type();
+		$this->post_type            = Email_Post_Type::instance();
 		$this->settings_menu        = new Settings_Menu();
 		$this->settings_tab         = new Email_Settings_Tab( $settings );
 		$this->blocks               = new Email_Blocks();
@@ -212,7 +212,7 @@ class Email_Customization {
 		 *
 		 * @hook sensei_disable_legacy_emails
 		 *
-		 * @since $$next-version$$
+		 * @since 4.12.0
 		 */
 		do_action( 'sensei_disable_legacy_emails' );
 	}

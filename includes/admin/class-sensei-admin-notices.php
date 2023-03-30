@@ -479,7 +479,7 @@ class Sensei_Admin_Notices {
 		/**
 		 * Filter the array of screen IDs that are part of Sensei, and where we should show Sensei notices on.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.12.0
 		 * @hook sensei_notices_screen_ids
 		 *
 		 * @param {array} Array of Screen IDs that are part of Sensei.

@@ -16,9 +16,35 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Email_Post_Type {
+	/**
+	 * Class instance.
+	 *
+	 * @var self
+	 */
+	private static $instance = null;
+
+	/**
+	 * Get class instance.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Email_Post_Type constructor.
+	 */
+	private function __construct() {}
+
+
 	/**
 	 * Post type name.
 	 */
@@ -43,7 +69,7 @@ class Email_Post_Type {
 	 * @param int      $user_id The user ID.
 	 * @param array    $args    Adds the context to the cap. Typically the object ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.12.0
 	 *
 	 * @access private
 	 *

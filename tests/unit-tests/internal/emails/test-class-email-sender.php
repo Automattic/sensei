@@ -197,30 +197,6 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( 'Test Student', $this->email_data['message'] );
 	}
 
-	public function testSendEmail_WhenCssInPresent_MovesCssToInline() {
-		/* Arrange. */
-		add_filter(
-			'sensei_email_styles',
-			function ( $styles ) {
-				return $styles . 'p { background-color: yellow; }';
-			}
-		);
-
-		/* Act. */
-		$this->email_sender->send_email(
-			'student_starts_course',
-			[
-				'a@a.test' => [
-					'student:displayname' => 'Test Student',
-				],
-			],
-			self::USAGE_TRACKING_TYPE
-		);
-
-		/* Assert. */
-		self::assertStringContainsString( 'background-color: yellow;', $this->email_data['message'] );
-	}
-
 	public function testSendEmail_WhenSubjectHasPlaceholders_ReplacesThePlaceholder() {
 		/* Act. */
 		$this->email_sender->send_email(

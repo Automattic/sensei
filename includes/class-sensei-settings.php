@@ -122,7 +122,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		 * Filters content for the settings page.
 		 *
 		 * @hook  sensei_settings_content
-		 * @since $$next-version$$
+		 * @since 4.12.0
 		 *
 		 * @param {string} $tab_name The tab slug.
 		 *
@@ -161,7 +161,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 					 * Fires after the navigation links are displayed.
 					 *
 					 * @hook  sensei_settings_after_links
-					 * @since $$next-version$$
+					 * @since 4.12.0
 					 *
 					 * @param {string} $tab_name The tab slug.
 					 */
