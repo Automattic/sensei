@@ -4,6 +4,8 @@ namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Page_Template;
 use Sensei\Internal\Emails\Email_Page_Template_Repository;
+use Sensei\Internal\Emails\Email_Post_Type;
+use WP_Post;
 
 /**
  * Tests for Sensei\Internal\Emails\Email_Page_Template class.
@@ -106,6 +108,42 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( $template_to_be_added, $result[1] );
+	}
+
+	public function testAddEmailTemplate_WhenThePostTypeIsIncorrect_ReturnsDefaultTemplate() {
+
+		/* Arrange. */
+		$repository           = $this->createMock( Email_Page_Template_Repository::class );
+		$page_template        = new Email_Page_Template( $repository );
+		$default_list         = [ $this->createMock( \WP_Block_Template::class ) ];
+		$template_to_be_added = $this->createMock( \WP_Block_Template::class );
+		$post = $post = new \stdClass();
+		$post->post_type = 'page';
+		$GLOBALS['post'] = $post;
+
+		$repository
+			->method( 'get' )
+			->willReturn( $template_to_be_added );
+
+		/* Act. */
+		$result = $page_template->add_email_template( $default_list, [], 'wp_template' );
+
+		/* Assert. */
+		self::assertSame( $default_list, $result );
+	}
+
+	public function testAddEmailTemplate_GivenQuerySpecifPostType_ReturnsDefaultTemplate() {
+
+		/* Arrange. */
+		$repository           = $this->createMock( Email_Page_Template_Repository::class );
+		$page_template        = new Email_Page_Template( $repository );
+		$default_list         = [ $this->createMock( \WP_Block_Template::class ) ];
+
+		/* Act. */
+		$result = $page_template->add_email_template( $default_list, ['post_type' => 'page'], 'wp_template' );
+
+		/* Assert. */
+		self::assertSame( $default_list, $result );
 	}
 
 	public function testAddEmailTemplate_WhenPostTypeIsIncorrect_ReturnsDefaultList() {
