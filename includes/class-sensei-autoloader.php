@@ -140,6 +140,7 @@ class Sensei_Autoloader {
 			'Sensei_Admin_Notices'                         => 'admin/class-sensei-admin-notices.php',
 			'Sensei_Editor_Wizard'                         => 'admin/class-sensei-editor-wizard.php',
 			'Sensei_No_Users_Table_Relationship'           => 'reports/class-sensei-no-users-table-relationship.php',
+			'SenseiLMS_Plugin_Updater'                     => 'admin/class-senseilms-plugin-updater.php',
 
 			/**
 			 * Admin Tools
