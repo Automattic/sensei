@@ -91,7 +91,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				esc_html( $total_completions )
 			),
 			'average_progress'   => sprintf(
-			// translators: Placeholder vale is the total average progress for all courses.
+			// translators: Placeholder value is the total average progress for all courses.
 				__( 'Average Progress (%s)', 'sensei-lms' ),
 				esc_html( sprintf( '%d%%', $total_average_progress ) )
 			),

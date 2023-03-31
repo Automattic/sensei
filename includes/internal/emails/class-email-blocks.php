@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Email_Blocks {
 
@@ -47,10 +47,10 @@ class Email_Blocks {
 			],
 			'color'      => [
 				'palette' =>
-									[
-										'theme'  => [],
-										'custom' => [],
-									],
+					[
+						'theme'  => [],
+						'custom' => [],
+					],
 			],
 			'typography' => [
 				'fluid' => false,
@@ -110,7 +110,7 @@ class Email_Blocks {
 		}
 
 		Sensei()->assets->enqueue( 'sensei-email-editor-setup', 'blocks/email-editor.js', [], true );
-		Sensei()->assets->enqueue( 'sensei-email-editor-style', 'blocks/email-editor-style.css' );
+		Sensei()->assets->enqueue( 'sensei-email-editor-style', 'css/email-notifications/email-editor-style.css' );
 	}
 
 	/**

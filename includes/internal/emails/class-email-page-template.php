@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Email_Page_Template {
 
@@ -27,7 +27,7 @@ class Email_Page_Template {
 	public const THEME         = 'sensei-email';
 	public const SLUG          = 'single-sensei_email';
 	public const ID            = self::THEME . '//' . self::SLUG;
-	public const TEMPLATE_PATH = 'block-templates/email-template.html';
+	public const TEMPLATE_PATH = 'block-templates/email-template.php';
 
 	/**
 	 * The Email_Page_Template_Repository instance.

@@ -3,7 +3,7 @@
  * The template used for the email preview.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.12.0
  *
  * @var string $subject The email subject.
  * @var string $avatar The avatar image.
