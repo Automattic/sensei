@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Manages plugin updates by hooking into WordPress's plugins update system and querying SenseiLMS Store's API.
  *
  * It's a fallback to SenseiLMS_Licensing\SenseiLMS_Plugin_Updater from Sensei Pro. So it works when
- * Sensei Pro is in a legacy version without this class.
+ * Sensei Pro is in a legacy version that depends on the activated license.
  *
  * @since $$next-version$$
  */
