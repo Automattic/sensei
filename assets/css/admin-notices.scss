@@ -5,7 +5,7 @@ $sensei-notice-icon-width: 30px;
 .sensei-notice {
 	@import '../shared/styles/wp-admin';
 
-	align-items: flex-start;
+	align-items: center;
 	border-left-color: $primary;
 	display: flex;
 	gap: 10px;
@@ -31,6 +31,10 @@ $sensei-notice-icon-width: 30px;
 		}
 	}
 
+	&__content {
+		color: #101517;
+	}
+
 	&__content a {
 		color: #000;
 	}
@@ -47,6 +51,11 @@ $sensei-notice-icon-width: 30px;
 		.button {
 			padding: 3px 12px;
 		}
+	}
+
+	.button-secondary {
+		color: #155E65;
+		border-color: #43AF99;
 	}
 
 	.notice-dismiss {

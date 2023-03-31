@@ -45,7 +45,7 @@ const NoticeAction = ( { action } ) => {
 			className={ classnames( 'button', buttonClass ) }
 			{ ...extraProps }
 		>
-			{ action.label }
+			<RawHTML>{ action.label }</RawHTML>
 		</a>
 	);
 };
