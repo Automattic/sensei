@@ -132,8 +132,7 @@ class SenseiLMS_Plugin_Updater {
 			'high' => $remote->banners->{'2x'},
 		];
 
-		// TODO: ADD CSS.
-		wp_enqueue_style( 'sensei-updater-styles', plugin_dir_url( $this->plugin_full_name ) . 'assets/dist/senseilms-licensing/styles.css', [], $this->version );
+		Sensei()->assets->enqueue( 'sensei-updater-styles', 'css/senseilms-licensing.css' );
 
 		return $res;
 	}
