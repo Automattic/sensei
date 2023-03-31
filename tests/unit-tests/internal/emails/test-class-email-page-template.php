@@ -117,7 +117,7 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 		$page_template        = new Email_Page_Template( $repository );
 		$default_list         = [ $this->createMock( \WP_Block_Template::class ) ];
 		$template_to_be_added = $this->createMock( \WP_Block_Template::class );
-		$post                 = $post = new \stdClass();
+		$post                 = new \stdClass();
 		$post->post_type      = 'page';
 		$GLOBALS['post']      = $post;
 
