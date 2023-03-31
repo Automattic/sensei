@@ -117,9 +117,9 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 		$page_template        = new Email_Page_Template( $repository );
 		$default_list         = [ $this->createMock( \WP_Block_Template::class ) ];
 		$template_to_be_added = $this->createMock( \WP_Block_Template::class );
-		$post = $post = new \stdClass();
-		$post->post_type = 'page';
-		$GLOBALS['post'] = $post;
+		$post                 = $post = new \stdClass();
+		$post->post_type      = 'page';
+		$GLOBALS['post']      = $post;
 
 		$repository
 			->method( 'get' )
@@ -135,12 +135,12 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 	public function testAddEmailTemplate_GivenQuerySpecifPostType_ReturnsDefaultTemplate() {
 
 		/* Arrange. */
-		$repository           = $this->createMock( Email_Page_Template_Repository::class );
-		$page_template        = new Email_Page_Template( $repository );
-		$default_list         = [ $this->createMock( \WP_Block_Template::class ) ];
+		$repository    = $this->createMock( Email_Page_Template_Repository::class );
+		$page_template = new Email_Page_Template( $repository );
+		$default_list  = [ $this->createMock( \WP_Block_Template::class ) ];
 
 		/* Act. */
-		$result = $page_template->add_email_template( $default_list, ['post_type' => 'page'], 'wp_template' );
+		$result = $page_template->add_email_template( $default_list, [ 'post_type' => 'page' ], 'wp_template' );
 
 		/* Assert. */
 		self::assertSame( $default_list, $result );
