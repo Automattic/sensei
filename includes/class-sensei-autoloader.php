@@ -302,6 +302,8 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Email_Seeder::class    => 'internal/emails/class-email-seeder.php',
 			\Sensei\Internal\Emails\Recreate_Emails_Tool::class => 'internal/emails/class-recreate-emails-tool.php',
 			\Sensei\Internal\Emails\Email_Repository::class => 'internal/emails/class-email-repository.php',
+			\Sensei\Internal\Emails\Email_Page_Template_Repository::class => 'internal/emails/class-email-page-template-repository.php',
+			\Sensei\Internal\Emails\Email_Page_Template::class => 'internal/emails/class-email-page-template.php',
 			\Sensei\Internal\Emails\Email_Patterns::class  => 'internal/emails/class-email-patterns.php',
 			\Sensei\Internal\Emails\Email_Preview::class   => 'internal/emails/class-email-preview.php',
 			\Sensei\Internal\Emails\Generators\Course_Created::class => 'internal/emails/generators/class-course-created.php',
@@ -312,10 +314,18 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Emails\Generators\Student_Completes_Lesson::class => 'internal/emails/generators/class-student-completes-lesson.php',
 			\Sensei\Internal\Emails\Generators\Student_Submits_Quiz::class => 'internal/emails/generators/class-student-submits-quiz.php',
 			\Sensei\Internal\Emails\Generators\Course_Completed::class => 'internal/emails/generators/class-course-completed.php',
+			\Sensei\Internal\Emails\Generators\Course_Welcome::class => 'internal/emails/generators/class-course-welcome.php',
 			\Sensei\Internal\Emails\Generators\New_Course_Assigned::class => 'internal/emails/generators/class-new-course-assigned.php',
 			\Sensei\Internal\Emails\Generators\Teacher_Message_Reply::class => 'internal/emails/generators/class-teacher-message-reply.php',
 			\Sensei\Internal\Emails\Generators\Student_Message_Reply::class => 'internal/emails/generators/class-student-message-reply.php',
 			\Sensei\Internal\Emails\Generators\Student_Sends_Message::class => 'internal/emails/generators/class-student-sends-message.php',
+			/**
+			 * MailPoet
+			 */
+			\Sensei\Emails\MailPoet\Main::class            => 'mailpoet/class-main.php',
+			\Sensei\Emails\MailPoet\Sync_Job::class        => 'mailpoet/class-sync-job.php',
+			\Sensei\Emails\MailPoet\Repository::class      => 'mailpoet/class-repository.php',
+
 		);
 	}
 

@@ -11,50 +11,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<!-- wp:post-title {"style":{"typography":{"fontStyle":"normal","fontWeight":"700","fontSize":"40px"},"color":{"text":"#020202"},"spacing":{"margin":{"bottom":"48px"}}}} /-->
+<!-- wp:group {"style":{"spacing":{"padding":{"top":"40px","right":"56px","left":"56px","bottom":"48px"}},"color":{"background":"#ffffff"}},"className":"email-notification__content"} -->
+<div class="wp-block-group email-notification__content has-background" style="background-color:#ffffff;padding-top:40px;padding-right:56px;padding-bottom:48px;padding-left:56px"><!-- wp:post-title {"style":{"typography":{"textTransform":"capitalize","fontStyle":"normal","fontWeight":"700","fontSize":"40px","lineHeight":"1"},"color":{"text":"#101517"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"},"margin":{"top":"0px","right":"0px","bottom":"48px","left":"0px"}}},"className":"email-notification__title"} /-->
 
-<!-- wp:group {"style":{"color":{"background":"#f6f7f7"},"spacing":{"padding":{"top":"32px","right":"32px","bottom":"32px","left":"32px"}}}} -->
-<div class="wp-block-group has-background" style="background-color:#f6f7f7;padding-top:32px;padding-right:32px;padding-bottom:32px;padding-left:32px"><!-- wp:paragraph {"style":{"typography":{"fontSize":"32px"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"},"margin":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}},"color":{"text":"#010101"}}} -->
-	<p class="has-text-color" style="color:#010101;font-size:32px;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px"><strong>[grade:validation]</strong></p>
-	<!-- /wp:paragraph -->
-
-	<!-- wp:group -->
-	<div class="wp-block-group"><!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#020202"}}} -->
-		<p class="has-text-color" style="color:#020202;font-size:16px;margin-top:24px;margin-bottom:0px"><strong>Course Name</strong></p>
+	<!-- wp:group {"style":{"color":{"background":"#f6f7f7"},"spacing":{"padding":{"top":"32px","right":"32px","bottom":"40px","left":"32px"},"margin":{"top":"0px","bottom":"0px"},"blockGap":"0px"}}} -->
+	<div class="wp-block-group has-background" style="background-color:#f6f7f7;margin-top:0px;margin-bottom:0px;padding-top:32px;padding-right:32px;padding-bottom:40px;padding-left:32px"><!-- wp:paragraph {"style":{"typography":{"fontSize":"32px","lineHeight":1},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"},"margin":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}},"color":{"text":"#101517"}}} -->
+		<p class="has-text-color" style="color:#101517;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;font-size:32px"><strong>[grade:validation]</strong></p>
 		<!-- /wp:paragraph -->
 
-		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px","lineHeight":"1"},"color":{"text":"#020202"}}} -->
-		<p class="has-text-color" style="color:#020202;font-size:16px;line-height:1">[course:name]</p>
-		<!-- /wp:paragraph --></div>
-	<!-- /wp:group -->
-
-	<!-- wp:group {"style":{"spacing":{"padding":{"top":"5px","right":"0px","bottom":"0px","left":"0px"},"blockGap":"10px"},"border":{"width":"0px","style":"none"}}} -->
-	<div class="wp-block-group" style="border-style:none;border-width:0px;padding-top:5px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#020202"}}} -->
-		<p class="has-text-color" style="color:#020202;font-size:16px;margin-top:24px;margin-bottom:0px"><strong>Lesson Name</strong></p>
+		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#101517"}}} -->
+		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong><?php echo esc_html__( 'Course Name', 'sensei-lms' ); ?></strong></p>
 		<!-- /wp:paragraph -->
 
-		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px","lineHeight":"1"},"color":{"text":"#020202"}}} -->
-		<p class="has-text-color" style="color:#020202;font-size:16px;line-height:1">[lesson:name]</p>
-		<!-- /wp:paragraph --></div>
-	<!-- /wp:group -->
-
-	<!-- wp:group {"style":{"spacing":{"padding":{"top":"5px","right":"0px","bottom":"0px","left":"0px"},"blockGap":"10px"},"border":{"width":"0px","style":"none"}}} -->
-	<div class="wp-block-group" style="border-style:none;border-width:0px;padding-top:5px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#020202"}}} -->
-		<p class="has-text-color" style="color:#020202;font-size:16px;margin-top:24px;margin-bottom:0px"><strong>Your Grade</strong></p>
+		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"color":{"text":"#101517"},"spacing":{"margin":{"top":"0","bottom":"0"}}}} -->
+		<p class="has-text-color" style="color:#101517;font-size:16px;margin-top:0;margin-bottom:0">[course:name]</p>
 		<!-- /wp:paragraph -->
 
-		<!-- wp:paragraph {"style":{"typography":{"fontSize":"24px","lineHeight":"1"},"spacing":{"margin":{"bottom":"40px"}},"color":{"text":"#020202"}}} -->
-		<p class="has-text-color" style="color:#020202;font-size:24px;line-height:1;margin-bottom:40px"><strong>[grade:percentage]</strong></p>
-		<!-- /wp:paragraph --></div>
-	<!-- /wp:group -->
+		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#101517"}}} -->
+		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong><?php echo esc_html__( 'Lesson Name', 'sensei-lms' ); ?></strong></p>
+		<!-- /wp:paragraph -->
 
-	<!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px"}}}} -->
-	<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"spacing":{"padding":{"top":"16px","bottom":"16px","left":"20px","right":"20px"}},"color":{"background":"#020202","text":"#fefefe"},"border":{"radius":"4px"}}} -->
-		<div class="wp-block-button"><a class="wp-block-button__link has-text-color has-background" href="[quiz:url]" style="border-radius:4px;background-color:#020202;color:#fefefe;padding-top:16px;padding-right:20px;padding-bottom:16px;padding-left:20px">Review Quiz</a></div>
-		<!-- /wp:button --></div>
-	<!-- /wp:buttons --></div>
+		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"color":{"text":"#101517"},"spacing":{"margin":{"top":"0","bottom":"0"}}}} -->
+		<p class="has-text-color" style="color:#101517;font-size:16px;margin-top:0;margin-bottom:0">[lesson:name]</p>
+		<!-- /wp:paragraph -->
+
+		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#101517"}}} -->
+		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong><?php echo esc_html__( 'Your Grade', 'sensei-lms' ); ?></strong></p>
+			<!-- /wp:paragraph -->
+
+			<!-- wp:paragraph {"style":{"typography":{"fontSize":"24px","lineHeight":"1"},"spacing":{"margin":{"top":"0px","bottom":"40px"}},"color":{"text":"#101517"}}} -->
+			<p class="has-text-color" style="color:#101517;font-size:24px;line-height:1;margin-top:0px;margin-bottom:40px"><strong>[grade:percentage]</strong></p>
+			<!-- /wp:paragraph -->
+
+		<!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px"}}}} -->
+		<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"color":{"text":"#fefefe","background":"#101517"},"typography":{"fontSize":"16px"}},"className":"has-custom-font-size"} -->
+			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-text-color has-background" href="[quiz:url]" style="color:#fefefe;background-color:#101517"><?php echo esc_html__( 'Review Quiz', 'sensei-lms' ); ?></a></div>
+			<!-- /wp:button -->
+		</div>
+		<!-- /wp:buttons -->
+	</div>
+	<!-- /wp:group -->
+</div>
 <!-- /wp:group -->
-
-<!-- wp:paragraph -->
-<p></p>
-<!-- /wp:paragraph -->

@@ -476,11 +476,21 @@ class Sensei_Admin_Notices {
 	 * @return bool
 	 */
 	private function condition_check_screen( array $allowed_screens, $screen_id = null ) : bool {
-		$allowed_screen_ids = array_merge( self::SENSEI_SCREEN_IDS, self::OTHER_ALLOWED_SCREEN_IDS );
+		/**
+		 * Filter the array of screen IDs that are part of Sensei, and where we should show Sensei notices on.
+		 *
+		 * @since 4.12.0
+		 * @hook sensei_notices_screen_ids
+		 *
+		 * @param {array} Array of Screen IDs that are part of Sensei.
+		 * @return {array} Updated array of screen IDs that are part of Sensei.
+		 */
+		$sensei_screen_ids  = apply_filters( 'sensei_notices_screen_ids', self::SENSEI_SCREEN_IDS );
+		$allowed_screen_ids = array_merge( $sensei_screen_ids, self::OTHER_ALLOWED_SCREEN_IDS );
 		$condition_pass     = true;
 
 		if ( in_array( 'sensei*', $allowed_screens, true ) ) {
-			$allowed_screens = array_merge( $allowed_screens, self::SENSEI_SCREEN_IDS );
+			$allowed_screens = array_merge( $allowed_screens, $sensei_screen_ids );
 		}
 
 		$screens   = array_intersect( $allowed_screen_ids, $allowed_screens );

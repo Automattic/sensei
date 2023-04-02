@@ -2,10 +2,10 @@
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
 Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, imranh920, jakeom, luchad0res, merkushin, m1r0, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 5.9
-Tested up to: 6.1
+Requires at least: 6.0
+Tested up to: 6.2
 Requires PHP: 7.2
-Stable tag: 4.11.2
+Stable tag: 4.12.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,22 +116,36 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
-### 4.12.0 - 2023-03-07
+### 4.12.0 - 2023-03-29
+
 #### Added
-- Register setup wizard option in settings endpoint.
-- Add template name as CSS class to body element in Learning Mode
-- Prepend sensei in CSS collapsed class
-- Add support for customizing the tabs on the wp-admin Courses page
+- Default Email templates
+- Bulk actions to enable and disable Emails
+- Email to be sent to teacher when a reply is received to a private message
+- Email Settings screen inside Email Customization
+- Support for custom tabs on the Course page
+- Disable pro Emails by default and allow enabling from pro
+- Email sent to student on course completion
+- Email sent to student upon grading of quiz
+- Email to be sent to student when a lesson becomes available
+- Email to be sent to teacher when a student sends a new message
+- Email to notify student before course expires
+- Pattern as Email template and student course complete mail
+- Reply To setting for Email
+- Send Email to student when the teacher replies to a private message
+- Send Email to teacher when a student submits a quiz
+- Send Email to teacher when new course is assigned
+- Sending Email to teacher on student starting a course using GB Email template
+- Trash Emails on plugin uninstall
+
+#### Changed
+- Open Install MailPoet page in same tab
+- Update language used in email functionality
 
 #### Fixed
-- Run activation hooks when plugin is activated in the background.
-- Fix global heading colors not working in Learning Mode
-- Fix deprecation warnings due to missmatching return type in PHP 8.1.
-- Fix progress bar and modules in Learning Mode not adhering to global colors
-- Fix students context menu
-- Disable Divi Theme Builder when Learning Mode enabled.
-- Fix error in import job
-- Auto select specific template for pattern at course creation if specified
+- Fix student "Message Reply Received" email not sending from lesson or quiz page
+- Logged out users are redirected to login page if tries to access course completion page
+- Use dynamic pricing for Sensei Pro upsells
 
 ### 4.11.1 - 2023-02-03
 

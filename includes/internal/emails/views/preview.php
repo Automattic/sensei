@@ -3,7 +3,7 @@
  * The template used for the email preview.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.12.0
  *
  * @var string $subject The email subject.
  * @var string $avatar The avatar image.
@@ -50,7 +50,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			}
 
 			.container {
-				max-width: 752px;
+				max-width: 800px;
 				margin: 0 auto;
 			}
 
@@ -72,6 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			.content {
 				margin: 0 -20px;
+				background: #f3f3f3;
 			}
 
 			.content iframe {

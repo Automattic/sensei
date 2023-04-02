@@ -209,6 +209,7 @@ $page-background: #b7c9be;
 		text-align: left;
 		margin: 0 0 32px;
 		animation: 0.5s slideDown;
+		box-sizing: border-box;
 
 		.components-notice__actions {
 			margin-top: 5px;

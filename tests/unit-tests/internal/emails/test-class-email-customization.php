@@ -38,7 +38,7 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 		$this->assertInstanceOf( Email_Customization::class, $result );
 	}
 
-	public function testInstace_WhenInitiated_AddsHookForRemovingLegacyEmail() {
+	public function testInstance_WhenInitiated_AddsHookForRemovingLegacyEmail() {
 		/* Arrange. */
 		$settings                   = $this->createMock( Sensei_Settings::class );
 		$assets                     = $this->createMock( Sensei_Assets::class );
@@ -76,6 +76,21 @@ class Email_Customization_Test extends \WP_UnitTestCase {
 		$priority_after = has_action( $action_name, [ $hook_instance, $function_name ] );
 
 		$this->assertNotEquals( $priority_before, $priority_after );
+	}
+
+	public function testDisableLegacyHook_WhenCalled_CallsTheDisableLegacyActionHook() {
+		/* Arrange. */
+		$settings                   = $this->createMock( Sensei_Settings::class );
+		$assets                     = $this->createMock( Sensei_Assets::class );
+		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
+		$instance                   = Email_Customization::instance( $settings, $assets, $lesson_progress_repository );
+		$count_before               = did_action( 'sensei_disable_legacy_emails' );
+
+		/* Act. */
+		$instance->disable_legacy_emails();
+
+		/* Assert. */
+		$this->assertEquals( $count_before + 1, did_action( 'sensei_disable_legacy_emails' ) );
 	}
 
 	public function legacyHooksDataProvider() {

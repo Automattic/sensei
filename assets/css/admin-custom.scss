@@ -347,6 +347,19 @@ a.sensei-custom-navigation__info {
 	margin-left: 0;
 }
 
+.sensei-custom-navigation__badge {
+	position: absolute;
+	display: inline-block;
+	margin-left: 5px;
+	padding: 0 5px;
+	font-size: 11px;
+	font-weight: 400;
+	color: #26212e;
+	white-space: nowrap;
+	border-radius: 10px;
+	background-color: #91e7c5;
+}
+
 .sensei-students__enrolled-course {
 	display: block;
 }

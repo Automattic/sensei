@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Email_List_Table extends Sensei_List_Table {
 	/**
@@ -63,7 +63,7 @@ class Email_List_Table extends Sensei_List_Table {
 		/**
 		 * Filter the columns that are displayed on the email list.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.12.0
 		 * @hook sensei_email_list_columns
 		 *
 		 * @param {array}  $columns    The table columns.
@@ -117,6 +117,8 @@ class Email_List_Table extends Sensei_List_Table {
 		$title   = _draft_or_post_title( $post );
 		$actions = $this->get_row_actions( $post );
 
+		$is_available = $this->is_email_available( $post );
+
 		$checkbox = sprintf(
 			// translators: %1s: Title of the Email.
 			'<label class="screen-reader-text">' . __( 'Select %1s', 'sensei-lms' ) . '</label>' .
@@ -125,12 +127,18 @@ class Email_List_Table extends Sensei_List_Table {
 			$post->ID
 		);
 
-		$description = sprintf(
-			'<strong><a href="%1$s" class="row-title">%2$s</a></strong>%3$s',
-			esc_url( get_edit_post_link( $post ) ),
-			get_post_meta( $post->ID, '_sensei_email_description', true ),
-			$this->row_actions( $actions )
-		);
+		$description = $is_available ?
+			sprintf(
+				'<strong><a href="%1$s" class="row-title">%2$s</a></strong>%3$s',
+				esc_url( get_edit_post_link( $post ) ),
+				get_post_meta( $post->ID, '_sensei_email_description', true ),
+				$this->row_actions( $actions )
+			) : sprintf(
+				'<strong class="sensei-email-unavailable">%1$s</strong><span class="awaiting-mod sensei-upsell-pro-badge">%2$s</span>%3$s',
+				get_post_meta( $post->ID, '_sensei_email_description', true ),
+				__( 'Pro', 'sensei-lms' ),
+				$this->row_actions( $actions )
+			);
 
 		$subject = esc_html( $title );
 
@@ -150,7 +158,7 @@ class Email_List_Table extends Sensei_List_Table {
 		/**
 		 * Filter the row data displayed on the email list.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.12.0
 		 * @hook sensei_email_list_row_data
 		 *
 		 * @param {array}  $row_data The row data.
@@ -171,8 +179,9 @@ class Email_List_Table extends Sensei_List_Table {
 	 */
 	protected function get_row_class( $post ): string {
 		$is_published = 'publish' === get_post_status( $post );
+		$is_available = $this->is_email_available( $post );
 
-		return $is_published
+		return $is_published && $is_available
 			? 'sensei-wp-list-table-row--enabled'
 			: 'sensei-wp-list-table-row--disabled';
 	}
@@ -187,6 +196,7 @@ class Email_List_Table extends Sensei_List_Table {
 	private function get_row_actions( $post ): array {
 		$title        = _draft_or_post_title( $post );
 		$is_published = 'publish' === get_post_status( $post );
+		$is_available = $this->is_email_available( $post );
 		$actions      = [];
 
 		$actions['edit'] = sprintf(
@@ -223,10 +233,19 @@ class Email_List_Table extends Sensei_List_Table {
 			__( 'Preview', 'sensei-lms' )
 		);
 
+		if ( ! $is_available ) {
+			$actions = [
+				'upgrade-to-pro' => sprintf(
+					'<a href="%1$s" aria-label="%2$s">%2$s</a>',
+					esc_url( 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=email_customization_pro' ),
+					__( 'Upgrade to Sensei Pro', 'sensei-lms' )
+				),
+			];
+		}
 		/**
 		 * Filter the row actions displayed on the email list.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.12.0
 		 * @hook sensei_email_list_row_actions
 		 *
 		 * @param {array}  $actions The row actions.
@@ -241,7 +260,7 @@ class Email_List_Table extends Sensei_List_Table {
 	/**
 	 * Display table content wrapped inside a form
 	 *
-	 * @since $$next-version$$
+	 * @since 4.12.0
 	 *
 	 * @return void
 	 */
@@ -263,5 +282,30 @@ class Email_List_Table extends Sensei_List_Table {
 			'bulk-disable-email' => __( 'Disable', 'sensei-lms' ),
 			'bulk-enable-email'  => __( 'Enable', 'sensei-lms' ),
 		];
+	}
+
+	/**
+	 * Check if the email is available.
+	 *
+	 * @param \WP_Post $post The email post.
+	 *
+	 * @return boolean True if the email is available, false otherwise.
+	 */
+	private function is_email_available( $post ) {
+		$available = ! get_post_meta( $post->ID, '_sensei_email_is_pro', true );
+
+		/**
+		 * Filter if the email is available.
+		 *
+		 * @since 4.12.0
+		 * @hook sensei_email_is_available
+		 *
+		 * @param {boolean} $available True if the email is available, false otherwise.
+		 * @param {object}  $post The post.
+		 * @param {object}  $list_table Email_List_Table instance.
+		 *
+		 * @return {boolean}
+		 */
+		return apply_filters( 'sensei_email_is_available', $available, $post, $this );
 	}
 }

@@ -139,4 +139,24 @@ class Email_Blocks_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$this->assertSame( $theme_json, $blocks->set_email_css_units( $theme_json ) );
 	}
+
+	/**
+	 * Ran in separate process to not set WP_ADMIN for all tests.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function testSetEmailCssUnits_WhenCalledWithoutACurrentScreen_DoesNotRaiseWarnings() {
+		/* Arrange. */
+		$blocks     = new Email_Blocks();
+		$theme_json = $this->createMock( 'WP_Theme_JSON_Data' );
+
+		define( 'WP_ADMIN', true );
+
+		/* Assert. */
+		$this->expectNotToPerformAssertions();
+
+		/* Act. */
+		$blocks->set_email_css_units( $theme_json );
+	}
 }

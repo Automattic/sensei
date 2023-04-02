@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class New_Course_Assigned extends Email_Generators_Abstract {
 	/**
@@ -27,10 +27,17 @@ class New_Course_Assigned extends Email_Generators_Abstract {
 	const IDENTIFIER_NAME = 'new_course_assigned';
 
 	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	const USAGE_TRACKING_TYPE = 'teacher-assigned-course';
+
+	/**
 	 * Initialize the email hooks.
 	 *
 	 * @access public
-	 * @since $$next-version$$
+	 * @since 4.12.0
 	 *
 	 * @return void
 	 */
@@ -39,7 +46,7 @@ class New_Course_Assigned extends Email_Generators_Abstract {
 	}
 
 	/**
-	 * Send email to student when a course is completed.
+	 * Send email to teacher when a course is assigned to them.
 	 *
 	 * @param int $teacher_id Teacher ID.
 	 * @param int $course_id  Course ID.
