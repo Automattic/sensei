@@ -46,8 +46,8 @@ class Sensei_Lesson_Actions_Block {
 		$course_id = Sensei()->lesson->get_course_id( $lesson->ID );
 
 		if (
-			Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id )
-			|| ! Sensei_Lesson::should_show_lesson_actions( $lesson->ID )
+			// Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id )
+			! Sensei_Lesson::should_show_lesson_actions( $lesson->ID )
 		) {
 			return '';
 		}

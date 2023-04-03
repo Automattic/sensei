@@ -58,7 +58,7 @@ class Course_Theme_Blocks extends Sensei_Blocks_Initializer {
 		new Blocks\Exit_Course();
 		new Blocks\Course_Progress_Counter();
 		new Blocks\Course_Progress_Bar();
-		new Blocks\Lesson_Actions();
+		// new Blocks\Lesson_Actions();
 		new Blocks\Quiz_Back_To_Lesson();
 		new Blocks\Sidebar_Toggle_Button();
 		new Blocks\Quiz_Actions();

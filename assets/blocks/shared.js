@@ -10,6 +10,13 @@ import { subscribe, select } from '@wordpress/data';
 import registerSenseiBlocks from './register-sensei-blocks';
 import ContactTeacherBlock from './contact-teacher-block';
 import ConditionalContentBlock from './conditional-content-block';
+import {
+	LessonActionsBlock,
+	CompleteLessonBlock,
+	NextLessonBlock,
+	ResetLessonBlock,
+	ViewQuizBlock,
+} from './lesson-actions';
 import { registerCourseListBlock } from './course-list-block';
 
 // Post types where blocks should be loaded. Or null if it should be loaded for any post type.
@@ -18,7 +25,7 @@ const BLOCKS_PER_POST_TYPE = {
 	'sensei-lms/conditional-content': [ 'course', 'lesson' ],
 };
 
-registerSenseiBlocks( [ ContactTeacherBlock, ConditionalContentBlock ] );
+registerSenseiBlocks( [ ContactTeacherBlock, ConditionalContentBlock, LessonActionsBlock, CompleteLessonBlock, NextLessonBlock, ResetLessonBlock, ViewQuizBlock ] );
 
 registerCourseListBlock();
 
