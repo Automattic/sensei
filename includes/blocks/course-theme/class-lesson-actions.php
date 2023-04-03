@@ -79,7 +79,15 @@ class Lesson_Actions {
 		$label = esc_html__( 'Completed', 'sensei-lms' );
 		$icon  = \Sensei()->assets->get_icon( 'checked' );
 
-		return ( '<button disabled="disabled" class="sensei-course-theme-lesson-actions__completed sensei-course-theme__button is-secondary is-completed has-icon">' . $icon . ' <span>' . $label . '</span></button>' );
+		return (
+			'<div className="wp-block-button">' .
+				'<button disabled="disabled" class="wp-block-button__link wp-element-button sensei-course-theme-lesson-actions__completed sensei-course-theme__button is-secondary is-completed has-icon">' . $icon .
+					' <span>' .
+						$label .
+					'</span>' .
+				'</button>' .
+			'</div>'
+		);
 
 	}
 
