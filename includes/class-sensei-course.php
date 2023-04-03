@@ -210,7 +210,7 @@ class Sensei_Course {
 	 */
 	public function add_showcase_courses_upsell() {
 		add_submenu_page(
-			null,
+			'options.php', // Hide in menu.
 			__( 'Showcase Courses', 'sensei-lms' ),
 			__( 'Showcase Courses', 'sensei-lms' ),
 			'edit_courses',
