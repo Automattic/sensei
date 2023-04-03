@@ -234,6 +234,8 @@ class SenseiLMS_Plugin_Updater {
 	 * Add update disclaimer for invalid license.
 	 *
 	 * @since $$next-version$$
+	 *
+	 * @internal
 	 */
 	public function invalid_license_update_disclaimer() {
 		if ( ! class_exists( '\SenseiLMS_Licensing\License_Manager' ) ) {
