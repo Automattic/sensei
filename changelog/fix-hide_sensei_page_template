@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Only show the sensei_email template for the sensei emails.
