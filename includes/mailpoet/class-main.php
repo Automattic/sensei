@@ -21,7 +21,7 @@ if ( ! class_exists( \MailPoet\API\API::class ) ) {
  * Handles the integration with the MailPoet plugin,
  * creates a list for each course and group, adds enrolled students.
  *
- * @since $$next-version$$
+ * @since 4.13.0
  */
 class Main {
 
@@ -56,7 +56,7 @@ class Main {
 	/**
 	 * Constructor
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 * @param object $mailpoet_api MailPoet API handle.
 	 */
 	public function __construct( $mailpoet_api ) {
@@ -67,7 +67,7 @@ class Main {
 			 * Schedule job to synchronise students in courses and groups with MailPoet subscribers list.
 			 *
 			 * @hook  sensei_email_mailpoet_sync_subscribers
-			 * @since $$next-version$$
+			 * @since 4.13.0
 			 */
 			add_action( 'sensei_email_mailpoet_sync_subscribers', array( $this, 'schedule_sync_job' ) );
 			register_deactivation_hook( SENSEI_LMS_PLUGIN_FILE, array( $this, 'deactivate_sync_job' ) );
@@ -104,7 +104,7 @@ class Main {
 	/**
 	 * Determines whether to attach job to cron.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 *
 	 * @access private
 	 * @return void
@@ -118,7 +118,7 @@ class Main {
 	/**
 	 * Attach job to cron.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 *
 	 * @access private
 	 * @return void
@@ -130,7 +130,7 @@ class Main {
 	/**
 	 * Remove MailPoet sync cron job when MailPoet plugin is uninstalled.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 *
 	 * @return void
 	 */
@@ -142,7 +142,7 @@ class Main {
 	/**
 	 * Get all groups and courses in Sensei.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 *
 	 * @return array
 	 */
@@ -157,7 +157,7 @@ class Main {
 	/**
 	 * Get all lists in MailPoet and use list name as index for easy local searching.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 *
 	 * @return array
 	 */
@@ -170,7 +170,7 @@ class Main {
 	/**
 	 * Add students as subscribers to lists on MailPoet for courses/groups.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 * @param array      $students A list of students belonging to this group/course.
 	 * @param string|int $list_id ID of the list on MailPoet.
 	 *
@@ -204,7 +204,7 @@ class Main {
 	/**
 	 * Remove students as subscribers from lists on MailPoet for courses/groups.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 * @param array      $subscribers A list of students to remove.
 	 * @param string|int $list_id ID of the list on MailPoet.
 	 *
@@ -224,7 +224,7 @@ class Main {
 	/**
 	 * Creates a Sensei LMS MailPoet list with name and description.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 * @param string $list_name The name of the list.
 	 * @param string $list_description The description of the list.
 	 *
@@ -360,7 +360,7 @@ class Main {
 	 * Get subscribers of a MailPoet list.
 	 * Returns null if the list does not exist.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 * @param int $mp_list_id MailPoet list ID.
 	 *
 	 * @return array
@@ -376,7 +376,7 @@ class Main {
 	/**
 	 * Figure out which subscribers to add and remove from lists on MailPoet for courses/groups.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 * @param array      $students A list of students belonging to this group/course list.
 	 * @param array      $subscribers A list of subscribers already on MailPoet.
 	 * @param string|int $list_id ID of the list on MailPoet.

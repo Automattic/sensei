@@ -14,13 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Some Helper methods to fetch Sensei data: courses, groups and students.
  *
- * @since $$next-version$$
+ * @since 4.13.0
  */
 class Repository {
 	/**
 	 * Get all enrolled students in a course or group.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 * @param int    $id The post ID.
 	 * @param string $post_type The post type.
 	 *
@@ -64,7 +64,7 @@ class Repository {
 	/**
 	 * Generates a Sensei LMS prefixed name for a MailPoet list.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 * @param string $name The name of the course or group.
 	 * @param string $post_type The post type: course or group.
 	 *
@@ -79,7 +79,7 @@ class Repository {
 	/**
 	 * Get all groups and courses in Sensei.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 *
 	 * @return array
 	 */
@@ -110,7 +110,7 @@ class Repository {
 	/**
 	 * Convert array of user objects to array of arrays.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.0
 	 * @param array $users Array of user objects.
 	 *
 	 * @return array Array of user arrays.
