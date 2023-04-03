@@ -1,6 +1,6 @@
 *** Changelog ***
 
-## 5.0.0 - 2023-04-03
+## 4.13.0 - 2023-03-30
 ### Added
 - Functionality to create MailPoet lists for all courses and groups, and to subscribe users to those lists.
 
