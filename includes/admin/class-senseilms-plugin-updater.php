@@ -150,7 +150,7 @@ class SenseiLMS_Plugin_Updater {
 	public function maybe_inject_custom_update_to_update_plugins_transient( $transient ) {
 
 		// Skip empty transients or if it was already set by Sensei Pro.
-		if ( empty( $transient ) || isset( $response[ $this->plugin_full_name ] ) ) {
+		if ( empty( $transient ) || isset( $transient->response[ $this->plugin_full_name ] ) ) {
 			return $transient;
 		}
 
