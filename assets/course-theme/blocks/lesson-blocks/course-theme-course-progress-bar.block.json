@@ -3,7 +3,11 @@
   "apiVersion": 2,
   "category": "theme",
   "supports": {
-    "align": true,
-    "color": true
+	"align": true,
+	"color": true,
+	"spacing": {
+	  "margin": true,
+      "padding": true
+    }
   }
 }
