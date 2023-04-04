@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The class file for Sensei_Course_Theme_Template_Selection.
  *
@@ -154,6 +155,30 @@ class Sensei_Course_Theme_Template_Selection {
 			),
 
 		];
+
+		// Register a new learning mode version
+		if (Sensei()->feature_flags->is_enabled('learning_mode_v2')) {
+			$templates += [
+				'default-v2'    => new Sensei_Course_Theme_Template(
+					[
+						'name'        => 'default-v2',
+						'title'       => __('Default V2', 'sensei-lms'),
+						'content'     => [
+							'lesson' => "$base_path/v2/default/lesson.html",
+							'quiz'   => $quiz_path,
+						],
+						// Check if we can use this version
+						'version'     => '1.0.0',
+						'styles'      => [Sensei()->assets->dist_path('course-theme/themes/v2/default-theme.css')],
+						'scripts'     => [],
+						'screenshots' => [
+							'thumbnail' => "$base_url/v2/default/img-thumb.jpg",
+							'full'      => "$base_url/v2/default/img-full.jpg",
+						],
+					]
+				)
+			];
+		}
 
 		/**
 		 * Filters the Learning Mode block templates list. Allows to add additional ones too.

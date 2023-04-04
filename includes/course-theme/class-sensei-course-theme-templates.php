@@ -324,11 +324,10 @@ class Sensei_Course_Theme_Templates {
 					$css = '';
 					if ( ! empty( $template['styles'] ) && is_array( $template['styles'] ) ) {
 						foreach ( $template['styles'] as $template_style_url ) {
-							$response = wp_remote_get( $template_style_url );
-							if ( ! is_wp_error( $response ) && ! empty( $response['body'] ) ) {
-								$css .= "\n\n";
-								$css .= $response['body'];
-							}
+							// the WP_REMOTE_GET is not working on my machine, we need to check if it is only local or it is a real bug
+							$response = file_get_contents( $template_style_url );
+							$css .= "\n\n";
+							$css .= $response;
 						}
 					}
 

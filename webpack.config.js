@@ -122,6 +122,7 @@ const files = [
 	'course-theme/course-theme.editor.js',
 	'course-theme/blocks/index.js',
 	'course-theme/themes/default-theme.scss',
+	'course-theme/themes/v2/default-theme.scss',
 	'course-theme/learning-mode-templates/index.js',
 	'course-theme/learning-mode-templates/styles.scss',
 ];

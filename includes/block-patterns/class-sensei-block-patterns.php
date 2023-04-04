@@ -118,6 +118,14 @@ class Sensei_Block_Patterns {
 				require __DIR__ . "/{$post_type}/{$block_pattern}.php"
 			);
 		}
+
+		if ( Sensei()->feature_flags->is_enabled( 'learning_mode_v2' ) ) {
+			register_block_pattern(
+				'sensei-lms/learning-mode-header',
+				require __DIR__ . '/learning-mode/header.php'
+			);
+		}
+
 	}
 
 	/**
