@@ -82,7 +82,7 @@
 	&.wp-block-button:not(.is-style-outline, .is-style-link) {
 		&:not(:hover) {
 			background-color: var(--sensei-primary-color) !important;
-			color: var(--sensei-primary-contrast-color);
+			color: var(--sensei-primary-contrast-color) !important;
 		}
 
 		&:hover {
