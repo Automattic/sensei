@@ -190,13 +190,16 @@ class SenseiLMS_Plugin_Updater {
 		$remote    = get_transient( $cache_key );
 
 		if ( false === $remote ) {
+			// @phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			$api_url = apply_filters( 'senseilms_licensing_api', 'https://senseilms.com/wp-json' );
+
 			$remote = wp_remote_get(
 				add_query_arg(
 					[
 						'plugin_slug' => $this->plugin_slug,
 						'ts'          => time(), // Adding some timestamp to workaround cache issues.
 					],
-					'https://senseilms.com/wp-json/plugin-updater/v1/info'
+					$api_url . '/plugin-updater/v1/info'
 				),
 				[
 					'timeout' => 10,
