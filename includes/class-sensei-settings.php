@@ -45,7 +45,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 2 );
 
 		// Make sure we don't trigger queries if legacy options aren't loaded in pre-loaded options.
-		add_filter( 'alloptions', [ $this, 'no_special_query_for_legacy_options' ] );
+		add_filter( 'pre_cache_alloptions', [ $this, 'no_special_query_for_legacy_options' ] );
 
 		// Mark settings section as visited on ajax action received.
 		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'mark_section_as_visited' ] );
