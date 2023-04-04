@@ -317,7 +317,7 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		$content = $email_settings_tab->get_content( 'email-notification-settings' );
 
 		/* Assert. */
-		self::assertStringContainsString( 'MailPoet Settings', $content );
+		self::assertStringContainsString( 'MailPoet Lists', $content );
 	}
 
 	public function testTabContent_WhenInSettingsSubtabAndMailPoetIsNotActive_HasInstallMailPoetLink() {
