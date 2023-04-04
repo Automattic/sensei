@@ -21,7 +21,8 @@
 	"prefer-stable": true,
 	"autoload": {
 		"classmap": [
-			"third-party/"
+			"third-party/",
+			"includes/"
 		]
 	},
 	"autoload-dev": {
