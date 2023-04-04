@@ -1,0 +1,5 @@
+Significance: patch
+Type: fixed
+
+Fixing performance issue when filtering on alloptions
+
