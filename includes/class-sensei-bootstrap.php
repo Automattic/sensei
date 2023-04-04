@@ -51,19 +51,10 @@ class Sensei_Bootstrap {
 		if ( $this->is_bootstrapped ) {
 			return $this;
 		}
-		$this->init_autoloader();
 		$this->init_must_have_includes();
 
 		$this->is_bootstrapped = true;
 		return $this;
-	}
-
-	/**
-	 * Initialize Sensei class autoloader.
-	 */
-	private function init_autoloader() {
-		require_once dirname( __FILE__ ) . '/class-sensei-autoloader.php';
-		$this->autoloader = new Sensei_Autoloader();
 	}
 
 	/**
