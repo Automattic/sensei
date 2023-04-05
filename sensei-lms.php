@@ -47,7 +47,7 @@ if ( ! defined( 'SENSEI_LMS_PLUGIN_PATH' ) ) {
 	define( 'SENSEI_LMS_PLUGIN_PATH', plugin_dir_path( SENSEI_LMS_PLUGIN_FILE ) );
 }
 
-if ( class_exists( 'Sensei_Main' ) && ! defined( 'PHPUNIT_SENSEI_TESTSUITE' ) ) {
+if ( class_exists( 'Sensei_Main', false ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
 		/**
 		 * Checks if Sensei is being activated.
