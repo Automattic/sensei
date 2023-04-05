@@ -310,7 +310,7 @@ class Sensei_Main {
 		$this->version               = isset( $args['version'] ) ? $args['version'] : null;
 
 		// Only set the install version if it is included in alloptions. This prevents a query on every page load.
-		$alloptions = wp_load_alloptions();
+		$alloptions            = wp_load_alloptions();
 		$this->install_version = $alloptions['sensei-install-version'] ?? null;
 
 		// Initialize the core Sensei functionality
