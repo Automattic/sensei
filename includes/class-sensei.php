@@ -308,7 +308,10 @@ class Sensei_Main {
 		$this->plugin_path           = trailingslashit( dirname( $this->main_plugin_file_name ) );
 		$this->template_url          = apply_filters( 'sensei_template_url', 'sensei/' );
 		$this->version               = isset( $args['version'] ) ? $args['version'] : null;
-		$this->install_version       = get_option( 'sensei-install-version' );
+
+		// Only set the install version if it is included in alloptions. This prevents a query on every page load.
+		$alloptions = wp_load_alloptions();
+		$this->install_version = $alloptions['sensei-install-version'] ?? null;
 
 		// Initialize the core Sensei functionality
 		$this->init();
