@@ -2,14 +2,4 @@
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-
-	a {
-		transition: none;
-		font-size: inherit;
-		color: inherit;
-
-		&:hover {
-			transition: inherit;
-		}
-	}
 }
