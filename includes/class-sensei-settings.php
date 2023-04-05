@@ -300,7 +300,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'19' => '19',
 			'20' => '20',
 		);
-
 		$complete_settings    = array(
 			'passed'   => __( 'Once all the course lessons have been completed', 'sensei-lms' ),
 			'complete' => __( 'At any time (by clicking the \'Complete Course\' button)', 'sensei-lms' ),
