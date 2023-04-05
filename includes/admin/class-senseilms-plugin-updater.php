@@ -83,6 +83,7 @@ class SenseiLMS_Plugin_Updater {
 
 		add_filter( 'plugins_api', [ $instance, 'get_plugin_info' ], 15, 3 );
 		add_filter( 'site_transient_update_plugins', [ $instance, 'maybe_inject_custom_update_to_update_plugins_transient' ], 15 );
+		add_action( 'in_plugin_update_message-' . $instance->plugin_full_name, [ $instance, 'invalid_license_update_disclaimer' ] );
 	}
 
 	/**
@@ -230,5 +231,31 @@ class SenseiLMS_Plugin_Updater {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Add update disclaimer for invalid license.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 */
+	public function invalid_license_update_disclaimer() {
+		if ( ! class_exists( '\SenseiLMS_Licensing\License_Manager' ) ) {
+			return;
+		}
+
+		// Checks if Sensei Pro method exists. So it's already being done there.
+		if ( class_exists( '\SenseiLMS_Licensing\SenseiLMS_Plugin_Updater' ) && method_exists( '\SenseiLMS_Licensing\SenseiLMS_Plugin_Updater', 'invalid_license_update_disclaimer' ) ) {
+			return;
+		}
+
+		$license_status = \SenseiLMS_Licensing\License_Manager::get_license_status( $this->plugin_slug );
+		if ( ! $license_status['is_valid'] ) {
+			printf(
+				'<br /><strong>%s</strong>',
+				esc_html__( 'Update will be available after you activate your license.', 'sensei-lms' )
+			);
+		}
 	}
 }
