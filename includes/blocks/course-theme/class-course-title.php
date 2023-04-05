@@ -60,7 +60,7 @@ class Course_Title {
 			return '';
 		}
 
-		$tag_name   = 'div';
+		$tag_name   = 'h2';
 		$class_name = 'wp-block-sensei-lms-course-title';
 
 		// Translators: placeholder is the course title.
