@@ -353,6 +353,7 @@ class Sensei_Main {
 		$this->initialize_cache_groups();
 		$this->initialize_global_objects();
 		$this->initialize_cli();
+		$this->initialize_3rd_party_compatibility();
 	}
 
 	/**
@@ -605,6 +606,15 @@ class Sensei_Main {
 
 			new Sensei_CLI();
 		}
+	}
+
+	/**
+	 * Load the 3rd party compatibility tweaks.
+	 *
+	 * @since $$next-version$$
+	 */
+	private function initialize_3rd_party_compatibility(): void {
+		require_once $this->resolve_path( 'includes/3rd-party/3rd-party.php' );
 	}
 
 	/**
