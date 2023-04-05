@@ -171,10 +171,11 @@ class Sensei_Course_Theme_Editor {
 		}
 
 		$cache_hash = md5( $theme->theme_root . '/' . $theme->stylesheet );
-		wp_cache_delete( 'theme-' . $cache_hash, 'themes' );
+		$cache_key  = "theme-{$cache_hash}";
 
+		wp_cache_delete( $cache_key, 'themes' );
 		wp_cache_add(
-			'theme-' . $cache_hash,
+			$cache_key,
 			array(
 				'block_theme' => true,
 				'headers'     => $theme->headers,
