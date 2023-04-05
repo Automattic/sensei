@@ -23,7 +23,11 @@
 		"classmap": [
 			"third-party/",
 			"includes/"
-		]
+		],
+        "files": [
+            "includes/sensei-functions.php",
+            "includes/3rd-party/3rd-party.php"
+        ]
 	},
 	"autoload-dev": {
 		"classmap": [
