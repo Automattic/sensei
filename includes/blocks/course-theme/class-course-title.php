@@ -60,21 +60,12 @@ class Course_Title {
 			return '';
 		}
 
-		$tag_name   = 'h2';
-		$class_name = 'wp-block-sensei-lms-course-title';
-
-		// Translators: placeholder is the course title.
-		$label = sprintf( __( '%s: back to course main page', 'sensei-lms' ), $title );
-
-		$title_link = sprintf( '<a href="%1$s" class="%2$s__link" aria-label="%4$s">%3$s</a>', get_the_permalink( $course_id ), $class_name, $title, esc_attr( $label ) );
-
-		$wrapper_attributes = get_block_wrapper_attributes( [ 'class' => $class_name ] );
+		$wrapper_attributes = get_block_wrapper_attributes();
 
 		return sprintf(
-			'<%1$s %2$s>%3$s</%1$s>',
-			$tag_name,
+			'<h2 %1s>%2$s</h2>',
 			$wrapper_attributes,
-			$title_link
+			$title
 		);
 	}
 }
