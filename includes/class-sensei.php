@@ -577,7 +577,7 @@ class Sensei_Main {
 		 * Integrate MailPoet by adding lists for courses and groups.
 		 *
 		 * @hook  sensei_email_mailpoet_feature
-		 * @since $$next-version$$
+		 * @since 4.13.0
 		 *
 		 * @param {bool} $enable Enable feature. Default true.
 		 *

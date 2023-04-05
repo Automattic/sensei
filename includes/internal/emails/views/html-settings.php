@@ -58,8 +58,8 @@ $options           = isset( $options ) ? $options : [];
 				</p>
 				<div class="sensei-link-navigation">
 					<?php if ( is_plugin_active( 'mailpoet/mailpoet.php' ) ) : ?>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=mailpoet-settings' ) ); ?>" target="_blank">
-							<?php esc_html_e( 'MailPoet Settings', 'sensei-lms' ); ?>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=mailpoet-segments#/lists' ) ); ?>" target="_blank">
+							<?php esc_html_e( 'MailPoet Lists', 'sensei-lms' ); ?>
 						</a>
 					<?php else : ?>
 						<a href="<?php echo esc_url( admin_url( 'plugin-install.php?s=mailpoet&tab=search&type=term' ) ); ?>">
