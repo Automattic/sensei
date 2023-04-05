@@ -32,7 +32,7 @@ class Sensei_Bootstrap {
 	 * @return $this
 	 */
 	public function bootstrap() {
-		_deprecated_function( __METHOD__, '$$next-version' );
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 		return $this;
 	}
 
@@ -44,7 +44,7 @@ class Sensei_Bootstrap {
 	 * @return Sensei_Bootstrap
 	 */
 	public static function get_instance() {
-		_deprecated_function( __METHOD__, '$$next-version' );
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
