@@ -13,6 +13,7 @@
         <server name="SERVER_NAME" value="http://foo.bar"/>
         <server name="SERVER_PORT" value="80"/>
         <server name="REMOTE_ADDR" value="127.1.2.3"/>
+        <const name="PHPUNIT_SENSEI_TESTSUITE" value="true"/>
     </php>
     <testsuites>
         <testsuite name="Sensei Test Suite">
