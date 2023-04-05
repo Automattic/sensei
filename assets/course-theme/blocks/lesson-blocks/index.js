@@ -123,11 +123,11 @@ export default [
 		edit() {
 			return (
 				<div className="sensei-course-theme-lesson-actions">
+					<div className="sensei-course-theme__button is-secondary">
+						{ __( 'Complete Lesson', 'sensei-lms' ) }
+					</div>
 					<div className="sensei-course-theme__button is-primary">
 						{ __( 'Take Quiz', 'sensei-lms' ) }
-					</div>
-					<div className="sensei-course-theme__button is-secondary">
-						{ __( 'Complete Course', 'sensei-lms' ) }
 					</div>
 				</div>
 			);
