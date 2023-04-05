@@ -153,25 +153,38 @@ class Sensei_Course_Theme_Editor {
 		add_action( 'admin_init', [ $this, 'add_editor_styles' ] );
 
 		if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
-			$theme = wp_get_theme();
-			if ( $theme ) {
-				$cache_hash = md5( $theme->theme_root . '/' . $theme->stylesheet );
-				wp_cache_delete( 'theme-' . $cache_hash, 'themes' );
-				wp_cache_add(
-					'theme-' . $cache_hash,
-					array(
-						'block_theme' => true,
-						'headers'     => $theme->headers,
-						'errors'      => $theme->errors,
-						'stylesheet'  => $theme->stylesheet,
-						'template'    => $theme->template,
-					),
-					'themes',
-					0
-				);
-			}
+			$this->substitute_theme_cache();
 			add_filter( 'theme_file_path', [ $this, 'override_theme_block_template_file' ], 10, 2 );
 		}
+	}
+
+	/**
+	 * Substitute cache to enable site editor for non-block themes.
+	 *
+	 * This is a temporary workaround until the site editor is enabled for non-block themes.
+	 * Or there will be a way to override the value for the theme.
+	 */
+	private function substitute_theme_cache() {
+		$theme = wp_get_theme();
+		if ( ! $theme ) {
+			return;
+		}
+
+		$cache_hash = md5( $theme->theme_root . '/' . $theme->stylesheet );
+		wp_cache_delete( 'theme-' . $cache_hash, 'themes' );
+
+		wp_cache_add(
+			'theme-' . $cache_hash,
+			array(
+				'block_theme' => true,
+				'headers'     => $theme->headers,
+				'errors'      => $theme->errors,
+				'stylesheet'  => $theme->stylesheet,
+				'template'    => $theme->template,
+			),
+			'themes',
+			0
+		);
 	}
 
 	/**
