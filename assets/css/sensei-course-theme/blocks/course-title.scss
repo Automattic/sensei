@@ -1,17 +1,15 @@
-.wp-block-sensei-lms-course-title {
+:root .wp-block-sensei-lms-course-title {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 
-	& > * {
-		font-size: inherit;
-		color: inherit;
-	}
-	& > *:hover {
-		transition: inherit;
-	}
-
 	a {
 		transition: none;
+		font-size: inherit;
+		color: inherit;
+
+		&:hover {
+			transition: inherit;
+		}
 	}
 }
