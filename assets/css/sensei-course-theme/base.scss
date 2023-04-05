@@ -16,6 +16,17 @@ body {
 	--wp--style--block-gap: 0px;
 	box-sizing: border-box;
 
+	a, [class*='sensei-'] a, a[class*='sensei-'] {
+		color: inherit;
+
+		&:hover, &:hover * {
+			color: var(--sensei-primary-color);
+			fill: var(--sensei-primary-color);
+			cursor: pointer;
+			background: none;
+		}
+	}
+
 	button:hover {
 		cursor: pointer;
 	}

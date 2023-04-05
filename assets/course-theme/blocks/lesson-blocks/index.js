@@ -22,13 +22,12 @@ import courseThemeNoticesMeta from './course-theme-notices.block.json';
 import courseThemePostTitleMeta from './course-theme-post-title.block.json';
 import courseThemePrevNextLessonMeta from './course-theme-prev-next-lesson.block.json';
 import learningModeLessonPropertiesMeta from './learning-mode-lesson-properties.block.json';
+import courseTitleMeta from './course-title.block.json';
 import exitCourseMeta from './exit-course.block.json';
 import focusModeToggleMeta from './focus-mode-toggle.block.json';
 import pageActionsMeta from './page-actions.block.json';
 import sideBarToggleButtonMeta from './sidebar-toggle-button.block.json';
 import courseThemeLessonVideoMeta from './course-theme-lesson-video.block.json';
-
-import CourseTitle from './course-title';
 
 const meta = {
 	category: 'theme',
@@ -40,7 +39,23 @@ const meta = {
 };
 
 export default [
-	CourseTitle,
+	{
+		...courseTitleMeta,
+		...meta,
+		title: __( 'Course Title', 'sensei-lms' ),
+		description: __(
+			'Display title of the course the current lesson or quiz belongs to.',
+			'sensei-lms'
+		),
+		edit: function CourseTitleEdit() {
+			const blockProps = useBlockProps();
+			return (
+				<span { ...blockProps }>
+					{ __( 'Course Title', 'sensei-lms' ) }
+				</span>
+			);
+		},
+	},
 	{
 		...courseThemeCourseProgressCounterMeta,
 		...meta,

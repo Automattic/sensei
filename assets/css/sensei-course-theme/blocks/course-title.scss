@@ -3,14 +3,6 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 
-	& > * {
-		font-size: inherit;
-		color: inherit;
-	}
-	& > *:hover {
-		transition: inherit;
-	}
-
 	a {
 		transition: none;
 	}
