@@ -25,8 +25,7 @@
 			"includes/"
 		],
         "files": [
-            "includes/sensei-functions.php",
-            "includes/3rd-party/3rd-party.php"
+            "includes/sensei-functions.php"
         ]
 	},
 	"autoload-dev": {
