@@ -47,7 +47,7 @@ if ( ! defined( 'SENSEI_LMS_PLUGIN_PATH' ) ) {
 	define( 'SENSEI_LMS_PLUGIN_PATH', plugin_dir_path( SENSEI_LMS_PLUGIN_FILE ) );
 }
 
-if ( class_exists( 'Sensei_Main' ) ) {
+if ( class_exists( 'Sensei_Main', false ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
 		/**
 		 * Checks if Sensei is being activated.
@@ -102,10 +102,6 @@ if ( ! Sensei_Dependency_Checker::check_future_php_requirement() ) {
 if ( ! Sensei_Dependency_Checker::check_assets() ) {
 	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_assets_notice' ) );
 }
-
-require_once dirname( __FILE__ ) . '/includes/class-sensei-bootstrap.php';
-
-Sensei_Bootstrap::get_instance()->bootstrap();
 
 if ( ! function_exists( 'Sensei' ) ) {
 	/**
