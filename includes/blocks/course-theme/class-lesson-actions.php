@@ -61,9 +61,11 @@ class Lesson_Actions {
 			<form data-id="complete-lesson-form" class="sensei-course-theme-lesson-actions__complete-lesson-form" method="POST" action="' . $permalink . '">
 				' . $nonce . '
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
-				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme__button sensei-course-theme-lesson-actions__complete ' . $button_class . '" ' . $disabled_attribute . '>
-					' . $text . '
-				</button>
+				<div class="wp-block-button is-style-outline">
+					<button type="submit" data-id="complete-lesson-button" class="wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__complete ' . $button_class . '" ' . $disabled_attribute . '>
+						' . $text . '
+					</button>
+				</div>
 			</form>
 		' );
 	}
@@ -77,7 +79,15 @@ class Lesson_Actions {
 		$label = esc_html__( 'Completed', 'sensei-lms' );
 		$icon  = \Sensei()->assets->get_icon( 'checked' );
 
-		return ( '<button disabled="disabled" class="sensei-course-theme-lesson-actions__completed sensei-course-theme__button is-secondary is-completed has-icon">' . $icon . ' <span>' . $label . '</span></button>' );
+		return (
+			'<div className="wp-block-button">' .
+				'<button disabled="disabled" class="wp-block-button__link wp-element-button sensei-course-theme-lesson-actions__completed sensei-course-theme__button is-secondary is-completed has-icon">' . $icon .
+					' <span>' .
+						$label .
+					'</span>' .
+				'</button>' .
+			'</div>'
+		);
 
 	}
 
@@ -118,9 +128,11 @@ class Lesson_Actions {
 
 		return ( '
 			<form method="POST" action="' . $quiz_permalink . '" class="sensei-course-theme-lesson-actions__take-quiz-form">
-				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme-lesson-actions__take-quiz sensei-course-theme__button is-primary" ' . $disabled . '>
-					' . $text . '
-			</button>
+				<div class="wp-block-button">
+					<button type="submit" data-id="complete-lesson-button" class="wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__take-quiz is-primary" ' . $disabled . '>
+						' . $text . '
+					</button>
+				</div>
 			</form>
 		' );
 	}
