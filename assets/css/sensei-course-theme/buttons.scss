@@ -11,7 +11,11 @@
 	}
 }
 
-.sensei-course-theme__button, .sensei-course-theme .wp-block-button, .sensei-course-theme__button[type=submit], .sensei-course-theme__button[type=button] {
+.editor-styles-wrapper .wp-block-button .wp-block-button__link.sensei-course-theme__button,
+.sensei-course-theme .wp-block-button,
+.sensei-course-theme__button,
+.sensei-course-theme__button[type=submit],
+.sensei-course-theme__button[type=button] {
 	.wp-block-button__link {
 		font-family: inherit;
 		font-weight: inherit;
@@ -78,7 +82,7 @@
 	&.wp-block-button:not(.is-style-outline, .is-style-link) {
 		&:not(:hover) {
 			background-color: var(--sensei-primary-color) !important;
-			color: var(--sensei-primary-contrast-color);
+			color: var(--sensei-primary-contrast-color) !important;
 		}
 
 		&:hover {
@@ -101,7 +105,6 @@
 			}
 		}
 	}
-
 
 	&.is-link {
 		font-weight: 600;
