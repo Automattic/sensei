@@ -48,7 +48,7 @@
 }
 
 // Astra
-.wp-block:not(.has-text-color) {
+.wp-block:not(.has-text-color):not(.wp-block-sensei-lms-course-theme-lesson-module) {
 	color: unset;
 }
 
