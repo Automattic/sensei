@@ -49,7 +49,7 @@ body.sensei-course-theme {
 		}
 	}
 
-	&__header + * {
+	&__header + *:not(style) {
 		margin-top: var(--sensei-lm-header-height) !important;
 		display: flow-root;
 	}
