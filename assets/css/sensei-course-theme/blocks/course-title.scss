@@ -2,14 +2,8 @@
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-
-	a {
-		transition: none;
-		font-size: inherit;
-		color: inherit;
-
-		&:hover {
-			transition: inherit;
-		}
-	}
+	font-size: 18px;
+	text-transform: uppercase;
+	font-weight: 600;
+	line-height: 21px;
 }
