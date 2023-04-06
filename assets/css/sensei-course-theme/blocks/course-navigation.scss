@@ -28,14 +28,12 @@
 		display: flex;
 		align-items: flex-start;
 		width: 100%;
-		margin: 12px 0;
 		padding: 0;
 		border: unset;
 		background: unset !important;
 		color: inherit !important;
 
-		&:hover {
-			color: var(--sensei-primary-color) !important;
+		&:hover h3 {
 			text-decoration: underline;
 		}
 
@@ -47,16 +45,17 @@
 		&.sensei-collapsed .sensei-lms-course-navigation-module__collapsible-icon {
 			transform: rotate(180deg);
 		}
+
+		> h3 {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex: 1;
+			margin: 0;
+			font-size: 18px;
+		}
 	}
 
-	&__title {
-		flex: 1;
-		font-weight: 600;
-		font-size: 18px;
-		line-height: 22px;
-		text-align: left;
-		margin: 0;
-	}
 
 	&__button {
 		color: inherit;
@@ -88,7 +87,6 @@
 	&__link {
 		flex: 1;
 		display: flex;
-		color: inherit;
 	}
 
 	&__title {
