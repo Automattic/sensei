@@ -21,8 +21,12 @@
 	"prefer-stable": true,
 	"autoload": {
 		"classmap": [
-			"third-party/"
-		]
+			"third-party/",
+			"includes/"
+		],
+        "files": [
+            "includes/sensei-functions.php"
+        ]
 	},
 	"autoload-dev": {
 		"classmap": [
