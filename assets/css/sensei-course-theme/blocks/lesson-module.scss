@@ -1,3 +1,4 @@
-.sensei-course-theme-lesson-module {
+.wp-block-sensei-lms-course-theme-lesson-module {
 	display: block;
+	font-size: inherit !important; //TODO: Temporary fix because the course theme is setting it to zero.
 }
