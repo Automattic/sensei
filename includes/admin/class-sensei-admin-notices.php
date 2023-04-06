@@ -419,7 +419,7 @@ class Sensei_Admin_Notices {
 						break;
 					}
 
-					if ( ! $this->condition_check_date_range( $condition['start_date'], $condition['end_date'] ) ) {
+					if ( ! $this->condition_check_date_range( $condition['start_date'] ?? null, $condition['end_date'] ?? null ) ) {
 						$can_see_notice = false;
 						break 2;
 					}
