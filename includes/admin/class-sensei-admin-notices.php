@@ -413,6 +413,18 @@ class Sensei_Admin_Notices {
 						break 2;
 					}
 					break;
+
+				case 'date_range':
+					if ( ! isset( $condition['start_date'] ) && ! isset( $condition['end_date'] ) ) {
+						break;
+					}
+
+					if ( ! $this->condition_check_date_range( $condition['start_date'], $condition['end_date'] ) ) {
+						$can_see_notice = false;
+						break 2;
+					}
+
+					break;
 			}
 		}
 
@@ -506,6 +518,8 @@ class Sensei_Admin_Notices {
 	/**
 	 * Check an "installed since" condition
 	 *
+	 * @since 4.10.0
+	 *
 	 * @param int|string $installed_since Time to check the installation time for.
 	 *
 	 * @return bool
@@ -519,6 +533,40 @@ class Sensei_Admin_Notices {
 			return false;
 		}
 		return $installed_at <= $installed_since;
+	}
+
+	/**
+	 * Check a date range condition.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param ?string $start_date_str Start date.
+	 * @param ?string $end_date_str   End date.
+	 *
+	 * @return bool
+	 */
+	private function condition_check_date_range( ?string $start_date_str, ?string $end_date_str ) : bool {
+		$condition_pass = true;
+		$now            = new DateTime();
+
+		// Defaults to WP timezone, but can be overridden by passing string that includes timezone.
+		$start_date = $start_date_str ? date_create( $start_date_str, wp_timezone() ) : null;
+		$end_date   = $end_date_str ? date_create( $end_date_str, wp_timezone() ) : null;
+
+		// If the passed date strings are invalid, don't show the notice.
+		if ( false === $start_date || false === $end_date ) {
+			return false;
+		}
+
+		if ( $start_date && $now < $start_date ) {
+			$condition_pass = false;
+		}
+
+		if ( $end_date && $now > $end_date ) {
+			$condition_pass = false;
+		}
+
+		return $condition_pass;
 	}
 
 	/**
