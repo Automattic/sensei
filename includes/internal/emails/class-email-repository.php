@@ -88,16 +88,17 @@ class Email_Repository {
 	 * @param string $description Email description.
 	 * @param string $content     Email content.
 	 * @param bool   $is_pro      Is pro email.
+	 * @param bool   $disabled    Is the email disabled.
 	 *
 	 * @return int|false Email post ID. Returns false if email already exists. Returns WP_Error on failure.
 	 */
-	public function create( string $identifier, array $types, string $subject, string $description, string $content, bool $is_pro = false ) {
+	public function create( string $identifier, array $types, string $subject, string $description, string $content, bool $is_pro = false, bool $disabled = false ) {
 		if ( $this->has( $identifier ) ) {
 			return false;
 		}
 
 		$email_data = [
-			'post_status'  => 'publish',
+			'post_status'  => $disabled ? 'draft' : 'publish',
 			'post_type'    => Email_Post_Type::POST_TYPE,
 			'post_title'   => $subject,
 			'post_content' => $content,
