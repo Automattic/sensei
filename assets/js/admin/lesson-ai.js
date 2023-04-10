@@ -41,7 +41,7 @@ const withQuestionGeneratorUpsellButton = ( BlockEdit ) => ( props ) => {
 	);
 };
 
-const addQuestionGeneratorUpsellButtonToQuizBlock = ( settings ) => {
+export const addQuestionGeneratorUpsellButtonToQuizBlock = ( settings ) => {
 	if ( 'sensei-lms/quiz' !== settings.name ) {
 		return settings;
 	}
