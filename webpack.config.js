@@ -35,6 +35,7 @@ const files = [
 	'js/admin/message-menu-fix.js',
 	'js/admin/meta-box-quiz-editor.js',
 	'js/admin/lesson-edit.js',
+	'js/admin/lesson-ai.js',
 	'js/admin/ordering.js',
 	'js/admin/sensei-notice-dismiss.js',
 	'js/admin/custom-navigation.js',
