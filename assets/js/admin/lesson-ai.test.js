@@ -29,4 +29,19 @@ describe( 'addQuestionGeneratorUpsellButtonToQuizBlock', () => {
 			getByText( 'Generate quiz questions with AI' )
 		).toBeInTheDocument();
 	} );
+
+	it( 'Should not render the upsell button if not quiz block', async () => {
+		const { edit: Edit } = addQuestionGeneratorUpsellButtonToQuizBlock( {
+			...settings,
+			name: 'sensei-lms/something-else',
+		} );
+
+		const { queryByText } = render(
+			<SlotFillProvider>
+				<Edit />
+			</SlotFillProvider>
+		);
+
+		expect( queryByText( 'Generate quiz questions with AI' ) ).toBeFalsy();
+	} );
 } );
