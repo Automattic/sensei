@@ -145,7 +145,7 @@ class Email_List_Table extends Sensei_List_Table {
 		$last_modified = sprintf(
 			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
 			__( '%s ago', 'sensei-lms' ),
-			human_time_diff( strtotime( $post->post_modified_gmt ) )
+			human_time_diff( strtotime( get_gmt_from_date( $post->post_modified ) ) )
 		);
 
 		$row_data = [

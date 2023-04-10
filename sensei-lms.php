@@ -3,7 +3,7 @@
  * Plugin Name: Sensei LMS
  * Plugin URI: https://senseilms.com/
  * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
- * Version: 4.12.0
+ * Version: 4.13.0
  * Author: Automattic
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'SENSEI_LMS_VERSION' ) ) {
-	define( 'SENSEI_LMS_VERSION', '4.12.0' ); // WRCS: DEFINED_VERSION.
+	define( 'SENSEI_LMS_VERSION', '4.13.0' ); // WRCS: DEFINED_VERSION.
 }
 
 if ( ! defined( 'SENSEI_LMS_PLUGIN_FILE' ) ) {
@@ -47,7 +47,7 @@ if ( ! defined( 'SENSEI_LMS_PLUGIN_PATH' ) ) {
 	define( 'SENSEI_LMS_PLUGIN_PATH', plugin_dir_path( SENSEI_LMS_PLUGIN_FILE ) );
 }
 
-if ( class_exists( 'Sensei_Main' ) ) {
+if ( class_exists( 'Sensei_Main', false ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
 		/**
 		 * Checks if Sensei is being activated.
@@ -102,10 +102,6 @@ if ( ! Sensei_Dependency_Checker::check_future_php_requirement() ) {
 if ( ! Sensei_Dependency_Checker::check_assets() ) {
 	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_assets_notice' ) );
 }
-
-require_once dirname( __FILE__ ) . '/includes/class-sensei-bootstrap.php';
-
-Sensei_Bootstrap::get_instance()->bootstrap();
 
 if ( ! function_exists( 'Sensei' ) ) {
 	/**

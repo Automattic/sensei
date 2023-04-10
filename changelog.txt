@@ -1,5 +1,17 @@
 *** Changelog ***
 
+## 4.13.0 - 2023-03-30
+### Added
+- Functionality to create MailPoet lists for all courses and groups, and to subscribe users to those lists.
+
+### Changed
+- Modify screen reader text to be less verbose on module expand button, front-end 👏 @alexstine
+
+### Fixed
+- Fix styling of notices on pages other than Sensei home and button output on Sensei home.
+- Missing aria-expanded attribute on front-end module expand button 👏 @alexstine
+- Only show the sensei_email template for the sensei emails.
+
 ## 4.12.0 - 2023-03-29
 ### Added
 - Default Email templates
