@@ -47,6 +47,18 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 		$this->assertFalse( $result );
 	}
 
+	public function testCreate_DisabledEmail_CreatesPostAsDraft() {
+		/* Arrange. */
+		$repository = new Email_Repository();
+
+		/* Act. */
+		$post_id = $repository->create( 'a', [ 'b' ], 'c', 'd', 'e', false, true );
+		$post    = get_post( $post_id );
+
+		/* Assert. */
+		$this->assertEquals( 'draft', $post->post_status );
+	}
+
 	public function testGet_EmailNotInRepository_ReturnsNull() {
 		/* Arrange. */
 		$repository = new Email_Repository();
@@ -85,6 +97,18 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 		$this->assertEquals( '', get_post_meta( $result1->ID, '_sensei_email_is_pro', true ) );
 		$this->assertEquals( 'y', $result2->post_title );
 		$this->assertEquals( 1, get_post_meta( $result2->ID, '_sensei_email_is_pro', true ) );
+	}
+
+	public function testGet_EmailCreatedWithDisabledParam_ReturnsNull() {
+		/* Arrange. */
+		$repository = new Email_Repository();
+		$repository->create( 'a', [ 'b' ], 'c', 'd', 'e', false, true );
+
+		/* Act. */
+		$result = $repository->get( 'a' );
+
+		/* Assert. */
+		$this->assertNull( $result );
 	}
 
 	public function testHasEmails_EmailsNotInRepository_ReturnsFalse() {
