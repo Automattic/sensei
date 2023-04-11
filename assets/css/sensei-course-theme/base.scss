@@ -1,13 +1,9 @@
+@import 'colors';
+
 $breakpoint: 783px;
 
 body {
-	// Try to pick up global styles, customizer or theme colors.
-	--sensei-primary-color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #307771)));
-	--sensei-background-color: var(--sensei-background-color-global, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #ffffff)));
-	--sensei-primary-contrast-color: var(--sensei-background-color, #FFFFFF);
-	--sensei-text-color: var(--sensei-text-color-global, var(--sensei-course-theme-foreground-color, var(--wp--preset--color--text, var(--wp--preset--color--foreground, #1E1E1E))));
 	--border-color: rgba(125, 125, 125, 0.3);
-
 	background-color: var(--sensei-background-color);
 	color: var(--sensei-text-color);
 }
@@ -15,10 +11,14 @@ body {
 .sensei-course-theme__frame {
 	--wp--style--block-gap: 0px;
 	box-sizing: border-box;
+	color: $sensei-module-lesson;
+	font-size: 13px;
+	font-weight: 400;
+	letter-spacing: normal;
 
-	a, [class*='sensei-'] a, a[class*='sensei-'] {
-		color: inherit;
-
+	a,
+	a[class*='sensei-'],
+	[class*='sensei-'] a {
 		&:hover, &:hover * {
 			color: var(--sensei-primary-color);
 			fill: var(--sensei-primary-color);
@@ -30,9 +30,4 @@ body {
 	button:hover {
 		cursor: pointer;
 	}
-
-	font-weight: 400;
-	font-size: 13px;
-	line-height: 1.5;
-	letter-spacing: normal;
 }

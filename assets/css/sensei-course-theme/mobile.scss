@@ -66,5 +66,23 @@
 				overflow: hidden;
 			}
 		}
+
+		/* Course Navigation */
+		.sensei-lms-course-navigation-module__title {
+			font-size: 1.3125rem;
+		}
+
+		.sensei-lms-course-navigation-lesson__title {
+			font-size: 1rem;
+		}
+
+		.sensei-course-theme .wp-block-button {
+			&.wp-block-button {
+				.wp-block-button__link.sensei-course-theme__button {
+					padding-left: 0.67em;
+					padding-right: 0.67em;
+				}
+			}
+		}
 	}
 }

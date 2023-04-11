@@ -31,44 +31,42 @@
 		}
 	}
 
-	font-family: 'Inter', sans-serif;
-	font-weight: 400;
-	line-height: 1.5;
-	letter-spacing: normal;
-	display: inline-block;
-	font-size: 14px;
-	cursor: pointer;
-	text-align: center;
 	background: transparent;
-	text-transform: unset;
 	border: none;
-	padding: 0;
-	margin: 0;
 	border-radius: 2px;
+	cursor: pointer;
+	display: inline-block;
+	font-family: var(--wp--preset--font-family--body-font);
+	font-size: 1.125rem;
+	font-weight: 400;
+	letter-spacing: normal;
+	margin: 0;
+	padding: 0;
+	text-align: center;
 	text-decoration: none !important;
+	text-transform: unset;
 
 	&.is-primary,
 	&.is-secondary,
 	&.is-link,
 	&.wp-block-button > .wp-block-button__link {
-		padding: 8px 11px;
-		font-weight: 700;
-		text-decoration: none;
 		border-radius: 2px;
+		font-weight: 400;
+		padding: 0 20px;
+		text-decoration: none;
 	}
 
 	&.is-primary,
 	&.is-secondary,
 	&.wp-block-button > .wp-block-button__link {
-		border: solid 1px var(--sensei-primary-color);
+		border: solid 1px var(--sensei-secondary-color);
 	}
 
 	&.wp-block-button {
 		padding: 0;
 
 		.wp-block-button__link {
-			padding: 8px 11px;
-			display: block;
+			padding: 0.83em 1.11em;
 
 			&:focus {
 				outline: dashed 1px var(--sensei-primary-color);
@@ -81,8 +79,8 @@
 	&.is-primary,
 	&.wp-block-button:not(.is-style-outline, .is-style-link) {
 		&:not(:hover) {
-			background-color: var(--sensei-primary-color) !important;
-			color: var(--sensei-primary-contrast-color) !important;
+			background-color: var(--sensei-secondary-color) !important;
+			color: #26212E;
 		}
 
 		&:hover {
@@ -93,8 +91,8 @@
 
 	&.is-secondary,
 	&.wp-block-button.is-style-outline {
-		color: var(--sensei-primary-color);
 		--wp--custom--button--border--color: var(--sensei-primary-color);
+		color: var(--sensei-primary-color);
 
 		&:hover {
 			background-color: var(--sensei-primary-color) !important;
@@ -132,9 +130,8 @@
 	}
 
 	&.is-completed.is-secondary {
-		opacity: 0.8;
-		color: var(--text-color) !important;
-		border-color: var(--text-color) !important;
+		display: flex;
+		opacity: 1;
 	}
 
 	&.is-busy {

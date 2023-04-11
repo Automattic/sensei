@@ -35,7 +35,7 @@ class Lesson_Module {
 	 *
 	 * @var string
 	 */
-	const DEFAULT_HTML_TAG_NAME = 'em';
+	const DEFAULT_HTML_TAG_NAME = 'div';
 
 	/**
 	 * Lesson_Module constructor.

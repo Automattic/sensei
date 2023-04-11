@@ -1,23 +1,38 @@
+/* This file loads for all themes except Course. */
+
 /*
   This style files are only required when the current theme don't provide learning mode customizations.
   Block based themes should declare add_theme_support('sensei-learning-mode'); to enable customization via theme.json
 */
+@import 'sensei-course-theme/colors';
 @import 'sensei-course-theme/theme-fixes';
 @import 'sensei-course-theme/buttons';
 
-.sensei-course-theme__frame {
+:root {
+	font-size: 100%;
+}
+
+.sensei-course-theme {
+	--wp--preset--font-family--body-font: -apple-system, BlinkMacSystemFont, Inter, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-family: var(--wp--preset--font-family--body-font);
+	font-size: 1.125rem;
+	font-weight: normal;
+	line-height: 1.6;
+
+	.wp-block-post-title {
+		color: $sensei-text;
+		font-weight: 300;
+		font-size: clamp(2.25rem, 1.536rem + 1.905vw, 3.25rem);
+	}
+}
+
+.sensei-course-theme__sidebar {
 	a, [class*='sensei-'] a, a[class*='sensei-'] {
 		text-decoration: none;
 
 		&:hover, &:hover * {
 			text-decoration: underline;
 		}
-	}
-
-	font-family: 'Inter', sans-serif;
-
-	* {
-		font-family: 'Inter', sans-serif;
 	}
 }
 
@@ -32,22 +47,13 @@
 	}
 }
 
-.sensei-course-theme-lesson-module {
-	font-family: 'Inter', sans-serif;
-	font-size: 14px;
-	line-height: 1.2;
-	font-weight: 400;
-	text-transform: uppercase;
-	margin-top: 10px !important;
-	margin-bottom: 10px !important;
-	font-style: normal;
-}
-
 .sensei-course-theme-lesson-actions {
 	padding: 0;
 	margin: 0;
 }
 
 .sensei-course-theme-course-progress {
-	color: #7f7e7e;
+	color: $sensei-lesson-meta;
+	font-size: 1rem;
+	line-height: 1.1875;
 }
