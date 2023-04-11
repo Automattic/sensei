@@ -28,8 +28,7 @@ export default class QueryLoop {
 		await this.choosePatternButton.click();
 
 		return await this.page
-			.locator( `[aria-label="${ patternName }"] div` )
-			.nth( 1 )
+			.locator( `[aria-label="${ patternName }"]` )
 			.click();
 	}
 }
