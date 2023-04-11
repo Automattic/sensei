@@ -180,7 +180,7 @@ class Lesson_Actions {
 			$is_pass_required            = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
 
 			if ( ! empty( $quiz_permalink ) && ! $is_quiz_submitted ) {
-				$render_quiz_button    = true;
+				$render_quiz_button = true;
 			}
 
 			// Complete button.
