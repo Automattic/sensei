@@ -142,7 +142,6 @@ class Sensei_Admin_Notices {
 		$transient_key = implode( '_', [ 'sensei_notices', Sensei()->version, determine_locale() ] );
 		$data          = get_transient( $transient_key );
 		$notices       = false;
-
 		// If the data is too old, fetch it again.
 		if ( $max_age && is_array( $data ) ) {
 			$age = time() - ( $data['_fetched'] ?? 0 );
@@ -546,8 +545,7 @@ class Sensei_Admin_Notices {
 	 * @return bool
 	 */
 	private function condition_check_date_range( ?string $start_date_str, ?string $end_date_str ) : bool {
-		$condition_pass = true;
-		$now            = new DateTime();
+		$now = new DateTime();
 
 		// Defaults to WP timezone, but can be overridden by passing string that includes timezone.
 		$start_date = $start_date_str ? date_create( $start_date_str, wp_timezone() ) : null;
@@ -559,14 +557,14 @@ class Sensei_Admin_Notices {
 		}
 
 		if ( $start_date && $now < $start_date ) {
-			$condition_pass = false;
+			return false;
 		}
 
 		if ( $end_date && $now > $end_date ) {
-			$condition_pass = false;
+			return false;
 		}
 
-		return $condition_pass;
+		return true;
 	}
 
 	/**
