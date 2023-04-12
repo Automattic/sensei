@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import domReady from '@wordpress/dom-ready';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Initializes complete lesson transition.
@@ -18,9 +17,6 @@ export const initCompleteLessonTransition = () => {
 		const progressBars = document.querySelectorAll(
 			'.sensei-course-theme-course-progress-bar-inner'
 		);
-		const mainContent =
-			document.querySelector( '.sensei-course-theme__main-content' ) ??
-			document.body;
 
 		/**
 		 * Disable complete buttons.
@@ -70,16 +66,6 @@ export const initCompleteLessonTransition = () => {
 
 			delayFormSubmit( e, form );
 			runProgressBarAnimation();
-
-			mainContent.insertAdjacentHTML(
-				'afterbegin',
-				`<div class="sensei-course-theme-lesson-completion-notice">
-					${ window.sensei.checkCircleIcon }
-					<p role="alert" class="sensei-course-theme-lesson-completion-notice__text">
-						${ __( 'Lesson complete', 'sensei-lms' ) }
-					</p>
-				</div>`
-			);
 		};
 
 		completeForms.forEach( ( form ) => {
