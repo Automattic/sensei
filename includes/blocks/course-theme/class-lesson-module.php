@@ -67,7 +67,18 @@ class Lesson_Module {
 			return '';
 		}
 
-		$wrapper_attr = get_block_wrapper_attributes();
+		// Determine the output class.
+		$class = 'sensei-course-theme-lesson-module';
+
+		if ( isset( $attributes['className'] ) ) {
+			$class = sanitize_html_class( $attributes['className'], $class );
+		}
+
+		$wrapper_attr = get_block_wrapper_attributes(
+			[
+				'class' => $class,
+			]
+		);
 
 		return sprintf( '<%1$s %2$s>%3$s</%1$s>', 'div', $wrapper_attr, $title );
 	}
