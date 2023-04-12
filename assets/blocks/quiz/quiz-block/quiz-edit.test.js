@@ -50,7 +50,7 @@ describe( 'addQuestionGeneratorUpsellButtonToQuizBlock', () => {
 		expect( getByText( 'Quiz Header Filled' ) ).toBeInTheDocument();
 	} );
 
-	it( 'Should have slot for loder', async () => {
+	it( 'Should have slot for loader', async () => {
 		const { getByText } = render(
 			<SlotFillProvider>
 				<Fill name="SenseiQuizBlockTop">
