@@ -52,8 +52,8 @@
 			font-size: 18px;
 		}
 	}
-  
-  &__title {
+
+	&__title {
 		color: var(--sensei-primary-color);
 		flex: 1;
 		font-size: 1.125rem;
@@ -61,7 +61,7 @@
 		line-height: 1.33;
 		margin: 0;
 		text-align: left;
-  }
+	}
 
 	&__button {
 		color: inherit;
@@ -91,8 +91,9 @@
 	padding: 10px 1px;
 
 	&__link {
-		flex: 1;
+		color: inherit;
 		display: flex;
+		flex: 1;
 	}
 
 	&__title {
