@@ -2,7 +2,7 @@ $sensei-module-lesson: #101517;
 $sensei-lesson-meta: #787C82;
 $sensei-hover-color: #F0F0F0;
 
-:root {
+body {
 	// Try to pick up global styles, customizer or theme colors.
 	--sensei-background-color: var(--sensei-background-color-global, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #FFFFFF)));
 	--sensei-primary-color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #155E65)));
