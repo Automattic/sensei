@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Disable the "welcome" and "no progress" emails by default

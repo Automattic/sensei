@@ -173,23 +173,28 @@ class Lesson_Actions {
 				$actions[] = $this->render_next_lesson();
 			}
 		} else {
-
+			$render_quiz_button          = false;
+			$complete_button_class       = 'is-primary';
 			$has_incomplete_prerequisite = ! Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
 			$quiz_permalink              = Sensei()->lesson->get_quiz_permalink( $lesson_id );
 			$is_quiz_submitted           = Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id );
 			$is_pass_required            = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
 
-			// Quiz button.
 			if ( ! empty( $quiz_permalink ) && ! $is_quiz_submitted ) {
-				$take_quiz_button = $this->render_take_quiz( $quiz_permalink, $has_incomplete_prerequisite );
-				$actions[]        = $take_quiz_button;
+				$render_quiz_button    = true;
+				$complete_button_class = 'is-secondary';
 			}
 
 			// Complete button.
 			if ( ! $is_pass_required ) {
-				$complete_button_class  = isset( $take_quiz_button ) ? 'is-secondary' : 'is-primary';
 				$complete_lesson_button = $this->render_complete_lesson( $complete_button_class, $has_incomplete_prerequisite );
 				$actions[]              = $complete_lesson_button;
+			}
+
+			// Quiz button.
+			if ( $render_quiz_button ) {
+				$take_quiz_button = $this->render_take_quiz( $quiz_permalink, $has_incomplete_prerequisite );
+				$actions[]        = $take_quiz_button;
 			}
 		}
 
