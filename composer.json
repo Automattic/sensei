@@ -24,9 +24,9 @@
 			"third-party/",
 			"includes/"
 		],
-        "files": [
-            "includes/sensei-functions.php"
-        ]
+		"files": [
+			"includes/sensei-functions.php"
+		]
 	},
 	"autoload-dev": {
 		"classmap": [
@@ -99,7 +99,16 @@
 	},
 	"extra": {
 		"changelogger": {
-			"changelog": "changelog.txt"
+			"changelog": "changelog.txt",
+			"types": {
+				"security": "Security",
+				"added": "Added",
+				"changed": "Changed",
+				"deprecated": "Deprecated",
+				"removed": "Removed",
+				"fixed": "Fixed",
+				"dev": "Development"
+			}
 		}
 	}
 }
