@@ -82,10 +82,10 @@ const Module = ( { title, lessons } ) => (
 	<section className="sensei-lms-course-navigation-module sensei-collapsible">
 		<header className="sensei-lms-course-navigation-module__header">
 			<div className="sensei-collapsible__toggle">
-				<div className="sensei-lms-course-navigation-module__title">
+				<h3 className="sensei-lms-course-navigation-module__title">
 					{ title }
-				</div>
-				<ChevronUp className="sensei-lms-course-navigation-module__collapsible-icon" />
+					<ChevronUp className="sensei-lms-course-navigation-module__collapsible-icon" />
+				</h3>
 			</div>
 		</header>
 		<ol className="sensei-lms-course-navigation-module__lessons sensei-collapsible__content">
@@ -113,12 +113,15 @@ const Lesson = ( { title, quiz, status } ) => {
 		<li
 			className={ `sensei-lms-course-navigation-lesson status-${ status }` }
 		>
-			<span className="sensei-lms-course-navigation-lesson__link">
+			<a
+				className="sensei-lms-course-navigation-lesson__link"
+				href="#pseudo-link"
+			>
 				<StatusIcon className="sensei-lms-course-navigation-lesson__status" />
 				<span className="sensei-lms-href sensei-lms-course-navigation-lesson__title">
 					{ title }
 				</span>
-			</span>
+			</a>
 			{ quiz && (
 				<span className="sensei-lms-href sensei-lms-course-navigation-lesson__extra">
 					{ __( 'Quiz', 'sensei-lms' ) }
