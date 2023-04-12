@@ -17,6 +17,7 @@
 .sensei-course-theme__button[type=submit],
 .sensei-course-theme__button[type=button] {
 	.wp-block-button__link {
+		border: none;
 		font-family: inherit;
 		font-weight: inherit;
 		font-size: inherit;
@@ -58,8 +59,12 @@
 
 	&.is-primary,
 	&.is-secondary,
-	&.wp-block-button > .wp-block-button__link {
+	&.wp-block-button {
 		border: solid 1px var(--sensei-secondary-color);
+
+		&.wp-block-button__link {
+			border: none;
+		}
 	}
 
 	&.wp-block-button {
@@ -67,25 +72,23 @@
 
 		.wp-block-button__link {
 			padding: 0.83em 1.11em;
-
-			&:focus {
-				outline: dashed 1px var(--sensei-primary-color);
-				margin: -1px;
-				padding: 9px 12px;
-			}
 		}
 	}
 
 	&.is-primary,
 	&.wp-block-button:not(.is-style-outline, .is-style-link) {
-		&:not(:hover) {
-			background-color: var(--sensei-secondary-color) !important;
-			color: #26212E;
-		}
+		background-color: var(--sensei-secondary-color);
+		color: #26212E;
 
 		&:hover {
-			color: var(--sensei-primary-color);
-			background: none;
+			color: #FFFFFF;
+			background-color: var(--sensei-primary-color);
+			border-color: var(--sensei-primary-color);
+		}
+
+		&:focus {
+			border: 1px solid #FFFFFF;
+			box-shadow: 0px 0px 0px 1.5px var(--sensei-secondary-color);
 		}
 	}
 
@@ -95,12 +98,16 @@
 		color: var(--sensei-primary-color);
 
 		&:hover {
-			background-color: var(--sensei-primary-color) !important;
-			color: var(--sensei-primary-contrast-color);
+			background-color: $sensei-hover-color;
+			color: var(--sensei-primary-color);
 
 			.wp-block-button__link {
 				border-color: var(--sensei-primary-color);
 			}
+		}
+
+		&:focus {
+			border-width: 1.5px;
 		}
 	}
 
