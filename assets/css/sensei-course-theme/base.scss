@@ -16,17 +16,6 @@ body {
 	font-weight: 400;
 	letter-spacing: normal;
 
-	a,
-	a[class*='sensei-'],
-	[class*='sensei-'] a {
-		&:hover, &:hover * {
-			color: var(--sensei-primary-color);
-			fill: var(--sensei-primary-color);
-			cursor: pointer;
-			background: none;
-		}
-	}
-
 	button:hover {
 		cursor: pointer;
 	}

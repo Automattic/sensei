@@ -21,7 +21,7 @@ class Exit_Course {
 	/**
 	 * Block JSON file.
 	 */
-	const BLOCK_JSON_FILE = '/lesson-blocks/exit-course.block.json';
+	const BLOCK_JSON_FILE = '/lesson-blocks/exit-course-button/block.json';
 
 	/**
 	 * Exit_Course constructor.
