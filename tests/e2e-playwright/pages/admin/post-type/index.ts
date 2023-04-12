@@ -18,7 +18,6 @@ export default class PostType {
 	dialogCloseButton: Locator;
 	addBlockButton: Locator;
 	searchBlock: Locator;
-	queryLoopPatternSelection: Locator;
 	previewURL: string | null;
 
 	constructor( page: Page, postType = 'page' ) {
@@ -29,9 +28,6 @@ export default class PostType {
 		this.dialogCloseButton = page.locator( '[aria-label="Close dialog"]' );
 		this.addBlockButton = page.locator( '[aria-label="Add block"]' );
 		this.searchBlock = page.locator( '[placeholder="Search"]' );
-		this.queryLoopPatternSelection = page.locator(
-			'[aria-label="Block: Query Loop"]'
-		);
 		this.previewURL = null;
 	}
 
@@ -43,7 +39,16 @@ export default class PostType {
 		return null;
 	}
 
-	async addBlock( blockName: string ): Promise< QueryLoop > {
+	async addQueryLoop( blockName: string ): Promise< QueryLoop > {
+		await this.addBlock( blockName );
+
+		return new QueryLoop(
+			this.page.locator( `[aria-label="Block: ${ blockName }"]` ),
+			this.page
+		);
+	}
+
+	async addBlock( blockName: string ): Promise< Page > {
 		await this.addBlockButton.click();
 		await this.searchBlock.fill( blockName );
 		await this.page
@@ -52,7 +57,7 @@ export default class PostType {
 			} )
 			.click();
 
-		return new QueryLoop( this.queryLoopPatternSelection, this.page );
+		return this.page;
 	}
 
 	async goToPreview(): Promise< Page > {
