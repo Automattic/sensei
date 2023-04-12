@@ -14,7 +14,7 @@
 	}
 
 	&__modules + &__lessons {
-		border-top: 1px dotted var(--border-color, $sensei-text);
+		border-top: 1px dotted var(--border-color, var(--sensei-text-color));
 		margin-top: 6px;
 		padding-top: 6px;
 	}
@@ -25,7 +25,7 @@
 		align-items: flex-start;
 		background: unset !important;
 		border: unset;
-		color: $sensei-text;
+		color: var(--sensei-text-color);
 		display: flex;
 		padding: 0;
 		width: 100%;

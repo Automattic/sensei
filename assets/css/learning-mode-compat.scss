@@ -20,7 +20,7 @@
 	line-height: 1.6;
 
 	.wp-block-post-title {
-		color: $sensei-text;
+		color: var(--sensei-text-color);
 		font-weight: 300;
 		font-size: clamp(2.25rem, 1.536rem + 1.905vw, 3.25rem);
 	}
