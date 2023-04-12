@@ -22,11 +22,11 @@ import courseThemeNoticesMeta from './course-theme-notices.block.json';
 import courseThemePostTitleMeta from './course-theme-post-title.block.json';
 import courseThemePrevNextLessonMeta from './course-theme-prev-next-lesson.block.json';
 import learningModeLessonPropertiesMeta from './learning-mode-lesson-properties.block.json';
-import exitCourseMeta from './exit-course.block.json';
 import focusModeToggleMeta from './focus-mode-toggle.block.json';
 import pageActionsMeta from './page-actions.block.json';
 import sideBarToggleButtonMeta from './sidebar-toggle-button.block.json';
 import courseThemeLessonVideoMeta from './course-theme-lesson-video.block.json';
+import ExitCourseButton from './exit-course-button';
 
 import CourseTitle from './course-title';
 
@@ -41,6 +41,7 @@ const meta = {
 
 export default [
 	CourseTitle,
+	ExitCourseButton,
 	{
 		...courseThemeCourseProgressCounterMeta,
 		...meta,
@@ -157,25 +158,7 @@ export default [
 			);
 		},
 	},
-	{
-		...exitCourseMeta,
-		...meta,
-		title: __( 'Exit Course', 'sensei-lms' ),
-		description: __(
-			'Exit Learning Mode and return to the course page.',
-			'sensei-lms'
-		),
-		edit: function ExitCourseEdit() {
-			const blockProps = useBlockProps( {
-				className: 'sensei-lms-href',
-			} );
-			return (
-				<span { ...blockProps }>
-					{ __( 'Exit Course', 'sensei-lms' ) }
-				</span>
-			);
-		},
-	},
+
 	{
 		...courseThemeLessonModuleMeta,
 		...meta,
