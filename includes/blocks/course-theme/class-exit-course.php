@@ -53,7 +53,7 @@ class Exit_Course {
 
 		$wrapper_attributes = '';
 		if ( function_exists( 'get_block_wrapper_attributes' ) ) {
-			$wrapper_attributes = get_block_wrapper_attributes( $attributes );
+			$wrapper_attributes = get_block_wrapper_attributes();
 		}
 
 		$label = $attributes['label'] ?? __( 'Exit Course', 'sensei-lms' );
