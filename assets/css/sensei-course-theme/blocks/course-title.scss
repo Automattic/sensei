@@ -1,9 +1,9 @@
-.wp-block-sensei-lms-course-title {
+:root .wp-block-sensei-lms-course-title {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-
-	a {
-		transition: none;
-	}
+	font-size: 18px;
+	text-transform: uppercase;
+	font-weight: 600;
+	line-height: 21px;
 }
