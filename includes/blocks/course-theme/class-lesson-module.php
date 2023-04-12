@@ -21,21 +21,7 @@ class Lesson_Module {
 	/**
 	 * Block JSON file.
 	 */
-	const BLOCK_JSON_FILE = '/lesson-blocks/course-theme-lesson-module.block.json';
-
-	/**
-	 * Allowed HTML wrapper tag names for this block.
-	 *
-	 * @var array
-	 */
-	const ALLOWED_HTML_TAG_NAMES = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div', 'span' );
-
-	/**
-	 * The default HTML tag name.
-	 *
-	 * @var string
-	 */
-	const DEFAULT_HTML_TAG_NAME = 'em';
+	const BLOCK_JSON_FILE = '/lesson-blocks/module-title/block.json';
 
 	/**
 	 * Lesson_Module constructor.
@@ -77,24 +63,8 @@ class Lesson_Module {
 			return '';
 		}
 
-		// Determine the output tag.
-		$tag_name = self::DEFAULT_HTML_TAG_NAME;
-		if ( isset( $attributes['tagName'] ) && in_array( $attributes['tagName'], self::ALLOWED_HTML_TAG_NAMES, true ) ) {
-			$tag_name = $attributes['tagName'];
-		}
+		$wrapper_attr = get_block_wrapper_attributes();
 
-		// Determine the output class.
-		$class = 'sensei-course-theme-lesson-module';
-		if ( isset( $attributes['className'] ) ) {
-			$class = sanitize_html_class( $attributes['className'], $class );
-		}
-
-		$wrapper_attr = get_block_wrapper_attributes(
-			[
-				'class' => $class,
-			]
-		);
-
-		return sprintf( '<%1$s %2$s>%3$s</%1$s>', $tag_name, $wrapper_attr, $title );
+		return sprintf( '<%1$s %2$s>%3$s</%1$s>', 'h3', $wrapper_attr, $title );
 	}
 }

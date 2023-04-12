@@ -17,7 +17,6 @@ import courseContentMeta from './course-content.block.json';
 import courseThemeCourseProgressBarMeta from './course-theme-course-progress-bar.block.json';
 import courseThemeCourseProgressCounterMeta from './course-theme-course-progress-counter.block.json';
 import courseThemeLessonActionsMeta from './course-theme-lesson-actions.block.json';
-import courseThemeLessonModuleMeta from './course-theme-lesson-module.block.json';
 import courseThemeNoticesMeta from './course-theme-notices.block.json';
 import courseThemePostTitleMeta from './course-theme-post-title.block.json';
 import courseThemePrevNextLessonMeta from './course-theme-prev-next-lesson.block.json';
@@ -29,6 +28,7 @@ import courseThemeLessonVideoMeta from './course-theme-lesson-video.block.json';
 import ExitCourseButton from './exit-course-button';
 
 import CourseTitle from './course-title';
+import moduleTitle from './module-title';
 
 const meta = {
 	category: 'theme',
@@ -42,6 +42,7 @@ const meta = {
 export default [
 	CourseTitle,
 	ExitCourseButton,
+	moduleTitle,
 	{
 		...courseThemeCourseProgressCounterMeta,
 		...meta,
@@ -155,23 +156,6 @@ export default [
 				<div className="sensei-course-theme__focus-mode-toggle">
 					<DoubleChevronRight className="sensei-course-theme__focus-mode-toggle-icon" />
 				</div>
-			);
-		},
-	},
-
-	{
-		...courseThemeLessonModuleMeta,
-		...meta,
-		title: __( 'Module Title', 'sensei-lms' ),
-		description: __(
-			'Display title of the module the current lesson belongs to.',
-			'sensei-lms'
-		),
-		edit: function ModuleTitleEdit() {
-			const blockProps = useBlockProps();
-
-			return (
-				<span { ...blockProps }>{ __( 'MODULE', 'sensei-lms' ) }</span>
 			);
 		},
 	},
