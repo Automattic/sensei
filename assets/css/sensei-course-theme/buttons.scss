@@ -1,4 +1,4 @@
-.sensei-course-theme__frame {
+.sensei-course-theme {
 	a, button {
 		&:focus {
 			outline: none;
@@ -36,7 +36,6 @@
 	border: none;
 	border-radius: 2px;
 	cursor: pointer;
-	display: inline-block;
 	font-family: var(--wp--preset--font-family--body-font);
 	font-size: 1.125rem;
 	font-weight: 400;
@@ -112,13 +111,18 @@
 	}
 
 	&.is-link {
-		font-weight: 600;
-		text-decoration: underline !important;
-		background: none !important;
-		color: inherit !important;
+		background: none;
+		color: var(--sensei-primary-color);
+		line-height: 1em;
+		padding: 0.83em 1.11em;
 
 		&:hover {
+			background-color: $sensei-hover-color;
 			color: var(--sensei-primary-color) !important;
+		}
+
+		&:focus {
+			border: solid 1.5px var(--sensei-secondary-color);
 		}
 	}
 
