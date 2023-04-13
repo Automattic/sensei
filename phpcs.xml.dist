@@ -11,7 +11,9 @@
 
 	<exclude-pattern type="relative">^node_modules/*</exclude-pattern>
 	<exclude-pattern type="relative">^vendor/*</exclude-pattern>
+	<exclude-pattern type="relative">^third-party/*</exclude-pattern>
 	<exclude-pattern type="relative">^build/*</exclude-pattern>
+	<exclude-pattern type="relative">^changelog/*</exclude-pattern>
 	<exclude-pattern type="relative">^tmp/*</exclude-pattern>
 
 	<!-- Configs -->

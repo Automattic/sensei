@@ -6,7 +6,7 @@
 
 	transition: max-height 350ms ease-in-out, opacity 350ms ease-in-out;
 
-	&.collapsed {
+	&.sensei-collapsed {
 		opacity: 0;
 		max-height: 0;
 	}

@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Sensei_Extensions {
 	const SENSEILMS_PRODUCTS_API_BASE_URL = 'https://senseilms.com/wp-json/senseilms-products/1.0';
+	const PRODUCT_SENSEI_PRO_SLUG         = 'sensei-pro';
 
 	/**
 	 * Instance of class.
@@ -84,11 +85,13 @@ final class Sensei_Extensions {
 			);
 
 			$raw_extensions = wp_safe_remote_get( $url );
-			if ( ! is_wp_error( $raw_extensions ) ) {
-				$json       = json_decode( wp_remote_retrieve_body( $raw_extensions ) );
-				$extensions = isset( $json->products ) ? $json->products : [];
+			if ( ! is_wp_error( $raw_extensions ) && 200 === wp_remote_retrieve_response_code( $raw_extensions ) ) {
+				$json = json_decode( wp_remote_retrieve_body( $raw_extensions ) );
 
-				set_transient( 'sensei_extensions_' . $extension_request_key, $extensions, DAY_IN_SECONDS );
+				if ( isset( $json->products ) && is_array( $json->products ) && ! empty( $json->products ) ) {
+					$extensions = $json->products;
+					set_transient( 'sensei_extensions_' . $extension_request_key, $extensions, DAY_IN_SECONDS );
+				}
 			}
 		}
 
@@ -105,6 +108,32 @@ final class Sensei_Extensions {
 		}
 
 		return $extensions;
+	}
+
+	/**
+	 * Fetch a specific Sensei extension.
+	 *
+	 * @since 4.12.0
+	 *
+	 * @param string $slug Extension slug.
+	 *
+	 * @return object|null
+	 */
+	public function get_extension( $slug ) {
+		$extensions = $this->get_extensions( 'plugin' );
+
+		$extensions = array_filter(
+			$extensions,
+			function( $extension ) use ( $slug ) {
+				return $slug === $extension->product_slug;
+			}
+		);
+
+		if ( empty( $extensions ) ) {
+			return null;
+		}
+
+		return array_shift( $extensions );
 	}
 
 	/**

@@ -3,12 +3,12 @@
  * Plugin Name: Sensei LMS
  * Plugin URI: https://senseilms.com/
  * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
- * Version: 4.11.0
+ * Version: 4.13.0
  * Author: Automattic
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Requires at least: 5.9
- * Tested up to: 6.1
+ * Requires at least: 6.0
+ * Tested up to: 6.2
  * Requires PHP: 7.2
  * Text Domain: sensei-lms
  * Domain path: /lang/
@@ -36,14 +36,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'SENSEI_LMS_VERSION' ) ) {
-	define( 'SENSEI_LMS_VERSION', '4.11.0' ); // WRCS: DEFINED_VERSION.
+	define( 'SENSEI_LMS_VERSION', '4.13.0' ); // WRCS: DEFINED_VERSION.
 }
 
 if ( ! defined( 'SENSEI_LMS_PLUGIN_FILE' ) ) {
 	define( 'SENSEI_LMS_PLUGIN_FILE', __FILE__ );
 }
 
-if ( class_exists( 'Sensei_Main' ) ) {
+if ( ! defined( 'SENSEI_LMS_PLUGIN_PATH' ) ) {
+	define( 'SENSEI_LMS_PLUGIN_PATH', plugin_dir_path( SENSEI_LMS_PLUGIN_FILE ) );
+}
+
+if ( class_exists( 'Sensei_Main', false ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
 		/**
 		 * Checks if Sensei is being activated.
@@ -79,6 +83,11 @@ if ( class_exists( 'Sensei_Main' ) ) {
 	}
 }
 
+/**
+ * Autoload the vendor dependencies. This includes the prefixed vendor dependencies as well.
+ */
+require SENSEI_LMS_PLUGIN_PATH . 'vendor/autoload.php';
+
 require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
 if ( ! Sensei_Dependency_Checker::check_php_requirement() ) {
 	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_version_notice' ) );
@@ -93,10 +102,6 @@ if ( ! Sensei_Dependency_Checker::check_future_php_requirement() ) {
 if ( ! Sensei_Dependency_Checker::check_assets() ) {
 	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_assets_notice' ) );
 }
-
-require_once dirname( __FILE__ ) . '/includes/class-sensei-bootstrap.php';
-
-Sensei_Bootstrap::get_instance()->bootstrap();
 
 if ( ! function_exists( 'Sensei' ) ) {
 	/**

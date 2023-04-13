@@ -1,0 +1,130 @@
+
+/**
+ THIS STYLE SHOULD NOT INCLUDED IN A REGULAR PAGE.
+ IT IS USED TO SET GENERAL EMAILS STYLES FOR THE SENSEI NOTIFICATIONS.
+**/
+
+
+/** VARIABLES **/
+$HEADER_SIZE: 48px;
+$MOBILE_HEADER_SIZE: 32px;
+
+/** BLOCKS **/
+.wp-block-button__link {
+	text-decoration: none;
+	border-radius: 4px;
+	padding: 16px 20px;
+}
+
+.wp-block-site-logo img{
+	border: none;
+	max-height: $HEADER_SIZE;
+	width: auto;
+}
+
+.wp-block-site-title a {
+	text-decoration: none;
+}
+
+.wp-block-site-logo {
+	max-height: $HEADER_SIZE;
+	width: auto;
+}
+
+.wp-block-site-title {
+	float: right;
+}
+
+.has-global-padding{
+	padding: 0px;
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.has-border-color, .has-border {
+ 	border-style: solid;
+}
+
+.wp-element-button, .editor-styles-wrapper .wp-block-button__link {
+	text-transform: capitalize;
+}
+
+figure {
+	margin: 0;
+	padding: 0;
+}
+
+/* CUSTOM CLASSES */
+.email-notification__footer .footer_info {
+	min-height: 32px;
+}
+
+.email-notification__footer figure {
+	float: left;
+}
+
+.email-notification__footer p {
+	line-height: 32px;
+}
+
+.email-notification__header {
+	min-height: $HEADER_SIZE;
+}
+
+.email-notification__header .wp-block-site-title {
+	line-height: $HEADER_SIZE;
+}
+
+/* MOBILE VERSION */
+@media (max-width: 800px) {
+
+    .email-notification__header {
+        min-height: $MOBILE_HEADER_SIZE !important; // It is important when there is no logo available.
+    }
+
+    .email-notification__header .wp-block-site-title {
+        line-height: $MOBILE_HEADER_SIZE !important;
+    }
+
+	.wp-block-site-title {
+		font-size: 15px !important;
+	}
+
+	.wp-block-site-logo img{
+    	max-height: $MOBILE_HEADER_SIZE !important;
+    }
+
+	.wp-block-buttons {
+		margin-bottom: 0 !important;
+		width: 100% !important;
+	}
+
+	.wp-block-button a {
+		display: inline-block !important;
+		width: 100% !important;
+		box-sizing: border-box !important;
+		text-align: center !important;
+	}
+
+	.email-notification__header, .email-notification__footer, .email-notification__content {
+		padding-left: 24px !important;
+		padding-right: 24px !important;
+	}
+
+	.email-notification__title {
+		margin-bottom: 32px !important;
+		padding-top: 0px !important;
+		font-size: 28px !important;
+	}
+
+	.email-notification__content {
+		margin-top: 0 !important;
+		padding: 24px !important;
+	}
+
+	.info__extra {
+		margin-top: 24px !important;
+	}
+}
