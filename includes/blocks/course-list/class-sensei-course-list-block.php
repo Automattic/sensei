@@ -92,33 +92,31 @@ class Sensei_Course_List_Block {
 			'core/query' === ( $parent_block->parsed_block['blockName'] ?? '' ) &&
 			'course' === ( $parent_block->parsed_block['attrs']['query']['postType'] ?? '' )
 		) {
-			$parsed_block['innerBlocks'] = $this->recursively_set_attribute_to_inner_blocks( $parsed_block['innerBlocks'] );
+			$parsed_block['innerBlocks'] = $this->recursively_find_and_set_attribute_to_the_take_course_block( $parsed_block['innerBlocks'] );
 		}
 
 		return $parsed_block;
 	}
 
 	/**
-	 * Set the attributes of inner blocks to detect if it's in Course List block.
+	 * Find and set isCourseListChild attribute to Take Course Button from inner blocks
+	 * to indicate if it's in Course List block.
 	 *
 	 * @param mixed $inner_blocks The inner blocks of the parsed block.
 	 *
 	 * @return array The inner blocks.
 	 */
-	private function recursively_set_attribute_to_inner_blocks( $inner_blocks ) {
-		if ( ! is_array( $inner_blocks ) ) {
-			return $inner_blocks;
-		}
-
-		foreach ( $inner_blocks as & $inner_block ) {
-			if ( ! $inner_block['attrs'] ) {
-				$inner_block['attrs'] = [];
+	private function recursively_find_and_set_attribute_to_the_take_course_block( $inner_blocks ) {
+		foreach ( $inner_blocks as $key => $inner_block ) {
+			if ( 'sensei-lms/button-take-course' === $inner_block['blockName'] ) {
+				if ( ! $inner_block['attrs'] ) {
+					$inner_blocks[ $key ]['attrs'] = [];
+				}
+				$inner_blocks[ $key ]['attrs']['isCourseListChild'] = true;
+				break;
+			} elseif ( ! empty( $inner_block['innerBlocks'] ) ) {
+				$inner_blocks[ $key ]['innerBlocks'] = $this->recursively_find_and_set_attribute_to_the_take_course_block( $inner_block['innerBlocks'] );
 			}
-
-			$inner_block['attrs']['isCourseListChild'] = true;
-			$inner_block['innerBlocks']                = $this->recursively_set_attribute_to_inner_blocks(
-				$inner_block['innerBlocks'] ?? []
-			);
 		}
 
 		return $inner_blocks;
