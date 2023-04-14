@@ -32,6 +32,11 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 <div class="wp-block-query alignwide wp-block-sensei-lms-course-list">
 <!-- wp:post-template {"align":"wide"} -->
 <!-- wp:post-title {"level":1,"isLink":true,"fontSize":"large"} /-->
+<!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"}} -->
+<div class="wp-block-group"><!-- wp:sensei-lms/button-take-course -->
+<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link">Take Course</button></div>
+<!-- /wp:sensei-lms/button-take-course -->
+</div><!-- /wp:group -->
 <!-- /wp:post-template --></div>
 <!-- /wp:query -->';
 
@@ -59,7 +64,7 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 		$this->block_instance = $instance;
 	}
 
-	public function testCourseListBlock_AddsAttributeToInnerBlocks_WhenRendered() {
+	public function testCourseListBlock_AddsAttributeToInnerTakeCourseButton_WhenRendered() {
 		if ( $this->skip_tests ) {
 			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
 		}
@@ -67,10 +72,10 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 		do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertTrue( $this->block_instance->parsed_block['innerBlocks'][0]['attrs']['isCourseListChild'] );
+		$this->assertTrue( $this->block_instance->parsed_block['innerBlocks'][1]['innerBlocks'][0]['attrs']['isCourseListChild'] );
 	}
 
-	public function testQueryLoopBlock_DoesNotAddCourseListAttributeToInnerBlocks_WhenRendered() {
+	public function testQueryLoopBlock_DoesNotAddCourseListAttributeToInnerTakeCourseButton_WhenRendered() {
 		if ( $this->skip_tests ) {
 			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
 		}
@@ -81,6 +86,6 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 		do_blocks( $modified_content );
 
 		/* ASSERT */
-		$this->assertArrayNotHasKey( 'isCourseListChild', $this->block_instance->parsed_block['innerBlocks'][0]['attrs'] );
+		$this->assertArrayNotHasKey( 'isCourseListChild', $this->block_instance->parsed_block['innerBlocks'][1]['innerBlocks'][0]['attrs'] );
 	}
 }
