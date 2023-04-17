@@ -235,20 +235,18 @@ class Sensei_Admin_Notices {
 			$notice['actions'] = [];
 		}
 
-		$notice_class = '';
-		if ( ! empty( $notice['style'] ) ) {
-			$notice_class = 'sensei-notice-' . $notice['style'];
-		}
+		$notice_classes   = [];
+		$notice_classes[] = 'sensei-notice__' . $notice['level'];
 
 		$is_dismissible       = $notice['dismissible'];
 		$notice_wrapper_extra = '';
 		if ( $is_dismissible ) {
 			wp_enqueue_script( 'sensei-dismiss-notices' );
-			$notice_class        .= ' is-dismissible';
+			$notice_classes[]     = 'is-dismissible';
 			$notice_wrapper_extra = sprintf( ' data-dismiss-action="sensei_dismiss_notice" data-dismiss-notice="%1$s" data-dismiss-nonce="%2$s"', esc_attr( $notice_id ), esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ) );
 		}
 		?>
-		<div class="notice sensei-notice <?php echo esc_attr( $notice_class ); ?>"
+		<div class="notice sensei-notice <?php echo esc_attr( implode( ' ', $notice_classes ) ); ?>"
 			<?php
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
 			echo $notice_wrapper_extra;
