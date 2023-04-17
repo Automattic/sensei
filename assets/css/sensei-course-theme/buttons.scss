@@ -95,6 +95,7 @@
 	&.wp-block-button.is-style-outline {
 		--wp--custom--button--border--color: var(--sensei-primary-color);
 		color: var(--sensei-primary-color);
+		flex-shrink: 0;
 
 		&:hover {
 			background-color: var(--sensei-button-hover-color);

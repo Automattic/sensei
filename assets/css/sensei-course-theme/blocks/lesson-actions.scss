@@ -11,21 +11,22 @@
 	}
 }
 
-.sensei-course-theme__post-pagination {
-	display: flex;
+.wp-block-sensei-lms-page-actions {
 	align-items: flex-start;
-	flex-wrap: wrap;
-	gap: 12px;
+	column-gap: 40px;
+	display: flex;
 
 	.post-page-numbers {
-		padding: 8px 13px;
-		border: 1px solid var(--border-color);
-		font-weight: 700;
+		color: var(--sensei-pagination-color);
+		opacity: 0.6;
 		text-decoration: none;
-		border-radius: 2px;
 
 		&.current {
-			opacity: 0.5;
+			opacity: 1;
 		}
+	}
+
+	@media screen and (max-width: 782px) {
+		justify-content: center;
 	}
 }
