@@ -1,4 +1,4 @@
-$breakpoint: 783px;
+$min_desktop_width: 783px;
 
 .sensei-course-theme {
 	&__columns {
@@ -6,7 +6,8 @@ $breakpoint: 783px;
 	}
 }
 
-@media screen and (min-width: ($breakpoint)) {
+// Desktop
+@media screen and (min-width: ($min_desktop_width)) {
 	.sensei-course-theme {
 		--sensei-lm-sidebar-width: 312px;
 
@@ -34,7 +35,6 @@ $breakpoint: 783px;
 			right: 0;
 			border-right: unset;
 			border-left: 1px solid var(--border-color);
-
 		}
 
 		&__columns &__main-content {
