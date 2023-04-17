@@ -28,11 +28,6 @@ body {
 	color: var(--sensei-background-color);
 }
 
-.wp-block-post-title {
-	margin-top: 20px !important;
-	margin-bottom: 20px !important;
-}
-
 
 /**
  * 4.0.1 Template compatibility.
@@ -105,6 +100,7 @@ body {
 	--wp--custom--gap--horizontal: var(--content-padding);
 	--wp--custom--gap--vertical: 12px;
 	--wp--custom--spacing--outer: 0px;
+	margin-block-end: 40px;
 
 	img {
 		max-width: 100%;
