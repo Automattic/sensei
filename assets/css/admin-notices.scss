@@ -64,19 +64,19 @@ $sensei-notice-icon-width: 30px;
 		position: static;
 	}
 
-	&__error {
+	&--error {
 		border-left-color: $notice-error;
 	}
 
-	&__warning {
+	&--warning {
 		border-left-color: $notice-warning;
 	}
 
-	&__info {
+	&--info {
 		border-left-color: $notice-info;
 	}
 
-	&__success {
+	&--success {
 		border-left-color: $notice-success;
 	}
 }

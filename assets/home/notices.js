@@ -103,7 +103,7 @@ const NoticeInfoLink = ( { infoLink } ) => {
 const Notice = ( { noticeId, notice, dismissNonce } ) => {
 	let noticeClass = '';
 	if ( !! notice.level ) {
-		noticeClass = 'sensei-notice__' + notice.level;
+		noticeClass = 'sensei-notice--' + notice.level;
 	}
 
 	const isDismissible = notice.dismissible && dismissNonce;

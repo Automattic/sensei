@@ -236,7 +236,7 @@ class Sensei_Admin_Notices {
 		}
 
 		$notice_classes   = [];
-		$notice_classes[] = 'sensei-notice__' . $notice['level'];
+		$notice_classes[] = 'sensei-notice--' . $notice['level'];
 
 		$is_dismissible       = $notice['dismissible'];
 		$notice_wrapper_extra = '';
