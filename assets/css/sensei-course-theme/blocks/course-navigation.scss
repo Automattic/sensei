@@ -1,5 +1,4 @@
 @import '../../../shared/styles/collapsible-content';
-@import '../colors';
 
 .editor-styles-wrapper .sensei-lms-course-navigation,
 .sensei-lms-course-navigation {
@@ -61,7 +60,7 @@
 	}
 
 	&__summary {
-		color: $sensei-lesson-meta;
+		color: var(--sensei-lesson-meta-color);
 		font-size: 0.8125rem;
 		max-height: 0;
 		overflow: hidden;
@@ -96,7 +95,7 @@
 	}
 
 	&__extra {
-		color: $sensei-lesson-meta;
+		color: var(--sensei-lesson-meta-color);
 		font-size: 0.8125rem;
 		margin-top: 1px; // Needed to compensate the font-size difference.
 		padding-left: 6px;

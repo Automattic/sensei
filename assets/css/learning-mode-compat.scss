@@ -4,7 +4,6 @@
   This style files are only required when the current theme don't provide learning mode customizations.
   Block based themes should declare add_theme_support('sensei-learning-mode'); to enable customization via theme.json
 */
-@import 'sensei-course-theme/colors';
 @import 'sensei-course-theme/theme-fixes';
 @import 'sensei-course-theme/buttons';
 
@@ -48,7 +47,7 @@
 }
 
 .sensei-course-theme-course-progress {
-	color: $sensei-lesson-meta;
+	color: var(--sensei-lesson-meta-color);
 	font-size: 1rem;
 	line-height: 1.1875;
 }

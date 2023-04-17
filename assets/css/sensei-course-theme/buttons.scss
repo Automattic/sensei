@@ -97,7 +97,7 @@
 		color: var(--sensei-primary-color);
 
 		&:hover {
-			background-color: $sensei-hover-color;
+			background-color: var(--sensei-button-hover-color);
 			color: var(--sensei-primary-color);
 
 			.wp-block-button__link {
@@ -117,7 +117,7 @@
 		padding: 0.83em 1.11em;
 
 		&:hover {
-			background-color: $sensei-hover-color;
+			background-color: var(--sensei-button-hover-color);
 			color: var(--sensei-primary-color) !important;
 		}
 

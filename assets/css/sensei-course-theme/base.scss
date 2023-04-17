@@ -1,5 +1,3 @@
-@import 'colors';
-
 $breakpoint: 783px;
 
 body {
@@ -11,7 +9,7 @@ body {
 .sensei-course-theme__frame {
 	--wp--style--block-gap: 0px;
 	box-sizing: border-box;
-	color: $sensei-module-lesson;
+	color: var(--sensei-module-lesson-color);
 	font-size: 0.8125rem;
 	font-weight: 400;
 	letter-spacing: normal;
