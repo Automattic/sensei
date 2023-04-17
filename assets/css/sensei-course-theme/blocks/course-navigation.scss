@@ -87,7 +87,7 @@
 	}
 
 	&__title {
-		color: inherit;
+		color: var(--sensei-module-lesson-color);
 		flex: 1;
 		font-size: 0.875rem;
 		font-weight: 300;
