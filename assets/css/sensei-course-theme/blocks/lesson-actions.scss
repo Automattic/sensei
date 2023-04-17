@@ -11,6 +11,10 @@
 	}
 }
 
+body .is-layout-flow > * + .sensei-course-theme__actions-wrapper {
+	margin-block-start: 40px;
+}
+
 .sensei-course-theme__post-pagination {
 	display: flex;
 	align-items: flex-start;
