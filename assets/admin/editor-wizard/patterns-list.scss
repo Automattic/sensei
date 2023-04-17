@@ -1,6 +1,6 @@
 $thumbnail-height: 235px;
 $preview-padding: 5px;
-$preview-max-height: $thumbnail-height - $preview-padding * 2;
+$preview-max-height: $thumbnail-height + 5px;
 
 .sensei-patterns-list {
 	@media ( min-width: 600px ) {
@@ -22,14 +22,12 @@ $preview-max-height: $thumbnail-height - $preview-padding * 2;
 			height: $thumbnail-height;
 			overflow: hidden;
 
-			display: flex;
-			justify-content: center;
-			align-items: center;
 			padding-top: $preview-padding;
 			padding-bottom: $preview-padding;
 
 			.block-editor-block-preview__container {
 				max-height: $preview-max-height;
+				margin-top: -17px;
 			}
 		}
 
