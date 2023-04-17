@@ -660,6 +660,11 @@ class Sensei_Admin_Notices {
 			];
 		}
 
+		$notice_levels = [ 'error', 'warning', 'success', 'info' ];
+		if ( ! isset( $notice['level'] ) || ! in_array( $notice['level'], $notice_levels, true ) ) {
+			$notice['level'] = 'info';
+		}
+
 		if ( ! isset( $notice['dismissible'] ) ) {
 			$notice['dismissible'] = true;
 		}
