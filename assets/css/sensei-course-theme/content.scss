@@ -54,8 +54,8 @@ body {
  */
 
 .sensei-course-theme {
-
-	&__main-content__container, &__main-content__container > .wp-block-group__inner-container {
+	&__main-content__container,
+	&__main-content__container > .wp-block-group__inner-container {
 		> * {
 			max-width: var(--content-size) !important;
 			margin-left: auto;
@@ -68,7 +68,6 @@ body {
 	}
 
 	.wp-block-post-content {
-
 		& > *, .wp-block-group__inner-container > * {
 			max-width: var(--content-size) !important;
 			margin-left: auto;
@@ -101,6 +100,10 @@ body {
 			margin-left: 0;
 			float: left;
 		}
+
+		.post-nav-links {
+			display: none;
+		}
 	}
 }
 
@@ -119,7 +122,4 @@ body {
 	object {
 		max-width: 100%;
 	}
-
 }
-
-
