@@ -57,7 +57,9 @@ describe.parallel( 'Create Courses', () => {
 		await expect(
 			previewPage.locator( 'h1:has-text("Test Create Course")' )
 		).toBeVisible();
-		await expect( previewPage.locator( 'text="Module 1"' ) ).toBeVisible();
+		await expect(
+			previewPage.getByRole( 'heading', { name: 'Module 1' } )
+		).toBeVisible();
 		await expect(
 			previewPage.locator( 'text="Lesson 1 in Module 1"' )
 		).toBeVisible();
