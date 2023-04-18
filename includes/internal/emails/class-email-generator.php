@@ -108,8 +108,10 @@ class Email_Generator {
 		 */
 		$email_generators = apply_filters( 'sensei_email_generators', $this->email_generators );
 
+		$published_emails = $this->email_repository->get_published_email_identifiers();
+
 		foreach ( $email_generators as $email_generator ) {
-			if ( $email_generator->is_email_active() ) {
+			if ( in_array( $email_generator->get_identifier(), $published_emails, true ) ) {
 				$email_generator->init();
 			}
 		}
