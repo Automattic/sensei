@@ -209,4 +209,24 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 		];
 		$this->assertEquals( $expected, (array) $result );
 	}
+
+	public function testGetPublishedEmailIdentifiers_WhenCalled_ReturnsOnlyTheIdentifiersOfPublishedEmails() {
+		/* Arrange. */
+		$repository = new Email_Repository();
+		$email_1    = $repository->create( 'a', [ 'b' ], 'c', 'd', 'e' );
+		$repository->create( 'f', [ 'g' ], 'h', 'i', 'j' );
+		wp_update_post(
+			[
+				'ID'          => $email_1,
+				'post_status' => 'draft',
+			],
+			true
+		);
+
+		/* Act. */
+		$result = $repository->get_published_email_identifiers();
+
+		/* Assert. */
+		$this->assertEquals( [ 'f' ], $result );
+	}
 }
