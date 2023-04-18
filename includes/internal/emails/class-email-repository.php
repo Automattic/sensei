@@ -236,4 +236,29 @@ class Email_Repository {
 
 		return 0 < (int) $query->post_count;
 	}
+
+	/**
+	 * Returns all published email identifiers.
+	 *
+	 * @internal
+	 *
+	 * @return string[]
+	 */
+	public function get_published_email_identifiers() {
+		$query = new WP_Query(
+			[
+				'post_type'      => Email_Post_Type::POST_TYPE,
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			]
+		);
+
+		$identifiers = [];
+		foreach ( $query->posts as $post_id ) {
+			$identifiers[] = get_post_meta( $post_id, self::META_IDENTIFIER, true );
+		}
+
+		return $identifiers;
+	}
 }
