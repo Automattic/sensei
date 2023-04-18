@@ -47,26 +47,28 @@ class Email_Generator_Test extends \WP_UnitTestCase {
 
 	public function testEmailGenerator_WhenInitHookCallsEmailGeneratorFunction_InitializesTheActiveEmails() {
 		/* Arrange. */
-		$generator = new Email_Generator( $this->email_repository, $this->lesson_progress_repository );
+		$mock_repository = $this->createMock( Email_Repository::class );
+		$mock_repository->method( 'get_published_email_identifiers' )->willReturn( [ 'a' ] );
+		$generator = new Email_Generator( $mock_repository, $this->lesson_progress_repository );
 		$generator->init();
 
 		$test_generator1 = $this->getMockBuilder( Email_Generators_Abstract::class )
-			->setMethods( [ 'is_email_active' ] )
-			->setConstructorArgs( [ $this->email_repository ] )
+			->setMethods( [ 'get_identifier' ] )
+			->setConstructorArgs( [ $mock_repository ] )
 			->getMockForAbstractClass();
 
-		$test_generator1->method( 'is_email_active' )
-			->willReturn( true );
+		$test_generator1->method( 'get_identifier' )
+			->willReturn( 'a' );
 
 		$test_generator1->expects( $this->once() )->method( 'init' );
 
 		$test_generator2 = $this->getMockBuilder( Email_Generators_Abstract::class )
-			->setMethods( [ 'is_email_active' ] )
-			->setConstructorArgs( [ $this->email_repository ] )
+			->setMethods( [ 'get_identifier' ] )
+			->setConstructorArgs( [ $mock_repository ] )
 			->getMockForAbstractClass();
 
-		$test_generator2->method( 'is_email_active' )
-			->willReturn( false );
+		$test_generator2->method( 'get_identifier' )
+			->willReturn( 'b' );
 
 		$test_generator2->expects( $this->never() )->method( 'init' );
 
