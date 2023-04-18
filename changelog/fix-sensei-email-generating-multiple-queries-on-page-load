@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+improved performance by generating one query instead of multiple on pageload from email
