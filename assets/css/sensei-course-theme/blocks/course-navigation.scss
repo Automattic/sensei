@@ -44,7 +44,6 @@
 	}
 
 	&__title {
-		color: var(--sensei-primary-color);
 		flex: 1;
 		font-size: 1.125rem;
 		font-weight: 600;
@@ -95,7 +94,6 @@
 	}
 
 	&__extra {
-		color: var(--sensei-lesson-meta-color);
 		font-size: 0.8125rem;
 		margin-top: 1px; // Needed to compensate the font-size difference.
 		padding-left: 6px;

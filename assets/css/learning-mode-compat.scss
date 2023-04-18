@@ -53,8 +53,15 @@
 	line-height: 1.1875;
 }
 
-@media screen and (max-width: (782px)) {
-	.sensei-lms-course-navigation-module__title {
+/* Course Navigation */
+.sensei-lms-course-navigation-module__title {
+	color: var(--sensei-primary-color);
+
+	@media screen and (max-width: (782px)) {
 		font-size: 1.3125rem;
 	}
+}
+
+.sensei-lms-course-navigation-lesson__extra {
+	color: var(--sensei-lesson-meta-color);
 }
