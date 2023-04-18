@@ -364,10 +364,11 @@ class Sensei_Grading_User_Quiz {
 							$html = wp_kses_post( apply_filters( 'sensei_answer_text', $_user_answer ) );
 							$html = '&lt;html>&lt;head>&lt;title>&lt;/title>&lt;/head>&lt;body>' . $html . '&lt;/body>&lt;/html>';
 							?>
-							&lt;iframe class="user-answer" srcdoc="&lt;?php echo esc_attr( $html ); ?>" sandbox="" height="auto">&lt;/iframe>
+							&lt;iframe class="user-answer" srcdoc="&lt;?php echo esc_attr( $html ); ?>" sandbox="allow-same-origin" height="auto">&lt;/iframe>
 							&lt;?php
 						}
 						?>
+
 						&lt;div class="right-answer">
 							&lt;h5>&lt;?php esc_html_e( 'Correct answer', 'sensei-lms' ); ?>&lt;/h5>
 							&lt;span class="correct-answer">
