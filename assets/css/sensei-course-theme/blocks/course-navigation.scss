@@ -80,13 +80,11 @@
 	padding: 10px 1px;
 
 	&__link {
-		color: inherit;
 		display: flex;
 		flex: 1;
 	}
 
 	&__title {
-		color: var(--sensei-module-lesson-color);
 		flex: 1;
 		font-size: 0.875rem;
 		font-weight: 300;
