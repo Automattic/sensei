@@ -212,14 +212,12 @@ export default [
 		apiVersion: 2,
 		edit: function EditPageActions() {
 			const blockProps = useBlockProps( {
-				className: 'sensei-quiz-pagination',
+				className: 'sensei-course-theme__post-pagination',
 			} );
 			return (
 				<div { ...blockProps }>
-					<div className="sensei-course-theme__post-pagination">
-						<span className="post-page-numbers current">1</span>
-						<span className="post-page-numbers">2</span>
-					</div>
+					<span className="post-page-numbers current">1</span>
+					<span className="post-page-numbers">2</span>
 				</div>
 			);
 		},
