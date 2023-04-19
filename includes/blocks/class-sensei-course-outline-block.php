@@ -15,6 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_Outline_Block {
 
 	/**
+	 * Instance of class.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
 	 * Attributes for inner blocks.
 	 *
 	 * @var array[]
@@ -54,9 +61,20 @@ class Sensei_Course_Outline_Block {
 	private $block_content;
 
 	/**
+	 * Return instance of Sensei_Course_Outline_Block.
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
 	 * Sensei_Course_Outline_Block constructor.
 	 */
-	public function __construct() {
+	private function __construct() {
 		$this->course = new Sensei_Course_Outline_Course_Block();
 		$this->lesson = new Sensei_Course_Outline_Lesson_Block();
 		$this->module = new Sensei_Course_Outline_Module_Block();

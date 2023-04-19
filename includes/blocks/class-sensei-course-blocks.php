@@ -54,7 +54,7 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	 * Initialize blocks that are used in course pages.
 	 */
 	public function initialize_blocks() {
-		$this->outline         = new Sensei_Course_Outline_Block();
+		$this->outline         = Sensei_Course_Outline_Block::instance();
 		$this->progress        = new Sensei_Course_Progress_Block();
 		$this->contact_teacher = new Sensei_Block_Contact_Teacher();
 		$this->take_course     = new Sensei_Block_Take_Course();
