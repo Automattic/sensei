@@ -28,12 +28,9 @@ body {
 	color: var(--sensei-background-color);
 }
 
-
-/**
- * 4.0.1 Template compatibility.
- */
-
 .sensei-course-theme__main-content {
+	padding: 0 24px;
+
 	> * {
 		max-width: var(--content-size) !important;
 		margin-left: auto;
