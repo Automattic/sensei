@@ -52,7 +52,6 @@ $breakpoint: 783px;
 		}
 
 		&__sidebar {
-
 			position: fixed;
 			z-index: 100;
 			background: var(--sensei-background-color, #fff);
@@ -67,7 +66,7 @@ $breakpoint: 783px;
 			overscroll-behavior: contain;
 			display: flex;
 			flex-direction: column;
-			padding: 32px 12px;
+			padding: 32px var(--content-padding);
 			transition: opacity 300ms;
 			scrollbar-gutter: stable both-edges;
 		}
