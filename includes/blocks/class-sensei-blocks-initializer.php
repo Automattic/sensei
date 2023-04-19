@@ -80,7 +80,7 @@ abstract class Sensei_Blocks_Initializer {
 	/**
 	 * Initializes the block assets.
 	 */
-	private function initialize_assets() {
+	private function initialize_assets(): void {
 		if ( is_admin() ) {
 			add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 			add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
@@ -95,6 +95,10 @@ abstract class Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function initialize_frontend_assets(): void {
+		if ( ! $this->is_post_type_included( get_post_type() ) ) {
+			return;
+		}
+
 		$is_archive_with_query_block = ( is_post_type_archive( 'course' ) || is_tax( 'course-category' ) ) && Sensei()->course->course_archive_page_has_query_block();
 		if (
 			Sensei()->blocks->has_sensei_blocks() ||
