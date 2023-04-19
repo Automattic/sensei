@@ -1,8 +1,6 @@
-@import '../colors';
-
 .wp-block-sensei-lms-course-theme-lesson-module {
-	border-left: solid 2px $sensei-module-lesson;
-	color: $sensei-module-lesson;
+	border-left: solid 2px var(--sensei-module-lesson-color);
+	color: var(--sensei-module-lesson-color);
 	font-size: 0.875rem;
 	line-height: 1.2;
 	padding-left: 0.5em;

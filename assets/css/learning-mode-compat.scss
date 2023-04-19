@@ -47,7 +47,7 @@
 }
 
 .sensei-course-theme-course-progress {
-	color: $sensei-lesson-meta;
+	color: var(--sensei-lesson-meta-color);
 	font-size: 1rem;
 	line-height: 1.1875;
 }
