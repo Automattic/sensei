@@ -70,13 +70,13 @@ $breakpoint: 783px;
 			order: -1;
 		}
 
-		&-course-progress {
+		.wp-block-sensei-lms-course-theme-course-progress-counter {
 			opacity: 0;
 			font-size: 14px;
 			line-height: 1.6;
 		}
 
-		&-course-progress-bar {
+		.wp-block-sensei-lms-course-theme-course-progress-bar {
 			margin-top: 0;
 		}
 
@@ -94,11 +94,11 @@ $breakpoint: 783px;
 				pointer-events: all;
 			}
 
-			.sensei-course-theme-course-progress {
+			.wp-block-sensei-lms-course-theme-course-progress-counter {
 				opacity: 1;
 			}
 
-			.sensei-course-theme-course-progress-bar {
+			.wp-block-sensei-lms-course-theme-course-progress-bar {
 				width: auto;
 				margin-left: 24px;
 				margin-right: 24px;
