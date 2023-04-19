@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Warning when admin email does not match any existing user and module has no author
