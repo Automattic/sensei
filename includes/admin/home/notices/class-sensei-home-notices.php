@@ -393,7 +393,7 @@ class Sensei_Home_Notices {
 		$plugin_file    = $plugin_data['plugin_basename'];
 		$latest_version = $plugin_data['latest_version'];
 
-		$notice            = $this->get_base_plugin_notice( $plugin_data );
+		$notice            = $this->get_base_plugin_notice( $plugin_data, [ 'sensei*' ] );
 		$notice['message'] = wp_kses(
 			sprintf(
 					// translators: First placeholder is the plugin name and second placeholder is the latest version available.
