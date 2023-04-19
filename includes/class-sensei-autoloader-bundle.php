@@ -14,18 +14,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * This class is no longer used.
  *
- * @deprecated $$next-version$$
+ * @deprecated 4.13.1
  */
 class Sensei_Autoloader_Bundle {
 	/**
 	 * Load a class of bundle.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.13.1
 	 *
 	 * @return bool
 	 */
 	public function load_class() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.13.1' );
 
 		return false;
 	}

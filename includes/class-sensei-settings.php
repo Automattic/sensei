@@ -177,14 +177,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Add legacy options to alloptions if they don't exist.
 	 *
 	 * @since 3.0.1
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.13.1
 	 *
 	 * @param array $alloptions All options that are preloaded by WordPress.
 	 *
 	 * @return array
 	 */
 	public function no_special_query_for_legacy_options( $alloptions ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.13.1' );
 
 		return $alloptions;
 	}
