@@ -5,6 +5,7 @@ body {
 	--sensei-background-color: var(--sensei-background-color-global, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #FFFFFF)));
 	--sensei-button-hover-color: #F0F0F0;
 	--sensei-lesson-meta-color: #787C82;
+	--sensei-locked-lesson-color: #646970;
 	--sensei-module-lesson-color: #101517;
 	--sensei-pagination-color: #191E23;
 	--sensei-primary-color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #155E65)));
@@ -13,6 +14,7 @@ body {
 	--sensei-text-color: var(--sensei-text-color-global, var(--sensei-course-theme-foreground-color, var(--wp--preset--color--text, var(--wp--preset--color--foreground, #1E1E1E))));
 
 	--border-color: rgba(125, 125, 125, 0.3);
+
 	background-color: var(--sensei-background-color);
 	color: var(--sensei-text-color);
 }
