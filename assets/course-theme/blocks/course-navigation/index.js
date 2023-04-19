@@ -80,14 +80,14 @@ const sampleStructure = [
  */
 const Module = ( { title, lessons } ) => (
 	<section className="sensei-lms-course-navigation-module sensei-collapsible">
-		<header className="sensei-lms-course-navigation-module__header">
-			<div className="sensei-collapsible__toggle">
+		<div className="sensei-lms-course-navigation-module__header">
+			<button className="sensei-collapsible__toggle">
 				<h3 className="sensei-lms-course-navigation-module__title">
 					{ title }
-					<ChevronUp className="sensei-lms-course-navigation-module__collapsible-icon" />
 				</h3>
-			</div>
-		</header>
+				<ChevronUp className="sensei-lms-course-navigation-module__collapsible-icon" />
+			</button>
+		</div>
 		<ol className="sensei-lms-course-navigation-module__lessons sensei-collapsible__content">
 			{ lessons.map( ( lesson ) => (
 				<Lesson { ...lesson } key={ lesson.title } />
