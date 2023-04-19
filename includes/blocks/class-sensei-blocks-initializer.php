@@ -26,41 +26,10 @@ abstract class Sensei_Blocks_Initializer {
 	 *
 	 * @param array|null $post_types The post types to initialize blocks for, or null for any post type.
 	 */
-	public function __construct( $post_types ) {
+	public function __construct( $post_types = null ) {
 		add_action( 'init', [ $this, 'maybe_initialize_blocks' ], 200 ); // Should be after all post types are registered.
 
 		$this->post_types = $post_types;
-	}
-
-	/**
-	 * Check if post type is included for initialization.
-	 *
-	 * @param string $post_type Post type to check.
-	 *
-	 * @return boolean Whether post type is included.
-	 */
-	private function is_post_type_included( $post_type ) {
-		return null === $this->post_types || in_array( $post_type, $this->post_types, true );
-	}
-
-	/**
-	 * Get the post type of the current admin page.
-	 *
-	 * @return string|null The post type or null if not found.
-	 */
-	private function get_admin_page_post_type(): ?string {
-		global $pagenow;
-
-		if ( 'post.php' === $pagenow && isset( $_GET['post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput -- Only reading the post ID.
-			$post_type = get_post_type( (int) $_GET['post'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only reading the post ID.
-			return $post_type ? $post_type : null;
-		}
-
-		if ( 'post-new.php' === $pagenow && isset( $_GET['post_type'] ) && post_type_exists( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput -- Only reading the post type.
-			return $_GET['post_type']; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput -- Already validated.
-		}
-
-		return null;
 	}
 
 	/**
@@ -139,6 +108,37 @@ abstract class Sensei_Blocks_Initializer {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check if post type is included for initialization.
+	 *
+	 * @param string $post_type Post type to check.
+	 *
+	 * @return boolean Whether post type is included.
+	 */
+	private function is_post_type_included( $post_type ) {
+		return null === $this->post_types || in_array( $post_type, $this->post_types, true );
+	}
+
+	/**
+	 * Get the post type of the current admin page.
+	 *
+	 * @return string|null The post type or null if not found.
+	 */
+	private function get_admin_page_post_type(): ?string {
+		global $pagenow;
+
+		if ( 'post.php' === $pagenow && isset( $_GET['post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput -- Only reading the post ID.
+			$post_type = get_post_type( (int) $_GET['post'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only reading the post ID.
+			return $post_type ? $post_type : null;
+		}
+
+		if ( 'post-new.php' === $pagenow && isset( $_GET['post_type'] ) && post_type_exists( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput -- Only reading the post type.
+			return $_GET['post_type']; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput -- Already validated.
+		}
+
+		return null;
 	}
 
 	/**
