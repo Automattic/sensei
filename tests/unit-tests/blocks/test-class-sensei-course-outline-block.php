@@ -190,7 +190,7 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		unregister_block_type( 'sensei-lms/course-outline-lesson' );
 		unregister_block_type( 'sensei-lms/course-outline-module' );
 
-		$outline_block = Sensei_Course_Outline_Block::instance();
+		$outline_block = new Sensei_Course_Outline_Block();
 
 		$this->mockPostCourseStructure(
 			[
@@ -233,6 +233,7 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 			$lesson_block
 		);
 	}
+
 
 	/**
 	 * Mock global post ID and its course structure.
