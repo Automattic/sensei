@@ -47,7 +47,6 @@
 	}
 
 	&__title {
-		color: var(--sensei-primary-color);
 		flex: 1;
 		font-size: 1.125rem;
 		font-weight: 600;
@@ -63,7 +62,6 @@
 	}
 
 	&__summary {
-		color: var(--sensei-lesson-meta-color);
 		font-size: 0.8125rem;
 		max-height: 0;
 		overflow: hidden;
@@ -83,14 +81,12 @@
 	margin-top: 24px;
 
 	&__link {
-		color: inherit;
 		display: flex;
 		flex: 1;
 		align-items: center;
 	}
 
 	&__title {
-		color: inherit;
 		flex: 1;
 		font-size: 0.875rem;
 		font-weight: 300;
@@ -98,7 +94,6 @@
 	}
 
 	&__extra {
-		color: var(--sensei-lesson-meta-color);
 		font-size: 0.8125rem;
 		margin-top: 1px; // Needed to compensate the font-size difference.
 		padding-left: 6px;

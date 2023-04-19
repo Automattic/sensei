@@ -4,7 +4,6 @@
   This style files are only required when the current theme don't provide learning mode customizations.
   Block based themes should declare add_theme_support('sensei-learning-mode'); to enable customization via theme.json
 */
-@import 'sensei-course-theme/colors';
 @import 'sensei-course-theme/theme-fixes';
 @import 'sensei-course-theme/buttons';
 
@@ -36,9 +35,23 @@
 	}
 }
 
+.editor-styles-wrapper .wp-block-sensei-lms-course-title,
 .wp-block-sensei-lms-course-title {
+	color: var(--sensei-text-color);
 	margin: 0;
-	font-weight: 600;
+	padding: 1px 2px;
+}
+
+.editor-styles-wrapper .wp-block-sensei-lms-course-theme-course-progress-counter,
+.wp-block-sensei-lms-course-theme-course-progress-counter {
+	color: var(--sensei-lesson-meta-color);
+	font-size: 1rem;
+	line-height: 1.1875;
+}
+
+/* Lesson Actions & Pagination */
+.wp-block-sensei-lms-page-actions .post-page-numbers {
+	color: var(--sensei-pagination-color);
 }
 
 .sensei-course-theme-lesson-actions {
@@ -46,14 +59,23 @@
 	margin: 0;
 }
 
-.sensei-course-theme-course-progress {
-	color: var(--sensei-lesson-meta-color);
-	font-size: 1rem;
-	line-height: 1.1875;
-}
+/* Course Navigation */
+.sensei-lms-course-navigation-module__title {
+	color: var(--sensei-primary-color);
 
-@media screen and (max-width: (782px)) {
-	.sensei-lms-course-navigation-module__title {
+	@media screen and (max-width: (782px)) {
 		font-size: 1.3125rem;
 	}
+}
+
+.sensei-lms-course-navigation-module__summary {
+	color: var(--sensei-lesson-meta-color);
+}
+
+.sensei-lms-course-navigation-lesson__link {
+	color: var(--sensei-module-lesson-color);
+}
+
+.sensei-lms-course-navigation-lesson__extra {
+	color: var(--sensei-lesson-meta-color);
 }

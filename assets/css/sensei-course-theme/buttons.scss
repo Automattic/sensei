@@ -52,7 +52,7 @@
 	&.wp-block-button > .wp-block-button__link {
 		border-radius: 2px;
 		font-weight: 400;
-		padding: 0 20px;
+		padding: 0.83em 1.11em;
 		text-decoration: none;
 	}
 
@@ -68,10 +68,6 @@
 
 	&.wp-block-button {
 		padding: 0;
-
-		.wp-block-button__link {
-			padding: 0.83em 1.11em;
-		}
 	}
 
 	&.is-primary,
@@ -95,6 +91,7 @@
 	&.wp-block-button.is-style-outline {
 		--wp--custom--button--border--color: var(--sensei-primary-color);
 		color: var(--sensei-primary-color);
+		flex-shrink: 0;
 
 		&:hover {
 			background-color: var(--sensei-button-hover-color);

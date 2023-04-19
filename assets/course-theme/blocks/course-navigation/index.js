@@ -123,9 +123,12 @@ const Lesson = ( { title, quiz, status } ) => {
 				</span>
 			</a>
 			{ quiz && (
-				<span className="sensei-lms-href sensei-lms-course-navigation-lesson__extra">
+				<a
+					className="sensei-lms-href sensei-lms-course-navigation-lesson__extra"
+					href="#pseudo-link"
+				>
 					{ __( 'Quiz', 'sensei-lms' ) }
-				</span>
+				</a>
 			) }
 		</li>
 	);
