@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @package Core
  * @since 1.9.0
- * @deprecated $$next-version$$
+ * @deprecated 4.13.1
  */
 class Sensei_Autoloader {
 	/**
@@ -22,18 +22,18 @@ class Sensei_Autoloader {
 	 * files within the includes directory
 	 *
 	 * @since 1.9.0
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.13.1
 	 */
 	public function initialize_class_file_map() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.13.1' );
 	}
 
 	/**
 	 * Autoload all sensei files as the class names are used.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.13.1
 	 */
 	public function autoload() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.13.1' );
 	}
 }

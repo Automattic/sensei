@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.0
 Tested up to: 6.2
 Requires PHP: 7.2
-Stable tag: 4.12.0
+Stable tag: 4.13.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,35 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+### 4.13.1 - 2023-04-19
+
+#### Changed
+- Disable the "welcome" and "no progress" emails by default
+- Update MailPoet link to point to Lists
+- Improve plugin loading performance using pre-built class map
+
+#### Fixed
+- Astra not loading the Courses page content
+- Fix auto grading not working and additionally throwing error for fill gap questions
+- Fix patterns wizard preview style
+- Fix the home email notification settings link
+- Make the email post type private
+- Remove fallback to legacy options
+- Fix showing warning from module when admin email does not match any existing user and it has no author
+
+### 4.13.0 - 2023-03-30
+
+#### Added
+- Functionality to create MailPoet lists for all courses and groups, and to subscribe users to those lists.
+
+#### Changed
+- Modify screen reader text to be less verbose on module expand button, front-end 👏 @alexstine
+
+#### Fixed
+- Fix styling of notices on pages other than Sensei home and button output on Sensei home.
+- Missing aria-expanded attribute on front-end module expand button 👏 @alexstine
+- Only show the sensei_email template for the sensei emails.
+
 ### 4.12.0 - 2023-03-29
 
 #### Added
@@ -147,28 +176,3 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 - Logged out users are redirected to login page if tries to access course completion page
 - Use dynamic pricing for Sensei Pro upsells
 
-### 4.11.1 - 2023-02-03
-
-- Add: Auto select course template depending on selected course pattern [#6200](https://github.com/Automattic/sensei/pull/6200)
-- Fix: Prevent html entities from showing up in module titles in editor [#6372](https://github.com/Automattic/sensei/pull/6372)
-- Fix: Remove separator from course list pattern [#6435](https://github.com/Automattic/sensei/pull/6435)
-- Fix: Alignment of url buttons for Blockbase/Astra themes [#5814](https://github.com/Automattic/sensei/pull/5814)
-- Fix: Type error when `the_content` is not a string [#6484](https://github.com/Automattic/sensei/pull/6484)
-- Fix: `the_content` hook called twice when viewing a lesson in learning mode [#6438](https://github.com/Automattic/sensei/pull/6438)
-- Tweak: Suppress theme without comments.php deprecation message [#6453](https://github.com/Automattic/sensei/pull/6453)
-- Tweak: Round course progress to integer [#6232](https://github.com/Automattic/sensei/pull/6232)
-
-### 4.11.0 - 2023-02-02
-
-- New: Guest users and teachers preview [#6421](https://github.com/Automattic/sensei/pull/6421)
-- Add: Add Course List block to My Courses and course archive on page creation [#6343](https://github.com/Automattic/sensei/pull/6343) [#6354](https://github.com/Automattic/sensei/pull/6354) [#6414](https://github.com/Automattic/sensei/pull/6416)
-- Add: Curate list of installed plugins that are logged [#6424](https://github.com/Automattic/sensei/pull/6424)
-- Add: Add filter for the student bulk action modal [#6366](https://github.com/Automattic/sensei/pull/6366)
-- Fix: Redirect to correct contact form if the user has a WPCOM subscription [#6407](https://github.com/Automattic/sensei/pull/6407)
-- Fix: Fix archive page going on infinite loop in Astra theme [#6431](https://github.com/Automattic/sensei/pull/6431)
-- Fix: Do not show quiz notice if it is the quiz page [#6313](https://github.com/Automattic/sensei/pull/6313)
-- Fix: Fix error when calling `the_content` filter with no post context [#6406](https://github.com/Automattic/sensei/pull/6406)
-- Fix: Fix issue where Quiz Timer options would appear only when the Random Question Order is enabled [#6377](https://github.com/Automattic/sensei/pull/6377)
-- Fix: Fix block editor check [#6359](https://github.com/Automattic/sensei/pull/6359)
-- Fix: Fix Twenty Fifteen and Learning Mode layout issue [#6360](https://github.com/Automattic/sensei/pull/6360)
-- Tweak: Change reset progress copy by [#6371](https://github.com/Automattic/sensei/pull/6371)
