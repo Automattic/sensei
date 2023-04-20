@@ -4,7 +4,7 @@
 	margin: 0;
 	width: 100%;
 
-	&-inner {
+	:first-child {
 		background-color: #30968B;
 		height: var(--header-progress-bar-height, 4px);
 	}

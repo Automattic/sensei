@@ -88,6 +88,13 @@ $breakpoint: 783px;
 
 		.wp-block-sensei-lms-course-theme-course-progress-bar {
 			margin-top: 0;
+			height: 4px;
+			border-radius: 0;
+
+			:first-child {
+				height: 4px;
+				border-radius: 0;
+			}
 		}
 
 		&--sidebar-open {
@@ -104,17 +111,13 @@ $breakpoint: 783px;
 				pointer-events: all;
 			}
 
-			.wp-block-sensei-lms-course-theme-course-progress-counter {
-				opacity: 1;
-			}
-
 			.wp-block-sensei-lms-course-theme-course-progress-bar {
 				width: auto;
 				margin-left: 24px;
 				margin-right: 24px;
-				border-radius: 6px ;
 
-				&, &--bar-inner {
+				&, :first-child {
+					border-radius: 6px;
 					height: 12px;
 				}
 			}
