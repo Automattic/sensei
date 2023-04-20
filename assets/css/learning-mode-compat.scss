@@ -52,6 +52,13 @@
 	line-height: 1.1875;
 }
 
+/* Content */
+.editor-styles-wrapper .wp-block .wp-block-sensei-lms-course-theme-lesson-module,
+.wp-block-sensei-lms-course-theme-lesson-module {
+	border-color: var(--sensei-module-lesson-color);
+	color: var(--sensei-module-lesson-color);
+}
+
 /* Lesson Actions & Pagination */
 .wp-block-sensei-lms-page-actions .post-page-numbers {
 	color: var(--sensei-pagination-color);
