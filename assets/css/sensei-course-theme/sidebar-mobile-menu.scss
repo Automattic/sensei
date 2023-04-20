@@ -47,6 +47,7 @@ $breakpoint: 783px;
 			.sensei-course-theme__sidebar {
 				opacity: 1;
 				top: calc(var(--sensei-wpadminbar-offset, 0px) + 90px);
+				pointer-events: all;
 			}
 
 		}
@@ -69,6 +70,7 @@ $breakpoint: 783px;
 			padding: 32px var(--content-padding);
 			transition: opacity 300ms;
 			scrollbar-gutter: stable both-edges;
+			pointer-events: none;
 		}
 
 		&__secondary-sidebar {
