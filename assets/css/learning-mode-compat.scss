@@ -23,6 +23,7 @@
 		color: var(--sensei-text-color);
 		font-weight: 300;
 		font-size: clamp(2.25rem, 1.536rem + 1.905vw, 3.25rem);
+		line-height: 1.23;
 	}
 }
 
@@ -54,6 +55,7 @@
 /* Lesson Actions & Pagination */
 .wp-block-sensei-lms-page-actions .post-page-numbers {
 	color: var(--sensei-pagination-color);
+	line-height: 2.667;
 }
 
 .sensei-course-theme-lesson-actions {
