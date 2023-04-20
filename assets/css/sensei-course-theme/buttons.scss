@@ -73,7 +73,7 @@
 	&.is-primary,
 	&.wp-block-button:not(.is-style-outline, .is-style-link) {
 		background-color: var(--sensei-secondary-color);
-		color: #26212E;
+		color: var(--sensei-button-text-color);
 
 		&:hover {
 			color: #FFFFFF;
