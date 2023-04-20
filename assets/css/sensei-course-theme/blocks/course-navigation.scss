@@ -1,9 +1,5 @@
 @import '../../../shared/styles/collapsible-content';
 
-@mixin text-gray() {
-	opacity: 0.7;
-}
-
 .editor-styles-wrapper .sensei-lms-course-navigation,
 .sensei-lms-course-navigation {
 	&__modules, &__lessons, &-module__lessons {
@@ -17,7 +13,7 @@
 	}
 
 	&__modules + &__lessons {
-		border-top: 1px dotted var(--border-color, #1E1E1E);
+		border-top: 1px dotted var(--border-color, var(--sensei-text-color));
 		margin-top: 6px;
 		padding-top: 6px;
 	}
@@ -25,13 +21,13 @@
 
 .sensei-lms-course-navigation-module {
 	.sensei-collapsible__toggle {
-		display: flex;
 		align-items: flex-start;
-		width: 100%;
-		padding: 0;
-		border: unset;
 		background: unset !important;
-		color: inherit !important;
+		border: unset;
+		color: var(--sensei-text-color);
+		display: flex;
+		padding: 0;
+		width: 100%;
 
 		&:hover h3 {
 			text-decoration: underline;
@@ -45,17 +41,16 @@
 		&.sensei-collapsed .sensei-lms-course-navigation-module__collapsible-icon {
 			transform: rotate(180deg);
 		}
-
-		> h3 {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			flex: 1;
-			margin: 0;
-			font-size: 18px;
-		}
 	}
 
+	&__title {
+		flex: 1;
+		font-size: 1.125rem;
+		font-weight: 600;
+		line-height: 1.33;
+		margin: 0;
+		text-align: left;
+	}
 
 	&__button {
 		color: inherit;
@@ -64,14 +59,13 @@
 	}
 
 	&__summary {
-		font-size: 13px;
-		@include text-gray;
-		visibility: hidden;
-		overflow: hidden;
+		font-size: 0.8125rem;
 		max-height: 0;
+		overflow: hidden;
 		position: relative;
 		top: -12px;
 		transition-delay: 150ms;
+		visibility: hidden;
 	}
 
 	&__lessons.sensei-collapsed ~ &__summary {
@@ -85,22 +79,21 @@
 	padding: 10px 1px;
 
 	&__link {
-		flex: 1;
 		display: flex;
+		flex: 1;
 	}
 
 	&__title {
 		flex: 1;
-		padding: 0 12px;
-		font-size: 14px;
+		font-size: 0.875rem;
 		font-weight: 300;
+		padding: 0 12px;
 	}
 
 	&__extra {
-		padding-left: 6px;
+		font-size: 0.8125rem;
 		margin-top: 1px; // Needed to compensate the font-size difference.
-		font-size: 13px;
-		@include text-gray;
+		padding-left: 6px;
 	}
 
 	&__status {
@@ -112,7 +105,7 @@
 
 	&.status-locked,
 	&.status-not-started &__status {
-		@include text-gray;
+		opacity: 0.7;
 	}
 
 	&.current-lesson &__title {
