@@ -7,5 +7,5 @@ import { useBlockProps } from '@wordpress/block-editor';
 export const ModuleTitleEdit = () => {
 	const blockProps = useBlockProps();
 
-	return <div { ...blockProps }>{ __( 'Module', 'sensei-lms' ) }</div>;
+	return <h3 { ...blockProps }>{ __( 'Module', 'sensei-lms' ) }</h3>;
 };
