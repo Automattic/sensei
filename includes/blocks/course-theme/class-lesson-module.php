@@ -28,6 +28,7 @@ class Lesson_Module {
 	 */
 	public function __construct() {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
+
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-lesson-module',
 			[
@@ -49,16 +50,19 @@ class Lesson_Module {
 	 */
 	public function render( array $attributes = array() ): string {
 		$lesson_id = \Sensei_Utils::get_current_lesson();
+
 		if ( ! $lesson_id ) {
 			return '';
 		}
 
 		$module_term = \Sensei()->modules->get_lesson_module( $lesson_id );
+
 		if ( ! $module_term ) {
 			return '';
 		}
 
 		$title = $module_term->name;
+
 		if ( ! $title ) {
 			return '';
 		}
