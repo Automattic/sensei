@@ -4,7 +4,8 @@ body,
 .editor-styles-wrapper .wp-block {
 	// Try to pick up global styles, customizer or theme colors.
 	--sensei-background-color: var(--sensei-background-color-global, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #FFFFFF)));
-	--sensei-button-hover-color: #F0F0F0;
+	--sensei-button-fill-hover-color: #FFFFFF;
+	--sensei-button-outline-hover-color: #F0F0F0;
 	--sensei-button-text-color: #26212E;
 	--sensei-lesson-meta-color: #787C82;
 	--sensei-locked-lesson-color: #646970;
