@@ -83,6 +83,7 @@ $breakpoint: 783px;
 			opacity: 0;
 			font-size: 14px;
 			line-height: 1.6;
+			display: none; /// Temporally hide the course progress counter on mobile until the final animation be implemented
 		}
 
 		.wp-block-sensei-lms-course-theme-course-progress-bar {
