@@ -28,7 +28,9 @@ add_filter( 'jetpack_shortcodes_to_include', 'sensei_jetpack_remove_shortcodes' 
 /**
  * Overrides the post types that Jetpack loads in the sitemap.
  *
- * @array $post_types Array of post types to include.
+ * @since $$next-version$$
+ *
+ * @param array $post_types Array of post types to include.
  *
  * @return array Revised array of post types to include.
  */
