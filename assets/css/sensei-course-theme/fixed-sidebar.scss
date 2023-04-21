@@ -1,4 +1,4 @@
-$breakpoint: 783px;
+$min_desktop_width: 783px;
 
 .sensei-course-theme {
 	&__columns {
@@ -6,26 +6,24 @@ $breakpoint: 783px;
 	}
 }
 
-@media screen and (min-width: ($breakpoint)) {
+// Desktop
+@media screen and (min-width: ($min_desktop_width)) {
 	.sensei-course-theme {
-		&__columns {
-			--sensei-lm-sidebar-width: 300px;
-		}
+		--sensei-lm-sidebar-width: 312px;
 
 		&__columns &__sidebar {
 			position: fixed;
 			top: 0;
 			bottom: 0;
 			left: 0;
-			width: var(--sensei-lm-sidebar-width, 300px);
+			width: var(--sensei-lm-sidebar-width);
 			border-right: 1px solid var(--border-color);
 			background-color: var(--sensei-background-color);
 			overflow: auto;
 			overscroll-behavior: contain;
 			display: flex;
 			flex-direction: column;
-			scrollbar-gutter: stable both-edges;
-			padding: 12px;
+			padding: 32px 24px;
 		}
 
 		&__header ~ &__columns &__sidebar {
@@ -37,12 +35,11 @@ $breakpoint: 783px;
 			right: 0;
 			border-right: unset;
 			border-left: 1px solid var(--border-color);
-
 		}
 
 		&__columns &__main-content {
 			padding: 32px 0;
-			margin-right: var(--sensei-lm-sidebar-width, 300px)!important;
+			margin-right: var(--sensei-lm-sidebar-width) !important;
 
 			// A Divi fix since it doesn't load Gutenberg block library styles.
 			@at-root {
@@ -54,7 +51,7 @@ $breakpoint: 783px;
 
 		&__columns &__sidebar ~ &__main-content {
 			margin-right: unset ! important;
-			margin-left: var(--sensei-lm-sidebar-width, 300px) !important;
+			margin-left: var(--sensei-lm-sidebar-width)  !important;
 		}
 
 	}

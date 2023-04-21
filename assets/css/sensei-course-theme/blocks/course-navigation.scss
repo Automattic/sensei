@@ -3,25 +3,28 @@
 .editor-styles-wrapper .sensei-lms-course-navigation,
 .sensei-lms-course-navigation {
 	&__modules, &__lessons, &-module__lessons {
-		&, li {
-			list-style: none;
-			margin: 0;
-		}
 
-		padding-left: 0;
 		margin: 0;
+
+		ol, li {
+			list-style: none;
+			padding: 0;
+		}
+	}
+	&__modules {
+		display: flex;
+		gap:  32px;
+		flex-direction: column;
 	}
 
 	&__modules + &__lessons {
-		border-top: 1px dotted var(--border-color, var(--sensei-text-color));
-		margin-top: 6px;
-		padding-top: 6px;
+		margin-top: 32px;
 	}
 }
 
 .sensei-lms-course-navigation-module {
 	.sensei-collapsible__toggle {
-		align-items: flex-start;
+		align-items: center;
 		background: unset !important;
 		border: unset;
 		color: var(--sensei-text-color);
@@ -62,10 +65,9 @@
 		font-size: 0.8125rem;
 		max-height: 0;
 		overflow: hidden;
-		position: relative;
-		top: -12px;
 		transition-delay: 150ms;
 		visibility: hidden;
+		margin-top: 4px;
 	}
 
 	&__lessons.sensei-collapsed ~ &__summary {
@@ -76,18 +78,19 @@
 
 .sensei-lms-course-navigation-lesson {
 	display: flex;
-	padding: 10px 1px;
+	margin-top: 24px;
 
 	&__link {
 		display: flex;
 		flex: 1;
+		align-items: center;
 	}
 
 	&__title {
 		flex: 1;
 		font-size: 0.875rem;
 		font-weight: 300;
-		padding: 0 12px;
+		padding: 0 8px;
 	}
 
 	&__extra {
@@ -99,7 +102,6 @@
 	&__status {
 		width: 12px;
 		height: 12px;
-		margin-top: 4px;
 		fill: currentColor;
 	}
 

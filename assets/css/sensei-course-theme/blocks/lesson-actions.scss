@@ -10,11 +10,19 @@
 	}
 }
 
+
+body .is-layout-flow > * + .sensei-course-theme__actions-wrapper {
+	margin-block-start: 40px;
+}
+
+.sensei-course-theme__post-pagination {
+	display: flex;
+}
+
 .wp-block-sensei-lms-page-actions {
 	align-items: flex-start;
 	column-gap: 40px;
 	display: flex;
-
 	.post-page-numbers {
 		opacity: 0.6;
 		text-decoration: none;

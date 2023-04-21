@@ -1,79 +1,145 @@
+$breakpoint: 783px;
+
 @media screen and (max-width: ($breakpoint - 1)) {
-	.sensei-course-theme__focus-mode-toggle {
-		display: none;
+	:root {
+		--sensei-lm-header-height: 52px;
+		--sensei-lm-mobile-header-height: 90px;
+		--content-padding: 24px;
 	}
 
-	.sensei-course-theme-lesson-completion-notice {
-		left: 0;
+
+	.admin-bar {
+		@at-root :root {
+			// When the admin bar is present, something is applying and extra spacing that is messing the padding calculate, so it require cut the padding by half.
+			--content-padding: 12px;
+		}
 	}
 
-	@media screen and (max-width: ($breakpoint - 1)) {
+	body .is-layout-flow > * + .sensei-course-theme__main-content {
+		margin-top: 32px;
+	}
 
-		.sensei-course-theme__focus-mode-toggle {
+	body.sensei-course-theme {
+		&__focus-mode-toggle {
 			display: none;
 		}
 
-		.sensei-course-theme-lesson-completion-notice {
+		&-lesson-completion-notice {
 			left: 0;
 		}
 
-		.sensei-course-theme {
-			--content-padding: 24px;
+		&__header__info {
+			align-items: start;
+		}
 
-			&__header {
-				transition: none !important;
-				display: flex;
-				flex-direction: column;
+		&-prev-next-lesson-text {
+			display: none;
+		}
 
-				> *:first-child {
-					flex: 1;
-				}
+		&__header {
+			display: flex;
+			flex-direction: column;
 
-				* {
-					gap: 12px !important;
-				}
-
-				.sensei-course-theme-prev-next-lesson-text, .wp-block-sensei-lms-exit-course {
-					display: none;
-				}
-
-				.sensei-course-theme-prev-next-lesson-a {
-					padding: 2px;
-				}
-
-				img {
-					max-height: 30px;
-					width: auto;
-				}
-
-				a, img {
-					margin: 0;
-				}
+			>*:first-child {
+				flex: 1;
 			}
 
-			&__header {
-				.sensei-course-theme-course-progress {
-					display: none;
-				}
+			* {
+				gap: 12px !important;
 			}
 
-			&--sidebar-open {
-				overflow: hidden;
+			&-prev-next-lesson-a {
+				padding: 2px;
+			}
+
+			.wp-block-sensei-lms-course-title {
+				transition: all 400ms;
+				min-height: 30px;
+			}
+
+			img {
+				max-height: 30px;
+				width: auto;
+			}
+
+			a,
+			img {
+				margin: 0;
 			}
 		}
 
-		/* Course Navigation */
-		.sensei-lms-course-navigation-lesson__title {
+		&__content {
+			padding: 0 24px;
+		}
+
+		.wp-block-sensei-lms-exit-course {
+			opacity: 0;
+			pointer-events: none;
+			font-size: 14px;
+			order: -1;
+		}
+
+		.wp-block-sensei-lms-course-theme-course-progress-counter {
+			opacity: 0;
+			font-size: 14px;
+			line-height: 1.6;
+			display: none; /// Temporally hide the course progress counter on mobile until the final animation be implemented
+		}
+
+		.wp-block-sensei-lms-course-theme-course-progress-bar {
+			margin-top: 0;
+			height: 4px;
+			border-radius: 0;
+
+			:first-child {
+				height: 4px;
+				border-radius: 0;
+			}
+		}
+
+		&--sidebar-open {
+			overflow: hidden;
+
+			.sensei-course-theme__header {
+				z-index: 999;
+				height: var(--sensei-lm-mobile-header-height);
+			}
+
+			.wp-block-sensei-lms-exit-course {
+				display: block;
+				opacity: 1;
+				pointer-events: all;
+			}
+
+			.wp-block-sensei-lms-course-theme-course-progress-bar {
+				width: auto;
+				margin-left: 24px;
+				margin-right: 24px;
+
+				&, :first-child {
+					border-radius: 6px;
+					height: 12px;
+				}
+			}
+
+			.wp-block-sensei-lms-course-title {
+				opacity: 0;
+				position: absolute;
+			}
+
+		}
+
+		&.wp-block-button {
+			.wp-block-button__link.sensei-course-theme__button {
+				padding-left: 0.67em;
+				padding-right: 0.67em;
+			}
+		}
+	}
+
+	.sensei-lms-course-navigation {
+		&-lesson__title {
 			font-size: 1rem;
-		}
-
-		.sensei-course-theme .wp-block-button {
-			&.wp-block-button {
-				.wp-block-button__link.sensei-course-theme__button {
-					padding-left: 0.67em;
-					padding-right: 0.67em;
-				}
-			}
 		}
 	}
 }
