@@ -7,6 +7,9 @@ import { render } from '@testing-library/react';
  */
 import FeaturedLabel from '.';
 
+/**
+ * WordPress dependencies
+ */
 import { useEntityProp } from '@wordpress/core-data';
 import { when } from 'jest-when';
 

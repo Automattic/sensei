@@ -4,22 +4,14 @@
 import { __ } from '@wordpress/i18n';
 import { registerBlockVariation } from '@wordpress/blocks';
 import { select, subscribe } from '@wordpress/data';
+import { addFilter } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
  */
 import './hooks';
-
-/**
- * Internal dependencies
- */
 import icon from '../../icons/course-list.svg';
-
-/**
- * Internal dependencies
- */
 import FeaturedLabel from './featured-label';
-import { addFilter } from '@wordpress/hooks';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {

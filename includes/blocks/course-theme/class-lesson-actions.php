@@ -61,9 +61,11 @@ class Lesson_Actions {
 			<form data-id="complete-lesson-form" class="sensei-course-theme-lesson-actions__complete-lesson-form" method="POST" action="' . $permalink . '">
 				' . $nonce . '
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
-				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme__button sensei-course-theme-lesson-actions__complete ' . $button_class . '" ' . $disabled_attribute . '>
-					' . $text . '
-				</button>
+				<div class="wp-block-button is-style-outline">
+					<button type="submit" data-id="complete-lesson-button" class="wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__complete ' . $button_class . '" ' . $disabled_attribute . '>
+						' . $text . '
+					</button>
+				</div>
 			</form>
 		' );
 	}
@@ -77,7 +79,15 @@ class Lesson_Actions {
 		$label = esc_html__( 'Completed', 'sensei-lms' );
 		$icon  = \Sensei()->assets->get_icon( 'checked' );
 
-		return ( '<button disabled="disabled" class="sensei-course-theme-lesson-actions__completed sensei-course-theme__button is-secondary is-completed has-icon">' . $icon . ' <span>' . $label . '</span></button>' );
+		return (
+			'<div className="wp-block-button">' .
+				'<button disabled="disabled" class="wp-block-button__link wp-element-button sensei-course-theme-lesson-actions__completed sensei-course-theme__button is-secondary is-completed has-icon">' . $icon .
+					' <span>' .
+						$label .
+					'</span>' .
+				'</button>' .
+			'</div>'
+		);
 
 	}
 
@@ -117,10 +127,12 @@ class Lesson_Actions {
 		$text           = esc_html__( 'Take Quiz', 'sensei-lms' );
 
 		return ( '
-			<form method="GET" action="' . $quiz_permalink . '" class="sensei-course-theme-lesson-actions__take-quiz-form">
-				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme-lesson-actions__take-quiz sensei-course-theme__button is-primary" ' . $disabled . '>
-					' . $text . '
-			</button>
+			<form method="POST" action="' . $quiz_permalink . '" class="sensei-course-theme-lesson-actions__take-quiz-form">
+				<div class="wp-block-button">
+					<button type="submit" data-id="complete-lesson-button" class="wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__take-quiz is-primary" ' . $disabled . '>
+						' . $text . '
+					</button>
+				</div>
 			</form>
 		' );
 	}
@@ -141,7 +153,7 @@ class Lesson_Actions {
 		$actions = [];
 		$class   = [ 'sensei-course-theme-lesson-actions' ];
 
-		if ( empty( $lesson_id ) || empty( $user_id ) ) {
+		if ( empty( $lesson_id ) ) {
 			return '';
 		}
 
@@ -161,23 +173,28 @@ class Lesson_Actions {
 				$actions[] = $this->render_next_lesson();
 			}
 		} else {
-
+			$render_quiz_button          = false;
+			$complete_button_class       = 'is-primary';
 			$has_incomplete_prerequisite = ! Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
 			$quiz_permalink              = Sensei()->lesson->get_quiz_permalink( $lesson_id );
 			$is_quiz_submitted           = Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id );
 			$is_pass_required            = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
 
-			// Quiz button.
 			if ( ! empty( $quiz_permalink ) && ! $is_quiz_submitted ) {
-				$take_quiz_button = $this->render_take_quiz( $quiz_permalink, $has_incomplete_prerequisite );
-				$actions[]        = $take_quiz_button;
+				$render_quiz_button    = true;
+				$complete_button_class = 'is-secondary';
 			}
 
 			// Complete button.
 			if ( ! $is_pass_required ) {
-				$complete_button_class  = isset( $take_quiz_button ) ? 'is-secondary' : 'is-primary';
 				$complete_lesson_button = $this->render_complete_lesson( $complete_button_class, $has_incomplete_prerequisite );
 				$actions[]              = $complete_lesson_button;
+			}
+
+			// Quiz button.
+			if ( $render_quiz_button ) {
+				$take_quiz_button = $this->render_take_quiz( $quiz_permalink, $has_incomplete_prerequisite );
+				$actions[]        = $take_quiz_button;
 			}
 		}
 

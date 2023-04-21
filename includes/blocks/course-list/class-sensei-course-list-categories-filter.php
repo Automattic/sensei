@@ -24,16 +24,25 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 	 *
 	 * @var string
 	 */
-	private $param_key = 'course-list-category-filter-';
+	const PARAM_KEY = 'course-list-category-filter-';
 
 	/**
 	 * Get the content to be be rendered inside the filtered block.
 	 *
-	 * @param int $query_id The id of the Query block this filter is rendering inside.
+	 * @param WP_Block $block The block instance.
 	 */
-	public function get_content( $query_id ) : string {
-		$filter_param_key  = $this->param_key . $query_id;
-		$category_id       = isset( $_GET[ $filter_param_key ] ) ? intval( $_GET[ $filter_param_key ] ) : -1; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
+	public function get_content( WP_Block $block ) : string {
+		$attributes       = $block->attributes;
+		$query_id         = $block->context['queryId'];
+		$is_inherited     = $block->context['query']['inherit'] ?? false;
+		$filter_param_key = $is_inherited ? 'course_category_filter' : self::PARAM_KEY . $query_id;
+		$default_option   = $attributes['defaultOptions']['categories'] ?? -1;
+		$category_id      = isset( $_GET[ $filter_param_key ] ) ? intval( $_GET[ $filter_param_key ] ) : -1; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
+
+		if ( $is_inherited && is_tax( 'course-category' ) ) {
+			return '';
+		}
+
 		$course_categories = get_terms(
 			[
 				'taxonomy'   => 'course-category',
@@ -42,7 +51,7 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 		);
 
 		return '<select data-param-key="' . esc_attr( $filter_param_key ) . '">
-			<option value="-1">' . esc_html__( 'All Categories', 'sensei-lms' ) . '</option>' .
+			<option value="' . esc_attr( $default_option ) . '">' . esc_html__( 'All Categories', 'sensei-lms' ) . '</option>' .
 			join(
 				'',
 				array_map(
@@ -60,7 +69,7 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 	 * @param int $query_id The id of the Query block this filter is rendering inside.
 	 */
 	public function get_course_ids_to_be_excluded( $query_id ): array {
-		$filter_param_key = $this->param_key . $query_id;
+		$filter_param_key = self::PARAM_KEY . $query_id;
 
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! isset( $_GET[ $filter_param_key ] ) ) {

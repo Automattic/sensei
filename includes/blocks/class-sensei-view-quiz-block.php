@@ -40,13 +40,13 @@ class Sensei_View_Quiz_Block {
 	public function render( array $attributes, string $content ) : string {
 		$lesson_id = get_the_ID();
 
-		if ( empty( $lesson_id ) ) {
+		if ( empty( $lesson_id ) || ! sensei_can_user_view_lesson( $lesson_id ) ) {
 			return '';
 		}
 
 		$quiz_permalink = Sensei()->lesson->get_quiz_permalink( $lesson_id );
 
-		if ( ! $quiz_permalink || ! Sensei()->access_settings() ) {
+		if ( ! $quiz_permalink ) {
 			return '';
 		}
 
@@ -66,6 +66,6 @@ class Sensei_View_Quiz_Block {
 			1
 		);
 
-		return '<form class="lesson_button_form" data-id="complete-lesson-form" method="GET" action="' . $quiz_permalink . '">' . $content . '</form>';
+		return '<form class="lesson_button_form" data-id="complete-lesson-form" method="POST" action="' . $quiz_permalink . '">' . $content . '</form>';
 	}
 }

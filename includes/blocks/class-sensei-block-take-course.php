@@ -74,6 +74,7 @@ class Sensei_Block_Take_Course {
 		} elseif ( ! is_user_logged_in() ) {
 			$html = $this->render_with_login( $content );
 		}
+
 		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'sensei-block-wrapper sensei-cta' ) );
 		return ! empty( $html ) ? '<div ' . $wrapper_attributes . '>' . $html . '</div>' : '';
 	}

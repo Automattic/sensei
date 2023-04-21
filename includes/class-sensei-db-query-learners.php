@@ -128,7 +128,7 @@ class Sensei_Db_Query_Learners {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results(
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Placeholders created dinamically.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Placeholders created dinamically.
 			$wpdb->prepare(
 				"
 				SELECT cm.user_id, MAX(cm.comment_date_gmt) AS last_activity_date
@@ -158,6 +158,18 @@ class Sensei_Db_Query_Learners {
 	public function get_all() {
 		global $wpdb;
 		$sql = $this->build_query();
+
+		/**
+		 * Filter the query to get learners based on the current search arguments.
+		 *
+		 * @hook sensei_learners_query
+		 * @since 4.11.0
+		 *
+		 * @param {string} $sql SQL query
+		 *
+		 * @return {Sensei_Db_Query_Learners} Query builder instance.
+		 */
+		$sql = apply_filters( 'sensei_learners_query', $sql, $this );
 
 		$results                     = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery -- Created inside the build_query method.
 		$this->total_items           = intval( $wpdb->get_var( 'SELECT FOUND_ROWS()' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery

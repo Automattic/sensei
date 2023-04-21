@@ -116,6 +116,27 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive_Test extends WP_UnitTestCa
 		$this->assertEquals( 'page', $post->post_type, 'The dummy post type should be "page"' );
 	}
 
+	public function testCourseArchivePage_WhenRendered_DoesNotRenderQueryListBlockWithoutPageContent() {
+		/* ACT */
+		$this->handler->handle_request();
+
+		/* ASSERT */
+		global $post;
+		$this->assertStringNotContainsString( 'wp-block-sensei-lms-course-list', $post->post_content );
+	}
+
+	public function testCourseArchivePage_WhenRendered_RendersQueryListBlockIfPageContentAvailable() {
+		/* ARRANGE */
+		Sensei_Setup_Wizard::instance()->pages->create_pages();
+
+		/* ACT */
+		$this->handler->handle_request();
+
+		/* ASSERT */
+		global $post;
+		$this->assertStringContainsString( 'wp-block-sensei-lms-course-list', $post->post_content );
+	}
+
 	/**
 	 * Helper to set up the current request to be a course archive page. This request
 	 * will be handled by the unsupported theme handler if the theme is not

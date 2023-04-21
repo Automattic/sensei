@@ -103,9 +103,6 @@ class Sensei_Course_Enrolment {
 	 * @return bool
 	 */
 	public function is_enrolled( $user_id, $check_cache = true ) {
-		if ( ! $user_id ) {
-			return false;
-		}
 
 		/**
 		 * Allow complete side-stepping of enrolment handling in Sensei.
@@ -125,6 +122,10 @@ class Sensei_Course_Enrolment {
 		$is_enrolled = apply_filters( 'sensei_is_enrolled', null, $user_id, $this->course_id, $check_cache );
 		if ( null !== $is_enrolled ) {
 			return $is_enrolled;
+		}
+
+		if ( ! $user_id ) {
+			return false;
 		}
 
 		// User is not enrolled if the course is not published or he is removed.

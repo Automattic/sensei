@@ -316,12 +316,11 @@ class Sensei_Grading_User_Quiz {
 						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped before core filter applied.
 						echo Sensei_Question::get_the_question_description( $question_id );
 						?>
-						<p class="user-answer">
 						<?php
 						foreach ( $user_answer_content as $_user_answer ) {
 
 							if ( 'multi-line' === Sensei()->question->get_question_type( $question->ID ) ) {
-								$is_plaintext = sanitize_text_field( $_user_answer ) == $_user_answer;
+								$is_plaintext = sanitize_textarea_field( $_user_answer ) === $_user_answer;
 								if ( $is_plaintext ) {
 									$_user_answer = nl2br( $_user_answer );
 								}
@@ -329,10 +328,14 @@ class Sensei_Grading_User_Quiz {
 								$_user_answer = htmlspecialchars_decode( $_user_answer );
 							}
 
-							echo wp_kses_post( apply_filters( 'sensei_answer_text', $_user_answer ) ) . '<br>';
+							$html = wp_kses_post( apply_filters( 'sensei_answer_text', $_user_answer ) );
+							$html = '<html><head><title></title></head><body>' . $html . '</body></html>';
+							?>
+							<iframe class="user-answer" srcdoc="<?php echo esc_attr( $html ); ?>" sandbox="allow-same-origin" height="auto"></iframe>
+							<?php
 						}
 						?>
-						</p>
+
 						<div class="right-answer">
 							<h5><?php esc_html_e( 'Correct answer', 'sensei-lms' ); ?></h5>
 							<span class="correct-answer">

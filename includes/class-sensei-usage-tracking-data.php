@@ -34,6 +34,7 @@ class Sensei_Usage_Tracking_Data {
 				'course_completion_rate'         => self::get_course_completion_rate(),
 				'course_videos'                  => self::get_course_videos_count(),
 				'course_no_notifications'        => self::get_course_no_notifications_count(),
+				'course_open_access'             => self::get_course_open_access_count(),
 				'course_prereqs'                 => self::get_course_prereqs_count(),
 				'course_featured'                => self::get_course_featured_count(),
 				'enrolments'                     => self::get_course_enrolments(),
@@ -67,7 +68,7 @@ class Sensei_Usage_Tracking_Data {
 		/**
 		 * Filter the usage tracking data.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.10.0
 		 * @hook sensei_usage_tracking_data
 		 *
 		 * @param {array} $usage_data The usage tracking data.
@@ -77,6 +78,30 @@ class Sensei_Usage_Tracking_Data {
 		return apply_filters( 'sensei_usage_tracking_data', $usage_data );
 	}
 
+	/**
+	 * Get the number of courses using the Open Access feature.
+	 *
+	 * @since 4.11.0
+	 *
+	 * @return int Number of courses using the learning mode.
+	 **/
+	public static function get_course_open_access_count() {
+		$course_query = new WP_Query(
+			array(
+				'post_type'      => 'course',
+				'post_status'    => 'any',
+				'posts_per_page' => -1,
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Only used for usage stats, not always called.
+					array(
+						'key'   => Sensei_Guest_User::COURSE_OPEN_ACCESS_META,
+						'value' => true,
+					),
+				),
+			)
+		);
+
+		return $course_query->found_posts;
+	}
 	/**
 	 * Get the base fields to be sent for event logging.
 	 *

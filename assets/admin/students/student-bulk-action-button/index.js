@@ -3,6 +3,7 @@
  */
 import { Button } from '@wordpress/components';
 import { render, useEffect, useState } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -40,6 +41,7 @@ export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 				setAction( 'reset-progress' );
 				break;
 			default:
+				setAction( selectedValue );
 		}
 	};
 	const buttonEnableDisableEventHandler = ( args ) => {
@@ -92,6 +94,38 @@ export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 
 		setIsModalOpen( true );
 	};
+
+	const defaultStudentModal = (
+		<StudentModal
+			action={ action }
+			onClose={ closeModal }
+			students={ studentIds }
+			studentDisplayName={ studentName }
+		/>
+	);
+
+	/**
+	 * Filters the bulk action modal.
+	 *
+	 * @since 4.11.0
+	 *
+	 * @param {Object}   modal       The modal component.
+	 * @param {string}   action      Selected action.
+	 * @param {Function} closeModal  The callback to run when the modal is closed.
+	 * @param {Array}    studentIds  Selected student ids.
+	 * @param {string}   studentName Selected student name.
+	 *
+	 * @return {Object} Filtered modal.
+	 */
+	const modal = applyFilters(
+		'senseiStudentBulkActionModal',
+		defaultStudentModal,
+		action,
+		closeModal,
+		studentIds,
+		studentName
+	);
+
 	return (
 		<>
 			<Button
@@ -103,14 +137,7 @@ export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 				{ __( 'Select Action', 'sensei-lms' ) }
 			</Button>
 			<input type="hidden" id="bulk-action-user-ids" />
-			{ isModalOpen && (
-				<StudentModal
-					action={ action }
-					onClose={ closeModal }
-					students={ studentIds }
-					studentDisplayName={ studentName }
-				/>
-			) }
+			{ isModalOpen && modal }
 		</>
 	);
 };

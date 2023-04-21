@@ -29,7 +29,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 			name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>"
 			value="<?php echo esc_attr( $question_data['user_answer_entry'] ); ?>"
 			class="gapfill-answer-gap"
-			<?php echo $question_data['quiz_is_completed'] || ! is_user_logged_in() ? 'disabled' : ''; ?>
+			<?php echo $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available() ? 'disabled' : ''; ?>
 		/>
 		<span class="gapfill-answer-post">
 			<?php echo wp_kses_post( apply_filters( 'sensei_answer_text', esc_html( $question_data['gapfill_post'] ) ) ); ?>

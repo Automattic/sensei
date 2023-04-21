@@ -1708,4 +1708,16 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 1, did_filter( 'sensei_usage_tracking_data' ) );
 	}
+
+	public function testGetCourseOpenAccessCount_WhenCalled_ReturnsCorrectNumberOfCourses() {
+		/* Arrange */
+		$course_ids = $this->factory->course->create_many( 2 );
+		update_post_meta( $course_ids[0], '_open_access', 1 );
+
+		/* Act */
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		/* Assert */
+		$this->assertEquals( 1, $usage_data['course_open_access'] );
+	}
 }

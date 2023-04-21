@@ -90,7 +90,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		$result = $this->block->render( [], self::CONTENT );
 
-		$this->assertRegExp( '|<a href="http://example.org/\?course=continue-course-block".*>Continue</a>|', $result );
+		$this->assertRegExp( '|<form action="http://example.org/\?course=continue-course-block" method="get".*>|', $result );
 	}
 
 	public function testRender_EnrolledAndStartedLesson_ReturnsModifiedBlockContentWithLessonUrl() {
@@ -108,7 +108,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$lesson_title = get_post( $course_lesson_ids[0] )->post_name;
-		$this->assertRegExp( '|<a href="http://example.org/\?lesson=' . $lesson_title . '".*>Continue</a>|', $result );
+		$this->assertRegExp( '|<form action="http://example.org/\?lesson=' . $lesson_title . '" method="get".*>|', $result );
 	}
 
 
@@ -125,7 +125,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$course_title = $this->course->post_name;
-		$this->assertRegExp( '|<a href="http://example.org/\?course=' . $course_title . '".*>Continue</a>|', $result );
+		$this->assertRegExp( '|<form action="http://example.org/\?course=' . $course_title . '" method="get".*>|', $result );
 	}
 
 	public function testRender_WhenTheStudentDoesntHaveStartedALesson_ReturnsLinkToFirstLesson() {
@@ -143,6 +143,6 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$lesson_title = get_post( $course_lesson_ids[1] )->post_name;
-		$this->assertRegExp( '|<a href="http://example.org/\?lesson=' . $lesson_title . '".*>Continue</a>|', $result );
+		$this->assertRegExp( '|<form action="http://example.org/\?lesson=' . $lesson_title . '" method="get".*>|', $result );
 	}
 }

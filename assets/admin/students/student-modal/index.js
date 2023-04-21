@@ -98,7 +98,7 @@ const getAction = ( action, studentCount, studentDisplayName ) => {
 					? sprintf(
 							// Translators: placeholder is the number of selected students.
 							__(
-								'Select the course(s) you would like to reset or remove progress from for <strong>%d students</strong>:',
+								'Select the course(s) you would like to reset progress from for <strong>%d students</strong>:',
 								'sensei-lms'
 							),
 							studentCount
@@ -106,16 +106,16 @@ const getAction = ( action, studentCount, studentDisplayName ) => {
 					: sprintf(
 							// Translators: placeholder is the student's name.
 							__(
-								'Select the course(s) you would like to reset or remove progress from for <strong>%s</strong>:',
+								'Select the course(s) you would like to reset progress from for <strong>%s</strong>:',
 								'sensei-lms'
 							),
 							safeStudentDisplayName
 					  ),
-			buttonLabel: __( 'Reset or Remove Progress', 'sensei-lms' ),
+			buttonLabel: __( 'Reset Progress', 'sensei-lms' ),
 			errorMessage: ( students ) =>
 				_n(
-					'Unable to reset or remove progress for this student. Please try again.',
-					'Unable to reset or remove progress for these students. Please try again.',
+					'Unable to reset progress for this student. Please try again.',
+					'Unable to reset progress for these students. Please try again.',
 					students.length,
 					'sensei-lms'
 				),

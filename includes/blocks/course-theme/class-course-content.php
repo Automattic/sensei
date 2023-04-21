@@ -78,15 +78,15 @@ class Course_Content {
 
 		$type = get_post_type();
 
-		$content = '';
-
 		switch ( $type ) {
 			case 'quiz':
 				$content = Quiz_Content::render_quiz();
 				break;
 			case 'lesson':
-				$content = $this->render_lesson_content();
+				$content = $this->render_lesson_content( $content );
 				break;
+			default:
+				$content = '';
 		}
 
 		add_filter( 'the_content', [ $this, 'render_content' ] );
@@ -98,26 +98,26 @@ class Course_Content {
 	/**
 	 * Render the current lesson page's content.
 	 *
-	 * @global string $_wp_current_template_content
+	 * @param string $content Content of the post.
 	 *
-	 * @return false|string
+	 * @return string
 	 */
-	private function render_lesson_content() {
+	private function render_lesson_content( $content ) {
 		global $_wp_current_template_content;
 
 		if ( ! in_the_loop() && have_posts() ) {
 			the_post();
 		}
 
-		ob_start();
-
 		if ( sensei_can_user_view_lesson() ) {
-			the_content();
-		} elseif ( empty( $_wp_current_template_content ) || ! has_block( 'core/post-excerpt', $_wp_current_template_content ) ) {
-			the_excerpt();
+			return $content;
 		}
 
-		return ob_get_clean();
+		if ( empty( $_wp_current_template_content ) || ! has_block( 'core/post-excerpt', $_wp_current_template_content ) ) {
+			return apply_filters( 'the_excerpt', get_the_excerpt() ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Intended.
+		}
+
+		return '';
 	}
 
 }

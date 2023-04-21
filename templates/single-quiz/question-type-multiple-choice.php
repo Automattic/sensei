@@ -30,7 +30,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 		?>
 
 		<li class="<?php echo esc_attr( $option['option_class'] ); ?>">
-			<input type="<?php echo esc_attr( $option['type'] ); ?>" id="<?php echo esc_attr( 'question_' . $question_data['ID'] . '-option-' . $count ); ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>[]" value="<?php echo esc_attr( $option['answer'] ); ?>" <?php echo esc_attr( $option['checked'] ); ?> <?php echo $question_data['quiz_is_completed'] || ! is_user_logged_in() ? 'disabled' : ''; ?> />
+			<input type="<?php echo esc_attr( $option['type'] ); ?>" id="<?php echo esc_attr( 'question_' . $question_data['ID'] . '-option-' . $count ); ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>[]" value="<?php echo esc_attr( $option['answer'] ); ?>" <?php echo esc_attr( $option['checked'] ); ?> <?php echo $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available() ? 'disabled' : ''; ?> />
 
 			<label for="<?php echo esc_attr( 'question_' . $question_data['ID'] . '-option-' . $count ); ?>">
 				<?php

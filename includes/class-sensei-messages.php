@@ -740,9 +740,13 @@ class Sensei_Messages {
 	 */
 	public function message_title( $title = '', $post_id = null ) {
 
-		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() && get_post_type( $post_id ) == $this->post_type ) {
+		if ( get_post_type( $post_id ) !== $this->post_type ) {
+			return $title;
+		}
+
+		if ( is_single() && is_singular() && in_the_loop() ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post_id ) ) {
-				$title = __( 'You are not allowed to view this message.', 'sensei-lms' );
+				return __( 'You are not allowed to view this message.', 'sensei-lms' );
 			}
 		}
 
@@ -758,9 +762,13 @@ class Sensei_Messages {
 	public function message_content( $content ) {
 		global $post;
 
-		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() ) {
+		if ( ! $post || get_post_type( $post->ID ) !== $this->post_type ) {
+			return $content;
+		}
+
+		if ( is_single() && is_singular() && in_the_loop() ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post->ID ) ) {
-				$content = __( 'Please log in to view your messages.', 'sensei-lms' );
+				return __( 'Please log in to view your messages.', 'sensei-lms' );
 			}
 		}
 
@@ -1027,7 +1035,7 @@ class Sensei_Messages {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.10.0
 	 */
 	public function show_success_notice(): void {
 		if ( ! Sensei_Utils::is_rest_request() ) {

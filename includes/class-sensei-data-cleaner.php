@@ -31,6 +31,7 @@ class Sensei_Data_Cleaner {
 		'question',
 		'multiple_question',
 		'sensei_message',
+		'sensei_email',
 	);
 
 	/**
@@ -329,15 +330,23 @@ class Sensei_Data_Cleaner {
 			self::remove_all_sensei_caps( $role );
 		}
 
-		// Remove caps and role from users.
+		// Remove caps and teacher role from users.
 		$users = get_users( array() );
 		foreach ( $users as $user ) {
 			self::remove_all_sensei_caps( $user );
 			$user->remove_role( self::$role );
+
+			// Delete user if it's a guest or preview user.
+			Sensei_Guest_User::delete_guest_user( $user->ID );
+			Sensei_Preview_User::delete_preview_user( $user->ID );
 		}
 
-		// Remove role.
+		// Remove teacher role.
 		remove_role( self::$role );
+
+		// Remove temporary user roles.
+		remove_role( Sensei_Guest_User::ROLE );
+		remove_role( Sensei_Preview_User::ROLE );
 	}
 
 	/**

@@ -44,14 +44,13 @@
 			height: 24px;
 		}
 
-		&.collapsed .sensei-lms-course-navigation-module__collapsible-icon {
+		&.sensei-collapsed .sensei-lms-course-navigation-module__collapsible-icon {
 			transform: rotate(180deg);
 		}
 	}
 
 	&__title {
 		flex: 1;
-		color: var(--sensei-primary-color);
 		font-weight: 600;
 		font-size: 18px;
 		line-height: 22px;
@@ -76,7 +75,7 @@
 		transition-delay: 150ms;
 	}
 
-	&__lessons.collapsed ~ &__summary {
+	&__lessons.sensei-collapsed ~ &__summary {
 		visibility: visible;
 		max-height: 50px;
 	}

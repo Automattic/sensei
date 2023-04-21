@@ -1073,7 +1073,6 @@ class Sensei_Lesson {
 	 * @access private
 	 * @param string $post_key (default: '')
 	 * @param int    $post_id (default: 0)
-	 * @return int|bool meta id or saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		/*
@@ -1117,7 +1116,7 @@ class Sensei_Lesson {
 		}
 
 		// Check if the user has permission to edit the target course.
-		if ( 'lesson_course' === $post_key && ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $new_meta_value ) ) {
+		if ( 'lesson_course' === $post_key && ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $new_meta_value ) && '' !== $new_meta_value ) {
 			return;
 		}
 
@@ -4622,12 +4621,8 @@ class Sensei_Lesson {
 	 */
 	public static function is_prerequisite_complete( $lesson_id, $user_id ) {
 
-		if ( empty( $lesson_id ) || empty( $user_id )
-		|| 'lesson' != get_post_type( $lesson_id )
-		|| ! is_a( get_user_by( 'id', $user_id ), 'WP_User' ) ) {
-
+		if ( empty( $lesson_id ) || ( 'lesson' !== get_post_type( $lesson_id ) ) ) {
 			return false;
-
 		}
 
 		$pre_requisite_id = (string) self::get_lesson_prerequisite_id( $lesson_id );
@@ -4638,6 +4633,10 @@ class Sensei_Lesson {
 
 			return true;
 
+		}
+
+		if ( empty( $user_id ) || ! is_a( get_user_by( 'id', $user_id ), 'WP_User' ) ) {
+			return false;
 		}
 
 		return Sensei_Utils::user_completed_lesson( $pre_requisite_id, $user_id );
@@ -4902,7 +4901,7 @@ class Sensei_Lesson {
 		<footer>
 
 			<?php
-			if ( $show_actions && $quiz_id && Sensei()->access_settings() ) {
+			if ( $show_actions && $quiz_id ) {
 
 				if ( self::lesson_quiz_has_questions( $lesson_id ) ) {
 					?>
@@ -4950,10 +4949,6 @@ class Sensei_Lesson {
 	public static function should_show_lesson_actions( int $lesson_id, int $user_id = 0 ) : bool {
 		$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
-		if ( 0 === $user_id ) {
-			return false;
-		}
-
 		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
 
 		if ( $lesson_prerequisite > 0 ) {
@@ -4979,7 +4974,10 @@ class Sensei_Lesson {
 		$lesson_allow_comments = $allow_comments && $user_can_view_lesson;
 
 		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
+			// Borrowed solution from https://github.com/WordPress/gutenberg/pull/28128.
+			add_filter( 'deprecated_file_trigger_error', '__return_false' );
 			comments_template( '', true );
+			remove_filter( 'deprecated_file_trigger_error', '__return_false' );
 		}
 	}
 

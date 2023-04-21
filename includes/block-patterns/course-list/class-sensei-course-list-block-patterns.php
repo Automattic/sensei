@@ -21,11 +21,7 @@ class Sensei_Course_List_Block_Patterns {
 	 */
 	public function register_course_list_block_patterns() {
 		$pagination =
-			'<!-- wp:separator {"align":"wide","className":"is-style-wide"} -->
-				<hr class="wp-block-separator alignwide is-style-wide"/>
-			<!-- /wp:separator -->
-
-			<!-- wp:query-pagination {"paginationArrow":"arrow","align":"wide","layout":{"type":"flex","justifyContent":"space-between"}} -->
+			'<!-- wp:query-pagination {"paginationArrow":"arrow","align":"wide","layout":{"type":"flex","justifyContent":"space-between"}} -->
 				<!-- wp:query-pagination-previous {"fontSize":"small"} /-->
 
 				<!-- wp:query-pagination-numbers /-->
@@ -42,7 +38,7 @@ class Sensei_Course_List_Block_Patterns {
 			 * Filter to add extra links to a Course List pattern. The added
 			 * links must be a valid rendered block.
 			 *
-			 * @since $$next-version$$
+			 * @since 4.10.0
 			 *
 			 * @param {array}  $course_list_extra_links The extra links.
 			 * @param {string} $pattern                 The pattern name.

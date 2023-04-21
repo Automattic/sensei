@@ -3,7 +3,7 @@
  * Sensei REST API: Sensei_REST_API_Theme_Controller class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.10.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * A REST controller for installing themes.
  *
- * @since $$next-version$$
+ * @since 4.10.0
  *
  * @see   WP_REST_Controller
  */
