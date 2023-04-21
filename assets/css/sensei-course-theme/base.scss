@@ -7,6 +7,8 @@ body,
 	--sensei-button-fill-hover-color: #FFFFFF;
 	--sensei-button-outline-hover-color: #F0F0F0;
 	--sensei-button-text-color: #26212E;
+	--sensei-course-progress-bar-color: #DCDCDE;
+	--sensei-course-progress-bar-inner-color: #30968B;
 	--sensei-lesson-meta-color: #787C82;
 	--sensei-locked-lesson-color: #646970;
 	--sensei-module-lesson-color: #101517;
@@ -19,9 +21,6 @@ body,
 	--border-color: rgba(125, 125, 125, 0.3);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-
-	background-color: var(--sensei-background-color);
-	color: var(--sensei-text-color);
 }
 
 .sensei-course-theme__frame {

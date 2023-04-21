@@ -33,6 +33,7 @@ body.sensei-course-theme {
 		position: fixed;
 		left: 0;
 		right: 0;
+		background-color: var(--sensei-background-color);
 		height: var(--sensei-lm-header-height);
 		top: var(--top-offset);
 		z-index: 100;

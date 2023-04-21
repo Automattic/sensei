@@ -27,6 +27,13 @@
 	}
 }
 
+/* Header */
+.editor-styles-wrapper .wp-block .wp-block-sensei-lms-exit-course,
+.wp-block-sensei-lms-exit-course {
+	color: var(--sensei-primary-color);
+	font-size: 1rem;
+}
+
 .editor-styles-wrapper .sensei-course-theme__sidebar,
 .sensei-course-theme__sidebar {
 	a, [class*='sensei-'] a, a[class*='sensei-'] {
@@ -41,8 +48,20 @@
 .editor-styles-wrapper .wp-block-sensei-lms-course-title,
 .wp-block-sensei-lms-course-title {
 	color: var(--sensei-text-color);
+	font-size: clamp(0.875rem, 0.696rem + 0.476vw, 1.125rem);
+	font-weight: 600;
+	line-height: 1.167;
 	margin: 0;
 	padding: 1px 2px;
+}
+
+.editor-styles-wrapper .sensei-course-theme-course-progress-bar,
+.sensei-course-theme-course-progress-bar {
+	background-color: var(--sensei-course-progress-bar-color);
+}
+
+.sensei-course-theme-course-progress-bar-inner {
+	background-color: var(--sensei-course-progress-bar-inner-color);
 }
 
 .editor-styles-wrapper .wp-block .wp-block-sensei-lms-course-theme-course-progress-counter,
