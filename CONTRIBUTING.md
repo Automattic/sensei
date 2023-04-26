@@ -39,11 +39,14 @@ The automated tsts for Sensei LMS can be run locally. Please see our [test instr
 
 ## Code Guidelines
 
-Here are some guidelines to pay attention for when contributing to Sensei LMS:
+Before submitting a pull request, make sure that your changes follow the following guidelines: 
 
-- Please ensure that your code adheres to the [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/).
-- Please provide clear documentation for any new functions or features you add.
-- Please ensure that any new code is well-tested and doesn't break any existing functionality.
+- Please ensure that your code adheres to coding standards for ([PHP](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/), [JavaScript](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/), [CSS](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/css/), [HTML](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/html/)).
+- Please provide clear documentation for any new functions, hooks or features you add.
+- Make sure that all strings are translatable (without concatenation, handles plurals)
+- Ensure that your new code is well-tested and does not break any existing functionality.
+  Test your changes on different user privileges, including admin, teacher, and subscriber as appropriate.
+  Test your code on the minimum supported PHP and WordPress versions.
 - Please ensure that any dependencies are properly handled and documented.
 
 ## JavaScript and CSS
