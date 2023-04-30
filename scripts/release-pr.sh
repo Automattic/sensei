@@ -22,7 +22,7 @@ docker build -t release-build $SCRIPT_DIR &&  \
 	docker run --name release-steps --rm -it \
 	-v ~/.gitconfig:/etc/gitconfig \
 	release-build \
-	bash -c "/usr/bin/release-steps.sh $NEXT_VERSION"
+	bash -c "/usr/bin/release-pr-steps.sh $NEXT_VERSION"
 
 docker image rm release-build
 rm -rf "$SCRIPT_DIR/ssh-data"

@@ -2,9 +2,9 @@
 
 Here, we have 2 scripts and one Dockerfile that help preparing the release PR.
 
-## scripts/release.sh 
+## scripts/release-pr.sh 
 
-Run it from the repository's root: `./scripts/release.sh X.Y.Z`, where X.Y.Z is the version you're releasing.
+Run it from the repository's root: `./scripts/release-pr.sh X.Y.Z`, where X.Y.Z is the version you're releasing.
 
 The script assumes, you have:
 
@@ -16,7 +16,7 @@ The script removes all the data in the end, so, hopefully, it won't cause damage
 
 However, use cautiously: don't share your Docker image or tempory directory/data.
 
-## scripts/release-steps.sh
+## scripts/release-pr-steps.sh
 
 This script is being run from inside the Docker container and runs all the needed steps:
 

@@ -41,8 +41,8 @@ RUN apt-get install -y \
   --no-install-recommends nodejs \
   && rm -rf /var/lib/apt/lists/*
 
-# Copy release steps.
-COPY release-steps.sh /usr/bin/release-steps.sh
+# Copy a script with release PR steps.
+COPY release-pr-steps.sh /usr/bin/release-pr-steps.sh
 
 # Copy ssh confid and keys! Not secure!
 # TODO: https://www.fastruby.io/blog/docker/docker-ssh-keys.html
