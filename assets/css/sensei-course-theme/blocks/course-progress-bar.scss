@@ -3,11 +3,11 @@
 	margin: 0;
 	width: 100%;
 
-	&-inner {
+	:first-child {
 		height: var(--header-progress-bar-height, 4px);
 	}
 }
 
 body .is-layout-flow > * + .wp-block-sensei-lms-course-theme-course-progress-bar {
-  margin: 0;
+	margin: 0;
 }
