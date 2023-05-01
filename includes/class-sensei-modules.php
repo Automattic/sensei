@@ -2279,6 +2279,15 @@ class Sensei_Core_Modules {
 
 		$term_owner = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
 
+		// Fallaback in case the admin email does not match a user, otherwise it shows warnings.
+		if ( ! $term_owner ) {
+			$site_admins = get_super_admins();
+
+			if ( ! empty( $site_admins ) && is_array( $site_admins ) ) {
+				$term_owner = get_user_by( 'login', $site_admins[0] );
+			}
+		}
+
 		if ( empty( $slug ) ) {
 
 			return $term_owner;
@@ -2292,7 +2301,7 @@ class Sensei_Core_Modules {
 				return get_user_by( 'id', $author_meta );
 			}
 		}
-		// look for the author in the slug
+		// look for the author in the slug.
 		$slug_parts = explode( '-', $slug );
 
 		if (

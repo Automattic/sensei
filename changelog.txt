@@ -1,5 +1,22 @@
 *** Changelog ***
 
+## 4.13.1 - 2023-04-19
+### Changed
+- Disable the "welcome" and "no progress" emails by default
+- Update MailPoet link to point to Lists
+
+### Fixed
+- Astra not loading the Courses page content
+- Fix auto grading not working and additionally throwing error for fill gap questions
+- Fix patterns wizard preview style
+- Fix the home email notification settings link
+- Make the email post type private
+- Remove fallback to legacy options
+- Fix showing warning from module when admin email does not match any existing user and it has no author
+
+### Change
+- Improve plugin loading performance using pre-built class map
+
 ## 4.13.0 - 2023-03-30
 ### Added
 - Functionality to create MailPoet lists for all courses and groups, and to subscribe users to those lists.

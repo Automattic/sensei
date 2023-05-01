@@ -144,6 +144,40 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 	}
 
+	public function testGetTermAuthor_WhenNoAuthorAndSiteAdminEmailDoesNotMatchAnyUser_AddsTheFirstAdminUserInFallback() {
+		/* Arrange */
+		wp_insert_term( 'Get Started', 'module' );
+
+		$term = wp_insert_term(
+			'A test term',
+			'module',
+			array(
+				'description' => 'A yummy apple.',
+				'slug'        => 'a-test-term',
+			)
+		);
+		update_site_option( 'admin_email', 'non-existant-user-mail@abc.com' );
+
+		$admins       = get_super_admins();
+		$admin        = get_user_by( 'login', $admins[0] );
+		$test_user_id = $this->factory->user->create(
+			[
+				'display_name' => 'Test User',
+				'user_email'   => 'test@a.com',
+			]
+		);
+
+		/* Act */
+		$term_author_admin = Sensei_Core_Modules::get_term_author( 'a-test-term' );
+		update_term_meta( $term['term_id'], 'module_author', $test_user_id );
+		$term_author_teacher = Sensei_Core_Modules::get_term_author( 'a-test-term' );
+
+		/* Assert */
+		$this->assertTrue( $admin->ID === $term_author_admin->ID, 'The function should return the first admin user in fallback.' );
+		$this->assertFalse( 'non-existant-user-mail@abc.com' === $admin->user_email );
+		$this->assertTrue( $test_user_id === $term_author_teacher->ID, 'The function should return the teacher user if exists using term meta.' );
+	}
+
 	/**
 	 * Ensure the course modules column "more" link is shown
 	 * only if the course has more than 3 modules.
