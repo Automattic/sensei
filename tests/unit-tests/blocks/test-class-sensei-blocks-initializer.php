@@ -179,35 +179,35 @@ class Sensei_Blocks_Initializer_Test extends WP_UnitTestCase {
 		$initializer_mock->maybe_initialize_blocks();
 	}
 
-	public function testInitializeFrontendAssets_WhenCorrectPostType_EnqueuesAssets() {
+	public function testInitializeFrontendAssets_WhenCorrectPostTypeAndHasSenseiBlocks_EnqueuesAssets() {
 		/* Arrange */
 		$initializer_mock = $this->getMockForAbstractClass( Sensei_Blocks_Initializer::class, [ [ 'course' ] ] );
 
 		global $post;
-		$post = $this->factory->course->create_and_get();
+		$post = $this->factory->course->create_and_get( [ 'post_content' => '<!-- wp:sensei-lms/lesson-actions --><!-- /wp:sensei-lms/lesson-actions -->' ] );
 
 		/* Assert */
 		$initializer_mock->expects( $this->once() )
-			->method( 'enqueue_block_editor_assets' );
+			->method( 'enqueue_block_assets' );
 
 		/* Act */
 		$initializer_mock->initialize_frontend_assets();
-		do_action( 'enqueue_block_editor_assets' );
+		do_action( 'enqueue_block_assets' );
 	}
 
-	public function testInitializeFrontendAssets_WhenIncorrectPostType_DoesNothing() {
+	public function testInitializeFrontendAssets_WhenIncorrectPostTypeAndHasSenseiBlocks_DoesNothing() {
 		/* Arrange */
 		$initializer_mock = $this->getMockForAbstractClass( Sensei_Blocks_Initializer::class, [ [ 'lesson' ] ] );
 
 		global $post;
-		$post = $this->factory->course->create_and_get();
+		$post = $this->factory->course->create_and_get( [ 'post_content' => '<!-- wp:sensei-lms/lesson-actions --><!-- /wp:sensei-lms/lesson-actions -->' ] );
 
 		/* Assert */
 		$initializer_mock->expects( $this->never() )
-			->method( 'enqueue_block_editor_assets' );
+			->method( 'enqueue_block_assets' );
 
 		/* Act */
 		$initializer_mock->initialize_frontend_assets();
-		do_action( 'enqueue_block_editor_assets' );
+		do_action( 'enqueue_block_assets' );
 	}
 }
