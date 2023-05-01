@@ -75,8 +75,6 @@ abstract class Sensei_Blocks_Initializer {
 		) {
 			add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		}
-
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 	}
 
 	/**
