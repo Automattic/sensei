@@ -1,4 +1,9 @@
 <?php
+/**
+ * AutomateWoo action for removing a user to a course.
+ *
+ * @package 3rd-Party
+ */
 
 namespace Sensei\AutomateWoo\Actions;
 
@@ -7,6 +12,9 @@ use AutomateWoo\Clean;
 use AutomateWoo\Sensei_Workflow_Helper;
 use Sensei_Course_Enrolment;
 
+/**
+ * AutomateWoo action class for removing a user to a course.
+ */
 class Remove_From_Course_Action extends Action {
 	/**
 	 * The data items required by the action.
@@ -20,7 +28,7 @@ class Remove_From_Course_Action extends Action {
 	 *
 	 * Admin props include: title, group and description.
 	 */
-	function load_admin_details() {
+	protected function load_admin_details() {
 		$this->title = __( 'Remove from Course', 'sensei-lms' );
 		$this->group = Sensei_Workflow_Helper::get_group_name();
 	}

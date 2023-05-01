@@ -1,4 +1,9 @@
 <?php
+/**
+ * Adds additional compatibility with AutomateWoo.
+ *
+ * @package 3rd-Party
+ */
 
 namespace Sensei\AutomateWoo;
 
@@ -11,7 +16,7 @@ namespace Sensei\AutomateWoo;
  *
  * @return array
  */
-function sensei_add_automatewoo_actions( $actions ) {
+function sensei_add_automatewoo_actions( $actions ): array {
 	return array_merge(
 		$actions,
 		[

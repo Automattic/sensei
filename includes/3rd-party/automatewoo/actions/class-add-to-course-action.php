@@ -1,4 +1,9 @@
 <?php
+/**
+ * AutomateWoo action for adding a user to a course.
+ *
+ * @package 3rd-Party
+ */
 
 namespace Sensei\AutomateWoo\Actions;
 
@@ -7,6 +12,9 @@ use AutomateWoo\Clean;
 use AutomateWoo\Sensei_Workflow_Helper;
 use Sensei_Course_Enrolment;
 
+/**
+ * AutomateWoo action class for adding a user to a course.
+ */
 class Add_To_Course_Action extends Action {
 	/**
 	 * The data items required by the action.
@@ -20,7 +28,7 @@ class Add_To_Course_Action extends Action {
 	 *
 	 * Admin props include: title, group and description.
 	 */
-	function load_admin_details() {
+	protected function load_admin_details() {
 		$this->title = __( 'Add to Course', 'sensei-lms' );
 		$this->group = Sensei_Workflow_Helper::get_group_name();
 	}
