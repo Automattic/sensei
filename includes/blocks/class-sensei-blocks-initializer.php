@@ -70,8 +70,8 @@ abstract class Sensei_Blocks_Initializer {
 
 		$is_archive_with_query_block = ( is_post_type_archive( 'course' ) || is_tax( 'course-category' ) ) && Sensei()->course->course_archive_page_has_query_block();
 		if (
-			Sensei()->blocks->has_sensei_blocks() ||
-			$is_archive_with_query_block
+			$is_archive_with_query_block ||
+			Sensei()->blocks->has_sensei_blocks()
 		) {
 			add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		}
