@@ -307,7 +307,7 @@ class Sensei_Home_Notices {
 		$is_dismissible = class_exists( 'Sensei_Admin_Notices' );
 
 		return [
-			'level'       => 'info',
+			'level'       => 'warning',
 			'type'        => 'site-wide',
 			'info_link'   => $info_link,
 			'conditions'  => [
