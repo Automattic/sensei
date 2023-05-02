@@ -5,7 +5,6 @@
 	&__modules, &__lessons, &-module__lessons {
 
 		margin: 0;
-
 		ol, li {
 			list-style: none;
 			padding: 0;
@@ -13,13 +12,18 @@
 	}
 	&__modules {
 		display: flex;
-		gap:  32px;
+		gap:  24px;
 		flex-direction: column;
 	}
 
 	&__modules + &__lessons {
-		margin-top: 32px;
+		margin-top: 24px;
 	}
+
+	&-module__lessons:not(.sensei-collapsed) {
+		margin-bottom: 12px;
+	}
+
 }
 
 .editor-styles-wrapper .sensei-lms-course-navigation-module,
