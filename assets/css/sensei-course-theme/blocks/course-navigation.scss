@@ -68,12 +68,13 @@
 		overflow: hidden;
 		transition-delay: 150ms;
 		visibility: hidden;
-		margin-top: 4px;
+		margin-top: 0px;
 	}
 
 	&__lessons.sensei-collapsed ~ &__summary {
 		visibility: visible;
 		max-height: 50px;
+		margin-top: 4px;
 	}
 }
 
