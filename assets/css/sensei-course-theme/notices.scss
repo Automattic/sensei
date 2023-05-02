@@ -9,10 +9,10 @@
 
 .sensei-course-theme-lesson-quiz-notice {
 	display: flex;
-	justify-content: space-between;
 	flex-flow: wrap;
+	font-size: 1.125rem;
 	gap: 15px;
-	font-size: 14px;
+	justify-content: space-between;
 
 	&__content {
 		display: flex;

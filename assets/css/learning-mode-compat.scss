@@ -11,6 +11,7 @@
 	font-size: 100%;
 }
 
+.editor-styles-wrapper .wp-block,
 .sensei-course-theme {
 	--wp--preset--font-family--body-font: -apple-system, BlinkMacSystemFont, Inter, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	font-family: var(--wp--preset--font-family--body-font);
@@ -22,9 +23,18 @@
 		color: var(--sensei-text-color);
 		font-weight: 300;
 		font-size: clamp(2.25rem, 1.536rem + 1.905vw, 3.25rem);
+		line-height: 1.23;
 	}
 }
 
+/* Header */
+.editor-styles-wrapper .wp-block .wp-block-sensei-lms-exit-course,
+.wp-block-sensei-lms-exit-course {
+	color: var(--sensei-primary-color);
+	font-size: 1rem;
+}
+
+.editor-styles-wrapper .sensei-course-theme__sidebar,
 .sensei-course-theme__sidebar {
 	a, [class*='sensei-'] a, a[class*='sensei-'] {
 		text-decoration: none;
@@ -38,20 +48,40 @@
 .editor-styles-wrapper .wp-block-sensei-lms-course-title,
 .wp-block-sensei-lms-course-title {
 	color: var(--sensei-text-color);
+	font-size: clamp(0.875rem, 0.696rem + 0.476vw, 1.125rem);
+	font-weight: 600;
+	line-height: 1.167;
 	margin: 0;
 	padding: 1px 2px;
 }
 
-.editor-styles-wrapper .wp-block-sensei-lms-course-theme-course-progress-counter,
+.editor-styles-wrapper .sensei-course-theme-course-progress-bar,
+.sensei-course-theme-course-progress-bar {
+	background-color: var(--sensei-course-progress-bar-color);
+}
+
+.sensei-course-theme-course-progress-bar-inner {
+	background-color: var(--sensei-course-progress-bar-inner-color);
+}
+
+.editor-styles-wrapper .wp-block .wp-block-sensei-lms-course-theme-course-progress-counter,
 .wp-block-sensei-lms-course-theme-course-progress-counter {
 	color: var(--sensei-lesson-meta-color);
 	font-size: 1rem;
 	line-height: 1.1875;
 }
 
+/* Content */
+.editor-styles-wrapper .wp-block .wp-block-sensei-lms-course-theme-lesson-module,
+.wp-block-sensei-lms-course-theme-lesson-module {
+	border-color: var(--sensei-module-lesson-color);
+	color: var(--sensei-module-lesson-color);
+}
+
 /* Lesson Actions & Pagination */
 .wp-block-sensei-lms-page-actions .post-page-numbers {
 	color: var(--sensei-pagination-color);
+	line-height: 2.667;
 }
 
 .sensei-course-theme-lesson-actions {
@@ -60,6 +90,7 @@
 }
 
 /* Course Navigation */
+.editor-styles-wrapper .sensei-lms-course-navigation-module__title,
 .sensei-lms-course-navigation-module__title {
 	color: var(--sensei-primary-color);
 
@@ -72,10 +103,16 @@
 	color: var(--sensei-lesson-meta-color);
 }
 
+.editor-styles-wrapper .sensei-lms-course-navigation-lesson__link,
 .sensei-lms-course-navigation-lesson__link {
 	color: var(--sensei-module-lesson-color);
 }
 
+.status-locked .sensei-lms-course-navigation-lesson__link {
+	color: var(--sensei-locked-lesson-color);
+}
+
+.editor-styles-wrapper .sensei-lms-course-navigation-lesson__extra,
 .sensei-lms-course-navigation-lesson__extra {
 	color: var(--sensei-lesson-meta-color);
 }

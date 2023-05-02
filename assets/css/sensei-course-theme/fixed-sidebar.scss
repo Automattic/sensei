@@ -18,12 +18,11 @@ $min_desktop_width: 783px;
 			left: 0;
 			width: var(--sensei-lm-sidebar-width);
 			border-right: 1px solid var(--border-color);
-			background-color: var(--sensei-background-color);
 			overflow: auto;
 			overscroll-behavior: contain;
 			display: flex;
 			flex-direction: column;
-			padding: 32px 24px;
+			padding: 32px 24px 40px 24px;
 		}
 
 		&__header ~ &__columns &__sidebar {
