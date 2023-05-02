@@ -34,7 +34,7 @@ Quizzes are a powerful way to improve your students' understanding of key concep
 
 ### Showcase your courses ###
 
-Submit your course to Sensei LMS' public course showcase at https://senseilms.com/showcase/. Sensei LMS' course showcase allows you to reach new audiences to expand your course's visibility.
+Submit your course to Sensei LMS' public course showcase at [https://senseilms.com/showcase/](https://senseilms.com/showcase/). Sensei LMS' course showcase allows you to reach new audiences to expand your course's visibility.
 
 ### Discover the power of Sensei Pro ###
 
