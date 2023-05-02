@@ -612,7 +612,7 @@ class Sensei_Main {
 	/**
 	 * Load the 3rd party compatibility tweaks.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.1
 	 */
 	private function initialize_3rd_party_compatibility(): void {
 		require_once $this->resolve_path( 'includes/3rd-party/3rd-party.php' );
