@@ -1,8 +1,5 @@
-.editor-styles-wrapper .wp-block-sensei-lms-course-title,
+.editor-styles-wrapper .wp-block .wp-block-sensei-lms-course-title,
 .wp-block-sensei-lms-course-title {
-	font-size: clamp(0.875rem, 0.696rem + 0.476vw, 1.125rem);
-	font-weight: 600;
-	line-height: 1.167;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
