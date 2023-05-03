@@ -41,6 +41,15 @@ class Sensei_Guest_User {
 	const LOGIN_PREFIX = 'sensei_guest_';
 
 	/**
+	 * Email domain used for guest users.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string
+	 */
+	const EMAIL_DOMAIN = 'guest.senseilms';
+
+	/**
 	 * Guest user id.
 	 *
 	 * @since 4.11.0
@@ -328,7 +337,7 @@ class Sensei_Guest_User {
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
-				'user_email'   => $user_name . '@guest.senseilms',
+				'user_email'   => $user_name . '@' . self::EMAIL_DOMAIN,
 				'display_name' => 'Guest Student ' . str_pad( $user_count, 3, '0', STR_PAD_LEFT ),
 				'role'         => self::ROLE,
 			]
