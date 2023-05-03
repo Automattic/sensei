@@ -522,10 +522,8 @@ class Sensei_Guest_User {
 			}
 		}
 		foreach ( $emails as $address ) {
-			if ( preg_match( '/(.*)<(.+)>/', $address, $matches ) ) {
-				if ( count( $matches ) === 3 ) {
-					$address = $matches[2];
-				}
+			if ( preg_match( '/(.*)<(.+)>/', $address, $matches ) && count( $matches ) === 3 ) {
+				$address = $matches[2];
 			}
 			if ( str_ends_with( $address, '@guest.senseilms' ) ) {
 				// If this is an e-mail address for a guest user, don't send it.
