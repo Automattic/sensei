@@ -499,13 +499,10 @@ class Sensei_Guest_User {
 			}
 			// If it's actually got contents.
 			if ( ! empty( $temp_headers ) ) {
-				// Iterate through the raw headers.
-				foreach ( $temp_headers as $header ) {
-					if ( strpos( $header, ':' ) === false ) {
-						continue;
+				foreach ( $temp_headers as $name => $content ) {
+					if ( is_int( $name ) && str_contains( $content, ':' ) ) {
+						list ( $name, $content) = explode( ':', trim( $content ), 2 );
 					}
-					// Explode them out.
-					list( $name, $content ) = explode( ':', trim( $header ), 2 );
 
 					// Cleanup crew.
 					$name    = trim( $name );
