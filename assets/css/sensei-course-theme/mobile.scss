@@ -73,6 +73,10 @@ $breakpoint: 783px;
 			padding: 0 24px;
 		}
 
+		.sensei-course-theme__actions-wrapper {
+			margin-block-start: 24px !important;
+		}
+
 		.wp-block-sensei-lms-exit-course {
 			opacity: 0;
 			pointer-events: none;
