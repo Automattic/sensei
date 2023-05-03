@@ -182,4 +182,204 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 
 	}
 
+	public function testSkipWpMail_ReturnIsTrueAndHasPreviewUser_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => array( 'user1@example.com', 'user2@preview.senseilms' ),
+			'headers' => array(
+				'Cc'       => 'user3@example.com,user4@example.com',
+				'Bcc'      => 'user5@example.com,user6@example.com',
+				'Reply-To' => 'user7@example.com,user8@example.com',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->preview_user->skip_wp_mail( true, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function testSkipWpMail_HasPreviewUserInTo_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com,user2@preview.senseilms',
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->preview_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function testSkipWpMail_HasPreviewUserInCc_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com',
+			'headers' => array(
+				'Cc' => 'user2@preview.senseilms',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->preview_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+
+	public function testSkipWpMail_HasPreviewUserInBcc_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com',
+			'headers' => array(
+				'Bcc' => 'user2@preview.senseilms',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->preview_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function testSkipWpMail_HasPreviewUserInReplyTo_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com',
+			'headers' => array(
+				'Reply-To' => 'user2@preview.senseilms',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->preview_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+
+	public function testSkipWpMail_HasPreviewUserInFrom_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com',
+			'headers' => array(
+				'From' => 'User 2 <user2@preview.senseilms>',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->preview_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+
+	public function testSkipWpMail_HeadersPassedAsString_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com',
+			'headers' => "Cc: user3@example.com,user4@preview.senseilms\r\nBcc: user5@example.com,user6@example.com\r\nReply-To: user7@example.com,user8@example.com",
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->preview_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function testSkipWpMail_EmailsArentPreviewUsers_ReturnsAtts() {
+		// Arrange
+		$atts = [
+			'to'      => [ 'user1@example.com', 'user2@example.com' ],
+			'headers' => [
+				'Cc'       => 'user3@example.com,user4@example.com',
+				'Bcc'      => 'user5@example.com,user6@example.com',
+				'Reply-To' => 'user7@example.com,user8@example.com',
+			],
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		];
+
+		// Act
+		$result = $this->preview_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+
+	public function testSkipWpMail_ChecksOnlyCcBccReplyToAndFromHeaders_ReturnsNull() {
+		// Arrange
+		$atts = array(
+			'to'      => array( 'user1@example.com', 'user2@example.com' ),
+			'headers' => array(
+				'Cc'         => 'User 3 <user3@example.com>,user4@example.com',
+				'Bcc'        => 'user5@example.com,User 6 <user6@example.com>',
+				'Reply-To'   => 'user7@example.com,user8@example.com',
+				'From'       => 'User 9 <user9@example.com>',
+				'X-Reply-To' => 'user10@preview.senseilms',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->preview_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function testSkipWpMail_SingleToWithPreviewEmail_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'John Doe <user1@preview.senseilms>',
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->preview_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function testSkipWpMail_SingleToWithValidEmail_ReturnsNull() {
+		// Arrange
+		$atts = array(
+			'to'      => 'John Doe <user1@example.com>',
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->preview_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+
 }
