@@ -137,7 +137,7 @@ class Sensei_Guest_User {
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
 		add_action( 'sensei_can_user_manually_enrol', [ $this, 'open_course_user_can_manualy_enroll' ], 10, 2 );
-		add_action( 'sensei_send_emails', [ $this, 'skip_sensei_email' ] );
+		add_filter( 'sensei_send_emails', [ $this, 'skip_sensei_email' ] );
 
 		$this->create_guest_student_role_if_not_exists();
 
@@ -466,7 +466,6 @@ class Sensei_Guest_User {
 	 */
 	public function skip_sensei_email( $send_email ) {
 		return $this->is_current_user_guest() ? false : $send_email;
-
 	}
 
 	/**
