@@ -24,7 +24,7 @@
 			<!-- wp:sensei-lms/sidebar-toggle-button /-->
 		</div>
 		<!-- /wp:group -->
-		</div>
+	</div>
 	<!-- /wp:group -->
 
 	<!-- wp:sensei-lms/course-theme-course-progress-bar /-->
@@ -35,8 +35,7 @@
 <div class="wp-block-sensei-lms-ui sensei-course-theme__columns">
 	<!-- wp:sensei-lms/ui {"elementClass":"sensei-course-theme__sidebar","className":""} -->
 	<div class="wp-block-sensei-lms-ui sensei-course-theme__frame sensei-course-theme__sidebar">
-		<!-- wp:sensei-lms/course-navigation /-->
-	</div>
+		<!-- wp:sensei-lms/course-navigation /--></div>
 	<!-- /wp:sensei-lms/ui -->
 
 	<!-- wp:sensei-lms/ui {"elementClass":"sensei-course-theme__main-content","lock":{"move":false,"remove":false}} -->
@@ -49,15 +48,14 @@
 
 		<!-- wp:post-content /-->
 
-		<!-- wp:sensei-lms/ui {"elementClass":"sensei-course-theme__content-footer"} -->
-		<div class="wp-block-sensei-lms-ui sensei-course-theme__frame sensei-course-theme__content-footer"></div>
-		<!-- /wp:sensei-lms/ui -->
+		<!-- wp:group {"style":{"spacing":{"margin":{"top":"40px"}}},"layout":{"type":"constrained"}} -->
+		<div class="wp-block-group" style="margin-top:40px">
+			<!-- wp:sensei-lms/page-actions {"style":{"spacing":{"blockGap":"43px"}}} /-->
 
-		<!-- wp:group {"className":"sensei-course-theme__actions-wrapper","layout":{"type":"flex","flexWrap":"nowrap"}} -->
-		<div class="wp-block-group sensei-course-theme__actions-wrapper"><!-- wp:sensei-lms/page-actions /-->
-
-			<!-- wp:group {"className":"sensei-lesson-footer","layout":{"type":"flex","flexWrap":"nowrap"}} -->
-			<div class="wp-block-group sensei-lesson-footer"><!-- wp:sensei-lms/course-theme-lesson-actions /--></div>
+			<!-- wp:group {"style":{"spacing":{"margin":{"top":"20px"}}},"className":"sensei-lesson-footer","layout":{"type":"flex","flexWrap":"nowrap"}} -->
+			<div class="wp-block-group sensei-lesson-footer" style="margin-top:20px">
+				<!-- wp:sensei-lms/course-theme-lesson-actions {"options":{"nextLesson":true}} /-->
+			</div>
 			<!-- /wp:group -->
 		</div>
 		<!-- /wp:group -->

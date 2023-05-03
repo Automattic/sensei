@@ -17,6 +17,7 @@ $breakpoint: 783px;
 
 	body .is-layout-flow > * + .sensei-course-theme__main-content {
 		margin-top: 32px;
+		padding-bottom: 32px;
 	}
 
 	body.sensei-course-theme {
@@ -70,6 +71,10 @@ $breakpoint: 783px;
 
 		&__content {
 			padding: 0 24px;
+		}
+
+		.sensei-course-theme__actions-wrapper {
+			margin-block-start: 24px !important;
 		}
 
 		.wp-block-sensei-lms-exit-course {
