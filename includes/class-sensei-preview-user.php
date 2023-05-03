@@ -92,6 +92,7 @@ class Sensei_Preview_User {
 		add_action( 'show_admin_bar', [ $this, 'show_admin_bar_to_preview_user' ], 90 );
 		add_action( 'admin_bar_menu', [ $this, 'add_user_switch_to_admin_bar' ], 90 );
 		add_filter( 'sensei_is_enrolled', [ $this, 'preview_user_always_enrolled' ], 90, 3 );
+		add_filter( 'pre_wp_mail', [ $this, 'skip_wp_mail' ], 10, 2 );
 
 		$this->create_role();
 	}
@@ -251,6 +252,28 @@ class Sensei_Preview_User {
 	 */
 	private function can_switch_to_preview_user( $course_id ) {
 		return Sensei_Course::can_current_user_edit_course( $course_id );
+	}
+
+	/**
+	 * Prevent emails related to the preview user from being dispatched via wp_mail.
+	 *
+	 * @access private
+	 * @since  $$next-version$$
+	 *
+	 * @param boolean|null $return Whether to send the email.
+	 * @param array        $atts   Email attributes.
+	 * @return boolean|null Whether to send the email.
+	 */
+	public function skip_wp_mail( $return, $atts ) {
+		if ( $this->is_preview_user_active() ) {
+			// If this e-mail is being dispatched while the current user is a previwe user, just... don't send it.
+			return false;
+		}
+		if ( Sensei_Temporary_User::should_block_email( $atts, self::EMAIL_DOMAIN ) ) {
+			// If this e-mail is being dispatched to a preview user, don't send it.
+			return false;
+		}
+		return $return;
 	}
 
 	/**
