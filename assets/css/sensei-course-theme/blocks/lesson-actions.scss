@@ -14,13 +14,14 @@ $breakpoint: 782px;
 	@media screen and (max-width: $breakpoint) {
 		justify-content: center;
 
-		 & > form {
+		 & > * {
 			flex: 1;
-
-			button {
-				width: 100%; // Fix the animation issue.
-			}
 		 }
+
+		 .sensei-course-theme__button {
+			width: 100%; // Fix the animation issue.
+			justify-content: center;
+		}
 
 	}
 }
