@@ -97,7 +97,7 @@ class Sensei_Preview_User {
 			add_filter( 'map_meta_cap', [ $this, 'allow_post_preview' ], 10, 4 );
 			add_filter( 'pre_get_posts', [ $this, 'count_unpublished_lessons' ], 10 );
 			add_filter( 'sensei_notice', [ $this, 'hide_notices' ], 10, 1 );
-			add_action( 'sensei_send_emails', '__return_false' );
+			add_filter( 'sensei_send_emails', '__return_false' );
 
 		}
 
