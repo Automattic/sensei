@@ -475,9 +475,9 @@ class Sensei_Guest_User {
 	 * @access private
 	 * @since  $$next-version$$
 	 *
-	 * @param boolean $return Whether to send the email.
-	 * @param array   $atts   Email attributes.
-	 * @return boolean Whether to send the email.
+	 * @param boolean|null $return Whether to send the email.
+	 * @param array        $atts   Email attributes.
+	 * @return boolean|null Whether to send the email.
 	 */
 	public function skip_wp_mail( $return, $atts ) {
 		if ( $this->is_current_user_guest() ) {
