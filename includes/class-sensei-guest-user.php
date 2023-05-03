@@ -138,6 +138,7 @@ class Sensei_Guest_User {
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
 		add_action( 'sensei_can_user_manually_enrol', [ $this, 'open_course_user_can_manualy_enroll' ], 10, 2 );
 		add_filter( 'sensei_send_emails', [ $this, 'skip_sensei_email' ] );
+		add_filter( 'pre_wp_mail', [ $this, 'skip_wp_mail' ], 10, 2 );
 
 		$this->create_guest_student_role_if_not_exists();
 
@@ -466,6 +467,72 @@ class Sensei_Guest_User {
 	 */
 	public function skip_sensei_email( $send_email ) {
 		return $this->is_current_user_guest() ? false : $send_email;
+	}
+
+	/**
+	 * Prevent emails related to the guest user from being dispatched via wp_mail.
+	 *
+	 * @access private
+	 * @since  $$next-version$$
+	 *
+	 * @param boolean $return Whether to send the email.
+	 * @param array   $atts   Email attributes.
+	 * @return boolean Whether to send the email.
+	 */
+	public function skip_wp_mail( $return, $atts ) {
+		if ( null !== $return ) {
+			// If we already have a return value, don't do anything, just return it early.
+			return $return;
+		}
+		if ( $this->is_current_user_guest() ) {
+			// If this e-mail is being dispatched while the current user is a guest, just... don't send it.
+			return false;
+		}
+		$emails = $atts['to'];
+		if ( ! is_array( $emails ) ) {
+			$emails = explode( ',', $emails );
+		}
+		if ( ! empty( $atts['headers'] ) ) {
+			$headers = $atts['headers'];
+			if ( ! is_array( $headers ) ) {
+				// Explode the headers out, so this function can take
+				// both string headers and an array of headers.
+				$temp_headers = explode( "\n", str_replace( "\r\n", "\n", $headers ) );
+			} else {
+				$temp_headers = $headers;
+			}
+			// If it's actually got contents.
+			if ( ! empty( $temp_headers ) ) {
+				// Iterate through the raw headers.
+				foreach ( $temp_headers as $header ) {
+					if ( strpos( $header, ':' ) === false ) {
+						continue;
+					}
+					// Explode them out.
+					list( $name, $content ) = explode( ':', trim( $header ), 2 );
+
+					// Cleanup crew.
+					$name    = trim( $name );
+					$content = trim( $content );
+
+					if ( in_array( strtolower( $name ), array( 'from', 'cc', 'bcc', 'reply-to' ), true ) ) {
+						$emails = array_merge( (array) $emails, explode( ',', $content ) );
+					}
+				}
+			}
+		}
+		foreach ( $emails as $address ) {
+			if ( preg_match( '/(.*)<(.+)>/', $address, $matches ) ) {
+				if ( count( $matches ) === 3 ) {
+					$address = $matches[2];
+				}
+			}
+			if ( str_ends_with( $address, '@guest.senseilms' ) ) {
+				// If this is an e-mail address for a guest user, don't send it.
+				return false;
+			}
+		}
+		return null;
 	}
 
 	/**
