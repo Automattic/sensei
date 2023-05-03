@@ -493,44 +493,9 @@ class Sensei_Guest_User {
 			// If this e-mail is being dispatched while the current user is a guest, just... don't send it.
 			return false;
 		}
-		$emails = $atts['to'];
-		if ( ! is_array( $emails ) ) {
-			$emails = explode( ',', $emails );
-		}
-		if ( ! empty( $atts['headers'] ) ) {
-			$headers = $atts['headers'];
-			if ( ! is_array( $headers ) ) {
-				// Explode the headers out, so this function can take
-				// both string headers and an array of headers.
-				$temp_headers = explode( "\n", str_replace( "\r\n", "\n", $headers ) );
-			} else {
-				$temp_headers = $headers;
-			}
-			// If it's actually got contents.
-			if ( ! empty( $temp_headers ) ) {
-				foreach ( $temp_headers as $name => $content ) {
-					if ( is_int( $name ) && str_contains( $content, ':' ) ) {
-						list ( $name, $content) = explode( ':', trim( $content ), 2 );
-					}
-
-					// Cleanup crew.
-					$name    = trim( $name );
-					$content = trim( $content );
-
-					if ( in_array( strtolower( $name ), [ 'from', 'cc', 'bcc', 'reply-to' ], true ) ) {
-						$emails = array_merge( (array) $emails, explode( ',', $content ) );
-					}
-				}
-			}
-		}
-		foreach ( $emails as $address ) {
-			if ( preg_match( '/(.*)<(.+)>/', $address, $matches ) && count( $matches ) === 3 ) {
-				$address = $matches[2];
-			}
-			if ( str_ends_with( $address, '@guest.senseilms' ) ) {
-				// If this is an e-mail address for a guest user, don't send it.
-				return false;
-			}
+		if ( Sensei_Temporary_User::should_block_email( $atts, self::EMAIL_DOMAIN ) ) {
+			// If this e-mail is being dispatched to a guest user, don't send it.
+			return false;
 		}
 		return $return;
 	}
