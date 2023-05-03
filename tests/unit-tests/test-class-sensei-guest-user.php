@@ -136,4 +136,203 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 
 	}
 
+	public function testSkipWpMail_ReturnIsTrueAndHasGuestUser_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => array( 'user1@example.com', 'user2@guest.senseilms' ),
+			'headers' => array(
+				'Cc'       => 'user3@example.com,user4@example.com',
+				'Bcc'      => 'user5@example.com,user6@example.com',
+				'Reply-To' => 'user7@example.com,user8@example.com',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->guest_user->skip_wp_mail( true, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function testSkipWpMail_HasGuestUserInTo_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com,user2@guest.senseilms',
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->guest_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function testSkipWpMail_HasGuestUserInCc_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com',
+			'headers' => array(
+				'Cc' => 'user2@guest.senseilms',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->guest_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+
+	public function testSkipWpMail_HasGuestUserInBcc_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com',
+			'headers' => array(
+				'Bcc' => 'user2@guest.senseilms',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->guest_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function testSkipWpMail_HasGuestUserInReplyTo_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com',
+			'headers' => array(
+				'Reply-To' => 'user2@guest.senseilms',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->guest_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+
+	public function testSkipWpMail_HasGuestUserInFrom_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com',
+			'headers' => array(
+				'From' => 'User 2 <user2@guest.senseilms>',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->guest_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+
+	public function testSkipWpMail_HeadersPassedAsString_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'user1@example.com',
+			'headers' => "Cc: user3@example.com,user4@guest.senseilms\r\nBcc: user5@example.com,user6@example.com\r\nReply-To: user7@example.com,user8@example.com",
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->guest_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function testSkipWpMail_EmailsArentGuestUsers_ReturnsAtts() {
+		// Arrange
+		$atts = [
+			'to'      => [ 'user1@example.com', 'user2@example.com' ],
+			'headers' => [
+				'Cc'       => 'user3@example.com,user4@example.com',
+				'Bcc'      => 'user5@example.com,user6@example.com',
+				'Reply-To' => 'user7@example.com,user8@example.com',
+			],
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		];
+
+		// Act
+		$result = $this->guest_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+
+	public function testSkipWpMail_ChecksOnlyCcBccReplyToAndFromHeaders_ReturnsNull() {
+		// Arrange
+		$atts = array(
+			'to'      => array( 'user1@example.com', 'user2@example.com' ),
+			'headers' => array(
+				'Cc'         => 'User 3 <user3@example.com>,user4@example.com',
+				'Bcc'        => 'user5@example.com,User 6 <user6@example.com>',
+				'Reply-To'   => 'user7@example.com,user8@example.com',
+				'From'       => 'User 9 <user9@example.com>',
+				'X-Reply-To' => 'user10@guest.senseilms',
+			),
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->guest_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function testSkipWpMail_SingleToWithGuestEmail_ReturnsFalse() {
+		// Arrange
+		$atts = array(
+			'to'      => 'John Doe <user1@guest.senseilms>',
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->guest_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function testSkipWpMail_SingleToWithValidEmail_ReturnsNull() {
+		// Arrange
+		$atts = array(
+			'to'      => 'John Doe <user1@example.com>',
+			'message' => 'Hello world',
+			'subject' => 'Test email',
+		);
+
+		// Act
+		$result = $this->guest_user->skip_wp_mail( null, $atts );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
 }
