@@ -480,10 +480,6 @@ class Sensei_Guest_User {
 	 * @return boolean Whether to send the email.
 	 */
 	public function skip_wp_mail( $return, $atts ) {
-		if ( null !== $return ) {
-			// If we already have a return value, don't do anything, just return it early.
-			return $return;
-		}
 		if ( $this->is_current_user_guest() ) {
 			// If this e-mail is being dispatched while the current user is a guest, just... don't send it.
 			return false;
@@ -530,7 +526,7 @@ class Sensei_Guest_User {
 				return false;
 			}
 		}
-		return null;
+		return $return;
 	}
 
 	/**
