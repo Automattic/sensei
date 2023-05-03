@@ -1,3 +1,5 @@
+$breakpoint: 782px;
+
 .sensei-course-theme-lesson-actions {
 	display: flex;
 	gap: 16px;
@@ -7,6 +9,19 @@
 	&__complete-lesson-form {
 		padding: 0;
 		margin: 0;
+	}
+
+	@media screen and (max-width: $breakpoint) {
+		justify-content: center;
+
+		 & > form {
+			flex: 1;
+
+			button {
+				width: 100%; // Fix the animation issue.
+			}
+		 }
+
 	}
 }
 
