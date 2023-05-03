@@ -260,9 +260,9 @@ class Sensei_Preview_User {
 	 * @access private
 	 * @since  $$next-version$$
 	 *
-	 * @param boolean|null $return Whether to send the email.
-	 * @param array        $atts   Email attributes.
-	 * @return boolean|null Whether to send the email.
+	 * @param bool|null $return Null if we should send the email, a boolean if not.
+	 * @param array     $atts   Email attributes.
+	 * @return bool|null Null if we should send the email, a boolean if not.
 	 */
 	public function skip_wp_mail( $return, $atts ) {
 		if ( $this->is_preview_user_active() ) {
