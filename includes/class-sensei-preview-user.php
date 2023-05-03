@@ -30,6 +30,15 @@ class Sensei_Preview_User {
 	const SWITCH_OFF_ACTION = 'sensei-exit-student-preview';
 
 	/**
+	 * Email domain used for preview users.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string
+	 */
+	const EMAIL_DOMAIN = 'preview.senseilms';
+
+	/**
 	 * Meta key for the associated preview user ID.
 	 * Used to link the original teacher and the preview user, in both directions.
 	 */
@@ -272,7 +281,7 @@ class Sensei_Preview_User {
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
-				'user_email'   => $user_name . '@preview.senseilms',
+				'user_email'   => $user_name . '@' . self::EMAIL_DOMAIN,
 				'display_name' => $display_name,
 				'last_name'    => $display_name,
 				'role'         => self::ROLE,
