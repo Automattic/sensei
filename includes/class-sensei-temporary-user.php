@@ -121,6 +121,59 @@ class Sensei_Temporary_User {
 	}
 
 	/**
+	 * Detect if the e-mail attributes relate to an e-mail from a temporary user.
+	 *
+	 * @access private
+	 * @since  $$next-version$$
+	 *
+	 * @param array  $atts   Email attributes.
+	 * @param string $email_domain The email domain to search for.
+	 * @return boolean Whether to block the email or not.
+	 */
+	public static function should_block_email( $atts, $email_domain ) {
+		$emails = $atts['to'];
+		if ( ! is_array( $emails ) ) {
+			$emails = explode( ',', $emails );
+		}
+		if ( ! empty( $atts['headers'] ) ) {
+			$headers = $atts['headers'];
+			if ( ! is_array( $headers ) ) {
+				// Explode the headers out, so this function can take
+				// both string headers and an array of headers.
+				$temp_headers = explode( "\n", str_replace( "\r\n", "\n", $headers ) );
+			} else {
+				$temp_headers = $headers;
+			}
+			// If it's actually got contents.
+			if ( ! empty( $temp_headers ) ) {
+				foreach ( $temp_headers as $name => $content ) {
+					if ( is_int( $name ) && str_contains( $content, ':' ) ) {
+						list ( $name, $content) = explode( ':', trim( $content ), 2 );
+					}
+
+					// Cleanup crew.
+					$name    = trim( $name );
+					$content = trim( $content );
+
+					if ( in_array( strtolower( $name ), [ 'from', 'cc', 'bcc', 'reply-to' ], true ) ) {
+						$emails = array_merge( (array) $emails, explode( ',', $content ) );
+					}
+				}
+			}
+		}
+		foreach ( $emails as $address ) {
+			if ( preg_match( '/(.*)<(.+)>/', $address, $matches ) && count( $matches ) === 3 ) {
+				$address = $matches[2];
+			}
+			if ( str_ends_with( $address, '@' . $email_domain ) ) {
+				// If this is an e-mail address for a guest user, don't send it.
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Make sure temporary users are not counted.
 	 * When the user has an ungraded quiz, they are still counted, since they will show up in the grading list, as per self::filter_sensei_activity.
 	 *
