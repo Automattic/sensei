@@ -35,7 +35,7 @@ When submitting a pull request, please ensure that you have thoroughly tested yo
 
 ## Automated tests
 
-The automated tsts for Sensei LMS can be run locally. Please see our [test instructions](https://github.com/Automattic/sensei/tree/trunk/tests#readme) to run the unit tests on your machine.
+The automated tests for Sensei LMS can be run locally. Please see our [test instructions](https://github.com/Automattic/sensei/tree/trunk/tests#readme) to run the unit tests on your machine.
 
 ## Code Guidelines
 
