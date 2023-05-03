@@ -511,7 +511,7 @@ class Sensei_Guest_User {
 					$name    = trim( $name );
 					$content = trim( $content );
 
-					if ( in_array( strtolower( $name ), array( 'from', 'cc', 'bcc', 'reply-to' ), true ) ) {
+					if ( in_array( strtolower( $name ), [ 'from', 'cc', 'bcc', 'reply-to' ], true ) ) {
 						$emails = array_merge( (array) $emails, explode( ',', $content ) );
 					}
 				}
