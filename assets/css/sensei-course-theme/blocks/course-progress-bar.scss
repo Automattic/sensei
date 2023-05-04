@@ -1,9 +1,13 @@
-.sensei-course-theme-course-progress-bar {
+.wp-block-sensei-lms-course-theme-course-progress-bar {
 	height: var(--header-progress-bar-height, 4px);
-	margin: 0 !important;
+	margin: 0;
 	width: 100%;
 
-	&-inner {
+	:first-child {
 		height: var(--header-progress-bar-height, 4px);
 	}
+}
+
+body .is-layout-flow > * + .wp-block-sensei-lms-course-theme-course-progress-bar {
+	margin: 0;
 }

@@ -107,7 +107,7 @@ class Lesson_Actions {
 		}
 
 		$label = __( 'Next Lesson', 'sensei-lms' );
-		$icon  = \Sensei()->assets->get_icon( 'chevron-right' );
+		$icon  = \Sensei()->assets->get_icon( 'arrow-right' );
 
 		return ( "<a class='sensei-course-theme-lesson-actions__next-lesson sensei-course-theme__button is-link has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
 

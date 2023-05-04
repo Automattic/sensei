@@ -3,32 +3,40 @@
 .editor-styles-wrapper .sensei-lms-course-navigation,
 .sensei-lms-course-navigation {
 	&__modules, &__lessons, &-module__lessons {
-		&, li {
-			list-style: none;
-			margin: 0;
-		}
 
-		padding-left: 0;
 		margin: 0;
+		ol, li {
+			list-style: none;
+			padding: 0;
+		}
+	}
+	&__modules {
+		display: flex;
+		gap:  24px;
+		flex-direction: column;
 	}
 
 	&__modules + &__lessons {
-		border-top: 1px dotted var(--border-color, var(--sensei-text-color));
-		margin-top: 6px;
-		padding-top: 6px;
+		margin-top: 24px;
 	}
+
+	&-module__lessons:not(.sensei-collapsed) {
+		margin-bottom: 8px;
+	}
+
 }
 
 .editor-styles-wrapper .sensei-lms-course-navigation-module,
 .sensei-lms-course-navigation-module {
 	.sensei-collapsible__toggle {
-		align-items: flex-start;
+		align-items: center;
 		background: unset !important;
 		border: unset;
 		color: var(--sensei-text-color);
 		display: flex;
 		padding: 0;
 		width: 100%;
+		gap: 20px;
 
 		&:hover h3 {
 			text-decoration: underline;
@@ -63,33 +71,34 @@
 		font-size: 0.8125rem;
 		max-height: 0;
 		overflow: hidden;
-		position: relative;
-		top: -12px;
 		transition-delay: 150ms;
 		visibility: hidden;
+		margin-top: 0px;
 	}
 
 	&__lessons.sensei-collapsed ~ &__summary {
 		visibility: visible;
 		max-height: 50px;
+		margin-top: 4px;
 	}
 }
 
 .sensei-lms-course-navigation-lesson {
 	display: flex;
-	padding: 10px 1px;
+	margin-top: 24px;
 
 	&__link {
 		display: flex;
 		flex: 1;
+		align-items: center;
 	}
 
 	&__title {
 		flex: 1;
 		font-size: 0.875rem;
 		font-weight: 300;
+		padding: 0 8px;
 		line-height: 1.214;
-		padding: 0 12px;
 	}
 
 	&__extra {
@@ -101,7 +110,6 @@
 	&__status {
 		width: 12px;
 		height: 12px;
-		margin-top: 4px;
 		fill: currentColor;
 	}
 
