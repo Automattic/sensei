@@ -11,7 +11,7 @@
  */
 
 function sensei_disable_learning_mode_style_for_course_theme() {
-	add_filter( 'course_learning_mode_load_styles', '__return_true'  );
+	add_filter( 'course_learning_mode_load_styles', '__return_false'  );
 }
 
 function sensei_load_learning_mode_style_for_course_theme() {
@@ -28,5 +28,5 @@ function sensei_load_learning_mode_style_for_course_theme() {
 	}
 }
 
-add_action( 'wp', 'sensei_disable_learning_mode_style_for_course_theme' );
-add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_course_theme' );
+// add_action( 'wp', 'sensei_disable_learning_mode_style_for_course_theme' );
+// add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_course_theme' );
