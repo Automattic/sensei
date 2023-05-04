@@ -166,7 +166,7 @@ class Sensei_Temporary_User {
 				$address = $matches[2];
 			}
 			if ( str_ends_with( $address, '@' . $email_domain ) ) {
-				// If this is an e-mail address for a guest user, don't send it.
+				// If this is an e-mail address for a temporary user, don't send it.
 				return true;
 			}
 		}
