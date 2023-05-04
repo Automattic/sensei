@@ -203,7 +203,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			}
 		);
 
-		return $this->create_extensions_response( $filtered_plugins, 'extensions', true );
+		return $this->create_extensions_response( $filtered_plugins, 'extensions' );
 	}
 
 	/**
@@ -363,13 +363,12 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 *
 	 * @since 4.8.0 It doesn't support WCCOM extensions anymore.
 	 *
-	 * @param array   $plugins        The plugins.
-	 * @param string  $extensions_key Response key for the extensions array.
-	 * @param boolean $full_response  Whether it's creating the response for the main fetch.
+	 * @param array  $plugins        The plugins.
+	 * @param string $extensions_key Response key for the extensions array.
 	 *
 	 * @return WP_REST_Response
 	 */
-	private function create_extensions_response( array $plugins, string $extensions_key, bool $full_response = false ): WP_REST_Response {
+	private function create_extensions_response( array $plugins, string $extensions_key ): WP_REST_Response {
 		$mapped_plugins = array_map(
 			function ( $plugin ) {
 				$plugin->price      = isset( $plugin->price ) ? html_entity_decode( $plugin->price ) : '';
@@ -381,13 +380,6 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		);
 
 		$response_json = [];
-
-		if ( $full_response ) {
-			$response_json = [
-				'layout' => Sensei_Extensions::instance()->get_layout(),
-			];
-		}
-
 		$response_json[ $extensions_key ] = array_values( $mapped_plugins );
 
 		$response = new WP_REST_Response();
@@ -463,72 +455,6 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 						'has_update'      => [
 							'type'        => 'boolean',
 							'description' => 'Whether the extension has available updates.',
-						],
-					],
-				],
-			],
-			'layout'     => [ $this, 'get_layout_schema' ],
-		];
-	}
-
-	/**
-	 * Schema for the layout endpoint.
-	 *
-	 * @return array Schema object.
-	 */
-	private function get_layout_schema() : array {
-		return [
-			'type'  => 'array',
-			'items' => [
-				'type'       => 'object',
-				'properties' => [
-					'key'         => [
-						'type'        => 'string',
-						'description' => 'Section key.',
-					],
-					'columns'     => [
-						'type'        => 'integer',
-						'description' => 'Number of columns to use.',
-					],
-					'type'        => [
-						'type'        => 'string',
-						'description' => 'Type of content.',
-					],
-					'title'       => [
-						'type'        => 'string',
-						'description' => 'Section title.',
-					],
-					'description' => [
-						'type'        => 'string',
-						'description' => 'Description title.',
-					],
-					'items'       => [
-						'type'        => 'array',
-						'description' => 'Items to list.',
-						'items'       => [
-							'type'       => 'object',
-							'properties' => [
-								'key'           => [
-									'type'        => 'string',
-									'description' => 'Item key.',
-								],
-								'extensionSlug' => [
-									'type'        => 'string',
-									'description' => 'Extension slug.',
-								],
-								'itemProps'     => [
-									'type'        => 'object',
-									'description' => 'Props to add to the list item component.',
-								],
-								'wrapperProps'  => [
-									'type'        => 'object',
-									'description' => 'Props to add to the wrapper component.',
-								],
-								'cardProps'     => [
-									'type'        => 'object',
-									'description' => 'Props to add to the card component.',
-								],
-							],
 						],
 					],
 				],
