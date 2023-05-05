@@ -117,7 +117,7 @@ class Sensei_PostTypes {
 
 		// Add protections on feeds for certain CPTs.
 		add_action( 'wp', [ $this, 'protect_feeds' ] );
-		add_action( 'wp_sitemaps_post_types', [ $this, 'exclude_sitemaps_post_types' ] );
+		add_filter( 'wp_sitemaps_post_types', [ $this, 'exclude_sitemaps_post_types' ] );
 
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
