@@ -95,6 +95,17 @@ $gray-400: #ccc;
 			&.upsell .button-text-content {
 				opacity: 0.7;
 			}
+			&:hover {
+				&, .button-text-content {
+					background-color: var(--wp--preset--color--primary);
+					border-color: var(--wp--preset--color--button-border-hover);
+					color: var(--wp--preset--color--secondary);
+					stroke: var(--wp--preset--color--secondary);
+					path {
+						fill: var(--wp--preset--color--secondary);
+					}
+				}
+			}
 			color: var(--sensei-primary-color);
 			border-radius: 8px;
 			padding: 25px 16px;
