@@ -95,7 +95,7 @@ $gray-400: #ccc;
 			&.upsell .button-text-content {
 				opacity: 0.7;
 			}
-			&:hover {
+			&:hover:not(:disabled) {
 				&, .button-text-content {
 					background-color: var(--wp--preset--color--primary);
 					border-color: var(--wp--preset--color--button-border-hover);
