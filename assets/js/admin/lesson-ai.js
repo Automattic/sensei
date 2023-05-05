@@ -5,7 +5,8 @@ import { Button, Fill } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 import { compose } from '@wordpress/compose';
-import { plus, Icon } from '@wordpress/icons';
+import { Icon } from '@wordpress/icons';
+import AiIcon from '../../icons/ai-icon.svg';
 
 const withQuestionGeneratorUpsellButton = ( BlockEdit ) => ( props ) => {
 	return (
@@ -22,10 +23,7 @@ const withQuestionGeneratorUpsellButton = ( BlockEdit ) => ( props ) => {
 					} }
 				>
 					<div className="button-text-content">
-						<Icon
-							icon={ plus }
-							className="sensei-pro-ai-generate-questions-button__icon"
-						/>
+						<Icon icon={ <AiIcon /> } />
 						{ __(
 							'Generate quiz questions with AI',
 							'sensei-pro'
