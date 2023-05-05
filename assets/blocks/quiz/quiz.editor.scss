@@ -65,7 +65,7 @@ $gray-400: #ccc;
 		margin-top: $default-block-margin;
 		margin-bottom: $default-block-margin;
 
-		&::before, & > span::before, & > span::after {
+		&::before, & > span::before {
 			content: '';
 			flex: 1;
 			background-color: currentColor;
@@ -92,8 +92,15 @@ $gray-400: #ccc;
 		}
 
 		button.sensei-pro-ai-generate-questions-button {
+			height: auto;
 			&.upsell .button-text-content {
 				opacity: 0.7;
+			}
+			&:disabled {
+				stroke: #828282;
+				path {
+					fill: #828282;
+				}
 			}
 			&:hover:not(:disabled) {
 				&, .button-text-content {
@@ -108,7 +115,7 @@ $gray-400: #ccc;
 			}
 			color: var(--sensei-primary-color);
 			border-radius: 8px;
-			padding: 25px 16px;
+			padding: 12px 16px 12px 18px;
 			border: 1px solid var(--sensei-primary-color);
 			box-shadow: none;
 			.button-text-content {
@@ -120,6 +127,7 @@ $gray-400: #ccc;
 				font-weight: 400;
 				letter-spacing: .04em;
 				word-spacing: 0.1em;
+				gap: 8px;
 			}
 		}
 	}
