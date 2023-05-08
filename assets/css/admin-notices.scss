@@ -12,31 +12,24 @@ $sensei-notice-icon-width: 30px;
 	min-height: 40px;
 	padding: 10px 16px;
 
-	&__icon {
-		color: #26212E;
-		flex: 0 0 auto;
-		margin-top: 0.5em;
-		width: $sensei-notice-icon-width;
-		height: $sensei-notice-icon-height;
-	}
-
-	&__wrapper {
-		padding: 0;
-		font-size: 14px;
-
-		@media (min-width: 500px) {
-			display: flex;
-			flex: 1 1 auto;
-			gap: 10px;
-		}
-	}
-
 	&__content {
+		display: flex;
+		gap: 10px;
+		align-items: center;
 		color: #101517;
+		font-size: 14px;
 	}
 
 	&__content a {
 		color: #000;
+	}
+
+	&__icon {
+		color: #26212E;
+		flex: 0 0 auto;
+		margin-top: 0;
+		width: $sensei-notice-icon-width;
+		height: $sensei-notice-icon-height;
 	}
 
 	&__heading {
@@ -47,8 +40,10 @@ $sensei-notice-icon-width: 30px;
 	&__actions {
 		margin: 0.5em 0 0.5em auto;
 		align-self: center;
+		white-space: nowrap;
 
 		.button {
+			margin-left: 20px;
 			padding: 3px 12px;
 		}
 	}
