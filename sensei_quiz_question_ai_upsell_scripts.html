@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_course_completed_page_url - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_quiz_question_ai_upsell_scripts - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_course_completed_page_url</h1>
+	<h1 class="page-title">Filter: sensei_quiz_question_ai_upsell_scripts</h1>
 	
 
 	
@@ -43,14 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_course_completed_page_url">apply_filters( 'sensei_course_completed_page_url', <span class="signature">$url, $course_id )</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="sensei_quiz_question_ai_upsell_scripts">apply_filters( 'sensei_quiz_question_ai_upsell_scripts', <span class="signature">$enqueue_scripts )</span><span class="type-signature"> &rarr; {bool}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter the course completed page URL.</p>
+    <p>Enqueue scripts for the quiz question AI upsell if the the feature is not available.</p>
 </div>
 
 
@@ -84,13 +84,13 @@
 
         <tr>
             
-                <td class="name"><code>$url</code></td>
+                <td class="name"><code>$enqueue_scripts</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">bool</span>
 
 
             
@@ -100,30 +100,7 @@
 
             
 
-            <td class="description last"><p>Course completed page URL.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>$course_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>ID of the course that was completed.</p></td>
+            <td class="description last"><p>Whether to enqueue the scripts. Default false.</p></td>
         </tr>
 
     
@@ -141,7 +118,7 @@
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>3.13.0</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -167,7 +144,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-course.php.html">includes/class-sensei-course.php</a>, <a href="includes_class-sensei-course.php.html#line3282">line 3282</a>
+        <a href="includes_class-sensei-lesson.php.html">includes/class-sensei-lesson.php</a>, <a href="includes_class-sensei-lesson.php.html#line2635">line 2635</a>
     </li></ul></dd>
     
 
@@ -194,7 +171,7 @@
 
         
 <div class="param-desc">
-    <p>Course completed page URL.</p>
+    <p>Whether to enqueue the scripts.</p>
 </div>
 
 
@@ -205,7 +182,7 @@
     </dt>
     <dd>
         
-<span class="param-type">string</span>
+<span class="param-type">bool</span>
 
 
     </dd>
