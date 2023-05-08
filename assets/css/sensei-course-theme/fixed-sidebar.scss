@@ -50,7 +50,7 @@ $min_desktop_width: 783px;
 		}
 
 		&__columns &__sidebar ~ &__main-content {
-			margin-right: unset ! important;
+			margin-right: 24px ! important;
 			margin-left: calc(var(--sensei-lm-sidebar-width) + 24px) !important;
 		}
 
