@@ -263,7 +263,7 @@ class Sensei_Preview_User {
 	 * @param array     $atts   Email attributes.
 	 * @return bool|null Null if we should send the email, a boolean if not.
 	 */
-	public function skip_wp_mail( $return, $atts ) {
+	public static function skip_wp_mail( $return, $atts ) {
 		if ( self::is_preview_user_active() ) {
 			// If this e-mail is being dispatched while the current user is a previwe user, just... don't send it.
 			return false;

@@ -487,7 +487,7 @@ class Sensei_Guest_User {
 	 * @param array     $atts   Email attributes.
 	 * @return bool|null Null if we should send the email, a boolean if not.
 	 */
-	public function skip_wp_mail( $return, $atts ) {
+	public static function skip_wp_mail( $return, $atts ) {
 		if ( self::is_current_user_guest() ) {
 			// If this e-mail is being dispatched while the current user is a guest, just... don't send it.
 			return false;
