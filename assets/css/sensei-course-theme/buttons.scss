@@ -1,3 +1,5 @@
+$breakpoint: 782px;
+
 .sensei-course-theme {
 	a, button {
 		&:focus {
@@ -13,9 +15,7 @@
 
 .editor-styles-wrapper .sensei-course-theme__main-content .wp-block-button,
 .sensei-course-theme .wp-block-button,
-.sensei-course-theme__button,
-.sensei-course-theme__button[type=submit],
-.sensei-course-theme__button[type=button] {
+.sensei-course-theme__button {
 	.wp-block-button__link {
 		border: none;
 		font-family: inherit;
@@ -54,6 +54,13 @@
 		font-weight: 400;
 		padding: 0.83em 1.11em;
 		text-decoration: none;
+		height: 100%;
+		width: 100%; // Fix the animation issue.
+		justify-content: center;
+
+		@media screen and (max-width: $breakpoint) {
+			padding: 0.83em 0.556em;
+		}
 	}
 
 	&.is-primary,
@@ -121,6 +128,10 @@
 		&:focus {
 			border: solid 1.5px var(--sensei-secondary-color);
 		}
+
+		@media screen and (max-width: $breakpoint) {
+			padding: 0.83em 0.556em;
+		}
 	}
 
 	&[aria-disabled='true'],
@@ -170,10 +181,13 @@
 		display: flex;
 		gap: 8px;
 		align-items: center;
+		white-space: nowrap;
+		width: 100%;
+		justify-content: center;
 
 		svg {
-			width: 20px;
-			height: 20px;
+			width: 16px;
+			height: 16px;
 		}
 	}
 }
