@@ -10,11 +10,12 @@ $sensei-notice-icon-width: 30px;
 	display: flex;
 	gap: 10px;
 	min-height: 40px;
-	padding: 10px 16px;
+	padding: 18px 24px;
 
 	&__content {
+		flex: 1;
 		display: flex;
-		gap: 10px;
+		gap: 18px;
 		align-items: center;
 		color: #101517;
 		font-size: 14px;
@@ -33,17 +34,15 @@ $sensei-notice-icon-width: 30px;
 	}
 
 	&__heading {
-		margin: 5px 0;
+		margin-bottom: 5px;
 		font-weight: bold;
 	}
 
 	&__actions {
-		margin: 0.5em 0 0.5em auto;
-		align-self: center;
 		white-space: nowrap;
 
 		.button {
-			margin-left: 20px;
+			margin-left: 18px;
 			padding: 3px 12px;
 		}
 	}
