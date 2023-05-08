@@ -307,7 +307,7 @@ class Sensei_Guest_User {
 	 * @since 4.11.0
 	 * @access private
 	 */
-	private function is_current_user_guest() {
+	private static function is_current_user_guest() {
 		$user = wp_get_current_user();
 		return self::is_guest_user( $user );
 	}
@@ -475,7 +475,7 @@ class Sensei_Guest_User {
 	 * @return boolean Whether to send the email.
 	 */
 	public function skip_sensei_email( $send_email ) {
-		return $this->is_current_user_guest() ? false : $send_email;
+		return self::is_current_user_guest() ? false : $send_email;
 	}
 
 	/**
@@ -489,7 +489,7 @@ class Sensei_Guest_User {
 	 * @return bool|null Null if we should send the email, a boolean if not.
 	 */
 	public function skip_wp_mail( $return, $atts ) {
-		if ( $this->is_current_user_guest() ) {
+		if ( self::is_current_user_guest() ) {
 			// If this e-mail is being dispatched while the current user is a guest, just... don't send it.
 			return false;
 		}
