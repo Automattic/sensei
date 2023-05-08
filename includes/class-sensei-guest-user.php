@@ -147,7 +147,6 @@ class Sensei_Guest_User {
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
 		add_action( 'sensei_can_user_manually_enrol', [ $this, 'open_course_user_can_manualy_enroll' ], 10, 2 );
 		add_filter( 'sensei_send_emails', [ $this, 'skip_sensei_email' ] );
-		add_filter( 'pre_wp_mail', [ $this, 'skip_wp_mail' ], 10, 2 );
 
 		$this->create_guest_student_role_if_not_exists();
 
