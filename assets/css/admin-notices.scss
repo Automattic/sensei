@@ -5,12 +5,17 @@ $sensei-notice-icon-width: 30px;
 .sensei-notice {
 	@import '../shared/styles/wp-admin';
 
-	align-items: center;
 	border-left-color: $primary;
 	display: flex;
-	gap: 10px;
+	flex-direction: column;
+	gap: 18px;
 	min-height: 40px;
 	padding: 18px 24px;
+
+	@media ( min-width: 961px ) {
+		flex-direction: row;
+		align-items: center;
+	}
 
 	&__content {
 		flex: 1;
@@ -42,8 +47,11 @@ $sensei-notice-icon-width: 30px;
 		white-space: nowrap;
 
 		.button {
-			margin-left: 18px;
 			padding: 3px 12px;
+
+			&:not(:first-child) {
+				margin-left: 18px;
+			}
 		}
 	}
 
