@@ -28,5 +28,5 @@ function sensei_load_learning_mode_style_for_course_theme() {
 	}
 }
 
-// add_action( 'wp', 'sensei_disable_learning_mode_style_for_course_theme' );
-// add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_course_theme' );
+add_action( 'wp', 'sensei_disable_learning_mode_style_for_course_theme' );
+add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_course_theme' );
