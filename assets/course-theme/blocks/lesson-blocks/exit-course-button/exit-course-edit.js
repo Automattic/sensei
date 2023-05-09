@@ -8,9 +8,8 @@ export const ExitCourseEdit = () => {
 	const blockProps = useBlockProps();
 
 	return (
-		<div className="sensei-course-theme__exit-course-wrapper">
+		<div { ...blockProps }>
 			<a
-				{ ...blockProps }
 				href="#exit-course-button-pseudo-link"
 				onClick={ ( event ) => event.preventDefault() }
 			>
