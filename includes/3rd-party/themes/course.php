@@ -11,7 +11,7 @@
  */
 
 function sensei_disable_learning_mode_style_for_course_theme() {
-	add_filter( 'internal_course_theme_use_learning_mode_style_from_sensei', '__return_true'  );
+	add_filter( 'course_learning_mode_load_styles', '__return_false'  );
 }
 
 function sensei_load_learning_mode_style_for_course_theme() {
