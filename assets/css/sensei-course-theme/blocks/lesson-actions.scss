@@ -1,10 +1,10 @@
 $breakpoint: 782px;
 
-.sensei-course-theme-lesson-actions {
+.sensei-course-theme .sensei-course-theme-lesson-actions,
+.editor-styles-wrapper .sensei-course-theme-lesson-actions {
 	display: flex;
 	gap: 16px;
 	list-style: none;
-	width: 100%;
 
 	&__complete-lesson-form {
 		padding: 0;
@@ -13,19 +13,18 @@ $breakpoint: 782px;
 
 	@media screen and (max-width: $breakpoint) {
 		justify-content: center;
+		width: 100%;
 
-		 & > * {
+		 & > *, .wp-block-button, &__next-lesson {
 			flex: 1;
 		 }
 
-		 .sensei-course-theme__button {
-			width: 100%; // Fix the animation issue.
-			justify-content: center;
+		 .wp-block-button {
+			height: 100%;
 		}
 
 	}
 }
-
 
 body .is-layout-flow > * + .sensei-course-theme__actions-wrapper {
 	margin-block-start: 40px;
@@ -48,7 +47,7 @@ body .is-layout-flow > * + .sensei-course-theme__actions-wrapper {
 		}
 	}
 
-	@media screen and (max-width: 782px) {
+	@media screen and (max-width: $breakpoint) {
 		justify-content: center;
 	}
 }

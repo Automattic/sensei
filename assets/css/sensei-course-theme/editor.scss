@@ -20,7 +20,7 @@
 	}
 
 	&__header ~ &__columns {
-		height: calc(100% - var(--sensei-lm-header-height));
+		height: calc(100vh - var(--sensei-lm-header-height));
 	}
 
 	&__header + * {
