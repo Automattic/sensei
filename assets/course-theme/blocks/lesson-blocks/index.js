@@ -217,7 +217,9 @@ export default [
 			return (
 				<div { ...blockProps }>
 					<span className="post-page-numbers current">1</span>
-					<span className="post-page-numbers">2</span>
+					<a href="#pseudo-link" className="post-page-numbers">
+						2
+					</a>
 				</div>
 			);
 		},
