@@ -5,7 +5,6 @@
  * @package 3rd-Party
  */
 
-
 /**
  * Don't load Learning Mode styles from Course theme.
  */
@@ -25,7 +24,7 @@ function sensei_load_learning_mode_style_for_course_theme() {
 	}
 
 	if ( Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
-		Sensei()->assets->enqueue( 'course-learning-mode', 'css/3rd-party/themes/course/learning-mode.css');
+		Sensei()->assets->enqueue( 'course-learning-mode', 'css/3rd-party/themes/course/learning-mode.css' );
 	}
 }
 
