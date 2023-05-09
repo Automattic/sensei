@@ -253,12 +253,12 @@ class Sensei_Admin_Notices {
 			?>
 		>
 			<?php
+			echo '<div class="sensei-notice__content">';
 			if ( ! empty( $notice['icon'] ) ) {
 				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
 				echo Sensei()->assets->get_icon( $notice['icon'], 'sensei-notice__icon' );
 			}
-			echo '<div class="sensei-notice__wrapper">';
-			echo '<div class="sensei-notice__content">';
+			echo '<div>';
 			if ( ! empty( $notice['heading'] ) ) {
 				echo '<div class="sensei-notice__heading">';
 				echo wp_kses( $notice['heading'], self::ALLOWED_HTML );

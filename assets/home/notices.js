@@ -130,11 +130,9 @@ const Notice = ( { noticeId, notice, dismissNonce } ) => {
 
 	return (
 		<div { ...containerProps }>
-			<SenseiCircleLogo className="sensei-notice__icon" />
-			<div className="sensei-notice__wrapper">
-				<div className="sensei-notice__content">
-					<RawHTML>{ message }</RawHTML>
-				</div>
+			<div className="sensei-notice__content">
+				<SenseiCircleLogo className="sensei-notice__icon" />
+				<RawHTML>{ message }</RawHTML>
 			</div>
 			<NoticeInfoLink infoLink={ notice.info_link } />
 			<NoticeActions actions={ notice.actions } />
