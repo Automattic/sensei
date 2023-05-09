@@ -3,6 +3,7 @@
 namespace SenseiTest\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Post_Type;
+use WP_Post_Type;
 
 /**
  * Tests for the Email_Post_Type class.
@@ -49,6 +50,49 @@ class Email_Post_Type_Test extends \WP_UnitTestCase {
 		$this->assertSame( 10, $priority );
 	}
 
+
+	public function testEnableEmailTemplateEditor_WhenIsAdminAndPostTypeIsEmail_ReturnsTrue() {
+		/* Arrange. */
+		$original = false;
+		set_current_screen( 'edit-post' );
+		$current_post_type = new WP_Post_Type( Email_Post_Type::POST_TYPE );
+
+		$email_post_type = Email_Post_Type::instance();
+
+		/* Act. */
+		$result = $email_post_type->enable_email_template_editor( $original, $current_post_type );
+
+		/* Assert. */
+		$this->assertSame( true, $result );
+	}
+
+
+	public function testEnableEmailTemplateEditorWhenIsNotTheEmailPostType_ReturnsOriginal() {
+		/* Arrange. */
+		$original          = false;
+		$current_post_type = new WP_Post_Type( 'other-post-type' );
+		$email_post_type   = Email_Post_Type::instance();
+		set_current_screen( 'edit-post' );
+
+		/* Act. */
+		$result = $email_post_type->enable_email_template_editor( $original, $current_post_type );
+
+		/* Assert. */
+		$this->assertSame( $original, $result );
+	}
+
+	public function testEnableEmailTemplateEditorWhenIsNotTheAdminInterface_ReturnsOriginal() {
+		/* Arrange. */
+		$original          = false;
+		$current_post_type = new WP_Post_Type( Email_Post_Type::POST_TYPE );
+		$email_post_type   = Email_Post_Type::instance();
+
+		/* Act. */
+		$result = $email_post_type->enable_email_template_editor( $original, $current_post_type );
+
+		/* Assert. */
+		$this->assertSame( $original, $result );
+	}
 
 	public function testInit_WhenCalled_AddsHookForRemovingEmailDeletingCap() {
 		/* Arrange. */

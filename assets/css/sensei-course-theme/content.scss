@@ -57,6 +57,8 @@ body {
 	}
 
 	.wp-block-post-content {
+		margin-top: 40px;
+
 		& > *, .wp-block-group__inner-container > * {
 			max-width: var(--content-size) !important;
 			margin-left: auto;

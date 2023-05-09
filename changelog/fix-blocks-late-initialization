@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Make the email post type private
+Fix blocks initialization

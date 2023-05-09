@@ -1,12 +1,28 @@
+$breakpoint: 782px;
+
 .sensei-course-theme-lesson-actions {
 	display: flex;
-	gap: 12px;
+	gap: 16px;
 	list-style: none;
 	width: 100%;
 
 	&__complete-lesson-form {
 		padding: 0;
 		margin: 0;
+	}
+
+	@media screen and (max-width: $breakpoint) {
+		justify-content: center;
+
+		 & > * {
+			flex: 1;
+		 }
+
+		 .sensei-course-theme__button {
+			width: 100%; // Fix the animation issue.
+			justify-content: center;
+		}
+
 	}
 }
 

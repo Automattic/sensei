@@ -5,7 +5,6 @@
 	&__modules, &__lessons, &-module__lessons {
 
 		margin: 0;
-
 		ol, li {
 			list-style: none;
 			padding: 0;
@@ -13,15 +12,21 @@
 	}
 	&__modules {
 		display: flex;
-		gap:  32px;
+		gap:  24px;
 		flex-direction: column;
 	}
 
 	&__modules + &__lessons {
-		margin-top: 32px;
+		margin-top: 24px;
 	}
+
+	&-module__lessons:not(.sensei-collapsed) {
+		margin-bottom: 8px;
+	}
+
 }
 
+.editor-styles-wrapper .sensei-lms-course-navigation-module,
 .sensei-lms-course-navigation-module {
 	.sensei-collapsible__toggle {
 		align-items: center;
@@ -31,6 +36,7 @@
 		display: flex;
 		padding: 0;
 		width: 100%;
+		gap: 20px;
 
 		&:hover h3 {
 			text-decoration: underline;
@@ -67,12 +73,13 @@
 		overflow: hidden;
 		transition-delay: 150ms;
 		visibility: hidden;
-		margin-top: 4px;
+		margin-top: 0px;
 	}
 
 	&__lessons.sensei-collapsed ~ &__summary {
 		visibility: visible;
 		max-height: 50px;
+		margin-top: 4px;
 	}
 }
 
@@ -91,6 +98,7 @@
 		font-size: 0.875rem;
 		font-weight: 300;
 		padding: 0 8px;
+		line-height: 1.214;
 	}
 
 	&__extra {

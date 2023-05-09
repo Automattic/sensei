@@ -110,13 +110,19 @@ jQuery( document ).ready( function ( $ ) {
 
 				if ( $this.hasClass( 'gap-fill' ) ) {
 					user_answer = $this
-						.find( '.user-answer .highlight' )
+						.find( '.user-answer' )
+						.contents()
+						.find( '.highlight' )
 						.html();
 					correct_answer = $this
 						.find( '.correct-answer .highlight' )
 						.html();
 				} else {
-					user_answer = $this.find( '.user-answer' ).html();
+					user_answer = $this
+						.find( '.user-answer' )
+						.contents()
+						.find( 'body' )
+						.html();
 					correct_answer = $this.find( '.correct-answer' ).html();
 				}
 
