@@ -55,8 +55,6 @@
 	&__title {
 		flex: 1;
 		font-size: 1.125rem;
-		font-weight: 600;
-		line-height: 1.33;
 		margin: 0;
 		text-align: left;
 	}
@@ -85,7 +83,11 @@
 
 .sensei-lms-course-navigation-lesson {
 	display: flex;
+	font-size: 0.875rem;
+	line-height: 1.214285714285714;
 	margin-top: 24px;
+	padding: 10px 1px;
+	text-decoration: none;
 
 	&__link {
 		display: flex;
@@ -97,12 +99,11 @@
 		flex: 1;
 		font-size: 0.875rem;
 		font-weight: 300;
-		padding: 0 8px;
 		line-height: 1.214;
+		padding: 0 8px;
 	}
 
 	&__extra {
-		font-size: 0.8125rem;
 		margin-top: 1px; // Needed to compensate the font-size difference.
 		padding-left: 6px;
 	}

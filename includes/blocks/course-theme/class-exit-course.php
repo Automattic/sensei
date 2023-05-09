@@ -58,6 +58,6 @@ class Exit_Course {
 
 		$label = $attributes['label'] ?? __( 'Exit Course', 'sensei-lms' );
 
-		return sprintf( '<a href="%1$s" %2$s>%3$s</a>', get_the_permalink( $course_id ), $wrapper_attributes, $label );
+		return sprintf( '<div class="sensei-course-theme__exit-course-wrapper"><a href="%1$s" %2$s>%3$s</a></div>', get_the_permalink( $course_id ), $wrapper_attributes, $label );
 	}
 }

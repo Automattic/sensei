@@ -8,12 +8,14 @@ export const ExitCourseEdit = () => {
 	const blockProps = useBlockProps();
 
 	return (
-		<a
-			{ ...blockProps }
-			href="#exit-course-button-pseudo-link"
-			onClick={ ( event ) => event.preventDefault() }
-		>
-			{ __( 'Exit Course', 'sensei-lms' ) }
-		</a>
+		<div className="sensei-course-theme__exit-course-wrapper">
+			<a
+				{ ...blockProps }
+				href="#exit-course-button-pseudo-link"
+				onClick={ ( event ) => event.preventDefault() }
+			>
+				{ __( 'Exit Course', 'sensei-lms' ) }
+			</a>
+		</div>
 	);
 };
