@@ -32,7 +32,9 @@ function sensei_load_learning_mode_style_for_course_theme() {
  * Enqueue Course theme-specific Learning Mode styles in the admin for the Site Editor and Lesson Editor.
  */
 function sensei_admin_load_learning_mode_style_for_course_theme() {
-	if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+	$is_course_theme = 'course' === wp_get_theme()->get_template();
+
+	if ( ! is_admin() || ! function_exists( 'get_current_screen' ) || ! $is_course_theme ) {
 		return;
 	}
 
