@@ -39,6 +39,7 @@ $min_desktop_width: 783px;
 		&__columns &__main-content {
 			padding: 32px 0;
 			margin-right: var(--sensei-lm-sidebar-width) !important;
+			min-height: calc(100vh - var(--sensei-lm-header-height, 0px) - 56px);
 
 			// A Divi fix since it doesn't load Gutenberg block library styles.
 			@at-root {
@@ -49,8 +50,8 @@ $min_desktop_width: 783px;
 		}
 
 		&__columns &__sidebar ~ &__main-content {
-			margin-right: unset ! important;
-			margin-left: var(--sensei-lm-sidebar-width)  !important;
+			margin-right: 24px ! important;
+			margin-left: calc(var(--sensei-lm-sidebar-width) + 24px) !important;
 		}
 
 	}
