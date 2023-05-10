@@ -28,5 +28,29 @@ function sensei_load_learning_mode_style_for_course_theme() {
 	}
 }
 
+/**
+ * Enqueue Course theme-specific Learning Mode styles in the admin for the Site Editor and Lesson Editor.
+ */
+function sensei_admin_load_learning_mode_style_for_course_theme() {
+	if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+		return;
+	}
+
+	$screen           = get_current_screen();
+	$is_lesson_editor = 'lesson' === $screen->post_type && 'post' === $screen->base;
+	$is_site_editor   = 'site-editor' === $screen->id;
+
+	if ( $is_lesson_editor || $is_site_editor ) {
+		Sensei()->assets->enqueue(
+			'course-learning-mode',
+			'css/3rd-party/themes/course/learning-mode.css',
+			[],
+			'screen'
+		);
+	}
+
+}
+
 add_action( 'wp', 'sensei_disable_learning_mode_style_for_course_theme' );
 add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_course_theme' );
+add_action( 'admin_enqueue_scripts', 'sensei_admin_load_learning_mode_style_for_course_theme' );
