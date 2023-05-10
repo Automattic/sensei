@@ -113,10 +113,10 @@ $gray-400: #ccc;
 					}
 				}
 			}
-			color: var(--sensei-primary-color);
+			color: var(--wp--preset--color--primary);
 			border-radius: 8px;
 			padding: 12px 16px 12px 18px;
-			border: 1px solid var(--sensei-primary-color);
+			border: 1px solid var(--wp--preset--color--primary);
 			box-shadow: none;
 			.button-text-content {
 				display: flex;
