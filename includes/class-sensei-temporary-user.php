@@ -124,7 +124,7 @@ class Sensei_Temporary_User {
 	 * Detect if the e-mail attributes relate to an e-mail from a temporary user.
 	 *
 	 * @access private
-	 * @since  $$next-version$$
+	 * @since  4.14.0
 	 *
 	 * @param array  $atts   Email attributes.
 	 * @param string $email_domain The email domain to search for.

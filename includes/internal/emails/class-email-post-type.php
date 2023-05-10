@@ -69,7 +69,7 @@ class Email_Post_Type {
 	 * @param bool         $is_viewable    Original is_viewable value.
 	 * @param WP_Post_Type $post_type  Current post_type.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.14.0
 	 *
 	 * @access private
 	 *

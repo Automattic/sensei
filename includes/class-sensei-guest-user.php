@@ -43,7 +43,7 @@ class Sensei_Guest_User {
 	/**
 	 * Email domain used for guest users.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.14.0
 	 *
 	 * @var string
 	 */
@@ -482,7 +482,7 @@ class Sensei_Guest_User {
 	 * Prevent emails related to the guest user from being dispatched via wp_mail.
 	 *
 	 * @access private
-	 * @since  $$next-version$$
+	 * @since  4.14.0
 	 *
 	 * @param bool|null $return Null if we should send the email, a boolean if not.
 	 * @param array     $atts   Email attributes.

@@ -3,7 +3,7 @@
  * File containing SenseiLMS_Plugin_Updater class.
  *
  * @package Sensei\Admin
- * @since   $$next-version$$
+ * @since   4.14.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * It's a fallback to SenseiLMS_Licensing\SenseiLMS_Plugin_Updater from Sensei Pro. So it works when
  * Sensei Pro is in a legacy version that depends on the activated license.
  *
- * @since $$next-version$$
+ * @since 4.14.0
  */
 class SenseiLMS_Plugin_Updater {
 
@@ -236,7 +236,7 @@ class SenseiLMS_Plugin_Updater {
 	/**
 	 * Add update disclaimer for invalid license.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.14.0
 	 *
 	 * @internal
 	 */
