@@ -5,26 +5,26 @@
  * @package 3rd-Party
  */
 
-
 /**
- * Load learning mode is enabled and the current theme is the automattic/course.
+ * Don't load Learning Mode styles from Course theme.
  */
-
 function sensei_disable_learning_mode_style_for_course_theme() {
 	add_filter( 'course_learning_mode_load_styles', '__return_false'  );
 }
 
+/**
+ * Enqueue Course theme-specific Learning Mode styles.
+ */
 function sensei_load_learning_mode_style_for_course_theme() {
-	$course_id = Sensei_Utils::get_current_course();
-	$is_course_theme =  'course' === wp_get_theme()->get_template();
+	$course_id       = Sensei_Utils::get_current_course();
+	$is_course_theme = 'course' === wp_get_theme()->get_template();
 
-	if( empty( $course_id ) || ! $is_course_theme ) {
+	if ( empty( $course_id ) || ! $is_course_theme ) {
 		return false;
 	}
 
-
-	if ( Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id )  ) {
-		Sensei()->assets->enqueue( 'course-learning-mode', 'css/3rd-party/themes/course/learning-mode.css');
+	if ( Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+		Sensei()->assets->enqueue( 'course-learning-mode', 'css/3rd-party/themes/course/learning-mode.css' );
 	}
 }
 
