@@ -225,10 +225,6 @@ body {
 	margin-block-start: 1.5rem;
 }
 
-.wp-block-post-content.is-layout-flow>*+* {
-	margin-block-start: 1.5rem;
-}
-
 .sensei-course-theme__post-pagination~.sensei-lesson-footer {
 	margin-block-start: 2rem !important; // The !important is require until we remove the spacing from the block template.
 }
