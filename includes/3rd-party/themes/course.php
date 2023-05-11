@@ -9,7 +9,7 @@
  * Don't load Learning Mode styles from Course theme.
  */
 function sensei_disable_learning_mode_style_for_course_theme() {
-	add_filter( 'course_learning_mode_load_styles', '__return_false'  );
+	add_filter( 'course_learning_mode_load_styles', '__return_false' );
 }
 
 /**
