@@ -206,3 +206,158 @@ body {
 .wp-block-sensei-lms-exit-course:hover {
 	text-decoration: none;
 }
+
+.sensei-course-theme .wp-site-logo > div > a > img {
+	width: auto !important;
+}
+
+.sensei-course-theme.is-gold {
+	@media screen and (min-width: 783px) {
+		.sensei-course-theme__sidebar {
+			--sensei-lm-sidebar-width: 312px;
+		}
+		--sensei-lm-header-height: 80px;
+
+		.has-global-padding {
+			padding: 0;
+		}
+
+		.sensei-course-theme__frame.sensei-course-theme__header {
+			padding-top: 0;
+
+			.sensei-course-theme-header-content {
+				margin-top: 1.75rem;
+				margin-bottom: 1.5rem;
+			}
+		}
+
+		.sensei-course-theme__main-content {
+			margin-block-start: 0;
+			padding-top: 3.5rem;
+
+			.wp-block-post-title {
+				margin-block-start: 2rem;
+			}
+
+			.wp-block-sensei-lms-course-theme-lesson-module {
+				box-sizing: border-box;
+				padding-left: 0.5rem;
+			}
+
+			.wp-block-post-content.is-layout-flow > * + * {
+				margin-block-start: 2.5rem;
+			}
+
+			.sensei-course-theme-lesson-actions {
+				gap: 1.25rem;
+
+				.wp-block-button > .wp-block-button__link,
+				.wp-block-button.is-style-outline > .wp-block-button__link {
+					padding: 1.25rem;
+				}
+			}
+		}
+
+		.sensei-course-theme__header + .sensei-course-theme__columns > div:first-child.sensei-course-theme__sidebar,
+		.sensei-course-theme__columns .sensei-course-theme__sidebar {
+			padding: 2rem 1.5rem 2.5px 1.5rem;
+		}
+
+		.sensei-lms-course-navigation {
+			padding-top: 0;
+
+			.sensei-lms-course-navigation__modules {
+				gap: 0;
+				padding-inline-start: 0;
+
+				.sensei-lms-course-navigation-module__lessons:not(.sensei-collapsed) {
+					padding-bottom: 0.3125rem;
+				}
+			}
+		}
+	}
+	--sensei-lm-header-height: 68px;
+
+	.has-global-padding {
+		padding: 0;
+	}
+
+	.sensei-course-theme__frame.sensei-course-theme__header {
+		padding-top: 0;
+
+		.sensei-course-theme-header-content {
+			margin-top: 1.125rem;
+			margin-bottom: 0.9375rem;
+
+			.sensei-course-theme__header__info {
+				max-height: 1.875rem;
+			}
+		}
+	}
+
+	.sensei-course-theme__main-content {
+		margin-block-start: 0;
+		padding-top: 2rem;
+
+		.wp-block-post-title {
+			margin-block-start: 1.5rem;
+		}
+
+		.wp-block-sensei-lms-course-theme-lesson-module {
+			box-sizing: border-box;
+			padding-left: 0.5rem;
+		}
+
+		.wp-block-post-content {
+			margin-top: 1.5rem;
+		}
+
+		.wp-block-sensei-lms-course-theme-notices {
+			margin-block-start: 1.5rem;
+		}
+
+		.wp-block-post-content.is-layout-flow > * + * {
+			margin-block-start: 1.5rem;
+		}
+
+		.sensei-course-theme-lesson-actions {
+			gap: 1rem;
+
+			div.wp-block-button {
+				display: flex;
+				gap: 0;
+
+				& > * {
+					flex-grow: 1;
+				}
+			}
+
+			.wp-block-button > .wp-block-button__link,
+			.wp-block-button.is-style-outline > .wp-block-button__link {
+				padding: 1.25rem;
+			}
+		}
+	}
+
+	.sensei-course-theme__header + .sensei-course-theme__columns > div:first-child.sensei-course-theme__sidebar,
+	.sensei-course-theme__columns .sensei-course-theme__sidebar {
+		padding: 2rem 1.5rem 2.5px 1.5rem;
+	}
+
+	.sensei-lms-course-navigation {
+		padding-top: 0;
+
+		.sensei-lms-course-navigation__modules {
+			gap: 0;
+			padding-inline-start: 0;
+
+			.sensei-lms-course-navigation-module:not(:first-of-type) {
+				margin-top: 1.5rem;
+
+				.sensei-lms-course-navigation-module__lessons:not(.sensei-collapsed) {
+					padding-bottom: 0.3125rem;
+				}
+			}
+		}
+	}
+}
