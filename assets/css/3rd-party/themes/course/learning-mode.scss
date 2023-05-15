@@ -260,6 +260,14 @@ body {
 					padding-bottom: 0.3125rem;
 				}
 			}
+
+			.sensei-lms-course-navigation__lessons {
+				padding-inline-start: 0;
+
+				.sensei-lms-course-navigation-lesson:first-of-type {
+					margin-top: 0;
+				}
+			}
 		}
 	}
 	--sensei-lm-header-height: 68px;
@@ -343,6 +351,15 @@ body {
 				.sensei-lms-course-navigation-module__lessons:not(.sensei-collapsed) {
 					padding-bottom: 0.3125rem;
 				}
+			}
+
+		}
+
+		.sensei-lms-course-navigation__lessons {
+			padding-inline-start: 0;
+
+			.sensei-lms-course-navigation-lesson:first-of-type {
+				margin-top: 0;
 			}
 		}
 	}
