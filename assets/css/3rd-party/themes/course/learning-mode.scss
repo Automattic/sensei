@@ -318,12 +318,13 @@ body {
 			padding-top: 3.5rem;
 
 			.wp-block-post-title {
-				margin-block-start: 2rem;
+				margin-block-start: 0;
 			}
 
 			.wp-block-sensei-lms-course-theme-lesson-module {
 				box-sizing: border-box;
 				padding-left: 0.5rem;
+				margin-bottom: 2rem;
 			}
 
 			.wp-block-post-content.is-layout-flow > * + * {
