@@ -208,6 +208,11 @@ body {
 	.sensei-course-theme__frame.sensei-course-theme__header {
 		padding-top: 0;
 
+		.wp-block-site-logo img {
+			max-height: 24px;
+			width: auto;
+		}
+
 		.sensei-course-theme-header-content {
 			margin-top: 1.125rem;
 			margin-bottom: 0.9375rem;
