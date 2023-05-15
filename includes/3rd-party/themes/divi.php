@@ -124,9 +124,12 @@ function sensei_admin_load_learning_mode_style_for_divi_theme() {
 	if ( $is_lesson_editor || $is_site_editor ) {
 		Sensei()->assets->enqueue(
 			'div-learning-mode',
-			'css/3rd-party/themes/div/learning-mode.css',
-			[],
-			'screen'
+			'css/3rd-party/themes/div/learning-mode.css'
+		);
+
+		Sensei()->assets->enqueue(
+			'div-learning-mode-editor',
+			'css/3rd-party/themes/divi/learning-mode.editor.css',
 		);
 	}
 
