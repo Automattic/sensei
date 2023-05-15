@@ -91,7 +91,7 @@ class Main {
 	 * @return Sensei_MailPoet
 	 */
 	public static function get_instance( $mailpoet_api = null ) {
-		if ( is_null( $mailpoet_api ) ) {
+		if ( is_null( $mailpoet_api ) && class_exists( \MailPoet\API\API::class ) ) {
 			$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
 		}
 		if ( ! isset( self::$instance ) ) {
