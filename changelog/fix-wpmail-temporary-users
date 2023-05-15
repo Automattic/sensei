@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Block triggering wp_mail for temporary users even on non-frontend context.

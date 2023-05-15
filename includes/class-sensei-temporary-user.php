@@ -35,6 +35,8 @@ class Sensei_Temporary_User {
 		add_filter( 'sensei_learners_query', [ static::class, 'filter_learners_query' ] );
 		add_filter( 'sensei_count_statuses_args', [ static::class, 'filter_count_statuses' ] );
 		add_filter( 'sensei_check_for_activity', [ static::class, 'filter_sensei_activity' ], 10, 2 );
+		add_filter( 'pre_wp_mail', [ Sensei_Guest_User::class, 'skip_wp_mail' ], 10, 2 );
+		add_filter( 'pre_wp_mail', [ Sensei_Preview_User::class, 'skip_wp_mail' ], 10, 2 );
 	}
 
 	/**

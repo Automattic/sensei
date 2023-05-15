@@ -147,7 +147,6 @@ class Sensei_Guest_User {
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
 		add_action( 'sensei_can_user_manually_enrol', [ $this, 'open_course_user_can_manualy_enroll' ], 10, 2 );
 		add_filter( 'sensei_send_emails', [ $this, 'skip_sensei_email' ] );
-		add_filter( 'pre_wp_mail', [ $this, 'skip_wp_mail' ], 10, 2 );
 
 		$this->create_guest_student_role_if_not_exists();
 
@@ -307,7 +306,7 @@ class Sensei_Guest_User {
 	 * @since 4.11.0
 	 * @access private
 	 */
-	private function is_current_user_guest() {
+	private static function is_current_user_guest() {
 		$user = wp_get_current_user();
 		return self::is_guest_user( $user );
 	}
@@ -475,7 +474,7 @@ class Sensei_Guest_User {
 	 * @return boolean Whether to send the email.
 	 */
 	public function skip_sensei_email( $send_email ) {
-		return $this->is_current_user_guest() ? false : $send_email;
+		return self::is_current_user_guest() ? false : $send_email;
 	}
 
 	/**
@@ -488,8 +487,8 @@ class Sensei_Guest_User {
 	 * @param array     $atts   Email attributes.
 	 * @return bool|null Null if we should send the email, a boolean if not.
 	 */
-	public function skip_wp_mail( $return, $atts ) {
-		if ( $this->is_current_user_guest() ) {
+	public static function skip_wp_mail( $return, $atts ) {
+		if ( self::is_current_user_guest() ) {
 			// If this e-mail is being dispatched while the current user is a guest, just... don't send it.
 			return false;
 		}
