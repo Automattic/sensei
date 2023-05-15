@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Don't re-create emails on plugin update
