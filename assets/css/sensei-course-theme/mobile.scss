@@ -4,7 +4,7 @@ $breakpoint: 783px;
 // mobile
 @media screen and (max-width: ($breakpoint - 1)) {
 	:root {
-		--sensei-lm-header-height: 52px;
+		--sensei-lm-header-height: 70px;
 		--sensei-lm-mobile-header-height: 90px;
 		--content-padding: 24px;
 	}
