@@ -15,6 +15,12 @@ $breakpoint: 783px;
 	}
 
 	body.sensei-course-theme {
+
+		.sensei-course-theme-header-content {
+			gap: 0;
+			transition: all 300ms;
+		}
+
 		&__focus-mode-toggle {
 			display: none;
 		}
@@ -76,6 +82,7 @@ $breakpoint: 783px;
 			pointer-events: none;
 			font-size: 14px;
 			order: -1;
+			white-space: nowrap;
 		}
 
 		.wp-block-sensei-lms-course-theme-course-progress-counter {
@@ -123,7 +130,6 @@ $breakpoint: 783px;
 
 			.wp-block-sensei-lms-course-title {
 				opacity: 0;
-				position: absolute;
 			}
 
 		}
