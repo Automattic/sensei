@@ -102,7 +102,7 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 
 		$message = $result
 			? __( 'Emails were re-created successfully.', 'sensei-lms' )
-			: __( 'There were errors while recreating emails.', 'sensei-lms' );
+			: __( 'There were errors while re-creating emails.', 'sensei-lms' );
 		$this->tools->add_user_message( $message, ! $result );
 	}
 
