@@ -112,7 +112,6 @@ function sensei_load_learning_mode_style_for_divi_theme() {
 function sensei_admin_load_learning_mode_style_for_divi_theme() {
 	$is_course_theme = 'divi' === wp_get_theme()->get_template();
 
-
 	if ( ! is_admin() || ! function_exists( 'get_current_screen' ) || ! $is_course_theme ) {
 		return;
 	}
@@ -129,7 +128,7 @@ function sensei_admin_load_learning_mode_style_for_divi_theme() {
 
 		Sensei()->assets->enqueue(
 			'div-learning-mode-editor',
-			'css/3rd-party/themes/divi/learning-mode.editor.css',
+			'css/3rd-party/themes/divi/learning-mode.editor.css'
 		);
 	}
 
