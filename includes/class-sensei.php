@@ -496,7 +496,6 @@ class Sensei_Main {
 		Sensei_Course_Theme_Option::instance()->init();
 		Sensei_Course_Theme::instance()->init();
 		Sensei_Course_Theme_Editor::instance()->init();
-		new Sensei_Customizer();
 
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();
