@@ -125,7 +125,6 @@ class Sensei_Preview_User {
 		add_action( 'show_admin_bar', [ $this, 'show_admin_bar_to_preview_user' ], 90 );
 		add_action( 'admin_bar_menu', [ $this, 'add_user_switch_to_admin_bar' ], 90 );
 		add_filter( 'sensei_is_enrolled', [ $this, 'preview_user_always_enrolled' ], 90, 3 );
-		add_filter( 'pre_wp_mail', [ $this, 'skip_wp_mail' ], 10, 2 );
 
 		$this->create_role();
 	}
@@ -136,7 +135,7 @@ class Sensei_Preview_User {
 	 * @access private
 	 */
 	public function add_preview_user_filters() {
-		if ( $this->is_preview_user_active() ) {
+		if ( self::is_preview_user_active() ) {
 			add_filter( 'map_meta_cap', [ $this, 'allow_post_preview' ], 10, 4 );
 			add_filter( 'pre_get_posts', [ $this, 'count_unpublished_lessons' ], 10 );
 			add_filter( 'sensei_notice', [ $this, 'hide_notices' ], 10, 1 );
@@ -228,7 +227,7 @@ class Sensei_Preview_User {
 			return;
 		}
 
-		if ( $this->can_switch_to_preview_user( $course_id ) &amp;&amp; ! $this->is_preview_user_active() ) {
+		if ( $this->can_switch_to_preview_user( $course_id ) &amp;&amp; ! self::is_preview_user_active() ) {
 			$wp_admin_bar->add_node(
 				[
 					'id'     => self::SWITCH_ON_ACTION,
@@ -242,7 +241,7 @@ class Sensei_Preview_User {
 			);
 		}
 
-		if ( $this->is_preview_user_active() ) {
+		if ( self::is_preview_user_active() ) {
 			$wp_admin_bar->add_node(
 				[
 					'id'     => self::SWITCH_OFF_ACTION,
@@ -269,7 +268,7 @@ class Sensei_Preview_User {
 	 * @return bool
 	 */
 	public function show_admin_bar_to_preview_user( $show ) {
-		if ( $this->is_preview_user_active() ) {
+		if ( self::is_preview_user_active() ) {
 			return true;
 		}
 
@@ -297,8 +296,8 @@ class Sensei_Preview_User {
 	 * @param array     $atts   Email attributes.
 	 * @return bool|null Null if we should send the email, a boolean if not.
 	 */
-	public function skip_wp_mail( $return, $atts ) {
-		if ( $this->is_preview_user_active() ) {
+	public static function skip_wp_mail( $return, $atts ) {
+		if ( self::is_preview_user_active() ) {
 			// If this e-mail is being dispatched while the current user is a previwe user, just... don't send it.
 			return false;
 		}
@@ -514,7 +513,7 @@ class Sensei_Preview_User {
 	 *
 	 * @return bool
 	 */
-	private function is_preview_user_active() {
+	private static function is_preview_user_active() {
 		$user = wp_get_current_user();
 		return self::is_preview_user( $user );
 	}
