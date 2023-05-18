@@ -530,6 +530,7 @@ class Sensei_Main {
 			new Sensei_Exit_Survey();
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
+			SenseiLMS_Plugin_Updater::init();
 
 		} else {
 

@@ -96,14 +96,8 @@ class Sensei_Home_Notices_Provider {
 	 * @return array
 	 */
 	private function format_item( $notice ) {
-		$level = 'info';
-		if ( array_key_exists( 'level', $notice ) ) {
-			$level = $notice['level'];
-		} elseif ( array_key_exists( 'style', $notice ) ) {
-			$level = $notice['style'];
-		}
 		return [
-			'level'       => $level,
+			'level'       => $notice['level'] ?? 'info',
 			'heading'     => $notice['heading'] ?? null,
 			'message'     => $notice['message'],
 			'info_link'   => $notice['info_link'] ?? null,
