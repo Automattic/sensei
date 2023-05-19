@@ -1,7 +1,7 @@
 $breakpoint: 783px;
 
-body,
-.editor-styles-wrapper .wp-block {
+
+body, .editor-styles-wrapper {
 	// Try to pick up global styles, customizer or theme colors.
 	--sensei-background-color: var(--sensei-background-color-global, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #FFFFFF)));
 	--sensei-button-fill-hover-color: #FFFFFF;
