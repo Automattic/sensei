@@ -226,37 +226,14 @@ final class Sensei_Extensions {
 	 * Get extensions page layout.
 	 *
 	 * @since 3.11.0
+	 * @deprecated 4.14.0
 	 *
 	 * @return array
 	 */
 	public function get_layout() {
-		$transient_key = implode(
-			'_',
-			[
-				'sensei_extensions_layout',
-				determine_locale(),
-				md5( self::SENSEILMS_PRODUCTS_API_BASE_URL ),
-			]
-		);
+		_deprecated_function( __METHOD__, '4.14.0' );
 
-		$extension_layout = get_transient( $transient_key );
-
-		if ( false === $extension_layout ) {
-			$raw_layout = wp_safe_remote_get(
-				add_query_arg(
-					[ 'lang' => determine_locale() ],
-					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/layout'
-				)
-			);
-
-			if ( ! is_wp_error( $raw_layout ) ) {
-				$json             = json_decode( wp_remote_retrieve_body( $raw_layout ) );
-				$extension_layout = isset( $json->layout ) ? $json->layout : [];
-				set_transient( $transient_key, $extension_layout, DAY_IN_SECONDS );
-			}
-		}
-
-		return $extension_layout;
+		return [];
 	}
 
 	/**
