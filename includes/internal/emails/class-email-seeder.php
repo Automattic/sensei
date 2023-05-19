@@ -9,6 +9,7 @@ namespace Sensei\Internal\Emails;
 
 use Sensei\Internal\Emails\Email_Seeder_Data;
 use Sensei\Internal\Emails\Email_Repository;
+use WP_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -93,6 +94,24 @@ class Email_Seeder {
 				return false;
 			}
 
+			// Preserve existing email status when re-creating.
+			$query = new WP_Query(
+				[
+					'post_type'   => Email_Post_Type::POST_TYPE,
+					'post_status' => 'any',
+					'meta_key'    => '_sensei_email_identifier', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_value'  => $identifier, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				]
+			);
+
+			if ( ! empty( $query->posts ) ) {
+				if ( 'publish' === $query->posts[0]->post_status ) {
+					$disabled = false;
+				} else {
+					$disabled = true;
+				}
+			}
+
 			$this->email_repository->delete( $identifier );
 		}
 
@@ -117,9 +136,11 @@ class Email_Seeder {
 		}
 
 		$description = $email_data['description'] ?? '';
+		$is_pro      = $email_data['is_pro'] ?? false;
 
-		$is_pro   = $email_data['is_pro'] ?? false;
-		$disabled = $email_data['disabled'] ?? false;
+		if ( ! isset( $disabled ) ) {
+			$disabled = $email_data['disabled'] ?? false;
+		}
 
 		$email_id = $this->email_repository->create( $identifier, $types, $subject, $description, $content, $is_pro, $disabled );
 
