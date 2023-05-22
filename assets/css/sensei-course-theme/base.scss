@@ -34,3 +34,8 @@ body, .editor-styles-wrapper {
 		cursor: pointer;
 	}
 }
+
+.wp-block-site-logo img {
+	max-height: 24px;
+	width: auto;
+}

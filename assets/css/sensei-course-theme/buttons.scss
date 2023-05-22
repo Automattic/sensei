@@ -1,173 +1,5 @@
+
 $breakpoint: 782px;
-
-.sensei-course-theme {
-	a, button {
-		&:focus {
-			outline: none;
-		}
-
-		&:focus-visible {
-			transition: none;
-			outline: dashed 1px var(--sensei-primary-color);
-		}
-	}
-}
-
-.editor-styles-wrapper .sensei-course-theme__main-content .wp-block-button,
-.sensei-course-theme .wp-block-button,
-.sensei-course-theme__button {
-	.wp-block-button__link {
-		border: none;
-		font-family: inherit;
-		font-weight: inherit;
-		font-size: inherit;
-		background-color: inherit !important;
-		color: inherit !important;
-		text-transform: unset;
-
-		&:hover {
-			background-color: inherit !important;
-			color: inherit !important;
-			text-decoration: none !important;
-		}
-	}
-
-	background: transparent;
-	border: none;
-	border-radius: 2px;
-	cursor: pointer;
-	font-family: var(--wp--preset--font-family--body-font);
-	font-size: 1.125rem;
-	font-weight: 400;
-	letter-spacing: normal;
-	margin: 0;
-	padding: 0;
-	text-align: center;
-	text-decoration: none !important;
-	text-transform: unset;
-
-	&.is-primary,
-	&.is-secondary,
-	&.is-link,
-	&.wp-block-button > .wp-block-button__link {
-		border-radius: 2px;
-		font-weight: 400;
-		padding: 0.83em 1.11em;
-		text-decoration: none;
-		height: 100%;
-		width: 100%; // Fix the animation issue.
-		justify-content: center;
-
-		@media screen and (max-width: $breakpoint) {
-			padding: 0.83em 0.556em;
-		}
-	}
-
-	&.is-primary,
-	&.is-secondary,
-	&.wp-block-button {
-		border: solid 1px var(--sensei-secondary-color);
-
-		&.wp-block-button__link {
-			border: none;
-		}
-	}
-
-	&.wp-block-button {
-		padding: 0;
-	}
-
-	&.is-primary,
-	&.wp-block-button:not(.is-style-outline, .is-style-link) {
-		background-color: var(--sensei-secondary-color);
-		color: var(--sensei-button-text-color);
-
-		&:hover {
-			color: var(--sensei-button-fill-hover-color);
-			background-color: var(--sensei-primary-color);
-			border-color: var(--sensei-primary-color);
-		}
-
-		&:focus {
-			border: 1px solid var(--sensei-button-fill-hover-color);
-			box-shadow: 0px 0px 0px 1.5px var(--sensei-secondary-color);
-		}
-	}
-
-	&.is-secondary,
-	&.wp-block-button.is-style-outline {
-		--wp--custom--button--border--color: var(--sensei-primary-color);
-		color: var(--sensei-primary-color);
-		flex-shrink: 0;
-
-		&:hover {
-			background-color: var(--sensei-button-outline-hover-color);
-			color: var(--sensei-primary-color);
-
-			.wp-block-button__link {
-				border-color: var(--sensei-primary-color);
-			}
-		}
-
-		&:focus {
-			border-width: 1.5px;
-		}
-	}
-
-	&.is-link {
-		background: none;
-		color: var(--sensei-primary-color);
-		line-height: 1em;
-		padding: 0.83em 1.11em;
-
-		&:hover {
-			background-color: var(--sensei-button-outline-hover-color);
-			color: var(--sensei-primary-color) !important;
-		}
-
-		&:focus {
-			border: solid 1.5px var(--sensei-secondary-color);
-		}
-
-		@media screen and (max-width: $breakpoint) {
-			padding: 0.83em 0.556em;
-		}
-	}
-
-	&[aria-disabled='true'],
-	&:disabled {
-		opacity: 0.5;
-		pointer-events: none;
-		cursor: not-allowed;
-	}
-
-	&.is-completed.is-primary {
-		opacity: 0.8;
-		color: var(--bg-color) !important;
-		background: var(--text-color) !important;
-		border-color: var(--text-color) !important;
-	}
-
-	&.is-completed.is-secondary {
-		display: flex;
-		opacity: 1;
-	}
-
-	&.is-busy {
-		background-image: linear-gradient(
-				-45deg,
-				rgba(255, 255, 255, 0.5) 28%,
-				rgba(255, 255, 255, 0.1) 28%,
-				rgba(255, 255, 255, 0.1) 72%,
-				rgba(255, 255, 255, 0.5) 72%
-		);
-		animation: components-button__busy-animation 25000ms infinite linear;
-
-		&:disabled {
-			cursor: not-allowed;
-		}
-	}
-}
 
 .sensei-course-theme .wp-block-buttons {
 	display: flex;
@@ -176,14 +8,22 @@ $breakpoint: 782px;
 }
 
 .sensei-course-theme__button,
+.wp-block-button.is-style-outline > .wp-block-button__link,
 .sensei-course-theme__link {
+	align-items: center;
+	white-space: nowrap;
+	width: 100%;
+	height: 100%;
+	justify-content: center;
+
+	@media screen and (max-width: $breakpoint) {
+		padding: .625rem;
+	}
+
+
 	&.has-icon {
 		display: flex;
 		gap: 8px;
-		align-items: center;
-		white-space: nowrap;
-		width: 100%;
-		justify-content: center;
 
 		svg {
 			width: 16px;
