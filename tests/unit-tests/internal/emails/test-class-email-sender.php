@@ -242,6 +242,24 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( 'Welcome – John', $email_body );
 	}
 
+	public function testGetEmailBody_WhenCalled_ResetsTheGlobalWpQuery() {
+		$post = $this->factory->post->create_and_get(
+			[
+				'post_type'    => Email_Post_Type::POST_TYPE,
+				'post_title'   => 'My template',
+				'post_name'    => 'Welcome - [name]',
+				'post_content' => 'Welcome - [name]',
+			]
+		);
+
+		/* Act. */
+		$this->email_sender->get_email_body( $post, [ 'name' => 'John' ] );
+		global $wp_query, $wp_the_query;
+
+		/* Assert. */
+		self::assertEquals( $wp_query, $wp_the_query );
+	}
+
 	public function testSendEmail_WhenTheReplyToIsSet_SetReplyTo() {
 		/* Arrange. */
 		$this->settings->set( 'email_reply_to_address', 'address_to_be_replied@gmail.com' );
