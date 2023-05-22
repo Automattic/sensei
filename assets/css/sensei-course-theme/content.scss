@@ -28,9 +28,11 @@ body {
 	color: var(--sensei-background-color);
 }
 
-.sensei-course-theme__main-content {
-	padding: 0 24px;
+.wp-site-blocks {
+	padding: 0 var(--content-padding);
+}
 
+.sensei-course-theme__main-content {
 	> * {
 		max-width: var(--content-size) !important;
 		margin-left: auto;
