@@ -91,13 +91,13 @@ function sensei_fix_divi_learning_mode_video_template_excerpt() {
 }
 
 /**
- * Enqueue Course theme-specific Learning Mode styles.
+ * Enqueue Divi theme-specific Learning Mode styles.
  */
 function sensei_load_learning_mode_style_for_divi_theme() {
 	$course_id       = Sensei_Utils::get_current_course();
-	$is_course_theme = 'divi' === strtolower( wp_get_theme()->get_template() );
+	$is_target_theme = 'divi' === strtolower( wp_get_theme()->get_template() );
 
-	if ( empty( $course_id ) || ! $is_course_theme ) {
+	if ( empty( $course_id ) || ! $is_target_theme ) {
 		return false;
 	}
 
@@ -107,12 +107,12 @@ function sensei_load_learning_mode_style_for_divi_theme() {
 }
 
 /**
- * Enqueue Course theme-specific Learning Mode styles in the admin for the Site Editor and Lesson Editor.
+ * Enqueue Divi theme-specific Learning Mode styles in the admin for the Site Editor and Lesson Editor.
  */
 function sensei_admin_load_learning_mode_style_for_divi_theme() {
-	$is_course_theme = 'divi' === strtolower( wp_get_theme()->get_template() );
+	$is_target_theme = 'divi' === strtolower( wp_get_theme()->get_template() );
 
-	if ( ! is_admin() || ! function_exists( 'get_current_screen' ) || ! $is_course_theme ) {
+	if ( ! is_admin() || ! function_exists( 'get_current_screen' ) || ! $is_target_theme ) {
 		return;
 	}
 
@@ -122,12 +122,12 @@ function sensei_admin_load_learning_mode_style_for_divi_theme() {
 
 	if ( $is_lesson_editor || $is_site_editor ) {
 		Sensei()->assets->enqueue(
-			'div-learning-mode',
+			'divi-learning-mode',
 			'css/3rd-party/themes/div/learning-mode.css'
 		);
 
 		Sensei()->assets->enqueue(
-			'div-learning-mode-editor',
+			'divi-learning-mode-editor',
 			'css/3rd-party/themes/divi/learning-mode.editor.css'
 		);
 	}
