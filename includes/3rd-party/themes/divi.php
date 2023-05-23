@@ -95,7 +95,7 @@ function sensei_fix_divi_learning_mode_video_template_excerpt() {
  */
 function sensei_load_learning_mode_style_for_divi_theme() {
 	$course_id       = Sensei_Utils::get_current_course();
-	$is_course_theme = 'divi' === wp_get_theme()->get_template();
+	$is_course_theme = 'divi' === strtolower( wp_get_theme()->get_template() );
 
 	if ( empty( $course_id ) || ! $is_course_theme ) {
 		return false;
@@ -110,7 +110,7 @@ function sensei_load_learning_mode_style_for_divi_theme() {
  * Enqueue Course theme-specific Learning Mode styles in the admin for the Site Editor and Lesson Editor.
  */
 function sensei_admin_load_learning_mode_style_for_divi_theme() {
-	$is_course_theme = 'divi' === wp_get_theme()->get_template();
+	$is_course_theme = 'divi' === strtolower( wp_get_theme()->get_template() );
 
 	if ( ! is_admin() || ! function_exists( 'get_current_screen' ) || ! $is_course_theme ) {
 		return;
