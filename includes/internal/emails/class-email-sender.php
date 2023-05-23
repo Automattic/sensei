@@ -176,9 +176,8 @@ class Email_Sender {
 		);
 
 		the_post();
-
 		$templated_output = $this->get_templated_post_content( $placeholders );
-		wp_reset_postdata();
+		wp_reset_query(); // phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query -- We need to reset the global query object.
 
 		return CssInliner::fromHtml( $templated_output )
 			->inlineCss( $this->load_email_styles() )
