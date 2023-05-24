@@ -9,13 +9,6 @@ $breakpoint: 783px;
 		--content-padding: 24px;
 	}
 
-
-	@at-root :root:has(.admin-bar) .sensei-course-theme__sidebar {
-		// When the admin bar is present, something is applying and extra spacing that is messing the padding calculate, so it require cut the padding by half.
-		--content-padding: 12px;
-	}
-
-
 	body .is-layout-flow > * + .sensei-course-theme__main-content {
 		margin-top: 32px;
 		padding-bottom: 32px;
