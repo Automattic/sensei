@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.0
 Tested up to: 6.2
 Requires PHP: 7.2
-Stable tag: 4.13.1
+Stable tag: 4.14.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -144,6 +144,23 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.14.0 - 2023-05-10
+
+#### Added
+- Ability to set conditions on admin notices based on a date range
+- Add disclamer with the reason that Sensei Pro can't be updated when license is not active
+- Add quiz generation using AI button in quiz block
+
+#### Changed
+- Use non-deprecated attribute to load SVG icons.
+
+#### Fixed
+- Don't send e-mails to Guest/Preview users
+- Fix PHP Warning with Divi when using Learning Mode Video theme
+- Fix Sensei admin notice styles
+- Missing email page template link on the editor
+- Removed unused calls to SenseiLMS.com for the old extensions page
+
 ### 4.13.1 - 2023-04-19
 
 #### Changed
@@ -173,34 +190,4 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Missing aria-expanded attribute on front-end module expand button 👏 @alexstine
 - Only show the sensei_email template for the sensei emails.
 
-### 4.12.0 - 2023-03-29
-
-#### Added
-- Default Email templates
-- Bulk actions to enable and disable Emails
-- Email to be sent to teacher when a reply is received to a private message
-- Email Settings screen inside Email Customization
-- Support for custom tabs on the Course page
-- Disable pro Emails by default and allow enabling from pro
-- Email sent to student on course completion
-- Email sent to student upon grading of quiz
-- Email to be sent to student when a lesson becomes available
-- Email to be sent to teacher when a student sends a new message
-- Email to notify student before course expires
-- Pattern as Email template and student course complete mail
-- Reply To setting for Email
-- Send Email to student when the teacher replies to a private message
-- Send Email to teacher when a student submits a quiz
-- Send Email to teacher when new course is assigned
-- Sending Email to teacher on student starting a course using GB Email template
-- Trash Emails on plugin uninstall
-
-#### Changed
-- Open Install MailPoet page in same tab
-- Update language used in email functionality
-
-#### Fixed
-- Fix student "Message Reply Received" email not sending from lesson or quiz page
-- Logged out users are redirected to login page if tries to access course completion page
-- Use dynamic pricing for Sensei Pro upsells
 

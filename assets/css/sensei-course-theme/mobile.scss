@@ -1,6 +1,5 @@
 $breakpoint: 783px;
 
-
 // mobile
 @media screen and (max-width: ($breakpoint - 1)) {
 	:root {
@@ -23,10 +22,6 @@ $breakpoint: 783px;
 
 		&__focus-mode-toggle {
 			display: none;
-		}
-
-		&-lesson-completion-notice {
-			left: 0;
 		}
 
 		&__header__info {
@@ -148,3 +143,4 @@ $breakpoint: 783px;
 		}
 	}
 }
+

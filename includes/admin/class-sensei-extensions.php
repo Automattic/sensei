@@ -226,12 +226,12 @@ final class Sensei_Extensions {
 	 * Get extensions page layout.
 	 *
 	 * @since 3.11.0
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.14.0
 	 *
 	 * @return array
 	 */
 	public function get_layout() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.14.0' );
 
 		return [];
 	}
