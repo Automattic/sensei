@@ -1,18 +1,22 @@
 @import '../notices';
 @import './quiz-graded';
 
-.sensei-lms-notice {
+
+$mobile_break_point: 782px;
+
+.sensei-course-theme .sensei-lms-notice {
 	background-color: rgba(125, 125, 125, 0.08);
 	border-color: var(--border-color);
 	color: inherit;
+	padding: 1.125rem 1.5rem;
 }
 
 .sensei-course-theme-lesson-quiz-notice {
 	display: flex;
-	justify-content: space-between;
 	flex-flow: wrap;
+	font-size: 1.125rem;
 	gap: 15px;
-	font-size: 14px;
+	justify-content: space-between;
 
 	&__content {
 		display: flex;
@@ -31,9 +35,6 @@
 		margin: 0 15px 0 0;
 	}
 
-	&__grade {
-	}
-
 	&__actions {
 		display: flex;
 		list-style: none;
@@ -41,7 +42,7 @@
 		padding: 0;
 		align-items: center;
 
-		> li:not(:last-child) {
+		>li:not(:last-child) {
 			margin-right: 12px;
 		}
 	}
@@ -54,6 +55,17 @@
 	&__link-chevron {
 		width: 24px;
 		height: 24px;
+	}
+
+	@media screen and (max-width: ($mobile_break_point)) {
+
+		flex-wrap: nowrap;
+		gap: 0;
+
+		&__content {
+			flex-direction: column;
+			align-items: start;
+		}
 	}
 }
 

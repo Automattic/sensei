@@ -89,4 +89,54 @@ function sensei_fix_divi_learning_mode_video_template_excerpt() {
 		remove_filter( 'render_block_core/post-excerpt', array( ET_GB_Block_Post_Excerpt::instance(), 'render_block' ) );
 	}
 }
+
+/**
+ * Enqueue Divi theme-specific Learning Mode styles.
+ */
+function sensei_load_learning_mode_style_for_divi_theme() {
+	$course_id       = Sensei_Utils::get_current_course();
+	$is_target_theme = 'divi' === strtolower( wp_get_theme()->get_template() );
+
+	if ( empty( $course_id ) || ! $is_target_theme ) {
+		return false;
+	}
+
+	if ( Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+		Sensei()->assets->enqueue( 'divi-learning-mode', 'css/3rd-party/themes/divi/learning-mode.css' );
+	}
+}
+
+/**
+ * Enqueue Divi theme-specific Learning Mode styles in the admin for the Site Editor and Lesson Editor.
+ */
+function sensei_admin_load_learning_mode_style_for_divi_theme() {
+	$is_target_theme = 'divi' === strtolower( wp_get_theme()->get_template() );
+
+	if ( ! is_admin() || ! function_exists( 'get_current_screen' ) || ! $is_target_theme ) {
+		return;
+	}
+
+	$screen           = get_current_screen();
+	$is_lesson_editor = 'lesson' === $screen->post_type && 'post' === $screen->base;
+	$is_site_editor   = 'site-editor' === $screen->id;
+
+	if ( $is_lesson_editor || $is_site_editor ) {
+		Sensei()->assets->enqueue(
+			'divi-learning-mode',
+			'css/3rd-party/themes/div/learning-mode.css'
+		);
+
+		Sensei()->assets->enqueue(
+			'divi-learning-mode-editor',
+			'css/3rd-party/themes/divi/learning-mode.editor.css'
+		);
+	}
+
+}
+
+add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_course_theme' );
+add_action( 'admin_enqueue_scripts', 'sensei_admin_load_learning_mode_style_for_course_theme' );
+
 add_action( 'template_redirect', 'sensei_fix_divi_learning_mode_video_template_excerpt' );
+add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_divi_theme' );
+add_action( 'admin_enqueue_scripts', 'sensei_admin_load_learning_mode_style_for_divi_theme' );

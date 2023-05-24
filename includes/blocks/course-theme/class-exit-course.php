@@ -21,7 +21,7 @@ class Exit_Course {
 	/**
 	 * Block JSON file.
 	 */
-	const BLOCK_JSON_FILE = '/lesson-blocks/exit-course.block.json';
+	const BLOCK_JSON_FILE = '/lesson-blocks/exit-course-button/block.json';
 
 	/**
 	 * Exit_Course constructor.
@@ -58,6 +58,15 @@ class Exit_Course {
 
 		$label = $attributes['label'] ?? __( 'Exit Course', 'sensei-lms' );
 
-		return sprintf( '<a href="%1$s" %2$s>%3$s</a>', get_the_permalink( $course_id ), $wrapper_attributes, $label );
+		return sprintf(
+			'<div %1$s>
+				<a href="%2$s">
+					%3$s
+				</a>
+			</div>',
+			$wrapper_attributes,
+			get_the_permalink( $course_id ),
+			$label
+		);
 	}
 }

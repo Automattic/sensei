@@ -1,38 +1,41 @@
 $breakpoint: 783px;
 
-body {
-	// Try to pick up global styles, customizer or theme colors.
-	--sensei-primary-color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #307771)));
-	--sensei-background-color: var(--sensei-background-color-global, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #ffffff)));
-	--sensei-primary-contrast-color: var(--sensei-background-color, #FFFFFF);
-	--sensei-text-color: var(--sensei-text-color-global, var(--sensei-course-theme-foreground-color, var(--wp--preset--color--text, var(--wp--preset--color--foreground, #1E1E1E))));
-	--border-color: rgba(125, 125, 125, 0.3);
 
-	background-color: var(--sensei-background-color);
-	color: var(--sensei-text-color);
+body, .editor-styles-wrapper {
+	// Try to pick up global styles, customizer or theme colors.
+	--sensei-background-color: var(--sensei-background-color-global, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #FFFFFF)));
+	--sensei-button-fill-hover-color: #FFFFFF;
+	--sensei-button-outline-hover-color: #F0F0F0;
+	--sensei-button-text-color: #26212E;
+	--sensei-course-progress-bar-color: #DCDCDE;
+	--sensei-course-progress-bar-inner-color: #30968B;
+	--sensei-lesson-meta-color: #787C82;
+	--sensei-locked-lesson-color: #646970;
+	--sensei-module-lesson-color: #101517;
+	--sensei-pagination-color: #191E23;
+	--sensei-primary-color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #155E65)));
+	--sensei-primary-contrast-color: var(--sensei-background-color, #FFFFFF);
+	--sensei-secondary-color: #43AF99;
+	--sensei-text-color: var(--sensei-text-color-global, var(--sensei-course-theme-foreground-color, var(--wp--preset--color--text, var(--wp--preset--color--foreground, #1E1E1E))));
+
+	--border-color: rgba(125, 125, 125, 0.3);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 .sensei-course-theme__frame {
 	--wp--style--block-gap: 0px;
 	box-sizing: border-box;
-
-	a, [class*='sensei-'] a, a[class*='sensei-'] {
-		color: inherit;
-
-		&:hover, &:hover * {
-			color: var(--sensei-primary-color);
-			fill: var(--sensei-primary-color);
-			cursor: pointer;
-			background: none;
-		}
-	}
+	font-size: 0.8125rem;
+	font-weight: 400;
+	letter-spacing: normal;
 
 	button:hover {
 		cursor: pointer;
 	}
+}
 
-	font-weight: 400;
-	font-size: 13px;
-	line-height: 1.5;
-	letter-spacing: normal;
+.wp-block-site-logo img {
+	max-height: 24px;
+	width: auto;
 }
