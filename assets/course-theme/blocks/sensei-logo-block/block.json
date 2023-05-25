@@ -1,0 +1,12 @@
+{
+	"apiVersion": 2,
+	"name": "sensei-lms/sensei-logo",
+	"title": "Sensei LMS Logo",
+	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"description": "Show the Sensei logo.",
+	"supports": {
+		"inserter": true,
+        "html": true
+	}
+}
