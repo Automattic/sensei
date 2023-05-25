@@ -17,7 +17,7 @@ const Edit = () => {
 };
 
 /**
- * Course Navigation block.
+ * Sensei Logo block.
  */
 export default {
 	...meta,
