@@ -43,10 +43,6 @@ body.sensei-course-theme {
 		& > :first-child {
 			flex: 1;
 		}
-
-		img {
-			max-height: var(--sensei-lm-header-height);
-		}
 	}
 
 	&__header + *:not(style) {
