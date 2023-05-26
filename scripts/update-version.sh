@@ -17,8 +17,6 @@ fi
 sed -E -i '' "s/\* Version: [0-9]+\.[0-9]+\.[0-9]+/\* Version: $VERSION/" sensei-lms.php
 
 # Update first occurrence of version in package.json & package-lock.json
-# doesn't work yet...
-sed -i '' "0,/^  \"version\":/s/^  \"version\": \".*\"/  \"version\": \"$VERSION\"/" package.json
-
-
+sed -i '' "s/^  \"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/  \"version\": \"$VERSION\"/g" package.json
+sed -i '' "s/^  \"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/  \"version\": \"$VERSION\"/g" package-lock.json
 
