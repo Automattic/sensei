@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 4.14.0\n"
+"Project-Id-Version: Sensei LMS 9.9.9\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-05-10T09:53:42+00:00\n"
+"POT-Creation-Date: 2023-05-26T20:45:14+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: sensei-lms\n"
@@ -918,7 +918,7 @@ msgstr ""
 #: assets/blocks/lesson-actions/complete-lesson-block/index.js:24
 #: assets/course-theme/blocks/quiz-blocks/index.js:121
 #: assets/dist/blocks/single-lesson.js:202
-#: assets/dist/course-theme/blocks/index.js:264
+#: assets/dist/course-theme/blocks/index.js:316
 msgid "Complete"
 msgstr ""
 
@@ -1813,9 +1813,9 @@ msgstr ""
 #: includes/class-sensei-frontend.php:880
 #: assets/blocks/lesson-actions/complete-lesson-block/index.js:18
 #: assets/blocks/lesson-actions/complete-lesson-block/index.js:31
-#: assets/course-theme/blocks/lesson-blocks/index.js:128
+#: assets/course-theme/blocks/lesson-blocks/index.js:115
 #: assets/dist/blocks/single-lesson.js:202
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Complete Lesson"
 msgstr ""
 
@@ -2152,7 +2152,7 @@ msgstr ""
 #: includes/blocks/course-theme/class-course-navigation.php:260
 #: includes/class-sensei-posttypes.php:800
 #: assets/blocks/lesson-actions/view-quiz-block/index.js:21
-#: assets/course-theme/blocks/course-navigation/index.js:124
+#: assets/course-theme/blocks/course-navigation/index.js:130
 #: assets/dist/blocks/single-lesson.js:353
 #: assets/dist/course-theme/blocks/index.js:241
 msgid "Quiz"
@@ -2163,15 +2163,11 @@ msgstr ""
 msgid "%1$d of %2$d lessons complete (%3$d%%)"
 msgstr ""
 
-#. Translators: placeholder is the course title.
-#: includes/blocks/course-theme/class-course-title.php:67
-msgid "%s: back to course main page"
-msgstr ""
-
 #: includes/blocks/course-theme/class-exit-course.php:59
-#: assets/course-theme/blocks/lesson-blocks/index.js:178
-#: assets/course-theme/blocks/lesson-blocks/index.js:189
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/exit-course-button/exit-course-edit.js:16
+#: assets/course-theme/blocks/lesson-blocks/exit-course-button/index.js:18
+#: assets/dist/course-theme/blocks/index.js:271
+#: assets/dist/course-theme/blocks/index.js:281
 msgid "Exit Course"
 msgstr ""
 
@@ -2180,8 +2176,8 @@ msgid "Toggle focus mode"
 msgstr ""
 
 #: includes/blocks/course-theme/class-lesson-actions.php:127
-#: assets/course-theme/blocks/lesson-blocks/index.js:133
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:120
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Take Quiz"
 msgstr ""
 
@@ -2207,7 +2203,7 @@ msgstr ""
 #: assets/blocks/lesson-actions/next-lesson-block/index.js:24
 #: assets/course-theme/blocks/quiz-blocks/index.js:109
 #: assets/dist/blocks/single-lesson.js:329
-#: assets/dist/course-theme/blocks/index.js:264
+#: assets/dist/course-theme/blocks/index.js:316
 #: assets/dist/setup-wizard/index.js:380
 #: assets/setup-wizard/theme/carousel.js:147
 msgid "Next"
@@ -2216,7 +2212,7 @@ msgstr ""
 #: includes/blocks/course-theme/class-quiz-back-to-lesson.php:62
 #: assets/course-theme/blocks/quiz-blocks/index.js:61
 #: assets/course-theme/blocks/quiz-blocks/index.js:69
-#: assets/dist/course-theme/blocks/index.js:264
+#: assets/dist/course-theme/blocks/index.js:316
 msgid "Back to lesson"
 msgstr ""
 
@@ -3242,7 +3238,7 @@ msgstr ""
 #: includes/class-sensei-quiz.php:1886
 #: templates/single-quiz/pagination.php:78
 #: assets/course-theme/blocks/quiz-blocks/index.js:114
-#: assets/dist/course-theme/blocks/index.js:264
+#: assets/dist/course-theme/blocks/index.js:316
 #: assets/dist/js/grading-general.js:68
 #: assets/js/grading-general.js:67
 msgid "Save"
@@ -3396,7 +3392,7 @@ msgstr ""
 msgid "See all Sensei Pro Features"
 msgstr ""
 
-#: includes/class-sensei-guest-user.php:417
+#: includes/class-sensei-guest-user.php:416
 msgid "Guest Student"
 msgstr ""
 
@@ -4160,9 +4156,11 @@ msgstr ""
 #: assets/blocks/course-outline/module-block/index.js:21
 #: assets/blocks/course-outline/outline-block/index.js:36
 #: assets/blocks/course-outline/outline-block/outline-appender.js:43
+#: assets/course-theme/blocks/lesson-blocks/module-title/module-title-edit.js:10
 #: assets/dist/blocks/single-course.js:360
 #: assets/dist/blocks/single-course.js:429
 #: assets/dist/blocks/single-course.js:438
+#: assets/dist/course-theme/blocks/index.js:306
 msgid "Module"
 msgstr ""
 
@@ -4698,15 +4696,15 @@ msgstr ""
 msgid "Lesson name"
 msgstr ""
 
-#: includes/class-sensei-preview-user.php:202
+#: includes/class-sensei-preview-user.php:201
 msgid "Preview as Student"
 msgstr ""
 
-#: includes/class-sensei-preview-user.php:216
+#: includes/class-sensei-preview-user.php:215
 msgid "Exit Student Preview"
 msgstr ""
 
-#: includes/class-sensei-preview-user.php:346
+#: includes/class-sensei-preview-user.php:345
 msgid "Preview Student"
 msgstr ""
 
@@ -7217,12 +7215,13 @@ msgstr ""
 #: assets/admin/editor-wizard/steps/course-details-step.js:53
 #: assets/blocks/course-results-block/course-results-edit.js:145
 #: assets/blocks/learner-courses-block/learner-courses-edit.js:140
-#: assets/course-theme/blocks/lesson-blocks/index.js:45
-#: assets/course-theme/blocks/lesson-blocks/index.js:54
+#: assets/course-theme/blocks/lesson-blocks/course-title/course-title-edit.js:11
+#: assets/course-theme/blocks/lesson-blocks/course-title/index.js:19
 #: assets/dist/admin/editor-wizard/index.js:72
 #: assets/dist/blocks/single-page.js:225
 #: assets/dist/blocks/single-page.js:267
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/dist/course-theme/blocks/index.js:254
+#: assets/dist/course-theme/blocks/index.js:264
 msgid "Course Title"
 msgstr ""
 
@@ -7292,9 +7291,9 @@ msgid "It is best to keep your Lesson Title short because it will show in your c
 msgstr ""
 
 #: assets/admin/editor-wizard/steps/lesson-details-step.js:43
-#: assets/course-theme/blocks/lesson-blocks/index.js:219
+#: assets/course-theme/blocks/lesson-blocks/index.js:171
 #: assets/dist/admin/editor-wizard/index.js:100
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Lesson Title"
 msgstr ""
 
@@ -8754,278 +8753,273 @@ msgstr ""
 msgid "2 lessons, 0 quizzes"
 msgstr ""
 
-#: assets/course-theme/blocks/course-navigation/index.js:141
+#: assets/course-theme/blocks/course-navigation/index.js:147
 #: assets/dist/course-theme/blocks/index.js:246
 msgid "Course Navigation"
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:46
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/course-title/index.js:20
+#: assets/dist/course-theme/blocks/index.js:264
 msgid "Display title of the course the current lesson or quiz belongs to."
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:62
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Course Progress"
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:63
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Display number of completed and total lessons in the course."
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:73
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "2 of 10 lessons complete (20%)"
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:81
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Previous & Next Lesson"
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:82
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Link to the previous and next lessons."
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:102
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Sidebar Menu Toggle"
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:103
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Turn the Sidebar block into an overlay menu on mobile screens."
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:118
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Lesson Actions (Learning Mode)"
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:119
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Display buttons for actions the learner can take for the current lesson."
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:143
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Course Progress Bar"
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:144
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Display course progress."
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:162
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Focus Mode Toggle"
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:163
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Toggle a minimalized view of Learning Mode."
-msgstr ""
-
-#: assets/course-theme/blocks/lesson-blocks/index.js:179
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/exit-course-button/index.js:19
+#: assets/dist/course-theme/blocks/index.js:281
 msgid "Exit Learning Mode and return to the course page."
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:197
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Module Title"
+#: assets/course-theme/blocks/lesson-blocks/index.js:49
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Course Progress"
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:198
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "Display title of the module the current lesson belongs to."
+#: assets/course-theme/blocks/lesson-blocks/index.js:50
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Display number of completed and total lessons in the course."
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:206
-#: assets/dist/course-theme/blocks/index.js:255
-msgid "MODULE"
+#: assets/course-theme/blocks/lesson-blocks/index.js:60
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "2 of 10 lessons complete (20%)"
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:213
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:68
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Previous & Next Lesson"
+msgstr ""
+
+#: assets/course-theme/blocks/lesson-blocks/index.js:69
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Link to the previous and next lessons."
+msgstr ""
+
+#: assets/course-theme/blocks/lesson-blocks/index.js:89
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Sidebar Menu Toggle"
+msgstr ""
+
+#: assets/course-theme/blocks/lesson-blocks/index.js:90
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Turn the Sidebar block into an overlay menu on mobile screens."
+msgstr ""
+
+#: assets/course-theme/blocks/lesson-blocks/index.js:105
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Lesson Actions (Learning Mode)"
+msgstr ""
+
+#: assets/course-theme/blocks/lesson-blocks/index.js:106
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Display buttons for actions the learner can take for the current lesson."
+msgstr ""
+
+#: assets/course-theme/blocks/lesson-blocks/index.js:130
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Course Progress Bar"
+msgstr ""
+
+#: assets/course-theme/blocks/lesson-blocks/index.js:131
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Display course progress."
+msgstr ""
+
+#: assets/course-theme/blocks/lesson-blocks/index.js:149
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Focus Mode Toggle"
+msgstr ""
+
+#: assets/course-theme/blocks/lesson-blocks/index.js:150
+#: assets/dist/course-theme/blocks/index.js:290
+msgid "Toggle a minimalized view of Learning Mode."
+msgstr ""
+
+#: assets/course-theme/blocks/lesson-blocks/index.js:165
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Post Title"
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:214
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:166
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Display title of the current lesson or quiz."
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:225
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:177
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Course Content"
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:226
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:178
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Display lesson or quiz content, if the learner has access to it."
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:231
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:183
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Course Content."
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:237
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:189
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Notices"
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:238
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:190
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Display Sensei notices about the current lesson or quiz."
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:246
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:198
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Notice"
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:255
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:207
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Page Actions"
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:256
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:208
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Display pagination and related actions for the current page."
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:278
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:230
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Lesson Video"
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:279
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:231
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Displays the featured video if there is one for the lesson."
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:314
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:266
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "Displays the lesson properties such as length and difficulty."
 msgstr ""
 
-#: assets/course-theme/blocks/lesson-blocks/index.js:325
-#: assets/dist/course-theme/blocks/index.js:255
+#: assets/course-theme/blocks/lesson-blocks/index.js:277
+#: assets/dist/course-theme/blocks/index.js:290
 msgid "The Learning Mode Lesson Properties block will display the lesson complexity and length. To set these properties, you need to add a Lesson Properties block to each individual lesson."
 msgstr ""
 
+#: assets/course-theme/blocks/lesson-blocks/module-title/index.js:18
+#: assets/dist/course-theme/blocks/index.js:299
+msgid "Module Title"
+msgstr ""
+
+#: assets/course-theme/blocks/lesson-blocks/module-title/index.js:19
+#: assets/dist/course-theme/blocks/index.js:299
+msgid "Display title of the module the current lesson belongs to."
+msgstr ""
+
 #: assets/course-theme/blocks/quiz-blocks/index.js:27
-#: assets/dist/course-theme/blocks/index.js:264
+#: assets/dist/course-theme/blocks/index.js:316
 msgid "Quiz Progress Bar"
 msgstr ""
 
 #: assets/course-theme/blocks/quiz-blocks/index.js:28
-#: assets/dist/course-theme/blocks/index.js:264
+#: assets/dist/course-theme/blocks/index.js:316
 msgid "Display progress of questions answered in a quiz."
 msgstr ""
 
 #: assets/course-theme/blocks/quiz-blocks/index.js:36
-#: assets/dist/course-theme/blocks/index.js:264
+#: assets/dist/course-theme/blocks/index.js:316
 msgid "2 of 10 questions complete (20%)"
 msgstr ""
 
 #: assets/course-theme/blocks/quiz-blocks/index.js:62
-#: assets/dist/course-theme/blocks/index.js:264
+#: assets/dist/course-theme/blocks/index.js:316
 msgid "Return to the lesson the quiz belongs to."
 msgstr ""
 
 #: assets/course-theme/blocks/quiz-blocks/index.js:77
-#: assets/dist/course-theme/blocks/index.js:264
+#: assets/dist/course-theme/blocks/index.js:316
 msgid "Quiz Actions and Pagination"
 msgstr ""
 
 #: assets/course-theme/blocks/quiz-blocks/index.js:78
-#: assets/dist/course-theme/blocks/index.js:264
+#: assets/dist/course-theme/blocks/index.js:316
 msgid "Display pagination and actions the learner can take for the current quiz page."
 msgstr ""
 
 #: assets/course-theme/blocks/template-style/template-style-block.js:19
-#: assets/dist/course-theme/blocks/index.js:297
+#: assets/dist/course-theme/blocks/index.js:349
 msgid "Template Style"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/spacer-block.js:34
-#: assets/dist/course-theme/blocks/index.js:322
+#: assets/dist/course-theme/blocks/index.js:374
 msgid "Spacer (Auto)"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/spacer-block.js:40
-#: assets/dist/course-theme/blocks/index.js:322
+#: assets/dist/course-theme/blocks/index.js:374
 msgid "Automatically fill space between blocks."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.js:86
-#: assets/dist/course-theme/blocks/index.js:331
+#: assets/dist/course-theme/blocks/index.js:383
 msgid "Interface Element"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:57
-#: assets/dist/course-theme/blocks/index.js:339
+#: assets/dist/course-theme/blocks/index.js:391
 msgid "Fixed Header"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:58
-#: assets/dist/course-theme/blocks/index.js:339
+#: assets/dist/course-theme/blocks/index.js:391
 msgid "Header area that stays fixed on top of the screen."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:78
-#: assets/dist/course-theme/blocks/index.js:339
+#: assets/dist/course-theme/blocks/index.js:391
 msgid "Sidebar Menu"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:79
-#: assets/dist/course-theme/blocks/index.js:339
+#: assets/dist/course-theme/blocks/index.js:391
 msgid "A sidebar displayed as an overlay menu on mobile screens. Add the \"Sidebar Toggle\" block to a header to allow opening and closing."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:97
-#: assets/dist/course-theme/blocks/index.js:339
+#: assets/dist/course-theme/blocks/index.js:391
 msgid "Main Content"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:98
-#: assets/dist/course-theme/blocks/index.js:339
+#: assets/dist/course-theme/blocks/index.js:391
 msgid "Content Area."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:113
-#: assets/dist/course-theme/blocks/index.js:341
+#: assets/dist/course-theme/blocks/index.js:393
 msgid "Two-column Layout"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:114
-#: assets/dist/course-theme/blocks/index.js:341
+#: assets/dist/course-theme/blocks/index.js:393
 msgid "Layout with a fixed left or right sidebar."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:151
-#: assets/dist/course-theme/blocks/index.js:341
+#: assets/dist/course-theme/blocks/index.js:393
 msgid "Video Container"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:152
-#: assets/dist/course-theme/blocks/index.js:341
+#: assets/dist/course-theme/blocks/index.js:393
 msgid "Container for a video with a sidebar."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:179
-#: assets/dist/course-theme/blocks/index.js:341
+#: assets/dist/course-theme/blocks/index.js:393
 msgid "Content Footer"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:180
-#: assets/dist/course-theme/blocks/index.js:341
+#: assets/dist/course-theme/blocks/index.js:393
 msgid "Navigation area below the content."
 msgstr ""
 
