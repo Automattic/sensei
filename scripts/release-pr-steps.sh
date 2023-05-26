@@ -48,7 +48,7 @@ git add .
 git commit -m 'Replace next version tag'
 
 echo "Update plugin version"
-./scripts/update-version.sh $NEXT_VERSION
+update-version.sh $NEXT_VERSION
 git add .
 git commit -m 'Update plugin version'
 

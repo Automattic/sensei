@@ -43,6 +43,7 @@ RUN apt-get install -y \
 
 # Copy a script with release PR steps.
 COPY release-pr-steps.sh /usr/bin/release-pr-steps.sh
+COPY update-version.sh /usr/bin/update-version.sh
 
 # Copy ssh confid and keys! Not secure!
 # TODO: https://www.fastruby.io/blog/docker/docker-ssh-keys.html
