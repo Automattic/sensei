@@ -47,7 +47,15 @@ class Sensei_Logo {
 	 * @return string The block HTML.
 	 */
 	public function render(): string {
-		$icon = Sensei()->assets->get_icon('sensei-logo-tree', '',  ['width' => '85', 'height' => '40'] );
-		return '<a href="https://www.senseilms.com/" target="_blank">'. $icon .'</a>';
+		$icon = Sensei()->assets->get_icon(
+			'sensei-logo-tree',
+			'',
+			[
+				'width'  => '85',
+				'height' => '40',
+			]
+		);
+
+		return '<a href="https://www.senseilms.com/" target="_blank">' . $icon . '</a>';
 	}
 }
