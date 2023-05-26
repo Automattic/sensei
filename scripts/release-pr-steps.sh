@@ -9,6 +9,12 @@ if [ "$NEXT_VERSION" = "" ]; then
 	exit
 fi
 
+RELEASE_BRANCH=$2
+if [ "$RELEASE_BRANCH" = "" ]; then
+	echo "Error: Release branch not set!"
+	exit
+fi
+
 # Fix permissions for ssh config and keys.
 chown -R root:root /root/.ssh
 export GIT_SSH_COMMAND="ssh -i /root/.ssh/id_rsa"
@@ -17,6 +23,15 @@ export GIT_SSH_COMMAND="ssh -i /root/.ssh/id_rsa"
 mkdir /release && cd /release
 git clone git@github.com:Automattic/sensei.git
 cd /release/sensei
+
+# Checkout release branch.
+git switch $RELEASE_BRANCH
+
+# Exit if could not switch to release branch.
+if [ $? -ne 0 ]; then
+	echo "Error: Could not switch to release branch!"
+	exit
+fi
 
 # Install dependencies.
 composer install && npm install
@@ -31,6 +46,11 @@ echo "Replace next version tag"
 ./scripts/replace-next-version-tag.sh $NEXT_VERSION
 git add .
 git commit -m 'Replace next version tag'
+
+echo "Update plugin version"
+./scripts/update-version.sh $NEXT_VERSION
+git add .
+git commit -m 'Update plugin version'
 
 echo "Changlogger write"
 composer exec -- changelogger write

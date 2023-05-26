@@ -9,7 +9,12 @@ if [ "$NEXT_VERSION" = "" ]; then
 	exit
 fi
 
-echo "Preparing release/$NEXT_VERSION"
+RELEASE_BRANCH=$2
+if [ "$RELEASE_BRANCH" = "" ]; then
+	RELEASE_BRANCH="trunk"
+fi
+
+echo "Preparing release/$NEXT_VERSION from $RELEASE_BRANCH"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 echo $SCRIPT_DIR
@@ -22,7 +27,7 @@ docker build -t release-build $SCRIPT_DIR &&  \
 	docker run --name release-steps --rm -it \
 	-v ~/.gitconfig:/etc/gitconfig \
 	release-build \
-	bash -c "/usr/bin/release-pr-steps.sh $NEXT_VERSION"
+	bash -c "/usr/bin/release-pr-steps.sh $NEXT_VERSION $RELEASE_BRANCH"
 
 docker image rm release-build
 rm -rf "$SCRIPT_DIR/ssh-data"
