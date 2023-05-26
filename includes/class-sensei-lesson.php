@@ -2631,6 +2631,20 @@ class Sensei_Lesson {
 		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
 			$this->enqueue_scripts_meta_box_quiz_editor();
 		}
+
+		/**
+		 * Enqueue scripts for the quiz question AI upsell if the the feature is not available.
+		 *
+		 * @since 4.14.0
+		 * @hook sensei_quiz_question_ai_upsell_scripts
+		 *
+		 * @param {bool} $enqueue_scripts Whether to enqueue the scripts. Default false.
+		 *
+		 * @return {bool} Whether to enqueue the scripts.
+		 */
+		if ( ! apply_filters( 'sensei_ai_quiz_generation_available', false ) ) {
+			Sensei()->assets->enqueue( 'sensei-quiz-question-ai-upsell', 'js/admin/lesson-ai.js', [], true );
+		}
 	}
 
 	/**

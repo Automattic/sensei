@@ -68,9 +68,10 @@ class Email_Repository {
 	public function has( string $identifier ): bool {
 		$query = new WP_Query(
 			[
-				'post_type'  => Email_Post_Type::POST_TYPE,
-				'meta_key'   => self::META_IDENTIFIER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				'meta_value' => $identifier, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value,
+				'post_type'   => Email_Post_Type::POST_TYPE,
+				'post_status' => 'any',
+				'meta_key'    => self::META_IDENTIFIER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'  => $identifier, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value,
 			]
 		);
 
@@ -88,16 +89,17 @@ class Email_Repository {
 	 * @param string $description Email description.
 	 * @param string $content     Email content.
 	 * @param bool   $is_pro      Is pro email.
+	 * @param bool   $disabled    Is the email disabled.
 	 *
 	 * @return int|false Email post ID. Returns false if email already exists. Returns WP_Error on failure.
 	 */
-	public function create( string $identifier, array $types, string $subject, string $description, string $content, bool $is_pro = false ) {
+	public function create( string $identifier, array $types, string $subject, string $description, string $content, bool $is_pro = false, bool $disabled = false ) {
 		if ( $this->has( $identifier ) ) {
 			return false;
 		}
 
 		$email_data = [
-			'post_status'  => 'publish',
+			'post_status'  => $disabled ? 'draft' : 'publish',
 			'post_type'    => Email_Post_Type::POST_TYPE,
 			'post_title'   => $subject,
 			'post_content' => $content,
@@ -129,10 +131,11 @@ class Email_Repository {
 	public function delete( string $identifier ): bool {
 		$query = new WP_Query(
 			[
-				'select'     => 'ID',
-				'post_type'  => Email_Post_Type::POST_TYPE,
-				'meta_key'   => self::META_IDENTIFIER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				'meta_value' => $identifier, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				'select'      => 'ID',
+				'post_type'   => Email_Post_Type::POST_TYPE,
+				'post_status' => 'any',
+				'meta_key'    => self::META_IDENTIFIER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'  => $identifier, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			]
 		);
 
@@ -229,6 +232,7 @@ class Email_Repository {
 		$query = new WP_Query(
 			[
 				'post_type'      => Email_Post_Type::POST_TYPE,
+				'post_status'    => 'any',
 				'posts_per_page' => 1,
 			]
 		);

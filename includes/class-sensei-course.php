@@ -4402,6 +4402,12 @@ class Sensei_Course {
 				)
 			);
 			remove_all_actions( 'sensei_pagination' );
+
+			// Running query loop block in do_blocks sets $wp_query->current_post to 0 which should be -1.
+			// This causes have_posts() to return false after rendering blocks. Which eventually causes
+			// Astra theme to not render the generated content.
+			global $wp_query;
+			$wp_query->current_post = -1;
 		}
 	}
 

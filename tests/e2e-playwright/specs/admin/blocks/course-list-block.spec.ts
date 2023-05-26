@@ -52,7 +52,7 @@ describe( 'Courses List Block', () => {
 		const postTypePage = new PostType( page, 'page' );
 
 		await postTypePage.goToPostTypeCreationPage();
-		const courseList = await postTypePage.addBlock( 'Course List' );
+		const courseList = await postTypePage.addQueryLoop( 'Course List' );
 		await courseList.choosePattern( 'Courses displayed in a grid' );
 
 		await postTypePage.publish();
