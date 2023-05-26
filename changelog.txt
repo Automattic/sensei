@@ -1,5 +1,22 @@
 *** Changelog ***
 
+## 4.15.0 - 2023-05-26
+### Added
+- Add support to use the heading global style colors on the module title
+- Use global style colors on exit course button
+
+### Changed
+- Review the Learning mode default template spacing and margins
+
+### Fixed
+- Block triggering wp_mail for temporary users even on non-frontend context.
+- Don't re-create emails on plugin update
+- Fix auto grading not working on the Grading page for multiple choice questions
+- Fix blocks initialization
+- Fix email body rendered in the front-end in some cases
+- Fix Kadence blocks crashing lesson editor
+- Fix MailPoet error when running job
+
 ## 4.14.0 - 2023-05-10
 ### Added
 - Ability to set conditions on admin notices based on a date range
