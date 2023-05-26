@@ -530,6 +530,7 @@ class Sensei_Main {
 			new Sensei_Exit_Survey();
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
+			SenseiLMS_Plugin_Updater::init();
 
 		} else {
 
@@ -611,7 +612,7 @@ class Sensei_Main {
 	/**
 	 * Load the 3rd party compatibility tweaks.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.1
 	 */
 	private function initialize_3rd_party_compatibility(): void {
 		require_once $this->resolve_path( 'includes/3rd-party/3rd-party.php' );

@@ -1,4 +1,0 @@
-Significance: patch
-Type: change
-
-Improve plugin loading performance using pre-built class map

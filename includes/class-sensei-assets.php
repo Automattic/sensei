@@ -310,7 +310,7 @@ class Sensei_Assets {
 	public function get_icon( string $name, string $class_names = '' ) : string {
 		$href = $this->get_icon_href( $name );
 
-		return '<svg class="' . esc_attr( $class_names ) . '"><use xlink:href="' . esc_url( $href ) . '"></use></svg>';
+		return '<svg class="' . esc_attr( $class_names ) . '"><use href="' . esc_url( $href ) . '"></use></svg>';
 	}
 
 	/**

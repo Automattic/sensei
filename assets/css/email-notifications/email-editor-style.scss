@@ -1,21 +1,42 @@
 @import './email-style.scss';
 
-:root .editor-styles-wrapper {
-	--wp--preset--color--background: #f3f3f3;
-	background-color: var(--wp--preset--color--background);
+// Style applied only when the user is editing the Sensei Email content
+.post-type-sensei_email, .editor-styles-wrapper:has(.email__wrapper) {
 
-	.wp-block-post-content *, .block-editor-block-list__layout * {
+	.wp-block-post-content *,
+	.block-editor-block-list__layout * {
 		font-family: -apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+		color: #101517;
 	}
-	.wp-element-button, .editor-styles-wrapper .wp-block-button__link {
+	.wp-element-button,
+	.editor-styles-wrapper .wp-block-button__link {
 		text-transform: capitalize;
 		border-radius: 4px;
 	}
+
+	// Hides the post-title but retain the spacing.
+	.edit-post-visual-editor__post-title-wrapper,
+	.editor-post-title {
+		visibility: hidden;
+		font-size: 12px !important;
+		margin: 0;
+	}
 }
 
-.edit-post-visual-editor__post-title-wrapper, .editor-post-title {
-	visibility: hidden;
+
+// This style is applied only when the user is editing the page layout via site-editor
+:has(.email__wrapper) {
+	.editor-styles-wrapper {
+		background-color: #f3f3f3;
+
+		.email__wrapper {
+			padding: 40px 56px 48px 56px !important;
+		}
+	}
 }
 
-
-
+:root .editor-styles-wrapper:has(.email-notification__content) {
+	.email__wrapper {
+		padding: 0 !important;
+	}
+}
