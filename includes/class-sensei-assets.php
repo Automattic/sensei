@@ -304,15 +304,16 @@ class Sensei_Assets {
 	 *
 	 * @param string $name        The name of the icon file at "assets/images/<name>.svg".
 	 * @param string $class_names Classnames to add to the SVG element.
+	 * @param array  $size         Set the icon width/height.
 	 *
 	 * @return string The SVG HTML.
 	 */
 	public function get_icon( string $name, string $class_names = '', array $size = [] ) : string {
-		$href = $this->get_icon_href( $name );
-		$width = $size['width'] ??  '';
-		$height = $size['height'] ??  '';
+		$href   = $this->get_icon_href( $name );
+		$width  = $size['width'] ?? '';
+		$height = $size['height'] ?? '';
 
-		return '<svg class="' . esc_attr( $class_names ) . '"' . ' width="'. $width .'"'. ' height="'. $height . '"><use href="' . esc_url( $href ) . '"></use></svg>';
+		return '<svg class="' . esc_attr( $class_names ) . " width='$width' height='$height'>" . '<use href="' . esc_url( $href ) . '"></use></svg>';
 	}
 
 	/**
