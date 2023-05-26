@@ -192,7 +192,7 @@ class Sensei_Setup_Wizard_Pages {
 			 * through setup wizard.
 			 *
 			 * @hook  sensei_courses_page_template
-			 * @since $$next-version$$
+			 * @since 4.11.0
 			 *
 			 * @param {array} $blocks Blocks array.
 			 *

@@ -1,11 +1,11 @@
 
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
-Contributors: automattic, aaronfc, alexsanford1, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, guzluis, imranh920, jakeom, lavagolem, luchad0res, merkushin, m1r0, nurguly, onubrooks, renathoc, yscik
+Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, imranh920, jakeom, luchad0res, merkushin, m1r0, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 5.9
-Tested up to: 6.1
+Requires at least: 6.0
+Tested up to: 6.2
 Requires PHP: 7.2
-Stable tag: 4.10.0
+Stable tag: 4.14.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,46 +15,52 @@ Create beautiful and engaging online courses, lessons, and quizzes.
 
 **Create beautiful and engaging online courses, lessons, and quizzes.**
 
-[Sensei LMS](https://senseilms.com) is a teaching and learning management plugin built by Automattic, the company behind WordPress.com, WooCommerce, and Jetpack. In fact, Sensei LMS is used to power all of Automattic’s employee training and courses too.
+[Sensei LMS](https://senseilms.com)  is a powerful learning management plugin from Automattic, the company behind WordPress.com, WooCommerce, and Jetpack. At Automattic, we use Sensei LMS to power all our employee training courses.
 
-Your knowledge is worth teaching - teach freely with Sensei LMS!
+Share your knowledge and teach freely with Sensei LMS!
 
 ### Powerful LMS Features ###
 
-- Integrates seamlessly with your WordPress site, and courses look great with any theme.
+- Seamlessly integrate Sensei LMS into your WordPress site. Sensei LMS looks great with any theme and can be customized to match your branding and style.
+- Create engaging courses with the [WordPress Block Editor](https://wordpress.org/documentation/article/wordpress-block-editor/), fully utilized by Sensei's free [Course Theme](https://senseilms.com/meet-course-a-new-free-block-theme-by-sensei/).
+- Enable [Learning Mode](https://senseilms.com/learning-mode/) for an immersive distraction-free learning experience.
 - Track student progress and performance with detailed reports.
-- Craft engaging lessons with no code required.
 - Embed videos from YouTube, Vimeo, and VideoPress for video-based courses.
 - Add the Course List block to any page or post to display available courses.
-- Customize the look and feel to match your branding and site style.
-- Enable the optional Learning Mode for a distraction free and immersive learning experience.
 
-### Quizzes That Reinforce ###
-Leverage the power of quizzes to strengthen your students’ understanding of key concepts and evaluate their progress.
+### Create effective quizzes ###
 
-Choose from many question types and quiz settings, including multiple-choice, fill-in-the-blank, true/false, free response, file uploads, and more.
+Quizzes are a powerful way to improve your students' understanding of key concepts and track their progress. Select from various quiz question types and settings, such as multiple-choice, fill-in-the-blank, true/false, free response, file uploads, and more.
 
-### Get More with Sensei Pro ###
+### Showcase your courses ###
 
-Do more and sell courses with Sensei Pro, which includes:
+Submit your course to Sensei LMS' public course showcase at [https://senseilms.com/showcase/](https://senseilms.com/showcase/). Sensei LMS' course showcase allows you to reach new audiences to expand your course's visibility.
 
-**WooCommerce Integration:** Set a price and sell courses with just a few clicks. Sensei Pro integrates perfectly with WooCommerce Subscriptions, Payments, Memberships, and Affiliates extensions too.
+### Discover the power of Sensei Pro ###
 
-**Content Drip:** For each lesson in a course, you can specify when students will be able to access the lesson content, either at a fixed interval after the date they start the course or on a specific date.
+Realize the full potential of your courses with Sensei Pro.
 
-**Interactive Blocks:** Videos, flashcards, image hotspots, and tasklists can be added to any lesson, and any WordPress page or post.
+**WooCommerce Integration:** Effortlessly set a price and sell courses in just a few clicks. Sensei Pro seamlessly integrates with WooCommerce Subscriptions, Payments, Memberships, and Affiliates extensions.
+
+**Scheduled Content Drip:** Control the pacing of lessons in your courses by specifying when students can access lesson content at fixed intervals after starting the course or on a particular date.
+
+**Immersive Interactive Blocks:** Enrich your lessons, pages, or posts with engaging videos, flashcards, image hotspots, and task lists.
 
 https://videopress.com/v/tLYw7R27
 
-**Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type. With Pro, you can add individual quiz questions to any WordPress content, not just in a quiz.
+**Enhanced Quiz Features:** Set a quiz timer and incorporate an ordering quiz question type. With Sensei LMS Pro, you can include individual quiz questions in any WordPress content, not just quizzes.
 
-**Groups & Cohorts:** Organize students into groups and cohorts to manage access and customize learning experiences.
+**Easy Groups & Cohorts:** Organize students into groups and cohorts to manage access and customize learning experiences.
 
-**Course Access Periods:** Select a start date, end date, or a specific amount of time that courses will remain accessible to students.
+**Course Access Periods:** Define a start date, end date, or a set amount of time that courses will remain accessible to students.
 
-**Conditional Content:** Hide and show lessons and content in lessons based on groups, enrollment status, and date.
+**Conditional Content:** Personalize the learning journey by hiding or showing lessons and content based on groups, enrollment status, and date.
 
-**Priority Support:** Our team of expert and friendly engineers are standing by and ready to help!
+**Dedicated Priority Support:** Our team of expert and friendly engineers is always available to provide assistance and ensure your success!
+
+**Flashcards:** Add text, videos, images, embeds, and more to both sides of the flashcard block type.
+
+**Co-Teachers:** Share course ownership with co-teachers who can edit course settings, lessons, and quizzes.
 
 [Learn more about Sensei Pro](https://senseilms.com/sensei-pro/).
 
@@ -62,15 +68,15 @@ https://videopress.com/v/tLYw7R27
 
 **Certificates:** Automatically generate beautiful downloadable PDF certificates for students when they complete a course.
 
-[Learn more about Sensei LMS Certificates](https://wordpress.org/plugins/sensei-certificates/).
+[Learn more about Sensei LMS Certificates.](https://wordpress.org/plugins/sensei-certificates/)
 
-**Media & Attachments:** Upload media and files like PDFs to a separate uploads area of your course or lesson.
+**Media and Attachments:** Upload media and files like PDFs to a separate uploads area of your course or lesson.
 
-[Learn more about Sensei LMS Media Attachments](https://wordpress.org/plugins/sensei-media-attachments/).
+[Learn more about Sensei LMS Media Attachments.](https://wordpress.org/plugins/sensei-media-attachments/)
 
 **Post To Course Creator:** Create courses quickly by converting existing blog posts into course lessons in just a few clicks.
 
-[Learn more about Sensei LMS Post To Course Creator](https://wordpress.org/plugins/sensei-post-to-course/).
+[Learn more about Sensei LMS Post To Course Creator.](https://wordpress.org/plugins/sensei-post-to-course/)
 
 == Installation ==
 
@@ -108,93 +114,80 @@ Sensei LMS can be used in conjunction with [Sensei Pro](https://senseilms.com/se
 
 Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [mailing list](https://senseilms.com/mailing-list/).
 
+= How can I include my courses in the Sensei LMS showcase? =
+
+To find out how to submit a course to the Sensei LMS showcase, and the requirements, please see our [documentation on the Course Showcase](https://senseilms.com/documentation/showcase/).
+
+= Does Sensei support live courses, Zoom integration, or webinars? =
+
+Yes! You can add links to Zoom, Google Meet, or whatever platform you choose in a course lesson. In addition, Sensei includes a meeting lesson type you can select when creating a new lesson to help make this even easier.
+
+= Does Sensei work in WordPress Multisite? =
+
+Sensei LMS works great in WordPress Multisite. Although a Sensei Pro license covers only one site, the Sensei Agency plan permits the activation of Sensei Pro on up to 20 sites. If you use or plan to use Sensei Pro on a Multisite with more than 20 sites, please [get in touch](https://senseilms.com/contact/) for custom pricing.
+
+= How can I sell courses as part of a membership? =
+
+Sensei LMS is compatible with Sensei Pro and [WooCommerce Memberships](https://woocommerce.com/products/woocommerce-memberships/), enabling you to sell courses as part of a membership plan.
+
+See [Selling Courses as a Membership](https://senseilms.com/documentation/selling-courses-as-a-membership/) for more details.
+
+= Does Sensei work in my language =
+
+Community members have translated the free Sensei LMS plugin [into 18 languages](https://translate.wordpress.org/projects/wp-plugins/sensei-lms/), while Sensei Pro has been [professionally translated into 16 languages](https://translate.wordpress.com/projects/sensei/). We welcome contributions to improve even more.
+
 == Screenshots ==
-1. Lesson editor
-2. Lesson page with Learning Mode enabled
-3. Quiz editor
-4. Course editor
+1. Course Editor
+2. Lesson Editor
+3. Learning Mode
+4. Quiz Editor
 
 == Changelog ==
 
-2023-01-12 - version 4.10.0
-* New: Course theme installation through the onboarding wizard
-	* Add onboarding theme step [#6182](https://github.com/Automattic/sensei/pull/6182), [#6251](https://github.com/Automattic/sensei/pull/6251), [#6273](https://github.com/Automattic/sensei/pull/6273)
-	* Add onboarding theme step backend [#6211](https://github.com/Automattic/sensei/pull/6211)
-	* Install Course theme [#6231](https://github.com/Automattic/sensei/pull/6231)
-	* Add usage tracking for Setup Wizard Course Theme step [#6252](https://github.com/Automattic/sensei/pull/6252)
-	* Add Sensei Home task to customize the Course theme [#6250](https://github.com/Automattic/sensei/pull/6250)
-* Add: Add `sensei_usage_tracking_data` filter hook [#6262](https://github.com/Automattic/sensei/pull/6262)
-* Add: Log sent emails [#6228](https://github.com/Automattic/sensei/pull/6228)
-* Add: Notice asking user for reviews/feedback [#6274](https://github.com/Automattic/sensei/pull/6274)
-* Add: Log when reports are run [#6319](https://github.com/Automattic/sensei/pull/6319)
-* Add: Add  `Sensei_Data_Port_Utilities::get_demo_course_id()` helper method [#6328](https://github.com/Automattic/sensei/pull/6328)
-* Add: Add filters for course actions buttons [#6296](https://github.com/Automattic/sensei/pull/6296)
-* Add: Course list button editing [#6324](https://github.com/Automattic/sensei/pull/6324)
-* Fix: Fix sidebar position for learning mode [#6210](https://github.com/Automattic/sensei/pull/6210)
-* Fix: Fix testimonial margin for block patterns [#6216](https://github.com/Automattic/sensei/pull/6216)
-* Fix: Ensure passing an integer module id [#6229](https://github.com/Automattic/sensei/pull/6229)
-* Fix: Ensure `is_plugin_active` call doesn't give an error [#6249](https://github.com/Automattic/sensei/pull/6249)
-* Fix: Always initialize question blocks in frontend [#6258](https://github.com/Automattic/sensei/pull/6258)
-* Fix: Fix global admin styles for Groups badge and landing page [#6260](https://github.com/Automattic/sensei/pull/6260)
-* Fix: Add empty checks to avoid warnings [#6270](https://github.com/Automattic/sensei/pull/6270)
-* Fix: Fix private message emails not being sent [#6257](https://github.com/Automattic/sensei/pull/6257)
-* Fix: Ensure all strings in block pattern templates are translated and escaped [#6322](https://github.com/Automattic/sensei/pull/6322)
-* Fix: Fix editor wizard header style [#6335](https://github.com/Automattic/sensei/pull/6335)
-* Fix: Update question post type to not be publicly queryable [#6347](https://github.com/Automattic/sensei/pull/6347)
-* Fix: Fix conflict by disabling Yoast initialization on Divi preview [#6342](https://github.com/Automattic/sensei/pull/6342)
-* Fix: Security fixes
-* Tweak: Remove the "source" property from events data [#6310](https://github.com/Automattic/sensei/pull/6310)
-* Tweak: Update Sensei logo [#6336](https://github.com/Automattic/sensei/pull/6336)
-* Tweak: Display warning in the editor when adding the lesson properties block if Learning Mode is enabled [#6078](https://github.com/Automattic/sensei/pull/6078)
+### 4.14.0 - 2023-05-10
 
-2022-12-09 - version 4.9.1
-* Fix: Always initialize question blocks in frontend [#6258](https://github.com/Automattic/sensei/pull/6258)
-* Fix: Fix global admin styles for Groups badge and landing page [#6260](https://github.com/Automattic/sensei/pull/6260)
+#### Added
+- Ability to set conditions on admin notices based on a date range
+- Add disclamer with the reason that Sensei Pro can't be updated when license is not active
+- Add quiz generation using AI button in quiz block
 
-2022-12-06 - version 4.9.0
-* New: Co-teacher
-    * Add/coteachers metabox hook [#6115](https://github.com/Automattic/sensei/pull/6115)
-    * Remove unused terms after course structure update. [#6118](https://github.com/Automattic/sensei/pull/6118)
-    * Fix ownership for draft lessons when changing teacher.  [#6180](https://github.com/Automattic/sensei/pull/6180)
-    * Add quiz appender filter [#6164](https://github.com/Automattic/sensei/pull/6164)
-    * Adapt co-teachers to new sidebar [#6166](https://github.com/Automattic/sensei/pull/6166)
-    * Fix some issues with the teacher's Students view  [#6167](https://github.com/Automattic/sensei/pull/6167)
-    * Prepare grading to support co-teachers. [#6157](https://github.com/Automattic/sensei/pull/6157)
-    * Ensure quiz author is set correctly when the quiz is initially created [#6129](https://github.com/Automattic/sensei/pull/6129)
-    * Make upgrade CTA for co-teachers consistent with other CTAs [#6212](https://github.com/Automattic/sensei/pull/6212)
-* New: Course Theme
-    * Update Featured label and course categories block styles [#6084](https://github.com/Automattic/sensei/pull/6084)
-    * Add landing page patterns [#6169](https://github.com/Automattic/sensei/pull/6169)
-    * Enable Learning Mode blocks to be configured by theme.json [#6067](https://github.com/Automattic/sensei/pull/6067)
-    * Skip opinionated styles when the active theme declares support for it [#6066](https://github.com/Automattic/sensei/pull/6066)
-    * Enable customization of the lesson status icons [#6070](https://github.com/Automattic/sensei/pull/6070)
-    * Fix sidebar position for learning mode [#6210](https://github.com/Automattic/sensei/pull/6210)
-    * Update section headings in Landing Page and Course List patterns [#6217](https://github.com/Automattic/sensei/pull/6217) 
-    * Fix mail list br tag escape in landing page [#6214](https://github.com/Automattic/sensei/pull/6214)
-* New: Course Settings
-    * Address testing feedback for course settings sidebar [#6161](https://github.com/Automattic/sensei/pull/6161)
-    * Course Settings Sidebar [#6156](https://github.com/Automattic/sensei/pull/6156)
-    * Create new course general sidebar [#6077](https://github.com/Automattic/sensei/pull/6077)
-    * Rename Course Settings sidebar, show arrow [#6197](https://github.com/Automattic/sensei/pull/6197) 
-* Add: Add/sensei contact link atomic [#6177](https://github.com/Automattic/sensei/pull/6177)
-* Add: Switch icon to SVG for Calypso compatibility [#6160](https://github.com/Automattic/sensei/pull/6160)
-* Add: Sensei on Dotcom - Connect Sensei Home tasks statuses with Calypso Launchpad tasks statuses [#6124](https://github.com/Automattic/sensei/pull/6124)
-* Add: Make the view quiz button behave as a complete lesson button when watching a video is required [#6127](https://github.com/Automattic/sensei/pull/6127)
-* Fix: Load persisted notices on user metas only when printing them [#6130](https://github.com/Automattic/sensei/pull/6130)
-* Fix: Make Last Activity column non-sortable [#6132](https://github.com/Automattic/sensei/pull/6132)
-* Fix: Fix issue with YouTube adapter's setCurrentTime [#6117](https://github.com/Automattic/sensei/pull/6117)
-* Fix: Students page now will show all courses enrolled even if it's more than 10. [#5886](https://github.com/Automattic/sensei/pull/5886)
-* Fix: Fix module teacher name not showing for modules added to course in legacy way [#5376](https://github.com/Automattic/sensei/pull/5376)
-* Fix: Improve classic editor support for questions [#5440](https://github.com/Automattic/sensei/pull/5440)
-* Fix: Fix warning when missing update attributes. [#6103](https://github.com/Automattic/sensei/pull/6103)
-* Fix: Prevent multiple actions being enqueued at the same time. [#6081](https://github.com/Automattic/sensei/pull/6081)
-* Fix: Fix Question Category admin page to display intended post_type [#6085](https://github.com/Automattic/sensei/pull/6085)
-* Fix: Add null-check for focus-mode event listener. [#6113](https://github.com/Automattic/sensei/pull/6113)
-* Fix: Do not redirect on login when Jetpack handles redirection [#6189](https://github.com/Automattic/sensei/pull/6189)
-* Fix: Fix YouTube embed handling on some environments [#6186](https://github.com/Automattic/sensei/pull/6186)
-* Fix: Enable to customize  sidebar-width and  header-height via css variables [#6068](https://github.com/Automattic/sensei/pull/6068)
-* Fix: Fix SQL performance issue on the student reports page [#6134](https://github.com/Automattic/sensei/pull/6134)
-* Fix: Avoid quiz check when it's in a preview [#6140](https://github.com/Automattic/sensei/pull/6140)
-* Fix: Fix home styles [#6139](https://github.com/Automattic/sensei/pull/6139)
-* Fix: Add compatibility for WP < 6.0 on quiz author fix [#6153](https://github.com/Automattic/sensei/pull/6153)
-* Fix: Fix double query when calling `WP_Query::get_posts` [#6168](https://github.com/Automattic/sensei/pull/6168)
+#### Changed
+- Use non-deprecated attribute to load SVG icons.
+
+#### Fixed
+- Don't send e-mails to Guest/Preview users
+- Fix PHP Warning with Divi when using Learning Mode Video theme
+- Fix Sensei admin notice styles
+- Missing email page template link on the editor
+- Removed unused calls to SenseiLMS.com for the old extensions page
+
+### 4.13.1 - 2023-04-19
+
+#### Changed
+- Disable the "welcome" and "no progress" emails by default
+- Update MailPoet link to point to Lists
+- Improve plugin loading performance using pre-built class map
+
+#### Fixed
+- Astra not loading the Courses page content
+- Fix auto grading not working and additionally throwing error for fill gap questions
+- Fix patterns wizard preview style
+- Fix the home email notification settings link
+- Make the email post type private
+- Remove fallback to legacy options
+- Fix showing warning from module when admin email does not match any existing user and it has no author
+
+### 4.13.0 - 2023-03-30
+
+#### Added
+- Functionality to create MailPoet lists for all courses and groups, and to subscribe users to those lists.
+
+#### Changed
+- Modify screen reader text to be less verbose on module expand button, front-end 👏 @alexstine
+
+#### Fixed
+- Fix styling of notices on pages other than Sensei home and button output on Sensei home.
+- Missing aria-expanded attribute on front-end module expand button 👏 @alexstine
+- Only show the sensei_email template for the sensei emails.
+
+

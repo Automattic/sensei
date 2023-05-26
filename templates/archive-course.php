@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     $$next-version$$
+ * @version     4.11.0
  */
 ?>
 

@@ -1,6 +1,8 @@
 <?php
 class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
+	use Sensei_Test_Redirect_Helpers;
+
 	/**
 	 * @var $factory
 	 */
@@ -1557,31 +1559,20 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$lesson_id = $this->factory->lesson->create( [ 'post_password' => 123 ] );
 		$quiz_id   = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 
-		$halt_redirect = function( $location, $status ) {
-			throw new \Exception(
-				wp_json_encode(
-					[
-						'location' => $location,
-						'status'   => $status,
-					]
-				)
-			);
-		};
-
 		$this->go_to( get_permalink( $quiz_id ) );
+		$this->prevent_wp_redirect();
 
 		/* Act. */
-		add_filter( 'wp_redirect', $halt_redirect, 1, 2 );
 		try {
 			Sensei()->quiz->redirect_if_lesson_is_protected();
-		} catch ( \Exception $e ) {
-			$redirect = json_decode( $e->getMessage(), true );
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status   = $e->getCode();
+			$redirect_location = $e->getMessage();
 		}
-		remove_filter( 'wp_redirect', $halt_redirect, 1, 2 );
 
 		/* Assert. */
-		$this->assertEquals( 302, $redirect['status'] );
-		$this->assertEquals( get_permalink( $lesson_id ), $redirect['location'] );
+		$this->assertEquals( 302, $redirect_status );
+		$this->assertEquals( get_permalink( $lesson_id ), $redirect_location );
 	}
 
 	public function testRedirectIfLessonIsProtected_NoProtectedLessonGiven_DoesNotRedirectsToLesson() {

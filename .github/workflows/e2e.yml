@@ -21,17 +21,17 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v3
 
-            - name: Updates the npm version
-              run: npm install -g npm@^8
+            - name: Install PHP dependencies
+              uses: ./.github/actions/install-php
 
-            - name: Install dependencies
+            - name: Install JS dependencies
               run: npm ci
 
             - name: Build assets
               run: npm run build:assets
 
             - name: Install Playwright
-              run: npx playwright install --with-deps
+              run: npx playwright install --with-deps chromium
 
             - name: Start wp-env
               run: npm run wp-env start 

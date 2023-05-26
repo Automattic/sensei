@@ -10,10 +10,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-
-            - name: Updates the CI npm
-              run: npm install -g npm@^8
-
             - uses: actions/cache@v3
               with:
                   path: ~/.npm/
@@ -34,10 +30,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-
-            - name: Updates the CI npm
-              run: npm install -g npm@8.9.0
-
             - uses: actions/cache@v3
               with:
                   path: ~/.npm/
@@ -57,10 +49,6 @@ jobs:
         steps:
             # clone the repository
             - uses: actions/checkout@v3
-
-            - name: Updates the npm version
-              run: npm install -g npm@^8
-
             - uses: actions/cache@v3
               with:
                   path: ~/.npm
@@ -70,86 +58,7 @@ jobs:
             - name: Install JS dependencies
               run: npm ci
             - name: Test JS
+              env:
+                  NODE_OPTIONS: "--max_old_space_size=4096"
               run: npm run test-js
     
-    dependencies-report-trunk:
-        runs-on: ubuntu-latest
-        name: Build trunk for Dependencies Report
-        steps:
-            - uses: actions/checkout@v3
-              with:
-                  ref: trunk
-            - shell: bash
-              name: Get trunk latest commit
-              id: trunk-commit
-              run: |
-                  echo "commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v3
-              id: dist-cache
-              with:
-                  path: ${{ github.workspace }}/assets/dist
-                  key: ${{ runner.os }}-dist-${{ steps.trunk-commit.outputs.commit }}
-            - name: Updates the npm version
-              run: npm install -g npm@^8
-              if: steps.dist-cache.outputs.cache-hit != 'true'
-            - name: Get npm cache directory
-              id: npm-cache
-              if: steps.dist-cache.outputs.cache-hit != 'true'
-              run: |
-                  echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v3
-              if: steps.dist-cache.outputs.cache-hit != 'true'
-              with:
-                  path: ${{ steps.npm-cache.outputs.dir }}
-                  key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-                  restore-keys: |
-                      ${{ runner.os }}-node-
-            - name: Install JS dependencies
-              run: npm ci
-              if: steps.dist-cache.outputs.cache-hit != 'true'
-            - name: Create default dist folder
-              run: mkdir -p ${{ github.workspace }}/assets/dist && echo "{}" > ${{ github.workspace }}/assets/dist/assets.json
-              if: steps.dist-cache.outputs.cache-hit != 'true'
-            - name: Build Combined Assets for Trunk
-              run: npm run build:combine-assets
-              if: steps.dist-cache.outputs.cache-hit != 'true'
-            - name: Upload Artifact
-              uses: actions/upload-artifact@v3
-              with:
-                  name: combined-assets
-                  path: ${{ github.workspace }}/assets/dist
-    dependencies-report:
-        needs: [ dependencies-report-trunk ]
-        name: WordPress Dependencies Report
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - name: Get npm cache directory
-              id: npm-cache
-              run: |
-                  echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v3
-              with:
-                  path: ${{ steps.npm-cache.outputs.dir }}
-                  key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-                  restore-keys: |
-                      ${{ runner.os }}-node-
-            - name: Updates the npm version
-              run: npm install -g npm@^8
-            - name: Install JS dependencies
-              run: npm ci
-            - name: Build Combined Assets
-              run: npm run build:combine-assets
-            - name: Download assets (trunk)
-              uses: actions/download-artifact@v3
-              with:
-                  name: combined-assets
-                  path: dist-trunk
-            - name: Analyze dependencies and publish report
-              uses: Automattic/github-action-wordpress-dependencies-report@v0
-              with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
-                  old-assets-folder: ${{ github.workspace }}/dist-trunk
-                  old-assets-branch: trunk
-                  new-assets-folder: ${{ github.workspace }}/assets/dist
-                  

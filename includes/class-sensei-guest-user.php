@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @author Automattic
  *
- * @since $$next-version$$
+ * @since 4.11.0
  * @package Core
  */
 class Sensei_Guest_User {
@@ -25,7 +25,7 @@ class Sensei_Guest_User {
 	/**
 	 * Name of the Role for Guest Users.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @var string
 	 */
@@ -34,16 +34,25 @@ class Sensei_Guest_User {
 	/**
 	 * Guest user login name prefix.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @var string
 	 */
 	const LOGIN_PREFIX = 'sensei_guest_';
 
 	/**
+	 * Email domain used for guest users.
+	 *
+	 * @since 4.14.0
+	 *
+	 * @var string
+	 */
+	const EMAIL_DOMAIN = 'guest.senseilms';
+
+	/**
 	 * Guest user id.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @var int
 	 */
@@ -52,7 +61,7 @@ class Sensei_Guest_User {
 	/**
 	 * Meta key for course open access setting.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @var string
 	 */
@@ -103,7 +112,7 @@ class Sensei_Guest_User {
 	/**
 	 * Sensei_Guest_User constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	public function __construct() {
 		add_action( 'init', [ $this, 'log_guest_user_out_before_all_actions' ], 8 );
@@ -115,14 +124,14 @@ class Sensei_Guest_User {
 	/**
 	 * Initialize guest user feature.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	public function init() {
 		/**
 		 * Enable or disable 'open access course' feature.
 		 *
 		 * @hook  sensei_feature_open_access_courses
-		 * @since $$next-version$$
+		 * @since 4.11.0
 		 *
 		 * @param {bool} $enable Enable feature. Default true.
 		 *
@@ -137,7 +146,7 @@ class Sensei_Guest_User {
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
 		add_action( 'sensei_can_user_manually_enrol', [ $this, 'open_course_user_can_manualy_enroll' ], 10, 2 );
-		add_action( 'sensei_send_emails', [ $this, 'skip_sensei_email' ] );
+		add_filter( 'sensei_send_emails', [ $this, 'skip_sensei_email' ] );
 
 		$this->create_guest_student_role_if_not_exists();
 
@@ -147,7 +156,7 @@ class Sensei_Guest_User {
 	 * Log out the guest user before any action, some actions like Log in Form does not work if guest user is logged in
 	 * even after setting current user to 0 by 'wp' hook.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	public function log_guest_user_out_before_all_actions() {
 		if (
@@ -162,7 +171,7 @@ class Sensei_Guest_User {
 	/**
 	 * Filter enrolment check to always return true if the course is open access.
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.11.0
 	 *
 	 * @param bool $is_enrolled Initial value.
 	 * @param int  $user_id User ID. Unused.
@@ -178,7 +187,7 @@ class Sensei_Guest_User {
 	/**
 	 * Filter manual enrolment check to always allow users to manually enrol if the course is open access.
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.11.0
 	 *
 	 * @param bool $can_enroll Initial value.
 	 * @param int  $course_id Course ID.
@@ -194,7 +203,7 @@ class Sensei_Guest_User {
 	/**
 	 * Filter course access check to always return true if the course is open access.
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.11.0
 	 *
 	 * @param bool $can_view_course_content Initial value.
 	 * @param int  $course_id Course ID.
@@ -208,7 +217,7 @@ class Sensei_Guest_User {
 	/**
 	 * Create a guest user for open access courses if no user is logged in.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 */
 	public function create_guest_user_and_login_for_open_course() {
@@ -238,7 +247,7 @@ class Sensei_Guest_User {
 	/**
 	 * Sets current guest user to none if out of open course context.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 */
 	public function log_in_guest_user_if_in_open_course() {
@@ -254,7 +263,7 @@ class Sensei_Guest_User {
 	/**
 	 * Checks if the action is related to an open course or a lesson or a quiz that belongs to an open course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 * @return boolean
 	 */
@@ -271,7 +280,7 @@ class Sensei_Guest_User {
 	 *
 	 * @param int $course_id ID of the course.
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.11.0
 	 * @return boolean|mixed
 	 */
 	private function is_course_open_access( $course_id ) {
@@ -281,7 +290,7 @@ class Sensei_Guest_User {
 		 * Filter if the given course has open access turned on.
 		 *
 		 * @hook  sensei_course_open_access
-		 * @since $$next-version$$
+		 * @since 4.11.0
 		 *
 		 * @param {bool} $is_open_access Open access setting value.
 		 * @param {int} $course_id Course ID.
@@ -294,10 +303,10 @@ class Sensei_Guest_User {
 	/**
 	 * Checks if the current user is a guest.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 */
-	private function is_current_user_guest() {
+	private static function is_current_user_guest() {
 		$user = wp_get_current_user();
 		return self::is_guest_user( $user );
 	}
@@ -305,7 +314,7 @@ class Sensei_Guest_User {
 	/**
 	 * Recreate nonce after logging in user invalidates existing one.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @param array $action Action to recreate nonce for.
 	 */
@@ -317,7 +326,7 @@ class Sensei_Guest_User {
 	/**
 	 * Create a user with Guest Student role .
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.11.0
 	 * @return int
 	 */
 	public static function create_guest_user() {
@@ -327,7 +336,7 @@ class Sensei_Guest_User {
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
-				'user_email'   => $user_name . '@guest.senseilms',
+				'user_email'   => $user_name . '@' . self::EMAIL_DOMAIN,
 				'display_name' => 'Guest Student ' . str_pad( $user_count, 3, '0', STR_PAD_LEFT ),
 				'role'         => self::ROLE,
 			]
@@ -367,7 +376,7 @@ class Sensei_Guest_User {
 	 *
 	 * @param int $user_id ID of the user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	private function login_user( $user_id ) {
 		wp_set_current_user( $user_id );
@@ -377,7 +386,7 @@ class Sensei_Guest_User {
 	/**
 	 * Manually enrol the new user in the course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @param int $user_id User ID.
 	 * @param int $course_id Course ID.
@@ -395,7 +404,7 @@ class Sensei_Guest_User {
 	/**
 	 * Create the Guest Student role if it does not exist.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	private function create_guest_student_role_if_not_exists() {
 		// Check if the Guest Student role exists.
@@ -411,13 +420,25 @@ class Sensei_Guest_User {
 	/**
 	 * Determine if the current requests is for a supported action.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @return string[]|null
 	 */
 	private function get_current_action() {
 
-		foreach ( $this->supported_actions as $action ) {
+		/**
+		 * Filters the list of supported actions for Guest Users.
+		 *
+		 * @hook  sensei_guest_user_supported_actions
+		 * @since 4.11
+		 *
+		 * @param {array} List of supported actions for guest users.
+		 *
+		 * @return {array} List of supported actions for guest users.
+		 */
+		$supported_actions = apply_filters( 'sensei_guest_user_supported_actions', $this->supported_actions );
+
+		foreach ( $supported_actions as $action ) {
 			if ( $this->is_action( $action['field'], $action['nonce'] ) ) {
 				return $action;
 			}
@@ -429,7 +450,7 @@ class Sensei_Guest_User {
 	/**
 	 * Determines if the request is for an action submitting the given form field and nonce.
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.11.0
 	 *
 	 * @param string $field Form field name for the action.
 	 * @param string $nonce Nonce name for the action.
@@ -446,15 +467,36 @@ class Sensei_Guest_User {
 	 * Prevent Sensei emails related to guest user actions.
 	 *
 	 * @access private
-	 * @since  $$next-version$$
+	 * @since  4.11.0
 	 *
 	 * @param boolean $send_email Whether to send the email.
 	 *
 	 * @return boolean Whether to send the email.
 	 */
 	public function skip_sensei_email( $send_email ) {
-		return $this->is_current_user_guest() ? false : $send_email;
+		return self::is_current_user_guest() ? false : $send_email;
+	}
 
+	/**
+	 * Prevent emails related to the guest user from being dispatched via wp_mail.
+	 *
+	 * @access private
+	 * @since  4.14.0
+	 *
+	 * @param bool|null $return Null if we should send the email, a boolean if not.
+	 * @param array     $atts   Email attributes.
+	 * @return bool|null Null if we should send the email, a boolean if not.
+	 */
+	public static function skip_wp_mail( $return, $atts ) {
+		if ( self::is_current_user_guest() ) {
+			// If this e-mail is being dispatched while the current user is a guest, just... don't send it.
+			return false;
+		}
+		if ( Sensei_Temporary_User::should_block_email( $atts, self::EMAIL_DOMAIN ) ) {
+			// If this e-mail is being dispatched to a guest user, don't send it.
+			return false;
+		}
+		return $return;
 	}
 
 	/**

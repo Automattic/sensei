@@ -1073,7 +1073,6 @@ class Sensei_Lesson {
 	 * @access private
 	 * @param string $post_key (default: '')
 	 * @param int    $post_id (default: 0)
-	 * @return int|bool meta id or saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		/*
@@ -1117,7 +1116,7 @@ class Sensei_Lesson {
 		}
 
 		// Check if the user has permission to edit the target course.
-		if ( 'lesson_course' === $post_key && ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $new_meta_value ) ) {
+		if ( 'lesson_course' === $post_key && ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $new_meta_value ) && '' !== $new_meta_value ) {
 			return;
 		}
 
@@ -2631,6 +2630,20 @@ class Sensei_Lesson {
 
 		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
 			$this->enqueue_scripts_meta_box_quiz_editor();
+		}
+
+		/**
+		 * Enqueue scripts for the quiz question AI upsell if the the feature is not available.
+		 *
+		 * @since 4.14.0
+		 * @hook sensei_quiz_question_ai_upsell_scripts
+		 *
+		 * @param {bool} $enqueue_scripts Whether to enqueue the scripts. Default false.
+		 *
+		 * @return {bool} Whether to enqueue the scripts.
+		 */
+		if ( ! apply_filters( 'sensei_ai_quiz_generation_available', false ) ) {
+			Sensei()->assets->enqueue( 'sensei-quiz-question-ai-upsell', 'js/admin/lesson-ai.js', [], true );
 		}
 	}
 
@@ -4975,7 +4988,10 @@ class Sensei_Lesson {
 		$lesson_allow_comments = $allow_comments && $user_can_view_lesson;
 
 		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
+			// Borrowed solution from https://github.com/WordPress/gutenberg/pull/28128.
+			add_filter( 'deprecated_file_trigger_error', '__return_false' );
 			comments_template( '', true );
+			remove_filter( 'deprecated_file_trigger_error', '__return_false' );
 		}
 	}
 

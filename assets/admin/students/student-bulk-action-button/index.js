@@ -107,7 +107,7 @@ export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 	/**
 	 * Filters the bulk action modal.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @param {Object}   modal       The modal component.
 	 * @param {string}   action      Selected action.

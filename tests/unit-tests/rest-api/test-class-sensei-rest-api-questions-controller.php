@@ -221,6 +221,7 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 				'random_order'           => 'no',
 				'answer_order'           => 'ac70b9a3f24b5b657826b567057169a2,b13d55d1ff11d676253fa5e4b0517bd7,89dc5589bfebac1468e8823afd5a4861',
 				'answer_feedback'        => 'Some feedback',
+				'hide_answer_feedback'   => '',
 			]
 		);
 
@@ -235,9 +236,10 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 				'editable'   => true,
 				'categories' => [],
 				'options'    => [
-					'grade'          => 2,
-					'answerFeedback' => 'Some feedback',
-					'randomOrder'    => false,
+					'grade'              => 2,
+					'answerFeedback'     => 'Some feedback',
+					'randomOrder'        => false,
+					'hideAnswerFeedback' => '',
 				],
 				'answer'     => [
 					'answers' => [

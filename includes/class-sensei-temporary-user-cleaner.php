@@ -6,7 +6,7 @@
  *
  * @package sensei-lms
  *
- * @since $$next-version$$
+ * @since 4.11.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @author Automattic
  *
- * @since $$next-version$$
+ * @since 4.11.0
  * @package Core
  */
 class Sensei_Temporary_User_Cleaner {
@@ -26,7 +26,7 @@ class Sensei_Temporary_User_Cleaner {
 	/**
 	 * Instance of singleton.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @var self
 	 */
@@ -35,7 +35,7 @@ class Sensei_Temporary_User_Cleaner {
 	/**
 	 * Fetches an instance of the class.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @return self
 	 */
@@ -54,7 +54,7 @@ class Sensei_Temporary_User_Cleaner {
 	/**
 	 * Add hooks to schedule cleaning job..
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'maybe_schedule_cron_jobs' ], 101 );
@@ -65,7 +65,7 @@ class Sensei_Temporary_User_Cleaner {
 	/**
 	 * Attach cleaning job to cron.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 */
 	public function maybe_schedule_cron_jobs() {
@@ -77,7 +77,7 @@ class Sensei_Temporary_User_Cleaner {
 	/**
 	 * Remove guest and preview users who have not been active within last week.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 */
 	public function clean_inactive_guest_users() {

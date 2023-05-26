@@ -42,6 +42,38 @@ class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_progress( $progress ) );
 	}
 
+	public function testGet_WhenSeveralStatusesFound_ReturnsCourseProgress(): void {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Comments_Based_Course_Progress_Repository();
+		$this->create_status_comment( $user_id, $course_id, 'complete' );
+		$this->create_status_comment( $user_id, $course_id, 'in-progress' );
+
+		/* Act. */
+		$progress = $repository->get( $course_id, $user_id );
+
+		/* Assert. */
+		$expected = [
+			'user_id'   => $user_id,
+			'course_id' => $course_id,
+			'status'    => 'in-progress',
+		];
+		self::assertSame( $expected, $this->export_progress( $progress ) );
+	}
+
+	private function create_status_comment( $user_id, $course_id, $status ) {
+		$comment_id = wp_insert_comment(
+			[
+				'comment_post_ID'  => $course_id,
+				'user_id'          => $user_id,
+				'comment_type'     => 'sensei_course_status',
+				'comment_approved' => $status,
+			]
+		);
+		return $comment_id;
+	}
+
 	public function testGet_WhenStatusNotFound_ReturnsNull(): void {
 		/* Arrange. */
 		$course_id  = $this->factory->course->create();

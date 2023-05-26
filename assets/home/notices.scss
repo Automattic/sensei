@@ -1,11 +1,9 @@
-
 .sensei-home {
 	&__notices {
 		margin-bottom: 20px;
 
 		.sensei-notice {
 			margin: 0 0 12px;
-			padding: 18px 24px;
 
 			&:last-child {
 				margin-bottom: 0;
@@ -15,40 +13,10 @@
 				display: none;
 			}
 
-			&__icon {
-				margin-top: 0;
-				align-self: center;
-			}
-
-			&__wrapper {
-				height: 100%;
-			}
-
-			&__content {
-				display: flex;
-				align-items: center;
-			}
-
 			.sensei-home {
 				&__link {
-					display: flex;
-					align-items: center;
-					height: 100%;
 					white-space: nowrap;
 				}
-			}
-
-			.button-secondary {
-				color: #155E65;
-				border-color: #43AF99;
-			}
-
-			.button {
-				margin-left: 20px;
-			}
-
-			.notice-dismiss {
-				margin-left: 18px;
 			}
 		}
 	}

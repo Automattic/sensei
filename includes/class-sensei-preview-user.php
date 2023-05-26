@@ -5,7 +5,7 @@
  * Handles operations related to teachers switching to a preview user.
  *
  * @package Sensei\Frontend
- * @since   $$next-version$$
+ * @since   4.11.0
  */
 
 /**
@@ -13,7 +13,7 @@
  *
  * @author  Automattic
  *
- * @since   $$next-version$$
+ * @since   4.11.0
  * @package Core
  */
 class Sensei_Preview_User {
@@ -30,6 +30,15 @@ class Sensei_Preview_User {
 	const SWITCH_OFF_ACTION = 'sensei-exit-student-preview';
 
 	/**
+	 * Email domain used for preview users.
+	 *
+	 * @since 4.14.0
+	 *
+	 * @var string
+	 */
+	const EMAIL_DOMAIN = 'preview.senseilms';
+
+	/**
 	 * Meta key for the associated preview user ID.
 	 * Used to link the original teacher and the preview user, in both directions.
 	 */
@@ -38,7 +47,7 @@ class Sensei_Preview_User {
 	/**
 	 * Preview user login name prefix.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 *
 	 * @var string
 	 */
@@ -47,7 +56,7 @@ class Sensei_Preview_User {
 	/**
 	 * Preview user class constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	public function __construct() {
 
@@ -58,7 +67,7 @@ class Sensei_Preview_User {
 	/**
 	 * Initialize preview user feature.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	public function init() {
 
@@ -66,7 +75,7 @@ class Sensei_Preview_User {
 		 * Enable or disable 'preview as student' feature.
 		 *
 		 * @hook sensei_feature_preview_students
-		 * @since $$next-version$$
+		 * @since 4.11.0
 		 *
 		 * @param {bool} $enable Enable feature. Default true.
 		 *
@@ -93,11 +102,11 @@ class Sensei_Preview_User {
 	 * @access private
 	 */
 	public function add_preview_user_filters() {
-		if ( $this->is_preview_user_active() ) {
+		if ( self::is_preview_user_active() ) {
 			add_filter( 'map_meta_cap', [ $this, 'allow_post_preview' ], 10, 4 );
 			add_filter( 'pre_get_posts', [ $this, 'count_unpublished_lessons' ], 10 );
 			add_filter( 'sensei_notice', [ $this, 'hide_notices' ], 10, 1 );
-			add_action( 'sensei_send_emails', '__return_false' );
+			add_filter( 'sensei_send_emails', '__return_false' );
 
 		}
 
@@ -106,7 +115,7 @@ class Sensei_Preview_User {
 	/**
 	 * Change the current user to the preview user if its set for the teacher.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 */
 	public function override_user() {
@@ -134,7 +143,7 @@ class Sensei_Preview_User {
 	/**
 	 * Create and switch to a preview user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 */
 	public function switch_to_preview_user() {
@@ -155,7 +164,7 @@ class Sensei_Preview_User {
 	/**
 	 * Switch back to original user and delete preview user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 */
 	public function switch_off_preview_user() {
@@ -173,7 +182,7 @@ class Sensei_Preview_User {
 	/**
 	 * Add switch to user link to admin bar.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar The WordPress Admin Bar object.
@@ -185,7 +194,7 @@ class Sensei_Preview_User {
 			return;
 		}
 
-		if ( $this->can_switch_to_preview_user( $course_id ) && ! $this->is_preview_user_active() ) {
+		if ( $this->can_switch_to_preview_user( $course_id ) && ! self::is_preview_user_active() ) {
 			$wp_admin_bar->add_node(
 				[
 					'id'     => self::SWITCH_ON_ACTION,
@@ -199,7 +208,7 @@ class Sensei_Preview_User {
 			);
 		}
 
-		if ( $this->is_preview_user_active() ) {
+		if ( self::is_preview_user_active() ) {
 			$wp_admin_bar->add_node(
 				[
 					'id'     => self::SWITCH_OFF_ACTION,
@@ -218,7 +227,7 @@ class Sensei_Preview_User {
 	/**
 	 * Enable admin bar for preview user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param bool $show Initial state.
@@ -226,7 +235,7 @@ class Sensei_Preview_User {
 	 * @return bool
 	 */
 	public function show_admin_bar_to_preview_user( $show ) {
-		if ( $this->is_preview_user_active() ) {
+		if ( self::is_preview_user_active() ) {
 			return true;
 		}
 
@@ -242,6 +251,28 @@ class Sensei_Preview_User {
 	 */
 	private function can_switch_to_preview_user( $course_id ) {
 		return Sensei_Course::can_current_user_edit_course( $course_id );
+	}
+
+	/**
+	 * Prevent emails related to the preview user from being dispatched via wp_mail.
+	 *
+	 * @access private
+	 * @since  4.14.0
+	 *
+	 * @param bool|null $return Null if we should send the email, a boolean if not.
+	 * @param array     $atts   Email attributes.
+	 * @return bool|null Null if we should send the email, a boolean if not.
+	 */
+	public static function skip_wp_mail( $return, $atts ) {
+		if ( self::is_preview_user_active() ) {
+			// If this e-mail is being dispatched while the current user is a previwe user, just... don't send it.
+			return false;
+		}
+		if ( Sensei_Temporary_User::should_block_email( $atts, self::EMAIL_DOMAIN ) ) {
+			// If this e-mail is being dispatched to a preview user, don't send it.
+			return false;
+		}
+		return $return;
 	}
 
 	/**
@@ -272,7 +303,7 @@ class Sensei_Preview_User {
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
-				'user_email'   => $user_name . '@preview.senseilms',
+				'user_email'   => $user_name . '@' . self::EMAIL_DOMAIN,
 				'display_name' => $display_name,
 				'last_name'    => $display_name,
 				'role'         => self::ROLE,
@@ -305,7 +336,7 @@ class Sensei_Preview_User {
 	/**
 	 * Create the Guest Student role if it does not exist.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	private function create_role() {
 		$role = get_role( self::ROLE );
@@ -370,7 +401,7 @@ class Sensei_Preview_User {
 	 *
 	 * @note This hook should only run when the preview user is active, it does not do checks on its own.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 *
 	 * @param WP_Query $query Lesson query.
@@ -449,7 +480,7 @@ class Sensei_Preview_User {
 	 *
 	 * @return bool
 	 */
-	private function is_preview_user_active() {
+	private static function is_preview_user_active() {
 		$user = wp_get_current_user();
 		return self::is_preview_user( $user );
 	}

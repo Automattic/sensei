@@ -72,6 +72,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		$this->register_submit_tracking_route();
 		$this->register_submit_features_route();
 		$this->register_complete_wizard_route();
+		$this->register_setup_wizard_settings();
 	}
 
 	/**
@@ -113,6 +114,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * Register /purpose endpoint.
 	 */
 	public function register_submit_purpose_route() {
+
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/purpose',
@@ -299,6 +301,64 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Register setup wizard user data option in the settings REST API endpoint.
+	 *
+	 * @since 4.11.2
+	 */
+	public function register_setup_wizard_settings() {
+
+		register_setting(
+			'options',
+			Sensei_Setup_Wizard::USER_DATA_OPTION,
+			[
+				'type'         => 'object',
+				'show_in_rest' => [
+					'schema' => [
+						'properties' => [
+							'features'  => $this->get_features_schema(),
+							'theme'     => $this->get_theme_schema(),
+							'purpose'   => $this->get_purpose_schema(),
+							'tracking'  => $this->get_tracking_schema(),
+							'__version' => [
+								'type'     => 'integer',
+								'required' => false,
+							],
+						],
+					],
+				],
+			]
+		);
+
+		add_filter( 'rest_pre_update_setting', [ $this, 'update_setup_wizard_settings' ], 10, 3 );
+	}
+
+	/**
+	 * Update setup wizard user data option when it's set via the REST API.
+	 * Ensures the option is complete with the default values if not set.
+	 *
+	 * @hooked rest_pre_update_setting
+	 * @access private
+	 *
+	 * @param bool   $updated Whether to override the default behavior for updating the
+	 *                        value of a setting.
+	 * @param string $name   Setting name (as shown in REST API responses).
+	 * @param mixed  $value  Updated setting value.
+	 */
+	public function update_setup_wizard_settings( $updated, $name, $value ) {
+		if ( Sensei_Setup_Wizard::USER_DATA_OPTION !== $name ) {
+			return $updated;
+		}
+		if ( ! empty( $value ) ) {
+			$default = Sensei_Setup_Wizard::instance()->get_wizard_user_data();
+			$value   = wp_parse_args( $value, $default );
+
+			update_option( Sensei_Setup_Wizard::USER_DATA_OPTION, $value );
+		}
+
+		return true;
+	}
+
+	/**
 	 * Register GET / endpoint for features step.
 	 *
 	 * @deprecated 4.8.0
@@ -402,10 +462,76 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 				'selected' => [
 					'description' => __( 'Slug of extensions to be installed.', 'sensei-lms' ),
 					'type'        => 'array',
+					'items'       => [
+						'type' => 'string',
+					],
 				],
 				'options'  => [
 					'description' => __( 'Sensei extensions.', 'sensei-lms' ),
 					'type'        => 'array',
+					'items'       => [
+						'type' => 'string',
+					],
+				],
+			],
+		];
+	}
+
+	/**
+	 * Get themes schema.
+	 *
+	 * @return array Schema object.
+	 */
+	public function get_theme_schema() {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'install_sensei_theme' => [
+					'description' => __( 'Whether user wants to install Sensei theme.', 'sensei-lms' ),
+					'type'        => 'boolean',
+				],
+			],
+		];
+	}
+
+	/**
+	 * Get purpose schema.
+	 *
+	 * @return array Schema object.
+	 */
+	public function get_purpose_schema() {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'selected' => [
+					'required' => true,
+					'type'     => 'array',
+					'items'    => [
+						'type' => 'string',
+						'enum' => self::PURPOSES,
+					],
+				],
+				'other'    => [
+					'required' => true,
+					'type'     => 'string',
+				],
+			],
+		];
+	}
+
+	/**
+	 * Get tracking schema.
+	 *
+	 * @return array Schema object.
+	 */
+	public function get_tracking_schema() {
+		return [
+			'required'   => false,
+			'type'       => 'object',
+			'properties' => [
+				'usage_tracking' => [
+					'description' => __( 'Usage tracking preference given by the site owner.', 'sensei-lms' ),
+					'type'        => 'boolean',
 				],
 			],
 		];
@@ -421,37 +547,9 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			'type'       => 'object',
 			'properties' => [
 				'features' => $this->get_features_schema(),
-				'purpose'  => [
-					'type'       => 'object',
-					'properties' => [
-						'selected' => [
-							'description' => __( 'Purposes selected by the site owner.', 'sensei-lms' ),
-							'type'        => 'array',
-						],
-						'other'    => [
-							'description' => __( 'Other free-text purpose.', 'sensei-lms' ),
-							'type'        => 'string',
-						],
-					],
-				],
-				'theme'    => [
-					'type'       => 'object',
-					'properties' => [
-						'install_sensei_theme' => [
-							'description' => __( 'Whether user wants to install Sensei theme.', 'sensei-lms' ),
-							'type'        => 'boolean',
-						],
-					],
-				],
-				'tracking' => [
-					'type'       => 'object',
-					'properties' => [
-						'usage_tracking' => [
-							'description' => __( 'Usage tracking preference given by the site owner.', 'sensei-lms' ),
-							'type'        => 'boolean',
-						],
-					],
-				],
+				'purpose'  => $this->get_purpose_schema(),
+				'theme'    => $this->get_theme_schema(),
+				'tracking' => $this->get_tracking_schema(),
 			],
 		];
 	}
