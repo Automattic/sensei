@@ -10,7 +10,7 @@
 /**
  * Stub to instantiate the MailPoet API object.
  *
- * @since $$next-version$$
+ * @since 4.13.0
  */
 class Sensei_MailPoet_API_Factory {
 	/**
@@ -41,7 +41,7 @@ class Sensei_MailPoet_API_Factory {
 /**
  * Stub to mock the MailPoet API object.
  *
- * @since $$next-version$$
+ * @since 4.13.0
  */
 class Sensei_MailPoetMockAPI_Test {
 	public $lists;

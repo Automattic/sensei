@@ -44,9 +44,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 		// Log when settings are updated by the user.
 		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 2 );
 
-		// Make sure we don't trigger queries if legacy options aren't loaded in pre-loaded options.
-		add_filter( 'alloptions', [ $this, 'no_special_query_for_legacy_options' ] );
-
 		// Mark settings section as visited on ajax action received.
 		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'mark_section_as_visited' ] );
 	}
@@ -180,19 +177,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Add legacy options to alloptions if they don't exist.
 	 *
 	 * @since 3.0.1
+	 * @deprecated 4.13.1
 	 *
 	 * @param array $alloptions All options that are preloaded by WordPress.
 	 *
 	 * @return array
 	 */
 	public function no_special_query_for_legacy_options( $alloptions ) {
-		if ( ! isset( $alloptions['woothemes-sensei_user_dashboard_page_id'] ) ) {
-			$alloptions['woothemes-sensei_user_dashboard_page_id'] = 0;
-		}
-
-		if ( ! isset( $alloptions['woothemes-sensei_courses_page_id'] ) ) {
-			$alloptions['woothemes-sensei_courses_page_id'] = 0;
-		}
+		_deprecated_function( __METHOD__, '4.13.1' );
 
 		return $alloptions;
 	}
@@ -341,7 +333,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'name'        => __( 'Course Archive Page', 'sensei-lms' ),
 			'description' => __( 'The page to use to display courses. If you leave this blank the default custom post type archive will apply.', 'sensei-lms' ),
 			'type'        => 'select',
-			'default'     => get_option( 'woothemes-sensei_courses_page_id', 0 ),
+			'default'     => 0,
 			'section'     => 'default-settings',
 			'required'    => 0,
 			'options'     => $pages_array,
@@ -351,7 +343,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'name'        => __( 'My Courses Page', 'sensei-lms' ),
 			'description' => __( 'The page to use to display the courses that a user is currently taking as well as the courses a user has complete.', 'sensei-lms' ),
 			'type'        => 'select',
-			'default'     => get_option( 'woothemes-sensei_user_dashboard_page_id', 0 ),
+			'default'     => 0,
 			'section'     => 'default-settings',
 			'required'    => 0,
 			'options'     => $pages_array,
@@ -361,7 +353,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'name'        => __( 'Course Completed Page', 'sensei-lms' ),
 			'description' => __( 'The page that is displayed after a student completes a course.', 'sensei-lms' ),
 			'type'        => 'select',
-			'default'     => get_option( 'woothemes-sensei_course_completed_page_id', 0 ),
+			'default'     => 0,
 			'section'     => 'default-settings',
 			'required'    => 0,
 			'options'     => $pages_array,

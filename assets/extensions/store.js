@@ -279,7 +279,6 @@ const selectors = {
 	),
 	getEntities: ( { entities }, entity ) => entities[ entity ],
 	getConnectionStatus: ( { connected } ) => connected,
-	getLayout: ( { layout } ) => layout,
 	getNextProcess: ( { queue } ) => queue[ 0 ] || null,
 	getError: ( { error } ) => error,
 };
@@ -296,7 +295,6 @@ const resolvers = {
 			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
 		} );
 
-		yield actions.setLayout( response.layout );
 		yield actions.setEntities( {
 			extensions: keyBy( response.extensions, 'product_slug' ),
 		} );

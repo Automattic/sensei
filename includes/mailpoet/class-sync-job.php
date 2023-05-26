@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Background Job to sync MailPoet list students with Sensei site courses and groups students.
  *
- * @since $$next-version$$
+ * @since 4.13.0
  */
 class Sync_Job extends \Sensei_Background_Job_Batch {
 	/**
