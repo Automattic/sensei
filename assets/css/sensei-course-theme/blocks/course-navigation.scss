@@ -9,7 +9,9 @@
 			list-style: none;
 			padding: 0;
 		}
+		padding-inline-start: 0;
 	}
+
 	&__modules {
 		display: flex;
 		gap:  24px;

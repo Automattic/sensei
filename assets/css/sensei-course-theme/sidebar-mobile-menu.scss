@@ -31,13 +31,14 @@ $breakpoint: 783px;
 		background: none;
 	}
 }
-
+// Desktop
 @media screen and (min-width: ($breakpoint)) {
 	.sensei-course-theme__sidebar-toggle {
 		display: none;
 	}
 }
 
+// Mobile
 @media screen and (max-width: ($breakpoint - 1)) {
 	.sensei-course-theme {
 
@@ -70,7 +71,7 @@ $breakpoint: 783px;
 			overscroll-behavior: contain;
 			display: flex;
 			flex-direction: column;
-			padding: 32px var(--content-padding);
+			padding: 32px var(--content-padding) !important;
 			transition: opacity 300ms;
 			scrollbar-gutter: stable both-edges;
 			pointer-events: none;
