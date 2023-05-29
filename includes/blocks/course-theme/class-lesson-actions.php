@@ -42,14 +42,16 @@ class Lesson_Actions {
 	}
 
 	/**
-	 * Renders complete lesson button.
+	 * Render Complete Lesson button.
 	 *
-	 * @param string $button_class Button class.
-	 * @param bool   $is_disabled  Whether it is disabled.
+	 * @param string $button_class     Button class.
+	 * @param bool   $is_outline_style Whether the button should be rendered using the outline style.
+	 * @param bool   $is_disabled      Whether it is disabled.
 	 *
 	 * @return string The complete lesson button.
 	 */
-	private function render_complete_lesson( string $button_class, bool $is_disabled ): string {
+	private function render_complete_lesson( string $button_class, bool $is_outline_style, bool $is_disabled ): string {
+		$button_style_class = $is_outline_style ? 'is-style-outline' : '';
 		$disabled_attribute = $is_disabled ? 'disabled' : '';
 
 		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
@@ -61,7 +63,7 @@ class Lesson_Actions {
 			<form data-id="complete-lesson-form" class="sensei-course-theme-lesson-actions__complete-lesson-form" method="POST" action="' . $permalink . '">
 				' . $nonce . '
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
-				<div class="wp-block-button is-style-outline">
+				<div class="wp-block-button ' . $button_style_class . '">
 					<button type="submit" data-id="complete-lesson-button" class="wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__complete ' . $button_class . '" ' . $disabled_attribute . '>
 						' . $text . '
 					</button>
@@ -185,7 +187,13 @@ class Lesson_Actions {
 
 			// Complete button.
 			if ( ! $is_pass_required ) {
-				$complete_lesson_button = $this->render_complete_lesson( 'is-secondary', $has_incomplete_prerequisite );
+				$is_outline_style = false;
+
+				if ( $render_quiz_button ) {
+					$is_outline_style = true;
+				}
+
+				$complete_lesson_button = $this->render_complete_lesson( 'is-secondary', $is_outline_style, $has_incomplete_prerequisite );
 				$actions[]              = $complete_lesson_button;
 			}
 
