@@ -53,14 +53,6 @@ body {
 
 /* Course Navigation */
 
-.sensei-lms-course-navigation {
-	&__modules,
-	&__lessons {
-		padding-inline-start: 0;
-	}
-}
-
-
 .sensei-lms-course-navigation-module__header {
 	padding-top: 0;
 }
@@ -202,10 +194,6 @@ body {
 .sensei-course-theme__header+.sensei-course-theme__columns > div:first-child.sensei-course-theme__sidebar {
 	border-radius: 0px;
 	border-width: 0px 1px 0px 0px;
-}
-
-.sensei-lms-course-navigation__modules {
-	padding-inline-start: 0;
 }
 
 .wp-block-post-content :is(h2, h3, h4, h5, h6) {
