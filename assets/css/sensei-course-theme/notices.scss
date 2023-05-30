@@ -4,6 +4,12 @@
 
 $mobile_break_point: 782px;
 
+.sensei-course-theme {
+	& > .sensei-message {
+		display: none;
+	}
+}
+
 .sensei-course-theme .sensei-lms-notice {
 	background-color: rgba(125, 125, 125, 0.08);
 	border-color: var(--border-color);
