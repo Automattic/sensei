@@ -187,7 +187,7 @@ class Sensei_PostTypes {
 		return array_filter(
 			$post_types,
 			function( $post_type ) {
-				return ! in_array( $post_type->name, self::SITEMAPS_EXCLUDED_PUBLIC_POST_TYPES , true );
+				return ! in_array( $post_type->name, self::SITEMAPS_EXCLUDED_PUBLIC_POST_TYPES, true );
 			}
 		);
 	}
