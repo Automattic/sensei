@@ -16,10 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <h1 class="alignwide sensei-content-title" style="font-size:clamp(3rem, 6vw, 4.5rem);line-height:1.15"><?php esc_html_e( 'Welcome to the Film Direction Course', 'sensei-lms' ); ?></h1>
 <!-- /wp:heading -->
 
-<!-- wp:spacer {"height":32} -->
-<div style="height:32px" aria-hidden="true" class="wp-block-spacer"></div>
-<!-- /wp:spacer -->
-
 <!-- wp:video {"align":"wide"} -->
 <figure class="wp-block-video alignwide"><video controls src="<?php echo esc_url( Sensei()->assets->get_image( 'patterns-video.mp4' ) ); ?>"></video></figure>
 <!-- /wp:video -->
