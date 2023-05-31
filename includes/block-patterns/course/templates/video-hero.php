@@ -186,8 +186,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link has-text-color" style="color:#ffffff"><?php esc_html_e( 'Contact Teacher', 'sensei-lms' ); ?></a></div>
 <!-- /wp:sensei-lms/button-contact-teacher --></div>
 <!-- /wp:group -->
-
-<!-- wp:spacer {"height":24} -->
-<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
-<!-- /wp:spacer --></div>
+</div>
 <!-- /wp:group -->
