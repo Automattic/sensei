@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Fix shortcodes being called in messages
