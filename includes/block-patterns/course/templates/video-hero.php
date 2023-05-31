@@ -155,10 +155,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <h2><?php esc_html_e( "Let's get started", 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->
 
-<!-- wp:spacer {"height":24} -->
-<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
-<!-- /wp:spacer -->
-
 <!-- wp:sensei-lms/course-progress /-->
 
 <!-- wp:sensei-lms/course-outline -->
