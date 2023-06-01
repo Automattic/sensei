@@ -24,4 +24,4 @@ function sensei_wordpress_seo_exclude_some_sensei_cpts( $is_excluded, $post_type
 	return $is_excluded;
 }
 
-add_filter( 'wpseo_sitemap_exclude_post_type', 'sensei_wordpress_seo_exclude_some_sensei_cpts', 10, 2 );
+add_filter( 'wpseo_sitemap_exclude_post_type', 'sensei_wordpress_seo_exclude_some_sensei_cpts', 20, 2 );
