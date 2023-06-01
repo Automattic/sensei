@@ -218,6 +218,8 @@ class Sensei_Course_Theme_Editor {
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/index.js', [ 'sensei-shared-blocks' ] );
 			Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
 			Sensei()->assets->enqueue_style( 'sensei-learning-mode-editor' );
+			Sensei()->assets->enqueue( 'sensei-email-editor-style', 'css/email-notifications/email-editor-style.css' );
+
 			Sensei_Course_Theme::instance()->enqueue_fonts();
 
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'course-theme/course-theme.editor.js' );

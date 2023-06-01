@@ -167,16 +167,16 @@ class Sensei_Emails {
 		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
 		add_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ) );
 
-		// Send
-		$send_email = true;
-
 		/**
 		 * Filter Sensei's ability to send out emails.
 		 *
 		 * @since 1.8.0
-		 * @param bool $send_email default true
+		 * @param bool $send_email Whether to send the email or not.
+		 * @param mixed $to The email address(es) to send the email to.
+		 * @param mixed $subject The subject of the email.
+		 * @param mixed $message The message of the email.
 		 */
-		if ( apply_filters( 'sensei_send_emails', $send_email, $to, $subject, $message ) ) {
+		if ( apply_filters( 'sensei_send_emails', true, $to, $subject, $message ) ) {
 
 			wp_mail( $to, $subject, $message, $headers, $attachments );
 

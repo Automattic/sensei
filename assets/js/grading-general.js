@@ -136,6 +136,7 @@ jQuery( document ).ready( function ( $ ) {
 					if ( $this.hasClass( 'multiple-choice' ) ) {
 						var user_answers = user_answer.split( '<br>' );
 						var correct_answers = correct_answer.split( '<br>' );
+
 						all_correct = true;
 
 						user_answers.forEach( function ( user_answer ) {
@@ -146,7 +147,10 @@ jQuery( document ).ready( function ( $ ) {
 							}
 						} );
 
-						if ( user_answers.length !== correct_answers.length ) {
+						if (
+							user_answers.length !==
+							correct_answers.length - 1
+						) {
 							all_correct = false;
 						}
 					}

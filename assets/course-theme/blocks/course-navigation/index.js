@@ -80,14 +80,14 @@ const sampleStructure = [
  */
 const Module = ( { title, lessons } ) => (
 	<section className="sensei-lms-course-navigation-module sensei-collapsible">
-		<header className="sensei-lms-course-navigation-module__header">
-			<div className="sensei-collapsible__toggle">
-				<div className="sensei-lms-course-navigation-module__title">
+		<div className="sensei-lms-course-navigation-module__header">
+			<button className="sensei-collapsible__toggle">
+				<h3 className="sensei-lms-course-navigation-module__title">
 					{ title }
-				</div>
+				</h3>
 				<ChevronUp className="sensei-lms-course-navigation-module__collapsible-icon" />
-			</div>
-		</header>
+			</button>
+		</div>
 		<ol className="sensei-lms-course-navigation-module__lessons sensei-collapsible__content">
 			{ lessons.map( ( lesson ) => (
 				<Lesson { ...lesson } key={ lesson.title } />
@@ -113,16 +113,22 @@ const Lesson = ( { title, quiz, status } ) => {
 		<li
 			className={ `sensei-lms-course-navigation-lesson status-${ status }` }
 		>
-			<span className="sensei-lms-course-navigation-lesson__link">
+			<a
+				className="sensei-lms-course-navigation-lesson__link"
+				href="#pseudo-link"
+			>
 				<StatusIcon className="sensei-lms-course-navigation-lesson__status" />
 				<span className="sensei-lms-href sensei-lms-course-navigation-lesson__title">
 					{ title }
 				</span>
-			</span>
+			</a>
 			{ quiz && (
-				<span className="sensei-lms-href sensei-lms-course-navigation-lesson__extra">
+				<a
+					className="sensei-lms-href sensei-lms-course-navigation-lesson__extra"
+					href="#pseudo-link"
+				>
 					{ __( 'Quiz', 'sensei-lms' ) }
-				</span>
+				</a>
 			) }
 		</li>
 	);

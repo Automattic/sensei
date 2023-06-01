@@ -142,7 +142,6 @@ class Sensei_Admin_Notices {
 		$transient_key = implode( '_', [ 'sensei_notices', Sensei()->version, determine_locale() ] );
 		$data          = get_transient( $transient_key );
 		$notices       = false;
-
 		// If the data is too old, fetch it again.
 		if ( $max_age && is_array( $data ) ) {
 			$age = time() - ( $data['_fetched'] ?? 0 );
@@ -236,32 +235,30 @@ class Sensei_Admin_Notices {
 			$notice['actions'] = [];
 		}
 
-		$notice_class = '';
-		if ( ! empty( $notice['style'] ) ) {
-			$notice_class = 'sensei-notice-' . $notice['style'];
-		}
+		$notice_classes   = [];
+		$notice_classes[] = 'sensei-notice--' . $notice['level'];
 
 		$is_dismissible       = $notice['dismissible'];
 		$notice_wrapper_extra = '';
 		if ( $is_dismissible ) {
 			wp_enqueue_script( 'sensei-dismiss-notices' );
-			$notice_class        .= ' is-dismissible';
+			$notice_classes[]     = 'is-dismissible';
 			$notice_wrapper_extra = sprintf( ' data-dismiss-action="sensei_dismiss_notice" data-dismiss-notice="%1$s" data-dismiss-nonce="%2$s"', esc_attr( $notice_id ), esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ) );
 		}
 		?>
-		<div class="notice sensei-notice <?php echo esc_attr( $notice_class ); ?>"
+		<div class="notice sensei-notice <?php echo esc_attr( implode( ' ', $notice_classes ) ); ?>"
 			<?php
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
 			echo $notice_wrapper_extra;
 			?>
 		>
 			<?php
+			echo '<div class="sensei-notice__content">';
 			if ( ! empty( $notice['icon'] ) ) {
 				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
 				echo Sensei()->assets->get_icon( $notice['icon'], 'sensei-notice__icon' );
 			}
-			echo '<div class="sensei-notice__wrapper">';
-			echo '<div class="sensei-notice__content">';
+			echo '<div>';
 			if ( ! empty( $notice['heading'] ) ) {
 				echo '<div class="sensei-notice__heading">';
 				echo wp_kses( $notice['heading'], self::ALLOWED_HTML );
@@ -413,6 +410,18 @@ class Sensei_Admin_Notices {
 						break 2;
 					}
 					break;
+
+				case 'date_range':
+					if ( ! isset( $condition['start_date'] ) && ! isset( $condition['end_date'] ) ) {
+						break;
+					}
+
+					if ( ! $this->condition_check_date_range( $condition['start_date'] ?? null, $condition['end_date'] ?? null ) ) {
+						$can_see_notice = false;
+						break 2;
+					}
+
+					break;
 			}
 		}
 
@@ -506,6 +515,8 @@ class Sensei_Admin_Notices {
 	/**
 	 * Check an "installed since" condition
 	 *
+	 * @since 4.10.0
+	 *
 	 * @param int|string $installed_since Time to check the installation time for.
 	 *
 	 * @return bool
@@ -519,6 +530,39 @@ class Sensei_Admin_Notices {
 			return false;
 		}
 		return $installed_at <= $installed_since;
+	}
+
+	/**
+	 * Check a date range condition.
+	 *
+	 * @since 4.14.0
+	 *
+	 * @param ?string $start_date_str Start date.
+	 * @param ?string $end_date_str   End date.
+	 *
+	 * @return bool
+	 */
+	private function condition_check_date_range( ?string $start_date_str, ?string $end_date_str ) : bool {
+		$now = new DateTime();
+
+		// Defaults to WP timezone, but can be overridden by passing string that includes timezone.
+		$start_date = $start_date_str ? date_create( $start_date_str, wp_timezone() ) : null;
+		$end_date   = $end_date_str ? date_create( $end_date_str, wp_timezone() ) : null;
+
+		// If the passed date strings are invalid, don't show the notice.
+		if ( false === $start_date || false === $end_date ) {
+			return false;
+		}
+
+		if ( $start_date && $now < $start_date ) {
+			return false;
+		}
+
+		if ( $end_date && $now > $end_date ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -614,6 +658,11 @@ class Sensei_Admin_Notices {
 				'type'         => 'user_cap',
 				'capabilities' => [ 'manage_options' ],
 			];
+		}
+
+		$notice_levels = [ 'error', 'warning', 'success', 'info' ];
+		if ( ! isset( $notice['level'] ) || ! in_array( $notice['level'], $notice_levels, true ) ) {
+			$notice['level'] = 'info';
 		}
 
 		if ( ! isset( $notice['dismissible'] ) ) {

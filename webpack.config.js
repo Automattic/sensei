@@ -35,6 +35,7 @@ const files = [
 	'js/admin/message-menu-fix.js',
 	'js/admin/meta-box-quiz-editor.js',
 	'js/admin/lesson-edit.js',
+	'js/admin/lesson-ai.js',
 	'js/admin/ordering.js',
 	'js/admin/sensei-notice-dismiss.js',
 	'js/admin/custom-navigation.js',
@@ -118,12 +119,16 @@ const files = [
 	'css/sensei-theme-blocks.scss',
 	'css/sensei-course-theme/sidebar-mobile-menu.scss',
 	'css/showcase-upsell.scss',
+	'css/senseilms-licensing.scss',
 	'course-theme/learning-mode.js',
 	'course-theme/course-theme.editor.js',
 	'course-theme/blocks/index.js',
 	'course-theme/themes/default-theme.scss',
 	'course-theme/learning-mode-templates/index.js',
 	'course-theme/learning-mode-templates/styles.scss',
+	'css/3rd-party/themes/course/learning-mode.scss',
+	'css/3rd-party/themes/divi/learning-mode.scss',
+	'css/3rd-party/themes/divi/learning-mode.editor.scss',
 ];
 
 function getName( filename ) {

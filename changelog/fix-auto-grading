@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix auto grading not working on the Grading page for multiple choice questions
