@@ -20,6 +20,7 @@ class Sensei_Course_List_Block {
 	public function __construct() {
 		add_filter( 'render_block', [ $this, 'maybe_render_login_form' ], 10, 2 );
 		add_filter( 'render_block_data', [ $this, 'maybe_change_inherited_to_true' ], 1 );
+		add_filter( 'render_block_data', [ $this, 'maybe_add_attributes_to_inner_blocks' ], 10, 3 );
 	}
 
 	/**
@@ -72,5 +73,52 @@ class Sensei_Course_List_Block {
 			$parsed_block['attrs']['query']['inherit'] = true;
 		}
 		return $parsed_block;
+	}
+
+	/**
+	 * Add an attribute in inner blocks inside post-template block to determine if they're in Query Loop block.
+	 *
+	 * @param array  $parsed_block The block to be rendered.
+	 * @param array  $source_block Unchanged source copy of the block to be rendered.
+	 * @param object $parent_block The parent block.
+	 *
+	 * @access private
+	 * @return array
+	 */
+	public function maybe_add_attributes_to_inner_blocks( $parsed_block, $source_block, $parent_block ) {
+		if (
+			'core/post-template' === $parsed_block['blockName'] &&
+			$parent_block &&
+			'core/query' === ( $parent_block->parsed_block['blockName'] ?? '' ) &&
+			'course' === ( $parent_block->parsed_block['attrs']['query']['postType'] ?? '' )
+		) {
+			$parsed_block['innerBlocks'] = $this->recursively_find_and_set_attribute_to_the_take_course_block( $parsed_block['innerBlocks'] );
+		}
+
+		return $parsed_block;
+	}
+
+	/**
+	 * Find and set isCourseListChild attribute to Take Course Button from inner blocks
+	 * to indicate if it's in Course List block.
+	 *
+	 * @param mixed $inner_blocks The inner blocks of the parsed block.
+	 *
+	 * @return array The inner blocks.
+	 */
+	private function recursively_find_and_set_attribute_to_the_take_course_block( $inner_blocks ) {
+		foreach ( $inner_blocks as $key => $inner_block ) {
+			if ( 'sensei-lms/button-take-course' === $inner_block['blockName'] ) {
+				if ( ! $inner_block['attrs'] ) {
+					$inner_blocks[ $key ]['attrs'] = [];
+				}
+				$inner_blocks[ $key ]['attrs']['isCourseListChild'] = true;
+				break;
+			} elseif ( ! empty( $inner_block['innerBlocks'] ) ) {
+				$inner_blocks[ $key ]['innerBlocks'] = $this->recursively_find_and_set_attribute_to_the_take_course_block( $inner_block['innerBlocks'] );
+			}
+		}
+
+		return $inner_blocks;
 	}
 }
