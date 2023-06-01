@@ -6,6 +6,11 @@ Here, we have 2 scripts and one Dockerfile that help preparing the release PR.
 
 Run it from the repository's root: `./scripts/release-pr.sh X.Y.Z`, where X.Y.Z is the version you're releasing.
 
+If you want to create the release not from `trunk`, specify the branch name:
+```
+./scripts/release-pr.sh X.Y.Z feature/branch
+```
+
 The script assumes, you have:
 
 - ~/.ssh - directory that contain all needed SSH configuration and keys for GitHub.
