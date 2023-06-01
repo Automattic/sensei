@@ -144,8 +144,25 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
-### 4.14.0 - 2023-05-10
+### 4.15.0 - 2023-06-01
+#### Security
+- Fix shortcodes being called in teacher's messages.
+- Remove private custom post types from sitemaps.
 
+#### Changed
+- Review the Learning mode default template typography, spacing and alignment.
+- Improve Global Style support in Learning mode templates.
+
+#### Fixed
+- Block triggering wp_mail for temporary users even on non-frontend context.
+- Don't re-create emails on plugin update.
+- Fix auto grading not working on the Grading page for multiple choice questions.
+- Fix blocks initialization.
+- Fix email body rendered in the front-end in some cases.
+- Fix Kadence blocks crashing lesson editor.
+- Fix MailPoet error when running job.
+
+### 4.14.0 - 2023-05-10
 #### Added
 - Ability to set conditions on admin notices based on a date range
 - Add disclamer with the reason that Sensei Pro can't be updated when license is not active
@@ -162,11 +179,9 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Removed unused calls to SenseiLMS.com for the old extensions page
 
 ### 4.13.1 - 2023-04-19
-
 #### Changed
 - Disable the "welcome" and "no progress" emails by default
 - Update MailPoet link to point to Lists
-- Improve plugin loading performance using pre-built class map
 
 #### Fixed
 - Astra not loading the Courses page content
@@ -177,17 +192,5 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Remove fallback to legacy options
 - Fix showing warning from module when admin email does not match any existing user and it has no author
 
-### 4.13.0 - 2023-03-30
-
-#### Added
-- Functionality to create MailPoet lists for all courses and groups, and to subscribe users to those lists.
-
-#### Changed
-- Modify screen reader text to be less verbose on module expand button, front-end 👏 @alexstine
-
-#### Fixed
-- Fix styling of notices on pages other than Sensei home and button output on Sensei home.
-- Missing aria-expanded attribute on front-end module expand button 👏 @alexstine
-- Only show the sensei_email template for the sensei emails.
-
-
+#### Change
+- Improve plugin loading performance using pre-built class map
