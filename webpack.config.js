@@ -126,6 +126,9 @@ const files = [
 	'course-theme/themes/default-theme.scss',
 	'course-theme/learning-mode-templates/index.js',
 	'course-theme/learning-mode-templates/styles.scss',
+	'css/3rd-party/themes/course/learning-mode.scss',
+	'css/3rd-party/themes/divi/learning-mode.scss',
+	'css/3rd-party/themes/divi/learning-mode.editor.scss',
 ];
 
 function getName( filename ) {
