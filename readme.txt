@@ -182,6 +182,7 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 #### Changed
 - Disable the "welcome" and "no progress" emails by default
 - Update MailPoet link to point to Lists
+- Improve plugin loading performance using pre-built class map
 
 #### Fixed
 - Astra not loading the Courses page content
@@ -191,6 +192,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Make the email post type private
 - Remove fallback to legacy options
 - Fix showing warning from module when admin email does not match any existing user and it has no author
-
-#### Change
-- Improve plugin loading performance using pre-built class map
