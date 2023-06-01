@@ -3,13 +3,13 @@
  * Adds additional compatibility with Yoast.
  *
  * @package 3rd-Party
- * @since $$next-version$$
+ * @since 4.15.0
  */
 
 /**
  * Overrides the shortcodes that Yoast loads.
  *
- * @since $$next-version$$
+ * @since 4.15.0
  *
  * @param bool   $is_excluded Whether the post type is excluded.
  * @param string $post_type The post type.
