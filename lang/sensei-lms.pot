@@ -2,16 +2,16 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 4.15.0\n"
+"Project-Id-Version: Sensei LMS 9.9.9\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-06-01T12:16:02+00:00\n"
+"POT-Creation-Date: 2023-06-02T11:44:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.7.1\n"
+"X-Generator: WP-CLI 2.8.0\n"
 "X-Domain: sensei-lms\n"
 
 #. Plugin Name of the plugin
@@ -1002,8 +1002,6 @@ msgid "Upgrade to Sensei Pro"
 msgstr ""
 
 #: includes/admin/home/help/class-sensei-home-help-provider.php:110
-#: tests/unit-tests/admin/home/help/test-class-sensei-home-help-provider.php:74
-#: tests/unit-tests/admin/home/help/test-class-sensei-home-help-provider.php:90
 msgid "Create a support ticket"
 msgstr ""
 
@@ -6035,7 +6033,6 @@ msgid "Manual"
 msgstr ""
 
 #: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:260
-#: tests/unit-tests/enrolment/test-class-sensei-course-manual-enrolment-provider.php:191
 msgid "Student manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS."
 msgstr ""
 
@@ -6044,18 +6041,14 @@ msgid "Student <strong>did not have</strong> course progress at the time of manu
 msgstr ""
 
 #: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:266
-#: tests/unit-tests/enrolment/test-class-sensei-course-manual-enrolment-provider.php:213
-#: tests/unit-tests/enrolment/test-class-sensei-course-manual-enrolment-provider.php:236
 msgid "Student <strong>did have</strong> course progress at the time of manual enrollment migration."
 msgstr ""
 
 #: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:269
-#: tests/unit-tests/enrolment/test-class-sensei-course-manual-enrolment-provider.php:214
 msgid "Manual enrollment <strong>was not provided</strong> to the student on legacy migration."
 msgstr ""
 
 #: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:271
-#: tests/unit-tests/enrolment/test-class-sensei-course-manual-enrolment-provider.php:237
 msgid "Manual enrollment <strong>was provided</strong> to the student on legacy migration."
 msgstr ""
 
@@ -6237,7 +6230,6 @@ msgstr ""
 
 #: includes/internal/emails/class-email-preview.php:194
 #: includes/internal/emails/generators/class-quiz-graded.php:89
-#: tests/unit-tests/internal/emails/generators/test-class-quiz-graded.php:97
 msgid "You Passed!"
 msgstr ""
 
@@ -6392,12 +6384,10 @@ msgid "Teacher Emails"
 msgstr ""
 
 #: includes/internal/emails/class-email-settings-tab.php:258
-#: tests/unit-tests/internal/emails/test-class-email-settings-tab.php:261
 msgid "\"Reply To\" Name"
 msgstr ""
 
 #: includes/internal/emails/class-email-settings-tab.php:266
-#: tests/unit-tests/internal/emails/test-class-email-settings-tab.php:267
 msgid "\"Reply To\" Address"
 msgstr ""
 
@@ -6418,7 +6408,6 @@ msgid "There were errors while recreating emails."
 msgstr ""
 
 #: includes/internal/emails/generators/class-quiz-graded.php:85
-#: tests/unit-tests/internal/emails/generators/test-class-quiz-graded.php:197
 msgid "You Did Not Pass"
 msgstr ""
 
