@@ -27,6 +27,10 @@ if [[ "$OS_TYPE" == "Darwin" ]]; then
 	#	define( 'SENSEI_LMS_VERSION', '4.15.0' ); // WRCS: DEFINED_VERSION.
 	sed -E -i '' "s/'SENSEI_LMS_VERSION', '[0-9]+\.[0-9]+\.[0-9]+/'SENSEI_LMS_VERSION', '$VERSION/" "$CURRENT_DIR/sensei-lms.php"
 
+	# Update version in the Stable Tag comment in readme.txt
+	# Stable tag: 4.15.0
+	sed -E -i '' "s/^Stable tag: [0-9]+\.[0-9]+\.[0-9]+/Stable tag: $VERSION/" "$CURRENT_DIR/readme.txt"
+
 
 	# Update first occurrence of version in package.json & package-lock.json
 	sed -i '' "s/^  \"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/  \"version\": \"$VERSION\"/g" "$CURRENT_DIR/package.json"
@@ -41,6 +45,9 @@ elif [[ "$OS_TYPE" == "Linux" ]]; then
 	#	define( 'SENSEI_LMS_VERSION', '4.15.0' ); // WRCS: DEFINED_VERSION.
 	sed -E -i'' "s/'SENSEI_LMS_VERSION', '[0-9]+\.[0-9]+\.[0-9]+/'SENSEI_LMS_VERSION', '$VERSION/" "$CURRENT_DIR/sensei-lms.php"
 
+	# Update version in the Stable Tag comment in readme.txt
+	# Stable tag: 4.15.0
+	sed -E -i'' "s/^Stable tag: [0-9]+\.[0-9]+\.[0-9]+/Stable tag: $VERSION/" "$CURRENT_DIR/readme.txt"
 
 	# Update first occurrence of version in package.json & package-lock.json
 	sed -i'' "s/^  \"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/  \"version\": \"$VERSION\"/g" "$CURRENT_DIR/package.json"
