@@ -750,7 +750,7 @@ class Sensei_Messages {
 			}
 		}
 
-		return strip_shortcodes( $title );
+		return $this->replace_brackets( $title );
 	}
 
 	/**
@@ -772,7 +772,24 @@ class Sensei_Messages {
 			}
 		}
 
-		return strip_shortcodes( $content );
+		return $this->replace_brackets( $content );
+	}
+
+	/**
+	 * Escape brackets to prevent shortcode loading in message content.
+	 * This approach is adopted because strip_shortcodes() does not work for escaped shortcodes.
+	 * For example, [shortcode] will be stripped but [[shortcode]] will become an active shortcode.
+	 *
+	 * @param  string $content Original message content.
+	 * @return string          Modified message content
+	 */
+	private function replace_brackets( $content ) {
+		$bracket_replaces = [
+			'[' => '&#91;',
+			']' => '&#93;',
+		];
+
+		return strtr( $content, $bracket_replaces );
 	}
 
 	/**

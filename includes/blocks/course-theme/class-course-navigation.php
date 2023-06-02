@@ -213,7 +213,7 @@ class Course_Navigation {
 				<div class="sensei-lms-course-navigation-module__header">
 					<button type="button" class="sensei-collapsible__toggle sensei-lms-course-navigation-module__button ' . $collapsed . '"
 						aria-controls="' . $content_id . '" aria-expanded="' . esc_attr( $is_current_module ? 'true' : 'false' ) . '">
-						<div class="sensei-lms-course-navigation-module__title">' . $title . '</div>
+						<h3 class="sensei-lms-course-navigation-module__title">' . $title . '</h3>
 						' . Sensei()->assets->get_icon( 'chevron-up', 'sensei-lms-course-navigation-module__collapsible-icon' ) . '
 					</button>
 				</div>
