@@ -34,7 +34,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Install dependencies.
-composer install && npm install
+composer install && npm ci
 
 # Disable commit signing.
 git config --global commit.gpgsign false
@@ -44,23 +44,39 @@ git switch -c "release/$NEXT_VERSION"
 
 echo "Replace next version tag"
 ./scripts/replace-next-version-tag.sh $NEXT_VERSION
-git add .
-git commit -m 'Replace next version tag'
+if [[ -n $(git status -s) ]]; then
+	git add .
+	git commit -m 'Replace next version tag'
+else
+  echo "There are no changes after next version tag replacement."
+fi
 
 echo "Update plugin version"
 update-version.sh $NEXT_VERSION
-git add .
-git commit -m 'Update plugin version'
+if [[ -n $(git status -s) ]]; then
+	git add .
+	git commit -m 'Update plugin version'
+else
+  echo "There are no changes after updating the version in plugin files."
+fi
 
 echo "Changlogger write"
 composer exec -- changelogger write
-git add .
-git commit -m 'Update chaneglog'
+if [[ -n $(git status -s) ]]; then
+	git add .
+	git commit -m 'Update chaneglog'
+else
+  echo "There are no changes after running changelogger."
+fi
 
 echo "Build translations"
 npm run build:assets && wp i18n make-pot --exclude=build,lib,vendor,node_modules,assets/vendor --headers='{"Last-Translator":null,"Language-Team":null,"Report-Msgid-Bugs-To":"https://wordpress.org/support/plugin/sensei-lms"}' . lang/sensei-lms.pot --allow-root
-git add .
-git commit -m 'Update translations'
+if [[ -n $(git status -s) ]]; then
+	git add .
+	git commit -m 'Update translations'
+else
+	echo "There are no changes after building translations."
+fi
 
 # Push all changes to GitHub
 git push --set-upstream origin "release/$NEXT_VERSION"
