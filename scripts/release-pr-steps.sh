@@ -85,4 +85,4 @@ git push --set-upstream origin "release/$NEXT_VERSION"
 gh auth login
 
 # Create PR.
-gh pr create --assignee @me --base trunk --draft --title "Release $NEXT_VERSION" --reviewer Automattic/nexus --label "[Type] Maintenance"
+gh pr create --assignee @me --base trunk --draft --title "Release $NEXT_VERSION" --reviewer Automattic/nexus --label "[Type] Maintenance" --label "No Changelog"
