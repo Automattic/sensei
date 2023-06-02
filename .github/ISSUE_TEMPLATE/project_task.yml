@@ -85,4 +85,4 @@ body:
       label: Resources
       description: Screenshots and/or link to related resources that help to describe the task.
     validations:
-      required: true
+      required: false
