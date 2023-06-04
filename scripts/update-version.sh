@@ -14,9 +14,14 @@ if ! [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     exit 1
 fi
 
+# Check if jq is installed. We use it to update the version in package.json and package-lock.json
+if ! command -v "jq" >/dev/null 2>&1; then
+    echo "jq is not installed. https://jqlang.github.io/jq/download/"
+fi
+
 CURRENT_DIR=$(pwd)
 OS_TYPE=$(uname -s)
-
+# sed arguments in different OS passed a bit differently.
 if [[ "$OS_TYPE" == "Darwin" ]]; then
     # You are on macOS
 
@@ -30,11 +35,6 @@ if [[ "$OS_TYPE" == "Darwin" ]]; then
 	# Update version in the Stable Tag comment in readme.txt
 	# Stable tag: 4.15.0
 	sed -E -i '' "s/^Stable tag: [0-9]+\.[0-9]+\.[0-9]+/Stable tag: $VERSION/" "$CURRENT_DIR/readme.txt"
-
-
-	# Update first occurrence of version in package.json & package-lock.json
-	sed -i '' "s/^  \"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/  \"version\": \"$VERSION\"/g" "$CURRENT_DIR/package.json"
-	sed -i '' "s/^  \"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/  \"version\": \"$VERSION\"/g" "$CURRENT_DIR/package-lock.json"
 elif [[ "$OS_TYPE" == "Linux" ]]; then
 	# You are on Linux
 
@@ -48,10 +48,16 @@ elif [[ "$OS_TYPE" == "Linux" ]]; then
 	# Update version in the Stable Tag comment in readme.txt
 	# Stable tag: 4.15.0
 	sed -E -i'' "s/^Stable tag: [0-9]+\.[0-9]+\.[0-9]+/Stable tag: $VERSION/" "$CURRENT_DIR/readme.txt"
-
-	# Update first occurrence of version in package.json & package-lock.json
-	sed -i'' "s/^  \"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/  \"version\": \"$VERSION\"/g" "$CURRENT_DIR/package.json"
-	sed -i'' "s/^  \"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/  \"version\": \"$VERSION\"/g" "$CURRENT_DIR/package-lock.json"
 else
     echo "Unsupported operating system"
 fi
+
+# Update package.json & package-lock.json
+jq ".version = \"$VERSION\"" "$CURRENT_DIR/package.json" > "$CURRENT_DIR/package.json.tmp" && \
+	mv "$CURRENT_DIR/package.json.tmp" "$CURRENT_DIR/package.json"
+
+jq ".version = \"$VERSION\"" "$CURRENT_DIR/package-lock.json" > "$CURRENT_DIR/package-lock.json.tmp" && \
+	mv "$CURRENT_DIR/package-lock.json.tmp" "$CURRENT_DIR/package-lock.json"
+
+jq ".\"\".version = \"$VERSION\"" "$CURRENT_DIR/package-lock.json" > "$CURRENT_DIR/package-lock.json.tmp" && \
+	mv "$CURRENT_DIR/package-lock.json.tmp" "$CURRENT_DIR/package-lock.json"

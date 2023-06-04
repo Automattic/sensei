@@ -8,7 +8,8 @@ RUN set -ex; \
         curl \
 		zip unzip \
 		zlib1g-dev libzip-dev \
-        git ssh; \
+        git ssh \
+		jq; \
     rm -rf /var/lib/apt/lists/*
 
 RUN eval `ssh-agent -s`
