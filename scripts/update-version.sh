@@ -52,12 +52,14 @@ else
     echo "Unsupported operating system"
 fi
 
-# Update package.json & package-lock.json
+# Update package.json.
 jq ".version = \"$VERSION\"" "$CURRENT_DIR/package.json" > "$CURRENT_DIR/package.json.tmp" && \
 	mv "$CURRENT_DIR/package.json.tmp" "$CURRENT_DIR/package.json"
 
+# Update package-lock.json: the first occurrence of version in the root object.
 jq ".version = \"$VERSION\"" "$CURRENT_DIR/package-lock.json" > "$CURRENT_DIR/package-lock.json.tmp" && \
 	mv "$CURRENT_DIR/package-lock.json.tmp" "$CURRENT_DIR/package-lock.json"
 
+# Update package-lock.json: the second occurrence of version.
 jq ".\"\".version = \"$VERSION\"" "$CURRENT_DIR/package-lock.json" > "$CURRENT_DIR/package-lock.json.tmp" && \
 	mv "$CURRENT_DIR/package-lock.json.tmp" "$CURRENT_DIR/package-lock.json"
