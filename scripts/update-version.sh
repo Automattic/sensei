@@ -61,5 +61,5 @@ jq ".version = \"$VERSION\"" "$CURRENT_DIR/package-lock.json" > "$CURRENT_DIR/pa
 	mv "$CURRENT_DIR/package-lock.json.tmp" "$CURRENT_DIR/package-lock.json"
 
 # Update package-lock.json: the second occurrence of version.
-jq ".\"\".version = \"$VERSION\"" "$CURRENT_DIR/package-lock.json" > "$CURRENT_DIR/package-lock.json.tmp" && \
+jq ".packages.\"\".version = \"$VERSION\"" "$CURRENT_DIR/package-lock.json" > "$CURRENT_DIR/package-lock.json.tmp" && \
 	mv "$CURRENT_DIR/package-lock.json.tmp" "$CURRENT_DIR/package-lock.json"
