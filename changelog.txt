@@ -1,5 +1,9 @@
 *** Changelog ***
 
+## 4.15.1 - 2023-06-06
+### Fixed
+- Fix editor block error when updating an email
+
 ## 4.15.0 - 2023-06-01
 ### Security
 - Fix shortcodes being called in teacher's messages.
