@@ -61,7 +61,10 @@ else
 fi
 
 echo "Changlogger write"
+# Write changelog.
 composer exec -- changelogger write
+# Copy changelog section in readme.
+./scripts/copy-changelog-to-readme.php
 if [[ -n $(git status -s) ]]; then
 	git add .
 	git commit -m 'Update chaneglog'
