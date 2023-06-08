@@ -73,6 +73,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$expected = [
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
+			'enrolled'           => 'Enrolled (0)',
 			'completions'        => 'Completed (0)',
 			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
@@ -91,6 +92,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 
 		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
 		$service->method( 'get_courses_average_grade' )->willReturn( 2 );
+		$service->method( 'get_total_enrollments' )->willReturn( 4 );
 
 		$course = $this->createMock( Sensei_Course::class );
 
@@ -111,6 +113,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$expected = [
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
+			'enrolled'           => 'Enrolled (4)',
 			'completions'        => 'Completed (1)',
 			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',

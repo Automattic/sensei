@@ -77,6 +77,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		}
 
 		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress( $all_course_ids );
+		$total_enrolled         = $this->reports_overview_service_courses->get_total_enrollments( $all_course_ids );
 
 		$columns = array(
 			'title'              => sprintf(
@@ -85,6 +86,11 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				esc_html( count( $all_course_ids ) )
 			),
 			'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
+			'enrolled'           => sprintf(
+				// translators: Placeholder value is the total average progress for all courses.
+				__( 'Enrolled (%d)', 'sensei-lms' ),
+				$total_enrolled
+			),
 			'completions'        => sprintf(
 			// translators: Placeholder value is the number of completed courses.
 				__( 'Completed (%d)', 'sensei-lms' ),
@@ -202,6 +208,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			array(
 				'title'              => $course_title,
 				'last_activity'      => $item->last_activity_date ? Sensei_Utils::format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
+				'enrolled'           => $this->reports_overview_service_courses->get_total_enrollments( [ $item->ID ] ),
 				'completions'        => $course_completions,
 				'average_progress'   => $average_course_progress,
 				'average_percent'    => $average_grade,
