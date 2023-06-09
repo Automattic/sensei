@@ -24,3 +24,17 @@ function sensei_jetpack_remove_shortcodes( $shortcodes ) {
 }
 
 add_filter( 'jetpack_shortcodes_to_include', 'sensei_jetpack_remove_shortcodes' );
+
+/**
+ * Overrides the post types that Jetpack loads in the sitemap.
+ *
+ * @since 4.15.0
+ *
+ * @param array $post_types Array of post types to include.
+ *
+ * @return array Revised array of post types to include.
+ */
+function sensei_jetpack_sitemap_post_types( $post_types ) {
+	return array_diff( $post_types, Sensei_PostTypes::SITEMAPS_EXCLUDED_PUBLIC_POST_TYPES );
+}
+add_filter( 'jetpack_sitemap_post_types', 'sensei_jetpack_sitemap_post_types' );

@@ -16,10 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <h1 class="alignwide sensei-content-title" style="font-size:clamp(3rem, 6vw, 4.5rem);line-height:1.15"><?php esc_html_e( 'Welcome to the Film Direction Course', 'sensei-lms' ); ?></h1>
 <!-- /wp:heading -->
 
-<!-- wp:spacer {"height":32} -->
-<div style="height:32px" aria-hidden="true" class="wp-block-spacer"></div>
-<!-- /wp:spacer -->
-
 <!-- wp:video {"align":"wide"} -->
 <figure class="wp-block-video alignwide"><video controls src="<?php echo esc_url( Sensei()->assets->get_image( 'patterns-video.mp4' ) ); ?>"></video></figure>
 <!-- /wp:video -->
@@ -159,10 +155,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <h2><?php esc_html_e( "Let's get started", 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->
 
-<!-- wp:spacer {"height":24} -->
-<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
-<!-- /wp:spacer -->
-
 <!-- wp:sensei-lms/course-progress /-->
 
 <!-- wp:sensei-lms/course-outline -->
@@ -186,8 +178,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link has-text-color" style="color:#ffffff"><?php esc_html_e( 'Contact Teacher', 'sensei-lms' ); ?></a></div>
 <!-- /wp:sensei-lms/button-contact-teacher --></div>
 <!-- /wp:group -->
-
-<!-- wp:spacer {"height":24} -->
-<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
-<!-- /wp:spacer --></div>
+</div>
 <!-- /wp:group -->
