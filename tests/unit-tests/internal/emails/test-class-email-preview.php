@@ -152,12 +152,22 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->assertStringContainsString( 'Welcome', $content );
 	}
 
-	public function testRenderPreview_WhenRenderingPage_RendersFromAddress() {
+	public function testRenderPreview_WhenRenderingPage_RendersFromInfo() {
 		/* Arrange. */
 		$this->login_as_admin();
 
 		$post_id       = $this->factory->email->create();
 		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
+
+		$this->email_sender
+			->expects( $this->once() )
+			->method( 'get_from_address' )
+			->willReturn( 'from@address.com' );
+
+		$this->email_sender
+			->expects( $this->once() )
+			->method( 'get_from_name' )
+			->willReturn( 'Sensei Form Name' );
 
 		$_GET['sensei_email_preview_id'] = $post_id;
 		$_REQUEST['_wpnonce']            = wp_create_nonce( 'preview-email-post_' . $post_id );
@@ -168,26 +178,8 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$content = ob_get_clean();
 
 		/* Assert. */
-		$this->assertStringContainsString( 'admin@example.org', $content );
-	}
-
-	public function testRenderPreview_WhenRenderingPage_RendersFromName() {
-		/* Arrange. */
-		$this->login_as_admin();
-
-		$post_id       = $this->factory->email->create();
-		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
-
-		$_GET['sensei_email_preview_id'] = $post_id;
-		$_REQUEST['_wpnonce']            = wp_create_nonce( 'preview-email-post_' . $post_id );
-
-		/* Act. */
-		ob_start();
-		$email_preview->render_preview();
-		$content = ob_get_clean();
-
-		/* Assert. */
-		$this->assertStringContainsString( 'Test Blog', $content );
+		$this->assertStringContainsString( 'Sensei Form Name', $content, 'Fail to render the from name' );
+		$this->assertStringContainsString( 'from@address.com', $content, 'Fail to render the from address' );
 	}
 
 	public function testRenderPreview_WhenRenderingPage_RendersAvatar() {
