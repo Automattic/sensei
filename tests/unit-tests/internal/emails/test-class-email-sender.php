@@ -324,4 +324,69 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( 'Reply-To: address_to_be_replied@gmail.com', $last_email->header );
 	}
 
+
+	public function testSendEmail_SetFromEmailName() {
+		$this->settings->set( 'email_from_name', 'Sensei From Name' );
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringContainsString( 'From: Sensei From Name <admin@example.org>', $last_email->header );
+	}
+
+	public function testSendEmail_SetFromEmailAddress() {
+		$this->settings->set( 'email_from_name', 'Sensei From Name' );
+		$this->settings->set( 'email_from_address', 'from_email@example.com' );
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringContainsString( 'From: Sensei From Name <from_email@example.com>', $last_email->header );
+	}
+
+
+	public function testSendEmail_WhenThereIsNoFromInfo_SetFromWithDefaultValues() {
+		$this->settings->set( 'email_from_name', '' );
+		$this->settings->set( 'email_from_address', '' );
+
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringContainsString( 'From: Test Blog <admin@example.org>', $last_email->header );
+	}
+
 }

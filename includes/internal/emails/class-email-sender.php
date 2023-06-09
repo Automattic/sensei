@@ -115,6 +115,9 @@ class Email_Sender {
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
 
+		add_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
+		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
+
 		foreach ( $replacements as $recipient => $replacement ) {
 			$subject = $this->get_email_subject( $email_post, $replacement );
 			$message = $this->get_email_body( $email_post, $replacement );
@@ -133,6 +136,44 @@ class Email_Sender {
 				sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
 			}
 		}
+
+		remove_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
+		remove_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
+	}
+
+
+	/**
+	 * Get from name for email.
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function get_from_name() {
+		$settings  = $this->settings->get_settings();
+		$from_name = $settings['email_from_name'] ?? '';
+
+		if ( empty( $from_name ) ) {
+			return wp_specialchars_decode( get_bloginfo( 'name' ) );
+		}
+
+		return wp_specialchars_decode( $from_name );
+	}
+
+	/**
+	 * Get from email address.
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function get_from_address() {
+		$settings     = $this->settings->get_settings();
+		$from_address = $settings['email_from_address'] ?? '';
+
+		if ( empty( $from_address ) ) {
+			return wp_specialchars_decode( get_bloginfo( 'admin_email' ) );
+		}
+
+		return wp_specialchars_decode( $from_address );
 	}
 
 	/**
