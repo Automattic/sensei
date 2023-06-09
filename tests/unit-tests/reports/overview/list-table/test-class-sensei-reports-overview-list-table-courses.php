@@ -75,7 +75,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'last_activity'      => 'Last Activity',
 			'enrolled'           => 'Enrolled (0)',
 			'completions'        => 'Completions (0)',
-			'completion_rate'    => 'Completion Rate (0%)',
+			'completion_rate'    => 'Completion Rate (N/A)',
 			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
 			'days_to_completion' => 'Days to Completion (0)',
