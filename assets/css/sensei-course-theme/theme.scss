@@ -1,10 +1,6 @@
 @import './blockbase-ponyfill';
 @import './global-styles';
 
-a {
-	color: var(--sensei-primary-color);
-}
-
 input, textarea {
 	font-size: inherit;
 }

@@ -1,9 +1,44 @@
 *** Changelog ***
 
+## 4.15.0 - 2023-06-01
+### Security
+- Fix shortcodes being called in teacher's messages.
+- Remove private custom post types from sitemaps.
+
+### Changed
+- Review the Learning mode default template typography, spacing and alignment.
+- Improve Global Style support in Learning mode templates.
+
+### Fixed
+- Block triggering wp_mail for temporary users even on non-frontend context.
+- Don't re-create emails on plugin update.
+- Fix auto grading not working on the Grading page for multiple choice questions.
+- Fix blocks initialization.
+- Fix email body rendered in the front-end in some cases.
+- Fix Kadence blocks crashing lesson editor.
+- Fix MailPoet error when running job.
+
+## 4.14.0 - 2023-05-10
+### Added
+- Ability to set conditions on admin notices based on a date range
+- Add disclamer with the reason that Sensei Pro can't be updated when license is not active
+- Add quiz generation using AI button in quiz block
+
+### Changed
+- Use non-deprecated attribute to load SVG icons.
+
+### Fixed
+- Don't send e-mails to Guest/Preview users
+- Fix PHP Warning with Divi when using Learning Mode Video theme
+- Fix Sensei admin notice styles
+- Missing email page template link on the editor
+- Removed unused calls to SenseiLMS.com for the old extensions page
+
 ## 4.13.1 - 2023-04-19
 ### Changed
 - Disable the "welcome" and "no progress" emails by default
 - Update MailPoet link to point to Lists
+- Improve plugin loading performance using pre-built class map
 
 ### Fixed
 - Astra not loading the Courses page content
@@ -13,9 +48,6 @@
 - Make the email post type private
 - Remove fallback to legacy options
 - Fix showing warning from module when admin email does not match any existing user and it has no author
-
-### Change
-- Improve plugin loading performance using pre-built class map
 
 ## 4.13.0 - 2023-03-30
 ### Added

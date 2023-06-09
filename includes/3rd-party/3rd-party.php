@@ -8,5 +8,7 @@
 // Require compatibility files.
 require_once dirname( __FILE__ ) . '/jetpack.php';
 require_once dirname( __FILE__ ) . '/woocommerce.php';
-require_once dirname( __FILE__ ) . '/divi.php';
 require_once dirname( __FILE__ ) . '/automatewoo/automatewoo.php';
+require_once dirname( __FILE__ ) . '/yoast.php';
+require_once dirname( __FILE__ ) . '/themes/divi.php';
+require_once dirname( __FILE__ ) . '/themes/course.php';

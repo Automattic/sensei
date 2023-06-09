@@ -116,14 +116,22 @@ class Email_Sender {
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
 
 		foreach ( $replacements as $recipient => $replacement ) {
-			wp_mail(
-				$recipient,
-				$this->get_email_subject( $email_post, $replacement ),
-				$this->get_email_body( $email_post, $replacement ),
-				$this->get_email_headers(),
-				null
-			);
-			sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
+			$subject = $this->get_email_subject( $email_post, $replacement );
+			$message = $this->get_email_body( $email_post, $replacement );
+
+			/*
+			 * For documentation of the filter check class-sensei-emails.php file.
+			 */
+			if ( apply_filters( 'sensei_send_emails', true, $recipient, $subject, $message ) ) {
+				wp_mail(
+					$recipient,
+					$subject,
+					$message,
+					$this->get_email_headers(),
+					null
+				);
+				sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
+			}
 		}
 	}
 
@@ -168,9 +176,8 @@ class Email_Sender {
 		);
 
 		the_post();
-
 		$templated_output = $this->get_templated_post_content( $placeholders );
-		wp_reset_postdata();
+		wp_reset_query(); // phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query -- We need to reset the global query object.
 
 		return CssInliner::fromHtml( $templated_output )
 			->inlineCss( $this->load_email_styles() )

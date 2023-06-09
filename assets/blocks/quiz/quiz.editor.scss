@@ -65,23 +65,70 @@ $gray-400: #ccc;
 		margin-top: $default-block-margin;
 		margin-bottom: $default-block-margin;
 
-		&::before, &::after {
+		&::before, & > span::before {
 			content: '';
 			flex: 1;
 			background-color: currentColor;
 			opacity: 0.5;
 			height: 1px;
+			flex-basis: 100%;
 		}
 
 		& > span {
-			font-size: $default-font-size;
-			position: relative;
-			text-transform: uppercase;
-			font-weight: 600;
-			font-family: $default-font;
-			opacity: 0.7;
-			border-radius: 4px;
-			padding: 6px 24px;
+			display: flex;
+			align-items: center;
+			flex-basis: 100%;
+			span {
+				font-size: 17px;
+				position: relative;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				font-weight: 600;
+				font-family: var( --wp--preset--font-family--heading );
+				border-radius: 4px;
+				padding: 6px 16px;
+				white-space: nowrap;
+			}
+		}
+
+		button.sensei-pro-ai-generate-questions-button {
+			height: auto;
+			&.upsell .button-text-content {
+				opacity: 0.7;
+			}
+			&:disabled {
+				stroke: #828282;
+				path {
+					fill: #828282;
+				}
+			}
+			&:hover:not(:disabled) {
+				&, .button-text-content {
+					background-color: var(--wp--preset--color--primary);
+					border-color: var(--wp--preset--color--button-border-hover);
+					color: var(--wp--preset--color--secondary);
+					stroke: var(--wp--preset--color--secondary);
+					path {
+						fill: var(--wp--preset--color--secondary);
+					}
+				}
+			}
+			color: var(--wp--preset--color--primary);
+			border-radius: 8px;
+			padding: 12px 16px 12px 18px;
+			border: 1px solid var(--wp--preset--color--primary);
+			box-shadow: none;
+			.button-text-content {
+				display: flex;
+				align-items: center;
+				text-transform: uppercase;
+				font-family: var( --wp--preset--font-family--heading );
+				font-size: 17px;
+				font-weight: 400;
+				letter-spacing: .04em;
+				word-spacing: 0.1em;
+				gap: 8px;
+			}
 		}
 	}
 

@@ -1,0 +1,23 @@
+.sensei-course-theme__header {
+	width: 100%;
+	max-width: unset;
+}
+
+.sensei-course-theme-header-content {
+	width: 100%;
+}
+
+.editor-styles-wrapper .block-editor-block-list__layout.is-root-container>*,
+.wp-block {
+	max-width: unset;
+	margin-left: unset !important;
+	margin-right: unset !important;
+}
+
+.editor-styles-wrapper .is-layout-constrained {
+	>.sensei-lesson-footer,
+	>.sensei-course-theme__post-pagination {
+		margin-left: unset !important;
+		margin-left: unset !important;
+	}
+}
