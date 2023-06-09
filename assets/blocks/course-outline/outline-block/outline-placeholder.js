@@ -3,6 +3,7 @@
  */
 import { BlockIcon } from '@wordpress/block-editor';
 import { Button, Placeholder } from '@wordpress/components';
+import { addAction, doAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -10,12 +11,16 @@ import { __ } from '@wordpress/i18n';
  */
 import settings from './index';
 
+const createCourseOutline = () => {
+	// eslint-disable-next-line no-console
+	console.log( 'Message from Sensei LMS' );
+};
+
 /**
  * Placeholder for empty Course Outline block.
  *
- * @param {Function} addBlock Add block
  */
-const OutlinePlaceholder = ( { addBlock } ) => (
+const OutlinePlaceholder = () => (
 	<Placeholder
 		className="wp-block-sensei-lms-course-outline__placeholder"
 		label={ __( 'Course Outline', 'sensei-lms' ) }
@@ -27,19 +32,25 @@ const OutlinePlaceholder = ( { addBlock } ) => (
 	>
 		<Button
 			isDefault
-			onClick={ () => addBlock( 'module' ) }
+			onClick={ () => doAction( 'sensei.courseOutline.blank' ) }
 			className="is-large"
 		>
-			{ __( 'Create a module', 'sensei-lms' ) }
+			{ __( 'Start with blank', 'sensei-lms' ) }
 		</Button>
 		<Button
 			isDefault
-			onClick={ () => addBlock( 'lesson' ) }
+			onClick={ () => doAction( 'sensei.courseOutline.ai' ) }
 			className="is-large"
 		>
-			{ __( 'Create a lesson', 'sensei-lms' ) }
+			{ __( 'Generate with AI', 'sensei-lms' ) }
 		</Button>
 	</Placeholder>
 );
 
 export default OutlinePlaceholder;
+
+addAction(
+	'sensei.courseOutline.blank',
+	'sensei-lms/course-outline',
+	createCourseOutline
+);
