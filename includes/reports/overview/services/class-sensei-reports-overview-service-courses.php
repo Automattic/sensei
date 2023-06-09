@@ -166,7 +166,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * Get total of enrollments
 	 *
 	 * @since  $$next-version$$
- 	 * @param array $course_ids Courses ids to filter by.
+	 * @param array $course_ids Courses ids to filter by.
 	 *
 	 * @return int total of enrollments
 	 */
