@@ -19,6 +19,7 @@ body,
 		}
 
 		&__placeholder-item {
+			margin: 0 0 20px;
 			padding: $item-padding $item-padding 0;
 
 			&.is-blank {
@@ -76,6 +77,7 @@ body,
 				display: flex;
 				flex: 1;
 				flex-wrap: wrap;
+				margin-bottom: 0;
 			}
 		}
 	}
