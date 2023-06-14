@@ -33,9 +33,9 @@ export const cleanAll = (): Buffer => {
  */
 export const configureSite = (): void => {
 	[
-		`wp rewrite structure /%postname%/`,
-		`wp rewrite flush`,
-		`wp theme activate course`,
+		`rewrite structure /%postname%/`,
+		`rewrite flush`,
+		`theme activate course`,
 	].forEach( cli );
 };
 

@@ -10,6 +10,7 @@ import StudentsPage from '@e2e/pages/admin/students/students';
 import { createCourse, createUser } from '@e2e/helpers/api';
 import type { User } from '@e2e/helpers/api';
 import { adminRole } from '@e2e/helpers/context';
+import { asAdmin } from '@e2e/helpers/api/contexts';
 
 test.describe.serial( 'Students Management', () => {
 	const COURSE_NAME = `Course #${ Math.ceil( Math.random() * 100 ) }`;
@@ -24,11 +25,14 @@ test.describe.serial( 'Students Management', () => {
 	// it is ensuring the browser is using a admin session.
 	test.use( adminRole() );
 
-	test.beforeAll( async ( { request } ) => {
-		student = await createUser( request, STUDENT );
-		course = await createCourse( request, {
-			title: COURSE_NAME,
-			lessons: [],
+	test.beforeAll( async ( { browser } ) => {
+		await asAdmin( browser, async ( request ) => {
+			student = await createUser( request, STUDENT );
+
+			course = await createCourse( request, {
+				title: COURSE_NAME,
+				lessons: [],
+			} );
 		} );
 	} );
 

@@ -1,7 +1,6 @@
 import { CourseContent } from '@e2e/factories/courses';
-import { APIRequestContext } from '@playwright/test';
 import { lessonSimple } from '../../factories/lesson';
-import { createApiContext } from './index';
+import { WpApiRequestContext } from './contexts';
 
 export type Course = {
 	title: string;
@@ -55,11 +54,9 @@ const toStructure = ( lesson: Lesson ) => ( {
 } );
 
 export const createCourse = async (
-	context: APIRequestContext,
+	api: WpApiRequestContext,
 	course: Course
 ): Promise< CourseResponse > => {
-	const api = await createApiContext( context );
-
 	const created = await api.post< CourseResponse >(
 		`/wp-json/wp/v2/courses`,
 		{
@@ -82,7 +79,7 @@ export const createCourse = async (
 
 	const createdLessons = await Promise.all(
 		newLessons.map( ( lesson ) => {
-			return updateLesson( context, {
+			return updateLesson( api, {
 				id: lesson.id,
 				status: 'publish',
 				content: lessonSimple(),
@@ -96,10 +93,9 @@ export const createCourse = async (
 	};
 };
 const updateLesson = async (
-	context: APIRequestContext,
+	api: WpApiRequestContext,
 	lesson: Lesson
 ): Promise< LessonResponse > => {
-	const api = await createApiContext( context );
 	return api.post< LessonResponse >(
 		`/wp-json/wp/v2/lessons/${ lesson.id }`,
 		{
@@ -111,13 +107,12 @@ const updateLesson = async (
 };
 
 export const createCourseCategory = async (
-	context: APIRequestContext,
+	wp: WpApiRequestContext,
 	category: CourseCategory
 ): Promise< CourseCategory > => {
 	const { name, description, slug } = category;
-	const api = await createApiContext( context );
 
-	return api.post( `/wp-json/wp/v2/course-category`, {
+	return wp.post( `/wp-json/wp/v2/course-category`, {
 		name,
 		description: description || `Some description for ${ name }`,
 		slug,
