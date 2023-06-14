@@ -21,7 +21,7 @@ const testCourseWithMode = ( courseMode: CourseMode ) =>
 
 		test( 'Student enrolls in course and completes all lessons.', async ( {
 			page,
-			course
+			course,
 		} ) => {
 			const coursePage = new CoursePage( page );
 			await page.goto( course.link );
@@ -54,7 +54,7 @@ const testCourseWithMode = ( courseMode: CourseMode ) =>
 
 		test( 'Student enrolls in course and completes all lessons #2.', async ( {
 			page,
-			course
+			course,
 		} ) => {
 			const coursePage = new CoursePage( page );
 			await page.goto( course.link );
