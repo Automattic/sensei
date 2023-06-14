@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Student_Completes_Lesson extends Email_Generators_Abstract {
 	/**
@@ -39,12 +39,19 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	const IDENTIFIER_NAME = 'student_completes_lesson';
 
 	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	const USAGE_TRACKING_TYPE = 'teacher-completed-lesson';
+
+	/**
 	 * Email_Generators_Abstract constructor.
 	 *
 	 * @param Email_Repository                     $repository Email_Repository instance.
 	 * @param Lesson_Progress_Repository_Interface $lesson_progress_repository Lesson progress repository.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.12.0
 	 *
 	 * @internal
 	 */
@@ -60,7 +67,7 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	 * Initialize the email hooks.
 	 *
 	 * @access public
-	 * @since $$next-version$$
+	 * @since 4.12.0
 	 *
 	 * @return void
 	 */

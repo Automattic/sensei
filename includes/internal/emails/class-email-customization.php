@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Email_Customization {
 
@@ -102,6 +102,21 @@ class Email_Customization {
 	private $preview;
 
 	/**
+	 * Email_Repository instance.
+	 *
+	 * @var Email_Repository
+	 */
+	public $repository;
+
+
+	/**
+	 * Email_Repository instance.
+	 *
+	 * @var Email_Page_Template
+	 */
+	private $page_template;
+
+	/**
 	 * Email_Customization constructor.
 	 *
 	 * Prevents other instances from being created outside of `self::instance()`.
@@ -111,19 +126,20 @@ class Email_Customization {
 	 * @param Lesson_Progress_Repository_Interface $lesson_progress_repository Lesson_Progress_Repository_Interface instance.
 	 */
 	private function __construct( Sensei_Settings $settings, Sensei_Assets $assets, Lesson_Progress_Repository_Interface $lesson_progress_repository ) {
-		$repository               = new Email_Repository();
-		$this->patterns           = new Email_Patterns();
-		$this->post_type          = new Email_Post_Type();
-		$this->settings_menu      = new Settings_Menu();
-		$this->settings_tab       = new Email_Settings_Tab( $settings );
-		$this->blocks             = new Email_Blocks();
-		$this->email_sender       = new Email_Sender( $repository, $settings, $this->patterns );
-		$this->email_generator    = new Email_Generator( $repository, $lesson_progress_repository );
-		$this->list_table_actions = new Email_List_Table_Actions();
-		$this->preview            = new Email_Preview( $this->email_sender, $assets );
-
-		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $repository );
+		$this->repository           = new Email_Repository();
+		$template_repository        = new Email_Page_Template_Repository();
+		$this->patterns             = new Email_Patterns();
+		$this->post_type            = Email_Post_Type::instance();
+		$this->settings_menu        = new Settings_Menu();
+		$this->settings_tab         = new Email_Settings_Tab( $settings );
+		$this->blocks               = new Email_Blocks();
+		$this->email_sender         = new Email_Sender( $this->repository, $settings, $this->patterns );
+		$this->email_generator      = new Email_Generator( $this->repository, $lesson_progress_repository );
+		$this->list_table_actions   = new Email_List_Table_Actions();
+		$this->preview              = new Email_Preview( $this->email_sender, $assets );
+		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $this->repository, $template_repository );
 		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
+		$this->page_template        = new Email_Page_Template( $template_repository );
 	}
 
 	/**
@@ -169,6 +185,7 @@ class Email_Customization {
 		$this->recreate_emails_tool->init();
 		$this->patterns->init();
 		$this->preview->init();
+		$this->page_template->init();
 
 		add_action( 'init', [ $this, 'disable_legacy_emails' ] );
 	}
@@ -189,5 +206,14 @@ class Email_Customization {
 		remove_action( 'sensei_private_message_reply', [ Sensei()->emails, 'new_message_reply' ] );
 		remove_action( 'sensei_new_private_message', [ Sensei()->emails, 'teacher_new_message' ] );
 		remove_action( 'transition_post_status', [ Sensei()->teacher, 'notify_admin_teacher_course_creation' ] );
+
+		/**
+		 * Action done after disabling legacy emails.
+		 *
+		 * @hook sensei_disable_legacy_emails
+		 *
+		 * @since 4.12.0
+		 */
+		do_action( 'sensei_disable_legacy_emails' );
 	}
 }

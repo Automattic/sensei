@@ -1,7 +1,7 @@
 {
   "name": "sensei-lms",
   "title": "Sensei LMS",
-  "version": "4.11.2",
+  "version": "4.15.0",
   "description": "Sensei LMS",
   "author": "Automattic",
   "license": "GPL-2.0-or-later",
@@ -116,9 +116,10 @@
   },
   "scripts": {
     "archive": "composer archive --file=$npm_package_name --format=zip",
-    "build": "npm run build:assets && npm run archive",
+    "build": "npm run build:assets && npm run build:dependencies && npm run archive",
     "build:analyzer": "npm run --silent build:assets -- --json > node_modules/.cache/sensei-lms/build-stats.json && npx webpack-bundle-analyzer node_modules/.cache/sensei-lms/build-stats.json assets/dist",
     "build:assets": "rm -rf ./assets/dist && cross-env NODE_ENV=production npx calypso-build",
+    "build:dependencies": "composer install && composer install --no-dev --prefer-dist --optimize-autoloader --no-scripts",
     "build:combine-assets": "cross-env COMBINE_ASSETS=true npm run build:assets",
     "build:docs": "rm -rf hookdocs/ && jsdoc -c hookdoc-conf.json",
     "build:vendor": "cp ./node_modules/select2/dist/css/select2.min.css ./node_modules/select2/dist/js/select2.full.js ./node_modules/select2/dist/js/select2.full.min.js ./assets/vendor/select2",

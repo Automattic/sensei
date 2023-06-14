@@ -34,6 +34,14 @@ class Email_Sender {
 	 */
 	private $repository;
 
+
+	/**
+	 * Email template repository instance.
+	 *
+	 * @var Email_Template_Repository
+	 */
+	private $template_repository;
+
 	/**
 	 * Email settings instance.
 	 *
@@ -71,17 +79,18 @@ class Email_Sender {
 		 * @param string $email_name   The name of the email template.
 		 * @param array  $replacements The placeholder replacements.
 		 */
-		add_action( 'sensei_email_send', [ $this, 'send_email' ], 10, 2 );
+		add_action( 'sensei_email_send', [ $this, 'send_email' ], 10, 3 );
 	}
 	/**
 	 * Send email of type.
 	 *
 	 * @param string $email_name The email type.
 	 * @param array  $replacements The placeholder replacements.
+	 * @param string $usage_tracking_type Usage tracking type.
 	 *
 	 * @access private
 	 */
-	public function send_email( $email_name, $replacements ) {
+	public function send_email( $email_name, $replacements, $usage_tracking_type ) {
 		$email_post = $this->get_email_post_by_name( $email_name );
 
 		if ( ! $email_post ) {
@@ -94,7 +103,7 @@ class Email_Sender {
 		/**
 		 * Filter the email replacements.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.12.0
 		 * @hook sensei_email_replacements
 		 *
 		 * @param {Array}        $replacements The email replacements.
@@ -107,13 +116,22 @@ class Email_Sender {
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
 
 		foreach ( $replacements as $recipient => $replacement ) {
-			wp_mail(
-				$recipient,
-				$this->get_email_subject( $email_post, $replacement ),
-				$this->get_email_body( $email_post, $replacement ),
-				$this->get_email_headers(),
-				null
-			);
+			$subject = $this->get_email_subject( $email_post, $replacement );
+			$message = $this->get_email_body( $email_post, $replacement );
+
+			/*
+			 * For documentation of the filter check class-sensei-emails.php file.
+			 */
+			if ( apply_filters( 'sensei_send_emails', true, $recipient, $subject, $message ) ) {
+				wp_mail(
+					$recipient,
+					$subject,
+					$message,
+					$this->get_email_headers(),
+					null
+				);
+				sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
+			}
 		}
 	}
 
@@ -145,22 +163,24 @@ class Email_Sender {
 	 * @return string
 	 */
 	public function get_email_body( WP_Post $email_post, array $placeholders = [] ): string {
-		global $post;
 
-		$post = $email_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Necessary for the post title block to work.
-		setup_postdata( $post );
+		$post_id = 'revision' === $email_post->post_type ? $email_post->post_parent : $email_post->ID;
 
-		$post_content = $this->replace_placeholders(
-			do_blocks( $email_post->post_content ),
-			$placeholders
+		// phpcs:ignore WordPress.WP.DiscouragedFunctions.query_posts_query_posts -- We need to modify the global query object in order to render templates.
+		query_posts(
+			[
+				'posts_per_page' => 1,
+				'p'              => $post_id,
+				'post_type'      => Email_Post_Type::POST_TYPE,
+			]
 		);
 
-		wp_reset_postdata();
-
-		$templated_output = $this->get_templated_post_content( $post_content );
+		the_post();
+		$templated_output = $this->get_templated_post_content( $placeholders );
+		wp_reset_query(); // phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query -- We need to reset the global query object.
 
 		return CssInliner::fromHtml( $templated_output )
-			->inlineCss( $this->get_header_styles() )
+			->inlineCss( $this->load_email_styles() )
 			->render();
 	}
 
@@ -183,6 +203,24 @@ class Email_Sender {
 	}
 
 	/**
+	 * Load the emails styles that should overwrite the Gutebenrg styles
+	 *
+	 * @internal
+	 *
+	 * @return string
+	 */
+	private function load_email_styles(): string {
+		$css_dist_path = Sensei()->assets->dist_path( 'css/email-notifications/email-style.css' );
+
+		if ( file_exists( $css_dist_path ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
+			return file_get_contents( $css_dist_path );
+		}
+
+		return '';
+	}
+
+	/**
 	 * Get the email post by name meta.
 	 *
 	 * @param string $email_identifier The email's unique name.
@@ -198,122 +236,45 @@ class Email_Sender {
 
 		return $email_post;
 	}
-
 	/**
 	 * Get the email body rendered in the email template.
 	 *
-	 * @param string $email_content The placeholder replaced email content.
+	 * @param array $placeholders The placeholder replaced email content.
 	 *
 	 * @return string
 	 */
-	private function get_templated_post_content( $email_content ) {
+	private function get_templated_post_content( $placeholders ) {
 		global $sensei_email_data;
-
-		$sensei_email_data['email_body'] = $email_content;
 		$sensei_email_data['body_class'] = '';
+
+		// Force use the default template usage.
+		$template = do_blocks( get_block_template( Email_Page_Template::ID, 'wp_template' )->content );
+
+		$post_content = $this->replace_placeholders(
+			$template,
+			$placeholders
+		);
+
+		$post_content                    = $this->add_base_url_for_images( $post_content );
+		$sensei_email_data['email_body'] = $post_content;
 
 		ob_start();
 
-		require dirname( __FILE__ ) . '/../../../templates/emails/block-email-template.php';
+		require Sensei()->plugin_path() . 'templates/emails/block-email-template.php';
 
 		return ltrim( ob_get_clean() );
 	}
 
 	/**
-	 * Get the styles from the header.
+	 * Append the site URL on all images before send the email.
+	 *
+	 * @param string $content The email content that should be updated.
 	 *
 	 * @return string
 	 */
-	private function get_header_styles() {
-		remove_action( 'wp_body_open', 'wp_global_styles_render_svg_filters' );
+	private function add_base_url_for_images( $content ) {
 
-		// Enqueue block library styles in case it already isn't.
-		if ( wp_script_is( 'wp-block-library', 'registered' ) && ! wp_script_is( 'wp-block-library', 'enqueued' ) ) {
-			wp_enqueue_style( 'wp-block-library' );
-		}
-
-		ob_start() &&
-
-		get_header();
-
-		$header_content = ltrim( ob_get_clean() );
-
-		if ( ! $header_content ) {
-			return '';
-		}
-
-		$dom = new \DOMDocument();
-		libxml_use_internal_errors( true );
-		$dom->loadHTML( $header_content );
-		libxml_clear_errors();
-
-		$header_styles = '';
-		$stylesheets   = [];
-
-		foreach ( $dom->getElementsByTagName( 'link' ) as $style_node ) {
-			if ( 'stylesheet' === $style_node->attributes->getNamedItem( 'rel' )->value ) {
-				$stylesheets[] = $style_node->attributes->getNamedItem( 'href' )->value;
-			}
-		}
-
-		/**
-		 * Filter the allowed stylesheets to be included in the email.
-		 *
-		 * @since $$next-version$$
-		 * @hook sensei_email_allowed_stylesheets
-		 *
-		 * @param {string[]} $allowed_stylesheets Parts of paths to uniquely identify allowed stylesheets.
-		 * @param {string[]} $stylesheets         All the stylesheets found in the header.
-		 *
-		 * @return {string[]}
-		 */
-		$allowed_stylesheets = apply_filters( 'sensei_email_allowed_stylesheets', [ 'block-library/style.min.css' ], $stylesheets );
-
-		$stylesheets = array_filter(
-			$stylesheets,
-			function( $stylesheet ) use ( $allowed_stylesheets ) {
-				foreach ( $allowed_stylesheets as $allowed_stylesheet ) {
-					if ( false !== strpos( $stylesheet, $allowed_stylesheet ) ) {
-						return true;
-					}
-				}
-				return false;
-			}
-		);
-
-		/**
-		 * Filter the stylesheets to be included in the email.
-		 *
-		 * @since $$next-version$$
-		 * @hook sensei_email_stylesheets
-		 *
-		 * @param {string[]} $stylesheets Stylesheets to be included in the email.
-		 *
-		 * @return {string[]}
-		 */
-		$stylesheets = apply_filters( 'sensei_email_stylesheets', $stylesheets );
-
-		// Fetch the styles from the scripts.
-		foreach ( array_reverse( $stylesheets ) as $stylesheet ) {
-			$header_styles .= file_get_contents( $stylesheet ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Get css file contents.
-		}
-
-		// Fetch the internal styles from the <style></style> tags.
-		foreach ( $dom->getElementsByTagName( 'style' ) as $style_node ) {
-			$header_styles .= $style_node->nodeValue; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- PHP property.
-		}
-
-		/**
-		 * Filter the email styles.
-		 *
-		 * @since $$next-version$$
-		 * @hook sensei_email_styles
-		 *
-		 * @param {string} $header_styles The email header styles.
-		 *
-		 * @return {string}
-		 */
-		return apply_filters( 'sensei_email_styles', $header_styles );
+		return str_replace( 'src="/wp-content', 'src="' . site_url( '/' ) . 'wp-content', $content );
 	}
 
 	/**

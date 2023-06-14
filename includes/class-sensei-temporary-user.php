@@ -35,6 +35,8 @@ class Sensei_Temporary_User {
 		add_filter( 'sensei_learners_query', [ static::class, 'filter_learners_query' ] );
 		add_filter( 'sensei_count_statuses_args', [ static::class, 'filter_count_statuses' ] );
 		add_filter( 'sensei_check_for_activity', [ static::class, 'filter_sensei_activity' ], 10, 2 );
+		add_filter( 'pre_wp_mail', [ Sensei_Guest_User::class, 'skip_wp_mail' ], 10, 2 );
+		add_filter( 'pre_wp_mail', [ Sensei_Preview_User::class, 'skip_wp_mail' ], 10, 2 );
 	}
 
 	/**
@@ -118,6 +120,59 @@ class Sensei_Temporary_User {
 			",
 			$query
 		);
+	}
+
+	/**
+	 * Detect if the e-mail attributes relate to an e-mail from a temporary user.
+	 *
+	 * @access private
+	 * @since  4.14.0
+	 *
+	 * @param array  $atts   Email attributes.
+	 * @param string $email_domain The email domain to search for.
+	 * @return boolean Whether to block the email or not.
+	 */
+	public static function should_block_email( $atts, $email_domain ) {
+		$emails = $atts['to'];
+		if ( ! is_array( $emails ) ) {
+			$emails = explode( ',', $emails );
+		}
+		if ( ! empty( $atts['headers'] ) ) {
+			$headers = $atts['headers'];
+			if ( ! is_array( $headers ) ) {
+				// Explode the headers out, so this function can take
+				// both string headers and an array of headers.
+				$temp_headers = explode( "\n", str_replace( "\r\n", "\n", $headers ) );
+			} else {
+				$temp_headers = $headers;
+			}
+			// If it's actually got contents.
+			if ( ! empty( $temp_headers ) ) {
+				foreach ( $temp_headers as $name => $content ) {
+					if ( is_int( $name ) && str_contains( $content, ':' ) ) {
+						list ( $name, $content) = explode( ':', trim( $content ), 2 );
+					}
+
+					// Cleanup crew.
+					$name    = trim( $name );
+					$content = trim( $content );
+
+					if ( in_array( strtolower( $name ), [ 'from', 'cc', 'bcc', 'reply-to' ], true ) ) {
+						$emails = array_merge( (array) $emails, explode( ',', $content ) );
+					}
+				}
+			}
+		}
+		foreach ( $emails as $address ) {
+			if ( preg_match( '/(.*)<(.+)>/', $address, $matches ) && count( $matches ) === 3 ) {
+				$address = $matches[2];
+			}
+			if ( str_ends_with( $address, '@' . $email_domain ) ) {
+				// If this is an e-mail address for a temporary user, don't send it.
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

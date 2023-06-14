@@ -1,41 +1,46 @@
 @import '../../../shared/styles/collapsible-content';
 
-@mixin text-gray() {
-	opacity: 0.7;
-}
-
 .editor-styles-wrapper .sensei-lms-course-navigation,
 .sensei-lms-course-navigation {
 	&__modules, &__lessons, &-module__lessons {
-		&, li {
-			list-style: none;
-			margin: 0;
-		}
 
-		padding-left: 0;
 		margin: 0;
+		ol, li {
+			list-style: none;
+			padding: 0;
+		}
+		padding-inline-start: 0;
+	}
+
+	&__modules {
+		display: flex;
+		gap:  24px;
+		flex-direction: column;
 	}
 
 	&__modules + &__lessons {
-		border-top: 1px dotted var(--border-color, #1E1E1E);
-		margin-top: 6px;
-		padding-top: 6px;
+		margin-top: 24px;
 	}
+
+	&-module__lessons:not(.sensei-collapsed) {
+		margin-bottom: 8px;
+	}
+
 }
 
+.editor-styles-wrapper .sensei-lms-course-navigation-module,
 .sensei-lms-course-navigation-module {
 	.sensei-collapsible__toggle {
-		display: flex;
-		align-items: flex-start;
-		width: 100%;
-		margin: 12px 0;
-		padding: 0;
-		border: unset;
+		align-items: center;
 		background: unset !important;
-		color: inherit !important;
+		border: unset;
+		color: var(--sensei-text-color);
+		display: flex;
+		padding: 0;
+		width: 100%;
+		gap: 20px;
 
-		&:hover {
-			color: var(--sensei-primary-color) !important;
+		&:hover h3 {
 			text-decoration: underline;
 		}
 
@@ -51,11 +56,9 @@
 
 	&__title {
 		flex: 1;
-		font-weight: 600;
-		font-size: 18px;
-		line-height: 22px;
-		text-align: left;
+		font-size: 1.125rem;
 		margin: 0;
+		text-align: left;
 	}
 
 	&__button {
@@ -65,59 +68,61 @@
 	}
 
 	&__summary {
-		font-size: 13px;
-		@include text-gray;
-		visibility: hidden;
-		overflow: hidden;
+		font-size: 0.8125rem;
 		max-height: 0;
-		position: relative;
-		top: -12px;
+		overflow: hidden;
 		transition-delay: 150ms;
+		visibility: hidden;
+		margin-top: 0px;
 	}
 
 	&__lessons.sensei-collapsed ~ &__summary {
 		visibility: visible;
 		max-height: 50px;
+		margin-top: 4px;
 	}
 }
 
 .sensei-lms-course-navigation-lesson {
 	display: flex;
+	font-size: 0.875rem;
+	line-height: 1.214285714285714;
+	margin-top: 24px;
 	padding: 10px 1px;
+	text-decoration: none;
 
 	&__link {
-		flex: 1;
 		display: flex;
-		color: inherit;
+		flex: 1;
+		align-items: center;
 	}
 
 	&__title {
 		flex: 1;
-		padding: 0 12px;
-		font-size: 14px;
-		font-weight: 300;
+		padding: 0 8px;
 	}
 
 	&__extra {
-		padding-left: 6px;
 		margin-top: 1px; // Needed to compensate the font-size difference.
-		font-size: 13px;
-		@include text-gray;
+		padding-left: 6px;
 	}
 
 	&__status {
 		width: 12px;
 		height: 12px;
-		margin-top: 4px;
 		fill: currentColor;
 	}
 
 	&.status-locked,
 	&.status-not-started &__status {
-		@include text-gray;
+		opacity: 0.7;
 	}
 
 	&.current-lesson &__title {
 		font-weight: 700;
 	}
+}
+
+.sensei-lms-course-navigation > .sensei-lms-course-navigation__lessons > .sensei-lms-course-navigation-lesson:first-of-type {
+	margin-top: 0;
 }

@@ -1,5 +1,96 @@
 *** Changelog ***
 
+## 4.15.0 - 2023-06-01
+### Security
+- Fix shortcodes being called in teacher's messages.
+- Remove private custom post types from sitemaps.
+
+### Changed
+- Review the Learning mode default template typography, spacing and alignment.
+- Improve Global Style support in Learning mode templates.
+
+### Fixed
+- Block triggering wp_mail for temporary users even on non-frontend context.
+- Don't re-create emails on plugin update.
+- Fix auto grading not working on the Grading page for multiple choice questions.
+- Fix blocks initialization.
+- Fix email body rendered in the front-end in some cases.
+- Fix Kadence blocks crashing lesson editor.
+- Fix MailPoet error when running job.
+
+## 4.14.0 - 2023-05-10
+### Added
+- Ability to set conditions on admin notices based on a date range
+- Add disclamer with the reason that Sensei Pro can't be updated when license is not active
+- Add quiz generation using AI button in quiz block
+
+### Changed
+- Use non-deprecated attribute to load SVG icons.
+
+### Fixed
+- Don't send e-mails to Guest/Preview users
+- Fix PHP Warning with Divi when using Learning Mode Video theme
+- Fix Sensei admin notice styles
+- Missing email page template link on the editor
+- Removed unused calls to SenseiLMS.com for the old extensions page
+
+## 4.13.1 - 2023-04-19
+### Changed
+- Disable the "welcome" and "no progress" emails by default
+- Update MailPoet link to point to Lists
+- Improve plugin loading performance using pre-built class map
+
+### Fixed
+- Astra not loading the Courses page content
+- Fix auto grading not working and additionally throwing error for fill gap questions
+- Fix patterns wizard preview style
+- Fix the home email notification settings link
+- Make the email post type private
+- Remove fallback to legacy options
+- Fix showing warning from module when admin email does not match any existing user and it has no author
+
+## 4.13.0 - 2023-03-30
+### Added
+- Functionality to create MailPoet lists for all courses and groups, and to subscribe users to those lists.
+
+### Changed
+- Modify screen reader text to be less verbose on module expand button, front-end 👏 @alexstine
+
+### Fixed
+- Fix styling of notices on pages other than Sensei home and button output on Sensei home.
+- Missing aria-expanded attribute on front-end module expand button 👏 @alexstine
+- Only show the sensei_email template for the sensei emails.
+
+## 4.12.0 - 2023-03-29
+### Added
+- Default Email templates
+- Bulk actions to enable and disable Emails
+- Email to be sent to teacher when a reply is received to a private message
+- Email Settings screen inside Email Customization
+- Support for custom tabs on the Course page
+- Disable pro Emails by default and allow enabling from pro
+- Email sent to student on course completion
+- Email sent to student upon grading of quiz
+- Email to be sent to student when a lesson becomes available
+- Email to be sent to teacher when a student sends a new message
+- Email to notify student before course expires
+- Pattern as Email template and student course complete mail
+- Reply To setting for Email
+- Send Email to student when the teacher replies to a private message
+- Send Email to teacher when a student submits a quiz
+- Send Email to teacher when new course is assigned
+- Sending Email to teacher on student starting a course using GB Email template
+- Trash Emails on plugin uninstall
+
+### Changed
+- Open Install MailPoet page in same tab
+- Update language used in email functionality
+
+### Fixed
+- Fix student "Message Reply Received" email not sending from lesson or quiz page
+- Logged out users are redirected to login page if tries to access course completion page
+- Use dynamic pricing for Sensei Pro upsells
+
 ## 4.11.2 - 2023-03-07
 ### Added
 - Register setup wizard option in settings endpoint.

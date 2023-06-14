@@ -66,10 +66,15 @@ class Page_Actions {
 	 */
 	private function render_lesson_actions() {
 		// WordPress post pagination.
+
+		$wrapper_attributes = get_block_wrapper_attributes(
+			[ 'class' => 'sensei-course-theme__post-pagination' ]
+		);
+
 		$actions = wp_link_pages(
 			[
 				'echo'   => false,
-				'before' => '<div class="wp-block-sensei-lms-page-actions sensei-course-theme__post-pagination">',
+				'before' => '<div ' . $wrapper_attributes . '>',
 				'after'  => '</div>',
 			]
 		);

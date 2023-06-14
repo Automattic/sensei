@@ -13,6 +13,7 @@
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
 		"sirbrillig/phpcs-variable-analysis": "2.11.9",
 		"squizlabs/php_codesniffer": "3.7.1",
+		"symfony/polyfill-php80": "1.16.0",
 		"wp-coding-standards/wpcs": "2.3.0",
 		"yoast/phpunit-polyfills": "1.0.4"
 	},
@@ -20,8 +21,12 @@
 	"prefer-stable": true,
 	"autoload": {
 		"classmap": [
-			"third-party/"
-		]
+			"third-party/",
+			"includes/"
+		],
+        "files": [
+            "includes/sensei-functions.php"
+        ]
 	},
 	"autoload-dev": {
 		"classmap": [

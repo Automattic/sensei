@@ -308,7 +308,10 @@ class Sensei_Main {
 		$this->plugin_path           = trailingslashit( dirname( $this->main_plugin_file_name ) );
 		$this->template_url          = apply_filters( 'sensei_template_url', 'sensei/' );
 		$this->version               = isset( $args['version'] ) ? $args['version'] : null;
-		$this->install_version       = get_option( 'sensei-install-version' );
+
+		// Only set the install version if it is included in alloptions. This prevents a query on every page load.
+		$alloptions            = wp_load_alloptions();
+		$this->install_version = $alloptions['sensei-install-version'] ?? null;
 
 		// Initialize the core Sensei functionality
 		$this->init();
@@ -350,6 +353,7 @@ class Sensei_Main {
 		$this->initialize_cache_groups();
 		$this->initialize_global_objects();
 		$this->initialize_cli();
+		$this->initialize_3rd_party_compatibility();
 	}
 
 	/**
@@ -526,6 +530,7 @@ class Sensei_Main {
 			new Sensei_Exit_Survey();
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
+			SenseiLMS_Plugin_Updater::init();
 
 		} else {
 
@@ -572,6 +577,23 @@ class Sensei_Main {
 		if ( $email_customization_enabled ) {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
 		}
+		// MailPoet integration.
+		/**
+		 * Integrate MailPoet by adding lists for courses and groups.
+		 *
+		 * @hook  sensei_email_mailpoet_feature
+		 * @since 4.13.0
+		 *
+		 * @param {bool} $enable Enable feature. Default true.
+		 *
+		 * @return {bool} Whether to enable feature.
+		 */
+		if ( apply_filters( 'sensei_email_mailpoet_feature', true ) ) {
+			if ( class_exists( \MailPoet\API\API::class ) ) {
+				$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
+				new Sensei\Emails\MailPoet\Main( $mailpoet_api );
+			}
+		}
 	}
 
 	/**
@@ -585,6 +607,15 @@ class Sensei_Main {
 
 			new Sensei_CLI();
 		}
+	}
+
+	/**
+	 * Load the 3rd party compatibility tweaks.
+	 *
+	 * @since 4.13.1
+	 */
+	private function initialize_3rd_party_compatibility(): void {
+		require_once $this->resolve_path( 'includes/3rd-party/3rd-party.php' );
 	}
 
 	/**

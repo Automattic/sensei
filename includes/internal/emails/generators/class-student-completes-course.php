@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Student_Completes_Course extends Email_Generators_Abstract {
 	/**
@@ -27,10 +27,17 @@ class Student_Completes_Course extends Email_Generators_Abstract {
 	const IDENTIFIER_NAME = 'student_completes_course';
 
 	/**
+	 * Identifier used in usage tracking.
+	 *
+	 * @var string
+	 */
+	const USAGE_TRACKING_TYPE = 'teacher-completed-course';
+
+	/**
 	 * Initialize the email hooks.
 	 *
 	 * @access public
-	 * @since $$next-version$$
+	 * @since 4.12.0
 	 *
 	 * @return void
 	 */

@@ -17,17 +17,18 @@ import courseContentMeta from './course-content.block.json';
 import courseThemeCourseProgressBarMeta from './course-theme-course-progress-bar.block.json';
 import courseThemeCourseProgressCounterMeta from './course-theme-course-progress-counter.block.json';
 import courseThemeLessonActionsMeta from './course-theme-lesson-actions.block.json';
-import courseThemeLessonModuleMeta from './course-theme-lesson-module.block.json';
 import courseThemeNoticesMeta from './course-theme-notices.block.json';
 import courseThemePostTitleMeta from './course-theme-post-title.block.json';
 import courseThemePrevNextLessonMeta from './course-theme-prev-next-lesson.block.json';
 import learningModeLessonPropertiesMeta from './learning-mode-lesson-properties.block.json';
-import courseTitleMeta from './course-title.block.json';
-import exitCourseMeta from './exit-course.block.json';
 import focusModeToggleMeta from './focus-mode-toggle.block.json';
 import pageActionsMeta from './page-actions.block.json';
 import sideBarToggleButtonMeta from './sidebar-toggle-button.block.json';
 import courseThemeLessonVideoMeta from './course-theme-lesson-video.block.json';
+import ExitCourseButton from './exit-course-button';
+
+import CourseTitle from './course-title';
+import moduleTitle from './module-title';
 
 const meta = {
 	category: 'theme',
@@ -39,23 +40,9 @@ const meta = {
 };
 
 export default [
-	{
-		...courseTitleMeta,
-		...meta,
-		title: __( 'Course Title', 'sensei-lms' ),
-		description: __(
-			'Display title of the course the current lesson or quiz belongs to.',
-			'sensei-lms'
-		),
-		edit: function CourseTitleEdit() {
-			const blockProps = useBlockProps();
-			return (
-				<span { ...blockProps }>
-					{ __( 'Course Title', 'sensei-lms' ) }
-				</span>
-			);
-		},
-	},
+	CourseTitle,
+	ExitCourseButton,
+	moduleTitle,
 	{
 		...courseThemeCourseProgressCounterMeta,
 		...meta,
@@ -123,11 +110,15 @@ export default [
 		edit() {
 			return (
 				<div className="sensei-course-theme-lesson-actions">
-					<div className="sensei-course-theme__button is-primary">
-						{ __( 'Take Quiz', 'sensei-lms' ) }
+					<div className="wp-block-button is-style-outline">
+						<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-secondary">
+							{ __( 'Complete Lesson', 'sensei-lms' ) }
+						</div>
 					</div>
-					<div className="sensei-course-theme__button is-secondary">
-						{ __( 'Complete Course', 'sensei-lms' ) }
+					<div className="wp-block-button">
+						<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-primary">
+							{ __( 'Take Quiz', 'sensei-lms' ) }
+						</div>
 					</div>
 				</div>
 			);
@@ -165,41 +156,6 @@ export default [
 				<div className="sensei-course-theme__focus-mode-toggle">
 					<DoubleChevronRight className="sensei-course-theme__focus-mode-toggle-icon" />
 				</div>
-			);
-		},
-	},
-	{
-		...exitCourseMeta,
-		...meta,
-		title: __( 'Exit Course', 'sensei-lms' ),
-		description: __(
-			'Exit Learning Mode and return to the course page.',
-			'sensei-lms'
-		),
-		edit: function ExitCourseEdit() {
-			const blockProps = useBlockProps( {
-				className: 'sensei-lms-href',
-			} );
-			return (
-				<span { ...blockProps }>
-					{ __( 'Exit Course', 'sensei-lms' ) }
-				</span>
-			);
-		},
-	},
-	{
-		...courseThemeLessonModuleMeta,
-		...meta,
-		title: __( 'Module Title', 'sensei-lms' ),
-		description: __(
-			'Display title of the module the current lesson belongs to.',
-			'sensei-lms'
-		),
-		edit: function ModuleTitleEdit() {
-			const blockProps = useBlockProps();
-
-			return (
-				<span { ...blockProps }>{ __( 'MODULE', 'sensei-lms' ) }</span>
 			);
 		},
 	},
@@ -256,14 +212,14 @@ export default [
 		apiVersion: 2,
 		edit: function EditPageActions() {
 			const blockProps = useBlockProps( {
-				className: 'sensei-quiz-pagination',
+				className: 'sensei-course-theme__post-pagination',
 			} );
 			return (
 				<div { ...blockProps }>
-					<div className="sensei-course-theme__post-pagination">
-						<span className="post-page-numbers current">1</span>
-						<span className="post-page-numbers">2</span>
-					</div>
+					<span className="post-page-numbers current">1</span>
+					<a href="#pseudo-link" className="post-page-numbers">
+						2
+					</a>
 				</div>
 			);
 		},

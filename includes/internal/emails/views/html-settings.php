@@ -3,7 +3,7 @@
  * File containing view for the tools page.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.12.0
  *
  * @var array              $options Array of Sensei settings and corresponding values.
  * @var array              $fields_to_display Array of Email settings to display.
@@ -58,11 +58,11 @@ $options           = isset( $options ) ? $options : [];
 				</p>
 				<div class="sensei-link-navigation">
 					<?php if ( is_plugin_active( 'mailpoet/mailpoet.php' ) ) : ?>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=mailpoet-settings' ) ); ?>" target="_blank">
-							<?php esc_html_e( 'MailPoet Settings', 'sensei-lms' ); ?>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=mailpoet-segments#/lists' ) ); ?>" target="_blank">
+							<?php esc_html_e( 'MailPoet Lists', 'sensei-lms' ); ?>
 						</a>
 					<?php else : ?>
-						<a href="<?php echo esc_url( admin_url( 'plugin-install.php?s=mailpoet&tab=search&type=term' ) ); ?>" target="_blank">
+						<a href="<?php echo esc_url( admin_url( 'plugin-install.php?s=mailpoet&tab=search&type=term' ) ); ?>">
 							<?php esc_html_e( 'Install MailPoet', 'sensei-lms' ); ?>
 						</a>
 						<a href="https://www.mailpoet.com/" target="_blank">
