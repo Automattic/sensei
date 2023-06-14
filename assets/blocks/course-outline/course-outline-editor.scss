@@ -1,14 +1,81 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '../../shared/styles/variables';
+
 $dark-gray: #1a1d20;
+$item-padding: 20px;
+
 body,
 .block-editor {
 	.wp-block-sensei-lms-course-outline {
 		padding: 0 1em;
 		margin: 0 -1em;
 
-		&__placeholder {
-			.components-button {
-				margin-right: 12px;
-				margin-bottom: 12px;
+		/* Placeholder */
+		&__placeholder-items {
+			@media (min-width: $break-small) {
+				display: flex;
+				gap: 12px;
+			}
+		}
+
+		&__placeholder-item {
+			padding: $item-padding $item-padding 0;
+
+			&.is-blank {
+				background-color: $gray-0;
+			}
+
+			&.is-ai {
+				background-color: $upsell;
+
+				> div:first-child {
+					display: flex;
+
+					.wp-block-sensei-lms-course-outline__placeholder-item-intro {
+						flex: 1 1;
+					}
+				}
+			}
+
+			&-intro {
+				font-size: 1.125rem;
+				line-height: 1.222222222222222;
+				margin: 0;
+				padding: 0 20px 0 0;
+			}
+
+			&-details {
+				font-size: 0.75rem;
+				line-height: 1.333333333333333;
+				padding-left: 20px;
+
+				li {
+					margin: 8px 0;
+				}
+			}
+
+			&-image {
+				display: block;
+			}
+
+			&-caption {
+				background-color: #fff;
+				display: block;
+				margin-left: -$item-padding;
+				margin-right: -$item-padding;
+				padding-top: 8px;
+				text-align: center;
+				width: calc(100% + 2 * $item-padding);
+
+				@media (min-width: $break-small) {
+					align-self: flex-end;
+				}
+			}
+
+			@media (min-width: $break-small) {
+				display: flex;
+				flex: 1;
+				flex-wrap: wrap;
 			}
 		}
 	}
