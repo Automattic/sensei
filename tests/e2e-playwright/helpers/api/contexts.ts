@@ -5,12 +5,13 @@ const NONCE_PATH = '/wp-admin/admin-ajax.php?action=rest-nonce';
 
 type RequestRunner = ( WpApiRequestContext ) => void;
 
-
 /**
- * Run callback over a separated browser context and destroying after the execution is complete, avoiding to mess the test context.
- * @param browser
- * @param callback
- * @returns
+ * Run callback over a separated browser context and destroying after the execution is complete,
+ * avoiding to mess the test context.
+ *
+ * @param browser The running browser instance.
+ * @param callback A callback function to run requests using the admin context
+ * @return Promise<void>
  */
 export const asAdmin = async (
 	browser: Browser,
