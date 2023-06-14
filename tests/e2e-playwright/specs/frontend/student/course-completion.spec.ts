@@ -19,10 +19,7 @@ const testCourseWithMode = ( courseMode: CourseMode ) =>
 		use( { courseMode } );
 		use( studentRole() );
 
-		test( 'Student enrolls in course and completes all lessons.', async ( {
-			page,
-			course,
-		} ) => {
+		test( 'Student enrolls in course and completes all lessons.', async ( { page, course } ) => {
 			const coursePage = new CoursePage( page );
 			await page.goto( course.link );
 
@@ -47,9 +44,35 @@ const testCourseWithMode = ( courseMode: CourseMode ) =>
 
 			// Course page indicates all lessons are completed.
 			await page.goto( course.link );
-			await expect(
-				page.locator( 'text=2 of 2 lessons completed (100%)' )
-			).toBeVisible();
+			await expect( page.locator( 'text=2 of 2 lessons completed (100%)' ) ).toBeVisible();
+		} );
+
+		test( 'Student enrolls in course and completes all lessons #2.', async ( { page, course } ) => {
+			const coursePage = new CoursePage( page );
+			await page.goto( course.link );
+
+			await coursePage.takeCourse.click();
+
+			// Can access first lesson content.
+			const [ lesson, lesson2 ] = course.lessons;
+			await page.goto( lesson.link );
+			const lessonPage = new LessonPage( page );
+
+			await expect( lessonPage.title ).toHaveText( lesson.title.raw );
+
+			// Completes first lesson.
+			await lessonPage.clickCompleteLesson();
+
+			// Second lesson is opened.
+			await expect( page ).toHaveURL( lesson2.link );
+			await expect( lessonPage.title ).toHaveText( lesson2.title.raw );
+
+			// Completes second lesson.
+			await lessonPage.clickCompleteLesson();
+
+			// Course page indicates all lessons are completed.
+			await page.goto( course.link );
+			await expect( page.locator( 'text=2 of 2 lessons completed (100%)' ) ).toBeVisible();
 		} );
 	} );
 
