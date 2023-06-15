@@ -335,6 +335,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 		$actual   = $instance->get_total_enrollments( [] );
 
+		/* Assert. */
 		self::assertSame( 0, $actual );
 	}
 	public function test_GetTotalTotalEnrollments_WhenThereIsSameStudentInDifferentCourses_ReturnSumOfEnrollments() {
