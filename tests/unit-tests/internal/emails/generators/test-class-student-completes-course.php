@@ -95,6 +95,66 @@ class Student_Completes_Course_Test extends \WP_UnitTestCase {
 		self::assertNotEmpty( $email_data['data']['test@a.com']['manage:students'] );
 	}
 
+	public function testGenerateEmail_WhenCalledByStudentCompletedCourseEventAndTeachersFilterHooked_CallsEmailSendingActionWithRightData() {
+		/* Arrange. */
+		$student_id = $this->factory->user->create(
+			[
+				'display_name' => 'Test Student',
+			]
+		);
+		$teacher1_id = $this->factory->user->create(
+			[
+				'user_email' => 'test@a.com',
+			]
+		);
+		$teacher2_id = $this->factory->user->create(
+			[
+				'user_email' => 'test@b.com',
+			]
+		);
+		$course     = $this->factory->course->create_and_get(
+			[
+				'post_title'  => 'Test Course',
+				'post_author' => $teacher1_id,
+			]
+		);
+
+		$this->manuallyEnrolStudentInCourse( $student_id, $course->ID );
+
+		( new Student_Completes_Course( $this->email_repository ) )->init();
+
+		$email_data = [
+			'name' => '',
+			'data' => null,
+		];
+
+		add_action(
+			'sensei_email_send',
+			function ( $email_name, $replacements ) use ( &$email_data ) {
+				$email_data['name'] = $email_name;
+				$email_data['data'] = $replacements;
+			},
+			10,
+			2
+		);
+
+		$teachers_filter = function ( $teachers, $course_id ) use ( $teacher2_id ) {
+			$teachers[] = $teacher2_id;
+			return $teachers;
+		};
+		add_filter( 'sensei_email_course_teachers', $teachers_filter, 10, 2 );
+
+		/* Act. */
+		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID );
+
+		/* Assert. */
+		self::assertArrayHasKey( 'test@a.com', $email_data['data'] );
+		self::assertArrayHasKey( 'test@b.com', $email_data['data'] );
+
+		/* Clean up. */
+		remove_filter( 'sensei_email_course_teachers', $teachers_filter, 10, 2 );
+	}
+
 	public function testGenerateEmail_WhenCalledByStudentUpdatedCourseEvent_DoesNotCallEmailIfCourseNotCompleted() {
 		/* Arrange. */
 		$student_id = $this->factory->user->create();

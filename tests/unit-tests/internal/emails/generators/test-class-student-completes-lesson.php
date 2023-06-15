@@ -145,13 +145,13 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		);
 		$course_id        = $factory->course->create(
 			[
-				'post_title' => 'Test Course',
+				'post_title'  => 'Test Course',
+				'post_author' => $teacher_id,
 			]
 		);
 		$lesson_id        = $factory->lesson->create(
 			[
 				'post_title'  => 'Test Lesson',
-				'post_author' => $teacher_id,
 				'meta_input'  => [
 					'_lesson_course' => $course_id,
 				],
@@ -200,6 +200,102 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 
 		/* Cleanup. */
 		remove_filter( 'sensei_email_send', $filter, 10 );
+		$factory->tearDown();
+	}
+
+	public function testStudentCompletedLessonMailToTeacher_LessonCompletedAndTeachersFilterHooked_CallsSendEmailFilterWithMathchingArguments() {
+		/* Arrange. */
+		$factory          = new \Sensei_Factory();
+		$student_id       = $factory->user->create(
+			[
+				'display_name' => 'Test Student',
+			]
+		);
+		$teacher1_id       = $factory->user->create(
+			[
+				'user_email' => 'test@a.com',
+			]
+		);
+		$teacher2_id       = $factory->user->create(
+			[
+				'user_email' => 'test@b.com',
+			]
+		);
+		$course_id        = $factory->course->create(
+			[
+				'post_title'  => 'Test Course',
+				'post_author' => $teacher1_id,
+			]
+		);
+		$lesson_id        = $factory->lesson->create(
+			[
+				'post_title'  => 'Test Lesson',
+				'meta_input'  => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+		$email_repository = $this->createMock( Email_Repository::class );
+
+		$lesson_progress = $this->createMock( Lesson_Progress::class );
+		$lesson_progress->method( 'get_status' )->willReturn( 'complete' );
+
+		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
+		$lesson_progress_repository->method( 'get' )->with( $lesson_id, $student_id )->willReturn( $lesson_progress );
+
+		$generator = new Student_Completes_Lesson( $email_repository, $lesson_progress_repository );
+
+		$teachers_filter = function( $teachers, $course_id ) use ( $teacher2_id ) {
+			$teachers[] = $teacher2_id;
+			return $teachers;
+		};
+		add_filter( 'sensei_email_course_teachers', $teachers_filter, 10, 2 );
+
+		$actual_data = [];
+		$filter      = function( $email, $options ) use ( &$actual_data ) {
+			$actual_data = [
+				'email'   => $email,
+				'options' => $options,
+			];
+		};
+		add_filter( 'sensei_email_send', $filter, 10, 2 );
+
+		/* Act. */
+		$generator->student_completed_lesson_mail_to_teacher( $student_id, $lesson_id );
+
+		/* Assert. */
+		$expected = [
+			'email'   => 'student_completes_lesson',
+			'options' => [
+				'test@a.com' => [
+					'student:id'          => $student_id,
+					'student:displayname' => 'Test Student',
+					'course:id'           => $course_id,
+					'course:name'         => 'Test Course',
+					'lesson:id'           => $lesson_id,
+					'lesson:name'         => 'Test Lesson',
+					'manage:students'     => esc_url(
+						admin_url( "admin.php?page=sensei_learners&course_id={$course_id}&lesson_id={$lesson_id}&view=learners" )
+					),
+				],
+				'test@b.com' => [
+					'student:id'          => $student_id,
+					'student:displayname' => 'Test Student',
+					'course:id'           => $course_id,
+					'course:name'         => 'Test Course',
+					'lesson:id'           => $lesson_id,
+					'lesson:name'         => 'Test Lesson',
+					'manage:students'     => esc_url(
+						admin_url( "admin.php?page=sensei_learners&course_id={$course_id}&lesson_id={$lesson_id}&view=learners" )
+					),
+				],
+			],
+		];
+		self::assertSame( $expected, $actual_data );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_email_send', $filter, 10 );
+		remove_filter( 'sensei_email_course_teachers', $teachers_filter, 10, 2 );
 		$factory->tearDown();
 	}
 }
