@@ -387,6 +387,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 		$actual   = $instance->get_total_enrollments( [ $course1_id, $course2_id ] );
 
+		/* Assert. */
 		self::assertSame( 2, $actual );
 	}
 
