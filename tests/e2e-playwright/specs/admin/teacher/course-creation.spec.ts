@@ -53,6 +53,11 @@ describe.parallel( 'Create Courses', () => {
 			'Lesson 1 in Module 1'
 		);
 
+		await coursesPage.addModuleWithLesson(
+			'Module 2',
+			'Lesson 1 in Module 2'
+		);
+
 		await coursesPage.submitForPreview();
 
 		const previewPage = await coursesPage.goToPreview();
