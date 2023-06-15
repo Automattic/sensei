@@ -334,6 +334,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 
 		/* Arrange. */
 		$instance = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
 		$actual   = $instance->get_total_enrollments( [] );
 
 		/* Assert. */
