@@ -45,8 +45,8 @@ describe.parallel( 'Create Courses', () => {
 		// Click "Start with default layout" button.
 		await wizardModal.startWithDefaultLayoutButton.click();
 
-		// Currently we saving the course status after the course wizard is closed, it moving the focus out of the course outline block.
-		await page.getByText( 'Draft Saved' ).isVisible();
+		// Currently we are saving the course status after the course wizard is closed, it moving the focus out of the course outline block.
+		await page.getByRole( 'button', { name: 'Save draft' } ).isVisible();
 
 		await coursesPage.addModuleWithLesson(
 			'Module 1',
