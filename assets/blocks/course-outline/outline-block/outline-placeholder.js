@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import aiOutlineImage from '../../../images/course-outline/ai.png';
 import settings from './index';
 import AiIcon from './ai-icon';
+import CheckIcon from '../../../icons/checked.svg';
 import SenseiProBadge from '../../../shared/components/sensei-pro-badge';
 
 /**
@@ -60,12 +61,14 @@ const OutlinePlaceholder = ( { addBlock } ) => {
 				</div>
 				<ul className="wp-block-sensei-lms-course-outline__placeholder-item-details">
 					<li>
+						<CheckIcon className="wp-block-sensei-lms-course-outline__placeholder-item-icon" />
 						{ __(
 							'AI tailored outline based on your content',
 							'sensei-lms'
 						) }
 					</li>
 					<li>
+						<CheckIcon className="wp-block-sensei-lms-course-outline__placeholder-item-icon" />
 						{ __(
 							'Access to all Sensei Pro features',
 							'sensei-lms'

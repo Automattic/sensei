@@ -11,6 +11,11 @@ body .editor-styles-wrapper,
 		margin: 0 -1em;
 
 		/* Placeholder */
+		&__placeholder .components-placeholder__instructions {
+			line-height: 21px;
+			margin-bottom: 16px;
+		}
+
 		&__placeholder-items {
 			.wp-block-sensei-lms-course-outline__placeholder-item {
 				margin: 0 0 20px;
@@ -22,6 +27,7 @@ body .editor-styles-wrapper,
 
 				&.is-ai {
 					background-color: $upsell;
+					color: #0E0A1A;
 
 					> div:first-child {
 						display: flex;
@@ -30,6 +36,23 @@ body .editor-styles-wrapper,
 
 						.wp-block-sensei-lms-course-outline__placeholder-item-intro {
 							flex: 1 1;
+						}
+					}
+
+					.wp-block-sensei-lms-course-outline__placeholder-item {
+						&-details {
+							list-style-type: none;
+							padding: 0;
+
+							li {
+								align-items: center;
+								display: flex;
+							}
+						}
+
+						&-icon {
+							height: 20px;
+							width: 20px;
 						}
 					}
 				}
@@ -56,6 +79,7 @@ body .editor-styles-wrapper,
 					font-size: 12px;
 					line-height: 1.333333333333333;
 					list-style-type: none;
+					margin-top: 0;
 					max-height: 103px; /* Height of ai.png */
 					max-width: 304px; /* Width of ai.png */
 					padding-left: 0;
