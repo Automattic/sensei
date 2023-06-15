@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Post_Type class.
+ * File containing the Course_Teachers_Trait class.
  *
  * @package sensei
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Trait Course_Teachers_Triat.
+ * Trait Course_Teachers_Trait.
  *
  * @internal
  *
