@@ -5,22 +5,31 @@ export const ADMIN: User = {
 	password: 'password',
 };
 
-export const GLOBAL_USERS: User[] = [
-	{
-		username: 'teacher',
-		email: 'teacher@teacher.com',
-		password: 'password',
-		roles: [ 'teacher' ],
-	},
-	{
-		username: 'student',
-		email: 'student@student.com',
-		password: 'password',
-	},
-	{
-		username: 'editor',
-		email: 'editor@student.com',
-		password: 'password',
-		roles: [ 'editor' ],
-	},
-];
+export const ADMIN_API: User = {
+	username: 'admin_api',
+	email: 'admin_api@adminapi.com',
+	password: 'password',
+	roles: [ 'administrator' ],
+};
+
+export const TEACHER: User = {
+	username: 'teacher',
+	email: 'teacher@teacher.com',
+	password: 'password',
+	roles: [ 'teacher' ],
+};
+
+export const STUDENT: User = {
+	username: 'student',
+	email: 'student@student.com',
+	password: 'password',
+};
+
+export const EDITOR: User = {
+	username: 'editor',
+	email: 'editor@student.com',
+	password: 'password',
+	roles: [ 'editor' ],
+};
+
+export const GLOBAL_USERS: User[] = [ TEACHER, STUDENT, EDITOR, ADMIN_API ];
