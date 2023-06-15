@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Student_Completes_Course extends Email_Generators_Abstract {
 
-	use Course_Teachers_Triat;
+	use Course_Teachers_Trait;
 
 	/**
 	 * Identifier of the email.

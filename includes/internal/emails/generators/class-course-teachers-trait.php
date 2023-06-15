@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since $$next-version$$
  */
-trait Course_Teachers_Triat {
+trait Course_Teachers_Trait {
 	/**
 	 * Get the teacher IDs for a given course.
 	 *

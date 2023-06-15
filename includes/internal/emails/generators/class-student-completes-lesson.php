@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Student_Completes_Lesson extends Email_Generators_Abstract {
 
-	use Course_Teachers_Triat;
+	use Course_Teachers_Trait;
 
 	/**
 	 * Lesson progress repository.
