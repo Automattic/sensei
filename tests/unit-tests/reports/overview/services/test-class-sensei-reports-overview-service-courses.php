@@ -345,7 +345,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$course1_id = $this->factory->course->create();
 		$course2_id = $this->factory->course->create();
 
-		//Add 2 lessons to the course
+		// Add 2 lessons to the course.
 		$lesson_course_1 = $this->factory->lesson->create(
 			[ 'meta_input' => [ '_lesson_course' => $course1_id ] ]
 		);
