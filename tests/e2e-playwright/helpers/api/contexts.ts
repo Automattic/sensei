@@ -69,8 +69,8 @@ export class WpApiRequestContext {
 		return this.context.post( '/wp-login.php', {
 			failOnStatusCode: true,
 			form: {
-				log: ADMIN_API.username,
-				pwd: ADMIN_API.password,
+				log: API.username,
+				pwd: API.password,
 			},
 		} );
 	}

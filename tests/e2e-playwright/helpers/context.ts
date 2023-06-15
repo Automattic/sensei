@@ -4,13 +4,7 @@
 import path from 'path';
 import type { APIRequestContext, Browser, Page } from '@playwright/test';
 import { User } from './api';
-import {
-	ADMIN,
-	ADMIN_API,
-	EDITOR,
-	STUDENT,
-	TEACHER,
-} from '@e2e/factories/users';
+import { ADMIN, API, EDITOR, STUDENT, TEACHER } from '@e2e/factories/users';
 
 const CONTEXT_DIR = path.resolve( __dirname, '../contexts' );
 
@@ -26,7 +20,7 @@ export const getContextByRole = ( userRole: string ): string =>
 	path.resolve( CONTEXT_DIR, `${ userRole }.json` );
 
 export const adminApiRole = (): Record< string, string > => ( {
-	storageState: getContextByRole( ADMIN_API.username ),
+	storageState: getContextByRole( API.username ),
 } );
 
 export const studentRole = (): Record< string, string > => ( {
