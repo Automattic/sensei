@@ -363,7 +363,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 	}
 
 
-	public function test_GetTotalTotalEnrollments_WhenThereIsStudentsInDifferentCourses_ReturnSumOfEnrollments() {
+	public function testGetTotalTotalEnrollments_WhenThereWereStudentsInDifferentCourses_ReturnsSumOfEnrollments() {
 
 		/* Arrange */
 		$user1_id = $this->factory->user->create();
