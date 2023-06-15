@@ -1,13 +1,20 @@
 import { User } from '@e2e/helpers/api';
 
-export const ADMIN: User = {
+export const SYSTEM_ADMIN: User = {
 	username: 'admin',
 	password: 'password',
 };
 
-export const ADMIN_API: User = {
-	username: 'admin_api',
-	email: 'admin_api@adminapi.com',
+export const API: User = {
+	username: 'api',
+	email: 'api@api.com',
+	password: 'password',
+	roles: [ 'administrator' ],
+};
+
+export const ADMIN: User = {
+	username: 'lms-administrator',
+	email: 'lms@lms.com',
 	password: 'password',
 	roles: [ 'administrator' ],
 };
@@ -32,4 +39,4 @@ export const EDITOR: User = {
 	roles: [ 'editor' ],
 };
 
-export const GLOBAL_USERS: User[] = [ TEACHER, STUDENT, EDITOR, ADMIN_API ];
+export const GLOBAL_USERS: User[] = [ ADMIN, TEACHER, STUDENT, EDITOR, API ];

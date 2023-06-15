@@ -4,7 +4,13 @@
 import path from 'path';
 import type { APIRequestContext, Browser, Page } from '@playwright/test';
 import { User } from './api';
-import { ADMIN } from '@e2e/factories/users';
+import {
+	ADMIN,
+	ADMIN_API,
+	EDITOR,
+	STUDENT,
+	TEACHER,
+} from '@e2e/factories/users';
 
 const CONTEXT_DIR = path.resolve( __dirname, '../contexts' );
 
@@ -19,20 +25,24 @@ const CONTEXT_DIR = path.resolve( __dirname, '../contexts' );
 export const getContextByRole = ( userRole: string ): string =>
 	path.resolve( CONTEXT_DIR, `${ userRole }.json` );
 
+export const adminApiRole = (): Record< string, string > => ( {
+	storageState: getContextByRole( ADMIN_API.username ),
+} );
+
 export const studentRole = (): Record< string, string > => ( {
-	storageState: getContextByRole( 'student' ),
+	storageState: getContextByRole( STUDENT.username ),
 } );
 
 export const teacherRole = (): Record< string, string > => ( {
-	storageState: getContextByRole( 'teacher' ),
+	storageState: getContextByRole( TEACHER.username ),
 } );
 
 export const adminRole = (): Record< string, string > => ( {
-	storageState: getContextByRole( 'admin' ),
+	storageState: getContextByRole( ADMIN.username ),
 } );
 
 export const editorRole = (): Record< string, string > => ( {
-	storageState: getContextByRole( 'editor' ),
+	storageState: getContextByRole( EDITOR.username ),
 } );
 
 export const useAdminContext = async (
