@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { APIRequestContext, request } from '@playwright/test';
-import { getContextByRole } from '../context';
 import { retry } from '@lifeomic/attempt';
-import { ADMIN } from '@e2e/factories/users';
+import { API } from '@e2e/factories/users';
+import { getContextByRole } from '../context';
 
 const NONCE_PATH = '/wp-admin/admin-ajax.php?action=rest-nonce';
 
@@ -17,7 +17,8 @@ type RequestRunner = ( WpApiRequestContext ) => void;
  */
 export const asAdmin = async ( callback: RequestRunner ): Promise< void > => {
 	const context = await request.newContext( {
-		baseURL: 'http://localhost:8889', //TODO: Get it from process.env
+		baseURL: 'http://localhost:8889',
+		storageState: getContextByRole( API.username ),
 	} );
 
 	await callback( new WpApiRequestContext( context ) );
@@ -26,7 +27,7 @@ export const asAdmin = async ( callback: RequestRunner ): Promise< void > => {
 
 /**
  *
- * Wrapper the Playwright ApiRequestContext to add the nonce on the requests
+ * Wrap the Playwright ApiRequestContext to add the nonce on the requests
  */
 export class WpApiRequestContext {
 	constructor( private context: APIRequestContext ) {}
@@ -68,8 +69,8 @@ export class WpApiRequestContext {
 		return this.context.post( '/wp-login.php', {
 			failOnStatusCode: true,
 			form: {
-				log: ADMIN.username,
-				pwd: ADMIN.password,
+				log: API.username,
+				pwd: API.password,
 			},
 		} );
 	}

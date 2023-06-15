@@ -13,6 +13,8 @@ import { adminRole } from '@e2e/helpers/context';
 import { asAdmin } from '@e2e/helpers/api/contexts';
 
 test.describe.serial( 'Students Management', () => {
+	test.use( adminRole() );
+
 	const COURSE_NAME = `Course #${ Math.ceil( Math.random() * 100 ) }`;
 
 	const STUDENT: User = {
@@ -23,7 +25,6 @@ test.describe.serial( 'Students Management', () => {
 	let student, course;
 
 	// it is ensuring the browser is using a admin session.
-	test.use( adminRole() );
 
 	test.beforeAll( async () => {
 		await asAdmin( async ( request ) => {
