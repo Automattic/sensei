@@ -87,18 +87,18 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			),
 			'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
 			'enrolled'           => sprintf(
-				// translators: Placeholder value is the total average progress for all courses.
+			// translators: Placeholder value is the total number of enrollments across all courses.
 				__( 'Enrolled (%d)', 'sensei-lms' ),
 				$total_enrolled
 			),
 
 			'completions'        => sprintf(
-				// translators: Placeholder value is the % of enrollments with completed course.
+			// translators: Placeholder value represents the total number of enrollments that have completed courses..
 				__( 'Completions (%s)', 'sensei-lms' ),
 				$total_completion
 			),
 			'completion_rate'    => sprintf(
-			// translators: Placeholder value is the % of enrollments with completed course.
+			// translators: Placeholder value represents the % of enrolled students that completed the course.
 				__( 'Completion Rate (%s)', 'sensei-lms' ),
 				$this->get_completion_rate( $total_enrolled, $total_completion )
 			),
