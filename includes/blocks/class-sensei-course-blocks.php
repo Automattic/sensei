@@ -126,7 +126,7 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 		wp_add_inline_script(
 			'sensei-single-course-blocks',
 			'window.sensei = window.sensei || {}; ' .
-			'window.sensei.aiCourseOutline = true;',
+			'window.sensei.aiCourseOutline = false;',
 			'before'
 		);
 
