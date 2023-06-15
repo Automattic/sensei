@@ -338,7 +338,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( 0, $actual );
 	}
-	public function test_GetTotalTotalEnrollments_WhenThereIsSameStudentInDifferentCourses_ReturnSumOfEnrollments() {
+	public function testGetTotalTotalEnrollments_WhenThereWereSameStudentsInDifferentCourses_ReturnsSumOfEnrollments() {
 
 		/* Arrange */
 		$user1_id   = $this->factory->user->create();
