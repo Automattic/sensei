@@ -1,28 +1,27 @@
-import { APIRequestContext, Browser } from '@playwright/test';
-import { adminRole } from '../context';
+/* eslint-disable no-console */
+import { APIRequestContext, request } from '@playwright/test';
+import { getContextByRole } from '../context';
+import { retry } from '@lifeomic/attempt';
+import { ADMIN } from '@e2e/factories/users';
 
 const NONCE_PATH = '/wp-admin/admin-ajax.php?action=rest-nonce';
 
 type RequestRunner = ( WpApiRequestContext ) => void;
 
 /**
- * Run callback over a separated browser context and destroying after the execution is complete,
+ * Run callback over a separated temporary context
  * avoiding to mess the test context.
  *
- * @param browser The running browser instance.
  * @param callback A callback function to run requests using the admin context
  * @return Promise<void>
  */
-export const asAdmin = async (
-	browser: Browser,
-	callback: RequestRunner
-): Promise< void > => {
-	const browserContext = await browser.newContext( adminRole() );
-	const context = browserContext.request;
+export const asAdmin = async ( callback: RequestRunner ): Promise< void > => {
+	const context = await request.newContext( {
+		baseURL: 'http://localhost:8889', //TODO: Get it from process.env
+	} );
 
 	await callback( new WpApiRequestContext( context ) );
 	await context.dispose();
-	return await browserContext.close();
 };
 
 /**
@@ -50,7 +49,11 @@ export class WpApiRequestContext {
 	}
 
 	private async makeRequest( data: Record< string, unknown > ) {
-		const nonce = await this.getNonce();
+		const nonce = await retry( () => this.getNonce(), {
+			handleError: async () => {
+				await this.refreshLogin();
+			},
+		} );
 
 		return {
 			failOnStatusCode: true,
@@ -59,5 +62,15 @@ export class WpApiRequestContext {
 			},
 			data,
 		};
+	}
+
+	private async refreshLogin() {
+		return this.context.post( '/wp-login.php', {
+			failOnStatusCode: true,
+			form: {
+				log: ADMIN.username,
+				pwd: ADMIN.password,
+			},
+		} );
 	}
 }

@@ -65,6 +65,7 @@
     "@babel/preset-env": "7.17.12",
     "@babel/runtime": "7.20.0",
     "@es-joy/jsdoccomment": "0.36.1",
+    "@lifeomic/attempt": "3.0.3",
     "@playwright/test": "1.28.0",
     "@svgr/webpack": "6.1.2",
     "@testing-library/dom": "7.30.3",

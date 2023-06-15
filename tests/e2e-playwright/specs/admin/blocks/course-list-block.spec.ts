@@ -33,9 +33,9 @@ describe( 'Courses List Block', () => {
 		},
 	];
 
-	beforeAll( async ( { browser } ) => {
+	beforeAll( async () => {
 		// Start to run request as admin
-		await asAdmin( browser, async ( api ) => {
+		await asAdmin( async ( api ) => {
 			for ( const course of courses ) {
 				const category = await createCourseCategory( api, {
 					name: course.category,
