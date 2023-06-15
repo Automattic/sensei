@@ -336,7 +336,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual   = $instance->get_total_enrollments( [] );
+		$actual = $instance->get_total_enrollments( [] );
 
 		/* Assert. */
 		self::assertSame( 0, $actual );
@@ -363,7 +363,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual   = $instance->get_total_enrollments( [ $course1_id, $course2_id ] );
+		$actual = $instance->get_total_enrollments( [ $course1_id, $course2_id ] );
 
 		/* Assert. */
 		self::assertSame( 2, $actual );
@@ -394,7 +394,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual   = $instance->get_total_enrollments( [ $course1_id, $course2_id ] );
+		$actual = $instance->get_total_enrollments( [ $course1_id, $course2_id ] );
 
 		/* Assert. */
 		self::assertSame( 2, $actual );
