@@ -97,7 +97,7 @@ class Student_Completes_Course_Test extends \WP_UnitTestCase {
 
 	public function testGenerateEmail_WhenCalledByStudentCompletedCourseEventAndTeachersFilterHooked_CallsEmailSendingActionWithRightData() {
 		/* Arrange. */
-		$student_id = $this->factory->user->create(
+		$student_id  = $this->factory->user->create(
 			[
 				'display_name' => 'Test Student',
 			]
@@ -112,7 +112,7 @@ class Student_Completes_Course_Test extends \WP_UnitTestCase {
 				'user_email' => 'test@b.com',
 			]
 		);
-		$course     = $this->factory->course->create_and_get(
+		$course      = $this->factory->course->create_and_get(
 			[
 				'post_title'  => 'Test Course',
 				'post_author' => $teacher1_id,

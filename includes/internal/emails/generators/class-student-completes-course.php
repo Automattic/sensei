@@ -97,7 +97,6 @@ class Student_Completes_Course extends Email_Generators_Abstract {
 			$emais_to_send[ $recipient ] = $email_replacements;
 		}
 
-
 		$this->send_email_action( $emais_to_send );
 	}
 }

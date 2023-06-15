@@ -151,8 +151,8 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		);
 		$lesson_id        = $factory->lesson->create(
 			[
-				'post_title'  => 'Test Lesson',
-				'meta_input'  => [
+				'post_title' => 'Test Lesson',
+				'meta_input' => [
 					'_lesson_course' => $course_id,
 				],
 			]
@@ -211,12 +211,12 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 				'display_name' => 'Test Student',
 			]
 		);
-		$teacher1_id       = $factory->user->create(
+		$teacher1_id      = $factory->user->create(
 			[
 				'user_email' => 'test@a.com',
 			]
 		);
-		$teacher2_id       = $factory->user->create(
+		$teacher2_id      = $factory->user->create(
 			[
 				'user_email' => 'test@b.com',
 			]
@@ -229,8 +229,8 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		);
 		$lesson_id        = $factory->lesson->create(
 			[
-				'post_title'  => 'Test Lesson',
-				'meta_input'  => [
+				'post_title' => 'Test Lesson',
+				'meta_input' => [
 					'_lesson_course' => $course_id,
 				],
 			]
