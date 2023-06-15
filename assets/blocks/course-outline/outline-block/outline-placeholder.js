@@ -9,7 +9,6 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import aiOutlineImage from '../../../images/course-outline/ai.png';
-import blankOutlineImage from '../../../images/course-outline/blank.png';
 import settings from './index';
 import AiIcon from './ai-icon';
 import SenseiProBadge from '../../../shared/components/sensei-pro-badge';
@@ -40,14 +39,10 @@ const OutlinePlaceholder = ( { addBlock } ) => {
 					<li>{ __( 'No starting point help', 'sensei-lms' ) }</li>
 					<li>{ __( 'General course outline', 'sensei-lms' ) }</li>
 				</ul>
-				<img
-					src={ window.sensei.pluginUrl + blankOutlineImage }
-					alt={ __(
-						'Illustration of two lessons in a course outline.',
-						'sensei-lms'
-					) }
-					className="wp-block-sensei-lms-course-outline__placeholder-item-image"
-				/>
+				<ul className="wp-block-sensei-lms-course-outline__placeholder-item-lessons">
+					<li>{ __( 'Lesson 1', 'sensei-lms' ) }</li>
+					<li>{ __( 'Lesson 2', 'sensei-lms' ) }</li>
+				</ul>
 				<figcaption className="wp-block-sensei-lms-course-outline__placeholder-item-caption">
 					{ __( 'Start with blank', 'sensei-lms' ) }
 				</figcaption>

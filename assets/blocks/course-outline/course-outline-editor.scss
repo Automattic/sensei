@@ -25,6 +25,8 @@ body .editor-styles-wrapper,
 
 					> div:first-child {
 						display: flex;
+						gap: 20px;
+						width: 100%;
 
 						.wp-block-sensei-lms-course-outline__placeholder-item-intro {
 							flex: 1 1;
@@ -36,7 +38,7 @@ body .editor-styles-wrapper,
 					font-size: 18px;
 					line-height: 1.222222222222222;
 					margin: 0;
-					padding: 0 20px 0 0;
+					padding: 0;
 				}
 
 				&-details {
@@ -47,6 +49,27 @@ body .editor-styles-wrapper,
 
 					li {
 						margin: 8px 0;
+					}
+				}
+
+				&-lessons {
+					font-size: 12px;
+					line-height: 1.333333333333333;
+					list-style-type: none;
+					max-height: 103px; /* Height of ai.png */
+					max-width: 304px; /* Width of ai.png */
+					padding-left: 0;
+					width: 100%;
+
+					li {
+						border: solid 1px $gray-5;
+						border-radius: 2px;
+						line-height: 20px;
+						padding: 20px;
+
+						&:first-child {
+							margin-bottom: 12px;
+						}
 					}
 				}
 
