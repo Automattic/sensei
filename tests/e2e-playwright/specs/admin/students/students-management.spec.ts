@@ -25,8 +25,8 @@ test.describe.serial( 'Students Management', () => {
 	// it is ensuring the browser is using a admin session.
 	test.use( adminRole() );
 
-	test.beforeAll( async ( { browser } ) => {
-		await asAdmin( browser, async ( request ) => {
+	test.beforeAll( async () => {
+		await asAdmin( async ( request ) => {
 			student = await createUser( request, STUDENT );
 
 			course = await createCourse( request, {

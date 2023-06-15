@@ -14,9 +14,9 @@ export const test = base.extend< {
 	courseMode: CourseMode;
 } >( {
 	courseMode: [ CourseMode.DEFAULT_MODE, { option: true } ],
-	course: async ( { browser, courseMode }, use ) => {
+	course: async ( { courseMode }, use ) => {
 		let course = null;
-		await asAdmin( browser, async ( api ) => {
+		await asAdmin( async ( api ) => {
 			course = await createCourse( api, buildCourse( courseMode ) );
 
 			await use( course );
