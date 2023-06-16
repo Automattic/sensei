@@ -37,8 +37,8 @@ const OutlinePlaceholder = ( { addBlock } ) => {
 					) }
 				</p>
 				<ul className="wp-block-sensei-lms-course-outline__placeholder-item-details">
-					<li>{ __( 'No starting point help', 'sensei-lms' ) }</li>
-					<li>{ __( 'General course outline', 'sensei-lms' ) }</li>
+					<li>{ __( 'Add Lessons and Modules', 'sensei-lms' ) }</li>
+					<li>{ __( 'Reorder and edit anytime', 'sensei-lms' ) }</li>
 				</ul>
 				<ul className="wp-block-sensei-lms-course-outline__placeholder-item-lessons">
 					<li>{ __( 'Lesson 1', 'sensei-lms' ) }</li>
