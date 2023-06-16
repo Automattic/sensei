@@ -145,7 +145,7 @@ class Email_Sender {
 	/**
 	 * Get from name for email.
 	 *
-	 * @access public
+	 * @since $$next-version$$
 	 * @return string
 	 */
 	public function get_from_name() {
@@ -153,16 +153,16 @@ class Email_Sender {
 		$from_name = $settings['email_from_name'] ?? '';
 
 		if ( empty( $from_name ) ) {
-			return wp_specialchars_decode( get_bloginfo( 'name' ) );
+			return esc_html( get_bloginfo( 'name' ) );
 		}
 
-		return wp_specialchars_decode( $from_name );
+		return esc_html( $from_name );
 	}
 
 	/**
 	 * Get from email address.
 	 *
-	 * @access public
+	 * @since $$next-version$$
 	 * @return string
 	 */
 	public function get_from_address() {
@@ -170,10 +170,10 @@ class Email_Sender {
 		$from_address = $settings['email_from_address'] ?? '';
 
 		if ( empty( $from_address ) ) {
-			return wp_specialchars_decode( get_bloginfo( 'admin_email' ) );
+			return esc_html( get_bloginfo( 'admin_email' ) );
 		}
 
-		return wp_specialchars_decode( $from_address );
+		return esc_html( $from_address );
 	}
 
 	/**
