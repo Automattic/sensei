@@ -325,7 +325,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 	}
 
 
-	public function testSendEmail_SetFromEmailName() {
+	public function testSendEmail_SetFromEmailName_RendersFromNameInHeader() {
 		$this->settings->set( 'email_from_name', 'Sensei From Name' );
 		$mailer = tests_retrieve_phpmailer_instance();
 
