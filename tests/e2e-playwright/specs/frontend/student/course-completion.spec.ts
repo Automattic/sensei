@@ -52,7 +52,7 @@ const testCourseWithMode = ( courseMode: CourseMode ) =>
 			).toBeVisible();
 		} );
 
-				test( 'Student enrolls in course and completes all lessons #2.', async ( {
+		test( 'Student enrolls in course and completes all lessons #2.', async ( {
 			page,
 			course,
 		} ) => {
