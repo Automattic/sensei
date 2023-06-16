@@ -345,7 +345,7 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( 'From: Sensei From Name <admin@example.org>', $last_email->header );
 	}
 
-	public function testSendEmail_SetFromEmailAddress() {
+	public function testSendEmail_SetFromEmailAddress_RendersFromEmailInHeader() {
 		$this->settings->set( 'email_from_name', 'Sensei From Name' );
 		$this->settings->set( 'email_from_address', 'from_email@example.com' );
 		$mailer = tests_retrieve_phpmailer_instance();
