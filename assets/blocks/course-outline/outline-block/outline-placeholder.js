@@ -8,10 +8,10 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import aiOutlineImage from '../../../images/course-outline/ai.png';
 import settings from './index';
-import CheckIcon from '../../../icons/checked.svg';
 import AiIcon from '../../../shared/components/ai-icon';
+import AiLessonsImage from './ai-lessons-image';
+import CheckIcon from '../../../icons/checked.svg';
 import SenseiProBadge from '../../../shared/components/sensei-pro-badge';
 
 /**
@@ -75,14 +75,7 @@ const OutlinePlaceholder = ( { addBlock } ) => {
 						) }
 					</li>
 				</ul>
-				<img
-					src={ window.sensei.pluginUrl + aiOutlineImage }
-					alt={ __(
-						'Illustration of two unnamed lessons in a course outline.',
-						'sensei-lms'
-					) }
-					className="wp-block-sensei-lms-course-outline__placeholder-item-image"
-				/>
+				<AiLessonsImage />
 				<figcaption className="wp-block-sensei-lms-course-outline__placeholder-item-caption">
 					{ __( 'Generate with AI', 'sensei-lms' ) }
 					<SenseiProBadge />
