@@ -10,8 +10,8 @@ import { __ } from '@wordpress/i18n';
  */
 import aiOutlineImage from '../../../images/course-outline/ai.png';
 import settings from './index';
-import AiIcon from './ai-icon';
 import CheckIcon from '../../../icons/checked.svg';
+import AiIcon from '../../../shared/components/ai-icon';
 import SenseiProBadge from '../../../shared/components/sensei-pro-badge';
 
 /**

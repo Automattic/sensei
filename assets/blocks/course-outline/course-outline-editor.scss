@@ -18,6 +18,7 @@ body .editor-styles-wrapper,
 
 		&__placeholder-items {
 			.wp-block-sensei-lms-course-outline__placeholder-item {
+				border-radius: 2px;
 				margin: 0 0 20px;
 				padding: $item-padding $item-padding 0;
 
@@ -51,8 +52,8 @@ body .editor-styles-wrapper,
 						}
 
 						&-icon {
-							height: 20px;
-							width: 20px;
+							height: 24px;
+							width: 24px;
 						}
 					}
 				}
