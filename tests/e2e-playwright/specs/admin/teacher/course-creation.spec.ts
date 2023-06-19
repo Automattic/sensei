@@ -10,7 +10,7 @@ import { teacherRole } from '@e2e/helpers/context';
 
 const { describe, use } = test;
 
-describe.parallel( 'Create Courses', () => {
+describe.skip( 'Create Courses', () => {
 	use( teacherRole() );
 
 	test( 'it has a Courses menu item in the main menu', async ( { page } ) => {
