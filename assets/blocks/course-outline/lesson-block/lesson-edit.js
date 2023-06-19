@@ -81,7 +81,7 @@ export const LessonEdit = ( props ) => {
 	return (
 		<>
 			<LessonSettings { ...props } { ...lessonStatus } />
-			<div { ...wrapperStyles }>
+			<div { ...wrapperStyles } data-lesson-id={ id }>
 				<Icon
 					icon={ check }
 					className="wp-block-sensei-lms-course-outline-lesson__status"
