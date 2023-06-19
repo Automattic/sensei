@@ -1,10 +1,8 @@
 <?php
 /**
- * Deprecated Life Coach pattern content.
- * Remove after the ai_course_outline feature is released.
+ * Life Coach pattern content.
  *
  * @package sensei-lms
- * @deprecated $$next-version$$
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -185,30 +183,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:group {"style":{"color":{"text":"#000000","background":"#f6f6f6"},"spacing":{"padding":{"top":"20px","right":"70px","bottom":"20px","left":"70px"}}},"layout":{"inherit":false}} -->
-<div class="wp-block-group has-text-color has-background" style="background-color:#f6f6f6;color:#000000;padding-top:20px;padding-right:70px;padding-bottom:20px;padding-left:70px"><!-- wp:spacer {"height":16} -->
+<!-- wp:group {"align":"wide","style":{"color":{"text":"#000000","background":"#f6f6f6"},"spacing":{"padding":{"top":"20px","right":"70px","bottom":"20px","left":"70px"}}},"layout":{"inherit":false}} -->
+<div class="wp-block-group alignwide has-text-color has-background" style="color:#000000;background-color:#f6f6f6;padding-top:20px;padding-right:70px;padding-bottom:20px;padding-left:70px"><!-- wp:spacer {"height":"16px"} -->
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
 <!-- wp:heading {"textAlign":"left"} -->
-<h2 class="has-text-align-left"><?php esc_html_e( 'Course Lessons', 'sensei-lms' ); ?></h2>
+<h2 class="wp-block-heading has-text-align-left">Course Lessons</h2>
 <!-- /wp:heading -->
 
-<!-- wp:sensei-lms/course-progress /-->
+<!-- wp:sensei-lms/course-progress {"defaultBarColor":"primary"} /-->
 
-<!-- wp:sensei-lms/course-outline -->
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 1', 'sensei-lms' ); ?>"} /-->
-
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 2', 'sensei-lms' ); ?>"} /-->
-
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 3', 'sensei-lms' ); ?>"} /-->
-<!-- /wp:sensei-lms/course-outline -->
+<!-- wp:sensei-lms/course-outline /-->
 
 <!-- wp:sensei-lms/button-take-course -->
-<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
+<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link">Take Course</button></div>
 <!-- /wp:sensei-lms/button-take-course -->
 
-<!-- wp:spacer {"height":16} -->
+<!-- wp:spacer {"height":"16px"} -->
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer --></div>
 <!-- /wp:group -->

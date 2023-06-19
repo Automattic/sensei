@@ -55,6 +55,7 @@ class Sensei_Feature_Flags {
 			[
 				'enrolment_provider_tooltip' => false,
 				'email_customization'        => true,
+				'ai_course_outline'          => false,
 			]
 		);
 	}
