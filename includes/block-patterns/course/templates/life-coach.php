@@ -1,6 +1,6 @@
 <?php
 /**
- * Life Coach pattern content.
+ * Deprecated Life Coach pattern content.
  * Remove after the ai_course_outline feature is released.
  *
  * @package sensei-lms
