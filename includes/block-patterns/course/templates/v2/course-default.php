@@ -1,10 +1,8 @@
 <?php
 /**
- * Deprecated Default pattern content.
- * Remove after the ai_course_outline feature is released.
+ * Default pattern content.
  *
  * @package sensei-lms
- * @deprecated $$next-version$$
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,11 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:sensei-lms/button-take-course -->
 
 <!-- wp:sensei-lms/course-progress /-->
+<!-- wp:sensei-lms/course-outline /-->
 
-<!-- wp:sensei-lms/course-outline -->
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 1', 'sensei-lms' ); ?>"} /-->
 
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 2', 'sensei-lms' ); ?>"} /-->
-
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 3', 'sensei-lms' ); ?>"} /-->
-<!-- /wp:sensei-lms/course-outline -->
