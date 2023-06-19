@@ -122,7 +122,12 @@ jQuery( document ).ready( function ( $ ) {
 						.find( '.user-answer' )
 						.contents()
 						.find( 'body' )
-						.html();
+						.map( function () {
+							return this.innerHTML.trim();
+						} )
+						.toArray()
+						.join( '<br>' );
+
 					correct_answer = $this.find( '.correct-answer' ).html();
 				}
 
