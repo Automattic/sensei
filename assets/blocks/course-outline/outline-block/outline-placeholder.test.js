@@ -12,7 +12,7 @@ describe( '<OutlinePlaceholder />', () => {
 	const addBlockMock = jest.fn();
 
 	beforeAll( () => {
-		window.sensei = {};
+		window.sensei = { feature_flags: {} };
 	} );
 
 	it( 'Should render the outline placeholder correctly when feature flag is enabled', () => {
