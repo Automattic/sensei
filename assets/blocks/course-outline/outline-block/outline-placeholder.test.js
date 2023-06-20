@@ -7,6 +7,7 @@ import { render } from '@testing-library/react';
  * Internal dependencies
  */
 import OutlinePlaceholder from './outline-placeholder';
+import userEvent from '@testing-library/user-event';
 
 describe( '<OutlinePlaceholder />', () => {
 	const addBlockMock = jest.fn();
@@ -27,6 +28,23 @@ describe( '<OutlinePlaceholder />', () => {
 		expect(
 			getByRole( 'button', { name: 'Start with blank' } )
 		).toBeVisible();
+	} );
+
+	it( 'Should run the generate ai callback', () => {
+		const generateWithAi = jest.fn();
+
+		const { getByRole } = render(
+			<OutlinePlaceholder
+				addBlock={ addBlockMock }
+				generateWithAi={ generateWithAi }
+			/>
+		);
+
+		userEvent.click(
+			getByRole( 'button', { name: 'Generate with AI Pro' } )
+		);
+
+		expect( generateWithAi ).toHaveBeenCalled();
 	} );
 
 	describe( 'when the feature aiCourseOutline off', () => {
