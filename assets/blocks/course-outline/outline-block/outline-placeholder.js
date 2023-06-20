@@ -14,22 +14,53 @@ import AiLessonsImage from './ai-lessons-image';
 import CheckIcon from '../../../icons/checked.svg';
 import SenseiProBadge from '../../../shared/components/sensei-pro-badge';
 
+const DeprecatedOutlinePlaceholder = ( { addBlock } ) => {
+	return (
+		<Placeholder
+			className="wp-block-sensei-lms-course-outline__placeholder"
+			label={ __( 'Course Outline', 'sensei-lms' ) }
+			icon={ <BlockIcon icon={ settings.icon } showColors /> }
+			instructions={ __(
+				'Build and display a course outline. A course is made up of modules (optional) and lessons. You can use modules to group related lessons together.',
+				'sensei-lms'
+			) }
+		>
+			<>
+				<Button
+					isDefault
+					onClick={ () => addBlock( 'module' ) }
+					className="is-large"
+				>
+					{ __( 'Create a module', 'sensei-lms' ) }
+				</Button>
+				<Button
+					isDefault
+					onClick={ () => addBlock( 'lesson' ) }
+					className="is-large"
+				>
+					{ __( 'Create a lesson', 'sensei-lms' ) }
+				</Button>
+			</>
+		</Placeholder>
+	);
+};
+
 /**
  * Placeholder for empty Course Outline block.
  *
- * @param {Function} addBlock Add block
  */
-const OutlinePlaceholder = ( { addBlock } ) => {
-	const instructions = window.sensei.aiCourseOutline
-		? __( 'Build and display a course outline.', 'sensei-lms' )
-		: __(
-				'Build and display a course outline. A course is made up of modules (optional) and lessons. You can use modules to group related lessons together.',
-				'sensei-lms'
-		  );
-
-	const content = window.sensei.aiCourseOutline ? (
+const OutlinePlaceholderWithAi = () => (
+	<Placeholder
+		className="wp-block-sensei-lms-course-outline__placeholder"
+		label={ __( 'Course Outline', 'sensei-lms' ) }
+		icon={ <BlockIcon icon={ settings.icon } showColors /> }
+		instructions={ __(
+			'Build and display a course outline.',
+			'sensei-lms'
+		) }
+	>
 		<div className="wp-block-sensei-lms-course-outline__placeholder-items">
-			<figure className="wp-block-sensei-lms-course-outline__placeholder-item is-blank">
+			<div className="wp-block-sensei-lms-course-outline__placeholder-item is-blank">
 				<p className="wp-block-sensei-lms-course-outline__placeholder-item-intro">
 					{ __(
 						'Start with a blank canvas and create your own course outline.',
@@ -44,12 +75,12 @@ const OutlinePlaceholder = ( { addBlock } ) => {
 					<li>{ __( 'Lesson 1', 'sensei-lms' ) }</li>
 					<li>{ __( 'Lesson 2', 'sensei-lms' ) }</li>
 				</ul>
-				<figcaption className="wp-block-sensei-lms-course-outline__placeholder-item-caption">
+				<Button className="wp-block-sensei-lms-course-outline__generation-option">
 					{ __( 'Start with blank', 'sensei-lms' ) }
-				</figcaption>
-			</figure>
+				</Button>
+			</div>
 
-			<figure className="wp-block-sensei-lms-course-outline__placeholder-item is-ai">
+			<div className="wp-block-sensei-lms-course-outline__placeholder-item is-ai">
 				<div>
 					<p className="wp-block-sensei-lms-course-outline__placeholder-item-intro">
 						{ __(
@@ -76,41 +107,20 @@ const OutlinePlaceholder = ( { addBlock } ) => {
 					</li>
 				</ul>
 				<AiLessonsImage />
-				<figcaption className="wp-block-sensei-lms-course-outline__placeholder-item-caption">
+				<Button className="wp-block-sensei-lms-course-outline__generation-option-button">
 					{ __( 'Generate with AI', 'sensei-lms' ) }
 					<SenseiProBadge />
-				</figcaption>
-			</figure>
+				</Button>
+			</div>
 		</div>
-	) : (
-		<>
-			<Button
-				isDefault
-				onClick={ () => addBlock( 'module' ) }
-				className="is-large"
-			>
-				{ __( 'Create a module', 'sensei-lms' ) }
-			</Button>
-			<Button
-				isDefault
-				onClick={ () => addBlock( 'lesson' ) }
-				className="is-large"
-			>
-				{ __( 'Create a lesson', 'sensei-lms' ) }
-			</Button>
-		</>
-	);
+	</Placeholder>
+);
 
-	return (
-		<Placeholder
-			className="wp-block-sensei-lms-course-outline__placeholder"
-			label={ __( 'Course Outline', 'sensei-lms' ) }
-			icon={ <BlockIcon icon={ settings.icon } showColors /> }
-			instructions={ instructions }
-		>
-			{ content }
-		</Placeholder>
+const OutlinePlaceholder = ( props ) =>
+	window?.sensei?.aiCourseOutline ? (
+		<OutlinePlaceholderWithAi { ...props } />
+	) : (
+		<DeprecatedOutlinePlaceholder { ...props } />
 	);
-};
 
 export default OutlinePlaceholder;
