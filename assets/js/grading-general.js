@@ -122,7 +122,12 @@ jQuery( document ).ready( function ( $ ) {
 						.find( '.user-answer' )
 						.contents()
 						.find( 'body' )
-						.html();
+						.map( function () {
+							return this.innerHTML.trim();
+						} )
+						.toArray()
+						.join( '<br>' );
+
 					correct_answer = $this.find( '.correct-answer' ).html();
 				}
 
@@ -153,6 +158,9 @@ jQuery( document ).ready( function ( $ ) {
 						) {
 							all_correct = false;
 						}
+					} else {
+						user_answer = user_answer.split( '<br>' )[ 0 ];
+						correct_answer = correct_answer.split( '<br>' )[ 0 ];
 					}
 
 					if ( all_correct || user_answer === correct_answer ) {
