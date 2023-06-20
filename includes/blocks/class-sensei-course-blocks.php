@@ -123,6 +123,13 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
 		);
 
+		wp_add_inline_script(
+			'sensei-single-course-blocks',
+			'window.sensei = window.sensei || {}; ' .
+			'window.sensei.aiCourseOutline = false;',
+			'before'
+		);
+
 		global $post;
 		if ( null !== $post ) {
 			Sensei()->assets->preload_data( [ sprintf( '/sensei-internal/v1/course-structure/%d?context=edit', $post->ID ) ] );
