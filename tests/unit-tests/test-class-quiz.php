@@ -1,4 +1,8 @@
 <?php
+
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
+
 class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 	use Sensei_Test_Redirect_Helpers;
@@ -1713,6 +1717,42 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertEmpty( $quiz_grades );
+	}
+
+	public function testResetUserLessonData_WhenCourseAlreadyStarted_DoesNotResetTheCourseStartDate() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		$course_progress_mock = $this->createMock( Course_Progress::class );
+		$course_progress_mock->method( 'get_started_at' )
+			->willReturn( new DateTime( 'now' ) );
+
+		$_course_progress_repository     = Sensei()->course_progress_repository;
+		$course_progress_repository_mock = $this->createMock( Course_Progress_Repository_Interface::class );
+		$course_progress_repository_mock
+			->method( 'get' )
+			->with( $course_id, $user_id )
+			->willReturn( $course_progress_mock );
+
+		/* Assert. */
+		$course_progress_mock
+			->expects( $this->never() )
+			->method( 'start' );
+
+		/* Act. */
+		Sensei()->course_progress_repository = $course_progress_repository_mock;
+		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+		Sensei()->course_progress_repository = $_course_progress_repository; // Reset.
 	}
 
 	public function testSetQuizAuthorOnCreate_WhenCreatingQuiz_SetsAuthorToLessonTeacher() {
