@@ -153,10 +153,10 @@ class Email_Sender {
 		$from_name = $settings['email_from_name'] ?? '';
 
 		if ( empty( $from_name ) ) {
-			return esc_html( get_bloginfo( 'name' ) );
+			return get_bloginfo( 'name' );
 		}
 
-		return esc_html( $from_name );
+		return $from_name;
 	}
 
 	/**
@@ -170,10 +170,10 @@ class Email_Sender {
 		$from_address = $settings['email_from_address'] ?? '';
 
 		if ( empty( $from_address ) ) {
-			return esc_html( get_bloginfo( 'admin_email' ) );
+			return get_bloginfo( 'admin_email' );
 		}
 
-		return esc_html( $from_address );
+		return $from_address;
 	}
 
 	/**
