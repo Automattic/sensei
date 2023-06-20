@@ -16,7 +16,7 @@ describe( '<OutlinePlaceholder />', () => {
 	} );
 
 	it( 'Should render the outline placeholder correctly when feature flag is enabled', () => {
-		window.sensei.aiCourseOutline = true;
+		window.sensei.feature_flags.course_outline_ai = true;
 
 		const { container, getByText } = render(
 			<OutlinePlaceholder addBlock={ addBlockMock } />
@@ -30,7 +30,7 @@ describe( '<OutlinePlaceholder />', () => {
 	} );
 
 	it( 'Should render the outline placeholder correctly when feature flag is disabled', () => {
-		window.sensei.aiCourseOutline = false;
+		window.sensei.feature_flags.course_outline_ai = false;
 
 		const { getByText } = render(
 			<OutlinePlaceholder addBlock={ addBlockMock } />

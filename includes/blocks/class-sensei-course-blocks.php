@@ -111,6 +111,8 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	 */
 	public function enqueue_block_editor_assets() {
 
+		Sensei()->assets->enqueue_script( 'sensei-feature-flags' );
+
 		Sensei()->assets->enqueue(
 			'sensei-single-course-blocks',
 			'blocks/single-course.js',
@@ -121,13 +123,6 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 			'sensei-single-course-blocks-editor-style',
 			'blocks/single-course-style-editor.css',
 			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
-		);
-
-		wp_add_inline_script(
-			'sensei-single-course-blocks',
-			'window.sensei = window.sensei || {}; ' .
-			'window.sensei.aiCourseOutline = false;',
-			'before'
 		);
 
 		global $post;
