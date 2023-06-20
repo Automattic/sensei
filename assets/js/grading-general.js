@@ -158,6 +158,9 @@ jQuery( document ).ready( function ( $ ) {
 						) {
 							all_correct = false;
 						}
+					} else {
+						user_answer = user_answer.split( '<br>' )[ 0 ];
+						correct_answer = correct_answer.split( '<br>' )[ 0 ];
 					}
 
 					if ( all_correct || user_answer === correct_answer ) {
