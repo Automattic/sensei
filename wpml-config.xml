@@ -8,17 +8,17 @@
 		<custom-field action="translate">_course_woocommerce_product</custom-field>
 	</custom-fields>
 	<custom-types>
-		<custom-type translate="1">course</custom-type>
-		<custom-type translate="1">lesson</custom-type>
-		<custom-type translate="1" display-as-translated="1">multiple_question</custom-type>
-		<custom-type translate="1">question</custom-type>
-		<custom-type translate="1" display-as-translated="1">quiz</custom-type>
+		<custom-type translate="0">course</custom-type>
+		<custom-type translate="0">lesson</custom-type>
+		<custom-type translate="0" display-as-translated="1">multiple_question</custom-type>
+		<custom-type translate="0">question</custom-type>
+		<custom-type translate="0" display-as-translated="1">quiz</custom-type>
 	</custom-types>
 	<taxonomies>
-		<taxonomy translate="1">course-category</taxonomy>
-		<taxonomy translate="1">lesson-tag</taxonomy>
-		<taxonomy translate="1">module</taxonomy>
-		<taxonomy translate="1">question-category</taxonomy>
+		<taxonomy translate="0">course-category</taxonomy>
+		<taxonomy translate="0">lesson-tag</taxonomy>
+		<taxonomy translate="0">module</taxonomy>
+		<taxonomy translate="0">question-category</taxonomy>
 	</taxonomies>
 	<admin-texts>
 		<key name="sensei-settings">
