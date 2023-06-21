@@ -67,6 +67,7 @@
 		<custom-field action="ignore">_sensei_email_is_pro</custom-field>
 		<custom-field action="ignore">_sensei_email_type</custom-field>
 		<custom-field action="ignore">_course_woocommerce_product</custom-field>
+		<custom-field action="ignore">_lesson_video_embed</custom-field>
 	</custom-fields>
 	<admin-texts>
 		<key name="sensei-settings">
