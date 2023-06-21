@@ -20,14 +20,14 @@ import SenseiProBadge from '../../../shared/components/sensei-pro-badge';
  * @param {Function} addBlock Add block
  */
 const OutlinePlaceholder = ( { addBlock } ) => {
-	const instructions = window.sensei.feature_flags.course_outline_ai
+	const instructions = window.sensei.featureFlags.course_outline_ai
 		? __( 'Build and display a course outline.', 'sensei-lms' )
 		: __(
 				'Build and display a course outline. A course is made up of modules (optional) and lessons. You can use modules to group related lessons together.',
 				'sensei-lms'
 		  );
 
-	const content = window.sensei.feature_flags.course_outline_ai ? (
+	const content = window.sensei.featureFlags.course_outline_ai ? (
 		<div className="wp-block-sensei-lms-course-outline__placeholder-items">
 			<figure className="wp-block-sensei-lms-course-outline__placeholder-item is-blank">
 				<p className="wp-block-sensei-lms-course-outline__placeholder-item-intro">

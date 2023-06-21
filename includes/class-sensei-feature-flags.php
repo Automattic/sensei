@@ -65,7 +65,7 @@ class Sensei_Feature_Flags {
 		wp_add_inline_script(
 			'sensei-feature-flags',
 			'window.sensei = window.sensei || {}; ' .
-			'window.sensei.feature_flags = ' . wp_json_encode( $this->get_feature_flags() ) . ';'
+			'window.sensei.featureFlags = ' . wp_json_encode( $this->get_feature_flags() ) . ';'
 		);
 	}
 

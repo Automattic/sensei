@@ -12,11 +12,11 @@ describe( '<OutlinePlaceholder />', () => {
 	const addBlockMock = jest.fn();
 
 	beforeAll( () => {
-		window.sensei = { feature_flags: {} };
+		window.sensei = { featureFlags: {} };
 	} );
 
 	it( 'Should render the outline placeholder correctly when feature flag is enabled', () => {
-		window.sensei.feature_flags.course_outline_ai = true;
+		window.sensei.featureFlags.course_outline_ai = true;
 
 		const { container, getByText } = render(
 			<OutlinePlaceholder addBlock={ addBlockMock } />
@@ -30,7 +30,7 @@ describe( '<OutlinePlaceholder />', () => {
 	} );
 
 	it( 'Should render the outline placeholder correctly when feature flag is disabled', () => {
-		window.sensei.feature_flags.course_outline_ai = false;
+		window.sensei.featureFlags.course_outline_ai = false;
 
 		const { getByText } = render(
 			<OutlinePlaceholder addBlock={ addBlockMock } />
