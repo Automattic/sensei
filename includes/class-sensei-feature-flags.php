@@ -89,7 +89,7 @@ class Sensei_Feature_Flags {
 		 */
 		return apply_filters(
 			'sensei_default_feature_flag_settings',
-			self::DEFAULT_FEATURE_FLAGS[ $env ] ?? self::DEFAULT_FEATURE_FLAGS['production']
+			static::DEFAULT_FEATURE_FLAGS[ $env ] ?? static::DEFAULT_FEATURE_FLAGS['production']
 		);
 	}
 
