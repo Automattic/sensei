@@ -42,6 +42,7 @@ const config = {
 		trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
 		screenshot: 'only-on-failure',
 		video: 'on-first-retry',
+		viewport: { width: 1280, height: 1200 },
 	},
 
 	/* Configure projects for major browsers */

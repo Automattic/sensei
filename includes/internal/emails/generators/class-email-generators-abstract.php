@@ -117,4 +117,19 @@ abstract class Email_Generators_Abstract {
 		 */
 		do_action( 'sensei_email_send', $this->get_identifier(), $replacements, static::USAGE_TRACKING_TYPE );
 	}
+
+	/**
+	 * Return recipients' email addresses based on given user IDs.
+	 *
+	 * @param array $user_ids User IDs.
+	 * @return array Array of email addresses.
+	 */
+	protected function get_recipients( $user_ids ): array {
+		$recipients = array();
+		foreach ( $user_ids as $user_id ) {
+			$user         = new \WP_User( $user_id );
+			$recipients[] = stripslashes( $user->user_email );
+		}
+		return $recipients;
+	}
 }
