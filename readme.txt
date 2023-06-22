@@ -156,6 +156,7 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Fix editor block error when updating an email.
 - Fix resetting a quiz also resets the course start date.
 - In lesson complete email use course author as lesson teacher.
+- Fix conflicts with modules using the same name.
 
 ### 4.15.0 - 2023-06-01
 #### Security
