@@ -29,14 +29,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <!-- wp:column -->
 <div class="wp-block-column"><!-- wp:paragraph {"className":"sensei-content-description"} -->
-<p class="sensei-content-description">Start learning about Film Direction with Doug, a senior VP at Films. You will learn all the secrets and how to prepare your project even before touching the camera.</p>
+<p class="sensei-content-description"><?php esc_html_e( 'Start learning about Film Direction with Doug, a senior VP at Films. You will learn all the secrets and how to prepare your project even before touching the camera.', 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column -->
 
 <!-- wp:column -->
 <div class="wp-block-column"><!-- wp:sensei-lms/button-take-course {"align":"right"} -->
-<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><button class="wp-block-button__link">Take Course</button></div>
-<!-- /wp:sensei-lms/button-take-course --></div>
+<div class="wp-block-sensei-lms-button-take-course has-text-align-right is-style-default wp-block-sensei-button wp-block-button"><button class="wp-block-button__link"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div><!-- /wp:sensei-lms/button-take-course --></div>
 <!-- /wp:column --></div>
 <!-- /wp:columns --></div>
 <!-- /wp:group --></div>
@@ -45,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"6rem"}}},"className":"sensei-pattern-group","layout":{"inherit":false}} -->
 <div class="wp-block-group alignfull sensei-pattern-group" style="padding-top:6rem;padding-bottom:6rem"><!-- wp:group {"align":"wide"} -->
 <div class="wp-block-group alignwide"><!-- wp:paragraph {"align":"center","style":{"typography":{"lineHeight":1.5}},"fontSize":"large"} -->
-<p class="has-text-align-center has-large-font-size" style="line-height:1.5">Get to know Doug's network of professionals by taking the Course today!</p>
+<p class="has-text-align-center has-large-font-size" style="line-height:1.5"><?php esc_html_e( "Get to know Doug's network of professionals by taking the Course today!", 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:spacer {"height":"16px"} -->
@@ -61,7 +60,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:spacer -->
 
 <!-- wp:sensei-lms/button-take-course {"align":"center","backgroundColor":"foreground","textColor":"background"} -->
-<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-center"><button class="wp-block-button__link has-background-color has-foreground-background-color has-text-color has-background">Take Course</button></div>
+<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-center"><button class="wp-block-button__link has-background-color has-foreground-background-color has-text-color has-background"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
 <!-- /wp:sensei-lms/button-take-course --></div>
 <!-- /wp:group --></div>
 <!-- /wp:group -->
