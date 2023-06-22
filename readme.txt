@@ -146,15 +146,15 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 ### 4.15.1 - 2023-06-22
 #### Added
-- Add Enrolled and Completion columns on the reports course page
+- Add Enrolled and Completion columns on the reports course page.
 
 #### Fixed
 - Avoid an error with getting future post URL for a scheduled sensei_email post.
 - Fix auto grading for non-multiple choice questions.
-- Fix auto grading not working for multiple choice questions when multiple correct answers
-- Fix Course Wizard spacing issue when using latest Gutenberg
-- Fix editor block error when updating an email
-- Fix resetting a quiz also resets the course start date
+- Fix auto grading not working for multiple choice questions when multiple correct answers.
+- Fix Course Wizard spacing issue when using latest Gutenberg.
+- Fix editor block error when updating an email.
+- Fix resetting a quiz also resets the course start date.
 - In lesson complete email use course author as lesson teacher.
 
 ### 4.15.0 - 2023-06-01
