@@ -64,7 +64,7 @@ echo "Changlogger write"
 # Write changelog.
 composer exec -- changelogger write --add-pr-num
 # Unwrap PR links.
-scripts/changelog-unwrap-pr-links.sh
+changelog-unwrap-pr-links.sh
 # Copy changelog section in readme.
 ./scripts/copy-changelog-to-readme.php
 
