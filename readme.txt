@@ -146,17 +146,17 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 ### 4.15.1 - 2023-06-22
 #### Added
-- Add Enrolled and Completion columns on the reports course page. [#6966]
+- Add Enrolled and Completion columns on the reports course page. [#6966](https://github.com/Automattic/sensei/pull/6966)
 
 #### Fixed
-- Avoid an error with getting future post URL for a scheduled sensei_email post. [#6975]
-- Fix auto grading for non-multiple choice questions. [#6984]
-- Fix auto grading not working for multiple choice questions when multiple correct answers. [#6906]
-- Fix Course Wizard spacing issue when using latest Gutenberg. [#6940]
-- Fix editor block error when updating an email. [#6936]
-- Fix resetting a quiz also resets the course start date. [#6643]
-- In lesson complete email use course author as lesson teacher. [#6977]
-- Fix conflicts with modules using the same name. [#6437]
+- Avoid an error with getting future post URL for a scheduled sensei_email post. [#6975](https://github.com/Automattic/sensei/pull/6975)
+- Fix auto grading for non-multiple choice questions. [#6984](https://github.com/Automattic/sensei/pull/6984)
+- Fix auto grading not working for multiple choice questions when multiple correct answers. [#6906](https://github.com/Automattic/sensei/pull/6906)
+- Fix Course Wizard spacing issue when using latest Gutenberg. [#6940](https://github.com/Automattic/sensei/pull/6940)
+- Fix editor block error when updating an email. [#6936](https://github.com/Automattic/sensei/pull/6936)
+- Fix resetting a quiz also resets the course start date. [#6643](https://github.com/Automattic/sensei/pull/6643)
+- In lesson complete email use course author as lesson teacher. [#6977](https://github.com/Automattic/sensei/pull/6977)
+- Fix conflicts with modules using the same name. [#6437](https://github.com/Automattic/sensei/pull/6437)
 
 ### 4.15.0 - 2023-06-01
 #### Security
