@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 9.9.9
  */
 trait Course_Teachers_Trait {
 	/**
@@ -24,7 +24,7 @@ trait Course_Teachers_Trait {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 9.9.9
 	 *
 	 * @param int $course_id The course ID.
 	 * @return array The teacher IDs.
@@ -35,7 +35,7 @@ trait Course_Teachers_Trait {
 		/**
 		 * Filter the teacher IDs for a given course.
 		 *
-		 * @since $$next-version$$
+		 * @since 9.9.9
 		 *
 		 * @param array $teacher_ids The teacher IDs.
 		 * @param int   $course_id   The course ID.

@@ -239,7 +239,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Get completion rate for a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 9.9.9
 	 *
 	 * @param int $total_enrollments Total of enrollments in a course.
 	 * @param int $total_completion Total of students who completed the course.
