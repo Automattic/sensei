@@ -2,7 +2,6 @@
 
 ## 4.16.0 - 2023-06-22
 ### Added
-- Add blank and AI options to Course Outline block placeholder
 - Add Enrolled and Completion columns on the reports course page
 
 ### Fixed
