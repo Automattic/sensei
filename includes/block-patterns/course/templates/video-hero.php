@@ -165,7 +165,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 2', 'sensei-lms' ); ?>"} /-->
 
 <!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 3', 'sensei-lms' ); ?>"} /-->
-<!-- /wp:sensei-lms/course-outline /-->
+<!-- /wp:sensei-lms/course-outline -->
 
 <!-- wp:spacer {"height":8} -->
 <div style="height:8px" aria-hidden="true" class="wp-block-spacer"></div>
