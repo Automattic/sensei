@@ -123,7 +123,7 @@ class Email_Post_Type {
 		register_post_type(
 			self::POST_TYPE,
 			[
-				'labels'       => [
+				'labels'              => [
 					'name'               => __( 'Emails', 'sensei-lms' ),
 					'singular_name'      => __( 'Email', 'sensei-lms' ),
 					'add_new'            => __( 'Add New', 'sensei-lms' ),
@@ -138,13 +138,16 @@ class Email_Post_Type {
 					'menu_name'          => __( 'Emails', 'sensei-lms' ),
 					'name_admin_bar'     => __( 'Email', 'sensei-lms' ),
 				],
-				'public'       => false,
-				'show_ui'      => true,
-				'show_in_menu' => false,
-				'show_in_rest' => true, // Enables the Gutenberg editor.
-				'hierarchical' => false,
-				'rewrite'      => false,
-				'supports'     => [ 'title', 'editor', 'author', 'revisions' ],
+				'public'              => true,
+				'exclude_from_search' => true,
+				'publicly_queryable'  => false,
+				'show_in_nav_menus'   => false,
+				'show_ui'             => true,
+				'show_in_menu'        => false,
+				'show_in_rest'        => true, // Enables the Gutenberg editor.
+				'hierarchical'        => false,
+				'rewrite'             => false,
+				'supports'            => [ 'title', 'editor', 'author', 'revisions' ],
 			]
 		);
 	}
