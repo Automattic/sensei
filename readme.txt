@@ -144,6 +144,20 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.16.0 - 2023-06-22
+#### Added
+- Add blank and AI options to Course Outline block placeholder
+- Add Enrolled and Completion columns on the reports course page
+
+#### Fixed
+- Avoid an error with getting future post URL for a scheduled sensei_email post.
+- Fix auto grading for non-multiple choice questions.
+- Fix auto grading not working for multiple choice questions when multiple correct answers
+- Fix Course Wizard spacing issue when using latest Gutenberg
+- Fix editor block error when updating an email
+- Fix resetting a quiz also resets the course start date
+- In lesson complete email use course author as lesson teacher.
+
 ### 4.15.0 - 2023-06-01
 #### Security
 - Fix shortcodes being called in teacher's messages.
@@ -177,18 +191,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Fix Sensei admin notice styles
 - Missing email page template link on the editor
 - Removed unused calls to SenseiLMS.com for the old extensions page
-
-### 4.13.1 - 2023-04-19
-#### Changed
-- Disable the "welcome" and "no progress" emails by default
-- Update MailPoet link to point to Lists
-- Improve plugin loading performance using pre-built class map
-
-#### Fixed
-- Astra not loading the Courses page content
-- Fix auto grading not working and additionally throwing error for fill gap questions
-- Fix patterns wizard preview style
-- Fix the home email notification settings link
-- Make the email post type private
-- Remove fallback to legacy options
-- Fix showing warning from module when admin email does not match any existing user and it has no author
