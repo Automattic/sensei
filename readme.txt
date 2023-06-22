@@ -144,7 +144,7 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
-### 4.16.0 - 2023-06-22
+### 4.15.1 - 2023-06-22
 #### Added
 - Add Enrolled and Completion columns on the reports course page
 
