@@ -5,6 +5,7 @@ import { useRef, useEffect } from '@wordpress/element';
 import { createBlock } from '@wordpress/blocks';
 import { InnerBlocks } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -22,6 +23,11 @@ const ALLOWED_BLOCKS = [
 export default {
 	...metadata,
 	metadata,
+	title: __( 'Featured Video', 'sensei-lms' ),
+	description: __(
+		'Add a featured video to your lesson to highlight the video and make use of our video templates.',
+		'sensei-lms'
+	),
 	example: {
 		innerBlocks: [
 			{

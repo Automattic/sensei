@@ -15,6 +15,14 @@ import metadata from './block.json';
 export default {
 	...metadata,
 	metadata,
+	title: __( 'Module', 'sensei-lms' ),
+	description: __( 'Group related lessons together.', 'sensei-lms' ),
+	keywords: [
+		__( 'module', 'sensei-lms' ),
+		__( 'course module', 'sensei-lms' ),
+		__( 'group', 'sensei-lms' ),
+		__( 'lessons', 'sensei-lms' ),
+	],
 	icon,
 	example: {
 		attributes: {

@@ -18,6 +18,8 @@ import icon from '../../../icons/question.svg';
 export default {
 	...metadata,
 	metadata,
+	title: __( 'Question', 'sensei-lms' ),
+	description: __( 'The building block of all quizzes.', 'sensei-lms' ),
 	icon,
 	usesContext: [ 'sensei-lms/quizId' ],
 	deprecated,
