@@ -382,7 +382,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_lessons['lesson_ids'][0], $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfNoLessonIsCompleted() {
+	public function testGetTargetPagePostIdForContinueUrl_WhenCalled_ReturnsFirstLessonIdIfNoLessonIsCompleted() {
 		/* Arrange */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
@@ -395,7 +395,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$result = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_lessons['course_id'], $user_id );
 
 		/* Assert */
-		$this->assertEquals( $course_lessons['course_id'], $result );
+		$this->assertEquals( $course_lessons['lesson_ids'][0], $result );
 	}
 
 	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfAllLessonsAreCompleted() {
