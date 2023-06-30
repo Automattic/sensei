@@ -1,7 +1,7 @@
 <?php
 /**
  * Deprecated Long Sales Page pattern content.
- * Remove after the ai_course_outline feature is released.
+ * Remove after the course_outline_ai feature is released.
  *
  * @package sensei-lms
  * @deprecated $$next-version$$

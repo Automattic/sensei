@@ -7,7 +7,7 @@
 
 ob_start();
 
-require Sensei()->feature_flags->is_enabled( 'ai_course_outline' ) ?
+require Sensei()->feature_flags->is_enabled( 'course_outline_ai' ) ?
 	__DIR__ . '/templates/v2/life-coach.php' :
 	__DIR__ . '/templates/life-coach.php';
 
