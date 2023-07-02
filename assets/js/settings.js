@@ -4,7 +4,7 @@ jQuery( document ).ready( function ( $ ) {
 
 	function hideAllSections() {
 		$senseiSettings.find( 'section' ).hide();
-		$senseiSettings.find( 'a.tab' ).removeClass( 'current' );
+		removeCurrentTab();
 	}
 
 	function show( section = '' ) {
@@ -12,6 +12,10 @@ jQuery( document ).ready( function ( $ ) {
 		markCurrentTab( section );
 		sensei_log_event( 'settings_view', { view: section } );
 		markSectionAsVisited( section );
+	}
+
+	function removeCurrentTab() {
+		$senseiSettings.find( 'a.tab' ).removeClass( 'current' );
 	}
 
 	function markCurrentTab( section ) {
@@ -72,6 +76,7 @@ jQuery( document ).ready( function ( $ ) {
 	}
 
 	$senseiSettings.find( 'a.tab' ).on( 'click', function ( e ) {
+		$senseiSettings.find( 'a.tab' ).removeClass( 'current' );
 		const href = $( this ).attr( 'href' );
 		if ( urlParams.has( 'tab' ) || ! href?.includes( '#' ) ) {
 			markCurrentTab( urlParams.get( 'tab' ) || defaultSectionId );
