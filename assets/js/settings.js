@@ -9,9 +9,13 @@ jQuery( document ).ready( function ( $ ) {
 
 	function show( section = '' ) {
 		$senseiSettings.find( `section#${ section }` ).show();
-		$senseiSettings.find( `[href$="${ section }"]` ).addClass( 'current' );
+		markCurrentTab( section );
 		sensei_log_event( 'settings_view', { view: section } );
 		markSectionAsVisited( section );
+	}
+
+	function markCurrentTab( section ) {
+		$senseiSettings.find( `[href$="${ section }"]` ).addClass( 'current' );
 	}
 
 	// Hide header and submit on page load if needed
@@ -52,22 +56,25 @@ jQuery( document ).ready( function ( $ ) {
 
 	window.onhashchange = hideSettingsFormElements;
 
-	// Show general settings section if no section is selected in url hasn.
+	// Show `General` settings section if no section is selected in url hasn.
 	const defaultSectionId = 'default-settings';
 	const urlHashSectionId = window.location.hash?.replace( '#', '' );
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams( queryString );
 	hideAllSections();
+	let sectionSet = false;
 	if ( urlHashSectionId ) {
 		show( urlHashSectionId );
+	} else if ( urlParams.has( 'tab' ) || ! href?.includes( '#' ) ) {
+		markCurrentTab( urlParams.get( 'tab' ) || defaultSectionId );
 	} else {
 		show( defaultSectionId );
 	}
 
 	$senseiSettings.find( 'a.tab' ).on( 'click', function ( e ) {
-		const queryString = window.location.search;
-		const urlParams = new URLSearchParams( queryString );
-
 		const href = $( this ).attr( 'href' );
 		if ( urlParams.has( 'tab' ) || ! href?.includes( '#' ) ) {
+			markCurrentTab( urlParams.get( 'tab' ) || defaultSectionId );
 			return true;
 		}
 
