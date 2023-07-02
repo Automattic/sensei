@@ -75,11 +75,7 @@ class Sensei_Course_Theme_Editor {
 
 		add_theme_page(
 			__( 'Editor', 'sensei-lms' ),
-			sprintf(
-			/* translators: %s: "beta" label */
-				__( 'Editor %s', 'sensei-lms' ),
-				'<span class="awaiting-mod">' . __( 'beta', 'sensei-lms' ) . '</span>'
-			),
+			__( 'Editor', 'sensei-lms' ),
 			'edit_theme_options',
 			'site-editor.php?postType=wp_template'
 		);
@@ -153,8 +149,39 @@ class Sensei_Course_Theme_Editor {
 		add_action( 'admin_init', [ $this, 'add_editor_styles' ] );
 
 		if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
+			$this->substitute_theme_cache();
 			add_filter( 'theme_file_path', [ $this, 'override_theme_block_template_file' ], 10, 2 );
 		}
+	}
+
+	/**
+	 * Substitute cache to enable site editor for non-block themes.
+	 *
+	 * This is a temporary workaround until the site editor is enabled for non-block themes.
+	 * Or there will be a way to override the value for the theme.
+	 */
+	private function substitute_theme_cache() {
+		$theme = wp_get_theme();
+		if ( ! $theme ) {
+			return;
+		}
+
+		$cache_hash = md5( $theme->theme_root . '/' . $theme->stylesheet );
+		$cache_key  = "theme-{$cache_hash}";
+
+		wp_cache_delete( $cache_key, 'themes' );
+		wp_cache_add(
+			$cache_key,
+			array(
+				'block_theme' => true,
+				'headers'     => $theme->headers,
+				'errors'      => $theme->errors,
+				'stylesheet'  => $theme->stylesheet,
+				'template'    => $theme->template,
+			),
+			'themes',
+			0
+		);
 	}
 
 	/**
@@ -187,6 +214,8 @@ class Sensei_Course_Theme_Editor {
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/index.js', [ 'sensei-shared-blocks' ] );
 			Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
 			Sensei()->assets->enqueue_style( 'sensei-learning-mode-editor' );
+			Sensei()->assets->enqueue( 'sensei-email-editor-style', 'css/email-notifications/email-editor-style.css' );
+
 			Sensei_Course_Theme::instance()->enqueue_fonts();
 
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'course-theme/course-theme.editor.js' );

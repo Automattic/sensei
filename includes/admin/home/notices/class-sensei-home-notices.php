@@ -289,10 +289,11 @@ class Sensei_Home_Notices {
 	 * Get the base settings for a plugin update notice.
 	 *
 	 * @param array $plugin_data The plugin update data.
+	 * @param array $screens    The screens to show the notice on.
 	 *
 	 * @return array
 	 */
-	private function get_base_plugin_notice( $plugin_data ) {
+	private function get_base_plugin_notice( $plugin_data, $screens = [] ) {
 		$changelog_url = $plugin_data['changelog'] ?? false;
 
 		$info_link = false;
@@ -302,18 +303,21 @@ class Sensei_Home_Notices {
 				'url'   => esc_url_raw( $changelog_url ),
 			];
 		}
+		if ( empty( $screens ) ) {
+			$screens = [ $this->screen_id ];
+		}
 
 		// We only want this to be dismissible if Sensei LMS is active and available because it can handle the dismiss requests.
 		$is_dismissible = class_exists( 'Sensei_Admin_Notices' );
 
 		return [
-			'level'       => 'info',
+			'level'       => 'warning',
 			'type'        => 'site-wide',
 			'info_link'   => $info_link,
 			'conditions'  => [
 				[
 					'type'    => 'screens',
-					'screens' => [ $this->screen_id ],
+					'screens' => $screens,
 				],
 			],
 			'dismissible' => $is_dismissible,
@@ -389,7 +393,7 @@ class Sensei_Home_Notices {
 		$plugin_file    = $plugin_data['plugin_basename'];
 		$latest_version = $plugin_data['latest_version'];
 
-		$notice            = $this->get_base_plugin_notice( $plugin_data );
+		$notice            = $this->get_base_plugin_notice( $plugin_data, [ 'sensei*' ] );
 		$notice['message'] = wp_kses(
 			sprintf(
 					// translators: First placeholder is the plugin name and second placeholder is the latest version available.

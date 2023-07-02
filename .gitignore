@@ -11,6 +11,7 @@ hookdocs
 node_modules/
 tests/images/test-*
 vendor/
+third-party/
 tests/e2e/screenshots
 /*.zip
 /coverage/
@@ -18,3 +19,4 @@ coverage.xml
 tests/e2e-playwright/contexts/*
 *.tsbuildinfo
 playwright-report/
+.vscode

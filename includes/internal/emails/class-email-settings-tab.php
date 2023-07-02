@@ -16,29 +16,69 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.12.0
  */
 class Email_Settings_Tab {
+
+	/**
+	 * Sensei_Settings instance.
+	 *
+	 * @var \Sensei_Settings
+	 */
+	private $settings;
+
+	/**
+	 * Email_Settings_Tab constructor.
+	 *
+	 * @param \Sensei_Settings $settings Sensei_Settings instance.
+	 */
+	public function __construct( \Sensei_Settings $settings ) {
+		$this->settings = $settings;
+	}
+
 	/**
 	 * Initialize the class and add hooks.
 	 *
 	 * @internal
 	 */
 	public function init() {
-		add_filter( 'sensei_settings_tab_content', [ $this, 'tab_content' ], 10, 2 );
+		add_action( 'sensei_settings_after_links', [ $this, 'render_tabs' ] );
+		add_filter( 'sensei_settings_content', [ $this, 'get_content' ], 10, 2 );
+		add_filter( 'sensei_settings_fields', [ $this, 'add_reply_to_setting' ] );
 	}
 
 	/**
-	 * Render the email settings tab.
+	 * Render tabs on the Emails settings page.
 	 *
 	 * @internal
 	 * @access private
 	 *
-	 * @param string $content  Existing content.
 	 * @param string $tab_name The current tab name.
+	 */
+	public function render_tabs( string $tab_name ) {
+		if ( 'email-notification-settings' !== $tab_name ) {
+			return;
+		}
+
+		$current_subtab = $this->get_current_subtab();
+
+		ob_start();
+		$this->render_submenu( $current_subtab );
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in render_submenu function.
+		echo ob_get_clean();
+	}
+
+	/**
+	 * Get the content on the Emails settings page.
+	 *
+	 * @internal
+	 * @access private
+	 *
+	 * @param string $tab_name The current tab name.
+	 * @param string $content  Tab content.
 	 * @return string
 	 */
-	public function tab_content( string $content, string $tab_name ): string {
+	public function get_content( string $tab_name, string $content = '' ): string {
 		if ( 'email-notification-settings' !== $tab_name ) {
 			return $content;
 		}
@@ -46,10 +86,7 @@ class Email_Settings_Tab {
 		$current_subtab = $this->get_current_subtab();
 
 		ob_start();
-
-		$this->render_submenu( $current_subtab );
 		$this->render_subtab( $current_subtab );
-
 		return ob_get_clean();
 	}
 
@@ -110,7 +147,6 @@ class Email_Settings_Tab {
 	 */
 	private function render_submenu( array $current_subtab ): void {
 		?>
-		<div class="sensei-custom-navigation">
 			<div class="sensei-custom-navigation__tabbar">
 				<?php foreach ( $this->get_subtabs() as $subtab ) : ?>
 					<a class="sensei-custom-navigation__tab <?php echo $subtab['key'] === $current_subtab['key'] ? 'active' : ''; ?>"
@@ -119,7 +155,6 @@ class Email_Settings_Tab {
 					</a>
 				<?php endforeach; ?>
 			</div>
-		</div>
 		<?php
 	}
 
@@ -136,17 +171,24 @@ class Email_Settings_Tab {
 	 * Render the student emails subtab.
 	 */
 	private function render_student_subtab(): void {
-		$list_table = new Email_List_Table();
-		$list_table->prepare_items( 'student' );
-		$list_table->display();
+		$this->render_list_table_for_type( 'student' );
 	}
 
 	/**
 	 * Render the teacher emails subtab.
 	 */
 	private function render_teacher_subtab(): void {
-		$list_table = new Email_List_Table();
-		$list_table->prepare_items( 'teacher' );
+		$this->render_list_table_for_type( 'teacher' );
+	}
+
+	/**
+	 * Reder list table for given type.
+	 *
+	 * @param string $type Type of emails to render.
+	 */
+	private function render_list_table_for_type( string $type ): void {
+		$list_table = new Email_List_Table( new Email_Repository() );
+		$list_table->prepare_items( $type );
 		$list_table->display();
 	}
 
@@ -154,6 +196,80 @@ class Email_Settings_Tab {
 	 * Render the settings subtab.
 	 */
 	private function render_settings_subtab(): void {
-		echo 'TODO';
+		global $wp_settings_fields;
+
+		$fields_to_display = array_filter(
+			$wp_settings_fields['sensei-settings']['email-notification-settings'] ?? [],
+			function( $field_key ) {
+				return in_array( $field_key, [ 'email_from_name', 'email_from_address', 'email_reply_to_name', 'email_reply_to_address' ], true );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+
+		$fields_to_display = array_map(
+			function( $field ) {
+				unset( $field['args']['data']['description'] );
+				$class = $field['args']['class'] ?? '';
+				if ( $class ) {
+					$class = ' class="' . esc_attr( $field['args']['class'] ) . '"';
+				}
+
+				$field['args']['class'] = $class;
+				return $field;
+			},
+			$fields_to_display
+		);
+
+		$options = $this->settings->get_settings() ?? [];
+		unset( $options['email_from_name'], $options['email_from_address'], $options['email_reply_to_address'], $options['email_reply_to_name'] );
+
+		include dirname( __FILE__ ) . '/views/html-settings.php';
+	}
+
+	/**
+	 * Display hidden field.
+	 *
+	 * @param array $key   Field key.
+	 * @param mixed $value Field value.
+	 */
+	private function form_field_hidden( $key, $value ) {
+		if ( ! is_array( $value ) ) {
+			echo '<input name="sensei-settings[' . esc_attr( $key ) . ']" type="hidden" value="' . esc_attr( $value ) . '" />' . "\n";
+		} else {
+			foreach ( $value as $v ) {
+				echo '<input name="sensei-settings[' . esc_attr( $key ) . '][]" type="hidden" value="' . esc_attr( $v ) . '" />' . "\n";
+			}
+		}
+	}
+
+	/**
+	 * Add the Reply To email address setting field.
+	 *
+	 * @since 4.12.0
+	 * @access private
+	 *
+	 * @param array $fields The fields to add to.
+	 *
+	 * @return array The fields with the Reply To email address field added.
+	 */
+	public function add_reply_to_setting( $fields ) {
+
+		$fields['email_reply_to_name'] = [
+			'name'     => __( '"Reply To" Name', 'sensei-lms' ),
+			'type'     => 'input',
+			'default'  => '',
+			'section'  => 'email-notification-settings',
+			'required' => 0,
+		];
+
+		$fields['email_reply_to_address'] = [
+			'name'     => __( '"Reply To" Address', 'sensei-lms' ),
+			'type'     => 'email',
+			'default'  => get_bloginfo( 'admin_email' ),
+			'section'  => 'email-notification-settings',
+			'required' => 0,
+		];
+
+		return $fields;
 	}
 }

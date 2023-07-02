@@ -16,6 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_PostTypes {
 	const LEARNER_TAXONOMY_NAME = 'sensei_learner';
 
+	/**
+	 * Post types to exclude from sitemaps.
+	 */
+	const SITEMAPS_EXCLUDED_PUBLIC_POST_TYPES = [
+		'quiz',
+		'sensei_message',
+		'lesson',
+	];
+
 	public $token;
 	public $slider_labels;
 	public $role_caps;
@@ -108,6 +117,7 @@ class Sensei_PostTypes {
 
 		// Add protections on feeds for certain CPTs.
 		add_action( 'wp', [ $this, 'protect_feeds' ] );
+		add_filter( 'wp_sitemaps_post_types', [ $this, 'exclude_sitemaps_post_types' ] );
 
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
@@ -164,6 +174,22 @@ class Sensei_PostTypes {
 		if ( is_feed() && is_post_type_archive( [ 'lesson', 'question', 'quiz', 'sensei_message' ] ) ) {
 			wp_die( esc_html__( 'Error: Feed does not exist', 'sensei-lms' ), '', [ 'response' => 404 ] );
 		}
+	}
+
+	/**
+	 * Exclude some post types from sitemaps.
+	 *
+	 * @param WP_Post_Type[] $post_types Array of post types.
+	 *
+	 * @return WP_Post_Type[]
+	 */
+	public function exclude_sitemaps_post_types( $post_types ) {
+		return array_filter(
+			$post_types,
+			function( $post_type ) {
+				return ! in_array( $post_type->name, self::SITEMAPS_EXCLUDED_PUBLIC_POST_TYPES, true );
+			}
+		);
 	}
 
 	/**

@@ -86,9 +86,9 @@ class Sensei_Course_Outline_Module_Block {
 					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . $title . '</h2>
 					' . $progress_indicator .
 			( ! empty( $outline_attributes['collapsibleModules'] ) ?
-				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow sensei-collapsible__toggle">
+				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow sensei-collapsible__toggle" aria-expanded="true">
 						' . Sensei()->assets->get_icon( 'chevron-up' ) . '
-						<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
+						<span class="screen-reader-text">' . $title . '</span>
 					</button>' : '' ) .
 			'</header>
 					' . $style_header . '

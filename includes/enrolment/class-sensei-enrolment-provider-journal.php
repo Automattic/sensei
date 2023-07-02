@@ -123,6 +123,7 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 		];
 	}
 
+	#[\ReturnTypeWillChange]
 	/**
 	 * Return object that can be serialized by `json_encode()`.
 	 *

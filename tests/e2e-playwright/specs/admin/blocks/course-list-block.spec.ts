@@ -8,6 +8,7 @@ import { test, expect } from '@playwright/test';
 import { createCourse, createCourseCategory } from '@e2e/helpers/api';
 import PostType from '@e2e/pages/admin/post-type';
 import { editorRole } from '@e2e/helpers/context';
+import { asAdmin } from '@e2e/helpers/api';
 
 const { describe, use, beforeAll } = test;
 
@@ -32,27 +33,30 @@ describe( 'Courses List Block', () => {
 		},
 	];
 
-	beforeAll( async ( { request } ) => {
-		for ( const course of courses ) {
-			const category = await createCourseCategory( request, {
-				name: course.category,
-				description: '',
-				slug: '',
-			} );
+	beforeAll( async () => {
+		// Start to run request as admin
+		await asAdmin( async ( api ) => {
+			for ( const course of courses ) {
+				const category = await createCourseCategory( api, {
+					name: course.category,
+					description: '',
+					slug: '',
+				} );
 
-			await createCourse( request, {
-				...course,
-				categoryIds: [ category.id ],
-				lessons: [],
-			} );
-		}
+				await createCourse( api, {
+					...course,
+					categoryIds: [ category.id ],
+					lessons: [],
+				} );
+			}
+		} );
 	} );
 
 	test( 'it should render a list of courses', async ( { page } ) => {
 		const postTypePage = new PostType( page, 'page' );
 
 		await postTypePage.goToPostTypeCreationPage();
-		const courseList = await postTypePage.addBlock( 'Course List' );
+		const courseList = await postTypePage.addQueryLoop( 'Course List' );
 		await courseList.choosePattern( 'Courses displayed in a grid' );
 
 		await postTypePage.publish();

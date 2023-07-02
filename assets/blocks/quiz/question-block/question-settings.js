@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody } from '@wordpress/components';
+import { PanelBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -43,6 +43,17 @@ const QuestionSettings = ( {
 						/>
 					)
 				) }
+				<ToggleControl
+					label={ __( 'Hide Answer Feedback', 'sensei-lms' ) }
+					checked={ options.hideAnswerFeedback === 'yes' }
+					onChange={ ( value ) =>
+						setOptions( { hideAnswerFeedback: value ? 'yes' : '' } )
+					}
+					help={ __(
+						'Do not show any feedback when the student answers this question.',
+						'sensei-lms'
+					) }
+				/>
 			</PanelBody>
 		</InspectorControls>
 	);

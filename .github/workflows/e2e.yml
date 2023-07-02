@@ -21,10 +21,20 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v3
 
-            - name: Updates the npm version
-              run: npm install -g npm@^8
+            - uses: actions/cache@v3
+              with:
+                  path: ~/.npm/
+                  key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+            - uses: actions/cache@v3
+              with:
+                  path: node_modules/
+                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+     
 
-            - name: Install dependencies
+            - name: Install PHP dependencies
+              uses: ./.github/actions/install-php
+
+            - name: Install JS dependencies
               run: npm ci
 
             - name: Build assets
@@ -36,23 +46,11 @@ jobs:
             - name: Start wp-env
               run: npm run wp-env start 
 
-            - name: Store wp-env logs
-              run: npm run wp-env logs tests --watch > logs.txt &
-
             - name: Run Playwright tests with @setup annotation
               run: CI=true npm run test:e2e -- --grep @setup
 
             - name: Run Playwright tests without the @setup annotation
               run: CI=true npm run test:e2e -- --grep-invert @setup
-
-            - name: Archive logs
-              uses: actions/upload-artifact@v3
-              if: failure()
-              with:
-                  name: logs
-                  path: logs.txt
-                  retention-days: 10
-                  if-no-files-found: ignore
 
             - name: Archive report
               uses: actions/upload-artifact@v3

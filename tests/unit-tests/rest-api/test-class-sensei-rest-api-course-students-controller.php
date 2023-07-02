@@ -100,7 +100,7 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 
 		/* Assert. */
 		$enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$this->assertTrue( $enrolment->is_enrolled( $student_id ) );
+		$this->assertTrue( $enrolment->is_enrolled( $student_id, false ) );
 	}
 
 	public function testAddUsersToCourses_UserNotFoundGiven_ReturnsSuccessfulResponse() {

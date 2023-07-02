@@ -25,21 +25,58 @@ class Sensei_Feature_Flags {
 	 *
 	 * @var array
 	 */
-	private $feature_flags;
+	private $feature_flags = [];
+
+	/**
+	 * Default feature flags constant.
+	 */
+	private const DEFAULT_FEATURE_FLAGS = [
+		'production'  => [
+			'enrolment_provider_tooltip' => false,
+			'email_customization'        => true,
+			'course_outline_ai'          => false,
+		],
+		'development' => [
+			'enrolment_provider_tooltip' => false,
+			'email_customization'        => true,
+			'course_outline_ai'          => true,
+		],
+	];
 
 	/**
 	 * Sensei_Feature_Flags constructor.
+	 *
+	 * @internal
 	 */
 	public function __construct() {
-		$this->feature_flags = [];
+		add_action( 'init', [ $this, 'register_scripts' ], 9 );
 	}
 
 	/**
-	 * Get default feature settings.
+	 * Register scripts.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 */
+	public function register_scripts() {
+		wp_register_script( 'sensei-feature-flags', '' ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Intended, this is a placeholder script.
+
+		wp_add_inline_script(
+			'sensei-feature-flags',
+			'window.sensei = window.sensei || {}; ' .
+			'window.sensei.featureFlags = ' . wp_json_encode( $this->get_feature_flags() ) . ';'
+		);
+	}
+
+	/**
+	 * Get the default feature flag settings for the current environment.
 	 *
 	 * @return array Default feature settings.
 	 */
-	private function get_default_feature_settings() {
+	private function get_default_feature_flags() {
+		$env = wp_get_environment_type();
+
 		/**
 		 * Filters the default feature flag settings.
 		 *
@@ -52,11 +89,22 @@ class Sensei_Feature_Flags {
 		 */
 		return apply_filters(
 			'sensei_default_feature_flag_settings',
-			[
-				'enrolment_provider_tooltip' => false,
-				'email_customization'        => false,
-			]
+			static::DEFAULT_FEATURE_FLAGS[ $env ] ?? static::DEFAULT_FEATURE_FLAGS['production']
 		);
+	}
+
+	/**
+	 * Get the feature flags for the current environment.
+	 *
+	 * @return array
+	 */
+	private function get_feature_flags(): array {
+		$feature_flags = [];
+		foreach ( $this->get_default_feature_flags() as $feature => $default_state ) {
+			$feature_flags[ $feature ] = $this->is_enabled( $feature );
+		}
+
+		return $feature_flags;
 	}
 
 	/**
@@ -67,17 +115,17 @@ class Sensei_Feature_Flags {
 	 * @return bool
 	 */
 	public function is_enabled( $feature ) {
-		$feature                  = trim( strtolower( $feature ) );
-		$default_feature_settings = $this->get_default_feature_settings();
+		$feature               = trim( strtolower( $feature ) );
+		$default_feature_flags = $this->get_default_feature_flags();
 
-		if ( ! isset( $default_feature_settings[ $feature ] ) ) {
+		if ( ! isset( $default_feature_flags[ $feature ] ) ) {
 			return false;
 		}
 
 		$full_feature_name = 'sensei_feature_flag_' . $feature;
 		if ( ! isset( $this->feature_flags[ $feature ] ) ) {
 			$feature_define                  = strtoupper( $full_feature_name );
-			$value                           = defined( $feature_define ) ? (bool) constant( $feature_define ) : $default_feature_settings[ $feature ];
+			$value                           = defined( $feature_define ) ? (bool) constant( $feature_define ) : $default_feature_flags[ $feature ];
 			$this->feature_flags[ $feature ] = $value;
 		}
 
