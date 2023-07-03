@@ -66,9 +66,15 @@ const OutlineEdit = ( props ) => {
 		[ clientId ]
 	);
 
+	const openTailoredModal = useCallback( () => {
+		window.location.hash = 'generate-course-outline-using-ai';
+	}, [] );
+
 	return isEmpty ? (
 		<OutlinePlaceholder
 			addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
+			addBlocks={ setBlocks }
+			openTailoredModal={ openTailoredModal }
 		/>
 	) : (
 		<OutlineAttributesContext.Provider
