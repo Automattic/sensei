@@ -1,10 +1,8 @@
 <?php
 /**
- * Deprecated Video Hero content.
- * Remove after the course_outline_ai feature is released.
+ * Video Hero pattern content.
  *
  * @package sensei-lms
- * @deprecated $$next-version$$
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,8 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <!-- wp:column -->
 <div class="wp-block-column"><!-- wp:sensei-lms/button-take-course {"align":"right"} -->
-<div class="wp-block-sensei-lms-button-take-course has-text-align-right is-style-default wp-block-sensei-button wp-block-button"><button class="wp-block-button__link"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
-<!-- /wp:sensei-lms/button-take-course --></div>
+<div class="wp-block-sensei-lms-button-take-course has-text-align-right is-style-default wp-block-sensei-button wp-block-button"><button class="wp-block-button__link"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div><!-- /wp:sensei-lms/button-take-course --></div>
 <!-- /wp:column --></div>
 <!-- /wp:columns --></div>
 <!-- /wp:group --></div>
@@ -50,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <p class="has-text-align-center has-large-font-size" style="line-height:1.5"><?php esc_html_e( "Get to know Doug's network of professionals by taking the Course today!", 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph -->
 
-<!-- wp:spacer {"height":16} -->
+<!-- wp:spacer {"height":"16px"} -->
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
@@ -58,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <p class="has-text-align-center has-x-large-font-size" style="font-weight:300;line-height:1.5"><a href="#">Jesús Rodriguez</a>, <a href="#">Emery Driscoll</a>, <a href="#">Megan Perry</a>, <a href="#">Rowan Price</a>, <a href="#">Angelo Tso</a>, <a href="#">Edward Stilton</a>, <a href="#">Amy Jensen</a>, <a href="#">Boston Bell</a>, <a href="#">Shay Ford</a>, <a href="#">Lee Cunningham</a>, <a href="#">Evelynn Ray</a>, <a href="#">Landen Reese</a>, <a href="#">Ewan Hart</a>, <a href="#">Jenna Chan</a>, <a href="#">Phoenix Murray</a>, <a href="#">Mel Saunders</a>, <a href="#">Aldo Davidson</a>, <a href="#">Zain Hall</a>.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:spacer {"height":16} -->
+<!-- wp:spacer {"height":"16px"} -->
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
@@ -69,7 +66,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:group -->
 
 <!-- wp:group {"align":"full","style":{"color":{"background":"#f8f4e4"},"spacing":{"padding":{"top":"20px","left":"90px","right":"90px","bottom":"20px"}}}} -->
-<div class="wp-block-group alignfull has-background" style="background-color:#f8f4e4;padding-top:20px;padding-right:90px;padding-bottom:20px;padding-left:90px"><!-- wp:spacer {"height":24} -->
+<div class="wp-block-group alignfull has-background" style="background-color:#f8f4e4;padding-top:20px;padding-right:90px;padding-bottom:20px;padding-left:90px"><!-- wp:spacer {"height":"24px"} -->
 <div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
@@ -87,7 +84,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <p class="has-text-color" style="color:#000000;font-size:5vw;line-height:1.1"><strong><?php esc_html_e( 'Film Direction', 'sensei-lms' ); ?></strong></p>
 <!-- /wp:paragraph -->
 
-<!-- wp:spacer {"height":5} -->
+<!-- wp:spacer {"height":"5px"} -->
 <div style="height:5px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer --></div>
 <!-- /wp:column --></div>
@@ -129,7 +126,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <p class="has-text-color has-extra-small-font-size" style="color:#000000"><?php esc_html_e( 'There are many pathways to becoming a film director. Some film directors started as screenwriters, cinematographers, producers, film editors, or actors. Directors use different approaches. In this course you will also learn about each of these points and figure out which one is for you.', 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph -->
 
-<!-- wp:spacer {"height":8} -->
+<!-- wp:spacer {"height":"8px"} -->
 <div style="height:8px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
@@ -148,26 +145,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:group {"style":{"spacing":{"padding":{"top":"20px","right":"90px","bottom":"20px","left":"90px"}},"color":{"text":"#ffffff","background":"#000000"}},"className":"sensei-pattern-group"} -->
-<div class="wp-block-group sensei-pattern-group has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:20px;padding-right:90px;padding-bottom:20px;padding-left:90px"><!-- wp:spacer {"height":24} -->
+<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"20px","right":"90px","bottom":"20px","left":"90px"}},"color":{"text":"#ffffff","background":"#000000"}},"className":"sensei-pattern-group"} -->
+<div class="wp-block-group alignwide sensei-pattern-group has-text-color has-background" style="color:#ffffff;background-color:#000000;padding-top:20px;padding-right:90px;padding-bottom:20px;padding-left:90px"><!-- wp:spacer {"height":"24px"} -->
 <div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
 <!-- wp:heading -->
-<h2><?php esc_html_e( "Let's get started", 'sensei-lms' ); ?></h2>
+<h2 class="wp-block-heading"><?php esc_html_e( "Let's get started", 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->
 
-<!-- wp:sensei-lms/course-progress /-->
+<!-- wp:sensei-lms/course-progress {"defaultBarColor":"primary"} /-->
 
-<!-- wp:sensei-lms/course-outline -->
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 1', 'sensei-lms' ); ?>"} /-->
+<!-- wp:sensei-lms/course-outline /-->
 
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 2', 'sensei-lms' ); ?>"} /-->
-
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 3', 'sensei-lms' ); ?>"} /-->
-<!-- /wp:sensei-lms/course-outline -->
-
-<!-- wp:spacer {"height":8} -->
+<!-- wp:spacer {"height":"8px"} -->
 <div style="height:8px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
@@ -179,6 +170,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- wp:sensei-lms/button-contact-teacher {"style":{"color":{"text":"#ffffff"}}} -->
 <div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link has-text-color" style="color:#ffffff"><?php esc_html_e( 'Contact Teacher', 'sensei-lms' ); ?></a></div>
 <!-- /wp:sensei-lms/button-contact-teacher --></div>
-<!-- /wp:group -->
-</div>
+<!-- /wp:group --></div>
 <!-- /wp:group -->
