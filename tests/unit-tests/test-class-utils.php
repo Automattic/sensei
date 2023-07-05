@@ -382,7 +382,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_lessons['lesson_ids'][0], $result );
 	}
 
-	public function testGetTargetPagePostIdForContinueUrl_WhenCalled_ReturnsFirstLessonIdIfNoLessonIsCompleted() {
+	public function testGetTargetPagePostIdForContinueUrl_WhenNoLessonIsCompleted_ReturnsFirstLessonId() {
 		/* Arrange */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
