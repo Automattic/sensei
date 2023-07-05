@@ -62,7 +62,7 @@ class Sensei_Class_Feature_Flags_Test extends WP_UnitTestCase {
 
 		/* Act. */
 		$flags->register_scripts();
-		$inline_script = wp_scripts()->print_inline_script( 'sensei-feature-flags', 'after', false );
+		$inline_script = wp_scripts()->get_data( 'sensei-feature-flags', 'after' )[1];
 
 		/* Assert. */
 		$expected = 'window.sensei = window.sensei || {}; window.sensei.featureFlags = {"foo_feature":false};';
