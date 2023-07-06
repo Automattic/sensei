@@ -1,7 +1,7 @@
 $breakpoint: 783px;
 
 :root {
-	--sensei-lm-header-height: 65px;
+	--sensei-lm-header-height: 80px;
 	--header-progress-bar-height: 4px;
 	--sensei-lm-sidebar-width: 300px;
 	--content-padding: 32px;
@@ -33,19 +33,15 @@ body.sensei-course-theme {
 		position: fixed;
 		left: 0;
 		right: 0;
+		background-color: var(--sensei-background-color);
 		height: var(--sensei-lm-header-height);
 		top: var(--top-offset);
-		background-color: var(--sensei-background-color);
 		z-index: 100;
 		display: flex;
 		flex-direction: column;
 
 		& > :first-child {
 			flex: 1;
-		}
-
-		img {
-			max-height: var(--sensei-lm-header-height);
 		}
 	}
 

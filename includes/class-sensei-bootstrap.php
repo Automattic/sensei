@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Bootstrap loads the functionality needed for Sensei_Main to initialize properly
  *
- * @deprecated $$next-version$$ Using Composer's autoloader now.
+ * @deprecated 4.13.1 Using Composer's autoloader now.
  *
  * @package Core
  */
@@ -27,24 +27,24 @@ class Sensei_Bootstrap {
 	/**
 	 * Set up Sensei class loaders and includes.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.13.1
 	 *
 	 * @return $this
 	 */
 	public function bootstrap() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.13.1' );
 		return $this;
 	}
 
 	/**
 	 * Get singleton.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.13.1
 	 *
 	 * @return Sensei_Bootstrap
 	 */
 	public static function get_instance() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.13.1' );
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}

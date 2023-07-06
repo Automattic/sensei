@@ -59,6 +59,31 @@ class Email_Post_Type {
 		add_action( 'init', [ $this, 'register_post_type' ] );
 		add_action( 'load-edit.php', [ $this, 'maybe_redirect_to_listing' ] );
 		add_action( 'map_meta_cap', [ $this, 'remove_cap_of_deleting_email' ], 10, 4 );
+
+		add_filter( 'is_post_type_viewable', [ $this, 'enable_email_template_editor' ], 10, 2 );
+	}
+
+	/**
+	 * Set sensei_email as viewable only on the admin interface.
+	 *
+	 * @param bool         $is_viewable    Original is_viewable value.
+	 * @param WP_Post_Type $post_type  Current post_type.
+	 *
+	 * @since 4.14.0
+	 *
+	 * @access private
+	 *
+	 * @internal
+	 *
+	 * @return bool
+	 */
+	public function enable_email_template_editor( $is_viewable, $post_type ) {
+
+		if ( is_admin() && self::POST_TYPE === $post_type->name ) {
+			return true;
+		}
+
+		return $is_viewable;
 	}
 
 	/**
@@ -98,7 +123,7 @@ class Email_Post_Type {
 		register_post_type(
 			self::POST_TYPE,
 			[
-				'labels'       => [
+				'labels'              => [
 					'name'               => __( 'Emails', 'sensei-lms' ),
 					'singular_name'      => __( 'Email', 'sensei-lms' ),
 					'add_new'            => __( 'Add New', 'sensei-lms' ),
@@ -113,13 +138,16 @@ class Email_Post_Type {
 					'menu_name'          => __( 'Emails', 'sensei-lms' ),
 					'name_admin_bar'     => __( 'Email', 'sensei-lms' ),
 				],
-				'public'       => false,
-				'show_ui'      => true,
-				'show_in_menu' => false,
-				'show_in_rest' => true, // Enables the Gutenberg editor.
-				'hierarchical' => false,
-				'rewrite'      => false,
-				'supports'     => [ 'title', 'editor', 'author', 'revisions' ],
+				'public'              => true,
+				'exclude_from_search' => true,
+				'publicly_queryable'  => false,
+				'show_in_nav_menus'   => false,
+				'show_ui'             => true,
+				'show_in_menu'        => false,
+				'show_in_rest'        => true, // Enables the Gutenberg editor.
+				'hierarchical'        => false,
+				'rewrite'             => false,
+				'supports'            => [ 'title', 'editor', 'author', 'revisions' ],
 			]
 		);
 	}

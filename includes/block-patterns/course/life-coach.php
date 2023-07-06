@@ -1,12 +1,15 @@
 <?php
 /**
- * Long Sales Page pattern.
+ * Life Coach Page pattern.
  *
  * @package sensei-lms
  */
 
 ob_start();
-require __DIR__ . '/templates/life-coach.php';
+
+require Sensei()->feature_flags->is_enabled( 'course_outline_ai' ) ?
+	__DIR__ . '/templates/v2/life-coach.php' :
+	__DIR__ . '/templates/life-coach.php';
 
 return [
 	'title'      => __( 'Life Coach', 'sensei-lms' ),

@@ -1465,7 +1465,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testSetQuickEditAdminDefaults_WhenCalled_LocalizesScripts(): void {
 		/* Arrange */
 		global $wp_scripts;
-		$wp_scripts = $this->createMock( WP_Scripts::class );
+		$old_wp_scripts = $wp_scripts;
+		$wp_scripts     = $this->createMock( WP_Scripts::class );
 
 		$post = $this->factory->lesson->create_and_get();
 		$quiz = $this->factory->quiz->create_and_get();
@@ -1506,6 +1507,9 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				]
 			);
 		$lesson->set_quick_edit_admin_defaults( 'lesson-course', $post->ID );
+
+		/* Reset */
+		$wp_scripts = $old_wp_scripts;
 	}
 
 	public function testMetaBoxSave_PostIdGiven_UpdatesPostMeta(): void {

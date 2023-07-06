@@ -162,4 +162,54 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertFalse( isset( $redirect_status ) );
 	}
+
+	public function testGettingMessageContentAndTitle_WhenGot_ReplacesBracketsByUnicode() {
+		$this->login_as_teacher();
+		$course_id  = $this->factory->course->create();
+		$teacher_id = get_current_user_id();
+
+		$this->login_as_student();
+		$student_id = get_current_user_id();
+
+		$instance   = new Sensei_Messages();
+		$message_id = $this->factory->message->create(
+			[
+				'meta_input' => [
+					'_post'     => $course_id,
+					'_posttype' => 'course',
+					'_receiver' => get_user_by( 'ID', $teacher_id )->user_login,
+					'_sender'   => get_user_by( 'ID', $student_id )->user_login,
+				],
+			]
+		);
+
+		$this->go_to( get_permalink( $message_id ) );
+
+		$content = $instance->message_content( 'This is a message with [brackets] [[brackets]] [[[brackets]]].' );
+		$title   = $instance->message_title( 'This is a title with [brackets] [[brackets]] [[[brackets]]].' );
+
+		$this->assertStringNotContainsString( '[', $content );
+		$this->assertStringNotContainsString( ']', $content );
+		$this->assertStringNotContainsString( '[', $title );
+		$this->assertStringNotContainsString( ']', $title );
+		$this->assertStringContainsString( '&#91;', $content );
+		$this->assertStringContainsString( '&#93;', $content );
+		$this->assertStringContainsString( '&#91;', $title );
+		$this->assertStringContainsString( '&#93;', $title );
+	}
+
+	public function testGettingPostContentAndTitle_DoesNotReplaceBrackets_IfNotSingleMessagePostInLoop() {
+		$this->login_as_teacher();
+
+		$instance = new Sensei_Messages();
+		$post_id  = $this->factory->post->create();
+
+		$this->go_to( get_permalink( $post_id ) );
+
+		$content = $instance->message_content( 'This is a message with [brackets] [[brackets]] [[[brackets]]].' );
+		$title   = $instance->message_title( 'This is a title with [brackets] [[brackets]] [[[brackets]]].' );
+
+		$this->assertEquals( 'This is a message with [brackets] [[brackets]] [[[brackets]]].', $content );
+		$this->assertEquals( 'This is a title with [brackets] [[brackets]] [[[brackets]]].', $title );
+	}
 }

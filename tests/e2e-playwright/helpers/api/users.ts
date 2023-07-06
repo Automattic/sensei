@@ -1,5 +1,4 @@
-import { APIRequestContext } from '@playwright/test';
-import { createApiContext } from './index';
+import { WpApiRequestContext } from './index';
 
 export type UserResponse = {
 	id: number;
@@ -19,12 +18,10 @@ export type User = {
 };
 
 export const createUser = async (
-	context: APIRequestContext,
+	api: WpApiRequestContext,
 	user: User
 ): Promise< UserResponse > => {
-	const api = await createApiContext( context );
-
-	return api.post( `/wp-json/wp/v2/users`, {
+	return api.post< UserResponse >( `/wp-json/wp/v2/users`, {
 		email: `${ user.username }@example.com`,
 		meta: { context: 'view' },
 		...user,

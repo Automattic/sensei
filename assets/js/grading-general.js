@@ -110,13 +110,24 @@ jQuery( document ).ready( function ( $ ) {
 
 				if ( $this.hasClass( 'gap-fill' ) ) {
 					user_answer = $this
-						.find( '.user-answer .highlight' )
+						.find( '.user-answer' )
+						.contents()
+						.find( '.highlight' )
 						.html();
 					correct_answer = $this
 						.find( '.correct-answer .highlight' )
 						.html();
 				} else {
-					user_answer = $this.find( '.user-answer' ).html();
+					user_answer = $this
+						.find( '.user-answer' )
+						.contents()
+						.find( 'body' )
+						.map( function () {
+							return this.innerHTML.trim();
+						} )
+						.toArray()
+						.join( '<br>' );
+
 					correct_answer = $this.find( '.correct-answer' ).html();
 				}
 
@@ -130,6 +141,7 @@ jQuery( document ).ready( function ( $ ) {
 					if ( $this.hasClass( 'multiple-choice' ) ) {
 						var user_answers = user_answer.split( '<br>' );
 						var correct_answers = correct_answer.split( '<br>' );
+
 						all_correct = true;
 
 						user_answers.forEach( function ( user_answer ) {
@@ -140,9 +152,15 @@ jQuery( document ).ready( function ( $ ) {
 							}
 						} );
 
-						if ( user_answers.length !== correct_answers.length ) {
+						if (
+							user_answers.length !==
+							correct_answers.length - 1
+						) {
 							all_correct = false;
 						}
+					} else {
+						user_answer = user_answer.split( '<br>' )[ 0 ];
+						correct_answer = correct_answer.split( '<br>' )[ 0 ];
 					}
 
 					if ( all_correct || user_answer === correct_answer ) {
