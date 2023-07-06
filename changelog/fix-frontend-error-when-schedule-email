@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Avoid an error with getting future post URL for a scheduled sensei_email post.

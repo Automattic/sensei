@@ -75,11 +75,7 @@ class Sensei_Course_Theme_Editor {
 
 		add_theme_page(
 			__( 'Editor', 'sensei-lms' ),
-			sprintf(
-			/* translators: %s: "beta" label */
-				__( 'Editor %s', 'sensei-lms' ),
-				'<span class="awaiting-mod">' . __( 'beta', 'sensei-lms' ) . '</span>'
-			),
+			__( 'Editor', 'sensei-lms' ),
 			'edit_theme_options',
 			'site-editor.php?postType=wp_template'
 		);

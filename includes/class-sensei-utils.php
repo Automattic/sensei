@@ -2786,7 +2786,7 @@ class Sensei_Utils {
 			$completed_lessons     = Sensei()->course->get_completed_lesson_ids( $course_id, $user_id );
 			$not_completed_lessons = array_diff( $course_lessons, $completed_lessons );
 
-			if ( count( $course_lessons ) !== count( $not_completed_lessons ) && ! empty( $not_completed_lessons ) ) {
+			if ( $not_completed_lessons ) {
 				return current( $not_completed_lessons );
 			}
 		}
