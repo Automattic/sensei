@@ -19,6 +19,9 @@ import { COURSE_STORE } from '../course-outline-store';
 import { useBlocksCreator } from '../use-block-creator';
 import OutlineAppender from './outline-appender';
 import OutlinePlaceholder from './outline-placeholder';
+import useSenseiProSettings from './use-sensei-pro-settings';
+
+const SENSEI_PRO_LINK = 'https://senseilms.com/sensei-pro/';
 
 const ALLOWED_BLOCKS = [
 	'sensei-lms/course-outline-module',
@@ -44,6 +47,8 @@ const OutlineEdit = ( props ) => {
 
 	const { loadStructure } = useDispatch( COURSE_STORE );
 
+	const { isActivated: isSenseiProActivated } = useSenseiProSettings();
+
 	useEffect( () => {
 		if ( ! attributes.isPreview ) {
 			loadStructure();
@@ -66,9 +71,19 @@ const OutlineEdit = ( props ) => {
 		[ clientId ]
 	);
 
+	const openTailoredModal = useCallback( () => {
+		if ( isSenseiProActivated ) {
+			window.location.hash = 'generate-course-outline-using-ai';
+		} else {
+			window.location.href = SENSEI_PRO_LINK;
+		}
+	}, [ isSenseiProActivated ] );
+
 	return isEmpty ? (
 		<OutlinePlaceholder
 			addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
+			addBlocks={ setBlocks }
+			openTailoredModal={ openTailoredModal }
 		/>
 	) : (
 		<OutlineAttributesContext.Provider
