@@ -60,11 +60,14 @@ class Course_Created_Test extends \WP_UnitTestCase {
 
 	public function testInit_WhenCalled_AddsHooksForInitializingIndividualEmails() {
 		/* Arrange. */
+		$email            = new \WP_Post( (object) [ 'post_status' => 'publish' ] );
 		$email_repository = $this->createMock( Email_Repository::class );
 		$generator        = new Course_Created( $email_repository );
+		$email_repository->method( 'get' )->with( 'course_created' )->willReturn( $email );
 
 		/* Act. */
 		$generator->init();
+		do_action( 'transition_post_status', 'draft', 'draft', $email );
 
 		/* Assert. */
 		$priority = has_action( 'transition_post_status', [ $generator, 'course_created_to_admin' ] );
