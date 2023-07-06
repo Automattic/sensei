@@ -41,7 +41,7 @@ class Course_Created extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'transition_post_status', [ $this, 'course_created_to_admin' ], 10, 3 );
+		$this->maybe_add_action( 'transition_post_status', [ $this, 'course_created_to_admin' ], 10, 3 );
 	}
 
 	/**

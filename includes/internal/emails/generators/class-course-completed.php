@@ -42,7 +42,7 @@ class Course_Completed extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_course_status_updated', [ $this, 'completed_course_mail_to_student' ], 10, 3 );
+		$this->maybe_add_action( 'sensei_course_status_updated', [ $this, 'completed_course_mail_to_student' ], 10, 3 );
 	}
 
 	/**
