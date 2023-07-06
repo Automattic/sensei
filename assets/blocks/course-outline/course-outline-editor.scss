@@ -27,10 +27,10 @@ body .editor-styles-wrapper,
 				transition: all ease 0.3s;
 
 				&:hover, &:focus {
-					// opacity: 0.5;
 					transform: translateY(-3px);
 					box-shadow: -1px 3px 6px 0px rgba(0, 0, 0, 0.15)
 				}
+
 				&.is-blank {
 					background-color: $gray-0;
 				}
