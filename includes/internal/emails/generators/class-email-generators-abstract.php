@@ -81,6 +81,30 @@ abstract class Email_Generators_Abstract {
 	}
 
 	/**
+	 * Add action if email is active.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param string   $action        Action name.
+	 * @param callable $callback      Callback.
+	 * @param int      $priority      Priority.
+	 * @param int      $accepted_args Accepted arguments.
+	 */
+	protected function maybe_add_action( $action, $callback, $priority = 10, $accepted_args = 1 ) {
+		add_action(
+			$action,
+			function () use ( $action, $callback, $priority, $accepted_args ) {
+				if ( $this->is_email_active() ) {
+					add_action( $action, $callback, $priority, $accepted_args );
+				}
+			},
+			1
+		);
+	}
+
+	/**
 	 * Get name of the identifier of the Email.
 	 *
 	 * @since 4.12.0
