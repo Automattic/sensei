@@ -21,6 +21,15 @@ body .editor-styles-wrapper,
 				border-radius: 2px;
 				margin: 0 0 20px;
 				padding: $item-padding $item-padding 0;
+				text-align: unset;
+				border-style: none;
+				cursor: pointer;
+				transition: all ease 0.3s;
+
+				&:hover, &:focus {
+					transform: translateY(-3px);
+					box-shadow: -1px 3px 6px 0px rgba(0, 0, 0, 0.15)
+				}
 
 				&.is-blank {
 					background-color: $gray-0;
@@ -107,9 +116,10 @@ body .editor-styles-wrapper,
 					display: block;
 					margin-left: -$item-padding;
 					margin-right: -$item-padding;
-					padding-top: 8px;
+					margin-top: 8px;
 					text-align: center;
 					width: calc(100% + 2 * $item-padding);
+					padding: 10px 0;
 
 					@media (min-width: $break-small) {
 						align-self: flex-end;
