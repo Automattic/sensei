@@ -23,8 +23,12 @@ import { createAdminContext } from '@e2e/helpers/context';
 export default async (): Promise< void > => {
 	cleanDatabase();
 	configureSite();
-
+	await cleanAllPlugins();
 	await setupDefaultUsers();
+};
+
+const cleanAllPlugins = async () => {
+	await cliAsync( 'wp plugin deactivate --all --exclude=sensei,sensei-lms' );
 };
 
 const setupDefaultUsers = async (): Promise< void > => {
