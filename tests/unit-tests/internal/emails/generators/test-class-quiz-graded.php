@@ -33,7 +33,7 @@ class Quiz_Graded_Test extends \WP_UnitTestCase {
 		parent::setUp();
 		$this->prepareEnrolmentManager();
 
-		$this->factory          = new Sensei_Factory();
+		$this->factory = new Sensei_Factory();
 
 		$this->email_repository = $this->createMock( Email_Repository::class );
 		$this->email_repository->method( 'get' )
