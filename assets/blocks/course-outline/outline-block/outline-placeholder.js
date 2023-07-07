@@ -30,15 +30,15 @@ const EditPlaceholder = ( { addBlocks, openTailoredModal = noop } ) => {
 		addBlocks( [
 			{
 				type: 'lesson',
-				title: 'Lesson 1',
+				title: __( 'Lesson 1', 'sensei-lms' ),
 			},
 			{
 				type: 'lesson',
-				title: 'Lesson 2',
+				title: __( 'Lesson 2', 'sensei-lms' ),
 			},
 			{
 				type: 'lesson',
-				title: 'Lesson 3',
+				title: __( 'Lesson 3', 'sensei-lms' ),
 			},
 		] );
 	};
