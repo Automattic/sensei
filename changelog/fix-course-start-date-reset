@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix resetting a quiz also resets the course start date

@@ -6,7 +6,9 @@
  */
 
 ob_start();
-require __DIR__ . '/templates/video-hero.php';
+require Sensei()->feature_flags->is_enabled( 'course_outline_ai' ) ?
+	__DIR__ . '/templates/v2/video-hero.php' :
+	__DIR__ . '/templates/video-hero.php';
 
 return [
 	'title'      => __( 'Video Hero', 'sensei-lms' ),
