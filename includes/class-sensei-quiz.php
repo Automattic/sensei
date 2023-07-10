@@ -1376,6 +1376,8 @@ class Sensei_Quiz {
 
 				if ( $feedback_block ) {
 					$feedback = $feedback_block;
+				} else {
+					$feedback = self::get_generic_answer_feedback( $question_id );
 				}
 			}
 		} else {
@@ -1443,6 +1445,19 @@ class Sensei_Quiz {
 		return $block ? render_block( $block ) : '';
 	}
 
+	/**
+	 * Get the contents for the generic answer feedback block.
+	 *
+	 * @access public
+	 * @param int $question_id
+	 *
+	 * @return string
+	 */
+	public static function get_generic_answer_feedback( $question_id ) {
+		$block = self::get_generic_answer_feedback_block( $question_id );
+		return $block ? render_block( $block ) : '';
+	}
+
 
 	/**
 	 * Get the contents for the correct answer feedback block.
@@ -1468,6 +1483,19 @@ class Sensei_Quiz {
 	 */
 	public static function get_incorrect_answer_feedback_block( $question_id ) {
 		return self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-incorrect' );
+	}
+
+	/**
+	 * Get the contents for the generic answer feedback block.
+	 *
+	 * @since 4.6.0
+	 * @access public
+	 * @param int $question_id Question Id.
+	 *
+	 * @return array
+	 */
+	public static function get_generic_answer_feedback_block( $question_id ) {
+		return self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-generic' );
 	}
 
 	/**

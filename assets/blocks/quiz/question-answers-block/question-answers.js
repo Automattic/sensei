@@ -19,13 +19,9 @@ import { QuestionContext } from '../question-block/question-context';
  *
  */
 const QuestionAnswers = () => {
-	const {
-		answer,
-		setAttributes,
-		AnswerBlock,
-		hasSelected,
-		canHaveFeedback,
-	} = useContext( QuestionContext );
+	const { answer, setAttributes, AnswerBlock, hasSelected } = useContext(
+		QuestionContext
+	);
 	return (
 		<div className={ classnames( 'sensei-lms-question-answers-block' ) }>
 			{ AnswerBlock?.edit && (
@@ -39,9 +35,7 @@ const QuestionAnswers = () => {
 						}
 						hasSelected={ hasSelected }
 					/>
-					{ canHaveFeedback && hasSelected && (
-						<AnswerFeedbackToggle />
-					) }
+					{ hasSelected && <AnswerFeedbackToggle /> }
 				</>
 			) }
 		</div>

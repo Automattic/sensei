@@ -29,6 +29,13 @@ const config = {
 			'sensei-lms'
 		),
 	},
+	generic: {
+		title: __( 'Feedback', 'sensei-lms' ),
+		placeholder: __(
+			'Show a message when the question has been answered',
+			'sensei-lms'
+		),
+	},
 };
 
 /**

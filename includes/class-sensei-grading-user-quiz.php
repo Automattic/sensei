@@ -138,9 +138,10 @@ class Sensei_Grading_User_Quiz {
 				$custom_feedback       = $custom_feedback[ $question_id ] ?? '';
 				$correct_feedback      = Sensei_Quiz::get_correct_answer_feedback( $question_id );
 				$incorrect_feedback    = Sensei_Quiz::get_incorrect_answer_feedback( $question_id );
+				$generic_feedback      = Sensei_Quiz::get_generic_answer_feedback( $question_id );
 				$question_answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, $user_id );
 
-				if ( ! $correct_feedback && ! $incorrect_feedback ) {
+				if ( ! $correct_feedback && ! $incorrect_feedback && ! $generic_feedback ) {
 					$custom_feedback = $question_answer_notes;
 				}
 
@@ -356,6 +357,7 @@ class Sensei_Grading_User_Quiz {
 							<h5><?php esc_html_e( 'Answer Feedback', 'sensei-lms' ); ?></h5>
 							<div class="answer-feedback-correct"><?php echo wp_kses_post( $correct_feedback ); ?></div>
 							<div class="answer-feedback-incorrect"><?php echo wp_kses_post( $incorrect_feedback ); ?></div>
+							<div class="answer-feedback-generic"><?php echo wp_kses_post( $generic_feedback ); ?></div>
 							<textarea class="correct-answer" name="questions_feedback[<?php echo esc_attr( $question_id ); ?>]" placeholder="<?php esc_attr_e( 'Add custom feedback here...', 'sensei-lms' ); ?>"><?php echo esc_html( $custom_feedback ); ?></textarea>
 						</div>
 					</div>

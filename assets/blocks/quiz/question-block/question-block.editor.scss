@@ -5,8 +5,8 @@ $block: '.sensei-lms-question-block';
 @import '../../../shared/styles/wp-colors';
 
 .sensei-lms-question-block {
-
-	.editor-styles-wrapper .wp-block &__title, .editor-styles-wrapper .wp-block &__index {
+	.editor-styles-wrapper .wp-block &__title,
+	.editor-styles-wrapper .wp-block &__index {
 		font-size: 24px;
 		margin-top: 0;
 		margin-bottom: 0;
@@ -30,7 +30,7 @@ $block: '.sensei-lms-question-block';
 		white-space: nowrap;
 
 		#{$block}.is-draft & {
-			opacity: .62;
+			opacity: 0.62;
 		}
 
 		.editor-styles-wrapper .wp-block & {
@@ -47,7 +47,6 @@ $block: '.sensei-lms-question-block';
 	}
 
 	&__type-selector {
-
 		&__popover .sensei-toolbar-dropdown__option {
 			padding: 12px;
 		}
@@ -74,7 +73,8 @@ $block: '.sensei-lms-question-block';
 		}
 	}
 
-	&__text-input-placeholder, &__file-input-placeholder {
+	&__text-input-placeholder,
+	&__file-input-placeholder {
 		border: 2px solid currentColor;
 		border-radius: 2px;
 		padding: 5px;
@@ -99,7 +99,9 @@ $block: '.sensei-lms-question-block';
 	&__input-label {
 	}
 
-	&__answer--multiple-choice, &__answer--true-false, &__answer--gap-fill {
+	&__answer--multiple-choice,
+	&__answer--true-false,
+	&__answer--gap-fill {
 		.editor-styles-wrapper & {
 			margin: 28px 0;
 			padding: 0;
@@ -110,13 +112,13 @@ $block: '.sensei-lms-question-block';
 		}
 	}
 
-	&__answer--multiple-choice, &__answer--true-false {
+	&__answer--multiple-choice,
+	&__answer--true-false {
 		.editor-styles-wrapper & li {
 			min-height: 35px;
 		}
 
 		&__toggle {
-
 			&__wrapper {
 				flex-basis: 65px;
 				margin-left: 12px;
@@ -131,7 +133,7 @@ $block: '.sensei-lms-question-block';
 				background: #fff;
 				border: 1px solid $gray-900;
 
-				&:not(:hover) {
+				&:not( :hover ) {
 					color: $gray-900 !important;
 				}
 			}
@@ -153,7 +155,6 @@ $block: '.sensei-lms-question-block';
 			&__control {
 				margin-right: 12px;
 			}
-
 		}
 
 		.editor-styles-wrapper & li {
@@ -161,7 +162,6 @@ $block: '.sensei-lms-question-block';
 			display: flex;
 			align-items: baseline;
 		}
-
 	}
 
 	&__multiple-choice-answer-option {
@@ -172,11 +172,9 @@ $block: '.sensei-lms-question-block';
 		&__input {
 			flex: 1;
 		}
-
 	}
 
 	&__answer--gap-fill {
-
 		.components-form-token-field {
 			&__input-container {
 				margin: 0;
@@ -192,7 +190,7 @@ $block: '.sensei-lms-question-block';
 
 			&__token {
 				font-size: inherit;
-				background: var(--wp-admin-theme-color, #333);
+				background: var( --wp-admin-theme-color, #333 );
 				color: #fff;
 				align-items: center;
 
@@ -216,10 +214,9 @@ $block: '.sensei-lms-question-block';
 		}
 
 		&__text {
-			border: 1px solid rgba(#ccc, 0.75);
+			border: 1px solid rgba( #ccc, 0.75 );
 			padding: 12px;
 			border-radius: 2px;
-
 		}
 
 		.editor-styles-wrapper &__right-answers {
@@ -238,7 +235,7 @@ $block: '.sensei-lms-question-block';
 
 		&__token {
 			font-size: inherit;
-			background: var(--wp-admin-theme-color, #333);
+			background: var( --wp-admin-theme-color, #333 );
 			color: #fff;
 			padding: 6px;
 			margin-right: 4px;
@@ -256,7 +253,7 @@ $block: '.sensei-lms-question-block';
 		padding: 1px 4px;
 		padding-left: 0;
 		margin-top: 2px;
-		background: rgba(#ccc, 0.2);
+		background: rgba( #ccc, 0.2 );
 		position: absolute;
 		cursor: default;
 		user-select: none;
@@ -284,29 +281,31 @@ $block: '.sensei-lms-question-block';
 			padding: 0;
 			margin: 0;
 			color: inherit;
-			&:hover, &:focus-visible {
-				color: var(--wp-admin-theme-color);
+			&:hover,
+			&:focus-visible {
+				color: var( --wp-admin-theme-color );
 			}
 		}
 		&__help {
-			opacity: .6;
+			opacity: 0.6;
 			font-size: 12px;
 		}
 		&__icon {
 			vertical-align: middle;
 			margin-left: 6px;
 			fill: currentColor;
-			.sensei-lms-question-block__answer-feedback-toggle:not(.is-visible) & {
+			.sensei-lms-question-block__answer-feedback-toggle:not( .is-visible )
+				& {
 				position: relative;
 				top: -2px;
 			}
 		}
-
 	}
 
-	&:not(.show-answer-feedback) {
-		.wp-block[data-type="sensei-lms/quiz-question-feedback-correct"],
-		.wp-block[data-type="sensei-lms/quiz-question-feedback-incorrect"] {
+	&:not( .show-answer-feedback ) {
+		.wp-block[data-type='sensei-lms/quiz-question-feedback-correct'],
+		.wp-block[data-type='sensei-lms/quiz-question-feedback-incorrect'],
+		.wp-block[data-type='sensei-lms/quiz-question-feedback-generic'] {
 			display: none;
 		}
 	}
