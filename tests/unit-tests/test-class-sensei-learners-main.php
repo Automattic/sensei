@@ -67,6 +67,8 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	 *
 	 * @dataProvider enrolmentFilterTestCases
 	 * @covers       Sensei_Learners_Main::get_learners
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function testUsersAreFilteredByEnrolmentStatus( $enrolment_status, $expected_result ) {
 
