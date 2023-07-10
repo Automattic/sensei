@@ -161,6 +161,32 @@ class Sensei_Reports_Overview_Service_Courses {
 		return (float) $wpdb->get_var( $query );
 	}
 
+
+	/**
+	 * Get total of enrollments
+	 *
+	 * @since  4.15.1
+	 * @param array $course_ids Courses ids to filter by.
+	 *
+	 * @return int total of enrollments
+	 */
+	public function get_total_enrollments( $course_ids ):int {
+		if ( empty( $course_ids ) ) {
+			return 0;
+		}
+		$total_grouped_by_course = $this->get_students_count_in_courses( $course_ids );
+
+		if ( empty( $total_grouped_by_course ) ) {
+			return 0;
+		}
+
+		$to_total = function ( $acc, $current ) {
+			return $acc + $current->students_count;
+		};
+
+		return array_reduce( $total_grouped_by_course, $to_total, 0 );
+	}
+
 	/**
 	 * Get all lessons completions.
 	 *

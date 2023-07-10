@@ -27,7 +27,7 @@ jobs:
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: '7.2'
+                  php-version: '7.3'
                   tools: composer
                   coverage: none
 
@@ -59,17 +59,17 @@ jobs:
             matrix:
                 wp: ['latest']
                 wpmu: [0]
-                php: ['7.2', '7.3', '7.4', '8.0']
+                php: ['7.3', '7.4', '8.0']
                 include:
-                    - php: 7.2
+                    - php: 7.3
                       wp: '5.9'
-                    - php: 7.2
+                    - php: 7.3
                       wp: '6.0'
-                    - php: 7.2
+                    - php: 7.3
                       wp: latest
                       wpmu: 1
                     - wp: nightly
-                      php: 7.2
+                      php: 7.3
         env:
             WP_VERSION: ${{ matrix.wp }}
             WP_MULTISITE: ${{ matrix.wpmu }}

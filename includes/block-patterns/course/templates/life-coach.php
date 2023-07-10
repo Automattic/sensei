@@ -1,8 +1,10 @@
 <?php
 /**
- * Video Hero pattern content.
+ * Deprecated Life Coach pattern content.
+ * Remove after the course_outline_ai feature is released.
  *
  * @package sensei-lms
+ * @deprecated $$next-version$$
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

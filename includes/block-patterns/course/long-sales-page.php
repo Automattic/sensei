@@ -6,7 +6,9 @@
  */
 
 ob_start();
-require __DIR__ . '/templates/long-sales-page.php';
+require Sensei()->feature_flags->is_enabled( 'course_outline_ai' ) ?
+	__DIR__ . '/templates/v2/long-sales.php' :
+	__DIR__ . '/templates/long-sales-page.php';
 
 return [
 	'title'      => __( 'Long Sales Page', 'sensei-lms' ),

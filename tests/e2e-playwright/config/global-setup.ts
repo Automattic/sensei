@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { retry } from '@lifeomic/attempt';
 import { chromium } from '@playwright/test';
 
 /**
