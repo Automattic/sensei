@@ -106,6 +106,10 @@ class Email_Blocks_Test extends \WP_UnitTestCase {
 
 
 	public function testSetEmailCssUnits_WhenCalledWithTheEmailPostType_ReturnsTheUpdatedTheme() {
+		if ( ! version_compare( get_bloginfo( 'version' ), '6.1.0', '>=' ) ) {
+			$this->markTestSkipped( 'Requires `WP_Theme_JSON_Data` which was introduced in WordPress 6.1.0.' );
+		}
+
 		/* Arrange. */
 		$blocks             = new Email_Blocks();
 		$theme_json         = $this->createMock( 'WP_Theme_JSON_Data' );
@@ -127,6 +131,10 @@ class Email_Blocks_Test extends \WP_UnitTestCase {
 	}
 
 	public function testSetEmailCssUnits_WhenCalledWithTheOtherPostType_ReturnsTheOriginalTheme() {
+		if ( ! version_compare( get_bloginfo( 'version' ), '6.1.0', '>=' ) ) {
+			$this->markTestSkipped( 'Requires `WP_Theme_JSON_Data` which was introduced in WordPress 6.1.0.' );
+		}
+
 		/* Arrange. */
 		$blocks             = new Email_Blocks();
 		$theme_json         = $this->createMock( 'WP_Theme_JSON_Data' );
@@ -147,6 +155,10 @@ class Email_Blocks_Test extends \WP_UnitTestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function testSetEmailCssUnits_WhenCalledWithoutACurrentScreen_DoesNotRaiseWarnings() {
+		if ( ! version_compare( get_bloginfo( 'version' ), '6.1.0', '>=' ) ) {
+			$this->markTestSkipped( 'Requires `WP_Theme_JSON_Data` which was introduced in WordPress 6.1.0.' );
+		}
+
 		/* Arrange. */
 		$blocks     = new Email_Blocks();
 		$theme_json = $this->createMock( 'WP_Theme_JSON_Data' );
