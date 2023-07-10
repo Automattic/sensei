@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix emails not using the From Name/Email settings
