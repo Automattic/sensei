@@ -4,6 +4,7 @@
  * Tests for Sensei_Enrolment_Provider_State_Store class.
  *
  * @group course-enrolment
+ * @covers Sensei_Enrolment_Provider_State_Store
  */
 class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
@@ -44,9 +45,6 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 
 	/**
 	 * Tests to make sure valid json strings result in a valid state store.
-	 *
-	 * @covers \Sensei_Enrolment_Provider_State_Store::get_provider_state
-	 * @covers \Sensei_Enrolment_Provider_State_Store::from_json
 	 */
 	public function testFromJsonString() {
 		$always_provides_provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
@@ -72,9 +70,6 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 
 	/**
 	 * Tests to make sure valid json strings result in a valid state store.
-	 *
-	 * @covers \Sensei_Enrolment_Provider_State_Store::get_provider_state
-	 * @covers \Sensei_Enrolment_Provider_State_Store::from_json
 	 */
 	public function testSerializedJsonValid() {
 		$always_provides_provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
@@ -108,10 +103,6 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test setting the has changed state when making changes to the provider states within the set.
-	 *
-	 * @covers \Sensei_Enrolment_Provider_State_Store::set_has_changed
-	 * @covers \Sensei_Enrolment_Provider_State_Store::get_has_changed
-	 * @covers \Sensei_Enrolment_Provider_State::set_stored_value
 	 */
 	public function testHasChangedStates() {
 		$always_provides_provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
