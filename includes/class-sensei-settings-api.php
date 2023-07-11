@@ -1078,7 +1078,7 @@ class Sensei_Settings_API {
 	/**
 	 * Validate email list fields.
 	 *
-	 * @param string $input
+	 * @param string $input Email list to be vaildiated.
 	 * @return string
 	 */
 	public function validate_field_email_list( $input ) {
@@ -1105,8 +1105,8 @@ class Sensei_Settings_API {
 	/**
 	 * Check and validate the input from email list fields.
 	 *
-	 * @param string $key
-	 * @return bool
+	 * @param string $input String of the value to be validated.
+	 * @return bool Is the value valid?
 	 */
 	public function check_field_email_list( $input ) {
 		if ( empty( $input ) ) {
@@ -1130,8 +1130,8 @@ class Sensei_Settings_API {
 	 *
 	 * @access protected
 	 * @since  1.0.0
-	 * @param  string $key
-	 * @param  array  $data
+	 * @param  string $key  Field key.
+	 * @param  array  $data Field data.
 	 * @return void
 	 */
 	protected function add_error( $key, $data ) {
