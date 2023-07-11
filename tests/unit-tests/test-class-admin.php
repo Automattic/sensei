@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Tests for Sensei_Admin class.
+ *
+ * @covers Sensei_Admin
+ */
 class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 	/**
@@ -33,17 +38,6 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test duplicate courses with lessons.
-	 *
-	 * @uses WooThemes_Sensei_Admin::duplicate_course_with_lessons_action
-	 * @uses WooThemes_Sensei_Admin::duplicate_content
-	 * @uses WooThemes_Sensei_Admin::duplicate_post
-	 * @uses WooThemes_Sensei_Admin::update_lesson_prerequisite_ids
-	 * @uses WooThemes_Sensei_Admin::get_prerequisite_update_object
-	 * @uses WooThemes_Sensei_Admin::duplicate_lesson_quizzes
-	 *
-	 * @covers WooThemes_Sensei_Admin::duplicate_course_lessons
-	 *
-	 * @return void
 	 */
 	public function testDuplicateCourseWithLessons() {
 
@@ -88,17 +82,6 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test duplicate courses with lessons with prerequisite.
-	 *
-	 * @uses WooThemes_Sensei_Admin::duplicate_course_with_lessons_action
-	 * @uses WooThemes_Sensei_Admin::duplicate_content
-	 * @uses WooThemes_Sensei_Admin::duplicate_course_lessons
-	 * @uses WooThemes_Sensei_Admin::duplicate_post
-	 * @uses WooThemes_Sensei_Admin::duplicate_lesson_quizzes
-	 *
-	 * @covers WooThemes_Sensei_Admin::update_lesson_prerequisite_ids
-	 * @covers WooThemes_Sensei_Admin::get_prerequisite_update_object
-	 *
-	 * @return void
 	 */
 	public function testDuplicateCourseWithLessonsWithPrerequisite() {
 		$qty_lessons = 2;
@@ -141,14 +124,6 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test duplicate courses with lessons, ensure lesson order is preserved.
-	 *
-	 * @uses WooThemes_Sensei_Admin::duplicate_course_with_lessons_action
-	 * @uses WooThemes_Sensei_Admin::duplicate_content
-	 * @uses WooThemes_Sensei_Admin::duplicate_post
-	 *
-	 * @covers WooThemes_Sensei_Admin::duplicate_course_lessons
-	 *
-	 * @return void
 	 */
 	public function testDuplicateCourseWithLessonsPreservesOrder() {
 		$qty_lessons = 2;
@@ -191,8 +166,6 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 	/**
 	 * Ensure the lessons could be moved and unassigned from modules.
-	 *
-	 * @covers Sensei_Admin::sync_lesson_order
 	 */
 	public function testShouldMoveLessonsBetweenModulesAndUnassignModules() {
 		/* Arrange. */
@@ -248,8 +221,6 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 	/**
 	 * Ensure the lessons order is updated.
-	 *
-	 * @covers Sensei_Admin::sync_lesson_order
 	 */
 	public function testShouldUpdateTheOrderOfLessons() {
 		/* Arrange. */
