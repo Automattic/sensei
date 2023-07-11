@@ -38,12 +38,6 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test duplicate courses with lessons.
-	 *
-	 * @uses WooThemes_Sensei_Admin::duplicate_course_with_lessons_action
-	 * @uses WooThemes_Sensei_Admin::duplicate_post
-	 * @uses WooThemes_Sensei_Admin::update_lesson_prerequisite_ids
-	 * @uses WooThemes_Sensei_Admin::get_prerequisite_update_object
-	 * @uses WooThemes_Sensei_Admin::duplicate_lesson_quizzes
 	 */
 	public function testDuplicateCourseWithLessons() {
 
@@ -88,11 +82,6 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test duplicate courses with lessons with prerequisite.
-	 *
-	 * @uses WooThemes_Sensei_Admin::duplicate_course_with_lessons_action
-	 * @uses WooThemes_Sensei_Admin::duplicate_course_lessons
-	 * @uses WooThemes_Sensei_Admin::duplicate_post
-	 * @uses WooThemes_Sensei_Admin::duplicate_lesson_quizzes
 	 */
 	public function testDuplicateCourseWithLessonsWithPrerequisite() {
 		$qty_lessons = 2;
@@ -135,9 +124,6 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test duplicate courses with lessons, ensure lesson order is preserved.
-	 *
-	 * @uses WooThemes_Sensei_Admin::duplicate_course_with_lessons_action
-	 * @uses WooThemes_Sensei_Admin::duplicate_post
 	 */
 	public function testDuplicateCourseWithLessonsPreservesOrder() {
 		$qty_lessons = 2;
