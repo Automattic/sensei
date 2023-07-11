@@ -19,6 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.12.0
  */
 class Student_Completes_Course extends Email_Generators_Abstract {
+
+	use Course_Teachers_Trait;
+
 	/**
 	 * Identifier of the email.
 	 *
@@ -61,9 +64,6 @@ class Student_Completes_Course extends Email_Generators_Abstract {
 		}
 
 		$student    = new \WP_User( $student_id );
-		$teacher_id = get_post_field( 'post_author', $course_id, 'raw' );
-		$teacher    = new \WP_User( $teacher_id );
-		$recipient  = stripslashes( $teacher->user_email );
 		$grade      = __( 'N/A', 'sensei-lms' );
 		$lesson_ids = \Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 		$manage_url = esc_url(
@@ -81,17 +81,22 @@ class Student_Completes_Course extends Email_Generators_Abstract {
 			$grade = \Sensei_Utils::sensei_course_user_grade( $course_id, $student_id ) . '%';
 		}
 
-		$this->send_email_action(
-			[
-				$recipient => [
-					'student:id'          => $student_id,
-					'student:displayname' => $student->display_name,
-					'course:id'           => $course_id,
-					'course:name'         => get_the_title( $course_id ),
-					'grade:percentage'    => $grade,
-					'manage:students'     => $manage_url,
-				],
-			]
-		);
+		$email_replacements = [
+			'student:id'          => $student_id,
+			'student:displayname' => $student->display_name,
+			'course:id'           => $course_id,
+			'course:name'         => get_the_title( $course_id ),
+			'grade:percentage'    => $grade,
+			'manage:students'     => $manage_url,
+		];
+
+		$teacher_ids   = $this->get_course_teachers( $course_id );
+		$recipients    = $this->get_recipients( $teacher_ids );
+		$emais_to_send = array();
+		foreach ( $recipients as $recipient ) {
+			$emais_to_send[ $recipient ] = $email_replacements;
+		}
+
+		$this->send_email_action( $emais_to_send );
 	}
 }

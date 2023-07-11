@@ -1,0 +1,4 @@
+Significance: minor
+Type: changed
+
+Bump minimum required PHP version to 7.3
