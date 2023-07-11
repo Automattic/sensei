@@ -335,6 +335,14 @@ class Email_Sender {
 			$headers[]        = "Reply-To: $reply_to_name <$reply_to_address>";
 		}
 
+		if ( ! empty( $settings['email_cc'] ) ) {
+			$headers[] = 'Cc: ' . $settings['email_cc'];
+		}
+
+		if ( ! empty( $settings['email_bcc'] ) ) {
+			$headers[] = 'Bcc: ' . $settings['email_bcc'];
+		}
+
 		return $headers;
 	}
 }

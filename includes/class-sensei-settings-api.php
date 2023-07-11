@@ -1076,6 +1076,20 @@ class Sensei_Settings_API {
 	}
 
 	/**
+	 * Validate email list fields.
+	 *
+	 * @param string $input
+	 * @return string
+	 */
+	public function validate_field_email_list( $input ) {
+		$source_emails    = explode( ',', $input );
+		$source_emails    = array_map( 'trim', $source_emails );
+		$sanitized_emails = array_filter( $source_emails, 'is_email' );
+
+		return implode( ', ', $sanitized_emails );
+	}
+
+	/**
 	 * Check and validate the input from text fields.
 	 *
 	 * @param  string $input String of the value to be validated.
@@ -1087,6 +1101,29 @@ class Sensei_Settings_API {
 
 		return $is_valid;
 	}
+
+	/**
+	 * Check and validate the input from email list fields.
+	 *
+	 * @param string $key
+	 * @return bool
+	 */
+	public function check_field_email_list( $input ) {
+		if ( empty( $input ) ) {
+			return true;
+		}
+
+		$source_emails    = explode( ',', $input );
+		$source_emails    = array_map( 'trim', $source_emails );
+		$sanitized_emails = array_filter( $source_emails, 'is_email' );
+
+		if ( count( $sanitized_emails ) !== count( $source_emails ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
 
 	/**
 	 * Log an error internally, for processing later using $this->parse_errors().
