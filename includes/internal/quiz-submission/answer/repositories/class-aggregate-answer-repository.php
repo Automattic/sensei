@@ -85,7 +85,7 @@ class Aggregate_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @return Answer The answer model.
 	 */
-	public function create( $submission, int $question_id, string $value ): Answer {
+	public function create( Submission $submission, int $question_id, string $value ): Answer {
 		$answer = $this->comments_based_repository->create( $submission, $question_id, $value );
 
 		if ( $this->use_tables ) {

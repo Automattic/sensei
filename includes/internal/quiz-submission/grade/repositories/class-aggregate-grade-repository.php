@@ -145,7 +145,7 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 	 * @param Submission $submission The submission.
 	 * @param Grade[]    $grades     An array of grades.
 	 */
-	public function save_many( $submission, array $grades ): void {
+	public function save_many( Submission $submission, array $grades ): void {
 		$this->comments_based_repository->save_many( $submission, $grades );
 
 		if ( $this->use_tables ) {

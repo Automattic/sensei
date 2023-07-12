@@ -54,7 +54,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @return Answer The answer model.
 	 */
-	public function create( $submission, int $question_id, string $value ): Answer {
+	public function create( Submission $submission, int $question_id, string $value ): Answer {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
