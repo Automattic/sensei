@@ -20,7 +20,7 @@ function withColorVariableSupport( settings ) {
 		return {
 			...props,
 			style: {
-				...( props.style || {} ),
+				...( props?.style || {} ),
 				...( style || {} ),
 			},
 		};

@@ -50,3 +50,26 @@
 .chosen-container-multi .chosen-choices li.search-field input[type="text"] {
 	min-height: 25px !important;
 }
+
+/* Fixes action menu display in WP 6+ */
+.student-action-menu .components-popover {
+	opacity: 1;
+}
+
+.student-action-menu .components-popover__content {
+	transform:translateX(-90%);
+}
+
+.student-action-menu .components-dropdown-menu__menu {
+	width: auto;
+}
+
+.student-action-menu .components-popover:not(.is-without-arrow)::after {
+	content: none;
+}
+
+@media screen and (max-width: 782px) {
+	.wp_list_table_sensei_learner_admins .is-expanded td:not(.hidden) {
+		overflow: visible;
+	}
+}

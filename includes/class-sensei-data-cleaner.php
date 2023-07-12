@@ -33,6 +33,7 @@ class Sensei_Data_Cleaner {
 		'question',
 		'multiple_question',
 		'sensei_message',
+		'sensei_email',
 	);
 
 	/**

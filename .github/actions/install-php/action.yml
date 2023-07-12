@@ -1,0 +1,36 @@
+name: Install PHP
+description: Setup PHP and its dependencies
+
+inputs:
+    php-version:
+        description: 'The PHP version to use'
+        required: false
+        default: '7.3'
+
+    extensions:
+        description: 'The PHP extensions to use'
+        required: false
+
+runs:
+    using: 'composite'
+    steps:
+        - uses: shivammathur/setup-php@v2
+          with:
+              php-version: ${{ inputs.php-version }}
+              tools: composer
+              coverage: none
+              extensions: ${{ inputs.extensions }}
+        - shell: bash
+          name: Get composer cache directory
+          id: composer-cache
+          run: |
+              echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        - uses: actions/cache@v3
+          with:
+              path: ${{ steps.composer-cache.outputs.dir }}
+              key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+              restore-keys: |
+                  ${{ runner.os }}-composer-
+        - shell: bash
+          name: Install PHP dependencies
+          run: composer install --no-ansi --no-interaction --prefer-dist --no-progress

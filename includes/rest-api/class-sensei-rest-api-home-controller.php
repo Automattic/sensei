@@ -176,6 +176,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 			'news'            => $this->news_provider->get(),
 			'guides'          => $this->guides_provider->get(),
 			'show_extensions' => $show_extensions,
+			'notices'         => $this->notices_provider->get(),
 		];
 
 		if ( $can_user_manage_sensei ) {
@@ -183,7 +184,6 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 			$data['help']         = $this->help_provider->get();
 			$data['promo_banner'] = $this->promo_banner_provider->get();
 			$data['tasks']        = $this->tasks_provider->get();
-			$data['notices']      = $this->notices_provider->get();
 		}
 
 		return $data;

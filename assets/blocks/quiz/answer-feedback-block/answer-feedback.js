@@ -3,6 +3,7 @@
  */
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import { useContext } from '@wordpress/element';
 
 /**
  * External dependencies
@@ -11,6 +12,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
+import { QuestionContext } from '../question-block/question-context';
 
 const config = {
 	correct: {
@@ -37,6 +39,12 @@ const config = {
  */
 const AnswerFeedback = ( { type } ) => {
 	const { title, placeholder } = config[ type ];
+	const questionContext = useContext( QuestionContext );
+	const { hideAnswerFeedback } = questionContext.options;
+
+	if ( hideAnswerFeedback ) {
+		return '';
+	}
 	return (
 		<div
 			className={ classnames(

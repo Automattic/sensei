@@ -12,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Bootstrap loads the functionality needed for Sensei_Main to initialize properly
  *
+ * @deprecated 4.13.1 Using Composer's autoloader now.
+ *
  * @package Core
  */
 class Sensei_Bootstrap {
@@ -23,66 +25,29 @@ class Sensei_Bootstrap {
 	private static $instance;
 
 	/**
-	 * Autoloader instance.
-	 *
-	 * @var null|Sensei_Autoloader
-	 */
-	private $autoloader = null;
-
-	/**
-	 * Flag to make sure bootstrapping is only run once.
-	 *
-	 * @var bool
-	 */
-	private $is_bootstrapped = false;
-
-	/**
-	 * Sensei_Bootstrap constructor.
-	 */
-	private function __construct() {
-	}
-
-	/**
 	 * Set up Sensei class loaders and includes.
+	 *
+	 * @deprecated 4.13.1
 	 *
 	 * @return $this
 	 */
 	public function bootstrap() {
-		if ( $this->is_bootstrapped ) {
-			return $this;
-		}
-		$this->init_autoloader();
-		$this->init_must_have_includes();
-
-		$this->is_bootstrapped = true;
+		_deprecated_function( __METHOD__, '4.13.1' );
 		return $this;
-	}
-
-	/**
-	 * Initialize Sensei class autoloader.
-	 */
-	private function init_autoloader() {
-		require_once dirname( __FILE__ ) . '/class-sensei-autoloader.php';
-		$this->autoloader = new Sensei_Autoloader();
 	}
 
 	/**
 	 * Get singleton.
 	 *
+	 * @deprecated 4.13.1
+	 *
 	 * @return Sensei_Bootstrap
 	 */
 	public static function get_instance() {
+		_deprecated_function( __METHOD__, '4.13.1' );
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
 		return self::$instance;
-	}
-
-	/**
-	 * Include global functions and compatibility helpers.
-	 */
-	private function init_must_have_includes() {
-		require_once dirname( __FILE__ ) . '/sensei-functions.php';
-		require_once dirname( __FILE__ ) . '/3rd-party/3rd-party.php';
 	}
 }

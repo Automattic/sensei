@@ -45,12 +45,16 @@ export function CourseCategoryEdit( props ) {
 		blockEditorStore
 	);
 
-	useEffect( () => {
-		if ( options ) {
-			setBackgroundColor( options.backgroundColor );
-			setTextColor( options.textColor );
-		}
-	}, [] );
+	useEffect(
+		() => {
+			if ( options ) {
+				setBackgroundColor( options.backgroundColor );
+				setTextColor( options.textColor );
+			}
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
 
 	// We need to store the colors inside the option attribute because
 	// by default the root backgroundColor and textColor are overwritten by

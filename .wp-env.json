@@ -1,5 +1,8 @@
 {
 	"core": null,
 	"plugins": [ "." ],
-	"themes": ["Automattic/course#trunk"]
+	"themes": ["Automattic/themes/course#trunk"],
+    "config": {
+        "WP_ENVIRONMENT_TYPE": "development"
+    }
 }

@@ -47,16 +47,12 @@
 	}
 }
 
-// Astra
-.wp-block:not(.has-text-color) {
-	color: unset;
-}
-
-.wp-block:not(.has-background) {
-	background-color: unset;
-}
-
 // Twenty Fifteen
 .sensei-course-theme::before {
 	width: 0px;
+}
+
+// Astra Mobile
+#ast-scroll-top.ast-scroll-to-top-right {
+	bottom:  90px;
 }

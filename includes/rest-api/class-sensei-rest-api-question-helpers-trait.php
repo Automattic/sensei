@@ -287,6 +287,10 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$meta['_question_grade'] = $options['grade'];
 		}
 
+		if ( isset( $options['hideAnswerFeedback'] ) ) {
+			$meta['_hide_answer_feedback'] = $options['hideAnswerFeedback'];
+		}
+
 		// Common meta.
 		switch ( $question['type'] ) {
 			case 'multiple-choice':
@@ -462,7 +466,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			'title'       => 'auto-draft' !== $question->post_status ? $question->post_title : '',
 			'description' => $question->post_content,
 			'options'     => [
-				'grade' => Sensei()->question->get_question_grade( $question->ID ),
+				'grade'              => Sensei()->question->get_question_grade( $question->ID ),
+				'hideAnswerFeedback' => get_post_meta( $question->ID, '_hide_answer_feedback', true ),
 			],
 			'type'        => Sensei()->question->get_question_type( $question->ID ),
 			'shared'      => ! empty( $question_meta['_quiz_id'] ) && count( $question_meta['_quiz_id'] ) > 1,
@@ -764,12 +769,17 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			'options'     => [
 				'type'       => 'object',
 				'properties' => [
-					'grade' => [
+					'grade'              => [
 						'type'        => 'integer',
 						'description' => 'Points this question is worth',
 						'minimum'     => 0,
 						'maximum'     => 100,
 						'default'     => 1,
+					],
+					'hideAnswerFeedback' => [
+						'type'        => 'string',
+						'description' => 'Hide/show answer feedback for the question',
+						'default'     => '',
 					],
 				],
 			],
