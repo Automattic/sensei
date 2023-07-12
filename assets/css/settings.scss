@@ -1078,6 +1078,11 @@ $promo_highlight: #43af99;
 		margin: 0;
 	}
 
+	&__price-period {
+		display: block;
+		font-size: 14px;
+	}
+
 	&__actions {
 		display: flex;
 		gap: 14px;
@@ -1119,5 +1124,37 @@ $promo_highlight: #43af99;
 		line-height: 16px;
 		border-radius: 12px;
 		padding: 1px 5px 3px;
+	}
+}
+
+.sensei-settings {
+	&__description--small {
+		max-width: 320px;
+	}
+
+	.sensei-link-navigation {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 20px;
+		margin-top: 10px;
+		font-size: 13px;
+
+		a {
+			text-decoration: none;
+		}
+	}
+
+	.sensei-mailpoet-icon {
+		width: 20px;
+		height: 20px;
+		margin-left: 10px;
+		position: absolute;
+	}
+
+	.sensei-woo-icon {
+		width: 29px;
+		height: 20px;
+		margin-left: 10px;
+		position: absolute;
 	}
 }

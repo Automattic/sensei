@@ -212,10 +212,8 @@ class Sensei_List_Table extends WP_List_Table {
 	 * @param object $item The current item
 	 */
 	function single_row( $item ) {
-		static $row_class = '';
-
-		$row_class   = ( $row_class == '' ? 'alternate' : '' );
 		$column_data = $this->get_row_data( $item );
+		$row_class   = $this->get_row_class( $item );
 
 		echo '<tr class="' . esc_attr( $row_class ) . '">';
 
@@ -257,7 +255,7 @@ class Sensei_List_Table extends WP_List_Table {
 				echo $column_data[ $column_name ];
 			}
 
-			if ( $column_name === $primary ) {
+			if ( ! $this->has_native_row_actions() && $column_name === $primary ) {
 				echo '<button type="button" class="toggle-row"><span class="screen-reader-text">' . esc_html__( 'Show more details', 'sensei-lms' ) . '</span></button>';
 			}
 
@@ -272,12 +270,38 @@ class Sensei_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Returns if current implementation uses native row actions.
+	 *
+	 * @since 4.12.0
+	 *
+	 * @return bool
+	 */
+	protected function has_native_row_actions() {
+		return false;
+	}
+
+	/**
 	 * @since 1.7.0
 	 * @access public
 	 * @abstract
 	 */
 	protected function get_row_data( $item ) {
 		die( 'either function Sensei_List_Table::get_row_data() must be over-ridden in a sub-class or Sensei_List_Table::single_row() should be.' );
+	}
+
+	/**
+	 * Get the CSS class of the row.
+	 *
+	 * @param object|array $item The current item.
+	 *
+	 * @return string
+	 */
+	protected function get_row_class( $item ): string {
+		static $row_class = '';
+
+		$row_class = '' === $row_class ? 'alternate' : '';
+
+		return $row_class;
 	}
 
 	/**
@@ -304,13 +328,56 @@ class Sensei_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * bulk_actions output for the bulk actions area
+	 * Bulk_actions output for the bulk actions area.
+	 *
+	 * @param string $which The location of the bulk actions: 'top' or 'bottom'. Default 'top'.
 	 *
 	 * @since  1.2.0
 	 */
 	public function bulk_actions( $which = '' ) {
-		// This will be output Above the table headers on the left
-		echo wp_kses_post( apply_filters( 'sensei_list_bulk_actions', '' ) );
+		ob_start();
+
+		parent::bulk_actions( $which );
+
+		$bulk_action_html = ob_get_clean();
+
+		// This will be output Above the table headers on the left.
+		echo wp_kses(
+			/**
+			 * Filter the output of bulk action for sensei list table.
+			 *
+			 * @hook sensei_list_bulk_actions
+			 *
+			 * @param {string} $bulk_action_html Output of bulk action function.
+			 *
+			 * @return {string} Filtered output of bulk action function.
+			 */
+			apply_filters( 'sensei_list_bulk_actions', $bulk_action_html ),
+			[
+				'div'    => [
+					'class' => [],
+				],
+				'label'  => [
+					'for'   => [],
+					'class' => [],
+				],
+				'select' => [
+					'name'  => [],
+					'id'    => [],
+					'class' => [],
+				],
+				'option' => [
+					'value' => [],
+				],
+				'input'  => [
+					'type'  => [],
+					'id'    => [],
+					'name'  => [],
+					'value' => [],
+					'class' => [],
+				],
+			]
+		);
 	}
 
 	/**

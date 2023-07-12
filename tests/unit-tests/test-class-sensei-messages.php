@@ -14,6 +14,7 @@
  */
 class Sensei_Messages_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_Test_Redirect_Helpers;
 
 	/**
 	 * Factory object.
@@ -124,18 +125,19 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$instance = new Sensei_Messages();
 
-		$this->haltRedirects();
+		$this->prevent_wp_redirect();
 
 		/* Act. */
 		try {
 			$instance->show_success_notice();
-		} catch ( \RuntimeException $e ) {
-			$redirect = json_decode( $e->getMessage(), true );
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status   = $e->getCode();
+			$redirect_location = $e->getMessage();
 		}
 
 		/* Assert. */
-		$this->assertSame( 302, $redirect['status'] );
-		$this->assertStringContainsString( 'send=complete', $redirect['location'] );
+		$this->assertSame( 302, $redirect_status );
+		$this->assertStringContainsString( 'send=complete', $redirect_location );
 	}
 
 	/**
@@ -148,35 +150,66 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 
 		define( 'REST_REQUEST', true );
 
-		$this->haltRedirects();
+		$this->prevent_wp_redirect();
 
 		/* Act. */
 		try {
 			$instance->show_success_notice();
-		} catch ( \RuntimeException $e ) {
-			$redirect = json_decode( $e->getMessage(), true );
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status = $e->getCode();
 		}
 
 		/* Assert. */
-		$this->assertFalse( isset( $redirect ) );
+		$this->assertFalse( isset( $redirect_status ) );
 	}
 
-	/**
-	 * Prevent redirects so they can be tested.
-	 * Throws a RuntimeException instead.
-	 */
-	private function haltRedirects(): void {
-		$halt_redirect = function( $location, $status ) {
-			throw new \RuntimeException(
-				wp_json_encode(
-					[
-						'location' => $location,
-						'status'   => $status,
-					]
-				)
-			);
-		};
+	public function testGettingMessageContentAndTitle_WhenGot_ReplacesBracketsByUnicode() {
+		$this->login_as_teacher();
+		$course_id  = $this->factory->course->create();
+		$teacher_id = get_current_user_id();
 
-		add_filter( 'wp_redirect', $halt_redirect, 1, 2 );
+		$this->login_as_student();
+		$student_id = get_current_user_id();
+
+		$instance   = new Sensei_Messages();
+		$message_id = $this->factory->message->create(
+			[
+				'meta_input' => [
+					'_post'     => $course_id,
+					'_posttype' => 'course',
+					'_receiver' => get_user_by( 'ID', $teacher_id )->user_login,
+					'_sender'   => get_user_by( 'ID', $student_id )->user_login,
+				],
+			]
+		);
+
+		$this->go_to( get_permalink( $message_id ) );
+
+		$content = $instance->message_content( 'This is a message with [brackets] [[brackets]] [[[brackets]]].' );
+		$title   = $instance->message_title( 'This is a title with [brackets] [[brackets]] [[[brackets]]].' );
+
+		$this->assertStringNotContainsString( '[', $content );
+		$this->assertStringNotContainsString( ']', $content );
+		$this->assertStringNotContainsString( '[', $title );
+		$this->assertStringNotContainsString( ']', $title );
+		$this->assertStringContainsString( '&#91;', $content );
+		$this->assertStringContainsString( '&#93;', $content );
+		$this->assertStringContainsString( '&#91;', $title );
+		$this->assertStringContainsString( '&#93;', $title );
+	}
+
+	public function testGettingPostContentAndTitle_DoesNotReplaceBrackets_IfNotSingleMessagePostInLoop() {
+		$this->login_as_teacher();
+
+		$instance = new Sensei_Messages();
+		$post_id  = $this->factory->post->create();
+
+		$this->go_to( get_permalink( $post_id ) );
+
+		$content = $instance->message_content( 'This is a message with [brackets] [[brackets]] [[[brackets]]].' );
+		$title   = $instance->message_title( 'This is a title with [brackets] [[brackets]] [[[brackets]]].' );
+
+		$this->assertEquals( 'This is a message with [brackets] [[brackets]] [[[brackets]]].', $content );
+		$this->assertEquals( 'This is a title with [brackets] [[brackets]] [[[brackets]]].', $title );
 	}
 }

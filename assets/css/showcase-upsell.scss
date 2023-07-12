@@ -1,0 +1,126 @@
+$breakpoint: 1350px;
+
+@font-face {
+	font-family: 'Inter';
+	src: url('../css/fonts/Inter.otf');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.sensei-showcase-upsell {
+	padding-top: 64px;
+	background-color: #26212e;
+	color: #fff;
+
+	@media (min-width: $breakpoint) {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	&__content {
+		padding: 0 44px 34px;
+
+		@media (min-width: $breakpoint) {
+			width: 285px;
+			flex-basis: 285px;
+			flex-shrink: 0;
+		}
+	}
+
+	&__title {
+		font-family: 'Inter';
+		font-size: 24px;
+		font-weight: 400;
+		line-height: 1.3;
+		color: inherit;
+
+		@at-root .wrap & { // CSS specificity.
+			padding: 0;
+			margin: 0 0 8px;
+		}
+	}
+
+	&__description {
+		margin: 0 0 27px;
+	}
+
+	&__list {
+		margin: 0 0 27px;
+	}
+
+	&__list-item {
+		margin-bottom: 10px;
+
+		&::before {
+			content: "\f15e";
+			margin-right: 12px;
+			font-family: dashicons;
+		}
+	}
+
+	&__price-wrapper {
+		margin-bottom: 24px;
+		font-family: 'Inter';
+		font-size: 14px;
+	}
+
+	&__price {
+		display: block;
+		font-size: 24px;
+		font-weight: 700;
+		line-height: 1.3;
+	}
+
+	&__buttons {
+		display: flex;
+		gap: 18px;
+
+		@media (min-width: $breakpoint) {
+			justify-content: space-between;
+			gap: 0;
+		}
+	}
+
+	&__button {
+		display: inline-block;
+		padding: 10px 24px;
+		text-decoration: none;
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.3;
+
+		&--primary {
+			background-color: #43af99;
+
+			&,
+			&:hover {
+				color: #000;
+			}
+		}
+
+		&--secondary {
+			background-color: transparent;
+			box-shadow:inset 0px 0px 0px 1px #c3c4c7;
+
+			&,
+			&:hover {
+				color: #fff;
+			}
+		}
+	}
+
+	&__illustration-wrapper {
+		display: none;
+
+		@media (min-width: $breakpoint) {
+			display: block;
+			align-self: flex-end;
+		}
+	}
+
+	&__illustration {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+}

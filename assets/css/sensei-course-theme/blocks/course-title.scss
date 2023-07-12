@@ -1,9 +1,6 @@
+.editor-styles-wrapper .wp-block .wp-block-sensei-lms-course-title,
 .wp-block-sensei-lms-course-title {
 	overflow: hidden;
-	white-space: nowrap;
 	text-overflow: ellipsis;
-
-	a {
-		transition: none;
-	}
+	white-space: nowrap;
 }

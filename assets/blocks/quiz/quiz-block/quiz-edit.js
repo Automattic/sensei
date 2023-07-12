@@ -19,6 +19,7 @@ import QuizSettings from './quiz-settings';
 import { useUpdateQuizHasQuestionsMeta } from './use-update-quiz-has-questions-meta';
 import { isQuestionEmpty } from '../data';
 import QuizProgressBarEdit from './quiz-progress-bar-edit';
+import { Slot } from '@wordpress/components';
 
 const ALLOWED_BLOCKS = [
 	'sensei-lms/quiz-question',
@@ -71,8 +72,13 @@ const QuizEdit = ( props ) => {
 		<>
 			<QuizValidationResult { ...props } />
 			<div className="sensei-lms-quiz-block__separator">
-				<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
+				<Slot name="SenseiQuizHeader" />
+				<span>
+					<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
+				</span>
 			</div>
+
+			<Slot name="SenseiQuizBlockTop" />
 
 			{ showPaginationProgressBar && (
 				<QuizProgressBarEdit pagination={ pagination } />

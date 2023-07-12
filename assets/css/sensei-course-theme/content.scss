@@ -7,7 +7,7 @@ body {
 	--wp--custom--form--color--text: inherit;
 	--wp--custom--form--padding: 6px 8px;
 	--wp--custom--list--spacing--padding--left: 16px;
-	--wp--custom--layout--content-size: 900px;
+	--wp--custom--layout--content-size: 830px;
 	--wp--custom--layout--wide-size: 1100px;
 	--wp--style--root--padding-top: 0px !important;
 	--wp--style--root--padding-bottom: 0px;
@@ -16,10 +16,6 @@ body {
 	--max-content-size: 100vw;
 	--content-size: min(var(--wp--custom--layout--content-size), var(--max-content-size));
 	--wide-size: min(var(--wp--custom--layout--wide-size), var(--max-content-size));
-
-	h1, h2, h3, h4, h5, h6 {
-		color: var(--sensei-text-color);
-	}
 
 	.wp-site-blocks {
 		background-color: var(--sensei-background-color);
@@ -32,18 +28,9 @@ body {
 	color: var(--sensei-background-color);
 }
 
-.wp-block-post-title {
-	margin-top: 20px !important;
-	margin-bottom: 20px !important;
-}
-
 .wp-site-blocks {
 	padding: 0 var(--content-padding);
 }
-
-/**
- * 4.0.1 Template compatibility.
- */
 
 .sensei-course-theme__main-content {
 	> * {
@@ -58,8 +45,8 @@ body {
  */
 
 .sensei-course-theme {
-
-	&__main-content__container, &__main-content__container > .wp-block-group__inner-container {
+	&__main-content__container,
+	&__main-content__container > .wp-block-group__inner-container {
 		> * {
 			max-width: var(--content-size) !important;
 			margin-left: auto;
@@ -72,6 +59,7 @@ body {
 	}
 
 	.wp-block-post-content {
+		margin-top: 40px;
 
 		& > *, .wp-block-group__inner-container > * {
 			max-width: var(--content-size) !important;
@@ -105,6 +93,10 @@ body {
 			margin-left: 0;
 			float: left;
 		}
+
+		.post-nav-links {
+			display: none;
+		}
 	}
 }
 
@@ -112,6 +104,7 @@ body {
 	--wp--custom--gap--horizontal: var(--content-padding);
 	--wp--custom--gap--vertical: 12px;
 	--wp--custom--spacing--outer: 0px;
+	margin-block-end: 40px;
 
 	img {
 		max-width: 100%;
@@ -123,7 +116,4 @@ body {
 	object {
 		max-width: 100%;
 	}
-
 }
-
-

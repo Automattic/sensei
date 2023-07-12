@@ -330,6 +330,76 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 2.5, $actual );
 	}
 
+	public function testGetTotalTotalEnrollments_WhenThereWereNoEnrolledStudents_ReturnsZero() {
+
+		/* Arrange. */
+		$instance = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_total_enrollments( [] );
+
+		/* Assert. */
+		self::assertSame( 0, $actual );
+	}
+	public function testGetTotalTotalEnrollments_WhenThereWereSameStudentsInDifferentCourses_ReturnsSumOfEnrollments() {
+
+		/* Arrange */
+		$user1_id   = $this->factory->user->create();
+		$course1_id = $this->factory->course->create();
+		$course2_id = $this->factory->course->create();
+
+		// Add 2 lessons to the course.
+		$lesson_course_1 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course1_id ] ]
+		);
+		$lesson_course_2 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course2_id ] ]
+		);
+
+		// Enroll student 2 to the course and lessons, but don't complete the lessons.
+		Sensei_Utils::sensei_start_lesson( $lesson_course_1, $user1_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_course_2, $user1_id );
+
+		$instance = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_total_enrollments( [ $course1_id, $course2_id ] );
+
+		/* Assert. */
+		self::assertSame( 2, $actual );
+	}
+
+
+	public function testGetTotalTotalEnrollments_WhenThereWereStudentsInDifferentCourses_ReturnsSumOfEnrollments() {
+
+		/* Arrange */
+		$user1_id = $this->factory->user->create();
+		$user2_id = $this->factory->user->create();
+
+		$course1_id = $this->factory->course->create();
+		$course2_id = $this->factory->course->create();
+
+		// Add 2 lessons to the course.
+		$lesson_course_1 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course1_id ] ]
+		);
+		$lesson_course_2 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course2_id ] ]
+		);
+
+		// Enroll student 2 to the course and lessons, but don't complete the lessons.
+		Sensei_Utils::sensei_start_lesson( $lesson_course_1, $user1_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_course_2, $user2_id );
+
+		$instance = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_total_enrollments( [ $course1_id, $course2_id ] );
+
+		/* Assert. */
+		self::assertSame( 2, $actual );
+	}
+
 	public function testGetAverageDaysToCompletionTotalWithoutCompletionsReturnsZero() {
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 		$actual   = $instance->get_average_days_to_completion( [] );

@@ -50,7 +50,7 @@ class Focus_Mode {
 
 		$wrapper_attributes = '';
 		if ( function_exists( 'get_block_wrapper_attributes' ) ) {
-			$wrapper_attributes = get_block_wrapper_attributes( $attributes );
+			$wrapper_attributes = get_block_wrapper_attributes();
 		}
 
 		$title_toggle = __( 'Toggle focus mode', 'sensei-lms' );

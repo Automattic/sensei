@@ -6,6 +6,8 @@
  */
 
 // Require compatibility files.
-require_once dirname( __FILE__ ) . '/jetpack.php';
-require_once dirname( __FILE__ ) . '/woocommerce.php';
-require_once dirname( __FILE__ ) . '/divi.php';
+require_once __DIR__ . '/jetpack.php';
+require_once __DIR__ . '/woocommerce.php';
+require_once __DIR__ . '/yoast.php';
+require_once __DIR__ . '/themes/divi.php';
+require_once __DIR__ . '/themes/course.php';

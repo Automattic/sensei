@@ -45,7 +45,7 @@ const NoticeAction = ( { action } ) => {
 			className={ classnames( 'button', buttonClass ) }
 			{ ...extraProps }
 		>
-			{ action.label }
+			<RawHTML>{ action.label }</RawHTML>
 		</a>
 	);
 };
@@ -103,7 +103,7 @@ const NoticeInfoLink = ( { infoLink } ) => {
 const Notice = ( { noticeId, notice, dismissNonce } ) => {
 	let noticeClass = '';
 	if ( !! notice.level ) {
-		noticeClass = 'sensei-notice-' + notice.level;
+		noticeClass = 'sensei-notice--' + notice.level;
 	}
 
 	const isDismissible = notice.dismissible && dismissNonce;
@@ -130,11 +130,9 @@ const Notice = ( { noticeId, notice, dismissNonce } ) => {
 
 	return (
 		<div { ...containerProps }>
-			<SenseiCircleLogo className="sensei-notice__icon" />
-			<div className="sensei-notice__wrapper">
-				<div className="sensei-notice__content">
-					<RawHTML>{ message }</RawHTML>
-				</div>
+			<div className="sensei-notice__content">
+				<SenseiCircleLogo className="sensei-notice__icon" />
+				<RawHTML>{ message }</RawHTML>
 			</div>
 			<NoticeInfoLink infoLink={ notice.info_link } />
 			<NoticeActions actions={ notice.actions } />

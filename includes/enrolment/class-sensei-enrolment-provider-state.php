@@ -100,6 +100,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 		return sanitize_text_field( $value );
 	}
 
+	#[\ReturnTypeWillChange]
 	/**
 	 * Return object that can be serialized by `json_encode()`.
 	 *
