@@ -90,13 +90,13 @@ div[data-type="sensei-lms/course-outline"] {
 					}
 				}
 
-				$self: &;
+
 
 				&:hover {
 					outline: solid .125rem var(--wp-admin-theme-color);
 					border-radius: .125rem;
 
-					#{$self}__lessons li {
+					.wp-block-sensei-lms-course-outline__placeholder__option__content__lessons li {
 						background-color: #fff;
 					}
 				}
