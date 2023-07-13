@@ -146,9 +146,6 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 ### 4.16.0 - 2023-07-13
 #### Added
-- Ability to set conditions on admin notices based on a date range
-- Add disclaimer with the reason that Sensei Pro can't be updated when license is not active
-- Add quiz generation using AI button in quiz block
 - Enable to select how to generate lessons when a course is created [#6999]
 
 #### Changed
