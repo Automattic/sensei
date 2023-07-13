@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix PHP 8.1 autovivification of falsy value deprecation message
