@@ -57,7 +57,7 @@ class Sensei_Feature_Flags {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.0
 	 */
 	public function register_scripts() {
 		wp_register_script( 'sensei-feature-flags', '' ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Intended, this is a placeholder script.
