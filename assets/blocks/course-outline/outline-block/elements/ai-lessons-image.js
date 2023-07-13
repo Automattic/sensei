@@ -1,23 +1,23 @@
 const AiLessonsImage = () => (
-	<div className="ai-course-outline-image">
-		<div className="ai-course-outline-image__item">
+	<div className="wp-block-sensei-lms-course-outline__ai-image">
+		<div className="wp-block-sensei-lms-course-outline__ai-image__item">
 			<div
 				style={ { width: '78%' } }
-				className="ai-course-outline-image__content"
+				className="wp-block-sensei-lms-course-outline__ai-image__content"
 			/>
 		</div>
 
-		<div className="ai-course-outline-image__item">
+		<div className="wp-block-sensei-lms-course-outline__ai-image__item">
 			<div
 				style={ { width: '47%' } }
-				className="ai-course-outline-image__content"
+				className="wp-block-sensei-lms-course-outline__ai-image__content"
 			/>
 		</div>
 
-		<div className="ai-course-outline-image__item">
+		<div className="wp-block-sensei-lms-course-outline__ai-image__item">
 			<div
 				style={ { width: '25%' } }
-				className="ai-course-outline-image__content"
+				className="wp-block-sensei-lms-course-outline__ai-image__content"
 			/>
 		</div>
 	</div>

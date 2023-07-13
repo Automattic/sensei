@@ -3,7 +3,7 @@
 /* Placeholder */
 
 div[data-type="sensei-lms/course-outline"] {
-	.outline-placeholder {
+	.wp-block-sensei-lms-course-outline__placeholder {
 		.components-placeholder__instructions {
 			line-height: 1.3125rem;
 			margin-bottom: 1rem;
@@ -104,18 +104,18 @@ div[data-type="sensei-lms/course-outline"] {
 
 			}
 
-			&.is-ai .outline-placeholder__option__content {
+			&.is-ai .wp-block-sensei-lms-course-outline__placeholder__option__content {
 				background-color: $upsell;
 
 				&:hover {
-					.ai-course-outline-image {
+					.wp-block-sensei-lms-course-outline__ai-image {
 						&__item {
 							background: #dcfbe81a;
 						}
 					}
 				}
 
-				.ai-course-outline-image {
+				.wp-block-sensei-lms-course-outline__ai-image {
 					display: flex;
 					width: 100%;
 					flex-direction: column;

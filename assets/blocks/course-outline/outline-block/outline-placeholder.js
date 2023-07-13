@@ -49,7 +49,7 @@ const EditPlaceholder = ( { addBlocks, openTailoredModal = noop } ) => {
 
 	return (
 		<Placeholder
-			className="outline-placeholder"
+			className="wp-block-sensei-lms-course-outline__placeholder"
 			label={ __( 'Course Outline', 'sensei-lms' ) }
 			icon={ <BlockIcon icon={ settings.icon } showColors /> }
 			instructions={ __(
@@ -57,14 +57,14 @@ const EditPlaceholder = ( { addBlocks, openTailoredModal = noop } ) => {
 				'sensei-lms'
 			) }
 		>
-			<div className="outline-placeholder__options">
+			<div className="wp-block-sensei-lms-course-outline__placeholder__options">
 				<button
-					className="outline-placeholder__option outline-placeholder__option-blank"
+					className="wp-block-sensei-lms-course-outline__placeholder__option wp-block-sensei-lms-course-outline__placeholder__option-blank"
 					onClick={ createBlankLessons }
 					aria-labelledby="generate-blank"
 				>
-					<div className="outline-placeholder__option__content">
-						<div className="outline-placeholder__option__content__intro">
+					<div className="wp-block-sensei-lms-course-outline__placeholder__option__content">
+						<div className="wp-block-sensei-lms-course-outline__placeholder__option__content__intro">
 							<p>
 								{ __(
 									'Start with a blank canvas and create your own course outline.',
@@ -72,7 +72,7 @@ const EditPlaceholder = ( { addBlocks, openTailoredModal = noop } ) => {
 								) }
 							</p>
 						</div>
-						<ul className="outline-placeholder__option__content__details">
+						<ul className="wp-block-sensei-lms-course-outline__placeholder__option__content__details">
 							<li>
 								{ __(
 									'Add Lessons and Modules',
@@ -86,13 +86,13 @@ const EditPlaceholder = ( { addBlocks, openTailoredModal = noop } ) => {
 								) }
 							</li>
 						</ul>
-						<ul className="outline-placeholder__option__content__lessons">
+						<ul className="wp-block-sensei-lms-course-outline__placeholder__option__content__lessons">
 							<li>{ __( 'Lesson 1', 'sensei-lms' ) }</li>
 							<li>{ __( 'Lesson 2', 'sensei-lms' ) }</li>
 						</ul>
 					</div>
 					<figcaption
-						className="outline-placeholder__option__caption"
+						className="wp-block-sensei-lms-course-outline__placeholder__option__caption"
 						id="generate-blank"
 					>
 						{ __( 'Start with blank', 'sensei-lms' ) }
@@ -100,21 +100,21 @@ const EditPlaceholder = ( { addBlocks, openTailoredModal = noop } ) => {
 				</button>
 
 				<button
-					className="outline-placeholder__option is-ai"
+					className="wp-block-sensei-lms-course-outline__placeholder__option is-ai"
 					aria-labelledby="generate-with-ai"
 					onClick={ onGenerateWithAIClick }
 				>
-					<div className="outline-placeholder__option__content">
-						<div className="outline-placeholder__option__content__intro">
+					<div className="wp-block-sensei-lms-course-outline__placeholder__option__content">
+						<div className="wp-block-sensei-lms-course-outline__placeholder__option__content__intro">
 							<p>
 								{ __(
 									"Get AI's help to start with a tailored course outline.",
 									'sensei-lms'
 								) }
 							</p>
-							<AiIcon className="outline-placeholder__option__content__intro__icon" />
+							<AiIcon className="wp-block-sensei-lms-course-outline__placeholder__option__content__intro__icon" />
 						</div>
-						<ul className="outline-placeholder__option__content__details">
+						<ul className="wp-block-sensei-lms-course-outline__placeholder__option__content__details">
 							<li>
 								<CheckIcon width={ 24 } height={ 24 } />
 								{ __(
@@ -133,7 +133,7 @@ const EditPlaceholder = ( { addBlocks, openTailoredModal = noop } ) => {
 						<AiLessonsImage />
 					</div>
 					<figcaption
-						className="outline-placeholder__option__caption"
+						className="wp-block-sensei-lms-course-outline__placeholder__option__caption"
 						id="generate-with-ai"
 					>
 						{ __( 'Generate with AI', 'sensei-lms' ) }
