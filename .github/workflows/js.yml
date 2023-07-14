@@ -24,6 +24,16 @@ jobs:
               run: npm run lint-js
             - name: Lint TS e2e
               run: npm run lint-e2e
+            - name: Slack Notification Failure
+              uses: rtCamp/action-slack-notify@v2
+              if: failure()
+              env:
+                SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+                SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
+                SLACK_USERNAME: 'Sensei CI Bot'
+                SLACK_COLOR: ${{ job.status }}
+                SLACK_TITLE: 'CI Failure'
+                SLACK_FOOTER: ''
 
     type-check:
         name: TypeScript Checking
