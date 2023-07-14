@@ -8,6 +8,7 @@
 		"dealerdirect/phpcodesniffer-composer-installer": "1.0.0",
 		"dms/phpunit-arraysubset-asserts": "0.5.0",
 		"humbug/php-scoper": "0.15.0",
+		"overtrue/phplint": "3.2.0",
 		"pelago/emogrifier": "7.0.0",
 		"phpcompatibility/phpcompatibility-wp": "2.1.4",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
