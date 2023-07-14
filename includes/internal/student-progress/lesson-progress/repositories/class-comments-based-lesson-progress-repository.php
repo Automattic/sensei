@@ -143,6 +143,40 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	}
 
 	/**
+	 * Delete all lesson progress for a lesson.
+	 * This is used when a lesson is deleted.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 */
+	public function delete_for_lesson( int $lesson_id ): void {
+		$args = array(
+			'post_id' => $lesson_id,
+			'type'    => 'sensei_lesson_status',
+		);
+
+		$this->delete_activities( $args );
+	}
+
+	/**
+	 * Delete all lesson progress for a user.
+	 * This is used when a user is deleted.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function delete_for_user( int $user_id ): void {
+		$args = array(
+			'user_id' => $user_id,
+			'type'    => 'sensei_lesson_status',
+		);
+
+		$this->delete_activities( $args );
+	}
+
+	/**
 	 * Returns the number of started lessons for a user in a course.
 	 * The number of started lessons is the same as the number of lessons that have a progress record.
 	 *
@@ -167,4 +201,33 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 
 		return Sensei_Utils::sensei_check_for_activity( $activity_args );
 	}
+
+	/**
+	 * Delete activity comments by given arguments.
+	 *
+	 * @param array $args Arguments to delete activity comments.
+	 */
+	private function delete_activities( array $args ): void {
+		$comments = Sensei_Utils::sensei_check_for_activity( $args, true );
+		if ( ! $comments ) {
+			return;
+		}
+
+		$comments = is_array( $comments ) ? $comments : [ $comments ];
+		$post_ids = [];
+		foreach ( $comments as $comment ) {
+			if ( isset( $comment->comment_post_ID ) ) {
+				$post_ids[] = $comment->comment_post_ID;
+			}
+
+			if ( isset( $comment->comment_ID ) && 0 < $comment->comment_ID ) {
+				wp_delete_comment( intval( $comment->comment_ID ), true );
+			}
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			Sensei()->flush_comment_counts_cache( $post_id );
+		}
+	}
 }
+

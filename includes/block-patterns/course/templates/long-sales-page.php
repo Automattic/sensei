@@ -4,7 +4,7 @@
  * Remove after the course_outline_ai feature is released.
  *
  * @package sensei-lms
- * @deprecated $$next-version$$
+ * @deprecated 4.16.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
