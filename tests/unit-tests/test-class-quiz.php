@@ -1723,6 +1723,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei()->quiz->set_user_grades( $quiz_grades_map, $lesson_id, $user_id );
 
 		$submission_id = Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		$submission    = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 
 		/* Act. */
 		ob_start();

@@ -10,6 +10,7 @@ namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 use DateTimeImmutable;
 use DateTimeZone;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,20 +48,20 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int    $submission_id The submission ID.
-	 * @param int    $question_id   The question ID.
-	 * @param string $value         The answer value.
+	 * @param Submission $submission  The submission.
+	 * @param int        $question_id The question ID.
+	 * @param string     $value       The answer value.
 	 *
 	 * @return Answer The answer model.
 	 */
-	public function create( int $submission_id, int $question_id, string $value ): Answer {
+	public function create( Submission $submission, int $question_id, string $value ): Answer {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
 		$this->wpdb->insert(
 			$this->get_table_name(),
 			[
-				'submission_id' => $submission_id,
+				'submission_id' => $submission->get_id(),
 				'question_id'   => $question_id,
 				'value'         => $value,
 				'created_at'    => $current_datetime->format( $date_format ),
@@ -77,7 +78,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 
 		return new Answer(
 			$this->wpdb->insert_id,
-			$submission_id,
+			$submission->get_id(),
 			$question_id,
 			$value,
 			$current_datetime,
@@ -122,13 +123,13 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int $submission_id The submission ID.
+	 * @param Submission $submission The submission.
 	 */
-	public function delete_all( int $submission_id ): void {
+	public function delete_all( Submission $submission ): void {
 		$this->wpdb->delete(
 			$this->get_table_name(),
 			[
-				'submission_id' => $submission_id,
+				'submission_id' => $submission->get_id(),
 			],
 			[
 				'%d',
