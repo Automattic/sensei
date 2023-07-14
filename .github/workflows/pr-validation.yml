@@ -23,5 +23,4 @@ jobs:
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON_EMOJI: ':red_circle:'
           SLACK_TITLE: 'CI Failure'
-          SLACK_MESSAGE: 'Job failed'
           SLACK_FOOTER: ''
