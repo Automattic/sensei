@@ -146,16 +146,16 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 ### 4.16.0 - 2023-07-13
 #### Added
-- Enable to select how to generate lessons when a course is created [#6999]
+- Enable to select how to generate lessons when a course is created [#6999](https://github.com/Automattic/sensei/pull/6999)
 
 #### Changed
-- Bump minimum required PHP version to 7.3 [#7005] 
+- Bump minimum required PHP version to 7.3 [#7005](https://github.com/Automattic/sensei/pull/7005)
 
 #### Fixed
-- Fix Continue Course block not redirecting to first lesson in some cases [#6997]
-- Fix emails not using the From Name/Email settings [#6968]
-- Fix PHP 8.1 autovivification of falsy value deprecation message [#7015]
-- Removed Beta label from Editor Menu [#6989]
+- Fix Continue Course block not redirecting to first lesson in some cases [#6997](https://github.com/Automattic/sensei/pull/6997)
+- Fix emails not using the From Name/Email settings [#6968](https://github.com/Automattic/sensei/pull/6968)
+- Fix PHP 8.1 autovivification of falsy value deprecation message [#7015](https://github.com/Automattic/sensei/pull/7015)
+- Removed Beta label from Editor Menu [#6989](https://github.com/Automattic/sensei/pull/6989)
 
 ### 4.15.1 - 2023-06-22
 #### Added
