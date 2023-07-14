@@ -40,7 +40,7 @@ class Sensei_Feature_Flags {
 		],
 		'development' => [
 			'enrolment_provider_tooltip' => false,
-			'tables_based_progress'      => true,
+			'tables_based_progress'      => false,
 			'email_customization'        => true,
 			'course_outline_ai'          => true,
 		],
