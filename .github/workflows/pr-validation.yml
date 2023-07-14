@@ -1,0 +1,15 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  check-milestone:
+    name: Check Milestone
+    runs-on: ubuntu-latest
+    steps:
+      - if: github.event.pull_request.milestone == null
+        run: |
+          echo "This PR is missing a milestone."
+          exit 1
