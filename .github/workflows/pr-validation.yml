@@ -20,7 +20,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
           SLACK_USERNAME: 'Sensei CI Bot'
-          SLACK_COLOR: 'error'
-          SLACK_ICON_EMOJI: ':jenkins-error:'
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON_EMOJI: ':red_circle:'
           SLACK_TITLE: 'CI Failure'
           SLACK_FOOTER: ''
