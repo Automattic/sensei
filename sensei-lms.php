@@ -141,3 +141,5 @@ if ( ! function_exists( 'activate_sensei' ) ) {
 		Sensei()->activate();
 	}
 }
+
+\Sensei\Internal\Installer\Installer::instance( SENSEI_LMS_VERSION )->init();

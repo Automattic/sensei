@@ -73,6 +73,26 @@ interface Lesson_Progress_Repository_Interface {
 	public function delete( Lesson_Progress $lesson_progress ): void;
 
 	/**
+	 * Delete all lesson progress for a lesson.
+	 * This is used when a lesson is deleted.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 */
+	public function delete_for_lesson( int $lesson_id ): void;
+
+	/**
+	 * Delete all lesson progress for a user.
+	 * This is used when a user is deleted.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function delete_for_user( int $user_id ): void;
+
+	/**
 	 * Returns the number of started lessons for a user in a course.
 	 * The number of started lessons is the same as the number of lessons that have a progress record.
 	 *

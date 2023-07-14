@@ -2,7 +2,7 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Submission\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Aggregate_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
 
 /**
@@ -12,15 +12,26 @@ use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repositor
  */
 class Submission_Repository_Factory_Test extends \WP_UnitTestCase {
 
-	public function testCreate_WhenCalled_ReturnsSubmissionRepository(): void {
+	/**
+	 * Tests that the factory creates the correct repository.
+	 *
+	 * @dataProvider providerCreate_WhenCalled_ReturnsSubmissionRepository
+	 */
+	public function testCreate_WhenCalled_ReturnsSubmissionRepository( bool $use_tables ): void {
 		/* Arrange. */
-		$factory = new Submission_Repository_Factory();
+		$factory = new Submission_Repository_Factory( $use_tables );
 
 		/* Act. */
 		$actual = $factory->create();
 
 		/* Assert. */
-		self::assertInstanceOf( Submission_Repository_Interface::class, $actual );
+		self::assertInstanceOf( Aggregate_Submission_Repository::class, $actual );
 	}
 
+	public function providerCreate_WhenCalled_ReturnsSubmissionRepository(): array {
+		return [
+			'use tables'        => [ true ],
+			'do not use tables' => [ false ],
+		];
+	}
 }
