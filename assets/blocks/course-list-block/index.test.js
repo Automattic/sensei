@@ -42,7 +42,7 @@ describe( 'addWrapperAroundFeaturedImageBlock', () => {
 			<Edit context={ { postType: 'post' } } />
 		);
 
-		expect( getByText( 'I am a featured image' ) ).toBeInTheDocument();
+		expect( getByText( 'I am a featured imagef' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render the original block when there is not a query id', () => {
