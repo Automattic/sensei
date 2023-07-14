@@ -5,6 +5,8 @@ on:
       - add/github-ci-failure-slack-notification
 jobs:
   unit-js:
+    runs-on: ubuntu-latest
+
     steps:
     - uses: ./.github/workflows/js.yml
 
