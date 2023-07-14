@@ -5,7 +5,8 @@ on:
       - add/github-ci-failure-slack-notification
 jobs:
   unit-js:
-    uses: ./.github/workflows/js.yml
+    steps:
+    - uses: ./.github/workflows/js.yml
 
     - name: Slack Notification Failure
       uses: rtCamp/action-slack-notify@v2
