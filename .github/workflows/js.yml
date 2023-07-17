@@ -24,11 +24,7 @@ jobs:
               run: npm run lint-js
             - name: Lint TS e2e
               run: npm run lint-e2e
-            - uses: ./.github/actions/slack-notification
-                with:
-                  slack_channel: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
-                  slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
-                  type: 'JS Linting'
+            - uses: ./.github/actions/install-php
 
     type-check:
         name: TypeScript Checking
