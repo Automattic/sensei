@@ -8,6 +8,6 @@ export class CoursePage {
 	constructor( private page: Page ) {}
 
 	get takeCourse(): Locator {
-		return this.page.locator( `button >> "Take Course"` ).first();
+		return this.page.locator( `button >> "Take Coursedf"` ).first();
 	}
 }
