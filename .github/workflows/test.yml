@@ -18,37 +18,3 @@ jobs:
           SLACK_COLOR: 'error'
           SLACK_TITLE: 'JS Failure'
           SLACK_FOOTER: ''
-  unit-php:
-    runs-on: ubuntu-latest
-    steps:
-      - name: PHP
-        uses: ./.github/workflows/php.yml
-      - name: Slack Notification Failure
-        uses: rtCamp/action-slack-notify@v2
-        if: failure()
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
-          SLACK_COLOR: 'error'
-          SLACK_TITLE: 'PHP Failure'
-          SLACK_FOOTER: ''
-  e2e:
-    runs-on: ubuntu-latest
-    steps:
-      - name: E2E
-        uses: ./.github/workflows/e2e.yml
-      - name: Slack Notification Failure
-        uses: rtCamp/action-slack-notify@v2
-        if: failure()
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
-          SLACK_COLOR: 'error'
-          SLACK_TITLE: 'E2E Failure'
-          SLACK_FOOTER: ''
-  docs:
-    needs: [ unit-js, unit-php, e2e ]
-    uses: ./.github/workflows/build-docs.yml
-  build:
-    needs: [ unit-js, unit-php, e2e ]
-    uses: ./.github/workflows/build.yml
