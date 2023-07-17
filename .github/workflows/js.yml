@@ -1,8 +1,9 @@
 name: JS Linting and Tests
 
 on:
-    pull_request:
-    workflow_call:
+    push:
+    branches:
+      - add/github-ci-failure-slack-notification
 
 jobs:
     lint:
@@ -24,7 +25,11 @@ jobs:
               run: npm run lint-js
             - name: Lint TS e2e
               run: npm run lint-e2e
-            - uses: ./.github/actions/install-php
+            - uses: ./.github/actions/slack-notification
+                with:
+                  slack_channel: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
+                  slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
+                  type: 'JS Linting'
 
     type-check:
         name: TypeScript Checking
