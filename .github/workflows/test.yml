@@ -5,11 +5,4 @@ on:
       - add/github-ci-failure-slack-notification
 jobs:
   unit-js:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: ./.github/workflows/js.yml
-    - uses: ./.github/actions/slack-notification
-      with:
-        slack_channel: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
-        slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
-        type: 'JS'
+    uses: ./.github/workflows/js.yml

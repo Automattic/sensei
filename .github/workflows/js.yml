@@ -24,6 +24,12 @@ jobs:
               run: npm run lint-js
             - name: Lint TS e2e
               run: npm run lint-e2e
+            - name Slack Notification on Failure
+              uses: ./.github/actions/slack-notification
+                with:
+                  slack_channel: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
+                  slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
+                  type: 'JS Linting'
 
     type-check:
         name: TypeScript Checking
@@ -61,3 +67,9 @@ jobs:
               env:
                   NODE_OPTIONS: "--max_old_space_size=4096"
               run: npm run test-js
+            - name Slack Notification on Failure
+              uses: ./.github/actions/slack-notification
+                with:
+                  slack_channel: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
+                  slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
+                  type: 'JS Testing'
