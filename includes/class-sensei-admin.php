@@ -206,7 +206,7 @@ class Sensei_Admin {
 		}
 
 		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- Only way to highlight our special pages in menu.
-		if ( 'edit-tags' ==$screen->base && 'module' === $taxonomy ) {
+		if ( 'edit-tags' == $screen->base && 'module' === $taxonomy ) {
 			$parent_file  = 'sensei';
 			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
 

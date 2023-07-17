@@ -15,7 +15,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
           SLACK_COLOR: 'error'
-          SLACK_TITLE: 'CI Failure'
+          SLACK_TITLE: 'JS Failure'
           SLACK_FOOTER: ''
   unit-php:
     runs-on: ubuntu-latest
@@ -28,7 +28,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
           SLACK_COLOR: 'error'
-          SLACK_TITLE: 'CI Failure'
+          SLACK_TITLE: 'PHP Unit Test Failure'
           SLACK_FOOTER: ''
   e2e:
     runs-on: ubuntu-latest
@@ -41,7 +41,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
           SLACK_COLOR: 'error'
-          SLACK_TITLE: 'CI Failure'
+          SLACK_TITLE: 'e2e Test Failure'
   docs:
     needs: [ unit-js, unit-php, e2e ]
     uses: ./.github/workflows/build-docs.yml
