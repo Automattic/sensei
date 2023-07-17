@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: /.github/workflows/js.yml
+    - uses: ./.github/workflows/js.yml
 
     - name: Slack Notification Failure
       uses: rtCamp/action-slack-notify@v2
