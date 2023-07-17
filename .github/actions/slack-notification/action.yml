@@ -10,13 +10,11 @@ inputs:
     required: true
     default: 'CI'
 runs:
-  using: 'composite'
-  steps:
-    - uses: rtCamp/action-slack-notify@v2
-      if: failure()
-      env:
-        SLACK_CHANNEL: ${{ inputs.slack_channel }}
-        SLACK_WEBHOOK: ${{ inputs.slack_webhook }}
-        SLACK_TITLE: ${{ inputs.type }}
-        SLACK_COLOR: 'error'
-        SLACK_FOOTER: ''
+  uses: rtCamp/action-slack-notify@v2
+    if: failure()
+    env:
+      SLACK_CHANNEL: ${{ inputs.slack_channel }}
+      SLACK_WEBHOOK: ${{ inputs.slack_webhook }}
+      SLACK_TITLE: ${{ inputs.type }}
+      SLACK_COLOR: 'error'
+      SLACK_FOOTER: ''
