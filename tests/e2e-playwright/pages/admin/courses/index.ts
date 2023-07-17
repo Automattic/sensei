@@ -16,7 +16,7 @@ class WizardModal {
 	}
 
 	async setCourse( { title, description } ) {
-		await this.base.getByLabel( 'course title' ).fill( title );
+		await this.base.getByLabel( 'course titled' ).fill( title );
 		await this.base.getByLabel( 'course description' ).fill( description );
 	}
 
