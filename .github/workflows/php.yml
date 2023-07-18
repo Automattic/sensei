@@ -54,7 +54,7 @@ jobs:
         runs-on: ubuntu-latest
         continue-on-error: ${{ matrix.wp == 'nightly' }}
         strategy:
-            fail-fast: false
+            fail-fast: true
             max-parallel: 10
             matrix:
                 wp: ['latest']
@@ -117,3 +117,13 @@ jobs:
 
             - name: Run tests
               run: ./vendor/bin/phpunit
+
+            - name: Slack Notification on Failure
+              uses: rtCamp/action-slack-notify@v2
+              if: ${{ failure() && github.event_name == 'push' }}
+              env:
+                SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
+                SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+                SLACK_TITLE: 'PHP Testing'
+                SLACK_COLOR: 'error'
+                SLACK_FOOTER: ''
