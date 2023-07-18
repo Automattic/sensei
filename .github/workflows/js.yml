@@ -1,9 +1,8 @@
 name: JS Linting and Tests
 
 on:
-    push:
-      branches:
-        - add/slack-notification-on-test-failure
+    pull_request:
+    workflow_call:
 
 jobs:
     lint:
