@@ -217,7 +217,7 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 		);
 
 		$notices_on_edit_course = $instance_on_edit_course->get_notices_to_display();
-		$this->assertArrayHasKey( 'on-sensei-pages', $notices_on_edit_course );
+		$this->assertArrayHasKey( 'abc123', $notices_on_edit_course );
 	}
 
 	public function testGetNoticesToDisplay_WithDateRangeCondtionMet_ShowNotice() {
