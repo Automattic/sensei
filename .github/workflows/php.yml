@@ -53,7 +53,7 @@ jobs:
     test:
         name: PHP Unit Tests
         runs-on: ubuntu-latest
-        continue-on-error: false
+        continue-on-error: ${{ matrix.wp == 'nightly' }}
         strategy:
             fail-fast: true
             max-parallel: 10
