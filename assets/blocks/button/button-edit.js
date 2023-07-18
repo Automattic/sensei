@@ -14,7 +14,6 @@ import ButtonSettings from './button-settings';
 /**
  * Edit component for a Button block.
  *
- * @param {Object} props
  */
 const ButtonEdit = ( props ) => {
 	const { placeholder, attributes, setAttributes } = props;

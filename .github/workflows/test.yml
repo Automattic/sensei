@@ -1,8 +1,0 @@
-name: Test Workflow
-on:
-  push:
-    branches:
-      - add/github-ci-failure-slack-notification
-jobs:
-  unit-js:
-    uses: ./.github/workflows/js.yml
