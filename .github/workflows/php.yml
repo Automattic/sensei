@@ -55,7 +55,7 @@ jobs:
         runs-on: ubuntu-latest
         continue-on-error: ${{ matrix.wp == 'nightly' }}
         strategy:
-            fail-fast: false
+            fail-fast: true
             max-parallel: 10
             matrix:
                 wp: ['latest']
