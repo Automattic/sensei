@@ -75,7 +75,7 @@ describe( 'Courses List Block', () => {
 
 		// It is possible to have more courses created by other test.
 		const buttonsCount = await page
-			.locator( `text='Start Course'` )
+			.locator( `text='Start Sensei'` )
 			.count();
 
 		await expect(
