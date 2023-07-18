@@ -2,8 +2,8 @@ name: JS Linting and Tests
 
 on:
     push:
-    branches:
-      - add/github-ci-failure-slack-notification
+      branches:
+        - add/github-ci-failure-slack-notification
 
 jobs:
     lint:
