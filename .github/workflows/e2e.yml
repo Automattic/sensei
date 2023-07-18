@@ -66,6 +66,6 @@ jobs:
               env:
                 SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
                 SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-                SLACK_TITLE: 'E2E'
+                SLACK_TITLE: 'E2E Testing'
                 SLACK_COLOR: 'error'
                 SLACK_FOOTER: ''
