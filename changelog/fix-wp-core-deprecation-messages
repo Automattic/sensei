@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-strpos and str_replace deprecation messages in PHP 8.2 and 8.2
+Fix `strpos`and `str_replace` deprecation messages in PHP 8.1 and 8.2
