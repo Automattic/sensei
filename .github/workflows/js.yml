@@ -64,7 +64,7 @@ jobs:
               run: npm run test-js
             - name: Slack Notification on Failure
               uses: rtCamp/action-slack-notify@v2
-              if: failure() && ${{ github.event_name == 'push' }}
+              if: ${{ failure() && github.event_name == 'push' }}
               env:
                 SLACK_CHANNEL: sensei-test
                 SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
