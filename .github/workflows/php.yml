@@ -1,8 +1,9 @@
 name: PHP Linting and Tests
 
 on:
-    pull_request:
-    workflow_call:
+    push:
+      branches:
+        - add/github-ci-failure-slack-notification
 
 jobs:
     lint:

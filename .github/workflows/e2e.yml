@@ -1,7 +1,8 @@
 name: E2E
 on:
-    pull_request:
-    workflow_call:
+    push:
+      branches:
+        - add/github-ci-failure-slack-notification
 env:
     CI: true
 
