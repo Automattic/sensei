@@ -121,7 +121,7 @@ jobs:
 
             - name: Slack Notification on Failure
               uses: rtCamp/action-slack-notify@v2
-              if: failure()
+              if: failure() && ${{ github.event_name == 'push' }}
               env:
                 SLACK_CHANNEL: sensei-test
                 SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
