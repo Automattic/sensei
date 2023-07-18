@@ -100,7 +100,7 @@ describe( 'useWizardOpenState', () => {
 			jest.runOnlyPendingTimers();
 		} );
 
-		expect( queryByText( 'abc' ) ).toBeTruthy();
+		expect( queryByText( 'open' ) ).toBeTruthy();
 	} );
 
 	it( 'Should open when other modals get closed', async () => {

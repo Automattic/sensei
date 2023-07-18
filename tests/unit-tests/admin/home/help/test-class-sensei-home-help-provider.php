@@ -79,7 +79,7 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 		// Create ticket item contains extra link.
 		$this->assertIsArray( $create_ticket_item['extra_link'] );
 		// Create ticket item has the 'lock' icon.
-		$this->assertEquals( 'abc123', $create_ticket_item['icon'] );
+		$this->assertEquals( 'lock', $create_ticket_item['icon'] );
 	}
 
 	public function testCreateSupportTicketIsEnabledAndWithoutExtralinkWhenFilterIsOverrided() {
