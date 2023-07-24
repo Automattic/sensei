@@ -602,7 +602,7 @@ class Sensei_Settings_API {
 	public function form_field_text( $args ) {
 		$options = $this->get_settings();
 
-		$type = in_array( $args['data']['type'] ?? '', [ 'email', 'text' ], true ) ? $args['data']['type'] : 'text';
+		$type     = in_array( $args['data']['type'] ?? '', [ 'email', 'text' ], true ) ? $args['data']['type'] : 'text';
 		$multiple = isset( $args['data']['multiple'] ) ? ' multiple ' : '';
 
 		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="' . esc_attr( $type ) . '" ' . $multiple . ' value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";

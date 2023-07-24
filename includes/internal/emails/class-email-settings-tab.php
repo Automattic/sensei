@@ -214,7 +214,6 @@ class Email_Settings_Tab {
 			ARRAY_FILTER_USE_KEY
 		);
 
-
 		$fields_to_display = array_map(
 			function( $field ) {
 				unset( $field['args']['data']['description'] );
