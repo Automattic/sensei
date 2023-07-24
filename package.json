@@ -1,7 +1,7 @@
 {
   "name": "sensei-lms",
   "title": "Sensei LMS",
-  "version": "4.15.1",
+  "version": "4.16.0",
   "description": "Sensei LMS",
   "author": "Automattic",
   "license": "GPL-2.0-or-later",
@@ -67,7 +67,7 @@
     "@es-joy/jsdoccomment": "0.36.1",
     "@faker-js/faker": "8.0.2",
     "@lifeomic/attempt": "3.0.3",
-    "@playwright/test": "1.28.0",
+    "@playwright/test": "1.36.1",
     "@svgr/webpack": "6.1.2",
     "@testing-library/dom": "7.30.3",
     "@testing-library/jest-dom": "5.11.10",

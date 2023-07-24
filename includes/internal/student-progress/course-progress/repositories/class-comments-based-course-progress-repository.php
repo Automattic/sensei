@@ -156,4 +156,64 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 
 		Sensei_Utils::sensei_delete_activities( $args );
 	}
+
+	/**
+	 * Delete course progress for a given course.
+	 *
+	 * @internal
+	 *
+	 * @param int $course_id The course ID.
+	 */
+	public function delete_for_course( int $course_id ): void {
+		$args = array(
+			'post_id' => $course_id,
+			'type'    => 'sensei_course_status',
+		);
+
+		$this->delete_activities( $args );
+	}
+
+	/**
+	 * Delete course progress for a given user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function delete_for_user( int $user_id ): void {
+		$args = array(
+			'user_id' => $user_id,
+			'type'    => 'sensei_course_status',
+		);
+
+		$this->delete_activities( $args );
+	}
+
+	/**
+	 * Delete activity comments for a given set of arguments.
+	 *
+	 * @param array $args The arguments.
+	 */
+	private function delete_activities( array $args ): void {
+		$comments = Sensei_Utils::sensei_check_for_activity( $args, true );
+		if ( ! $comments ) {
+			return;
+		}
+
+		$comments = is_array( $comments ) ? $comments : [ $comments ];
+		$post_ids = [];
+		foreach ( $comments as $comment ) {
+			if ( isset( $comment->comment_post_ID ) ) {
+				$post_ids[] = $comment->comment_post_ID;
+			}
+
+			if ( isset( $comment->comment_ID ) && 0 < $comment->comment_ID ) {
+				wp_delete_comment( intval( $comment->comment_ID ), true );
+			}
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			Sensei()->flush_comment_counts_cache( $post_id );
+		}
+	}
 }

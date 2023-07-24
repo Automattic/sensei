@@ -5,7 +5,7 @@ inputs:
     php-version:
         description: 'The PHP version to use'
         required: false
-        default: '7.2'
+        default: '7.3'
 
     extensions:
         description: 'The PHP extensions to use'

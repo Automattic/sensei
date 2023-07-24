@@ -1,0 +1,185 @@
+@import '../../../shared/styles/variables';
+
+/* Placeholder */
+
+div[data-type="sensei-lms/course-outline"] {
+	.wp-block-sensei-lms-course-outline__placeholder {
+		.components-placeholder__instructions {
+			line-height: 1.3125rem;
+			margin-bottom: 1rem;
+		}
+
+		&__options {
+			@media (min-width: $break-small) {
+				display: flex;
+				gap: .75rem;
+			}
+		}
+
+		&__option {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			text-align: left;
+			background-color: transparent;
+			cursor: pointer;
+
+			// Regular Content
+			&__content {
+				border-radius: .125rem;
+				padding: 1.25rem 1.25rem 0;
+				text-align: unset;
+				border-style: none;
+
+				background-color: $gray-0;
+				overflow-y: hidden;
+				height: 14.1875rem;
+				flex-shrink: 1;
+				transition: all 0.2s ease-out;
+
+				&::is(ul) {
+					padding: 0;
+				}
+
+				&__intro {
+					display: flex;
+					flex: 1 1;
+					gap: 1.25rem;
+					width: 100%;
+
+					p {
+						text-align: left;
+						font-size: 1.125rem;
+						line-height: 1.222222222222222;
+						margin: 0;
+						padding: 0;
+					}
+				}
+
+
+
+				&__details {
+					font-size: 0.75rem;
+					line-height: 1.333333333333333;
+					padding-left: 20px;
+					width: 100%;
+					margin-top: 16px;
+					margin-bottom: 14.4px;
+
+					li {
+						line-height: 1.5rem;
+					}
+				}
+
+				&__lessons {
+					font-size: .75rem;
+					line-height: 1.333333333333333;
+					list-style-type: none;
+					margin-top: 0;
+					width: 100%;
+					padding-left: 0;
+					width: 100%;
+
+					li {
+						border: solid .0625rem $gray-5;
+						border-radius: .125rem;
+						line-height: 1rem;
+						padding: 1.25rem;
+						margin-bottom: .5rem;
+						transition: background-color 0.4s ease-out;
+					}
+				}
+
+
+
+				&:hover {
+					outline: solid .125rem var(--wp-admin-theme-color);
+					border-radius: .125rem;
+
+					.wp-block-sensei-lms-course-outline__placeholder__option__content__lessons li {
+						background-color: #fff;
+					}
+				}
+
+
+			}
+
+			&.is-ai .wp-block-sensei-lms-course-outline__placeholder__option__content {
+				background-color: $upsell;
+
+				&:hover {
+					.wp-block-sensei-lms-course-outline__ai-image {
+						&__item {
+							background: #dcfbe81a;
+						}
+					}
+				}
+
+				.wp-block-sensei-lms-course-outline__ai-image {
+					display: flex;
+					width: 100%;
+					flex-direction: column;
+					align-items: flex-start;
+					gap: .75rem;
+
+					&__item {
+						border: .0625rem solid #6fcfb2;
+						display: flex;
+						width: 100%;
+						align-items: center;
+						padding: 1.25rem;
+						box-sizing: border-box;
+						transition: background-color 0.3s ease-in-out;
+					}
+
+					&__content {
+						background-color: #dcfbe8;
+						height: 1.25rem;
+						border-radius: 1.25rem;
+						box-sizing: border-box;
+						opacity: 0.80;
+					}
+				}
+
+				&__intro {
+					&__icon {
+						height: 1.5rem;
+						width: 1.5rem;
+					}
+				}
+
+				&__details {
+					list-style-type: none;
+					padding: 0;
+
+					li {
+						align-items: center;
+						display: flex;
+						line-height: 1.5rem;
+						margin: 0;
+
+						&:first-of-type {
+							margin-bottom: 0;
+						}
+					}
+				}
+			}
+
+
+
+
+			&__caption {
+				background-color: #fff;
+				display: block;
+				text-align: center;
+				height: 1.625rem;
+				margin-top: .5rem;
+				width: 100%;
+
+				@media (min-width: $break-small) {
+					align-self: flex-end;
+				}
+			}
+		}
+	}
+}

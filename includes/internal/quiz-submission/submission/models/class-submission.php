@@ -167,4 +167,15 @@ class Submission {
 	public function get_updated_at(): DateTimeInterface {
 		return $this->updated_at;
 	}
+
+	/**
+	 * Set the updated at date.
+	 *
+	 * @internal
+	 *
+	 * @param DateTimeInterface $updated_at The updated date.
+	 */
+	public function set_updated_at( DateTimeInterface $updated_at ): void {
+		$this->updated_at = $updated_at;
+	}
 }

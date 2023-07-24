@@ -145,7 +145,7 @@ class Email_Sender {
 	/**
 	 * Get from name for email.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.0
 	 * @return string
 	 */
 	public function get_from_name() {
@@ -162,7 +162,7 @@ class Email_Sender {
 	/**
 	 * Get from email address.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.0
 	 * @return string
 	 */
 	public function get_from_address() {

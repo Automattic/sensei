@@ -92,7 +92,9 @@ class Sensei_Home_Remote_Data_API {
 				$data = false;
 			}
 
-			unset( $data['_fetched'] );
+			if ( is_array( $data ) ) {
+				unset( $data['_fetched'] );
+			}
 		}
 
 		if ( false === $data ) {

@@ -71,4 +71,22 @@ interface Quiz_Progress_Repository_Interface {
 	 * @param Quiz_Progress $quiz_progress The quiz progress.
 	 */
 	public function delete( Quiz_Progress $quiz_progress ): void;
+
+	/**
+	 * Delete all quiz progress for a quiz.
+	 *
+	 * @internal
+	 *
+	 * @param int $quiz_id Quiz identifier.
+	 */
+	public function delete_for_quiz( int $quiz_id ): void;
+
+	/**
+	 * Delete all quiz progress for a user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id User identifier.
+	 */
+	public function delete_for_user( int $user_id ): void;
 }
