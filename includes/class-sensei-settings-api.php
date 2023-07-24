@@ -605,7 +605,7 @@ class Sensei_Settings_API {
 		$type     = in_array( $args['data']['type'] ?? '', [ 'email', 'text' ], true ) ? $args['data']['type'] : 'text';
 		$multiple = isset( $args['data']['multiple'] ) ? ' multiple ' : '';
 
-		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="' . esc_attr( $type ) . '" ' . $multiple . ' value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
+		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="' . esc_attr( $type ) . '" ' . esc_attr( $multiple ) . ' value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
 		if ( isset( $args['data']['description'] ) ) {
 			echo '<span class="description">' . wp_kses_post( $args['data']['description'] ) . '</span>' . "\n";
 		}
