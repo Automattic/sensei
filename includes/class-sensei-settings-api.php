@@ -603,8 +603,9 @@ class Sensei_Settings_API {
 		$options = $this->get_settings();
 
 		$type = in_array( $args['data']['type'] ?? '', [ 'email', 'text' ], true ) ? $args['data']['type'] : 'text';
+		$multiple = isset( $args['data']['multiple'] ) ? ' multiple ' : '';
 
-		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
+		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="' . esc_attr( $type ) . '" ' . $multiple . ' value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
 		if ( isset( $args['data']['description'] ) ) {
 			echo '<span class="description">' . wp_kses_post( $args['data']['description'] ) . '</span>' . "\n";
 		}
@@ -1076,20 +1077,6 @@ class Sensei_Settings_API {
 	}
 
 	/**
-	 * Validate email list fields.
-	 *
-	 * @param string $input Email list to be vaildiated.
-	 * @return string
-	 */
-	public function validate_field_email_list( $input ) {
-		$source_emails    = explode( ',', $input );
-		$source_emails    = array_map( 'trim', $source_emails );
-		$sanitized_emails = array_filter( $source_emails, 'is_email' );
-
-		return implode( ', ', $sanitized_emails );
-	}
-
-	/**
 	 * Check and validate the input from text fields.
 	 *
 	 * @param  string $input String of the value to be validated.
@@ -1101,29 +1088,6 @@ class Sensei_Settings_API {
 
 		return $is_valid;
 	}
-
-	/**
-	 * Check and validate the input from email list fields.
-	 *
-	 * @param string $input String of the value to be validated.
-	 * @return bool Is the value valid?
-	 */
-	public function check_field_email_list( $input ) {
-		if ( empty( $input ) ) {
-			return true;
-		}
-
-		$source_emails    = explode( ',', $input );
-		$source_emails    = array_map( 'trim', $source_emails );
-		$sanitized_emails = array_filter( $source_emails, 'is_email' );
-
-		if ( count( $sanitized_emails ) !== count( $source_emails ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
 
 	/**
 	 * Log an error internally, for processing later using $this->parse_errors().

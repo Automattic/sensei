@@ -733,7 +733,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$fields['email_cc'] = array(
 			'name'          => __( 'CC', 'sensei-lms' ),
 			'description'   => __( 'Enter email addresses to CC on all emails. Separate multiple email addresses with commas.', 'sensei-lms' ),
-			'type'          => 'email_list',
+			'type'          => 'email',
+			'multiple'      => true,
 			'default'       => '',
 			'section'       => 'email-notification-settings',
 			'required'      => 0,
@@ -744,6 +745,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'name'          => __( 'BCC', 'sensei-lms' ),
 			'description'   => __( 'Enter email addresses to BCC on all emails. Separate multiple email addresses with commas.', 'sensei-lms' ),
 			'type'          => 'email_list',
+			'type'          => 'email',
+			'multiple'      => true,
 			'default'       => '',
 			'section'       => 'email-notification-settings',
 			'required'      => 0,
