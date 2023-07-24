@@ -79,6 +79,12 @@ export default class PostType {
 		return this.page;
 	}
 
+	async saveDraft(): Promise< void > {
+		await this.page
+			.locator( '[aria-label="Editor top bar"] >> text=Save draft' )
+			.click();
+	}
+
 	async publish(): Promise< void > {
 		await this.page
 			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
