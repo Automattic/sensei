@@ -130,7 +130,7 @@ class Sensei_Admin {
 	 */
 	public function add_course_order() {
 		add_submenu_page(
-			null, // Hide in menu.
+			'', // Hide in menu.
 			__( 'Order Courses', 'sensei-lms' ),
 			__( 'Order Courses', 'sensei-lms' ),
 			'manage_sensei',
@@ -147,7 +147,7 @@ class Sensei_Admin {
 	 */
 	public function add_lesson_order() {
 		add_submenu_page(
-			null,
+			'',
 			__( 'Order Lessons', 'sensei-lms' ),
 			__( 'Order Lessons', 'sensei-lms' ),
 			'edit_published_lessons',

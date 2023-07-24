@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
  */
 import settings from './index';
 import AiIcon from '../../../shared/components/ai-icon';
-import AiLessonsImage from './ai-lessons-image';
+import AiLessonsImage from './elements/ai-lessons-image';
 import CheckIcon from '../../../icons/checked.svg';
 import SenseiProBadge from '../../../shared/components/sensei-pro-badge';
 /**
@@ -57,32 +57,42 @@ const EditPlaceholder = ( { addBlocks, openTailoredModal = noop } ) => {
 				'sensei-lms'
 			) }
 		>
-			<div className="wp-block-sensei-lms-course-outline__placeholder-items">
+			<div className="wp-block-sensei-lms-course-outline__placeholder__options">
 				<button
-					className="wp-block-sensei-lms-course-outline__placeholder-item is-blank"
+					className="wp-block-sensei-lms-course-outline__placeholder__option wp-block-sensei-lms-course-outline__placeholder__option-blank"
 					onClick={ createBlankLessons }
 					aria-labelledby="generate-blank"
 				>
-					<p className="wp-block-sensei-lms-course-outline__placeholder-item-intro">
-						{ __(
-							'Start with a blank canvas and create your own course outline.',
-							'sensei-lms'
-						) }
-					</p>
-					<ul className="wp-block-sensei-lms-course-outline__placeholder-item-details">
-						<li>
-							{ __( 'Add Lessons and Modules', 'sensei-lms' ) }
-						</li>
-						<li>
-							{ __( 'Reorder and edit anytime', 'sensei-lms' ) }
-						</li>
-					</ul>
-					<ul className="wp-block-sensei-lms-course-outline__placeholder-item-lessons">
-						<li>{ __( 'Lesson 1', 'sensei-lms' ) }</li>
-						<li>{ __( 'Lesson 2', 'sensei-lms' ) }</li>
-					</ul>
+					<div className="wp-block-sensei-lms-course-outline__placeholder__option__content">
+						<div className="wp-block-sensei-lms-course-outline__placeholder__option__content__intro">
+							<p>
+								{ __(
+									'Start with a blank canvas and create your own course outline.',
+									'sensei-lms'
+								) }
+							</p>
+						</div>
+						<ul className="wp-block-sensei-lms-course-outline__placeholder__option__content__details">
+							<li>
+								{ __(
+									'Add Lessons and Modules',
+									'sensei-lms'
+								) }
+							</li>
+							<li>
+								{ __(
+									'Reorder and edit anytime',
+									'sensei-lms'
+								) }
+							</li>
+						</ul>
+						<ul className="wp-block-sensei-lms-course-outline__placeholder__option__content__lessons">
+							<li>{ __( 'Lesson 1', 'sensei-lms' ) }</li>
+							<li>{ __( 'Lesson 2', 'sensei-lms' ) }</li>
+						</ul>
+					</div>
 					<figcaption
-						className="wp-block-sensei-lms-course-outline__placeholder-item-caption"
+						className="wp-block-sensei-lms-course-outline__placeholder__option__caption"
 						id="generate-blank"
 					>
 						{ __( 'Start with blank', 'sensei-lms' ) }
@@ -90,38 +100,40 @@ const EditPlaceholder = ( { addBlocks, openTailoredModal = noop } ) => {
 				</button>
 
 				<button
-					className="wp-block-sensei-lms-course-outline__placeholder-item is-ai"
+					className="wp-block-sensei-lms-course-outline__placeholder__option is-ai"
 					aria-labelledby="generate-with-ai"
 					onClick={ onGenerateWithAIClick }
 				>
-					<div>
-						<p className="wp-block-sensei-lms-course-outline__placeholder-item-intro">
-							{ __(
-								"Get AI's help to start with a tailored course outline.",
-								'sensei-lms'
-							) }
-						</p>
-						<AiIcon className="wp-block-sensei-lms-course-outline__placeholder-item-icon" />
+					<div className="wp-block-sensei-lms-course-outline__placeholder__option__content">
+						<div className="wp-block-sensei-lms-course-outline__placeholder__option__content__intro">
+							<p>
+								{ __(
+									"Get AI's help to start with a tailored course outline.",
+									'sensei-lms'
+								) }
+							</p>
+							<AiIcon className="wp-block-sensei-lms-course-outline__placeholder__option__content__intro__icon" />
+						</div>
+						<ul className="wp-block-sensei-lms-course-outline__placeholder__option__content__details">
+							<li>
+								<CheckIcon width={ 24 } height={ 24 } />
+								{ __(
+									'AI tailored outline based on your content',
+									'sensei-lms'
+								) }
+							</li>
+							<li>
+								<CheckIcon width={ 24 } height={ 24 } />
+								{ __(
+									'Access to all Sensei Pro features',
+									'sensei-lms'
+								) }
+							</li>
+						</ul>
+						<AiLessonsImage />
 					</div>
-					<ul className="wp-block-sensei-lms-course-outline__placeholder-item-details">
-						<li>
-							<CheckIcon className="wp-block-sensei-lms-course-outline__placeholder-item-icon" />
-							{ __(
-								'AI tailored outline based on your content',
-								'sensei-lms'
-							) }
-						</li>
-						<li>
-							<CheckIcon className="wp-block-sensei-lms-course-outline__placeholder-item-icon" />
-							{ __(
-								'Access to all Sensei Pro features',
-								'sensei-lms'
-							) }
-						</li>
-					</ul>
-					<AiLessonsImage />
 					<figcaption
-						className="wp-block-sensei-lms-course-outline__placeholder-item-caption"
+						className="wp-block-sensei-lms-course-outline__placeholder__option__caption"
 						id="generate-with-ai"
 					>
 						{ __( 'Generate with AI', 'sensei-lms' ) }

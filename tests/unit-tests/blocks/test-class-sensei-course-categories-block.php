@@ -5,6 +5,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  * Tests for Sensei_Block_Take_Course class.
  *
  * @group course-structure
+ * @covers Sensei_Course_Categories_Block
  */
 class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	/**
@@ -54,8 +55,6 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 
 	/**
 	 * The course categories is registered
-	 *
-	 * @covers Sensei_Course_Categories_Block::construct
 	 */
 	public function testBlock_RegisterBlock() {
 		/* Arrange */
@@ -72,8 +71,6 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 
 	/**
 	 * The course categories block renders content.
-	 *
-	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
 	public function testBlock_RenderTheBlockContent() {
 		/* Act */
@@ -86,8 +83,6 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 
 	/**
 	 * The course categories block is rendering the style and the class attributes from the wrapper.
-	 *
-	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
 	public function testBlockRender_RenderTheAttributesFromTheWrapper() {
 		/* Act */
@@ -101,8 +96,6 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 
 	/**
 	 * Doesn't render the block if it's not running in a course context.
-	 *
-	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
 	public function testRenderBlock_Page_ReturnsEmptyString() {
 		$GLOBALS['post'] = $this->factory->post->create_and_get( [ 'post_name' => 'some post' ] );
@@ -116,8 +109,6 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 
 	/**
 	 * Doesn't render the block if there are no course categories
-	 *
-	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
 	public function testRenderBlockWithNoCourseCategories_Page_ReturnsEmptyString() {
 		/* Arrange */

@@ -96,6 +96,17 @@ class Submission_Test extends \WP_UnitTestCase {
 		self::assertSame( '2020-01-01 00:00:02', $actual );
 	}
 
+	public function testSetUpdatedAt_WhenCalled_SetsUpdatedAt(): void {
+		/* Arrange. */
+		$submission = $this->createSubmission();
+
+		/* Act. */
+		$submission->set_updated_at( new \DateTime( '2020-01-01 00:00:01' ) );
+
+		/* Assert. */
+		self::assertSame( '2020-01-01 00:00:01', $submission->get_updated_at()->format( 'Y-m-d H:i:s' ) );
+	}
+
 	private function createSubmission(): Submission {
 		return new Submission(
 			1,

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { render } from '@testing-library/react';
+import '@testing-library/jest-dom';
 
 /**
  * Internal dependencies
@@ -18,15 +19,13 @@ describe( '<OutlinePlaceholder />', () => {
 	} );
 
 	it( 'Should render the outline placeholder correctly when feature flag is enabled', () => {
-		const { container, getByText } = render(
+		const { getByText } = render(
 			<OutlinePlaceholder addBlocksMock={ addBlocksMock } />
 		);
 
-		expect(
-			getByText( 'Build and display a course outline.' )
-		).toBeTruthy();
-		expect( container.querySelector( '.is-blank' ) ).toBeTruthy();
-		expect( container.querySelector( '.is-ai' ) ).toBeTruthy();
+		expect( getByText( 'Start with blank' ) ).toBeVisible();
+
+		expect( getByText( 'Generate with AI' ) ).toBeVisible();
 	} );
 
 	it( 'Should create empty lessons', () => {

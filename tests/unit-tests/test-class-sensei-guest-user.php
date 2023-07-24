@@ -60,8 +60,8 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( is_user_logged_in(), $open_access );
 		if ( $open_access ) {
-			$this->assertRegexp( '/^sensei_guest_.*$/', wp_get_current_user()->user_login );
-			$this->assertRegexp( '/^Guest Student 00.*$/', wp_get_current_user()->display_name );
+			$this->assertMatchesRegularExpression( '/^sensei_guest_.*$/', wp_get_current_user()->user_login );
+			$this->assertMatchesRegularExpression( '/^Guest Student 00.*$/', wp_get_current_user()->display_name );
 		}
 
 	}
