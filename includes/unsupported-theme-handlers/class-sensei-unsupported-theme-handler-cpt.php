@@ -224,6 +224,10 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 * @return string The page.php template if possible, the original template * otherwise.
 	 */
 	public function force_page_template( $template ) {
+		if ( $this->is_lesson_cpt_in_block_fse_theme() ) {
+			return $template;
+		}
+
 		$path = get_query_template( 'page' );
 
 		if ( $path ) {
