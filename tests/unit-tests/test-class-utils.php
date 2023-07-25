@@ -519,4 +519,77 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertEquals( $course_id, $result );
 	}
+
+	public function testIsFseThemeSupported_WhenCalled_WorksIfBlockTemplatesIndexAvailable() {
+		/* Arrange */
+		$theme_directory = get_template_directory() . '/block-templates';
+		$index_file      = $theme_directory . '/index.html';
+
+		// Remove the 'block-templates/index.html' file if it exists.
+		if ( file_exists( $index_file ) ) {
+			unlink( $index_file );
+		}
+
+		// Create the 'block-templates' directory if it doesn't exist.
+		if ( ! is_dir( $theme_directory ) ) {
+			mkdir( $theme_directory );
+		}
+
+		$this->create_file( $index_file );
+
+		/* Assert */
+		// Call the function and assert the result.
+		$this->assertTrue( Sensei_Utils::is_fse_theme() );
+
+		unlink( $index_file );
+		rmdir( $theme_directory );
+	}
+
+	public function testIsFseThemeSupported_WhenCalled_WorksIfIndexHtmlAvailable() {
+		/* Arrange */
+		$theme_directory = get_template_directory() . '/templates';
+		$index_file      = $theme_directory . '/index.html';
+
+		// Remove the 'templates/index.html' file if it exists.
+		if ( file_exists( $index_file ) ) {
+			unlink( $index_file );
+		}
+
+		// Create the 'templates' directory if it doesn't exist.
+		if ( ! is_dir( $theme_directory ) ) {
+			mkdir( $theme_directory );
+		}
+
+		$this->create_file( $index_file );
+
+		/* Assert */
+		// Call the function and assert the result.
+		$this->assertTrue( Sensei_Utils::is_fse_theme() );
+
+		unlink( $index_file );
+		rmdir( $theme_directory );
+	}
+
+	/**
+	 * Create the 'index.html' file to mimic a theme with FSE support.
+	 */
+	private function create_file( $index_file ) {
+		// Initialize the WP_Filesystem.
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+		WP_Filesystem();
+
+		global $wp_filesystem;
+
+		// Check if WP_Filesystem is initialized properly.
+		if ( ! $wp_filesystem ) {
+			return; // Or handle the error accordingly.
+		}
+
+		$file_contents = "Silence is golden\n";
+
+		// Use WP_Filesystem's method to create and write to the file.
+		$wp_filesystem->put_contents( $index_file, $file_contents, FS_CHMOD_FILE );
+	}
 }
