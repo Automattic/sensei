@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Handles the user deletion.
  *
- * @since $$next-version$$
+ * @since 9.9.9
  */
 class User_Deleted_Handler {
 
