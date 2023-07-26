@@ -236,10 +236,11 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	/**
 	 * Check if current theme is a FSE block one and if the current post type is a lesson.
 	 *
+	 * @since $$next-version$$
+	 *
 	 * @return bool
-	 * @access private
 	 */
-	public function is_lesson_cpt_in_block_fse_theme() {
+	private function is_lesson_cpt_in_block_fse_theme() {
 		return 'lesson' === $this->post_type && Sensei_Utils::is_fse_theme();
 	}
 }
