@@ -1,7 +1,11 @@
 *** Changelog ***
 
-## 4.16.0 - 2023-07-13
+## 4.16.1 - 2023-07-26
+### Fixed
+- Fix PHP 8.1 deprecation notice on Students page
+- Fix `strpos`and `str_replace` deprecation messages in PHP 8.1 and 8.2
 
+## 4.16.0 - 2023-07-13
 ### Added
 - Enable to select how to generate lessons when a course is created [#6999](https://github.com/Automattic/sensei/pull/6999)
 
@@ -13,7 +17,6 @@
 - Fix emails not using the From Name/Email settings [#6968](https://github.com/Automattic/sensei/pull/6968)
 - Fix PHP 8.1 autovivification of falsy value deprecation message [#7015](https://github.com/Automattic/sensei/pull/7015)
 - Removed Beta label from Editor Menu [#6989](https://github.com/Automattic/sensei/pull/6989)
-
 
 ## 4.15.1 - 2023-06-22
 ### Added
