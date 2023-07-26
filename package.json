@@ -126,7 +126,7 @@
     "build:vendor": "cp ./node_modules/select2/dist/css/select2.min.css ./node_modules/select2/dist/js/select2.full.js ./node_modules/select2/dist/js/select2.full.min.js ./assets/vendor/select2",
     "changelog": "./vendor/bin/changelogger add",
     "format": "wp-scripts format",
-    "i18n:build": "npm run build:assets && wp i18n make-pot --exclude=build,lib,vendor,node_modules,assets/vendor --headers='{\"Last-Translator\":null,\"Language-Team\":null,\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/sensei-lms\"}' . lang/sensei-lms.pot",
+    "i18n:build": "npm run build:assets && wp i18n make-pot --exclude=build,lib,vendor,node_modules,assets/vendor --headers='{\"Last-Translator\":null,\"Language-Team\":null,\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/sensei-lms\"}' . lang/sensei-lms.pot --allow-root",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
     "lint-e2e": "eslint -c ./tests/e2e-playwright/.eslintrc.js ./tests/e2e-playwright/ && tsc --noEmit --project tests/e2e-playwright/tsconfig.json",

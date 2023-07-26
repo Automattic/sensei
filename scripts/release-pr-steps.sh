@@ -76,7 +76,7 @@ else
 fi
 
 echo "Build translations"
-npm run i18n:build --allow-root
+npm run i18n:build
 if [[ -n $(git status -s) ]]; then
 	git add .
 	git commit -m 'Update translations'
