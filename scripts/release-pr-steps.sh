@@ -76,7 +76,7 @@ else
 fi
 
 echo "Build translations"
-npm run build:assets && wp i18n make-pot --exclude=build,lib,vendor,node_modules,assets/vendor --headers='{"Last-Translator":null,"Language-Team":null,"Report-Msgid-Bugs-To":"https://wordpress.org/support/plugin/sensei-lms"}' . lang/sensei-lms.pot --allow-root
+npm run i18n:build --allow-root
 if [[ -n $(git status -s) ]]; then
 	git add .
 	git commit -m 'Update translations'
