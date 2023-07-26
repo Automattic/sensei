@@ -3,7 +3,6 @@
 /**
  * Tests for Sensei_Enrolment_Calculation_Scheduler class.
  *
- * @covers Sensei_Enrolment_Learner_Calculation_Scheduler
  * @group course-enrolment
  */
 class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {

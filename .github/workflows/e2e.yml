@@ -47,10 +47,10 @@ jobs:
               run: npm run wp-env start 
 
             - name: Run Playwright tests with @setup annotation
-              run: CI=true npm run test:e2e -- --grep @setup
+              run: CI=true npm run test:e2e:setup-only
 
-            - name: Run Playwright tests without the @setup annotation
-              run: CI=true npm run test:e2e -- --grep-invert @setup
+            - name: Run Playwright tests
+              run: CI=true npm run test:e2e
 
             - name: Archive report
               uses: actions/upload-artifact@v3
@@ -60,3 +60,12 @@ jobs:
                   path: playwright-report/
                   retention-days: 30
                   if-no-files-found: ignore
+            - name: Slack Notification on Failure
+              uses: rtCamp/action-slack-notify@v2
+              if: ${{ failure() && github.event_name == 'push' }}
+              env:
+                SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
+                SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+                SLACK_TITLE: 'E2E Testing'
+                SLACK_COLOR: 'error'
+                SLACK_FOOTER: ''

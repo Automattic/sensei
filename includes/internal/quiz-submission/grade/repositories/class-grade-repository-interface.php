@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Quiz_Submission\Grade\Repositories;
 
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,7 +27,7 @@ interface Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int         $submission_id The submission ID.
+	 * @param Submission  $submission    The submission.
 	 * @param int         $answer_id     The answer ID.
 	 * @param int         $question_id   The question ID.
 	 * @param int         $points        The points.
@@ -34,7 +35,7 @@ interface Grade_Repository_Interface {
 	 *
 	 * @return Grade The grade.
 	 */
-	public function create( int $submission_id, int $answer_id, int $question_id, int $points, string $feedback = null ): Grade;
+	public function create( Submission $submission, int $answer_id, int $question_id, int $points, string $feedback = null ): Grade;
 
 	/**
 	 * Get all grades for a quiz submission.
@@ -52,17 +53,17 @@ interface Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int     $submission_id The submission ID.
-	 * @param Grade[] $grades        An array of grades.
+	 * @param Submission $submission The submission.
+	 * @param Grade[]    $grades     An array of grades.
 	 */
-	public function save_many( int $submission_id, array $grades ): void;
+	public function save_many( Submission $submission, array $grades ): void;
 
 	/**
 	 * Delete all grades for a submission.
 	 *
 	 * @internal
 	 *
-	 * @param int $submission_id The submission ID.
+	 * @param Submission $submission The submission.
 	 */
-	public function delete_all( int $submission_id ): void;
+	public function delete_all( Submission $submission ): void;
 }

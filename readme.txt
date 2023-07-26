@@ -4,8 +4,8 @@ Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, 
 Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.0
 Tested up to: 6.2
-Requires PHP: 7.2
-Stable tag: 4.15.1
+Requires PHP: 7.3
+Stable tag: 4.16.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -144,6 +144,19 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.16.0 - 2023-07-13
+#### Added
+- Enable to select how to generate lessons when a course is created [#6999](https://github.com/Automattic/sensei/pull/6999)
+
+#### Changed
+- Bump minimum required PHP version to 7.3 [#7005](https://github.com/Automattic/sensei/pull/7005)
+
+#### Fixed
+- Fix Continue Course block not redirecting to first lesson in some cases [#6997](https://github.com/Automattic/sensei/pull/6997)
+- Fix emails not using the From Name/Email settings [#6968](https://github.com/Automattic/sensei/pull/6968)
+- Fix PHP 8.1 autovivification of falsy value deprecation message [#7015](https://github.com/Automattic/sensei/pull/7015)
+- Removed Beta label from Editor Menu [#6989](https://github.com/Automattic/sensei/pull/6989)
+
 ### 4.15.1 - 2023-06-22
 #### Added
 - Add Enrolled and Completion columns on the reports course page. [#6966](https://github.com/Automattic/sensei/pull/6966)
@@ -175,19 +188,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Fix email body rendered in the front-end in some cases.
 - Fix Kadence blocks crashing lesson editor.
 - Fix MailPoet error when running job.
-
-### 4.14.0 - 2023-05-10
-#### Added
-- Ability to set conditions on admin notices based on a date range
-- Add disclamer with the reason that Sensei Pro can't be updated when license is not active
-- Add quiz generation using AI button in quiz block
-
-#### Changed
-- Use non-deprecated attribute to load SVG icons.
-
-#### Fixed
-- Don't send e-mails to Guest/Preview users
-- Fix PHP Warning with Divi when using Learning Mode Video theme
-- Fix Sensei admin notice styles
-- Missing email page template link on the editor
-- Removed unused calls to SenseiLMS.com for the old extensions page

@@ -33,11 +33,14 @@ class Sensei_Feature_Flags {
 	private const DEFAULT_FEATURE_FLAGS = [
 		'production'  => [
 			'enrolment_provider_tooltip' => false,
+			'tables_based_progress'      => false,
 			'email_customization'        => true,
-			'course_outline_ai'          => false,
+			'course_outline_ai'          => true,
+			'tutor_ai'                   => true,
 		],
 		'development' => [
 			'enrolment_provider_tooltip' => false,
+			'tables_based_progress'      => false,
 			'email_customization'        => true,
 			'course_outline_ai'          => true,
 		],
@@ -57,7 +60,7 @@ class Sensei_Feature_Flags {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.0
 	 */
 	public function register_scripts() {
 		wp_register_script( 'sensei-feature-flags', '' ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Intended, this is a placeholder script.

@@ -20,6 +20,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Lesson_Progress_Repository_Factory {
 	/**
+	 * Use tables based progress flag.
+	 *
+	 * @var bool
+	 */
+	private $use_tables;
+
+	/**
+	 * Lesson_Progress_Repository_Factory constructor.
+	 *
+	 * @param bool $use_tables Use tables based progress flag.
+	 */
+	public function __construct( bool $use_tables ) {
+		$this->use_tables = $use_tables;
+	}
+
+	/**
 	 * Creates a new lesson progress repository.
 	 *
 	 * @internal
@@ -27,6 +43,12 @@ class Lesson_Progress_Repository_Factory {
 	 * @return Lesson_Progress_Repository_Interface The repository.
 	 */
 	public function create(): Lesson_Progress_Repository_Interface {
-		return new Comments_Based_Lesson_Progress_Repository();
+		global $wpdb;
+
+		return new Aggregate_Lesson_Progress_Repository(
+			new Comments_Based_Lesson_Progress_Repository(),
+			new Tables_Based_Lesson_Progress_Repository( $wpdb ),
+			$this->use_tables
+		);
 	}
 }

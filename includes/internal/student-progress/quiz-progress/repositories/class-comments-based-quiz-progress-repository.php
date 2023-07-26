@@ -141,12 +141,55 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @param Quiz_Progress $quiz_progress Quiz progress.
 	 */
 	public function delete( Quiz_Progress $quiz_progress ): void {
-		delete_comment_meta( $quiz_progress->get_quiz_id(), 'quiz_answers' );
-		delete_comment_meta( $quiz_progress->get_id(), 'grade' );
+		Sensei_Utils::sensei_delete_quiz_answers( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
+	}
 
-		// Backward compatibility with Sensei prior to 1.7.
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
-		Sensei_Utils::sensei_delete_quiz_grade( $lesson_id, $quiz_progress->get_user_id() );
-		Sensei_Utils::sensei_delete_quiz_answers( $lesson_id, $quiz_progress->get_user_id() );
+	/**
+	 * Delete all quiz progress for a given quiz.
+	 *
+	 * @internal
+	 *
+	 * @param int $quiz_id Quiz identifier.
+	 */
+	public function delete_for_quiz( int $quiz_id ): void {
+		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+
+		$activity_args = [
+			'post_id' => $lesson_id,
+			'type'    => 'sensei_lesson_status',
+		];
+		$comments      = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		foreach ( $comments as $comment ) {
+			$this->delete_grade_and_answers( $comment->comment_ID );
+			Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $comment->user_id );
+		}
+	}
+
+	/**
+	 * Delete all quiz grades and answers for a user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id User identifier.
+	 */
+	public function delete_for_user( int $user_id ): void {
+		$activity_args = [
+			'user_id' => $user_id,
+			'type'    => 'sensei_lesson_status',
+		];
+		$comments      = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		foreach ( $comments as $comment ) {
+			$this->delete_grade_and_answers( $comment->comment_ID );
+		}
+	}
+
+	/**
+	 * Delete the quiz grade and answers.
+	 *
+	 * @param int $comment_id Comment identifier.
+	 */
+	private function delete_grade_and_answers( $comment_id ): void {
+		delete_comment_meta( $comment_id, 'quiz_answers' );
+		delete_comment_meta( $comment_id, 'grade' );
 	}
 }

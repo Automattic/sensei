@@ -9,6 +9,7 @@
  * Tests for Sensei_Setup_Wizard_Test class.
  *
  * @group setup_wizard
+ * @covers Sensei_Setup_Wizard
  */
 class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
@@ -63,9 +64,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test setup wizard notice in dashboard.
-	 *
-	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
-	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeInDashboard() {
 		// Create and login as admin.
@@ -86,9 +84,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test setup wizard notice in screen with Sensei prefix.
-	 *
-	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
-	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeInSenseiScreen() {
 		// Create and login as admin.
@@ -109,9 +104,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test setup wizard notice in no Sensei screen.
-	 *
-	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
-	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeInOtherScreen() {
 		// Create and login as admin.
@@ -130,9 +122,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test setup wizard notice with suggest option as 0.
-	 *
-	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
-	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeSuggestOptionAsZero() {
 		// Create and login as admin.
@@ -151,9 +140,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test setup wizard notice with suggest option empty.
-	 *
-	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
-	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeSuggestOptionEmpty() {
 		// Create and login as admin.
@@ -171,9 +157,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test setup wizard notice for no admin user.
-	 *
-	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
-	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeNoAdmin() {
 		// Create and login as teacher.
@@ -192,8 +175,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test skip setup wizard.
-	 *
-	 * @covers Sensei_Setup_Wizard::skip_setup_wizard
 	 */
 	public function testSkipSetupWizard() {
 		// Create and login as admin.
@@ -211,8 +192,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test skip setup wizard.
-	 *
-	 * @covers Sensei_Setup_Wizard::skip_setup_wizard
 	 */
 	public function testSkipSetupWizardNoAdmin() {
 		// Create and login as teacher.
@@ -292,8 +271,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test if WooCommerce help tab is being prevented in the Sensei pages.
-	 *
-	 * @covers Sensei_Setup_Wizard::should_enable_woocommerce_help_tab
 	 */
 	public function testShouldEnableWooCommerceHelpTab() {
 		$_GET['post_type'] = 'course';
@@ -306,8 +283,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test if WooCommerce help tab is being untouched in no Sensei pages.
-	 *
-	 * @covers Sensei_Setup_Wizard::should_enable_woocommerce_help_tab
 	 */
 	public function testShouldEnableWooCommerceHelpTabNoSenseiPage() {
 		$_GET['post_type'] = 'woocommerce';
@@ -320,8 +295,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test add setup wizard help tab to edit course screen.
-	 *
-	 * @covers Sensei_Setup_Wizard::add_setup_wizard_help_tab
 	 */
 	public function testAddSetupWizardHelpTab() {
 		// Create and login as administrator.
@@ -340,8 +313,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test add setup wizard help tab in non edit course screens.
-	 *
-	 * @covers Sensei_Setup_Wizard::add_setup_wizard_help_tab
 	 */
 	public function testAddSetupWizardHelpTabNonEditCourseScreen() {
 		// Create and login as administrator.
@@ -360,8 +331,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test add setup wizard help tab for no admin user.
-	 *
-	 * @covers Sensei_Setup_Wizard::add_setup_wizard_help_tab
 	 */
 	public function testAddSetupWizardHelpTabNoAdmin() {
 		// Create and login as teacher.
