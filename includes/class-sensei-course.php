@@ -2090,6 +2090,7 @@ class Sensei_Course {
 
 					}
 				}
+					$complete_html .= apply_filters( 'sensei_completed_course_links', '', $course_item->ID, $user->ID );
 
 					$complete_html .= '</section>';
 
