@@ -2090,6 +2090,17 @@ class Sensei_Course {
 
 					}
 				}
+					/**
+					 * Publicly displays links related to the completed course
+					 *
+					 * @since 4.16.0
+					 * @hook sensei_results_completed_links
+					 *
+					 * @param {int} $course_id The ID of the course.
+					 * @param {int} $user_id The user ID of the learner.
+					 *
+					 * @return {string} HTML output of the links.
+					 */
 					$complete_html .= apply_filters( 'sensei_results_completed_links', '', $course_item->ID, $user->ID );
 
 					$complete_html .= '</section>';
