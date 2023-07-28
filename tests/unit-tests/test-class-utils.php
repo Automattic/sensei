@@ -522,7 +522,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_id, $result );
 	}
 
-	public function testIsFseThemeSupported_WhenCalled_WorksIfBlockTemplatesIndexAvailable() {
+	public function testIsFseTheme_WhenBlockTemplatesIndexAvailable_ReturnsTrue() {
 		/* Arrange */
 		$theme_directory = get_template_directory() . '/block-templates';
 		$index_file      = $theme_directory . '/index.html';
@@ -539,15 +539,17 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 		$this->create_index_file( $index_file );
 
+		/* Act */
+		$result = Sensei_Utils::is_fse_theme();
+
 		/* Assert */
-		// Call the function and assert the result.
-		$this->assertTrue( Sensei_Utils::is_fse_theme() );
+		$this->assertTrue( $result );
 
 		unlink( $index_file );
 		rmdir( $theme_directory );
 	}
 
-	public function testIsFseThemeSupported_WhenCalled_WorksIfIndexHtmlAvailable() {
+	public function testIsFseTheme_WhenIndexHtmlAvailable_ReturnsTrue() {
 		/* Arrange */
 		$theme_directory = get_template_directory() . '/templates';
 		$index_file      = $theme_directory . '/index.html';
@@ -564,9 +566,11 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 		$this->create_index_file( $index_file );
 
+		/* Act */
+		$result = Sensei_Utils::is_fse_theme();
+
 		/* Assert */
-		// Call the function and assert the result.
-		$this->assertTrue( Sensei_Utils::is_fse_theme() );
+		$this->assertTrue( $result );
 
 		unlink( $index_file );
 		rmdir( $theme_directory );
