@@ -2093,7 +2093,7 @@ class Sensei_Course {
 					/**
 					 * Publicly displays links related to the completed course
 					 *
-					 * @since 4.16.0
+					 * @since 4.16.1
 					 * @hook sensei_results_completed_links
 					 *
 					 * @param {int} $course_id The ID of the course.
