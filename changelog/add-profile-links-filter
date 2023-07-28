@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Add `sensei_results_completed_links` filter
