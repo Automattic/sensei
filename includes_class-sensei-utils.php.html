@@ -2845,6 +2845,17 @@ class Sensei_Utils {
 		}
 		return $course_id;
 	}
+
+	/**
+	 * Check if the current theme supports Full Site Editing (FSE).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return bool True if FSE is supported, false otherwise.
+	 */
+	public static function is_fse_theme() {
+		return function_exists( 'wp_is_block_theme' ) &amp;&amp; wp_is_block_theme();
+	}
 }
 
 /**
