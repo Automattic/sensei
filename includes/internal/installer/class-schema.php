@@ -71,7 +71,8 @@ class Schema {
 
 		$collate = $wpdb->get_charset_collate();
 
-		return "
+		$table_queries = [
+			"{$wpdb->prefix}sensei_lms_progress"         => "
 CREATE TABLE {$wpdb->prefix}sensei_lms_progress (
 	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
 	post_id bigint UNSIGNED NOT NULL,
@@ -87,6 +88,8 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_progress (
 	UNIQUE KEY user_progress (post_id, user_id, type),
 	KEY status (status)
 ) $collate;
+",
+			"{$wpdb->prefix}sensei_lms_quiz_submissions" => "
 CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_submissions (
 	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
 	quiz_id bigint UNSIGNED NOT NULL,
@@ -97,6 +100,8 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_submissions (
 	PRIMARY KEY  (id),
 	UNIQUE KEY user_quiz (quiz_id, user_id)
 ) $collate;
+",
+			"{$wpdb->prefix}sensei_lms_quiz_answers"     => "
 CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_answers (
 	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
 	submission_id bigint UNSIGNED NOT NULL,
@@ -107,6 +112,8 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_answers (
 	PRIMARY KEY  (id),
 	UNIQUE KEY question_submission (submission_id, question_id)
 ) $collate;
+",
+			"{$wpdb->prefix}sensei_lms_quiz_grades"      => "
 CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
 	answer_id bigint UNSIGNED NOT NULL,
@@ -117,7 +124,18 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 	updated_at datetime NOT NULL,
 	PRIMARY KEY  (id),
 	UNIQUE KEY question_answer (answer_id, question_id)
-) $collate;";
+) $collate;
+",
+		];
+
+		$query = '';
+		foreach ( $this->get_tables() as $table ) {
+			if ( isset( $table_queries[ $table ] ) ) {
+				$query .= $table_queries[ $table ];
+			}
+		}
+
+		return $query;
 	}
 
 	/**
@@ -133,12 +151,13 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 	public function get_tables(): array {
 		global $wpdb;
 
-		$tables = [
-			"{$wpdb->prefix}sensei_lms_progress",
-			"{$wpdb->prefix}sensei_lms_quiz_submissions",
-			"{$wpdb->prefix}sensei_lms_quiz_answers",
-			"{$wpdb->prefix}sensei_lms_quiz_grades",
-		];
+		$tables = [];
+		if ( Sensei()->feature_flags->is_enabled( 'tables_based_progress' ) ) {
+			$tables[] = "{$wpdb->prefix}sensei_lms_progress";
+			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_submissions";
+			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_answers";
+			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_grades";
+		}
 
 		/**
 		 * Filter the list of known tables.
