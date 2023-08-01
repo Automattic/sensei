@@ -18,6 +18,7 @@ use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Tools\Migration_Tool;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -570,6 +571,11 @@ class Sensei_Main {
 		$this->course_progress_repository = ( new Course_Progress_Repository_Factory( $use_tables ) )->create();
 		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory( $use_tables ) )->create();
 		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory( $use_tables ) )->create();
+
+		// Student progress migration.
+		if ( $use_tables ) {
+			( new Migration_Tool( \Sensei_Tools::instance() ) )->init();
+		}
 
 		// Quiz submission repositories.
 		$this->quiz_submission_repository = ( new Submission_Repository_Factory( $use_tables ) )->create();
