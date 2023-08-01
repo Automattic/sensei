@@ -141,8 +141,9 @@ class Student_Progress_Migration implements Migration {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$progress_comments = $wpdb->get_results( $comments_query );
 
-		$comment_ids = array();
-		$post_ids    = array();
+		$comment_ids      = array();
+		$post_ids         = array();
+		$trashed_post_ids = array();
 		foreach ( $progress_comments as $progress_comment ) {
 			$comment_ids[] = $progress_comment->comment_ID;
 
@@ -179,8 +180,9 @@ class Student_Progress_Migration implements Migration {
 			// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 			$post_meta_query = $wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT * FROM {$wpdb->postmeta} WHERE  meta_key IN ( %s ) AND post_id IN ( {$placeholders} )",
+				"SELECT * FROM {$wpdb->postmeta} WHERE  meta_key IN ( %s, %s ) AND post_id IN ( {$placeholders} )",
 				'_lesson_quiz',
+				'_wp_trash_meta_comments_status',
 				...$ids
 			);
 			if ( $dry_run ) {
@@ -203,8 +205,20 @@ class Student_Progress_Migration implements Migration {
 		// Map post meta to the comment ID.
 		foreach ( $post_meta as $meta ) {
 			$comment_id = $post_ids[ $meta->post_id ];
-			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-			$mapped_meta[ $comment_id ][ $meta->meta_key ] = $meta->meta_value;
+
+			if ( '_wp_trash_meta_comments_status' === $meta->meta_key ) {
+				$comment_statuses = maybe_unserialize( $meta->meta_value );
+				if ( ! is_array( $comment_statuses ) ) {
+					continue;
+				}
+
+				foreach ( $comment_statuses as $comment_id => $comment_status ) {
+					$mapped_meta[ $comment_id ]['status'] = $comment_status;
+				}
+			} else {
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				$mapped_meta[ $comment_id ][ $meta->meta_key ] = $meta->meta_value;
+			}
 		}
 
 		$last_comment_id = end( $comment_ids );
@@ -222,12 +236,23 @@ class Student_Progress_Migration implements Migration {
 	private function prepare_progress_to_insert( $progress_comments, $mapped_meta ): void {
 		$this->progress_inserts = array();
 		foreach ( $progress_comments as $progress_comment ) {
+			$meta = isset( $mapped_meta[ $progress_comment->comment_ID ] )
+				? $mapped_meta[ $progress_comment->comment_ID ]
+				: array();
+
+			// Process comments for trashed posts.
+			if ( 'post-trashed' === $progress_comment->comment_approved ) {
+				$progress_comment->comment_approved = isset( $meta['status'] )
+					? $meta['status']
+					: 'in-progress';
+			}
+
 			switch ( $progress_comment->comment_type ) {
 				case 'sensei_course_status':
-					$this->prepare_course_progress_to_insert( $progress_comment, $mapped_meta );
+					$this->prepare_course_progress_to_insert( $progress_comment, $meta );
 					break;
 				case 'sensei_lesson_status':
-					$this->prepare_lesson_progress_to_insert( $progress_comment, $mapped_meta );
+					$this->prepare_lesson_progress_to_insert( $progress_comment, $meta );
 					break;
 				default:
 					$this->errors[] = sprintf(
@@ -260,8 +285,8 @@ class Student_Progress_Migration implements Migration {
 		}
 
 		$started_at = 0;
-		if ( isset( $meta[ $comment->comment_ID ]['start'] ) ) {
-			$started_at = $meta[ $comment->comment_ID ]['start'];
+		if ( isset( $meta['start'] ) ) {
+			$started_at = $meta['start'];
 		}
 
 		$this->progress_inserts[] = [
@@ -292,8 +317,8 @@ class Student_Progress_Migration implements Migration {
 		}
 
 		$started_at = 0;
-		if ( isset( $meta[ $comment->comment_ID ]['start'] ) ) {
-			$started_at = $meta[ $comment->comment_ID ]['start'];
+		if ( isset( $meta['start'] ) ) {
+			$started_at = $meta['start'];
 		}
 
 		$this->progress_inserts[] = [
@@ -312,8 +337,8 @@ class Student_Progress_Migration implements Migration {
 		// we create a quiz progress entry as well.
 		// We are able to determine a few non-initial statuses for the quiz.
 		// Because of that, by default we set the status to in-progress.
-		if ( isset( $meta[ $comment->comment_ID ]['_lesson_quiz'] ) ) {
-			$quiz_id            = $meta[ $comment->comment_ID ]['_lesson_quiz'];
+		if ( isset( $meta['_lesson_quiz'] ) ) {
+			$quiz_id            = $meta['_lesson_quiz'];
 			$supported_statuses = [
 				Quiz_Progress::STATUS_IN_PROGRESS,
 				Quiz_Progress::STATUS_FAILED,

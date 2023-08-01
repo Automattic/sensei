@@ -62,7 +62,7 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	 * @return string
 	 */
 	public function get_id() {
-		return 'progress-migration';
+		return 'student-progress-migration';
 	}
 
 	/**
@@ -71,7 +71,7 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	 * @return string
 	 */
 	public function get_name() {
-		return __( 'Migrate comment-based progress', 'sensei-lms' );
+		return __( 'Migrate comment-based student progress', 'sensei-lms' );
 	}
 
 	/**
@@ -103,6 +103,7 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 				$message .= ' ' . $error;
 			}
 		}
+
 		$this->tools->add_user_message( $message, ! $result );
 	}
 
