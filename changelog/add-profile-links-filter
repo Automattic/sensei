@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Add `sensei_results_completed_links` filter
+Updates the `sensei_results_links` filter to include the learner's user ID when displaying public profiles and to display results links publicly.
