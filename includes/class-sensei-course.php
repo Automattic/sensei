@@ -2083,7 +2083,7 @@ class Sensei_Course {
 						$complete_html .= '<p class="sensei-results-links">';
 						$complete_html .= $results_links;
 						$complete_html .= '</p>';
-				 }
+				}
 					$complete_html .= '</section>';
 
 				$complete_html .= '</article>';
