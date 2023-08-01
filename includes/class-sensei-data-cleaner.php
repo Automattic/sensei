@@ -6,6 +6,8 @@
  * @package Core
  */
 
+use Sensei\Internal\Installer\Installer;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	// Exit if accessed directly.
 	exit;
@@ -280,6 +282,7 @@ class Sensei_Data_Cleaner {
 		self::cleanup_transients();
 		self::cleanup_options();
 		self::cleanup_user_meta();
+		self::cleanup_custom_tables();
 	}
 
 	/**
@@ -463,6 +466,20 @@ class Sensei_Data_Cleaner {
 
 		foreach ( self::$post_meta as $post_meta ) {
 			$wpdb->delete( $wpdb->postmeta, array( 'meta_key' => $post_meta ) );
+		}
+	}
+
+	/**
+	 * Drop the custom tables.
+	 */
+	private static function cleanup_custom_tables(): void {
+		global $wpdb;
+
+		$tables = Installer::instance()->get_schema()->get_tables();
+
+		foreach ( $tables as $table ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Intended.
+			$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
 		}
 	}
 }

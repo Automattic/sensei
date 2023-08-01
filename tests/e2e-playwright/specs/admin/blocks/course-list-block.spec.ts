@@ -9,6 +9,7 @@ import { createCourse, createCourseCategory } from '@e2e/helpers/api';
 import PostType from '@e2e/pages/admin/post-type';
 import { editorRole } from '@e2e/helpers/context';
 import { asAdmin } from '@e2e/helpers/api';
+import { faker } from '@faker-js/faker';
 
 const { describe, use, beforeAll } = test;
 
@@ -17,19 +18,19 @@ describe( 'Courses List Block', () => {
 
 	const courses = [
 		{
-			title: 'Photography',
-			excerpt: 'Course about photography',
-			category: 'category a',
+			title: faker.lorem.sentence( 2 ),
+			excerpt: faker.lorem.sentence( 3 ),
+			category: faker.lorem.slug( 2 ),
 		},
 		{
-			title: 'Music',
-			excerpt: 'Course about music',
-			category: 'category b',
+			title: faker.lorem.sentence( 2 ),
+			excerpt: faker.lorem.sentence( 3 ),
+			category: faker.lorem.slug( 2 ),
 		},
 		{
-			title: 'Audio',
-			excerpt: 'Course about Audio',
-			category: 'category c',
+			title: faker.lorem.sentence( 2 ),
+			excerpt: faker.lorem.sentence( 3 ),
+			category: faker.lorem.slug( 2 ),
 		},
 	];
 
@@ -64,13 +65,11 @@ describe( 'Courses List Block', () => {
 
 		for ( const course of courses ) {
 			await expect(
-				published.locator( `role=heading[name=${ course.title }]` )
+				published.getByRole( 'heading', { name: course.title } )
 			).toBeVisible();
+
 			await expect(
-				published.locator( `text='${ course.excerpt }'` )
-			).toBeVisible();
-			await expect(
-				published.locator( `role=link[name='${ course.category }']` )
+				published.getByRole( 'link', { name: course.category } )
 			).toBeVisible();
 		}
 

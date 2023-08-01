@@ -2,16 +2,16 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 4.15.1\n"
+"Project-Id-Version: Sensei LMS 4.16.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-06-22T13:34:43+00:00\n"
+"POT-Creation-Date: 2023-07-13T15:24:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.8.1\n"
+"X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: sensei-lms\n"
 
 #. Plugin Name of the plugin
@@ -81,7 +81,7 @@ msgstr ""
 #: assets/blocks/course-outline/status-preview/status-control/index.js:17
 #: assets/blocks/lesson-actions/lesson-actions-block/lesson-actions-settings.js:40
 #: assets/dist/blocks/global-blocks.js:265
-#: assets/dist/blocks/single-course.js:520
+#: assets/dist/blocks/single-course.js:537
 #: assets/dist/blocks/single-lesson.js:270
 msgid "In Progress"
 msgstr ""
@@ -444,8 +444,8 @@ msgstr ""
 #: assets/blocks/lesson-actions/view-quiz-block/index.js:22
 #: assets/dist/blocks/single-course.js:352
 #: assets/dist/blocks/single-course.js:370
-#: assets/dist/blocks/single-course.js:448
-#: assets/dist/blocks/single-course.js:457
+#: assets/dist/blocks/single-course.js:456
+#: assets/dist/blocks/single-course.js:465
 #: assets/dist/blocks/single-lesson.js:202
 #: assets/dist/blocks/single-lesson.js:329
 #: assets/dist/blocks/single-lesson.js:341
@@ -530,7 +530,7 @@ msgstr[1] ""
 #: assets/data-port/import/done/done-page.js:91
 #: assets/dist/blocks/global-blocks.js:265
 #: assets/dist/blocks/global-blocks.js:408
-#: assets/dist/blocks/single-course.js:520
+#: assets/dist/blocks/single-course.js:537
 #: assets/dist/blocks/single-lesson.js:270
 #: assets/dist/blocks/single-page.js:213
 #: assets/dist/data-port/import.js:393
@@ -541,7 +541,7 @@ msgstr ""
 #: assets/blocks/course-actions-block/course-status-options.js:8
 #: assets/blocks/course-outline/status-preview/status-control/index.js:16
 #: assets/dist/blocks/global-blocks.js:265
-#: assets/dist/blocks/single-course.js:520
+#: assets/dist/blocks/single-course.js:537
 msgid "Not Started"
 msgstr ""
 
@@ -1003,6 +1003,8 @@ msgid "Upgrade to Sensei Pro"
 msgstr ""
 
 #: includes/admin/home/help/class-sensei-home-help-provider.php:110
+#: tests/unit-tests/admin/home/help/test-class-sensei-home-help-provider.php:74
+#: tests/unit-tests/admin/home/help/test-class-sensei-home-help-provider.php:90
 msgid "Create a support ticket"
 msgstr ""
 
@@ -1498,220 +1500,278 @@ msgstr ""
 msgid "Course List"
 msgstr ""
 
-#: includes/block-patterns/course/course-default.php:12
+#: includes/block-patterns/course/course-default.php:16
 msgid "Course Default"
 msgstr ""
 
-#: includes/block-patterns/course/life-coach.php:12
+#: includes/block-patterns/course/life-coach.php:15
 msgid "Life Coach"
 msgstr ""
 
-#: includes/block-patterns/course/long-sales-page.php:12
+#: includes/block-patterns/course/long-sales-page.php:14
 msgid "Long Sales Page"
 msgstr ""
 
-#: includes/block-patterns/course/templates/course-default.php:13
+#: includes/block-patterns/course/templates/course-default.php:15
+#: includes/block-patterns/course/templates/v2/course-default.php:13
 msgid "Course description, objectives, and overview."
 msgstr ""
 
-#: includes/block-patterns/course/templates/course-default.php:18
-#: includes/block-patterns/course/templates/life-coach.php:27
-#: includes/block-patterns/course/templates/life-coach.php:63
-#: includes/block-patterns/course/templates/life-coach.php:206
-#: includes/block-patterns/course/templates/long-sales-page.php:24
-#: includes/block-patterns/course/templates/long-sales-page.php:222
-#: includes/block-patterns/course/templates/long-sales-page.php:270
-#: includes/block-patterns/course/templates/video-hero.php:38
-#: includes/block-patterns/course/templates/video-hero.php:64
-#: includes/block-patterns/course/templates/video-hero.php:135
-#: includes/block-patterns/course/templates/video-hero.php:174
+#: includes/block-patterns/course/templates/course-default.php:20
+#: includes/block-patterns/course/templates/life-coach.php:29
+#: includes/block-patterns/course/templates/life-coach.php:65
+#: includes/block-patterns/course/templates/life-coach.php:208
+#: includes/block-patterns/course/templates/long-sales-page.php:26
+#: includes/block-patterns/course/templates/long-sales-page.php:224
+#: includes/block-patterns/course/templates/long-sales-page.php:272
+#: includes/block-patterns/course/templates/v2/course-default.php:18
+#: includes/block-patterns/course/templates/v2/life-coach.php:27
+#: includes/block-patterns/course/templates/v2/life-coach.php:63
+#: includes/block-patterns/course/templates/v2/life-coach.php:200
+#: includes/block-patterns/course/templates/v2/long-sales.php:24
+#: includes/block-patterns/course/templates/v2/long-sales.php:222
+#: includes/block-patterns/course/templates/v2/long-sales.php:264
+#: includes/block-patterns/course/templates/v2/video-hero.php:38
+#: includes/block-patterns/course/templates/v2/video-hero.php:63
+#: includes/block-patterns/course/templates/v2/video-hero.php:134
+#: includes/block-patterns/course/templates/v2/video-hero.php:167
+#: includes/block-patterns/course/templates/video-hero.php:40
+#: includes/block-patterns/course/templates/video-hero.php:66
+#: includes/block-patterns/course/templates/video-hero.php:137
+#: includes/block-patterns/course/templates/video-hero.php:176
 #: assets/blocks/take-course-block/index.js:35
 #: assets/dist/blocks/global-blocks.js:646
 msgid "Take Course"
-msgstr ""
-
-#: includes/block-patterns/course/templates/course-default.php:24
-#: includes/block-patterns/course/templates/life-coach.php:198
-#: includes/block-patterns/course/templates/long-sales-page.php:262
-#: includes/block-patterns/course/templates/video-hero.php:161
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:44
-#: assets/dist/blocks/single-course.js:476
-msgid "Lesson 1"
 msgstr ""
 
 #: includes/block-patterns/course/templates/course-default.php:26
 #: includes/block-patterns/course/templates/life-coach.php:200
 #: includes/block-patterns/course/templates/long-sales-page.php:264
 #: includes/block-patterns/course/templates/video-hero.php:163
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:45
-#: assets/dist/blocks/single-course.js:476
-msgid "Lesson 2"
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:33
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:90
+#: assets/dist/blocks/single-course.js:482
+msgid "Lesson 1"
 msgstr ""
 
 #: includes/block-patterns/course/templates/course-default.php:28
 #: includes/block-patterns/course/templates/life-coach.php:202
 #: includes/block-patterns/course/templates/long-sales-page.php:266
 #: includes/block-patterns/course/templates/video-hero.php:165
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:37
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:91
+#: assets/dist/blocks/single-course.js:482
+msgid "Lesson 2"
+msgstr ""
+
+#: includes/block-patterns/course/templates/course-default.php:30
+#: includes/block-patterns/course/templates/life-coach.php:204
+#: includes/block-patterns/course/templates/long-sales-page.php:268
+#: includes/block-patterns/course/templates/video-hero.php:167
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:41
+#: assets/dist/blocks/single-course.js:482
 msgid "Lesson 3"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:19
+#: includes/block-patterns/course/templates/life-coach.php:21
+#: includes/block-patterns/course/templates/v2/life-coach.php:19
 msgid "Do What You Always Wanted Today!"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:23
+#: includes/block-patterns/course/templates/life-coach.php:25
+#: includes/block-patterns/course/templates/v2/life-coach.php:23
 msgid "Hellen's Life Hacks course will teach you how to get to know yourself and how you can use your natural abilities to finally change your life around and do what you always wanted."
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:41
+#: includes/block-patterns/course/templates/life-coach.php:43
+#: includes/block-patterns/course/templates/v2/life-coach.php:41
 msgid "Make your dream a reality"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:45
+#: includes/block-patterns/course/templates/life-coach.php:47
+#: includes/block-patterns/course/templates/v2/life-coach.php:45
 msgid "Hellen's classes offer 1:1 sessions so that she gets to know each of their students. It's not just a group chat, it's you and Hellen, at a personal level. That way you can figure out exactly how to apply her teachings to your personality."
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:55
+#: includes/block-patterns/course/templates/life-coach.php:57
+#: includes/block-patterns/course/templates/v2/life-coach.php:55
 msgid "Meeting Helen"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:72
+#: includes/block-patterns/course/templates/life-coach.php:74
+#: includes/block-patterns/course/templates/v2/life-coach.php:72
 msgid "Here's what you'll learn"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:86
+#: includes/block-patterns/course/templates/life-coach.php:88
+#: includes/block-patterns/course/templates/v2/life-coach.php:86
 msgid "Discover your inner self"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:90
+#: includes/block-patterns/course/templates/life-coach.php:92
+#: includes/block-patterns/course/templates/v2/life-coach.php:90
 msgid "It's important to know who you are before you can get where you want."
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:100
+#: includes/block-patterns/course/templates/life-coach.php:102
+#: includes/block-patterns/course/templates/v2/life-coach.php:100
 msgid "Meet Hellen in your 1:1"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:104
+#: includes/block-patterns/course/templates/life-coach.php:106
+#: includes/block-patterns/course/templates/v2/life-coach.php:104
 msgid "You'll get one hour call with Hellen to apply the knowledge you have just acquired."
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:114
+#: includes/block-patterns/course/templates/life-coach.php:116
+#: includes/block-patterns/course/templates/v2/life-coach.php:114
 msgid "Make it actionable"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:118
+#: includes/block-patterns/course/templates/life-coach.php:120
+#: includes/block-patterns/course/templates/v2/life-coach.php:118
 msgid "Hellen's course ends with clear action items, so you know what you have to do next."
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:131
+#: includes/block-patterns/course/templates/life-coach.php:133
+#: includes/block-patterns/course/templates/v2/life-coach.php:131
 msgid "Meet Hellen"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:135
+#: includes/block-patterns/course/templates/life-coach.php:137
+#: includes/block-patterns/course/templates/v2/life-coach.php:135
 msgid "You will begin by getting to know Hellen, who will also teach you how to learn the best tricks she accumulated throughout her 25+ years of experience."
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:139
+#: includes/block-patterns/course/templates/life-coach.php:141
+#: includes/block-patterns/course/templates/v2/life-coach.php:139
 msgid "Contact Hellen"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:158
+#: includes/block-patterns/course/templates/life-coach.php:160
+#: includes/block-patterns/course/templates/v2/life-coach.php:158
 msgid "TESTIMONIALS"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:162
+#: includes/block-patterns/course/templates/life-coach.php:164
+#: includes/block-patterns/course/templates/v2/life-coach.php:162
 msgid "What Clients Say"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:166
+#: includes/block-patterns/course/templates/life-coach.php:168
+#: includes/block-patterns/course/templates/v2/life-coach.php:166
 msgid "We place a huge value on strong relationships and have seen the benefit they bring to our business. Customer feedback is vital in helping us to get it right."
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:178
+#: includes/block-patterns/course/templates/life-coach.php:180
+#: includes/block-patterns/course/templates/v2/life-coach.php:178
 msgid "Running my own business for a year and couldn't be happier! Thanks, for the course!"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:178
-#: includes/block-patterns/course/templates/long-sales-page.php:243
+#: includes/block-patterns/course/templates/life-coach.php:180
+#: includes/block-patterns/course/templates/long-sales-page.php:245
+#: includes/block-patterns/course/templates/v2/life-coach.php:178
+#: includes/block-patterns/course/templates/v2/long-sales.php:243
 msgid "Volunteer"
 msgstr ""
 
-#: includes/block-patterns/course/templates/life-coach.php:192
-#: includes/block-patterns/course/templates/long-sales-page.php:256
+#: includes/block-patterns/course/templates/life-coach.php:194
+#: includes/block-patterns/course/templates/long-sales-page.php:258
+#: includes/block-patterns/course/templates/v2/life-coach.php:192
+#: includes/block-patterns/course/templates/v2/long-sales.php:256
 #: includes/class-sensei-course.php:732
 msgid "Course Lessons"
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:16
+#: includes/block-patterns/course/templates/long-sales-page.php:18
+#: includes/block-patterns/course/templates/v2/long-sales.php:16
 msgid "Deep dive into portrait photography"
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:20
+#: includes/block-patterns/course/templates/long-sales-page.php:22
+#: includes/block-patterns/course/templates/v2/long-sales.php:20
 msgid "Learn from Jeff Bronson how to shoot photography like a pro in any outside light conditions."
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:34
+#: includes/block-patterns/course/templates/long-sales-page.php:36
+#: includes/block-patterns/course/templates/v2/long-sales.php:34
 msgid "What is portrait photography"
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:38
+#: includes/block-patterns/course/templates/long-sales-page.php:40
+#: includes/block-patterns/course/templates/v2/long-sales.php:38
 msgid "<strong>Portrait photography</strong>, or <strong>portraiture</strong>, is a type of photography aimed at capturing the personality of a person or group of people by using effective lighting, backdrops, and poses. A portrait photograph may be artistic or clinical."
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:68
+#: includes/block-patterns/course/templates/long-sales-page.php:70
+#: includes/block-patterns/course/templates/v2/long-sales.php:68
 msgid "A photographic portrait means to consider who we have before us and what we want to show about that person."
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:80
+#: includes/block-patterns/course/templates/long-sales-page.php:82
+#: includes/block-patterns/course/templates/v2/long-sales.php:80
 msgid "What you will learn to master"
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:95
+#: includes/block-patterns/course/templates/long-sales-page.php:97
+#: includes/block-patterns/course/templates/v2/long-sales.php:95
 msgid "Lighting for portraiture"
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:105
+#: includes/block-patterns/course/templates/long-sales-page.php:107
+#: includes/block-patterns/course/templates/v2/long-sales.php:105
 msgid "There are many techniques available to light a subject's face."
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:117
+#: includes/block-patterns/course/templates/long-sales-page.php:119
+#: includes/block-patterns/course/templates/v2/long-sales.php:117
 msgid "Three-point lighting"
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:127
+#: includes/block-patterns/course/templates/long-sales-page.php:129
+#: includes/block-patterns/course/templates/v2/long-sales.php:127
 msgid "Three-point lighting is one of the most common lighting setups. It is traditionally used in a studio, but photographers may use it on-location in combination with ambient light."
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:139
+#: includes/block-patterns/course/templates/long-sales-page.php:141
+#: includes/block-patterns/course/templates/v2/long-sales.php:139
 msgid "Key light"
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:149
+#: includes/block-patterns/course/templates/long-sales-page.php:151
+#: includes/block-patterns/course/templates/v2/long-sales.php:149
 msgid "The key light, also known as the main light, is placed either to the left, right, or above the subject's face, typically 30 to 60 degrees from the camera."
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:161
+#: includes/block-patterns/course/templates/long-sales-page.php:163
+#: includes/block-patterns/course/templates/v2/long-sales.php:161
 msgid "Fill light"
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:171
+#: includes/block-patterns/course/templates/long-sales-page.php:173
+#: includes/block-patterns/course/templates/v2/long-sales.php:171
 msgid "The fill light, also known as the secondary main light, is typically placed opposite the key light."
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:185
+#: includes/block-patterns/course/templates/long-sales-page.php:187
+#: includes/block-patterns/course/templates/v2/long-sales.php:185
 msgid "Meet Jeff Bronson"
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:189
+#: includes/block-patterns/course/templates/long-sales-page.php:191
+#: includes/block-patterns/course/templates/v2/long-sales.php:189
 msgid "You will begin by getting to know the work of Jeff de Bronson, who will also teach you how to learn the best tricks he accumulated throughout his 25+ years of experience."
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:193
+#: includes/block-patterns/course/templates/long-sales-page.php:195
+#: includes/block-patterns/course/templates/v2/long-sales.php:193
 msgid "Jeff lives in NYC and has worked for many world-famous publications. In his free time, he likes to discover new ways of how he can pass on the skills and artistic views accumulated in his journey."
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:201
-#: includes/block-patterns/course/templates/video-hero.php:178
+#: includes/block-patterns/course/templates/long-sales-page.php:203
+#: includes/block-patterns/course/templates/v2/long-sales.php:201
+#: includes/block-patterns/course/templates/v2/video-hero.php:171
+#: includes/block-patterns/course/templates/video-hero.php:180
 #: includes/blocks/class-sensei-block-contact-teacher.php:71
 #: includes/class-sensei-messages.php:274
 #: assets/blocks/contact-teacher-block/index.js:13
@@ -1721,55 +1781,67 @@ msgstr ""
 msgid "Contact Teacher"
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:210
+#: includes/block-patterns/course/templates/long-sales-page.php:212
+#: includes/block-patterns/course/templates/v2/long-sales.php:210
 msgid "Jeff at work"
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:214
+#: includes/block-patterns/course/templates/long-sales-page.php:216
+#: includes/block-patterns/course/templates/v2/long-sales.php:214
 msgid "Meet Jeff in his studio and see firsthand how he approaches a photoshoot in this exclusive trailer."
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:218
+#: includes/block-patterns/course/templates/long-sales-page.php:220
+#: includes/block-patterns/course/templates/v2/long-sales.php:218
 msgid "Unlock the full video by signing up for Jeff's course."
 msgstr ""
 
-#: includes/block-patterns/course/templates/long-sales-page.php:243
+#: includes/block-patterns/course/templates/long-sales-page.php:245
+#: includes/block-patterns/course/templates/v2/long-sales.php:243
 msgid "\"Jeff's course really help me understand how to work with light and my closer to my subjects. Amazing course!\""
 msgstr ""
 
-#: includes/block-patterns/course/templates/video-hero.php:16
+#: includes/block-patterns/course/templates/v2/video-hero.php:16
+#: includes/block-patterns/course/templates/video-hero.php:18
 msgid "Welcome to the Film Direction Course"
 msgstr ""
 
-#: includes/block-patterns/course/templates/video-hero.php:32
+#: includes/block-patterns/course/templates/v2/video-hero.php:32
+#: includes/block-patterns/course/templates/video-hero.php:34
 msgid "Start learning about Film Direction with Doug, a senior VP at Films. You will learn all the secrets and how to prepare your project even before touching the camera."
 msgstr ""
 
-#: includes/block-patterns/course/templates/video-hero.php:48
+#: includes/block-patterns/course/templates/v2/video-hero.php:47
+#: includes/block-patterns/course/templates/video-hero.php:50
 msgid "Get to know Doug's network of professionals by taking the Course today!"
 msgstr ""
 
-#: includes/block-patterns/course/templates/video-hero.php:81
+#: includes/block-patterns/course/templates/v2/video-hero.php:80
+#: includes/block-patterns/course/templates/video-hero.php:83
 msgid "INTRODUCTION"
 msgstr ""
 
-#: includes/block-patterns/course/templates/video-hero.php:85
+#: includes/block-patterns/course/templates/v2/video-hero.php:84
+#: includes/block-patterns/course/templates/video-hero.php:87
 msgid "Film Direction"
 msgstr ""
 
-#: includes/block-patterns/course/templates/video-hero.php:97
+#: includes/block-patterns/course/templates/v2/video-hero.php:96
+#: includes/block-patterns/course/templates/video-hero.php:99
 msgid "A <strong>film director</strong> controls a film's artistic and dramatic aspects and visualizes the screenplay (or script) while guiding the film crew and actors in the fulfillment of that vision. The director has a key role in choosing the cast members, production design, and all the creative aspects of filmmaking."
 msgstr ""
 
-#: includes/block-patterns/course/templates/video-hero.php:127
+#: includes/block-patterns/course/templates/v2/video-hero.php:126
+#: includes/block-patterns/course/templates/video-hero.php:129
 msgid "There are many pathways to becoming a film director. Some film directors started as screenwriters, cinematographers, producers, film editors, or actors. Directors use different approaches. In this course you will also learn about each of these points and figure out which one is for you."
 msgstr ""
 
-#: includes/block-patterns/course/templates/video-hero.php:155
+#: includes/block-patterns/course/templates/v2/video-hero.php:154
+#: includes/block-patterns/course/templates/video-hero.php:157
 msgid "Let's get started"
 msgstr ""
 
-#: includes/block-patterns/course/video-hero.php:12
+#: includes/block-patterns/course/video-hero.php:14
 msgid "Video Hero"
 msgstr ""
 
@@ -2737,7 +2809,7 @@ msgstr ""
 #: includes/class-sensei-course.php:355
 #: includes/class-sensei-groups-landing-page.php:32
 #: includes/internal/emails/class-email-list-table.php:139
-#: assets/dist/blocks/single-course.js:768
+#: assets/dist/blocks/single-course.js:876
 #: assets/dist/js/admin/lesson-ai.js:116
 #: assets/js/admin/lesson-ai.js:33
 #: assets/shared/components/sensei-pro-badge/index.js:7
@@ -4138,7 +4210,7 @@ msgstr ""
 #: includes/class-sensei-posttypes.php:1087
 #: assets/blocks/course-outline/outline-block/outline-settings.js:26
 #: assets/blocks/course-results-block/course-results-settings.js:22
-#: assets/dist/blocks/single-course.js:494
+#: assets/dist/blocks/single-course.js:502
 #: assets/dist/blocks/single-page.js:234
 msgid "Modules"
 msgstr ""
@@ -4162,8 +4234,8 @@ msgstr ""
 #: assets/blocks/course-outline/outline-block/outline-appender.js:43
 #: assets/course-theme/blocks/lesson-blocks/module-title/module-title-edit.js:10
 #: assets/dist/blocks/single-course.js:370
-#: assets/dist/blocks/single-course.js:448
-#: assets/dist/blocks/single-course.js:457
+#: assets/dist/blocks/single-course.js:456
+#: assets/dist/blocks/single-course.js:465
 #: assets/dist/course-theme/blocks/index.js:306
 msgid "Module"
 msgstr ""
@@ -4696,7 +4768,7 @@ msgstr ""
 
 #: includes/class-sensei-posttypes.php:962
 #: assets/blocks/course-outline/outline-block/outline-appender.js:35
-#: assets/dist/blocks/single-course.js:457
+#: assets/dist/blocks/single-course.js:465
 msgid "Lesson name"
 msgstr ""
 
@@ -5507,16 +5579,8 @@ msgid "Configure"
 msgstr ""
 
 #: includes/course-theme/class-sensei-course-theme-editor.php:77
+#: includes/course-theme/class-sensei-course-theme-editor.php:78
 msgid "Editor"
-msgstr ""
-
-#. translators: %s: "beta" label
-#: includes/course-theme/class-sensei-course-theme-editor.php:80
-msgid "Editor %s"
-msgstr ""
-
-#: includes/course-theme/class-sensei-course-theme-editor.php:81
-msgid "beta"
 msgstr ""
 
 #: includes/course-theme/class-sensei-course-theme-lesson.php:121
@@ -6039,6 +6103,7 @@ msgid "Manual"
 msgstr ""
 
 #: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:260
+#: tests/unit-tests/enrolment/test-class-sensei-course-manual-enrolment-provider.php:191
 msgid "Student manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS."
 msgstr ""
 
@@ -6047,14 +6112,18 @@ msgid "Student <strong>did not have</strong> course progress at the time of manu
 msgstr ""
 
 #: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:266
+#: tests/unit-tests/enrolment/test-class-sensei-course-manual-enrolment-provider.php:213
+#: tests/unit-tests/enrolment/test-class-sensei-course-manual-enrolment-provider.php:236
 msgid "Student <strong>did have</strong> course progress at the time of manual enrollment migration."
 msgstr ""
 
 #: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:269
+#: tests/unit-tests/enrolment/test-class-sensei-course-manual-enrolment-provider.php:214
 msgid "Manual enrollment <strong>was not provided</strong> to the student on legacy migration."
 msgstr ""
 
 #: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:271
+#: tests/unit-tests/enrolment/test-class-sensei-course-manual-enrolment-provider.php:237
 msgid "Manual enrollment <strong>was provided</strong> to the student on legacy migration."
 msgstr ""
 
@@ -6236,6 +6305,7 @@ msgstr ""
 
 #: includes/internal/emails/class-email-preview.php:194
 #: includes/internal/emails/generators/class-quiz-graded.php:89
+#: tests/unit-tests/internal/emails/generators/test-class-quiz-graded.php:97
 msgid "You Passed!"
 msgstr ""
 
@@ -6390,10 +6460,12 @@ msgid "Teacher Emails"
 msgstr ""
 
 #: includes/internal/emails/class-email-settings-tab.php:258
+#: tests/unit-tests/internal/emails/test-class-email-settings-tab.php:261
 msgid "\"Reply To\" Name"
 msgstr ""
 
 #: includes/internal/emails/class-email-settings-tab.php:266
+#: tests/unit-tests/internal/emails/test-class-email-settings-tab.php:267
 msgid "\"Reply To\" Address"
 msgstr ""
 
@@ -6414,6 +6486,7 @@ msgid "There were errors while recreating emails."
 msgstr ""
 
 #: includes/internal/emails/generators/class-quiz-graded.php:85
+#: tests/unit-tests/internal/emails/generators/test-class-quiz-graded.php:197
 msgid "You Did Not Pass"
 msgstr ""
 
@@ -7776,7 +7849,7 @@ msgstr ""
 #: assets/blocks/course-outline/module-block/index.js:22
 #: assets/blocks/course-outline/outline-block/index.js:37
 #: assets/dist/blocks/single-course.js:370
-#: assets/dist/blocks/single-course.js:448
+#: assets/dist/blocks/single-course.js:456
 msgid "About Module"
 msgstr ""
 
@@ -7784,7 +7857,7 @@ msgstr ""
 #: assets/blocks/course-outline/outline-block/index.js:20
 #: assets/blocks/course-results-block/index.js:19
 #: assets/dist/blocks/single-course.js:370
-#: assets/dist/blocks/single-course.js:448
+#: assets/dist/blocks/single-course.js:456
 #: assets/dist/blocks/single-page.js:243
 msgid "Filled"
 msgstr ""
@@ -7793,7 +7866,7 @@ msgstr ""
 #: assets/blocks/course-outline/outline-block/index.js:25
 #: assets/blocks/course-results-block/index.js:24
 #: assets/dist/blocks/single-course.js:370
-#: assets/dist/blocks/single-course.js:448
+#: assets/dist/blocks/single-course.js:456
 #: assets/dist/blocks/single-page.js:243
 msgid "Minimal"
 msgstr ""
@@ -7822,7 +7895,7 @@ msgstr ""
 #: assets/blocks/course-outline/outline-block/outline-settings.js:43
 #: assets/blocks/course-results-block/course-results-settings.js:30
 #: assets/dist/blocks/single-course.js:401
-#: assets/dist/blocks/single-course.js:494
+#: assets/dist/blocks/single-course.js:502
 #: assets/dist/blocks/single-page.js:234
 msgid "Border"
 msgstr ""
@@ -7842,109 +7915,111 @@ msgstr ""
 msgid "Optional, keep empty for default"
 msgstr ""
 
+#: assets/blocks/course-outline/outline-block/elements/deprecated-placeholder.js:15
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:53
+#: assets/dist/blocks/single-course.js:446
+#: assets/dist/blocks/single-course.js:482
+msgid "Course Outline"
+msgstr ""
+
+#: assets/blocks/course-outline/outline-block/elements/deprecated-placeholder.js:17
+#: assets/dist/blocks/single-course.js:446
+msgid "Build and display a course outline. A course is made up of modules (optional) and lessons. You can use modules to group related lessons together."
+msgstr ""
+
+#: assets/blocks/course-outline/outline-block/elements/deprecated-placeholder.js:27
+#: assets/dist/blocks/single-course.js:446
+msgid "Create a module"
+msgstr ""
+
+#: assets/blocks/course-outline/outline-block/elements/deprecated-placeholder.js:34
+#: assets/dist/blocks/single-course.js:446
+msgid "Create a lesson"
+msgstr ""
+
 #: assets/blocks/course-outline/outline-block/index.js:54
 #: assets/course-theme/blocks/course-navigation/index.js:34
-#: assets/dist/blocks/single-course.js:448
+#: assets/dist/blocks/single-course.js:456
 #: assets/dist/course-theme/blocks/index.js:241
 msgid "First Lesson"
 msgstr ""
 
 #: assets/blocks/course-outline/outline-block/index.js:63
 #: assets/course-theme/blocks/course-navigation/index.js:38
-#: assets/dist/blocks/single-course.js:448
+#: assets/dist/blocks/single-course.js:456
 #: assets/dist/course-theme/blocks/index.js:241
 msgid "Second Lesson"
 msgstr ""
 
 #: assets/blocks/course-outline/outline-block/outline-appender.js:55
-#: assets/dist/blocks/single-course.js:457
+#: assets/dist/blocks/single-course.js:465
 msgid "Add Module or Lesson"
 msgstr ""
 
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:24
-#: assets/dist/blocks/single-course.js:476
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:55
+#: assets/dist/blocks/single-course.js:482
 msgid "Build and display a course outline."
 msgstr ""
 
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:25
-#: assets/dist/blocks/single-course.js:476
-msgid "Build and display a course outline. A course is made up of modules (optional) and lessons. You can use modules to group related lessons together."
-msgstr ""
-
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:34
-#: assets/dist/blocks/single-course.js:476
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:69
+#: assets/dist/blocks/single-course.js:482
 msgid "Start with a blank canvas and create your own course outline."
 msgstr ""
 
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:40
-#: assets/dist/blocks/single-course.js:476
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:77
+#: assets/dist/blocks/single-course.js:482
 msgid "Add Lessons and Modules"
 msgstr ""
 
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:41
-#: assets/dist/blocks/single-course.js:476
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:83
+#: assets/dist/blocks/single-course.js:482
 msgid "Reorder and edit anytime"
 msgstr ""
 
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:48
-#: assets/dist/blocks/single-course.js:476
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:98
+#: assets/dist/blocks/single-course.js:482
 msgid "Start with blank"
 msgstr ""
 
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:55
-#: assets/dist/blocks/single-course.js:476
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:110
+#: assets/dist/blocks/single-course.js:482
 msgid "Get AI's help to start with a tailored course outline."
 msgstr ""
 
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:65
-#: assets/dist/blocks/single-course.js:476
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:120
+#: assets/dist/blocks/single-course.js:482
 msgid "AI tailored outline based on your content"
 msgstr ""
 
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:72
-#: assets/dist/blocks/single-course.js:476
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:127
+#: assets/dist/blocks/single-course.js:482
 msgid "Access to all Sensei Pro features"
 msgstr ""
 
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:80
-#: assets/dist/blocks/single-course.js:476
+#: assets/blocks/course-outline/outline-block/outline-placeholder.js:139
+#: assets/dist/blocks/single-course.js:482
 msgid "Generate with AI"
 msgstr ""
 
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:92
-#: assets/dist/blocks/single-course.js:476
-msgid "Create a module"
-msgstr ""
-
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:99
-#: assets/dist/blocks/single-course.js:476
-msgid "Create a lesson"
-msgstr ""
-
-#: assets/blocks/course-outline/outline-block/outline-placeholder.js:107
-#: assets/dist/blocks/single-course.js:476
-msgid "Course Outline"
-msgstr ""
-
 #: assets/blocks/course-outline/outline-block/outline-settings.js:34
-#: assets/dist/blocks/single-course.js:494
+#: assets/dist/blocks/single-course.js:502
 msgid "Collapsible modules"
 msgstr ""
 
 #: assets/blocks/course-outline/outline-block/outline-settings.js:35
-#: assets/dist/blocks/single-course.js:494
+#: assets/dist/blocks/single-course.js:502
 msgid "Modules can be collapsed or expanded."
 msgstr ""
 
 #: assets/blocks/course-outline/outline-block/outline-settings.js:44
 #: assets/blocks/course-results-block/course-results-settings.js:31
-#: assets/dist/blocks/single-course.js:494
+#: assets/dist/blocks/single-course.js:502
 #: assets/dist/blocks/single-page.js:234
 msgid "Toggle the border for all modules."
 msgstr ""
 
 #: assets/blocks/course-outline/status-preview/status-control/index.js:45
-#: assets/dist/blocks/single-course.js:520
+#: assets/dist/blocks/single-course.js:537
 msgid "Preview a status. The actual status that the student sees is determined by their progress in the course."
 msgstr ""
 
@@ -8091,7 +8166,7 @@ msgstr ""
 #: assets/dist/blocks/global-blocks.js:714
 #: assets/dist/blocks/quiz/index.js:855
 #: assets/dist/blocks/shared.js:309
-#: assets/dist/blocks/single-course.js:708
+#: assets/dist/blocks/single-course.js:816
 #: assets/dist/blocks/single-lesson.js:417
 #: assets/dist/blocks/single-page.js:276
 #: assets/dist/blocks/single-page.js:366
@@ -9257,6 +9332,7 @@ msgid "Choose one or more CSV files to upload from your computer."
 msgstr ""
 
 #: assets/dist/admin/editor-wizard/index.js:207
+#: assets/dist/blocks/single-course.js:740
 #: assets/dist/home/index.js:249
 #: assets/extensions/store.js:139
 msgid "Update completed successfully!"
@@ -9264,12 +9340,14 @@ msgstr ""
 
 #. translators: Placeholder is the underlying error message.
 #: assets/dist/admin/editor-wizard/index.js:208
+#: assets/dist/blocks/single-course.js:741
 #: assets/dist/home/index.js:250
 #: assets/extensions/store.js:144
 msgid "There was an error while updating the plugin: %1$s"
 msgstr ""
 
 #: assets/dist/admin/editor-wizard/index.js:208
+#: assets/dist/blocks/single-course.js:741
 #: assets/dist/home/index.js:250
 #: assets/extensions/store.js:150
 msgid "Installation completed successfully!"
@@ -9277,6 +9355,7 @@ msgstr ""
 
 #. translators: Placeholder is the underlying error message.
 #: assets/dist/admin/editor-wizard/index.js:209
+#: assets/dist/blocks/single-course.js:742
 #: assets/dist/home/index.js:251
 #: assets/extensions/store.js:155
 msgid "There was an error while installing the plugin: %1$s"

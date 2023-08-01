@@ -3657,12 +3657,15 @@ class Sensei_Lesson {
 		$questions_array = $questions;
 
 		// If viewing quiz on frontend or in grading then only single questions must be shown.
-		$selected_questions = false;
+		$selected_questions = [];
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Input used for comparisons.
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it.
-			$selected_questions = Sensei()->quiz_submission_repository->get_question_ids( $quiz_id, $user_id );
+			$submission         = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			$selected_questions = $submission
+				? Sensei()->quiz_submission_repository->get_question_ids( $submission->get_id() )
+				: [];
 
 			if ( $selected_questions ) {
 				// Fetch each question in the order in which they were asked.
@@ -4987,7 +4990,8 @@ class Sensei_Lesson {
 		$user_can_view_lesson  = sensei_can_user_view_lesson();
 		$lesson_allow_comments = $allow_comments && $user_can_view_lesson;
 
-		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
+		if ( ( $lesson_allow_comments && ! Sensei_Utils::is_fse_theme() ) || is_singular( 'sensei_message' ) ) {
+
 			// Borrowed solution from https://github.com/WordPress/gutenberg/pull/28128.
 			add_filter( 'deprecated_file_trigger_error', '__return_false' );
 			comments_template( '', true );

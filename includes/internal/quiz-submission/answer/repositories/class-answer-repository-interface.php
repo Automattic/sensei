@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,13 +27,13 @@ interface Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int    $submission_id The submission ID.
-	 * @param int    $question_id   The question ID.
-	 * @param string $value         The answer value.
+	 * @param Submission $submission  The submission.
+	 * @param int        $question_id The question ID.
+	 * @param string     $value       The answer value.
 	 *
 	 * @return Answer The answer model.
 	 */
-	public function create( int $submission_id, int $question_id, string $value ): Answer;
+	public function create( Submission $submission, int $question_id, string $value ): Answer;
 
 	/**
 	 * Get all answers for a quiz submission.
@@ -50,7 +51,7 @@ interface Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int $submission_id The submission ID.
+	 * @param Submission $submission The submission.
 	 */
-	public function delete_all( int $submission_id ): void;
+	public function delete_all( Submission $submission ): void;
 }

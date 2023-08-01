@@ -68,7 +68,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
 		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
-		$this->assertRegExp( '/.*always-provides.*Second message.*First message/', $user_meta, 'A meta with the provider id and the two messages should be stored.' );
+		$this->assertMatchesRegularExpression( '/.*always-provides.*Second message.*First message/', $user_meta, 'A meta with the provider id and the two messages should be stored.' );
 
 		$logs = Sensei_Enrolment_Provider_Journal_Store::get_provider_logs( $provider, $user, $course );
 		$this->assertCount( 2, $logs, 'There should be exactly 2 messages in the logs' );
@@ -97,8 +97,8 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
 		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
-		$this->assertRegExp( '/.*manual.*s.*true/', $user_meta, 'Manual provider status should be true' );
-		$this->assertRegExp( '/.*simple.*s.*false/', $user_meta, 'Simple provider status should be true' );
+		$this->assertMatchesRegularExpression( '/.*manual.*s.*true/', $user_meta, 'Manual provider status should be true' );
+		$this->assertMatchesRegularExpression( '/.*simple.*s.*false/', $user_meta, 'Simple provider status should be true' );
 
 		$provider_results = [
 			'manual' => false,
@@ -113,8 +113,8 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
 		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
-		$this->assertRegExp( '/.*manual.*s.*false.*s.*true/', $user_meta, 'Manual provider status should be initially true then false' );
-		$this->assertRegExp( '/.*simple.*s.*true.*s.*false/', $user_meta, 'Simple provider status should be initially false then true' );
+		$this->assertMatchesRegularExpression( '/.*manual.*s.*false.*s.*true/', $user_meta, 'Manual provider status should be initially true then false' );
+		$this->assertMatchesRegularExpression( '/.*simple.*s.*true.*s.*false/', $user_meta, 'Simple provider status should be initially false then true' );
 	}
 
 	/**
@@ -171,8 +171,8 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
 		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
-		$this->assertRegExp( '/.*manual.*s.*false.*s.*false/', $user_meta, 'Manual provider status should be false in both entries.' );
-		$this->assertRegExp( '/.*simple.*s.*false.*s.*true/', $user_meta, 'Simple provider status should be initially true then false.' );
+		$this->assertMatchesRegularExpression( '/.*manual.*s.*false.*s.*false/', $user_meta, 'Manual provider status should be false in both entries.' );
+		$this->assertMatchesRegularExpression( '/.*simple.*s.*false.*s.*true/', $user_meta, 'Simple provider status should be initially true then false.' );
 
 		// Test that if a user is enrolled to a course, nothing is stored for courses that is unenrolled.
 		$second_course    = $this->factory->course->create();
@@ -218,8 +218,8 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
 		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
-		$this->assertRegExp( '/.*manual.*s.*false/', $user_meta, 'Manual provider status should be stored.' );
-		$this->assertRegExp( '/.*simple.*s.*false/', $user_meta, 'Simple provider status should be stored.' );
+		$this->assertMatchesRegularExpression( '/.*manual.*s.*false/', $user_meta, 'Manual provider status should be stored.' );
+		$this->assertMatchesRegularExpression( '/.*simple.*s.*false/', $user_meta, 'Simple provider status should be stored.' );
 	}
 
 	/**
