@@ -90,7 +90,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
 		$quiz_id   = $this->factory->quiz->create(
 			array(
-				'post_title'  => 'Quiz 1',
+				'post_title' => 'Quiz 1',
 			)
 		);
 		$lesson_id = $this->factory->lesson->create(
@@ -103,7 +103,6 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 			)
 		);
 		update_post_meta( $quiz_id, '_quiz_lesson', $lesson_id );
-
 
 		\Sensei_Utils::start_user_on_course( 1, $course_id );
 		\Sensei_Utils::user_start_lesson( 1, $lesson_id, true );

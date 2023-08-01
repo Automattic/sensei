@@ -12,7 +12,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 	public function testGetId_Always_ReturnsMatchingValue(): void {
 		/* Arrange. */
 		$tools = $this->createMock( \Sensei_Tools::class );
-		$tool = new Migration_Tool( $tools );
+		$tool  = new Migration_Tool( $tools );
 
 		/* Act. */
 		$actual = $tool->get_id();
@@ -24,7 +24,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 	public function testInit_Always_AddsFilter(): void {
 		/* Arrange. */
 		$tools = $this->createMock( \Sensei_Tools::class );
-		$tool = new Migration_Tool( $tools );
+		$tool  = new Migration_Tool( $tools );
 
 		/* Act. */
 		$before_init = has_filter( 'sensei_tools', [ $tool, 'register_tool' ] );
@@ -47,7 +47,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 	public function testRegisterTool_Always_AddsItselfToTools(): void {
 		/* Arrange. */
 		$tools = $this->createMock( \Sensei_Tools::class );
-		$tool = new Migration_Tool( $tools );
+		$tool  = new Migration_Tool( $tools );
 
 		/* Act. */
 		$actual = $tool->register_tool( array() );
