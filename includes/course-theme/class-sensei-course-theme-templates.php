@@ -271,6 +271,15 @@ class Sensei_Course_Theme_Templates {
 			return $templates;
 		}
 
+		// Remove the default lesson template for course theme.
+		$templates = array_filter(
+			$templates,
+			function( $template ) {
+				$is_course_theme = 'Course' === wp_get_theme()->get( 'Name' );
+				return ! ( $is_course_theme && 'course//single-lesson' === $template->id );
+			}
+		);
+
 		$course_theme_templates = $this->get_block_templates();
 		$extra_templates        = array_values( $course_theme_templates );
 
