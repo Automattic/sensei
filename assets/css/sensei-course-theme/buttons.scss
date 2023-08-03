@@ -17,7 +17,9 @@ $breakpoint: 782px;
 	justify-content: center;
 
 	@media screen and (max-width: $breakpoint) {
-		padding: .625rem;
+		padding: 20px;
+		line-height: 100%;
+		letter-spacing: -0.14px;
 	}
 
 
