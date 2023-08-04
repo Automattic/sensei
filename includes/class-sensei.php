@@ -1,6 +1,7 @@
 <?php
 
 use Sensei\Internal\Emails\Email_Customization;
+use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
@@ -13,6 +14,10 @@ use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progres
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -530,6 +535,7 @@ class Sensei_Main {
 			new Sensei_Exit_Survey();
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
+			SenseiLMS_Plugin_Updater::init();
 
 		} else {
 
@@ -560,14 +566,21 @@ class Sensei_Main {
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
 		// Student progress repositories.
-		$this->course_progress_repository = ( new Course_Progress_Repository_Factory() )->create();
-		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory() )->create();
-		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory() )->create();
+		$use_tables                       = $this->feature_flags->is_enabled( 'tables_based_progress' );
+		$this->course_progress_repository = ( new Course_Progress_Repository_Factory( $use_tables ) )->create();
+		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory( $use_tables ) )->create();
+		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory( $use_tables ) )->create();
 
 		// Quiz submission repositories.
-		$this->quiz_submission_repository = ( new Submission_Repository_Factory() )->create();
-		$this->quiz_answer_repository     = ( new Answer_Repository_Factory() )->create();
-		$this->quiz_grade_repository      = ( new Grade_Repository_Factory() )->create();
+		$this->quiz_submission_repository = ( new Submission_Repository_Factory( $use_tables ) )->create();
+		$this->quiz_answer_repository     = ( new Answer_Repository_Factory( $use_tables ) )->create();
+		$this->quiz_grade_repository      = ( new Grade_Repository_Factory( $use_tables ) )->create();
+
+		// Init student progress handlers.
+		( new Course_Deleted_Handler( $this->course_progress_repository ) )->init();
+		( new Lesson_Deleted_Handler( $this->lesson_progress_repository ) )->init();
+		( new Quiz_Deleted_Handler( $this->quiz_progress_repository ) )->init();
+		( new User_Deleted_Handler( $this->course_progress_repository, $this->lesson_progress_repository, $this->quiz_progress_repository ) )->init();
 
 		// Cron for periodically cleaning guest user related data.
 		Sensei_Temporary_User_Cleaner::instance()->init();
@@ -611,7 +624,7 @@ class Sensei_Main {
 	/**
 	 * Load the 3rd party compatibility tweaks.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.13.1
 	 */
 	private function initialize_3rd_party_compatibility(): void {
 		require_once $this->resolve_path( 'includes/3rd-party/3rd-party.php' );
@@ -641,7 +654,6 @@ class Sensei_Main {
 
 		// check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
 		add_action( 'admin_init', array( $this, 'flush_rewrite_rules' ), 101 );
-		add_action( 'init', array( $this, 'update' ) );
 
 		// Add plugin action links filter
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
@@ -779,8 +791,12 @@ class Sensei_Main {
 	 * Checks for plugin update tasks and ensures the current version is set.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @deprecated $$next-version$$
 	 */
 	public function update() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$current_version = get_option( 'sensei-version' );
 		$is_new_install  = ! $current_version && ! $this->course_exists();
 		$is_upgrade      = $current_version && version_compare( $this->version, $current_version, '>' );
@@ -790,8 +806,50 @@ class Sensei_Main {
 			$this->register_plugin_version( $is_new_install );
 		}
 
-		$this->updates = new Sensei_Updates( $current_version, $is_new_install, $is_upgrade );
+		$updates_factory = new Updates_Factory();
+		$this->updates   = $updates_factory->create( $current_version, $is_upgrade, $is_new_install );
 		$this->updates->run_updates();
+	}
+
+	/**
+	 * Helper function to check to see if any courses exist in the database.
+	 *
+	 * @deprected $$next-version$$
+	 *
+	 * @return bool
+	 */
+	private function course_exists(): bool {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lightweight query run only once before post type is registered.
+		$course_sample_id = (int) $wpdb->get_var( "SELECT `ID` FROM {$wpdb->posts} WHERE `post_type`='course' LIMIT 1" );
+
+		return ! empty( $course_sample_id );
+	}
+
+	/**
+	 * Register the plugin's version.
+	 *
+	 * @access public
+	 * @since  1.0.0
+	 * @param boolean $is_new_install Is this a new install.
+	 * @return void
+	 *
+	 * @deprecated $$next-version$$
+	 */
+	private function register_plugin_version( $is_new_install ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		if ( isset( $this->version ) ) {
+
+			update_option( 'sensei-version', $this->version );
+
+			if ( $is_new_install ) {
+				update_option( 'sensei-install-version', $this->version );
+			}
+		}
 	}
 
 	/**
@@ -837,20 +895,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Helper function to check to see if any courses exists in the database.
-	 *
-	 * @return bool
-	 */
-	private function course_exists() {
-		global $wpdb;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lightweight query run only once before post type is registered.
-		$course_sample_id = (int) $wpdb->get_var( "SELECT `ID` FROM {$wpdb->posts} WHERE `post_type`='course' LIMIT 1" );
-
-		return ! empty( $course_sample_id );
-	}
-
-	/**
 	 * Run on activation of the plugin.
 	 *
 	 * @access public
@@ -875,25 +919,6 @@ class Sensei_Main {
 		}
 
 		update_option( 'sensei_installed', 1 );
-	}
-
-	/**
-	 * Register the plugin's version.
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @param boolean $is_new_install Is this a new install.
-	 * @return void
-	 */
-	private function register_plugin_version( $is_new_install ) {
-		if ( isset( $this->version ) ) {
-
-			update_option( 'sensei-version', $this->version );
-
-			if ( $is_new_install ) {
-				update_option( 'sensei-install-version', $this->version );
-			}
-		}
 	}
 
 	/**
@@ -1470,7 +1495,6 @@ class Sensei_Main {
 	public function is_general_configuration_page() {
 		return isset( $_GET['page'] ) && 'sensei-settings' === trim( $_GET['page'] ) && ( ! isset( $_GET['tab'] ) || 'general' === trim( $_GET['tab'] ) );
 	}
-
 
 		/**
 		 * Returns the admin configuration url for the admin general configuration page

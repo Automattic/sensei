@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix `strpos`and `str_replace` deprecation messages in PHP 8.1 and 8.2

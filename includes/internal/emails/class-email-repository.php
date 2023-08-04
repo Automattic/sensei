@@ -68,9 +68,10 @@ class Email_Repository {
 	public function has( string $identifier ): bool {
 		$query = new WP_Query(
 			[
-				'post_type'  => Email_Post_Type::POST_TYPE,
-				'meta_key'   => self::META_IDENTIFIER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				'meta_value' => $identifier, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value,
+				'post_type'   => Email_Post_Type::POST_TYPE,
+				'post_status' => 'any',
+				'meta_key'    => self::META_IDENTIFIER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'  => $identifier, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value,
 			]
 		);
 
@@ -130,10 +131,11 @@ class Email_Repository {
 	public function delete( string $identifier ): bool {
 		$query = new WP_Query(
 			[
-				'select'     => 'ID',
-				'post_type'  => Email_Post_Type::POST_TYPE,
-				'meta_key'   => self::META_IDENTIFIER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				'meta_value' => $identifier, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				'select'      => 'ID',
+				'post_type'   => Email_Post_Type::POST_TYPE,
+				'post_status' => 'any',
+				'meta_key'    => self::META_IDENTIFIER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'  => $identifier, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			]
 		);
 
@@ -230,6 +232,7 @@ class Email_Repository {
 		$query = new WP_Query(
 			[
 				'post_type'      => Email_Post_Type::POST_TYPE,
+				'post_status'    => 'any',
 				'posts_per_page' => 1,
 			]
 		);

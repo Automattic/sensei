@@ -1,0 +1,88 @@
+name: Project Task
+description: A project task template
+title: "Enable students to take a course"
+body:
+  - type: markdown
+    attributes:
+      value: |
+         *TIP*: After write your task, please make sure it is following the [INVEST](https://en.wikipedia.org/wiki/INVEST_(mnemonic)) principles 
+  - type: input
+    id: goal
+    attributes:
+      label: Goal
+      description: | 
+        Describe the task goal in a single line or few lines from the user perspective. You can also use the "As a [who], I want [what] so that [why]." format. 
+      placeholder: As a Student, I want to take a course, so that only I can access my course lessons.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context [Optional]
+      description: Provide any contextual information that you believe is necessary to understand bettern the task.
+    validations:
+      required: false
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: |
+        Provide a list of items that helps the team to understand what the task should **include**. Example:
+        * Endpoint 
+        * Frontend
+        * Data validation
+        * Generic error message if something goes wrong
+    validations:
+      required: true
+
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of Scope
+      description: |
+        Provide a list of items that helps the team to understand what the task should **NOT include**. Example:
+        * Error cases. - All errors will be handled by the task #XXXX 
+    validations:
+      required: true
+
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      value: |
+        *Scenario: Happy Path*
+        *Given* <I am in a state X>
+        **When** <I do an action that changes the state>
+        **Then** <I should see the results of my action>
+        
+        *Scenario: [Sad Path 1]*
+        *Given* <I am in a state X>
+        **When** <I do an action that changes the state>
+        **Then** <I should see the results of my action>
+        
+      description: |
+        Describe the cases which the developers should match to ensure the task scope was completed. 
+        It should include the happy path and the sad path. 
+        
+        **Tip** Use the spec by example format. 
+        ``Given <I am in a state X>
+        When <I do an action that changes the state>
+        Then <I should see the results of my action>``
+
+        Example:
+
+        **Given** I am on the Course List 
+        **When** I click on the "Take course" button
+        **Then** I should see I am assigned to the course
+    validations:
+      required: true
+
+  - type: textarea
+    id: resources
+    attributes:
+      label: Resources
+      description: Screenshots and/or link to related resources that help to describe the task.
+    validations:
+      required: false

@@ -355,11 +355,11 @@ class Sensei_Quiz {
 		// save the user data
 		$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
 
-		Sensei()->quiz_grade_repository->delete_all( $submission->get_id() );
-		Sensei()->quiz_answer_repository->delete_all( $submission->get_id() );
+		Sensei()->quiz_grade_repository->delete_all( $submission );
+		Sensei()->quiz_answer_repository->delete_all( $submission );
 
 		foreach ( $prepared_answers as $question_id => $answer ) {
-			Sensei()->quiz_answer_repository->create( $submission->get_id(), $question_id, $answer );
+			Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
 		}
 
 		// Save transient to make retrieval faster.
@@ -785,22 +785,16 @@ class Sensei_Quiz {
 		if ( $quiz_id ) {
 			// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade.
 			Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
-
-			$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-			if ( $quiz_submission ) {
-				$quiz_submission->set_final_grade( null );
-				Sensei()->quiz_submission_repository->save( $quiz_submission );
-				Sensei()->quiz_grade_repository->delete_all( $quiz_submission->get_id() );
-				Sensei()->quiz_answer_repository->delete_all( $quiz_submission->get_id() );
-			}
 		}
 
 		// Update course completion.
 		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
 		if ( $course_progress ) {
-			$course_progress->start();
+			if ( ! $course_progress->get_started_at() ) {
+				$course_progress->start();
 
-			Sensei()->course_progress_repository->save( $course_progress );
+				Sensei()->course_progress_repository->save( $course_progress );
+			}
 
 			// Reset the course progress metadata.
 			$course_progress_metadata = [
@@ -1053,7 +1047,7 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		Sensei()->quiz_grade_repository->delete_all( $submission->get_id() );
+		Sensei()->quiz_grade_repository->delete_all( $submission );
 
 		$answers     = Sensei()->quiz_answer_repository->get_all( $submission->get_id() );
 		$answers_map = [];
@@ -1063,7 +1057,7 @@ class Sensei_Quiz {
 
 		foreach ( $quiz_grades as $question_id => $points ) {
 			$answer = $answers_map[ $question_id ];
-			Sensei()->quiz_grade_repository->create( $submission->get_id(), $answer->get_id(), $question_id, $points );
+			Sensei()->quiz_grade_repository->create( $submission, $answer->get_id(), $question_id, $points );
 		}
 
 		$transient_key = 'quiz_grades_' . $user_id . '_' . $lesson_id;
@@ -1245,7 +1239,7 @@ class Sensei_Quiz {
 			$grade->set_feedback( $feedback );
 		}
 
-		Sensei()->quiz_grade_repository->save_many( $submission->get_id(), $grades );
+		Sensei()->quiz_grade_repository->save_many( $submission, $grades );
 
 		// Save transient to make retrieval faster in the future.
 		$transient_key = 'sensei_answers_feedback_' . $user_id . '_' . $lesson_id;

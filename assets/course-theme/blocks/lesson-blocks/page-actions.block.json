@@ -11,7 +11,7 @@
     "spacing": {
       "margin": true,
       "padding": true,
-      "blockGap": true
+      "blockGap": false
     },
     "__experimentalBorder": {
       "color": true,

@@ -10,7 +10,7 @@ import { teacherRole } from '@e2e/helpers/context';
 
 const { describe, use } = test;
 
-describe.parallel( 'Create Courses', () => {
+describe( 'Create Courses', () => {
 	use( teacherRole() );
 
 	test( 'it has a Courses menu item in the main menu', async ( { page } ) => {
@@ -21,7 +21,6 @@ describe.parallel( 'Create Courses', () => {
 
 		const coursesMenuItem = await dashboard.getCoursesMenuItem();
 		await coursesMenuItem.click();
-
 		await expect(
 			page.locator( '.sensei-custom-navigation__title h1' )
 		).toHaveText( 'Courses' );
@@ -35,15 +34,16 @@ describe.parallel( 'Create Courses', () => {
 
 		// Fill in the course title and description.
 		const wizardModal = coursesPage.wizardModal;
-		await wizardModal.input.fill( 'Test Create Course' );
-		await wizardModal.textArea.fill( 'Test Create Course Description' );
 
-		// Click "Continue" button.
-		await wizardModal.continueButton.click();
-		// Click "Continue with Sensei Free" button.
-		await wizardModal.continueWithFreeButton.first().click();
-		// Click "Start with default layout" button.
-		await wizardModal.startWithDefaultLayoutButton.click();
+		await wizardModal.setCourse( {
+			title: 'Test Create Course',
+			description: 'Test Create Course Description',
+		} );
+
+		await wizardModal.finishWithDefaultLayout();
+
+		await page.getByRole( 'button', { name: 'Start with blank' } ).click();
+		await coursesPage.saveDraft();
 
 		await coursesPage.addModuleWithLesson(
 			'Module 1',
@@ -51,20 +51,22 @@ describe.parallel( 'Create Courses', () => {
 		);
 
 		await coursesPage.submitForPreview();
+		const preview = await coursesPage.goToPreview();
 
-		const previewPage = await coursesPage.goToPreview();
+		await expect(
+			preview.getByRole( 'heading', { name: 'Test Create Course' } )
+		).toBeVisible();
 
 		await expect(
-			previewPage.locator( 'h1:has-text("Test Create Course")' )
+			preview.getByRole( 'heading', { name: 'Module 1' } )
 		).toBeVisible();
+
 		await expect(
-			previewPage.getByRole( 'heading', { name: 'Module 1' } )
+			preview.getByText( 'Lesson 1 in Module 1' )
 		).toBeVisible();
+
 		await expect(
-			previewPage.locator( 'text="Lesson 1 in Module 1"' )
-		).toBeVisible();
-		await expect(
-			previewPage.locator( 'button:has-text("Take Course")' )
+			preview.getByRole( 'button', { name: 'Take Course' } )
 		).toBeVisible();
 	} );
 } );

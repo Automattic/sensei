@@ -115,16 +115,65 @@ class Email_Sender {
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
 
+		add_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
+		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
+
 		foreach ( $replacements as $recipient => $replacement ) {
-			wp_mail(
-				$recipient,
-				$this->get_email_subject( $email_post, $replacement ),
-				$this->get_email_body( $email_post, $replacement ),
-				$this->get_email_headers(),
-				null
-			);
-			sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
+			$subject = $this->get_email_subject( $email_post, $replacement );
+			$message = $this->get_email_body( $email_post, $replacement );
+
+			/*
+			 * For documentation of the filter check class-sensei-emails.php file.
+			 */
+			if ( apply_filters( 'sensei_send_emails', true, $recipient, $subject, $message ) ) {
+				wp_mail(
+					$recipient,
+					$subject,
+					$message,
+					$this->get_email_headers(),
+					null
+				);
+				sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
+			}
 		}
+
+		remove_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
+		remove_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
+	}
+
+
+	/**
+	 * Get from name for email.
+	 *
+	 * @since 4.16.0
+	 * @return string
+	 */
+	public function get_from_name() {
+		$settings  = $this->settings->get_settings();
+		$from_name = $settings['email_from_name'] ?? '';
+
+		if ( empty( $from_name ) ) {
+			return get_bloginfo( 'name' );
+		}
+
+		return $from_name;
+	}
+
+	/**
+	 * Get from email address.
+	 *
+	 * @since 4.16.0
+	 * @return string
+	 */
+	public function get_from_address() {
+		$settings     = $this->settings->get_settings();
+		$from_address = $settings['email_from_address'] ?? '';
+
+		if ( empty( $from_address ) ) {
+			return get_bloginfo( 'admin_email' );
+		}
+
+		return $from_address;
 	}
 
 	/**
@@ -168,9 +217,8 @@ class Email_Sender {
 		);
 
 		the_post();
-
 		$templated_output = $this->get_templated_post_content( $placeholders );
-		wp_reset_postdata();
+		wp_reset_query(); // phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query -- We need to reset the global query object.
 
 		return CssInliner::fromHtml( $templated_output )
 			->inlineCss( $this->load_email_styles() )

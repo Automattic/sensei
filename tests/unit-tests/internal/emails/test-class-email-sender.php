@@ -242,6 +242,24 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( 'Welcome – John', $email_body );
 	}
 
+	public function testGetEmailBody_WhenCalled_ResetsTheGlobalWpQuery() {
+		$post = $this->factory->post->create_and_get(
+			[
+				'post_type'    => Email_Post_Type::POST_TYPE,
+				'post_title'   => 'My template',
+				'post_name'    => 'Welcome - [name]',
+				'post_content' => 'Welcome - [name]',
+			]
+		);
+
+		/* Act. */
+		$this->email_sender->get_email_body( $post, [ 'name' => 'John' ] );
+		global $wp_query, $wp_the_query;
+
+		/* Assert. */
+		self::assertEquals( $wp_query, $wp_the_query );
+	}
+
 	public function testSendEmail_WhenTheReplyToIsSet_SetReplyTo() {
 		/* Arrange. */
 		$this->settings->set( 'email_reply_to_address', 'address_to_be_replied@gmail.com' );
@@ -304,6 +322,71 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$last_email = $mailer->get_sent( 0 );
 		self::assertStringContainsString( 'Reply-To: address_to_be_replied@gmail.com', $last_email->header );
+	}
+
+
+	public function testSendEmail_SetFromEmailName_RendersFromNameInHeader() {
+		$this->settings->set( 'email_from_name', 'Sensei From Name' );
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringContainsString( 'From: Sensei From Name <admin@example.org>', $last_email->header );
+	}
+
+	public function testSendEmail_SetFromEmailAddress_RendersFromEmailInHeader() {
+		$this->settings->set( 'email_from_name', 'Sensei From Name' );
+		$this->settings->set( 'email_from_address', 'from_email@example.com' );
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringContainsString( 'From: Sensei From Name <from_email@example.com>', $last_email->header );
+	}
+
+
+	public function testSendEmail_WhenThereIsNoFromInfo_SetFromWithDefaultValues() {
+		$this->settings->set( 'email_from_name', '' );
+		$this->settings->set( 'email_from_address', '' );
+
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringContainsString( 'From: Test Blog <admin@example.org>', $last_email->header );
 	}
 
 }

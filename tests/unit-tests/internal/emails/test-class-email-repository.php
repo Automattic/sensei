@@ -22,6 +22,21 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 		$this->assertFalse( $result );
 	}
 
+	/**
+	 * Tests that a disabled email is found in the repository.
+	 */
+	public function testHas_DisabledEmailInRepository_ReturnsTrue() {
+		/* Arrange. */
+		$repository = new Email_Repository();
+		$repository->create( 'disabled', [ 'b' ], 'c', 'd', 'e', false, true );
+
+		/* Act. */
+		$result = $repository->has( 'disabled' );
+
+		/* Assert. */
+		$this->assertTrue( $result );
+	}
+
 	public function testHas_EmailCreated_ReturnsTrue() {
 		/* Arrange. */
 		$repository = new Email_Repository();
@@ -127,6 +142,22 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 		$repository = new Email_Repository();
 		$repository->create( 'a', [ 'b' ], 'c', 'd', 'e' );
 		$repository->create( 'f', [ 'g' ], 'h', 'i', 'j' );
+
+		/* Act. */
+		$result = $repository->has_emails();
+
+		/* Assert. */
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Tests that when only disabled emails are created, that they are still found in the repository.
+	 */
+	public function testHasEmails_AllEmailsDisabled_ReturnsTrue() {
+		/* Arrange. */
+		$repository = new Email_Repository();
+		$repository->create( 'a', [ 'b' ], 'c', 'd', 'e', false, true );
+		$repository->create( 'f', [ 'g' ], 'h', 'i', 'j', false, true );
 
 		/* Act. */
 		$result = $repository->has_emails();

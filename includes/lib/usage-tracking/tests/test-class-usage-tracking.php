@@ -13,6 +13,7 @@ Usage_Tracking_Test_Subclass::get_instance();
  * plugin.
  *
  * @group usage-tracking
+ * @covers Sensei_Usage_Tracking_Base
  */
 class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 	use ArraySubsetAsserts;
@@ -29,8 +30,6 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 
 	/**
 	 * Ensure cron job action is set up.
-	 *
-	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testCronJobActionAdded() {
 		$this->assertTrue( ! ! has_action( $this->usage_tracking->get_prefix() . '_usage_tracking_send_usage_data', array( $this->usage_tracking, 'send_usage_data' ) ) );
@@ -38,8 +37,6 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 
 	/**
 	 * Ensure scheduling function works properly.
-	 *
-	 * @covers {Prefix}_Usage_Tracking::schedule_tracking_task
 	 */
 	public function testScheduleTrackingTask() {
 		// Make sure it's cleared initially
@@ -64,8 +61,6 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure that a request is made to the correct URL with the given
 	 * properties and the default properties.
-	 *
-	 * @covers {Prefix}_Usage_Tracking::send_event
 	 */
 	public function testSendEvent() {
 		$event      = 'my_event';
@@ -112,8 +107,6 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure that the request is not made if tracking is not enabled, unless
 	 * $force is true.
-	 *
-	 * @covers {Prefix}_Usage_Tracking::send_event
 	 */
 	public function testSendEventWithTrackingDisabled() {
 		$event      = 'my_event';
@@ -135,8 +128,6 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 
 	/**
 	 * Ensure that the request is only sent when the setting is enabled.
-	 *
-	 * @covers {Prefix}_Usage_Tracking::maybe_send_usage_data
 	 */
 	public function testSendUsageData() {
 		// Count the number of network requests
@@ -159,7 +150,6 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Tests the basic structure for collected system data.
 	 *
-	 * @covers {Prefix}_Usage_Tracking::get_system_data
 	 * @group track-system-data
 	 */
 	public function testSystemDataStructure() {
