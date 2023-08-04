@@ -101,13 +101,13 @@
 		"changelogger": {
 			"changelog": "changelog.txt",
 			"types": {
-				"security": "Security",
-				"added": "Added",
-				"changed": "Changed",
-				"deprecated": "Deprecated",
-				"removed": "Removed",
-				"fixed": "Fixed",
-				"dev": "Development"
+				"security": "Vulnerability fix, e.g. 'Fix XSS vulnerability'.",
+				"added": "New feature, e.g. 'Add quiz generation using AI'.",
+				"changed": "Changes in existing functionality, e.g. 'Redirect to next lesson without showing a message', 'Bump minimum required PHP version to 7.3'.",
+				"deprecated": "Soon-to-be removed feature, e.g. 'Deprecate the legacy email system in favor of the new one'.",
+				"removed": "Removed feature, e.g. 'Remove the legacy email system'.",
+				"fixed": "Bug fix, e.g. 'Fix admin notice styles'.",
+				"dev": "Development-related change, e.g. 'Deprecate the `Sensei_Emails` class', 'Add new API for fetching the course progress', 'Introduce new hook: `sensei_email_send`'."
 			}
 		}
 	}
