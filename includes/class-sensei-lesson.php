@@ -4868,6 +4868,11 @@ class Sensei_Lesson {
 		$is_preview = isset( $post->ID )
 			&& Sensei_Utils::is_preview_lesson( $post->ID )
 			&& ! Sensei_Course::is_user_enrolled( $course_id, $current_user->ID );
+		$title      = apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type );
+
+		if ( ! $title ) {
+			return;
+		}
 
 		?>
 		<header class="lesson-title">
@@ -4876,7 +4881,7 @@ class Sensei_Lesson {
 
 				<?php
 				/** This filter is documented in includes/class-sensei-messages.php */
-				echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type ) );
+				echo wp_kses_post( $title );
 				?>
 
 			</h1>
