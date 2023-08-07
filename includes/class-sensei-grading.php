@@ -737,13 +737,14 @@ class Sensei_Grading {
 		if ( in_array( $lesson_status, [ 'passed', 'graded' ], true ) ) {
 
 			/**
-			 * Summary.
+			 * Fires when a user completes a lesson.
 			 *
-			 * Description.
+			 * This hook is fired when a user passes a quiz or their quiz submission was graded.
+			 * Therefore the corresponding lesson is marked as complete.
 			 *
 			 * @since 1.7.0
 			 *
-			 * @param int  $user_id
+			 * @param int $user_id
 			 * @param int $quiz_lesson_id
 			 */
 			do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
