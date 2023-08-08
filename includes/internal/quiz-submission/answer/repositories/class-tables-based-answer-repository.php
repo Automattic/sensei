@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 9.9.9
  */
 class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	/**

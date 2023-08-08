@@ -20,7 +20,7 @@ use wpdb;
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 9.9.9
  */
 class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	/**

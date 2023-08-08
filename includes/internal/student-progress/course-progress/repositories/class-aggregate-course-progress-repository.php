@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 9.9.9
  */
 class Aggregate_Course_Progress_Repository implements Course_Progress_Repository_Interface {
 	/**

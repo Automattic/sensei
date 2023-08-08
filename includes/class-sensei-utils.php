@@ -2816,7 +2816,7 @@ class Sensei_Utils {
 	/**
 	 * Check if the current theme supports Full Site Editing (FSE).
 	 *
-	 * @since $$next-version$$
+	 * @since 9.9.9
 	 *
 	 * @return bool True if FSE is supported, false otherwise.
 	 */

@@ -236,7 +236,7 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	/**
 	 * Check if current theme is a FSE block one and if the current post type is a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 9.9.9
 	 *
 	 * @return bool
 	 */
