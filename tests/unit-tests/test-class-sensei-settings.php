@@ -7,6 +7,8 @@
 
 /**
  * Class for testing Sensei Settings.
+ *
+ * @covers \Sensei_Settings
  */
 class Sensei_Settings_Test extends WP_UnitTestCase {
 	/**
@@ -182,6 +184,19 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		/** Assert. */
 		$this->assertArrayHasKey( 'email_cc', $settings_array );
 		$this->assertArrayHasKey( 'email_bcc', $settings_array );
+	}
+
+	public function testInitFields_Always_AddsEmailCcAndBccFields() {
+		/** Arrange. */
+		$settings         = Sensei()->settings;
+		$settings->fields = array();
+
+		/** Act. */
+		$settings->init_fields();
+
+		/** Assert. */
+		$this->assertArrayHasKey( 'email_cc', $settings->fields );
+		$this->assertArrayHasKey( 'email_bcc', $settings->fields );
 	}
 
 	/**
