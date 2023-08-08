@@ -24,8 +24,6 @@ class Schema_Test extends \WP_UnitTestCase {
 		parent::setUp();
 
 		$this->schema = new Schema();
-
-		$this->reset_schema();
 	}
 
 	public function testCreateTables_WhenCalled_ShouldCreateTheTablesDefinedInGetTables(): void {
@@ -33,6 +31,8 @@ class Schema_Test extends \WP_UnitTestCase {
 		global $wpdb;
 
 		$expected_tables = $this->schema->get_tables();
+
+		$this->reset_schema();
 
 		/* Act. */
 		$this->schema->create_tables();
@@ -42,6 +42,46 @@ class Schema_Test extends \WP_UnitTestCase {
 		$created_tables = $wpdb->get_col( "SHOW TABLES LIKE '{$wpdb->prefix}sensei_lms%'" );
 		foreach ( $expected_tables as $table ) {
 			$this->assertContains( $table, $created_tables );
+		}
+	}
+
+	public function testGetTables_WhenTablesBasedProgressFeatureIsEnabled_ShouldReturnTheTablesBasedProgressTables(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		/* Act. */
+		$tables = $this->schema->get_tables();
+
+		/* Assert. */
+		$expected_tables = [
+			"{$wpdb->prefix}sensei_lms_progress",
+			"{$wpdb->prefix}sensei_lms_quiz_submissions",
+			"{$wpdb->prefix}sensei_lms_quiz_answers",
+			"{$wpdb->prefix}sensei_lms_quiz_grades",
+		];
+		foreach ( $expected_tables as $table ) {
+			$this->assertContains( $table, $tables );
+		}
+	}
+
+	public function testGetTables_WhenTablesBasedProgressFeatureIsDisabled_ShouldNotReturnTheTablesBasedProgressTables(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		add_filter( 'sensei_feature_flag_tables_based_progress', '__return_false' );
+
+		/* Act. */
+		$tables = $this->schema->get_tables();
+
+		/* Assert. */
+		$expected_tables = [
+			"{$wpdb->prefix}sensei_lms_progress",
+			"{$wpdb->prefix}sensei_lms_quiz_submissions",
+			"{$wpdb->prefix}sensei_lms_quiz_answers",
+			"{$wpdb->prefix}sensei_lms_quiz_grades",
+		];
+		foreach ( $expected_tables as $table ) {
+			$this->assertNotContains( $table, $tables );
 		}
 	}
 
