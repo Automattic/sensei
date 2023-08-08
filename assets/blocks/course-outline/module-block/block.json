@@ -85,6 +85,10 @@
     },
     "borderedSelected": {
       "type": "boolean"
+    },
+    "lessonSubheaderFontSize": {
+      "type": "string",
+      "default":""
     }
   }
 }
