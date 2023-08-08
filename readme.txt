@@ -144,6 +144,13 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.16.1 - 2023-08-08
+#### Fixed
+- Fix duplicate comment sections under lesson in FSE themes
+- Fix PHP 8.1 deprecation notice on Students page
+- Fix `strpos`and `str_replace` deprecation messages in PHP 8.1 and 8.2
+- Updates the `sensei_results_links` filter to include the learner's user ID when displaying public profiles and to display results links publicly.
+
 ### 4.16.0 - 2023-07-13
 #### Added
 - Enable to select how to generate lessons when a course is created [#6999](https://github.com/Automattic/sensei/pull/6999)
@@ -170,21 +177,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Fix resetting a quiz also resets the course start date. [#6643](https://github.com/Automattic/sensei/pull/6643)
 - In lesson complete email use course author as lesson teacher. [#6977](https://github.com/Automattic/sensei/pull/6977)
 - Fix conflicts with modules using the same name. [#6437](https://github.com/Automattic/sensei/pull/6437)
-
-### 4.15.0 - 2023-06-01
-#### Security
-- Fix shortcodes being called in teacher's messages.
-- Remove private custom post types from sitemaps.
-
-#### Changed
-- Review the Learning mode default template typography, spacing and alignment.
-- Improve Global Style support in Learning mode templates.
-
-#### Fixed
-- Block triggering wp_mail for temporary users even on non-frontend context.
-- Don't re-create emails on plugin update.
-- Fix auto grading not working on the Grading page for multiple choice questions.
-- Fix blocks initialization.
-- Fix email body rendered in the front-end in some cases.
-- Fix Kadence blocks crashing lesson editor.
-- Fix MailPoet error when running job.
