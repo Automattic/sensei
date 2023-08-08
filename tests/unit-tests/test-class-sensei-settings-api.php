@@ -28,12 +28,14 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 
 		/** Act. */
 		ob_start();
-		$settings->form_field_text( array(
-			'key'      => 'test',
-			'data'     => array(
-				'multiple' => true,
-			),
-		) );
+		$settings->form_field_text(
+			array(
+				'key'  => 'test',
+				'data' => array(
+					'multiple' => true,
+				),
+			)
+		);
 		$output = ob_get_clean();
 
 		/** Assert. */
@@ -46,9 +48,11 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 
 		/** Act. */
 		ob_start();
-		$settings->form_field_text( array(
-			'key'      => 'test',
-		) );
+		$settings->form_field_text(
+			array(
+				'key' => 'test',
+			)
+		);
 		$output = ob_get_clean();
 
 		/** Assert. */
