@@ -37,7 +37,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$comments_based_repository
 			->expects( $this->once() )
 			->method( 'create' )
-			->with( $submission, 2, 3, 4, 'feedback' );
+			->with( $this->identicalTo( $submission ), 2, 3, 4, 'feedback' );
 		$repository->create( $submission, 2, 3, 4, 'feedback' );
 	}
 
@@ -129,7 +129,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$comments_based_repository
 			->expects( $this->once() )
 			->method( 'delete_all' )
-			->with( $submission );
+			->with( $this->identicalTo( $submission ) );
 		$repository->delete_all( $submission );
 	}
 
@@ -187,7 +187,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$tables_based_repository
 			->expects( $this->once() )
 			->method( 'delete_all' )
-			->with( $tables_based_submission );
+			->with( $this->identicalTo( $tables_based_submission ) );
 		$repository->delete_all( $submission );
 	}
 
@@ -212,7 +212,10 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$comments_based_repository
 			->expects( $this->once() )
 			->method( 'save_many' )
-			->with( $submission, $grades );
+			->with(
+				$this->identicalTo( $submission ),
+				$this->identicalTo( $grades )
+			);
 		$repository->save_many( $submission, $grades );
 	}
 
@@ -281,7 +284,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			->expects( $this->once() )
 			->method( 'save_many' )
 			->with(
-				$tables_based_submission,
+				$this->identicalTo( $tables_based_submission ),
 				$this->callback(
 					function ( array $grades ) {
 						$this->assertSame( 1, count( $grades ) );
