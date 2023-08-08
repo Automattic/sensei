@@ -15,13 +15,13 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 	 */
 	protected $factory;
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 		self::$initial_hook_suffix = $GLOBALS['hook_suffix'] ?? null;
 		$GLOBALS['hook_suffix']    = null;
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		$GLOBALS['hook_suffix'] = self::$initial_hook_suffix;
 	}
@@ -29,7 +29,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();

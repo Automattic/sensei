@@ -16,13 +16,13 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 	 */
 	protected $factory;
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 		self::$initial_hook_suffix = $GLOBALS['hook_suffix'] ?? null;
 		$GLOBALS['hook_suffix']    = null;
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		$GLOBALS['hook_suffix'] = self::$initial_hook_suffix;
 	}
@@ -30,7 +30,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 	/**
 	 * Set up before each test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
@@ -39,7 +39,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 	/**
 	 * Tear down after each test.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->factory->tearDown();
@@ -328,6 +328,76 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		// Average for the second course: 4 / 1 = 4.
 		// Total: (1 + 4) / 2 = 2.5.
 		self::assertSame( 2.5, $actual );
+	}
+
+	public function testGetTotalTotalEnrollments_WhenThereWereNoEnrolledStudents_ReturnsZero() {
+
+		/* Arrange. */
+		$instance = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_total_enrollments( [] );
+
+		/* Assert. */
+		self::assertSame( 0, $actual );
+	}
+	public function testGetTotalTotalEnrollments_WhenThereWereSameStudentsInDifferentCourses_ReturnsSumOfEnrollments() {
+
+		/* Arrange */
+		$user1_id   = $this->factory->user->create();
+		$course1_id = $this->factory->course->create();
+		$course2_id = $this->factory->course->create();
+
+		// Add 2 lessons to the course.
+		$lesson_course_1 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course1_id ] ]
+		);
+		$lesson_course_2 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course2_id ] ]
+		);
+
+		// Enroll student 2 to the course and lessons, but don't complete the lessons.
+		Sensei_Utils::sensei_start_lesson( $lesson_course_1, $user1_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_course_2, $user1_id );
+
+		$instance = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_total_enrollments( [ $course1_id, $course2_id ] );
+
+		/* Assert. */
+		self::assertSame( 2, $actual );
+	}
+
+
+	public function testGetTotalTotalEnrollments_WhenThereWereStudentsInDifferentCourses_ReturnsSumOfEnrollments() {
+
+		/* Arrange */
+		$user1_id = $this->factory->user->create();
+		$user2_id = $this->factory->user->create();
+
+		$course1_id = $this->factory->course->create();
+		$course2_id = $this->factory->course->create();
+
+		// Add 2 lessons to the course.
+		$lesson_course_1 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course1_id ] ]
+		);
+		$lesson_course_2 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course2_id ] ]
+		);
+
+		// Enroll student 2 to the course and lessons, but don't complete the lessons.
+		Sensei_Utils::sensei_start_lesson( $lesson_course_1, $user1_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_course_2, $user2_id );
+
+		$instance = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_total_enrollments( [ $course1_id, $course2_id ] );
+
+		/* Assert. */
+		self::assertSame( 2, $actual );
 	}
 
 	public function testGetAverageDaysToCompletionTotalWithoutCompletionsReturnsZero() {

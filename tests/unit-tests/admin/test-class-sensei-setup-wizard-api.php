@@ -24,7 +24,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Set up before the class.
 	 */
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		// Mock WooCommerce plugin information.
 		set_transient(
 			Sensei_Utils::WC_INFORMATION_TRANSIENT,
@@ -44,7 +44,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Test specific setup.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		self::resetEnrolmentProviders();
@@ -66,7 +66,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Test specific teardown.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		global $wp_rest_server;
@@ -76,7 +76,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		Sensei()->usage_tracking->set_tracking_enabled( true );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}
@@ -131,6 +131,15 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		$this->assertNotNull( $courses_page, 'Course archive page' );
 		$this->assertNotNull( $my_courses_page, 'My Courses page' );
 		$this->assertNotNull( $course_completed_page, 'Course completed page' );
+	}
+
+	public function testMyCoursesPage_WhenCreated_ContainsQueryListBlock() {
+
+		$this->request( 'POST', 'welcome', [ 'usage_tracking' => false ] );
+
+		$my_courses_page = get_page_by_path( 'my-courses' );
+
+		$this->assertStringContainsString( 'wp:query', $my_courses_page->post_content );
 	}
 
 	/**
@@ -217,8 +226,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = Sensei()->setup_wizard->get_wizard_user_data();
 
-		$this->assertNotContains( [ 'invalid_data' ], $data['purpose']['selected'] );
-		$this->assertNotContains( [ 'invalid_data' ], $data['features']['selected'] );
+		$this->assertEmpty( $data['purpose']['selected'] );
+		$this->assertEmpty( $data['features']['selected'] );
 	}
 
 
@@ -250,6 +259,43 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
+	 * Tests that theme get endpoint returns the install sensei theme option.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
+	 */
+	public function testGetThemeReturnsUserData() {
+
+		Sensei()->setup_wizard->update_wizard_user_data(
+			[ 'theme' => [ 'install_sensei_theme' => true ] ]
+		);
+
+		$data = $this->request( 'GET', '' );
+
+		$this->assertEquals(
+			[ 'install_sensei_theme' => true ],
+			$data['theme']
+		);
+	}
+
+	/**
+	 * Tests that submitting to theme endpoint updates the install sensei theme option.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_theme
+	 */
+	public function testSubmitThemeUpdatesInstallSenseiThemeOption() {
+
+		Sensei()->usage_tracking->set_tracking_enabled( false );
+		$this->request( 'POST', 'theme', [ 'theme' => [ 'install_sensei_theme' => true ] ] );
+
+		$data = $this->request( 'GET', '' );
+
+		$this->assertEquals(
+			[ 'install_sensei_theme' => true ],
+			$data['theme']
+		);
+	}
+
+	/**
 	 * Tests tracking endpoint returning the current usage tracking setting.
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
@@ -274,19 +320,6 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 */
 	public function testSubmitTrackingUpdatesUsageTrackingSetting() {
 
-		Sensei()->usage_tracking->set_tracking_enabled( false );
-		$this->request( 'POST', 'tracking', [ 'tracking' => [ 'usage_tracking' => true ] ] );
-
-		$this->assertEquals( true, Sensei()->usage_tracking->get_tracking_enabled() );
-	}
-
-	/**
-	 * Tests that submitting to features endpoint validates input against whitelist
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_purpose
-	 */
-	public function testSubmitPurposeLogged() {
-
 		$this->request(
 			'POST',
 			'purpose',
@@ -297,6 +330,11 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 				],
 			]
 		);
+
+		Sensei()->usage_tracking->set_tracking_enabled( false );
+		$this->request( 'POST', 'tracking', [ 'tracking' => [ 'usage_tracking' => true ] ] );
+
+		$this->assertEquals( true, Sensei()->usage_tracking->get_tracking_enabled() );
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_setup_wizard_purpose_continue' );
 		$this->assertCount( 1, $events );
@@ -342,5 +380,15 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		}
 
 		return $this->server->dispatch( $request )->get_data();
+	}
+
+	public function testCourseArchivePage_WhenCreated_ContainsQueryListBlock() {
+
+		$this->request( 'POST', 'welcome', [ 'usage_tracking' => false ] );
+
+		$my_courses_page = get_page_by_path( 'courses-overview' );
+
+		$this->assertEquals( 'courses-overview', $my_courses_page->post_name );
+		$this->assertStringContainsString( 'wp:query', $my_courses_page->post_content );
 	}
 }

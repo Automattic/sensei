@@ -9,13 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+
 /**
  * Tests for Sensei_Export_Courses class.
  *
  * @group data-port
  */
 class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
-
+	use ArraySubsetAsserts;
 	use Sensei_Export_Task_Tests;
 
 	/**
@@ -28,7 +30,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		if ( ! isset( Sensei()->admin ) ) {

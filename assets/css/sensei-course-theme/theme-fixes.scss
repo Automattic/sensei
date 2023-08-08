@@ -1,6 +1,4 @@
-
 // Theme compatibilty fixes
-
 .wp-block-site-logo {
 	.custom-logo-link {
 		margin: 0;
@@ -13,19 +11,16 @@
 }
 
 .sensei-course-theme {
-
 	// Twenty twenty one
-
 	.wp-block-group::before, .wp-block-group::after {
 		content: none;
 	}
+
 	--responsive--aligndefault-width: 1200px;
 }
 
 .sensei-course-theme__frame {
-
 	// Twenty twenty
-
 	.wp-block-group.wp-block-group.wp-block-group.wp-block-group {
 		&:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright):not(.is-style-wide) {
 			margin: unset;
@@ -39,11 +34,10 @@
 }
 
 // Twenty twenty
-
-.entry-content > :not(.alignwide):not(.alignfull):not(.alignleft):not(.alignright):not(.is-style-wide)
-{
+.entry-content > :not(.alignwide):not(.alignfull):not(.alignleft):not(.alignright):not(.is-style-wide) {
 	width: auto;
 }
+
 [class*='__inner-container'] {
 	> *, > .wp-block-group, > .wp-block-cover {
 		&:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright):not(.is-style-wide) {
@@ -53,11 +47,12 @@
 	}
 }
 
-// Astra
-.wp-block:not(.has-text-color) {
-	color: unset;
+// Twenty Fifteen
+.sensei-course-theme::before {
+	width: 0px;
 }
 
-.wp-block:not(.has-background) {
-	background-color: unset;
+// Astra Mobile
+#ast-scroll-top.ast-scroll-to-top-right {
+	bottom:  90px;
 }

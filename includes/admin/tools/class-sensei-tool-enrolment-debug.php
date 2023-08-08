@@ -96,7 +96,7 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable -- Variable used in view.
 		$courses = false;
 		if ( $course_search->found_posts < 100 ) {
-			$courses = $course_search->get_posts();
+			$courses = $course_search->posts;
 		}
 
 		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable -- Variable used in view.

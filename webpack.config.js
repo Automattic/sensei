@@ -10,6 +10,11 @@ const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
 /**
+ * WordPress dependencies
+ */
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+
+/**
  * I18n methods that should not be mangled by the compiler process
  */
 const I18N_METHODS = [ '__', '_n', '_nx', '_x' ];
@@ -30,6 +35,7 @@ const files = [
 	'js/admin/message-menu-fix.js',
 	'js/admin/meta-box-quiz-editor.js',
 	'js/admin/lesson-edit.js',
+	'js/admin/lesson-ai.js',
 	'js/admin/ordering.js',
 	'js/admin/sensei-notice-dismiss.js',
 	'js/admin/custom-navigation.js',
@@ -75,13 +81,19 @@ const files = [
 	'blocks/shared-style-editor.scss',
 	'blocks/frontend.js',
 	'blocks/core-pattern-polyfill/core-pattern-polyfill.js',
+	'blocks/email-editor.js',
+	'css/email-notifications/email-editor-style.scss',
+	'css/email-notifications/email-style.scss',
 	'admin/editor-wizard/index.js',
 	'admin/editor-wizard/style.scss',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
 	'admin/students/student-action-menu/index.js',
 	'admin/students/student-bulk-action-button/index.js',
+	'admin/students/student-bulk-action-button/student-bulk-action-button.scss',
 	'admin/students/student-modal/student-modal.scss',
+	'admin/emails/email-preview-button/index.js',
+	'admin/emails/email-preview-button/email-preview-button.scss',
 	'css/block-patterns.scss',
 	'css/page-block-patterns.scss',
 	'css/tools.scss',
@@ -106,12 +118,17 @@ const files = [
 	'css/learning-mode.theme.scss',
 	'css/sensei-theme-blocks.scss',
 	'css/sensei-course-theme/sidebar-mobile-menu.scss',
+	'css/showcase-upsell.scss',
+	'css/senseilms-licensing.scss',
 	'course-theme/learning-mode.js',
 	'course-theme/course-theme.editor.js',
 	'course-theme/blocks/index.js',
 	'course-theme/themes/default-theme.scss',
 	'course-theme/learning-mode-templates/index.js',
 	'course-theme/learning-mode-templates/styles.scss',
+	'css/3rd-party/themes/course/learning-mode.scss',
+	'css/3rd-party/themes/divi/learning-mode.scss',
+	'css/3rd-party/themes/divi/learning-mode.editor.scss',
 ];
 
 function getName( filename ) {
@@ -135,6 +152,7 @@ function getWebpackConfig( env, argv ) {
 	const scriptFiles = /\.[jt]sx?$/i;
 
 	const isProduction = process.env.NODE_ENV === 'production';
+	const COMBINE_ASSETS = 'true' === process.env.COMBINE_ASSETS;
 
 	webpackConfig.module.rules = webpackConfig.module.rules.map( ( rule ) => {
 		if ( rule.test.test( 'test.scss' ) ) {
@@ -187,7 +205,7 @@ function getWebpackConfig( env, argv ) {
 	// Handle only images in JS files
 	webpackConfig.module.rules.push(
 		{
-			test: /\.(?:gif|jpg|jpeg|png)$/i,
+			test: /\.(?:gif|jpg|jpeg|png|webp)$/i,
 			issuer: scriptFiles,
 			type: 'asset/resource',
 			generator: {
@@ -200,6 +218,13 @@ function getWebpackConfig( env, argv ) {
 			issuer: scriptFiles,
 			use: [ '@svgr/webpack' ],
 		}
+	);
+
+	// We remove the DependencyExtractionWebpackPlugin from the list of plugins because we will
+	// add some custom parameters later.
+	const plugins = webpackConfig.plugins.filter(
+		( plugin ) =>
+			plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 	);
 
 	return {
@@ -225,7 +250,12 @@ function getWebpackConfig( env, argv ) {
 			process.env.SOURCEMAP ||
 			( isDevelopment ? 'eval-source-map' : false ),
 		plugins: [
-			...webpackConfig.plugins,
+			...plugins,
+			new DependencyExtractionWebpackPlugin( {
+				injectPolyfill: true,
+				combineAssets: COMBINE_ASSETS,
+				outputFormat: COMBINE_ASSETS ? 'json' : 'php',
+			} ),
 			new GenerateChunksMapPlugin( {
 				output: path.resolve(
 					'./node_modules/.cache/sensei-lms/chunks-map.json'

@@ -15,7 +15,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Set up before each test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		Sensei_Test_Events::reset();

@@ -14,7 +14,7 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile_Test extends WP_UnitTestC
 	 */
 	private $learner_user;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 
@@ -25,7 +25,7 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile_Test extends WP_UnitTestC
 		$this->handler = new Sensei_Unsupported_Theme_Handler_Learner_Profile();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->handler = null;
 
 		Sensei_Unsupported_Theme_Handler_Page_Imitator_Test::delete_page_template();

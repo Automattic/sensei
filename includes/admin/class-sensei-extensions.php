@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Sensei_Extensions {
 	const SENSEILMS_PRODUCTS_API_BASE_URL = 'https://senseilms.com/wp-json/senseilms-products/1.0';
+	const PRODUCT_SENSEI_PRO_SLUG         = 'sensei-pro';
 
 	/**
 	 * Instance of class.
@@ -84,11 +85,13 @@ final class Sensei_Extensions {
 			);
 
 			$raw_extensions = wp_safe_remote_get( $url );
-			if ( ! is_wp_error( $raw_extensions ) ) {
-				$json       = json_decode( wp_remote_retrieve_body( $raw_extensions ) );
-				$extensions = isset( $json->products ) ? $json->products : [];
+			if ( ! is_wp_error( $raw_extensions ) && 200 === wp_remote_retrieve_response_code( $raw_extensions ) ) {
+				$json = json_decode( wp_remote_retrieve_body( $raw_extensions ) );
 
-				set_transient( 'sensei_extensions_' . $extension_request_key, $extensions, DAY_IN_SECONDS );
+				if ( isset( $json->products ) && is_array( $json->products ) && ! empty( $json->products ) ) {
+					$extensions = $json->products;
+					set_transient( 'sensei_extensions_' . $extension_request_key, $extensions, DAY_IN_SECONDS );
+				}
 			}
 		}
 
@@ -100,7 +103,37 @@ final class Sensei_Extensions {
 			return $this->add_installed_extensions_properties( $extensions );
 		}
 
+		if ( 'theme' === $type ) {
+			return $this->add_installed_themes_properties( $extensions );
+		}
+
 		return $extensions;
+	}
+
+	/**
+	 * Fetch a specific Sensei extension.
+	 *
+	 * @since 4.12.0
+	 *
+	 * @param string $slug Extension slug.
+	 *
+	 * @return object|null
+	 */
+	public function get_extension( $slug ) {
+		$extensions = $this->get_extensions( 'plugin' );
+
+		$extensions = array_filter(
+			$extensions,
+			function( $extension ) use ( $slug ) {
+				return $slug === $extension->product_slug;
+			}
+		);
+
+		if ( empty( $extensions ) ) {
+			return null;
+		}
+
+		return array_shift( $extensions );
 	}
 
 	/**
@@ -158,40 +191,49 @@ final class Sensei_Extensions {
 	}
 
 	/**
+	 * Map the themes array, adding the installed properties.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @access private
+	 *
+	 * @param array $themes Themes from the REST API.
+	 *
+	 * @return array Themes with installed properties.
+	 */
+	public function add_installed_themes_properties( $themes ) {
+		// Includes installed version.
+		$themes = array_map(
+			function( $theme ) {
+				$theme_slug          = $theme->product_slug;
+				$theme_object        = wp_get_theme( $theme_slug );
+				$theme->is_installed = $theme_object->exists();
+				$theme->is_activated = wp_get_theme()->get_stylesheet() === $theme_slug;
+
+				if ( $theme->is_installed ) {
+					$theme->installed_version = $theme_object->get( 'Version' );
+				}
+
+				return $theme;
+			},
+			$themes
+		);
+
+		return $themes;
+	}
+
+	/**
 	 * Get extensions page layout.
 	 *
 	 * @since 3.11.0
+	 * @deprecated 4.14.0
 	 *
 	 * @return array
 	 */
 	public function get_layout() {
-		$transient_key = implode(
-			'_',
-			[
-				'sensei_extensions_layout',
-				determine_locale(),
-				md5( self::SENSEILMS_PRODUCTS_API_BASE_URL ),
-			]
-		);
+		_deprecated_function( __METHOD__, '4.14.0' );
 
-		$extension_layout = get_transient( $transient_key );
-
-		if ( false === $extension_layout ) {
-			$raw_layout = wp_safe_remote_get(
-				add_query_arg(
-					[ 'lang' => determine_locale() ],
-					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/layout'
-				)
-			);
-
-			if ( ! is_wp_error( $raw_layout ) ) {
-				$json             = json_decode( wp_remote_retrieve_body( $raw_layout ) );
-				$extension_layout = isset( $json->layout ) ? $json->layout : [];
-				set_transient( $transient_key, $extension_layout, DAY_IN_SECONDS );
-			}
-		}
-
-		return $extension_layout;
+		return [];
 	}
 
 	/**

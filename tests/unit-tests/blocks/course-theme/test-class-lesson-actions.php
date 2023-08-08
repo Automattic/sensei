@@ -25,8 +25,8 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 		self::resetEnrolmentProviders();
@@ -42,7 +42,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		];
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 		WP_Block_Supports::$block_to_render = null;
@@ -106,8 +106,8 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$block_html = $block->render();
 
 		// Check for is-secondary class suffix.
-		$this->assertRegExp( '/<button.*is-secondary.*>.*\n.*Complete Lesson/', $block_html, 'Should render complete button as secondary CTA' );
-		$this->assertContains( 'Take Quiz', $block_html, 'Should render the take quiz button' );
+		$this->assertMatchesRegularExpression( '/<button.*is-secondary.*>.*\n.*Complete Lesson/', $block_html, 'Should render complete button as secondary CTA' );
+		$this->assertStringContainsString( 'Take Quiz', $block_html, 'Should render the take quiz button' );
 	}
 
 	/**
@@ -124,8 +124,8 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$block = new Lesson_Actions();
 
 		// Check for empty response.
-		$this->assertNotContains( 'Complete Lesson', $block->render(), 'Should not render the complete lesson button.' );
-		$this->assertContains( 'Take Quiz', $block->render(), 'Should render the take quiz button.' );
+		$this->assertStringNotContainsString( 'Complete Lesson', $block->render(), 'Should not render the complete lesson button.' );
+		$this->assertStringContainsString( 'Take Quiz', $block->render(), 'Should render the take quiz button.' );
 	}
 
 	/**
@@ -154,7 +154,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 
 		$block = new Lesson_Actions();
 
-		$this->assertContains( 'Completed', $block->render(), 'Should render "Completed" button if user already completed the lesson.' );
+		$this->assertStringContainsString( 'Completed', $block->render(), 'Should render "Completed" button if user already completed the lesson.' );
 	}
 
 	/**
@@ -176,7 +176,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 
 		$block = new Lesson_Actions();
 
-		$this->assertContains( 'Next Lesson', $block->render( [ 'options' => [ 'nextLesson' => true ] ] ), 'Should render "Next Lesson" link if the option is enabled and there is a next lesson in the course.' );
+		$this->assertStringContainsString( 'Next Lesson', $block->render( [ 'options' => [ 'nextLesson' => true ] ] ), 'Should render "Next Lesson" link if the option is enabled and there is a next lesson in the course.' );
 	}
 
 	/**
@@ -187,7 +187,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 
 		$block = new Lesson_Actions();
 
-		$this->assertNotContains( 'Next Lesson', $block->render( [ 'options' => [ 'nextLesson' => true ] ] ), 'Should not render "Next Lesson" link if the option is enabled but there is no next lesson in the course.' );
+		$this->assertStringNotContainsString( 'Next Lesson', $block->render( [ 'options' => [ 'nextLesson' => true ] ] ), 'Should not render "Next Lesson" link if the option is enabled but there is no next lesson in the course.' );
 	}
 
 	/**
@@ -213,8 +213,8 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$block           = new Lesson_Actions();
 
 		// Check for disabled button.
-		$this->assertContains( ' disabled', $block->render(), 'Should render disabled button if lesson has a pre-requisite.' );
-		$this->assertContains( 'aria-disabled="true"', $block->render(), 'Should render disabled button if lesson has a pre-requisite.' );
+		$this->assertStringContainsString( ' disabled', $block->render(), 'Should render disabled button if lesson has a pre-requisite.' );
+		$this->assertStringContainsString( 'aria-disabled="true"', $block->render(), 'Should render disabled button if lesson has a pre-requisite.' );
 	}
 
 	/**
@@ -226,7 +226,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$block = new Lesson_Actions();
 
 		// Check for Complete lesson button.
-		$this->assertContains( 'Complete Lesson', $block->render(), 'Should render "Complete lesson" button if user can mark lesson as complete.' );
+		$this->assertStringContainsString( 'Complete Lesson', $block->render(), 'Should render "Complete lesson" button if user can mark lesson as complete.' );
 	}
 
 

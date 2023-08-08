@@ -18,7 +18,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	/**
 	 * Set up before each test.
 	 */
-	public function setup() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->resetCourseEnrolmentManager();
 
@@ -30,7 +30,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	/**
 	 * Tear down after each test.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->factory->tearDown();
@@ -304,14 +304,16 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	 * @return int The user ID.
 	 */
 	private function createUserWithActivity( string $activity_date, array $user_args = [] ): int {
-		$user_id = $this->factory->user->create( $user_args );
+		$user_id   = $this->factory->user->create( $user_args );
+		$course_id = $this->factory->course->create();
 
 		$lesson_id = $this->factory->lesson->create(
 			[
-				'meta_input' => [ '_lesson_course' => $this->factory->course->create() ],
+				'meta_input' => [ '_lesson_course' => $course_id ],
 			]
 		);
 
+		$this->manuallyEnrolStudentInCourse( $user_id, $course_id );
 		$activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
 
 		wp_update_comment(

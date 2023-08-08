@@ -14,12 +14,12 @@ class Sensei_View_Helper_Test extends WP_UnitTestCase {
 	 */
 	private static $initial_settings;
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 		self::$initial_settings = Sensei()->settings->settings;
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		Sensei()->settings->settings = self::$initial_settings;
 	}

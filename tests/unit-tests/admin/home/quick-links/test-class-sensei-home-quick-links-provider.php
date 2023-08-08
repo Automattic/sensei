@@ -23,7 +23,7 @@ class Sensei_Home_Quick_Links_Provider_Test extends WP_UnitTestCase {
 	/**
 	 * Setup.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->provider = new Sensei_Home_Quick_Links_Provider();
 	}

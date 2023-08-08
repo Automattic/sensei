@@ -3,13 +3,13 @@
 class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 	private static $initial_hook_suffix;
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 		self::$initial_hook_suffix = $GLOBALS['hook_suffix'] ?? null;
 		$GLOBALS['hook_suffix']    = null;
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		$GLOBALS['hook_suffix'] = self::$initial_hook_suffix;
 	}

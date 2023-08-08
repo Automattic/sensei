@@ -282,24 +282,52 @@ class Sensei_Analysis {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$type = isset( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : 'students';
 
+		// Set up default properties for logging an event.
+		$event_properties = [ 'view' => '' ];
+
 		if ( 0 < $lesson_id ) {
 			// Viewing a specific Lesson and all its Learners
 			$this->analysis_lesson_users_view( $lesson_id );
-		} elseif ( 0 < $course_id && ! $user_id && 'user' == $type ) {
+
+			$event_properties['view'] = 'course-lesson-users';
+		} elseif ( 0 < $course_id && ! $user_id && 'user' === $type ) {
 			// Viewing a specific Course and all its Learners
 			$this->analysis_course_users_view( $course_id );
+
+			$event_properties['view'] = 'course-users';
 		} elseif ( 0 < $course_id && 0 < $user_id ) {
 			// Viewing a specific Learner on a specific Course, showing their Lessons
 			$this->analysis_user_course_view( $course_id, $user_id );
+
+			$event_properties['view'] = 'user-course-lessons';
 		} elseif ( 0 < $course_id ) {
 			// Viewing a specific Course and all it's Lessons
 			$this->analysis_course_view( $course_id );
+
+			$event_properties['view'] = 'course-lessons';
 		} elseif ( 0 < $user_id ) {
 			// Viewing a specific Learner, and their Courses
 			$this->analysis_user_profile_view( $user_id );
+
+			$event_properties['view'] = 'user-courses';
 		} else {
 			// Overview of all Learners, all Courses, or all Lessons
 			$this->analysis_default_view( $type );
+
+			if ( 'lessons' === $type ) {
+				// Ensure the user has actually filtered by a course first before sending the "lessons" event.
+				if ( ! empty( $_GET['course_filter'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+					$event_properties['view'] = $type;
+				}
+			} else {
+				// For consistency reasons we use "users" instead of "students".
+				$event_properties['view'] = 'students' === $type ? 'users' : $type;
+			}
+		}
+
+		// Log event.
+		if ( $event_properties['view'] ) {
+			sensei_log_event( 'analysis_view', $event_properties );
 		}
 	}
 

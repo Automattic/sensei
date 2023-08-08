@@ -36,8 +36,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="wp-block-group alignfull sensei-course-theme-course-list-pattern has-background-color has-primary-background-color has-text-color has-background has-link-color" style="padding-top:5rem;padding-right:20px;padding-bottom:100px;padding-left:20px">
 	<!-- wp:group {"style":{"border":{"left":{"color":"var:preset|color|background","width":"1px"}},"spacing":{"padding":{"left":"20px"},"margin":{"bottom":"40px"}}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"space-between","verticalAlignment":"bottom"}} -->
 	<div class="wp-block-group" style="border-left-color:var(--wp--preset--color--background);border-left-width:1px;margin-bottom:40px;padding-left:20px">
-		<!-- wp:heading {"level":5,"style":{"typography":{"textTransform":"uppercase","letterSpacing":"0.01em","lineHeight":"1.0"},"spacing":{"padding":{"top":"0px"}}},"textColor":"background","className":"sensei-pattern-heading"} -->
-		<h5 class="sensei-pattern-heading has-background-color has-text-color" style="padding-top:0px;letter-spacing:0.01em;line-height:1.0;text-transform:uppercase"><strong><?php echo esc_html__( 'Course list', 'sensei-lms' ); ?></strong></h5>
+		<!-- wp:heading {"level":2,"style":{"typography":{"textTransform":"uppercase","letterSpacing":"0.01em","lineHeight":"1.0"},"spacing":{"padding":{"top":"0px"}}},"textColor":"background","className":"sensei-pattern-heading","fontSize":"medium"} -->
+		<h2 class="sensei-pattern-heading has-background-color has-text-color has-medium-font-size" style="padding-top:0px;letter-spacing:0.01em;line-height:1.0;text-transform:uppercase"><strong><?php echo esc_html__( 'Course list', 'sensei-lms' ); ?></strong></h2>
 		<!-- /wp:heading -->
 
 		<!-- wp:paragraph {"style":{"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"textColor":"background","className":"sensei-course-list-all-courses-link"} -->
@@ -102,8 +102,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="wp-block-group has-primary-color has-text-color" style="padding-bottom:40px">
 		<!-- wp:group {"style":{"spacing":{"padding":{"left":"20px"}},"border":{"top":{"width":"0px","style":"none"},"right":{"width":"0px","style":"none"},"bottom":{"width":"0px","style":"none"},"left":{"width":"1px","color":"var:preset|color|primary"}}},"layout":{"type":"flex","flexWrap":"nowrap"}} -->
 		<div class="wp-block-group" style="border-top-style:none;border-top-width:0px;border-right-style:none;border-right-width:0px;border-bottom-style:none;border-bottom-width:0px;border-left-color:var(--wp--preset--color--primary);border-left-width:1px;padding-left:20px">
-			<!-- wp:heading {"level":5,"style":{"typography":{"textTransform":"uppercase","lineHeight":"1"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}},"className":"sensei-pattern-heading"} -->
-			<h5 class="sensei-pattern-heading" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;line-height:1;text-transform:uppercase"><?php echo esc_html__( 'Blog posts', 'sensei-lms' ); ?></h5>
+			<!-- wp:heading {"level":2,"style":{"typography":{"textTransform":"uppercase","lineHeight":"1"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}},"className":"sensei-pattern-heading","fontSize":"medium"} -->
+			<h2 class="sensei-pattern-heading has-medium-font-size" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;line-height:1;text-transform:uppercase"><?php echo esc_html__( 'Blog posts', 'sensei-lms' ); ?></h2>
 			<!-- /wp:heading -->
 		</div>
 		<!-- /wp:group -->
@@ -142,16 +142,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- wp:group {"style":{"spacing":{"padding":{"left":"38px","top":"20px","bottom":"20px"}},"border":{"top":{"width":"0px","style":"none"},"right":{"width":"0px","style":"none"},"bottom":{"width":"0px","style":"none"},"left":{"color":"var:preset|color|foreground"}}},"className":"is-style-group-left-border","layout":{"type":"flex","flexWrap":"wrap","justifyContent":"space-between"}} -->
 	<div class="wp-block-group is-style-group-left-border" style="border-top-style:none;border-top-width:0px;border-right-style:none;border-right-width:0px;border-bottom-style:none;border-bottom-width:0px;border-left-color:var(--wp--preset--color--foreground);padding-top:20px;padding-bottom:20px;padding-left:38px">
 		<!-- wp:heading {"textAlign":"left","style":{"typography":{"lineHeight":"1","textTransform":"uppercase"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}},"fontFamily":"secondary"} -->
-		<h2 class="has-text-align-left has-secondary-font-family" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;line-height:1;text-transform:uppercase">
-		<?php
-			echo wp_kses(
-				esc_html__( 'Keep track of the latest<br>news and lessons.<br>Every week in your inbox.', 'sensei-lms' ),
-				[
-					'br' => [],
-				]
-			);
-			?>
-			</h2>
+		<h2 class="has-text-align-left has-secondary-font-family" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;line-height:1;text-transform:uppercase"><?php echo wp_kses( __( 'Keep track of the latest<br>news and lessons.<br>Every week in your inbox.', 'sensei-lms' ), [ 'br' => [] ] ); ?></h2>
 		<!-- /wp:heading -->
 
 		<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"right","verticalAlignment":"center"}} -->
@@ -171,8 +162,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"80px","bottom":"120px","right":"20px","left":"20px"},"blockGap":"0px"}},"backgroundColor":"foreground","textColor":"background","className":"wp-sensei-testimonial-pattern","layout":{"type":"constrained","contentSize":"1000px"}} -->
 <div class="wp-block-group alignfull wp-sensei-testimonial-pattern has-background-color has-foreground-background-color has-text-color has-background" style="padding-top:80px;padding-right:20px;padding-bottom:120px;padding-left:20px"><!-- wp:group {"style":{"spacing":{"padding":{"left":"20px","bottom":"0px"}},"border":{"top":{"width":"0px","style":"none"},"right":{"width":"0px","style":"none"},"bottom":{"width":"0px","style":"none"},"left":{"color":"var:preset|color|tertiary","width":"1px"}}},"layout":{"type":"flex","flexWrap":"nowrap"}} -->
-	<div class="wp-block-group" style="border-top-style:none;border-top-width:0px;border-right-style:none;border-right-width:0px;border-bottom-style:none;border-bottom-width:0px;border-left-color:var(--wp--preset--color--tertiary);border-left-width:1px;padding-bottom:0px;padding-left:20px"><!-- wp:heading {"level":5,"style":{"typography":{"textTransform":"uppercase","lineHeight":"1","letterSpacing":"0.01em"},"spacing":{"padding":{"top":"0px"}}},"className":"sensei-pattern-heading","fontFamily":"secondary"} -->
-		<h5 class="sensei-pattern-heading has-secondary-font-family" style="padding-top:0px;letter-spacing:0.01em;line-height:1;text-transform:uppercase"><?php echo esc_html__( 'What students say', 'sensei-lms' ); ?></h5>
+	<div class="wp-block-group" style="border-top-style:none;border-top-width:0px;border-right-style:none;border-right-width:0px;border-bottom-style:none;border-bottom-width:0px;border-left-color:var(--wp--preset--color--tertiary);border-left-width:1px;padding-bottom:0px;padding-left:20px"><!-- wp:heading {"level":2,"style":{"typography":{"textTransform":"uppercase","lineHeight":"1","letterSpacing":"0.01em"},"spacing":{"padding":{"top":"0px"}}},"className":"sensei-pattern-heading","fontSize":"medium","fontFamily":"secondary"} -->
+		<h2 class="sensei-pattern-heading has-secondary-font-family has-medium-font-size" style="padding-top:0px;letter-spacing:0.01em;line-height:1;text-transform:uppercase"><?php echo esc_html__( 'What students say', 'sensei-lms' ); ?></h2>
 		<!-- /wp:heading --></div>
 	<!-- /wp:group -->
 
@@ -193,8 +184,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<p style="font-style:normal;font-weight:700;letter-spacing:0.02em;line-height:1">Christopher Brown</p>
 			<!-- /wp:paragraph -->
 
-			<!-- wp:paragraph {"style":{"typography":{"lineHeight":"1","letterSpacing":"0.02em"},"spacing":{"padding":{"top":"10px"}}}} -->
-			<p style="padding-top:10px;letter-spacing:0.02em;line-height:1"><?php echo esc_html__( 'Founder at BeautifulWriting.com', 'sensei-lms' ); ?></p>
+			<!-- wp:paragraph {"style":{"typography":{"lineHeight":"1","letterSpacing":"0.02em"},"spacing":{"padding":{"top":"10px"},"margin":{"top":"0px"}}}} -->
+			<p style="margin-top:0;padding-top:10px;letter-spacing:0.02em;line-height:1"><?php echo esc_html__( 'Founder at BeautifulWriting.com', 'sensei-lms' ); ?></p>
 			<!-- /wp:paragraph --></div>
 		<!-- /wp:column --></div>
 	<!-- /wp:columns --></div>

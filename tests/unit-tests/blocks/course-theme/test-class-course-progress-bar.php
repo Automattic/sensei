@@ -21,8 +21,8 @@ class Course_Progress_Bar_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 
@@ -32,7 +32,7 @@ class Course_Progress_Bar_Test extends WP_UnitTestCase {
 		];
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		WP_Block_Supports::$block_to_render = null;
 	}
@@ -59,15 +59,15 @@ class Course_Progress_Bar_Test extends WP_UnitTestCase {
 		$block           = new Course_Progress_Bar();
 
 		// check for 0% width
-		$this->assertContains( 'width: 0%', $block->render(), 'The course progress bar width should be 0%.' );
+		$this->assertStringContainsString( 'width: 0%', $block->render(), 'The course progress bar width should be 0%.' );
 
 		// check for 50% width
 		\Sensei_Utils::sensei_start_lesson( $lesson1->ID, get_current_user_id(), true );
-		$this->assertContains( 'width: 50%', $block->render(), 'The course progress bar width should be 50%.' );
+		$this->assertStringContainsString( 'width: 50%', $block->render(), 'The course progress bar width should be 50%.' );
 
 		// check for 100% width
 		\Sensei_Utils::sensei_start_lesson( $lesson2->ID, get_current_user_id(), true );
-		$this->assertContains( 'width: 100%', $block->render(), 'The course progress bar width should be 100%.' );
+		$this->assertStringContainsString( 'width: 100%', $block->render(), 'The course progress bar width should be 100%.' );
 	}
 
 	/**

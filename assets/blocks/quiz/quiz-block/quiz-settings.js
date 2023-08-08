@@ -258,9 +258,9 @@ const QuizSettings = ( {
 									) }
 								/>
 							</PanelRow>
-							<Slot name="SenseiQuizSettings" />
 						</Fragment>
 					) }
+					<Slot name="SenseiQuizSettings" />
 					{ ! hideQuizTimer && (
 						<PanelRow>
 							<QuizTimerPromo />

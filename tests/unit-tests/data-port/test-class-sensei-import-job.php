@@ -19,7 +19,7 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the tests.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		// Make sure CSVs are allowed on WordPress multi-site.
@@ -30,7 +30,7 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	/**
 	 * Tear down after tests.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		delete_site_option( 'upload_filetypes' );

@@ -220,6 +220,227 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'on-sensei-pages', $notices_on_edit_course );
 	}
 
+	public function testGetNoticesToDisplay_WithDateRangeCondtionMet_ShowNotice() {
+		// Arrange.
+		$this->login_as_admin();
+		$notices = [
+			'notice-with-date-range' => [
+				'message'    => 'Important message to show on sites during a specific date range.',
+				'conditions' => [
+					[
+						'type'       => 'date_range',
+						'start_date' => ( new DateTime( '-1 minute' ) )->format( 'c' ),
+						'end_date'   => ( new DateTime( '+1 minute' ) )->format( 'c' ),
+					],
+				],
+			],
+		];
+
+		$instance = $this->getMockInstance( [ 'notices' => $notices ] );
+
+		// Act.
+		$notices_to_display = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayHasKey( 'notice-with-date-range', $notices_to_display );
+	}
+
+	public function testGetNoticesToDisplay_WithDateRangeEndingMinuteAgo_HideNotice() {
+		// Arrange.
+		$this->login_as_admin();
+		$notices = [
+			'notice-with-date-range' => [
+				'message'    => 'Important message to show on sites during a specific date range.',
+				'conditions' => [
+					[
+						'type'       => 'date_range',
+						'start_date' => ( new DateTime( '-2 minutes' ) )->format( 'c' ),
+						'end_date'   => ( new DateTime( '-1 minute' ) )->format( 'c' ),
+					],
+				],
+			],
+		];
+
+		$instance = $this->getMockInstance( [ 'notices' => $notices ] );
+
+		// Act.
+		$notices_to_display = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'notice-with-date-range', $notices_to_display );
+	}
+
+	public function testGetNoticesToDisplay_WithDateRangeStartingInOneMinute_HideNotice() {
+		// Arrange.
+		$this->login_as_admin();
+		$notices = [
+			'notice-with-date-range' => [
+				'message'    => 'Important message to show on sites during a specific date range.',
+				'conditions' => [
+					[
+						'type'       => 'date_range',
+						'start_date' => ( new DateTime( '+1 minute' ) )->format( 'c' ),
+						'end_date'   => ( new DateTime( '+1 year' ) )->format( 'c' ),
+					],
+				],
+			],
+		];
+
+		$instance = $this->getMockInstance( [ 'notices' => $notices ] );
+
+		// Act.
+		$notices_to_display = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'notice-with-date-range', $notices_to_display );
+	}
+
+	public function testGetNoticesToDisplay_WithInvalidStartDateFormat_HideNotice() {
+		// Arrange.
+		$this->login_as_admin();
+		$notices = [
+			'notice-with-date-range' => [
+				'message'    => 'Important message to show on sites during a specific date range.',
+				'conditions' => [
+					[
+						'type'       => 'date_range',
+						'start_date' => ( new DateTime( '-1 year' ) )->format( 'c' ) . ' MoonTime',
+						'end_date'   => ( new DateTime( '+1 year' ) )->format( 'c' ),
+					],
+				],
+			],
+		];
+
+		$instance = $this->getMockInstance( [ 'notices' => $notices ] );
+
+		// Act.
+		$notices_to_display = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'notice-with-date-range', $notices_to_display );
+	}
+
+	public function testGetNoticesToDisplay_WithInvalidEndDateFormat_HideNotice() {
+		// Arrange.
+		$this->login_as_admin();
+		$notices = [
+			'notice-with-date-range' => [
+				'message'    => 'Important message to show on sites during a specific date range.',
+				'conditions' => [
+					[
+						'type'       => 'date_range',
+						'start_date' => ( new DateTime( '-1 year' ) )->format( 'c' ),
+						'end_date'   => ( new DateTime( '+1 year' ) )->format( 'c' ) . ' MoonTime',
+					],
+				],
+			],
+		];
+
+		$instance = $this->getMockInstance( [ 'notices' => $notices ] );
+
+		// Act.
+		$notices_to_display = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'notice-with-date-range', $notices_to_display );
+	}
+
+	public function testGetNoticesToDisplay_WithPartialStartDateInFuture_HideNotice() {
+		// Arrange.
+		$this->login_as_admin();
+		$notices = [
+			'notice-with-date-range' => [
+				'message'    => 'Important message to show on sites during a specific date range.',
+				'conditions' => [
+					[
+						'type'       => 'date_range',
+						'start_date' => ( new DateTime( '+1 hour' ) )->format( 'c' ),
+					],
+				],
+			],
+		];
+
+		$instance = $this->getMockInstance( [ 'notices' => $notices ] );
+
+		// Act.
+		$notices_to_display = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'notice-with-date-range', $notices_to_display );
+	}
+
+	public function testGetNoticesToDisplay_WithPartialStartDateInPast_ShowNotice() {
+		// Arrange.
+		$this->login_as_admin();
+		$notices = [
+			'notice-with-date-range' => [
+				'message'    => 'Important message to show on sites during a specific date range.',
+				'conditions' => [
+					[
+						'type'       => 'date_range',
+						'start_date' => ( new DateTime( '-1 hour' ) )->format( 'c' ),
+					],
+				],
+			],
+		];
+
+		$instance = $this->getMockInstance( [ 'notices' => $notices ] );
+
+		// Act.
+		$notices_to_display = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayHasKey( 'notice-with-date-range', $notices_to_display );
+	}
+
+	public function testGetNoticesToDisplay_WithPartialEndDateInPast_HideNotice() {
+		// Arrange.
+		$this->login_as_admin();
+		$notices = [
+			'notice-with-date-range' => [
+				'message'    => 'Important message to show on sites during a specific date range.',
+				'conditions' => [
+					[
+						'type'     => 'date_range',
+						'end_date' => ( new DateTime( '-1 hour' ) )->format( 'c' ),
+					],
+				],
+			],
+		];
+
+		$instance = $this->getMockInstance( [ 'notices' => $notices ] );
+
+		// Act.
+		$notices_to_display = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'notice-with-date-range', $notices_to_display );
+	}
+
+	public function testGetNoticesToDisplay_WithPartialEndDateInFuture_ShowNotice() {
+		// Arrange.
+		$this->login_as_admin();
+		$notices = [
+			'notice-with-date-range' => [
+				'message'    => 'Important message to show on sites during a specific date range.',
+				'conditions' => [
+					[
+						'type'     => 'date_range',
+						'end_date' => ( new DateTime( '+1 hour' ) )->format( 'c' ),
+					],
+				],
+			],
+		];
+
+		$instance = $this->getMockInstance( [ 'notices' => $notices ] );
+
+		// Act.
+		$notices_to_display = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayHasKey( 'notice-with-date-range', $notices_to_display );
+	}
+
 	/**
 	 * Tests basic has/doesn't have plugins test.
 	 */
@@ -297,6 +518,102 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'with-jetpack', $notices_with_both );
 		$this->assertArrayNotHasKey( 'with-no-woocommerce', $notices_with_both );
 		$this->assertArrayHasKey( 'with-woocommerce', $notices_with_both );
+	}
+
+
+	/**
+	 * Test the `installed_since` condition.
+	 */
+	public function testGetNoticesToDisplay_GivenInstalledSince_ValidatesStrings() {
+		// Arrange.
+		$this->login_as_admin();
+		update_option( 'sensei_installed_at', 10 );
+		$all_notices = [
+			'hide-since-9'  => [
+				'message'    => 'Hide since 9',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => 9,
+					],
+				],
+			],
+			'show-since-10' => [
+				'message'    => 'Show since 10',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => 10,
+					],
+				],
+			],
+			'show-since-11' => [
+				'message'    => 'Show since 11',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => 11,
+					],
+				],
+			],
+		];
+
+		// Act.
+		$instance = $this->getMockInstance( [ 'notices' => $all_notices ] );
+		$notices  = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'hide-since-9', $notices );
+		$this->assertArrayHasKey( 'show-since-10', $notices );
+		$this->assertArrayHasKey( 'show-since-11', $notices );
+	}
+
+
+	/**
+	 * Test the `installed_since` condition with relative times.
+	 */
+	public function testGetNoticesToDisplay_GivenInstalledSinceString_ValidatesStrings() {
+		// Arrange.
+		$this->login_as_admin();
+		update_option( 'sensei_installed_at', time() - 10 );
+		$all_notices = [
+			'show-since-9'  => [
+				'message'    => 'Show since 9',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => '9 seconds',
+					],
+				],
+			],
+			'show-since-10' => [
+				'message'    => 'Show since 10',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => '10 seconds',
+					],
+				],
+			],
+			'hide-since-11' => [
+				'message'    => 'Hide since 11',
+				'conditions' => [
+					[
+						'type'            => 'installed_since',
+						'installed_since' => '11 seconds',
+					],
+				],
+			],
+		];
+
+		// Act.
+		$instance = $this->getMockInstance( [ 'notices' => $all_notices ] );
+		$notices  = $instance->get_notices_to_display();
+
+		// Assert.
+		$this->assertArrayHasKey( 'show-since-9', $notices );
+		$this->assertArrayHasKey( 'show-since-10', $notices );
+		$this->assertArrayNotHasKey( 'hide-since-11', $notices );
 	}
 
 	/**

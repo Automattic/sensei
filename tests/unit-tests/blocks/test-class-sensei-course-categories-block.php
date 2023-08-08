@@ -5,6 +5,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  * Tests for Sensei_Block_Take_Course class.
  *
  * @group course-structure
+ * @covers Sensei_Course_Categories_Block
  */
 class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	/**
@@ -36,7 +37,7 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->factory  = new Sensei_Factory();
 		$this->block    = new Sensei_Course_Categories_Block();
@@ -47,15 +48,13 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $course;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/course-categories' );
 	}
 
 	/**
 	 * The course categories is registered
-	 *
-	 * @covers Sensei_Course_Categories_Block::construct
 	 */
 	public function testBlock_RegisterBlock() {
 		/* Arrange */
@@ -72,22 +71,18 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 
 	/**
 	 * The course categories block renders content.
-	 *
-	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
 	public function testBlock_RenderTheBlockContent() {
 		/* Act */
 		$result = do_blocks( self::CONTENT );
 
 		/* Assert */
-		$this->assertContains( $this->category->name, $result );
-		$this->assertContains( $this->category->slug, $result );
+		$this->assertStringContainsString( $this->category->name, $result );
+		$this->assertStringContainsString( $this->category->slug, $result );
 	}
 
 	/**
 	 * The course categories block is rendering the style and the class attributes from the wrapper.
-	 *
-	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
 	public function testBlockRender_RenderTheAttributesFromTheWrapper() {
 		/* Act */
@@ -95,14 +90,12 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 		$result                  = do_blocks( $content_with_attributes );
 
 		/* Assert */
-		$this->assertContains( 'class="some-class"', $result );
-		$this->assertContains( 'style="some-style"', $result );
+		$this->assertStringContainsString( 'class="some-class"', $result );
+		$this->assertStringContainsString( 'style="some-style"', $result );
 	}
 
 	/**
 	 * Doesn't render the block if it's not running in a course context.
-	 *
-	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
 	public function testRenderBlock_Page_ReturnsEmptyString() {
 		$GLOBALS['post'] = $this->factory->post->create_and_get( [ 'post_name' => 'some post' ] );
@@ -116,8 +109,6 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 
 	/**
 	 * Doesn't render the block if there are no course categories
-	 *
-	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
 	public function testRenderBlockWithNoCourseCategories_Page_ReturnsEmptyString() {
 		/* Arrange */

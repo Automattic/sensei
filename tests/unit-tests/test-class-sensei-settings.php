@@ -26,7 +26,7 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 	/**
 	 * Set up for tests.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		Sensei_Test_Events::reset();
 		$this->resetSimulateSettingsRequest();
 
@@ -36,7 +36,7 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 	/**
 	 * Tear down after tests.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		Sensei_Test_Events::reset();

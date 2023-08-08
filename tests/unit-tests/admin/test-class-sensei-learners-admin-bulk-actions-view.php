@@ -23,19 +23,19 @@ class Sensei_Learners_Admin_Bulk_Actions_View_Test extends WP_UnitTestCase {
 	 */
 	protected $factory;
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 		self::$initial_hook_suffix = $GLOBALS['hook_suffix'] ?? null;
 		$GLOBALS['hook_suffix']    = null;
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 		$GLOBALS['hook_suffix'] = self::$initial_hook_suffix;
 	}
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 		self::resetEnrolmentProviders();
@@ -90,8 +90,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View_Test extends WP_UnitTestCase {
 		$controller         = $this->createMock( Sensei_Learners_Admin_Bulk_Actions_Controller::class );
 		$learner_management = $this->createMock( Sensei_Learner_Management::class );
 
-		$enrolled_courses_query = $this->createMock( WP_Query::class );
-		$enrolled_courses_query->method( 'get_posts' )->willReturn( $enrolled_courses );
+		$enrolled_courses_query        = $this->createMock( WP_Query::class );
+		$enrolled_courses_query->posts = $enrolled_courses;
 
 		$learner = $this->createMock( Sensei_Learner::class );
 		$learner

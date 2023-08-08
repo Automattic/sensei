@@ -1,0 +1,74 @@
+.sensei-carousel {
+	width: 100%;
+	overflow: hidden;
+
+	&__viewport {
+		width: 95%;
+		margin: 0 auto;
+		overflow: visible;
+
+		@media (min-width: $small-screen-break) {
+			width: 80%;
+		}
+
+		@media (min-width: 1250px) {
+			width: 60%;
+		}
+	}
+
+	&__slider {
+		display: flex;
+		margin: 0;
+		transition: 0.5s transform;
+		cursor: grab;
+
+		> li {
+			flex: 0 0 100%;
+			width: 100%;
+			padding: 0 5px;
+			margin: 0;
+			box-sizing: border-box;
+
+			@media (min-width: $small-screen-break) {
+				padding: 0 20px;
+			}
+		}
+
+		img {
+			pointer-events: none;
+		}
+	}
+
+	&--is-dragging &__slider {
+		transition: none;
+	}
+
+	&__controls {
+		margin-top: 40px;
+		display: flex;
+		justify-content: center;
+		gap: 24px;
+	}
+
+	&__control {
+		display: block;
+		width: 42px;
+		height: 42px;
+		background-color: #FFF;
+		border: none;
+		border-radius: 50%;
+		cursor: pointer;
+		color: #1E1E1E;
+		transition: 0.3s opacity;
+
+		&[disabled] {
+			opacity: 0.4;
+			cursor: not-allowed;
+		}
+
+		> svg {
+			width: 24px;
+			height: 24px;
+		}
+	}
+}

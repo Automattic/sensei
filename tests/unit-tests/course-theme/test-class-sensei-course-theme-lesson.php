@@ -20,8 +20,8 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 	}
@@ -67,9 +67,9 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		\Sensei_Course_Theme_Lesson::instance()->init();
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
 
-		$this->assertContains( 'Lesson quiz in progress', $html, 'Should return quiz progress notice' );
-		$this->assertContains( '2 of 3', $html, 'Should return quiz progress notice' );
-		$this->assertContains( 'quiz-page=2', $html, 'Should have the link to quiz page with the first unanswered question' );
+		$this->assertStringContainsString( 'Lesson quiz in progress', $html, 'Should return quiz progress notice' );
+		$this->assertStringContainsString( '2 of 3', $html, 'Should return quiz progress notice' );
+		$this->assertStringContainsString( 'quiz-page=2', $html, 'Should have the link to quiz page with the first unanswered question' );
 
 		// Set second question as unanswered.
 		$user_quiz_answers = [
@@ -82,7 +82,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		\Sensei_Course_Theme_Lesson::instance()->init();
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
 
-		$this->assertContains( 'quiz-page=1', $html, 'Should have the link to quiz page with the first unanswered question' );
+		$this->assertStringContainsString( 'quiz-page=1', $html, 'Should have the link to quiz page with the first unanswered question' );
 
 		// Remove quiz pagination.
 		delete_post_meta( $quiz_id, '_pagination' );
@@ -90,7 +90,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		\Sensei_Course_Theme_Lesson::instance()->init();
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
 
-		$this->assertNotContains( 'quiz-page=', $html, 'Should not have the link to a specific page' );
+		$this->assertStringNotContainsString( 'quiz-page=', $html, 'Should not have the link to a specific page' );
 	}
 
 	/**
@@ -104,7 +104,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
 
-		$this->assertContains( 'Awaiting grade', $html, 'Should return quiz ungraded notice' );
+		$this->assertStringContainsString( 'Awaiting grade', $html, 'Should return quiz ungraded notice' );
 	}
 
 	/**
@@ -119,7 +119,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
 
-		$this->assertContains( 'You require <strong>80</strong>% to pass this lesson\'s quiz. Your grade is <strong>0</strong>%.', $html, 'Should return quiz failed notice' );
+		$this->assertStringContainsString( 'You require <strong>80</strong>% to pass this lesson\'s quiz. Your grade is <strong>0</strong>%.', $html, 'Should return quiz failed notice' );
 	}
 
 	/**
@@ -134,7 +134,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
 
-		$this->assertContains( 'Your Grade: <strong class="sensei-course-theme-lesson-quiz-notice__grade">0</strong>%', $html, 'Should return quiz graded notice' );
+		$this->assertStringContainsString( 'Your Grade: <strong class="sensei-course-theme-lesson-quiz-notice__grade">0</strong>%', $html, 'Should return quiz graded notice' );
 	}
 
 	/**
@@ -159,7 +159,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
-		$this->assertRegExp( '/Please complete the .* to view this lesson content/', $html, 'Should return prerequisite notice' );
+		$this->assertMatchesRegularExpression( '/Please complete the .* to view this lesson content/', $html, 'Should return prerequisite notice' );
 	}
 
 	/**
@@ -184,7 +184,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
-		$this->assertRegExp( '/You will be able to view this lesson once the .* are completed and graded./', $html, 'Should return ungraded prerequisite notice' );
+		$this->assertMatchesRegularExpression( '/You will be able to view this lesson once the .* are completed and graded./', $html, 'Should return ungraded prerequisite notice' );
 	}
 
 	/**
@@ -213,7 +213,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
-		$this->assertRegExp( '/You must first complete .* before taking this course./', $html, 'Should return course prerequisite notice' );
+		$this->assertMatchesRegularExpression( '/You must first complete .* before taking this course./', $html, 'Should return course prerequisite notice' );
 	}
 
 	/**
@@ -228,7 +228,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
-		$this->assertContains( 'Please register or sign in to access the course content.', $html, 'Should return logged out notice' );
+		$this->assertStringContainsString( 'Please register or sign in to access the course content.', $html, 'Should return logged out notice' );
 	}
 
 	/**
@@ -249,7 +249,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
-		$this->assertContains( 'Register or sign in to take this lesson.', $html, 'Should return logged out preview notice' );
+		$this->assertStringContainsString( 'Register or sign in to take this lesson.', $html, 'Should return logged out preview notice' );
 	}
 
 	/**
@@ -264,7 +264,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
-		$this->assertContains( 'Please register for this course to access the content.', $html, 'Should return not enrolled notice' );
+		$this->assertStringContainsString( 'Please register for this course to access the content.', $html, 'Should return not enrolled notice' );
 	}
 
 	/**
@@ -285,7 +285,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
-		$this->assertContains( 'Register for this course to take this lesson.', $html, 'Should return not enrolled preview notice' );
+		$this->assertStringContainsString( 'Register for this course to take this lesson.', $html, 'Should return not enrolled preview notice' );
 	}
 
 	/**

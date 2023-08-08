@@ -7,28 +7,28 @@
 
 /**
  * Class for testing Sensei_PostTypes.
+ *
+ * @covers Sensei_PostTypes
  */
 class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 		$this->factory = new Sensei_Factory();
 	}
 
 	/**
 	 * Tear down function.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->factory->tearDown();
 		parent::tearDown();
 	}
 
 	/**
 	 * Test actions are fired on shutdown.
-	 *
-	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testFireActionsOnShutdown() {
 		$this->assertNotFalse(
@@ -41,8 +41,6 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 
 	/**
 	 * Test action firing on first publish.
-	 *
-	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testFireActionOnFirstPublish() {
 		$this->factory->course->create();
@@ -52,8 +50,6 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 
 	/**
 	 * Test action fires for all Sensei post types.
-	 *
-	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testFireActionForSenseiPostTypes() {
 		$this->factory->course->create();
@@ -74,8 +70,6 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 
 	/**
 	 * Ensure intitial publish action is fired after other hooks.
-	 *
-	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testFireActionAfterHooks() {
 		add_action(
@@ -106,8 +100,6 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	/**
 	 * Ensure initial publish action is not called for REST API requests. See
 	 * documentation for Sensei_Course::setup_initial_publish_action
-	 *
-	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testFireNoActionOnRestApiRequest() {
 		$this->assertNotFalse(
@@ -133,8 +125,6 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	 * Ensure post is not marked as "already published" on metabox update
 	 * request. See documentation for
 	 * Sensei_Course::setup_initial_publish_action
-	 *
-	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testNoMarkPublishedOnMetaboxUpdate() {
 		$_REQUEST['meta-box-loader'] = '1';
@@ -171,8 +161,6 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 
 	/**
 	 * Test action fires for no non-Sensei post types.
-	 *
-	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testFireNoActionForNonSenseiPostType() {
 		$this->factory->post->create();
@@ -182,8 +170,6 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 
 	/**
 	 * Test no action firing on second publish.
-	 *
-	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testFireNoActionOnSecondPublish() {
 		$course_id = $this->factory->course->create();
@@ -213,8 +199,6 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 
 	/**
 	 * Test no action firing on existing post second publish.
-	 *
-	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testFireNoActionOnExistingPostSecondPublish() {
 		$course_id = $this->factory->course->create();
@@ -247,8 +231,6 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 
 	/**
 	 * Test no action firing on update.
-	 *
-	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testFireNoActionOnExistingCourseUpdate() {
 		$course_id = $this->factory->course->create();

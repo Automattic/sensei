@@ -21,13 +21,13 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the tests.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		Sensei_Test_Events::reset();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->set_data_port_jobs( [] );
@@ -59,8 +59,8 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 		Sensei_Data_Port_Manager::instance()->persist();
 
 		$json = get_option( Sensei_Data_Port_Manager::OPTION_NAME );
-		$this->assertRegExp( '/.*user_id.*1234/', $json, 'User id should be stored in JSON.' );
-		$this->assertRegExp( '/.*handler.*Sensei_Import_Job/', $json, 'Handler should equal to Sensei_Import_Job.' );
+		$this->assertMatchesRegularExpression( '/.*user_id.*1234/', $json, 'User id should be stored in JSON.' );
+		$this->assertMatchesRegularExpression( '/.*handler.*Sensei_Import_Job/', $json, 'Handler should equal to Sensei_Import_Job.' );
 	}
 
 	public function testCancelledJobsAreRemoved() {

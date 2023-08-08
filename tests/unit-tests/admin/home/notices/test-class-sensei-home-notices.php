@@ -77,6 +77,99 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 		parent::tear_down();
 	}
 
+	public function testAddReviewNotice_GivenUnderprivUser_ReturnsEmptyArray() {
+		// Arrange.
+		update_option( 'sensei_installed_at', strtotime( '-1 year' ) );
+		$remote_data_mock = $this->getRemoteDataMock( $this->getStandardResponse() );
+		$notices          = $this->getNoticesMock( $remote_data_mock );
+		$user             = $this->factory->user->create_and_get( [ 'role' => 'editor' ] );
+		wp_set_current_user( $user->ID );
+
+		// Act.
+		$notices = $notices->add_review_notice( [] );
+
+		// Assert.
+		$this->assertEmpty( $notices );
+	}
+
+
+	public function testAddReviewNotice_GivenDisabledRemoteAPI_ReturnsEmptyArray() {
+		// Arrange.
+		update_option( 'sensei_installed_at', strtotime( '-1 year' ) );
+		$remote_data_mock = $this->getRemoteDataMock( [] );
+		$notices          = $this->getNoticesMock( $remote_data_mock );
+		$user             = $this->factory->user->create_and_get( [ 'role' => 'administrator' ] );
+		grant_super_admin( $user->ID );
+		wp_set_current_user( $user->ID );
+
+		// Act.
+		$notices = $notices->add_review_notice( [] );
+
+		// Assert.
+		$this->assertEmpty( $notices );
+	}
+
+	public function testAddReviewNotice_GivenAdministrator_ReturnsCorrectNotices() {
+		// Arrange.
+		$notice_id = 'sensei_home_sensei_review';
+		update_option( 'sensei_installed_at', strtotime( '-1 year' ) );
+		$remote_data_mock = $this->getRemoteDataMock( $this->getStandardResponse() );
+		$notices          = $this->getNoticesMock( $remote_data_mock );
+		$user             = $this->factory->user->create_and_get( [ 'role' => 'administrator' ] );
+		grant_super_admin( $user->ID );
+		wp_set_current_user( $user->ID );
+
+		// Act.
+		$notices = $notices->add_review_notice( [] );
+
+		// Assert.
+		$this->assertArrayHasKey( $notice_id, $notices );
+		$this->assertStringContainsString( 'Are you enjoying', $notices[ $notice_id ]['message'] );
+		$this->assertEquals( 'Yes', $notices[ $notice_id ]['actions'][0]['label'] );
+		$this->assertEquals( 'No', $notices[ $notice_id ]['actions'][1]['label'] );
+	}
+
+	public function testAddReviewNotice_GivenAdministratorYesResponse_ReturnsReviewAnswer() {
+		// Arrange.
+		$notice_id = 'sensei_home_sensei_review_yes';
+		update_option( 'sensei_installed_at', strtotime( '-1 year' ) );
+		$remote_data_mock = $this->getRemoteDataMock( $this->getStandardResponse() );
+		$notices          = $this->getNoticesMock( $remote_data_mock );
+		$user             = $this->factory->user->create_and_get( [ 'role' => 'administrator' ] );
+		grant_super_admin( $user->ID );
+		wp_set_current_user( $user->ID );
+
+		// Act.
+		$notices = $notices->add_review_notice( [] );
+
+		// Assert.
+		$this->assertArrayHasKey( $notice_id, $notices );
+		$this->assertStringContainsString( 'Great to hear', $notices[ $notice_id ]['message'] );
+		$this->assertEquals( 'https://review_url', $notices[ $notice_id ]['info_link']['url'] );
+		$this->assertEquals( 'sensei_home_sensei_review', $notices[ $notice_id ]['parent_id'] );
+	}
+
+
+	public function testAddReviewNotice_GivenAdministratorNoResponse_ReturnsFeedbackAnswer() {
+		// Arrange.
+		$notice_id = 'sensei_home_sensei_review_no';
+		update_option( 'sensei_installed_at', strtotime( '-1 year' ) );
+		$remote_data_mock = $this->getRemoteDataMock( $this->getStandardResponse() );
+		$notices          = $this->getNoticesMock( $remote_data_mock );
+		$user             = $this->factory->user->create_and_get( [ 'role' => 'administrator' ] );
+		grant_super_admin( $user->ID );
+		wp_set_current_user( $user->ID );
+
+		// Act.
+		$notices = $notices->add_review_notice( [] );
+
+		// Assert.
+		$this->assertArrayHasKey( $notice_id, $notices );
+		$this->assertStringContainsString( 'Let us know how we can improve your experience', $notices[ $notice_id ]['message'] );
+		$this->assertEquals( 'https://feedback_url', $notices[ $notice_id ]['info_link']['url'] );
+		$this->assertEquals( 'sensei_home_sensei_review', $notices[ $notice_id ]['parent_id'] );
+	}
+
 	public function testAddUpdateNotices_GivenUnderprivUser_ReturnsEmptyArray() {
 		// Arrange.
 		$remote_data_mock = $this->getRemoteDataMock( $this->getStandardResponse() );
@@ -183,6 +276,11 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 					],
 				],
 			],
+			'reviews'  => [
+				'show_after'   => '10 days',
+				'feedback_url' => 'https://feedback_url',
+				'review_url'   => 'https://review_url',
+			],
 		];
 	}
 
@@ -207,7 +305,7 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 	/**
 	 * The remote data API mock builder.
 	 *
-	 * @param mixed $response Resonse from remote data API.
+	 * @param mixed $response Response from remote data API.
 	 *
 	 * @return Sensei_Home_Remote_Data_API
 	 */

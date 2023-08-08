@@ -5,7 +5,7 @@
 	flex-wrap: wrap;
 	box-sizing: border-box;
 
-	@media (min-width: $break-medium)  {
+	@media (min-width: $break-medium) {
 		justify-content: space-between;
 	}
 
@@ -23,7 +23,7 @@
 		min-width: 232px;
 		opacity: 0.4;
 
-		@media (min-width: $break-medium)  {
+		@media (min-width: $break-medium) {
 			width: 50%;
 		}
 	}

@@ -2,7 +2,7 @@
 
 class Sensei_Unsupported_Themes_Test extends WP_UnitTestCase {
 
-	public function tearDown() {
+	public function tearDown(): void {
 		Sensei_Unsupported_Themes::reset();
 
 		parent::tearDown();

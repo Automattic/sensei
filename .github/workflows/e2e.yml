@@ -1,0 +1,71 @@
+name: E2E
+on:
+    pull_request:
+    workflow_call:
+env:
+    CI: true
+
+# Cancels all previous workflow runs for pull requests that have not completed.
+concurrency:
+    # The concurrency group contains the workflow name and the branch name for pull requests
+    # or the commit hash for any other events.
+    group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+    cancel-in-progress: true
+
+jobs:
+    test:
+        name: E2E Tests
+        timeout-minutes: 15
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - uses: actions/cache@v3
+              with:
+                  path: ~/.npm/
+                  key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+            - uses: actions/cache@v3
+              with:
+                  path: node_modules/
+                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+     
+
+            - name: Install PHP dependencies
+              uses: ./.github/actions/install-php
+
+            - name: Install JS dependencies
+              run: npm ci
+
+            - name: Build assets
+              run: npm run build:assets
+
+            - name: Install Playwright
+              run: npx playwright install --with-deps chromium
+
+            - name: Start wp-env
+              run: npm run wp-env start 
+
+            - name: Run Playwright tests with @setup annotation
+              run: CI=true npm run test:e2e:setup-only
+
+            - name: Run Playwright tests
+              run: CI=true npm run test:e2e
+
+            - name: Archive report
+              uses: actions/upload-artifact@v3
+              if: failure()
+              with:
+                  name: playwright-report
+                  path: playwright-report/
+                  retention-days: 30
+                  if-no-files-found: ignore
+            - name: Slack Notification on Failure
+              uses: rtCamp/action-slack-notify@v2
+              if: ${{ failure() && github.event_name == 'push' }}
+              env:
+                SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
+                SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+                SLACK_TITLE: 'E2E Testing'
+                SLACK_COLOR: 'error'
+                SLACK_FOOTER: ''

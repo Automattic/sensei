@@ -22,17 +22,17 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the tests.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		// Make sure CSVs are allowed on WordPress multi-site.
 		update_site_option( 'upload_filetypes', 'csv' );
 
-		return parent::setUp();
+		parent::setUp();
 	}
 
 	/**
 	 * Tear down after tests.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		delete_site_option( 'upload_filetypes' );

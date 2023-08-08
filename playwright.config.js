@@ -10,7 +10,7 @@ const { devices } = require( '@playwright/test' );
  */
 const config = {
 	testDir: './tests/e2e-playwright/specs/',
-	testMatch: '**/*.spec.js',
+	testMatch: /.*\.spec\.(js|ts)$/,
 	/* Maximum time one test can run for. */
 	timeout: 30 * 1000, // 30 seconds.
 	globalSetup: require.resolve(
@@ -28,7 +28,7 @@ const config = {
 	/* Retry on CI only */
 	retries: process.env.CI ? 2 : 0,
 	/* Opt out of parallel tests on CI. */
-	workers: 1,
+	workers: process.env.CI ? 1 : 2,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter: process.env.CI ? 'github' : 'list',
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -42,6 +42,7 @@ const config = {
 		trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
 		screenshot: 'only-on-failure',
 		video: 'on-first-retry',
+		viewport: { width: 1280, height: 1200 },
 	},
 
 	/* Configure projects for major browsers */

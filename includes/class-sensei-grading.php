@@ -426,7 +426,7 @@ class Sensei_Grading {
 		/**
 		 * Filter fires inside Sensei_Grading::count_statuses
 		 *
-		 * Alter the the post_in array to determine which posts the
+		 * Alter the post_in array to determine which posts the
 		 * comment query should be limited to.
 		 *
 		 * @since 1.8.0
@@ -434,26 +434,31 @@ class Sensei_Grading {
 		 */
 		$args = apply_filters( 'sensei_count_statuses_args', $args );
 
-		if ( 'course' == $args['type'] ) {
+		if ( 'course' === $args['type'] ) {
 			$type = 'sensei_course_status';
 		} else {
 			$type = 'sensei_lesson_status';
 		}
-		$cache_key = 'sensei-' . $args['type'] . '-statuses';
+
+		$cache_key = 'sensei-statuses-' . md5( wp_json_encode( $args ) );
 
 		$query = "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s ";
 
-		// Restrict to specific posts
+		// Restrict to specific posts.
 		if ( isset( $args['post__in'] ) && ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
 			$query .= ' AND comment_post_ID IN (' . implode( ',', array_map( 'absint', $args['post__in'] ) ) . ')';
 		} elseif ( ! empty( $args['post_id'] ) ) {
 			$query .= $wpdb->prepare( ' AND comment_post_ID = %d', $args['post_id'] );
 		}
-		// Restrict to specific users
+		// Restrict to specific users.
 		if ( isset( $args['user_id'] ) && is_array( $args['user_id'] ) ) {
 			$query .= ' AND user_id IN (' . implode( ',', array_map( 'absint', $args['user_id'] ) ) . ')';
 		} elseif ( ! empty( $args['user_id'] ) ) {
 			$query .= $wpdb->prepare( ' AND user_id = %d', $args['user_id'] );
+		}
+		// Restrict to specific users.
+		if ( isset( $args['query'] ) ) {
+			$query .= $args['query'];
 		}
 		$query .= ' GROUP BY comment_approved';
 
@@ -732,13 +737,14 @@ class Sensei_Grading {
 		if ( in_array( $lesson_status, [ 'passed', 'graded' ], true ) ) {
 
 			/**
-			 * Summary.
+			 * Fires when a user completes a lesson.
 			 *
-			 * Description.
+			 * This hook is fired when a user passes a quiz or their quiz submission was graded.
+			 * Therefore the corresponding lesson is marked as complete.
 			 *
 			 * @since 1.7.0
 			 *
-			 * @param int  $user_id
+			 * @param int $user_id
 			 * @param int $quiz_lesson_id
 			 */
 			do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );

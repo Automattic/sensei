@@ -13,7 +13,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 
 	private $controller;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
@@ -30,7 +30,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	/**
 	 * Clean up after all tests.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}

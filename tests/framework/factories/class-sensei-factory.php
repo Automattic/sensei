@@ -85,6 +85,13 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	public $message;
 
 	/**
+	 * The email post type factory.
+	 *
+	 * @var Sensei_UnitTest_Factory_For_Email
+	 */
+	public $email;
+
+	/**
 	 * constructor function
 	 *
 	 * This sets up some basic demo data
@@ -100,6 +107,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-message.php';
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-question-category.php';
 		require_once dirname( __FILE__ ) . '/class-sensei-unittest-factory-for-course-category.php';
+		require_once dirname( __FILE__ ) . '/class-sensei-unittest-factory-for-email.php';
 
 		$this->course            = new WP_UnitTest_Factory_For_Course( $this );
 		$this->lesson            = new WP_UnitTest_Factory_For_Lesson( $this );
@@ -110,6 +118,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		$this->message           = new WP_UnitTest_Factory_For_Message( $this );
 		$this->question_category = new WP_UnitTest_Factory_For_Question_Category( $this );
 		$this->course_category   = new Sensei_UnitTest_Factory_For_Course_Category( $this );
+		$this->email             = new Sensei_UnitTest_Factory_For_Email( $this );
 	}
 
 	/**
@@ -147,7 +156,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	/**
 	 * Teardown data that the factory creates.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		if ( empty( $this->basic_test_course_ids ) ) {
 			return;
 		}

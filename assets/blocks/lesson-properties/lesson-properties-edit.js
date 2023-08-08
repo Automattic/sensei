@@ -9,7 +9,7 @@ import classnames from 'classnames';
 import { useCallback } from '@wordpress/element';
 import { useEntityProp } from '@wordpress/core-data';
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, SelectControl } from '@wordpress/components';
+import { PanelBody, SelectControl, Notice } from '@wordpress/components';
 import { __, _n } from '@wordpress/i18n';
 
 /**
@@ -17,6 +17,8 @@ import { __, _n } from '@wordpress/i18n';
  */
 import NumberControl from '../editor-components/number-control';
 import { DIFFICULTIES } from './constants';
+
+const courseThemeEnabled = window?.sensei?.courseThemeEnabled || false;
 
 const LessonPropertiesEdit = ( props ) => {
 	const { className } = props;
@@ -81,43 +83,52 @@ const LessonPropertiesEdit = ( props ) => {
 				</InspectorControls>
 			) }
 
-			<div className={ className }>
-				<span
-					className={ classnames(
-						'wp-block-sensei-lms-lesson-properties__length',
-						{ disabled: ! length }
+			{ courseThemeEnabled ? (
+				<Notice status="warning" isDismissible={ false }>
+					{ __(
+						'Since Learning Mode is activated, use this block to add the properties to each lesson and make sure your Lesson template contains the Lesson Properties block.',
+						'sensei-lms'
 					) }
-				>
-					{ __( 'Length', 'sensei-lms' ) +
-						': ' +
-						length +
-						' ' +
-						_n( 'minute', 'minutes', length, 'sensei-lms' ) }
-				</span>
+				</Notice>
+			) : (
+				<div className={ className }>
+					<span
+						className={ classnames(
+							'wp-block-sensei-lms-lesson-properties__length',
+							{ disabled: ! length }
+						) }
+					>
+						{ __( 'Length', 'sensei-lms' ) +
+							': ' +
+							length +
+							' ' +
+							_n( 'minute', 'minutes', length, 'sensei-lms' ) }
+					</span>
 
-				<span
-					className={ classnames(
-						'wp-block-sensei-lms-lesson-properties__separator',
-						{ disabled: ! length || ! difficulty }
-					) }
-				>
-					|
-				</span>
+					<span
+						className={ classnames(
+							'wp-block-sensei-lms-lesson-properties__separator',
+							{ disabled: ! length || ! difficulty }
+						) }
+					>
+						|
+					</span>
 
-				<span
-					className={ classnames(
-						'wp-block-sensei-lms-lesson-properties__difficulty',
-						{ disabled: ! difficulty }
-					) }
-				>
-					{ __( 'Difficulty', 'sensei-lms' ) +
-						': ' +
-						DIFFICULTIES.find(
-							( lessonDifficulty ) =>
-								difficulty === lessonDifficulty.value
-						)?.label }
-				</span>
-			</div>
+					<span
+						className={ classnames(
+							'wp-block-sensei-lms-lesson-properties__difficulty',
+							{ disabled: ! difficulty }
+						) }
+					>
+						{ __( 'Difficulty', 'sensei-lms' ) +
+							': ' +
+							DIFFICULTIES.find(
+								( lessonDifficulty ) =>
+									difficulty === lessonDifficulty.value
+							)?.label }
+					</span>
+				</div>
+			) }
 		</>
 	);
 };

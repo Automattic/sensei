@@ -14,6 +14,8 @@ import classnames from 'classnames';
 import SenseiCircleLogo from '../images/sensei-circle-logo.svg';
 import Link from './link';
 
+const hiddenClassName = 'sensei-notice--is-hidden';
+
 /**
  * Component to render an action of a given notice.
  *
@@ -21,21 +23,29 @@ import Link from './link';
  * @param {Object} props.action The action to render.
  */
 const NoticeAction = ( { action } ) => {
-	if ( ! action || ! action.label || ! action.url ) {
+	if ( ! action || ! action.label || ( ! action.url && ! action.tasks ) ) {
 		return null;
 	}
 
 	const isPrimary = action.primary ?? true;
 
 	const buttonClass = isPrimary ? 'button-primary' : 'button-secondary';
+
+	const extraProps = {};
+	if ( action.tasks ) {
+		extraProps[ 'data-sensei-notice-tasks' ] = JSON.stringify(
+			action.tasks
+		);
+	}
 	return (
 		<a
 			href={ action.url }
 			target={ action.target ?? '_self' }
 			rel="noopener noreferrer"
 			className={ classnames( 'button', buttonClass ) }
+			{ ...extraProps }
 		>
-			{ action.label }
+			<RawHTML>{ action.label }</RawHTML>
 		</a>
 	);
 };
@@ -69,7 +79,17 @@ const NoticeInfoLink = ( { infoLink } ) => {
 	if ( ! infoLink ) {
 		return null;
 	}
-	return <Link label={ infoLink.label } url={ infoLink.url } />;
+	const dataSet = {};
+	if ( infoLink.tasks ) {
+		dataSet[ 'sensei-notice-tasks' ] = JSON.stringify( infoLink.tasks );
+	}
+	return (
+		<Link
+			label={ infoLink.label }
+			url={ infoLink.url }
+			dataSet={ dataSet }
+		/>
+	);
 };
 
 /**
@@ -83,20 +103,23 @@ const NoticeInfoLink = ( { infoLink } ) => {
 const Notice = ( { noticeId, notice, dismissNonce } ) => {
 	let noticeClass = '';
 	if ( !! notice.level ) {
-		noticeClass = 'sensei-notice-' + notice.level;
+		noticeClass = 'sensei-notice--' + notice.level;
 	}
 
 	const isDismissible = notice.dismissible && dismissNonce;
+	const { parent_id: parentId } = notice;
 
 	const containerProps = {
 		className: classnames( 'notice', 'sensei-notice', noticeClass, {
 			'is-dismissible': isDismissible,
+			[ hiddenClassName ]: !! parentId,
 		} ),
+		'data-sensei-notice-id': noticeId,
 	};
 
 	if ( isDismissible ) {
 		containerProps[ 'data-dismiss-action' ] = 'sensei_dismiss_notice';
-		containerProps[ 'data-dismiss-notice' ] = noticeId;
+		containerProps[ 'data-dismiss-notice' ] = parentId ?? noticeId;
 		containerProps[ 'data-dismiss-nonce' ] = dismissNonce;
 	}
 
@@ -107,11 +130,9 @@ const Notice = ( { noticeId, notice, dismissNonce } ) => {
 
 	return (
 		<div { ...containerProps }>
-			<SenseiCircleLogo className="sensei-notice__icon" />
-			<div className="sensei-notice__wrapper">
-				<div className="sensei-notice__content">
-					<RawHTML>{ message }</RawHTML>
-				</div>
+			<div className="sensei-notice__content">
+				<SenseiCircleLogo className="sensei-notice__icon" />
+				<RawHTML>{ message }</RawHTML>
 			</div>
 			<NoticeInfoLink infoLink={ notice.info_link } />
 			<NoticeActions actions={ notice.actions } />

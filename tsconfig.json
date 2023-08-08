@@ -1,0 +1,45 @@
+{
+    /** 
+    File totally inspired by the Gutenberg tsconfig.json, which can be found in: 
+    https://github.com/WordPress/gutenberg/blob/1b21f86cb6518d0f3fab240a777f4fb5c29c9c2d/tsconfig.base.json
+    */ 
+    "compilerOptions": {
+        "skipLibCheck": true,
+        "allowJs": true,
+        "checkJs": false, /** We require a @tscheck annotation to force checking a .js file */
+        "allowSyntheticDefaultImports": true,
+        "jsx": "preserve",
+        "target": "esnext",
+        "module": "esnext",
+        "lib": [ "dom", "esnext" ],
+        "declaration": true,
+        "declarationMap": true,
+        "composite": true,
+        "noEmit": true,
+        "isolatedModules": true,
+
+        /* Strict Type-Checking Options */
+        "strict": true,
+
+        /* Additional Checks */
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "importsNotUsedAsValues": "error",
+
+        /* Module Resolution Options */
+        "moduleResolution": "node",
+
+        /* This needs to be false so our types are possible to consume without setting this */
+        "esModuleInterop": false,
+        "resolveJsonModule": true,
+
+        "typeRoots": [ "./typings", "./node_modules/@types" ],
+    },
+    "include": [
+        "assets/**/*.js",
+        "assets/**/*.ts",
+        "assets/**/*.json"
+    ]
+}

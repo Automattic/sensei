@@ -7,7 +7,7 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 	 */
 	private $post_id;
 
-	public function setUp() {
+	public function setUp(): void {
 		global $post, $page, $wp_query, $wp_the_query;
 
 		parent::setUp();
@@ -100,7 +100,7 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single-course.php' );
 		$output   = $renderer->render();
 
-		$this->assertNotContains(
+		$this->assertStringNotContainsString(
 			$this->get_fake_title(),
 			$output,
 			'Post title should not be rendered'

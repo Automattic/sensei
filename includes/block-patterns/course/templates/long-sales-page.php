@@ -1,8 +1,10 @@
 <?php
 /**
- * Long Sales Page pattern content.
+ * Deprecated Long Sales Page pattern content.
+ * Remove after the course_outline_ai feature is released.
  *
  * @package sensei-lms
+ * @deprecated 4.16.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -75,8 +77,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:spacer -->
 
 <!-- wp:group {"align":"full","style":{"spacing":{"padding":{"bottom":"120px","top":"120px","right":"90px","left":"90px"}},"color":{"background":"#121c1c","text":"#ffffff"}},"className":"sensei-pattern-group","layout":{"inherit":true}} -->
-<div class="wp-block-group alignfull sensei-pattern-group has-text-color has-background" style="background-color:#121c1c;color:#ffffff;padding-top:120px;padding-right:90px;padding-bottom:120px;padding-left:90px"><!-- wp:heading -->
-<h2><?php esc_html_e( 'What you will learn to master', 'sensei-lms' ); ?></h2>
+<div class="wp-block-group alignfull sensei-pattern-group has-text-color has-background" style="background-color:#121c1c;color:#ffffff;padding-top:120px;padding-right:90px;padding-bottom:120px;padding-left:90px">
+<!-- wp:heading {"align":"wide"} -->
+<h2 class="wp-block-heading alignwide"><?php esc_html_e( 'What you will learn to master', 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->
 
 <!-- wp:spacer {"height":16} -->

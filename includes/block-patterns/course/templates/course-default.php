@@ -1,8 +1,10 @@
 <?php
 /**
- * Default pattern content.
+ * Deprecated Default pattern content.
+ * Remove after the course_outline_ai feature is released.
  *
  * @package sensei-lms
+ * @deprecated 4.16.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

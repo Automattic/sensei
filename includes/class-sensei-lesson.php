@@ -542,7 +542,7 @@ class Sensei_Lesson {
 					$lesson_status
 				);
 
-				$in_module_lessons = array_merge( $in_module_lessons, $module_lessons_query->get_posts() );
+				$in_module_lessons = array_merge( $in_module_lessons, $module_lessons_query->posts );
 			}
 
 			$lessons = array_merge( $in_module_lessons, $lessons );
@@ -806,34 +806,48 @@ class Sensei_Lesson {
 	 * @param int $post_id The post id.
 	 * @return string|null The URL string or null if the post does not have one.
 	 */
-	private function get_featured_video_media_from_blocks( $post_id ) {
+	private function get_featured_video_media_from_blocks( int $post_id ): ?string {
 		$post   = get_post( $post_id );
 		$blocks = parse_blocks( $post->post_content );
-		foreach ( $blocks as $block ) {
-			if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
-				if ( 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
-					$block = $block['innerBlocks'][0];
-				}
-				if ( 'core/video' === $block['innerBlocks'][0]['blockName'] ) {
-					if ( $block['innerBlocks'][0]['attrs']['videoPressClassNames'] ) {
-						return $block['attrs']['poster'];
-					} else {
-						return wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) );
-					}
-				}
-				if ( 'core/embed' === $block['innerBlocks'][0]['blockName'] ) {
-					$url = $block['innerBlocks'][0]['attrs']['url'];
-					if ( 'youtube' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
-						return $this->get_youtube_thumbnail( $url );
-					} elseif ( 'vimeo' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
-						return $this->get_vimeo_thumbnail( $url );
-					} elseif ( 'videopress' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
-						return $this->get_videopress_thumbnail( $url );
-					}
-				}
-			}
+
+		if ( 0 === count( $blocks ) || 'sensei-lms/featured-video' !== $blocks[0]['blockName'] ) {
 			return null;
 		}
+
+		$block = $blocks[0];
+
+		if ( ! empty( $block['innerBlocks'][0]['blockName'] ) && 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
+			$block = $block['innerBlocks'][0];
+		}
+
+		if ( empty( $block['innerBlocks'][0]['blockName'] ) ) {
+			return null;
+		}
+
+		if ( 'core/video' === $block['innerBlocks'][0]['blockName'] ) {
+			if ( ! empty( $block['innerBlocks'][0]['attrs']['videoPressClassNames'] ) ) {
+				return $block['attrs']['poster'];
+			}
+
+			return empty( $block['innerBlocks'][0]['attrs']['id'] ) ? null : wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) );
+		}
+
+		if ( 'core/embed' === $block['innerBlocks'][0]['blockName'] ) {
+			$url = $block['innerBlocks'][0]['attrs']['url'];
+
+			switch ( $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
+				case 'youtube':
+					return $this->get_youtube_thumbnail( $url );
+				case 'vimeo':
+					return $this->get_vimeo_thumbnail( $url );
+				case 'videopress':
+					return $this->get_videopress_thumbnail( $url );
+				default:
+					return null;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -1059,7 +1073,6 @@ class Sensei_Lesson {
 	 * @access private
 	 * @param string $post_key (default: '')
 	 * @param int    $post_id (default: 0)
-	 * @return int|bool meta id or saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		/*
@@ -1103,7 +1116,7 @@ class Sensei_Lesson {
 		}
 
 		// Check if the user has permission to edit the target course.
-		if ( 'lesson_course' === $post_key && ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $new_meta_value ) ) {
+		if ( 'lesson_course' === $post_key && ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $new_meta_value ) && '' !== $new_meta_value ) {
 			return;
 		}
 
@@ -2618,6 +2631,20 @@ class Sensei_Lesson {
 		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
 			$this->enqueue_scripts_meta_box_quiz_editor();
 		}
+
+		/**
+		 * Enqueue scripts for the quiz question AI upsell if the the feature is not available.
+		 *
+		 * @since 4.14.0
+		 * @hook sensei_quiz_question_ai_upsell_scripts
+		 *
+		 * @param {bool} $enqueue_scripts Whether to enqueue the scripts. Default false.
+		 *
+		 * @return {bool} Whether to enqueue the scripts.
+		 */
+		if ( ! apply_filters( 'sensei_ai_quiz_generation_available', false ) ) {
+			Sensei()->assets->enqueue( 'sensei-quiz-question-ai-upsell', 'js/admin/lesson-ai.js', [], true );
+		}
 	}
 
 	/**
@@ -3630,12 +3657,15 @@ class Sensei_Lesson {
 		$questions_array = $questions;
 
 		// If viewing quiz on frontend or in grading then only single questions must be shown.
-		$selected_questions = false;
+		$selected_questions = [];
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Input used for comparisons.
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it.
-			$selected_questions = Sensei()->quiz_submission_repository->get_question_ids( $quiz_id, $user_id );
+			$submission         = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			$selected_questions = $submission
+				? Sensei()->quiz_submission_repository->get_question_ids( $submission->get_id() )
+				: [];
 
 			if ( $selected_questions ) {
 				// Fetch each question in the order in which they were asked.
@@ -4608,12 +4638,8 @@ class Sensei_Lesson {
 	 */
 	public static function is_prerequisite_complete( $lesson_id, $user_id ) {
 
-		if ( empty( $lesson_id ) || empty( $user_id )
-		|| 'lesson' != get_post_type( $lesson_id )
-		|| ! is_a( get_user_by( 'id', $user_id ), 'WP_User' ) ) {
-
+		if ( empty( $lesson_id ) || ( 'lesson' !== get_post_type( $lesson_id ) ) ) {
 			return false;
-
 		}
 
 		$pre_requisite_id = (string) self::get_lesson_prerequisite_id( $lesson_id );
@@ -4624,6 +4650,10 @@ class Sensei_Lesson {
 
 			return true;
 
+		}
+
+		if ( empty( $user_id ) || ! is_a( get_user_by( 'id', $user_id ), 'WP_User' ) ) {
+			return false;
 		}
 
 		return Sensei_Utils::user_completed_lesson( $pre_requisite_id, $user_id );
@@ -4888,7 +4918,7 @@ class Sensei_Lesson {
 		<footer>
 
 			<?php
-			if ( $show_actions && $quiz_id && Sensei()->access_settings() ) {
+			if ( $show_actions && $quiz_id ) {
 
 				if ( self::lesson_quiz_has_questions( $lesson_id ) ) {
 					?>
@@ -4936,10 +4966,6 @@ class Sensei_Lesson {
 	public static function should_show_lesson_actions( int $lesson_id, int $user_id = 0 ) : bool {
 		$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
-		if ( 0 === $user_id ) {
-			return false;
-		}
-
 		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
 
 		if ( $lesson_prerequisite > 0 ) {
@@ -4964,8 +4990,12 @@ class Sensei_Lesson {
 		$user_can_view_lesson  = sensei_can_user_view_lesson();
 		$lesson_allow_comments = $allow_comments && $user_can_view_lesson;
 
-		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
+		if ( ( $lesson_allow_comments && ! Sensei_Utils::is_fse_theme() ) || is_singular( 'sensei_message' ) ) {
+
+			// Borrowed solution from https://github.com/WordPress/gutenberg/pull/28128.
+			add_filter( 'deprecated_file_trigger_error', '__return_false' );
 			comments_template( '', true );
+			remove_filter( 'deprecated_file_trigger_error', '__return_false' );
 		}
 	}
 

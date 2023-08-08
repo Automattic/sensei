@@ -32,7 +32,7 @@ class Sensei_Home_Quick_Links_Provider {
 			$this->create_category(
 				__( 'Settings', 'sensei-lms' ),
 				[
-					$this->create_item( __( 'Email notifications', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#email-notification-settings' ) ),
+					$this->create_item( __( 'Email notifications', 'sensei-lms' ), admin_url( $this->get_email_notification_url() ) ),
 					$this->create_item( __( 'Learning mode', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#appearance-settings' ) ),
 					$this->create_item( __( 'WooCommerce', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#woocommerce-settings' ) ),
 					$this->create_item( __( 'Content drip', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#sensei-content-drip-settings' ) ),
@@ -51,29 +51,30 @@ class Sensei_Home_Quick_Links_Provider {
 	}
 
 	/**
+	 * Return the correct email notification settings based on the feature flag.
+	 *
+	 * @return array The magical link to create a demo course or the link to edit the demo course.
+	 */
+	private function get_email_notification_url() {
+		if ( Sensei()->feature_flags->is_enabled( 'email_customization' ) ) {
+			return 'admin.php?page=sensei-settings&tab=email-notification-settings';
+		}
+
+		return '/admin.php?page=sensei-settings#email-notification-settings';
+	}
+
+	/**
 	 * Return the magical link to create a demo course, or the link to edit the demo course.
 	 *
 	 * @return array The magical link to create a demo course or the link to edit the demo course.
 	 */
 	private function create_demo_link() {
-		global $wpdb;
-		$cache_key   = 'home/metadata/demo-course';
-		$cache_group = 'sensei/temporary';
-		$result      = wp_cache_get( $cache_key, $cache_group );
-		if ( false === $result ) {
-			$prefix = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Safe-ish and rare query.
-			$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='course' AND post_status IN ('publish', 'draft') AND post_name LIKE %s ORDER BY post_status='published' DESC, ID ASC LIMIT 1", "{$prefix}%" ) );
-			if ( null === $post_id ) {
-				$result = null;
-			} else {
-				$result = $post_id;
-				wp_cache_set( $cache_key, $result, $cache_group, 60 );
-			}
+		$demo_course_id = Sensei_Data_Port_Utilities::get_demo_course_id();
+
+		if ( $demo_course_id ) {
+			return $this->create_item( __( 'Edit demo course', 'sensei-lms' ), get_edit_post_link( $demo_course_id, '&' ) );
 		}
-		if ( null !== $result ) {
-			return $this->create_item( __( 'Edit demo course', 'sensei-lms' ), get_edit_post_link( $result, '&' ) );
-		}
+
 		return $this->create_item( __( 'Install a demo course', 'sensei-lms' ), self::ACTION_INSTALL_DEMO_COURSE );
 	}
 

@@ -5,65 +5,79 @@ $sensei-notice-icon-width: 30px;
 .sensei-notice {
 	@import '../shared/styles/wp-admin';
 
-	align-items: flex-start;
 	border-left-color: $primary;
 	display: flex;
-	gap: 10px;
+	flex-direction: column;
+	gap: 18px;
 	min-height: 40px;
-	padding: 10px 16px;
+	padding: 18px 24px;
+
+	@media ( min-width: 961px ) {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	&__content {
+		flex: 1;
+		display: flex;
+		gap: 18px;
+		align-items: center;
+		color: #101517;
+		font-size: 14px;
+
+		a {
+			color: #000;
+		}
+	}
 
 	&__icon {
 		color: #26212E;
 		flex: 0 0 auto;
-		margin-top: 0.5em;
+		margin-top: 0;
 		width: $sensei-notice-icon-width;
 		height: $sensei-notice-icon-height;
 	}
 
-	&__wrapper {
-		padding: 0;
-		font-size: 14px;
-
-		@media (min-width: 500px) {
-			display: flex;
-			flex: 1 1 auto;
-			gap: 10px;
-		}
-	}
-
-	&__content a {
-		color: #000;
-	}
-
 	&__heading {
-		margin: 5px 0;
+		margin-bottom: 5px;
 		font-weight: bold;
 	}
 
 	&__actions {
-		margin: 0.5em 0 0.5em auto;
-		align-self: center;
+		white-space: nowrap;
 
 		.button {
 			padding: 3px 12px;
+
+			&:not(:first-child) {
+				margin-left: 18px;
+			}
 		}
 	}
 
-	.notice-dismiss {
-		align-self: center;
-		padding: 0;
-		position: static;
+	.button-secondary {
+		color: #155E65;
+		border-color: #43AF99;
 	}
 
-	&.sensei-notice-error {
+	.notice-dismiss {
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	&--error {
 		border-left-color: $notice-error;
 	}
 
-	&.sensei-notice-warning {
+	&--warning {
 		border-left-color: $notice-warning;
 	}
 
-	&.sensei-notice-info {
+	&--info {
 		border-left-color: $notice-info;
+	}
+
+	&--success {
+		border-left-color: $notice-success;
 	}
 }

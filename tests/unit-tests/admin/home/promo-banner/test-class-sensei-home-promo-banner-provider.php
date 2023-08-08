@@ -30,7 +30,7 @@ class Sensei_Home_Promo_Banner_Provider_Test extends WP_UnitTestCase {
 	/**
 	 * Setup.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->had_promo_banner_filter_overridden = has_filter( 'sensei_home_promo_banner_show', '__return_false' );
 		$this->provider                           = new Sensei_Home_Promo_Banner_Provider();
@@ -39,7 +39,7 @@ class Sensei_Home_Promo_Banner_Provider_Test extends WP_UnitTestCase {
 	/**
 	 * Tear down.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		// Clean filter after test if it wasn't set initially.
 		if ( ! $this->had_promo_banner_filter_overridden ) {
 			remove_filter( 'sensei_home_promo_banner_show', '__return_false' );

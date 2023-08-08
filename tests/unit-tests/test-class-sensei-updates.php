@@ -24,7 +24,7 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		Sensei_Test_Events::reset();
@@ -37,10 +37,10 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	/**
 	 * Clean up after all tests.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		self::resetScheduler();
 
-		return parent::tearDownAfterClass();
+		parent::tearDownAfterClass();
 	}
 
 	/**
@@ -189,17 +189,17 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 		$date_str = $latest_version_date->format( 'Y-m-d' );
 
 		return <<<END
-{$date_str} - version {$latest_version}
+## {$latest_version} - {$date_str}
 * Fix: Fix something broken.
 * Change: Changed something to be better.
 
-2021.03.07 - version 3.8.1
+## 3.8.1 - 2021.03.07
 * Fix: Fix something [#1](https://github.com/Automattic/sensei/pull/1)
 * Fix: Fix something [#2](https://github.com/Automattic/sensei/pull/2)
 * Fix: Fix something [#3](https://github.com/Automattic/sensei/pull/3)
 * Fix: Fix something [#4](https://github.com/Automattic/sensei/pull/4) 👏 helper
 
-2021.03.01 - version 3.8.0
+## 3.8.0 - 2021.03.01
 * Fix: Fix something [#5](https://github.com/Automattic/sensei/pull/5)
 * Fix: Fix something [#6](https://github.com/Automattic/sensei/pull/6)
 END;

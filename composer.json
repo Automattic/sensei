@@ -2,17 +2,52 @@
 	"name": "automattic/sensei-lms",
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
 	"require-dev": {
-		"php": "^7.2 || ^8",
-		"bamarni/composer-bin-plugin": "^1.4",
-		"dealerdirect/phpcodesniffer-composer-installer": "0.7.1",
-		"phpcompatibility/phpcompatibility-wp": "2.1.2",
+		"php": "^7.3 || ^8",
+		"automattic/jetpack-changelogger": "3.3.5",
+		"bamarni/composer-bin-plugin": "1.8.2",
+		"dealerdirect/phpcodesniffer-composer-installer": "1.0.0",
+		"dms/phpunit-arraysubset-asserts": "0.5.0",
+		"humbug/php-scoper": "0.15.0",
+		"pelago/emogrifier": "7.0.0",
+		"phpcompatibility/phpcompatibility-wp": "2.1.4",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
-		"sirbrillig/phpcs-variable-analysis": "2.11.2",
-		"squizlabs/php_codesniffer": "3.6.0",
+		"sirbrillig/phpcs-variable-analysis": "2.11.16",
+		"squizlabs/php_codesniffer": "3.7.2",
+		"symfony/polyfill-php80": "1.16.0",
 		"wp-coding-standards/wpcs": "2.3.0",
-		"yoast/phpunit-polyfills": "1.0.3"
+		"yoast/phpunit-polyfills": "2.0.0"
 	},
+	"minimum-stability": "dev",
 	"prefer-stable": true,
+	"autoload": {
+		"classmap": [
+			"third-party/",
+			"includes/"
+		],
+		"files": [
+			"includes/sensei-functions.php"
+		]
+	},
+	"autoload-dev": {
+		"classmap": [
+			"config/"
+		]
+	},
+	"scripts": {
+		"prefix-dependencies": [
+			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --output-dir=third-party --config=config/scoper.inc.php --force --quiet"
+		],
+		"pre-install-cmd": [
+			"mkdir -p third-party"
+		],
+		"pre-update-cmd": [
+			"mkdir -p third-party"
+		],
+		"post-autoload-dump": [
+			"Sensei\\Config\\Composer\\Actions::prefix_dependencies",
+			"composer dump-autoload --no-scripts"
+		]
+	},
 	"archive": {
 		"exclude": [
 			"/*",
@@ -20,6 +55,10 @@
 			"!/assets/*/*/*.js",
 			"!/assets/*/*/*/*.js",
 			"!/assets/*/*/*/*/*.js",
+			"!/assets/*/*.ts",
+			"!/assets/*/*/*.ts",
+			"!/assets/*/*/*/*.ts",
+			"!/assets/*/*/*/*/*.ts",
 			"!/assets/*/*.json",
 			"!/assets/*/*/*.json",
 			"!/assets/*/*/*/*.json",
@@ -39,6 +78,8 @@
 			"!/widgets",
 			"!/sensei-lms.php",
 			"!/wpml-config.xml",
+			"!/vendor",
+			"!/third-party",
 			".DS_Store",
 			".*",
 			"*.test.js",
@@ -49,11 +90,16 @@
 		"optimize-autoloader": true,
 		"sort-packages": true,
 		"platform": {
-			"php": "7.2"
+			"php": "7.3"
 		},
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true,
 			"bamarni/composer-bin-plugin": true
+		}
+	},
+	"extra": {
+		"changelogger": {
+			"changelog": "changelog.txt"
 		}
 	}
 }

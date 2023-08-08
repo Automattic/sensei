@@ -7,7 +7,7 @@
 /*  Sensei Icon Font */
 @font-face {
 	font-family: 'sensei';
-	src: url( '../css/fonts/sensei/sensei.woff2' ) format( 'woff2' ), url( '../css/fonts/sensei/sensei.woff' ) format( 'woff' );
+	src: url('../css/fonts/sensei/sensei.woff2') format('woff2'), url('../css/fonts/sensei/sensei.woff') format('woff');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -47,4 +47,23 @@ body #toplevel_page_sensei {
 
 .edit-php.post-type-quiz .add-new-h2 {
 	display: none;
+}
+
+$promo_highlight: #43af99;
+
+#adminmenuwrap #adminmenu .sensei-promo-groups__badge, .sensei-upsell-pro-badge {
+	background: $promo_highlight;
+	color: #2c3338;
+	font-weight: 400;
+}
+
+.sensei-upsell-pro-badge {
+	border-radius: 12px;
+	padding: 3px 8px;
+	margin-left: 10px;
+	line-height: 1;
+}
+
+.sensei-wp-list-table-row--disabled .sensei-email-unavailable {
+	color: #999999;
 }

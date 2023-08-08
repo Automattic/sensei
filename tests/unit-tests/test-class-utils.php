@@ -1,5 +1,17 @@
 <?php
 
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+
+/**
+ * Class for testing Sensei_Utils class.
+ *
+ * @group utils
+ *
+ * phpcs:disable Generic.Commenting.DocComment.MissingShort
+ */
 class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	/**
@@ -8,8 +20,8 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 	 * This function sets up the lessons, quizzes and their questions. This function runs before
 	 * every single test in this class
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 
@@ -18,7 +30,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -246,8 +258,8 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$output = ob_get_clean();
 
 		/* Assert. */
-		$this->assertContains( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
-		$this->assertNotContains( 'param_2', $output, 'Output should not contain the excluded query param input.' );
+		$this->assertStringContainsString( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
+		$this->assertStringNotContainsString( 'param_2', $output, 'Output should not contain the excluded query param input.' );
 	}
 
 	/**
@@ -281,7 +293,9 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 			]
 		);
 
-		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		$submission_id = Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
 
 		/* Act. */
 		Sensei_Utils::sensei_grade_quiz( $quiz_id, 12.34, $user_id );
@@ -290,6 +304,112 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 
 		$this->assertSame( 12.34, $quiz_submission->get_final_grade() );
+	}
+
+	public function testIsRestRequest_WhenNotRestRequest_ReturnsFalse() {
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertFalse( $is_rest_request );
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function testIsRestRequest_WhenRestRequest_ReturnsTrue() {
+		/* Arrange. */
+		define( 'REST_REQUEST', true );
+
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertTrue( $is_rest_request );
+	}
+
+	public function testSenseiDeleteQuizAnswers_WhenNoQuizProvided_ReturnsFalse() {
+		/* Act. */
+		$result = Sensei_Utils::sensei_delete_quiz_answers( 0, 1 );
+
+		/* Assert. */
+		$this->assertFalse( $result );
+	}
+
+	public function testSenseiDeleteQuizAnswers_WhenNoUserProvidedAndNoUserLoggedIn_ReturnsFalse() {
+		/* Act. */
+		$result = Sensei_Utils::sensei_delete_quiz_answers( 1, 0 );
+
+		/* Assert. */
+		$this->assertFalse( $result );
+	}
+
+	public function testSenseiDeleteQuizAnswers_WhenNoQuizSubmission_ReturnsFalse() {
+		/* Act. */
+		$result = Sensei_Utils::sensei_delete_quiz_answers( 1, 1 );
+
+		/* Assert. */
+		$this->assertFalse( $result );
+	}
+
+	public function testSenseiDeleteQuizAnswers_WhenHasQuizSubmission_ReturnsTrue() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		$this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+		$this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+
+		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
+
+		Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, $user_id );
+
+		/* Act. */
+		$result = Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
+
+		/* Assert. */
+		$this->assertTrue( $result );
+	}
+
+	public function testSenseiDeleteQuizAnswers_WhenHasQuizSubmission_DeletesTheQuizData() {
+		/* Arrange. */
+		$submission_id = 123;
+		$submission    = $this->createMock( Submission::class );
+		$submission->method( 'get_id' )->willReturn( $submission_id );
+
+		Sensei()->quiz_answer_repository     = $this->createMock( Answer_Repository_Interface::class );
+		Sensei()->quiz_grade_repository      = $this->createMock( Grade_Repository_Interface::class );
+		Sensei()->quiz_submission_repository = $this->createMock( Submission_Repository_Interface::class );
+		Sensei()->quiz_submission_repository
+			->method( 'get' )
+			->willReturn( $submission );
+
+		/* Act & Assert. */
+		Sensei()->quiz_submission_repository
+			->expects( $this->once() )
+			->method( 'delete' )
+			->with( $submission );
+
+		Sensei()->quiz_answer_repository
+			->expects( $this->once() )
+			->method( 'delete_all' )
+			->with( $submission );
+
+		Sensei()->quiz_grade_repository
+			->expects( $this->once() )
+			->method( 'delete_all' )
+			->with( $submission );
+
+		Sensei_Utils::sensei_delete_quiz_answers( 1, 1 );
 	}
 
 	/**
@@ -305,5 +425,175 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 			'seconds' => [ 20, '20 seconds ago' ],
 			'date'    => [ 8 * 24 * 60 * 60, null ],
 		];
+	}
+
+	public function testUserCountByRole_WhenCalled_ReturnsCorrectNumberOfStudents() {
+		$this->factory->user->create_many( 3 );
+		$this->factory->user->create_many( 2, array( 'role' => 'student' ) );
+
+		$result = Sensei_Utils::get_user_count_for_role( 'student' );
+
+		$this->assertEquals( 2, $result );
+	}
+
+	public function testGetTargetResumeId_WhenCalled_ReturnsNextLessonIdIfPreviousLessonIsCompleted() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count' => 3,
+			)
+		);
+		$user_id        = $this->factory->user->create();
+
+		Sensei_Utils::sensei_start_lesson( $course_lessons['lesson_ids'][0], $user_id, true );
+
+		/* Act */
+		$result = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_lessons['course_id'], $user_id );
+
+		/* Assert */
+		$this->assertEquals( $course_lessons['lesson_ids'][1], $result );
+	}
+
+	public function testGetTargetResumeId_WhenCalled_ReturnsLastLessonIdIfNotCompleted() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count' => 3,
+			)
+		);
+		$user_id        = $this->factory->user->create();
+
+		Sensei_Utils::sensei_start_lesson( $course_lessons['lesson_ids'][0], $user_id, false );
+
+		/* Act */
+		$result = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_lessons['course_id'], $user_id );
+
+		/* Assert */
+		$this->assertEquals( $course_lessons['lesson_ids'][0], $result );
+	}
+
+	public function testGetTargetPagePostIdForContinueUrl_WhenNoLessonIsCompleted_ReturnsFirstLessonId() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count' => 3,
+			)
+		);
+		$user_id        = $this->factory->user->create();
+
+		/* Act */
+		$result = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_lessons['course_id'], $user_id );
+
+		/* Assert */
+		$this->assertEquals( $course_lessons['lesson_ids'][0], $result );
+	}
+
+	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfAllLessonsAreCompleted() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count' => 3,
+			)
+		);
+		$user_id        = $this->factory->user->create();
+
+		foreach ( $course_lessons['lesson_ids'] as $lesson_id ) {
+			Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+		}
+
+		/* Act */
+		$result = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_lessons['course_id'], $user_id );
+
+		/* Assert */
+		$this->assertEquals( $course_lessons['course_id'], $result );
+	}
+
+	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfItHasNoLessons() {
+		/* Arrange */
+		$course_id = $this->factory->course->create();
+		$user_id   = $this->factory->user->create();
+
+		/* Act */
+		$result = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_id, $user_id );
+
+		/* Assert */
+		$this->assertEquals( $course_id, $result );
+	}
+
+	public function testIsFseTheme_WhenBlockTemplatesIndexAvailable_ReturnsTrue() {
+		/* Arrange */
+		$theme_directory = get_template_directory() . '/block-templates';
+		$index_file      = $theme_directory . '/index.html';
+
+		// Remove the 'block-templates/index.html' file if it exists.
+		if ( file_exists( $index_file ) ) {
+			unlink( $index_file );
+		}
+
+		// Create the 'block-templates' directory if it doesn't exist.
+		if ( ! is_dir( $theme_directory ) ) {
+			mkdir( $theme_directory );
+		}
+
+		$this->create_file( $index_file );
+
+		/* Act */
+		$result = Sensei_Utils::is_fse_theme();
+
+		/* Assert */
+		$this->assertTrue( $result );
+
+		unlink( $index_file );
+		rmdir( $theme_directory );
+	}
+
+	public function testIsFseTheme_WhenIndexHtmlAvailable_ReturnsTrue() {
+		/* Arrange */
+		$theme_directory = get_template_directory() . '/templates';
+		$index_file      = $theme_directory . '/index.html';
+
+		// Remove the 'templates/index.html' file if it exists.
+		if ( file_exists( $index_file ) ) {
+			unlink( $index_file );
+		}
+
+		// Create the 'templates' directory if it doesn't exist.
+		if ( ! is_dir( $theme_directory ) ) {
+			mkdir( $theme_directory );
+		}
+
+		$this->create_file( $index_file );
+
+		/* Act */
+		$result = Sensei_Utils::is_fse_theme();
+
+		/* Assert */
+		$this->assertTrue( $result );
+
+		unlink( $index_file );
+		rmdir( $theme_directory );
+	}
+
+	/**
+	 * Create the 'index.html' file to mimic a theme with FSE support.
+	 */
+	private function create_file( $index_file ) {
+		// Initialize the WP_Filesystem.
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+		WP_Filesystem();
+
+		global $wp_filesystem;
+
+		// Check if WP_Filesystem is initialized properly.
+		if ( ! $wp_filesystem ) {
+			return; // Or handle the error accordingly.
+		}
+
+		$file_contents = "Silence is golden\n";
+
+		// Use WP_Filesystem's method to create and write to the file.
+		$wp_filesystem->put_contents( $index_file, $file_contents, FS_CHMOD_FILE );
 	}
 }

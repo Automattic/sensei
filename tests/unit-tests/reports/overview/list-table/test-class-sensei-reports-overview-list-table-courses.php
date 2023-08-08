@@ -16,13 +16,13 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	 */
 	protected $factory;
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 		self::$initial_hook_suffix = $GLOBALS['hook_suffix'] ?? null;
 		$GLOBALS['hook_suffix']    = null;
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		$GLOBALS['hook_suffix'] = self::$initial_hook_suffix;
 	}
@@ -30,7 +30,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	/**
 	 * Set up before each test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
@@ -39,7 +39,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	/**
 	 * Tear down after each test.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->factory->tearDown();
@@ -73,7 +73,9 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$expected = [
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
-			'completions'        => 'Completed (0)',
+			'enrolled'           => 'Enrolled (0)',
+			'completions'        => 'Completions (0)',
+			'completion_rate'    => 'Completion Rate (N/A)',
 			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
 			'days_to_completion' => 'Days to Completion (0)',
@@ -91,6 +93,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 
 		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
 		$service->method( 'get_courses_average_grade' )->willReturn( 2 );
+		$service->method( 'get_total_enrollments' )->willReturn( 4 );
 
 		$course = $this->createMock( Sensei_Course::class );
 
@@ -111,7 +114,9 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$expected = [
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
-			'completions'        => 'Completed (1)',
+			'enrolled'           => 'Enrolled (4)',
+			'completions'        => 'Completions (1)',
+			'completion_rate'    => 'Completion Rate (25%)',
 			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
 			'days_to_completion' => 'Days to Completion (0)',

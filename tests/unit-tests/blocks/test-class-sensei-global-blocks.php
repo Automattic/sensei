@@ -2,6 +2,8 @@
 
 /**
  * Tests for Sensei_Course_Progress_Block class.
+ *
+ * @covers Sensei_Global_Blocks
  */
 class Sensei_Global_Blocks_Test extends WP_UnitTestCase {
 
@@ -22,7 +24,7 @@ class Sensei_Global_Blocks_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		$this->global_blocks = new Sensei_Global_Blocks();
 		$this->blocks        = [
 			'sensei-lms/button-take-course',
@@ -38,8 +40,6 @@ class Sensei_Global_Blocks_Test extends WP_UnitTestCase {
 
 	/**
 	 * Register all global blocks
-	 *
-	 * @covers Sensei_Global_Blocks->initialize_blocks
 	 */
 	public function testInitializeBlocks_WhenCalled_ShowsRegisterAllBlocks() {
 		$is_registered = function ( string $block ): void {
@@ -56,8 +56,6 @@ class Sensei_Global_Blocks_Test extends WP_UnitTestCase {
 
 	/**
 	 * Enqueue the global block assets
-	 *
-	 * @covers Sensei_Global_Blocks->enqueue_block_assets
 	 */
 	public function testEnqueueBlockAssets_WhenCalled_EnqueueBlockAssets() {
 		/* Act */
@@ -70,8 +68,6 @@ class Sensei_Global_Blocks_Test extends WP_UnitTestCase {
 
 	/**
 	 * Enqueue the global block assets, except when the user is on the admin page.
-	 *
-	 * @covers Sensei_Global_Blocks->enqueue_block_assets
 	 */
 	public function testEnqueueBlockAssets_WhenCalledOnAdmin_NotEnqueueCourseListFilter() {
 		/* Arrange */
@@ -89,8 +85,6 @@ class Sensei_Global_Blocks_Test extends WP_UnitTestCase {
 
 	/**
 	 * Enqueue the global block assets
-	 *
-	 * @covers Sensei_Global_Blocks->enqueue_block_editor_assets
 	 */
 	public function testEnqueueBlockEditorAssets_WhenCalledOnAdmin_NotEnqueueCourseListFilter() {
 		/* Act */

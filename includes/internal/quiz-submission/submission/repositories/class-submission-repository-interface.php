@@ -60,16 +60,15 @@ interface Submission_Repository_Interface {
 	public function get( int $quiz_id, int $user_id ): ?Submission;
 
 	/**
-	 * Get the question IDs related to this quiz submission.
+	 * Get the questions related to the quiz submission.
 	 *
 	 * @internal
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
+	 * @param int $submission_id The quiz submission ID.
 	 *
 	 * @return array An array of question post IDs.
 	 */
-	public function get_question_ids( int $quiz_id, int $user_id ): array;
+	public function get_question_ids( int $submission_id ): array;
 
 	/**
 	 * Save quiz submission.
@@ -79,4 +78,13 @@ interface Submission_Repository_Interface {
 	 * @param Submission $submission The quiz submission.
 	 */
 	public function save( Submission $submission ): void;
+
+	/**
+	 * Delete the quiz submission.
+	 *
+	 * @internal
+	 *
+	 * @param Submission $submission The quiz submission.
+	 */
+	public function delete( Submission $submission ): void;
 }

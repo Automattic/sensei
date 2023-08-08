@@ -23,48 +23,85 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @return array Usage data.
 	 **/
-	public static function get_usage_data() {
-		$question_type_count = self::get_question_type_count();
-		$quiz_stats          = self::get_quiz_stats();
-		$usage_data          = array(
-			'courses'                        => wp_count_posts( 'course' )->publish,
-			'course_active'                  => self::get_course_active_count(),
-			'course_completed'               => self::get_course_completed_count(),
-			'course_completion_rate'         => self::get_course_completion_rate(),
-			'course_videos'                  => self::get_course_videos_count(),
-			'course_no_notifications'        => self::get_course_no_notifications_count(),
-			'course_prereqs'                 => self::get_course_prereqs_count(),
-			'course_featured'                => self::get_course_featured_count(),
-			'enrolments'                     => self::get_course_enrolments(),
-			'enrolment_first'                => self::get_first_course_enrolment(),
-			'enrolment_last'                 => self::get_last_course_enrolment(),
-			'enrolment_calculated'           => self::get_is_enrolment_calculated() ? 1 : 0,
-			'learners'                       => self::get_learner_count(),
-			'lessons'                        => wp_count_posts( 'lesson' )->publish,
-			'lesson_modules'                 => self::get_lesson_module_count(),
-			'lesson_prereqs'                 => self::get_lesson_prerequisite_count(),
-			'lesson_previews'                => self::get_lesson_preview_count(),
-			'lesson_length'                  => self::get_lesson_has_length_count(),
-			'lesson_complexity'              => self::get_lesson_with_complexity_count(),
-			'lesson_videos'                  => self::get_lesson_with_video_count(),
-			'messages'                       => wp_count_posts( 'sensei_message' )->publish,
-			'modules'                        => wp_count_terms( 'module' ),
-			'modules_max'                    => self::get_max_module_count(),
-			'modules_min'                    => self::get_min_module_count(),
-			'questions'                      => wp_count_posts( 'question' )->publish,
-			'question_media'                 => self::get_question_media_count(),
-			'question_random_order'          => self::get_question_random_order_count(),
-			'teachers'                       => self::get_teacher_count(),
-			'courses_using_learning_mode'    => self::get_courses_using_learning_mode_count(),
-			'learning_mode_enabled_globally' => self::get_is_learning_mode_enabled_globally() ? 1 : 0,
-			'learning_mode_template'         => self::get_selected_learning_mode_template(),
-			'learning_mode_is_customized'    => self::get_learning_mode_is_customized(),
-			'learning_mode_template_version' => self::get_template_version(),
+	public static function get_usage_data(): array {
+		$usage_data = array_merge(
+			self::get_question_type_count(),
+			self::get_quiz_stats(),
+			[
+				'courses'                        => wp_count_posts( 'course' )->publish,
+				'course_active'                  => self::get_course_active_count(),
+				'course_completed'               => self::get_course_completed_count(),
+				'course_completion_rate'         => self::get_course_completion_rate(),
+				'course_videos'                  => self::get_course_videos_count(),
+				'course_no_notifications'        => self::get_course_no_notifications_count(),
+				'course_open_access'             => self::get_course_open_access_count(),
+				'course_prereqs'                 => self::get_course_prereqs_count(),
+				'course_featured'                => self::get_course_featured_count(),
+				'enrolments'                     => self::get_course_enrolments(),
+				'enrolment_first'                => self::get_first_course_enrolment(),
+				'enrolment_last'                 => self::get_last_course_enrolment(),
+				'enrolment_calculated'           => self::get_is_enrolment_calculated() ? 1 : 0,
+				'learners'                       => self::get_learner_count(),
+				'lessons'                        => wp_count_posts( 'lesson' )->publish,
+				'lesson_modules'                 => self::get_lesson_module_count(),
+				'lesson_prereqs'                 => self::get_lesson_prerequisite_count(),
+				'lesson_previews'                => self::get_lesson_preview_count(),
+				'lesson_length'                  => self::get_lesson_has_length_count(),
+				'lesson_complexity'              => self::get_lesson_with_complexity_count(),
+				'lesson_videos'                  => self::get_lesson_with_video_count(),
+				'messages'                       => wp_count_posts( 'sensei_message' )->publish,
+				'modules'                        => wp_count_terms( 'module' ),
+				'modules_max'                    => self::get_max_module_count(),
+				'modules_min'                    => self::get_min_module_count(),
+				'questions'                      => wp_count_posts( 'question' )->publish,
+				'question_media'                 => self::get_question_media_count(),
+				'question_random_order'          => self::get_question_random_order_count(),
+				'teachers'                       => self::get_teacher_count(),
+				'courses_using_learning_mode'    => self::get_courses_using_learning_mode_count(),
+				'learning_mode_enabled_globally' => self::get_is_learning_mode_enabled_globally() ? 1 : 0,
+				'learning_mode_template'         => self::get_selected_learning_mode_template(),
+				'learning_mode_is_customized'    => self::get_learning_mode_is_customized(),
+				'learning_mode_template_version' => self::get_template_version(),
+			]
 		);
 
-		return array_merge( $question_type_count, $usage_data, $quiz_stats );
+		/**
+		 * Filter the usage tracking data.
+		 *
+		 * @since 4.10.0
+		 * @hook sensei_usage_tracking_data
+		 *
+		 * @param {array} $usage_data The usage tracking data.
+		 *
+		 * @return {array} Returns filtered usage tracking data.
+		 */
+		return apply_filters( 'sensei_usage_tracking_data', $usage_data );
 	}
 
+	/**
+	 * Get the number of courses using the Open Access feature.
+	 *
+	 * @since 4.11.0
+	 *
+	 * @return int Number of courses using the learning mode.
+	 **/
+	public static function get_course_open_access_count() {
+		$course_query = new WP_Query(
+			array(
+				'post_type'      => 'course',
+				'post_status'    => 'any',
+				'posts_per_page' => -1,
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Only used for usage stats, not always called.
+					array(
+						'key'   => Sensei_Guest_User::COURSE_OPEN_ACCESS_META,
+						'value' => true,
+					),
+				),
+			)
+		);
+
+		return $course_query->found_posts;
+	}
 	/**
 	 * Get the base fields to be sent for event logging.
 	 *
@@ -78,13 +115,6 @@ class Sensei_Usage_Tracking_Data {
 			'courses'  => post_type_exists( 'course' ) ? wp_count_posts( 'course' )->publish : 0,
 			'learners' => self::get_learner_count(),
 		];
-
-		/**
-		 * Filter the event logging source.
-		 *
-		 * @param string The source (defaults to "unknown").
-		 */
-		$base_fields['source'] = apply_filters( 'sensei_event_logging_source', 'unknown' );
 
 		/**
 		 * Filter the fields that should be sent with every event that is logged.

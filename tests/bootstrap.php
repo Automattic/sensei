@@ -40,6 +40,9 @@ class Sensei_Unit_Tests_Bootstrap {
 		// Prevent requests from `WP_Http::request` while testing.
 		tests_add_filter( 'pre_http_request', [ $this, 'prevent_requests' ], 99 );
 
+		// Enable features.
+		tests_add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
+
 		/*
 		* Load PHPUnit Polyfills for the WP testing suite.
 		* @see https://github.com/WordPress/wordpress-develop/pull/1563/
@@ -114,20 +117,17 @@ class Sensei_Unit_Tests_Bootstrap {
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-manual-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-scheduler-test-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-test-redirect-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-background-job-stub.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-sensei-factory.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-wp-unittest-factory-for-post-sensei.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/trait-sensei-data-port-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/trait-sensei-export-task-tests.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/exceptions/class-sensei-wp-redirect-exception.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-mailpoet-api-factory.php';
 
 		// Testing setup for event logging.
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-test-events.php';
-
-		// Used for some libraries. Tests that require these libraries should be skipped if they don't exist.
-		$autoload_file = __DIR__ . '/../vendor/autoload.php';
-		if ( file_exists( $autoload_file ) ) {
-			require_once $autoload_file;
-		}
 
 		Sensei_Test_Events::init();
 	}

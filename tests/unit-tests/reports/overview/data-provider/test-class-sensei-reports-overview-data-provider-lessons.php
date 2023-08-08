@@ -16,7 +16,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons_Test extends WP_UnitTestCase
 	/**
 	 * Set up before each test.
 	 */
-	public function setup() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
@@ -25,7 +25,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons_Test extends WP_UnitTestCase
 	/**
 	 * Tear down after each test.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->factory->tearDown();

@@ -121,7 +121,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Add teacher id as term meta when a module is added to a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 * @access private
 	 *
 	 * @param int     $post_ID      Post ID.
@@ -144,7 +144,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Add teacher id as term meta when a module is added to a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 * @access private
 	 *
 	 * @param int    $object_id Object ID.
@@ -164,7 +164,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Remove teacher id from term meta when a module is added to a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 * @access private
 	 *
 	 * @param int    $object_id Object ID.
@@ -645,7 +645,7 @@ class Sensei_Core_Modules {
 		// Remove module from existing courses
 		if ( isset( $courses ) && is_array( $courses ) ) {
 			foreach ( $courses as $course ) {
-				wp_remove_object_terms( $course->ID, $module_id, $this->taxonomy );
+				wp_remove_object_terms( $course->ID, (int) $module_id, $this->taxonomy );
 			}
 		}
 
@@ -1231,7 +1231,7 @@ class Sensei_Core_Modules {
 	 */
 	public function add_submenus() {
 		add_submenu_page(
-			null, // Hide the submenu.
+			'', // Hide the submenu.
 			__( 'Order Modules', 'sensei-lms' ),
 			__( 'Order Modules', 'sensei-lms' ),
 			'edit_lessons',
@@ -2279,6 +2279,15 @@ class Sensei_Core_Modules {
 
 		$term_owner = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
 
+		// Fallaback in case the admin email does not match a user, otherwise it shows warnings.
+		if ( ! $term_owner ) {
+			$site_admins = get_super_admins();
+
+			if ( ! empty( $site_admins ) && is_array( $site_admins ) ) {
+				$term_owner = get_user_by( 'login', $site_admins[0] );
+			}
+		}
+
 		if ( empty( $slug ) ) {
 
 			return $term_owner;
@@ -2292,7 +2301,7 @@ class Sensei_Core_Modules {
 				return get_user_by( 'id', $author_meta );
 			}
 		}
-		// look for the author in the slug
+		// look for the author in the slug.
 		$slug_parts = explode( '-', $slug );
 
 		if (
@@ -2591,8 +2600,18 @@ class Sensei_Core_Modules {
 			}
 		}
 
-		return $users_terms;
-
+		/**
+		 * Filters the module terms when ownership is being checked for them.
+		 *
+		 * @hook   sensei_filter_module_terms_by_owner
+		 * @since  4.9.0
+		 *
+		 * @param  {WP_Term[]} $user_terms The terms after applying the filter by owner.
+		 * @param  {WP_Term[]|int[]} $terms The original terms before the filtering was applied.
+		 * @param  {int} $user_id The user ID to check for ownership.
+		 * @return {WP_Term[]} The final list of terms that must be considered as owner by the given user ID.
+		 */
+		return apply_filters( 'sensei_filter_module_terms_by_owner', $users_terms, $terms, $user_id );
 	}
 
 	/**

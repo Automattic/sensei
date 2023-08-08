@@ -1,6 +1,8 @@
 name: JS Linting and Tests
 
-on: pull_request
+on:
+    pull_request:
+    workflow_call:
 
 jobs:
     lint:
@@ -8,10 +10,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-
-            - name: Updates the CI npm
-              run: npm install -g npm@^8
-
             - uses: actions/cache@v3
               with:
                   path: ~/.npm/
@@ -24,6 +22,26 @@ jobs:
               run: npm ci
             - name: Lint JS
               run: npm run lint-js
+            - name: Lint TS e2e
+              run: npm run lint-e2e
+
+    type-check:
+        name: TypeScript Checking
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/cache@v3
+              with:
+                  path: ~/.npm/
+                  key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+            - uses: actions/cache@v3
+              with:
+                  path: node_modules/
+                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+            - name: Install JS dependencies
+              run: npm ci
+            - name: Lint JS
+              run: npm run lint-types
 
     test:
         name: JS Testing
@@ -31,10 +49,6 @@ jobs:
         steps:
             # clone the repository
             - uses: actions/checkout@v3
-
-            - name: Updates the npm version
-              run: npm install -g npm@^8
-
             - uses: actions/cache@v3
               with:
                   path: ~/.npm
@@ -44,4 +58,15 @@ jobs:
             - name: Install JS dependencies
               run: npm ci
             - name: Test JS
+              env:
+                  NODE_OPTIONS: "--max_old_space_size=4096"
               run: npm run test-js
+            - name: Slack Notification on Failure
+              uses: rtCamp/action-slack-notify@v2
+              if: ${{ failure() && github.event_name == 'push' }}
+              env:
+                SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
+                SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+                SLACK_TITLE: 'JS Testing'
+                SLACK_COLOR: 'error'
+                SLACK_FOOTER: ''

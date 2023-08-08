@@ -27,7 +27,7 @@ class Sensei_Block_View_Results_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		self::resetEnrolmentProviders();
 		$this->prepareEnrolmentManager();
@@ -39,12 +39,12 @@ class Sensei_Block_View_Results_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $this->course;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-view-results' );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}
@@ -87,7 +87,7 @@ class Sensei_Block_View_Results_Test extends WP_UnitTestCase {
 
 		$result = $this->block->render( [], self::CONTENT );
 
-		$this->assertRegExp( "|<a href=\"http://example.org/\?page_id={$page_id}&#038;course_id={$this->course->ID}\".*>View Results</a>|", $result );
+		$this->assertMatchesRegularExpression( "|<form method=\"get\" action=\"http://example.org/\?page_id={$page_id}&#038;course_id={$this->course->ID}\".*>|", $result );
 	}
 
 	/**

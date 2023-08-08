@@ -19,7 +19,7 @@ class Sensei_Import_Courses_Tests extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();

@@ -1,16 +1,15 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '../../shared/styles/variables';
+@import './outline-block/outline-placeholder.scss';
+
 $dark-gray: #1a1d20;
-body,
-.block-editor {
+$item-padding: 20px;
+
+body .editor-styles-wrapper,
+.editor-styles-wrapper .block-editor {
 	.wp-block-sensei-lms-course-outline {
 		padding: 0 1em;
 		margin: 0 -1em;
-
-		&__placeholder {
-			.components-button {
-				margin-right: 12px;
-				margin-bottom: 12px;
-			}
-		}
 	}
 
 	textarea.wp-block-sensei-lms-course-outline-module__title-input {

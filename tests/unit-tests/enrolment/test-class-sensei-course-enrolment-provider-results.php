@@ -9,8 +9,8 @@ class Sensei_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 	}
@@ -29,8 +29,8 @@ class Sensei_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCase {
 		];
 
 		$provider_results = Sensei_Course_Enrolment_Provider_Results::from_json( wp_json_encode( $base ) );
-		$this->assertTrue( $provider_results instanceof Sensei_Course_Enrolment_Provider_Results );
-		$this->assertEquals( round( $base['t'], 3 ), round( $provider_results->get_time(), 3 ), 'Time (`t`) should match what it was initially set to', 0.1 );
+		$this->assertInstanceOf( Sensei_Course_Enrolment_Provider_Results::class, $provider_results );
+		$this->assertEqualsWithDelta( round( $base['t'], 3 ), round( $provider_results->get_time(), 3 ), 0.1, 'Time (`t`) should match what it was initially set to' );
 		$this->assertEquals( $base['v'], $provider_results->get_version_hash(), 'Version (`v`) should match what it was initially set to' );
 		$this->assertEquals( $base['r'], $provider_results->get_provider_results(), 'Results (`r`) should match what it was initially set to' );
 	}

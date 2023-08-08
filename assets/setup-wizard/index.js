@@ -95,11 +95,14 @@ const SenseiSetupWizardPage = () => {
 			defaultRoute={ steps[ 0 ].key }
 		>
 			<Fullscreen />
-			<NavigationBar steps={ steps } />
 
-			<h1 className="sensei-setup-wizard__sensei-logo">
-				<LogoTree /> Sensei
-			</h1>
+			<header className="sensei-setup-wizard__header">
+				<NavigationBar steps={ steps } />
+
+				<h1 className="sensei-setup-wizard__sensei-logo">
+					<LogoTree /> Sensei
+				</h1>
+			</header>
 
 			{ content }
 		</QueryStringRouter>

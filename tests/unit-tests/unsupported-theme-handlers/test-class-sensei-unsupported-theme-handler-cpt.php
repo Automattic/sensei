@@ -14,7 +14,7 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 	 */
 	private $course;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		// We'll use a Course post and handler to test this.
@@ -22,7 +22,7 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 		$this->handler = new Sensei_Unsupported_Theme_Handler_CPT( 'course' );
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->handler = null;
 
 		parent::tearDown();

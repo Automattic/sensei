@@ -27,15 +27,15 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	/**
 	 * Setup method. Run first on every test execution.
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 		$this->factory = new Sensei_Factory();
 	}
 
 	/**
 	 * Cleanup/teardown after class.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		\Sensei()->settings->set( 'sensei_learning_mode_all', false );
 	}

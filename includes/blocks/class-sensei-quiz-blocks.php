@@ -68,7 +68,7 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 	 * Initializes quiz blocks.
 	 */
 	public function initialize_blocks() {
-		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
+		if ( is_admin() && ! Sensei()->quiz->is_block_based_editor_enabled() ) {
 			return;
 		}
 

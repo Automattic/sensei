@@ -143,6 +143,7 @@ const QuestionEdit = ( props ) => {
 				showAnswerFeedback,
 				toggleAnswerFeedback,
 			},
+			options,
 		} ),
 		[
 			AnswerBlock,
@@ -151,6 +152,7 @@ const QuestionEdit = ( props ) => {
 			setAttributes,
 			showAnswerFeedback,
 			canHaveFeedback,
+			options,
 		]
 	);
 

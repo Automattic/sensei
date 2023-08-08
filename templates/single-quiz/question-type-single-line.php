@@ -31,7 +31,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 	<input type="text" id="<?php echo esc_attr( 'question_' . $question_data['ID'] ); ?>"
 		name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>"
 		value="<?php echo esc_attr( $question_data['user_answer_entry'] ); ?>"
-		<?php echo $question_data['quiz_is_completed'] || ! is_user_logged_in() ? 'disabled' : ''; ?>
+		<?php echo $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available() ? 'disabled' : ''; ?>
 		/>
 
 </div>

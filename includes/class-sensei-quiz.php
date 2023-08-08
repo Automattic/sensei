@@ -32,7 +32,7 @@ class Sensei_Quiz {
 	/**
 	 * The main plugin filename.
 	 *
-	 * @deprecated $$next-version$$ This attribute was never meant to be used. Added by mistake in `1f529be` and later made useless in `4f25fe5`.
+	 * @deprecated 4.9.0 This attribute was never meant to be used. Added by mistake in `1f529be` and later made useless in `4f25fe5`.
 	 * @var string
 	 */
 	public $file;
@@ -86,6 +86,7 @@ class Sensei_Quiz {
 		add_filter( 'body_class', [ $this, 'add_quiz_blocks_class' ] );
 		add_filter( 'post_class', [ $this, 'add_quiz_blocks_class' ] );
 
+		add_filter( 'sensei_quiz_enable_block_based_editor', [ $this, 'disable_block_editor_functions_when_question_types_are_registered' ], 2 ); // It has 2 as priority for better backward compabilitiby, since originally it was inside the method `is_block_based_editor_enabled`.
 	}
 
 	/**
@@ -99,8 +100,12 @@ class Sensei_Quiz {
 
 		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 
-		// Disable block editor functions if custom question types have been registered, or we are not in the block editor.
-		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' ) && ( ! $current_screen || $current_screen->is_block_editor() );
+		$is_block_editor = (
+			! $current_screen || $current_screen->is_block_editor()
+		) || (
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't touch the nonce.
+			isset( $_GET['meta-box-loader-nonce'] ) && wp_verify_nonce( wp_unslash( $_GET['meta-box-loader-nonce'] ), 'meta-box-loader' )
+		);
 
 		/**
 		 * Filter to change whether the block based editor should be used instead of the legacy
@@ -114,7 +119,20 @@ class Sensei_Quiz {
 		 *
 		 * @return {bool}
 		 */
-		return apply_filters( 'sensei_quiz_enable_block_based_editor', $is_block_based_editor_enabled );
+		return apply_filters( 'sensei_quiz_enable_block_based_editor', $is_block_editor );
+	}
+
+	/**
+	 * Disable block based editor when custom question types have been registered.
+	 *
+	 * @since 4.11.0
+	 *
+	 * @param bool $is_block_based_editor_enabled Whether the block based editor is enabled.
+	 *
+	 * @return bool Whether block based editor should be enabled.
+	 */
+	public function disable_block_editor_functions_when_question_types_are_registered( $is_block_based_editor_enabled ) {
+		return ! has_filter( 'sensei_question_types' ) && $is_block_based_editor_enabled;
 	}
 
 	/**
@@ -337,11 +355,11 @@ class Sensei_Quiz {
 		// save the user data
 		$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
 
-		Sensei()->quiz_grade_repository->delete_all( $submission->get_id() );
-		Sensei()->quiz_answer_repository->delete_all( $submission->get_id() );
+		Sensei()->quiz_grade_repository->delete_all( $submission );
+		Sensei()->quiz_answer_repository->delete_all( $submission );
 
 		foreach ( $prepared_answers as $question_id => $answer ) {
-			Sensei()->quiz_answer_repository->create( $submission->get_id(), $question_id, $answer );
+			Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
 		}
 
 		// Save transient to make retrieval faster.
@@ -767,22 +785,16 @@ class Sensei_Quiz {
 		if ( $quiz_id ) {
 			// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade.
 			Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
-
-			$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-			if ( $quiz_submission ) {
-				$quiz_submission->set_final_grade( null );
-				Sensei()->quiz_submission_repository->save( $quiz_submission );
-				Sensei()->quiz_grade_repository->delete_all( $quiz_submission->get_id() );
-				Sensei()->quiz_answer_repository->delete_all( $quiz_submission->get_id() );
-			}
 		}
 
 		// Update course completion.
 		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
 		if ( $course_progress ) {
-			$course_progress->start();
+			if ( ! $course_progress->get_started_at() ) {
+				$course_progress->start();
 
-			Sensei()->course_progress_repository->save( $course_progress );
+				Sensei()->course_progress_repository->save( $course_progress );
+			}
 
 			// Reset the course progress metadata.
 			$course_progress_metadata = [
@@ -1035,7 +1047,7 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		Sensei()->quiz_grade_repository->delete_all( $submission->get_id() );
+		Sensei()->quiz_grade_repository->delete_all( $submission );
 
 		$answers     = Sensei()->quiz_answer_repository->get_all( $submission->get_id() );
 		$answers_map = [];
@@ -1045,7 +1057,7 @@ class Sensei_Quiz {
 
 		foreach ( $quiz_grades as $question_id => $points ) {
 			$answer = $answers_map[ $question_id ];
-			Sensei()->quiz_grade_repository->create( $submission->get_id(), $answer->get_id(), $question_id, $points );
+			Sensei()->quiz_grade_repository->create( $submission, $answer->get_id(), $question_id, $points );
 		}
 
 		$transient_key = 'quiz_grades_' . $user_id . '_' . $lesson_id;
@@ -1227,7 +1239,7 @@ class Sensei_Quiz {
 			$grade->set_feedback( $feedback );
 		}
 
-		Sensei()->quiz_grade_repository->save_many( $submission->get_id(), $grades );
+		Sensei()->quiz_grade_repository->save_many( $submission, $grades );
 
 		// Save transient to make retrieval faster in the future.
 		$transient_key = 'sensei_answers_feedback_' . $user_id . '_' . $lesson_id;
@@ -1500,10 +1512,6 @@ class Sensei_Quiz {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
-
-		if ( ! $user_id ) {
-			return false;
-		}
 
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 		$course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );

@@ -93,15 +93,9 @@ class Sensei_Notices {
 		 * @since 4.7.0
 		 * @hook sensei_notice
 		 *
-		 * @param array $notice {
-		 *     The notice data with the following properties.
+		 * @param {array} $notice The notice data.
 		 *
-		 *     @type string $content The message text of the notice.
-		 *     @type string $type    The type of the notice. Default: "alert".
-		 *     @type string $key     Optional. The identifier key for the notice.
-		 * }
-		 *
-		 * @return array|null The notice data. Or return null if you want to prevent the notice showing up.
+		 * @return {array|null} The notice data. Or return null if you want to prevent the notice showing up.
 		 */
 		$notice = apply_filters( 'sensei_notice', $notice );
 
@@ -191,7 +185,7 @@ class Sensei_Notices {
 	 *
 	 * @return string The modified content.
 	 */
-	public function prepend_notices_to_content( string $content ) : string {
+	public function prepend_notices_to_content( $content ) {
 		if ( in_the_loop() && is_main_query() ) {
 
 			ob_start();

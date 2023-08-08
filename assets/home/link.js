@@ -15,15 +15,22 @@ import { addUtms, isUrlExternal } from './utils';
  * @param {string}   props.label   The label for the link.
  * @param {string}   props.url     The target URL.
  * @param {Function} props.onClick The event listener for the click event.
+ * @param {Object}   props.dataSet Data attributes to add to the link.
  */
-const Link = ( { label, url, onClick } ) => {
+const Link = ( { label, url, onClick, dataSet } ) => {
 	const isExternal = isUrlExternal( url );
 	const linkProps = {
 		href: addUtms( url ),
-		target: onClick || ! isExternal ? undefined : '_blank',
+		target: ! isExternal ? undefined : '_blank',
 		rel: isExternal ? 'noreferrer' : undefined,
 		onClick,
 	};
+	if ( !! dataSet ) {
+		for ( const [ key, value ] of Object.entries( dataSet ) ) {
+			linkProps[ 'data-' + key ] = value;
+		}
+	}
+
 	return (
 		<div className="sensei-home__link">
 			<a { ...linkProps }>

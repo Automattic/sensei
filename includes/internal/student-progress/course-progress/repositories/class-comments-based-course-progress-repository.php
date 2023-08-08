@@ -68,6 +68,14 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			return null;
 		}
 
+		if ( is_array( $comment ) ) {
+			usort(
+				$comment,
+				[ $this, 'sort_comments' ]
+			);
+			$comment = reset( $comment );
+		}
+
 		$meta_start = get_comment_meta( $comment->comment_ID, 'start', true );
 		$started_at = $meta_start ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
 
@@ -79,6 +87,23 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		}
 
 		return new Course_Progress( (int) $comment->comment_ID, $course_id, $user_id, $comment->comment_approved, $started_at, $completed_at, $comment_date, $comment_date );
+	}
+
+	/**
+	 * Sort comments by comment ID in descending order.
+	 *
+	 * @param \stdClass $a First comment to compare.
+	 * @param \stdClass $b Second comment to compare.
+	 *
+	 * @return int
+	 */
+	private function sort_comments( $a, $b ) {
+		$a_id = (int) $a->comment_ID;
+		$b_id = (int) $b->comment_ID;
+		if ( $a_id === $b_id ) {
+			return 0;
+		}
+		return ( $a_id > $b_id ) ? -1 : 1;
 	}
 
 	/**
@@ -130,5 +155,65 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		);
 
 		Sensei_Utils::sensei_delete_activities( $args );
+	}
+
+	/**
+	 * Delete course progress for a given course.
+	 *
+	 * @internal
+	 *
+	 * @param int $course_id The course ID.
+	 */
+	public function delete_for_course( int $course_id ): void {
+		$args = array(
+			'post_id' => $course_id,
+			'type'    => 'sensei_course_status',
+		);
+
+		$this->delete_activities( $args );
+	}
+
+	/**
+	 * Delete course progress for a given user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function delete_for_user( int $user_id ): void {
+		$args = array(
+			'user_id' => $user_id,
+			'type'    => 'sensei_course_status',
+		);
+
+		$this->delete_activities( $args );
+	}
+
+	/**
+	 * Delete activity comments for a given set of arguments.
+	 *
+	 * @param array $args The arguments.
+	 */
+	private function delete_activities( array $args ): void {
+		$comments = Sensei_Utils::sensei_check_for_activity( $args, true );
+		if ( ! $comments ) {
+			return;
+		}
+
+		$comments = is_array( $comments ) ? $comments : [ $comments ];
+		$post_ids = [];
+		foreach ( $comments as $comment ) {
+			if ( isset( $comment->comment_post_ID ) ) {
+				$post_ids[] = $comment->comment_post_ID;
+			}
+
+			if ( isset( $comment->comment_ID ) && 0 < $comment->comment_ID ) {
+				wp_delete_comment( intval( $comment->comment_ID ), true );
+			}
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			Sensei()->flush_comment_counts_cache( $post_id );
+		}
 	}
 }

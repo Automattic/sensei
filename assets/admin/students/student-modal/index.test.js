@@ -224,7 +224,7 @@ describe( '<StudentModal />', () => {
 	describe( 'Reset/Remove Progress action', () => {
 		const onClose = jest.fn();
 		const descriptionLookupText =
-			'Select the course(s) you would like to reset or remove progress from for ';
+			'Select the course(s) you would like to reset progress from for ';
 
 		beforeEach( () => {
 			render(
@@ -259,7 +259,7 @@ describe( '<StudentModal />', () => {
 
 		it( 'Should display the action button', async () => {
 			expect(
-				await buttonByLabel( 'Reset or Remove Progress' )
+				await buttonByLabel( 'Reset Progress' )
 			).toBeInTheDocument();
 		} );
 
@@ -278,9 +278,7 @@ describe( '<StudentModal />', () => {
 
 			fireEvent.click( await courseOptionAt( 0 ) );
 
-			fireEvent.click(
-				await buttonByLabel( 'Reset or Remove Progress' )
-			);
+			fireEvent.click( await buttonByLabel( 'Reset Progress' ) );
 
 			await waitFor( () => {
 				expect( onClose ).toHaveBeenCalledWith( true );
@@ -316,7 +314,7 @@ describe( '<StudentModal />', () => {
 					.once()
 					.reply( 200, { status: 'ok' } );
 
-				// Reset or remove progress
+				// Reset progress
 				nock( 'http://localhost' )
 					.post( '/sensei-internal/v1/course-progress/batch', {
 						student_ids: [ students[ 0 ] ],
@@ -378,14 +376,12 @@ describe( '<StudentModal />', () => {
 				);
 
 				fireEvent.click( await courseOptionAt( 0 ) );
-				fireEvent.click(
-					await buttonByLabel( 'Reset or Remove Progress' )
-				);
+				fireEvent.click( await buttonByLabel( 'Reset Progress' ) );
 
 				expect(
 					// In addition to the notice, there is an ARIA element that has this text.
 					await findAllByText(
-						'Unable to reset or remove progress for this student. Please try again.'
+						'Unable to reset progress for this student. Please try again.'
 					)
 				).toHaveLength( 2 ); // ARIA + notice
 			} );
@@ -418,7 +414,7 @@ describe( '<StudentModal />', () => {
 					.once()
 					.reply( 200, { status: 'ok' } );
 
-				// Reset or remove progress
+				// Reset progress
 				nock( 'http://localhost' )
 					.post( '/sensei-internal/v1/course-progress/batch', {
 						student_ids: students,
@@ -480,13 +476,11 @@ describe( '<StudentModal />', () => {
 				);
 
 				fireEvent.click( await courseOptionAt( 0 ) );
-				fireEvent.click(
-					await buttonByLabel( 'Reset or Remove Progress' )
-				);
+				fireEvent.click( await buttonByLabel( 'Reset Progress' ) );
 
 				expect(
 					await findAllByText(
-						'Unable to reset or remove progress for these students. Please try again.'
+						'Unable to reset progress for these students. Please try again.'
 					)
 				).toHaveLength( 2 ); // ARIA + notice
 			} );

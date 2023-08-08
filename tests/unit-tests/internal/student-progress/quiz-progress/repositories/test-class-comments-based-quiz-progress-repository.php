@@ -18,12 +18,12 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 	 */
 	protected $factory;
 
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 		$this->factory = new \Sensei_Factory();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -162,13 +162,14 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$progress->pass();
 		$repository->save( $progress );
 
-		update_comment_meta( $quiz_id, 'quiz_answers', [ $question_id => 'answer' ] );
+		update_comment_meta( $progress->get_id(), 'questions_asked', $question_id );
+		update_comment_meta( $progress->get_id(), 'quiz_answers', [ $question_id => 'answer' ] );
 
 		/* Act. */
 		$repository->delete( $progress );
 
 		/* Assert. */
-		$actual = get_comment_meta( $quiz_id, 'quiz_answers', true );
+		$actual = get_comment_meta( $progress->get_id(), 'quiz_answers', true );
 		self::assertEmpty( $actual );
 	}
 
@@ -185,6 +186,7 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$progress->pass();
 		$repository->save( $progress );
 
+		update_comment_meta( $progress->get_id(), 'questions_asked', '1,2' );
 		update_comment_meta( $progress->get_id(), 'grade', 1 );
 
 		/* Act. */
@@ -193,6 +195,99 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$actual = get_comment_meta( $progress->get_id(), 'grade', true );
 		self::assertEmpty( $actual );
+	}
+
+	public function testDeleteForQuiz_WhenQuizGiven_DeletesGradesForThisQuiz(): void {
+		/* Arrange. */
+		$lesson1_id = $this->factory->lesson->create();
+		$lesson2_id = $this->factory->lesson->create();
+		$user1_id   = $this->factory->user->create();
+		$user2_id   = $this->factory->user->create();
+		$quiz1_id   = $this->factory->quiz->create( [ 'post_parent' => $lesson1_id ] );
+		$quiz2_id   = $this->factory->quiz->create( [ 'post_parent' => $lesson2_id ] );
+		\Sensei_Utils::update_lesson_status( $user1_id, $lesson1_id, 'in-progress' );
+		\Sensei_Utils::update_lesson_status( $user1_id, $lesson2_id, 'in-progress' );
+		\Sensei_Utils::update_lesson_status( $user2_id, $lesson1_id, 'in-progress' );
+
+		$repository = new Comments_Based_Quiz_Progress_Repository();
+
+		$progress1 = $repository->get( $quiz1_id, $user1_id );
+		$progress1->pass();
+		$repository->save( $progress1 );
+		update_comment_meta( $progress1->get_id(), 'grade', 1 );
+
+		$progress2 = $repository->get( $quiz2_id, $user1_id );
+		$progress2->pass();
+		$repository->save( $progress2 );
+		update_comment_meta( $progress2->get_id(), 'grade', 1 );
+
+		$progress3 = $repository->get( $quiz1_id, $user2_id );
+		$progress3->pass();
+		$repository->save( $progress3 );
+		update_comment_meta( $progress3->get_id(), 'grade', 1 );
+
+		/* Act. */
+		$repository->delete_for_quiz( $quiz1_id );
+
+		/* Assert. */
+		$actual   = [
+			'progress1 grade' => get_comment_meta( $progress1->get_id(), 'grade', true ),
+			'progress2 grade' => get_comment_meta( $progress2->get_id(), 'grade', true ),
+			'progress3 grade' => get_comment_meta( $progress3->get_id(), 'grade', true ),
+		];
+		$expected = [
+			'progress1 grade' => '',
+			'progress2 grade' => '1',
+			'progress3 grade' => '',
+		];
+		self::assertSame( $expected, $actual );
+	}
+
+	public function testDeleteForUser_WhenUserGiven_DeletesGradesForThisUser(): void {
+		/* Arrange. */
+		$lesson1_id = $this->factory->lesson->create();
+		$lesson2_id = $this->factory->lesson->create();
+		$user1_id   = $this->factory->user->create();
+		$user2_id   = $this->factory->user->create();
+		$quiz1_id   = $this->factory->quiz->create( [ 'post_parent' => $lesson1_id ] );
+		$quiz2_id   = $this->factory->quiz->create( [ 'post_parent' => $lesson2_id ] );
+		\Sensei_Utils::update_lesson_status( $user1_id, $lesson1_id, 'in-progress' );
+		\Sensei_Utils::update_lesson_status( $user1_id, $lesson2_id, 'in-progress' );
+		\Sensei_Utils::update_lesson_status( $user2_id, $lesson1_id, 'in-progress' );
+
+		$repository = new Comments_Based_Quiz_Progress_Repository();
+
+		$progress1 = $repository->get( $quiz1_id, $user1_id );
+		$progress1->pass();
+		$repository->save( $progress1 );
+		update_comment_meta( $progress1->get_id(), 'grade', 1 );
+
+		$progress2 = $repository->get( $quiz2_id, $user1_id );
+		$progress2->pass();
+		$repository->save( $progress2 );
+		update_comment_meta( $progress2->get_id(), 'grade', 1 );
+
+		$progress3 = $repository->get( $quiz1_id, $user2_id );
+		$progress3->pass();
+		$repository->save( $progress3 );
+		update_comment_meta( $progress3->get_id(), 'grade', 1 );
+
+		/* Act. */
+		$repository->delete_for_user( $user1_id );
+
+		/* Assert. */
+		$actual = [
+			'progress1 grade' => get_comment_meta( $progress1->get_id(), 'grade', true ),
+			'progress2 grade' => get_comment_meta( $progress2->get_id(), 'grade', true ),
+			'progress3 grade' => get_comment_meta( $progress3->get_id(), 'grade', true ),
+		];
+
+		$expected = [
+			'progress1 grade' => '',
+			'progress2 grade' => '',
+			'progress3 grade' => '1',
+		];
+		self::assertSame( $expected, $actual );
 	}
 
 	private function export_progress( Quiz_Progress $progress ): array {

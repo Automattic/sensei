@@ -71,7 +71,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 	private $controller;
 
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->quick_links_provider_mock = $this->createMock( Sensei_Home_Quick_Links_Provider::class );
@@ -248,7 +248,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 		$this->assertEquals( $mocked_response, $result['notices'] );
 	}
 
-	public function testGetData_GivenAMockedNoticesProviderAsTeacher_NotIncluded() {
+	public function testGetData_GivenAMockedNoticesProviderAsTeacher_Included() {
 		// Arrange
 		$this->login_as_teacher();
 
@@ -256,6 +256,6 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 		$result = $this->controller->get_data();
 
 		// Assert
-		$this->assertArrayNotHasKey( 'notices', $result );
+		$this->assertArrayHasKey( 'notices', $result );
 	}
 }

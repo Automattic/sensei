@@ -49,13 +49,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 		}
 		$response = json_decode( $this->_last_response );
 
-		$this->assertInternalType( 'object', $response );
-		$this->assertObjectHasAttribute( 'success', $response );
+		$this->assertIsObject( $response );
+		$this->assertObjectHasProperty( 'success', $response );
 		$this->assertTrue( $response->success );
 		$this->assertCount( 9, $response->data );
 
 		foreach ( $response->data as $item ) {
-			$this->assertContains( 'Course title', $item );
+			$this->assertStringContainsString( 'Course title', $item );
 		}
 	}
 }

@@ -10,7 +10,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
@@ -20,7 +20,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 	/**
 	 * Clean up after test.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		remove_all_filters( 'sensei_enrolment_course_calculation_job_batch_size' );

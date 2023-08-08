@@ -18,7 +18,7 @@ class Sensei_Scheduler_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		self::resetScheduler();
@@ -28,10 +28,10 @@ class Sensei_Scheduler_Test extends WP_UnitTestCase {
 	/**
 	 * Clean up after all tests.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		self::restoreShimScheduler();
 
-		return parent::tearDownAfterClass();
+		parent::tearDownAfterClass();
 	}
 
 	/**

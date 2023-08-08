@@ -23,7 +23,7 @@ class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 
 	const REST_ROUTE = '/sensei-internal/v1/home';
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		// Setup REST server for integration tests.
@@ -33,7 +33,7 @@ class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 		do_action( 'rest_api_init' );
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		// Unregister REST server.
 		global $wp_rest_server;
 		$wp_rest_server = null;

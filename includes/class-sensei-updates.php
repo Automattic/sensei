@@ -6,6 +6,11 @@
  * @since 1.1.0
  */
 
+use Sensei\Internal\Emails\Email_Seeder_Data;
+use Sensei\Internal\Emails\Email_Repository;
+use Sensei\Internal\Emails\Email_Seeder;
+use Sensei\Internal\Emails\Email_Template_Repository;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -80,9 +85,31 @@ class Sensei_Updates {
 		$this->v3_7_add_comment_indexes();
 		$this->v3_9_fix_question_author();
 		$this->v3_9_remove_abandoned_multiple_question();
+		$this->v4_10_update_install_time();
+		$this->v4_12_create_default_emails();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Create default emails.
+	 *
+	 * @return void
+	 */
+	private function v4_12_create_default_emails() {
+		if ( ! Sensei()->feature_flags->is_enabled( 'email_customization' ) ) {
+			return;
+		}
+
+		$repository = new Email_Repository();
+		if ( $repository->has_emails() ) {
+			return;
+		}
+
+		$seeder = new Email_Seeder( new Email_Seeder_Data(), $repository );
+		$seeder->init();
+		$seeder->create_all();
 	}
 
 	/**
@@ -95,6 +122,13 @@ class Sensei_Updates {
 		}
 
 		Sensei_Scheduler::instance()->schedule_job( new Sensei_Update_Remove_Abandoned_Multiple_Question() );
+	}
+
+	/**
+	 * Set new option to save when Sensei was installed/updated.
+	 */
+	private function v4_10_update_install_time() {
+		add_option( 'sensei_installed_at', time() );
 	}
 
 	/**
@@ -327,7 +361,12 @@ class Sensei_Updates {
 			$version_match = preg_quote( $version, '/' );
 		}
 
-		preg_match_all( "/((?'year'\d{4})[\-\.](?'month'\d{1,2})[\-\.](?'day'\d{1,2}).*version\s+(?'version'{$version_match}))[^\S]/", $changelog, $releases_raw, PREG_SET_ORDER );
+		preg_match_all(
+			"/## (?'version'{$version_match}) - ((?'year'\d{4})[\-\.](?'month'\d{1,2})[\-\.](?'day'\d{1,2}))[^\S]/",
+			$changelog,
+			$releases_raw,
+			PREG_SET_ORDER
+		);
 
 		foreach ( $releases_raw as $release ) {
 			if ( empty( $release['version'] ) || empty( $release['year'] ) || empty( $release['month'] ) || empty( $release['day'] ) ) {

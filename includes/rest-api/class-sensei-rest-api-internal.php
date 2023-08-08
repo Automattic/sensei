@@ -51,6 +51,7 @@ class Sensei_REST_API_Internal {
 			new Sensei_REST_API_Lesson_Quiz_Controller( $this->namespace ),
 			new Sensei_REST_API_Question_Options_Controller( $this->namespace ),
 			new Sensei_REST_API_Extensions_Controller( $this->namespace ),
+			new Sensei_REST_API_Theme_Controller( $this->namespace ),
 			new Sensei_REST_API_Send_Message_Controller( $this->namespace ),
 			new Sensei_REST_API_Course_Students_Controller( $this->namespace ),
 			new Sensei_REST_API_Course_Progress_Controller( $this->namespace ),

@@ -1,8 +1,10 @@
 <?php
 /**
- * Video Hero pattern content.
+ * Deprecated Life Coach pattern content.
+ * Remove after the course_outline_ai feature is released.
  *
  * @package sensei-lms
+ * @deprecated 4.16.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,13 +38,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div style="height:28px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:heading -->
-<h2><?php esc_html_e( 'Make your dream a reality', 'sensei-lms' ); ?></h2>
+<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"},"margin":{"top":"9px","bottom":"9px"}}},"layout":{"type":"default"}} -->
+<div class="wp-block-group alignwide" style="margin-top:9px;margin-bottom:9px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:heading -->
+<h2 class="wp-block-heading"><?php esc_html_e( 'Make your dream a reality', 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p><?php esc_html_e( "Hellen's classes offer 1:1 sessions so that she gets to know each of their students. It's not just a group chat, it's you and Hellen, at a personal level. That way you can figure out exactly how to apply her teachings to your personality.", 'sensei-lms' ); ?></p>
-<!-- /wp:paragraph -->
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
 
 <!-- wp:spacer {"height":16} -->
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>

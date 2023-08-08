@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class Sensei_Dependency_Checker {
-	const MINIMUM_PHP_VERSION        = '7.2';
-	const FUTURE_MINIMUM_PHP_VERSION = '7.2';
+	const MINIMUM_PHP_VERSION        = '7.3';
+	const FUTURE_MINIMUM_PHP_VERSION = '7.3';
 
 	/**
 	 * Checks for our PHP version requirement.

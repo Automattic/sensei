@@ -23,12 +23,12 @@ class Sensei_Home_Task_Configure_Learning_Mode_Test extends WP_UnitTestCase {
 	 */
 	private $task;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->task = new Sensei_Home_Task_Configure_Learning_Mode();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		delete_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY );
 		parent::tearDown();
 	}

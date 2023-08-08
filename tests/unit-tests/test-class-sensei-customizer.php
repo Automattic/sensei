@@ -5,12 +5,12 @@ class Sensei_Customizer_Test extends WP_UnitTestCase {
 
 	private $customizer;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->customizer = new Sensei_Customizer();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		remove_action( 'customize_register', array( $this->customizer, 'add_customizer_settings' ) );
 		remove_action( 'customize_preview_init', array( $this->customizer, 'enqueue_customizer_helper' ) );

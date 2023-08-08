@@ -26,7 +26,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 	/**
 	 * Test specific setup.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		global $wp_rest_server;
@@ -41,7 +41,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$this->prepareEnrolmentManager();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}

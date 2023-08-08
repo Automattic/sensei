@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @package Sensei
  * @author  Automattic
- * @since   $$next-version$$
+ * @since   4.9.0
  */
 class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 

@@ -14,7 +14,7 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive_Test extends WP_UnitTestCa
 	 */
 	private $course;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 
@@ -25,7 +25,7 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive_Test extends WP_UnitTestCa
 		$this->handler = new Sensei_Unsupported_Theme_Handler_Course_Archive();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->handler = null;
 
 		Sensei_Unsupported_Theme_Handler_Page_Imitator_Test::delete_page_template();
@@ -114,6 +114,27 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive_Test extends WP_UnitTestCa
 		$this->assertNotEquals( 0, $post->ID, 'The dummy post ID should be non-zero' );
 		$this->assertNull( get_post( $post->ID ), 'The dummy post ID should be unused' );
 		$this->assertEquals( 'page', $post->post_type, 'The dummy post type should be "page"' );
+	}
+
+	public function testCourseArchivePage_WhenRendered_DoesNotRenderQueryListBlockWithoutPageContent() {
+		/* ACT */
+		$this->handler->handle_request();
+
+		/* ASSERT */
+		global $post;
+		$this->assertStringNotContainsString( 'wp-block-sensei-lms-course-list', $post->post_content );
+	}
+
+	public function testCourseArchivePage_WhenRendered_RendersQueryListBlockIfPageContentAvailable() {
+		/* ARRANGE */
+		Sensei_Setup_Wizard::instance()->pages->create_pages();
+
+		/* ACT */
+		$this->handler->handle_request();
+
+		/* ASSERT */
+		global $post;
+		$this->assertStringContainsString( 'wp-block-sensei-lms-course-list', $post->post_content );
 	}
 
 	/**

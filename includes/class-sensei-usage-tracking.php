@@ -24,9 +24,6 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		// Add filter for settings.
 		add_filter( 'sensei_settings_fields', array( $this, 'add_setting_field' ) );
 
-		// Init event logging source filters.
-		add_action( 'init', [ $this, 'init_event_logging_sources' ] );
-
 		// Log when Sensei is updated.
 		add_action( 'sensei_log_update', [ $this, 'log_update' ] );
 	}
@@ -39,10 +36,13 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Initialize filters for event logging sources.
 	 *
 	 * @since 2.1.0
+	 * @deprecated 4.10.0
 	 *
 	 * @access private
 	 */
 	public function init_event_logging_sources() {
+		_deprecated_function( __METHOD__, '4.10.0' );
+
 		add_filter( 'sensei_event_logging_source', [ $this, 'detect_event_logging_source' ], 1 );
 		add_filter( 'template_redirect', [ $this, 'set_event_logging_source_frontend' ] );
 		add_filter( 'import_start', [ $this, 'set_event_logging_source_data_import' ] );
@@ -97,21 +97,24 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		if ( 1 === preg_match( '/(^sensei|\-sensei$)/', $plugin_slug ) ) {
 			return true;
 		}
+
 		$third_party_plugins = array(
+			'automatewoo',
 			'classic-editor',
 			'jetpack',
+			'mailpoet',
 			'polylang',
-			'sitepress-multilingual-cms',
+			'sitepress-multilingual-cms', // WPML.
 			'woocommerce',
+			'woocommerce-follow-up-emails',
 			'woocommerce-memberships',
-			'woocommerce-product-vendors',
 			'woocommerce-subscriptions',
-			'woothemes-updater',
-			'wp-quicklatex',
 		);
+
 		if ( in_array( $plugin_slug, $third_party_plugins, true ) ) {
 			return true;
 		}
+
 		return false;
 	}
 
@@ -168,6 +171,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Attempt to detect the source of the event logging request.
 	 *
 	 * @since 2.1.0
+	 * @deprecated 4.10.0
 	 *
 	 * @access private
 	 *
@@ -175,6 +179,8 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * @return string         The detected source.
 	 */
 	public static function detect_event_logging_source( $source ) {
+		_deprecated_function( __METHOD__, '4.10.0' );
+
 		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			return 'rest-api';
 		}
@@ -191,10 +197,13 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Set the event logging source to `frontend`.
 	 *
 	 * @since 2.1.0
+	 * @deprecated 4.10.0
 	 *
 	 * @access private
 	 */
 	public function set_event_logging_source_frontend() {
+		_deprecated_function( __METHOD__, '4.10.0' );
+
 		add_filter(
 			'sensei_event_logging_source',
 			function( $fields ) {
@@ -207,10 +216,13 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Set the event logging source to `data-import`.
 	 *
 	 * @since 2.1.0
+	 * @deprecated 4.10.0
 	 *
 	 * @access private
 	 */
 	public function set_event_logging_source_data_import() {
+		_deprecated_function( __METHOD__, '4.10.0' );
+
 		add_filter(
 			'sensei_event_logging_source',
 			function( $fields ) {

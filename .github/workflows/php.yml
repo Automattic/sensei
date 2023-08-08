@@ -1,6 +1,8 @@
 name: PHP Linting and Tests
 
-on: pull_request
+on:
+    pull_request:
+    workflow_call:
 
 jobs:
     lint:
@@ -25,15 +27,16 @@ jobs:
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: '7.2'
+                  php-version: '7.3'
                   tools: composer
                   coverage: none
 
             - name: Set up branches
               run: git checkout -b trunk refs/remotes/origin/trunk && git checkout -
+              if: github.ref != 'refs/heads/trunk'
 
             - name: Install PHP dependencies
-              run: composer self-update --1 && composer install --no-ansi --no-interaction --prefer-dist --no-progress
+              run: composer self-update && composer install --no-ansi --no-interaction --prefer-dist --no-progress
 
             - name: Check for new issues
               run: ./scripts/linter-ci
@@ -51,22 +54,22 @@ jobs:
         runs-on: ubuntu-latest
         continue-on-error: ${{ matrix.wp == 'nightly' }}
         strategy:
-            fail-fast: false
+            fail-fast: true
             max-parallel: 10
             matrix:
                 wp: ['latest']
                 wpmu: [0]
-                php: ['7.2', '7.3', '7.4', '8.0']
+                php: ['7.3', '7.4', '8.0']
                 include:
-                    - php: 7.2
-                      wp: '5.9'
-                    - php: 7.2
+                    - php: 7.3
                       wp: '6.0'
-                    - php: 7.2
+                    - php: 7.3
+                      wp: '6.1'
+                    - php: 7.3
                       wp: latest
                       wpmu: 1
-                    - wp: nightly
-                      php: 7.2
+                    - php: 7.3
+                      wp: nightly
         env:
             WP_VERSION: ${{ matrix.wp }}
             WP_MULTISITE: ${{ matrix.wpmu }}
@@ -109,21 +112,18 @@ jobs:
             - name: Install PHP dependencies
               run: composer install --no-ansi --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
 
-            - name: Add PHP 7.4+ compatibility
-              run: |
-                  if [ "$(php -r "echo version_compare(PHP_VERSION,'7.4','>=');")" ]; then
-                      curl -L https://github.com/woocommerce/phpunit/archive/add-compatibility-with-php8-to-phpunit-7.zip -o /tmp/phpunit-7.5-fork.zip
-                      unzip -d /tmp/phpunit-7.5-fork /tmp/phpunit-7.5-fork.zip
-                      rm ./vendor/bin/phpunit
-                      composer bin phpunit config --unset platform
-                      composer bin phpunit config repositories.0 '{"type": "path", "url": "/tmp/phpunit-7.5-fork/phpunit-add-compatibility-with-php8-to-phpunit-7", "options": {"symlink": false}}'
-                      composer bin phpunit require --dev -W phpunit/phpunit:@dev --ignore-platform-reqs
-                      rm -rf ./vendor/phpunit/
-                      composer dump-autoload
-                  fi
-
             - name: Setup test environment
               run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 $WP_VERSION
 
             - name: Run tests
               run: ./vendor/bin/phpunit
+
+            - name: Slack Notification on Failure
+              uses: rtCamp/action-slack-notify@v2
+              if: ${{ failure() && github.event_name == 'push' }}
+              env:
+                SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
+                SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+                SLACK_TITLE: 'PHP Testing'
+                SLACK_COLOR: 'error'
+                SLACK_FOOTER: ''

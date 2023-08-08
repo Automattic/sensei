@@ -74,6 +74,10 @@ class Sensei_Home_Task_Sell_Course_With_WooCommerce implements Sensei_Home_Task 
 	 * @return bool Whether the task should be active or not.
 	 */
 	public static function is_active() {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			return false;
 		}

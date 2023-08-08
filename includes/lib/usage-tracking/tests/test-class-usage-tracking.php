@@ -1,5 +1,7 @@
 <?php
 
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+
 require_once dirname( __FILE__ ) . '/support/class-usage-tracking-test-subclass.php';
 require_once dirname( __FILE__ ) . '/support/wp-die-exception.php';
 
@@ -11,12 +13,15 @@ Usage_Tracking_Test_Subclass::get_instance();
  * plugin.
  *
  * @group usage-tracking
+ * @covers Sensei_Usage_Tracking_Base
  */
 class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
+	use ArraySubsetAsserts;
+
 	private $event_counts       = array();
 	private $track_http_request = array();
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		// Update the class name here to match the Usage Tracking class.
 		$this->usage_tracking = Usage_Tracking_Test_Subclass::get_instance();
@@ -25,8 +30,6 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 
 	/**
 	 * Ensure cron job action is set up.
-	 *
-	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testCronJobActionAdded() {
 		$this->assertTrue( ! ! has_action( $this->usage_tracking->get_prefix() . '_usage_tracking_send_usage_data', array( $this->usage_tracking, 'send_usage_data' ) ) );
@@ -34,8 +37,6 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 
 	/**
 	 * Ensure scheduling function works properly.
-	 *
-	 * @covers {Prefix}_Usage_Tracking::schedule_tracking_task
 	 */
 	public function testScheduleTrackingTask() {
 		// Make sure it's cleared initially
@@ -60,8 +61,6 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure that a request is made to the correct URL with the given
 	 * properties and the default properties.
-	 *
-	 * @covers {Prefix}_Usage_Tracking::send_event
 	 */
 	public function testSendEvent() {
 		$event      = 'my_event';
@@ -89,30 +88,25 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 		$query = array();
 		parse_str( $parsed_url['query'], $query );
 
-		// Older versions (for PHP 5.2) of PHPUnit do not have this method
-		if ( method_exists( $this, 'assertArraySubset' ) ) {
-			$this->assertArraySubset(
-				array(
-					'button_clicked' => 'my_button',
-					'admin_email'    => 'admin@example.org',
-					'_ut'            => $this->usage_tracking->get_prefix() . ':site_url',
-					'_ui'            => 'example.org',
-					'_ul'            => '',
-					'_en'            => $this->usage_tracking->get_prefix() . '_my_event',
-					'_ts'            => '1234000',
-					'_'              => '_',
-				),
-				$query,
-				'Query parameters'
-			);
-		}
+		$this->assertArraySubset(
+			array(
+				'button_clicked' => 'my_button',
+				'admin_email'    => 'admin@example.org',
+				'_ut'            => $this->usage_tracking->get_prefix() . ':site_url',
+				'_ui'            => 'example.org',
+				'_ul'            => '',
+				'_en'            => $this->usage_tracking->get_prefix() . '_my_event',
+				'_ts'            => '1234000',
+				'_'              => '_',
+			),
+			$query,
+			'Query parameters'
+		);
 	}
 
 	/**
 	 * Ensure that the request is not made if tracking is not enabled, unless
 	 * $force is true.
-	 *
-	 * @covers {Prefix}_Usage_Tracking::send_event
 	 */
 	public function testSendEventWithTrackingDisabled() {
 		$event      = 'my_event';
@@ -134,8 +128,6 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 
 	/**
 	 * Ensure that the request is only sent when the setting is enabled.
-	 *
-	 * @covers {Prefix}_Usage_Tracking::maybe_send_usage_data
 	 */
 	public function testSendUsageData() {
 		// Count the number of network requests
@@ -158,7 +150,6 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Tests the basic structure for collected system data.
 	 *
-	 * @covers {Prefix}_Usage_Tracking::get_system_data
 	 * @group track-system-data
 	 */
 	public function testSystemDataStructure() {
@@ -166,7 +157,7 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 
 		$system_data = $this->usage_tracking->get_system_data();
 
-		$this->assertInternalType( 'array', $system_data, 'System data must be returned as an array' );
+		$this->assertIsArray( $system_data, 'System data must be returned as an array' );
 
 		$this->assertArrayHasKey( 'wp_version', $system_data, '`wp_version` key must exist in system data' );
 		$this->assertEquals( $wp_version, $system_data['wp_version'], '`wp_version` does not match expected value' );

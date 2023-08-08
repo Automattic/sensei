@@ -7,7 +7,12 @@
 export const addUtms = ( url ) => {
 	try {
 		const parsed = new URL( url );
-		if ( parsed.hostname === 'senseilms.com' ) {
+		if (
+			parsed.hostname === 'senseilms.com' &&
+			! parsed.searchParams.has( 'utm_source' ) &&
+			! parsed.searchParams.has( 'utm_medium' ) &&
+			! parsed.searchParams.has( 'utm_campaign' )
+		) {
 			parsed.searchParams.set( 'utm_source', 'plugin_sensei' );
 			parsed.searchParams.set( 'utm_medium', 'upsell' );
 			parsed.searchParams.set( 'utm_campaign', 'sensei_home' );

@@ -1,27 +1,32 @@
+$small-header-height: 80px;
+$big-header-height: 88px;
+
 $small-screen-break: 600px;
 $small-vertical-padding: 20px;
 $small-horizontal-padding: 20px;
 $big-vertical-padding: 60px;
 $big-horizontal-padding: 80px;
 
+$page-background: #b7c9be;
+
 @import '../css/font-recoleta';
 @import 'fullscreen';
 @import 'animations';
 @import 'navigation-bar/style';
 @import 'purpose/style';
+@import 'theme/style';
 @import 'usage-tracking/style';
 @import 'newsletter/style';
 @import 'features/style';
 
 .sensei-setup-wizard-page {
 	overflow-x: hidden;
-	background-color: #b7c9be;
+	background-color: $page-background;
 }
 
 .sensei-setup-wizard {
 	display: flex;
-	flex-direction: column;
-	height: 100vh;
+	min-height: 100vh;
 	color: #000;
 	font-size: 16px;
 
@@ -40,15 +45,37 @@ $big-horizontal-padding: 80px;
 		color: #000;
 	}
 
-	&__sensei-logo {
+	&__header {
 		display: flex;
-		margin: $small-horizontal-padding;
+		flex-direction: column;
+		width: 100%;
+		height: $small-header-height;
+		position: fixed;
+		z-index: 1;
+		background-color: $page-background;
+
+		@media (min-width: $small-screen-break) {
+			height: $big-header-height;
+		}
+
+		@at-root {
+			.sensei-setup-wizard-page--features &,
+			.sensei-setup-wizard-page--welcome & {
+				background-color: transparent;
+			}
+		}
+	}
+
+	&__sensei-logo {
+		flex: 1;
+		display: flex;
+		margin: 0 $small-horizontal-padding;
 		align-items: center;
 		font-family: $recoleta-font-family;
 		font-size: 18px;
 
 		@media (min-width: $small-screen-break) {
-			margin: 24px;
+			margin: 0 24px;
 		}
 
 		> svg {
@@ -58,28 +85,38 @@ $big-horizontal-padding: 80px;
 		}
 	}
 
-	&__step-title {
+	&__step-title,
+	&__subsection-title {
 		font-family: $recoleta-font-family;
 		font-size: 28px;
 		font-weight: 400;
 		line-height: 1.1;
-		margin: 0 0 12px;
 
 		@media (min-width: $small-screen-break) {
 			font-size: 44px;
 		}
 	}
 
+	&__step-title {
+		margin: 0 0 12px;
+	}
+
+	&__subsection-title {
+		max-width: 724px;
+		margin: 0 auto 64px;
+		text-align: center;
+	}
+
 	// Container.
 	&__container {
 		flex: 1;
-		padding: $small-vertical-padding $small-horizontal-padding;
+		padding: ( $small-vertical-padding + $small-header-height ) $small-horizontal-padding $small-vertical-padding;
 
 		display: flex;
 		flex-direction: column;
 
 		@media (min-width: $small-screen-break) {
-			padding: $big-vertical-padding $big-horizontal-padding;
+			padding: ( $big-vertical-padding + $big-header-height ) $big-horizontal-padding $big-vertical-padding;
 		}
 	}
 
@@ -114,6 +151,14 @@ $big-horizontal-padding: 80px;
 			border: none;
 			background: transparent;
 			text-decoration: underline;
+		}
+
+		&--only-medium {
+			display: none;
+
+			@media (min-width: $small-screen-break) {
+				display: revert;
+			}
 		}
 
 		&:disabled,
@@ -164,6 +209,7 @@ $big-horizontal-padding: 80px;
 		text-align: left;
 		margin: 0 0 32px;
 		animation: 0.5s slideDown;
+		box-sizing: border-box;
 
 		.components-notice__actions {
 			margin-top: 5px;
@@ -209,6 +255,26 @@ $big-horizontal-padding: 80px;
 		@media (min-width: $small-screen-break) {
 			text-align: center;
 			max-width: 414px;
+
+			&--large {
+				max-width: 564px;
+				padding-right: 20px;
+				padding-left: 20px;
+			}
+		}
+
+		&--sticky {
+			position: sticky;
+			top: $small-vertical-padding + $small-header-height;
+
+			@media (min-width: $small-screen-break) {
+				top: $big-vertical-padding + $big-header-height;
+			}
+		}
+
+		&--hidden {
+			visibility: hidden;
+			pointer-events: none;
 		}
 	}
 
@@ -234,8 +300,8 @@ $big-horizontal-padding: 80px;
 
 		&--newsletter {
 			background-image: url("../images/onboarding-newsletter-illustration.png");
-			margin-left: -$small-vertical-padding;
-			margin-right: -$small-vertical-padding;
+			margin-left: -$small-horizontal-padding;
+			margin-right: -$small-horizontal-padding;
 		}
 	}
 

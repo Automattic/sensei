@@ -64,7 +64,10 @@ class Sensei_Course_Video_Settings {
 	public function init() {
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_scripts' ] );
+		// When there's no embed handler for YouTube, it uses the oembed filter.
 		add_filter( 'embed_oembed_html', [ $this, 'enable_youtube_api' ], 11, 2 );
+		// When there is an embed handler registered, it uses the embed handler filter.
+		add_filter( 'embed_handler_html', [ $this, 'enable_youtube_api' ], 11, 2 );
 	}
 
 	/**

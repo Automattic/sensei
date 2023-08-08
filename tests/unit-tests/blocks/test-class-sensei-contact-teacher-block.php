@@ -10,7 +10,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$GLOBALS['post']        = (object) [
@@ -22,7 +22,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-contact-teacher' );
 	}
@@ -34,7 +34,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 		$block  = new Sensei_Block_Contact_Teacher();
 		$output = $block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
 
-		$this->assertRegExp( '|<a href="/course/test/\?contact=course#private_message".*>Contact teacher</a>|', $output );
+		$this->assertMatchesRegularExpression( '|<a href="/course/test/\?contact=course#private_message".*>Contact teacher</a>|', $output );
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 		Sensei()->notices->maybe_print_notices();
 		$notices = ob_get_clean();
 
-		$this->assertContains( 'Your private message has been sent.', $notices );
+		$this->assertStringContainsString( 'Your private message has been sent.', $notices );
 	}
 
 	/**
@@ -63,8 +63,8 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 		$block  = new Sensei_Block_Contact_Teacher();
 		$output = $block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
 
-		$this->assertRegExp( '|<form.*<input.* name="' . \Sensei_Messages::NONCE_FIELD_NAME . '" .*</form>|ms', $output );
-		$this->assertRegExp( '|<form.*<textarea.* name="contact_message" .*</form>|ms', $output );
+		$this->assertMatchesRegularExpression( '|<form.*<input.* name="' . \Sensei_Messages::NONCE_FIELD_NAME . '" .*</form>|ms', $output );
+		$this->assertMatchesRegularExpression( '|<form.*<textarea.* name="contact_message" .*</form>|ms', $output );
 	}
 
 }

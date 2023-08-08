@@ -3,6 +3,7 @@
  */
 import Welcome from './welcome';
 import Purpose from './purpose';
+import Theme from './theme';
 import UsageTracking from './usage-tracking';
 import Newsletter from './newsletter';
 import Features from './features';
@@ -15,6 +16,10 @@ const steps = [
 	{
 		key: 'purpose',
 		container: <Purpose />,
+	},
+	{
+		key: 'theme',
+		container: <Theme />,
 	},
 	{
 		key: 'tracking',

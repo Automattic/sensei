@@ -11,7 +11,7 @@ class Sensei_Course_Enrolment_Stored_Status_Provider_Test extends WP_UnitTestCas
 	/**
 	 * Setup function.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();

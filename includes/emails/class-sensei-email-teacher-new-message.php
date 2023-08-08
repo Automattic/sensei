@@ -92,9 +92,6 @@ if ( ! class_exists( 'Sensei_Email_Teacher_New_Message', false ) ) :
 			Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 
 			do_action( 'sensei_after_sending_email' );
-
-			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) . '#private_message' ) );
-			exit;
 		}
 	}
 

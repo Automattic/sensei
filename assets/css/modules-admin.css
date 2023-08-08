@@ -1,11 +1,13 @@
 .module-order-select-course-submit {
 	vertical-align: top;
 }
+
 .sortable-module-list {
 	border: 1px solid #e5e5e5;
-	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,.04);
-	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
 }
+
 .sortable-module-list .module {
 	cursor: move;
 	background: #FFF;
@@ -13,6 +15,7 @@
 	padding: 10px;
 	font-weight: bold;
 }
+
 .sortable-module-list .module span:before {
 	font-family: dashicons;
 	content: "\f333";
@@ -21,17 +24,21 @@
 	margin-right: 10px;
 	color: #BDBDBD;
 }
+
 .sortable-module-list .module.ui-sortable-helper {
 	zoom: 1;
 	filter: alpha(opacity=70);
 	opacity: 0.7;
 }
+
 .sortable-module-list .module.ui-sortable-helper span:before {
 	color: #444;
 }
+
 .sortable-module-list .module:nth-child(odd) {
 	background: #F9F9F9;
 }
+
 .sortable-module-list .ui-sortable-placeholder {
 	background: #EBEBEB !important;
 	border: 1px dashed #DDDDDD;
@@ -42,4 +49,27 @@
 /* Fixes display issue in Chrome for Windows */
 .chosen-container-multi .chosen-choices li.search-field input[type="text"] {
 	min-height: 25px !important;
+}
+
+/* Fixes action menu display in WP 6+ */
+.student-action-menu .components-popover {
+	opacity: 1;
+}
+
+.student-action-menu .components-popover__content {
+	transform:translateX(-90%);
+}
+
+.student-action-menu .components-dropdown-menu__menu {
+	width: auto;
+}
+
+.student-action-menu .components-popover:not(.is-without-arrow)::after {
+	content: none;
+}
+
+@media screen and (max-width: 782px) {
+	.wp_list_table_sensei_learner_admins .is-expanded td:not(.hidden) {
+		overflow: visible;
+	}
 }

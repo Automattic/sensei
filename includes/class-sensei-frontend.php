@@ -106,6 +106,9 @@ class Sensei_Frontend {
 
 		// Hide Sensei activity comments from lesson and course pages.
 		add_filter( 'wp_list_comments_args', array( $this, 'hide_sensei_activity' ) );
+
+		new Sensei_Guest_User();
+		new Sensei_Preview_User();
 	}
 
 	/**

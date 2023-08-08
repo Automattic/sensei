@@ -16,8 +16,8 @@ class Sensei_Class_Lesson_Modules_Test extends WP_UnitTestCase {
 		parent::__construct();
 	}
 
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 
@@ -38,7 +38,7 @@ class Sensei_Class_Lesson_Modules_Test extends WP_UnitTestCase {
 		$this->lesson_modules = new Sensei_Core_Lesson_Modules( $this->lesson_id );
 	}
 
-	public function teardown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 		wp_delete_term( $this->module_id, $this->module_taxonomy );

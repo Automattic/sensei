@@ -1,5 +1,7 @@
 <?php
 
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+
 /**
  * Tests for Sensei_Course_Outline_Block class.
  *
@@ -7,17 +9,12 @@
  */
 class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 
-	/**
-	 * Initialize the blocks once.
-	 */
-	public static function setUpBeforeClass() {
-		Sensei()->blocks->course->initialize_blocks();
-	}
+	use ArraySubsetAsserts;
 
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 
@@ -41,7 +38,7 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		Sensei()->notices->maybe_print_notices();
 		$result = ob_get_clean();
 
-		$this->assertContains( 'There is no published content in this course yet.', $result );
+		$this->assertStringContainsString( 'There is no published content in this course yet.', $result );
 	}
 
 	/**
@@ -61,7 +58,7 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		);
 		$result = do_blocks( $post_content );
 
-		$this->assertContains( 'Test Lesson', $result );
+		$this->assertStringContainsString( 'Test Lesson', $result );
 	}
 
 	/**
@@ -82,7 +79,7 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		);
 		$result = do_blocks( $post_content );
 
-		$this->assertContains( 'Preview', $result );
+		$this->assertStringContainsString( 'Preview', $result );
 	}
 
 	/**
@@ -108,7 +105,7 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		);
 		$result = do_blocks( $post_content );
 
-		$this->assertNotContains( 'Preview', $result );
+		$this->assertStringNotContainsString( 'Preview', $result );
 	}
 
 	/**
@@ -139,10 +136,10 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		$result      = do_blocks( $post_content );
 		$module_link = get_term_link( $module->term_id, Sensei()->modules->taxonomy );
 
-		$this->assertContains( $module->name, $result );
-		$this->assertContains( $module->description, $result );
-		$this->assertContains( $module_link, $result );
-		$this->assertContains( 'Test Lesson', $result );
+		$this->assertStringContainsString( $module->name, $result );
+		$this->assertStringContainsString( $module->description, $result );
+		$this->assertStringContainsString( $module_link, $result );
+		$this->assertStringContainsString( 'Test Lesson', $result );
 	}
 
 	/**
@@ -173,8 +170,8 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		$result      = do_blocks( $post_content );
 		$module_link = get_term_link( $module->term_id, Sensei()->modules->taxonomy );
 
-		$this->assertContains( $module->name, $result );
-		$this->assertNotContains( $module_link, $result );
+		$this->assertStringContainsString( $module->name, $result );
+		$this->assertStringNotContainsString( $module_link, $result );
 	}
 
 	/**

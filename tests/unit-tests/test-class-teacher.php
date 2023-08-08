@@ -23,7 +23,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 	 * This function sets up the lessons, quizes and their questions. This function runs before
 	 * every single test in this class
 	 */
-	public function setup() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
@@ -32,7 +32,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 	/**
 	 *
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 
@@ -451,10 +451,10 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		$users_with_edit_courses_rights_ids = Sensei()->teacher->get_teachers_and_authors();
 
 		foreach ( array_merge( $administrators, $editors, $teachers ) as $user_id ) {
-			$this->assertContains( $user_id, $users_with_edit_courses_rights_ids, 'Should include users which have the `edit_courses` capability.' );
+			$this->assertContainsEquals( $user_id, $users_with_edit_courses_rights_ids, 'Should include users which have the `edit_courses` capability.' );
 		}
 		foreach ( $subscribers as $subscriber_id ) {
-			$this->assertNotContains( $subscriber_id, $users_with_edit_courses_rights_ids, 'Should not include users that don\'t have the `edit_courses` capability.' );
+			$this->assertNotContainsEquals( $subscriber_id, $users_with_edit_courses_rights_ids, 'Should not include users that don\'t have the `edit_courses` capability.' );
 		}
 	}
 

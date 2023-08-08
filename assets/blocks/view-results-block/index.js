@@ -2,11 +2,13 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { BlockControls } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
  */
 import { BlockStyles, createButtonBlockType } from '../button';
+import CourseStatusToolbar from '../course-actions-block/course-status-toolbar';
 
 /**
  * View results button block.
@@ -38,4 +40,12 @@ export default createButtonBlockType( {
 		),
 		validPostTypes: [ 'course' ],
 	},
+	EditWrapper: ( { children } ) => (
+		<>
+			<BlockControls>
+				<CourseStatusToolbar useCourseStatusContext={ true } />
+			</BlockControls>
+			{ children }
+		</>
+	),
 } );

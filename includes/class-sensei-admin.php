@@ -130,7 +130,7 @@ class Sensei_Admin {
 	 */
 	public function add_course_order() {
 		add_submenu_page(
-			null, // Hide in menu.
+			'', // Hide in menu.
 			__( 'Order Courses', 'sensei-lms' ),
 			__( 'Order Courses', 'sensei-lms' ),
 			'manage_sensei',
@@ -147,7 +147,7 @@ class Sensei_Admin {
 	 */
 	public function add_lesson_order() {
 		add_submenu_page(
-			null,
+			'',
 			__( 'Order Lessons', 'sensei-lms' ),
 			__( 'Order Lessons', 'sensei-lms' ),
 			'edit_published_lessons',
@@ -216,7 +216,7 @@ class Sensei_Admin {
 			$_wp_real_parent_file[''] = 'sensei';
 			$submenu_file             = 'edit-tags.php?taxonomy=module&post_type=course';
 
-		} elseif ( in_array( $screen->id, [ 'course', 'edit-course-category', 'admin_page_course-order' ], true ) ) {
+		} elseif ( in_array( $screen->id, [ 'course', 'edit-course-category', 'admin_page_course-order', 'admin_page_' . Sensei_Course::SHOWCASE_COURSES_SLUG ], true ) ) {
 			// Course pages.
 			$parent_file              = 'sensei';
 			$_wp_real_parent_file[''] = 'sensei';
@@ -240,6 +240,11 @@ class Sensei_Admin {
 			$_wp_real_parent_file[''] = 'sensei';
 			$submenu_file             = 'edit.php?post_type=sensei_message';
 
+		} elseif ( in_array( $screen->id, [ 'sensei_email', 'edit-sensei_email' ], true ) ) {
+			// Message pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'sensei-settings';
 		}
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
@@ -352,7 +357,7 @@ class Sensei_Admin {
 	private function are_custom_admin_styles_allowed( $post_type, $hook_suffix, $screen ) {
 		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
-		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', Sensei_Analysis::PAGE_SLUG, 'sensei_learners', 'sensei_updates', 'sensei-settings', 'sensei_learners', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
+		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', Sensei_Analysis::PAGE_SLUG, 'sensei_learners', 'sensei_updates', 'sensei-settings', 'sensei_learners', Sensei_Course::SHOWCASE_COURSES_SLUG, $this->lesson_order_page_slug, $this->course_order_page_slug ) );
 		$module_pages_screen_ids = [ 'edit-module' ];
 
 		$is_allowed_type           = isset( $post_type ) && in_array( $post_type, $allowed_post_types, true );
@@ -1837,16 +1842,27 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Registers the hook to call mark_completed when the wc-admin page on WooCommerce is visited.
+	 * Registers the hook to call mark_completed on tasks that have been
+	 * completed.
 	 *
 	 * @access private
 	 * @return void
 	 */
 	public function admin_init() {
+		global $pagenow;
+
 		if ( Sensei_Home_Task_Sell_Course_With_WooCommerce::is_active() ) {
 			$hook = get_plugin_page_hook( 'wc-admin', 'woocommerce' );
 			if ( null !== $hook ) {
 				add_action( $hook, [ Sensei_Home_Task_Sell_Course_With_WooCommerce::class, 'mark_completed' ] );
+			}
+		}
+
+		// Mark the Course Theme Customization as completed if we are visiting
+		// the site editor or the customizer with the Course theme installed.
+		if ( Sensei_Home_Task_Customize_Course_Theme::is_active() ) {
+			if ( in_array( $pagenow, [ 'site-editor.php', 'customize.php' ], true ) ) {
+				Sensei_Home_Task_Customize_Course_Theme::mark_completed();
 			}
 		}
 	}
@@ -2083,7 +2099,14 @@ class Sensei_Admin {
 			return;
 		}
 
-		if ( in_array( $screen->id, [ 'course', 'lesson', Sensei_Home::SCREEN_ID ], true ) ) {
+		$screens = [
+			'course',
+			'lesson',
+			Sensei_Home::SCREEN_ID,
+			'admin_page_' . Sensei_Setup_Wizard::instance()->page_slug,
+		];
+
+		if ( in_array( $screen->id, $screens, true ) ) {
 			?>
 			<script>
 				window.sensei = window.sensei || {};

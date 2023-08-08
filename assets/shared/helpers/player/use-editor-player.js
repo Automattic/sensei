@@ -117,7 +117,10 @@ const addScript = ( doc, src, onLoad ) => {
 const prepareYouTubeIframe = ( playerIframe, w ) => {
 	// Update the current embed to enable JS API.
 	if ( playerIframe && ! playerIframe.src.includes( 'enablejsapi=1' ) ) {
-		playerIframe.src = playerIframe.src + '&enablejsapi=1';
+		playerIframe.src =
+			playerIframe.src +
+			'&enablejsapi=1&origin=' +
+			window.location.origin;
 	}
 
 	w.senseiYouTubeIframeAPIReady =

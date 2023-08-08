@@ -114,6 +114,9 @@ $block: '.wp-block-sensei-lms-course-list';
 
 			.sensei-block-wrapper {
 				padding: 5px 0;
+				.wp-block-button {
+					margin: 0px;
+				}
 			}
 		}
 
@@ -122,6 +125,11 @@ $block: '.wp-block-sensei-lms-course-list';
 				width: 100%;
 			}
 		}
+	}
+
+	&--is-list-view .sensei-cta .wp-block-button__link {
+		display: block;
+		float: right;
 	}
 
 	@media ( min-width: 782px ) {

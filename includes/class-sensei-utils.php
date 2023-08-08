@@ -117,8 +117,8 @@ class Sensei_Utils {
 			$args['count'] = true;
 		}
 
-		// A user ID of 0 is in valid, so shortcut this
-		if ( isset( $args['user_id'] ) && 0 == intval( $args['user_id'] ) ) {
+		// A user ID of 0 is invalid, so shortcut this.
+		if ( isset( $args['user_id'] ) && 0 === intval( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
 			return false;
 		}
@@ -127,17 +127,17 @@ class Sensei_Utils {
 			$args['status'] = 'any';
 		}
 
-		// Get the comments
 		/**
 		 * This filter runs inside Sensei_Utils::sensei_check_for_activity
 		 *
 		 * It runs while getting the comments for the given request.
 		 *
 		 * @param int|array $comments
+		 * @param array $args Search arguments.
 		 */
-		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ) );
+		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ), $args );
 
-		// Return comments
+		// Return comments.
 		if ( $return_comments ) {
 			// Could check for array of 1 and just return the 1 item?
 			if ( is_array( $comments ) && 1 == count( $comments ) ) {
@@ -146,8 +146,8 @@ class Sensei_Utils {
 
 			return $comments;
 		}
-		// Count comments
-		return intval( $comments ); // This is the count, check the return from WP_Comment_Query
+		// Count comments.
+		return intval( $comments ); // This is the count, check the return from WP_Comment_Query.
 	}
 
 
@@ -659,26 +659,46 @@ class Sensei_Utils {
 		return $question_grade;
 	}
 
-	public static function sensei_delete_quiz_answers( $quiz_id = 0, $user_id = 0 ) {
-		if ( intval( $user_id ) == 0 ) {
+	/**
+	 * Delete the quiz answers and all related data including the grades.
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The user ID.
+	 *
+	 * @return bool
+	 */
+	public static function sensei_delete_quiz_answers( $quiz_id = 0, $user_id = 0 ): bool {
+		if ( intval( $user_id ) === 0 ) {
 			$user_id = get_current_user_id();
 		}
 
-		$delete_answers = false;
-		if ( intval( $quiz_id ) > 0 ) {
-			$questions = self::sensei_get_quiz_questions( $quiz_id );
-			foreach ( $questions as $question ) {
-				$delete_answers = self::sensei_delete_activities(
-					array(
-						'post_id' => $question->ID,
-						'user_id' => $user_id,
-						'type'    => 'sensei_user_answer',
-					)
-				);
-			}
+		if ( ! $quiz_id || ! $user_id ) {
+			return false;
 		}
 
-		return $delete_answers;
+		$deleted   = false;
+		$questions = self::sensei_get_quiz_questions( $quiz_id );
+		foreach ( $questions as $question ) {
+			// Fallback for pre 1.7.4 data.
+			$deleted = self::sensei_delete_activities(
+				array(
+					'post_id' => $question->ID,
+					'user_id' => $user_id,
+					'type'    => 'sensei_user_answer',
+				)
+			);
+		}
+
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( $quiz_submission ) {
+			Sensei()->quiz_submission_repository->delete( $quiz_submission );
+			Sensei()->quiz_answer_repository->delete_all( $quiz_submission );
+			Sensei()->quiz_grade_repository->delete_all( $quiz_submission );
+
+			$deleted = true;
+		}
+
+		return $deleted;
 	}
 
 	/**
@@ -1732,6 +1752,7 @@ class Sensei_Utils {
 		if ( ! empty( $status ) ) {
 			$args = array(
 				'user_id'   => $user_id,
+				'username'  => get_userdata( $user_id )->user_login ?? null,
 				'post_id'   => $lesson_id,
 				'status'    => $status,
 				'type'      => 'sensei_lesson_status', /* FIELD SIZE 20 */
@@ -1769,11 +1790,12 @@ class Sensei_Utils {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$args = array(
-				'user_id' => $user_id,
-				'post_id' => $course_id,
-				'status'  => $status,
-				'type'    => 'sensei_course_status', /* FIELD SIZE 20 */
-				'action'  => 'update', // Update the existing status...
+				'user_id'  => $user_id,
+				'username' => get_userdata( $user_id )->user_login ?? null,
+				'post_id'  => $course_id,
+				'status'   => $status,
+				'type'     => 'sensei_course_status', /* FIELD SIZE 20 */
+				'action'   => 'update', // Update the existing status...
 			);
 
 			$comment_id = self::sensei_log_activity( $args );
@@ -2212,7 +2234,7 @@ class Sensei_Utils {
 				break;
 		}
 
-		return $course_id ? $course_id : null;
+		return $course_id ? absint( $course_id ) : null;
 	}
 
 
@@ -2304,6 +2326,17 @@ class Sensei_Utils {
 			case 'frontend':
 				return ( ! is_admin() || defined( 'DOING_AJAX' ) ) && ! defined( 'DOING_CRON' );
 		}
+	}
+
+	/**
+	 * Check if this is a REST API request.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public static function is_rest_request(): bool {
+		return defined( 'REST_REQUEST' ) && REST_REQUEST;
 	}
 
 	/**
@@ -2687,6 +2720,108 @@ class Sensei_Utils {
 	 */
 	public static function is_atomic_platform(): bool {
 		return defined( 'ATOMIC_SITE_ID' ) && ATOMIC_SITE_ID && defined( 'ATOMIC_CLIENT_ID' ) && ATOMIC_CLIENT_ID;
+	}
+
+	/**
+	 * Get count of users for a provided role.
+	 *
+	 * @param  string $role Slug of the Role.
+	 * @return int    Count of users having the provided role.
+	 */
+	public static function get_user_count_for_role( $role ) {
+		return count(
+			Sensei_Temporary_User::get_all_users(
+				[
+					'fields' => 'ID',
+					'role'   => $role,
+				]
+			)
+		);
+	}
+
+	/**
+	 * Tells if the current site is hosted in wordpress.com and the
+	 * plan includes an active subscription for a paid Sensei product.
+	 *
+	 * @return bool {bool} If there is an active WPCOM subscription or not.
+	 * @since 4.11.0
+	 */
+	public static function has_wpcom_subscription(): bool {
+		$subscriptions = get_option( 'wpcom_active_subscriptions', [] );
+
+		/**
+		 * Filter to allow adding products slugs to check if it has an active WPCOM subscription.
+		 *
+		 * @hook sensei_wpcom_product_slugs
+		 * @since 4.11.0
+		 *
+		 * @param {Array} $products Array of products slugs to check if it has an active WPCOM subscription.
+		 *
+		 * @return {array}
+		 */
+		$product_slugs = apply_filters( 'sensei_wpcom_product_slugs', [] );
+		foreach ( $product_slugs as $product_slug ) {
+			if ( array_key_exists( $product_slug, $subscriptions ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Gets the id for the last lesson the user was working on, or the next lesson, or
+	 * the course id as fallback for fresh users or courses with no lessons.
+	 *
+	 * @param int $course_id Id of the course.
+	 * @param int $user_id   Id of the user.
+	 *
+	 * @since 4.12.0
+	 *
+	 * @return int
+	 */
+	public static function get_target_page_post_id_for_continue_url( $course_id, $user_id ) {
+		$course_lessons = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+
+		if ( empty( $course_lessons ) ) {
+			return $course_id;
+		}
+		// First try to get the lesson the user started or updated last.
+		$activity_args = [
+			'post__in' => $course_lessons,
+			'user_id'  => $user_id,
+			'type'     => 'sensei_lesson_status',
+			'number'   => 1,
+			'orderby'  => 'comment_date',
+			'order'    => 'DESC',
+			'status'   => [ 'in-progress', 'ungraded' ],
+		];
+
+		$last_lesson_activity = self::sensei_check_for_activity( $activity_args, true );
+
+		if ( ! empty( $last_lesson_activity ) ) {
+			return $last_lesson_activity->comment_post_ID;
+		} else {
+			// If there is no such lesson, get the first lesson that the user has not yet started.
+			$completed_lessons     = Sensei()->course->get_completed_lesson_ids( $course_id, $user_id );
+			$not_completed_lessons = array_diff( $course_lessons, $completed_lessons );
+
+			if ( $not_completed_lessons ) {
+				return current( $not_completed_lessons );
+			}
+		}
+		return $course_id;
+	}
+
+	/**
+	 * Check if the current theme supports Full Site Editing (FSE).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return bool True if FSE is supported, false otherwise.
+	 */
+	public static function is_fse_theme() {
+		return function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
 	}
 }
 

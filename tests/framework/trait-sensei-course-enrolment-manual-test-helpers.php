@@ -144,4 +144,13 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 
 		Sensei_Course_Enrolment_Manager::instance()->collect_enrolment_providers();
 	}
+
+	/**
+	 * Resets the cached learner terms.
+	 */
+	private static function resetLearnerTerms(): void {
+		$learner_instance = new ReflectionProperty( Sensei_Learner::class, 'learner_terms' );
+		$learner_instance->setAccessible( true );
+		$learner_instance->setValue( Sensei_Course_Enrolment_Manager::instance(), [] );
+	}
 }

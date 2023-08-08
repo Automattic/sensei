@@ -37,7 +37,7 @@
 .sensei-editor-wizard-modal {
 	color: #1e1e1e;
 
-	@media ( min-width: 600px ) { // Media query needed for WP 5.8 compatibility.
+	@media ( min-width: 600px ) {
 		width: 800px;
 		height: 670px;
 	}
@@ -53,19 +53,14 @@
 
 	.components-modal__header {
 		border-bottom: none;
-		padding: 0;
-		position: sticky;
-		top: 0;
-		margin: 0 0 -60px;
+		padding: 0 18px;
 
-		// WP 5.8 fixes.
-		width: 100%;
-		background: transparent;
+		+ * {
+			height: 100%;
+		}
 
-		.components-button {
-			align-self: flex-start;
-			margin: 8px 8px 0 0;
-			position: static;
+		@media ( min-width: 600px ) {
+			padding: 0 30px;
 		}
 	}
 
@@ -184,6 +179,7 @@
 .sensei-editor-wizard-step {
 	&__title,
 	&__sticky-title {
+		padding-right: 30px; // Keep out of the close space.
 		line-height: 1.1;
 		color: inherit;
 	}

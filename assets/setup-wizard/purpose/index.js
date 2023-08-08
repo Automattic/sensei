@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
-import { TextControl } from '@wordpress/components';
+import { Notice, TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 
 /**
@@ -45,7 +45,7 @@ const purposes = [
 const getInstallDescription = ( slug, features ) => {
 	const feature = features.find( ( i ) => i.product_slug === slug );
 
-	if ( ! feature.is_activated ) {
+	if ( feature && ! feature.is_activated ) {
 		const action = feature.is_installed
 			? __( 'activated', 'sensei-lms' )
 			: __( 'installed for free', 'sensei-lms' );
@@ -95,7 +95,7 @@ const Purpose = () => {
 	};
 
 	const goToNextStep = () => {
-		goTo( 'tracking' );
+		goTo( 'theme' );
 	};
 
 	const submitPage = () => {
@@ -157,6 +157,30 @@ const Purpose = () => {
 				</PurposeItem>
 			</ul>
 			<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
+				{
+					// It should contain WooCommerce + other Sensei extensions.
+					featuresData.options.length <= 1 && (
+						<Notice
+							status="error"
+							className="sensei-setup-wizard__error-notice"
+							isDismissible={ false }
+							actions={ [
+								{
+									label: __(
+										'Refresh the page',
+										'sensei-lms'
+									),
+									url: window.location.href,
+								},
+							] }
+						>
+							{ __(
+								'An error happened while loading the Sensei extensions.',
+								'sensei-lms'
+							) }
+						</Notice>
+					)
+				}
 				{ errorNotice }
 				<button
 					disabled={ isSubmitting || isEmpty }

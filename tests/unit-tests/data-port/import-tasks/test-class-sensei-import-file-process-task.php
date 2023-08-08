@@ -19,7 +19,7 @@ class Sensei_Import_File_Process_Task_Tests extends WP_UnitTestCase {
 	/**
 	 * Set up before class.
 	 */
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-import-file-process-task-mock.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-data-port-job-mock.php';
 	}
