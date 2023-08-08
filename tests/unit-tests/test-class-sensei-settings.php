@@ -172,6 +172,18 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		$this->assertEquals( [ 'email_learners' ], $changed );
 	}
 
+	public function testGetSettings_Always_HasEmailCcAndBccSettings() {
+		/** Arrange. */
+		$settings = Sensei()->settings;
+
+		/** Act. */
+		$settings_array = $settings->get_settings();
+
+		/** Assert. */
+		$this->assertArrayHasKey( 'email_cc', $settings_array );
+		$this->assertArrayHasKey( 'email_bcc', $settings_array );
+	}
+
 	/**
 	 * Simulate Sensei settings update request.
 	 */
