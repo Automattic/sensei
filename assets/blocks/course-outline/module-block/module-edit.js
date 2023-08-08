@@ -58,6 +58,7 @@ export const ModuleEdit = ( props ) => {
 			description,
 			borderedSelected,
 			borderColorValue,
+			lessonSubheaderFontSize,
 			teacher,
 			slug,
 		},
@@ -131,6 +132,11 @@ export const ModuleEdit = ( props ) => {
 		},
 	}[ style ];
 
+	// Lesson subheader styles.
+	const lessonSubheaderStyle = {
+		fontSize: lessonSubheaderFontSize,
+	};
+
 	// Minimal border element.
 	let minimalBorder;
 	if ( 'minimal' === style ) {
@@ -171,6 +177,8 @@ export const ModuleEdit = ( props ) => {
 				}
 				customSlug={ slug }
 				setCustomSlug={ updateSlug }
+				attributes={ props.attributes }
+				setAttributes={ setAttributes }
 			/>
 			<section
 				className={ classnames( className, {
@@ -236,7 +244,10 @@ export const ModuleEdit = ( props ) => {
 							onChange={ updateDescription }
 						/>
 					</div>
-					<h3 className="wp-block-sensei-lms-course-outline-module__lessons-title">
+					<h3
+						style={ lessonSubheaderStyle }
+						className="wp-block-sensei-lms-course-outline-module__lessons-title"
+					>
 						{ __( 'Lessons', 'sensei-lms' ) }
 					</h3>
 					<InnerBlocks
