@@ -174,6 +174,37 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( $module_link, $result );
 	}
 
+	public function testCourseOutlineModuleRender_WhenAttributeSubheadingHasFontSize_ThatFontsizeIsAddedAsStyle() {
+		/* Arrange */
+		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
+		$module       = $this->factory->module->create_and_get();
+		$post_content = str_replace( 'course-outline-module {"id":1', 'course-outline-module {"id":' . $module->term_id, $post_content );
+
+		$this->mockPostCourseStructure(
+			[
+				[
+					'id'          => $module->term_id,
+					'type'        => 'module',
+					'title'       => $module->name,
+					'description' => 'Test Description',
+					'lessons'     => [
+						[
+							'id'    => 1,
+							'type'  => 'lesson',
+							'title' => 'Test Lesson',
+						],
+					],
+				],
+			]
+		);
+
+		/* Act */
+		$result = do_blocks( $post_content );
+
+		/* Assert */
+		$this->assertStringContainsString( 'font-size:2.225rem;', $result );
+	}
+
 	/**
 	 * Test that attributes parsed from the block are passed over to the dynamic render function.
 	 */
@@ -226,7 +257,6 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 			$lesson_block
 		);
 	}
-
 
 	/**
 	 * Mock global post ID and its course structure.
