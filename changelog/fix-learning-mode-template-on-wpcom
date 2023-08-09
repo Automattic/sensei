@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix lesson styling in editor on WordPress 6.3 or when Gutenberg enabled
