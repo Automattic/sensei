@@ -197,7 +197,7 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 		if ( $this->use_tables ) {
 			$tables_based_submission = $this->tables_based_submission_repository->get( $submission->get_quiz_id(), $submission->get_user_id() );
 			if ( $tables_based_submission ) {
-				$this->tables_based_repository->delete_all( $submission );
+				$this->tables_based_repository->delete_all( $tables_based_submission );
 			}
 		}
 	}
