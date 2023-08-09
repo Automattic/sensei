@@ -255,11 +255,13 @@ class Student_Progress_Migration implements Migration {
 					$this->prepare_lesson_progress_to_insert( $progress_comment, $meta );
 					break;
 				default:
-					$this->errors[] = sprintf(
+					$this->add_error(
+						sprintf(
 						/* translators: %s: comment type */
-						__( 'Unknown comment (id %1$d) type: %2$s', 'sensei-lms' ),
-						$progress_comment->comment_ID,
-						$progress_comment->comment_type
+							__( 'Unknown comment (id %1$d) type: %2$s', 'sensei-lms' ),
+							$progress_comment->comment_ID,
+							$progress_comment->comment_type
+						)
 					);
 
 			}
@@ -279,14 +281,24 @@ class Student_Progress_Migration implements Migration {
 		}
 
 		if ( Course_Progress::STATUS_COMPLETE === $comment->comment_approved ) {
-			$completed_at = $comment->comment_date;
+			$completed_at = $comment->comment_date_gmt;
 		} else {
 			$completed_at = null;
 		}
 
 		$started_at = 0;
 		if ( isset( $meta['start'] ) ) {
-			$started_at = $meta['start'];
+			try {
+				$started_at = $this->convert_to_utc( $meta['start'] );
+			} catch ( \Exception $e ) {
+				$this->add_error(
+					sprintf(
+					/* translators: %s: comment id */
+						__( 'Unable to convert course progress start date (comment id %s) to UTC.', 'sensei-lms' ),
+						$comment->comment_ID
+					)
+				);
+			}
 		}
 
 		$this->progress_inserts[] = [
@@ -297,8 +309,8 @@ class Student_Progress_Migration implements Migration {
 			'status'         => $course_status,
 			'started_at'     => $started_at,
 			'completed_at'   => $completed_at,
-			'created_at'     => $comment->comment_date,
-			'updated_at'     => $comment->comment_date,
+			'created_at'     => $comment->comment_date_gmt,
+			'updated_at'     => $comment->comment_date_gmt,
 		];
 	}
 
@@ -312,13 +324,23 @@ class Student_Progress_Migration implements Migration {
 		$lesson_status = 'in-progress';
 		$completed_at  = null;
 		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
-			$completed_at  = $comment->comment_date;
+			$completed_at  = $comment->comment_date_gmt;
 			$lesson_status = 'complete';
 		}
 
 		$started_at = 0;
 		if ( isset( $meta['start'] ) ) {
-			$started_at = $meta['start'];
+			try {
+				$started_at = $this->convert_to_utc( $meta['start'] );
+			} catch ( \Exception $e ) {
+				$this->add_error(
+					sprintf(
+					/* translators: %s: comment id */
+						__( 'Unable to convert lesson progress start date (comment id %s) to UTC.', 'sensei-lms' ),
+						$comment->comment_ID
+					)
+				);
+			}
 		}
 
 		$this->progress_inserts[] = [
@@ -329,8 +351,8 @@ class Student_Progress_Migration implements Migration {
 			'status'         => $lesson_status,
 			'started_at'     => $started_at,
 			'completed_at'   => $completed_at,
-			'created_at'     => $comment->comment_date,
-			'updated_at'     => $comment->comment_date,
+			'created_at'     => $comment->comment_date_gmt,
+			'updated_at'     => $comment->comment_date_gmt,
 		];
 
 		// In case there is a quiz associated with the lesson,
@@ -367,10 +389,22 @@ class Student_Progress_Migration implements Migration {
 				'status'         => $quiz_status,
 				'started_at'     => $started_at,
 				'completed_at'   => $quiz_completed_at,
-				'created_at'     => $comment->comment_date,
-				'updated_at'     => $comment->comment_date,
+				'created_at'     => $comment->comment_date_gmt,
+				'updated_at'     => $comment->comment_date_gmt,
 			];
 		}
+	}
+
+	/**
+	 * Convert original date to UTC.
+	 *
+	 * @param string $date The date to convert.
+	 */
+	private function convert_to_utc( string $date ): string {
+		$dt  = new \DateTime( $date, wp_timezone() );
+		$utc = new \DateTimeZone( 'UTC' );
+		$dt->setTimezone( $utc );
+		return $dt->format( 'Y-m-d H:i:s' );
 	}
 
 	/**
