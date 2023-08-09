@@ -5,7 +5,6 @@
  * @package 3rd-Party
  */
 
-
 /**
  * Enqueue Astra theme-specific Learning Mode styles.
  */
