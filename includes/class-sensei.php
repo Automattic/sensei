@@ -821,7 +821,7 @@ class Sensei_Main {
 	/**
 	 * Helper function to check to see if any courses exist in the database.
 	 *
-	 * @deprected $$next-version$$
+	 * @deprecated $$next-version$$
 	 *
 	 * @return bool
 	 */
