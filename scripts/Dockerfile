@@ -2,20 +2,21 @@ FROM composer:2 AS composer
 FROM php:7.4-cli
 
 RUN set -ex; \
+    echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/bullseye-backports.list; \
     apt-get update ; \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
 		zip unzip \
 		zlib1g-dev libzip-dev \
-        git ssh \
+        git/bullseye-backports ssh \
 		jq; \
     rm -rf /var/lib/apt/lists/*
 
 RUN eval `ssh-agent -s`
 
 # Install GitHub CLI.
-ENV GITHUB_CLI_VERSION 2.25.1
+ENV GITHUB_CLI_VERSION 2.32.1
 RUN set -ex; \
     curl -L "https://github.com/cli/cli/releases/download/v${GITHUB_CLI_VERSION}/gh_${GITHUB_CLI_VERSION}_checksums.txt" -o checksums.txt; \
     curl -OL "https://github.com/cli/cli/releases/download/v${GITHUB_CLI_VERSION}/gh_${GITHUB_CLI_VERSION}_linux_arm64.deb"; \
