@@ -1,7 +1,19 @@
 *** Changelog ***
 
-## 4.16.0 - 2023-07-13
+## 4.17.0 - 2023-08-10
+### Added
+- Add CC/BCC fields for Sensei emails. [#7014](https://github.com/Automattic/sensei/pull/7014)
+- Add student progress migration [#7049](https://github.com/Automattic/sensei/pull/7049)
 
+### Fixed
+- Fix "view results" button not working [#7058](https://github.com/Automattic/sensei/pull/7058)
+- Fix duplicate comment sections under lesson in FSE themes [#7044](https://github.com/Automattic/sensei/pull/7044)
+- Fix lesson styling in editor on WordPress 6.3 or when Gutenberg enabled [#7054](https://github.com/Automattic/sensei/pull/7054)
+- Fix PHP 8.1 deprecation notice on Students page [#7038](https://github.com/Automattic/sensei/pull/7038)
+- Fix `strpos`and `str_replace` deprecation messages in PHP 8.1 and 8.2 [#7028](https://github.com/Automattic/sensei/pull/7028)
+- Updates the `sensei_results_links` filter to include the learner's user ID when displaying public profiles and to display results links publicly. [#7048](https://github.com/Automattic/sensei/pull/7048)
+
+## 4.16.0 - 2023-07-13
 ### Added
 - Enable to select how to generate lessons when a course is created [#6999](https://github.com/Automattic/sensei/pull/6999)
 
@@ -13,7 +25,6 @@
 - Fix emails not using the From Name/Email settings [#6968](https://github.com/Automattic/sensei/pull/6968)
 - Fix PHP 8.1 autovivification of falsy value deprecation message [#7015](https://github.com/Automattic/sensei/pull/7015)
 - Removed Beta label from Editor Menu [#6989](https://github.com/Automattic/sensei/pull/6989)
-
 
 ## 4.15.1 - 2023-06-22
 ### Added
