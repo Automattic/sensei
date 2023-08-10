@@ -595,6 +595,7 @@ class Sensei_Main {
 		if ( $email_customization_enabled ) {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
 		}
+
 		// MailPoet integration.
 		/**
 		 * Integrate MailPoet by adding lists for courses and groups.
