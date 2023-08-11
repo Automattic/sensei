@@ -70,7 +70,7 @@ class Sensei_Course_Theme_Templates {
 		add_filter( 'pre_get_block_file_template', [ $this, 'get_single_block_template' ], 10, 3 );
 		add_filter( 'theme_lesson_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
 		add_filter( 'theme_quiz_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
-		add_action( 'sensei_course_theme_before_templates_load', [ $this, 'load_course_theme_patterns' ] );
+		add_action( 'init', [ $this, 'load_course_theme_patterns' ] );
 
 	}
 
@@ -82,13 +82,6 @@ class Sensei_Course_Theme_Templates {
 	 */
 	public function maybe_use_course_theme_templates() {
 		if ( Sensei_Course_Theme_Option::should_use_learning_mode() ) {
-			/**
-			 * Fires before the course theme templates are loaded.
-			 *
-			 * @since $$next-version$$
-			 */
-			do_action( 'sensei_course_theme_before_templates_load' );
-
 			add_filter( 'sensei_use_sensei_template', '__return_false' );
 			add_filter( 'single_template_hierarchy', [ $this, 'set_single_template_hierarchy' ] );
 			add_theme_support( 'block-templates' );
