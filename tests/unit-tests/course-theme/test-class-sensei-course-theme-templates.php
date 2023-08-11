@@ -16,22 +16,41 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Theme_Templates_Test extends WP_UnitTestCase {
 
-	public function testCourseThemePatterns_WhenActionNotCalled_DoesNotCreateThePatterns() {
-		/* Arrange. */
+	public function testSenseiCourseThemeTemplates_WhenClassInitialized_PatternCreationFunctionIsAttachedWithInit() {
+		/* Arrange */
 		$registry = \WP_Block_Patterns_Registry::get_instance();
 
-		/* Assert. */
-		self::assertFalse( $registry->is_registered( 'sensei-course-theme/header' ) );
+		/* Act */
+		$course_theme_templates = Sensei_Course_Theme_Templates::instance();
+
+		/* Assert */
+		self::assertSame( 10, has_filter( 'init', [ $course_theme_templates, 'load_course_theme_patterns' ] ) );
 	}
 
-	public function testCourseThemePatterns_WhenActionCalled_CreatesThePatterns() {
-		/* Arrange. */
+	public function testSenseiCourseThemeTemplates_WhenPatternAccessed_IsCreatedAlreadyByInit() {
+		/* Arrange */
 		$registry = \WP_Block_Patterns_Registry::get_instance();
 
-		/* Act. */
-		do_action( 'sensei_course_theme_before_templates_load' );
-
-		/* Assert. */
+		/* Assert */
 		self::assertTrue( $registry->is_registered( 'sensei-course-theme/header' ) );
+	}
+
+	public function testLoadCoursePattern_WhenCalled_CreatesTheHeaderPattern() {
+		/* Arrange */
+		$registry               = \WP_Block_Patterns_Registry::get_instance();
+		$course_theme_templates = Sensei_Course_Theme_Templates::instance();
+
+		$registry->unregister( 'sensei-course-theme/header' );
+
+		$is_registered_before = $registry->is_registered( 'sensei-course-theme/header' );
+
+		/* Act */
+		$course_theme_templates->load_course_theme_patterns();
+
+		$is_registered_after = $registry->is_registered( 'sensei-course-theme/header' );
+
+		/* Assert */
+		self::assertFalse( $is_registered_before );
+		self::assertTrue( $is_registered_after );
 	}
 }
