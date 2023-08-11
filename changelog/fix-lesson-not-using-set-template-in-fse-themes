@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed issue of lessons not using the selected template in FSE themes
