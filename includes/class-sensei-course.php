@@ -210,7 +210,7 @@ class Sensei_Course {
 	 */
 	public function add_showcase_courses_upsell() {
 		add_submenu_page(
-			null,
+			'',
 			__( 'Showcase Courses', 'sensei-lms' ),
 			__( 'Showcase Courses', 'sensei-lms' ),
 			'edit_courses',
@@ -2067,30 +2067,23 @@ class Sensei_Course {
 
 						$complete_html .= $this->get_progress_meter( 100 );
 
-				if ( $manage ) {
-					$has_quizzes = Sensei()->course->course_quizzes( $course_item->ID, true );
-
-					// Output only if there is content to display
-					if ( self::has_results_links( $course_item->ID ) || $has_quizzes ) {
-						$complete_html .= '<p class="sensei-results-links">';
-						$results_link   = '';
-
-						if ( $has_quizzes ) {
-							$results_link = '<a class="button view-results" href="'
+				$results_link = '';
+				if ( $manage && Sensei()->course->course_quizzes( $course_item->ID, true ) ) {
+						$results_link = '<a class="button view-results" href="'
 								. esc_url( self::get_view_results_link( $course_item->ID ) )
 								. '">' . esc_html__( 'View Results', 'sensei-lms' )
 								. '</a>';
-						}
-
-						/**
-						 * Filter documented in Sensei_Course::the_course_action_buttons
-						 */
-						$complete_html .= apply_filters( 'sensei_results_links', $results_link, $course_item->ID );
-						$complete_html .= '</p>';
-
-					}
 				}
 
+				/**
+				* Filter documented in Sensei_Course::the_course_action_buttons
+				*/
+				$results_links = apply_filters( 'sensei_results_links', $results_link, $course_item->ID, $user->ID );
+				if ( $results_links ) {
+						$complete_html .= '<p class="sensei-results-links">';
+						$complete_html .= $results_links;
+						$complete_html .= '</p>';
+				}
 					$complete_html .= '</section>';
 
 				$complete_html .= '</article>';

@@ -714,6 +714,45 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'required'    => 1,
 		);
 
+		$fields['email_reply_to_name'] = [
+			'name'     => __( '"Reply To" Name', 'sensei-lms' ),
+			'type'     => 'input',
+			'default'  => '',
+			'section'  => 'email-notification-settings',
+			'required' => 0,
+		];
+
+		$fields['email_reply_to_address'] = [
+			'name'     => __( '"Reply To" Address', 'sensei-lms' ),
+			'type'     => 'email',
+			'default'  => get_bloginfo( 'admin_email' ),
+			'section'  => 'email-notification-settings',
+			'required' => 0,
+		];
+
+		$fields['email_cc'] = array(
+			'name'          => __( 'CC', 'sensei-lms' ),
+			'description'   => __( 'Enter email addresses to CC on all emails. Separate multiple email addresses with commas.', 'sensei-lms' ),
+			'type'          => 'email',
+			'multiple'      => true,
+			'default'       => '',
+			'section'       => 'email-notification-settings',
+			'required'      => 0,
+			'error_message' => __( 'One or more of the email addresses entered for CC is invalid.', 'sensei-lms' ),
+		);
+
+		$fields['email_bcc'] = array(
+			'name'          => __( 'BCC', 'sensei-lms' ),
+			'description'   => __( 'Enter email addresses to BCC on all emails. Separate multiple email addresses with commas.', 'sensei-lms' ),
+			'type'          => 'email_list',
+			'type'          => 'email',
+			'multiple'      => true,
+			'default'       => '',
+			'section'       => 'email-notification-settings',
+			'required'      => 0,
+			'error_message' => __( 'One or more of the email addresses entered for BCC is invalid.', 'sensei-lms' ),
+		);
+
 		$fields['email_header_image'] = array(
 			'name'        => __( 'Header Image', 'sensei-lms' ),
 			// translators: Placeholders are opening and closing <a> tags linking to the media uploader.

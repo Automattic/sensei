@@ -1,18 +1,21 @@
 name: Trunk Workflow
 on:
-    push:
-        branches:
-            - trunk
+  push:
+    branches:
+      - trunk
 jobs:
-    unit-js:
-        uses: ./.github/workflows/js.yml 
-    unit-php:
-        uses: ./.github/workflows/php.yml 
-    e2e:
-        uses: ./.github/workflows/e2e.yml 
-    docs:
-        needs: [ unit-js, unit-php, e2e ]
-        uses: ./.github/workflows/build-docs.yml 
-    build:
-        needs: [ unit-js, unit-php, e2e ]
-        uses: ./.github/workflows/build.yml
+  unit-js:
+    uses: ./.github/workflows/js.yml
+    secrets: inherit
+  unit-php:
+    uses: ./.github/workflows/php.yml
+    secrets: inherit
+  e2e:
+    uses: ./.github/workflows/e2e.yml
+    secrets: inherit
+  docs:
+    needs: [ unit-js, unit-php, e2e ]
+    uses: ./.github/workflows/build-docs.yml
+  build:
+    needs: [ unit-js, unit-php, e2e ]
+    uses: ./.github/workflows/build.yml

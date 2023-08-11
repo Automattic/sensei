@@ -33,12 +33,14 @@ class Sensei_Feature_Flags {
 	private const DEFAULT_FEATURE_FLAGS = [
 		'production'  => [
 			'enrolment_provider_tooltip' => false,
+			'tables_based_progress'      => false,
 			'email_customization'        => true,
 			'course_outline_ai'          => true,
 			'tutor_ai'                   => true,
 		],
 		'development' => [
 			'enrolment_provider_tooltip' => false,
+			'tables_based_progress'      => false,
 			'email_customization'        => true,
 			'course_outline_ai'          => true,
 		],
