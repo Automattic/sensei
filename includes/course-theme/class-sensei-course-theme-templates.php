@@ -70,6 +70,7 @@ class Sensei_Course_Theme_Templates {
 		add_filter( 'pre_get_block_file_template', [ $this, 'get_single_block_template' ], 10, 3 );
 		add_filter( 'theme_lesson_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
 		add_filter( 'theme_quiz_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
+		add_action( 'sensei_course_theme_before_templates_load', [ $this, 'load_course_theme_patterns' ] );
 
 	}
 
@@ -81,6 +82,13 @@ class Sensei_Course_Theme_Templates {
 	 */
 	public function maybe_use_course_theme_templates() {
 		if ( Sensei_Course_Theme_Option::should_use_learning_mode() ) {
+			/**
+			 * Fires before the course theme templates are loaded.
+			 *
+			 * @since $$next-version$$
+			 */
+			do_action( 'sensei_course_theme_before_templates_load' );
+
 			add_filter( 'sensei_use_sensei_template', '__return_false' );
 			add_filter( 'single_template_hierarchy', [ $this, 'set_single_template_hierarchy' ] );
 			add_theme_support( 'block-templates' );
@@ -300,7 +308,6 @@ class Sensei_Course_Theme_Templates {
 	 * @return array
 	 */
 	public function get_block_templates() {
-
 		$this->load_file_templates();
 
 		$db_templates = $this->get_custom_templates();
@@ -499,5 +506,30 @@ class Sensei_Course_Theme_Templates {
 		return false;
 	}
 
+	/**
+	 * Loads and registers the learning mode specific patterns prior to loading the templates so that their
+	 * reference can be used in the LM templates.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 */
+	public function load_course_theme_patterns() {
+		$pattern_files = glob( Sensei_Course_Theme::instance()->get_course_theme_root() . '/patterns/*.html' );
+
+		foreach ( $pattern_files as $pattern_file ) {
+			$pattern_title = basename( $pattern_file, '.html' );
+
+			register_block_pattern(
+				'sensei-course-theme/' . $pattern_title,
+				[
+					'title'    => $pattern_title,
+					'inserter' => false,
+					'content'  => file_get_contents( $pattern_file ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Using local file.
+				]
+			);
+		}
+
+	}
 
 }
