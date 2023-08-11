@@ -324,6 +324,89 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( 'Reply-To: address_to_be_replied@gmail.com', $last_email->header );
 	}
 
+	public function testSendEmail_WhenEmailCcWasSet_SetsEmailCcHeader() {
+		/* Arrange. */
+		$this->settings->set( 'email_cc', 'cc@example.com' );
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringContainsString( 'Cc: cc@example.com', $last_email->header );
+	}
+
+	public function testSendEmail_WhenEmailCcWasNotSet_DoesntSetEmailCcHeader() {
+		/* Arrange. */
+		$this->settings->set( 'email_cc', '' );
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringNotContainsString( 'Cc: cc@example.com', $last_email->header );
+	}
+
+	public function testSendEmail_WhenEmailBccWasSet_SetsEmailBccHeader() {
+		/* Arrange. */
+		$this->settings->set( 'email_bcc', 'bcc@example.com' );
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringContainsString( 'Bcc: bcc@example.com', $last_email->header );
+	}
+
+	public function testSendEmail_WhenEmailBccWasNotSet_DoesntSetEmailBccHeader() {
+		/* Arrange. */
+		$this->settings->set( 'email_cc', '' );
+		$mailer = tests_retrieve_phpmailer_instance();
+
+		/* Act */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			[
+				'a@a.test' => [
+					'student:displayname' => 'Test Student',
+				],
+			],
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Assert. */
+		$last_email = $mailer->get_sent( 0 );
+		self::assertStringNotContainsString( 'Bcc: bcc@example.com', $last_email->header );
+	}
 
 	public function testSendEmail_SetFromEmailName_RendersFromNameInHeader() {
 		$this->settings->set( 'email_from_name', 'Sensei From Name' );
