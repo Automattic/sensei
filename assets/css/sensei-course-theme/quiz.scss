@@ -54,17 +54,6 @@ $tablet-breakpoint: 768px;
 	}
 
 	&__header {
-		background-color: var(--sensei-background-color);
-		z-index: 100;
-
-		.wp-block-post-title {
-			font-family: inherit;
-			font-size: 24px;
-			font-weight: 600;
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-		}
 
 		&__left {
 			min-width: 0;
