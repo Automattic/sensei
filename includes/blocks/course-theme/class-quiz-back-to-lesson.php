@@ -67,9 +67,10 @@ class Quiz_Back_To_Lesson {
 			]
 		);
 		return sprintf(
-			'<a href="%s" %s>&lt; %s</a>',
+			'<a href="%s" %s>%s %s</a>',
 			esc_url( $lesson_url ),
 			$wrapper_attr,
+			Sensei()->assets->get_icon( 'chevron-left' ),
 			esc_html( $text )
 		);
 	}
