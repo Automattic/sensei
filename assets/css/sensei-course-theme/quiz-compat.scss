@@ -1,0 +1,15 @@
+.sensei-course-theme__quiz {
+	&__main-content {
+		.wp-block-post-title {
+			margin-bottom: 2.5rem;
+
+			@media (max-width: 499px) {
+				margin-bottom: 3.75rem;
+			}
+		}
+
+		.sensei-lms-quiz-back-to-lesson {
+			color: inherit;
+		}
+	}
+}
