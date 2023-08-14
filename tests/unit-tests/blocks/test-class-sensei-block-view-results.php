@@ -87,7 +87,10 @@ class Sensei_Block_View_Results_Test extends WP_UnitTestCase {
 
 		$result = $this->block->render( [], self::CONTENT );
 
-		$this->assertMatchesRegularExpression( "|<form method=\"get\" action=\"http://example.org/\?page_id={$page_id}&#038;course_id={$this->course->ID}\".*>|", $result );
+		$this->assertMatchesRegularExpression(
+			"|<form method=\"get\" action=\"http://example.org/\?page_id={$page_id}&#038;course_id={$this->course->ID}\".*><input type=\"hidden\" name=\"page_id\" value=\"{$page_id}\"><input type=\"hidden\" name=\"course_id\" value=\"{$this->course->ID}\">|",
+			$result
+		);
 	}
 
 	/**
