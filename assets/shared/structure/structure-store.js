@@ -245,27 +245,27 @@ export function registerStructureStore( {
 				return;
 			}
 
-			const isSavingPost =
-				editor.isSavingPost() && ! editor.isAutosavingPost();
 			const isSavingStructure = select(
 				storeName
 			).getIsSavingStructure();
 
+			const isSavingPost =
+				editor.isSavingPost() && ! editor.isAutosavingPost();
 			if ( isSavingPost ) {
 				editorStartedSaving = true;
-				metaSavingStarted = false;
 			}
 
-			if ( editorStartedSaving && ! metaSavingStarted ) {
-				metaSavingStarted = editPostSelector.isSavingMetaBoxes();
+			const isSavingMetaBoxes = editPostSelector.isSavingMetaBoxes();
+			if ( isSavingMetaBoxes ) {
+				metaSavingStarted = true;
 			}
 
 			if (
 				! structureStartedSaving &&
 				! isSavingPost &&
+				! isSavingMetaBoxes &&
 				editorStartedSaving &&
-				metaSavingStarted &&
-				! editPostSelector.isSavingMetaBoxes()
+				metaSavingStarted
 			) {
 				// Start saving structure when post has finished saving.
 				structureStartedSaving = true;
