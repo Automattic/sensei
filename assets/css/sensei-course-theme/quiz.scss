@@ -14,6 +14,25 @@ $tablet-breakpoint: 768px;
 		.wp-block-post-title {
 			margin-top: clamp(1.688rem, 0.534rem + 3.846vw, 2.938rem);
 		}
+
+		.sensei-lms-quiz-back-to-lesson {
+			display: flex;
+			align-items: center;
+
+			svg {
+				width: 24px;
+				height: 24px;
+			}
+
+			/* The gap between the arrow and the text for mobile and smaller screens */
+			gap: 8px;
+
+			@media (min-width: 500px) {
+				/* The gap between the arrow and the text for Desktop */
+				gap: 4px;
+			}
+		}
+
 		> * {
 			display: block;
 			max-width: 900px;
