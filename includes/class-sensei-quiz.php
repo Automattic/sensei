@@ -1835,6 +1835,12 @@ class Sensei_Quiz {
 		$is_reset_allowed  = self::is_reset_allowed( $lesson_id );
 		$has_actions       = $is_reset_allowed || ! $is_quiz_completed;
 
+		$wrapper_attributes = get_block_wrapper_attributes(
+			[
+				'class' => 'sensei-quiz-actions',
+			]
+		);
+
 		if ( ! $has_actions ) {
 			return;
 		}
@@ -1844,7 +1850,13 @@ class Sensei_Quiz {
 		wp_enqueue_script( 'sensei-stop-double-submission' );
 		?>
 
-		<div class="sensei-quiz-actions">
+		<?php
+			echo sprintf(
+				'<div %s>',
+				$wrapper_attributes // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No need to escape output of get_block_wrapper_attributes().
+			);
+		?>
+
 			<?php if ( ! $is_quiz_completed ) : ?>
 				<div class="sensei-quiz-actions-primary wp-block-buttons">
 					<div class="sensei-quiz-action wp-block-button">
