@@ -94,6 +94,8 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @param int $submission_id The submission ID.
 	 *
 	 * @return Answer[] An array of answers.
+	 *
+	 * @psalm-return non-empty-list<Answer>
 	 */
 	public function get_all( int $submission_id ): array {
 		$query = $this->wpdb->prepare(

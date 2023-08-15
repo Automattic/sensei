@@ -53,6 +53,8 @@ class Course_Completed extends Email_Generators_Abstract {
 	 * @param int    $course_id  The course ID.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function completed_course_mail_to_student( $status = 'in-progress', $student_id = 0, $course_id = 0 ) {
 

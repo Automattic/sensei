@@ -148,7 +148,9 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 *
 	 * @param int $submission_id The quiz submission ID.
 	 *
-	 * @return array An array of question post IDs.
+	 * @return int[] An array of question post IDs.
+	 *
+	 * @psalm-return array<int>
 	 */
 	public function get_question_ids( int $submission_id ): array {
 		$quiz_answers_table = $this->wpdb->prefix . 'sensei_lms_quiz_answers';

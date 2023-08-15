@@ -29,6 +29,8 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	 * Get the ID of the tool.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'enrolment-debug'
 	 */
 	public function get_id() {
 		return 'enrolment-debug';
@@ -55,14 +57,16 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	/**
 	 * Is the tool a single action?
 	 *
-	 * @return bool
+	 * @return false
 	 */
-	public function is_single_action() {
+	public function is_single_action(): bool {
 		return false;
 	}
 
 	/**
 	 * Output tool view for interactive action methods.
+	 *
+	 * @return void
 	 */
 	public function output() {
 		// If the results were processed by `process()`, show them here.
@@ -110,6 +114,8 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	 *
 	 * @param string $message  Message to show.
 	 * @param bool   $is_error True if this is an error message.
+	 *
+	 * @return never
 	 */
 	private function return_with_message( $message, $is_error ) {
 		Sensei_Tools::instance()->add_user_message( $message, $is_error );
@@ -120,6 +126,8 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 
 	/**
 	 * Process the tool action.
+	 *
+	 * @return void
 	 */
 	public function process() {
 		Sensei()->assets->enqueue( 'sensei-enrolment-debug', 'css/enrolment-debug.css' );
@@ -173,9 +181,11 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	 * @param WP_User $user   User object.
 	 * @param WP_Post $course Course post object.
 	 *
-	 * @return array
+	 * @return (((((int|string|string[])[]|mixed|string)[]|bool|int|mixed|null|string)[]|false|float|int|string)[]|bool|int|null|string)[]
+	 *
+	 * @psalm-return array{course: string, course_id: int, course_published: bool, user: string, user_id: int, is_enrolled: bool, is_removed: bool, results_stale: bool, results_match: bool, results_time: null|string, providers: array<int, array{id: int, name: string, handles_course: bool, is_enrolled: bool|null, debug: array<string>|false|mixed, logs: array<array{timestamp: positive-int, message: string, data: array{source: string, trace: string}}|mixed>, history: array|false}>, progress: array{start_date: string, last_activity: false|string, status: string, percent_complete: 100|false|float}|false}
 	 */
-	private function get_debug_results( WP_User $user, WP_Post $course ) {
+	private function get_debug_results( WP_User $user, WP_Post $course ): array {
 		$enrolment_manager    = Sensei_Course_Enrolment_Manager::instance();
 		$course_enrolment     = Sensei_Course_Enrolment::get_course_instance( $course->ID );
 		$provider_results     = $course_enrolment->get_enrolment_check_results( $user->ID );
@@ -325,7 +335,9 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 *
-	 * @return false|float
+	 * @return float|int
+	 *
+	 * @psalm-return 0|float
 	 */
 	private function get_percent_complete( $user_id, $course_id ) {
 		$completed_lesson_ids = [];
@@ -372,7 +384,7 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	 *
 	 * @param int|float $time Format the time.
 	 *
-	 * @return string
+	 * @return false|string
 	 */
 	public static function format_date( $time ) {
 		$time             = round( $time );
@@ -428,7 +440,7 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	/**
 	 * Is the tool currently available?
 	 *
-	 * @return bool True if tool is available.
+	 * @return true True if tool is available.
 	 */
 	public function is_available() {
 		return true;

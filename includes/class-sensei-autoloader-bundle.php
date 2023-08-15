@@ -22,9 +22,9 @@ class Sensei_Autoloader_Bundle {
 	 *
 	 * @deprecated 4.13.1
 	 *
-	 * @return bool
+	 * @return false
 	 */
-	public function load_class() {
+	public function load_class(): bool {
 		_deprecated_function( __METHOD__, '4.13.1' );
 
 		return false;

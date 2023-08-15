@@ -23,7 +23,7 @@ class Sensei_Course_Categories_Block {
 	/**
 	 * Register course results block.
 	 */
-	private function register_block() {
+	private function register_block(): void {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-categories',
 			[

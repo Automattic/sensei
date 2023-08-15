@@ -118,6 +118,8 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 
 	/**
 	 * Create the posts query.
+	 *
+	 * @return void
 	 */
 	private function setup_post_query() {
 		global $page, $cpage;
@@ -140,7 +142,7 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 	 * Backup the globals that we will be modifying. Set them back with
 	 * `reset_global_vars`.
 	 */
-	private function backup_global_vars() {
+	private function backup_global_vars(): void {
 		global $wp_query, $wp_the_query, $post, $pages;
 
 		$this->global_post_ref         = $post;
@@ -155,7 +157,7 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 	 *
 	 * @access private
 	 */
-	public function set_global_vars() {
+	public function set_global_vars(): void {
 		global $wp_query, $wp_the_query, $post, $pages;
 
 		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- Used to render single post.
@@ -170,7 +172,7 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 	 * Reset global variables to what they were before calling
 	 * `backup_global_vars`.
 	 */
-	private function reset_global_vars() {
+	private function reset_global_vars(): void {
 		global $wp_query, $wp_the_query, $post, $pages;
 
 		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- Restoring preexisting state.

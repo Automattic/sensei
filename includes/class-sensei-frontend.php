@@ -454,9 +454,10 @@ class Sensei_Frontend {
 	 * Pagination for course archive pages when filtering by course type.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param WP_Query $query WP_Query instance.
 	 */
-	function sensei_course_archive_pagination( $query ) {
+	function sensei_course_archive_pagination( $query ): void {
 
 		if ( ! is_admin() && $query->is_main_query() && isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'newcourses', 'featuredcourses', 'freecourses', 'paidcourses' ) ) ) {
 
@@ -560,7 +561,7 @@ class Sensei_Frontend {
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 */
-	public function lesson_tags_display( $lesson_id = 0 ) {
+	public function lesson_tags_display( $lesson_id = 0 ): void {
 		if ( $lesson_id ) {
 			$tags = wp_get_post_terms( $lesson_id, 'lesson-tag' );
 			if ( $tags && count( $tags ) > 0 ) {
@@ -592,7 +593,7 @@ class Sensei_Frontend {
 	 *
 	 * @param WP_Query $query WP_Query instance.
 	 */
-	public function lesson_tag_archive_filter( $query ) {
+	public function lesson_tag_archive_filter( $query ): void {
 		if ( $query->is_main_query() && is_tax( 'lesson-tag' ) ) {
 			// Limit to lessons only.
 			$query->set( 'post_type', 'lesson' );
@@ -621,7 +622,7 @@ class Sensei_Frontend {
 	/**
 	 * Outputs the lesson tag archive description.
 	 */
-	public function lesson_tag_archive_description() {
+	public function lesson_tag_archive_description(): void {
 		if ( is_tax( 'lesson-tag' ) ) {
 			$tag = get_queried_object();
 			echo '<p class="archive-description lesson-description">' . wp_kses_post( apply_filters( 'sensei_lesson_tag_archive_description', nl2br( $tag->description ), $tag->term_id ) ) . '</p>';
@@ -630,6 +631,8 @@ class Sensei_Frontend {
 
 	/**
 	 * Marks a lesson as complete.
+	 *
+	 * @return void
 	 */
 	public function sensei_complete_lesson() {
 		global $post, $current_user;
@@ -678,6 +681,8 @@ class Sensei_Frontend {
 	 * @since 1.12.0
 	 *
 	 * @param int $lesson_id Lesson ID.
+	 *
+	 * @return void
 	 */
 	private function maybe_redirect_to_next_lesson( $lesson_id = 0 ) {
 		if ( 0 >= $lesson_id ) {
@@ -712,11 +717,14 @@ class Sensei_Frontend {
 	 * Redirect to the course completed page, if applicable.
 	 *
 	 * @since 3.13.0
+	 *
 	 * @access private
 	 *
 	 * @param string $status    Course status.
 	 * @param int    $user_id   The user ID (unused).
 	 * @param int    $course_id The course ID.
+	 *
+	 * @return void
 	 */
 	public function redirect_to_course_completed_page( $status, $user_id, $course_id ) {
 		if ( 'complete' !== $status || ! $course_id ) {
@@ -737,7 +745,7 @@ class Sensei_Frontend {
 	/**
 	 * Marks a course as complete.
 	 */
-	public function sensei_complete_course() {
+	public function sensei_complete_course(): void {
 		global $current_user;
 
 		if ( isset( $_POST['course_complete'] ) && wp_verify_nonce( $_POST['woothemes_sensei_complete_course_noonce'], 'woothemes_sensei_complete_course_noonce' ) ) {
@@ -823,7 +831,7 @@ class Sensei_Frontend {
 	/**
 	 * Outputs all notices.
 	 */
-	public function sensei_frontend_messages() {
+	public function sensei_frontend_messages(): void {
 		Sensei()->notices->maybe_print_notices();
 	}
 
@@ -832,7 +840,7 @@ class Sensei_Frontend {
 	 *
 	 * @param int $post_id Optional. Lesson ID. Default 0.
 	 */
-	public function sensei_lesson_video( $post_id = 0 ) {
+	public function sensei_lesson_video( $post_id = 0 ): void {
 		if ( 0 < intval( $post_id ) && sensei_can_user_view_lesson( $post_id ) ) {
 			$lesson_video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
 			$lesson_video_embed = Sensei_Utils::render_video_embed( $lesson_video_embed );
@@ -847,6 +855,8 @@ class Sensei_Frontend {
 
 	/**
 	 * Outputs the "Complete Lesson" button.
+	 *
+	 * @return void
 	 */
 	public function sensei_complete_lesson_button() {
 		global  $post;
@@ -888,7 +898,7 @@ class Sensei_Frontend {
 	/**
 	 * Outputs the "Reset Lesson" button.
 	 */
-	public function sensei_reset_lesson_button() {
+	public function sensei_reset_lesson_button(): void {
 		global  $post;
 
 		// Lesson quizzes.
@@ -919,7 +929,7 @@ class Sensei_Frontend {
 		}
 	}
 
-	public function sensei_course_archive_meta() {
+	public function sensei_course_archive_meta(): void {
 		// Meta data.
 		$post_id           = get_the_ID();
 		$category_output   = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
@@ -984,7 +994,7 @@ class Sensei_Frontend {
 		<?php
 	}
 
-	public function sensei_course_category_main_content() {
+	public function sensei_course_category_main_content(): void {
 		global $post;
 		if ( have_posts() ) {
 			?>
@@ -1021,7 +1031,7 @@ class Sensei_Frontend {
 
 	}
 
-	public function sensei_login_form() {
+	public function sensei_login_form(): void {
 		/*
 		 * It is safe to ignore nonce verification below because we are just
 		 * using the POST data to display values in the form, not to change any
@@ -1092,7 +1102,7 @@ class Sensei_Frontend {
 		<?php
 	}
 
-	public function sensei_lesson_meta( $post_id = 0 ) {
+	public function sensei_lesson_meta( $post_id = 0 ): void {
 		if ( 0 < intval( $post_id ) ) {
 			$lesson_course_id = absint( get_post_meta( $post_id, '_lesson_course', true ) );
 			?>
@@ -1135,7 +1145,7 @@ class Sensei_Frontend {
 		return apply_filters( 'sensei_lesson_preview_title_text', $preview_text, $course_id );
 	}
 
-	public function sensei_lesson_preview_title_tag( $course_id ) {
+	public function sensei_lesson_preview_title_tag( $course_id ): string {
 		return '<span class="preview-label">'
 			. $this->sensei_lesson_preview_title_text( $course_id )
 			. '</span>';
@@ -1163,7 +1173,7 @@ class Sensei_Frontend {
 		return $title;
 	} // sensei_lesson_preview_title
 
-	public function sensei_course_start() {
+	public function sensei_course_start(): void {
 		global $post, $current_user;
 
 		// Handle user starting the course.

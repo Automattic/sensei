@@ -64,10 +64,8 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 
 	/**
 	 * create the messages query .
-	 *
-	 * @return mixed
 	 */
-	public function setup_course_categories() {
+	public function setup_course_categories(): void {
 
 		$args = array(
 			'orderby'    => $this->orderby,
@@ -119,9 +117,15 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 	 * @since 1.9.0
 	 *
 	 * @param array $category_ids
-	 * @return array
+	 * @param string|string[] $categories
+	 *
+	 * @return (int|numeric)[]
+	 *
+	 * @psalm-param ''|list<string> $categories
+	 *
+	 * @psalm-return list<int|numeric>
 	 */
-	public function generate_term_ids( $categories = array() ) {
+	public function generate_term_ids( $categories = array() ): array {
 
 		$cat_ids = array();
 

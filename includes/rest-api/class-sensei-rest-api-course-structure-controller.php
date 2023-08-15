@@ -43,6 +43,8 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register the REST API endpoints for Course Structure.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -200,7 +202,9 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 	 *
 	 * @param int $course_id Id of the course.
 	 *
-	 * @return WP_Post|null
+	 * @return WP_Post|array|null
+	 *
+	 * @psalm-return WP_Post|array<int|string, mixed>|null
 	 */
 	private function get_course( int $course_id ) {
 		$course = get_post( $course_id );
@@ -211,9 +215,11 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 	/**
 	 * Schema for the endpoint.
 	 *
-	 * @return array Schema object.
+	 * @return ((array|string)[]|string)[] Schema object.
+	 *
+	 * @psalm-return array{type: 'array', items: array{oneOf?: array{0: mixed, 1: mixed}, type?: 'object'}}
 	 */
-	public function get_schema() {
+	public function get_schema(): array {
 		if ( ! is_wp_version_compatible( '5.6.0' ) ) {
 			// This is only used for tests right now so this is safe.
 			return [
@@ -234,8 +240,12 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Get schema for lessons.
+	 *
+	 * @return (((string|true)[]|string)[]|string)[]
+	 *
+	 * @psalm-return array{type: 'object', required: array{0: 'type', 1: 'title'}, properties: array{type: array{type: 'string', pattern: 'lesson', required: true}, id: array{description: string, type: 'integer'}, title: array{description: string, type: 'string'}, draft: array{description: string, type: 'boolean', readOnly: true}}}
 	 */
-	private function get_schema_lessons() {
+	private function get_schema_lessons(): array {
 		return [
 			'type'       => 'object',
 			'required'   => [ 'type', 'title' ],
@@ -264,8 +274,12 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Get schema for modules.
+	 *
+	 * @return (((mixed|string|true)[]|string)[]|string)[]
+	 *
+	 * @psalm-return array{type: 'object', required: array{0: 'type', 1: 'title', 2: 'lessons'}, properties: array{type: array{type: 'string', pattern: 'module', required: true}, id: array{description: string, type: 'integer'}, title: array{description: string, type: 'string'}, description: array{description: string, type: 'string'}, lessons: array{description: string, type: 'array', items: mixed}}}
 	 */
-	private function get_schema_modules() {
+	private function get_schema_modules(): array {
 		return [
 			'type'       => 'object',
 			'required'   => [ 'type', 'title', 'lessons' ],

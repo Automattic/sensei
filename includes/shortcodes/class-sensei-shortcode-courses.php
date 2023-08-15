@@ -109,7 +109,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @since 1.9.0
 	 */
-	protected function setup_course_query() {
+	protected function setup_course_query(): void {
 
 		// query defaults
 		$query_args = array(

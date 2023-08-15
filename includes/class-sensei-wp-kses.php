@@ -11,9 +11,11 @@ class Sensei_Wp_Kses {
 	 * @param $string
 	 * @param $allowed_html
 	 * @param array        $allowed_protocols
+	 * @param array|null $allowed_html
+	 *
 	 * @return string
 	 */
-	public static function wp_kses( $string, $allowed_html = null, $allowed_protocols = array() ) {
+	public static function wp_kses( string $string, ?array $allowed_html = null, $allowed_protocols = array() ) {
 		if ( empty( $allowed_protocols ) ) {
 			$allowed_protocols = wp_allowed_protocols();
 		}
@@ -55,7 +57,12 @@ class Sensei_Wp_Kses {
 		return self::$allowed_html;
 	}
 
-	public static function get_video_html_tag_allowed_attributes() {
+	/**
+	 * @return array[]
+	 *
+	 * @psalm-return array{source: array<empty, empty>, autoplay: array<empty, empty>, controls: array<empty, empty>, height: array<empty, empty>, loop: array<empty, empty>, muted: array<empty, empty>, poster: array<empty, empty>, preload: array<empty, empty>, src: array<empty, empty>, width: array<empty, empty>}
+	 */
+	public static function get_video_html_tag_allowed_attributes(): array {
 		return array(
 			'source'   => array(),
 			'autoplay' => array(),
@@ -70,7 +77,12 @@ class Sensei_Wp_Kses {
 		);
 	}
 
-	public static function get_source_html_tag_allowed_attributes() {
+	/**
+	 * @return array[]
+	 *
+	 * @psalm-return array{src: array<empty, empty>, type: array<empty, empty>, srcset: array<empty, empty>, sizes: array<empty, empty>, media: array<empty, empty>}
+	 */
+	public static function get_source_html_tag_allowed_attributes(): array {
 		return array(
 			'src'    => array(),
 			'type'   => array(),
@@ -87,9 +99,12 @@ class Sensei_Wp_Kses {
 	 * see https://www.w3schools.com/html/html_formatting.asp
 	 *
 	 * @access public
+	 *
 	 * @since 4.6.4
 	 *
-	 * @return array HTML formatting tags
+	 * @return array[] HTML formatting tags
+	 *
+	 * @psalm-return array{b: array<empty, empty>, strong: array<empty, empty>, i: array<empty, empty>, em: array<empty, empty>, mark: array<empty, empty>, small: array<empty, empty>, del: array<empty, empty>, ins: array<empty, empty>, sub: array<empty, empty>, sup: array<empty, empty>}
 	 */
 	public static function get_allowed_html_formatting_tags(): array {
 		return array(
@@ -127,9 +142,12 @@ class Sensei_Wp_Kses {
 	 *
 	 * @param array $unescaped_data Array of unescaped data.
 	 * @param array $allowed_html List of allowed HTML elements (to be merged with results of wp_kses_allowed_html( 'post' )).
-	 * @return array Escaped data.
-	 **/
-	public static function wp_kses_array( $unescaped_data, $allowed_html = array() ) {
+	 *
+	 * @return string[] Escaped data.
+	 *
+	 * @psalm-return array<string>
+	 */
+	public static function wp_kses_array( $unescaped_data, $allowed_html = array() ): array {
 		$escaped_data = array();
 
 		foreach ( $unescaped_data as $key => $data ) {

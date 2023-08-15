@@ -72,7 +72,9 @@ final class Sensei_Course_Enrolment_Provider_Results implements JsonSerializable
 	/**
 	 * Return object that can be serialized by `json_encode()`.
 	 *
-	 * @return array
+	 * @return (array|int|string)[]
+	 *
+	 * @psalm-return array{t: int, v: string, r: array}
 	 */
 	public function jsonSerialize() {
 		return [
@@ -95,10 +97,8 @@ final class Sensei_Course_Enrolment_Provider_Results implements JsonSerializable
 	 * Returns the result of all the enrolment checks. Used by `Sensei_Course_Enrolment::is_enrolled()`, do not call directly.
 	 *
 	 * @access private
-	 *
-	 * @return bool|null
 	 */
-	public function is_enrolment_provided() {
+	public function is_enrolment_provided(): bool {
 		$provider_results = $this->get_provider_results();
 
 		// If one provider is allowing enrolment, they are enrolled in the course.

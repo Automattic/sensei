@@ -206,9 +206,10 @@ class Sensei_Course {
 	 * Add showcase courses upsell page.
 	 *
 	 * @since 4.12.0
+	 *
 	 * @internal
 	 */
-	public function add_showcase_courses_upsell() {
+	public function add_showcase_courses_upsell(): void {
 		add_submenu_page(
 			'',
 			__( 'Showcase Courses', 'sensei-lms' ),
@@ -223,9 +224,10 @@ class Sensei_Course {
 	 * Add showcase courses upsell screen.
 	 *
 	 * @since 4.12.0
+	 *
 	 * @internal
 	 */
-	public function showcase_courses_screen() {
+	public function showcase_courses_screen(): void {
 		// Get the price of Pro. Return if it's not available.
 		$sensei_pro_product = Sensei_Extensions::instance()->get_extension( Sensei_Extensions::PRODUCT_SENSEI_PRO_SLUG );
 		$sensei_pro_price   = $sensei_pro_product ? str_replace( '.00', '', $sensei_pro_product->price ) : '-';
@@ -311,6 +313,8 @@ class Sensei_Course {
 	 * @since 4.0.0
 	 *
 	 * @internal
+	 *
+	 * @return void
 	 */
 	public function add_custom_navigation() {
 		$screen = get_current_screen();
@@ -389,7 +393,7 @@ class Sensei_Course {
 	 * @param WP_Screen $screen WordPress current screen object.
 	 * @param array     $tabs List of tabs to show.
 	 */
-	private function display_courses_navigation( WP_Screen $screen, array $tabs ) {
+	private function display_courses_navigation( WP_Screen $screen, array $tabs ): void {
 		/**
 		 * Filter courses navigation sidebar content.
 		 *
@@ -449,7 +453,10 @@ class Sensei_Course {
 	 * Register and enqueue scripts and styles that are needed in the backend.
 	 *
 	 * @access private
+	 *
 	 * @since 2.1.0
+	 *
+	 * @return void
 	 */
 	public function register_admin_scripts() {
 		$screen = get_current_screen();
@@ -484,9 +491,11 @@ class Sensei_Course {
 	/**
 	 * Get Course Settings Sidebar Variables.
 	 *
-	 * @return array
+	 * @return ((WP_Post|int|mixed)[]|int|mixed|string)[]
+	 *
+	 * @psalm-return array{nonce_value: string, nonce_name: mixed, teachers: mixed, features: array{open_access: mixed}, courses: array<WP_Post|int>, author: int}
 	 */
-	public static function get_course_settings_sidebar_vars() {
+	public static function get_course_settings_sidebar_vars(): array {
 		$course_id = get_the_ID();
 		return [
 			'nonce_value' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
@@ -585,7 +594,7 @@ class Sensei_Course {
 	/**
 	 * @param $message
 	 */
-	private static function add_course_access_permission_message( $message ) {
+	private static function add_course_access_permission_message( string $message ): void {
 		global $post;
 		if ( Sensei()->settings->get( 'access_permission' ) ) {
 			$message = apply_filters_deprecated(
@@ -607,7 +616,7 @@ class Sensei_Course {
 	 * @param type $user_id
 	 * @param type $quiz_id
 	 */
-	public function update_status_after_quiz_submission( $user_id, $quiz_id ) {
+	public function update_status_after_quiz_submission( $user_id, $quiz_id ): void {
 		if ( intval( $user_id ) > 0 && intval( $quiz_id ) > 0 ) {
 			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 			$this->update_status_after_lesson_change( $user_id, $lesson_id );
@@ -620,7 +629,7 @@ class Sensei_Course {
 	 * @param int $user_id
 	 * @param int $lesson_id
 	 */
-	public function update_status_after_lesson_change( $user_id, $lesson_id ) {
+	public function update_status_after_lesson_change( $user_id, $lesson_id ): void {
 		if ( intval( $user_id ) > 0 && intval( $lesson_id ) > 0 ) {
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 			if ( intval( $course_id ) > 0 ) {
@@ -633,7 +642,7 @@ class Sensei_Course {
 	/**
 	 * Sets up the meta fields used for courses.
 	 */
-	public function set_up_meta_fields() {
+	public function set_up_meta_fields(): void {
 		register_post_meta(
 			'course',
 			'_course_prerequisite',
@@ -767,9 +776,10 @@ class Sensei_Course {
 	 * Hooked into `rest_api_init`.
 	 *
 	 * @since 4.9.0
+	 *
 	 * @access private
 	 */
-	public function add_author_support() {
+	public function add_author_support(): void {
 		add_post_type_support( 'course', 'author' );
 	}
 
@@ -924,8 +934,10 @@ class Sensei_Course {
 	 * Handles saving the meta data
 	 *
 	 * @access public
+	 *
 	 * @param int $post_id
-	 * @return int
+	 *
+	 * @return int|null
 	 */
 	public function meta_box_save( $post_id ) {
 		global $post;
@@ -968,9 +980,11 @@ class Sensei_Course {
 	 * Does the save
 	 *
 	 * @access private
+	 *
 	 * @param string $post_key (default: '')
 	 * @param int    $post_id (default: 0)
-	 * @return int new meta id | bool meta value saved status
+	 *
+	 * @return bool|int|null new meta id | bool meta value saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		/*
@@ -1143,11 +1157,16 @@ class Sensei_Course {
 	 * while moving the existing ones to the end.
 	 *
 	 * @access private
-	 * @since  1.0.0
-	 * @param  array $defaults  Array of column header labels keyed by column ID.
-	 * @return array            Updated array of column header labels keyed by column ID.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $defaults  Array of column header labels keyed by column ID.
+	 *
+	 * @return (mixed|string)[] Updated array of column header labels keyed by column ID.
+	 *
+	 * @psalm-return array<mixed|string>
 	 */
-	public function add_column_headings( $defaults ) {
+	public function add_column_headings( $defaults ): array {
 		$new_columns                        = [];
 		$new_columns['cb']                  = '<input type="checkbox" />';
 		$new_columns['title']               = _x( 'Course Title', 'column name', 'sensei-lms' );
@@ -1241,9 +1260,12 @@ class Sensei_Course {
 	 * @param int    $amount (default: 0)
 	 * @param string $type (default: 'default')
 	 * @param array  $includes (default: array())
-	 * @return array
+	 *
+	 * @return (WP_Post|int)[]
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
-	public function course_query( $amount = 0, $type = 'default', $includes = [], $excludes = [] ) {
+	public function course_query( $amount = 0, $type = 'default', $includes = [], $excludes = [] ): array {
 		_deprecated_function( __METHOD__, '3.0.0' );
 
 		if ( 'usercourses' === $type ) {
@@ -1298,7 +1320,7 @@ class Sensei_Course {
 	 * @param array  $includes (default: array())
 	 * @return array
 	 */
-	public function get_archive_query_args( $type = '', $amount = 0, $includes = [], $excludes = [] ) {
+	public function get_archive_query_args( $type = '', $amount = 0, $includes = [], $excludes = [] ): array {
 		_deprecated_function( __METHOD__, '3.0.0' );
 
 		global $wp_query;
@@ -1529,9 +1551,13 @@ class Sensei_Course {
 	 * course_count function.
 	 *
 	 * @access public
+	 *
 	 * @param array  $exclude (default: array())
 	 * @param string $post_status (default: 'publish')
+	 *
 	 * @return int
+	 *
+	 * @psalm-return 0|positive-int
 	 */
 	public function course_count( $post_status = 'publish' ) {
 
@@ -1638,13 +1664,17 @@ class Sensei_Course {
 	 * Used for the uasort in $this->course_lessons()
 	 *
 	 * @since 1.8.0
+	 *
 	 * @access protected
 	 *
 	 * @param array $lesson_1
 	 * @param array $lesson_2
+	 *
 	 * @return int
+	 *
+	 * @psalm-return -1|0|1
 	 */
-	protected function _short_course_lessons_callback( $lesson_1, $lesson_2 ) {
+	protected function _short_course_lessons_callback( $lesson_1, $lesson_2 ): int {
 
 		if ( $lesson_1->course_order == $lesson_2->course_order ) {
 			return 0;
@@ -1656,10 +1686,14 @@ class Sensei_Course {
 	/**
 	 * Fetch all quiz ids in a course
 	 *
-	 * @since  1.5.0
-	 * @param  integer $course_id ID of course
-	 * @param  boolean $boolean_check True if a simple yes/no is required
-	 * @return array              Array of quiz post objects
+	 * @since 1.5.0
+	 *
+	 * @param integer $course_id ID of course
+	 * @param boolean $boolean_check True if a simple yes/no is required
+	 *
+	 * @return array|bool Array of quiz post objects
+	 *
+	 * @psalm-return bool|list<mixed>
 	 */
 	public function course_quizzes( $course_id = 0, $boolean_check = false ) {
 
@@ -1689,11 +1723,15 @@ class Sensei_Course {
 	 * course_lessons_completed function. Appears to be completely unused and a duplicate of course_lessons()!
 	 *
 	 * @access public
-	 * @param  int    $course_id (default: 0)
-	 * @param  string $post_status (default: 'publish')
-	 * @return array
+	 *
+	 * @param int    $course_id (default: 0)
+	 * @param string $post_status (default: 'publish')
+	 *
+	 * @return WP_Post[]
+	 *
+	 * @psalm-return array<WP_Post>
 	 */
-	public function course_lessons_completed( $course_id = 0, $post_status = 'publish' ) {
+	public function course_lessons_completed( $course_id = 0, $post_status = 'publish' ): array {
 
 		return $this->course_lessons( $course_id, $post_status );
 
@@ -1704,9 +1742,13 @@ class Sensei_Course {
 	 * course_author_lesson_count function.
 	 *
 	 * @access public
-	 * @param  int $author_id (default: 0)
-	 * @param  int $course_id (default: 0)
+	 *
+	 * @param int $author_id (default: 0)
+	 * @param int $course_id (default: 0)
+	 *
 	 * @return int
+	 *
+	 * @psalm-return 0|positive-int
 	 */
 	public function course_author_lesson_count( $author_id = 0, $course_id = 0 ) {
 
@@ -1730,8 +1772,12 @@ class Sensei_Course {
 	 * course_lesson_count function.
 	 *
 	 * @access public
-	 * @param  int $course_id (default: 0)
+	 *
+	 * @param int $course_id (default: 0)
+	 *
 	 * @return int
+	 *
+	 * @psalm-return 0|positive-int
 	 */
 	public function course_lesson_count( $course_id = 0 ) {
 
@@ -1756,8 +1802,12 @@ class Sensei_Course {
 	 * course_lesson_preview_count function.
 	 *
 	 * @access public
-	 * @param  int $course_id (default: 0)
+	 *
+	 * @param int $course_id (default: 0)
+	 *
 	 * @return int
+	 *
+	 * @psalm-return 0|positive-int
 	 */
 	public function course_lesson_preview_count( $course_id = 0 ) {
 
@@ -1814,12 +1864,14 @@ class Sensei_Course {
 	 *
 	 * This function also ouputs the html so no need to echo the content.
 	 *
-	 * @since  1.4.0
-	 * @param  object  $user   Queried user object
-	 * @param  boolean $manage Whether the user has permission to manage the courses
-	 * @return string          HTML displayng course data
+	 * @since 1.4.0
+	 *
+	 * @param object  $user   Queried user object
+	 * @param boolean $manage Whether the user has permission to manage the courses
+	 *
+	 * @return void HTML displayng course data
 	 */
-	public function load_user_courses_content( $user = false ) {
+	public function load_user_courses_content( $user = false ): void {
 		global $course;
 
 		if ( ! isset( Sensei()->settings->settings['learner_profile_show_courses'] )
@@ -2296,10 +2348,12 @@ class Sensei_Course {
 	 * Generate the course meter component
 	 *
 	 * @since 1.8.0
+	 *
 	 * @param int $progress_percentage 0 - 100
+	 *
 	 * @return string $progress_bar_html
 	 */
-	public function get_progress_meter( $progress_percentage ) {
+	public function get_progress_meter( $progress_percentage ): string {
 
 		if ( 50 < $progress_percentage ) {
 			$class = ' green';
@@ -2444,9 +2498,12 @@ class Sensei_Course {
 	 *
 	 * @param int $course_id
 	 * @param int $user_id
-	 * @return array $completed_lesson_ids
+	 *
+	 * @return int[] $completed_lesson_ids
+	 *
+	 * @psalm-return list<int>
 	 */
-	public function get_completed_lesson_ids( $course_id, $user_id = 0 ) {
+	public function get_completed_lesson_ids( $course_id, $user_id = 0 ): array {
 
 		if ( ! ( intval( $user_id ) ) > 0 ) {
 			$user_id = get_current_user_id();
@@ -2552,9 +2609,10 @@ class Sensei_Course {
 	 * Render the course notification setting meta box
 	 *
 	 * @since 1.8.0
+	 *
 	 * @param $course
 	 */
-	public function course_notification_meta_box_content( $course ) {
+	public function course_notification_meta_box_content( $course ): void {
 
 		$checked = get_post_meta( $course->ID, 'disable_notification', true );
 
@@ -2569,9 +2627,12 @@ class Sensei_Course {
 	 * Store the setting for the course notification setting.
 	 *
 	 * @hooked int save_post
+	 *
 	 * @since 1.8.0
 	 *
 	 * @param $course_id
+	 *
+	 * @return void
 	 */
 	public function save_course_notification_meta_box( $course_id ) {
 
@@ -2599,7 +2660,7 @@ class Sensei_Course {
 	 *
 	 * @param integer $course_id
 	 */
-	public function the_course_free_lesson_preview( $course_id ) {
+	public function the_course_free_lesson_preview( $course_id ): void {
 		// Meta data
 		$course                = get_post( $course_id );
 		$preview_lesson_count  = intval( Sensei()->course->course_lesson_preview_count( $course->ID ) );
@@ -2626,9 +2687,10 @@ class Sensei_Course {
 	 * Add course mata to the course meta hook
 	 *
 	 * @since 1.9.0
+	 *
 	 * @param integer $course_id
 	 */
-	public function the_course_meta( $course_id ) {
+	public function the_course_meta( $course_id ): void {
 		$course              = get_post( $course_id );
 		$category_output     = get_the_term_list( $course->ID, 'course-category', '', ', ', '' );
 		$author_display_name = get_the_author_meta( 'display_name', $course->post_author );
@@ -2723,6 +2785,8 @@ class Sensei_Course {
 	 * - delete course
 	 *
 	 * @param WP_Post $course
+	 *
+	 * @return void
 	 */
 	public static function the_course_action_buttons( $course ) {
 		if ( ! is_user_logged_in() ) {
@@ -2956,7 +3020,10 @@ class Sensei_Course {
 	 * hooked into sensei_loop_course_before
 	 *
 	 * @since 1.9.0
+	 *
 	 * @param
+	 *
+	 * @return void
 	 */
 	public static function course_archive_sorting( $query ) {
 
@@ -3023,7 +3090,10 @@ class Sensei_Course {
 	 * hooked into sensei_loop_course_before
 	 *
 	 * @since 1.9.0
+	 *
 	 * @param
+	 *
+	 * @return void
 	 */
 	public static function course_archive_filters( $query ) {
 
@@ -3196,8 +3266,10 @@ class Sensei_Course {
 	 * Hooked into pre_get_posts.
 	 *
 	 * @since 3.15.0
+	 *
 	 * @param WP_Query $query WordPress query.
-	 * @return WP_Query
+	 *
+	 * @return WP_Query|null
 	 */
 	public static function course_archive_set_order_by( $query ) {
 		// Exit early if it is from admin panel or anywhere else other than an archive page, like admin panel and pages with shortcode.
@@ -3410,6 +3482,8 @@ class Sensei_Course {
 	 * Output the the single course lessons title with markup.
 	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public static function the_course_lessons_title() {
 		if ( ! is_singular( 'course' ) || ! Sensei_Utils::show_course_lessons( get_the_ID() ) ) {
@@ -3471,7 +3545,10 @@ class Sensei_Course {
 	 * queried separately.
 	 *
 	 * @since 1.9.0
+	 *
 	 * @global $wp_query
+	 *
+	 * @return void
 	 */
 	public static function load_single_course_lessons_query() {
 
@@ -3551,6 +3628,8 @@ class Sensei_Course {
 	 * etc.
 	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public static function the_course_enrolment_actions() {
 		global $post, $current_user;
@@ -3681,6 +3760,8 @@ class Sensei_Course {
 	 * @access private
 	 *
 	 * @since 2.0.0
+	 *
+	 * @return void
 	 */
 	public static function output_course_enrolment_actions() {
 		global $post;
@@ -3739,6 +3820,8 @@ class Sensei_Course {
 	 * Output the course video inside the loop.
 	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public static function the_course_video() {
 
@@ -3776,7 +3859,10 @@ class Sensei_Course {
 	 * Output the title for the single lesson page
 	 *
 	 * @global $post
+	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public static function the_title() {
 
@@ -3809,6 +3895,8 @@ class Sensei_Course {
 	 * Show the title on the course category pages
 	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public static function course_category_title() {
 
@@ -3873,9 +3961,11 @@ class Sensei_Course {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @return array
+	 * @return (int|string)[]
+	 *
+	 * @psalm-return array{post_type: 'course', posts_per_page: 1000, orderby: 'date', order: 'DESC', suppress_filters: 0}
 	 */
-	public static function get_default_query_args() {
+	public static function get_default_query_args(): array {
 		return [
 			'post_type'        => 'course',
 			'posts_per_page'   => 1000,
@@ -3890,7 +3980,10 @@ class Sensei_Course {
 	 * Courses with no pre-requisite should always return true
 	 *
 	 * @since 1.9.0
+	 *
 	 * @param $course_id
+	 * @param false|int $course_id
+	 *
 	 * @return bool
 	 */
 	public static function is_prerequisite_complete( $course_id ) {
@@ -3924,7 +4017,10 @@ class Sensei_Course {
 	 * to a non-empty value.
 	 *
 	 * @since 1.9.5
+	 *
 	 * @param WP_Query $query hooked in from pre_get_posts
+	 *
+	 * @return void
 	 */
 	function allow_course_archive_on_front_page( $query ) {
 		// Bail if it's clear we're not looking at a static front page or if the $running flag is
@@ -4003,7 +4099,7 @@ class Sensei_Course {
 	 *
 	 * @since 1.9.10
 	 */
-	public static function prerequisite_complete_message() {
+	public static function prerequisite_complete_message(): void {
 		if ( ! self::is_prerequisite_complete( get_the_ID() ) ) {
 			$message = self::get_course_prerequisite_message( get_the_ID() );
 			Sensei()->notices->add_notice( $message, 'info' );
@@ -4049,11 +4145,12 @@ class Sensei_Course {
 	 * Log an event when a course is initially published.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @access private
 	 *
 	 * @param WP_Post $course The Course.
 	 */
-	public function log_initial_publish_event( $course ) {
+	public function log_initial_publish_event( $course ): void {
 		$product_ids   = get_post_meta( $course->ID, '_course_woocommerce_product', false );
 		$product_count = empty( $product_ids ) ? 0 : count( array_filter( $product_ids, 'is_numeric' ) );
 
@@ -4072,10 +4169,13 @@ class Sensei_Course {
 	 * Hooked into `save_post_course`.
 	 *
 	 * @since 3.6.0
+	 *
 	 * @access private
 	 *
 	 * @param int      $post_id Post ID.
 	 * @param \WP_Post $post    Post object.
+	 *
+	 * @return void
 	 */
 	public function mark_updating_course_id( $post_id, $post ) {
 		if ( 'publish' !== $post->post_status ) {
@@ -4131,7 +4231,10 @@ class Sensei_Course {
 	 * Hooked into `shutdown`.
 	 *
 	 * @since 3.6.0
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function log_course_update() {
 		if ( empty( $this->course_id_updating ) ) {
@@ -4171,9 +4274,10 @@ class Sensei_Course {
 	 * Hooked into `rest_api_init`.
 	 *
 	 * @since 3.6.0
+	 *
 	 * @access private
 	 */
-	public function disable_log_course_update() {
+	public function disable_log_course_update(): void {
 		remove_action( 'shutdown', [ $this, 'log_course_update' ] );
 	}
 
@@ -4182,7 +4286,7 @@ class Sensei_Course {
 	 *
 	 * @access private
 	 */
-	public function setup_single_course_page() {
+	public function setup_single_course_page(): void {
 		global $post;
 
 		// Remove legacy actions on courses with new blocks.
@@ -4200,7 +4304,7 @@ class Sensei_Course {
 	 *
 	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function add_legacy_course_hooks( $sensei ) {
+	public function add_legacy_course_hooks( $sensei ): void {
 		// Legacy progress bar on the single course page.
 		add_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_statement' ], 15 );
 		add_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_meter' ], 16 );
@@ -4225,7 +4329,7 @@ class Sensei_Course {
 	/**
 	 * Remove legacy course actions.
 	 */
-	public function remove_legacy_course_actions() {
+	public function remove_legacy_course_actions(): void {
 		// Legacy lesson listing.
 		remove_action( 'sensei_single_course_content_inside_after', [ __CLASS__, 'the_course_lessons_title' ], 9 );
 		remove_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
@@ -4292,7 +4396,7 @@ class Sensei_Course {
 	 * @param String  $url  Default redirect url.
 	 * @param WP_Post $post Post object for course.
 	 *
-	 * @return String
+	 * @return false|string
 	 */
 	public static function alter_redirect_url_after_enrolment( $url, $post ) {
 
@@ -4361,7 +4465,7 @@ class Sensei_Course {
 	 *
 	 * @since 4.11.0
 	 */
-	public function archive_page_content() {
+	public function archive_page_content(): void {
 		$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
 
 		if (
@@ -4410,6 +4514,8 @@ class Sensei_Course {
 	 * @since 4.12.0
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function maybe_redirect_to_login_from_course_completion() {
 

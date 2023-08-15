@@ -143,7 +143,10 @@ class Sensei_Teacher {
 	 * Sensei_Teacher::add_capabilities
 	 *
 	 * @since 1.8.0
+	 *
 	 * @access protected
+	 *
+	 * @return void
 	 */
 	protected function add_capabilities() {
 
@@ -265,10 +268,12 @@ class Sensei_Teacher {
 	 * Render the teacher meta box markup
 	 *
 	 * @since 1.8.0
+	 *
 	 * @access public
+	 *
 	 * @parameters
 	 */
-	public function teacher_meta_box_content( $post ) {
+	public function teacher_meta_box_content( $post ): void {
 		wp_nonce_field( self::NONCE_ACTION_NAME, self::NONCE_FIELD_NAME );
 
 		// get the current author
@@ -444,13 +449,14 @@ class Sensei_Teacher {
 	 * a part of any other course taught by a different teacher.
 	 *
 	 * @since 4.6.0
+	 *
 	 * @access private
 	 *
-	 * @param  string $module_slug Slug of the module to check for.
-	 * @param  int    $course_id   Slugs of the modules to check for.
-	 * @param  int    $teacher_id  Slugs of the modules to check for.
+	 * @param string $module_slug Slug of the module to check for.
+	 * @param int    $course_id   Slugs of the modules to check for.
+	 * @param int    $teacher_id  Slugs of the modules to check for.
 	 *
-	 * @return string|boolean Returns the name of the first course it finds a match for, false otherwise.
+	 * @return false|string Returns the name of the first course it finds a match for, false otherwise.
 	 */
 	public static function is_module_in_use_by_different_course_and_teacher( $module_slug, $course_id, $teacher_id ) {
 		$existing_module_by_slug = get_term_by( 'slug', $module_slug, 'module' );
@@ -491,7 +497,7 @@ class Sensei_Teacher {
 	 * @param $new_teacher_id
 	 * @return void
 	 */
-	public static function update_course_modules_author( $course_id, $new_teacher_id ) {
+	public static function update_course_modules_author( int $course_id, int $new_teacher_id ) {
 		if ( empty( $course_id ) || empty( $new_teacher_id ) ) {
 			return;
 		}
@@ -991,10 +997,12 @@ class Sensei_Teacher {
 	 * This function hooks into wp_insert_post
 	 *
 	 * @since 1.8.0
+	 *
 	 * @param int $course_id
-	 * @return bool
+	 *
+	 * @return false|null
 	 */
-	public function notify_admin_teacher_course_creation( $new_status, $old_status, $post ) {
+	public function notify_admin_teacher_course_creation( $new_status, $old_status, $post ): ?bool {
 
 		$course_id = $post->ID;
 
@@ -1122,8 +1130,10 @@ class Sensei_Teacher {
 	 * @since 3.9.0 Method extracted from `Sensei_Teacher::limit_analysis_learners`.
 	 *
 	 * @return int[] Learner IDs.
+	 *
+	 * @psalm-return list<int>
 	 */
-	public function get_learner_ids_for_courses_with_edit_permission() {
+	public function get_learner_ids_for_courses_with_edit_permission(): array {
 		// for teachers all courses only return those which belong to the teacher
 		// as they don't have access to course belonging to other users
 		$courses_with_edit_permission = Sensei()->course->get_all_courses();
@@ -1280,8 +1290,11 @@ class Sensei_Teacher {
 	 * Print out  teacher column data
 	 *
 	 * @since 1.8.0
+	 *
 	 * @param $column
 	 * @param $course_id
+	 *
+	 * @return void
 	 */
 	public function course_column_data( $column, $course_id ) {
 
@@ -1732,7 +1745,7 @@ class Sensei_Teacher {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function archive_title() {
+	public static function archive_title(): void {
 
 		$author      = get_user_by( 'id', get_query_var( 'author' ) );
 		$author_name = $author->display_name;
@@ -1754,7 +1767,7 @@ class Sensei_Teacher {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function remove_course_meta_on_teacher_archive() {
+	public static function remove_course_meta_on_teacher_archive(): void {
 
 		remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
 

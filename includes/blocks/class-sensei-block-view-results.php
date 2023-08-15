@@ -26,7 +26,7 @@ class Sensei_Block_View_Results {
 	 *
 	 * @access private
 	 */
-	public function register_block() {
+	public function register_block(): void {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/button-view-results',
 			[

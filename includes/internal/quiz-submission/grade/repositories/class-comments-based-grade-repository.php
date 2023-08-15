@@ -64,6 +64,8 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 * @param int $submission_id The submission ID.
 	 *
 	 * @return Grade[] An array of grades.
+	 *
+	 * @psalm-return list<Grade>
 	 */
 	public function get_all( int $submission_id ): array {
 		$grades_map = get_comment_meta( $submission_id, 'quiz_grades', true );

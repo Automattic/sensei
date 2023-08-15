@@ -62,7 +62,7 @@ class Email_Seeder {
 	 *
 	 * @internal
 	 */
-	public function init() {
+	public function init(): void {
 		/**
 		 * Filter the email data.
 		 *
@@ -148,7 +148,9 @@ class Email_Seeder {
 	/**
 	 * Get all available email identifiers.
 	 *
-	 * @return array
+	 * @return (int|string)[]
+	 *
+	 * @psalm-return list<array-key>
 	 */
 	private function get_email_identifiers(): array {
 		return array_keys( $this->emails );

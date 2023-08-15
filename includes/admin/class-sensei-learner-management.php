@@ -104,7 +104,10 @@ class Sensei_Learner_Management {
 	 * Add custom navigation to the admin pages.
 	 *
 	 * @since 4.4.0
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function add_custom_navigation() {
 		$screen = get_current_screen();
@@ -122,7 +125,7 @@ class Sensei_Learner_Management {
 	 *
 	 * @param WP_Screen $screen WordPress current screen object.
 	 */
-	private function display_students_navigation( WP_Screen $screen ) {
+	private function display_students_navigation( WP_Screen $screen ): void {
 		?>
 		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
 			<div class="sensei-custom-navigation__heading-with-info">
@@ -141,10 +144,11 @@ class Sensei_Learner_Management {
 	/**
 	 * Add learner management menu.
 	 *
-	 * @since  1.6.0
+	 * @since 1.6.0
+	 *
 	 * @access public
 	 */
-	public function learners_admin_menu() {
+	public function learners_admin_menu(): void {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			$learners_page = add_submenu_page(
 				'sensei',
@@ -177,7 +181,7 @@ class Sensei_Learner_Management {
 	/**
 	 * Adds a "Learners per page" screen option to the Bulk Learner Actions page.
 	 */
-	public function load_screen_options_when_on_bulk_actions() {
+	public function load_screen_options_when_on_bulk_actions(): void {
 		if ( isset( $this->bulk_actions_controller ) && $this->bulk_actions_controller->is_current_page() ) {
 
 			$args = array(
@@ -193,10 +197,12 @@ class Sensei_Learner_Management {
 	 * Enqueues scripts.
 	 *
 	 * @description Load in JavaScripts where necessary.
+	 *
 	 * @access public
+	 *
 	 * @since 1.6.0
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts(): void {
 
 		// Load Learners JS.
 
@@ -247,10 +253,12 @@ class Sensei_Learner_Management {
 	 * Enqueue styles.
 	 *
 	 * @description Load in CSS styles where necessary.
+	 *
 	 * @access public
+	 *
 	 * @since 1.6.0
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles(): void {
 		Sensei()->assets->enqueue( 'sensei-jquery-ui', 'css/jquery-ui.css' );
 		Sensei()->assets->enqueue(
 			'sensei-student-modal-style',
@@ -262,9 +270,9 @@ class Sensei_Learner_Management {
 	/**
 	 * Loads dependent files.
 	 *
-	 * @since  1.6.0
+	 * @since 1.6.0
 	 */
-	public function load_data_table_files() {
+	public function load_data_table_files(): void {
 
 		// Load Learners Classes.
 		$classes_to_load = array(
@@ -310,9 +318,10 @@ class Sensei_Learner_Management {
 	 * Outputs the content for the Learner Management page.
 	 *
 	 * @since 1.6.0
+	 *
 	 * @access public
 	 */
-	public function learners_page() {
+	public function learners_page(): void {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 		if ( ! empty( $_GET['course_id'] ) ) {
@@ -326,10 +335,11 @@ class Sensei_Learner_Management {
 	/**
 	 * Outputs the breadcrumb.
 	 *
-	 * @since  1.6.0
+	 * @since 1.6.0
+	 *
 	 * @param array $args Partial function names.
 	 */
-	public function learners_headers( $args = array( 'nav' => 'default' ) ) {
+	public function learners_headers( $args = array( 'nav' => 'default' ) ): void {
 
 		$function = 'learners_' . $args['nav'] . '_nav';
 		$this->$function();
@@ -340,10 +350,11 @@ class Sensei_Learner_Management {
 	/**
 	 * Wrapper for Learners area.
 	 *
-	 * @since  1.6.0
+	 * @since 1.6.0
+	 *
 	 * @param string $which Wrapper location. Valid values are 'top' and 'bottom'.
 	 */
-	public function wrapper_container( $which ) {
+	public function wrapper_container( $which ): void {
 		if ( 'top' === $which ) {
 			?>
 			<div id="woothemes-sensei" class="wrap woothemes-sensei">
@@ -358,9 +369,9 @@ class Sensei_Learner_Management {
 	/**
 	 * Default nav area for Learners.
 	 *
-	 * @since  1.6.0
+	 * @since 1.6.0
 	 */
-	public function learners_default_nav() {
+	public function learners_default_nav(): void {
 		$course_id = (int) sanitize_text_field( wp_unslash( $_GET['course_id'] ?? 0 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$lesson_id = (int) sanitize_text_field( wp_unslash( $_GET['lesson_id'] ?? 0 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
@@ -412,6 +423,8 @@ class Sensei_Learner_Management {
 
 	/**
 	 * Filters table by course category.
+	 *
+	 * @return never
 	 */
 	public function get_redirect_url() {
 		check_ajax_referer( 'course_category_nonce', 'security' );
@@ -440,6 +453,8 @@ class Sensei_Learner_Management {
 
 	/**
 	 * Edits the course/lesson start date.
+	 *
+	 * @return never
 	 */
 	public function edit_date_started() {
 		check_ajax_referer( 'edit_date_nonce', 'security' );
@@ -531,6 +546,8 @@ class Sensei_Learner_Management {
 	 * Handles actions that are performed asynchronously from learner management.
 	 *
 	 * @param string $action Action to perform. Currently handled values are 'reset'.
+	 *
+	 * @return never
 	 */
 	public function handle_user_async_action( $action ) {
 		check_ajax_referer( 'modify_user_post_nonce', 'security' );
@@ -606,7 +623,7 @@ class Sensei_Learner_Management {
 	/**
 	 * Handles learner actions (manually enrolling or withdrawing a student from a course).
 	 */
-	public function handle_learner_actions() {
+	public function handle_learner_actions(): void {
 		if ( ! isset( $_GET['learner_action'] ) ) {
 			return;
 		}
@@ -671,21 +688,21 @@ class Sensei_Learner_Management {
 	/**
 	 * Resets Learner progress for a course/lesson.
 	 */
-	public function reset_user_post() {
+	public function reset_user_post(): void {
 		$this->handle_user_async_action( 'reset' );
 	}
 
 	/**
 	 * Removes a Learner from a course/lesson.
 	 */
-	public function remove_user_from_post() {
+	public function remove_user_from_post(): void {
 		$this->handle_user_async_action( 'remove' );
 	}
 
 	/**
 	 * Searches for a Learner by name or username.
 	 */
-	public function json_search_users() {
+	public function json_search_users(): void {
 
 		check_ajax_referer( 'search-users', 'security' );
 
@@ -738,9 +755,9 @@ class Sensei_Learner_Management {
 	/**
 	 * Adds a Learner to a course/lesson.
 	 *
-	 * @return bool false if the Learner was not added.
+	 * @return false false if the Learner was not added.
 	 */
-	public function add_new_learners() {
+	public function add_new_learners(): bool {
 
 		$result = false;
 
@@ -839,7 +856,7 @@ class Sensei_Learner_Management {
 	/**
 	 * Displays a notice to indicate whether or not the Learner(s) was added successfully.
 	 */
-	public function add_learner_notices() {
+	public function add_learner_notices(): void {
 		if ( isset( $_GET['page'] ) && $this->page_slug === $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
 			$message = sanitize_text_field( wp_unslash( $_GET['message'] ) );
 			$notice  = false;

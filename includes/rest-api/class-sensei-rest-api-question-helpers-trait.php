@@ -69,7 +69,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @param array $question The question JSON array.
 	 *
-	 * @return int|WP_Error Multiple question id on success.
+	 * @return WP_Error|int Multiple question id on success.
+	 *
+	 * @psalm-return 0|WP_Error|positive-int
 	 */
 	private function save_category_question( $question ) {
 		$question_id = $question['id'] ?? null;
@@ -141,7 +143,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 * @param array  $question The question JSON array.
 	 * @param string $status Question status.
 	 *
-	 * @return int|WP_Error Question id on success.
+	 * @return WP_Error|int Question id on success.
+	 *
+	 * @psalm-return 0|WP_Error|positive-int
 	 */
 	private function save_question( $question, $status = 'publish' ) {
 		$question_id = $question['id'] ?? null;
@@ -264,7 +268,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 * @param int    $question_id   Question post id.
 	 * @param string $question_type Question type.
 	 */
-	private function migrate_non_editor_question( int $question_id, string $question_type ) {
+	private function migrate_non_editor_question( int $question_id, string $question_type ): void {
 		delete_post_meta( $question_id, '_question_media' );
 
 		if ( 'file-upload' === $question_type ) {
@@ -340,7 +344,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @param array $question The multiple choice JSON array.
 	 *
-	 * @return array The calculated meta.
+	 * @return (array|int|string)[] The calculated meta.
+	 *
+	 * @psalm-return array{_random_order: 'no'|'yes', _question_right_answer?: list<mixed>, _question_wrong_answers?: list<mixed>, _answer_order?: string, _right_answer_count?: 0|positive-int, _wrong_answer_count?: 0|positive-int}
 	 */
 	private function get_multiple_choice_meta( array $question ): array {
 		$meta = [];
@@ -379,7 +385,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @param array $question The gap fill JSON array.
 	 *
-	 * @return array The calculated meta.
+	 * @return string[] The calculated meta.
+	 *
+	 * @psalm-return array{_question_right_answer?: string}
 	 */
 	private function get_gap_fill_meta( $question ): array {
 		$answer = $question['answer'];
@@ -435,7 +443,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @param WP_Post $question The question post.
 	 *
-	 * @return array
+	 * @return (int|int[]|string)[]
+	 *
+	 * @psalm-return array{type: 'category-question', id: int, options: array{category: int, number: int}}
 	 */
 	private function get_category_question( WP_Post $question ) : array {
 		$category = (int) get_post_meta( $question->ID, 'category', true );
@@ -456,7 +466,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @param WP_Post $question The question post.
 	 *
-	 * @return array The question properties.
+	 * @return (WP_Error|array|bool|int|mixed|string)[] The question properties.
+	 *
+	 * @psalm-return array{id: int, title: string, description: string, options: array{grade: mixed, hideAnswerFeedback: mixed}, type: mixed, shared: bool, editable: bool, categories: WP_Error|array, media?: array}
 	 */
 	private function get_question_common_properties( WP_Post $question ): array {
 		$question_meta = get_post_meta( $question->ID );
@@ -492,7 +504,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 * @param int $question_media_id The attachment id.
 	 * @param int $question_id       The question id.
 	 *
-	 * @return array Media info. It includes the type, id, url and title.
+	 * @return (int|null|string)[] Media info. It includes the type, id, url and title.
+	 *
+	 * @psalm-return array{url?: string, type?: string, id?: int|null, title?: string}
 	 */
 	private function get_question_media( int $question_media_id, int $question_id ) : array {
 		$question_media = [];
@@ -587,7 +601,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @param WP_Post $question The question post.
 	 *
-	 * @return array The gap fill question properties.
+	 * @return (string|string[])[] The gap fill question properties.
+	 *
+	 * @psalm-return array{before: string, gap: list<string>, after: string}
 	 */
 	private function get_gap_fill_properties( WP_Post $question ): array {
 		$right_answer_meta = get_post_meta( $question->ID, '_question_right_answer', true );
@@ -615,7 +631,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @param WP_Post $question The question post.
 	 *
-	 * @return array The multiple choice question properties.
+	 * @return (array|bool)[][] The multiple choice question properties.
+	 *
+	 * @psalm-return array{options: array{randomOrder: bool}, answer: array{answers: array}}
 	 */
 	private function get_multiple_choice_properties( WP_Post $question ): array {
 		$type_specific_properties = [
@@ -643,7 +661,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @see Sensei_Question::get_answers_sorted
 	 *
-	 * @return array The answers array.
+	 * @return (bool|mixed)[][] The answers array.
+	 *
+	 * @psalm-return array<array{label: mixed, correct: bool}>
 	 */
 	private function get_answers_array( WP_Post $question, string $meta_key, bool $is_correct ): array {
 		$answers = get_post_meta( $question->ID, $meta_key, true );
@@ -707,7 +727,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	/**
 	 * Helper method which returns the schema for category question properties.
 	 *
-	 * @return array The properties.
+	 * @return (((string|string[]|true)[][]|string|true)[][]|string)[] The properties.
+	 *
+	 * @psalm-return array{title: 'Category Question', type: 'object', properties: array{type: array{type: 'string', pattern: 'category-question', required: true}, id: array{type: 'integer', description: 'Multiple question post ID'}, options: array{type: 'object', properties: array{category: array{type: array{0: 'integer', 1: 'null'}, description: 'Term ID of the category where questions are picked', required: true}, number: array{type: 'integer', description: 'Number of questions to select from the category', required: true}}}}}
 	 */
 	private function get_category_question_schema(): array {
 		$question_category_properties = [
@@ -747,7 +769,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	/**
 	 * Helper method which returns the schema for common question properties.
 	 *
-	 * @return array The properties
+	 * @return (((int|string)[]|string)[]|string|true)[][] The properties
+	 *
+	 * @psalm-return array{id: array{type: 'integer', description: 'Question post ID'}, title: array{type: 'string', description: 'Question text'}, description: array{type: 'string', description: 'Question description'}, answer: array{type: 'object'}, options: array{type: 'object', properties: array{grade: array{type: 'integer', description: 'Points this question is worth', minimum: 0, maximum: 100, default: 1}, hideAnswerFeedback: array{type: 'string', description: 'Hide/show answer feedback for the question', default: ''}}}, shared: array{type: 'boolean', description: 'Whether the question has been added on other quizzes', readonly: true}, editable: array{type: 'boolean', description: 'Whether the question can be edited by the current user', readonly: true}, categories: array{type: 'array', readonly: true, description: 'Category term IDs attached to the question', items: array{type: 'integer', description: 'Term IDs'}}, media: array{type: 'object', readonly: true, properties: array{id: array{type: 'integer', description: 'Linked media id'}, type: array{type: 'string', description: 'Media type'}, url: array{type: 'string', description: 'Media url'}, title: array{type: 'string', description: 'Media title'}}}}
 	 */
 	public function get_common_question_properties_schema(): array {
 		return [
@@ -830,7 +854,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	/**
 	 * Helper method which returns the schema for multiple choice question properties.
 	 *
-	 * @return array The properties
+	 * @return (((((string|string[][])[]|false|string)[][]|string|true)[]|mixed)[]|string)[] The properties
+	 *
+	 * @psalm-return array{title: 'Question', type: 'object', properties: array<array{properties?: array{randomOrder?: array{type: 'boolean', description: 'Should options be randomized when displayed to quiz takers', default: false}, answerFeedback?: array{type: array{0: 'string', 1: 'null'}, description: 'Feedback to show quiz takers once quiz is submitted'}, answers?: array{type: 'array', description: 'Options for the multiple choice', items: array{type: 'object', properties: array{label: array{type: 'string', description: 'Label for answer option'}, correct: array{type: 'boolean', description: 'Whether this answer is correct'}}}}}, type?: 'string', pattern?: 'multiple-choice', required?: true}|mixed>}
 	 */
 	private function get_multiple_choice_schema(): array {
 		$multiple_choice_properties = [
@@ -886,7 +912,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	/**
 	 * Helper method which returns the schema for true/false question properties.
 	 *
-	 * @return array The properties
+	 * @return ((((string|string[]|true)[][]|string|true)[]|mixed)[]|string)[] The properties
+	 *
+	 * @psalm-return array{title: 'Question', type: 'object', properties: array<array{properties?: array{randomOrder?: array{type: 'boolean', description: 'Should options be randomized when displayed to quiz takers', default: true}, answerFeedback?: array{type: array{0: 'string', 1: 'null'}, description: 'Feedback to show quiz takers once quiz is submitted'}, correct?: array{type: 'boolean', description: 'Correct answer for question'}}, type?: 'string', pattern?: 'boolean', required?: true}|mixed>}
 	 */
 	private function get_boolean_schema(): array {
 		$boolean_properties = [
@@ -928,7 +956,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	/**
 	 * Helper method which returns the schema for gap fill question properties.
 	 *
-	 * @return array The properties
+	 * @return ((((string|string[])[][]|string|true)[]|mixed)[]|string)[] The properties
+	 *
+	 * @psalm-return array{title: 'Question', type: 'object', properties: array<array{description?: 'Answer before and after text, and correct answers.', properties?: array{before: array{type: 'string', description: 'Text before the gap'}, gap: array{type: 'array', description: 'Gap text answers', items: array{type: 'string', description: 'Gap answers'}}, after: array{type: 'string', description: 'Text after the gap'}}, type?: 'string', pattern?: 'gap-fill', required?: true}|mixed>}
 	 */
 	private function get_gap_fill_schema(): array {
 		$gap_fill_properties = [
@@ -970,7 +1000,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	/**
 	 * Helper method which returns the schema for single line question properties.
 	 *
-	 * @return array The properties
+	 * @return ((((string|string[])[][]|string|true)[]|mixed)[]|string)[] The properties
+	 *
+	 * @psalm-return array{title: 'Question', type: 'object', properties: array<array{properties?: array{teacherNotes: array{type: array{0: 'string', 1: 'null'}, description: 'Teacher notes for grading'}}, type?: 'string', pattern?: 'single-line', required?: true}|mixed>}
 	 */
 	private function get_single_line_schema(): array {
 		$single_line_properties = [
@@ -999,7 +1031,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	/**
 	 * Helper method which returns the schema for multi line question properties.
 	 *
-	 * @return array The properties
+	 * @return ((((string|string[])[][]|string|true)[]|mixed)[]|string)[] The properties
+	 *
+	 * @psalm-return array{title: 'Question', type: 'object', properties: array<array{properties?: array{teacherNotes: array{type: array{0: 'string', 1: 'null'}, description: 'Teacher notes for grading'}}, type?: 'string', pattern?: 'multi-line', required?: true}|mixed>}
 	 */
 	private function get_multi_line_schema(): array {
 		$multiline_properties = [
@@ -1028,7 +1062,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	/**
 	 * Helper method which returns the schema for file upload question properties.
 	 *
-	 * @return array The properties
+	 * @return ((((string|string[]|true)[][]|string|true)[]|mixed)[]|string)[] The properties
+	 *
+	 * @psalm-return array{title: 'Question', type: 'object', properties: array<array{properties?: array{teacherNotes: array{type: array{0: 'string', 1: 'null'}, description: 'Teacher notes for grading'}, studentHelp: array{type: array{0: 'string', 1: 'null'}, description: 'Description for student explaining what needs to be uploaded', readonly: true}}, type?: 'string', pattern?: 'file-upload', required?: true}|mixed>}
 	 */
 	private function get_file_upload_schema(): array {
 		$file_upload_properties = [

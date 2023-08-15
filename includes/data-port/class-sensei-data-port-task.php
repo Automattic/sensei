@@ -40,6 +40,8 @@ abstract class Sensei_Data_Port_Task {
 
 	/**
 	 * Save the current task's state.
+	 *
+	 * @return void
 	 */
 	public function save_state() {
 		// Silence is golden.

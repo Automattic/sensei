@@ -48,8 +48,10 @@ abstract class Sensei_Data_Port_Schema {
 	 * Get the column name for the id.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'id'
 	 */
-	public function get_column_id() {
+	public function get_column_id(): string {
 		return self::COLUMN_ID;
 	}
 
@@ -57,17 +59,21 @@ abstract class Sensei_Data_Port_Schema {
 	 * Get the column name for the slug.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'slug'
 	 */
-	public function get_column_slug() {
+	public function get_column_slug(): string {
 		return self::COLUMN_SLUG;
 	}
 
 	/**
 	 * Get the optional fields in the schema.
 	 *
-	 * @return array Field names.
+	 * @return (int|string)[] Field names.
+	 *
+	 * @psalm-return list<array-key>
 	 */
-	public function get_required_fields() {
+	public function get_required_fields(): array {
 		$schema = $this->get_schema();
 
 		return array_values(
@@ -89,9 +95,11 @@ abstract class Sensei_Data_Port_Schema {
 	/**
 	 * Get the optional fields in the schema.
 	 *
-	 * @return array Field names.
+	 * @return (int|string)[] Field names.
+	 *
+	 * @psalm-return list<array-key>
 	 */
-	public function get_optional_fields() {
+	public function get_optional_fields(): array {
 		$schema = $this->get_schema();
 
 		return array_values(
@@ -115,9 +123,11 @@ abstract class Sensei_Data_Port_Schema {
 	 *
 	 * @param string $filter_type Filter to get the allowed mime types filtered by a specific type.
 	 *
-	 * @return array Allowed mime types.
+	 * @return string[] Allowed mime types.
+	 *
+	 * @psalm-return array<string>
 	 */
-	protected function get_allowed_mime_types( $filter_type = null ) {
+	protected function get_allowed_mime_types( $filter_type = null ): array {
 		if ( null === $filter_type ) {
 			return get_allowed_mime_types();
 		}

@@ -270,7 +270,7 @@ class Sensei_Data_Cleaner {
 	 *
 	 * @access public
 	 */
-	public static function cleanup_all() {
+	public static function cleanup_all(): void {
 		// Ensure module taxonomy is created before calling functions that rely on its existence.
 		Sensei()->modules->setup_modules_taxonomy();
 
@@ -290,7 +290,7 @@ class Sensei_Data_Cleaner {
 	 *
 	 * @access private
 	 */
-	private static function cleanup_custom_post_types() {
+	private static function cleanup_custom_post_types(): void {
 		foreach ( self::$custom_post_types as $post_type ) {
 			$items = get_posts(
 				array(
@@ -312,7 +312,7 @@ class Sensei_Data_Cleaner {
 	 *
 	 * @access private
 	 */
-	private static function cleanup_options() {
+	private static function cleanup_options(): void {
 		foreach ( self::$options as $option ) {
 			delete_option( $option );
 		}
@@ -323,7 +323,7 @@ class Sensei_Data_Cleaner {
 	 *
 	 * @access private
 	 */
-	private static function cleanup_roles_and_caps() {
+	private static function cleanup_roles_and_caps(): void {
 		global $wp_roles;
 
 		// Remove caps from roles.
@@ -357,7 +357,7 @@ class Sensei_Data_Cleaner {
 	 *
 	 * @param (WP_User|WP_Role) $object the user or role object.
 	 */
-	private static function remove_all_sensei_caps( $object ) {
+	private static function remove_all_sensei_caps( $object ): void {
 		foreach ( self::$caps as $cap ) {
 			$object->remove_cap( $cap );
 		}
@@ -368,7 +368,7 @@ class Sensei_Data_Cleaner {
 	 *
 	 * @access private
 	 */
-	private static function cleanup_pages() {
+	private static function cleanup_pages(): void {
 		$settings = new Sensei_Settings();
 
 		// Trash the Course Archive page.
@@ -395,7 +395,7 @@ class Sensei_Data_Cleaner {
 	 *
 	 * @access private
 	 */
-	private static function cleanup_taxonomies() {
+	private static function cleanup_taxonomies(): void {
 		global $wpdb;
 
 		foreach ( self::$taxonomies as $taxonomy ) {
@@ -421,7 +421,7 @@ class Sensei_Data_Cleaner {
 	 *
 	 * @access private
 	 */
-	private static function cleanup_transients() {
+	private static function cleanup_transients(): void {
 		global $wpdb;
 
 		foreach ( array( '_transient_', '_transient_timeout_' ) as $prefix ) {
@@ -441,7 +441,7 @@ class Sensei_Data_Cleaner {
 	 *
 	 * @access private
 	 */
-	private static function cleanup_user_meta() {
+	private static function cleanup_user_meta(): void {
 		global $wpdb;
 
 		foreach ( self::$user_meta_keys as $meta_key ) {
@@ -461,7 +461,7 @@ class Sensei_Data_Cleaner {
 	 *
 	 * @access private
 	 */
-	private static function cleanup_post_meta() {
+	private static function cleanup_post_meta(): void {
 		global $wpdb;
 
 		foreach ( self::$post_meta as $post_meta ) {

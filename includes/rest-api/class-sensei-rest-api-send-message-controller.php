@@ -43,6 +43,8 @@ class Sensei_REST_API_Send_Message_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register the REST API endpoints for Course Structure.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -115,9 +117,12 @@ class Sensei_REST_API_Send_Message_Controller extends \WP_REST_Controller {
 	 * Save new message.
 	 *
 	 * @param WP_REST_Request $request The request object.
-	 * @return string The json response.
+	 *
+	 * @return (bool|mixed|null)[] The json response.
+	 *
+	 * @psalm-return array{success: bool, message_id?: mixed, message?: mixed|null}
 	 */
-	public function save_new_message( WP_REST_Request $request ) {
+	public function save_new_message( WP_REST_Request $request ): array {
 		$post_id = $request->get_param( 'post_id' );
 		$message = $request->get_param( 'contact_message' );
 
@@ -155,7 +160,8 @@ class Sensei_REST_API_Send_Message_Controller extends \WP_REST_Controller {
 	 * Validates the nonce value.
 	 *
 	 * @param string $nonce The nonce value.
-	 * @return boolean
+	 *
+	 * @return false|int
 	 */
 	public function validate_nonce_value( $nonce ) {
 		return wp_verify_nonce( $nonce, \Sensei_Messages::NONCE_ACTION_NAME );

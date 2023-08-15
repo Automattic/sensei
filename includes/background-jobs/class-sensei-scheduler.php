@@ -39,7 +39,7 @@ class Sensei_Scheduler {
 	/**
 	 * Initialize actions.
 	 */
-	public static function init() {
+	public static function init(): void {
 		add_action( Sensei_Background_Job_Stateful::NAME, [ __CLASS__, 'run_stateful_job' ] );
 	}
 
@@ -80,7 +80,7 @@ class Sensei_Scheduler {
 	/**
 	 * Get the class for the scheduler.
 	 *
-	 * @return string
+	 * @return Sensei_Scheduler_Interface|class-string<Sensei_Scheduler_Interface>
 	 */
 	private static function get_class() {
 		if ( 0 === did_action( 'plugins_loaded' ) ) {

@@ -69,7 +69,7 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @access private
 	 */
-	public function clear_block_content() {
+	public function clear_block_content(): void {
 		$this->block_content = null;
 	}
 
@@ -78,7 +78,7 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @access private
 	 */
-	public function register_blocks() {
+	public function register_blocks(): void {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-outline',
 			[
@@ -112,9 +112,12 @@ class Sensei_Course_Outline_Block {
 	 * @param array $attributes Block attributes.
 	 *
 	 * @access private
+	 *
 	 * @return string
+	 *
+	 * @psalm-return ''
 	 */
-	public function process_lesson_block( $attributes ) {
+	public function process_lesson_block( $attributes ): string {
 		if ( ! empty( $attributes['id'] ) ) {
 			$this->block_attributes['lesson'][ $attributes['id'] ] = $attributes;
 		}
@@ -128,9 +131,12 @@ class Sensei_Course_Outline_Block {
 	 * @param array $attributes Block attributes.
 	 *
 	 * @access private
+	 *
 	 * @return string
+	 *
+	 * @psalm-return ''
 	 */
-	public function process_module_block( $attributes ) {
+	public function process_module_block( $attributes ): string {
 		if ( ! empty( $attributes['id'] ) ) {
 			$this->block_attributes['module'][ $attributes['id'] ] = $attributes;
 		}
@@ -141,6 +147,8 @@ class Sensei_Course_Outline_Block {
 	 * Add attributes from matching blocks to modules and lessons in course structure.
 	 *
 	 * @param array $structure Course structure.
+	 *
+	 * @return void
 	 */
 	private function add_block_attributes( &$structure ) {
 		if ( empty( $structure ) ) {
@@ -156,8 +164,12 @@ class Sensei_Course_Outline_Block {
 
 	/**
 	 * Get blocks to render, based on course structure.
+	 *
+	 * @return (array|int)[]
+	 *
+	 * @psalm-return array{post_id?: int, attributes?: array, blocks?: array}
 	 */
-	public function get_block_structure() {
+	public function get_block_structure(): array {
 		global $post;
 
 		if ( ! $post ) {

@@ -58,12 +58,11 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 	}
 
 	/**
-	 *
 	 * Setup the user query that will be used in the render method
 	 *
 	 * @since 1.9.0
 	 */
-	protected function setup_teacher_query() {
+	protected function setup_teacher_query(): void {
 
 		$user_query_args = array(
 			'role' => 'teacher',
@@ -141,7 +140,7 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 	 *   @type WP_User
 	 * }
 	 */
-	public function users_unique( $users ) {
+	public function users_unique( array $users ) {
 
 		$array_unique_users_ids = array();
 		foreach ( $users as $index => $user ) {
@@ -192,9 +191,12 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 	 * Convert mixed array of user id and user names to only be an array of user_ids
 	 *
 	 * @param array $users
-	 * @return array $users_ids
+	 *
+	 * @return (int|numeric)[] $users_ids
+	 *
+	 * @psalm-return list<int|numeric>
 	 */
-	public function convert_usernames_to_ids( $users ) {
+	public function convert_usernames_to_ids( $users ): array {
 
 		// backup
 		$users_ids = array();
@@ -255,7 +257,7 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 	 * @param $users
 	 * @return  array $sorted_users
 	 */
-	public function users_sort( $users ) {
+	public function users_sort( array $users ) {
 
 		$sorted_users = $users;
 

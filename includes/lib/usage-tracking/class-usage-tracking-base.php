@@ -63,6 +63,8 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * implemented by subclasses.
 	 *
 	 * @throws Exception Method is not implemented in subclass.
+	 *
+	 * @return never
 	 */
 	public static function get_instance() {
 		throw new Exception( 'Usage Tracking subclasses must implement get_instance. See class-usage-tracking-base.php' );
@@ -179,7 +181,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @param callable $callback the callback returning the usage data to be logged.
 	 */
-	public function set_callback( $callback ) {
+	public function set_callback( $callback ): void {
 		$this->callback = $callback;
 	}
 
@@ -244,9 +246,9 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @param array    $properties      Event Properties.
 	 * @param null|int $event_timestamp When the event occurred.
 	 *
-	 * @return bool
+	 * @return true
 	 */
-	private function send_tracks_request( $event, $properties = array(), $event_timestamp = null ) {
+	private function send_tracks_request( $event, $properties = array(), $event_timestamp = null ): bool {
 
 		$pixel      = 'https://pixel.wp.com/t.gif';
 		$event_name = $this->get_event_prefix() . '_' . $event;
@@ -285,7 +287,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * the data if tracking is enabled, so it is safe to call this function,
 	 * and schedule the job, before the user opts into tracking.
 	 */
-	public function schedule_tracking_task() {
+	public function schedule_tracking_task(): void {
 		if ( ! wp_next_scheduled( $this->job_name ) ) {
 			wp_schedule_event( time(), $this->get_prefix() . '_usage_tracking_two_weeks', $this->job_name );
 		}
@@ -295,7 +297,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Unschedule the job scheduled by schedule_tracking_task if any is
 	 * scheduled. This should be called on plugin deactivation.
 	 */
-	public function unschedule_tracking_task() {
+	public function unschedule_tracking_task(): void {
 		if ( wp_next_scheduled( $this->job_name ) ) {
 			wp_clear_scheduled_hook( $this->job_name );
 		}
@@ -314,6 +316,8 @@ abstract class Sensei_Usage_Tracking_Base {
 	/**
 	 * Call the usage data callback and send the usage data to Tracks. Only
 	 * sends data if tracking is enabled.
+	 *
+	 * @return void
 	 */
 	public function send_usage_data() {
 		if ( ! $this->is_tracking_enabled() || ! is_callable( $this->callback ) ) {
@@ -342,7 +346,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * same prefix used everywhere else, but plugins may override this if
 	 * needed.
 	 */
-	protected function get_event_prefix() {
+	protected function get_event_prefix(): string {
 		return $this->get_prefix();
 	}
 
@@ -351,8 +355,12 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * externally.
 	 *
 	 * @param array $schedules the existing cron schedules.
+	 *
+	 * @return ((int|string)[]|mixed)[]
+	 *
+	 * @psalm-return array<array{interval: 1296000, display: string}|mixed>
 	 */
-	public function add_usage_tracking_two_week_schedule( $schedules ) {
+	public function add_usage_tracking_two_week_schedule( $schedules ): array {
 		$day_in_seconds = 86400;
 		$schedules[ $this->get_prefix() . '_usage_tracking_two_weeks' ] = array(
 			'interval' => 15 * $day_in_seconds,
@@ -365,7 +373,9 @@ abstract class Sensei_Usage_Tracking_Base {
 	/**
 	 * Collect system data to track.
 	 *
-	 * @return array
+	 * @return (int|mixed|string)[]
+	 *
+	 * @psalm-return array<string, 0|1|mixed|string>
 	 */
 	public function get_system_data() {
 		global $wp_version;
@@ -401,8 +411,10 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Gets a list of activated plugins.
 	 *
 	 * @return array List of plugins. Index is friendly name, value is version.
+	 *
+	 * @psalm-return array<string, mixed>
 	 */
-	protected function get_plugin_data() {
+	protected function get_plugin_data(): array {
 		$plugins = array();
 		foreach ( $this->get_plugins() as $plugin_basename => $plugin ) {
 			$plugin_name             = $this->get_plugin_name( $plugin_basename );
@@ -414,7 +426,9 @@ abstract class Sensei_Usage_Tracking_Base {
 	/**
 	 * Partial wrapper for for `get_plugins()` function. Filters out non-active plugins.
 	 *
-	 * @return array Key is the plugin file path and the value is an array of the plugin data.
+	 * @return array[] Key is the plugin file path and the value is an array of the plugin data.
+	 *
+	 * @psalm-return array<array>
 	 */
 	protected function get_plugins() {
 		if ( ! function_exists( 'get_plugins' ) ) {
@@ -458,7 +472,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 */
-	protected function hide_tracking_opt_in() {
+	protected function hide_tracking_opt_in(): void {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::skip_setup_wizard' );
 	}
 
@@ -467,7 +481,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 */
-	protected function is_opt_in_hidden() {
+	protected function is_opt_in_hidden(): void {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
@@ -477,7 +491,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 */
-	protected function opt_in_dialog_text_allowed_html() {
+	protected function opt_in_dialog_text_allowed_html(): void {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
@@ -487,7 +501,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 */
-	public function maybe_display_tracking_opt_in() {
+	public function maybe_display_tracking_opt_in(): void {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
@@ -497,7 +511,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 */
-	public function handle_tracking_opt_in() {
+	public function handle_tracking_opt_in(): void {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
@@ -507,7 +521,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @deprecated 3.1.0
 	 */
-	public function enqueue_script_deps() {
+	public function enqueue_script_deps(): void {
 		_deprecated_function( __METHOD__, '3.1.0' );
 	}
 
@@ -517,7 +531,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @deprecated 3.1.0
 	 */
-	public function output_opt_in_js() {
+	public function output_opt_in_js(): void {
 		_deprecated_function( __METHOD__, '3.1.0' );
 	}
 }

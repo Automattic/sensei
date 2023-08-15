@@ -166,13 +166,13 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 	}
 
-	private function is_my_courses() {
+	private function is_my_courses(): bool {
 		global $wp_query;
 
 		return $wp_query->is_page() && $wp_query->get_queried_object_id() === absint( Sensei()->settings->get( 'my_course_page' ) );
 	}
 
-	private function should_filter_course_by_status( $course_status, $user_id ) {
+	private function should_filter_course_by_status( $course_status, $user_id ): bool {
 		/**
 		 * Filters courses processed by the course query in the
 		 * [sensei_user_courses] shortcode.
@@ -196,7 +196,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @since 1.9.0
 	 */
-	protected function setup_course_query() {
+	protected function setup_course_query(): void {
 		$learner_manager = Sensei_Learner::instance();
 		$user_id         = get_current_user_id();
 		$empty_callback  = [ $this, 'no_course_message_output' ];
@@ -253,7 +253,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @since 3.0.0
 	 */
-	public function no_course_message_output() {
+	public function no_course_message_output(): void {
 		?>
 
 		<li class="user-active">
@@ -278,7 +278,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @since 1.9.0
 	 */
-	public function completed_no_course_message_output() {
+	public function completed_no_course_message_output(): void {
 		?>
 		<li class="user-completed">
 			<div class="sensei-message info">
@@ -296,7 +296,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @since 1.9.0
 	 */
-	public function active_no_course_message_output() {
+	public function active_no_course_message_output(): void {
 		?>
 
 		<li class="user-active">
@@ -377,7 +377,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @since 1.9.0
 	 */
-	public function attach_shortcode_hooks() {
+	public function attach_shortcode_hooks(): void {
 
 		// Don't show the toggle action if the user specified complete or active for this shortcode.
 		if ( $this->is_shortcode_initial_status_all ) {
@@ -421,7 +421,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @since 1.9.0
 	 */
-	public function detach_shortcode_hooks() {
+	public function detach_shortcode_hooks(): void {
 
 		// Remove all hooks after the output is generated.
 		remove_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 3 );
@@ -445,7 +445,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @param int $course_id Course ID.
 	 */
-	public function attach_course_progress( $course_id ) {
+	public function attach_course_progress( $course_id ): void {
 
 		if ( $this->is_block ) {
 			$progress_block = ( new Sensei_Course_Progress_Block() )->render_course_progress( [ 'postId' => $course_id ] );
@@ -465,7 +465,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @param integer $course_id
 	 */
-	public function attach_course_buttons( $course_id ) {
+	public function attach_course_buttons( $course_id ): void {
 
 		Sensei()->course->the_course_action_buttons( get_post( $course_id ) );
 
@@ -476,7 +476,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @param int|WP_Post $course
 	 */
-	public function course_category( $course ) {
+	public function course_category( $course ): void {
 		$category_output = get_the_term_list( $course, 'course-category', '', ', ', '' );
 		echo '<span class="wp-block-sensei-lms-learner-courses__courses-list__category">
 					' . wp_kses_post( $category_output ) . '
@@ -486,14 +486,14 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	/**
 	 * Add an opening wrapper element around the course details.
 	 */
-	public function add_course_details_wrapper_start() {
+	public function add_course_details_wrapper_start(): void {
 		echo '<div class="wp-block-sensei-lms-learner-courses__courses-list__details">';
 	}
 
 	/**
 	 * Add a closing wrapper element around the course details.
 	 */
-	public function add_course_details_wrapper_end() {
+	public function add_course_details_wrapper_end(): void {
 		echo '</div>';
 	}
 
@@ -502,11 +502,14 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @since 1.9
 	 *
-	 * @param  array   $classes
-	 * @param  WP_Post $course
-	 * @return array $classes
+	 * @param array   $classes
+	 * @param WP_Post $course
+	 *
+	 * @return (mixed|string)[] $classes
+	 *
+	 * @psalm-return array<'user-active'|'user-completed'|mixed>
 	 */
-	public function course_status_class_tagging( $classes, $course ) {
+	public function course_status_class_tagging( $classes, $course ): array {
 
 		if ( Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
 
@@ -524,6 +527,8 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 	/**
 	 * Output the course toggle functionality
+	 *
+	 * @return void
 	 */
 	public function course_toggle_actions() {
 		/**
@@ -588,7 +593,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @since 1.9.0
 	 */
-	function print_course_toggle_actions_inline_script() {
+	function print_course_toggle_actions_inline_script(): void {
 		?>
 
 		<script type="text/javascript">

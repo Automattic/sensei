@@ -20,6 +20,8 @@ class Sensei_Home_Task_Publish_First_Course implements Sensei_Home_Task {
 	 * The ID for the task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'publish-first-course'
 	 */
 	public static function get_id(): string {
 		return 'publish-first-course';
@@ -29,6 +31,8 @@ class Sensei_Home_Task_Publish_First_Course implements Sensei_Home_Task {
 	 * Number used to sort in frontend.
 	 *
 	 * @return int
+	 *
+	 * @psalm-return 600
 	 */
 	public function get_priority(): int {
 		return 600;

@@ -20,6 +20,8 @@ trait Sensei_Import_Prerequisite_Trait {
 	 * @param string $meta_field Meta field that holds the pre-req.
 	 * @param string $post_type  Post type that is being handled.
 	 * @param string $model_key  Model key.
+	 *
+	 * @return void
 	 */
 	private function handle_prerequisite_helper( $task, $meta_field, $post_type, $model_key ) {
 		$post_id           = (int) $task[0];
@@ -79,7 +81,7 @@ trait Sensei_Import_Prerequisite_Trait {
 	 * @param int    $line_number Line number.
 	 * @param string $post_title  Post title for logging.
 	 */
-	public function add_prerequisite_task( $post_id, $reference, $line_number, $post_title ) {
+	public function add_prerequisite_task( $post_id, $reference, $line_number, $post_title ): void {
 		$this->add_post_process_task(
 			'prerequisite',
 			[

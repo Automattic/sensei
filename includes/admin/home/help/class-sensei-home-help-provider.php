@@ -15,6 +15,8 @@ class Sensei_Home_Help_Provider {
 	 * Return a list of categories which each contain multiple help items.
 	 *
 	 * @return array[]
+	 *
+	 * @psalm-return array{0: array}
 	 */
 	public function get(): array {
 		return [
@@ -35,9 +37,12 @@ class Sensei_Home_Help_Provider {
 	 *
 	 * @param string  $title The category title.
 	 * @param array[] $items The items in the category.
-	 * @return array
+	 *
+	 * @return (array[]|string)[]
+	 *
+	 * @psalm-return array{title: string, items: array<array>}
 	 */
-	private function create_category( $title, $items ) {
+	private function create_category( $title, $items ): array {
 		return [
 			'title' => $title,
 			'items' => $items,
@@ -52,9 +57,11 @@ class Sensei_Home_Help_Provider {
 	 * @param string|null $icon Optional. Icon to be used.
 	 * @param array|null  $extra_link Optional. An extra link normally used to explain why the action url is missing.
 	 *
-	 * @return array
+	 * @return (array|null|string)[]
+	 *
+	 * @psalm-return array{title: string, url: null|string, icon: null|string, extra_link: array|null}
 	 */
-	private function create_item( string $title, ?string $url = null, ?string $icon = null, ?array $extra_link = null ) {
+	private function create_item( string $title, ?string $url = null, ?string $icon = null, ?array $extra_link = null ): array {
 		return [
 			'title'      => $title,
 			'url'        => $url,
@@ -69,9 +76,11 @@ class Sensei_Home_Help_Provider {
 	 * @param string $label The label for the link.
 	 * @param string $url The url for the link.
 	 *
-	 * @return array
+	 * @return string[]
+	 *
+	 * @psalm-return array{label: string, url: string}
 	 */
-	private function create_extra_link( string $label, string $url ) {
+	private function create_extra_link( string $label, string $url ): array {
 		return [
 			'label' => $label,
 			'url'   => $url,

@@ -67,6 +67,10 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 	 * Get a list of course Ids to be excluded from the course list block filtered by Course Category.
 	 *
 	 * @param int $query_id The id of the Query block this filter is rendering inside.
+	 *
+	 * @return (WP_Post|int)[]
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
 	public function get_course_ids_to_be_excluded( $query_id ): array {
 		$filter_param_key = self::PARAM_KEY . $query_id;

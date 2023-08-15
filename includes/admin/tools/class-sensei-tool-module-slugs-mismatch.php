@@ -20,6 +20,8 @@ class Sensei_Tool_Module_Slugs_Mismatch implements Sensei_Tool_Interface {
 	 * Get the ID of the tool.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'module-slugs-mismatch'
 	 */
 	public function get_id() {
 		return 'module-slugs-mismatch';
@@ -45,6 +47,8 @@ class Sensei_Tool_Module_Slugs_Mismatch implements Sensei_Tool_Interface {
 
 	/**
 	 * Run the tool.
+	 *
+	 * @return void
 	 */
 	public function process() {
 		$terms   = $this->get_module_terms();
@@ -79,7 +83,9 @@ class Sensei_Tool_Module_Slugs_Mismatch implements Sensei_Tool_Interface {
 	/**
 	 * Get module terms.
 	 *
-	 * @return \WP_Term[] Module terms.
+	 * @return (WP_Term|int|string)[]|WP_Error|string Module terms.
+	 *
+	 * @psalm-return WP_Error|array<WP_Term|int|string>|string
 	 */
 	private function get_module_terms() {
 		remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
@@ -115,7 +121,7 @@ class Sensei_Tool_Module_Slugs_Mismatch implements Sensei_Tool_Interface {
 	 *
 	 * @return string Feedback message.
 	 */
-	private function get_feedback_message( $updated, $errors ) {
+	private function get_feedback_message( $updated, $errors ): string {
 		$message = '';
 
 		if ( ! empty( $updated ) ) {
@@ -144,7 +150,7 @@ class Sensei_Tool_Module_Slugs_Mismatch implements Sensei_Tool_Interface {
 	/**
 	 * Is the tool currently available?
 	 *
-	 * @return bool True if tool is available.
+	 * @return true True if tool is available.
 	 */
 	public function is_available() {
 		return true;

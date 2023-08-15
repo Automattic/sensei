@@ -33,9 +33,11 @@ class Sensei_Home_News_Provider {
 	/**
 	 * Returns all the information for the news section.
 	 *
-	 * @return array|null
+	 * @return (array[]|mixed|null)[]|null
+	 *
+	 * @psalm-return array{items: array<array>, more_url: mixed|null}|null
 	 */
-	public function get() {
+	public function get(): ?array {
 		$remote_data = $this->remote_data_api->fetch( HOUR_IN_SECONDS );
 		if (
 			! $remote_data
@@ -61,9 +63,11 @@ class Sensei_Home_News_Provider {
 	 *
 	 * @param array $item The news item.
 	 *
-	 * @return array|null
+	 * @return (mixed|string)[]|null
+	 *
+	 * @psalm-return array{title: mixed, url: mixed, date: string}|null
 	 */
-	private function format_item( $item ) {
+	private function format_item( $item ): ?array {
 		if ( ! isset( $item['title'] ) || ! isset( $item['url'] ) || ! isset( $item['date'] ) ) {
 			return null;
 		}

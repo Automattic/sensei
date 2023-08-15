@@ -21,7 +21,7 @@ class Sensei_Scheduler_WP_Cron implements Sensei_Scheduler_Interface {
 	 * @param Sensei_Background_Job_Interface $job  Job object.
 	 * @param int|null                        $time Time when the job should run. Defaults to now.
 	 *
-	 * @return mixed
+	 * @return void
 	 */
 	public function schedule_job( Sensei_Background_Job_Interface $job, $time = null ) {
 		if ( null === $time ) {
@@ -38,6 +38,8 @@ class Sensei_Scheduler_WP_Cron implements Sensei_Scheduler_Interface {
 	 *
 	 * @param Sensei_Background_Job_Interface $job                 Job object.
 	 * @param callable|null                   $completion_callback Callback to call when job is complete.
+	 *
+	 * @return void
 	 */
 	public function run( Sensei_Background_Job_Interface $job, $completion_callback = null ) {
 		$this->schedule_job( $job );
@@ -56,6 +58,8 @@ class Sensei_Scheduler_WP_Cron implements Sensei_Scheduler_Interface {
 	 * Cancel a scheduled job.
 	 *
 	 * @param Sensei_Background_Job_Interface $job Job to schedule.
+	 *
+	 * @return void
 	 */
 	public function cancel_scheduled_job( Sensei_Background_Job_Interface $job ) {
 		wp_clear_scheduled_hook( $job->get_name(), [ $job->get_args() ] );
@@ -63,6 +67,8 @@ class Sensei_Scheduler_WP_Cron implements Sensei_Scheduler_Interface {
 
 	/**
 	 * Cancel all jobs.
+	 *
+	 * @return void
 	 */
 	public function cancel_all_jobs() {
 		/**

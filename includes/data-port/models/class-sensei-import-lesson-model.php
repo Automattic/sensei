@@ -21,6 +21,8 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	 * Get the model key to identify items in log entries.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'lesson'
 	 */
 	public function get_model_key() {
 		return self::MODEL_KEY;
@@ -29,7 +31,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	/**
 	 * Create a new lesson or update an existing lesson.
 	 *
-	 * @return true|WP_Error
+	 * @return WP_Error|bool
 	 */
 	public function sync_post() {
 		$result = $this->sync_lesson();
@@ -46,7 +48,9 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	/**
 	 * Helper method which stores the quiz post.
 	 *
-	 * @return bool|WP_Error  True on success, WP_Error on failure.
+	 * @return WP_Error|int|true True on success, WP_Error on failure.
+	 *
+	 * @psalm-return WP_Error|positive-int|true
 	 */
 	private function sync_quiz() {
 		$quiz_id = wp_insert_post( $this->get_quiz_args(), true );
@@ -69,9 +73,11 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	/**
 	 * Helper method to get quiz post arguments.
 	 *
-	 * @return array The arguments.
+	 * @return (array|int|mixed|string)[] The arguments.
+	 *
+	 * @psalm-return array{post_type: 'quiz', post_parent: int, post_content: '', ID?: mixed, post_author?: int, post_status?: mixed, post_title?: mixed, meta_input: array}
 	 */
-	private function get_quiz_args() {
+	private function get_quiz_args(): array {
 		$args = [
 			'post_type'    => 'quiz',
 			'post_parent'  => $this->get_post_id(),
@@ -103,9 +109,11 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	/**
 	 * Helper method to get quiz meta arguments.
 	 *
-	 * @return array The arguments.
+	 * @return (int|mixed|numeric|string)[] The arguments.
+	 *
+	 * @psalm-return array{_quiz_lesson: int, _pass_required?: ''|'on', _quiz_passmark?: 0|numeric, _show_questions?: ''|mixed, _random_question_order?: 'no'|'yes', _quiz_grade_type?: 'auto'|'manual', _enable_quiz_reset?: ''|'on'}
 	 */
-	private function get_quiz_meta() {
+	private function get_quiz_meta(): array {
 		$meta = [ '_quiz_lesson' => $this->get_post_id() ];
 
 		$pass_required = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED );
@@ -179,6 +187,8 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	 * Helper method to parse and store the quiz questions.
 	 *
 	 * @param int $quiz_id The quiz id.
+	 *
+	 * @return void
 	 */
 	private function set_quiz_questions( $quiz_id ) {
 		$questions = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_QUESTIONS );
@@ -213,7 +223,9 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	/**
 	 * Helper method which stores the lesson post.
 	 *
-	 * @return bool|WP_Error  True on success, WP_Error on failure.
+	 * @return WP_Error|int|true True on success, WP_Error on failure.
+	 *
+	 * @psalm-return WP_Error|positive-int|true
 	 */
 	private function sync_lesson() {
 
@@ -277,9 +289,11 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	/**
 	 * Helper method to get lesson post arguments.
 	 *
-	 * @return array  The arguments.
+	 * @return (array|int|mixed|string)[] The arguments.
+	 *
+	 * @psalm-return array{ID: int, post_type: string, post_author?: int, post_content?: mixed, post_status?: mixed, post_title?: mixed, post_excerpt?: mixed, post_name?: mixed, comment_status?: 'closed'|'open', meta_input?: array}
 	 */
-	private function get_lesson_args() {
+	private function get_lesson_args(): array {
 		$args = [
 			'ID'        => $this->get_post_id(),
 			'post_type' => $this->schema->get_post_type(),
@@ -331,9 +345,11 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	/**
 	 * Helper method to get quiz meta arguments.
 	 *
-	 * @return array  The arguments.
+	 * @return (int|mixed|string)[] The arguments.
+	 *
+	 * @psalm-return array{_lesson_video_embed?: mixed, _lesson_preview?: ''|'preview', _lesson_complexity?: mixed, _lesson_length?: int}
 	 */
-	private function get_lesson_meta() {
+	private function get_lesson_meta(): array {
 		$meta = [];
 
 		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO );
@@ -375,6 +391,8 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	 *
 	 * @param string $column_name The CSV column name which contains the terms.
 	 * @param string $taxonomy The taxonomy of the terms.
+	 *
+	 * @return void
 	 */
 	private function set_lesson_terms( $column_name, $taxonomy ) {
 		$new_terms = $this->get_value( $column_name );

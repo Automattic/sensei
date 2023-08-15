@@ -76,6 +76,10 @@ class Sensei_Course_List_Student_Course_Filter extends Sensei_Course_List_Filter
 	 * Get a list of course Ids to be excluded from the course list block filtered by user's course status.
 	 *
 	 * @param int $query_id The id of the Query block this filter is rendering inside.
+	 *
+	 * @return (WP_Post|int)[]
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
 	public function get_course_ids_to_be_excluded( $query_id ): array {
 		$user_id = get_current_user_id();

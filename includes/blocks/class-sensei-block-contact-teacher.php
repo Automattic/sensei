@@ -27,7 +27,7 @@ class Sensei_Block_Contact_Teacher {
 	 *
 	 * @access private
 	 */
-	public function register_block() {
+	public function register_block(): void {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/button-contact-teacher',
 			[
@@ -42,7 +42,7 @@ class Sensei_Block_Contact_Teacher {
 	 *
 	 * @access private
 	 */
-	public function add_notices() {
+	public function add_notices(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 		if ( isset( $_GET['send'] ) && 'complete' === $_GET['send'] ) {
 			Sensei()->notices->add_notice( __( 'Your private message has been sent.', 'sensei-lms' ), 'tick', 'sensei-contact-teacher-confirm' );
@@ -99,7 +99,7 @@ class Sensei_Block_Contact_Teacher {
 	 *
 	 * @return string
 	 */
-	private function teacher_contact_form( $post ) {
+	private function teacher_contact_form( $post ): string {
 
 		$nonce         = wp_nonce_field( \Sensei_Messages::NONCE_ACTION_NAME, \Sensei_Messages::NONCE_FIELD_NAME, true, false );
 		$wp_rest_nonce = wp_nonce_field( 'wp_rest', '_wpnonce', true, false );

@@ -72,6 +72,8 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 * Get the action name for the scheduled job.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'sensei_calculate_course_enrolments'
 	 */
 	public function get_name() {
 		return self::NAME;
@@ -80,7 +82,9 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	/**
 	 * Get the arguments to run with the job.
 	 *
-	 * @return array
+	 * @return (int|string)[]
+	 *
+	 * @psalm-return array{job_id: string, course_id: int}
 	 */
 	public function get_args() {
 		return [
@@ -91,6 +95,8 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 
 	/**
 	 * Run the job.
+	 *
+	 * @return void
 	 */
 	public function run() {
 		$current_job_id = $this->get_current_job_id();
@@ -140,9 +146,11 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	/**
 	 * Get the query arguments for the user query.
 	 *
-	 * @return array
+	 * @return (int|string)[]
+	 *
+	 * @psalm-return array{fields: 'ID', number: int, orderby: 'ID', order: 'ASC'}
 	 */
-	private function get_query_args() {
+	private function get_query_args(): array {
 		$user_args = [
 			'fields'  => 'ID',
 			'number'  => $this->batch_size,
@@ -160,7 +168,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 *
 	 * @param WP_User_Query $user_query User query to modify.
 	 */
-	public function modify_user_query_add_user_id( WP_User_Query $user_query ) {
+	public function modify_user_query_add_user_id( WP_User_Query $user_query ): void {
 		global $wpdb;
 
 		$user_query->query_where .= $wpdb->prepare( ' AND ID>%d', $this->get_last_user_id() );
@@ -171,14 +179,14 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 *
 	 * @return string
 	 */
-	private function get_current_job_option_name() {
+	private function get_current_job_option_name(): string {
 		return self::OPTION_TRACK_CURRENT_JOB_PREFIX . $this->course_id;
 	}
 
 	/**
 	 * Get the option name for tracking the last user ID.
 	 *
-	 * @return string
+	 * @return false|string
 	 */
 	private function get_last_user_id_option_name() {
 		$job_id = $this->get_job_id();
@@ -194,6 +202,8 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 * Set the last calculated user ID.
 	 *
 	 * @param int $user_id User ID.
+	 *
+	 * @return void
 	 */
 	public function set_last_user_id( $user_id ) {
 		$current_user_option_name = $this->get_last_user_id_option_name();
@@ -250,7 +260,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	/**
 	 * Set up job before it is scheduled for the first time.
 	 */
-	public function setup() {
+	public function setup(): void {
 		$this->job_id = md5( uniqid() );
 
 		update_option( $this->get_current_job_option_name(), $this->job_id, false );
@@ -275,7 +285,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	/**
 	 * Clean up when a job is finished or has been cancelled.
 	 */
-	public function end() {
+	public function end(): void {
 		$this->is_complete = true;
 
 		$current_user_option_name = $this->get_last_user_id_option_name();

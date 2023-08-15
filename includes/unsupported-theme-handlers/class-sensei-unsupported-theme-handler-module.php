@@ -33,6 +33,8 @@ class Sensei_Unsupported_Theme_Handler_Module
 	 * to render that post. Adapted from WooCommerce and bbPress.
 	 *
 	 * @since 1.12.0
+	 *
+	 * @return void
 	 */
 	public function handle_request() {
 		global $post;
@@ -84,6 +86,8 @@ class Sensei_Unsupported_Theme_Handler_Module
 	 * @param WP_Query $wp_query
 	 * @param WP_Post  $post_to_copy
 	 * @param array    $post_params
+	 *
+	 * @return void
 	 */
 	protected function prepare_wp_query( $wp_query, $post_to_copy, $post_params ) {
 		$wp_query->is_tax = true;

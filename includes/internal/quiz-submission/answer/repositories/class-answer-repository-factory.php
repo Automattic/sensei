@@ -43,10 +43,8 @@ class Answer_Repository_Factory {
 	 * Create a repository for the answers.
 	 *
 	 * @internal
-	 *
-	 * @return Answer_Repository_Interface
 	 */
-	public function create(): Answer_Repository_Interface {
+	public function create(): Aggregate_Answer_Repository {
 		global $wpdb;
 
 		return new Aggregate_Answer_Repository(

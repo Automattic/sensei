@@ -44,10 +44,11 @@ class Sensei_Learner_Profiles {
 	/**
 	 * Enqueue frontend JavaScripts.
 	 *
-	 * @since  3.0.0
+	 * @since 3.0.0
+	 *
 	 * @access private
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts(): void {
 		global $wp_query;
 
 		if ( ! Sensei_Utils::get_setting_as_flag( 'js_disable', 'sensei_settings_js_disable' ) &&

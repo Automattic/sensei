@@ -125,6 +125,8 @@ class Sensei_Guest_User {
 	 * Initialize guest user feature.
 	 *
 	 * @since 4.11.0
+	 *
+	 * @return void
 	 */
 	public function init() {
 		/**
@@ -158,7 +160,7 @@ class Sensei_Guest_User {
 	 *
 	 * @since 4.11.0
 	 */
-	public function log_guest_user_out_before_all_actions() {
+	public function log_guest_user_out_before_all_actions(): void {
 		if (
 			is_user_logged_in() &&
 			$this->is_current_user_guest()
@@ -218,7 +220,10 @@ class Sensei_Guest_User {
 	 * Create a guest user for open access courses if no user is logged in.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function create_guest_user_and_login_for_open_course() {
 
@@ -248,9 +253,10 @@ class Sensei_Guest_User {
 	 * Sets current guest user to none if out of open course context.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
 	 */
-	public function log_in_guest_user_if_in_open_course() {
+	public function log_in_guest_user_if_in_open_course(): void {
 		if (
 			! is_user_logged_in() &&
 			$this->is_open_course_related_action() &&
@@ -304,9 +310,10 @@ class Sensei_Guest_User {
 	 * Checks if the current user is a guest.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
 	 */
-	private static function is_current_user_guest() {
+	private static function is_current_user_guest(): bool {
 		$user = wp_get_current_user();
 		return self::is_guest_user( $user );
 	}
@@ -318,7 +325,7 @@ class Sensei_Guest_User {
 	 *
 	 * @param array $action Action to recreate nonce for.
 	 */
-	private function recreate_nonce( $action ) {
+	private function recreate_nonce( $action ): void {
 		$nonce           = $action['nonce'];
 		$_POST[ $nonce ] = wp_create_nonce( $nonce );
 	}
@@ -326,8 +333,9 @@ class Sensei_Guest_User {
 	/**
 	 * Create a user with Guest Student role .
 	 *
-	 * @since  4.11.0
-	 * @return int
+	 * @since 4.11.0
+	 *
+	 * @return WP_Error|int
 	 */
 	public static function create_guest_user() {
 		$user_count = Sensei_Utils::get_user_count_for_role( self::ROLE ) + 1;
@@ -378,7 +386,7 @@ class Sensei_Guest_User {
 	 *
 	 * @since 4.11.0
 	 */
-	private function login_user( $user_id ) {
+	private function login_user( $user_id ): void {
 		wp_set_current_user( $user_id );
 		wp_set_auth_cookie( $user_id, true );
 	}
@@ -390,6 +398,8 @@ class Sensei_Guest_User {
 	 *
 	 * @param int $user_id User ID.
 	 * @param int $course_id Course ID.
+	 *
+	 * @return void
 	 */
 	private function enrol_user( $user_id, $course_id ) {
 		if ( ! Sensei_Course::can_current_user_manually_enrol( $course_id )
@@ -406,7 +416,7 @@ class Sensei_Guest_User {
 	 *
 	 * @since 4.11.0
 	 */
-	private function create_guest_student_role_if_not_exists() {
+	private function create_guest_student_role_if_not_exists(): void {
 		// Check if the Guest Student role exists.
 		$guest_role = get_role( self::ROLE );
 

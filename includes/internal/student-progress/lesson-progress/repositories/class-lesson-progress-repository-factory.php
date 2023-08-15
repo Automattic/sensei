@@ -40,9 +40,9 @@ class Lesson_Progress_Repository_Factory {
 	 *
 	 * @internal
 	 *
-	 * @return Lesson_Progress_Repository_Interface The repository.
+	 * @return Aggregate_Lesson_Progress_Repository The repository.
 	 */
-	public function create(): Lesson_Progress_Repository_Interface {
+	public function create(): Aggregate_Lesson_Progress_Repository {
 		global $wpdb;
 
 		return new Aggregate_Lesson_Progress_Repository(

@@ -58,6 +58,8 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register the REST API endpoints for Course Structure.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -130,7 +132,8 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 	 * Validates the nonce value.
 	 *
 	 * @param string $nonce The nonce value.
-	 * @return boolean
+	 *
+	 * @return false|int
 	 */
 	public function validate_nonce_value( $nonce ) {
 		return wp_verify_nonce( $nonce, \Sensei_Teacher::NONCE_ACTION_NAME );

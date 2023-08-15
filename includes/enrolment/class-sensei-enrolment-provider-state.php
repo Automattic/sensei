@@ -43,10 +43,8 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 *
 	 * @param Sensei_Enrolment_Provider_State_Store $state_store State store storing this provider state object.
 	 * @param array                                 $data        Data to initialize object from.
-	 *
-	 * @return self|false
 	 */
-	public static function from_array( Sensei_Enrolment_Provider_State_Store $state_store, $data ) {
+	public static function from_array( Sensei_Enrolment_Provider_State_Store $state_store, $data ): self {
 		$provider_data = array_map( [ __CLASS__, 'sanitize_data' ], $data );
 		$provider_data = array_filter( $provider_data, [ __CLASS__, 'filter_null_values' ] );
 
@@ -131,7 +129,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 * @param string $key   Key for the value to set.
 	 * @param mixed  $value Value to set.
 	 */
-	public function set_stored_value( $key, $value ) {
+	public function set_stored_value( $key, $value ): void {
 		if (
 			! isset( $this->provider_data[ $key ] )
 			|| $value !== $this->provider_data[ $key ]

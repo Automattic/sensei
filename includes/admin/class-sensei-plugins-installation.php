@@ -58,6 +58,8 @@ class Sensei_Plugins_Installation {
 	 * Function called after the HTTP request is finished, so it's executed without the client having to wait for it.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function run_deferred_actions() {
 		if ( empty( $this->deferred_actions ) ) {
@@ -75,7 +77,7 @@ class Sensei_Plugins_Installation {
 	 *
 	 * @param int $limit Time limit.
 	 */
-	private function set_time_limit( $limit = 0 ) {
+	private function set_time_limit( $limit = 0 ): void {
 		if ( function_exists( 'set_time_limit' ) && false === strpos( ini_get( 'disable_functions' ), 'set_time_limit' ) && ! ini_get( 'safe_mode' ) ) { // phpcs:ignore PHPCompatibility.IniDirectives.RemovedIniDirectives.safe_modeDeprecatedRemoved
 			@set_time_limit( $limit ); // phpcs:ignore
 		}
@@ -86,7 +88,7 @@ class Sensei_Plugins_Installation {
 	 *
 	 * @see https://core.trac.wordpress.org/ticket/41358
 	 */
-	private function close_http_connection() {
+	private function close_http_connection(): void {
 		// Only 1 PHP process can access a session object at a time, close this so the next request isn't kept waiting.
 		if ( session_id() ) {
 			session_write_close();
@@ -112,7 +114,7 @@ class Sensei_Plugins_Installation {
 	 *
 	 * @param stdClass[] $plugins_to_install Plugin objects to install.
 	 */
-	public function install_plugins( $plugins_to_install ) {
+	public function install_plugins( $plugins_to_install ): void {
 		$installing_plugins = $this->get_installing_plugins();
 
 		foreach ( $plugins_to_install as $plugin ) {
@@ -156,7 +158,7 @@ class Sensei_Plugins_Installation {
 	 *
 	 * @param stdClass[] $installing_plugins Installing plugins.
 	 */
-	public function set_installing_plugins( $installing_plugins ) {
+	public function set_installing_plugins( $installing_plugins ): void {
 		set_transient( self::INSTALLING_PLUGINS_TRANSIENT, $installing_plugins, DAY_IN_SECONDS );
 	}
 
@@ -177,8 +179,12 @@ class Sensei_Plugins_Installation {
 	 *
 	 * @param array  $plugins Associative array of plugin files to paths.
 	 * @param string $key     Plugin relative path. Example: woocommerce/woocommerce.php.
+	 *
+	 * @return (mixed|string)[]
+	 *
+	 * @psalm-return array<mixed|string>
 	 */
-	private function associate_plugin_file( $plugins, $key ) {
+	private function associate_plugin_file( $plugins, $key ): array {
 		$filename             = $this->get_file_name_from_path( $key );
 		$plugins[ $filename ] = $key;
 		return $plugins;
@@ -248,7 +254,7 @@ class Sensei_Plugins_Installation {
 	 * @param string $slug    Plugin slug.
 	 * @param string $message Error message.
 	 */
-	private function save_error( $slug, $message ) {
+	private function save_error( $slug, $message ): void {
 
 		$message = wp_kses( $message, [] );
 
@@ -275,7 +281,7 @@ class Sensei_Plugins_Installation {
 	 *
 	 * @param string $slug
 	 */
-	private function complete_installation( $slug ) {
+	private function complete_installation( $slug ): void {
 		$installing_plugins = $this->get_installing_plugins();
 
 		if ( ! empty( $installing_plugins ) ) {
@@ -316,6 +322,8 @@ class Sensei_Plugins_Installation {
 	 * @param stdClass[] $plugin_to_install Plugin information.
 	 *
 	 * @throws Exception If unable to proceed with plugin installation.
+	 *
+	 * @return void
 	 */
 	private function background_installer( $plugin_to_install ) {
 		if ( ! empty( $plugin_to_install->product_slug ) ) {
@@ -391,7 +399,7 @@ class Sensei_Plugins_Installation {
 	 *
 	 * @throws Exception When there is an installation error.
 	 */
-	public function install_plugin( $plugin_slug ) {
+	public function install_plugin( $plugin_slug ): void {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
@@ -473,7 +481,7 @@ class Sensei_Plugins_Installation {
 	 *
 	 * @throws Exception When there is an activation error.
 	 */
-	public function activate_plugin( $plugin_slug, $plugin_file ) {
+	public function activate_plugin( $plugin_slug, $plugin_file ): void {
 		// Prevent WC wizard open after installation.
 		if ( 'woocommerce' === $plugin_slug ) {
 			add_filter( 'pre_set_transient__wc_activation_redirect', '__return_false' );

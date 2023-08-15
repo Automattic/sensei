@@ -40,7 +40,7 @@ class Course_Deleted_Handler {
 	/**
 	 * Adds hooks to handle the deletion of a course.
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'deleted_post', [ $this, 'handle' ], 10, 2 );
 	}
 
@@ -49,6 +49,8 @@ class Course_Deleted_Handler {
 	 *
 	 * @param int     $course_id The post ID.
 	 * @param WP_Post $course The post object.
+	 *
+	 * @return void
 	 */
 	public function handle( $course_id, $course ) {
 		if ( ! $course || 'course' !== $course->post_type ) {

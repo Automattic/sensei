@@ -22,9 +22,10 @@ class Sensei_Autoloader {
 	 * files within the includes directory
 	 *
 	 * @since 1.9.0
+	 *
 	 * @deprecated 4.13.1
 	 */
-	public function initialize_class_file_map() {
+	public function initialize_class_file_map(): void {
 		_deprecated_function( __METHOD__, '4.13.1' );
 	}
 
@@ -33,7 +34,7 @@ class Sensei_Autoloader {
 	 *
 	 * @deprecated 4.13.1
 	 */
-	public function autoload() {
+	public function autoload(): void {
 		_deprecated_function( __METHOD__, '4.13.1' );
 	}
 }

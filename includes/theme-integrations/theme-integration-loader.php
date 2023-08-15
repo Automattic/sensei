@@ -40,7 +40,7 @@ class Sensei_Theme_Integration_Loader {
 	 *
 	 * @since 1.9.0
 	 */
-	private function setup_themes() {
+	private function setup_themes(): void {
 
 		$this->themes = array(
 			'twentyeleven',
@@ -60,7 +60,7 @@ class Sensei_Theme_Integration_Loader {
 	 *
 	 * @since 1.12.0
 	 */
-	public function get_supported_themes() {
+	public function get_supported_themes(): array {
 		return $this->themes;
 	}
 
@@ -69,7 +69,7 @@ class Sensei_Theme_Integration_Loader {
 	 *
 	 * @since 1.9.0
 	 */
-	private function setup_currently_active_theme() {
+	private function setup_currently_active_theme(): void {
 
 		$this->active_theme = get_option( 'template' );
 
@@ -81,6 +81,8 @@ class Sensei_Theme_Integration_Loader {
 	 * a theme we have an integration for within core.
 	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public function possibly_load_supported_theme_wrappers() {
 

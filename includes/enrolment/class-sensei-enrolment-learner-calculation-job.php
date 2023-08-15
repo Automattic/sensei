@@ -51,6 +51,8 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_
 	 * Get the action name for the scheduled job.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'sensei_calculate_learner_enrolments'
 	 */
 	public function get_name() {
 		return self::NAME;
@@ -60,6 +62,8 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_
 	 * Get the arguments to run with the job.
 	 *
 	 * @return array
+	 *
+	 * @psalm-return array<empty, empty>
 	 */
 	public function get_args() {
 		return [];
@@ -67,6 +71,8 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_
 
 	/**
 	 * Run the job.
+	 *
+	 * @return void
 	 */
 	public function run() {
 		$user_args = [
@@ -102,7 +108,7 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_
 	 *
 	 * @param string $current_version Setting up current version.
 	 */
-	public function setup( $current_version ) {
+	public function setup( $current_version ): void {
 		update_option( self::OPTION_TRACK_VERSION_CALC, $current_version, false );
 
 		$this->set_last_user_id( 0 );
@@ -137,7 +143,7 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_
 	 *
 	 * @param WP_User_Query $user_query User query to modify.
 	 */
-	public function modify_user_query_add_user_id( WP_User_Query $user_query ) {
+	public function modify_user_query_add_user_id( WP_User_Query $user_query ): void {
 		global $wpdb;
 
 		$user_query->query_where .= $wpdb->prepare( ' AND ID>%d', $this->get_last_user_id() );
@@ -148,7 +154,7 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_
 	 *
 	 * @param int $user_id User ID.
 	 */
-	private function set_last_user_id( $user_id ) {
+	private function set_last_user_id( $user_id ): void {
 		update_option( self::OPTION_TRACK_LAST_USER_ID, (int) $user_id, false );
 	}
 
@@ -164,7 +170,7 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_
 	/**
 	 * Clean up after the job ends.
 	 */
-	public function end() {
+	public function end(): void {
 		$this->is_complete = true;
 
 		delete_option( self::OPTION_TRACK_LAST_USER_ID );

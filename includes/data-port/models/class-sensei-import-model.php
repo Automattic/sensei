@@ -106,9 +106,9 @@ abstract class Sensei_Import_Model {
 	/**
 	 * Check to see if the post already exists in the database.
 	 *
-	 * @return int
+	 * @return int|null
 	 */
-	protected function get_existing_post_id() {
+	protected function get_existing_post_id(): ?int {
 		$post_id = null;
 		$data    = $this->get_data();
 
@@ -135,7 +135,7 @@ abstract class Sensei_Import_Model {
 	 *
 	 * @param array $data Data to restore item from.
 	 */
-	private function restore_from_source_array( $data ) {
+	private function restore_from_source_array( $data ): void {
 		$sanitized_data = [];
 		$schema_array   = $this->schema->get_schema();
 
@@ -318,7 +318,7 @@ abstract class Sensei_Import_Model {
 	 *
 	 * @param array $data The data array.
 	 */
-	public function set_data( $data ) {
+	public function set_data( $data ): void {
 		$this->data = $data;
 	}
 
@@ -329,7 +329,7 @@ abstract class Sensei_Import_Model {
 	 *
 	 * @return array
 	 */
-	public function get_error_data( $data = [] ) {
+	public function get_error_data( $data = [] ): array {
 		$data['type'] = $this->get_model_key();
 
 		$entry_id = $this->get_value( $this->schema->get_column_id() );
@@ -402,7 +402,7 @@ abstract class Sensei_Import_Model {
 	 *
 	 * @param string $column_name  The CSV column name which has the image source.
 	 *
-	 * @return bool|WP_Error  True on success, WP_Error on failure.
+	 * @return WP_Error|int|true True on success, WP_Error on failure.
 	 */
 	protected function add_thumbnail_to_post( $column_name ) {
 		$post_id   = $this->get_post_id();
@@ -433,7 +433,7 @@ abstract class Sensei_Import_Model {
 	 * @param string $message  Warning message.
 	 * @param array  $log_data Log data.
 	 */
-	public function add_line_warning( $message, $log_data = [] ) {
+	public function add_line_warning( $message, $log_data = [] ): void {
 		$this->deferred_warnings[] = [
 			'message'  => $message,
 			'log_data' => $log_data,
@@ -443,7 +443,7 @@ abstract class Sensei_Import_Model {
 	/**
 	 * Add deferred warnings to the job.
 	 */
-	public function add_warnings_to_job() {
+	public function add_warnings_to_job(): void {
 		foreach ( $this->deferred_warnings as $warning ) {
 			$this->task->get_job()->add_line_warning(
 				$this->get_model_key(),
@@ -459,7 +459,7 @@ abstract class Sensei_Import_Model {
 	/**
 	 * Stores an import id to the job.
 	 */
-	protected function store_import_id() {
+	protected function store_import_id(): void {
 		$import_id = $this->get_value( $this->schema->get_column_id() );
 
 		if ( ! empty( $import_id ) && $this->task ) {
@@ -490,7 +490,7 @@ abstract class Sensei_Import_Model {
 	 *
 	 * @param int $id Post ID.
 	 */
-	protected function set_post_id( $id ) {
+	protected function set_post_id( $id ): void {
 		$this->post_id = $id;
 	}
 }

@@ -81,6 +81,9 @@ class Sensei_Messages {
 		add_action( 'sensei_new_private_message', [ $this, 'show_success_notice' ], 999 );
 	}
 
+	/**
+	 * @return void
+	 */
 	public function only_show_messages_to_owner( $query ) {
 		if ( is_admin() ) {
 			return;
@@ -124,7 +127,7 @@ class Sensei_Messages {
 		$query->set( 'meta_query', $meta_query );
 	}
 
-	public function add_menu_item() {
+	public function add_menu_item(): void {
 		if ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
 
 			add_submenu_page(
@@ -137,6 +140,9 @@ class Sensei_Messages {
 		}
 	}
 
+	/**
+	 * @return void
+	 */
 	public function add_meta_box( $post_type, $post ) {
 
 		if ( ! $post_type == $this->post_type ) {
@@ -147,7 +153,7 @@ class Sensei_Messages {
 
 	}
 
-	public function meta_box_content() {
+	public function meta_box_content(): void {
 		global  $post;
 
 		$settings = array(
@@ -242,6 +248,9 @@ class Sensei_Messages {
 		);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function send_message_link( $post_id = 0, $user_id = 0 ) {
 		global  $post;
 
@@ -323,6 +332,9 @@ class Sensei_Messages {
 		);
 	}
 
+	/**
+	 * @return null|string
+	 */
 	public function teacher_contact_form( $post ) {
 		if ( ! is_user_logged_in() ) {
 			return;
@@ -354,6 +366,9 @@ class Sensei_Messages {
 		return $html;
 	}
 
+	/**
+	 * @return false|null
+	 */
 	public function save_new_message() {
 
 		if ( ! isset( $_POST[ self::NONCE_FIELD_NAME ] ) || ! isset( $_POST['post_id'] ) ) {
@@ -379,6 +394,9 @@ class Sensei_Messages {
 		$this->save_new_message_post( $current_user->ID, $post->post_author, $message, $post->ID );
 	}
 
+	/**
+	 * @return void
+	 */
 	public function message_reply_received( $comment_id = 0 ) {
 
 		// Get comment object.
@@ -422,6 +440,8 @@ class Sensei_Messages {
 	 * @param WP_REST_Request $request  Request object.
 	 * @param bool            $creating True when creating a comment, false
 	 *                                  when updating.
+	 *
+	 * @return void
 	 */
 	public function message_rest_insert( WP_Comment $comment, WP_REST_Request $request, bool $creating ) {
 		$message = get_post( $comment->comment_post_ID );
@@ -459,9 +479,8 @@ class Sensei_Messages {
 	 *
 	 * @param array $emails
 	 * @param int   $comment_id
-	 * @return array;
 	 */
-	public function stop_wp_comment_emails( $emails, $comment_id ) {
+	public function stop_wp_comment_emails( $emails, $comment_id ): array {
 
 		$comment = get_comment( $comment_id );
 		if ( isset( $comment->comment_post_ID ) &&
@@ -574,6 +593,8 @@ class Sensei_Messages {
 
 	/**
 	 * Make sure user has permission to see the post content of a private message.
+	 *
+	 * @return void
 	 */
 	public function check_permissions_edit_comments() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action based on input.
@@ -642,7 +663,6 @@ class Sensei_Messages {
 	 * @param  none
 	 * @return void
 	 */
-
 	public function message_login() {
 
 		if ( is_user_logged_in() ) {
@@ -853,7 +873,7 @@ class Sensei_Messages {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function the_message_sent_by_title() {
+	public static function the_message_sent_by_title(): void {
 
 		$sender_username = get_post_meta( get_the_ID(), '_sender', true );
 		if ( $sender_username ) {
@@ -925,10 +945,8 @@ class Sensei_Messages {
 	 * archive header.
 	 *
 	 * @since 1.9.0
-	 *
-	 * @return string
 	 */
-	public static function the_archive_header() {
+	public static function the_archive_header(): void {
 
 		$html  = '';
 		$html .= '<header class="archive-header"><h1>';
@@ -948,9 +966,10 @@ class Sensei_Messages {
 	 * Output the title for a message given the post_id.
 	 *
 	 * @since 1.9.0
+	 *
 	 * @param $post_id
 	 */
-	public static function the_message_title( $message_post_id ) {
+	public static function the_message_title( $message_post_id ): void {
 		?>
 		<h2>
 			<a href="<?php echo esc_url_raw( get_the_permalink( $message_post_id ) ); ?>">
@@ -992,7 +1011,7 @@ class Sensei_Messages {
 	 *
 	 * @param $message_post_id
 	 */
-	public static function the_message_sender( $message_post_id ) {
+	public static function the_message_sender( $message_post_id ): void {
 
 		$sender_username = get_post_meta( $message_post_id, '_sender', true );
 		$sender          = get_user_by( 'login', $sender_username );
@@ -1017,7 +1036,7 @@ class Sensei_Messages {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function the_my_messages_link() {
+	public static function the_my_messages_link(): void {
 		if ( ! Sensei()->settings->get( 'messages_disable' ) ) {
 			?>
 			<p class="my-messages-link-container">

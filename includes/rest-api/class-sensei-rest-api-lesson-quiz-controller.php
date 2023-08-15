@@ -44,6 +44,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register the REST API endpoints for quiz.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -163,7 +165,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request WordPress request object.
 	 *
-	 * @return WP_REST_Response|WP_Error
+	 * @return WP_Error|WP_REST_Response|int
 	 */
 	public function save_quiz( WP_REST_Request $request ) {
 		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
@@ -252,7 +254,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 * @param array   $json_params The input coming from JSON data.
 	 * @param WP_Post $lesson       The parent lesson.
 	 *
-	 * @return array The meta.
+	 * @return (false|int|mixed|null|string)[] The meta.
+	 *
+	 * @psalm-return array{_quiz_lesson: int, _pass_required?: ''|'on', _quiz_passmark?: 0|mixed, _quiz_grade_type?: 'auto'|'manual', _enable_quiz_reset?: ''|'on', _show_questions?: ''|mixed, _random_question_order?: 'no'|'yes', _failed_show_answer_feedback: 'no'|'yes'|null, _failed_show_correct_answers: 'no'|'yes'|null, _failed_indicate_incorrect: 'no'|'yes'|null, _button_text_color: mixed|null, _button_background_color: mixed|null, _pagination?: false|string}
 	 */
 	private function get_quiz_meta( array $json_params, WP_Post $lesson ) : array {
 		$meta_input = [ '_quiz_lesson' => $lesson->ID ];
@@ -414,7 +418,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 *
 	 * @param WP_Post $quiz The quiz.
 	 *
-	 * @return array The array of the questions as defined by the schema.
+	 * @return array[] The array of the questions as defined by the schema.
+	 *
+	 * @psalm-return list<array>
 	 */
 	private function get_quiz_questions( WP_Post $quiz ) : array {
 		$questions = Sensei()->quiz->get_questions( $quiz->ID );
@@ -438,7 +444,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	/**
 	 * Schema for the endpoint.
 	 *
-	 * @return array Schema object.
+	 * @return ((array|string|true)[][]|string)[] Schema object.
+	 *
+	 * @psalm-return array{type: 'object', properties: array{options: array{type: 'object', required: true, properties: array{pass_required: array{type: 'boolean', description: 'Pass required to complete lesson', default: false}, quiz_passmark: array{type: 'integer', description: 'Score grade between 0 and 100 required to pass the quiz', default: 100}, auto_grade: array{type: 'boolean', description: 'Whether auto-grading should take place', default: true}, allow_retakes: array{type: 'boolean', description: 'Allow quizzes to be taken again', default: true}, show_questions: array{type: array{0: 'integer', 1: 'null'}, description: 'Number of questions to show randomly', default: null}, random_question_order: array{type: 'boolean', description: 'Show questions in a random order', default: false}, failed_indicate_incorrect: array{type: array{0: 'boolean', 1: 'null'}, description: 'Indicate which questions are incorrect', default: null}, failed_show_correct_answers: array{type: array{0: 'boolean', 1: 'null'}, description: 'Show correct answers', default: null}, failed_show_answer_feedback: array{type: array{0: 'boolean', 1: 'null'}, description: 'Show answer feedback text', default: null}, button_text_color: array{type: array{0: 'string', 1: 'null'}, description: 'Button text color', default: null}, button_background_color: array{type: array{0: 'string', 1: 'null'}, description: 'Button background color', default: null}, pagination: array{type: 'object', required: true, properties: array{pagination_number: array{type: array{0: 'integer', 1: 'null'}, description: 'Number of questions per page', default: null}, show_progress_bar: array{type: 'boolean', description: 'Whether to show the progress bar in the frontend', default: false}, progress_bar_radius: array{type: 'integer', description: 'Progress bar radius', default: 6}, progress_bar_height: array{type: 'integer', description: 'Progress bar height', default: 12}, progress_bar_background: array{type: array{0: 'string', 1: 'null'}, description: 'Progress bar background color', default: null}}}}}, questions: array{type: 'array', required: true, items: array}, lesson_title: array{type: 'string', description: 'The lesson title'}, lesson_status: array{type: 'string', description: 'The lesson status'}}}
 	 */
 	public function get_item_schema(): array {
 		$schema = [

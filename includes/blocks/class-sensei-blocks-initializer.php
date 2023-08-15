@@ -36,6 +36,8 @@ abstract class Sensei_Blocks_Initializer {
 	 * Check if blocks should be initialized and do initialization.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function maybe_initialize_blocks() {
 		if ( ! $this->should_initialize_blocks() ) {

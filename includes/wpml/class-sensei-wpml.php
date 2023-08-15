@@ -5,7 +5,7 @@ class Sensei_WPML {
 		add_action( 'sensei_after_sending_email', array( $this, 'sensei_after_sending_email' ) );
 	}
 
-	public function sensei_before_mail( $email_address ) {
+	public function sensei_before_mail( $email_address ): void {
 		/**
 		* Switch language for email
 		*
@@ -21,7 +21,7 @@ class Sensei_WPML {
 		do_action( 'wpml_switch_language_for_email', $email_address );
 	}
 
-	public function sensei_after_sending_email() {
+	public function sensei_after_sending_email(): void {
 		/**
 		* Restore language after sending email
 		*

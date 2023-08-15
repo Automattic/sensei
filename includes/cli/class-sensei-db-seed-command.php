@@ -160,7 +160,7 @@ Execution time: {$this->get_execution_time()}
 	 *
 	 * @param string $message The logged message.
 	 */
-	private function log( string $message ) {
+	private function log( string $message ): void {
 		$date = wp_date( 'Y-m-d H:i:s' );
 
 		WP_CLI::log( "[$date] $message" );
@@ -169,7 +169,7 @@ Execution time: {$this->get_execution_time()}
 	/**
 	 * Start the timer.
 	 */
-	private function start_timer() {
+	private function start_timer(): void {
 		$this->timer_start = microtime( true );
 	}
 

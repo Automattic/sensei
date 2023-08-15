@@ -742,13 +742,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	/**
 	 * Return array of course
 	 *
-	 * @since  1.7.0
+	 * @since 1.7.0
 	 *
 	 * @param array $args Arguments to WP_Query.
 	 *
-	 * @return array courses
+	 * @return (WP_Post|int)[] courses
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
-	private function get_courses( $args ) {
+	private function get_courses( $args ): array {
 		$course_args = array(
 			'post_type'      => 'course',
 			'post_status'    => 'publish',
@@ -779,13 +781,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	/**
 	 * Return array of lessons.
 	 *
-	 * @since  1.7.0
+	 * @since 1.7.0
 	 *
 	 * @param array $args Arguments to WP_Query.
 	 *
-	 * @return array lessons
+	 * @return (WP_Post|int)[] lessons
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
-	private function get_lessons( $args ) {
+	private function get_lessons( $args ): array {
 		$lesson_args = array(
 			'post_type'      => 'lesson',
 			'post_status'    => 'publish',
@@ -891,8 +895,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 *
 	 * @param string $search The search string.
 	 *
-	 * @return array|bool An array of user ids or false if no filtering is required. If no users are found an empty
-	 *                    array will be returned.
+	 * @return array|false An array of user ids or false if no filtering is required. If no users are found an empty array will be returned.
 	 */
 	private function filter_activities_by_users( $search ) {
 		$user_args = [];
@@ -1042,6 +1045,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * Extra controls to be displayed between bulk actions and pagination.
 	 *
 	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 *
+	 * @return void
 	 */
 	public function extra_tablenav( $which ) {
 		if ( 'top' === $which ) {
@@ -1114,7 +1119,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 *
 	 * @return string The element
 	 */
-	private function lessons_link() {
+	private function lessons_link(): string {
 		$query_args = array(
 			'page'      => $this->page_slug,
 			'course_id' => $this->course_id,

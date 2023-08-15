@@ -35,6 +35,8 @@ class Sensei_Unsupported_Theme_Handler_Message_Archive
 	 * Adapted from WooCommerce and bbPress.
 	 *
 	 * @since 1.12.0
+	 *
+	 * @return void
 	 */
 	public function handle_request() {
 		global $wp_query;
@@ -78,6 +80,8 @@ class Sensei_Unsupported_Theme_Handler_Message_Archive
 	 * @param WP_Query $wp_query
 	 * @param object   $object_to_copy
 	 * @param array    $post_params
+	 *
+	 * @return void
 	 */
 	protected function prepare_wp_query( $wp_query, $object_to_copy, $post_params ) {
 		global $post;

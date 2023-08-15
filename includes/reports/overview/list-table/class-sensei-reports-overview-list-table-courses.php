@@ -151,8 +151,11 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 *
 	 * @param object $item The current item.
 	 *
-	 * @return array Report row data.
+	 * @return string[] Report row data.
+	 *
 	 * @throws Exception If date-time conversion fails.
+	 *
+	 * @psalm-return array<string>
 	 */
 	protected function get_row_data( $item ) {
 		// Last Activity.
@@ -311,7 +314,9 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Return additional filters for current report.
 	 *
-	 * @return array
+	 * @return string[]
+	 *
+	 * @psalm-return array{last_activity_date_from: string, last_activity_date_to: string}
 	 */
 	protected function get_additional_filters(): array {
 		return [

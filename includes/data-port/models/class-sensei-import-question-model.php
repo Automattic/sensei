@@ -19,6 +19,8 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	 * Get the model key to identify items in log entries.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'question'
 	 */
 	public function get_model_key() {
 		return self::MODEL_KEY;
@@ -34,7 +36,9 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	/**
 	 * Create a new question or update an existing question.
 	 *
-	 * @return true|WP_Error
+	 * @return WP_Error|int|true
+	 *
+	 * @psalm-return WP_Error|positive-int|true
 	 */
 	public function sync_post() {
 		$question_type = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TYPE );
@@ -76,9 +80,11 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	/**
 	 * Generates the post array.
 	 *
-	 * @return array
+	 * @return (array|int|mixed|string)[]
+	 *
+	 * @psalm-return array{post_type: 'question', post_author?: int, ID?: int, post_title: mixed, post_name?: mixed, post_content?: mixed, post_status?: mixed, tax_input: array}
 	 */
-	private function get_post_array() {
+	private function get_post_array(): array {
 		$postarr = [
 			'post_type' => Sensei_Data_Port_Question_Schema::POST_TYPE,
 		];
@@ -118,7 +124,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	/**
 	 * Synchronize the post meta.
 	 */
-	private function sync_meta() {
+	private function sync_meta(): void {
 		$current_meta = get_post_meta( $this->get_post_id() );
 		$meta_fields  = $this->get_meta_fields();
 
@@ -161,9 +167,11 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	/**
 	 * Get the meta fields and their values.
 	 *
-	 * @return array|WP_Error
+	 * @return (mixed|null|string)[]
+	 *
+	 * @psalm-return array{_question_grade: mixed, _random_order: 'no'|'yes'|mixed, _answer_feedback: mixed, _question_media: mixed|null|string}
 	 */
-	private function get_meta_fields() {
+	private function get_meta_fields(): array {
 		$fields = [];
 
 		$fields['_question_grade']  = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_GRADE );
@@ -180,7 +188,9 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	/**
 	 * Get the question media value.
 	 *
-	 * @return null|string
+	 * @return WP_Error|int|null|string
+	 *
+	 * @psalm-return ''|WP_Error|int|null
 	 */
 	private function get_question_media_value() {
 		$column_name = Sensei_Data_Port_Question_Schema::COLUMN_MEDIA;
@@ -333,9 +343,11 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	/**
 	 * Get the terms for the question, keyed by taxonomy type.
 	 *
-	 * @return array
+	 * @return (int|mixed)[][]
+	 *
+	 * @psalm-return array{'question-type'?: array{0: mixed}, 'question-category': list<int>}
 	 */
-	private function get_taxonomy_terms() {
+	private function get_taxonomy_terms(): array {
 		$taxonomy_terms = [];
 
 		$question_type = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TYPE );

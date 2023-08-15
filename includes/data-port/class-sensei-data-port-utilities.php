@@ -23,7 +23,7 @@ class Sensei_Data_Port_Utilities {
 	 * @param string $email    User's email.
 	 * @param string $role     The user's role.
 	 *
-	 * @return WP_User|WP_Error  WP_User on success, WP_Error on failure.
+	 * @return WP_Error|WP_User|false|int WP_User on success, WP_Error on failure.
 	 */
 	public static function create_user( $username, $email = '', $role = '' ) {
 		$user = get_user_by( 'login', $username );
@@ -53,7 +53,7 @@ class Sensei_Data_Port_Utilities {
 	 * @param int    $parent_id          Id of the parent post.
 	 * @param array  $allowed_mime_types Allowed mime types.
 	 *
-	 * @return int|WP_Error  Attachment id on success, WP_Error on failure.
+	 * @return WP_Error|WP_Post|int|true Attachment id on success, WP_Error on failure.
 	 */
 	public static function get_attachment_from_source( $source, $parent_id = 0, $allowed_mime_types = null ) {
 		if ( false === filter_var( $source, FILTER_VALIDATE_URL ) ) {
@@ -104,7 +104,7 @@ class Sensei_Data_Port_Utilities {
 	 * @param int    $parent_id          The attachment's parent id.
 	 * @param array  $allowed_mime_types Allowed mime types.
 	 *
-	 * @return int|WP_Error  The attachment id or an error.
+	 * @return WP_Error|WP_Post|int|true The attachment id or an error.
 	 */
 	public static function create_attachment_from_url( $external_url, $parent_id = 0, $allowed_mime_types = null ) {
 		require_once ABSPATH . 'wp-admin/includes/image.php';
@@ -250,9 +250,11 @@ class Sensei_Data_Port_Utilities {
 	 *
 	 * @param array $mime_types Array of mime types.
 	 *
-	 * @return array Array of valid extensions.
+	 * @return string[] Array of valid extensions.
+	 *
+	 * @psalm-return array<int, string>
 	 */
-	private static function mime_types_extensions( $mime_types ) {
+	private static function mime_types_extensions( $mime_types ): array {
 		$extensions = [];
 		foreach ( array_keys( $mime_types ) as $ext_list ) {
 			$extensions = array_merge( $extensions, explode( '|', $ext_list ) );
@@ -269,7 +271,7 @@ class Sensei_Data_Port_Utilities {
 	 * @param string $taxonomy_name   Name of the taxonomy.
 	 * @param int    $teacher_user_id User ID for the teacher (only needed for modules).
 	 *
-	 * @return WP_Term|false
+	 * @return WP_Term|false|int|string
 	 */
 	public static function get_term( $term_name_path, $taxonomy_name, $teacher_user_id = null ) {
 		if ( ! $term_name_path ) {
@@ -340,9 +342,11 @@ class Sensei_Data_Port_Utilities {
 	 * @param int    $teacher_user_id User ID for the teacher.
 	 * @param int    $parent_id       Parent ID (optional).
 	 *
-	 * @return array
+	 * @return (false|int|string)[]
+	 *
+	 * @psalm-return array{number: 1, taxonomy: string, hide_empty: false, parent: int, name?: string, slug?: string}
 	 */
-	private static function get_term_query_args( $term_name, $taxonomy_name, $teacher_user_id, $parent_id = 0 ) {
+	private static function get_term_query_args( $term_name, $taxonomy_name, $teacher_user_id, $parent_id = 0 ): array {
 		$args               = [];
 		$args['number']     = 1;
 		$args['taxonomy']   = $taxonomy_name;
@@ -366,7 +370,7 @@ class Sensei_Data_Port_Utilities {
 	 * @param int    $teacher_user_id User ID for the teacher.
 	 * @param int    $parent_id       Parent ID (optional).
 	 *
-	 * @return WP_Term|false
+	 * @return WP_Term|array|false
 	 */
 	private static function create_term( $term_name, $taxonomy_name, $teacher_user_id, $parent_id = null ) {
 		$args         = [];
@@ -390,9 +394,11 @@ class Sensei_Data_Port_Utilities {
 	 * @param string $str_list      List in string form, separated by commas.
 	 * @param bool   $remove_quotes Remove the surrounding quotes.
 	 *
-	 * @return array|string[]
+	 * @return string[]
+	 *
+	 * @psalm-return list<string>
 	 */
-	public static function split_list_safely( $str_list, $remove_quotes = false ) {
+	public static function split_list_safely( $str_list, $remove_quotes = false ): array {
 		if ( empty( trim( $str_list ) ) ) {
 			return [];
 		}
@@ -510,7 +516,7 @@ class Sensei_Data_Port_Utilities {
 	 * @param string $module_name  The module name.
 	 * @param int    $course_id    Course ID.
 	 *
-	 * @return WP_Error|WP_Term  WP_Error when the module can't be applied to the lesson, WP_Term otherwise.
+	 * @return WP_Error|WP_Term|array WP_Error when the module can't be applied to the lesson, WP_Term otherwise.
 	 */
 	public static function get_module_for_course( $module_name, $course_id ) {
 		$module = get_term_by( 'name', $module_name, 'module' );
@@ -543,9 +549,9 @@ class Sensei_Data_Port_Utilities {
 	 *
 	 * @since 4.10.0
 	 *
-	 * @return int|null
+	 * @return WP_Post|int|null
 	 */
-	public static function get_demo_course_id(): ?int {
+	public static function get_demo_course_id() {
 		$query = new WP_Query(
 			[
 				'posts_per_page' => 1,

@@ -61,7 +61,7 @@ class Sensei_Course_Theme_Templates {
 	/**
 	 * Initializes the Course Theme Editor.
 	 */
-	public function init() {
+	public function init(): void {
 
 		// The below hooks enable block theme support and inject the learning mode templates.
 		add_action( 'template_redirect', [ $this, 'maybe_use_course_theme_templates' ], 1 );
@@ -79,7 +79,7 @@ class Sensei_Course_Theme_Templates {
 	 *
 	 * @access private
 	 */
-	public function maybe_use_course_theme_templates() {
+	public function maybe_use_course_theme_templates(): void {
 		if ( Sensei_Course_Theme_Option::should_use_learning_mode() ) {
 			add_filter( 'sensei_use_sensei_template', '__return_false' );
 			add_filter( 'single_template_hierarchy', [ $this, 'set_single_template_hierarchy' ] );
@@ -93,7 +93,7 @@ class Sensei_Course_Theme_Templates {
 	 *
 	 * @access private
 	 */
-	public function maybe_add_theme_supports() {
+	public function maybe_add_theme_supports(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Argument cast to int and used for comparison.
 		if ( isset( $_GET['post'] ) && in_array( get_post_type( (int) $_GET['post'] ), [ 'lesson', 'quiz' ], true ) ) {
 			add_theme_support( 'block-templates' );
@@ -109,8 +109,12 @@ class Sensei_Course_Theme_Templates {
 	 * @param WP_Theme     $theme          The theme object.
 	 * @param WP_Post|null $post           The post being edited, provided for context, or null.
 	 * @param string       $post_type      Post type to get the templates for.
+	 *
+	 * @return (mixed|string)[]
+	 *
+	 * @psalm-return array<mixed|string>
 	 */
-	public function add_learning_mode_template( $post_templates, $theme, $post, $post_type ) {
+	public function add_learning_mode_template( $post_templates, $theme, $post, $post_type ): array {
 		if ( ! Sensei_Course_Theme_Option::should_use_learning_mode() ) {
 			return $post_templates;
 		}
@@ -170,6 +174,8 @@ class Sensei_Course_Theme_Templates {
 
 	/**
 	 * Set up template data.
+	 *
+	 * @return void
 	 */
 	private function load_file_templates() {
 
@@ -300,9 +306,11 @@ class Sensei_Course_Theme_Templates {
 	/**
 	 * Get block templates, including user-customized overrides.
 	 *
-	 * @return array
+	 * @return (WP_Block_Template|stdClass)[]
+	 *
+	 * @psalm-return array<WP_Block_Template|stdClass>
 	 */
-	public function get_block_templates() {
+	public function get_block_templates(): array {
 
 		$this->load_file_templates();
 
@@ -392,6 +400,10 @@ class Sensei_Course_Theme_Templates {
 
 	/**
 	 * Retrieves the Learning Mode templates that are stored in the db.
+	 *
+	 * @return (WP_Post|int)[]
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
 	public static function get_db_templates(): array {
 		$db_templates_query = new \WP_Query(

@@ -84,6 +84,8 @@ class Sensei_Import_CSV_Reader {
 	 * Set the delimiter to read the CSV file.
 	 *
 	 * The delimiter detection works testing the delimiter which find more columns.
+	 *
+	 * @return void
 	 */
 	private function detect_delimiter() {
 		/**
@@ -169,18 +171,18 @@ class Sensei_Import_CSV_Reader {
 	 * Read a batch of lines from the CSV file. It is expected that the file has been validated before this method is
 	 * called.
 	 *
-	 * @return array {
-	 *    An array of read lines.
+	 * @return (WP_Error|array|false)[] { An array of read lines.
 	 *
-	 *    @type array {
+	 * @type array {
 	 *      An array of the values of a line.
-	 *
-	 *      @type $$column_name Column value.
+	 * @type $$column_name Column value.
 	 *    }
-	 *    @type WP_Error An error for the specific line.
+	 * @type WP_Error An error for the specific line.
 	 * }
+	 *
+	 * @psalm-return list<WP_Error|array<string, mixed>|false>
 	 */
-	public function read_lines() {
+	public function read_lines(): array {
 
 		if ( $this->is_completed() ) {
 			return [];
@@ -268,8 +270,10 @@ class Sensei_Import_CSV_Reader {
 	 * Get the column names of the file.
 	 *
 	 * @return string[]
+	 *
+	 * @psalm-return array<string>
 	 */
-	private function get_column_names() {
+	private function get_column_names(): array {
 		$this->file->seek( 0 );
 
 		$column_names = $this->file->current();
@@ -324,7 +328,7 @@ class Sensei_Import_CSV_Reader {
 	 * @param array  $required_columns The columns that the CSV file is required to have.
 	 * @param array  $optional_columns The columns that are optional.
 	 *
-	 * @return bool|WP_Error
+	 * @return WP_Error|true
 	 */
 	public static function validate_csv_file( $file_path, $required_columns, $optional_columns ) {
 		if ( ! is_readable( $file_path ) ) {

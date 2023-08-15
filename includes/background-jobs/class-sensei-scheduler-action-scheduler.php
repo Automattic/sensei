@@ -29,6 +29,8 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 	 *
 	 * @param Sensei_Background_Job_Interface $job  Job object.
 	 * @param int|null                        $time Time when the job should run. Defaults to now.
+	 *
+	 * @return void
 	 */
 	public function schedule_job( Sensei_Background_Job_Interface $job, $time = null ) {
 		if ( null === $time ) {
@@ -53,6 +55,8 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 	 *
 	 * @param Sensei_Background_Job_Interface $job                 Job object.
 	 * @param callable|null                   $completion_callback Callback to call when job is complete.
+	 *
+	 * @return void
 	 */
 	public function run( Sensei_Background_Job_Interface $job, $completion_callback = null ) {
 		$this->current_job = $job;
@@ -81,6 +85,8 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 	 * Cancel a scheduled job.
 	 *
 	 * @param Sensei_Background_Job_Interface $job Job to schedule.
+	 *
+	 * @return void
 	 */
 	public function cancel_scheduled_job( Sensei_Background_Job_Interface $job ) {
 		as_unschedule_all_actions( $job->get_name(), [ $job->get_args() ], self::ACTION_SCHEDULER_GROUP );
@@ -88,6 +94,8 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 
 	/**
 	 * Cancel all jobs.
+	 *
+	 * @return void
 	 */
 	public function cancel_all_jobs() {
 		as_unschedule_all_actions( null, null, self::ACTION_SCHEDULER_GROUP );

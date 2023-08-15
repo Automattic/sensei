@@ -35,6 +35,8 @@ class Sensei_Block_Quiz_Question {
 	 * @param string $content    The block content.
 	 *
 	 * @return string The block HTML.
+	 *
+	 * @psalm-return ''
 	 */
 	public function render_quiz_question( array $attributes, string $content ) : string {
 		return '';

@@ -23,7 +23,7 @@ class Sensei_Course_Outline_Module_Block {
 	 *
 	 * @return string Module HTML
 	 */
-	public function render_module_block( $block, $course_id, $outline_attributes ) {
+	public function render_module_block( $block, $course_id, $outline_attributes ): string {
 
 		$progress_indicator = $this->get_module_progress_indicator( $block['id'], $course_id );
 

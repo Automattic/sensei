@@ -120,6 +120,8 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * Overrides get_collection_params to add the 'sender' argument.
 	 *
 	 * @since 2.3.0
+	 *
+	 * @return array
 	 */
 	public function get_collection_params() {
 		$query_params = parent::get_collection_params();
@@ -128,7 +130,10 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 			'description'       => __( 'Returns the messages from either all or the current user.', 'sensei-lms' ),
 			'type'              => 'string',
 			'default'           => 'current',
-			'validate_callback' => function ( $value ) {
+			'validate_callback' => /**
+			 * @return WP_Error|true
+			 */
+			function ( $value ) {
 
 				if ( in_array( $value, array( 'all', 'current' ), true ) ) {
 					return true;

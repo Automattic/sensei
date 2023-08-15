@@ -43,7 +43,7 @@ class Sensei_Enrolment_Job_Scheduler {
 	/**
 	 * Initialize the hooks.
 	 */
-	public function init() {
+	public function init(): void {
 		// Handle job that ensures all learners have up-to-date enrolment calculations.
 		add_action( 'init', [ $this, 'maybe_start_learner_calculation' ], 101 );
 		add_filter( 'sensei_background_job_actions', [ $this, 'get_background_jobs' ] );
@@ -105,7 +105,7 @@ class Sensei_Enrolment_Job_Scheduler {
 	 *
 	 * @param int $course_id Course post ID.
 	 */
-	private function cancel_course_calculation_job( $course_id ) {
+	private function cancel_course_calculation_job( $course_id ): void {
 		$args = [
 			'course_id' => $course_id,
 		];
@@ -122,6 +122,8 @@ class Sensei_Enrolment_Job_Scheduler {
 	 * Check to see if we need to start learner calculation job.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function maybe_start_learner_calculation() {
 		if ( ! $this->is_background_job_enabled( Sensei_Enrolment_Learner_Calculation_Job::NAME ) ) {
@@ -149,6 +151,8 @@ class Sensei_Enrolment_Job_Scheduler {
 	 * Run batch of learner calculations.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function run_learner_calculation() {
 		if ( ! $this->is_background_job_enabled( Sensei_Enrolment_Learner_Calculation_Job::NAME ) ) {
@@ -156,7 +160,7 @@ class Sensei_Enrolment_Job_Scheduler {
 		}
 
 		$job                 = new Sensei_Enrolment_Learner_Calculation_Job();
-		$completion_callback = function() {
+		$completion_callback = function(): void {
 			$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 
 			update_option(
@@ -174,6 +178,8 @@ class Sensei_Enrolment_Job_Scheduler {
 	 * @access private
 	 *
 	 * @param array $args Arguments for the job.
+	 *
+	 * @return void
 	 */
 	public function run_course_calculation( $args ) {
 		if ( ! $this->is_background_job_enabled( Sensei_Enrolment_Course_Calculation_Job::NAME ) ) {
@@ -190,8 +196,10 @@ class Sensei_Enrolment_Job_Scheduler {
 	 * @param string[] $jobs List of job action names.
 	 *
 	 * @return string[]
+	 *
+	 * @psalm-return array<string>
 	 */
-	public function get_background_jobs( $jobs ) {
+	public function get_background_jobs( $jobs ): array {
 		$jobs[] = Sensei_Enrolment_Learner_Calculation_Job::NAME;
 		$jobs[] = Sensei_Enrolment_Course_Calculation_Job::NAME;
 

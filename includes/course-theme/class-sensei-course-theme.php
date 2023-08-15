@@ -72,7 +72,7 @@ class Sensei_Course_Theme {
 	/**
 	 * Initializes the Course Theme.
 	 */
-	public function init() {
+	public function init(): void {
 		Sensei_Course_Theme_Templates::instance()->init();
 		Sensei_Course_Theme_Template_Selection::instance()->init();
 
@@ -113,10 +113,8 @@ class Sensei_Course_Theme {
 	 * Add the URL prefix the theme is active under.
 	 *
 	 * @param string $path Optional path to prefix.
-	 *
-	 * @return string|void
 	 */
-	public function get_theme_redirect_url( $path = '' ) {
+	public function get_theme_redirect_url( $path = '' ): string {
 
 		if ( '' === get_option( 'permalink_structure' ) || get_query_var( 'preview' ) ) {
 			return home_url( add_query_arg( [ self::QUERY_VAR => 1 ], $path ) );
@@ -127,6 +125,8 @@ class Sensei_Course_Theme {
 
 	/**
 	 * Replace theme for the current request if the '/learn' route is used.
+	 *
+	 * @return void
 	 */
 	public function maybe_override_theme() {
 
@@ -179,7 +179,7 @@ class Sensei_Course_Theme {
 	/**
 	 * Load a bundled theme for the request.
 	 */
-	public function override_theme() {
+	public function override_theme(): void {
 
 		$this->original_theme = get_stylesheet();
 
@@ -208,7 +208,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @access private
 	 */
-	public function add_query_var() {
+	public function add_query_var(): void {
 		global $wp;
 
 		$wp->add_query_var( self::QUERY_VAR );
@@ -220,7 +220,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @access private
 	 */
-	public function maybe_flush_rewrite_rules() {
+	public function maybe_flush_rewrite_rules(): void {
 
 		if ( self::REWRITE_VERSION !== get_option( 'sensei_course_theme_query_var_flushed' ) ) {
 			flush_rewrite_rules( false );
@@ -236,6 +236,8 @@ class Sensei_Course_Theme {
 	 *
 	 * @param string       $post_type Post type name.
 	 * @param WP_Post_Type $args      Post type object.
+	 *
+	 * @return void
 	 */
 	public function add_post_type_rewrite_rules( $post_type, $args ) {
 
@@ -256,8 +258,10 @@ class Sensei_Course_Theme {
 	 * @access private
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'sensei-course-theme'
 	 */
-	public function theme_template() {
+	public function theme_template(): string {
 		return self::THEME_NAME;
 	}
 
@@ -267,8 +271,10 @@ class Sensei_Course_Theme {
 	 * @access private
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'sensei-course-theme'
 	 */
-	public function theme_stylesheet() {
+	public function theme_stylesheet(): string {
 		return self::THEME_NAME;
 	}
 
@@ -301,7 +307,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @return string
 	 */
-	public function get_course_theme_root() {
+	public function get_course_theme_root(): string {
 		return $this->get_plugin_themes_root() . '/' . self::THEME_NAME;
 	}
 
@@ -312,7 +318,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @return string
 	 */
-	public function get_course_theme_root_url() {
+	public function get_course_theme_root_url(): string {
 		return $this->theme_root_uri() . '/' . self::THEME_NAME;
 	}
 
@@ -324,8 +330,10 @@ class Sensei_Course_Theme {
 	 * @param string[] $classes The html classess to be added.
 	 *
 	 * @return string[] $classes
+	 *
+	 * @psalm-return array{0: 'sensei-course-theme', 1: string}
 	 */
-	public function add_sensei_theme_body_class( $classes ) {
+	public function add_sensei_theme_body_class( $classes ): array {
 		return array_merge( $classes, [ self::THEME_NAME, 'sensei-' . Sensei_Course_Theme_Template_Selection::get_active_template_name() ] );
 	}
 
@@ -354,7 +362,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @access private
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles(): void {
 
 		$version         = $this->get_template_version();
 		$css_file        = 'css/learning-mode.' . $version . '.css';
@@ -402,7 +410,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @access private
 	 */
-	public function enqueue_fonts() {
+	public function enqueue_fonts(): void {
 		$font_families = [ 'family=Inter:wght@300;400;500;600;700', 'family=Source+Serif+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900' ];
 
 		$fonts_url = esc_url_raw( 'https://fonts.googleapis.com/css2?' . implode( '&', array_unique( $font_families ) ) . '&display=swap' );
@@ -440,7 +448,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @param string|null $post_type The post type to customize.
 	 *
-	 * @return The customization url
+	 * @return string customization url
 	 */
 	public static function get_learning_mode_fse_url( string $post_type = null ) : string {
 		// Get the post type manually if not provided.
@@ -495,6 +503,8 @@ class Sensei_Course_Theme {
 	 * Replace 'Edit site' in admin bar to point to the current theme template.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function admin_menu_init() {
 

@@ -36,7 +36,7 @@ class Sensei_Email_Signup_Form {
 	 *
 	 * @since 1.0.0
 	 */
-	public function init() {
+	public function init(): void {
 		// Add actions for displaying the email signup modal.
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
@@ -48,7 +48,7 @@ class Sensei_Email_Signup_Form {
 	 *
 	 * @access private
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts(): void {
 		// Load JS for the form.
 		Sensei()->assets->enqueue( 'sensei-email-signup-js', 'js/admin/email-signup.js', [ 'jquery-modal' ] );
 	}
@@ -58,7 +58,7 @@ class Sensei_Email_Signup_Form {
 	 *
 	 * @access private
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles(): void {
 		Sensei()->assets->enqueue( 'sensei-email-signup-css', 'css/admin/email-signup.css', [ 'jquery-modal' ] );
 	}
 
@@ -67,7 +67,7 @@ class Sensei_Email_Signup_Form {
 	 *
 	 * @access private
 	 */
-	public function output_modal() {
+	public function output_modal(): void {
 		include dirname( __FILE__ ) . '/template.php';
 	}
 

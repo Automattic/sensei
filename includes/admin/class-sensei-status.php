@@ -46,7 +46,7 @@ class Sensei_Status {
 	 *
 	 * @since 3.7.0
 	 */
-	public function init() {
+	public function init(): void {
 		add_filter( 'debug_information', [ $this, 'add_sensei_debug_info' ] );
 		add_filter( 'site_status_tests', [ $this, 'add_sensei_tests' ] );
 	}
@@ -58,7 +58,7 @@ class Sensei_Status {
 	 *
 	 * @return array
 	 */
-	public function add_sensei_debug_info( $info ) {
+	public function add_sensei_debug_info( $info ): array {
 		$section = [
 			'label'  => __( 'Sensei LMS', 'sensei-lms' ),
 			'fields' => [],
@@ -77,9 +77,11 @@ class Sensei_Status {
 	/**
 	 * Adds information on which legacy update flags have been set in Sensei.
 	 *
-	 * @return array
+	 * @return (false|string)[]
+	 *
+	 * @psalm-return array{label: string, value: string, debug: false|string}
 	 */
-	private function get_legacy_flags_info() {
+	private function get_legacy_flags_info(): array {
 		$legacy_flags       = Sensei()->get_legacy_flags();
 		$legacy_flags_human = [];
 
@@ -103,9 +105,11 @@ class Sensei_Status {
 	/**
 	 * Get legacy enrolment info field.
 	 *
-	 * @return array
+	 * @return (mixed|string)[]
+	 *
+	 * @psalm-return array{label: string, value: string, debug: mixed}
 	 */
-	private function get_legacy_enrolment_info() {
+	private function get_legacy_enrolment_info(): array {
 		$legacy_enrolment_timestamp    = get_option( 'sensei_enrolment_legacy' );
 		$value_is_legacy_enrolment_set = __( 'Not applicable', 'sensei-lms' );
 
@@ -125,9 +129,11 @@ class Sensei_Status {
 	/**
 	 * Get template overrides info field.
 	 *
-	 * @return array
+	 * @return (string|string[])[]
+	 *
+	 * @psalm-return array{label: string, value: array<string>|string}
 	 */
-	private function get_template_overrides_info() {
+	private function get_template_overrides_info(): array {
 
 		$template_overrides_value = __( 'No template overrides', 'sensei-lms' );
 		$template_overrides       = $this->get_template_override_status();
@@ -156,9 +162,11 @@ class Sensei_Status {
 	/**
 	 * Get the basic status of the learner calculation background job.
 	 *
-	 * @return array
+	 * @return string[]
+	 *
+	 * @psalm-return array{label: string, value: string}
 	 */
-	private function get_is_calculation_pending_info() {
+	private function get_is_calculation_pending_info(): array {
 		$job_scheduler     = Sensei_Enrolment_Job_Scheduler::instance();
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 		$current_version   = $enrolment_manager->get_enrolment_calculation_version();
@@ -180,9 +188,11 @@ class Sensei_Status {
 	/**
 	 * Get templates that have been overridden by the theme.
 	 *
-	 * @return array
+	 * @return (mixed|null|string)[][]
+	 *
+	 * @psalm-return array<array{path: mixed|null, sensei_version: string, theme_version: string}>
 	 */
-	public function get_template_override_status() {
+	public function get_template_override_status(): array {
 		$overrides = [];
 		$templates = $this->get_templates();
 
@@ -203,9 +213,11 @@ class Sensei_Status {
 	/**
 	 * Get an array of template files.
 	 *
-	 * @return array
+	 * @return string[]
+	 *
+	 * @psalm-return array<false|string, string>
 	 */
-	private function get_templates() {
+	private function get_templates(): array {
 		$templates = [];
 
 		$template_dir = Sensei()->plugin_path . 'templates/';
@@ -258,7 +270,7 @@ class Sensei_Status {
 	 *
 	 * @return array
 	 */
-	public function add_sensei_tests( $tests ) {
+	public function add_sensei_tests( $tests ): array {
 		if ( ! isset( $tests['direct'] ) ) {
 			$tests['direct'] = [];
 		}
@@ -274,9 +286,11 @@ class Sensei_Status {
 	/**
 	 * Tests for calculated enrolment cache.
 	 *
-	 * @return array
+	 * @return (string|string[])[]
+	 *
+	 * @psalm-return array{label: string, status: 'good'|'recommended', badge: array{label: string, color: 'blue'}, description: string, actions: '', test: 'enrolment_cache_warmed'}
 	 */
-	public function test_enrolment_cache_warmed() {
+	public function test_enrolment_cache_warmed(): array {
 		$description = __( 'Sensei LMS attempts to calculate whether students are enrolled in all courses ahead of time to speed up loading.', 'sensei-lms' );
 		$result      = [
 			'label'       => __( 'Student enrollment has been calculated', 'sensei-lms' ),

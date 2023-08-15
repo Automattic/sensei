@@ -41,7 +41,7 @@ class Email_Settings_Tab {
 	 *
 	 * @internal
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'sensei_settings_after_links', [ $this, 'render_tabs' ] );
 		add_filter( 'sensei_settings_content', [ $this, 'get_content' ], 10, 2 );
 	}
@@ -50,9 +50,12 @@ class Email_Settings_Tab {
 	 * Render tabs on the Emails settings page.
 	 *
 	 * @internal
+	 *
 	 * @access private
 	 *
 	 * @param string $tab_name The current tab name.
+	 *
+	 * @return void
 	 */
 	public function render_tabs( string $tab_name ) {
 		if ( 'email-notification-settings' !== $tab_name ) {
@@ -114,7 +117,9 @@ class Email_Settings_Tab {
 	/**
 	 * Get all available subtabs.
 	 *
-	 * @return array[]
+	 * @return ((static|string)[]|string)[][]
+	 *
+	 * @psalm-return array{0: array{name: string, href: string, key: 'student', render_callback: array{0: static, 1: 'render_student_subtab'}}, 1: array{name: string, href: string, key: 'teacher', render_callback: array{0: static, 1: 'render_teacher_subtab'}}, 2: array{name: string, href: string, key: 'settings', render_callback: array{0: static, 1: 'render_settings_subtab'}}}
 	 */
 	private function get_subtabs(): array {
 		return [
@@ -247,7 +252,7 @@ class Email_Settings_Tab {
 	 * @param array $key   Field key.
 	 * @param mixed $value Field value.
 	 */
-	private function form_field_hidden( $key, $value ) {
+	private function form_field_hidden( $key, $value ): void {
 		if ( ! is_array( $value ) ) {
 			echo '<input name="sensei-settings[' . esc_attr( $key ) . ']" type="hidden" value="' . esc_attr( $value ) . '" />' . "\n";
 		} else {
@@ -261,6 +266,7 @@ class Email_Settings_Tab {
 	 * Add the Reply To email address setting field.
 	 *
 	 * @since 4.12.0
+	 *
 	 * @deprecated $$next-version$$ Moved to Sensei_Settings::init_fields.
 	 *
 	 * @access private
@@ -269,7 +275,7 @@ class Email_Settings_Tab {
 	 *
 	 * @return array The fields with the Reply To email address field added.
 	 */
-	public function add_reply_to_setting( $fields ) {
+	public function add_reply_to_setting( $fields ): array {
 
 		$fields['email_reply_to_name'] = [
 			'name'     => __( '"Reply To" Name', 'sensei-lms' ),

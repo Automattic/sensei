@@ -32,10 +32,11 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Lesson_Progress The lesson progress.
+	 * @return Lesson_Progress|null The lesson progress.
+	 *
 	 * @throws RuntimeException When the lesson progress could not be created.
 	 */
-	public function create( int $lesson_id, int $user_id ): Lesson_Progress {
+	public function create( int $lesson_id, int $user_id ): ?Lesson_Progress {
 		$metadata   = [
 			'start' => current_time( 'mysql' ),
 		];

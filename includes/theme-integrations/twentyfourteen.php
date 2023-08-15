@@ -18,7 +18,7 @@ class Sensei_Twentyfourteen {
 	 *
 	 * @since 1.9.0
 	 */
-	public function wrapper_start() {
+	public function wrapper_start(): void {
 		?>
 
 		<div id="main-content" class="main-content">
@@ -34,7 +34,7 @@ class Sensei_Twentyfourteen {
 	 *
 	 * @since 1.9.0
 	 */
-	public function wrapper_end() {
+	public function wrapper_end(): void {
 		?>
 
 

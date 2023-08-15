@@ -52,6 +52,8 @@ class Student_Starts_Course extends Email_Generators_Abstract {
 	 * @param int $course_id  The course ID.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function student_started_course_mail_to_teacher( $student_id, $course_id ) {
 		$course = get_post( $course_id );

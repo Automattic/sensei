@@ -51,6 +51,8 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 *
 	 * @param int $student_id The student ID.
 	 * @param int $course_id  The course ID.
+	 *
+	 * @return void
 	 */
 	public function welcome_to_course_for_student( $student_id, $course_id ) {
 		$course = get_post( $course_id );

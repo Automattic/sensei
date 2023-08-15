@@ -20,6 +20,8 @@ class Sensei_Import_Questions
 	 * Return a unique key for the task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'questions'
 	 */
 	public function get_task_key() {
 		return 'questions';
@@ -41,6 +43,8 @@ class Sensei_Import_Questions
 	 * Get the model key for this task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'question'
 	 */
 	public function get_model_key() {
 		return Sensei_Import_Question_Model::MODEL_KEY;
@@ -51,7 +55,7 @@ class Sensei_Import_Questions
 	 *
 	 * @param string $file_path File path of the file to validate.
 	 *
-	 * @return true|WP_Error
+	 * @return WP_Error|bool
 	 */
 	public static function validate_source_file( $file_path ) {
 		$schema          = new Sensei_Data_Port_Question_Schema();

@@ -31,9 +31,9 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Register lesson post meta.
 	 *
-	 * @since  3.11.0
+	 * @since 3.11.0
 	 */
-	private function init_post_meta() {
+	private function init_post_meta(): void {
 		register_post_meta(
 			'lesson',
 			'_quiz_has_questions',

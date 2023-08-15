@@ -47,6 +47,8 @@ class Sensei_Course_List_Featured_Filter extends Sensei_Course_List_Filter_Abstr
 	 * Get the content to be be rendered inside the filtered block.
 	 *
 	 * @param WP_Block $block The block instance.
+	 *
+	 * @return string
 	 */
 	public function get_content( WP_Block $block ) : string {
 		$attributes       = $block->attributes;
@@ -72,6 +74,10 @@ class Sensei_Course_List_Featured_Filter extends Sensei_Course_List_Filter_Abstr
 	 * Get a list of course Ids to be excluded from the course list block filtered by Featured status.
 	 *
 	 * @param int $query_id The id of the Query block this filter is rendering inside.
+	 *
+	 * @return (WP_Post|int)[]
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
 	public function get_course_ids_to_be_excluded( $query_id ): array {
 		$filter_param_key = self::PARAM_KEY . $query_id;

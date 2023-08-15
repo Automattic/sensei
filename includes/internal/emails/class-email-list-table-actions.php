@@ -124,7 +124,7 @@ class Email_List_Table_Actions {
 	 * Ensures the bulk request is valid and the user has permission.
 	 * If the request is not valid, the method will exit with a message.
 	 */
-	private function validate_bulk_action_request() {
+	private function validate_bulk_action_request(): void {
 		if ( ! current_user_can( 'manage_sensei' ) ) {
 			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
@@ -156,8 +156,10 @@ class Email_List_Table_Actions {
 	 * Get the email IDs from the request.
 	 *
 	 * @return int[] The email IDs.
+	 *
+	 * @psalm-return array<empty, int>
 	 */
-	private function get_email_ids_from_request() {
+	private function get_email_ids_from_request(): array {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is checked in `validate_bulk_action_request`.
 		return array_map( 'intval', $_REQUEST['email'] ?? [] );
 	}
@@ -165,8 +167,10 @@ class Email_List_Table_Actions {
 	/**
 	 * Redirect the user back to where it came from.
 	 * If the action link was accessed directly, redirect to the emails list.
+	 *
+	 * @return never
 	 */
-	private function redirect_back(): void {
+	private function redirect_back() {
 		$referer  = wp_get_referer();
 		$location = $referer
 			? $referer

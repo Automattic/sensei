@@ -27,7 +27,7 @@ class Email_Patterns {
 	 *
 	 * @internal
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'current_screen', [ $this, 'register_email_editor_block_patterns' ] );
 		add_action( 'init', [ $this, 'register_email_preview_block_patterns' ] );
 		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
@@ -38,7 +38,7 @@ class Email_Patterns {
 	 *
 	 * @access private
 	 */
-	public function register_block_patterns_category() {
+	public function register_block_patterns_category(): void {
 		register_block_pattern_category(
 			'sensei-emails',
 			[ 'label' => __( 'Sensei Emails', 'sensei-lms' ) ]
@@ -54,7 +54,7 @@ class Email_Patterns {
 	 *
 	 * @param WP_Screen $current_screen Current screen.
 	 */
-	public function register_email_editor_block_patterns( $current_screen ) {
+	public function register_email_editor_block_patterns( $current_screen ): void {
 		$post_type = $current_screen->post_type;
 
 		if ( 'sensei_email' === $post_type ) {
@@ -69,7 +69,7 @@ class Email_Patterns {
 	 *
 	 * @since 4.12.0
 	 */
-	public function register_email_preview_block_patterns() {
+	public function register_email_preview_block_patterns(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification -- Used for comparison.
 		if ( ! empty( $_GET['sensei_email_preview_id'] ) ) {
 			$this->register_email_block_patterns();
@@ -83,7 +83,7 @@ class Email_Patterns {
 	 *
 	 * @since 4.12.0
 	 */
-	public function register_email_block_patterns() {
+	public function register_email_block_patterns(): void {
 		$patterns = [
 			'course-created'              =>
 				[

@@ -42,7 +42,9 @@ class Sensei_Home_Tasks_Provider {
 	/**
 	 * Returns the Tasks.
 	 *
-	 * @return array
+	 * @return ((array|mixed)[]|bool|null)[]
+	 *
+	 * @psalm-return array{items: array<array>, site: array, course: array|null, is_completed: bool}
 	 */
 	public function get(): array {
 		return [
@@ -108,7 +110,10 @@ class Sensei_Home_Tasks_Provider {
 	 * Maps a specific Sensei_Home_Task to a basic array structure. Will execute the code in `is_completed` for all entries.
 	 *
 	 * @param Sensei_Home_Task $task The actual task to map.
-	 * @return array
+	 *
+	 * @return (bool|int|null|string)[]
+	 *
+	 * @psalm-return array{id: string, title: string, priority: int, url: null|string, done: bool}
 	 */
 	private function map_task( Sensei_Home_Task $task ): array {
 		return [
@@ -123,9 +128,11 @@ class Sensei_Home_Tasks_Provider {
 	/**
 	 * Return the site information needed for the task list component.
 	 *
-	 * @return array The site info, including title and image (which is the custom logo) URL.
+	 * @return (null|string)[] The site info, including title and image (which is the custom logo) URL.
+	 *
+	 * @psalm-return array{title: string, image: null|string}
 	 */
-	private function get_site() {
+	private function get_site(): array {
 		$custom_logo_id = get_theme_mod( 'custom_logo' );
 		$image          = wp_get_attachment_image_src( $custom_logo_id, 'full' );
 		return [
@@ -171,12 +178,14 @@ class Sensei_Home_Tasks_Provider {
 	 *
 	 * @param bool $completed Whether the task list must be marked as completed or uncompleted.
 	 */
-	public function mark_as_completed( $completed = true ) {
+	public function mark_as_completed( $completed = true ): void {
 		update_option( self::COMPLETED_TASKS_OPTION_KEY, $completed, false );
 	}
 
 	/**
 	 * Attaches required hooks.
+	 *
+	 * @return void
 	 */
 	private function attach_tasks_statuses_hooks() {
 		// Attach the hooks only once.
@@ -199,7 +208,7 @@ class Sensei_Home_Tasks_Provider {
 	/**
 	 * Updates the tasks_statuses in wp options
 	 */
-	public function update_tasks_statuses() {
+	public function update_tasks_statuses(): void {
 		$tasks_statuses = [];
 
 		foreach ( $this->get_tasks() as $task ) {

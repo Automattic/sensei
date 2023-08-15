@@ -100,7 +100,10 @@ class Email_Blocks {
 	 * Load admin assets.
 	 *
 	 * @internal
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function load_admin_assets() {
 		$screen = get_current_screen();

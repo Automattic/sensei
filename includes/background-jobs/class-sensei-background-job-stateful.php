@@ -88,6 +88,8 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	 * Get the action name for the scheduled job.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'sensei_background_job_stateful'
 	 */
 	public function get_name() {
 		return self::NAME;
@@ -105,7 +107,7 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	/**
 	 * Restore a job state.
 	 */
-	private function restore_state() {
+	private function restore_state(): void {
 		$state_raw = get_transient( $this->get_state_transient_name() );
 
 		$state = $state_raw ? json_decode( $state_raw, true ) : [];
@@ -119,7 +121,7 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	/**
 	 * Clean up.
 	 */
-	public function cleanup() {
+	public function cleanup(): void {
 		delete_transient( $this->get_state_transient_name() );
 		$this->deleted = true;
 	}
@@ -151,7 +153,7 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	 * @param string $key   State key to update.
 	 * @param mixed  $value Value to set.
 	 */
-	public function set_state( $key, $value ) {
+	public function set_state( $key, $value ): void {
 		$current_value = $this->state[ $key ] ?? null;
 		if ( $current_value !== $value ) {
 			$this->changed = true;
@@ -162,6 +164,8 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 
 	/**
 	 * Persist the state.
+	 *
+	 * @return void
 	 */
 	public function persist() {
 		if ( $this->deleted || ! $this->changed ) {
@@ -174,7 +178,9 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	/**
 	 * Get the arguments to run with the job.
 	 *
-	 * @return array
+	 * @return (mixed|string)[]
+	 *
+	 * @psalm-return array{id: string, class: class-string<Sensei_Background_Job_Stateful>}
 	 */
 	public function get_args() {
 		return array_merge(

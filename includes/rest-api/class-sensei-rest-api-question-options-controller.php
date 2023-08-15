@@ -43,6 +43,8 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register the REST API endpoints for quiz.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -108,10 +110,8 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 	 * Get multiple questions.
 	 *
 	 * @param WP_REST_Request $request WordPress request object.
-	 *
-	 * @return WP_REST_Response|WP_Error
 	 */
-	public function get_multiple_questions( WP_REST_Request $request ) {
+	public function get_multiple_questions( WP_REST_Request $request ): WP_REST_Response {
 		$response     = new WP_REST_Response();
 		$question_ids = $request->get_param( 'question_ids' );
 		if ( empty( $question_ids ) ) {
@@ -148,8 +148,10 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 	 * @param string $question_ids_str Question IDs separated by a comma.
 	 *
 	 * @return int[]
+	 *
+	 * @psalm-return array<int, int>
 	 */
-	public function sanitize_multiple_questions( $question_ids_str ) {
+	public function sanitize_multiple_questions( $question_ids_str ): array {
 		return array_filter(
 			array_map(
 				'intval',
@@ -161,9 +163,9 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 	/**
 	 * Check user permission for fetching multiple questions
 	 *
-	 * @return bool|WP_Error Whether the user can get questions.
+	 * @return bool Whether the user can get questions.
 	 */
-	public function can_user_get_multiple_questions() {
+	public function can_user_get_multiple_questions(): bool {
 		// We'll do individual level question checks later.
 		return is_user_logged_in();
 	}
@@ -206,7 +208,9 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 	/**
 	 * Schema for the endpoint when multiple questions are returned.
 	 *
-	 * @return array Schema object.
+	 * @return (array|string)[] Schema object.
+	 *
+	 * @psalm-return array{type: 'array', description: 'Questions in batch', items: array}
 	 */
 	public function get_multiple_question_schema() : array {
 		return [

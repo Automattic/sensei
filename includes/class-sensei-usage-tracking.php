@@ -36,11 +36,12 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Initialize filters for event logging sources.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @deprecated 4.10.0
 	 *
 	 * @access private
 	 */
-	public function init_event_logging_sources() {
+	public function init_event_logging_sources(): void {
 		_deprecated_function( __METHOD__, '4.10.0' );
 
 		add_filter( 'sensei_event_logging_source', [ $this, 'detect_event_logging_source' ], 1 );
@@ -52,14 +53,27 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Implementation for abstract functions.
 	 */
 
+	/**
+	 * @return static
+	 */
 	public static function get_instance() {
 		return self::get_instance_for_subclass( get_class() );
 	}
 
+	/**
+	 * @return string
+	 *
+	 * @psalm-return 'sensei'
+	 */
 	protected function get_prefix() {
 		return 'sensei';
 	}
 
+	/**
+	 * @return string
+	 *
+	 * @psalm-return 'sensei-lms'
+	 */
 	protected function get_text_domain() {
 		return 'sensei-lms';
 	}
@@ -68,6 +82,9 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		return Sensei()->settings->get( self::SENSEI_SETTING_NAME ) || false;
 	}
 
+	/**
+	 * @return void
+	 */
 	public function set_tracking_enabled( $enable ) {
 		Sensei()->settings->set( self::SENSEI_SETTING_NAME, $enable );
 
@@ -127,11 +144,12 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Log an update event.
 	 *
 	 * @since 3.9.0
+	 *
 	 * @access internal
 	 *
 	 * @param array $args Deferred event parameters.
 	 */
-	public function log_update( $args ) {
+	public function log_update( $args ): void {
 		sensei_log_event(
 			'plugin_update',
 			$args
@@ -145,7 +163,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 *
 	 * @return array
 	 */
-	public function add_setting_field( $fields ) {
+	public function add_setting_field( $fields ): array {
 		$fields[ self::SENSEI_SETTING_NAME ] = array(
 			'name'        => __( 'Enable usage tracking', 'sensei-lms' ),
 			'description' => sprintf(
@@ -197,11 +215,12 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Set the event logging source to `frontend`.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @deprecated 4.10.0
 	 *
 	 * @access private
 	 */
-	public function set_event_logging_source_frontend() {
+	public function set_event_logging_source_frontend(): void {
 		_deprecated_function( __METHOD__, '4.10.0' );
 
 		add_filter(
@@ -216,11 +235,12 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Set the event logging source to `data-import`.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @deprecated 4.10.0
 	 *
 	 * @access private
 	 */
-	public function set_event_logging_source_data_import() {
+	public function set_event_logging_source_data_import(): void {
 		_deprecated_function( __METHOD__, '4.10.0' );
 
 		add_filter(
@@ -238,16 +258,18 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 *
 	 * @param string $plugin_file The activated plugin.
 	 */
-	public function log_wccom_plugin_install( $plugin_file ) {
+	public function log_wccom_plugin_install( $plugin_file ): void {
 		_deprecated_function( __METHOD__, '4.8.0' );
 	}
 
 	/**
 	 * Get the template override data.
 	 *
-	 * @return array
+	 * @return (int|mixed|null|string)[]
+	 *
+	 * @psalm-return array<string, 0|mixed|null|positive-int|string>
 	 */
-	public function get_template_data() {
+	public function get_template_data(): array {
 		$theme              = wp_get_theme();
 		$template_overrides = Sensei_Status::instance()->get_template_override_status();
 
@@ -280,7 +302,9 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	/**
 	 * Collect system data to track.
 	 *
-	 * @return array
+	 * @return (int|mixed)[]
+	 *
+	 * @psalm-return array<0|1|mixed>
 	 */
 	public function get_system_data() {
 		$system_data                 = [];

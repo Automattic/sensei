@@ -59,7 +59,7 @@ class User_Deleted_Handler {
 	/**
 	 * Adds hooks.
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'deleted_user', [ $this, 'handle' ], 10, 1 );
 	}
 
@@ -68,7 +68,7 @@ class User_Deleted_Handler {
 	 *
 	 * @param int $user_id User ID.
 	 */
-	public function handle( $user_id ) {
+	public function handle( $user_id ): void {
 		$this->course_progress_repository->delete_for_user( $user_id );
 		$this->lesson_progress_repository->delete_for_user( $user_id );
 		$this->quiz_progress_repository->delete_for_user( $user_id );

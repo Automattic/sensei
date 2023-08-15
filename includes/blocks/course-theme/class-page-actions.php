@@ -64,7 +64,7 @@ class Page_Actions {
 	 *
 	 * @return string
 	 */
-	private function render_lesson_actions() {
+	private function render_lesson_actions(): string {
 		// WordPress post pagination.
 
 		$wrapper_attributes = get_block_wrapper_attributes(

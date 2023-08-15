@@ -37,8 +37,11 @@ class Sensei_Core_Lesson_Modules {
 	 * course and module are being updated at the same time.
 	 *
 	 * @since 1.9.18
+	 *
 	 * @param integer|string $module_id ID of the new module
 	 * @param integer|string $course_id (Optional) ID of the course to check against
+	 *
+	 * @return void
 	 */
 	public function set_module( $module_id, $course_id = null ) {
 

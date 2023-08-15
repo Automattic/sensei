@@ -22,6 +22,8 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 
 	/**
 	 * Initialize blocks that are available globally.
+	 *
+	 * @return void
 	 */
 	public function initialize_blocks() {
 		new Sensei_Block_Take_Course();
@@ -38,6 +40,8 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 	 * Enqueue frontend and editor assets.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function enqueue_block_assets() {
 		Sensei()->assets->enqueue(
@@ -58,6 +62,8 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 	 * Enqueue editor assets.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
 		Sensei()->assets->enqueue( 'sensei-global-blocks', 'blocks/global-blocks.js', [], true );

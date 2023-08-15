@@ -69,6 +69,8 @@ class Sensei_Updates {
 	 * Run the updates (if necessary).
 	 *
 	 * @since 3.7.0
+	 *
+	 * @return void
 	 */
 	public function run_updates() {
 		// Only proceed if we knew the previous version and this was a new install or an upgrade.
@@ -114,6 +116,8 @@ class Sensei_Updates {
 
 	/**
 	 * Enqueue job to remove the abandoned `multiple_question`.
+	 *
+	 * @return void
 	 */
 	private function v3_9_remove_abandoned_multiple_question() {
 		// Only run this if we're upgrading and the current version (before upgrade) is less than 3.9.0.
@@ -127,12 +131,14 @@ class Sensei_Updates {
 	/**
 	 * Set new option to save when Sensei was installed/updated.
 	 */
-	private function v4_10_update_install_time() {
+	private function v4_10_update_install_time(): void {
 		add_option( 'sensei_installed_at', time() );
 	}
 
 	/**
 	 * Enqueue job to fix question post authors from previous course teacher changes.
+	 *
+	 * @return void
 	 */
 	private function v3_9_fix_question_author() {
 		// Only run this if we're upgrading and the current version (before upgrade) is less than 3.9.0.
@@ -147,6 +153,8 @@ class Sensei_Updates {
 	 * Add comment table indexes.
 	 *
 	 * @since 3.7.0
+	 *
+	 * @return void
 	 */
 	private function v3_7_add_comment_indexes() {
 		global $wpdb;
@@ -197,9 +205,11 @@ class Sensei_Updates {
 	 *
 	 * @param string $table Table to get indexes for.
 	 *
-	 * @return array
+	 * @return (array|bool)[][]
+	 *
+	 * @psalm-return array<array{unique: bool, columns: list<mixed>}>
 	 */
-	private function get_table_indexes( $table ) {
+	private function get_table_indexes( $table ): array {
 		global $wpdb;
 
 		$indexes = [];
@@ -231,7 +241,7 @@ class Sensei_Updates {
 	 *
 	 * @since 3.7.0
 	 */
-	private function v3_7_check_rewrite_front() {
+	private function v3_7_check_rewrite_front(): void {
 		global $wp_rewrite;
 
 		// Set up legacy `with_front` on CPT rewrite options.
@@ -249,7 +259,7 @@ class Sensei_Updates {
 	 *
 	 * @since 3.0.0
 	 */
-	private function v3_0_check_legacy_enrolment() {
+	private function v3_0_check_legacy_enrolment(): void {
 		// Mark site as having enrolment data from legacy instances.
 		if (
 			// If the version is known and the previous version was pre-3.0.0.
@@ -309,7 +319,7 @@ class Sensei_Updates {
 	/**
 	 * Logs the system update.
 	 */
-	private function log_update() {
+	private function log_update(): void {
 		wp_schedule_single_event(
 			time(),
 			'sensei_log_update',
@@ -347,9 +357,11 @@ class Sensei_Updates {
 	 *
 	 * @param string $version Filter to just include a single version (Optional).
 	 *
-	 * @return DateTimeImmutable[]
+	 * @return (DateTimeImmutable|false)[]
+	 *
+	 * @psalm-return array<string, DateTimeImmutable|false>
 	 */
-	private function get_changelog_release_dates( $version = null ) {
+	private function get_changelog_release_dates( $version = null ): array {
 		$releases  = [];
 		$changelog = $this->get_changelog();
 		if ( ! $changelog ) {
@@ -532,9 +544,10 @@ class Sensei_Updates {
 	 * Sets the role capabilities for WordPress users.
 	 *
 	 * @since 1.1.0
+	 *
 	 * @deprecated 3.7.0
 	 */
-	public function assign_role_caps() {
+	public function assign_role_caps(): void {
 		_deprecated_function( __METHOD__, '3.7.0', 'Sensei_Main::assign_role_caps' );
 
 		Sensei()->assign_role_caps();

@@ -36,7 +36,7 @@ class Sensei_Block_Patterns {
 	/**
 	 * Initializes the class.
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'init', [ $this, 'maybe_register_pattern_block_polyfill' ], 99 );
 		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
 		add_action( 'init', [ $this, 'register_course_list_block_patterns' ] );
@@ -55,7 +55,7 @@ class Sensei_Block_Patterns {
 	 *
 	 * @access private
 	 */
-	public function register_block_patterns_category() {
+	public function register_block_patterns_category(): void {
 		register_block_pattern_category(
 			self::get_patterns_category_name(),
 			[ 'label' => __( 'Sensei LMS', 'sensei-lms' ) ]
@@ -67,7 +67,7 @@ class Sensei_Block_Patterns {
 	 *
 	 * @access private
 	 */
-	public function register_course_list_block_patterns() {
+	public function register_course_list_block_patterns(): void {
 		require __DIR__ . '/course-list/class-sensei-course-list-block-patterns.php';
 		( new Sensei_Course_List_Block_Patterns() )->register_course_list_block_patterns();
 	}
@@ -79,7 +79,7 @@ class Sensei_Block_Patterns {
 	 *
 	 * @access private
 	 */
-	public function register_block_patterns( $current_screen ) {
+	public function register_block_patterns( $current_screen ): void {
 		$post_type      = $current_screen->post_type;
 		$block_patterns = [];
 
@@ -124,6 +124,8 @@ class Sensei_Block_Patterns {
 	 * Register pattern block polyfill if it's not registered.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function maybe_register_pattern_block_polyfill() {
 		if ( \WP_Block_Type_Registry::get_instance()->is_registered( 'core/pattern' ) ) {
@@ -162,7 +164,7 @@ class Sensei_Block_Patterns {
 	 *
 	 * @access private
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts(): void {
 		$post_type  = get_post_type();
 		$post_types = [ 'course', 'lesson' ];
 
@@ -177,15 +179,19 @@ class Sensei_Block_Patterns {
 
 	/**
 	 * Get patterns category name.
+	 *
+	 * @psalm-return 'sensei-lms'
 	 */
-	public static function get_patterns_category_name() {
+	public static function get_patterns_category_name(): string {
 		return 'sensei-lms';
 	}
 
 	/**
 	 * Get post content block type name.
+	 *
+	 * @psalm-return 'sensei-lms/post-content'
 	 */
-	public static function get_post_content_block_type_name() {
+	public static function get_post_content_block_type_name(): string {
 		return 'sensei-lms/post-content';
 	}
 }

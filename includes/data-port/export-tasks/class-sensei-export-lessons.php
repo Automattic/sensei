@@ -21,6 +21,8 @@ class Sensei_Export_Lessons
 	 * Content type of the task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'lesson'
 	 */
 	public function get_content_type() {
 		return 'lesson';
@@ -31,7 +33,9 @@ class Sensei_Export_Lessons
 	 *
 	 * @param WP_Post $post The lesson.
 	 *
-	 * @return array The columns data per key.
+	 * @return (false|int|mixed|null|string)[] The columns data per key.
+	 *
+	 * @psalm-return array{id: int, lesson: string, slug: string, description: string, excerpt: string, status: string, module: ''|mixed|null, prerequisite: string, preview: 0|1, tags: string, image: false|string, length: mixed, complexity: mixed, video: mixed, 'pass required': 0|1, passmark: mixed, 'number of questions': mixed, 'random question order': 0|1, 'auto-grade': 0|1, 'quiz reset': 0|1, 'allow comments': 0|1, questions: string}
 	 */
 	protected function get_post_fields( $post ) {
 		$meta           = [];
@@ -113,7 +117,7 @@ class Sensei_Export_Lessons
 	/**
 	 * Schema for the content type.
 	 *
-	 * @return Sensei_Data_Port_Schema
+	 * @return Schema
 	 */
 	protected function get_type_schema() {
 		return new Sensei_Data_Port_Lesson_Schema();

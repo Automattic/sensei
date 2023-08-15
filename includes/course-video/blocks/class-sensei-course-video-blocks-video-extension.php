@@ -57,7 +57,7 @@ class Sensei_Course_Video_Blocks_Video_Extension {
 	 *
 	 * @deprecated 4.6.4
 	 */
-	public function init() {
+	public function init(): void {
 		_deprecated_function( __METHOD__, '4.6.4' );
 
 		add_filter( 'render_block_core/video', [ $this, 'wrap_video' ], 10, 1 );

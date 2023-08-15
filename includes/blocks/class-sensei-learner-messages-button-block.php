@@ -29,7 +29,7 @@ class Sensei_Learner_Messages_Button_Block {
 	 *
 	 * @access private
 	 */
-	public function admin_enqueue_scripts() {
+	public function admin_enqueue_scripts(): void {
 		wp_localize_script(
 			'sensei-single-page-blocks',
 			'sensei_messages',
@@ -45,7 +45,7 @@ class Sensei_Learner_Messages_Button_Block {
 	 *
 	 * @access private
 	 */
-	public function register_block() {
+	public function register_block(): void {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/button-learner-messages',
 			[ 'render_callback' => [ $this, 'render_learner_messages_block' ] ]

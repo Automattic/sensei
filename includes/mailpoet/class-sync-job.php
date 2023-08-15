@@ -21,6 +21,8 @@ class Sync_Job extends \Sensei_Background_Job_Batch {
 	 * Get the job batch size.
 	 *
 	 * @return int
+	 *
+	 * @psalm-return 15
 	 */
 	protected function get_batch_size() : int {
 		return 15;
@@ -29,7 +31,7 @@ class Sync_Job extends \Sensei_Background_Job_Batch {
 	/**
 	 * Can multiple instances be enqueued at the same time?
 	 *
-	 * @return bool
+	 * @return false
 	 */
 	protected function allow_multiple_instances() : bool {
 		return false;

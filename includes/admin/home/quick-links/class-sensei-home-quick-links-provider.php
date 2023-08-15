@@ -17,6 +17,8 @@ class Sensei_Home_Quick_Links_Provider {
 	 * Return a list of categories which each contain multiple quick link items.
 	 *
 	 * @return array[]
+	 *
+	 * @psalm-return array{0: array, 1: array, 2: array}
 	 */
 	public function get(): array {
 		return [
@@ -53,9 +55,11 @@ class Sensei_Home_Quick_Links_Provider {
 	/**
 	 * Return the correct email notification settings based on the feature flag.
 	 *
-	 * @return array The magical link to create a demo course or the link to edit the demo course.
+	 * @return string The magical link to create a demo course or the link to edit the demo course.
+	 *
+	 * @psalm-return '/admin.php?page=sensei-settings#email-notification-settings'|'admin.php?page=sensei-settings&tab=email-notification-settings'
 	 */
-	private function get_email_notification_url() {
+	private function get_email_notification_url(): string {
 		if ( Sensei()->feature_flags->is_enabled( 'email_customization' ) ) {
 			return 'admin.php?page=sensei-settings&tab=email-notification-settings';
 		}
@@ -84,7 +88,9 @@ class Sensei_Home_Quick_Links_Provider {
 	 * @param string $title The category title.
 	 * @param array  $items The category items.
 	 *
-	 * @return array
+	 * @return (array|string)[]
+	 *
+	 * @psalm-return array{title: string, items: array}
 	 */
 	private function create_category( string $title, array $items ): array {
 		return [
@@ -99,7 +105,9 @@ class Sensei_Home_Quick_Links_Provider {
 	 * @param string      $title The item title.
 	 * @param string|null $url Optional. The item action URL.
 	 *
-	 * @return array
+	 * @return (null|string)[]
+	 *
+	 * @psalm-return array{title: string, url: null|string}
 	 */
 	private function create_item( string $title, ?string $url ): array {
 		return [

@@ -33,14 +33,14 @@ class Sensei_Course_Results_Block {
 	 *
 	 * @access private
 	 */
-	public function clear_block_content() {
+	public function clear_block_content(): void {
 		$this->block_content = null;
 	}
 
 	/**
 	 * Register course results block.
 	 */
-	private function register_block() {
+	private function register_block(): void {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-results',
 			[
@@ -277,7 +277,7 @@ class Sensei_Course_Results_Block {
 	 *
 	 * @param array $item The course structure item.
 	 */
-	private function render_lesson( $item ) {
+	private function render_lesson( $item ): string {
 		$section_content   = [];
 		$section_content[] = '<li class="wp-block-sensei-lms-course-results__lesson">';
 		$section_content[] = '<a href="' . esc_url( get_permalink( $item['id'] ) ) . '" class="wp-block-sensei-lms-course-results__lesson-link">';

@@ -60,7 +60,7 @@ class Sensei_Course_Theme_Option {
 	/**
 	 * Initializes the Course Theme.
 	 */
-	public function init() {
+	public function init(): void {
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
@@ -72,7 +72,7 @@ class Sensei_Course_Theme_Option {
 	 *
 	 * @access private
 	 */
-	public function ensure_learning_mode_url_prefix() {
+	public function ensure_learning_mode_url_prefix(): void {
 
 		$is_theme_overridden   = Sensei_Course_Theme::instance()::THEME_NAME === get_stylesheet();
 		$should_override_theme = self::should_use_learning_mode() && self::should_override_theme();
@@ -228,7 +228,7 @@ class Sensei_Course_Theme_Option {
 	 *
 	 * @access private
 	 */
-	public function register_post_meta() {
+	public function register_post_meta(): void {
 		register_post_meta(
 			'course',
 			self::THEME_POST_META_NAME,

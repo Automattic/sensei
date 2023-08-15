@@ -21,6 +21,8 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 	 * Get the model key to identify items in log entries.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'course'
 	 */
 	public function get_model_key() {
 		return self::MODEL_KEY;
@@ -29,7 +31,9 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 	/**
 	 * Create a new question or update an existing question.
 	 *
-	 * @return true|WP_Error
+	 * @return WP_Error|WP_User|int|true
+	 *
+	 * @psalm-return WP_Error|WP_User|positive-int|true
 	 */
 	public function sync_post() {
 		$teacher = $this->get_default_author();
@@ -147,9 +151,11 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 	 *
 	 * @param int $teacher  The teacher id.
 	 *
-	 * @return array
+	 * @return (array|int|mixed|string)[]
+	 *
+	 * @psalm-return array{ID: int, post_author: int, post_type: 'course', post_status?: 'draft', post_title?: mixed, post_excerpt?: mixed, post_name?: mixed, meta_input?: array}
 	 */
-	private function get_course_args( $teacher ) {
+	private function get_course_args( $teacher ): array {
 
 		$args = [
 			'ID'          => $this->get_post_id(),
@@ -187,9 +193,11 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 	/**
 	 * Retrieve the meta arguments to be used in wp_insert_post.
 	 *
-	 * @return array
+	 * @return (mixed|string)[]
+	 *
+	 * @psalm-return array{_course_featured?: ''|'featured', _course_video_embed?: mixed, disable_notification?: mixed}
 	 */
-	private function get_course_meta() {
+	private function get_course_meta(): array {
 		$meta = [];
 
 		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_FEATURED );
@@ -216,6 +224,8 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 	 * @param string $column_name  The CSV column name which contains the terms.
 	 * @param string $taxonomy     The taxonomy of the terms.
 	 * @param int    $teacher      The teacher id.
+	 *
+	 * @return void
 	 */
 	private function set_course_terms( $column_name, $taxonomy, $teacher = null ) {
 		$course_id = $this->get_post_id();
@@ -280,7 +290,7 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 	 * @param int    $course_id  The course id.
 	 * @param string $taxonomy   The taxonomy to delete the terms for.
 	 */
-	private function delete_course_terms( $course_id, $taxonomy ) {
+	private function delete_course_terms( $course_id, $taxonomy ): void {
 		wp_delete_object_term_relationships( $course_id, $taxonomy );
 
 		if ( 'module' === $taxonomy ) {

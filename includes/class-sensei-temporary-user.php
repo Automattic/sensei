@@ -27,7 +27,7 @@ class Sensei_Temporary_User {
 	 *
 	 * @since 4.11.0
 	 */
-	public static function init() {
+	public static function init(): void {
 		add_filter( 'editable_roles', [ static::class, 'filter_out_temporary_user_roles' ], 11 );
 		add_filter( 'views_users', [ static::class, 'filter_out_temporary_user_role_tabs' ] );
 
@@ -86,11 +86,12 @@ class Sensei_Temporary_User {
 	 * Remove guest users from user queries.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
 	 */
-	public static function filter_out_temporary_users( WP_User_Query $query ) {
+	public static function filter_out_temporary_users( WP_User_Query $query ): void {
 		global $wpdb;
 
 		$query->query_where = str_replace(
@@ -107,11 +108,12 @@ class Sensei_Temporary_User {
 	 * Remove guest users from user queries.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
 	 *
 	 * @param string $query The user query.
 	 */
-	public static function filter_learners_query( string $query ) {
+	public static function filter_learners_query( string $query ): string {
 
 		return str_replace(
 			'WHERE 1=1',
@@ -186,7 +188,7 @@ class Sensei_Temporary_User {
 	 *
 	 * @return array
 	 */
-	public static function filter_count_statuses( array $args ) {
+	public static function filter_count_statuses( array $args ): array {
 
 		$args['query'] = ( $args['query'] ?? '' ) . " AND ( ( comment_author NOT LIKE '" . Sensei_Guest_User::LOGIN_PREFIX . "%'
 			AND comment_author NOT LIKE '" . Sensei_Preview_User::LOGIN_PREFIX . "%' ) OR comment_approved = 'ungraded')
@@ -225,11 +227,12 @@ class Sensei_Temporary_User {
 	 * Filter out Guest Student role tab from Users page in Settings.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
 	 *
 	 * @param array $views List of tabs.
 	 */
-	public static function filter_out_temporary_user_role_tabs( $views ) {
+	public static function filter_out_temporary_user_role_tabs( $views ): array {
 		unset( $views[ Sensei_Guest_User::ROLE ] );
 		unset( $views[ Sensei_Preview_User::ROLE ] );
 		return $views;
@@ -239,11 +242,12 @@ class Sensei_Temporary_User {
 	 * Remove Guest Student role from showing up Settings.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
 	 *
 	 * @param array $roles List of roles.
 	 */
-	public static function filter_out_temporary_user_roles( $roles ) {
+	public static function filter_out_temporary_user_roles( $roles ): array {
 		unset( $roles[ Sensei_Guest_User::ROLE ] );
 		unset( $roles[ Sensei_Preview_User::ROLE ] );
 		return $roles;

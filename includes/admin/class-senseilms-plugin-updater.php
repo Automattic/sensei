@@ -59,13 +59,15 @@ class SenseiLMS_Plugin_Updater {
 	/**
 	 * Initialize the plugin updater.
 	 */
-	public static function init() {
+	public static function init(): void {
 		add_action( 'plugins_loaded', [ __CLASS__, 'plugins_loaded' ] );
 	}
 
 	/**
 	 * Add hooks after the `plugins_loaded`, so we make sure Sensei Pro was
 	 * already loaded.
+	 *
+	 * @return void
 	 */
 	public static function plugins_loaded() {
 		// Early return if license and updates are managed by WooCommerce.
@@ -96,7 +98,7 @@ class SenseiLMS_Plugin_Updater {
 	 *
 	 * @hooked plugins_api
 	 *
-	 * @return false|object If other than false is returned the actual call to wordpress.org is not done.
+	 * @return array|false|object If other than false is returned the actual call to wordpress.org is not done.
 	 */
 	public function get_plugin_info( $res, $action, $args ) {
 		if (
@@ -239,6 +241,8 @@ class SenseiLMS_Plugin_Updater {
 	 * @since 4.14.0
 	 *
 	 * @internal
+	 *
+	 * @return void
 	 */
 	public function invalid_license_update_disclaimer() {
 		if ( ! class_exists( '\SenseiLMS_Licensing\License_Manager' ) ) {

@@ -17,6 +17,8 @@ class Sensei_Twentyfifteen extends Sensei__S {
 	 * Output opening wrappers
 	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public function wrapper_start() {
 
@@ -35,7 +37,7 @@ class Sensei_Twentyfifteen extends Sensei__S {
 	 *
 	 * @since 1.9.0
 	 */
-	private function print_styles(){?>
+	private function print_styles(): void{?>
 
 		<style>
 			@media screen and (min-width: 59.6875em){

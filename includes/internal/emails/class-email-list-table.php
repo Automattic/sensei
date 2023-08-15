@@ -80,6 +80,8 @@ class Email_List_Table extends Sensei_List_Table {
 	 * @internal
 	 *
 	 * @param string|null $type The email type that will be listed.
+	 *
+	 * @return void
 	 */
 	public function prepare_items( string $type = null ) {
 		$per_page = $this->get_items_per_page( 'sensei_emails_per_page' );
@@ -100,7 +102,7 @@ class Email_List_Table extends Sensei_List_Table {
 	/**
 	 * Returns if current implementation uses native row actions.
 	 *
-	 * @return bool
+	 * @return true
 	 */
 	protected function has_native_row_actions() {
 		return true;
@@ -176,6 +178,8 @@ class Email_List_Table extends Sensei_List_Table {
 	 * @param \WP_Post $post The current item.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'sensei-wp-list-table-row--disabled'|'sensei-wp-list-table-row--enabled'
 	 */
 	protected function get_row_class( $post ): string {
 		$is_published = 'publish' === get_post_status( $post );
@@ -275,7 +279,9 @@ class Email_List_Table extends Sensei_List_Table {
 	/**
 	 * Get the bulk actions that are available for the table.
 	 *
-	 * @return array
+	 * @return string[]
+	 *
+	 * @psalm-return array{'bulk-disable-email': string, 'bulk-enable-email': string}
 	 */
 	public function get_bulk_actions() {
 		return [

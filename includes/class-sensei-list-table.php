@@ -76,10 +76,13 @@ class Sensei_List_Table extends WP_List_Table {
 	/**
 	 * remove_sortable_columns removes all sortable columns by returning an empty array
 	 *
-	 * @param  array $columns Existing columns
-	 * @return array          Modified columns
+	 * @param array $columns Existing columns
+	 *
+	 * @return array Modified columns
+	 *
+	 * @psalm-return array<empty, empty>
 	 */
-	public function remove_sortable_columns( $columns ) {
+	public function remove_sortable_columns( $columns ): array {
 		return array();
 	}
 
@@ -88,7 +91,9 @@ class Sensei_List_Table extends WP_List_Table {
 	 *
 	 * @access protected
 	 *
-	 * @return array List of CSS classes for the table tag.
+	 * @return string[] List of CSS classes for the table tag.
+	 *
+	 * @psalm-return array<string>
 	 */
 	protected function get_table_classes() {
 		return array_diff( parent::get_table_classes(), array( 'fixed' ) );
@@ -97,8 +102,11 @@ class Sensei_List_Table extends WP_List_Table {
 	/**
 	 * extra_tablenav adds extra markup in the toolbars before or after the list
 	 *
-	 * @since  1.2.0
+	 * @since 1.2.0
+	 *
 	 * @param string $which, helps you decide if you add the markup after (bottom) or before (top) the list
+	 *
+	 * @return void
 	 */
 	public function extra_tablenav( $which ) {
 		if ( $which == 'top' ) {
@@ -208,8 +216,11 @@ class Sensei_List_Table extends WP_List_Table {
 	/**
 	 * Called by WP-List-Table and wrapping get_row_data() (needs overriding) with the elements needed for HTML output
 	 *
-	 * @since  1.7.0
+	 * @since 1.7.0
+	 *
 	 * @param object $item The current item
+	 *
+	 * @return void
 	 */
 	function single_row( $item ) {
 		$column_data = $this->get_row_data( $item );
@@ -274,7 +285,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 *
 	 * @since 4.12.0
 	 *
-	 * @return bool
+	 * @return false
 	 */
 	protected function has_native_row_actions() {
 		return false;
@@ -282,10 +293,14 @@ class Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * @since 1.7.0
+	 *
 	 * @access public
+	 *
 	 * @abstract
+	 *
+	 * @return never
 	 */
-	protected function get_row_data( $item ) {
+	protected function get_row_data( object $item ) {
 		die( 'either function Sensei_List_Table::get_row_data() must be over-ridden in a sub-class or Sensei_List_Table::single_row() should be.' );
 	}
 
@@ -295,6 +310,8 @@ class Sensei_List_Table extends WP_List_Table {
 	 * @param object|array $item The current item.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return ''|'alternate'
 	 */
 	protected function get_row_class( $item ): string {
 		static $row_class = '';
@@ -320,8 +337,11 @@ class Sensei_List_Table extends WP_List_Table {
 	/**
 	 * get_bulk_actions sets the bulk actions list
 	 *
-	 * @since  1.2.0
+	 * @since 1.2.0
+	 *
 	 * @return array action list
+	 *
+	 * @psalm-return array<empty, empty>
 	 */
 	public function get_bulk_actions() {
 		return array();

@@ -155,11 +155,16 @@ class Sensei_Utils {
 	 * Get IDs of Sensei activity items.
 	 *
 	 * @access public
-	 * @since  1.0.0
-	 * @param  array $args (default: array())
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $args (default: array())
+	 *
 	 * @return array
+	 *
+	 * @psalm-return list<mixed>
 	 */
-	public static function sensei_activity_ids( $args = array() ) {
+	public static function sensei_activity_ids( $args = array() ): array {
 
 		$comments = self::sensei_check_for_activity( $args, true );
 		// Need to always use an array, even with only 1 item
@@ -300,6 +305,11 @@ class Sensei_Utils {
 
 	}
 
+	/**
+	 * @return false|int
+	 *
+	 * @psalm-return 0|false|positive-int
+	 */
 	public static function upload_file( $file = array() ) {
 
 		require_once ABSPATH . 'wp-admin/includes/admin.php';
@@ -398,10 +408,11 @@ class Sensei_Utils {
 	/**
 	 * Grade question
 	 *
-	 * @param  integer $question_id ID of question
-	 * @param  integer $grade       Grade received
+	 * @param integer $question_id ID of question
+	 * @param integer $grade       Grade received
 	 * @param int     $user_id
-	 * @return boolean
+	 *
+	 * @return bool|int
 	 */
 	public static function sensei_grade_question( $question_id = 0, $grade = 0, $user_id = 0 ) {
 		if ( intval( $user_id ) == 0 ) {
@@ -430,7 +441,7 @@ class Sensei_Utils {
 		return $activity_logged;
 	}
 
-	public static function sensei_delete_question_grade( $question_id = 0, $user_id = 0 ) {
+	public static function sensei_delete_question_grade( $question_id = 0, $user_id = 0 ): bool {
 		if ( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
 		}
@@ -532,7 +543,7 @@ class Sensei_Utils {
 	 * @param int $user_id
 	 * @return boolean
 	 */
-	public static function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0, $from_course = false ) {
+	public static function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0, bool $from_course = false ) {
 
 		if ( ! $lesson_id ) {
 			return false;
@@ -598,7 +609,7 @@ class Sensei_Utils {
 		return true;
 	}
 
-	public static function sensei_get_quiz_questions( $quiz_id = 0 ) {
+	public static function sensei_get_quiz_questions( int $quiz_id = 0 ): array {
 
 		$questions = array();
 
@@ -610,7 +621,7 @@ class Sensei_Utils {
 		return $questions;
 	}
 
-	public static function sensei_get_quiz_total( $quiz_id = 0 ) {
+	public static function sensei_get_quiz_total( int $quiz_id = 0 ) {
 
 		$quiz_total = 0;
 
@@ -732,10 +743,11 @@ class Sensei_Utils {
 	/**
 	 * Add answer notes to question
 	 *
-	 * @param  integer $question_id ID of question
-	 * @param  integer $user_id     ID of user
+	 * @param integer $question_id ID of question
+	 * @param integer $user_id     ID of user
 	 * @param string  $notes
-	 * @return boolean
+	 *
+	 * @return bool|int
 	 */
 	public static function sensei_add_answer_notes( $question_id = 0, $user_id = 0, $notes = '' ) {
 		if ( intval( $user_id ) == 0 ) {
@@ -791,9 +803,12 @@ class Sensei_Utils {
 	/**
 	 * sort_array_by_key sorts array by key
 	 *
-	 * @since  1.3.0
-	 * @param  array                           $array by ref
-	 * @param  $key string column name in array
+	 * @since 1.3.0
+	 *
+	 * @param array                           $array by ref
+	 * @param $key string column name in array
+	 * @param empty $key
+	 *
 	 * @return void
 	 */
 	public static function sort_array_by_key( $array, $key ) {
@@ -816,11 +831,14 @@ class Sensei_Utils {
 	 * @since 1.3.2
 	 * @since 3.5.0 Added $query_args.
 	 *
-	 * @param  integer $quiz_id
-	 * @param  array   $query_args Additional args for the query.
-	 * @return array of quiz questions
+	 * @param integer $quiz_id
+	 * @param array   $query_args Additional args for the query.
+	 *
+	 * @return (WP_Post|int)[] of quiz questions
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
-	public static function lesson_quiz_questions( $quiz_id = 0, $query_args = [] ) {
+	public static function lesson_quiz_questions( $quiz_id = 0, $query_args = [] ): array {
 		$questions_array = array();
 		if ( 0 < $quiz_id ) {
 			$defaults      = array(
@@ -849,6 +867,8 @@ class Sensei_Utils {
 	 *
 	 * @param int $user_id User ID.
 	 * @param int $course_id Course ID
+	 *
+	 * @return void
 	 */
 	public static function force_complete_user_course( $user_id, $course_id ) {
 		$user = get_user_by( 'id', $user_id );
@@ -998,8 +1018,10 @@ class Sensei_Utils {
 	/**
 	 * Set the status message displayed to the user for a course
 	 *
-	 * @param  integer $course_id ID of course
-	 * @param  integer $user_id   ID of user
+	 * @param integer $course_id ID of course
+	 * @param integer $user_id   ID of user
+	 *
+	 * @return void
 	 */
 	public static function sensei_user_course_status_message( $course_id = 0, $user_id = 0 ) {
 		if ( intval( $user_id ) == 0 ) {
@@ -1256,10 +1278,12 @@ class Sensei_Utils {
 	/**
 	 * Start course for user
 	 *
-	 * @since  1.4.8
-	 * @param  integer $user_id   User ID
-	 * @param  integer $course_id Course ID
-	 * @return bool|int False if they haven't started; Comment ID of course progress if they have.
+	 * @since 1.4.8
+	 *
+	 * @param integer $user_id   User ID
+	 * @param integer $course_id Course ID
+	 *
+	 * @return false|int False if they haven't started; Comment ID of course progress if they have.
 	 */
 	public static function user_start_course( $user_id = 0, $course_id = 0 ) {
 
@@ -1454,11 +1478,17 @@ class Sensei_Utils {
 	 * @param int         $decimal_places_to_round
 	 * @return int|number
 	 */
-	public static function quotient_as_absolute_rounded_percentage( $numerator, $denominator, $decimal_places_to_round = 0 ) {
+	public static function quotient_as_absolute_rounded_percentage( int $numerator, int $denominator, $decimal_places_to_round = 0 ) {
 		return self::quotient_as_absolute_rounded_number( $numerator * 100.0, $denominator, $decimal_places_to_round );
 	}
 
-	public static function quotient_as_absolute_rounded_number( $numerator, $denominator, $decimal_places_to_round = 0 ) {
+	/**
+	 * @param float|int $numerator
+	 *
+	 * @psalm-param 0|float $numerator
+	 * @psalm-param positive-int $denominator
+	 */
+	public static function quotient_as_absolute_rounded_number( $numerator, int $denominator, int $decimal_places_to_round = 0 ) {
 		if ( 0 === $denominator ) {
 			return 0;
 		}
@@ -1466,7 +1496,7 @@ class Sensei_Utils {
 		return self::as_absolute_rounded_number( doubleval( $numerator ) / ( $denominator ), $decimal_places_to_round );
 	}
 
-	public static function as_absolute_rounded_number( $number, $decimal_places_to_round = 0 ) {
+	public static function as_absolute_rounded_number( $number, int $decimal_places_to_round = 0 ): float {
 		return abs( round( ( doubleval( $number ) ), $decimal_places_to_round ) );
 	}
 
@@ -1697,7 +1727,7 @@ class Sensei_Utils {
 		return false;
 	}
 
-	public static function is_preview_lesson( $lesson_id ) {
+	public static function is_preview_lesson( $lesson_id ): bool {
 		$is_preview = false;
 
 		if ( 'lesson' == get_post_type( $lesson_id ) ) {
@@ -1710,7 +1740,7 @@ class Sensei_Utils {
 		return $is_preview;
 	}
 
-	public static function user_passed_quiz( $quiz_id = 0, $user_id = 0 ) {
+	public static function user_passed_quiz( $quiz_id = 0, $user_id = 0 ): bool {
 
 		if ( ! $quiz_id ) {
 			return false;
@@ -1835,7 +1865,7 @@ class Sensei_Utils {
 	 * @param  array $pieces (default: array())
 	 * @return array
 	 */
-	public static function comment_any_status_filter( $pieces ) {
+	public static function comment_any_status_filter( $pieces ): array {
 		_deprecated_function( __FUNCTION__, '3.13.4' );
 
 		$pieces['where'] = str_replace( array( "( comment_approved = '0' OR comment_approved = '1' ) AND", "comment_approved = 'any' AND" ), '', $pieces['where'] );
@@ -1929,7 +1959,7 @@ class Sensei_Utils {
 	 * @param mixed  $value
 	 * @param int    $user_id
 	 *
-	 * @return bool $success
+	 * @return bool|int $success
 	 */
 	public static function update_user_data( $data_key, $post_id, $value = '', $user_id = 0 ) {
 
@@ -1981,8 +2011,10 @@ class Sensei_Utils {
 	 * @param int      $user_id
 	 *
 	 * @return mixed $user_data_value
+	 *
+	 * @psalm-param 'quiz_answers_feedback' $data_key
 	 */
-	public static function get_user_data( $data_key, $post_id, $user_id = 0 ) {
+	public static function get_user_data( string $data_key, int $post_id, $user_id = 0 ) {
 
 		$user_data_value = true;
 
@@ -2064,18 +2096,24 @@ class Sensei_Utils {
 	 *
 	 * @param string   $selected_value
 	 * @param $options{
-	 *    @type string $value the value saved in the database
-	 *    @type string $option what the user will see in the list of items
-	 * }
 	 * @param array    $attributes{
-	 *   @type string $attribute  type such name or id etc.
-	 *  @type string $value
-	 * }
 	 * @param bool     $enable_none_option
+	 * @param (mixed|string)[] $options
+	 * @param string[] $attributes
+	 *
+	 * @type string $value the value saved in the database
+	 * @type string $option what the user will see in the list of items
+	 * }
+	 * @type string $attribute  type such name or id etc.
+	 * @type string $value
+	 * }
 	 *
 	 * @return string $drop_down_element
+	 *
+	 * @psalm-param array<mixed|string> $options
+	 * @psalm-param array{name?: string, id?: string, style?: 'width: 100%', class?: ' '} $attributes
 	 */
-	public static function generate_drop_down( $selected_value, $options = array(), $attributes = array(), $enable_none_option = true ) {
+	public static function generate_drop_down( $selected_value, array $options = array(), array $attributes = array(), $enable_none_option = true ) {
 
 		$drop_down_element = '';
 
@@ -2265,7 +2303,7 @@ class Sensei_Utils {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function restore_wp_query() {
+	public static function restore_wp_query(): void {
 
 		wp_reset_query();
 
@@ -2280,9 +2318,12 @@ class Sensei_Utils {
 	 *
 	 * @param array $array_a
 	 * @param array $array_b
+	 *
 	 * @return array $merged_array
+	 *
+	 * @psalm-return list<mixed>
 	 */
-	public static function array_zip_merge( $array_a, $array_b ) {
+	public static function array_zip_merge( $array_a, $array_b ): array {
 
 		if ( ! is_array( $array_a ) || ! is_array( $array_b ) ) {
 			trigger_error( 'array_zip_merge requires both arrays to be indexed arrays ' );
@@ -2312,10 +2353,11 @@ class Sensei_Utils {
 	/**
 	 * What type of request is this?
 	 *
-	 * @param  string $type admin, ajax, cron or frontend.
-	 * @return bool
+	 * @param string $type admin, ajax, cron or frontend.
+	 *
+	 * @return bool|null
 	 */
-	public static function is_request( $type ) {
+	public static function is_request( $type ): ?bool {
 		switch ( $type ) {
 			case 'admin':
 				return is_admin();
@@ -2363,7 +2405,7 @@ class Sensei_Utils {
 		return $course_progress->get_id();
 	}
 
-	public static function is_plugin_present_and_activated( $plugin_class_to_look_for, $plugin_registered_path ) {
+	public static function is_plugin_present_and_activated( string $plugin_class_to_look_for, string $plugin_registered_path ): bool {
 		$active_plugins = (array) get_option( 'active_plugins', array() );
 
 		if ( is_multisite() ) {
@@ -2515,7 +2557,7 @@ class Sensei_Utils {
 	 * @param $user_id int
 	 * @return bool
 	 */
-	public static function reset_course_for_user( $course_id, $user_id ) {
+	public static function reset_course_for_user( int $course_id, int $user_id ) {
 		self::sensei_remove_user_from_course( $course_id, $user_id );
 
 		if ( ! Sensei_Course::is_user_enrolled( $course_id, $user_id ) ) {
@@ -2528,9 +2570,12 @@ class Sensei_Utils {
 	/**
 	 * @param $setting_name string
 	 * @param null|string         $filter_to_apply
+	 *
 	 * @return bool
+	 *
+	 * @psalm-param 'js_disable'|'styles_disable' $setting_name
 	 */
-	public static function get_setting_as_flag( $setting_name, $filter_to_apply = null ) {
+	public static function get_setting_as_flag( string $setting_name, $filter_to_apply = null ) {
 		$setting_on = false;
 
 		if ( isset( Sensei()->settings->settings[ $setting_name ] ) ) {
@@ -2608,7 +2653,7 @@ class Sensei_Utils {
 	 *
 	 * @param array $excluded The query params that should be excluded.
 	 */
-	public static function output_query_params_as_inputs( array $excluded = [] ) {
+	public static function output_query_params_as_inputs( array $excluded = [] ): void {
 		// phpcs:ignore WordPress.Security.NonceVerification -- The nonce should be checked before calling this method.
 		foreach ( $_GET as $name => $value ) {
 			if ( in_array( $name, $excluded, true ) ) {
@@ -2627,7 +2672,7 @@ class Sensei_Utils {
 	 *
 	 * @param string $date The last activity date.
 	 *
-	 * @return string The formatted last activity date.
+	 * @return false|string The formatted last activity date.
 	 */
 	public static function format_last_activity_date( string $date ) {
 		$timezone     = new DateTimeZone( 'GMT' );
@@ -2725,8 +2770,11 @@ class Sensei_Utils {
 	/**
 	 * Get count of users for a provided role.
 	 *
-	 * @param  string $role Slug of the Role.
-	 * @return int    Count of users having the provided role.
+	 * @param string $role Slug of the Role.
+	 *
+	 * @return int Count of users having the provided role.
+	 *
+	 * @psalm-return 0|positive-int
 	 */
 	public static function get_user_count_for_role( $role ) {
 		return count(

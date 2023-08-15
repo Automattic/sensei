@@ -290,10 +290,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Generate a csv report with different parameters, pagination, columns and table elements
 	 *
-	 * @since  1.7.0
-	 * @return data
+	 * @since 1.7.0
+	 *
+	 * @return array[]
+	 *
+	 * @psalm-return non-empty-list<array>
 	 */
-	public function generate_report( $report ) {
+	public function generate_report( $report ): array {
 		$data = array();
 
 		$this->csv_output = true;
@@ -364,9 +367,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Generates the overall array for a single item in the display
 	 *
-	 * @since  1.7.0
+	 * @since 1.7.0
+	 *
 	 * @param object $item The current item.
-	 * @return array $column_data;
+	 *
+	 * @return string[] $column_data;
+	 *
+	 * @psalm-return array<string>
 	 */
 	protected function get_row_data( $item ) {
 
@@ -628,7 +635,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 *
 	 * @param string $date Registration date.
 	 *
-	 * @return string Formatted registration date.
+	 * @return false|string Formatted registration date.
 	 */
 	private function format_date_registered( string $date ) {
 		$timezone = new DateTimeZone( 'GMT' );
@@ -665,10 +672,17 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Return array of course
 	 *
-	 * @since  1.7.0
-	 * @return array courses
+	 * @since 1.7.0
+	 *
+	 * @return (WP_Post|int)[] courses
+	 *
+	 * @param (int|mixed|string)[] $args
+	 *
+	 * @psalm-param array{number: -1|mixed, offset: 0|mixed, orderby: string, order: 'ASC'|'DESC', search?: string} $args
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
-	private function get_courses( $args ) {
+	private function get_courses( array $args ): array {
 		$course_args = array(
 			'post_type'        => 'course',
 			'post_status'      => array( 'publish', 'private' ),
@@ -702,12 +716,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Return array of lessons.
 	 *
-	 * @since  1.7.0
+	 * @since 1.7.0
 	 *
 	 * @param array $args      The query arguments.
 	 * @param int   $course_id The selected course ID.
 	 *
-	 * @return array Lesson posts or empty array if no course is selected.
+	 * @return (WP_Post|int)[] Lesson posts or empty array if no course is selected.
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
 	private function get_lessons( array $args, int $course_id ): array {
 
@@ -742,10 +758,15 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Return array of learners
 	 *
-	 * @since  1.7.0
+	 * @since 1.7.0
+	 *
 	 * @return array learners
+	 *
+	 * @param (int|mixed|string)[] $args
+	 *
+	 * @psalm-param array{number: -1|mixed, offset: 0|mixed, orderby: string, order: 'ASC'|'DESC', search?: string} $args
 	 */
-	private function get_learners( $args ) {
+	private function get_learners( array $args ) {
 
 		if ( ! empty( $args['search'] ) ) {
 			$args = array(
@@ -878,10 +899,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Output top filter form.
 	 *
-	 * @since  4.2.0
+	 * @since 4.2.0
+	 *
 	 * @access private
 	 */
-	public function output_top_filters() {
+	public function output_top_filters(): void {
 		?>
 		<form class="sensei-analysis__top-filters">
 			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 'start_date', 'end_date', 's' ] ); ?>
@@ -930,7 +952,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 *
 	 * @since 4.2.0
 	 */
-	private function output_course_select_input() {
+	private function output_course_select_input(): void {
 		$courses            = Sensei_Course::get_all_courses();
 		$selected_course_id = $this->get_course_filter_value();
 
@@ -1065,14 +1087,15 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Add the sum of days taken by each student to complete a lesson with returning lesson row.
 	 *
-	 * @since  4.2.0
+	 * @since 4.2.0
+	 *
 	 * @access private
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 *
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_days_to_complete_to_lessons_query( $clauses ) {
+	public function add_days_to_complete_to_lessons_query( $clauses ): array {
 		global $wpdb;
 
 		$clauses['fields'] .= ", (SELECT SUM( ABS( DATEDIFF( STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date )) + 1 ) as days_to_complete";
@@ -1140,12 +1163,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Add the `last_activity` field to the user query.
 	 *
-	 * @since  4.3.0
+	 * @since 4.3.0
+	 *
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
 	 */
-	public function add_last_activity_to_user_query( WP_User_Query $query ) {
+	public function add_last_activity_to_user_query( WP_User_Query $query ): void {
 		global $wpdb;
 
 		$query->query_fields .= ", (
@@ -1160,25 +1184,27 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Order query based on the custom field.
 	 *
-	 * @since  4.3.0
+	 * @since 4.3.0
+	 *
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
 	 */
-	public function add_orderby_custom_field_to_query( WP_User_Query $query ) {
+	public function add_orderby_custom_field_to_query( WP_User_Query $query ): void {
 		$query->query_orderby = 'ORDER BY ' . $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
 	}
 
 	/**
 	 * Order query based on the custom field.
 	 *
-	 * @since  4.3.0
+	 * @since 4.3.0
+	 *
 	 * @access private
 	 *
 	 * @param array  $args Arguments Old orderby arguments.
 	 * @param object $query Query.
 	 */
-	public function add_orderby_custom_field_to_non_user_query( $args, $query ) {
+	public function add_orderby_custom_field_to_non_user_query( $args, $query ): string {
 		return $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
 	}
 
@@ -1187,10 +1213,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 *
 	 * This action should be called after `Sensei_Analysis_Overview_List_Table::add_last_activity_to_user_query`.
 	 *
-	 * @since  4.2.0
+	 * @since 4.2.0
+	 *
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
+	 *
+	 * @return void
 	 */
 	public function filter_users_by_last_activity( WP_User_Query $query ) {
 		global $wpdb;
@@ -1224,14 +1253,15 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Add the sum of days taken by each student to complete a course and the number of completions for each course.
 	 *
-	 * @since  4.2.0
+	 * @since 4.2.0
+	 *
 	 * @access private
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 *
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_days_to_completion_to_courses_queries( $clauses ) {
+	public function add_days_to_completion_to_courses_queries( $clauses ): array {
 		global $wpdb;
 
 		// Get the number of days to complete a course: `days to complete = complete date - start date + 1`.

@@ -17,6 +17,8 @@ class Sensei_Twentyseventeen extends Sensei__S {
 	 * Output opening wrappers
 	 *
 	 * @since 1.9.15
+	 *
+	 * @return void
 	 */
 	public function wrapper_start() {
 		?>
@@ -32,6 +34,8 @@ class Sensei_Twentyseventeen extends Sensei__S {
 	 * Output closing wrappers
 	 *
 	 * @since 1.9.15
+	 *
+	 * @return void
 	 */
 	public function wrapper_end() {
 		?>

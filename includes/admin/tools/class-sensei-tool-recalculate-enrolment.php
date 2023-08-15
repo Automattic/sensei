@@ -20,6 +20,8 @@ class Sensei_Tool_Recalculate_Enrolment implements Sensei_Tool_Interface {
 	 * Get the ID of the tool.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'recalculate-enrolment'
 	 */
 	public function get_id() {
 		return 'recalculate-enrolment';
@@ -45,6 +47,8 @@ class Sensei_Tool_Recalculate_Enrolment implements Sensei_Tool_Interface {
 
 	/**
 	 * Run the tool.
+	 *
+	 * @return void
 	 */
 	public function process() {
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
@@ -56,7 +60,7 @@ class Sensei_Tool_Recalculate_Enrolment implements Sensei_Tool_Interface {
 	/**
 	 * Is the tool currently available?
 	 *
-	 * @return bool True if tool is available.
+	 * @return true True if tool is available.
 	 */
 	public function is_available() {
 		return true;

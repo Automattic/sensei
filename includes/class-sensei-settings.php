@@ -72,7 +72,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @param $setting
 	 * @param $new_value
 	 */
-	public function set( $setting, $new_value ) {
+	public function set( $setting, $new_value ): bool {
 
 		$settings             = $this->get_settings();
 		$settings[ $setting ] = $new_value;
@@ -819,19 +819,27 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 	/**
 	 * Get options for the learning mode templates.
+	 *
+	 * @return Sensei_Course_Theme_Template[]
+	 *
+	 * @psalm-return array<Sensei_Course_Theme_Template>
 	 */
-	private function get_learning_mode_template_options() {
+	private function get_learning_mode_template_options(): array {
 		return Sensei_Course_Theme_Template_Selection::get_templates();
 	}
 
 	/**
 	 * Get options for the duration fields.
 	 *
-	 * @since  1.0.0
-	 * @param  $include_milliseconds (default: true) Whether or not to include milliseconds between 0 and 1.
-	 * @return array Options between 0.1 and 10 seconds.
+	 * @since 1.0.0
+	 *
+	 * @param $include_milliseconds (default: true) Whether or not to include milliseconds between 0 and 1.
+	 *
+	 * @return string[] Options between 0.1 and 10 seconds.
+	 *
+	 * @psalm-return array{'0.5': string, '0.9': string, '0.8': string, '0.7': string, '0.6': string, '0.4': string, '0.3': string, '0.2': string, '0.1': string, '10.0': string, '9.5': string, '9.0': string, '8.5': string, '8.0': string, '7.5': string, '7.0': string, '6.5': string, '6.0': string, '5.5': string, '5.0': string, '4.5': string, '4.0': string, '3.5': string, '3.0': string, '2.5': string, '2.0': string, '1.5': string, '1.0': string}
 	 */
-	private function get_duration_options( $include_milliseconds = true ) {
+	private function get_duration_options( $include_milliseconds = true ): array {
 		$numbers = array( '1.0', '1.5', '2.0', '2.5', '3.0', '3.5', '4.0', '4.5', '5.0', '5.5', '6.0', '6.5', '7.0', '7.5', '8.0', '8.5', '9.0', '9.5', '10.0' );
 		$options = array();
 
@@ -855,10 +863,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Return an array of pages.
 	 *
 	 * @access private
-	 * @since  1.0.0
-	 * @return array
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string[]
+	 *
+	 * @psalm-return array<int|string, string>
 	 */
-	private function pages_array() {
+	private function pages_array(): array {
 		if ( ! is_admin() ) {
 			return [];
 		}
@@ -904,7 +916,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function flush_rewrite_rules() {
+	public static function flush_rewrite_rules(): void {
 
 		/*
 		 * Skipping nonce check because it is already done by WordPress for the Settings page.
@@ -924,10 +936,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Logs settings update from the Settings form.
 	 *
 	 * @access private
+	 *
 	 * @since 2.1.0
 	 *
 	 * @param array $old_value The old settings value.
 	 * @param array $value     The new settings value.
+	 *
+	 * @return void
 	 */
 	public function log_settings_update( $old_value, $value ) {
 		// Only process user-initiated settings updates.
@@ -1018,7 +1033,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 *
 	 * @param array $args The field arguments.
 	 */
-	public function render_learning_mode_setting( $args ) {
+	public function render_learning_mode_setting( $args ): void {
 		$options = $this->get_settings();
 		$key     = $args['key'];
 		$value   = $options[ $key ];
@@ -1053,7 +1068,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 *
 	 * @param array $args The field arguments.
 	 */
-	public function render_learning_mode_templates( $args ) {
+	public function render_learning_mode_templates( $args ): void {
 		$settings = $this->get_settings();
 		$key      = $args['key'];
 		$value    = $settings[ $key ];
@@ -1127,7 +1142,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	/**
 	 * Marks the given section as visited.
 	 */
-	public function mark_section_as_visited() {
+	public function mark_section_as_visited(): void {
 		if ( isset( $_POST['nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'sensei-mark-settings-section-visited' ) ) {
 			if ( isset( $_POST['section_id'] ) ) {
 				$section_id = sanitize_key( $_POST['section_id'] );

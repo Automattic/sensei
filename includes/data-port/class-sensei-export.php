@@ -53,7 +53,7 @@ class Sensei_Export {
 	 *
 	 * @deprecated 4.0.0
 	 */
-	public function admin_menu() {
+	public function admin_menu(): void {
 		_deprecated_function( __METHOD__, '4.0.0' );
 
 		if ( current_user_can( 'manage_sensei' ) ) {
@@ -71,7 +71,7 @@ class Sensei_Export {
 	/**
 	 * Render app container for export page.
 	 */
-	public function export_page() {
+	public function export_page(): void {
 
 		?>
 		<div id="sensei-export-page-wrapper" class="wrap">

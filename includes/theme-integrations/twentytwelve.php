@@ -18,7 +18,7 @@ class Sensei_Twentytwelve {
 	 *
 	 * @since 1.9.0
 	 */
-	public function wrapper_start() {
+	public function wrapper_start(): void {
 		?>
 
 		<div id="primary" class="site-content">
@@ -32,7 +32,7 @@ class Sensei_Twentytwelve {
 	 *
 	 * @since 1.9.0
 	 */
-	public function wrapper_end() {
+	public function wrapper_end(): void {
 		?>
 
 			</div>

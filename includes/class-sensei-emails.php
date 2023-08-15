@@ -57,7 +57,7 @@ class Sensei_Emails {
 	/**
 	 * Init email classes
 	 */
-	function init() {
+	function init(): void {
 
 		$this->emails['learner-graded-quiz']      = new Sensei_Email_Learner_Graded_Quiz();
 		$this->emails['learner-completed-course'] = new Sensei_Email_Learner_Completed_Course();
@@ -197,7 +197,12 @@ class Sensei_Emails {
 		return apply_filters( 'sensei_email', $html, $email_template );
 	}
 
-	function load_template( $template = '' ) {
+	/**
+	 * @psalm-param ''|'footer'|'header' $template
+	 *
+	 * @return false|null|string
+	 */
+	function load_template( string $template = '' ) {
 		global  $email_template;
 
 		if ( ! $template ) {
@@ -372,7 +377,7 @@ class Sensei_Emails {
 	 * @param int    $passmark
 	 * @param string $quiz_grade_type
 	 */
-	function teacher_quiz_submitted( $learner_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0, $quiz_grade_type = 'manual' ) {
+	function teacher_quiz_submitted( $learner_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0, $quiz_grade_type = 'manual' ): void {
 
 		$email_type = 'teacher-quiz-submitted';
 		$send       = false;

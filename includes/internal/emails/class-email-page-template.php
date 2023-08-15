@@ -71,7 +71,7 @@ class Email_Page_Template {
 	 * @param string            $id          The template id.
 	 * @param string            $template_type     The template type "wp_template" or "wp_template_part".
 	 *
-	 * @return WP_Block_Template The original or the email template;
+	 * @return WP_Block_Template|\WP_Block_Template|null The original or the email template;
 	 */
 	public function get_template( $template, $id, $template_type ) {
 		if ( 'wp_template' !== $template_type || ! $id || 0 !== strpos( $id, self::THEME ) ) {
@@ -96,7 +96,7 @@ class Email_Page_Template {
 	 * @param string            $id          The template id.
 	 * @param string            $template_type     The template type "wp_template" or "wp_template_part".
 	 *
-	 * @return WP_Block_Template The original or the email template;
+	 * @return WP_Block_Template|\WP_Block_Template|null The original or the email template;
 	 */
 	public function get_from_file( $template, $id, $template_type ) {
 		if ( 'wp_template' !== $template_type || ! $id || 0 !== strpos( $id, self::THEME ) ) {

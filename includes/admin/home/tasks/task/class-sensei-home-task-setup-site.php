@@ -21,6 +21,8 @@ class Sensei_Home_Task_Setup_Site implements Sensei_Home_Task {
 	 * The ID for the task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'setup-site'
 	 */
 	public static function get_id(): string {
 		return 'setup-site';
@@ -30,6 +32,8 @@ class Sensei_Home_Task_Setup_Site implements Sensei_Home_Task {
 	 * Number used to sort in frontend.
 	 *
 	 * @return int
+	 *
+	 * @psalm-return 100
 	 */
 	public function get_priority(): int {
 		return 100;
@@ -56,7 +60,7 @@ class Sensei_Home_Task_Setup_Site implements Sensei_Home_Task {
 	/**
 	 * Whether the task is completed or not.
 	 *
-	 * @return bool
+	 * @return true
 	 */
 	public function is_completed(): bool {
 		return true;

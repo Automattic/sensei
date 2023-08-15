@@ -66,7 +66,9 @@ class Sensei_Home_Notices_Provider {
 	 *
 	 * @param int|null $max_age The max age (seconds) of the source data.
 	 *
-	 * @return array
+	 * @return array[]
+	 *
+	 * @psalm-return array<array>
 	 */
 	public function get( $max_age = HOUR_IN_SECONDS ): array {
 		$notices = isset( $this->admin_notices ) ? $this->admin_notices->get_notices_to_display( $this->screen_id, $max_age ) : $this->local_only( $max_age );
@@ -93,9 +95,12 @@ class Sensei_Home_Notices_Provider {
 	 * Format a notice item.
 	 *
 	 * @param array $notice The unformatted notice.
-	 * @return array
+	 *
+	 * @return (array|bool|mixed|null|string)[]
+	 *
+	 * @psalm-return array{level: 'info'|mixed, heading: mixed|null, message: mixed, info_link: mixed|null, actions: array<empty, empty>|mixed, dismissible: bool|mixed, parent_id: mixed|null}
 	 */
-	private function format_item( $notice ) {
+	private function format_item( $notice ): array {
 		return [
 			'level'       => $notice['level'] ?? 'info',
 			'heading'     => $notice['heading'] ?? null,

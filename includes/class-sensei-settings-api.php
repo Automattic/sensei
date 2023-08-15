@@ -58,9 +58,10 @@ class Sensei_Settings_API {
 	 * Setup the settings screen and necessary functions.
 	 *
 	 * @access public
-	 * @since  1.0.0
+	 *
+	 * @since 1.0.0
 	 */
-	public function register_hook_listener() {
+	public function register_hook_listener(): void {
 		add_action( 'admin_init', array( $this, 'settings_fields' ) );
 		add_action( 'init', array( $this, 'general_init' ), 5 );
 	}
@@ -84,11 +85,11 @@ class Sensei_Settings_API {
 	/**
 	 * Render content drip upgrade settings.
 	 *
-	 * @since   4.1.0
+	 * @since 4.1.0
 	 *
-	 * @access  private
+	 * @access private
 	 */
-	private function render_content_drip_settings() {
+	private function render_content_drip_settings(): void {
 		$image_path_desktop = Sensei()->assets->get_image( 'content-drip-promo-desktop.png' );
 		$image_path_mobile  = Sensei()->assets->get_image( 'content-drip-promo-mobile.png' );
 		$header             = __( 'Get Sensei Pro', 'sensei-lms' );
@@ -101,11 +102,11 @@ class Sensei_Settings_API {
 	/**
 	 * Render woo commerce upgrade settings.
 	 *
-	 * @since   4.1.0
+	 * @since 4.1.0
 	 *
-	 * @access  private
+	 * @access private
 	 */
-	private function render_woocommerce_upgrade_settings() {
+	private function render_woocommerce_upgrade_settings(): void {
 		$image_path_desktop = Sensei()->assets->get_image( 'purchase-sensei-pro-desktop.png' );
 		$image_path_mobile  = Sensei()->assets->get_image( 'purchase-sensei-pro-mobile.png' );
 		$header             = __( 'Get Sensei Pro', 'sensei-lms' );
@@ -118,9 +119,9 @@ class Sensei_Settings_API {
 	/**
 	 * Render promo banner for sensei lms settings.
 	 *
-	 * @since   4.1.0
+	 * @since 4.1.0
 	 *
-	 * @access  private
+	 * @access private
 	 *
 	 * @param string $image_path_desktop Path to image for desktop view.
 	 * @param string $image_path_mobile Path to image for mobile view.
@@ -129,7 +130,7 @@ class Sensei_Settings_API {
 	 * @param string $url Redirect url.
 	 * @param string $button_text Button text in banner.
 	 */
-	private function render_promo_banner( $image_path_desktop, $image_path_mobile, $header, $text, $url, $button_text ) {
+	private function render_promo_banner( $image_path_desktop, $image_path_mobile, $header, $text, $url, $button_text ): void {
 		?>
 		<div id="sensei-promo-banner" class="sensei-promo-banner">
 			<div class="sensei-promo-banner__background sensei-promo-banner__background-large sensei-promo-banner__background-medium">
@@ -312,11 +313,16 @@ class Sensei_Settings_API {
 	 * Determine the method to use for outputting a field, validating a field or checking a field.
 	 *
 	 * @access protected
-	 * @since  1.0.0
-	 * @param  array $data
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $data
+	 *
 	 * @return callable,  array or string
+	 *
+	 * @psalm-param 'check'|'form'|'validate' $type
 	 */
-	protected function determine_method( $data, $type = 'form' ) {
+	protected function determine_method( $data, string $type = 'form' ) {
 		$method = '';
 
 		if ( ! in_array( $type, array( 'form', 'validate', 'check' ) ) ) {
@@ -468,12 +474,13 @@ class Sensei_Settings_API {
 	/**
 	 * Render additional section elements.
 	 *
-	 * @since  4.1.0
+	 * @since 4.1.0
 	 *
 	 * @access private
+	 *
 	 * @param string $section_id Section id.
 	 */
-	private function render_additional_section_elements( $section_id ) {
+	private function render_additional_section_elements( $section_id ): void {
 		/**
 		 * Filters the woocommerce promo settings section.
 		 *
@@ -918,10 +925,12 @@ class Sensei_Settings_API {
 	 * Generate button field.
 	 *
 	 * @access public
-	 * @since  1.9.0
-	 * @param  array $args
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param array $args
 	 */
-	public function form_field_button( $args ) {
+	public function form_field_button( $args ): void {
 		if ( isset( $args['data']['target'] ) && isset( $args['data']['label'] ) ) {
 			printf( '<a href="%s" class="button button-secondary">%s</a> ', esc_url( $args['data']['target'] ), esc_html( $args['data']['label'] ) );
 
@@ -1022,9 +1031,14 @@ class Sensei_Settings_API {
 	 * Validate checkbox fields.
 	 *
 	 * @access public
-	 * @since  1.0.0
-	 * @param  string $input
-	 * @return string
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $input
+	 *
+	 * @return bool|int
+	 *
+	 * @psalm-return 0|bool
 	 */
 	public function validate_field_checkbox( $input ) {
 		if ( ! isset( $input ) ) {
@@ -1038,11 +1052,16 @@ class Sensei_Settings_API {
 	 * Validate multicheck fields.
 	 *
 	 * @access public
-	 * @since  1.0.0
-	 * @param  string $input
-	 * @return string
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $input
+	 *
+	 * @return string[]
+	 *
+	 * @psalm-return array{0: string}
 	 */
-	public function validate_field_multicheck( $input ) {
+	public function validate_field_multicheck( $input ): array {
 		$input = (array) $input;
 
 		$input = array_map( 'esc_attr', $input );
@@ -1079,11 +1098,13 @@ class Sensei_Settings_API {
 	/**
 	 * Check and validate the input from text fields.
 	 *
-	 * @param  string $input String of the value to be validated.
-	 * @since  1.1.0
-	 * @return boolean Is the value valid?
+	 * @param string $input String of the value to be validated.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return true Is the value valid?
 	 */
-	public function check_field_text( $input ) {
+	public function check_field_text( $input ): bool {
 		$is_valid = true;
 
 		return $is_valid;
@@ -1131,10 +1152,14 @@ class Sensei_Settings_API {
 	 * Return an array of field types expecting an array value returned.
 	 *
 	 * @access protected
-	 * @since  1.0.0
-	 * @return array
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string[]
+	 *
+	 * @psalm-return array{0: 'multicheck'}
 	 */
-	protected function get_array_field_types() {
+	protected function get_array_field_types(): array {
 		return array( 'multicheck' );
 	}
 

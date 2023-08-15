@@ -42,7 +42,9 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	 *
 	 * @param array $filters Filters to apply to the data.
 	 *
-	 * @return array
+	 * @return (WP_Post|int)[]
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
 	public function get_items( array $filters ): array {
 		if ( ! $filters['course_id'] ) {
@@ -90,7 +92,8 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	/**
 	 * Add the sum of days taken by each student to complete a lesson with returning lesson row.
 	 *
-	 * @since  4.3.0
+	 * @since 4.3.0
+	 *
 	 * @access private
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
@@ -114,7 +117,8 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	/**
 	 * Add the `last_activity` field to the query.
 	 *
-	 * @since  4.4.1
+	 * @since 4.4.1
+	 *
 	 * @access private
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.

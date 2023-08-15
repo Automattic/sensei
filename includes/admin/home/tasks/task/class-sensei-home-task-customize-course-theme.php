@@ -18,6 +18,8 @@ class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	 * The ID for the task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'customize-course-theme'
 	 */
 	public static function get_id(): string {
 		return 'customize-course-theme';
@@ -27,6 +29,8 @@ class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	 * Number used to sort in frontend.
 	 *
 	 * @return int
+	 *
+	 * @psalm-return 400
 	 */
 	public function get_priority(): int {
 		return 400;

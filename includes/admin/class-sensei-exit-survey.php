@@ -30,10 +30,11 @@ class Sensei_Exit_Survey {
 	/**
 	 * Enqueues admin scripts when needed on different screens.
 	 *
-	 * @since  2.0.0
+	 * @since 2.0.0
+	 *
 	 * @access private
 	 */
-	public function enqueue_admin_assets() {
+	public function enqueue_admin_assets(): void {
 		$screen = get_current_screen();
 		if ( in_array( $screen->id, [ 'plugins', 'plugins-network' ], true ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-exit-survey', 'admin/exit-survey/index.js', [], true );
@@ -52,7 +53,7 @@ class Sensei_Exit_Survey {
 	/**
 	 * Save feedback from exit survey AJAX request.
 	 */
-	public function save_exit_survey() {
+	public function save_exit_survey(): void {
 		check_ajax_referer( 'sensei_exit_survey' );
 
 		$feedback = [

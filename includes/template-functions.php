@@ -81,7 +81,7 @@ function sensei_start_course_form( $course_id ) {
  * @param array $widget_args (default: array())
  * @return array
  */
-function sensei_recent_comments_widget_filter( $widget_args = array() ) {
+function sensei_recent_comments_widget_filter( $widget_args = array() ): array {
 	if ( ! isset( $widget_args['post_type'] ) ) {
 		$widget_args['post_type'] = array( 'post', 'page' );
 	}
@@ -120,31 +120,31 @@ add_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
 /**
  * sensei_complete_lesson_button description
  * since 1.0.3
- *
- * @return html
  */
-function sensei_complete_lesson_button() {
+function sensei_complete_lesson_button(): void {
 	do_action( 'sensei_complete_lesson_button' );
 }
 
 /**
  * sensei_reset_lesson_button description
  * since 1.0.3
- *
- * @return html
  */
-function sensei_reset_lesson_button() {
+function sensei_reset_lesson_button(): void {
 	do_action( 'sensei_reset_lesson_button' );
 }
 
 /**
  * Returns all of the modules and lessons in a course, in order.
  *
- * @since  1.9.20
- * @param  string|bool $course_id Course ID
+ * @since 1.9.20
+ *
+ * @param string|bool $course_id Course ID
+ *
  * @return array Course modules and lessons
+ *
+ * @psalm-return list<mixed>
  */
-function sensei_get_modules_and_lessons( $course_id ) {
+function sensei_get_modules_and_lessons( $course_id ): array {
 	$lesson_ids          = array();
 	$modules_and_lessons = array();
 	$course_modules      = Sensei()->modules->get_course_modules( $course_id );
@@ -182,12 +182,16 @@ function sensei_get_modules_and_lessons( $course_id ) {
 /**
  * Returns the lessons in a course that are not associated with a module.
  *
- * @since  1.9.20
- * @param  string|bool $course_id Course ID
- * @param  array       $lesson_ids Lesson IDs to exclude
- * @return array Other lessons not part of a module
+ * @since 1.9.20
+ *
+ * @param string|bool $course_id Course ID
+ * @param array       $lesson_ids Lesson IDs to exclude
+ *
+ * @return (WP_Post|int)[] Other lessons not part of a module
+ *
+ * @psalm-return array<WP_Post|int>
  */
-function sensei_get_other_lessons( $course_id, $lesson_ids ) {
+function sensei_get_other_lessons( $course_id, $lesson_ids ): array {
 
 	global $wp_query;
 	$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
@@ -215,10 +219,12 @@ function sensei_get_other_lessons( $course_id, $lesson_ids ) {
 /**
  * Returns the URL for a navigation link.
  *
- * @since  1.9.20
- * @param  string|bool     $course_id Course ID
- * @param  WP_Post|WP_Term $item      WP_Post (lesson/quiz) or WP_Term (module)
- * @return string URL or empty string
+ * @since 1.9.20
+ *
+ * @param string|bool     $course_id Course ID
+ * @param WP_Post|WP_Term $item      WP_Post (lesson/quiz) or WP_Term (module)
+ *
+ * @return false|string URL or empty string
  */
 function sensei_get_navigation_url( $course_id, $item ) {
 	if ( ! $item || empty( $course_id ) ) {
@@ -258,11 +264,15 @@ function sensei_get_navigation_link_text( $item ) {
 /**
  * Returns navigation links for the modules and lessons in a course.
  *
- * @since  1.0.9
- * @param  integer $lesson_id Lesson ID.
- * @return array Multi-dimensional array of previous and next links.
+ * @since 1.0.9
+ *
+ * @param integer $lesson_id Lesson ID.
+ *
+ * @return string[][] Multi-dimensional array of previous and next links.
+ *
+ * @psalm-return array{previous?: array{url: string, name: string}, next?: array{url: string, name: string}}
  */
-function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
+function sensei_get_prev_next_lessons( $lesson_id = 0 ): array {
 	// For modules, $lesson_id is the first lesson in the module.
 	$links               = array();
 	$course_id           = Sensei()->lesson->get_course_id( $lesson_id );
@@ -372,7 +382,7 @@ function sensei_have_modules() {
  *
  * @since 1.9.0
  */
-function sensei_setup_module() {
+function sensei_setup_module(): void {
 
 	global  $sensei_modules_loop, $wp_query;
 
@@ -461,9 +471,8 @@ function sensei_module_has_lessons() {
  * @since 1.9.0
  *
  * @uses sensei_the_module_title
- * @return string
  */
-function sensei_the_module_title_attribute() {
+function sensei_the_module_title_attribute(): void {
 
 	echo esc_attr( sensei_get_the_module_title() );
 
@@ -473,10 +482,8 @@ function sensei_the_module_title_attribute() {
  * Returns a permalink to the module currently loaded within the Single Course module loop.
  *
  * This function should only be used with the Sensei modules loop.
- *
- * @return string
  */
-function sensei_the_module_permalink() {
+function sensei_the_module_permalink(): void {
 
 	global $sensei_modules_loop;
 	$course_id      = $sensei_modules_loop['course_id'];
@@ -532,10 +539,10 @@ function sensei_get_the_module_title() {
  * within the Sensei module loop.
  *
  * @since 1.9.0
+ *
  * @uses sensei_get_the_module_title
- * @return string
  */
-function sensei_the_module_title() {
+function sensei_the_module_title(): void {
 
 	echo esc_html( sensei_get_the_module_title() );
 
@@ -603,7 +610,7 @@ function sensei_get_the_module_status() {
  *
  * @since 1.9.0
  */
-function sensei_the_module_status() {
+function sensei_the_module_status(): void {
 
 	echo wp_kses_post( sensei_get_the_module_status() );
 
@@ -639,7 +646,7 @@ function sensei_get_the_module_id() {
  *
  * @since 1.9.7
  */
-function sensei_the_module_id() {
+function sensei_the_module_id(): void {
 
 	echo esc_html( sensei_get_the_module_id() );
 
@@ -700,7 +707,7 @@ function sensei_quiz_has_questions() {
  *
  * @since 1.9.0
  */
-function sensei_setup_the_question() {
+function sensei_setup_the_question(): void {
 
 	global $sensei_question_loop;
 
@@ -715,7 +722,7 @@ function sensei_setup_the_question() {
  *
  * This function gets the type and loads the template that will handle it.
  */
-function sensei_the_question_content() {
+function sensei_the_question_content(): void {
 
 	global $sensei_question_loop;
 
@@ -731,7 +738,7 @@ function sensei_the_question_content() {
  *
  * @since 1.9.0
  */
-function sensei_the_question_class() {
+function sensei_the_question_class(): void {
 
 	global $sensei_question_loop;
 
@@ -818,6 +825,8 @@ function sensei_get_the_question_number() {
  * Ouput the single lesson meta
  *
  * The function should only be called on the single lesson
+ *
+ * @return void
  */
 function sensei_the_single_lesson_meta() {
 
@@ -871,6 +880,8 @@ function sensei_the_single_lesson_meta() {
  * @uses get_header
  *
  * @since 1.9.0
+ *
+ * @return void
  */
 function get_sensei_header() {
 
@@ -908,6 +919,8 @@ function get_sensei_header() {
  * @uses get_footer
  *
  * @since 1.9.0
+ *
+ * @return void
  */
 function get_sensei_footer() {
 
@@ -952,7 +965,7 @@ function get_sensei_footer() {
  *
  * @since 1.9.0
  */
-function the_no_permissions_title() {
+function the_no_permissions_title(): void {
 
 	/**
 	 * Filter the no permissions title just before it is echo'd on the
@@ -970,7 +983,7 @@ function the_no_permissions_title() {
  *
  * @since 1.9.0
  */
-function the_no_permissions_message( $post_id ) {
+function the_no_permissions_message( $post_id ): void {
 
 	/**
 	 * Filter the no permissions message just before it is echo'd on the
@@ -986,9 +999,10 @@ function the_no_permissions_message( $post_id ) {
  * Output the sensei excerpt
  *
  * @since 1.9.0
+ *
  * @deprecated 3.2.0
  */
-function sensei_the_excerpt( $post_id ) {
+function sensei_the_excerpt( $post_id ): void {
 
 	_deprecated_function( __FUNCTION__, '3.2.0' );
 
@@ -1018,7 +1032,7 @@ function sensei_get_current_page_url() {
  *
  * @since 1.9.0
  */
-function sensei_the_my_courses_content() {
+function sensei_the_my_courses_content(): void {
 
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
 	echo Sensei()->course->load_user_courses_content( wp_get_current_user() );
@@ -1034,7 +1048,7 @@ function sensei_the_my_courses_content() {
  *
  * @since 1.9.0
  */
-function sensei_load_template( $template_name ) {
+function sensei_load_template( $template_name ): void {
 
 	Sensei_Templates::get_template( $template_name );
 
@@ -1046,9 +1060,10 @@ function sensei_load_template( $template_name ) {
  *
  * @param string $slug the first part to the template file name
  * @param string $name the name of the template.
+ *
  * @since 1.9.0
  */
-function sensei_load_template_part( $slug, $name ) {
+function sensei_load_template_part( $slug, $name ): void {
 
 	Sensei_Templates::get_part( $slug, $name );
 
@@ -1064,8 +1079,12 @@ function sensei_load_template_part( $slug, $name ) {
  * be ignored.
  *
  * @since 1.9.0
+ *
  * @access public
+ *
  * @param string $lesson_id
+ *
+ * @return void
  */
 function sensei_the_lesson_excerpt( $lesson_id = '' ) {
 
@@ -1087,6 +1106,8 @@ function sensei_the_lesson_excerpt( $lesson_id = '' ) {
  * The the course result lessons template
  *
  * @since 1.9.0
+ *
+ * @return void
  */
 function sensei_the_course_results_lessons() {
 	// load backwards compatible template name if it exists in the users theme
@@ -1106,9 +1127,10 @@ function sensei_the_course_results_lessons() {
  * the course archive.
  *
  * @uses Sensei_Course::get_loop_number_of_columns
+ *
  * @since 1.9.0
  */
-function sensei_courses_per_row() {
+function sensei_courses_per_row(): void {
 
 	echo esc_html( Sensei_Course::get_loop_number_of_columns() );
 
@@ -1118,11 +1140,12 @@ function sensei_courses_per_row() {
  * Wrapper function for Sensei_Templates::get_template( $template_name, $args, $path )
  *
  * @since 1.9.0
+ *
  * @param $template_name
  * @param $args
  * @param $path
  */
-function sensei_get_template( $template_name, $args, $path ) {
+function sensei_get_template( $template_name, $args, $path ): void {
 
 	Sensei_Templates::get_template( $template_name, $args, $path );
 
@@ -1136,8 +1159,10 @@ function sensei_get_template( $template_name, $args, $path ) {
  * @since 1.9.0
  *
  * @return string $status_class
+ *
+ * @psalm-return ''|'completed'
  */
-function get_the_lesson_status_class() {
+function get_the_lesson_status_class(): string {
 
 	$status_class     = '';
 	$lesson_completed = Sensei_Utils::user_completed_lesson( get_the_ID(), get_current_user_id() );
@@ -1156,7 +1181,7 @@ function get_the_lesson_status_class() {
  *
  * @since 1.9.0
  */
-function sensei_the_lesson_status_class() {
+function sensei_the_lesson_status_class(): void {
 
 	echo esc_html( get_the_lesson_status_class() );
 }
@@ -1183,6 +1208,6 @@ function sensei_get_the_module_description() {
 /**
  * Print out the current module Description
  */
-function sensei_the_module_description() {
+function sensei_the_module_description(): void {
 	echo esc_html( sensei_get_the_module_description() );
 }

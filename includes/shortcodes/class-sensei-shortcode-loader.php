@@ -59,7 +59,7 @@ class Sensei_Shortcode_Loader {
 	 * NOTE: When adding a new shortcode here be sure to load your shortcodes class
 	 * in class-sensei-autoloader class_file_map function
 	 */
-	public function setup_shortcode_class_map() {
+	public function setup_shortcode_class_map(): void {
 
 		/**
 		 * Filter the array of shortcodes and their handler classes.
@@ -94,6 +94,8 @@ class Sensei_Shortcode_Loader {
 	 * This function adds shortcodes to WP that links to other functionality.
 	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public function initialize_shortcodes() {
 

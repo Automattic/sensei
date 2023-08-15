@@ -20,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	/**
 	 * Initialize hooks.
+	 *
+	 * @return void
 	 */
 	public function init() {
 		_deprecated_function( __METHOD__, '4.6.4' );

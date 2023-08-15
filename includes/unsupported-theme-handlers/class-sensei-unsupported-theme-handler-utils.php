@@ -17,7 +17,7 @@ class Sensei_Unsupported_Theme_Handler_Utils {
 	/**
 	 * Turn off pagination in the theme.
 	 */
-	public static function disable_theme_pagination() {
+	public static function disable_theme_pagination(): void {
 		add_filter( 'previous_post_link', '__return_false' );
 		add_filter( 'next_post_link', '__return_false' );
 	}
@@ -25,7 +25,7 @@ class Sensei_Unsupported_Theme_Handler_Utils {
 	/**
 	 * Disable rendering of comments.
 	 */
-	public static function disable_comments() {
+	public static function disable_comments(): void {
 		add_filter( 'comments_template_query_args', array( 'Sensei_Unsupported_Theme_Handler_Utils', 'filter_comment_args_load_none' ), 100 );
 		add_filter( 'comments_open', '__return_false', 100 );
 		add_filter( 'get_comments_number', '__return_false', 100 );
@@ -34,7 +34,7 @@ class Sensei_Unsupported_Theme_Handler_Utils {
 	/**
 	 * If we have previously disabled comments, re-enable them.
 	 */
-	public static function reenable_comments() {
+	public static function reenable_comments(): void {
 		remove_filter( 'comments_template_query_args', array( 'Sensei_Unsupported_Theme_Handler_Utils', 'filter_comment_args_load_none' ), 100 );
 		remove_filter( 'comments_open', '__return_false', 100 );
 		remove_filter( 'get_comments_number', '__return_false', 100 );
@@ -48,7 +48,7 @@ class Sensei_Unsupported_Theme_Handler_Utils {
 	 *
 	 * @return array
 	 */
-	public static function filter_comment_args_load_none( $comment_args ) {
+	public static function filter_comment_args_load_none( $comment_args ): array {
 		$comment_args['comment__in'] = array( 0 );
 		return $comment_args;
 	}

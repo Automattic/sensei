@@ -106,6 +106,8 @@ abstract class Sensei_Export_Task
 	 * Run export task.
 	 *
 	 * @throws Exception Caught exception when empty file is passed in tests.
+	 *
+	 * @return void
 	 */
 	public function run() {
 		$posts = $this->query->posts;
@@ -240,7 +242,9 @@ abstract class Sensei_Export_Task
 	 * @type integer $total Number of total actions.
 	 * }
 	 *
-	 * @return array
+	 * @return int[]
+	 *
+	 * @psalm-return array{total: int, completed: int}
 	 */
 	public function get_completion_ratio() {
 		return [
@@ -254,7 +258,7 @@ abstract class Sensei_Export_Task
 	 *
 	 * @param string $tmp_file
 	 */
-	public function add_file_to_job( $tmp_file ) {
+	public function add_file_to_job( $tmp_file ): void {
 		$type     = $this->get_content_type();
 		$date     = gmdate( 'Y-m-d' );
 		$filename = sanitize_file_name( get_bloginfo( 'name' ) . '-' . ucwords( $type ) . 's-' . $date . '.csv' );

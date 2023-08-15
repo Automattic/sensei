@@ -39,7 +39,7 @@ class Course_Content {
 	 *
 	 * @return string
 	 */
-	public function render_content_block() {
+	public function render_content_block(): string {
 
 		// Make sure post is set up correctly.
 		if ( ! in_the_loop() && have_posts() ) {

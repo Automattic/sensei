@@ -41,7 +41,9 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 *
 	 * @param array $filters Filters to apply to the data.
 	 *
-	 * @return array
+	 * @return (WP_Post|int)[]
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
 	public function get_items( array $filters ): array {
 		$this->date_from = $filters['last_activity_date_from'] ?? null;
@@ -86,20 +88,22 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	/**
 	 * Order query based on the custom field.
 	 *
-	 * @since  4.3.0
+	 * @since 4.3.0
+	 *
 	 * @access private
 	 *
 	 * @param array  $args Arguments Old orderby arguments.
 	 * @param object $query Query.
 	 */
-	public function add_orderby_custom_field_to_query( $args, $query ) {
+	public function add_orderby_custom_field_to_query( $args, $query ): string {
 		return $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
 	}
 
 	/**
 	 * Add last activity date for each course.
 	 *
-	 * @since  4.4.1
+	 * @since 4.4.1
+	 *
 	 * @access private
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.

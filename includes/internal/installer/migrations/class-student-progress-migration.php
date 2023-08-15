@@ -77,6 +77,8 @@ class Student_Progress_Migration implements Migration {
 	 * @since $$next-version$$
 	 *
 	 * @return string
+	 *
+	 * @psalm-return '1.0.0'
 	 */
 	public function target_version(): string {
 		return '1.0.0';
@@ -116,7 +118,10 @@ class Student_Progress_Migration implements Migration {
 	 *
 	 * @param int  $after_comment_id The last comment ID that was migrated.
 	 * @param bool $dry_run Whether to run the migration in dry-run mode.
-	 * @return array The comments and comment meta to migrate.
+	 *
+	 * @return (array[]|false|mixed)[] The comments and comment meta to migrate.
+	 *
+	 * @psalm-return array{0: mixed, 1: array<array>, 2: false|mixed}
 	 */
 	private function get_comments_and_meta( int $after_comment_id, bool $dry_run ): array {
 		global $wpdb;
@@ -469,11 +474,7 @@ class Student_Progress_Migration implements Migration {
 	 *
 	 * @param array $batch Data to generate queries for. Will be 'data' array returned by `$this->fetch_data_for_migration_for_ids()` method.
 	 *
-	 * @return string Generated queries for insertion for this batch, would be of the form:
-	 * INSERT IGNORE INTO $table_name ($columns) values
-	 *  ($value for row 1)
-	 *  ($value for row 2)
-	 * ...
+	 * @return string Generated queries for insertion for this batch, would be of the form: INSERT IGNORE INTO $table_name ($columns) values ($value for row 1) ($value for row 2) ...
 	 */
 	private function generate_insert_sql_for_batch( array $batch ): string {
 		global $wpdb;
@@ -487,7 +488,8 @@ class Student_Progress_Migration implements Migration {
 	 * Generate values clauses to be used in INSERT statements.
 	 *
 	 * @param array $batch Actual data to migrate.
-	 * @return strng SQL clause for values.
+	 *
+	 * @return string SQL clause for values.
 	 */
 	private function generate_column_clauses( array $batch ): string {
 		global $wpdb;

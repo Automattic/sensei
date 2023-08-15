@@ -44,7 +44,7 @@ abstract class Sensei_Course_Enrolment_Stored_Status_Provider implements Sensei_
 	 * @param int  $course_id   Course post ID.
 	 * @param bool $is_enrolled Enrolment state to set for the user and course.
 	 */
-	final protected function set_enrolment_status( $user_id, $course_id, $is_enrolled ) {
+	final protected function set_enrolment_status( $user_id, $course_id, $is_enrolled ): void {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
 
@@ -58,7 +58,7 @@ abstract class Sensei_Course_Enrolment_Stored_Status_Provider implements Sensei_
 	 * @param int $user_id     User ID.
 	 * @param int $course_id   Course post ID.
 	 */
-	final protected function clear_enrolment_status( $user_id, $course_id ) {
+	final protected function clear_enrolment_status( $user_id, $course_id ): void {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
 

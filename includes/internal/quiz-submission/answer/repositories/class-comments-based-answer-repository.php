@@ -55,6 +55,8 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @param int $submission_id The submission ID.
 	 *
 	 * @return Answer[] An array of answers.
+	 *
+	 * @psalm-return list<Answer>
 	 */
 	public function get_all( int $submission_id ): array {
 		$answers    = [];

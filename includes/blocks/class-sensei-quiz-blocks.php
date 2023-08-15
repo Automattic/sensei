@@ -25,6 +25,8 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 	 * Enqueue editor assets.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
 		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
@@ -60,12 +62,16 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 	 * Enqueue frontend and editor assets.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function enqueue_block_assets() {
 	}
 
 	/**
 	 * Initializes quiz blocks.
+	 *
+	 * @return void
 	 */
 	public function initialize_blocks() {
 		if ( is_admin() && ! Sensei()->quiz->is_block_based_editor_enabled() ) {

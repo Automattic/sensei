@@ -97,6 +97,8 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 * @param int $submission_id The submission ID.
 	 *
 	 * @return Grade[] An array of grades.
+	 *
+	 * @psalm-return list<Grade>
 	 */
 	public function get_all( int $submission_id ): array {
 		$answer_ids = $this->get_answer_ids_by_submission_id( $submission_id );

@@ -21,7 +21,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	 *
 	 * @param string $type The report type.
 	 *
-	 * @return Sensei_List_Table
+	 * @return Sensei_Reports_Overview_List_Table_Courses|Sensei_Reports_Overview_List_Table_Lessons|Sensei_Reports_Overview_List_Table_Students
 	 *
 	 * @throws InvalidArgumentException If the report type is not supported.
 	 */

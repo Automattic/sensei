@@ -42,6 +42,8 @@ class Sensei_Unsupported_Theme_Handler_Teacher_Archive
 	 * Adapted from WooCommerce and bbPress.
 	 *
 	 * @since 1.12.0
+	 *
+	 * @return void
 	 */
 	public function handle_request() {
 		$this->author = get_user_by( 'id', get_query_var( 'author' ) );
@@ -80,6 +82,8 @@ class Sensei_Unsupported_Theme_Handler_Teacher_Archive
 	 * @param WP_Query $wp_query
 	 * @param object   $object_to_copy
 	 * @param array    $post_params
+	 *
+	 * @return void
 	 */
 	protected function prepare_wp_query( $wp_query, $object_to_copy, $post_params ) {
 		$wp_query->queried_object    = $this->author;

@@ -47,7 +47,7 @@ class Sensei_Customizer {
 	 *
 	 * @param WP_Customize_Manager $wp_customize
 	 */
-	public function add_customizer_settings( WP_Customize_Manager $wp_customize ) {
+	public function add_customizer_settings( WP_Customize_Manager $wp_customize ): void {
 
 		$wp_customize->add_section(
 			'sensei-course-theme',
@@ -92,14 +92,14 @@ class Sensei_Customizer {
 	 *
 	 * @hooked customize_preview_init
 	 */
-	public function enqueue_customizer_helper() {
+	public function enqueue_customizer_helper(): void {
 		add_action( 'wp_print_footer_scripts', [ $this, 'output_customizer_helper' ] );
 	}
 
 	/**
 	 * Output custom settings as CSS variables.
 	 */
-	public function output_custom_settings() {
+	public function output_custom_settings(): void {
 
 		$css = '';
 
@@ -122,7 +122,7 @@ class Sensei_Customizer {
 	/**
 	 * Helper script to instantly update the CSS variables when previewing customizer settings.
 	 */
-	public function output_customizer_helper() {
+	public function output_customizer_helper(): void {
 
 		?>
 		<script type="text/javascript">

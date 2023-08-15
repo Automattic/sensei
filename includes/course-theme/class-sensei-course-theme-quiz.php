@@ -42,6 +42,8 @@ class Sensei_Course_Theme_Quiz {
 
 	/**
 	 * Initializes the class.
+	 *
+	 * @return void
 	 */
 	public function init() {
 		if ( 'quiz' !== get_post_type() ) {
@@ -55,6 +57,8 @@ class Sensei_Course_Theme_Quiz {
 	 * Renders the block.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	private function maybe_add_quiz_results_notice() {
 		$lesson_id = Sensei_Utils::get_current_lesson();
@@ -117,7 +121,7 @@ class Sensei_Course_Theme_Quiz {
 	/**
 	 * Renders the reset quiz button.
 	 */
-	private static function render_reset_quiz() {
+	private static function render_reset_quiz(): string {
 		$nonce     = wp_nonce_field( 'woothemes_sensei_reset_quiz_nonce', 'woothemes_sensei_reset_quiz_nonce', false, false );
 		$permalink = esc_url( get_permalink() );
 		$text      = __( 'Restart Quiz', 'sensei-lms' );
@@ -136,7 +140,7 @@ class Sensei_Course_Theme_Quiz {
 	/**
 	 * Renders the contact teacher button.
 	 */
-	private static function render_contact_teacher() {
+	private static function render_contact_teacher(): string {
 		$link  = '<a href="#" class="sensei-course-theme__button is-link">' . __( 'Contact teacher', 'sensei-lms' ) . '</a>';
 		$block = new Sensei_Block_Contact_Teacher();
 		return $block->render_contact_teacher_block( null, $link );

@@ -47,9 +47,9 @@ class Sensei_Course_Manual_Enrolment_Provider
 	/**
 	 * Gets the unique identifier of this enrolment provider.
 	 *
-	 * @return int
+	 * @psalm-return 'manual'
 	 */
-	public function get_id() {
+	public function get_id(): string {
 		return 'manual';
 	}
 
@@ -67,7 +67,7 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 *
 	 * @param int $course_id Course post ID.
 	 *
-	 * @return bool
+	 * @return true
 	 */
 	public function handles_enrolment( $course_id ) {
 		return true;
@@ -233,7 +233,7 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 * @param int  $course_id               Course post ID.
 	 * @param bool $legacy_enrolment_status Value of legacy enrolment status.
 	 */
-	private function set_migrated_legacy_enrolment_status( $user_id, $course_id, $legacy_enrolment_status ) {
+	private function set_migrated_legacy_enrolment_status( $user_id, $course_id, $legacy_enrolment_status ): void {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
 
@@ -248,6 +248,8 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 * @param int $course_id Course post ID.
 	 *
 	 * @return string[] Array of human readable debug messages. Allowed HTML tags: a[href]; strong; em; span[style,class]
+	 *
+	 * @psalm-return non-empty-list<string>
 	 */
 	public function debug( $user_id, $course_id ) {
 		$messages = [];
@@ -280,7 +282,9 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 *
 	 * This version should be bumped to the next stable Sensei LMS version whenever this provider is modified.
 	 *
-	 * @return int|string
+	 * @return string
+	 *
+	 * @psalm-return '3.0.0'
 	 */
 	public function get_version() {
 		return '3.0.0';

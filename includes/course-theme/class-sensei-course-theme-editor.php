@@ -52,7 +52,7 @@ class Sensei_Course_Theme_Editor {
 	/**
 	 * Initializes the Course Theme Editor.
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'setup_theme', [ $this, 'maybe_add_site_editor_hooks' ], 1 );
 		add_action( 'setup_theme', [ $this, 'maybe_override_lesson_theme' ], 1 );
 		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ] );
@@ -66,6 +66,8 @@ class Sensei_Course_Theme_Editor {
 	 * Adds the Appearance -> Editor menu item, unless it's already there because the active theme is a block theme.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function add_admin_menu_site_editor_item() {
 
@@ -84,6 +86,8 @@ class Sensei_Course_Theme_Editor {
 
 	/**
 	 * Load the course theme for the lesson editor if it has Learning Mode enabled.
+	 *
+	 * @return void
 	 */
 	public function maybe_override_lesson_theme() {
 
@@ -112,7 +116,7 @@ class Sensei_Course_Theme_Editor {
 	 *
 	 * @access private
 	 */
-	public function maybe_add_site_editor_hooks() {
+	public function maybe_add_site_editor_hooks(): void {
 
 		if ( $this->is_site_editor_request() ) {
 			$this->add_site_editor_hooks();
@@ -124,7 +128,7 @@ class Sensei_Course_Theme_Editor {
 	 *
 	 * @since 4.7.0
 	 */
-	public static function is_site_editor_request() {
+	public static function is_site_editor_request(): bool {
 
 		$uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 
@@ -141,7 +145,7 @@ class Sensei_Course_Theme_Editor {
 	 *
 	 * @access private
 	 */
-	public function add_site_editor_hooks() {
+	public function add_site_editor_hooks(): void {
 
 		register_theme_directory( Sensei()->plugin_path() . 'themes' );
 
@@ -159,6 +163,8 @@ class Sensei_Course_Theme_Editor {
 	 *
 	 * This is a temporary workaround until the site editor is enabled for non-block themes.
 	 * Or there will be a way to override the value for the theme.
+	 *
+	 * @return void
 	 */
 	private function substitute_theme_cache() {
 		$theme = wp_get_theme();
@@ -208,7 +214,7 @@ class Sensei_Course_Theme_Editor {
 	 *
 	 * @access private
 	 */
-	public function enqueue_site_editor_assets() {
+	public function enqueue_site_editor_assets(): void {
 
 		if ( $this->lesson_has_learning_mode() || $this->is_site_editor() ) {
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/index.js', [ 'sensei-shared-blocks' ] );
@@ -228,7 +234,7 @@ class Sensei_Course_Theme_Editor {
 	 *
 	 * @access private
 	 */
-	public function add_editor_styles() {
+	public function add_editor_styles(): void {
 
 		add_editor_style( Sensei()->assets->asset_url( 'css/frontend.css' ) );
 		add_editor_style( Sensei()->assets->asset_url( 'css/learning-mode.css' ) );
@@ -238,9 +244,11 @@ class Sensei_Course_Theme_Editor {
 	/**
 	 * Check if the post being edited is a lesson with Learning Mode enabled.
 	 *
-	 * @param WP_Post? $post The post to check.
+	 * @param WP_Post|array|null $post
 	 *
 	 * @return bool
+	 *
+	 * @psalm-param WP_Post|array<int|string, mixed>|null $post
 	 */
 	private function lesson_has_learning_mode( $post = null ) {
 

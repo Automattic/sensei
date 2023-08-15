@@ -17,6 +17,8 @@ class Sensei_Home_Task_Configure_Learning_Mode implements Sensei_Home_Task {
 	 * The ID for the task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'configure-learning-mode'
 	 */
 	public static function get_id(): string {
 		return 'configure-learning-mode';
@@ -26,6 +28,8 @@ class Sensei_Home_Task_Configure_Learning_Mode implements Sensei_Home_Task {
 	 * Number used to sort in frontend.
 	 *
 	 * @return int
+	 *
+	 * @psalm-return 300
 	 */
 	public function get_priority(): int {
 		return 300;

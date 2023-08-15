@@ -149,9 +149,11 @@ class Email_Preview {
 	/**
 	 * Get the email post.
 	 *
-	 * @return WP_Post|null
+	 * @return WP_Post|array|null
+	 *
+	 * @psalm-return WP_Post|array<int|string, mixed>|null
 	 */
-	private function get_email_post(): ?WP_Post {
+	private function get_email_post() {
 		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce validated at a later point.
 		$post_id = isset( $_GET['sensei_email_preview_id'] ) ? (int) $_GET['sensei_email_preview_id'] : 0;
 
@@ -179,6 +181,8 @@ class Email_Preview {
 	 * Get the placeholders to be replaced.
 	 *
 	 * @return string[]
+	 *
+	 * @psalm-return array{'author:displayname': string, 'certificate:url': '#', 'completed:url': '#', 'course:name': string, 'course:url': '#', 'date:dtext': string, 'editcourse:url': '#', 'grade:percentage': '89%', 'grade:quiz': '#', 'grade:validation': string, 'lesson:name': string, 'lesson:url': '#', 'manage:course': '#', 'manage:students': '#', 'message:displaymessage': string, 'quiz:url': '#', 'reply:url': '#', 'results:url': '#', 'resume:url': '#', 'student:displayname': string, 'subject:displaysubject': string, 'teacher:displayname': string}
 	 */
 	private function get_placeholders(): array {
 		return [

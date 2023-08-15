@@ -88,7 +88,7 @@ class Main {
 	 *
 	 * @param object $mailpoet_api MailPoet API handle.
 	 *
-	 * @return Sensei_MailPoet
+	 * @return Sensei_MailPoet|self
 	 */
 	public static function get_instance( $mailpoet_api = null ) {
 		if ( is_null( $mailpoet_api ) && class_exists( \MailPoet\API\API::class ) ) {

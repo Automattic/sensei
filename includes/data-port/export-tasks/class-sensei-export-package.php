@@ -25,6 +25,8 @@ class Sensei_Export_Package
 
 	/**
 	 * Run this task.
+	 *
+	 * @return void
 	 */
 	public function run() {
 		$this->is_completed = true;
@@ -82,11 +84,13 @@ class Sensei_Export_Package
 	 *
 	 * {
 	 *
-	 *     @type integer $completed  Number of completed actions.
-	 *     @type integer $total      Number of total actions.
+	 * @type integer $completed  Number of completed actions.
+	 * @type integer $total      Number of total actions.
 	 * }
 	 *
-	 * @return array
+	 * @return int[]
+	 *
+	 * @psalm-return array{completed: 0|1, total: 1}
 	 */
 	public function get_completion_ratio() {
 		return [

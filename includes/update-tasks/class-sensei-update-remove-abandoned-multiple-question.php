@@ -18,6 +18,8 @@ class Sensei_Update_Remove_Abandoned_Multiple_Question extends Sensei_Background
 	 * Get the job batch size.
 	 *
 	 * @return int
+	 *
+	 * @psalm-return 30
 	 */
 	protected function get_batch_size() : int {
 		return 30;
@@ -26,7 +28,7 @@ class Sensei_Update_Remove_Abandoned_Multiple_Question extends Sensei_Background
 	/**
 	 * Can multiple instances be enqueued at the same time?
 	 *
-	 * @return bool
+	 * @return false
 	 */
 	protected function allow_multiple_instances() : bool {
 		return false;

@@ -111,8 +111,10 @@ class Sensei_Admin {
 	 * @since 4.8.0
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'manage_sensei'|'manage_sensei_grades'
 	 */
-	public static function get_top_menu_capability() {
+	public static function get_top_menu_capability(): string {
 		$menu_cap = 'manage_sensei';
 
 		if ( ! current_user_can( 'manage_sensei' ) && current_user_can( 'manage_sensei_grades' ) ) {
@@ -125,10 +127,11 @@ class Sensei_Admin {
 	/**
 	 * Add Course order page to admin panel.
 	 *
-	 * @since  4.0.0
+	 * @since 4.0.0
+	 *
 	 * @access private
 	 */
-	public function add_course_order() {
+	public function add_course_order(): void {
 		add_submenu_page(
 			'', // Hide in menu.
 			__( 'Order Courses', 'sensei-lms' ),
@@ -142,10 +145,11 @@ class Sensei_Admin {
 	/**
 	 * Add Lesson order page to admin panel.
 	 *
-	 * @since  4.0.0
+	 * @since 4.0.0
+	 *
 	 * @access private
 	 */
-	public function add_lesson_order() {
+	public function add_lesson_order(): void {
 		add_submenu_page(
 			'',
 			__( 'Order Lessons', 'sensei-lms' ),
@@ -159,11 +163,15 @@ class Sensei_Admin {
 	/**
 	 * [admin_menu_order description]
 	 *
-	 * @since  1.4.0
-	 * @param  array $menu_order Existing menu order
-	 * @return array             Modified menu order for Sensei
+	 * @since 1.4.0
+	 *
+	 * @param array $menu_order Existing menu order
+	 *
+	 * @return (mixed|string)[] Modified menu order for Sensei
+	 *
+	 * @psalm-return list<'separator-sensei'|mixed>
 	 */
-	public function admin_menu_order( $menu_order ) {
+	public function admin_menu_order( $menu_order ): array {
 
 		// Initialize our custom order array
 		$sensei_menu_order = array();
@@ -321,11 +329,12 @@ class Sensei_Admin {
 	 * Load the global admin styles for the menu icon and the relevant page icon.
 	 *
 	 * @access public
+	 *
 	 * @since 1.0.0
 	 *
 	 * @param string $hook The current admin page.
 	 */
-	public function admin_styles_global( $hook ) {
+	public function admin_styles_global( $hook ): void {
 		global $post_type;
 
 		// Global Styles for icons and menu items
@@ -375,9 +384,10 @@ class Sensei_Admin {
 	 * The script users should enqueue the script when needed.
 	 *
 	 * @since 1.8.2
+	 *
 	 * @access public
 	 */
-	public function register_scripts( $hook ) {
+	public function register_scripts( $hook ): void {
 		$screen = get_current_screen();
 
 		Sensei()->assets->register( 'sensei-dismiss-notices', 'js/admin/sensei-notice-dismiss.js', [] );
@@ -579,8 +589,10 @@ class Sensei_Admin {
 	 * Redirect the user safely.
 	 *
 	 * @access private
-	 * @param  string $redirect_url URL to redirect the user.
-	 * @return void
+	 *
+	 * @param string $redirect_url URL to redirect the user.
+	 *
+	 * @return never
 	 */
 	protected function safe_redirect( $redirect_url ) {
 		wp_safe_redirect( esc_url_raw( $redirect_url ) );
@@ -717,11 +729,14 @@ class Sensei_Admin {
 	/**
 	 * Get an prerequisite update object.
 	 *
-	 * @param  integer $old_lesson_id ID of the lesson before the duplication.
-	 * @param  integer $new_lesson_id New ID of the lesson.
-	 * @return array                  Object with the id of the lesson to update and its old prerequisite id.
+	 * @param integer $old_lesson_id ID of the lesson before the duplication.
+	 * @param integer $new_lesson_id New ID of the lesson.
+	 *
+	 * @return (int|mixed)[]|null Object with the id of the lesson to update and its old prerequisite id.
+	 *
+	 * @psalm-return array{lesson_id: int, old_prerequisite_id: mixed}|null
 	 */
-	private function get_prerequisite_update_object( $old_lesson_id, $new_lesson_id ) {
+	private function get_prerequisite_update_object( $old_lesson_id, $new_lesson_id ): ?array {
 		$lesson_prerequisite = get_post_meta( $old_lesson_id, '_lesson_prerequisite', true );
 
 		if ( ! empty( $lesson_prerequisite ) ) {
@@ -743,6 +758,8 @@ class Sensei_Admin {
 	 * @param int   $course_id            The ID of the new Course.
 	 * @param array $new_lesson_id_lookup An array mapping old lesson IDs to the
 	 *                                    IDs of their duplicates.
+	 *
+	 * @return void
 	 */
 	private function update_lesson_order_on_course( $course_id, $new_lesson_id_lookup ) {
 		$old_lesson_order_string = get_post_meta( $course_id, '_lesson_order', true );
@@ -780,7 +797,7 @@ class Sensei_Admin {
 	 * @param int     $old_course_id The ID of the old Course that was duplicated.
 	 * @param int     $new_course_id The ID of the new Course.
 	 */
-	private function update_lesson_order_on_lesson( $lesson, $old_course_id, $new_course_id ) {
+	private function update_lesson_order_on_lesson( $lesson, $old_course_id, $new_course_id ): void {
 		$lesson_order_value = get_post_meta( $lesson->ID, "_order_$old_course_id", true );
 		update_post_meta( $lesson->ID, "_order_$new_course_id", $lesson_order_value );
 		delete_post_meta( $lesson->ID, "_order_$old_course_id" );
@@ -826,10 +843,13 @@ class Sensei_Admin {
 	/**
 	 * Duplicate post.
 	 *
-	 * @param  object  $post          Post to be duplicated.
-	 * @param  string  $suffix        Suffix for duplicated post title.
-	 * @param  boolean $ignore_course Ignore lesson course when dulicating.
-	 * @return object                 Duplicate post object.
+	 * @param object  $post          Post to be duplicated.
+	 * @param string  $suffix        Suffix for duplicated post title.
+	 * @param boolean $ignore_course Ignore lesson course when dulicating.
+	 *
+	 * @return WP_Post|array|false|null Duplicate post object.
+	 *
+	 * @psalm-return WP_Post|array<int|string, mixed>|false|null
 	 */
 	private function duplicate_post( $post, $suffix = null, $ignore_course = false ) {
 
@@ -1084,7 +1104,7 @@ class Sensei_Admin {
 		\Sensei_Learner::instance()->delete_all_user_activity( $user_id );
 	}
 
-	public function render_settings( $settings = array(), $post_id = 0, $group_id = '' ) {
+	public function render_settings( $settings = array(), $post_id = 0, $group_id = '' ): string {
 
 		$html = '';
 
@@ -1333,7 +1353,7 @@ class Sensei_Admin {
 	 *
 	 * @since 1.12.2
 	 */
-	public function handle_order_courses() {
+	public function handle_order_courses(): void {
 		check_admin_referer( 'order_courses' );
 
 		$ordered = null;
@@ -1461,7 +1481,10 @@ class Sensei_Admin {
 		return get_option( 'sensei_course_order', '' );
 	}
 
-	public function save_course_order( $order_string = '' ) {
+	/**
+	 * @return true
+	 */
+	public function save_course_order( string $order_string = '' ): bool {
 		global $wpdb;
 		$order = array();
 
@@ -1492,6 +1515,8 @@ class Sensei_Admin {
 	 * Handle the POST request for reordering the Lessons.
 	 *
 	 * @since 1.12.2
+	 *
+	 * @return never
 	 */
 	public function handle_order_lessons() {
 		check_admin_referer( 'order_lessons' );
@@ -1712,7 +1737,7 @@ class Sensei_Admin {
 		return $order_string;
 	}
 
-	public function save_lesson_order( $order_string = '', $course_id = 0 ) {
+	public function save_lesson_order( $order_string = '', $course_id = 0 ): bool {
 
 		/**
 		 * It is safe to ignore nonce validation here, because this is called
@@ -1867,7 +1892,7 @@ class Sensei_Admin {
 		}
 	}
 
-	function sensei_add_custom_menu_items() {
+	function sensei_add_custom_menu_items(): void {
 		global $pagenow;
 
 		if ( 'nav-menus.php' == $pagenow ) {
@@ -1875,7 +1900,7 @@ class Sensei_Admin {
 		}
 	}
 
-	function wp_nav_menu_item_sensei_links_meta_box( $object ) {
+	function wp_nav_menu_item_sensei_links_meta_box( $object ): void {
 		global $nav_menu_selected_id;
 
 		$menu_items = array(
@@ -1950,7 +1975,7 @@ class Sensei_Admin {
 	 *
 	 * @since 1.8.7
 	 */
-	public static function install_pages() {
+	public static function install_pages(): void {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard_Pages::create_pages' );
 	}
 
@@ -1958,9 +1983,12 @@ class Sensei_Admin {
 	 * Remove a course from course order option when trashed
 	 *
 	 * @since 1.9.8
+	 *
 	 * @param $new_status null|string
 	 * @param $old_status null|string
 	 * @param $post null|WP_Post
+	 *
+	 * @return void
 	 */
 	public function remove_trashed_course_from_course_order( $new_status = null, $old_status = null, $post = null ) {
 		if ( empty( $new_status ) || empty( $old_status ) || $new_status === $old_status ) {
@@ -1986,7 +2014,7 @@ class Sensei_Admin {
 		}
 	}
 
-	public function notify_if_admin_email_not_real_admin_user() {
+	public function notify_if_admin_email_not_real_admin_user(): void {
 		$maybe_admin = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
 
 		if ( false === $maybe_admin || false === user_can( $maybe_admin, 'manage_options' ) ) {
@@ -2028,6 +2056,8 @@ class Sensei_Admin {
 	 * @access private
 	 *
 	 * @since 2.1.0
+	 *
+	 * @return void
 	 */
 	public function output_cpt_block_editor_workaround() {
 		$screen = get_current_screen();
@@ -2059,9 +2089,10 @@ class Sensei_Admin {
 	 * Attempt to log a Sensei event.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @access private
 	 */
-	public function ajax_log_event() {
+	public function ajax_log_event(): void {
 		// phpcs:disable WordPress.Security.NonceVerification
 		if ( ! isset( $_REQUEST['event_name'] ) ) {
 			wp_die();
@@ -2089,8 +2120,11 @@ class Sensei_Admin {
 	/**
 	 * Set `window.sensei.pluginUrl` to be used from javascript.
 	 *
-	 * @since  4.5.0
+	 * @since 4.5.0
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function sensei_set_plugin_url() {
 

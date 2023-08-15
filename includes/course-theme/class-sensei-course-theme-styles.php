@@ -20,7 +20,7 @@ class Sensei_Course_Theme_Styles {
 	/**
 	 * Add hooks.
 	 */
-	public static function init() {
+	public static function init(): void {
 		add_action( 'wp_head', [ self::class, 'output_global_styles_colors' ] );
 		add_action( 'render_block', [ self::class, 'apply_block_support' ], 10, 2 );
 	}
@@ -55,6 +55,8 @@ class Sensei_Course_Theme_Styles {
 	 * Get global styles colors and output them as CSS variables.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public static function output_global_styles_colors() {
 		if ( ! function_exists( 'wp_get_global_styles' ) ) {
@@ -75,9 +77,11 @@ class Sensei_Course_Theme_Styles {
 	 *
 	 * @param array $styles Styles object.
 	 *
-	 * @return array Name-value pairs of CSS variables
+	 * @return array|null Name-value pairs of CSS variables
+	 *
+	 * @psalm-return array<empty, empty>|null
 	 */
-	private static function get_colors_as_css_variables( $styles ) {
+	private static function get_colors_as_css_variables( $styles ): ?array {
 
 		if ( empty( $styles ) ) {
 			return [];
@@ -90,9 +94,11 @@ class Sensei_Course_Theme_Styles {
 	 *
 	 * @param array $styles Styles object.
 	 *
-	 * @return array
+	 * @return (mixed|null)[]
+	 *
+	 * @psalm-return array{'--sensei-text-color'?: mixed|null, '--sensei-background-color'?: mixed|null, '--sensei-primary-contrast-color'?: mixed|null, '--sensei-primary-color'?: mixed}
 	 */
-	private static function get_colors( $styles ) {
+	private static function get_colors( $styles ): array {
 
 		if ( empty( $styles ) ) {
 			return [];
@@ -147,8 +153,12 @@ class Sensei_Course_Theme_Styles {
 	 *
 	 * @param array $variables Key-value pair of variable names and values.
 	 * @param array $postfix   Optional variable name postfix.
+	 *
+	 * @return string[]
+	 *
+	 * @psalm-return list<string>
 	 */
-	private static function format_css_variables( $variables, $postfix = '' ) {
+	private static function format_css_variables( $variables, $postfix = '' ): array {
 		$css = [];
 
 		foreach ( $variables as $variable => $value ) {
@@ -168,7 +178,7 @@ class Sensei_Course_Theme_Styles {
 	 *
 	 * @param string $css CSS properties.
 	 */
-	private static function output_style( $css ) {
+	private static function output_style( $css ): void {
 		?>
 		<style>
 			body {

@@ -23,7 +23,7 @@ add_filter( 'woocommerce_prevent_admin_access', 'sensei_woocommerce_prevent_admi
 /**
  * Show admin bar to users who can 'edit_courses'.
  */
-function sensei_woocommerce_show_admin_bar() {
+function sensei_woocommerce_show_admin_bar(): void {
 	if ( current_user_can( 'edit_courses' ) ) {
 		add_filter( 'woocommerce_disable_admin_bar', '__return_false', 10, 1 );
 	}

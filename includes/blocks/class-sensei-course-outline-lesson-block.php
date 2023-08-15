@@ -22,7 +22,7 @@ class Sensei_Course_Outline_Lesson_Block {
 	 *
 	 * @return string Lesson HTML
 	 */
-	public function render_lesson_block( $block, $course_id ) {
+	public function render_lesson_block( $block, $course_id ): string {
 		$attributes = $block['attributes'];
 
 		$lesson_id   = $block['id'];

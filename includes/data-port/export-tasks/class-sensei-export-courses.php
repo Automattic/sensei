@@ -21,6 +21,8 @@ class Sensei_Export_Courses
 	 * Content type of the task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'course'
 	 */
 	public function get_content_type() {
 		return 'course';
@@ -31,7 +33,9 @@ class Sensei_Export_Courses
 	 *
 	 * @param WP_Post $post The course.
 	 *
-	 * @return array The columns data per key.
+	 * @return (false|int|mixed|string)[] The columns data per key.
+	 *
+	 * @psalm-return array{id: int, course: string, slug: string, description: string, excerpt: string, 'teacher username': string, 'teacher email': string, lessons: string, modules: string, prerequisite: string, featured: 0|1, categories: string, image: false|string, video: mixed, 'disable notifications': 0|1}
 	 */
 	protected function get_post_fields( $post ) {
 
@@ -115,7 +119,7 @@ class Sensei_Export_Courses
 	/**
 	 * Schema for the content type.
 	 *
-	 * @return Sensei_Data_Port_Schema
+	 * @return Schema
 	 */
 	protected function get_type_schema() {
 		return new Sensei_Data_Port_Course_Schema();

@@ -82,9 +82,11 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	/**
 	 * Sanitize a log entry.
 	 *
-	 * @param  array $log_entry Non-sanitized log entry.
+	 * @param array $log_entry Non-sanitized log entry.
 	 *
-	 * @return array
+	 * @return (int|string)[]|false
+	 *
+	 * @psalm-return array{timestamp: int, message: string}|false
 	 */
 	private static function deserialize_log_entry( $log_entry ) {
 		if ( ! is_array( $log_entry ) ) {
@@ -110,7 +112,9 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	 *
 	 * @param array $entry The serialized history entry.
 	 *
-	 * @return array|bool
+	 * @return (bool|float|null)[]|false
+	 *
+	 * @psalm-return array{timestamp: float, enrolment_status: bool|null}|false
 	 */
 	private static function deserialize_history_entry( $entry ) {
 		if ( ! isset( $entry['t'] ) || ! array_key_exists( 's', $entry ) ) {
@@ -127,7 +131,9 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	/**
 	 * Return object that can be serialized by `json_encode()`.
 	 *
-	 * @return array
+	 * @return array[]
+	 *
+	 * @psalm-return array{h?: array, l?: array}
 	 */
 	public function jsonSerialize() {
 		$history     = array_map( [ __CLASS__, 'serialize_history_entry' ], $this->history );
@@ -152,8 +158,10 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	 * @param array $entry The deserialized history entry.
 	 *
 	 * @return array
+	 *
+	 * @psalm-return array{t: mixed, s: mixed}
 	 */
-	private function serialize_history_entry( $entry ) {
+	private function serialize_history_entry( $entry ): array {
 		return [
 			't' => $entry['timestamp'],
 			's' => $entry['enrolment_status'],
@@ -166,8 +174,10 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	 * @param array $entry The serialized log entry.
 	 *
 	 * @return array
+	 *
+	 * @psalm-return array{t: mixed, m: mixed}
 	 */
-	private function serialize_log_entry( $entry ) {
+	private function serialize_log_entry( $entry ): array {
 		return [
 			't' => $entry['timestamp'],
 			'm' => $entry['message'],
@@ -179,7 +189,7 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	 *
 	 * @param string $message The message.
 	 */
-	public function add_log_message( $message ) {
+	public function add_log_message( $message ): void {
 		/**
 		 * Filter the maximum amount of log messages that are going to be stored for each user, course and provider.
 		 *
@@ -284,7 +294,7 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	 *
 	 * @param array $status The history entry.
 	 */
-	private function add_status( $status ) {
+	private function add_status( $status ): void {
 		/**
 		 * Filter the maximum amount of historical entries that are going to be stored for each user, course and provider.
 		 *

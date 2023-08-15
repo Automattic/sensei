@@ -41,6 +41,8 @@ abstract class Sensei_Background_Job_Batch extends Sensei_Background_Job_Statefu
 
 	/**
 	 * Run the job.
+	 *
+	 * @return void
 	 */
 	public function run() {
 		$offset = $this->get_state( self::STATE_OFFSET, 0 );

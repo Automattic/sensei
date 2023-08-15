@@ -219,8 +219,10 @@ class Sensei_Quiz {
 	 * Get the lesson this quiz belongs to.
 	 *
 	 * @since 1.7.2
+	 *
 	 * @param int|null $quiz_id (Optional) The quiz post ID. Defaults to the current post ID.
-	 * @return int|bool Lesson ID or false if not found.
+	 *
+	 * @return false|int Lesson ID or false if not found.
 	 */
 	public function get_lesson_id( $quiz_id = null ) {
 
@@ -243,6 +245,8 @@ class Sensei_Quiz {
 	 * This function hooks into the quiz page and accepts the answer form save post.
 	 *
 	 * @since 1.7.3
+	 *
+	 * @return void
 	 */
 	public function user_save_quiz_answers_listener() {
 
@@ -316,6 +320,7 @@ class Sensei_Quiz {
 	 * For this function you must supply all three parameters. It will return false if one is left out.
 	 *
 	 * @since 1.7.4
+	 *
 	 * @access public
 	 *
 	 * @param array $quiz_answers
@@ -323,9 +328,9 @@ class Sensei_Quiz {
 	 * @param int   $lesson_id
 	 * @param int   $user_id
 	 *
-	 * @return false|int $answers_saved
+	 * @return bool $answers_saved
 	 */
-	public static function save_user_answers( $quiz_answers, $files = array(), $lesson_id = 0, $user_id = 0 ) {
+	public static function save_user_answers( $quiz_answers, $files = array(), $lesson_id = 0, $user_id = 0 ): bool {
 
 		if ( ! ( $user_id > 0 ) ) {
 			$user_id = get_current_user_id();
@@ -435,15 +440,13 @@ class Sensei_Quiz {
 
 
 	/**
-	 *
 	 * This function runs on the init hook and checks if the reset quiz button was clicked.
 	 *
 	 * @since 1.7.2
-	 * @hooked init
 	 *
-	 * @return void;
+	 * @hooked init
 	 */
-	public function reset_button_click_listener() {
+	public function reset_button_click_listener(): void {
 
 		if ( ! isset( $_POST['quiz_reset'] )
 			|| ! isset( $_POST['woothemes_sensei_reset_quiz_nonce'] )
@@ -520,8 +523,11 @@ class Sensei_Quiz {
 	/**
 	 * Redirect back to the lesson if the lesson is password protected.
 	 *
-	 * @since  4.4.3
+	 * @since 4.4.3
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function redirect_if_lesson_is_protected() {
 		if ( ! is_singular( 'quiz' ) ) {
@@ -543,10 +549,11 @@ class Sensei_Quiz {
 	 * This is needed to save the answers for each page.
 	 * Used when the quiz pagination is enabled.
 	 *
-	 * @since  3.15.0
+	 * @since 3.15.0
+	 *
 	 * @access private
 	 */
-	public function page_change_listener() {
+	public function page_change_listener(): void {
 
 		if (
 			! isset( $_POST['quiz_target_page'] )
@@ -589,9 +596,10 @@ class Sensei_Quiz {
 	 * current quiz.
 	 *
 	 * @since 1.7.4
+	 *
 	 * @access public
 	 */
-	public function load_global_quiz_data() {
+	public function load_global_quiz_data(): void {
 
 		global  $post, $current_user;
 		$this->data = new stdClass();
@@ -656,11 +664,15 @@ class Sensei_Quiz {
 	 * as comment meta by the calling function.
 	 *
 	 * @since 1.7.4
+	 *
 	 * @access public
 	 *
 	 * @param array $unprepared_answers Submitted answers.
 	 * @param array $files Uploaded files.
-	 * @return array|false
+	 *
+	 * @return false|string[]
+	 *
+	 * @psalm-return array<string>|false
 	 */
 	public static function prepare_form_submitted_answers( $unprepared_answers, $files ) {
 
@@ -1079,7 +1091,7 @@ class Sensei_Quiz {
 	 *
 	 * @return array|false $user_quiz_grades or false if none exists for this users
 	 */
-	public function get_user_grades( $lesson_id, $user_id = 0 ) {
+	public function get_user_grades( int $lesson_id, int $user_id = 0 ) {
 
 		// get the user_id if none was passed in use the current logged in user
 		if ( ! intval( $user_id ) > 0 ) {
@@ -1256,15 +1268,15 @@ class Sensei_Quiz {
 	 * during grading. Grading occurs manually or automatically.
 	 *
 	 * @since 1.7.5
+	 *
 	 * @access public
 	 *
 	 * @param int $lesson_id
 	 * @param int $user_id
 	 *
-	 * @return false | array $answers_feedback{
-	 *  $type int $question_id
-	 *  $type string $question_feedback
-	 * }
+	 * @return (false|string)[]|false $answers_feedback{ $type int $question_id $type string $question_feedback }
+	 *
+	 * @psalm-return array<false|string>|false
 	 */
 	public function get_user_answers_feedback( $lesson_id, $user_id = 0 ) {
 
@@ -1440,12 +1452,14 @@ class Sensei_Quiz {
 	 * Get the contents for the correct answer feedback block.
 	 *
 	 * @access public
+	 *
 	 * @since 4.6.0
+	 *
 	 * @param int $question_id Question Id.
 	 *
-	 * @return array
+	 * @return array|null
 	 */
-	public static function get_correct_answer_feedback_block( $question_id ) {
+	public static function get_correct_answer_feedback_block( $question_id ): ?array {
 		return self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-correct' );
 	}
 
@@ -1453,12 +1467,14 @@ class Sensei_Quiz {
 	 * Get the contents for the incorrect answer feedback block.
 	 *
 	 * @since 4.6.0
+	 *
 	 * @access public
+	 *
 	 * @param int $question_id Question Id.
 	 *
-	 * @return array
+	 * @return array|null
 	 */
-	public static function get_incorrect_answer_feedback_block( $question_id ) {
+	public static function get_incorrect_answer_feedback_block( $question_id ): ?array {
 		return self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-incorrect' );
 	}
 
@@ -1614,6 +1630,8 @@ class Sensei_Quiz {
 	 * The function will create a global quiz loop variable.
 	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public static function start_quiz_questions_loop() {
 		global $sensei_question_loop;
@@ -1685,7 +1703,7 @@ class Sensei_Quiz {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function stop_quiz_questions_loop() {
+	public static function stop_quiz_questions_loop(): void {
 
 		_deprecated_function( __METHOD__, '3.10.0' );
 
@@ -1705,7 +1723,7 @@ class Sensei_Quiz {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function the_title() {
+	public static function the_title(): void {
 		?>
 		 <header>
 
@@ -1730,7 +1748,7 @@ class Sensei_Quiz {
 	 *
 	 * @param int $quiz_id quiz id.
 	 */
-	public static function the_user_status_message( $quiz_id ) {
+	public static function the_user_status_message( $quiz_id ): void {
 
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 		$status    = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, get_current_user_id() );
@@ -1751,7 +1769,7 @@ class Sensei_Quiz {
 	 *
 	 * @since 3.15.0
 	 */
-	public static function output_quiz_hidden_fields() {
+	public static function output_quiz_hidden_fields(): void {
 
 		global $sensei_question_loop;
 
@@ -1768,6 +1786,8 @@ class Sensei_Quiz {
 	 * Replaces the default action buttons.
 	 *
 	 * @since 3.15.0
+	 *
+	 * @return void
 	 */
 	public static function the_quiz_pagination() {
 
@@ -1791,6 +1811,8 @@ class Sensei_Quiz {
 	 * Rendering html element that will be replaced with Progress Bar.
 	 *
 	 * @since 3.15.0
+	 *
+	 * @return void
 	 */
 	public static function the_quiz_progress_bar() {
 		$quiz_id             = get_the_ID();
@@ -1823,6 +1845,8 @@ class Sensei_Quiz {
 	 * action such as reset complete and save.
 	 *
 	 * @since 1.3.0
+	 *
+	 * @return void
 	 */
 	public static function action_buttons() {
 
@@ -2019,6 +2043,8 @@ class Sensei_Quiz {
 	 * @since 1.9.5
 	 *
 	 * @param integer $post_id of the post being permanently deleted.
+	 *
+	 * @return void
 	 */
 	public function maybe_delete_quiz( $post_id ) {
 
@@ -2100,6 +2126,8 @@ class Sensei_Quiz {
 	 * @param array $questions  All questions.
 	 *
 	 * @return array
+	 *
+	 * @psalm-return list<mixed>
 	 */
 	private function filter_out_incomplete_questions( array $questions ): array {
 		$filtered_questions = [];
@@ -2163,6 +2191,8 @@ class Sensei_Quiz {
 	 *
 	 * @param int   $quiz_id      The quiz id.
 	 * @param array $question_ids The array of questions ids.
+	 *
+	 * @return void
 	 */
 	public function set_questions( int $quiz_id, array $question_ids ) {
 		$old_question_order = get_post_meta( $quiz_id, '_question_order', true );
@@ -2234,6 +2264,8 @@ class Sensei_Quiz {
 	 *
 	 * @param int   $quiz_id      The quiz id.
 	 * @param array $question_ids A list of quiz ids to remove the meta from.
+	 *
+	 * @return void
 	 */
 	private function delete_quiz_question_meta( $quiz_id, $question_ids = null ) {
 		if ( null === $question_ids ) {
@@ -2262,6 +2294,8 @@ class Sensei_Quiz {
 	 *
 	 * @param int $quiz_id       Quiz post ID.
 	 * @param int $new_author_id New author.
+	 *
+	 * @return void
 	 */
 	public function update_quiz_author( int $quiz_id, int $new_author_id ) {
 		if ( 'quiz' !== get_post_type( $quiz_id ) ) {

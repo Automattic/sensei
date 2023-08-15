@@ -68,7 +68,7 @@ class Sensei_Templates {
 	 * @param string        $template_path
 	 * @param string        $default_path
 	 */
-	public static function get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
+	public static function get_template( string $template_name, $args = array(), $template_path = '', $default_path = '' ): void {
 
 		if ( $args && is_array( $args ) ) {
 			extract( $args );
@@ -96,8 +96,11 @@ class Sensei_Templates {
 	 * @param $template_name
 	 * @param string        $template_path
 	 * @param string        $default_path
+	 * @param (int|string) $template_name
 	 *
 	 * @return mixed|void
+	 *
+	 * @psalm-param array-key $template_name
 	 */
 	public static function locate_template( $template_name, $template_path = '', $default_path = '' ) {
 
@@ -297,7 +300,7 @@ class Sensei_Templates {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function get_no_permission_template() {
+	public static function get_no_permission_template(): string {
 
 		// possible backward compatible template loading
 		// this template was removed in 1.9.0 and code all moved into the no-permissions.php file
@@ -330,10 +333,11 @@ class Sensei_Templates {
 	 * will exit execution of the script an not continue.
 	 *
 	 * @since 1.9.0
+	 *
 	 * @param string $template
 	 * @param bool   $load_header_footer should the file be wrapped in between header and footer? Default: true
 	 */
-	public static function locate_and_load_template_overrides( $template = '', $load_header_footer = false ) {
+	public static function locate_and_load_template_overrides( $template = '', $load_header_footer = false ): void {
 
 		$found_template = locate_template( array( $template ) );
 		if ( $found_template ) {
@@ -360,9 +364,10 @@ class Sensei_Templates {
 	 * A generic function for echoing the post title
 	 *
 	 * @since 1.9.0
-	 * @param  WP_Post $post
+	 *
+	 * @param WP_Post $post
 	 */
-	public static function the_title( $post ) {
+	public static function the_title( $post ): void {
 
 		// ID passed in
 		if ( is_numeric( $post ) ) {
@@ -413,7 +418,7 @@ class Sensei_Templates {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function fire_sensei_complete_course_hook() {
+	public static function fire_sensei_complete_course_hook(): void {
 
 		do_action( 'sensei_complete_course' );
 
@@ -424,7 +429,7 @@ class Sensei_Templates {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function fire_frontend_messages_hook() {
+	public static function fire_frontend_messages_hook(): void {
 
 		do_action( 'sensei_frontend_messages' );
 

@@ -122,11 +122,14 @@ class Sensei_Core_Modules {
 	 * Add teacher id as term meta when a module is added to a course.
 	 *
 	 * @since 4.9.0
+	 *
 	 * @access private
 	 *
 	 * @param int     $post_ID      Post ID.
 	 * @param WP_Post $post_after   Post object following the update.
 	 * @param WP_Post $post_before  Post object before the update.
+	 *
+	 * @return void
 	 */
 	public function update_module_teacher_id_meta_on_post_teacher_update( int $post_ID, WP_Post $post_after, WP_Post $post_before ) {
 		if ( 'course' !== get_post( $post_ID )->post_type ) {
@@ -145,11 +148,14 @@ class Sensei_Core_Modules {
 	 * Add teacher id as term meta when a module is added to a course.
 	 *
 	 * @since 4.9.0
+	 *
 	 * @access private
 	 *
 	 * @param int    $object_id Object ID.
 	 * @param int    $tt_id     Term taxonomy ID.
 	 * @param string $taxonomy  Taxonomy slug.
+	 *
+	 * @return void
 	 */
 	public function add_teacher_id_in_module_meta_when_added_to_course( int $object_id, int $tt_id, string $taxonomy ) {
 		if ( 'module' !== $taxonomy ) {
@@ -165,11 +171,14 @@ class Sensei_Core_Modules {
 	 * Remove teacher id from term meta when a module is added to a course.
 	 *
 	 * @since 4.9.0
+	 *
 	 * @access private
 	 *
 	 * @param int    $object_id Object ID.
 	 * @param array  $tt_ids    An array of term taxonomy IDs.
 	 * @param string $taxonomy  Taxonomy slug.
+	 *
+	 * @return void
 	 */
 	public function remove_teacher_id_from_module_meta_when_removed_from_course( int $object_id, array $tt_ids, string $taxonomy ) {
 		if ( 'module' !== $taxonomy ) {
@@ -224,7 +233,10 @@ class Sensei_Core_Modules {
 	 * Add custom navigation to the admin pages.
 	 *
 	 * @since 4.0.0
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function add_custom_navigation() {
 		$screen = get_current_screen();
@@ -243,7 +255,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @param WP_Screen $screen WordPress current screen object.
 	 */
-	private function display_modules_navigation( WP_Screen $screen ) {
+	private function display_modules_navigation( WP_Screen $screen ): void {
 		?>
 		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
 			<div class="sensei-custom-navigation__heading">
@@ -306,7 +318,7 @@ class Sensei_Core_Modules {
 	 * @param WP_Post $lesson_post The lesson post object.
 	 * @param int     $course_id   The course id.
 	 */
-	private function output_lesson_module_metabox( WP_Post $lesson_post, int $course_id ) {
+	private function output_lesson_module_metabox( WP_Post $lesson_post, int $course_id ): void {
 		// Get current lesson module.
 		$module_id = $course_id ? $this->get_lesson_module_if_exists( $lesson_post ) : null;
 
@@ -420,7 +432,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @param int $module_term_id Term ID for the module.
 	 */
-	public function remove_if_unused( $module_term_id ) {
+	public function remove_if_unused( $module_term_id ): void {
 		if ( ! $this->is_term_used( $module_term_id ) ) {
 			wp_delete_term( $module_term_id, 'module' );
 		}
@@ -550,9 +562,10 @@ class Sensei_Core_Modules {
 	 * Adds hooks for use with editing a taxonomy in WP Admin.
 	 *
 	 * @since 3.6.0
+	 *
 	 * @access private
 	 */
-	public function add_module_admin_hooks() {
+	public function add_module_admin_hooks(): void {
 		add_action( 'edited_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
 		add_action( 'created_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
 	}
@@ -668,11 +681,12 @@ class Sensei_Core_Modules {
 	 * Track module creation.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @access private
 	 *
 	 * @param int $module_id ID of module.
 	 */
-	public function track_module_creation( $module_id ) {
+	public function track_module_creation( $module_id ): void {
 		$module           = get_term( $module_id );
 		$event_properties = [
 			// phpcs:ignore WordPress.Security.NonceVerification
@@ -691,7 +705,8 @@ class Sensei_Core_Modules {
 	 * Ajax function to search for courses matching term
 	 *
 	 * @since 1.8.0
-	 * @return void
+	 *
+	 * @return never
 	 */
 	public function search_courses_json() {
 		// Security check
@@ -1011,7 +1026,10 @@ class Sensei_Core_Modules {
 	 * Outputs the module course sign-up link.
 	 *
 	 * @access private
+	 *
 	 * @since 3.0.0
+	 *
+	 * @return void
 	 */
 	public function course_signup_link() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of retrieving course ID.
@@ -1159,10 +1177,13 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param  integer $user_id ID of user
-	 * @param  integer $module_id ID of module
-	 * @param  integer $course_id ID of course
-	 * @return integer            Module progress percentage
+	 * @param integer $user_id ID of user
+	 * @param integer $module_id ID of module
+	 * @param integer $course_id ID of course
+	 *
+	 * @return float|int Module progress percentage
+	 *
+	 * @psalm-return 0|float
 	 */
 	public function calculate_user_module_progress( $user_id = 0, $module_id = 0, $course_id = 0 ) {
 
@@ -1229,7 +1250,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 4.0.0
 	 */
-	public function add_submenus() {
+	public function add_submenus(): void {
 		add_submenu_page(
 			'', // Hide the submenu.
 			__( 'Order Modules', 'sensei-lms' ),
@@ -1245,7 +1266,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.12.2
 	 */
-	public function handle_order_modules() {
+	public function handle_order_modules(): void {
 		check_admin_referer( 'order_modules' );
 
 		$ordered = false;
@@ -1384,10 +1405,11 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param  array $columns Existing columns.
-	 * @return array          Modified columns.
+	 * @param array $columns Existing columns.
+	 *
+	 * @return array Modified columns.
 	 */
-	public function course_columns( $columns = array() ) {
+	public function course_columns( $columns = array() ): array {
 		$columns['modules'] = __( 'Modules', 'sensei-lms' );
 
 		return $columns;
@@ -1414,6 +1436,8 @@ class Sensei_Core_Modules {
 	 * @since 4.0.0
 	 *
 	 * @param int $course_id
+	 *
+	 * @return void
 	 */
 	private function output_course_modules_column( int $course_id ) {
 		$modules = $this->get_course_modules( $course_id );
@@ -1489,13 +1513,15 @@ class Sensei_Core_Modules {
 	/**
 	 * Add custom columns to lesson list table.
 	 *
-	 * @since  4.0.0
+	 * @since 4.0.0
+	 *
 	 * @access private
 	 *
-	 * @param  array $columns Existing columns.
-	 * @return array          Modified columns.
+	 * @param array $columns Existing columns.
+	 *
+	 * @return array Modified columns.
 	 */
-	public function add_lesson_columns( $columns = array() ) {
+	public function add_lesson_columns( $columns = array() ): array {
 		// The lesson module column id should not be equal to "module".
 		// @see https://core.trac.wordpress.org/ticket/56185.
 		$columns['modules'] = __( 'Module', 'sensei-lms' );
@@ -1506,13 +1532,14 @@ class Sensei_Core_Modules {
 	/**
 	 * Load content in the lesson custom columns.
 	 *
-	 * @since  4.0.0
+	 * @since 4.0.0
+	 *
 	 * @access private
 	 *
-	 * @param  string  $column    Current column name.
-	 * @param  integer $lesson_id The lesson ID.
+	 * @param string  $column    Current column name.
+	 * @param integer $lesson_id The lesson ID.
 	 */
-	public function add_lesson_column_content( $column = '', $lesson_id = 0 ) {
+	public function add_lesson_column_content( $column = '', $lesson_id = 0 ): void {
 		if ( 'modules' === $column ) {
 			$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
 			$module  = $modules && is_array( $modules ) ? $modules[0] : null;
@@ -1583,10 +1610,11 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param  array $columns Default columns
-	 * @return array          Modified columns
+	 * @param array $columns Default columns
+	 *
+	 * @return array Modified columns
 	 */
-	public function taxonomy_column_headings( $columns ) {
+	public function taxonomy_column_headings( $columns ): array {
 
 		unset( $columns['posts'] );
 
@@ -1744,8 +1772,9 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param  integer $lesson_id ID of lesson
-	 * @return object             Module taxonomy term object
+	 * @param integer $lesson_id ID of lesson
+	 *
+	 * @return false|object Module taxonomy term object
 	 */
 	public function get_lesson_module( $lesson_id = 0 ) {
 		$lesson_id = intval( $lesson_id );
@@ -1992,9 +2021,12 @@ class Sensei_Core_Modules {
 	 *
 	 * @param $course_id
 	 * @param $term_id
-	 * @return array $lessons
+	 *
+	 * @return (WP_Post|int)[] $lessons
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
-	public function get_lessons( $course_id, $term_id ) {
+	public function get_lessons( $course_id, $term_id ): array {
 
 		$lesson_query = $this->get_lessons_query( $course_id, $term_id );
 
@@ -2017,8 +2049,11 @@ class Sensei_Core_Modules {
 	 * @param int          $term_id                    Module term ID.
 	 * @param array|string $course_lessons_post_status Post status for lessons. Can be an array of statuses.
 	 *
-	 * @return WP_Query $lessons_query
+	 * @return WP_Query|array $lessons_query
+	 *
 	 * @since 1.8.0
+	 *
+	 * @psalm-return WP_Query|array<empty, empty>
 	 */
 	public function get_lessons_query( $course_id, $term_id, $course_lessons_post_status = null ) {
 		global $wp_query;
@@ -2106,7 +2141,7 @@ class Sensei_Core_Modules {
 	 * @since 1.8.0
 	 * @since 1.9.7 Added `not_found` label.
 	 */
-	public function setup_modules_taxonomy() {
+	public function setup_modules_taxonomy(): void {
 
 		$labels = array(
 			'name'              => __( 'Modules', 'sensei-lms' ),
@@ -2230,9 +2265,12 @@ class Sensei_Core_Modules {
 	 * @since 1.8.0
 	 *
 	 * @param string $term_name
-	 * @return array $owners { type WP_User }. Empty array if none if found.
+	 *
+	 * @return WP_User[] $owners { type WP_User }. Empty array if none if found.
+	 *
+	 * @psalm-return list<WP_User>
 	 */
-	public static function get_term_authors( $term_name ) {
+	public static function get_term_authors( $term_name ): array {
 
 		$terms = get_terms(
 			array( 'module' ),
@@ -2273,9 +2311,10 @@ class Sensei_Core_Modules {
 	 * @since 1.8.0
 	 *
 	 * @param $slug
-	 * @return WP_User $author if no author is found or invalid term is passed the admin user will be returned.
+	 *
+	 * @return WP_User|false $author if no author is found or invalid term is passed the admin user will be returned.
 	 */
-	public static function get_term_author( $slug = '' ) {
+	public static function get_term_author( string $slug = '' ) {
 
 		$term_owner = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
 
@@ -2332,7 +2371,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @param WP_Post $post Post object.
 	 */
-	public function course_module_metabox( $post ) {
+	public function course_module_metabox( $post ): void {
 
 		$tax_name = 'module';
 		$taxonomy = get_taxonomy( 'module' );
@@ -2385,7 +2424,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 */
-	public static function add_new_module_term() {
+	public static function add_new_module_term(): void {
 
 		if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( $_POST['security'], '_ajax_nonce-add-module' ) ) {
 			wp_send_json_error( array( 'error' => 'wrong security nonce' ) );
@@ -2453,7 +2492,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @deprecated 3.15.0
 	 */
-	public function ajax_get_course_modules() {
+	public function ajax_get_course_modules(): void {
 		_deprecated_function( __METHOD__, '3.15.0', 'Sensei_Core_Modules::handle_get_lesson_module_metabox' );
 
 		// Security check
@@ -2474,7 +2513,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 3.15.0
 	 */
-	public function handle_get_lesson_module_metabox() {
+	public function handle_get_lesson_module_metabox(): void {
 		// Security check.
 		check_ajax_referer( 'get_lesson_module_metabox_nonce', 'security' );
 
@@ -2579,7 +2618,7 @@ class Sensei_Core_Modules {
 	 * @param $user_id
 	 * @return array
 	 */
-	public function filter_terms_by_owner( $terms, $user_id ) {
+	public function filter_terms_by_owner( array $terms, int $user_id ) {
 
 		$users_terms = array();
 
@@ -2673,7 +2712,7 @@ class Sensei_Core_Modules {
 	 * with the modules taxonomy. We are removing this as
 	 * we have created our own custom meta box.
 	 */
-	public static function remove_default_modules_box() {
+	public static function remove_default_modules_box(): void {
 
 		remove_meta_box( 'modulediv', 'course', 'side' );
 
@@ -2684,11 +2723,12 @@ class Sensei_Core_Modules {
 	 * for it when determining the none module lessons.
 	 *
 	 * @since 1.9.0
+	 *
 	 * @deprecated 3.6.0
 	 *
 	 * @param int $post_id The post ID.
 	 */
-	public static function reset_none_modules_transient( $post_id ) {
+	public static function reset_none_modules_transient( $post_id ): void {
 		_deprecated_function( __METHOD__, '3.6.0' );
 	}
 
@@ -2698,6 +2738,8 @@ class Sensei_Core_Modules {
 	 * Setup the global $sensei_modules_loop
 	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public static function setup_single_course_module_loop() {
 
@@ -2737,7 +2779,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.9.0
 	 */
-	public static function teardown_single_course_module_loop() {
+	public static function teardown_single_course_module_loop(): void {
 
 		global $sensei_modules_loop;
 
@@ -2758,7 +2800,7 @@ class Sensei_Core_Modules {
 	 * @param int $module_id  Term ID.
 	 * @param int $teacher_id ID of module teacher.
 	 */
-	public static function update_module_teacher_meta( $module_id, $teacher_id ) {
+	public static function update_module_teacher_meta( $module_id, $teacher_id ): void {
 		if ( user_can( $teacher_id, 'manage_options' ) ) {
 			delete_term_meta( $module_id, 'module_author' );
 		} else {

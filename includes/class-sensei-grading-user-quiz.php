@@ -85,9 +85,9 @@ class Sensei_Grading_User_Quiz {
 	 *
 	 * This view is shown when grading a quiz for a single user in admin under grading
 	 *
-	 * @since  1.3.0
+	 * @since 1.3.0
 	 */
-	public function display() {
+	public function display(): void {
 		// Get data for the user.
 		$questions = $this->build_data_array();
 

@@ -102,6 +102,8 @@ abstract class Sensei_Import_File_Process_Task
 
 	/**
 	 * Run this task.
+	 *
+	 * @return void
 	 */
 	public function run() {
 		if ( $this->is_completed() ) {
@@ -131,6 +133,8 @@ abstract class Sensei_Import_File_Process_Task
 
 	/**
 	 * Save the current task's state.
+	 *
+	 * @return void
 	 */
 	public function save_state() {
 		$this->get_job()->set_state(
@@ -145,7 +149,7 @@ abstract class Sensei_Import_File_Process_Task
 	/**
 	 * Execute post process tasks.
 	 */
-	private function run_post_process_tasks() {
+	private function run_post_process_tasks(): void {
 		$post_process_batch_left = self::POST_PROCESS_BATCH_SIZE;
 		while ( $post_process_batch_left > 0 && ! empty( $this->post_process_tasks ) ) {
 			$post_process_batch_left--;
@@ -178,11 +182,13 @@ abstract class Sensei_Import_File_Process_Task
 	 *
 	 * {
 	 *
-	 *     @type integer $completed  Number of completed actions.
-	 *     @type integer $total      Number of total actions.
+	 * @type integer $completed  Number of completed actions.
+	 * @type integer $total      Number of total actions.
 	 * }
 	 *
-	 * @return array
+	 * @return int[]
+	 *
+	 * @psalm-return array{completed: int, total: int}
 	 */
 	public function get_completion_ratio() {
 		return [
@@ -306,7 +312,7 @@ abstract class Sensei_Import_File_Process_Task
 	 * @param string $task Task name. Handler should be a method with the name `handle_{$task}`.
 	 * @param array  $args Arguments to pass to the task.
 	 */
-	public function add_post_process_task( $task, $args ) {
+	public function add_post_process_task( $task, $args ): void {
 		if ( ! isset( $this->post_process_tasks[ $task ] ) ) {
 			$this->post_process_tasks[ $task ] = [];
 		}

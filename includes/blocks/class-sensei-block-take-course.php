@@ -28,7 +28,7 @@ class Sensei_Block_Take_Course {
 	 *
 	 * @access private
 	 */
-	public function register_block() {
+	public function register_block(): void {
 		Sensei_Blocks::register_sensei_block( 'sensei-lms/button-take-course', [ 'render_callback' => [ $this, 'render_take_course_block' ] ] );
 	}
 
@@ -87,7 +87,7 @@ class Sensei_Block_Take_Course {
 	 *
 	 * @return string
 	 */
-	private function render_with_start_course_form( $course_id, $button ) {
+	private function render_with_start_course_form( $course_id, $button ): string {
 		$nonce = wp_nonce_field( 'woothemes_sensei_start_course_noonce', 'woothemes_sensei_start_course_noonce', false, false );
 		return ( '
 			<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
@@ -132,7 +132,7 @@ class Sensei_Block_Take_Course {
 	 *
 	 * @return string
 	 */
-	private function render_with_login( $content ) {
+	private function render_with_login( $content ): string {
 		$target = sensei_user_registration_url();
 
 		$course_url = add_query_arg( 'take_course_sign_in', '1', get_permalink() );

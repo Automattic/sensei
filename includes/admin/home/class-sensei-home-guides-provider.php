@@ -33,9 +33,11 @@ class Sensei_Home_Guides_Provider {
 	/**
 	 * Returns all the information for the guides section.
 	 *
-	 * @return array|null
+	 * @return (array[]|mixed|null)[]|null
+	 *
+	 * @psalm-return array{items: array<array>, more_url: mixed|null}|null
 	 */
-	public function get() {
+	public function get(): ?array {
 		$remote_data = $this->remote_data_api->fetch( HOUR_IN_SECONDS );
 		if (
 			! $remote_data
@@ -62,8 +64,10 @@ class Sensei_Home_Guides_Provider {
 	 * @param array $item The guides item.
 	 *
 	 * @return array|null
+	 *
+	 * @psalm-return array{title: mixed, url: mixed}|null
 	 */
-	private function format_item( $item ) {
+	private function format_item( $item ): ?array {
 		if ( ! isset( $item['title'] ) || ! isset( $item['url'] ) ) {
 			return null;
 		}

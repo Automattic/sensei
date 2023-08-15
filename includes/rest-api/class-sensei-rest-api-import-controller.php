@@ -29,6 +29,8 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 	 * Get the handler class job this REST API controller handles.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return Sensei_Import_Job::class
 	 */
 	protected function get_handler_class() {
 		return Sensei_Import_Job::class;
@@ -37,7 +39,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 	/**
 	 * Create a data port job for the current user.
 	 *
-	 * @return Sensei_Data_Port_Job
+	 * @return Sensei_Import_Job
 	 */
 	protected function create_job() {
 		return Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
@@ -45,6 +47,8 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 
 	/**
 	 * Register the REST API endpoints for the class.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		parent::register_routes();
@@ -279,7 +283,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 *
-	 * @return WP_REST_Response|WP_Error
+	 * @return WP_Error|WP_REST_Response|true
 	 */
 	public function request_post_start_sample_job( $request ) {
 		$files = [
@@ -351,9 +355,11 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 	/**
 	 * Get the schema for the client on file related requests.
 	 *
-	 * @return array
+	 * @return array[]
+	 *
+	 * @psalm-return array{job: array}
 	 */
-	public function get_file_item_schema() {
+	public function get_file_item_schema(): array {
 		return [
 			'job' => $this->get_item_schema(),
 		];

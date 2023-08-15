@@ -97,7 +97,7 @@ class Installer {
 	 *
 	 * @since $$next-version$$
 	 */
-	public function init() {
+	public function init(): void {
 		register_activation_hook( SENSEI_LMS_PLUGIN_FILE, [ $this, 'install' ] );
 		add_action( 'plugins_loaded', [ $this, 'install' ] );
 		add_action( 'init', array( $this, 'update' ) );
@@ -111,6 +111,8 @@ class Installer {
 	 * @internal
 	 *
 	 * @since $$next-version$$
+	 *
+	 * @return void
 	 */
 	public function install() {
 		if (

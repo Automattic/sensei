@@ -45,10 +45,8 @@ class Grade_Repository_Factory {
 	 * Create a repository for the grades.
 	 *
 	 * @internal
-	 *
-	 * @return Grade_Repository_Interface
 	 */
-	public function create(): Grade_Repository_Interface {
+	public function create(): Aggregate_Grade_Repository {
 		global $wpdb;
 
 		return new Aggregate_Grade_Repository(

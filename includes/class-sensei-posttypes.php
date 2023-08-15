@@ -154,9 +154,10 @@ class Sensei_PostTypes {
 	 * Set up REST API for post types.
 	 *
 	 * @access private
+	 *
 	 * @since 2.2.0
 	 */
-	public function setup_rest_api() {
+	public function setup_rest_api(): void {
 		// Ensure registered meta will show up in the REST API for courses and lessons.
 		add_post_type_support( 'course', 'custom-fields' );
 		add_post_type_support( 'lesson', 'custom-fields' );
@@ -170,7 +171,7 @@ class Sensei_PostTypes {
 	 *
 	 * @access private
 	 */
-	public function protect_feeds() {
+	public function protect_feeds(): void {
 		if ( is_feed() && is_post_type_archive( [ 'lesson', 'question', 'quiz', 'sensei_message' ] ) ) {
 			wp_die( esc_html__( 'Error: Feed does not exist', 'sensei-lms' ), '', [ 'response' => 404 ] );
 		}
@@ -578,7 +579,7 @@ class Sensei_PostTypes {
 	 *
 	 * @access private
 	 */
-	public function setup_learner_taxonomy() {
+	public function setup_learner_taxonomy(): void {
 		register_taxonomy(
 			self::LEARNER_TAXONOMY_NAME,
 			'course',
@@ -802,9 +803,9 @@ class Sensei_PostTypes {
 	/**
 	 * Setup the singular, plural and menu label names for the post types.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
 	 */
-	private function setup_post_type_labels_base() {
+	private function setup_post_type_labels_base(): void {
 		$this->labels = array(
 			'course'   => array(),
 			'lesson'   => array(),
@@ -848,13 +849,17 @@ class Sensei_PostTypes {
 	/**
 	 * Create the labels for a specified post type.
 	 *
-	 * @since  1.0.0
-	 * @param  string $singular The label for a singular instance of the post type
-	 * @param  string $plural   The label for a plural instance of the post type
-	 * @param  string $menu     The menu item label
-	 * @return array            An array of the labels to be used
+	 * @since 1.0.0
+	 *
+	 * @param string $singular The label for a singular instance of the post type
+	 * @param string $plural   The label for a plural instance of the post type
+	 * @param string $menu     The menu item label
+	 *
+	 * @return string[] An array of the labels to be used
+	 *
+	 * @psalm-return array{name: string, singular_name: string, add_new: string, add_new_item: string, edit_item: string, new_item: string, all_items: string, view_item: string, search_items: string, not_found: string, not_found_in_trash: string, parent_item_colon: '', menu_name: string}
 	 */
-	private function create_post_type_labels( $singular, $plural, $menu ) {
+	private function create_post_type_labels( $singular, $plural, $menu ): array {
 
 		$lower_case_plural = function_exists( 'mb_strtolower' ) ? mb_strtolower( $plural, 'UTF-8' ) : strtolower( $plural );
 
@@ -888,11 +893,13 @@ class Sensei_PostTypes {
 	/**
 	 * Setup update messages for the post types.
 	 *
-	 * @since  1.0.0
-	 * @param  array $messages The existing array of messages for post types.
-	 * @return array           The modified array of messages for post types.
+	 * @since 1.0.0
+	 *
+	 * @param array $messages The existing array of messages for post types.
+	 *
+	 * @return array The modified array of messages for post types.
 	 */
-	public function setup_post_type_messages( $messages ) {
+	public function setup_post_type_messages( $messages ): array {
 		$messages['course']            = $this->create_post_type_messages( 'course' );
 		$messages['lesson']            = $this->create_post_type_messages( 'lesson' );
 		$messages['quiz']              = $this->create_post_type_messages( 'quiz' );
@@ -905,11 +912,15 @@ class Sensei_PostTypes {
 	/**
 	 * Create an array of messages for a specified post type.
 	 *
-	 * @since  1.0.0
-	 * @param  string $post_type The post type for which to create messages.
-	 * @return array            An array of messages (empty array if the post type isn't one we're looking to work with).
+	 * @since 1.0.0
+	 *
+	 * @param string $post_type The post type for which to create messages.
+	 *
+	 * @return (false|string)[] An array of messages (empty array if the post type isn't one we're looking to work with).
+	 *
+	 * @psalm-return array{0?: '', 1?: string, 2?: string, 3?: string, 4?: string, 5?: false|string, 6?: string, 7?: string, 8?: string, 9?: string, 10?: string}
 	 */
-	private function create_post_type_messages( $post_type ) {
+	private function create_post_type_messages( $post_type ): array {
 		global $post, $post_ID;
 
 		if ( ! isset( $this->labels[ $post_type ] ) ) {
@@ -1070,7 +1081,7 @@ class Sensei_PostTypes {
 	 *
 	 * @since 4.0.0
 	 */
-	public function add_submenus() {
+	public function add_submenus(): void {
 		Sensei_Home::instance()->add_admin_menu_item();
 
 		add_submenu_page(
@@ -1154,9 +1165,10 @@ class Sensei_PostTypes {
 	 * blocks.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @access private
 	 */
-	public function setup_initial_publish_action() {
+	public function setup_initial_publish_action(): void {
 		$this->reset_scheduled_initial_publish_actions();
 
 		// Schedule an action for initial publish of Sensei CPT's.
@@ -1174,9 +1186,10 @@ class Sensei_PostTypes {
 	 * called on `rest_api_init`.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @access private
 	 */
-	public function disable_fire_scheduled_initial_publish_actions() {
+	public function disable_fire_scheduled_initial_publish_actions(): void {
 		remove_action( 'shutdown', [ $this, 'fire_scheduled_initial_publish_actions' ] );
 	}
 
@@ -1196,11 +1209,14 @@ class Sensei_PostTypes {
 	 * we just need to schedule the action if needed.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @access private
 	 *
 	 * @param string  $new_status The new post status.
 	 * @param string  $old_status The old post status.
 	 * @param WP_Post $post       The post.
+	 *
+	 * @return void
 	 */
 	public function maybe_schedule_initial_publish_action( $new_status, $old_status, $post ) {
 		// Only handle Sensei post types.
@@ -1223,9 +1239,10 @@ class Sensei_PostTypes {
 	 * Fire the scheduled "initial publish" actions. This is run on `shutdown`.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @access private
 	 */
-	public function fire_scheduled_initial_publish_actions() {
+	public function fire_scheduled_initial_publish_actions(): void {
 		foreach ( array_unique( $this->initial_publish_post_ids ) as $post_id ) {
 			$post = get_post( $post_id );
 			if ( $post ) {
@@ -1243,9 +1260,10 @@ class Sensei_PostTypes {
 	 * (typically run by the block editor).
 	 *
 	 * @since 2.1.0
+	 *
 	 * @access private
 	 */
-	private function is_meta_box_save_request() {
+	private function is_meta_box_save_request(): bool {
 		// phpcs:ignore WordPress.Security.NonceVerification
 		return isset( $_REQUEST['meta-box-loader'] ) && '1' === $_REQUEST['meta-box-loader'];
 	}
@@ -1254,11 +1272,12 @@ class Sensei_PostTypes {
 	 * Schedule an "initial publish" action for the given post ID.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @access private
 	 *
 	 * @param int $post_id The post ID.
 	 */
-	private function schedule_initial_publish_action( $post_id ) {
+	private function schedule_initial_publish_action( $post_id ): void {
 		$this->initial_publish_post_ids[] = $post_id;
 	}
 
@@ -1266,9 +1285,10 @@ class Sensei_PostTypes {
 	 * Reset the array of post ID's for which to fire "initial publish" actions.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @access private
 	 */
-	private function reset_scheduled_initial_publish_actions() {
+	private function reset_scheduled_initial_publish_actions(): void {
 		$this->initial_publish_post_ids = [];
 	}
 
@@ -1309,7 +1329,7 @@ class Sensei_PostTypes {
 	 *
 	 * @param string $post_id The post ID.
 	 */
-	private function mark_post_already_published( $post_id ) {
+	private function mark_post_already_published( $post_id ): void {
 		add_post_meta( $post_id, '_sensei_already_published', true, true );
 	}
 

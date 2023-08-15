@@ -248,10 +248,13 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * Generate a csv report with different parameters, pagination, columns and table elements
 	 *
-	 * @since  1.7.0
-	 * @return data
+	 * @since 1.7.0
+	 *
+	 * @return (array|mixed)[]
+	 *
+	 * @psalm-return non-empty-list<list<mixed>|mixed>
 	 */
-	public function generate_report( $report ) {
+	public function generate_report( $report ): array {
 
 		$data = array();
 
@@ -318,8 +321,11 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * Generates the overall array for a single item in the display
 	 *
-	 * @since  1.7.0
+	 * @since 1.7.0
+	 *
 	 * @param object $item The current item
+	 *
+	 * @return array
 	 */
 	protected function get_row_data( $item ) {
 
@@ -540,10 +546,15 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * Return array of course statuses
 	 *
-	 * @since  1.7.0
+	 * @since 1.7.0
+	 *
 	 * @return array statuses
+	 *
+	 * @param (int|mixed|string)[] $args
+	 *
+	 * @psalm-param array{number: ''|mixed, offset: 0|mixed, orderby: string, order: 'ASC'|'DESC', search?: string} $args
 	 */
-	private function get_course_statuses( $args ) {
+	private function get_course_statuses( array $args ) {
 
 		$activity_args = [
 			'post_id' => $this->course_id,
@@ -601,10 +612,17 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * Return array of Courses' lessons
 	 *
-	 * @since  1.7.0
-	 * @return array statuses
+	 * @since 1.7.0
+	 *
+	 * @return (WP_Post|int)[] statuses
+	 *
+	 * @param (int|mixed|string)[] $args
+	 *
+	 * @psalm-param array{number: ''|mixed, offset: 0|mixed, orderby: string, order: 'ASC'|'DESC', search?: string} $args
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
-	private function get_lessons( $args ) {
+	private function get_lessons( array $args ): array {
 
 		$lessons_args = array(
 			'post_type'        => 'lesson',
@@ -706,6 +724,8 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 * Extra controls to be displayed between bulk actions and pagination.
 	 *
 	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 *
+	 * @return void
 	 */
 	public function extra_tablenav( $which ) {
 		?>
@@ -730,7 +750,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * Output top filter form.
 	 */
-	private function output_top_filters() {
+	private function output_top_filters(): void {
 		?>
 			<label for="sensei-start-date-filter">
 				<?php esc_html_e( 'Date Started', 'sensei-lms' ); ?>:

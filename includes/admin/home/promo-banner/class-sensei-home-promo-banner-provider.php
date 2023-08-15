@@ -15,6 +15,8 @@ class Sensei_Home_Promo_Banner_Provider {
 	 * Returns all the information for the promotional banner.
 	 *
 	 * @return array
+	 *
+	 * @psalm-return array{is_visible: mixed}
 	 */
 	public function get(): array {
 

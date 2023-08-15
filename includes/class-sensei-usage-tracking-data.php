@@ -129,9 +129,11 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @since 1.11.0
 	 *
-	 * @return array
+	 * @return (int|null)[]
+	 *
+	 * @psalm-return array{quiz_total: int, questions_min: int|null, questions_max: int|null, category_questions: int, quiz_pass_required: int, quiz_passmark: int, quiz_num_questions: int, quiz_rand_questions: int, quiz_auto_grade: int, quiz_allow_retake: int}
 	 */
-	private static function get_quiz_stats() {
+	private static function get_quiz_stats(): array {
 		$query = new WP_Query(
 			array(
 				'post_type'      => 'lesson',
@@ -245,7 +247,10 @@ class Sensei_Usage_Tracking_Data {
 	 * @since 1.11.0
 	 *
 	 * @param int[] $published_quiz_ids
+	 *
 	 * @return int
+	 *
+	 * @psalm-return 0|positive-int
 	 */
 	private static function get_category_question_count( $published_quiz_ids ) {
 		$multiple_question_query = new WP_Query(
@@ -305,7 +310,9 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @since 3.6.0
 	 *
-	 * @return double Average course completion rate.
+	 * @return float|string Average course completion rate.
+	 *
+	 * @psalm-return ''|float
 	 */
 	private static function get_course_completion_rate() {
 		$course_args             = array(
@@ -354,7 +361,9 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @param int $course_id Course ID.
 	 *
-	 * @return array|WP_Error Learner term data or empty array if no terms found.
+	 * @return (WP_Term|int|string)[]|WP_Error|string Learner term data or empty array if no terms found.
+	 *
+	 * @psalm-return WP_Error|array<WP_Term|int|string>|string
 	 */
 	private static function get_enrolled_learner_terms( $course_id ) {
 		$term_args = array(
@@ -526,8 +535,10 @@ class Sensei_Usage_Tracking_Data {
 	 * Get the learner term IDs for all admin users.
 	 *
 	 * @return int[]
+	 *
+	 * @psalm-return list<int>
 	 */
-	private static function get_admin_learner_term_ids() {
+	private static function get_admin_learner_term_ids(): array {
 		$admins         = get_users( [ 'role' => 'administrator' ] );
 		$admin_term_ids = [];
 		foreach ( $admins as $admin ) {
@@ -624,9 +635,9 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @since 1.9.20
 	 *
-	 * @return array Number of published lessons with a prerequisite.
-	 **/
-	private static function get_lesson_prerequisite_count() {
+	 * @return int Number of published lessons with a prerequisite.
+	 */
+	private static function get_lesson_prerequisite_count(): int {
 		$query = new WP_Query(
 			array(
 				'post_type'  => 'lesson',
@@ -649,9 +660,9 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @since 1.9.20
 	 *
-	 * @return array Number of published lessons that enable previewing.
-	 **/
-	private static function get_lesson_preview_count() {
+	 * @return int Number of published lessons that enable previewing.
+	 */
+	private static function get_lesson_preview_count(): int {
 		$query = new WP_Query(
 			array(
 				'post_type'  => 'lesson',
@@ -674,9 +685,9 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @since 1.9.20
 	 *
-	 * @return array Number of published lessons associated with a module.
-	 **/
-	private static function get_lesson_module_count() {
+	 * @return int Number of published lessons associated with a module.
+	 */
+	private static function get_lesson_module_count(): int {
 		$query = new WP_Query(
 			array(
 				'post_type' => 'lesson',
@@ -774,8 +785,10 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @since 1.9.20
 	 *
-	 * @return int Maximum modules count.
-	 **/
+	 * @return WP_Error|int|string Maximum modules count.
+	 *
+	 * @psalm-return 0|WP_Error|string
+	 */
 	private static function get_max_module_count() {
 		$max_modules = 0;
 		$query       = new WP_Query(
@@ -810,8 +823,10 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @since 1.9.20
 	 *
-	 * @return int Minimum modules count.
-	 **/
+	 * @return WP_Error|int|string Minimum modules count.
+	 *
+	 * @psalm-return 0|WP_Error|string
+	 */
 	private static function get_min_module_count() {
 		$min_modules   = 0;
 		$query         = new WP_Query(
@@ -852,9 +867,11 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @since 1.9.20
 	 *
-	 * @return array Number of published questions of each type.
-	 **/
-	private static function get_question_type_count() {
+	 * @return int[] Number of published questions of each type.
+	 *
+	 * @psalm-return array<0|1|2>
+	 */
+	private static function get_question_type_count(): array {
 		$count          = array();
 		$question_types = Sensei()->question->question_types();
 
@@ -888,9 +905,9 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @since 1.9.20
 	 *
-	 * @return array Number of published questions with media.
-	 **/
-	private static function get_question_media_count() {
+	 * @return int Number of published questions with media.
+	 */
+	private static function get_question_media_count(): int {
 		$query = new WP_Query(
 			array(
 				'post_type'  => 'question',
@@ -914,7 +931,9 @@ class Sensei_Usage_Tracking_Data {
 	 * @since 1.9.20
 	 *
 	 * @return int Number of multiple choice questions with randomized answers.
-	 **/
+	 *
+	 * @psalm-return 0|positive-int
+	 */
 	private static function get_question_random_order_count() {
 		$count     = 0;
 		$query     = new WP_Query(
@@ -993,9 +1012,9 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @param string $key Question type.
 	 *
-	 * @return array Question type key.
-	 **/
-	private static function get_question_type_key( $key ) {
+	 * @return string Question type key.
+	 */
+	private static function get_question_type_key( $key ): string {
 		return str_replace( '-', '_', 'question_' . $key );
 	}
 

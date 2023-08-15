@@ -147,9 +147,9 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 *
 	 * @param string $job_id  The job id.
 	 *
-	 * @return Sensei_Data_Port_Job|null instance.
+	 * @return null|static instance.
 	 */
-	public static function get( $job_id ) {
+	public static function get( $job_id ): ?self {
 		$option_name = self::get_option_name( $job_id );
 
 		/**
@@ -190,7 +190,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	/**
 	 * Set up a job to start.
 	 */
-	public function start() {
+	public function start(): void {
 		$this->has_changed = true;
 		$this->is_started  = true;
 	}
@@ -207,9 +207,11 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	/**
 	 * Get the logs of the job.
 	 *
-	 * @return array The logs.
+	 * @return array[] The logs.
+	 *
+	 * @psalm-return list<array{message: mixed, level: mixed, data: mixed}>
 	 */
-	public function get_logs() {
+	public function get_logs(): array {
 		usort(
 			$this->logs,
 			function( $first_log, $second_log ) {
@@ -255,8 +257,10 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @param int $second  The second integer.
 	 *
 	 * @return int
+	 *
+	 * @psalm-return -1|0|1
 	 */
-	private function compare_null_integers( $first, $second ) {
+	private function compare_null_integers( $first, $second ): int {
 		if ( $first === $second ) {
 			return 0;
 		}
@@ -275,7 +279,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	/**
 	 * Delete any stored state for this job.
 	 */
-	public function clean_up() {
+	public function clean_up(): void {
 		foreach ( array_keys( $this->files ) as $file_key ) {
 			$this->delete_file( $file_key );
 		}
@@ -296,9 +300,11 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	/**
 	 * Get the completion status of the job.
 	 *
-	 * @return array
+	 * @return (float|string)[]
+	 *
+	 * @psalm-return array{status: 'completed'|'pending'|'setup', percentage: float}
 	 */
-	public function get_status() {
+	public function get_status(): array {
 		$status = 'setup';
 		if ( $this->is_started ) {
 			$status = $this->is_completed ? 'completed' : 'pending';
@@ -358,7 +364,9 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	/**
 	 * Serialize state to JSON.
 	 *
-	 * @return array
+	 * @return (array|bool|float|int)[]
+	 *
+	 * @psalm-return array{s: array, l: array, r: array, c: bool, i: bool, p: float, f: array, u: int}
 	 */
 	public function jsonSerialize() {
 		return [
@@ -377,6 +385,8 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * Restore state from JSON.
 	 *
 	 * @param string $json_string The JSON string.
+	 *
+	 * @return void
 	 */
 	private function restore_from_json( $json_string ) {
 		$json_arr = json_decode( $json_string, true );
@@ -401,6 +411,8 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @param string $message Log message.
 	 * @param int    $level   Log level (see constants).
 	 * @param array  $data    Data to include with the message.
+	 *
+	 * @return void
 	 */
 	public function add_log_entry( $message, $level = self::LOG_LEVEL_INFO, $data = [] ) {
 		$this->has_changed = true;
@@ -417,7 +429,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 *
 	 * @access private
 	 */
-	public function persist() {
+	public function persist(): void {
 		if ( ! $this->is_deleted && $this->has_changed ) {
 			update_option( self::get_option_name( $this->job_id ), wp_json_encode( $this ), false );
 		}
@@ -427,6 +439,8 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 
 	/**
 	 * Run the job.
+	 *
+	 * @return void
 	 */
 	public function run() {
 		if ( $this->is_complete() || ! $this->is_started() ) {
@@ -562,9 +576,11 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	/**
 	 * Get injectable files data.
 	 *
-	 * @return array
+	 * @return (false|string)[][]
+	 *
+	 * @psalm-return array<array{name: string, url: false|string}>
 	 */
-	public function get_files_data() {
+	public function get_files_data(): array {
 		$data = [];
 		foreach ( $this->files as $file_key => $file_post_id ) {
 			$file = get_post( $file_post_id );
@@ -601,7 +617,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 *
 	 * @param string $file_key Key for the file being saved.
 	 *
-	 * @return bool
+	 * @return WP_Post|false|null
 	 */
 	public function delete_file( $file_key ) {
 		if ( ! isset( $this->files[ $file_key ] ) ) {
@@ -637,7 +653,9 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	/**
 	 * Returns the arguments for data port jobs.
 	 *
-	 * @return array
+	 * @return string[]
+	 *
+	 * @psalm-return array{job_id: string}
 	 */
 	public function get_args() {
 		return [ 'job_id' => $this->job_id ];
@@ -647,6 +665,8 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * Get the action name for the scheduled job.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'sensei-data-port-job'
 	 */
 	public function get_name() {
 		return self::SCHEDULED_ACTION_NAME;
@@ -659,7 +679,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 *
 	 * @return string The option name.
 	 */
-	private static function get_option_name( $job_id ) {
+	private static function get_option_name( $job_id ): string {
 		return self::OPTION_PREFIX . $job_id;
 	}
 
@@ -680,7 +700,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @param string $state_key The key of the state.
 	 * @param mixed  $state     The state.
 	 */
-	public function set_state( $state_key, $state ) {
+	public function set_state( $state_key, $state ): void {
 		$this->has_changed         = true;
 		$this->state[ $state_key ] = $state;
 	}
@@ -699,7 +719,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 *
 	 * @param int $user_id User ID.
 	 */
-	private function set_user_id( $user_id ) {
+	private function set_user_id( $user_id ): void {
 		$this->user_id = $user_id;
 	}
 
@@ -708,9 +728,9 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 *
 	 * @param array $entry Log entry.
 	 *
-	 * @return string|null
+	 * @return null|string
 	 */
-	public static function get_log_entry_descriptor( $entry ) {
+	public static function get_log_entry_descriptor( $entry ): ?string {
 		$data = ! empty( $entry['data'] ) ? $entry['data'] : [];
 
 		$descriptor = [];
@@ -736,8 +756,10 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @param int $level Integer level.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'error'|'info'|'notice'
 	 */
-	public static function translate_log_severity_level( $level ) {
+	public static function translate_log_severity_level( $level ): string {
 		$map = [
 			self::LOG_LEVEL_INFO   => 'info',
 			self::LOG_LEVEL_NOTICE => 'notice',

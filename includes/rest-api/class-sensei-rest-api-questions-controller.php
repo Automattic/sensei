@@ -116,7 +116,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 *
-	 * @return WP_Error|WP_Post|WP_REST_Response
+	 * @return WP_Error|WP_REST_Response|int
 	 */
 	public function update_item( $request ) {
 
@@ -159,7 +159,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	 *
 	 * @return array|null Question block.
 	 */
-	private function get_question_block_from_content( $post_content ) {
+	private function get_question_block_from_content( $post_content ): ?array {
 		if ( ! has_block( 'sensei-lms/quiz-question', $post_content ) ) {
 			return null;
 		}

@@ -58,7 +58,7 @@ class Sensei_Course_Theme_Compat {
 	 *
 	 * @access private
 	 */
-	public function the_course_theme_layout() {
+	public function the_course_theme_layout(): void {
 
 		$template = \Sensei_Course_Theme_Templates::instance()->should_use_quiz_template() ? 'quiz' : 'lesson';
 		$content  = $this->load_block_template( $template );
@@ -113,7 +113,7 @@ class Sensei_Course_Theme_Compat {
 	 *
 	 * @return string
 	 */
-	private function get_the_block_template_html( $template_content ) {
+	private function get_the_block_template_html( $template_content ): string {
 		global $wp_embed;
 		$content = $wp_embed->run_shortcode( $template_content );
 		$content = $wp_embed->autoembed( $content );

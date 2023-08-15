@@ -49,7 +49,7 @@ class Prev_Next_Lesson {
 	 *
 	 * @return string The link,
 	 */
-	private function get_link( $urls, $type, $label, $icon_name, $aria_label ) {
+	private function get_link( $urls, $type, $label, $icon_name, $aria_label ): string {
 		$disabled_attrs = '';
 
 		if ( empty( $urls[ $type ]['url'] ) ) {

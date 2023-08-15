@@ -84,6 +84,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * Extra controls to be displayed between bulk actions and pagination.
 	 *
 	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 *
+	 * @return void
 	 */
 	public function extra_tablenav( $which ) {
 		if ( 'top' === $which ) {
@@ -109,7 +111,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	/**
 	 * Outputs the HTML before the main table.
 	 */
-	public function output_headers() {
+	public function output_headers(): void {
 		$link_back_to_lm = '<a href="' . esc_url( $this->learner_management->get_url() ) . '">' . esc_html( $this->learner_management->get_name() ) . '</a>';
 		$subtitle        = '';
 
@@ -160,6 +162,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * Prepare the table items.
 	 *
 	 * @see WP_List_Table
+	 *
+	 * @return void
 	 */
 	public function prepare_items() {
 		$this->items = $this->get_learners( $this->query_args );
@@ -183,8 +187,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 *
 	 * @see WP_List_Table
 	 *
-	 * @return array The row's data
+	 * @return string[] The row's data
+	 *
 	 * @throws Exception When learner term could not be retrieved.
+	 *
+	 * @psalm-return array<string>
 	 */
 	protected function get_row_data( $item ) {
 		if ( ! $item ) {
@@ -275,7 +282,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 *
 	 * @return string The HTML.
 	 */
-	private function get_learner_html( $learner ) {
+	private function get_learner_html( $learner ): string {
 		$full_name = Sensei_Learner::get_full_name( $learner->user_id );
 		// translators: Placeholder is the item title/name.
 		$a_title = sprintf( __( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), $full_name );
@@ -332,7 +339,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @param string  $select_label    The label of the element.
 	 * @param bool    $multiple        Whether multiple selections are allowed.
 	 */
-	private function courses_select( $courses, $selected_course, $select_id = 'course-select', $name = 'course_id', $select_label = null, $multiple = false ) {
+	private function courses_select( $courses, $selected_course, $select_id = 'course-select', $name = 'course_id', $select_label = null, $multiple = false ): void {
 		if ( null === $select_label ) {
 			$select_label = __( 'Select Course', 'sensei-lms' );
 		}
@@ -358,7 +365,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 *
 	 * @return string HTML for the bulk action dropdown.
 	 */
-	private function get_bulk_action_dropdown_html() {
+	private function get_bulk_action_dropdown_html(): string {
 		$html = '';
 
 		$html .= '<select id="bulk-action-selector-top" name="sensei_bulk_action_select" class="sensei-student-bulk-actions__placeholder-dropdown sensei-bulk-action-select">';
@@ -378,7 +385,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	/**
 	 * Helper method to display the controls of bulk actions.
 	 */
-	public function data_table_header() {
+	public function data_table_header(): void {
 
 		$courses         = Sensei_Course::get_all_courses();
 		$selected_course = 0;
@@ -433,7 +440,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	/**
 	 * Returns the search button text.
 	 */
-	public function search_button() {
+	public function search_button(): string {
 		return __( 'Search Students', 'sensei-lms' );
 	}
 
@@ -485,9 +492,12 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @access private
 	 *
 	 * @param array $styles List of styles that are allowed and considered safe.
-	 * @return array
+	 *
+	 * @return (mixed|string)[]
+	 *
+	 * @psalm-return array<'display'|mixed>
 	 */
-	public function get_allowed_css( $styles ) {
+	public function get_allowed_css( $styles ): array {
 		$styles[] = 'display';
 
 		return $styles;
@@ -496,9 +506,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	/**
 	 * Generates the query args from GET arguments
 	 *
-	 * @return array The query args
+	 * @return (false|int|string)[] The query args
+	 *
+	 * @psalm-return array{page: string, view: string, per_page: int, offset: int, orderby: string, order: 'ASC'|'DESC', search: false|string, filter_by_course_id: int, filter_type: 'exc'|'inc'}
 	 */
-	private function parse_query_args() {
+	private function parse_query_args(): array {
 		// Handle orderby.
 		$orderby = '';
 

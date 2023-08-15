@@ -67,9 +67,11 @@ class Sensei_Analysis {
 	 *
 	 * @param string $key The key to get.
 	 *
-	 * @return string|void
+	 * @return null|string
+	 *
+	 * @psalm-return 'sensei_reports'|null
 	 */
-	public function __get( $key ) {
+	public function __get( $key ): ?string {
 		if ( 'page_slug' === $key ) {
 			_doing_it_wrong( 'Sensei_Analysis->page_slug', 'The "page_slug" property is deprecated. Use the Sensei_Analysis::PAGE_SLUG constant instead.', '4.2.0' );
 
@@ -81,7 +83,10 @@ class Sensei_Analysis {
 	 * Add custom navigation to the admin pages.
 	 *
 	 * @since 4.2.0
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function add_custom_navigation() {
 		// phpcs:ignore WordPress.Security.NonceVerification -- No action, nonce is not required.
@@ -102,7 +107,7 @@ class Sensei_Analysis {
 	/**
 	 * Display the Reports navigation.
 	 */
-	private function display_reports_navigation() {
+	private function display_reports_navigation(): void {
 		// phpcs:ignore
 		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
 
@@ -185,10 +190,11 @@ class Sensei_Analysis {
 	/**
 	 * Enqueue JS scripts.
 	 *
-	 * @since  4.2.0
+	 * @since 4.2.0
+	 *
 	 * @access private
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts(): void {
 
 		Sensei()->assets->enqueue( 'sensei-reports', 'js/admin/reports.js', [ 'jquery', 'jquery-ui-datepicker' ] );
 
@@ -337,7 +343,7 @@ class Sensei_Analysis {
 	 * @since  1.2.0
 	 * @return void
 	 */
-	public function analysis_default_view( $type ) {
+	public function analysis_default_view( string $type ) {
 		$sensei_analysis_overview = $this->load_data_object( 'Overview', $type );
 		$exclude_query_params     = [ 'start_date', 'end_date' ];
 		$this->display_report_page( $sensei_analysis_overview, null, $exclude_query_params );
@@ -417,7 +423,7 @@ class Sensei_Analysis {
 	 * @param string|null       $nav_type Navigation type.
 	 * @param array             $exclude_query_params Query parameters to exclude from output.
 	 */
-	private function display_report_page( Sensei_List_Table $list_table, $nav_type = null, array $exclude_query_params = [] ) {
+	private function display_report_page( Sensei_List_Table $list_table, $nav_type = null, array $exclude_query_params = [] ): void {
 		$exclude_query_params = array_merge( $exclude_query_params, [ '_wpnonce', '_wp_http_referer', 's' ] );
 
 		// Wrappers
@@ -448,7 +454,7 @@ class Sensei_Analysis {
 	 *
 	 * @param string|null $nav_type Navigation type.
 	 */
-	private function display_nav( $nav_type ) {
+	private function display_nav( $nav_type ): void {
 		switch ( $nav_type ) {
 			case 'user_profile':
 				$this->analysis_user_profile_nav();
@@ -806,7 +812,7 @@ class Sensei_Analysis {
 	 * @param int $lesson_id Lesson post ID.
 	 * @param int $user_id   User ID.
 	 */
-	private function check_course_lesson( $course_id, $lesson_id, $user_id ) {
+	private function check_course_lesson( $course_id, $lesson_id, $user_id ): void {
 		if (
 			$course_id
 			&& (
@@ -892,13 +898,17 @@ class Sensei_Analysis {
 	/**
 	 * Adds display_name to the default list of search columns for the WP User Object
 	 *
-	 * @since  1.4.5
-	 * @param  array  $search_columns         array of default user columns to search
-	 * @param  string $search                search string
-	 * @param  object $user_query_object     WP_User_Query Object
-	 * @return array $search_columns         array of user columns to search
+	 * @since 1.4.5
+	 *
+	 * @param array  $search_columns         array of default user columns to search
+	 * @param string $search                search string
+	 * @param object $user_query_object     WP_User_Query Object
+	 *
+	 * @return (mixed|string)[] $search_columns array of user columns to search
+	 *
+	 * @psalm-return array<'display_name'|mixed>
 	 */
-	public function user_search_columns_filter( $search_columns, $search, $user_query_object ) {
+	public function user_search_columns_filter( $search_columns, $search, $user_query_object ): array {
 		// Alter $search_columns to include the fields you want to search on
 		array_push( $search_columns, 'display_name' );
 		return $search_columns;

@@ -78,7 +78,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	/**
 	 * Initializes the data port manager.
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'init', [ $this, 'maybe_schedule_cron_jobs' ] );
 		add_action( 'admin_init', [ $this, 'redirect_imported_sample' ] );
 		add_action( 'sensei_data_port_complete', [ $this, 'log_complete_import_jobs' ] );
@@ -95,7 +95,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	/**
 	 * Schedule garbage collection event if needed.
 	 */
-	public function maybe_schedule_cron_jobs() {
+	public function maybe_schedule_cron_jobs(): void {
 		if ( ! wp_next_scheduled( 'sensei_data_port_garbage_collection' ) ) {
 			wp_schedule_event( time(), 'daily', 'sensei_data_port_garbage_collection' );
 		}
@@ -105,6 +105,8 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 * Redirect to the last imported course.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function redirect_imported_sample() {
 		if (
@@ -132,6 +134,8 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 * @access private
 	 *
 	 * @param int $post_id Post ID.
+	 *
+	 * @return never
 	 */
 	protected function redirect_edit_post_link( $post_id ) {
 		wp_safe_redirect( get_edit_post_link( $post_id, null ) );
@@ -141,7 +145,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	/**
 	 * Clean old jobs.
 	 */
-	public function clean_old_jobs() {
+	public function clean_old_jobs(): void {
 		foreach ( $this->data_port_jobs as $job ) {
 			$age = time() - $job['time'];
 			if ( $age > self::JOB_STALE_AGE_SECONDS ) {
@@ -154,6 +158,8 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 * Runs a scheduled data port job.
 	 *
 	 * @param array $args The arguments of the background job. Only the job_id is included.
+	 *
+	 * @return void
 	 */
 	public function run_scheduled_data_port_job( $args ) {
 		if ( empty( $args['job_id'] ) ) {
@@ -174,7 +180,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 *
 	 * @param Sensei_Data_Port_Job $job
 	 */
-	public function run_data_port_job( $job ) {
+	public function run_data_port_job( $job ): void {
 		$job_running = get_transient( self::OPTION_RUNNING_JOB );
 		if ( ! $job_running ) {
 			set_transient( self::OPTION_RUNNING_JOB, true, 120 );
@@ -213,7 +219,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 *
 	 * @param int $user_id The user which started the job.
 	 *
-	 * @return Sensei_Import_Job
+	 * @return Sensei_Export_Job|Sensei_Import_Job
 	 */
 	public function create_import_job( $user_id ) {
 		return $this->create_job( $user_id, Sensei_Import_Job::class );
@@ -224,7 +230,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 *
 	 * @param int $user_id The user which started the job.
 	 *
-	 * @return Sensei_Export_Job
+	 * @return Sensei_Export_Job|Sensei_Import_Job
 	 */
 	public function create_export_job( $user_id ) {
 		return $this->create_job( $user_id, Sensei_Export_Job::class );
@@ -255,7 +261,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 *
 	 * @param string $job_id  The job id.
 	 */
-	public function cancel_job( $job_id ) {
+	public function cancel_job( $job_id ): void {
 		$job = $this->get_job( $job_id );
 
 		if ( null !== $job ) {
@@ -274,7 +280,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	/**
 	 * Cancel all pending jobs.
 	 */
-	public function cancel_all_jobs() {
+	public function cancel_all_jobs(): void {
 		foreach ( $this->data_port_jobs as $job ) {
 			if ( is_subclass_of( $job['handler'], 'Sensei_Data_Port_Job', true ) ) {
 				$job_instance = $job['handler']::get( $job['id'] );
@@ -295,6 +301,8 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 * @access private
 	 *
 	 * @param Sensei_Data_Port_Job $job The job object.
+	 *
+	 * @return void
 	 */
 	public function log_complete_import_jobs( Sensei_Data_Port_Job $job ) {
 		if ( ! $job instanceof Sensei_Import_Job ) {
@@ -323,6 +331,8 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 * @access private
 	 *
 	 * @param Sensei_Data_Port_Job $job The job object.
+	 *
+	 * @return void
 	 */
 	public function log_complete_export_jobs( Sensei_Data_Port_Job $job ) {
 		if ( ! $job instanceof Sensei_Export_Job ) {
@@ -361,7 +371,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 *
 	 * @access private
 	 */
-	public function persist() {
+	public function persist(): void {
 		if ( $this->has_changed ) {
 			update_option( self::OPTION_NAME, wp_json_encode( $this ), false );
 		}

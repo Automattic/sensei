@@ -43,6 +43,8 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 
 	/**
 	 * Register the REST API endpoints for extensions.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -140,7 +142,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request WordPress request object.
 	 *
-	 * @return bool|WP_Error Whether the user can read extensions.
+	 * @return WP_Error|true Whether the user can read extensions.
 	 */
 	public function can_user_read_plugins( WP_REST_Request $request ) {
 		if ( ! current_user_can( Sensei_Admin::get_top_menu_capability() ) ) {
@@ -159,7 +161,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request WordPress request object.
 	 *
-	 * @return bool|WP_Error Whether the user can manage extensions.
+	 * @return WP_Error|true Whether the user can manage extensions.
 	 */
 	public function can_user_manage_plugins( WP_REST_Request $request ) {
 		if ( ! current_user_can( 'activate_plugins' ) || ! current_user_can( 'update_plugins' ) ) {
@@ -260,7 +262,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request The request.
 	 *
-	 * @return WP_REST_Response|WP_Error
+	 * @return WP_Error|WP_REST_Response|bool
 	 */
 	public function update_extensions( WP_REST_Request $request ) {
 		$json_params    = $request->get_json_params();
@@ -317,7 +319,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 * @param WP_Ajax_Upgrader_Skin $skin     Upgrader sking.
 	 * @param Plugin_Upgrader       $upgrader The upgrader.
 	 *
-	 * @return bool|WP_Error
+	 * @return WP_Error|bool|string
 	 */
 	private function check_for_upgrade_error( array $plugins, $result, WP_Ajax_Upgrader_Skin $skin, Plugin_Upgrader $upgrader ) {
 		if ( is_wp_error( $skin->result ) ) {
@@ -391,7 +393,9 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	/**
 	 * Schema for the extensions endpoint.
 	 *
-	 * @return array Schema object.
+	 * @return ((string|string[][])[]|string)[][] Schema object.
+	 *
+	 * @psalm-return array{extensions: array{type: 'array', items: array{type: 'object', properties: array{hash: array{type: 'string', description: 'Product ID.'}, title: array{type: 'string', description: 'Extension title.'}, image: array{type: 'string', description: 'Extension image.'}, excerpt: array{type: 'string', description: 'Extension excerpt'}, link: array{type: 'string', description: 'Extension link.'}, price: array{type: 'string', description: 'Extension price.'}, is_featured: array{type: 'boolean', description: 'Whether its a featured extension.'}, product_slug: array{type: 'string', description: 'Extension product slug.'}, hosted_location: array{type: 'string', description: 'Where the extension is hosted (dotorg or external)'}, type: array{type: 'string', description: 'Whether this is a plugin or a theme'}, plugin_file: array{type: 'string', description: 'Main plugin file.'}, version: array{type: 'string', description: 'Extension version.'}, is_installed: array{type: 'boolean', description: 'Whether the extension is installed.'}, has_update: array{type: 'boolean', description: 'Whether the extension has available updates.'}}}}}
 	 */
 	public function get_extensions_schema() : array {
 		return [

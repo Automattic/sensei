@@ -82,7 +82,7 @@ class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @since 1.9.0
 	 */
-	protected function setup_course_query() {
+	protected function setup_course_query(): void {
 
 		// for non numeric teacher arguments value query by author_name and not author
 		$teacher_query_by = is_numeric( $this->teacher ) ? 'author' : 'author_name';

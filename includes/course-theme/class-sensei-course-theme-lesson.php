@@ -43,6 +43,8 @@ class Sensei_Course_Theme_Lesson {
 
 	/**
 	 * Initializes the class.
+	 *
+	 * @return void
 	 */
 	public function init() {
 		$post_type = get_post_type();
@@ -60,8 +62,10 @@ class Sensei_Course_Theme_Lesson {
 	 * Intercepts the notices and prints them out later via 'sensei-lms/course-theme-notices' block.
 	 *
 	 * @param array $notice The notice to intercept.
+	 *
+	 * @return array|null
 	 */
-	public static function intercept_notice( array $notice ) {
+	public static function intercept_notice( array $notice ): ?array {
 		// Do nothing if it is not lesson or quiz post.
 		$post_type = get_post_type();
 		if ( ! in_array( $post_type, [ 'lesson', 'quiz' ], true ) ) {
@@ -83,6 +87,8 @@ class Sensei_Course_Theme_Lesson {
 
 	/**
 	 * Maybe add lesson quiz results notice.
+	 *
+	 * @return void
 	 */
 	private function maybe_add_quiz_results_notice() {
 		$lesson_id = \Sensei_Utils::get_current_lesson();
@@ -200,6 +206,8 @@ class Sensei_Course_Theme_Lesson {
 
 	/**
 	 * Maybe add lesson prerequisite notice.
+	 *
+	 * @return void
 	 */
 	private function maybe_add_lesson_prerequisite_notice() {
 		$lesson_id = \Sensei_Utils::get_current_lesson();

@@ -20,6 +20,8 @@ class Sensei_Tool_Ensure_Roles implements Sensei_Tool_Interface {
 	 * Get the ID of the tool.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'ensure-roles'
 	 */
 	public function get_id() {
 		return 'ensure-roles';
@@ -45,6 +47,8 @@ class Sensei_Tool_Ensure_Roles implements Sensei_Tool_Interface {
 
 	/**
 	 * Run the tool.
+	 *
+	 * @return void
 	 */
 	public function process() {
 		Sensei()->assign_role_caps();
@@ -58,7 +62,7 @@ class Sensei_Tool_Ensure_Roles implements Sensei_Tool_Interface {
 	/**
 	 * Is the tool currently available?
 	 *
-	 * @return bool True if tool is available.
+	 * @return true True if tool is available.
 	 */
 	public function is_available() {
 		return true;

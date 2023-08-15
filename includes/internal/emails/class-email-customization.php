@@ -195,7 +195,7 @@ class Email_Customization {
 	 *
 	 * @access private
 	 */
-	public function disable_legacy_emails() {
+	public function disable_legacy_emails(): void {
 		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'teacher_completed_course' ] );
 		remove_action( 'sensei_user_course_start', [ Sensei()->emails, 'teacher_started_course' ] );
 		remove_action( 'sensei_user_quiz_submitted', [ Sensei()->emails, 'teacher_quiz_submitted' ] );

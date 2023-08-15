@@ -81,9 +81,11 @@ class Repository {
 	 *
 	 * @since 4.13.0
 	 *
-	 * @return array
+	 * @return (int|string)[][]
+	 *
+	 * @psalm-return array<array{id: int, post_type: string, name: string, description: string}>
 	 */
-	public static function fetch_sensei_lists() {
+	public static function fetch_sensei_lists(): array {
 		$args = array(
 			'post_type'        => array( 'group', 'course' ),
 			'posts_per_page'   => -1,
@@ -111,11 +113,14 @@ class Repository {
 	 * Convert array of user objects to array of arrays.
 	 *
 	 * @since 4.13.0
+	 *
 	 * @param array $users Array of user objects.
 	 *
-	 * @return array Array of user arrays.
+	 * @return (mixed|string)[][] Array of user arrays.
+	 *
+	 * @psalm-return array<array{id: mixed, email: string, display_name: mixed, wp_user_login: mixed}>
 	 */
-	public static function user_objects_to_array( $users ) {
+	public static function user_objects_to_array( $users ): array {
 		return array_map(
 			static function( $user ) {
 				return array(

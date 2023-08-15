@@ -67,6 +67,8 @@ class Sensei_Import_Associations
 
 	/**
 	 * Run this task.
+	 *
+	 * @return void
 	 */
 	public function run() {
 		if ( ! isset( $this->total_tasks ) ) {
@@ -99,6 +101,8 @@ class Sensei_Import_Associations
 	 *
 	 * @param int   $course_id Course post ID.
 	 * @param array $args      Arguments from when this task was enqueued.
+	 *
+	 * @return void
 	 */
 	private function handle_course_lessons( $course_id, $args ) {
 		$this->batch_remaining--;
@@ -110,7 +114,7 @@ class Sensei_Import_Associations
 			return;
 		}
 
-		$add_warning_helper = function( $message, $code ) use ( $line_number, $course_id, $post_title ) {
+		$add_warning_helper = function( $message, $code ) use ( $line_number, $course_id, $post_title ): void {
 			$model_key = Sensei_Import_Course_Model::MODEL_KEY;
 			$this->get_job()->add_line_warning(
 				$model_key,
@@ -221,9 +225,11 @@ class Sensei_Import_Associations
 	 *
 	 * @param int $course_id Course post ID.
 	 *
-	 * @return int[]
+	 * @return (WP_Post|int)[]
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
-	private function get_current_lesson_ids( $course_id ) {
+	private function get_current_lesson_ids( $course_id ): array {
 		$post_args = [
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
@@ -256,7 +262,7 @@ class Sensei_Import_Associations
 
 		$lesson_id = (int) $lesson_id;
 
-		$add_warning_helper = function( $message, $code ) use ( $line_number, $lesson_id, $post_title ) {
+		$add_warning_helper = function( $message, $code ) use ( $line_number, $lesson_id, $post_title ): void {
 			$model_key = Sensei_Import_Lesson_Model::MODEL_KEY;
 
 			$this->get_job()->add_line_warning(
@@ -309,7 +315,7 @@ class Sensei_Import_Associations
 	 * @param int    $line_number Line number for the lesson.
 	 * @param string $post_title  Import line post title.
 	 */
-	public function add_lesson_module( $lesson_id, $module, $line_number, $post_title ) {
+	public function add_lesson_module( $lesson_id, $module, $line_number, $post_title ): void {
 		$this->lesson_modules[ $lesson_id ] = [
 			$module,
 			$line_number,
@@ -325,7 +331,7 @@ class Sensei_Import_Associations
 	 * @param int    $line_number Line number for the lesson.
 	 * @param string $post_title  Import line post title.
 	 */
-	public function add_course_lessons( $course_id, $lessons, $line_number, $post_title ) {
+	public function add_course_lessons( $course_id, $lessons, $line_number, $post_title ): void {
 		$this->course_lessons[ $course_id ] = [
 			$lessons,
 			$line_number,
@@ -347,11 +353,13 @@ class Sensei_Import_Associations
 	 *
 	 * {
 	 *
-	 *     @type integer $completed  Number of completed actions.
-	 *     @type integer $total      Number of total actions.
+	 * @type integer $completed  Number of completed actions.
+	 * @type integer $total      Number of total actions.
 	 * }
 	 *
-	 * @return array
+	 * @return (float|int)[]
+	 *
+	 * @psalm-return array{completed: 0|10|float, total: 10}
 	 */
 	public function get_completion_ratio() {
 		$artificial_task_size = 10;
@@ -376,6 +384,8 @@ class Sensei_Import_Associations
 	 * Get the number of remaining tasks.
 	 *
 	 * @return int
+	 *
+	 * @psalm-return 0|positive-int
 	 */
 	private function get_remaining_tasks() {
 		return count( $this->lesson_modules ) + count( $this->course_lessons );
@@ -383,6 +393,8 @@ class Sensei_Import_Associations
 
 	/**
 	 * Save the current task's state.
+	 *
+	 * @return void
 	 */
 	public function save_state() {
 		$this->get_job()->set_state(

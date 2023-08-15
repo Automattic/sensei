@@ -54,7 +54,7 @@ class Sensei_Setup_Wizard_Pages {
 	/**
 	 * Create Sensei pages and update settings.
 	 */
-	public function create_pages() {
+	public function create_pages(): void {
 
 		// Courses page.
 		$new_course_page_id = $this->create_page( esc_sql( _x( 'courses-overview', 'page_slug', 'sensei-lms' ) ), __( 'Courses', 'sensei-lms' ), $this->get_courses_page_template() );

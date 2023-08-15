@@ -61,7 +61,7 @@ class Sensei_Course_Video_Settings {
 	/**
 	 * Initializes the Video-Based Course Progression.
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_scripts' ] );
 		// When there's no embed handler for YouTube, it uses the oembed filter.
@@ -143,7 +143,7 @@ class Sensei_Course_Video_Settings {
 	 *
 	 * @access private
 	 */
-	public function register_post_meta() {
+	public function register_post_meta(): void {
 		$settings = [
 			self::COURSE_VIDEO_AUTOCOMPLETE,
 			self::COURSE_VIDEO_AUTOPAUSE,

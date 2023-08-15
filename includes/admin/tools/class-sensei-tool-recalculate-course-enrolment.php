@@ -22,6 +22,8 @@ class Sensei_Tool_Recalculate_Course_Enrolment implements Sensei_Tool_Interface,
 	 * Get the ID of the tool.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'recalculate-course-enrolment'
 	 */
 	public function get_id() {
 		return 'recalculate-course-enrolment';
@@ -47,6 +49,8 @@ class Sensei_Tool_Recalculate_Course_Enrolment implements Sensei_Tool_Interface,
 
 	/**
 	 * Output tool view for interactive action methods.
+	 *
+	 * @return void
 	 */
 	public function output() {
 		$course_query_args = [
@@ -72,6 +76,8 @@ class Sensei_Tool_Recalculate_Course_Enrolment implements Sensei_Tool_Interface,
 
 	/**
 	 * Process form input.
+	 *
+	 * @return void
 	 */
 	public function process() {
 		if ( empty( $_POST['course_id'] ) ) {
@@ -105,7 +111,7 @@ class Sensei_Tool_Recalculate_Course_Enrolment implements Sensei_Tool_Interface,
 	/**
 	 * Is the tool currently available?
 	 *
-	 * @return bool True if tool is available.
+	 * @return true True if tool is available.
 	 */
 	public function is_available() {
 		return true;

@@ -43,6 +43,8 @@ class Sensei_REST_API_Theme_Controller extends WP_REST_Controller {
 
 	/**
 	 * Register the REST API endpoints for the Course theme.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -69,7 +71,7 @@ class Sensei_REST_API_Theme_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request WordPress request object.
 	 *
-	 * @return bool|WP_Error Whether the user can manage themes.
+	 * @return WP_Error|true Whether the user can manage themes.
 	 */
 	public function can_user_manage_themes( WP_REST_Request $request ) {
 		if (

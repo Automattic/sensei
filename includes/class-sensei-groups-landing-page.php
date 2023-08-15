@@ -23,9 +23,10 @@ class Sensei_Groups_Landing_Page {
 	 * Add student groups menu item and display student groups landing page.
 	 *
 	 * @access public
+	 *
 	 * @since 4.5.2
 	 */
-	public function add_groups_landing_page_menu_item() {
+	public function add_groups_landing_page_menu_item(): void {
 
 		// Add new menu item.
 		$menu_item_title = __( 'Groups', 'sensei-lms' );
@@ -45,9 +46,10 @@ class Sensei_Groups_Landing_Page {
 	 * Display student groups promo landing page.
 	 *
 	 * @access public
+	 *
 	 * @since 4.5.2
 	 */
-	public function display_student_groups_landing_page() {
+	public function display_student_groups_landing_page(): void {
 		// Get the price of Pro. Return if it's not available.
 		$sensei_pro_product = Sensei_Extensions::instance()->get_extension( Sensei_Extensions::PRODUCT_SENSEI_PRO_SLUG );
 		$sensei_pro_price   = $sensei_pro_product ? str_replace( '.00', '', $sensei_pro_product->price ) : '-';
@@ -130,11 +132,12 @@ class Sensei_Groups_Landing_Page {
 	 * Wrapper container wrapper_container wrapper.
 	 *
 	 * @access public
+	 *
 	 * @since 4.5.2
 	 *
 	 * @param string $which which wrapper top or bottom.
 	 */
-	public function wrapper_container( $which ) {
+	public function wrapper_container( $which ): void {
 		if ( 'top' === $which ) {
 			?>
 			<div id="woothemes-sensei" class="wrap woothemes-sensei">

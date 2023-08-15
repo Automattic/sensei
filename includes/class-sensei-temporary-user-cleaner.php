@@ -56,7 +56,7 @@ class Sensei_Temporary_User_Cleaner {
 	 *
 	 * @since 4.11.0
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'init', [ $this, 'maybe_schedule_cron_jobs' ], 101 );
 		add_action( 'sensei_remove_inactive_guest_users', [ $this, 'clean_inactive_guest_users' ] );
 	}
@@ -66,9 +66,10 @@ class Sensei_Temporary_User_Cleaner {
 	 * Attach cleaning job to cron.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
 	 */
-	public function maybe_schedule_cron_jobs() {
+	public function maybe_schedule_cron_jobs(): void {
 		if ( ! wp_next_scheduled( 'sensei_remove_inactive_guest_users' ) ) {
 			wp_schedule_event( time(), 'daily', 'sensei_remove_inactive_guest_users' );
 		}
@@ -78,9 +79,10 @@ class Sensei_Temporary_User_Cleaner {
 	 * Remove guest and preview users who have not been active within last week.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
 	 */
-	public function clean_inactive_guest_users() {
+	public function clean_inactive_guest_users(): void {
 		$user_ids_to_be_deleted = $this->get_inactive_users();
 
 		foreach ( $user_ids_to_be_deleted as $user_id ) {
@@ -95,8 +97,10 @@ class Sensei_Temporary_User_Cleaner {
 	 * @access private
 	 *
 	 * @return array List of user IDs.
+	 *
+	 * @psalm-return list<mixed>
 	 */
-	private function get_inactive_users() {
+	private function get_inactive_users(): array {
 
 		$guest_user_ids = Sensei_Temporary_User::get_all_users(
 			[

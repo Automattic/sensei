@@ -25,8 +25,8 @@ class Progress_Bar {
 	 * @param array $attributes {
 	 *     Component attributes.
 	 *
-	 *     @type string $label      Text label.
-	 *     @type float  $percentage Progress bar percentage.
+	 * @type string $label      Text label.
+	 * @type float  $percentage Progress bar percentage.
 	 * }
 	 *
 	 * @return string HTML.

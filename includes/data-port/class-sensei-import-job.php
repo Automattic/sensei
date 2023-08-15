@@ -75,7 +75,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * @param int    $line_number Line number.
 	 * @param int    $result      Result value from class constants RESULT_ERROR, RESULT_WARNING, RESULT_SUCCESS.
 	 */
-	public function set_line_result( $model_key, $line_number, $result ) {
+	public function set_line_result( $model_key, $line_number, $result ): void {
 		if (
 			! isset( $this->results[ $model_key ][ $line_number ] )
 			|| $this->results[ $model_key ][ $line_number ] > $result
@@ -96,7 +96,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * @param string $message     Warning message.
 	 * @param array  $log_data    Log data.
 	 */
-	public function add_line_warning( $model_key, $line_number, $message, $log_data = [] ) {
+	public function add_line_warning( $model_key, $line_number, $message, $log_data = [] ): void {
 		$log_data['line'] = $line_number;
 
 		$this->set_line_result( $model_key, $line_number, self::RESULT_WARNING );
@@ -109,6 +109,8 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * @param string $message Log message.
 	 * @param int    $level   Log level (see constants).
 	 * @param array  $data    Data to include with the message.
+	 *
+	 * @return void
 	 */
 	public function add_log_entry( $message, $level = self::LOG_LEVEL_INFO, $data = [] ) {
 		if ( isset( $data['code'], $data['type'] ) ) {
@@ -134,12 +136,15 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	/**
 	 * Get the configuration for expected files.
 	 *
-	 * @return array {
-	 *    @type array $$component {
-	 *        @type callable $validator  Callback to handle validating the file before save (optional).
-	 *        @type array    $mime_types Expected mime-types for the file.
+	 * @return string[][][] {
+	 *
+	 * @type array $$component {
+	 * @type callable $validator  Callback to handle validating the file before save (optional).
+	 * @type array    $mime_types Expected mime-types for the file.
 	 *    }
 	 * }
+	 *
+	 * @psalm-return array{questions: array{validator: array{0: Sensei_Import_Questions::class, 1: 'validate_source_file'}, mime_types: array{csv: 'text/csv', txt: 'text/plain'}}, courses: array{validator: array{0: Sensei_Import_Courses::class, 1: 'validate_source_file'}, mime_types: array{csv: 'text/csv', txt: 'text/plain'}}, lessons: array{validator: array{0: Sensei_Import_Lessons::class, 1: 'validate_source_file'}, mime_types: array{csv: 'text/csv', txt: 'text/plain'}}}
 	 */
 	public static function get_file_config() {
 		$files = [];
@@ -217,7 +222,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 *
 	 * @param bool $is_sample_data True if this is the sample data being imported.
 	 */
-	public function set_is_sample_data( $is_sample_data ) {
+	public function set_is_sample_data( $is_sample_data ): void {
 		$this->set_state( self::SAMPLE_DATA_STATE_KEY, (bool) $is_sample_data );
 	}
 
@@ -359,7 +364,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * @param string $original_id ID that was provided in the source file.
 	 * @param int    $post_id     Post ID that was created during the import.
 	 */
-	public function set_import_id( $post_type, $original_id, $post_id ) {
+	public function set_import_id( $post_type, $original_id, $post_id ): void {
 		$map = $this->get_state( self::MAPPED_ID_STATE_KEY );
 
 		if ( ! isset( $map[ $post_type ] ) ) {
@@ -373,8 +378,12 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 
 	/**
 	 * Get the result counts for each model.
+	 *
+	 * @return (int)[][]
+	 *
+	 * @psalm-return array<'course'|'lesson'|'question', array<'error'|'success'|'warning', 0|positive-int>>
 	 */
-	public function get_result_counts() {
+	public function get_result_counts(): array {
 		$model_keys = [
 			Sensei_Import_Question_Model::MODEL_KEY,
 			Sensei_Import_Course_Model::MODEL_KEY,
@@ -407,9 +416,11 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	/**
 	 * Get the default results array.
 	 *
-	 * @return array
+	 * @return array[]
+	 *
+	 * @psalm-return array{question: array<empty, empty>, course: array<empty, empty>, lesson: array<empty, empty>}
 	 */
-	public static function get_default_results() {
+	public static function get_default_results(): array {
 		return [
 			Sensei_Import_Question_Model::MODEL_KEY => [],
 			Sensei_Import_Course_Model::MODEL_KEY   => [],
@@ -423,7 +434,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * @param string $post_type The post type.
 	 * @param string $import_id The import id.
 	 *
-	 * @return int|null The post id if the post exists, null otherwise.
+	 * @return WP_Post|int|null The post id if the post exists, null otherwise.
 	 */
 	public function translate_import_id( $post_type, $import_id ) {
 		if ( empty( $import_id ) ) {
@@ -461,7 +472,9 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	/**
 	 * Logs are order by log type first and then by line number. The method defines the ordering by type.
 	 *
-	 * @return array An array of log types which defines the log order.
+	 * @return string[] An array of log types which defines the log order.
+	 *
+	 * @psalm-return array{0: 'course', 1: 'lesson', 2: 'question'}
 	 */
 	protected function get_log_type_order() {
 		return [ Sensei_Import_Course_Model::MODEL_KEY, Sensei_Import_Lesson_Model::MODEL_KEY, Sensei_Import_Question_Model::MODEL_KEY ];

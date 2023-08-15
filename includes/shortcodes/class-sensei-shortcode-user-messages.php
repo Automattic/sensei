@@ -41,10 +41,8 @@ class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
 
 	/**
 	 * create the messages query .
-	 *
-	 * @return mixed
 	 */
-	public function setup_messages_query() {
+	public function setup_messages_query(): void {
 
 		$user = wp_get_current_user();
 

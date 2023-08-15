@@ -52,7 +52,7 @@ class Sensei_Import {
 	 *
 	 * @deprecated 4.0.0
 	 */
-	public function admin_menu() {
+	public function admin_menu(): void {
 		_deprecated_function( __METHOD__, '4.0.0' );
 
 		if ( current_user_can( 'manage_sensei' ) ) {
@@ -70,7 +70,7 @@ class Sensei_Import {
 	/**
 	 * Render app container for import page.
 	 */
-	public function import_page() {
+	public function import_page(): void {
 
 		?>
 		<div id="sensei-import-page-wrapper" class="wrap">

@@ -44,7 +44,7 @@ class Sensei_Editor_Wizard {
 	/**
 	 * Initializes the class.
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'init', [ $this, 'register_post_metas' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
 	}
@@ -54,7 +54,7 @@ class Sensei_Editor_Wizard {
 	 *
 	 * @access private
 	 */
-	public function register_post_metas() {
+	public function register_post_metas(): void {
 		// A meta used to identify lessons created dynamically as new.
 		register_post_meta(
 			'lesson',
@@ -77,7 +77,7 @@ class Sensei_Editor_Wizard {
 	 *
 	 * @access private
 	 */
-	public function enqueue_admin_scripts( $hook_suffix ) {
+	public function enqueue_admin_scripts( $hook_suffix ): void {
 		$post_type   = get_post_type();
 		$post_id     = get_the_ID();
 		$new_post    = get_post_meta( $post_id, '_new_post', true );

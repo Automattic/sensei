@@ -26,7 +26,7 @@ class Sensei_Featured_Video_Block {
 	 *
 	 * @access private
 	 */
-	public function register_block() {
+	public function register_block(): void {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/featured-video',
 			[

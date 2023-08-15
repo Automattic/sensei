@@ -114,6 +114,8 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register the REST API endpoints for Home.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		$this->register_get_data_route();
@@ -132,7 +134,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	/**
 	 * Register GET / endpoint.
 	 */
-	public function register_get_data_route() {
+	public function register_get_data_route(): void {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base,
@@ -149,7 +151,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	/**
 	 * Register POST /tasks/complete endpoint.
 	 */
-	public function register_mark_tasks_complete_route() {
+	public function register_mark_tasks_complete_route(): void {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/tasks/complete',
@@ -166,9 +168,11 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	/**
 	 * Get data for Sensei Home frontend.
 	 *
-	 * @return array Setup Wizard data
+	 * @return ((array|mixed)[]|bool|null)[] Setup Wizard data
+	 *
+	 * @psalm-return array{news: array|null, guides: array|null, show_extensions: bool, notices: array, quick_links?: array<array>, help?: array<array>, promo_banner?: array, tasks?: array}
 	 */
-	public function get_data() {
+	public function get_data(): array {
 		$show_extensions        = current_user_can( 'activate_plugins' ) && current_user_can( 'update_plugins' );
 		$can_user_manage_sensei = current_user_can( 'manage_sensei' );
 
@@ -192,9 +196,11 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	/**
 	 * Mark tasks list as fully completed for the first time.
 	 *
-	 * @return array
+	 * @return true[]
+	 *
+	 * @psalm-return array{success: true}
 	 */
-	public function mark_tasks_completed() {
+	public function mark_tasks_completed(): array {
 		$this->tasks_provider->mark_as_completed( true );
 		return [ 'success' => true ];
 	}

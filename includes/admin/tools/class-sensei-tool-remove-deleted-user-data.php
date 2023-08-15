@@ -20,6 +20,8 @@ class Sensei_Tool_Remove_Deleted_User_Data implements Sensei_Tool_Interface {
 	 * Get the ID of the tool.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'remove-deleted-user-data'
 	 */
 	public function get_id() {
 		return 'remove-deleted-user-data';
@@ -45,6 +47,8 @@ class Sensei_Tool_Remove_Deleted_User_Data implements Sensei_Tool_Interface {
 
 	/**
 	 * Run the tool.
+	 *
+	 * @return void
 	 */
 	public function process() {
 		global $wpdb;
@@ -72,7 +76,7 @@ class Sensei_Tool_Remove_Deleted_User_Data implements Sensei_Tool_Interface {
 	/**
 	 * Is the tool currently available?
 	 *
-	 * @return bool True if tool is available.
+	 * @return true True if tool is available.
 	 */
 	public function is_available() {
 		return true;

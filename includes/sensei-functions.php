@@ -200,10 +200,14 @@ if ( ! function_exists( 'sensei_rgb_from_hex' ) ) {
 	 * Hex darker/lighter/contrast functions for colours
 	 *
 	 * @access public
+	 *
 	 * @param mixed $color
-	 * @return string
+	 *
+	 * @return int[]
+	 *
+	 * @psalm-return array{R: int, G: int, B: int}
 	 */
-	function sensei_rgb_from_hex( $color ) {
+	function sensei_rgb_from_hex( $color ): array {
 		$color = str_replace( '#', '', $color );
 		// Convert shorthand colors to full format, e.g. "FFF" -> "FFFFFF"
 		$color = preg_replace( '~^(.)(.)(.)$~', '$1$1$2$2$3$3', $color );
@@ -226,7 +230,7 @@ if ( ! function_exists( 'sensei_hex_darker' ) ) {
 	 * @param int   $factor (default: 30)
 	 * @return string
 	 */
-	function sensei_hex_darker( $color, $factor = 30 ) {
+	function sensei_hex_darker( $color, $factor = 30 ): string {
 		$base  = sensei_rgb_from_hex( $color );
 		$color = '#';
 
@@ -256,7 +260,7 @@ if ( ! function_exists( 'sensei_hex_lighter' ) ) {
 	 * @param int   $factor (default: 30)
 	 * @return string
 	 */
-	function sensei_hex_lighter( $color, $factor = 30 ) {
+	function sensei_hex_lighter( $color, $factor = 30 ): string {
 		$base  = sensei_rgb_from_hex( $color );
 		$color = '#';
 
@@ -288,7 +292,7 @@ if ( ! function_exists( 'sensei_hex_lighter' ) ) {
  * @param $alternative
  * @param array       $args
  */
-function sensei_do_deprecated_action( $hook_tag, $version, $alternative = '', $args = array() ) {
+function sensei_do_deprecated_action( $hook_tag, $version, $alternative = '', $args = array() ): void {
 
 	if ( has_action( $hook_tag ) ) {
 
@@ -472,6 +476,8 @@ function sensei_does_theme_support_templates() {
  *
  * @param string $event_name The name of the event, without the `sensei_` prefix.
  * @param array  $properties The event properties to be sent.
+ *
+ * @return void
  */
 function sensei_log_event( $event_name, $properties = [] ) {
 	$properties = array_merge(
@@ -502,6 +508,8 @@ function sensei_log_event( $event_name, $properties = [] ) {
  *
  * @param string $event_name The name of the event, without the `sensei_` prefix.
  * @param array  $properties The event properties to be sent.
+ *
+ * @return void
  */
 function sensei_log_jetpack_event( $event_name, $properties = [] ) {
 	if ( ! class_exists( 'Automattic\Jetpack\Tracking' ) || ! Sensei()->usage_tracking->is_tracking_enabled() ) {

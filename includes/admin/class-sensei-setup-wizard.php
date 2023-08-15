@@ -111,7 +111,7 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @link https://developer.wordpress.org/reference/functions/add_submenu_page/#comment-445
 	 */
-	public function register_wizard_page() {
+	public function register_wizard_page(): void {
 		if ( current_user_can( 'manage_sensei' ) ) {
 			add_submenu_page(
 				'options.php',
@@ -131,7 +131,7 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @param WP_Screen $current_screen Current screen object.
 	 */
-	public function remove_notices_from_setup_wizard( $current_screen ) {
+	public function remove_notices_from_setup_wizard( $current_screen ): void {
 		if ( strpos( $current_screen->id, $this->page_slug ) !== false ) {
 			remove_all_actions( 'admin_notices' );
 		}
@@ -142,7 +142,7 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @access private
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts(): void {
 		$handle = 'sensei-setup-wizard';
 		Sensei()->assets->enqueue( $handle, 'setup-wizard/index.js', [ 'sensei-event-logging' ], true );
 		Sensei()->assets->preload_data( [ '/sensei-internal/v1/setup-wizard' ] );
@@ -153,7 +153,7 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @access private
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles(): void {
 		Sensei()->assets->enqueue( 'sensei-setup-wizard', 'setup-wizard/style.css', [ 'sensei-wp-components' ] );
 	}
 
@@ -163,9 +163,10 @@ class Sensei_Setup_Wizard {
 	 * @param string $classes Current class list.
 	 *
 	 * @access private
+	 *
 	 * @return string Extended class list.
 	 */
-	public function filter_body_class( $classes ) {
+	public function filter_body_class( $classes ): string {
 		$classes .= ' sensei-wp-admin-fullscreen ';
 		return $classes;
 	}
@@ -173,7 +174,7 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Set up hooks for loading Setup Wizard page assets.
 	 */
-	public function prepare_wizard_page() {
+	public function prepare_wizard_page(): void {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		add_action( 'admin_body_class', [ $this, 'filter_body_class' ] );
@@ -185,6 +186,8 @@ class Sensei_Setup_Wizard {
 	 * Redirect after first activation.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function activation_redirect() {
 		if (
@@ -211,6 +214,8 @@ class Sensei_Setup_Wizard {
 
 	/**
 	 * Redirect to setup wizard.
+	 *
+	 * @return never
 	 */
 	protected function redirect_to_setup_wizard() {
 		wp_safe_redirect( admin_url( 'admin.php?page=' . $this->page_slug ) );
@@ -220,7 +225,7 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Render app container for setup wizard.
 	 */
-	public function render_wizard_page() {
+	public function render_wizard_page(): void {
 
 		?>
 		<div id="sensei-setup-wizard-page" class="sensei-setup-wizard">
@@ -265,6 +270,8 @@ class Sensei_Setup_Wizard {
 	 * Setup wizard notice.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function setup_wizard_notice() {
 		if (
@@ -300,7 +307,7 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @access private
 	 */
-	public function skip_setup_wizard() {
+	public function skip_setup_wizard(): void {
 		if (
 			isset( $_GET['sensei_skip_setup_wizard'] )
 			&& '1' === $_GET['sensei_skip_setup_wizard']
@@ -316,7 +323,7 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Mark the setup wizard as finished.
 	 */
-	public function finish_setup_wizard() {
+	public function finish_setup_wizard(): void {
 		update_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 );
 	}
 
@@ -357,6 +364,8 @@ class Sensei_Setup_Wizard {
 	 * @param WP_Screen $screen Current screen.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function add_setup_wizard_help_tab( $screen ) {
 		$link_track_event = 'setup_wizard_click';
@@ -412,9 +421,11 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Get data used for Mailing list sign-up form.
 	 *
-	 * @return array The data.
+	 * @return (mixed|string)[] The data.
+	 *
+	 * @psalm-return array{admin_email: mixed, mc_url: 'https://senseilms.us19.list-manage.com/subscribe/post-json?u=7a061a9141b0911d6d9bafe3a&id=4fa225a515', gdpr_field: '23563'}
 	 */
-	public function get_mailing_list_form_data() {
+	public function get_mailing_list_form_data(): array {
 
 		return [
 			'admin_email' => get_option( 'admin_email', '' ),
@@ -474,9 +485,11 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @param boolean $clear_active_plugins_cache Clear cache for `is_plugin_active`.
 	 *
-	 * @return array Sensei extensions.
+	 * @return stdClass[] Sensei extensions.
+	 *
+	 * @psalm-return array<stdClass>
 	 */
-	public function get_sensei_extensions( $clear_active_plugins_cache = false ) {
+	public function get_sensei_extensions( $clear_active_plugins_cache = false ): array {
 		_deprecated_function( __METHOD__, '4.8.0' );
 
 		if ( $clear_active_plugins_cache ) {
@@ -517,7 +530,7 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @param string[] $extension_slugs Extension slugs to install.
 	 */
-	public function install_extensions( $extension_slugs ) {
+	public function install_extensions( $extension_slugs ): void {
 		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$extensions_to_install = [];
@@ -538,7 +551,7 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @deprecated 4.8.0
 	 */
-	public static function close_wccom_install() {
+	public static function close_wccom_install(): void {
 		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$wccom_installing_transient = 'sensei_setup_wizard_wccom_installing';

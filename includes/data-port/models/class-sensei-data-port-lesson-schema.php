@@ -40,6 +40,10 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 
 	/**
 	 * Implementation of get_schema as documented in superclass.
+	 *
+	 * @return (array|bool|string)[][]
+	 *
+	 * @psalm-return array{id: array{type: 'string'}, lesson: array{type: 'string', required: true, allow_html: true}, slug: array{type: 'slug'}, description: array{type: 'string', allow_html: true}, excerpt: array{type: 'string', allow_html: true}, status: array{type: 'string', default: 'draft', pattern: '/^(publish|pending|draft|)$/'}, module: array{type: 'string'}, prerequisite: array{type: 'string'}, preview: array{type: 'bool', default: false}, tags: array{type: 'string'}, image: array{type: 'url-or-file', mime_types: array}, length: array{type: 'int'}, complexity: array{type: 'string', pattern: '/^(easy|std|hard|)$/'}, video: array{type: 'video'}, 'pass required': array{type: 'bool', default: false}, passmark: array{type: 'float'}, 'number of questions': array{type: 'int'}, 'random question order': array{type: 'bool', default: false}, 'auto-grade': array{type: 'bool', default: true}, 'quiz reset': array{type: 'bool', default: false}, 'allow comments': array{type: 'bool', default: true}, questions: array{type: 'string'}}
 	 */
 	public function get_schema() {
 		return [
@@ -130,6 +134,8 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 	 * Get lesson post type.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'lesson'
 	 */
 	public function get_post_type() {
 		return self::POST_TYPE;
@@ -139,6 +145,8 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 	 * Get the column name for the title.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'lesson'
 	 */
 	public function get_column_title() {
 		return self::COLUMN_TITLE;

@@ -29,6 +29,8 @@ class Sensei_REST_API_Export_Controller extends Sensei_REST_API_Data_Port_Contro
 	 * Get the handler class job this REST API controller handles.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return Sensei_Export_Job::class
 	 */
 	protected function get_handler_class() {
 		return Sensei_Export_Job::class;
@@ -37,7 +39,7 @@ class Sensei_REST_API_Export_Controller extends Sensei_REST_API_Data_Port_Contro
 	/**
 	 * Create a data port job for the current user.
 	 *
-	 * @return Sensei_Data_Port_Job
+	 * @return Sensei_Export_Job
 	 */
 	protected function create_job() {
 		return Sensei_Data_Port_Manager::instance()->create_export_job( get_current_user_id() );

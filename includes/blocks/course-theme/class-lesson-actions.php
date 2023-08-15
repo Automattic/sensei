@@ -77,7 +77,7 @@ class Lesson_Actions {
 	 *
 	 * @return string
 	 */
-	private function render_completed_lesson() {
+	private function render_completed_lesson(): string {
 		$label = esc_html__( 'Completed', 'sensei-lms' );
 		$icon  = \Sensei()->assets->get_icon( 'checked' );
 

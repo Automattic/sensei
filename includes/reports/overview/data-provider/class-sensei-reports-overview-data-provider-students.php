@@ -121,12 +121,13 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 * Add a user query hook before querying the users.
 	 * This allows for third parties to alter the query.
 	 *
-	 * @since  4.6.0
+	 * @since 4.6.0
+	 *
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
 	 */
-	public function add_pre_user_query_hook( WP_User_Query $query ) {
+	public function add_pre_user_query_hook( WP_User_Query $query ): void {
 		/**
 		 * Fires before the user query is executed.
 		 *
@@ -143,12 +144,13 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 *
 	 * @deprecated 4.6.4
 	 *
-	 * @since  4.4.1
+	 * @since 4.4.1
+	 *
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
 	 */
-	public function only_course_enrolled_users( WP_User_Query $query ) {
+	public function only_course_enrolled_users( WP_User_Query $query ): void {
 		_deprecated_function( __METHOD__, '4.6.4' );
 
 		global $wpdb;
@@ -165,12 +167,13 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	/**
 	 * Group query by users.
 	 *
-	 * @since  4.6.4
+	 * @since 4.6.4
+	 *
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
 	 */
-	public function group_by_users( WP_User_Query $query ) {
+	public function group_by_users( WP_User_Query $query ): void {
 		global $wpdb;
 
 		$query->query_where .= " GROUP BY {$wpdb->users}.ID ";
@@ -179,12 +182,13 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	/**
 	 * Order query based on the custom field.
 	 *
-	 * @since  4.3.0
+	 * @since 4.3.0
+	 *
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
 	 */
-	public function add_orderby_custom_field_to_user_query( WP_User_Query $query ) {
+	public function add_orderby_custom_field_to_user_query( WP_User_Query $query ): void {
 		$query->query_orderby = 'ORDER BY ' . $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
 	}
 
@@ -195,7 +199,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 *
 	 * @param WP_User_Query $query The user query.
 	 */
-	public function add_last_activity_to_user_query( WP_User_Query $query ) {
+	public function add_last_activity_to_user_query( WP_User_Query $query ): void {
 		global $wpdb;
 
 		$query->query_fields .= ", (
@@ -217,6 +221,8 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
+	 *
+	 * @return void
 	 */
 	public function filter_users_by_last_activity( WP_User_Query $query ) {
 		global $wpdb;

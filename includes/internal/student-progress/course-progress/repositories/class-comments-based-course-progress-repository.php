@@ -30,10 +30,12 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Course_Progress The course progress.
+	 *
+	 * @return Course_Progress|null The course progress.
+	 *
 	 * @throws \RuntimeException If the course progress could not be created.
 	 */
-	public function create( int $course_id, int $user_id ): Course_Progress {
+	public function create( int $course_id, int $user_id ): ?Course_Progress {
 		$metadata   = [
 			'start'    => current_time( 'mysql' ),
 			'percent'  => 0,
@@ -96,8 +98,10 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 * @param \stdClass $b Second comment to compare.
 	 *
 	 * @return int
+	 *
+	 * @psalm-return -1|0|1
 	 */
-	private function sort_comments( $a, $b ) {
+	private function sort_comments( $a, $b ): int {
 		$a_id = (int) $a->comment_ID;
 		$b_id = (int) $b->comment_ID;
 		if ( $a_id === $b_id ) {

@@ -125,7 +125,7 @@ final class Sensei_Home {
 	 *
 	 * @since 4.8.0
 	 */
-	public function init() {
+	public function init(): void {
 		$this->notices->init();
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
@@ -136,9 +136,10 @@ final class Sensei_Home {
 	 * Enqueues admin scripts when needed on different screens.
 	 *
 	 * @since 4.8.0
+	 *
 	 * @access private
 	 */
-	public function enqueue_admin_assets() {
+	public function enqueue_admin_assets(): void {
 		$screen = get_current_screen();
 
 		if ( self::SCREEN_ID === $screen->id ) {
@@ -156,7 +157,7 @@ final class Sensei_Home {
 	 *
 	 * @since 4.8.0
 	 */
-	private function localize_script() {
+	private function localize_script(): void {
 		$data = array(
 			'connectUrl' => add_query_arg(
 				array(
@@ -216,11 +217,11 @@ final class Sensei_Home {
 	/**
 	 * Adds the menu item for the Home page.
 	 *
-	 * @since  4.8.0
+	 * @since 4.8.0
 	 *
 	 * @access private
 	 */
-	public function add_admin_menu_item() {
+	public function add_admin_menu_item(): void {
 		$menu_cap = Sensei_Admin::get_top_menu_capability();
 
 		$notices_html  = '';
@@ -244,10 +245,11 @@ final class Sensei_Home {
 	/**
 	 * Renders Sensei Home.
 	 *
-	 * @since  4.8.0
+	 * @since 4.8.0
+	 *
 	 * @access private
 	 */
-	public function render() {
+	public function render(): void {
 		require __DIR__ . '/views/html-admin-page-home.php';
 	}
 	/**
@@ -255,7 +257,7 @@ final class Sensei_Home {
 	 *
 	 * @access private
 	 */
-	public function handle_tasks_dismiss() {
+	public function handle_tasks_dismiss(): void {
 		check_ajax_referer( self::DISMISS_TASKS_NONCE_ACTION );
 
 		if ( ! current_user_can( 'manage_options' ) ) {

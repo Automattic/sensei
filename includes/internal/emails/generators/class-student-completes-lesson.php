@@ -85,6 +85,8 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	 *
 	 * @param int $student_id The student ID.
 	 * @param int $lesson_id  The lesson ID.
+	 *
+	 * @return void
 	 */
 	public function student_completed_lesson_mail_to_teacher( $student_id, $lesson_id ) {
 		$lesson_progress = $this->lesson_progress_repository->get( $lesson_id, $student_id );

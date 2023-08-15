@@ -39,10 +39,8 @@ class Submission_Repository_Factory {
 	 * Create a repository for the quiz submissions.
 	 *
 	 * @internal
-	 *
-	 * @return Submission_Repository_Interface
 	 */
-	public function create(): Submission_Repository_Interface {
+	public function create(): Aggregate_Submission_Repository {
 		global $wpdb;
 
 		return new Aggregate_Submission_Repository(

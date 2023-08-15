@@ -37,20 +37,23 @@ final class Sensei_Extensions {
 	 * Initializes the class and adds all filters and actions related to the extension directory.
 	 *
 	 * @since 2.0.0
+	 *
 	 * @deprecated 4.8.0
 	 */
-	public function init() {
+	public function init(): void {
 		_deprecated_function( __METHOD__, '4.8.0' );
 	}
 
 	/**
 	 * Enqueues admin scripts when needed on different screens.
 	 *
-	 * @since  2.0.0
+	 * @since 2.0.0
+	 *
 	 * @access private
+	 *
 	 * @deprecated 4.8.0
 	 */
-	public function enqueue_admin_assets() {
+	public function enqueue_admin_assets(): void {
 		_deprecated_function( __METHOD__, '4.8.0' );
 	}
 
@@ -141,12 +144,15 @@ final class Sensei_Extensions {
 	 *
 	 * @since 4.8.0
 	 *
-	 * @param  string $type                  Product type ('plugin' or 'theme').
-	 * @param  string $category              Category to fetch (null = all).
-	 * @param  string $additional_query_args Additional query arguments.
-	 * @return array
+	 * @param string $type                  Product type ('plugin' or 'theme').
+	 * @param string $category              Category to fetch (null = all).
+	 * @param string $additional_query_args Additional query arguments.
+	 *
+	 * @return (array|mixed)[]
+	 *
+	 * @psalm-return array<array|mixed>
 	 */
-	public function get_extensions_and_woocommerce( $type = null, $category = null, $additional_query_args = [] ) {
+	public function get_extensions_and_woocommerce( $type = null, $category = null, $additional_query_args = [] ): array {
 		$extensions = $this->get_extensions( $type, $category, $additional_query_args );
 
 		// Add WooCommerce.
@@ -226,11 +232,14 @@ final class Sensei_Extensions {
 	 * Get extensions page layout.
 	 *
 	 * @since 3.11.0
+	 *
 	 * @deprecated 4.14.0
 	 *
 	 * @return array
+	 *
+	 * @psalm-return array<empty, empty>
 	 */
-	public function get_layout() {
+	public function get_layout(): array {
 		_deprecated_function( __METHOD__, '4.14.0' );
 
 		return [];
@@ -268,23 +277,26 @@ final class Sensei_Extensions {
 	/**
 	 * Adds the menu item for the Home page.
 	 *
-	 * @since  4.8.0
+	 * @since 4.8.0
 	 *
 	 * @access private
+	 *
 	 * @deprecated 4.8.0
 	 */
-	public function add_admin_menu_item() {
+	public function add_admin_menu_item(): void {
 		_deprecated_function( __METHOD__, '4.8.0' );
 	}
 
 	/**
 	 * Renders the extensions page.
 	 *
-	 * @since  2.0.0
+	 * @since 2.0.0
+	 *
 	 * @access private
+	 *
 	 * @deprecated 4.8.0
 	 */
-	public function render() {
+	public function render(): void {
 		_deprecated_function( __METHOD__, '4.8.0' );
 	}
 

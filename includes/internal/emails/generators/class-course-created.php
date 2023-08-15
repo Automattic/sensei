@@ -52,6 +52,8 @@ class Course_Created extends Email_Generators_Abstract {
 	 * @param string   $new_status New status.
 	 * @param string   $old_status Old status.
 	 * @param \WP_Post $post       The post.
+	 *
+	 * @return void
 	 */
 	public function course_created_to_admin( $new_status, $old_status, $post ) {
 		$course_id = $post->ID;

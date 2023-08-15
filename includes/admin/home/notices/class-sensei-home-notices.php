@@ -51,7 +51,7 @@ class Sensei_Home_Notices {
 	/**
 	 * Add the hooks related to this class.
 	 */
-	public function init() {
+	public function init(): void {
 		add_filter( 'sensei_show_admin_notices_' . $this->screen_id, '__return_false' );
 		add_filter( 'sensei_admin_notices', [ $this, 'add_update_notices' ], 10, 2 );
 		add_filter( 'sensei_admin_notices', [ $this, 'add_review_notice' ], 10, 2 );
@@ -291,9 +291,11 @@ class Sensei_Home_Notices {
 	 * @param array $plugin_data The plugin update data.
 	 * @param array $screens    The screens to show the notice on.
 	 *
-	 * @return array
+	 * @return (((array|string)[]|string)[]|bool|string)[]
+	 *
+	 * @psalm-return array{level: 'warning', type: 'site-wide', info_link: array{label: string, url: string}|false, conditions: array{0: array{type: 'screens', screens: array}}, dismissible: bool, actions: array<empty, empty>}
 	 */
-	private function get_base_plugin_notice( $plugin_data, $screens = [] ) {
+	private function get_base_plugin_notice( $plugin_data, $screens = [] ): array {
 		$changelog_url = $plugin_data['changelog'] ?? false;
 
 		$info_link = false;
@@ -354,10 +356,8 @@ class Sensei_Home_Notices {
 	 * Get the settings for a plugin update notice on a deactivated and licensed plugin.
 	 *
 	 * @param array $plugin_data The plugin update data.
-	 *
-	 * @return array|null
 	 */
-	private function get_deactivated_plugin_update_notice( array $plugin_data ) {
+	private function get_deactivated_plugin_update_notice( array $plugin_data ): array {
 		$plugin_name    = $plugin_data['name'];
 		$plugin_file    = $plugin_data['plugin_basename'];
 		$latest_version = $plugin_data['latest_version'];
@@ -385,8 +385,6 @@ class Sensei_Home_Notices {
 	 * Get the settings for a plugin update notice on a licensed plugin.
 	 *
 	 * @param array $plugin_data The plugin update data.
-	 *
-	 * @return array|null
 	 */
 	private function get_plugin_update_notice( array $plugin_data ): array {
 		$plugin_name    = $plugin_data['name'];
@@ -417,9 +415,11 @@ class Sensei_Home_Notices {
 	 *
 	 * @param array $versions  The version data from the SenseiLMS.com API.
 	 *
-	 * @return array
+	 * @return ((int|string)|bool|mixed|null)[][]
+	 *
+	 * @psalm-return array<string, array{name: mixed, plugin_basename: array-key, plugin_version: mixed, latest_version: mixed, changelog: mixed|null, licensed: false|mixed, active: bool}>
 	 */
-	private function get_plugins_with_updates( $versions ) {
+	private function get_plugins_with_updates( $versions ): array {
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}

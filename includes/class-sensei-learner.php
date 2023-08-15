@@ -56,7 +56,7 @@ class Sensei_Learner {
 	 *
 	 * @since 3.0.0
 	 */
-	public function init() {
+	public function init(): void {
 		add_filter( 'rest_course_query', array( $this, 'filter_rest_course_query' ), 10, 2 );
 		add_action( 'wp_ajax_get_course_list', array( $this, 'get_course_list' ) );
 
@@ -79,7 +79,7 @@ class Sensei_Learner {
 	 * @param  array $columns Course columns.
 	 * @return array
 	 */
-	public function add_course_column_heading( $columns ) {
+	public function add_course_column_heading( $columns ): array {
 		$columns['students'] = _x( 'Students', 'column name', 'sensei-lms' );
 
 		return $columns;
@@ -88,13 +88,14 @@ class Sensei_Learner {
 	/**
 	 * Output the content of the course columns.
 	 *
-	 * @since  4.0.0
+	 * @since 4.0.0
+	 *
 	 * @access private
 	 *
-	 * @param  string $column    Current column name.
-	 * @param  int    $course_id The course ID.
+	 * @param string $column    Current column name.
+	 * @param int    $course_id The course ID.
 	 */
-	public function add_course_column_data( $column, $course_id ) {
+	public function add_course_column_data( $column, $course_id ): void {
 		if ( 'students' === $column ) {
 			$this->output_students_column( $course_id );
 		}
@@ -240,9 +241,12 @@ class Sensei_Learner {
 	 * Hooked into sensei_log_activity_after
 	 *
 	 * @since 3.7.0
+	 *
 	 * @access private
 	 *
 	 * @param array $args
+	 *
+	 * @return void
 	 */
 	public function remove_duplicate_progress( $args ) {
 		if ( empty( $args['post_id'] ) || empty( $args['user_id'] ) || empty( $args['type'] ) ) {
@@ -307,8 +311,10 @@ class Sensei_Learner {
 	 * @param array $base_query_args The base query arguments - default is empty.
 	 *
 	 * @return int Post count.
+	 *
+	 * @psalm-return 0|positive-int
 	 */
-	public function get_enrolled_courses_count_query( $user_id, array $base_query_args = [] ): int {
+	public function get_enrolled_courses_count_query( $user_id, array $base_query_args = [] ) {
 		$base_query_args = [
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
@@ -455,7 +461,7 @@ class Sensei_Learner {
 	 *
 	 * @param int $user_id  The user id.
 	 */
-	private function before_enrolled_courses_query( $user_id ) {
+	private function before_enrolled_courses_query( $user_id ): void {
 		/**
 		 * Fire before we query a user's enrolled courses. This needs to be called before
 		 * building the query arguments because `active` courses might be incomplete if we
@@ -475,8 +481,10 @@ class Sensei_Learner {
 	 * @param string $status  Course progress status. Either `completed` or `in-progress`.
 	 *
 	 * @return int[]
+	 *
+	 * @psalm-return list<int>
 	 */
-	private function get_course_ids_by_progress_status( $user_id, $status ) {
+	private function get_course_ids_by_progress_status( $user_id, $status ): array {
 		$course_ids      = [];
 		$course_statuses = Sensei_Utils::sensei_check_for_activity(
 			[
@@ -544,7 +552,7 @@ class Sensei_Learner {
 	 * @param int $user_id User ID.
 	 * @return string
 	 */
-	public static function get_learner_term_slug( $user_id ) {
+	public static function get_learner_term_slug( $user_id ): string {
 		return self::LEARNER_TERM_PREFIX . $user_id;
 	}
 
@@ -733,7 +741,7 @@ class Sensei_Learner {
 	/**
 	 * Returns course list for AJAX "more" call on Students page.
 	 *
-	 * @return void
+	 * @return never
 	 */
 	public function get_course_list() {
 		if ( empty( $_POST['nonce'] ) ) {

@@ -55,6 +55,8 @@ class Student_Submits_Quiz extends Email_Generators_Abstract {
 	 * @param int    $grade           Grade.
 	 * @param int    $passmark        Passmark.
 	 * @param string $quiz_grade_type Quiz grade type.
+	 *
+	 * @return void
 	 */
 	public function student_submits_quiz_mail_to_teacher( $student_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0, $quiz_grade_type = 'manual' ) {
 		// Only trigger if the quiz was marked as manual grading, or auto grading didn't complete.

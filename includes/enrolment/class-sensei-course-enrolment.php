@@ -75,9 +75,9 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @param int $course_id Course ID to handle checks for.
 	 *
-	 * @return self
+	 * @return static
 	 */
-	public static function get_course_instance( $course_id ) {
+	public static function get_course_instance( $course_id ): self {
 		if ( ! isset( self::$instances[ $course_id ] ) ) {
 			self::$instances[ $course_id ] = new static( $course_id );
 		}
@@ -178,7 +178,7 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @param int $user_id User ID.
 	 */
-	public function invalidate_learner_result( $user_id ) {
+	public function invalidate_learner_result( $user_id ): void {
 		update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), '' );
 	}
 
@@ -272,7 +272,8 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @param int $user_id User ID.
 	 *
-	 * @return bool|Sensei_Course_Enrolment_Provider_Results
+	 * @return Sensei_Course_Enrolment_Provider_Results|false
+	 *
 	 * @throws Exception When learner term could not be created.
 	 */
 	public function get_enrolment_check_results( $user_id ) {
@@ -329,7 +330,7 @@ class Sensei_Course_Enrolment {
 	 * @param int                                      $user_id           User ID.
 	 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results Enrolment results object.
 	 */
-	private function store_enrolment_results( $user_id, Sensei_Course_Enrolment_Provider_Results $enrolment_results ) {
+	private function store_enrolment_results( $user_id, Sensei_Course_Enrolment_Provider_Results $enrolment_results ): void {
 		$results_meta_key   = $this->get_enrolment_results_meta_key();
 		$had_existing_value = ! empty( get_user_meta( $user_id, $results_meta_key, true ) );
 
@@ -374,7 +375,7 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @return string
 	 */
-	public function get_enrolment_results_meta_key() {
+	public function get_enrolment_results_meta_key(): string {
 		global $wpdb;
 
 		return $wpdb->get_blog_prefix() . self::META_PREFIX_ENROLMENT_RESULTS . $this->course_id;

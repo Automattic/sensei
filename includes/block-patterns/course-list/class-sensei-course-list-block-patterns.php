@@ -19,7 +19,7 @@ class Sensei_Course_List_Block_Patterns {
 	 *
 	 * @access private
 	 */
-	public function register_course_list_block_patterns() {
+	public function register_course_list_block_patterns(): void {
 		$pagination =
 			'<!-- wp:query-pagination {"paginationArrow":"arrow","align":"wide","layout":{"type":"flex","justifyContent":"space-between"}} -->
 				<!-- wp:query-pagination-previous {"fontSize":"small"} /-->

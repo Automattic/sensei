@@ -64,10 +64,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
 	/**
 	 * Get the name of the page.
-	 *
-	 * @return string|void
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return $this->name;
 	}
 
@@ -84,9 +82,12 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * This method returns an empty array and it exists only for backwards compatibility.
 	 *
 	 * @deprecated 3.0.0
+	 *
 	 * @return array Empty array
+	 *
+	 * @psalm-return array<empty, empty>
 	 */
-	public function get_query_args() {
+	public function get_query_args(): array {
 
 		_deprecated_function( __METHOD__, '3.0.0' );
 
@@ -99,7 +100,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 *
 	 * @deprecated 3.0.0
 	 */
-	public function learners_admin_menu() {
+	public function learners_admin_menu(): void {
 
 		_deprecated_function( __METHOD__, '3.0.0' );
 
@@ -138,6 +139,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * @param string $result The result code or an error message to be displayed.
 	 *
 	 * @access private
+	 *
+	 * @return never
 	 */
 	public function redirect_to_learner_admin_index( $result ) {
 		$url = add_query_arg(
@@ -203,6 +206,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * 'bulk_action_course_ids and' The courses which the action is aimed on.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function handle_http_post() {
 		if ( ! $this->is_current_page() ) {
@@ -254,7 +259,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 *
 	 * @access private
 	 */
-	public function check_nonce() {
+	public function check_nonce(): void {
 		check_admin_referer( self::NONCE_SENSEI_BULK_LEARNER_ACTIONS, self::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD );
 	}
 
@@ -265,7 +270,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * @param integer $course_id The course which the action relates to.
 	 * @param string  $action    The action.
 	 */
-	private function do_user_action( $user_id, $course_id, $action ) {
+	private function do_user_action( $user_id, $course_id, $action ): void {
 		switch ( $action ) {
 			case self::ENROL_RESTORE_ENROLMENT:
 				$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
@@ -288,7 +293,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 *
 	 * @access private
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts(): void {
 		$is_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 
 		wp_enqueue_script( 'jquery-modal' );
@@ -314,7 +319,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 *
 	 * @deprecated 4.4.0
 	 */
-	public function learner_admin_page() {
+	public function learner_admin_page(): void {
 
 		_deprecated_function( __METHOD__, '4.4.0', 'Sensei_Learner_Management::output_main_page' );
 
@@ -349,7 +354,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	/**
 	 * Checks if this is the bulk management page.
 	 */
-	public function is_current_page() {
+	public function is_current_page(): bool {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 		return empty( $_GET['course_id'] ) && isset( $_GET['page'] ) && $_GET['page'] === $this->page_slug;
 	}
@@ -357,7 +362,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	/**
 	 * Registers the class' hooks.
 	 */
-	private function register_hooks() {
+	private function register_hooks(): void {
 		if ( $this->is_current_page() ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 30 );
 		}
@@ -378,6 +383,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	/**
 	 * Adds a notice in the bulk management page. The notice message is retrieved from the message GET argument. The
 	 * GET argument can be either the actual message or a specific code.
+	 *
+	 * @return void
 	 */
 	public function add_notices() {
 		if ( ! $this->is_current_page() ) {

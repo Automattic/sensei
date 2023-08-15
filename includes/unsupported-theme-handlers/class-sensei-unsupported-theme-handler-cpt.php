@@ -68,6 +68,8 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 * Set up handling for a single CPT page.
 	 *
 	 * @since 1.12.0
+	 *
+	 * @return void
 	 */
 	public function handle_request() {
 		$this->post_id = get_the_ID();
@@ -147,9 +149,9 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 * Get the renderer for this handler. Subclasses may override this to
 	 * provide a custom object that implements Sensei_Renderer_Interface.
 	 *
-	 * @return Sensei_Renderer_Interface The renderer object to use.
+	 * @return Sensei_Renderer_Single_Post The renderer object to use.
 	 */
-	protected function get_renderer() {
+	protected function get_renderer(): Sensei_Renderer_Single_Post {
 		$show_pagination = $this->get_option( 'show_pagination', true );
 
 		/**
@@ -191,14 +193,14 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	/**
 	 * Add a filter to hide the post title.
 	 */
-	public function add_filter_hide_the_title() {
+	public function add_filter_hide_the_title(): void {
 		add_filter( 'the_title', array( $this, 'hide_the_title' ), 20, 2 );
 	}
 
 	/**
 	 * Remove the filter to hide the post title.
 	 */
-	public function remove_filter_hide_the_title() {
+	public function remove_filter_hide_the_title(): void {
 		remove_filter( 'the_title', array( $this, 'hide_the_title' ), 20, 2 );
 	}
 

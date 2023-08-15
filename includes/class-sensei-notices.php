@@ -170,7 +170,7 @@ class Sensei_Notices {
 	/**
 	 * Adds a filter to the content to add notices added by blocks.
 	 */
-	public function setup_block_notices() {
+	public function setup_block_notices(): void {
 		if ( is_singular( 'course' ) && Sensei()->course->has_sensei_blocks( get_post() ) ) {
 			add_filter( 'the_content', [ $this, 'prepend_notices_to_content' ] );
 		}

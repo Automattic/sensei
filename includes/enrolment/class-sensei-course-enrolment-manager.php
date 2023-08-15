@@ -71,7 +71,7 @@ class Sensei_Course_Enrolment_Manager {
 	/**
 	 * Sets the actions.
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'plugins_loaded', [ $this, 'detect_wcpc_1' ], 100 );
 		add_action( 'init', [ $this, 'collect_enrolment_providers' ], 100 );
 		add_action( 'shutdown', [ $this, 'run_deferred_course_enrolment_checks' ] );
@@ -92,6 +92,8 @@ class Sensei_Course_Enrolment_Manager {
 	 * Do not call outside of this class.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function collect_enrolment_providers() {
 		if ( isset( $this->enrolment_providers ) ) {
@@ -250,7 +252,7 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @access private
 	 */
-	public function run_deferred_course_enrolment_checks() {
+	public function run_deferred_course_enrolment_checks(): void {
 		foreach ( $this->deferred_enrolment_checks as $user_id => $course_ids ) {
 			foreach ( array_keys( $course_ids ) as $course_id ) {
 				$this->do_course_enrolment_check( $user_id, $course_id );
@@ -265,7 +267,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * @param int                                      $course_id         Course post ID.
 	 * @param int                                      $user_id           User ID.
 	 */
-	public function remove_deferred_enrolment_check( Sensei_Course_Enrolment_Provider_Results $enrolment_results, $course_id, $user_id ) {
+	public function remove_deferred_enrolment_check( Sensei_Course_Enrolment_Provider_Results $enrolment_results, $course_id, $user_id ): void {
 		if ( isset( $this->deferred_enrolment_checks[ $user_id ] ) ) {
 			unset( $this->deferred_enrolment_checks[ $user_id ][ $course_id ] );
 		}
@@ -276,6 +278,8 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
+	 *
+	 * @return void
 	 */
 	private function defer_course_enrolment_check( $user_id, $course_id ) {
 		if ( ! isset( $this->deferred_enrolment_checks[ $user_id ] ) ) {
@@ -301,7 +305,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 */
-	private function do_course_enrolment_check( $user_id, $course_id ) {
+	private function do_course_enrolment_check( $user_id, $course_id ): void {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		if ( $course_enrolment ) {
 			$course_enrolment->is_enrolled( $user_id, false );
@@ -314,7 +318,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 */
-	private function invalidate_learner_result( $user_id, $course_id ) {
+	private function invalidate_learner_result( $user_id, $course_id ): void {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		if ( $course_enrolment ) {
 			$course_enrolment->invalidate_learner_result( $user_id );
@@ -354,6 +358,8 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
+	 *
+	 * @return void
 	 */
 	public static function trigger_course_enrolment_check( $user_id, $course_id ) {
 		$instance = self::instance();
@@ -403,6 +409,8 @@ class Sensei_Course_Enrolment_Manager {
 	 * @param int $user_id User ID.
 	 *
 	 * @see Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check
+	 *
+	 * @return void
 	 */
 	public function recalculate_enrolments( $user_id ) {
 		$learner_calculated_version = get_user_meta( $user_id, self::get_learner_calculated_version_meta_key(), true );
@@ -440,6 +448,8 @@ class Sensei_Course_Enrolment_Manager {
 	 * @param string  $new_status New post status.
 	 * @param string  $old_status Old post status.
 	 * @param WP_Post $post       Post object.
+	 *
+	 * @return void
 	 */
 	public function recalculate_on_course_post_status_change( $new_status, $old_status, $post ) {
 		if (
@@ -463,7 +473,7 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @param int $user_id User ID.
 	 */
-	public function mark_user_as_needing_recalculation( $user_id ) {
+	public function mark_user_as_needing_recalculation( $user_id ): void {
 		delete_user_meta( $user_id, self::get_learner_calculated_version_meta_key() );
 	}
 
@@ -472,7 +482,7 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @return string The calculation version.
 	 */
-	public function get_enrolment_calculation_version() {
+	public function get_enrolment_calculation_version(): string {
 		$hash_components   = [];
 		$hash_components[] = $this->get_site_salt();
 		$hash_components[] = $this->get_enrolment_provider_versions_hash();
@@ -495,6 +505,8 @@ class Sensei_Course_Enrolment_Manager {
 	 * Detect WooCommerce Paid Courses v1 and disable the enrolment functionality while it is installed.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function detect_wcpc_1() {
 		if (
@@ -516,6 +528,8 @@ class Sensei_Course_Enrolment_Manager {
 	 * Adds notice in WP Admin when we detect WooCommerce Paid Courses v1 is installed.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function add_wcpc_1_notice() {
 		$screen        = get_current_screen();

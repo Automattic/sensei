@@ -122,7 +122,9 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 *
 	 * @param int $submission_id The quiz submission ID.
 	 *
-	 * @return array An array of question post IDs.
+	 * @return int[] An array of question post IDs.
+	 *
+	 * @psalm-return list<int>
 	 */
 	public function get_question_ids( int $submission_id ): array {
 		$questions_asked_csv = get_comment_meta( $submission_id, 'questions_asked', true );
@@ -197,9 +199,9 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 *
 	 * @param WP_Comment $status_comment The lesson status comment.
 	 *
-	 * @return DateTimeInterface The created date.
+	 * @return DateTimeImmutable The created date.
 	 */
-	private function get_created_date( WP_Comment $status_comment ): DateTimeInterface {
+	private function get_created_date( WP_Comment $status_comment ): DateTimeImmutable {
 		$start_date = get_comment_meta( $status_comment->comment_ID, 'start', true );
 
 		return $start_date

@@ -68,7 +68,9 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	/**
 	 * Get the configuration for expected files.
 	 *
-	 * @return array
+	 * @return array[]
+	 *
+	 * @psalm-return array{course: array<empty, empty>, lesson: array<empty, empty>, question: array<empty, empty>, package: array<empty, empty>}
 	 */
 	public static function get_file_config() {
 		return [
@@ -82,7 +84,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	/**
 	 * Check if a job is ready to be started.
 	 *
-	 * @return bool
+	 * @return true
 	 */
 	public function is_ready() {
 		return true;
@@ -92,15 +94,17 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	/**
 	 * Get the result counts for each model.
 	 */
-	public function get_result_counts() {
+	public function get_result_counts(): void {
 	}
 
 	/**
 	 * Get the default results array.
 	 *
 	 * @return array
+	 *
+	 * @psalm-return array<empty, empty>
 	 */
-	public static function get_default_results() {
+	public static function get_default_results(): array {
 		return [];
 	}
 
@@ -109,7 +113,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 *
 	 * @param string[] $content_types Content types.
 	 */
-	public function set_content_types( $content_types ) {
+	public function set_content_types( $content_types ): void {
 		$this->set_state( self::CONTENT_TYPES_STATE_KEY, $content_types );
 	}
 
@@ -125,7 +129,9 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	/**
 	 * Type order in the logs.
 	 *
-	 * @return array
+	 * @return string[]
+	 *
+	 * @psalm-return array{0: 'course', 1: 'lesson', 2: 'question'}
 	 */
 	public function get_log_type_order() {
 		return [ 'course', 'lesson', 'question' ];

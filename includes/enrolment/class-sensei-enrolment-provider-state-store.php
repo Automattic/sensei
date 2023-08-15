@@ -76,6 +76,8 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	 * Restore a provider state store from a serialized JSON string.
 	 *
 	 * @param string $json_string JSON representation of enrolment state.
+	 *
+	 * @return void
 	 */
 	private function restore_from_json( $json_string ) {
 		$json_arr = json_decode( $json_string, true );
@@ -109,7 +111,9 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	/**
 	 * Return object that can be serialized by `json_encode()`.
 	 *
-	 * @return array
+	 * @return Sensei_Enrolment_Provider_State[][]
+	 *
+	 * @psalm-return array<array<Sensei_Enrolment_Provider_State>>
 	 */
 	public function jsonSerialize() {
 		$course_states = $this->provider_states;
@@ -143,7 +147,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	 *
 	 * @param Sensei_Enrolment_Provider_State[] $provider_states State objects for all providers.
 	 */
-	private function set_provider_states( $provider_states ) {
+	private function set_provider_states( $provider_states ): void {
 		$this->provider_states = $provider_states;
 	}
 
@@ -176,14 +180,14 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	 *
 	 * @param bool $has_changed True if provider states have changed.
 	 */
-	public function set_has_changed( $has_changed ) {
+	public function set_has_changed( $has_changed ): void {
 		$this->has_changed = (bool) $has_changed;
 	}
 
 	/**
 	 * Get if a provider state store has changed and if it needs to be updated in the database.
 	 */
-	public function get_has_changed() {
+	public function get_has_changed(): bool {
 		return $this->has_changed;
 	}
 
@@ -213,7 +217,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	 *
 	 * As this isn't a singleton, Sensei_Course_Enrolment_Manager hooks this into `shutdown` in its `init` method.
 	 */
-	public static function persist_all() {
+	public static function persist_all(): void {
 		foreach ( self::$instances as $user_id => $instance ) {
 			$instance->save();
 		}

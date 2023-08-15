@@ -49,7 +49,10 @@ class Sensei_Question {
 	 * Add custom navigation to the admin pages.
 	 *
 	 * @since 4.0.0
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function add_custom_navigation() {
 		$screen = get_current_screen();
@@ -92,7 +95,7 @@ class Sensei_Question {
 	 *
 	 * @param WP_Screen $screen
 	 */
-	private function display_question_navigation( WP_Screen $screen ) {
+	private function display_question_navigation( WP_Screen $screen ): void {
 		?>
 		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
 			<div class="sensei-custom-navigation__heading">
@@ -137,11 +140,16 @@ class Sensei_Question {
 	 * while moving the existing ones to the end.
 	 *
 	 * @access private
-	 * @since  1.3.0
-	 * @param  array $defaults  Array of column header labels keyed by column ID.
-	 * @return array            Updated array of column header labels keyed by column ID.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param array $defaults  Array of column header labels keyed by column ID.
+	 *
+	 * @return (mixed|string)[] Updated array of column header labels keyed by column ID.
+	 *
+	 * @psalm-return array<mixed|string>
 	 */
-	public function add_column_headings( $defaults ) {
+	public function add_column_headings( $defaults ): array {
 		$new_columns                      = [];
 		$new_columns['cb']                = '<input type="checkbox" />';
 		$new_columns['title']             = _x( 'Question', 'column name', 'sensei-lms' );
@@ -206,7 +214,7 @@ class Sensei_Question {
 
 	}
 
-	public function question_edit_panel_metabox( $post_type, $post ) {
+	public function question_edit_panel_metabox( $post_type, $post ): void {
 		if ( in_array( $post_type, array( 'question', 'multiple_question' ) ) ) {
 
 			$metabox_title = __( 'Question', 'sensei-lms' );
@@ -240,13 +248,18 @@ class Sensei_Question {
 	 *
 	 * @param array $post_types Post types.
 	 *
-	 * @return array
+	 * @return (mixed|string)[]
+	 *
+	 * @psalm-return array<'question'|mixed>
 	 */
-	public function load_lesson_edit_script( $post_types ) {
+	public function load_lesson_edit_script( $post_types ): array {
 		$post_types[] = 'question';
 		return $post_types;
 	}
 
+	/**
+	 * @return void
+	 */
 	public function question_edit_panel() {
 		global  $post, $pagenow;
 
@@ -326,6 +339,9 @@ class Sensei_Question {
 		);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function question_lessons_panel() {
 		global $post;
 
@@ -402,7 +418,7 @@ class Sensei_Question {
 
 	}
 
-	public function save_question( $post_id = 0 ) {
+	public function save_question( $post_id = 0 ): void {
 		/*
 		 * Ensure that we are on the `post` screen. If so, we can trust that
 		 * nonce verification has been performed.
@@ -595,9 +611,10 @@ class Sensei_Question {
 	 * This function simply loads the question type template
 	 *
 	 * @since 1.9.0
+	 *
 	 * @param string $question_type The question type.
 	 */
-	public static function load_question_template( $question_type ) {
+	public static function load_question_template( $question_type ): void {
 		$old_template_name = 'single-quiz/question_type-' . $question_type . '.php';
 		$new_template_name = 'single-quiz/question-type-' . $question_type . '.php';
 
@@ -618,9 +635,10 @@ class Sensei_Question {
 	 * @uses Sensei_Question::get_the_question_title
 	 *
 	 * @since 1.9.0
+	 *
 	 * @param $question_id
 	 */
-	public static function the_question_title( $question_id ) {
+	public static function the_question_title( $question_id ): void {
 		echo wp_kses_post( self::get_the_question_title( $question_id ) );
 	}
 
@@ -632,7 +650,7 @@ class Sensei_Question {
 	 * @param $question_id
 	 * @return string
 	 */
-	public static function get_the_question_title( $question_id ) {
+	public static function get_the_question_title( $question_id ): string {
 		/**
 		 * Filter the question title.
 		 *
@@ -690,9 +708,10 @@ class Sensei_Question {
 	 * Output the question description
 	 *
 	 * @since 1.9.0
+	 *
 	 * @param $question_id
 	 */
-	public static function the_question_description( $question_id ) {
+	public static function the_question_description( $question_id ): void {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method (before `the_content` filter).
 		echo self::get_the_question_description( $question_id );
 	}
@@ -704,7 +723,7 @@ class Sensei_Question {
 	 * @param $question_id
 	 * @return string
 	 */
-	public static function get_the_question_media( $question_id ) {
+	public static function get_the_question_media( string $question_id ) {
 
 		$question_media      = get_post_meta( $question_id, '_question_media', true );
 		$question_media_link = '';
@@ -783,9 +802,10 @@ class Sensei_Question {
 	 * Output the question media
 	 *
 	 * @since 1.9.0
+	 *
 	 * @param string $question_id
 	 */
-	public static function the_question_media( $question_id ) {
+	public static function the_question_media( $question_id ): void {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo self::question_media_kses( self::get_the_question_media( $question_id ) );
 	}
@@ -796,7 +816,10 @@ class Sensei_Question {
 	 *
 	 * @param int  $question_id Question id.
 	 * @param bool $answer_correct Flag indicating if the answer is correct or not.
-	 * @return array CSS classes
+	 *
+	 * @return (mixed|string)[] CSS classes
+	 *
+	 * @psalm-return array{0: 'sensei-lms-question__answer-feedback--correct'|'sensei-lms-question__answer-feedback--incorrect', 1: ''|mixed}
 	 */
 	private static function get_answer_feedback_classes( $question_id, bool $answer_correct ): array {
 		if ( $answer_correct ) {
@@ -839,12 +862,13 @@ class Sensei_Question {
 	/**
 	 * Output a special field for the question needed for question submission.
 	 *
-	 * @since      1.9.0
+	 * @since 1.9.0
+	 *
 	 * @deprecated 3.15.0 use Sensei_Quiz::output_quiz_hidden_fields
 	 *
 	 * @param $question_id
 	 */
-	public static function the_question_hidden_fields( $question_id ) {
+	public static function the_question_hidden_fields( $question_id ): void {
 
 		// To be removed in 5.0.0.
 		_deprecated_function( __METHOD__, '3.15.0', 'Sensei_Quiz::output_quiz_hidden_fields' );
@@ -862,8 +886,10 @@ class Sensei_Question {
 	 * @since 3.14.0
 	 *
 	 * @param $question_id
+	 *
+	 * @return void
 	 */
-	public static function the_answer_feedback( $question_id ) {
+	public static function the_answer_feedback( int $question_id ) {
 
 		$hide_answer_feedback = get_post_meta( $question_id, '_hide_answer_feedback', true );
 		if ( $hide_answer_feedback ) {
@@ -1040,7 +1066,7 @@ class Sensei_Question {
 	 *
 	 * @param int $question_id Question ID.
 	 */
-	public static function answer_feedback_notes( $question_id ) {
+	public static function answer_feedback_notes( $question_id ): void {
 		_deprecated_function( __METHOD__, '3.14.0', 'Sensei_Question::the_answer_feedback' );
 		self::the_answer_feedback( $question_id );
 	}
@@ -1054,7 +1080,10 @@ class Sensei_Question {
 	 * Pseudo code for logic:  https://github.com/Automattic/sensei/issues/1422#issuecomment-214494263
 	 *
 	 * @since 1.9.0
+	 *
 	 * @deprecated 3.14.0 Moved into the_answer_feedback
+	 *
+	 * @return void
 	 */
 	public static function the_answer_result_indication() {
 
@@ -1100,12 +1129,13 @@ class Sensei_Question {
 
 	/**
 	 * @since 1.9.5
+	 *
 	 * @deprecated 3.14.0 Moved into the_answer_feedback
 	 *
 	 * @param integer $lesson_id
 	 * @param integer $question_id
 	 */
-	public static function output_result_indication( $lesson_id, $question_id ) {
+	public static function output_result_indication( $lesson_id, $question_id ): void {
 
 		_deprecated_function( __METHOD__, '3.14.0', 'Sensei_Question::the_answer_feedback' );
 
@@ -1229,10 +1259,8 @@ class Sensei_Question {
 	 * @param array  $question_data
 	 * @param string $question_id
 	 * @param string $quiz_id
-	 *
-	 * @return array()
 	 */
-	public static function file_upload_load_question_data( $question_data, $question_id, $quiz_id ) {
+	public static function file_upload_load_question_data( $question_data, $question_id, $quiz_id ): array {
 
 		if ( 'file-upload' === Sensei()->question->get_question_type( $question_id ) ) {
 
@@ -1481,7 +1509,7 @@ class Sensei_Question {
 	 * @param $question_id
 	 * @return string $correct_answer or empty
 	 */
-	public static function get_correct_answer( $question_id ) {
+	public static function get_correct_answer( int $question_id ) {
 		$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 		$type         = Sensei()->question->get_question_type( $question_id );
 
@@ -1588,11 +1616,12 @@ class Sensei_Question {
 	 * Log an event when a question is initially published.
 	 *
 	 * @since 2.1.0
+	 *
 	 * @access private
 	 *
 	 * @param WP_Post $question The question object.
 	 */
-	public function log_initial_publish_event( $question ) {
+	public function log_initial_publish_event( $question ): void {
 		$event_properties = [
 			'page'          => 'unknown',
 			'question_type' => $this->get_question_type( $question->ID ),

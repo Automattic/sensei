@@ -350,7 +350,7 @@ class Sensei_Main {
 	 *
 	 * @since 1.9.0
 	 */
-	protected function init() {
+	protected function init(): void {
 
 		// Localisation
 		$this->load_plugin_textdomain();
@@ -368,11 +368,18 @@ class Sensei_Main {
 	 * Ensure that only one instance of the main Sensei class can be loaded.
 	 *
 	 * @since 1.8.0
+	 *
 	 * @static
+	 *
 	 * @see WC()
+	 *
 	 * @return self
+	 *
+	 * @param string[] $args
+	 *
+	 * @psalm-param array{version: '4.16.0'} $args
 	 */
-	public static function instance( $args ) {
+	public static function instance( array $args ) {
 
 		if ( is_null( self::$_instance ) ) {
 
@@ -395,7 +402,7 @@ class Sensei_Main {
 	 *
 	 * @param $plugin
 	 */
-	public static function activation_flush_rules( $plugin ) {
+	public static function activation_flush_rules( $plugin ): void {
 
 		if ( strpos( $plugin, '/sensei-lms.php' ) > 0 ) {
 
@@ -428,7 +435,7 @@ class Sensei_Main {
 	 *
 	 * @since 4.6.0
 	 */
-	protected function initialize_cache_groups() {
+	protected function initialize_cache_groups(): void {
 		wp_cache_add_non_persistent_groups( 'sensei/temporary' );
 	}
 
@@ -437,7 +444,7 @@ class Sensei_Main {
 	 *
 	 * @since 1.9.0
 	 */
-	public function initialize_global_objects() {
+	public function initialize_global_objects(): void {
 		// Setup settings.
 		$this->settings = new Sensei_Settings();
 
@@ -620,7 +627,7 @@ class Sensei_Main {
 	 *
 	 * @since 4.3.0
 	 */
-	private function initialize_cli() {
+	private function initialize_cli(): void {
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			require_once $this->resolve_path( 'includes/class-sensei-cli.php' );
 
@@ -642,7 +649,7 @@ class Sensei_Main {
 	 *
 	 * @since 1.9.0
 	 */
-	public function load_hooks() {
+	public function load_hooks(): void {
 
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 		add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
@@ -760,10 +767,11 @@ class Sensei_Main {
 	/**
 	 * Run on activation.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
+	 *
 	 * @deprecated 3.0.0
 	 */
-	public function activation() {
+	public function activation(): void {
 		_deprecated_function( __METHOD__, '3.0.0' );
 	}
 
@@ -801,7 +809,7 @@ class Sensei_Main {
 	 *
 	 * @deprecated $$next-version$$
 	 */
-	public function update() {
+	public function update(): void {
 		_deprecated_function( __METHOD__, '$$next-version$$' );
 
 		$current_version = get_option( 'sensei-version' );
@@ -867,7 +875,7 @@ class Sensei_Main {
 	 * @param string $flag  Short name for the flag to set.
 	 * @param bool   $value Boolean value to set.
 	 */
-	public function set_legacy_flag( $flag, $value ) {
+	public function set_legacy_flag( $flag, $value ): void {
 		$legacy_flags          = $this->get_legacy_flags();
 		$legacy_flags[ $flag ] = (bool) $value;
 
@@ -1094,7 +1102,7 @@ class Sensei_Main {
 	 *
 	 * @param int $post_id Post ID.
 	 */
-	public function flush_comment_counts_cache( $post_id ) {
+	public function flush_comment_counts_cache( $post_id ): void {
 		$post_id = (int) $post_id;
 
 		$post_transient_id = self::COMMENT_COUNT_TRANSIENT_PREFIX . $post_id;
@@ -1129,11 +1137,13 @@ class Sensei_Main {
 	/**
 	 * Get the Sensei related comment counts by comment_approved.
 	 *
-	 * @param  int $post_id Post ID.
+	 * @param int $post_id Post ID.
 	 *
-	 * @return array
+	 * @return int[]
+	 *
+	 * @psalm-return array<int>
 	 */
-	private function get_sensei_comment_counts_direct( $post_id ) {
+	private function get_sensei_comment_counts_direct( $post_id ): array {
 		global $wpdb;
 
 		$post_where = '';
@@ -1295,7 +1305,7 @@ class Sensei_Main {
 	 *
 	 * @since 1.7.0
 	 */
-	public function jetpack_latex_support() {
+	public function jetpack_latex_support(): void {
 		$this->maybe_add_latex_support_via( 'latex_markup' );
 	}
 
@@ -1304,7 +1314,7 @@ class Sensei_Main {
 	 *
 	 * @param string $func_name A Function.
 	 */
-	private function maybe_add_latex_support_via( $func_name ) {
+	private function maybe_add_latex_support_via( $func_name ): void {
 		if ( function_exists( $func_name ) ) {
 			add_filter( 'sensei_question_title', $func_name );
 			add_filter( 'sensei_answer_text', $func_name );
@@ -1317,7 +1327,7 @@ class Sensei_Main {
 	 * Checks that the WP QuickLaTeX plugin has been activated
 	 * to support LaTeX within question titles and answers
 	 */
-	public function wp_quicklatex_support() {
+	public function wp_quicklatex_support(): void {
 		$this->maybe_add_latex_support_via( 'quicklatex_parser' );
 	}
 
@@ -1329,7 +1339,7 @@ class Sensei_Main {
 	 *
 	 * @since 1.8.0
 	 */
-	public function load_modules_class() {
+	public function load_modules_class(): void {
 		global $sensei_modules;
 
 		$class = is_null( $sensei_modules ) ? get_class() : get_class( $sensei_modules );
@@ -1352,7 +1362,7 @@ class Sensei_Main {
 	 *
 	 * @since 1.8.0
 	 */
-	public function disable_sensei_modules_extension() {
+	public function disable_sensei_modules_extension(): void {
 		?>
 		<div class="notice updated fade">
 			<p>
@@ -1377,7 +1387,7 @@ class Sensei_Main {
 	 *
 	 * @since 1.9.0
 	 */
-	public function flush_rewrite_rules() {
+	public function flush_rewrite_rules(): void {
 
 		// ensures that the rewrite rules are flushed on the second
 		// attempt. This ensure that the settings for any other process
@@ -1403,7 +1413,7 @@ class Sensei_Main {
 	 *
 	 * @since 1.9.0
 	 */
-	public function initiate_rewrite_rules_flush() {
+	public function initiate_rewrite_rules_flush(): void {
 
 		update_option( 'sensei_flush_rewrite_rules', '1' );
 
@@ -1478,8 +1488,10 @@ class Sensei_Main {
 	 * @deprecated 3.1.1
 	 *
 	 * @return string support url
+	 *
+	 * @psalm-return 'https://www.woothemes.com/my-account/create-a-ticket/?utm_source=SenseiPlugin&utm_medium=PluginPage&utm_content=Support&utm_campaign=SenseiPlugin'
 	 */
-	public function get_support_url() {
+	public function get_support_url(): string {
 		_deprecated_function( __METHOD__, '3.1.1' );
 
 		return 'https://www.woothemes.com/my-account/create-a-ticket/?utm_source=SenseiPlugin&utm_medium=PluginPage&utm_content=Support&utm_campaign=SenseiPlugin';
@@ -1517,7 +1529,7 @@ class Sensei_Main {
 	 *
 	 * @since 1.9.13
 	 */
-	public function activate() {
+	public function activate(): void {
 		// Create the teacher role on activation and ensure that it has all the needed capabilities.
 		$this->teacher->create_role();
 
@@ -1533,7 +1545,7 @@ class Sensei_Main {
 	/**
 	 * Assign role caps for the various post types.
 	 */
-	public function assign_role_caps() {
+	public function assign_role_caps(): void {
 		foreach ( $this->post_types->role_caps as $role_cap_set ) {
 			foreach ( $role_cap_set as $role_key => $capabilities_array ) {
 				// Get the role.
@@ -1553,9 +1565,9 @@ class Sensei_Main {
 	/**
 	 * Adds Sensei capabilities to the editor role.
 	 *
-	 * @return bool
+	 * @return true
 	 */
-	public function add_editor_caps() {
+	public function add_editor_caps(): bool {
 		$role = get_role( 'editor' );
 
 		if ( ! is_null( $role ) ) {
@@ -1568,9 +1580,9 @@ class Sensei_Main {
 	/**
 	 * Adds Sensei capabilities to admin.
 	 *
-	 * @return bool
+	 * @return true
 	 */
-	public function add_sensei_admin_caps() {
+	public function add_sensei_admin_caps(): bool {
 		$role = get_role( 'administrator' );
 
 		if ( ! is_null( $role ) ) {
@@ -1586,7 +1598,7 @@ class Sensei_Main {
 	 *
 	 * @since 1.9.12
 	 */
-	public function sensei_load_template_functions() {
+	public function sensei_load_template_functions(): void {
 		require_once $this->resolve_path( 'includes/template-functions.php' );
 	}
 

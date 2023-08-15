@@ -63,6 +63,8 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register the REST API endpoints for Setup Wizard.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		$this->register_get_data_route();
@@ -96,7 +98,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register /welcome endpoint.
 	 */
-	public function register_submit_welcome_route() {
+	public function register_submit_welcome_route(): void {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/welcome',
@@ -113,7 +115,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register /purpose endpoint.
 	 */
-	public function register_submit_purpose_route() {
+	public function register_submit_purpose_route(): void {
 
 		register_rest_route(
 			$this->namespace,
@@ -163,7 +165,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register /theme endpoint.
 	 */
-	public function register_submit_theme_route() {
+	public function register_submit_theme_route(): void {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/theme',
@@ -191,7 +193,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register /tracking endpoint.
 	 */
-	public function register_submit_tracking_route() {
+	public function register_submit_tracking_route(): void {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/tracking',
@@ -221,7 +223,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 *
 	 * @since 4.8.0 It just completes the setup wizard after the features were installed.
 	 */
-	public function register_submit_features_route() {
+	public function register_submit_features_route(): void {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/features',
@@ -240,7 +242,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 *
 	 * @deprecated 4.8.0
 	 */
-	public function register_submit_features_installation_route() {
+	public function register_submit_features_installation_route(): void {
 		_deprecated_function( __METHOD__, '4.8.0' );
 
 		register_rest_route(
@@ -268,7 +270,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register /ready endpoint.
 	 */
-	public function register_complete_wizard_route() {
+	public function register_complete_wizard_route(): void {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/ready',
@@ -285,7 +287,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register GET / endpoint.
 	 */
-	public function register_get_data_route() {
+	public function register_get_data_route(): void {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base,
@@ -305,7 +307,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 *
 	 * @since 4.11.2
 	 */
-	public function register_setup_wizard_settings() {
+	public function register_setup_wizard_settings(): void {
 
 		register_setting(
 			'options',
@@ -337,6 +339,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * Ensures the option is complete with the default values if not set.
 	 *
 	 * @hooked rest_pre_update_setting
+	 *
 	 * @access private
 	 *
 	 * @param bool   $updated Whether to override the default behavior for updating the
@@ -344,7 +347,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @param string $name   Setting name (as shown in REST API responses).
 	 * @param mixed  $value  Updated setting value.
 	 */
-	public function update_setup_wizard_settings( $updated, $name, $value ) {
+	public function update_setup_wizard_settings( $updated, $name, $value ): bool {
 		if ( Sensei_Setup_Wizard::USER_DATA_OPTION !== $name ) {
 			return $updated;
 		}
@@ -363,7 +366,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 *
 	 * @deprecated 4.8.0
 	 */
-	public function register_get_features_route() {
+	public function register_get_features_route(): void {
 		_deprecated_function( __METHOD__, '4.8.0' );
 
 		register_rest_route(
@@ -383,9 +386,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Get data for Setup Wizard frontend.
 	 *
-	 * @return array Setup Wizard data
+	 * @return array[] Setup Wizard data
+	 *
+	 * @psalm-return array{purpose: array{selected: mixed, other: mixed}, theme: array{install_sensei_theme: mixed}, tracking: array{usage_tracking: mixed}, newsletter: array, features: array}
 	 */
-	public function get_data() {
+	public function get_data(): array {
 		$user_data = $this->setup_wizard->get_wizard_user_data();
 
 		return [
@@ -411,9 +416,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 *
 	 * @param mixed $user_data Optional user data param. If it's not set, it will be fetched.
 	 *
-	 * @return array Features data
+	 * @return (array|mixed)[] Features data
+	 *
+	 * @psalm-return array{selected: mixed, options: array}
 	 */
-	public function get_features_data( $user_data = null ) {
+	public function get_features_data( $user_data = null ): array {
 		$clear_active_plugins_cache = false;
 
 		if ( ! $user_data || ! isset( $user_data['features'] ) ) {
@@ -453,9 +460,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Get features schema.
 	 *
-	 * @return array Schema object.
+	 * @return ((string|string[])[][]|string)[] Schema object.
+	 *
+	 * @psalm-return array{type: 'object', properties: array{selected: array{description: string, type: 'array', items: array{type: 'string'}}, options: array{description: string, type: 'array', items: array{type: 'string'}}}}
 	 */
-	public function get_features_schema() {
+	public function get_features_schema(): array {
 		return [
 			'type'       => 'object',
 			'properties' => [
@@ -480,9 +489,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Get themes schema.
 	 *
-	 * @return array Schema object.
+	 * @return (string|string[][])[] Schema object.
+	 *
+	 * @psalm-return array{type: 'object', properties: array{install_sensei_theme: array{description: string, type: 'boolean'}}}
 	 */
-	public function get_theme_schema() {
+	public function get_theme_schema(): array {
 		return [
 			'type'       => 'object',
 			'properties' => [
@@ -497,9 +508,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Get purpose schema.
 	 *
-	 * @return array Schema object.
+	 * @return (((string|string[])[]|string|true)[][]|string)[] Schema object.
+	 *
+	 * @psalm-return array{type: 'object', properties: array{selected: array{required: true, type: 'array', items: array{type: 'string', enum: array{0: 'sell_courses', 1: 'provide_certification', 2: 'educate_students', 3: 'train_employees', 4: 'other'}}}, other: array{required: true, type: 'string'}}}
 	 */
-	public function get_purpose_schema() {
+	public function get_purpose_schema(): array {
 		return [
 			'type'       => 'object',
 			'properties' => [
@@ -522,9 +535,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Get tracking schema.
 	 *
-	 * @return array Schema object.
+	 * @return (false|string|string[][])[] Schema object.
+	 *
+	 * @psalm-return array{required: false, type: 'object', properties: array{usage_tracking: array{description: string, type: 'boolean'}}}
 	 */
-	public function get_tracking_schema() {
+	public function get_tracking_schema(): array {
 		return [
 			'required'   => false,
 			'type'       => 'object',
@@ -540,9 +555,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Schema for the endpoint.
 	 *
-	 * @return array Schema object.
+	 * @return (array[]|string)[] Schema object.
+	 *
+	 * @psalm-return array{type: 'object', properties: array{features: array, purpose: array, theme: array, tracking: array}}
 	 */
-	public function get_schema() {
+	public function get_schema(): array {
 		return [
 			'type'       => 'object',
 			'properties' => [
@@ -559,9 +576,9 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 *
 	 * @param array $data Form data.
 	 *
-	 * @return bool Success.
+	 * @return true Success.
 	 */
-	public function submit_welcome( $data ) {
+	public function submit_welcome( $data ): bool {
 		$this->setup_wizard->pages->create_pages();
 
 		return true;
@@ -604,9 +621,9 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 *
 	 * @param array $data Form data.
 	 *
-	 * @return bool Success.
+	 * @return true Success.
 	 */
-	public function submit_tracking( $data ) {
+	public function submit_tracking( $data ): bool {
 		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['tracking']['usage_tracking'] );
 		Sensei()->usage_tracking->send_usage_data();
 
@@ -639,9 +656,9 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 *
 	 * @since 4.8.0 Complete the setup wizard.
 	 *
-	 * @return bool Success.
+	 * @return true Success.
 	 */
-	public function submit_features() {
+	public function submit_features(): bool {
 		$this->setup_wizard->finish_setup_wizard();
 
 		return true;
@@ -654,9 +671,9 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 *
 	 * @param array $form Form data.
 	 *
-	 * @return bool Success.
+	 * @return true Success.
 	 */
-	public function submit_features_installation( $form ) {
+	public function submit_features_installation( $form ): bool {
 		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$this->setup_wizard->install_extensions( $form['selected'] );
@@ -668,8 +685,10 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * Complete setup wizard
 	 *
 	 * @deprecated 4.8.0
+	 *
+	 * @return true
 	 */
-	public function complete_setup_wizard() {
+	public function complete_setup_wizard(): bool {
 		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$this->setup_wizard->finish_setup_wizard();

@@ -36,10 +36,8 @@ class Quiz_Progress_Repository_Factory {
 	 * Creates a new quiz progress repository.
 	 *
 	 * @internal
-	 *
-	 * @return Quiz_Progress_Repository_Interface
 	 */
-	public function create(): Quiz_Progress_Repository_Interface {
+	public function create(): Aggregate_Quiz_Progress_Repository {
 		global $wpdb;
 
 		return new Aggregate_Quiz_Progress_Repository(

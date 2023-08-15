@@ -10,14 +10,27 @@ class Usage_Tracking_Test_Subclass extends Sensei_Usage_Tracking_Base {
 
 	const TRACKING_ENABLED_OPTION_NAME = 'testing-usage-tracking-enabled';
 
+	/**
+	 * @return static
+	 */
 	public static function get_instance() {
 		return self::get_instance_for_subclass( get_class() );
 	}
 
+	/**
+	 * @return string
+	 *
+	 * @psalm-return 'testing'
+	 */
 	public function get_prefix() {
 		return 'testing';
 	}
 
+	/**
+	 * @return string
+	 *
+	 * @psalm-return 'text-domain'
+	 */
 	public function get_text_domain() {
 		return 'text-domain';
 	}
@@ -26,6 +39,9 @@ class Usage_Tracking_Test_Subclass extends Sensei_Usage_Tracking_Base {
 		return get_option( self::TRACKING_ENABLED_OPTION_NAME ) || false;
 	}
 
+	/**
+	 * @return void
+	 */
 	public function set_tracking_enabled( $enable ) {
 		update_option( self::TRACKING_ENABLED_OPTION_NAME, $enable );
 	}
@@ -34,6 +50,11 @@ class Usage_Tracking_Test_Subclass extends Sensei_Usage_Tracking_Base {
 		return current_user_can( 'manage_usage_tracking' );
 	}
 
+	/**
+	 * @return string
+	 *
+	 * @psalm-return 'Please enable Usage Tracking!'
+	 */
 	public function opt_in_dialog_text() {
 		return 'Please enable Usage Tracking!';
 	}
@@ -45,10 +66,18 @@ class Usage_Tracking_Test_Subclass extends Sensei_Usage_Tracking_Base {
 		return false;
 	}
 
-	public function get_template_data() {
+	/**
+	 * @psalm-return array<empty, empty>
+	 */
+	public function get_template_data(): array {
 		return [];
 	}
 
+	/**
+	 * @return string[][]
+	 *
+	 * @psalm-return array{'Hello.php': array{Version: '1.0.0'}, 'jetpack/jetpack.php': array{Version: '1.1.1'}, 'test-dev/test.php': array{Version: '1.1.1'}, 'test/test.php': array{Version: '1.0.0'}, 'my-favorite-plugin/my-favorite-plugin.php': array{Version: '1.0.0'}}
+	 */
 	protected function get_plugins() {
 		return array(
 			'Hello.php'                                 => array(

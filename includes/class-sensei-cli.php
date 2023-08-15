@@ -24,14 +24,14 @@ class Sensei_CLI {
 	/**
 	 * Load the command files.
 	 */
-	private function load() {
+	private function load(): void {
 		require_once dirname( __FILE__ ) . '/cli/class-sensei-db-seed-command.php';
 	}
 
 	/**
 	 * Register the CLI commands.
 	 */
-	private function register() {
+	private function register(): void {
 		WP_CLI::add_command( 'sensei db seed', Sensei_DB_Seed_Command::class );
 	}
 }

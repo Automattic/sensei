@@ -41,7 +41,7 @@ class Sensei_Unsupported_Themes {
 	 *
 	 * @since 1.12.0
 	 */
-	public static function init() {
+	public static function init(): void {
 		$instance = self::get_instance();
 		$instance->maybe_handle_request();
 	}
@@ -50,6 +50,8 @@ class Sensei_Unsupported_Themes {
 	 * Get the singleton instance.
 	 *
 	 * @since 1.12.0
+	 *
+	 * @return self|string
 	 */
 	public static function get_instance() {
 		if ( ! self::$_instance ) {
@@ -63,7 +65,7 @@ class Sensei_Unsupported_Themes {
 	 *
 	 * @since 1.12.0
 	 */
-	public static function reset() {
+	public static function reset(): void {
 		self::$_instance = null;
 	}
 
@@ -112,6 +114,8 @@ class Sensei_Unsupported_Themes {
 	 * handled here, sets the instance variable $_is_handling_request.
 	 *
 	 * @since 1.12.0
+	 *
+	 * @return void
 	 */
 	protected function maybe_handle_request() {
 		// Do nothing if this theme supports Sensei.

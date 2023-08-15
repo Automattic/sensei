@@ -62,7 +62,7 @@ class Sensei_Feature_Flags {
 	 *
 	 * @since 4.16.0
 	 */
-	public function register_scripts() {
+	public function register_scripts(): void {
 		wp_register_script( 'sensei-feature-flags', '' ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Intended, this is a placeholder script.
 
 		wp_add_inline_script(
@@ -99,7 +99,9 @@ class Sensei_Feature_Flags {
 	/**
 	 * Get the feature flags for the current environment.
 	 *
-	 * @return array
+	 * @return bool[]
+	 *
+	 * @psalm-return array<bool>
 	 */
 	private function get_feature_flags(): array {
 		$feature_flags = [];

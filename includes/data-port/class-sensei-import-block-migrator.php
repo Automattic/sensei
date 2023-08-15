@@ -118,7 +118,9 @@ class Sensei_Import_Block_Migrator {
 	 *
 	 * @param array $lesson_block The lesson block.
 	 *
-	 * @return bool|array The lesson block or false if the id couldn't be mapped.
+	 * @return (ArrayAccess|array|mixed)[]|false The lesson block or false if the id couldn't be mapped.
+	 *
+	 * @psalm-return array{attrs: ArrayAccess|array{id: mixed}}|false
 	 */
 	private function map_lesson_block_id( array $lesson_block ) {
 		if ( empty( $lesson_block['attrs']['id'] ) ) {
@@ -166,7 +168,7 @@ class Sensei_Import_Block_Migrator {
 	 *
 	 * @param array $module_block The module block.
 	 *
-	 * @return bool|array The mapped module block or false if the block couldn't be mapped.
+	 * @return array|false The mapped module block or false if the block couldn't be mapped.
 	 */
 	private function map_module_block_id( array $module_block ) {
 		if ( empty( $module_block['attrs']['title'] ) ) {

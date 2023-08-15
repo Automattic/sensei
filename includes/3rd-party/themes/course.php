@@ -8,12 +8,14 @@
 /**
  * Don't load Learning Mode styles from Course theme.
  */
-function sensei_disable_learning_mode_style_for_course_theme() {
+function sensei_disable_learning_mode_style_for_course_theme(): void {
 	add_filter( 'course_learning_mode_load_styles', '__return_false' );
 }
 
 /**
  * Enqueue Course theme-specific Learning Mode styles.
+ *
+ * @return false|null
  */
 function sensei_load_learning_mode_style_for_course_theme() {
 	$course_id       = Sensei_Utils::get_current_course();
@@ -30,6 +32,8 @@ function sensei_load_learning_mode_style_for_course_theme() {
 
 /**
  * Enqueue Course theme-specific Learning Mode styles in the admin for the Site Editor and Lesson Editor.
+ *
+ * @return void
  */
 function sensei_admin_load_learning_mode_style_for_course_theme() {
 	$is_course_theme = 'course' === wp_get_theme()->get_template();

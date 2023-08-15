@@ -39,10 +39,8 @@ class Course_Progress_Repository_Factory {
 	 * Create a repository for a course progress.
 	 *
 	 * @internal
-	 *
-	 * @return Course_Progress_Repository_Interface
 	 */
-	public function create(): Course_Progress_Repository_Interface {
+	public function create(): Aggregate_Course_Progress_Repository {
 		global $wpdb;
 
 		return new Aggregate_Course_Progress_Repository(

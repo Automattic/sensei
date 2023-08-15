@@ -54,10 +54,11 @@ class Sensei_Grading {
 	/**
 	 * Add the Grading submenu.
 	 *
-	 * @since  1.3.0
+	 * @since 1.3.0
+	 *
 	 * @access public
 	 */
-	public function grading_admin_menu() {
+	public function grading_admin_menu(): void {
 		$indicator_html = '';
 		$grading_counts = Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] );
 
@@ -384,10 +385,15 @@ class Sensei_Grading {
 	/**
 	 * Return array of valid statuses for either Course or Lesson
 	 *
-	 * @since  1.7.0
-	 * @return array
+	 * @since 1.7.0
+	 *
+	 * @return string[]
+	 *
+	 * @psalm-param 'sensei_course_status'|'sensei_lesson_status' $type
+	 *
+	 * @psalm-return array{0?: 'in-progress', 1?: 'complete', 2?: 'ungraded', 3?: 'graded', 4?: 'passed', 5?: 'failed'}
 	 */
-	public function get_stati( $type ) {
+	public function get_stati( string $type ): array {
 		$statuses = array();
 		switch ( $type ) {
 			case 'course':
@@ -507,7 +513,7 @@ class Sensei_Grading {
 	 * @since  1.7.0
 	 * @return string
 	 */
-	public function courses_drop_down_html( $selected_course_id = 0 ) {
+	public function courses_drop_down_html( $selected_course_id = 0 ): string {
 
 		$html = '';
 
@@ -535,10 +541,9 @@ class Sensei_Grading {
 	/**
 	 * Build the Lessons dropdown for return in AJAX
 	 *
-	 * @since  1.?
-	 * @return string
+	 * @since 1.?
 	 */
-	public function get_lessons_dropdown() {
+	public function get_lessons_dropdown(): void {
 		if ( ! isset( $_GET['course_id'] ) ) {
 			// Try deprecated functionality as a fallback.
 			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
@@ -572,6 +577,8 @@ class Sensei_Grading {
 	/**
 	 * Deprecated version of the get_lessons_dropdown function, used as a
 	 * fallback.
+	 *
+	 * @return never
 	 */
 	private function deprecated_get_lessons_dropdown() {
 		// Parse POST data
@@ -595,7 +602,7 @@ class Sensei_Grading {
 		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 	}
 
-	public function lessons_drop_down_html( $course_id = 0, $selected_lesson_id = 0 ) {
+	public function lessons_drop_down_html( int $course_id = 0, $selected_lesson_id = 0 ): string {
 
 		$html = '';
 		if ( 0 < intval( $course_id ) ) {
@@ -631,9 +638,9 @@ class Sensei_Grading {
 	 * the grades as the Grader selected theme and saves the total grade and
 	 * individual question grades.
 	 *
-	 * @return bool
+	 * @return false
 	 */
-	public function admin_process_grading_submission() {
+	public function admin_process_grading_submission(): bool {
 
 		// NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry.
 		if ( ! isset( $_POST['sensei_manual_grade'] )
@@ -769,7 +776,7 @@ class Sensei_Grading {
 
 	}
 
-	public function get_redirect_url() {
+	public function get_redirect_url(): void {
 		if ( ! isset( $_GET['course_id'] ) || ! isset( $_GET['lesson_id'] ) ) {
 			// Try deprecated functionality as a fallback.
 			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
@@ -813,6 +820,8 @@ class Sensei_Grading {
 
 	/**
 	 * Deprecated version of the get_redirect_url function, used as a fallback.
+	 *
+	 * @return never
 	 */
 	private function deprecated_get_redirect_url() {
 		// Parse POST data
@@ -847,7 +856,7 @@ class Sensei_Grading {
 		die();
 	}
 
-	public function add_grading_notices() {
+	public function add_grading_notices(): void {
 		$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : false;
 		$message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : false;
 
@@ -865,7 +874,7 @@ class Sensei_Grading {
 		}
 	}
 
-	public function sensei_grading_notices() {
+	public function sensei_grading_notices(): void {
 		if ( isset( $_GET['action'] ) && 'graded' == $_GET['action'] ) {
 			echo '<div class="grading-notice updated">';
 				echo '<p>' . esc_html__( 'Quiz Graded Successfully!', 'sensei-lms' ) . '</p>';
@@ -881,15 +890,16 @@ class Sensei_Grading {
 	 *
 	 * @since 1.7.4
 	 *
-	 * @param  integer $quiz_id         ID of quiz
-	 * @param  array   $submitted questions id ans answers {
-	 *          @type int $question_id
-	 *          @type mixed $answer
-	 * }
-	 * @param  integer $total_questions Total questions in quiz (not used)
+	 * @param integer $quiz_id         ID of quiz
+	 * @param array   $submitted questions id ans answers {
+	 * @param integer $total_questions Total questions in quiz (not used)
 	 * @param string  $quiz_grade_type Optional defaults to auto
 	 *
-	 * @return int $quiz_grade total sum of all question grades
+	 * @type int $question_id
+	 * @type mixed $answer
+	 * }
+	 *
+	 * @return WP_Error|false|int|number $quiz_grade total sum of all question grades
 	 */
 	public static function grade_quiz_auto( $quiz_id = 0, $submitted = array(), $total_questions = 0, $quiz_grade_type = 'auto' ) {
 
@@ -1062,7 +1072,7 @@ class Sensei_Grading {
 	 *
 	 * @return bool | int false or the grade given to the user answer
 	 */
-	public static function grade_gap_fill_question( $question_id, $user_answer ) {
+	public static function grade_gap_fill_question( int $question_id, string $user_answer ) {
 
 		$right_answer  = get_post_meta( $question_id, '_question_right_answer', true );
 		$gapfill_array = explode( '||', $right_answer );
@@ -1126,9 +1136,10 @@ class Sensei_Grading {
 	 * Add together all the graded lesson grades
 	 *
 	 * @since 1.9.0
-	 * @return double $sum_of_all_grades
+	 *
+	 * @return int $sum_of_all_grades
 	 */
-	public static function get_graded_lessons_sum() {
+	public static function get_graded_lessons_sum(): int {
 
 		global $wpdb;
 
@@ -1173,10 +1184,10 @@ class Sensei_Grading {
 	 * Get the sum of all grades for the given user.
 	 *
 	 * @since 1.9.0
+	 *
 	 * @param $user_id
-	 * @return double
 	 */
-	public static function get_user_graded_lessons_sum( $user_id ) {
+	public static function get_user_graded_lessons_sum( $user_id ): int {
 		global $wpdb;
 
 		$clean_user_id                 = esc_sql( $user_id );
@@ -1197,9 +1208,8 @@ class Sensei_Grading {
 	 * @since 1.9.0
 	 *
 	 * @param int lesson_id
-	 * @return double
 	 */
-	public static function get_lessons_users_grades_sum( $lesson_id ) {
+	public static function get_lessons_users_grades_sum( $lesson_id ): int {
 
 		global $wpdb;
 
@@ -1222,9 +1232,8 @@ class Sensei_Grading {
 	 * @since 1.9.0
 	 *
 	 * @param int $course_id
-	 * @return double
 	 */
-	public static function get_course_users_grades_sum( $course_id ) {
+	public static function get_course_users_grades_sum( $course_id ): int {
 		global $wpdb;
 
 		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );

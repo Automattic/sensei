@@ -25,7 +25,7 @@ class Settings_Menu {
 	 *
 	 * @internal
 	 */
-	public function init() {
+	public function init(): void {
 		add_filter( 'sensei_settings_tabs', [ $this, 'replace_email_tab' ] );
 	}
 
@@ -39,7 +39,7 @@ class Settings_Menu {
 	 * @param array $sections The existing sections.
 	 * @return array
 	 */
-	public function replace_email_tab( array $sections ) {
+	public function replace_email_tab( array $sections ): array {
 		$sections['email-notification-settings'] = array(
 			'name'        => __( 'Emails', 'sensei-lms' ),
 			'description' => __( 'Settings for email notifications sent from your site.', 'sensei-lms' ),

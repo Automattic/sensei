@@ -61,7 +61,7 @@ class Course_Navigation {
 	/**
 	 * Register course navigation block.
 	 */
-	private function register_block() {
+	private function register_block(): void {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		\Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-navigation',
@@ -155,7 +155,7 @@ class Course_Navigation {
 	 *
 	 * @return string Module HTML
 	 */
-	private function render_module( $module ) {
+	private function render_module( $module ): string {
 		$module_id  = $module['id'];
 		$title      = esc_html( $module['title'] );
 		$lessons    = $module['lessons'];
@@ -234,7 +234,7 @@ class Course_Navigation {
 	 *
 	 * @return string
 	 */
-	private function render_lesson( $lesson ) {
+	private function render_lesson( $lesson ): string {
 		$lesson_id     = $lesson['id'];
 		$locked_lesson = ! $this->is_enrolled || ! \Sensei_Lesson::is_prerequisite_complete( $lesson_id, $this->user_id );
 		$status        = $this->get_user_lesson_status( $lesson, $locked_lesson );

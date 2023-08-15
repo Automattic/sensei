@@ -80,10 +80,8 @@ class Email_Page_Template_Repository {
 	 *
 	 * @param \WP_Post $post  Email template post.
 	 * @param string   $identifier  Email Page Template identifier.
-	 *
-	 * @return WP_Block_Template | null
 	 */
-	private function build_from_post( \WP_Post $post, string $identifier ) {
+	private function build_from_post( \WP_Post $post, string $identifier ): WP_Block_Template {
 		list( $theme, ) = explode( '//', $identifier, 2 );
 
 		$template                 = new WP_Block_Template();
@@ -112,10 +110,8 @@ class Email_Page_Template_Repository {
 	 *
 	 * @param string $content  Email Content.
 	 * @param string $identifier  Email Page Template identifier.
-	 *
-	 * @return WP_Block_Template | null
 	 */
-	private function build_from_content( string $content, string $identifier ) {
+	private function build_from_content( string $content, string $identifier ): WP_Block_Template {
 		list($theme, $slug ) = explode( '//', $identifier, 2 );
 
 		$template                 = new WP_Block_Template();

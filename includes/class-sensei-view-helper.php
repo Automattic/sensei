@@ -20,7 +20,7 @@ class Sensei_View_Helper {
 	 * @param mixed $points The Points.
 	 * @return string
 	 */
-	public function format_question_points( $points ) {
+	public function format_question_points( $points ): string {
 		$format = $this->get_setting_or_default( 'quiz_question_points_format', 'number' );
 
 		// default is `number`.
@@ -72,7 +72,7 @@ class Sensei_View_Helper {
 	 * @param string $formatted_points Points.
 	 * @return string
 	 */
-	private function with_brackets( $formatted_points ) {
+	private function with_brackets( $formatted_points ): string {
 		return '[' . $formatted_points . ']';
 	}
 

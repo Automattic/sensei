@@ -37,16 +37,19 @@ class Sensei_Data_Port_Question_Schema extends Sensei_Data_Port_Schema {
 	/**
 	 * Get the schema for the data type.
 	 *
-	 * @return array {
-	 *     @type array $$field_name {
-	 *          @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url-or-file, username, video.
-	 *          @type string   $pattern    Regular expression that the value should match (Optional).
-	 *          @type mixed    $default    Default value if not set or invalid. Default is `null` (Optional).
-	 *          @type bool     $required   True if a non-empty value is required. Default is `false` (Optional).
-	 *          @type bool     $allow_html True if HTML should be allowed. Default is `false` (Optional).
-	 *          @type callable $validator  Callable to use when validating data (Optional).
+	 * @return (Closure|array|closure|int|string|true)[][] {
+	 *
+	 * @type array $$field_name {
+	 * @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url-or-file, username, video.
+	 * @type string   $pattern    Regular expression that the value should match (Optional).
+	 * @type mixed    $default    Default value if not set or invalid. Default is `null` (Optional).
+	 * @type bool     $required   True if a non-empty value is required. Default is `false` (Optional).
+	 * @type bool     $allow_html True if HTML should be allowed. Default is `false` (Optional).
+	 * @type callable $validator  Callable to use when validating data (Optional).
 	 *     }
 	 * }
+	 *
+	 * @psalm-return array{id: array{type: 'string'}, question: array{type: 'string', required: true, allow_html: true}, slug: array{type: 'slug'}, description: array{type: 'string', allow_html: true}, status: array{type: 'string', default: 'draft', pattern: '/^(publish|pending|draft|)$/'}, type: array{type: 'string', default: 'multiple-choice', pattern: '/^(multiple\-choice|boolean|gap\-fill|single\-line|multi\-line|file\-upload|)$/'}, grade: array{type: 'int', default: 1}, 'random answer order': array{type: 'bool', default: true}, media: array{type: 'url-or-file', mime_types: array}, categories: array{type: 'string'}, answer: array{type: 'string', validator: closure, default: Closure(mixed, Sensei_Import_Question_Model):(1|null)}, feedback: array{type: 'string', allow_html: true}, 'text before gap': array{type: 'string', validator: closure, allow_html: true}, gap: array{type: 'string', validator: closure, allow_html: true}, 'text after gap': array{type: 'string', validator: closure, allow_html: true}, 'upload notes': array{type: 'string', allow_html: true}, 'teacher notes': array{type: 'string', allow_html: true}}
 	 */
 	public function get_schema() {
 		return [
@@ -142,9 +145,9 @@ class Sensei_Data_Port_Question_Schema extends Sensei_Data_Port_Schema {
 	 * @param string $type            Question type that makes this field required.
 	 * @param bool   $default_no_type Default validation result when no type value is set.
 	 *
-	 * @return closure
+	 * @psalm-return Closure(mixed, Sensei_Import_Question_Model):bool
 	 */
-	private function validate_for_question_type( $type, $default_no_type = true ) {
+	private function validate_for_question_type( $type, $default_no_type = true ): Closure {
 		return function ( $field, Sensei_Import_Question_Model $model ) use ( $type, $default_no_type ) {
 			$data          = $model->get_data();
 			$question_type = $model->get_question_type();
@@ -165,6 +168,8 @@ class Sensei_Data_Port_Question_Schema extends Sensei_Data_Port_Schema {
 	 * Get question post type.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'question'
 	 */
 	public function get_post_type() {
 		return self::POST_TYPE;
@@ -174,6 +179,8 @@ class Sensei_Data_Port_Question_Schema extends Sensei_Data_Port_Schema {
 	 * Get the column name for the title.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'question'
 	 */
 	public function get_column_title() {
 		return self::COLUMN_TITLE;

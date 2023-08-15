@@ -52,6 +52,8 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 
 	/**
 	 * Register the REST API endpoints for the class..
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -149,7 +151,9 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 *
-	 * @return WP_REST_Response|WP_Error
+	 * @return WP_Error|WP_REST_Response|null[]
+	 *
+	 * @psalm-return WP_Error|WP_REST_Response|array{id: null}
 	 */
 	public function request_get_job( $request ) {
 		$job_id = $this->get_job_id_param( $request );
@@ -357,9 +361,11 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 *
 	 * @param Sensei_Data_Port_Job $job Job to be prepared for the client.
 	 *
-	 * @return array
+	 * @return (array|mixed|string)[]
+	 *
+	 * @psalm-return array{id: string, status: array, files: array, results: mixed}
 	 */
-	public function prepare_to_serve_job( Sensei_Data_Port_Job $job ) {
+	public function prepare_to_serve_job( Sensei_Data_Port_Job $job ): array {
 		return [
 			'id'      => $job->get_job_id(),
 			'status'  => $job->get_status(),
@@ -374,9 +380,11 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 * @param Sensei_Data_Port_Job $job    Job to be prepared for the client.
 	 * @param int                  $offset Offset.
 	 *
-	 * @return array
+	 * @return (((mixed|null|string)[]|mixed|null|string)[][]|int)[]
+	 *
+	 * @psalm-return array{offset: int, total: 0|positive-int, items: array<array{type: mixed|null, line: mixed|null, severity: string, descriptor: null|string, message: mixed, post: array{id: mixed|null, title: mixed|null, edit_link: null|string}}>}
 	 */
-	public function prepare_to_serve_job_logs( Sensei_Data_Port_Job $job, $offset = 0 ) {
+	public function prepare_to_serve_job_logs( Sensei_Data_Port_Job $job, $offset = 0 ): array {
 		$log_entries = $job->get_logs();
 
 		$logs_refactored = array_map(
@@ -409,7 +417,9 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	/**
 	 * Get the job schema for the client.
 	 *
-	 * @return array
+	 * @return (((string|string[][])[][]|string|true)[][]|string)[]
+	 *
+	 * @psalm-return array{type: 'object', properties: array{id: array{description: string, type: 'string', readonly: true}, status: array{type: 'object', properties: array{status: array{description: string, type: 'string'}, percentage: array{description: string, type: 'integer'}}}, files: array{type: 'object', properties: array<array{type: 'object', properties: array{name: array{description: string, type: 'string'}, url: array{description: string, type: 'string'}}}>}, results: array{type: 'object'}}}
 	 */
 	public function get_item_schema() {
 		$file_properties = [];
@@ -468,9 +478,11 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	/**
 	 * Get the logs schema for the client.
 	 *
-	 * @return array
+	 * @return ((((string|string[]|true)[][]|string)[]|string)[][]|string)[]
+	 *
+	 * @psalm-return array{type: 'object', properties: array{items: array{type: 'array', items: array{type: 'object', properties: array{type: array{description: string, type: 'string', readonly: true}, line: array{description: string, type: 'integer', readonly: true}, severity: array{description: string, type: 'string', enum: array{0: 'info', 1: 'notice', 2: 'error'}, readonly: true}, descriptor: array{description: string, type: 'string', readonly: true}, message: array{description: string, type: 'string', readonly: true}}}}}}
 	 */
-	public function get_logs_schema() {
+	public function get_logs_schema(): array {
 		return [
 			'type'       => 'object',
 			'properties' => [

@@ -21,7 +21,9 @@ class Sensei_Block_Helpers {
 	 * @param array $colors           An array with the color attribute as keys and the style property as values.
 	 * @param array $size_styles      An array with the sizing attribute as keys and the style property as values.
 	 *
-	 * @return array Colors CSS classes and inline styles.
+	 * @return string[][] Colors CSS classes and inline styles.
+	 *
+	 * @psalm-return array{css_classes: list<string>, inline_styles: list<string>}
 	 */
 	public static function build_styles( array $block_attributes, array $colors = [], array $size_styles = [] ): array {
 		$attributes = [
@@ -133,9 +135,11 @@ class Sensei_Block_Helpers {
 	 * @param string $separator Separator string between variables.
 	 * @param string $prefix CSS variable prefix.
 	 *
-	 * @return array CSS styles and classlist.
+	 * @return string[] CSS styles and classlist.
+	 *
+	 * @psalm-return array{0: string, 1: string}
 	 */
-	public static function css_variables( $variables, $separator = "\n", $prefix = '--sensei-' ) {
+	public static function css_variables( $variables, $separator = "\n", $prefix = '--sensei-' ): array {
 		$style   = '';
 		$classes = '';
 		foreach ( $variables as $variable => $value ) {
@@ -155,9 +159,9 @@ class Sensei_Block_Helpers {
 	 * @param string $value Value.
 	 * @param string $unit  Unit.
 	 *
-	 * @return string|null Postfixed value or null if empty.
+	 * @return null|string Postfixed value or null if empty.
 	 */
-	public static function css_unit( $value, $unit = 'px' ) {
+	public static function css_unit( $value, $unit = 'px' ): ?string {
 		if ( ! isset( $value ) || '' === $value ) {
 			return null;
 		}

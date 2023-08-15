@@ -56,7 +56,7 @@ class Sensei_Tools {
 	 *
 	 * @since 3.7.0
 	 */
-	public function init() {
+	public function init(): void {
 		add_filter( 'sensei_learners_main_column_data', [ Sensei_Tool_Enrolment_Debug::class, 'add_debug_action' ], 10, 3 );
 	}
 
@@ -101,7 +101,7 @@ class Sensei_Tools {
 	/**
 	 * Adds admin menu pages.
 	 */
-	public function add_menu_pages() {
+	public function add_menu_pages(): void {
 		$title = esc_html__( 'Tools', 'sensei-lms' );
 
 		add_submenu_page(
@@ -118,6 +118,8 @@ class Sensei_Tools {
 
 	/**
 	 * Handle processing actions on the tools page.
+	 *
+	 * @return void
 	 */
 	public function process() {
 		$tools = $this->get_tools();
@@ -163,7 +165,7 @@ class Sensei_Tools {
 	/**
 	 * Output the tools page.
 	 */
-	public function output() {
+	public function output(): void {
 		Sensei()->assets->enqueue( 'sensei-tools', 'css/tools.css' );
 
 		$tools = $this->get_tools();
@@ -202,7 +204,7 @@ class Sensei_Tools {
 	 *
 	 * @param Sensei_Tool_Interface $tool Tool object.
 	 */
-	public function get_tool_url( Sensei_Tool_Interface $tool ) {
+	public function get_tool_url( Sensei_Tool_Interface $tool ): string {
 		$tool_id = $tool->get_id();
 		$url     = add_query_arg( 'tool', $tool_id, $this->get_tools_url() );
 		if ( ! $this->is_interactive_tool( $tool ) ) {
@@ -262,9 +264,9 @@ class Sensei_Tools {
 	 * @param string $message  User message to display.
 	 * @param bool   $is_error True this message is an error.
 	 *
-	 * @return bool
+	 * @return true
 	 */
-	public function add_user_message( $message, $is_error = false ) {
+	public function add_user_message( $message, $is_error = false ): bool {
 		$messages_key = $this->get_user_message_transient_name();
 		$messages     = $this->get_user_messages( false );
 
@@ -283,7 +285,7 @@ class Sensei_Tools {
 	 *
 	 * @return string
 	 */
-	private function get_user_message_transient_name() {
+	private function get_user_message_transient_name(): string {
 		return self::MESSAGES_TRANSIENT_PREFIX . get_current_user_id();
 	}
 
@@ -291,6 +293,8 @@ class Sensei_Tools {
 	 * Trigger invalid request and redirect.
 	 *
 	 * @param Sensei_Tool_Interface $tool Tool object to possibly redirect to.
+	 *
+	 * @return never
 	 */
 	public function trigger_invalid_request( $tool = null ) {
 		$redirect = $this->get_tools_url();

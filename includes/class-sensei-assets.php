@@ -72,7 +72,7 @@ class Sensei_Assets {
 	 * @param array       $dependencies Dependencies.
 	 * @param bool|string $args         In footer flag (script) or media type (style).
 	 */
-	public function enqueue( $handle, $filename, $dependencies = [], $args = null ) {
+	public function enqueue( $handle, $filename, $dependencies = [], $args = null ): void {
 
 		$config = $this->asset_config( $filename, $dependencies, $args );
 		$this->call_wp( 'wp_enqueue', $handle, $config );
@@ -87,7 +87,7 @@ class Sensei_Assets {
 	 * @param array       $dependencies Dependencies.
 	 * @param null        $args         Asset arguments.
 	 */
-	public function register( $handle, $filename, $dependencies = [], $args = null ) {
+	public function register( $handle, $filename, $dependencies = [], $args = null ): void {
 		$config = $this->asset_config( $filename, $dependencies, $args );
 
 		$this->call_wp( 'wp_register', $handle, $config );
@@ -98,7 +98,7 @@ class Sensei_Assets {
 	 *
 	 * @param string $handle Unique name of the script.
 	 */
-	public function enqueue_script( $handle ) {
+	public function enqueue_script( $handle ): void {
 		wp_enqueue_script( $handle );
 	}
 
@@ -107,7 +107,7 @@ class Sensei_Assets {
 	 *
 	 * @param string $handle Unique name of the stylesheet.
 	 */
-	public function enqueue_style( $handle ) {
+	public function enqueue_style( $handle ): void {
 		wp_enqueue_style( $handle );
 	}
 
@@ -118,7 +118,7 @@ class Sensei_Assets {
 	 * @param string $handle Unique handle for the asset.
 	 * @param array  $config Asset information.
 	 */
-	private function call_wp( $action, $handle, $config ) {
+	private function call_wp( $action, $handle, $config ): void {
 		call_user_func( $action . '_' . $config['type'], $handle, $config['url'], $config['dependencies'], $config['version'], $config['args'] );
 
 		if ( 'script' === $config['type'] && in_array( 'wp-i18n', $config['dependencies'], true ) ) {
@@ -134,9 +134,11 @@ class Sensei_Assets {
 	 * @param array       $dependencies Dependencies.
 	 * @param bool|string $args         Argument passed to wp_enqueue_script or wp_enqueue_style.
 	 *
-	 * @return array Asset information.
+	 * @return (array|bool|mixed|string)[] Asset information.
+	 *
+	 * @psalm-return array{url: string, dependencies: array, version: mixed|string, type: 'script'|'style', args: bool|string}
 	 */
-	public function asset_config( $filename, $dependencies = [], $args = null ) {
+	public function asset_config( $filename, $dependencies = [], $args = null ): array {
 
 		$is_js             = preg_match( '/\.js$/', $filename );
 		$basename          = preg_replace( '/\.\w+$/', '', $filename );
@@ -192,7 +194,7 @@ class Sensei_Assets {
 	 *
 	 * @return string Public url for the file.
 	 */
-	public function asset_url( $filename ) {
+	public function asset_url( $filename ): string {
 		return rtrim( $this->plugin_url, '/' ) . '/assets/dist/' . $filename;
 	}
 
@@ -201,7 +203,7 @@ class Sensei_Assets {
 	 *
 	 * @param string[] $rest_routes REST routes to preload.
 	 */
-	public function preload_data( $rest_routes ) {
+	public function preload_data( $rest_routes ): void {
 		// Temporarily removes the user filter when loading from preload.
 		remove_action( 'pre_get_posts', array( Sensei()->teacher, 'filter_queries' ) );
 		$preload_data = array_reduce(
@@ -230,7 +232,7 @@ class Sensei_Assets {
 	 *
 	 * @deprecated 3.10.0
 	 */
-	public function override_script( $handle, $src, $deps = null ) {
+	public function override_script( $handle, $src, $deps = null ): void {
 		_deprecated_function( __METHOD__, '3.10.0' );
 
 		$scripts = wp_scripts();
@@ -255,7 +257,7 @@ class Sensei_Assets {
 	 *
 	 * @deprecated 3.10.0
 	 */
-	public function wp_compat() {
+	public function wp_compat(): void {
 		_deprecated_function( __METHOD__, '3.10.0' );
 	}
 
@@ -263,7 +265,7 @@ class Sensei_Assets {
 	/**
 	 * Disable loading frontend.css for the current page.
 	 */
-	public function disable_frontend_styles() {
+	public function disable_frontend_styles(): void {
 		add_filter( 'sensei_disable_styles', '__return_true' );
 	}
 

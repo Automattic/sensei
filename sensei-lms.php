@@ -110,7 +110,7 @@ if ( ! function_exists( 'Sensei' ) ) {
 	 *
 	 * @since 1.8.0
 	 */
-	function Sensei() {
+	function Sensei(): Sensei_Main {
 		// phpcs:enable
 		return Sensei_Main::instance( array( 'version' => SENSEI_LMS_VERSION ) );
 	}
@@ -136,7 +136,7 @@ if ( ! function_exists( 'activate_sensei' ) ) {
 	 *
 	 * @since 1.8.0
 	 */
-	function activate_sensei() {
+	function activate_sensei(): void {
 		// phpcs:enable
 		Sensei()->activate();
 	}

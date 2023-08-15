@@ -52,6 +52,8 @@ class New_Course_Assigned extends Email_Generators_Abstract {
 	 * @param int $course_id  Course ID.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function course_new_teacher_assigned_email( $teacher_id, $course_id ) {
 

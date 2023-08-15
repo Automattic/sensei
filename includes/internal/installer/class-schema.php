@@ -37,7 +37,7 @@ class Schema {
 	 *
 	 * @since $$next-version$$
 	 */
-	public function create_tables() {
+	public function create_tables(): void {
 		global $wpdb;
 
 		$wpdb->hide_errors();

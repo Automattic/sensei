@@ -73,7 +73,7 @@ class Sensei_Blocks {
 	 *
 	 * @access private
 	 */
-	public function register_generic_assets() {
+	public function register_generic_assets(): void {
 		Sensei()->assets->register( 'sensei-shared-blocks', 'blocks/shared.js', [], true );
 		Sensei()->assets->register( 'sensei-shared-blocks-style', 'blocks/shared-style.css' );
 		Sensei()->assets->register( 'sensei-shared-blocks-editor-style', 'blocks/shared-style-editor.css' );
@@ -119,9 +119,11 @@ class Sensei_Blocks {
 	 * @param array                           $categories Current categories.
 	 * @param WP_Post|WP_Block_Editor_Context $context    Either the WP Post (pre-WP 5.8) or the context object.
 	 *
-	 * @return array Filtered categories.
+	 * @return (mixed|string[])[] Filtered categories.
+	 *
+	 * @psalm-return array{0: array{slug: 'sensei-lms', title: string}|mixed}
 	 */
-	public function sensei_block_categories( $categories, $context ) {
+	public function sensei_block_categories( $categories, $context ): array {
 
 		return array_merge(
 			[
@@ -144,6 +146,8 @@ class Sensei_Blocks {
 	 *                               the block or path to the folder where the `block.json`
 	 *                               file is located. The block will be registered using
 	 *                               `register_block_type_from_metadata` if it's defined.
+	 *
+	 * @return void
 	 */
 	public static function register_sensei_block( $block_name, $block_args, $file_or_folder = null ) {
 		if ( WP_Block_Type_Registry::get_instance()->is_registered( $block_name ) ) {

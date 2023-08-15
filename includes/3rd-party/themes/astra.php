@@ -7,6 +7,8 @@
 
 /**
  * Enqueue Astra theme-specific Learning Mode styles.
+ *
+ * @return false|null
  */
 function sensei_load_learning_mode_styles_for_astra_theme() {
 	$course_id       = Sensei_Utils::get_current_course();

@@ -53,7 +53,7 @@ class Quiz_Content {
 	/**
 	 * Render the questions.
 	 */
-	private static function render_questions_loop() {
+	private static function render_questions_loop(): void {
 
 		do_action( 'sensei_single_quiz_questions_before', get_the_id() );
 

@@ -82,6 +82,8 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 * Restore a provider journal store from a serialized JSON string.
 	 *
 	 * @param string $json_string JSON representation of enrolment state.
+	 *
+	 * @return void
 	 */
 	private function restore_from_json( $json_string ) {
 		$json_arr = json_decode( $json_string, true );
@@ -105,7 +107,9 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	/**
 	 * Return object that can be serialized by `json_encode()`.
 	 *
-	 * @return array
+	 * @return Sensei_Enrolment_Provider_Journal[][]
+	 *
+	 * @psalm-return array<array<Sensei_Enrolment_Provider_Journal>>
 	 */
 	public function jsonSerialize() {
 		return $this->providers_journal;
@@ -148,7 +152,7 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 *
 	 * As this isn't a singleton, Sensei_Course_Enrolment_Manager hooks this into `shutdown` in its `init` method.
 	 */
-	public static function persist_all() {
+	public static function persist_all(): void {
 		foreach ( self::$instances as $user_id => $instance ) {
 			$instance->save();
 		}
@@ -161,6 +165,8 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results The enrolment results.
 	 * @param int                                      $user_id          The user which the change applies to.
 	 * @param int                                      $course_id        The course which the change applies to.
+	 *
+	 * @return void
 	 */
 	public static function register_possible_enrolment_change( $enrolment_results, $user_id, $course_id ) {
 		$journal_store = self::get( $user_id );
@@ -248,7 +254,7 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 * @param int                                        $course_id The course id.
 	 * @param string                                     $message   The message to be added.
 	 */
-	public static function add_provider_log_message( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id, $course_id, $message ) {
+	public static function add_provider_log_message( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id, $course_id, $message ): void {
 		$journal_store = self::get( $user_id );
 
 		if ( ! isset( $journal_store->providers_journal[ $course_id ][ $provider->get_id() ] ) ) {

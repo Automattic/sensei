@@ -56,7 +56,7 @@ class Sensei_Course_Theme_Template_Selection {
 	/**
 	 * Initialize the class.
 	 */
-	public function init() {
+	public function init(): void {
 		add_action( 'save_post', [ $this, 'maybe_set_block_template_name' ], 10, 3 );
 		add_action( 'update_option_sensei-settings', [ $this, 'update_legacy_template_naming' ], 10, 3 );
 	}
@@ -215,6 +215,8 @@ class Sensei_Course_Theme_Template_Selection {
 	 * @param int     $post_id The id of the post saved.
 	 * @param WP_Post $post The instance of the post that was saved.
 	 * @param boolean $update Whether this was an update of the existing post or not.
+	 *
+	 * @return void
 	 */
 	public function maybe_set_block_template_name( $post_id, $post, $update ) {
 		if (
@@ -239,6 +241,8 @@ class Sensei_Course_Theme_Template_Selection {
 	 * @param mixed  $old_settings The old value of the option.
 	 * @param mixed  $new_settings The new value of the option.
 	 * @param string $option The name of the option being updated.
+	 *
+	 * @return void
 	 */
 	public function update_legacy_template_naming( $old_settings, $new_settings, $option ) {
 		$key          = 'sensei_learning_mode_template';

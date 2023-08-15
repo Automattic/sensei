@@ -41,7 +41,7 @@ class Sensei_REST_API_Internal {
 	/**
 	 * Register internal endpoints.
 	 */
-	public function register() {
+	public function register(): void {
 
 		$this->controllers = [
 			new Sensei_REST_API_Setup_Wizard_Controller( $this->namespace ),

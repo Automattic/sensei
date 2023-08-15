@@ -40,6 +40,8 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * @param WP_Query $wp_query
 	 * @param object   $object_to_copy
 	 * @param array    $post_params
+	 *
+	 * @return void
 	 */
 	protected function prepare_wp_query( $wp_query, $object_to_copy, $post_params ) {
 		// For use in sub-classes.
@@ -63,7 +65,7 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * @param array  $post_params    Optional post parameters to override when
 	 *                               creating the Page.
 	 */
-	protected function output_content_as_page( $content, $object_to_copy = null, $post_params = array() ) {
+	protected function output_content_as_page( $content, $object_to_copy = null, $post_params = array() ): void {
 		global $post, $wp_query, $wp_the_query;
 
 		// Set up dummy post for rendering.
@@ -126,9 +128,12 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * Generate dummy post args.
 	 *
 	 * @param object $object_to_copy
-	 * @return array
+	 *
+	 * @return (int|mixed|string)[]
+	 *
+	 * @psalm-return array{ID: int|mixed, post_status: 'publish'|mixed, post_author: 0|mixed, post_parent: 0|mixed, post_type: 'page'|mixed, post_date: mixed|string, post_date_gmt: mixed|string, post_modified: mixed|string, post_modified_gmt: mixed|string, post_title: ''|mixed, post_excerpt: ''|mixed, post_content_filtered: ''|mixed, post_mime_type: ''|mixed, post_password: ''|mixed, post_name: ''|mixed, guid: ''|mixed, menu_order: 0|mixed, pinged: ''|mixed, to_ping: ''|mixed, ping_status: ''|mixed, comment_status: 'closed'|mixed, comment_count: 0|mixed, filter: 'raw'|mixed}
 	 */
-	private function generate_dummy_post_args( $object_to_copy ) {
+	private function generate_dummy_post_args( $object_to_copy ): array {
 		global $wpdb;
 
 		$default_args = array(
@@ -177,9 +182,12 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * Generate dummy post args from term object.
 	 *
 	 * @param WP_Term $term_to_copy
-	 * @return array
+	 *
+	 * @return string[]
+	 *
+	 * @psalm-return array{post_title: string, post_name: string}
 	 */
-	private function generate_post_args_from_term( $term_to_copy ) {
+	private function generate_post_args_from_term( $term_to_copy ): array {
 		return array(
 			'post_title' => $term_to_copy->name,
 			'post_name'  => $term_to_copy->slug,
@@ -190,9 +198,12 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * Generate dummy post args from user object.
 	 *
 	 * @param WP_User $user_to_copy
-	 * @return array
+	 *
+	 * @return (int|string)[]
+	 *
+	 * @psalm-return array{post_author: int, post_date: string, post_date_gmt: string, post_modified: string, post_modified_gmt: string, post_title: string, post_name: string}
 	 */
-	private function generate_post_args_from_user( $user_to_copy ) {
+	private function generate_post_args_from_user( $user_to_copy ): array {
 		return array(
 			'post_author'       => $user_to_copy->ID,
 			'post_date'         => $user_to_copy->user_registered,
@@ -208,9 +219,12 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * Generate dummy post args from another post object.
 	 *
 	 * @param WP_Post $post_to_copy
-	 * @return array
+	 *
+	 * @return string[]
+	 *
+	 * @psalm-return array{post_author: string, post_date: string, post_date_gmt: string, post_modified: string, post_modified_gmt: string, post_title: string, post_name: string}
 	 */
-	private function generate_post_args_from_post( $post_to_copy ) {
+	private function generate_post_args_from_post( $post_to_copy ): array {
 		return array(
 			'post_author'       => $post_to_copy->post_author,
 			'post_date'         => $post_to_copy->post_date,
@@ -227,9 +241,12 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * Generate dummy post args from a post type object.
 	 *
 	 * @param WP_Post_Type $post_type_to_copy
-	 * @return array
+	 *
+	 * @return string[]
+	 *
+	 * @psalm-return array{post_title: string, post_name: string}
 	 */
-	private function generate_post_args_from_post_type( $post_type_to_copy ) {
+	private function generate_post_args_from_post_type( $post_type_to_copy ): array {
 		return array(
 			'post_title' => $post_type_to_copy->label,
 			'post_name'  => $post_type_to_copy->name,
@@ -239,7 +256,7 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	/**
 	 * Run the sensei_pagination action. This can be used in a hook.
 	 */
-	public function do_sensei_pagination() {
+	public function do_sensei_pagination(): void {
 		do_action( 'sensei_pagination' );
 	}
 
@@ -248,10 +265,8 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 *
 	 * @param string $title
 	 * @param string $id
-	 *
-	 * @return string|bool
 	 */
-	public function hide_dummy_post_title( $title, $id ) {
+	public function hide_dummy_post_title( $title, $id ): string {
 		if ( $this->dummy_post->ID === $id ) {
 			return '';
 		}
@@ -290,7 +305,7 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 *
 	 * @since 1.12.0
 	 */
-	public function setup_original_query() {
+	public function setup_original_query(): void {
 		global $wp_query, $post;
 
 		// Just to be sure.

@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Tool_Import implements Sensei_Tool_Interface, Sensei_Tool_Interactive_Interface {
 	/**
 	 * Output tool view for interactive action methods.
+	 *
+	 * @return void
 	 */
 	public function output() {
 		include __DIR__ . '/views/html-import.php';
@@ -28,6 +30,8 @@ class Sensei_Tool_Import implements Sensei_Tool_Interface, Sensei_Tool_Interacti
 	 * Get the ID of the tool.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'import-content'
 	 */
 	public function get_id() {
 		return 'import-content';
@@ -53,6 +57,8 @@ class Sensei_Tool_Import implements Sensei_Tool_Interface, Sensei_Tool_Interacti
 
 	/**
 	 * Run the tool.
+	 *
+	 * @return void
 	 */
 	public function process() {
 		add_action(
@@ -74,7 +80,7 @@ class Sensei_Tool_Import implements Sensei_Tool_Interface, Sensei_Tool_Interacti
 	/**
 	 * Is the tool currently available?
 	 *
-	 * @return bool True if tool is available.
+	 * @return true True if tool is available.
 	 */
 	public function is_available() {
 		return true;

@@ -119,8 +119,11 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	 *
 	 * @param object $item The current item.
 	 *
-	 * @return array Report row data.
+	 * @return string[] Report row data.
+	 *
 	 * @throws Exception If date-time conversion fails.
+	 *
+	 * @psalm-return array<string>
 	 */
 	protected function get_row_data( $item ) {
 		// Get Learners (i.e. those who have started).
@@ -238,7 +241,9 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	/**
 	 * Return additional filters for current report.
 	 *
-	 * @return array
+	 * @return int[]
+	 *
+	 * @psalm-return array{course_id: int}
 	 */
 	protected function get_additional_filters(): array {
 		return [

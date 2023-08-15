@@ -26,6 +26,8 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 * Enqueue frontend and editor assets.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function enqueue_block_assets() {
 
@@ -40,6 +42,8 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 * Enqueue editor assets.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
 
@@ -71,6 +75,8 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 
 	/**
 	 * Initializes the blocks.
+	 *
+	 * @return void
 	 */
 	public function initialize_blocks() {
 
@@ -115,7 +121,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 *
 	 * @access private
 	 */
-	public function remove_block_related_content() {
+	public function remove_block_related_content(): void {
 
 		if ( has_block( 'sensei-lms/lesson-actions' ) ) {
 			remove_action( 'sensei_single_lesson_content_inside_after', [ 'Sensei_Lesson', 'footer_quiz_call_to_action' ] );

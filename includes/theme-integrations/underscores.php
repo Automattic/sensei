@@ -17,6 +17,8 @@ class Sensei__S {
 	 * Output opening wrappers
 	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public function wrapper_start(){ ?>
 		<div id="primary" class="content-area">
@@ -29,6 +31,8 @@ class Sensei__S {
 	 * Output closing wrappers
 	 *
 	 * @since 1.9.0
+	 *
+	 * @return void
 	 */
 	public function wrapper_end() {
 		?>

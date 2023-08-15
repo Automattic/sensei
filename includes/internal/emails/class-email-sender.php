@@ -72,7 +72,7 @@ class Email_Sender {
 	/**
 	 * Adds all filters and actions.
 	 */
-	public function init() {
+	public function init(): void {
 		/**
 		 * Send email of predefined types with provided contents.
 		 *
@@ -89,6 +89,8 @@ class Email_Sender {
 	 * @param string $usage_tracking_type Usage tracking type.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function send_email( $email_name, $replacements, $usage_tracking_type ) {
 		$email_post = $this->get_email_post_by_name( $email_name );
@@ -321,7 +323,9 @@ class Email_Sender {
 	/**
 	 * Return the email headers.
 	 *
-	 * @return array Headers.
+	 * @return string[] Headers.
+	 *
+	 * @psalm-return array{0: 'Content-Type: text/html; charset=UTF-8', 1?: string, 2?: string, 3?: string}
 	 */
 	private function get_email_headers():array {
 		$settings = $this->settings->get_settings();

@@ -40,7 +40,7 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	/**
 	 * Initialize the tool.
 	 */
-	public function init() {
+	public function init(): void {
 		add_filter( 'sensei_tools', [ $this, 'register_tool' ] );
 	}
 
@@ -49,9 +49,11 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	 *
 	 * @param array $tools List of tools.
 	 *
-	 * @return array
+	 * @return (mixed|static)[]
+	 *
+	 * @psalm-return array<mixed|static>
 	 */
-	public function register_tool( $tools ) {
+	public function register_tool( $tools ): array {
 		$tools[] = $this;
 		return $tools;
 	}
@@ -60,6 +62,8 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	 * Get the ID of the tool.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'student-progress-migration'
 	 */
 	public function get_id() {
 		return 'student-progress-migration';
@@ -88,6 +92,8 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 
 	/**
 	 * Run the tool.
+	 *
+	 * @return void
 	 */
 	public function process() {
 		$migration     = new Student_Progress_Migration();
@@ -110,7 +116,7 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	/**
 	 * Is the tool currently available?
 	 *
-	 * @return bool True if tool is available.
+	 * @return true True if tool is available.
 	 */
 	public function is_available() {
 		return true;

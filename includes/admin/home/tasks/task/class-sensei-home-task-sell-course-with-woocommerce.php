@@ -18,6 +18,8 @@ class Sensei_Home_Task_Sell_Course_With_WooCommerce implements Sensei_Home_Task 
 	 * The ID for the task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'sell-course-with-woocommerce'
 	 */
 	public static function get_id(): string {
 		return 'sell-course-with-woocommerce';
@@ -27,6 +29,8 @@ class Sensei_Home_Task_Sell_Course_With_WooCommerce implements Sensei_Home_Task 
 	 * Number used to sort in frontend.
 	 *
 	 * @return int
+	 *
+	 * @psalm-return 400
 	 */
 	public function get_priority(): int {
 		return 400;

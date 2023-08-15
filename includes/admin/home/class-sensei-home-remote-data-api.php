@@ -126,7 +126,7 @@ class Sensei_Home_Remote_Data_API {
 	 * @param string    $cache_key The cache key.
 	 * @param \WP_Error $error     The error.
 	 */
-	private function set_fail_retry( $cache_key, $error ) {
+	private function set_fail_retry( $cache_key, $error ): void {
 		$data = [
 			'error' => $this->serialize_wp_error( $error ),
 		];
@@ -144,9 +144,11 @@ class Sensei_Home_Remote_Data_API {
 	 *
 	 * @param \WP_Error $error The error to serialize.
 	 *
-	 * @return array
+	 * @return (mixed|string)[][][]
+	 *
+	 * @psalm-return array<array{messages: array<string>, data: array}>
 	 */
-	private function serialize_wp_error( \WP_Error $error ) {
+	private function serialize_wp_error( \WP_Error $error ): array {
 		$data = [];
 		foreach ( $error->get_error_codes() as $code ) {
 			$data[ $code ] = [

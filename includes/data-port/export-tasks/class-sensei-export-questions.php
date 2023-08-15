@@ -21,6 +21,8 @@ class Sensei_Export_Questions
 	 * Content type of the task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'question'
 	 */
 	public function get_content_type() {
 		return 'question';
@@ -31,7 +33,9 @@ class Sensei_Export_Questions
 	 *
 	 * @param WP_Post $post The question.
 	 *
-	 * @return array The columns data per key.
+	 * @return (int|mixed|string)[] The columns data per key.
+	 *
+	 * @psalm-return array{id: int|mixed, question: mixed|string, slug: mixed|string, description: mixed|string, status: mixed|string, type: mixed, grade: mixed, 'random answer order': 0|1|mixed, media: mixed|string, categories: mixed|string, answer: ''|mixed, feedback: mixed, 'text before gap': ''|mixed, gap: ''|mixed, 'text after gap': ''|mixed, 'upload notes': ''|mixed, 'teacher notes': ''|mixed}
 	 */
 	protected function get_post_fields( $post ) {
 
@@ -82,7 +86,7 @@ class Sensei_Export_Questions
 	 *
 	 * @param int $attachment Attachment ID.
 	 *
-	 * @return string Media path.
+	 * @return false|string Media path.
 	 */
 	private function get_media( $attachment ) {
 		if ( empty( $attachment ) ) {
@@ -102,9 +106,11 @@ class Sensei_Export_Questions
 	 * @param string $question_type
 	 * @param array  $meta
 	 *
-	 * @return array
+	 * @return (mixed|string)[]
+	 *
+	 * @psalm-return array{'teacher notes'?: mixed, answer?: mixed|string, 'text before gap'?: string, gap?: string, 'text after gap'?: string, 'upload notes'?: ''|mixed}
 	 */
-	protected function get_answer_fields( $question_type, $meta ) {
+	protected function get_answer_fields( $question_type, $meta ): array {
 
 		$columns = [];
 
@@ -162,7 +168,7 @@ class Sensei_Export_Questions
 	/**
 	 * Schema for the content type.
 	 *
-	 * @return Sensei_Data_Port_Schema
+	 * @return Schema
 	 */
 	protected function get_type_schema() {
 		return new Sensei_Data_Port_Question_Schema();

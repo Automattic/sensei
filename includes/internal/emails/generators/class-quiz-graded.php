@@ -54,6 +54,8 @@ class Quiz_Graded extends Email_Generators_Abstract {
 	 * @param int $quiz_id  Quiz ID.
 	 * @param int $grade    Grade.
 	 * @param int $passmark Passmark.
+	 *
+	 * @return void
 	 */
 	public function quiz_graded_mail_to_student( $user_id, $quiz_id, $grade, $passmark ) {
 		$lesson_id = \Sensei()->quiz->get_lesson_id( $quiz_id );

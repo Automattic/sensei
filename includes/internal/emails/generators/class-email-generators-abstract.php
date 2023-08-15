@@ -104,7 +104,7 @@ abstract class Email_Generators_Abstract {
 	 *
 	 * @since 4.12.0
 	 */
-	protected function send_email_action( $replacements ) {
+	protected function send_email_action( $replacements ): void {
 		/**
 		 * Send HTML email.
 		 *
@@ -122,7 +122,10 @@ abstract class Email_Generators_Abstract {
 	 * Return recipients' email addresses based on given user IDs.
 	 *
 	 * @param array $user_ids User IDs.
-	 * @return array Array of email addresses.
+	 *
+	 * @return string[] Array of email addresses.
+	 *
+	 * @psalm-return list<string>
 	 */
 	protected function get_recipients( $user_ids ): array {
 		$recipients = array();

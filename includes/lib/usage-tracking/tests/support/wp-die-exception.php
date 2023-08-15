@@ -3,7 +3,7 @@
 class WP_Die_Exception extends Exception {
 	private $wp_die_args = null;
 
-	public function set_wp_die_args( $message, $title, $args ) {
+	public function set_wp_die_args( $message, $title, $args ): void {
 		$this->wp_die_args = array(
 			'message' => $message,
 			'title'   => $title,

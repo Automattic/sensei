@@ -41,6 +41,8 @@ class Sensei_REST_API_Course_Students_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register the REST API endpoints for Course Structure.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -150,7 +152,9 @@ class Sensei_REST_API_Course_Students_Controller extends \WP_REST_Controller {
 	/**
 	 * Schema definition for endpoint arguments.
 	 *
-	 * @return array[]
+	 * @return (int|string|string[]|true)[][]
+	 *
+	 * @psalm-return array{course_ids: array{description: 'Course Ids to perform the action on.', type: 'array', minItems: 1, uniqueItems: true, items: array{type: 'integer'}, required: true}, student_ids: array{description: 'Student Ids to perform the action on', type: 'array', minItems: 1, uniqueItems: true, items: array{type: 'integer'}, required: true}}
 	 */
 	public function get_args_schema(): array {
 		return [

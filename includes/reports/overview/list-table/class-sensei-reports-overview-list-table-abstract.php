@@ -77,7 +77,9 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	/**
 	 * Get the filter arguments needed to get the items.
 	 *
-	 * @return array filter_arguments Arguments.
+	 * @return (int|mixed|string)[] filter_arguments Arguments.
+	 *
+	 * @psalm-return array{number: mixed, offset: 0|mixed, orderby: mixed|string, order: 'ASC'|'DESC'|mixed, search?: mixed|string}
 	 */
 	private function get_filter_args(): array {
 		// Handle orderby.
@@ -121,7 +123,9 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	/**
 	 * Prepare the table with different parameters, pagination, columns and table elements
 	 *
-	 * @since  1.7.0
+	 * @since 1.7.0
+	 *
+	 * @return void
 	 */
 	public function prepare_items() {
 		$filter_args       = $this->get_filter_args();
@@ -159,9 +163,11 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	/**
 	 * Generate a csv report with different parameters, pagination, columns and table elements
 	 *
-	 * @return array
+	 * @return array[]
+	 *
+	 * @psalm-return non-empty-list<array>
 	 */
-	public function generate_report() {
+	public function generate_report(): array {
 		$data = array();
 
 		$this->csv_output = true;
@@ -243,6 +249,8 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 * Extra controls to be displayed between bulk actions and pagination.
 	 *
 	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 *
+	 * @return void
 	 */
 	public function extra_tablenav( $which ) {
 		$visibility_class = 'top' === $which ? 'sensei-actions__always-visible' : '';
@@ -268,10 +276,11 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	/**
 	 * Output top filter form.
 	 *
-	 * @since  4.2.0
+	 * @since 4.2.0
+	 *
 	 * @access private
 	 */
-	public function output_top_filters() {
+	public function output_top_filters(): void {
 		Sensei_Utils::output_query_params_as_inputs(
 			[
 				'course_filter',
@@ -358,7 +367,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	/**
 	 * Output the course filter select input.
 	 */
-	private function output_course_select_input() {
+	private function output_course_select_input(): void {
 		$courses            = Sensei_Course::get_all_courses();
 		$selected_course_id = $this->get_course_filter_value();
 
@@ -381,6 +390,8 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 	/**
 	 * Output for table footer
+	 *
+	 * @return void
 	 */
 	public function data_table_footer() {
 		if ( $this->total_items < 1 ) {
@@ -434,6 +445,8 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 	/**
 	 * The text for the search button.
+	 *
+	 * @return string
 	 */
 	public function search_button() {
 		return __( 'Search Courses', 'sensei-lms' );

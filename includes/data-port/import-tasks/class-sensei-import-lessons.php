@@ -19,6 +19,8 @@ class Sensei_Import_Lessons extends Sensei_Import_File_Process_Task {
 	 * Return a unique key for the task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'lessons'
 	 */
 	public function get_task_key() {
 		return 'lessons';
@@ -40,6 +42,8 @@ class Sensei_Import_Lessons extends Sensei_Import_File_Process_Task {
 	 * Get the model key for this task.
 	 *
 	 * @return string
+	 *
+	 * @psalm-return 'lesson'
 	 */
 	public function get_model_key() {
 		return Sensei_Import_Lesson_Model::MODEL_KEY;
@@ -50,7 +54,7 @@ class Sensei_Import_Lessons extends Sensei_Import_File_Process_Task {
 	 *
 	 * @param string $file_path File path of the file to validate.
 	 *
-	 * @return true|WP_Error
+	 * @return WP_Error|bool
 	 */
 	public static function validate_source_file( $file_path ) {
 		$schema          = new Sensei_Data_Port_Lesson_Schema();
@@ -67,7 +71,7 @@ class Sensei_Import_Lessons extends Sensei_Import_File_Process_Task {
 	 *
 	 * @param array $task Prerequisite task arguments.
 	 */
-	protected function handle_prerequisite( $task ) {
+	protected function handle_prerequisite( $task ): void {
 		self::handle_prerequisite_helper(
 			$task,
 			'_lesson_prerequisite',

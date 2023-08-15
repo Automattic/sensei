@@ -62,14 +62,15 @@ class Sensei_Course_Structure {
 	 * @param string  $context  Context that structure is being retrieved for. Possible values: edit, view.
 	 * @param boolean $no_cache Avoid query cache.
 	 *
-	 * @return array {
-	 *     An array which has course structure information.
+	 * @return array[] { An array which has course structure information.
 	 *
-	 *     @type array Each element is an array with either module or lesson information as defined in prepare_lesson()
+	 * @type array Each element is an array with either module or lesson information as defined in prepare_lesson()
 	 *                 and prepare_module().
 	 * }
+	 *
+	 * @psalm-return list<array>
 	 */
-	public function get( $context = 'view', $no_cache = false ) {
+	public function get( $context = 'view', $no_cache = false ): array {
 		if ( $no_cache ) {
 			add_filter( 'posts_where', [ $this, 'filter_no_cache_where' ] );
 		}
@@ -115,7 +116,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return string Where with extra condition to avoid cache.
 	 */
-	public function filter_no_cache_where( $where ) {
+	public function filter_no_cache_where( $where ): string {
 		$time = time();
 
 		return $where . ' AND ' . $time . ' = ' . $time;
@@ -129,19 +130,20 @@ class Sensei_Course_Structure {
 	 * @param WP_Term      $module_term        Module term.
 	 * @param array|string $lesson_post_status Lesson post status(es).
 	 *
-	 * @return array {
-	 *     An array which has module information.
+	 * @return (array[]|int|string)[] { An array which has module information.
 	 *
-	 *     @type string $type        The type of the array which is 'module'.
-	 *     @type int    $id          The module term id.
-	 *     @type string $title       The module name.
-	 *     @type string $teacher     Name of the teacher of this module, gets populated only in admin panel for admins and if the teacher is not admin.
-	 *     @type int    $teacherId   ID of the module author, used by block editor to detect change of teacher.
-	 *     @type string $lastTitle   Used in the block editor for unchanged title state reference.
-	 *     @type string $slug        Slug of the module, not empty only if the slug is custom.
-	 *     @type string $description The module description.
-	 *     @type array  $lessons     An array of the module lessons. See Sensei_Course_Structure::prepare_lesson().
+	 * @type string $type        The type of the array which is 'module'.
+	 * @type int    $id          The module term id.
+	 * @type string $title       The module name.
+	 * @type string $teacher     Name of the teacher of this module, gets populated only in admin panel for admins and if the teacher is not admin.
+	 * @type int    $teacherId   ID of the module author, used by block editor to detect change of teacher.
+	 * @type string $lastTitle   Used in the block editor for unchanged title state reference.
+	 * @type string $slug        Slug of the module, not empty only if the slug is custom.
+	 * @type string $description The module description.
+	 * @type array  $lessons     An array of the module lessons. See Sensei_Course_Structure::prepare_lesson().
 	 * }
+	 *
+	 * @psalm-return array{type: 'module', id: int, title: string, description: string, teacher: string, teacherId: int, lastTitle: string, slug: string, lessons: list<array>}
 	 */
 	private function prepare_module( WP_Term $module_term, $lesson_post_status ) : array {
 		$lessons      = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
@@ -171,14 +173,15 @@ class Sensei_Course_Structure {
 	 *
 	 * @param WP_Post $lesson_post Lesson post object.
 	 *
-	 * @return array {
-	 *     An array which has lesson information.
+	 * @return (bool|int|mixed|string)[] { An array which has lesson information.
 	 *
-	 *     @type string $type  The type of the array which is 'lesson'.
-	 *     @type int    $id    The lesson post id.
-	 *     @type string $title The lesson title.
-	 *     @type bool   $draft True if the lesson is a draft.
+	 * @type string $type  The type of the array which is 'lesson'.
+	 * @type int    $id    The lesson post id.
+	 * @type string $title The lesson title.
+	 * @type bool   $draft True if the lesson is a draft.
 	 * }
+	 *
+	 * @psalm-return array{type: 'lesson', id: int, title: string, draft: bool, preview: mixed}
 	 */
 	private function prepare_lesson( WP_Post $lesson_post ) : array {
 		return [
@@ -196,7 +199,9 @@ class Sensei_Course_Structure {
 	 * @param int          $module_term_id     Term ID for the module.
 	 * @param array|string $lesson_post_status Lesson post status(es).
 	 *
-	 * @return WP_Post[]
+	 * @return (WP_Post|int)[]
+	 *
+	 * @psalm-return array<WP_Post|int>
 	 */
 	private function get_module_lessons( int $module_term_id, $lesson_post_status ) : array {
 		$lessons_query = Sensei()->modules->get_lessons_query( $this->course_id, $module_term_id, $lesson_post_status );
@@ -226,7 +231,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @param array $raw_structure Course structure to save in its raw, un-sanitized form as returned by get().
 	 *
-	 * @return bool|WP_Error
+	 * @return WP_Error|array|bool
 	 */
 	public function save( array $raw_structure ) {
 		$structure = $this->sanitize_structure( $raw_structure );
@@ -292,12 +297,13 @@ class Sensei_Course_Structure {
 	 *
 	 * @param array $item Item to save as returned from prepare_module().
 	 *
-	 * @return false|array[] {
-	 *     If successful, we return this:
+	 * @return (int|int[])[]|false { If successful, we return this:
 	 *
-	 *     @type int   $0 $module_id  Saved module ID.
-	 *     @type array $1 $lesson_ids All the lesson IDs from this module.
+	 * @type int   $0 $module_id  Saved module ID.
+	 * @type array $1 $lesson_ids All the lesson IDs from this module.
 	 * }
+	 *
+	 * @psalm-return array{0: int, 1: list<int>}|false
 	 */
 	private function save_module( array $item ) {
 		if ( $item['id'] || $item['slug'] ) {
@@ -457,7 +463,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @param array $module_order Module order to save.
 	 */
-	public function save_module_order( array $module_order ) {
+	public function save_module_order( array $module_order ): void {
 		$current_module_order_raw = get_post_meta( $this->course_id, '_module_order', true );
 		$current_module_order     = $current_module_order_raw ? array_map( 'intval', $current_module_order_raw ) : [];
 
@@ -507,6 +513,8 @@ class Sensei_Course_Structure {
 	 * @param array $item Item to create.
 	 *
 	 * @return false|int
+	 *
+	 * @psalm-return false|positive-int
 	 */
 	private function create_lesson( array $item ) {
 		$post_args = [
@@ -534,7 +542,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @param int $lesson_id Lesson ID to create quiz for.
 	 */
-	private function create_quiz( int $lesson_id ) {
+	private function create_quiz( int $lesson_id ): void {
 		$lesson = get_post( $lesson_id );
 
 		$post_args = [
@@ -558,7 +566,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @param array $item Item to save.
 	 *
-	 * @return false|int
+	 * @return false|int|null
 	 */
 	private function update_lesson( array $item ) {
 		$lesson = get_post( $item['id'] );
@@ -588,7 +596,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 */
-	private function clear_lesson_associations( int $lesson_id ) {
+	private function clear_lesson_associations( int $lesson_id ): void {
 		delete_post_meta( $lesson_id, '_lesson_course' );
 		$lesson_modules = get_the_terms( $lesson_id, 'module' );
 		if ( is_array( $lesson_modules ) ) {
@@ -608,10 +616,13 @@ class Sensei_Course_Structure {
 	 * @param array $structure Structure to flatten as returned by get().
 	 *
 	 * @return array[] {
-	 *     @type array $0 $lesson_ids    All the lesson IDs.
-	 *     @type array $1 $module_ids    All the module IDs.
-	 *     @type array $2 $module_titles All the module titles.
+	 *
+	 * @type array $0 $lesson_ids    All the lesson IDs.
+	 * @type array $1 $module_ids    All the module IDs.
+	 * @type array $2 $module_titles All the module titles.
 	 * }
+	 *
+	 * @psalm-return array{0: list<mixed>, 1: list<mixed>, 2: list<mixed>}
 	 */
 	private function flatten_structure( array $structure ) : array {
 		$lesson_ids    = [];
@@ -710,7 +721,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @param array $raw_item Module or lesson as returned by prepare_lesson or prepare_module.
 	 *
-	 * @return array|WP_Error
+	 * @return WP_Error|array|true
 	 */
 	private function sanitize_item( array $raw_item ) {
 		$validate = $this->validate_item_structure( $raw_item );

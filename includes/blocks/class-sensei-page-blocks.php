@@ -98,6 +98,8 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 
 	/**
 	 * Initialize blocks that are used in page post types.
+	 *
+	 * @return void
 	 */
 	public function initialize_blocks() {
 		new Sensei_Block_Take_Course();
@@ -115,6 +117,8 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * Enqueue frontend and editor assets.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function enqueue_block_assets() {
 
@@ -133,6 +137,8 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * Enqueue editor assets.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
 		Sensei()->assets->enqueue( 'sensei-single-page-blocks', 'blocks/single-page.js', [], true );

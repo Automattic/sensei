@@ -106,6 +106,8 @@ class Sensei_Admin_Notices {
 
 	/**
 	 * Initialize hooks.
+	 *
+	 * @return void
 	 */
 	public function init() {
 		if ( ! is_admin() ) {
@@ -201,6 +203,8 @@ class Sensei_Admin_Notices {
 	 * Output the admin notice.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function add_admin_notices() {
 		$screen_id = $this->get_screen_id();
@@ -230,7 +234,7 @@ class Sensei_Admin_Notices {
 	 * @param string $notice_id The unique notice ID.
 	 * @param array  $notice The notice configuration.
 	 */
-	private function add_admin_notice( $notice_id, $notice ) {
+	private function add_admin_notice( $notice_id, $notice ): void {
 		if ( empty( $notice['actions'] ) || ! is_array( $notice['actions'] ) ) {
 			$notice['actions'] = [];
 		}
@@ -299,9 +303,11 @@ class Sensei_Admin_Notices {
 	 * @param string   $screen_id The screen ID.
 	 * @param int|null $max_age   The max age (seconds) of the source data.
 	 *
-	 * @return array
+	 * @return array[]
+	 *
+	 * @psalm-return array<array{message: mixed}>
 	 */
-	public function get_notices_to_display( $screen_id = null, $max_age = null ) {
+	public function get_notices_to_display( $screen_id = null, $max_age = null ): array {
 		$notices = [];
 		foreach ( $this->get_notices( $max_age ) as $notice_id => $notice ) {
 			$notice = $this->normalize_notice( $notice );
@@ -619,9 +625,11 @@ class Sensei_Admin_Notices {
 	/**
 	 * Partial wrapper for for `get_plugins()` function. Filters out non-active plugins.
 	 *
-	 * @return array Key is basename of active plugins and value is version.
+	 * @return array[] Key is basename of active plugins and value is version.
+	 *
+	 * @psalm-return array<array>
 	 */
-	protected function get_active_plugins() {
+	protected function get_active_plugins(): array {
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
@@ -643,7 +651,7 @@ class Sensei_Admin_Notices {
 	 *
 	 * @return array
 	 */
-	private function normalize_notice( $notice ) {
+	private function normalize_notice( $notice ): array {
 		if ( ! isset( $notice['conditions'] ) || ! is_array( $notice['conditions'] ) ) {
 			$notice['conditions'] = [];
 		}
@@ -712,7 +720,7 @@ class Sensei_Admin_Notices {
 	 * @param array $dismissed_notices Array of dismissed notices.
 	 * @param bool  $is_user_notification True if we are setting user notifications (vs site-wide notifications).
 	 */
-	private function save_dismissed_notices( $dismissed_notices, $is_user_notification ) {
+	private function save_dismissed_notices( $dismissed_notices, $is_user_notification ): void {
 		if ( $is_user_notification ) {
 			update_user_meta( get_current_user_id(), self::DISMISSED_NOTICES_USER_META, $dismissed_notices );
 		} else {
@@ -724,6 +732,8 @@ class Sensei_Admin_Notices {
 	 * Handle the dismissal of the notice.
 	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function handle_notice_dismiss() {
 		check_ajax_referer( self::DISMISS_NOTICE_NONCE_ACTION, 'nonce' );

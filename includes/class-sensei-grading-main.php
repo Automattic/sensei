@@ -228,8 +228,13 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	/**
 	 * Generates content for a single row of the table, overriding parent
 	 *
-	 * @since  1.7.0
+	 * @since 1.7.0
+	 *
 	 * @param object $item The current item
+	 *
+	 * @return string[]
+	 *
+	 * @psalm-return array<string>
 	 */
 	protected function get_row_data( $item ) {
 		global $wp_version;
@@ -396,6 +401,8 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 * Extra controls to be displayed between bulk actions and pagination.
 	 *
 	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 *
+	 * @return void
 	 */
 	public function extra_tablenav( $which ) {
 		if ( 'top' === $which ) {

@@ -91,7 +91,9 @@ class Email_Repository {
 	 * @param bool   $is_pro      Is pro email.
 	 * @param bool   $disabled    Is the email disabled.
 	 *
-	 * @return int|false Email post ID. Returns false if email already exists. Returns WP_Error on failure.
+	 * @return false|int Email post ID. Returns false if email already exists. Returns WP_Error on failure.
+	 *
+	 * @psalm-return 0|false|positive-int
 	 */
 	public function create( string $identifier, array $types, string $subject, string $description, string $content, bool $is_pro = false, bool $disabled = false ) {
 		if ( $this->has( $identifier ) ) {
@@ -160,7 +162,8 @@ class Email_Repository {
 	 * @internal
 	 *
 	 * @param string $identifier Email identifier.
-	 * @return \WP_Post|null
+	 *
+	 * @return \WP_Post|int|null
 	 */
 	public function get( string $identifier ) {
 		$query = new WP_Query(
@@ -186,12 +189,10 @@ class Email_Repository {
 	 * @param string|null $type Email type.
 	 * @param int         $per_page Posts per page. Default 10.
 	 * @param int         $offset Offset. Default 0.
-	 * @return object Object with results.
-	 *                `items` is an array of `WP_Post` objects.
-	 *                `total_items` is the total number of results.
-	 *                `total_pages` is the total number of pages.
+	 *
+	 * @return \stdClass Object with results. `items` is an array of `WP_Post` objects. `total_items` is the total number of results. `total_pages` is the total number of pages.
 	 */
-	public function get_all( string $type = null, $per_page = 10, $offset = 0 ) {
+	public function get_all( string $type = null, $per_page = 10, $offset = 0 ): \stdClass {
 		$query_args = [
 			'post_type'      => Email_Post_Type::POST_TYPE,
 			'posts_per_page' => $per_page,

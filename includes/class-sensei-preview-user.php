@@ -68,6 +68,8 @@ class Sensei_Preview_User {
 	 * Initialize preview user feature.
 	 *
 	 * @since 4.11.0
+	 *
+	 * @return void
 	 */
 	public function init() {
 
@@ -101,7 +103,7 @@ class Sensei_Preview_User {
 	 *
 	 * @access private
 	 */
-	public function add_preview_user_filters() {
+	public function add_preview_user_filters(): void {
 		if ( self::is_preview_user_active() ) {
 			add_filter( 'map_meta_cap', [ $this, 'allow_post_preview' ], 10, 4 );
 			add_filter( 'pre_get_posts', [ $this, 'count_unpublished_lessons' ], 10 );
@@ -116,7 +118,10 @@ class Sensei_Preview_User {
 	 * Change the current user to the preview user if its set for the teacher.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function override_user() {
 
@@ -144,7 +149,10 @@ class Sensei_Preview_User {
 	 * Create and switch to a preview user.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function switch_to_preview_user() {
 
@@ -165,7 +173,10 @@ class Sensei_Preview_User {
 	 * Switch back to original user and delete preview user.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
+	 *
+	 * @return void
 	 */
 	public function switch_off_preview_user() {
 
@@ -183,9 +194,12 @@ class Sensei_Preview_User {
 	 * Add switch to user link to admin bar.
 	 *
 	 * @since 4.11.0
+	 *
 	 * @access private
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar The WordPress Admin Bar object.
+	 *
+	 * @return void
 	 */
 	public function add_user_switch_to_admin_bar( $wp_admin_bar ) {
 
@@ -292,7 +306,7 @@ class Sensei_Preview_User {
 	 *
 	 * @param int $course_id Course ID.
 	 *
-	 * @return int
+	 * @return WP_Error|int
 	 */
 	private function create_preview_user( $course_id ) {
 		$teacher      = wp_get_current_user();
@@ -319,6 +333,8 @@ class Sensei_Preview_User {
 	 * Delete preview user, including their course progress data.
 	 *
 	 * @param int $user_id User ID for the preview user.
+	 *
+	 * @return void
 	 */
 	public static function delete_preview_user( $user_id ) {
 
@@ -338,7 +354,7 @@ class Sensei_Preview_User {
 	 *
 	 * @since 4.11.0
 	 */
-	private function create_role() {
+	private function create_role(): void {
 		$role = get_role( self::ROLE );
 
 		if ( ! is_a( $role, 'WP_Role' ) ) {
@@ -463,7 +479,7 @@ class Sensei_Preview_User {
 	 *
 	 * @param int $preview_user_id Preview user ID.
 	 */
-	private function set_preview_user( $preview_user_id ) {
+	private function set_preview_user( $preview_user_id ): void {
 		list( 'course' => $course_id ) = get_user_meta( $preview_user_id, self::META, true );
 		$user_id                       = get_current_user_id();
 		$existing_preview_user         = $this->get_preview_user( $user_id, $course_id );
@@ -544,9 +560,11 @@ class Sensei_Preview_User {
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course ID.
 	 *
-	 * @return array
+	 * @return int[]
+	 *
+	 * @psalm-return array{user: int, course: int}
 	 */
-	private static function meta_value( $user_id, $course_id ) {
+	private static function meta_value( $user_id, $course_id ): array {
 		return [
 			'user'   => absint( $user_id ),
 			'course' => absint( $course_id ),
