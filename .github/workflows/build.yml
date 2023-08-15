@@ -39,6 +39,10 @@ jobs:
         name: PHP Syntax Check
         needs: build
         runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                php: [7.3, 8.1]
         steps:
             - name: Download Build Artifact
               uses: actions/download-artifact@v3
@@ -48,7 +52,7 @@ jobs:
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: 8.1
+                  php-version: ${{ matrix.php }}
                   tools: phplint
                   coverage: none
 
