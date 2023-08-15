@@ -508,7 +508,7 @@ class Sensei_Course_Theme_Templates {
 	 * @param array  $current_templates The block templates.
 	 * @param string $theme_name The theme name.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @internal
 	 *
