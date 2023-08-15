@@ -52,7 +52,7 @@ class Sensei_Course_Theme_Templates_Test extends WP_UnitTestCase {
 		/* Assert */
 		self::assertFalse( $is_registered_before );
 		self::assertTrue( $is_registered_after );
-  }
+	}
 
 	public function testTemplateFilter_WhenCourseThemeEnabled_ReturnsFilteredTemplateList() {
 		/* Arrange */
