@@ -799,10 +799,10 @@ class Sensei_Main {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.16.1
 	 */
 	public function update() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.16.1' );
 
 		$current_version = get_option( 'sensei-version' );
 		$is_new_install  = ! $current_version && ! $this->course_exists();
@@ -821,12 +821,12 @@ class Sensei_Main {
 	/**
 	 * Helper function to check to see if any courses exist in the database.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.16.1
 	 *
 	 * @return bool
 	 */
 	private function course_exists(): bool {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.16.1' );
 
 		global $wpdb;
 
@@ -844,10 +844,10 @@ class Sensei_Main {
 	 * @param boolean $is_new_install Is this a new install.
 	 * @return void
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.16.1
 	 */
 	private function register_plugin_version( $is_new_install ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.16.1' );
 
 		if ( isset( $this->version ) ) {
 

@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.16.1
  */
 class Aggregate_Quiz_Progress_Repository implements Quiz_Progress_Repository_Interface {
 	/**

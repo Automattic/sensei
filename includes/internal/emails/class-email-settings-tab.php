@@ -261,7 +261,7 @@ class Email_Settings_Tab {
 	 * Add the Reply To email address setting field.
 	 *
 	 * @since 4.12.0
-	 * @deprecated $$next-version$$ Moved to Sensei_Settings::init_fields.
+	 * @deprecated 4.16.1 Moved to Sensei_Settings::init_fields.
 	 *
 	 * @access private
 	 *
