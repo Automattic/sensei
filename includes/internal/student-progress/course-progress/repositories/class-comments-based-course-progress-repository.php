@@ -35,7 +35,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 *
 	 * @throws \RuntimeException If the course progress could not be created.
 	 */
-	public function create( int $course_id, int $user_id ): ?Course_Progress {
+	public function create( int $course_id, int $user_id ): Course_Progress {
 		$metadata   = [
 			'start'    => current_time( 'mysql' ),
 			'percent'  => 0,
