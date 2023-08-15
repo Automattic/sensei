@@ -525,8 +525,9 @@ class Sensei_Course_Theme_Templates {
 				]
 			);
 		}
+	}
 
-  /**
+	/**
 	 * Filters the block templates to hide the lesson template in the post editor if the course does not have learning mode enabled.
 	 *
 	 * @param array  $current_templates The block templates.
