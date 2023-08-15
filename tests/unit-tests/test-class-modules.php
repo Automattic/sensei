@@ -178,6 +178,31 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$this->assertTrue( $test_user_id === $term_author_teacher->ID, 'The function should return the teacher user if exists using term meta.' );
 	}
 
+	public function testGetTermAuthor_WhenAuthorDoesNotExists_ReturnsFirstAdminUserAsFallback() {
+		/* Arrange */
+		wp_insert_term( 'Get Started', 'module' );
+
+		$term = wp_insert_term(
+			'A test term',
+			'module',
+			array(
+				'description' => 'A yummy apple.',
+				'slug'        => 'a-test-term',
+			)
+		);
+
+		$admin                = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
+		$not_existing_user_id = 2000;
+
+		update_term_meta( $term['term_id'], 'module_author', $not_existing_user_id );
+
+		/* Act */
+		$term_author_admin = Sensei_Core_Modules::get_term_author( 'a-test-term' );
+
+		/* Assert */
+		$this->assertSame( $admin->ID, $term_author_admin->ID );
+	}
+
 	/**
 	 * Ensure the course modules column "more" link is shown
 	 * only if the course has more than 3 modules.

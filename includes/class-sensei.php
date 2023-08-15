@@ -18,6 +18,7 @@ use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Tools\Migration_Tool;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -571,6 +572,11 @@ class Sensei_Main {
 		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory( $use_tables ) )->create();
 		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory( $use_tables ) )->create();
 
+		// Student progress migration.
+		if ( $use_tables ) {
+			( new Migration_Tool( \Sensei_Tools::instance() ) )->init();
+		}
+
 		// Quiz submission repositories.
 		$this->quiz_submission_repository = ( new Submission_Repository_Factory( $use_tables ) )->create();
 		$this->quiz_answer_repository     = ( new Answer_Repository_Factory( $use_tables ) )->create();
@@ -589,6 +595,7 @@ class Sensei_Main {
 		if ( $email_customization_enabled ) {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
 		}
+
 		// MailPoet integration.
 		/**
 		 * Integrate MailPoet by adding lists for courses and groups.
@@ -814,7 +821,7 @@ class Sensei_Main {
 	/**
 	 * Helper function to check to see if any courses exist in the database.
 	 *
-	 * @deprected $$next-version$$
+	 * @deprecated $$next-version$$
 	 *
 	 * @return bool
 	 */

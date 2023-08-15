@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix lessons not being saved when creating a course on the latest Gutenberg version
