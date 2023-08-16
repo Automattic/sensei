@@ -7,11 +7,17 @@
 	}
 	&__footer {
 		.sensei-quiz-actions {
+			.sensei-quiz-action {
+				button {
+					padding: 0 32px;
+					line-height: 56px;
+				}
+			}
 			.sensei-quiz-actions-secondary {
 				.sensei-quiz-action {
 					button {
 						font-family: var( --wp--preset--font-family--body );
-						font-size: var(--wp--preset--font-size--medium);
+						font-size: var(--wp--custom--typography--font-sizes--normal);
 					}
 				}
 			}
