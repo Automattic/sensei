@@ -3,7 +3,7 @@
 	<projectFiles>
 		<file name="sensei-lms.php" />
 		<directory name="includes" />
-		<ignoreFiles>
+		<ignoreFiles allowMissingFiles="true">
 			<directory name="config" />
 			<directory name="includes/internal/emails/views" />
 			<directory name="sample-data" />
