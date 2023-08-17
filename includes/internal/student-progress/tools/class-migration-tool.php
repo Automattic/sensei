@@ -3,7 +3,7 @@
  * File containing Migration_Tool class.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.16.1
  */
 
 namespace Sensei\Internal\Student_Progress\Tools;
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Migration_Tool class.
  *
- * @since $$next-version$$
+ * @since 4.16.1
  */
 class Migration_Tool implements \Sensei_Tool_Interface {
 

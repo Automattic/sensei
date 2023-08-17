@@ -19,7 +19,7 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
 /**
  * Class Student_Progress_Migration.
  *
- * @since $$next-version$$
+ * @since 4.16.1
  */
 class Student_Progress_Migration implements Migration {
 
@@ -74,7 +74,7 @@ class Student_Progress_Migration implements Migration {
 	/**
 	 * The targeted plugin version.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @return string
 	 */
@@ -85,7 +85,7 @@ class Student_Progress_Migration implements Migration {
 	/**
 	 * Run the migration.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @param bool $dry_run Whether to run the migration in dry-run mode.
 	 * @return int The number of rows inserted.

@@ -271,6 +271,9 @@ class Sensei_Course_Theme_Templates {
 			return $templates;
 		}
 
+		// Remove the default lesson template for course theme.
+		$templates = $this->filter_single_lesson_template_in_learning_mode( $templates, wp_get_theme()->get( 'Name' ) );
+
 		$course_theme_templates = $this->get_block_templates();
 		$extra_templates        = array_values( $course_theme_templates );
 
@@ -499,5 +502,26 @@ class Sensei_Course_Theme_Templates {
 		return false;
 	}
 
+	/**
+	 * Filters the block templates to hide the lesson template in the post editor if the course does not have learning mode enabled.
+	 *
+	 * @param array  $current_templates The block templates.
+	 * @param string $theme_name The theme name.
+	 *
+	 * @since 4.16.1
+	 *
+	 * @internal
+	 *
+	 * @return array The filtered block templates.
+	 */
+	public function filter_single_lesson_template_in_learning_mode( $current_templates, $theme_name ) {
+		return array_filter(
+			$current_templates,
+			function( $template ) use ( $theme_name ) {
+				$is_course_theme = 'Course' === $theme_name;
+				return ! ( $is_course_theme && 'course//single-lesson' === $template->id );
+			}
+		);
+	}
 
 }

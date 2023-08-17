@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @intenal
  *
- * @since $$next-version$$
+ * @since 4.16.1
  */
 class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Repository_Interface {
 	/**

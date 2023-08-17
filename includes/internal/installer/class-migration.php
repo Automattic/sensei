@@ -3,7 +3,7 @@
  * File containing the interface \Sensei\Internal\Installer\Migration.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.16.1
  */
 
 namespace Sensei\Internal\Installer;
@@ -11,13 +11,13 @@ namespace Sensei\Internal\Installer;
 /**
  * Migration interface.
  *
- * @since $$next-version$$
+ * @since 4.16.1
  */
 interface Migration {
 	/**
 	 * The targeted plugin version.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @return string
 	 */
@@ -26,7 +26,7 @@ interface Migration {
 	/**
 	 * Run the migration.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @param bool $dry_run Whether to run the migration in dry-run mode.
 	 */

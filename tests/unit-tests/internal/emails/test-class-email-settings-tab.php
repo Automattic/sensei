@@ -238,18 +238,6 @@ class Email_Settings_Tab_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( '<input type="submit" name="submit" ', $content );
 	}
 
-	public function testInit_WhenLoaded_AddsTheReplyToSettingFilterHook() {
-		/* Arrange. */
-		$settings           = $this->createMock( Sensei_Settings::class );
-		$email_settings_tab = new Email_Settings_Tab( $settings );
-
-		/* Act. */
-		$email_settings_tab->init();
-
-		/* Assert. */
-		self::assertEquals( 10, has_filter( 'sensei_settings_fields', [ $email_settings_tab, 'add_reply_to_setting' ] ) );
-	}
-
 	public function testTabContent_WhenInSettingsSubtab_HasReplyToInContent() {
 		/* Arrange. */
 		$settings = $this->createMock( Sensei_Settings::class );
