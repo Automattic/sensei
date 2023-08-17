@@ -53,17 +53,6 @@ $tablet-breakpoint: 768px;
 
 	}
 
-	&__header {
-
-		&__left {
-			min-width: 0;
-		}
-
-		&__right {
-			flex: 1;
-		}
-	}
-
 	&__footer {
 		display: flex;
 		flex-direction: row;
