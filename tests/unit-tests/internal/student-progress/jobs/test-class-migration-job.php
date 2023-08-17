@@ -76,7 +76,7 @@ class Migration_Job_Test extends \WP_UnitTestCase {
 
 	public function providerGetErrors_Always_ReturnsMigrationErrors(): array {
 		return array(
-			'no errors' => array(
+			'no errors'  => array(
 				array(),
 			),
 			'has errors' => array(

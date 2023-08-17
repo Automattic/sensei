@@ -3,7 +3,7 @@
  * File containing the Migration_Job class.
  *
  * @package sensei
-*/
+ */
 
 namespace Sensei\Internal\Student_Progress\Jobs;
 

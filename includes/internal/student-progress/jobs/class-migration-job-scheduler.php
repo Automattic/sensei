@@ -82,7 +82,7 @@ class Migration_Job_Scheduler {
 	 * @since $$next-version$$
 	 */
 	public function init() {
-		add_action( $this->get_hook_name(), [ $this, 'run_job' ]);
+		add_action( $this->get_hook_name(), [ $this, 'run_job' ] );
 	}
 
 	/**
@@ -152,14 +152,14 @@ class Migration_Job_Scheduler {
 	 * Set start time.
 	 */
 	private function start() {
-		update_option( self::STARTED_OPTION_NAME, microtime(true) );
-		delete_option( self::COMPLETED_OPTION_NAME, 0 );
+		update_option( self::STARTED_OPTION_NAME, microtime( true ) );
+		delete_option( self::COMPLETED_OPTION_NAME );
 	}
 
 	/**
 	 * Set completion time.
 	 */
 	private function complete() {
-		update_option( self::COMPLETED_OPTION_NAME, microtime(true) );
+		update_option( self::COMPLETED_OPTION_NAME, microtime( true ) );
 	}
 }

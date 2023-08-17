@@ -35,14 +35,16 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	 * @var Migration_Job_Scheduler
 	 */
 	private $migration_job_scheduler;
+
 	/**
 	 * Migration_Tool constructor.
 	 *
-	 * @param \Sensei_Tools $tools Sensei_Tools instance.
+	 * @param \Sensei_Tools           $tools Sensei_Tools instance.
+	 * @param Migration_Job_Scheduler $migration_job_scheduler Migration_Job_Scheduler instance.
 	 */
-	public function __construct( \Sensei_Tools $tools, Migration_Job_Scheduler $migration_Job_Scheduler ) {
+	public function __construct( \Sensei_Tools $tools, Migration_Job_Scheduler $migration_job_scheduler ) {
 		$this->tools                   = $tools;
-		$this->migration_job_scheduler = $migration_Job_Scheduler;
+		$this->migration_job_scheduler = $migration_job_scheduler;
 	}
 
 	/**
@@ -101,9 +103,9 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 		$errors = get_option( Migration_Job_Scheduler::ERRORS_OPTION_NAME, [] );
 
 		return sprintf(
+			// translators: %1$s: migration status. %2$s: errors.
 			__(
-				// translators: %s: migration status. %s: errors.
-				'Migrate comment-based progress to the new table-based progress system. Status: %s. Errors: %s.',
+				'Migrate comment-based progress to the new table-based progress system. Status: %1$s. Errors: %2$s.',
 				'sensei-lms'
 			),
 			$status,
