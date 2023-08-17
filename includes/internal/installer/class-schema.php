@@ -3,7 +3,7 @@
  * File containing the class \Sensei\Internal\Installer\Schema.
  *
  * @package sensei
- * @since   $$next-version$$
+ * @since   4.16.1
  */
 
 namespace Sensei\Internal\Installer;
@@ -13,7 +13,7 @@ namespace Sensei\Internal\Installer;
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.16.1
  */
 class Schema {
 	/*
@@ -21,7 +21,7 @@ class Schema {
 	 * As of WP 4.2, however, they moved to utf8mb4, which uses 4 bytes per character. This means that an index which
 	 * used to have room for floor(767/3) = 255 characters, now only has room for floor(767/4) = 191 characters.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 * @var int
 	 */
 	const MAX_INDEX_LENGTH = 191;
@@ -35,7 +35,7 @@ class Schema {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 */
 	public function create_tables() {
 		global $wpdb;
@@ -62,7 +62,7 @@ class Schema {
 	 * @internal
 	 *
 	 * @see https://codex.wordpress.org/Creating_Tables_with_Plugins#Creating_or_Updating_the_Table
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @return string The schema query.
 	 */
@@ -144,7 +144,7 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @return array Database tables.
 	 */
@@ -164,7 +164,7 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 		 *
 		 * If plugins need to add new tables, they can inject them here.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.16.1
 		 *
 		 * @param array $tables An array of Sensei specific database table names.
 		 */
