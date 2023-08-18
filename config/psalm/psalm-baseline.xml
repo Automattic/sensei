@@ -1754,7 +1754,8 @@
     </UndefinedFunction>
   </file>
   <file src="includes/blocks/course-theme/class-quiz-back-to-lesson.php">
-    <UndefinedFunction occurrences="2">
+    <UndefinedFunction occurrences="3">
+      <code>Sensei()</code>
       <code>Sensei()</code>
       <code>Sensei()</code>
     </UndefinedFunction>
