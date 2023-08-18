@@ -3,6 +3,7 @@
  */
 $tablet-breakpoint: 768px;
 
+@import '~@wordpress/base-styles/breakpoints';
 @import '../../shared/blocks/progress-bar/progress-bar';
 
 .sensei-course-theme__quiz {
@@ -26,7 +27,7 @@ $tablet-breakpoint: 768px;
 			/* The gap between the arrow and the text for mobile and smaller screens */
 			gap: 8px;
 
-			@media (min-width: 500px) {
+			@media (min-width: $break-medium) {
 				/* The gap between the arrow and the text for Desktop */
 				gap: 4px;
 			}
@@ -51,17 +52,6 @@ $tablet-breakpoint: 768px;
 		justify-content: space-between;
 		gap: 24px;
 
-	}
-
-	&__header {
-
-		&__left {
-			min-width: 0;
-		}
-
-		&__right {
-			flex: 1;
-		}
 	}
 
 	&__footer {
