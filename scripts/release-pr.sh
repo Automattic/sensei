@@ -23,7 +23,7 @@ echo $SCRIPT_DIR
 # TODO: https://www.fastruby.io/blog/docker/docker-ssh-keys.html
 cp -r ~/.ssh "$SCRIPT_DIR/ssh-data"
 
-docker build -t release-build $SCRIPT_DIR &&  \
+docker build -t release-build "$SCRIPT_DIR" &&  \
 	docker run --name release-steps --rm -it \
 	-v ~/.gitconfig:/etc/gitconfig \
 	release-build \
