@@ -38,7 +38,7 @@ $breakpoint: 783px;
 
 // Desktop
 @media screen and (min-width: ($breakpoint)) {
-	.sensei-course-theme__sidebar-toggle {
+	.single-lesson .sensei-course-theme__sidebar-toggle {
 		display: none;
 	}
 }
@@ -46,7 +46,6 @@ $breakpoint: 783px;
 // Mobile
 @media screen and (max-width: ($breakpoint - 1)) {
 	.sensei-course-theme {
-
 		&--sidebar-open {
 			overflow: hidden;
 
