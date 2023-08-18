@@ -25,7 +25,7 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	/**
 	 * Sensei_Tools instance.
 	 *
-	 * @var \Sensei_Tools
+	 * @var Sensei_Tools
 	 */
 	private $tools;
 
@@ -39,10 +39,10 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	/**
 	 * Migration_Tool constructor.
 	 *
-	 * @param \Sensei_Tools           $tools Sensei_Tools instance.
+	 * @param Sensei_Tools            $tools Sensei_Tools instance.
 	 * @param Migration_Job_Scheduler $migration_job_scheduler Migration_Job_Scheduler instance.
 	 */
-	public function __construct( \Sensei_Tools $tools, Migration_Job_Scheduler $migration_job_scheduler ) {
+	public function __construct( Sensei_Tools $tools, Migration_Job_Scheduler $migration_job_scheduler ) {
 		$this->tools                   = $tools;
 		$this->migration_job_scheduler = $migration_job_scheduler;
 	}
@@ -50,7 +50,7 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	/**
 	 * Initialize the tool.
 	 */
-	public function init() {
+	public function init(): void {
 		add_filter( 'sensei_tools', [ $this, 'register_tool' ] );
 	}
 
@@ -116,7 +116,7 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	/**
 	 * Run the tool.
 	 */
-	public function process() {
+	public function process(): void {
 		$this->migration_job_scheduler->schedule();
 
 		$message = __( 'Migration scheduled.', 'sensei-lms' );
@@ -129,7 +129,7 @@ class Migration_Tool implements \Sensei_Tool_Interface {
 	 *
 	 * @return bool True if tool is available.
 	 */
-	public function is_available() {
+	public function is_available(): bool {
 		return true;
 	}
 }
