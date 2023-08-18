@@ -5,7 +5,11 @@
 
 $breakpoint: 783px;
 
-.sensei-course-theme__sidebar-toggle {
+.single-quiz .sensei-course-theme__sidebar-toggle {
+	display: none;
+}
+
+.single-lesson .sensei-course-theme__sidebar-toggle {
 	display: block;
 	width: 24px;
 	height: 24px;
@@ -31,9 +35,10 @@ $breakpoint: 783px;
 		background: none;
 	}
 }
+
 // Desktop
 @media screen and (min-width: ($breakpoint)) {
-	.sensei-course-theme__sidebar-toggle {
+	.single-lesson .sensei-course-theme__sidebar-toggle {
 		display: none;
 	}
 }
@@ -41,7 +46,6 @@ $breakpoint: 783px;
 // Mobile
 @media screen and (max-width: ($breakpoint - 1)) {
 	.sensei-course-theme {
-
 		&--sidebar-open {
 			overflow: hidden;
 
@@ -84,6 +88,5 @@ $breakpoint: 783px;
 		&:not(&--sidebar-open) &__sidebar {
 			opacity: 0;
 		}
-
 	}
 }

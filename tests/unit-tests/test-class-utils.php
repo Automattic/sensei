@@ -5,6 +5,8 @@ use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interfac
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
+
 /**
  * Class for testing Sensei_Utils class.
  *
@@ -13,7 +15,7 @@ use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repositor
  * phpcs:disable Generic.Commenting.DocComment.MissingShort
  */
 class Sensei_Class_Utils_Test extends WP_UnitTestCase {
-
+	use \Sensei_File_System_Helper;
 	/**
 	 * setup function
 	 *
@@ -535,7 +537,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 			mkdir( $theme_directory );
 		}
 
-		$this->create_file( $index_file );
+		$this->create_index_file( $index_file );
 
 		/* Act */
 		$result = Sensei_Utils::is_fse_theme();
@@ -562,7 +564,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 			mkdir( $theme_directory );
 		}
 
-		$this->create_file( $index_file );
+		$this->create_index_file( $index_file );
 
 		/* Act */
 		$result = Sensei_Utils::is_fse_theme();
@@ -572,28 +574,5 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 		unlink( $index_file );
 		rmdir( $theme_directory );
-	}
-
-	/**
-	 * Create the 'index.html' file to mimic a theme with FSE support.
-	 */
-	private function create_file( $index_file ) {
-		// Initialize the WP_Filesystem.
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-		WP_Filesystem();
-
-		global $wp_filesystem;
-
-		// Check if WP_Filesystem is initialized properly.
-		if ( ! $wp_filesystem ) {
-			return; // Or handle the error accordingly.
-		}
-
-		$file_contents = "Silence is golden\n";
-
-		// Use WP_Filesystem's method to create and write to the file.
-		$wp_filesystem->put_contents( $index_file, $file_contents, FS_CHMOD_FILE );
 	}
 }

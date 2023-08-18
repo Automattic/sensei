@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.16.1
  */
 class Aggregate_Answer_Repository implements Answer_Repository_Interface {
 	/**
