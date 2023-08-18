@@ -625,7 +625,7 @@ class Sensei_Course_Theme {
 		$text_domain = $theme->get( 'TextDomain' );
 
 		if ( ! empty( $text_domain ) ) {
-			$classes[] = $theme->get( 'TextDomain' ) . '-theme';
+			$classes[] = 'sensei-' . $theme->get( 'TextDomain' );
 		}
 
 		return $classes;
