@@ -745,7 +745,7 @@ function sensei_the_question_class() {
 	 */
 	 $classes = apply_filters( 'sensei_question_classes', array( $question_type ) );
 
-	$html_classes = '';
+	$html_classes = 'wp-block-sensei-lms-quiz-question ';
 	foreach ( $classes as $class ) {
 
 		$html_classes .= $class . ' ';
