@@ -510,7 +510,7 @@ class Sensei_Course_Theme_Templates {
 	 *
 	 * @since $$next-version$$
 	 */
-	public function load_course_theme_patterns() {
+	public function load_course_theme_patterns() : void {
 		$pattern_files = glob( Sensei_Course_Theme::instance()->get_course_theme_root() . '/patterns/*.html' );
 
 		foreach ( $pattern_files as $pattern_file ) {
