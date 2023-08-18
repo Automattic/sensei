@@ -621,8 +621,12 @@ class Sensei_Course_Theme {
 	 * @return array          Body classes with theme slug added.
 	 */
 	public function add_body_class( $classes ) {
-		$theme     = wp_get_theme();
-		$classes[] = $theme->get( 'TextDomain' );
+		$theme       = wp_get_theme();
+		$text_domain = $theme->get( 'TextDomain' );
+
+		if ( ! empty( $text_domain ) ) {
+			$classes[] = $theme->get( 'TextDomain' ) . '-theme';
+		}
 
 		return $classes;
 	}
