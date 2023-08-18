@@ -94,6 +94,9 @@ class Sensei_Course_Theme {
 
 		// Prevent module links in learning mode.
 		add_filter( 'sensei_do_link_to_module', [ $this, 'prevent_link_to_module' ] );
+
+		// Add custom body class.
+		add_filter( 'body_class', [ $this, 'add_body_class' ] );
 	}
 
 	/**
