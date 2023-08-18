@@ -76,10 +76,11 @@ class Sensei_Unit_Tests_Bootstrap {
 	 * @since 1.9
 	 */
 	public function load_sensei() {
-		require_once $this->plugin_dir . '/sensei-lms.php';
-
 		// Testing setup for scheduler.
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-scheduler-shim.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/actionscheduler-mocks.php';
+
+		require_once $this->plugin_dir . '/sensei-lms.php';
 
 		add_filter( 'sensei_scheduler_class', [ __CLASS__, 'scheduler_use_shim' ] );
 	}

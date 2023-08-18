@@ -13,10 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/../../vendor/woocommerce/action-scheduler/classes/ActionScheduler_Versions.php';
+
 $GLOBALS['scheduled_actions']       = [];
 $GLOBALS['scheduled_actions_calls'] = [];
-
-class ActionScheduler_Versions {}
 
 function _as_reset() {
 	$GLOBALS['scheduled_actions']       = [];
