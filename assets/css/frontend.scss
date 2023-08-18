@@ -1159,7 +1159,7 @@ section.entry span.course-lesson-progress {
 	}
 }
 
-.course-container, .course, .lesson, .quiz:not(.quiz-blocks):not(.sensei-course-theme) {
+.course-container, .course:not(.sensei-course-theme), .lesson, .quiz:not(.quiz-blocks):not(.sensei-course-theme) {
 	a.button, a.button:visited,
 	a.comment-reply-link,
 	#commentform #submit,
