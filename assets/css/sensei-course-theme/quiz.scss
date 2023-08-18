@@ -32,8 +32,6 @@ $tablet-breakpoint: 768px;
 	}
 
 	&__header {
-		position: sticky;
-		top: var(--top-offset);
 		background-color: var(--sensei-background-color);
 		z-index: 100;
 
