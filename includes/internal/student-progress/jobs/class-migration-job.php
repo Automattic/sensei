@@ -34,7 +34,7 @@ class Migration_Job {
 	 *
 	 * @var bool
 	 */
-	private $is_complete;
+	private $is_complete = false;
 
 	/**
 	 * Job name.
@@ -60,7 +60,7 @@ class Migration_Job {
 	 *
 	 * @since $$next-version$$
 	 */
-	public function run() {
+	public function run(): void {
 		$rows_inserted     = $this->migration->run( false );
 		$this->is_complete = 0 === $rows_inserted;
 	}
