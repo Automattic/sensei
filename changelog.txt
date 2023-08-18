@@ -1,5 +1,12 @@
 *** Changelog ***
 
+## 4.17.0 - 2023-08-18
+### Changes to existing functionality (e.g. Redirect to next lesson without showing a message, Bump minimum required PHP version to 7.3)
+- Change "Lesson Type" to "Lesson Layout" in wizard [#7111](https://github.com/Automattic/sensei/pull/7111)
+
+### Bug fix (e.g. Fix admin notice styles)
+- Fixed extra header element in lesson content [#7063](https://github.com/Automattic/sensei/pull/7063)
+
 ## 4.16.1 - 2023-08-15
 ### Added
 - Add CC/BCC fields for Sensei emails [#7014](https://github.com/Automattic/sensei/pull/7014)
