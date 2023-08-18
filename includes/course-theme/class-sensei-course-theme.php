@@ -607,4 +607,20 @@ class Sensei_Course_Theme {
 			die();
 		}
 	}
+
+	/**
+	 * Add current theme's text domain to body class.
+	 *
+	 * @since $$next-version$$
+	 * @internal
+	 *
+	 * @param  array $classes Existing body classes.
+	 * @return array          Body classes with theme slug added.
+	 */
+	public function add_body_class( $classes ) {
+		$theme     = wp_get_theme();
+		$classes[] = $theme->get( 'TextDomain' );
+
+		return $classes;
+	}
 }
