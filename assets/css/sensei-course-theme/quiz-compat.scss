@@ -1,0 +1,19 @@
+/* This file loads for all themes except Course. */
+
+@import '~@wordpress/base-styles/breakpoints';
+
+.sensei-course-theme__quiz {
+	&__main-content {
+		.wp-block-post-title {
+			margin-bottom: 3.75rem;
+
+			@media (min-width: $break-medium) {
+				margin-bottom: 2.5rem;
+			}
+		}
+
+		.sensei-lms-quiz-back-to-lesson {
+			color: inherit;
+		}
+	}
+}

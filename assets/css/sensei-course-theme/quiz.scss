@@ -3,12 +3,35 @@
  */
 $tablet-breakpoint: 768px;
 
+@import '~@wordpress/base-styles/breakpoints';
 @import '../../shared/blocks/progress-bar/progress-bar';
 
 .sensei-course-theme__quiz {
 	&__main-content {
-		padding: 32px;
 		margin-bottom: 100px !important;
+		padding-top: clamp(2.5rem, 1.346rem + 3.846vw, 3.75rem);
+
+		.wp-block-post-title {
+			margin-top: clamp(1.688rem, 0.534rem + 3.846vw, 2.938rem);
+		}
+
+		.sensei-lms-quiz-back-to-lesson {
+			display: flex;
+			align-items: center;
+
+			svg {
+				width: 24px;
+				height: 24px;
+			}
+
+			/* The gap between the arrow and the text for mobile and smaller screens */
+			gap: 8px;
+
+			@media (min-width: $break-medium) {
+				/* The gap between the arrow and the text for Desktop */
+				gap: 4px;
+			}
+		}
 
 		> * {
 			display: block;
@@ -29,28 +52,6 @@ $tablet-breakpoint: 768px;
 		justify-content: space-between;
 		gap: 24px;
 
-	}
-
-	&__header {
-		background-color: var(--sensei-background-color);
-		z-index: 100;
-
-		.wp-block-post-title {
-			font-family: inherit;
-			font-size: 24px;
-			font-weight: 600;
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-		}
-
-		&__left {
-			min-width: 0;
-		}
-
-		&__right {
-			flex: 1;
-		}
 	}
 
 	&__footer {
@@ -131,7 +132,6 @@ $tablet-breakpoint: 768px;
 }
 
 .sensei-lms-quiz-back-to-lesson {
-	font-family: var(--font-family);
 	font-size: 14px;
 	text-decoration: none;
 }
