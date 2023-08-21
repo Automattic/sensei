@@ -93,7 +93,7 @@ class Migration_Job_Scheduler {
 	 * @since $$next-version$$
 	 */
 	public function schedule(): void {
-		$action_id = $this->action_scheduler->schedule_immediate_single_action(
+		$action_id = $this->action_scheduler->schedule_single_action(
 			$this->get_hook_name(),
 			[],
 			false

@@ -58,7 +58,7 @@ class Action_Scheduler {
 	 * @param bool   $unique Whether to schedule the action only if it is not already scheduled.
 	 * @return int The scheduled action ID.
 	 */
-	public function schedule_immediate_single_action( string $hook, array $args = [], bool $unique = true ): int {
+	public function schedule_single_action( string $hook, array $args = [], bool $unique = true ): int {
 		return as_schedule_single_action( time(), $hook, $args, self::GROUP_ID, $unique );
 	}
 
@@ -86,7 +86,7 @@ class Action_Scheduler {
 	 *
 	 * @since $$next-version$$
 	 */
-	public function unschedule_all_cron_actions(): void {
+	public function unschedule_all_actions(): void {
 		// Passing only group to unschedule all by group.
 		as_unschedule_all_actions( '', [], self::GROUP_ID );
 	}
