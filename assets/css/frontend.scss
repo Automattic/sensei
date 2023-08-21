@@ -303,7 +303,8 @@ a.sensei-certificate-link {
 	form {
 		ol#sensei-quiz-list {
 			margin: 0 0 1.618em 0;
-			list-style-position: outside;
+			list-style-position: inside;
+			list-style-type: none;
 
 			li {
 				position: relative;
