@@ -309,16 +309,27 @@ a.sensei-certificate-link {
 			li {
 				position: relative;
 				margin: 0 0 1.618em;
-				font-size: 1.1em;
 
-				> span {
-					display: block;
-					margin: 0 0 1em;
-					font-weight: bold;
+				> .sensei-question-header {
+					margin-top: clamp(3.75rem, 2.596rem + 3.846vw, 5rem);
+					margin-bottom: clamp(1.25rem, 0.096rem + 3.846vw, 2.5rem);
+					padding: 0;
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
 
-					span {
-						float: right;
+					.question-title {
+						margin: 0;
+						padding: 0;
 					}
+
+					.grade {
+						font-family: var(--wp--preset--font-family--system);
+					}
+				}
+
+				.answers {
+					padding-left: 0;
 				}
 
 				.question_media_display {
@@ -349,6 +360,10 @@ a.sensei-certificate-link {
 					margin: .53em 0;
 
 					li {
+						display: flex;
+						align-items: center;
+						line-height: 1;
+
 						&.right_answer {
 							color: green;
 						}
