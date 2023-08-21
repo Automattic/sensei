@@ -306,6 +306,20 @@ a.sensei-certificate-link {
 			list-style-position: inside;
 			list-style-type: none;
 
+			input[type=radio]{
+				appearance: none;
+				width: 20px;
+				height: 20px;
+				border-radius: 50%;
+				background-clip: content-box;
+				border: 1px solid #949494;
+				background-color: #FFF;
+			}
+
+			input[type="radio"]:checked {
+				border: 6px solid var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
+			}
+
 			li {
 				position: relative;
 				margin: 0 0 1.618em;
