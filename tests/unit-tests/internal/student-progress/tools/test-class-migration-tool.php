@@ -161,4 +161,17 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$tool->process();
 	}
+
+	public function testIsAvailable_Always_ReturnsTrue(): void {
+		/* Arrange. */
+		$tools     = $this->createMock( \Sensei_Tools::class );
+		$scheduler = $this->createMock( \Sensei\Internal\Student_Progress\Jobs\Migration_Job_Scheduler::class );
+		$tool      = new Migration_Tool( $tools, $scheduler );
+
+		/* Act. */
+		$actual = $tool->is_available();
+
+		/* Assert. */
+		$this->assertTrue( $actual );
+	}
 }
