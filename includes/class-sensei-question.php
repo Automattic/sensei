@@ -649,12 +649,18 @@ class Sensei_Question {
 
 		$question_grade = Sensei()->question->get_question_grade( $question_id );
 
-		$title_html  = '<span class="question question-title">';
+		$title_html = '<div class="sensei-question-header"><h2 class="question question-title">';
+
+		// translators: %d is the question number.
+		$title_html .= sprintf( esc_html__( '%d. ', 'sensei-lms' ), sensei_get_the_question_number() );
 		$title_html .= esc_html( $title );
+		$title_html .= '</h2>';
+
 		if ( $question_grade > 0 ) {
 			$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
 		}
-		$title_html .= '</span>';
+
+		$title_html .= '</div>';
 
 		return $title_html;
 	}
