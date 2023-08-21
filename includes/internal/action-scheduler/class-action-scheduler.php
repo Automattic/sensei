@@ -74,9 +74,7 @@ class Action_Scheduler {
 	 * @return int|null The scheduled action ID if a scheduled action was found, or null if no matching action found.
 	 */
 	public function unschedule_action( string $hook, array $args = [] ): ?int {
-		$id = as_unschedule_action( $hook, $args, self::GROUP_ID );
-
-		return null !== $id ? (int) $id : null;
+		return as_unschedule_action( $hook, $args, self::GROUP_ID );
 	}
 
 	/**
