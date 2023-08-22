@@ -39,6 +39,26 @@ $tablet-breakpoint: 768px;
 			margin-left: auto;
 			margin-right: auto;
 		}
+
+		form {
+			ol#sensei-quiz-list {
+				input[type=radio],
+				.sensei-lms-question-block__option-toggle__control
+				{
+					appearance: none;
+					width: 20px;
+					height: 20px;
+					border-radius: 50%;
+					background-clip: content-box;
+					border: 1px solid #949494;
+					background-color: #FFF;
+				}
+
+				input[type="radio"]:checked {
+					border: 6px solid var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
+				}
+			}
+		}
 	}
 
 	&__header, &__footer {
