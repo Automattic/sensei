@@ -307,16 +307,16 @@ class Sensei_Main {
 	/**
 	 * Migration job scheduler.
 	 *
-	 * @var Migration_Job_Scheduler
+	 * @var Migration_Job_Scheduler|null
 	 */
-	public $migration_scheduler;
+	public $migration_scheduler = null;
 
 	/**
 	 * Action scheduler.
 	 *
-	 * @var Action_Scheduler
+	 * @var Action_Scheduler|null
 	 */
-	public $action_scheduler;
+	public $action_scheduler = null;
 
 	/**
 	 * Constructor method.
