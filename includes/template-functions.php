@@ -722,8 +722,13 @@ function sensei_the_question_content() {
 	$question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
 
 	// load the template that displays the question information.
-	Sensei_Question::load_question_template( $question_type );
+	?>
 
+	<div class="wp-block-sensei-lms-question-answers">
+		<?php Sensei_Question::load_question_template( $question_type ); ?>
+	</div>
+
+	<?php
 }
 
 /**
