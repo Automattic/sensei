@@ -686,6 +686,10 @@ class Sensei_Question {
 			}
 		}
 
+		if ( ! empty( $question_description ) ) {
+			$question_description = '<div class="wp-block-sensei-lms-question-description">' . $question_description . '</div>';
+		}
+
 		/**
 		 * Already documented within WordPress Core
 		 */
