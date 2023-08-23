@@ -15,6 +15,8 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 }
 
 .wp-block-sensei-lms-question-answers {
+	color: inherit;
+
 	li:not(:last-child) {
 		margin-bottom: 1.25rem;
 	}
@@ -25,13 +27,17 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 		}
 	}
 
+	input {
+		color: inherit;
+	}
+
 	input[type="text"] {
 		border: 0px;
 		border-bottom: 1px solid $question-input-border-color;
 		background-color: transparent;
 		font-family: inherit;
 		font-size: inherit;
-		color: inherit;
+		padding: 0;
 		&:focus-visible {
 			outline: none;
 		}
@@ -45,6 +51,13 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 
 	.wp-editor-container {
 		border: 1px solid $question-input-border-color;
+	}
+
+	input[type=file]::file-selector-button {
+		border: 1px solid $question-input-border-color;
+		padding: .8rem 1.25rem;
+		background-color: transparent;
+		margin-bottom: 20px;
 	}
 }
 
