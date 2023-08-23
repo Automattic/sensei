@@ -29,6 +29,56 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 
 	/**
+	 * Order categories by field.
+	 *
+	 * @var string
+	 */
+	public $orderby;
+
+	/**
+	 * Order direction.
+	 *
+	 * @var string
+	 */
+	public $order;
+
+	/**
+	 * Number of categories to display.
+	 *
+	 * @var int
+	 */
+	public $number;
+
+	/**
+	 * Parent category id.
+	 *
+	 * @var int
+	 */
+	public $parent;
+
+	/**
+	 * Include categories.
+	 *
+	 * @var array
+	 */
+	public $include;
+
+	/**
+	 * Exclude categories.
+	 *
+	 * @var array
+	 */
+	public $exclude;
+
+	/**
+	 * Hide empty categories.
+	 *
+	 * @var bool
+	 */
+	public $hide_empty;
+
+
+	/**
 	 * @var array list of taxonomy terms.
 	 */
 	protected $sensei_course_taxonomy_terms;
