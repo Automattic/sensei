@@ -17,3 +17,37 @@
 		}
 	}
 }
+
+.wp-block-sensei-lms-question-answers {
+	& * {
+		font-size: 1.125rem;
+	}
+}
+
+.quiz {
+	form {
+		ol#sensei-quiz-list {
+			li {
+				.wp-block-sensei-lms-question-answers,
+				.wp-block-sensei-lms-question-description {
+					font-size: 1.125rem;
+				}
+
+				h2 {
+					font-size: clamp(1.5rem, 0.808rem + 2.308vw, 2.25rem);
+					font-weight: 400;
+				}
+
+				> .question-title {
+					display: block;
+					margin: 0 0 1em;
+					font-weight: 400;
+
+					> span {
+						font-size: clamp(1rem, 0.538rem + 1.538vw, 1.5rem);
+					}
+				}
+			}
+		}
+	}
+}
