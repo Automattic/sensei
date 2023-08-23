@@ -4,6 +4,23 @@
 		.wp-block-post-title {
 			margin-bottom: 3.75rem;
 		}
+
+		form {
+			ol#sensei-quiz-list {
+				.wp-block-sensei-lms-question-answers {
+					input[type=file]::file-selector-button {
+						font-family: var(--wp--preset--font-family--heading);
+						color: inherit;
+						border: 1px solid var(--wp--preset--color--foreground);
+						border-radius: 8px;
+						padding: 0.8rem 2rem;
+						text-transform: uppercase;
+						letter-spacing: 1.05px;
+						font-size: var(--wp--custom--typography--font-sizes--button);
+					}
+				}
+			}
+		}
 	}
 	&__footer {
 		.sensei-quiz-actions {
