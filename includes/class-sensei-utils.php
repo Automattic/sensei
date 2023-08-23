@@ -292,6 +292,7 @@ class Sensei_Utils {
 			'tinymce'       => array(
 				'theme_advanced_buttons1' => $buttons,
 				'theme_advanced_buttons2' => '',
+				'content_style'           => 'body.mce-content-body { background: transparent; color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #155E65))) } ',
 			),
 			'quicktags'     => false,
 		);
