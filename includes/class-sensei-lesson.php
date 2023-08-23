@@ -1325,7 +1325,11 @@ class Sensei_Lesson {
 
 					$html .= '</table>';
 
-		/** @psalm-suppress RedundantPropertyInitializationCheck */
+		/**
+		 * In case the question order is not set, we need to initialize it to an empty string.
+		 *
+		 * @psalm-suppress RedundantPropertyInitializationCheck
+		 */
 		if ( ! isset( $this->question_order ) ) {
 			$this->question_order = '';
 		}
@@ -1432,7 +1436,11 @@ class Sensei_Lesson {
 				$html             .= $this->quiz_panel_question( $question_type, $question_counter, $question_id, 'quiz', $multiple_data );
 				$question_counter += $question_increment;
 
-				/** @psalm-suppress RedundantConditionGivenDocblockType */
+				/**
+				 * In case the question order is not set, we need to initialize it to an empty string.
+				 *
+				 * @psalm-suppress RedundantConditionGivenDocblockType
+				*/
 				if ( isset( $this->question_order ) && strlen( $this->question_order ) > 0 ) {
 					$this->question_order .= ',';
 				}
