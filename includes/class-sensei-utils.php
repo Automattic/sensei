@@ -305,10 +305,7 @@ class Sensei_Utils {
 			$settings['tinymce']['content_style'] = $global_variables . 'body.mce-content-body { background: transparent; color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #155E65))) }';
 		}
 
-
-
 		wp_editor( $content, $editor_id, $settings );
-
 	}
 
 	public static function upload_file( $file = array() ) {
