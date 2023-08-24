@@ -129,7 +129,7 @@ const QuestionEdit = ( props ) => {
 		props.meta.showValidationErrors && props.meta.validationErrors?.length;
 
 	const questionGrade = (
-		<div className="sensei-lms-question-block__grade">
+		<div className="sensei-lms-question-block__grade grade">
 			{ formatGradeLabel( options.grade ) }
 		</div>
 	);
