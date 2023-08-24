@@ -36,13 +36,18 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 		justify-content: space-between;
 		line-height: 1;
 
+		.sensei-lms-question-block__title {
+			textarea {
+				font-size: inherit;
+			}
+		}
+
 		.question-title {
 			margin: 0;
 			padding: 0;
 		}
 
 		.grade {
-			font-family: var(--wp--preset--font-family--system);
 			line-height: 1;
 		}
 	}

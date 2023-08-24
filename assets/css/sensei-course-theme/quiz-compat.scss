@@ -27,6 +27,29 @@
 	& * {
 		font-size: 1.125rem;
 	}
+
+	input[type=file]::file-selector-button,
+	.sensei-lms-question-block__file-input-placeholder {
+		color: inherit;
+		border: 1px solid var(--sensei-secondary-color, #43AF99);
+		border-radius: 0;
+		font-size: 1.125rem;
+		text-transform: none;
+		line-height: 1;
+		font-family: inherit;
+		padding: .85rem 1.25rem;
+	}
+}
+
+.wp-block-sensei-lms-quiz {
+	.sensei-lms-question-block__title {
+		font-family: var(--wp--preset--font-family--system);
+		textarea {
+			font-size: inherit;
+			font-family: inherit;
+			font-weight: inherit;
+		}
+	}
 }
 
 .quiz {
