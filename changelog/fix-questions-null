@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Avoid getting fatal error when questions set to null
