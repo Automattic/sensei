@@ -15,6 +15,11 @@
 		.sensei-lms-quiz-back-to-lesson {
 			color: inherit;
 		}
+
+		input[type=file]::file-selector-button {
+			padding: 0.75rem 1.25rem;
+			color: inherit;
+		}
 	}
 }
 
@@ -25,8 +30,16 @@
 }
 
 .quiz {
+	$textColor: #1E1E1E;
 	form {
 		ol#sensei-quiz-list {
+			color: $textColor;
+
+			/* Some themes directly target inputs */
+			input {
+				color: $textColor;
+			}
+
 			li {
 				.wp-block-sensei-lms-question-answers,
 				.wp-block-sensei-lms-question-description {
