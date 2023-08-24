@@ -110,7 +110,7 @@ $tablet-breakpoint: 768px;
 
 			input[type=radio],
 			input[type=checkbox] + label:before {
-				border: 1px solid var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
+				border: 1px solid #949494;
 				width: 20px;
 				height: 20px;
 				background-color: #FFF;
@@ -125,7 +125,7 @@ $tablet-breakpoint: 768px;
 			}
 
 			input[type="radio"]:checked {
-				border-width: 6px;
+				border: 6px solid var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
 			}
 
 			input[type="checkbox"] {
