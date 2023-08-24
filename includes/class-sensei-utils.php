@@ -297,8 +297,15 @@ class Sensei_Utils {
 		);
 
 		if ( false !== strpos( $input_name, 'sensei_question[' ) ) {
-			$settings['tinymce']['content_style'] = 'body.mce-content-body { background: transparent; color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #155E65))) } ';
+
+			// Only pick the global style variables. TinyMCE loads in an iFrame, so none of our global
+			// variables are available inside it. We add them here manually.
+			$global_variables = str_replace( '"', "'", wp_get_global_stylesheet( [ 'variables' ] ) );
+
+			$settings['tinymce']['content_style'] = $global_variables . 'body.mce-content-body { background: transparent; color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #155E65))) }';
 		}
+
+
 
 		wp_editor( $content, $editor_id, $settings );
 
