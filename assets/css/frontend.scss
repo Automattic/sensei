@@ -310,25 +310,6 @@ a.sensei-certificate-link {
 			li {
 				position: relative;
 
-				> .sensei-question-header {
-					margin-top: clamp(3.75rem, 2.596rem + 3.846vw, 5rem);
-					margin-bottom: clamp(1.25rem, 0.096rem + 3.846vw, 2.5rem);
-					padding: 0;
-					display: flex;
-					align-items: end;
-					justify-content: space-between;
-
-					.question-title {
-						margin: 0;
-						padding: 0;
-					}
-
-					.grade {
-						font-family: var(--wp--preset--font-family--system);
-						line-height: 1;
-					}
-				}
-
 				.answers {
 					padding-left: 0;
 				}
