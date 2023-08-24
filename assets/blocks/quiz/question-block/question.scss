@@ -55,9 +55,11 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 
 	input[type=file]::file-selector-button {
 		border: 1px solid $question-input-border-color;
-		padding: .8rem 1.25rem;
 		background-color: transparent;
-		margin-bottom: 20px;
+	}
+
+	.max_upload_size {
+		margin-top: 20px;
 	}
 }
 
