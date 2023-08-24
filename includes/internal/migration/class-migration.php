@@ -29,6 +29,8 @@ interface Migration {
 	 * @since 4.16.1
 	 *
 	 * @param bool $dry_run Whether to run the migration in dry-run mode.
+	 *
+	 * @return int The number of rows migrated.
 	 */
 	public function run( bool $dry_run = true );
 
