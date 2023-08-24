@@ -6,7 +6,7 @@
  * @since 4.16.1
  */
 
-namespace Sensei\Internal\Installer;
+namespace Sensei\Internal\Migration;
 
 /**
  * Migration interface.

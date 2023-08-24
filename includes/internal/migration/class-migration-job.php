@@ -5,9 +5,9 @@
  * @package sensei
  */
 
-namespace Sensei\Internal\Student_Progress\Jobs;
+namespace Sensei\Internal\Migration;
 
-use Sensei\Internal\Installer\Migrations\Student_Progress_Migration;
+use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -5,7 +5,7 @@
  * @package sensei
  */
 
-namespace Sensei\Internal\Student_Progress\Jobs;
+namespace Sensei\Internal\Migration;
 
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 

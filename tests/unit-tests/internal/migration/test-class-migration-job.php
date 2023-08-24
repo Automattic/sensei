@@ -1,14 +1,14 @@
 <?php
 
-namespace SenseiTest\Internal\Student_Progress\Jobs;
+namespace SenseiTest\Internal\Migration;
 
-use Sensei\Internal\Installer\Migrations\Student_Progress_Migration;
-use Sensei\Internal\Student_Progress\Jobs\Migration_Job;
+use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
+use Sensei\Internal\Migration\Migration_Job;
 
 /**
  * Class Migration_Job_Test
  *
- * @covers \Sensei\Internal\Student_Progress\Jobs\Migration_Job
+ * @covers \Sensei\Internal\Migration\Migration_Job
 */
 class Migration_Job_Test extends \WP_UnitTestCase {
 	public function testRun_Always_RunsMigration() {

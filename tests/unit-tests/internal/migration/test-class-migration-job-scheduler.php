@@ -1,15 +1,15 @@
 <?php
 
-namespace SenseiTest\Internal\Student_Progress\Jobs;
+namespace SenseiTest\Internal\Migration;
 
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
-use Sensei\Internal\Student_Progress\Jobs\Migration_Job;
-use Sensei\Internal\Student_Progress\Jobs\Migration_Job_Scheduler;
+use Sensei\Internal\Migration\Migration_Job;
+use Sensei\Internal\Migration\Migration_Job_Scheduler;
 
 /**
  * Class Migration_Job_Scheduler_Test
  *
- * @covers \Sensei\Internal\Student_Progress\Jobs\Migration_Job_Scheduler
+ * @covers \Sensei\Internal\Migration\Migration_Job_Scheduler
  */
 class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 	public function testInit_Always_AddsMigrationJobHook() {

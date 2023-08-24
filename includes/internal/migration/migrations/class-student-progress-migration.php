@@ -5,13 +5,13 @@
  * @package sensei
  */
 
-namespace Sensei\Internal\Installer\Migrations;
+namespace Sensei\Internal\Migration\Migrations;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Sensei\Internal\Installer\Migration;
+use Sensei\Internal\Migration\Migration;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
@@ -93,7 +93,7 @@ class Student_Progress_Migration implements Migration {
 	public function run( bool $dry_run = true ) {
 		$since_comment_id = get_option( 'sensei_migrated_progress_last_comment_id', 0 );
 		$this->errors     = array();
-		list( $progress_comments, $mapped_meta, $last_comment_id ) = $this->get_comments_and_meta( $since_comment_id, $dry_run );
+		[ $progress_comments, $mapped_meta, $last_comment_id ] = $this->get_comments_and_meta( $since_comment_id, $dry_run );
 
 		if ( empty( $progress_comments ) ) {
 			return 0;
@@ -488,7 +488,7 @@ class Student_Progress_Migration implements Migration {
 	 * Generate values clauses to be used in INSERT statements.
 	 *
 	 * @param array $batch Actual data to migrate.
-	 * @return strng SQL clause for values.
+	 * @return string SQL clause for values.
 	 */
 	private function generate_column_clauses( array $batch ): string {
 		global $wpdb;

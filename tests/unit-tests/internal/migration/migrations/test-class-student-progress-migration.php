@@ -1,21 +1,21 @@
 <?php
 
-namespace SenseiTest\Internal\Installer\Migrations;
+namespace SenseiTest\Internal\Migration\Migrations;
 
-use Sensei\Internal\Installer\Migrations\Student_Progress_Migration;
+use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 use Sensei_Factory;
 
 /**
  * Class Student_Progress_Migration_Test
  *
- * @covers \Sensei\Internal\Installer\Migrations\Student_Progress_Migration
+ * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration
  */
 class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 
 	/**
 	 * Migration instance.
 	 *
-	 * @var \Sensei\Internal\Installer\Migrations\Student_Progress_Migration
+	 * @var \Sensei\Internal\Migration\Migrations\Student_Progress_Migration
 	 */
 	private $migration;
 

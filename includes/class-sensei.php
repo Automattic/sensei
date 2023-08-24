@@ -2,8 +2,11 @@
 
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Emails\Email_Customization;
-use Sensei\Internal\Installer\Migrations\Student_Progress_Migration;
 use Sensei\Internal\Installer\Updates_Factory;
+use Sensei\Internal\Migration\Migration_Tool;
+use Sensei\Internal\Migration\Migration_Job;
+use Sensei\Internal\Migration\Migration_Job_Scheduler;
+use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
@@ -12,8 +15,6 @@ use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repositor
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
-use Sensei\Internal\Student_Progress\Jobs\Migration_Job;
-use Sensei\Internal\Student_Progress\Jobs\Migration_Job_Scheduler;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
@@ -22,7 +23,6 @@ use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
-use Sensei\Internal\Student_Progress\Tools\Migration_Tool;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
