@@ -315,7 +315,7 @@ a.sensei-certificate-link {
 					margin-bottom: clamp(1.25rem, 0.096rem + 3.846vw, 2.5rem);
 					padding: 0;
 					display: flex;
-					align-items: center;
+					align-items: end;
 					justify-content: space-between;
 
 					.question-title {
@@ -325,6 +325,7 @@ a.sensei-certificate-link {
 
 					.grade {
 						font-family: var(--wp--preset--font-family--system);
+						line-height: 1;
 					}
 				}
 
