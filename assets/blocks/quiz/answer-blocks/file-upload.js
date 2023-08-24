@@ -10,7 +10,7 @@ const FileUploadAnswer = () => {
 	return (
 		<div className="sensei-lms-question-block__answer sensei-lms-question-block__answer--file-upload">
 			<div className="sensei-lms-question-block__file-input-placeholder">
-				{ __( 'Browse…', 'sensei-lms' ) }
+				{ __( 'Choose File', 'sensei-lms' ) }
 			</div>
 		</div>
 	);
