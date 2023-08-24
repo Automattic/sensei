@@ -683,13 +683,16 @@ function sensei_quiz_has_questions() {
 
 	global $sensei_question_loop;
 
-	$questions_count = count( $sensei_question_loop['questions'] );
+	$questions = $sensei_question_loop['questions'] ?? array();
+	$current   = $sensei_question_loop['current'] ?? 0;
+
+	$questions_count = count( $questions );
 
 	if ( 0 === $questions_count ) {
 		return false;
 	}
 
-	return $sensei_question_loop['current'] + 1 < $questions_count;
+	return $current + 1 < $questions_count;
 }
 
 /**
