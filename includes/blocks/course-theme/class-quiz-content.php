@@ -47,7 +47,7 @@ class Quiz_Content {
 
 		$content = ob_get_clean();
 
-		return ( "<form id='sensei-quiz-form' method='post' enctype='multipart/form-data' class='sensei-form'>{$content}</form>" );
+		return ( "<form id='sensei-quiz-form' method='post' enctype='multipart/form-data' class='sensei-form wp-block-sensei-lms-quiz'>{$content}</form>" );
 	}
 
 	/**

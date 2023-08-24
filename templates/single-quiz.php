@@ -35,7 +35,7 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 
 	<?php if ( sensei_quiz_has_questions() ) : ?>
 
-		<form method="POST" enctype="multipart/form-data" id="sensei-quiz-form">
+		<form method="POST" enctype="multipart/form-data" id="sensei-quiz-form" class="wp-block-sensei-lms-quiz">
 
 			<?php
 
