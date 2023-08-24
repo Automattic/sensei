@@ -14,6 +14,40 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 	}
 }
 
+.wp-block-sensei-lms-quiz {
+	.wp-block-sensei-lms-quiz-question {
+		margin-top: clamp(3.75rem, 2.596rem + 3.846vw, 5rem);
+	}
+
+	.sensei-lms-question-block__title {
+		flex-grow: 1;
+	    line-height:1;
+		textarea {
+			display: block;
+			padding: 0;
+			margin: 0;
+		}
+	}
+	.sensei-lms-question-block__header {
+		margin-bottom: clamp(1.25rem, 0.096rem + 3.846vw, 2.5rem);
+		padding: 0;
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		line-height: 1;
+
+		.question-title {
+			margin: 0;
+			padding: 0;
+		}
+
+		.grade {
+			font-family: var(--wp--preset--font-family--system);
+			line-height: 1;
+		}
+	}
+}
+
 .wp-block-sensei-lms-question-answers {
 	color: inherit;
 
@@ -31,7 +65,7 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 		color: inherit;
 	}
 
-	input[type="text"] {
+	input[type="text"]:not(.components-form-token-field__input) {
 		border: 0px;
 		border-bottom: 1px solid $question-input-border-color;
 		background-color: transparent;
