@@ -295,7 +295,7 @@ class Sensei_Utils {
 				'setup'                   => 'function (editor) {
 													editor.on("blur init",function(){
 														if (editor.getContent() == ""){
-														    editor.setContent("<p id=\"multi-line-placeholder\">' . __( 'Your answer' , 'sensei-lms' ) . '</p>");
+														    editor.setContent("<p id=\"multi-line-placeholder\">' . __( 'Your answer', 'sensei-lms' ) . '</p>");
 														}
 													});
 													editor.on("focus",function(){
