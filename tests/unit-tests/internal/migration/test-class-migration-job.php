@@ -87,13 +87,13 @@ class Migration_Job_Test extends \WP_UnitTestCase {
 
 	public function testGetJobName_Always_ReturnsMatchingValue() {
 		/* Arrange. */
-		$migration = $this->createMock( Student_Progress_Migration::class );
+		$migration = new Student_Progress_Migration();
 		$job       = new Migration_Job( $migration );
 
 		/* Act. */
 		$actual = $job->get_job_name();
 
 		/* Assert. */
-		$this->assertEquals( 'progress_migration', $actual );
+		$this->assertSame( 'student_progress_migration', $actual );
 	}
 }

@@ -7,7 +7,7 @@
 
 namespace Sensei\Internal\Migration;
 
-use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
+use ReflectionClass;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,9 +23,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Migration_Job {
 
 	/**
-	 * Progress migration.
+	 * Migration.
 	 *
-	 * @var Student_Progress_Migration
+	 * @var Migration
 	 */
 	private $migration;
 
@@ -46,11 +46,13 @@ class Migration_Job {
 	/**
 	 * Migration_Job constructor.
 	 *
-	 * @param Student_Progress_Migration $migration Progress migration.
+	 * @param Migration $migration Migration.
 	 */
-	public function __construct( Student_Progress_Migration $migration ) {
+	public function __construct( Migration $migration ) {
 		$this->migration = $migration;
-		$this->job_name  = 'progress_migration';
+		$this->job_name  = strtolower(
+			( new ReflectionClass( $migration ) )->getShortName()
+		);
 	}
 
 	/**
