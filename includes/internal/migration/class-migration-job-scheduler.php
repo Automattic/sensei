@@ -26,28 +26,28 @@ class Migration_Job_Scheduler {
 	 *
 	 * @var string
 	 */
-	private const HOOK_NAMESPACE = 'sensei_lms_jobs_';
+	private const HOOK_NAMESPACE = 'sensei_lms_migration_job_';
 
 	/**
 	 * Migration errors option name.
 	 *
 	 * @var string
 	 */
-	public const ERRORS_OPTION_NAME = 'sensei_lms_progress_migration_job_errors';
+	public const ERRORS_OPTION_NAME = 'sensei_lms_migration_job_errors';
 
 	/**
 	 * Migration job started option name.
 	 *
 	 * @var string
 	 */
-	public const STARTED_OPTION_NAME = 'sensei_lms_progress_migration_job_started';
+	public const STARTED_OPTION_NAME = 'sensei_lms_migration_job_started';
 
 	/**
 	 * Migration job completed option name.
 	 *
 	 * @var string
 	 */
-	public const COMPLETED_OPTION_NAME = 'sensei_lms_progress_migration_job_completed';
+	public const COMPLETED_OPTION_NAME = 'sensei_lms_migration_job_completed';
 
 	/**
 	 * Action_Scheduler instance.
@@ -57,45 +57,59 @@ class Migration_Job_Scheduler {
 	private $action_scheduler;
 
 	/**
-	 * Job to schedule.
+	 * Jobs to schedule.
 	 *
-	 * @var Migration_Job
+	 * @var Migration_Job[]
 	 */
-	private $job;
+	private $jobs = [];
 
 	/**
 	 * Migration_Job_Scheduler constructor.
 	 *
 	 * @param Action_Scheduler $action_scheduler Action_Scheduler instance.
-	 * @param Migration_Job    $job              Job to schedule.
 	 */
-	public function __construct( Action_Scheduler $action_scheduler, Migration_Job $job ) {
+	public function __construct( Action_Scheduler $action_scheduler ) {
 		$this->action_scheduler = $action_scheduler;
-		$this->job              = $job;
 	}
 
 	/**
-	 * Initialize the job.
+	 * Register a job to be scheduled.
 	 *
-	 * @internal
-	 *
-	 * @since $$next-version$$
+	 * @param Migration_Job $job The migration job.
 	 */
-	public function init(): void {
-		add_action( $this->get_hook_name(), [ $this, 'run_job' ] );
+	public function register_job( Migration_Job $job ): void {
+		$this->jobs[ $job->get_name() ] = $job;
+
+		add_action( $this->get_job_hook_name( $job ), [ $this, 'run_job' ] );
 	}
 
 	/**
-	 * Schedule the job.
+	 * Schedule all jobs.
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since  $$next-version$$
+	 * @throws \RuntimeException If no jobs to schedule.
 	 */
 	public function schedule(): void {
-		$action_id = $this->action_scheduler->schedule_single_action(
-			$this->get_hook_name(),
-			[],
+		if ( ! $this->jobs ) {
+			throw new \RuntimeException( 'No jobs to schedule.' );
+		}
+
+		$first_job = reset( $this->jobs );
+
+		$this->schedule_job( $first_job );
+	}
+
+	/**
+	 * Schedule a job.
+	 *
+	 * @param Migration_Job $job The migration job.
+	 */
+	private function schedule_job( Migration_Job $job ): void {
+		$this->action_scheduler->schedule_single_action(
+			$this->get_job_hook_name( $job ),
+			[ 'job_name' => $job->get_name() ],
 			false
 		);
 	}
@@ -106,34 +120,64 @@ class Migration_Job_Scheduler {
 	 * @internal
 	 *
 	 * @since $$next-version$$
+	 *
+	 * @param string $job_name The job name.
 	 */
-	public function run_job(): void {
+	public function run_job( string $job_name ): void {
 		if ( $this->is_first_run() ) {
 			$this->start();
 		}
 
-		$this->job->run();
+		$job = $this->jobs[ $job_name ];
 
-		if ( $this->job->get_errors() ) {
-			$migration_errors = get_option( self::ERRORS_OPTION_NAME, [] );
-			$migration_errors = array_merge( $migration_errors, $this->job->get_errors() );
+		$job->run();
+
+		if ( $job->get_errors() ) {
+			$migration_errors = (array) get_option( self::ERRORS_OPTION_NAME, [] );
+			$migration_errors = array_merge( $migration_errors, $job->get_errors() );
 			update_option( self::ERRORS_OPTION_NAME, $migration_errors );
 		}
 
-		if ( $this->job->is_complete() ) {
-			$this->complete();
+		if ( $job->is_complete() ) {
+			$next_job = $this->get_next_job( $job );
+			if ( $next_job ) {
+				$this->schedule_job( $next_job );
+			} else {
+				$this->complete();
+			}
 		} else {
-			$this->schedule();
+			$this->schedule_job( $job );
 		}
+	}
+
+	/**
+	 * Get the next job.
+	 *
+	 * @param Migration_Job $job The migration job.
+	 *
+	 * @return Migration_Job|null
+	 */
+	private function get_next_job( Migration_Job $job ): ?Migration_Job {
+		$job_names    = array_keys( $this->jobs );
+		$position     = array_search( $job->get_name(), $job_names, true );
+		$has_next_job = false !== $position && isset( $job_names[ $position + 1 ] );
+
+		if ( ! $has_next_job ) {
+			return null;
+		}
+
+		return $this->jobs[ $job_names[ $position + 1 ] ];
 	}
 
 	/**
 	 * Get the hook name for the job.
 	 *
+	 * @param Migration_Job $job The migration job.
+	 *
 	 * @return string
 	 */
-	private function get_hook_name(): string {
-		return self::HOOK_NAMESPACE . $this->job->get_job_name();
+	private function get_job_hook_name( Migration_Job $job ): string {
+		return self::HOOK_NAMESPACE . $job->get_name();
 	}
 
 	/**

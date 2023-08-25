@@ -456,10 +456,6 @@ class Student_Progress_Migration implements Migration {
 	 * @param string $error The error message to add.
 	 */
 	protected function add_error( string $error ): void {
-		if ( is_null( $this->errors ) ) {
-			$this->errors = array();
-		}
-
 		if ( ! in_array( $error, $this->errors, true ) ) {
 			$this->errors[] = $error;
 		}

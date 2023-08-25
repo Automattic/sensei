@@ -41,7 +41,7 @@ class Migration_Job {
 	 *
 	 * @var string
 	 */
-	private $job_name;
+	private $name;
 
 	/**
 	 * Migration_Job constructor.
@@ -50,7 +50,7 @@ class Migration_Job {
 	 */
 	public function __construct( Migration $migration ) {
 		$this->migration = $migration;
-		$this->job_name  = strtolower(
+		$this->name      = strtolower(
 			( new ReflectionClass( $migration ) )->getShortName()
 		);
 	}
@@ -102,8 +102,8 @@ class Migration_Job {
 	 *
 	 * @return string
 	 */
-	public function get_job_name(): string {
-		return $this->job_name;
+	public function get_name(): string {
+		return $this->name;
 	}
 }
 
