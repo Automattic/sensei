@@ -20,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 
+$sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available();
 ?>
 
 <?php if ( $question_data['question_helptext'] ) { ?>
@@ -47,7 +48,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 
 	</p>
 
-	<?php if ( getimagesize( $question_data['answer_media_url'] ) ) { ?>
+	<?php if ( $sensei_is_quiz_view_only_mode && getimagesize( $question_data['answer_media_url'] ) ) { ?>
 		<img src="<?php echo esc_url( $question_data['answer_media_url'] ); ?>" class="submitted_image_file" />
 	<?php } ?>
 
