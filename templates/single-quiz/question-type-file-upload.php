@@ -46,6 +46,11 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 		?>
 
 	</p>
+
+	<?php if ( getimagesize( $question_data['answer_media_url'] ) ) { ?>
+		<img src="<?php echo esc_url( $question_data['answer_media_url'] ); ?>" class="submitted_image_file" />
+	<?php } ?>
+
 	<?php if ( ! $question_data['quiz_is_completed'] ) { ?>
 
 		<aside class="reupload_notice"><?php esc_html_e( 'Uploading a new file will replace your existing one:', 'sensei-lms' ); ?></aside>
