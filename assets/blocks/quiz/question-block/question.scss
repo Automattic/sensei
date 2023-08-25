@@ -51,6 +51,14 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 			line-height: 1;
 		}
 	}
+	.submitted_file {
+		margin-bottom: 20px;
+	}
+
+	.submitted_image_file {
+		max-height: 480px;
+		margin-bottom: 20px;
+	}
 }
 
 .wp-block-sensei-lms-question-answers {
