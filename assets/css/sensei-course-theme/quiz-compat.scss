@@ -39,6 +39,16 @@
 		font-family: inherit;
 		padding: .85rem 1.25rem;
 	}
+
+	.submitted_file {
+		font-size: 18px;
+		font-style: normal;
+		font-weight: 400;
+		color: #1E1E1E;
+		a {
+			color: #155E65
+		}
+	}
 }
 
 .wp-block-sensei-lms-quiz {

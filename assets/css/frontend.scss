@@ -323,7 +323,12 @@ a.sensei-certificate-link {
 				}
 
 				.submitted_file {
-					font-weight: bold;
+					margin-bottom: 20px;
+				}
+
+				.submitted_image_file {
+					max-height: 480px;
+					margin-bottom: 20px;
 				}
 
 				.reupload_notice {
