@@ -20,9 +20,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 
-Sensei_Utils::sensei_text_editor(
-	$question_data['user_answer_entry'],
-	'textquestion' . $question_data['ID'],
-	'sensei_question[' . $question_data['ID'] . ']'
-);
+$sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available();
 
+if ( $sensei_is_quiz_view_only_mode ) {
+	?>
+	<div class="sensei_quiz_question_user_text_answer">
+		<?php echo wp_kses_post( $question_data['user_answer_entry'] ); ?>
+	</div>
+	<?php
+} else {
+	Sensei_Utils::sensei_text_editor(
+		$question_data['user_answer_entry'],
+		'textquestion' . $question_data['ID'],
+		'sensei_question[' . $question_data['ID'] . ']'
+	);
+}
