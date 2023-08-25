@@ -20,15 +20,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 
+$sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available();
+
 ?>
 
 <div class="answer">
 
-	<input type="text" id="<?php echo esc_attr( 'question_' . $question_data['ID'] ); ?>"
+	<?php if ( $sensei_is_quiz_view_only_mode ) { ?>
+		<div class="sensei_quiz_question_user_text_answer">
+			<?php echo wp_kses_post( $question_data['user_answer_entry'] ); ?>
+		</div>
+	<?php } else { ?>
+		<input type="text" id="<?php echo esc_attr( 'question_' . $question_data['ID'] ); ?>"
 		name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>"
 		placeholder="<?php echo esc_attr__( 'Your answer', 'sensei-lms' ); ?>"
 		value="<?php echo esc_attr( $question_data['user_answer_entry'] ); ?>"
 		<?php echo $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available() ? 'disabled' : ''; ?>
 		/>
+	<?php } ?>
 
 </div>
