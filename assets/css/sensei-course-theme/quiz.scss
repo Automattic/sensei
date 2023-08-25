@@ -128,6 +128,11 @@ $tablet-breakpoint: 768px;
 				border: 6px solid var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
 			}
 
+			input[type="radio"]:disabled:not(:checked),
+			input[type="radio"]:disabled:not(:checked) + label {
+				opacity: 0.4;
+			}
+
 			input[type="checkbox"] {
 				display: none;
 			}
