@@ -129,7 +129,9 @@ $tablet-breakpoint: 768px;
 			}
 
 			input[type="radio"]:disabled:not(:checked),
-			input[type="radio"]:disabled:not(:checked) + label {
+			input[type="radio"]:disabled:not(:checked) + label,
+			input[type="checkbox"]:disabled:not(:checked),
+			input[type="checkbox"]:disabled:not(:checked) + label {
 				opacity: 0.4;
 			}
 
