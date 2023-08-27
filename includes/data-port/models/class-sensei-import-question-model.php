@@ -32,6 +32,13 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	private $question_type;
 
 	/**
+	 * Cached processed multiple choice answers.
+	 *
+	 * @var array|null
+	 */
+	private $processed_multiple_choice_answers;
+
+	/**
 	 * Create a new question or update an existing question.
 	 *
 	 * @return true|WP_Error

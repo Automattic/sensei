@@ -18,6 +18,10 @@ $breakpoint: 782px;
 	padding: 1rem 32px;
 	line-height: 100%;
 
+	@media screen and (max-width: $breakpoint) {
+		letter-spacing: -0.14px;
+	}
+
 	&.has-icon {
 		display: flex;
 		gap: 8px;
