@@ -30,6 +30,20 @@ class Sensei_Settings_API {
 	public $settings_version;
 
 	/**
+	 * Array of fields that have not been added to a section.
+	 *
+	 * @var array|null
+	 */
+	public $remaining_fields;
+
+	/**
+	 * Page's hook suffix.
+	 *
+	 * @var string|false
+	 */
+	public $hook = false;
+
+	/**
 	 * Constructor.
 	 *
 	 * @access public

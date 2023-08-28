@@ -1754,7 +1754,8 @@
     </UndefinedFunction>
   </file>
   <file src="includes/blocks/course-theme/class-quiz-back-to-lesson.php">
-    <UndefinedFunction occurrences="2">
+    <UndefinedFunction occurrences="3">
+      <code>Sensei()</code>
       <code>Sensei()</code>
       <code>Sensei()</code>
     </UndefinedFunction>
@@ -2859,25 +2860,6 @@
     <UndefinedConstant occurrences="1">
       <code>OBJECT_K</code>
     </UndefinedConstant>
-    <UndefinedThisPropertyAssignment occurrences="11">
-      <code>$this-&gt;course_id</code>
-      <code>$this-&gt;filter_by_course_id</code>
-      <code>$this-&gt;filter_type</code>
-      <code>$this-&gt;lesson_id</code>
-      <code>$this-&gt;offset</code>
-      <code>$this-&gt;order_by</code>
-      <code>$this-&gt;order_type</code>
-      <code>$this-&gt;per_page</code>
-      <code>$this-&gt;search</code>
-      <code>$this-&gt;total_items</code>
-      <code>$this-&gt;total_items</code>
-    </UndefinedThisPropertyAssignment>
-    <UndefinedThisPropertyFetch occurrences="4">
-      <code>$this-&gt;filter_type</code>
-      <code>$this-&gt;offset</code>
-      <code>$this-&gt;order_type</code>
-      <code>$this-&gt;per_page</code>
-    </UndefinedThisPropertyFetch>
   </file>
   <file src="includes/class-sensei-dependency-checker.php">
     <MissingReturnType occurrences="4">
@@ -3779,12 +3761,6 @@
       <code>$cat-&gt;name</code>
       <code>$question_cat-&gt;name</code>
     </UndefinedPropertyFetch>
-    <UndefinedThisPropertyAssignment occurrences="4">
-      <code>$this-&gt;question_order</code>
-      <code>$this-&gt;question_order</code>
-      <code>$this-&gt;question_order</code>
-      <code>$this-&gt;question_order</code>
-    </UndefinedThisPropertyAssignment>
   </file>
   <file src="includes/class-sensei-list-table.php">
     <ArgumentTypeCoercion occurrences="2">
@@ -4317,24 +4293,6 @@
       <code>get_queried_object()-&gt;ID</code>
       <code>get_queried_object()-&gt;post_type</code>
     </UndefinedPropertyFetch>
-    <UndefinedThisPropertyAssignment occurrences="8">
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-    </UndefinedThisPropertyAssignment>
-    <UndefinedThisPropertyFetch occurrences="6">
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-      <code>$this-&gt;labels</code>
-    </UndefinedThisPropertyFetch>
   </file>
   <file src="includes/class-sensei-preview-user.php">
     <ArgumentTypeCoercion occurrences="2">
@@ -4409,10 +4367,6 @@
       <code>$quiz_id</code>
       <code>$quiz_id</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="2">
-      <code>$meta_fields</code>
-      <code>$token</code>
-    </MissingPropertyType>
     <MissingReturnType occurrences="20">
       <code>add_custom_navigation</code>
       <code>answer_feedback_notes</code>
@@ -4528,13 +4482,6 @@
       <code>Sensei()</code>
       <code>Sensei()</code>
     </UndefinedFunction>
-    <UndefinedThisPropertyAssignment occurrences="1">
-      <code>$this-&gt;question_types</code>
-    </UndefinedThisPropertyAssignment>
-    <UndefinedThisPropertyFetch occurrences="2">
-      <code>$this-&gt;question_types</code>
-      <code>$this-&gt;question_types</code>
-    </UndefinedThisPropertyFetch>
   </file>
   <file src="includes/class-sensei-quiz.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -4740,9 +4687,6 @@
       <code>Sensei()</code>
       <code>Sensei()</code>
     </UndefinedFunction>
-    <UndefinedThisPropertyAssignment occurrences="1">
-      <code>$this-&gt;data</code>
-    </UndefinedThisPropertyAssignment>
   </file>
   <file src="includes/class-sensei-settings-api.php">
     <DocblockTypeContradiction occurrences="1">
@@ -4814,14 +4758,6 @@
       <code>Sensei()</code>
       <code>Sensei()</code>
     </UndefinedFunction>
-    <UndefinedThisPropertyAssignment occurrences="3">
-      <code>$this-&gt;hook</code>
-      <code>$this-&gt;remaining_fields</code>
-      <code>$this-&gt;remaining_fields</code>
-    </UndefinedThisPropertyAssignment>
-    <UndefinedThisPropertyFetch occurrences="1">
-      <code>$this-&gt;remaining_fields</code>
-    </UndefinedThisPropertyFetch>
   </file>
   <file src="includes/class-sensei-settings.php">
     <DocblockTypeContradiction occurrences="2">
@@ -4872,9 +4808,6 @@
       <code>\Sensei()</code>
       <code>\Sensei()</code>
     </UndefinedFunction>
-    <UndefinedThisPropertyAssignment occurrences="1">
-      <code>$this-&gt;hook</code>
-    </UndefinedThisPropertyAssignment>
   </file>
   <file src="includes/class-sensei-teacher.php">
     <ArgumentTypeCoercion occurrences="8">
@@ -5740,9 +5673,6 @@
       <code>Sensei()</code>
       <code>Sensei()</code>
     </UndefinedFunction>
-    <UndefinedThisPropertyAssignment occurrences="1">
-      <code>$this-&gt;Sensei_WPML</code>
-    </UndefinedThisPropertyAssignment>
     <UnresolvableInclude occurrences="6">
       <code>require_once $this-&gt;plugin_path . 'widgets/class-sensei-' . $key . '-widget.php'</code>
       <code>require_once $this-&gt;resolve_path( 'includes/3rd-party/3rd-party.php' )</code>
@@ -6899,9 +6829,6 @@
     <UndefinedFunction occurrences="1">
       <code>Sensei()</code>
     </UndefinedFunction>
-    <UndefinedThisPropertyAssignment occurrences="1">
-      <code>$this-&gt;processed_multiple_choice_answers</code>
-    </UndefinedThisPropertyAssignment>
   </file>
   <file src="includes/email-signup/class-sensei-email-signup-form.php">
     <DocblockTypeContradiction occurrences="2">
@@ -8983,24 +8910,6 @@
     <PossiblyInvalidPropertyFetch occurrences="1">
       <code>$term-&gt;term_id</code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedThisPropertyAssignment occurrences="7">
-      <code>$this-&gt;exclude</code>
-      <code>$this-&gt;hide_empty</code>
-      <code>$this-&gt;include</code>
-      <code>$this-&gt;number</code>
-      <code>$this-&gt;order</code>
-      <code>$this-&gt;orderby</code>
-      <code>$this-&gt;parent</code>
-    </UndefinedThisPropertyAssignment>
-    <UndefinedThisPropertyFetch occurrences="7">
-      <code>$this-&gt;exclude</code>
-      <code>$this-&gt;hide_empty</code>
-      <code>$this-&gt;include</code>
-      <code>$this-&gt;number</code>
-      <code>$this-&gt;order</code>
-      <code>$this-&gt;orderby</code>
-      <code>$this-&gt;parent</code>
-    </UndefinedThisPropertyFetch>
   </file>
   <file src="includes/shortcodes/class-sensei-shortcode-course-page.php">
     <InvalidArgument occurrences="1">
@@ -9057,9 +8966,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$lesson_page_query</code>
     </PropertyNotSetInConstructor>
-    <UndefinedThisPropertyAssignment occurrences="1">
-      <code>$this-&gt;id</code>
-    </UndefinedThisPropertyAssignment>
   </file>
   <file src="includes/shortcodes/class-sensei-shortcode-loader.php">
     <ArgumentTypeCoercion occurrences="1">
