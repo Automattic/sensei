@@ -19,6 +19,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
 	/**
+	 * The lesson id
+	 *
+	 * @var int
+	 */
+	public $id;
+
+	/**
 	 * @var array $lesson_page_query {
 	 *     @type WP_Post
 	 * }

@@ -62,7 +62,7 @@ export default class PostType {
 
 	async goToPreview(): Promise< Page > {
 		await this.page
-			.locator( 'button[aria-label="Preview"]' )
+			.getByRole( 'button', { name: 'Preview' } )
 			.first()
 			.click();
 

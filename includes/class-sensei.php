@@ -259,6 +259,15 @@ class Sensei_Main {
 	public $admin_notices;
 
 	/**
+	 * WPML compatibility class.
+	 *
+	 * @var Sensei_WPML
+	 *
+	 * @psalm-suppress PropertyNotSetInConstructor
+	 */
+	public $sensei_wpml;
+
+	/**
 	 * Course progress repository.
 	 *
 	 * @var Course_Progress_Repository_Interface
@@ -562,7 +571,7 @@ class Sensei_Main {
 		$this->learner_profiles = new Sensei_Learner_Profiles();
 
 		// Load WPML compatibility class
-		$this->Sensei_WPML = new Sensei_WPML();
+		$this->sensei_wpml = new Sensei_WPML();
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
