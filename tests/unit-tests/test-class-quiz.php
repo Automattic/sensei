@@ -809,8 +809,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$quiz_progress_after = Sensei()->quiz_progress_repository->get( $test_quiz_id, $test_user_id );
 		$actual              = array(
-			'exists_before' => $quiz_progress_before !== null,
-			'exists_after'  => $quiz_progress_after !== null,
+			'exists_before' => null !== $quiz_progress_before,
+			'exists_after'  => null !== $quiz_progress_after,
 		);
 		$expected            = array(
 			'exists_before' => false,
