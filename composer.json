@@ -1,6 +1,9 @@
 {
 	"name": "automattic/sensei-lms",
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
+	"require": {
+		"woocommerce/action-scheduler": "3.6.2"
+	},
 	"require-dev": {
 		"php": "^7.3 || ^8",
 		"automattic/jetpack-changelogger": "3.3.5",

@@ -1,6 +1,8 @@
 <?php
 
+use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Emails\Email_Customization;
+use Sensei\Internal\Installer\Migrations\Student_Progress_Migration;
 use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
@@ -10,6 +12,8 @@ use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repositor
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Jobs\Migration_Job;
+use Sensei\Internal\Student_Progress\Jobs\Migration_Job_Scheduler;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
@@ -310,6 +314,20 @@ class Sensei_Main {
 	public $quiz_grade_repository;
 
 	/**
+	 * Migration job scheduler.
+	 *
+	 * @var Migration_Job_Scheduler|null
+	 */
+	public $migration_scheduler;
+
+	/**
+	 * Action scheduler.
+	 *
+	 * @var Action_Scheduler|null
+	 */
+	public $action_scheduler;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -581,9 +599,14 @@ class Sensei_Main {
 		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory( $use_tables ) )->create();
 		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory( $use_tables ) )->create();
 
+		$this->action_scheduler = new Action_Scheduler();
 		// Student progress migration.
 		if ( $use_tables ) {
-			( new Migration_Tool( \Sensei_Tools::instance() ) )->init();
+			$migration                 = new Student_Progress_Migration();
+			$migration_job             = new Migration_Job( $migration );
+			$this->migration_scheduler = new Migration_Job_Scheduler( $this->action_scheduler, $migration_job );
+			$this->migration_scheduler->init();
+			( new Migration_Tool( \Sensei_Tools::instance(), $this->migration_scheduler ) )->init();
 		}
 
 		// Quiz submission repositories.
