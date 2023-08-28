@@ -512,6 +512,19 @@ class Sensei_Utils {
 			}
 		}
 
+		// If the lesson has quizzes, mark it as started.
+		$quiz_ids = get_post_meta( $lesson_id, '_quiz_id', false );
+		if ( ! empty( $quiz_ids ) ) {
+			foreach ( $quiz_ids as $quiz_id ) {
+				$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+				if ( ! $quiz_progress ) {
+					$quiz_progress = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+				}
+				$quiz_progress->start();
+				Sensei()->quiz_progress_repository->save( $quiz_progress );
+			}
+		}
+
 		if ( $complete && ! $lesson_progress->is_complete() ) {
 			$lesson_progress->complete();
 			Sensei()->lesson_progress_repository->save( $lesson_progress );

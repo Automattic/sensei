@@ -790,6 +790,13 @@ class Sensei_Quiz {
 		}
 
 		if ( $quiz_id ) {
+			// Reset the quiz progress.
+			$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+			if ( $quiz_progress ) {
+				$quiz_progress->start();
+				Sensei()->quiz_progress_repository->save( $quiz_progress );
+			}
+
 			// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade.
 			Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
 		}
