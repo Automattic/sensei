@@ -92,6 +92,7 @@ class Student_Progress_Migration implements Migration {
 	 */
 	public function run( bool $dry_run = true ) {
 		$since_comment_id = get_option( 'sensei_migrated_progress_last_comment_id', 0 );
+		$this->errors     = array();
 		list( $progress_comments, $mapped_meta, $last_comment_id ) = $this->get_comments_and_meta( $since_comment_id, $dry_run );
 
 		if ( empty( $progress_comments ) ) {
