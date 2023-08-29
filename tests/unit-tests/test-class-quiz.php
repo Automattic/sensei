@@ -1768,7 +1768,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Act. */
 		Sensei()->course_progress_repository = $course_progress_repository_mock;
+		ob_start();
 		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+		ob_end_clean();
 		Sensei()->course_progress_repository = $_course_progress_repository; // Reset.
 	}
 
