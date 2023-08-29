@@ -1,6 +1,7 @@
 /* This file loads for all themes except Course. */
-
 @import '~@wordpress/base-styles/breakpoints';
+
+$textColor: #1E1E1E;
 
 .sensei-course-theme__quiz {
 	&__main-content {
@@ -53,9 +54,8 @@
 }
 
 .quiz {
-	$textColor: #1E1E1E;
 	form {
-		ol#sensei-quiz-list {
+		#sensei-quiz-list {
 			color: $textColor;
 
 			/* Some themes directly target inputs */

@@ -77,10 +77,10 @@ $tablet-breakpoint: 768px;
 			width: 100%;
 
 			.sensei-quiz-actions-secondary {
-
 				.sensei-quiz-action {
 					.button, button {
 						text-decoration: none;
+
 						&:hover {
 							text-decoration: underline;
 						}
@@ -106,8 +106,7 @@ $tablet-breakpoint: 768px;
 
 .sensei-course-theme.quiz {
 	form {
-		ol#sensei-quiz-list {
-
+		#sensei-quiz-list {
 			input[type=radio],
 			input[type=checkbox] + label:before {
 				border: 1px solid #949494;
