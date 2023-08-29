@@ -191,22 +191,20 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $submission );
 	}
 
-	public function testSave_UseTablesOnAndSubmissionNotFound_DoesntCallTablesBasedRepository(): void {
+	public function testSave_UseTablesOnAndSubmissionNotFound_CreatesTablesBasedSubmission(): void {
 		/* Arrange. */
 		$submission     = $this->create_submission();
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$tables_based
-			->method( 'get' )
-			->with( 2, 3 )
-			->willReturn( null );
 
 		$repository = new Aggregate_Submission_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$tables_based
-			->expects( $this->never() )
-			->method( 'save' );
+			->expects( $this->once() )
+			->method( 'get_or_create' )
+			->with( 2, 3, 12.34 )
+			->willReturn( $this->create_submission() );
 
 		$repository->save( $submission );
 	}

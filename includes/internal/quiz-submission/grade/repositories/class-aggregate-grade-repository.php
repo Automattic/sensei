@@ -12,7 +12,6 @@ use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -151,7 +150,7 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 		if ( $this->use_tables ) {
 			$grades_to_save          = [];
 			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
-			$tables_based_grades = $this->tables_based_repository->get_all( $tables_based_submission->get_id() );
+			$tables_based_grades     = $this->tables_based_repository->get_all( $tables_based_submission->get_id() );
 			foreach ( $grades as $grade ) {
 				$filtered = array_filter(
 					$tables_based_grades,

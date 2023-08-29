@@ -161,6 +161,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$submission = $this->createMock( Submission::class );
 		$submission->method( 'get_quiz_id' )->willReturn( 1 );
 		$submission->method( 'get_user_id' )->willReturn( 2 );
+		$submission->method( 'get_final_grade' )->willReturn( 3.0 );
 
 		$tables_based_submission = $this->createMock( Submission::class );
 
@@ -169,7 +170,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_submission_repository
-			->method( 'get' )
+			->method( 'get_or_create' )
 			->with( 1, 2 )
 			->willReturn( $tables_based_submission );
 
@@ -219,7 +220,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$repository->save_many( $submission, $grades );
 	}
 
-	public function testSaveMany_UseTablesSetToFalse_DoesntUseCommentsBasedRepository(): void {
+	public function testSaveMany_UseTablesSetToFalse_DoesntUseTablesBasedRepository(): void {
 		/* Arrange */
 		$submission                         = $this->createMock( Submission::class );
 		$comments_based_repository          = $this->createMock( Comments_Based_Grade_Repository::class );
@@ -233,7 +234,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
-			true
+			false
 		);
 
 		/* Expect & Act */
@@ -248,6 +249,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$submission = $this->createMock( Submission::class );
 		$submission->method( 'get_quiz_id' )->willReturn( 5 );
 		$submission->method( 'get_user_id' )->willReturn( 6 );
+		$submission->method( 'get_final_grade' )->willReturn( 7.0 );
 
 		$comments_based_repository = $this->createMock( Comments_Based_Grade_Repository::class );
 
@@ -265,8 +267,8 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_submission_repository
-			->method( 'get' )
-			->with( 5, 6 )
+			->method( 'get_or_create' )
+			->with( 5, 6, 7.0 )
 			->willReturn( $tables_based_submission );
 
 		$tables_based_answer_repository = $this->createMock( Tables_Based_Answer_Repository::class );
