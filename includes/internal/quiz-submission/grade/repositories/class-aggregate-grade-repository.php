@@ -105,19 +105,19 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 		$grade = $this->comments_based_repository->create( $submission, $answer_id, $question_id, $points, $feedback );
 
 		if ( $this->use_tables ) {
-			$tables_based_submission = $this->tables_based_submission_repository->get( $submission->get_quiz_id(), $submission->get_user_id() );
-			if ( $tables_based_submission ) {
-				$answers  = $this->tables_based_answer_repository->get_all( $tables_based_submission->get_id() );
-				$filtered = array_filter(
-					$answers,
-					function( Answer $answer ) use ( $question_id ) {
-						return $answer->get_question_id() === $question_id;
-					}
-				);
-				if ( count( $filtered ) === 1 ) {
-					$answer = array_shift( $filtered );
-					$this->tables_based_repository->create( $tables_based_submission, $answer->get_id(), $question_id, $points, $feedback );
+			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+
+			$answers  = $this->tables_based_answer_repository->get_all( $tables_based_submission->get_id() );
+			$filtered = array_filter(
+				$answers,
+				function( Answer $answer ) use ( $question_id ) {
+					return $answer->get_question_id() === $question_id;
 				}
+			);
+
+			if ( count( $filtered ) === 1 ) {
+				$answer = array_shift( $filtered );
+				$this->tables_based_repository->create( $tables_based_submission, $answer->get_id(), $question_id, $points, $feedback );
 			}
 		}
 
@@ -150,37 +150,35 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 
 		if ( $this->use_tables ) {
 			$grades_to_save          = [];
-			$tables_based_submission = $this->tables_based_submission_repository->get( $submission->get_quiz_id(), $submission->get_user_id() );
-			if ( $tables_based_submission ) {
-				$tables_based_grades = $this->tables_based_repository->get_all( $tables_based_submission->get_id() );
-				foreach ( $grades as $grade ) {
-					$filtered = array_filter(
-						$tables_based_grades,
-						function( Grade $tables_based_grade ) use ( $grade ) {
-							return $tables_based_grade->get_question_id() === $grade->get_question_id();
-						}
-					);
-					if ( count( $filtered ) !== 1 ) {
-						continue;
+			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+			$tables_based_grades = $this->tables_based_repository->get_all( $tables_based_submission->get_id() );
+			foreach ( $grades as $grade ) {
+				$filtered = array_filter(
+					$tables_based_grades,
+					function( Grade $tables_based_grade ) use ( $grade ) {
+						return $tables_based_grade->get_question_id() === $grade->get_question_id();
 					}
-					$tables_based_grade = array_shift( $filtered );
-
-					$created_at = new DateTimeImmutable( '@' . $grade->get_created_at()->getTimestamp() );
-					$updated_at = new DateTimeImmutable( '@' . $grade->get_updated_at()->getTimestamp() );
-
-					$grades_to_save[] = new Grade(
-						$tables_based_grade->get_id(),
-						$tables_based_grade->get_answer_id(),
-						$tables_based_grade->get_question_id(),
-						$grade->get_points(),
-						$grade->get_feedback(),
-						$created_at,
-						$updated_at
-					);
+				);
+				if ( count( $filtered ) !== 1 ) {
+					continue;
 				}
+				$tables_based_grade = array_shift( $filtered );
 
-				$this->tables_based_repository->save_many( $tables_based_submission, $grades_to_save );
+				$created_at = new DateTimeImmutable( '@' . $grade->get_created_at()->getTimestamp() );
+				$updated_at = new DateTimeImmutable( '@' . $grade->get_updated_at()->getTimestamp() );
+
+				$grades_to_save[] = new Grade(
+					$tables_based_grade->get_id(),
+					$tables_based_grade->get_answer_id(),
+					$tables_based_grade->get_question_id(),
+					$grade->get_points(),
+					$grade->get_feedback(),
+					$created_at,
+					$updated_at
+				);
 			}
+
+			$this->tables_based_repository->save_many( $tables_based_submission, $grades_to_save );
 		}
 	}
 
@@ -195,10 +193,23 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 		$this->comments_based_repository->delete_all( $submission );
 
 		if ( $this->use_tables ) {
-			$tables_based_submission = $this->tables_based_submission_repository->get( $submission->get_quiz_id(), $submission->get_user_id() );
-			if ( $tables_based_submission ) {
-				$this->tables_based_repository->delete_all( $tables_based_submission );
-			}
+			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+			$this->tables_based_repository->delete_all( $tables_based_submission );
 		}
+	}
+
+	/**
+	 * Get the tables based submission for a given submission or create if not exists.
+	 *
+	 * @param Submission $submission The submission.
+	 *
+	 * @return Submission The tables based submission or null if it does not exist.
+	 */
+	private function get_or_create_tables_based_submission( Submission $submission ): ?Submission {
+		return $this->tables_based_submission_repository->get_or_create(
+			$submission->get_quiz_id(),
+			$submission->get_user_id(),
+			$submission->get_final_grade()
+		);
 	}
 }

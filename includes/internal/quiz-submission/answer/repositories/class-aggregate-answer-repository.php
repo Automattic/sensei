@@ -89,10 +89,8 @@ class Aggregate_Answer_Repository implements Answer_Repository_Interface {
 		$answer = $this->comments_based_repository->create( $submission, $question_id, $value );
 
 		if ( $this->use_tables ) {
-			$tables_based_submission = $this->get_tables_based_submission( $submission );
-			if ( $tables_based_submission ) {
-				$this->tables_based_repository->create( $tables_based_submission, $question_id, $value );
-			}
+			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+			$this->tables_based_repository->create( $tables_based_submission, $question_id, $value );
 		}
 
 		return $answer;
@@ -122,21 +120,23 @@ class Aggregate_Answer_Repository implements Answer_Repository_Interface {
 		$this->comments_based_repository->delete_all( $submission );
 
 		if ( $this->use_tables ) {
-			$tables_based_submission = $this->get_tables_based_submission( $submission );
-			if ( $tables_based_submission ) {
-				$this->tables_based_repository->delete_all( $tables_based_submission );
-			}
+			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+			$this->tables_based_repository->delete_all( $tables_based_submission );
 		}
 	}
 
 	/**
-	 * Get the tables based submission for a given submission.
+	 * Get the tables based submission for a given submission or create if not exists.
 	 *
 	 * @param Submission $submission The submission.
 	 *
-	 * @return Submission|null The tables based submission or null if it does not exist.
+	 * @return Submission The tables based submission or null if it does not exist.
 	 */
-	private function get_tables_based_submission( Submission $submission ): ?Submission {
-		return $this->tables_based_submission_repository->get( $submission->get_quiz_id(), $submission->get_user_id() );
+	private function get_or_create_tables_based_submission( Submission $submission ): ?Submission {
+		return $this->tables_based_submission_repository->get_or_create(
+			$submission->get_quiz_id(),
+			$submission->get_user_id(),
+			$submission->get_final_grade()
+		);
 	}
 }
