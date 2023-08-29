@@ -6,6 +6,7 @@ use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Migration\Migration_Tool;
 use Sensei\Internal\Migration\Migration_Job;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
+use Sensei\Internal\Migration\Migrations\Quiz_Migration;
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
@@ -594,9 +595,8 @@ class Sensei_Main {
 		// Student progress migration.
 		if ( $use_tables ) {
 			$this->migration_scheduler = new Migration_Job_Scheduler( $this->action_scheduler );
-			$this->migration_scheduler->register_job(
-				new Migration_Job( new Student_Progress_Migration() )
-			);
+			$this->migration_scheduler->register_job( new Migration_Job( new Student_Progress_Migration() ) );
+			$this->migration_scheduler->register_job( new Migration_Job( new Quiz_Migration() ) );
 			( new Migration_Tool( \Sensei_Tools::instance(), $this->migration_scheduler ) )->init();
 		}
 
