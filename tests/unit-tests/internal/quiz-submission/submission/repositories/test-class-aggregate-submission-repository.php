@@ -74,27 +74,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		$repository->create( 1, 2, 12.34 );
 	}
 
-	public function testGetOrCreate_WhenHasSubmission_DoesntCallCreate(): void {
-		/* Arrange. */
-		$repository = $this->getMockBuilder( Aggregate_Submission_Repository::class )
-			->disableOriginalConstructor()
-			->setMethods( [ 'get', 'create' ] )
-			->getMock();
-
-		/* Expect & Act. */
-		$repository
-			->expects( $this->once() )
-			->method( 'get' )
-			->willReturn( $this->createMock( Submission::class ) );
-
-		$repository
-			->expects( $this->never() )
-			->method( 'create' );
-
-		$repository->get_or_create( 1, 2, 12.34 );
-	}
-
-	public function testGetOrCreate_WhenHasNoSubmission_CallsCreate(): void {
+	public function testGetOrCreate_Always_CallsGetOrCreateOnCommentsBasedRepository(): void {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
@@ -103,14 +83,22 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		/* Expect & Act. */
 		$comments_based
 			->expects( $this->once() )
-			->method( 'create' )
-			->with( 1, 2, 12.34 );
+			->method( 'get_or_create' )
+			->with( 1, 2, 12.34 )
+			->willReturn( $this->createMock( Submission::class ) );
+		$repository->get_or_create( 1, 2, 12.34 );
+	}
 
+	public function testGetOrCreate_Never_CallsGetOrCreateOnTablesBasedRepository(): void {
+		/* Arrange. */
+		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
+		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, true );
+
+		/* Expect & Act. */
 		$tables_based
-			->expects( $this->once() )
-			->method( 'create' )
-			->with( 1, 2, 12.34 );
-
+			->expects( $this->never() )
+			->method( 'get_or_create' );
 		$repository->get_or_create( 1, 2, 12.34 );
 	}
 
