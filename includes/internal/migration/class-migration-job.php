@@ -25,7 +25,7 @@ class Migration_Job {
 	/**
 	 * Migration.
 	 *
-	 * @var Migration
+	 * @var Migration_Abstract
 	 */
 	private $migration;
 
@@ -46,9 +46,9 @@ class Migration_Job {
 	/**
 	 * Migration_Job constructor.
 	 *
-	 * @param Migration $migration Migration.
+	 * @param Migration_Abstract $migration Migration.
 	 */
-	public function __construct( Migration $migration ) {
+	public function __construct( Migration_Abstract $migration ) {
 		$this->migration = $migration;
 		$this->name      = strtolower(
 			( new ReflectionClass( $migration ) )->getShortName()

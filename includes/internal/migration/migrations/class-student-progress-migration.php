@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Sensei\Internal\Migration\Migration;
+use Sensei\Internal\Migration\Migration_Abstract;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
@@ -21,15 +21,7 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
  *
  * @since 4.16.1
  */
-class Student_Progress_Migration implements Migration {
-
-	/**
-	 * The errors that occurred during the migration.
-	 *
-	 * @var array
-	 */
-	private $errors = array();
-
+class Student_Progress_Migration extends Migration_Abstract {
 	/**
 	 * The course progress data to insert.
 	 *
@@ -63,15 +55,6 @@ class Student_Progress_Migration implements Migration {
 	}
 
 	/**
-	 * Return the errors that occurred during the migration.
-	 *
-	 * @return array
-	 */
-	public function get_errors(): array {
-		return $this->errors;
-	}
-
-	/**
 	 * The targeted plugin version.
 	 *
 	 * @since 4.16.1
@@ -91,8 +74,7 @@ class Student_Progress_Migration implements Migration {
 	 * @return int The number of rows inserted.
 	 */
 	public function run( bool $dry_run = true ) {
-		$since_comment_id = get_option( 'sensei_migrated_progress_last_comment_id', 0 );
-		$this->errors     = array();
+		$since_comment_id                                      = (int) get_option( 'sensei_migrated_progress_last_comment_id', 0 );
 		[ $progress_comments, $mapped_meta, $last_comment_id ] = $this->get_comments_and_meta( $since_comment_id, $dry_run );
 
 		if ( empty( $progress_comments ) ) {
@@ -448,17 +430,6 @@ class Student_Progress_Migration implements Migration {
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Add an error message to the errors list unless it's there already.
-	 *
-	 * @param string $error The error message to add.
-	 */
-	protected function add_error( string $error ): void {
-		if ( ! in_array( $error, $this->errors, true ) ) {
-			$this->errors[] = $error;
-		}
 	}
 
 	/**

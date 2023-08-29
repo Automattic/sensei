@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Sensei\Internal\Migration\Migration;
+use Sensei\Internal\Migration\Migration_Abstract;
 
 /**
  * Class Quiz_Migration.
@@ -20,20 +20,13 @@ use Sensei\Internal\Migration\Migration;
  *
  * @since $$next-version$$
  */
-class Quiz_Migration implements Migration {
+class Quiz_Migration extends Migration_Abstract {
 	/**
 	 * Migration errors option name.
 	 *
 	 * @var string
 	 */
 	public const LAST_COMMENT_ID_OPTION_NAME = 'sensei_migrated_quiz_last_comment_id';
-
-	/**
-	 * The errors that occurred during the migration.
-	 *
-	 * @var array
-	 */
-	private $errors = array();
 
 	/**
 	 * The size of a batch or how many quiz submissions to migrate in a single run.
@@ -47,17 +40,8 @@ class Quiz_Migration implements Migration {
 	 *
 	 * @param int $batch_size The size of a batch or how many quiz submissions to migrate in a single run.
 	 */
-	public function __construct( int $batch_size = 1 ) {
-		$this->batch_size  = $batch_size;
-	}
-
-	/**
-	 * Return the errors that occurred during the migration.
-	 *
-	 * @return array
-	 */
-	public function get_errors(): array {
-		return $this->errors;
+	public function __construct( int $batch_size = 100 ) {
+		$this->batch_size = $batch_size;
 	}
 
 	/**
@@ -77,11 +61,10 @@ class Quiz_Migration implements Migration {
 	 * @since $$next-version$$
 	 *
 	 * @param bool $dry_run Whether to run the migration in dry-run mode.
-	 * @return int The number of rows inserted.
+	 * @return int The number of quiz submissions migrated.
 	 */
 	public function run( bool $dry_run = true ) {
 		$since_comment_id = (int) get_option( self::LAST_COMMENT_ID_OPTION_NAME, 0 );
-		$this->errors     = array();
 
 		global $wpdb;
 		$comments_query = $wpdb->prepare(
@@ -125,6 +108,7 @@ class Quiz_Migration implements Migration {
 		$quiz_meta = $wpdb->get_results( $quiz_meta_query );
 		$quiz_data = [];
 		foreach ( $quiz_meta as $meta ) {
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- We're not doing a meta query here, phpcs is confused.
 			$quiz_data[ $meta->comment_id ][ $meta->meta_key ] = $meta->meta_value;
 		}
 
@@ -241,16 +225,5 @@ class Quiz_Migration implements Migration {
 		update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_comment_id );
 
 		return count( $comment_ids );
-	}
-
-	/**
-	 * Add an error message to the errors list unless it's there already.
-	 *
-	 * @param string $error The error message to add.
-	 */
-	protected function add_error( string $error ): void {
-		if ( ! in_array( $error, $this->errors, true ) ) {
-			$this->errors[] = $error;
-		}
 	}
 }
