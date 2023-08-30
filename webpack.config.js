@@ -51,6 +51,7 @@ const files = [
 	'js/settings.js',
 	'js/user-dashboard.js',
 	'js/stop-double-submission.js',
+	'js/question-answer-tinymce-editor.js',
 	'setup-wizard/index.js',
 	'setup-wizard/style.scss',
 	'home/index.js',

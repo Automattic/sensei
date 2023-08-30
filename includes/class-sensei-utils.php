@@ -293,21 +293,10 @@ class Sensei_Utils {
 				'theme_advanced_buttons1' => $buttons,
 				'theme_advanced_buttons2' => '',
 				'setup'                   => 'function (editor) {
-													// Remove placeholder on submit.
-													jQuery("#sensei-quiz-form").submit(function() {
-													    editor.dom.remove("multi-line-placeholder");
-														return true;
-													});
-													// Add placeholder on init and blur.
-													editor.on("blur init",function(){
-														if (editor.getContent() == ""){
-															editor.setContent("<p id=\'multi-line-placeholder\'>' . __( 'Your answers', 'sensei-lms' ) . '</p>");
-														}
-													});
-													// Remove placeholder on focus.
-													editor.on("focus",function(){
-														editor.dom.remove("multi-line-placeholder");
-													});
+													tinymce.dom.ScriptLoader.ScriptLoader.add("'. Sensei()->assets->asset_url( 'js/question-answer-tinymce-editor.js' ) . '");
+													tinymce.dom.ScriptLoader.ScriptLoader.loadQueue(function() {
+														window.addPlaceholderInTinymceEditor(editor);
+                									});
 											  }
 				',
 			),
