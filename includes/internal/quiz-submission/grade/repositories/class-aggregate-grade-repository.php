@@ -288,9 +288,9 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @param Submission $submission The submission.
 	 *
-	 * @return Submission The tables based submission or null if it does not exist.
+	 * @return Submission The tables based submission.
 	 */
-	private function get_or_create_tables_based_submission( Submission $submission ): ?Submission {
+	private function get_or_create_tables_based_submission( Submission $submission ): Submission {
 		return $this->tables_based_submission_repository->get_or_create(
 			$submission->get_quiz_id(),
 			$submission->get_user_id(),
