@@ -107,12 +107,14 @@ $tablet-breakpoint: 768px;
 .sensei-course-theme.quiz {
 	form {
 		#sensei-quiz-list {
-			input[type=radio],
-			input[type=checkbox] + label:before {
-				border: 1px solid #949494;
-				width: 20px;
-				height: 20px;
-				background-color: #FFF;
+			.sensei-multiple-choice-answer-option {
+				&-checkbox + label:before,
+				&-radio {
+					border: 1px solid #949494;
+					width: 20px;
+					height: 20px;
+					background-color: #FFF;
+				}
 			}
 
 			input[type=radio],
@@ -123,38 +125,40 @@ $tablet-breakpoint: 768px;
 				background-clip: content-box;
 			}
 
-			input[type="radio"]:checked {
+			.sensei-multiple-choice-answer-option-radio:checked {
 				border: 6px solid var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
 			}
 
-			input[type="checkbox"] {
+
+
+			.sensei-multiple-choice-answer-option-checkbox {
 				display: none;
-			}
 
-			input[type="checkbox"] + label {
-				display: flex;
-				align-items: center;
-				gap: 10px;
-			}
+				& + label {
+					display: flex;
+					align-items: center;
+					gap: 10px;
+				}
 
-			input[type="checkbox"] + label:before {
-				content: "\00a0";
-				display: flex;
-				font-size: 1.1rem;
-				justify-content: center;
-				align-items: center;
-				padding: 0;
-				vertical-align: center;
-				border-radius: 2px;
-				margin-right: var(--wp--custom--comment-gap-small);
-			}
+				& + label:before {
+					content: "\00a0";
+					display: flex;
+					font-size: 1.1rem;
+					justify-content: center;
+					align-items: center;
+					padding: 0;
+					vertical-align: center;
+					border-radius: 2px;
+					margin-right: var(--wp--custom--comment-gap-small);
+				}
 
-			input[type="checkbox"]:checked + label:before {
-				color: white;
-				font-family: dashicons;
-				content: "\f15e";
-				text-align: center;
-				background-color: var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
+				&:checked + label:before {
+					color: white;
+					font-family: dashicons;
+					content: "\f15e";
+					text-align: center;
+					background-color: var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
+				}
 			}
 		}
 	}
