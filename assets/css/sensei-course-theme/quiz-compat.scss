@@ -29,16 +29,17 @@ $textColor: #1E1E1E;
 		font-size: 1.125rem;
 	}
 
-	input[type=file]::file-selector-button,
-	.sensei-lms-question-block__file-input-placeholder {
-		color: inherit;
-		border: 1px solid var(--sensei-secondary-color, #43AF99);
-		border-radius: 0;
-		font-size: 1.125rem;
-		text-transform: none;
-		line-height: 1;
-		font-family: inherit;
-		padding: .85rem 1.25rem;
+		.sensei-lms-question-block__file-input {
+			&-placeholder, &::file-selector-button {
+				color: inherit;
+				border: 1px solid var(--sensei-secondary-color, #43AF99);
+				border-radius: 0;
+				font-size: 1.125rem;
+				text-transform: none;
+				line-height: 1;
+				font-family: inherit;
+				padding: .85rem 1.25rem;
+		}
 	}
 }
 
