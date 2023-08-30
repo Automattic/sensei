@@ -320,7 +320,8 @@ class Sensei_Utils {
 			// variables are available inside it. We add them here manually.
 			$global_variables = str_replace( '"', "'", wp_get_global_stylesheet( [ 'variables' ] ) );
 
-			$settings['tinymce']['content_style'] = $global_variables . 'body.mce-content-body { background: transparent; color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #1E1E1E))) } #multi-line-placeholder { color: #646970; }';
+			$question_editor_styles               = str_replace("\n", "", file_get_contents( Sensei()->assets->src_path( 'css/question-answer-tinymce-editor.css' ) ) );
+			$settings['tinymce']['content_style'] = $global_variables . ' ' . $question_editor_styles;
 		}
 
 		wp_editor( $content, $editor_id, $settings );
