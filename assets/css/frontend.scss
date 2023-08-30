@@ -331,8 +331,10 @@ a.sensei-certificate-link {
 					margin-bottom: 5px;
 				}
 
-				.max_upload_size {
+				.max_upload_size,
+				.sensei-lms-question-block__file-input {
 					font-size: 75%;
+					font-family: inherit;
 				}
 
 				ul {
