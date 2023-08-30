@@ -1,14 +1,15 @@
 .wp-block-sensei-lms-quiz {
 	.wp-block-sensei-lms-question-answers {
 
-		input[type=file]::file-selector-button,
-		.sensei-lms-question-block__file-input-placeholder {
-			color: inherit;
-			border: 1px solid var(--wp--preset--color--foreground);
-			border-radius: 8px;
-			text-transform: uppercase;
-			font-size: var(--wp--custom--typography--font-sizes--button);
-			line-height: 1;
+		.sensei-lms-question-block__file-input {
+			&-placeholder, &::file-selector-button {
+				color: inherit;
+				border: 1px solid var(--wp--preset--color--foreground);
+				border-radius: 8px;
+				text-transform: uppercase;
+				font-size: var(--wp--custom--typography--font-sizes--button);
+				line-height: 1;
+			}
 		}
 	}
 
