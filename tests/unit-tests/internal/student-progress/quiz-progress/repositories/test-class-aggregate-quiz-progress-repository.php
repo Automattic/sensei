@@ -119,7 +119,7 @@ class Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$tables_based = $this->createMock( Tables_Based_Quiz_Progress_Repository::class );
 		$tables_based->method( 'get' )->willReturn( $progress );
 
-		$repository     = new Aggregate_Quiz_Progress_Repository( $comments_based, $tables_based, true );
+		$repository = new Aggregate_Quiz_Progress_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$comments_based
