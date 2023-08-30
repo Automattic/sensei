@@ -17,7 +17,7 @@ window.addPlaceholderInTinymceEditor = ( editor ) => {
 		if ( editor.getContent() == '' ) {
 			editor.setContent(
 				"<p id='multi-line-placeholder'>" +
-					__( 'Your answers', 'sensei-lms' ) +
+					__( 'Your answer', 'sensei-lms' ) +
 					'</p>'
 			);
 		}
