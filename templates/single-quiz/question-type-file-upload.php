@@ -56,7 +56,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 
 <?php if ( ! $question_data['quiz_is_completed'] ) { ?>
 
-	<input type="file" name="file_upload_<?php echo esc_attr( $question_data['ID'] ); ?>" />
+	<input type="file" class="sensei-lms-question-block__file-input" name="file_upload_<?php echo esc_attr( $question_data['ID'] ); ?>" />
 
 	<input type="hidden" name="sensei_question[<?php echo esc_attr( $question_data['ID'] ); ?>]"
 		   value="<?php echo esc_attr( $question_data['user_answer_entry'] ); ?>" />
