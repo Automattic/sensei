@@ -3,6 +3,7 @@
 namespace SenseiTest\Internal\Quiz_Submission\Grade\Repositories;
 
 use DateTimeImmutable;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Aggregate_Grade_Repository;
@@ -24,12 +25,14 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_answer_repository     = $this->createMock( Tables_Based_Answer_Repository::class );
+		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
 
 		$repository = new Aggregate_Grade_Repository(
 			$comments_based_repository,
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
+			$comments_based_answer_repository,
 			true
 		);
 
@@ -48,12 +51,14 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_answer_repository     = $this->createMock( Tables_Based_Answer_Repository::class );
+		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
 
 		$repository = new Aggregate_Grade_Repository(
 			$comments_based_repository,
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
+			$comments_based_answer_repository,
 			true
 		);
 
@@ -70,12 +75,14 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_answer_repository     = $this->createMock( Tables_Based_Answer_Repository::class );
+		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
 
 		$repository = new Aggregate_Grade_Repository(
 			$comments_based_repository,
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
+			$comments_based_answer_repository,
 			true
 		);
 
@@ -93,12 +100,14 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_answer_repository     = $this->createMock( Tables_Based_Answer_Repository::class );
+		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
 
 		$repository = new Aggregate_Grade_Repository(
 			$comments_based_repository,
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
+			$comments_based_answer_repository,
 			true
 		);
 
@@ -116,12 +125,14 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_answer_repository     = $this->createMock( Tables_Based_Answer_Repository::class );
+		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
 
 		$repository = new Aggregate_Grade_Repository(
 			$comments_based_repository,
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
+			$comments_based_answer_repository,
 			true
 		);
 
@@ -140,12 +151,14 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_answer_repository     = $this->createMock( Tables_Based_Answer_Repository::class );
+		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
 
 		$repository = new Aggregate_Grade_Repository(
 			$comments_based_repository,
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
+			$comments_based_answer_repository,
 			false
 		);
 
@@ -175,12 +188,14 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			->willReturn( $tables_based_submission );
 
 		$tables_based_answer_repository = $this->createMock( Tables_Based_Answer_Repository::class );
+		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
 
 		$repository = new Aggregate_Grade_Repository(
 			$comments_based_repository,
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
+			$comments_based_answer_repository,
 			true
 		);
 
@@ -199,6 +214,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_answer_repository     = $this->createMock( Tables_Based_Answer_Repository::class );
+		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
 		$grades                             = [ $this->createMock( Grade::class ) ];
 
 		$repository = new Aggregate_Grade_Repository(
@@ -206,6 +222,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
+			$comments_based_answer_repository,
 			true
 		);
 
@@ -227,6 +244,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_answer_repository     = $this->createMock( Tables_Based_Answer_Repository::class );
+		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
 		$grades                             = [ $this->createMock( Grade::class ) ];
 
 		$repository = new Aggregate_Grade_Repository(
@@ -234,6 +252,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
+			$comments_based_answer_repository,
 			false
 		);
 
@@ -272,12 +291,14 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			->willReturn( $tables_based_submission );
 
 		$tables_based_answer_repository = $this->createMock( Tables_Based_Answer_Repository::class );
+		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
 
 		$repository = new Aggregate_Grade_Repository(
 			$comments_based_repository,
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
+			$comments_based_answer_repository,
 			true
 		);
 
