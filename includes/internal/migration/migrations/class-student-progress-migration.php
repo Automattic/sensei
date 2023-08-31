@@ -82,7 +82,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		}
 
 		if ( false === $last_comment_id && ! empty( $progress_comments ) ) {
-			$this->errors[] = __( 'Could not find the last comment ID migrating data.', 'sensei-lms' );
+			$this->add_error( __( 'Could not find the last comment ID migrating data.', 'sensei-lms' ) );
 			return 0;
 		}
 
