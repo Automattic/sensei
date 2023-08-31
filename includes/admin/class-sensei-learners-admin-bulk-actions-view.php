@@ -354,19 +354,25 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 	/**
-	 * Helper method to display the bulk action selector.
+	 * Gets the HTML for the bulk action dropdown.
+	 *
+	 * @return string HTML for the bulk action dropdown.
 	 */
-	private function render_bulk_action_select_box() {
-		?>
-		<select id="bulk-action-selector-top" name="sensei_bulk_action_select" class="sensei-student-bulk-actions__placeholder-dropdown sensei-bulk-action-select">
-			<option value="0"><?php echo esc_html( __( 'Select Bulk Actions', 'sensei-lms' ) ); ?></option>
-			<?php
-			foreach ( $this->controller->get_known_bulk_actions() as $value => $translation ) {
-				echo '<option value="' . esc_attr( $value ) . '">' . esc_html( $translation ) . '</option>';
-			}
-			?>
-		</select>
-		<?php
+	private function get_bulk_action_dropdown_html() {
+		$html = '';
+
+		$html .= '<select id="bulk-action-selector-top" name="sensei_bulk_action_select" class="sensei-student-bulk-actions__placeholder-dropdown sensei-bulk-action-select">';
+		$html .= '<option value="0">';
+		$html .= esc_html( __( 'Select Bulk Actions', 'sensei-lms' ) );
+		$html .= '</option>';
+
+		foreach ( $this->controller->get_known_bulk_actions() as $value => $translation ) {
+			$html .= '<option value="' . esc_attr( $value ) . '">' . esc_html( $translation ) . '</option>';
+		}
+
+		$html .= '</select>';
+
+		return $html;
 	}
 
 	/**
@@ -388,14 +394,15 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 					<div class="sensei-student-bulk-actions__bulk_actions_container">
 						<?php
 						echo wp_kses(
-							$this->render_bulk_action_select_box(),
+							$this->get_bulk_action_dropdown_html(),
 							array(
 								'option' => array(
 									'value' => array(),
 								),
 								'select' => array(
-									'id'   => array(),
-									'name' => array(),
+									'id'    => array(),
+									'class' => array(),
+									'name'  => array(),
 								),
 							)
 						);

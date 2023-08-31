@@ -57,6 +57,13 @@ class Sensei_PostTypes {
 	public $messages;
 
 	/**
+	 * Labels for post types.
+	 *
+	 * @var array
+	 */
+	public $labels;
+
+	/**
 	 * Array of post ID's for which to fire an "initial publish" action.
 	 *
 	 * @var array

@@ -1231,7 +1231,7 @@ class Sensei_Core_Modules {
 	 */
 	public function add_submenus() {
 		add_submenu_page(
-			null, // Hide the submenu.
+			'', // Hide the submenu.
 			__( 'Order Modules', 'sensei-lms' ),
 			__( 'Order Modules', 'sensei-lms' ),
 			'edit_lessons',
@@ -2289,26 +2289,26 @@ class Sensei_Core_Modules {
 		}
 
 		if ( empty( $slug ) ) {
-
 			return $term_owner;
-
 		}
-		$term = get_term_by( 'slug', $slug, 'module' );
 
+		// Look for the author in the term meta.
+		$term = get_term_by( 'slug', $slug, 'module' );
 		if ( $term ) {
-			$author_meta = get_term_meta( $term->term_id, 'module_author', true );
-			if ( $author_meta ) {
-				return get_user_by( 'id', $author_meta );
+			$author_id = (int) get_term_meta( $term->term_id, 'module_author', true );
+			$author    = get_user_by( 'id', $author_id );
+
+			if ( $author ) {
+				return $author;
 			}
 		}
+
 		// look for the author in the slug.
 		$slug_parts = explode( '-', $slug );
-
 		if (
 			count( $slug_parts ) > 1
 			&& is_numeric( $slug_parts[0] )
 		) {
-
 			// get the user data
 			$possible_user_id = $slug_parts[0];
 			$author           = get_userdata( $possible_user_id );
@@ -2316,9 +2316,7 @@ class Sensei_Core_Modules {
 			// if the user doesnt exist for the first part of the slug
 			// then this slug was also created by admin
 			if ( is_a( $author, 'WP_User' ) ) {
-
 				$term_owner = $author;
-
 			}
 		}
 

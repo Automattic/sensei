@@ -44,7 +44,6 @@ class Email_Settings_Tab {
 	public function init() {
 		add_action( 'sensei_settings_after_links', [ $this, 'render_tabs' ] );
 		add_filter( 'sensei_settings_content', [ $this, 'get_content' ], 10, 2 );
-		add_filter( 'sensei_settings_fields', [ $this, 'add_reply_to_setting' ] );
 	}
 
 	/**
@@ -198,10 +197,19 @@ class Email_Settings_Tab {
 	private function render_settings_subtab(): void {
 		global $wp_settings_fields;
 
+		$allowed_fields = array(
+			'email_from_name',
+			'email_from_address',
+			'email_reply_to_name',
+			'email_reply_to_address',
+			'email_cc',
+			'email_bcc',
+		);
+
 		$fields_to_display = array_filter(
 			$wp_settings_fields['sensei-settings']['email-notification-settings'] ?? [],
-			function( $field_key ) {
-				return in_array( $field_key, [ 'email_from_name', 'email_from_address', 'email_reply_to_name', 'email_reply_to_address' ], true );
+			function( $field_key ) use ( $allowed_fields ) {
+				return in_array( $field_key, $allowed_fields, true );
 			},
 			ARRAY_FILTER_USE_KEY
 		);
@@ -221,7 +229,14 @@ class Email_Settings_Tab {
 		);
 
 		$options = $this->settings->get_settings() ?? [];
-		unset( $options['email_from_name'], $options['email_from_address'], $options['email_reply_to_address'], $options['email_reply_to_name'] );
+		unset(
+			$options['email_from_name'],
+			$options['email_from_address'],
+			$options['email_reply_to_address'],
+			$options['email_reply_to_name'],
+			$options['email_cc'],
+			$options['email_bcc']
+		);
 
 		include dirname( __FILE__ ) . '/views/html-settings.php';
 	}
@@ -246,6 +261,8 @@ class Email_Settings_Tab {
 	 * Add the Reply To email address setting field.
 	 *
 	 * @since 4.12.0
+	 * @deprecated 4.16.1 Moved to Sensei_Settings::init_fields.
+	 *
 	 * @access private
 	 *
 	 * @param array $fields The fields to add to.

@@ -20,17 +20,17 @@ describe( 'Courses List Block', () => {
 		{
 			title: faker.lorem.sentence( 2 ),
 			excerpt: faker.lorem.sentence( 3 ),
-			category: faker.lorem.slug( 1 ),
+			category: faker.lorem.slug( 2 ),
 		},
 		{
 			title: faker.lorem.sentence( 2 ),
 			excerpt: faker.lorem.sentence( 3 ),
-			category: faker.lorem.slug( 1 ),
+			category: faker.lorem.slug( 2 ),
 		},
 		{
 			title: faker.lorem.sentence( 2 ),
 			excerpt: faker.lorem.sentence( 3 ),
-			category: faker.lorem.slug( 1 ),
+			category: faker.lorem.slug( 2 ),
 		},
 	];
 

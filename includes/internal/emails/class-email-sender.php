@@ -145,7 +145,7 @@ class Email_Sender {
 	/**
 	 * Get from name for email.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.0
 	 * @return string
 	 */
 	public function get_from_name() {
@@ -162,7 +162,7 @@ class Email_Sender {
 	/**
 	 * Get from email address.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.0
 	 * @return string
 	 */
 	public function get_from_address() {
@@ -333,6 +333,14 @@ class Email_Sender {
 			$reply_to_address = $settings['email_reply_to_address'];
 			$reply_to_name    = isset( $settings['email_reply_to_name'] ) ? $settings['email_reply_to_name'] : '';
 			$headers[]        = "Reply-To: $reply_to_name <$reply_to_address>";
+		}
+
+		if ( ! empty( $settings['email_cc'] ) ) {
+			$headers[] = 'Cc: ' . $settings['email_cc'];
+		}
+
+		if ( ! empty( $settings['email_bcc'] ) ) {
+			$headers[] = 'Bcc: ' . $settings['email_bcc'];
 		}
 
 		return $headers;

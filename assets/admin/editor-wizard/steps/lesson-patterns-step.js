@@ -29,7 +29,7 @@ const LessonPatternsStep = ( { wizardData, ...props } ) => {
 	return (
 		<Fragment>
 			<PatternsStep
-				title={ __( 'Lesson Type', 'sensei-lms' ) }
+				title={ __( 'Lesson Layout', 'sensei-lms' ) }
 				replaces={ replaces }
 				{ ...props }
 			/>
@@ -48,7 +48,7 @@ const UpsellBlock = () => (
 		<LogoTreeIcon className="sensei-editor-wizard-patterns-upsell__logo" />
 		<div className="sensei-editor-wizard-patterns-upsell__text">
 			<b className="sensei-editor-wizard-patterns-upsell__title">
-				{ __( 'Want More Lesson Types?', 'sensei-lms' ) }
+				{ __( 'Want More Lesson Layouts?', 'sensei-lms' ) }
 			</b>
 			<br />
 			{ __(

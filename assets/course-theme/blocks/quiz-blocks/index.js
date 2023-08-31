@@ -7,6 +7,7 @@ import { useBlockProps } from '@wordpress/block-editor';
 /**
  * Internal dependencies
  */
+import ChevronLeft from '../../../icons/chevron-left.svg';
 import LogoTreeIcon from '../../../icons/logo-tree.svg';
 import quizActionsMeta from './quiz-actions.block.json';
 import quizBackToLessonMeta from './quiz-back-to-lesson.block.json';
@@ -66,7 +67,8 @@ export default [
 		edit() {
 			return (
 				<span className="sensei-lms-href sensei-lms-quiz-back-to-lesson">
-					&lt; { __( 'Back to lesson', 'sensei-lms' ) }
+					<ChevronLeft />
+					{ __( 'Back to lesson', 'sensei-lms' ) }
 				</span>
 			);
 		},

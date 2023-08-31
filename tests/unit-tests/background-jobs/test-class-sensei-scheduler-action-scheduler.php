@@ -27,7 +27,6 @@ class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 	 * Set up before all tests.
 	 */
 	public static function setUpBeforeClass(): void {
-		self::createMocks();
 		self::resetScheduler();
 		add_filter( 'sensei_scheduler_class', [ __CLASS__, 'scheduler_use_action_scheduler' ] );
 
@@ -146,12 +145,5 @@ class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 
 		$result = _as_get_scheduled_actions( $job->get_name(), [ $job->get_args() ], null );
 		$this->assertEquals( 1, count( $result ) );
-	}
-
-	/**
-	 * Set up mocks.
-	 */
-	private static function createMocks() {
-		require_once SENSEI_TEST_FRAMEWORK_DIR . '/actionscheduler-mocks.php';
 	}
 }

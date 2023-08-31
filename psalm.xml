@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<psalm autoloader="config/psalm/psalm-loader.php" errorBaseline="config/psalm/psalm-baseline.xml">
+	<projectFiles>
+		<file name="sensei-lms.php" />
+		<directory name="includes" />
+		<ignoreFiles allowMissingFiles="true">
+			<directory name="config" />
+			<directory name="includes/internal/emails/views" />
+			<directory name="sample-data" />
+			<directory name="third-party" />
+			<directory name="vendor" />
+			<directory name="vendor-bin" />
+			<directory name="widgets" />
+		</ignoreFiles>
+	</projectFiles>
+	<issueHandlers>
+		<InternalClass errorLevel="suppress" />
+		<InternalMethod errorLevel="suppress" />
+	</issueHandlers>
+</psalm>

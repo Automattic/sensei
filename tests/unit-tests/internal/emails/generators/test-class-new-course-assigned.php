@@ -9,7 +9,7 @@ use Sensei_Factory;
 /**
  * Tests for Sensei\Internal\Emails\New_Course_Assigned class.
  *
- * @covers \Sensei\Internal\Emails\New_Course_Assigned
+ * @covers \Sensei\Internal\Emails\Generators\New_Course_Assigned
  */
 class New_Course_Assigned_Test extends \WP_UnitTestCase {
 	use \Sensei_Test_Login_Helpers;

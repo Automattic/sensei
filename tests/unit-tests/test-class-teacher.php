@@ -451,10 +451,10 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		$users_with_edit_courses_rights_ids = Sensei()->teacher->get_teachers_and_authors();
 
 		foreach ( array_merge( $administrators, $editors, $teachers ) as $user_id ) {
-			$this->assertContains( $user_id, $users_with_edit_courses_rights_ids, 'Should include users which have the `edit_courses` capability.' );
+			$this->assertContainsEquals( $user_id, $users_with_edit_courses_rights_ids, 'Should include users which have the `edit_courses` capability.' );
 		}
 		foreach ( $subscribers as $subscriber_id ) {
-			$this->assertNotContains( $subscriber_id, $users_with_edit_courses_rights_ids, 'Should not include users that don\'t have the `edit_courses` capability.' );
+			$this->assertNotContainsEquals( $subscriber_id, $users_with_edit_courses_rights_ids, 'Should not include users that don\'t have the `edit_courses` capability.' );
 		}
 	}
 

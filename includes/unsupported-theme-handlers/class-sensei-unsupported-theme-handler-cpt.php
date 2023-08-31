@@ -75,8 +75,10 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		add_filter( 'the_content', array( $this, 'cpt_page_content_filter' ) );
 		add_filter( 'template_include', array( $this, 'force_page_template' ) );
 
-		// Disable comments.
-		Sensei_Unsupported_Theme_Handler_Utils::disable_comments();
+		// Disable comments if not block theme and post type is not lesson.
+		if ( ! $this->is_lesson_cpt_in_block_fse_theme() ) {
+			Sensei_Unsupported_Theme_Handler_Utils::disable_comments();
+		}
 
 		// Handle some type-specific items.
 		if ( 'sensei_message' === $this->post_type ) {
@@ -119,7 +121,9 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		$content  = $renderer->render();
 
 		// Disable theme comments.
-		Sensei_Unsupported_Theme_Handler_Utils::disable_comments();
+		if ( ! $this->is_lesson_cpt_in_block_fse_theme() ) {
+			Sensei_Unsupported_Theme_Handler_Utils::disable_comments();
+		}
 
 		// Disable pagination.
 		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
@@ -220,6 +224,10 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 * @return string The page.php template if possible, the original template * otherwise.
 	 */
 	public function force_page_template( $template ) {
+		if ( $this->is_lesson_cpt_in_block_fse_theme() ) {
+			return $template;
+		}
+
 		$path = get_query_template( 'page' );
 
 		if ( $path ) {
@@ -229,4 +237,14 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		return $template;
 	}
 
+	/**
+	 * Check if current theme is a FSE block one and if the current post type is a lesson.
+	 *
+	 * @since 4.16.1
+	 *
+	 * @return bool
+	 */
+	private function is_lesson_cpt_in_block_fse_theme() {
+		return 'lesson' === $this->post_type && Sensei_Utils::is_fse_theme();
+	}
 }

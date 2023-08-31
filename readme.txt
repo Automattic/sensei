@@ -2,10 +2,10 @@
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
 Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, imranh920, jakeom, luchad0res, merkushin, m1r0, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 6.0
-Tested up to: 6.2
+Requires at least: 6.1
+Tested up to: 6.3
 Requires PHP: 7.3
-Stable tag: 4.15.1
+Stable tag: 4.16.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,7 +120,7 @@ To find out how to submit a course to the Sensei LMS showcase, and the requireme
 
 = Does Sensei support live courses, Zoom integration, or webinars? =
 
-Yes! You can add links to Zoom, Google Meet, or whatever platform you choose in a course lesson. In addition, Sensei includes a meeting lesson type you can select when creating a new lesson to help make this even easier.
+Yes! You can add links to Zoom, Google Meet, or whatever platform you choose in a course lesson. In addition, Sensei includes a meeting lesson layout you can select when creating a new lesson to help make this even easier.
 
 = Does Sensei work in WordPress Multisite? =
 
@@ -144,6 +144,37 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.16.1 - 2023-08-15
+#### Added
+- Add CC/BCC fields for Sensei emails [#7014](https://github.com/Automattic/sensei/pull/7014)
+
+#### Changed
+- Update the `sensei_results_links` filter to include the learner's user ID when displaying public profiles and to display results links publicly [#7048](https://github.com/Automattic/sensei/pull/7048)
+
+#### Fixed
+- Fix "View Results" button not working [#7058](https://github.com/Automattic/sensei/pull/7058)
+- Fix custom button colors not being applied in Learning Mode [#7080](https://github.com/Automattic/sensei/pull/7080)
+- Fix duplicate comment sections under lesson in FSE themes [#7044](https://github.com/Automattic/sensei/pull/7044)
+- Fix lessons not using the selected template in FSE themes [#7045](https://github.com/Automattic/sensei/pull/7045)
+- Fix error when the module author user is deleted [#7082](https://github.com/Automattic/sensei/pull/7082)
+- Fix lessons not being saved when creating a course on the latest Gutenberg version [#7091](https://github.com/Automattic/sensei/pull/7091)
+- Fix lesson styling in editor on WordPress 6.3 or when Gutenberg enabled [#7054](https://github.com/Automattic/sensei/pull/7054)
+- Fix PHP 8.1 deprecation notice on Students page [#7038](https://github.com/Automattic/sensei/pull/7038)
+- Fix `strpos`and `str_replace` deprecation messages in PHP 8.1 and 8.2 [#7028](https://github.com/Automattic/sensei/pull/7028)
+
+### 4.16.0 - 2023-07-13
+#### Added
+- Enable to select how to generate lessons when a course is created [#6999](https://github.com/Automattic/sensei/pull/6999)
+
+#### Changed
+- Bump minimum required PHP version to 7.3 [#7005](https://github.com/Automattic/sensei/pull/7005)
+
+#### Fixed
+- Fix Continue Course block not redirecting to first lesson in some cases [#6997](https://github.com/Automattic/sensei/pull/6997)
+- Fix emails not using the From Name/Email settings [#6968](https://github.com/Automattic/sensei/pull/6968)
+- Fix PHP 8.1 autovivification of falsy value deprecation message [#7015](https://github.com/Automattic/sensei/pull/7015)
+- Removed Beta label from Editor Menu [#6989](https://github.com/Automattic/sensei/pull/6989)
+
 ### 4.15.1 - 2023-06-22
 #### Added
 - Add Enrolled and Completion columns on the reports course page. [#6966](https://github.com/Automattic/sensei/pull/6966)
@@ -157,37 +188,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Fix resetting a quiz also resets the course start date. [#6643](https://github.com/Automattic/sensei/pull/6643)
 - In lesson complete email use course author as lesson teacher. [#6977](https://github.com/Automattic/sensei/pull/6977)
 - Fix conflicts with modules using the same name. [#6437](https://github.com/Automattic/sensei/pull/6437)
-
-### 4.15.0 - 2023-06-01
-#### Security
-- Fix shortcodes being called in teacher's messages.
-- Remove private custom post types from sitemaps.
-
-#### Changed
-- Review the Learning mode default template typography, spacing and alignment.
-- Improve Global Style support in Learning mode templates.
-
-#### Fixed
-- Block triggering wp_mail for temporary users even on non-frontend context.
-- Don't re-create emails on plugin update.
-- Fix auto grading not working on the Grading page for multiple choice questions.
-- Fix blocks initialization.
-- Fix email body rendered in the front-end in some cases.
-- Fix Kadence blocks crashing lesson editor.
-- Fix MailPoet error when running job.
-
-### 4.14.0 - 2023-05-10
-#### Added
-- Ability to set conditions on admin notices based on a date range
-- Add disclamer with the reason that Sensei Pro can't be updated when license is not active
-- Add quiz generation using AI button in quiz block
-
-#### Changed
-- Use non-deprecated attribute to load SVG icons.
-
-#### Fixed
-- Don't send e-mails to Guest/Preview users
-- Fix PHP Warning with Divi when using Learning Mode Video theme
-- Fix Sensei admin notice styles
-- Missing email page template link on the editor
-- Removed unused calls to SenseiLMS.com for the old extensions page

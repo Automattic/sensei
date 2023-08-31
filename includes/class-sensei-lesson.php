@@ -19,6 +19,13 @@ class Sensei_Lesson {
 	public $allowed_html;
 
 	/**
+	 * Question order.
+	 *
+	 * @var string
+	 */
+	public $question_order;
+
+	/**
 	 * Lesson ID being saved.
 	 *
 	 * @since 3.8.0
@@ -1318,6 +1325,11 @@ class Sensei_Lesson {
 
 					$html .= '</table>';
 
+		/**
+		 * In case the question order is not set, we need to initialize it to an empty string.
+		 *
+		 * @psalm-suppress RedundantPropertyInitializationCheck
+		 */
 		if ( ! isset( $this->question_order ) ) {
 			$this->question_order = '';
 		}
@@ -1424,8 +1436,14 @@ class Sensei_Lesson {
 				$html             .= $this->quiz_panel_question( $question_type, $question_counter, $question_id, 'quiz', $multiple_data );
 				$question_counter += $question_increment;
 
+				/**
+				 * In case the question order is not set, we need to initialize it to an empty string.
+				 *
+				 * @psalm-suppress RedundantConditionGivenDocblockType
+				*/
 				if ( isset( $this->question_order ) && strlen( $this->question_order ) > 0 ) {
-					$this->question_order .= ','; }
+					$this->question_order .= ',';
+				}
 				$this->question_order .= $question_id;
 			}
 		}
@@ -3657,12 +3675,15 @@ class Sensei_Lesson {
 		$questions_array = $questions;
 
 		// If viewing quiz on frontend or in grading then only single questions must be shown.
-		$selected_questions = false;
+		$selected_questions = [];
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Input used for comparisons.
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it.
-			$selected_questions = Sensei()->quiz_submission_repository->get_question_ids( $quiz_id, $user_id );
+			$submission         = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			$selected_questions = $submission
+				? Sensei()->quiz_submission_repository->get_question_ids( $submission->get_id() )
+				: [];
 
 			if ( $selected_questions ) {
 				// Fetch each question in the order in which they were asked.
@@ -4866,14 +4887,20 @@ class Sensei_Lesson {
 			&& Sensei_Utils::is_preview_lesson( $post->ID )
 			&& ! Sensei_Course::is_user_enrolled( $course_id, $current_user->ID );
 
+		/** This filter is documented in includes/class-sensei-messages.php */
+		$title = apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type );
+
+		if ( ! $title ) {
+			return;
+		}
+
 		?>
 		<header class="lesson-title">
 
 			<h1>
 
 				<?php
-				/** This filter is documented in includes/class-sensei-messages.php */
-				echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type ) );
+				echo wp_kses_post( $title );
 				?>
 
 			</h1>
@@ -4987,7 +5014,8 @@ class Sensei_Lesson {
 		$user_can_view_lesson  = sensei_can_user_view_lesson();
 		$lesson_allow_comments = $allow_comments && $user_can_view_lesson;
 
-		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
+		if ( ( $lesson_allow_comments && ! Sensei_Utils::is_fse_theme() ) || is_singular( 'sensei_message' ) ) {
+
 			// Borrowed solution from https://github.com/WordPress/gutenberg/pull/28128.
 			add_filter( 'deprecated_file_trigger_error', '__return_false' );
 			comments_template( '', true );

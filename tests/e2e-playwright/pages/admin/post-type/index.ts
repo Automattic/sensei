@@ -61,7 +61,10 @@ export default class PostType {
 	}
 
 	async goToPreview(): Promise< Page > {
-		await this.page.locator( 'button:has-text("Preview")' ).first().click();
+		await this.page
+			.getByRole( 'button', { name: 'Preview' } )
+			.first()
+			.click();
 
 		const [ previewPage ] = await Promise.all( [
 			this.page.waitForEvent( 'popup' ),
@@ -77,6 +80,12 @@ export default class PostType {
 			.locator( 'text=View Page' )
 			.click();
 		return this.page;
+	}
+
+	async saveDraft(): Promise< void > {
+		await this.page
+			.locator( '[aria-label="Editor top bar"] >> text=Save draft' )
+			.click();
 	}
 
 	async publish(): Promise< void > {

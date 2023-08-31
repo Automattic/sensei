@@ -1,21 +1,26 @@
 {
 	"name": "automattic/sensei-lms",
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
+	"require": {
+		"woocommerce/action-scheduler": "3.6.2"
+	},
 	"require-dev": {
 		"php": "^7.3 || ^8",
-		"automattic/jetpack-changelogger": "v3.3.1",
+		"automattic/jetpack-changelogger": "3.3.5",
 		"bamarni/composer-bin-plugin": "1.8.2",
-		"dealerdirect/phpcodesniffer-composer-installer": "0.7.2",
-		"dms/phpunit-arraysubset-asserts": "0.4.0",
-		"humbug/php-scoper": "0.13.9",
-		"pelago/emogrifier": "6.0.0",
+		"dealerdirect/phpcodesniffer-composer-installer": "1.0.0",
+		"dms/phpunit-arraysubset-asserts": "0.5.0",
+		"humbug/php-scoper": "0.15.0",
+		"pelago/emogrifier": "7.0.0",
+		"php-stubs/wordpress-stubs": "^6.3",
 		"phpcompatibility/phpcompatibility-wp": "2.1.4",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
-		"sirbrillig/phpcs-variable-analysis": "2.11.9",
-		"squizlabs/php_codesniffer": "3.7.1",
+		"sirbrillig/phpcs-variable-analysis": "2.11.16",
+		"squizlabs/php_codesniffer": "3.7.2",
 		"symfony/polyfill-php80": "1.16.0",
+		"vimeo/psalm": "4.22.0",
 		"wp-coding-standards/wpcs": "2.3.0",
-		"yoast/phpunit-polyfills": "1.0.4"
+		"yoast/phpunit-polyfills": "2.0.0"
 	},
 	"minimum-stability": "dev",
 	"prefer-stable": true,
@@ -99,7 +104,16 @@
 	},
 	"extra": {
 		"changelogger": {
-			"changelog": "changelog.txt"
+			"changelog": "changelog.txt",
+			"types": {
+				"security": "Vulnerability fix (e.g. Fix XSS vulnerability)",
+				"added": "New feature (e.g. Add quiz generation using AI)",
+				"changed": "Changes to existing functionality (e.g. Redirect to next lesson without showing a message, Bump minimum required PHP version to 7.3)",
+				"deprecated": "Soon-to-be removed feature (e.g. Deprecate the legacy email system in favor of the new one)",
+				"removed": "Removed feature (e.g. Remove the legacy email system)",
+				"fixed": "Bug fix (e.g. Fix admin notice styles)",
+				"dev": "Changes that third-party devs should be aware of (e.g. Deprecate the `Sensei_Emails` class, Remove wrapper elements from templates, Introduce new hook: `sensei_email_send`)"
+			}
 		}
 	}
 }

@@ -345,7 +345,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 		$category_names        = Sensei_Data_Port_Utilities::split_list_safely( $line_data[ Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES ], true );
 		$expected_category_ids = array_map(
 			function( $module_name ) {
-				return (string) Sensei_Data_Port_Utilities::get_term( $module_name, 'course-category' )->term_id;
+				return Sensei_Data_Port_Utilities::get_term( $module_name, 'course-category' )->term_id;
 			},
 			$category_names
 		);

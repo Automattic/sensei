@@ -1,3 +1,5 @@
+@import "quiz";
+
 :root {
 	--sensei-lm-header-height: 84px;
 }
@@ -32,6 +34,15 @@ body {
 
 	.wp-block-sensei-lms-course-theme-course-progress-bar {
 		background-color: var(--border-color);
+	}
+
+	.wp-block-image img, .wp-block-video video {
+		border-radius: 4px;
+		border: 1px solid var(--wp--preset--color--foreground);
+	}
+
+	.wp-block-video {
+		line-height: 0;
 	}
 }
 

@@ -106,7 +106,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$block_html = $block->render();
 
 		// Check for is-secondary class suffix.
-		$this->assertRegExp( '/<button.*is-secondary.*>.*\n.*Complete Lesson/', $block_html, 'Should render complete button as secondary CTA' );
+		$this->assertMatchesRegularExpression( '/<button.*is-secondary.*>.*\n.*Complete Lesson/', $block_html, 'Should render complete button as secondary CTA' );
 		$this->assertStringContainsString( 'Take Quiz', $block_html, 'Should render the take quiz button' );
 	}
 

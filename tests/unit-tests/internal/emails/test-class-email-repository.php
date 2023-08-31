@@ -24,8 +24,6 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 
 	/**
 	 * Tests that a disabled email is found in the repository.
-	 *
-	 * @covers Email_Repository::has
 	 */
 	public function testHas_DisabledEmailInRepository_ReturnsTrue() {
 		/* Arrange. */
@@ -154,8 +152,6 @@ class Email_Repository_Test extends \WP_UnitTestCase {
 
 	/**
 	 * Tests that when only disabled emails are created, that they are still found in the repository.
-	 *
-	 * @covers Email_Repository::has_emails
 	 */
 	public function testHasEmails_AllEmailsDisabled_ReturnsTrue() {
 		/* Arrange. */

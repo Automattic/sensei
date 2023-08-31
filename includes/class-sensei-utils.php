@@ -659,26 +659,46 @@ class Sensei_Utils {
 		return $question_grade;
 	}
 
-	public static function sensei_delete_quiz_answers( $quiz_id = 0, $user_id = 0 ) {
-		if ( intval( $user_id ) == 0 ) {
+	/**
+	 * Delete the quiz answers and all related data including the grades.
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The user ID.
+	 *
+	 * @return bool
+	 */
+	public static function sensei_delete_quiz_answers( $quiz_id = 0, $user_id = 0 ): bool {
+		if ( intval( $user_id ) === 0 ) {
 			$user_id = get_current_user_id();
 		}
 
-		$delete_answers = false;
-		if ( intval( $quiz_id ) > 0 ) {
-			$questions = self::sensei_get_quiz_questions( $quiz_id );
-			foreach ( $questions as $question ) {
-				$delete_answers = self::sensei_delete_activities(
-					array(
-						'post_id' => $question->ID,
-						'user_id' => $user_id,
-						'type'    => 'sensei_user_answer',
-					)
-				);
-			}
+		if ( ! $quiz_id || ! $user_id ) {
+			return false;
 		}
 
-		return $delete_answers;
+		$deleted   = false;
+		$questions = self::sensei_get_quiz_questions( $quiz_id );
+		foreach ( $questions as $question ) {
+			// Fallback for pre 1.7.4 data.
+			$deleted = self::sensei_delete_activities(
+				array(
+					'post_id' => $question->ID,
+					'user_id' => $user_id,
+					'type'    => 'sensei_user_answer',
+				)
+			);
+		}
+
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( $quiz_submission ) {
+			Sensei()->quiz_submission_repository->delete( $quiz_submission );
+			Sensei()->quiz_answer_repository->delete_all( $quiz_submission );
+			Sensei()->quiz_grade_repository->delete_all( $quiz_submission );
+
+			$deleted = true;
+		}
+
+		return $deleted;
 	}
 
 	/**
@@ -2791,6 +2811,17 @@ class Sensei_Utils {
 			}
 		}
 		return $course_id;
+	}
+
+	/**
+	 * Check if the current theme supports Full Site Editing (FSE).
+	 *
+	 * @since 4.16.1
+	 *
+	 * @return bool True if FSE is supported, false otherwise.
+	 */
+	public static function is_fse_theme() {
+		return function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
 	}
 }
 
