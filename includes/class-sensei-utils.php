@@ -293,7 +293,7 @@ class Sensei_Utils {
 				'theme_advanced_buttons1' => $buttons,
 				'theme_advanced_buttons2' => '',
 				'setup'                   => 'function (editor) {
-													tinymce.dom.ScriptLoader.ScriptLoader.add("'. Sensei()->assets->asset_url( 'js/question-answer-tinymce-editor.js' ) . '");
+													tinymce.dom.ScriptLoader.ScriptLoader.add("' . Sensei()->assets->asset_url( 'js/question-answer-tinymce-editor.js' ) . '");
 													tinymce.dom.ScriptLoader.ScriptLoader.loadQueue(function() {
 														window.addPlaceholderInTinymceEditor(editor);
                 									});
@@ -309,6 +309,7 @@ class Sensei_Utils {
 			// variables are available inside it. We add them here manually.
 			$global_variables = str_replace( '"', "'", wp_get_global_stylesheet( [ 'variables' ] ) );
 
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Using local file.
 			$question_editor_styles               = str_replace("\n", "", file_get_contents( Sensei()->assets->src_path( 'css/question-answer-tinymce-editor.css' ) ) );
 			$settings['tinymce']['content_style'] = $global_variables . ' ' . $question_editor_styles;
 		}
