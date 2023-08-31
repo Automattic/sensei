@@ -310,7 +310,7 @@ class Sensei_Utils {
 			$global_variables = str_replace( '"', "'", wp_get_global_stylesheet( [ 'variables' ] ) );
 
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Using local file.
-			$question_editor_styles               = str_replace("\n", "", file_get_contents( Sensei()->assets->src_path( 'css/question-answer-tinymce-editor.css' ) ) );
+			$question_editor_styles               = str_replace( "\n", "", file_get_contents( Sensei()->assets->src_path( 'css/question-answer-tinymce-editor.css' ) ) ); // phpcs:ignore Squiz.Strings.DoubleQuoteUsage.NotRequired -- Need double quote for newline.
 			$settings['tinymce']['content_style'] = $global_variables . ' ' . $question_editor_styles;
 		}
 
