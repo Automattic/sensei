@@ -1,6 +1,7 @@
 <?php
 
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -512,16 +513,16 @@ class Sensei_Utils {
 			}
 		}
 
-		// If the lesson has quizzes, mark it as started.
-		$quiz_ids = get_post_meta( $lesson_id, '_quiz_id', false );
-		if ( ! empty( $quiz_ids ) ) {
-			foreach ( $quiz_ids as $quiz_id ) {
-				$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
-				if ( ! $quiz_progress ) {
-					$quiz_progress = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
-				}
-				$quiz_progress->start();
-				Sensei()->quiz_progress_repository->save( $quiz_progress );
+		// If the lesson has a quiz, create a quiz progress record if it doesn't exist.
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! empty( $quiz_id ) ) {
+			$tables_based_progress_feature = Sensei()->feature_flags->is_enabled( 'tables_based_progress' );
+			$quiz_progress_repository      = ( new Quiz_Progress_Repository_Factory( $tables_based_progress_feature ) )
+				->create_tables_based_repository();
+
+			$quiz_progress = $quiz_progress_repository->get( $quiz_id, $user_id );
+			if ( ! $quiz_progress ) {
+				$quiz_progress = $quiz_progress_repository->create( $quiz_id, $user_id );
 			}
 		}
 

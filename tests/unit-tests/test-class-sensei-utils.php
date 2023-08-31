@@ -4,6 +4,7 @@ use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interf
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
 
@@ -14,7 +15,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
  *
  * phpcs:disable Generic.Commenting.DocComment.MissingShort
  */
-class Sensei_Class_Utils_Test extends WP_UnitTestCase {
+class Sensei_Utils_Test extends WP_UnitTestCase {
 	use \Sensei_File_System_Helper;
 	/**
 	 * setup function
@@ -574,5 +575,28 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 		unlink( $index_file );
 		rmdir( $theme_directory );
+	}
+
+	public function testSenseiStartLesson_WhenLessonHadQuiz_UpdatesLessonStatus(): void {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+		$this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+		$tables_based_quiz_progress_repository = ( new Quiz_Progress_Repository_Factory( true ) )->create_tables_based_repository();
+
+		/* Act. */
+		\Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		/* Assert. */
+		$quiz_progress = $tables_based_quiz_progress_repository->has( $quiz_id, $user_id );
+		$this->assertTrue( $quiz_progress );
 	}
 }

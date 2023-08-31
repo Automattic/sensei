@@ -48,4 +48,10 @@ class Quiz_Progress_Repository_Factory {
 			$this->use_tables
 		);
 	}
+
+	public function create_tables_based_repository(): Tables_Based_Quiz_Progress_Repository {
+		global $wpdb;
+
+		return new Tables_Based_Quiz_Progress_Repository( $wpdb );
+	}
 }
