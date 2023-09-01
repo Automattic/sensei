@@ -513,19 +513,6 @@ class Sensei_Utils {
 			}
 		}
 
-		// If the lesson has a quiz, create a quiz progress record if it doesn't exist.
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id, 'publish' );
-		if ( ! empty( $quiz_id ) ) {
-			$tables_based_progress_feature = Sensei()->feature_flags->is_enabled( 'tables_based_progress' );
-			$quiz_progress_repository      = ( new Quiz_Progress_Repository_Factory( $tables_based_progress_feature ) )
-				->create_tables_based_repository();
-
-			$quiz_progress = $quiz_progress_repository->get( $quiz_id, $user_id );
-			if ( ! $quiz_progress ) {
-				$quiz_progress = $quiz_progress_repository->create( $quiz_id, $user_id );
-			}
-		}
-
 		if ( $complete && ! $lesson_progress->is_complete() ) {
 			$lesson_progress->complete();
 			Sensei()->lesson_progress_repository->save( $lesson_progress );

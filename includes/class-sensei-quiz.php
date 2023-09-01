@@ -1,4 +1,7 @@
 <?php
+
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -94,6 +97,12 @@ class Sensei_Quiz {
 		add_filter( 'post_class', [ $this, 'add_quiz_blocks_class' ] );
 
 		add_filter( 'sensei_quiz_enable_block_based_editor', [ $this, 'disable_block_editor_functions_when_question_types_are_registered' ], 2 ); // It has 2 as priority for better backward compabilitiby, since originally it was inside the method `is_block_based_editor_enabled`.
+
+		// Frontend-specific hooks.
+		if ( ! is_admin() ) {
+			// Create the quiz progress when the student visits the quiz page for the first time.
+			add_action( 'wp', array( $this, 'maybe_create_quiz_progress' ) );
+		}
 	}
 
 	/**
@@ -2316,9 +2325,45 @@ class Sensei_Quiz {
 			$html
 		);
 	}
+
+	/**
+	 * Create a quiz progress record for a student when they visit the quiz for the first time.
+	 *
+	 * @access private
+	 *
+	 * @param int|string $quiz_id The quiz ID.
+	 * @param int|string $user_id The user ID.
+	 */
+	public function maybe_create_quiz_progress( $quiz_id = '', $user_id = '' ): void {
+		if ( empty( $quiz_id ) || ! is_int( $quiz_id ) ) {
+			$quiz_id = get_the_ID();
+		}
+
+		if ( empty( $user_id ) || ! is_int( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $quiz_id ) || empty( $user_id ) || 'quiz' !== get_post_type( $quiz_id ) ) {
+			return;
+		}
+
+		$quiz_available = $this->is_quiz_available( $quiz_id, $user_id );
+		if ( ! $quiz_available ) {
+			return;
+		}
+
+		$tables_based_progress_feature = Sensei()->feature_flags->is_enabled( 'tables_based_progress' );
+		$quiz_progress_repository      = ( new Quiz_Progress_Repository_Factory( $tables_based_progress_feature ) )
+			->create_tables_based_repository();
+
+		$quiz_progress = $quiz_progress_repository->get( $quiz_id, $user_id );
+		if ( $quiz_progress ) {
+			return;
+		}
+
+		$quiz_progress = $quiz_progress_repository->create( $quiz_id, $user_id );
+	}
 }
-
-
 
 /**
  * Class WooThemes_Sensei_Quiz
