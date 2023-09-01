@@ -1849,4 +1849,61 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		// Ensure the quiz author is changed to main_teacher_id.
 		$this->assertEquals( $main_teacher_id, get_post_field( 'post_author', $quiz_id ) );
 	}
+
+	public function testMaybeCreateQuizProgress_QuizWasNotAvailable_DoesntCreateQuizProgress(): void {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		/* Act. */
+		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, $user_id );
+
+		/* Assert. */
+		$actual = Sensei()->quiz_progress_repository->has( $quiz_id, $user_id );
+		$this->assertFalse( $actual );
+	}
+
+	public function testMaybeCreateQuizProgress_QuizWasAvailable_DoesntCreateQuizProgress(): void {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		/* Act. */
+		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, $user_id );
+
+		/* Assert. */
+		$actual = Sensei()->quiz_progress_repository->has( $quiz_id, $user_id );
+		$this->assertTrue( $actual );
+	}
 }
