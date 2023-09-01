@@ -42,6 +42,7 @@ const files = [
 	'js/admin/reports.js',
 	'js/frontend/course-archive.js',
 	'js/frontend/course-video/video-blocks-extension.js',
+	'js/file-upload-question-type.js',
 	'js/grading-general.js',
 	'js/image-selectors.js',
 	'js/learners-bulk-actions.js',
