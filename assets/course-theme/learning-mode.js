@@ -1,12 +1,13 @@
 /**
  * Internal dependencies
  */
-import './scroll-direction';
 import './adminbar-layout';
 import './featured-video-size';
-import { toggleFocusMode } from './focus-mode';
-import { submitContactTeacher } from './contact-teacher';
+import './scroll-direction';
 import { initCompleteLessonTransition } from './complete-lesson-button';
+import { submitContactTeacher } from './contact-teacher';
+import { handleFileUpload } from './file-upload-question-type';
+import { toggleFocusMode } from './focus-mode';
 
 if ( ! window.sensei ) {
 	window.sensei = {};
@@ -23,3 +24,4 @@ window.sensei.courseTheme = { toggleFocusMode, toggleSidebar };
 window.sensei.submitContactTeacher = submitContactTeacher;
 
 initCompleteLessonTransition();
+handleFileUpload();
