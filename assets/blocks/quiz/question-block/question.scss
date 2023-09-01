@@ -9,6 +9,7 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 
 .wp-block-sensei-lms-question-description {
 	margin-bottom: 20px;
+
 	*:last-child {
 		margin-bottom: 0;
 	}
@@ -21,13 +22,15 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 
 	.sensei-lms-question-block__title {
 		flex-grow: 1;
-	    line-height:1;
+		line-height: 1;
+
 		textarea {
 			display: block;
 			padding: 0;
 			margin: 0;
 		}
 	}
+
 	.sensei-lms-question-block__header {
 		margin-bottom: clamp(1.25rem, 0.096rem + 3.846vw, 2.5rem);
 		padding: 0;
@@ -81,6 +84,7 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 			outline: none;
 		}
 	}
+
 	input[type="text"]:not(.gapfill-answer-gap) {
 		width: 100%;
 		@media (min-width: $break-small) {
@@ -92,9 +96,12 @@ $question-input-border-color: var(--wp--preset--color--foreground, var(--sensei-
 		border: 1px solid $question-input-border-color;
 	}
 
-	input[type=file]::file-selector-button {
-		border: 1px solid $question-input-border-color;
-		background-color: transparent;
+	.sensei-lms-question-block__file-upload {
+		display: inline-block;
+	}
+
+	.sensei-lms-question-block__file-input {
+		display: none;
 	}
 
 	.max_upload_size {
