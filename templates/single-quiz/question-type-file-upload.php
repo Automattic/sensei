@@ -59,7 +59,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 	<label for="file-upload-<?php echo esc_attr( $question_data['ID'] ); ?>" class="wp-block-button is-style-outline sensei-lms-question-block__file-upload">
 		<input id="file-upload-<?php echo esc_attr( $question_data['ID'] ); ?>" type="file" class="sensei-lms-question-block__file-input" name="file_upload_<?php echo esc_attr( $question_data['ID'] ); ?>" />
 		<span type="button" class="wp-block-button__link wp-element-button is-secondary sensei-course-theme__button sensei-lms-question-block__file-upload-button">
-			<?php echo esc_html( 'Choose File', 'sensei-lms' ); ?>
+			<?php echo esc_html__( 'Choose File', 'sensei-lms' ); ?>
 		</span>
 	</label>
 	<span class="sensei-lms-question-block__file-upload-name"></span>
