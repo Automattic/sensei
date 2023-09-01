@@ -2347,6 +2347,9 @@ class Sensei_Quiz {
 			return;
 		}
 
+		$quiz_id = (int) $quiz_id;
+		$user_id = (int) $user_id;
+
 		$quiz_available = $this->is_quiz_available( $quiz_id, $user_id );
 		if ( ! $quiz_available ) {
 			return;
