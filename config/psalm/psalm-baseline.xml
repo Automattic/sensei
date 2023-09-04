@@ -4,9 +4,6 @@
     <MissingReturnType occurrences="1">
       <code>sensei_load_learning_mode_styles_for_astra_theme</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/3rd-party/themes/course.php">
     <MissingReturnType occurrences="3">
@@ -19,9 +16,6 @@
       <code>$screen-&gt;id</code>
       <code>$screen-&gt;post_type</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/3rd-party/themes/divi.php">
     <MissingReturnType occurrences="5">
@@ -40,10 +34,9 @@
       <code>$screen-&gt;id</code>
       <code>$screen-&gt;post_type</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedFunction occurrences="3">
+    <UndefinedFunction occurrences="2">
       <code>'sensei_admin_load_learning_mode_style_for_course_theme'</code>
       <code>'sensei_load_learning_mode_style_for_course_theme'</code>
-      <code>Sensei()</code>
     </UndefinedFunction>
   </file>
   <file src="includes/3rd-party/woocommerce.php">
@@ -74,11 +67,6 @@
     <UndefinedConstant occurrences="1">
       <code>DAY_IN_SECONDS</code>
     </UndefinedConstant>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/class-sensei-editor-wizard.php">
     <DocblockTypeContradiction occurrences="2">
@@ -98,11 +86,6 @@
     <PossiblyFalseArgument occurrences="1">
       <code>$post_id</code>
     </PossiblyFalseArgument>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/class-sensei-exit-survey.php">
     <MissingReturnType occurrences="2">
@@ -112,12 +95,6 @@
     <PossiblyNullPropertyFetch occurrences="1">
       <code>$screen-&gt;id</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/class-sensei-extensions.php">
     <DocblockTypeContradiction occurrences="2">
@@ -170,15 +147,6 @@
     <RedundantCast occurrences="1">
       <code>(int) $notices_count</code>
     </RedundantCast>
-    <UndefinedConstant occurrences="1">
-      <code>SENSEI_LMS_VERSION</code>
-    </UndefinedConstant>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/class-sensei-learner-management.php">
     <ArgumentTypeCoercion occurrences="3">
@@ -235,17 +203,6 @@
     <UndefinedDocblockClass occurrences="1">
       <code>undefined</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="9">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/class-sensei-learners-admin-bulk-actions-controller.php">
     <MissingReturnType occurrences="10">
@@ -266,9 +223,6 @@
     <PossiblyNullPropertyFetch occurrences="1">
       <code>get_post_type_object( 'course' )-&gt;cap</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/class-sensei-learners-admin-bulk-actions-view.php">
     <ArgumentTypeCoercion occurrences="1"/>
@@ -400,9 +354,6 @@
     <TooManyArguments occurrences="1">
       <code>manual_filter_visible</code>
     </TooManyArguments>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/class-sensei-plugins-installation.php">
     <ArgumentTypeCoercion occurrences="1"/>
@@ -469,12 +420,6 @@
     <PossiblyInvalidPropertyFetch occurrences="1">
       <code>$page-&gt;ID</code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/class-sensei-setup-wizard.php">
     <DeprecatedMethod occurrences="3">
@@ -524,11 +469,6 @@
     <UndefinedDocblockClass occurrences="1">
       <code>Sensei_Setup</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/class-sensei-status.php">
     <DocblockTypeContradiction occurrences="2">
@@ -544,10 +484,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$final_template_path</code>
     </PossiblyNullArgument>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/class-sensei-tools.php">
     <DocblockTypeContradiction occurrences="2">
@@ -568,9 +504,6 @@
     <UndefinedConstant occurrences="1">
       <code>HOUR_IN_SECONDS</code>
     </UndefinedConstant>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedInterfaceMethod occurrences="1">
       <code>output</code>
     </UndefinedInterfaceMethod>
@@ -613,9 +546,6 @@
     <UndefinedClass occurrences="1">
       <code>\SenseiLMS_Licensing\License_Manager</code>
     </UndefinedClass>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedPropertyFetch occurrences="18">
       <code>$remote-&gt;author</code>
       <code>$remote-&gt;banners</code>
@@ -705,9 +635,6 @@
     <InvalidReturnType occurrences="1">
       <code>array</code>
     </InvalidReturnType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/home/tasks/class-sensei-home-tasks-provider.php">
     <MissingReturnType occurrences="3">
@@ -768,11 +695,6 @@
     <PossiblyNullPropertyFetch occurrences="1">
       <code>$course_progress-&gt;comment_approved</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedInterfaceMethod occurrences="1">
       <code>debug</code>
     </UndefinedInterfaceMethod>
@@ -781,34 +703,18 @@
     <MissingReturnType occurrences="1">
       <code>process</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/tools/class-sensei-tool-export.php">
     <MissingReturnType occurrences="2">
       <code>output</code>
       <code>process</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/tools/class-sensei-tool-import.php">
     <MissingReturnType occurrences="2">
       <code>output</code>
       <code>process</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/tools/class-sensei-tool-interactive-interface.php">
     <MissingReturnType occurrences="1">
@@ -830,10 +736,6 @@
     <MissingReturnType occurrences="1">
       <code>process</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/tools/class-sensei-tool-recalculate-course-enrolment.php">
     <MissingReturnType occurrences="2">
@@ -853,9 +755,6 @@
     <MissingReturnType occurrences="1">
       <code>process</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/tools/views/html-enrolment-debug-form.php">
     <InvalidScalarArgument occurrences="2">
@@ -879,17 +778,6 @@
     <InvalidScalarArgument occurrences="1">
       <code>$course_value</code>
     </InvalidScalarArgument>
-  </file>
-  <file src="includes/admin/views/html-admin-page-students-course.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/admin/views/html-admin-page-students-main.php">
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/views/html-admin-page-tools-header.php">
     <RedundantConditionGivenDocblockType occurrences="2">
@@ -939,12 +827,6 @@
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
-    <UndefinedFunction occurrences="4">
-      <code>as_next_scheduled_action( $job-&gt;get_name(), [ $job-&gt;get_args() ], self::ACTION_SCHEDULER_GROUP )</code>
-      <code>as_schedule_single_action( $time, $job-&gt;get_name(), [ $job-&gt;get_args() ], self::ACTION_SCHEDULER_GROUP )</code>
-      <code>as_unschedule_all_actions( $job-&gt;get_name(), [ $job-&gt;get_args() ], self::ACTION_SCHEDULER_GROUP )</code>
-      <code>as_unschedule_all_actions( null, null, self::ACTION_SCHEDULER_GROUP )</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/background-jobs/class-sensei-scheduler-interface.php">
     <MissingReturnType occurrences="3">
@@ -1011,12 +893,6 @@
       <code>register_block_patterns_category</code>
       <code>register_course_list_block_patterns</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UnresolvableInclude occurrences="1">
       <code>require __DIR__ . "/{$post_type}/{$block_pattern}.php"</code>
     </UnresolvableInclude>
@@ -1027,101 +903,21 @@
     </MissingReturnType>
   </file>
   <file src="includes/block-patterns/course/course-default.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UnresolvableInclude occurrences="1"/>
   </file>
   <file src="includes/block-patterns/course/life-coach.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UnresolvableInclude occurrences="1"/>
   </file>
   <file src="includes/block-patterns/course/long-sales-page.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UnresolvableInclude occurrences="1"/>
   </file>
-  <file src="includes/block-patterns/course/templates/life-coach.php">
-    <UndefinedFunction occurrences="8">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/block-patterns/course/templates/long-sales-page.php">
-    <UndefinedFunction occurrences="5">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/block-patterns/course/templates/v2/life-coach.php">
-    <UndefinedFunction occurrences="8">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/block-patterns/course/templates/v2/long-sales.php">
-    <UndefinedFunction occurrences="5">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/block-patterns/course/templates/v2/video-hero.php">
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/block-patterns/course/templates/video-hero.php">
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
   <file src="includes/block-patterns/course/video-hero.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UnresolvableInclude occurrences="1"/>
   </file>
   <file src="includes/block-patterns/lesson/templates/zoom-meeting.php">
     <PossiblyFalseArgument occurrences="1">
       <code>wp_date( 'F jS, Y' )</code>
     </PossiblyFalseArgument>
-  </file>
-  <file src="includes/block-patterns/page/templates/landing-page-grid.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/block-patterns/page/templates/landing-page-list.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-block-contact-teacher.php">
     <InvalidScalarArgument occurrences="1">
@@ -1131,42 +927,16 @@
       <code>add_notices</code>
       <code>register_block</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-block-helpers.php">
     <DocblockTypeContradiction occurrences="1">
       <code>! isset( $value )</code>
     </DocblockTypeContradiction>
   </file>
-  <file src="includes/blocks/class-sensei-block-quiz-category-question.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
   <file src="includes/blocks/class-sensei-block-quiz-progress.php">
     <PossiblyFalseArgument occurrences="1">
       <code>$quiz_id</code>
     </PossiblyFalseArgument>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/class-sensei-block-quiz-question.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/class-sensei-block-quiz.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-block-take-course.php">
     <MissingReturnType occurrences="1">
@@ -1178,11 +948,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$target</code>
     </PossiblyNullArgument>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-block-view-results.php">
     <MissingReturnType occurrences="1">
@@ -1220,10 +985,6 @@
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$post_types</code>
     </PossiblyNullPropertyAssignmentValue>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-blocks.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -1239,18 +1000,6 @@
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>is_string( $post )</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="10">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-complete-lesson-block.php">
     <PossiblyFalseArgument occurrences="1">
@@ -1259,10 +1008,6 @@
     <PossiblyInvalidPropertyFetch occurrences="1">
       <code>$lesson-&gt;ID</code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-conditional-content-block.php">
     <PossiblyFalseArgument occurrences="1">
@@ -1271,12 +1016,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$course_id</code>
     </PossiblyNullArgument>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-continue-course-block.php">
     <DocblockTypeContradiction occurrences="1">
@@ -1290,9 +1029,6 @@
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>$target_post_id</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-course-blocks.php">
     <MissingReturnType occurrences="3">
@@ -1309,15 +1045,6 @@
       <code>$progress</code>
       <code>$take_course</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="7">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-course-categories-block.php">
     <MissingReturnType occurrences="1">
@@ -1326,9 +1053,6 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$terms</code>
     </PossiblyInvalidArgument>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-course-outline-block.php">
     <MissingReturnType occurrences="4">
@@ -1343,32 +1067,16 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$block_content</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-course-outline-course-block.php">
     <MissingClosureParamType occurrences="1">
       <code>$block</code>
     </MissingClosureParamType>
-    <UndefinedFunction occurrences="5">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-course-outline-lesson-block.php">
     <PossiblyFalseArgument occurrences="1">
       <code>get_permalink( $lesson_id )</code>
     </PossiblyFalseArgument>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-course-outline-module-block.php">
     <MissingClosureParamType occurrences="1">
@@ -1377,20 +1085,11 @@
     <MissingClosureReturnType occurrences="1">
       <code>function( $block ) use ( $course_id ) {</code>
     </MissingClosureReturnType>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-course-overview-block.php">
     <PossiblyFalseArgument occurrences="1">
       <code>get_permalink( absint( $course_id ) )</code>
     </PossiblyFalseArgument>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-course-progress-block.php">
     <MissingReturnType occurrences="1">
@@ -1399,11 +1098,6 @@
     <PossiblyFalseArgument occurrences="1">
       <code>$course_id</code>
     </PossiblyFalseArgument>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-course-results-block.php">
     <MissingReturnType occurrences="3">
@@ -1420,20 +1114,11 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$block_content</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-featured-video-block.php">
     <MissingReturnType occurrences="1">
       <code>register_block</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-global-blocks.php">
     <MissingReturnType occurrences="3">
@@ -1441,12 +1126,6 @@
       <code>enqueue_block_editor_assets</code>
       <code>initialize_blocks</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-learner-courses-block.php">
     <NullArgument occurrences="2">
@@ -1457,9 +1136,6 @@
       <code>$attributes['options']['progressBarBorderRadius'] ?? null</code>
       <code>$attributes['options']['progressBarHeight'] ?? null</code>
     </PossiblyNullArgument>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-learner-messages-button-block.php">
     <MissingReturnType occurrences="2">
@@ -1469,19 +1145,11 @@
     <PossiblyFalseArgument occurrences="1">
       <code>get_post_type_archive_link( 'sensei_message' )</code>
     </PossiblyFalseArgument>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-lesson-actions-block.php">
     <PossiblyInvalidPropertyFetch occurrences="1">
       <code>$lesson-&gt;ID</code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-lesson-blocks.php">
     <MissingReturnType occurrences="4">
@@ -1493,15 +1161,6 @@
     <PossiblyNullPropertyAssignment occurrences="1">
       <code>$post_type_object</code>
     </PossiblyNullPropertyAssignment>
-    <UndefinedFunction occurrences="7">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-lesson-properties-block.php">
     <PossiblyFalseArgument occurrences="2">
@@ -1511,10 +1170,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$course_id</code>
     </PossiblyNullArgument>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-next-lesson-block.php">
     <PossiblyInvalidPropertyFetch occurrences="2">
@@ -1534,13 +1189,6 @@
       <code>enqueue_block_editor_assets</code>
       <code>initialize_blocks</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="5">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-quiz-blocks.php">
     <MissingReturnType occurrences="3">
@@ -1552,15 +1200,6 @@
       <code>$post_type_object</code>
       <code>$post_type_object</code>
     </PossiblyNullPropertyAssignment>
-    <UndefinedFunction occurrences="7">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/class-sensei-reset-lesson-block.php">
     <PossiblyFalseArgument occurrences="1">
@@ -1569,26 +1208,11 @@
     <PossiblyInvalidPropertyFetch occurrences="1">
       <code>$lesson-&gt;ID</code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/class-sensei-view-quiz-block.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/course-list/class-sensei-course-list-block.php">
     <RedundantConditionGivenDocblockType occurrences="2">
       <code>$parent_block</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/course-list/class-sensei-course-list-categories-filter.php">
     <InvalidArgument occurrences="1">
@@ -1608,10 +1232,6 @@
     <MissingReturnType occurrences="1">
       <code>register_block</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/course-theme/class-course-navigation.php">
     <MissingClosureParamType occurrences="3">
@@ -1641,24 +1261,6 @@
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>isset( $user_lesson_status-&gt;comment_approved )</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-course-progress-bar.php">
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-course-progress-counter.php">
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/course-theme/class-course-theme-blocks.php">
     <MissingReturnType occurrences="3">
@@ -1667,11 +1269,6 @@
       <code>initialize_blocks</code>
     </MissingReturnType>
   </file>
-  <file src="includes/blocks/course-theme/class-course-title.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
   <file src="includes/blocks/course-theme/class-exit-course.php">
     <PossiblyFalseArgument occurrences="1">
       <code>get_the_permalink( $course_id )</code>
@@ -1679,14 +1276,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$course_id</code>
     </PossiblyNullArgument>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-focus-mode.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/course-theme/class-lesson-actions.php">
     <PossiblyFalseArgument occurrences="1">
@@ -1695,45 +1284,14 @@
     <PossiblyNullArgument occurrences="1">
       <code>$lesson_id</code>
     </PossiblyNullArgument>
-    <UndefinedFunction occurrences="8">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>\Sensei()</code>
-      <code>\Sensei()</code>
-      <code>sensei_get_prev_next_lessons( $lesson_id )</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-lesson-module.php">
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-lesson-properties.php">
     <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
+      <code>sensei_get_prev_next_lessons( $lesson_id )</code>
     </UndefinedFunction>
   </file>
   <file src="includes/blocks/course-theme/class-lesson-video.php">
     <MissingClosureParamType occurrences="1">
       <code>$classes</code>
     </MissingClosureParamType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-notices.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-page-actions.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/blocks/course-theme/class-prev-next-lesson.php">
     <DocblockTypeContradiction occurrences="1">
@@ -1742,30 +1300,15 @@
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>$aria_label</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>\Sensei()</code>
-      <code>sensei_get_prev_next_lessons( $lesson_id )</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-quiz-actions.php">
     <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-quiz-back-to-lesson.php">
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
+      <code>sensei_get_prev_next_lessons( $lesson_id )</code>
     </UndefinedFunction>
   </file>
   <file src="includes/blocks/course-theme/class-quiz-content.php">
     <MissingReturnType occurrences="1">
       <code>render_questions_loop</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="8">
-      <code>Sensei()</code>
+    <UndefinedFunction occurrences="7">
       <code>sensei_get_the_question_id()</code>
       <code>sensei_get_the_question_id()</code>
       <code>sensei_get_the_question_number()</code>
@@ -1773,23 +1316,6 @@
       <code>sensei_setup_the_question()</code>
       <code>sensei_the_question_class()</code>
       <code>sensei_the_question_content()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-sidebar-toggle-button.php">
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-template-style.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/blocks/course-theme/class-ui.php">
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
     </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-admin.php">
@@ -1917,34 +1443,6 @@
     <TooManyArguments occurrences="1">
       <code>esc_html( sprintf( __( 'Please supply a %1$s ID.', 'sensei-lms' ) ), $post_type )</code>
     </TooManyArguments>
-    <UndefinedFunction occurrences="26">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-analysis-course-list-table.php">
     <ArgumentTypeCoercion occurrences="1"/>
@@ -2138,18 +1636,6 @@
     <UndefinedDocblockClass occurrences="1">
       <code>data</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="10">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-analysis-user-profile-list-table.php">
     <ArgumentTypeCoercion occurrences="1"/>
@@ -2236,13 +1722,6 @@
     <UndefinedDocblockClass occurrences="1">
       <code>undefined</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="5">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-assets.php">
     <MissingReturnType occurrences="9">
@@ -2268,10 +1747,6 @@
       <code>$deps</code>
       <code>$handle</code>
     </PossiblyNullArgument>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-autoloader.php">
     <MissingReturnType occurrences="2">
@@ -2313,9 +1788,6 @@
       <code>! $module_id || empty( $module_id ) || ! $module_exists_in_course</code>
       <code>$module_id || ! empty( $module_id )</code>
     </ParadoxicalCondition>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-course-results.php">
     <InvalidPropertyFetch occurrences="1">
@@ -2437,13 +1909,6 @@
     <RedundantCastGivenDocblockType occurrences="1">
       <code>(int) $existing_module-&gt;term_id</code>
     </RedundantCastGivenDocblockType>
-    <UndefinedFunction occurrences="5">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedMethod occurrences="3">
       <code>$create_result</code>
       <code>$lesson</code>
@@ -2727,76 +2192,8 @@
       <code>type</code>
       <code>type</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="70">
+    <UndefinedFunction occurrences="2">
       <code>'course_single_lessons'</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>\Sensei()</code>
-      <code>\Sensei()</code>
-      <code>\Sensei()</code>
       <code>sensei_start_course_form( $post-&gt;ID )</code>
     </UndefinedFunction>
     <UndefinedMagicPropertyFetch occurrences="2">
@@ -2820,14 +2217,6 @@
     </MissingReturnType>
   </file>
   <file src="includes/class-sensei-data-cleaner.php">
-    <InternalClass occurrences="1">
-      <code>Installer::instance()</code>
-    </InternalClass>
-    <InternalMethod occurrences="3">
-      <code>Installer::instance()</code>
-      <code>get_schema</code>
-      <code>get_tables</code>
-    </InternalMethod>
     <MissingReturnType occurrences="10">
       <code>cleanup_all</code>
       <code>cleanup_custom_post_types</code>
@@ -2846,9 +2235,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$role</code>
     </PossiblyNullArgument>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-db-query-learners.php">
     <MissingClosureParamType occurrences="1">
@@ -2911,30 +2297,6 @@
       <code>$_from_name</code>
       <code>$emails</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="22">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UnresolvableInclude occurrences="1">
       <code>include $template</code>
     </UnresolvableInclude>
@@ -3034,54 +2396,7 @@
     <UndefinedConstant occurrences="1">
       <code>WP_DEBUG</code>
     </UndefinedConstant>
-    <UndefinedFunction occurrences="48">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
+    <UndefinedFunction occurrences="1">
       <code>sensei_get_prev_next_lessons( $lesson_id )</code>
     </UndefinedFunction>
     <UndefinedMagicPropertyFetch occurrences="3">
@@ -3126,14 +2441,6 @@
       <code>WooThemes_Sensei_Grading_Main</code>
       <code>WooThemes_Sensei_Grading_Main</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="6">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-grading-user-quiz.php">
     <InvalidScalarArgument occurrences="12">
@@ -3156,16 +2463,6 @@
     <PossiblyFalseArgument occurrences="1">
       <code>$answer_media_url</code>
     </PossiblyFalseArgument>
-    <UndefinedFunction occurrences="8">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-grading.php">
     <DocblockTypeContradiction occurrences="1">
@@ -3255,26 +2552,6 @@
     <UndefinedDocblockClass occurrences="1">
       <code>undefined</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="18">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-groups-landing-page.php">
     <MissingReturnType occurrences="3">
@@ -3282,11 +2559,6 @@
       <code>display_student_groups_landing_page</code>
       <code>wrapper_container</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-guest-user.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -3333,11 +2605,6 @@
     <MissingReturnType occurrences="1">
       <code>enqueue_scripts</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-learner.php">
     <DocblockTypeContradiction occurrences="5">
@@ -3371,9 +2638,6 @@
       <code>$user-&gt;first_name</code>
       <code>$user-&gt;last_name</code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-lesson.php">
     <ArgumentTypeCoercion occurrences="4">
@@ -3697,63 +2961,7 @@
     <TypeDoesNotContainType occurrences="1">
       <code>! isset( $row_counter )</code>
     </TypeDoesNotContainType>
-    <UndefinedFunction occurrences="58">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
+    <UndefinedFunction occurrences="2">
       <code>sensei_complete_lesson_button()</code>
       <code>sensei_reset_lesson_button()</code>
     </UndefinedFunction>
@@ -3922,16 +3130,6 @@
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>! is_wp_error( $message_id )</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="8">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-modules.php">
     <ArgumentTypeCoercion occurrences="5">
@@ -4135,28 +3333,7 @@
       <code>$tax_name === 'category'</code>
       <code>empty( $modules )</code>
     </TypeDoesNotContainType>
-    <UndefinedFunction occurrences="22">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
+    <UndefinedFunction occurrences="1">
       <code>sensei_module_has_lessons()</code>
     </UndefinedFunction>
     <UndefinedMagicPropertyFetch occurrences="5">
@@ -4189,9 +3366,6 @@
     <MissingReturnType occurrences="1">
       <code>setup_block_notices</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-posttypes.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -4269,22 +3443,6 @@
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>$post instanceof WP_Post</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="14">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedMagicPropertyFetch occurrences="2">
       <code>get_queried_object()-&gt;ID</code>
       <code>get_queried_object()-&gt;post_type</code>
@@ -4446,42 +3604,6 @@
     <TypeDoesNotContainType occurrences="1">
       <code>$is_quiz_graded</code>
     </TypeDoesNotContainType>
-    <UndefinedFunction occurrences="34">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-quiz.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -4628,65 +3750,6 @@
       <code>DAY_IN_SECONDS</code>
       <code>DAY_IN_SECONDS</code>
     </UndefinedConstant>
-    <UndefinedFunction occurrences="57">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-settings-api.php">
     <DocblockTypeContradiction occurrences="1">
@@ -4746,18 +3809,6 @@
     <PossiblyUndefinedVariable occurrences="1">
       <code>$is_valid</code>
     </PossiblyUndefinedVariable>
-    <UndefinedFunction occurrences="10">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-settings.php">
     <DocblockTypeContradiction occurrences="2">
@@ -4799,15 +3850,6 @@
     <RedundantCondition occurrences="1">
       <code>empty( $template-&gt;title )</code>
     </RedundantCondition>
-    <UndefinedFunction occurrences="7">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>\Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-teacher.php">
     <ArgumentTypeCoercion occurrences="8">
@@ -4938,28 +3980,6 @@
     <UndefinedConstant occurrences="1">
       <code>ARRAY_A</code>
     </UndefinedConstant>
-    <UndefinedFunction occurrences="20">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedMethod occurrences="1">
       <code>$new_term</code>
     </UndefinedMethod>
@@ -5003,33 +4023,7 @@
       <code>$args &amp;&amp; is_array( $args )</code>
       <code>is_array( $args )</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="28">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
+    <UndefinedFunction occurrences="2">
       <code>get_sensei_footer()</code>
       <code>get_sensei_header()</code>
     </UndefinedFunction>
@@ -5094,16 +4088,6 @@
     <DocblockTypeContradiction occurrences="1">
       <code>is_object( $current_version )</code>
     </DocblockTypeContradiction>
-    <InternalClass occurrences="2">
-      <code>new Email_Seeder( new Email_Seeder_Data(), $repository )</code>
-      <code>new Email_Seeder_Data()</code>
-    </InternalClass>
-    <InternalMethod occurrences="4">
-      <code>create_all</code>
-      <code>has_emails</code>
-      <code>init</code>
-      <code>new Email_Seeder( new Email_Seeder_Data(), $repository )</code>
-    </InternalMethod>
     <InvalidReturnStatement occurrences="1">
       <code>$releases</code>
     </InvalidReturnStatement>
@@ -5139,18 +4123,6 @@
     <UndefinedConstant occurrences="1">
       <code>ARRAY_A</code>
     </UndefinedConstant>
-    <UndefinedFunction occurrences="10">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-usage-tracking-data.php">
     <DocblockTypeContradiction occurrences="1">
@@ -5201,15 +4173,6 @@
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>is_array( $courses )</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="7">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-usage-tracking.php">
     <MissingClosureParamType occurrences="2">
@@ -5228,14 +4191,6 @@
     <TypeDoesNotContainType occurrences="1">
       <code>false</code>
     </TypeDoesNotContainType>
-    <UndefinedFunction occurrences="6">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-utils.php">
     <ArgumentTypeCoercion occurrences="4">
@@ -5257,9 +4212,6 @@
       <code>false</code>
       <code>wp_date( get_option( 'date_format' ), $date-&gt;getTimestamp(), $timezone )</code>
     </FalsableReturnStatement>
-    <InternalClass occurrences="1">
-      <code>Course_Progress::STATUS_COMPLETE</code>
-    </InternalClass>
     <InvalidFalsableReturnType occurrences="1">
       <code>string</code>
     </InvalidFalsableReturnType>
@@ -5397,58 +4349,7 @@
     <UndefinedDocblockClass occurrences="1">
       <code>int|number</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="53">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
+    <UndefinedFunction occurrences="2">
       <code>WC()</code>
       <code>sensei_get_prev_next_lessons( $lesson_id )</code>
     </UndefinedFunction>
@@ -5463,10 +4364,6 @@
       <code>'none' === $format</code>
       <code>'text' === $format</code>
     </TypeDoesNotContainNull>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei-wp-kses.php">
     <MissingParamType occurrences="2">
@@ -5481,9 +4378,6 @@
       <code>get_source_html_tag_allowed_attributes</code>
       <code>get_video_html_tag_allowed_attributes</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/class-sensei.php">
     <DeprecatedMethod occurrences="2">
@@ -5494,42 +4388,6 @@
       <code>empty( $comment_counts )</code>
       <code>is_null( self::$_instance )</code>
     </DocblockTypeContradiction>
-    <InternalClass occurrences="11">
-      <code>Email_Customization::instance( $this-&gt;settings, $this-&gt;assets, $this-&gt;lesson_progress_repository )</code>
-      <code>new Answer_Repository_Factory( $use_tables )</code>
-      <code>new Course_Deleted_Handler( $this-&gt;course_progress_repository )</code>
-      <code>new Course_Progress_Repository_Factory( $use_tables )</code>
-      <code>new Grade_Repository_Factory( $use_tables )</code>
-      <code>new Lesson_Deleted_Handler( $this-&gt;lesson_progress_repository )</code>
-      <code>new Lesson_Progress_Repository_Factory( $use_tables )</code>
-      <code>new Quiz_Deleted_Handler( $this-&gt;quiz_progress_repository )</code>
-      <code>new Quiz_Progress_Repository_Factory( $use_tables )</code>
-      <code>new Submission_Repository_Factory( $use_tables )</code>
-      <code>new Updates_Factory()</code>
-    </InternalClass>
-    <InternalMethod occurrences="21">
-      <code>Email_Customization::instance( $this-&gt;settings, $this-&gt;assets, $this-&gt;lesson_progress_repository )</code>
-      <code>create</code>
-      <code>create</code>
-      <code>create</code>
-      <code>create</code>
-      <code>create</code>
-      <code>create</code>
-      <code>create</code>
-      <code>init</code>
-      <code>init</code>
-      <code>init</code>
-      <code>init</code>
-      <code>new Answer_Repository_Factory( $use_tables )</code>
-      <code>new Course_Deleted_Handler( $this-&gt;course_progress_repository )</code>
-      <code>new Course_Progress_Repository_Factory( $use_tables )</code>
-      <code>new Grade_Repository_Factory( $use_tables )</code>
-      <code>new Lesson_Deleted_Handler( $this-&gt;lesson_progress_repository )</code>
-      <code>new Lesson_Progress_Repository_Factory( $use_tables )</code>
-      <code>new Quiz_Deleted_Handler( $this-&gt;quiz_progress_repository )</code>
-      <code>new Quiz_Progress_Repository_Factory( $use_tables )</code>
-      <code>new Submission_Repository_Factory( $use_tables )</code>
-    </InternalMethod>
     <InvalidArgument occurrences="2">
       <code>$this-&gt;get_id()</code>
       <code>$this-&gt;get_id()</code>
@@ -5662,17 +4520,10 @@
     <TooManyArguments occurrences="1">
       <code>init</code>
     </TooManyArguments>
-    <UndefinedConstant occurrences="3">
+    <UndefinedConstant occurrences="2">
       <code>ARRAY_A</code>
-      <code>SENSEI_LMS_PLUGIN_FILE</code>
       <code>WP_LANG_DIR</code>
     </UndefinedConstant>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UnresolvableInclude occurrences="6">
       <code>require_once $this-&gt;plugin_path . 'widgets/class-sensei-' . $key . '-widget.php'</code>
       <code>require_once $this-&gt;resolve_path( 'includes/3rd-party/3rd-party.php' )</code>
@@ -5707,9 +4558,6 @@
       <code>WP_CLI</code>
       <code>WP_CLI</code>
     </UndefinedClass>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/course-theme/class-sensei-course-theme-compat.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -5754,18 +4602,6 @@
       <code>$post-&gt;ID</code>
       <code>$post-&gt;post_type</code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedFunction occurrences="10">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/course-theme/class-sensei-course-theme-lesson.php">
     <DocblockTypeContradiction occurrences="4">
@@ -5792,17 +4628,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$lesson_id</code>
     </PossiblyNullArgument>
-    <UndefinedFunction occurrences="9">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/course-theme/class-sensei-course-theme-option.php">
     <DocblockTypeContradiction occurrences="3">
@@ -5830,10 +4655,6 @@
     <PossiblyNullPropertyFetch occurrences="1">
       <code>get_post_type_object( 'lesson' )-&gt;cap</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/course-theme/class-sensei-course-theme-quiz.php">
     <DocblockTypeContradiction occurrences="2">
@@ -5856,10 +4677,6 @@
       <code>$lesson_id</code>
       <code>$lesson_id</code>
     </PossiblyNullArgument>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/course-theme/class-sensei-course-theme-styles.php">
     <InvalidArgument occurrences="1">
@@ -5899,11 +4716,6 @@
       <code>maybe_set_block_template_name</code>
       <code>update_legacy_template_naming</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>\Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/course-theme/class-sensei-course-theme-template.php">
     <PropertyNotSetInConstructor occurrences="8">
@@ -5950,9 +4762,6 @@
       <code>'wp_template' !== $template_type</code>
       <code>is_array( $template-&gt;scripts )</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedMethod occurrences="1">
       <code>$response</code>
     </UndefinedMethod>
@@ -5991,20 +4800,6 @@
     <UndefinedDocblockClass occurrences="1">
       <code>The</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="12">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/course-video/blocks/class-sensei-course-video-blocks-embed-extension.php">
     <DeprecatedMethod occurrences="2">
@@ -6095,10 +4890,6 @@
       <code>$post</code>
       <code>$post</code>
     </PossiblyInvalidArgument>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/data-port/class-sensei-data-port-job.php">
     <DocblockTypeContradiction occurrences="3">
@@ -6337,11 +5128,6 @@
       <code>admin_menu</code>
       <code>export_page</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/data-port/class-sensei-import-block-migrator.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -6437,22 +5223,11 @@
       <code>admin_menu</code>
       <code>import_page</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/data-port/export-tasks/class-sensei-export-courses.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$categories</code>
     </PossiblyInvalidArgument>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/data-port/export-tasks/class-sensei-export-lessons.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -6464,10 +5239,6 @@
     <PossiblyNullPropertyFetch occurrences="1">
       <code>get_term( $module_term_id )-&gt;name</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedPropertyFetch occurrences="1">
       <code>get_term( $module_term_id )-&gt;name</code>
     </UndefinedPropertyFetch>
@@ -6501,13 +5272,6 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$categories</code>
     </PossiblyInvalidArgument>
-    <UndefinedFunction occurrences="5">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/data-port/export-tasks/class-sensei-export-task.php">
     <MissingFile occurrences="1">
@@ -6573,10 +5337,6 @@
       <code>isset( $this-&gt;total_tasks )</code>
       <code>isset( $this-&gt;total_tasks )</code>
     </RedundantPropertyInitializationCheck>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedMethod occurrences="4">
       <code>add_line_warning</code>
       <code>add_line_warning</code>
@@ -6685,14 +5445,6 @@
       <code>Sensei_Import_Course_Model</code>
       <code>Sensei_Import_Course_Model</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="6">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedMethod occurrences="1">
       <code>get_associations_task</code>
     </UndefinedMethod>
@@ -6735,10 +5487,6 @@
       <code>Sensei_Import_Lesson_Model</code>
       <code>Sensei_Import_Lesson_Model</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedMethod occurrences="2">
       <code>get_associations_task</code>
       <code>translate_import_id</code>
@@ -6826,9 +5574,6 @@
       <code>Sensei_Import_Question_Model</code>
       <code>Sensei_Import_Question_Model</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/email-signup/class-sensei-email-signup-form.php">
     <DocblockTypeContradiction occurrences="2">
@@ -6841,10 +5586,6 @@
       <code>init</code>
       <code>output_modal</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/email-signup/template.php">
     <DeprecatedClass occurrences="3">
@@ -6864,10 +5605,6 @@
       <code>$template</code>
       <code>$user</code>
     </MissingPropertyType>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/emails/class-sensei-email-learner-graded-quiz.php">
     <InvalidGlobal occurrences="1">
@@ -6880,10 +5617,6 @@
       <code>$template</code>
       <code>$user</code>
     </MissingPropertyType>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/emails/class-sensei-email-new-message-reply.php">
     <InvalidGlobal occurrences="1">
@@ -6916,10 +5649,6 @@
       <code>$recipient</code>
       <code>$subject</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/emails/class-sensei-email-teacher-completed-course.php">
     <InvalidGlobal occurrences="1">
@@ -6933,10 +5662,6 @@
       <code>$teacher</code>
       <code>$template</code>
     </MissingPropertyType>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/emails/class-sensei-email-teacher-completed-lesson.php">
     <InvalidGlobal occurrences="1">
@@ -6950,10 +5675,6 @@
       <code>$teacher</code>
       <code>$template</code>
     </MissingPropertyType>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/emails/class-sensei-email-teacher-new-course-assignment.php">
     <MissingParamType occurrences="2">
@@ -6974,10 +5695,6 @@
     <PossiblyNullPropertyFetch occurrences="1">
       <code>$course-&gt;post_title</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/emails/class-sensei-email-teacher-new-message.php">
     <InvalidGlobal occurrences="1">
@@ -7002,10 +5719,6 @@
     <PossiblyNullPropertyFetch occurrences="1">
       <code>$this-&gt;message-&gt;post_content</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/emails/class-sensei-email-teacher-quiz-submitted.php">
     <InvalidGlobal occurrences="1">
@@ -7019,10 +5732,6 @@
       <code>$teacher</code>
       <code>$template</code>
     </MissingPropertyType>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/emails/class-sensei-email-teacher-started-course.php">
     <InvalidGlobal occurrences="1">
@@ -7036,10 +5745,6 @@
       <code>$teacher</code>
       <code>$template</code>
     </MissingPropertyType>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/enrolment/class-sensei-course-enrolment-manager.php">
     <DocblockTypeContradiction occurrences="2">
@@ -7291,10 +5996,6 @@
       <code>WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg</code>
       <code>WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/emails/class-email-customization.php">
     <DocblockTypeContradiction occurrences="2">
@@ -7307,21 +6008,6 @@
     <TooManyArguments occurrences="1">
       <code>new Email_Seeder( new Email_Seeder_Data(), $this-&gt;repository, $template_repository )</code>
     </TooManyArguments>
-    <UndefinedFunction occurrences="13">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/emails/class-email-generator.php">
     <InvalidPropertyAssignmentValue occurrences="1"/>
@@ -7466,10 +6152,6 @@
     <UndefinedDocblockClass occurrences="1">
       <code>Email_Template_Repository</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UnresolvableInclude occurrences="1">
       <code>require Sensei()-&gt;plugin_path() . 'templates/emails/block-email-template.php'</code>
     </UnresolvableInclude>
@@ -7565,19 +6247,11 @@
       <code>$course-&gt;ID</code>
       <code>$lesson-&gt;ID</code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedFunction occurrences="2">
-      <code>\Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/emails/generators/class-student-completes-course.php">
     <MissingReturnType occurrences="1">
       <code>student_completed_course_mail_to_teacher</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="2">
-      <code>\Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/emails/generators/class-student-completes-lesson.php">
     <MissingReturnType occurrences="1">
@@ -7587,9 +6261,6 @@
       <code>(int) $lesson_id</code>
       <code>(int) $student_id</code>
     </RedundantCast>
-    <UndefinedFunction occurrences="1">
-      <code>\Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/emails/generators/class-student-message-reply.php">
     <InvalidScalarArgument occurrences="1">
@@ -7604,9 +6275,6 @@
       <code>$teacher-&gt;display_name</code>
       <code>get_userdata( $recipient_id )-&gt;user_email</code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/emails/generators/class-student-sends-message.php">
     <PossiblyFalseArgument occurrences="1">
@@ -7652,10 +6320,6 @@
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>! is_wp_error( $grade )</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="2">
-      <code>\Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/emails/generators/class-teacher-message-reply.php">
     <InvalidScalarArgument occurrences="2">
@@ -7678,10 +6342,8 @@
       <code>init</code>
       <code>install</code>
     </MissingReturnType>
-    <UndefinedConstant occurrences="3">
+    <UndefinedConstant occurrences="1">
       <code>MINUTE_IN_SECONDS</code>
-      <code>SENSEI_LMS_PLUGIN_FILE</code>
-      <code>SENSEI_LMS_VERSION</code>
     </UndefinedConstant>
   </file>
   <file src="includes/internal/installer/class-migration.php">
@@ -7696,9 +6358,6 @@
     <MissingReturnType occurrences="1">
       <code>create_tables</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/installer/class-updates-factory.php">
     <PossiblyNullArgument occurrences="1">
@@ -7738,9 +6397,6 @@
       <code>$status_comment-&gt;comment_ID</code>
       <code>is_numeric( $final_grade ) ? $final_grade : null</code>
     </InvalidScalarArgument>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/quiz-submission/submission/repositories/class-tables-based-submission-repository.php">
     <PossiblyInvalidPropertyFetch occurrences="6">
@@ -7776,9 +6432,6 @@
     <PossiblyNullReference occurrences="1">
       <code>format</code>
     </PossiblyNullReference>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/student-progress/course-progress/repositories/class-tables-based-course-progress-repository.php">
     <PossiblyInvalidPropertyFetch occurrences="8">
@@ -7830,11 +6483,6 @@
     <UndefinedDocblockClass occurrences="1">
       <code>RuntimeException</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/student-progress/lesson-progress/repositories/class-tables-based-lesson-progress-repository.php">
     <PossiblyInvalidPropertyFetch occurrences="8">
@@ -7854,9 +6502,6 @@
     <RedundantCastGivenDocblockType occurrences="1">
       <code>(int) $this-&gt;wpdb-&gt;insert_id</code>
     </RedundantCastGivenDocblockType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/student-progress/quiz-progress/repositories/class-aggregate-quiz-progress-repository.php">
     <PossiblyNullReference occurrences="2">
@@ -7880,12 +6525,6 @@
     <PossiblyNullReference occurrences="1">
       <code>format</code>
     </PossiblyNullReference>
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/internal/student-progress/quiz-progress/repositories/class-tables-based-quiz-progress-repository.php">
     <PossiblyInvalidPropertyFetch occurrences="8">
@@ -7929,12 +6568,6 @@
     <MissingReturnType occurrences="2">
       <code>handle</code>
       <code>init</code>
-    </MissingReturnType>
-  </file>
-  <file src="includes/internal/student-progress/tools/class-migration-tool.php">
-    <MissingReturnType occurrences="2">
-      <code>init</code>
-      <code>process</code>
     </MissingReturnType>
   </file>
   <file src="includes/lib/usage-tracking/class-usage-tracking-base.php">
@@ -8029,8 +6662,7 @@
       <code>\MailPoet\API\MP\v1\APIException</code>
       <code>\MailPoet\API\MP\v1\APIException</code>
     </UndefinedClass>
-    <UndefinedConstant occurrences="2">
-      <code>SENSEI_LMS_PLUGIN_FILE</code>
+    <UndefinedConstant occurrences="1">
       <code>WP_PLUGIN_DIR</code>
     </UndefinedConstant>
     <UndefinedDocblockClass occurrences="2">
@@ -8092,9 +6724,6 @@
       <code>$global_wp_query_ref</code>
       <code>$global_wp_the_query_ref</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/reports/class-sensei-no-users-table-relationship.php">
     <DeprecatedClass occurrences="1">
@@ -8162,17 +6791,6 @@
       <code>Sensei_Reports_Overview_List_Table_Courses</code>
       <code>Sensei_Reports_Overview_List_Table_Courses</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="includes/reports/overview/list-table/class-sensei-reports-overview-list-table-factory.php">
-    <UndefinedFunction occurrences="4">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/reports/overview/list-table/class-sensei-reports-overview-list-table-lessons.php">
     <InvalidArgument occurrences="1">
@@ -8285,9 +6903,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Course_Structure_Controller</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-course-students-controller.php">
     <InvalidClass occurrences="2">
@@ -8342,10 +6957,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Course_Utils_Controller</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-data-port-controller.php">
     <DocblockTypeContradiction occurrences="2">
@@ -8471,10 +7082,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Import_Controller</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-internal.php">
     <MissingReturnType occurrences="1">
@@ -8537,13 +7144,6 @@
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>is_wp_error( $result )</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="5">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-lessons-controller.php">
     <MissingClosureParamType occurrences="3">
@@ -8570,10 +7170,6 @@
       <code>Sensei_REST_API_Lessons_Controller</code>
       <code>Sensei_REST_API_Lessons_Controller</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-messages-controller.php">
     <DocblockTypeContradiction occurrences="1">
@@ -8644,13 +7240,6 @@
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>! is_wp_error( $result )</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="5">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedPropertyFetch occurrences="2">
       <code>$question_category-&gt;name</code>
       <code>$question_category-&gt;term_id</code>
@@ -8726,10 +7315,6 @@
       <code>$current_user</code>
       <code>$current_user</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedPropertyAssignment occurrences="1">
       <code>$response-&gt;data</code>
     </UndefinedPropertyAssignment>
@@ -8772,12 +7357,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Send_Message_Controller</code>
     </PropertyNotSetInConstructor>
-    <UndefinedFunction occurrences="4">
-      <code>\Sensei()</code>
-      <code>\Sensei()</code>
-      <code>\Sensei()</code>
-      <code>\Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-setup-wizard-controller.php">
     <DeprecatedMethod occurrences="1">
@@ -8808,11 +7387,6 @@
     <UndefinedDocblockClass occurrences="1">
       <code>$this-&gt;setup_wizard-&gt;pages</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-theme-controller.php">
     <ArgumentTypeCoercion occurrences="1"/>
@@ -8872,21 +7446,6 @@
     <UndefinedClass occurrences="1">
       <code>Jetpack</code>
     </UndefinedClass>
-    <UndefinedFunction occurrences="13">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/shortcodes/class-sensei-shortcode-course-categories.php">
     <InvalidArgument occurrences="1">
@@ -9065,33 +7624,11 @@
     <UndefinedDocblockClass occurrences="1">
       <code>status</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="13">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/shortcodes/class-sensei-shortcode-user-messages.php">
     <InvalidReturnType occurrences="1">
       <code>mixed</code>
     </InvalidReturnType>
-    <UndefinedFunction occurrences="5">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/template-functions.php">
     <DocblockTypeContradiction occurrences="4">
@@ -9174,30 +7711,6 @@
       <code>html</code>
       <code>html</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="22">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedMagicPropertyFetch occurrences="5">
       <code>$item-&gt;ID</code>
       <code>$item-&gt;name</code>
@@ -9213,11 +7726,6 @@
       <code>setup_currently_active_theme</code>
       <code>setup_themes</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="3">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/theme-integrations/twentyeleven.php">
     <MissingReturnType occurrences="2">
@@ -9275,9 +7783,6 @@
     <ParamNameMismatch occurrences="1">
       <code>$post_to_copy</code>
     </ParamNameMismatch>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course-results.php">
     <MissingReturnType occurrences="2">
@@ -9334,9 +7839,6 @@
     <MissingReturnType occurrences="1">
       <code>handle_request</code>
     </MissingReturnType>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/unsupported-theme-handlers/class-sensei-unsupported-theme-handler-message-archive.php">
     <MissingReturnType occurrences="2">
@@ -9365,10 +7867,6 @@
       <code>$module-&gt;name</code>
       <code>$module-&gt;slug</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedFunction occurrences="2">
-      <code>Sensei()</code>
-      <code>Sensei()</code>
-    </UndefinedFunction>
     <UndefinedMagicPropertyFetch occurrences="2">
       <code>$module-&gt;name</code>
       <code>$module-&gt;slug</code>
@@ -9429,9 +7927,6 @@
     <RedundantCast occurrences="1">
       <code>(int) $offset</code>
     </RedundantCast>
-    <UndefinedFunction occurrences="1">
-      <code>Sensei()</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/update-tasks/class-sensei-update-remove-abandoned-multiple-question.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -9455,10 +7950,6 @@
     </MissingReturnType>
   </file>
   <file src="sensei-lms.php">
-    <InternalMethod occurrences="2">
-      <code>\Sensei\Internal\Installer\Installer::instance( SENSEI_LMS_VERSION )</code>
-      <code>init</code>
-    </InternalMethod>
     <InvalidGlobal occurrences="1">
       <code>global $woothemes_sensei;</code>
     </InvalidGlobal>
@@ -9469,9 +7960,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$plugin</code>
     </PossiblyNullArgument>
-    <UnresolvableInclude occurrences="1">
-      <code>require SENSEI_LMS_PLUGIN_PATH . 'vendor/autoload.php'</code>
-    </UnresolvableInclude>
   </file>
   <file src="vendor/php-stubs/wordpress-stubs/wordpress-stubs.php">
     <InvalidDocblock occurrences="2">

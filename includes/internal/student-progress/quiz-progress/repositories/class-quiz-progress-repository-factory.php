@@ -33,7 +33,7 @@ class Quiz_Progress_Repository_Factory {
 	}
 
 	/**
-	 * Creates a new quiz progress repository.
+	 * Create a new quiz progress repository.
 	 *
 	 * @internal
 	 *
@@ -47,5 +47,20 @@ class Quiz_Progress_Repository_Factory {
 			new Tables_Based_Quiz_Progress_Repository( $wpdb ),
 			$this->use_tables
 		);
+	}
+
+	/**
+	 * Create a new tables based quiz progress repository.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return Tables_Based_Quiz_Progress_Repository
+	 */
+	public function create_tables_based_repository(): Tables_Based_Quiz_Progress_Repository {
+		global $wpdb;
+
+		return new Tables_Based_Quiz_Progress_Repository( $wpdb );
 	}
 }
