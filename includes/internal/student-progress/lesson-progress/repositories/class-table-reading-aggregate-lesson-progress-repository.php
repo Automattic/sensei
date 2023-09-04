@@ -69,7 +69,7 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 				$lesson_progress->get_user_id()
 			);
 		}
-		$comments_based_progress = new Lesson_Progress(
+		$updated_comments_based_progress = new Lesson_Progress(
 			$comments_based_progress->get_id(),
 			$lesson_progress->get_lesson_id(),
 			$lesson_progress->get_user_id(),
@@ -79,7 +79,7 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 			$lesson_progress->get_created_at(),
 			$lesson_progress->get_updated_at()
 		);
-		$this->comments_based_repository->save( $comments_based_progress );
+		$this->comments_based_repository->save( $updated_comments_based_progress );
 	}
 
 	public function delete(Lesson_Progress $lesson_progress): void {

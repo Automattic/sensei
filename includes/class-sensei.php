@@ -608,7 +608,7 @@ class Sensei_Main {
 		$read_from_tables                 = apply_filters( 'sensei_student_progress_read_from_tables', false );
 		$this->course_progress_repository = ( new Course_Progress_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
 		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
-		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory( $tables_enabled ) )->create();
+		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
 
 		$this->action_scheduler = new Action_Scheduler();
 		// Student progress migration.

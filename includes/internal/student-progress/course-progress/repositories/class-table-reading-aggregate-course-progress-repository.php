@@ -114,7 +114,10 @@ class Table_Reading_Aggregate_Course_Progress_Repository implements Course_Progr
 	 */
 	public function delete(Course_Progress $course_progress): void {
 		$this->tables_based_repository->delete( $course_progress );
-		$this->comments_based_repository->delete( $course_progress );
+		$comments_based_progress = $this->comments_based_repository->get( $course_progress->get_course_id(), $course_progress->get_user_id() );
+		if ( $comments_based_progress ) {
+			$this->comments_based_repository->delete( $comments_based_progress );
+		}
 	}
 
 	/**
