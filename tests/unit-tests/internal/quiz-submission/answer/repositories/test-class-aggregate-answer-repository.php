@@ -22,14 +22,18 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$submission = $this->createMock( Submission::class );
 		$submission->method( 'get_quiz_id' )->willReturn( 1 );
 		$submission->method( 'get_user_id' )->willReturn( 2 );
-		$tables_based_submission            = $this->createMock( Submission::class );
-		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
-		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
+		$submission->method( 'get_final_grade' )->willReturn( 3.0 );
+
+		$tables_based_submission = $this->createMock( Submission::class );
+		$comments_based          = $this->createMock( Comments_Based_Answer_Repository::class );
+		$tables_based            = $this->createMock( Tables_Based_Answer_Repository::class );
+
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_submission_repository
-			->method( 'get' )
-			->with( 1, 2 )
+			->method( 'get_or_create' )
+			->with( 1, 2, 3.0 )
 			->willReturn( $tables_based_submission );
+
 		$repository = new Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
@@ -70,15 +74,16 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_UseTablesOff_DoesntCallTablesBasedRepository(): void {
 		/* Arrange. */
-		$submission                         = $this->createMock( Submission::class );
-		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
-		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
+		$submission     = $this->createMock( Submission::class );
+		$comments_based = $this->createMock( Comments_Based_Answer_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Answer_Repository::class );
+
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$repository                         = new Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
 			$tables_based_submission_repository,
-			true
+			false
 		);
 
 		/* Expect & Act. */
@@ -142,7 +147,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 			$comments_based,
 			$tables_based,
 			$tables_based_submission_repository,
-			true
+			false
 		);
 
 		/* Expect & Act. */
@@ -158,14 +163,18 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$submission = $this->createMock( Submission::class );
 		$submission->method( 'get_quiz_id' )->willReturn( 1 );
 		$submission->method( 'get_user_id' )->willReturn( 2 );
-		$tables_based_submission            = $this->createMock( Submission::class );
-		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
-		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
+		$submission->method( 'get_final_grade' )->willReturn( 3.0 );
+
+		$tables_based_submission = $this->createMock( Submission::class );
+		$comments_based          = $this->createMock( Comments_Based_Answer_Repository::class );
+		$tables_based            = $this->createMock( Tables_Based_Answer_Repository::class );
+
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
 		$tables_based_submission_repository
-			->method( 'get' )
-			->with( 1, 2 )
+			->method( 'get_or_create' )
+			->with( 1, 2.0 )
 			->willReturn( $tables_based_submission );
+
 		$repository = new Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
