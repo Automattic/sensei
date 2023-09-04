@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-Sensei()->assets->enqueue( 'sensei-file-upload-question-type', 'js/file-upload-question-type.js', [],true );
+Sensei()->assets->enqueue( 'sensei-file-upload-question-type', 'js/file-upload-question-type.js', [], true );
 
 /**
  * Get the question data with the current quiz id
