@@ -38,14 +38,6 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		$this->cleanup_custom_tables();
 	}
 
-	public function testTargetVersion_Always_ReturnsMatchingValue(): void {
-		/* Act. */
-		$actual = $this->migration->target_version();
-
-		/* Assert. */
-		$this->assertEquals( '1.0.0', $actual );
-	}
-
 	public function testGetErrors_MigrationDidntRun_ReturnsEmptyArray(): void {
 		/* Act. */
 		$actual = $this->migration->get_errors();

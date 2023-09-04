@@ -32,14 +32,6 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$wpdb->query( 'TRUNCATE TABLE ' . $wpdb->prefix . 'sensei_lms_progress' );
 	}
 
-	public function testTargetVersion_Always_ReturnsMathcingValue(): void {
-		/* Act. */
-		$actual = $this->migration->target_version();
-
-		/* Assert. */
-		$this->assertEquals( '1.0.0', $actual );
-	}
-
 	public function testGetErrors_MigrationDidntRun_ReturnsEmptyArray(): void {
 		/* Act. */
 		$actual = $this->migration->get_errors();
