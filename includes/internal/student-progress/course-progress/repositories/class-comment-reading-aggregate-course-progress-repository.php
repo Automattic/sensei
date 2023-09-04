@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 4.16.1
  */
-class Aggregate_Course_Progress_Repository implements Course_Progress_Repository_Interface {
+class Comment_Reading_Aggregate_Course_Progress_Repository implements Course_Progress_Repository_Interface {
 	/**
 	 * Comments based course progress repository implementation.
 	 *

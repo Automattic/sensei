@@ -62,12 +62,12 @@ class Course_Progress_Repository_Factory {
 		}
 
 		if ( ! $this->read_tables ) {
-			return new Aggregate_Course_Progress_Repository( $comments_based, $tables_based );
+			return new Comment_Reading_Aggregate_Course_Progress_Repository( $comments_based, $tables_based );
 		}
 
-		return new Aggregate_Table_Reading_Course_Progress_Repository(
+		return new Table_Reading_Aggregate_Course_Progress_Repository(
 			$comments_based,
-			$tables_based,
+			$tables_based
 		);
 	}
 }
