@@ -14,7 +14,7 @@ class Migration_Job_Test extends \WP_UnitTestCase {
 	public function testRun_Always_RunsMigration() {
 		/* Arrange. */
 		$migration = $this->createMock( Student_Progress_Migration::class );
-		$job       = new Migration_Job( $migration );
+		$job       = new Migration_Job( 'student_progress_migration', $migration );
 
 		/* Expect & Act. */
 		$migration
@@ -30,7 +30,7 @@ class Migration_Job_Test extends \WP_UnitTestCase {
 		$migration = $this->createMock( Student_Progress_Migration::class );
 		$migration->method( 'run' )->willReturn( 0 );
 
-		$job = new Migration_Job( $migration );
+		$job = new Migration_Job( 'student_progress_migration', $migration );
 		$job->run();
 
 		/* Act. */
@@ -45,7 +45,7 @@ class Migration_Job_Test extends \WP_UnitTestCase {
 		$migration = $this->createMock( Student_Progress_Migration::class );
 		$migration->method( 'run' )->willReturn( 1 );
 
-		$job = new Migration_Job( $migration );
+		$job = new Migration_Job( 'student_progress_migration', $migration );
 		$job->run();
 
 		/* Act. */
@@ -65,7 +65,7 @@ class Migration_Job_Test extends \WP_UnitTestCase {
 		$migration = $this->createMock( Student_Progress_Migration::class );
 		$migration->method( 'get_errors' )->willReturn( $errors );
 
-		$job = new Migration_Job( $migration );
+		$job = new Migration_Job( 'student_progress_migration', $migration );
 
 		/* Act. */
 		$actual = $job->get_errors();
@@ -88,7 +88,7 @@ class Migration_Job_Test extends \WP_UnitTestCase {
 	public function testGetName_Always_ReturnsMatchingValue() {
 		/* Arrange. */
 		$migration = new Student_Progress_Migration();
-		$job       = new Migration_Job( $migration );
+		$job       = new Migration_Job( 'student_progress_migration', $migration );
 
 		/* Act. */
 		$actual = $job->get_name();

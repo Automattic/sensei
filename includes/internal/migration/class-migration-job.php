@@ -7,8 +7,6 @@
 
 namespace Sensei\Internal\Migration;
 
-use ReflectionClass;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -21,6 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 class Migration_Job {
+	/**
+	 * Job name.
+	 *
+	 * @var string
+	 */
+	private $name;
 
 	/**
 	 * Migration.
@@ -37,22 +41,14 @@ class Migration_Job {
 	private $is_complete = false;
 
 	/**
-	 * Job name.
-	 *
-	 * @var string
-	 */
-	private $name;
-
-	/**
 	 * Migration_Job constructor.
 	 *
+	 * @param string             $name The job name. Should be hook friendly (lowercase, underscored).
 	 * @param Migration_Abstract $migration Migration.
 	 */
-	public function __construct( Migration_Abstract $migration ) {
+	public function __construct( string $name, Migration_Abstract $migration ) {
+		$this->name      = $name;
 		$this->migration = $migration;
-		$this->name      = strtolower(
-			( new ReflectionClass( $migration ) )->getShortName()
-		);
 	}
 
 	/**
@@ -94,7 +90,7 @@ class Migration_Job {
 	}
 
 	/**
-	 * Get job name.
+	 * Get the job name.
 	 *
 	 * @internal
 	 *

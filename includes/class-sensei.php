@@ -595,8 +595,12 @@ class Sensei_Main {
 		// Student progress migration.
 		if ( $use_tables ) {
 			$this->migration_scheduler = new Migration_Job_Scheduler( $this->action_scheduler );
-			$this->migration_scheduler->register_job( new Migration_Job( new Student_Progress_Migration() ) );
-			$this->migration_scheduler->register_job( new Migration_Job( new Quiz_Migration() ) );
+			$this->migration_scheduler->register_job(
+				new Migration_Job( 'student_progress_migration', new Student_Progress_Migration() )
+			);
+			$this->migration_scheduler->register_job(
+				new Migration_Job( 'quiz_migration', new Quiz_Migration() )
+			);
 			( new Migration_Tool( \Sensei_Tools::instance(), $this->migration_scheduler ) )->init();
 		}
 
