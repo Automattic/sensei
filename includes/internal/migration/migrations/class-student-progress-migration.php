@@ -55,17 +55,6 @@ class Student_Progress_Migration extends Migration_Abstract {
 	}
 
 	/**
-	 * The targeted plugin version.
-	 *
-	 * @since 4.16.1
-	 *
-	 * @return string
-	 */
-	public function target_version(): string {
-		return '1.0.0';
-	}
-
-	/**
 	 * Run the migration.
 	 *
 	 * @since 4.16.1

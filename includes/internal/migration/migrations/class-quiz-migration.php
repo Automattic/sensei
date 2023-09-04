@@ -59,17 +59,6 @@ class Quiz_Migration extends Migration_Abstract {
 	}
 
 	/**
-	 * The targeted plugin version.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @return string
-	 */
-	public function target_version(): string {
-		return '1.0.0';
-	}
-
-	/**
 	 * Run the migration.
 	 *
 	 * @since $$next-version$$

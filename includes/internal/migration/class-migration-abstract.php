@@ -22,15 +22,6 @@ abstract class Migration_Abstract {
 	private $errors = array();
 
 	/**
-	 * The targeted plugin version.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @return string
-	 */
-	abstract public function target_version(): string;
-
-	/**
 	 * Run the migration.
 	 *
 	 * @since $$next-version$$
