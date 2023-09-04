@@ -6,9 +6,8 @@
  * @since 4.16.1
  */
 
-namespace Sensei\Internal\Student_Progress\Tools;
+namespace Sensei\Internal\Migration;
 
-use Sensei\Internal\Student_Progress\Jobs\Migration_Job_Scheduler;
 use Sensei_Tools;
 
 if ( ! defined( 'ABSPATH' ) ) {

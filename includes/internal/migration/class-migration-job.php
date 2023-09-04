@@ -5,9 +5,7 @@
  * @package sensei
  */
 
-namespace Sensei\Internal\Student_Progress\Jobs;
-
-use Sensei\Internal\Installer\Migrations\Student_Progress_Migration;
+namespace Sensei\Internal\Migration;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -21,11 +19,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 class Migration_Job {
+	/**
+	 * Job name.
+	 *
+	 * @var string
+	 */
+	private $name;
 
 	/**
-	 * Progress migration.
+	 * Migration.
 	 *
-	 * @var Student_Progress_Migration
+	 * @var Migration_Abstract
 	 */
 	private $migration;
 
@@ -37,20 +41,14 @@ class Migration_Job {
 	private $is_complete = false;
 
 	/**
-	 * Job name.
-	 *
-	 * @var string
-	 */
-	private $job_name;
-
-	/**
 	 * Migration_Job constructor.
 	 *
-	 * @param Student_Progress_Migration $migration Progress migration.
+	 * @param string             $name The job name. Should be hook friendly (lowercase, underscored).
+	 * @param Migration_Abstract $migration Migration.
 	 */
-	public function __construct( Student_Progress_Migration $migration ) {
+	public function __construct( string $name, Migration_Abstract $migration ) {
+		$this->name      = $name;
 		$this->migration = $migration;
-		$this->job_name  = 'progress_migration';
 	}
 
 	/**
@@ -92,7 +90,7 @@ class Migration_Job {
 	}
 
 	/**
-	 * Get job name.
+	 * Get the job name.
 	 *
 	 * @internal
 	 *
@@ -100,8 +98,8 @@ class Migration_Job {
 	 *
 	 * @return string
 	 */
-	public function get_job_name(): string {
-		return $this->job_name;
+	public function get_name(): string {
+		return $this->name;
 	}
 }
 

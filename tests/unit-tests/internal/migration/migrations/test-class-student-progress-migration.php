@@ -1,21 +1,21 @@
 <?php
 
-namespace SenseiTest\Internal\Installer\Migrations;
+namespace SenseiTest\Internal\Migration\Migrations;
 
-use Sensei\Internal\Installer\Migrations\Student_Progress_Migration;
+use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 use Sensei_Factory;
 
 /**
  * Class Student_Progress_Migration_Test
  *
- * @covers \Sensei\Internal\Installer\Migrations\Student_Progress_Migration
+ * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration
  */
 class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 
 	/**
 	 * Migration instance.
 	 *
-	 * @var \Sensei\Internal\Installer\Migrations\Student_Progress_Migration
+	 * @var \Sensei\Internal\Migration\Migrations\Student_Progress_Migration
 	 */
 	private $migration;
 
@@ -30,14 +30,6 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( 'TRUNCATE TABLE ' . $wpdb->prefix . 'sensei_lms_progress' );
-	}
-
-	public function testTargetVersion_Always_ReturnsMathcingValue(): void {
-		/* Act. */
-		$actual = $this->migration->target_version();
-
-		/* Assert. */
-		$this->assertEquals( '1.0.0', $actual );
 	}
 
 	public function testGetErrors_MigrationDidntRun_ReturnsEmptyArray(): void {
