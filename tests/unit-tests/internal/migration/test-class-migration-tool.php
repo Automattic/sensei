@@ -8,7 +8,7 @@ use Sensei_Tools;
 /**
  * Class Migration_Tool_Test
  *
- * @covers \Sensei\Internal\Student_Progress\Tools\Migration_Tool
+ * @covers \Sensei\Internal\Migration\Migration_Tool
  */
 class Migration_Tool_Test extends \WP_UnitTestCase {
 	public function testInit_Always_AddsFilter(): void {
