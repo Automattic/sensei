@@ -64,7 +64,7 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 			$lesson_progress->get_user_id()
 		);
 		if ( ! $comments_based_progress) {
-			$this->comments_based_repository->create(
+			$comments_based_progress = $this->comments_based_repository->create(
 				$lesson_progress->get_lesson_id(),
 				$lesson_progress->get_user_id()
 			);

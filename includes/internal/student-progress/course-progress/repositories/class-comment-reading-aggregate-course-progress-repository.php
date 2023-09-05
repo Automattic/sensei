@@ -110,12 +110,12 @@ class Comment_Reading_Aggregate_Course_Progress_Repository implements Course_Pro
 		}
 
 		$started_at = null;
-		if ( $course_progress->get_started_at() ) {
+		if ( ! is_null( $course_progress->get_started_at() ) ) {
 			$started_at = new \DateTimeImmutable( '@' . $course_progress->get_started_at()->getTimestamp() );
 		}
 
 		$completed_at = null;
-		if ( $course_progress->get_completed_at() ) {
+		if ( ! is_null( $course_progress->get_completed_at() ) ) {
 			$completed_at = new \DateTimeImmutable( '@' . $course_progress->get_completed_at()->getTimestamp() );
 		}
 

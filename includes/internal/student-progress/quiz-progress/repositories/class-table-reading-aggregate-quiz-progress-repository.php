@@ -90,12 +90,15 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 */
 	public function save(Quiz_Progress $quiz_progress): void {
 		$this->tables_based_repository->save( $quiz_progress );
-		$coments_based_quiz_progress = $this->comments_based_repository->get( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
-		if ( ! $coments_based_quiz_progress ) {
-			$this->comments_based_repository->create( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
+		$comments_based_quiz_progress = $this->comments_based_repository->get( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
+		if ( ! $comments_based_quiz_progress ) {
+			$comments_based_quiz_progress = $this->comments_based_repository->create(
+				$quiz_progress->get_quiz_id(),
+				$quiz_progress->get_user_id()
+			);
 		}
 		$updated_comments_based_quiz_progress = new Quiz_Progress(
-			$coments_based_quiz_progress->get_id(),
+			$comments_based_quiz_progress->get_id(),
 			$quiz_progress->get_quiz_id(),
 			$quiz_progress->get_user_id(),
 			$quiz_progress->get_status(),
