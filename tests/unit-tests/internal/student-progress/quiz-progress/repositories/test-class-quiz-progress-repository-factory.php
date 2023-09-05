@@ -33,12 +33,12 @@ class Quiz_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 
 	public function providerCreate_WhenCalled_ReturnsQuizProgressRepository(): array {
 		return array(
-			'tables enabled, readig disabled' => array(
+			'tables enabled, readig disabled'   => array(
 				true,
 				false,
 				Comment_Reading_Aggregate_Quiz_Progress_Repository::class,
 			),
-			'tables enabled, reading enabled' => array(
+			'tables enabled, reading enabled'   => array(
 				true,
 				true,
 				Table_Reading_Aggregate_Quiz_Progress_Repository::class,
@@ -48,7 +48,7 @@ class Quiz_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 				false,
 				Comments_Based_Quiz_Progress_Repository::class,
 			),
-			'tables disabled, reading enabled' => array(
+			'tables disabled, reading enabled'  => array(
 				false,
 				true,
 				Comments_Based_Quiz_Progress_Repository::class,
@@ -58,7 +58,7 @@ class Quiz_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 
 	public function testCreateTablesBasedRepository_Always_ReturnsTablesBasedRepository(): void {
 		/* Arrange. */
-		$factory = new Quiz_Progress_Repository_Factory( true );
+		$factory = new Quiz_Progress_Repository_Factory( true, true );
 
 		/* Act. */
 		$actual_repository = $factory->create_tables_based_repository();
