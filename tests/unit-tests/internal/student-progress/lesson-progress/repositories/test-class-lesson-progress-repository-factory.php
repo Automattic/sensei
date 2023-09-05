@@ -31,17 +31,17 @@ class Lesson_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 
 	public function providerCreate_WhenCalled_ReturnsLessonProgressRepository(): array {
 		return [
-			'tables feature enabled, read enabled'  => array(
+			'tables feature enabled, read enabled'   => array(
 				true,
 				true,
 				Table_Reading_Aggregate_Lesson_Progress_Repository::class,
 			),
-			'tables feature enabled, read disabled' => array(
+			'tables feature enabled, read disabled'  => array(
 				true,
 				false,
 				Comment_Reading_Aggregate_Lesson_Progress_Repository::class,
 			),
-			'tables feature disabled, read enabled' => array(
+			'tables feature disabled, read enabled'  => array(
 				false,
 				true,
 				Comments_Based_Lesson_Progress_Repository::class,

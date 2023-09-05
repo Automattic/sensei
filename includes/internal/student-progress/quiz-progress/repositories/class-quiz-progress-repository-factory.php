@@ -34,6 +34,7 @@ class Quiz_Progress_Repository_Factory {
 	 * Quiz_Progress_Repository_Factory constructor.
 	 *
 	 * @param bool $tables_enabled Is tables based progress enabled.
+	 * @param bool $read_tables Is reading from tables enabled.
 	 */
 	public function __construct( bool $tables_enabled, bool $read_tables ) {
 		$this->tables_enabled = $tables_enabled;

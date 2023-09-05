@@ -44,26 +44,52 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 		$this->tables_based_repository   = $tables_based_repository;
 	}
 
-	public function create(int $lesson_id, int $user_id): Lesson_Progress {
-		$this->comments_based_repository->create($lesson_id, $user_id);
-		return $this->tables_based_repository->create($lesson_id, $user_id);
+	/**
+	 * Creates a new lesson progress.
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id   The user ID.
+	 * @return Lesson_Progress The lesson progress.
+	 */
+	public function create( int $lesson_id, int $user_id ): Lesson_Progress {
+		$this->comments_based_repository->create( $lesson_id, $user_id );
+		return $this->tables_based_repository->create( $lesson_id, $user_id );
 	}
 
-	public function get(int $lesson_id, int $user_id): ?Lesson_Progress {
-		return $this->tables_based_repository->get($lesson_id, $user_id);
+	/**
+	 * Get a lesson progress.
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id   The user ID.
+	 * @return Lesson_Progress|null The lesson progress.
+	 */
+	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress {
+		return $this->tables_based_repository->get( $lesson_id, $user_id );
 	}
 
-	public function has(int $lesson_id, int $user_id): bool {
-		return $this->tables_based_repository->has($lesson_id, $user_id);
+	/**
+	 * Checks if a lesson progress exists.
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id   The user ID.
+	 * @return bool Whether the lesson progress exists.
+	 */
+	public function has( int $lesson_id, int $user_id ): bool {
+		return $this->tables_based_repository->has( $lesson_id, $user_id );
 	}
 
-	public function save(Lesson_Progress $lesson_progress): void {
-		$this->tables_based_repository->save($lesson_progress);
+	/**
+	 * Save a lesson progress.
+	 *
+	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 */
+	public function save( Lesson_Progress $lesson_progress ): void {
+		$this->tables_based_repository->save( $lesson_progress );
 		$comments_based_progress = $this->comments_based_repository->get(
 			$lesson_progress->get_lesson_id(),
 			$lesson_progress->get_user_id()
 		);
-		if ( ! $comments_based_progress) {
+		if ( ! $comments_based_progress ) {
 			$comments_based_progress = $this->comments_based_repository->create(
 				$lesson_progress->get_lesson_id(),
 				$lesson_progress->get_user_id()
@@ -82,28 +108,50 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 		$this->comments_based_repository->save( $updated_comments_based_progress );
 	}
 
-	public function delete(Lesson_Progress $lesson_progress): void {
-		$this->tables_based_repository->delete($lesson_progress);
+	/**
+	 * Deletes a lesson progress.
+	 *
+	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 */
+	public function delete( Lesson_Progress $lesson_progress ): void {
+		$this->tables_based_repository->delete( $lesson_progress );
 		$comments_based_progress = $this->comments_based_repository->get(
 			$lesson_progress->get_lesson_id(),
 			$lesson_progress->get_user_id()
 		);
-		if ($comments_based_progress) {
-			$this->comments_based_repository->delete($comments_based_progress);
+		if ( $comments_based_progress ) {
+			$this->comments_based_repository->delete( $comments_based_progress );
 		}
 	}
 
-	public function delete_for_lesson(int $lesson_id): void {
-		$this->comments_based_repository->delete_for_lesson($lesson_id);
-		$this->tables_based_repository->delete_for_lesson($lesson_id);
+	/**
+	 * Deletes all lesson progress for a given lesson.
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 */
+	public function delete_for_lesson( int $lesson_id ): void {
+		$this->comments_based_repository->delete_for_lesson( $lesson_id );
+		$this->tables_based_repository->delete_for_lesson( $lesson_id );
 	}
 
-	public function delete_for_user(int $user_id): void {
-		$this->comments_based_repository->delete_for_user($user_id);
-		$this->tables_based_repository->delete_for_user($user_id);
+	/**
+	 * Deletes all lesson progress for a given user.
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function delete_for_user( int $user_id ): void {
+		$this->comments_based_repository->delete_for_user( $user_id );
+		$this->tables_based_repository->delete_for_user( $user_id );
 	}
 
-	public function count(int $course_id, int $user_id): int {
-		return $this->tables_based_repository->count($course_id, $user_id);
+	/**
+	 * Count the number of lesson progress records in a given course for a given user.
+	 *
+	 * @param int $course_id The course ID.
+	 * @param int $user_id   The user ID.
+	 * @return int
+	 */
+	public function count( int $course_id, int $user_id ): int {
+		return $this->tables_based_repository->count( $course_id, $user_id );
 	}
 }

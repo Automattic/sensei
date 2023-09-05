@@ -44,7 +44,6 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 	 *
 	 * @param Comments_Based_Quiz_Progress_Repository $comments_based_repository Comments based quiz progress repository implementation.
 	 * @param Tables_Based_Quiz_Progress_Repository   $tables_based_repository  Tables based quiz progress repository implementation.
-	 * @param bool                                    $use_tables  The flag if the tables based implementation is available for use.
 	 */
 	public function __construct( Comments_Based_Quiz_Progress_Repository $comments_based_repository, Tables_Based_Quiz_Progress_Repository $tables_based_repository ) {
 		$this->comments_based_repository = $comments_based_repository;

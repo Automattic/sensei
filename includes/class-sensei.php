@@ -602,7 +602,7 @@ class Sensei_Main {
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
 		// Student progress repositories.
-		$tables_enabled                   = $this->feature_flags->is_enabled( 'tables_based_progress' );
+		$tables_enabled = $this->feature_flags->is_enabled( 'tables_based_progress' );
 		/**
 		 * Filter whether to read student progress from tables.
 		 *

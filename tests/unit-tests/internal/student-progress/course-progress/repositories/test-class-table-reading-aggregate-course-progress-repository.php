@@ -155,7 +155,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository_Test extends \WP_UnitTe
 		$progress->method( 'get_course_id' )->willReturn( 1 );
 		$progress->method( 'get_user_id' )->willReturn( 2 );
 
-		$commets_based_progress = $this->createMock( Course_Progress::class );
+		$commets_based_progress    = $this->createMock( Course_Progress::class );
 		$comments_based_repository = $this->createMock( Comments_Based_Course_Progress_Repository::class );
 		$comments_based_repository
 			->method( 'get' )
@@ -236,7 +236,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository_Test extends \WP_UnitTe
 
 	public function testSave_Always_CallsTablesBasedRepository(): void {
 		/* Arrange. */
-		$date_mock = new \DateTimeImmutable( '2020-01-01' );
+		$date_mock               = new \DateTimeImmutable( '2020-01-01' );
 		$tables_based_progress   = new Course_Progress( 3, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
 		$comments_based_progress = new Course_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
 
@@ -246,7 +246,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository_Test extends \WP_UnitTe
 			->with( 1, 2 )
 			->willReturn( $comments_based_progress );
 
-		$tables_based_repository   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+		$tables_based_repository = $this->createMock( Tables_Based_Course_Progress_Repository::class );
 
 		$repository = new Table_Reading_Aggregate_Course_Progress_Repository( $comments_based_repository, $tables_based_repository );
 
@@ -260,7 +260,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository_Test extends \WP_UnitTe
 
 	public function testSave_CommentsBasedProgressNotFound_CreatesCommentsBasedProgress(): void {
 		/* Arrange. */
-		$date_mock = new \DateTimeImmutable( '2020-01-01' );
+		$date_mock               = new \DateTimeImmutable( '2020-01-01' );
 		$tables_based_progress   = new Course_Progress( 3, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
 		$comments_based_progress = new Course_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
 
@@ -270,7 +270,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository_Test extends \WP_UnitTe
 			->with( 1, 2 )
 			->willReturn( null );
 
-		$tables_based_repository   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+		$tables_based_repository = $this->createMock( Tables_Based_Course_Progress_Repository::class );
 
 		$repository = new Table_Reading_Aggregate_Course_Progress_Repository( $comments_based_repository, $tables_based_repository );
 
@@ -286,7 +286,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository_Test extends \WP_UnitTe
 
 	public function testSave_CommentsBasedProgressFound_DoesntCreateCommentsBasedProgress(): void {
 		/* Arrange. */
-		$date_mock = new \DateTimeImmutable( '2020-01-01' );
+		$date_mock               = new \DateTimeImmutable( '2020-01-01' );
 		$tables_based_progress   = new Course_Progress( 3, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
 		$comments_based_progress = new Course_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
 
@@ -296,7 +296,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository_Test extends \WP_UnitTe
 			->with( 1, 2 )
 			->willReturn( $comments_based_progress );
 
-		$tables_based_repository   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+		$tables_based_repository = $this->createMock( Tables_Based_Course_Progress_Repository::class );
 
 		$repository = new Table_Reading_Aggregate_Course_Progress_Repository( $comments_based_repository, $tables_based_repository );
 
@@ -311,7 +311,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository_Test extends \WP_UnitTe
 
 	public function testSave_Always_SavesToCommentsBasedRepository(): void {
 		/* Arrange. */
-		$date_mock = new \DateTimeImmutable( '2020-01-01' );
+		$date_mock               = new \DateTimeImmutable( '2020-01-01' );
 		$tables_based_progress   = new Course_Progress( 3, 1, 2, 'complete', $date_mock, $date_mock, $date_mock, $date_mock );
 		$comments_based_progress = new Course_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
 
@@ -321,7 +321,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository_Test extends \WP_UnitTe
 			->with( 1, 2 )
 			->willReturn( $comments_based_progress );
 
-		$tables_based_repository   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+		$tables_based_repository = $this->createMock( Tables_Based_Course_Progress_Repository::class );
 
 		$repository = new Table_Reading_Aggregate_Course_Progress_Repository( $comments_based_repository, $tables_based_repository );
 

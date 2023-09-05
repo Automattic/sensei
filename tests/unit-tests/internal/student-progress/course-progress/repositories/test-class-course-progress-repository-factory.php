@@ -32,12 +32,12 @@ class Course_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 
 	public function providerCreate_WhenCalled_ReturnsCourseProgressRepository(): array {
 		return array(
-			'tables enabled, reading disabled' => array(
+			'tables enabled, reading disabled'  => array(
 				true,
 				false,
 				Comment_Reading_Aggregate_Course_Progress_Repository::class,
 			),
-			'tables enabled, reading enabled' => array(
+			'tables enabled, reading enabled'   => array(
 				true,
 				true,
 				Table_Reading_Aggregate_Course_Progress_Repository::class,
@@ -47,7 +47,7 @@ class Course_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 				false,
 				Comments_Based_Course_Progress_Repository::class,
 			),
-			'tables disabled, reading enabled' => array(
+			'tables disabled, reading enabled'  => array(
 				false,
 				true,
 				Comments_Based_Course_Progress_Repository::class,
