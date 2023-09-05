@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Quiz_Submission\Grade\Repositories;
 
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
@@ -56,6 +57,7 @@ class Grade_Repository_Factory {
 			new Tables_Based_Grade_Repository( $wpdb ),
 			new Tables_Based_Submission_Repository( $wpdb ),
 			new Tables_Based_Answer_Repository( $wpdb ),
+			new Comments_Based_Answer_Repository(),
 			$this->use_tables
 		);
 	}

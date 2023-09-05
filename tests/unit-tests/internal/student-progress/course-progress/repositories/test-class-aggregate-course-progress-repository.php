@@ -91,18 +91,12 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->has( 1, 2 );
 	}
 
-	/**
-	 * Test that the repository will always use comments based repository while saving.
-	 *
-	 * @param bool $use_tables
-	 * @dataProvider providerSave_Always_CallsCommentsBasedRepository
-	 */
-	public function testSave_Always_CallsCommentsBasedRepository( bool $use_tables ): void {
+	public function testSave_WhenDidntUseTables_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
 		$progress       = $this->create_course_progress();
 		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
-		$repository     = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, $use_tables );
+		$repository     = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, false );
 
 		/* Expect & Act. */
 		$comments_based
@@ -112,11 +106,22 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
-	public function providerSave_Always_CallsCommentsBasedRepository(): array {
-		return [
-			'uses tables'         => [ true ],
-			'does not use tables' => [ false ],
-		];
+	public function testSave_WhenTablesUsed_CallsCommentsBasedRepository(): void {
+		/* Arrange. */
+		$progress       = $this->create_course_progress();
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+
+		$tables_based = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+		$tables_based->method( 'get' )->willReturn( $progress );
+
+		$repository = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, true );
+
+		/* Expect & Act. */
+		$comments_based
+			->expects( $this->once() )
+			->method( 'save' )
+			->with( $progress );
+		$repository->save( $progress );
 	}
 
 	public function testSave_UseTablesOnAndProgressFound_CallsTablesBasedRepository(): void {
@@ -178,9 +183,10 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
-	public function testSave_UseTablesOnAndProgressNotFound_DoesntCallTablesBasedRepository(): void {
+	public function testSave_UseTablesOnAndProgressNotFound_CreatesTablesBasedProgress(): void {
 		/* Arrange. */
-		$progress = $this->create_course_progress();
+		$progress         = $this->create_course_progress();
+		$created_progress = $this->create_course_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
@@ -193,8 +199,10 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		/* Expect & Act. */
 		$tables_based
-			->expects( $this->never() )
-			->method( 'save' );
+			->expects( $this->once() )
+			->method( 'create' )
+			->with( 2, 3 )
+			->willReturn( $created_progress );
 		$repository->save( $progress );
 	}
 

@@ -113,28 +113,34 @@ class Aggregate_Course_Progress_Repository implements Course_Progress_Repository
 		$this->comments_based_repository->save( $course_progress );
 		if ( $this->use_tables ) {
 			$tables_based_progress = $this->tables_based_repository->get( $course_progress->get_course_id(), $course_progress->get_user_id() );
-			if ( $tables_based_progress ) {
-				$started_at = null;
-				if ( $course_progress->get_started_at() ) {
-					$started_at = new \DateTimeImmutable( '@' . $course_progress->get_started_at()->getTimestamp() );
-				}
-				$completed_at = null;
-				if ( $course_progress->get_completed_at() ) {
-					$completed_at = new \DateTimeImmutable( '@' . $course_progress->get_completed_at()->getTimestamp() );
-				}
-
-				$progress_to_save = new Course_Progress(
-					$tables_based_progress->get_id(),
-					$tables_based_progress->get_course_id(),
-					$tables_based_progress->get_user_id(),
-					$course_progress->get_status(),
-					$started_at,
-					$completed_at,
-					$tables_based_progress->get_created_at(),
-					$tables_based_progress->get_updated_at()
+			if ( ! $tables_based_progress ) {
+				$tables_based_progress = $this->tables_based_repository->create(
+					$course_progress->get_course_id(),
+					$course_progress->get_user_id()
 				);
-				$this->tables_based_repository->save( $progress_to_save );
 			}
+
+			$started_at = null;
+			if ( $course_progress->get_started_at() ) {
+				$started_at = new \DateTimeImmutable( '@' . $course_progress->get_started_at()->getTimestamp() );
+			}
+
+			$completed_at = null;
+			if ( $course_progress->get_completed_at() ) {
+				$completed_at = new \DateTimeImmutable( '@' . $course_progress->get_completed_at()->getTimestamp() );
+			}
+
+			$progress_to_save = new Course_Progress(
+				$tables_based_progress->get_id(),
+				$tables_based_progress->get_course_id(),
+				$tables_based_progress->get_user_id(),
+				$course_progress->get_status(),
+				$started_at,
+				$completed_at,
+				$tables_based_progress->get_created_at(),
+				$tables_based_progress->get_updated_at()
+			);
+			$this->tables_based_repository->save( $progress_to_save );
 		}
 	}
 
