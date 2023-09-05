@@ -611,9 +611,12 @@ class Sensei_Main {
 		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
 		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
 
-		$this->action_scheduler = new Action_Scheduler();
+		if ( class_exists( 'ActionScheduler_Versions' ) ) {
+			$this->action_scheduler = new Action_Scheduler();
+		}
+
 		// Student progress migration.
-		if ( $tables_enabled ) {
+		if ( $tables_enabled && $this->action_scheduler ) {
 			$this->migration_scheduler = new Migration_Job_Scheduler( $this->action_scheduler );
 			$this->migration_scheduler->register_job(
 				new Migration_Job( 'student_progress_migration', new Student_Progress_Migration() )
