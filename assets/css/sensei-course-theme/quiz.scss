@@ -1,10 +1,17 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '../../shared/blocks/progress-bar/progress-bar';
 
+$vertical-spacing: 60px;
+$vertical-spacing-desktop: 80px;
+
 .sensei-course-theme__quiz {
 	&__main-content {
-		margin-bottom: 100px !important;
+		margin-bottom: $vertical-spacing;
 		padding-top: clamp(2.5rem, 1.346rem + 3.846vw, 3.75rem);
+
+		@media (min-width: $break-medium) {
+			margin-bottom: $vertical-spacing-desktop;
+		}
 
 		.wp-block-post-title {
 			margin-top: clamp(1.688rem, 0.534rem + 3.846vw, 2.938rem);
@@ -44,11 +51,16 @@
 		justify-content: flex-end;
 		margin: 0 auto;
 		max-width: var(--content-size);
-		padding: 24px;
 
 		&__wrapper {
-			margin: 0 !important;
 			display: block;
+			margin: 0 !important;
+			/* Using padding instead of margin as some themes have a non-white body background color. */
+			padding-bottom: $vertical-spacing;
+
+			@media (min-width: $break-medium) {
+				padding-bottom: $vertical-spacing-desktop;
+			}
 		}
 
 		.wp-block-group__inner-container {
