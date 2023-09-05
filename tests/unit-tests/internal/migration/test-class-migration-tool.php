@@ -1,8 +1,9 @@
 <?php
-namespace SenseiTest\Internal\Student_Progress\Tools;
+namespace SenseiTest\Internal\Migration;
 
-use Sensei\Internal\Student_Progress\Jobs\Migration_Job_Scheduler;
-use Sensei\Internal\Student_Progress\Tools\Migration_Tool;
+use Sensei\Internal\Migration\Migration_Job_Scheduler;
+use Sensei\Internal\Migration\Migration_Tool;
+use Sensei_Tools;
 
 /**
  * Class Migration_Tool_Test
@@ -12,7 +13,7 @@ use Sensei\Internal\Student_Progress\Tools\Migration_Tool;
 class Migration_Tool_Test extends \WP_UnitTestCase {
 	public function testInit_Always_AddsFilter(): void {
 		/* Arrange. */
-		$tools     = $this->createMock( \Sensei_Tools::class );
+		$tools     = $this->createMock( Sensei_Tools::class );
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$tool      = new Migration_Tool( $tools, $scheduler );
 
@@ -36,7 +37,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 
 	public function testRegisterTool_Always_AddsItselfToTools(): void {
 		/* Arrange. */
-		$tools     = $this->createMock( \Sensei_Tools::class );
+		$tools     = $this->createMock( Sensei_Tools::class );
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$tool      = new Migration_Tool( $tools, $scheduler );
 
@@ -50,7 +51,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 
 	public function testGetId_Always_ReturnsMatchingValue(): void {
 		/* Arrange. */
-		$tools     = $this->createMock( \Sensei_Tools::class );
+		$tools     = $this->createMock( Sensei_Tools::class );
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$tool      = new Migration_Tool( $tools, $scheduler );
 
@@ -63,7 +64,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 
 	public function testGetName_Always_ReturnsMatchingValue(): void {
 		/* Arrange. */
-		$tools     = $this->createMock( \Sensei_Tools::class );
+		$tools     = $this->createMock( Sensei_Tools::class );
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$tool      = new Migration_Tool( $tools, $scheduler );
 
@@ -76,7 +77,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 
 	public function testGetDescription_WhenMigrationNotStarted_ReturnsStatusNone(): void {
 		/* Arrange. */
-		$tools     = $this->createMock( \Sensei_Tools::class );
+		$tools     = $this->createMock( Sensei_Tools::class );
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$tool      = new Migration_Tool( $tools, $scheduler );
 
@@ -89,7 +90,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 
 	public function testGetDescription_WhenMigrationStarted_ReturnsStatusInProgress(): void {
 		/* Arrange. */
-		$tools     = $this->createMock( \Sensei_Tools::class );
+		$tools     = $this->createMock( Sensei_Tools::class );
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$tool      = new Migration_Tool( $tools, $scheduler );
 
@@ -104,7 +105,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 
 	public function testGetDescription_WhenMigrationComplete_ReturnsStatusCompleted(): void {
 		/* Arrange. */
-		$tools     = $this->createMock( \Sensei_Tools::class );
+		$tools     = $this->createMock( Sensei_Tools::class );
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$tool      = new Migration_Tool( $tools, $scheduler );
 
@@ -120,7 +121,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 
 	public function testGetDescription_WhenHasErrors_ReturnsErrors(): void {
 		/* Arrange. */
-		$tools     = $this->createMock( \Sensei_Tools::class );
+		$tools     = $this->createMock( Sensei_Tools::class );
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$tool      = new Migration_Tool( $tools, $scheduler );
 
@@ -135,7 +136,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 
 	public function testProcess_Always_SchedulesTheMigrationJob(): void {
 		/* Arrange. */
-		$tools     = $this->createMock( \Sensei_Tools::class );
+		$tools     = $this->createMock( Sensei_Tools::class );
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$tool      = new Migration_Tool( $tools, $scheduler );
 
@@ -149,7 +150,7 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 
 	public function testProcess_Always_AddsUserMessage(): void {
 		/* Arrange. */
-		$tools     = $this->createMock( \Sensei_Tools::class );
+		$tools     = $this->createMock( Sensei_Tools::class );
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$tool      = new Migration_Tool( $tools, $scheduler );
 
@@ -164,8 +165,8 @@ class Migration_Tool_Test extends \WP_UnitTestCase {
 
 	public function testIsAvailable_Always_ReturnsTrue(): void {
 		/* Arrange. */
-		$tools     = $this->createMock( \Sensei_Tools::class );
-		$scheduler = $this->createMock( \Sensei\Internal\Student_Progress\Jobs\Migration_Job_Scheduler::class );
+		$tools     = $this->createMock( Sensei_Tools::class );
+		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$tool      = new Migration_Tool( $tools, $scheduler );
 
 		/* Act. */

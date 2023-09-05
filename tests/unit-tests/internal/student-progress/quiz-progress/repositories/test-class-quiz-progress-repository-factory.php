@@ -6,6 +6,7 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comment_Reading_
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Table_Reading_Aggregate_Quiz_Progress_Repository;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
 
 /**
  * Tests for the Quiz_Progress_Repository_Factory class.
@@ -53,5 +54,16 @@ class Quiz_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 				Comments_Based_Quiz_Progress_Repository::class,
 			),
 		);
+	}
+
+	public function testCreateTablesBasedRepository_Always_ReturnsTablesBasedRepository(): void {
+		/* Arrange. */
+		$factory = new Quiz_Progress_Repository_Factory( true );
+
+		/* Act. */
+		$actual_repository = $factory->create_tables_based_repository();
+
+		/* Assert. */
+		$this->assertInstanceOf( Tables_Based_Quiz_Progress_Repository::class, $actual_repository );
 	}
 }

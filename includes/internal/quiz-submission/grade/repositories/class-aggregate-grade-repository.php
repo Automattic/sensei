@@ -187,7 +187,6 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 		$this->comments_based_repository->save_many( $submission, $grades );
 
 		if ( $this->use_tables ) {
-			$grades_to_save          = [];
 			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
 			$tables_based_grades     = $this->get_or_create_tables_based_grades_for_save(
 				$submission,
@@ -195,8 +194,9 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 				$grades
 			);
 
+			$grades_to_save = [];
 			foreach ( $grades as $grade ) {
-				$tables_based_grade = $tables_based_grades[ $grade->get_id() ] ?? null;
+				$tables_based_grade = $tables_based_grades[ $grade->get_question_id() ] ?? null;
 				if ( null === $tables_based_grade ) {
 					continue;
 				}
@@ -246,15 +246,15 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 				}
 			);
 			if ( count( $filtered ) === 1 ) {
-				$grade                      = array_shift( $filtered );
-				$result[ $grade->get_id() ] = $grade;
+				$grade                               = array_shift( $filtered );
+				$result[ $grade->get_question_id() ] = $grade;
 			} else {
 				$answer = $tables_based_answers[ $comments_based_grade->get_question_id() ] ?? null;
 				if ( ! $answer ) {
 					continue;
 				}
 
-				$result[ $comments_based_grade->get_id() ] = $this->tables_based_repository->create(
+				$result[ $comments_based_grade->get_question_id() ] = $this->tables_based_repository->create(
 					$tables_based_submission,
 					$answer->get_id(),
 					$comments_based_grade->get_question_id(),
