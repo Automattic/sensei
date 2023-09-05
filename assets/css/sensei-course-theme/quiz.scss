@@ -37,26 +37,14 @@
 	}
 
 	&__footer {
-		padding: 24px;
-
-		margin: 0 auto;
-		max-width: 1200px;
-
-		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		gap: 24px;
-
-	}
-
-	&__footer {
 		display: flex;
 		flex-direction: row;
+		gap: 24px;
 		justify-content: flex-end;
-		align-items: center;
-		max-width: var(--content-size);
 		margin: 0 auto;
-		padding: 24px 0;
+		max-width: var(--content-size);
+		padding: 24px;
 
 		&__wrapper {
 			margin: 0 !important;
