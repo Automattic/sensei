@@ -1,15 +1,17 @@
-/**
- * Variables
- */
-$tablet-breakpoint: 768px;
-
 @import '~@wordpress/base-styles/breakpoints';
 @import '../../shared/blocks/progress-bar/progress-bar';
 
+$vertical-spacing: 60px;
+$vertical-spacing-desktop: 80px;
+
 .sensei-course-theme__quiz {
 	&__main-content {
-		margin-bottom: 100px !important;
+		margin-bottom: $vertical-spacing;
 		padding-top: clamp(2.5rem, 1.346rem + 3.846vw, 3.75rem);
+
+		@media (min-width: $break-medium) {
+			margin-bottom: $vertical-spacing-desktop;
+		}
 
 		.wp-block-post-title {
 			margin-top: clamp(1.688rem, 0.534rem + 3.846vw, 2.938rem);
@@ -41,31 +43,24 @@ $tablet-breakpoint: 768px;
 		}
 	}
 
-	&__header, &__footer {
-		padding: 24px;
-
-		margin: 0 auto;
-		max-width: 1200px;
-
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 24px;
-
-	}
-
 	&__footer {
+		align-items: center;
 		display: flex;
 		flex-direction: row;
+		gap: 24px;
 		justify-content: flex-end;
-		align-items: center;
-		max-width: var(--content-size);
 		margin: 0 auto;
-		padding: 24px 0;
+		max-width: var(--content-size);
 
 		&__wrapper {
-			margin: 0 !important;
 			display: block;
+			margin: 0 !important;
+			/* Using padding instead of margin as some themes have a non-white body background color. */
+			padding-bottom: $vertical-spacing;
+
+			@media (min-width: $break-medium) {
+				padding-bottom: $vertical-spacing-desktop;
+			}
 		}
 
 		.wp-block-group__inner-container {
@@ -170,7 +165,7 @@ $tablet-breakpoint: 768px;
 	}
 }
 
-@media only screen and (min-width: $tablet-breakpoint) {
+@media only screen and (min-width: $break-medium) {
 	.sensei-course-theme__quiz {
 		&__footer {
 			&__wrapper {
