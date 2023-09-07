@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import apiFetch from '@wordpress/api-fetch';
 import { render } from '@wordpress/element';
 
 /**
@@ -53,6 +54,7 @@ import { ExitSurveyForm } from './form';
 		constructor( { href } ) {
 			this.href = href;
 		}
+
 		/**
 		 * Create and open a modal with an exit survey form.
 		 *
@@ -83,10 +85,22 @@ import { ExitSurveyForm } from './form';
 		 */
 		submitExitSurvey = async ( data ) => {
 			const body = new window.FormData();
+
 			body.append( 'action', 'exit_survey' );
 			body.append( '_wpnonce', window.sensei_exit_survey?.nonce );
 			body.append( 'reason', data.reason );
 			body.append( 'details', data.details );
+
+			// Get the name of the active theme.
+			try {
+				const result = await apiFetch( {
+					path: '/wp/v2/themes?status=active',
+				} );
+
+				if ( result.length > 0 ) {
+					body.append( 'theme', result[ 0 ].name?.raw || '' );
+				}
+			} catch ( e ) {}
 
 			await window.fetch( window.ajaxurl, {
 				method: 'POST',
