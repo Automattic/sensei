@@ -20,6 +20,7 @@ import { ExitSurveyForm } from './form';
 
 		const deactivateLinks = [
 			getDeactivateLinkElement( 'sensei-lms' ),
+			getDeactivateLinkElement( 'sensei-pro-wc-paid-courses' ),
 			getDeactivateLinkElement( 'sensei-with-woocommerce-paid-courses' ),
 			getDeactivateLinkElement(
 				'woocommerce-com-woocommerce-paid-courses'
