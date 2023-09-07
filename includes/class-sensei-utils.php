@@ -2665,6 +2665,7 @@ class Sensei_Utils {
 				'src'             => array(),
 				'frameborder'     => array(),
 				'allowfullscreen' => array(),
+				'allow'           => array(),
 			),
 			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes(),
 		);

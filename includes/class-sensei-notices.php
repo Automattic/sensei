@@ -63,6 +63,7 @@ class Sensei_Notices {
 					'src'             => array(),
 					'frameborder'     => array(),
 					'allowfullscreen' => array(),
+					'allow'           => array(),
 				),
 			)
 		);

@@ -39,6 +39,7 @@ class Sensei_Wp_Kses {
 					'src'             => array(),
 					'frameborder'     => array(),
 					'allowfullscreen' => array(),
+					'allow'           => array(),
 				),
 				'video'  => self::get_video_html_tag_allowed_attributes(),
 				'a'      => array(

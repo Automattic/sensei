@@ -86,6 +86,7 @@ class Sensei_Course {
 				'src'             => [],
 				'frameborder'     => [],
 				'allowfullscreen' => [],
+				'allow'           => [],
 			],
 			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes(),
 			'source' => Sensei_Wp_Kses::get_source_html_tag_allowed_attributes(),

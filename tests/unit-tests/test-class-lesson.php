@@ -726,6 +726,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				'src'             => [],
 				'frameborder'     => [],
 				'allowfullscreen' => [],
+				'allow'           => [],
 			],
 			'video'  => [
 				'source'   => [],
