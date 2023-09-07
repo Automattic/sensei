@@ -13,4 +13,8 @@
 			<directory name="widgets" />
 		</ignoreFiles>
 	</projectFiles>
+	<stubs>
+		<file name="sensei-lms.php" />
+		<file name="includes/template-functions.php" />
+	</stubs>
 </psalm>
