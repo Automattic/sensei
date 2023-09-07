@@ -48,28 +48,28 @@ abstract class Email_Generators_Abstract {
 	 *
 	 * @var string
 	 */
-	private $action;
+	private $action = '';
 
 	/**
 	 * Callback name.
 	 *
 	 * @var callable
 	 */
-	private $callback;
+	private $callback = '';
 
 	/**
 	 * Priority.
 	 *
 	 * @var int
 	 */
-	private $priority;
+	private $priority = 10;
 
 	/**
 	 * Accepted arguments.
 	 *
 	 * @var int
 	 */
-	private $accepted_args;
+	private $accepted_args = 1;
 
 	/**
 	 * Email_Generators_Abstract constructor.
