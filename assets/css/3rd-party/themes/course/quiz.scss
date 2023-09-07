@@ -1,21 +1,22 @@
-.sensei-course-theme__quiz {
-
-	&__main-content {
-		.wp-block-post-title {
-			margin-bottom: 3.75rem;
-		}
-	}
-	&__footer {
-		.sensei-quiz-actions {
-			.sensei-quiz-action {
-				button {
-					padding: 1rem 32px;
-				}
+.quiz {
+	.sensei-course-theme__quiz {
+		&__main-content {
+			.wp-block-post-title {
+				margin-bottom: 3.75rem;
 			}
-			.sensei-quiz-actions-secondary {
+		}
+		&__footer {
+			.sensei-quiz-actions {
 				.sensei-quiz-action {
 					button {
-						font-family: var( --wp--preset--font-family--body );
+						padding: 1rem 32px;
+					}
+				}
+				.sensei-quiz-actions-secondary {
+					.sensei-quiz-action {
+						button {
+							font-family: var( --wp--preset--font-family--body );
+						}
 					}
 				}
 			}

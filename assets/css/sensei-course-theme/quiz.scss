@@ -72,10 +72,10 @@ $vertical-spacing-desktop: 80px;
 			width: 100%;
 
 			.sensei-quiz-actions-secondary {
-
 				.sensei-quiz-action {
 					.button, button {
 						text-decoration: none;
+
 						&:hover {
 							text-decoration: underline;
 						}
@@ -94,6 +94,66 @@ $vertical-spacing-desktop: 80px;
 
 			.sensei-quiz-pagination__list ul.page-numbers {
 				gap: 1rem;
+			}
+		}
+	}
+}
+
+.sensei-course-theme.quiz {
+	form {
+		#sensei-quiz-list {
+			.sensei-multiple-choice-answer-option {
+				&-checkbox + label:before,
+				&-radio {
+					border: 1px solid #949494;
+					width: 20px;
+					height: 20px;
+					background-color: #FFF;
+				}
+			}
+
+			.sensei-multiple-choice-answer-option-radio,
+			.sensei-lms-question-block__option-toggle__control
+			{
+				appearance: none;
+				border-radius: 50%;
+				background-clip: content-box;
+			}
+
+			.sensei-multiple-choice-answer-option-radio:checked {
+				border: 6px solid var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
+			}
+
+
+
+			.sensei-multiple-choice-answer-option-checkbox {
+				display: none;
+
+				& + label {
+					display: flex;
+					align-items: center;
+					gap: 10px;
+				}
+
+				& + label:before {
+					content: "\00a0";
+					display: flex;
+					font-size: 1.1rem;
+					justify-content: center;
+					align-items: center;
+					padding: 0;
+					vertical-align: center;
+					border-radius: 2px;
+					margin-right: var(--wp--custom--comment-gap-small);
+				}
+
+				&:checked + label:before {
+					color: white;
+					font-family: dashicons;
+					content: "\f15e";
+					text-align: center;
+					background-color: var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
+				}
 			}
 		}
 	}

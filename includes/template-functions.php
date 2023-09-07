@@ -259,7 +259,7 @@ function sensei_get_navigation_link_text( $item ) {
  * Returns navigation links for the modules and lessons in a course.
  *
  * @since  1.0.9
- * @param  integer $lesson_id Lesson ID.
+ * @param  int|null $lesson_id Lesson ID.
  * @return array Multi-dimensional array of previous and next links.
  */
 function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
@@ -722,8 +722,13 @@ function sensei_the_question_content() {
 	$question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
 
 	// load the template that displays the question information.
-	Sensei_Question::load_question_template( $question_type );
+	?>
 
+	<div class="wp-block-sensei-lms-question-answers">
+		<?php Sensei_Question::load_question_template( $question_type ); ?>
+	</div>
+
+	<?php
 }
 
 /**
@@ -745,7 +750,7 @@ function sensei_the_question_class() {
 	 */
 	 $classes = apply_filters( 'sensei_question_classes', array( $question_type ) );
 
-	$html_classes = '';
+	$html_classes = 'wp-block-sensei-lms-quiz-question ';
 	foreach ( $classes as $class ) {
 
 		$html_classes .= $class . ' ';

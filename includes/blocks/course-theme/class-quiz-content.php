@@ -47,7 +47,7 @@ class Quiz_Content {
 
 		$content = ob_get_clean();
 
-		return ( "<form id='sensei-quiz-form' method='post' enctype='multipart/form-data' class='sensei-form'>{$content}</form>" );
+		return ( "<form id='sensei-quiz-form' method='post' enctype='multipart/form-data' class='sensei-form wp-block-sensei-lms-quiz'>{$content}</form>" );
 	}
 
 	/**
@@ -63,8 +63,8 @@ class Quiz_Content {
 			sensei_setup_the_question();
 			?>
 			<li
-				class="sensei-quiz-question <?php sensei_the_question_class(); ?>"
-				value="<?php echo esc_attr( sensei_get_the_question_number() ); ?>"
+				class="sensei-quiz-question wp-block-sensei-lms-quiz-question <?php sensei_the_question_class(); ?>"
+				value="<?php echo intval( sensei_get_the_question_number() ); ?>"
 			>
 				<?php
 				do_action( 'sensei_quiz_question_inside_before', sensei_get_the_question_id() );

@@ -301,23 +301,17 @@ a.sensei-certificate-link {
 
 .quiz {
 	form {
-		ol#sensei-quiz-list {
+		#sensei-quiz-list {
 			margin: 0 0 1.618em 0;
-			list-style-position: outside;
+			list-style-position: inside;
+			list-style-type: none;
+			padding-inline-start: 0;
 
 			li {
 				position: relative;
-				margin: 0 0 1.618em;
-				font-size: 1.1em;
 
-				> span {
-					display: block;
-					margin: 0 0 1em;
-					font-weight: bold;
-
-					span {
-						float: right;
-					}
+				.answers {
+					padding-left: 0;
 				}
 
 				.question_media_display {
@@ -337,9 +331,10 @@ a.sensei-certificate-link {
 					margin-bottom: 5px;
 				}
 
-				.max_upload_size {
-					font-style: italic;
+				.max_upload_size,
+				.sensei-lms-question-block__file-upload-name {
 					font-size: 75%;
+					font-family: inherit;
 				}
 
 				ul {
@@ -348,6 +343,10 @@ a.sensei-certificate-link {
 					margin: .53em 0;
 
 					li {
+						display: flex;
+						align-items: center;
+						line-height: 1;
+
 						&.right_answer {
 							color: green;
 						}
@@ -361,9 +360,7 @@ a.sensei-certificate-link {
 							color: red;
 						}
 
-						margin: 0 0 .382em;
 						font-weight: normal;
-						font-size: 0.9em;
 						list-style: none;
 
 						input {

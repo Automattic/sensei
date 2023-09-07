@@ -1,12 +1,11 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies
  */
-import { BlockControls, InnerBlocks } from '@wordpress/block-editor';
+import {
+	BlockControls,
+	InnerBlocks,
+	useBlockProps,
+} from '@wordpress/block-editor';
 import { select, useDispatch } from '@wordpress/data';
 import { useCallback, useMemo, useState } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
@@ -42,6 +41,11 @@ import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 import SingleQuestion from './single-question';
+
+/**
+ * External dependencies
+ */
+import classNames from 'classnames';
 
 let questionOptions = Object.entries( types ).map(
 	( [ value, settings ] ) => ( {
@@ -125,7 +129,7 @@ const QuestionEdit = ( props ) => {
 		props.meta.showValidationErrors && props.meta.validationErrors?.length;
 
 	const questionGrade = (
-		<div className="sensei-lms-question-block__grade">
+		<div className="sensei-lms-question-block__grade grade">
 			{ formatGradeLabel( options.grade ) }
 		</div>
 	);
@@ -170,6 +174,14 @@ const QuestionEdit = ( props ) => {
 		[ canHaveFeedback ]
 	);
 
+	const blockProps = useBlockProps( {
+		className: classNames( 'sensei-lms-question-block', {
+			'is-draft': ! title,
+			'is-invalid': isInvalid,
+			'show-answer-feedback': showAnswerFeedback,
+		} ),
+	} );
+
 	if ( ! editable ) {
 		return (
 			<QuestionView
@@ -180,30 +192,26 @@ const QuestionEdit = ( props ) => {
 	}
 
 	return (
-		<div
-			className={ classnames( 'sensei-lms-question-block', {
-				'is-draft': ! title,
-				'is-invalid': isInvalid,
-				'show-answer-feedback': showAnswerFeedback,
-			} ) }
-		>
-			{ questionIndex }
-			{ isSingle && <SingleQuestion { ...props } /> }
-			<h2 className="sensei-lms-question-block__title">
-				<SingleLineInput
-					placeholder={ __( 'Question Title', 'sensei-lms' ) }
-					value={ title }
-					onChange={ ( nextValue ) =>
-						setAttributes( { title: nextValue } )
-					}
-					onEnter={ selectDescription }
-					onRemove={ () => removeBlock( clientId ) }
-				/>
-			</h2>
-			{ AnswerBlock.subtitle && (
-				<AnswerBlock.subtitle isQuestionSelected={ hasSelected } />
-			) }
-			{ showContent && questionGrade }
+		<div { ...blockProps }>
+			<div className="sensei-lms-question-block__header">
+				{ questionIndex }
+				{ isSingle && <SingleQuestion { ...props } /> }
+				<h2 className="sensei-lms-question-block__title">
+					<SingleLineInput
+						placeholder={ __( 'Question Title', 'sensei-lms' ) }
+						value={ title }
+						onChange={ ( nextValue ) =>
+							setAttributes( { title: nextValue } )
+						}
+						onEnter={ selectDescription }
+						onRemove={ () => removeBlock( clientId ) }
+					/>
+				</h2>
+				{ AnswerBlock.subtitle && (
+					<AnswerBlock.subtitle isQuestionSelected={ hasSelected } />
+				) }
+				{ showContent && questionGrade }
+			</div>
 			{ hasSelected && shared && <SharedQuestionNotice /> }
 			{ showContent && (
 				<QuestionContext.Provider value={ questionContext }>
