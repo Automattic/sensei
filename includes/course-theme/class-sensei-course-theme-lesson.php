@@ -6,6 +6,8 @@
  * @since 3.15.0
  */
 
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -101,9 +103,9 @@ class Sensei_Course_Theme_Lesson {
 		$notices       = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' );
 		$quiz_id       = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$user_answers  = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
-		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 
-		if ( $this->maybe_add_lesson_quiz_progress_notice( $user_answers, $lesson_status, $quiz_id, $notices ) ) {
+		if ( $this->maybe_add_lesson_quiz_progress_notice( $user_answers, $quiz_progress, $quiz_id, $notices ) ) {
 			return;
 		}
 
@@ -117,9 +119,9 @@ class Sensei_Course_Theme_Lesson {
 		$passmark_rounded = Sensei_Utils::round( $passmark, 2 );
 		$pass_required    = get_post_meta( $quiz_id, '_pass_required', true );
 
-		if ( 'ungraded' === $lesson_status->comment_approved ) {
+		if ( 'ungraded' === $quiz_progress->get_status() ) {
 			$text = __( 'Awaiting grade', 'sensei-lms' );
-		} elseif ( 'failed' === $lesson_status->comment_approved ) {
+		} elseif ( 'failed' === $quiz_progress->get_status() ) {
 			// translators: Placeholders are the required grade and the actual grade, respectively.
 			$text = sprintf( __( 'You require %1$s%% to pass this lesson\'s quiz. Your grade is %2$s%%.', 'sensei-lms' ), '<strong>' . $passmark_rounded . '</strong>', '<strong>' . $grade_rounded . '</strong>' );
 		} else {
@@ -142,14 +144,14 @@ class Sensei_Course_Theme_Lesson {
 	 * Maybe add lesson quiz progress notice.
 	 *
 	 * @param array|false            $user_answers  User answers.
-	 * @param object|false           $lesson_status Lesson status.
+	 * @param Quiz_Progress|null     $quiz_progress Quiz progress.
 	 * @param int                    $quiz_id       Quiz ID.
 	 * @param Sensei_Context_Notices $notices       Notices instance.
 	 *
 	 * @return bool Whether notice was added.
 	 */
-	private function maybe_add_lesson_quiz_progress_notice( $user_answers, $lesson_status, $quiz_id, $notices ) {
-		if ( ! $user_answers || empty( $user_answers ) || ! is_array( $user_answers ) || empty( $lesson_status ) || 'in-progress' !== $lesson_status->comment_approved ) {
+	private function maybe_add_lesson_quiz_progress_notice( $user_answers, $quiz_progress, $quiz_id, $notices ) {
+		if ( ! $user_answers || empty( $user_answers ) || ! is_array( $user_answers ) || empty( $quiz_progress ) || 'in-progress' !== $quiz_progress->get_status() ) {
 			return false;
 		}
 
@@ -213,7 +215,13 @@ class Sensei_Course_Theme_Lesson {
 		$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
 
 		if ( $lesson_prerequisite > 0 ) {
-			$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_prerequisite, $user_id );
+			$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_prerequisite, $user_id );
+			$quiz_id         = Sensei()->lesson->lesson_quizzes( $lesson_prerequisite );
+			if ( $quiz_id ) {
+				// If the leesons has a quiz, use the quiz progress instead.
+				$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+				$lesson_progress = $quiz_progress;
+			}
 
 			$prerequisite_lesson_link = '<a href="'
 				. esc_url( get_permalink( $lesson_prerequisite ) )
@@ -224,7 +232,7 @@ class Sensei_Course_Theme_Lesson {
 				. esc_html__( 'prerequisites', 'sensei-lms' )
 				. '</a>';
 
-			$text = ! empty( $lesson_status ) && 'ungraded' === $lesson_status->comment_approved
+			$text = ! empty( $lesson_progress ) && 'ungraded' === $lesson_progress->get_status()
 				// translators: Placeholder is the link to the prerequisite lesson.
 				? sprintf( esc_html__( 'You will be able to view this lesson once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
 				// translators: Placeholder is the link to the prerequisite lesson.

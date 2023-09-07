@@ -897,10 +897,10 @@ class Sensei_Question {
 			return;
 		}
 
-		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
+		$user_quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, get_current_user_id() );
 		$user_quiz_grade    = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
 		$reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
-		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'ungraded', 'in-progress' ) );
+		$quiz_graded        = $user_quiz_progress && ! in_array( $user_quiz_progress->get_status(), array( 'ungraded', 'in-progress' ) );
 
 		$quiz_required_pass_grade = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 		$succeeded                = $user_quiz_grade >= $quiz_required_pass_grade;

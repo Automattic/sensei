@@ -157,10 +157,9 @@ class Sensei_Course_Theme_Templates {
 	public function should_use_quiz_template() {
 		$post = get_post();
 
-		$lesson_id = \Sensei_Utils::get_current_lesson();
-		$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
+		$progress = Sensei()->quiz_progress_repository->get( $post->ID, get_current_user_id() );
 
-		$has_submitted_quiz = $status && in_array( $status->comment_approved, [ 'ungraded', 'graded', 'passed', 'failed' ], true );
+		$has_submitted_quiz = $progress && in_array( $progress->get_status(), [ 'ungraded', 'graded', 'passed', 'failed' ], true );
 
 		if ( ! $post || 'quiz' !== $post->post_type || $has_submitted_quiz ) {
 			return false;

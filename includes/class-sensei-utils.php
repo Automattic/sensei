@@ -936,13 +936,15 @@ class Sensei_Utils {
 				$has_questions = Sensei()->lesson->lesson_has_quiz_with_graded_questions( $lesson->ID );
 
 				if ( $has_questions ) {
-					$user_lesson_status = self::user_lesson_status( $lesson->ID, $user_id );
+					$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+					$user_has_quiz_progress = Sensei()->quiz_progress_repository->has( $quiz_id, $user_id );
 
-					if ( empty( $user_lesson_status ) ) {
+					if ( ! $user_has_quiz_progress ) {
 						continue;
 					}
 					// Get user quiz grade
-					$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+					$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+					$quiz_grade = $submission ? $submission->get_final_grade() : 0;
 
 					// Add up total grade
 					$total_grade += intval( $quiz_grade );
@@ -1063,40 +1065,32 @@ class Sensei_Utils {
 		$extra     = '';
 
 		if ( $lesson_id > 0 && $user_id > 0 ) {
-			// Course ID
+			// Course ID.
 			$course_id = absint( get_post_meta( $lesson_id, '_lesson_course', true ) );
 
-			// Has user started course
+			// Has user started course.
 			$started_course = Sensei_Course::is_user_enrolled( $course_id, $user_id );
 
-			// Has user completed lesson
-			$user_lesson_status = self::user_lesson_status( $lesson_id, $user_id );
-			$lesson_complete    = self::user_completed_lesson( $user_lesson_status );
+			// Has user completed lesson.
+			$lesson_complete    = self::user_completed_lesson( $lesson_id, $user_id );
 
-			// Quiz ID
+			// Quiz ID.
 			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
-			// Quiz grade
-			$quiz_grade = 0;
-			if ( $user_lesson_status ) {
-				// user lesson status can return as an array.
-				if ( is_array( $user_lesson_status ) ) {
-					$comment_ID = $user_lesson_status[0]->comment_ID;
+			// Quiz progress.
+			$user_quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 
-				} else {
-					$comment_ID = $user_lesson_status->comment_ID;
-				}
+			// Quiz grade.
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			$quiz_grade = $submission ? $submission->get_final_grade() : 0;
 
-				$quiz_grade = get_comment_meta( $comment_ID, 'grade', true );
-			}
-
-			// Quiz passmark
+			// Quiz passmark.
 			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 
-			// Pass required
+			// Pass required.
 			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
 
-			// Quiz questions
+			// Quiz questions.
 			$has_quiz_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 
 			if ( ! $started_course ) {
@@ -1152,7 +1146,13 @@ class Sensei_Utils {
 				$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
 
 				if ( ! $is_lesson && $lesson_prerequisite > 0 ) {
-					$lesson_status = self::user_lesson_status( $lesson_prerequisite, $user_id );
+					$prerequisite_lesson_progrss = Sensei()->lesson_progress_repository->get( $lesson_prerequisite, $user_id );
+					$prerequisite_quiz_id        = Sensei()->lesson->lesson_quizzes( $lesson_prerequisite );
+					if ( $prerequisite_quiz_id ) {
+						$prerequisite_quiz_progress = Sensei()->quiz_progress_repository->get( $prerequisite_quiz_id, $user_id );
+						// If there is a quiz for the prerequisite lesson, use the quiz progress.
+						$prerequisite_lesson_progrss = $prerequisite_quiz_progress;
+					}
 
 					$prerequisite_lesson_link = '<a href="'
 						. esc_url( get_permalink( $lesson_prerequisite ) )
@@ -1163,14 +1163,14 @@ class Sensei_Utils {
 						. esc_html__( 'prerequisites', 'sensei-lms' )
 						. '</a>';
 
-					$message = ! empty( $lesson_status ) && 'ungraded' === $lesson_status->comment_approved
+					$message = ! empty( $prerequisite_lesson_progrss ) && 'ungraded' === $prerequisite_lesson_progrss->get_status()
 						// translators: Placeholder is the link to the prerequisite lesson.
 						? sprintf( esc_html__( 'You will be able to access this quiz once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
 						// translators: Placeholder is the link to the prerequisite lesson.
 						: sprintf( esc_html__( 'Please complete the %1$s to access this quiz.', 'sensei-lms' ), $prerequisite_lesson_link );
 
 					// Lesson/Quiz isn't "complete" instead it's ungraded (previously this "state" meant that it *was* complete).
-				} elseif ( isset( $user_lesson_status->comment_approved ) && 'ungraded' == $user_lesson_status->comment_approved ) {
+				} elseif ( $user_quiz_progress && 'ungraded' == $user_quiz_progress->get_status() ) {
 					$status    = 'complete';
 					$box_class = 'info';
 					if ( $is_lesson ) {
@@ -1182,7 +1182,7 @@ class Sensei_Utils {
 					}
 
 					// Lesson status must be "failed".
-				} elseif ( isset( $user_lesson_status->comment_approved ) && 'failed' == $user_lesson_status->comment_approved ) {
+				} elseif ( $user_quiz_progress && 'failed' == $user_quiz_progress->get_status() ) {
 					$status    = 'failed';
 					$box_class = 'alert';
 					if ( $is_lesson ) {
@@ -1582,19 +1582,31 @@ class Sensei_Utils {
 				if ( 0 >= (int) $user_id ) {
 					return false;
 				}
-				$_user_lesson_status = self::user_lesson_status( $lesson, $user_id );
 
-				if ( isset( $_user_lesson_status->comment_approved ) ) {
+				$lesson_id = (int) $lesson;
+				$user_id   = (int) $user_id;
 
-					$user_lesson_status = $_user_lesson_status->comment_approved;
-
+				$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+				if ( $lesson_progress ) {
+					$user_lesson_status = $lesson_progress->get_status();
 				} else {
-
-					return false; // No status means not complete
-
+					return false; // No progress means not complete
 				}
 
-				$lesson_id = $lesson;
+				// In the comments-based progress we use one entry to store both the lesson progress and the quiz progress.
+				// In the tables-based progress we split them. Here is important to use the quiz proress if the quiz pass is required.
+				$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+				if ( $lesson_quiz_id ) {
+					$quiz_progress = Sensei()->quiz_progress_repository->get( $lesson_quiz_id, $user_id );
+					$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
+					if ( $pass_required ) {
+						if ( $quiz_progress ) {
+							$user_lesson_status = $quiz_progress->get_status();
+						} else {
+							return false;
+						}
+					}
+				}
 			}
 
 			/**
@@ -1608,31 +1620,33 @@ class Sensei_Utils {
 			 */
 			$user_lesson_status = apply_filters( 'sensei_user_completed_lesson', $user_lesson_status, $lesson_id, $user_id );
 
-			if ( 'in-progress' != $user_lesson_status ) {
-				// Check for Passed or Completed Setting
-				// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
-				switch ( $user_lesson_status ) {
-					case 'complete':
-					case 'graded':
-					case 'passed':
-						return true;
+			if ( 'in-progress' === $user_lesson_status ) {
+				return false;
+			}
 
-					case 'failed':
-						// This may be 'completed' depending on...
-						if ( $lesson_id ) {
-							// Get Quiz ID, this won't be needed once all Quiz meta fields are stored on the Lesson
-							$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-							if ( $lesson_quiz_id ) {
-								// ...the quiz pass setting
-								$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
-								if ( empty( $pass_required ) ) {
-									// We just require the user to have done the quiz, not to have passed
-									return true;
-								}
+			// Check for Passed or Completed Setting
+			// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
+			switch ( $user_lesson_status ) {
+				case 'complete':
+				case 'graded':
+				case 'passed':
+					return true;
+
+				case 'failed':
+					// This may be 'completed' depending on...
+					if ( $lesson_id ) {
+						// Get Quiz ID, this won't be needed once all Quiz meta fields are stored on the Lesson
+						$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+						if ( $lesson_quiz_id ) {
+							// ...the quiz pass setting
+							$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
+							if ( empty( $pass_required ) ) {
+								// We just require the user to have done the quiz, not to have passed
+								return true;
 							}
 						}
-						return false;
-				}
+					}
+					return false;
 			}
 		}
 
@@ -1720,11 +1734,10 @@ class Sensei_Utils {
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
 		}
-		$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 
 		// Quiz Grade
-		$lesson_status = self::user_lesson_status( $lesson_id, $user_id );
-		$quiz_grade    = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
+		$submission = \Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		$quiz_grade = $submission ? $submission->get_final_grade() : 0;
 
 		// Check if Grade is greater than or equal to pass percentage
 		$quiz_passmark = self::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
@@ -1733,7 +1746,6 @@ class Sensei_Utils {
 		}
 
 		return false;
-
 	}
 
 	/**
