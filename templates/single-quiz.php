@@ -60,7 +60,7 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 
 					<li
 						class="<?php sensei_the_question_class(); ?>"
-						value="<?php echo esc_attr( sensei_get_the_question_number() ); ?>"
+						value="<?php echo intval( sensei_get_the_question_number() ); ?>"
 					>
 
 						<?php
