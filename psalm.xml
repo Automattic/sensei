@@ -19,5 +19,6 @@
 	<issueHandlers>
 		<InternalClass errorLevel="suppress" />
 		<InternalMethod errorLevel="suppress" />
+		<MissingReturnType errorLevel="suppress" />
 	</issueHandlers>
 </psalm>
