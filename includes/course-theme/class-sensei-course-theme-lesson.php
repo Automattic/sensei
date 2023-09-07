@@ -215,12 +215,12 @@ class Sensei_Course_Theme_Lesson {
 		$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
 
 		if ( $lesson_prerequisite > 0 ) {
-			$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_prerequisite, $user_id );
-			$quiz_id         = Sensei()->lesson->lesson_quizzes( $lesson_prerequisite );
+			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_prerequisite );
 			if ( $quiz_id ) {
 				// If the leesons has a quiz, use the quiz progress instead.
-				$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
-				$lesson_progress = $quiz_progress;
+				$prerequisite_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+			} else {
+				$prerequisite_progress = Sensei()->lesson_progress_repository->get( $lesson_prerequisite, $user_id );
 			}
 
 			$prerequisite_lesson_link = '<a href="'
@@ -232,7 +232,7 @@ class Sensei_Course_Theme_Lesson {
 				. esc_html__( 'prerequisites', 'sensei-lms' )
 				. '</a>';
 
-			$text = ! empty( $lesson_progress ) && 'ungraded' === $lesson_progress->get_status()
+			$text = ! empty( $prerequisite_progress ) && 'ungraded' === $prerequisite_progress->get_status()
 				// translators: Placeholder is the link to the prerequisite lesson.
 				? sprintf( esc_html__( 'You will be able to view this lesson once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
 				// translators: Placeholder is the link to the prerequisite lesson.
