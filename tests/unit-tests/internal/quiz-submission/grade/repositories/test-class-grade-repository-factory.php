@@ -22,5 +22,4 @@ class Grade_Repository_Factory_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertInstanceOf( Aggregate_Grade_Repository::class, $actual );
 	}
-
 }

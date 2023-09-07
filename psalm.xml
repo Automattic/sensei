@@ -13,6 +13,9 @@
 			<directory name="widgets" />
 		</ignoreFiles>
 	</projectFiles>
+	<stubs>
+		<file name="sensei-lms.php" />
+	</stubs>
 	<issueHandlers>
 		<InternalClass errorLevel="suppress" />
 		<InternalMethod errorLevel="suppress" />
