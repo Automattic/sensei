@@ -495,20 +495,17 @@ div.sensei-quiz-actions {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 1.5em;
+	row-gap: 32px;
 
 	@media only screen and (min-width: $tablet-breakpoint) {
 		flex-direction: row;
 		margin-left: auto;
+		justify-content: space-between;
 	}
 
 	.sensei-quiz-action {
 		margin: 0;
 		padding: 0;
-
-		.button {
-			padding: 8px 11px;
-		}
 	}
 
 	.sensei-quiz-actions-primary {
@@ -518,21 +515,17 @@ div.sensei-quiz-actions {
 
 	.sensei-quiz-actions-secondary {
 		display: flex;
-		order: 1;
+		column-gap: 56px;
+		flex-direction: column;
+		row-gap: 32px;
+		align-items: center;
 
 		@media only screen and (min-width: $tablet-breakpoint) {
 			order: 0;
+			flex-direction: row;
 		}
 
 		.sensei-quiz-action {
-			display: flex;
-
-			&:not(:first-child) {
-				margin-left: 0.5em;
-				padding-left: 0.5em;
-				border-left: 2px solid;
-			}
-
 			.button, button {
 				@include button-link;
 			}
