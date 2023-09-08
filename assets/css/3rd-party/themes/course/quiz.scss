@@ -1,8 +1,9 @@
+@import '../../../../shared/styles/variables';
+
 .wp-block-sensei-lms-quiz {
 	.wp-block-sensei-lms-question-answers {
-
 		.sensei_quiz_question_user_text_answer {
-			color: rgb(100, 105, 112);
+			color: $gray-50;
 		}
 
 		.submitted_image_file {

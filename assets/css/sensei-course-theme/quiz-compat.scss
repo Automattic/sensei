@@ -1,4 +1,5 @@
 /* This file loads for all themes except Course. */
+@import '../../shared/styles/variables';
 @import '~@wordpress/base-styles/breakpoints';
 
 $textColor: #1E1E1E;
@@ -35,7 +36,7 @@ $textColor: #1E1E1E;
 	}
 
 	.sensei_quiz_question_user_text_answer {
-		color: #646970;
+		color: $gray-50;
 	}
 }
 
