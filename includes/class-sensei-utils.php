@@ -1600,6 +1600,7 @@ class Sensei_Utils {
 				if ( $lesson_quiz_id ) {
 					$quiz_progress = Sensei()->quiz_progress_repository->get( $lesson_quiz_id, $user_id );
 					$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
+
 					if ( $pass_required ) {
 						if ( $quiz_progress ) {
 							$user_lesson_status = $quiz_progress->get_status();

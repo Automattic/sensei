@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
 use DateTime;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
 use Sensei_Utils;
 
@@ -78,6 +79,8 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			Quiz_Progress::STATUS_GRADED,
 			Quiz_Progress::STATUS_PASSED,
 			Quiz_Progress::STATUS_UNGRADED,
+			// Need to support legacy status from lessons as some code still relies on it.
+			Lesson_Progress::STATUS_COMPLETE,
 		];
 
 		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );

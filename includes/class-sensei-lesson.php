@@ -3626,6 +3626,10 @@ class Sensei_Lesson {
 	 */
 	public function is_quiz_submitted( int $lesson_id, int $user_id ) : bool {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			return false;
+		}
+
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 
 		return ! empty( $quiz_progress ) && in_array( $quiz_progress->get_status(), [ 'ungraded', 'passed', 'failed', 'graded' ], true );
