@@ -64,7 +64,7 @@ class Quiz_Content {
 			?>
 			<li
 				class="sensei-quiz-question wp-block-sensei-lms-quiz-question <?php sensei_the_question_class(); ?>"
-				value="<?php echo esc_attr( sensei_get_the_question_number() ); ?>"
+				value="<?php echo intval( sensei_get_the_question_number() ); ?>"
 			>
 				<?php
 				do_action( 'sensei_quiz_question_inside_before', sensei_get_the_question_id() );

@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+Sensei()->assets->enqueue( 'sensei-file-upload-question-type', 'js/file-upload-question-type.js', [], true );
+
 /**
  * Get the question data with the current quiz id
  * All data is loaded in this array to keep the template clean.
@@ -62,10 +64,16 @@ $sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei
 
 <?php if ( ! $question_data['quiz_is_completed'] ) { ?>
 
-	<input type="file" name="file_upload_<?php echo esc_attr( $question_data['ID'] ); ?>" />
+	<label for="file-upload-<?php echo esc_attr( $question_data['ID'] ); ?>" class="wp-block-button is-style-outline sensei-lms-question-block__file-upload">
+		<input id="file-upload-<?php echo esc_attr( $question_data['ID'] ); ?>" type="file" class="sensei-lms-question-block__file-input" name="file_upload_<?php echo esc_attr( $question_data['ID'] ); ?>" />
+		<span type="button" class="wp-block-button__link wp-element-button is-secondary sensei-course-theme__button sensei-lms-question-block__file-upload-button">
+			<?php echo esc_html__( 'Choose File', 'sensei-lms' ); ?>
+		</span>
+	</label>
+	<span class="sensei-lms-question-block__file-upload-name"></span>
 
 	<input type="hidden" name="sensei_question[<?php echo esc_attr( $question_data['ID'] ); ?>]"
-		   value="<?php echo esc_attr( $question_data['user_answer_entry'] ); ?>" />
+		value="<?php echo esc_attr( $question_data['user_answer_entry'] ); ?>" />
 
 	<aside class="max_upload_size"><?php echo esc_html( $question_data['max_upload_size'] ); ?></aside>
 

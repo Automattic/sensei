@@ -63,7 +63,7 @@ $block: '.sensei-lms-question-block';
 		}
 	}
 
-	&__text-input-placeholder, &__file-input-placeholder {
+	&__text-input-placeholder {
 		border: 1px solid currentColor;
 		border-radius: 2px;
 		padding: 5px;
@@ -78,14 +78,6 @@ $block: '.sensei-lms-question-block';
 		border-top: 0;
 		border-left: 0;
 		border-right: 0;
-	}
-
-	&__file-input-placeholder {
-		text-transform: uppercase;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		user-select: none;
 	}
 
 	&__input-label {
@@ -108,7 +100,6 @@ $block: '.sensei-lms-question-block';
 		}
 
 		&__toggle {
-
 			&__wrapper {
 				flex-basis: 65px;
 				margin-left: 12px;

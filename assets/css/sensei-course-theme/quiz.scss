@@ -1,15 +1,17 @@
-/**
- * Variables
- */
-$tablet-breakpoint: 768px;
-
 @import '~@wordpress/base-styles/breakpoints';
 @import '../../shared/blocks/progress-bar/progress-bar';
 
+$vertical-spacing: 60px;
+$vertical-spacing-desktop: 80px;
+
 .sensei-course-theme__quiz {
 	&__main-content {
-		margin-bottom: 100px !important;
+		margin-bottom: $vertical-spacing;
 		padding-top: clamp(2.5rem, 1.346rem + 3.846vw, 3.75rem);
+
+		@media (min-width: $break-medium) {
+			margin-bottom: $vertical-spacing-desktop;
+		}
 
 		.wp-block-post-title {
 			margin-top: clamp(1.688rem, 0.534rem + 3.846vw, 2.938rem);
@@ -41,31 +43,24 @@ $tablet-breakpoint: 768px;
 		}
 	}
 
-	&__header, &__footer {
-		padding: 24px;
-
-		margin: 0 auto;
-		max-width: 1200px;
-
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 24px;
-
-	}
-
 	&__footer {
+		align-items: center;
 		display: flex;
 		flex-direction: row;
+		gap: 24px;
 		justify-content: flex-end;
-		align-items: center;
-		max-width: var(--content-size);
 		margin: 0 auto;
-		padding: 24px 0;
+		max-width: var(--content-size);
 
 		&__wrapper {
-			margin: 0 !important;
 			display: block;
+			margin: 0 !important;
+			/* Using padding instead of margin as some themes have a non-white body background color. */
+			padding-bottom: $vertical-spacing;
+
+			@media (min-width: $break-medium) {
+				padding-bottom: $vertical-spacing-desktop;
+			}
 		}
 
 		.wp-block-group__inner-container {
@@ -77,10 +72,10 @@ $tablet-breakpoint: 768px;
 			width: 100%;
 
 			.sensei-quiz-actions-secondary {
-
 				.sensei-quiz-action {
 					.button, button {
 						text-decoration: none;
+
 						&:hover {
 							text-decoration: underline;
 						}
@@ -106,17 +101,18 @@ $tablet-breakpoint: 768px;
 
 .sensei-course-theme.quiz {
 	form {
-		ol#sensei-quiz-list {
-
-			input[type=radio],
-			input[type=checkbox] + label:before {
-				border: 1px solid #949494;
-				width: 20px;
-				height: 20px;
-				background-color: #FFF;
+		#sensei-quiz-list {
+			.sensei-multiple-choice-answer-option {
+				&-checkbox + label:before,
+				&-radio {
+					border: 1px solid #949494;
+					width: 20px;
+					height: 20px;
+					background-color: #FFF;
+				}
 			}
 
-			input[type=radio],
+			.sensei-multiple-choice-answer-option-radio,
 			.sensei-lms-question-block__option-toggle__control
 			{
 				appearance: none;
@@ -124,7 +120,7 @@ $tablet-breakpoint: 768px;
 				background-clip: content-box;
 			}
 
-			input[type="radio"]:checked {
+			.sensei-multiple-choice-answer-option-radio:checked {
 				border: 6px solid var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
 			}
 
@@ -135,34 +131,34 @@ $tablet-breakpoint: 768px;
 				opacity: 0.4;
 			}
 
-			input[type="checkbox"] {
+			.sensei-multiple-choice-answer-option-checkbox {
 				display: none;
-			}
 
-			input[type="checkbox"] + label {
-				display: flex;
-				align-items: center;
-				gap: 10px;
-			}
+				& + label {
+					display: flex;
+					align-items: center;
+					gap: 10px;
+				}
 
-			input[type="checkbox"] + label:before {
-				content: "\00a0";
-				display: flex;
-				font-size: 1.1rem;
-				justify-content: center;
-				align-items: center;
-				padding: 0;
-				vertical-align: center;
-				border-radius: 2px;
-				margin-right: var(--wp--custom--comment-gap-small);
-			}
+				& + label:before {
+					content: "\00a0";
+					display: flex;
+					font-size: 1.1rem;
+					justify-content: center;
+					align-items: center;
+					padding: 0;
+					vertical-align: center;
+					border-radius: 2px;
+					margin-right: var(--wp--custom--comment-gap-small);
+				}
 
-			input[type="checkbox"]:checked + label:before {
-				color: white;
-				font-family: dashicons;
-				content: "\f15e";
-				text-align: center;
-				background-color: var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
+				&:checked + label:before {
+					color: white;
+					font-family: dashicons;
+					content: "\f15e";
+					text-align: center;
+					background-color: var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
+				}
 			}
 		}
 	}
@@ -174,7 +170,7 @@ $tablet-breakpoint: 768px;
 	}
 }
 
-@media only screen and (min-width: $tablet-breakpoint) {
+@media only screen and (min-width: $break-medium) {
 	.sensei-course-theme__quiz {
 		&__footer {
 			&__wrapper {

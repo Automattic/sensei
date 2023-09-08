@@ -1,6 +1,7 @@
 /* This file loads for all themes except Course. */
-
 @import '~@wordpress/base-styles/breakpoints';
+
+$textColor: #1E1E1E;
 
 .sensei-course-theme__quiz {
 	&__main-content {
@@ -15,29 +16,12 @@
 		.sensei-lms-quiz-back-to-lesson {
 			color: inherit;
 		}
-
-		input[type=file]::file-selector-button {
-			padding: 0.75rem 1.25rem;
-			color: inherit;
-		}
 	}
 }
 
 .wp-block-sensei-lms-question-answers {
 	& * {
 		font-size: 1.125rem;
-	}
-
-	input[type=file]::file-selector-button,
-	.sensei-lms-question-block__file-input-placeholder {
-		color: inherit;
-		border: 1px solid var(--sensei-secondary-color, #43AF99);
-		border-radius: 0;
-		font-size: 1.125rem;
-		text-transform: none;
-		line-height: 1;
-		font-family: inherit;
-		padding: .85rem 1.25rem;
 	}
 
 	.submitted_file {
@@ -58,6 +42,7 @@
 .wp-block-sensei-lms-quiz {
 	.sensei-lms-question-block__title {
 		font-family: var(--wp--preset--font-family--system);
+
 		textarea {
 			font-size: inherit;
 			font-family: inherit;
@@ -67,9 +52,8 @@
 }
 
 .quiz {
-	$textColor: #1E1E1E;
 	form {
-		ol#sensei-quiz-list {
+		#sensei-quiz-list {
 			color: $textColor;
 
 			/* Some themes directly target inputs */

@@ -301,7 +301,7 @@ a.sensei-certificate-link {
 
 .quiz {
 	form {
-		ol#sensei-quiz-list {
+		#sensei-quiz-list {
 			margin: 0 0 1.618em 0;
 			list-style-position: inside;
 			list-style-type: none;
@@ -327,8 +327,10 @@ a.sensei-certificate-link {
 					margin-bottom: 5px;
 				}
 
-				.max_upload_size {
+				.max_upload_size,
+				.sensei-lms-question-block__file-upload-name {
 					font-size: 75%;
+					font-family: inherit;
 				}
 
 				ul {

@@ -259,7 +259,7 @@ function sensei_get_navigation_link_text( $item ) {
  * Returns navigation links for the modules and lessons in a course.
  *
  * @since  1.0.9
- * @param  integer $lesson_id Lesson ID.
+ * @param  int|null $lesson_id Lesson ID.
  * @return array Multi-dimensional array of previous and next links.
  */
 function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
