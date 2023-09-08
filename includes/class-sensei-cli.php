@@ -17,15 +17,7 @@ class Sensei_CLI {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		$this->load();
 		$this->register();
-	}
-
-	/**
-	 * Load the command files.
-	 */
-	private function load() {
-		require_once dirname( __FILE__ ) . '/cli/class-sensei-db-seed-command.php';
 	}
 
 	/**
