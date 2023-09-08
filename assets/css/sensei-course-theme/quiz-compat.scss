@@ -25,17 +25,18 @@ $textColor: #1E1E1E;
 		font-size: 1.125rem;
 	}
 
-	.wp-block-sensei-lms-question-answers__filename {
+	&__filename {
+		color: #1E1E1E;
 		font-size: 18px;
 		font-style: normal;
 		font-weight: 400;
-		color: #1E1E1E;
+
 		a {
 			color: #155E65
 		}
 	}
 
-	.wp-block-sensei-lms-question-answers__answer {
+	&__answer {
 		color: $gray-50;
 	}
 }

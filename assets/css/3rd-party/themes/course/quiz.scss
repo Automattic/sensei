@@ -2,13 +2,13 @@
 
 .wp-block-sensei-lms-quiz {
 	.wp-block-sensei-lms-question-answers {
-		.wp-block-sensei-lms-question-answers__answer {
+		&__answer {
 			color: $gray-50;
 		}
 
-		.wp-block-sensei-lms-question-answers__preview {
-			border-radius: 4px;
+		&__preview {
 			border: 1px solid var(--wp--preset--color--foreground);
+			border-radius: 4px;
 		}
 	}
 }
