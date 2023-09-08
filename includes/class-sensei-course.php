@@ -2261,9 +2261,7 @@ class Sensei_Course {
 	 * Returns a list of all courses
 	 *
 	 * @since 1.8.0
-	 * @return array $courses{
-	 *  @type $course WP_Post
-	 * }
+	 * @return WP_Post[]
 	 */
 	public static function get_all_courses() {
 
