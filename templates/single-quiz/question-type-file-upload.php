@@ -36,7 +36,7 @@ $sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei
 
 <?php if ( $question_data['answer_media_url'] && $question_data['answer_media_filename'] ) { ?>
 
-	<p class="submitted_file">
+	<p class="wp-block-sensei-lms-question-answers__filename">
 
 		<?php
 		printf(
@@ -51,7 +51,7 @@ $sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei
 	</p>
 
 	<?php if ( $sensei_is_quiz_view_only_mode && getimagesize( $question_data['answer_media_url'] ) ) { ?>
-		<img src="<?php echo esc_url( $question_data['answer_media_url'] ); ?>" class="submitted_image_file" />
+		<img src="<?php echo esc_url( $question_data['answer_media_url'] ); ?>" class="wp-block-sensei-lms-question-answers__preview" />
 	<?php } ?>
 
 	<?php if ( ! $question_data['quiz_is_completed'] ) { ?>

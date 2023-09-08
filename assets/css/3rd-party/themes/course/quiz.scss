@@ -2,11 +2,11 @@
 
 .wp-block-sensei-lms-quiz {
 	.wp-block-sensei-lms-question-answers {
-		.sensei_quiz_question_user_text_answer {
+		.wp-block-sensei-lms-question-answers__answer {
 			color: $gray-50;
 		}
 
-		.submitted_image_file {
+		.wp-block-sensei-lms-question-answers__preview {
 			border-radius: 4px;
 			border: 1px solid var(--wp--preset--color--foreground);
 		}
