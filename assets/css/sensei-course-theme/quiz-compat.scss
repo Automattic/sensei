@@ -26,7 +26,7 @@ $textColor: #1E1E1E;
 	}
 
 	&__filename {
-		color: #1E1E1E;
+		color: $textColor;
 		font-size: 18px;
 		font-style: normal;
 		font-weight: 400;
