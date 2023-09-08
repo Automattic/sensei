@@ -82,6 +82,8 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 			[ 'sensei-lms/quiz-question' ],
 		];
 		$post_type_object->template_lock = 'insert';
+
+		wp_enqueue_style( 'dashicons' );
 	}
 
 
