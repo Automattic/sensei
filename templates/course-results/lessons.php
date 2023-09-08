@@ -130,7 +130,7 @@ global $course;
 				$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson->ID );
 				if ( $has_questions ) {
 					$sensei_quiz_id    = Sensei()->lesson->lesson_quizzes( $lesson->ID );
-					$sensei_submission = Sensei()->quiz_submission_repository->get( $quiz_id, get_current_user_id() );
+					$sensei_submission = Sensei()->quiz_submission_repository->get( $sensei_quiz_id, get_current_user_id() );
 					// Get user quiz grade
 					$lesson_grade = '';
 					if ( ! empty( $sensei_submission ) ) {
