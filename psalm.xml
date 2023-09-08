@@ -19,5 +19,6 @@
 	<issueHandlers>
 		<InternalClass errorLevel="suppress" />
 		<InternalMethod errorLevel="suppress" />
+		<RedundantCastGivenDocblockType errorLevel="suppress" />
 	</issueHandlers>
 </psalm>

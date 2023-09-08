@@ -151,7 +151,7 @@ class Sensei_Course_Theme_Lesson {
 	 * @return bool Whether notice was added.
 	 */
 	private function maybe_add_lesson_quiz_progress_notice( $user_answers, $quiz_progress, $quiz_id, $notices ) {
-		if ( ! $user_answers || empty( $user_answers ) || ! is_array( $user_answers ) || empty( $quiz_progress ) || 'in-progress' !== $quiz_progress->get_status() ) {
+		if ( ! is_array( $user_answers ) || count( $user_answers ) === 0 || empty( $quiz_progress ) || 'in-progress' !== $quiz_progress->get_status() ) {
 			return false;
 		}
 

@@ -157,11 +157,15 @@ class Sensei_Course_Theme_Templates {
 	public function should_use_quiz_template() {
 		$post = get_post();
 
+		if ( ! $post || ! ( $post instanceof WP_Post ) ) {
+			return false;
+		}
+
 		$progress = Sensei()->quiz_progress_repository->get( $post->ID, get_current_user_id() );
 
 		$has_submitted_quiz = $progress && in_array( $progress->get_status(), [ 'ungraded', 'graded', 'passed', 'failed' ], true );
 
-		if ( ! $post || 'quiz' !== $post->post_type || $has_submitted_quiz ) {
+		if ( 'quiz' !== $post->post_type || $has_submitted_quiz ) {
 			return false;
 		}
 
