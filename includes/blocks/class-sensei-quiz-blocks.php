@@ -83,6 +83,7 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 		];
 		$post_type_object->template_lock = 'insert';
 
+		// The checkboxes look broken otherwise because the checkmark comes from dashicons.
 		wp_enqueue_style( 'dashicons' );
 	}
 
