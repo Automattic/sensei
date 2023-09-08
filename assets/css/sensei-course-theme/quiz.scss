@@ -140,15 +140,14 @@ $vertical-spacing-desktop: 80px;
 				}
 
 				& + label:before {
+					align-items: center;
+					border-radius: 2px;
 					content: "\00a0";
 					display: flex;
 					font-size: 1.1rem;
 					justify-content: center;
-					align-items: center;
+					margin-right: 10px;
 					padding: 0;
-					vertical-align: center;
-					border-radius: 2px;
-					margin-right: var(--wp--custom--comment-gap-small);
 				}
 
 				&:checked + label:before {
