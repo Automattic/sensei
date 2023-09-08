@@ -625,8 +625,8 @@ class Sensei_Quiz {
 		$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $post->ID, '_quiz_passmark', true ), 2 );
 
 		// Get latest quiz answers and grades.
-		$lesson_id          = Sensei()->quiz->get_lesson_id( $post->ID );
-		$user_quizzes       = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
+		$lesson_id    = Sensei()->quiz->get_lesson_id( $post->ID );
+		$user_quizzes = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
 
 		$user_quiz_grade = 0;
 		$quiz_submission = Sensei()->quiz_submission_repository->get( $post->ID, $current_user->ID );
@@ -773,10 +773,10 @@ class Sensei_Quiz {
 		}
 
 		// Get the lesson quiz.
-		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		// Check if the user has started the lesson or quiz.
-		$need_reset_data = false;
+		$need_reset_data          = false;
 		$user_has_lesson_progress = Sensei()->lesson_progress_repository->has( $lesson_id, $user_id );
 		if ( $user_has_lesson_progress ) {
 			$need_reset_data = true;

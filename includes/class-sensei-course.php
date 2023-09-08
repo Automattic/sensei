@@ -3569,7 +3569,7 @@ class Sensei_Course {
 		// Check if course is completed.
 		$completed_course = false;
 		if ( ! empty( $user_id ) ) {
-			$completed_course   = Sensei_Utils::user_completed_course( $course_id, $user_id );
+			$completed_course = Sensei_Utils::user_completed_course( $course_id, $user_id );
 		}
 
 		/**

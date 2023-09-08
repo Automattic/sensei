@@ -936,7 +936,7 @@ class Sensei_Utils {
 				$has_questions = Sensei()->lesson->lesson_has_quiz_with_graded_questions( $lesson->ID );
 
 				if ( $has_questions ) {
-					$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+					$quiz_id                = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 					$user_has_quiz_progress = Sensei()->quiz_progress_repository->has( $quiz_id, $user_id );
 
 					if ( ! $user_has_quiz_progress ) {
@@ -1072,7 +1072,7 @@ class Sensei_Utils {
 			$started_course = Sensei_Course::is_user_enrolled( $course_id, $user_id );
 
 			// Has user completed lesson.
-			$lesson_complete    = self::user_completed_lesson( $lesson_id, $user_id );
+			$lesson_complete = self::user_completed_lesson( $lesson_id, $user_id );
 
 			// Quiz ID.
 			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
@@ -1146,7 +1146,7 @@ class Sensei_Utils {
 				$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
 
 				if ( ! $is_lesson && $lesson_prerequisite > 0 ) {
-					$prerequisite_quiz_id        = Sensei()->lesson->lesson_quizzes( $lesson_prerequisite );
+					$prerequisite_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_prerequisite );
 					if ( $prerequisite_quiz_id ) {
 						// If there is a quiz for the prerequisite lesson, use the quiz progress.
 						$prerequisite_progress = Sensei()->quiz_progress_repository->get( $prerequisite_quiz_id, $user_id );
