@@ -127,8 +127,20 @@ class Sensei_Templates {
 			$template = '';
 		}
 
+		/**
+		 * Filter located template.
+		 *
+		 * @hook sensei_locate_template
+		 *
+		 * @param {string} $template The located template.
+		 * @param {string} $template_name The template name.
+		 * @param {string} $template_path The template path.
+		 * @return {string} Filetered located template.
+		 */
+		$template = apply_filters( 'sensei_locate_template', $template, $template_name, $template_path );
+
 		// Return what we found
-		return apply_filters( 'sensei_locate_template', $template, $template_name, $template_path );
+		return $template;
 
 	}
 

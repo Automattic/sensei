@@ -124,7 +124,18 @@ class Sensei_List_Table extends WP_List_Table {
 		?><form method="get">
 			<?php
 			Sensei_Utils::output_query_params_as_inputs( [ 's' ] );
-			$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
+
+			/**
+			 * Filter search button text in Sensei list table.
+			 *
+			 * @hook sensei_list_table_search_button_text
+			 *
+			 * @param {string} $button_text Search button text.
+			 * @return {string} Filtered search button text.
+			 */
+			$search_button_text = apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) );
+
+			$this->search_box( $search_button_text, 'search_id' );
 			?>
 		</form>
 		<?php

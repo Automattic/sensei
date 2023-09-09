@@ -35,6 +35,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 			<label for="<?php echo esc_attr( 'question_' . $question_data['ID'] . '-option-' . $count ); ?>">
 				<?php
 				echo wp_kses(
+					/* This filter is documented in includes/class-sensei-grading-user-quiz.php */
 					apply_filters( 'sensei_answer_text', $option['answer'] ),
 					Sensei_Wp_Kses::get_allowed_html_formatting_tags(),
 					array()

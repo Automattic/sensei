@@ -328,7 +328,17 @@ class Sensei_Grading_User_Quiz {
 								$_user_answer = htmlspecialchars_decode( $_user_answer );
 							}
 
-							$html = wp_kses_post( apply_filters( 'sensei_answer_text', $_user_answer ) );
+							/**
+							 * Filter user answer text.
+							 *
+							 * @hook sensei_answer_text
+							 *
+							 * @param {string} Answer text.
+							 * @return {string} Filtered answer text.
+							 */
+							$_user_answer = apply_filters( 'sensei_answer_text', $_user_answer );
+
+							$html = wp_kses_post( $_user_answer );
 							$html = '<html><head><title></title></head><body>' . $html . '</body></html>';
 							?>
 							<iframe class="user-answer" srcdoc="<?php echo esc_attr( $html ); ?>" sandbox="allow-same-origin" height="auto"></iframe>
@@ -346,6 +356,7 @@ class Sensei_Grading_User_Quiz {
 									$_right_answer = htmlspecialchars_decode( nl2br( $_right_answer ) );
 								}
 
+								/* This filter is documented in includes/class-sensei-grading-user-quiz.php (above)*/
 								echo wp_kses_post( apply_filters( 'sensei_answer_text', $_right_answer ) ) . '<br>';
 
 							}
