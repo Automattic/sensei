@@ -599,12 +599,12 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		);
 
 		/**
-		 * Filter sub-menu for Grading.
+		 * Filter submenu for Grading.
 		 *
 		 * @hook sensei_grading_sub_menu
 		 *
-		 * @param {array} $sub_munu Sub-menu.
-		 * @return {array} Filtered sub-menu.
+		 * @param {array} $submunu Submenu.
+		 * @return {array} Filtered submenu.
 		 */
 		return apply_filters( 'sensei_grading_sub_menu', $menu );
 	}
