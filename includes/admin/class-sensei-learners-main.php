@@ -1155,12 +1155,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		$form_lesson_id = 0;
 		if ( $this->course_id && ! $this->lesson_id ) {
 			$post_title     = get_the_title( $this->course_id );
-			$post_type      = __( 'Course', 'sensei-lms' );
+			$box_title      = __( 'Add Student to Course', 'sensei-lms' );
 			$form_post_type = 'course';
 			$form_course_id = $this->course_id;
 		} elseif ( $this->course_id && $this->lesson_id ) {
 			$post_title     = get_the_title( $this->lesson_id );
-			$post_type      = __( 'Lesson', 'sensei-lms' );
+			$box_title      = __( 'Add Student to Lesson', 'sensei-lms' );
 			$form_post_type = 'lesson';
 			$form_course_id = $this->course_id;
 			$form_lesson_id = $this->lesson_id;
@@ -1172,10 +1172,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		?>
 		<div class="postbox">
 			<h2 id="add-student-to-course-header">
-				<?php
-				// translators: Placeholder is the post type.
-				printf( esc_html__( 'Add Student to %1$s', 'sensei-lms' ), esc_html( $post_type ) );
-				?>
+				<?php echo esc_html( $box_title ); ?>
 			</h2>
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
