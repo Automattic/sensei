@@ -2335,6 +2335,11 @@ class Sensei_Quiz {
 	 * @param int|string $user_id The user ID.
 	 */
 	public function maybe_create_quiz_progress( $quiz_id = '', $user_id = '' ): void {
+		$tables_based_progress_feature = Sensei()->feature_flags->is_enabled( 'tables_based_progress' );
+		if ( ! $tables_based_progress_feature ) {
+			return;
+		}
+
 		if ( empty( $quiz_id ) || ! is_int( $quiz_id ) ) {
 			$quiz_id = get_the_ID();
 		}
@@ -2352,8 +2357,7 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$tables_based_progress_feature = Sensei()->feature_flags->is_enabled( 'tables_based_progress' );
-		$quiz_progress_repository      = ( new Quiz_Progress_Repository_Factory( $tables_based_progress_feature ) )
+		$quiz_progress_repository = ( new Quiz_Progress_Repository_Factory( $tables_based_progress_feature ) )
 			->create_tables_based_repository();
 
 		$quiz_progress = $quiz_progress_repository->get( $quiz_id, $user_id );
