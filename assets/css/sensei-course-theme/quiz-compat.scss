@@ -1,4 +1,5 @@
 /* This file loads for all themes except Course. */
+@import '../../shared/styles/variables';
 @import '~@wordpress/base-styles/breakpoints';
 
 $textColor: #1E1E1E;
@@ -22,6 +23,21 @@ $textColor: #1E1E1E;
 .wp-block-sensei-lms-question-answers {
 	& * {
 		font-size: 1.125rem;
+	}
+
+	&__filename {
+		color: $textColor;
+		font-size: 18px;
+		font-style: normal;
+		font-weight: 400;
+
+		a {
+			color: #155E65
+		}
+	}
+
+	&__answer {
+		color: $gray-50;
 	}
 }
 

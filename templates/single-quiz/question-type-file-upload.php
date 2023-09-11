@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     2.0.0
+ * @version     $$next-version$$
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +22,7 @@ Sensei()->assets->enqueue( 'sensei-file-upload-question-type', 'js/file-upload-q
  */
 $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 
+$sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available();
 ?>
 
 <?php if ( $question_data['question_helptext'] ) { ?>
@@ -35,7 +36,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 
 <?php if ( $question_data['answer_media_url'] && $question_data['answer_media_filename'] ) { ?>
 
-	<p class="submitted_file">
+	<p class="wp-block-sensei-lms-question-answers__filename">
 
 		<?php
 		printf(
@@ -48,6 +49,11 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 		?>
 
 	</p>
+
+	<?php if ( $sensei_is_quiz_view_only_mode && getimagesize( $question_data['answer_media_url'] ) ) { ?>
+		<img src="<?php echo esc_url( $question_data['answer_media_url'] ); ?>" class="wp-block-sensei-lms-question-answers__preview" />
+	<?php } ?>
+
 	<?php if ( ! $question_data['quiz_is_completed'] ) { ?>
 
 		<aside class="reupload_notice"><?php esc_html_e( 'Uploading a new file will replace your existing one:', 'sensei-lms' ); ?></aside>

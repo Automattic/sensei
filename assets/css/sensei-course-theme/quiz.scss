@@ -124,7 +124,12 @@ $vertical-spacing-desktop: 80px;
 				border: 6px solid var(--wp--preset--color--foreground, var(--sensei-secondary-color, #949494) );
 			}
 
-
+			input[type="radio"]:disabled:not(:checked),
+			input[type="radio"]:disabled:not(:checked) + label,
+			input[type="checkbox"]:disabled:not(:checked),
+			input[type="checkbox"]:disabled:not(:checked) + label {
+				opacity: 0.4;
+			}
 
 			.sensei-multiple-choice-answer-option-checkbox {
 				display: none;
@@ -132,19 +137,17 @@ $vertical-spacing-desktop: 80px;
 				& + label {
 					display: flex;
 					align-items: center;
-					gap: 10px;
 				}
 
 				& + label:before {
+					align-items: center;
+					border-radius: 2px;
 					content: "\00a0";
 					display: flex;
 					font-size: 1.1rem;
 					justify-content: center;
-					align-items: center;
+					margin-right: 10px;
 					padding: 0;
-					vertical-align: center;
-					border-radius: 2px;
-					margin-right: var(--wp--custom--comment-gap-small);
 				}
 
 				&:checked + label:before {

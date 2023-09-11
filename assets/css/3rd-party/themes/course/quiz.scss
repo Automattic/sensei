@@ -1,3 +1,17 @@
+@import '../../../../shared/styles/variables';
+
+.wp-block-sensei-lms-quiz {
+	.wp-block-sensei-lms-question-answers {
+		&__answer {
+			color: $gray-50;
+		}
+
+		&__preview {
+			border: 1px solid var(--wp--preset--color--foreground);
+			border-radius: 4px;
+		}
+	}
+}
 .quiz {
 	.sensei-course-theme__quiz {
 		&__main-content {
