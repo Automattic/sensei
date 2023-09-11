@@ -729,11 +729,11 @@ function sensei_the_question_content() {
 			/**
 			 * Fires before the question answers are displayed inside the answers block.
 			 *
-			 * @hook sensei_quiz_question_answers_inside_before Hook used for printing content inside the question answers section before the template content.
+			 * @hook sensei_quiz_question_answers_inside_before
 			 *
 			 * @since $$next-version$$
 			 *
-			 * @param int $question_id The ID of the question.
+			 * @param {int} $question_id The ID of the question.
 			 */
 			do_action( 'sensei_quiz_question_answers_inside_before', $sensei_question_loop['current_question']->ID );
 
@@ -742,11 +742,11 @@ function sensei_the_question_content() {
 			/**
 			 * Fires after the question answers are displayed inside the answers block.
 			 *
-			 * @hook sensei_quiz_question_answers_inside_after Hook used for printing content inside the question answers section after the template content.
+			 * @hook sensei_quiz_question_answers_inside_after
 			 *
 			 * @since $$next-version$$
 			 *
-			 * @param int $question_id The ID of the question.
+			 * @param {int} $question_id The ID of the question.
 			 */
 			do_action( 'sensei_quiz_question_answers_inside_after', $sensei_question_loop['current_question']->ID );
 		?>
