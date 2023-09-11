@@ -8,8 +8,9 @@
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTime;
-use SebastianBergmann\Timer\RuntimeException;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use RuntimeException;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,14 +33,14 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Lesson_Progress The lesson progress.
+	 * @return Comments_Based_Lesson_Progress The lesson progress.
 	 * @throws RuntimeException When the lesson progress could not be created.
 	 */
-	public function create( int $lesson_id, int $user_id ): Lesson_Progress {
+	public function create( int $lesson_id, int $user_id ): Comments_Based_Lesson_Progress {
 		$metadata   = [
 			'start' => current_time( 'mysql' ),
 		];
-		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, Lesson_Progress::STATUS_IN_PROGRESS, $metadata );
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, Lesson_Progress_Interface::STATUS_IN_PROGRESS, $metadata );
 		if ( ! $comment_id ) {
 			throw new RuntimeException( "Can't create a lesson progress" );
 		}
@@ -55,9 +56,9 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Lesson_Progress|null The lesson progress or null if not found.
+	 * @return Comments_Based_Lesson_Progress|null The lesson progress or null if not found.
 	 */
-	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress {
+	public function get( int $lesson_id, int $user_id ): ?Comments_Based_Lesson_Progress {
 		$activity_args = [
 			'post_id' => $lesson_id,
 			'user_id' => $user_id,
@@ -78,7 +79,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			$completed_at = null;
 		}
 
-		return new Lesson_Progress( (int) $comment->comment_ID, $lesson_id, $user_id, $comment->comment_approved, $started_at, $completed_at, $comment_date, $comment_date );
+		return new Comments_Based_Lesson_Progress( (int) $comment->comment_ID, $lesson_id, $user_id, $comment->comment_approved, $started_at, $completed_at, $comment_date, $comment_date );
 	}
 
 	/**
@@ -105,9 +106,11 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 *
 	 * @internal
 	 *
-	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
-	public function save( Lesson_Progress $lesson_progress ): void {
+	public function save( Lesson_Progress_Interface $lesson_progress ): void {
+		$this->asserstCommentsBasedLessonProgress( $lesson_progress );
+
 		$metadata = [];
 		if ( $lesson_progress->get_started_at() ) {
 			$metadata['start'] = $lesson_progress->get_started_at()->format( 'Y-m-d H:i:s' );
@@ -129,9 +132,11 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 *
 	 * @internal
 	 *
-	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
-	public function delete( Lesson_Progress $lesson_progress ): void {
+	public function delete( Lesson_Progress_Interface $lesson_progress ): void {
+		$this->asserstCommentsBasedLessonProgress( $lesson_progress );
+
 		$args = array(
 			'post_id' => $lesson_progress->get_lesson_id(),
 			'type'    => 'sensei_lesson_status',
@@ -228,6 +233,14 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		foreach ( $post_ids as $post_id ) {
 			Sensei()->flush_comment_counts_cache( $post_id );
 		}
+	}
+
+	private function asserstCommentsBasedLessonProgress( Lesson_Progress_Interface $lesson_progress ): Comments_Based_Lesson_Progress {
+		if ( ! $lesson_progress instanceof Comments_Based_Lesson_Progress ) {
+			$actual_type = get_class( $lesson_progress );
+			throw new RuntimeException( "Expected Comments_Based_Lesson_Progress, {$actual_type} given instead" );
+		}
+		return $lesson_progress;
 	}
 }
 

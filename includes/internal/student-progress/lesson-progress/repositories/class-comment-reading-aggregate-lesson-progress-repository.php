@@ -7,7 +7,9 @@
 
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -57,9 +59,9 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
-	 * @return Lesson_Progress The lesson progress.
+	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
-	public function create( int $lesson_id, int $user_id ): Lesson_Progress {
+	public function create( int $lesson_id, int $user_id ): Comments_Based_Lesson_Progress {
 		$progress = $this->comments_based_repository->create( $lesson_id, $user_id );
 		$this->tables_based_repository->create( $lesson_id, $user_id );
 		return $progress;
@@ -74,7 +76,7 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	 * @param int $user_id The user ID.
 	 * @return Lesson_Progress|null The lesson progress or null if it does not exist.
 	 */
-	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress {
+	public function get( int $lesson_id, int $user_id ): ?Comments_Based_Lesson_Progress {
 		return $this->comments_based_repository->get( $lesson_id, $user_id );
 	}
 
@@ -96,10 +98,11 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	 *
 	 * @internal
 	 *
-	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
-	public function save( Lesson_Progress $lesson_progress ): void {
+	public function save( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->comments_based_repository->save( $lesson_progress );
+
 		$tables_based_progress = $this->tables_based_repository->get( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() );
 		if ( ! $tables_based_progress ) {
 			$tables_based_progress = $this->tables_based_repository->create(
@@ -118,7 +121,7 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 			$completed_at = new \DateTimeImmutable( '@' . $lesson_progress->get_completed_at()->getTimestamp() );
 		}
 
-		$progress_to_save = new Lesson_Progress(
+		$progress_to_save = new Tables_Based_Lesson_Progress(
 			$tables_based_progress->get_id(),
 			$tables_based_progress->get_lesson_id(),
 			$tables_based_progress->get_user_id(),
@@ -136,9 +139,9 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	 *
 	 * @intenal
 	 *
-	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
-	public function delete( Lesson_Progress $lesson_progress ): void {
+	public function delete( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->comments_based_repository->delete( $lesson_progress );
 		$this->tables_based_repository->delete( $lesson_progress );
 	}
