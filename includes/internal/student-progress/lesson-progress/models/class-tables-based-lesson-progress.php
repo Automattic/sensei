@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Lesson_Progress class.
+ * File containing the Tables_Based_Lesson_Progress class.
  *
  * @package sensei
  */
@@ -22,20 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 4.7.2
  */
-class Lesson_Progress {
-	/**
-	 * Status lesson in progress.
-	 *
-	 * @internal
-	 */
-	public const STATUS_IN_PROGRESS = 'in-progress';
-
-	/**
-	 * Status lesson completed.
-	 *
-	 * @internal
-	 */
-	public const STATUS_COMPLETE = 'complete';
+class Tables_Based_Lesson_Progress implements Lesson_Progress_Interface {
 
 	/**
 	 * Progress identifier.
@@ -139,8 +126,7 @@ class Lesson_Progress {
 	 */
 	public function complete( ?DateTimeInterface $completed_at = null ): void {
 		$this->completed_at = $completed_at ?? current_datetime();
-		$has_questions      = Sensei_Lesson::lesson_quiz_has_questions( $this->lesson_id );
-		$this->status       = $has_questions ? Quiz_Progress::STATUS_PASSED : self::STATUS_COMPLETE;
+		$this->status       = self::STATUS_COMPLETE;
 	}
 
 	/**
@@ -217,13 +203,7 @@ class Lesson_Progress {
 	 * @return bool
 	 */
 	public function is_complete(): bool {
-		$completed_statuses = [
-			self::STATUS_COMPLETE,
-			Quiz_Progress::STATUS_PASSED,
-			Quiz_Progress::STATUS_GRADED,
-		];
-
-		return in_array( $this->status, $completed_statuses, true );
+		return $this->get_status() === Lesson_Progress_Interface::STATUS_COMPLETE;
 	}
 
 	/**
