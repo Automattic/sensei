@@ -6,16 +6,16 @@
 	height: 100%;
 
 	&__footer {
-		position: sticky;
-		bottom: 0;
-		width: 100%;
+		align-items: center;
 		background: #ffffff;
+		border-top: 1px solid rgba(30, 30, 30, 0.12);
+		bottom: 0;
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
 		gap: 12px;
-		border-top: 1px solid rgba(30, 30, 30, 0.12);
 		padding: 18px;
+		position: sticky;
+		width: 100%;
 		z-index: 10;
 
 		@media ( min-width: 600px ) {
