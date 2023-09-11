@@ -16,6 +16,7 @@
 		gap: 12px;
 		border-top: 1px solid rgba(30, 30, 30, 0.12);
 		padding: 18px;
+		z-index: 10;
 
 		@media ( min-width: 600px ) {
 			padding: 18px 30px;
