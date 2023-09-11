@@ -2,6 +2,7 @@
 
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
 
 class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
@@ -1852,7 +1853,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertEquals( $main_teacher_id, get_post_field( 'post_author', $quiz_id ) );
 	}
 
-	public function testMaybeCreateQuizProgress_QuizWasNotAvailable_DoesntCreateQuizProgress(): void {
+	public function testMaybeCreateQuizProgress_QuizWasNotAvailable_DoesntCreateTablesBasedQuizProgress(): void {
 		/* Arrange. */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -1876,11 +1877,13 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, $user_id );
 
 		/* Assert. */
-		$actual = Sensei()->quiz_progress_repository->has( $quiz_id, $user_id );
+		global $wpdb;
+		$quiz_progress_repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+		$actual                   = $quiz_progress_repository->has( $quiz_id, $user_id );
 		$this->assertFalse( $actual );
 	}
 
-	public function testMaybeCreateQuizProgress_QuizWasAvailable_DoesntCreateQuizProgress(): void {
+	public function testMaybeCreateQuizProgress_QuizWasAvailable_CreatesTablesBasedQuizProgress(): void {
 		/* Arrange. */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -1899,13 +1902,52 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 				],
 			]
 		);
-		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
 
 		/* Act. */
 		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, $user_id );
 
 		/* Assert. */
-		$actual = Sensei()->quiz_progress_repository->has( $quiz_id, $user_id );
+		global $wpdb;
+		$quiz_progress_repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+		$actual                   = $quiz_progress_repository->has( $quiz_id, $user_id );
 		$this->assertTrue( $actual );
+	}
+
+	public function testMaybeCreateQuizProgress_WhenTablesBasedProgressFeatureIsDisabled_DoesntCreateTablesBasedQuizProgress(): void {
+		/* Arrange. */
+		add_filter( 'sensei_feature_flag_tables_based_progress', '__return_false' );
+
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		/* Act. */
+		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, $user_id );
+
+		/* Assert. */
+		global $wpdb;
+		$quiz_progress_repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+		$actual                   = $quiz_progress_repository->has( $quiz_id, $user_id );
+		$this->assertFalse( $actual );
 	}
 }
