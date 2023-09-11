@@ -3,21 +3,21 @@
 namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Aggregate_Lesson_Progress_Repository;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comment_Reading_Aggregate_Lesson_Progress_Repository;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
 
 /**
- * Tests for Aggregate_Lesson_Progress_Repository.
+ * Tests for Comment_Reading_Aggregate_Lesson_Progress_Repository.
  *
- * @covers \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Aggregate_Lesson_Progress_Repository
+ * @covers \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comment_Reading_Aggregate_Lesson_Progress_Repository
  */
-class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
+class Comment_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function testCreate_UseTablesOn_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
-		$repository     = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
+		$repository     = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$tables_based
@@ -27,38 +27,11 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->create( 1, 2 );
 	}
 
-	public function testCreate_UseTablesOn_CallsCommentsBasedRepository(): void {
+	public function testCreate_Always_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
-		$repository     = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
-
-		/* Expect & Act. */
-		$comments_based
-			->expects( $this->once() )
-			->method( 'create' )
-			->with( 1, 2 );
-		$repository->create( 1, 2 );
-	}
-
-	public function testCreate_UseTablesOff_DoesntCallTablesBasedRepository(): void {
-		/* Arrange. */
-		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
-		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
-		$repository     = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
-
-		/* Expect & Act. */
-		$tables_based
-			->expects( $this->never() )
-			->method( 'create' );
-		$repository->create( 1, 2 );
-	}
-
-	public function testCreate_UseTablesOff_CallsCommentsBasedRepository(): void {
-		/* Arrange. */
-		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
-		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
-		$repository     = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
+		$repository     = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$comments_based
@@ -72,7 +45,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
-		$repository     = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
+		$repository     = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
 
 		/* Expect & Act. */
 		$comments_based
@@ -86,7 +59,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
-		$repository     = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
+		$repository     = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
 
 		/* Expect & Act. */
 		$comments_based
@@ -94,21 +67,6 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 			->method( 'has' )
 			->with( 1, 2 );
 		$repository->has( 1, 2 );
-	}
-
-	public function testSave_WhenDidntUseTables_CallsCommentsBasedRepository(): void {
-		/* Arrange. */
-		$progress       = $this->create_lesson_progress();
-		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
-		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
-		$repository     = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
-
-		/* Expect & Act. */
-		$comments_based
-			->expects( $this->once() )
-			->method( 'save' )
-			->with( $progress );
-		$repository->save( $progress );
 	}
 
 	public function testSave_WhenUsedTables_CallsCommentsBasedRepository(): void {
@@ -121,7 +79,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 			->method( 'get' )
 			->willReturn( $progress );
 
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
+		$repository = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
 
 		/* Expect & Act. */
 		$comments_based
@@ -131,7 +89,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
-	public function testSave_UseTablesOnAndProgressFound_CallsTablesBasedRepository(): void {
+	public function testSave_TablesBasedProgressFound_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$progress       = $this->create_lesson_progress();
 		$found_progress = new Lesson_Progress(
@@ -152,7 +110,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 			->with( 2, 3 )
 			->willReturn( $found_progress );
 
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
+		$repository = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
 
 		/* Expect & Act. */
 		$tables_based
@@ -170,7 +128,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
-	public function testSave_UseTablesOnAndProgressFound_ConvertsTimeToUtc(): void {
+	public function testSave_TablesBasedProgressFound_ConvertsTimeToUtc(): void {
 		/* Arrange. */
 		$progress = $this->create_lesson_progress( new \DateTimeImmutable( '2020-01-01 03:00:00', new \DateTimeZone( 'GMT+03:00' ) ) );
 
@@ -183,7 +141,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 			->with( 2, 3 )
 			->willReturn( $found_progress );
 
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
+		$repository = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
 
 		/* Expect & Act. */
 		$tables_based
@@ -198,7 +156,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 			);
 		$repository->save( $progress );
 	}
-	public function testSave_UseTablesOnAndProgressNotFound_CreatesTablesBasedProgress(): void {
+	public function testSave_TablesBasedProgressNotFound_CreatesTablesBasedProgress(): void {
 		/* Arrange. */
 		$progress         = $this->create_lesson_progress();
 		$created_progress = $this->create_lesson_progress();
@@ -210,7 +168,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 			->with( 2, 3 )
 			->willReturn( null );
 
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
+		$repository = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
 
 		/* Expect & Act. */
 		$tables_based
@@ -221,30 +179,14 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
-	public function testDelete_UseTablesOff_DoesntCallTablesBasedRepository(): void {
+	public function testDelete_Always_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$progress = $this->create_lesson_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
 
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
-
-		/* Expect & Act. */
-		$tables_based
-			->expects( $this->never() )
-			->method( 'delete' );
-		$repository->delete( $progress );
-	}
-
-	public function testDelete_UseTablesOn_CallsTablesBasedRepository(): void {
-		/* Arrange. */
-		$progress = $this->create_lesson_progress();
-
-		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
-		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
-
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
+		$repository = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
 
 		/* Expect & Act. */
 		$tables_based
@@ -254,21 +196,14 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete( $progress );
 	}
 
-	/**
-	 * Test that the repository will always use comments based repository while deleting.
-	 *
-	 * @param bool $use_tables
-	 *
-	 * @dataProvider providerDelete_Always_CallsCommentsBasedRepository
-	 */
-	public function testDelete_Always_CallsCommentsBasedRepository( $use_tables ): void {
+	public function testDelete_Always_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
 		$progress = $this->create_lesson_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
 
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, $use_tables );
+		$repository = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
 
 		/* Expect & Act. */
 		$comments_based
@@ -277,37 +212,14 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete( $progress );
 	}
 
-	public function providerDelete_Always_CallsCommentsBasedRepository(): array {
-		return [
-			'uses tables'         => [ true ],
-			'does not use tables' => [ false ],
-		];
-	}
-
-	public function testDeleteForLesson_UseTablesOff_DoesntCallTablesBasedRepository(): void {
+	public function testDeleteForLesson_Always_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$lesson_id = 2;
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
 
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
-
-		/* Expect & Act. */
-		$tables_based
-			->expects( $this->never() )
-			->method( 'delete_for_lesson' );
-		$repository->delete_for_lesson( $lesson_id );
-	}
-
-	public function testDeleteForLesson_UseTablesOn_CallsTablesBasedRepository(): void {
-		/* Arrange. */
-		$lesson_id = 2;
-
-		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
-		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
-
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
+		$repository = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
 
 		/* Expect & Act. */
 		$tables_based
@@ -317,21 +229,14 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete_for_lesson( $lesson_id );
 	}
 
-	/**
-	 * Test that the repository will always use comments based repository while deleting.
-	 *
-	 * @param bool $use_tables
-	 *
-	 * @dataProvider providerDeleteForLesson_Always_CallsCommentsBasedRepository
-	 */
-	public function testDeleteForLesson_Always_CallsCommentsBasedRepository( $use_tables ): void {
+	public function testDeleteForLesson_Always_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
 		$lesson_id = 2;
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
 
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, $use_tables );
+		$repository = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
 
 		/* Expect & Act. */
 		$comments_based
@@ -340,37 +245,14 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete_for_lesson( $lesson_id );
 	}
 
-	public function providerDeleteForLesson_Always_CallsCommentsBasedRepository(): array {
-		return [
-			'uses tables'         => [ true ],
-			'does not use tables' => [ false ],
-		];
-	}
-
-	public function testDeleteForUser_UseTablesOff_DoesntCallTablesBasedRepository(): void {
+	public function testDeleteForUser_Always_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$user_id = 2;
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
 
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
-
-		/* Expect & Act. */
-		$tables_based
-			->expects( $this->never() )
-			->method( 'delete_for_user' );
-		$repository->delete_for_user( $user_id );
-	}
-
-	public function testDeleteForUser_UseTablesOn_CallsTablesBasedRepository(): void {
-		/* Arrange. */
-		$user_id = 2;
-
-		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
-		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
-
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
+		$repository = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
 
 		/* Expect & Act. */
 		$tables_based
@@ -380,21 +262,14 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete_for_user( $user_id );
 	}
 
-	/**
-	 * Test that the repository will always use comments based repository while deleting.
-	 *
-	 * @param bool $use_tables
-	 *
-	 * @dataProvider providerDeleteForUser_Always_CallsCommentsBasedRepository
-	 */
-	public function testDeleteForUser_Always_CallsCommentsBasedRepository( $use_tables ): void {
+	public function testDeleteForUser_Always_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
 		$user_id = 2;
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
 
-		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, $use_tables );
+		$repository = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
 
 		/* Expect & Act. */
 		$comments_based
@@ -414,7 +289,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
-		$repository     = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
+		$repository     = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
 
 		/* Expect & Act. */
 		$comments_based

@@ -2370,15 +2370,14 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$quiz_progress_repository = ( new Quiz_Progress_Repository_Factory( $tables_based_progress_feature ) )
-			->create_tables_based_repository();
+		$quiz_progress_repository = Sensei()->quiz_progress_repository_factory->create_tables_based_repository();
+		$quiz_progress            = $quiz_progress_repository->get( $quiz_id, $user_id );
 
-		$quiz_progress = $quiz_progress_repository->get( $quiz_id, $user_id );
 		if ( $quiz_progress ) {
 			return;
 		}
 
-		$quiz_progress = $quiz_progress_repository->create( $quiz_id, $user_id );
+		$quiz_progress_repository->create( $quiz_id, $user_id );
 	}
 }
 
