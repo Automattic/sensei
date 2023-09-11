@@ -725,7 +725,31 @@ function sensei_the_question_content() {
 	?>
 
 	<div class="wp-block-sensei-lms-question-answers">
-		<?php Sensei_Question::load_question_template( $question_type ); ?>
+		<?php
+			/**
+			 * Fires before the question answers are displayed inside the answers block.
+			 *
+			 * @hook sensei_quiz_question_answers_inside_before Hook used for printing content inside the question answers section before the template content.
+			 *
+			 * @since $$next-version$$
+			 *
+			 * @param int $question_id The ID of the question.
+			 */
+			do_action( 'sensei_quiz_question_answers_inside_before', $sensei_question_loop['current_question']->ID );
+
+			Sensei_Question::load_question_template( $question_type );
+
+			/**
+			 * Fires after the question answers are displayed inside the answers block.
+			 *
+			 * @hook sensei_quiz_question_answers_inside_after Hook used for printing content inside the question answers section after the template content.
+			 *
+			 * @since $$next-version$$
+			 *
+			 * @param int $question_id The ID of the question.
+			 */
+			do_action( 'sensei_quiz_question_answers_inside_after', $sensei_question_loop['current_question']->ID );
+		?>
 	</div>
 
 	<?php
