@@ -29,6 +29,19 @@ export default async (): Promise< void > => {
 
 const cleanAllPlugins = async () => {
 	await cliAsync( 'wp plugin deactivate --all --exclude=sensei,sensei-lms' );
+
+	if ( needActivateGutenberg() ) {
+		console.log( 'Installing and activating Gutenberg plugin...' );
+		await cliAsync( 'wp plugin install gutenberg' );
+		await cliAsync( 'wp plugin activate gutenberg' );
+	}
+};
+
+const needActivateGutenberg = () => {
+	return (
+		process.env.ENABLE_GUTENBERG &&
+		JSON.parse( process.env.ENABLE_GUTENBERG )
+	);
 };
 
 const setupDefaultUsers = async (): Promise< void > => {

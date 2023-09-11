@@ -91,13 +91,7 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 	 * @return Submission The quiz submission.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
-		$submission = $this->get( $quiz_id, $user_id );
-
-		if ( $submission ) {
-			return $submission;
-		}
-
-		return $this->create( $quiz_id, $user_id, $final_grade );
+		return $this->comments_based_repository->get_or_create( $quiz_id, $user_id, $final_grade );
 	}
 
 	/**
@@ -138,24 +132,26 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 		$this->comments_based_repository->save( $submission );
 
 		if ( $this->use_tables ) {
-			$tables_based_submission = $this->tables_based_repository->get( $submission->get_quiz_id(), $submission->get_user_id() );
+			$tables_based_submission = $this->tables_based_repository->get_or_create(
+				$submission->get_quiz_id(),
+				$submission->get_user_id(),
+				$submission->get_final_grade()
+			);
 
-			if ( $tables_based_submission ) {
-				// Make sure the dates are in UTC.
-				$created_at = new DateTimeImmutable( '@' . $submission->get_created_at()->getTimestamp() );
-				$updated_at = new DateTimeImmutable( '@' . $submission->get_updated_at()->getTimestamp() );
+			// Make sure the dates are in UTC.
+			$created_at = new DateTimeImmutable( '@' . $submission->get_created_at()->getTimestamp() );
+			$updated_at = new DateTimeImmutable( '@' . $submission->get_updated_at()->getTimestamp() );
 
-				$submission_to_save = new Submission(
-					$tables_based_submission->get_id(),
-					$submission->get_quiz_id(),
-					$submission->get_user_id(),
-					$submission->get_final_grade(),
-					$created_at,
-					$updated_at
-				);
+			$submission_to_save = new Submission(
+				$tables_based_submission->get_id(),
+				$submission->get_quiz_id(),
+				$submission->get_user_id(),
+				$submission->get_final_grade(),
+				$created_at,
+				$updated_at
+			);
 
-				$this->tables_based_repository->save( $submission_to_save );
-			}
+			$this->tables_based_repository->save( $submission_to_save );
 		}
 	}
 

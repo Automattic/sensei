@@ -1,6 +1,7 @@
 <?php
 
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

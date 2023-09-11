@@ -90,6 +90,6 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 	 * Cancel all jobs.
 	 */
 	public function cancel_all_jobs() {
-		as_unschedule_all_actions( null, null, self::ACTION_SCHEDULER_GROUP );
+		as_unschedule_all_actions( '', [], self::ACTION_SCHEDULER_GROUP );
 	}
 }

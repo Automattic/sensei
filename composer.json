@@ -1,6 +1,9 @@
 {
 	"name": "automattic/sensei-lms",
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
+	"require": {
+		"woocommerce/action-scheduler": "3.6.2"
+	},
 	"require-dev": {
 		"php": "^7.3 || ^8",
 		"automattic/jetpack-changelogger": "3.3.5",
@@ -103,13 +106,13 @@
 		"changelogger": {
 			"changelog": "changelog.txt",
 			"types": {
-				"security": "Vulnerability fix (e.g. Fix XSS vulnerability)",
-				"added": "New feature (e.g. Add quiz generation using AI)",
-				"changed": "Changes to existing functionality (e.g. Redirect to next lesson without showing a message, Bump minimum required PHP version to 7.3)",
-				"deprecated": "Soon-to-be removed feature (e.g. Deprecate the legacy email system in favor of the new one)",
-				"removed": "Removed feature (e.g. Remove the legacy email system)",
-				"fixed": "Bug fix (e.g. Fix admin notice styles)",
-				"dev": "Changes that third-party devs should be aware of (e.g. Deprecate the `Sensei_Emails` class, Remove wrapper elements from templates, Introduce new hook: `sensei_email_send`)"
+				"security": "Security",
+				"added": "Added",
+				"changed": "Changed",
+				"deprecated": "Deprecated",
+				"removed": "Removed",
+				"fixed": "Fixed",
+				"development": "Development"
 			}
 		}
 	}

@@ -88,6 +88,13 @@ if ( class_exists( 'Sensei_Main', false ) ) {
  */
 require SENSEI_LMS_PLUGIN_PATH . 'vendor/autoload.php';
 
+/**
+ * Load packages and libraries.
+ */
+if ( ! defined( 'SENSEI_DO_NOT_LOAD_ACTION_SCHEDULER' ) || ! SENSEI_DO_NOT_LOAD_ACTION_SCHEDULER ) {
+	require SENSEI_LMS_PLUGIN_PATH . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
+}
+
 require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
 if ( ! Sensei_Dependency_Checker::check_php_requirement() ) {
 	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_version_notice' ) );
