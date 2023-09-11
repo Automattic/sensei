@@ -1,5 +1,9 @@
 <?xml version="1.0"?>
-<psalm autoloader="config/psalm/psalm-loader.php" errorBaseline="config/psalm/psalm-baseline.xml">
+<psalm
+	autoloader="config/psalm/psalm-loader.php"
+	errorBaseline="config/psalm/psalm-baseline.xml"
+	memoizeMethodCallResults="true"
+ >
 	<projectFiles>
 		<file name="sensei-lms.php" />
 		<directory name="includes" />
@@ -19,5 +23,10 @@
 	<issueHandlers>
 		<InternalClass errorLevel="suppress" />
 		<InternalMethod errorLevel="suppress" />
+		<PropertyNotSetInConstructor>
+			<errorLevel type="suppress">
+				<referencedProperty name="Sensei_Main::$quiz_progress_repository_factory" />
+			</errorLevel>
+		</PropertyNotSetInConstructor>
 	</issueHandlers>
 </psalm>
