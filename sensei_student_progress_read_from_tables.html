@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_email_list_row_actions - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_student_progress_read_from_tables - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_email_list_row_actions</h1>
+	<h1 class="page-title">Filter: sensei_student_progress_read_from_tables</h1>
 	
 
 	
@@ -43,14 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_email_list_row_actions">apply_filters( 'sensei_email_list_row_actions', <span class="signature">$actions, $post, $list_table )</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id="sensei_student_progress_read_from_tables">apply_filters( 'sensei_student_progress_read_from_tables', <span class="signature">$read_from_tables )</span><span class="type-signature"> &rarr; {bool}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter the row actions displayed on the email list.</p>
+    <p>Filter whether to read student progress from tables.</p>
 </div>
 
 
@@ -84,13 +84,13 @@
 
         <tr>
             
-                <td class="name"><code>$actions</code></td>
+                <td class="name"><code>$read_from_tables</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">bool</span>
 
 
             
@@ -100,53 +100,7 @@
 
             
 
-            <td class="description last"><p>The row actions.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>$post</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The post.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>$list_table</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Email_List_Table instance.</p></td>
+            <td class="description last"><p>Whether to read student progress from tables. Default false.</p></td>
         </tr>
 
     
@@ -164,7 +118,7 @@
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>4.12.0</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next_version$$</li></ul></dd>
     
 
     
@@ -190,7 +144,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_internal_emails_class-email-list-table.php.html">includes/internal/emails/class-email-list-table.php</a>, <a href="includes_internal_emails_class-email-list-table.php.html#line245">line 245</a>
+        <a href="includes_class-sensei.php.html">includes/class-sensei.php</a>, <a href="includes_class-sensei.php.html#line606">line 606</a>
     </li></ul></dd>
     
 
@@ -216,6 +170,10 @@
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    <p>Whether to read student progress from tables.</p>
+</div>
+
 
 
 <dl>
@@ -224,7 +182,7 @@
     </dt>
     <dd>
         
-<span class="param-type">array</span>
+<span class="param-type">bool</span>
 
 
     </dd>
