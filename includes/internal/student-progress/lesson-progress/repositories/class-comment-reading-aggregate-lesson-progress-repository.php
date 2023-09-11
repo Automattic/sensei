@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 4.16.1
  */
-class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository_Interface {
+class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository_Interface {
 	/**
 	 * Comments based lesson progress repository implementation.
 	 *
@@ -38,25 +38,16 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 	private $tables_based_repository;
 
 	/**
-	 * The flag if the tables based implementation is available for use.
-	 *
-	 * @var bool
-	 */
-	private $use_tables;
-
-	/**
 	 * Aggregate_Lesson_Progress_Repository constructor.
 	 *
 	 * @internal
 	 *
 	 * @param Comments_Based_Lesson_Progress_Repository $comments_based_repository Comments based lesson progress repository implementation.
 	 * @param Tables_Based_Lesson_Progress_Repository   $tables_based_repository  Tables based lesson progress repository implementation.
-	 * @param bool                                      $use_tables  The flag if the tables based implementation is available for use.
 	 */
-	public function __construct( Comments_Based_Lesson_Progress_Repository $comments_based_repository, Tables_Based_Lesson_Progress_Repository $tables_based_repository, bool $use_tables ) {
+	public function __construct( Comments_Based_Lesson_Progress_Repository $comments_based_repository, Tables_Based_Lesson_Progress_Repository $tables_based_repository ) {
 		$this->comments_based_repository = $comments_based_repository;
 		$this->tables_based_repository   = $tables_based_repository;
-		$this->use_tables                = $use_tables;
 	}
 
 	/**
@@ -70,9 +61,7 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress {
 		$progress = $this->comments_based_repository->create( $lesson_id, $user_id );
-		if ( $this->use_tables ) {
-			$this->tables_based_repository->create( $lesson_id, $user_id );
-		}
+		$this->tables_based_repository->create( $lesson_id, $user_id );
 		return $progress;
 	}
 
@@ -111,37 +100,35 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 	 */
 	public function save( Lesson_Progress $lesson_progress ): void {
 		$this->comments_based_repository->save( $lesson_progress );
-		if ( $this->use_tables ) {
-			$tables_based_progress = $this->tables_based_repository->get( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() );
-			if ( ! $tables_based_progress ) {
-				$tables_based_progress = $this->tables_based_repository->create(
-					$lesson_progress->get_lesson_id(),
-					$lesson_progress->get_user_id()
-				);
-			}
-
-			$started_at = null;
-			if ( $lesson_progress->get_started_at() ) {
-				$started_at = new \DateTimeImmutable( '@' . $lesson_progress->get_started_at()->getTimestamp() );
-			}
-
-			$completed_at = null;
-			if ( $lesson_progress->get_completed_at() ) {
-				$completed_at = new \DateTimeImmutable( '@' . $lesson_progress->get_completed_at()->getTimestamp() );
-			}
-
-			$progress_to_save = new Lesson_Progress(
-				$tables_based_progress->get_id(),
-				$tables_based_progress->get_lesson_id(),
-				$tables_based_progress->get_user_id(),
-				$lesson_progress->get_status(),
-				$started_at,
-				$completed_at,
-				$tables_based_progress->get_created_at(),
-				$tables_based_progress->get_updated_at()
+		$tables_based_progress = $this->tables_based_repository->get( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() );
+		if ( ! $tables_based_progress ) {
+			$tables_based_progress = $this->tables_based_repository->create(
+				$lesson_progress->get_lesson_id(),
+				$lesson_progress->get_user_id()
 			);
-			$this->tables_based_repository->save( $progress_to_save );
 		}
+
+		$started_at = null;
+		if ( $lesson_progress->get_started_at() ) {
+			$started_at = new \DateTimeImmutable( '@' . $lesson_progress->get_started_at()->getTimestamp() );
+		}
+
+		$completed_at = null;
+		if ( $lesson_progress->get_completed_at() ) {
+			$completed_at = new \DateTimeImmutable( '@' . $lesson_progress->get_completed_at()->getTimestamp() );
+		}
+
+		$progress_to_save = new Lesson_Progress(
+			$tables_based_progress->get_id(),
+			$tables_based_progress->get_lesson_id(),
+			$tables_based_progress->get_user_id(),
+			$lesson_progress->get_status(),
+			$started_at,
+			$completed_at,
+			$tables_based_progress->get_created_at(),
+			$tables_based_progress->get_updated_at()
+		);
+		$this->tables_based_repository->save( $progress_to_save );
 	}
 
 	/**
@@ -153,9 +140,7 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 	 */
 	public function delete( Lesson_Progress $lesson_progress ): void {
 		$this->comments_based_repository->delete( $lesson_progress );
-		if ( $this->use_tables ) {
-			$this->tables_based_repository->delete( $lesson_progress );
-		}
+		$this->tables_based_repository->delete( $lesson_progress );
 	}
 
 	/**
@@ -167,9 +152,7 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 	 */
 	public function delete_for_lesson( int $lesson_id ): void {
 		$this->comments_based_repository->delete_for_lesson( $lesson_id );
-		if ( $this->use_tables ) {
-			$this->tables_based_repository->delete_for_lesson( $lesson_id );
-		}
+		$this->tables_based_repository->delete_for_lesson( $lesson_id );
 	}
 
 	/**
@@ -181,9 +164,7 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 	 */
 	public function delete_for_user( int $user_id ): void {
 		$this->comments_based_repository->delete_for_user( $user_id );
-		if ( $this->use_tables ) {
-			$this->tables_based_repository->delete_for_user( $user_id );
-		}
+		$this->tables_based_repository->delete_for_user( $user_id );
 	}
 
 	/**
