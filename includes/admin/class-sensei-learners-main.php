@@ -1148,7 +1148,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			return;
 		}
 
-		$post_type      = '';
+		$box_title      = '';
 		$post_title     = '';
 		$form_post_type = '';
 		$form_course_id = 0;
