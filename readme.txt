@@ -144,6 +144,30 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.17.0 - 2023-09-13
+#### Added
+- Added header on the learning mode template of quizzes [#7087](https://github.com/Automattic/sensei/pull/7087)
+- Log active theme name on plugin deactivation [#7155](https://github.com/Automattic/sensei/pull/7155)
+
+#### Changed
+- Change "Lesson Type" to "Lesson Layout" in wizard [#7111](https://github.com/Automattic/sensei/pull/7111)
+- Change all question styles for quizzes in learning mode [#7163](https://github.com/Automattic/sensei/pull/7163)
+- Changed the footer styles of Quiz template [#7163](https://github.com/Automattic/sensei/pull/7163)
+- Display "Default Lesson" first in lesson wizard [#7119](https://github.com/Automattic/sensei/pull/7119)
+- Style changes of the navigation and title area of quiz in learning mode [#7093](https://github.com/Automattic/sensei/pull/7093)
+- Update style of quiz questions that have been submitted for grading [#7163](https://github.com/Automattic/sensei/pull/7163)
+
+#### Fixed
+- Button and Image style fix for lessons in learning mode in Course theme [#7059](https://github.com/Automattic/sensei/pull/7059)
+- Fixed AI course outline generator not working in WCPC [#7157](https://github.com/Automattic/sensei/pull/7157)
+- Fixed extra header element in lesson content [#7063](https://github.com/Automattic/sensei/pull/7063)
+- Fix PHP 8.2 compatibilty issue: creation of dynamic property. [#7120](https://github.com/Automattic/sensei/pull/7120)
+- Fix stuck in infinite loop issue on My Messages page in Astra theme [#7138](https://github.com/Automattic/sensei/pull/7138)
+- Incorrect lesson layout sometimes added in editor [#7164](https://github.com/Automattic/sensei/pull/7164)
+
+#### Development
+- Update question type templates [#7163](https://github.com/Automattic/sensei/pull/7163)
+
 ### 4.16.1 - 2023-08-15
 #### Added
 - Add CC/BCC fields for Sensei emails [#7014](https://github.com/Automattic/sensei/pull/7014)
@@ -174,17 +198,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Fix emails not using the From Name/Email settings [#6968](https://github.com/Automattic/sensei/pull/6968)
 - Fix PHP 8.1 autovivification of falsy value deprecation message [#7015](https://github.com/Automattic/sensei/pull/7015)
 - Removed Beta label from Editor Menu [#6989](https://github.com/Automattic/sensei/pull/6989)
-
-### 4.15.1 - 2023-06-22
-#### Added
-- Add Enrolled and Completion columns on the reports course page. [#6966](https://github.com/Automattic/sensei/pull/6966)
-
-#### Fixed
-- Avoid an error with getting future post URL for a scheduled sensei_email post. [#6975](https://github.com/Automattic/sensei/pull/6975)
-- Fix auto grading for non-multiple choice questions. [#6984](https://github.com/Automattic/sensei/pull/6984)
-- Fix auto grading not working for multiple choice questions when multiple correct answers. [#6906](https://github.com/Automattic/sensei/pull/6906)
-- Fix Course Wizard spacing issue when using latest Gutenberg. [#6940](https://github.com/Automattic/sensei/pull/6940)
-- Fix editor block error when updating an email. [#6936](https://github.com/Automattic/sensei/pull/6936)
-- Fix resetting a quiz also resets the course start date. [#6643](https://github.com/Automattic/sensei/pull/6643)
-- In lesson complete email use course author as lesson teacher. [#6977](https://github.com/Automattic/sensei/pull/6977)
-- Fix conflicts with modules using the same name. [#6437](https://github.com/Automattic/sensei/pull/6437)
