@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTime;
+use ReflectionClass;
 use RuntimeException;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
@@ -109,13 +110,24 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
 	public function save( Lesson_Progress_Interface $lesson_progress ): void {
-		$this->asserstCommentsBasedLessonProgress( $lesson_progress );
+		$this->assert_comments_based_lesson_progress( $lesson_progress );
 
 		$metadata = [];
 		if ( $lesson_progress->get_started_at() ) {
 			$metadata['start'] = $lesson_progress->get_started_at()->format( 'Y-m-d H:i:s' );
 		}
-		$comment_id = Sensei_Utils::update_lesson_status( $lesson_progress->get_user_id(), $lesson_progress->get_lesson_id(), $lesson_progress->get_status(), $metadata );
+
+		$reflection_class = new ReflectionClass( Comments_Based_Lesson_Progress::class );
+		$status_property  = $reflection_class->getProperty( 'status' );
+		$status_property->setAccessible( true );
+		$status           = $status_property->getValue( $lesson_progress );
+
+		$comment_id = Sensei_Utils::update_lesson_status(
+			$lesson_progress->get_user_id(),
+			$lesson_progress->get_lesson_id(),
+			$status,
+			$metadata
+		);
 
 		if ( $lesson_progress->is_complete() && $comment_id ) {
 			$comment = [
@@ -135,8 +147,6 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
 	public function delete( Lesson_Progress_Interface $lesson_progress ): void {
-		$this->asserstCommentsBasedLessonProgress( $lesson_progress );
-
 		$args = array(
 			'post_id' => $lesson_progress->get_lesson_id(),
 			'type'    => 'sensei_lesson_status',
@@ -235,12 +245,17 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		}
 	}
 
-	private function asserstCommentsBasedLessonProgress( Lesson_Progress_Interface $lesson_progress ): Comments_Based_Lesson_Progress {
+	/**
+	 * Asserts that the lesson progress is a Comments_Based_Lesson_Progress.
+	 *
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws RuntimeException When the lesson progress is not a Comments_Based_Lesson_Progress.
+	 */
+	private function assert_comments_based_lesson_progress( Lesson_Progress_Interface $lesson_progress ): void {
 		if ( ! $lesson_progress instanceof Comments_Based_Lesson_Progress ) {
 			$actual_type = get_class( $lesson_progress );
 			throw new RuntimeException( "Expected Comments_Based_Lesson_Progress, {$actual_type} given instead" );
 		}
-		return $lesson_progress;
 	}
 }
 

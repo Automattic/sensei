@@ -9,6 +9,7 @@ namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use RuntimeException;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
 use wpdb;
@@ -168,6 +169,8 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
 	public function save( Lesson_Progress_Interface $lesson_progress ): void {
+		$this->assert_tables_based_lesson_progress( $lesson_progress );
+
 		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$lesson_progress->set_updated_at( $updated_at );
 
@@ -291,5 +294,18 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		$count = $this->wpdb->get_var( $query );
 
 		return (int) $count;
+	}
+
+	/**
+	 * Asserts that the lesson progress is a Tables_Based_Lesson_Progress.
+	 *
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws RuntimeException If the lesson progress is not a Tables_Based_Lesson_Progress.
+	 */
+	private function assert_tables_based_lesson_progress( Lesson_Progress_Interface $lesson_progress ): void {
+		if ( ! $lesson_progress instanceof Tables_Based_Lesson_Progress ) {
+			$actual_type = get_class( $lesson_progress );
+			throw new RuntimeException( "Expected Tables_Based_Lesson_Progress, {$actual_type} given instead" );
+		}
 	}
 }

@@ -2,7 +2,9 @@
 
 namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comment_Reading_Aggregate_Lesson_Progress_Repository;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
@@ -71,13 +73,14 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_Unit
 
 	public function testSave_WhenUsedTables_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
-		$progress       = $this->create_lesson_progress();
+		$progress       = $this->create_comments_based_lesson_progress();
+		$found_progress = $this->create_tables_based_lesson_progress();
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 
 		$tables_based = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
 		$tables_based
 			->method( 'get' )
-			->willReturn( $progress );
+			->willReturn( $found_progress );
 
 		$repository = new Comment_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
 
@@ -91,17 +94,8 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_Unit
 
 	public function testSave_TablesBasedProgressFound_CallsTablesBasedRepository(): void {
 		/* Arrange. */
-		$progress       = $this->create_lesson_progress();
-		$found_progress = new Lesson_Progress(
-			2,
-			3,
-			4,
-			'a',
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable()
-		);
+		$progress       = $this->create_comments_based_lesson_progress();
+		$found_progress = $this->create_tables_based_lesson_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
@@ -118,7 +112,7 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_Unit
 			->method( 'save' )
 			->with(
 				$this->callback(
-					function ( Lesson_Progress $progress_to_save ) use ( $progress, $found_progress ) {
+					function ( Lesson_Progress_Interface $progress_to_save ) use ( $progress, $found_progress ) {
 						self::assertNotSame( $progress, $progress_to_save, 'We should create a new progress based on a found one: not using passed for saving.' );
 						self::assertNotSame( $found_progress, $progress_to_save, 'We should create a new progress based on a found one: not the found one itself.' );
 						return true;
@@ -130,9 +124,9 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_Unit
 
 	public function testSave_TablesBasedProgressFound_ConvertsTimeToUtc(): void {
 		/* Arrange. */
-		$progress = $this->create_lesson_progress( new \DateTimeImmutable( '2020-01-01 03:00:00', new \DateTimeZone( 'GMT+03:00' ) ) );
+		$progress = $this->create_comments_based_lesson_progress( new \DateTimeImmutable( '2020-01-01 03:00:00', new \DateTimeZone( 'GMT+03:00' ) ) );
 
-		$found_progress = $this->create_lesson_progress();
+		$found_progress = $this->create_tables_based_lesson_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
@@ -149,7 +143,7 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_Unit
 			->method( 'save' )
 			->with(
 				$this->callback(
-					function ( Lesson_Progress $progress_to_save ) {
+					function ( Lesson_Progress_Interface $progress_to_save ) {
 						return '2020-01-01 00:00:00' === $progress_to_save->get_started_at()->format( 'Y-m-d H:i:s' );
 					}
 				)
@@ -158,8 +152,8 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_Unit
 	}
 	public function testSave_TablesBasedProgressNotFound_CreatesTablesBasedProgress(): void {
 		/* Arrange. */
-		$progress         = $this->create_lesson_progress();
-		$created_progress = $this->create_lesson_progress();
+		$progress         = $this->create_comments_based_lesson_progress();
+		$created_progress = $this->create_tables_based_lesson_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
@@ -181,7 +175,7 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_Unit
 
 	public function testDelete_Always_CallsTablesBasedRepository(): void {
 		/* Arrange. */
-		$progress = $this->create_lesson_progress();
+		$progress = $this->create_comments_based_lesson_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
@@ -198,7 +192,7 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_Unit
 
 	public function testDelete_Always_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
-		$progress = $this->create_lesson_progress();
+		$progress = $this->create_comments_based_lesson_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
@@ -300,17 +294,36 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_Unit
 	}
 
 	/**
-	 * Create a lesson progress.
+	 * Create a comments-baesd lesson progress.
 	 *
 	 * @param \DateTimeInterface|null $started_at The started at date.
-	 * @return Lesson_Progress
+	 * @return Comments_Based_Lesson_Progress
 	 */
-	public function create_lesson_progress( $started_at = null ): Lesson_Progress {
-		return new Lesson_Progress(
+	public function create_comments_based_lesson_progress( $started_at = null ): Comments_Based_Lesson_Progress {
+		return new Comments_Based_Lesson_Progress(
 			1,
 			2,
 			3,
 			'a',
+			$started_at ?? new \DateTimeImmutable(),
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable()
+		);
+	}
+
+	/**
+	 * Create a tables-baesd lesson progress.
+	 *
+	 * @param \DateTimeInterface|null $started_at The started at date.
+	 * @return Lesson_Progress
+	 */
+	public function create_tables_based_lesson_progress( $started_at = null ): Tables_Based_Lesson_Progress {
+		return new Tables_Based_Lesson_Progress(
+			4,
+			2,
+			3,
+			'b',
 			$started_at ?? new \DateTimeImmutable(),
 			new \DateTimeImmutable(),
 			new \DateTimeImmutable(),

@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Sensei\Internal\Migration\Migration_Abstract;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
 
 /**
@@ -340,7 +340,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 				Quiz_Progress::STATUS_PASSED,
 				Quiz_Progress::STATUS_UNGRADED,
 				// We need to map lesson statuses to quiz' passed status.
-				Lesson_Progress::STATUS_COMPLETE,
+				Lesson_Progress_Interface::STATUS_COMPLETE,
 			];
 			$quiz_status        = in_array( $comment->comment_approved, $supported_statuses, true )
 				? $comment->comment_approved
@@ -349,7 +349,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 			if ( Quiz_Progress::STATUS_IN_PROGRESS === $quiz_status ) {
 				$quiz_completed_at = null;
 			}
-			if ( Lesson_Progress::STATUS_COMPLETE === $quiz_status ) {
+			if ( Lesson_Progress_Interface::STATUS_COMPLETE === $quiz_status ) {
 				$quiz_status = Quiz_Progress::STATUS_PASSED;
 			}
 
