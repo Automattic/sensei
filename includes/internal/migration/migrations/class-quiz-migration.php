@@ -18,7 +18,7 @@ use Sensei\Internal\Migration\Migration_Abstract;
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.17.0
  */
 class Quiz_Migration extends Migration_Abstract {
 	/**
@@ -61,7 +61,7 @@ class Quiz_Migration extends Migration_Abstract {
 	/**
 	 * Run the migration.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @param bool $dry_run Whether to run the migration in dry-run mode.
 	 * @return int The number of quiz submissions migrated.

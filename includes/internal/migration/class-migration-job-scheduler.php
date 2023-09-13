@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.17.0
  */
 class Migration_Job_Scheduler {
 	/**
@@ -88,7 +88,7 @@ class Migration_Job_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.17.0
 	 * @throws \RuntimeException If no jobs to schedule.
 	 */
 	public function schedule(): void {
@@ -119,7 +119,7 @@ class Migration_Job_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @param string $job_name The job name.
 	 */

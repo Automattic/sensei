@@ -731,7 +731,7 @@ function sensei_the_question_content() {
 			 *
 			 * @hook sensei_quiz_question_answers_inside_before
 			 *
-			 * @since $$next-version$$
+			 * @since 4.17.0
 			 *
 			 * @param {int} $question_id The ID of the question.
 			 */
@@ -744,7 +744,7 @@ function sensei_the_question_content() {
 			 *
 			 * @hook sensei_quiz_question_answers_inside_after
 			 *
-			 * @since $$next-version$$
+			 * @since 4.17.0
 			 *
 			 * @param {int} $question_id The ID of the question.
 			 */

@@ -73,7 +73,7 @@ class Quiz_Progress_Repository_Factory {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @return Tables_Based_Quiz_Progress_Repository
 	 */
