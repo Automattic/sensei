@@ -53,7 +53,7 @@ const OutlineEdit = ( props ) => {
 	/**
 	 * Filters if the course outline generator upsell should be removed or not.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @param {boolean} removeCourseOutlineGeneratorUpsell Whether to remove the course outline generator upsell.
 	 * @return {boolean} Whether to remove the course outline generator upsell.

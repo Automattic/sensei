@@ -3,7 +3,7 @@
  * File containing the abstract class for migrations.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.17.0
  */
 
 namespace Sensei\Internal\Migration;
@@ -11,7 +11,7 @@ namespace Sensei\Internal\Migration;
 /**
  * Migration abstract class.
  *
- * @since $$next-version$$
+ * @since 4.17.0
  */
 abstract class Migration_Abstract {
 	/**
@@ -24,7 +24,7 @@ abstract class Migration_Abstract {
 	/**
 	 * Run the migration.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @param bool $dry_run Whether to run the migration in dry-run mode.
 	 *
@@ -35,7 +35,7 @@ abstract class Migration_Abstract {
 	/**
 	 * Return the errors that occurred during the migration.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @return array
 	 */

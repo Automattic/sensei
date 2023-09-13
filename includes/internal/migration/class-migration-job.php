@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.17.0
  */
 class Migration_Job {
 	/**
@@ -56,7 +56,7 @@ class Migration_Job {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 */
 	public function run(): void {
 		$rows_inserted     = $this->migration->run( false );
@@ -68,7 +68,7 @@ class Migration_Job {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @return array
 	 */
@@ -81,7 +81,7 @@ class Migration_Job {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @return bool
 	 */
@@ -94,7 +94,7 @@ class Migration_Job {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @return string
 	 */
