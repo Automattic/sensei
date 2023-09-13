@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.1
 Tested up to: 6.3
 Requires PHP: 7.3
-Stable tag: 4.16.1
+Stable tag: 4.17.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
