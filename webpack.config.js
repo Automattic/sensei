@@ -118,6 +118,7 @@ const files = [
 	'css/learning-mode-compat.scss',
 	'css/learning-mode.editor.scss',
 	'css/learning-mode.theme.scss',
+	'css/question-answer-tinymce-editor.css',
 	'css/sensei-theme-blocks.scss',
 	'css/sensei-course-theme/sidebar-mobile-menu.scss',
 	'css/showcase-upsell.scss',
