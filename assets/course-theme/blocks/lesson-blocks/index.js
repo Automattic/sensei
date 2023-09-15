@@ -107,6 +107,12 @@ export default [
 			'Display buttons for actions the learner can take for the current lesson.',
 			'sensei-lms'
 		),
+		attributes: {
+			options: {
+				type: 'object',
+				default: {},
+			},
+		},
 		edit() {
 			return (
 				<div className="sensei-course-theme-lesson-actions">
