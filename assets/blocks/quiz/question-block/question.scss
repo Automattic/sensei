@@ -120,18 +120,20 @@ $question-input-border-color: var(--wp--preset--color--foreground, #155E65 );
 .sensei-lms-question__answer-feedback {
 	--color: #DCDCDE;
 	$horizontal-padding: 24px;
-	border: 2px solid var(--color);
+	border: 2px solid var(--border-color);
 	border-radius: 1px;
 	font-family: var(--wp--preset--font-family--system);
 	margin: 12px auto;
 
 	&--correct {
-		--color: #4ab866;
+		--color: #d6edda;
+		--border-color: #5c936b;
 		--icon: "\f15e";
 	}
 
 	&--incorrect {
-		--color: #e26f56;
+		--border-color: #cf8b25;
+		--color: #faebe0;
 		--icon: "\f335";
 	}
 
@@ -178,7 +180,7 @@ $question-input-border-color: var(--wp--preset--color--foreground, #155E65 );
 
 		&:after {
 			box-sizing: border-box;
-			color: #1e1e1e;
+			color: var(--border-color);
 			content: var(--icon);
 			font-family: dashicons, sans-serif;
 			font-size: 1.5rem;
