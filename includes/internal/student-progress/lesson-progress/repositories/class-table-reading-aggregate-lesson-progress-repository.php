@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Table_Reading_Aggregate_Lesson_Progress_Repository.
  *
- * @since $$next-version$$
+ * @since 4.17.0
  */
 class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository_Interface {
 	/**

@@ -259,7 +259,7 @@ function sensei_get_navigation_link_text( $item ) {
  * Returns navigation links for the modules and lessons in a course.
  *
  * @since  1.0.9
- * @param  integer $lesson_id Lesson ID.
+ * @param  int|null $lesson_id Lesson ID.
  * @return array Multi-dimensional array of previous and next links.
  */
 function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
@@ -722,8 +722,37 @@ function sensei_the_question_content() {
 	$question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
 
 	// load the template that displays the question information.
-	Sensei_Question::load_question_template( $question_type );
+	?>
 
+	<div class="wp-block-sensei-lms-question-answers">
+		<?php
+			/**
+			 * Fires before the question answers are displayed inside the answers block.
+			 *
+			 * @hook sensei_quiz_question_answers_inside_before
+			 *
+			 * @since 4.17.0
+			 *
+			 * @param {int} $question_id The ID of the question.
+			 */
+			do_action( 'sensei_quiz_question_answers_inside_before', $sensei_question_loop['current_question']->ID );
+
+			Sensei_Question::load_question_template( $question_type );
+
+			/**
+			 * Fires after the question answers are displayed inside the answers block.
+			 *
+			 * @hook sensei_quiz_question_answers_inside_after
+			 *
+			 * @since 4.17.0
+			 *
+			 * @param {int} $question_id The ID of the question.
+			 */
+			do_action( 'sensei_quiz_question_answers_inside_after', $sensei_question_loop['current_question']->ID );
+		?>
+	</div>
+
+	<?php
 }
 
 /**
@@ -745,7 +774,7 @@ function sensei_the_question_class() {
 	 */
 	 $classes = apply_filters( 'sensei_question_classes', array( $question_type ) );
 
-	$html_classes = '';
+	$html_classes = 'wp-block-sensei-lms-quiz-question ';
 	foreach ( $classes as $class ) {
 
 		$html_classes .= $class . ' ';
