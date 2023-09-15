@@ -7,7 +7,8 @@
 
 namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -54,9 +55,9 @@ class Table_Reading_Aggregate_Course_Progress_Repository implements Course_Progr
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Course_Progress The course progress.
+	 * @return Course_Progress_Interface The course progress.
 	 */
-	public function create( int $course_id, int $user_id ): Course_Progress {
+	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
 		$this->comments_based_repository->create( $course_id, $user_id );
 		return $this->tables_based_repository->create( $course_id, $user_id );
 	}
@@ -66,9 +67,9 @@ class Table_Reading_Aggregate_Course_Progress_Repository implements Course_Progr
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Course_Progress|null The course progress, or null if it doesn't exist.
+	 * @return Course_Progress_Interface|null The course progress, or null if it doesn't exist.
 	 */
-	public function get( int $course_id, int $user_id ): ?Course_Progress {
+	public function get( int $course_id, int $user_id ): ?Course_Progress_Interface {
 		return $this->tables_based_repository->get( $course_id, $user_id );
 	}
 
@@ -86,15 +87,15 @@ class Table_Reading_Aggregate_Course_Progress_Repository implements Course_Progr
 	/**
 	 * Save course progress.
 	 *
-	 * @param Course_Progress $course_progress The course progress.
+	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
-	public function save( Course_Progress $course_progress ): void {
+	public function save( Course_Progress_Interface $course_progress ): void {
 		$this->tables_based_repository->save( $course_progress );
 		$comments_based_progress = $this->comments_based_repository->get( $course_progress->get_course_id(), $course_progress->get_user_id() );
 		if ( ! $comments_based_progress ) {
 			$comments_based_progress = $this->comments_based_repository->create( $course_progress->get_course_id(), $course_progress->get_user_id() );
 		}
-		$updated_comments_based_progress = new Course_Progress(
+		$updated_comments_based_progress = new Comments_Based_Course_Progress(
 			$comments_based_progress->get_id(),
 			$comments_based_progress->get_course_id(),
 			$comments_based_progress->get_user_id(),
@@ -110,9 +111,9 @@ class Table_Reading_Aggregate_Course_Progress_Repository implements Course_Progr
 	/**
 	 * Deletes a course progress.
 	 *
-	 * @param Course_Progress $course_progress The course progress.
+	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
-	public function delete( Course_Progress $course_progress ): void {
+	public function delete( Course_Progress_Interface $course_progress ): void {
 		$this->tables_based_repository->delete( $course_progress );
 		$comments_based_progress = $this->comments_based_repository->get( $course_progress->get_course_id(), $course_progress->get_user_id() );
 		if ( $comments_based_progress ) {

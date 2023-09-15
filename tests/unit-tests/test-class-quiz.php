@@ -1,6 +1,6 @@
 <?php
 
-use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
 
@@ -1787,7 +1787,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 
-		$course_progress_mock = $this->createMock( Course_Progress::class );
+		$course_progress_mock = $this->createMock( Course_Progress_Interface::class );
 		$course_progress_mock->method( 'get_started_at' )
 			->willReturn( new DateTime( 'now' ) );
 

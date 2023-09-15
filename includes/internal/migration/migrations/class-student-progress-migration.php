@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Sensei\Internal\Migration\Migration_Abstract;
-use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 
@@ -248,11 +248,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 */
 	private function prepare_course_progress_to_insert( $comment, $meta ): void {
 		$course_status = 'in-progress';
-		if ( Course_Progress::STATUS_COMPLETE === $comment->comment_approved ) {
+		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
 			$course_status = 'complete';
 		}
 
-		if ( Course_Progress::STATUS_COMPLETE === $comment->comment_approved ) {
+		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
 			$completed_at = $comment->comment_date_gmt;
 		} else {
 			$completed_at = null;

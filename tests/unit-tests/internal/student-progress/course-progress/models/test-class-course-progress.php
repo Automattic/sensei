@@ -1,24 +1,24 @@
 <?php
 /**
- * File containing the Course_Progress_Test class.
+ * File containing the Comments_Based_Course_Progress_Test class.
  *
  * @package sensei
  */
 
 namespace SenseiTest\Internal\Student_Progress\Course_Progress\Models;
 
-use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 
 /**
- * Class Course_Progress_Test.
+ * Class Comments_Based_Course_Progress_Test.
  *
- * @covers \Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress
+ * @covers \Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress
  */
-class Course_Progress_Test extends \WP_UnitTestCase {
+class Comments_Based_Course_Progress_Test extends \WP_UnitTestCase {
 	public function testGetStartedAt_WhenStartWithStartedAtCalled_ReturnsSameStartedAt(): void {
 		/* Arrange. */
 		$started_at = new \DateTimeImmutable();
-		$progress   = $this->createProgress();
+		$progress   = $this->create_progress();
 
 		/* Act. */
 		$progress->start( $started_at );
@@ -29,7 +29,7 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetStatus_WhenStartCalled_ReturnsMatchingStatus(): void {
 		/* Arrange. */
-		$progress = $this->createProgress();
+		$progress = $this->create_progress();
 
 		/* Act. */
 		$progress->start();
@@ -41,7 +41,7 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 	public function testGetCompletedAt_WhenCompleteWithCompletedAtCalled_ReturnsSameCompletedAt(): void {
 		/* Arrange. */
 		$completed_at = new \DateTimeImmutable();
-		$progress     = $this->createProgress();
+		$progress     = $this->create_progress();
 
 		/* Act. */
 		$progress->complete( $completed_at );
@@ -52,7 +52,7 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetStatus_WhenCompleteCalled_ReturnsMatchingStatus(): void {
 		/* Arrange. */
-		$progress = $this->createProgress();
+		$progress = $this->create_progress();
 
 		/* Act. */
 		$progress->complete();
@@ -61,8 +61,8 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( 'complete', $progress->get_status() );
 	}
 
-	private function createProgress(): Course_Progress {
-		return new Course_Progress(
+	private function create_progress(): Comments_Based_Course_Progress {
+		return new Comments_Based_Course_Progress(
 			1,
 			2,
 			3,
