@@ -127,7 +127,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		$reflection_class = new \ReflectionClass( Comments_Based_Quiz_Progress::class );
 		$status_property  = $reflection_class->getProperty( 'status' );
 		$status_property->setAccessible( true );
-		$status           = $status_property->getValue( $quiz_progress );
+		$status = $status_property->getValue( $quiz_progress );
 
 		Sensei_Utils::update_lesson_status( $quiz_progress->get_user_id(), $lesson_id, $status, $metadata );
 	}

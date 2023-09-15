@@ -48,7 +48,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 
 		$progress = $this->get( $lesson_id, $user_id );
 		if ( ! $progress ) {
-			throw new RuntimeException( "Created lesson progress not found" );
+			throw new RuntimeException( 'Created lesson progress not found' );
 		}
 
 		return $progress;
@@ -126,7 +126,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		$reflection_class = new ReflectionClass( Comments_Based_Lesson_Progress::class );
 		$status_property  = $reflection_class->getProperty( 'status' );
 		$status_property->setAccessible( true );
-		$status           = $status_property->getValue( $lesson_progress );
+		$status = $status_property->getValue( $lesson_progress );
 
 		$comment_id = Sensei_Utils::update_lesson_status(
 			$lesson_progress->get_user_id(),

@@ -156,7 +156,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository_Test extends \WP_UnitTe
 		$progress->method( 'get_course_id' )->willReturn( 1 );
 		$progress->method( 'get_user_id' )->willReturn( 2 );
 
-		$comments_based_progress    = $this->createMock( Comments_Based_Course_Progress::class );
+		$comments_based_progress   = $this->createMock( Comments_Based_Course_Progress::class );
 		$comments_based_repository = $this->createMock( Comments_Based_Course_Progress_Repository::class );
 		$comments_based_repository
 			->method( 'get' )
