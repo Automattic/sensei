@@ -126,13 +126,13 @@ $question-input-border-color: var(--wp--preset--color--foreground, #155E65 );
 	margin: 12px auto;
 
 	&--correct {
-		--color: #B8E6BF;
-		--icon: '\f058';
+		--color: #4ab866;
+		--icon: "\f15e";
 	}
 
 	&--incorrect {
-		--color: #F7DCC6;
-		--icon: '\f057';
+		--color: #e26f56;
+		--icon: "\f335";
 	}
 
 	&.empty {
