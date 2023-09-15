@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Tables_Based_Lesson_Progress_Test extends \WP_UnitTestCase {
 	/**
+	 * Sensei factory.
+	 *
 	 * @var \Sensei_Factory
 	 */
 	protected $factory;

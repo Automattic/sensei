@@ -261,6 +261,12 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		);
 	}
 
+	/**
+	 * Assert that the course progress is a Tables_Based_Course_Progress.
+	 *
+	 * @param Course_Progress_Interface $course_progress The course progress.
+	 * @throws \InvalidArgumentException If the course progress is not a Tables_Based_Course_Progress.
+	 */
 	private function assert_tables_based_course_progress( Course_Progress_Interface $course_progress ): void {
 		if ( ! $course_progress instanceof Tables_Based_Course_Progress ) {
 			$actual_type = get_class( $course_progress );
