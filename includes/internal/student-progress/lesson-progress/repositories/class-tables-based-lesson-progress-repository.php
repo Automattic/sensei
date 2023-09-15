@@ -104,7 +104,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Lesson_Progress|null The lesson progress or null if not found.
+	 * @return Tables_Based_Lesson_Progress|null The lesson progress or null if not found.
 	 */
 	public function get( int $lesson_id, int $user_id ): ?Tables_Based_Lesson_Progress {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';

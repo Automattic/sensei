@@ -45,7 +45,12 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			throw new \RuntimeException( "Can't create a course progress" );
 		}
 
-		return $this->get( $course_id, $user_id );
+		$progress = $this->get( $course_id, $user_id );
+		if ( ! $progress ) {
+			throw new \RuntimeException( 'Created course progress not found' );
+		}
+
+		return $progress;
 	}
 
 	/**
@@ -219,6 +224,12 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		}
 	}
 
+	/**
+	 * Assert that the course progress is a Comments_Based_Course_Progress.
+	 *
+	 * @param Course_Progress_Interface $course_progress The course progress.
+	 * @throws \InvalidArgumentException If the course progress is not a Comments_Based_Course_Progress.
+	 */
 	private function assert_comments_based_course_progress( Course_Progress_Interface $course_progress ): void {
 		if ( ! $course_progress instanceof Comments_Based_Course_Progress ) {
 			$actual_type = get_class( $course_progress );

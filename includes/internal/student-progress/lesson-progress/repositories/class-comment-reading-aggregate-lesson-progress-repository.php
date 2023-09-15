@@ -59,7 +59,7 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
-	 * @return Lesson_Progress_Interface The lesson progress.
+	 * @return Comments_Based_Lesson_Progress The lesson progress.
 	 */
 	public function create( int $lesson_id, int $user_id ): Comments_Based_Lesson_Progress {
 		$progress = $this->comments_based_repository->create( $lesson_id, $user_id );
@@ -74,7 +74,7 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
-	 * @return Lesson_Progress|null The lesson progress or null if it does not exist.
+	 * @return Comments_Based_Lesson_Progress|null The lesson progress or null if it does not exist.
 	 */
 	public function get( int $lesson_id, int $user_id ): ?Comments_Based_Lesson_Progress {
 		return $this->comments_based_repository->get( $lesson_id, $user_id );
