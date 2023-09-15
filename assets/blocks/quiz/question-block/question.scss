@@ -177,10 +177,18 @@ $question-input-border-color: var(--wp--preset--color--foreground, #155E65 );
 		}
 	}
 
-	&__icon:after {
-		content: var(--icon);
-		font-family: FontAwesomeSensei, FontAwesome, sans-serif;
-		margin-right: 6px;
+	&__icon {
+		display: flex;
+
+		&:after {
+			box-sizing: border-box;
+			color: #1e1e1e;
+			content: var(--icon);
+			font-family: dashicons, sans-serif;
+			font-size: 1.5rem;
+			line-height: 1;
+			margin-right: 8px;
+		}
 	}
 
 }
