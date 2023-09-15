@@ -117,6 +117,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			$metadata['start'] = $lesson_progress->get_started_at()->format( 'Y-m-d H:i:s' );
 		}
 
+		// We need to use internal value for status, not the one returned by the getter.
 		$reflection_class = new ReflectionClass( Comments_Based_Lesson_Progress::class );
 		$status_property  = $reflection_class->getProperty( 'status' );
 		$status_property->setAccessible( true );

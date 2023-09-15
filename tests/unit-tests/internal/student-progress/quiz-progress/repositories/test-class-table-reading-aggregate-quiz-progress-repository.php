@@ -2,7 +2,8 @@
 
 namespace SenseiTest\Internal\Student_Progress\Quiz_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Table_Reading_Aggregate_Quiz_Progress_Repository;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository;
@@ -12,7 +13,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTest
 		/* Arrange. */
 		$comments_based_repository = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 
-		$created_progress        = $this->createMock( \Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress::class );
+		$created_progress        = $this->createMock( Tables_Based_Quiz_Progress::class );
 		$tables_based_repository = $this->createMock( Tables_Based_Quiz_Progress_Repository::class );
 		$tables_based_repository->method( 'create' )->willReturn( $created_progress );
 
@@ -44,7 +45,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTest
 		/* Arrange. */
 		$comments_based_repository = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 
-		$created_progress        = $this->createMock( \Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress::class );
+		$created_progress        = $this->createMock( Tables_Based_Quiz_Progress::class );
 		$tables_based_repository = $this->createMock( Tables_Based_Quiz_Progress_Repository::class );
 		$tables_based_repository
 			->method( 'get' )
@@ -109,7 +110,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTest
 
 	public function testDelete_Always_CallsTablesBasedRepository(): void {
 		/* Arrange. */
-		$progress = $this->createMock( Quiz_Progress::class );
+		$progress = $this->createMock( Tables_Based_Quiz_Progress::class );
 		$progress->method( 'get_quiz_id' )->willReturn( 1 );
 		$progress->method( 'get_user_id' )->willReturn( 2 );
 
@@ -128,7 +129,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTest
 
 	public function testDelete_CommentsBasedProgressNotFound_DoesntDeleteCommentsBasedProgress(): void {
 		/* Arrange. */
-		$progress = $this->createMock( Quiz_Progress::class );
+		$progress = $this->createMock( Tables_Based_Quiz_Progress::class );
 		$progress->method( 'get_quiz_id' )->willReturn( 1 );
 		$progress->method( 'get_user_id' )->willReturn( 2 );
 
@@ -151,11 +152,11 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTest
 
 	public function testDelete_CommentsBasedProgressFound_DeletesCommentsBasedProgress(): void {
 		/* Arrange. */
-		$progress = $this->createMock( Quiz_Progress::class );
+		$progress = $this->createMock( Tables_Based_Quiz_Progress::class );
 		$progress->method( 'get_quiz_id' )->willReturn( 1 );
 		$progress->method( 'get_user_id' )->willReturn( 2 );
 
-		$commets_based_progress    = $this->createMock( Quiz_Progress::class );
+		$commets_based_progress    = $this->createMock( Comments_Based_Quiz_Progress::class );
 		$comments_based_repository = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 		$comments_based_repository
 			->method( 'get' )
@@ -167,7 +168,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTest
 		$repository = new Table_Reading_Aggregate_Quiz_Progress_Repository( $comments_based_repository, $tables_based_repository );
 
 		/* Expect & Act. */
-		$tables_based_repository
+		$comments_based_repository
 			->expects( $this->once() )
 			->method( 'delete' )
 			->with( $commets_based_progress );
@@ -237,8 +238,8 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTest
 	public function testSave_Always_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$date_mock               = new \DateTimeImmutable( '2020-01-01' );
-		$tables_based_progress   = new Quiz_Progress( 3, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
-		$comments_based_progress = new Quiz_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
+		$tables_based_progress   = new Tables_Based_Quiz_Progress( 3, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
+		$comments_based_progress = new Comments_Based_Quiz_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
 
 		$comments_based_repository = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 		$comments_based_repository
@@ -261,8 +262,8 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTest
 	public function testSave_CommentsBasedProgressNotFound_CreatesCommentsBasedProgress(): void {
 		/* Arrange. */
 		$date_mock               = new \DateTimeImmutable( '2020-01-01' );
-		$tables_based_progress   = new Quiz_Progress( 3, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
-		$comments_based_progress = new Quiz_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
+		$tables_based_progress   = new Tables_Based_Quiz_Progress( 3, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
+		$comments_based_progress = new Comments_Based_Quiz_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
 
 		$comments_based_repository = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 		$comments_based_repository
@@ -287,8 +288,8 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTest
 	public function testSave_CommentsBasedProgressFound_DoesntCreateCommentsBasedProgress(): void {
 		/* Arrange. */
 		$date_mock               = new \DateTimeImmutable( '2020-01-01' );
-		$tables_based_progress   = new Quiz_Progress( 3, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
-		$comments_based_progress = new Quiz_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
+		$tables_based_progress   = new Tables_Based_Quiz_Progress( 3, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
+		$comments_based_progress = new Comments_Based_Quiz_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
 
 		$comments_based_repository = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 		$comments_based_repository
@@ -312,8 +313,8 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTest
 	public function testSave_Always_SavesToCommentsBasedRepository(): void {
 		/* Arrange. */
 		$date_mock               = new \DateTimeImmutable( '2020-01-01' );
-		$tables_based_progress   = new Quiz_Progress( 3, 1, 2, 'complete', $date_mock, $date_mock, $date_mock, $date_mock );
-		$comments_based_progress = new Quiz_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
+		$tables_based_progress   = new Tables_Based_Quiz_Progress( 3, 1, 2, 'passed', $date_mock, $date_mock, $date_mock, $date_mock );
+		$comments_based_progress = new Comments_Based_Quiz_Progress( 4, 1, 2, 'in-progress', $date_mock, $date_mock, $date_mock, $date_mock );
 
 		$comments_based_repository = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 		$comments_based_repository
@@ -331,8 +332,8 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTest
 			->method( 'save' )
 			->with(
 				$this->callback(
-					function ( Quiz_Progress $progress ) {
-						return 'complete' === $progress->get_status();
+					function ( Comments_Based_Quiz_Progress $progress ) {
+						return 'passed' === $progress->get_status();
 					}
 				)
 			);

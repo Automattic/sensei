@@ -200,7 +200,19 @@ class Comments_Based_Quiz_Progress implements Quiz_Progress_Interface {
 	 * @return string|null
 	 */
 	public function get_status(): ?string {
-		return $this->status;
+		$supported_statuses = [
+			Quiz_Progress_Interface::STATUS_IN_PROGRESS,
+			Quiz_Progress_Interface::STATUS_FAILED,
+			Quiz_Progress_Interface::STATUS_GRADED,
+			Quiz_Progress_Interface::STATUS_PASSED,
+			Quiz_Progress_Interface::STATUS_UNGRADED,
+		];
+
+		$status = in_array( $this->status, $supported_statuses, true )
+			? $this->status
+			: Quiz_Progress_Interface::STATUS_IN_PROGRESS;
+
+		return $status;
 	}
 
 	/**

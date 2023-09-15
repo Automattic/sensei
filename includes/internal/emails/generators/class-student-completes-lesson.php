@@ -8,9 +8,7 @@
 namespace Sensei\Internal\Emails\Generators;
 
 use Sensei\Internal\Emails\Email_Repository;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

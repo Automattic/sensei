@@ -8,7 +8,7 @@
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Models;
 
 use DateTimeInterface;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei_Lesson;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -127,7 +127,7 @@ class Comments_Based_Lesson_Progress implements Lesson_Progress_Interface {
 	public function complete( ?DateTimeInterface $completed_at = null ): void {
 		$this->completed_at = $completed_at ?? current_datetime();
 		$has_questions      = Sensei_Lesson::lesson_quiz_has_questions( $this->lesson_id );
-		$this->status       = $has_questions ? Quiz_Progress::STATUS_PASSED : self::STATUS_COMPLETE;
+		$this->status       = $has_questions ? Quiz_Progress_Interface::STATUS_PASSED : self::STATUS_COMPLETE;
 	}
 
 	/**

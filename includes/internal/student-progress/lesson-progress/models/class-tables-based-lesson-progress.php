@@ -8,8 +8,6 @@
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Models;
 
 use DateTimeInterface;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
-use Sensei_Lesson;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
