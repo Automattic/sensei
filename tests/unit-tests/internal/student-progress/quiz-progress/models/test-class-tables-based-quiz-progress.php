@@ -2,14 +2,14 @@
 
 namespace SenseiTest\Internal\Student_Progress\Quiz_Progress\Models;
 
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
 
 /**
- * Class Comments_Based_Quiz_Progress_Test.
+ * Class Tables_Based_Quiz_Progress_Test.
  *
- * @covers \Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress
+ * @covers \Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress
  */
-class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
+class Tables_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetId_ConstructedWithId_ReturnsSameId(): void {
 		/* Arrange. */
@@ -159,8 +159,8 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( 'ungraded', $actual );
 	}
 
-	private function create_progress( string $status = null ): Comments_Based_Quiz_Progress {
-		return new Comments_Based_Quiz_Progress(
+	private function create_progress( string $status = null ): Tables_Based_Quiz_Progress {
+		return new Tables_Based_Quiz_Progress(
 			1,
 			2,
 			3,
