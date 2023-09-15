@@ -9,7 +9,6 @@ namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -56,9 +55,9 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
-	 * @return Tables_Based_Quiz_Progress The quiz progress.
+	 * @return Quiz_Progress_Interface The quiz progress.
 	 */
-	public function create( int $quiz_id, int $user_id ): Tables_Based_Quiz_Progress {
+	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		$this->comments_based_repository->create( $quiz_id, $user_id );
 		return $this->tables_based_repository->create( $quiz_id, $user_id );
 	}
@@ -68,9 +67,9 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
-	 * @return Tables_Based_Quiz_Progress|null The quiz progress or null if it does not exist.
+	 * @return Quiz_Progress_Interface|null The quiz progress or null if it does not exist.
 	 */
-	public function get( int $quiz_id, int $user_id ): ?Tables_Based_Quiz_Progress {
+	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress_Interface {
 		return $this->tables_based_repository->get( $quiz_id, $user_id );
 	}
 

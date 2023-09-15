@@ -9,7 +9,6 @@ namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -51,9 +50,9 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id   The user ID.
-	 * @return Tables_Based_Lesson_Progress The lesson progress.
+	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
-	public function create( int $lesson_id, int $user_id ): Tables_Based_Lesson_Progress {
+	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
 		$this->comments_based_repository->create( $lesson_id, $user_id );
 		return $this->tables_based_repository->create( $lesson_id, $user_id );
 	}
@@ -63,9 +62,9 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id   The user ID.
-	 * @return Tables_Based_Lesson_Progress|null The lesson progress.
+	 * @return Lesson_Progress_Interface|null The lesson progress.
 	 */
-	public function get( int $lesson_id, int $user_id ): ?Tables_Based_Lesson_Progress {
+	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress_Interface {
 		return $this->tables_based_repository->get( $lesson_id, $user_id );
 	}
 

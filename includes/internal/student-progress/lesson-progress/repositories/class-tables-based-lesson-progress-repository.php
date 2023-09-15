@@ -52,9 +52,9 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Tables_Based_Lesson_Progress The lesson progress.
+	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
-	public function create( int $lesson_id, int $user_id ): Tables_Based_Lesson_Progress {
+	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
@@ -104,9 +104,9 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Tables_Based_Lesson_Progress|null The lesson progress or null if not found.
+	 * @return Lesson_Progress_Interface|null The lesson progress or null if not found.
 	 */
-	public function get( int $lesson_id, int $user_id ): ?Tables_Based_Lesson_Progress {
+	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress_Interface {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared

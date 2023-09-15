@@ -34,10 +34,10 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Comments_Based_Lesson_Progress The lesson progress.
+	 * @return Lesson_Progress_Interface The lesson progress.
 	 * @throws RuntimeException When the lesson progress could not be created.
 	 */
-	public function create( int $lesson_id, int $user_id ): Comments_Based_Lesson_Progress {
+	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
 		$metadata   = [
 			'start' => current_time( 'mysql' ),
 		];
@@ -62,9 +62,9 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Comments_Based_Lesson_Progress|null The lesson progress or null if not found.
+	 * @return Lesson_Progress_Interface|null The lesson progress or null if not found.
 	 */
-	public function get( int $lesson_id, int $user_id ): ?Comments_Based_Lesson_Progress {
+	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress_Interface {
 		$activity_args = [
 			'post_id' => $lesson_id,
 			'user_id' => $user_id,
@@ -264,4 +264,3 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		}
 	}
 }
-

@@ -50,9 +50,9 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Tables_Based_Course_Progress The course progress.
+	 * @return Course_Progress_Interface The course progress.
 	 */
-	public function create( int $course_id, int $user_id ): Tables_Based_Course_Progress {
+	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
@@ -101,9 +101,9 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Tables_Based_Course_Progress|null The course progress or null if it does not exist.
+	 * @return Course_Progress_Interface|null The course progress or null if it does not exist.
 	 */
-	public function get( int $course_id, int $user_id ): ?Tables_Based_Course_Progress {
+	public function get( int $course_id, int $user_id ): ?Course_Progress_Interface {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared

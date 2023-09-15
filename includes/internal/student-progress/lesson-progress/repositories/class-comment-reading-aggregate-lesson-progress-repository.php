@@ -7,7 +7,6 @@
 
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
 
@@ -59,9 +58,9 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
-	 * @return Comments_Based_Lesson_Progress The lesson progress.
+	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
-	public function create( int $lesson_id, int $user_id ): Comments_Based_Lesson_Progress {
+	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
 		$progress = $this->comments_based_repository->create( $lesson_id, $user_id );
 		$this->tables_based_repository->create( $lesson_id, $user_id );
 		return $progress;
@@ -74,9 +73,9 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
-	 * @return Comments_Based_Lesson_Progress|null The lesson progress or null if it does not exist.
+	 * @return Lesson_Progress_Interface|null The lesson progress or null if it does not exist.
 	 */
-	public function get( int $lesson_id, int $user_id ): ?Comments_Based_Lesson_Progress {
+	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress_Interface {
 		return $this->comments_based_repository->get( $lesson_id, $user_id );
 	}
 

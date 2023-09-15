@@ -31,10 +31,10 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Comments_Based_Course_Progress The course progress.
+	 * @return Course_Progress_Interface The course progress.
 	 * @throws \RuntimeException If the course progress could not be created.
 	 */
-	public function create( int $course_id, int $user_id ): Comments_Based_Course_Progress {
+	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
 		$metadata   = [
 			'start'    => current_time( 'mysql' ),
 			'percent'  => 0,
@@ -63,7 +63,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 *
 	 * @return Comments_Based_Course_Progress|null The course progress.
 	 */
-	public function get( int $course_id, int $user_id ): ?Comments_Based_Course_Progress {
+	public function get( int $course_id, int $user_id ): ?Course_Progress_Interface {
 		$activity_args = [
 			'post_id' => $course_id,
 			'user_id' => $user_id,

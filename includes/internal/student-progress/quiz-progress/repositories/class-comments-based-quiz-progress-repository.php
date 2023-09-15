@@ -32,10 +32,10 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
-	 * @return Comments_Based_Quiz_Progress
+	 * @return Quiz_Progress_Interface
 	 * @throws \RuntimeException When the quiz progress doesn't exist. In this implementation we re-use lesson progress.
 	 */
-	public function create( int $quiz_id, int $user_id ): Comments_Based_Quiz_Progress {
+	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		$progress = $this->get( $quiz_id, $user_id );
 		if ( ! $progress ) {
 			/**
@@ -55,9 +55,9 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
-	 * @return Comments_Based_Quiz_Progress
+	 * @return Quiz_Progress_Interface
 	 */
-	public function get( int $quiz_id, int $user_id ): ?Comments_Based_Quiz_Progress {
+	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress_Interface {
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 		if ( ! $lesson_id ) {
 			return null;

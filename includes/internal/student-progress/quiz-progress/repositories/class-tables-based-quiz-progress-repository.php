@@ -50,9 +50,9 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
-	 * @return Tables_Based_Quiz_Progress
+	 * @return Quiz_Progress_Interface
 	 */
-	public function create( int $quiz_id, int $user_id ): Tables_Based_Quiz_Progress {
+	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
@@ -101,9 +101,9 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
-	 * @return Tables_Based_Quiz_Progress
+	 * @return Quiz_Progress_Interface|null
 	 */
-	public function get( int $quiz_id, int $user_id ): ?Tables_Based_Quiz_Progress {
+	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress_Interface {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
