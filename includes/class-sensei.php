@@ -347,6 +347,14 @@ class Sensei_Main {
 		$this->main_plugin_file_name = $main_plugin_file_name;
 		$this->plugin_url            = trailingslashit( plugins_url( '', $this->main_plugin_file_name ) );
 		$this->plugin_path           = trailingslashit( dirname( $this->main_plugin_file_name ) );
+		/**
+		 * Filter the template url.
+		 *
+		 * @hook sensei_template_url
+		 *
+		 * @param {string} $template_url The template url.
+		 * @return {string} Filtered template url.
+		 */
 		$this->template_url          = apply_filters( 'sensei_template_url', 'sensei/' );
 		$this->version               = isset( $args['version'] ) ? $args['version'] : null;
 
@@ -1032,6 +1040,17 @@ class Sensei_Main {
 	 * @return int
 	 */
 	public function get_page_id( $page ) {
+
+		/**
+		 * Filter the page ID.
+		 *
+		 * {page} is the page name.
+		 *
+		 * @hook sensei_get_{page}_page_id
+		 *
+		 * @param {int} $page The page ID.
+		 * @return {int} Filtered page ID.
+		 */
 		$page = apply_filters( 'sensei_get_' . esc_attr( $page ) . '_page_id', get_option( 'sensei_' . esc_attr( $page ) . '_page_id' ) );
 		return ( $page ) ? $page : -1;
 	}
@@ -1282,6 +1301,16 @@ class Sensei_Main {
 
 		// Only return sizes we define in settings.
 		if ( ! in_array( $image_size, array( 'course_archive_image', 'course_single_image', 'lesson_archive_image', 'lesson_single_image' ), true ) ) {
+			/**
+			 * Filter the image size.
+			 *
+			 * {image_size} is one of: course_archive_image, course_single_image, lesson_archive_image, lesson_single_image.
+			 *
+			 * @hook sensei_get_image_size_{image_size}
+			 *
+			 * @param {string} $image_size Image Size.
+			 * @return {string} Filtered image size.
+			 */
 			return apply_filters( 'sensei_get_image_size_' . $image_size, '' );
 		}
 
@@ -1307,6 +1336,7 @@ class Sensei_Main {
 		$size['height'] = isset( $size['height'] ) ? $size['height'] : '100';
 		$size['crop']   = isset( $size['crop'] ) ? $size['crop'] : 0;
 
+		/** This filter is documented in includes/class-sensei.php (above). */
 		return apply_filters( 'sensei_get_image_size_' . $image_size, $size );
 	}
 
