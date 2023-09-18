@@ -81,7 +81,7 @@ class Sensei_Course_Results_Block {
 		$structure         = Sensei_Course_Structure::instance( $course_id )->get( 'view' );
 		$has_other_lessons = $this->course_structure_has_type( $structure, 'lesson' );
 		$block_content     = [];
-		$block_content[]   = '<section class="wp-block-sensei-lms-course-results sensei-block-wrapper ' . $class_name . '">';
+		$block_content[]   = '<section class="wp-block-sensei-lms-course-results sensei-block-wrapper ' . esc_attr( $class_name ) . '">';
 		$block_content[]   = $this->render_total_grade( $course_id );
 		$block_content[]   = $this->render_course_title( $course_id, $structure, $attributes );
 
