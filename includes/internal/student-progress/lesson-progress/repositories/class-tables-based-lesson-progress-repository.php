@@ -301,7 +301,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * Asserts that the lesson progress is a Tables_Based_Lesson_Progress.
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
-	 * @throws RuntimeException If the lesson progress is not a Tables_Based_Lesson_Progress.
+	 * @throws InvalidArgumentException If the lesson progress is not a Tables_Based_Lesson_Progress.
 	 */
 	private function assert_tables_based_lesson_progress( Lesson_Progress_Interface $lesson_progress ): void {
 		if ( ! $lesson_progress instanceof Tables_Based_Lesson_Progress ) {

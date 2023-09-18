@@ -245,7 +245,7 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testSave_NonTablesBasedProgressGiven_TrowsException(): void {
 		/* Arrange. */
-		$progress = $this->createMock( Course_Progress_Interface::class );
+		$progress   = $this->createMock( Course_Progress_Interface::class );
 		$repository = new Tables_Based_Course_Progress_Repository( $this->createMock( wpdb::class ) );
 
 		/* Expect & Act. */

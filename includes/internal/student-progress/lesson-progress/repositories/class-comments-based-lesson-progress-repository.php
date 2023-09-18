@@ -256,7 +256,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * Asserts that the lesson progress is a Comments_Based_Lesson_Progress.
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
-	 * @throws RuntimeException When the lesson progress is not a Comments_Based_Lesson_Progress.
+	 * @throws InvalidArgumentException When the lesson progress is not a Comments_Based_Lesson_Progress.
 	 */
 	private function assert_comments_based_lesson_progress( Lesson_Progress_Interface $lesson_progress ): void {
 		if ( ! $lesson_progress instanceof Comments_Based_Lesson_Progress ) {

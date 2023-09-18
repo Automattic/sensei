@@ -204,7 +204,7 @@ class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		/* Expect & Act. */
 		$this->expectException( \InvalidArgumentException::class );
-		$this->expectExceptionMessage( 'Expected Comments_Based_Course_Progress, got ' . get_class($progress) . '.' );
+		$this->expectExceptionMessage( 'Expected Comments_Based_Course_Progress, got ' . get_class( $progress ) . '.' );
 		$repository->save( $progress );
 	}
 
