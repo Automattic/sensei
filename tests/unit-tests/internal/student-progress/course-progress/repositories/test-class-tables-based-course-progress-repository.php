@@ -243,6 +243,17 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertTrue( $has );
 	}
 
+	public function testSave_NonTablesBasedProgressGiven_TrowsException(): void {
+		/* Arrange. */
+		$progress = $this->createMock( Course_Progress_Interface::class );
+		$repository = new Tables_Based_Course_Progress_Repository( $this->createMock( wpdb::class ) );
+
+		/* Expect & Act. */
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Expected Tables_Based_Course_Progress, got ' . get_class( $progress ) . '.' );
+		$repository->save( $progress );
+	}
+
 	public function testSave_ProgressGiven_CallsWpdbUpdate(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );

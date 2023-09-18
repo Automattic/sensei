@@ -269,7 +269,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	private function assert_tables_based_quiz_progress( Quiz_Progress_Interface $quiz_progress ): void {
 		if ( ! $quiz_progress instanceof Tables_Based_Quiz_Progress ) {
 			$actual_type = get_class( $quiz_progress );
-			throw new \InvalidArgumentException( "Expected a Tables_Based_Quiz_Progress, got {$actual_type} instead." );
+			throw new \InvalidArgumentException( "Expected Tables_Based_Quiz_Progress, got {$actual_type}." );
 		}
 	}
 }

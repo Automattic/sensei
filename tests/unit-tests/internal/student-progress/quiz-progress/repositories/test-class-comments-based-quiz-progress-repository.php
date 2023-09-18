@@ -148,6 +148,17 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_progress( $actual ) );
 	}
 
+	public function testSave_NonCommentsBasedProgressGiven_ThrowsException(): void {
+		/* Arrange. */
+		$progress = $this->createMock( Quiz_Progress_Interface::class );
+		$repository = new Comments_Based_Quiz_Progress_Repository();
+
+		/* Expect & Act. */
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Expected Comments_Based_Quiz_Progress, got ' . get_class( $progress ) . '.' );
+		$repository->save( $progress );
+	}
+
 	public function testDelete_ProgressGiven_DeletesAllUserAnswers(): void {
 		/* Arrange. */
 		$lesson_id   = $this->factory->lesson->create();

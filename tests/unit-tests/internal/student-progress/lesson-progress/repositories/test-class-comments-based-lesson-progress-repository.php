@@ -112,6 +112,17 @@ class Comments_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $this->export_progress( $progress ), $this->export_progress( $actual ) );
 	}
 
+	public function testSave_WhenNonCommentsBasedProgressGiven_ThrowsException(): void {
+		/* Arrange. */
+		$progress   = $this->createMock( Lesson_Progress_Interface::class );
+		$repository = new Comments_Based_Lesson_Progress_Repository();
+
+		/* Expect&Act. */
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Expected Comments_Based_Lesson_Progress, got ' . get_class( $progress ) . '.' );
+		$repository->save( $progress );
+	}
+
 	public function testCount_WhenNoProgress_ReturnsZero(): void {
 		/* Arrange. */
 		$course_id  = $this->factory->course->create();

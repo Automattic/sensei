@@ -9,6 +9,7 @@ namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use InvalidArgumentException;
 use RuntimeException;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
@@ -305,7 +306,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	private function assert_tables_based_lesson_progress( Lesson_Progress_Interface $lesson_progress ): void {
 		if ( ! $lesson_progress instanceof Tables_Based_Lesson_Progress ) {
 			$actual_type = get_class( $lesson_progress );
-			throw new RuntimeException( "Expected Tables_Based_Lesson_Progress, {$actual_type} given instead" );
+			throw new InvalidArgumentException( "Expected Tables_Based_Lesson_Progress, got {$actual_type}." );
 		}
 	}
 }

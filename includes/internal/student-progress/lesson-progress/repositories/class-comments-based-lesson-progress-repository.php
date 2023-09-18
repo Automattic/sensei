@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTime;
+use InvalidArgumentException;
 use ReflectionClass;
 use RuntimeException;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
@@ -260,7 +261,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	private function assert_comments_based_lesson_progress( Lesson_Progress_Interface $lesson_progress ): void {
 		if ( ! $lesson_progress instanceof Comments_Based_Lesson_Progress ) {
 			$actual_type = get_class( $lesson_progress );
-			throw new RuntimeException( "Expected Comments_Based_Lesson_Progress, {$actual_type} given instead" );
+			throw new InvalidArgumentException( "Expected Comments_Based_Lesson_Progress, got {$actual_type}." );
 		}
 	}
 }

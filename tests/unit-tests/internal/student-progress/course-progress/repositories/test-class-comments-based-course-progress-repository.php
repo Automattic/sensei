@@ -197,6 +197,17 @@ class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertTrue( $repository->has( $course_id, $user_id ) );
 	}
 
+	public function testSave_CommentsBasedProgressGiven_ThrowsException(): void {
+		/* Arrange. */
+		$progress   = $this->createMock( Course_Progress_Interface::class );
+		$repository = new Comments_Based_Course_Progress_Repository();
+
+		/* Expect & Act. */
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Expected Comments_Based_Course_Progress, got ' . get_class($progress) . '.' );
+		$repository->save( $progress );
+	}
+
 	private function export_progress( Course_Progress_Interface $progress ): array {
 		return [
 			'user_id'   => $progress->get_user_id(),
