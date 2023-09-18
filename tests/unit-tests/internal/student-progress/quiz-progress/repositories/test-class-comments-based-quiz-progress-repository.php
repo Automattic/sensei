@@ -150,7 +150,7 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testSave_NonCommentsBasedProgressGiven_ThrowsException(): void {
 		/* Arrange. */
-		$progress = $this->createMock( Quiz_Progress_Interface::class );
+		$progress   = $this->createMock( Quiz_Progress_Interface::class );
 		$repository = new Comments_Based_Quiz_Progress_Repository();
 
 		/* Expect & Act. */
