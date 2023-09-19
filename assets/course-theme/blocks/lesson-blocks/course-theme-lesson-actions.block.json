@@ -23,11 +23,5 @@
       "style": true,
       "width": true
     }
-  },
-  "attributes": {
-    "options": {
-      "type": "object",
-      "default": {}
-    }
   }
 }
