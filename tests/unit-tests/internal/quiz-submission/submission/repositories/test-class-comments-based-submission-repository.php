@@ -3,7 +3,7 @@
 namespace SenseiTest\Internal\Quiz_Submission\Submission\Repositories;
 
 use RuntimeException;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei_Utils;
 
@@ -70,7 +70,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$repository_mock
 			->expects( $this->once() )
 			->method( 'get' )
-			->willReturn( $this->createMock( Submission::class ) );
+			->willReturn( $this->createMock( Comments_Based_Submission::class ) );
 
 		$repository_mock
 			->expects( $this->never() )
@@ -186,7 +186,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
 	public function testSave_WhenLessonStatusNotFound_ThrowsException(): void {
 		/* Arrange. */
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Comments_Based_Submission::class );
 		$repository = new Comments_Based_Submission_Repository();
 
 		/* Assert. */
@@ -264,7 +264,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$this->assertNull( $repository->get( $quiz_id, $user_id )->get_final_grade() );
 	}
 
-	private function export_submission( Submission $submission ): array {
+	private function export_submission( Comments_Based_Submission $submission ): array {
 		return [
 			'quiz_id'     => $submission->get_quiz_id(),
 			'user_id'     => $submission->get_user_id(),
