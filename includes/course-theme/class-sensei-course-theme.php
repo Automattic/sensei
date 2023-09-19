@@ -614,7 +614,7 @@ class Sensei_Course_Theme {
 	/**
 	 * Add current theme's text domain to body class.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 * @internal
 	 *
 	 * @param  array $classes Existing body classes.

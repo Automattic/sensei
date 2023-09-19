@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Submission class.
+ * File containing the Submission_Abstract class.
  *
  * @package sensei
  */
@@ -14,13 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Submission.
+ * Abstract class for the submission model.
  *
  * @internal
  *
- * @since 4.7.2
+ * @since $$next_version$$
  */
-class Submission {
+class Submission_Abstract implements Submission_Interface {
 	/**
 	 * The submission ID.
 	 *

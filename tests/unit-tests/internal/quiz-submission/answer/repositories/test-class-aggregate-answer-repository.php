@@ -2,13 +2,11 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Submission\Repositories;
 
-use DateTimeImmutable;
-use DateTimeZone;
-use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Aggregate_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
 /**
@@ -19,12 +17,12 @@ use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submiss
 class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 	public function testCreate_UseTablesOn_CallsTablesBasedRepository(): void {
 		/* Arrange. */
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Comments_Based_Submission::class );
 		$submission->method( 'get_quiz_id' )->willReturn( 1 );
 		$submission->method( 'get_user_id' )->willReturn( 2 );
 		$submission->method( 'get_final_grade' )->willReturn( 3.0 );
 
-		$tables_based_submission = $this->createMock( Submission::class );
+		$tables_based_submission = $this->createMock( Tables_Based_Submission::class );
 		$comments_based          = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based            = $this->createMock( Tables_Based_Answer_Repository::class );
 
@@ -52,7 +50,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_UseTablesOn_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
-		$submission                         = $this->createMock( Submission::class );
+		$submission                         = $this->createMock( Comments_Based_Submission::class );
 		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
@@ -74,7 +72,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_UseTablesOff_DoesntCallTablesBasedRepository(): void {
 		/* Arrange. */
-		$submission     = $this->createMock( Submission::class );
+		$submission     = $this->createMock( Comments_Based_Submission::class );
 		$comments_based = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Answer_Repository::class );
 
@@ -96,7 +94,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_UseTablesOff_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
-		$submission                         = $this->createMock( Submission::class );
+		$submission                         = $this->createMock( Comments_Based_Submission::class );
 		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
@@ -139,7 +137,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testDeleteAll_UseTablesOff_DoesntCallTablesBasedRepository(): void {
 		/* Arrange. */
-		$submission                         = $this->createMock( Submission::class );
+		$submission                         = $this->createMock( Comments_Based_Submission::class );
 		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
@@ -160,12 +158,12 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testDeleteAll_UseTablesOn_CallsTablesBasedRepository(): void {
 		/* Arrange. */
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Comments_Based_Submission::class );
 		$submission->method( 'get_quiz_id' )->willReturn( 1 );
 		$submission->method( 'get_user_id' )->willReturn( 2 );
 		$submission->method( 'get_final_grade' )->willReturn( 3.0 );
 
-		$tables_based_submission = $this->createMock( Submission::class );
+		$tables_based_submission = $this->createMock( Tables_Based_Submission::class );
 		$comments_based          = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based            = $this->createMock( Tables_Based_Answer_Repository::class );
 
@@ -200,7 +198,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 	 */
 	public function testDeleteAll_Always_CallsCommentsBasedRepository( bool $use_tables ): void {
 		/* Arrange. */
-		$submission                         = $this->createMock( Submission::class );
+		$submission                         = $this->createMock( Comments_Based_Submission::class );
 		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );

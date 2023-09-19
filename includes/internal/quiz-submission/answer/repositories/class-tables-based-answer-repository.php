@@ -10,7 +10,7 @@ namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 use DateTimeImmutable;
 use DateTimeZone;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -48,13 +48,13 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission  The submission.
-	 * @param int        $question_id The question ID.
-	 * @param string     $value       The answer value.
+	 * @param Submission_Interface $submission  The submission.
+	 * @param int                  $question_id The question ID.
+	 * @param string               $value       The answer value.
 	 *
 	 * @return Answer The answer model.
 	 */
-	public function create( Submission $submission, int $question_id, string $value ): Answer {
+	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
@@ -123,9 +123,9 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The submission.
+	 * @param Submission_Interface $submission The submission.
 	 */
-	public function delete_all( Submission $submission ): void {
+	public function delete_all( Submission_Interface $submission ): void {
 		$this->wpdb->delete(
 			$this->get_table_name(),
 			[

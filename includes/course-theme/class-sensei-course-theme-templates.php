@@ -508,7 +508,7 @@ class Sensei_Course_Theme_Templates {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 */
 	public function load_course_theme_patterns() : void {
 		$pattern_files = glob( Sensei_Course_Theme::instance()->get_course_theme_root() . '/patterns/*.html' );

@@ -8,7 +8,7 @@
 namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -79,13 +79,13 @@ class Aggregate_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission  The submission.
-	 * @param int        $question_id The question ID.
-	 * @param string     $value       The answer value.
+	 * @param Submission_Interface $submission  The submission.
+	 * @param int                  $question_id The question ID.
+	 * @param string               $value       The answer value.
 	 *
 	 * @return Answer The answer model.
 	 */
-	public function create( Submission $submission, int $question_id, string $value ): Answer {
+	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer {
 		$answer = $this->comments_based_repository->create( $submission, $question_id, $value );
 
 		if ( $this->use_tables ) {
@@ -114,9 +114,9 @@ class Aggregate_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The submission.
+	 * @param Submission_Interface $submission The submission.
 	 */
-	public function delete_all( Submission $submission ): void {
+	public function delete_all( Submission_Interface $submission ): void {
 		$this->comments_based_repository->delete_all( $submission );
 
 		if ( $this->use_tables ) {
@@ -128,11 +128,11 @@ class Aggregate_Answer_Repository implements Answer_Repository_Interface {
 	/**
 	 * Get the tables based submission for a given submission or create if not exists.
 	 *
-	 * @param Submission $submission The submission.
+	 * @param Submission_Interface $submission The submission.
 	 *
-	 * @return Submission The tables based submission or null if it does not exist.
+	 * @return Submission_Interface The tables based submission or null if it does not exist.
 	 */
-	private function get_or_create_tables_based_submission( Submission $submission ): Submission {
+	private function get_or_create_tables_based_submission( Submission_Interface $submission ): Submission_Interface {
 		return $this->tables_based_submission_repository->get_or_create(
 			$submission->get_quiz_id(),
 			$submission->get_user_id(),

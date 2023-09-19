@@ -112,7 +112,7 @@
 				"deprecated": "Deprecated",
 				"removed": "Removed",
 				"fixed": "Fixed",
-				"dev": "Dev"
+				"development": "Development"
 			}
 		}
 	}

@@ -68,11 +68,12 @@ $boolean_options = array( 'true', 'false' );
 	<li class="<?php echo esc_attr( $answer_class ); ?>">
 
 		<input type="radio"
-			   id="<?php echo esc_attr( 'question_' . $question_data['ID'] . '-option-' . $option_value ); ?>"
-			   name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>"
-			   value="<?php echo esc_attr( $option_value ); ?>"
-			<?php echo checked( $question_data['user_answer_entry'], $option_value, false ); ?>
-			<?php echo $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available() ? 'disabled' : ''; ?>
+				id="<?php echo esc_attr( 'question_' . $question_data['ID'] . '-option-' . $option_value ); ?>"
+				name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>"
+				value="<?php echo esc_attr( $option_value ); ?>"
+				class="sensei-multiple-choice-answer-option-radio"
+				<?php echo checked( $question_data['user_answer_entry'], $option_value, false ); ?>
+				<?php echo $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available() ? 'disabled' : ''; ?>
 		/>
 		<label for="<?php echo esc_attr( 'question_' . $question_data['ID'] . '-option-' . $option_value ); ?>">
 			<?php

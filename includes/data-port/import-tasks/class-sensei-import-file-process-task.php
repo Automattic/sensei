@@ -58,7 +58,7 @@ abstract class Sensei_Import_File_Process_Task
 	/**
 	 * Sensei_Import_File_Process_Task constructor.
 	 *
-	 * @param Sensei_Data_Port_Job $job
+	 * @param Sensei_Data_Port_Job $job The data port job.
 	 */
 	public function __construct( Sensei_Data_Port_Job $job ) {
 		parent::__construct( $job );
@@ -121,7 +121,7 @@ abstract class Sensei_Import_File_Process_Task
 
 			$this->completed_lines = $this->reader->get_completed_lines();
 			$this->total_lines     = $this->reader->get_total_lines();
-		} elseif ( $this->reader->is_completed() ) {
+		} else {
 			// Running this in an else so that post process tasks run in a fresh batch.
 			$this->run_post_process_tasks();
 		}
