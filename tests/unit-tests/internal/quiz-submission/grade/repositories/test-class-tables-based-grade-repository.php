@@ -4,7 +4,7 @@ namespace SenseiTest\Internal\Quiz_Submission\Grade\Repositories;
 
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
 /**
@@ -27,9 +27,9 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_ParamsGiven_ReturnsGrade(): void {
 		/* Arrange */
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Tables_Based_Submission::class );
 		$wpdb       = $this->createMock( \wpdb::class );
-		$repository = new \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository( $wpdb );
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
 		/* Act */
 		$grade = $repository->create( $submission, 2, 3, 4, 'feedback' );
@@ -47,9 +47,9 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_ParamsGiven_InserstsData(): void {
 		/* Arrange */
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Tables_Based_Submission::class );
 		$wpdb       = $this->createMock( \wpdb::class );
-		$repository = new \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository( $wpdb );
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
 		/* Expect & Act */
 		$wpdb->expects( $this->once() )
@@ -75,7 +75,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange */
 		global $wpdb;
 		$repository = new Tables_Based_Grade_Repository( $wpdb );
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Tables_Based_Submission::class );
 
 		/* Act */
 		$grade = $repository->create( $submission, 2, 3, 4, 'feedback' );
@@ -97,13 +97,13 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 	public function testSaveMany_GradesGiven_UpdatesData(): void {
 		/* Arrange */
 		$wpdb       = $this->createMock( \wpdb::class );
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Tables_Based_Submission::class );
 		$submission->method( 'get_id' )->willReturn( 6 );
 		$grades     = [
 			new Grade( 1, 2, 3, 4, 'feedback', new \DateTimeImmutable(), new \DateTimeImmutable() ),
 			new Grade( 5, 6, 7, 8, 'feedback2', new \DateTimeImmutable(), new \DateTimeImmutable() ),
 		];
-		$repository = new \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository( $wpdb );
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
 		/* Expect & Act */
 		$wpdb
@@ -143,7 +143,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$grades     = [
 			new Grade( $created['grade_id'], $created['answer_id'], $question_id, 4, 'feedback2', new \DateTimeImmutable(), new \DateTimeImmutable() ),
 		];
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Tables_Based_Submission::class );
 		$submission->method( 'get_id' )->willReturn( $created['submission_id'] );
 
 		/* Act */
@@ -169,7 +169,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 	public function testDeleteAll_SubmissionIdGiven_ExecutesDeleteQuery(): void {
 		/* Arrange */
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Tables_Based_Submission::class );
 		$submission
 			->method( 'get_id' )
 			->willReturn( 6 );
@@ -276,7 +276,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 			]
 		);
 
-		$repository = new \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository( $wpdb );
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
 		/* Act */
 		$grades = $repository->get_all( 6 );
@@ -416,7 +416,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	private function export_grade( \Sensei\Internal\Quiz_Submission\Grade\Models\Grade $grade ) {
+	private function export_grade( Grade $grade ) {
 		return [
 			'answer_id'   => $grade->get_answer_id(),
 			'question_id' => $grade->get_question_id(),

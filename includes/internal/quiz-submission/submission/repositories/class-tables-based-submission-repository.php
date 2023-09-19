@@ -9,7 +9,8 @@ namespace Sensei\Internal\Quiz_Submission\Submission\Repositories;
 
 use DateTimeImmutable;
 use DateTimeZone;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,9 +52,9 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
-	 * @return Submission The quiz submission.
+	 * @return Submission_Interface The quiz submission.
 	 */
-	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
+	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
@@ -75,7 +76,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 			]
 		);
 
-		return new Submission(
+		return new Tables_Based_Submission(
 			$this->wpdb->insert_id,
 			$quiz_id,
 			$user_id,
@@ -94,9 +95,9 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
-	 * @return Submission The quiz submission.
+	 * @return Submission_Interface The quiz submission.
 	 */
-	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
+	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
 		$submission = $this->get( $quiz_id, $user_id );
 
 		if ( $submission ) {
@@ -114,9 +115,9 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Submission|null The quiz submission.
+	 * @return Submission_Interface|null The quiz submission.
 	 */
-	public function get( int $quiz_id, int $user_id ): ?Submission {
+	public function get( int $quiz_id, int $user_id ): ?Submission_Interface {
 		$query = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			"SELECT * FROM {$this->get_table_name()} WHERE quiz_id = %d AND user_id = %d",
@@ -131,7 +132,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 			return null;
 		}
 
-		return new Submission(
+		return new Tables_Based_Submission(
 			(int) $row->id,
 			(int) $row->quiz_id,
 			(int) $row->user_id,
@@ -170,9 +171,9 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The quiz submission.
+	 * @param Submission_Interface $submission The quiz submission.
 	 */
-	public function save( Submission $submission ): void {
+	public function save( Submission_Interface $submission ): void {
 		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$submission->set_updated_at( $updated_at );
 
@@ -200,9 +201,9 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The quiz submission.
+	 * @param Submission_Interface $submission The quiz submission.
 	 */
-	public function delete( Submission $submission ): void {
+	public function delete( Submission_Interface $submission ): void {
 		$this->wpdb->delete(
 			$this->get_table_name(),
 			[
