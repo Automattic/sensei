@@ -4,7 +4,7 @@ namespace SenseiTest\Internal\Quiz_Submission\Submission\Repositories;
 
 use DateTimeImmutable;
 use DateTimeZone;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 use wpdb;
 
@@ -108,7 +108,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$repository_mock
 			->expects( $this->once() )
 			->method( 'get' )
-			->willReturn( $this->createMock( Submission::class ) );
+			->willReturn( $this->createMock( Tables_Based_Submission::class ) );
 
 		$repository_mock
 			->expects( $this->never() )
@@ -116,7 +116,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
 		$submission = $repository_mock->get_or_create( 1, 2 );
 
-		$this->assertInstanceOf( Submission::class, $submission );
+		$this->assertInstanceOf( Tables_Based_Submission::class, $submission );
 	}
 
 	public function testGetOrCreate_WhenSubmissionDoesNotExist_ReturnsNewSubmission(): void {
@@ -135,11 +135,11 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$repository_mock
 			->expects( $this->once() )
 			->method( 'create' )
-			->willReturn( $this->createMock( Submission::class ) );
+			->willReturn( $this->createMock( Tables_Based_Submission::class ) );
 
 		$submission = $repository_mock->get_or_create( 1, 2 );
 
-		$this->assertInstanceOf( Submission::class, $submission );
+		$this->assertInstanceOf( Tables_Based_Submission::class, $submission );
 	}
 
 	public function testGet_WhenNotFound_ReturnsNull(): void {
@@ -277,7 +277,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );
 		$timezone   = new DateTimeZone( 'UTC' );
-		$submission = new Submission(
+		$submission = new Tables_Based_Submission(
 			1,
 			2,
 			3,
@@ -317,7 +317,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 	public function testDelete_WhenCalled_DeletesFromTheDatabase(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );
-		$submission = new Submission(
+		$submission = new Tables_Based_Submission(
 			1,
 			2,
 			3,
@@ -346,7 +346,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete( $submission );
 	}
 
-	private function export_submission( Submission $submission ): array {
+	private function export_submission( Tables_Based_Submission $submission ): array {
 		return [
 			'id'          => $submission->get_id(),
 			'quiz_id'     => $submission->get_quiz_id(),
@@ -355,7 +355,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		];
 	}
 
-	private function export_submission_with_dates( Submission $submission ): array {
+	private function export_submission_with_dates( Tables_Based_Submission $submission ): array {
 		return array_merge(
 			$this->export_submission( $submission ),
 			[

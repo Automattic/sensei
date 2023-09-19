@@ -5,7 +5,7 @@ namespace SenseiTest\Internal\Quiz_Submission\Answer\Repositories;
 use DateTimeImmutable;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use wpdb;
 
 /**
@@ -28,7 +28,7 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_WhenCalled_InsertsToWpdb(): void {
 		/* Arrange. */
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Submission_Interface::class );
 		$submission->method( 'get_id' )->willReturn( 1 );
 		$wpdb       = $this->createMock( wpdb::class );
 		$repository = new Tables_Based_Answer_Repository( $wpdb );
@@ -60,7 +60,7 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_WhenCalled_ReturnsAnswer(): void {
 		/* Arrange. */
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Submission_Interface::class );
 		$submission->method( 'get_id' )->willReturn( 1 );
 		$wpdb            = $this->createMock( wpdb::class );
 		$wpdb->insert_id = 3;
@@ -191,7 +191,7 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testDeleteAll_WhenCalled_DeletesAllFromTheDatabase(): void {
 		/* Arrange. */
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Submission_Interface::class );
 		$submission->method( 'get_id' )->willReturn( 1 );
 
 		$wpdb       = $this->createMock( wpdb::class );

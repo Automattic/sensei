@@ -4,8 +4,7 @@ namespace SenseiTest\Internal\Quiz_Submission\Grade\Repositories;
 
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei_Utils;
 
 /**
@@ -187,9 +186,9 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		];
 	}
 
-	private function create_submission( $lesson_id, $user_id ): Submission {
+	private function create_submission( $lesson_id, $user_id ): Comments_Based_Submission {
 		$submission_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-		return new Submission(
+		return new Comments_Based_Submission(
 			$submission_id,
 			$lesson_id,
 			$user_id,
