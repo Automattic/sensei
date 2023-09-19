@@ -77,14 +77,14 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 	 */
 	public function testBlockRenderingWithClassName() {
 		// Arrange
-		$className    = 'custom-classname';;
-		$post_content = '<!-- wp:sensei-lms/learner-courses {"className":"' . $className . '"} /-->';
+		$class_name   = 'custom-classname';
+		$post_content = '<!-- wp:sensei-lms/learner-courses {"className":"' . $class_name . '"} /-->';
 
 		// Act
 		$result = do_blocks( $post_content );
 
 		// Assert
-		$this->assertStringContainsString( $className, $result );
+		$this->assertStringContainsString( $class_name, $result );
 	}
 
 }
