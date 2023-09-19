@@ -3,7 +3,7 @@
 namespace SenseiTest\Internal\Quiz_Submission\Answer\Repositories;
 
 use DateTimeImmutable;
-use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use wpdb;
@@ -214,7 +214,7 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete_all( $submission );
 	}
 
-	private function export_answer( Answer $answer ): array {
+	private function export_answer( Tables_Based_Answer $answer ): array {
 		return [
 			'id'            => $answer->get_id(),
 			'submission_id' => $answer->get_submission_id(),
@@ -223,7 +223,7 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		];
 	}
 
-	private function export_answer_with_dates( Answer $answer ): array {
+	private function export_answer_with_dates( Tables_Based_Answer $answer ): array {
 		return array_merge(
 			$this->export_answer( $answer ),
 			[

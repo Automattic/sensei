@@ -4,7 +4,8 @@ namespace SenseiTest\Internal\Quiz_Submission\Grade\Repositories;
 
 use DateTime;
 use DateTimeImmutable;
-use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Comments_Based_Answer;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
@@ -351,14 +352,14 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			->with( 5, 6, 7.0 )
 			->willReturn( $tables_based_submission );
 
-		$tables_based_answer            = new Answer( 2, 8, 3, '4', new DateTime( '@5' ), new DateTime( '@6' ) );
+		$tables_based_answer            = new Tables_Based_Answer( 2, 8, 3, '4', new DateTime( '@5' ), new DateTime( '@6' ) );
 		$tables_based_answer_repository = $this->createMock( Tables_Based_Answer_Repository::class );
 		$tables_based_answer_repository
 			->method( 'get_all' )
 			->with( 8 )
 			->willReturn( [ $tables_based_answer ] );
 
-		$comments_based_answer            = new Answer( 2, 8, 3, '4', new DateTime( '@5' ), new DateTime( '@6' ) );
+		$comments_based_answer            = new Comments_Based_Answer( 2, 8, 3, '4', new DateTime( '@5' ), new DateTime( '@6' ) );
 		$comments_based_answer_repository = $this->createMock( Comments_Based_Answer_Repository::class );
 		$comments_based_answer_repository
 			->method( 'get_all' )

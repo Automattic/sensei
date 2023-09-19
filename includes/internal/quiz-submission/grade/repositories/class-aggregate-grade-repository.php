@@ -8,7 +8,8 @@
 namespace Sensei\Internal\Quiz_Submission\Grade\Repositories;
 
 use DateTimeImmutable;
-use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
@@ -134,7 +135,7 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @param Submission_Interface $comments_based_submission The comments based submission.
 	 * @param Submission_Interface $tables_based_submission   The tables based submission.
-	 * @return Answer[] The answers.
+	 * @return Answer_Interface[] The answers.
 	 */
 	public function get_or_create_tables_based_answers( Submission_Interface $comments_based_submission, Submission_Interface $tables_based_submission ): array {
 		$comments_based_answers = $this->comments_based_answer_repository->get_all( $comments_based_submission->get_id() );
@@ -143,7 +144,7 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 		foreach ( $comments_based_answers as $comments_based_answer ) {
 			$filtered = array_filter(
 				$tables_based_answers,
-				function( Answer $answer ) use ( $comments_based_answer ) {
+				function( Answer_Interface $answer ) use ( $comments_based_answer ) {
 					return $answer->get_question_id() === $comments_based_answer->get_question_id();
 				}
 			);
