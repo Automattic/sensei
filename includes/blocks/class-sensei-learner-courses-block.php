@@ -54,6 +54,10 @@ class Sensei_Learner_Courses_Block {
 			$class .= ' wp-block-sensei-lms-learner-courses--is-' . $attributes['options']['layoutView'] . '-view';
 		}
 
+		if ( ! empty( $attributes['className'] ) ) {
+			$class .= ' ' . $attributes['className'];
+		}
+
 		return '<div class="wp-block-sensei-lms-learner-courses ' . $class . ' " style="' . esc_attr( $style ) . '">' . $shortcode->render() . '</div>';
 	}
 }
