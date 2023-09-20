@@ -24,6 +24,7 @@ use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submiss
 class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 	public function testCreate_Always_UsesCommentsBasedRepository(): void {
 		/* Arrange */
+		$answer                             = $this->createMock( Comments_Based_Answer::class );
 		$submission                         = $this->createMock( Comments_Based_Submission::class );
 		$comments_based_repository          = $this->createMock( Comments_Based_Grade_Repository::class );
 		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
@@ -44,12 +45,13 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$comments_based_repository
 			->expects( $this->once() )
 			->method( 'create' )
-			->with( $this->identicalTo( $submission ), 2, 3, 4, 'feedback' );
-		$repository->create( $submission, 2, 3, 4, 'feedback' );
+			->with( $this->identicalTo( $submission ), $this->identicalTo( $answer ), 3, 4, 'feedback' );
+		$repository->create( $submission, $answer, 3, 4, 'feedback' );
 	}
 
 	public function testCreate_UseTablesSetToFalse_DoesntUseCommentsBasedRepository(): void {
 		/* Arrange */
+		$answer                             = $this->createMock( Tables_Based_Answer::class );
 		$submission                         = $this->createMock( Comments_Based_Submission::class );
 		$comments_based_repository          = $this->createMock( Comments_Based_Grade_Repository::class );
 		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
@@ -70,7 +72,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$tables_based_repository
 			->expects( $this->never() )
 			->method( 'create' );
-		$repository->create( $submission, 2, 3, 4, 'feedback' );
+		$repository->create( $submission, $answer, 3, 4, 'feedback' );
 	}
 
 	public function testGetAll_Always_UsesCommentsBasedRepository(): void {
@@ -359,7 +361,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			->with( 8 )
 			->willReturn( [ $tables_based_answer ] );
 
-		$comments_based_answer            = new Comments_Based_Answer( 2, 8, 3, '4', new DateTime( '@5' ), new DateTime( '@6' ) );
+		$comments_based_answer            = new Comments_Based_Answer( 8, 3, '4', new DateTime( '@5' ), new DateTime( '@6' ) );
 		$comments_based_answer_repository = $this->createMock( Comments_Based_Answer_Repository::class );
 		$comments_based_answer_repository
 			->method( 'get_all' )
@@ -381,7 +383,7 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			->method( 'create' )
 			->with(
 				$this->identicalTo( $tables_based_submission ),
-				2,
+				$this->identicalTo( $tables_based_answer ),
 				3,
 				4,
 				'feedback2'

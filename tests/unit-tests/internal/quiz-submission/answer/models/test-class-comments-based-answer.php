@@ -18,15 +18,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Comments_Based_Answer_Test extends \WP_UnitTestCase {
 
-	public function testGetId_ConstructedWithId_ReturnsSameId(): void {
+	public function testGetId_WhenCalled_ThrowsException(): void {
 		/* Arrange. */
 		$answer = $this->create_answer();
 
-		/* Act. */
-		$actual = $answer->get_id();
-
 		/* Assert. */
-		self::assertSame( 1, $actual );
+		self::expectException( \BadMethodCallException::class );
+
+		/* Act. */
+		$answer->get_id();
 	}
 
 	public function testGetSubmissionId_ConstructedWithSubmissionId_ReturnsSameSubmissionId(): void {
@@ -86,7 +86,6 @@ class Comments_Based_Answer_Test extends \WP_UnitTestCase {
 
 	private function create_answer(): Comments_Based_Answer {
 		return new Comments_Based_Answer(
-			1,
 			2,
 			3,
 			'yes',

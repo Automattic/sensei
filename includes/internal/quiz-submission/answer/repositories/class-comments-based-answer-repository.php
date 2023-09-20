@@ -45,7 +45,7 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 
 		$created_at = current_datetime();
 
-		return new Comments_Based_Answer( 0, $submission_id, $question_id, $value, $created_at, $created_at );
+		return new Comments_Based_Answer( $submission_id, $question_id, $value, $created_at, $created_at );
 	}
 
 	/**
@@ -62,7 +62,7 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 		$created_at = current_datetime();
 
 		foreach ( $this->get_answers_map( $submission_id ) as $question_id => $value ) {
-			$answers[] = new Comments_Based_Answer( 0, $submission_id, $question_id, $value, $created_at, $created_at );
+			$answers[] = new Comments_Based_Answer( $submission_id, $question_id, $value, $created_at, $created_at );
 		}
 
 		return $answers;
