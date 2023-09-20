@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use wpdb;
@@ -47,21 +48,21 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission  The submission.
-	 * @param int                  $answer_id   The answer ID.
+	 * @param Answer_Interface     $answer      The answer.
 	 * @param int                  $question_id The question ID.
 	 * @param int                  $points      The points.
 	 * @param string|null          $feedback    The feedback.
 	 *
 	 * @return Grade The grade.
 	 */
-	public function create( Submission_Interface $submission, int $answer_id, int $question_id, int $points, ?string $feedback = null ): Grade {
+	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade {
 		$current_date = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
 		$date_format  = 'Y-m-d H:i:s';
 
 		$this->wpdb->insert(
 			$this->get_table_name(),
 			[
-				'answer_id'   => $answer_id,
+				'answer_id'   => $answer->get_id(),
 				'question_id' => $question_id,
 				'points'      => $points,
 				'feedback'    => $feedback,
@@ -80,7 +81,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 
 		return new Grade(
 			$this->wpdb->insert_id,
-			$answer_id,
+			$answer->get_id(),
 			$question_id,
 			$points,
 			$feedback,
