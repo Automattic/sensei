@@ -109,9 +109,7 @@ class Email_Generator {
 		$email_generators = apply_filters( 'sensei_email_generators', $this->email_generators );
 
 		foreach ( $email_generators as $email_generator ) {
-			if ( $email_generator->is_email_active() ) {
-				$email_generator->init();
-			}
+			$email_generator->init();
 		}
 	}
 }

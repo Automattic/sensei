@@ -24,6 +24,7 @@
 	<issueHandlers>
 		<InternalClass errorLevel="suppress" />
 		<InternalMethod errorLevel="suppress" />
+		<MissingReturnType errorLevel="suppress" />
 		<PropertyNotSetInConstructor>
 			<errorLevel type="suppress">
 				<referencedProperty name="Sensei_Main::$quiz_progress_repository_factory" />

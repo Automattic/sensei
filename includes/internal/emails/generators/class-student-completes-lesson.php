@@ -75,7 +75,7 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_user_lesson_end', [ $this, 'student_completed_lesson_mail_to_teacher' ], 10, 2 );
+		$this->maybe_add_action( 'sensei_user_lesson_end', [ $this, 'student_completed_lesson_mail_to_teacher' ], 10, 2 );
 	}
 
 	/**
