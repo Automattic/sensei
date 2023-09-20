@@ -72,4 +72,19 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 
 	}
 
+	/**
+	 * The Learner Courses block renders the className.
+	 */
+	public function testBlockRenderingWithClassName() {
+		// Arrange
+		$class_name   = 'custom-classname';
+		$post_content = '<!-- wp:sensei-lms/learner-courses {"className":"' . $class_name . '"} /-->';
+
+		// Act
+		$result = do_blocks( $post_content );
+
+		// Assert
+		$this->assertStringContainsString( $class_name, $result );
+	}
+
 }
