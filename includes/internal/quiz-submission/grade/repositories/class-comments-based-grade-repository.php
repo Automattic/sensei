@@ -55,7 +55,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 
 		$created_at = current_datetime();
 
-		return new Comments_Based_Grade( 0, 0, $question_id, $points, $feedback, $created_at, $created_at );
+		return new Comments_Based_Grade( $question_id, $points, $feedback, $created_at, $created_at );
 	}
 
 	/**
@@ -79,7 +79,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 
 		foreach ( $grades_map as $question_id => $points ) {
 			$feedback = $feedback_map[ $question_id ] ?? null;
-			$grades[] = new Comments_Based_Grade( 0, 0, $question_id, $points, $feedback, $created_at, $created_at );
+			$grades[] = new Comments_Based_Grade( $question_id, $points, $feedback, $created_at, $created_at );
 		}
 
 		return $grades;

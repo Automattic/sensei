@@ -18,26 +18,26 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Comments_Based_Grade_Test extends \WP_UnitTestCase {
 
-	public function testGetId_ConstructedWithId_ReturnsSameId(): void {
+	public function testGetId_WhenCalled_ThrowsException(): void {
 		/* Arrange. */
 		$grade = $this->create_grade();
 
-		/* Act. */
-		$actual = $grade->get_id();
-
 		/* Assert. */
-		self::assertSame( 1, $actual );
+		$this->expectException( \BadMethodCallException::class );
+
+		/* Act. */
+		$grade->get_id();
 	}
 
-	public function testGetAnswerId_ConstructedWithAnswerId_ReturnsSameAnswerId(): void {
+	public function testGetAnswerId_WhenCalled_ThrowsException(): void {
 		/* Arrange. */
 		$grade = $this->create_grade();
 
-		/* Act. */
-		$actual = $grade->get_answer_id();
-
 		/* Assert. */
-		self::assertSame( 2, $actual );
+		$this->expectException( \BadMethodCallException::class );
+
+		/* Act. */
+		$grade->get_answer_id();
 	}
 
 	public function testGetQuestionId_ConstructedWithQuestionId_ReturnsSameQuestionId(): void {
@@ -109,8 +109,6 @@ class Comments_Based_Grade_Test extends \WP_UnitTestCase {
 
 	private function create_grade(): Comments_Based_Grade {
 		return new Comments_Based_Grade(
-			1,
-			2,
 			3,
 			10,
 			'Good job!',

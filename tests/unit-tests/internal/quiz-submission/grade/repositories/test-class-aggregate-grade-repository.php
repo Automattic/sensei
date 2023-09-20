@@ -9,6 +9,7 @@ use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Comments_Based_Grade;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Tables_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Aggregate_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository;
@@ -278,14 +279,14 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		$comments_based_repository = $this->createMock( Comments_Based_Grade_Repository::class );
 
-		$existing_grade          = new Comments_Based_Grade( 1, 2, 3, 4, 'feedback', new DateTimeImmutable(), new DateTimeImmutable() );
+		$existing_grade          = new Tables_Based_Grade( 1, 2, 3, 4, 'feedback', new DateTimeImmutable(), new DateTimeImmutable() );
 		$tables_based_repository = $this->createMock( Tables_Based_Grade_Repository::class );
 		$tables_based_repository
 			->method( 'get_all' )
 			->with( 8 )
 			->willReturn( [ $existing_grade ] );
 
-		$grades = [ new Comments_Based_Grade( 1, 2, 3, 4, 'feedback2', new DateTimeImmutable(), new DateTimeImmutable() ) ];
+		$grades = [ new Comments_Based_Grade( 3, 4, 'feedback2', new DateTimeImmutable(), new DateTimeImmutable() ) ];
 
 		$tables_based_submission = $this->createMock( Tables_Based_Submission::class );
 		$tables_based_submission->method( 'get_id' )->willReturn( 8 );
@@ -335,15 +336,13 @@ class Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$submission->method( 'get_final_grade' )->willReturn( 7.0 );
 
 		$comments_based_repository = $this->createMock( Comments_Based_Grade_Repository::class );
-
-		$existing_grade          = new Comments_Based_Grade( 1, 2, 3, 4, 'feedback', new DateTimeImmutable(), new DateTimeImmutable() );
-		$tables_based_repository = $this->createMock( Tables_Based_Grade_Repository::class );
+		$tables_based_repository   = $this->createMock( Tables_Based_Grade_Repository::class );
 		$tables_based_repository
 			->method( 'get_all' )
 			->with( 8 )
 			->willReturn( [] );
 
-		$grades = [ new Comments_Based_Grade( 1, 2, 3, 4, 'feedback2', new DateTimeImmutable(), new DateTimeImmutable() ) ];
+		$grades = [ new Comments_Based_Grade( 3, 4, 'feedback2', new DateTimeImmutable(), new DateTimeImmutable() ) ];
 
 		$tables_based_submission = $this->createMock( Tables_Based_Submission::class );
 		$tables_based_submission->method( 'get_id' )->willReturn( 8 );
