@@ -124,6 +124,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		}
 
 		// We need to use internal value for status, not the one returned by the getter.
+		// Comments_Based_Lesson_Progress::get_status() returns a normalized status, but we need the internal one.
 		$reflection_class = new ReflectionClass( Comments_Based_Lesson_Progress::class );
 		$status_property  = $reflection_class->getProperty( 'status' );
 		$status_property->setAccessible( true );

@@ -124,6 +124,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		}
 
 		// We need to use internal value for status, not the one returned by the getter.
+		// Commets-based `get_status` method excludes lesson-progress `complete` status, that we still need while saving.
 		$reflection_class = new \ReflectionClass( Comments_Based_Quiz_Progress::class );
 		$status_property  = $reflection_class->getProperty( 'status' );
 		$status_property->setAccessible( true );
