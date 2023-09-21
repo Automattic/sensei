@@ -9,10 +9,10 @@ namespace Sensei\Internal\Quiz_Submission\Grade\Repositories;
 
 use DateTimeImmutable;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
-use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
-use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Tables_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
@@ -111,9 +111,9 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 	 * @param int                  $points      The points.
 	 * @param string|null          $feedback    The feedback.
 	 *
-	 * @return Grade The grade.
+	 * @return Grade_Interface The grade.
 	 */
-	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade {
+	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface {
 		$grade = $this->comments_based_repository->create( $submission, $answer, $question_id, $points, $feedback );
 
 		if ( $this->use_tables ) {
@@ -169,7 +169,7 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 *
-	 * @return Grade[] An array of grades.
+	 * @return Grade_Interface[] An array of grades.
 	 */
 	public function get_all( int $submission_id ): array {
 		return $this->comments_based_repository->get_all( $submission_id );
@@ -181,7 +181,7 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The submission.
-	 * @param Grade[]              $grades     An array of grades.
+	 * @param Grade_Interface[]    $grades     An array of grades.
 	 */
 	public function save_many( Submission_Interface $submission, array $grades ): void {
 		$this->comments_based_repository->save_many( $submission, $grades );
@@ -204,7 +204,7 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 				$created_at = new DateTimeImmutable( '@' . $grade->get_created_at()->getTimestamp() );
 				$updated_at = new DateTimeImmutable( '@' . $grade->get_updated_at()->getTimestamp() );
 
-				$grades_to_save[] = new Grade(
+				$grades_to_save[] = new Tables_Based_Grade(
 					$tables_based_grade->get_id(),
 					$tables_based_grade->get_answer_id(),
 					$tables_based_grade->get_question_id(),
@@ -224,8 +224,8 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @param Submission_Interface $comments_based_submission The comments based submission.
 	 * @param Submission_Interface $tables_based_submission   The tables based submission.
-	 * @param Grade[]              $comments_based_grades     The comments based grades.
-	 * @return Grade[] The tables based grades.
+	 * @param Grade_Interface[]    $comments_based_grades     The comments based grades.
+	 * @return Grade_Interface[] The tables based grades.
 	 */
 	private function get_or_create_tables_based_grades_for_save(
 		Submission_Interface $comments_based_submission,
@@ -241,7 +241,7 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 		foreach ( $comments_based_grades as $comments_based_grade ) {
 			$filtered = array_filter(
 				$tables_based_grades,
-				function( Grade $grade ) use ( $comments_based_grade ) {
+				function( Grade_Interface $grade ) use ( $comments_based_grade ) {
 					return $grade->get_question_id() === $comments_based_grade->get_question_id();
 				}
 			);

@@ -3,7 +3,7 @@
 namespace SenseiTest\Internal\Quiz_Submission\Grade\Repositories;
 
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
-use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Comments_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei_Utils;
@@ -40,7 +40,6 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = [
-			'answer_id'   => 0,
 			'question_id' => 1,
 			'points'      => 22,
 			'feedback'    => 'Great!',
@@ -184,9 +183,8 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	private function export_grade( Grade $grade ): array {
+	private function export_grade( Comments_Based_Grade $grade ): array {
 		return [
-			'answer_id'   => $grade->get_answer_id(),
 			'question_id' => $grade->get_question_id(),
 			'points'      => $grade->get_points(),
 			'feedback'    => $grade->get_feedback(),
