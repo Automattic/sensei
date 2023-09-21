@@ -7,8 +7,6 @@
 
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Models;
 
-use DateTimeInterface;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
