@@ -1,29 +1,45 @@
 <?php
 /**
- * File containing the Lesson_Progress_Test class.
+ * File containing the Tables_Based_Lesson_Progress_Test class.
  */
 
 namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Models;
 
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Class Lesson_Progress_Test.
+ * Class Tables_Based_Lesson_Progress_Test.
  *
- * @covers \Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress
+ * @covers \Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress
  */
-class Lesson_Progress_Test extends \WP_UnitTestCase {
+class Tables_Based_Lesson_Progress_Test extends \WP_UnitTestCase {
+	/**
+	 * Sensei factory.
+	 *
+	 * @var \Sensei_Factory
+	 */
+	protected $factory;
+
+	public function setUp(): void {
+		parent::setUp();
+		$this->factory = new \Sensei_Factory();
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+		$this->factory->tearDown();
+	}
 
 	public function testGetId_ConstructedWithId_ReturnsSameId(): void {
 		/* Arrange. */
-		$course_progress = $this->createProgress();
+		$lesson_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_id();
+		$actual = $lesson_progress->get_id();
 
 		/* Assert. */
 		self::assertSame( 1, $actual );
@@ -31,10 +47,10 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetLessonId_ConstructedWithLessonId_ReturnsSameLessonId(): void {
 		/* Arrange. */
-		$course_progress = $this->createProgress();
+		$lesson_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_lesson_id();
+		$actual = $lesson_progress->get_lesson_id();
 
 		/* Assert. */
 		self::assertSame( 2, $actual );
@@ -42,32 +58,44 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetUserId_ConstructedWithUserId_ReturnsSameUserId(): void {
 		/* Arrange. */
-		$course_progress = $this->createProgress();
+		$lesson_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_user_id();
+		$actual = $lesson_progress->get_user_id();
 
 		/* Assert. */
 		self::assertSame( 3, $actual );
 	}
 
-	public function testGetStatus_ConstructedWithStatus_ReturnsSameStatus(): void {
+	/**
+	 * Test that get status returns the expected value.
+	 *
+	 * @dataProvider providerGetStatus_ConstructedWithStatus_ReturnsMatchingStatus
+	 */
+	public function testGetStatus_ConstructedWithStatus_ReturnsMatchingStatus( $internal_status, $expected_status ): void {
 		/* Arrange. */
-		$course_progress = $this->createProgress();
+		$lesson_progress = $this->create_progress( $internal_status );
 
 		/* Act. */
-		$actual = $course_progress->get_status();
+		$actual = $lesson_progress->get_status();
 
 		/* Assert. */
-		self::assertSame( 'in-progress', $actual );
+		self::assertSame( $expected_status, $actual );
+	}
+
+	public function providerGetStatus_ConstructedWithStatus_ReturnsMatchingStatus(): array {
+		return array(
+			'in-progress' => array( 'in-progress', 'in-progress' ),
+			'complete'    => array( 'complete', 'complete' ),
+		);
 	}
 
 	public function testGetStartedAt_ConstructedWithStartedAt_ReturnsSameStartedAt(): void {
 		/* Arrange. */
-		$course_progress = $this->createProgress();
+		$lesson_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_started_at()->format( 'Y-m-d H:i:s' );
+		$actual = $lesson_progress->get_started_at()->format( 'Y-m-d H:i:s' );
 
 		/* Assert. */
 		self::assertSame( '2020-01-01 00:00:00', $actual );
@@ -75,10 +103,10 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetCompletedAt_ConstructedWithCompletedAt_ReturnsSameCompletedAt(): void {
 		/* Arrange. */
-		$course_progress = $this->createProgress();
+		$lesson_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_completed_at()->format( 'Y-m-d H:i:s' );
+		$actual = $lesson_progress->get_completed_at()->format( 'Y-m-d H:i:s' );
 
 		/* Assert. */
 		self::assertSame( '2020-01-01 00:00:01', $actual );
@@ -86,10 +114,10 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetCreatedAt_ConstructedWithCreatedAt_ReturnsSameCreatedAt(): void {
 		/* Arrange. */
-		$course_progress = $this->createProgress();
+		$lesson_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_created_at()->format( 'Y-m-d H:i:s' );
+		$actual = $lesson_progress->get_created_at()->format( 'Y-m-d H:i:s' );
 
 		/* Assert. */
 		self::assertSame( '2020-01-01 00:00:02', $actual );
@@ -97,10 +125,10 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetUpdatedAt_ConstructedWithUpdatedAt_ReturnsSameUpdatedAt(): void {
 		/* Arrange. */
-		$course_progress = $this->createProgress();
+		$lesson_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_updated_at()->format( 'Y-m-d H:i:s' );
+		$actual = $lesson_progress->get_updated_at()->format( 'Y-m-d H:i:s' );
 
 		/* Assert. */
 		self::assertSame( '2020-01-01 00:00:03', $actual );
@@ -108,11 +136,11 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetUpdatedAt_WhenUpdatedAtSet_ReturnsSameUpdatedAt(): void {
 		/* Arrange. */
-		$course_progress = $this->createProgress();
-		$course_progress->set_updated_at( new \DateTime( '2020-01-01 00:00:04' ) );
+		$lesson_progress = $this->create_progress();
+		$lesson_progress->set_updated_at( new \DateTime( '2020-01-01 00:00:04' ) );
 
 		/* Act. */
-		$actual = $course_progress->get_updated_at()->format( 'Y-m-d H:i:s' );
+		$actual = $lesson_progress->get_updated_at()->format( 'Y-m-d H:i:s' );
 
 		/* Assert. */
 		self::assertSame( '2020-01-01 00:00:04', $actual );
@@ -121,7 +149,7 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 	public function testGetStartedAt_WhenStartWithStartedAtCalled_ReturnsSameStartedAt(): void {
 		/* Arrange. */
 		$started_at = new \DateTimeImmutable();
-		$progress   = $this->createProgress();
+		$progress   = $this->create_progress();
 
 		/* Act. */
 		$progress->start( $started_at );
@@ -132,7 +160,7 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 
 	public function testIsComplete_WhenConstructedInProgressAndCompleteCalled_ReturnsTrue(): void {
 		/* Arrange. */
-		$progress = $this->createProgress( 'in-progress' );
+		$progress = $this->create_progress( 'in-progress' );
 		$progress->complete();
 
 		/* Act. */
@@ -144,7 +172,7 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 
 	public function testIsComplete_WhenConstructedCompleteAndStartCalled_ReturnsFalse(): void {
 		/* Arrange. */
-		$progress = $this->createProgress( 'complete' );
+		$progress = $this->create_progress( 'complete' );
 		$progress->start();
 
 		/* Act. */
@@ -155,7 +183,7 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that the progress is complete when the completed_at is set.
+	 * Test that the progress is complete when the status is set.
 	 *
 	 * @dataProvider providerIsComplete_WhenConstructedWithStatus_ReturnsMatchingValue
 	 * @param string $status The status to set.
@@ -163,7 +191,7 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 	 */
 	public function testIsComplete_WhenConstructedWithStatus_ReturnsMatchingValue( string $status, bool $expected ): void {
 		/* Arrange. */
-		$progress = $this->createProgress( $status );
+		$progress = $this->create_progress( $status );
 
 		/* Act. */
 		$actual = $progress->is_complete();
@@ -176,18 +204,13 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 		return [
 			[ 'in-progress', false ],
 			[ 'complete', true ],
-			// The following values come from quiz progress:
-			[ 'passed', true ],
-			[ 'failed', false ],
-			[ 'graded', true ],
-			[ 'ungraded', false ],
 		];
 	}
 
 	public function testGetCompletedAt_WhenCompleteWithCompletedAtCalled_ReturnsSameCompletedAt(): void {
 		/* Arrange. */
 		$completed_at = new \DateTimeImmutable();
-		$progress     = $this->createProgress();
+		$progress     = $this->create_progress();
 
 		/* Act. */
 		$progress->complete( $completed_at );
@@ -196,8 +219,8 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( $completed_at, $progress->get_completed_at() );
 	}
 
-	private function createProgress( string $status = null ): Lesson_Progress {
-		return new Lesson_Progress(
+	private function create_progress( string $status = null ): Tables_Based_Lesson_Progress {
+		return new Tables_Based_Lesson_Progress(
 			1,
 			2,
 			3,

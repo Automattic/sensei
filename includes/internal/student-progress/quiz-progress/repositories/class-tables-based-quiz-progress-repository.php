@@ -9,7 +9,8 @@ namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
 use DateTimeImmutable;
 use DateTimeZone;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -49,9 +50,9 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
-	 * @return Quiz_Progress
+	 * @return Quiz_Progress_Interface
 	 */
-	public function create( int $quiz_id, int $user_id ): Quiz_Progress {
+	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
@@ -61,7 +62,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				'user_id'        => $user_id,
 				'parent_post_id' => null,
 				'type'           => 'quiz',
-				'status'         => Quiz_Progress::STATUS_IN_PROGRESS,
+				'status'         => Quiz_Progress_Interface::STATUS_IN_PROGRESS,
 				'started_at'     => $current_datetime->format( $date_format ),
 				'completed_at'   => null,
 				'created_at'     => $current_datetime->format( $date_format ),
@@ -81,11 +82,11 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		);
 		$id = (int) $this->wpdb->insert_id;
 
-		return new Quiz_Progress(
+		return new Tables_Based_Quiz_Progress(
 			$id,
 			$quiz_id,
 			$user_id,
-			Quiz_Progress::STATUS_IN_PROGRESS,
+			Quiz_Progress_Interface::STATUS_IN_PROGRESS,
 			$current_datetime,
 			null,
 			$current_datetime,
@@ -100,9 +101,9 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
-	 * @return Quiz_Progress
+	 * @return Quiz_Progress_Interface|null
 	 */
-	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress {
+	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress_Interface {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -120,7 +121,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 
 		$timezone = new DateTimeZone( 'UTC' );
 
-		return new Quiz_Progress(
+		return new Tables_Based_Quiz_Progress(
 			(int) $row->id,
 			(int) $row->post_id,
 			(int) $row->user_id,
@@ -162,9 +163,11 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @internal
 	 *
-	 * @param Quiz_Progress $quiz_progress Quiz progress.
+	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
 	 */
-	public function save( Quiz_Progress $quiz_progress ): void {
+	public function save( Quiz_Progress_Interface $quiz_progress ): void {
+		$this->assert_tables_based_quiz_progress( $quiz_progress );
+
 		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$quiz_progress->set_updated_at( $updated_at );
 
@@ -197,9 +200,9 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @internal
 	 *
-	 * @param Quiz_Progress $quiz_progress Quiz progress.
+	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
 	 */
-	public function delete( Quiz_Progress $quiz_progress ): void {
+	public function delete( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
@@ -255,5 +258,18 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				'%s',
 			]
 		);
+	}
+
+	/**
+	 * Assert that the quiz progress is a Tables_Based_Quiz_Progress.
+	 *
+	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
+	 * @throws \InvalidArgumentException If the quiz progress is not a Tables_Based_Quiz_Progress.
+	 */
+	private function assert_tables_based_quiz_progress( Quiz_Progress_Interface $quiz_progress ): void {
+		if ( ! $quiz_progress instanceof Tables_Based_Quiz_Progress ) {
+			$actual_type = get_class( $quiz_progress );
+			throw new \InvalidArgumentException( "Expected Tables_Based_Quiz_Progress, got {$actual_type}." );
+		}
 	}
 }

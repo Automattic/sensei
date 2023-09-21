@@ -5,6 +5,7 @@ namespace SenseiTest\Internal\Emails\Generators;
 use Sensei\Internal\Emails\Email_Repository;
 use Sensei\Internal\Emails\Generators\Student_Completes_Lesson;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei_Lesson;
 
@@ -109,8 +110,8 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$email_repository = $this->createMock( Email_Repository::class );
 
-		$lesson_progress = $this->createMock( Lesson_Progress::class );
-		$lesson_progress->method( 'get_status' )->willReturn( 'in-progress' );
+		$lesson_progress = $this->createMock( Lesson_Progress_Interface::class );
+		$lesson_progress->method( 'is_complete' )->willReturn( false );
 
 		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 		$lesson_progress_repository->method( 'get' )->with( 2, 1 )->willReturn( $lesson_progress );
@@ -162,8 +163,8 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		);
 		$email_repository = $this->createMock( Email_Repository::class );
 
-		$lesson_progress = $this->createMock( Lesson_Progress::class );
-		$lesson_progress->method( 'get_status' )->willReturn( 'complete' );
+		$lesson_progress = $this->createMock( Lesson_Progress_Interface::class );
+		$lesson_progress->method( 'is_complete' )->willReturn( true );
 
 		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 		$lesson_progress_repository->method( 'get' )->with( $lesson_id, $student_id )->willReturn( $lesson_progress );
@@ -240,8 +241,8 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		);
 		$email_repository = $this->createMock( Email_Repository::class );
 
-		$lesson_progress = $this->createMock( Lesson_Progress::class );
-		$lesson_progress->method( 'get_status' )->willReturn( 'complete' );
+		$lesson_progress = $this->createMock( Lesson_Progress_Interface::class );
+		$lesson_progress->method( 'is_complete' )->willReturn( true );
 
 		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 		$lesson_progress_repository->method( 'get' )->with( $lesson_id, $student_id )->willReturn( $lesson_progress );

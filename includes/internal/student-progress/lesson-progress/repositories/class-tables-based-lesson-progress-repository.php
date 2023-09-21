@@ -9,7 +9,10 @@ namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTimeImmutable;
 use DateTimeZone;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use InvalidArgumentException;
+use RuntimeException;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,9 +53,9 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Lesson_Progress The lesson progress.
+	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
-	public function create( int $lesson_id, int $user_id ): Lesson_Progress {
+	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
@@ -62,7 +65,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 				'user_id'        => $user_id,
 				'parent_post_id' => null,
 				'type'           => 'lesson',
-				'status'         => Lesson_Progress::STATUS_IN_PROGRESS,
+				'status'         => Lesson_Progress_Interface::STATUS_IN_PROGRESS,
 				'started_at'     => $current_datetime->format( $date_format ),
 				'completed_at'   => null,
 				'created_at'     => $current_datetime->format( $date_format ),
@@ -82,11 +85,11 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		);
 		$id = (int) $this->wpdb->insert_id;
 
-		return new Lesson_Progress(
+		return new Tables_Based_Lesson_Progress(
 			$id,
 			$lesson_id,
 			$user_id,
-			Lesson_Progress::STATUS_IN_PROGRESS,
+			Lesson_Progress_Interface::STATUS_IN_PROGRESS,
 			$current_datetime,
 			null,
 			$current_datetime,
@@ -102,9 +105,9 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Lesson_Progress|null The lesson progress or null if not found.
+	 * @return Lesson_Progress_Interface|null The lesson progress or null if not found.
 	 */
-	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress {
+	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress_Interface {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -122,7 +125,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 
 		$timezone = new DateTimeZone( 'UTC' );
 
-		return new Lesson_Progress(
+		return new Tables_Based_Lesson_Progress(
 			(int) $row->id,
 			(int) $row->post_id,
 			(int) $row->user_id,
@@ -164,9 +167,11 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 *
 	 * @internal
 	 *
-	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
-	public function save( Lesson_Progress $lesson_progress ): void {
+	public function save( Lesson_Progress_Interface $lesson_progress ): void {
+		$this->assert_tables_based_lesson_progress( $lesson_progress );
+
 		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$lesson_progress->set_updated_at( $updated_at );
 
@@ -199,9 +204,9 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 *
 	 * @internal
 	 *
-	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
-	public function delete( Lesson_Progress $lesson_progress ): void {
+	public function delete( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
@@ -290,5 +295,18 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		$count = $this->wpdb->get_var( $query );
 
 		return (int) $count;
+	}
+
+	/**
+	 * Asserts that the lesson progress is a Tables_Based_Lesson_Progress.
+	 *
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws InvalidArgumentException If the lesson progress is not a Tables_Based_Lesson_Progress.
+	 */
+	private function assert_tables_based_lesson_progress( Lesson_Progress_Interface $lesson_progress ): void {
+		if ( ! $lesson_progress instanceof Tables_Based_Lesson_Progress ) {
+			$actual_type = get_class( $lesson_progress );
+			throw new InvalidArgumentException( "Expected Tables_Based_Lesson_Progress, got {$actual_type}." );
+		}
 	}
 }

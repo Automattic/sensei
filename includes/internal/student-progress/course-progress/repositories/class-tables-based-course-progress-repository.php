@@ -9,7 +9,8 @@ namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
 use DateTimeImmutable;
 use DateTimeZone;
-use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Tables_Based_Course_Progress;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -49,9 +50,9 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Course_Progress The course progress.
+	 * @return Course_Progress_Interface The course progress.
 	 */
-	public function create( int $course_id, int $user_id ): Course_Progress {
+	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
@@ -61,7 +62,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				'user_id'        => $user_id,
 				'parent_post_id' => null,
 				'type'           => 'course',
-				'status'         => Course_Progress::STATUS_IN_PROGRESS,
+				'status'         => Course_Progress_Interface::STATUS_IN_PROGRESS,
 				'started_at'     => $current_datetime->format( $date_format ),
 				'completed_at'   => null,
 				'created_at'     => $current_datetime->format( $date_format ),
@@ -81,11 +82,11 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		);
 		$id = (int) $this->wpdb->insert_id;
 
-		return new Course_Progress(
+		return new Tables_Based_Course_Progress(
 			$id,
 			$course_id,
 			$user_id,
-			Course_Progress::STATUS_IN_PROGRESS,
+			Course_Progress_Interface::STATUS_IN_PROGRESS,
 			$current_datetime,
 			null,
 			$current_datetime,
@@ -100,9 +101,9 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Course_Progress|null The course progress or null if it does not exist.
+	 * @return Course_Progress_Interface|null The course progress or null if it does not exist.
 	 */
-	public function get( int $course_id, int $user_id ): ?Course_Progress {
+	public function get( int $course_id, int $user_id ): ?Course_Progress_Interface {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -120,7 +121,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 
 		$timezone = new DateTimeZone( 'UTC' );
 
-		return new Course_Progress(
+		return new Tables_Based_Course_Progress(
 			(int) $row->id,
 			(int) $row->post_id,
 			(int) $row->user_id,
@@ -162,9 +163,11 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 *
 	 * @internal
 	 *
-	 * @param Course_Progress $course_progress The course progress.
+	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
-	public function save( Course_Progress $course_progress ): void {
+	public function save( Course_Progress_Interface $course_progress ): void {
+		$this->assert_tables_based_course_progress( $course_progress );
+
 		$date_format = 'Y-m-d H:i:s';
 
 		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
@@ -198,9 +201,9 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 *
 	 * @internal
 	 *
-	 * @param Course_Progress $course_progress The course progress.
+	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
-	public function delete( Course_Progress $course_progress ): void {
+	public function delete( Course_Progress_Interface $course_progress ): void {
 		$this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
@@ -256,5 +259,18 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				'%s',
 			]
 		);
+	}
+
+	/**
+	 * Assert that the course progress is a Tables_Based_Course_Progress.
+	 *
+	 * @param Course_Progress_Interface $course_progress The course progress.
+	 * @throws \InvalidArgumentException If the course progress is not a Tables_Based_Course_Progress.
+	 */
+	private function assert_tables_based_course_progress( Course_Progress_Interface $course_progress ): void {
+		if ( ! $course_progress instanceof Tables_Based_Course_Progress ) {
+			$actual_type = get_class( $course_progress );
+			throw new \InvalidArgumentException( "Expected Tables_Based_Course_Progress, got {$actual_type}." );
+		}
 	}
 }

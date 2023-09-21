@@ -3,7 +3,8 @@
 namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTimeImmutable;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
 use Sensei_Course;
 use wpdb;
@@ -244,7 +245,7 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function testSave_ProgressGiven_CallsWpdbUpdate(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );
-		$progress   = new Lesson_Progress(
+		$progress   = new Tables_Based_Lesson_Progress(
 			1,
 			2,
 			3,
@@ -286,10 +287,21 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
+	public function testSave_NonTablesBasedProgressGiven_ThrowsException(): void {
+		/* Arrange. */
+		$progress   = $this->createMock( Lesson_Progress_Interface::class );
+		$repository = new Tables_Based_Lesson_Progress_Repository( $this->createMock( wpdb::class ) );
+
+		/* Expect & Act. */
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Expected Tables_Based_Lesson_Progress, got ' . get_class( $progress ) . '.' );
+		$repository->save( $progress );
+	}
+
 	public function testDelete_ProgressGiven_CallsWpdbDelete(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );
-		$progress   = new Lesson_Progress(
+		$progress   = new Tables_Based_Lesson_Progress(
 			1,
 			2,
 			3,
@@ -400,7 +412,7 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		Sensei()->course = $initial_course;
 	}
 
-	private function export_progress( Lesson_Progress $progress ): array {
+	private function export_progress( Lesson_Progress_Interface $progress ): array {
 		return [
 			'id'        => $progress->get_id(),
 			'lesson_id' => $progress->get_lesson_id(),
@@ -409,7 +421,7 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		];
 	}
 
-	private function export_progress_with_dates( ?Lesson_Progress $progress ): array {
+	private function export_progress_with_dates( ?Lesson_Progress_Interface $progress ): array {
 		return [
 			'id'           => $progress->get_id(),
 			'lesson_id'    => $progress->get_lesson_id(),

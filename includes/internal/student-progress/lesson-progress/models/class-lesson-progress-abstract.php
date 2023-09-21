@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Lesson_Progress class.
+ * File containing the Lesson_Progress_Abstract class.
  *
  * @package sensei
  */
@@ -8,34 +8,19 @@
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Models;
 
 use DateTimeInterface;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
-use Sensei_Lesson;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Class Lesson_Progress.
+ * Class Lesson_Progress_Abstract.
  *
  * @internal
  *
- * @since 4.7.2
+ * @since $$next-version$$
  */
-class Lesson_Progress {
-	/**
-	 * Status lesson in progress.
-	 *
-	 * @internal
-	 */
-	public const STATUS_IN_PROGRESS = 'in-progress';
-
-	/**
-	 * Status lesson completed.
-	 *
-	 * @internal
-	 */
-	public const STATUS_COMPLETE = 'complete';
+abstract class Lesson_Progress_Abstract implements Lesson_Progress_Interface {
 
 	/**
 	 * Progress identifier.
@@ -139,8 +124,7 @@ class Lesson_Progress {
 	 */
 	public function complete( ?DateTimeInterface $completed_at = null ): void {
 		$this->completed_at = $completed_at ?? current_datetime();
-		$has_questions      = Sensei_Lesson::lesson_quiz_has_questions( $this->lesson_id );
-		$this->status       = $has_questions ? Quiz_Progress::STATUS_PASSED : self::STATUS_COMPLETE;
+		$this->status       = self::STATUS_COMPLETE;
 	}
 
 	/**
@@ -217,13 +201,7 @@ class Lesson_Progress {
 	 * @return bool
 	 */
 	public function is_complete(): bool {
-		$completed_statuses = [
-			self::STATUS_COMPLETE,
-			Quiz_Progress::STATUS_PASSED,
-			Quiz_Progress::STATUS_GRADED,
-		];
-
-		return in_array( $this->status, $completed_statuses, true );
+		return $this->get_status() === self::STATUS_COMPLETE;
 	}
 
 	/**
