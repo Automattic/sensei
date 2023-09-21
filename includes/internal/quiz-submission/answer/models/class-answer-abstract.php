@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Answer class.
+ * File containing the Answer_Abstract class.
  *
  * @package sensei
  */
@@ -14,13 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Answer.
+ * Class Answer_Abstract.
  *
  * @internal
  *
- * @since 4.7.2
+ * @since $$next_version$$
  */
-class Answer {
+class Answer_Abstract implements Answer_Interface {
 	/**
 	 * The answer ID.
 	 *

@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Quiz_Submission\Grade\Repositories;
 
+use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 
@@ -27,15 +28,15 @@ interface Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission_Interface $submission    The submission.
-	 * @param int                  $answer_id     The answer ID.
-	 * @param int                  $question_id   The question ID.
-	 * @param int                  $points        The points.
-	 * @param string|null          $feedback      The feedback.
+	 * @param Submission_Interface $submission  The submission.
+	 * @param Answer_Interface     $answer      The answer.
+	 * @param int                  $question_id The question ID.
+	 * @param int                  $points      The points.
+	 * @param string|null          $feedback    The feedback.
 	 *
 	 * @return Grade The grade.
 	 */
-	public function create( Submission_Interface $submission, int $answer_id, int $question_id, int $points, string $feedback = null ): Grade;
+	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, string $feedback = null ): Grade;
 
 	/**
 	 * Get all grades for a quiz submission.

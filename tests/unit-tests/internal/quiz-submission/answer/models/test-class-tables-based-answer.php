@@ -1,26 +1,26 @@
 <?php
 /**
- * File containing the Answer_Test class.
+ * File containing the Tables_Based_Answer_Test class.
  */
 
 namespace SenseiTest\Internal\Quiz_Submission\Answer\Models;
 
-use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Class Answer_Test.
+ * Class Tables_Based_Answer_Test.
  *
- * @covers \Sensei\Internal\Quiz_Submission\Answer\Models\Answer
+ * @covers \Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer
  */
-class Answer_Test extends \WP_UnitTestCase {
+class Tables_Based_Answer_Test extends \WP_UnitTestCase {
 
 	public function testGetId_ConstructedWithId_ReturnsSameId(): void {
 		/* Arrange. */
-		$answer = $this->createAnswer();
+		$answer = $this->create_answer();
 
 		/* Act. */
 		$actual = $answer->get_id();
@@ -31,7 +31,7 @@ class Answer_Test extends \WP_UnitTestCase {
 
 	public function testGetSubmissionId_ConstructedWithSubmissionId_ReturnsSameSubmissionId(): void {
 		/* Arrange. */
-		$answer = $this->createAnswer();
+		$answer = $this->create_answer();
 
 		/* Act. */
 		$actual = $answer->get_submission_id();
@@ -42,7 +42,7 @@ class Answer_Test extends \WP_UnitTestCase {
 
 	public function testGetQuestionId_ConstructedWithQuestionId_ReturnsSameQuestionId(): void {
 		/* Arrange. */
-		$answer = $this->createAnswer();
+		$answer = $this->create_answer();
 
 		/* Act. */
 		$actual = $answer->get_question_id();
@@ -53,7 +53,7 @@ class Answer_Test extends \WP_UnitTestCase {
 
 	public function testGetValue_ConstructedWithValue_ReturnsSameValue(): void {
 		/* Arrange. */
-		$answer = $this->createAnswer();
+		$answer = $this->create_answer();
 
 		/* Act. */
 		$actual = $answer->get_value();
@@ -64,7 +64,7 @@ class Answer_Test extends \WP_UnitTestCase {
 
 	public function testGetCreatedAt_ConstructedWithCreatedAt_ReturnsSameCreatedAt(): void {
 		/* Arrange. */
-		$answer = $this->createAnswer();
+		$answer = $this->create_answer();
 
 		/* Act. */
 		$actual = $answer->get_created_at()->format( 'Y-m-d H:i:s' );
@@ -75,7 +75,7 @@ class Answer_Test extends \WP_UnitTestCase {
 
 	public function testGetUpdatedAt_ConstructedWithUpdatedAt_ReturnsSameUpdatedAt(): void {
 		/* Arrange. */
-		$answer = $this->createAnswer();
+		$answer = $this->create_answer();
 
 		/* Act. */
 		$actual = $answer->get_updated_at()->format( 'Y-m-d H:i:s' );
@@ -84,8 +84,8 @@ class Answer_Test extends \WP_UnitTestCase {
 		self::assertSame( '2020-01-01 00:00:02', $actual );
 	}
 
-	private function createAnswer(): Answer {
-		return new Answer(
+	private function create_answer(): Tables_Based_Answer {
+		return new Tables_Based_Answer(
 			1,
 			2,
 			3,

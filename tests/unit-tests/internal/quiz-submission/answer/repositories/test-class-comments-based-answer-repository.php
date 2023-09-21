@@ -2,7 +2,7 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Answer\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Comments_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei_Utils;
@@ -141,7 +141,7 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	private function export_answer( Answer $answer ): array {
+	private function export_answer( Comments_Based_Answer $answer ): array {
 		return [
 			'question_id' => $answer->get_question_id(),
 			'value'       => $answer->get_value(),
