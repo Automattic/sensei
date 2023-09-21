@@ -201,7 +201,7 @@ class Tables_Based_Lesson_Progress implements Lesson_Progress_Interface {
 	 * @return bool
 	 */
 	public function is_complete(): bool {
-		return $this->get_status() === Lesson_Progress_Interface::STATUS_COMPLETE;
+		return $this->get_status() === self::STATUS_COMPLETE;
 	}
 
 	/**

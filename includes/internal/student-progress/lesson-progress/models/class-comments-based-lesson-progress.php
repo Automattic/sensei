@@ -175,7 +175,7 @@ class Comments_Based_Lesson_Progress implements Lesson_Progress_Interface {
 			case 'complete':
 			case 'graded':
 			case 'passed':
-				return Lesson_Progress_Interface::STATUS_COMPLETE;
+				return self::STATUS_COMPLETE;
 
 			case 'failed':
 				// This may be 'completed' depending on...
@@ -186,13 +186,13 @@ class Comments_Based_Lesson_Progress implements Lesson_Progress_Interface {
 					$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
 					if ( empty( $pass_required ) ) {
 						// We just require the user to have done the quiz, not to have passed.
-						return Lesson_Progress_Interface::STATUS_COMPLETE;
+						return self::STATUS_COMPLETE;
 					}
 				}
-				return Lesson_Progress_Interface::STATUS_IN_PROGRESS;
+				return self::STATUS_IN_PROGRESS;
 
 			default:
-				return Lesson_Progress_Interface::STATUS_IN_PROGRESS;
+				return self::STATUS_IN_PROGRESS;
 		}
 	}
 
@@ -226,7 +226,7 @@ class Comments_Based_Lesson_Progress implements Lesson_Progress_Interface {
 	 * @return bool
 	 */
 	public function is_complete(): bool {
-		return $this->get_status() === Lesson_Progress_Interface::STATUS_COMPLETE;
+		return $this->get_status() === self::STATUS_COMPLETE;
 	}
 
 	/**
