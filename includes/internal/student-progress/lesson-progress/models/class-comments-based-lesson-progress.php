@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since 4.7.2
+ * @since $$next-version$$
  */
 class Comments_Based_Lesson_Progress implements Lesson_Progress_Interface {
 
