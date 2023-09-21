@@ -719,7 +719,7 @@ class Sensei_Frontend {
 	 * @param int    $course_id The course ID.
 	 */
 	public function redirect_to_course_completed_page( $status, $user_id, $course_id ) {
-		if ( 'complete' !== $status || ! $course_id ) {
+		if ( 'complete' !== $status || ! $course_id || Sensei_Utils::is_rest_request() ) {
 			return;
 		}
 
