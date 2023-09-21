@@ -2,8 +2,9 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Grade\Repositories;
 
+use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository;
-use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Tables_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
@@ -28,11 +29,12 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 	public function testCreate_ParamsGiven_ReturnsGrade(): void {
 		/* Arrange */
 		$submission = $this->createMock( Tables_Based_Submission::class );
+		$answer     = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
 		$wpdb       = $this->createMock( \wpdb::class );
 		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
 		/* Act */
-		$grade = $repository->create( $submission, 2, 3, 4, 'feedback' );
+		$grade = $repository->create( $submission, $answer, 3, 4, 'feedback' );
 
 		/* Assert */
 		$expected = [
@@ -45,9 +47,10 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 	}
 
 
-	public function testCreate_ParamsGiven_InserstsData(): void {
+	public function testCreate_ParamsGiven_InsertsData(): void {
 		/* Arrange */
 		$submission = $this->createMock( Tables_Based_Submission::class );
+		$answer     = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
 		$wpdb       = $this->createMock( \wpdb::class );
 		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
@@ -68,7 +71,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 					}
 				)
 			);
-		$repository->create( $submission, 2, 3, 4, 'feedback' );
+		$repository->create( $submission, $answer, 3, 4, 'feedback' );
 	}
 
 	public function testIntegrationCreate_ParamsGiven_ReturnsGrade(): void {
@@ -76,9 +79,10 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		$repository = new Tables_Based_Grade_Repository( $wpdb );
 		$submission = $this->createMock( Tables_Based_Submission::class );
+		$answer     = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
 
 		/* Act */
-		$grade = $repository->create( $submission, 2, 3, 4, 'feedback' );
+		$grade = $repository->create( $submission, $answer, 3, 4, 'feedback' );
 
 		/* Assert */
 		$expected = [
@@ -100,8 +104,8 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$submission = $this->createMock( Tables_Based_Submission::class );
 		$submission->method( 'get_id' )->willReturn( 6 );
 		$grades     = [
-			new Grade( 1, 2, 3, 4, 'feedback', new \DateTimeImmutable(), new \DateTimeImmutable() ),
-			new Grade( 5, 6, 7, 8, 'feedback2', new \DateTimeImmutable(), new \DateTimeImmutable() ),
+			new Tables_Based_Grade( 1, 2, 3, 4, 'feedback', new \DateTimeImmutable(), new \DateTimeImmutable() ),
+			new Tables_Based_Grade( 5, 6, 7, 8, 'feedback2', new \DateTimeImmutable(), new \DateTimeImmutable() ),
 		];
 		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
@@ -131,7 +135,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$repository->save_many( $submission, $grades );
 	}
 
-	public function testIntegrationSaveMany_GradesGiven_UptadesData(): void {
+	public function testIntegrationSaveMany_GradesGiven_UpdatesData(): void {
 		/* Arrange */
 		global $wpdb;
 
@@ -141,7 +145,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		$repository = new Tables_Based_Grade_Repository( $wpdb );
 		$grades     = [
-			new Grade( $created['grade_id'], $created['answer_id'], $question_id, 4, 'feedback2', new \DateTimeImmutable(), new \DateTimeImmutable() ),
+			new Tables_Based_Grade( $created['grade_id'], $created['answer_id'], $question_id, 4, 'feedback2', new \DateTimeImmutable(), new \DateTimeImmutable() ),
 		];
 		$submission = $this->createMock( Tables_Based_Submission::class );
 		$submission->method( 'get_id' )->willReturn( $created['submission_id'] );
@@ -416,7 +420,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	private function export_grade( Grade $grade ) {
+	private function export_grade( Tables_Based_Grade $grade ) {
 		return [
 			'answer_id'   => $grade->get_answer_id(),
 			'question_id' => $grade->get_question_id(),

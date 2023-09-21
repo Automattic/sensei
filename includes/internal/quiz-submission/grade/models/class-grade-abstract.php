@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Grade class.
+ * File containing the Grade_Abstract class.
  *
  * @package sensei
  */
@@ -14,13 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Grade.
+ * Class Grade_Abstract.
  *
  * @internal
  *
- * @since 4.7.2
+ * @since $$next_version$$
  */
-class Grade {
+class Grade_Abstract implements Grade_Interface {
 	/**
 	 * The grade ID.
 	 *

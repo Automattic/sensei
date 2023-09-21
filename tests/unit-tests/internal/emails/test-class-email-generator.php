@@ -44,44 +44,4 @@ class Email_Generator_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals( 10, has_action( 'init', [ $generator, 'init_email_generators' ] ) );
 	}
-
-	public function testEmailGenerator_WhenInitHookCallsEmailGeneratorFunction_InitializesTheActiveEmails() {
-		/* Arrange. */
-		$generator = new Email_Generator( $this->email_repository, $this->lesson_progress_repository );
-		$generator->init();
-
-		$test_generator1 = $this->getMockBuilder( Email_Generators_Abstract::class )
-			->setMethods( [ 'is_email_active' ] )
-			->setConstructorArgs( [ $this->email_repository ] )
-			->getMockForAbstractClass();
-
-		$test_generator1->method( 'is_email_active' )
-			->willReturn( true );
-
-		$test_generator1->expects( $this->once() )->method( 'init' );
-
-		$test_generator2 = $this->getMockBuilder( Email_Generators_Abstract::class )
-			->setMethods( [ 'is_email_active' ] )
-			->setConstructorArgs( [ $this->email_repository ] )
-			->getMockForAbstractClass();
-
-		$test_generator2->method( 'is_email_active' )
-			->willReturn( false );
-
-		$test_generator2->expects( $this->never() )->method( 'init' );
-
-		/* Assert */
-		add_filter(
-			'sensei_email_generators',
-			function () use ( $test_generator1, $test_generator2 ) {
-				return [
-					'test1' => $test_generator1,
-					'test2' => $test_generator2,
-				];
-			}
-		);
-
-		/* Act. */
-		$generator->init_email_generators();
-	}
 }

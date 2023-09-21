@@ -73,10 +73,13 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 		$generator                  = new Student_Completes_Lesson( $email_repository, $lesson_progress_repository );
 
+		$email = new \WP_Post( (object) [ 'post_status' => 'publish' ] );
+		$email_repository->method( 'get' )->with( 'student_completes_lesson' )->willReturn( $email );
 		/* Act. */
 		$generator->init();
 
 		/* Assert. */
+		do_action( 'sensei_user_lesson_end', 1, 2 );
 		$priority = has_action( 'sensei_user_lesson_end', [ $generator, 'student_completed_lesson_mail_to_teacher' ] );
 		self::assertSame( 10, $priority );
 	}

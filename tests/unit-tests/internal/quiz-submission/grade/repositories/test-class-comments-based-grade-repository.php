@@ -2,7 +2,8 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Grade\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Comments_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei_Utils;
@@ -32,13 +33,13 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$user_id          = $this->factory->user->create();
 		$grade_repository = new Comments_Based_Grade_Repository();
 		$submission       = $this->create_submission( $lesson_id, $user_id );
+		$answer           = $this->createMock( Answer_Interface::class );
 
 		/* Act. */
-		$grade = $grade_repository->create( $submission, 0, 1, 22, 'Great!' );
+		$grade = $grade_repository->create( $submission, $answer, 1, 22, 'Great!' );
 
 		/* Assert. */
 		$expected = [
-			'answer_id'   => 0,
 			'question_id' => 1,
 			'points'      => 22,
 			'feedback'    => 'Great!',
@@ -53,10 +54,11 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$user_id          = $this->factory->user->create();
 		$grade_repository = new Comments_Based_Grade_Repository();
 		$submission       = $this->create_submission( $lesson_id, $user_id );
+		$answer           = $this->createMock( Answer_Interface::class );
 
 		/* Act. */
-		$grade_repository->create( $submission, 0, 1, 22, 'Great!' );
-		$grade_repository->create( $submission, 0, 2, 33, 'Awesome!' );
+		$grade_repository->create( $submission, $answer, 1, 22, 'Great!' );
+		$grade_repository->create( $submission, $answer, 2, 33, 'Awesome!' );
 
 		/* Assert. */
 		$this->assertSame(
@@ -74,10 +76,11 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$user_id          = $this->factory->user->create();
 		$grade_repository = new Comments_Based_Grade_Repository();
 		$submission       = $this->create_submission( $lesson_id, $user_id );
+		$answer           = $this->createMock( Answer_Interface::class );
 
 		/* Act. */
-		$grade_repository->create( $submission, 0, 1, 22, 'Great!' );
-		$grade_repository->create( $submission, 0, 2, 33, 'Awesome!' );
+		$grade_repository->create( $submission, $answer, 1, 22, 'Great!' );
+		$grade_repository->create( $submission, $answer, 2, 33, 'Awesome!' );
 
 		/* Assert. */
 		$this->assertSame(
@@ -108,10 +111,11 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id        = $this->factory->lesson->create();
 		$user_id          = $this->factory->user->create();
 		$submission       = $this->create_submission( $lesson_id, $user_id );
+		$answer           = $this->createMock( Answer_Interface::class );
 		$grade_repository = new Comments_Based_Grade_Repository();
 
-		$grade_1 = $grade_repository->create( $submission, 0, 1, 22, 'Great!' );
-		$grade_2 = $grade_repository->create( $submission, 0, 2, 33, 'Awesome!' );
+		$grade_1 = $grade_repository->create( $submission, $answer, 1, 22, 'Great!' );
+		$grade_2 = $grade_repository->create( $submission, $answer, 2, 33, 'Awesome!' );
 
 		/* Act. */
 		$grades = $grade_repository->get_all( $submission->get_id() );
@@ -134,10 +138,11 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id        = $this->factory->lesson->create();
 		$user_id          = $this->factory->user->create();
 		$submission       = $this->create_submission( $lesson_id, $user_id );
+		$answer           = $this->createMock( Answer_Interface::class );
 		$grade_repository = new Comments_Based_Grade_Repository();
 
-		$grade_1 = $grade_repository->create( $submission, 0, 1, 22, 'Great!' );
-		$grade_2 = $grade_repository->create( $submission, 0, 2, 33, 'Awesome!' );
+		$grade_1 = $grade_repository->create( $submission, $answer, 1, 22, 'Great!' );
+		$grade_2 = $grade_repository->create( $submission, $answer, 2, 33, 'Awesome!' );
 
 		$grade_1->set_feedback( 'Amazing!' );
 		$grade_2->set_feedback( 'Wow!' );
@@ -164,8 +169,9 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$user_id          = $this->factory->user->create();
 		$grade_repository = new Comments_Based_Grade_Repository();
 		$submission       = $this->create_submission( $lesson_id, $user_id );
+		$answer           = $this->createMock( Answer_Interface::class );
 
-		$grade_repository->create( $submission, 0, 1, 22, 'Great!' );
+		$grade_repository->create( $submission, $answer, 1, 22, 'Great!' );
 
 		/* Act. */
 		$grade_repository->delete_all( $submission );
@@ -177,9 +183,8 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	private function export_grade( Grade $grade ): array {
+	private function export_grade( Comments_Based_Grade $grade ): array {
 		return [
-			'answer_id'   => $grade->get_answer_id(),
 			'question_id' => $grade->get_question_id(),
 			'points'      => $grade->get_points(),
 			'feedback'    => $grade->get_feedback(),
