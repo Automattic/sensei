@@ -77,7 +77,7 @@ for FILE in $(git ls-files); do
 	grep -F -q '$$next-version$$' "$FILE" 2>/dev/null || continue
 	debug "Processing $FILE"
 
-	sed -i.bak -E -e 's!(@since|@deprecated( +[sS]ince)?)( +)\$\$next-version\$\$!\1\3'"$VE"'!g' "$FILE"
+	sed -i.bak -E -e 's!(@version|@since|@deprecated( +[sS]ince)?)( +)\$\$next-version\$\$!\1\3'"$VE"'!g' "$FILE"
 	rm "$FILE.bak" # We need a backup file because macOS requires it.
 	sed -i.bak -E -e $'s!(^\t*_deprecated_(function|constructor|file|argument|hook)\\( .*, \'[^\']*)\\$\\$next-version\\$\\$\'!\\1'"$VE"$'\'!g' "$FILE"
 	rm "$FILE.bak" # We need a backup file because macOS requires it.

@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Improve performance by reducing the number of queries that run on page load

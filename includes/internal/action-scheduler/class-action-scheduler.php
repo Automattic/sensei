@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.17.0
  */
 class Action_Scheduler {
 	/**
@@ -33,7 +33,7 @@ class Action_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @param int    $timestamp           Timestamp for when to run the action.
 	 * @param int    $interval_in_seconds Interval in seconds between each run of the action.
@@ -51,7 +51,7 @@ class Action_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @param string $hook   Action hook to execute.
 	 * @param array  $args   Arguments to pass to the hook's callback function.
@@ -67,7 +67,7 @@ class Action_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @param string $hook Action hook to execute.
 	 * @param array  $args Arguments to pass to the hook's callback function.
@@ -82,7 +82,7 @@ class Action_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 */
 	public function unschedule_all_actions(): void {
 		// Passing only group to unschedule all by group.
@@ -94,7 +94,7 @@ class Action_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.17.0
 	 *
 	 * @param string     $hook  The hook of the action.
 	 * @param array|null $args  Args that have been passed to the action. Null will matches any args.

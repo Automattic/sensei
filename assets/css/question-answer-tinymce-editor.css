@@ -1,0 +1,8 @@
+body.mce-content-body {
+	background: transparent;
+	color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #1E1E1E)))
+}
+
+#multi-line-placeholder {
+	color: #646970;
+}
