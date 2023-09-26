@@ -157,6 +157,10 @@ $question-input-border-color: var(--wp--preset--color--foreground, #155E65 );
 		padding: 18px;
 	}
 
+	&__answer-notes > *:first-child {
+		margin-top: 0;
+	}
+
 	&__correct-answer {
 		.highlight {
 			background: var(--color);
