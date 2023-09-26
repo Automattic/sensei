@@ -8,8 +8,11 @@
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTime;
-use SebastianBergmann\Timer\RuntimeException;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use InvalidArgumentException;
+use ReflectionClass;
+use RuntimeException;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,19 +35,24 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Lesson_Progress The lesson progress.
+	 * @return Lesson_Progress_Interface The lesson progress.
 	 * @throws RuntimeException When the lesson progress could not be created.
 	 */
-	public function create( int $lesson_id, int $user_id ): Lesson_Progress {
+	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
 		$metadata   = [
 			'start' => current_time( 'mysql' ),
 		];
-		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, Lesson_Progress::STATUS_IN_PROGRESS, $metadata );
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, Lesson_Progress_Interface::STATUS_IN_PROGRESS, $metadata );
 		if ( ! $comment_id ) {
 			throw new RuntimeException( "Can't create a lesson progress" );
 		}
 
-		return $this->get( $lesson_id, $user_id );
+		$progress = $this->get( $lesson_id, $user_id );
+		if ( ! $progress ) {
+			throw new RuntimeException( 'Created lesson progress not found' );
+		}
+
+		return $progress;
 	}
 
 	/**
@@ -55,9 +63,9 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Lesson_Progress|null The lesson progress or null if not found.
+	 * @return Lesson_Progress_Interface|null The lesson progress or null if not found.
 	 */
-	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress {
+	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress_Interface {
 		$activity_args = [
 			'post_id' => $lesson_id,
 			'user_id' => $user_id,
@@ -78,7 +86,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			$completed_at = null;
 		}
 
-		return new Lesson_Progress( (int) $comment->comment_ID, $lesson_id, $user_id, $comment->comment_approved, $started_at, $completed_at, $comment_date, $comment_date );
+		return new Comments_Based_Lesson_Progress( (int) $comment->comment_ID, $lesson_id, $user_id, $comment->comment_approved, $started_at, $completed_at, $comment_date, $comment_date );
 	}
 
 	/**
@@ -105,14 +113,29 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 *
 	 * @internal
 	 *
-	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
-	public function save( Lesson_Progress $lesson_progress ): void {
+	public function save( Lesson_Progress_Interface $lesson_progress ): void {
+		$this->assert_comments_based_lesson_progress( $lesson_progress );
+
 		$metadata = [];
 		if ( $lesson_progress->get_started_at() ) {
 			$metadata['start'] = $lesson_progress->get_started_at()->format( 'Y-m-d H:i:s' );
 		}
-		$comment_id = Sensei_Utils::update_lesson_status( $lesson_progress->get_user_id(), $lesson_progress->get_lesson_id(), $lesson_progress->get_status(), $metadata );
+
+		// We need to use internal value for status, not the one returned by the getter.
+		// Comments_Based_Lesson_Progress::get_status() returns a normalized status, but we need the internal one.
+		$reflection_class = new ReflectionClass( Comments_Based_Lesson_Progress::class );
+		$status_property  = $reflection_class->getProperty( 'status' );
+		$status_property->setAccessible( true );
+		$status = $status_property->getValue( $lesson_progress );
+
+		$comment_id = Sensei_Utils::update_lesson_status(
+			$lesson_progress->get_user_id(),
+			$lesson_progress->get_lesson_id(),
+			$status,
+			$metadata
+		);
 
 		if ( $lesson_progress->is_complete() && $comment_id ) {
 			$comment = [
@@ -129,9 +152,9 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 *
 	 * @internal
 	 *
-	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
-	public function delete( Lesson_Progress $lesson_progress ): void {
+	public function delete( Lesson_Progress_Interface $lesson_progress ): void {
 		$args = array(
 			'post_id' => $lesson_progress->get_lesson_id(),
 			'type'    => 'sensei_lesson_status',
@@ -229,5 +252,17 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			Sensei()->flush_comment_counts_cache( $post_id );
 		}
 	}
-}
 
+	/**
+	 * Asserts that the lesson progress is a Comments_Based_Lesson_Progress.
+	 *
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws InvalidArgumentException When the lesson progress is not a Comments_Based_Lesson_Progress.
+	 */
+	private function assert_comments_based_lesson_progress( Lesson_Progress_Interface $lesson_progress ): void {
+		if ( ! $lesson_progress instanceof Comments_Based_Lesson_Progress ) {
+			$actual_type = get_class( $lesson_progress );
+			throw new InvalidArgumentException( "Expected Comments_Based_Lesson_Progress, got {$actual_type}." );
+		}
+	}
+}

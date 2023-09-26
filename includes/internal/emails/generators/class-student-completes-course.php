@@ -45,7 +45,7 @@ class Student_Completes_Course extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_course_status_updated', [ $this, 'student_completed_course_mail_to_teacher' ], 10, 3 );
+		$this->maybe_add_action( 'sensei_course_status_updated', [ $this, 'student_completed_course_mail_to_teacher' ], 10, 3 );
 	}
 
 	/**

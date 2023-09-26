@@ -4,7 +4,8 @@ namespace SenseiTest\Internal\Quiz_Submission\Submission\Repositories;
 
 use DateTimeImmutable;
 use DateTimeZone;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Aggregate_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
@@ -85,7 +86,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 			->expects( $this->once() )
 			->method( 'get_or_create' )
 			->with( 1, 2, 12.34 )
-			->willReturn( $this->createMock( Submission::class ) );
+			->willReturn( $this->createMock( Comments_Based_Submission::class ) );
 		$repository->get_or_create( 1, 2, 12.34 );
 	}
 
@@ -180,7 +181,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 			->method( 'save' )
 			->with(
 				$this->callback(
-					function ( Submission $submission_to_save ) use ( $submission, $found_submission ) {
+					function ( Tables_Based_Submission $submission_to_save ) use ( $submission, $found_submission ) {
 						self::assertNotSame( $submission, $submission_to_save, 'We should create a new submission based on a found one: not using passed for saving.' );
 						self::assertNotSame( $found_submission, $submission_to_save, 'We should create a new submission based on a found one: not the found one itself.' );
 						return true;
@@ -213,7 +214,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$submission     = new Submission(
+		$submission     = new Comments_Based_Submission(
 			1,
 			2,
 			3,
@@ -235,7 +236,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 			->method( 'save' )
 			->with(
 				$this->callback(
-					function ( Submission $submission_to_save ) {
+					function ( Tables_Based_Submission $submission_to_save ) {
 						$this->assertSame( '+00:00', $submission_to_save->get_created_at()->getTimezone()->getName() );
 						$this->assertSame( '+00:00', $submission_to_save->get_updated_at()->getTimezone()->getName() );
 
@@ -310,10 +311,10 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * Creates a submission object.
 	 *
-	 * @return Submission
+	 * @return Comments_Based_Submission
 	 */
-	public function create_submission(): Submission {
-		return new Submission(
+	public function create_submission(): Comments_Based_Submission {
+		return new Comments_Based_Submission(
 			1,
 			2,
 			3,

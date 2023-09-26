@@ -3,7 +3,8 @@
 namespace SenseiTest\Internal\Student_Progress\Quiz_Progress\Repositories;
 
 use DateTimeImmutable;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
 use wpdb;
 
@@ -243,7 +244,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function testSave_ProgressGiven_CallsWpdbUpdate(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );
-		$progress   = new Quiz_Progress(
+		$progress   = new Tables_Based_Quiz_Progress(
 			1,
 			2,
 			3,
@@ -285,10 +286,21 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
+	public function testSave_NonTablesBasedProgressGiven_ThrowsException(): void {
+		/* Arrange. */
+		$progress   = $this->createMock( Quiz_Progress_Interface::class );
+		$repository = new Tables_Based_Quiz_Progress_Repository( $this->createMock( wpdb::class ) );
+
+		/* Expect& Act. */
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Expected Tables_Based_Quiz_Progress, got ' . get_class( $progress ) . '.' );
+		$repository->save( $progress );
+	}
+
 	public function testDelete_ProgressGiven_CallsWpdbDelete(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );
-		$progress   = new Quiz_Progress(
+		$progress   = new Tables_Based_Quiz_Progress(
 			1,
 			2,
 			3,
@@ -366,7 +378,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete_for_user( 2 );
 	}
 
-	private function export_progress( Quiz_Progress $progress ): array {
+	private function export_progress( Quiz_Progress_Interface $progress ): array {
 		return [
 			'id'      => $progress->get_id(),
 			'quiz_id' => $progress->get_quiz_id(),
@@ -375,7 +387,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		];
 	}
 
-	private function export_progress_with_dates( ?Quiz_Progress $progress ): array {
+	private function export_progress_with_dates( ?Quiz_Progress_Interface $progress ): array {
 		return [
 			'id'           => $progress->get_id(),
 			'quiz_id'      => $progress->get_quiz_id(),

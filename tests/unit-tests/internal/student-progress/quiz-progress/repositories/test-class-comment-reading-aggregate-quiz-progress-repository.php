@@ -2,7 +2,8 @@
 
 namespace SenseiTest\Internal\Student_Progress\Quiz_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comment_Reading_Aggregate_Quiz_Progress_Repository;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
@@ -71,11 +72,12 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTe
 
 	public function testSave_Always_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
-		$progress       = $this->create_quiz_progress();
+		$progress       = $this->create_comments_based_quiz_progress();
 		$comments_based = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 
-		$tables_based = $this->createMock( Tables_Based_Quiz_Progress_Repository::class );
-		$tables_based->method( 'get' )->willReturn( $progress );
+		$tables_based_progress = $this->create_tables_based_quiz_progress();
+		$tables_based          = $this->createMock( Tables_Based_Quiz_Progress_Repository::class );
+		$tables_based->method( 'get' )->willReturn( $tables_based_progress );
 
 		$repository = new Comment_Reading_Aggregate_Quiz_Progress_Repository( $comments_based, $tables_based );
 
@@ -89,17 +91,8 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTe
 
 	public function testSave_TablesBasedProgressFound_CallsTablesBasedRepository(): void {
 		/* Arrange. */
-		$progress       = $this->create_quiz_progress();
-		$found_progress = new Quiz_Progress(
-			2,
-			3,
-			4,
-			'a',
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable()
-		);
+		$progress       = $this->create_comments_based_quiz_progress();
+		$found_progress = $this->create_tables_based_quiz_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Quiz_Progress_Repository::class );
@@ -116,7 +109,7 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTe
 			->method( 'save' )
 			->with(
 				$this->callback(
-					function ( Quiz_Progress $progress_to_save ) use ( $progress, $found_progress ) {
+					function ( Tables_Based_Quiz_Progress $progress_to_save ) use ( $progress, $found_progress ) {
 						self::assertNotSame( $progress, $progress_to_save, 'We should create a new progress based on a found one: not using passed for saving.' );
 						self::assertNotSame( $found_progress, $progress_to_save, 'We should create a new progress based on a found one: not the found one itself.' );
 						return true;
@@ -128,9 +121,9 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTe
 
 	public function testSave_TablesProgressProgressFound_ConvertsTimeToUtc(): void {
 		/* Arrange. */
-		$progress = $this->create_quiz_progress( new \DateTimeImmutable( '2020-01-01 03:00:00', new \DateTimeZone( 'GMT+03:00' ) ) );
+		$progress = $this->create_comments_based_quiz_progress( new \DateTimeImmutable( '2020-01-01 03:00:00', new \DateTimeZone( 'GMT+03:00' ) ) );
 
-		$found_progress = $this->create_quiz_progress();
+		$found_progress = $this->create_tables_based_quiz_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Quiz_Progress_Repository::class );
@@ -147,7 +140,7 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTe
 			->method( 'save' )
 			->with(
 				$this->callback(
-					function ( Quiz_Progress $progress_to_save ) {
+					function ( Tables_Based_Quiz_Progress $progress_to_save ) {
 						return '2020-01-01 00:00:00' === $progress_to_save->get_started_at()->format( 'Y-m-d H:i:s' );
 					}
 				)
@@ -157,8 +150,8 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTe
 
 	public function testSave_TablesBasedProgressNotFound_CaertesQuizProgress(): void {
 		/* Arrange. */
-		$progress         = $this->create_quiz_progress();
-		$created_progress = $this->create_quiz_progress();
+		$progress         = $this->create_comments_based_quiz_progress();
+		$created_progress = $this->create_tables_based_quiz_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Quiz_Progress_Repository::class );
@@ -180,7 +173,7 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTe
 
 	public function testDelete_Always_CallsTablesBasedRepository(): void {
 		/* Arrange. */
-		$progress = $this->create_quiz_progress();
+		$progress = $this->create_comments_based_quiz_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Quiz_Progress_Repository::class );
@@ -197,7 +190,7 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTe
 
 	public function testDelete_Always_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
-		$progress = $this->create_quiz_progress();
+		$progress = $this->create_comments_based_quiz_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Quiz_Progress_Repository::class );
@@ -278,17 +271,36 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTe
 	}
 
 	/**
-	 * Create a quiz progress.
+	 * Create a comments-based quiz progress.
 	 *
 	 * @param \DateTimeInterface|null $started_at Started at.
-	 * @return Quiz_Progress
+	 * @return Comments_Based_Quiz_Progress
 	 */
-	public function create_quiz_progress( $started_at = null ): Quiz_Progress {
-		return new Quiz_Progress(
+	public function create_comments_based_quiz_progress( $started_at = null ): Comments_Based_Quiz_Progress {
+		return new Comments_Based_Quiz_Progress(
 			1,
 			2,
 			3,
 			'a',
+			$started_at ?? new \DateTimeImmutable(),
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable()
+		);
+	}
+
+	/**
+	 * Create a tables-based quiz progress.
+	 *
+	 * @param \DateTimeInterface|null $started_at Started at.
+	 * @return Tables_Based_Quiz_Progress
+	 */
+	public function create_tables_based_quiz_progress( $started_at = null ): Tables_Based_Quiz_Progress {
+		return new Tables_Based_Quiz_Progress(
+			4,
+			2,
+			3,
+			'b',
 			$started_at ?? new \DateTimeImmutable(),
 			new \DateTimeImmutable(),
 			new \DateTimeImmutable(),

@@ -45,7 +45,7 @@ class Student_Sends_Message extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_new_private_message', array( $this, 'new_message_mail_to_teacher' ), 10, 2 );
+		$this->maybe_add_action( 'sensei_new_private_message', array( $this, 'new_message_mail_to_teacher' ), 10, 2 );
 	}
 
 	/**

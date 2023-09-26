@@ -7,7 +7,8 @@
 
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -54,9 +55,9 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
-	 * @return Quiz_Progress The quiz progress.
+	 * @return Quiz_Progress_Interface The quiz progress.
 	 */
-	public function create( int $quiz_id, int $user_id ): Quiz_Progress {
+	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		$this->comments_based_repository->create( $quiz_id, $user_id );
 		return $this->tables_based_repository->create( $quiz_id, $user_id );
 	}
@@ -66,9 +67,9 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
-	 * @return Quiz_Progress|null The quiz progress or null if it does not exist.
+	 * @return Quiz_Progress_Interface|null The quiz progress or null if it does not exist.
 	 */
-	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress {
+	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress_Interface {
 		return $this->tables_based_repository->get( $quiz_id, $user_id );
 	}
 
@@ -86,9 +87,9 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	/**
 	 * Save quiz progress.
 	 *
-	 * @param Quiz_Progress $quiz_progress The quiz progress.
+	 * @param Quiz_Progress_Interface $quiz_progress The quiz progress.
 	 */
-	public function save( Quiz_Progress $quiz_progress ): void {
+	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->tables_based_repository->save( $quiz_progress );
 		$comments_based_quiz_progress = $this->comments_based_repository->get( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
 		if ( ! $comments_based_quiz_progress ) {
@@ -97,7 +98,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 				$quiz_progress->get_user_id()
 			);
 		}
-		$updated_comments_based_quiz_progress = new Quiz_Progress(
+		$updated_comments_based_quiz_progress = new Comments_Based_Quiz_Progress(
 			$comments_based_quiz_progress->get_id(),
 			$quiz_progress->get_quiz_id(),
 			$quiz_progress->get_user_id(),
@@ -113,9 +114,9 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	/**
 	 * Deletes a quiz progress.
 	 *
-	 * @param Quiz_Progress $quiz_progress The quiz progress.
+	 * @param Quiz_Progress_Interface $quiz_progress The quiz progress.
 	 */
-	public function delete( Quiz_Progress $quiz_progress ): void {
+	public function delete( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->tables_based_repository->delete( $quiz_progress );
 		$coments_based_quiz_progress = $this->comments_based_repository->get( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
 		if ( $coments_based_quiz_progress ) {
@@ -142,5 +143,4 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 		$this->comments_based_repository->delete_for_user( $user_id );
 		$this->tables_based_repository->delete_for_user( $user_id );
 	}
-
 }

@@ -9,8 +9,9 @@ namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 
 use DateTimeImmutable;
 use DateTimeZone;
-use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -48,13 +49,13 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission  The submission.
-	 * @param int        $question_id The question ID.
-	 * @param string     $value       The answer value.
+	 * @param Submission_Interface $submission  The submission.
+	 * @param int                  $question_id The question ID.
+	 * @param string               $value       The answer value.
 	 *
-	 * @return Answer The answer model.
+	 * @return Answer_Interface The answer model.
 	 */
-	public function create( Submission $submission, int $question_id, string $value ): Answer {
+	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer_Interface {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
@@ -76,7 +77,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 			]
 		);
 
-		return new Answer(
+		return new Tables_Based_Answer(
 			$this->wpdb->insert_id,
 			$submission->get_id(),
 			$question_id,
@@ -93,7 +94,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 *
-	 * @return Answer[] An array of answers.
+	 * @return Answer_Interface[] An array of answers.
 	 */
 	public function get_all( int $submission_id ): array {
 		$query = $this->wpdb->prepare(
@@ -105,7 +106,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		$answers = [];
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Prepared earlier.
 		foreach ( $this->wpdb->get_results( $query ) as $result ) {
-			$answers[] = new Answer(
+			$answers[] = new Tables_Based_Answer(
 				$result->id,
 				$result->submission_id,
 				$result->question_id,
@@ -123,9 +124,9 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The submission.
+	 * @param Submission_Interface $submission The submission.
 	 */
-	public function delete_all( Submission $submission ): void {
+	public function delete_all( Submission_Interface $submission ): void {
 		$this->wpdb->delete(
 			$this->get_table_name(),
 			[

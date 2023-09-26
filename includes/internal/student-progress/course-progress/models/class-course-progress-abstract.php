@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Course_Progress class.
+ * File containing the Course_Progress_Abstract class.
  *
  * @package sensei
  */
@@ -14,26 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Course_Progress.
+ * Class Course_Progress_Abstract.
+ *
+ * Shared properties and methods for course progress models.
+ * This class is not meant to be instantiated directly.
  *
  * @internal
  *
- * @since 4.7.2
+ * @since $$next-version$$
  */
-class Course_Progress {
-	/**
-	 * Status course in progress.
-	 *
-	 * @internal
-	 */
-	public const STATUS_IN_PROGRESS = 'in-progress';
-
-	/**
-	 * Status course complete.
-	 *
-	 * @internal
-	 */
-	public const STATUS_COMPLETE = 'complete';
+abstract class Course_Progress_Abstract implements Course_Progress_Interface {
 
 	/**
 	 * Progress identifier.
@@ -124,7 +114,7 @@ class Course_Progress {
 	 * @param DateTimeInterface|null $started_at Course start date.
 	 */
 	public function start( DateTimeInterface $started_at = null ): void {
-		$this->status     = self::STATUS_IN_PROGRESS;
+		$this->status     = Course_Progress_Interface::STATUS_IN_PROGRESS;
 		$this->started_at = $started_at ?? current_datetime();
 	}
 
@@ -136,7 +126,7 @@ class Course_Progress {
 	 * @param DateTimeInterface|null $completed_at Course completion date.
 	 */
 	public function complete( DateTimeInterface $completed_at = null ): void {
-		$this->status       = self::STATUS_COMPLETE;
+		$this->status       = Course_Progress_Interface::STATUS_COMPLETE;
 		$this->completed_at = $completed_at ?? current_datetime();
 	}
 

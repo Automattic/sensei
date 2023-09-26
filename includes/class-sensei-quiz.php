@@ -1080,7 +1080,7 @@ class Sensei_Quiz {
 
 		foreach ( $quiz_grades as $question_id => $points ) {
 			$answer = $answers_map[ $question_id ];
-			Sensei()->quiz_grade_repository->create( $submission, $answer->get_id(), $question_id, $points );
+			Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
 		}
 
 		$transient_key = 'quiz_grades_' . $user_id . '_' . $lesson_id;

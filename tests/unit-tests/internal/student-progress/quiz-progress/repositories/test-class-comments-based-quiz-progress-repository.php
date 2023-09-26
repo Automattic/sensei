@@ -2,7 +2,7 @@
 
 namespace SenseiTest\Internal\Student_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository;
 
 /**
@@ -114,7 +114,7 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new \Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository();
+		$repository = new Comments_Based_Quiz_Progress_Repository();
 
 		/* Act. */
 		$actual = $repository->has( $quiz_id, $user_id );
@@ -146,6 +146,17 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 			'status'  => 'passed',
 		];
 		self::assertSame( $expected, $this->export_progress( $actual ) );
+	}
+
+	public function testSave_NonCommentsBasedProgressGiven_ThrowsException(): void {
+		/* Arrange. */
+		$progress   = $this->createMock( Quiz_Progress_Interface::class );
+		$repository = new Comments_Based_Quiz_Progress_Repository();
+
+		/* Expect & Act. */
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Expected Comments_Based_Quiz_Progress, got ' . get_class( $progress ) . '.' );
+		$repository->save( $progress );
 	}
 
 	public function testDelete_ProgressGiven_DeletesAllUserAnswers(): void {
@@ -290,7 +301,7 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
-	private function export_progress( Quiz_Progress $progress ): array {
+	private function export_progress( Quiz_Progress_Interface $progress ): array {
 		return [
 			'user_id' => $progress->get_user_id(),
 			'quiz_id' => $progress->get_quiz_id(),

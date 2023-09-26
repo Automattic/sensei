@@ -2,9 +2,8 @@
 
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
 
@@ -387,7 +386,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	public function testSenseiDeleteQuizAnswers_WhenHasQuizSubmission_DeletesTheQuizData() {
 		/* Arrange. */
 		$submission_id = 123;
-		$submission    = $this->createMock( Submission::class );
+		$submission    = $this->createMock( Submission_Interface::class );
 		$submission->method( 'get_id' )->willReturn( $submission_id );
 
 		Sensei()->quiz_answer_repository     = $this->createMock( Answer_Repository_Interface::class );

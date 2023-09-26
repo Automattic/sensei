@@ -8,7 +8,8 @@
 namespace Sensei\Internal\Quiz_Submission\Submission\Repositories;
 
 use DateTimeImmutable;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -67,9 +68,9 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
-	 * @return Submission The quiz submission.
+	 * @return Submission_Interface The quiz submission.
 	 */
-	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
+	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
 		$submission = $this->comments_based_repository->create( $quiz_id, $user_id, $final_grade );
 
 		if ( $this->use_tables ) {
@@ -88,9 +89,9 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
-	 * @return Submission The quiz submission.
+	 * @return Submission_Interface The quiz submission.
 	 */
-	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
+	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
 		return $this->comments_based_repository->get_or_create( $quiz_id, $user_id, $final_grade );
 	}
 
@@ -102,9 +103,9 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Submission|null The quiz submission.
+	 * @return Submission_Interface|null The quiz submission.
 	 */
-	public function get( int $quiz_id, int $user_id ): ?Submission {
+	public function get( int $quiz_id, int $user_id ): ?Submission_Interface {
 		return $this->comments_based_repository->get( $quiz_id, $user_id );
 	}
 
@@ -126,9 +127,9 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The quiz submission.
+	 * @param Submission_Interface $submission The quiz submission.
 	 */
-	public function save( Submission $submission ): void {
+	public function save( Submission_Interface $submission ): void {
 		$this->comments_based_repository->save( $submission );
 
 		if ( $this->use_tables ) {
@@ -142,7 +143,7 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 			$created_at = new DateTimeImmutable( '@' . $submission->get_created_at()->getTimestamp() );
 			$updated_at = new DateTimeImmutable( '@' . $submission->get_updated_at()->getTimestamp() );
 
-			$submission_to_save = new Submission(
+			$submission_to_save = new Tables_Based_Submission(
 				$tables_based_submission->get_id(),
 				$submission->get_quiz_id(),
 				$submission->get_user_id(),
@@ -160,9 +161,9 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The quiz submission.
+	 * @param Submission_Interface $submission The quiz submission.
 	 */
-	public function delete( Submission $submission ): void {
+	public function delete( Submission_Interface $submission ): void {
 		$this->comments_based_repository->delete( $submission );
 
 		if ( $this->use_tables ) {

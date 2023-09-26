@@ -11,8 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Tables_Based_Grade;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use wpdb;
 
 /**
@@ -46,22 +48,22 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission  $submission  The submission.
-	 * @param int         $answer_id   The answer ID.
-	 * @param int         $question_id The question ID.
-	 * @param int         $points      The points.
-	 * @param string|null $feedback    The feedback.
+	 * @param Submission_Interface $submission  The submission.
+	 * @param Answer_Interface     $answer      The answer.
+	 * @param int                  $question_id The question ID.
+	 * @param int                  $points      The points.
+	 * @param string|null          $feedback    The feedback.
 	 *
-	 * @return Grade The grade.
+	 * @return Grade_Interface The grade.
 	 */
-	public function create( Submission $submission, int $answer_id, int $question_id, int $points, ?string $feedback = null ): Grade {
+	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface {
 		$current_date = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
 		$date_format  = 'Y-m-d H:i:s';
 
 		$this->wpdb->insert(
 			$this->get_table_name(),
 			[
-				'answer_id'   => $answer_id,
+				'answer_id'   => $answer->get_id(),
 				'question_id' => $question_id,
 				'points'      => $points,
 				'feedback'    => $feedback,
@@ -78,9 +80,9 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 			]
 		);
 
-		return new Grade(
+		return new Tables_Based_Grade(
 			$this->wpdb->insert_id,
-			$answer_id,
+			$answer->get_id(),
 			$question_id,
 			$points,
 			$feedback,
@@ -96,7 +98,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 *
-	 * @return Grade[] An array of grades.
+	 * @return Grade_Interface[] An array of grades.
 	 */
 	public function get_all( int $submission_id ): array {
 		$answer_ids = $this->get_answer_ids_by_submission_id( $submission_id );
@@ -111,7 +113,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 
 		$grades = [];
 		foreach ( $grade_rows as $grade_row ) {
-			$grades[] = new Grade(
+			$grades[] = new Tables_Based_Grade(
 				$grade_row->id,
 				$grade_row->answer_id,
 				$grade_row->question_id,
@@ -130,10 +132,10 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The submission.
-	 * @param Grade[]    $grades     An array of grades.
+	 * @param Submission_Interface $submission The submission.
+	 * @param Grade_Interface[]    $grades     An array of grades.
 	 */
-	public function save_many( Submission $submission, array $grades ): void {
+	public function save_many( Submission_Interface $submission, array $grades ): void {
 		foreach ( $grades as $grade ) {
 			$this->save( $grade );
 		}
@@ -144,9 +146,9 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The submission.
+	 * @param Submission_Interface $submission The submission.
 	 */
-	public function delete_all( Submission $submission ): void {
+	public function delete_all( Submission_Interface $submission ): void {
 		$answer_ids = $this->get_answer_ids_by_submission_id( $submission->get_id() );
 		if ( empty( $answer_ids ) ) {
 			return;
@@ -161,9 +163,9 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	/**
 	 * Save single grade.
 	 *
-	 * @param Grade $grade The grade.
+	 * @param Grade_Interface $grade The grade.
 	 */
-	private function save( Grade $grade ): void {
+	private function save( Grade_Interface $grade ): void {
 		$updated_at = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
 
 		$this->wpdb->update(

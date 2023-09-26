@@ -1,7 +1,6 @@
 <?php
 
-use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -1528,7 +1527,7 @@ class Sensei_Utils {
 			}
 		}
 
-		if ( $user_course_status && Course_Progress::STATUS_COMPLETE === $user_course_status ) {
+		if ( $user_course_status && Course_Progress_Interface::STATUS_COMPLETE === $user_course_status ) {
 			return true;
 		}
 

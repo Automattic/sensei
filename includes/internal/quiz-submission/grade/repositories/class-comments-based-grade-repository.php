@@ -7,8 +7,10 @@
 
 namespace Sensei\Internal\Quiz_Submission\Grade\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Comments_Based_Grade;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,15 +29,15 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission  $submission The submission ID.
-	 * @param int         $answer_id     The answer ID.
-	 * @param int         $question_id   The question ID.
-	 * @param int         $points        The points.
-	 * @param string|null $feedback      The feedback.
+	 * @param Submission_Interface $submission  The submission ID.
+	 * @param Answer_Interface     $answer      The answer.
+	 * @param int                  $question_id The question ID.
+	 * @param int                  $points      The points.
+	 * @param string|null          $feedback    The feedback.
 	 *
-	 * @return Grade The grade.
+	 * @return Grade_Interface The grade.
 	 */
-	public function create( Submission $submission, int $answer_id, int $question_id, int $points, string $feedback = null ): Grade {
+	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, string $feedback = null ): Grade_Interface {
 		$submission_id              = $submission->get_id();
 		$grades_map                 = get_comment_meta( $submission_id, 'quiz_grades', true );
 		$grades_map                 = is_array( $grades_map ) ? $grades_map : [];
@@ -53,7 +55,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 
 		$created_at = current_datetime();
 
-		return new Grade( 0, 0, $question_id, $points, $feedback, $created_at, $created_at );
+		return new Comments_Based_Grade( $question_id, $points, $feedback, $created_at, $created_at );
 	}
 
 	/**
@@ -63,7 +65,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 *
-	 * @return Grade[] An array of grades.
+	 * @return Grade_Interface[] An array of grades.
 	 */
 	public function get_all( int $submission_id ): array {
 		$grades_map = get_comment_meta( $submission_id, 'quiz_grades', true );
@@ -77,7 +79,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 
 		foreach ( $grades_map as $question_id => $points ) {
 			$feedback = $feedback_map[ $question_id ] ?? null;
-			$grades[] = new Grade( 0, 0, $question_id, $points, $feedback, $created_at, $created_at );
+			$grades[] = new Comments_Based_Grade( $question_id, $points, $feedback, $created_at, $created_at );
 		}
 
 		return $grades;
@@ -88,10 +90,10 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The submission.
-	 * @param Grade[]    $grades     An array of grades.
+	 * @param Submission_Interface $submission The submission.
+	 * @param Grade_Interface[]    $grades     An array of grades.
 	 */
-	public function save_many( Submission $submission, array $grades ): void {
+	public function save_many( Submission_Interface $submission, array $grades ): void {
 		$grades_map   = [];
 		$feedback_map = [];
 
@@ -109,9 +111,9 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The submission.
+	 * @param Submission_Interface $submission The submission.
 	 */
-	public function delete_all( Submission $submission ): void {
+	public function delete_all( Submission_Interface $submission ): void {
 		delete_comment_meta( $submission->get_id(), 'quiz_grades' );
 		delete_comment_meta( $submission->get_id(), 'quiz_answers_feedback' );
 	}

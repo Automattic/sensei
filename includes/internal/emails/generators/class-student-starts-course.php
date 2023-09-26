@@ -42,7 +42,7 @@ class Student_Starts_Course extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_user_course_start', [ $this, 'student_started_course_mail_to_teacher' ], 10, 2 );
+		$this->maybe_add_action( 'sensei_user_course_start', [ $this, 'student_started_course_mail_to_teacher' ], 10, 2 );
 	}
 
 	/**

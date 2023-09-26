@@ -379,7 +379,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			$plugins
 		);
 
-		$response_json = [];
+		$response_json                    = [];
 		$response_json[ $extensions_key ] = array_values( $mapped_plugins );
 
 		$response = new WP_REST_Response();

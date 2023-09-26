@@ -7,7 +7,8 @@
 
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -57,9 +58,9 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
-	 * @return Quiz_Progress The quiz progress.
+	 * @return Quiz_Progress_Interface The quiz progress.
 	 */
-	public function create( int $quiz_id, int $user_id ): Quiz_Progress {
+	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		$this->tables_based_repository->create( $quiz_id, $user_id );
 		return $this->comments_based_repository->create( $quiz_id, $user_id );
 	}
@@ -71,9 +72,9 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
-	 * @return Quiz_Progress|null The quiz progress or null if it does not exist.
+	 * @return Quiz_Progress_Interface|null The quiz progress or null if it does not exist.
 	 */
-	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress {
+	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress_Interface {
 		return $this->comments_based_repository->get( $quiz_id, $user_id );
 	}
 
@@ -95,9 +96,9 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 	 *
 	 * @internal
 	 *
-	 * @param Quiz_Progress $quiz_progress The quiz progress.
+	 * @param Quiz_Progress_Interface $quiz_progress The quiz progress.
 	 */
-	public function save( Quiz_Progress $quiz_progress ): void {
+	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->comments_based_repository->save( $quiz_progress );
 
 		$tables_based_progress = $this->tables_based_repository->get( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
@@ -118,7 +119,7 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 			$completed_at = new \DateTimeImmutable( '@' . $quiz_progress->get_completed_at()->getTimestamp() );
 		}
 
-		$progress_to_save = new Quiz_Progress(
+		$progress_to_save = new Tables_Based_Quiz_Progress(
 			$tables_based_progress->get_id(),
 			$tables_based_progress->get_quiz_id(),
 			$tables_based_progress->get_user_id(),
@@ -136,9 +137,9 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 	 *
 	 * @internal
 	 *
-	 * @param Quiz_Progress $quiz_progress The quiz progress.
+	 * @param Quiz_Progress_Interface $quiz_progress The quiz progress.
 	 */
-	public function delete( Quiz_Progress $quiz_progress ): void {
+	public function delete( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->comments_based_repository->delete( $quiz_progress );
 		$this->tables_based_repository->delete( $quiz_progress );
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Quiz_Progress class.
+ * File containing the Quiz_Progress_Abstract class.
  *
  * @package sensei
  */
@@ -14,48 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Quiz_Progress.
+ * Class Quiz_Progress_Abstract.
  *
  * @internal
  *
- * @since 4.7.2
+ * @since $$next-version$$
  */
-class Quiz_Progress {
-	/**
-	 * In progress quiz status.
-	 *
-	 * @internal
-	 */
-	public const STATUS_IN_PROGRESS = 'in-progress';
-
-	/**
-	 * Passed quiz status.
-	 *
-	 * @internal
-	 */
-	public const STATUS_PASSED = 'passed';
-
-	/**
-	 * Graded quiz status.
-	 *
-	 * @internal
-	 */
-	public const STATUS_GRADED = 'graded';
-
-	/**
-	 * Ungraded quiz status.
-	 *
-	 * @internal
-	 */
-	public const STATUS_UNGRADED = 'ungraded';
-
-	/**
-	 * Failed quiz status.
-	 *
-	 * @internal
-	 */
-	public const STATUS_FAILED = 'failed';
-
+class Quiz_Progress_Abstract implements Quiz_Progress_Interface {
 	/**
 	 * Progress identifier.
 	 *

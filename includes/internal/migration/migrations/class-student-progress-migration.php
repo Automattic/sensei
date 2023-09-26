@@ -12,9 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Sensei\Internal\Migration\Migration_Abstract;
-use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 
 /**
  * Class Student_Progress_Migration.
@@ -248,11 +248,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 */
 	private function prepare_course_progress_to_insert( $comment, $meta ): void {
 		$course_status = 'in-progress';
-		if ( Course_Progress::STATUS_COMPLETE === $comment->comment_approved ) {
+		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
 			$course_status = 'complete';
 		}
 
-		if ( Course_Progress::STATUS_COMPLETE === $comment->comment_approved ) {
+		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
 			$completed_at = $comment->comment_date_gmt;
 		} else {
 			$completed_at = null;
@@ -334,23 +334,23 @@ class Student_Progress_Migration extends Migration_Abstract {
 		if ( isset( $meta['_lesson_quiz'] ) ) {
 			$quiz_id            = $meta['_lesson_quiz'];
 			$supported_statuses = [
-				Quiz_Progress::STATUS_IN_PROGRESS,
-				Quiz_Progress::STATUS_FAILED,
-				Quiz_Progress::STATUS_GRADED,
-				Quiz_Progress::STATUS_PASSED,
-				Quiz_Progress::STATUS_UNGRADED,
+				Quiz_Progress_Interface::STATUS_IN_PROGRESS,
+				Quiz_Progress_Interface::STATUS_FAILED,
+				Quiz_Progress_Interface::STATUS_GRADED,
+				Quiz_Progress_Interface::STATUS_PASSED,
+				Quiz_Progress_Interface::STATUS_UNGRADED,
 				// We need to map lesson statuses to quiz' passed status.
-				Lesson_Progress::STATUS_COMPLETE,
+				Lesson_Progress_Interface::STATUS_COMPLETE,
 			];
 			$quiz_status        = in_array( $comment->comment_approved, $supported_statuses, true )
 				? $comment->comment_approved
-				: Quiz_Progress::STATUS_IN_PROGRESS;
+				: Quiz_Progress_Interface::STATUS_IN_PROGRESS;
 			$quiz_completed_at  = $completed_at;
-			if ( Quiz_Progress::STATUS_IN_PROGRESS === $quiz_status ) {
+			if ( Quiz_Progress_Interface::STATUS_IN_PROGRESS === $quiz_status ) {
 				$quiz_completed_at = null;
 			}
-			if ( Lesson_Progress::STATUS_COMPLETE === $quiz_status ) {
-				$quiz_status = Quiz_Progress::STATUS_PASSED;
+			if ( Lesson_Progress_Interface::STATUS_COMPLETE === $quiz_status ) {
+				$quiz_status = Quiz_Progress_Interface::STATUS_PASSED;
 			}
 
 			$this->progress_inserts[] = [
