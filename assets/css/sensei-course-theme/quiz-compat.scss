@@ -53,6 +53,12 @@ $textColor: #1E1E1E;
 	}
 }
 
+.wp-block-sensei-lms-quiz-actions {
+	button:disabled {
+		opacity: 0.6;
+	}
+}
+
 .quiz {
 	form {
 		#sensei-quiz-list {
