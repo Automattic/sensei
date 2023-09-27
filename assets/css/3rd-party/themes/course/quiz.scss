@@ -12,6 +12,13 @@
 		}
 	}
 }
+
+.wp-block-sensei-lms-quiz-actions {
+	button:disabled {
+		opacity: 0.4;
+	}
+}
+
 .quiz {
 	.sensei-course-theme__quiz {
 		&__main-content {
