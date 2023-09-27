@@ -1856,7 +1856,6 @@ class Sensei_Quiz {
 		$lesson_id         = Sensei()->quiz->get_lesson_id();
 		$is_quiz_completed = self::is_quiz_completed();
 		$is_reset_allowed  = self::is_reset_allowed( $lesson_id );
-		$has_actions       = $is_reset_allowed || ! $is_quiz_completed;
 		$course_id         = Sensei()->lesson->get_course_id( $lesson_id );
 		$is_learning_mode  = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
 		$is_awaiting_grade = false;
@@ -1869,11 +1868,15 @@ class Sensei_Quiz {
 			$is_awaiting_grade = 'ungraded' === $lesson_status->comment_approved;
 		}
 
+		$show_grade_pending_button = $is_learning_mode && $is_awaiting_grade;
+
 		$wrapper_attributes = get_block_wrapper_attributes(
 			[
 				'class' => 'sensei-quiz-actions',
 			]
 		);
+
+		$has_actions = $is_reset_allowed || ! $is_quiz_completed || $show_grade_pending_button;
 
 		if ( ! $has_actions ) {
 			return;
