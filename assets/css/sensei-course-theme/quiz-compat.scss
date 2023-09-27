@@ -57,6 +57,12 @@ $textColor: #1E1E1E;
 	button:disabled {
 		opacity: 0.6;
 	}
+
+	.sensei-quiz-actions-secondary {
+		.sensei-course-theme__button.is-link {
+			color: var(--sensei-primary-color);
+		}
+	}
 }
 
 .quiz {
