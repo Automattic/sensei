@@ -1918,8 +1918,8 @@ class Sensei_Quiz {
 			<div class="sensei-quiz-actions-secondary">
 				<?php if ( $is_reset_allowed ) : ?>
 					<div class="sensei-quiz-action">
-						<button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission">
-							<?php esc_attr_e( 'Reset Quiz', 'sensei-lms' ); ?>
+						<button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission sensei-course-theme__button is-link">
+							<?php esc_attr_e( 'Restart Quiz', 'sensei-lms' ); ?>
 						</button>
 
 						<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
