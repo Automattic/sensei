@@ -201,6 +201,14 @@ $vertical-spacing-desktop: 80px;
 	text-decoration: none;
 }
 
+.wp-block-sensei-lms-quiz-actions {
+	button:disabled {
+		cursor: not-allowed;
+		pointer-events: none;
+		width: auto;
+	}
+}
+
 .sensei-progress-bar {
 	&__bar {
 		height: 12px;
