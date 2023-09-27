@@ -1857,6 +1857,17 @@ class Sensei_Quiz {
 		$is_quiz_completed = self::is_quiz_completed();
 		$is_reset_allowed  = self::is_reset_allowed( $lesson_id );
 		$has_actions       = $is_reset_allowed || ! $is_quiz_completed;
+		$course_id         = Sensei()->lesson->get_course_id( $lesson_id );
+		$is_learning_mode  = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		$is_awaiting_grade = false;
+
+		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
+
+		if ( $lesson_status ) {
+			$lesson_status = is_array( $lesson_status ) ? $lesson_status[0] : $lesson_status;
+
+			$is_awaiting_grade = 'ungraded' === $lesson_status->comment_approved;
+		}
 
 		$wrapper_attributes = get_block_wrapper_attributes(
 			[
@@ -1896,6 +1907,12 @@ class Sensei_Quiz {
 						<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_complete_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
 					</div>
 				</div>
+			<?php endif ?>
+
+			<?php if ( $is_awaiting_grade && $is_learning_mode ) : ?>
+				<button type="button" class="wp-element-button sensei-course-theme__button is-primary" disabled>
+					<?php esc_attr_e( 'Pending teacher grade', 'sensei-lms' ); ?>
+				</button>
 			<?php endif ?>
 
 			<div class="sensei-quiz-actions-secondary">
