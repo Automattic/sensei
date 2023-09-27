@@ -521,6 +521,11 @@ div.sensei-quiz-actions {
 		.sensei-quiz-action {
 			.button, button {
 				@include button-link;
+				text-decoration: none;
+
+				&:hover {
+					text-decoration: underline;
+				}
 			}
 		}
 	}
