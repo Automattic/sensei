@@ -87,7 +87,7 @@ class Sensei_Course_Theme_Quiz {
 		// Prepare message.
 		$text = __( "You've passed the quiz and can continue to the next lesson.", 'sensei-lms' );
 		if ( 'ungraded' === $lesson_status->comment_approved ) {
-			$text = __( 'Your answers have been submitted and your teacher will grade this quiz shortly.', 'sensei-lms' );
+			$text = __( 'Your answers have been submitted and the quiz will be graded soon. You\'ll receive an email once it\'s ready to view.', 'sensei-lms' );
 		} elseif ( 'failed' === $lesson_status->comment_approved ) {
 			$passmark         = get_post_meta( $quiz_id, '_quiz_passmark', true );
 			$passmark_rounded = Sensei_Utils::round( $passmark, 2 );
@@ -99,16 +99,14 @@ class Sensei_Course_Theme_Quiz {
 			);
 		}
 
-		$actions = [];
+		$actions[] = self::get_pending_grade_button_html();
 
-		// Prepare reset quiz button.
+		// Prepare Restart Quiz button.
 		$reset_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
+
 		if ( $reset_allowed ) {
 			$actions[] = self::render_reset_quiz();
 		}
-
-		// Prepare contact teacher button.
-		$actions[] = self::render_contact_teacher();
 
 		$notices = \Sensei_Context_Notices::instance( 'course_theme_quiz_grade' );
 		$notices->add_notice( 'course-theme-quiz-grade', $text, $title, $actions );
@@ -134,12 +132,16 @@ class Sensei_Course_Theme_Quiz {
 	}
 
 	/**
-	 * Renders the contact teacher button.
+	 * Generates the HTML markup for the "Pending teacher grade" button.
 	 */
-	private static function render_contact_teacher() {
-		$link  = '<a href="#" class="sensei-course-theme__button is-link">' . __( 'Contact teacher', 'sensei-lms' ) . '</a>';
-		$block = new Sensei_Block_Contact_Teacher();
-		return $block->render_contact_teacher_block( null, $link );
+	private static function get_pending_grade_button_html() {
+		return
+			'<div class="wp-block-buttons">
+				<div class="wp-block-button sensei-course-theme-quiz-graded-notice__pending-grade">
+					<button class="wp-block-button__link">'
+						. __( 'Pending teacher grade', 'sensei-lms' ) .
+					'</button>
+				</div>
+			</div>';
 	}
-
 }
