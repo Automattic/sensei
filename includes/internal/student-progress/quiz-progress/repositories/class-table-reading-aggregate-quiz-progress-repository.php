@@ -9,6 +9,7 @@ namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -142,5 +143,17 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	public function delete_for_user( int $user_id ): void {
 		$this->comments_based_repository->delete_for_user( $user_id );
 		$this->tables_based_repository->delete_for_user( $user_id );
+	}
+
+	/**
+	 * Find quiz progress.
+	 *
+	 * @internal
+	 *
+	 * @param array $args The arguments.
+	 * @return Quiz_Progress_Interface[] The course progress.
+	 */
+	public function find( array $args ): array {
+		return $this->tables_based_repository->find( $args );
 	}
 }

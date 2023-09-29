@@ -96,11 +96,33 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 				$lesson_progress->get_user_id()
 			);
 		}
+
+		// If the status of the lesson progress is different from the status of the comments based lesson progress,
+		// update the comments based lesson progress to match the status of the lesson progress.
+		// We can't just use the status of the lesson progress because the comments based lesson lesson_progress
+		// has a different underlying set of statuses.
+		if ( $lesson_progress->get_status() !== $comments_based_progress->get_status() ) {
+			if ( ! $comments_based_progress->is_complete() ) {
+				$comments_based_progress->complete();
+			} else {
+				$comments_based_progress->start();
+			}
+		}
+
+		// Use reflection to get underlying status value.
+		// Comments-based lesson progress uses a different set of statuses than tables-based lesson progress,
+		// because is used for both lessons and quizzes.
+		// `get_status` method returns the normalized status, but we need the underlying status here.
+		$reflection_class    = new \ReflectionClass( Comments_Based_Lesson_Progress::class );
+		$reflection_property = $reflection_class->getProperty( 'status' );
+		$reflection_property->setAccessible( true );
+		$status = $reflection_property->getValue( $comments_based_progress );
+
 		$updated_comments_based_progress = new Comments_Based_Lesson_Progress(
 			$comments_based_progress->get_id(),
 			$lesson_progress->get_lesson_id(),
 			$lesson_progress->get_user_id(),
-			$lesson_progress->get_status(),
+			$status,
 			$lesson_progress->get_started_at(),
 			$lesson_progress->get_completed_at(),
 			$lesson_progress->get_created_at(),
@@ -154,5 +176,17 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 	 */
 	public function count( int $course_id, int $user_id ): int {
 		return $this->tables_based_repository->count( $course_id, $user_id );
+	}
+
+	/**
+	 * Find lesson progress.
+	 *
+	 * @internal
+	 *
+	 * @param array $args The arguments.
+	 * @return Lesson_Progress_Interface[]
+	 */
+	public function find( array $args ): array {
+		return $this->tables_based_repository->find( $args );
 	}
 }
