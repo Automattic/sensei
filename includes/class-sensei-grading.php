@@ -688,6 +688,11 @@ class Sensei_Grading {
 		// store the feedback from grading
 		Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id, $user_id );
 
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $quiz_lesson_id, $user_id );
+		if ( ! $lesson_progress ) {
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id );
+		}
+
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 		if ( ! $quiz_progress ) {
 			return false;
@@ -712,6 +717,9 @@ class Sensei_Grading {
 			if ( $pass_required ) {
 				// Student has reached the pass mark and lesson is complete.
 				if ( $quiz_passmark <= $grade ) {
+					// Due to our internal logic, we need to complete the lesson first.
+					// This is because in the comments-based version the lesson status is used for both the lesson and the quiz.
+					$lesson_progress->complete();
 					$lesson_status = 'passed';
 					$quiz_progress->pass();
 				} else {
@@ -722,11 +730,17 @@ class Sensei_Grading {
 
 			// Student only has to partake the quiz.
 			else {
+				$lesson_progress->complete();
 				$lesson_status = 'graded';
 				$quiz_progress->grade();
 			}
 		}
 
+		// Due to our internal logic, we need to save the lesson progress first.
+		// This is because in the comments-based version the lesson status is used for both the lesson and the quiz.
+		// And in this context the quiz status should be preserved in the comments-based version.
+		// For the tables-based version the order does not matter.
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
 		Sensei()->quiz_progress_repository->save( $quiz_progress );
 		if ( count( $lesson_metadata ) ) {
 			foreach ( $lesson_metadata as $key => $value ) {
@@ -734,22 +748,13 @@ class Sensei_Grading {
 			}
 		}
 
-		if ( in_array( $lesson_status, [ 'passed', 'graded' ], true ) ) {
+		if ( $lesson_progress->is_complete() ) {
 
-			/**
-			 * Fires when a user completes a lesson.
-			 *
-			 * This hook is fired when a user passes a quiz or their quiz submission was graded.
-			 * Therefore the corresponding lesson is marked as complete.
-			 *
-			 * @since 1.7.0
-			 *
-			 * @param int $user_id
-			 * @param int $quiz_lesson_id
-			 */
+			/* The action is documented in includes/class-sensei-utils.php */
 			do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
 
 		}
+
 		if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
 
 			$load_url = add_query_arg( array( 'message' => 'graded' ) );

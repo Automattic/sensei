@@ -3625,9 +3625,14 @@ class Sensei_Lesson {
 	 * @return bool Whether quiz is submitted.
 	 */
 	public function is_quiz_submitted( int $lesson_id, int $user_id ) : bool {
-		$user_lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			return false;
+		}
 
-		return ! empty( $user_lesson_status ) && in_array( $user_lesson_status->comment_approved, [ 'ungraded', 'passed', 'failed', 'graded' ], true );
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+
+		return ! empty( $quiz_progress ) && in_array( $quiz_progress->get_status(), [ 'ungraded', 'passed', 'failed', 'graded' ], true );
 	}
 
 
@@ -4484,8 +4489,8 @@ class Sensei_Lesson {
 
 				<?php
 
-				$meta_html          = '';
-				$user_lesson_status = Sensei_Utils::user_lesson_status( get_the_ID(), get_current_user_id() );
+				$meta_html    = '';
+				$has_progress = Sensei()->lesson_progress_repository->has( $lesson_id, get_current_user_id() );
 
 				$lesson_length = get_post_meta( $lesson_id, '_lesson_length', true );
 				if ( '' != $lesson_length ) {
@@ -4509,7 +4514,7 @@ class Sensei_Lesson {
 
 					$meta_html .= '<span class="lesson-status complete">' . esc_html__( 'Complete', 'sensei-lms' ) . '</span>';
 
-				} elseif ( $user_lesson_status ) {
+				} elseif ( $has_progress ) {
 
 					$meta_html .= '<span class="lesson-status in-progress">' . esc_html__( 'In Progress', 'sensei-lms' ) . '</span>';
 
@@ -4815,8 +4820,12 @@ class Sensei_Lesson {
 	 * @since 1.9.0
 	 */
 	public static function prerequisite_complete_message() {
+		$lesson_id = get_the_ID();
+		if ( false === $lesson_id ) {
+			return;
+		}
 
-		$lesson_prerequisite = self::find_first_prerequisite_lesson( get_the_ID(), get_current_user_id() );
+		$lesson_prerequisite = self::find_first_prerequisite_lesson( $lesson_id, get_current_user_id() );
 
 		if ( $lesson_prerequisite > 0 ) {
 

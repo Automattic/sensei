@@ -1950,4 +1950,28 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$actual                   = $quiz_progress_repository->has( $quiz_id, $user_id );
 		$this->assertFalse( $actual );
 	}
+
+	public function testGetLessonIds_QuizIdsGiven_ReturnsMatchingIds(): void {
+		/* Arrange. */
+		$lesson_ids = $this->factory->lesson->create_many( 3 );
+		$quiz_ids   = array();
+		foreach ( $lesson_ids as $lesson_id ) {
+			$quiz_ids[] = $this->factory->quiz->create(
+				array(
+					'post_parent' => $lesson_id,
+					'meta_input'  => array(
+						'_quiz_lesson' => $lesson_id,
+					),
+				)
+			);
+		}
+
+		/* Act. */
+		$actual = Sensei()->quiz->get_lesson_ids( $quiz_ids );
+
+		/* Assert. */
+		sort( $lesson_ids );
+		sort( $actual );
+		$this->assertSame( $lesson_ids, $actual );
+	}
 }

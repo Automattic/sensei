@@ -72,10 +72,11 @@ global $course;
 					$lesson_grade  = 'n/a';
 					$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson->ID );
 					if ( $has_questions ) {
-						$lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, get_current_user_id() );
-						if ( $lesson_status ) {
+						$sensei_quiz_id    = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+						$sensei_submission = Sensei()->quiz_submission_repository->get( $sensei_quiz_id, get_current_user_id() );
+						if ( $sensei_submission ) {
 							// Get user quiz grade
-							$lesson_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
+							$lesson_grade = $sensei_submission->get_final_grade();
 							if ( $lesson_grade ) {
 								$lesson_grade .= '%';
 							}
@@ -128,11 +129,12 @@ global $course;
 				$lesson_grade  = 'n/a';
 				$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson->ID );
 				if ( $has_questions ) {
-					$lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, get_current_user_id() );
+					$sensei_quiz_id    = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+					$sensei_submission = Sensei()->quiz_submission_repository->get( $sensei_quiz_id, get_current_user_id() );
 					// Get user quiz grade
 					$lesson_grade = '';
-					if ( ! empty( $lesson_status ) ) {
-						$lesson_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
+					if ( ! empty( $sensei_submission ) ) {
+						$lesson_grade = $sensei_submission->get_final_grade();
 						if ( $lesson_grade ) {
 							$lesson_grade .= '%';
 						}

@@ -1551,11 +1551,11 @@ class Sensei_Course {
 
 
 	/**
-	 * course_lessons function.
+	 * Get course lessons.
 	 *
 	 * @access public
 	 *
-	 * @param int          $course_id   (default: 0).         The course id.
+	 * @param int|WP_Post  $course_id   (default: 0).         The course id.
 	 * @param string|array $post_status (default: 'publish'). The post status.
 	 * @param string       $fields      (default: 'all').     WP only allows 3 types, but we will limit it to only 'ids' or 'all'.
 	 * @param array        $query_args  Base arguments for the WP query.
@@ -3569,8 +3569,7 @@ class Sensei_Course {
 		// Check if course is completed.
 		$completed_course = false;
 		if ( ! empty( $user_id ) ) {
-			$user_course_status = Sensei_Utils::user_course_status( $course_id, $user_id );
-			$completed_course   = Sensei_Utils::user_completed_course( $user_course_status );
+			$completed_course = Sensei_Utils::user_completed_course( $course_id, $user_id );
 		}
 
 		/**

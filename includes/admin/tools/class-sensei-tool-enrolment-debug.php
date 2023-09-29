@@ -309,9 +309,9 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 		$course_lessons = Sensei()->course->course_lessons( $course_id );
 
 		foreach ( $course_lessons as $lesson ) {
-			$lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
-			if ( $lesson_status ) {
-				$dates[] = strtotime( $lesson_status->comment_date_gmt );
+			$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson->ID, $user_id );
+			if ( $lesson_progress ) {
+				$dates[] = $lesson_progress->get_updated_at()->getTimestamp();
 			}
 		}
 

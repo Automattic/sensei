@@ -65,10 +65,10 @@ class Sensei_Course_Theme_Quiz {
 			return;
 		}
 
-		$lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 
 		// If quiz is not submitted, then nothing else to do.
-		if ( ! Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) || empty( $lesson_status ) ) {
+		if ( ! Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) || empty( $quiz_progress ) ) {
 			return;
 		}
 
@@ -80,15 +80,15 @@ class Sensei_Course_Theme_Quiz {
 			__( 'Your Grade: %1$s%%', 'sensei-lms' ),
 			$grade_rounded
 		);
-		if ( 'ungraded' === $lesson_status->comment_approved ) {
+		if ( 'ungraded' === $quiz_progress->get_status() ) {
 			$title = __( 'Awaiting grade', 'sensei-lms' );
 		}
 
 		// Prepare message.
 		$text = __( "You've passed the quiz and can continue to the next lesson.", 'sensei-lms' );
-		if ( 'ungraded' === $lesson_status->comment_approved ) {
+		if ( 'ungraded' === $quiz_progress->get_status() ) {
 			$text = __( 'Your answers have been submitted and your teacher will grade this quiz shortly.', 'sensei-lms' );
-		} elseif ( 'failed' === $lesson_status->comment_approved ) {
+		} elseif ( 'failed' === $quiz_progress->get_status() ) {
 			$passmark         = get_post_meta( $quiz_id, '_quiz_passmark', true );
 			$passmark_rounded = Sensei_Utils::round( $passmark, 2 );
 			$text             = sprintf(
