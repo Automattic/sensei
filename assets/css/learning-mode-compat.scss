@@ -208,7 +208,7 @@ $breakpoint: 782px;
 		background-color: var(--sensei-secondary-color);
 		color: var(--sensei-button-text-color);
 
-		&:hover {
+		&:not(.sensei-course-theme-quiz-graded-notice__pending-grade):hover {
 			color: var(--sensei-button-fill-hover-color);
 			background-color: var(--sensei-primary-color);
 			border-color: var(--sensei-primary-color);

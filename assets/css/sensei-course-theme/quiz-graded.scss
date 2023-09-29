@@ -2,27 +2,39 @@
 	padding-bottom: 36px;
 
 	&__title {
-		font-size: 30px;
+		font-size: 24px;
 		font-weight: 700;
 		line-height: 1.2;
-		margin: 12px 0;
+		margin: 0;
 	}
 
 	&__text {
-		font-size: 16px;
-		line-height: 1.75;
-		margin: 24px 0;
+		font-size: 18px;
+		line-height: 1.6;
+		margin: 0 0 20px;
 	}
 
 	&__actions {
-		display: flex;
-		flex-direction: row;
-		justify-content: flex-start;
 		align-items: center;
-		gap: 24px;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+
+		@media (min-width: $break-medium) {
+			flex-direction: row;
+			justify-content: space-between;
+		}
 	}
 
 	&__reset-quiz-form {
 		margin-bottom: 0;
+
+		.sensei-course-theme__button {
+			background-color: transparent;
+			border: none;
+			color: inherit;
+			font-family: var(--wp--preset--font-family--body);
+			font-size: 18px;
+		}
 	}
 }

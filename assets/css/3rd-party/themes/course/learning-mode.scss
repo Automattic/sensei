@@ -250,10 +250,29 @@ body {
 	}
 }
 
-// Notice
+/* Notices */
 .sensei-course-theme-lesson-quiz-notice {
 	font-family: var(--wp--preset--font-family--system);
 	margin: 1.5rem 0;
+}
+
+.sensei-lms-notice.sensei-course-theme-quiz-graded-notice {
+	background-color: var(--wp--preset--color--primary);
+	color: var(--wp--preset--color--background);
+}
+
+.sensei-course-theme-quiz-graded-notice {
+	&__pending-grade {
+		.wp-block-button__link {
+			background-color: var(--wp--preset--color--background);
+			color: var(--wp--preset--color--primary);
+			opacity: 0.6;
+
+			&:hover {
+				border-color: var(--wp--preset--color--background);
+			}
+		}
+	}
 }
 
 /* Modern Template */
@@ -261,7 +280,6 @@ body {
 	border: 1px solid var(--sensei-text-color);
 	border-radius: 4px;
 }
-
 
 .learning-mode-full-width .wp-block-sensei-lms-course-theme-course-progress-counter {
 	opacity: 1;

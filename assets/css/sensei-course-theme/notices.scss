@@ -1,7 +1,6 @@
 @import '../notices';
 @import './quiz-graded';
 
-
 $mobile_break_point: 782px;
 
 body.sensei-course-theme {
@@ -11,10 +10,9 @@ body.sensei-course-theme {
 }
 
 .sensei-course-theme .sensei-lms-notice {
-	background-color: rgba(125, 125, 125, 0.08);
-	border-color: var(--border-color);
-	color: inherit;
-	padding: 1.125rem 1.5rem;
+	background-color: #f6f7f7;
+	color: #1e1e1e;
+	padding: 1.5rem;
 }
 
 .sensei-course-theme-lesson-quiz-notice {
