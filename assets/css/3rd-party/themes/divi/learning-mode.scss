@@ -13,6 +13,19 @@ $desktop_min_width: 783px;
 	padding-bottom: 0;
 }
 
+.wp-block-post-content {
+	.sensei-lms-question__answer-feedback__content {
+		padding-bottom: 18px;
+
+		p {
+			margin-bottom: 1.6em;
+		}
+	}
+
+	.sensei-lms-question__answer-feedback__header {
+		padding: 14px;
+	}
+}
 
 .sensei-course-theme__frame .sensei-course-theme-course-progress-bar-inner {
 	background-color: var(--sensei-primary-color);
