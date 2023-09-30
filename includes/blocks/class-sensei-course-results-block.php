@@ -222,7 +222,7 @@ class Sensei_Course_Results_Block {
 
 		}
 
-		if ( 0 < count( $item['lessons'] ) ) {
+		if ( $item['lessons'] ) {
 			$section_content[] = '<ul class="wp-block-sensei-lms-course-results__lessons">';
 
 			foreach ( $item['lessons'] as $lesson ) {

@@ -384,7 +384,7 @@ class Sensei_Question {
 			$quizzes = array_unique( array_filter( $quizzes ) );
 		}
 
-		if ( 0 == count( $quizzes ) ) {
+		if ( ! $quizzes ) {
 			echo wp_kses_post( $no_lessons );
 			return;
 		}

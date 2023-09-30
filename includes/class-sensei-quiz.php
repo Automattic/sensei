@@ -1673,7 +1673,7 @@ class Sensei_Quiz {
 		}
 
 		$sensei_question_loop['questions_asked'] = wp_list_pluck( $all_questions, 'ID' );
-		$sensei_question_loop['total']           = count( $all_questions );
+		$sensei_question_loop['total']           = is_countable( $all_questions ) ? count( $all_questions ) : 0;
 
 		// Paginate the questions.
 		if ( $sensei_question_loop['posts_per_page'] > 0 ) {
@@ -2365,7 +2365,7 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$quiz_available = $this->is_quiz_available( $quiz_id, $user_id );
+		$quiz_available = static::is_quiz_available($quiz_id, $user_id);
 		if ( ! $quiz_available ) {
 			return;
 		}

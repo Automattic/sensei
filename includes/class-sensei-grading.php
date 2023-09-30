@@ -523,7 +523,7 @@ class Sensei_Grading {
 		$courses     = get_posts( apply_filters( 'sensei_grading_filter_courses', $course_args ) );
 
 		$html .= '<option value="">' . __( 'Select a course', 'sensei-lms' ) . '</option>';
-		if ( count( $courses ) > 0 ) {
+		if ( $courses ) {
 			foreach ( $courses as $course_id ) {
 				$html .= '<option value="' . esc_attr( absint( $course_id ) ) . '" ' . selected( $course_id, $selected_course_id, false ) . '>' . esc_html( get_the_title( $course_id ) ) . '</option>' . "\n";
 			}
@@ -614,7 +614,7 @@ class Sensei_Grading {
 			$lessons     = get_posts( apply_filters( 'sensei_grading_filter_lessons', $lesson_args ) );
 
 			$html .= '<option value="">' . esc_html__( 'Select a lesson', 'sensei-lms' ) . '</option>';
-			if ( count( $lessons ) > 0 ) {
+			if ( $lessons ) {
 				foreach ( $lessons as $lesson_id ) {
 					$html .= '<option value="' . esc_attr( absint( $lesson_id ) ) . '" ' . selected( $lesson_id, $selected_lesson_id, false ) . '>' . esc_html( get_the_title( $lesson_id ) ) . '</option>' . "\n";
 				}
@@ -1287,7 +1287,7 @@ class Sensei_Grading {
 			) averages_by_course"
 		);
 
-		return doubleval( $result->courses_average );
+		return floatval( $result->courses_average );
 	}
 }
 

@@ -391,7 +391,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$course_enrolment       = Sensei_Course_Enrolment::get_course_instance( $this->course_id );
 				$enrolment_results      = $course_enrolment->get_enrolment_check_results( $user_activity->user_id );
 				$provider_results       = $enrolment_results ? $enrolment_results->get_provider_results() : [];
-				$enrolment_tooltip_html = '';
+				$enrolment_tooltip_html = array();
 
 				if ( Sensei()->feature_flags->is_enabled( 'enrolment_provider_tooltip' ) ) {
 					if ( ! empty( $provider_results ) ) {

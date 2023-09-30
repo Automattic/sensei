@@ -80,4 +80,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	</section> <!-- article .message-content -->
 
-</article> <!-- article .(<?php echo esc_attr( join( ' ', get_post_class( array( 'sensei_message', 'post' ) ) ) ); ?>  -->
+</article> <!-- article .(<?php echo esc_attr( implode( ' ', get_post_class( array( 'sensei_message', 'post' ) ) ) ); ?>  -->

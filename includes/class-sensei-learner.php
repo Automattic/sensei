@@ -756,7 +756,7 @@ class Sensei_Learner {
 		}
 
 		$html_items = [];
-		if ( count( $courses ) > 0 ) {
+		if ( $courses ) {
 			foreach ( $courses as $course ) {
 				$html_items[] = '<a href="' . esc_url( $controller->get_learner_management_course_url( $course->ID ) ) .
 								'" class="sensei-students__enrolled-course" data-course-id="' . esc_attr( $course->ID ) . '">' .
