@@ -2365,7 +2365,7 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$quiz_available = static::is_quiz_available($quiz_id, $user_id);
+		$quiz_available = static::is_quiz_available( $quiz_id, $user_id );
 		if ( ! $quiz_available ) {
 			return;
 		}
