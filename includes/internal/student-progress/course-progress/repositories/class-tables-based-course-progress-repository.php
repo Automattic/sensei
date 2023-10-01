@@ -291,17 +291,17 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 
 		$where_clause = array( 'type = %s' );
 		$query_params = array( 'course' );
-		if ( ! is_null( $course_id ) ) {
+		if ( ! empty( $course_id ) ) {
 			$query_params   = array_merge( $query_params, (array) $course_id );
 			$where_clause[] = 'post_id IN (' . $this->get_placeholders( (array) $course_id ) . ')';
 		}
 
-		if ( ! is_null( $user_id ) ) {
+		if ( ! empty( $user_id ) ) {
 			$query_params[] = (int) $user_id;
 			$where_clause[] = 'user_id = %d';
 		}
 
-		if ( ! is_null( $status ) ) {
+		if ( ! empty( $status ) ) {
 			$query_params   = array_merge( $query_params, (array) $status );
 			$where_clause[] = 'status IN (' . $this->get_placeholders( (array) $status ) . ')';
 		}

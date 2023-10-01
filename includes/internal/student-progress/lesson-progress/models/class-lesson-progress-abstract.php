@@ -111,8 +111,9 @@ abstract class Lesson_Progress_Abstract implements Lesson_Progress_Interface {
 	 * @param DateTimeInterface|null $started_at The start date.
 	 */
 	public function start( ?DateTimeInterface $started_at = null ): void {
-		$this->started_at = $started_at ?? current_datetime();
-		$this->status     = self::STATUS_IN_PROGRESS;
+		$this->started_at   = $started_at ?? current_datetime();
+		$this->completed_at = null;
+		$this->status       = self::STATUS_IN_PROGRESS;
 	}
 
 	/**

@@ -290,17 +290,17 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 
 		$where_clause = array( 'type = %s' );
 		$query_params = array( 'quiz' );
-		if ( ! is_null( $quiz_id ) ) {
+		if ( ! empty( $quiz_id ) ) {
 			$query_params   = array_merge( $query_params, (array) $quiz_id );
 			$where_clause[] = 'post_id IN (' . $this->get_placeholders( (array) $quiz_id ) . ')';
 		}
 
-		if ( ! is_null( $user_id ) ) {
+		if ( ! empty( $user_id ) ) {
 			$query_params[] = (int) $user_id;
 			$where_clause[] = 'user_id = %d';
 		}
 
-		if ( ! is_null( $status ) ) {
+		if ( ! empty( $status ) ) {
 			$query_params   = array_merge( $query_params, (array) $status );
 			$where_clause[] = 'status IN (' . $this->get_placeholders( (array) $status ) . ')';
 		}

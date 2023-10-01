@@ -1582,8 +1582,8 @@ class Sensei_Utils {
 	 * Check if a user has completed a lesson or not
 	 *
 	 * @uses  Sensei()
-	 * @param mixed $lesson lesson_id or sensei_lesson_status entry
-	 * @param int   $user_id
+	 * @param int|WP_Comment|string $lesson  lesson id (int), lesson status (string), or sensei_lesson_status entry (WP_Comment).
+	 * @param int                   $user_id User ID.
 	 * @return boolean
 	 */
 	public static function user_completed_lesson( $lesson = 0, $user_id = 0 ): bool {
@@ -2010,6 +2010,16 @@ class Sensei_Utils {
 
 			$sensei_user_activity_id = $sensei_user_status->comment_ID;
 
+		}
+
+		if ( 'course' === $post_type ) {
+			$course_progress_repository = Sensei()->course_progress_repository_factory->create_comments_based_repository();
+			$course_progress            = $course_progress_repository->get( $post_id, $user_id );
+			$sensei_user_activity_id    = $course_progress->get_id();
+		} else {
+			$lesson_progress_repository = Sensei()->lesson_progress_repository_factory->create_comments_based_repository();
+			$lesson_progress            = $lesson_progress_repository->get( $post_id, $user_id );
+			$sensei_user_activity_id    = $lesson_progress->get_id();
 		}
 
 		// store the data

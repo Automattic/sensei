@@ -1598,14 +1598,24 @@ class Sensei_Course {
 		// that have been added to the course.
 		if ( count( $lessons ) > 1 ) {
 
+			$lesson_order = array();
 			foreach ( $lessons as $lesson ) {
 
 				$order = intval( get_post_meta( $lesson->ID, '_order_' . $course_id, true ) );
 				// for lessons with no order set it to be 10000 so that it show up at the end
-				$lesson->course_order = $order ? $order : 100000;
+				$lesson_order[ $lesson->ID ] = $order ? $order : 100000;
 			}
 
-			uasort( $lessons, [ $this, '_short_course_lessons_callback' ] );
+			uasort( $lessons, function ( $lesson_1, $lesson_2 ) use ($lesson_order) {
+				$lesson_1_order = $lesson_order[ $lesson_1->ID ];
+				$lesson_2_order = $lesson_order[ $lesson_2->ID ];
+
+				if ( $lesson_1_order == $lesson_2_order ) {
+					return 0;
+				}
+
+				return ( $lesson_1_order < $lesson_2_order ) ? -1 : 1;
+			} );
 		}
 
 		/**
@@ -1632,25 +1642,6 @@ class Sensei_Course {
 
 		return $lessons;
 
-	}
-
-	/**
-	 * Used for the uasort in $this->course_lessons()
-	 *
-	 * @since 1.8.0
-	 * @access protected
-	 *
-	 * @param array $lesson_1
-	 * @param array $lesson_2
-	 * @return int
-	 */
-	protected function _short_course_lessons_callback( $lesson_1, $lesson_2 ) {
-
-		if ( $lesson_1->course_order == $lesson_2->course_order ) {
-			return 0;
-		}
-
-		return ( $lesson_1->course_order < $lesson_2->course_order ) ? -1 : 1;
 	}
 
 	/**

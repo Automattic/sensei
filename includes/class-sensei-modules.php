@@ -1180,7 +1180,6 @@ class Sensei_Core_Modules {
 			'fields'         => 'ids',
 		);
 		$lessons = get_posts( $args );
-
 		if ( is_wp_error( $lessons ) || 0 >= count( $lessons ) ) {
 			return 0;
 		}
@@ -1188,6 +1187,7 @@ class Sensei_Core_Modules {
 		$completed       = false;
 		$lesson_count    = 0;
 		$completed_count = 0;
+		$lessons         = array_map( 'intval', $lessons );
 		foreach ( $lessons as $lesson_id ) {
 			$completed = Sensei_Utils::user_completed_lesson( $lesson_id, $user_id );
 			++$lesson_count;

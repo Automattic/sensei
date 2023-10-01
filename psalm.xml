@@ -27,6 +27,8 @@
 		<MissingReturnType errorLevel="suppress" />
 		<PropertyNotSetInConstructor>
 			<errorLevel type="suppress">
+				<referencedProperty name="Sensei_Main::$course_progress_repository_factory" />
+				<referencedProperty name="Sensei_Main::$lesson_progress_repository_factory" />
 				<referencedProperty name="Sensei_Main::$quiz_progress_repository_factory" />
 			</errorLevel>
 		</PropertyNotSetInConstructor>

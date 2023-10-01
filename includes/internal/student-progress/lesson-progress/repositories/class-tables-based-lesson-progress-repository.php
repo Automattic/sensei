@@ -327,17 +327,17 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 
 		$where_clause = array( 'type = %s' );
 		$query_params = array( 'lesson' );
-		if ( ! is_null( $lesson_id ) ) {
+		if ( ! empty( $lesson_id ) ) {
 			$query_params   = array_merge( $query_params, (array) $lesson_id );
 			$where_clause[] = 'post_id IN (' . $this->get_placeholders( (array) $lesson_id ) . ')';
 		}
 
-		if ( ! is_null( $user_id ) ) {
+		if ( ! empty( $user_id ) ) {
 			$query_params[] = (int) $user_id;
 			$where_clause[] = 'user_id = %d';
 		}
 
-		if ( ! is_null( $status ) ) {
+		if ( ! empty( $status ) ) {
 			$query_params   = array_merge( $query_params, (array) $status );
 			$where_clause[] = 'status IN (' . $this->get_placeholders( (array) $status ) . ')';
 		}

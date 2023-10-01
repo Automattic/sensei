@@ -4731,9 +4731,14 @@ class Sensei_Lesson {
 	 */
 	public static function course_signup_link() {
 
+		$lesson_id = get_the_ID();
+		if ( $lesson_id ) {
+			return;
+		}
+
 		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
 
-		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( get_the_ID() ) ) {
+		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 			return;
 		}
 
@@ -5042,7 +5047,7 @@ class Sensei_Lesson {
 	 */
 	public static function user_lesson_quiz_status_message( $lesson_id = 0, $user_id = 0 ) {
 
-		$lesson_id                 = empty( $lesson_id ) ? get_the_ID() : $lesson_id;
+		$lesson_id                 = empty( $lesson_id ) ? (int) get_the_ID() : $lesson_id;
 		$user_id                   = empty( $user_id ) ? get_current_user_id() : $user_id;
 		$lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
 		$quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );

@@ -1170,8 +1170,13 @@ function sensei_get_template( $template_name, $args, $path ) {
  */
 function get_the_lesson_status_class() {
 
+	$lesson_id = get_the_ID();
+	if ( ! $lesson_id ) {
+		return '';
+	}
+
 	$status_class     = '';
-	$lesson_completed = Sensei_Utils::user_completed_lesson( get_the_ID(), get_current_user_id() );
+	$lesson_completed = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
 
 	if ( $lesson_completed ) {
 		$status_class = 'completed';

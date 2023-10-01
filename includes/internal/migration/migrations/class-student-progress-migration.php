@@ -300,6 +300,16 @@ class Student_Progress_Migration extends Migration_Abstract {
 			$lesson_status = 'complete';
 		}
 
+		if ( $comment->comment_approved === 'failed' ) {
+			$quiz_id = Sensei()->lesson->lesson_quizzes( $comment->comment_post_ID );
+			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+			if ( empty( $pass_required ) ) {
+				// If pass is not required, we consider the lesson as complete.
+				$completed_at  = $comment->comment_date_gmt;
+				$lesson_status = 'complete';
+			}
+		}
+
 		$started_at = 0;
 		if ( isset( $meta['start'] ) ) {
 			try {
