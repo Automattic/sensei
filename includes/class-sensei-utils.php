@@ -1471,9 +1471,9 @@ class Sensei_Utils {
 	/**
 	 * Get completion percentage.
 	 *
-	 * @param $numerator
-	 * @param $denominator
-	 * @param int         $decimal_places_to_round
+	 * @param mixed $numerator  Numerator.
+	 * @param int   $denominator Denominator.
+	 * @param int   $decimal_places_to_round Decimal places to round.
 	 * @return float
 	 */
 	public static function quotient_as_absolute_rounded_percentage( $numerator, $denominator, $decimal_places_to_round = 0 ) {
@@ -1483,9 +1483,9 @@ class Sensei_Utils {
 	/**
 	 * Get formatted quotient.
 	 *
-	 * @param mixed $numerator
-	 * @param int   $denominator
-	 * @param int   $decimal_places_to_round
+	 * @param mixed $numerator  Numerator.
+	 * @param int   $denominator Denominator.
+	 * @param int   $decimal_places_to_round Decimal places to round.
 	 * @return float
 	 */
 	public static function quotient_as_absolute_rounded_number( $numerator, $denominator, $decimal_places_to_round = 0 ) {
@@ -1497,10 +1497,10 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Round a number to a given number of decimal places
+	 * Round a number to a given number of decimal places.
 	 *
-	 * @param mixed $number
-	 * @param int   $decimal_places_to_round
+	 * @param mixed $number Number to round.
+	 * @param int   $decimal_places_to_round Decimal places to round.
 	 * @return float
 	 */
 	public static function as_absolute_rounded_number( $number, $decimal_places_to_round = 0 ) {
