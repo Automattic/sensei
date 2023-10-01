@@ -28,6 +28,14 @@ class Sensei_Utils {
 	 */
 	public static function get_placeholder_image() {
 
+		/**
+		 * Filter the placeholder thumbnail image.
+		 *
+		 * @hook sensei_placeholder_thumbnail
+		 *
+		 * @param {string} $placeholder_image_url The URL to the placeholder thumbnail image.
+		 * @return {string} The URL to the placeholder thumbnail image.
+		 */
 		return esc_url( apply_filters( 'sensei_placeholder_thumbnail', Sensei()->plugin_url . 'assets/images/placeholder.png' ) );
 	}
 
@@ -132,8 +140,11 @@ class Sensei_Utils {
 		 *
 		 * It runs while getting the comments for the given request.
 		 *
-		 * @param int|array $comments
-		 * @param array $args Search arguments.
+		 * @hook sensei_check_for_activity
+		 *
+		 * @param {int|array} $comments Activity to filter.
+		 * @param {array}     $args     Search arguments.
+		 * @return {int|array} Filtered activity.
 		 */
 		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ), $args );
 
@@ -328,10 +339,10 @@ class Sensei_Utils {
 		 *
 		 * @since 1.7.4
 		 *
-		 * @param array  $file_upload_args {
+		 * @param {array} $file_upload_args {
 		 *      array of current values
 		 *
-		 *     @type string test_form set to false by default
+		 *     @type {string} test_form set to false by default
 		 * }
 		 */
 		$file_upload_args = apply_filters( 'sensei_file_upload_args', array( 'test_form' => false ) );
@@ -340,11 +351,11 @@ class Sensei_Utils {
 		 * Customize the prefix prepended onto files uploaded in Sensei.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook sensei_file_upload_file_prefix
 		 *
 		 * @param {string} $prefix Prefix to prepend to uploaded files.
 		 * @param {array}  $file   Arguments with uploaded file information.
-		 *
 		 * @return {string}
 		 */
 		$file_prefix = apply_filters( 'sensei_file_upload_file_prefix', substr( md5( uniqid() ), 0, 7 ) . '_', $file );
@@ -921,8 +932,11 @@ class Sensei_Utils {
 		 *
 		 * @since 1.9.7
 		 *
-		 * @param integer $course_passmark  Pass mark for course
-		 * @param integer $course_id        ID of course
+		 * @hook sensei_course_pass_grade
+		 *
+		 * @param {int} $course_passmark  Pass mark for course.
+		 * @param {int} $course_id        ID of course.
+		 * @return {int} Filtered course pass mark.
 		 */
 		return apply_filters( 'sensei_course_pass_grade', self::round( $course_passmark ), $course_id );
 	}
@@ -930,9 +944,9 @@ class Sensei_Utils {
 	/**
 	 * Get user total grade for course
 	 *
-	 * @param  integer $course_id ID of course
-	 * @param  integer $user_id   ID of user
-	 * @return integer            User's total grade
+	 * @param  int $course_id ID of course
+	 * @param  int $user_id   ID of user
+	 * @return int            User's total grade
 	 */
 	public static function sensei_course_user_grade( $course_id = 0, $user_id = 0 ) {
 
@@ -978,9 +992,12 @@ class Sensei_Utils {
 		 *
 		 * @since 1.9.7
 		 *
-		 * @param integer $total_grade  User's total grade
-		 * @param integer $course_id    ID of course
-		 * @param integer $user_id      ID of user
+		 * @hook sensei_course_user_grade
+		 *
+		 * @param {int} $total_grade  User's total grade
+		 * @param {int} $course_id    ID of course
+		 * @param {int} $user_id      ID of user
+		 * @return {int} Fitlered user total grade.
 		 */
 		return apply_filters( 'sensei_course_user_grade', self::round( $total_grade ), $course_id, $user_id );
 	}
@@ -988,9 +1005,9 @@ class Sensei_Utils {
 	/**
 	 * Check if user has passed a course
 	 *
-	 * @param  integer $course_id ID of course
-	 * @param  integer $user_id   ID of user
-	 * @return boolean
+	 * @param  int $course_id ID of course
+	 * @param  int $user_id   ID of user
+	 * @return bool
 	 */
 	public static function sensei_user_passed_course( $course_id = 0, $user_id = 0 ) {
 		if ( intval( $user_id ) == 0 ) {
@@ -1055,6 +1072,16 @@ class Sensei_Utils {
 			}
 		}
 
+		/**
+		 * Filter a message for user course status.
+		 *
+		 * Possible statuses: not_started, passed, failed.
+		 *
+		 * @hook sensei_user_course_status_{status}
+		 *
+		 * @param {string} $message Status message.
+		 * @return {string} Filtered status message.
+		 */
 		$message = apply_filters( 'sensei_user_course_status_' . $status, $message );
 		Sensei()->notices->add_notice( $message, $box_class );
 	}
@@ -1240,9 +1267,12 @@ class Sensei_Utils {
 			 *
 			 * @since 2.0.0
 			 *
-			 * @param string $message     Message to show user.
-			 * @param int    $course_id   Post ID for the course.
-			 * @param string $course_link Generated HTML link to the course.
+			 * @hook sensei_quiz_course_signup_notice_message
+			 *
+			 * @param {string} $message     Message to show user.
+			 * @param {int}    $course_id   Post ID for the course.
+			 * @param {string} $course_link Generated HTML link to the course.
+			 * @return {string} Filtered message.
 			 */
 			$message = apply_filters( 'sensei_quiz_course_signup_notice_message', $message_default, $course_id, $course_link );
 		}
@@ -1255,7 +1285,17 @@ class Sensei_Utils {
 			$extra   = '<p><a class="button" href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . __( 'View the lesson quiz', 'sensei-lms' ) . '">' . __( 'View the lesson quiz', 'sensei-lms' ) . '</a></p>';
 		}
 
-		// Filter of all messages
+		/**
+		 * Filter user quiz status.
+		 *
+		 * @hook sensei_user_quiz_status
+		 *
+		 * @param {array} $status_data Array containing the status, message and additions information.
+		 * @param {int}   $lesson_id   Lesson ID.
+		 * @param {int}   $user_id     User ID.
+		 * @param {bool}  $is_leeson   A flag is $lesson_id is a lesson.
+		 * @return {array} Filtered quiz status.
+		 */
 		return apply_filters(
 			'sensei_user_quiz_status',
 			array(
@@ -2170,30 +2210,50 @@ class Sensei_Utils {
 	 *
 	 * @since 1.8.5
 	 *
-	 * @param double $val
-	 * @param int    $precision
-	 * @param $mode
-	 * @param string $context
+	 * @param float $val        Value to round.
+	 * @param int    $precision Precision.
+	 * @param int    $mode      Round mode.
+	 * @param string $context   Context.
 	 *
 	 * @return double $val
 	 */
 	public static function round( $val, $precision = 0, $mode = PHP_ROUND_HALF_UP, $context = '' ) {
 
 		/**
+		 * Filter the round precision.
+		 *
 		 * Change the precision for the Sensei_Utils::round function.
 		 * the precision given will be passed into the php round function
 		 *
 		 * @since 1.8.5
+		 *
+		 * @hook sensei_round_precision
+		 *
+		 * @param {int}    $precision Precision.
+		 * @param {float}  $value     Value to round.
+		 * @param {string} $context   Context.
+		 * @param {int}    $mode      Round mode.
+		 * @return {int} Filtered precision.
 		 */
 		$precision = apply_filters( 'sensei_round_precision', $precision, $val, $context, $mode );
 
 		/**
+		 * Filter round mode.
+		 *
 		 * Change the mode for the Sensei_Utils::round function.
 		 * the mode given will be passed into the php round function
 		 *
 		 * This applies only to PHP version 5.3.0 and greater
 		 *
 		 * @since 1.8.5
+		 *
+		 * @hook sensei_round_mode
+		 *
+		 * @param {int}    $mode      Round mode.
+		 * @param {float}  $value     Value to round.
+		 * @param {string} $context   Context.
+		 * @param {int}    $precision Precision.
+		 * @return {int} Filtered round mode.
 		 */
 		$mode = apply_filters( 'sensei_round_mode', $mode, $val, $context, $precision );
 
@@ -2571,8 +2631,11 @@ class Sensei_Utils {
 		 *
 		 * @since 2.2.0
 		 *
-		 * @param bool $show_lessons   Whether the lessons should be shown. Default true.
-		 * @param int|false $course_id Course ID.
+		 * @hook sensei_course_show_lessons
+		 *
+		 * @param {bool} $show_lessons   Whether the lessons should be shown. Default true.
+		 * @param {int|false} $course_id Course ID.
+		 * @return {bool} Filtered visibility of lessons.
 		 */
 		return apply_filters( 'sensei_course_show_lessons', true, $course_id );
 	}
@@ -2768,12 +2831,12 @@ class Sensei_Utils {
 		/**
 		 * Filter to allow adding products slugs to check if it has an active WPCOM subscription.
 		 *
-		 * @hook sensei_wpcom_product_slugs
 		 * @since 4.11.0
 		 *
-		 * @param {Array} $products Array of products slugs to check if it has an active WPCOM subscription.
+		 * @hook sensei_wpcom_product_slugs
 		 *
-		 * @return {array}
+		 * @param {array} $products Array of products slugs to check if it has an active WPCOM subscription.
+		 * @return {array} Filtered array of products slugs.
 		 */
 		$product_slugs = apply_filters( 'sensei_wpcom_product_slugs', [] );
 		foreach ( $product_slugs as $product_slug ) {
