@@ -141,7 +141,6 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
 		$submission = $repository->create( $quiz_id, $user_id, 0 );
 
-
 		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
 
 		/* Act. */

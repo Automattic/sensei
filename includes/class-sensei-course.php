@@ -1606,16 +1606,19 @@ class Sensei_Course {
 				$lesson_order[ $lesson->ID ] = $order ? $order : 100000;
 			}
 
-			uasort( $lessons, function ( $lesson_1, $lesson_2 ) use ($lesson_order) {
-				$lesson_1_order = $lesson_order[ $lesson_1->ID ];
-				$lesson_2_order = $lesson_order[ $lesson_2->ID ];
+			uasort(
+				$lessons,
+				function ( $lesson_1, $lesson_2 ) use ( $lesson_order ) {
+					$lesson_1_order = $lesson_order[ $lesson_1->ID ];
+					$lesson_2_order = $lesson_order[ $lesson_2->ID ];
 
-				if ( $lesson_1_order == $lesson_2_order ) {
-					return 0;
+					if ( $lesson_1_order == $lesson_2_order ) {
+						return 0;
+					}
+
+					return ( $lesson_1_order < $lesson_2_order ) ? -1 : 1;
 				}
-
-				return ( $lesson_1_order < $lesson_2_order ) ? -1 : 1;
-			} );
+			);
 		}
 
 		/**
@@ -1628,9 +1631,8 @@ class Sensei_Course {
 		 */
 		$lessons = apply_filters( 'sensei_course_get_lessons', $lessons, $course_id );
 
-		// return the requested fields
-		// runs after the sensei_course_get_lessons filter so the filter always give an array of lesson
-		// objects
+		// Return the requested fields.
+		// Runs after the sensei_course_get_lessons filter so the filter always give an array of lesson objects.
 		if ( 'ids' === $fields ) {
 			$lesson_objects = $lessons;
 			$lessons        = [];
