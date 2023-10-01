@@ -300,8 +300,8 @@ class Student_Progress_Migration extends Migration_Abstract {
 			$lesson_status = 'complete';
 		}
 
-		if ( $comment->comment_approved === 'failed' ) {
-			$quiz_id = Sensei()->lesson->lesson_quizzes( $comment->comment_post_ID );
+		if ( 'failed' === $comment->comment_approved ) {
+			$quiz_id       = Sensei()->lesson->lesson_quizzes( $comment->comment_post_ID );
 			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
 			if ( empty( $pass_required ) ) {
 				// If pass is not required, we consider the lesson as complete.
