@@ -1469,17 +1469,25 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Get completion percentage
+	 * Get completion percentage.
 	 *
 	 * @param $numerator
 	 * @param $denominator
 	 * @param int         $decimal_places_to_round
-	 * @return int|number
+	 * @return float
 	 */
 	public static function quotient_as_absolute_rounded_percentage( $numerator, $denominator, $decimal_places_to_round = 0 ) {
 		return self::quotient_as_absolute_rounded_number( $numerator * 100.0, $denominator, $decimal_places_to_round );
 	}
 
+	/**
+	 * Get formatted quotient.
+	 *
+	 * @param mixed $numerator
+	 * @param int   $denominator
+	 * @param int   $decimal_places_to_round
+	 * @return float
+	 */
 	public static function quotient_as_absolute_rounded_number( $numerator, $denominator, $decimal_places_to_round = 0 ) {
 		if ( 0 === $denominator ) {
 			return 0;
@@ -1488,6 +1496,13 @@ class Sensei_Utils {
 		return self::as_absolute_rounded_number( doubleval( $numerator ) / ( $denominator ), $decimal_places_to_round );
 	}
 
+	/**
+	 * Round a number to a given number of decimal places
+	 *
+	 * @param mixed $number
+	 * @param int   $decimal_places_to_round
+	 * @return float
+	 */
 	public static function as_absolute_rounded_number( $number, $decimal_places_to_round = 0 ) {
 		return abs( round( ( doubleval( $number ) ), $decimal_places_to_round ) );
 	}

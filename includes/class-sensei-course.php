@@ -1932,7 +1932,7 @@ class Sensei_Course {
 
 				$progress_percentage = Sensei_Utils::quotient_as_absolute_rounded_percentage( $lessons_completed, $lesson_count, 0 );
 
-				$active_html .= $this->get_progress_meter( $progress_percentage );
+				$active_html .= $this->get_progress_meter( (int) $progress_percentage );
 
 				$active_html .= '</section>';
 
