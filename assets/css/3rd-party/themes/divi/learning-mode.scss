@@ -14,16 +14,18 @@ $desktop_min_width: 783px;
 }
 
 .wp-block-post-content {
-	.sensei-lms-question__answer-feedback__content {
-		padding-bottom: 18px;
+	.sensei-lms-question__answer-feedback {
+		&__content {
+			padding-bottom: 18px;
 
-		p {
-			margin-bottom: 1.6em;
+			p {
+				margin-bottom: 1.6em;
+			}
 		}
-	}
 
-	.sensei-lms-question__answer-feedback__header {
-		padding: 14px;
+		&__header {
+			padding: 14px;
+		}
 	}
 }
 
