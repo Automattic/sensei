@@ -1972,7 +1972,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		// Enable course theme;
 		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
 
-
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
 
 		$this->go_to( get_permalink( $quiz_id ) );
