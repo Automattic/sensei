@@ -121,7 +121,7 @@ $question-input-border-color: var(--wp--preset--color--foreground, #155E65 );
 	--color: #DCDCDE;
 	border: 2px solid var(--border-color);
 	border-radius: 1px;
-	font-family: var(--wp--preset--font-family--system);
+	font-family: var(--wp--preset--font-family--system, var(--wp--preset--font-family--body-font));
 	margin: 12px auto;
 	color: #1e1e1e;
 	font-size: 1.125rem;
