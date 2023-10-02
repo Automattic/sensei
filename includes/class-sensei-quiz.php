@@ -1858,8 +1858,7 @@ class Sensei_Quiz {
 		$is_reset_allowed  = self::is_reset_allowed( $lesson_id );
 		$course_id         = Sensei()->lesson->get_course_id( $lesson_id );
 		$is_learning_mode  = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
-		$lesson_status     = \Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
-		$is_awaiting_grade = $lesson_status && 'ungraded' === $lesson_status->comment_approved;
+		$is_awaiting_grade = self::is_quiz_awaiting_grade_for_user( $lesson_id, get_current_user_id() );
 
 		$show_grade_pending_button = $is_learning_mode && $is_awaiting_grade;
 
@@ -2391,6 +2390,32 @@ class Sensei_Quiz {
 		}
 
 		$quiz_progress_repository->create( $quiz_id, $user_id );
+	}
+
+	/**
+	 * Check if the quiz is in ungraded state for a user.
+	 *
+	 * @param ?int $lesson_id The lesson ID.
+	 * @param ?int $user_id   The user ID.
+	 *
+	 * @return bool True if the quiz is in ungraded state for the user, false otherwise.
+	 */
+	public static function is_quiz_awaiting_grade_for_user( $lesson_id = null, $user_id = null ) {
+		if ( empty( $lesson_id ) ) {
+			$quiz_id = Sensei()->quiz->get_lesson_id();
+		}
+
+		if ( empty( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $quiz_id ) || empty( $user_id ) || 'quiz' !== get_post_type( $quiz_id ) ) {
+			return false;
+		}
+
+		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+
+		return $lesson_status && 'ungraded' === $lesson_status->comment_approved;
 	}
 }
 
