@@ -1690,7 +1690,7 @@ class Sensei_Utils {
 	 * @since 1.7.0
 	 * @param int $lesson_id
 	 * @param int $user_id
-	 * @return WP_Comment|WP_Comment[]|false
+	 * @return WP_Comment|false
 	 */
 	public static function user_lesson_status( $lesson_id = 0, $user_id = 0 ) {
 
