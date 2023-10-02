@@ -10,8 +10,8 @@ body.sensei-course-theme {
 }
 
 .sensei-course-theme .sensei-lms-notice {
-	background-color: #f6f7f7;
-	color: #1e1e1e;
+	background-color: var(--wp--preset--color--primary, #f6f7f7);
+	color: var(--wp--preset--color--background, #1e1e1e);
 	padding: 1.5rem;
 }
 
@@ -52,8 +52,13 @@ body.sensei-course-theme {
 	}
 
 	&__action {
-		display: flex;
 		align-items: center;
+		color: inherit;
+		display: flex;
+
+		&:active {
+			background-color: inherit;
+		}
 	}
 
 	&__link-chevron {

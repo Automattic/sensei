@@ -256,11 +256,6 @@ body {
 	margin: 1.5rem 0;
 }
 
-.sensei-lms-notice.sensei-course-theme-quiz-graded-notice {
-	background-color: var(--wp--preset--color--primary);
-	color: var(--wp--preset--color--background);
-}
-
 .sensei-course-theme-quiz-graded-notice {
 	&__pending-grade {
 		.wp-block-button__link {
