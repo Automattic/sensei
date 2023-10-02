@@ -135,13 +135,14 @@ class Sensei_Course_Theme_Quiz {
 	 * Generates the HTML markup for the "Pending teacher grade" button.
 	 */
 	private static function get_pending_grade_button_html() {
-		return
+		return (
 			'<div class="wp-block-buttons">
 				<div class="wp-block-button sensei-course-theme-quiz-graded-notice__pending-grade">
 					<button class="wp-block-button__link">'
 						. __( 'Pending teacher grade', 'sensei-lms' ) .
 					'</button>
 				</div>
-			</div>';
+			</div>'
+		);
 	}
 }
