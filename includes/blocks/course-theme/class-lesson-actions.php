@@ -162,15 +162,8 @@ class Lesson_Actions {
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
 		$is_learning_mode  = \Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
-		$is_awaiting_grade = false;
-
-		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
-
-		if ( $lesson_status ) {
-			$lesson_status = is_array( $lesson_status ) ? $lesson_status[0] : $lesson_status;
-
-			$is_awaiting_grade = 'ungraded' === $lesson_status->comment_approved;
-		}
+		$lesson_status     = \Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
+		$is_awaiting_grade = $lesson_status && 'ungraded' === $lesson_status->comment_approved;
 
 		if ( $is_learning_mode && $is_awaiting_grade && 'quiz' === get_post_type() ) {
 			return '';
