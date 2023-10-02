@@ -18,7 +18,7 @@
 		align-items: center;
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: 16px;
 
 		@media (min-width: $break-medium) {
 			flex-direction: row;
@@ -33,7 +33,7 @@
 			background-color: transparent;
 			border: none;
 			color: inherit;
-			font-family: var(--wp--preset--font-family--body);
+			font-family: var(--wp--preset--font-family--body-font);
 			font-size: 18px;
 		}
 	}

@@ -257,11 +257,14 @@ body {
 }
 
 .sensei-course-theme-quiz-graded-notice {
+	&__text {
+		margin: 0 0 32px;
+	}
+
 	&__pending-grade {
 		.wp-block-button__link {
 			background-color: var(--wp--preset--color--background);
 			color: var(--wp--preset--color--primary);
-			opacity: 0.6;
 
 			&:hover {
 				border-color: var(--wp--preset--color--background);
