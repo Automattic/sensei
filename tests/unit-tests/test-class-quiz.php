@@ -1988,4 +1988,39 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertStringContainsString( 'Pending teacher grade', $result );
 	}
+
+	public function testQuizFooterActions_WhenAwaitingGradeButNotInLearningMode_DoesNotRenderAwaitingGradeButton() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+
+		$quiz_id          = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		wp_set_current_user( $user_id );
+
+
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
+
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		WP_Block_Supports::$block_to_render = [
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/quiz-actions',
+		];
+
+		/* Act */
+		$result = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
+
+		/* Assert */
+		$this->assertStringNotContainsString( 'Pending teacher grade', $result );
+	}
 }
