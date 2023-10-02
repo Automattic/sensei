@@ -1044,7 +1044,7 @@ class Sensei_Question {
 					<?php if ( $correct_answer ) { ?>
 						<div class="sensei-lms-question__answer-feedback__correct-answer">
 							<?php echo wp_kses_post( __( 'Right Answer:', 'sensei-lms' ) ); ?>
-							<strong><?php echo wp_kses_post( $correct_answer ); ?></strong>
+							<?php echo wp_kses_post( $correct_answer ); ?>
 						</div>
 					<?php } ?>
 					<?php if ( $has_answer_notes ) { ?>

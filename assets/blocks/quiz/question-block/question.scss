@@ -119,19 +119,23 @@ $question-input-border-color: var(--wp--preset--color--foreground, #155E65 );
 
 .sensei-lms-question__answer-feedback {
 	--color: #DCDCDE;
-	$horizontal-padding: 24px;
-	border: 1px solid var(--color);
+	border: 2px solid var(--border-color);
 	border-radius: 1px;
+	font-family: var(--wp--preset--font-family--system, var(--wp--preset--font-family--body-font));
 	margin: 12px auto;
+	color: #1e1e1e;
+	font-size: 1.125rem;
 
 	&--correct {
-		--color: #B8E6BF;
-		--icon: '\f058';
+		--color: #d6edda;
+		--border-color: #5c936b;
+		--icon: "\f15e";
 	}
 
 	&--incorrect {
-		--color: #F7DCC6;
-		--icon: '\f057';
+		--border-color: #cf8b25;
+		--color: #faebe0;
+		--icon: "\f335";
 	}
 
 	&.empty {
@@ -140,21 +144,20 @@ $question-input-border-color: var(--wp--preset--color--foreground, #155E65 );
 
 	&__header {
 		display: flex;
-		padding: 6px $horizontal-padding;
+		padding: 14px;
 		background: var(--color);
-		font-size: 80%;
 		align-items: center;
 	}
 	&__title {
 		flex: 1;
 	}
 
-	&__points {
-		font-weight: bold;
+	&__content {
+		padding: 18px;
 	}
 
-	&__content {
-		padding: 12px $horizontal-padding;
+	&__answer-notes > *:first-child {
+		margin-top: 0;
 	}
 
 	&__correct-answer {
@@ -177,10 +180,18 @@ $question-input-border-color: var(--wp--preset--color--foreground, #155E65 );
 		}
 	}
 
-	&__icon:after {
-		content: var(--icon);
-		font-family: FontAwesomeSensei, FontAwesome, sans-serif;
-		margin-right: 6px;
+	&__icon {
+		display: flex;
+
+		&:after {
+			box-sizing: border-box;
+			color: var(--border-color);
+			content: var(--icon);
+			font-family: dashicons, sans-serif;
+			font-size: 1.5rem;
+			line-height: 1;
+			margin-right: 8px;
+		}
 	}
 
 }

@@ -5,7 +5,7 @@
 		"woocommerce/action-scheduler": "3.6.2"
 	},
 	"require-dev": {
-		"php": "^7.3 || ^8",
+		"php": "^7.4 || ^8",
 		"automattic/jetpack-changelogger": "3.3.5",
 		"bamarni/composer-bin-plugin": "1.8.2",
 		"dealerdirect/phpcodesniffer-composer-installer": "1.0.0",
@@ -95,7 +95,7 @@
 		"optimize-autoloader": true,
 		"sort-packages": true,
 		"platform": {
-			"php": "7.3"
+			"php": "7.4"
 		},
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true,

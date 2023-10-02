@@ -13,6 +13,11 @@ import quizActionsMeta from './quiz-actions.block.json';
 import quizBackToLessonMeta from './quiz-back-to-lesson.block.json';
 import quizProgressMeta from './quiz-progress.block.json';
 
+/**
+ * External dependencies
+ */
+import classNames from 'classnames';
+
 const meta = {
 	attributes: {},
 	icon: {
@@ -64,9 +69,16 @@ export default [
 			'Return to the lesson the quiz belongs to.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function EditQuizBackToLesson() {
+			const blockProps = useBlockProps( {
+				className: classNames(
+					'sensei-lms-href',
+					'sensei-lms-quiz-back-to-lesson'
+				),
+			} );
+
 			return (
-				<span className="sensei-lms-href sensei-lms-quiz-back-to-lesson">
+				<span { ...blockProps }>
 					<ChevronLeft />
 					{ __( 'Back to lesson', 'sensei-lms' ) }
 				</span>
