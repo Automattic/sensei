@@ -173,7 +173,7 @@ class Course_Navigation {
 
 		$current_lesson_id  = \Sensei_Utils::get_current_lesson();
 		$has_current_lesson = count(
-			(array) array_filter(
+			array_filter(
 				$lessons,
 				function( $lesson ) use ( $current_lesson_id ) {
 					return $current_lesson_id === $lesson['id'];
@@ -184,7 +184,7 @@ class Course_Navigation {
 
 		$lesson_count = count( $lessons );
 		$quiz_count   = count(
-			(array) array_filter(
+			array_filter(
 				$lessons,
 				function( $lesson ) {
 					return \Sensei_Lesson::lesson_quiz_has_questions( $lesson['id'] );

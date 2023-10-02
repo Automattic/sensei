@@ -391,24 +391,24 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$course_enrolment       = Sensei_Course_Enrolment::get_course_instance( $this->course_id );
 				$enrolment_results      = $course_enrolment->get_enrolment_check_results( $user_activity->user_id );
 				$provider_results       = $enrolment_results ? $enrolment_results->get_provider_results() : [];
-				$enrolment_tooltip_html = array();
+				$enrolment_tooltip_html = '';
 
 				if ( Sensei()->feature_flags->is_enabled( 'enrolment_provider_tooltip' ) ) {
 					if ( ! empty( $provider_results ) ) {
-						$enrolment_tooltip_html = [ '<ul class="enrolment-helper">' ];
+						$tooltip_html_parts = [ '<ul class="enrolment-helper">' ];
 
 						foreach ( $provider_results as $id => $result ) {
 							$name       = Sensei_Course_Enrolment_Manager::instance()->get_enrolment_provider_name_by_id( $id ) ?? $id;
 							$item_class = $result ? 'provides-enrolment' : 'does-not-provide-enrolment';
 
-							$enrolment_tooltip_html[] =
+							$tooltip_html_parts[] =
 								'<li class="' . esc_attr( $item_class ) . '">' .
 									esc_html( $name ) .
 								'</li>';
 						}
 
-						$enrolment_tooltip_html[] = '</ul>';
-						$enrolment_tooltip_html   = implode( '', $enrolment_tooltip_html );
+						$tooltip_html_parts[]   = '</ul>';
+						$enrolment_tooltip_html = implode( '', $tooltip_html_parts );
 					} else {
 						$enrolment_tooltip_html = esc_html__( 'No enrollment data was found.', 'sensei-lms' );
 					}

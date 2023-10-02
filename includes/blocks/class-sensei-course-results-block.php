@@ -222,15 +222,13 @@ class Sensei_Course_Results_Block {
 
 		}
 
-		if ( $item['lessons'] ) {
-			$section_content[] = '<ul class="wp-block-sensei-lms-course-results__lessons">';
+		$section_content[] = '<ul class="wp-block-sensei-lms-course-results__lessons">';
 
-			foreach ( $item['lessons'] as $lesson ) {
-				$section_content[] = $this->render_lesson( $lesson );
-			}
-
-			$section_content[] = '</ul>';
+		foreach ( $item['lessons'] as $lesson ) {
+			$section_content[] = $this->render_lesson( $lesson );
 		}
+
+		$section_content[] = '</ul>';
 
 		$section_content[] = '</section>';
 
