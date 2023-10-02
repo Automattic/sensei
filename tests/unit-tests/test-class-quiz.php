@@ -2007,7 +2007,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		wp_set_current_user( $user_id );
 
-
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
 
 		$this->go_to( get_permalink( $quiz_id ) );
