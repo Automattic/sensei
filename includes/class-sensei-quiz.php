@@ -2402,14 +2402,14 @@ class Sensei_Quiz {
 	 */
 	public static function is_quiz_awaiting_grade_for_user( $lesson_id = null, $user_id = null ) {
 		if ( empty( $lesson_id ) ) {
-			$quiz_id = Sensei()->quiz->get_lesson_id();
+			$lesson_id = Sensei()->quiz->get_lesson_id();
 		}
 
 		if ( empty( $user_id ) ) {
 			$user_id = get_current_user_id();
 		}
 
-		if ( empty( $quiz_id ) || empty( $user_id ) || 'quiz' !== get_post_type( $quiz_id ) ) {
+		if ( empty( $lesson_id ) || empty( $user_id ) || 'lesson' !== get_post_type( $lesson_id ) ) {
 			return false;
 		}
 
