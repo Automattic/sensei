@@ -8,7 +8,7 @@ $breakpoint: 782px;
 	.sensei-course-theme-quiz-graded-notice__pending-grade {
 		opacity: 0.6;
 
-		&:hover {
+		.wp-block-button__link:hover {
 			cursor: default;
 		}
 	}
