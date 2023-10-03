@@ -2417,6 +2417,47 @@ class Sensei_Quiz {
 
 		return $lesson_status && 'ungraded' === $lesson_status->comment_approved;
 	}
+
+	/**
+	 * Returns next lesson URL when meets the conditions of the next lesson button to be displayed
+	 * in the quiz footer, returns null otherwise.
+	 *
+	 * @param ?int $lesson_id The lesson ID.
+	 * @param ?int $user_id   The user ID.
+	 *
+	 * @return string|null Next lesson URL if condition holds, null otherwise.
+	 */
+	public static function maybe_get_next_lesson_url_for_quiz_footer( $lesson_id = null, $user_id = null ) {
+		if ( empty( $lesson_id ) ) {
+			$lesson_id = Sensei()->quiz->get_lesson_id();
+		}
+
+		if ( empty( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $lesson_id ) || empty( $user_id ) || 'lesson' !== get_post_type( $lesson_id ) || 'quiz' !== get_post_type() ) {
+			return '';
+		}
+
+		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+
+		$is_complete = $lesson_status && in_array( $lesson_status->comment_approved, [ 'complete', 'graded', 'passed', 'failed' ], true );
+
+		if ( ! $is_complete ) {
+			return null;
+		}
+
+		$is_pass_required = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
+
+		if ( $is_pass_required && 'failed' === $lesson_status->comment_approved ) {
+			return null;
+		}
+
+		$prev_next_urls = sensei_get_prev_next_lessons( $lesson_id );
+		return $prev_next_urls['next']['url'] ?? null;
+	}
+
 }
 
 /**
