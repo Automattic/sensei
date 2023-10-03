@@ -122,6 +122,7 @@ class Sensei_Course_Theme_Quiz {
 			);
 		}
 
+		$actions   = [];
 		$actions[] = self::get_pending_grade_button_html();
 
 		// Prepare Restart Quiz button.
