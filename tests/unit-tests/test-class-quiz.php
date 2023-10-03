@@ -2326,4 +2326,65 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertStringContainsString( 'Continue to next lesson', $result );
 	}
+
+	public function testQuizFooterActions_WhenPassedButNextLessonHasLowerOrder_DoesNotShowTheNextLessonButton() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_1  = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 2,
+					'_quiz_has_questions'  => 1,
+				],
+			]
+		);
+		$this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+				],
+			]
+		);
+
+		$quiz_id = $this->factory->maybe_create_quiz_for_lesson( $lesson_1 );
+		$this->factory->question->create(
+			[
+				'quiz_id'                => $quiz_id,
+				'question_type'          => 'multiple-choice',
+				'question_right_answers' => [ ' ', ' ', ' ' ],
+				'question_wrong_answers' => [ ' ' ],
+			]
+		);
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		wp_set_current_user( $user_id );
+
+		// Enable course theme;
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_1, 'passed' );
+		update_comment_meta( $comment_id, 'grade', 2 );
+		update_post_meta( $quiz_id, '_pass_required', 0 );
+
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		WP_Block_Supports::$block_to_render = [
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/quiz-actions',
+		];
+
+		global $sensei_question_loop;
+		$sensei_question_loop['total_pages'] = 1;
+
+		/* Act */
+		$result = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
+
+		/* Assert */
+		$this->assertStringNotContainsString( 'Continue to next lesson', $result );
+	}
 }
