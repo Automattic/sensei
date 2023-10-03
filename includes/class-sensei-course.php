@@ -1884,7 +1884,7 @@ class Sensei_Course {
 				// Get Course Categories
 				$category_output = get_the_term_list( $course_item->ID, 'course-category', '', ', ', '' );
 
-				$active_html .= '<article class="' . esc_attr( join( ' ', get_post_class( [ 'course', 'post' ], $course_item->ID ) ) ) . '">';
+				$active_html .= '<article class="' . esc_attr( implode( ' ', get_post_class( [ 'course', 'post' ], $course_item->ID ) ) ) . '">';
 
 				// Image
 				$active_html .= Sensei()->course->course_image( absint( $course_item->ID ), '100', '100', true );
@@ -2025,7 +2025,7 @@ class Sensei_Course {
 				// Get Course Categories
 				$category_output = get_the_term_list( $course_item->ID, 'course-category', '', ', ', '' );
 
-				$complete_html .= '<article class="' . esc_attr( join( ' ', get_post_class( [ 'course', 'post' ], $course_item->ID ) ) ) . '">';
+				$complete_html .= '<article class="' . esc_attr( implode( ' ', get_post_class( [ 'course', 'post' ], $course_item->ID ) ) ) . '">';
 
 				// Image
 				$complete_html .= Sensei()->course->course_image( absint( $course_item->ID ), 100, 100, true );
@@ -4056,9 +4056,10 @@ class Sensei_Course {
 	public function log_initial_publish_event( $course ) {
 		$product_ids   = get_post_meta( $course->ID, '_course_woocommerce_product', false );
 		$product_count = empty( $product_ids ) ? 0 : count( array_filter( $product_ids, 'is_numeric' ) );
+		$modules       = wp_get_post_terms( $course->ID, 'module' );
 
 		$event_properties = [
-			'module_count'  => count( wp_get_post_terms( $course->ID, 'module' ) ),
+			'module_count'  => is_countable( $modules ) ? count( $modules ) : 0,
 			'lesson_count'  => $this->course_lesson_count( $course->ID ),
 			'product_count' => $product_count,
 			'sample_course' => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG === $course->post_name ? 1 : 0,
@@ -4148,6 +4149,7 @@ class Sensei_Course {
 		$content       = $post->post_content;
 		$product_ids   = get_post_meta( $course_id, '_course_woocommerce_product', false );
 		$product_count = empty( $product_ids ) ? 0 : count( array_filter( $product_ids, 'is_numeric' ) );
+		$modules       = wp_get_post_terms( $course_id, 'module' );
 
 		$event_properties = [
 			'course_id'                     => $course_id,
@@ -4156,7 +4158,7 @@ class Sensei_Course {
 			'has_take_course_block'         => has_block( 'sensei-lms/button-take-course', $content ) ? 1 : 0,
 			'has_contact_teacher_block'     => has_block( 'sensei-lms/button-contact-teacher', $content ) ? 1 : 0,
 			'has_conditional_content_block' => has_block( 'sensei-lms/conditional-content', $content ) ? 1 : 0,
-			'module_count'                  => count( wp_get_post_terms( $course_id, 'module' ) ),
+			'module_count'                  => is_countable( $modules ) ? count( $modules ) : 0,
 			'lesson_count'                  => $this->course_lesson_count( $course_id ),
 			'product_count'                 => $product_count,
 			'sample_course'                 => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG === $post->post_name ? 1 : 0,

@@ -188,7 +188,7 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 		);
 		$posts_array = get_posts( $post_args );
 
-		if ( count( $posts_array ) > 0 ) {
+		if ( $posts_array ) {
 			?>
 			<ul>
 			<?php

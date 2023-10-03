@@ -49,7 +49,7 @@ abstract class Sensei_Course_List_Filter_Abstract {
 		$filter_param_key = static::PARAM_KEY . $query_id;
 		$default_option   = $default_options[ static::FILTER_NAME ] ?? '';
 
-		if ( ! key_exists( $filter_param_key, $_GET ) && ! empty( $default_option ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
+		if ( ! array_key_exists( $filter_param_key, $_GET ) && ! empty( $default_option ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
 			$_GET[ $filter_param_key ] = $default_option;
 		}
 	}

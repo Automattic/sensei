@@ -498,7 +498,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 						remove_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 
 						$grade_count          = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
-						$grade_total          = ! empty( $lesson_grades->meta_sum ) ? doubleval( $lesson_grades->meta_sum ) : 0;
+						$grade_total          = ! empty( $lesson_grades->meta_sum ) ? floatval( $lesson_grades->meta_sum ) : 0;
 						$lesson_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
 					}
 					// Output lesson data

@@ -604,6 +604,7 @@ class Sensei_Messages {
 			return false;
 		}
 
+		$user_login = null;
 		if ( $user_id == 0 ) {
 			global $current_user;
 			wp_get_current_user();

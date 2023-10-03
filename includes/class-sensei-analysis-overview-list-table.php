@@ -149,28 +149,27 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return array The array of columns to use with the table with columns appended to their title
 	 */
 	public function add_totals_to_report_column_headers( array $columns ) {
-		$column_value_map = array();
-		switch ( $this->type ) {
-			case 'lessons' && $this->get_course_filter_value():
-				$total_counts                           = $this->get_totals_for_lesson_report_column_headers( $this->get_course_filter_value() );
-				$column_value_map['title']              = $total_counts->lesson_count;
-				$column_value_map['lesson_module']      = $total_counts->unique_module_count;
-				$column_value_map['students']           = $total_counts->unique_student_count;
-				$column_value_map['completions']        = $total_counts->lesson_completed_count > 0 && $total_counts->lesson_count > 0
-					? ceil( $total_counts->lesson_completed_count / $total_counts->lesson_count )
-					: 0;
-				$column_value_map['days_to_completion'] = $total_counts->lesson_completed_count > 0
-					? ceil( $total_counts->days_to_complete_sum / $total_counts->lesson_completed_count )
-					: __( 'N/A', 'sensei-lms' );
-				$column_value_map['completion_rate']    = $total_counts->lesson_start_count > 0
-					? Sensei_Utils::quotient_as_absolute_rounded_percentage( $total_counts->lesson_completed_count, $total_counts->lesson_start_count ) . '%'
-					: '0%';
-				break;
-			default:
-				break;
+		if ( 'lessons' !== $this->type || ! $this->get_course_filter_value() ) {
+			return $columns;
 		}
+
+		$total_counts                           = $this->get_totals_for_lesson_report_column_headers( $this->get_course_filter_value() );
+		$column_value_map                       = array();
+		$column_value_map['title']              = $total_counts->lesson_count;
+		$column_value_map['lesson_module']      = $total_counts->unique_module_count;
+		$column_value_map['students']           = $total_counts->unique_student_count;
+		$column_value_map['completions']        = $total_counts->lesson_completed_count > 0 && $total_counts->lesson_count > 0
+			? ceil( $total_counts->lesson_completed_count / $total_counts->lesson_count )
+			: 0;
+		$column_value_map['days_to_completion'] = $total_counts->lesson_completed_count > 0
+			? ceil( $total_counts->days_to_complete_sum / $total_counts->lesson_completed_count )
+			: __( 'N/A', 'sensei-lms' );
+		$column_value_map['completion_rate']    = $total_counts->lesson_start_count > 0
+			? Sensei_Utils::quotient_as_absolute_rounded_percentage( $total_counts->lesson_completed_count, $total_counts->lesson_start_count ) . '%'
+			: '0%';
+
 		foreach ( $column_value_map as $key => $value ) {
-			if ( key_exists( $key, $columns ) ) {
+			if ( array_key_exists( $key, $columns ) ) {
 				$columns[ $key ] = $columns[ $key ] . ' (' . esc_html( $value ) . ')';
 			}
 		}
@@ -376,7 +375,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$last_activity_date = __( 'N/A', 'sensei-lms' );
 				$lessons            = Sensei()->course->course_lessons( $item->ID, 'any', 'ids' );
 
-				if ( 0 < count( $lessons ) ) {
+				if ( $lessons ) {
 					$last_activity_date = $this->get_last_activity_date( array( 'post__in' => $lessons ) );
 				}
 
@@ -1332,7 +1331,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		global $wpdb;
 		$lessons      = Sensei()->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids' );
 		$lesson_ids   = '0';
-		$lesson_count = count( $lessons );
+		$lesson_count = is_countable( $lessons ) ? count( $lessons ) : 0;
 		if ( 0 < $lesson_count ) {
 			$lesson_ids = implode( ',', $lessons );
 		};
@@ -1340,7 +1339,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$default_args  = array(
 			'fields' => 'ids',
 		);
-		$modules_count = count( wp_get_object_terms( $lessons, 'module', $default_args ) );
+		$modules       = wp_get_object_terms( $lessons, 'module', $default_args );
+		$modules_count = is_countable( $modules ) ? count( $modules ) : 0;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		$lesson_completion_info                      = $wpdb->get_row(
 			$wpdb->prepare(

@@ -152,7 +152,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function request_get_job( $request ) {
-		$job_id = $this->get_job_id_param( $request );
+		$job_id = static::get_job_id_param( $request );
 		$job    = $this->resolve_job( $job_id, true );
 
 		if ( ! $job ) {
@@ -180,7 +180,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function request_process_job( $request ) {
-		$job = $this->get_job( $this->get_job_id_param( $request ) );
+		$job = $this->get_job( static::get_job_id_param( $request ) );
 
 		if ( ! $job ) {
 			return new WP_Error(
