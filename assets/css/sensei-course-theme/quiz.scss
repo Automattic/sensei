@@ -202,10 +202,14 @@ $vertical-spacing-desktop: 80px;
 }
 
 .wp-block-sensei-lms-quiz-actions {
+
+	.sensei-course-theme__button.is-primary {
+		width: auto;
+	}
+
 	button:disabled {
 		cursor: not-allowed;
 		pointer-events: none;
-		width: auto;
 	}
 }
 
