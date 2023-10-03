@@ -246,7 +246,7 @@ class Sensei_Grading_User_Quiz {
 				 */
 				$possibly_new_args = apply_filters( 'sensei_grading_display_quiz_question', null, $type, $question_id, $right_answer, $user_answer_content );
 
-				if ( null !== $possibly_new_args && 0 < count( $possibly_new_args ) ) {
+				if ( null !== $possibly_new_args && $possibly_new_args ) {
 					$type_name           = $possibly_new_args['type_name'] ?? $type_name;
 					$right_answer        = $possibly_new_args['right_answer'] ?? $right_answer;
 					$user_answer_content = $possibly_new_args['user_answer_content'] ?? $user_answer_content;

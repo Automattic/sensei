@@ -264,7 +264,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	private function create_tabs() {
-		if ( count( $this->sections ) > 0 ) {
+		if ( $this->sections ) {
 			$tabs = array();
 			foreach ( $this->sections as $k => $v ) {
 				$tabs[ $k ] = $v;
@@ -281,7 +281,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function create_sections() {
-		if ( count( $this->sections ) > 0 ) {
+		if ( $this->sections ) {
 			foreach ( $this->sections as $k => $v ) {
 				add_settings_section( $k, $v['name'], array( $this, 'section_description' ), $this->token );
 			}
@@ -296,7 +296,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function create_fields() {
-		if ( count( $this->sections ) > 0 ) {
+		if ( $this->sections ) {
 
 			foreach ( $this->fields as $k => $v ) {
 				$method = $this->determine_method( $v, 'form' );
@@ -1130,7 +1130,7 @@ class Sensei_Settings_API {
 	 * @return  void
 	 */
 	protected function parse_errors() {
-		if ( count( $this->errors ) > 0 ) {
+		if ( $this->errors ) {
 			foreach ( $this->errors as $k => $v ) {
 				add_settings_error( $this->token . '-errors', $k, $v, 'error' );
 			}

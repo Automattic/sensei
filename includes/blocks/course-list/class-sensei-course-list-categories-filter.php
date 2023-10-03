@@ -52,7 +52,7 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 
 		return '<select data-param-key="' . esc_attr( $filter_param_key ) . '">
 			<option value="' . esc_attr( $default_option ) . '">' . esc_html__( 'All Categories', 'sensei-lms' ) . '</option>' .
-			join(
+			implode(
 				'',
 				array_map(
 					function ( $category ) use ( $category_id ) {

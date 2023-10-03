@@ -154,7 +154,7 @@ function sensei_get_modules_and_lessons( $course_id ) {
 		foreach ( (array) $course_modules as $module ) {
 			$module_lessons = Sensei()->modules->get_lessons( $course_id, $module->term_id );
 
-			if ( count( $module_lessons ) === 0 ) {
+			if ( ! $module_lessons ) {
 				continue;
 			}
 
@@ -683,7 +683,11 @@ function sensei_quiz_has_questions() {
 
 	global $sensei_question_loop;
 
-	$questions_count = count( $sensei_question_loop['questions'] );
+	if ( empty( $sensei_question_loop['questions'] ) ) {
+		return false;
+	}
+
+	$questions_count = is_countable( $sensei_question_loop['questions'] ) ? count( $sensei_question_loop['questions'] ) : 0;
 
 	if ( 0 === $questions_count ) {
 		return false;

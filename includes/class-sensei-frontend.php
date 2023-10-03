@@ -563,7 +563,7 @@ class Sensei_Frontend {
 	public function lesson_tags_display( $lesson_id = 0 ) {
 		if ( $lesson_id ) {
 			$tags = wp_get_post_terms( $lesson_id, 'lesson-tag' );
-			if ( $tags && count( $tags ) > 0 ) {
+			if ( $tags ) {
 				$tag_list = '';
 				foreach ( $tags as $tag ) {
 					$tag_link = get_term_link( $tag, 'lesson-tag' );
@@ -998,7 +998,7 @@ class Sensei_Frontend {
 					the_post();
 					?>
 
-					<article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ) ); ?>">
+					<article class="<?php echo esc_attr( implode( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ) ); ?>">
 
 						<?php do_action( 'sensei_course_archive_meta' ); ?>
 
