@@ -1869,7 +1869,7 @@ class Sensei_Quiz {
 			]
 		);
 
-		$has_actions = $is_reset_allowed || ! $is_quiz_completed || $show_grade_pending_button;
+		$has_actions = $is_reset_allowed || ! $is_quiz_completed || $show_grade_pending_button || ! empty( $next_lesson_url );
 
 		if ( ! $has_actions ) {
 			return;
@@ -2462,6 +2462,7 @@ class Sensei_Quiz {
 		}
 
 		$prev_next_urls = sensei_get_prev_next_lessons( $lesson_id );
+
 		return $prev_next_urls['next']['url'] ?? null;
 	}
 
