@@ -6,6 +6,8 @@
  * @since 3.15.0
  */
 
+use Sensei\Internal\Emails\Email_Repository;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -86,8 +88,29 @@ class Sensei_Course_Theme_Quiz {
 
 		// Prepare message.
 		$text = __( "You've passed the quiz and can continue to the next lesson.", 'sensei-lms' );
+
 		if ( 'ungraded' === $lesson_status->comment_approved ) {
-			$text = __( 'Your answers have been submitted and the quiz will be graded soon. You\'ll receive an email once it\'s ready to view.', 'sensei-lms' );
+			$email_enabled = false;
+			$text          = __( 'Your answers have been submitted and the quiz will be graded soon.', 'sensei-lms' );
+
+			// New quiz graded email.
+			if ( Sensei()->feature_flags->is_enabled( 'email_customization' ) ) {
+				$repository        = new Email_Repository();
+				$quiz_graded_email = $repository->get( 'quiz_graded' );
+
+				if ( $quiz_graded_email && 'publish' === $quiz_graded_email->post_status ) {
+					$email_enabled = true;
+				}
+			} else { // Old quiz graded email.
+				if ( isset( Sensei()->settings->settings['email_learners'] ) &&
+					in_array( 'learner-graded-quiz', (array) Sensei()->settings->settings['email_learners'], true ) ) {
+					$email_enabled = true;
+				}
+			}
+
+			if ( $email_enabled ) {
+				$text .= __( ' You\'ll receive an email once it\'s ready to view.', 'sensei-lms' );
+			}
 		} elseif ( 'failed' === $lesson_status->comment_approved ) {
 			$passmark         = get_post_meta( $quiz_id, '_quiz_passmark', true );
 			$passmark_rounded = Sensei_Utils::round( $passmark, 2 );
