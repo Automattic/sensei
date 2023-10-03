@@ -1859,6 +1859,7 @@ class Sensei_Quiz {
 		$course_id         = Sensei()->lesson->get_course_id( $lesson_id );
 		$is_learning_mode  = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
 		$is_awaiting_grade = self::is_quiz_awaiting_grade_for_user( $lesson_id, get_current_user_id() );
+		$next_lesson_url   = self::maybe_get_next_lesson_url_for_quiz_footer( $lesson_id, get_current_user_id() );
 
 		$show_grade_pending_button = $is_learning_mode && $is_awaiting_grade;
 
@@ -1902,6 +1903,12 @@ class Sensei_Quiz {
 						<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_complete_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
 					</div>
 				</div>
+			<?php endif ?>
+
+			<?php if ( $next_lesson_url ) : ?>
+				<a class="wp-element-button sensei-course-theme__button is-primary" href="<?php echo esc_url( $next_lesson_url ); ?>">
+					<?php esc_attr_e( 'Continue to next lesson', 'sensei-lms' ); ?>
+				</a>
 			<?php endif ?>
 
 			<?php if ( $is_awaiting_grade && $is_learning_mode ) : ?>
