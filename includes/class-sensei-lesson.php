@@ -3811,7 +3811,6 @@ class Sensei_Lesson {
 					// Loop through all questions and pick the ones to be shown based on the random key selection.
 					$questions = [];
 
-					// @psalm-suppress PossibleRawObjectIteration -- For some reason, Psalm thinks that $questions_array is an object.
 					foreach ( $questions_array as $k => $question ) {
 
 						// Random keys will always be an array, unless only one question is to be shown.
