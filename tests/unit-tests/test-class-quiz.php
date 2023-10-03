@@ -2096,4 +2096,55 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertStringNotContainsString( 'Pending teacher grade', $result );
 	}
+
+	public function testQuizFooterActions_WhenPassedInLearningMode_ShowsTheNextLessonButton() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_1  = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+				],
+			]
+		);
+		$this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+				],
+			]
+		);
+
+		$quiz_id          = $this->factory->maybe_create_quiz_for_lesson( $lesson_1 );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		wp_set_current_user( $user_id );
+
+		// Enable course theme;
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_1, 'graded' );
+		update_comment_meta( $comment_id, 'grade', 2 );
+
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		WP_Block_Supports::$block_to_render = [
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/quiz-actions',
+		];
+
+		global $sensei_question_loop;
+		$sensei_question_loop['total_pages'] = 1;
+
+		/* Act */
+		$result = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
+
+		/* Assert */
+		$this->assertStringContainsString( 'Continue to next lesson', $result );
+		echo $result;
+	}
 }
