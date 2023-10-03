@@ -163,8 +163,7 @@ class Email_Sender {
 					$recipient,
 					$subject,
 					$message,
-					$this->get_email_headers(),
-					null
+					$this->get_email_headers()
 				);
 				sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
 			}
