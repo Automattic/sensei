@@ -114,7 +114,7 @@ class Sensei_Course_Theme_Editor {
 	 */
 	public function maybe_add_site_editor_hooks() {
 
-		if ( $this->is_site_editor_request() ) {
+		if ( static::is_site_editor_request() ) {
 			$this->add_site_editor_hooks();
 		}
 	}

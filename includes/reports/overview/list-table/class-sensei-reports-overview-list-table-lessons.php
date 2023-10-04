@@ -91,7 +91,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 			? Sensei_Utils::quotient_as_absolute_rounded_percentage( $total_counts->lesson_completed_count, $total_counts->lesson_start_count ) . '%'
 			: '0%';
 		foreach ( $column_value_map as $key => $value ) {
-			if ( key_exists( $key, $columns ) ) {
+			if ( array_key_exists( $key, $columns ) ) {
 				$columns[ $key ] = $columns[ $key ] . ' (' . esc_html( $value ) . ')';
 			}
 		}
@@ -276,7 +276,8 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 		$default_args  = array(
 			'fields' => 'ids',
 		);
-		$modules_count = count( wp_get_object_terms( $lessons, 'module', $default_args ) );
+		$modules       = wp_get_object_terms( $lessons, 'module', $default_args );
+		$modules_count = is_countable( $modules ) ? count( $modules ) : 0;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		$lesson_completion_info                      = $wpdb->get_row(
 			$wpdb->prepare(

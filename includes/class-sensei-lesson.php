@@ -817,7 +817,7 @@ class Sensei_Lesson {
 		$post   = get_post( $post_id );
 		$blocks = parse_blocks( $post->post_content );
 
-		if ( 0 === count( $blocks ) || 'sensei-lms/featured-video' !== $blocks[0]['blockName'] ) {
+		if ( ! $blocks || 'sensei-lms/featured-video' !== $blocks[0]['blockName'] ) {
 			return null;
 		}
 
@@ -1024,7 +1024,7 @@ class Sensei_Lesson {
 		update_post_meta( $post_id, '_lesson_quiz', $quiz_id );
 		// Mark if the Lesson Quiz has questions
 		$quiz_questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
-		if ( 0 < count( $quiz_questions ) ) {
+		if ( $quiz_questions ) {
 			update_post_meta( $post_id, '_quiz_has_questions', '1' );
 		} else {
 			delete_post_meta( $post_id, '_quiz_has_questions' );
@@ -1405,7 +1405,7 @@ class Sensei_Lesson {
 
 		$html = '';
 
-		if ( count( $questions ) > 0 ) {
+		if ( $questions ) {
 			$question_counter = 1;
 
 			foreach ( $questions as $question ) {
@@ -1455,9 +1455,18 @@ class Sensei_Lesson {
 	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0, $context = 'quiz', $multiple_data = array() ) {
 		global $row_counter;
 
-		$html = '';
+		$random_order                = null;
+		$question_grade              = null;
+		$question_media_add_button   = '';
+		$question_media_delete_class = '';
+		$question_media_link_class   = '';
+		$question_media_link         = '';
+		$question_media_thumb_class  = '';
+		$question_media_thumb        = '';
+		$question_media              = '';
+		$html                        = '';
+		$question_class              = '';
 
-		$question_class = '';
 		if ( 'quiz' == $context ) {
 			if ( ! $row_counter || ! isset( $row_counter ) ) {
 				$row_counter = 1;
@@ -1525,7 +1534,7 @@ class Sensei_Lesson {
 					$question                = get_post( $question_id );
 					$html                   .= '<td class="table-count question-number question-count-column"><span class="number">' . esc_html( $question_counter ) . '</span></td>';
 					$html                   .= '<td>' . esc_html( $question->post_title ) . '</td>';
-					$html                   .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
+					$html                   .= '<td class="question-grade-column">' . esc_html( (string) $question_grade ) . '</td>';
 					$question_types_filtered = ucwords( str_replace( array( 'boolean', 'multiple-choice', 'gap-fill', 'single-line', 'multi-line', 'file-upload' ), array( __( 'True/False', 'sensei-lms' ), __( 'Multiple Choice', 'sensei-lms' ), __( 'Gap Fill', 'sensei-lms' ), __( 'Single Line', 'sensei-lms' ), __( 'Multi Line', 'sensei-lms' ), __( 'File Upload', 'sensei-lms' ) ), $question_type ) );
 					$html                   .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
 
@@ -1583,7 +1592,7 @@ class Sensei_Lesson {
 							// Question grade
 							$html     .= '<div>';
 								$html .= '<label for="question_' . esc_attr( $question_counter ) . '_grade">' . esc_html__( 'Grade:', 'sensei-lms' ) . '</label> ';
-								$html .= '<input type="number" id="question_' . esc_attr( $question_counter ) . '_grade" class="question_grade small-text" name="question_grade" min="0" value="' . esc_attr( $question_grade ) . '" />';
+								$html .= '<input type="number" id="question_' . esc_attr( $question_counter ) . '_grade" class="question_grade small-text" name="question_grade" min="0" value="' . esc_attr( (string) $question_grade ) . '" />';
 							$html     .= '</div>';
 
 							// Random order
@@ -1599,7 +1608,7 @@ class Sensei_Lesson {
 								$html .= '<button id="question_' . esc_attr( $question_counter ) . '_media_button" class="upload_media_file_button button-secondary" data-uploader-title="' . esc_attr__( 'Add file to question', 'sensei-lms' ) . '" data-uploader-button-text="' . esc_attr__( 'Add to question', 'sensei-lms' ) . '">' . esc_html( $question_media_add_button ) . '</button>';
 								$html .= '<button id="question_' . esc_attr( $question_counter ) . '_media_button_delete" class="delete_media_file_button button-secondary ' . esc_attr( $question_media_delete_class ) . '">' . esc_html__( 'Delete file', 'sensei-lms' ) . '</button><br/>';
 								$html .= '<span id="question_' . esc_attr( $question_counter ) . '_media_link" class="question_media_link ' . esc_attr( $question_media_link_class ) . '">' . wp_kses_post( $question_media_link ) . '</span>';
-								$html .= '<br/><img id="question_' . esc_attr( $question_counter ) . '_media_preview" class="question_media_preview ' . esc_attr( $question_media_thumb_class ) . '" src="' . esc_url( $question_media_thumb ) . '" /><br/>';
+								$html .= '<br/><img id="question_' . esc_attr( $question_counter ) . '_media_preview" class="question_media_preview ' . esc_attr( $question_media_thumb_class ) . '" src="' . esc_url( (string) $question_media_thumb ) . '" /><br/>';
 								$html .= '<input type="hidden" id="question_' . esc_attr( $question_counter ) . '_media" class="question_media" name="question_media" value="' . esc_attr( $question_media ) . '" />';
 							$html     .= '</div>';
 
@@ -2867,6 +2876,7 @@ class Sensei_Lesson {
 	 * @access public
 	 */
 	public function lesson_update_question() {
+		$nonce = '';
 		// Add nonce security to the request.
 		if ( isset( $_POST['lesson_update_question_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
@@ -3151,6 +3161,7 @@ class Sensei_Lesson {
 	}
 
 	public function lesson_update_grade_type() {
+		$nonce = '';
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_grade_type_nonce'] ) ) {
 
@@ -3175,6 +3186,7 @@ class Sensei_Lesson {
 	}
 
 	public function lesson_update_question_order() {
+		$nonce = '';
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_question_order_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
@@ -3208,6 +3220,7 @@ class Sensei_Lesson {
 	}
 
 	public function lesson_update_question_order_random() {
+		$nonce = '';
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_question_order_random_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
@@ -3244,6 +3257,7 @@ class Sensei_Lesson {
 		$question_wrong_answers = $question_right_answers = array();
 		$question_type          = 'multiple-choice';
 		$question_category      = '';
+		$question_grade         = null;
 
 		// Handle Question Type
 		if ( isset( $data['question_type'] ) && ( '' != $data['question_type'] ) ) {
@@ -3365,7 +3379,7 @@ class Sensei_Lesson {
 			}
 		}
 
-		$wrong_answer_count = count( $question_wrong_answers );
+		$wrong_answer_count = is_countable( $question_wrong_answers ) ? count( $question_wrong_answers ) : 0;
 
 		// Only save if there is a valid title
 		if ( $post_title != '' ) {
@@ -3662,7 +3676,7 @@ class Sensei_Lesson {
 		// If viewing quiz on the frontend then show questions in random order if set.
 		if ( ! is_admin() ) {
 			$random_order = get_post_meta( $quiz_id, '_random_question_order', true );
-			if ( $random_order && 'yes' === $random_order ) {
+			if ( 'yes' === $random_order ) {
 				$orderby = 'rand';
 			}
 		}
@@ -3788,13 +3802,15 @@ class Sensei_Lesson {
 				// Negative amount is considered as All (same as zero).
 				if ( $show_questions > 0 ) {
 					// Get random set of array keys from selected questions array.
+					$questions_count    = is_countable( $questions_array ) ? count( $questions_array ) : 0;
 					$selected_questions = array_rand(
 						$questions_array,
-						$show_questions > count( $questions_array ) ? count( $questions_array ) : $show_questions
+						$show_questions > $questions_count ? $questions_count : $show_questions
 					);
 
-					// Loop through all questions and pick the the ones to be shown based on the random key selection.
+					// Loop through all questions and pick the ones to be shown based on the random key selection.
 					$questions = [];
+
 					foreach ( $questions_array as $k => $question ) {
 
 						// Random keys will always be an array, unless only one question is to be shown.
