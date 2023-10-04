@@ -2434,7 +2434,7 @@ class Sensei_Quiz {
 	 *
 	 * @return string|null Next lesson URL if condition holds, null otherwise.
 	 */
-	public static function maybe_get_next_lesson_url_for_quiz_footer( $lesson_id = null, $user_id = null ) {
+	private static function maybe_get_next_lesson_url_for_quiz_footer( $lesson_id = null, $user_id = null ) {
 		if ( empty( $lesson_id ) ) {
 			$lesson_id = Sensei()->quiz->get_lesson_id();
 		}
