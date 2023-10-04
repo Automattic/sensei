@@ -2306,7 +2306,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		wp_set_current_user( $user_id );
 
-		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_1, 'failed' );
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_1, 'passed' );
 		update_comment_meta( $comment_id, 'grade', 2 );
 		update_post_meta( $quiz_id, '_pass_required', 0 );
 
@@ -2324,7 +2324,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$result = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
 
 		/* Assert */
-		$this->assertStringContainsString( 'Continue to next lesson', $result );
+		$this->assertStringNotContainsString( 'Continue to next lesson', $result );
 	}
 
 	public function testActionButtons_WhenPassedButNextLessonHasLowerOrder_DoesNotShowTheNextLessonButton() {
