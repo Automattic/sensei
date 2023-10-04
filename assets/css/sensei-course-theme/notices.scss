@@ -1,7 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
 @import '../notices';
 @import './quiz-graded';
-
-$mobile_break_point: 782px;
 
 body.sensei-course-theme {
 	& > .sensei-message {
@@ -12,7 +11,11 @@ body.sensei-course-theme {
 .sensei-course-theme .sensei-lms-notice {
 	background-color: var(--wp--preset--color--primary, #f6f7f7);
 	color: var(--wp--preset--color--background, #1e1e1e);
-	padding: 1.5rem;
+	padding: 24px 24px 8px 24px;
+
+	@media (min-width: $break-medium) {
+		padding-bottom: 24px;
+	}
 }
 
 .sensei-course-theme-lesson-quiz-notice {
@@ -66,8 +69,7 @@ body.sensei-course-theme {
 		height: 24px;
 	}
 
-	@media screen and (max-width: ($mobile_break_point)) {
-
+	@media screen and (max-width: $break-medium) {
 		flex-wrap: nowrap;
 		gap: 0;
 
