@@ -1897,7 +1897,7 @@ class Sensei_Quiz {
 							class="wp-block-button__link button quiz-submit complete sensei-course-theme__button sensei-stop-double-submission"
 							style="<?php echo esc_attr( $button_inline_styles ); ?>"
 						>
-							<?php esc_attr_e( 'Complete Quiz', 'sensei-lms' ); ?>
+							<?php esc_html_e( 'Complete Quiz', 'sensei-lms' ); ?>
 						</button>
 
 						<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_complete_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
@@ -1907,13 +1907,13 @@ class Sensei_Quiz {
 
 			<?php if ( $next_lesson_url ) : ?>
 				<a class="wp-element-button sensei-course-theme__button is-primary" href="<?php echo esc_url( $next_lesson_url ); ?>">
-					<?php esc_attr_e( 'Continue to next lesson', 'sensei-lms' ); ?>
+					<?php esc_html_e( 'Continue to next lesson', 'sensei-lms' ); ?>
 				</a>
 			<?php endif ?>
 
 			<?php if ( $is_awaiting_grade && $is_learning_mode ) : ?>
 				<button type="button" class="wp-element-button sensei-course-theme__button is-primary" disabled>
-					<?php esc_attr_e( 'Pending teacher grade', 'sensei-lms' ); ?>
+					<?php esc_html_e( 'Pending teacher grade', 'sensei-lms' ); ?>
 				</button>
 			<?php endif ?>
 
@@ -1921,7 +1921,7 @@ class Sensei_Quiz {
 				<?php if ( $is_reset_allowed ) : ?>
 					<div class="sensei-quiz-action">
 						<button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission sensei-course-theme__button is-link">
-							<?php esc_attr_e( 'Restart Quiz', 'sensei-lms' ); ?>
+							<?php esc_html_e( 'Restart Quiz', 'sensei-lms' ); ?>
 						</button>
 
 						<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
@@ -1931,7 +1931,7 @@ class Sensei_Quiz {
 				<?php if ( ! $is_quiz_completed ) : ?>
 					<div class="sensei-quiz-action">
 						<button type="submit" name="quiz_save" form="sensei-quiz-form" class="quiz-submit save sensei-stop-double-submission">
-							<?php esc_attr_e( 'Save Progress', 'sensei-lms' ); ?>
+							<?php esc_html_e( 'Save Progress', 'sensei-lms' ); ?>
 						</button>
 
 						<input type="hidden" name="woothemes_sensei_save_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
