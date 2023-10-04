@@ -2097,7 +2097,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'Pending teacher grade', $result );
 	}
 
-	public function testQuizFooterActions_WhenPassedInLearningMode_ShowsTheNextLessonButton() {
+	public function testActionButtons_WhenPassedInLearningMode_ShowsTheNextLessonButton() {
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2147,7 +2147,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'Continue to next lesson', $result );
 	}
 
-	public function testQuizFooterActions_WhenFailedInLearningModeButPassRequired_DoesNotShowTheNextLessonButton() {
+	public function testActionButtons_WhenFailedInLearningModeButPassRequired_DoesNotShowTheNextLessonButton() {
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2205,10 +2205,10 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$result = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
 
 		/* Assert */
-		$this->assertStringNotContainsString( 'Continue to next lesson', $result );
+		$this->assertStringContainsString( 'Contact teacher', $result );
 	}
 
-	public function testQuizFooterActions_WhenFailedInLearningModeButPassNotRequired_ShowsTheNextLessonButton() {
+	public function testActionButtons_WhenFailedInLearningModeButPassNotRequired_ShowsTheNextLessonButton() {
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2269,7 +2269,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'Continue to next lesson', $result );
 	}
 
-	public function testQuizFooterActions_WhenPassedButNotInLearningMode_DoesNotShowTheNextLessonButton() {
+	public function testActionButtons_WhenPassedButNotInLearningMode_DoesNotShowTheNextLessonButton() {
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2327,7 +2327,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'Continue to next lesson', $result );
 	}
 
-	public function testQuizFooterActions_WhenPassedButNextLessonHasLowerOrder_DoesNotShowTheNextLessonButton() {
+	public function testActionButtons_WhenPassedButNextLessonHasLowerOrder_DoesNotShowTheNextLessonButton() {
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2388,7 +2388,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'Continue to next lesson', $result );
 	}
 
-	public function testQuizFooterActions_WhenQuizPassedButOnLessonPage_DoesNotShowTheNextLessonButton() {
+	public function testActionButtons_WhenQuizPassedButOnLessonPage_DoesNotShowTheNextLessonButton() {
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
