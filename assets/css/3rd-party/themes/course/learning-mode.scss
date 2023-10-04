@@ -1,3 +1,4 @@
+@import '~@wordpress/base-styles/breakpoints';
 @import "questions";
 @import "quiz";
 
@@ -257,8 +258,6 @@ body {
 }
 
 .sensei-course-theme-quiz-graded-notice {
-	border-radius: 4px;
-
 	&__text {
 		margin: 0 0 32px;
 	}
@@ -272,6 +271,10 @@ body {
 				border-color: var(--wp--preset--color--background);
 			}
 		}
+	}
+
+	@media (min-width: $break-medium) {
+		border-radius: 4px;
 	}
 }
 
