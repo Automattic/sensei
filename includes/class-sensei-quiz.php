@@ -1859,7 +1859,7 @@ class Sensei_Quiz {
 		$course_id         = Sensei()->lesson->get_course_id( $lesson_id );
 		$is_learning_mode  = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
 		$is_awaiting_grade = self::is_quiz_awaiting_grade_for_user( $lesson_id, get_current_user_id() );
-		$next_lesson_url   = self::maybe_get_next_lesson_url_for_quiz_footer( $lesson_id, get_current_user_id() );
+		$post_grade_action = self::maybe_get_button_html_for_quiz_footer( $lesson_id, get_current_user_id() );
 
 		$show_grade_pending_button = $is_learning_mode && $is_awaiting_grade;
 
@@ -1869,7 +1869,7 @@ class Sensei_Quiz {
 			]
 		);
 
-		$has_actions = $is_reset_allowed || ! $is_quiz_completed || $show_grade_pending_button || ! empty( $next_lesson_url );
+		$has_actions = $is_reset_allowed || ! $is_quiz_completed || $show_grade_pending_button || ! empty( $post_grade_action );
 
 		if ( ! $has_actions ) {
 			return;
@@ -1905,11 +1905,9 @@ class Sensei_Quiz {
 				</div>
 			<?php endif ?>
 
-			<?php if ( $next_lesson_url ) : ?>
-				<a class="wp-element-button sensei-course-theme__button is-primary" href="<?php echo esc_url( $next_lesson_url ); ?>">
-					<?php esc_html_e( 'Continue to next lesson', 'sensei-lms' ); ?>
-				</a>
-			<?php endif ?>
+			<?php if ( $post_grade_action ) :
+				echo wp_kses_post( $post_grade_action );
+			endif ?>
 
 			<?php if ( $is_awaiting_grade && $is_learning_mode ) : ?>
 				<button type="button" class="wp-element-button sensei-course-theme__button is-primary" disabled>
@@ -2426,15 +2424,15 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Returns next lesson URL when meets the conditions of the next lesson button to be displayed
-	 * in the quiz footer, returns null otherwise.
+	 * Returns the HTML for the next lesson button or the contact Teacher button based on condition.
+	 * If none of the conditions are met, returns null.
 	 *
 	 * @param ?int $lesson_id The lesson ID.
 	 * @param ?int $user_id   The user ID.
 	 *
-	 * @return string|null Next lesson URL if condition holds, null otherwise.
+	 * @return string|null Next lesson or Contact Teacher button if condition holds, null otherwise.
 	 */
-	private static function maybe_get_next_lesson_url_for_quiz_footer( $lesson_id = null, $user_id = null ) {
+	private static function maybe_get_button_html_for_quiz_footer( $lesson_id = null, $user_id = null ) {
 		if ( empty( $lesson_id ) ) {
 			$lesson_id = Sensei()->quiz->get_lesson_id();
 		}
@@ -2456,14 +2454,41 @@ class Sensei_Quiz {
 		}
 
 		$is_pass_required = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
+		$is_reset_allowed = self::is_reset_allowed( $lesson_id );
 
 		if ( $is_pass_required && 'failed' === $lesson_status->comment_approved ) {
-			return null;
+
+			if ( $is_reset_allowed ) {
+				return null;
+			}
+
+			$block  = new Sensei_Block_Contact_Teacher();
+			$button = self::get_primary_button_anchor_html( __( 'Contact teacher', 'sensei-lms' ), '#' );
+			return $block->render_contact_teacher_block( [], $button );
 		}
 
-		$prev_next_urls = sensei_get_prev_next_lessons( $lesson_id );
+		$prev_next_urls  = sensei_get_prev_next_lessons( $lesson_id );
+		$next_lesson_url = $prev_next_urls['next']['url'] ?? null;
 
-		return $prev_next_urls['next']['url'] ?? null;
+		if ( $next_lesson_url ) {
+			return self::get_primary_button_anchor_html( __( 'Continue to next lesson', 'sensei-lms' ), $next_lesson_url );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the HTML for a primary button anchor.
+	 *
+	 * @param string $button_text The button text.
+	 * @param string $url         The URL.
+	 *
+	 * @return string The HTML for the primary button anchor.
+	 */
+	private static function get_primary_button_anchor_html( $button_text, $url ) {
+		return '<a class="wp-element-button sensei-course-theme__button is-primary" href="' . esc_url( $url ) . '">' .
+						esc_html( $button_text ) .
+				'</a>';
 	}
 
 }
