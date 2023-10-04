@@ -2444,7 +2444,7 @@ class Sensei_Quiz {
 		}
 
 		if ( empty( $lesson_id ) || empty( $user_id ) || 'lesson' !== get_post_type( $lesson_id ) || 'quiz' !== get_post_type() ) {
-			return '';
+			return null;
 		}
 
 		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
