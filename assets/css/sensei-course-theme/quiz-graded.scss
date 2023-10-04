@@ -1,5 +1,13 @@
 .sensei-course-theme-quiz-graded-notice {
+	/* --content-padding comes from mobile.scss */
+	margin-left: calc(var(--content-padding) * -1);
+	margin-right: calc(var(--content-padding) * -1);
 	padding-bottom: 36px;
+
+	@media (min-width: $break-medium) {
+		margin-left: 0;
+		margin-right: 0;
+	}
 
 	&__title {
 		font-size: 24px;
