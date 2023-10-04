@@ -1905,11 +1905,9 @@ class Sensei_Quiz {
 				</div>
 			<?php endif ?>
 
-			<?php
-				if ( $post_grade_action ) {
-					echo wp_kses_post( $post_grade_action );
-				}
-			?>
+			<?php if ( $is_learning_mode && $post_grade_action ) : ?>
+				<?php echo wp_kses_post( $post_grade_action ); ?>
+			<?php endif ?>
 
 			<?php if ( $is_awaiting_grade && $is_learning_mode ) : ?>
 				<button type="button" class="wp-element-button sensei-course-theme__button is-primary" disabled>
