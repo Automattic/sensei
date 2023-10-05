@@ -1,6 +1,5 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '../notices';
-@import './quiz-graded';
 
 body.sensei-course-theme {
 	& > .sensei-message {
@@ -8,6 +7,7 @@ body.sensei-course-theme {
 	}
 }
 
+/* All notices */
 .sensei-course-theme .sensei-lms-notice {
 	background-color: var(--wp--preset--color--primary, #f6f7f7);
 	color: var(--wp--preset--color--background, #1e1e1e);
@@ -18,6 +18,7 @@ body.sensei-course-theme {
 	}
 }
 
+/* Quiz notice on lesson page */
 .sensei-course-theme-lesson-quiz-notice {
 	display: flex;
 	flex-flow: wrap;
@@ -80,6 +81,57 @@ body.sensei-course-theme {
 	}
 }
 
+/* Quiz notice on quiz page */
+.sensei-course-theme-quiz-graded-notice {
+	/* --content-padding comes from mobile.scss */
+	margin-left: calc(var(--content-padding) * -1);
+	margin-right: calc(var(--content-padding) * -1);
+	padding-bottom: 36px;
+
+	@media (min-width: $break-medium) {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	&__title {
+		font-size: 24px;
+		font-weight: 700;
+		line-height: 1.2;
+		margin: 0;
+	}
+
+	&__text {
+		font-size: 18px;
+		line-height: 1.6;
+		margin: 0 0 20px;
+	}
+
+	&__actions {
+		align-items: center;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+
+		@media (min-width: $break-medium) {
+			flex-direction: row;
+			justify-content: space-between;
+		}
+	}
+
+	&__reset-quiz-form {
+		margin-bottom: 0;
+
+		.sensei-course-theme__button {
+			background-color: transparent;
+			border: none;
+			color: inherit;
+			font-family: var(--wp--preset--font-family--body-font);
+			font-size: 18px;
+		}
+	}
+}
+
+/* Locked lesson notice */
 .sensei-course-theme-locked-lesson-notice {
 	&__header {
 		display: flex;
