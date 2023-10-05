@@ -1859,6 +1859,7 @@ class Sensei_Quiz {
 		$course_id         = Sensei()->lesson->get_course_id( $lesson_id );
 		$is_learning_mode  = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
 		$is_awaiting_grade = self::is_quiz_awaiting_grade_for_user( $lesson_id, get_current_user_id() );
+		$post_grade_action = self::maybe_get_button_html_for_quiz_footer( $lesson_id, get_current_user_id() );
 
 		$show_grade_pending_button = $is_learning_mode && $is_awaiting_grade;
 
@@ -1868,7 +1869,7 @@ class Sensei_Quiz {
 			]
 		);
 
-		$has_actions = $is_reset_allowed || ! $is_quiz_completed || $show_grade_pending_button;
+		$has_actions = $is_reset_allowed || ! $is_quiz_completed || $show_grade_pending_button || ! empty( $post_grade_action );
 
 		if ( ! $has_actions ) {
 			return;
@@ -1896,7 +1897,7 @@ class Sensei_Quiz {
 							class="wp-block-button__link button quiz-submit complete sensei-course-theme__button sensei-stop-double-submission"
 							style="<?php echo esc_attr( $button_inline_styles ); ?>"
 						>
-							<?php esc_attr_e( 'Complete Quiz', 'sensei-lms' ); ?>
+							<?php esc_html_e( 'Complete Quiz', 'sensei-lms' ); ?>
 						</button>
 
 						<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_complete_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
@@ -1904,9 +1905,13 @@ class Sensei_Quiz {
 				</div>
 			<?php endif ?>
 
+			<?php if ( $is_learning_mode && $post_grade_action ) : ?>
+				<?php echo wp_kses_post( $post_grade_action ); ?>
+			<?php endif ?>
+
 			<?php if ( $is_awaiting_grade && $is_learning_mode ) : ?>
 				<button type="button" class="wp-element-button sensei-course-theme__button is-primary" disabled>
-					<?php esc_attr_e( 'Pending teacher grade', 'sensei-lms' ); ?>
+					<?php esc_html_e( 'Pending teacher grade', 'sensei-lms' ); ?>
 				</button>
 			<?php endif ?>
 
@@ -1914,7 +1919,7 @@ class Sensei_Quiz {
 				<?php if ( $is_reset_allowed ) : ?>
 					<div class="sensei-quiz-action">
 						<button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission sensei-course-theme__button is-link">
-							<?php esc_attr_e( 'Restart Quiz', 'sensei-lms' ); ?>
+							<?php esc_html_e( 'Restart Quiz', 'sensei-lms' ); ?>
 						</button>
 
 						<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
@@ -1924,7 +1929,7 @@ class Sensei_Quiz {
 				<?php if ( ! $is_quiz_completed ) : ?>
 					<div class="sensei-quiz-action">
 						<button type="submit" name="quiz_save" form="sensei-quiz-form" class="quiz-submit save sensei-stop-double-submission">
-							<?php esc_attr_e( 'Save Progress', 'sensei-lms' ); ?>
+							<?php esc_html_e( 'Save Progress', 'sensei-lms' ); ?>
 						</button>
 
 						<input type="hidden" name="woothemes_sensei_save_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
@@ -2417,6 +2422,75 @@ class Sensei_Quiz {
 
 		return $lesson_status && 'ungraded' === $lesson_status->comment_approved;
 	}
+
+	/**
+	 * Returns the HTML for the next lesson button or the contact Teacher button based on condition.
+	 * If none of the conditions are met, returns null.
+	 *
+	 * @param ?int $lesson_id The lesson ID.
+	 * @param ?int $user_id   The user ID.
+	 *
+	 * @return string|null Next lesson or Contact Teacher button if condition holds, null otherwise.
+	 */
+	private static function maybe_get_button_html_for_quiz_footer( $lesson_id = null, $user_id = null ) {
+		if ( empty( $lesson_id ) ) {
+			$lesson_id = Sensei()->quiz->get_lesson_id();
+		}
+
+		if ( empty( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $lesson_id ) || empty( $user_id ) || 'lesson' !== get_post_type( $lesson_id ) || 'quiz' !== get_post_type() ) {
+			return null;
+		}
+
+		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+
+		$is_complete = $lesson_status && in_array( $lesson_status->comment_approved, [ 'complete', 'graded', 'passed', 'failed' ], true );
+
+		if ( ! $is_complete ) {
+			return null;
+		}
+
+		$is_pass_required = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
+		$is_reset_allowed = self::is_reset_allowed( $lesson_id );
+
+		if ( $is_pass_required && 'failed' === $lesson_status->comment_approved ) {
+
+			if ( $is_reset_allowed ) {
+				return null;
+			}
+
+			$block  = new Sensei_Block_Contact_Teacher();
+			$button = self::get_primary_button_anchor_html( __( 'Contact teacher', 'sensei-lms' ), '#' );
+			return $block->render_contact_teacher_block( [], $button );
+		}
+
+		$prev_next_urls  = sensei_get_prev_next_lessons( $lesson_id );
+		$next_lesson_url = $prev_next_urls['next']['url'] ?? null;
+
+		if ( $next_lesson_url ) {
+			return self::get_primary_button_anchor_html( __( 'Continue to next lesson', 'sensei-lms' ), $next_lesson_url );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the HTML for a primary button anchor.
+	 *
+	 * @param string $button_text The button text.
+	 * @param string $url         The URL.
+	 *
+	 * @return string The HTML for the primary button anchor.
+	 */
+	private static function get_primary_button_anchor_html( $button_text, $url ) {
+		return '<a class="wp-element-button sensei-course-theme__button is-primary" href="' . esc_url( $url ) . '">' .
+						esc_html( $button_text ) .
+				'</a>';
+	}
+
 }
 
 /**
