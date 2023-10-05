@@ -61,13 +61,13 @@ body {
 	.wp-block-post-content {
 		margin-top: 40px;
 
-		& > *, .wp-block-group__inner-container > * {
+		& > *, & ~ div > *, .wp-block-group__inner-container > * {
 			max-width: var(--content-size) !important;
 			margin-left: auto;
 			margin-right: auto;
 		}
 
-		&, & > & {
+		&, & > &, & ~ div {
 			max-width: unset !important;
 			width: unset !important;
 			padding: 0 !important;
