@@ -66,6 +66,23 @@
 			}
 		}
 	}
+
+	&.alert {
+		background: #ffd9c8;
+
+		&:before {
+			color: $error;
+			content: '\f071';
+		}
+
+		a {
+			color: darken($error, 10%);
+
+			&:hover {
+				color: darken($error, 15%);
+			}
+		}
+	}
 }
 
 .wp-block-sensei-lms-learner-courses {
