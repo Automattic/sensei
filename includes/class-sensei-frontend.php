@@ -1076,7 +1076,7 @@ class Sensei_Frontend {
 						<?php wp_nonce_field( 'sensei-register' ); ?>
 
 						<p class="form-row">
-							<input type="submit" class="button" name="register" value="<?php esc_attr_e( 'Register', 'sensei-lms' ); ?>" />
+							<input type="submit" class="button wp-element-button" name="register" value="<?php esc_attr_e( 'Register', 'sensei-lms' ); ?>" />
 						</p>
 
 						<?php do_action( 'sensei_register_form_end' ); ?>
