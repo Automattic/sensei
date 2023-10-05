@@ -118,6 +118,14 @@ body.sensei-course-theme {
 		}
 	}
 
+	&__pending-grade {
+		opacity: 0.6;
+
+		.wp-block-button__link:hover {
+			cursor: default;
+		}
+	}
+
 	&__reset-quiz-form {
 		margin-bottom: 0;
 

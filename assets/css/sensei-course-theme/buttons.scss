@@ -4,16 +4,7 @@ $breakpoint: 782px;
 	display: flex;
 	align-items: center;
 	gap: 12px;
-
-	.sensei-course-theme-quiz-graded-notice__pending-grade {
-		opacity: 0.6;
-
-		.wp-block-button__link:hover {
-			cursor: default;
-		}
-	}
 }
-
 
 .sensei-course-theme__button,
 .sensei-course-theme__link,
