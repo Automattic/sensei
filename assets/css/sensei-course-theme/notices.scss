@@ -118,7 +118,6 @@ body.sensei-course-theme {
 
 		@media (min-width: $break-medium) {
 			flex-direction: row;
-			justify-content: space-between;
 		}
 	}
 
@@ -139,6 +138,10 @@ body.sensei-course-theme {
 			color: inherit;
 			font-family: var(--wp--preset--font-family--body-font);
 			font-size: 18px;
+		}
+
+		@media (min-width: $break-medium) {
+			margin-left: auto;
 		}
 	}
 }
