@@ -98,7 +98,10 @@ class Sensei_Scheduler {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param string $class_name Class for the scheduler that should be used by Sensei.
+		 * @hook sensei_scheduler_class
+		 *
+		 * @param {string} $class_name Class for the scheduler that should be used by Sensei.
+		 * @return {string} Filtered class name.
 		 */
 		$class_name = apply_filters( 'sensei_scheduler_class', $default_class_name );
 		if ( ! is_subclass_of( $class_name, Sensei_Scheduler_Interface::class, true ) ) {
