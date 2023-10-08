@@ -241,7 +241,6 @@ class Sensei_Grading_User_Quiz {
 				 * }
 				 * @param {string} $type
 				 * @param {int}    $question_id
-				 *
 				 * @return {array|null}
 				 */
 				$possibly_new_args = apply_filters( 'sensei_grading_display_quiz_question', null, $type, $question_id, $right_answer, $user_answer_content );
@@ -311,7 +310,17 @@ class Sensei_Grading_User_Quiz {
 						</div>
 					</div>
 					<div class="sensei-grading-answer">
-						<h4><?php echo wp_kses_post( apply_filters( 'sensei_question_title', $question->post_title ) ); ?></h4>
+						<h4><?php
+							/**
+							 * Filters the question title.
+							 *
+							 * @hook sensei_question_title
+							 *
+							 * @param {string} $question_title The question title.
+							 * @return {string} Filtered question title.
+							 */
+							echo wp_kses_post( apply_filters( 'sensei_question_title', $question->post_title ) );
+						?></h4>
 						<?php
 						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped before core filter applied.
 						echo Sensei_Question::get_the_question_description( $question_id );
