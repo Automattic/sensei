@@ -129,11 +129,11 @@ class Sensei_Quiz {
 		 * editor if necessary.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook sensei_quiz_enable_block_based_editor
 		 *
 		 * @param {bool} $is_block_based_editor_enabled True if block based editor is enabled.
-		 *
-		 * @return {bool}
+		 * @return {bool} Filtered value.
 		 */
 		return apply_filters( 'sensei_quiz_enable_block_based_editor', $is_block_editor );
 	}
@@ -732,11 +732,11 @@ class Sensei_Quiz {
 		 * Filters allowed which mimetypes are allowed.
 		 *
 		 * @since 3.7.0
+		 *
 		 * @hook sensei_quiz_answer_file_upload_types
 		 *
 		 * @param {false|array} $allowed_mime_types Array of allowed mimetypes. Returns `false` to allow all file types.
 		 * @param {int}         $question_id        Question post ID.
-		 *
 		 * @return {false|array} Allowed mime types or false to allow all types.
 		 */
 		$allowed_mime_types = apply_filters( 'sensei_quiz_answer_file_upload_types', false, $question_id );
@@ -1401,10 +1401,14 @@ class Sensei_Quiz {
 		 * Filter the user question feedback.
 		 *
 		 * @since 1.9.12
-		 * @param string $feedback
-		 * @param int    $lesson_id
-		 * @param int    $question_id
-		 * @param int    $user_id
+		 *
+		 * @hook sensei_user_question_feedback
+		 *
+		 * @param {string} $feedback    The feedback.
+		 * @param {int}    $lesson_id   The lesson ID.
+		 * @param {int}    $question_id The question ID.
+		 * @param {int}    $user_id     The user ID.
+		 * @return {string} The filtered feedback.
 		 */
 		return apply_filters( 'sensei_user_question_feedback', $feedback, $lesson_id, $question_id, $user_id );
 
