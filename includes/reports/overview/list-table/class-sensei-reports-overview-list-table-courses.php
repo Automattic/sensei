@@ -120,7 +120,26 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		);
 
 		// Backwards compatible filter name, moving forward should have single filter name.
+		/**
+		 * Filter the columns for the courses overview report.
+		 *
+		 * @hook sensei_analysis_overview_courses_columns
+		 *
+		 * @param {array} $columns The columns for the courses overview report.
+		 * @param {Sensei_Reports_Overview_List_Table_Courses} $this The current instance of the class.
+		 * @return {array} The filtered columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_courses_columns', $columns, $this );
+
+		/**
+		 * Filter the columns for the courses overview report.
+		 *
+		 * @hook sensei_analysis_overview_columns
+		 *
+		 * @param {array} $columns The columns for the courses overview report.
+		 * @param {Sensei_Reports_Overview_List_Table_Courses} $this The current instance of the class.
+		 * @return {array} The filtered columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_columns', $columns, $this );
 
 		$this->columns = $columns;
@@ -140,7 +159,26 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		);
 
 		// Backwards compatible filter name, moving forward should have single filter name.
+		/**
+		 * Filter the sortable columns for the courses overview report.
+		 *
+		 * @hook sensei_analysis_overview_courses_columns_sortable
+		 *
+		 * @param {array} $columns The sortable columns for the courses overview report.
+		 * @param {Sensei_Reports_Overview_List_Table_Courses} $this The current instance of the class.
+		 * @return {array} The filtered sortable columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_courses_columns_sortable', $columns, $this );
+
+		/**
+		 * Filter the sortable columns for the courses overview report.
+		 *
+		 * @hook sensei_analysis_overview_columns_sortable
+		 *
+		 * @param {array} $columns The sortable columns for the courses overview report.
+		 * @param {Sensei_Reports_Overview_List_Table_Courses} $this The current instance of the class.
+		 * @return {array} The filtered sortable columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_columns_sortable', $columns, $this );
 
 		return $columns;
@@ -164,6 +202,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			'type'    => 'sensei_course_status',
 			'status'  => 'complete',
 		);
+		/** This filter is documented in sensei-analysis-overview-list-table.php */
 		$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
 
 		// Average Grade will be N/A if the course has no lessons or quizzes, if none of the lessons
@@ -179,6 +218,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 			);
 
+			/** This filter is documented in sensei-analysis-overview-list-table.php */
 			$percent_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
 			$percent_total = $this->grading::get_course_users_grades_sum( $item->ID );
 

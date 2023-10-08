@@ -90,7 +90,26 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		);
 
 		// Backwards compatible filter name, moving forward should have single filter name.
+		/**
+		 * Filter the columns that are going to be used in the table.
+		 *
+		 * @hook sensei_analysis_overview_users_columns
+		 *
+		 * @param {array} $columns The array of columns to use with the table.
+		 * @param {Sensei_Reports_Overview_List_Table_Students} $this The current instance of the class.
+		 * @return {array} Filtered columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_users_columns', $columns, $this );
+
+		/**
+		 * Filter the columns that are going to be used in the table.
+		 *
+		 * @hook sensei_analysis_overview_columns
+		 *
+		 * @param {array} $columns The array of columns to use with the table.
+		 * @param {Sensei_Reports_Overview_List_Table_Students} $this The current instance of the class.
+		 * @return {array} Filtered columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_columns', $columns, $this );
 
 		$this->columns = $columns;
@@ -112,7 +131,26 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		];
 
 		// Backwards compatible filter name, moving forward should have single filter name.
+		/**
+		 * Filter the sortable columns that are going to be used in the table.
+		 *
+		 * @hook sensei_analysis_overview_users_columns_sortable
+		 *
+		 * @param {array} $columns The array of columns to use with the table.
+		 * @param {Sensei_Reports_Overview_List_Table_Students} $this The current instance of the class.
+		 * @return {array} Filtered columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_users_columns_sortable', $columns, $this );
+
+		/**
+		 * Filter the sortable columns that are going to be used in the table.
+		 *
+		 * @hook sensei_analysis_overview_columns_sortable
+		 *
+		 * @param {array} $columns The array of columns to use with the table.
+		 * @param {Sensei_Reports_Overview_List_Table_Students} $this The current instance of the class.
+		 * @return {array} Filtered columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_columns_sortable', $columns, $this );
 
 		return $columns;
@@ -133,6 +171,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			'type'    => 'sensei_course_status',
 			'status'  => 'any',
 		);
+		/** Filter is documented in class-sensei-analysis-overview-list-table.php */
 		$user_courses_started = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item ) );
 
 		// Get Completed Courses.
@@ -141,6 +180,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			'type'    => 'sensei_course_status',
 			'status'  => 'complete',
 		);
+		/** Filter is documented in class-sensei-analysis-overview-list-table.php */
 		$user_courses_ended = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_ended', $course_args, $item ) );
 
 		// Get Quiz Grades.
@@ -151,6 +191,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Filtering graded only.
 		);
 
+		/** Filter is documented in class-sensei-analysis-overview-list-table.php */
 		$grade_count        = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), false );
 		$grade_total        = Sensei_Grading::get_user_graded_lessons_sum( $item->ID );
 		$user_average_grade = 0;
