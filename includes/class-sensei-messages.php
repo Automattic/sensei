@@ -19,13 +19,6 @@ class Sensei_Messages {
 	public $meta_fields;
 
 	/**
-	 * The message notice.
-	 *
-	 * @var string
-	 */
-	public $message_notice;
-
-	/**
 	 * The nonce name when submitting a new message.
 	 *
 	 * @var string
@@ -46,7 +39,6 @@ class Sensei_Messages {
 		$this->token       = 'messages';
 		$this->post_type   = 'sensei_message';
 		$this->meta_fields = array( 'sender', 'receiver' );
-		$this->message_notice = '';
 
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'remove_meta_box' ) );
