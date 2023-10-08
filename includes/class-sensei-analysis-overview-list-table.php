@@ -136,9 +136,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		 *
 		 * Backwards compatible filter name, moving forward should have single filter name.
 		 *
-		 * @hook sensei_analysis_overview_{type}_columns
-		 *
 		 * @deprecated $$next-version$$ Use sensei_analysis_overview_columns instead.
+		 *
+		 * @hook sensei_analysis_overview_{type}_columns
 		 *
 		 * @param {array} $columns Array of columns for the report table.
 		 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
@@ -235,9 +235,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		 *
 		 * Backwards compatible filter name, moving forward should have single filter name.
 		 *
-		 * @hook sensei_analysis_overview_{type}_columns_sortable
-		 *
 		 * @deprecated $$next-version$$ Use sensei_analysis_overview_columns_sortable instead.
+		 *
+		 * @hook sensei_analysis_overview_{type}_columns_sortable
 		 *
 		 * @param {array} $columns Array of sortable columns for the report table.
 		 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
