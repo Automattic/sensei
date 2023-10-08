@@ -360,7 +360,6 @@ class Sensei_List_Table extends WP_List_Table {
 			 * @hook sensei_list_bulk_actions
 			 *
 			 * @param {string} $bulk_action_html Output of bulk action function.
-			 *
 			 * @return {string} Filtered output of bulk action function.
 			 */
 			apply_filters( 'sensei_list_bulk_actions', $bulk_action_html ),
