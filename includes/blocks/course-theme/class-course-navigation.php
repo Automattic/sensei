@@ -282,6 +282,15 @@ class Course_Navigation {
 	private function lesson_status_icon( $status ) {
 		$icon = Sensei()->assets->get_icon( self::ICONS[ $status ], 'sensei-lms-course-navigation-lesson__status' );
 
+		/**
+		 * Filter the lesson status icon.
+		 *
+		 * @hook sensei_learning_mode_lesson_status_icon
+		 *
+		 * @param {string} $icon   The icon HTML.
+		 * @param {string} $status The lesson status.
+		 * @return {string} The icon HTML.
+		 */
 		return apply_filters( 'sensei_learning_mode_lesson_status_icon', $icon, $status );
 	}
 
