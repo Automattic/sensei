@@ -90,7 +90,9 @@ class Sensei_Home_Tasks_Provider {
 		 *
 		 * @since 4.8.0
 		 *
-		 * @param array $tasks {
+		 * @hook sensei_home_tasks
+		 *
+		 * @param {array} $tasks {
 		 *  A dictionary of tasks indexed by task ID.
 		 *
 		 *  @type string $id The task ID. Must be unique.
@@ -100,6 +102,7 @@ class Sensei_Home_Tasks_Provider {
 		 *  @type string $image Optional. Source url or path for the featured image when this task is the first pending one.
 		 *  @type bool $done Whether the task is considered done or not.
 		 * }
+		 * @return {array} Filtered tasks.
 		 */
 		return apply_filters( 'sensei_home_tasks', $tasks );
 	}
