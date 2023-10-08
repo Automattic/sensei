@@ -127,6 +127,7 @@ class Sensei_Analysis {
 		 * Filter the Reports navigation menu items.
 		 *
 		 * @since 4.2.0
+		 *
 		 * @hook sensei_analysis_sub_menu
 		 *
 		 * @param {array} $menu The menu items.
@@ -137,6 +138,7 @@ class Sensei_Analysis {
 		 * Filter the Reports page title.
 		 *
 		 * @since 4.2.0
+		 *
 		 * @hook sensei_analysis_nav_title
 		 *
 		 * @param {string} $title The page title.
@@ -543,7 +545,17 @@ class Sensei_Analysis {
 		$title = $this->name;
 		?>
 			<h1>
-				<?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?>
+				<?php
+				/**
+				 * Filter the Reports page title.
+				 *
+				 * @hook sensei_analysis_nav_title
+				 *
+				 * @param {string} $title The page title.
+				 * @return {string} Returns filtered page title.
+				 */
+				echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) );
+				?>
 			</h1>
 		<?php
 	}
@@ -576,6 +588,7 @@ class Sensei_Analysis {
 
 		}
 		?>
+			<?php /** This filter is documented earlier in this file. */ ?>
 			<h1><?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?></h1>
 		<?php
 	}
@@ -617,6 +630,7 @@ class Sensei_Analysis {
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
 		?>
+			<?php /** This filter is documented earlier in this file. */ ?>
 			<h1><?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?></h1>
 		<?php
 	}
@@ -645,6 +659,7 @@ class Sensei_Analysis {
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
 		?>
+			<?php /** This filter is documented earlier in this file. */ ?>
 			<h1><?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?></h1>
 		<?php
 	}
@@ -673,6 +688,7 @@ class Sensei_Analysis {
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
 		?>
+			<?php /** This filter is documented earlier in this file. */ ?>
 			<h1><?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?></h1>
 		<?php
 	}
@@ -710,6 +726,7 @@ class Sensei_Analysis {
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $lesson_id ) );
 		}
 		?>
+			<?php /** This filter is documented earlier in this file. */ ?>
 			<h1><?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?></h1>
 		<?php
 	}
@@ -732,6 +749,14 @@ class Sensei_Analysis {
 			}
 
 			// Setup the variables we might need
+			/**
+			 * Filter the filename for the CSV export.
+			 *
+			 * @hook sensei_csv_export_filename
+			 *
+			 * @param {string} $filename The filename.
+			 * @return {string} Filtered filename.
+			 */
 			$filename  = apply_filters( 'sensei_csv_export_filename', $report );
 			$course_id = 0;
 			$lesson_id = 0;
