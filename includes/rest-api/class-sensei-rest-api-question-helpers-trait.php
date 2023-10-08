@@ -53,13 +53,13 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		/**
 		 * Modify or add REST API schema for a question type.
 		 *
-		 * @since  3.9.0
-		 * @hook   sensei_rest_api_schema_question_type
+		 * @since 3.9.0
 		 *
-		 * @param  {Array}  $schema Schema for a single question.
-		 * @param  {string} $type   Question type.
+		 * @hook sensei_rest_api_schema_question_type
 		 *
-		 * @return {array}
+		 * @param {Array}  $schema Schema for a single question.
+		 * @param {string} $type   Question type.
+		 * @return {array} Filtered schema.
 		 */
 		return apply_filters( 'sensei_rest_api_schema_question_type', $schema, $type );
 	}
@@ -570,14 +570,14 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		/**
 		 * Allows modification of type specific question properties.
 		 *
-		 * @since  3.9.0
-		 * @hook   sensei_question_type_specific_properties
+		 * @since 3.9.0
 		 *
-		 * @param  {array}   $type_specific_properties The properties of the question.
-		 * @param  {string}  $question_type            The question type.
-		 * @param  {WP_Post} $question                 The question post.
+		 * @hook sensei_question_type_specific_properties
 		 *
-		 * @return {array}
+		 * @param {array}   $type_specific_properties The properties of the question.
+		 * @param {string}  $question_type            The question type.
+		 * @param {WP_Post} $question                 The question post.
+		 * @return {array} Filtered properties.
 		 */
 		return apply_filters( 'sensei_question_type_specific_properties', $type_specific_properties, $question_type, $question );
 	}
@@ -695,11 +695,11 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * Add additional question types to the REST API schema.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook sensei_rest_api_schema_single_question
 		 *
 		 * @param {Array} $schema Schema for a single question.
-		 *
-		 * @return {array}
+		 * @return {array} Filtered schema.
 		 */
 		return apply_filters( 'sensei_rest_api_schema_single_question', $single_question_schema );
 	}
