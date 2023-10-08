@@ -74,11 +74,11 @@ class Sensei_Preview_User {
 		/**
 		 * Enable or disable 'preview as student' feature.
 		 *
-		 * @hook sensei_feature_preview_students
 		 * @since 4.11.0
 		 *
-		 * @param {bool} $enable Enable feature. Default true.
+		 * @hook sensei_feature_preview_students
 		 *
+		 * @param {bool} $enable Enable feature. Default true.
 		 * @return {bool} Wether to enable feature.
 		 */
 		if ( ! apply_filters( 'sensei_feature_preview_students', true ) ) {
