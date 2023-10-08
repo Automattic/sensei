@@ -67,8 +67,11 @@ class Sensei_Enrolment_Job_Scheduler {
 		 *
 		 * @since 3.1.0
 		 *
-		 * @param bool   $is_job_enabled     True if the job is enabled.
-		 * @param string $enrolment_job_name Name of the job.
+		 * @hook sensei_is_enrolment_background_job_enabled
+		 *
+		 * @param {bool}   $is_job_enabled     True if the job is enabled.
+		 * @param {string} $enrolment_job_name Name of the job.
+		 * @return {bool} Filtered value.
 		 */
 		return apply_filters( 'sensei_is_enrolment_background_job_enabled', true, $enrolment_job_name );
 	}
