@@ -339,11 +339,14 @@ class Sensei_Utils {
 		 *
 		 * @since 1.7.4
 		 *
+		 * @hook sensei_file_upload_args
+		 *
 		 * @param {array} $file_upload_args {
 		 *      array of current values
 		 *
 		 *     @type {string} test_form set to false by default
 		 * }
+		 * @return {array} Filtered data array.
 		 */
 		$file_upload_args = apply_filters( 'sensei_file_upload_args', array( 'test_form' => false ) );
 
@@ -356,7 +359,7 @@ class Sensei_Utils {
 		 *
 		 * @param {string} $prefix Prefix to prepend to uploaded files.
 		 * @param {array}  $file   Arguments with uploaded file information.
-		 * @return {string}
+		 * @return {string} Filtered prefix.
 		 */
 		$file_prefix = apply_filters( 'sensei_file_upload_file_prefix', substr( md5( uniqid() ), 0, 7 ) . '_', $file );
 
@@ -1277,7 +1280,16 @@ class Sensei_Utils {
 			$message = apply_filters( 'sensei_quiz_course_signup_notice_message', $message_default, $course_id, $course_link );
 		}
 
-		// Legacy filter
+		/**
+		 * Filter a message for user quiz status. Legacy filter.
+		 *
+		 * Possible statuses: not_started, passed, failed.
+		 *
+		 * @hook sensei_user_quiz_status_{status}
+		 *
+		 * @param {string} $message Status message.
+		 * @return {string} Filtered status message.
+		 */
 		$message = apply_filters( 'sensei_user_quiz_status_' . $status, $message );
 
 		if ( $is_lesson && ! in_array( $status, array( 'login_required', 'not_started_course' ) ) ) {
@@ -1401,8 +1413,12 @@ class Sensei_Utils {
 		 *
 		 * @since 1.9.3
 		 *
-		 * @param bool|int $user_started_course
-		 * @param integer $course_id
+		 * @hook sensei_user_started_course
+		 *
+		 * @param {bool|int} $user_started_course False if the user has not started the course, otherwise the comment ID of the course progress.
+		 * @param {int}      $course_id           The course ID.
+		 * @param {int}      $user_id             The user ID.
+		 * @return {bool|int} Filtered user started course ID.
 		 */
 		return apply_filters( 'sensei_user_started_course', $user_started_course, $course_id, $user_id );
 
@@ -1658,9 +1674,12 @@ class Sensei_Utils {
 			 *
 			 * @since 1.9.7
 			 *
-			 * @param string    $user_lesson_status User lesson status
-			 * @param int       $lesson_id          ID of lesson
-			 * @param int       $user_id            ID of user
+			 * @hook sensei_user_completed_lesson
+			 *
+			 * @param {string} $user_lesson_status User lesson status.
+			 * @param {int}    $lesson_id          ID of lesson.
+			 * @param {int}    $user_id            ID of user.
+			 * @return {string} Filtered user lesson status.
 			 */
 			$user_lesson_status = apply_filters( 'sensei_user_completed_lesson', $user_lesson_status, $lesson_id, $user_id );
 
