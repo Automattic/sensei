@@ -701,7 +701,7 @@ class Sensei_PostTypes {
 				 * @param {string} $slug The rewrite slug.
 				 * @return {string} The filtered rewrite slug.
 				 */
-				'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'sensei-lms' ) ) )
+				'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'sensei-lms' ) ) ),
 			),
 		);
 
@@ -749,7 +749,7 @@ class Sensei_PostTypes {
 				 * @param {string} $slug The rewrite slug.
 				 * @return {string} The filtered rewrite slug.
 				 */
-				'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'sensei-lms' ) ) )
+				'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'sensei-lms' ) ) ),
 			),
 		);
 
@@ -798,7 +798,7 @@ class Sensei_PostTypes {
 				 * @param {string} $slug The rewrite slug.
 				 * @return {string} The filtered rewrite slug.
 				 */
-				'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'sensei-lms' ) ) )
+				'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'sensei-lms' ) ) ),
 			),
 		);
 
@@ -853,7 +853,7 @@ class Sensei_PostTypes {
 				 * @param {string} $slug The rewrite slug.
 				 * @return {string} The filtered rewrite slug.
 				 */
-				'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'sensei-lms' ) ) )
+				'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'sensei-lms' ) ) ),
 			),
 		);
 
@@ -906,7 +906,7 @@ class Sensei_PostTypes {
 				 * @param {string} $slug The rewrite slug.
 				 * @return {string} The filtered rewrite slug.
 				 */
-				'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'sensei-lms' ) ) )
+				'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'sensei-lms' ) ) ),
 			),
 		);
 

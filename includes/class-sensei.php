@@ -355,8 +355,8 @@ class Sensei_Main {
 		 * @param {string} $template_url The template url.
 		 * @return {string} Filtered template url.
 		 */
-		$this->template_url          = apply_filters( 'sensei_template_url', 'sensei/' );
-		$this->version               = isset( $args['version'] ) ? $args['version'] : null;
+		$this->template_url = apply_filters( 'sensei_template_url', 'sensei/' );
+		$this->version      = isset( $args['version'] ) ? $args['version'] : null;
 
 		// Only set the install version if it is included in alloptions. This prevents a query on every page load.
 		$alloptions            = wp_load_alloptions();

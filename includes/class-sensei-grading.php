@@ -335,7 +335,8 @@ class Sensei_Grading {
 
 		}
 		?>
-			<h1><?php
+			<h1>
+			<?php
 			/**
 			 * Filter the title of the Grading page.
 			 *
@@ -345,7 +346,8 @@ class Sensei_Grading {
 			 * @return {string} Filtered title.
 			 */
 			echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) );
-			?></h1>
+			?>
+			</h1>
 		<?php
 	}
 
@@ -551,7 +553,7 @@ class Sensei_Grading {
 		 * @param {array} $course_args Array of arguments for the query.
 		 * @return {array} Filtered arguments.
 		 */
-		$courses     = get_posts( apply_filters( 'sensei_grading_filter_courses', $course_args ) );
+		$courses = get_posts( apply_filters( 'sensei_grading_filter_courses', $course_args ) );
 
 		$html .= '<option value="">' . __( 'Select a course', 'sensei-lms' ) . '</option>';
 		if ( $courses ) {
@@ -650,7 +652,7 @@ class Sensei_Grading {
 			 * @param {array} $lesson_args Array of arguments for the query.
 			 * @return {array} Filtered arguments.
 			 */
-			$lessons     = get_posts( apply_filters( 'sensei_grading_filter_lessons', $lesson_args ) );
+			$lessons = get_posts( apply_filters( 'sensei_grading_filter_lessons', $lesson_args ) );
 
 			$html .= '<option value="">' . esc_html__( 'Select a lesson', 'sensei-lms' ) . '</option>';
 			if ( $lessons ) {

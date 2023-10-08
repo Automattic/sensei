@@ -75,7 +75,7 @@ class Sensei_Emails {
 		 * @param {array} $emails Array of email classes.
 		 * @return {array} Filtered array of email classes.
 		 */
-		$this->emails                             = apply_filters( 'sensei_email_classes', $this->emails );
+		$this->emails = apply_filters( 'sensei_email_classes', $this->emails );
 	}
 
 	/**

@@ -440,7 +440,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 					$status          = __( 'Not started', 'sensei-lms' );
 					$user_start_date = $user_end_date = $status_class = $grade = '';
 
-					$lesson_args   = array(
+					$lesson_args = array(
 						'post_id' => $item->ID,
 						'user_id' => $this->user_id,
 						'type'    => 'sensei_lesson_status',
@@ -526,7 +526,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				// Display lessons for this Course regardless of users
 				else {
 					// Get Learners (i.e. those who have started)
-					$lesson_args     = array(
+					$lesson_args = array(
 						'post_id' => $item->ID,
 						'type'    => 'sensei_lesson_status',
 						'status'  => 'any',
@@ -543,7 +543,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 					$lesson_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item ) );
 
 					// Get Course Completions
-					$lesson_args        = array(
+					$lesson_args = array(
 						'post_id' => $item->ID,
 						'type'    => 'sensei_lesson_status',
 						'status'  => array( 'complete', 'graded', 'passed', 'failed' ),

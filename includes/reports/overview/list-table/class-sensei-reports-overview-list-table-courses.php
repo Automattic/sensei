@@ -197,7 +197,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$lessons = $this->course->course_lessons( $item->ID, 'any', 'ids' );
 
 		// Get Course Completions.
-		$course_args        = array(
+		$course_args = array(
 			'post_id' => $item->ID,
 			'type'    => 'sensei_course_status',
 			'status'  => 'complete',

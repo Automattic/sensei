@@ -428,7 +428,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				}
 
 				// Get Course Completions.
-				$course_args        = array(
+				$course_args = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_course_status',
 					'status'  => 'complete',
@@ -511,7 +511,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
 				 * @return {array} Filtered array of column data for the report table.
 				 */
-				$column_data             = apply_filters(
+				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'              => $course_title,
@@ -528,7 +528,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'lessons':
 				// Get Learners (i.e. those who have started).
-				$lesson_args     = array(
+				$lesson_args = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_lesson_status',
 					'status'  => 'any',
@@ -548,7 +548,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$lesson_students = Sensei_Utils::sensei_check_for_activity( $lesson_args );
 
 				// Get Course Completions.
-				$lesson_args        = array(
+				$lesson_args = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_lesson_status',
 					'status'  => array( 'complete', 'graded', 'passed', 'failed', 'ungraded' ),
@@ -605,7 +605,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'users':
 			default:
 				// Get Started Courses.
-				$course_args          = array(
+				$course_args = array(
 					'user_id' => $item->ID,
 					'type'    => 'sensei_course_status',
 					'status'  => 'any',
@@ -625,7 +625,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$user_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args );
 
 				// Get Completed Courses.
-				$course_args        = array(
+				$course_args = array(
 					'user_id' => $item->ID,
 					'type'    => 'sensei_course_status',
 					'status'  => 'complete',
@@ -661,7 +661,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				 * @param {WP_User} $item Current user object.
 				 * @return {array} Filtered array of query arguments for graded user lessons.
 				 */
-				$grade_args         = apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item );
+				$grade_args = apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item );
 
 				$grade_count        = Sensei_Utils::sensei_check_for_activity( $grade_args, false );
 				$grade_total        = Sensei_Grading::get_user_graded_lessons_sum( $item->ID );

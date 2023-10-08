@@ -162,7 +162,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	 */
 	protected function get_row_data( $item ) {
 		// Get Learners (i.e. those who have started).
-		$lesson_args     = array(
+		$lesson_args = array(
 			'post_id' => $item->ID,
 			'type'    => 'sensei_lesson_status',
 			'status'  => 'any',
@@ -171,7 +171,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 		$lesson_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item ) );
 
 		// Get Course Completions.
-		$lesson_args        = array(
+		$lesson_args = array(
 			'post_id' => $item->ID,
 			'type'    => 'sensei_lesson_status',
 			'status'  => array( 'complete', 'graded', 'passed', 'failed', 'ungraded' ),

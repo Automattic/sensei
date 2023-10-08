@@ -166,7 +166,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 */
 	protected function get_row_data( $item ) {
 		// Get Started Courses.
-		$course_args          = array(
+		$course_args = array(
 			'user_id' => $item->ID,
 			'type'    => 'sensei_course_status',
 			'status'  => 'any',
@@ -175,7 +175,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$user_courses_started = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item ) );
 
 		// Get Completed Courses.
-		$course_args        = array(
+		$course_args = array(
 			'user_id' => $item->ID,
 			'type'    => 'sensei_course_status',
 			'status'  => 'complete',

@@ -539,7 +539,7 @@ class Sensei_Frontend {
 		 * @param {string} $separator Breadcrumb separator.
 		 * @return {string} Filtered separator.
 		 */
-		$separator                = apply_filters( 'sensei_breadcrumb_separator', '&gt;' );
+		$separator = apply_filters( 'sensei_breadcrumb_separator', '&gt;' );
 
 		$html = '<section class="sensei-breadcrumb">' . esc_html( $sensei_breadcrumb_prefix );
 		// Lesson.

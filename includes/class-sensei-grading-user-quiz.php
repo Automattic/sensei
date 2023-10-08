@@ -310,7 +310,8 @@ class Sensei_Grading_User_Quiz {
 						</div>
 					</div>
 					<div class="sensei-grading-answer">
-						<h4><?php
+						<h4>
+						<?php
 							/**
 							 * Filters the question title.
 							 *
@@ -320,7 +321,8 @@ class Sensei_Grading_User_Quiz {
 							 * @return {string} Filtered question title.
 							 */
 							echo wp_kses_post( apply_filters( 'sensei_question_title', $question->post_title ) );
-						?></h4>
+						?>
+						</h4>
 						<?php
 						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped before core filter applied.
 						echo Sensei_Question::get_the_question_description( $question_id );

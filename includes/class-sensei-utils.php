@@ -2229,7 +2229,7 @@ class Sensei_Utils {
 	 *
 	 * @since 1.8.5
 	 *
-	 * @param float $val        Value to round.
+	 * @param float  $val        Value to round.
 	 * @param int    $precision Precision.
 	 * @param int    $mode      Round mode.
 	 * @param string $context   Context.

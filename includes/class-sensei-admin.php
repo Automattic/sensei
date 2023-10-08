@@ -363,7 +363,7 @@ class Sensei_Admin {
 		 * @param {array} $allowed_post_types The list of post types where the admin custom styles should be loaded.
 		 * @return {array} Filtered list of allowed post types.
 		 */
-		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 
 		/**
 		 * Filter the list of admin pages where the admin custom styles should be loaded.
