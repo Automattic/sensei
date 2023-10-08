@@ -69,10 +69,10 @@ class Sensei_Usage_Tracking_Data {
 		 * Filter the usage tracking data.
 		 *
 		 * @since 4.10.0
+		 *
 		 * @hook sensei_usage_tracking_data
 		 *
 		 * @param {array} $usage_data The usage tracking data.
-		 *
 		 * @return {array} Returns filtered usage tracking data.
 		 */
 		return apply_filters( 'sensei_usage_tracking_data', $usage_data );
@@ -119,7 +119,10 @@ class Sensei_Usage_Tracking_Data {
 		/**
 		 * Filter the fields that should be sent with every event that is logged.
 		 *
-		 * @param array $base_fields The default base fields.
+		 * @hook sensei_event_logging_base_fields
+		 *
+		 * @param {array} $base_fields The default base fields.
+		 * @return {array} Returns filtered base fields.
 		 */
 		return apply_filters( 'sensei_event_logging_base_fields', $base_fields );
 	}
