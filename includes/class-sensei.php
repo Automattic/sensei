@@ -666,11 +666,11 @@ class Sensei_Main {
 		/**
 		 * Integrate MailPoet by adding lists for courses and groups.
 		 *
-		 * @hook  sensei_email_mailpoet_feature
 		 * @since 4.13.0
 		 *
-		 * @param {bool} $enable Enable feature. Default true.
+		 * @hook  sensei_email_mailpoet_feature
 		 *
+		 * @param {bool} $enable Enable feature. Default true.
 		 * @return {bool} Whether to enable feature.
 		 */
 		if ( apply_filters( 'sensei_email_mailpoet_feature', true ) ) {
@@ -1160,8 +1160,11 @@ class Sensei_Main {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool $includes_sensei_comments Whether the count already includes Sensei's comments.
-		 * @param int  $post_id                  Post ID.
+		 * @hook sensei_comment_counts_include_sensei_comments
+		 *
+		 * @param {bool} $includes_sensei_comments Whether the count already includes Sensei's comments.
+		 * @param {int}  $post_id                  Post ID.
+		 * @return {bool} Whether the count already includes Sensei's comments.
 		 */
 		return apply_filters( 'sensei_comment_counts_include_sensei_comments', $includes_sensei_comments, $post_id );
 	}
