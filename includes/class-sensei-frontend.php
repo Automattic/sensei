@@ -376,7 +376,10 @@ class Sensei_Frontend {
 						 *
 						 * With this filter you can alter the login / login menu item title string
 						 *
-						 * @param $menu_title
+						 * @hook sensei_login_logout_menu_title
+						 *
+						 * @param {string} $menu_title The menu title.
+						 * @return {string} The filtered menu title.
 						 */
 						$item->title = apply_filters( 'sensei_login_logout_menu_title', $menu_title );
 
@@ -528,6 +531,14 @@ class Sensei_Frontend {
 		}
 
 		$sensei_breadcrumb_prefix = __( 'Back to: ', 'sensei-lms' );
+		/**
+		 * Filter the breadcrumb separator.
+		 *
+		 * @hook sensei_breadcrumb_separator
+		 *
+		 * @param {string} $separator Breadcrumb separator.
+		 * @return {string} Filtered separator.
+		 */
 		$separator                = apply_filters( 'sensei_breadcrumb_separator', '&gt;' );
 
 		$html = '<section class="sensei-breadcrumb">' . esc_html( $sensei_breadcrumb_prefix );
@@ -548,7 +559,15 @@ class Sensei_Frontend {
 			 $html .= '<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" title="' . esc_attr__( 'Back to the lesson', 'sensei-lms' ) . '">' . esc_html( get_the_title( $lesson_id ) ) . '</a>';
 		}
 
-		// Allow other plugins to filter html.
+		/**
+		 * Filter the breadcrumb HTML.
+		 *
+		 * @hook sensei_breadcrumb_output
+		 *
+		 * @param {string} $html      Breadcrumb HTML.
+		 * @param {string} $separator Breadcrumb separator.
+		 * @return {string} Filtered HTML.
+		 */
 		$html  = apply_filters( 'sensei_breadcrumb_output', $html, $separator );
 		$html .= '</section>';
 
@@ -612,8 +631,17 @@ class Sensei_Frontend {
 	 */
 	public function lesson_tag_archive_header( $title ) {
 		if ( is_tax( 'lesson-tag' ) ) {
+			/**
+			 * Filters the lesson tag archive title.
+			 *
+			 * @hook sensei_lesson_tag_archive_title
+			 *
+			 * @param {string} $title Lesson tag archive title.
+			 * @return {string} Filtered title.
+			 */
+			$lesson_tag_archive_title = apply_filters( 'sensei_lesson_tag_archive_title', get_queried_object()->name );
 			// translators: Placeholder is the filtered tag name.
-			$title = sprintf( __( 'Lesson tag: %1$s', 'sensei-lms' ), apply_filters( 'sensei_lesson_tag_archive_title', get_queried_object()->name ) );
+			$title = sprintf( __( 'Lesson tag: %1$s', 'sensei-lms' ), $lesson_tag_archive_title );
 		}
 		return $title;
 	}
@@ -624,6 +652,15 @@ class Sensei_Frontend {
 	public function lesson_tag_archive_description() {
 		if ( is_tax( 'lesson-tag' ) ) {
 			$tag = get_queried_object();
+			/**
+			 * Filters the lesson tag archive description.
+			 *
+			 * @hook sensei_lesson_tag_archive_description
+			 *
+			 * @param {string} $description Lesson tag archive description.
+			 * @param {int}    $tag_id      Lesson tag ID.
+			 * @return {string} Filtered description.
+			 */
 			echo '<p class="archive-description lesson-description">' . wp_kses_post( apply_filters( 'sensei_lesson_tag_archive_description', nl2br( $tag->description ), $tag->term_id ) ) . '</p>';
 		}
 	}
@@ -696,9 +733,12 @@ class Sensei_Frontend {
 		 *
 		 * @since 1.12.0
 		 *
-		 * @param string|bool $redirect_url URL to redirect students to after completing a lesson. False to skip redirect.
-		 * @param int         $lesson_id    Current lesson ID.
-		 * @param array       $nav_links    Navigation links found for the current lesson.
+		 * @hook sensei_complete_lesson_redirect_url
+		 *
+		 * @param {string|bool} $redirect_url URL to redirect students to after completing a lesson. False to skip redirect.
+		 * @param {int}         $lesson_id    Current lesson ID.
+		 * @param {array}       $nav_links    Navigation links found for the current lesson.
+		 * @return {string|bool} Filtered URL to redirect students to after completing a lesson. False to skip redirect.
 		 */
 		$redirect_url = apply_filters( 'sensei_complete_lesson_redirect_url', $redirect_url, $lesson_id, $nav_links );
 
@@ -1129,8 +1169,11 @@ class Sensei_Frontend {
 		 *
 		 * @since 1.11.0
 		 *
-		 * @param string $preview_text
-		 * @param int    $course_id
+		 * @hook sensei_lesson_preview_title_text
+		 *
+		 * @param {string} $preview_text
+		 * @param {int}    $course_id
+		 * @return {string} Filtered text.
 		 */
 		return apply_filters( 'sensei_lesson_preview_title_text', $preview_text, $course_id );
 	}
@@ -1181,14 +1224,17 @@ class Sensei_Frontend {
 			 *
 			 * @since 3.0.0
 			 *
-			 * @param callable $handler {
+			 * @hook sensei_frontend_course_signup_handler
+			 *
+			 * @param {callable} $handler {
 			 *     Frontend enrolment handler. Returns `true` if successful; `false` if not.
 			 *
 			 *     @type int $user_id   User ID.
 			 *     @type int $course_id Course post ID.
 			 * }
-			 * @param int      $user_id          User ID.
-			 * @param int      $course_id        Course post ID.
+			 * @param {int}      $user_id          User ID.
+			 * @param {int}      $course_id        Course post ID.
+			 * @return {callable} Filtered handler.
 			 */
 			$learner_enrollment_handler = apply_filters( 'sensei_frontend_learner_enrolment_handler', [ $this, 'manually_enrol_learner' ], $current_user->ID, $post->ID );
 
@@ -1208,8 +1254,11 @@ class Sensei_Frontend {
 				 *
 				 * @since 1.10.0
 				 *
-				 * @param string|bool  $redirect_url URL to redirect students to after starting course. Return `false` to prevent redirect.
-				 * @param WP_Post      $post         Post object for course.
+				 * @hook sensei_start_course_redirect_url
+				 *
+				 * @param {string|bool}  $redirect_url URL to redirect students to after starting course. Return `false` to prevent redirect.
+				 * @param {WP_Post}      $post         Post object for course.
+				 * @return {string|bool} Filtered URL to redirect students to after starting course. Return `false` to prevent redirect.
 				 */
 				$redirect_url = apply_filters( 'sensei_start_course_redirect_url', get_permalink( $post->ID ), $post );
 
@@ -1403,12 +1452,14 @@ class Sensei_Frontend {
 					/**
 					 * Change the redirect url programatically.
 					 *
-					 * @hook sensei_login_success_redirect_url
+					 * The redirect URL if login is successful. Note that if this URL points to an external domain, it may need to be whitelisted using the `allowed_redirect_hosts` filter.
+					 *
 					 * @since 3.15.0
 					 *
-					 * @param {string} $referrer The page where the current url wheresensei login form was posted from.
+					 * @hook sensei_login_success_redirect_url
 					 *
-					 * The redirect URL if login is successful. Note that if this URL points to an external domain, it may need to be whitelisted using the `allowed_redirect_hosts` filter.
+					 * @param {string} $referrer The page where the current url wheresensei login form was posted from.
+					 * @return {string} The redirect URL.
 					 */
 					$success_redirect_url = apply_filters( 'sensei_login_success_redirect_url', $success_redirect_url );
 
@@ -1528,6 +1579,14 @@ class Sensei_Frontend {
 
 		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : $redirect;
 
+		/**
+		 * Filter the URL that students are redirected to after registering.
+		 *
+		 * @hook sensei_registration_redirect
+		 *
+		 * @param {string} $redirect_to URL to redirect students to after registering.
+		 * @return {string} Filtered URL to redirect students to after registering.
+		 */
 		wp_safe_redirect( apply_filters( 'sensei_registration_redirect', $redirect_to ) );
 		exit;
 
