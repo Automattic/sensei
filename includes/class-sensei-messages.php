@@ -19,6 +19,13 @@ class Sensei_Messages {
 	public $meta_fields;
 
 	/**
+	 * The message notice.
+	 *
+	 * @var string
+	 */
+	public $message_notice;
+
+	/**
 	 * The nonce name when submitting a new message.
 	 *
 	 * @var string
@@ -39,6 +46,7 @@ class Sensei_Messages {
 		$this->token       = 'messages';
 		$this->post_type   = 'sensei_message';
 		$this->meta_fields = array( 'sender', 'receiver' );
+		$this->message_notice = '';
 
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'remove_meta_box' ) );
@@ -289,12 +297,13 @@ class Sensei_Messages {
 		 *
 		 * @since 1.9.18
 		 *
-		 * @param string    $html
-		 * @param array     $this->message_notice
-		 * @param int       $post_id
-		 * @param int       $user_id
+		 * @hook sensei_messages_send_message_link
 		 *
-		 * @return string
+		 * @param {string} $html           The HTML for the send message link.
+		 * @param {array}  $message_notice The message notice.
+		 * @param {int}    $post_id        The post ID.
+		 * @param {int}    $user_id        The user ID.
+		 * @return {string} Filtered HTML.
 		 */
 		echo wp_kses(
 			apply_filters( 'sensei_messages_send_message_link', $html, isset( $this->message_notice ) ? $this->message_notice : '', $post_id, $user_id ),
@@ -906,9 +915,13 @@ class Sensei_Messages {
 				 * Filter Sensei single title
 				 *
 				 * @since 1.8.0
-				 * @param string $title
-				 * @param string $template
-				 * @param string $post_type
+				 *
+				 * @hook sensei_single_title
+				 *
+				 * @param {string} $title     The title.
+				 * @param {string} $template  The template.
+				 * @param {string} $post_type The post type.
+				 * @return {string} Filtered title.
 				 */
 				echo wp_kses_post( apply_filters( 'sensei_single_title', $title, $post->post_type ) );
 				?>
@@ -940,6 +953,11 @@ class Sensei_Messages {
 		 * Filter the sensei messages archive title.
 		 *
 		 * @since 1.0.0
+		 *
+		 * @hook sensei_message_archive_title
+		 *
+		 * @param {string} $html The HTML for the archive title.
+		 * @return {string} Filtered HTML.
 		 */
 		echo wp_kses_post( apply_filters( 'sensei_message_archive_title', $html ) );
 
