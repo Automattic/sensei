@@ -296,8 +296,9 @@ class Sensei_Lesson {
 		/**
 		 * Filters the Content Drip promo metabox toggle.
 		 *
-		 * @hook  sensei_lesson_content_drip_hide
 		 * @since 4.1.0
+		 *
+		 * @hook  sensei_lesson_content_drip_hide
 		 *
 		 * @param  {bool} $hide_content_drip Whether to hide the Content Drip promo metabox.
 		 * @return {bool} Whether to hide the Content Drip promo metabox.
@@ -1870,6 +1871,7 @@ class Sensei_Lesson {
 		 * Filter the quiz panel add html.
 		 *
 		 * @since 1.9.7
+		 *
 		 * @hook sensei_quiz_panel_add
 		 *
 		 * @param {string} $html    HTML for adding a question.
@@ -1957,6 +1959,7 @@ class Sensei_Lesson {
 		 * Filter existing questions query
 		 *
 		 * @since 1.8.0
+		 *
 		 * @hook sensei_existing_questions_query_results
 		 *
 		 * @param {object} $qry Query object containing an array of existing questions.
@@ -2663,10 +2666,10 @@ class Sensei_Lesson {
 		 * Enqueue scripts for the quiz question AI upsell if the the feature is not available.
 		 *
 		 * @since 4.14.0
+		 *
 		 * @hook sensei_quiz_question_ai_upsell_scripts
 		 *
 		 * @param {bool} $enqueue_scripts Whether to enqueue the scripts. Default false.
-		 *
 		 * @return {bool} Whether to enqueue the scripts.
 		 */
 		if ( ! apply_filters( 'sensei_ai_quiz_generation_available', false ) ) {
@@ -3758,10 +3761,10 @@ class Sensei_Lesson {
 						 * this filter.
 						 *
 						 * @since 3.10.0
+						 *
 						 * @hook sensei_filter_category_questions_by_author
 						 *
 						 * @param {array}  $quiz_id The quiz id.
-						 *
 						 * @return {array} Whether questions should be filtered by author.
 						 */
 						$should_filter = apply_filters( 'sensei_filter_category_questions_by_author', true, $quiz_id );
@@ -3832,6 +3835,7 @@ class Sensei_Lesson {
 		 * Filter the questions returned by Sensei_Lesson::lessons_quiz_questions.
 		 *
 		 * @since 1.8.0
+		 *
 		 * @hook sensei_lesson_quiz_questions
 		 *
 		 * @param {array}  $questions Questions.
@@ -4473,6 +4477,7 @@ class Sensei_Lesson {
 		 * Filter whether to show lesson numbers next to the lesson.
 		 *
 		 * @since 1.0
+		 *
 		 * @hook sensei_show_lesson_numbers
 		 *
 		 * @param {bool} $show_lesson_numbers Whether to show lesson numbers. Default false.
@@ -4612,6 +4617,7 @@ class Sensei_Lesson {
 		 * Filter the lesson prerequisite.
 		 *
 		 * @since 1.0
+		 *
 		 * @hook sensei_lesson_prerequisite
 		 *
 		 * @param {string|bool} $prerequisite_lesson_id Prerequisite lesson ID. False if prerequisite lesson ID is
@@ -4754,6 +4760,7 @@ class Sensei_Lesson {
 		 * Filter whether to show the course sign up notice on the lesson page.
 		 *
 		 * @since 2.0.0
+		 *
 		 * @hook sensei_lesson_show_course_signup_notice
 		 *
 		 * @param {bool}   $show_course_signup_notice True if we should show the signup notice to the user.
@@ -4772,6 +4779,7 @@ class Sensei_Lesson {
 			 * Filter the course sign up notice message on the lesson page.
 			 *
 			 * @since 2.0.0
+			 *
 			 * @hook sensei_lesson_course_signup_notice_message
 			 *
 			 * @param {string} $message_default Message to show user.
@@ -4785,6 +4793,7 @@ class Sensei_Lesson {
 			 * Filter the course sign up notice message alert level on the lesson page.
 			 *
 			 * @since 2.0.0
+			 *
 			 * @hook sensei_lesson_course_signup_notice_level
 			 *
 			 * @param {string} $notice_level Level to use for the sign up notice (alert, tick, download, info).
