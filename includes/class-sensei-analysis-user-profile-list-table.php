@@ -51,7 +51,16 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			'status'    => __( 'Status', 'sensei-lms' ),
 			'percent'   => __( 'Percent Complete', 'sensei-lms' ),
 		);
+		/**
+		 * Filter the columns that are going to be used in the table.
+		 *
+		 * @hook sensei_analysis_user_profile_columns
+		 *
+		 * @param {array} $columns The array of columns to use with the table.
+		 * @return {array} The filtered array of columns to use with the table.
+		 */
 		$columns = apply_filters( 'sensei_analysis_user_profile_columns', $columns );
+
 		return $columns;
 	}
 
@@ -59,13 +68,23 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * Define the columns that are going to be used in the table
 	 *
 	 * @since  1.7.0
-	 * @return array $columns, the array of columns to use with the table
+	 * @return array $columns the array of columns to use with the table
 	 */
 	function get_sortable_columns() {
 		$columns = array(
 			'completed' => array( 'comment_date', false ),
 		);
+
+		/**
+		 * Filter sortable columns that are going to be used in the table.
+		 *
+		 * @hook sensei_analysis_user_profile_columns_sortable
+		 *
+		 * @param {array} $columns The array of sortable columns to use with the table.
+		 * @return {array} The filtered array of sortable columns to use with the table.
+		 */
 		$columns = apply_filters( 'sensei_analysis_user_profile_columns_sortable', $columns );
+
 		return $columns;
 	}
 
@@ -98,6 +117,15 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		$this->search = $search;
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
+		/**
+		 * Filter the number of items per page that are going to be used in the table.
+		 *
+		 * @hook sensei_comments_per_page
+		 *
+		 * @param {int}    $per_page The number of items per page to use with the table.
+		 * @param {string} $type     The type of items per page to use with the table.
+		 * @return {int} The filtered number of items per page to use with the table.
+		 */
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
 
 		$paged  = $this->get_pagenum();
@@ -274,6 +302,14 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			$activity_args['post_author'] = get_current_user_id();
 		}
 
+		/**
+		 * Filter the activity args for the user profile statuses.
+		 *
+		 * @hook sensei_analysis_user_profile_filter_statuses
+		 *
+		 * @param {array} $activity_args The array of activity args.
+		 * @return {array} The filtered array of activity args.
+		 */
 		$activity_args = apply_filters( 'sensei_analysis_user_profile_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
@@ -348,6 +384,14 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification
 			return;
 		}
+		/**
+		 * Filter the search button text for the list table.
+		 *
+		 * @hook sensei_list_table_search_button_text
+		 *
+		 * @param {string} $text The text for the search button.
+		 * @return {string} The filtered text for the search button.
+		 */
 		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 
