@@ -67,7 +67,11 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		 * Filter the WP_User_Query arguments
 		 *
 		 * @since 1.6.0
-		 * @param $query_args
+		 *
+		 * @hook sensei_analysis_overview_filter_users
+		 *
+		 * @param {array} $query_args The WP_User_Query arguments.
+		 * @return {array} Filtered arguments.
 		 */
 		$query_args = apply_filters( 'sensei_analysis_overview_filter_users', $query_args );
 
@@ -107,12 +111,12 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		 * Filters if the last activity filter by date and the last activity sorting are enabled in
 		 * the students report.
 		 *
-		 * @hook  sensei_students_report_last_activity_filter_enabled
 		 * @since 4.6.4
 		 *
-		 * @param {boolean} $enabled Whether the students last activity filter is enabled.
+		 * @hook sensei_students_report_last_activity_filter_enabled
 		 *
-		 * @return {boolean} Whether the students last activity filter is enabled.
+		 * @param {bool} $enabled Whether the students last activity filter is enabled.
+		 * @return {bool} Whether the students last activity filter is enabled.
 		 */
 		return apply_filters( 'sensei_students_report_last_activity_filter_enabled', true );
 	}
