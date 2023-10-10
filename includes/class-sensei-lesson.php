@@ -4732,7 +4732,7 @@ class Sensei_Lesson {
 	public static function course_signup_link() {
 
 		$lesson_id = get_the_ID();
-		if ( $lesson_id ) {
+		if ( ! $lesson_id ) {
 			return;
 		}
 

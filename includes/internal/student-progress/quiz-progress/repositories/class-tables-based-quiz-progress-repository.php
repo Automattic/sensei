@@ -274,7 +274,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	}
 
 	/**
-	 * Find lesson progress.
+	 * Find quiz progress.
 	 *
 	 * @internal
 	 *

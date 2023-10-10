@@ -198,12 +198,12 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	}
 
 	/**
-	 * Find course progress.
+	 * Find quiz progress.
 	 *
 	 * @internal
 	 *
 	 * @param array $args The arguments.
-	 * @return Quiz_Progress_Interface[] The course progress.
+	 * @return Quiz_Progress_Interface[] The quiz progress.
 	 * @throws \InvalidArgumentException When ordering is not supported.
 	 */
 	public function find( array $args ): array {

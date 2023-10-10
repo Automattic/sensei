@@ -174,7 +174,7 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 	 * @internal
 	 *
 	 * @param array $args The arguments.
-	 * @return Quiz_Progress_Interface[] The course progress.
+	 * @return Quiz_Progress_Interface[] The quiz progress.
 	 */
 	public function find( array $args ): array {
 		return $this->comments_based_repository->find( $args );
