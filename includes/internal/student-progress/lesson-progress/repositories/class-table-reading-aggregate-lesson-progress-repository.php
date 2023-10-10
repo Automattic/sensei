@@ -102,7 +102,7 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 		// We can't just use the status of the lesson progress because the comments based lesson lesson_progress
 		// has a different underlying set of statuses.
 		if ( $lesson_progress->get_status() !== $comments_based_progress->get_status() ) {
-			if ( ! $comments_based_progress->is_complete() ) {
+			if ( $lesson_progress->is_complete() ) {
 				$comments_based_progress->complete();
 			} else {
 				$comments_based_progress->start();
