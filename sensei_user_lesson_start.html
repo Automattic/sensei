@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_tools - Sensei LMS Hook Docs</title>
+	<title>Action: sensei_user_lesson_start - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_tools</h1>
+	<h1 class="page-title">Action: sensei_user_lesson_start</h1>
 	
 
 	
@@ -43,14 +43,15 @@
 
     
 
-    <h4 class="name" id="sensei_tools">apply_filters( 'sensei_tools', <span class="signature">$tools )</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id="sensei_user_lesson_start">do_action( 'sensei_user_lesson_start', <span class="signature">$user_id, $lesson_id )</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Array of the tools available to Sensei LMS.</p>
+    <p>Fires when a user starts a lesson.
+When this action runs the lesson status may not yet exist.</p>
 </div>
 
 
@@ -84,13 +85,13 @@
 
         <tr>
             
-                <td class="name"><code>$tools</code></td>
+                <td class="name"><code>$user_id</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;Sensei_Tool_Interface></span>
+<span class="param-type">int</span>
 
 
             
@@ -100,7 +101,30 @@
 
             
 
-            <td class="description last"><p>Tool objects for Sensei LMS.</p></td>
+            <td class="description last"><p>ID of user starting lesson.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$lesson_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>ID of lesson being started.</p></td>
         </tr>
 
     
@@ -116,9 +140,6 @@
 
     
 
-    
-    <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>3.7.0</li></ul></dd>
     
 
     
@@ -144,7 +165,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_admin_class-sensei-tools.php.html">includes/admin/class-sensei-tools.php</a>, <a href="includes_admin_class-sensei-tools.php.html#line80">line 80</a>
+        <a href="includes_class-sensei-utils.php.html">includes/class-sensei-utils.php</a>, <a href="includes_class-sensei-utils.php.html#line519">line 519</a>
     </li></ul></dd>
     
 
@@ -167,24 +188,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">array</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
