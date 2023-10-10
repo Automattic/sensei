@@ -955,16 +955,13 @@ class Sensei_Quiz {
 				if ( $quiz_pass_percentage <= $grade ) {
 					$lesson_progress->complete();
 					$quiz_progress->pass();
-					$lesson_status = 'passed';
 				} else {
 					$quiz_progress->fail();
-					$lesson_status = 'failed';
 				}
 			} else {
 				// Student only has to partake the quiz.
 				$lesson_progress->complete();
 				$quiz_progress->grade();
-				$lesson_status = 'graded';
 			}
 		}
 
