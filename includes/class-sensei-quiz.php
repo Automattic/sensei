@@ -272,7 +272,7 @@ class Sensei_Quiz {
 			)
 		);
 
-		return wp_list_pluck( $quiz_parents, 'post_parent' );
+		return array_unique( array_values( $quiz_parents ) );
 	}
 
 	/**
