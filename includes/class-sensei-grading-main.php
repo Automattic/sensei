@@ -541,7 +541,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		 * @param {array} $count_args Count statuses arguments.
 		 * @return {array} Filtered count arguments.
 		 */
-		$count_args = apply_filters( 'sensei_grading_count_statues', $count_args );
+		$count_args = apply_filters_deprecated( 'sensei_grading_count_statues', $count_args, '4.18.0', 'sensei_grading_count_statuses' );
 
 		/**
 		 * Filter count statuses arguments in Grading.
