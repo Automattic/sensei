@@ -897,11 +897,6 @@
     </PossiblyInvalidArgument>
   </file>
   <file src="includes/blocks/course-theme/class-course-navigation.php">
-    <MissingClosureParamType occurrences="3">
-      <code>$lesson</code>
-      <code>$lesson</code>
-      <code>$lesson</code>
-    </MissingClosureParamType>
     <PossiblyFalseArgument occurrences="3">
       <code>get_permalink( $lesson_id )</code>
       <code>get_permalink( $lesson_id )</code>
@@ -915,9 +910,6 @@
       <code>$is_enrolled</code>
       <code>$user_id</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>isset( $user_lesson_status-&gt;comment_approved )</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="includes/blocks/course-theme/class-exit-course.php">
     <PossiblyFalseArgument occurrences="1">
@@ -1578,13 +1570,12 @@
       <code>get_the_ID()</code>
       <code>get_the_ID()</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArgument occurrences="7">
+    <PossiblyInvalidArgument occurrences="5">
       <code>$category_output</code>
       <code>$category_output</code>
       <code>$category_output</code>
       <code>$course</code>
       <code>$output</code>
-      <code>$progress_percentage</code>
     </PossiblyInvalidArgument>
     <PossiblyInvalidPropertyFetch occurrences="25">
       <code>$course-&gt;ID</code>
@@ -2113,7 +2104,7 @@
       <code>$question_cats</code>
       <code>$questions_array</code>
     </PossibleRawObjectIteration>
-    <PossiblyFalseArgument occurrences="16">
+    <PossiblyFalseArgument occurrences="15">
       <code>$lesson_id</code>
       <code>$lesson_id</code>
       <code>$lesson_id</code>
@@ -2644,10 +2635,6 @@
     <InvalidReturnType occurrences="1">
       <code>int</code>
     </InvalidReturnType>
-    <RedundantCastGivenDocblockType occurrences="2">
-      <code>(array) $user-&gt;roles</code>
-      <code>(int) $course_id</code>
-    </RedundantCastGivenDocblockType>
   </file>
   <file src="includes/class-sensei-question.php">
     <DeprecatedMethod occurrences="1">
@@ -3285,18 +3272,14 @@
       <code>require_once ABSPATH . 'wp-admin/includes/image.php'</code>
       <code>require_once ABSPATH . 'wp-admin/includes/plugin-install.php'</code>
     </MissingFile>
-    <MissingParamType occurrences="20">
+    <MissingParamType occurrences="18">
       <code>$attributes</code>
       <code>$course_id</code>
       <code>$data_key</code>
-      <code>$denominator</code>
-      <code>$denominator</code>
       <code>$file</code>
       <code>$from_course</code>
       <code>$key</code>
       <code>$mode</code>
-      <code>$numerator</code>
-      <code>$numerator</code>
       <code>$options</code>
       <code>$plugin_class_to_look_for</code>
       <code>$plugin_registered_path</code>
@@ -3349,9 +3332,6 @@
       <code>DAY_IN_SECONDS</code>
       <code>WP_PLUGIN_DIR</code>
     </UndefinedConstant>
-    <UndefinedDocblockClass occurrences="1">
-      <code>int|number</code>
-    </UndefinedDocblockClass>
     <UndefinedFunction occurrences="1">
       <code>WC()</code>
     </UndefinedFunction>
@@ -3659,11 +3639,7 @@
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>$post-&gt;post_author</code>
     </InvalidPropertyAssignmentValue>
-    <PossiblyInvalidPropertyFetch occurrences="1">
-      <code>$post-&gt;post_type</code>
-    </PossiblyInvalidPropertyFetch>
-    <PossiblyNullArgument occurrences="2">
-      <code>$lesson_id</code>
+    <PossiblyNullArgument occurrences="1">
       <code>$query['post_type'] ?? null</code>
     </PossiblyNullArgument>
     <RedundantConditionGivenDocblockType occurrences="5">
@@ -4606,13 +4582,6 @@
       <code>function() {</code>
     </MissingClosureReturnType>
   </file>
-  <file src="includes/enrolment/class-sensei-enrolment-learner-calculation-job.php">
-    <RedundantCastGivenDocblockType occurrences="3">
-      <code>(int) $this-&gt;batch_size</code>
-      <code>(int) $user_id</code>
-      <code>(int) $user_query-&gt;get_total()</code>
-    </RedundantCastGivenDocblockType>
-  </file>
   <file src="includes/enrolment/class-sensei-enrolment-provider-journal-store.php">
     <DocblockTypeContradiction occurrences="1">
       <code>is_wp_error( $result )</code>
@@ -4644,9 +4613,6 @@
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>$provider_states</code>
     </InvalidPropertyAssignmentValue>
-    <RedundantCastGivenDocblockType occurrences="1">
-      <code>(bool) $has_changed</code>
-    </RedundantCastGivenDocblockType>
   </file>
   <file src="includes/hooks/template.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -4963,11 +4929,6 @@
     </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/internal/student-progress/course-progress/repositories/class-comments-based-course-progress-repository.php">
-    <InvalidPropertyFetch occurrences="3">
-      <code>$comment-&gt;comment_ID</code>
-      <code>$comment-&gt;comment_approved</code>
-      <code>$comment-&gt;comment_date</code>
-    </InvalidPropertyFetch>
     <PossiblyNullArgument occurrences="1">
       <code>$course_progress-&gt;get_status()</code>
     </PossiblyNullArgument>
@@ -4983,16 +4944,8 @@
       <code>$row-&gt;updated_at</code>
       <code>$row-&gt;user_id</code>
     </PossiblyInvalidPropertyFetch>
-    <RedundantCastGivenDocblockType occurrences="1">
-      <code>(int) $this-&gt;wpdb-&gt;insert_id</code>
-    </RedundantCastGivenDocblockType>
   </file>
   <file src="includes/internal/student-progress/lesson-progress/repositories/class-comments-based-lesson-progress-repository.php">
-    <InvalidPropertyFetch occurrences="3">
-      <code>$comment-&gt;comment_ID</code>
-      <code>$comment-&gt;comment_approved</code>
-      <code>$comment-&gt;comment_date</code>
-    </InvalidPropertyFetch>
     <PossiblyNullReference occurrences="1">
       <code>format</code>
     </PossiblyNullReference>
@@ -5008,9 +4961,6 @@
       <code>$row-&gt;updated_at</code>
       <code>$row-&gt;user_id</code>
     </PossiblyInvalidPropertyFetch>
-    <RedundantCastGivenDocblockType occurrences="1">
-      <code>(int) $this-&gt;wpdb-&gt;insert_id</code>
-    </RedundantCastGivenDocblockType>
   </file>
   <file src="includes/internal/student-progress/quiz-progress/repositories/class-comments-based-quiz-progress-repository.php">
     <PossiblyInvalidIterator occurrences="2">
@@ -5029,9 +4979,6 @@
       <code>$row-&gt;updated_at</code>
       <code>$row-&gt;user_id</code>
     </PossiblyInvalidPropertyFetch>
-    <RedundantCastGivenDocblockType occurrences="1">
-      <code>(int) $this-&gt;wpdb-&gt;insert_id</code>
-    </RedundantCastGivenDocblockType>
   </file>
   <file src="includes/internal/student-progress/services/class-course-deleted-handler.php">
     <UndefinedDocblockClass occurrences="1">
@@ -5983,9 +5930,8 @@
       <code>$question_type</code>
       <code>$template_name</code>
     </MissingParamType>
-    <PossiblyFalseArgument occurrences="2">
+    <PossiblyFalseArgument occurrences="1">
       <code>get_permalink( $course_id )</code>
-      <code>get_the_ID()</code>
     </PossiblyFalseArgument>
     <PossiblyInvalidArgument occurrences="2">
       <code>$item</code>

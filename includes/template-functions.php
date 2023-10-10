@@ -864,6 +864,9 @@ function sensei_the_single_lesson_meta() {
 	}
 
 	$lesson_id = get_the_ID();
+	if ( ! $lesson_id ) {
+		return;
+	}
 
 	// Get the meta info
 	$lesson_course_id = absint( get_post_meta( $lesson_id, '_lesson_course', true ) );
