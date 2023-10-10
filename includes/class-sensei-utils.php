@@ -1633,10 +1633,9 @@ class Sensei_Utils {
 				// In the tables-based progress we split them. Here is important to use the quiz proress if the quiz pass is required.
 				$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 				if ( $lesson_quiz_id ) {
-					$quiz_progress = Sensei()->quiz_progress_repository->get( $lesson_quiz_id, $user_id );
 					$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
-
 					if ( $pass_required ) {
+						$quiz_progress = Sensei()->quiz_progress_repository->get( $lesson_quiz_id, $user_id );
 						if ( $quiz_progress ) {
 							$user_lesson_status = $quiz_progress->get_status();
 						} else {
