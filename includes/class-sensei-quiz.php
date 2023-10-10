@@ -2482,7 +2482,7 @@ class Sensei_Quiz {
 	 *
 	 * @param string $button_text The button text.
 	 * @param string $url         The URL.
-	 * @param array $classes      CSS classes to add to the button.
+	 * @param array  $classes      CSS classes to add to the button.
 	 *
 	 * @return string The HTML for the primary button anchor.
 	 */
@@ -2492,7 +2492,7 @@ class Sensei_Quiz {
 				'wp-block-button__link',
 				'wp-element-button',
 				'sensei-course-theme__button',
-				'is-primary'
+				'is-primary',
 			),
 			$classes
 		);
