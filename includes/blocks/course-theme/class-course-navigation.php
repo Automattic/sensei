@@ -310,9 +310,15 @@ class Course_Navigation {
 		if ( $completed ) {
 			$status = 'completed';
 		} else {
-			$user_lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $this->user_id );
-			if ( isset( $user_lesson_status->comment_approved ) ) {
-				$status = $user_lesson_status->comment_approved;
+			// If the lesson has a quiz, use the quiz progress.
+			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+			if ( $quiz_id ) {
+				$user_progress = \Sensei()->quiz_progress_repository->get( $quiz_id, $this->user_id );
+			} else {
+				$user_progress = \Sensei()->lesson_progress_repository->get( $lesson_id, $this->user_id );
+			}
+			if ( $user_progress ) {
+				$status = $user_progress->get_status();
 
 				if ( in_array( $status, $in_progress_statuses, true ) ) {
 					$status = 'in-progress';

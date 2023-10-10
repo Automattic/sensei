@@ -1551,11 +1551,11 @@ class Sensei_Course {
 
 
 	/**
-	 * course_lessons function.
+	 * Get course lessons.
 	 *
 	 * @access public
 	 *
-	 * @param int          $course_id   (default: 0).         The course id.
+	 * @param int|WP_Post  $course_id   (default: 0).         The course id.
 	 * @param string|array $post_status (default: 'publish'). The post status.
 	 * @param string       $fields      (default: 'all').     WP only allows 3 types, but we will limit it to only 'ids' or 'all'.
 	 * @param array        $query_args  Base arguments for the WP query.
@@ -1598,14 +1598,27 @@ class Sensei_Course {
 		// that have been added to the course.
 		if ( count( $lessons ) > 1 ) {
 
+			$lesson_order = array();
 			foreach ( $lessons as $lesson ) {
 
 				$order = intval( get_post_meta( $lesson->ID, '_order_' . $course_id, true ) );
 				// for lessons with no order set it to be 10000 so that it show up at the end
-				$lesson->course_order = $order ? $order : 100000;
+				$lesson_order[ $lesson->ID ] = $order ? $order : 100000;
 			}
 
-			uasort( $lessons, [ $this, '_short_course_lessons_callback' ] );
+			uasort(
+				$lessons,
+				function ( $lesson_1, $lesson_2 ) use ( $lesson_order ) {
+					$lesson_1_order = $lesson_order[ $lesson_1->ID ];
+					$lesson_2_order = $lesson_order[ $lesson_2->ID ];
+
+					if ( $lesson_1_order == $lesson_2_order ) {
+						return 0;
+					}
+
+					return ( $lesson_1_order < $lesson_2_order ) ? -1 : 1;
+				}
+			);
 		}
 
 		/**
@@ -1618,9 +1631,8 @@ class Sensei_Course {
 		 */
 		$lessons = apply_filters( 'sensei_course_get_lessons', $lessons, $course_id );
 
-		// return the requested fields
-		// runs after the sensei_course_get_lessons filter so the filter always give an array of lesson
-		// objects
+		// Return the requested fields.
+		// Runs after the sensei_course_get_lessons filter so the filter always give an array of lesson objects.
 		if ( 'ids' === $fields ) {
 			$lesson_objects = $lessons;
 			$lessons        = [];
@@ -1632,25 +1644,6 @@ class Sensei_Course {
 
 		return $lessons;
 
-	}
-
-	/**
-	 * Used for the uasort in $this->course_lessons()
-	 *
-	 * @since 1.8.0
-	 * @access protected
-	 *
-	 * @param array $lesson_1
-	 * @param array $lesson_2
-	 * @return int
-	 */
-	protected function _short_course_lessons_callback( $lesson_1, $lesson_2 ) {
-
-		if ( $lesson_1->course_order == $lesson_2->course_order ) {
-			return 0;
-		}
-
-		return ( $lesson_1->course_order < $lesson_2->course_order ) ? -1 : 1;
 	}
 
 	/**
@@ -1941,7 +1934,7 @@ class Sensei_Course {
 
 				$progress_percentage = Sensei_Utils::quotient_as_absolute_rounded_percentage( $lessons_completed, $lesson_count, 0 );
 
-				$active_html .= $this->get_progress_meter( $progress_percentage );
+				$active_html .= $this->get_progress_meter( (int) $progress_percentage );
 
 				$active_html .= '</section>';
 
@@ -3569,8 +3562,7 @@ class Sensei_Course {
 		// Check if course is completed.
 		$completed_course = false;
 		if ( ! empty( $user_id ) ) {
-			$user_course_status = Sensei_Utils::user_course_status( $course_id, $user_id );
-			$completed_course   = Sensei_Utils::user_completed_course( $user_course_status );
+			$completed_course = Sensei_Utils::user_completed_course( $course_id, $user_id );
 		}
 
 		/**

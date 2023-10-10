@@ -148,7 +148,7 @@ function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
 	$pre_requisite_complete = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
 	$is_preview_lesson      = false;
 
-	if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
+	if ( $lesson_id && Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 		$is_preview_lesson      = true;
 		$pre_requisite_complete = true;
 	};

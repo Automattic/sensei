@@ -743,13 +743,7 @@ class Sensei_Core_Modules {
 		$title_text = '';
 
 		if ( method_exists( 'Sensei_Utils', 'is_preview_lesson' ) && Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
-			$is_user_taking_course = Sensei_Utils::sensei_check_for_activity(
-				array(
-					'post_id' => $course_id,
-					'user_id' => $current_user->ID,
-					'type'    => 'sensei_course_status',
-				)
-			);
+			$is_user_taking_course = Sensei()->course_progress_repository->has( $course_id, $current_user->ID );
 			if ( ! $is_user_taking_course ) {
 				if ( method_exists( 'Sensei_Frontend', 'sensei_lesson_preview_title_text' ) ) {
 					$title_text = Sensei()->frontend->sensei_lesson_preview_title_text( $course_id );
@@ -1194,6 +1188,7 @@ class Sensei_Core_Modules {
 		$completed       = false;
 		$lesson_count    = 0;
 		$completed_count = 0;
+		$lessons         = array_map( 'intval', $lessons );
 		foreach ( $lessons as $lesson_id ) {
 			$completed = Sensei_Utils::user_completed_lesson( $lesson_id, $user_id );
 			++$lesson_count;
