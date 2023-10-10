@@ -265,7 +265,7 @@ class Sensei_Quiz {
 	public function get_lesson_ids( array $quiz_ids ) {
 		$quiz_parents = get_posts(
 			array(
-				'fields'         => 'id=>post_parent',
+				'fields'         => 'id=>parent',
 				'post_type'      => 'quiz',
 				'post__in'       => $quiz_ids,
 				'posts_per_page' => -1,
