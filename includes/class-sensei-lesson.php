@@ -4736,7 +4736,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
 		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 			return;
