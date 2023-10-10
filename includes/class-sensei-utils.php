@@ -2017,7 +2017,7 @@ class Sensei_Utils {
 		$sensei_user_status = self::$status_function( $post_id, $user_id );
 		if ( ! isset( $sensei_user_status->comment_ID ) ) {
 
-			$start_function          = 'user_start_' . $post_type;
+			$start_function = 'user_start_' . $post_type;
 			self::$start_function( $user_id, $post_id );
 
 		}
