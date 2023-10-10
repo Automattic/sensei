@@ -2018,11 +2018,7 @@ class Sensei_Utils {
 		if ( ! isset( $sensei_user_status->comment_ID ) ) {
 
 			$start_function          = 'user_start_' . $post_type;
-			$sensei_user_activity_id = self::$start_function( $user_id, $post_id );
-
-		} else {
-
-			$sensei_user_activity_id = $sensei_user_status->comment_ID;
+			self::$start_function( $user_id, $post_id );
 
 		}
 
