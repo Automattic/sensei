@@ -698,7 +698,6 @@ class Sensei_Grading {
 			return false;
 		}
 
-		$lesson_status   = 'ungraded';
 		$lesson_metadata = [];
 		$quiz_progress->ungrade();
 
@@ -720,10 +719,8 @@ class Sensei_Grading {
 					// Due to our internal logic, we need to complete the lesson first.
 					// This is because in the comments-based version the lesson status is used for both the lesson and the quiz.
 					$lesson_progress->complete();
-					$lesson_status = 'passed';
 					$quiz_progress->pass();
 				} else {
-					$lesson_status = 'failed';
 					$quiz_progress->fail();
 				}
 			}
@@ -731,7 +728,6 @@ class Sensei_Grading {
 			// Student only has to partake the quiz.
 			else {
 				$lesson_progress->complete();
-				$lesson_status = 'graded';
 				$quiz_progress->grade();
 			}
 		}
