@@ -341,11 +341,8 @@ class Sensei_Utils {
 		 *
 		 * @hook sensei_file_upload_args
 		 *
-		 * @param {array} $file_upload_args {
-		 *      array of current values
-		 *
-		 *     @type {string} test_form set to false by default
-		 * }
+		 * @param {array} $file_upload_args Array of current values
+		 * @property {string} test_form set to false by default
 		 * @return {array} Filtered data array.
 		 */
 		$file_upload_args = apply_filters( 'sensei_file_upload_args', array( 'test_form' => false ) );

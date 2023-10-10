@@ -1229,8 +1229,8 @@ class Sensei_Frontend {
 			 * @param {callable} $handler {
 			 *     Frontend enrolment handler. Returns `true` if successful; `false` if not.
 			 *
-			 *     @type int $user_id   User ID.
-			 *     @type int $course_id Course post ID.
+			 *     @property {int} $user_id   User ID.
+			 *     @property {int} $course_id Course post ID.
 			 * }
 			 * @param {int}      $user_id          User ID.
 			 * @param {int}      $course_id        Course post ID.
