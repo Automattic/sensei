@@ -78,11 +78,13 @@ class Sensei_Course_Theme_Quiz {
 		// Prepare title.
 		$grade         = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
 		$grade_rounded = Sensei_Utils::round( $grade, 2 );
+		$reset_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
 		$title         = sprintf(
 			// translators: The placeholder is the quiz grade.
 			__( 'Your Grade: %1$s%%', 'sensei-lms' ),
 			$grade_rounded
 		);
+
 		if ( 'ungraded' === $lesson_status->comment_approved ) {
 			$title = __( 'Awaiting grade', 'sensei-lms' );
 		}
@@ -126,6 +128,13 @@ class Sensei_Course_Theme_Quiz {
 				$passmark_rounded,
 				$grade_rounded
 			);
+
+			// Display Contact Teacher button.
+			if ( ! $reset_allowed ) {
+				$block     = new Sensei_Block_Contact_Teacher();
+				$button    = Sensei_Quiz::get_primary_button_html( __( 'Contact teacher', 'sensei-lms' ), '#' );
+				$actions[] = $block->render_contact_teacher_block( [], $button );
+			}
 		}
 
 		// "Continue to next lesson" button.
@@ -136,8 +145,6 @@ class Sensei_Course_Theme_Quiz {
 		}
 
 		// "Restart Quiz" button.
-		$reset_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
-
 		if ( $reset_allowed ) {
 			$actions[] = self::render_reset_quiz();
 		}
