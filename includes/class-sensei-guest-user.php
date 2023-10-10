@@ -161,7 +161,7 @@ class Sensei_Guest_User {
 	public function log_guest_user_out_before_all_actions() {
 		if (
 			is_user_logged_in() &&
-			$this->is_current_user_guest()
+			self::is_current_user_guest()
 		) {
 			$this->guest_user_id = get_current_user_id();
 			wp_set_current_user( 0 );

@@ -57,7 +57,7 @@ global $course;
 			$lessons_query = Sensei()->modules->get_lessons_query( $course->ID, $module->term_id );
 			$lessons       = $lessons_query->get_posts();
 
-			if ( count( $lessons ) > 0 ) {
+			if ( $lessons ) {
 
 				$course_has_lessons_in_modules = true;
 
@@ -113,7 +113,7 @@ global $course;
 		<?php
 
 		$lessons = Sensei()->modules->get_none_module_lessons( $course->ID );
-		if ( 0 < count( $lessons ) ) :
+		if ( $lessons ) :
 			?>
 
 			<?php

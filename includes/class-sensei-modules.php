@@ -1180,7 +1180,8 @@ class Sensei_Core_Modules {
 			'fields'         => 'ids',
 		);
 		$lessons = get_posts( $args );
-		if ( is_wp_error( $lessons ) || 0 >= count( $lessons ) ) {
+
+		if ( is_wp_error( $lessons ) || ! $lessons ) {
 			return 0;
 		}
 
@@ -2540,10 +2541,12 @@ class Sensei_Core_Modules {
 	 */
 	public function filter_course_selected_terms( $terms, $course_ids_array, $taxonomies ) {
 
+		$taxonomies_count = is_countable( $taxonomies ) ? count( $taxonomies ) : 0;
+
 		// dont limit for admins and other taxonomies. This should also only apply to admin
 		if ( current_user_can( 'manage_options' ) || ! is_admin() || empty( $terms )
 			// only apply this to module only taxonomy queries so 1 taxonomy only:
-			|| count( $taxonomies ) > 1 || ! in_array( 'module', $taxonomies ) ) {
+			|| $taxonomies_count > 1 || ! in_array( 'module', $taxonomies ) ) {
 			return $terms;
 		}
 

@@ -748,21 +748,17 @@ class Sensei_Learner {
 		$learner_manager = self::instance();
 		$controller      = new Sensei_Learners_Admin_Bulk_Actions_Controller( new Sensei_Learner_Management( '' ), $learner_manager );
 		$base_query_args = [ 'posts_per_page' => -1 ];
-		$posts           = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args )->posts;
-		$courses         = 0;
-		if ( $posts ) {
-			// We only want to show courses after the third one in the UI.
-			$courses = array_slice( $posts, 3 );
-		}
+		$courses_query   = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args );
+
+		// We only want to show courses after the third one in the UI.
+		$courses = array_slice( $courses_query->posts, 3 );
 
 		$html_items = [];
-		if ( count( $courses ) > 0 ) {
-			foreach ( $courses as $course ) {
-				$html_items[] = '<a href="' . esc_url( $controller->get_learner_management_course_url( $course->ID ) ) .
-								'" class="sensei-students__enrolled-course" data-course-id="' . esc_attr( $course->ID ) . '">' .
-								esc_html( $course->post_title ) .
-								'</a>';
-			}
+		foreach ( $courses as $course ) {
+			$html_items[] = '<a href="' . esc_url( $controller->get_learner_management_course_url( $course->ID ) ) .
+							'" class="sensei-students__enrolled-course" data-course-id="' . intval( $course->ID ) . '">' .
+							esc_html( $course->post_title ) .
+							'</a>';
 		}
 		wp_send_json_success( $html_items );
 		exit();

@@ -766,7 +766,7 @@ class Sensei_Admin {
 		}
 
 		// Persist new lesson order to course meta.
-		$new_lesson_order_string = join( ',', $new_lesson_order );
+		$new_lesson_order_string = implode( ',', $new_lesson_order );
 		update_post_meta( $course_id, '_lesson_order', $new_lesson_order_string );
 	}
 
@@ -884,7 +884,7 @@ class Sensei_Admin {
 		if ( ! is_wp_error( $new_post_id ) ) {
 
 			$post_meta = get_post_custom( $post->ID );
-			if ( $post_meta && count( $post_meta ) > 0 ) {
+			if ( $post_meta ) {
 
 				/**
 				 * Ignored meta fields when duplicating a post.
@@ -1088,7 +1088,7 @@ class Sensei_Admin {
 
 		$html = '';
 
-		if ( 0 == count( $settings ) ) {
+		if ( ! $settings ) {
 			return $html;
 		}
 
@@ -1379,7 +1379,7 @@ class Sensei_Admin {
 
 								$courses = Sensei()->course->get_all_courses();
 
-								if ( 0 < count( $courses ) ) {
+								if ( $courses ) {
 
 									// order the courses as set by the users
 									$all_course_ids = array();

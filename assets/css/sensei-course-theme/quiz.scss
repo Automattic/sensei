@@ -201,6 +201,23 @@ $vertical-spacing-desktop: 80px;
 	text-decoration: none;
 }
 
+.wp-block-sensei-lms-quiz-actions {
+
+	& > div:first-child.sensei-quiz-actions-secondary {
+		flex-grow: 1;
+		justify-content: end;
+	}
+
+	.sensei-course-theme__button.is-primary {
+		width: auto;
+	}
+
+	button:disabled {
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+}
+
 .sensei-progress-bar {
 	&__bar {
 		height: 12px;

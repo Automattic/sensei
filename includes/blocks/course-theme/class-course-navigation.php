@@ -158,7 +158,7 @@ class Course_Navigation {
 	private function render_module( $module ) {
 		$module_id  = $module['id'];
 		$title      = esc_html( $module['title'] );
-		$lessons    = $module['lessons'];
+		$lessons    = is_array( $module['lessons'] ) ? $module['lessons'] : [];
 		$module_url = add_query_arg( 'course_id', $this->course_id, get_term_link( $module_id, 'module' ) );
 
 		$lessons_html = implode(

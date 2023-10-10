@@ -1493,7 +1493,7 @@ class Sensei_Utils {
 			return 0;
 		}
 
-		return self::as_absolute_rounded_number( doubleval( $numerator ) / ( $denominator ), $decimal_places_to_round );
+		return self::as_absolute_rounded_number( floatval( $numerator ) / ( $denominator ), $decimal_places_to_round );
 	}
 
 	/**
@@ -1504,7 +1504,7 @@ class Sensei_Utils {
 	 * @return float
 	 */
 	public static function as_absolute_rounded_number( $number, $decimal_places_to_round = 0 ) {
-		return abs( round( ( doubleval( $number ) ), $decimal_places_to_round ) );
+		return abs( round( ( floatval( $number ) ), $decimal_places_to_round ) );
 	}
 
 	/**
@@ -2189,8 +2189,7 @@ class Sensei_Utils {
 			$drop_down_element .= '<option value="">' . esc_html__( 'None', 'sensei-lms' ) . '</option>';
 		}
 
-		if ( count( $options ) > 0 ) {
-
+		if ( $options ) {
 			foreach ( $options as $value => $option ) {
 
 				$element  = '';
