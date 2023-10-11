@@ -6,21 +6,21 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Aggregate_Submission_Repository;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comment_Reading_Aggregate_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
 /**
- * Class Aggregate_Submission_Repository_Test
+ * Class Comment_Reading_Aggregate_Submission_Repository_Test
  *
- * @covers \Sensei\Internal\Quiz_Submission\Submission\Repositories\Aggregate_Submission_Repository
+ * @covers \Sensei\Internal\Quiz_Submission\Submission\Repositories\Comment_Reading_Aggregate_Submission_Repository
  */
-class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
+class Comment_Reading_Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 	public function testCreate_UseTablesOn_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, true );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$tables_based
@@ -35,7 +35,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, true );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$comments_based
@@ -50,7 +50,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, false );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, false );
 
 		/* Expect & Act. */
 		$tables_based
@@ -64,7 +64,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, false );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, false );
 
 		/* Expect & Act. */
 		$comments_based
@@ -79,7 +79,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, true );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$comments_based
@@ -94,7 +94,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, true );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$tables_based
@@ -107,7 +107,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, false );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, false );
 
 		/* Expect & Act. */
 		$comments_based
@@ -122,7 +122,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, false );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, false );
 
 		/* Expect & Act. */
 		$comments_based
@@ -144,7 +144,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		$submission     = $this->create_submission();
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, $use_tables );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, $use_tables );
 
 		/* Expect & Act. */
 		$comments_based
@@ -173,7 +173,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 			->with( 2, 3 )
 			->willReturn( $found_submission );
 
-		$repository = new Aggregate_Submission_Repository( $comments_based, $tables_based, true );
+		$repository = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$tables_based
@@ -198,7 +198,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
 
-		$repository = new Aggregate_Submission_Repository( $comments_based, $tables_based, true );
+		$repository = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$tables_based
@@ -228,7 +228,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 			->with( 2, 3 )
 			->willReturn( $submission );
 
-		$repository = new Aggregate_Submission_Repository( $comments_based, $tables_based, true );
+		$repository = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$tables_based
@@ -253,7 +253,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		$submission     = $this->create_submission();
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, false );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, false );
 
 		/* Expect & Act. */
 		$tables_based
@@ -268,7 +268,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		$submission     = $this->create_submission();
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, true );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
 		$tables_based
@@ -291,7 +291,7 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 		$submission     = $this->create_submission();
 		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, $use_tables );
+		$repository     = new Comment_Reading_Aggregate_Submission_Repository( $comments_based, $tables_based, $use_tables );
 
 		/* Expect & Act. */
 		$comments_based

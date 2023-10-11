@@ -45,7 +45,7 @@ class Submission_Repository_Factory {
 	public function create(): Submission_Repository_Interface {
 		global $wpdb;
 
-		return new Aggregate_Submission_Repository(
+		return new Comment_Reading_Aggregate_Submission_Repository(
 			new Comments_Based_Submission_Repository(),
 			new Tables_Based_Submission_Repository( $wpdb ),
 			$this->use_tables

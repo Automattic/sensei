@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Aggregate_Submission_Repository class.
+ * File containing the Comment_Reading_Aggregate_Submission_Repository class.
  *
  * @package sensei
  */
@@ -16,13 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Aggregate_Submission_Repository.
+ * Class Comment_Reading_Aggregate_Submission_Repository.
  *
  * @internal
  *
  * @since 4.16.1
  */
-class Aggregate_Submission_Repository implements Submission_Repository_Interface {
+class Comment_Reading_Aggregate_Submission_Repository implements Submission_Repository_Interface {
 	/**
 	 * Comments based quiz submission repository implementation.
 	 *
