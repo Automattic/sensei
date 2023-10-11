@@ -86,9 +86,6 @@ class Sensei_Home_Tasks_Provider {
 		}
 
 		/**
-		*/
-
-		/**
 		 * Filters the list of tasks that will be later displayed in the Sensei Home header.
 		 *
 		 * @since 4.8.0

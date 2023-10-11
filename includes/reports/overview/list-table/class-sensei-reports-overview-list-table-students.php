@@ -181,7 +181,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		 * @param {WP_User} $item Current user object.
 		 * @return {array} Filtered array of query arguments for started user courses.
 		*/
-		$course_args = apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item );
+		$course_args          = apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item );
 		$user_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args );
 
 		// Get Completed Courses.

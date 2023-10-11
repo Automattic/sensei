@@ -389,7 +389,8 @@ class Sensei_Grading {
 
 		}
 		?>
-			<h2><?php
+			<h2>
+			<?php
 			/**
 			 * Filter the title of the Grading page.
 			 *
@@ -399,7 +400,8 @@ class Sensei_Grading {
 			 * @return {string} Filtered title.
 			 */
 			echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) );
-			?></h2>
+			?>
+			</h2>
 		<?php
 	}
 
