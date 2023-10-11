@@ -997,7 +997,7 @@ class Sensei_Utils {
 		 * @param {int} $total_grade  User's total grade
 		 * @param {int} $course_id    ID of course
 		 * @param {int} $user_id      ID of user
-		 * @return {int} Fitlered user total grade.
+		 * @return {int} Filtered user total grade.
 		 */
 		return apply_filters( 'sensei_course_user_grade', self::round( $total_grade ), $course_id, $user_id );
 	}

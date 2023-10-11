@@ -473,7 +473,15 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
-		/* Filter documented in includes/class-sensei-list-table.php */
+
+		/**
+		 * Filter the search button text for the list table.
+		 *
+		 * @hook sensei_list_table_search_button_text
+		 *
+		 * @param {string} $text The search button text.
+		 * @return {string} The filtered search button text.
+		 */
 		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 

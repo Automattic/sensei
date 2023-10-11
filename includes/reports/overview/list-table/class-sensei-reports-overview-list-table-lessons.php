@@ -167,7 +167,15 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 			'type'    => 'sensei_lesson_status',
 			'status'  => 'any',
 		);
-		/** Filter is documented in class-sensei-analysis-overview-list-table.php */
+		/**
+		 * Filter the lesson learners activity arguments for the Course Analysis list table.
+		 *
+		 * @hook sensei_analysis_lesson_learners
+		 *
+		 * @param {array}  $lesson_args The lesson learners activity arguments.
+		 * @param {object} $item The current item.
+		 * @return {array} The lesson learners activity arguments.
+		 */
 		$lesson_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item ) );
 
 		// Get Course Completions.
@@ -177,7 +185,16 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 			'status'  => array( 'complete', 'graded', 'passed', 'failed', 'ungraded' ),
 			'count'   => true,
 		);
-		/** Filter is documented in class-sensei-analysis-overview-list-table.php */
+
+		/**
+		 * Filter the lesson completions activity arguments.
+		 *
+		 * @hook sensei_analysis_lesson_completions
+		 *
+		 * @param {array}  $lesson_args The lesson completions activity arguments.
+		 * @param {object} $item The current item.
+		 * @return {array} The lesson completions activity arguments.
+		 */
 		$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
 		// Taking the ceiling value for the average.
 		$average_completion_days = $lesson_completions > 0 ? ceil( $item->days_to_complete / $lesson_completions ) : __( 'N/A', 'sensei-lms' );
@@ -198,6 +215,16 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 			$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 		}
 
+		/**
+		 * Filter the row data for the Analysis Overview list table.
+		 *
+		 * @hook sensei_analysis_overview_column_data
+		 *
+		 * @param {array} $column_data Array of column data for the report table.
+		 * @param {object|WP_Post|WP_User} $item Current row object.
+		 * @param {Sensei_Reports_Overview_List_Table_Lessons} $this Current instance of the list table.
+		 * @return {array} Filtered array of column data for the report table.
+		 */
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
 			array(

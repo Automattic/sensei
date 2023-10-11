@@ -160,7 +160,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 			* @hook widget_course_categories_dropdown_args
 			*
 			* @param {array} $cat_args Course categories dropdown arguments.
-			* @return {array} Fitlered course categories dropdown arguments.
+			* @return {array} Filtered course categories dropdown arguments.
 			*/
 			$cat_args = apply_filters( 'widget_course_categories_dropdown_args', $cat_args );
 			wp_dropdown_categories( $cat_args );

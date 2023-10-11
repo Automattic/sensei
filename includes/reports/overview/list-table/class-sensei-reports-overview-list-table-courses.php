@@ -202,7 +202,15 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			'type'    => 'sensei_course_status',
 			'status'  => 'complete',
 		);
-		/** This filter is documented in sensei-analysis-overview-list-table.php */
+		/**
+		 * Filter the course completions query arguments.
+		 *
+		 * @hook sensei_analysis_course_completions
+		 *
+		 * @param {array} $course_args Array of query arguments for course completions.
+		 * @param {WP_Post} $item Current course post object.
+		 * @return {array} Filtered array of query arguments for course completions.
+		 */
 		$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
 
 		// Average Grade will be N/A if the course has no lessons or quizzes, if none of the lessons
@@ -218,7 +226,15 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 			);
 
-			/** This filter is documented in sensei-analysis-overview-list-table.php */
+			/**
+			 * Filter the course completion percentage query arguments.
+			 *
+			 * @hook sensei_analysis_course_percentage
+			 *
+			 * @param {array} $grade_args Array of query arguments for course percentage.
+			 * @param {WP_Post} $item Current course post object.
+			 * @return {array} Filtered array of query arguments for course percentage.
+			 */
 			$percent_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
 			$percent_total = $this->grading::get_course_users_grades_sum( $item->ID );
 
@@ -233,7 +249,6 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$average_completion_days = $item->count_of_completions > 0 ? ceil( $item->days_to_completion / $item->count_of_completions ) : __( 'N/A', 'sensei-lms' );
 
 		// Output course data.
-		/** This filter is documented in wp-includes/post-template.php */
 		$course_title   = apply_filters( 'the_title', $item->post_title, $item->ID ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 		$total_enrolled = $this->reports_overview_service_courses->get_total_enrollments( [ $item->ID ] );
 
@@ -251,6 +266,16 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 
 		$average_course_progress = $this->get_average_progress_for_courses_table( $item->ID );
 
+		/**
+		 * Filter the row data for the Analysis Overview list table.
+		 *
+		 * @hook sensei_analysis_overview_column_data
+		 *
+		 * @param {array} $column_data Array of column data for the report table.
+		 * @param {object|WP_Post|WP_User} $item Current row object.
+		 * @param {Sensei_Reports_Overview_List_Table_Courses} $this Current instance of the list table.
+		 * @return {array} Filtered array of column data for the report table.
+		 */
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
 			array(

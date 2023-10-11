@@ -2117,8 +2117,15 @@ class Sensei_Course {
 				}
 
 				/**
-				* Filter documented in Sensei_Course::the_course_action_buttons
-				*/
+				 * Filter results links.
+				 *
+				 * @hook sensei_results_links
+				 *
+				 * @param {string} $results_links HTML for results links.
+				 * @param {int}    $course_id     Course ID.
+				 * @param {int}    $user_id       User ID.
+				 * @return {string} HTML for results links.
+				 */
 				$results_links = apply_filters( 'sensei_results_links', $results_link, $course_item->ID, $user->ID );
 				if ( $results_links ) {
 						$complete_html .= '<p class="sensei-results-links">';
@@ -3499,7 +3506,13 @@ class Sensei_Course {
 		}
 
 		/**
-		 * hook document in class-woothemes-sensei-message.php
+		 * Filter Sensei single title
+		 *
+		 * @hook sensei_single_title
+		 *
+		 * @param {string} $title     The title.
+		 * @param {string} $post_type The post type.
+		 * @return {string} Filtered title.
 		 */
 		$title = apply_filters( 'sensei_single_title', $title, $post->post_type );
 
@@ -3676,7 +3689,13 @@ class Sensei_Course {
 						}
 
 						/**
-						 * Filter documented in Sensei_Course::the_course_action_buttons
+						 * Filter results links.
+						 *
+						 * @hook sensei_results_links
+						 *
+						 * @param {string} $results_links HTML for results links.
+						 * @param {int}    $course_id     Course ID.
+						 * @return {string} HTML for results links.
 						 */
 						$results_link = apply_filters( 'sensei_results_links', $results_link, $course_id );
 						echo wp_kses_post( $results_link );
@@ -3859,7 +3878,13 @@ class Sensei_Course {
 
 				<?php
 				/**
-				 * Filter documented in class-sensei-messages.php the_title
+				 * Filter Sensei single title
+				 *
+				 * @hook sensei_single_title
+				 *
+				 * @param {string} $title     The title.
+				 * @param {string} $post_type The post type.
+				 * @return {string} Filtered title.
 				 */
 				echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type ) );
 				?>

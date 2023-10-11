@@ -174,9 +174,20 @@ class Sensei_Learner_Profiles {
 		 */
 		$name = apply_filters( 'sensei_learner_profile_courses_heading_name', $name );
 
-		/** This filter is documented earlier in this file. */
-		// translators: Placeholder is the name of the student.
-		echo '<h2>' . wp_kses_post( apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'sensei-lms' ), $name ) ) ) . '</h2>';
+		/**
+		 * Filter the title for the learner profile page.
+		 *
+		 * @hook sensei_learner_profile_courses_heading
+		 *
+		 * @param {string} $title The title.
+		 * @return {string} The filtered title.
+		 */
+		$title = apply_filters(
+			'sensei_learner_profile_courses_heading',
+			// translators: Placeholder is the name of the student.
+			sprintf( __( 'Courses %s is taking', 'sensei-lms' ), $name )
+		);
+		echo '<h2>' . wp_kses_post( $title ) . '</h2>';
 	}
 
 	/**

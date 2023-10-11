@@ -504,7 +504,15 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 			if ( ! empty( $mimetype_array[0] ) ) {
 				if ( 'image' === $mimetype_array[0] ) {
-					// This filter is documented in class-sensei-question.php.
+					/**
+					 * Filter the size of the question image.
+					 *
+					 * @hook sensei_question_image_size
+					 *
+					 * @param {string} $size        Image size.
+					 * @param {int}    $question_id Question ID.
+					 * @return {string} Image size.
+					 */
 					$image_size            = apply_filters( 'sensei_question_image_size', 'medium', $question_id );
 					$attachment_src        = wp_get_attachment_image_src( $question_media_id, $image_size );
 					$question_media['url'] = esc_url( $attachment_src[0] );

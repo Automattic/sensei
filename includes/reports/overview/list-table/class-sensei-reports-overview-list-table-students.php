@@ -171,8 +171,18 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			'type'    => 'sensei_course_status',
 			'status'  => 'any',
 		);
-		/** Filter is documented in class-sensei-analysis-overview-list-table.php */
-		$user_courses_started = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item ) );
+
+		/**
+		 * Filter user progress query arguments for courses: find started courses.
+		 *
+		 * @hook sensei_analysis_user_courses_started
+		 *
+		 * @param {array} $course_args Array of query arguments for started user courses.
+		 * @param {WP_User} $item Current user object.
+		 * @return {array} Filtered array of query arguments for started user courses.
+		*/
+		$course_args = apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item );
+		$user_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args );
 
 		// Get Completed Courses.
 		$course_args = array(
@@ -180,7 +190,16 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			'type'    => 'sensei_course_status',
 			'status'  => 'complete',
 		);
-		/** Filter is documented in class-sensei-analysis-overview-list-table.php */
+
+		/**
+		 * Filter user progress query arguments for courses: find completed courses.
+		 *
+		 * @hook sensei_analysis_user_courses_ended
+		 *
+		 * @param {array} $course_args Array of query arguments for ended user courses.
+		 * @param {WP_User} $item Current user object.
+		 * @return {array} Filtered array of query arguments for ended user courses.
+		 */
 		$user_courses_ended = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_ended', $course_args, $item ) );
 
 		// Get Quiz Grades.
@@ -191,7 +210,15 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Filtering graded only.
 		);
 
-		/** Filter is documented in class-sensei-analysis-overview-list-table.php */
+		/**
+		 * Filter user progress query arguments for lessons: find graded lessons.
+		 *
+		 * @hook sensei_analysis_user_lesson_grades
+		 *
+		 * @param {array} $grade_args Array of query arguments for graded user lessons.
+		 * @param {WP_User} $item Current user object.
+		 * @return {array} Filtered array of query arguments for graded user lessons.
+		 */
 		$grade_count        = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), false );
 		$grade_total        = Sensei_Grading::get_user_graded_lessons_sum( $item->ID );
 		$user_average_grade = 0;
@@ -213,6 +240,16 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			$last_activity_date = $this->csv_output ? $item->last_activity_date : Sensei_Utils::format_last_activity_date( $item->last_activity_date );
 		}
 
+		/**
+		 * Filter the row data for the Analysis Overview list table.
+		 *
+		 * @hook sensei_analysis_overview_column_data
+		 *
+		 * @param {array} $column_data Array of column data for the report table.
+		 * @param {object|WP_Post|WP_User} $item Current row object.
+		 * @param {Sensei_Reports_Overview_List_Table_Students} $this Current instance of the list table.
+		 * @return {array} Filtered array of column data for the report table.
+		 */
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
 			array(

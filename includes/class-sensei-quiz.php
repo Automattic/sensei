@@ -1626,7 +1626,13 @@ class Sensei_Quiz {
 			$title = sprintf( __( '%s Quiz', 'sensei-lms' ), $title_with_no_quizzes );
 
 			/**
-			 * hook document in class-woothemes-sensei-message.php
+			 * Filter Sensei single title
+			 *
+			 * @hook sensei_single_title
+			 *
+			 * @param {string} $title     The title.
+			 * @param {string} $post_type The post type.
+			 * @return {string} Filtered title.
 			 */
 			$title = apply_filters( 'sensei_single_title', $title, get_post_type() );
 		}
@@ -1740,7 +1746,13 @@ class Sensei_Quiz {
 
 				<?php
 				/**
-				 * Filter documented in class-sensei-messages.php the_title
+				 * Filter Sensei single title
+				 *
+				 * @hook sensei_single_title
+				 *
+				 * @param {string} $title     The title.
+				 * @param {string} $post_type The post type.
+				 * @return {string} Filtered title.
 				 */
 				echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( get_post() ), get_post_type( get_the_ID() ) ) );
 				?>

@@ -4912,7 +4912,15 @@ class Sensei_Lesson {
 			&& Sensei_Utils::is_preview_lesson( $post->ID )
 			&& ! Sensei_Course::is_user_enrolled( $course_id, $current_user->ID );
 
-		/** This filter is documented in includes/class-sensei-messages.php */
+		/**
+		 * Filter Sensei single title
+		 *
+		 * @hook sensei_single_title
+		 *
+		 * @param {string} $title     The title.
+		 * @param {string} $post_type The post type.
+		 * @return {string} Filtered title.
+		 */
 		$title = apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type );
 
 		if ( ! $title ) {

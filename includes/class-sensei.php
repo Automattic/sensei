@@ -1307,7 +1307,7 @@ class Sensei_Main {
 			/**
 			 * Filter the image size.
 			 *
-			 * {image_size} is one of: course_archive_image, course_single_image, lesson_archive_image, lesson_single_image.
+			 * {image_size} is NOT one of: course_archive_image, course_single_image, lesson_archive_image, lesson_single_image.
 			 *
 			 * @hook sensei_get_image_size_{image_size}
 			 *
@@ -1339,7 +1339,16 @@ class Sensei_Main {
 		$size['height'] = isset( $size['height'] ) ? $size['height'] : '100';
 		$size['crop']   = isset( $size['crop'] ) ? $size['crop'] : 0;
 
-		/** This filter is documented in includes/class-sensei.php (above). */
+		/**
+		 * Filter the image size.
+		 *
+		 * {image_size} is one of: course_archive_image, course_single_image, lesson_archive_image, lesson_single_image.
+		 *
+		 * @hook sensei_get_image_size_{image_size}
+		 *
+		 * @param {string} $image_size Image Size.
+		 * @return {string} Filtered image size.
+		*/
 		return apply_filters( 'sensei_get_image_size_' . $image_size, $size );
 	}
 

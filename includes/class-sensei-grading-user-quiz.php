@@ -367,7 +367,14 @@ class Sensei_Grading_User_Quiz {
 									$_right_answer = htmlspecialchars_decode( nl2br( $_right_answer ) );
 								}
 
-								/* This filter is documented in includes/class-sensei-grading-user-quiz.php (above)*/
+								/**
+								 * Filter user answer text.
+								 *
+								 * @hook sensei_answer_text
+								 *
+								 * @param {string} Answer text.
+								 * @return {string} Filtered answer text.
+								 */
 								echo wp_kses_post( apply_filters( 'sensei_answer_text', $_right_answer ) ) . '<br>';
 
 							}

@@ -389,8 +389,17 @@ class Sensei_Grading {
 
 		}
 		?>
-			<?php /** Filter is documented earlier in this file. */ ?>
-			<h2><?php echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) ); ?></h2>
+			<h2><?php
+			/**
+			 * Filter the title of the Grading page.
+			 *
+			 * @hook sensei_grading_nav_title
+			 *
+			 * @param {string} $title
+			 * @return {string} Filtered title.
+			 */
+			echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) );
+			?></h2>
 		<?php
 	}
 

@@ -911,7 +911,6 @@ class Sensei_Messages {
 				 * @hook sensei_single_title
 				 *
 				 * @param {string} $title     The title.
-				 * @param {string} $template  The template.
 				 * @param {string} $post_type The post type.
 				 * @return {string} Filtered title.
 				 */

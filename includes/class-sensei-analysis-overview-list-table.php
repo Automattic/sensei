@@ -284,7 +284,15 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
 
-		/* Filter documented in includes/class-sensei-grading-main.php */
+		/**
+		 * Filter the number of items per page.
+		 *
+		 * @hook sensei_comments_per_page
+		 *
+		 * @param {int} $per_page The number of items per page.
+		 * @param {string} $type The type of items.
+		 * @return {int} The number of items per page.
+		 */
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
 
 		$paged  = $this->get_pagenum();
@@ -586,7 +594,16 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 				}
 
-				/** This filter is documented in includes/class-sensei-analysis-overview-list-table.php */
+				/**
+				 * Filter the row data for the Analysis Overview list table.
+				 *
+				 * @hook sensei_analysis_overview_column_data
+				 *
+				 * @param {array} $column_data Array of column data for the report table.
+				 * @param {object|WP_Post|WP_User} $item Current row object.
+				 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
+				 * @return {array} Filtered array of column data for the report table.
+				 */
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
@@ -692,7 +709,16 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$last_activity_date = $this->csv_output ? $item->last_activity_date : Sensei_Utils::format_last_activity_date( $item->last_activity_date );
 				}
 
-				/** This filter is documented in includes/class-sensei-analysis-overview-list-table.php */
+				/**
+				 * Filter the row data for the Analysis Overview list table.
+				 *
+				 * @hook sensei_analysis_overview_column_data
+				 *
+				 * @param {array} $column_data Array of column data for the report table.
+				 * @param {object|WP_Post|WP_User} $item Current row object.
+				 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
+				 * @return {array} Filtered array of column data for the report table.
+				 */
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
