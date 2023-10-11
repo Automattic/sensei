@@ -114,8 +114,9 @@ abstract class Course_Progress_Abstract implements Course_Progress_Interface {
 	 * @param DateTimeInterface|null $started_at Course start date.
 	 */
 	public function start( DateTimeInterface $started_at = null ): void {
-		$this->status     = Course_Progress_Interface::STATUS_IN_PROGRESS;
-		$this->started_at = $started_at ?? current_datetime();
+		$this->status       = Course_Progress_Interface::STATUS_IN_PROGRESS;
+		$this->started_at   = $started_at ?? current_datetime();
+		$this->completed_at = null;
 	}
 
 	/**

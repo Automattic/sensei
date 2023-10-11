@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
+
 /**
  * Class Quiz_Progress_Repository_Factory.
  *
@@ -64,7 +66,8 @@ class Quiz_Progress_Repository_Factory {
 
 		return new Table_Reading_Aggregate_Quiz_Progress_Repository(
 			new Comments_Based_Quiz_Progress_Repository(),
-			new Tables_Based_Quiz_Progress_Repository( $wpdb )
+			new Tables_Based_Quiz_Progress_Repository( $wpdb ),
+			new Comments_Based_Lesson_Progress_Repository()
 		);
 	}
 

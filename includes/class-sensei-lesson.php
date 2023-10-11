@@ -3639,9 +3639,14 @@ class Sensei_Lesson {
 	 * @return bool Whether quiz is submitted.
 	 */
 	public function is_quiz_submitted( int $lesson_id, int $user_id ) : bool {
-		$user_lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			return false;
+		}
 
-		return ! empty( $user_lesson_status ) && in_array( $user_lesson_status->comment_approved, [ 'ungraded', 'passed', 'failed', 'graded' ], true );
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+
+		return ! empty( $quiz_progress ) && in_array( $quiz_progress->get_status(), [ 'ungraded', 'passed', 'failed', 'graded' ], true );
 	}
 
 
@@ -4500,8 +4505,8 @@ class Sensei_Lesson {
 
 				<?php
 
-				$meta_html          = '';
-				$user_lesson_status = Sensei_Utils::user_lesson_status( get_the_ID(), get_current_user_id() );
+				$meta_html    = '';
+				$has_progress = Sensei()->lesson_progress_repository->has( $lesson_id, get_current_user_id() );
 
 				$lesson_length = get_post_meta( $lesson_id, '_lesson_length', true );
 				if ( '' != $lesson_length ) {
@@ -4525,7 +4530,7 @@ class Sensei_Lesson {
 
 					$meta_html .= '<span class="lesson-status complete">' . esc_html__( 'Complete', 'sensei-lms' ) . '</span>';
 
-				} elseif ( $user_lesson_status ) {
+				} elseif ( $has_progress ) {
 
 					$meta_html .= '<span class="lesson-status in-progress">' . esc_html__( 'In Progress', 'sensei-lms' ) . '</span>';
 
@@ -4742,9 +4747,14 @@ class Sensei_Lesson {
 	 */
 	public static function course_signup_link() {
 
-		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
+		$lesson_id = get_the_ID();
+		if ( ! $lesson_id ) {
+			return;
+		}
 
-		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( get_the_ID() ) ) {
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 			return;
 		}
 
@@ -4831,8 +4841,12 @@ class Sensei_Lesson {
 	 * @since 1.9.0
 	 */
 	public static function prerequisite_complete_message() {
+		$lesson_id = get_the_ID();
+		if ( false === $lesson_id ) {
+			return;
+		}
 
-		$lesson_prerequisite = self::find_first_prerequisite_lesson( get_the_ID(), get_current_user_id() );
+		$lesson_prerequisite = self::find_first_prerequisite_lesson( $lesson_id, get_current_user_id() );
 
 		if ( $lesson_prerequisite > 0 ) {
 
@@ -5049,7 +5063,7 @@ class Sensei_Lesson {
 	 */
 	public static function user_lesson_quiz_status_message( $lesson_id = 0, $user_id = 0 ) {
 
-		$lesson_id                 = empty( $lesson_id ) ? get_the_ID() : $lesson_id;
+		$lesson_id                 = empty( $lesson_id ) ? (int) get_the_ID() : $lesson_id;
 		$user_id                   = empty( $user_id ) ? get_current_user_id() : $user_id;
 		$lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
 		$quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );

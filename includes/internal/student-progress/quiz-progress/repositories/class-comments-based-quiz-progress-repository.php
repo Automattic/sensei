@@ -11,6 +11,7 @@ use DateTime;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei_Utils;
+use WP_Comment;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -69,21 +70,11 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			'type'    => 'sensei_lesson_status',
 		];
 		$comment       = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-		if ( ! $comment ) {
+		if ( ! $comment instanceof WP_Comment ) {
 			return null;
 		}
 
-		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
-		$meta_start   = get_comment_meta( $comment->comment_ID, 'start', true );
-		$started_at   = ! empty( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
-
-		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
-			$completed_at = $comment_date;
-		} else {
-			$completed_at = null;
-		}
-
-		return new Comments_Based_Quiz_Progress( (int) $comment->comment_ID, $quiz_id, $user_id, $comment->comment_approved, $started_at, $completed_at, $comment_date, $comment_date );
+		return $this->create_progress_from_comment( $comment, $quiz_id );
 	}
 
 	/**
@@ -204,5 +195,129 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			$actual_type = get_class( $quiz_progress );
 			throw new \InvalidArgumentException( "Expected Comments_Based_Quiz_Progress, got {$actual_type}." );
 		}
+	}
+
+	/**
+	 * Find quiz progress.
+	 *
+	 * @internal
+	 *
+	 * @param array $args The arguments.
+	 * @return Quiz_Progress_Interface[] The quiz progress.
+	 * @throws \InvalidArgumentException When ordering is not supported.
+	 */
+	public function find( array $args ): array {
+		$comments_args = array(
+			'type'    => 'sensei_lesson_status',
+			'order'   => 'ASC',
+			'orderby' => 'comment_ID',
+		);
+
+		$quiz_id = $args['quiz_id'] ?? null;
+		if ( isset( $args['quiz_id'] ) ) {
+			$lesson_ids = Sensei()->quiz->get_lesson_ids( (array) $args['quiz_id'] );
+			if ( ! empty( $lesson_ids ) ) {
+				$comments_args['post__in'] = $lesson_ids;
+			} else {
+				return array();
+			}
+		}
+
+		if ( isset( $args['user_id'] ) ) {
+			$comments_args['user_id'] = $args['user_id'];
+		}
+
+		if ( isset( $args['status'] ) ) {
+			$comments_args['status'] = $args['status'];
+		}
+
+		if ( isset( $args['order'] ) ) {
+			$comments_args['order'] = $args['order'];
+		}
+
+		if ( isset( $args['orderby'] ) ) {
+			switch ( $args['orderby'] ) {
+				case 'started_at':
+					throw new \InvalidArgumentException( 'Ordering by started_at is not supported in comments-based version.' );
+				case 'completed_at':
+				case 'created_at':
+				case 'updated_at':
+					$comments_args['orderby'] = 'comment_date';
+					break;
+				case 'quiz_id':
+					// We need to order by lesson ID, not quiz ID, as the lesson ID is not reachable from the comment.
+					$comments_args['orderby'] = 'comment_post_ID';
+					break;
+				case 'id':
+					$comments_args['orderby'] = 'comment_ID';
+					break;
+				case 'status':
+					$comments_args['orderby'] = 'comment_approved';
+					break;
+				default:
+					$comments_args['orderby'] = $args['orderby'];
+					break;
+			}
+		}
+
+		if ( isset( $args['order'] ) ) {
+			$comments_args['order'] = $args['order'];
+		}
+
+		if ( isset( $args['offset'] ) ) {
+			$comments_args['offset'] = $args['offset'];
+		}
+
+		if ( isset( $args['number'] ) ) {
+			$comments_args['number'] = $args['number'];
+		}
+
+		$comments = \Sensei_Utils::sensei_check_for_activity( $comments_args, true );
+		if ( empty( $comments ) ) {
+			return array();
+		}
+
+		$comments = is_array( $comments ) ? $comments : array( $comments );
+
+		$quiz_progresses = [];
+		foreach ( $comments as $comment ) {
+			$quiz_progresses[] = $this->create_progress_from_comment( $comment, $quiz_id );
+		}
+
+		return $quiz_progresses;
+	}
+
+	/**
+	 * Create a lesson progress from a comment.
+	 *
+	 * @param WP_Comment $comment The comment.
+	 * @param int|null   $quiz_id The quiz ID that is associated with the status comment.
+	 * @return Comments_Based_Quiz_Progress The course progress.
+	 */
+	private function create_progress_from_comment( WP_Comment $comment, ?int $quiz_id = null ): Comments_Based_Quiz_Progress {
+		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
+		$meta_start   = get_comment_meta( (int) $comment->comment_ID, 'start', true );
+		$started_at   = ! empty( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
+
+		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
+			$completed_at = $comment_date;
+		} else {
+			$completed_at = null;
+		}
+
+		if ( is_null( $quiz_id ) ) {
+			$quiz_id = Sensei()->lesson->lesson_quizzes( $comment->comment_post_ID );
+		}
+
+		return new Comments_Based_Quiz_Progress(
+			(int) $comment->comment_ID,
+			(int) $quiz_id,
+			(int) $comment->user_id,
+			$comment->comment_approved,
+			$started_at,
+			$completed_at,
+			$comment_date,
+			$comment_date
+		);
 	}
 }

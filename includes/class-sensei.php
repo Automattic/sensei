@@ -273,11 +273,25 @@ class Sensei_Main {
 	public $sensei_wpml;
 
 	/**
+	 * Course progress repository factory.
+	 *
+	 * @var Course_Progress_Repository_Factory
+	 */
+	public $course_progress_repository_factory;
+
+	/**
 	 * Course progress repository.
 	 *
 	 * @var Course_Progress_Repository_Interface
 	 */
 	public $course_progress_repository;
+
+	/**
+	 * Lesson progress repository factory.
+	 *
+	 * @var Lesson_Progress_Repository_Factory
+	 */
+	public $lesson_progress_repository_factory;
 
 	/**
 	 * Lesson progress repository.
@@ -613,11 +627,13 @@ class Sensei_Main {
 		 * @param {bool} $read_from_tables Whether to read student progress from tables. Default false.
 		 * @return {bool} Whether to read student progress from tables.
 		 */
-		$read_from_tables                       = apply_filters( 'sensei_student_progress_read_from_tables', false );
-		$this->course_progress_repository       = ( new Course_Progress_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
-		$this->lesson_progress_repository       = ( new Lesson_Progress_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
-		$this->quiz_progress_repository_factory = new Quiz_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
-		$this->quiz_progress_repository         = $this->quiz_progress_repository_factory->create();
+		$read_from_tables                         = apply_filters( 'sensei_student_progress_read_from_tables', false );
+		$this->course_progress_repository_factory = new Course_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
+		$this->course_progress_repository         = $this->course_progress_repository_factory->create();
+		$this->lesson_progress_repository_factory = new Lesson_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
+		$this->lesson_progress_repository         = $this->lesson_progress_repository_factory->create();
+		$this->quiz_progress_repository_factory   = new Quiz_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
+		$this->quiz_progress_repository           = $this->quiz_progress_repository_factory->create();
 
 		if ( class_exists( 'ActionScheduler_Versions' ) ) {
 			$this->action_scheduler = new Action_Scheduler();

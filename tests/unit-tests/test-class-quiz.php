@@ -1951,6 +1951,30 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertFalse( $actual );
 	}
 
+	public function testGetLessonIds_QuizIdsGiven_ReturnsMatchingIds(): void {
+		/* Arrange. */
+		$lesson_ids = $this->factory->lesson->create_many( 3 );
+		$quiz_ids   = array();
+		foreach ( $lesson_ids as $lesson_id ) {
+			$quiz_ids[] = $this->factory->quiz->create(
+				array(
+					'post_parent' => $lesson_id,
+					'meta_input'  => array(
+						'_quiz_lesson' => $lesson_id,
+					),
+				)
+			);
+		}
+
+		/* Act. */
+		$actual = Sensei()->quiz->get_lesson_ids( $quiz_ids );
+
+		/* Assert. */
+		sort( $lesson_ids );
+		sort( $actual );
+		$this->assertSame( $lesson_ids, $actual );
+	}
+
 	public function testQuizFooterActions_WhenAwaitingGradeInLearningMode_RendersAwaitingGradeButton() {
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
@@ -2095,5 +2119,357 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$this->assertStringNotContainsString( 'Pending teacher grade', $result );
+	}
+
+	public function testActionButtons_WhenPassedInLearningMode_ShowsTheNextLessonButton() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_1  = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+				],
+			]
+		);
+		$this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 2,
+				],
+			]
+		);
+
+		$quiz_id          = $this->factory->maybe_create_quiz_for_lesson( $lesson_1 );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		wp_set_current_user( $user_id );
+
+		// Enable course theme;
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_1, 'passed' );
+		update_comment_meta( $comment_id, 'grade', 2 );
+
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		WP_Block_Supports::$block_to_render = [
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/quiz-actions',
+		];
+
+		global $sensei_question_loop;
+		$sensei_question_loop['total_pages'] = 1;
+
+		/* Act */
+		$result = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
+
+		/* Assert */
+		$this->assertStringContainsString( 'Continue to next lesson', $result );
+	}
+
+	public function testActionButtons_WhenFailedInLearningModeButPassRequired_DoesNotShowTheNextLessonButton() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_1  = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+					'_quiz_has_questions'  => 1,
+				],
+			]
+		);
+		$this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 2,
+				],
+			]
+		);
+
+		$quiz_id = $this->factory->maybe_create_quiz_for_lesson( $lesson_1 );
+		$this->factory->question->create(
+			[
+				'quiz_id'                => $quiz_id,
+				'question_type'          => 'multiple-choice',
+				'question_right_answers' => [ ' ', ' ', ' ' ],
+				'question_wrong_answers' => [ ' ' ],
+			]
+		);
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		wp_set_current_user( $user_id );
+
+		// Enable course theme;
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_1, 'failed' );
+		update_comment_meta( $comment_id, 'grade', 2 );
+		update_post_meta( $quiz_id, '_pass_required', 'on' );
+
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		WP_Block_Supports::$block_to_render = [
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/quiz-actions',
+		];
+
+		global $sensei_question_loop;
+		$sensei_question_loop['total_pages'] = 1;
+
+		/* Act */
+		$result = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
+
+		/* Assert */
+		$this->assertStringContainsString( 'Contact teacher', $result );
+	}
+
+	public function testActionButtons_WhenFailedInLearningModeButPassNotRequired_ShowsTheNextLessonButton() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_1  = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+					'_quiz_has_questions'  => 1,
+				],
+			]
+		);
+		$this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 2,
+				],
+			]
+		);
+
+		$quiz_id = $this->factory->maybe_create_quiz_for_lesson( $lesson_1 );
+		$this->factory->question->create(
+			[
+				'quiz_id'                => $quiz_id,
+				'question_type'          => 'multiple-choice',
+				'question_right_answers' => [ ' ', ' ', ' ' ],
+				'question_wrong_answers' => [ ' ' ],
+			]
+		);
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		wp_set_current_user( $user_id );
+
+		// Enable course theme;
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_1, 'failed' );
+		update_comment_meta( $comment_id, 'grade', 2 );
+		update_post_meta( $quiz_id, '_pass_required', 0 );
+
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		WP_Block_Supports::$block_to_render = [
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/quiz-actions',
+		];
+
+		global $sensei_question_loop;
+		$sensei_question_loop['total_pages'] = 1;
+
+		/* Act */
+		$result = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
+
+		/* Assert */
+		$this->assertStringContainsString( 'Continue to next lesson', $result );
+	}
+
+	public function testActionButtons_WhenPassedButNotInLearningMode_DoesNotShowTheNextLessonButton() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_1  = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+					'_quiz_has_questions'  => 1,
+				],
+			]
+		);
+		$this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 2,
+				],
+			]
+		);
+
+		$quiz_id = $this->factory->maybe_create_quiz_for_lesson( $lesson_1 );
+		$this->factory->question->create(
+			[
+				'quiz_id'                => $quiz_id,
+				'question_type'          => 'multiple-choice',
+				'question_right_answers' => [ ' ', ' ', ' ' ],
+				'question_wrong_answers' => [ ' ' ],
+			]
+		);
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		wp_set_current_user( $user_id );
+
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_1, 'passed' );
+		update_comment_meta( $comment_id, 'grade', 2 );
+		update_post_meta( $quiz_id, '_pass_required', 0 );
+
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		WP_Block_Supports::$block_to_render = [
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/quiz-actions',
+		];
+
+		global $sensei_question_loop;
+		$sensei_question_loop['total_pages'] = 1;
+
+		/* Act */
+		$result = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
+
+		/* Assert */
+		$this->assertStringNotContainsString( 'Continue to next lesson', $result );
+	}
+
+	public function testActionButtons_WhenPassedButNextLessonHasLowerOrder_DoesNotShowTheNextLessonButton() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_1  = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 2,
+					'_quiz_has_questions'  => 1,
+				],
+			]
+		);
+		$this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+				],
+			]
+		);
+
+		$quiz_id = $this->factory->maybe_create_quiz_for_lesson( $lesson_1 );
+		$this->factory->question->create(
+			[
+				'quiz_id'                => $quiz_id,
+				'question_type'          => 'multiple-choice',
+				'question_right_answers' => [ ' ', ' ', ' ' ],
+				'question_wrong_answers' => [ ' ' ],
+			]
+		);
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		wp_set_current_user( $user_id );
+
+		// Enable course theme;
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_1, 'passed' );
+		update_comment_meta( $comment_id, 'grade', 2 );
+		update_post_meta( $quiz_id, '_pass_required', 0 );
+
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		WP_Block_Supports::$block_to_render = [
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/quiz-actions',
+		];
+
+		global $sensei_question_loop;
+		$sensei_question_loop['total_pages'] = 1;
+
+		/* Act */
+		$result = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
+
+		/* Assert */
+		$this->assertStringNotContainsString( 'Continue to next lesson', $result );
+	}
+
+	public function testActionButtons_WhenQuizPassedButOnLessonPage_DoesNotShowTheNextLessonButton() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_1  = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+					'_quiz_has_questions'  => 1,
+				],
+			]
+		);
+		$this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 2,
+				],
+			]
+		);
+
+		$quiz_id = $this->factory->maybe_create_quiz_for_lesson( $lesson_1 );
+		$this->factory->question->create(
+			[
+				'quiz_id'                => $quiz_id,
+				'question_type'          => 'multiple-choice',
+				'question_right_answers' => [ ' ', ' ', ' ' ],
+				'question_wrong_answers' => [ ' ' ],
+			]
+		);
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		wp_set_current_user( $user_id );
+
+		// Enable course theme;
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_1, 'passed' );
+		update_comment_meta( $comment_id, 'grade', 2 );
+		update_post_meta( $quiz_id, '_pass_required', 0 );
+
+		$this->go_to( get_permalink( $lesson_1 ) );
+
+		WP_Block_Supports::$block_to_render = [
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/quiz-actions',
+		];
+
+		global $sensei_question_loop;
+		$sensei_question_loop['total_pages'] = 1;
+
+		/* Act */
+		$result = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
+
+		/* Assert */
+		$this->assertStringNotContainsString( 'Continue to next lesson', $result );
 	}
 }
