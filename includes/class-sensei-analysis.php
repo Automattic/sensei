@@ -643,7 +643,8 @@ class Sensei_Analysis {
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
 		?>
-			<h1><?php
+			<h1>
+			<?php
 			/**
 			 * Filter the Reports page title.
 			 *
@@ -655,7 +656,8 @@ class Sensei_Analysis {
 			 * @return {string} Returns filtered page title.
 			 */
 			echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) );
-			?></h1>
+			?>
+			</h1>
 		<?php
 	}
 
