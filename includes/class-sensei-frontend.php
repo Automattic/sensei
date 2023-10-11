@@ -1541,10 +1541,10 @@ class Sensei_Frontend {
 	 */
 	public function login_message_process() {
 
-			// setup the message variables.
-			$message = '';
+		// setup the message variables.
+		$message = '';
 
-			// only output message if the url contains login=failed and login=emptyfields.
+		// only output message if the url contains login=failed and login=emptyfields.
 		if ( $_GET['login'] == 'failed' ) {
 
 			$message = __( 'Incorrect login details', 'sensei-lms' );
@@ -1554,7 +1554,14 @@ class Sensei_Frontend {
 			$message = __( 'Please enter your username and password', 'sensei-lms' );
 		}
 
-			Sensei()->notices->add_notice( $message, 'alert' );
+		if ( '' !== $message ) {
+			// If it's a login failure, don't print the notices from the wp_body_open hook. Because on non-block
+			// themes, the notices are printed in the top, even above the header or nav, which breaks it.
+			// We show the notice on the login form instead.
+			remove_action( 'wp_body_open', [ Sensei()->notices, 'maybe_print_notices' ] );
+		}
+
+		Sensei()->notices->add_notice( $message, 'alert' );
 
 	}
 
