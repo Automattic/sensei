@@ -144,7 +144,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
 		 * @return {array} Filtered array of columns for the report table.
 		 */
-		$columns = apply_filters( 'sensei_analysis_overview_' . $this->type . '_columns', $columns, $this );
+		$columns = apply_filters_deprecated(
+			'sensei_analysis_overview_' . $this->type . '_columns',
+			array( $columns, $this ),
+			'$$next-version$$',
+			'sensei_analysis_overview_columns'
+		);
 
 		/**
 		 * Filter the columns that are going to be used in the Analysis Overview list table.
@@ -243,7 +248,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
 		 * @return {array} Filtered array of sortable columns for the report table.
 		 */
-		$columns = apply_filters( 'sensei_analysis_overview_' . $this->type . '_columns_sortable', $columns, $this );
+		$columns = apply_filters_deprecated(
+			'sensei_analysis_overview_' . $this->type . '_columns_sortable',
+			array( $columns, $this ),
+			'$$next-version$$',
+			'sensei_analysis_overview_columns_sortable'
+		);
 
 		/**
 		 * Filter the sortable columns that are going to be used in the Analysis Overview list table.
