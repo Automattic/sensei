@@ -83,6 +83,23 @@
 			}
 		}
 	}
+
+	&.success {
+		background: lighten( $success, 35% );
+
+		&:before {
+			color: $success;
+			content: '\f058';
+		}
+
+		a {
+			color: darken($success, 10%);
+
+			&:hover {
+				color: darken($success, 15%);
+			}
+		}
+	}
 }
 
 #my-courses {
