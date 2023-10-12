@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.18.0
  */
 class Tables_Based_Lesson_Progress extends Lesson_Progress_Abstract {
 }
