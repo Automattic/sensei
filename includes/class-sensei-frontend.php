@@ -1224,17 +1224,12 @@ class Sensei_Frontend {
 			 *
 			 * @since 3.0.0
 			 *
-			 * @hook sensei_frontend_course_signup_handler
+			 * @hook sensei_frontend_learner_enrolment_handler
 			 *
-			 * @param {callable} $handler {
-			 *     Frontend enrolment handler. Returns `true` if successful; `false` if not.
-			 *
-			 *     @property {int} $user_id   User ID.
-			 *     @property {int} $course_id Course post ID.
-			 * }
-			 * @param {int}      $user_id          User ID.
-			 * @param {int}      $course_id        Course post ID.
-			 * @return {callable} Filtered handler.
+			 * @param    {callback(int, int):bool} $handler   Frontend enrolment handler. Takes two arguments: $user_id and $course_id. Returns `true` if successful; `false` if not.
+			 * @param    {int}                     $user_id   User ID.
+			 * @param    {int}                     $course_id Course post ID.
+			 * @return   {callback(int, int):bool} Filtered handler.
 			 */
 			$learner_enrollment_handler = apply_filters( 'sensei_frontend_learner_enrolment_handler', [ $this, 'manually_enrol_learner' ], $current_user->ID, $post->ID );
 
