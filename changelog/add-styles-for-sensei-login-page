@@ -1,0 +1,4 @@
+Significance: minor
+Type: changed
+
+Updated the login page style and fixed issue of "My Messages" button rendering when logged out

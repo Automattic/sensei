@@ -721,16 +721,6 @@ section.entry span.course-lesson-progress {
 		clear: both;
 	}
 
-	form#loginform {
-		label {
-			display: block;
-		}
-
-		input[type='text'], input[type='password'] {
-			width: 90%;
-		}
-	}
-
 	&.ui-tabs {
 		position: relative;
 		zoom: 1;

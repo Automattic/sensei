@@ -3,6 +3,7 @@
  */
 @import 'fontawesome';
 @import 'mixins';
+@import "~@wordpress/base-styles/breakpoints";
 
 /**
  * Course Completed Page
@@ -63,6 +64,80 @@
 			&:hover {
 				color: darken($color_body, 15%);
 			}
+		}
+	}
+
+	&.alert {
+		background: #ffd9c8;
+
+		&:before {
+			color: $error;
+			content: '\f071';
+		}
+
+		a {
+			color: darken($error, 10%);
+
+			&:hover {
+				color: darken($error, 15%);
+			}
+		}
+	}
+}
+
+#my-courses {
+	#customer_login {
+		column-gap: 1.5rem;
+		display: flex;
+
+		@media screen and (max-width: $break-medium) {
+			flex-direction: column;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 0.7rem;
+		}
+
+		input.input-text {
+			box-sizing: border-box;
+			font-size: var(--wp--preset--font-size--small);
+			line-height: normal;
+			margin: 0;
+			outline: 0;
+			padding: 0.9rem 1.1rem;
+			width: 100%;
+		}
+
+		& > div {
+			display: flex;
+			flex: 1 1 0;
+			flex-direction: column;
+		}
+
+		form {
+			border: 1px solid #d3ced2;
+			border-radius: 5px;
+			flex: 1 1 0;
+			margin: 0 0 2em 0;
+			padding: 20px;
+			text-align: left;
+		}
+
+		.sensei-login-submit {
+			.button {
+				margin-right: 1em;
+			}
+		}
+	}
+}
+
+.theme-twentytwentyone {
+	#customer_login {
+		.remember_me,
+		.sensei-login-submit,
+		.form-row:last-child {
+			margin-top: 1rem;
 		}
 	}
 }
