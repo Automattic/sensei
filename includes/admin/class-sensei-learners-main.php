@@ -951,8 +951,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		 *
 		 * @hook sensei_learners_search_users
 		 *
-		 * @param {array} $user_args Search user arguments.
-		 * @property {string} search The search string, used as in WP_User_Query.
+		 * @param    {array}   $user_args             Search user arguments.
+		 * @property {string} `$user_args['search']` The search string, used as in WP_User_Query.
 		 * @return {array} The modified arguments.
 		 */
 		$user_args = apply_filters( 'sensei_learners_search_users', $user_args );

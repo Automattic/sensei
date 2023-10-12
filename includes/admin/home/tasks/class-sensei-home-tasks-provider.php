@@ -92,13 +92,13 @@ class Sensei_Home_Tasks_Provider {
 		 *
 		 * @hook sensei_home_tasks
 		 *
-		 * @param {array} $tasks A dictionary of tasks indexed by task ID.
-		 * @property {string} id The task ID. Must be unique.
-		 * @property {string} title The task title.
-		 * @property {int}    priority Number used in frontend to sort tasks in ascending order.
-		 * @property {string} url Optional. Destination URL for users when clicking on the task.
-		 * @property {string} image Optional. Source url or path for the featured image when this task is the first pending one.
-		 * @property {bool}   done Whether the task is considered done or not.
+		 * @param    {array[]} $tasks                A dictionary of tasks indexed by task ID.
+		 * @property {string} `$tasks[]['id']`       The task ID. Must be unique.
+		 * @property {string} `$tasks[]['title']`    The task title.
+		 * @property {int}    `$tasks[]['priority']` Number used in frontend to sort tasks in ascending order.
+		 * @property {string} `$tasks[]['url']`      Optional. Destination URL for users when clicking on the task.
+		 * @property {string} `$tasks[]['image']`    Optional. Source url or path for the featured image when this task is the first pending one.
+		 * @property {bool}   `$tasks[]['done']`     Whether the task is considered done or not.
 		 * @return {array} Filtered tasks.
 		 */
 		return apply_filters( 'sensei_home_tasks', $tasks );
