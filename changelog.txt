@@ -1,16 +1,15 @@
 *** Changelog ***
 
 ## 4.18.0 - 2023-10-12
-### Added
-- Add success message styles [#7209](https://github.com/Automattic/sensei/pull/7209)
 
 ### Changed
-- Bump minimum required PHP version to 7.4 [#7195](https://github.com/Automattic/sensei/pull/7195)
-- Changed footer style for quizzes awaiting grading [#7190](https://github.com/Automattic/sensei/pull/7190)
 - Changed styles for graded question answer feedbacks [#7171](https://github.com/Automattic/sensei/pull/7171)
-- Improve support for PHP 8.1 [#7198](https://github.com/Automattic/sensei/pull/7198)
-- Updated stylings of graded quizzes footer in learning mode [#7202](https://github.com/Automattic/sensei/pull/7202)
+- Updated styling of graded quizzes footer in learning mode [#7202](https://github.com/Automattic/sensei/pull/7202)
 - Updated the login page style and fixed issue of "My Messages" button rendering when logged out [#7204](https://github.com/Automattic/sensei/pull/7204)
+- Changed footer style for quizzes awaiting grading [#7190](https://github.com/Automattic/sensei/pull/7190)
+- Add success message styles [#7209](https://github.com/Automattic/sensei/pull/7209)
+- Bump minimum required PHP version to 7.4 [#7195](https://github.com/Automattic/sensei/pull/7195)
+- Improve support for PHP 8.1 [#7198](https://github.com/Automattic/sensei/pull/7198)
 
 ### Fixed
 - Fix "Next Lesson" button not visible on completed lessons [#7169](https://github.com/Automattic/sensei/pull/7169)
