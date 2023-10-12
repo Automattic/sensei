@@ -111,7 +111,7 @@ abstract class Email_Generators_Abstract {
 	/**
 	 * Add action if email is active.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.18.0
 	 *
 	 * @internal
 	 *
@@ -132,7 +132,7 @@ abstract class Email_Generators_Abstract {
 	/**
 	 * Add action if email is active.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.18.0
 	 *
 	 * @internal
 	 */

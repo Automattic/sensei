@@ -1693,7 +1693,7 @@ class Sensei_Utils {
 	 * Returns the requested course status
 	 *
 	 * @since 1.7.0
-	 * @deprecated $$next-version$$ Use course progress repository instead.
+	 * @deprecated 4.18.0 Use course progress repository instead.
 	 *
 	 * @param int $course_id
 	 * @param int $user_id

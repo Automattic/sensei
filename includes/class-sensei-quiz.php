@@ -257,7 +257,7 @@ class Sensei_Quiz {
 	/**
 	 * Get lesson ids for given quizzes.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.18.0
 	 *
 	 * @param int[] $quiz_ids The quiz IDs.
 	 * @return array Lesson ids, empty array if no lessons found.
