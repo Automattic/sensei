@@ -145,6 +145,9 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 == Changelog ==
 
 ### 4.18.0 - 2023-10-12
+#### Security
+- Escape class attributes in Student Courses and Course Results block
+
 #### Changed
 - Changed styles for graded question answer feedbacks [#7171](https://github.com/Automattic/sensei/pull/7171)
 - Updated styling of graded quizzes footer in learning mode [#7202](https://github.com/Automattic/sensei/pull/7202)

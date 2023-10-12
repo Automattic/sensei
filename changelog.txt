@@ -1,6 +1,8 @@
 *** Changelog ***
 
 ## 4.18.0 - 2023-10-12
+### Security
+- Escape class attributes in Student Courses and Course Results block
 
 ### Changed
 - Changed styles for graded question answer feedbacks [#7171](https://github.com/Automattic/sensei/pull/7171)
