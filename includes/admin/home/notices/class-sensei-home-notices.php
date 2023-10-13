@@ -216,11 +216,11 @@ class Sensei_Home_Notices {
 			 *
 			 * Defaults to true for plugins that don't need a license.
 			 *
-			 * @hook sensei_home_is_plugin_licensed_{$plugin_slug}
 			 * @since 4.8.0
 			 *
-			 * @param {bool} $is_licensed Whether the plugin has an active license.
+			 * @hook sensei_home_is_plugin_licensed_{$plugin_slug}
 			 *
+			 * @param {bool} $is_licensed Whether the plugin has an active license.
 			 * @return {bool} Whether the plugin has an active license.
 			 */
 			$has_license = apply_filters( 'sensei_home_is_plugin_licensed_' . $plugin_slug, ! $plugin_data['licensed'] );

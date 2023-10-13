@@ -813,9 +813,12 @@ class Sensei_Core_Modules {
 		 *
 		 * @since 1.10.0
 		 *
-		 * @param bool    $do_link_to_module  True if module should be linked to.
-		 * @param WP_Term $module             Module to check if it should be linked to.
-		 * @param bool    $link_to_current    Allow for linking to the currently displayed module.
+		 * @hook sensei_do_link_to_module
+		 *
+		 * @param {bool}    $do_link_to_module  True if module should be linked to.
+		 * @param {WP_Term} $module             Module to check if it should be linked to.
+		 * @param {bool}    $link_to_current    Allow for linking to the currently displayed module.
+		 * @return {bool} Filtered value of $do_link_to_module.
 		 */
 		return apply_filters( 'sensei_do_link_to_module', $do_link_to_module, $module, $link_to_current );
 	}
@@ -913,6 +916,14 @@ class Sensei_Core_Modules {
 	 */
 	public function module_archive_title( $title ) {
 		if ( is_tax( $this->taxonomy ) ) {
+			/**
+			 * Filter the module archive title.
+			 *
+			 * @hook sensei_module_archive_title
+			 *
+			 * @param {string} $title Archive title.
+			 * @return {string} Filtered title.
+			 */
 			$title = apply_filters( 'sensei_module_archive_title', get_queried_object()->name );
 		}
 		return $title;
@@ -952,6 +963,15 @@ class Sensei_Core_Modules {
 			}
 
 			if ( $this->can_view_module_content( $module, $course_id, $user_id ) ) {
+				/**
+				 * Filter the module archive description.
+				 *
+				 * @hook sensei_module_archive_description
+				 *
+				 * @param {string} $description Archive description.
+				 * @param {int}    $module_id   Module term ID.
+				 * @return {string} Filtered description.
+				 */
 				echo '<p class="archive-description module-description">' . wp_kses_post( apply_filters( 'sensei_module_archive_description', nl2br( $module->description ), $module->term_id ) ) . '</p>';
 			}
 		}
@@ -993,10 +1013,13 @@ class Sensei_Core_Modules {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool $can_view_module_content True if they can view module content.
-		 * @param int  $module_term_id          Module term ID.
-		 * @param int  $course_id               Course post ID.
-		 * @param int  $user_id                 User ID.
+		 * @hook sensei_can_user_view_module
+		 *
+		 * @param {bool} $can_view_module_content True if they can view module content.
+		 * @param {int}  $module_term_id          Module term ID.
+		 * @param {int}  $course_id               Course post ID.
+		 * @param {int}  $user_id                 User ID.
+		 * @return {bool} Filtered value of $can_view_module_content.
 		 */
 		return apply_filters( 'sensei_can_user_view_module', $can_view_module_content, $module->term_id, $course_id, $user_id );
 	}
@@ -1021,8 +1044,11 @@ class Sensei_Core_Modules {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool $show_course_signup_notice True if we should show the signup notice to the user.
-		 * @param int  $course_id                 Post ID for the course.
+		 * @hook sensei_module_show_course_signup_notice
+		 *
+		 * @param {bool} $show_course_signup_notice True if we should show the signup notice to the user.
+		 * @param {int}  $course_id                 Post ID for the course.
+		 * @return {bool} Filtered value of $show_course_signup_notice.
 		 */
 		if ( ! apply_filters( 'sensei_module_show_course_signup_notice', $show_course_signup_notice, $course_id ) ) {
 			return;
@@ -1040,9 +1066,12 @@ class Sensei_Core_Modules {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param string $message     Message to show user.
-		 * @param int    $course_id   Post ID for the course.
-		 * @param string $course_link Generated HTML link to the course.
+		 * @hook sensei_module_course_signup_notice_message
+		 *
+		 * @param {string} $message     Message to show user.
+		 * @param {int}    $course_id   Post ID for the course.
+		 * @param {string} $course_link Generated HTML link to the course.
+		 * @return {string} Filtered message.
 		 */
 		$message = apply_filters( 'sensei_module_course_signup_notice_message', $message_default, $course_id, $course_link );
 
@@ -1051,8 +1080,11 @@ class Sensei_Core_Modules {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param string $notice_level Notice level to use for the shown alert (alert, tick, download, info).
-		 * @param int    $course_id    Post ID for the course.
+		 * @hook sensei_module_course_signup_notice_level
+		 *
+		 * @param {string} $notice_level Notice level to use for the shown alert (alert, tick, download, info).
+		 * @param {int}    $course_id    Post ID for the course.
+		 * @return {string} Filtered notice level.
 		 */
 		$notice_level = apply_filters( 'sensei_module_course_signup_notice_level', 'info', $course_id );
 		Sensei()->notices->add_notice( $message, $notice_level );
@@ -1421,10 +1453,11 @@ class Sensei_Core_Modules {
 		 * Filter to change the number of links in the course modules column.
 		 *
 		 * @since 4.0.0
-		 * @hook  sensei_module_course_column_max_links_count
 		 *
-		 * @param  {int} $max_links_count The number of links.
-		 * @return {int}
+		 * @hook sensei_module_course_column_max_links_count
+		 *
+		 * @param {int} $max_links_count The number of links.
+		 * @return {int} The filtered number of links.
 		 */
 		$max_links_count = apply_filters( 'sensei_module_course_column_max_links_count', 3 );
 		$links_count     = count( $modules );
@@ -1856,7 +1889,14 @@ class Sensei_Core_Modules {
 			$disable_styles = Sensei()->settings->settings['styles_disable'];
 		}
 
-		// Add filter for theme overrides
+		/**
+		 * Filter to disable Sensei styles.
+		 *
+		 * @hook sensei_disable_styles
+		 *
+		 * @param {bool} $disable_styles Whether to disable Sensei styles.
+		 * @return {bool} Whether to disable Sensei styles.
+		 */
 		$disable_styles = apply_filters( 'sensei_disable_styles', $disable_styles );
 
 		if ( ! $disable_styles ) {
@@ -1949,8 +1989,11 @@ class Sensei_Core_Modules {
 		 *
 		 * @since 2.2.0
 		 *
-		 * @param string $html   The HTML to be displayed.
-		 * @param int $course_id Course ID.
+		 * @hook sensei_modules_title
+		 *
+		 * @param {string} $html      The HTML to be displayed.
+		 * @param {int}    $course_id Course ID.
+		 * @return {string} The filtered HTML.
 		 */
 		echo wp_kses_post( apply_filters( 'sensei_modules_title', '<header class="modules-title"><h2>' . __( 'Modules', 'sensei-lms' ) . '</h2></header>', $post->ID ) );
 	}
@@ -2124,7 +2167,11 @@ class Sensei_Core_Modules {
 		 * Filter to alter the Sensei Modules rewrite slug
 		 *
 		 * @since 1.8.0
-		 * @param string default 'modules'
+		 *
+		 * @hook sensei_module_slug
+		 *
+		 * @param {string} $modules_rewrite_slug The rewrite slug for the modules taxonomy.
+		 * @return {string} The filtered rewrite slug for the modules taxonomy.
 		 */
 		$modules_rewrite_slug = apply_filters( 'sensei_module_slug', 'modules' );
 
@@ -2598,12 +2645,13 @@ class Sensei_Core_Modules {
 		/**
 		 * Filters the module terms when ownership is being checked for them.
 		 *
-		 * @hook   sensei_filter_module_terms_by_owner
 		 * @since  4.9.0
 		 *
-		 * @param  {WP_Term[]} $user_terms The terms after applying the filter by owner.
-		 * @param  {WP_Term[]|int[]} $terms The original terms before the filtering was applied.
-		 * @param  {int} $user_id The user ID to check for ownership.
+		 * @hook   sensei_filter_module_terms_by_owner
+		 *
+		 * @param {WP_Term[]}       $user_terms The terms after applying the filter by owner.
+		 * @param {WP_Term[]|int[]} $terms      The original terms before the filtering was applied.
+		 * @param {int}             $user_id    The user ID to check for ownership.
 		 * @return {WP_Term[]} The final list of terms that must be considered as owner by the given user ID.
 		 */
 		return apply_filters( 'sensei_filter_module_terms_by_owner', $users_terms, $terms, $user_id );

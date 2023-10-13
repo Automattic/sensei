@@ -37,9 +37,11 @@ trait Course_Teachers_Trait {
 		 *
 		 * @since 4.15.1
 		 *
-		 * @param array $teacher_ids The teacher IDs.
-		 * @param int   $course_id   The course ID.
-		 * @return array The teacher IDs.
+		 * @hook sensei_email_course_teachers
+		 *
+		 * @param {array} $teacher_ids The teacher IDs.
+		 * @param {int}   $course_id   The course ID.
+		 * @return {array} The teacher IDs.
 		 */
 		return apply_filters( 'sensei_email_course_teachers', array( $teacher_id ), $course_id );
 	}

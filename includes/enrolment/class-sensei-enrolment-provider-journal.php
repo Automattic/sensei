@@ -185,7 +185,10 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param int  $message_log_size Default message log size.
+		 * @hook sensei_enrolment_message_log_size
+		 *
+		 * @param {int} $message_log_size Default message log size.
+		 * @return {int} Filtered message log size.
 		 */
 		$message_log_size = apply_filters( 'sensei_enrolment_message_log_size', self::DEFAULT_MESSAGE_LOG_SIZE );
 
@@ -290,7 +293,10 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param int  $history_size Default history size.
+		 * @hook sensei_enrolment_history_size
+		 *
+		 * @param {int} $history_size Default history size.
+		 * @return {int} Filtered history size.
 		 */
 		$history_size = apply_filters( 'sensei_enrolment_history_size', self::DEFAULT_HISTORY_SIZE );
 
