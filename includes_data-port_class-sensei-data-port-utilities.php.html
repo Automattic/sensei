@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Source: includes/data-port/class-sensei-data-port-utilities.php - Sensei LMS Hook Docs</title>
+
+	<script src="scripts/prettify/prettify.js"> </script>
+	<script src="scripts/prettify/lang-css.js"> </script>
+	<!--[if lt IE 9]>
+	  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+	<link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+
+	<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono|IBM+Plex+Sans:300,400|Playfair+Display:900&display=swap" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div id="main">
+
+	
+	<h1 class="page-title">Source: includes/data-port/class-sensei-data-port-utilities.php</h1>
+	
+
+	
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;?php
+/**
+ * File containing the Sensei_Data_Port_Utilities.
+ *
+ * @package sensei
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * A collection of utilies used in data port.
+ */
+class Sensei_Data_Port_Utilities {
+
+	const CHARS_WHITESPACE_AND_QUOTES = " \"\t\n\r\0\x0B";
+
+	/**
+	 * Create a user. If the user exists, the method simply returns the user.
+	 *
+	 * @param string $username The username.
+	 * @param string $email    User's email.
+	 * @param string $role     The user's role.
+	 *
+	 * @return WP_User|WP_Error  WP_User on success, WP_Error on failure.
+	 */
+	public static function create_user( $username, $email = '', $role = '' ) {
+		$user = get_user_by( 'login', $username );
+
+		if ( ! $user ) {
+			$user_id = wp_create_user( $username, wp_generate_password(), $email );
+
+			if ( is_wp_error( $user_id ) ) {
+				return $user_id;
+			}
+
+			$user = get_user_by( 'ID', $user_id );
+
+			if ( ! empty( $role ) &amp;&amp; $user ) {
+				$user->set_role( $role );
+			}
+		}
+
+		return $user;
+	}
+
+	/**
+	 * Get an attachment by providing its source. The source can be a URL or a filename from the media library. If the
+	 * source is an external URL, it will be retrieved and an appropriate attachment will be created.
+	 *
+	 * @param string $source             Filename or URL.
+	 * @param int    $parent_id          Id of the parent post.
+	 * @param array  $allowed_mime_types Allowed mime types.
+	 *
+	 * @return int|WP_Error  Attachment id on success, WP_Error on failure.
+	 */
+	public static function get_attachment_from_source( $source, $parent_id = 0, $allowed_mime_types = null ) {
+		if ( false === filter_var( $source, FILTER_VALIDATE_URL ) ) {
+
+			$attachments = get_posts(
+				[
+					'fields'         => 'ids',
+					'post_type'      => 'attachment',
+					'posts_per_page' => 1,
+					'post_status'    => 'any',
+					'meta_compare'   => 'REGEXP',
+					'meta_key'       => '_wp_attached_file', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- No faster way to search an attachment from its filename.
+					'meta_value'     => '(^|/)' . sanitize_file_name( $source ) . '$', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+				]
+			);
+
+			if ( empty( $attachments ) ) {
+				return new WP_Error(
+					'sensei_data_port_attachment_not_found',
+					__( 'No attachment with the specified file name was found.', 'sensei-lms' )
+				);
+			}
+
+			$attachment_id   = $attachments[0];
+			$valid_mime_type = self::validate_file_mime_type_by_attachment_id( $attachment_id, $allowed_mime_types );
+
+			if ( is_wp_error( $valid_mime_type ) ) {
+				return $valid_mime_type;
+			}
+		} else {
+			// In case a local URL is provided, try to convert it to the attachment.
+			$attachment_id = attachment_url_to_postid( $source );
+
+			if ( ! $attachment_id ) {
+				$attachment_id = self::create_attachment_from_url( $source, $parent_id, $allowed_mime_types );
+			}
+		}
+
+		return $attachment_id;
+	}
+
+	/**
+	 * This method retrieves a file from an external url, creates an attachment and links the attachment with the
+	 * downloaded file. If the file has been already downloaded an linked to an attachment, it returns the existing
+	 * attachment instead.
+	 *
+	 * @param string $external_url       The external url.
+	 * @param int    $parent_id          The attachment's parent id.
+	 * @param array  $allowed_mime_types Allowed mime types.
+	 *
+	 * @return int|WP_Error  The attachment id or an error.
+	 */
+	public static function create_attachment_from_url( $external_url, $parent_id = 0, $allowed_mime_types = null ) {
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+
+		$existing_attachment = get_posts(
+			[
+				'fields'         => 'ids',
+				'post_type'      => 'attachment',
+				'posts_per_page' => 1,
+				'post_status'    => 'inherit',
+				'post_parent'    => $parent_id,
+				'meta_key'       => '_sensei_attachment_source_key', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Only attachments are checked.
+				'meta_value'     => md5( $external_url ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+			]
+		);
+
+		if ( ! empty( $existing_attachment ) ) {
+			$attachment_id   = $existing_attachment[0];
+			$valid_mime_type = self::validate_file_mime_type_by_attachment_id( $attachment_id, $allowed_mime_types );
+
+			if ( is_wp_error( $valid_mime_type ) ) {
+				return $valid_mime_type;
+			}
+
+			return $attachment_id;
+		}
+
+		/**
+		 * Filters the timeout value for the HTTP request which retrieves an external attachment.
+		 *
+		 * Increase this value in case big attachments are imported and the request to get them
+		 * times out.
+		 *
+		 * @since 3.3.0
+		 *
+		 * @hook sensei_import_attachment_request_timeout
+		 *
+		 * @param {float} $timeout Time in seconds until a request times out. Default 10.
+		 * @return {float} Filtered timeout value.
+		 */
+		$timeout  = apply_filters( 'sensei_import_attachment_request_timeout', 10 );
+		$response = wp_safe_remote_get( $external_url, [ 'timeout' => $timeout ] );
+
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return new WP_Error(
+				'sensei_data_port_attachment_failure',
+				__( 'Error encountered while retrieving the attachment from the provided URL.', 'sensei-lms' )
+			);
+		}
+
+		$upload_result = wp_upload_bits( basename( $external_url ), null, wp_remote_retrieve_body( $response ) );
+
+		if ( ! empty( $upload_result['error'] ) ) {
+			return new WP_Error( 'sensei_data_port_storing_file_failure', $upload_result['error'] );
+		}
+
+		$file_path = $upload_result['file'];
+		$file_url  = $upload_result['url'];
+
+		$wp_filetype     = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
+		$valid_mime_type = self::validate_file_mime_type( $wp_filetype['type'], $allowed_mime_types, $file_path );
+
+		if ( is_wp_error( $valid_mime_type ) ) {
+			return $valid_mime_type;
+		}
+
+		$attachment_args = [
+			'post_content'   => '',
+			'post_title'     => basename( $file_path ),
+			'post_mime_type' => $wp_filetype['type'],
+			'guid'           => $file_url,
+			'post_status'    => 'inherit',
+		];
+
+		$attachment_id = wp_insert_attachment( $attachment_args, $file_path, $parent_id );
+		update_post_meta( $attachment_id, '_sensei_attachment_source_key', md5( $external_url ) );
+
+		if ( is_wp_error( $attachment_id ) ) {
+			return $attachment_id;
+		}
+
+		if ( 0 === $attachment_id ) {
+			return new WP_Error(
+				'sensei_data_port_attachment_failure',
+				__( 'Attachment insertion failed.', 'sensei-lms' )
+			);
+		}
+
+		wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $file_path ) );
+
+		return $attachment_id;
+	}
+
+	/**
+	 * Validate file mime type by attachment ID.
+	 *
+	 * @param int   $attachment_id      Attachment ID.
+	 * @param array $allowed_mime_types Allowed mime types.
+	 *
+	 * @return true|WP_Error
+	 */
+	private static function validate_file_mime_type_by_attachment_id( $attachment_id, $allowed_mime_types = null ) {
+		$file_path   = get_attached_file( $attachment_id );
+		$wp_filetype = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
+
+		return self::validate_file_mime_type( $wp_filetype['type'], $allowed_mime_types, $file_path );
+	}
+
+	/**
+	 * Validate file mime type.
+	 *
+	 * @param string $mime_type          File mime type.
+	 * @param array  $allowed_mime_types Allowed mime types.
+	 * @param string $file_name          File name to validate by extension, as fallback for administrators.
+	 *
+	 * @return true|WP_Error
+	 */
+	public static function validate_file_mime_type( $mime_type, $allowed_mime_types = null, $file_name = null ) {
+		if ( null === $allowed_mime_types ) {
+			return true;
+		}
+
+		$valid_mime_type  = $mime_type &amp;&amp; in_array( $mime_type, $allowed_mime_types, true );
+		$valid_extensions = self::mime_types_extensions( $allowed_mime_types );
+
+		// If we cannot determine the type, allow check based on extension for administrators.
+		if ( ! $mime_type &amp;&amp; current_user_can( 'unfiltered_upload' ) &amp;&amp; null !== $file_name ) {
+			$valid_mime_type = in_array( pathinfo( $file_name, PATHINFO_EXTENSION ), $valid_extensions, true );
+		}
+
+		if ( ! $valid_mime_type ) {
+			return new WP_Error(
+				'sensei_data_port_unexpected_file_type',
+				// translators: Placeholder is list of file extensions.
+				sprintf( __( 'File type is not supported. Must be one of the following: %s.', 'sensei-lms' ), implode( ', ', $valid_extensions ) )
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get an array of extensions.
+	 *
+	 * @param array $mime_types Array of mime types.
+	 *
+	 * @return array Array of valid extensions.
+	 */
+	private static function mime_types_extensions( $mime_types ) {
+		$extensions = [];
+		foreach ( array_keys( $mime_types ) as $ext_list ) {
+			$extensions = array_merge( $extensions, explode( '|', $ext_list ) );
+		}
+
+		return array_unique( $extensions );
+	}
+
+	/**
+	 * Get a term based on human readable string and create it if needed. If the taxonomy is hierarchical,
+	 * this method processes that as well and returns the \WP_Term object for the last in their hierarchy.
+	 *
+	 * @param string $term_name_path  Term name with optional hierarchy path, separated by " > ".
+	 * @param string $taxonomy_name   Name of the taxonomy.
+	 * @param int    $teacher_user_id User ID for the teacher (only needed for modules).
+	 *
+	 * @return WP_Term|false
+	 */
+	public static function get_term( $term_name_path, $taxonomy_name, $teacher_user_id = null ) {
+		if ( ! $term_name_path ) {
+			return false;
+		}
+
+		$taxonomy = get_taxonomy( $taxonomy_name );
+		if ( ! $taxonomy ) {
+			return false;
+		}
+
+		if ( $taxonomy->hierarchical ) {
+			$term_path = preg_split( '/ ?> ?/', $term_name_path );
+		} else {
+			$term_path = [ $term_name_path ];
+		}
+
+		/**
+		 * Last term object.
+		 *
+		 * @var WP_Term $last_term
+		 */
+		$last_term = null;
+
+		foreach ( $term_path as $term_name ) {
+			$term_name = trim( $term_name );
+			$parent_id = isset( $last_term ) ? $last_term->term_id : 0;
+
+			$term_query = new WP_Term_Query( self::get_term_query_args( $term_name, $taxonomy_name, $teacher_user_id, $parent_id ) );
+			$terms      = $term_query->get_terms();
+
+			if ( ! empty( $terms ) ) {
+				$last_term = array_shift( $terms );
+			} else {
+				$last_term = self::create_term( $term_name, $taxonomy_name, $teacher_user_id, $parent_id );
+			}
+
+			if ( ! $last_term ) {
+				return false;
+			}
+		}
+
+		return $last_term;
+	}
+
+	/**
+	 * Generate the term slug.
+	 *
+	 * @param string $term_name       Term name.
+	 * @param string $taxonomy_name   Name of the taxonomy.
+	 * @param int    $teacher_user_id User ID for the teacher.
+	 *
+	 * @return string
+	 */
+	private static function get_term_slug( $term_name, $taxonomy_name, $teacher_user_id ) {
+		if ( 'module' === $taxonomy_name &amp;&amp; ! user_can( $teacher_user_id, 'manage_options' ) ) {
+			return intval( $teacher_user_id ) . '-' . sanitize_title( $term_name );
+		}
+
+		return sanitize_title( $term_name );
+	}
+
+	/**
+	 * Generate the arguments for the term query.
+	 *
+	 * @param string $term_name       Term name.
+	 * @param string $taxonomy_name   Name of the taxonomy.
+	 * @param int    $teacher_user_id User ID for the teacher.
+	 * @param int    $parent_id       Parent ID (optional).
+	 *
+	 * @return array
+	 */
+	private static function get_term_query_args( $term_name, $taxonomy_name, $teacher_user_id, $parent_id = 0 ) {
+		$args               = [];
+		$args['number']     = 1;
+		$args['taxonomy']   = $taxonomy_name;
+		$args['hide_empty'] = false;
+		$args['parent']     = $parent_id;
+
+		if ( 'module' === $taxonomy_name ) {
+			$args['slug'] = self::get_term_slug( $term_name, $taxonomy_name, $teacher_user_id );
+		} else {
+			$args['name'] = $term_name;
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Create a new term.
+	 *
+	 * @param string $term_name       Term name.
+	 * @param string $taxonomy_name   Name of the taxonomy.
+	 * @param int    $teacher_user_id User ID for the teacher.
+	 * @param int    $parent_id       Parent ID (optional).
+	 *
+	 * @return WP_Term|false
+	 */
+	private static function create_term( $term_name, $taxonomy_name, $teacher_user_id, $parent_id = null ) {
+		$args         = [];
+		$args['slug'] = self::get_term_slug( $term_name, $taxonomy_name, $teacher_user_id );
+
+		if ( $parent_id ) {
+			$args['parent'] = $parent_id;
+		}
+
+		$term_arr = wp_insert_term( $term_name, $taxonomy_name, $args );
+		if ( is_wp_error( $term_arr ) ) {
+			return false;
+		}
+
+		return get_term_by( 'id', $term_arr['term_id'], $taxonomy_name );
+	}
+
+	/**
+	 * Split a list and ignore commas enclosed in quotes. Legitimate quotes should be HTML escaped.
+	 *
+	 * @param string $str_list      List in string form, separated by commas.
+	 * @param bool   $remove_quotes Remove the surrounding quotes.
+	 *
+	 * @return array|string[]
+	 */
+	public static function split_list_safely( $str_list, $remove_quotes = false ) {
+		if ( empty( trim( $str_list ) ) ) {
+			return [];
+		}
+
+		$str_list = self::replace_curly_quotes( $str_list );
+		$list     = preg_split( '/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/', $str_list );
+
+		if ( $remove_quotes ) {
+			$list = array_map(
+				function( $value ) {
+					return trim( $value, self::CHARS_WHITESPACE_AND_QUOTES );
+				},
+				$list
+			);
+		} else {
+			$list = array_map( 'trim', $list );
+		}
+
+		return $list;
+	}
+
+	/**
+	 * Replace the curly quotes with straight quotes in the string.
+	 *
+	 * @param string $string String that possibly has curly quotes.
+	 *
+	 * @return string
+	 */
+	public static function replace_curly_quotes( $string ) {
+		return str_replace( [ '“', '”' ], '"', $string );
+	}
+
+	/**
+	 * Serialize a list of terms into comma-separated list.
+	 * Adds quotes if name contains commas.
+	 *
+	 * @param WP_Term[] $terms The terms array.
+	 *
+	 * @return string
+	 */
+	public static function serialize_term_list( $terms ) {
+		$names = array_map( 'Sensei_Data_Port_Utilities::serialize_term', $terms );
+		return implode( ',', $names );
+	}
+
+	/**
+	 * Return term name and hierarchy representation, in the format of 'Parent > Child'.
+	 *
+	 * @param WP_Term $term The term object.
+	 *
+	 * @return string
+	 */
+	public static function serialize_term( WP_Term $term ) {
+
+		$name = self::escape_list_item( $term->name );
+		if ( ! empty( $term->parent ) ) {
+			$parent_term = get_term( $term->parent, $term->taxonomy );
+			$parent_str  = self::serialize_term( $parent_term );
+			return $parent_str . ' > ' . $name;
+		}
+		return $name;
+	}
+
+	/**
+	 * Serialize a list into comma-separated list.
+	 * Wrap values in quotes if they contain a comma.
+	 *
+	 * @deprecated 3.5.2
+	 *
+	 * @param string[] $values The values array.
+	 *
+	 * @return string
+	 */
+	public static function serialize_list( $values = [] ) {
+		_deprecated_function( __METHOD__, '3.5.2' );
+
+		return ! empty( $values )
+			? implode( ',', array_map( 'Sensei_Data_Port_Utilities::escape_list_item', $values ) )
+			: '';
+	}
+
+	/**
+	 * Wrap value in quotes if it contains a comma.
+	 * Escape quotes if wrapped.
+	 *
+	 * @param string $value The value.
+	 *
+	 * @return string
+	 */
+	public static function escape_list_item( $value ) {
+		if ( false !== strpos( $value, ',' ) ) {
+			$value = '"' . str_replace( '"', '\"', $value ) . '"';
+		}
+		return $value;
+	}
+
+	/**
+	 * Serialize ID field.
+	 *
+	 * @param int|int[] $ids ID or IDs array to format.
+	 *
+	 * @return string Serialized ID field.
+	 */
+	public static function serialize_id_field( $ids ) {
+		if ( empty( $ids ) ) {
+			return '';
+		}
+
+		return 'id:' . implode( ',id:', (array) $ids );
+	}
+
+	/**
+	 * Helper method which gets a module by name and checks if the module can be applied to a course's lesson.
+	 *
+	 * @param string $module_name  The module name.
+	 * @param int    $course_id    Course ID.
+	 *
+	 * @return WP_Error|WP_Term  WP_Error when the module can't be applied to the lesson, WP_Term otherwise.
+	 */
+	public static function get_module_for_course( $module_name, $course_id ) {
+		$module = get_term_by( 'name', $module_name, 'module' );
+
+		if ( ! $module ) {
+			return new WP_Error(
+				'sensei_data_port_module_not_found',
+				// translators: Placeholder is the term which errored.
+				sprintf( __( 'Module does not exist: %s.', 'sensei-lms' ), $module_name )
+			);
+		}
+
+		$course_modules = wp_list_pluck( wp_get_post_terms( $course_id, 'module' ), 'term_id' );
+
+		if ( ! in_array( $module->term_id, $course_modules, true ) ) {
+			return new WP_Error(
+				'sensei_data_port_module_not_part_of_course',
+				// translators: First placeholder is the term which errored, second is the course id.
+				sprintf( __( 'Module %1$s is not part of course %2$s.', 'sensei-lms' ), $module_name, $course_id )
+			);
+		}
+
+		return $module;
+	}
+
+	/**
+	 * Get the ID of the imported demo course.
+	 *
+	 * @internal
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return int|null
+	 */
+	public static function get_demo_course_id(): ?int {
+		$query = new WP_Query(
+			[
+				'posts_per_page' => 1,
+				'post_type'      => 'course',
+				'post_status'    => 'any',
+				'fields'         => 'ids',
+				'name'           => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG,
+			]
+		);
+
+		if ( ! $query->found_posts ) {
+			return null;
+		}
+
+		return $query->get_posts()[0];
+	}
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+	<footer>
+		<a href="https://senseilms.com/">SenseiLMS.com</a> &bull;
+		<a href="https://github.com/automattic/sensei">Sensei LMS on GitHub</a>
+	</footer>
+
+
+</div>
+
+<nav>
+	<h2><a href="index.html">Home</a></h2><h3>Actions</h3><ul><li><a href="sensei_course_learning_mode_load_override_styles.html">sensei_course_learning_mode_load_override_styles</a></li><li><a href="sensei_course_learning_mode_load_theme.html">sensei_course_learning_mode_load_theme</a></li><li><a href="sensei_course_learning_mode_override_theme.html">sensei_course_learning_mode_override_theme</a></li><li><a href="sensei_course_new_teacher_assigned.html">sensei_course_new_teacher_assigned</a></li><li><a href="sensei_data_port_complete.html">sensei_data_port_complete</a></li><li><a href="sensei_disable_legacy_emails.html">sensei_disable_legacy_emails</a></li><li><a href="sensei_email_mailpoet_sync_subscribers.html">sensei_email_mailpoet_sync_subscribers</a></li><li><a href="sensei_email_send.html">sensei_email_send</a></li><li><a href="sensei_lesson_video.html">sensei_lesson_video</a></li><li><a href="sensei_loaded.html">sensei_loaded</a></li><li><a href="sensei_new_private_message.html">sensei_new_private_message</a></li><li><a href="sensei_quiz_question_answers_inside_after.html">sensei_quiz_question_answers_inside_after</a></li><li><a href="sensei_quiz_question_answers_inside_before.html">sensei_quiz_question_answers_inside_before</a></li><li><a href="sensei_reports_overview_after_top_filters.html">sensei_reports_overview_after_top_filters</a></li><li><a href="sensei_reports_overview_before_top_filters.html">sensei_reports_overview_before_top_filters</a></li><li><a href="sensei_reports_overview_students_data_provider_pre_user_query.html">sensei_reports_overview_students_data_provider_pre_user_query</a></li><li><a href="sensei_rest_api_category_question_saved.html">sensei_rest_api_category_question_saved</a></li><li><a href="sensei_rest_api_lesson_quiz_update.html">sensei_rest_api_lesson_quiz_update</a></li><li><a href="sensei_rest_api_question_saved.html">sensei_rest_api_question_saved</a></li><li><a href="sensei_settings_after_links.html">sensei_settings_after_links</a></li><li><a href="sensei_tools_listing_after_%257B$tool_id%257D.html">sensei_tools_listing_after_{$tool_id}</a></li><li><a href="sensei_user_lesson_start.html">sensei_user_lesson_start</a></li></ul><h3>Filters</h3><ul><li><a href="sensei_add_comment_indexes.html">sensei_add_comment_indexes</a></li><li><a href="sensei_admin_notices.html">sensei_admin_notices</a></li><li><a href="sensei_analysis_course_columns.html">sensei_analysis_course_columns</a></li><li><a href="sensei_analysis_course_columns_sortable.html">sensei_analysis_course_columns_sortable</a></li><li><a href="sensei_analysis_course_completions.html">sensei_analysis_course_completions</a></li><li><a href="sensei_analysis_course_filter_lessons.html">sensei_analysis_course_filter_lessons</a></li><li><a href="sensei_analysis_course_filter_statuses.html">sensei_analysis_course_filter_statuses</a></li><li><a href="sensei_analysis_course_no_items_text.html">sensei_analysis_course_no_items_text</a></li><li><a href="sensei_analysis_course_percentage.html">sensei_analysis_course_percentage</a></li><li><a href="sensei_analysis_course_search_users.html">sensei_analysis_course_search_users</a></li><li><a href="sensei_analysis_course_sub_menu.html">sensei_analysis_course_sub_menu</a></li><li><a href="sensei_analysis_course_user_lesson.html">sensei_analysis_course_user_lesson</a></li><li><a href="sensei_analysis_course_%257Bview%257D_columns.html">sensei_analysis_course_{view}_columns</a></li><li><a href="sensei_analysis_course_%257Bview%257D_columns_sortable.html">sensei_analysis_course_{view}_columns_sortable</a></li><li><a href="sensei_analysis_lesson_columns.html">sensei_analysis_lesson_columns</a></li><li><a href="sensei_analysis_lesson_columns_sortable.html">sensei_analysis_lesson_columns_sortable</a></li><li><a href="sensei_analysis_lesson_completions.html">sensei_analysis_lesson_completions</a></li><li><a href="sensei_analysis_lesson_filter_statuses.html">sensei_analysis_lesson_filter_statuses</a></li><li><a href="sensei_analysis_lesson_grades.html">sensei_analysis_lesson_grades</a></li><li><a href="sensei_analysis_lesson_learners.html">sensei_analysis_lesson_learners</a></li><li><a href="sensei_analysis_lesson_search_users.html">sensei_analysis_lesson_search_users</a></li><li><a href="sensei_analysis_nav_title.html">sensei_analysis_nav_title</a></li><li><a href="sensei_analysis_overview_column_data.html">sensei_analysis_overview_column_data</a></li><li><a href="sensei_analysis_overview_columns.html">sensei_analysis_overview_columns</a></li><li><a href="sensei_analysis_overview_columns_sortable.html">sensei_analysis_overview_columns_sortable</a></li><li><a href="sensei_analysis_overview_courses_columns.html">sensei_analysis_overview_courses_columns</a></li><li><a href="sensei_analysis_overview_courses_columns_sortable.html">sensei_analysis_overview_courses_columns_sortable</a></li><li><a href="sensei_analysis_overview_filter_courses.html">sensei_analysis_overview_filter_courses</a></li><li><a href="sensei_analysis_overview_filter_lessons.html">sensei_analysis_overview_filter_lessons</a></li><li><a href="sensei_analysis_overview_filter_users.html">sensei_analysis_overview_filter_users</a></li><li><a href="sensei_analysis_overview_lessons_columns.html">sensei_analysis_overview_lessons_columns</a></li><li><a href="sensei_analysis_overview_lessons_columns_sortable.html">sensei_analysis_overview_lessons_columns_sortable</a></li><li><a href="sensei_analysis_overview_users_columns.html">sensei_analysis_overview_users_columns</a></li><li><a href="sensei_analysis_overview_users_columns_sortable.html">sensei_analysis_overview_users_columns_sortable</a></li><li><a href="sensei_analysis_overview_%257Btype%257D_columns.html">sensei_analysis_overview_{type}_columns</a></li><li><a href="sensei_analysis_overview_%257Btype%257D_columns_sortable.html">sensei_analysis_overview_{type}_columns_sortable</a></li><li><a href="sensei_analysis_sub_menu.html">sensei_analysis_sub_menu</a></li><li><a href="sensei_analysis_user_courses_ended.html">sensei_analysis_user_courses_ended</a></li><li><a href="sensei_analysis_user_courses_started.html">sensei_analysis_user_courses_started</a></li><li><a href="sensei_analysis_user_lesson_grades.html">sensei_analysis_user_lesson_grades</a></li><li><a href="sensei_analysis_user_profile_columns.html">sensei_analysis_user_profile_columns</a></li><li><a href="sensei_analysis_user_profile_columns_sortable.html">sensei_analysis_user_profile_columns_sortable</a></li><li><a href="sensei_analysis_user_profile_filter_statuses.html">sensei_analysis_user_profile_filter_statuses</a></li><li><a href="sensei_answer_text.html">sensei_answer_text</a></li><li><a href="sensei_archive_courses_per_page.html">sensei_archive_courses_per_page</a></li><li><a href="sensei_autogradable_question_types.html">sensei_autogradable_question_types</a></li><li><a href="sensei_background_job_actions.html">sensei_background_job_actions</a></li><li><a href="sensei_block_type_args.html">sensei_block_type_args</a></li><li><a href="sensei_breadcrumb_output.html">sensei_breadcrumb_output</a></li><li><a href="sensei_breadcrumb_separator.html">sensei_breadcrumb_separator</a></li><li><a href="sensei_can_access_course_content.html">sensei_can_access_course_content</a></li><li><a href="sensei_can_use_users_relationship.html">sensei_can_use_users_relationship</a></li><li><a href="sensei_can_user_manually_enrol.html">sensei_can_user_manually_enrol</a></li><li><a href="sensei_can_user_view_lesson.html">sensei_can_user_view_lesson</a></li><li><a href="sensei_can_user_view_module.html">sensei_can_user_view_module</a></li><li><a href="sensei_check_for_activity.html">sensei_check_for_activity</a></li><li><a href="sensei_comment_counts_include_sensei_comments.html">sensei_comment_counts_include_sensei_comments</a></li><li><a href="sensei_comments_per_page.html">sensei_comments_per_page</a></li><li><a href="sensei_complete_lesson_redirect_url.html">sensei_complete_lesson_redirect_url</a></li><li><a href="sensei_context_notices.html">sensei_context_notices</a></li><li><a href="sensei_count_statuses.html">sensei_count_statuses</a></li><li><a href="sensei_count_statuses_args.html">sensei_count_statuses_args</a></li><li><a href="sensei_course_archive_page_url.html">sensei_course_archive_page_url</a></li><li><a href="sensei_course_block_template.html">sensei_course_block_template</a></li><li><a href="sensei_course_category_slug.html">sensei_course_category_slug</a></li><li><a href="sensei_course_complete_prerequisite_message.html">sensei_course_complete_prerequisite_message</a></li><li><a href="sensei_course_completed_page_template.html">sensei_course_completed_page_template</a></li><li><a href="sensei_course_completed_page_url.html">sensei_course_completed_page_url</a></li><li><a href="sensei_course_completion_percentage.html">sensei_course_completion_percentage</a></li><li><a href="sensei_course_completion_statement.html">sensei_course_completion_statement</a></li><li><a href="sensei_course_content_has_access.html">sensei_course_content_has_access</a></li><li><a href="sensei_course_count.html">sensei_course_count</a></li><li><a href="sensei_course_custom_navigation_tabs.html">sensei_course_custom_navigation_tabs</a></li><li><a href="sensei_course_enrolment_providers.html">sensei_course_enrolment_providers</a></li><li><a href="sensei_course_enrolment_providers_prevent_manual_enrol.html">sensei_course_enrolment_providers_prevent_manual_enrol</a></li><li><a href="sensei_course_enrolment_store_results.html">sensei_course_enrolment_store_results</a></li><li><a href="sensei_course_get_lessons.html">sensei_course_get_lessons</a></li><li><a href="sensei_course_image_html.html">sensei_course_image_html</a></li><li><a href="sensei_course_is_prerequisite_complete.html">sensei_course_is_prerequisite_complete</a></li><li><a href="sensei_course_learning_mode_enabled.html">sensei_course_learning_mode_enabled</a></li><li><a href="sensei_course_learning_mode_theme_override_enabled.html">sensei_course_learning_mode_theme_override_enabled</a></li><li><a href="sensei_course_list_block_patterns_extra_links.html">sensei_course_list_block_patterns_extra_links</a></li><li><a href="sensei_course_loop_content_class.html">sensei_course_loop_content_class</a></li><li><a href="sensei_course_loop_number_of_columns.html">sensei_course_loop_number_of_columns</a></li><li><a href="sensei_course_meta_default_save.html">sensei_course_meta_default_save</a></li><li><a href="sensei_course_meta_fields.html">sensei_course_meta_fields</a></li><li><a href="sensei_course_open_access.html">sensei_course_open_access</a></li><li><a href="sensei_course_pass_grade.html">sensei_course_pass_grade</a></li><li><a href="sensei_course_placeholder_image_url.html">sensei_course_placeholder_image_url</a></li><li><a href="sensei_course_progress_stats.html">sensei_course_progress_stats</a></li><li><a href="sensei_course_show_lessons.html">sensei_course_show_lessons</a></li><li><a href="sensei_course_slug.html">sensei_course_slug</a></li><li><a href="sensei_course_the_title.html">sensei_course_the_title</a></li><li><a href="sensei_course_user_grade.html">sensei_course_user_grade</a></li><li><a href="sensei_courses_navigation_sidebar.html">sensei_courses_navigation_sidebar</a></li><li><a href="sensei_courses_page_template.html">sensei_courses_page_template</a></li><li><a href="sensei_csv_export_filename.html">sensei_csv_export_filename</a></li><li><a href="sensei_custom_navigation_allowed_screens.html">sensei_custom_navigation_allowed_screens</a></li><li><a href="sensei_default_feature_flag_settings.html">sensei_default_feature_flag_settings</a></li><li><a href="sensei_disable_styles.html">sensei_disable_styles</a></li><li><a href="sensei_do_link_to_module.html">sensei_do_link_to_module</a></li><li><a href="sensei_duplicate_post_args.html">sensei_duplicate_post_args</a></li><li><a href="sensei_duplicate_post_ignore_meta.html">sensei_duplicate_post_ignore_meta</a></li><li><a href="sensei_email.html">sensei_email</a></li><li><a href="sensei_email_classes.html">sensei_email_classes</a></li><li><a href="sensei_email_course_teachers.html">sensei_email_course_teachers</a></li><li><a href="sensei_email_data.html">sensei_email_data</a></li><li><a href="sensei_email_generators.html">sensei_email_generators</a></li><li><a href="sensei_email_heading.html">sensei_email_heading</a></li><li><a href="sensei_email_is_available.html">sensei_email_is_available</a></li><li><a href="sensei_email_list_columns.html">sensei_email_list_columns</a></li><li><a href="sensei_email_list_row_actions.html">sensei_email_list_row_actions</a></li><li><a href="sensei_email_list_row_data.html">sensei_email_list_row_data</a></li><li><a href="sensei_email_mailpoet_feature.html">sensei_email_mailpoet_feature</a></li><li><a href="sensei_email_replacements.html">sensei_email_replacements</a></li><li><a href="sensei_email_seeder_data.html">sensei_email_seeder_data</a></li><li><a href="sensei_email_subject.html">sensei_email_subject</a></li><li><a href="sensei_enable_enrolment_provider_journal.html">sensei_enable_enrolment_provider_journal</a></li><li><a href="sensei_enrolment_course_calculation_job_batch_size.html">sensei_enrolment_course_calculation_job_batch_size</a></li><li><a href="sensei_enrolment_history_size.html">sensei_enrolment_history_size</a></li><li><a href="sensei_enrolment_learner_calculation_job_batch_size.html">sensei_enrolment_learner_calculation_job_batch_size</a></li><li><a href="sensei_enrolment_message_log_size.html">sensei_enrolment_message_log_size</a></li><li><a href="sensei_event_logging_base_fields.html">sensei_event_logging_base_fields</a></li><li><a href="sensei_existing_questions_query_results.html">sensei_existing_questions_query_results</a></li><li><a href="sensei_feature_course_preview_lessons.html">sensei_feature_course_preview_lessons</a></li><li><a href="sensei_feature_open_access_courses.html">sensei_feature_open_access_courses</a></li><li><a href="sensei_feature_preview_students.html">sensei_feature_preview_students</a></li><li><a href="sensei_file_upload_args.html">sensei_file_upload_args</a></li><li><a href="sensei_file_upload_file_prefix.html">sensei_file_upload_file_prefix</a></li><li><a href="sensei_filter_category_questions_by_author.html">sensei_filter_category_questions_by_author</a></li><li><a href="sensei_filter_module_terms_by_owner.html">sensei_filter_module_terms_by_owner</a></li><li><a href="sensei_filter_queries_set_author.html">sensei_filter_queries_set_author</a></li><li><a href="sensei_frontend_learner_enrolment_handler.html">sensei_frontend_learner_enrolment_handler</a></li><li><a href="sensei_gap_fill_case_sensitive_grading.html">sensei_gap_fill_case_sensitive_grading</a></li><li><a href="sensei_get_all_courses.html">sensei_get_all_courses</a></li><li><a href="sensei_get_image_size_%25257Bimage_size%25257D.html">sensei_get_image_size_{image_size}</a></li><li><a href="sensei_get_question_grade.html">sensei_get_question_grade</a></li><li><a href="sensei_get_question_template_data.html">sensei_get_question_template_data</a></li><li><a href="sensei_get_%257Bpage%257D_page_id.html">sensei_get_{page}_page_id</a></li><li><a href="sensei_grade_question_auto.html">sensei_grade_question_auto</a></li><li><a href="sensei_grading_allowed_user_ids.html">sensei_grading_allowed_user_ids</a></li><li><a href="sensei_grading_count_statues.html">sensei_grading_count_statues</a></li><li><a href="sensei_grading_count_statuses.html">sensei_grading_count_statuses</a></li><li><a href="sensei_grading_default_columns.html">sensei_grading_default_columns</a></li><li><a href="sensei_grading_default_columns_sortable.html">sensei_grading_default_columns_sortable</a></li><li><a href="sensei_grading_display_quiz_question.html">sensei_grading_display_quiz_question</a></li><li><a href="sensei_grading_filter_courses.html">sensei_grading_filter_courses</a></li><li><a href="sensei_grading_filter_lessons.html">sensei_grading_filter_lessons</a></li><li><a href="sensei_grading_filter_statuses.html">sensei_grading_filter_statuses</a></li><li><a href="sensei_grading_main_column_data.html">sensei_grading_main_column_data</a></li><li><a href="sensei_grading_nav_title.html">sensei_grading_nav_title</a></li><li><a href="sensei_grading_search_users.html">sensei_grading_search_users</a></li><li><a href="sensei_grading_sub_menu.html">sensei_grading_sub_menu</a></li><li><a href="sensei_guest_user_supported_actions.html">sensei_guest_user_supported_actions</a></li><li><a href="sensei_home_is_plugin_licensed_%257B$plugin_slug%257D.html">sensei_home_is_plugin_licensed_{$plugin_slug}</a></li><li><a href="sensei_home_promo_banner_show.html">sensei_home_promo_banner_show</a></li><li><a href="sensei_home_remote_data_other_plugins.html">sensei_home_remote_data_other_plugins</a></li><li><a href="sensei_home_remote_data_primary_plugin_slug.html">sensei_home_remote_data_primary_plugin_slug</a></li><li><a href="sensei_home_remote_data_retry_error.html">sensei_home_remote_data_retry_error</a></li><li><a href="sensei_home_support_ticket_creation_upsell_show.html">sensei_home_support_ticket_creation_upsell_show</a></li><li><a href="sensei_home_tasks.html">sensei_home_tasks</a></li><li><a href="sensei_icon_href.html">sensei_icon_href</a></li><li><a href="sensei_import_attachment_request_timeout.html">sensei_import_attachment_request_timeout</a></li><li><a href="sensei_import_csv_delimiter.html">sensei_import_csv_delimiter</a></li><li><a href="sensei_import_csv_delimiter_options.html">sensei_import_csv_delimiter_options</a></li><li><a href="sensei_is_enrolled.html">sensei_is_enrolled</a></li><li><a href="sensei_is_enrolment_background_job_enabled.html">sensei_is_enrolment_background_job_enabled</a></li><li><a href="sensei_is_legacy_enrolled.html">sensei_is_legacy_enrolled</a></li><li><a href="sensei_is_login_required.html">sensei_is_login_required</a></li><li><a href="sensei_learner_admin_get_row_data.html">sensei_learner_admin_get_row_data</a></li><li><a href="sensei_learner_courses_page_template.html">sensei_learner_courses_page_template</a></li><li><a href="sensei_learner_enrolled_courses_args.html">sensei_learner_enrolled_courses_args</a></li><li><a href="sensei_learner_full_name.html">sensei_learner_full_name</a></li><li><a href="sensei_learner_profile_courses_heading.html">sensei_learner_profile_courses_heading</a></li><li><a href="sensei_learner_profile_courses_heading_name.html">sensei_learner_profile_courses_heading_name</a></li><li><a href="sensei_learner_profile_info_avatar.html">sensei_learner_profile_info_avatar</a></li><li><a href="sensei_learner_profile_info_bio.html">sensei_learner_profile_info_bio</a></li><li><a href="sensei_learner_profile_info_name.html">sensei_learner_profile_info_name</a></li><li><a href="sensei_learner_profile_permalink.html">sensei_learner_profile_permalink</a></li><li><a href="sensei_learner_profiles_url_base.html">sensei_learner_profiles_url_base</a></li><li><a href="sensei_learners_add_learner_redirect_url.html">sensei_learners_add_learner_redirect_url</a></li><li><a href="sensei_learners_admin_get_known_bulk_actions.html">sensei_learners_admin_get_known_bulk_actions</a></li><li><a href="sensei_learners_default_columns.html">sensei_learners_default_columns</a></li><li><a href="sensei_learners_default_columns_sortable.html">sensei_learners_default_columns_sortable</a></li><li><a href="sensei_learners_filter_courses.html">sensei_learners_filter_courses</a></li><li><a href="sensei_learners_filter_lessons.html">sensei_learners_filter_lessons</a></li><li><a href="sensei_learners_filter_users.html">sensei_learners_filter_users</a></li><li><a href="sensei_learners_learner_updated.html">sensei_learners_learner_updated</a></li><li><a href="sensei_learners_nav_title.html">sensei_learners_nav_title</a></li><li><a href="sensei_learners_no_items_text.html">sensei_learners_no_items_text</a></li><li><a href="sensei_learners_query.html">sensei_learners_query</a></li><li><a href="sensei_learners_search_users.html">sensei_learners_search_users</a></li><li><a href="sensei_learners_sub_menu.html">sensei_learners_sub_menu</a></li><li><a href="sensei_learning_mode_block_templates.html">sensei_learning_mode_block_templates</a></li><li><a href="sensei_learning_mode_lesson_status_icon.html">sensei_learning_mode_lesson_status_icon</a></li><li><a href="sensei_lesson_archive_title.html">sensei_lesson_archive_title</a></li><li><a href="sensei_lesson_block_template.html">sensei_lesson_block_template</a></li><li><a href="sensei_lesson_content_drip_hide.html">sensei_lesson_content_drip_hide</a></li><li><a href="sensei_lesson_count.html">sensei_lesson_count</a></li><li><a href="sensei_lesson_course_signup_notice_level.html">sensei_lesson_course_signup_notice_level</a></li><li><a href="sensei_lesson_course_signup_notice_message.html">sensei_lesson_course_signup_notice_message</a></li><li><a href="sensei_lesson_excerpt.html">sensei_lesson_excerpt</a></li><li><a href="sensei_lesson_placeholder_image_url.html">sensei_lesson_placeholder_image_url</a></li><li><a href="sensei_lesson_prerequisite.html">sensei_lesson_prerequisite</a></li><li><a href="sensei_lesson_preview_title_text.html">sensei_lesson_preview_title_text</a></li><li><a href="sensei_lesson_quiz_questions.html">sensei_lesson_quiz_questions</a></li><li><a href="sensei_lesson_show_course_signup_notice.html">sensei_lesson_show_course_signup_notice</a></li><li><a href="sensei_lesson_slug.html">sensei_lesson_slug</a></li><li><a href="sensei_lesson_tag_archive_description.html">sensei_lesson_tag_archive_description</a></li><li><a href="sensei_lesson_tag_archive_title.html">sensei_lesson_tag_archive_title</a></li><li><a href="sensei_lesson_tag_slug.html">sensei_lesson_tag_slug</a></li><li><a href="sensei_lesson_take_course_url.html">sensei_lesson_take_course_url</a></li><li><a href="sensei_list_bulk_actions.html">sensei_list_bulk_actions</a></li><li><a href="sensei_list_table_search_button_text.html">sensei_list_table_search_button_text</a></li><li><a href="sensei_lms_schema_get_tables.html">sensei_lms_schema_get_tables</a></li><li><a href="sensei_load_default_supported_theme_wrappers.html">sensei_load_default_supported_theme_wrappers</a></li><li><a href="sensei_locate_template.html">sensei_locate_template</a></li><li><a href="sensei_log_event.html">sensei_log_event</a></li><li><a href="sensei_login_logout_menu_title.html">sensei_login_logout_menu_title</a></li><li><a href="sensei_login_success_redirect_url.html">sensei_login_success_redirect_url</a></li><li><a href="sensei_login_url.html">sensei_login_url</a></li><li><a href="sensei_message_archive_title.html">sensei_message_archive_title</a></li><li><a href="sensei_messages_send_message_link.html">sensei_messages_send_message_link</a></li><li><a href="sensei_messages_slug.html">sensei_messages_slug</a></li><li><a href="sensei_module_archive_description.html">sensei_module_archive_description</a></li><li><a href="sensei_module_archive_title.html">sensei_module_archive_title</a></li><li><a href="sensei_module_course_column_max_links_count.html">sensei_module_course_column_max_links_count</a></li><li><a href="sensei_module_course_signup_notice_level.html">sensei_module_course_signup_notice_level</a></li><li><a href="sensei_module_course_signup_notice_message.html">sensei_module_course_signup_notice_message</a></li><li><a href="sensei_module_show_course_signup_notice.html">sensei_module_show_course_signup_notice</a></li><li><a href="sensei_module_slug.html">sensei_module_slug</a></li><li><a href="sensei_modules_title.html">sensei_modules_title</a></li><li><a href="sensei_multiple_question_slug.html">sensei_multiple_question_slug</a></li><li><a href="sensei_my_courses_per_page.html">sensei_my_courses_per_page</a></li><li><a href="sensei_notice.html">sensei_notice</a></li><li><a href="sensei_notices_screen_ids.html">sensei_notices_screen_ids</a></li><li><a href="sensei_notify_admin_new_course_creation.html">sensei_notify_admin_new_course_creation</a></li><li><a href="sensei_placeholder_thumbnail.html">sensei_placeholder_thumbnail</a></li><li><a href="sensei_pre_grade_question_auto.html">sensei_pre_grade_question_auto</a></li><li><a href="sensei_pre_kses.html">sensei_pre_kses</a></li><li><a href="sensei_question_answer_message_correct_answer.html">sensei_question_answer_message_correct_answer</a></li><li><a href="sensei_question_answer_message_css_class.html">sensei_question_answer_message_css_class</a></li><li><a href="sensei_question_answer_message_grade.html">sensei_question_answer_message_grade</a></li><li><a href="sensei_question_answer_message_text.html">sensei_question_answer_message_text</a></li><li><a href="sensei_question_answer_notes.html">sensei_question_answer_notes</a></li><li><a href="sensei_question_category_slug.html">sensei_question_category_slug</a></li><li><a href="sensei_question_classes.html">sensei_question_classes</a></li><li><a href="sensei_question_image_size.html">sensei_question_image_size</a></li><li><a href="sensei_question_show_answers.html">sensei_question_show_answers</a></li><li><a href="sensei_question_title.html">sensei_question_title</a></li><li><a href="sensei_question_type_slug.html">sensei_question_type_slug</a></li><li><a href="sensei_question_type_specific_properties.html">sensei_question_type_specific_properties</a></li><li><a href="sensei_question_types.html">sensei_question_types</a></li><li><a href="sensei_questions_get_correct_answer.html">sensei_questions_get_correct_answer</a></li><li><a href="sensei_quiz_answer_file_upload_types.html">sensei_quiz_answer_file_upload_types</a></li><li><a href="sensei_quiz_course_signup_notice_message.html">sensei_quiz_course_signup_notice_message</a></li><li><a href="sensei_quiz_enable_block_based_editor.html">sensei_quiz_enable_block_based_editor</a></li><li><a href="sensei_quiz_ordering_question_type_hide.html">sensei_quiz_ordering_question_type_hide</a></li><li><a href="sensei_quiz_pagination_args.html">sensei_quiz_pagination_args</a></li><li><a href="sensei_quiz_panel_add.html">sensei_quiz_panel_add</a></li><li><a href="sensei_quiz_question_ai_upsell_scripts.html">sensei_quiz_question_ai_upsell_scripts</a></li><li><a href="sensei_quiz_question_points_format.html">sensei_quiz_question_points_format</a></li><li><a href="sensei_quiz_settings.html">sensei_quiz_settings</a></li><li><a href="sensei_quiz_slug.html">sensei_quiz_slug</a></li><li><a href="sensei_quiz_type_slug.html">sensei_quiz_type_slug</a></li><li><a href="sensei_register_post_type_course.html">sensei_register_post_type_course</a></li><li><a href="sensei_register_post_type_lesson.html">sensei_register_post_type_lesson</a></li><li><a href="sensei_register_post_type_question.html">sensei_register_post_type_question</a></li><li><a href="sensei_register_post_type_quiz.html">sensei_register_post_type_quiz</a></li><li><a href="sensei_register_post_type_sensei_message.html">sensei_register_post_type_sensei_message</a></li><li><a href="sensei_registration_redirect.html">sensei_registration_redirect</a></li><li><a href="sensei_registration_url.html">sensei_registration_url</a></li><li><a href="sensei_reports_overview_export_button_url.html">sensei_reports_overview_export_button_url</a></li><li><a href="sensei_rest_api_lesson_quiz_response.html">sensei_rest_api_lesson_quiz_response</a></li><li><a href="sensei_rest_api_schema_question_type.html">sensei_rest_api_schema_question_type</a></li><li><a href="sensei_rest_api_schema_single_question.html">sensei_rest_api_schema_single_question</a></li><li><a href="sensei_restrict_posts_menu_page.html">sensei_restrict_posts_menu_page</a></li><li><a href="sensei_results_links.html">sensei_results_links</a></li><li><a href="sensei_round_mode.html">sensei_round_mode</a></li><li><a href="sensei_round_precision.html">sensei_round_precision</a></li><li><a href="sensei_scheduler_class.html">sensei_scheduler_class</a></li><li><a href="sensei_scripts_allowed_pages.html">sensei_scripts_allowed_pages</a></li><li><a href="sensei_scripts_allowed_post_type_pages.html">sensei_scripts_allowed_post_type_pages</a></li><li><a href="sensei_scripts_allowed_post_types.html">sensei_scripts_allowed_post_types</a></li><li><a href="sensei_send_emails.html">sensei_send_emails</a></li><li><a href="sensei_settings_content.html">sensei_settings_content</a></li><li><a href="sensei_settings_content_drip_hide.html">sensei_settings_content_drip_hide</a></li><li><a href="sensei_settings_fields.html">sensei_settings_fields</a></li><li><a href="sensei_settings_tabs.html">sensei_settings_tabs</a></li><li><a href="sensei_settings_woocommerce_hide.html">sensei_settings_woocommerce_hide</a></li><li><a href="sensei_shortcode_user_courses_display_course_toggle_actions.html">sensei_shortcode_user_courses_display_course_toggle_actions</a></li><li><a href="sensei_should_defer_enrolment_check.html">sensei_should_defer_enrolment_check</a></li><li><a href="sensei_show_admin_notices_%257B$screen_id%257D.html">sensei_show_admin_notices_{$screen_id}</a></li><li><a href="sensei_show_enrolment_debug_button.html">sensei_show_enrolment_debug_button</a></li><li><a href="sensei_show_lesson_numbers.html">sensei_show_lesson_numbers</a></li><li><a href="sensei_show_main_footer.html">sensei_show_main_footer</a></li><li><a href="sensei_show_main_header.html">sensei_show_main_header</a></li><li><a href="sensei_single_title.html">sensei_single_title</a></li><li><a href="sensei_start_course_redirect_url.html">sensei_start_course_redirect_url</a></li><li><a href="sensei_student_groups_hide.html">sensei_student_groups_hide</a></li><li><a href="sensei_student_progress_read_from_tables.html">sensei_student_progress_read_from_tables</a></li><li><a href="sensei_students_report_last_activity_filter_enabled.html">sensei_students_report_last_activity_filter_enabled</a></li><li><a href="sensei_teacher_archive_query.html">sensei_teacher_archive_query</a></li><li><a href="sensei_teachers_shortcode_list_item.html">sensei_teachers_shortcode_list_item</a></li><li><a href="sensei_template_url.html">sensei_template_url</a></li><li><a href="sensei_the_module_description.html">sensei_the_module_description</a></li><li><a href="sensei_the_module_id.html">sensei_the_module_id</a></li><li><a href="sensei_the_module_permalink.html">sensei_the_module_permalink</a></li><li><a href="sensei_the_module_status_html.html">sensei_the_module_status_html</a></li><li><a href="sensei_the_module_title.html">sensei_the_module_title</a></li><li><a href="sensei_the_no_permissions_message.html">sensei_the_no_permissions_message</a></li><li><a href="sensei_the_no_permissions_title.html">sensei_the_no_permissions_title</a></li><li><a href="sensei_the_question_number.html">sensei_the_question_number</a></li><li><a href="sensei_the_title_classes.html">sensei_the_title_classes</a></li><li><a href="sensei_the_title_html_tag.html">sensei_the_title_html_tag</a></li><li><a href="sensei_tools.html">sensei_tools</a></li><li><a href="sensei_usage_tracking_data.html">sensei_usage_tracking_data</a></li><li><a href="sensei_use_wp_register_link.html">sensei_use_wp_register_link</a></li><li><a href="sensei_user_completed_lesson.html">sensei_user_completed_lesson</a></li><li><a href="sensei_user_course_status_%257Bstatus%257D.html">sensei_user_course_status_{status}</a></li><li><a href="sensei_user_courses_filter_options.html">sensei_user_courses_filter_options</a></li><li><a href="sensei_user_courses_query.html">sensei_user_courses_query</a></li><li><a href="sensei_user_question_feedback.html">sensei_user_question_feedback</a></li><li><a href="sensei_user_quiz_status.html">sensei_user_quiz_status</a></li><li><a href="sensei_user_quiz_status_%257Bstatus%257D.html">sensei_user_quiz_status_{status}</a></li><li><a href="sensei_user_started_course.html">sensei_user_started_course</a></li><li><a href="sensei_video_position.html">sensei_video_position</a></li><li><a href="sensei_wpcom_product_slugs.html">sensei_wpcom_product_slugs</a></li><li><a href="widget_course_categories_args.html">widget_course_categories_args</a></li><li><a href="widget_course_categories_dropdown_args.html">widget_course_categories_dropdown_args</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

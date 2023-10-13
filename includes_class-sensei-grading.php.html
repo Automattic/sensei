@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Source: includes/class-sensei-grading.php - Sensei LMS Hook Docs</title>
+
+	<script src="scripts/prettify/prettify.js"> </script>
+	<script src="scripts/prettify/lang-css.js"> </script>
+	<!--[if lt IE 9]>
+	  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+	<link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+
+	<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono|IBM+Plex+Sans:300,400|Playfair+Display:900&display=swap" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div id="main">
+
+	
+	<h1 class="page-title">Source: includes/class-sensei-grading.php</h1>
+	
+
+	
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
+/**
+ * Sensei Grading Class
+ *
+ * All functionality pertaining to the Admin Grading in Sensei.
+ *
+ * @package Assessment
+ * @author Automattic
+ *
+ * @since 1.3.0
+ */
+class Sensei_Grading {
+
+	public $name;
+	public $file;
+	public $page_slug;
+
+	/**
+	 * Constructor
+	 *
+	 * @since  1.3.0
+	 *
+	 * @param $file
+	 */
+	public function __construct( $file ) {
+		$this->name      = __( 'Grading', 'sensei-lms' );
+		$this->file      = $file;
+		$this->page_slug = 'sensei_grading';
+
+		// Admin functions
+		if ( is_admin() ) {
+			add_action( 'grading_wrapper_container', array( $this, 'wrapper_container' ) );
+
+			if ( isset( $_GET['page'] ) &amp;&amp; ( $_GET['page'] == $this->page_slug ) ) {
+				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
+				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
+			}
+
+			add_action( 'admin_init', array( $this, 'admin_process_grading_submission' ) );
+			add_action( 'admin_notices', array( $this, 'add_grading_notices' ) );
+		}
+
+		// Ajax functions
+		if ( is_admin() ) {
+			add_action( 'wp_ajax_get_lessons_dropdown', array( $this, 'get_lessons_dropdown' ) );
+			add_action( 'wp_ajax_get_redirect_url', array( $this, 'get_redirect_url' ) );
+		}
+	}
+
+	/**
+	 * Add the Grading submenu.
+	 *
+	 * @since  1.3.0
+	 * @access public
+	 */
+	public function grading_admin_menu() {
+		$indicator_html = '';
+		$grading_counts = Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] );
+
+		if ( intval( $grading_counts['ungraded'] ) > 0 ) {
+			$indicator_html = ' &lt;span class="awaiting-mod">' . esc_html( $grading_counts['ungraded'] ) . '&lt;/span>';
+		}
+
+		if ( current_user_can( 'manage_sensei_grades' ) ) {
+			add_submenu_page(
+				'sensei',
+				__( 'Grading', 'sensei-lms' ),
+				__( 'Grading', 'sensei-lms' ) . $indicator_html,
+				'manage_sensei_grades',
+				$this->page_slug,
+				array( $this, 'grading_page' )
+			);
+		}
+	}
+
+	/**
+	 * enqueue_scripts function.
+	 *
+	 * @description Load in JavaScripts where necessary.
+	 * @access public
+	 * @since 1.3.0
+	 * @return void
+	 */
+	public function enqueue_scripts() {
+
+		// Load Grading JS
+		Sensei()->assets->enqueue( 'sensei-grading-general', 'js/grading-general.js', [ 'jquery', 'sensei-core-select2' ] );
+
+	}
+
+	/**
+	 * enqueue_styles function.
+	 *
+	 * @description Load in CSS styles where necessary.
+	 * @access public
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function enqueue_styles() {
+
+		wp_enqueue_style( Sensei()->token . '-admin' );
+
+		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
+
+	}
+
+	/**
+	 * load_data_table_files loads required files for Grading
+	 *
+	 * @since  1.3.0
+	 * @return void
+	 */
+	public function load_data_table_files() {
+
+		// Load Grading Classes
+		$classes_to_load = array(
+			'list-table',
+			'grading-main',
+			'grading-user-quiz',
+		);
+		foreach ( $classes_to_load as $class_file ) {
+			Sensei()->load_class( $class_file );
+		}
+	}
+
+	/**
+	 * load_data_object creates new instance of class
+	 *
+	 * @since  1.3.0
+	 * @deprecated 3.3.0  Use constructors instead.
+	 *
+	 * @param  string    $name          Name of class
+	 * @param  integer   $data          constructor arguments
+	 * @param  undefined $optional_data optional constructor arguments
+	 * @return object                 class instance object
+	 */
+	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
+		// Use constructors directly.
+		_deprecated_function( __METHOD__, '3.3.0', 'new Sensei_Grading_{$name}' );
+
+		// Load Analysis data
+		$object_name = 'Sensei_Grading_' . $name;
+		if ( is_null( $optional_data ) ) {
+			$sensei_grading_object = new $object_name( $data );
+		} else {
+			$sensei_grading_object = new $object_name( $data, $optional_data );
+		}
+		if ( 'Main' == $name ) {
+			$sensei_grading_object->prepare_items();
+		}
+		return $sensei_grading_object;
+	}
+
+	/**
+	 * grading_page function.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 * @return void
+	 */
+	public function grading_page() {
+
+		if ( isset( $_GET['quiz_id'] ) &amp;&amp; 0 &lt; intval( $_GET['quiz_id'] ) &amp;&amp; isset( $_GET['user'] ) &amp;&amp; 0 &lt; intval( $_GET['user'] ) ) {
+			$this->grading_user_quiz_view();
+		} else {
+			$this->grading_default_view();
+		}
+	}
+
+	/**
+	 * grading_default_view default view for grading page
+	 *
+	 * @since  1.3.0
+	 * @return void
+	 */
+	public function grading_default_view() {
+
+		$course_id = null;
+		$lesson_id = null;
+		$user_id   = null;
+		$view      = null;
+
+		// Load Grading data
+		if ( ! empty( $_GET['course_id'] ) ) {
+			$course_id = intval( $_GET['course_id'] );
+
+			if ( ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course_id ) ) {
+				return;
+			}
+		}
+		if ( ! empty( $_GET['lesson_id'] ) ) {
+			$lesson_id = intval( $_GET['lesson_id'] );
+
+			if ( ! current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson_id ) ) {
+				return;
+			}
+		}
+
+		if ( ! empty( $_GET['user_id'] ) ) {
+			$user_id = intval( $_GET['user_id'] );
+		}
+		if ( ! empty( $_GET['view'] ) ) {
+			$view = esc_html( $_GET['view'] );
+		}
+
+		$sensei_grading_overview = new Sensei_Grading_Main( compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
+		$sensei_grading_overview->prepare_items();
+
+		// Wrappers
+		do_action( 'grading_before_container' );
+		do_action( 'grading_wrapper_container', 'top' );
+
+		$this->grading_default_nav();
+		do_action( 'sensei_grading_after_headers' );
+
+		$sensei_grading_overview->views();
+		?>
+		&lt;form id="grading-filters" method="get">
+			&lt;?php
+			Sensei_Utils::output_query_params_as_inputs( [ 'course_id', 'lesson_id', 's' ] );
+			$sensei_grading_overview->table_search_form();
+			$sensei_grading_overview->display();
+			?>
+		&lt;/form>
+		&lt;?php
+		do_action( 'sensei_grading_extra' );
+		do_action( 'grading_wrapper_container', 'bottom' );
+		do_action( 'grading_after_container' );
+	}
+
+	/**
+	 * grading_user_quiz_view user quiz answers view for grading page
+	 *
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function grading_user_quiz_view() {
+
+		// Load Grading data
+		$user_id = 0;
+		$quiz_id = 0;
+		if ( isset( $_GET['user'] ) ) {
+			$user_id = intval( $_GET['user'] );
+		}
+		if ( isset( $_GET['quiz_id'] ) ) {
+			$quiz_id   = intval( $_GET['quiz_id'] );
+			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+
+			if ( ! current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson_id ) ) {
+				return;
+			}
+		}
+
+		$sensei_grading_user_profile = new Sensei_Grading_User_Quiz( $user_id, $quiz_id );
+
+		// Wrappers
+		do_action( 'grading_before_container' );
+		do_action( 'grading_wrapper_container', 'top' );
+
+		$this->grading_user_quiz_nav();
+		do_action( 'sensei_grading_after_headers' );
+
+		?>
+		&lt;div id="poststuff" class="sensei-grading-wrap user-profile">
+			&lt;div class="sensei-grading-main">
+				&lt;?php $sensei_grading_user_profile->display(); ?>
+			&lt;/div>
+		&lt;/div>
+		&lt;?php
+		do_action( 'grading_wrapper_container', 'bottom' );
+		do_action( 'grading_after_container' );
+	}
+
+	/**
+	 * Outputs Grading general headers.
+	 *
+	 * @since  1.3.0
+	 * @deprecated 3.13.4
+	 *
+	 * @param array $args
+	 * @return void
+	 */
+	public function grading_headers( $args = array( 'nav' => 'default' ) ) {
+		_deprecated_function( __METHOD__, '3.13.4' );
+
+		$function = 'grading_' . $args['nav'] . '_nav';
+		$this->$function();
+		do_action( 'sensei_grading_after_headers' );
+	}
+
+	/**
+	 * wrapper_container wrapper for Grading area
+	 *
+	 * @since  1.3.0
+	 * @param $which string
+	 * @return void
+	 */
+	public function wrapper_container( $which ) {
+		if ( 'top' == $which ) {
+			?>
+			&lt;div id="woothemes-sensei" class="wrap woothemes-sensei">
+			&lt;?php
+		} elseif ( 'bottom' == $which ) {
+			?>
+			&lt;/div>&lt;!--/#woothemes-sensei-->
+			&lt;?php
+		}
+	}
+
+	/**
+	 * Default nav area for Grading
+	 *
+	 * @since  1.3.0
+	 * @return void
+	 */
+	public function grading_default_nav() {
+		$title = esc_html( $this->name );
+
+		if ( isset( $_GET['course_id'] ) ) {
+			$course_id = intval( $_GET['course_id'] );
+			$title    .= '&lt;span class="course-title">&amp;gt;&amp;nbsp;&amp;nbsp;' . esc_html( get_the_title( $course_id ) ) . '&lt;/span>';
+		}
+		if ( isset( $_GET['lesson_id'] ) ) {
+			$lesson_id = intval( $_GET['lesson_id'] );
+			$title    .= '&amp;nbsp;&amp;nbsp;&lt;span class="lesson-title">&amp;gt;&amp;nbsp;&amp;nbsp;' . esc_html( get_the_title( intval( $lesson_id ) ) ) . '&lt;/span>';
+		}
+		if ( isset( $_GET['user_id'] ) &amp;&amp; 0 &lt; intval( $_GET['user_id'] ) ) {
+
+			$user_name = Sensei_Learner::get_full_name( $_GET['user_id'] );
+			$title    .= '&amp;nbsp;&amp;nbsp;&lt;span class="user-title">&amp;gt;&amp;nbsp;&amp;nbsp;' . esc_html( $user_name ) . '&lt;/span>';
+
+		}
+		?>
+			&lt;h1>
+			&lt;?php
+			/**
+			 * Filter the title of the Grading page.
+			 *
+			 * @hook sensei_grading_nav_title
+			 *
+			 * @param {string} $title
+			 * @return {string} Filtered title.
+			 */
+			echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) );
+			?>
+			&lt;/h1>
+		&lt;?php
+	}
+
+	/**
+	 * Nav area for Grading specific users' quiz answers
+	 *
+	 * @since  1.3.0
+	 * @return void
+	 */
+	public function grading_user_quiz_nav() {
+		$title = esc_html( $this->name );
+
+		if ( isset( $_GET['quiz_id'] ) ) {
+			$quiz_id   = intval( $_GET['quiz_id'] );
+			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			$url       = add_query_arg(
+				array(
+					'page'      => $this->page_slug,
+					'course_id' => $course_id,
+				),
+				admin_url( 'admin.php' )
+			);
+			$title    .= sprintf( '&amp;nbsp;&amp;nbsp;&lt;span class="course-title">&amp;gt;&amp;nbsp;&amp;nbsp;&lt;a href="%s">%s&lt;/a>&lt;/span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
+
+			$url    = add_query_arg(
+				array(
+					'page'      => $this->page_slug,
+					'lesson_id' => $lesson_id,
+				),
+				admin_url( 'admin.php' )
+			);
+			$title .= sprintf( '&amp;nbsp;&amp;nbsp;&lt;span class="lesson-title">&amp;gt;&amp;nbsp;&amp;nbsp;&lt;a href="%s">%s&lt;/a>&lt;/span>', esc_url( $url ), esc_html( get_the_title( $lesson_id ) ) );
+		}
+		if ( isset( $_GET['user'] ) &amp;&amp; 0 &lt; intval( $_GET['user'] ) ) {
+
+			$user_name = Sensei_Learner::get_full_name( $_GET['user'] );
+			$title    .= '&amp;nbsp;&amp;nbsp;&lt;span class="user-title">&amp;gt;&amp;nbsp;&amp;nbsp;' . esc_html( $user_name ) . '&lt;/span>';
+
+		}
+		?>
+			&lt;h2>
+			&lt;?php
+			/**
+			 * Filter the title of the Grading page.
+			 *
+			 * @hook sensei_grading_nav_title
+			 *
+			 * @param {string} $title
+			 * @return {string} Filtered title.
+			 */
+			echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) );
+			?>
+			&lt;/h2>
+		&lt;?php
+	}
+
+	/**
+	 * Return array of valid statuses for either Course or Lesson
+	 *
+	 * @since  1.7.0
+	 * @return array
+	 */
+	public function get_stati( $type ) {
+		$statuses = array();
+		switch ( $type ) {
+			case 'course':
+				$statuses = array(
+					'in-progress',
+					'complete',
+				);
+				break;
+
+			case 'lesson':
+				$statuses = array(
+					'in-progress',
+					'complete',
+					'ungraded',
+					'graded',
+					'passed',
+					'failed',
+				);
+				break;
+
+		}
+		return $statuses;
+	}
+
+	/**
+	 * Count the various statuses for Course or Lesson
+	 * Very similar to get_comment_count()
+	 *
+	 * @since  1.7.0
+	 * @param  array $args (default: array())
+	 * @return object
+	 */
+	public function count_statuses( $args = array() ) {
+		global  $wpdb;
+
+		/**
+		 * Filter fires inside Sensei_Grading::count_statuses
+		 *
+		 * Alter the post_in array to determine which posts the comment query should be limited to.
+		 *
+		 * @since 1.8.0
+		 *
+		 * @hook sensei_count_statuses_args
+		 *
+		 * @param {array} $args Array of arguments for the query.
+		 * @return {array} Filtered arguments.
+		 */
+		$args = apply_filters( 'sensei_count_statuses_args', $args );
+
+		if ( 'course' === $args['type'] ) {
+			$type = 'sensei_course_status';
+		} else {
+			$type = 'sensei_lesson_status';
+		}
+
+		$cache_key = 'sensei-statuses-' . md5( wp_json_encode( $args ) );
+
+		$query = "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s ";
+
+		// Restrict to specific posts.
+		if ( isset( $args['post__in'] ) &amp;&amp; ! empty( $args['post__in'] ) &amp;&amp; is_array( $args['post__in'] ) ) {
+			$query .= ' AND comment_post_ID IN (' . implode( ',', array_map( 'absint', $args['post__in'] ) ) . ')';
+		} elseif ( ! empty( $args['post_id'] ) ) {
+			$query .= $wpdb->prepare( ' AND comment_post_ID = %d', $args['post_id'] );
+		}
+		// Restrict to specific users.
+		if ( isset( $args['user_id'] ) &amp;&amp; is_array( $args['user_id'] ) ) {
+			$query .= ' AND user_id IN (' . implode( ',', array_map( 'absint', $args['user_id'] ) ) . ')';
+		} elseif ( ! empty( $args['user_id'] ) ) {
+			$query .= $wpdb->prepare( ' AND user_id = %d', $args['user_id'] );
+		}
+		// Restrict to specific users.
+		if ( isset( $args['query'] ) ) {
+			$query .= $args['query'];
+		}
+		$query .= ' GROUP BY comment_approved';
+
+		$counts = wp_cache_get( $cache_key, 'counts' );
+		if ( false === $counts ) {
+			$sql     = $wpdb->prepare( $query, $type );
+			$results = (array) $wpdb->get_results( $sql, ARRAY_A );
+			$counts  = array_fill_keys( $this->get_stati( $type ), 0 );
+
+			foreach ( $results as $row ) {
+				$counts[ $row['comment_approved'] ] = $row['total'];
+			}
+			wp_cache_set( $cache_key, $counts, 'counts' );
+		}
+
+		if ( ! isset( $counts['graded'] ) ) {
+			$counts['graded'] = 0;
+		}
+
+		if ( ! isset( $counts['ungraded'] ) ) {
+			$counts['ungraded'] = 0;
+		}
+
+		if ( ! isset( $counts['passed'] ) ) {
+			$counts['passed'] = 0;
+		}
+
+		if ( ! isset( $counts['failed'] ) ) {
+			$counts['failed'] = 0;
+		}
+
+		if ( ! isset( $counts['in-progress'] ) ) {
+			$counts['in-progress'] = 0;
+		}
+
+		if ( ! isset( $counts['complete'] ) ) {
+			$counts['complete'] = 0;
+		}
+
+		/**
+		 * Filter the counts of statuses for a given type.
+		 *
+		 * @hook sensei_count_statuses
+		 *
+		 * @param {array} $counts Array of counts for each status.
+		 * @param {string} $type Type of status to count: sensei_course_status or sensei_lesson_status.
+		 * @return {array} Filtered counts.
+		 */
+		return apply_filters( 'sensei_count_statuses', $counts, $type );
+	}
+
+	/**
+	 * Build the Courses dropdown for return in AJAX
+	 *
+	 * @since  1.7.0
+	 * @return string
+	 */
+	public function courses_drop_down_html( $selected_course_id = 0 ) {
+
+		$html = '';
+
+		$course_args = array(
+			'post_type'        => 'course',
+			'posts_per_page'   => -1,
+			'orderby'          => 'title',
+			'order'            => 'ASC',
+			'post_status'      => 'any',
+			'suppress_filters' => 0,
+			'fields'           => 'ids',
+		);
+		/**
+		 * Filter the arguments used to query for courses in the grading dropdown.
+		 *
+		 * @hook sensei_grading_filter_courses
+		 *
+		 * @param {array} $course_args Array of arguments for the query.
+		 * @return {array} Filtered arguments.
+		 */
+		$courses = get_posts( apply_filters( 'sensei_grading_filter_courses', $course_args ) );
+
+		$html .= '&lt;option value="">' . __( 'Select a course', 'sensei-lms' ) . '&lt;/option>';
+		if ( $courses ) {
+			foreach ( $courses as $course_id ) {
+				$html .= '&lt;option value="' . esc_attr( absint( $course_id ) ) . '" ' . selected( $course_id, $selected_course_id, false ) . '>' . esc_html( get_the_title( $course_id ) ) . '&lt;/option>' . "\n";
+			}
+		}
+
+		return $html;
+	}
+
+	/**
+	 * Build the Lessons dropdown for return in AJAX
+	 *
+	 * @since  1.?
+	 * @return string
+	 */
+	public function get_lessons_dropdown() {
+		if ( ! isset( $_GET['course_id'] ) ) {
+			// Try deprecated functionality as a fallback.
+			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+			if ( isset( $_POST['data'] ) ) {
+				_doing_it_wrong(
+					'get_lessons_dropdown',
+					'The get_lessons_dropdown AJAX call should be a GET request with parameter "course_id".',
+					'1.12.2'
+				);
+				$this->deprecated_get_lessons_dropdown();
+			}
+			wp_die();
+		}
+
+		// Get course ID.
+		$course_id = intval( $_GET['course_id'] );
+
+		echo wp_kses(
+			$this->lessons_drop_down_html( $course_id ),
+			array(
+				'option' => array(
+					'selected' => array(),
+					'value'    => array(),
+				),
+			)
+		);
+
+		wp_die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
+	}
+
+	/**
+	 * Deprecated version of the get_lessons_dropdown function, used as a
+	 * fallback.
+	 */
+	private function deprecated_get_lessons_dropdown() {
+		// Parse POST data
+		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+		$data        = $_POST['data'];
+		$course_data = array();
+		parse_str( $data, $course_data );
+
+		$course_id = intval( $course_data['course_id'] );
+
+		echo wp_kses(
+			$this->lessons_drop_down_html( $course_id ),
+			array(
+				'option' => array(
+					'selected' => array(),
+					'value'    => array(),
+				),
+			)
+		);
+
+		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
+	}
+
+	public function lessons_drop_down_html( $course_id = 0, $selected_lesson_id = 0 ) {
+
+		$html = '';
+		if ( 0 &lt; intval( $course_id ) ) {
+
+			$lesson_args = array(
+				'post_type'        => 'lesson',
+				'posts_per_page'   => -1,
+				'orderby'          => 'title',
+				'order'            => 'ASC',
+				'meta_key'         => '_lesson_course',
+				'meta_value'       => $course_id,
+				'post_status'      => 'publish',
+				'suppress_filters' => 0,
+				'fields'           => 'ids',
+			);
+			/**
+			 * Filter the arguments used to query for lessons in the grading dropdown.
+			 *
+			 * @hook sensei_grading_filter_lessons
+			 *
+			 * @param {array} $lesson_args Array of arguments for the query.
+			 * @return {array} Filtered arguments.
+			 */
+			$lessons = get_posts( apply_filters( 'sensei_grading_filter_lessons', $lesson_args ) );
+
+			$html .= '&lt;option value="">' . esc_html__( 'Select a lesson', 'sensei-lms' ) . '&lt;/option>';
+			if ( $lessons ) {
+				foreach ( $lessons as $lesson_id ) {
+					$html .= '&lt;option value="' . esc_attr( absint( $lesson_id ) ) . '" ' . selected( $lesson_id, $selected_lesson_id, false ) . '>' . esc_html( get_the_title( $lesson_id ) ) . '&lt;/option>' . "\n";
+				}
+			}
+		}
+
+		return $html;
+	}
+
+	/**
+	 * The process grading function handles admin grading submissions.
+	 *
+	 * This function is hooked on to admin_init. It simply accepts
+	 * the grades as the Grader selected theme and saves the total grade and
+	 * individual question grades.
+	 *
+	 * @return bool
+	 */
+	public function admin_process_grading_submission() {
+
+		// NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry.
+		if ( ! isset( $_POST['sensei_manual_grade'] )
+			|| ! wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' )
+			|| ! isset( $_GET['quiz_id'] )
+			|| $_GET['quiz_id'] != $_POST['sensei_manual_grade'] ) {
+
+			return false; // exit and do not grade.
+
+		}
+
+		$quiz_id = $_GET['quiz_id'];
+		$user_id = $_GET['user'];
+
+		$questions            = Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+		$quiz_lesson_id       = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$quiz_grade           = 0;
+		$quiz_grade_total     = $_POST['quiz_grade_total'];
+		$all_question_grades  = array();
+		$all_answers_feedback = array();
+
+		foreach ( $questions as $question ) {
+
+			$question_id = $question->ID;
+
+			if ( isset( $_POST[ 'question_' . $question_id . '_grade' ] ) ) {
+
+				$question_grade = absint( wp_unslash( $_POST[ 'question_' . $question_id . '_grade' ] ) ) ?? 0;
+
+				// add data to the array that will, after the loop, be stored on the lesson status
+				$all_question_grades[ $question_id ] = $question_grade;
+
+				// tally up the total quiz grade
+				$quiz_grade += $question_grade;
+
+			} // endif
+
+			// Question answer feedback / notes
+			$question_feedback = '';
+			if ( isset( $_POST['questions_feedback'][ $question_id ] ) ) {
+
+				$question_feedback = wp_unslash( $_POST['questions_feedback'][ $question_id ] );
+
+			}
+			$all_answers_feedback[ $question_id ] = $question_feedback;
+
+		}
+
+		// store all question grades on the lesson status
+		Sensei()->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id, $user_id );
+
+		// store the feedback from grading
+		Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id, $user_id );
+
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $quiz_lesson_id, $user_id );
+		if ( ! $lesson_progress ) {
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id );
+		}
+
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_progress ) {
+			return false;
+		}
+
+		$lesson_metadata = [];
+		$quiz_progress->ungrade();
+
+		// $_POST['all_questions_graded'] is set when all questions have been graded
+		// in the class sensei grading user quiz -> display()
+		if ( $_POST['all_questions_graded'] == 'yes' ) {
+
+			// Set the users total quiz grade.
+			$grade = Sensei_Utils::quotient_as_absolute_rounded_percentage( $quiz_grade, $quiz_grade_total, 2 );
+			Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
+
+			// Duplicating what Frontend->sensei_complete_quiz() does.
+			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+			$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
+
+			if ( $pass_required ) {
+				// Student has reached the pass mark and lesson is complete.
+				if ( $quiz_passmark &lt;= $grade ) {
+					// Due to our internal logic, we need to complete the lesson first.
+					// This is because in the comments-based version the lesson status is used for both the lesson and the quiz.
+					$lesson_progress->complete();
+					$quiz_progress->pass();
+				} else {
+					$quiz_progress->fail();
+				}
+			}
+
+			// Student only has to partake the quiz.
+			else {
+				$lesson_progress->complete();
+				$quiz_progress->grade();
+			}
+		}
+
+		// Due to our internal logic, we need to save the lesson progress first.
+		// This is because in the comments-based version the lesson status is used for both the lesson and the quiz.
+		// And in this context the quiz status should be preserved in the comments-based version.
+		// For the tables-based version the order does not matter.
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
+		if ( count( $lesson_metadata ) ) {
+			foreach ( $lesson_metadata as $key => $value ) {
+				update_comment_meta( $quiz_progress->get_id(), $key, $value );
+			}
+		}
+
+		if ( $lesson_progress->is_complete() ) {
+
+			/* The action is documented in includes/class-sensei-utils.php */
+			do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
+
+		}
+
+		if ( isset( $_POST['sensei_grade_next_learner'] ) &amp;&amp; strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
+
+			$load_url = add_query_arg( array( 'message' => 'graded' ) );
+
+		} elseif ( isset( $_POST['_wp_http_referer'] ) ) {
+
+			$load_url = add_query_arg( array( 'message' => 'graded' ), $_POST['_wp_http_referer'] );
+
+		} else {
+
+			$load_url = add_query_arg( array( 'message' => 'graded' ) );
+
+		}
+
+		wp_safe_redirect( esc_url_raw( $load_url ) );
+		exit;
+
+	}
+
+	public function get_redirect_url() {
+		if ( ! isset( $_GET['course_id'] ) || ! isset( $_GET['lesson_id'] ) ) {
+			// Try deprecated functionality as a fallback.
+			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+			if ( isset( $_POST['data'] ) ) {
+				_doing_it_wrong(
+					'get_redirect_url',
+					'The get_redirect_url AJAX call should be a GET request with parameters "course_id" and "lesson_id".',
+					'1.12.2'
+				);
+				$this->deprecated_get_redirect_url();
+			}
+			wp_die();
+		}
+
+		// Get data.
+		$course_id    = intval( $_GET['course_id'] );
+		$lesson_id    = intval( $_GET['lesson_id'] );
+		$grading_view = ( isset( $_GET['view'] ) &amp;&amp; $_GET['view'] ) ? $_GET['view'] : 'ungraded';
+
+		if ( 0 &lt; $lesson_id &amp;&amp; 0 &lt; $course_id ) {
+			echo esc_url_raw(
+				apply_filters(
+					'sensei_ajax_redirect_url',
+					add_query_arg(
+						array(
+							'page'      => $this->page_slug,
+							'lesson_id' => $lesson_id,
+							'course_id' => $course_id,
+							'view'      => $grading_view,
+						),
+						admin_url( 'admin.php' )
+					)
+				)
+			);
+		} else {
+			echo '';
+		}
+
+		wp_die();
+	}
+
+	/**
+	 * Deprecated version of the get_redirect_url function, used as a fallback.
+	 */
+	private function deprecated_get_redirect_url() {
+		// Parse POST data
+		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+		$data        = $_POST['data'];
+		$lesson_data = array();
+		parse_str( $data, $lesson_data );
+
+		$lesson_id    = intval( $lesson_data['lesson_id'] );
+		$course_id    = intval( $lesson_data['course_id'] );
+		$grading_view = sanitize_text_field( $lesson_data['view'] );
+
+		if ( 0 &lt; $lesson_id &amp;&amp; 0 &lt; $course_id ) {
+			echo esc_url_raw(
+				apply_filters(
+					'sensei_ajax_redirect_url',
+					add_query_arg(
+						array(
+							'page'      => $this->page_slug,
+							'lesson_id' => $lesson_id,
+							'course_id' => $course_id,
+							'view'      => $grading_view,
+						),
+						admin_url( 'admin.php' )
+					)
+				)
+			);
+		} else {
+			echo '';
+		}
+
+		die();
+	}
+
+	public function add_grading_notices() {
+		$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : false;
+		$message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : false;
+
+		if (
+			$page
+			&amp;&amp; $message
+			&amp;&amp; $this->page_slug === $page
+			&amp;&amp; 'graded' === $message
+		) {
+			?>
+			&lt;div class="grading-notice updated">
+				&lt;p>&lt;?php echo esc_html__( 'Quiz Graded Successfully!', 'sensei-lms' ); ?>&lt;/p>
+			&lt;/div>
+			&lt;?php
+		}
+	}
+
+	public function sensei_grading_notices() {
+		if ( isset( $_GET['action'] ) &amp;&amp; 'graded' == $_GET['action'] ) {
+			echo '&lt;div class="grading-notice updated">';
+				echo '&lt;p>' . esc_html__( 'Quiz Graded Successfully!', 'sensei-lms' ) . '&lt;/p>';
+			echo '&lt;/div>';
+		}
+	}
+
+	/**
+	 * Grade quiz automatically
+	 *
+	 * This function grades each question automatically if there all questions are auto gradable. If not
+	 * the quiz will not be auto gradable.
+	 *
+	 * @since 1.7.4
+	 *
+	 * @param  integer $quiz_id         ID of quiz
+	 * @param  array   $submitted questions id ans answers {
+	 *          @type int $question_id
+	 *          @type mixed $answer
+	 * }
+	 * @param  integer $total_questions Total questions in quiz (not used)
+	 * @param string  $quiz_grade_type Optional defaults to auto
+	 *
+	 * @return int $quiz_grade total sum of all question grades
+	 */
+	public static function grade_quiz_auto( $quiz_id = 0, $submitted = array(), $total_questions = 0, $quiz_grade_type = 'auto' ) {
+
+		if ( ! ( intval( $quiz_id ) > 0 ) || ! $submitted
+			|| $quiz_grade_type != 'auto' ) {
+			return false; // exit early
+		}
+
+		$user_id           = get_current_user_id();
+		$lesson_id         = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$quiz_autogradable = true;
+
+		/**
+		 * Filter question types that can be automatically graded.
+		 *
+		 * This filter fires inside the auto grade quiz function and provides you with the default list.
+		 *
+		 * @hook sensei_autogradable_question_types
+		 *
+		 * @param {array} Types of questions, default: array( 'multiple-choice', 'boolean', 'gap-fill' ).
+		 * @return {array} Filtered array of question types.
+		 */
+		$autogradable_question_types = apply_filters( 'sensei_autogradable_question_types', array( 'multiple-choice', 'boolean', 'gap-fill' ) );
+
+		$grade_total         = 0;
+		$all_question_grades = array();
+		foreach ( $submitted as $question_id => $answer ) {
+
+			// check if the question is autogradable, either by type, or because the grade is 0
+			$question_type    = Sensei()->question->get_question_type( $question_id );
+			$achievable_grade = Sensei()->question->get_question_grade( $question_id );
+			// Question has a zero grade, so skip grading
+			if ( 0 == $achievable_grade ) {
+				$all_question_grades[ $question_id ] = $achievable_grade;
+			} elseif ( in_array( $question_type, $autogradable_question_types ) ) {
+				// Get user question grade
+				$question_grade                      = self::grade_question_auto( $question_id, $question_type, $answer, $user_id );
+				$all_question_grades[ $question_id ] = $question_grade;
+				$grade_total                        += $question_grade;
+
+			} else {
+
+				// There is a question that cannot be autograded
+				$quiz_autogradable = false;
+
+			}
+		}
+
+		// Only if the whole quiz was autogradable do we set a grade
+		if ( $quiz_autogradable ) {
+			$quiz_total = Sensei_Utils::sensei_get_quiz_total( $quiz_id );
+			$grade      = Sensei_Utils::quotient_as_absolute_rounded_percentage( $grade_total, $quiz_total, 2 );
+			Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
+
+		} else {
+
+			$grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'sensei-lms' ) );
+
+		}
+
+		// store the auto gradable grades. If the quiz is not auto gradable the grades can be use as the default
+		// when doing manual grading.
+		Sensei()->quiz->set_user_grades( $all_question_grades, $lesson_id, $user_id );
+
+		return $grade;
+
+	}
+
+	/**
+	 * Grade question automatically
+	 *
+	 * This function checks the question type and then grades it accordingly.
+	 *
+	 * @since 1.7.4
+	 *
+	 * @param integer $question_id
+	 * @param string  $question_type of the standard Sensei question types
+	 * @param string  $answer
+	 * @param int     $user_id
+	 *
+	 * @return int $question_grade
+	 */
+	public static function grade_question_auto( $question_id = 0, $question_type = '', $answer = '', $user_id = 0 ) {
+
+		if ( intval( $user_id ) == 0 ) {
+
+			$user_id = get_current_user_id();
+
+		}
+
+		if ( ! ( intval( $question_id ) > 0 ) ) {
+
+			return false;
+
+		}
+
+		Sensei()->question->get_question_type( $question_id );
+
+		/**
+		 * Applying a grade before the auto grading takes place.
+		 *
+		 * This filter is applied just before the question is auto graded. It fires in the context of a single question
+		 * in the sensei_grade_question_auto function. It fires irrespective of the question type. If you return a value
+		 * other than false the auto grade functionality will be ignored and your supplied grade will be user for this question.
+		 *
+		 * @hook sensei_pre_grade_question_auto
+		 *
+		 * @param {int|false} $question_grade Question grade, default false.
+		 * @param {int}       $question_id    ID of the question being graded.
+		 * @param {string}    $question_type  One of the Sensei question type.
+		 * @param {string}    $answer         User supplied question answer.
+		 * @return {int|false} Filtered question grade.
+		 */
+		$question_grade = apply_filters( 'sensei_pre_grade_question_auto', false, $question_id, $question_type, $answer );
+
+		if ( false !== $question_grade ) {
+
+			return $question_grade;
+
+		}
+
+		// auto grading core
+		if ( in_array( $question_type, array( 'multiple-choice', 'boolean' ) ) ) {
+
+			$right_answer = (array) get_post_meta( $question_id, '_question_right_answer', true );
+
+			$answer = wp_unslash( $answer );
+			$answer = (array) $answer;
+			if ( is_array( $right_answer ) &amp;&amp; count( $right_answer ) == count( $answer ) ) {
+				// Loop through all answers ensure none are 'missing'
+				$all_correct = true;
+				foreach ( $answer as $check_answer ) {
+					if ( ! in_array( $check_answer, $right_answer ) ) {
+						$all_correct = false;
+					}
+				}
+				// If all correct then grade
+				if ( $all_correct ) {
+					$question_grade = Sensei()->question->get_question_grade( $question_id );
+				}
+			}
+		} elseif ( 'gap-fill' == $question_type ) {
+
+			$question_grade = self::grade_gap_fill_question( $question_id, $answer );
+
+		} else {
+
+			/**
+			 * Grading questions that are not auto gradable.
+			 *
+			 * This filter is applied the context of ta single question within the sensei_grade_question_auto function.
+			 * It fires for all other questions types. It does not apply to 'multiple-choice'  , 'boolean' and gap-fill.
+			 *
+			 * @hook sensei_grade_question_auto
+			 *
+			 * @param {int}    $question_grade Question grade.
+			 * @param {int}    $question_id    ID of the question being graded.
+			 * @param {string} $question_type  One of the Sensei question type.
+			 * @param {string} $answer         User supplied question answer
+			 * @return {int} Filtered question grade.
+			 */
+			$question_grade = (int) apply_filters( 'sensei_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
+
+		}
+
+		return $question_grade;
+	}
+
+	/**
+	 * Grading logic specifically for the gap fill questions
+	 *
+	 * @since 1.9.0
+	 * @param $question_id
+	 * @param $user_answer
+	 *
+	 * @return bool | int false or the grade given to the user answer
+	 */
+	public static function grade_gap_fill_question( $question_id, $user_answer ) {
+
+		$right_answer  = get_post_meta( $question_id, '_question_right_answer', true );
+		$gapfill_array = explode( '||', $right_answer );
+
+		$user_answer = wp_unslash( $user_answer );
+
+		/**
+		 * case sensitive grading filter
+		 *
+		 * alter the value simply use this code in your plugin or the themes functions.php
+		 * add_filter( 'sensei_gap_fill_case_sensitive_grading','__return_true' );
+		 *
+		 * @since 1.9.0
+		 *
+		 * @hook sensei_gap_fill_case_sensitive_grading
+		 *
+		 * @param {bool} $do_case_sensitive_comparison Whether to do case sensitive comparison or not, default false.
+		 * @return {bool} Filtered value.
+		 */
+		$do_case_sensitive_comparison = apply_filters( 'sensei_gap_fill_case_sensitive_grading', false );
+
+		$regex_modifier = '';
+		if ( $do_case_sensitive_comparison ) {
+			$is_exact_answer_match = trim( $user_answer ) === trim( $gapfill_array[1] );
+		} else {
+			$is_exact_answer_match = trim( strtolower( $user_answer ) ) === trim( strtolower( $gapfill_array[1] ) );
+			$regex_modifier        = 'i';
+		}
+
+		$regex_answer_check = '/' . addcslashes( $gapfill_array[1], '/' ) . '/' . $regex_modifier;
+
+		if (
+			$is_exact_answer_match
+			|| 1 === @preg_match( $regex_answer_check, $user_answer )
+		) {
+			return Sensei()->question->get_question_grade( $question_id );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Counts the lessons that have been graded manually and automatically
+	 *
+	 * @since 1.9.0
+	 * @return int $number_of_graded_lessons
+	 */
+	public static function get_graded_lessons_count() {
+
+		global $wpdb;
+
+		$comment_query_piece           = [];
+		$comment_query_piece['select'] = 'SELECT   COUNT(*) AS total';
+		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
+
+		$comment_query            = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
+		$number_of_graded_lessons = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
+
+		return $number_of_graded_lessons;
+	}
+
+	/**
+	 * Add together all the graded lesson grades
+	 *
+	 * @since 1.9.0
+	 * @return double $sum_of_all_grades
+	 */
+	public static function get_graded_lessons_sum() {
+
+		global $wpdb;
+
+		$comment_query_piece           = [];
+		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
+		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
+
+		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
+		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
+
+		return $sum_of_all_grades;
+
+	}
+
+	/**
+	 * Get average grade of all lessons graded in all the courses.
+	 *
+	 * @since 4.2.0
+	 * @access public
+	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
+	 */
+	public function get_graded_lessons_average_grade() {
+		global $wpdb;
+
+		// Fetching all the grades of all the lessons that are graded.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$sum_result          = $wpdb->get_row(
+			"SELECT SUM( {$wpdb->commentmeta}.meta_value ) AS grade_sum,COUNT( * ) as grade_count FROM {$wpdb->comments}
+             INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id )
+			 WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')"
+		);
+		$average_grade_value = 0;
+		if ( '0' === $sum_result->grade_count ) {
+			return $average_grade_value;
+		}
+		$average_grade_value = $sum_result->grade_sum / $sum_result->grade_count;
+		return $average_grade_value;
+	}
+
+	/**
+	 * Get the sum of all grades for the given user.
+	 *
+	 * @since 1.9.0
+	 * @param $user_id
+	 * @return double
+	 */
+	public static function get_user_graded_lessons_sum( $user_id ) {
+		global $wpdb;
+
+		$clean_user_id                 = esc_sql( $user_id );
+		$comment_query_piece           = [];
+		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
+		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.user_id = {$clean_user_id} ";
+
+		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
+		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
+
+		return $sum_of_all_grades;
+	}
+
+	/**
+	 * Get the sum of all user grades for the given lesson.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param int lesson_id
+	 * @return double
+	 */
+	public static function get_lessons_users_grades_sum( $lesson_id ) {
+
+		global $wpdb;
+
+		$clean_lesson_id               = esc_sql( $lesson_id );
+		$comment_query_piece           = [];
+		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
+		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.comment_post_ID = {$clean_lesson_id} ";
+
+		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
+		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
+
+		return $sum_of_all_grades;
+
+	}
+
+	/**
+	 * Get the sum of all user grades for the given course.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param int $course_id
+	 * @return double
+	 */
+	public static function get_course_users_grades_sum( $course_id ) {
+		global $wpdb;
+
+		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
+
+		if ( ! $lesson_ids ) {
+			return 0;
+		}
+
+		$comment_query_piece           = [];
+		$clean_lesson_ids              = implode( ',', esc_sql( $lesson_ids ) );
+		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
+		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND {$wpdb->comments}.comment_approved IN ('graded', 'passed', 'failed') AND ( {$wpdb->commentmeta}.meta_key = 'grade')
+			AND {$wpdb->comments}.comment_post_ID IN ({$clean_lesson_ids}) ";
+
+		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
+		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
+
+		return $sum_of_all_grades;
+
+	}
+
+	/**
+	 * Get the average grade of all courses.
+	 *
+	 * @since 4.2.0
+	 * @access public
+	 *
+	 * @return double Average grade of all courses.
+	 */
+	public function get_courses_average_grade() {
+		global $wpdb;
+
+		/**
+		 * The subquery calculates the average grade per course, and the outer query then calculates the
+		 * average grade of all courses. To be included in the calculation, a lesson must:
+		 *   Have a status of 'graded', 'passed' or 'failed'.
+		 *   Have grade data.
+		 *   Be associated with a course.
+		 *   Have quiz questions (checking for the existence of '_quiz_has_questions' meta is sufficient;
+		 *   if it exists its value will be 1).
+		 */
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$result = $wpdb->get_row(
+			"SELECT AVG(course_average) as courses_average
+			FROM (
+				SELECT AVG(cm.meta_value) as course_average
+				FROM {$wpdb->comments} c
+				INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
+				INNER JOIN {$wpdb->postmeta} course ON c.comment_post_ID = course.post_id
+				INNER JOIN {$wpdb->postmeta} has_questions ON c.comment_post_ID = has_questions.post_id
+				INNER JOIN {$wpdb->posts} p ON p.ID = course.meta_value
+				WHERE c.comment_type = 'sensei_lesson_status'
+					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
+					AND cm.meta_key = 'grade'
+					AND course.meta_key = '_lesson_course'
+					AND course.meta_value &lt;> ''
+					AND has_questions.meta_key = '_quiz_has_questions'
+				GROUP BY course.meta_value
+			) averages_by_course"
+		);
+
+		return floatval( $result->courses_average );
+	}
+}
+
+/**
+ * Class WooThemes_Sensei_Grading
+ *
+ * @ignore only for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Grading extends Sensei_Grading{}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+	<footer>
+		<a href="https://senseilms.com/">SenseiLMS.com</a> &bull;
+		<a href="https://github.com/automattic/sensei">Sensei LMS on GitHub</a>
+	</footer>
+
+
+</div>
+
+<nav>
+	<h2><a href="index.html">Home</a></h2><h3>Actions</h3><ul><li><a href="sensei_course_learning_mode_load_override_styles.html">sensei_course_learning_mode_load_override_styles</a></li><li><a href="sensei_course_learning_mode_load_theme.html">sensei_course_learning_mode_load_theme</a></li><li><a href="sensei_course_learning_mode_override_theme.html">sensei_course_learning_mode_override_theme</a></li><li><a href="sensei_course_new_teacher_assigned.html">sensei_course_new_teacher_assigned</a></li><li><a href="sensei_data_port_complete.html">sensei_data_port_complete</a></li><li><a href="sensei_disable_legacy_emails.html">sensei_disable_legacy_emails</a></li><li><a href="sensei_email_mailpoet_sync_subscribers.html">sensei_email_mailpoet_sync_subscribers</a></li><li><a href="sensei_email_send.html">sensei_email_send</a></li><li><a href="sensei_lesson_video.html">sensei_lesson_video</a></li><li><a href="sensei_loaded.html">sensei_loaded</a></li><li><a href="sensei_new_private_message.html">sensei_new_private_message</a></li><li><a href="sensei_quiz_question_answers_inside_after.html">sensei_quiz_question_answers_inside_after</a></li><li><a href="sensei_quiz_question_answers_inside_before.html">sensei_quiz_question_answers_inside_before</a></li><li><a href="sensei_reports_overview_after_top_filters.html">sensei_reports_overview_after_top_filters</a></li><li><a href="sensei_reports_overview_before_top_filters.html">sensei_reports_overview_before_top_filters</a></li><li><a href="sensei_reports_overview_students_data_provider_pre_user_query.html">sensei_reports_overview_students_data_provider_pre_user_query</a></li><li><a href="sensei_rest_api_category_question_saved.html">sensei_rest_api_category_question_saved</a></li><li><a href="sensei_rest_api_lesson_quiz_update.html">sensei_rest_api_lesson_quiz_update</a></li><li><a href="sensei_rest_api_question_saved.html">sensei_rest_api_question_saved</a></li><li><a href="sensei_settings_after_links.html">sensei_settings_after_links</a></li><li><a href="sensei_tools_listing_after_%257B$tool_id%257D.html">sensei_tools_listing_after_{$tool_id}</a></li><li><a href="sensei_user_lesson_start.html">sensei_user_lesson_start</a></li></ul><h3>Filters</h3><ul><li><a href="sensei_add_comment_indexes.html">sensei_add_comment_indexes</a></li><li><a href="sensei_admin_notices.html">sensei_admin_notices</a></li><li><a href="sensei_analysis_course_columns.html">sensei_analysis_course_columns</a></li><li><a href="sensei_analysis_course_columns_sortable.html">sensei_analysis_course_columns_sortable</a></li><li><a href="sensei_analysis_course_completions.html">sensei_analysis_course_completions</a></li><li><a href="sensei_analysis_course_filter_lessons.html">sensei_analysis_course_filter_lessons</a></li><li><a href="sensei_analysis_course_filter_statuses.html">sensei_analysis_course_filter_statuses</a></li><li><a href="sensei_analysis_course_no_items_text.html">sensei_analysis_course_no_items_text</a></li><li><a href="sensei_analysis_course_percentage.html">sensei_analysis_course_percentage</a></li><li><a href="sensei_analysis_course_search_users.html">sensei_analysis_course_search_users</a></li><li><a href="sensei_analysis_course_sub_menu.html">sensei_analysis_course_sub_menu</a></li><li><a href="sensei_analysis_course_user_lesson.html">sensei_analysis_course_user_lesson</a></li><li><a href="sensei_analysis_course_%257Bview%257D_columns.html">sensei_analysis_course_{view}_columns</a></li><li><a href="sensei_analysis_course_%257Bview%257D_columns_sortable.html">sensei_analysis_course_{view}_columns_sortable</a></li><li><a href="sensei_analysis_lesson_columns.html">sensei_analysis_lesson_columns</a></li><li><a href="sensei_analysis_lesson_columns_sortable.html">sensei_analysis_lesson_columns_sortable</a></li><li><a href="sensei_analysis_lesson_completions.html">sensei_analysis_lesson_completions</a></li><li><a href="sensei_analysis_lesson_filter_statuses.html">sensei_analysis_lesson_filter_statuses</a></li><li><a href="sensei_analysis_lesson_grades.html">sensei_analysis_lesson_grades</a></li><li><a href="sensei_analysis_lesson_learners.html">sensei_analysis_lesson_learners</a></li><li><a href="sensei_analysis_lesson_search_users.html">sensei_analysis_lesson_search_users</a></li><li><a href="sensei_analysis_nav_title.html">sensei_analysis_nav_title</a></li><li><a href="sensei_analysis_overview_column_data.html">sensei_analysis_overview_column_data</a></li><li><a href="sensei_analysis_overview_columns.html">sensei_analysis_overview_columns</a></li><li><a href="sensei_analysis_overview_columns_sortable.html">sensei_analysis_overview_columns_sortable</a></li><li><a href="sensei_analysis_overview_courses_columns.html">sensei_analysis_overview_courses_columns</a></li><li><a href="sensei_analysis_overview_courses_columns_sortable.html">sensei_analysis_overview_courses_columns_sortable</a></li><li><a href="sensei_analysis_overview_filter_courses.html">sensei_analysis_overview_filter_courses</a></li><li><a href="sensei_analysis_overview_filter_lessons.html">sensei_analysis_overview_filter_lessons</a></li><li><a href="sensei_analysis_overview_filter_users.html">sensei_analysis_overview_filter_users</a></li><li><a href="sensei_analysis_overview_lessons_columns.html">sensei_analysis_overview_lessons_columns</a></li><li><a href="sensei_analysis_overview_lessons_columns_sortable.html">sensei_analysis_overview_lessons_columns_sortable</a></li><li><a href="sensei_analysis_overview_users_columns.html">sensei_analysis_overview_users_columns</a></li><li><a href="sensei_analysis_overview_users_columns_sortable.html">sensei_analysis_overview_users_columns_sortable</a></li><li><a href="sensei_analysis_overview_%257Btype%257D_columns.html">sensei_analysis_overview_{type}_columns</a></li><li><a href="sensei_analysis_overview_%257Btype%257D_columns_sortable.html">sensei_analysis_overview_{type}_columns_sortable</a></li><li><a href="sensei_analysis_sub_menu.html">sensei_analysis_sub_menu</a></li><li><a href="sensei_analysis_user_courses_ended.html">sensei_analysis_user_courses_ended</a></li><li><a href="sensei_analysis_user_courses_started.html">sensei_analysis_user_courses_started</a></li><li><a href="sensei_analysis_user_lesson_grades.html">sensei_analysis_user_lesson_grades</a></li><li><a href="sensei_analysis_user_profile_columns.html">sensei_analysis_user_profile_columns</a></li><li><a href="sensei_analysis_user_profile_columns_sortable.html">sensei_analysis_user_profile_columns_sortable</a></li><li><a href="sensei_analysis_user_profile_filter_statuses.html">sensei_analysis_user_profile_filter_statuses</a></li><li><a href="sensei_answer_text.html">sensei_answer_text</a></li><li><a href="sensei_archive_courses_per_page.html">sensei_archive_courses_per_page</a></li><li><a href="sensei_autogradable_question_types.html">sensei_autogradable_question_types</a></li><li><a href="sensei_background_job_actions.html">sensei_background_job_actions</a></li><li><a href="sensei_block_type_args.html">sensei_block_type_args</a></li><li><a href="sensei_breadcrumb_output.html">sensei_breadcrumb_output</a></li><li><a href="sensei_breadcrumb_separator.html">sensei_breadcrumb_separator</a></li><li><a href="sensei_can_access_course_content.html">sensei_can_access_course_content</a></li><li><a href="sensei_can_use_users_relationship.html">sensei_can_use_users_relationship</a></li><li><a href="sensei_can_user_manually_enrol.html">sensei_can_user_manually_enrol</a></li><li><a href="sensei_can_user_view_lesson.html">sensei_can_user_view_lesson</a></li><li><a href="sensei_can_user_view_module.html">sensei_can_user_view_module</a></li><li><a href="sensei_check_for_activity.html">sensei_check_for_activity</a></li><li><a href="sensei_comment_counts_include_sensei_comments.html">sensei_comment_counts_include_sensei_comments</a></li><li><a href="sensei_comments_per_page.html">sensei_comments_per_page</a></li><li><a href="sensei_complete_lesson_redirect_url.html">sensei_complete_lesson_redirect_url</a></li><li><a href="sensei_context_notices.html">sensei_context_notices</a></li><li><a href="sensei_count_statuses.html">sensei_count_statuses</a></li><li><a href="sensei_count_statuses_args.html">sensei_count_statuses_args</a></li><li><a href="sensei_course_archive_page_url.html">sensei_course_archive_page_url</a></li><li><a href="sensei_course_block_template.html">sensei_course_block_template</a></li><li><a href="sensei_course_category_slug.html">sensei_course_category_slug</a></li><li><a href="sensei_course_complete_prerequisite_message.html">sensei_course_complete_prerequisite_message</a></li><li><a href="sensei_course_completed_page_template.html">sensei_course_completed_page_template</a></li><li><a href="sensei_course_completed_page_url.html">sensei_course_completed_page_url</a></li><li><a href="sensei_course_completion_percentage.html">sensei_course_completion_percentage</a></li><li><a href="sensei_course_completion_statement.html">sensei_course_completion_statement</a></li><li><a href="sensei_course_content_has_access.html">sensei_course_content_has_access</a></li><li><a href="sensei_course_count.html">sensei_course_count</a></li><li><a href="sensei_course_custom_navigation_tabs.html">sensei_course_custom_navigation_tabs</a></li><li><a href="sensei_course_enrolment_providers.html">sensei_course_enrolment_providers</a></li><li><a href="sensei_course_enrolment_providers_prevent_manual_enrol.html">sensei_course_enrolment_providers_prevent_manual_enrol</a></li><li><a href="sensei_course_enrolment_store_results.html">sensei_course_enrolment_store_results</a></li><li><a href="sensei_course_get_lessons.html">sensei_course_get_lessons</a></li><li><a href="sensei_course_image_html.html">sensei_course_image_html</a></li><li><a href="sensei_course_is_prerequisite_complete.html">sensei_course_is_prerequisite_complete</a></li><li><a href="sensei_course_learning_mode_enabled.html">sensei_course_learning_mode_enabled</a></li><li><a href="sensei_course_learning_mode_theme_override_enabled.html">sensei_course_learning_mode_theme_override_enabled</a></li><li><a href="sensei_course_list_block_patterns_extra_links.html">sensei_course_list_block_patterns_extra_links</a></li><li><a href="sensei_course_loop_content_class.html">sensei_course_loop_content_class</a></li><li><a href="sensei_course_loop_number_of_columns.html">sensei_course_loop_number_of_columns</a></li><li><a href="sensei_course_meta_default_save.html">sensei_course_meta_default_save</a></li><li><a href="sensei_course_meta_fields.html">sensei_course_meta_fields</a></li><li><a href="sensei_course_open_access.html">sensei_course_open_access</a></li><li><a href="sensei_course_pass_grade.html">sensei_course_pass_grade</a></li><li><a href="sensei_course_placeholder_image_url.html">sensei_course_placeholder_image_url</a></li><li><a href="sensei_course_progress_stats.html">sensei_course_progress_stats</a></li><li><a href="sensei_course_show_lessons.html">sensei_course_show_lessons</a></li><li><a href="sensei_course_slug.html">sensei_course_slug</a></li><li><a href="sensei_course_the_title.html">sensei_course_the_title</a></li><li><a href="sensei_course_user_grade.html">sensei_course_user_grade</a></li><li><a href="sensei_courses_navigation_sidebar.html">sensei_courses_navigation_sidebar</a></li><li><a href="sensei_courses_page_template.html">sensei_courses_page_template</a></li><li><a href="sensei_csv_export_filename.html">sensei_csv_export_filename</a></li><li><a href="sensei_custom_navigation_allowed_screens.html">sensei_custom_navigation_allowed_screens</a></li><li><a href="sensei_default_feature_flag_settings.html">sensei_default_feature_flag_settings</a></li><li><a href="sensei_disable_styles.html">sensei_disable_styles</a></li><li><a href="sensei_do_link_to_module.html">sensei_do_link_to_module</a></li><li><a href="sensei_duplicate_post_args.html">sensei_duplicate_post_args</a></li><li><a href="sensei_duplicate_post_ignore_meta.html">sensei_duplicate_post_ignore_meta</a></li><li><a href="sensei_email.html">sensei_email</a></li><li><a href="sensei_email_classes.html">sensei_email_classes</a></li><li><a href="sensei_email_course_teachers.html">sensei_email_course_teachers</a></li><li><a href="sensei_email_data.html">sensei_email_data</a></li><li><a href="sensei_email_generators.html">sensei_email_generators</a></li><li><a href="sensei_email_heading.html">sensei_email_heading</a></li><li><a href="sensei_email_is_available.html">sensei_email_is_available</a></li><li><a href="sensei_email_list_columns.html">sensei_email_list_columns</a></li><li><a href="sensei_email_list_row_actions.html">sensei_email_list_row_actions</a></li><li><a href="sensei_email_list_row_data.html">sensei_email_list_row_data</a></li><li><a href="sensei_email_mailpoet_feature.html">sensei_email_mailpoet_feature</a></li><li><a href="sensei_email_replacements.html">sensei_email_replacements</a></li><li><a href="sensei_email_seeder_data.html">sensei_email_seeder_data</a></li><li><a href="sensei_email_subject.html">sensei_email_subject</a></li><li><a href="sensei_enable_enrolment_provider_journal.html">sensei_enable_enrolment_provider_journal</a></li><li><a href="sensei_enrolment_course_calculation_job_batch_size.html">sensei_enrolment_course_calculation_job_batch_size</a></li><li><a href="sensei_enrolment_history_size.html">sensei_enrolment_history_size</a></li><li><a href="sensei_enrolment_learner_calculation_job_batch_size.html">sensei_enrolment_learner_calculation_job_batch_size</a></li><li><a href="sensei_enrolment_message_log_size.html">sensei_enrolment_message_log_size</a></li><li><a href="sensei_event_logging_base_fields.html">sensei_event_logging_base_fields</a></li><li><a href="sensei_existing_questions_query_results.html">sensei_existing_questions_query_results</a></li><li><a href="sensei_feature_course_preview_lessons.html">sensei_feature_course_preview_lessons</a></li><li><a href="sensei_feature_open_access_courses.html">sensei_feature_open_access_courses</a></li><li><a href="sensei_feature_preview_students.html">sensei_feature_preview_students</a></li><li><a href="sensei_file_upload_args.html">sensei_file_upload_args</a></li><li><a href="sensei_file_upload_file_prefix.html">sensei_file_upload_file_prefix</a></li><li><a href="sensei_filter_category_questions_by_author.html">sensei_filter_category_questions_by_author</a></li><li><a href="sensei_filter_module_terms_by_owner.html">sensei_filter_module_terms_by_owner</a></li><li><a href="sensei_filter_queries_set_author.html">sensei_filter_queries_set_author</a></li><li><a href="sensei_frontend_learner_enrolment_handler.html">sensei_frontend_learner_enrolment_handler</a></li><li><a href="sensei_gap_fill_case_sensitive_grading.html">sensei_gap_fill_case_sensitive_grading</a></li><li><a href="sensei_get_all_courses.html">sensei_get_all_courses</a></li><li><a href="sensei_get_image_size_%25257Bimage_size%25257D.html">sensei_get_image_size_{image_size}</a></li><li><a href="sensei_get_question_grade.html">sensei_get_question_grade</a></li><li><a href="sensei_get_question_template_data.html">sensei_get_question_template_data</a></li><li><a href="sensei_get_%257Bpage%257D_page_id.html">sensei_get_{page}_page_id</a></li><li><a href="sensei_grade_question_auto.html">sensei_grade_question_auto</a></li><li><a href="sensei_grading_allowed_user_ids.html">sensei_grading_allowed_user_ids</a></li><li><a href="sensei_grading_count_statues.html">sensei_grading_count_statues</a></li><li><a href="sensei_grading_count_statuses.html">sensei_grading_count_statuses</a></li><li><a href="sensei_grading_default_columns.html">sensei_grading_default_columns</a></li><li><a href="sensei_grading_default_columns_sortable.html">sensei_grading_default_columns_sortable</a></li><li><a href="sensei_grading_display_quiz_question.html">sensei_grading_display_quiz_question</a></li><li><a href="sensei_grading_filter_courses.html">sensei_grading_filter_courses</a></li><li><a href="sensei_grading_filter_lessons.html">sensei_grading_filter_lessons</a></li><li><a href="sensei_grading_filter_statuses.html">sensei_grading_filter_statuses</a></li><li><a href="sensei_grading_main_column_data.html">sensei_grading_main_column_data</a></li><li><a href="sensei_grading_nav_title.html">sensei_grading_nav_title</a></li><li><a href="sensei_grading_search_users.html">sensei_grading_search_users</a></li><li><a href="sensei_grading_sub_menu.html">sensei_grading_sub_menu</a></li><li><a href="sensei_guest_user_supported_actions.html">sensei_guest_user_supported_actions</a></li><li><a href="sensei_home_is_plugin_licensed_%257B$plugin_slug%257D.html">sensei_home_is_plugin_licensed_{$plugin_slug}</a></li><li><a href="sensei_home_promo_banner_show.html">sensei_home_promo_banner_show</a></li><li><a href="sensei_home_remote_data_other_plugins.html">sensei_home_remote_data_other_plugins</a></li><li><a href="sensei_home_remote_data_primary_plugin_slug.html">sensei_home_remote_data_primary_plugin_slug</a></li><li><a href="sensei_home_remote_data_retry_error.html">sensei_home_remote_data_retry_error</a></li><li><a href="sensei_home_support_ticket_creation_upsell_show.html">sensei_home_support_ticket_creation_upsell_show</a></li><li><a href="sensei_home_tasks.html">sensei_home_tasks</a></li><li><a href="sensei_icon_href.html">sensei_icon_href</a></li><li><a href="sensei_import_attachment_request_timeout.html">sensei_import_attachment_request_timeout</a></li><li><a href="sensei_import_csv_delimiter.html">sensei_import_csv_delimiter</a></li><li><a href="sensei_import_csv_delimiter_options.html">sensei_import_csv_delimiter_options</a></li><li><a href="sensei_is_enrolled.html">sensei_is_enrolled</a></li><li><a href="sensei_is_enrolment_background_job_enabled.html">sensei_is_enrolment_background_job_enabled</a></li><li><a href="sensei_is_legacy_enrolled.html">sensei_is_legacy_enrolled</a></li><li><a href="sensei_is_login_required.html">sensei_is_login_required</a></li><li><a href="sensei_learner_admin_get_row_data.html">sensei_learner_admin_get_row_data</a></li><li><a href="sensei_learner_courses_page_template.html">sensei_learner_courses_page_template</a></li><li><a href="sensei_learner_enrolled_courses_args.html">sensei_learner_enrolled_courses_args</a></li><li><a href="sensei_learner_full_name.html">sensei_learner_full_name</a></li><li><a href="sensei_learner_profile_courses_heading.html">sensei_learner_profile_courses_heading</a></li><li><a href="sensei_learner_profile_courses_heading_name.html">sensei_learner_profile_courses_heading_name</a></li><li><a href="sensei_learner_profile_info_avatar.html">sensei_learner_profile_info_avatar</a></li><li><a href="sensei_learner_profile_info_bio.html">sensei_learner_profile_info_bio</a></li><li><a href="sensei_learner_profile_info_name.html">sensei_learner_profile_info_name</a></li><li><a href="sensei_learner_profile_permalink.html">sensei_learner_profile_permalink</a></li><li><a href="sensei_learner_profiles_url_base.html">sensei_learner_profiles_url_base</a></li><li><a href="sensei_learners_add_learner_redirect_url.html">sensei_learners_add_learner_redirect_url</a></li><li><a href="sensei_learners_admin_get_known_bulk_actions.html">sensei_learners_admin_get_known_bulk_actions</a></li><li><a href="sensei_learners_default_columns.html">sensei_learners_default_columns</a></li><li><a href="sensei_learners_default_columns_sortable.html">sensei_learners_default_columns_sortable</a></li><li><a href="sensei_learners_filter_courses.html">sensei_learners_filter_courses</a></li><li><a href="sensei_learners_filter_lessons.html">sensei_learners_filter_lessons</a></li><li><a href="sensei_learners_filter_users.html">sensei_learners_filter_users</a></li><li><a href="sensei_learners_learner_updated.html">sensei_learners_learner_updated</a></li><li><a href="sensei_learners_nav_title.html">sensei_learners_nav_title</a></li><li><a href="sensei_learners_no_items_text.html">sensei_learners_no_items_text</a></li><li><a href="sensei_learners_query.html">sensei_learners_query</a></li><li><a href="sensei_learners_search_users.html">sensei_learners_search_users</a></li><li><a href="sensei_learners_sub_menu.html">sensei_learners_sub_menu</a></li><li><a href="sensei_learning_mode_block_templates.html">sensei_learning_mode_block_templates</a></li><li><a href="sensei_learning_mode_lesson_status_icon.html">sensei_learning_mode_lesson_status_icon</a></li><li><a href="sensei_lesson_archive_title.html">sensei_lesson_archive_title</a></li><li><a href="sensei_lesson_block_template.html">sensei_lesson_block_template</a></li><li><a href="sensei_lesson_content_drip_hide.html">sensei_lesson_content_drip_hide</a></li><li><a href="sensei_lesson_count.html">sensei_lesson_count</a></li><li><a href="sensei_lesson_course_signup_notice_level.html">sensei_lesson_course_signup_notice_level</a></li><li><a href="sensei_lesson_course_signup_notice_message.html">sensei_lesson_course_signup_notice_message</a></li><li><a href="sensei_lesson_excerpt.html">sensei_lesson_excerpt</a></li><li><a href="sensei_lesson_placeholder_image_url.html">sensei_lesson_placeholder_image_url</a></li><li><a href="sensei_lesson_prerequisite.html">sensei_lesson_prerequisite</a></li><li><a href="sensei_lesson_preview_title_text.html">sensei_lesson_preview_title_text</a></li><li><a href="sensei_lesson_quiz_questions.html">sensei_lesson_quiz_questions</a></li><li><a href="sensei_lesson_show_course_signup_notice.html">sensei_lesson_show_course_signup_notice</a></li><li><a href="sensei_lesson_slug.html">sensei_lesson_slug</a></li><li><a href="sensei_lesson_tag_archive_description.html">sensei_lesson_tag_archive_description</a></li><li><a href="sensei_lesson_tag_archive_title.html">sensei_lesson_tag_archive_title</a></li><li><a href="sensei_lesson_tag_slug.html">sensei_lesson_tag_slug</a></li><li><a href="sensei_lesson_take_course_url.html">sensei_lesson_take_course_url</a></li><li><a href="sensei_list_bulk_actions.html">sensei_list_bulk_actions</a></li><li><a href="sensei_list_table_search_button_text.html">sensei_list_table_search_button_text</a></li><li><a href="sensei_lms_schema_get_tables.html">sensei_lms_schema_get_tables</a></li><li><a href="sensei_load_default_supported_theme_wrappers.html">sensei_load_default_supported_theme_wrappers</a></li><li><a href="sensei_locate_template.html">sensei_locate_template</a></li><li><a href="sensei_log_event.html">sensei_log_event</a></li><li><a href="sensei_login_logout_menu_title.html">sensei_login_logout_menu_title</a></li><li><a href="sensei_login_success_redirect_url.html">sensei_login_success_redirect_url</a></li><li><a href="sensei_login_url.html">sensei_login_url</a></li><li><a href="sensei_message_archive_title.html">sensei_message_archive_title</a></li><li><a href="sensei_messages_send_message_link.html">sensei_messages_send_message_link</a></li><li><a href="sensei_messages_slug.html">sensei_messages_slug</a></li><li><a href="sensei_module_archive_description.html">sensei_module_archive_description</a></li><li><a href="sensei_module_archive_title.html">sensei_module_archive_title</a></li><li><a href="sensei_module_course_column_max_links_count.html">sensei_module_course_column_max_links_count</a></li><li><a href="sensei_module_course_signup_notice_level.html">sensei_module_course_signup_notice_level</a></li><li><a href="sensei_module_course_signup_notice_message.html">sensei_module_course_signup_notice_message</a></li><li><a href="sensei_module_show_course_signup_notice.html">sensei_module_show_course_signup_notice</a></li><li><a href="sensei_module_slug.html">sensei_module_slug</a></li><li><a href="sensei_modules_title.html">sensei_modules_title</a></li><li><a href="sensei_multiple_question_slug.html">sensei_multiple_question_slug</a></li><li><a href="sensei_my_courses_per_page.html">sensei_my_courses_per_page</a></li><li><a href="sensei_notice.html">sensei_notice</a></li><li><a href="sensei_notices_screen_ids.html">sensei_notices_screen_ids</a></li><li><a href="sensei_notify_admin_new_course_creation.html">sensei_notify_admin_new_course_creation</a></li><li><a href="sensei_placeholder_thumbnail.html">sensei_placeholder_thumbnail</a></li><li><a href="sensei_pre_grade_question_auto.html">sensei_pre_grade_question_auto</a></li><li><a href="sensei_pre_kses.html">sensei_pre_kses</a></li><li><a href="sensei_question_answer_message_correct_answer.html">sensei_question_answer_message_correct_answer</a></li><li><a href="sensei_question_answer_message_css_class.html">sensei_question_answer_message_css_class</a></li><li><a href="sensei_question_answer_message_grade.html">sensei_question_answer_message_grade</a></li><li><a href="sensei_question_answer_message_text.html">sensei_question_answer_message_text</a></li><li><a href="sensei_question_answer_notes.html">sensei_question_answer_notes</a></li><li><a href="sensei_question_category_slug.html">sensei_question_category_slug</a></li><li><a href="sensei_question_classes.html">sensei_question_classes</a></li><li><a href="sensei_question_image_size.html">sensei_question_image_size</a></li><li><a href="sensei_question_show_answers.html">sensei_question_show_answers</a></li><li><a href="sensei_question_title.html">sensei_question_title</a></li><li><a href="sensei_question_type_slug.html">sensei_question_type_slug</a></li><li><a href="sensei_question_type_specific_properties.html">sensei_question_type_specific_properties</a></li><li><a href="sensei_question_types.html">sensei_question_types</a></li><li><a href="sensei_questions_get_correct_answer.html">sensei_questions_get_correct_answer</a></li><li><a href="sensei_quiz_answer_file_upload_types.html">sensei_quiz_answer_file_upload_types</a></li><li><a href="sensei_quiz_course_signup_notice_message.html">sensei_quiz_course_signup_notice_message</a></li><li><a href="sensei_quiz_enable_block_based_editor.html">sensei_quiz_enable_block_based_editor</a></li><li><a href="sensei_quiz_ordering_question_type_hide.html">sensei_quiz_ordering_question_type_hide</a></li><li><a href="sensei_quiz_pagination_args.html">sensei_quiz_pagination_args</a></li><li><a href="sensei_quiz_panel_add.html">sensei_quiz_panel_add</a></li><li><a href="sensei_quiz_question_ai_upsell_scripts.html">sensei_quiz_question_ai_upsell_scripts</a></li><li><a href="sensei_quiz_question_points_format.html">sensei_quiz_question_points_format</a></li><li><a href="sensei_quiz_settings.html">sensei_quiz_settings</a></li><li><a href="sensei_quiz_slug.html">sensei_quiz_slug</a></li><li><a href="sensei_quiz_type_slug.html">sensei_quiz_type_slug</a></li><li><a href="sensei_register_post_type_course.html">sensei_register_post_type_course</a></li><li><a href="sensei_register_post_type_lesson.html">sensei_register_post_type_lesson</a></li><li><a href="sensei_register_post_type_question.html">sensei_register_post_type_question</a></li><li><a href="sensei_register_post_type_quiz.html">sensei_register_post_type_quiz</a></li><li><a href="sensei_register_post_type_sensei_message.html">sensei_register_post_type_sensei_message</a></li><li><a href="sensei_registration_redirect.html">sensei_registration_redirect</a></li><li><a href="sensei_registration_url.html">sensei_registration_url</a></li><li><a href="sensei_reports_overview_export_button_url.html">sensei_reports_overview_export_button_url</a></li><li><a href="sensei_rest_api_lesson_quiz_response.html">sensei_rest_api_lesson_quiz_response</a></li><li><a href="sensei_rest_api_schema_question_type.html">sensei_rest_api_schema_question_type</a></li><li><a href="sensei_rest_api_schema_single_question.html">sensei_rest_api_schema_single_question</a></li><li><a href="sensei_restrict_posts_menu_page.html">sensei_restrict_posts_menu_page</a></li><li><a href="sensei_results_links.html">sensei_results_links</a></li><li><a href="sensei_round_mode.html">sensei_round_mode</a></li><li><a href="sensei_round_precision.html">sensei_round_precision</a></li><li><a href="sensei_scheduler_class.html">sensei_scheduler_class</a></li><li><a href="sensei_scripts_allowed_pages.html">sensei_scripts_allowed_pages</a></li><li><a href="sensei_scripts_allowed_post_type_pages.html">sensei_scripts_allowed_post_type_pages</a></li><li><a href="sensei_scripts_allowed_post_types.html">sensei_scripts_allowed_post_types</a></li><li><a href="sensei_send_emails.html">sensei_send_emails</a></li><li><a href="sensei_settings_content.html">sensei_settings_content</a></li><li><a href="sensei_settings_content_drip_hide.html">sensei_settings_content_drip_hide</a></li><li><a href="sensei_settings_fields.html">sensei_settings_fields</a></li><li><a href="sensei_settings_tabs.html">sensei_settings_tabs</a></li><li><a href="sensei_settings_woocommerce_hide.html">sensei_settings_woocommerce_hide</a></li><li><a href="sensei_shortcode_user_courses_display_course_toggle_actions.html">sensei_shortcode_user_courses_display_course_toggle_actions</a></li><li><a href="sensei_should_defer_enrolment_check.html">sensei_should_defer_enrolment_check</a></li><li><a href="sensei_show_admin_notices_%257B$screen_id%257D.html">sensei_show_admin_notices_{$screen_id}</a></li><li><a href="sensei_show_enrolment_debug_button.html">sensei_show_enrolment_debug_button</a></li><li><a href="sensei_show_lesson_numbers.html">sensei_show_lesson_numbers</a></li><li><a href="sensei_show_main_footer.html">sensei_show_main_footer</a></li><li><a href="sensei_show_main_header.html">sensei_show_main_header</a></li><li><a href="sensei_single_title.html">sensei_single_title</a></li><li><a href="sensei_start_course_redirect_url.html">sensei_start_course_redirect_url</a></li><li><a href="sensei_student_groups_hide.html">sensei_student_groups_hide</a></li><li><a href="sensei_student_progress_read_from_tables.html">sensei_student_progress_read_from_tables</a></li><li><a href="sensei_students_report_last_activity_filter_enabled.html">sensei_students_report_last_activity_filter_enabled</a></li><li><a href="sensei_teacher_archive_query.html">sensei_teacher_archive_query</a></li><li><a href="sensei_teachers_shortcode_list_item.html">sensei_teachers_shortcode_list_item</a></li><li><a href="sensei_template_url.html">sensei_template_url</a></li><li><a href="sensei_the_module_description.html">sensei_the_module_description</a></li><li><a href="sensei_the_module_id.html">sensei_the_module_id</a></li><li><a href="sensei_the_module_permalink.html">sensei_the_module_permalink</a></li><li><a href="sensei_the_module_status_html.html">sensei_the_module_status_html</a></li><li><a href="sensei_the_module_title.html">sensei_the_module_title</a></li><li><a href="sensei_the_no_permissions_message.html">sensei_the_no_permissions_message</a></li><li><a href="sensei_the_no_permissions_title.html">sensei_the_no_permissions_title</a></li><li><a href="sensei_the_question_number.html">sensei_the_question_number</a></li><li><a href="sensei_the_title_classes.html">sensei_the_title_classes</a></li><li><a href="sensei_the_title_html_tag.html">sensei_the_title_html_tag</a></li><li><a href="sensei_tools.html">sensei_tools</a></li><li><a href="sensei_usage_tracking_data.html">sensei_usage_tracking_data</a></li><li><a href="sensei_use_wp_register_link.html">sensei_use_wp_register_link</a></li><li><a href="sensei_user_completed_lesson.html">sensei_user_completed_lesson</a></li><li><a href="sensei_user_course_status_%257Bstatus%257D.html">sensei_user_course_status_{status}</a></li><li><a href="sensei_user_courses_filter_options.html">sensei_user_courses_filter_options</a></li><li><a href="sensei_user_courses_query.html">sensei_user_courses_query</a></li><li><a href="sensei_user_question_feedback.html">sensei_user_question_feedback</a></li><li><a href="sensei_user_quiz_status.html">sensei_user_quiz_status</a></li><li><a href="sensei_user_quiz_status_%257Bstatus%257D.html">sensei_user_quiz_status_{status}</a></li><li><a href="sensei_user_started_course.html">sensei_user_started_course</a></li><li><a href="sensei_video_position.html">sensei_video_position</a></li><li><a href="sensei_wpcom_product_slugs.html">sensei_wpcom_product_slugs</a></li><li><a href="widget_course_categories_args.html">widget_course_categories_args</a></li><li><a href="widget_course_categories_dropdown_args.html">widget_course_categories_dropdown_args</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
