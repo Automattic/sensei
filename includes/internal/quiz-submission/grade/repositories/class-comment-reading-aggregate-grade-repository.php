@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Aggregate_Grade_Repository.
+ * File containing the class Comment_Reading_Aggregate_Grade_Repository.
  *
  * @package sensei
  */
@@ -21,13 +21,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Aggregate_Grade_Repository
+ * Class Comment_Reading_Aggregate_Grade_Repository
  *
  * @internal
  *
  * @since 4.16.1
  */
-class Aggregate_Grade_Repository implements Grade_Repository_Interface {
+class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Interface {
 	/**
 	 * Comments based quiz grade repository implementation.
 	 *
@@ -136,7 +136,7 @@ class Aggregate_Grade_Repository implements Grade_Repository_Interface {
 	 * @param Submission_Interface $tables_based_submission   The tables based submission.
 	 * @return Answer_Interface[] The answers.
 	 */
-	public function get_or_create_tables_based_answers( Submission_Interface $comments_based_submission, Submission_Interface $tables_based_submission ): array {
+	private function get_or_create_tables_based_answers( Submission_Interface $comments_based_submission, Submission_Interface $tables_based_submission ): array {
 		$comments_based_answers = $this->comments_based_answer_repository->get_all( $comments_based_submission->get_id() );
 		$tables_based_answers   = $this->tables_based_answer_repository->get_all( $tables_based_submission->get_id() );
 		$result                 = array();

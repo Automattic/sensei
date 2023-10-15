@@ -52,7 +52,7 @@ class Grade_Repository_Factory {
 	public function create(): Grade_Repository_Interface {
 		global $wpdb;
 
-		return new Aggregate_Grade_Repository(
+		return new Comment_Reading_Aggregate_Grade_Repository(
 			new Comments_Based_Grade_Repository(),
 			new Tables_Based_Grade_Repository( $wpdb ),
 			new Tables_Based_Submission_Repository( $wpdb ),

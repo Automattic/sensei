@@ -2,7 +2,7 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Grade\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Grade\Repositories\Aggregate_Grade_Repository;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comment_Reading_Aggregate_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
 
 /**
@@ -20,6 +20,6 @@ class Grade_Repository_Factory_Test extends \WP_UnitTestCase {
 		$actual = $factory->create();
 
 		/* Assert. */
-		self::assertInstanceOf( Aggregate_Grade_Repository::class, $actual );
+		self::assertInstanceOf( Comment_Reading_Aggregate_Grade_Repository::class, $actual );
 	}
 }
