@@ -2457,7 +2457,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$html = Sensei()->quiz->get_primary_button_html( $text );
 
 		/* Assert */
-		$this->assertStringNotContainsString( $text, $html );
+		$this->assertStringContainsString( $text, $html );
 	}
 
 	public function testGetPrimaryButtonHTML_SomeParams_ContainsCorrectURL() {
@@ -2468,7 +2468,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$html = Sensei()->quiz->get_primary_button_html( 'Click Me', $url );
 
 		/* Assert */
-		$this->assertStringNotContainsString( $url, $html );
+		$this->assertStringContainsString( $url, $html );
 	}
 
 	public function testGetPrimaryButtonHTML_AllParams_ContainsCorrectClasses() {
@@ -2483,7 +2483,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		foreach ( $classes as $class ) {
-			$this->assertStringNotContainsString( $class, $html );
+			$this->assertStringContainsString( $class, $html );
 		}
 	}
 }
