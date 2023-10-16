@@ -38,8 +38,7 @@ class Comment_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
-			$comments_based_answer_repository,
-			true
+			$comments_based_answer_repository
 		);
 
 		/* Expect & Act */
@@ -47,32 +46,6 @@ class Comment_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			->expects( $this->once() )
 			->method( 'create' )
 			->with( $this->identicalTo( $submission ), $this->identicalTo( $answer ), 3, 4, 'feedback' );
-		$repository->create( $submission, $answer, 3, 4, 'feedback' );
-	}
-
-	public function testCreate_UseTablesSetToFalse_DoesntUseCommentsBasedRepository(): void {
-		/* Arrange */
-		$answer                             = $this->createMock( Tables_Based_Answer::class );
-		$submission                         = $this->createMock( Comments_Based_Submission::class );
-		$comments_based_repository          = $this->createMock( Comments_Based_Grade_Repository::class );
-		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
-		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
-		$tables_based_answer_repository     = $this->createMock( Tables_Based_Answer_Repository::class );
-		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
-
-		$repository = new Comment_Reading_Aggregate_Grade_Repository(
-			$comments_based_repository,
-			$tables_based_repository,
-			$tables_based_submission_repository,
-			$tables_based_answer_repository,
-			$comments_based_answer_repository,
-			true
-		);
-
-		/* Expect & Act */
-		$tables_based_repository
-			->expects( $this->never() )
-			->method( 'create' );
 		$repository->create( $submission, $answer, 3, 4, 'feedback' );
 	}
 
@@ -89,8 +62,7 @@ class Comment_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
-			$comments_based_answer_repository,
-			true
+			$comments_based_answer_repository
 		);
 
 		/* Expect & Act */
@@ -114,8 +86,7 @@ class Comment_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
-			$comments_based_answer_repository,
-			true
+			$comments_based_answer_repository
 		);
 
 		/* Expect & Act */
@@ -139,8 +110,7 @@ class Comment_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
-			$comments_based_answer_repository,
-			true
+			$comments_based_answer_repository
 		);
 
 		/* Expect & Act */
@@ -151,32 +121,7 @@ class Comment_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete_all( $submission );
 	}
 
-	public function testDeleteAll_UseTablesSetToFalse_DoesntUseTablesBasedRepository(): void {
-		/* Arrange */
-		$submission                         = $this->createMock( Comments_Based_Submission::class );
-		$comments_based_repository          = $this->createMock( Comments_Based_Grade_Repository::class );
-		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
-		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
-		$tables_based_answer_repository     = $this->createMock( Tables_Based_Answer_Repository::class );
-		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
-
-		$repository = new Comment_Reading_Aggregate_Grade_Repository(
-			$comments_based_repository,
-			$tables_based_repository,
-			$tables_based_submission_repository,
-			$tables_based_answer_repository,
-			$comments_based_answer_repository,
-			false
-		);
-
-		/* Expect & Act */
-		$tables_based_repository
-			->expects( $this->never() )
-			->method( 'delete_all' );
-		$repository->delete_all( $submission );
-	}
-
-	public function testDeleteAll_UseTablesSetToTrue_UsesTablesBasedRepository(): void {
+	public function testDeleteAll_Always_UsesTablesBasedRepository(): void {
 		/* Arrange */
 		$submission = $this->createMock( Comments_Based_Submission::class );
 		$submission->method( 'get_quiz_id' )->willReturn( 1 );
@@ -244,33 +189,7 @@ class Comment_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$repository->save_many( $submission, $grades );
 	}
 
-	public function testSaveMany_UseTablesSetToFalse_DoesntUseTablesBasedRepository(): void {
-		/* Arrange */
-		$submission                         = $this->createMock( Comments_Based_Submission::class );
-		$comments_based_repository          = $this->createMock( Comments_Based_Grade_Repository::class );
-		$tables_based_repository            = $this->createMock( Tables_Based_Grade_Repository::class );
-		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
-		$tables_based_answer_repository     = $this->createMock( Tables_Based_Answer_Repository::class );
-		$comments_based_answer_repository   = $this->createMock( Comments_Based_Answer_Repository::class );
-		$grades                             = [ $this->createMock( Comments_Based_Grade::class ) ];
-
-		$repository = new Comment_Reading_Aggregate_Grade_Repository(
-			$comments_based_repository,
-			$tables_based_repository,
-			$tables_based_submission_repository,
-			$tables_based_answer_repository,
-			$comments_based_answer_repository,
-			false
-		);
-
-		/* Expect & Act */
-		$tables_based_repository
-			->expects( $this->never() )
-			->method( 'get_all' );
-		$repository->save_many( $submission, $grades );
-	}
-
-	public function testSaveMany_UseTablesSetToTrue_UsesTablesBasedRepository(): void {
+	public function testSaveMany_TablesBasedGradesFound_UsesTablesBasedRepository(): void {
 		/* Arrange */
 		$submission = $this->createMock( Comments_Based_Submission::class );
 		$submission->method( 'get_quiz_id' )->willReturn( 5 );
@@ -305,8 +224,7 @@ class Comment_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
-			$comments_based_answer_repository,
-			true
+			$comments_based_answer_repository
 		);
 
 		/* Expect & Act */
@@ -327,7 +245,7 @@ class Comment_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$repository->save_many( $submission, $grades );
 	}
 
-	public function testSaveMany_UseTablesSetToTrueAndTablesBasedGradesNotFound_CreatesTablesBasedGrades(): void {
+	public function testSaveMany_TablesBasedGradesNotFound_CreatesTablesBasedGrades(): void {
 		/* Arrange */
 		$submission = $this->createMock( Comments_Based_Submission::class );
 		$submission->method( 'get_id' )->willReturn( 4 );
@@ -372,8 +290,7 @@ class Comment_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 			$tables_based_repository,
 			$tables_based_submission_repository,
 			$tables_based_answer_repository,
-			$comments_based_answer_repository,
-			true
+			$comments_based_answer_repository
 		);
 
 		/* Expect & Act */

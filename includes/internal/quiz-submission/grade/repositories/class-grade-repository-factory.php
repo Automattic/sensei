@@ -72,8 +72,7 @@ class Grade_Repository_Factory {
 				new Tables_Based_Grade_Repository( $wpdb ),
 				new Tables_Based_Submission_Repository( $wpdb ),
 				new Tables_Based_Answer_Repository( $wpdb ),
-				new Comments_Based_Answer_Repository(),
-				$this->tables_enabled
+				new Comments_Based_Answer_Repository()
 			);
 		}
 

@@ -62,8 +62,7 @@ class Submission_Repository_Factory {
 		if ( ! $this->read_tables ) {
 			return new Comment_Reading_Aggregate_Submission_Repository(
 				new Comments_Based_Submission_Repository(),
-				new Tables_Based_Submission_Repository( $wpdb ),
-				$this->tables_enabled
+				new Tables_Based_Submission_Repository( $wpdb )
 			);
 		}
 

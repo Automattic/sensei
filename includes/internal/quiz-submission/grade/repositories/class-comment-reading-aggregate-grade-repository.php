@@ -32,14 +32,14 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 * Comments based quiz grade repository implementation.
 	 *
 	 * @var Comments_Based_Grade_Repository
-	 */
+	*/
 	private $comments_based_repository;
 
 	/**
 	 * Tables based quiz grade repository implementation.
 	 *
 	 * @var Tables_Based_Grade_Repository
-	 */
+	*/
 	private $tables_based_repository;
 
 
@@ -47,14 +47,14 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 * Tables based quiz submission repository implementation.
 	 *
 	 * @var Tables_Based_Submission_Repository
-	 */
+	*/
 	private $tables_based_submission_repository;
 
 	/**
 	 * Tables baesd answer repository.
 	 *
 	 * @var Tables_Based_Answer_Repository
-	 */
+	*/
 	private $tables_based_answer_repository;
 
 
@@ -62,15 +62,8 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 * Comments based answer repository.
 	 *
 	 * @var Comments_Based_Answer_Repository
-	 */
+	*/
 	private $comments_based_answer_repository;
-
-	/**
-	 * The flag if the tables based implementation is available for use.
-	 *
-	 * @var bool
-	 */
-	private $use_tables;
 
 	/**
 	 * Constructor.
@@ -82,22 +75,19 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 * @param Tables_Based_Submission_Repository $tables_based_submission_repository Tables based quiz submission repository implementation.
 	 * @param Tables_Based_Answer_Repository     $tables_based_answer_repository Tables based quiz answer repository implementation.
 	 * @param Comments_Based_Answer_Repository   $comments_based_answer_repository Comments based quiz answer repository implementation.
-	 * @param bool                               $use_tables  The flag if the tables based implementation is available for use.
-	 */
+	*/
 	public function __construct(
 		Comments_Based_Grade_Repository $comments_based_repository,
 		Tables_Based_Grade_Repository $tables_based_repository,
 		Tables_Based_Submission_Repository $tables_based_submission_repository,
 		Tables_Based_Answer_Repository $tables_based_answer_repository,
-		Comments_Based_Answer_Repository $comments_based_answer_repository,
-		bool $use_tables
+		Comments_Based_Answer_Repository $comments_based_answer_repository
 	) {
 		$this->comments_based_repository          = $comments_based_repository;
 		$this->tables_based_repository            = $tables_based_repository;
 		$this->tables_based_submission_repository = $tables_based_submission_repository;
 		$this->tables_based_answer_repository     = $tables_based_answer_repository;
 		$this->comments_based_answer_repository   = $comments_based_answer_repository;
-		$this->use_tables                         = $use_tables;
 	}
 
 	/**
@@ -112,18 +102,16 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 * @param string|null          $feedback    The feedback.
 	 *
 	 * @return Grade_Interface The grade.
-	 */
+	*/
 	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface {
 		$grade = $this->comments_based_repository->create( $submission, $answer, $question_id, $points, $feedback );
 
-		if ( $this->use_tables ) {
-			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
-			$tables_based_answers    = $this->get_or_create_tables_based_answers( $submission, $tables_based_submission );
-			$tables_based_answer     = $tables_based_answers[ $question_id ] ?? null;
+		$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+		$tables_based_answers    = $this->get_or_create_tables_based_answers( $submission, $tables_based_submission );
+		$tables_based_answer     = $tables_based_answers[ $question_id ] ?? null;
 
-			if ( $tables_based_answer ) {
-				$this->tables_based_repository->create( $tables_based_submission, $tables_based_answer, $question_id, $points, $feedback );
-			}
+		if ( $tables_based_answer ) {
+			$this->tables_based_repository->create( $tables_based_submission, $tables_based_answer, $question_id, $points, $feedback );
 		}
 
 		return $grade;
@@ -135,7 +123,7 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 * @param Submission_Interface $comments_based_submission The comments based submission.
 	 * @param Submission_Interface $tables_based_submission   The tables based submission.
 	 * @return Answer_Interface[] The answers.
-	 */
+	*/
 	private function get_or_create_tables_based_answers( Submission_Interface $comments_based_submission, Submission_Interface $tables_based_submission ): array {
 		$comments_based_answers = $this->comments_based_answer_repository->get_all( $comments_based_submission->get_id() );
 		$tables_based_answers   = $this->tables_based_answer_repository->get_all( $tables_based_submission->get_id() );
@@ -170,7 +158,7 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 * @param int $submission_id The submission ID.
 	 *
 	 * @return Grade_Interface[] An array of grades.
-	 */
+	*/
 	public function get_all( int $submission_id ): array {
 		return $this->comments_based_repository->get_all( $submission_id );
 	}
@@ -182,41 +170,39 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 *
 	 * @param Submission_Interface $submission The submission.
 	 * @param Grade_Interface[]    $grades     An array of grades.
-	 */
+	*/
 	public function save_many( Submission_Interface $submission, array $grades ): void {
 		$this->comments_based_repository->save_many( $submission, $grades );
 
-		if ( $this->use_tables ) {
-			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
-			$tables_based_grades     = $this->get_or_create_tables_based_grades_for_save(
-				$submission,
-				$tables_based_submission,
-				$grades
-			);
+		$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+		$tables_based_grades     = $this->get_or_create_tables_based_grades_for_save(
+			$submission,
+			$tables_based_submission,
+			$grades
+		);
 
-			$grades_to_save = [];
-			foreach ( $grades as $grade ) {
-				$tables_based_grade = $tables_based_grades[ $grade->get_question_id() ] ?? null;
-				if ( null === $tables_based_grade ) {
-					continue;
-				}
-
-				$created_at = new DateTimeImmutable( '@' . $grade->get_created_at()->getTimestamp() );
-				$updated_at = new DateTimeImmutable( '@' . $grade->get_updated_at()->getTimestamp() );
-
-				$grades_to_save[] = new Tables_Based_Grade(
-					$tables_based_grade->get_id(),
-					$tables_based_grade->get_answer_id(),
-					$tables_based_grade->get_question_id(),
-					$grade->get_points(),
-					$grade->get_feedback(),
-					$created_at,
-					$updated_at
-				);
+		$grades_to_save = [];
+		foreach ( $grades as $grade ) {
+			$tables_based_grade = $tables_based_grades[ $grade->get_question_id() ] ?? null;
+			if ( null === $tables_based_grade ) {
+				continue;
 			}
 
-			$this->tables_based_repository->save_many( $tables_based_submission, $grades_to_save );
+			$created_at = new DateTimeImmutable( '@' . $grade->get_created_at()->getTimestamp() );
+			$updated_at = new DateTimeImmutable( '@' . $grade->get_updated_at()->getTimestamp() );
+
+			$grades_to_save[] = new Tables_Based_Grade(
+				$tables_based_grade->get_id(),
+				$tables_based_grade->get_answer_id(),
+				$tables_based_grade->get_question_id(),
+				$grade->get_points(),
+				$grade->get_feedback(),
+				$created_at,
+				$updated_at
+			);
 		}
+
+		$this->tables_based_repository->save_many( $tables_based_submission, $grades_to_save );
 	}
 
 	/**
@@ -226,7 +212,7 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 * @param Submission_Interface $tables_based_submission   The tables based submission.
 	 * @param Grade_Interface[]    $comments_based_grades     The comments based grades.
 	 * @return Grade_Interface[] The tables based grades.
-	 */
+	*/
 	private function get_or_create_tables_based_grades_for_save(
 		Submission_Interface $comments_based_submission,
 		Submission_Interface $tables_based_submission,
@@ -273,14 +259,12 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The submission.
-	 */
+	*/
 	public function delete_all( Submission_Interface $submission ): void {
 		$this->comments_based_repository->delete_all( $submission );
 
-		if ( $this->use_tables ) {
-			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
-			$this->tables_based_repository->delete_all( $tables_based_submission );
-		}
+		$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+		$this->tables_based_repository->delete_all( $tables_based_submission );
 	}
 
 	/**
@@ -289,7 +273,7 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 * @param Submission_Interface $submission The submission.
 	 *
 	 * @return Submission_Interface The tables based submission.
-	 */
+	*/
 	private function get_or_create_tables_based_submission( Submission_Interface $submission ): Submission_Interface {
 		return $this->tables_based_submission_repository->get_or_create(
 			$submission->get_quiz_id(),

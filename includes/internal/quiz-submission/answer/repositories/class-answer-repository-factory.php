@@ -72,7 +72,6 @@ class Answer_Repository_Factory {
 				new Comments_Based_Answer_Repository(),
 				new Tables_Based_Answer_Repository( $wpdb ),
 				new Tables_Based_Submission_Repository( $wpdb ),
-				$this->read_tables
 			);
 		}
 
