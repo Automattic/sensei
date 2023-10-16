@@ -137,7 +137,7 @@ class Sensei_Course_Theme_Quiz {
 		}
 
 		// "Continue to next lesson" button.
-		if ( in_array( $lesson_status->comment_approved, [ 'complete', 'graded', 'passed' ], true ) ) {
+		if ( in_array( $quiz_progress->get_status(), [ 'complete', 'graded', 'passed' ], true ) ) {
 			$prev_next_urls  = sensei_get_prev_next_lessons( $lesson_id );
 			$next_lesson_url = $prev_next_urls['next']['url'] ?? null;
 			$actions[]       = Sensei_Quiz::get_primary_button_html( __( 'Continue to next lesson', 'sensei-lms' ), $next_lesson_url );
