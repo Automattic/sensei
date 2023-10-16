@@ -186,23 +186,23 @@ class Table_Reading_Aggregate_Grade_Repository implements Grade_Repository_Inter
 			);
 
 			$grades_to_save = [];
-			foreach ( $grades as $grade ) {
-				$comments_based_grade = $comments_based_grades[ $grade->get_question_id() ] ?? null;
-				if ( null === $comments_based_grade ) {
-					continue;
-				}
-
-				$created_at = new DateTimeImmutable( '@' . $grade->get_created_at()->getTimestamp() );
-				$updated_at = new DateTimeImmutable( '@' . $grade->get_updated_at()->getTimestamp() );
-
-				$grades_to_save[] = new Comments_Based_Grade(
-					$comments_based_grade->get_question_id(),
-					$grade->get_points(),
-					$grade->get_feedback(),
-					$created_at,
-					$updated_at
-				);
+		foreach ( $grades as $grade ) {
+			$comments_based_grade = $comments_based_grades[ $grade->get_question_id() ] ?? null;
+			if ( null === $comments_based_grade ) {
+				continue;
 			}
+
+			$created_at = new DateTimeImmutable( '@' . $grade->get_created_at()->getTimestamp() );
+			$updated_at = new DateTimeImmutable( '@' . $grade->get_updated_at()->getTimestamp() );
+
+			$grades_to_save[] = new Comments_Based_Grade(
+				$comments_based_grade->get_question_id(),
+				$grade->get_points(),
+				$grade->get_feedback(),
+				$created_at,
+				$updated_at
+			);
+		}
 
 			$this->comments_based_repository->save_many( $comments_based_submission, $grades_to_save );
 	}
