@@ -85,7 +85,6 @@ class Table_Reading_Aggregate_Submission_Repository_Test extends \WP_UnitTestCas
 			->expects( $this->once() )
 			->method( 'get' )
 			->with( 1, 2 );
-
 		$repository->get( 1, 2 );
 	}
 
@@ -100,7 +99,6 @@ class Table_Reading_Aggregate_Submission_Repository_Test extends \WP_UnitTestCas
 			->expects( $this->once() )
 			->method( 'get_question_ids' )
 			->with( 1 );
-
 		$repository->get_question_ids( 1 );
 	}
 
@@ -116,7 +114,6 @@ class Table_Reading_Aggregate_Submission_Repository_Test extends \WP_UnitTestCas
 			->expects( $this->once() )
 			->method( 'save' )
 			->with( $submission );
-
 		$repository->save( $submission );
 	}
 
@@ -146,7 +143,6 @@ class Table_Reading_Aggregate_Submission_Repository_Test extends \WP_UnitTestCas
 					}
 				)
 			);
-
 		$repository->save( $submission );
 	}
 
@@ -164,7 +160,6 @@ class Table_Reading_Aggregate_Submission_Repository_Test extends \WP_UnitTestCas
 			->method( 'get_or_create' )
 			->with( 2, 3, 12.34 )
 			->willReturn( $this->create_comments_based_submission() );
-
 		$repository->save( $submission );
 	}
 
@@ -204,7 +199,6 @@ class Table_Reading_Aggregate_Submission_Repository_Test extends \WP_UnitTestCas
 					}
 				)
 			);
-
 		$repository->save( $submission );
 	}
 
@@ -220,7 +214,6 @@ class Table_Reading_Aggregate_Submission_Repository_Test extends \WP_UnitTestCas
 			->expects( $this->once() )
 			->method( 'delete' )
 			->with( $submission );
-
 		$repository->delete( $submission );
 	}
 
@@ -235,7 +228,6 @@ class Table_Reading_Aggregate_Submission_Repository_Test extends \WP_UnitTestCas
 		$comments_based
 			->expects( $this->once() )
 			->method( 'delete' );
-
 		$repository->delete( $submission );
 	}
 

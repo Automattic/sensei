@@ -23,7 +23,7 @@ use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submi
  * @covers \Sensei\Internal\Quiz_Submission\Grade\Repositories\Table_Reading_Aggregate_Grade_Repository
  */
 class Table_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
-	public function testCreate_Always_UsesCommentsBasedRepository(): void {
+	public function testCreate_Always_UsesTablesBasedRepository(): void {
 		/* Arrange */
 		$answer                               = $this->createMock( Tables_Based_Answer::class );
 		$submission                           = $this->createMock( Tables_Based_Submission::class );
@@ -49,7 +49,7 @@ class Table_Reading_Aggregate_Grade_Repository_Test extends \WP_UnitTestCase {
 		$repository->create( $submission, $answer, 3, 4, 'feedback' );
 	}
 
-	public function testGetAll_Always_UsesCommentsBasedRepository(): void {
+	public function testGetAll_Always_UsesTablesBasedRepository(): void {
 		/* Arrange */
 		$tables_based_repository              = $this->createMock( Tables_Based_Grade_Repository::class );
 		$comments_based_repository            = $this->createMock( Comments_Based_Grade_Repository::class );

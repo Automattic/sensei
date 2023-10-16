@@ -74,12 +74,13 @@ class Table_Reading_Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$repository->create( $tables_based_submission, 1, 'value' );
 	}
 
-	public function testGetAll_Always_CallsTablesBasedRepository(): void {
+	public function testGetAll_SubmissionIdGiven_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$comments_based                       = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based                         = $this->createMock( Tables_Based_Answer_Repository::class );
 		$comments_based_submission_repository = $this->createMock( Comments_Based_Submission_Repository::class );
-		$repository                           = new Table_Reading_Aggregate_Answer_Repository(
+
+		$repository = new Table_Reading_Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
 			$comments_based_submission_repository
@@ -94,7 +95,7 @@ class Table_Reading_Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$repository->get_all( 1 );
 	}
 
-	public function testDeleteAll_Always_CallsCommentsBasedRepository(): void {
+	public function testDeleteAll_CommentsBasedSubmissionFound_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
 		$comments_based_submission = $this->createMock( Comments_Based_Submission::class );
 		$tables_based_submission   = $this->createMock( Tables_Based_Submission::class );
@@ -114,8 +115,7 @@ class Table_Reading_Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$repository = new Table_Reading_Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
-			$comments_based_submission_repository,
-			true
+			$comments_based_submission_repository
 		);
 
 		/* Expect & Act. */
@@ -127,7 +127,7 @@ class Table_Reading_Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete_all( $tables_based_submission );
 	}
 
-	public function testDeleteAll_Always_CallsTablesBasedRepository(): void {
+	public function testDeleteAll_SubmissionGiven_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$tables_based_submission = $this->createMock( Tables_Based_Submission::class );
 		$comments_based          = $this->createMock( Comments_Based_Answer_Repository::class );
