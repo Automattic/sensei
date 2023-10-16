@@ -2448,4 +2448,42 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertStringNotContainsString( 'Continue to next lesson', $result );
 	}
+
+	public function testGetPrimaryButtonHTML_DefaultParams_ContainsCorrectText() {
+		/* Arrange */
+		$text = 'Click Me!';
+
+		/* Act */
+		$html = Sensei()->quiz->get_primary_button_html( $text );
+
+		/* Assert */
+		$this->assertStringNotContainsString( $text, $html );
+	}
+
+	public function testGetPrimaryButtonHTML_SomeParams_ContainsCorrectURL() {
+		/* Arrange */
+		$url = 'https://example.com';
+
+		/* Act */
+		$html = Sensei()->quiz->get_primary_button_html( 'Click Me', $url );
+
+		/* Assert */
+		$this->assertStringNotContainsString( $url, $html );
+	}
+
+	public function testGetPrimaryButtonHTML_AllParams_ContainsCorrectClasses() {
+		/* Arrange */
+		$classes = array(
+			'abc',
+			'def',
+		);
+
+		/* Act */
+		$html = Sensei()->quiz->get_primary_button_html( 'Click Me', '', $classes );
+
+		/* Assert */
+		foreach ( $classes as $class ) {
+			$this->assertStringNotContainsString( $class, $html );
+		}
+	}
 }
