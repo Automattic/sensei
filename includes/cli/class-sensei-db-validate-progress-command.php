@@ -146,12 +146,28 @@ class Sensei_DB_Validate_Progress_Command {
 			$tables_based_progress   = $tables_based_repository->get( $course_id, $user_id );
 
 			if ( ! $comments_based_progress ) {
-				WP_CLI::warning( 'Comments based progress not found.' );
+				$this->is_valid = false;
+				WP_CLI::warning(
+					'Course comments based progress not found for: ' . wp_json_encode(
+						[
+							'course_id' => $course_id,
+							'user_id'   => $user_id,
+						]
+					)
+				);
 				continue;
 			}
 
 			if ( ! $tables_based_progress ) {
-				WP_CLI::warning( 'Tables based progress not found.' );
+				$this->is_valid = false;
+				WP_CLI::warning(
+					'Course tables based progress not found for: ' . wp_json_encode(
+						[
+							'course_id' => $course_id,
+							'user_id'   => $user_id,
+						]
+					)
+				);
 				continue;
 			}
 
@@ -187,12 +203,28 @@ class Sensei_DB_Validate_Progress_Command {
 			$tables_based_progress   = $tables_based_repository->get( $lesson_id, $user_id );
 
 			if ( ! $comments_based_progress ) {
-				WP_CLI::warning( 'Comments based progress not found.' );
+				$this->is_valid = false;
+				WP_CLI::warning(
+					'Lesson comments based progress not found for: ' . wp_json_encode(
+						[
+							'lesson_id' => $lesson_id,
+							'user_id'   => $user_id,
+						]
+					)
+				);
 				continue;
 			}
 
 			if ( ! $tables_based_progress ) {
-				WP_CLI::warning( 'Tables based progress not found.' );
+				$this->is_valid = false;
+				WP_CLI::warning(
+					'Lesson tables based progress not found for: ' . wp_json_encode(
+						[
+							'lesson_id' => $lesson_id,
+							'user_id'   => $user_id,
+						]
+					)
+				);
 				continue;
 			}
 
@@ -230,12 +262,28 @@ class Sensei_DB_Validate_Progress_Command {
 			$tables_based_progress   = $tables_based_repository->get( $quiz_id, $user_id );
 
 			if ( ! $comments_based_progress ) {
-				WP_CLI::warning( 'Comments based progress not found.' );
+				$this->is_valid = false;
+				WP_CLI::warning(
+					'Quiz comments based progress not found for: ' . wp_json_encode(
+						[
+							'quiz_id' => $quiz_id,
+							'user_id' => $user_id,
+						]
+					)
+				);
 				continue;
 			}
 
 			if ( ! $tables_based_progress ) {
-				WP_CLI::warning( 'Tables based progress not found.' );
+				$this->is_valid = false;
+				WP_CLI::warning(
+					'Quiz tables based progress not found for: ' . wp_json_encode(
+						[
+							'quiz_id' => $quiz_id,
+							'user_id' => $user_id,
+						]
+					)
+				);
 				continue;
 			}
 
