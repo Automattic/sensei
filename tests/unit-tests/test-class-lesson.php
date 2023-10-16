@@ -1155,6 +1155,9 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testCourseSignupLink_WhenSignupNoticeNeeded_AddsNotice(): void {
 		/* Arrange */
+		global $post;
+		$lesson_id        = $this->factory->lesson->create();
+		$post             = get_post( $lesson_id );
 		$notices          = $this->createMock( Sensei_Notices::class );
 		Sensei()->notices = $notices;
 

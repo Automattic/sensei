@@ -177,10 +177,13 @@ class Sensei_Course_Manual_Enrolment_Provider
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool      $is_legacy_enrolled          If the user was actually enrolled before 3.0.0 migration.
-		 * @param int       $user_id                     User ID.
-		 * @param int       $course_id                   Course post ID.
-		 * @param int|false $course_progress_comment_id  Comment ID for the course progress record (if it exists).
+		 * @hook sensei_is_legacy_enrolled
+		 *
+		 * @param {bool}      $is_legacy_enrolled          If the user was actually enrolled before 3.0.0 migration.
+		 * @param {int}       $user_id                     User ID.
+		 * @param {int}       $course_id                   Course post ID.
+		 * @param {int|false} $course_progress_comment_id  Comment ID for the course progress record (if it exists).
+		 * @return {bool} Filtered value.
 		 */
 		$is_legacy_enrolled = apply_filters( 'sensei_is_legacy_enrolled', true, $user_id, $course_id, $course_progress_comment_id );
 		$this->set_migrated_legacy_enrolment_status( $user_id, $course_id, $is_legacy_enrolled );

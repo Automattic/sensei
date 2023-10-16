@@ -199,6 +199,38 @@ class Comments_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertTrue( $repository->has( $lesson_id, $user_id ) );
 	}
 
+	public function testFind_ArgumentsGiven_ReturnsMatchingProgress(): void {
+		/* Arrange. */
+		$lesson_ids = $this->factory->lesson->create_many( 5 );
+		$user_id    = $this->factory->user->create();
+
+		$repository       = new Comments_Based_Lesson_Progress_Repository();
+		$created_progress = [];
+		foreach ( $lesson_ids as $lesson_id ) {
+			$created_progress[] = $repository->create( $lesson_id, $user_id );
+		}
+
+		$expected = array();
+		for ( $i = 0; $i < 3; $i++ ) {
+			$progress = $created_progress[ $i ];
+			$progress->complete();
+			$repository->save( $progress );
+			$expected[] = $this->export_progress( $progress );
+		}
+
+		/* Act. */
+		$found_progress = $repository->find(
+			array(
+				'user_id' => $user_id,
+				'status'  => 'complete',
+			)
+		);
+		$actual         = array_map( array( $this, 'export_progress' ), $found_progress );
+
+		/* Assert. */
+		self::assertSame( $expected, $actual );
+	}
+
 	private function export_progress( Lesson_Progress_Interface $progress ): array {
 		return [
 			'user_id'   => $progress->get_user_id(),

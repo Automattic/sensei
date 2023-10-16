@@ -4,8 +4,8 @@ Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, 
 Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.1
 Tested up to: 6.3
-Requires PHP: 7.3
-Stable tag: 4.17.0
+Requires PHP: 7.4
+Stable tag: 4.18.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -132,7 +132,7 @@ Sensei LMS is compatible with Sensei Pro and [WooCommerce Memberships](https://w
 
 See [Selling Courses as a Membership](https://senseilms.com/documentation/selling-courses-as-a-membership/) for more details.
 
-= Does Sensei work in my language =
+= Does Sensei work in my language? =
 
 Community members have translated the free Sensei LMS plugin [into 18 languages](https://translate.wordpress.org/projects/wp-plugins/sensei-lms/), while Sensei Pro has been [professionally translated into 16 languages](https://translate.wordpress.com/projects/sensei/). We welcome contributions to improve even more.
 
@@ -143,6 +143,31 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 4. Quiz Editor
 
 == Changelog ==
+
+### 4.18.0 - 2023-10-12
+#### Security
+- Escape class attributes in Student Courses and Course Results block
+
+#### Changed
+- Changed styles for graded question answer feedbacks [#7171](https://github.com/Automattic/sensei/pull/7171)
+- Updated styling of graded quizzes footer in learning mode [#7202](https://github.com/Automattic/sensei/pull/7202)
+- Updated the login page style and fixed issue of "My Messages" button rendering when logged out [#7204](https://github.com/Automattic/sensei/pull/7204)
+- Changed footer style for quizzes awaiting grading [#7190](https://github.com/Automattic/sensei/pull/7190)
+- Add success message styles [#7209](https://github.com/Automattic/sensei/pull/7209)
+- Bump minimum required PHP version to 7.4 [#7195](https://github.com/Automattic/sensei/pull/7195)
+- Improve support for PHP 8.1 [#7198](https://github.com/Automattic/sensei/pull/7198)
+
+#### Fixed
+- Fix "Next Lesson" button not visible on completed lessons [#7169](https://github.com/Automattic/sensei/pull/7169)
+- Fix additional css classes for Student Courses block [#7174](https://github.com/Automattic/sensei/pull/7174)
+- Fixed back to lesson block to apply block styles in quiz navigation area [#7186](https://github.com/Automattic/sensei/pull/7186)
+- Fix formatting of Course List block on course archive page [#7180](https://github.com/Automattic/sensei/pull/7180)
+- Fix student progress reset not working in some cases [#7181](https://github.com/Automattic/sensei/pull/7181)
+- Improve performance by reducing the number of queries that run on page load [#6819](https://github.com/Automattic/sensei/pull/6819)
+- Split manual enrollment title in order to allow different gender on the translation [#7165](https://github.com/Automattic/sensei/pull/7165)
+
+#### Development
+- Updated the "login-form" template [#7204](https://github.com/Automattic/sensei/pull/7204)
 
 ### 4.17.0 - 2023-09-13
 #### Added
@@ -185,16 +210,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Fix lesson styling in editor on WordPress 6.3 or when Gutenberg enabled [#7054](https://github.com/Automattic/sensei/pull/7054)
 - Fix PHP 8.1 deprecation notice on Students page [#7038](https://github.com/Automattic/sensei/pull/7038)
 - Fix `strpos`and `str_replace` deprecation messages in PHP 8.1 and 8.2 [#7028](https://github.com/Automattic/sensei/pull/7028)
-
-### 4.16.0 - 2023-07-13
-#### Added
-- Enable to select how to generate lessons when a course is created [#6999](https://github.com/Automattic/sensei/pull/6999)
-
-#### Changed
-- Bump minimum required PHP version to 7.3 [#7005](https://github.com/Automattic/sensei/pull/7005)
-
-#### Fixed
-- Fix Continue Course block not redirecting to first lesson in some cases [#6997](https://github.com/Automattic/sensei/pull/6997)
-- Fix emails not using the From Name/Email settings [#6968](https://github.com/Automattic/sensei/pull/6968)
-- Fix PHP 8.1 autovivification of falsy value deprecation message [#7015](https://github.com/Automattic/sensei/pull/7015)
-- Removed Beta label from Editor Menu [#6989](https://github.com/Automattic/sensei/pull/6989)

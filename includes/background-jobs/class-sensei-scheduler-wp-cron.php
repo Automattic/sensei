@@ -70,7 +70,10 @@ class Sensei_Scheduler_WP_Cron implements Sensei_Scheduler_Interface {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param array $actions Scheduled actions that are handled by this class.
+		 * @hook sensei_background_job_actions
+		 *
+		 * @param {array} $actions Scheduled actions that are handled by this class.
+		 * @return {array} Filtered actions.
 		 */
 		$actions = apply_filters( 'sensei_background_job_actions', [] );
 		foreach ( $actions as $action_name ) {

@@ -129,11 +129,11 @@ class Sensei_Quiz {
 		 * editor if necessary.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook sensei_quiz_enable_block_based_editor
 		 *
 		 * @param {bool} $is_block_based_editor_enabled True if block based editor is enabled.
-		 *
-		 * @return {bool}
+		 * @return {bool} Filtered value.
 		 */
 		return apply_filters( 'sensei_quiz_enable_block_based_editor', $is_block_editor );
 	}
@@ -230,7 +230,6 @@ class Sensei_Quiz {
 		wp_update_post( $my_post );
 	}
 
-
 	/**
 	 * Get the lesson this quiz belongs to.
 	 *
@@ -253,6 +252,27 @@ class Sensei_Quiz {
 
 		return $quiz ? $quiz->post_parent : false;
 
+	}
+
+	/**
+	 * Get lesson ids for given quizzes.
+	 *
+	 * @since 4.18.0
+	 *
+	 * @param int[] $quiz_ids The quiz IDs.
+	 * @return array Lesson ids, empty array if no lessons found.
+	 */
+	public function get_lesson_ids( array $quiz_ids ) {
+		$quiz_parents = get_posts(
+			array(
+				'fields'         => 'id=>parent',
+				'post_type'      => 'quiz',
+				'post__in'       => $quiz_ids,
+				'posts_per_page' => -1,
+			)
+		);
+
+		return array_unique( array_values( $quiz_parents ) );
 	}
 
 	/**
@@ -625,9 +645,8 @@ class Sensei_Quiz {
 		$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $post->ID, '_quiz_passmark', true ), 2 );
 
 		// Get latest quiz answers and grades.
-		$lesson_id          = Sensei()->quiz->get_lesson_id( $post->ID );
-		$user_quizzes       = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
-		$user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
+		$lesson_id    = Sensei()->quiz->get_lesson_id( $post->ID );
+		$user_quizzes = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
 
 		$user_quiz_grade = 0;
 		$quiz_submission = Sensei()->quiz_submission_repository->get( $post->ID, $current_user->ID );
@@ -639,7 +658,7 @@ class Sensei_Quiz {
 			$user_quizzes = array(); }
 
 		// Check again that the lesson is complete.
-		$user_lesson_end      = Sensei_Utils::user_completed_lesson( $user_lesson_status );
+		$user_lesson_end      = Sensei_Utils::user_completed_lesson( $lesson_id, $current_user->ID );
 		$user_lesson_complete = false;
 		if ( $user_lesson_end ) {
 			$user_lesson_complete = true;
@@ -732,11 +751,11 @@ class Sensei_Quiz {
 		 * Filters allowed which mimetypes are allowed.
 		 *
 		 * @since 3.7.0
+		 *
 		 * @hook sensei_quiz_answer_file_upload_types
 		 *
 		 * @param {false|array} $allowed_mime_types Array of allowed mimetypes. Returns `false` to allow all file types.
 		 * @param {int}         $question_id        Question post ID.
-		 *
 		 * @return {false|array} Allowed mime types or false to allow all types.
 		 */
 		$allowed_mime_types = apply_filters( 'sensei_quiz_answer_file_upload_types', false, $question_id );
@@ -773,16 +792,26 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		// Get the users lesson status to make.
-		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
-		if ( ! isset( $user_lesson_status->comment_ID ) ) {
-			// This user is not taking this lesson so this process is not needed.
-			return false;
+		// Get the lesson quiz.
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+		// Check if the user has started the lesson or quiz.
+		$need_reset_data          = false;
+		$user_has_lesson_progress = Sensei()->lesson_progress_repository->has( $lesson_id, $user_id );
+		if ( $user_has_lesson_progress ) {
+			$need_reset_data = true;
+		}
+		if ( $quiz_id ) {
+			$user_has_quiz_progress = Sensei()->quiz_progress_repository->has( $quiz_id, $user_id );
+			if ( $user_has_quiz_progress ) {
+				$need_reset_data = true;
+			}
 		}
 
-		// Get the lesson quiz and course.
-		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+		// This user is not taking this lesson so this process is not needed.
+		if ( ! $need_reset_data ) {
+			return false;
+		}
 
 		// Reset the transients.
 		$answers_transient_key          = 'sensei_answers_' . $user_id . '_' . $lesson_id;
@@ -811,6 +840,7 @@ class Sensei_Quiz {
 		}
 
 		// Update course completion.
+		$course_id       = Sensei()->lesson->get_course_id( $lesson_id );
 		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
 		if ( $course_progress ) {
 			if ( ! $course_progress->get_started_at() ) {
@@ -890,6 +920,11 @@ class Sensei_Quiz {
 			Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 		}
 
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+		if ( ! $lesson_progress ) {
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+		}
+
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 		if ( ! $quiz_progress ) {
 			// Even after starting a lesson we can't find the progress. Leave immediately.
@@ -918,34 +953,27 @@ class Sensei_Quiz {
 
 				// Student has reached the pass mark and lesson is complete.
 				if ( $quiz_pass_percentage <= $grade ) {
+					$lesson_progress->complete();
 					$quiz_progress->pass();
-					$lesson_status = 'passed';
 				} else {
 					$quiz_progress->fail();
-					$lesson_status = 'failed';
 				}
 			} else {
 				// Student only has to partake the quiz.
+				$lesson_progress->complete();
 				$quiz_progress->grade();
-				$lesson_status = 'graded';
 			}
 		}
 
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
 		Sensei()->quiz_progress_repository->save( $quiz_progress );
 		foreach ( $lesson_metadata as $key => $value ) {
 			update_comment_meta( $quiz_progress->get_id(), $key, $value );
 		}
 
-		if ( 'passed' === $lesson_status || 'graded' === $lesson_status ) {
+		if ( $lesson_progress->is_complete() ) {
 
-			/**
-			 * Lesson end action hook
-			 *
-			 * This hook is fired after a lesson quiz has been graded and the lesson status is 'passed' OR 'graded'
-			 *
-			 * @param int $user_id
-			 * @param int $lesson_id
-			 */
+			/* The action is documented in includes/class-sensei-utils.php */
 			do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
 
 		}
@@ -1401,10 +1429,14 @@ class Sensei_Quiz {
 		 * Filter the user question feedback.
 		 *
 		 * @since 1.9.12
-		 * @param string $feedback
-		 * @param int    $lesson_id
-		 * @param int    $question_id
-		 * @param int    $user_id
+		 *
+		 * @hook sensei_user_question_feedback
+		 *
+		 * @param {string} $feedback    The feedback.
+		 * @param {int}    $lesson_id   The lesson ID.
+		 * @param {int}    $question_id The question ID.
+		 * @param {int}    $user_id     The user ID.
+		 * @return {string} The filtered feedback.
 		 */
 		return apply_filters( 'sensei_user_question_feedback', $feedback, $lesson_id, $question_id, $user_id );
 
@@ -1572,26 +1604,23 @@ class Sensei_Quiz {
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
 
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+		// Check the quiz progress status.
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_progress ) {
+			return false;
+		}
 
-		// Check the lesson status.
-		$lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
-		if ( $lesson_status ) {
-			$lesson_status = is_array( $lesson_status ) ? $lesson_status[0] : $lesson_status;
+		if ( 'ungraded' === $quiz_progress->get_status() ) {
+			return true;
+		}
 
-			if ( 'ungraded' === $lesson_status->comment_approved ) {
-				return true;
-			}
-
-			// Check for a quiz grade.
-			$quiz_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
-			if ( '' !== $quiz_grade ) {
-				return true;
-			}
+		// Check for a quiz grade.
+		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( $submission && ! is_null( $submission->get_final_grade() ) ) {
+			return true;
 		}
 
 		return false;
-
 	}
 
 	/**
@@ -1622,7 +1651,13 @@ class Sensei_Quiz {
 			$title = sprintf( __( '%s Quiz', 'sensei-lms' ), $title_with_no_quizzes );
 
 			/**
-			 * hook document in class-woothemes-sensei-message.php
+			 * Filter Sensei single title
+			 *
+			 * @hook sensei_single_title
+			 *
+			 * @param {string} $title     The title.
+			 * @param {string} $post_type The post type.
+			 * @return {string} Filtered title.
 			 */
 			$title = apply_filters( 'sensei_single_title', $title, get_post_type() );
 		}
@@ -1673,7 +1708,7 @@ class Sensei_Quiz {
 		}
 
 		$sensei_question_loop['questions_asked'] = wp_list_pluck( $all_questions, 'ID' );
-		$sensei_question_loop['total']           = count( $all_questions );
+		$sensei_question_loop['total']           = is_countable( $all_questions ) ? count( $all_questions ) : 0;
 
 		// Paginate the questions.
 		if ( $sensei_question_loop['posts_per_page'] > 0 ) {
@@ -1689,10 +1724,8 @@ class Sensei_Quiz {
 		}
 
 		// Don't use pagination if quiz has been completed.
-		$lesson_id = \Sensei_Utils::get_current_lesson();
-		$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
-
-		$quiz_completed = $status && 'in-progress' !== $status->comment_approved;
+		$quiz_progress  = Sensei()->quiz_progress_repository->get( $quiz_id, get_current_user_id() );
+		$quiz_completed = $quiz_progress && 'in-progress' !== $quiz_progress->get_status();
 
 		$sensei_question_loop['questions'] = $quiz_completed ? $all_questions : $loop_questions;
 		$sensei_question_loop['quiz_id']   = $quiz_id;
@@ -1736,7 +1769,13 @@ class Sensei_Quiz {
 
 				<?php
 				/**
-				 * Filter documented in class-sensei-messages.php the_title
+				 * Filter Sensei single title
+				 *
+				 * @hook sensei_single_title
+				 *
+				 * @param {string} $title     The title.
+				 * @param {string} $post_type The post type.
+				 * @return {string} Filtered title.
 				 */
 				echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( get_post() ), get_post_type( get_the_ID() ) ) );
 				?>
@@ -1856,13 +1895,20 @@ class Sensei_Quiz {
 		$lesson_id         = Sensei()->quiz->get_lesson_id();
 		$is_quiz_completed = self::is_quiz_completed();
 		$is_reset_allowed  = self::is_reset_allowed( $lesson_id );
-		$has_actions       = $is_reset_allowed || ! $is_quiz_completed;
+		$course_id         = Sensei()->lesson->get_course_id( $lesson_id );
+		$is_learning_mode  = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		$is_awaiting_grade = self::is_quiz_awaiting_grade_for_user( $lesson_id, get_current_user_id() );
+		$post_grade_action = self::maybe_get_button_html_for_quiz_footer( $lesson_id, get_current_user_id() );
+
+		$show_grade_pending_button = $is_learning_mode && $is_awaiting_grade;
 
 		$wrapper_attributes = get_block_wrapper_attributes(
 			[
 				'class' => 'sensei-quiz-actions',
 			]
 		);
+
+		$has_actions = $is_reset_allowed || ! $is_quiz_completed || $show_grade_pending_button || ! empty( $post_grade_action );
 
 		if ( ! $has_actions ) {
 			return;
@@ -1890,7 +1936,7 @@ class Sensei_Quiz {
 							class="wp-block-button__link button quiz-submit complete sensei-course-theme__button sensei-stop-double-submission"
 							style="<?php echo esc_attr( $button_inline_styles ); ?>"
 						>
-							<?php esc_attr_e( 'Complete Quiz', 'sensei-lms' ); ?>
+							<?php esc_html_e( 'Complete Quiz', 'sensei-lms' ); ?>
 						</button>
 
 						<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_complete_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
@@ -1898,11 +1944,21 @@ class Sensei_Quiz {
 				</div>
 			<?php endif ?>
 
+			<?php if ( $is_learning_mode && $post_grade_action ) : ?>
+				<?php echo wp_kses_post( $post_grade_action ); ?>
+			<?php endif ?>
+
+			<?php if ( $is_awaiting_grade && $is_learning_mode ) : ?>
+				<button type="button" class="wp-element-button sensei-course-theme__button is-primary" disabled>
+					<?php esc_html_e( 'Pending teacher grade', 'sensei-lms' ); ?>
+				</button>
+			<?php endif ?>
+
 			<div class="sensei-quiz-actions-secondary">
 				<?php if ( $is_reset_allowed ) : ?>
 					<div class="sensei-quiz-action">
-						<button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission">
-							<?php esc_attr_e( 'Reset Quiz', 'sensei-lms' ); ?>
+						<button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission sensei-course-theme__button is-link">
+							<?php esc_html_e( 'Restart Quiz', 'sensei-lms' ); ?>
 						</button>
 
 						<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
@@ -1912,7 +1968,7 @@ class Sensei_Quiz {
 				<?php if ( ! $is_quiz_completed ) : ?>
 					<div class="sensei-quiz-action">
 						<button type="submit" name="quiz_save" form="sensei-quiz-form" class="quiz-submit save sensei-stop-double-submission">
-							<?php esc_attr_e( 'Save Progress', 'sensei-lms' ); ?>
+							<?php esc_html_e( 'Save Progress', 'sensei-lms' ); ?>
 						</button>
 
 						<input type="hidden" name="woothemes_sensei_save_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
@@ -2365,7 +2421,7 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$quiz_available = $this->is_quiz_available( $quiz_id, $user_id );
+		$quiz_available = static::is_quiz_available( $quiz_id, $user_id );
 		if ( ! $quiz_available ) {
 			return;
 		}
@@ -2379,6 +2435,101 @@ class Sensei_Quiz {
 
 		$quiz_progress_repository->create( $quiz_id, $user_id );
 	}
+
+	/**
+	 * Check if the quiz is in ungraded state for a user.
+	 *
+	 * @param ?int $lesson_id The lesson ID.
+	 * @param ?int $user_id   The user ID.
+	 *
+	 * @return bool True if the quiz is in ungraded state for the user, false otherwise.
+	 */
+	public static function is_quiz_awaiting_grade_for_user( $lesson_id = null, $user_id = null ) {
+		if ( empty( $lesson_id ) ) {
+			$lesson_id = Sensei()->quiz->get_lesson_id();
+		}
+
+		if ( empty( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $lesson_id ) || empty( $user_id ) || 'lesson' !== get_post_type( $lesson_id ) ) {
+			return false;
+		}
+
+		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+
+		return $lesson_status && 'ungraded' === $lesson_status->comment_approved;
+	}
+
+	/**
+	 * Returns the HTML for the next lesson button or the contact Teacher button based on condition.
+	 * If none of the conditions are met, returns null.
+	 *
+	 * @param ?int $lesson_id The lesson ID.
+	 * @param ?int $user_id   The user ID.
+	 *
+	 * @return string|null Next lesson or Contact Teacher button if condition holds, null otherwise.
+	 */
+	private static function maybe_get_button_html_for_quiz_footer( $lesson_id = null, $user_id = null ) {
+		if ( empty( $lesson_id ) ) {
+			$lesson_id = Sensei()->quiz->get_lesson_id();
+		}
+
+		if ( empty( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $lesson_id ) || empty( $user_id ) || 'lesson' !== get_post_type( $lesson_id ) || 'quiz' !== get_post_type() ) {
+			return null;
+		}
+
+		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+
+		$is_complete = $lesson_status && in_array( $lesson_status->comment_approved, [ 'complete', 'graded', 'passed', 'failed' ], true );
+
+		if ( ! $is_complete ) {
+			return null;
+		}
+
+		$is_pass_required = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
+		$is_reset_allowed = self::is_reset_allowed( $lesson_id );
+
+		if ( $is_pass_required && 'failed' === $lesson_status->comment_approved ) {
+
+			if ( $is_reset_allowed ) {
+				return null;
+			}
+
+			$block  = new Sensei_Block_Contact_Teacher();
+			$button = self::get_primary_button_anchor_html( __( 'Contact teacher', 'sensei-lms' ), '#' );
+			return $block->render_contact_teacher_block( [], $button );
+		}
+
+		$prev_next_urls  = sensei_get_prev_next_lessons( $lesson_id );
+		$next_lesson_url = $prev_next_urls['next']['url'] ?? null;
+
+		if ( $next_lesson_url ) {
+			return self::get_primary_button_anchor_html( __( 'Continue to next lesson', 'sensei-lms' ), $next_lesson_url );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the HTML for a primary button anchor.
+	 *
+	 * @param string $button_text The button text.
+	 * @param string $url         The URL.
+	 *
+	 * @return string The HTML for the primary button anchor.
+	 */
+	private static function get_primary_button_anchor_html( $button_text, $url ) {
+		return '<a class="wp-element-button sensei-course-theme__button is-primary" href="' . esc_url( $url ) . '">' .
+						esc_html( $button_text ) .
+				'</a>';
+	}
+
 }
 
 /**

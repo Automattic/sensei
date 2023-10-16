@@ -241,6 +241,14 @@ class Sensei_PostTypes {
 			'show_in_admin_bar'     => true,
 			'query_var'             => true,
 			'rewrite'               => array(
+				/**
+				 * Filter the rewrite slug for the course post type.
+				 *
+				 * @hook sensei_course_slug
+				 *
+				 * @param {string} $slug The rewrite slug.
+				 * @return {string} The filtered rewrite slug.
+				 */
 				'slug'       => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'sensei-lms' ) ) ),
 				'with_front' => $with_front,
 				'feeds'      => true,
@@ -261,12 +269,15 @@ class Sensei_PostTypes {
 		 * Filter the arguments passed in when registering the Sensei Course post type.
 		 *
 		 * @since 1.9.0
-		 * @param array $args
+		 *
+		 * @hook sensei_register_post_type_course
+		 *
+		 * @param {array} $args The arguments passed in when registering the Sensei Course post type.
+		 * @return {array} The filtered arguments.
 		 */
 		register_post_type( 'course', apply_filters( 'sensei_register_post_type_course', $args ) );
 
 	}
-
 
 	/**
 	 * Redirect to the correct course archive link when using plain permalinks.
@@ -347,7 +358,6 @@ class Sensei_PostTypes {
 
 	}
 
-
 	/**
 	 * Setup the "lesson" post type, it's admin menu item and the appropriate labels and permissions.
 	 *
@@ -378,6 +388,14 @@ class Sensei_PostTypes {
 			'show_in_admin_bar'     => true,
 			'query_var'             => true,
 			'rewrite'               => array(
+				/**
+				 * Filter the rewrite slug for the lesson post type.
+				 *
+				 * @hook sensei_lesson_slug
+				 *
+				 * @param {string} $slug The rewrite slug.
+				 * @return {string} The filtered rewrite slug.
+				 */
 				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => $with_front,
 				'feeds'      => true,
@@ -398,7 +416,11 @@ class Sensei_PostTypes {
 		 * Filter the arguments passed in when registering the Sensei Lesson post type.
 		 *
 		 * @since 1.9.0
-		 * @param array $args
+		 *
+		 * @hook sensei_register_post_type_lesson
+		 *
+		 * @param {array} $args The arguments passed in when registering the Sensei Lesson post type.
+		 * @return {array} The filtered arguments.
 		 */
 		register_post_type( 'lesson', apply_filters( 'sensei_register_post_type_lesson', $args ) );
 
@@ -430,6 +452,14 @@ class Sensei_PostTypes {
 			'query_var'           => true,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
+				/**
+				 * Filter the rewrite slug for the quiz post type.
+				 *
+				 * @hook sensei_quiz_slug
+				 *
+				 * @param {string} $slug The rewrite slug.
+				 * @return {string} The filtered rewrite slug.
+				 */
 				'slug'       => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => $with_front,
 				'feeds'      => true,
@@ -450,12 +480,15 @@ class Sensei_PostTypes {
 		 * Filter the arguments passed in when registering the Sensei Quiz post type.
 		 *
 		 * @since 1.9.0
-		 * @param array $args
+		 *
+		 * @hook sensei_register_post_type_quiz
+		 *
+		 * @param {array} $args The arguments passed in when registering the Sensei Quiz post type.
+		 * @return {array} The filtered arguments.
 		 */
 		register_post_type( 'quiz', apply_filters( 'sensei_register_post_type_quiz', $args ) );
 
 	}
-
 
 	/**
 	 * Setup the "question" post type, it's admin menu item and the appropriate labels and permissions.
@@ -493,7 +526,11 @@ class Sensei_PostTypes {
 		 * Filter the arguments passed in when registering the Sensei Question post type.
 		 *
 		 * @since 1.9.0
-		 * @param array $args
+		 *
+		 * @hook sensei_register_post_type_question
+		 *
+		 * @param {array} $args The arguments passed in when registering the Sensei Question post type.
+		 * @return {array} The filtered arguments.
 		 */
 		register_post_type( 'question', apply_filters( 'sensei_register_post_type_question', $args ) );
 
@@ -517,6 +554,14 @@ class Sensei_PostTypes {
 			'query_var'           => false,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
+				/**
+				 * Filter the rewrite slug for the multiple_question post type.
+				 *
+				 * @hook sensei_multiple_question_slug
+				 *
+				 * @param {string} $slug The rewrite slug.
+				 * @return {string} The filtered rewrite slug.
+				 */
 				'slug'       => esc_attr( apply_filters( 'sensei_multiple_question_slug', _x( 'multiple_question', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => false,
 				'feeds'      => false,
@@ -553,6 +598,14 @@ class Sensei_PostTypes {
 				'query_var'             => true,
 				'exclude_from_search'   => true,
 				'rewrite'               => array(
+					/**
+					 * Filter the rewrite slug for the Sensei Message post type.
+					 *
+					 * @hook sensei_messages_slug
+					 *
+					 * @param {string} $slug The rewrite slug.
+					 * @return {string} The filtered rewrite slug.
+					 */
 					'slug'       => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'sensei-lms' ) ) ),
 					'with_front' => false,
 					'feeds'      => false,
@@ -574,7 +627,11 @@ class Sensei_PostTypes {
 			 * Filter the arguments passed in when registering the Sensei sensei_message post type.
 			 *
 			 * @since 1.9.0
-			 * @param array $args
+			 *
+			 * @hook sensei_register_post_type_sensei_message
+			 *
+			 * @param {array} $args The arguments passed in when registering the Sensei sensei_message post type.
+			 * @return {array} The filtered arguments.
 			 */
 			register_post_type( 'sensei_message', apply_filters( 'sensei_register_post_type_sensei_message', $args ) );
 		}
@@ -635,7 +692,17 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_courses',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
+			'rewrite'           => array(
+				/**
+				 * Filter the rewrite slug for the course category taxonomy.
+				 *
+				 * @hook sensei_course_category_slug
+				 *
+				 * @param {string} $slug The rewrite slug.
+				 * @return {string} The filtered rewrite slug.
+				 */
+				'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'sensei-lms' ) ) ),
+			),
 		);
 
 		register_taxonomy( 'course-category', array( 'course' ), $args );
@@ -673,7 +740,17 @@ class Sensei_PostTypes {
 			'query_var'         => true,
 			'show_in_nav_menus' => false,
 			'public'            => false,
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
+			'rewrite'           => array(
+				/**
+				 * Filter the rewrite slug for the quiz type taxonomy.
+				 *
+				 * @hook sensei_quiz_type_slug
+				 *
+				 * @param {string} $slug The rewrite slug.
+				 * @return {string} The filtered rewrite slug.
+				 */
+				'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'sensei-lms' ) ) ),
+			),
 		);
 
 		register_taxonomy( 'quiz-type', array( 'quiz' ), $args );
@@ -712,7 +789,17 @@ class Sensei_PostTypes {
 			'show_in_nav_menus' => false,
 			'show_admin_column' => true,
 			'show_in_rest'      => true,
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
+			'rewrite'           => array(
+				/**
+				 * Filter the rewrite slug for the question type taxonomy.
+				 *
+				 * @hook sensei_question_type_slug
+				 *
+				 * @param {string} $slug The rewrite slug.
+				 * @return {string} The filtered rewrite slug.
+				 */
+				'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'sensei-lms' ) ) ),
+			),
 		);
 
 		register_taxonomy( 'question-type', array( 'question' ), $args );
@@ -757,7 +844,17 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_questions',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
+			'rewrite'           => array(
+				/**
+				 * Filter the rewrite slug for the question category taxonomy.
+				 *
+				 * @hook sensei_question_category_slug
+				 *
+				 * @param {string} $slug The rewrite slug.
+				 * @return {string} The filtered rewrite slug.
+				 */
+				'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'sensei-lms' ) ) ),
+			),
 		);
 
 		register_taxonomy( 'question-category', array( 'question' ), $args );
@@ -800,7 +897,17 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_lessons',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
+			'rewrite'           => array(
+				/**
+				 * Filter the rewrite slug for the lesson tag taxonomy.
+				 *
+				 * @hook sensei_lesson_tag_slug
+				 *
+				 * @param {string} $slug The rewrite slug.
+				 * @return {string} The filtered rewrite slug.
+				 */
+				'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'sensei-lms' ) ) ),
+			),
 		);
 
 		register_taxonomy( 'lesson-tag', array( 'lesson' ), $args );
@@ -1124,10 +1231,11 @@ class Sensei_PostTypes {
 		/**
 		 * Filters the Student groups promo landing page.
 		 *
-		 * @hook  sensei_student_groups_hide
 		 * @since 4.5.2
 		 *
-		 * @param  {bool} $sensei_student_groups_hide Whether to hide the Student Groups promo landing page.
+		 * @hook sensei_student_groups_hide
+		 *
+		 * @param {bool} $sensei_student_groups_hide Whether to hide the Student Groups promo landing page.
 		 * @return {bool} Whether to hide the Student groups landing page.
 		 */
 		if ( ! apply_filters( 'sensei_student_groups_hide', false ) ) {

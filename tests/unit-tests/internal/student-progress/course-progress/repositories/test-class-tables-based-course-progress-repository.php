@@ -14,6 +14,22 @@ use wpdb;
  * @covers \Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository
  */
 class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
+	/**
+	 * Sensei factory.
+	 *
+	 * @var \Sensei_Factory
+	 */
+	protected $factory;
+
+	public function setUp(): void {
+		parent::setUp();
+		$this->factory = new \Sensei_Factory();
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+		$this->factory->tearDown();
+	}
 
 	public function testCreate_ParamsGiven_InsertsToWpdb(): void {
 		/* Arrange. */
@@ -378,6 +394,45 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 				]
 			);
 		$repository->delete_for_user( 2 );
+	}
+
+	public function testIntegrationFind_ArgumentsGiven_ReturnsMatchingProgress(): void {
+		/* Arrange. */
+		global $wpdb;
+		$course_ids = $this->factory->course->create_many( 5 );
+		$user_id    = $this->factory->user->create();
+
+		$repository       = new Tables_Based_Course_Progress_Repository( $wpdb );
+		$created_progress = [];
+		foreach ( $course_ids as $course_id ) {
+			$created_progress[] = $repository->create( $course_id, $user_id );
+		}
+
+		$expected = array();
+		for ( $i = 0; $i < 3; $i++ ) {
+			$progress = $created_progress[ $i ];
+			$progress->complete();
+			$repository->save( $progress );
+			$expected[] = $this->export_progress( $progress );
+		}
+
+		/* Act. */
+		$found_progress = $repository->find(
+			array(
+				'user_id' => $user_id,
+				'status'  => 'complete',
+			)
+		);
+		$actual         = array_map( array( $this, 'export_progress' ), $found_progress );
+		usort(
+			$actual,
+			function( $a, $b ) {
+				return $a['course_id'] <=> $b['course_id'];
+			}
+		);
+
+		/* Assert. */
+		self::assertSame( $expected, $actual );
 	}
 
 	private function export_progress( Course_Progress_Interface $progress ): array {

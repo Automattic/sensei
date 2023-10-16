@@ -89,4 +89,14 @@ interface Course_Progress_Repository_Interface {
 	 * @param int $user_id The user ID.
 	 */
 	public function delete_for_user( int $user_id ): void;
+
+	/**
+	 * Find course progress.
+	 *
+	 * @internal
+	 *
+	 * @param array $args The arguments.
+	 * @return Course_Progress_Interface[] The course progress.
+	 */
+	public function find( array $args ): array;
 }

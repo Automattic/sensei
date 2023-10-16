@@ -42,7 +42,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php: [7.3, 8.1]
+                php: [7.4, 8.1]
         steps:
             - name: Download Build Artifact
               uses: actions/download-artifact@v3
