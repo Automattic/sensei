@@ -10,6 +10,14 @@ import CourseOverviewBlock from './course-overview-block';
 import CourseProgressBlock from './course-progress-block';
 import TakeCourseBlock from './take-course-block';
 import ViewResultsBlock from './view-results-block';
+import {
+	CompleteLessonBlock,
+	LessonActionsBlock,
+	LessonCompletedBlock,
+	NextLessonBlock,
+	ViewQuizBlock,
+	ResetLessonBlock,
+} from './lesson-actions';
 
 registerCourseListBlock();
 
@@ -22,4 +30,10 @@ registerSenseiBlocks( [
 	CourseProgressBlock,
 	TakeCourseBlock,
 	ViewResultsBlock,
+	LessonActionsBlock,
+	LessonCompletedBlock,
+	CompleteLessonBlock,
+	NextLessonBlock,
+	ViewQuizBlock,
+	ResetLessonBlock,
 ] );
