@@ -91,10 +91,10 @@ class Sensei_Notices {
 		 * Allows to modify a sensei notice that will be shown to the user.
 		 *
 		 * @since 4.7.0
+		 *
 		 * @hook sensei_notice
 		 *
 		 * @param {array} $notice The notice data.
-		 *
 		 * @return {array|null} The notice data. Or return null if you want to prevent the notice showing up.
 		 */
 		$notice = apply_filters( 'sensei_notice', $notice );

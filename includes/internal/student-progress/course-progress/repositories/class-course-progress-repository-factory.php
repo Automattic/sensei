@@ -54,7 +54,7 @@ class Course_Progress_Repository_Factory {
 	public function create(): Course_Progress_Repository_Interface {
 		global $wpdb;
 
-		$comments_based = new Comments_Based_Course_Progress_Repository();
+		$comments_based = $this->create_comments_based_repository();
 		$tables_based   = new Tables_Based_Course_Progress_Repository( $wpdb );
 
 		if ( ! $this->tables_enabled ) {
@@ -69,5 +69,16 @@ class Course_Progress_Repository_Factory {
 			$comments_based,
 			$tables_based
 		);
+	}
+
+	/**
+	 * Create a comments based course progress repository.
+	 *
+	 * @internal
+	 *
+	 * @return Comments_Based_Course_Progress_Repository
+	 */
+	public function create_comments_based_repository(): Comments_Based_Course_Progress_Repository {
+		return new Comments_Based_Course_Progress_Repository();
 	}
 }

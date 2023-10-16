@@ -166,7 +166,10 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 		 *
 		 * @since 4.16.1
 		 *
-		 * @param array $tables An array of Sensei specific database table names.
+		 * @hook sensei_lms_schema_get_tables
+		 *
+		 * @param {array} $tables An array of Sensei specific database table names.
+		 * @return {array} Filtered array of Sensei specific database table names.
 		 */
 		$tables = apply_filters( 'sensei_lms_schema_get_tables', $tables );
 

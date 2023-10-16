@@ -403,7 +403,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		 *
 		 * @param {array}   $quiz_data The response data.
 		 * @param {WP_Post} $quiz      The quiz post.default interval.
-		 *
 		 * @return {array} $quiz_data The modified response data.
 		 */
 		return apply_filters( 'sensei_rest_api_lesson_quiz_response', $quiz_data, $quiz );

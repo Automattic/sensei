@@ -16,13 +16,13 @@ if ( ! function_exists( 'sensei_quiz_grade_notices_map' ) ) {
 	/**
 	 * Notices map to echo notices HTML.
 	 *
-	 * @param array $notice
+	 * @param array $notice Quiz grade notice.
 	 */
 	function sensei_quiz_grade_notices_map( $notice ) {
 		?>
 		<div class='sensei-course-theme__frame sensei-lms-notice sensei-course-theme-quiz-graded-notice'>
 			<?php if ( isset( $notice['title'] ) && ! empty( $notice['title'] ) ) { ?>
-			<div class='sensei-course-theme-quiz-graded-notice__title'><?php echo wp_kses_post( $notice['title'] ); ?></div>
+			<h2 class='sensei-course-theme-quiz-graded-notice__title'><?php echo wp_kses_post( $notice['title'] ); ?></h2>
 			<?php } ?>
 
 			<?php if ( isset( $notice['text'] ) && ! empty( $notice['text'] ) ) { ?>

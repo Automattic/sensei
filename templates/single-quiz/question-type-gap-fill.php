@@ -26,7 +26,17 @@ $sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei
 
 <p class="gapfill-answer">
 	<span class="gapfill-answer-pre">
-		<?php echo wp_kses_post( apply_filters( 'sensei_answer_text', esc_html( $question_data['gapfill_pre'] ) ) ); ?>
+		<?php
+		/**
+		 * Filter user answer text.
+		 *
+		 * @hook sensei_answer_text
+		 *
+		 * @param {string} Answer text.
+		 * @return {string} Filtered answer text.
+		 */
+		echo wp_kses_post( apply_filters( 'sensei_answer_text', esc_html( $question_data['gapfill_pre'] ) ) );
+		?>
 		<?php if ( $sensei_is_quiz_view_only_mode ) { ?>
 			<span class="wp-block-sensei-lms-question-answers__answer">
 				<?php echo wp_kses_post( $question_data['user_answer_entry'] ); ?>
@@ -40,7 +50,17 @@ $sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei
 			/>
 		<?php } ?>
 		<span class="gapfill-answer-post">
-			<?php echo wp_kses_post( apply_filters( 'sensei_answer_text', esc_html( $question_data['gapfill_post'] ) ) ); ?>
+			<?php
+			/**
+			 * Filter user answer text.
+			 *
+			 * @hook sensei_answer_text
+			 *
+			 * @param {string} Answer text.
+			 * @return {string} Filtered answer text.
+			 */
+			echo wp_kses_post( apply_filters( 'sensei_answer_text', esc_html( $question_data['gapfill_post'] ) ) );
+			?>
 		</span>
 	</span>
 </p>

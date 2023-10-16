@@ -91,12 +91,12 @@ class Sensei_Home_Help_Provider {
 		/**
 		 * Filter to disable upsell to Sensei Pro in Sensei Home's action to create support tickets.
 		 *
-		 * @hook sensei_home_support_ticket_creation_upsell_show
 		 * @since 4.8.0
 		 *
-		 * @param {bool} $show_upsell True if upsell must be shown.
+		 * @hook sensei_home_support_ticket_creation_upsell_show
 		 *
-		 * @return {bool}
+		 * @param {bool} $show_upsell True if upsell must be shown.
+		 * @return {bool} Filtered value.
 		 */
 		if ( apply_filters( 'sensei_home_support_ticket_creation_upsell_show', true ) ) {
 			$extra_link = $this->create_extra_link( __( 'Upgrade to Sensei Pro', 'sensei-lms' ), 'https://senseilms.com/pricing/' );

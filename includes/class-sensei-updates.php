@@ -154,12 +154,12 @@ class Sensei_Updates {
 		/**
 		 * Filter to disable attempts at adding the comment indexes.
 		 *
-		 * @hook sensei_add_comment_indexes
 		 * @since 3.7.0
 		 *
-		 * @param {bool} $do_add_indexes True if indexes should be added to comment table.
+		 * @hook sensei_add_comment_indexes
 		 *
-		 * @return {bool}
+		 * @param {bool} $do_add_indexes True if indexes should be added to comment table.
+		 * @return {bool} Filtered value.
 		 */
 		if ( ! apply_filters( 'sensei_add_comment_indexes', true ) ) {
 			return;

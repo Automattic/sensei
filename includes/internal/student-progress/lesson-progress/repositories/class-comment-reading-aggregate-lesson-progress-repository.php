@@ -182,4 +182,16 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	public function count( int $course_id, int $user_id ): int {
 		return $this->comments_based_repository->count( $course_id, $user_id );
 	}
+
+	/**
+	 * Find lesson progress.
+	 *
+	 * @internal
+	 *
+	 * @param array $args The arguments.
+	 * @return Lesson_Progress_Interface[]
+	 */
+	public function find( array $args ): array {
+		return $this->comments_based_repository->find( $args );
+	}
 }

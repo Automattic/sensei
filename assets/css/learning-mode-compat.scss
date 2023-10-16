@@ -294,3 +294,17 @@ $breakpoint: 782px;
 		}
 	}
 }
+
+/* Quiz Notice */
+.sensei-course-theme-quiz-graded-notice {
+	&__title {
+		font-size: 24px;
+		font-weight: 700;
+		line-height: normal;
+	}
+
+	&__text {
+		font-size: 18px;
+		line-height: normal;
+	}
+}

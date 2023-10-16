@@ -145,12 +145,13 @@ class Sensei_Course_Theme_Option {
 		/**
 		 * Filters if the theme should be overriden for learning mode.
 		 *
-		 * @since 4.0.2
-		 * @hook  sensei_course_learning_mode_theme_override_enabled
 		 * @deprecated 4.7.0
 		 *
-		 * @param {bool} $enabled True if the learning mode theme override is enabled.
+		 * @since 4.0.2
 		 *
+		 * @hook  sensei_course_learning_mode_theme_override_enabled
+		 *
+		 * @param {bool} $enabled True if the learning mode theme override is enabled.
 		 * @return {bool} The modified learning mode theme override setting.
 		 */
 		return (bool) apply_filters( 'sensei_course_learning_mode_theme_override_enabled', false );
@@ -188,11 +189,11 @@ class Sensei_Course_Theme_Option {
 		 * Filters if a course has learning mode enabled.
 		 *
 		 * @since 4.0.0
+		 *
 		 * @hook  sensei_course_learning_mode_enabled
 		 *
 		 * @param {bool} $enabled    True if the learning mode is enabled for the course or globally.
 		 * @param {int}  $course_id  The id of the course.
-		 *
 		 * @return {bool} The modified learning mode setting.
 		 */
 		return (bool) apply_filters( 'sensei_course_learning_mode_enabled', $enabled, $course_id );

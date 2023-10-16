@@ -70,7 +70,17 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 		}
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
 		add_filter( 'posts_clauses', [ $this, 'add_last_activity_to_lessons_query' ] );
+
 		// Using WP_Query as get_posts() doesn't support 'found_posts'.
+
+		/*
+		 * Filter the arguments for the query used to fetch the lessons for the overview report.
+		 *
+		 * @hook sensei_analysis_overview_filter_lessons
+		 *
+		 * @param {array} $lessons_args Arguments for the query.
+		 * @return {array} Filtered arguments for the query.
+		 */
 		$lessons_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args ) );
 		remove_filter( 'posts_clauses', [ $this, 'add_last_activity_to_lessons_query' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
