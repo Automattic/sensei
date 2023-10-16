@@ -2,7 +2,7 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Answer\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Answer\Repositories\Aggregate_Answer_Repository;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comment_Reading_Aggregate_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 
 /**
@@ -25,7 +25,7 @@ class Answer_Repository_Factory_Test extends \WP_UnitTestCase {
 		$actual = $factory->create();
 
 		/* Assert. */
-		self::assertInstanceOf( Aggregate_Answer_Repository::class, $actual );
+		self::assertInstanceOf( Comment_Reading_Aggregate_Answer_Repository::class, $actual );
 	}
 
 	public function providerCreate_WhenCalled_ReturnsAnswerRepository(): array {

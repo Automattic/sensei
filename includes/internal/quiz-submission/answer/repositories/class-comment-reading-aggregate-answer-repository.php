@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Aggregate_Answer_Repository class.
+ * File containing the Comment_Reading_Aggregate_Answer_Repository class.
  *
  * @package sensei
  */
@@ -16,13 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Aggregate_Answer_Repository.
+ * Class Comment_Reading_Aggregate_Answer_Repository.
  *
  * @internal
  *
  * @since 4.16.1
  */
-class Aggregate_Answer_Repository implements Answer_Repository_Interface {
+class Comment_Reading_Aggregate_Answer_Repository implements Answer_Repository_Interface {
 	/**
 	 * Comments based quiz answer repository implementation.
 	 *

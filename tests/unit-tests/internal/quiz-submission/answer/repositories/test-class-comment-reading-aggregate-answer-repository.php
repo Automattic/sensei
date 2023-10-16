@@ -2,7 +2,7 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Submission\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Answer\Repositories\Aggregate_Answer_Repository;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comment_Reading_Aggregate_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
@@ -10,11 +10,11 @@ use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
 /**
- * Class Aggregate_Answer_Repository_Test
+ * Class Comment_Reading_Aggregate_Answer_Repository_Test
  *
- * @covers \Sensei\Internal\Quiz_Submission\Answer\Repositories\Aggregate_Answer_Repository
+ * @covers \Sensei\Internal\Quiz_Submission\Answer\Repositories\Comment_Reading_Aggregate_Answer_Repository
  */
-class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
+class Comment_Reading_Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 	public function testCreate_UseTablesOn_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$submission = $this->createMock( Comments_Based_Submission::class );
@@ -32,7 +32,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 			->with( 1, 2, 3.0 )
 			->willReturn( $tables_based_submission );
 
-		$repository = new Aggregate_Answer_Repository(
+		$repository = new Comment_Reading_Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
 			$tables_based_submission_repository,
@@ -54,7 +54,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository                         = new Aggregate_Answer_Repository(
+		$repository                         = new Comment_Reading_Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
 			$tables_based_submission_repository,
@@ -77,7 +77,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$tables_based   = $this->createMock( Tables_Based_Answer_Repository::class );
 
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository                         = new Aggregate_Answer_Repository(
+		$repository                         = new Comment_Reading_Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
 			$tables_based_submission_repository,
@@ -98,7 +98,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository                         = new Aggregate_Answer_Repository(
+		$repository                         = new Comment_Reading_Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
 			$tables_based_submission_repository,
@@ -119,7 +119,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository                         = new Aggregate_Answer_Repository(
+		$repository                         = new Comment_Reading_Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
 			$tables_based_submission_repository,
@@ -141,7 +141,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository                         = new Aggregate_Answer_Repository(
+		$repository                         = new Comment_Reading_Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
 			$tables_based_submission_repository,
@@ -173,7 +173,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 			->with( 1, 2.0 )
 			->willReturn( $tables_based_submission );
 
-		$repository = new Aggregate_Answer_Repository(
+		$repository = new Comment_Reading_Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
 			$tables_based_submission_repository,
@@ -202,7 +202,7 @@ class Aggregate_Answer_Repository_Test extends \WP_UnitTestCase {
 		$comments_based                     = $this->createMock( Comments_Based_Answer_Repository::class );
 		$tables_based                       = $this->createMock( Tables_Based_Answer_Repository::class );
 		$tables_based_submission_repository = $this->createMock( Tables_Based_Submission_Repository::class );
-		$repository                         = new Aggregate_Answer_Repository(
+		$repository                         = new Comment_Reading_Aggregate_Answer_Repository(
 			$comments_based,
 			$tables_based,
 			$tables_based_submission_repository,

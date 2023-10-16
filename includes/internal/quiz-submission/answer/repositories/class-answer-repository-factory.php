@@ -49,7 +49,7 @@ class Answer_Repository_Factory {
 	public function create(): Answer_Repository_Interface {
 		global $wpdb;
 
-		return new Aggregate_Answer_Repository(
+		return new Comment_Reading_Aggregate_Answer_Repository(
 			new Comments_Based_Answer_Repository(),
 			new Tables_Based_Answer_Repository( $wpdb ),
 			new Tables_Based_Submission_Repository( $wpdb ),
