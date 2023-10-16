@@ -1,0 +1,4 @@
+Significance: minor
+Type: removed
+
+Eliminate usage of temporary Course theme hook
