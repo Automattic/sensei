@@ -140,4 +140,16 @@ class Table_Reading_Aggregate_Course_Progress_Repository implements Course_Progr
 		$this->tables_based_repository->delete_for_user( $user_id );
 		$this->comments_based_repository->delete_for_user( $user_id );
 	}
+
+	/**
+	 * Find course progress.
+	 *
+	 * @internal
+	 *
+	 * @param array $args The arguments.
+	 * @return Course_Progress_Interface[] The course progress.
+	 */
+	public function find( array $args ): array {
+		return $this->tables_based_repository->find( $args );
+	}
 }

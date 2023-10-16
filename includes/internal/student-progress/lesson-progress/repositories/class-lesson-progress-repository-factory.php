@@ -70,4 +70,15 @@ class Lesson_Progress_Repository_Factory {
 			new Tables_Based_Lesson_Progress_Repository( $wpdb )
 		);
 	}
+
+	/**
+	 * Creates a comments-based lesson progress repository.
+	 *
+	 * @internal
+	 *
+	 * @return Comments_Based_Lesson_Progress_Repository The repository.
+	 */
+	public function create_comments_based_repository(): Comments_Based_Lesson_Progress_Repository {
+		return new Comments_Based_Lesson_Progress_Repository();
+	}
 }

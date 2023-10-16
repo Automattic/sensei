@@ -104,13 +104,13 @@ class Email_Sender {
 		 * Filter the email replacements.
 		 *
 		 * @since 4.12.0
+		 *
 		 * @hook sensei_email_replacements
 		 *
-		 * @param {Array}        $replacements The email replacements.
+		 * @param {array}        $replacements The email replacements.
 		 * @param {string}       $email_name   The email name.
 		 * @param {WP_Post}      $email_post   The email post.
 		 * @param {Email_Sender} $email_sender The email sender class instance.
-		 *
 		 * @return {Array} The email replacements.
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );

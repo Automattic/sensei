@@ -273,11 +273,25 @@ class Sensei_Main {
 	public $sensei_wpml;
 
 	/**
+	 * Course progress repository factory.
+	 *
+	 * @var Course_Progress_Repository_Factory
+	 */
+	public $course_progress_repository_factory;
+
+	/**
 	 * Course progress repository.
 	 *
 	 * @var Course_Progress_Repository_Interface
 	 */
 	public $course_progress_repository;
+
+	/**
+	 * Lesson progress repository factory.
+	 *
+	 * @var Lesson_Progress_Repository_Factory
+	 */
+	public $lesson_progress_repository_factory;
 
 	/**
 	 * Lesson progress repository.
@@ -347,8 +361,16 @@ class Sensei_Main {
 		$this->main_plugin_file_name = $main_plugin_file_name;
 		$this->plugin_url            = trailingslashit( plugins_url( '', $this->main_plugin_file_name ) );
 		$this->plugin_path           = trailingslashit( dirname( $this->main_plugin_file_name ) );
-		$this->template_url          = apply_filters( 'sensei_template_url', 'sensei/' );
-		$this->version               = isset( $args['version'] ) ? $args['version'] : null;
+		/**
+		 * Filter the template url.
+		 *
+		 * @hook sensei_template_url
+		 *
+		 * @param {string} $template_url The template url.
+		 * @return {string} Filtered template url.
+		 */
+		$this->template_url = apply_filters( 'sensei_template_url', 'sensei/' );
+		$this->version      = isset( $args['version'] ) ? $args['version'] : null;
 
 		// Only set the install version if it is included in alloptions. This prevents a query on every page load.
 		$alloptions            = wp_load_alloptions();
@@ -613,11 +635,13 @@ class Sensei_Main {
 		 * @param {bool} $read_from_tables Whether to read student progress from tables. Default false.
 		 * @return {bool} Whether to read student progress from tables.
 		 */
-		$read_from_tables                       = apply_filters( 'sensei_student_progress_read_from_tables', false );
-		$this->course_progress_repository       = ( new Course_Progress_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
-		$this->lesson_progress_repository       = ( new Lesson_Progress_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
-		$this->quiz_progress_repository_factory = new Quiz_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
-		$this->quiz_progress_repository         = $this->quiz_progress_repository_factory->create();
+		$read_from_tables                         = apply_filters( 'sensei_student_progress_read_from_tables', false );
+		$this->course_progress_repository_factory = new Course_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
+		$this->course_progress_repository         = $this->course_progress_repository_factory->create();
+		$this->lesson_progress_repository_factory = new Lesson_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
+		$this->lesson_progress_repository         = $this->lesson_progress_repository_factory->create();
+		$this->quiz_progress_repository_factory   = new Quiz_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
+		$this->quiz_progress_repository           = $this->quiz_progress_repository_factory->create();
 
 		if ( class_exists( 'ActionScheduler_Versions' ) ) {
 			$this->action_scheduler = new Action_Scheduler();
@@ -658,11 +682,11 @@ class Sensei_Main {
 		/**
 		 * Integrate MailPoet by adding lists for courses and groups.
 		 *
-		 * @hook  sensei_email_mailpoet_feature
 		 * @since 4.13.0
 		 *
-		 * @param {bool} $enable Enable feature. Default true.
+		 * @hook  sensei_email_mailpoet_feature
 		 *
+		 * @param {bool} $enable Enable feature. Default true.
 		 * @return {bool} Whether to enable feature.
 		 */
 		if ( apply_filters( 'sensei_email_mailpoet_feature', true ) ) {
@@ -1032,6 +1056,17 @@ class Sensei_Main {
 	 * @return int
 	 */
 	public function get_page_id( $page ) {
+
+		/**
+		 * Filter the page ID.
+		 *
+		 * {page} is the page name.
+		 *
+		 * @hook sensei_get_{page}_page_id
+		 *
+		 * @param {int} $page The page ID.
+		 * @return {int} Filtered page ID.
+		 */
 		$page = apply_filters( 'sensei_get_' . esc_attr( $page ) . '_page_id', get_option( 'sensei_' . esc_attr( $page ) . '_page_id' ) );
 		return ( $page ) ? $page : -1;
 	}
@@ -1141,8 +1176,11 @@ class Sensei_Main {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool $includes_sensei_comments Whether the count already includes Sensei's comments.
-		 * @param int  $post_id                  Post ID.
+		 * @hook sensei_comment_counts_include_sensei_comments
+		 *
+		 * @param {bool} $includes_sensei_comments Whether the count already includes Sensei's comments.
+		 * @param {int}  $post_id                  Post ID.
+		 * @return {bool} Whether the count already includes Sensei's comments.
 		 */
 		return apply_filters( 'sensei_comment_counts_include_sensei_comments', $includes_sensei_comments, $post_id );
 	}
@@ -1282,6 +1320,16 @@ class Sensei_Main {
 
 		// Only return sizes we define in settings.
 		if ( ! in_array( $image_size, array( 'course_archive_image', 'course_single_image', 'lesson_archive_image', 'lesson_single_image' ), true ) ) {
+			/**
+			 * Filter the image size.
+			 *
+			 * {image_size} is NOT one of: course_archive_image, course_single_image, lesson_archive_image, lesson_single_image.
+			 *
+			 * @hook sensei_get_image_size_{image_size}
+			 *
+			 * @param {string} $image_size Image Size.
+			 * @return {string} Filtered image size.
+			 */
 			return apply_filters( 'sensei_get_image_size_' . $image_size, '' );
 		}
 
@@ -1307,6 +1355,16 @@ class Sensei_Main {
 		$size['height'] = isset( $size['height'] ) ? $size['height'] : '100';
 		$size['crop']   = isset( $size['crop'] ) ? $size['crop'] : 0;
 
+		/**
+		 * Filter the image size.
+		 *
+		 * {image_size} is one of: course_archive_image, course_single_image, lesson_archive_image, lesson_single_image.
+		 *
+		 * @hook sensei_get_image_size_{image_size}
+		 *
+		 * @param {string} $image_size Image Size.
+		 * @return {string} Filtered image size.
+		*/
 		return apply_filters( 'sensei_get_image_size_' . $image_size, $size );
 	}
 

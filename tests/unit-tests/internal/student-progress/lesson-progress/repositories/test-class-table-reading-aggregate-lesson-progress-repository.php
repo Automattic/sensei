@@ -356,4 +356,43 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTe
 		/* Assert. */
 		$this->assertSame( 3, $actual );
 	}
+
+	public function testFind_Always_CallsTablesBasedRepository(): void {
+		/* Arrange. */
+		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
+
+		$repository = new Table_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
+
+		$args = array(
+			'a' => 1,
+			'b' => 2,
+		);
+
+		/* Expect & Act. */
+		$tables_based
+			->expects( $this->once() )
+			->method( 'find' )
+			->with( $args );
+		$repository->find( $args );
+	}
+
+	public function testFind_Never_CallsCommentsBasedRepository(): void {
+		/* Arrange. */
+		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
+
+		$repository = new Table_Reading_Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based );
+
+		$args = array(
+			'a' => 1,
+			'b' => 2,
+		);
+
+		/* Expect & Act. */
+		$comments_based
+			->expects( $this->never() )
+			->method( 'find' );
+		$repository->find( $args );
+	}
 }

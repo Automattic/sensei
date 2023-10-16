@@ -296,8 +296,9 @@ class Sensei_Lesson {
 		/**
 		 * Filters the Content Drip promo metabox toggle.
 		 *
-		 * @hook  sensei_lesson_content_drip_hide
 		 * @since 4.1.0
+		 *
+		 * @hook  sensei_lesson_content_drip_hide
 		 *
 		 * @param  {bool} $hide_content_drip Whether to hide the Content Drip promo metabox.
 		 * @return {bool} Whether to hide the Content Drip promo metabox.
@@ -1870,6 +1871,7 @@ class Sensei_Lesson {
 		 * Filter the quiz panel add html.
 		 *
 		 * @since 1.9.7
+		 *
 		 * @hook sensei_quiz_panel_add
 		 *
 		 * @param {string} $html    HTML for adding a question.
@@ -1957,6 +1959,7 @@ class Sensei_Lesson {
 		 * Filter existing questions query
 		 *
 		 * @since 1.8.0
+		 *
 		 * @hook sensei_existing_questions_query_results
 		 *
 		 * @param {object} $qry Query object containing an array of existing questions.
@@ -2663,10 +2666,10 @@ class Sensei_Lesson {
 		 * Enqueue scripts for the quiz question AI upsell if the the feature is not available.
 		 *
 		 * @since 4.14.0
+		 *
 		 * @hook sensei_quiz_question_ai_upsell_scripts
 		 *
 		 * @param {bool} $enqueue_scripts Whether to enqueue the scripts. Default false.
-		 *
 		 * @return {bool} Whether to enqueue the scripts.
 		 */
 		if ( ! apply_filters( 'sensei_ai_quiz_generation_available', false ) ) {
@@ -3639,9 +3642,14 @@ class Sensei_Lesson {
 	 * @return bool Whether quiz is submitted.
 	 */
 	public function is_quiz_submitted( int $lesson_id, int $user_id ) : bool {
-		$user_lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			return false;
+		}
 
-		return ! empty( $user_lesson_status ) && in_array( $user_lesson_status->comment_approved, [ 'ungraded', 'passed', 'failed', 'graded' ], true );
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+
+		return ! empty( $quiz_progress ) && in_array( $quiz_progress->get_status(), [ 'ungraded', 'passed', 'failed', 'graded' ], true );
 	}
 
 
@@ -3758,10 +3766,10 @@ class Sensei_Lesson {
 						 * this filter.
 						 *
 						 * @since 3.10.0
+						 *
 						 * @hook sensei_filter_category_questions_by_author
 						 *
 						 * @param {array}  $quiz_id The quiz id.
-						 *
 						 * @return {array} Whether questions should be filtered by author.
 						 */
 						$should_filter = apply_filters( 'sensei_filter_category_questions_by_author', true, $quiz_id );
@@ -3832,6 +3840,7 @@ class Sensei_Lesson {
 		 * Filter the questions returned by Sensei_Lesson::lessons_quiz_questions.
 		 *
 		 * @since 1.8.0
+		 *
 		 * @hook sensei_lesson_quiz_questions
 		 *
 		 * @param {array}  $questions Questions.
@@ -4473,6 +4482,7 @@ class Sensei_Lesson {
 		 * Filter whether to show lesson numbers next to the lesson.
 		 *
 		 * @since 1.0
+		 *
 		 * @hook sensei_show_lesson_numbers
 		 *
 		 * @param {bool} $show_lesson_numbers Whether to show lesson numbers. Default false.
@@ -4500,8 +4510,8 @@ class Sensei_Lesson {
 
 				<?php
 
-				$meta_html          = '';
-				$user_lesson_status = Sensei_Utils::user_lesson_status( get_the_ID(), get_current_user_id() );
+				$meta_html    = '';
+				$has_progress = Sensei()->lesson_progress_repository->has( $lesson_id, get_current_user_id() );
 
 				$lesson_length = get_post_meta( $lesson_id, '_lesson_length', true );
 				if ( '' != $lesson_length ) {
@@ -4525,7 +4535,7 @@ class Sensei_Lesson {
 
 					$meta_html .= '<span class="lesson-status complete">' . esc_html__( 'Complete', 'sensei-lms' ) . '</span>';
 
-				} elseif ( $user_lesson_status ) {
+				} elseif ( $has_progress ) {
 
 					$meta_html .= '<span class="lesson-status in-progress">' . esc_html__( 'In Progress', 'sensei-lms' ) . '</span>';
 
@@ -4612,6 +4622,7 @@ class Sensei_Lesson {
 		 * Filter the lesson prerequisite.
 		 *
 		 * @since 1.0
+		 *
 		 * @hook sensei_lesson_prerequisite
 		 *
 		 * @param {string|bool} $prerequisite_lesson_id Prerequisite lesson ID. False if prerequisite lesson ID is
@@ -4742,9 +4753,14 @@ class Sensei_Lesson {
 	 */
 	public static function course_signup_link() {
 
-		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
+		$lesson_id = get_the_ID();
+		if ( ! $lesson_id ) {
+			return;
+		}
 
-		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( get_the_ID() ) ) {
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 			return;
 		}
 
@@ -4754,6 +4770,7 @@ class Sensei_Lesson {
 		 * Filter whether to show the course sign up notice on the lesson page.
 		 *
 		 * @since 2.0.0
+		 *
 		 * @hook sensei_lesson_show_course_signup_notice
 		 *
 		 * @param {bool}   $show_course_signup_notice True if we should show the signup notice to the user.
@@ -4772,6 +4789,7 @@ class Sensei_Lesson {
 			 * Filter the course sign up notice message on the lesson page.
 			 *
 			 * @since 2.0.0
+			 *
 			 * @hook sensei_lesson_course_signup_notice_message
 			 *
 			 * @param {string} $message_default Message to show user.
@@ -4785,6 +4803,7 @@ class Sensei_Lesson {
 			 * Filter the course sign up notice message alert level on the lesson page.
 			 *
 			 * @since 2.0.0
+			 *
 			 * @hook sensei_lesson_course_signup_notice_level
 			 *
 			 * @param {string} $notice_level Level to use for the sign up notice (alert, tick, download, info).
@@ -4831,8 +4850,12 @@ class Sensei_Lesson {
 	 * @since 1.9.0
 	 */
 	public static function prerequisite_complete_message() {
+		$lesson_id = get_the_ID();
+		if ( false === $lesson_id ) {
+			return;
+		}
 
-		$lesson_prerequisite = self::find_first_prerequisite_lesson( get_the_ID(), get_current_user_id() );
+		$lesson_prerequisite = self::find_first_prerequisite_lesson( $lesson_id, get_current_user_id() );
 
 		if ( $lesson_prerequisite > 0 ) {
 
@@ -4903,7 +4926,15 @@ class Sensei_Lesson {
 			&& Sensei_Utils::is_preview_lesson( $post->ID )
 			&& ! Sensei_Course::is_user_enrolled( $course_id, $current_user->ID );
 
-		/** This filter is documented in includes/class-sensei-messages.php */
+		/**
+		 * Filter Sensei single title
+		 *
+		 * @hook sensei_single_title
+		 *
+		 * @param {string} $title     The title.
+		 * @param {string} $post_type The post type.
+		 * @return {string} Filtered title.
+		 */
 		$title = apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type );
 
 		if ( ! $title ) {
@@ -5049,7 +5080,7 @@ class Sensei_Lesson {
 	 */
 	public static function user_lesson_quiz_status_message( $lesson_id = 0, $user_id = 0 ) {
 
-		$lesson_id                 = empty( $lesson_id ) ? get_the_ID() : $lesson_id;
+		$lesson_id                 = empty( $lesson_id ) ? (int) get_the_ID() : $lesson_id;
 		$user_id                   = empty( $user_id ) ? get_current_user_id() : $user_id;
 		$lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
 		$quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );

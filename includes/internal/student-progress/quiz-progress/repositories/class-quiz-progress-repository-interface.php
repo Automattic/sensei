@@ -89,4 +89,14 @@ interface Quiz_Progress_Repository_Interface {
 	 * @param int $user_id User identifier.
 	 */
 	public function delete_for_user( int $user_id ): void;
+
+	/**
+	 * Find course progress.
+	 *
+	 * @internal
+	 *
+	 * @param array $args The arguments.
+	 * @return Quiz_Progress_Interface[] The course progress.
+	 */
+	public function find( array $args ): array;
 }

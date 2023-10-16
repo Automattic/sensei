@@ -40,9 +40,10 @@ class Sensei_Course_List_Block_Patterns {
 			 *
 			 * @since 4.10.0
 			 *
+			 * @hook sensei_course_list_block_patterns_extra_links
+			 *
 			 * @param {array}  $course_list_extra_links The extra links.
 			 * @param {string} $pattern                 The pattern name.
-			 *
 			 * @return {array} The extra links.
 			 */
 			$course_list_extra_links[ $pattern ] = apply_filters( 'sensei_course_list_block_patterns_extra_links', [], $pattern );

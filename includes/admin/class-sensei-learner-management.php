@@ -395,6 +395,14 @@ class Sensei_Learner_Management {
 			<h2 class="sensei-students__subheading">
 				<?php
 				echo wp_kses(
+					/**
+					 * Filters the title of the Learners page.
+					 *
+					 * @hook sensei_learners_nav_title
+					 *
+					 * @param {string} $title Title of the Learners page.
+					 * @return {string} Filtered title of the Learners page.
+					 */
 					apply_filters( 'sensei_learners_nav_title', $title ),
 					array(
 						'span' => array(
@@ -512,10 +520,11 @@ class Sensei_Learner_Management {
 		 *
 		 * This filter should return false if there was no update in the learner row.
 		 *
+		 * @hook sensei_learners_learner_updated
+		 *
 		 * @param {bool} $updated    A flag indicating if there was an update in the learner row.
 		 * @param {int}  $post_id    Lesson or course id.
 		 * @param {int}  $comment_id The comment id which tracks the progress of the learner.
-		 *
 		 * @return {bool} False if there were no updates.
 		 */
 		$updated = apply_filters( 'sensei_learners_learner_updated', $updated, $post_id, $comment_id );
@@ -830,6 +839,14 @@ class Sensei_Learner_Management {
 			$query_args['message'] .= '_multiple';
 		}
 
+		/**
+		 * Filter the redirect URL after adding a learner.
+		 *
+		 * @hook sensei_learners_add_learner_redirect_url
+		 *
+		 * @param {string} $redirect_url URL to redirect to after adding a learner.
+		 * @return {string} Filtered URL to redirect to after adding a learner.
+		 */
 		$redirect_url = apply_filters( 'sensei_learners_add_learner_redirect_url', add_query_arg( $query_args, admin_url( 'admin.php' ) ) );
 
 		wp_safe_redirect( esc_url_raw( $redirect_url ) );

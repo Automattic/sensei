@@ -272,4 +272,96 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			throw new \InvalidArgumentException( "Expected Tables_Based_Quiz_Progress, got {$actual_type}." );
 		}
 	}
+
+	/**
+	 * Find quiz progress.
+	 *
+	 * @internal
+	 *
+	 * @param array $args The arguments.
+	 * @return Quiz_Progress_Interface[]
+	 */
+	public function find( array $args ): array {
+		$quiz_id = $args['quiz_id'] ?? null;
+		$user_id = $args['user_id'] ?? null;
+		$status  = $args['status'] ?? null;
+		$limit   = $args['number'] ?? 100;
+		$offset  = $args['offset'] ?? 0;
+
+		$where_clause = array( 'type = %s' );
+		$query_params = array( 'quiz' );
+		if ( ! empty( $quiz_id ) ) {
+			$query_params   = array_merge( $query_params, (array) $quiz_id );
+			$where_clause[] = 'post_id IN (' . $this->get_placeholders( (array) $quiz_id ) . ')';
+		}
+
+		if ( ! empty( $user_id ) ) {
+			$query_params[] = (int) $user_id;
+			$where_clause[] = 'user_id = %d';
+		}
+
+		if ( ! empty( $status ) ) {
+			$query_params   = array_merge( $query_params, (array) $status );
+			$where_clause[] = 'status IN (' . $this->get_placeholders( (array) $status ) . ')';
+		}
+
+		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$query_string = 'SELECT * FROM ' . $table_name . ' ';
+		if ( count( $where_clause ) > 0 ) {
+			$query_string .= 'WHERE ' . implode( ' AND ', $where_clause ) . ' ';
+		}
+
+		$query_string  .= 'ORDER BY id ASC ';
+		$query_string  .= 'LIMIT %d OFFSET %d';
+		$query_params[] = $limit;
+		$query_params[] = $offset;
+
+		$query = $this->wpdb->prepare(
+			$query_string, // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			...$query_params
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$rows = $this->wpdb->get_results( $query );
+		if ( ! $rows ) {
+			return array();
+		}
+
+		$timezone = new DateTimeZone( 'UTC' );
+
+		$course_progresses = array();
+		foreach ( $rows as $row ) {
+			$course_progresses[] = new Tables_Based_Quiz_Progress(
+				(int) $row->id,
+				(int) $row->post_id,
+				(int) $row->user_id,
+				$row->status,
+				$row->started_at ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
+				$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
+				new DateTimeImmutable( $row->created_at, $timezone ),
+				new DateTimeImmutable( $row->updated_at, $timezone )
+			);
+		}
+
+		return $course_progresses;
+	}
+
+	/**
+	 * Return a string of placeholders for the given values.
+	 *
+	 * @param array $values The values.
+	 * @return string The placeholders.
+	 */
+	private function get_placeholders( array $values ) {
+		if ( empty( $values ) ) {
+			return '';
+		}
+
+		$placeholder  = is_numeric( $values[0] ) ? '%d' : '%s';
+		$placeholders = array_fill( 0, count( $values ), $placeholder );
+
+		return implode( ', ', $placeholders );
+	}
 }

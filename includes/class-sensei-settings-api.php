@@ -493,9 +493,10 @@ class Sensei_Settings_API {
 		 *
 		 * @since 4.1.0
 		 *
-		 * @hook  sensei_settings_woocommerce_hide  Hook used to hide woocommerce promo banner and section.
+		 * @hook sensei_settings_woocommerce_hide  Hook used to hide woocommerce promo banner and section.
 		 *
-		 * @return {boolean}                        Returns a boolean value that defines if the woocommerce promo banner should be hidden.
+		 * @param {bool} $hide_woocommerce_settings Defines if the woocommerce promo banner should be hidden.
+		 * @return {bool} Returns a boolean value that defines if the woocommerce promo banner should be hidden.
 		 */
 		$hide_woocommerce_settings = apply_filters( 'sensei_settings_woocommerce_hide', false );
 		if ( 'woocommerce-settings' === $section_id && ! $hide_woocommerce_settings ) {
@@ -509,7 +510,8 @@ class Sensei_Settings_API {
 		 *
 		 * @hook  sensei_settings_content_drip_hide  Hook used to hide content drip promo banner and section.
 		 *
-		 * @return {boolean}                        Returns a boolean value that defines if the content drip promo banner should be hidden.
+		 * @param {bool} $hide_content_drip_settings Defines if the content drip promo banner should be hidden.
+		 * @return {bool} Returns a boolean value that defines if the content drip promo banner should be hidden.
 		 */
 		$hide_content_drip_settings = apply_filters( 'sensei_settings_content_drip_hide', false );
 		if ( 'sensei-content-drip-settings' === $section_id && ! $hide_content_drip_settings ) {

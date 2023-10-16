@@ -118,11 +118,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 		/**
 		 * Filters content for the settings page.
 		 *
-		 * @hook  sensei_settings_content
 		 * @since 4.12.0
 		 *
-		 * @param {string} $tab_name The tab slug.
+		 * @hook  sensei_settings_content
 		 *
+		 * @param {string} $tab_name The tab slug.
 		 * @return {string} Filtered tab content.
 		 */
 		$content = apply_filters( 'sensei_settings_content', $tab_name );
@@ -233,11 +233,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 		/**
 		 * Filters the woocommerce promo settings section.
 		 *
+		 * Hook used to hide woocommerce promo banner and section.
+
 		 * @since 4.1.0
 		 *
-		 * @hook  sensei_settings_woocommerce_hide  Hook used to hide woocommerce promo banner and section.
+		 * @hook sensei_settings_woocommerce_hide
 		 *
-		 * @return {boolean}                        Returns a boolean value that defines if the woocommerce promo banner should be hidden.
+		 * @param {bool} $hide_woocommerce_settings  Boolean value that defines if the woocommerce promo banner should be hidden.
+		 * @return {bool} Filtered boolean value that defines if the woocommerce promo banner should be hidden.
 		 */
 		$hide_woocommerce_settings = apply_filters( 'sensei_settings_woocommerce_hide', false );
 		if ( ! $hide_woocommerce_settings ) {
@@ -250,11 +253,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 		/**
 		 * Filters the content drip promo settings section.
 		 *
+		 * Hook used to hide content drip promo banner and section.
+		 *
 		 * @since 4.1.0
 		 *
-		 * @hook  sensei_settings_content_drip_hide  Hook used to hide content drip promo banner and section.
+		 * @hook sensei_settings_content_drip_hide
 		 *
-		 * @return {boolean}                        Returns a boolean value that defines if the content drip promo banner should be hidden.
+		 * @param {bool} $hide_content_drip_settings  Boolean value that defines if the content drip promo banner should be hidden.
+		 * @return {bool} Filtered boolean value that defines if the content drip promo banner should be hidden.
 		 */
 		$hide_content_drip_settings = apply_filters( 'sensei_settings_content_drip_hide', false );
 		if ( ! $hide_content_drip_settings ) {
@@ -264,6 +270,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 			);
 		}
 
+		/**
+		 * Filters settings tabs.
+		 *
+		 * @hook sensei_settings_tabs
+		 *
+		 * @param {array} $sections  Array of settings sections.
+		 * @return {array} Filtered array of settings sections.
+		 */
 		$this->sections = apply_filters( 'sensei_settings_tabs', $sections );
 	}
 
@@ -631,6 +645,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		// Learner Profile settings
+		/**
+		 * Filters the learner profile URL base.
+		 *
+		 * @hook sensei_learner_profiles_url_base
+		 *
+		 * @param {string} $profile_url_base  The profile URL base, default is 'learner'.
+		 * @return {string} Filtered profile URL base.
+		 */
 		$profile_url_base    = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'sensei-lms' ) );
 		$profile_url_example = trailingslashit( get_home_url() ) . $profile_url_base . '/%username%';
 
@@ -813,6 +835,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'required'    => 1,
 		);
 
+		/**
+		 * Filters settings fields.
+		 *
+		 * @hook sensei_settings_fields
+		 *
+		 * @param {array} $fields The array of fields.
+		 * @return {array} Filtered array of fields.
+		 */
 		$this->fields = apply_filters( 'sensei_settings_fields', $fields );
 
 	}

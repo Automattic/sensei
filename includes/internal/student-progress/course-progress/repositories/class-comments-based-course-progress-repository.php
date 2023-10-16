@@ -11,6 +11,7 @@ use DateTime;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei_Utils;
+use WP_Comment;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -24,6 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.7.2
  */
 class Comments_Based_Course_Progress_Repository implements Course_Progress_Repository_Interface {
+
 	/**
 	 * Creates a new course progress.
 	 *
@@ -82,7 +84,21 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			$comment = reset( $comment );
 		}
 
-		$meta_start = get_comment_meta( $comment->comment_ID, 'start', true );
+		if ( ! $comment instanceof WP_Comment ) {
+			return null;
+		}
+
+		return $this->create_progress_from_comment( $comment );
+	}
+
+	/**
+	 * Create a course progress from a comment.
+	 *
+	 * @param WP_Comment $comment The comment.
+	 * @return Comments_Based_Course_Progress The course progress.
+	 */
+	private function create_progress_from_comment( WP_Comment $comment ): Comments_Based_Course_Progress {
+		$meta_start = get_comment_meta( (int) $comment->comment_ID, 'start', true );
 		$started_at = $meta_start ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
 
 		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
@@ -92,7 +108,16 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			$completed_at = null;
 		}
 
-		return new Comments_Based_Course_Progress( (int) $comment->comment_ID, $course_id, $user_id, $comment->comment_approved, $started_at, $completed_at, $comment_date, $comment_date );
+		return new Comments_Based_Course_Progress(
+			(int) $comment->comment_ID,
+			(int) $comment->comment_post_ID,
+			(int) $comment->user_id,
+			$comment->comment_approved,
+			$started_at,
+			$completed_at,
+			$comment_date,
+			$comment_date
+		);
 	}
 
 	/**
@@ -235,5 +260,92 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			$actual_type = get_class( $course_progress );
 			throw new \InvalidArgumentException( "Expected Comments_Based_Course_Progress, got {$actual_type}." );
 		}
+	}
+
+	/**
+	 * Find course progress.
+	 *
+	 * @internal
+	 *
+	 * @param array $args The arguments.
+	 * @return Course_Progress_Interface[] The course progress.
+	 * @throws \InvalidArgumentException If the order by argument is not supported.
+	 */
+	public function find( array $args ): array {
+		$comments_args = array(
+			'type'    => 'sensei_course_status',
+			'order'   => 'ASC',
+			'orderby' => 'comment_ID',
+		);
+
+		if ( isset( $args['course_id'] ) ) {
+			if ( is_array( $args['course_id'] ) ) {
+				$comments_args['post__in'] = $args['course_id'];
+			} else {
+				$comments_args['post_id'] = $args['course_id'];
+			}
+		}
+
+		if ( isset( $args['user_id'] ) ) {
+			$comments_args['user_id'] = $args['user_id'];
+		}
+
+		if ( isset( $args['status'] ) ) {
+			$comments_args['status'] = $args['status'];
+		}
+
+		if ( isset( $args['order'] ) ) {
+			$comments_args['order'] = $args['order'];
+		}
+
+		if ( isset( $args['orderby'] ) ) {
+			switch ( $args['orderby'] ) {
+				case 'started_at':
+					throw new \InvalidArgumentException( 'Ordering by started_at is not supported in comments-based version.' );
+				case 'completed_at':
+				case 'created_at':
+				case 'updated_at':
+					$comments_args['orderby'] = 'comment_date';
+					break;
+				case 'course_id':
+					$comments_args['orderby'] = 'comment_post_ID';
+					break;
+				case 'id':
+					$comments_args['orderby'] = 'comment_ID';
+					break;
+				case 'status':
+					$comments_args['orderby'] = 'comment_approved';
+					break;
+				default:
+					$comments_args['orderby'] = $args['orderby'];
+					break;
+			}
+		}
+
+		if ( isset( $args['order'] ) ) {
+			$comments_args['order'] = $args['order'];
+		}
+
+		if ( isset( $args['offset'] ) ) {
+			$comments_args['offset'] = $args['offset'];
+		}
+
+		if ( isset( $args['number'] ) ) {
+			$comments_args['number'] = $args['number'];
+		}
+
+		$comments = \Sensei_Utils::sensei_check_for_activity( $comments_args, true );
+		if ( empty( $comments ) ) {
+			return array();
+		}
+
+		$comments = is_array( $comments ) ? $comments : array( $comments );
+
+		$course_progresses = [];
+		foreach ( $comments as $comment ) {
+			$course_progresses[] = $this->create_progress_from_comment( $comment );
+		}
+
+		return $course_progresses;
 	}
 }

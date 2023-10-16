@@ -69,6 +69,15 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		if ( 'count_of_completions' === $course_args['orderby'] ) {
 			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 		}
+
+		/**
+		 * Filter the courses query arguments.
+		 *
+		 * @hook sensei_analysis_overview_filter_courses
+		 *
+		 * @param {array} $course_args Array of arguments for the courses query.
+		 * @return {array} Filtered array of arguments for the courses query.
+		 */
 		$course_args   = apply_filters( 'sensei_analysis_overview_filter_courses', $course_args );
 		$courses_query = new WP_Query( $course_args );
 

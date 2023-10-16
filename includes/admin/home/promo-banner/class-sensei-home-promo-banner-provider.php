@@ -22,12 +22,12 @@ class Sensei_Home_Promo_Banner_Provider {
 			/**
 			 * Filter to disable the promotional banner in Sensei Home.
 			 *
-			 * @hook sensei_home_promo_banner_show
 			 * @since 4.8.0
 			 *
-			 * @param {bool} $show_promo_banner True if promotional banner must be shown.
+			 * @hook sensei_home_promo_banner_show
 			 *
-			 * @return {bool}
+			 * @param {bool} $show_promo_banner True if promotional banner must be shown.
+			 * @return {bool} Filtered value.
 			 */
 			'is_visible' => apply_filters( 'sensei_home_promo_banner_show', true ),
 		];

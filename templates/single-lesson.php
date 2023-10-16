@@ -39,8 +39,26 @@ do_action( 'sensei_single_lesson_content_inside_before', get_the_ID() );
 
 if ( sensei_can_user_view_lesson() ) {
 
-	if ( 'top' === apply_filters( 'sensei_video_position', 'top', $post->ID ) ) {
+	/**
+	 * Filter video position.
+	 *
+	 * @hook sensei_video_position
+	 *
+	 * @param {string} $position The video position.
+	 * @param {int}    $post_id  The post ID.
+	 * @return {string} Filtered video position.
+	 */
+	$sensei_video_position = apply_filters( 'sensei_video_position', 'top', $post->ID );
 
+	if ( 'top' === $sensei_video_position ) {
+
+		/**
+		 * Fire action when a lesson video expected.
+		 *
+		 * @hook sensei_lesson_video
+		 *
+		 * @param {int} $post_id The post ID.
+		 */
 		do_action( 'sensei_lesson_video', $post->ID );
 
 	}

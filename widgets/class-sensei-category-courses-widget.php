@@ -154,7 +154,16 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 				'name'             => $this->get_field_name( 'course_category' ),
 				'class'            => 'widefat',
 			);
-			wp_dropdown_categories( apply_filters( 'widget_course_categories_dropdown_args', $cat_args ) );
+			/**
+			* Filter course categories dropdown arguments.
+			*
+			* @hook widget_course_categories_dropdown_args
+			*
+			* @param {array} $cat_args Course categories dropdown arguments.
+			* @return {array} Filtered course categories dropdown arguments.
+			*/
+			$cat_args = apply_filters( 'widget_course_categories_dropdown_args', $cat_args );
+			wp_dropdown_categories( $cat_args );
 			?>
 		</p>
 		<!-- Widget Limit: Text Input -->

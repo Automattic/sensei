@@ -28,6 +28,14 @@ class Sensei_Utils {
 	 */
 	public static function get_placeholder_image() {
 
+		/**
+		 * Filter the placeholder thumbnail image.
+		 *
+		 * @hook sensei_placeholder_thumbnail
+		 *
+		 * @param {string} $placeholder_image_url The URL to the placeholder thumbnail image.
+		 * @return {string} The URL to the placeholder thumbnail image.
+		 */
 		return esc_url( apply_filters( 'sensei_placeholder_thumbnail', Sensei()->plugin_url . 'assets/images/placeholder.png' ) );
 	}
 
@@ -102,7 +110,6 @@ class Sensei_Utils {
 		}
 	}
 
-
 	/**
 	 * Check for Sensei activity.
 	 *
@@ -132,8 +139,11 @@ class Sensei_Utils {
 		 *
 		 * It runs while getting the comments for the given request.
 		 *
-		 * @param int|array $comments
-		 * @param array $args Search arguments.
+		 * @hook sensei_check_for_activity
+		 *
+		 * @param {int|array} $comments Activity to filter.
+		 * @param {array}     $args     Search arguments.
+		 * @return {int|array} Filtered activity.
 		 */
 		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ), $args );
 
@@ -328,11 +338,11 @@ class Sensei_Utils {
 		 *
 		 * @since 1.7.4
 		 *
-		 * @param array  $file_upload_args {
-		 *      array of current values
+		 * @hook sensei_file_upload_args
 		 *
-		 *     @type string test_form set to false by default
-		 * }
+		 * @param    {array}   $file_upload_args               Array of current values.
+		 * @property {string} `$file_upload_args['test_form']` Set to false by default.
+		 * @return {array} Filtered data array.
 		 */
 		$file_upload_args = apply_filters( 'sensei_file_upload_args', array( 'test_form' => false ) );
 
@@ -340,12 +350,12 @@ class Sensei_Utils {
 		 * Customize the prefix prepended onto files uploaded in Sensei.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook sensei_file_upload_file_prefix
 		 *
 		 * @param {string} $prefix Prefix to prepend to uploaded files.
 		 * @param {array}  $file   Arguments with uploaded file information.
-		 *
-		 * @return {string}
+		 * @return {string} Filtered prefix.
 		 */
 		$file_prefix = apply_filters( 'sensei_file_upload_file_prefix', substr( md5( uniqid() ), 0, 7 ) . '_', $file );
 
@@ -517,7 +527,15 @@ class Sensei_Utils {
 			}
 		}
 
-		// Note: When this action runs the lesson status may not yet exist.
+		/**
+		 * Fires when a user starts a lesson.
+		 * When this action runs the lesson status may not yet exist.
+		 *
+		 * @hook sensei_user_lesson_start
+		 *
+		 * @param {int} $user_id ID of user starting lesson.
+		 * @param {int} $lesson_id ID of lesson being started.
+		 */
 		do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
@@ -535,7 +553,17 @@ class Sensei_Utils {
 		}
 
 		if ( $complete ) {
-			// Run this *after* the lesson status has been created/updated.
+			/**
+			 * Fires when a user completes a lesson.
+			 *
+			 * This hook is fired when a user completes a lesson, passes a quiz or their quiz submission was graded.
+			 * Therefore the corresponding lesson is marked as complete.
+			 *
+			 * @since 1.7.0
+			 *
+			 * @param int $user_id
+			 * @param int $lesson_id
+			 */
 			do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
 		}
 
@@ -921,8 +949,11 @@ class Sensei_Utils {
 		 *
 		 * @since 1.9.7
 		 *
-		 * @param integer $course_passmark  Pass mark for course
-		 * @param integer $course_id        ID of course
+		 * @hook sensei_course_pass_grade
+		 *
+		 * @param {int} $course_passmark  Pass mark for course.
+		 * @param {int} $course_id        ID of course.
+		 * @return {int} Filtered course pass mark.
 		 */
 		return apply_filters( 'sensei_course_pass_grade', self::round( $course_passmark ), $course_id );
 	}
@@ -930,9 +961,9 @@ class Sensei_Utils {
 	/**
 	 * Get user total grade for course
 	 *
-	 * @param  integer $course_id ID of course
-	 * @param  integer $user_id   ID of user
-	 * @return integer            User's total grade
+	 * @param  int $course_id ID of course
+	 * @param  int $user_id   ID of user
+	 * @return int            User's total grade
 	 */
 	public static function sensei_course_user_grade( $course_id = 0, $user_id = 0 ) {
 
@@ -952,13 +983,15 @@ class Sensei_Utils {
 				$has_questions = Sensei()->lesson->lesson_has_quiz_with_graded_questions( $lesson->ID );
 
 				if ( $has_questions ) {
-					$user_lesson_status = self::user_lesson_status( $lesson->ID, $user_id );
+					$quiz_id                = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+					$user_has_quiz_progress = Sensei()->quiz_progress_repository->has( $quiz_id, $user_id );
 
-					if ( empty( $user_lesson_status ) ) {
+					if ( ! $user_has_quiz_progress ) {
 						continue;
 					}
 					// Get user quiz grade
-					$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+					$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+					$quiz_grade = $submission ? $submission->get_final_grade() : 0;
 
 					// Add up total grade
 					$total_grade += intval( $quiz_grade );
@@ -978,9 +1011,12 @@ class Sensei_Utils {
 		 *
 		 * @since 1.9.7
 		 *
-		 * @param integer $total_grade  User's total grade
-		 * @param integer $course_id    ID of course
-		 * @param integer $user_id      ID of user
+		 * @hook sensei_course_user_grade
+		 *
+		 * @param {int} $total_grade  User's total grade
+		 * @param {int} $course_id    ID of course
+		 * @param {int} $user_id      ID of user
+		 * @return {int} Filtered user total grade.
 		 */
 		return apply_filters( 'sensei_course_user_grade', self::round( $total_grade ), $course_id, $user_id );
 	}
@@ -988,9 +1024,9 @@ class Sensei_Utils {
 	/**
 	 * Check if user has passed a course
 	 *
-	 * @param  integer $course_id ID of course
-	 * @param  integer $user_id   ID of user
-	 * @return boolean
+	 * @param  int $course_id ID of course
+	 * @param  int $user_id   ID of user
+	 * @return bool
 	 */
 	public static function sensei_user_passed_course( $course_id = 0, $user_id = 0 ) {
 		if ( intval( $user_id ) == 0 ) {
@@ -1055,6 +1091,16 @@ class Sensei_Utils {
 			}
 		}
 
+		/**
+		 * Filter a message for user course status.
+		 *
+		 * Possible statuses: not_started, passed, failed.
+		 *
+		 * @hook sensei_user_course_status_{status}
+		 *
+		 * @param {string} $message Status message.
+		 * @return {string} Filtered status message.
+		 */
 		$message = apply_filters( 'sensei_user_course_status_' . $status, $message );
 		Sensei()->notices->add_notice( $message, $box_class );
 	}
@@ -1079,40 +1125,32 @@ class Sensei_Utils {
 		$extra     = '';
 
 		if ( $lesson_id > 0 && $user_id > 0 ) {
-			// Course ID
+			// Course ID.
 			$course_id = absint( get_post_meta( $lesson_id, '_lesson_course', true ) );
 
-			// Has user started course
+			// Has user started course.
 			$started_course = Sensei_Course::is_user_enrolled( $course_id, $user_id );
 
-			// Has user completed lesson
-			$user_lesson_status = self::user_lesson_status( $lesson_id, $user_id );
-			$lesson_complete    = self::user_completed_lesson( $user_lesson_status );
+			// Has user completed lesson.
+			$lesson_complete = self::user_completed_lesson( $lesson_id, $user_id );
 
-			// Quiz ID
+			// Quiz ID.
 			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
-			// Quiz grade
-			$quiz_grade = 0;
-			if ( $user_lesson_status ) {
-				// user lesson status can return as an array.
-				if ( is_array( $user_lesson_status ) ) {
-					$comment_ID = $user_lesson_status[0]->comment_ID;
+			// Quiz progress.
+			$user_quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 
-				} else {
-					$comment_ID = $user_lesson_status->comment_ID;
-				}
+			// Quiz grade.
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			$quiz_grade = $submission ? $submission->get_final_grade() : 0;
 
-				$quiz_grade = get_comment_meta( $comment_ID, 'grade', true );
-			}
-
-			// Quiz passmark
+			// Quiz passmark.
 			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 
-			// Pass required
+			// Pass required.
 			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
 
-			// Quiz questions
+			// Quiz questions.
 			$has_quiz_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 
 			if ( ! $started_course ) {
@@ -1168,7 +1206,14 @@ class Sensei_Utils {
 				$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
 
 				if ( ! $is_lesson && $lesson_prerequisite > 0 ) {
-					$lesson_status = self::user_lesson_status( $lesson_prerequisite, $user_id );
+					$prerequisite_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_prerequisite );
+					if ( $prerequisite_quiz_id ) {
+						// If there is a quiz for the prerequisite lesson, use the quiz progress.
+						$prerequisite_progress = Sensei()->quiz_progress_repository->get( $prerequisite_quiz_id, $user_id );
+					} else {
+						// If there is no quiz for the prerequisite lesson, use the lesson progress.
+						$prerequisite_progress = Sensei()->lesson_progress_repository->get( $lesson_prerequisite, $user_id );
+					}
 
 					$prerequisite_lesson_link = '<a href="'
 						. esc_url( get_permalink( $lesson_prerequisite ) )
@@ -1179,14 +1224,14 @@ class Sensei_Utils {
 						. esc_html__( 'prerequisites', 'sensei-lms' )
 						. '</a>';
 
-					$message = ! empty( $lesson_status ) && 'ungraded' === $lesson_status->comment_approved
+					$message = ! empty( $prerequisite_progress ) && 'ungraded' === $prerequisite_progress->get_status()
 						// translators: Placeholder is the link to the prerequisite lesson.
 						? sprintf( esc_html__( 'You will be able to access this quiz once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
 						// translators: Placeholder is the link to the prerequisite lesson.
 						: sprintf( esc_html__( 'Please complete the %1$s to access this quiz.', 'sensei-lms' ), $prerequisite_lesson_link );
 
 					// Lesson/Quiz isn't "complete" instead it's ungraded (previously this "state" meant that it *was* complete).
-				} elseif ( isset( $user_lesson_status->comment_approved ) && 'ungraded' == $user_lesson_status->comment_approved ) {
+				} elseif ( $user_quiz_progress && 'ungraded' == $user_quiz_progress->get_status() ) {
 					$status    = 'complete';
 					$box_class = 'info';
 					if ( $is_lesson ) {
@@ -1198,7 +1243,7 @@ class Sensei_Utils {
 					}
 
 					// Lesson status must be "failed".
-				} elseif ( isset( $user_lesson_status->comment_approved ) && 'failed' == $user_lesson_status->comment_approved ) {
+				} elseif ( $user_quiz_progress && 'failed' == $user_quiz_progress->get_status() ) {
 					$status    = 'failed';
 					$box_class = 'alert';
 					if ( $is_lesson ) {
@@ -1240,14 +1285,26 @@ class Sensei_Utils {
 			 *
 			 * @since 2.0.0
 			 *
-			 * @param string $message     Message to show user.
-			 * @param int    $course_id   Post ID for the course.
-			 * @param string $course_link Generated HTML link to the course.
+			 * @hook sensei_quiz_course_signup_notice_message
+			 *
+			 * @param {string} $message     Message to show user.
+			 * @param {int}    $course_id   Post ID for the course.
+			 * @param {string} $course_link Generated HTML link to the course.
+			 * @return {string} Filtered message.
 			 */
 			$message = apply_filters( 'sensei_quiz_course_signup_notice_message', $message_default, $course_id, $course_link );
 		}
 
-		// Legacy filter
+		/**
+		 * Filter a message for user quiz status. Legacy filter.
+		 *
+		 * Possible statuses: not_started, passed, failed.
+		 *
+		 * @hook sensei_user_quiz_status_{status}
+		 *
+		 * @param {string} $message Status message.
+		 * @return {string} Filtered status message.
+		 */
 		$message = apply_filters( 'sensei_user_quiz_status_' . $status, $message );
 
 		if ( $is_lesson && ! in_array( $status, array( 'login_required', 'not_started_course' ) ) ) {
@@ -1255,7 +1312,17 @@ class Sensei_Utils {
 			$extra   = '<p><a class="button" href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . __( 'View the lesson quiz', 'sensei-lms' ) . '">' . __( 'View the lesson quiz', 'sensei-lms' ) . '</a></p>';
 		}
 
-		// Filter of all messages
+		/**
+		 * Filter user quiz status.
+		 *
+		 * @hook sensei_user_quiz_status
+		 *
+		 * @param {array} $status_data Array containing the status, message and additions information.
+		 * @param {int}   $lesson_id   Lesson ID.
+		 * @param {int}   $user_id     User ID.
+		 * @param {bool}  $is_leeson   A flag is $lesson_id is a lesson.
+		 * @return {array} Filtered quiz status.
+		 */
 		return apply_filters(
 			'sensei_user_quiz_status',
 			array(
@@ -1361,8 +1428,12 @@ class Sensei_Utils {
 		 *
 		 * @since 1.9.3
 		 *
-		 * @param bool|int $user_started_course
-		 * @param integer $course_id
+		 * @hook sensei_user_started_course
+		 *
+		 * @param {bool|int} $user_started_course False if the user has not started the course, otherwise the comment ID of the course progress.
+		 * @param {int}      $course_id           The course ID.
+		 * @param {int}      $user_id             The user ID.
+		 * @return {bool|int} Filtered user started course ID.
 		 */
 		return apply_filters( 'sensei_user_started_course', $user_started_course, $course_id, $user_id );
 
@@ -1394,7 +1465,6 @@ class Sensei_Utils {
 			$course_progress->start();
 		}
 
-		$course_completion  = Sensei()->settings->settings['course_completion'];
 		$lessons_completed  = 0;
 		$lesson_status_args = array(
 			'user_id' => $user_id,
@@ -1415,29 +1485,17 @@ class Sensei_Utils {
 			// ...if all lessons 'passed' then update the course status to complete
 		// The below checks if a lesson is fully completed, though maybe should be Utils::user_completed_lesson()
 		$lesson_status_args['post__in'] = $lesson_ids;
-		$all_lesson_statuses            = self::sensei_check_for_activity( $lesson_status_args, true );
-		// Need to always return an array, even with only 1 item.
-		if ( ! is_array( $all_lesson_statuses ) ) {
-			$all_lesson_statuses = array( $all_lesson_statuses );
-		}
+		$lesson_progress_args           = array(
+			'user_id'   => $user_id,
+			'lesson_id' => $lesson_ids,
+		);
+		$all_lesson_progress            = Sensei()->lesson_progress_repository->find( $lesson_progress_args );
 
-		foreach ( $all_lesson_statuses as $lesson_status ) {
-			// If lessons are complete without needing quizzes to be passed
-			if ( 'passed' !== $course_completion ) {
-				// A user cannot 'complete' a course if a lesson...
-				// ...is still in progress
-				// ...hasn't yet been graded.
-				$lesson_not_complete_stati = array( 'in-progress', 'ungraded' );
-				if ( ! in_array( $lesson_status->comment_approved, $lesson_not_complete_stati, true ) ) {
-					$lessons_completed++;
-				}
-			} else {
-				$lesson_complete_stati = array( 'complete', 'graded', 'passed' );
-				if ( in_array( $lesson_status->comment_approved, $lesson_complete_stati, true ) ) {
-					$lessons_completed++;
-				}
+		foreach ( $all_lesson_progress as $lesson_progress ) {
+			if ( $lesson_progress->is_complete() ) {
+				$lessons_completed++;
 			}
-		} // Each lesson
+		}
 
 		if ( $lessons_completed === $total_lessons ) {
 			$course_progress->complete();
@@ -1464,17 +1522,25 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Get completion percentage
+	 * Get completion percentage.
 	 *
-	 * @param $numerator
-	 * @param $denominator
-	 * @param int         $decimal_places_to_round
-	 * @return int|number
+	 * @param mixed $numerator  Numerator.
+	 * @param int   $denominator Denominator.
+	 * @param int   $decimal_places_to_round Decimal places to round.
+	 * @return float
 	 */
 	public static function quotient_as_absolute_rounded_percentage( $numerator, $denominator, $decimal_places_to_round = 0 ) {
 		return self::quotient_as_absolute_rounded_number( $numerator * 100.0, $denominator, $decimal_places_to_round );
 	}
 
+	/**
+	 * Get formatted quotient.
+	 *
+	 * @param mixed $numerator  Numerator.
+	 * @param int   $denominator Denominator.
+	 * @param int   $decimal_places_to_round Decimal places to round.
+	 * @return float
+	 */
 	public static function quotient_as_absolute_rounded_number( $numerator, $denominator, $decimal_places_to_round = 0 ) {
 		if ( 0 === $denominator ) {
 			return 0;
@@ -1483,6 +1549,13 @@ class Sensei_Utils {
 		return self::as_absolute_rounded_number( floatval( $numerator ) / ( $denominator ), $decimal_places_to_round );
 	}
 
+	/**
+	 * Round a number to a given number of decimal places.
+	 *
+	 * @param mixed $number Number to round.
+	 * @param int   $decimal_places_to_round Decimal places to round.
+	 * @return float
+	 */
 	public static function as_absolute_rounded_number( $number, $decimal_places_to_round = 0 ) {
 		return abs( round( ( floatval( $number ) ), $decimal_places_to_round ) );
 	}
@@ -1577,8 +1650,8 @@ class Sensei_Utils {
 	 * Check if a user has completed a lesson or not
 	 *
 	 * @uses  Sensei()
-	 * @param mixed $lesson lesson_id or sensei_lesson_status entry
-	 * @param int   $user_id
+	 * @param int|WP_Comment|string $lesson  lesson id (int), lesson status (string), or sensei_lesson_status entry (WP_Comment).
+	 * @param int                   $user_id User ID.
 	 * @return boolean
 	 */
 	public static function user_completed_lesson( $lesson = 0, $user_id = 0 ): bool {
@@ -1598,19 +1671,31 @@ class Sensei_Utils {
 				if ( 0 >= (int) $user_id ) {
 					return false;
 				}
-				$_user_lesson_status = self::user_lesson_status( $lesson, $user_id );
 
-				if ( isset( $_user_lesson_status->comment_approved ) ) {
+				$lesson_id = (int) $lesson;
+				$user_id   = (int) $user_id;
 
-					$user_lesson_status = $_user_lesson_status->comment_approved;
-
+				$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+				if ( $lesson_progress ) {
+					$user_lesson_status = $lesson_progress->get_status();
 				} else {
-
-					return false; // No status means not complete
-
+					return false; // No progress means not complete
 				}
 
-				$lesson_id = $lesson;
+				// In the comments-based progress we use one entry to store both the lesson progress and the quiz progress.
+				// In the tables-based progress we split them. Here is important to use the quiz proress if the quiz pass is required.
+				$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+				if ( $lesson_quiz_id ) {
+					$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
+					if ( $pass_required ) {
+						$quiz_progress = Sensei()->quiz_progress_repository->get( $lesson_quiz_id, $user_id );
+						if ( $quiz_progress ) {
+							$user_lesson_status = $quiz_progress->get_status();
+						} else {
+							return false;
+						}
+					}
+				}
 			}
 
 			/**
@@ -1618,37 +1703,42 @@ class Sensei_Utils {
 			 *
 			 * @since 1.9.7
 			 *
-			 * @param string    $user_lesson_status User lesson status
-			 * @param int       $lesson_id          ID of lesson
-			 * @param int       $user_id            ID of user
+			 * @hook sensei_user_completed_lesson
+			 *
+			 * @param {string} $user_lesson_status User lesson status.
+			 * @param {int}    $lesson_id          ID of lesson.
+			 * @param {int}    $user_id            ID of user.
+			 * @return {string} Filtered user lesson status.
 			 */
 			$user_lesson_status = apply_filters( 'sensei_user_completed_lesson', $user_lesson_status, $lesson_id, $user_id );
 
-			if ( 'in-progress' != $user_lesson_status ) {
-				// Check for Passed or Completed Setting
-				// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
-				switch ( $user_lesson_status ) {
-					case 'complete':
-					case 'graded':
-					case 'passed':
-						return true;
+			if ( 'in-progress' === $user_lesson_status ) {
+				return false;
+			}
 
-					case 'failed':
-						// This may be 'completed' depending on...
-						if ( $lesson_id ) {
-							// Get Quiz ID, this won't be needed once all Quiz meta fields are stored on the Lesson
-							$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-							if ( $lesson_quiz_id ) {
-								// ...the quiz pass setting
-								$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
-								if ( empty( $pass_required ) ) {
-									// We just require the user to have done the quiz, not to have passed
-									return true;
-								}
+			// Check for Passed or Completed Setting
+			// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
+			switch ( $user_lesson_status ) {
+				case 'complete':
+				case 'graded':
+				case 'passed':
+					return true;
+
+				case 'failed':
+					// This may be 'completed' depending on...
+					if ( $lesson_id ) {
+						// Get Quiz ID, this won't be needed once all Quiz meta fields are stored on the Lesson
+						$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+						if ( $lesson_quiz_id ) {
+							// ...the quiz pass setting
+							$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
+							if ( empty( $pass_required ) ) {
+								// We just require the user to have done the quiz, not to have passed
+								return true;
 							}
 						}
-						return false;
-				}
+					}
+					return false;
 			}
 		}
 
@@ -1659,6 +1749,8 @@ class Sensei_Utils {
 	 * Returns the requested course status
 	 *
 	 * @since 1.7.0
+	 * @deprecated 4.18.0 Use course progress repository instead.
+	 *
 	 * @param int $course_id
 	 * @param int $user_id
 	 * @return object
@@ -1714,6 +1806,12 @@ class Sensei_Utils {
 		return false;
 	}
 
+	/**
+	 * Returns if a lesson is a preview lesson or not.
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @return bool
+	 */
 	public static function is_preview_lesson( $lesson_id ) {
 		$is_preview = false;
 
@@ -1727,6 +1825,13 @@ class Sensei_Utils {
 		return $is_preview;
 	}
 
+	/**
+	 * Returns if a user has passed a quiz or not.
+	 *
+	 * @param int $quiz_id Quiz ID.
+	 * @param int $user_id User ID.
+	 * @return bool
+	 */
 	public static function user_passed_quiz( $quiz_id = 0, $user_id = 0 ) {
 
 		if ( ! $quiz_id ) {
@@ -1736,11 +1841,10 @@ class Sensei_Utils {
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
 		}
-		$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 
 		// Quiz Grade
-		$lesson_status = self::user_lesson_status( $lesson_id, $user_id );
-		$quiz_grade    = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
+		$submission = \Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		$quiz_grade = $submission ? $submission->get_final_grade() : 0;
 
 		// Check if Grade is greater than or equal to pass percentage
 		$quiz_passmark = self::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
@@ -1749,7 +1853,6 @@ class Sensei_Utils {
 		}
 
 		return false;
-
 	}
 
 	/**
@@ -1970,13 +2073,19 @@ class Sensei_Utils {
 		$sensei_user_status = self::$status_function( $post_id, $user_id );
 		if ( ! isset( $sensei_user_status->comment_ID ) ) {
 
-			$start_function          = 'user_start_' . $post_type;
-			$sensei_user_activity_id = self::$start_function( $user_id, $post_id );
+			$start_function = 'user_start_' . $post_type;
+			self::$start_function( $user_id, $post_id );
 
+		}
+
+		if ( 'course' === $post_type ) {
+			$course_progress_repository = Sensei()->course_progress_repository_factory->create_comments_based_repository();
+			$course_progress            = $course_progress_repository->get( $post_id, $user_id );
+			$sensei_user_activity_id    = $course_progress->get_id();
 		} else {
-
-			$sensei_user_activity_id = $sensei_user_status->comment_ID;
-
+			$lesson_progress_repository = Sensei()->lesson_progress_repository_factory->create_comments_based_repository();
+			$lesson_progress            = $lesson_progress_repository->get( $post_id, $user_id );
+			$sensei_user_activity_id    = $lesson_progress->get_id();
 		}
 
 		// store the data
@@ -2170,30 +2279,50 @@ class Sensei_Utils {
 	 *
 	 * @since 1.8.5
 	 *
-	 * @param double $val
-	 * @param int    $precision
-	 * @param $mode
-	 * @param string $context
+	 * @param float  $val        Value to round.
+	 * @param int    $precision Precision.
+	 * @param int    $mode      Round mode.
+	 * @param string $context   Context.
 	 *
 	 * @return double $val
 	 */
 	public static function round( $val, $precision = 0, $mode = PHP_ROUND_HALF_UP, $context = '' ) {
 
 		/**
+		 * Filter the round precision.
+		 *
 		 * Change the precision for the Sensei_Utils::round function.
 		 * the precision given will be passed into the php round function
 		 *
 		 * @since 1.8.5
+		 *
+		 * @hook sensei_round_precision
+		 *
+		 * @param {int}    $precision Precision.
+		 * @param {float}  $value     Value to round.
+		 * @param {string} $context   Context.
+		 * @param {int}    $mode      Round mode.
+		 * @return {int} Filtered precision.
 		 */
 		$precision = apply_filters( 'sensei_round_precision', $precision, $val, $context, $mode );
 
 		/**
+		 * Filter round mode.
+		 *
 		 * Change the mode for the Sensei_Utils::round function.
 		 * the mode given will be passed into the php round function
 		 *
 		 * This applies only to PHP version 5.3.0 and greater
 		 *
 		 * @since 1.8.5
+		 *
+		 * @hook sensei_round_mode
+		 *
+		 * @param {int}    $mode      Round mode.
+		 * @param {float}  $value     Value to round.
+		 * @param {string} $context   Context.
+		 * @param {int}    $precision Precision.
+		 * @return {int} Filtered round mode.
 		 */
 		$mode = apply_filters( 'sensei_round_mode', $mode, $val, $context, $precision );
 
@@ -2571,8 +2700,11 @@ class Sensei_Utils {
 		 *
 		 * @since 2.2.0
 		 *
-		 * @param bool $show_lessons   Whether the lessons should be shown. Default true.
-		 * @param int|false $course_id Course ID.
+		 * @hook sensei_course_show_lessons
+		 *
+		 * @param {bool} $show_lessons   Whether the lessons should be shown. Default true.
+		 * @param {int|false} $course_id Course ID.
+		 * @return {bool} Filtered visibility of lessons.
 		 */
 		return apply_filters( 'sensei_course_show_lessons', true, $course_id );
 	}
@@ -2768,12 +2900,12 @@ class Sensei_Utils {
 		/**
 		 * Filter to allow adding products slugs to check if it has an active WPCOM subscription.
 		 *
-		 * @hook sensei_wpcom_product_slugs
 		 * @since 4.11.0
 		 *
-		 * @param {Array} $products Array of products slugs to check if it has an active WPCOM subscription.
+		 * @hook sensei_wpcom_product_slugs
 		 *
-		 * @return {array}
+		 * @param {array} $products Array of products slugs to check if it has an active WPCOM subscription.
+		 * @return {array} Filtered array of products slugs.
 		 */
 		$product_slugs = apply_filters( 'sensei_wpcom_product_slugs', [] );
 		foreach ( $product_slugs as $product_slug ) {
@@ -2803,29 +2935,28 @@ class Sensei_Utils {
 			return $course_id;
 		}
 		// First try to get the lesson the user started or updated last.
-		$activity_args = [
-			'post__in' => $course_lessons,
-			'user_id'  => $user_id,
-			'type'     => 'sensei_lesson_status',
-			'number'   => 1,
-			'orderby'  => 'comment_date',
-			'order'    => 'DESC',
-			'status'   => [ 'in-progress', 'ungraded' ],
-		];
+		$progress_args = array(
+			'lesson_id' => $course_lessons,
+			'user_id'   => $user_id,
+			'status'    => array( 'in-progress' ),
+			'orderby'   => 'updated_at',
+			'order'     => 'DESC',
+			'number'    => 1,
+		);
+		$last_progress = Sensei()->lesson_progress_repository->find( $progress_args );
 
-		$last_lesson_activity = self::sensei_check_for_activity( $activity_args, true );
-
-		if ( ! empty( $last_lesson_activity ) ) {
-			return $last_lesson_activity->comment_post_ID;
-		} else {
-			// If there is no such lesson, get the first lesson that the user has not yet started.
-			$completed_lessons     = Sensei()->course->get_completed_lesson_ids( $course_id, $user_id );
-			$not_completed_lessons = array_diff( $course_lessons, $completed_lessons );
-
-			if ( $not_completed_lessons ) {
-				return current( $not_completed_lessons );
-			}
+		if ( count( $last_progress ) > 0 ) {
+			return $last_progress[0]->get_lesson_id();
 		}
+
+		// If there is no such lesson, get the first lesson that the user has not yet started.
+		$completed_lessons     = Sensei()->course->get_completed_lesson_ids( $course_id, $user_id );
+		$not_completed_lessons = array_diff( $course_lessons, $completed_lessons );
+
+		if ( $not_completed_lessons ) {
+			return current( $not_completed_lessons );
+		}
+
 		return $course_id;
 	}
 

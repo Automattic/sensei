@@ -103,4 +103,14 @@ interface Lesson_Progress_Repository_Interface {
 	 * @return int
 	 */
 	public function count( int $course_id, int $user_id ): int;
+
+	/**
+	 * Find lesson progress.
+	 *
+	 * @internal
+	 *
+	 * @param array $args The arguments.
+	 * @return Lesson_Progress_Interface[]
+	 */
+	public function find( array $args ): array;
 }

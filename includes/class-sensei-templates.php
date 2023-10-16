@@ -127,8 +127,20 @@ class Sensei_Templates {
 			$template = '';
 		}
 
+		/**
+		 * Filter located template.
+		 *
+		 * @hook sensei_locate_template
+		 *
+		 * @param {string} $template The located template.
+		 * @param {string} $template_name The template name.
+		 * @param {string} $template_path The template path.
+		 * @return {string} Filetered located template.
+		 */
+		$template = apply_filters( 'sensei_locate_template', $template, $template_name, $template_path );
+
 		// Return what we found
-		return apply_filters( 'sensei_locate_template', $template, $template_name, $template_path );
+		return $template;
 
 	}
 
@@ -151,12 +163,14 @@ class Sensei_Templates {
 		/**
 		 * Filters if Sensei templates and content wrappers should be used. For development purposes.
 		 *
-		 * @hook   sensei_use_sensei_template
-		 *
-		 * @param  {bool} $use_templates Whether to use Sensei templates for the request.
+		 * @access private
 		 *
 		 * @since  3.6.0
-		 * @access private
+		 *
+		 * @hook sensei_use_sensei_template
+		 *
+		 * @param {bool} $use_templates Whether to use Sensei templates for the request.
+		 * @return {bool} Whether to use Sensei templates for the request.
 		 */
 		if ( ! apply_filters( 'sensei_use_sensei_template', true ) && ! isset( $email_template ) ) {
 			return $template;
@@ -374,7 +388,10 @@ class Sensei_Templates {
 		 *
 		 * @since 1.9.0
 		 *
-		 * @param $title_html_tag default is 'h3'
+		 * @hook sensei_the_title_html_tag
+		 *
+		 * @param {string} $title_html_tag HTML tag for title, default is 'h3'.
+		 * @return {string} Filtered HTML tag for title.
 		 */
 		$title_html_tag = apply_filters( 'sensei_the_title_html_tag', 'h3' );
 
@@ -382,7 +399,11 @@ class Sensei_Templates {
 		 * Filter the title classes
 		 *
 		 * @since 1.9.0
-		 * @param string $title_classes defaults to $post_type-title
+		 *
+		 * @hook sensei_the_title_classes
+		 *
+		 * @param {string} $title_classes Title classes, defaults to `{$post_type}-title`.
+		 * @return {string} Filtered title classes.
 		 */
 		$title_classes = apply_filters( 'sensei_the_title_classes', $post->post_type . '-title' );
 
@@ -394,7 +415,10 @@ class Sensei_Templates {
 		 *
 		 * @since 1.9.16
 		 *
-		 * @param string $course_title The Course Title.
+		 * @hook sensei_course_the_title
+		 *
+		 * @param {string} $course_title The Course Title.
+		 * @return {string} Filtered course title.
 		 */
 		$course_title = (string) apply_filters( 'sensei_course_the_title', $post->post_title );
 		$html        .= $course_title;

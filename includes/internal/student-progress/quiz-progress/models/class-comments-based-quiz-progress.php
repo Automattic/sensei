@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Models;
 
 use DateTimeInterface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -18,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.18.0
  */
 class Comments_Based_Quiz_Progress extends Quiz_Progress_Abstract {
 	/**
@@ -29,18 +30,17 @@ class Comments_Based_Quiz_Progress extends Quiz_Progress_Abstract {
 	 * @return string|null
 	 */
 	public function get_status(): ?string {
-		$supported_statuses = [
-			self::STATUS_IN_PROGRESS,
-			self::STATUS_FAILED,
-			self::STATUS_GRADED,
-			self::STATUS_PASSED,
-			self::STATUS_UNGRADED,
-		];
-
-		$status = in_array( $this->status, $supported_statuses, true )
-			? $this->status
-			: self::STATUS_IN_PROGRESS;
-
-		return $status;
+		switch ( $this->status ) {
+			case self::STATUS_IN_PROGRESS:
+			case self::STATUS_FAILED:
+			case self::STATUS_GRADED:
+			case self::STATUS_PASSED:
+			case self::STATUS_UNGRADED:
+				return $this->status;
+			case Lesson_Progress_Interface::STATUS_COMPLETE:
+				return self::STATUS_PASSED;
+			default:
+				return self::STATUS_IN_PROGRESS;
+		}
 	}
 }

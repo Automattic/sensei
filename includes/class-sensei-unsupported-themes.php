@@ -122,12 +122,14 @@ class Sensei_Unsupported_Themes {
 		/**
 		 * Filters if Sensei templates and content wrappers should be used. For development purposes.
 		 *
-		 * @hook   sensei_use_sensei_template
-		 *
-		 * @param  {bool} $use_templates Whether to use Sensei templates for the request.
-		 *
-		 * @since  3.6.0
 		 * @access private
+		 *
+		 * @since 3.6.0
+		 *
+		 * @hook sensei_use_sensei_template
+		 *
+		 * @param {bool} $use_templates Whether to use Sensei templates for the request.
+		 * @return {bool} Filtered value.
 		 */
 		if ( ! apply_filters( 'sensei_use_sensei_template', true ) ) {
 			return;

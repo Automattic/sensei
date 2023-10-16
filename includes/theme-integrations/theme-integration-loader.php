@@ -88,9 +88,12 @@ class Sensei_Theme_Integration_Loader {
 		 * Allow developer to stop the loading of the default supported theme wrappers.
 		 * After removing this you can follow the documentation on how to add theme support.
 		 *
-		 * @since 1.9.4 introduced filter
+		 * @since 1.9.4
 		 *
-		 * @param boolean $load_default_supported_theme_wrappers
+		 * @hook sensei_load_default_supported_theme_wrappers
+		 *
+		 * @param {bool} $load_default_supported_theme_wrappers Whether to load the default supported theme wrappers.
+		 * @return {bool} Filtered value.
 		 */
 		$load_default_supported_theme_wrappers = apply_filters( 'sensei_load_default_supported_theme_wrappers', true );
 

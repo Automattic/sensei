@@ -42,7 +42,10 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param int $batch_size Batch size to filter.
+		 * @hook sensei_enrolment_learner_calculation_job_batch_size
+		 *
+		 * @param {int} $batch_size Batch size to filter.
+		 * @return {int} Filtered batch size.
 		 */
 		$this->batch_size = apply_filters( 'sensei_enrolment_learner_calculation_job_batch_size', self::DEFAULT_BATCH_SIZE );
 	}
