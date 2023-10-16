@@ -117,11 +117,10 @@ class Table_Reading_Aggregate_Answer_Repository implements Answer_Repository_Int
 	/**
 	 * Get the comments-based submission for a given tables-based submission or create if not exists.
 	 *
-	 * @param Tables_Based_Submission $submission The submission.
-	 *
-	 * @return Comments_Based_Submission The comments-based submission or null if it does not exist.
+	 * @param Submission_Interface $submission The submission.
+	 * @return Submission_Interface The comments-based submission or null if it does not exist.
 	 */
-	private function get_or_create_comments_based_submission( Tables_Based_Submission $submission ): Comments_Based_Submission {
+	private function get_or_create_comments_based_submission( Submission_Interface $submission ): Submission_Interface {
 		return $this->comments_based_submission_repository->get_or_create(
 			$submission->get_quiz_id(),
 			$submission->get_user_id(),

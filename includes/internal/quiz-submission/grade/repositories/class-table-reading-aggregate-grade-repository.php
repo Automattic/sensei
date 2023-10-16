@@ -18,7 +18,6 @@ use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -210,14 +209,14 @@ class Table_Reading_Aggregate_Grade_Repository implements Grade_Repository_Inter
 	/**
 	 * Get or create all grades for the table based submission.
 	 *
-	 * @param Comments_Based_Submission $comments_based_submission The comments based submission.
-	 * @param Tables_Based_Submission   $tables_based_submission   The tables based submission.
-	 * @param Tables_Based_Grade[]      $tables_based_grades       The tables-based grades.
-	 * @return Comments_Based_Grade[] The tables based grades.
+	 * @param Submission_Interface $comments_based_submission The comments based submission.
+	 * @param Submission_Interface $tables_based_submission   The tables based submission.
+	 * @param Grade_Interface[]    $tables_based_grades       The tables-based grades.
+	 * @return Grade_Interface[] The tables based grades.
 	 */
 	private function get_or_create_comments_based_grades_for_save(
-		Comments_Based_Submission $comments_based_submission,
-		Tables_Based_Submission $tables_based_submission,
+		Submission_Interface $comments_based_submission,
+		Submission_Interface $tables_based_submission,
 		array $tables_based_grades
 	): array {
 		$comments_based_answers = $this->get_or_create_comments_based_answers(
@@ -272,11 +271,11 @@ class Table_Reading_Aggregate_Grade_Repository implements Grade_Repository_Inter
 	/**
 	 * Get the tables based submission for a given submission or create if not exists.
 	 *
-	 * @param Tables_Based_Submission $submission The submission.
+	 * @param Submission_Interface $submission The submission.
 	 *
-	 * @return Submission_Interface The tables based submission.
+	 * @return Submission_Interface The comments based submission.
 	 */
-	private function get_or_create_comments_based_submission( Tables_Based_Submission $submission ): Submission_Interface {
+	private function get_or_create_comments_based_submission( Submission_Interface $submission ): Submission_Interface {
 		return $this->comments_based_submission_repository->get_or_create(
 			$submission->get_quiz_id(),
 			$submission->get_user_id(),
