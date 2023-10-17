@@ -22,6 +22,8 @@ import {
 	INNER_BLOCKS_TEMPLATE,
 	IN_PROGRESS_PREVIEW,
 } from './constants';
+import { useSelect } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 
 const courseThemeEnabled = window?.sensei?.courseThemeEnabled || false;
 
@@ -45,6 +47,11 @@ const LessonActionsEdit = ( props ) => {
 	const [ previewState, onPreviewChange ] = usePreviewState(
 		IN_PROGRESS_PREVIEW
 	);
+	const { postId } = useSelect( ( select ) => {
+		return {
+			postId: select( editorStore ).getCurrentPostId(),
+		};
+	} );
 
 	const toggleBlocks = useToggleBlocks( {
 		parentClientId: clientId,
@@ -59,7 +66,7 @@ const LessonActionsEdit = ( props ) => {
 	} );
 
 	const hasQuiz = useHasQuiz();
-	const quizStateClass = hasQuiz ? 'has-quiz' : 'no-quiz';
+	const quizStateClass = hasQuiz || ! postId ? 'has-quiz' : 'no-quiz';
 
 	const completeLessonAllowed = useCompleteLessonAllowed( hasQuiz );
 	const completeLessonAllowedClass = completeLessonAllowed
