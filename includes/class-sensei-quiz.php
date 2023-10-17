@@ -2521,11 +2521,12 @@ class Sensei_Quiz {
 	 *
 	 * @param string $button_text The button text.
 	 * @param string $url         The URL.
-	 * @param array  $classes      CSS classes to add to the button.
+	 * @param array  $classes     CSS classes to add to the button.
 	 *
 	 * @return string The HTML for the primary button anchor.
 	 */
 	public static function get_primary_button_html( $button_text, $url = '', $classes = [] ) {
+		$href    = '';
 		$classes = array_merge(
 			array(
 				'wp-block-button__link',
@@ -2536,9 +2537,13 @@ class Sensei_Quiz {
 			$classes
 		);
 
+		if ( $url ) {
+			$href = ' href="' . esc_url( $url ) . '"';
+		}
+
 		return (
 			'<div class="wp-block-button">
-				<a class="' . esc_attr( implode( ' ', $classes ) ) . '" href="' . esc_url( $url ) . '">' .
+				<a class="' . esc_attr( implode( ' ', $classes ) ) . '"' . $href . '>' .
 					esc_html( $button_text ) .
 				'</a>
 			</div>'

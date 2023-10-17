@@ -269,6 +269,7 @@ body {
 
 	&__pending-grade:hover {
 		border-color: var(--wp--preset--color--background);
+		cursor: default;
 	}
 
 	@media (min-width: $break-medium) {
