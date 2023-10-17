@@ -43,8 +43,6 @@ class Sensei_Lesson_Actions_Block {
 			return '';
 		}
 
-		$course_id = Sensei()->lesson->get_course_id( $lesson->ID );
-
 		if ( ! Sensei_Lesson::should_show_lesson_actions( $lesson->ID ) ) {
 			return '';
 		}
