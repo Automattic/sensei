@@ -95,8 +95,8 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 				),
 			)
 		);
-		$user_1 = $this->factory->user->create();
-		$user_2 = $this->factory->user->create();
+		$user_1    = $this->factory->user->create();
+		$user_2    = $this->factory->user->create();
 
 		update_post_meta( $quiz_id, '_quiz_lesson', $lesson_id );
 
