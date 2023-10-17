@@ -96,7 +96,7 @@ class Sensei_Course_Theme_Quiz {
 			$text          = __( 'Your answers have been submitted and the quiz will be graded soon.', 'sensei-lms' );
 			$actions[]     = Sensei_Quiz::get_primary_button_html(
 				__( 'Pending teacher grade', 'sensei-lms' ),
-				'',
+				null,
 				[ 'sensei-course-theme-quiz-graded-notice__pending-grade' ]
 			);
 
@@ -131,7 +131,7 @@ class Sensei_Course_Theme_Quiz {
 			// Display Contact Teacher button.
 			if ( ! $reset_allowed ) {
 				$block     = new Sensei_Block_Contact_Teacher();
-				$button    = Sensei_Quiz::get_primary_button_html( __( 'Contact teacher', 'sensei-lms' ), '#' );
+				$button    = Sensei_Quiz::get_primary_button_html( __( 'Contact teacher', 'sensei-lms' ) );
 				$actions[] = $block->render_contact_teacher_block( [], $button );
 			}
 		}

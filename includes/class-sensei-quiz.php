@@ -2519,13 +2519,13 @@ class Sensei_Quiz {
 	/**
 	 * Returns the HTML for a primary button anchor.
 	 *
-	 * @param string $button_text The button text.
-	 * @param string $url         The URL.
-	 * @param array  $classes     CSS classes to add to the button.
+	 * @param string      $button_text The button text.
+	 * @param string|null $url         The URL.
+	 * @param array       $classes     CSS classes to add to the button.
 	 *
 	 * @return string The HTML for the primary button anchor.
 	 */
-	public static function get_primary_button_html( $button_text, $url = '', $classes = [] ) {
+	public static function get_primary_button_html( $button_text, $url = null, $classes = [] ) {
 		$href    = '';
 		$classes = array_merge(
 			array(
