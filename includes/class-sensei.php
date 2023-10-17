@@ -735,6 +735,8 @@ class Sensei_Main {
 
 		add_action( 'body_class', array( $this, 'body_class' ) );
 
+		add_filter( 'body_class', array( $this, 'maybe_add_course_theme_variation_class' ) );
+
 		// Check for and activate JetPack LaTeX support
 		add_action( 'plugins_loaded', array( $this, 'jetpack_latex_support' ), 200 ); // Runs after Jetpack has loaded it's modules
 
@@ -1400,6 +1402,41 @@ class Sensei_Main {
 			if ( get_the_ID() === intval( Sensei()->settings->settings['course_completed_page'] ) ) {
 				$classes[] = 'course-completed';
 			}
+		}
+
+		return $classes;
+	}
+
+	/**
+	 * For course theme, add a body class with the variation.
+	 *
+	 * @param array $classes Body classes.
+	 *
+	 * @intenal
+	 *
+	 * @return array Body classes.
+	 */
+	public function maybe_add_course_theme_variation_class( $classes ) {
+
+		$is_course_theme = 'course' === wp_get_theme()->get_template();
+
+		if ( ! $is_course_theme ) {
+			return $classes;
+		}
+
+		if ( ! is_array( $classes ) ) {
+			$classes = [];
+		}
+
+		$css_string    = wp_get_global_stylesheet( [ 'variables' ] ) ?? '';
+		$property_name = '--wp--custom--course-theme-variation';
+		$pattern       = "/$property_name\s*:\s*([^;]+)/";
+
+		if ( preg_match( $pattern, $css_string, $matches ) ) {
+			// $matches[0] contains the full match
+			// $matches[1] contains the CSS value for the specified property
+			$css_value = trim( $matches[1] );
+			$classes[] = 'course-theme-variation-' . $css_value;
 		}
 
 		return $classes;
