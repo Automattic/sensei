@@ -40,7 +40,7 @@ class Sensei_Lesson_Completed_Block {
 	public function render( array $attributes, string $content ) : string {
 		$lesson = get_post();
 
-		if ( empty( $lesson ) || ! Sensei_Utils::user_completed_lesson( $lesson->ID ) ) {
+		if ( ! is_a( $lesson, WP_Post::class ) || ! Sensei_Utils::user_completed_lesson( $lesson->ID ) ) {
 			return '';
 		}
 
