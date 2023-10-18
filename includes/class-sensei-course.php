@@ -4132,6 +4132,8 @@ class Sensei_Course {
 	 * Show a message telling the user that they are not allowed to self enroll if the setting is enabled.
 	 *
 	 * @since $$next-version$$
+	 *
+	 * @internal
 	 */
 	public static function self_enrollment_not_allowed_message() {
 		$course_id = get_the_ID();
