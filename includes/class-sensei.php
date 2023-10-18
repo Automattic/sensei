@@ -2,6 +2,7 @@
 
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Emails\Email_Customization;
+use Sensei\Internal\Installer\Schema;
 use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Migration\Migration_Tool;
 use Sensei\Internal\Migration\Migration_Job;
@@ -24,6 +25,7 @@ use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
+use Sensei\Internal\Tools\Progress_Tables_Eraser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -657,6 +659,11 @@ class Sensei_Main {
 				new Migration_Job( 'quiz_migration', new Quiz_Migration() )
 			);
 			( new Migration_Tool( \Sensei_Tools::instance(), $this->migration_scheduler ) )->init();
+		}
+
+		// Progress tables eraser.
+		if ( $tables_enabled ) {
+			( new Progress_Tables_Eraser( new Schema() ) )->init();
 		}
 
 		// Quiz submission repositories.
