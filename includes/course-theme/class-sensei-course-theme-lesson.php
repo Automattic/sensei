@@ -262,6 +262,19 @@ class Sensei_Course_Theme_Lesson {
 		$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
 		$notice_icon  = 'lock';
 
+		// Check if self enrollment is allowed.
+		if ( Sensei_Course::is_self_enrollment_not_allowed( $course_id ) ) {
+			$notices->add_notice(
+				$notice_key,
+				__( 'Please contact the course administrator to access the course content.', 'sensei-lms' ),
+				$notice_title,
+				[],
+				$notice_icon
+			);
+
+			return;
+		}
+
 		// Course prerequisite notice.
 		if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
 			$notices->add_notice(
