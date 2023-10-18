@@ -27,6 +27,13 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	private $course;
 
 	/**
+	 * Keep initial state of Sensei()->notices.
+	 *
+	 * @var Sensei_Notices|null
+	 */
+	private $initial_notices;
+
+	/**
 	 * Set up the test.
 	 */
 	public function setUp(): void {
@@ -40,11 +47,15 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 		$this->course    = $this->factory->course->create_and_get( [ 'post_name' => 'take-block-course' ] );
 		$GLOBALS['post'] = $this->course;
 
+		$this->initial_notices = Sensei()->notices;
+
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-take-course' );
+
+		Sensei()->notices = $this->initial_notices;
 	}
 
 	public static function tearDownAfterClass(): void {

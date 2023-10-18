@@ -14,6 +14,13 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	protected $factory;
 
 	/**
+	 * Keep initial state of Sensei()->notices.
+	 *
+	 * @var Sensei_Notices|null
+	 */
+	private $initial_notices;
+
+	/**
 	 * Setup function.
 	 *
 	 * This function sets up the lessons, quizes and their questions. This function runs before
@@ -24,11 +31,15 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
+
+		$this->initial_notices = Sensei()->notices;
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+
+		Sensei()->notices = $this->initial_notices;
 	}
 
 	/**
