@@ -71,6 +71,12 @@ class Sensei_Block_Take_Course {
 				}
 				$html = $this->render_with_start_course_form( $course_id, $content );
 			}
+		} elseif ( Sensei_Course::is_self_enrollment_not_allowed( $course_id ) && ! Sensei_Course::is_user_enrolled( $course_id, get_current_user_id() ) ) {
+			Sensei()->notices->add_notice(
+				__( 'Please contact the course administrator to sign up for this course.', 'sensei-lms' ),
+				'info'
+			);
+			$html = $this->render_disabled( $content );
 		} elseif ( ! is_user_logged_in() ) {
 			$html = $this->render_with_login( $content );
 		}

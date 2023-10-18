@@ -167,4 +167,42 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 		$this->assertEmpty( $result );
 	}
+
+	/**
+	 * Self Enrollment Not Allowed.
+	 */
+	public function testRenderTakeCourseBlock_WhenSelfEnrollmentIsNotAllowed_AddsNotice() {
+		/* Arrange. */
+		$this->login_as_student();
+		update_post_meta( $this->course->ID, '_self_enrollment_not_allowed', true );
+
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		/* Expect & Act */
+		$notices->expects( self::once() )
+			->method( 'add_notice' )
+			->with( $this->stringContains( 'Please contact the course administrator to sign up for this course.' ) );
+		do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
+	}
+
+	/**
+	 * Self Enrollment Not Allowed And User Is Enrolled.
+	 */
+	public function testRenderTakeCourseBlock_WhenSelfEnrollmentIsNotAllowedAndUserIsEnrolled_DoesNotAddNotice() {
+		/* Arrange. */
+		$student = $this->factory->user->create();
+		$this->manuallyEnrolStudentInCourse( $student, $this->course->ID );
+
+		$this->login_as( $student );
+		update_post_meta( $this->course->ID, '_self_enrollment_not_allowed', true );
+
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		/* Expect & Act */
+		$notices->expects( self::never() )
+			->method( 'add_notice' );
+		do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
+	}
 }

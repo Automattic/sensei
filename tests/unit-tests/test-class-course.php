@@ -768,7 +768,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		Sensei_Course::self_enrollment_not_allowed_message();
 	}
 
-	public function testSelfEnrollmentNotAllowedMessage_WhenCourseAllowsSelfEnrollment_DontAddNotice(): void {
+	public function testSelfEnrollmentNotAllowedMessage_WhenCourseAllowsSelfEnrollment_DoesNotAddNotice(): void {
 		/* Arrange */
 		global $post;
 
@@ -783,7 +783,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		Sensei_Course::self_enrollment_not_allowed_message();
 	}
 
-	public function testSelfEnrollmentNotAllowedMessage_WhenCourseDoesntAllowSelfEnrollmentAndUserIsEnrolled_DontAddNotice(): void {
+	public function testSelfEnrollmentNotAllowedMessage_WhenCourseDoesntAllowSelfEnrollmentAndUserIsEnrolled_DoesNotAddNotice(): void {
 		/* Arrange */
 		$this->login_as_student();
 		global $post;
