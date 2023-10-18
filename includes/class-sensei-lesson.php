@@ -4782,8 +4782,16 @@ class Sensei_Lesson {
 			$course_link .= esc_html__( 'course', 'sensei-lms' );
 			$course_link .= '</a>';
 
-			// translators: The placeholder %1$s is a link to the Course.
-			$message_default = sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'sensei-lms' ), $course_link );
+			$format = '';
+			if ( Sensei_Course::is_self_enrollment_not_allowed( $course_id ) ) {
+				// translators: The placeholder %1$s is a link to the Course.
+				$format = esc_html__( 'Please contact the course administrator to sign up for the %1$s before starting the lesson.', 'sensei-lms' );
+			} else {
+				// translators: The placeholder %1$s is a link to the Course.
+				$format = esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'sensei-lms' );
+			}
+
+			$message_default = sprintf( $format, $course_link );
 
 			/**
 			 * Filter the course sign up notice message on the lesson page.
