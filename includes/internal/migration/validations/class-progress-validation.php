@@ -98,6 +98,8 @@ class Progress_Validation {
 	/**
 	 * Get the course IDs.
 	 *
+	 * @psalm-suppress InvalidReturnType, InvalidReturnStatement -- Psalm doesn't understand the 'fields' argument.
+	 *
 	 * @return int[]
 	 */
 	private function get_course_ids(): array {
@@ -114,6 +116,8 @@ class Progress_Validation {
 	/**
 	 * Get the lesson IDs.
 	 *
+	 * @psalm-suppress InvalidReturnType, InvalidReturnStatement -- Psalm doesn't understand the 'fields' argument.
+	 *
 	 * @return int[]
 	 */
 	private function get_lesson_ids(): array {
@@ -129,6 +133,8 @@ class Progress_Validation {
 
 	/**
 	 * Get the quiz IDs.
+	 *
+	 * @psalm-suppress InvalidReturnType, InvalidReturnStatement -- Psalm doesn't understand the 'fields' argument.
 	 *
 	 * @return int[]
 	 */
