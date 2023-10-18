@@ -4127,6 +4127,23 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Show a message telling the user that they are not allowed to self enroll if the setting is enabled.
+	 *
+	 * @since $$next-version$$
+	 */
+	public static function self_enrollment_not_allowed_message() {
+		$course_id = get_the_ID();
+		$user_id   = get_current_user_id();
+
+		if ( self::is_self_enrollment_not_allowed( get_the_ID() ) && ! self::is_user_enrolled( $course_id, $user_id ) ) {
+			Sensei()->notices->add_notice(
+				__( 'Please contact the course administrator to sign up for this course.', 'sensei-lms' ),
+				'info'
+			);
+		}
+	}
+
+	/**
 	 * Generate the HTML of the course prerequisite notice.
 	 *
 	 * @param int $course_id The course id.
@@ -4341,6 +4358,8 @@ class Sensei_Course {
 		// Course prerequisite completion message.
 		add_action( 'sensei_single_course_content_inside_before', [ 'Sensei_Course', 'prerequisite_complete_message' ], 20 );
 
+		// Self enrollment not allowed message.
+		add_action( 'sensei_single_course_content_inside_before', [ 'Sensei_Course', 'self_enrollment_not_allowed_message' ], 20 );
 	}
 
 	/**
@@ -4363,6 +4382,9 @@ class Sensei_Course {
 
 		// Course prerequisite completion message.
 		remove_action( 'sensei_single_course_content_inside_before', [ 'Sensei_Course', 'prerequisite_complete_message' ], 20 );
+
+		// Self enrollment not allowed message.
+		remove_action( 'sensei_single_course_content_inside_before', [ 'Sensei_Course', 'self_enrollment_not_allowed_message' ], 20 );
 
 		// Add message links to courses.
 		remove_action( 'sensei_single_course_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 35 );
