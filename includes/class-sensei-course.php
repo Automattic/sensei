@@ -3771,6 +3771,8 @@ class Sensei_Course {
 	/**
 	 * Check if self enrollment is not allowed for the given course.
 	 *
+	 * @since $$next-version$$
+	 *
 	 * @param int $course_id Course post ID.
 	 *
 	 * @return boolean Whether self enrollment is not allowed.
