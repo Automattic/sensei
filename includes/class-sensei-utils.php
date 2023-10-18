@@ -2973,6 +2973,18 @@ class Sensei_Utils {
 	public static function is_fse_theme() {
 		return function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
 	}
+
+	/**
+	 * Check if the current screen is a site editor page.
+	 *
+	 * @return bool
+	 */
+	public static function is_site_editor() {
+
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+		return ! empty( $screen ) && in_array( $screen->id, [ 'widgets', 'site-editor', 'customize', 'appearance_page_gutenberg-edit-site' ], true );
+	}
 }
 
 /**
