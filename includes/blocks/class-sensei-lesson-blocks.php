@@ -49,6 +49,12 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			[ 'sensei-shared-blocks' ],
 			true
 		);
+		Sensei()->assets->enqueue(
+			'sensei-lesson-action-blocks',
+			'blocks/lesson-action-blocks.js',
+			[ 'sensei-single-lesson-blocks' ],
+			true
+		);
 
 		$course_id         = Sensei_Utils::get_current_course();
 		$has_learning_mode = ! empty( $course_id ) && Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
