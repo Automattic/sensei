@@ -60,6 +60,7 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$wpdb->insert(
 			$wpdb->prefix . 'sensei_lms_progress',
 			array(
@@ -79,6 +80,7 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 		$this->eraser->process();
 
 		/* Assert. */
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}sensei_lms_progress" );
 		self::assertSame( 0, $count );
 	}

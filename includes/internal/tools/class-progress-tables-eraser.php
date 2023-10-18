@@ -93,7 +93,9 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface {
 		global $wpdb;
 
 		foreach ( $this->schema->get_tables() as $table ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) === $table ) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$wpdb->query( "TRUNCATE TABLE $table" );
 			}
 		}
