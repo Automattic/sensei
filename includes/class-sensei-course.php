@@ -670,6 +670,18 @@ class Sensei_Course {
 		);
 		register_post_meta(
 			'course',
+			'_self_enrollment_not_allowed',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			]
+		);
+		register_post_meta(
+			'course',
 			'disable_notification',
 			[
 				'show_in_rest'  => true,
