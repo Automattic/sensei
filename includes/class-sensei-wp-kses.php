@@ -23,7 +23,14 @@ class Sensei_Wp_Kses {
 		$string = wp_kses_no_null( $string, array( 'slash_zero' => 'keep' ) );
 		$string = wp_kses_normalize_entities( $string );
 		/**
-		 * Filter content similar to pre_kses
+		 * Filter content before passing it to kses, similar to pre_kses.
+		 *
+		 * @hook sensei_pre_kses
+		 *
+		 * @param {string} $string            Content to run through kses.
+		 * @param {array}  $allowed_html      Allowed HTML elements.
+		 * @param {array}  $allowed_protocols Allowed protocol in links.
+		 * @return {string} Filtered content.
 		 */
 		$string = apply_filters( 'sensei_pre_kses', $string, $allowed_html, $allowed_protocols );
 		return wp_kses_split( $string, $allowed_html, $allowed_protocols );

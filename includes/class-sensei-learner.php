@@ -440,11 +440,11 @@ class Sensei_Learner {
 		 * Filters the arguments of the query which fetches a learner's enrolled courses.
 		 *
 		 * @since 3.3.0
+		 *
 		 * @hook sensei_learner_enrolled_courses_args
 		 *
 		 * @param {array} $query_args  The query args.
 		 * @param {int}   $user_id     The user id.
-		 *
 		 * @return {array} Query arguments.
 		 */
 		return apply_filters( 'sensei_learner_enrolled_courses_args', $query_args, $user_id );
@@ -585,8 +585,12 @@ class Sensei_Learner {
 		 * Filter the user full name from the get_learner_full_name function.
 		 *
 		 * @since 1.8.0
-		 * @param $full_name
-		 * @param $user_id
+		 *
+		 * @hook sensei_learner_full_name
+		 *
+		 * @param {string} $full_name The full name of the user.
+		 * @param {int}]   $user_id   The user ID.
+		 * @return {string} The full name of the user.
 		 */
 		return apply_filters( 'sensei_learner_full_name', $full_name, $user_id );
 
@@ -670,7 +674,14 @@ class Sensei_Learner {
 				'search' => '*' . $args['search'] . '*',
 				'fields' => 'ID',
 			);
-			// Filter for extending.
+			/**
+			 * Filter the user arguments used to search for learners.
+			 *
+			 * @hook sensei_learners_search_users
+			 *
+			 * @param {array} $user_args The user arguments.
+			 * @return {array} The filtered user arguments.
+			 */
 			$user_args = apply_filters( 'sensei_learners_search_users', $user_args );
 			if ( ! empty( $user_args ) ) {
 				$learners_search          = new WP_User_Query( $user_args );
@@ -678,6 +689,14 @@ class Sensei_Learner {
 			}
 		}
 
+		/**
+		 * Filter the arguments used to search for learners activity.
+		 *
+		 * @hook sensei_learners_filter_users
+		 *
+		 * @param {array} $activity_args The activity arguments.
+		 * @return {array} The filtered activity arguments.
+		 */
 		$activity_args = apply_filters( 'sensei_learners_filter_users', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice.

@@ -262,6 +262,15 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
+
+		/**
+		 * Filter the search button text for the list table.
+		 *
+		 * @hook sensei_list_table_search_button_text
+		 *
+		 * @param {string} $text The search button text.
+		 * @return {string} The filtered search button text.
+		 */
 		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 
@@ -420,11 +429,11 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		/**
 		 * Customize the export button URL on the reports overview screen.
 		 *
-		 * @hook  sensei_reports_overview_export_button_url
 		 * @since 4.6.0
 		 *
-		 * @param {string} $url The export button URL.
+		 * @hook sensei_reports_overview_export_button_url
 		 *
+		 * @param {string} $url The export button URL.
 		 * @return {string} The export button URL.
 		 */
 		$url = apply_filters( 'sensei_reports_overview_export_button_url', $url );

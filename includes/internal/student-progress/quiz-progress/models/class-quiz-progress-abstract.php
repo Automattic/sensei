@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.18.0
  */
 class Quiz_Progress_Abstract implements Quiz_Progress_Interface {
 	/**

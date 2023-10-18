@@ -67,7 +67,15 @@ class Sensei_Emails {
 		$this->emails['teacher-quiz-submitted']   = new Sensei_Email_Teacher_Quiz_Submitted();
 		$this->emails['teacher-new-message']      = new Sensei_Email_Teacher_New_Message();
 		$this->emails['new-message-reply']        = new Sensei_Email_New_Message_Reply();
-		$this->emails                             = apply_filters( 'sensei_email_classes', $this->emails );
+		/**
+		 * Filter Sensei's email classes.
+		 *
+		 * @hook sensei_email_classes
+		 *
+		 * @param {array} $emails Array of email classes.
+		 * @return {array} Filtered array of email classes.
+		 */
+		$this->emails = apply_filters( 'sensei_email_classes', $this->emails );
 	}
 
 	/**
@@ -171,10 +179,14 @@ class Sensei_Emails {
 		 * Filter Sensei's ability to send out emails.
 		 *
 		 * @since 1.8.0
-		 * @param bool $send_email Whether to send the email or not.
-		 * @param mixed $to The email address(es) to send the email to.
-		 * @param mixed $subject The subject of the email.
-		 * @param mixed $message The message of the email.
+		 *
+		 * @hook sensei_send_emails
+		 *
+		 * @param {bool} $send_email Whether to send the email or not.
+		 * @param {mixed} $to The email address(es) to send the email to.
+		 * @param {mixed} $subject The subject of the email.
+		 * @param {mixed} $message The message of the email.
+		 * @return {bool} Whether to send the email or not.
 		 */
 		if ( apply_filters( 'sensei_send_emails', true, $to, $subject, $message ) ) {
 
@@ -194,6 +206,15 @@ class Sensei_Emails {
 
 		$html = $this->wrap_message( $message );
 
+		/**
+		 * Filter the email content.
+		 *
+		 * @hook sensei_email
+		 *
+		 * @param {string} $html The email content.
+		 * @param {string} $email_template The email template.
+		 * @return {string} Filtered email content.
+		 */
 		return apply_filters( 'sensei_email', $html, $email_template );
 	}
 

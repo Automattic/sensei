@@ -599,6 +599,7 @@ class Sensei_Question {
 		 * Filter the grade for the given question.
 		 *
 		 * @since 1.9.6
+		 *
 		 * @hook sensei_get_question_grade
 		 *
 		 * @param {int} $question_grade Question grade.
@@ -655,6 +656,7 @@ class Sensei_Question {
 		 * Filter the question title.
 		 *
 		 * @since 1.3.0
+		 *
 		 * @hook sensei_question_title
 		 *
 		 * @param {string} $title Question title.
@@ -662,7 +664,15 @@ class Sensei_Question {
 		 */
 		$title = apply_filters( 'sensei_question_title', get_the_title( $question_id ) );
 
-		/** This filter is documented in includes/class-sensei-messages.php */
+		/**
+		 * Filter Sensei single title
+		 *
+		 * @hook sensei_single_title
+		 *
+		 * @param {string} $title     The title.
+		 * @param {string} $post_type The post type.
+		 * @return {string} Filtered title.
+		 */
 		$title = apply_filters( 'sensei_single_title', $title, 'question' );
 
 		$question_grade = Sensei()->question->get_question_grade( $question_id );
@@ -929,15 +939,15 @@ class Sensei_Question {
 		/**
 		 * Allow dynamic overriding of whether to show question answers or not
 		 *
-		 * @hook  sensei_question_show_answers
 		 * @since 1.9.7
+		 *
+		 * @hook  sensei_question_show_answers
 		 *
 		 * @param {bool} $show_answers Whether to show the answer to the question.
 		 * @param {int}  $question_id  Question ID.
 		 * @param {int}  $quiz_id      Quiz ID.
 		 * @param {int}  $lesson_id    Lesson ID.
 		 * @param {int}  $user_id      User ID.
-		 *
 		 * @return {bool} Whether to show the answer to the question.
 		 */
 		$show_correct_answers = apply_filters( 'sensei_question_show_answers', $show_correct_answers, $question_id, $quiz_id, $lesson_id, get_current_user_id() );
@@ -960,15 +970,15 @@ class Sensei_Question {
 		/**
 		 * Filter the answer message CSS classes.
 		 *
-		 * @hook  sensei_question_answer_message_css_class
 		 * @since  1.9.0
+		 *
+		 * @hook  sensei_question_answer_message_css_class
 		 *
 		 * @param {string} $answer_notes_classname Space-separated CSS classes to apply to answer message.
 		 * @param {int}    $lesson_id              Lesson ID.
 		 * @param {int}    $question_id            Question ID.
 		 * @param {int}    $user_id                User ID.
 		 * @param {bool}   $answer_correct         Whether this is the correct answer.
-		 *
 		 * @return {string} Space-separated CSS classes to apply to answer message.
 		 */
 		$answer_notes_classnames = apply_filters( 'sensei_question_answer_message_css_class', $answer_notes_classnames, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
@@ -978,12 +988,12 @@ class Sensei_Question {
 		 * Filter the answer feedback.
 		 *
 		 * @since  1.9.0
+		 *
 		 * @hook   sensei_question_answer_notes
 		 *
 		 * @param  {bool|string} $answer_notes Answer notes.
 		 * @param  {int}         $question_id  Question ID.
 		 * @param  {int}         $lesson_id    Lesson ID.
-		 *
 		 * @return {string} Answer notes.
 		 */
 		$answer_notes = apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id );
@@ -997,15 +1007,15 @@ class Sensei_Question {
 		/**
 		 * Filter the learner grade displayed.
 		 *
-		 * @hook  sensei_question_answer_message_grade
 		 * @since 3.14.0
+		 *
+		 * @hook  sensei_question_answer_message_grade
 		 *
 		 * @param {string} $grade          Formatted grade (eg "0/3 points")
 		 * @param {int}    $lesson_id      Lesson ID.
 		 * @param {int}    $question_id    Question ID.
 		 * @param {int}    $user_id        User ID.
 		 * @param {bool}   $answer_correct Whether this is the correct answer.
-		 *
 		 * @return {string} Answer message.
 		 */
 		$grade = apply_filters( 'sensei_question_answer_message_grade', $grade, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
@@ -1013,15 +1023,15 @@ class Sensei_Question {
 		/**
 		 * Filter the correct answer.
 		 *
-		 * @hook  sensei_question_answer_message_correct_answer
 		 * @since 1.9.0
+		 *
+		 * @hook  sensei_question_answer_message_correct_answer
 		 *
 		 * @param {string} $answer_message Answer message.
 		 * @param {int}    $lesson_id      Lesson ID.
 		 * @param {int}    $question_id    Question ID.
 		 * @param {int}    $user_id        User ID.
 		 * @param {bool}   $answer_correct Whether this is the correct answer.
-		 *
 		 * @return {string} Answer message.
 		 */
 		$correct_answer   = apply_filters( 'sensei_question_answer_message_correct_answer', $correct_answer, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
@@ -1117,7 +1127,18 @@ class Sensei_Question {
 			$show_answers = false;
 		}
 
-		/** This filter is documented in self::the_answer_feedback */
+		/**
+		 * Allow dynamic overriding of whether to show question answers or not
+		 *
+		 * @hook  sensei_question_show_answers
+		 *
+		 * @param {bool} $show_answers Whether to show the answer to the question.
+		 * @param {int}  $question_id  Question ID.
+		 * @param {int}  $quiz_id      Quiz ID.
+		 * @param {int}  $lesson_id    Lesson ID.
+		 * @param {int}  $user_id      User ID.
+		 * @return {bool} Whether to show the answer to the question.
+		 */
 		$show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_item->ID, $quiz_id, $lesson_id, get_current_user_id() );
 
 		if ( $show_answers ) {
@@ -1168,14 +1189,26 @@ class Sensei_Question {
 			$answer_message_class .= ' has_notes';
 		}
 
-		/** This filter is documented in self::the_answer_feedback */
+		/**
+		 * Filter the answer message CSS classes.
+		 *
+		 * @hook  sensei_question_answer_message_css_class
+		 *
+		 * @param {string} $answer_notes_classname Space-separated CSS classes to apply to answer message.
+		 * @param {int}    $lesson_id              Lesson ID.
+		 * @param {int}    $question_id            Question ID.
+		 * @param {int}    $user_id                User ID.
+		 * @param {bool}   $answer_correct         Whether this is the correct answer.
+		 * @return {string} Space-separated CSS classes to apply to answer message.
+		 */
 		$final_css_classes = apply_filters( 'sensei_question_answer_message_css_class', $answer_message_class, $lesson_id, $question_id, get_current_user_id(), $user_correct );
 
 		/**
 		 * Filter the answer message.
 		 *
-		 * @hook sensei_question_answer_message_text
 		 * @deprecated
+		*
+		 * @hook sensei_question_answer_message_text
 		 *
 		 * @param {string} $answer_message Answer message.
 		 * @param {int}    $lesson_id      Lesson ID.
@@ -1238,6 +1271,7 @@ class Sensei_Question {
 		 * the get_template_data function.
 		 *
 		 * @since 1.9.0
+		 *
 		 * @hook sensei_get_question_template_data
 		 *
 		 * @param {array} $data        Question data.
@@ -1555,6 +1589,7 @@ class Sensei_Question {
 		 * Can be used for text filters.
 		 *
 		 * @since 1.9.7
+		 *
 		 * @hook sensei_questions_get_correct_answer
 		 *
 		 * @param {string} $right_answer Correct answer.

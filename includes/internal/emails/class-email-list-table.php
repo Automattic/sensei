@@ -64,11 +64,11 @@ class Email_List_Table extends Sensei_List_Table {
 		 * Filter the columns that are displayed on the email list.
 		 *
 		 * @since 4.12.0
+		 *
 		 * @hook sensei_email_list_columns
 		 *
 		 * @param {array}  $columns    The table columns.
 		 * @param {object} $list_table Email_List_Table instance.
-		 *
 		 * @return {array} The modified table columns.
 		 */
 		return apply_filters( 'sensei_email_list_columns', $columns, $this );
@@ -159,13 +159,13 @@ class Email_List_Table extends Sensei_List_Table {
 		 * Filter the row data displayed on the email list.
 		 *
 		 * @since 4.12.0
+		 *
 		 * @hook sensei_email_list_row_data
 		 *
 		 * @param {array}  $row_data The row data.
 		 * @param {object} $post The post.
 		 * @param {object} $list_table Email_List_Table instance.
-		 *
-		 * @return {array}
+		 * @return {array} The modified row data.
 		 */
 		return apply_filters( 'sensei_email_list_row_data', $row_data, $post, $this );
 	}
@@ -246,13 +246,13 @@ class Email_List_Table extends Sensei_List_Table {
 		 * Filter the row actions displayed on the email list.
 		 *
 		 * @since 4.12.0
+		 *
 		 * @hook sensei_email_list_row_actions
 		 *
 		 * @param {array}  $actions The row actions.
 		 * @param {object} $post The post.
 		 * @param {object} $list_table Email_List_Table instance.
-		 *
-		 * @return {array}
+		 * @return {array} The modified row actions.
 		 */
 		return apply_filters( 'sensei_email_list_row_actions', $actions, $post, $this );
 	}
@@ -298,13 +298,13 @@ class Email_List_Table extends Sensei_List_Table {
 		 * Filter if the email is available.
 		 *
 		 * @since 4.12.0
+		 *
 		 * @hook sensei_email_is_available
 		 *
 		 * @param {boolean} $available True if the email is available, false otherwise.
 		 * @param {object}  $post The post.
 		 * @param {object}  $list_table Email_List_Table instance.
-		 *
-		 * @return {boolean}
+		 * @return {boolean} Filtered value.
 		 */
 		return apply_filters( 'sensei_email_is_available', $available, $post, $this );
 	}

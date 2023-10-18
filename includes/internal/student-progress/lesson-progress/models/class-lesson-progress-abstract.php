@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.18.0
  */
 abstract class Lesson_Progress_Abstract implements Lesson_Progress_Interface {
 

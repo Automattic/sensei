@@ -231,11 +231,11 @@ class Sensei_Db_Query_Learners {
 		/**
 		 * Filter the query to get learners based on the current search arguments.
 		 *
-		 * @hook sensei_learners_query
 		 * @since 4.11.0
 		 *
-		 * @param {string} $sql SQL query
+		 * @hook sensei_learners_query
 		 *
+		 * @param {string} $sql SQL query.
 		 * @return {Sensei_Db_Query_Learners} Query builder instance.
 		 */
 		$sql = apply_filters( 'sensei_learners_query', $sql, $this );
