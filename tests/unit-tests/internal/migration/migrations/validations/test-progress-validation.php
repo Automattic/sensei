@@ -180,12 +180,11 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	public function testRun_WhenHasQuizProgressInTable_HasNoErrors(): void {
 		/* Arrange. */
 		$course_data         = $this->factory->get_course_with_lessons();
-		$course_id           = $course_data['course_id'];
 		$lesson_id           = $course_data['lesson_ids'][0];
 		$quiz_id             = $course_data['quiz_ids'][0];
 		$progress_validation = new Progress_Validation();
 
-		$this->directlyEnrolStudent( 1, $course_id );
+		add_filter( 'sensei_is_enrolled', '__return_true' );
 		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
 		Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, 1 );
 		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, 1 );
@@ -202,13 +201,12 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		global $wpdb;
 		$course_data         = $this->factory->get_course_with_lessons();
-		$course_id           = $course_data['course_id'];
 		$lesson_id           = $course_data['lesson_ids'][0];
 		$quiz_id             = $course_data['quiz_ids'][0];
 		$progress_validation = new Progress_Validation();
 		$progress_repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 
-		$this->directlyEnrolStudent( 1, $course_id );
+		add_filter( 'sensei_is_enrolled', '__return_true' );
 		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
 		Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, 1 );
 		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, 1 );
@@ -229,13 +227,12 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		global $wpdb;
 		$course_data         = $this->factory->get_course_with_lessons();
-		$course_id           = $course_data['course_id'];
 		$lesson_id           = $course_data['lesson_ids'][0];
 		$quiz_id             = $course_data['quiz_ids'][0];
 		$progress_validation = new Progress_Validation();
 		$progress_repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 
-		$this->directlyEnrolStudent( 1, $course_id );
+		add_filter( 'sensei_is_enrolled', '__return_true' );
 		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
 		Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, 1 );
 		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, 1 );
