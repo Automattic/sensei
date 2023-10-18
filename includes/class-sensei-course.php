@@ -3731,6 +3731,8 @@ class Sensei_Course {
 	/**
 	 * Check if a user can manually enrol themselves.
 	 *
+	 * @since $$next-version$$ Add a check whether self enrollment is not allowed.
+	 *
 	 * @param int $course_id Course post ID.
 	 *
 	 * @return bool
@@ -3740,7 +3742,10 @@ class Sensei_Course {
 		// Check if the user is already enrolled through any provider.
 		$is_user_enrolled = self::is_user_enrolled( $course_id, get_current_user_id() );
 
-		$default_can_user_manually_enrol = is_user_logged_in() && ! $is_user_enrolled;
+		// Check if self enrollment is not allowed for this course.
+		$is_self_enrollment_not_allowed = self::is_self_enrollment_not_allowed( $course_id );
+
+		$default_can_user_manually_enrol = is_user_logged_in() && ! $is_user_enrolled && ! $is_self_enrollment_not_allowed;
 
 		$can_user_manually_enrol = apply_filters_deprecated(
 			'sensei_display_start_course_form',
@@ -3761,6 +3766,17 @@ class Sensei_Course {
 		 * @return {bool} Filtered value.
 		 */
 		return (bool) apply_filters( 'sensei_can_user_manually_enrol', $can_user_manually_enrol, $course_id );
+	}
+
+	/**
+	 * Check if self enrollment is not allowed for the given course.
+	 *
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return boolean Whether self enrollment is not allowed.
+	 */
+	public static function is_self_enrollment_not_allowed( $course_id ) {
+		return (bool) get_post_meta( $course_id, '_self_enrollment_not_allowed', true );
 	}
 
 	/**
