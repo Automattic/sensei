@@ -245,7 +245,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
 		/* Assert. */
-		$this->assertMatchesRegularExpression( '/Please contact the course administrator to access the course content./', $html, 'Should return not allowed self enrollment notice' );
+		$this->assertStringContainsString( 'Please contact the course administrator to access the course content.', $html, 'Should return not allowed self enrollment notice' );
 	}
 
 	/**
