@@ -4139,7 +4139,11 @@ class Sensei_Course {
 		$course_id = get_the_ID();
 		$user_id   = get_current_user_id();
 
-		if ( self::is_self_enrollment_not_allowed( get_the_ID() ) && ! self::is_user_enrolled( $course_id, $user_id ) ) {
+		if ( false === $course_id ) {
+			return;
+		}
+
+		if ( self::is_self_enrollment_not_allowed( $course_id ) && ! self::is_user_enrolled( $course_id, $user_id ) ) {
 			Sensei()->notices->add_notice(
 				__( 'Please contact the course administrator to sign up for this course.', 'sensei-lms' ),
 				'info'
