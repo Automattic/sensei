@@ -650,9 +650,7 @@ class Sensei_Course {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'integer',
-				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
 		register_post_meta(
@@ -663,9 +661,7 @@ class Sensei_Course {
 				'single'            => true,
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
-				'auth_callback'     => function ( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
+				'auth_callback'     => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
 		register_post_meta(
@@ -675,9 +671,7 @@ class Sensei_Course {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'boolean',
-				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
 		register_post_meta(
@@ -687,9 +681,7 @@ class Sensei_Course {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'boolean',
-				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
 		register_post_meta(
@@ -699,9 +691,7 @@ class Sensei_Course {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'boolean',
-				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
 		/**
@@ -715,6 +705,21 @@ class Sensei_Course {
 		 * @return {string[]} Filtered meta field key names.
 		 */
 		$this->meta_fields = apply_filters( 'sensei_course_meta_fields', [ 'course_prerequisite', 'course_featured', 'course_video_embed' ] );
+	}
+
+	/**
+	 * Add the course meta boxes.
+	 *
+	 * @internal
+	 *
+	 * @param bool   $allowed
+	 * @param string $meta_key
+	 * @param int    $post_id  The post ID where the meta key is being edited.
+	 *
+	 * @return boolean Whether the user can edit the meta key.
+	 */
+	public function post_meta_auth_callback( $allowed, $meta_key, $post_id ) {
+		return current_user_can( 'edit_post', $post_id );
 	}
 
 	/**
