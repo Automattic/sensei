@@ -4,7 +4,6 @@
  *
  * @package sensei
  *
- *
  * @var string $tool_id Tool ID for this tool.
  */
 
