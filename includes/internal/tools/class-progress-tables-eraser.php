@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Tools;
 
 use Sensei\Internal\Installer\Schema;
+use Sensei_Tool_Interactive_Interface;
 use Sensei_Tool_Interface;
 use Sensei_Tools;
 
@@ -22,7 +23,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since $$next-version$$
  */
-class Progress_Tables_Eraser implements Sensei_Tool_Interface {
+class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Interactive_Interface {
+	/**
+	 * Nonce action.
+	 *
+	 * @var string
+	 */
+	const NONCE_ACTION = 'sensei-tools-progress-tables-eraser';
 
 	/**
 	 * Sensei schema.
@@ -65,7 +72,7 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface {
 	 * @return string
 	 */
 	public function get_id() {
-		return 'student-progress-eraser';
+		return 'progress-tables-eraser';
 	}
 
 	/**
@@ -90,15 +97,56 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface {
 	 * Run the tool.
 	 */
 	public function process() {
+		if ( empty( $_POST['delete-tables'] ) ) {
+			return;
+		}
+
+		$wpnonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : '';
+		if ( empty( $wpnonce ) || ! wp_verify_nonce( wp_unslash( $wpnonce ), self::NONCE_ACTION ) ) {
+			Sensei_Tools::instance()->trigger_invalid_request( $this );
+			return;
+		}
+
+		if ( empty( $_POST['confirm'] ) ) {
+			Sensei_Tools::instance()->add_user_message( __( 'You must confirm the action before it can be performed.', 'sensei-lms' ), true );
+			wp_safe_redirect( $this->get_tool_url() );
+			wp_die();
+		}
+
 		global $wpdb;
 
+		$results = array();
 		foreach ( $this->schema->get_tables() as $table ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) === $table ) {
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$wpdb->query( "TRUNCATE TABLE $table" );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange
+				$wpdb->query( "DROP TABLE $table" );
+				$results[] = $table;
 			}
 		}
+
+		if ( count( $results ) > 0 ) {
+			$message = sprintf(
+				/* translators: %s: list of tables. */
+				__( 'The following tables have been deleted: %s', 'sensei-lms' ),
+				implode( ', ', $results )
+			);
+
+			/**
+			 * Fires after progress tables are deleted.
+			 *
+			 * @since $$next-version$$
+			 *
+			 * @param array $tables List of deleted tables.
+			 */
+			do_action( 'sensei_tools_progress_tables_deleted', $results );
+		} else {
+			$message = __( 'No tables were deleted.', 'sensei-lms' );
+		}
+
+		Sensei_Tools::instance()->add_user_message( $message );
+		wp_safe_redirect( $this->get_tool_url() );
+		wp_die();
 	}
 
 	/**
@@ -107,6 +155,33 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface {
 	 * @return bool True if tool is available.
 	 */
 	public function is_available() {
-		return true;
+		global $wpdb;
+
+		foreach ( $this->schema->get_tables() as $table ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Output tool view for interactive action methods.
+	 */
+	public function output() {
+		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable -- Variable used in view.
+		$tool_id = $this->get_id();
+		include __DIR__ . '/views/html-progress-tables-eraser-form.php';
+	}
+
+	/**
+	 * Get the URL for this tool.
+	 *
+	 * @return string
+	 */
+	private function get_tool_url(): string {
+		return admin_url( 'admin.php?page=sensei-tools&tool=' . $this->get_id() );
 	}
 }
