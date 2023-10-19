@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0e4302cd363bf4222e4336cdeeee607e",
+    "content-hash": "42ec6978f53e8a797460fc8c19e65f61",
     "packages": [
         {
             "name": "woocommerce/action-scheduler",
@@ -1535,6 +1535,50 @@
                 "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.3.0"
             },
             "time": "2023-08-10T16:34:11+00:00"
+        },
+        {
+            "name": "php-stubs/wp-cli-stubs",
+            "version": "v2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-stubs/wp-cli-stubs.git",
+                "reference": "5a4fce1430c5d59f8d8a5f0ab573930139b0279b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-stubs/wp-cli-stubs/zipball/5a4fce1430c5d59f8d8a5f0ab573930139b0279b",
+                "reference": "5a4fce1430c5d59f8d8a5f0ab573930139b0279b",
+                "shasum": ""
+            },
+            "require": {
+                "php-stubs/wordpress-stubs": "^4.7 || ^5.0 || ^6.0"
+            },
+            "require-dev": {
+                "php": "~7.3 || ~8.0",
+                "php-stubs/generator": "^0.8.0"
+            },
+            "suggest": {
+                "symfony/polyfill-php73": "Symfony polyfill backporting some PHP 7.3+ features to lower PHP versions",
+                "szepeviktor/phpstan-wordpress": "WordPress extensions for PHPStan"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "WP-CLI function and class declaration stubs for static analysis.",
+            "homepage": "https://github.com/php-stubs/wp-cli-stubs",
+            "keywords": [
+                "PHPStan",
+                "static analysis",
+                "wordpress",
+                "wp-cli"
+            ],
+            "support": {
+                "issues": "https://github.com/php-stubs/wp-cli-stubs/issues",
+                "source": "https://github.com/php-stubs/wp-cli-stubs/tree/v2.8.0"
+            },
+            "time": "2023-06-02T09:21:15+00:00"
         },
         {
             "name": "phpcompatibility/php-compatibility",
@@ -4609,10 +4653,10 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": {
-        "php": "^7.3 || ^8"
+        "php": "^7.4 || ^8"
     },
     "platform-overrides": {
-        "php": "7.3"
+        "php": "7.4"
     },
     "plugin-api-version": "2.3.0"
 }
