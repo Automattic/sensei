@@ -126,6 +126,8 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	 * When the course has an unmet prerequisite, button is disabled with a message.
 	 */
 	public function testDisabledWhenPrerequisiteUnmet() {
+		$GLOBALS['wp_query']->is_single = true;
+
 		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
 		$property->setAccessible( true );
 		$property->setValue( Sensei()->notices, false );
@@ -184,6 +186,8 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	 */
 	public function testRenderTakeCourseBlock_WhenSelfEnrollmentIsNotAllowed_AddsNotice() {
 		/* Arrange. */
+		$GLOBALS['wp_query']->is_single = true;
+
 		$this->login_as_student();
 		update_post_meta( $this->course->ID, '_sensei_self_enrollment_not_allowed', true );
 
@@ -198,10 +202,31 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Self-Enrollment Not In Course Page.
+	 */
+	public function testRenderTakeCourseBlock_WhenSelfEnrollmentIsNotAllowedAndNotInSinglePost_DoesNotAddNotice() {
+		/* Arrange. */
+		$GLOBALS['wp_query']->is_single = false;
+
+		$this->login_as_student();
+		update_post_meta( $this->course->ID, '_sensei_self_enrollment_not_allowed', true );
+
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		/* Expect & Act */
+		$notices->expects( self::never() )
+			->method( 'add_notice' );
+		do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
+	}
+
+	/**
 	 * Self-Enrollment Not Allowed And User Is Enrolled.
 	 */
 	public function testRenderTakeCourseBlock_WhenSelfEnrollmentIsNotAllowedAndUserIsEnrolled_DoesNotAddNotice() {
 		/* Arrange. */
+		$GLOBALS['wp_query']->is_single = true;
+
 		$student = $this->factory->user->create();
 		$this->manuallyEnrolStudentInCourse( $student, $this->course->ID );
 
