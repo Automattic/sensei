@@ -51,7 +51,7 @@ const CourseGeneralSidebar = () => {
 	const featured = meta._course_featured;
 	const prerequisite = meta._course_prerequisite;
 	const notification = meta.disable_notification;
-	const senfEnrollmentNotAllowed = meta._self_enrollment_not_allowed;
+	const selfEnrollmentNotAllowed = meta._self_enrollment_not_allowed;
 	const openAccess = meta._open_access;
 
 	useEffect( () =>
@@ -177,7 +177,7 @@ const CourseGeneralSidebar = () => {
 			<h3>{ __( 'Enrollment', 'sensei-lms' ) }</h3>
 			<CheckboxControl
 				label={ __( "Don't allow self enrollment", 'sensei-lms' ) }
-				checked={ senfEnrollmentNotAllowed }
+				checked={ selfEnrollmentNotAllowed }
 				onChange={ ( checked ) =>
 					setMeta( {
 						...meta,
