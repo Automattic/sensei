@@ -54,7 +54,7 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 		$name = $this->eraser->get_name();
 
 		/* Assert. */
-		self::assertSame( 'Erase content of student progress tables', $name );
+		self::assertSame( 'Delete student progress tables', $name );
 	}
 
 	public function testGetDescription_Always_ReturnsMatchingString(): void {
@@ -63,7 +63,7 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 		$description = $this->eraser->get_description();
 
 		/* Assert. */
-		self::assertSame( 'Erase the content of the student progress and quiz submission tables. This will delete all data in those tables, but won\'t affect comment-based data.', $description );
+		self::assertSame( 'Delete student progress and quiz submission tables. This will delete those tables, but won\'t affect comment-based data.', $description );
 	}
 
 	public function testProcess_ConfirmationProvided_DeletesTables(): void {
