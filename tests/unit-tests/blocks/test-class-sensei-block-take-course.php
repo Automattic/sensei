@@ -180,7 +180,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Self Enrollment Not Allowed.
+	 * Self-Enrollment Not Allowed.
 	 */
 	public function testRenderTakeCourseBlock_WhenSelfEnrollmentIsNotAllowed_AddsNotice() {
 		/* Arrange. */
@@ -198,7 +198,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Self Enrollment Not Allowed And User Is Enrolled.
+	 * Self-Enrollment Not Allowed And User Is Enrolled.
 	 */
 	public function testRenderTakeCourseBlock_WhenSelfEnrollmentIsNotAllowedAndUserIsEnrolled_DoesNotAddNotice() {
 		/* Arrange. */

@@ -262,7 +262,7 @@ class Sensei_Course_Theme_Lesson {
 		$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
 		$notice_icon  = 'lock';
 
-		// Check if self enrollment is allowed.
+		// Check if self-enrollment is allowed.
 		if ( Sensei_Course::is_self_enrollment_not_allowed( $course_id ) ) {
 			$notices->add_notice(
 				$notice_key,
