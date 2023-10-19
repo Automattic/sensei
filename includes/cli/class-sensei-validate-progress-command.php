@@ -7,7 +7,9 @@
 
 use Sensei\Internal\Migration\Validations\Progress_Validation;
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * WP-CLI command that validates the progress data.
