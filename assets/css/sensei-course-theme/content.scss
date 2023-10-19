@@ -131,6 +131,12 @@ body {
 			}
 		}
 	}
+
+	.wp-block-post-content {
+		.wp-block-sensei-lms-lesson-actions {
+			display: none;
+		}
+	}
 }
 
 .entry-content {
@@ -148,13 +154,5 @@ body {
 	iframe,
 	object {
 		max-width: 100%;
-	}
-}
-
-.sensei-course-theme {
-	.wp-block-post-content {
-		.wp-block-sensei-lms-lesson-actions {
-			display: none;
-		}
 	}
 }
