@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix padding in site editor that prevents full-width alignment from working
