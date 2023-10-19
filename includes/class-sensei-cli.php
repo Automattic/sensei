@@ -25,6 +25,6 @@ class Sensei_CLI {
 	 */
 	private function register() {
 		WP_CLI::add_command( 'sensei db seed', Sensei_DB_Seed_Command::class );
-		WP_CLI::add_command( 'sensei db validate progress', Sensei_DB_Validate_Progress_Command::class );
+		WP_CLI::add_command( 'sensei validate progress', Sensei_Validate_Progress_Command::class );
 	}
 }

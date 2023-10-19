@@ -1,6 +1,6 @@
 <?php
 /**
- * Sensei_DB_Validate_Progress_Command class file.
+ * Sensei_Validate_Progress_Command class file.
  *
  * @package sensei
  */
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since $$next-version$$
  */
-class Sensei_DB_Validate_Progress_Command {
+class Sensei_Validate_Progress_Command {
 	/**
 	 * Seed the database.
 	 *
