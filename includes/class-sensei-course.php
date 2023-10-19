@@ -712,8 +712,8 @@ class Sensei_Course {
 	 *
 	 * @internal
 	 *
-	 * @param bool   $allowed
-	 * @param string $meta_key
+	 * @param bool   $allowed  Whether the user can add the meta.
+	 * @param string $meta_key The meta key.
 	 * @param int    $post_id  The post ID where the meta key is being edited.
 	 *
 	 * @return boolean Whether the user can edit the meta key.
