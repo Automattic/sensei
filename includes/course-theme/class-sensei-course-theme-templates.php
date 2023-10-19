@@ -322,9 +322,10 @@ class Sensei_Course_Theme_Templates {
 			} else {
 				// Prefill the template contents from their content files.
 				if ( ! empty( $template['content'] ) && file_exists( $template['content'] ) ) {
-					// Get the block template markup.
 
 					$extension = pathinfo( $template['content'], PATHINFO_EXTENSION );
+
+					// Get the block template markup.
 					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
 					$html = 'html' === $extension ? file_get_contents( $template['content'] ) : $this->get_markup_from_php_template_path( $template['content'] );
 
