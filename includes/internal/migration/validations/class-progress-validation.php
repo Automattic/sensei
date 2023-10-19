@@ -30,7 +30,7 @@ class Progress_Validation {
 	 *
 	 * @var Validation_Error[]
 	 */
-	private $errors = [];
+	private array $errors = array();
 
 	/**
 	 * Run the validation.
@@ -40,7 +40,7 @@ class Progress_Validation {
 	 * @since $$next-version$$
 	 */
 	public function run(): void {
-		$this->errors = [];
+		$this->errors = array();
 
 		if ( ! $this->is_progress_migration_complete() ) {
 			$this->add_error( 'The progress migration is not complete. Please run the progress migration first.' );
