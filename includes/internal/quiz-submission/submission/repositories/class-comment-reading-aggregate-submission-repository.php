@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Aggregate_Submission_Repository class.
+ * File containing the Comment_Reading_Aggregate_Submission_Repository class.
  *
  * @package sensei
  */
@@ -16,13 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Aggregate_Submission_Repository.
+ * Class Comment_Reading_Aggregate_Submission_Repository.
  *
  * @internal
  *
  * @since 4.16.1
  */
-class Aggregate_Submission_Repository implements Submission_Repository_Interface {
+class Comment_Reading_Aggregate_Submission_Repository implements Submission_Repository_Interface {
 	/**
 	 * Comments based quiz submission repository implementation.
 	 *
@@ -38,25 +38,16 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 	private $tables_based_repository;
 
 	/**
-	 * The flag if the tables based implementation is available for use.
-	 *
-	 * @var bool
-	 */
-	private $use_tables;
-
-	/**
 	 * Constructor.
 	 *
 	 * @internal
 	 *
 	 * @param Comments_Based_Submission_Repository $comments_based_repository Comments based quiz submission repository implementation.
 	 * @param Tables_Based_Submission_Repository   $tables_based_repository  Tables based quiz submission repository implementation.
-	 * @param bool                                 $use_tables  The flag if the tables based implementation is available for use.
 	 */
-	public function __construct( Comments_Based_Submission_Repository $comments_based_repository, Tables_Based_Submission_Repository $tables_based_repository, bool $use_tables ) {
+	public function __construct( Comments_Based_Submission_Repository $comments_based_repository, Tables_Based_Submission_Repository $tables_based_repository ) {
 		$this->comments_based_repository = $comments_based_repository;
 		$this->tables_based_repository   = $tables_based_repository;
-		$this->use_tables                = $use_tables;
 	}
 
 	/**
@@ -72,10 +63,7 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 	 */
 	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
 		$submission = $this->comments_based_repository->create( $quiz_id, $user_id, $final_grade );
-
-		if ( $this->use_tables ) {
-			$this->tables_based_repository->create( $quiz_id, $user_id, $final_grade );
-		}
+		$this->tables_based_repository->create( $quiz_id, $user_id, $final_grade );
 
 		return $submission;
 	}
@@ -132,28 +120,26 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 	public function save( Submission_Interface $submission ): void {
 		$this->comments_based_repository->save( $submission );
 
-		if ( $this->use_tables ) {
-			$tables_based_submission = $this->tables_based_repository->get_or_create(
-				$submission->get_quiz_id(),
-				$submission->get_user_id(),
-				$submission->get_final_grade()
-			);
+		$tables_based_submission = $this->tables_based_repository->get_or_create(
+			$submission->get_quiz_id(),
+			$submission->get_user_id(),
+			$submission->get_final_grade()
+		);
 
-			// Make sure the dates are in UTC.
-			$created_at = new DateTimeImmutable( '@' . $submission->get_created_at()->getTimestamp() );
-			$updated_at = new DateTimeImmutable( '@' . $submission->get_updated_at()->getTimestamp() );
+		// Make sure the dates are in UTC.
+		$created_at = new DateTimeImmutable( '@' . $submission->get_created_at()->getTimestamp() );
+		$updated_at = new DateTimeImmutable( '@' . $submission->get_updated_at()->getTimestamp() );
 
-			$submission_to_save = new Tables_Based_Submission(
-				$tables_based_submission->get_id(),
-				$submission->get_quiz_id(),
-				$submission->get_user_id(),
-				$submission->get_final_grade(),
-				$created_at,
-				$updated_at
-			);
+		$submission_to_save = new Tables_Based_Submission(
+			$tables_based_submission->get_id(),
+			$submission->get_quiz_id(),
+			$submission->get_user_id(),
+			$submission->get_final_grade(),
+			$created_at,
+			$updated_at
+		);
 
-			$this->tables_based_repository->save( $submission_to_save );
-		}
+		$this->tables_based_repository->save( $submission_to_save );
 	}
 
 	/**
@@ -165,9 +151,6 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 	 */
 	public function delete( Submission_Interface $submission ): void {
 		$this->comments_based_repository->delete( $submission );
-
-		if ( $this->use_tables ) {
-			$this->tables_based_repository->delete( $submission );
-		}
+		$this->tables_based_repository->delete( $submission );
 	}
 }
