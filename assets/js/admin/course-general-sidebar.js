@@ -185,7 +185,7 @@ const CourseGeneralSidebar = () => {
 					} )
 				}
 				help={ __(
-					"Students can't take this course by themselves. They can be enrolled only by teachers, administrators, or invitation.",
+					'Students need to be manually enrolled by teachers or administrators.',
 					'sensei-lms'
 				) }
 			/>
