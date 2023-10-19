@@ -1,7 +1,7 @@
 // The action blocks, ordered.
 export const ACTION_BLOCKS = [
-	'sensei-lms/button-view-quiz',
 	'sensei-lms/button-complete-lesson',
+	'sensei-lms/button-view-quiz',
 	'sensei-lms/button-lesson-completed',
 	'sensei-lms/button-next-lesson',
 	'sensei-lms/button-reset-lesson',
