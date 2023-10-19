@@ -322,9 +322,11 @@ class Sensei_Course_Theme_Templates {
 			} else {
 				// Prefill the template contents from their content files.
 				if ( ! empty( $template['content'] ) && file_exists( $template['content'] ) ) {
-					// Get the block template html.
+					// Get the block template markup.
+
+					$extension = pathinfo( $template['content'], PATHINFO_EXTENSION );
 					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-					$html = file_get_contents( $template['content'] );
+					$html = 'html' === $extension ? file_get_contents( $template['content'] ) : $this->get_markup_from_php_template_path( $template['content'] );
 
 					// Get the block template styles.
 					$css = '';
@@ -552,4 +554,23 @@ class Sensei_Course_Theme_Templates {
 		);
 	}
 
+	/**
+	 * Get the markup content from a PHP template path.
+	 * This way, we can use translatable strings in the templates
+	 * which is not possible with the HTML files.
+	 *
+	 * @param string $template_path The path to the PHP template.
+	 *
+	 * @return string
+	 */
+	private function get_markup_from_php_template_path( $template_path ) {
+		ob_start();
+		/**
+		 * Suppressing the phpcs warning for the include statement.
+		 *
+		 * @psalm-suppress UnresolvableInclude
+		 */
+		include $template_path; // phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable
+		return ob_get_clean();
+	}
 }
