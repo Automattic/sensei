@@ -51,7 +51,7 @@ const CourseGeneralSidebar = () => {
 	const featured = meta._course_featured;
 	const prerequisite = meta._course_prerequisite;
 	const notification = meta.disable_notification;
-	const selfEnrollmentNotAllowed = meta._self_enrollment_not_allowed;
+	const selfEnrollmentNotAllowed = meta._sensei_self_enrollment_not_allowed;
 	const openAccess = meta._open_access;
 
 	useEffect( () =>
@@ -181,7 +181,7 @@ const CourseGeneralSidebar = () => {
 				onChange={ ( checked ) =>
 					setMeta( {
 						...meta,
-						_self_enrollment_not_allowed: checked,
+						_sensei_self_enrollment_not_allowed: checked,
 					} )
 				}
 				help={ __(

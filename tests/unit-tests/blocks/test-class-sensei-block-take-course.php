@@ -185,7 +185,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	public function testRenderTakeCourseBlock_WhenSelfEnrollmentIsNotAllowed_AddsNotice() {
 		/* Arrange. */
 		$this->login_as_student();
-		update_post_meta( $this->course->ID, '_self_enrollment_not_allowed', true );
+		update_post_meta( $this->course->ID, '_sensei_self_enrollment_not_allowed', true );
 
 		$notices          = $this->createMock( Sensei_Notices::class );
 		Sensei()->notices = $notices;
@@ -206,7 +206,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 		$this->manuallyEnrolStudentInCourse( $student, $this->course->ID );
 
 		$this->login_as( $student );
-		update_post_meta( $this->course->ID, '_self_enrollment_not_allowed', true );
+		update_post_meta( $this->course->ID, '_sensei_self_enrollment_not_allowed', true );
 
 		$notices          = $this->createMock( Sensei_Notices::class );
 		Sensei()->notices = $notices;

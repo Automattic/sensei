@@ -225,7 +225,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$course_id              = $this->factory->course->create(
 			[
 				'meta_input' => [
-					'_self_enrollment_not_allowed' => true,
+					'_sensei_self_enrollment_not_allowed' => true,
 				],
 			]
 		);

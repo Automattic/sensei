@@ -770,7 +770,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$notices          = $this->createMock( Sensei_Notices::class );
 		Sensei()->notices = $notices;
 
-		update_post_meta( $course_id, '_self_enrollment_not_allowed', true );
+		update_post_meta( $course_id, '_sensei_self_enrollment_not_allowed', true );
 
 		/* Expect & Act */
 		$notices->expects( self::once() )
@@ -804,7 +804,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$notices          = $this->createMock( Sensei_Notices::class );
 		Sensei()->notices = $notices;
 
-		update_post_meta( $course_id, '_self_enrollment_not_allowed', true );
+		update_post_meta( $course_id, '_sensei_self_enrollment_not_allowed', true );
 
 		$this->manuallyEnrolStudentInCourse( get_current_user_id(), $course_id );
 

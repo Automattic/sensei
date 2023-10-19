@@ -666,7 +666,7 @@ class Sensei_Course {
 		);
 		register_post_meta(
 			'course',
-			'_self_enrollment_not_allowed',
+			'_sensei_self_enrollment_not_allowed',
 			[
 				'show_in_rest'  => true,
 				'single'        => true,
@@ -3783,7 +3783,7 @@ class Sensei_Course {
 	 * @return boolean Whether self-enrollment is not allowed.
 	 */
 	public static function is_self_enrollment_not_allowed( $course_id ) {
-		$self_enrollment_not_allowed = (bool) get_post_meta( $course_id, '_self_enrollment_not_allowed', true );
+		$self_enrollment_not_allowed = (bool) get_post_meta( $course_id, '_sensei_self_enrollment_not_allowed', true );
 
 		/**
 		 * Check if self-enrollment is not allowed.

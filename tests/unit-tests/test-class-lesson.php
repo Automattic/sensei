@@ -1183,7 +1183,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		Sensei()->notices = $notices;
 
 		$course = $this->factory->course->create_and_get();
-		update_post_meta( $course->ID, '_self_enrollment_not_allowed', true );
+		update_post_meta( $course->ID, '_sensei_self_enrollment_not_allowed', true );
 
 		$lesson = $this->createMock( Sensei_Lesson::class );
 		$lesson->method( 'get_course_id' )->willReturn( $course->ID );
