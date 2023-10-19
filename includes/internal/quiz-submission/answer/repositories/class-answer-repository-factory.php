@@ -9,7 +9,6 @@ namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
-use SenseiTest\Internal\Quiz_Submission\Submission\Repositories\Table_Reading_Aggregate_Answer_Repository_Test;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

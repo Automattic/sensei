@@ -13,10 +13,7 @@ use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Re
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Comments_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
-use Sensei\Internal\Quiz_Submission\Grade\Models\Tables_Based_Grade;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {

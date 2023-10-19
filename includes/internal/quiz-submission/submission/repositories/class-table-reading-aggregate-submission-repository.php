@@ -119,7 +119,7 @@ class Table_Reading_Aggregate_Submission_Repository implements Submission_Reposi
 	public function save( Submission_Interface $submission ): void {
 		$this->tables_based_repository->save( $submission );
 
-		$commets_based_submission = $this->comments_based_repository->get_or_create(
+		$comments_based_submission = $this->comments_based_repository->get_or_create(
 			$submission->get_quiz_id(),
 			$submission->get_user_id(),
 			$submission->get_final_grade()
@@ -130,7 +130,7 @@ class Table_Reading_Aggregate_Submission_Repository implements Submission_Reposi
 		$updated_at = new \DateTimeImmutable( '@' . $submission->get_updated_at()->getTimestamp() );
 
 		$submission_to_save = new Comments_Based_Submission(
-			$commets_based_submission->get_id(),
+			$comments_based_submission->get_id(),
 			$submission->get_quiz_id(),
 			$submission->get_user_id(),
 			$submission->get_final_grade(),

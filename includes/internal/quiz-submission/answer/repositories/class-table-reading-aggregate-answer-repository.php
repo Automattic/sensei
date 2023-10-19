@@ -8,11 +8,8 @@
 namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
