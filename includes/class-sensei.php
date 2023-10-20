@@ -1412,7 +1412,7 @@ class Sensei_Main {
 	 *
 	 * @param array $classes Body classes.
 	 *
-	 * @intenal
+	 * @internal
 	 *
 	 * @return array Body classes.
 	 */
