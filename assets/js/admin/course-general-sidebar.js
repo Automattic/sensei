@@ -177,7 +177,7 @@ const CourseGeneralSidebar = () => {
 
 					<h3>{ __( 'Access', 'sensei-lms' ) }</h3>
 					<CheckboxControl
-						label={ __( 'Open Access', 'sensei-lms' ) }
+						label={ __( 'Open access', 'sensei-lms' ) }
 						checked={ openAccess }
 						onChange={ ( checked ) =>
 							setMeta( { ...meta, _open_access: checked } )
