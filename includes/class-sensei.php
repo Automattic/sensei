@@ -1424,10 +1424,6 @@ class Sensei_Main {
 			return $classes;
 		}
 
-		if ( ! is_array( $classes ) ) {
-			$classes = [];
-		}
-
 		$css_string    = wp_get_global_stylesheet( [ 'variables' ] ) ?? '';
 		$property_name = '--wp--custom--course-theme-variation';
 		$pattern       = "/$property_name\s*:\s*([^;]+)/";
