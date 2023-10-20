@@ -209,7 +209,7 @@ const CourseGeneralSidebar = () => {
 			<h3>{ __( 'Course Notifications', 'sensei-lms' ) }</h3>
 			<CheckboxControl
 				label={ __(
-					'Disable notifications on this course?',
+					'Disable notifications on this course',
 					'sensei-lms'
 				) }
 				checked={ notification }
