@@ -1417,8 +1417,10 @@ class Sensei_Main {
 	 * @return array Body classes.
 	 */
 	public function maybe_add_course_theme_variation_class( $classes ) {
+		$theme = wp_get_theme();
 
-		$is_course_theme = 'course' === wp_get_theme()->get_template();
+		$is_course_theme = 'course' === strtolower( $theme->get_template() ) ||
+			'course' === strtolower( $theme['Name'] ?? '' );
 
 		if ( ! $is_course_theme ) {
 			return $classes;
