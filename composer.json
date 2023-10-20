@@ -13,7 +13,6 @@
 		"humbug/php-scoper": "0.15.0",
 		"pelago/emogrifier": "7.0.0",
 		"php-stubs/wordpress-stubs": "^6.3",
-		"php-stubs/wp-cli-stubs": "^2.8",
 		"phpcompatibility/phpcompatibility-wp": "2.1.4",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
 		"sirbrillig/phpcs-variable-analysis": "2.11.16",

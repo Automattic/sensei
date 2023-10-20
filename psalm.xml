@@ -33,6 +33,16 @@
 				<referencedProperty name="Sensei_Main::$quiz_progress_repository_factory" />
 			</errorLevel>
 		</PropertyNotSetInConstructor>
+		<UndefinedClass>
+			<errorLevel type="suppress">
+				<referencedClass name="WP_CLI" />
+			</errorLevel>
+		</UndefinedClass>
+		<UndefinedFunction>
+			<errorLevel type="suppress">
+				<referencedFunction name="WP_CLI\Utils\format_items" />
+			</errorLevel>
+		</UndefinedFunction>
 		<InvalidScalarArgument>
 			<errorLevel type="suppress">
 				<referencedFunction name="esc_attr" />
