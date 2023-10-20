@@ -1428,11 +1428,20 @@ class Sensei_Main {
 
 		$css_string    = wp_get_global_stylesheet( [ 'variables' ] );
 		$property_name = '--wp--custom--course-theme-variation';
-		$pattern       = "/$property_name\s*:\s*([^;]+)/";
+
+		// 1. "/": Delimiters that mark the start and end of the regex pattern.
+		// 2. "$property_name": This part of the pattern matches the specific property name, in our case, '--wp--custom--course-theme-variation', defined in Course theme's JSON files.
+		// 3. "\s*": Matches zero or more whitespace characters.
+		// 4. ":": Matches the colon you write to separate the CSS property name and property value.
+		// 5. "\s*": Matches zero or more whitespace characters after the colon.
+		// 6. "([^;]+)": This is a capturing group that matches one or more characters that are not a semicolon. It captures the value of the property.
+		// 7. "/": The closing delimiter of the regex pattern.
+		// Overall, this regex is designed to extract the value associated with a specific CSS property (defined in $property_name).
+		$pattern = "/$property_name\s*:\s*([^;]+)/";
 
 		if ( preg_match( $pattern, $css_string, $matches ) ) {
-			// $matches[0] contains the full match
-			// $matches[1] contains the CSS value for the specified property
+			// $matches[0] contains the full match.
+			// $matches[1] contains the CSS value for the specified property.
 			$css_value = trim( $matches[1] );
 			$classes[] = 'course-theme-variation-' . $css_value;
 		}
