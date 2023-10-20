@@ -2,7 +2,6 @@
 
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Emails\Email_Customization;
-use Sensei\Internal\Installer\Schema;
 use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Migration\Migration_Tool;
 use Sensei\Internal\Migration\Migration_Job;

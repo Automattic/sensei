@@ -129,7 +129,9 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 		}
 
 		Sensei_Tools::instance()->add_user_message( $message );
-		wp_safe_redirect( $this->get_tool_url() );
+
+		// Redirect to the tools page to avoid confusion: the tool is no longer available.
+		wp_safe_redirect( Sensei_Tools::instance()->get_tools_url() );
 		exit;
 	}
 
