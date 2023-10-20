@@ -19,20 +19,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.7.2
  */
 class Submission_Repository_Factory {
+
 	/**
-	 * Use tables-based repository.
+	 * Is tables based progress feature flag enabled.
 	 *
 	 * @var bool
 	 */
-	private $use_tables;
+	private $tables_enabled;
+
+	/**
+	 * Read from tables.
+	 *
+	 * @var bool
+	 */
+	private $read_tables;
 
 	/**
 	 * Submission_Repository_Factory constructor.
 	 *
-	 * @param bool $use_tables Use tables-based repository.
+	 * @param bool $tables_enabled Is tables based progress feature flag enabled.
+	 * @param bool $read_tables    Read from tables.
 	 */
-	public function __construct( $use_tables = false ) {
-		$this->use_tables = $use_tables;
+	public function __construct( bool $tables_enabled, bool $read_tables ) {
+		$this->tables_enabled = $tables_enabled;
+		$this->read_tables    = $read_tables;
 	}
 
 	/**
@@ -45,10 +55,20 @@ class Submission_Repository_Factory {
 	public function create(): Submission_Repository_Interface {
 		global $wpdb;
 
-		return new Aggregate_Submission_Repository(
+		if ( ! $this->tables_enabled ) {
+			return new Comments_Based_Submission_Repository();
+		}
+
+		if ( ! $this->read_tables ) {
+			return new Comment_Reading_Aggregate_Submission_Repository(
+				new Comments_Based_Submission_Repository(),
+				new Tables_Based_Submission_Repository( $wpdb )
+			);
+		}
+
+		return new Table_Reading_Aggregate_Submission_Repository(
 			new Comments_Based_Submission_Repository(),
-			new Tables_Based_Submission_Repository( $wpdb ),
-			$this->use_tables
+			new Tables_Based_Submission_Repository( $wpdb )
 		);
 	}
 }

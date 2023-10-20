@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Aggregate_Answer_Repository class.
+ * File containing the Comment_Reading_Aggregate_Answer_Repository class.
  *
  * @package sensei
  */
@@ -16,13 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Aggregate_Answer_Repository.
+ * Class Comment_Reading_Aggregate_Answer_Repository.
  *
  * @internal
  *
  * @since 4.16.1
  */
-class Aggregate_Answer_Repository implements Answer_Repository_Interface {
+class Comment_Reading_Aggregate_Answer_Repository implements Answer_Repository_Interface {
 	/**
 	 * Comments based quiz answer repository implementation.
 	 *
@@ -46,13 +46,6 @@ class Aggregate_Answer_Repository implements Answer_Repository_Interface {
 	private $tables_based_submission_repository;
 
 	/**
-	 * The flag if the tables based implementation is available for use.
-	 *
-	 * @var bool
-	 */
-	private $use_tables;
-
-	/**
 	 * Constructor.
 	 *
 	 * @internal
@@ -60,18 +53,15 @@ class Aggregate_Answer_Repository implements Answer_Repository_Interface {
 	 * @param Comments_Based_Answer_Repository   $comments_based_repository Comments based quiz answer repository implementation.
 	 * @param Tables_Based_Answer_Repository     $tables_based_repository  Tables based quiz answer repository implementation.
 	 * @param Tables_Based_Submission_Repository $tables_based_submission_repository Tables based quiz submission repository.
-	 * @param bool                               $use_tables  The flag if the tables based implementation is available for use.
 	 */
 	public function __construct(
 		Comments_Based_Answer_Repository $comments_based_repository,
 		Tables_Based_Answer_Repository $tables_based_repository,
-		Tables_Based_Submission_Repository $tables_based_submission_repository,
-		bool $use_tables
+		Tables_Based_Submission_Repository $tables_based_submission_repository
 	) {
 		$this->comments_based_repository          = $comments_based_repository;
 		$this->tables_based_repository            = $tables_based_repository;
 		$this->tables_based_submission_repository = $tables_based_submission_repository;
-		$this->use_tables                         = $use_tables;
 	}
 
 	/**
@@ -88,10 +78,8 @@ class Aggregate_Answer_Repository implements Answer_Repository_Interface {
 	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer_Interface {
 		$answer = $this->comments_based_repository->create( $submission, $question_id, $value );
 
-		if ( $this->use_tables ) {
-			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
-			$this->tables_based_repository->create( $tables_based_submission, $question_id, $value );
-		}
+		$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+		$this->tables_based_repository->create( $tables_based_submission, $question_id, $value );
 
 		return $answer;
 	}
@@ -119,10 +107,8 @@ class Aggregate_Answer_Repository implements Answer_Repository_Interface {
 	public function delete_all( Submission_Interface $submission ): void {
 		$this->comments_based_repository->delete_all( $submission );
 
-		if ( $this->use_tables ) {
-			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
-			$this->tables_based_repository->delete_all( $tables_based_submission );
-		}
+		$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+		$this->tables_based_repository->delete_all( $tables_based_submission );
 	}
 
 	/**
