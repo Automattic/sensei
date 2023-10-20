@@ -663,7 +663,7 @@ class Sensei_Main {
 
 		// Progress tables eraser.
 		if ( ! $tables_enabled ) {
-			( new Progress_Tables_Eraser( new Schema() ) )->init();
+			( new Progress_Tables_Eraser() )->init();
 		}
 
 		// Quiz submission repositories.

@@ -32,22 +32,6 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	const NONCE_ACTION = 'sensei-tools-progress-tables-eraser';
 
 	/**
-	 * Sensei schema.
-	 *
-	 * @var Schema
-	 */
-	private $schema;
-
-	/**
-	 * Progress_Tables_Eraser constructor.
-	 *
-	 * @param Schema $schema Sensei schema.
-	 */
-	public function __construct( Schema $schema ) {
-		$this->schema = $schema;
-	}
-
-	/**
 	 * Initialize the tool.
 	 */
 	public function init(): void {
@@ -110,13 +94,13 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 		if ( empty( $_POST['confirm'] ) ) {
 			Sensei_Tools::instance()->add_user_message( __( 'You must confirm the action before it can be performed.', 'sensei-lms' ), true );
 			wp_safe_redirect( $this->get_tool_url() );
-			wp_die();
+			exit;
 		}
 
 		global $wpdb;
 
 		$results = array();
-		foreach ( $this->schema->get_tables() as $table ) {
+		foreach ( $this->get_tables() as $table ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange
@@ -146,7 +130,7 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 
 		Sensei_Tools::instance()->add_user_message( $message );
 		wp_safe_redirect( $this->get_tool_url() );
-		wp_die();
+		exit;
 	}
 
 	/**
@@ -157,7 +141,7 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	public function is_available() {
 		global $wpdb;
 
-		foreach ( $this->schema->get_tables() as $table ) {
+		foreach ( $this->get_tables() as $table ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
 				return true;
@@ -183,5 +167,21 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	 */
 	private function get_tool_url(): string {
 		return admin_url( 'admin.php?page=sensei-tools&tool=' . $this->get_id() );
+	}
+
+	/**
+	 * Get the tables to delete.
+	 *
+	 * @return array
+	 */
+	private function get_tables(): array {
+		global $wpdb;
+
+		return array(
+			"{$wpdb->prefix}sensei_lms_progress",
+			"{$wpdb->prefix}sensei_lms_quiz_submissions",
+			"{$wpdb->prefix}sensei_lms_quiz_answers",
+			"{$wpdb->prefix}sensei_lms_quiz_grades",
+		);
 	}
 }

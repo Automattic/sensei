@@ -24,7 +24,7 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->eraser = new Progress_Tables_Eraser( new Schema() );
+		$this->eraser = new Progress_Tables_Eraser();
 		add_filter( 'wp_redirect', [ $this, 'filterWpRedirect' ], 10, 2 );
 	}
 
@@ -68,8 +68,7 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 
 	public function testProcess_ConfirmationProvided_DeletesTables(): void {
 		/* Arrange. */
-		$schema = new Schema();
-		$schema->create_tables();
+		$this->create_tables();
 
 		$_POST['_wpnonce']      = wp_create_nonce( Progress_Tables_Eraser::NONCE_ACTION );
 		$_POST['confirm']       = 'yes';
@@ -89,8 +88,7 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 
 	public function testProcess_NoConfirmationProvided_DeletesTables(): void {
 		/* Arrange. */
-		$schema = new Schema();
-		$schema->create_tables();
+		$this->create_tables();
 
 		$_POST['_wpnonce']      = wp_create_nonce( Progress_Tables_Eraser::NONCE_ACTION );
 		$_POST['delete-tables'] = 'yes';
@@ -112,5 +110,10 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertTrue( $result );
+	}
+
+	private function create_tables(): void {
+		$schema = new Schema();
+		$schema->create_tables();
 	}
 }
