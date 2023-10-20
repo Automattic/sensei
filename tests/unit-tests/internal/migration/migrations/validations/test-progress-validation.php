@@ -30,6 +30,13 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+		$this->cleanup_custom_tables();
+	}
+
+	protected function tearDown(): void {
+		parent::tearDown();
+
+		$this->cleanup_custom_tables();
 	}
 
 	public function testRun_WhenProgressMigrationIsComplete_HasNoErrors(): void {
@@ -263,5 +270,15 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		}
 
 		return $errors[0]->get_message();
+	}
+
+	private function cleanup_custom_tables() {
+		global $wpdb;
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_progress" );
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades" );
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_answers" );
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_submissions" );
+		// phpcs:enable
 	}
 }
