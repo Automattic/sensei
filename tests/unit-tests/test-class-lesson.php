@@ -1192,7 +1192,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		/* Expect & Act */
 		$notices->expects( self::once() )
 			->method( 'add_notice' )
-			->with( $this->stringContains( 'Please contact the course administrator to sign up for' ) );
+			->with( 'Please contact the course administrator to access the course content.' );
 		$result = Sensei_Lesson::course_signup_link();
 	}
 
