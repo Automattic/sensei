@@ -2089,7 +2089,7 @@ class Sensei_Utils {
 		}
 
 		// store the data
-		$success = update_comment_meta( $sensei_user_activity_id, $data_key, $value );
+		$success = (bool) update_comment_meta( $sensei_user_activity_id, $data_key, $value );
 
 		return $success;
 

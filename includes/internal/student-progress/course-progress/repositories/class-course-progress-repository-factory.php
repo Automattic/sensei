@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.7.2
  */
 class Course_Progress_Repository_Factory {
+
 	/**
 	 * Is tables based progress feature flag enabled.
 	 *
