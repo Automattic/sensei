@@ -11,7 +11,7 @@ body.sensei-course-theme {
 .sensei-course-theme .sensei-lms-notice {
 	background-color: var(--wp--preset--color--primary, #f6f7f7);
 	color: var(--wp--preset--color--background, #1e1e1e);
-	padding: 24px 24px 24px 24px;
+	padding: 24px;
 
 	@media (min-width: $break-medium) {
 		padding-bottom: 24px;
