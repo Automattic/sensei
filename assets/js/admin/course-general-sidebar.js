@@ -196,7 +196,7 @@ const CourseGeneralSidebar = () => {
 
 					<h3>{ __( 'Access', 'sensei-lms' ) }</h3>
 					<CheckboxControl
-						label={ __( 'Open Access', 'sensei-lms' ) }
+						label={ __( 'Open access', 'sensei-lms' ) }
 						checked={ openAccess }
 						onChange={ ( checked ) =>
 							setMeta( { ...meta, _open_access: checked } )
@@ -213,7 +213,7 @@ const CourseGeneralSidebar = () => {
 
 			<h3>{ __( 'Featured Course', 'sensei-lms' ) }</h3>
 			<CheckboxControl
-				label={ __( 'Feature this course.', 'sensei-lms' ) }
+				label={ __( 'Feature this course', 'sensei-lms' ) }
 				checked={ featured == 'featured' }
 				onChange={ ( checked ) =>
 					setMeta( {
@@ -228,7 +228,7 @@ const CourseGeneralSidebar = () => {
 			<h3>{ __( 'Course Notifications', 'sensei-lms' ) }</h3>
 			<CheckboxControl
 				label={ __(
-					'Disable notifications on this course?',
+					'Disable notifications on this course',
 					'sensei-lms'
 				) }
 				checked={ notification }
