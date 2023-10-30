@@ -3823,7 +3823,7 @@ class Sensei_Course {
 
 		if ( self::can_current_user_manually_enrol( $post->ID ) ) {
 				sensei_start_course_form( $post->ID );
-		} else {
+		} elseif ( ! self::is_self_enrollment_not_allowed( $post->ID ) ) {
 			if ( get_option( 'users_can_register' ) ) {
 
 				// set the permissions message
