@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_learner_enrolled_courses_args - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_self_enrollment_not_allowed - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_learner_enrolled_courses_args</h1>
+	<h1 class="page-title">Filter: sensei_self_enrollment_not_allowed</h1>
 	
 
 	
@@ -43,14 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_learner_enrolled_courses_args">apply_filters( 'sensei_learner_enrolled_courses_args', <span class="signature">$query_args, $user_id )</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id="sensei_self_enrollment_not_allowed">apply_filters( 'sensei_self_enrollment_not_allowed', <span class="signature">$self_enrollment_not_allowed, $course_id )</span><span class="type-signature"> &rarr; {bool}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filters the arguments of the query which fetches a learner's enrolled courses.</p>
+    <p>Check if self-enrollment is not allowed.</p>
 </div>
 
 
@@ -84,13 +84,13 @@
 
         <tr>
             
-                <td class="name"><code>$query_args</code></td>
+                <td class="name"><code>$self_enrollment_not_allowed</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">bool</span>
 
 
             
@@ -100,14 +100,14 @@
 
             
 
-            <td class="description last"><p>The query args.</p></td>
+            <td class="description last"><p>True if self-enrollment is not allowed, false otherwise.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>$user_id</code></td>
+                <td class="name"><code>$course_id</code></td>
             
 
             <td class="type">
@@ -123,7 +123,7 @@
 
             
 
-            <td class="description last"><p>The user id.</p></td>
+            <td class="description last"><p>Course post ID.</p></td>
         </tr>
 
     
@@ -141,7 +141,7 @@
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>3.3.0</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -167,7 +167,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-learner.php.html">includes/class-sensei-learner.php</a>, <a href="includes_class-sensei-learner.php.html#line439">line 439</a>
+        <a href="includes_class-sensei-course.php.html">includes/class-sensei-course.php</a>, <a href="includes_class-sensei-course.php.html#line3788">line 3788</a>
     </li></ul></dd>
     
 
@@ -194,7 +194,7 @@
 
         
 <div class="param-desc">
-    <p>Query arguments.</p>
+    <p>Filtered value.</p>
 </div>
 
 
@@ -205,7 +205,7 @@
     </dt>
     <dd>
         
-<span class="param-type">array</span>
+<span class="param-type">bool</span>
 
 
     </dd>
