@@ -30,12 +30,6 @@ body {
 
 .sensei-course-theme__main-content {
 	padding: 0 var(--content-padding);
-
-	> * {
-		max-width: var(--content-size) !important;
-		margin-left: auto;
-		margin-right: auto;
-	}
 }
 
 /**
@@ -94,6 +88,16 @@ body {
 
 		.post-nav-links {
 			display: none;
+		}
+	}
+
+	&.sensei-default {
+		.sensei-course-theme__main-content {
+			> * {
+				max-width: var(--content-size) !important;
+				margin-left: auto;
+				margin-right: auto;
+			}
 		}
 	}
 }
