@@ -185,7 +185,7 @@ const CourseGeneralSidebar = () => {
 					} )
 				}
 				help={ __(
-					'Students need to be manually enrolled by teachers or administrators.',
+					'Students need to be manually enrolled by teachers or administrators. Not available for paid courses.',
 					'sensei-lms'
 				) }
 			/>
