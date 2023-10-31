@@ -262,15 +262,14 @@ body {
 		margin: 0 0 32px;
 	}
 
-	&__pending-grade {
-		.wp-block-button__link {
-			background-color: var(--wp--preset--color--background);
-			color: var(--wp--preset--color--primary);
+	.wp-block-button__link {
+		background-color: var(--wp--preset--color--background);
+		color: var(--wp--preset--color--primary);
+	}
 
-			&:hover {
-				border-color: var(--wp--preset--color--background);
-			}
-		}
+	&__pending-grade:hover {
+		border-color: var(--wp--preset--color--background);
+		cursor: default;
 	}
 
 	@media (min-width: $break-medium) {

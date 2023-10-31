@@ -59,6 +59,7 @@ class Sensei_Course_Theme_Quiz {
 	 * @access private
 	 */
 	private function maybe_add_quiz_results_notice() {
+		$actions   = [];
 		$lesson_id = Sensei_Utils::get_current_lesson();
 		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$user_id   = get_current_user_id();
@@ -77,6 +78,7 @@ class Sensei_Course_Theme_Quiz {
 		// Prepare title.
 		$grade         = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
 		$grade_rounded = Sensei_Utils::round( $grade, 2 );
+		$reset_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
 		$title         = sprintf(
 			// translators: The placeholder is the quiz grade.
 			__( 'Your Grade: %1$s%%', 'sensei-lms' ),
@@ -92,6 +94,11 @@ class Sensei_Course_Theme_Quiz {
 		if ( 'ungraded' === $quiz_progress->get_status() ) {
 			$email_enabled = false;
 			$text          = __( 'Your answers have been submitted and the quiz will be graded soon.', 'sensei-lms' );
+			$actions[]     = Sensei_Quiz::get_primary_button_html(
+				__( 'Pending teacher grade', 'sensei-lms' ),
+				null,
+				[ 'sensei-course-theme-quiz-graded-notice__pending-grade' ]
+			);
 
 			// New quiz graded email.
 			if ( Sensei()->feature_flags->is_enabled( 'email_customization' ) ) {
@@ -120,14 +127,23 @@ class Sensei_Course_Theme_Quiz {
 				$passmark_rounded,
 				$grade_rounded
 			);
+
+			// Display Contact Teacher button.
+			if ( ! $reset_allowed ) {
+				$block     = new Sensei_Block_Contact_Teacher();
+				$button    = Sensei_Quiz::get_primary_button_html( __( 'Contact teacher', 'sensei-lms' ) );
+				$actions[] = $block->render_contact_teacher_block( [], $button );
+			}
 		}
 
-		$actions   = [];
-		$actions[] = self::get_pending_grade_button_html();
+		// "Continue to next lesson" button.
+		if ( in_array( $quiz_progress->get_status(), [ 'complete', 'graded', 'passed' ], true ) ) {
+			$prev_next_urls  = sensei_get_prev_next_lessons( $lesson_id );
+			$next_lesson_url = $prev_next_urls['next']['url'] ?? null;
+			$actions[]       = Sensei_Quiz::get_primary_button_html( __( 'Continue to next lesson', 'sensei-lms' ), $next_lesson_url );
+		}
 
-		// Prepare Restart Quiz button.
-		$reset_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
-
+		// "Restart Quiz" button.
 		if ( $reset_allowed ) {
 			$actions[] = self::render_reset_quiz();
 		}
@@ -153,20 +169,5 @@ class Sensei_Course_Theme_Quiz {
 				</button>
 			</form>
 		" );
-	}
-
-	/**
-	 * Generates the HTML markup for the "Pending teacher grade" button.
-	 */
-	private static function get_pending_grade_button_html() {
-		return (
-			'<div class="wp-block-buttons">
-				<div class="wp-block-button sensei-course-theme-quiz-graded-notice__pending-grade">
-					<button class="wp-block-button__link">'
-						. __( 'Pending teacher grade', 'sensei-lms' ) .
-					'</button>
-				</div>
-			</div>'
-		);
 	}
 }
