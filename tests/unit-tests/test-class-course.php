@@ -14,6 +14,13 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	protected $factory;
 
 	/**
+	 * Keep initial state of Sensei()->notices.
+	 *
+	 * @var Sensei_Notices|null
+	 */
+	private $initial_notices;
+
+	/**
 	 * Setup function.
 	 *
 	 * This function sets up the lessons, quizes and their questions. This function runs before
@@ -24,11 +31,15 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
+
+		$this->initial_notices = Sensei()->notices;
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+
+		Sensei()->notices = $this->initial_notices;
 	}
 
 	/**
@@ -748,5 +759,58 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertTrue( isset( $redirect_status ) );
 		$this->assertStringContainsString( home_url( '/wp-login.php' ), $redirect_location );
+	}
+
+	public function testSelfEnrollmentNotAllowedMessage_WhenCourseDoesntAllowSelfEnrollment_AddsNotice(): void {
+		/* Arrange */
+		global $post;
+
+		$course_id        = $this->factory->course->create();
+		$post             = get_post( $course_id );
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		update_post_meta( $course_id, '_sensei_self_enrollment_not_allowed', true );
+
+		/* Expect & Act */
+		$notices->expects( self::once() )
+			->method( 'add_notice' )
+			->with( $this->stringContains( 'Please contact the course administrator to sign up for this course.' ) );
+		Sensei_Course::self_enrollment_not_allowed_message();
+	}
+
+	public function testSelfEnrollmentNotAllowedMessage_WhenCourseAllowsSelfEnrollment_DoesNotAddNotice(): void {
+		/* Arrange */
+		global $post;
+
+		$course_id        = $this->factory->course->create();
+		$post             = get_post( $course_id );
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		/* Expect & Act */
+		$notices->expects( self::never() )
+			->method( 'add_notice' );
+		Sensei_Course::self_enrollment_not_allowed_message();
+	}
+
+	public function testSelfEnrollmentNotAllowedMessage_WhenCourseDoesntAllowSelfEnrollmentAndUserIsEnrolled_DoesNotAddNotice(): void {
+		/* Arrange */
+		$this->login_as_student();
+		global $post;
+
+		$course_id        = $this->factory->course->create();
+		$post             = get_post( $course_id );
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		update_post_meta( $course_id, '_sensei_self_enrollment_not_allowed', true );
+
+		$this->manuallyEnrolStudentInCourse( get_current_user_id(), $course_id );
+
+		/* Expect & Act */
+		$notices->expects( self::never() )
+			->method( 'add_notice' );
+		Sensei_Course::self_enrollment_not_allowed_message();
 	}
 }
