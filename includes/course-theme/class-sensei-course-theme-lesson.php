@@ -250,8 +250,9 @@ class Sensei_Course_Theme_Lesson {
 	 * @return void
 	 */
 	private function maybe_add_not_enrolled_notice() {
-		$lesson_id = \Sensei_Utils::get_current_lesson();
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+		$lesson_id  = \Sensei_Utils::get_current_lesson();
+		$course_id  = Sensei()->lesson->get_course_id( $lesson_id );
+		$is_preview = $lesson_id && Sensei_Utils::is_preview_lesson( $lesson_id );
 
 		if ( Sensei_Course::is_user_enrolled( $course_id ) ) {
 			return;
@@ -261,6 +262,24 @@ class Sensei_Course_Theme_Lesson {
 		$notice_key   = 'locked_lesson';
 		$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
 		$notice_icon  = 'lock';
+
+		if ( $is_preview ) {
+			$notice_title = __( 'This is a preview lesson', 'sensei-lms' );
+			$notice_icon  = 'eye';
+		}
+
+		// Check if self-enrollment is allowed.
+		if ( Sensei_Course::is_self_enrollment_not_allowed( $course_id ) ) {
+			$notices->add_notice(
+				$notice_key,
+				__( 'Please contact the course administrator to take this lesson.', 'sensei-lms' ),
+				$notice_title,
+				[],
+				$notice_icon
+			);
+
+			return;
+		}
 
 		// Course prerequisite notice.
 		if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
@@ -298,10 +317,8 @@ class Sensei_Course_Theme_Lesson {
 
 			$notice_text = __( 'Please register or sign in to access the course content.', 'sensei-lms' );
 
-			if ( $lesson_id && Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
-				$notice_text  = __( 'Register or sign in to take this lesson.', 'sensei-lms' );
-				$notice_title = __( 'This is a preview lesson', 'sensei-lms' );
-				$notice_icon  = 'eye';
+			if ( $is_preview ) {
+				$notice_text = __( 'Register or sign in to take this lesson.', 'sensei-lms' );
 			}
 
 			$notices->add_notice(
@@ -327,10 +344,8 @@ class Sensei_Course_Theme_Lesson {
 
 		$notice_text = __( 'Please register for this course to access the content.', 'sensei-lms' );
 
-		if ( $lesson_id && Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
-			$notice_text  = __( 'Register for this course to take this lesson.', 'sensei-lms' );
-			$notice_title = __( 'This is a preview lesson', 'sensei-lms' );
-			$notice_icon  = 'eye';
+		if ( $is_preview ) {
+			$notice_text = __( 'Register for this course to take this lesson.', 'sensei-lms' );
 		}
 
 		$notices->add_notice(

@@ -51,6 +51,7 @@ const CourseGeneralSidebar = () => {
 	const featured = meta._course_featured;
 	const prerequisite = meta._course_prerequisite;
 	const notification = meta.disable_notification;
+	const selfEnrollmentNotAllowed = meta._sensei_self_enrollment_not_allowed;
 	const openAccess = meta._open_access;
 
 	useEffect( () =>
@@ -170,6 +171,24 @@ const CourseGeneralSidebar = () => {
 					}
 				/>
 			) : null }
+
+			<HorizontalRule />
+
+			<h3>{ __( 'Enrollment', 'sensei-lms' ) }</h3>
+			<CheckboxControl
+				label={ __( "Don't allow self-enrollment", 'sensei-lms' ) }
+				checked={ selfEnrollmentNotAllowed }
+				onChange={ ( checked ) =>
+					setMeta( {
+						...meta,
+						_sensei_self_enrollment_not_allowed: checked,
+					} )
+				}
+				help={ __(
+					'Students need to be manually enrolled by teachers or administrators.',
+					'sensei-lms'
+				) }
+			/>
 
 			{ window.sensei.courseSettingsSidebar.features?.open_access && (
 				<>
