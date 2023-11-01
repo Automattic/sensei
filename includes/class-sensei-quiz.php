@@ -2502,7 +2502,7 @@ class Sensei_Quiz {
 			}
 
 			$block  = new Sensei_Block_Contact_Teacher();
-			$button = self::get_primary_button_anchor_html( __( 'Contact teacher', 'sensei-lms' ), '#' );
+			$button = self::get_primary_button_html( __( 'Contact teacher', 'sensei-lms' ), '#' );
 			return $block->render_contact_teacher_block( [], $button );
 		}
 
@@ -2510,7 +2510,7 @@ class Sensei_Quiz {
 		$next_lesson_url = $prev_next_urls['next']['url'] ?? null;
 
 		if ( $next_lesson_url ) {
-			return self::get_primary_button_anchor_html( __( 'Continue to next lesson', 'sensei-lms' ), $next_lesson_url );
+			return self::get_primary_button_html( __( 'Continue to next lesson', 'sensei-lms' ), $next_lesson_url );
 		}
 
 		return null;
@@ -2519,17 +2519,36 @@ class Sensei_Quiz {
 	/**
 	 * Returns the HTML for a primary button anchor.
 	 *
-	 * @param string $button_text The button text.
-	 * @param string $url         The URL.
+	 * @param string      $button_text The button text.
+	 * @param string|null $url         The URL.
+	 * @param array       $classes     CSS classes to add to the button.
 	 *
 	 * @return string The HTML for the primary button anchor.
 	 */
-	private static function get_primary_button_anchor_html( $button_text, $url ) {
-		return '<a class="wp-element-button sensei-course-theme__button is-primary" href="' . esc_url( $url ) . '">' .
-						esc_html( $button_text ) .
-				'</a>';
-	}
+	public static function get_primary_button_html( $button_text, $url = null, $classes = [] ) {
+		$href    = '';
+		$classes = array_merge(
+			array(
+				'wp-block-button__link',
+				'wp-element-button',
+				'sensei-course-theme__button',
+				'is-primary',
+			),
+			$classes
+		);
 
+		if ( $url ) {
+			$href = ' href="' . esc_url( $url ) . '"';
+		}
+
+		return (
+			'<div class="wp-block-button">
+				<a class="' . esc_attr( implode( ' ', $classes ) ) . '"' . $href . '>' .
+					esc_html( $button_text ) .
+				'</a>
+			</div>'
+		);
+	}
 }
 
 /**
