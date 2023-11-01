@@ -144,6 +144,9 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.19.1 - 2023-11-01
+
+
 ### 4.19.0 - 2023-11-01
 #### Added
 - Add a setting to not allow self-enrollment on courses [#7231](https://github.com/Automattic/sensei/pull/7231)
@@ -183,27 +186,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 #### Development
 - Updated the "login-form" template [#7204](https://github.com/Automattic/sensei/pull/7204)
-
-### 4.17.0 - 2023-09-13
-#### Added
-- Added header on the learning mode template of quizzes [#7087](https://github.com/Automattic/sensei/pull/7087)
-- Log active theme name on plugin deactivation [#7155](https://github.com/Automattic/sensei/pull/7155)
-
-#### Changed
-- Change "Lesson Type" to "Lesson Layout" in wizard [#7111](https://github.com/Automattic/sensei/pull/7111)
-- Change all question styles for quizzes in learning mode [#7163](https://github.com/Automattic/sensei/pull/7163)
-- Changed the footer styles of Quiz template [#7163](https://github.com/Automattic/sensei/pull/7163)
-- Display "Default Lesson" first in lesson wizard [#7119](https://github.com/Automattic/sensei/pull/7119)
-- Style changes of the navigation and title area of quiz in learning mode [#7093](https://github.com/Automattic/sensei/pull/7093)
-- Update style of quiz questions that have been submitted for grading [#7163](https://github.com/Automattic/sensei/pull/7163)
-
-#### Fixed
-- Button and Image style fix for lessons in learning mode in Course theme [#7059](https://github.com/Automattic/sensei/pull/7059)
-- Fixed AI course outline generator not working in WCPC [#7157](https://github.com/Automattic/sensei/pull/7157)
-- Fixed extra header element in lesson content [#7063](https://github.com/Automattic/sensei/pull/7063)
-- Fix PHP 8.2 compatibilty issue: creation of dynamic property. [#7120](https://github.com/Automattic/sensei/pull/7120)
-- Fix stuck in infinite loop issue on My Messages page in Astra theme [#7138](https://github.com/Automattic/sensei/pull/7138)
-- Incorrect lesson layout sometimes added in editor [#7164](https://github.com/Automattic/sensei/pull/7164)
-
-#### Development
-- Update question type templates [#7163](https://github.com/Automattic/sensei/pull/7163)
