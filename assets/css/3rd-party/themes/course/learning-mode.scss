@@ -286,3 +286,9 @@ body {
 .learning-mode-full-width .wp-block-sensei-lms-course-theme-course-progress-counter {
 	opacity: 1;
 }
+
+.sensei-course-theme-locked-lesson-notice__actions {
+	.sensei-course-theme__button {
+		color: var(--wp--preset--color--background, #1e1e1e);
+	}
+}
