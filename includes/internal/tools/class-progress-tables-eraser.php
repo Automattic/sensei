@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.19.0
  */
 class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Interactive_Interface {
 	/**
@@ -119,7 +119,7 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 			/**
 			 * Fires after progress tables are deleted.
 			 *
-			 * @since $$next-version$$
+			 * @since 4.19.0
 			 *
 			 * @param array $tables List of deleted tables.
 			 */

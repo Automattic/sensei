@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.19.0
  */
 class Table_Reading_Aggregate_Grade_Repository implements Grade_Repository_Interface {
 	/**
