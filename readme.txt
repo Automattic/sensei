@@ -144,6 +144,21 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.19.0 - 2023-11-01
+#### Added
+- Add a setting to not allow self-enrollment on courses [#7231](https://github.com/Automattic/sensei/pull/7231)
+
+#### Changed
+- Update style of "Awaiting Grade" notice in Learning Mode [#7197](https://github.com/Automattic/sensei/pull/7197)
+- Update style of "Your Grade" notice in Learning Mode [#7197](https://github.com/Automattic/sensei/pull/7197)
+
+#### Removed
+- Eliminate usage of temporary Course theme hook [#7219](https://github.com/Automattic/sensei/pull/7219)
+
+#### Fixed
+- Fix course notices that are intended to be displayed only on the course page but were currently appearing on the courses archive page [#7231](https://github.com/Automattic/sensei/pull/7231)
+- Fix padding in site editor that prevents full-width alignment from working [#7233](https://github.com/Automattic/sensei/pull/7233)
+
 ### 4.18.0 - 2023-10-12
 #### Security
 - Escape class attributes in Student Courses and Course Results block
@@ -192,21 +207,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 #### Development
 - Update question type templates [#7163](https://github.com/Automattic/sensei/pull/7163)
-
-### 4.16.1 - 2023-08-15
-#### Added
-- Add CC/BCC fields for Sensei emails [#7014](https://github.com/Automattic/sensei/pull/7014)
-
-#### Changed
-- Update the `sensei_results_links` filter to include the learner's user ID when displaying public profiles and to display results links publicly [#7048](https://github.com/Automattic/sensei/pull/7048)
-
-#### Fixed
-- Fix "View Results" button not working [#7058](https://github.com/Automattic/sensei/pull/7058)
-- Fix custom button colors not being applied in Learning Mode [#7080](https://github.com/Automattic/sensei/pull/7080)
-- Fix duplicate comment sections under lesson in FSE themes [#7044](https://github.com/Automattic/sensei/pull/7044)
-- Fix lessons not using the selected template in FSE themes [#7045](https://github.com/Automattic/sensei/pull/7045)
-- Fix error when the module author user is deleted [#7082](https://github.com/Automattic/sensei/pull/7082)
-- Fix lessons not being saved when creating a course on the latest Gutenberg version [#7091](https://github.com/Automattic/sensei/pull/7091)
-- Fix lesson styling in editor on WordPress 6.3 or when Gutenberg enabled [#7054](https://github.com/Automattic/sensei/pull/7054)
-- Fix PHP 8.1 deprecation notice on Students page [#7038](https://github.com/Automattic/sensei/pull/7038)
-- Fix `strpos`and `str_replace` deprecation messages in PHP 8.1 and 8.2 [#7028](https://github.com/Automattic/sensei/pull/7028)

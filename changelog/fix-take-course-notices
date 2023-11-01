@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix course notices that are intended to be displayed only on the course page but were currently appearing on the courses archive page
