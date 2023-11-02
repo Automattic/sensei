@@ -1,5 +1,20 @@
 *** Changelog ***
 
+## 4.19.0 - 2023-11-01
+### Added
+- Add a setting to not allow self-enrollment on courses [#7231](https://github.com/Automattic/sensei/pull/7231)
+
+### Changed
+- Update style of "Awaiting Grade" notice in Learning Mode [#7197](https://github.com/Automattic/sensei/pull/7197)
+- Update style of "Your Grade" notice in Learning Mode [#7197](https://github.com/Automattic/sensei/pull/7197)
+
+### Removed
+- Eliminate usage of temporary Course theme hook [#7219](https://github.com/Automattic/sensei/pull/7219)
+
+### Fixed
+- Fix course notices that are intended to be displayed only on the course page but were currently appearing on the courses archive page [#7231](https://github.com/Automattic/sensei/pull/7231)
+- Fix padding in site editor that prevents full-width alignment from working [#7233](https://github.com/Automattic/sensei/pull/7233)
+
 ## 4.18.0 - 2023-10-12
 ### Security
 - Escape class attributes in Student Courses and Course Results block
