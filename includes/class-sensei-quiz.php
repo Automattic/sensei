@@ -1945,7 +1945,10 @@ class Sensei_Quiz {
 			<?php endif ?>
 
 			<?php if ( $is_learning_mode && $post_grade_action ) : ?>
-				<?php echo wp_kses_post( $post_grade_action ); ?>
+				<?php
+					$allowed_html = self::get_allowed_html_for_modal_form();
+					echo wp_kses( $post_grade_action, $allowed_html );
+				?>
 			<?php endif ?>
 
 			<?php if ( $is_awaiting_grade && $is_learning_mode ) : ?>
@@ -2547,6 +2550,41 @@ class Sensei_Quiz {
 					esc_html( $button_text ) .
 				'</a>
 			</div>'
+		);
+	}
+
+	/**
+	 * Returns allowed HTML elements apart from posts for Kses.
+	 *
+	 * @return array Allowed HTML for modal forms in Kses.
+	 */
+	public static function get_allowed_html_for_modal_form() {
+		return array_merge(
+			wp_kses_allowed_html( 'post' ),
+			array(
+				'form'     => array(
+					'action' => array(),
+					'class'  => array(),
+					'method' => array(),
+					'name'   => array(),
+				),
+				'input'    => array(
+					'class' => array(),
+					'name'  => array(),
+					'type'  => array(),
+					'value' => array(),
+				),
+				'textarea' => array(
+					'name'        => array(),
+					'placeholder' => array(),
+				),
+				'svg'      => array(
+					'class' => array(),
+				),
+				'use'      => array(
+					'href' => array(),
+				),
+			)
 		);
 	}
 }
