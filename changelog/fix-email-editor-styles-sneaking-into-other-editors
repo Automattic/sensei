@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Email editor styles getting leaked into other templates in site editor
