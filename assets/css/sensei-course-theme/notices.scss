@@ -81,8 +81,7 @@ body.sensei-course-theme {
 	}
 }
 
-/* Quiz notice on quiz page */
-.sensei-course-theme-quiz-graded-notice {
+@mixin sensei-lm-notice-styles {
 	/* --content-padding comes from mobile.scss */
 	margin-left: calc(var(--content-padding) * -1);
 	margin-right: calc(var(--content-padding) * -1);
@@ -115,6 +114,11 @@ body.sensei-course-theme {
 			flex-direction: row;
 		}
 	}
+}
+
+/* Quiz notice on quiz page */
+.sensei-course-theme-quiz-graded-notice {
+	@include sensei-lm-notice-styles;
 
 	&__pending-grade {
 		opacity: 0.6;
@@ -143,6 +147,8 @@ body.sensei-course-theme {
 
 /* Locked lesson notice */
 .sensei-course-theme-locked-lesson-notice {
+	@include sensei-lm-notice-styles;
+
 	&__header {
 		display: flex;
 		padding-bottom: 18px;
