@@ -338,7 +338,7 @@ class Sensei_Course_Theme_Lesson {
 			'<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
 				<input type="hidden" name="course_start" value="1" />
 				' . $nonce . '
-				<button type="submit" class="sensei-course-theme__button is-primary">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
+				<button type="submit" class="sensei-course-theme__button is-primary wp-block-button__link">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
 			</form>',
 		];
 
