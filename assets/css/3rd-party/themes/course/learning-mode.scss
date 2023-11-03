@@ -46,6 +46,14 @@ body {
 	.wp-block-video {
 		line-height: 0;
 	}
+
+	&.is-default {
+		.sensei-course-theme-locked-lesson-notice {
+			.is-secondary.sensei-course-theme__button {
+				font-size: clamp(1.313rem, 1.188rem + 0.417vw, 1.5rem);
+			}
+		}
+	}
 }
 
 .sensei-course-theme__sidebar {
