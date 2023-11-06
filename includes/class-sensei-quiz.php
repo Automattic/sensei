@@ -2563,20 +2563,24 @@ class Sensei_Quiz {
 			wp_kses_allowed_html( 'post' ),
 			array(
 				'form'     => array(
-					'action' => array(),
-					'class'  => array(),
-					'method' => array(),
-					'name'   => array(),
+					'action'   => array(),
+					'class'    => array(),
+					'method'   => array(),
+					'name'     => array(),
+					'onsubmit' => array(),
 				),
 				'input'    => array(
 					'class' => array(),
 					'name'  => array(),
 					'type'  => array(),
 					'value' => array(),
+					'id'    => array(),
 				),
 				'textarea' => array(
 					'name'        => array(),
 					'placeholder' => array(),
+					'rows'        => array(),
+					'required'    => array(),
 				),
 				'svg'      => array(
 					'class' => array(),
