@@ -1,4 +1,4 @@
-$breakpoint: 782px;
+@import "~@wordpress/base-styles/breakpoints";
 
 .sensei-course-theme .wp-block-buttons {
 	display: flex;
@@ -24,6 +24,18 @@ $breakpoint: 782px;
 		svg {
 			width: 16px;
 			height: 16px;
+		}
+	}
+}
+
+.wp-block-sensei-lms-course-theme-lesson-actions {
+	@media screen and (max-width: $break-medium) {
+		justify-content: space-between;
+
+		.is-style-outline {
+			.wp-element-button.wp-block-button__link.sensei-course-theme__button {
+				width: 100%;
+			}
 		}
 	}
 }
