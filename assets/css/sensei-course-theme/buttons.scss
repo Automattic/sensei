@@ -33,17 +33,7 @@
 		display: flex;
 	}
 
-	.wp-block-button.is-style-outline {
-		.wp-block-button__link {
-			border: none;
-		}
-	}
-
 	@media screen and (max-width: $break-medium) {
-
-		* {
-			flex: 1 1 0;
-		}
 
 		.sensei-quiz-actions-primary {
 			flex-direction: column;
