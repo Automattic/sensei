@@ -14,8 +14,6 @@
 	justify-content: center;
 	white-space: nowrap;
 	width: auto;
-	padding: 1rem 32px;
-	line-height: 100%;
 
 	&.has-icon {
 		display: flex;
@@ -28,9 +26,29 @@
 	}
 }
 
-.wp-block-sensei-lms-course-theme-lesson-actions {
+.wp-block-sensei-lms-course-theme-lesson-actions,
+.wp-block-sensei-lms-quiz-actions {
+
+	.sensei-course-theme-lesson-actions__next-lesson.has-icon {
+		display: flex;
+	}
+
+	.wp-block-buttons {
+		.wp-block-button.is-style-outline {
+			border: none;
+		}
+	}
+
 	@media screen and (max-width: $break-medium) {
-		justify-content: space-between;
+
+		.sensei-quiz-actions-primary {
+			flex-direction: column;
+
+			* {
+				flex: 1 1 0;
+				width: 100%;
+			}
+		}
 
 		.is-style-outline {
 			.wp-element-button.wp-block-button__link.sensei-course-theme__button {
