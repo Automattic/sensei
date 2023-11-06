@@ -60,30 +60,6 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 	</div>
 
 	<div class="sensei-quiz-actions">
-		<?php if ( $sensei_is_quiz_available && $sensei_has_actions ) : ?>
-			<div class="sensei-quiz-actions-secondary">
-				<?php if ( $sensei_is_reset_allowed ) : ?>
-					<div class="sensei-quiz-action">
-						<button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission">
-							<?php esc_attr_e( 'Restart Quiz', 'sensei-lms' ); ?>
-						</button>
-
-						<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
-					</div>
-				<?php endif ?>
-
-				<?php if ( ! $sensei_is_quiz_completed ) : ?>
-					<div class="sensei-quiz-action">
-						<button type="submit" name="quiz_save" form="sensei-quiz-form" class="quiz-submit save sensei-stop-double-submission">
-							<?php esc_attr_e( 'Save Progress', 'sensei-lms' ); ?>
-						</button>
-
-						<input type="hidden" name="woothemes_sensei_save_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
-					</div>
-				<?php endif ?>
-			</div>
-		<?php endif ?>
-
 		<div class="sensei-quiz-actions-primary wp-block-buttons">
 			<?php if ( $sensei_question_loop['current_page'] > 1 ) : ?>
 				<div class="sensei-quiz-action wp-block-button is-style-outline">
@@ -129,5 +105,29 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 				</div>
 			<?php endif ?>
 		</div>
+
+		<?php if ( $sensei_is_quiz_available && $sensei_has_actions ) : ?>
+			<div class="sensei-quiz-actions-secondary">
+				<?php if ( $sensei_is_reset_allowed ) : ?>
+					<div class="sensei-quiz-action">
+						<button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission">
+							<?php esc_attr_e( 'Restart Quiz', 'sensei-lms' ); ?>
+						</button>
+
+						<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
+					</div>
+				<?php endif ?>
+
+				<?php if ( ! $sensei_is_quiz_completed ) : ?>
+					<div class="sensei-quiz-action">
+						<button type="submit" name="quiz_save" form="sensei-quiz-form" class="quiz-submit save sensei-stop-double-submission">
+							<?php esc_attr_e( 'Save Progress', 'sensei-lms' ); ?>
+						</button>
+
+						<input type="hidden" name="woothemes_sensei_save_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
+					</div>
+				<?php endif ?>
+			</div>
+		<?php endif ?>
 	</div>
 </div>
