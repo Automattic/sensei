@@ -60,6 +60,10 @@ body.sensei-course-theme {
 		color: inherit;
 		display: flex;
 
+		&.sensei-course-theme__button.is-link {
+			display: flex;
+		}
+
 		&:active {
 			background-color: inherit;
 		}
