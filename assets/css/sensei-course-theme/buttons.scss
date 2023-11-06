@@ -39,18 +39,13 @@
 		}
 	}
 
-	.sensei-quiz-actions-primary {
-		* {
-			flex: 1 1 0;
-		}
-	}
-
 	@media screen and (max-width: $break-medium) {
 
 		.sensei-quiz-actions-primary {
-			flex-direction: column;
+			width: 100%;
 
 			* {
+				flex: 1 1 0;
 				width: 100%;
 			}
 		}
