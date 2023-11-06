@@ -3,7 +3,7 @@
  * File containing the Validation_Error class.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.19.1
  */
 
 namespace Sensei\Internal\Migration\Validations;
@@ -13,7 +13,7 @@ namespace Sensei\Internal\Migration\Validations;
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.19.1
  */
 class Validation_Error {
 	/**
@@ -35,7 +35,7 @@ class Validation_Error {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.1
 	 *
 	 * @param string $message Error message.
 	 * @param array  $data    Error data.
@@ -50,7 +50,7 @@ class Validation_Error {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.1
 	 *
 	 * @return string
 	 */
@@ -63,7 +63,7 @@ class Validation_Error {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.1
 	 *
 	 * @return array
 	 */
@@ -76,7 +76,7 @@ class Validation_Error {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.1
 	 *
 	 * @return bool
 	 */

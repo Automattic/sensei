@@ -3,7 +3,7 @@
  * File containing the Progress_Validation class.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.19.1
  */
 
 namespace Sensei\Internal\Migration\Validations;
@@ -22,7 +22,7 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Qui
 /**
  * Class responsible for validation of the migrated progress data.
  *
- * @since $$next-version$$
+ * @since 4.19.1
  */
 class Progress_Validation {
 	/**
@@ -37,7 +37,7 @@ class Progress_Validation {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.1
 	 */
 	public function run(): void {
 		$this->errors = array();
@@ -64,7 +64,7 @@ class Progress_Validation {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.1
 	 *
 	 * @return bool
 	 */
@@ -77,7 +77,7 @@ class Progress_Validation {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.1
 	 *
 	 * @return Validation_Error[]
 	 */
