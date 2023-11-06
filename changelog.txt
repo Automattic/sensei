@@ -1,5 +1,9 @@
 *** Changelog ***
 
+## 4.19.1 - 2023-11-06
+### Fixed
+- Email editor styles getting leaked into other templates in site editor [#7258](https://github.com/Automattic/sensei/pull/7258)
+
 ## 4.19.0 - 2023-11-01
 ### Added
 - Add a setting to not allow self-enrollment on courses [#7231](https://github.com/Automattic/sensei/pull/7231)

@@ -14,13 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * WP-CLI command that validates the progress data.
  *
- * @since $$next-version$$
+ * @since 4.19.1
  */
 class Sensei_Validate_Progress_Command {
 	/**
 	 * Seed the database.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.1
 	 *
 	 * @param array $args       Command arguments.
 	 * @param array $assoc_args Command arguments with names.
@@ -43,7 +43,7 @@ class Sensei_Validate_Progress_Command {
 	/**
 	 * Output the validation errors.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.1
 	 *
 	 * @param Progress_Validation $progress_validation Progress validation.
 	 */
