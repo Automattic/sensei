@@ -60,7 +60,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 	</div>
 
 	<div class="sensei-quiz-actions wp-block-sensei-lms-quiz-actions">
-		<div class="sensei-quiz-actions-primary wp-block-buttons">
+		<div class="sensei-quiz-actions-primary">
 			<?php if ( $sensei_question_loop['current_page'] > 1 ) : ?>
 				<div class="sensei-quiz-action wp-block-button is-style-outline">
 					<button
