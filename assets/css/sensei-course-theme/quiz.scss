@@ -179,7 +179,7 @@ $vertical-spacing-desktop: 80px;
 				flex-direction: row;
 
 				.sensei-quiz-action {
-					flex: unset;
+					white-space: nowrap;
 				}
 
 				.sensei-quiz-actions-secondary {
