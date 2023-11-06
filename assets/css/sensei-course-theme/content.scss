@@ -28,7 +28,8 @@ body {
 	color: var(--sensei-background-color);
 }
 
-.sensei-course-theme__main-content {
+.sensei-course-theme__main-content,
+.sensei-course-theme__quiz__footer__wrapper {
 	padding: 0 var(--content-padding);
 }
 
