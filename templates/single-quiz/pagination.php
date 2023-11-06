@@ -98,7 +98,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 						class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission"
 						style="<?php echo esc_attr( $sensei_button_inline_styles ); ?>"
 					>
-						<?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>
+						<?php esc_attr_e( 'Complete Quiz', 'sensei-lms' ); ?>
 					</button>
 
 					<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_complete_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
