@@ -59,7 +59,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 		?>
 	</div>
 
-	<div class="sensei-quiz-actions">
+	<div class="sensei-quiz-actions wp-block-sensei-lms-quiz-actions">
 		<div class="sensei-quiz-actions-primary wp-block-buttons">
 			<?php if ( $sensei_question_loop['current_page'] > 1 ) : ?>
 				<div class="sensei-quiz-action wp-block-button is-style-outline">
@@ -110,7 +110,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 			<div class="sensei-quiz-actions-secondary">
 				<?php if ( $sensei_is_reset_allowed ) : ?>
 					<div class="sensei-quiz-action">
-						<button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission">
+						<button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission sensei-course-theme__button is-link">
 							<?php esc_attr_e( 'Restart Quiz', 'sensei-lms' ); ?>
 						</button>
 
@@ -120,7 +120,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 
 				<?php if ( ! $sensei_is_quiz_completed ) : ?>
 					<div class="sensei-quiz-action">
-						<button type="submit" name="quiz_save" form="sensei-quiz-form" class="quiz-submit save sensei-stop-double-submission">
+						<button type="submit" name="quiz_save" form="sensei-quiz-form" class="quiz-submit save sensei-stop-double-submission sensei-course-theme__button is-link">
 							<?php esc_attr_e( 'Save Progress', 'sensei-lms' ); ?>
 						</button>
 
