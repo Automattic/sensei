@@ -71,7 +71,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__prev-button"
 						style="<?php echo esc_attr( $sensei_button_inline_styles ); ?>"
 					>
-						<?php esc_attr_e( 'Previous', 'sensei-lms' ); ?>
+						<?php esc_attr_e( 'Previous Question', 'sensei-lms' ); ?>
 					</button>
 				</div>
 			<?php endif ?>
@@ -86,7 +86,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__next-button"
 						style="<?php echo esc_attr( $sensei_button_inline_styles ); ?>"
 					>
-						<?php esc_attr_e( 'Next', 'sensei-lms' ); ?>
+						<?php esc_attr_e( 'Next Question', 'sensei-lms' ); ?>
 					</button>
 				</div>
 			<?php elseif ( $sensei_is_quiz_available && ! $sensei_is_quiz_completed ) : ?>
