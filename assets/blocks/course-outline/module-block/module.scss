@@ -66,6 +66,9 @@ body.theme-course {
 		flex: 1;
 		margin: 0;
 		color: inherit;
+		display: flex;
+		flex-flow: wrap;
+
 		&::before, &::after {
 			content: none;
 		}
