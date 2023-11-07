@@ -18,6 +18,8 @@ body.theme-course {
 
 		#{$block}__lessons-title {
 			font-size: var(--wp--preset--font-size--small);
+			padding-top: 10px;
+			padding-bottom: 10px;
 		}
 	}
 }
