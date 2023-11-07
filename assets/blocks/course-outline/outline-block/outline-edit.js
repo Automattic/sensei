@@ -20,6 +20,7 @@ import { useBlocksCreator } from '../use-block-creator';
 import OutlineAppender from './outline-appender';
 import OutlinePlaceholder from './outline-placeholder';
 import useSenseiProSettings from './use-sensei-pro-settings';
+import { applyFilters } from '@wordpress/hooks';
 
 const SENSEI_PRO_LINK = 'https://senseilms.com/sensei-pro/';
 
@@ -49,6 +50,19 @@ const OutlineEdit = ( props ) => {
 
 	const { isActivated: isSenseiProActivated } = useSenseiProSettings();
 
+	/**
+	 * Filters if the course outline generator upsell should be removed or not.
+	 *
+	 * @since 4.17.0
+	 *
+	 * @param {boolean} removeCourseOutlineGeneratorUpsell Whether to remove the course outline generator upsell.
+	 * @return {boolean} Whether to remove the course outline generator upsell.
+	 */
+	const removeCourseOutlineGeneratorUpsell = applyFilters(
+		'senseiCourseOutlineGeneratorUpsellRemove',
+		isSenseiProActivated
+	);
+
 	useEffect( () => {
 		if ( ! attributes.isPreview ) {
 			loadStructure();
@@ -72,12 +86,12 @@ const OutlineEdit = ( props ) => {
 	);
 
 	const openTailoredModal = useCallback( () => {
-		if ( isSenseiProActivated ) {
+		if ( removeCourseOutlineGeneratorUpsell ) {
 			window.location.hash = 'generate-course-outline-using-ai';
 		} else {
 			window.location.href = SENSEI_PRO_LINK;
 		}
-	}, [ isSenseiProActivated ] );
+	}, [ removeCourseOutlineGeneratorUpsell ] );
 
 	return isEmpty ? (
 		<OutlinePlaceholder

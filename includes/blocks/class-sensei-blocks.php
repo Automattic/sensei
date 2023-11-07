@@ -159,14 +159,15 @@ class Sensei_Blocks {
 		 * Notice that for blocks being registered using the `$file_or_folder`, this filter runs before the
 		 * `register_block_type_from_metadata`.
 		 *
-		 * @since 3.6.0
-		 * @hook sensei_block_type_args
 		 * @see register_block_type
 		 * @see register_block_type_from_metadata
 		 *
+		 * @since 3.6.0
+		 *
+		 * @hook sensei_block_type_args
+		 *
 		 * @param {array}  $block_args The block arguments as defined by register_block_type.
 		 * @param {string} $block_name Block name.
-		 *
 		 * @return {array} Block args.
 		 */
 		$block_args = apply_filters( 'sensei_block_type_args', $block_args, $block_name );

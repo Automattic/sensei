@@ -1,19 +1,24 @@
 {
 	"name": "automattic/sensei-lms",
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
+	"require": {
+		"woocommerce/action-scheduler": "3.6.2"
+	},
 	"require-dev": {
-		"php": "^7.3 || ^8",
+		"php": "^7.4 || ^8",
 		"automattic/jetpack-changelogger": "3.3.5",
 		"bamarni/composer-bin-plugin": "1.8.2",
 		"dealerdirect/phpcodesniffer-composer-installer": "1.0.0",
 		"dms/phpunit-arraysubset-asserts": "0.5.0",
 		"humbug/php-scoper": "0.15.0",
 		"pelago/emogrifier": "7.0.0",
+		"php-stubs/wordpress-stubs": "^6.3",
 		"phpcompatibility/phpcompatibility-wp": "2.1.4",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
 		"sirbrillig/phpcs-variable-analysis": "2.11.16",
 		"squizlabs/php_codesniffer": "3.7.2",
 		"symfony/polyfill-php80": "1.16.0",
+		"vimeo/psalm": "4.22.0",
 		"wp-coding-standards/wpcs": "2.3.0",
 		"yoast/phpunit-polyfills": "2.0.0"
 	},
@@ -90,7 +95,7 @@
 		"optimize-autoloader": true,
 		"sort-packages": true,
 		"platform": {
-			"php": "7.3"
+			"php": "7.4"
 		},
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true,
@@ -99,7 +104,16 @@
 	},
 	"extra": {
 		"changelogger": {
-			"changelog": "changelog.txt"
+			"changelog": "changelog.txt",
+			"types": {
+				"security": "Security",
+				"added": "Added",
+				"changed": "Changed",
+				"deprecated": "Deprecated",
+				"removed": "Removed",
+				"fixed": "Fixed",
+				"development": "Development"
+			}
 		}
 	}
 }

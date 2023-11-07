@@ -214,13 +214,13 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		 * Filters the query which fetches the user courses.
 		 *
 		 * @since 3.13.3
+		 *
 		 * @hook sensei_user_courses_query
 		 *
 		 * @param {null}   $query
 		 * @param {int}    $user_id         The user id.
 		 * @param {string} $status          Status of query to run.
 		 * @param {array}  $base_query_args Base query args.
-		 *
 		 * @return {WP_Query} The query.
 		 */
 		$filtered_query = apply_filters( 'sensei_user_courses_query', null, $user_id, $this->status, $base_query_args );
@@ -529,11 +529,12 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		/**
 		 * Determine if we should display course toggles on User Courses Shortcode.
 		 *
-		 * @param bool $should_display_course_toggles Should we Display the course toggles.
-		 *
 		 * @since 1.9.18
 		 *
-		 * @return bool
+		 * @hook sensei_shortcode_user_courses_display_course_toggle_actions
+		 *
+		 * @param {bool} $should_display_course_toggles Should we display the course toggles.
+		 * @return {bool} Filtered value.
 		 */
 		$should_display_course_toggles = (bool) apply_filters( 'sensei_shortcode_user_courses_display_course_toggle_actions', true );
 		if ( false === $should_display_course_toggles ) {
@@ -574,10 +575,10 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		 * Filters the the user courses filter options.
 		 *
 		 * @since 3.13.3
+		 *
 		 * @hook sensei_user_courses_filter_options
 		 *
 		 * @param {array} $filter_options The filter options.
-		 *
 		 * @return {array} The filter options.
 		 */
 		return apply_filters( 'sensei_user_courses_filter_options', $filter_options );

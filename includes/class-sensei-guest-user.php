@@ -161,7 +161,7 @@ class Sensei_Guest_User {
 	public function log_guest_user_out_before_all_actions() {
 		if (
 			is_user_logged_in() &&
-			$this->is_current_user_guest()
+			self::is_current_user_guest()
 		) {
 			$this->guest_user_id = get_current_user_id();
 			wp_set_current_user( 0 );
@@ -429,11 +429,11 @@ class Sensei_Guest_User {
 		/**
 		 * Filters the list of supported actions for Guest Users.
 		 *
-		 * @hook  sensei_guest_user_supported_actions
 		 * @since 4.11
 		 *
-		 * @param {array} List of supported actions for guest users.
+		 * @hook sensei_guest_user_supported_actions
 		 *
+		 * @param {array} List of supported actions for guest users.
 		 * @return {array} List of supported actions for guest users.
 		 */
 		$supported_actions = apply_filters( 'sensei_guest_user_supported_actions', $this->supported_actions );

@@ -119,7 +119,7 @@ class Sensei_MailPoetMockAPI_Test {
 	 */
 	public function addList( $list ) {
 		$new_list      = array(
-			'id'          => wp_rand( 100, 500 ),
+			'id'          => intval( wp_unique_id() ),
 			'name'        => $list['name'],
 			'description' => $list['description'],
 			'subscribers' => array(),

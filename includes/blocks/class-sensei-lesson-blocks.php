@@ -89,12 +89,12 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		/**
 		 * Customize the lesson block template.
 		 *
-		 * @hook  sensei_lesson_block_template
 		 * @since 3.9.0
+		 *
+		 * @hook  sensei_lesson_block_template
 		 *
 		 * @param {string[][]} $template          Array of blocks to use as the default initial state for a lesson.
 		 * @param {string[][]} $original_template Original block template.
-		 *
 		 * @return {string[][]} Array of blocks to use as the default initial state for a lesson.
 		 */
 		$post_type_object->template = apply_filters( 'sensei_lesson_block_template', $block_template, $post_type_object->template ?? [] );

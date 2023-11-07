@@ -131,8 +131,35 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				break;
 		}
 
-		// Backwards compatible filter name, moving forward should have single filter name
-		$columns = apply_filters( 'sensei_analysis_overview_' . $this->type . '_columns', $columns, $this );
+		/**
+		 * Filter the columns that are going to be used in the Analysis Overview list table.
+		 *
+		 * Backwards compatible filter name, moving forward should have single filter name.
+		 *
+		 * @deprecated 4.19.0 Use sensei_analysis_overview_columns instead.
+		 *
+		 * @hook sensei_analysis_overview_{type}_columns
+		 *
+		 * @param {array} $columns Array of columns for the report table.
+		 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
+		 * @return {array} Filtered array of columns for the report table.
+		 */
+		$columns = apply_filters_deprecated(
+			'sensei_analysis_overview_' . $this->type . '_columns',
+			array( $columns, $this ),
+			'4.19.0',
+			'sensei_analysis_overview_columns'
+		);
+
+		/**
+		 * Filter the columns that are going to be used in the Analysis Overview list table.
+		 *
+		 * @hook sensei_analysis_overview_columns
+		 *
+		 * @param {array} $columns Array of columns for the report table.
+		 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
+		 * @return {array} Filtered array of columns for the report table.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_columns', $columns, $this );
 
 		$this->columns = $columns;
@@ -149,28 +176,27 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return array The array of columns to use with the table with columns appended to their title
 	 */
 	public function add_totals_to_report_column_headers( array $columns ) {
-		$column_value_map = array();
-		switch ( $this->type ) {
-			case 'lessons' && $this->get_course_filter_value():
-				$total_counts                           = $this->get_totals_for_lesson_report_column_headers( $this->get_course_filter_value() );
-				$column_value_map['title']              = $total_counts->lesson_count;
-				$column_value_map['lesson_module']      = $total_counts->unique_module_count;
-				$column_value_map['students']           = $total_counts->unique_student_count;
-				$column_value_map['completions']        = $total_counts->lesson_completed_count > 0 && $total_counts->lesson_count > 0
-					? ceil( $total_counts->lesson_completed_count / $total_counts->lesson_count )
-					: 0;
-				$column_value_map['days_to_completion'] = $total_counts->lesson_completed_count > 0
-					? ceil( $total_counts->days_to_complete_sum / $total_counts->lesson_completed_count )
-					: __( 'N/A', 'sensei-lms' );
-				$column_value_map['completion_rate']    = $total_counts->lesson_start_count > 0
-					? Sensei_Utils::quotient_as_absolute_rounded_percentage( $total_counts->lesson_completed_count, $total_counts->lesson_start_count ) . '%'
-					: '0%';
-				break;
-			default:
-				break;
+		if ( 'lessons' !== $this->type || ! $this->get_course_filter_value() ) {
+			return $columns;
 		}
+
+		$total_counts                           = $this->get_totals_for_lesson_report_column_headers( $this->get_course_filter_value() );
+		$column_value_map                       = array();
+		$column_value_map['title']              = $total_counts->lesson_count;
+		$column_value_map['lesson_module']      = $total_counts->unique_module_count;
+		$column_value_map['students']           = $total_counts->unique_student_count;
+		$column_value_map['completions']        = $total_counts->lesson_completed_count > 0 && $total_counts->lesson_count > 0
+			? ceil( $total_counts->lesson_completed_count / $total_counts->lesson_count )
+			: 0;
+		$column_value_map['days_to_completion'] = $total_counts->lesson_completed_count > 0
+			? ceil( $total_counts->days_to_complete_sum / $total_counts->lesson_completed_count )
+			: __( 'N/A', 'sensei-lms' );
+		$column_value_map['completion_rate']    = $total_counts->lesson_start_count > 0
+			? Sensei_Utils::quotient_as_absolute_rounded_percentage( $total_counts->lesson_completed_count, $total_counts->lesson_start_count ) . '%'
+			: '0%';
+
 		foreach ( $column_value_map as $key => $value ) {
-			if ( key_exists( $key, $columns ) ) {
+			if ( array_key_exists( $key, $columns ) ) {
 				$columns[ $key ] = $columns[ $key ] . ' (' . esc_html( $value ) . ')';
 			}
 		}
@@ -208,9 +234,38 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				);
 				break;
 		}
-		// Backwards compatible filter name, moving forward should have single filter name.
-		$columns = apply_filters( 'sensei_analysis_overview_' . $this->type . '_columns_sortable', $columns, $this );
+
+		/**
+		 * Filter the sortable columns that are going to be used in the Analysis Overview list table.
+		 *
+		 * Backwards compatible filter name, moving forward should have single filter name.
+		 *
+		 * @deprecated 4.19.0 Use sensei_analysis_overview_columns_sortable instead.
+		 *
+		 * @hook sensei_analysis_overview_{type}_columns_sortable
+		 *
+		 * @param {array} $columns Array of sortable columns for the report table.
+		 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
+		 * @return {array} Filtered array of sortable columns for the report table.
+		 */
+		$columns = apply_filters_deprecated(
+			'sensei_analysis_overview_' . $this->type . '_columns_sortable',
+			array( $columns, $this ),
+			'4.19.0',
+			'sensei_analysis_overview_columns_sortable'
+		);
+
+		/**
+		 * Filter the sortable columns that are going to be used in the Analysis Overview list table.
+		 *
+		 * @hook sensei_analysis_overview_columns_sortable
+		 *
+		 * @param {array} $columns Array of sortable columns for the report table.
+		 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
+		 * @return {array} Filtered array of sortable columns for the report table.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_columns_sortable', $columns, $this );
+
 		return $columns;
 	}
 
@@ -238,6 +293,16 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
+
+		/**
+		 * Filter the number of items per page.
+		 *
+		 * @hook sensei_comments_per_page
+		 *
+		 * @param {int} $per_page The number of items per page.
+		 * @param {string} $type The type of items.
+		 * @return {int} The number of items per page.
+		 */
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
 
 		$paged  = $this->get_pagenum();
@@ -376,17 +441,29 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$last_activity_date = __( 'N/A', 'sensei-lms' );
 				$lessons            = Sensei()->course->course_lessons( $item->ID, 'any', 'ids' );
 
-				if ( 0 < count( $lessons ) ) {
+				if ( $lessons ) {
 					$last_activity_date = $this->get_last_activity_date( array( 'post__in' => $lessons ) );
 				}
 
 				// Get Course Completions.
-				$course_args        = array(
+				$course_args = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_course_status',
 					'status'  => 'complete',
 				);
-				$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
+
+				/**
+				 * Filter the course completions query arguments.
+				 *
+				 * @hook sensei_analysis_course_completions
+				 *
+				 * @param {array} $course_args Array of query arguments for course completions.
+				 * @param {WP_Post} $item Current course post object.
+				 * @return {array} Filtered array of query arguments for course completions.
+				 */
+				$course_args = apply_filters( 'sensei_analysis_course_completions', $course_args, $item );
+
+				$course_completions = Sensei_Utils::sensei_check_for_activity( $course_args );
 
 				// Average Grade will be N/A if the course has no lessons or quizzes, if none of the lessons
 				// have a status of 'graded', 'passed' or 'failed', or if none of the quizzes have grades.
@@ -401,7 +478,18 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'meta_key' => 'grade',
 					);
 
-					$percent_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
+					/**
+					 * Filter the course completion percentage query arguments.
+					 *
+					 * @hook sensei_analysis_course_percentage
+					 *
+					 * @param {array} $grade_args Array of query arguments for course percentage.
+					 * @param {WP_Post} $item Current course post object.
+					 * @return {array} Filtered array of query arguments for course percentage.
+					 */
+					$grade_args = apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item );
+
+					$percent_count = Sensei_Utils::sensei_check_for_activity( $grade_args, false );
 					$percent_total = Sensei_Grading::get_course_users_grades_sum( $item->ID );
 
 					if ( $percent_count > 0 && $percent_total >= 0 ) {
@@ -430,7 +518,18 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				}
 
 				$average_course_progress = $this->get_average_progress_for_courses_table( $item->ID );
-				$column_data             = apply_filters(
+
+				/**
+				 * Filter the row data for the Analysis Overview list table.
+				 *
+				 * @hook sensei_analysis_overview_column_data
+				 *
+				 * @param {array} $column_data Array of column data for the report table.
+				 * @param {object|WP_Post|WP_User} $item Current row object.
+				 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
+				 * @return {array} Filtered array of column data for the report table.
+				 */
+				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'              => $course_title,
@@ -447,21 +546,46 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'lessons':
 				// Get Learners (i.e. those who have started).
-				$lesson_args     = array(
+				$lesson_args = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_lesson_status',
 					'status'  => 'any',
 				);
-				$lesson_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item ) );
+
+				/**
+				 * Filter the lesson learners progress query arguments.
+				 *
+				 * @hook sensei_analysis_lesson_learners
+				 *
+				 * @param {array} $lesson_args Array of query arguments for lesson learners.
+				 * @param {WP_Post} $item Current lesson post object.
+				 * @return {array} Filtered array of query arguments for lesson learners.
+				 */
+				$lesson_args = apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item );
+
+				$lesson_students = Sensei_Utils::sensei_check_for_activity( $lesson_args );
 
 				// Get Course Completions.
-				$lesson_args        = array(
+				$lesson_args = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_lesson_status',
 					'status'  => array( 'complete', 'graded', 'passed', 'failed', 'ungraded' ),
 					'count'   => true,
 				);
-				$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
+
+				/**
+				 * Filter the lesson completions query arguments.
+				 *
+				 * @hook sensei_analysis_lesson_completions
+				 *
+				 * @param {array} $lesson_args Array of query arguments for lesson completions.
+				 * @param {WP_Post} $item Current lesson post object.
+				 * @return {array} Filtered array of query arguments for lesson completions.
+				 */
+				$lesson_args = apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item );
+
+				$lesson_completions = Sensei_Utils::sensei_check_for_activity( $lesson_args );
+
 				// Taking the ceiling value for the average.
 				$average_completion_days = $lesson_completions > 0 ? ceil( $item->days_to_complete / $lesson_completions ) : __( 'N/A', 'sensei-lms' );
 
@@ -479,6 +603,17 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 
 				}
+
+				/**
+				 * Filter the row data for the Analysis Overview list table.
+				 *
+				 * @hook sensei_analysis_overview_column_data
+				 *
+				 * @param {array} $column_data Array of column data for the report table.
+				 * @param {object|WP_Post|WP_User} $item Current row object.
+				 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
+				 * @return {array} Filtered array of column data for the report table.
+				 */
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
@@ -497,20 +632,44 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'users':
 			default:
 				// Get Started Courses.
-				$course_args          = array(
+				$course_args = array(
 					'user_id' => $item->ID,
 					'type'    => 'sensei_course_status',
 					'status'  => 'any',
 				);
-				$user_courses_started = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item ) );
+
+				/**
+				 * Filter user progress query arguments for courses: find started courses.
+				 *
+				 * @hook sensei_analysis_user_courses_started
+				 *
+				 * @param {array} $course_args Array of query arguments for started user courses.
+				 * @param {WP_User} $item Current user object.
+				 * @return {array} Filtered array of query arguments for started user courses.
+				 */
+				$course_args = apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item );
+
+				$user_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args );
 
 				// Get Completed Courses.
-				$course_args        = array(
+				$course_args = array(
 					'user_id' => $item->ID,
 					'type'    => 'sensei_course_status',
 					'status'  => 'complete',
 				);
-				$user_courses_ended = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_ended', $course_args, $item ) );
+
+				/**
+				 * Filter user progress query arguments for courses: find completed courses.
+				 *
+				 * @hook sensei_analysis_user_courses_ended
+				 *
+				 * @param {array} $course_args Array of query arguments for ended user courses.
+				 * @param {WP_User} $item Current user object.
+				 * @return {array} Filtered array of query arguments for ended user courses.
+				 */
+				$course_args = apply_filters( 'sensei_analysis_user_courses_ended', $course_args, $item );
+
+				$user_courses_ended = Sensei_Utils::sensei_check_for_activity( $course_args );
 
 				// Get Quiz Grades.
 				$grade_args = array(
@@ -520,7 +679,18 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'meta_key' => 'grade',
 				);
 
-				$grade_count        = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), false );
+				/**
+				 * Filter user progress query arguments for lessons: find graded lessons.
+				 *
+				 * @hook sensei_analysis_user_lesson_grades
+				 *
+				 * @param {array} $grade_args Array of query arguments for graded user lessons.
+				 * @param {WP_User} $item Current user object.
+				 * @return {array} Filtered array of query arguments for graded user lessons.
+				 */
+				$grade_args = apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item );
+
+				$grade_count        = Sensei_Utils::sensei_check_for_activity( $grade_args, false );
 				$grade_total        = Sensei_Grading::get_user_graded_lessons_sum( $item->ID );
 				$user_average_grade = 0;
 
@@ -548,6 +718,17 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				if ( $item->last_activity_date ) {
 					$last_activity_date = $this->csv_output ? $item->last_activity_date : Sensei_Utils::format_last_activity_date( $item->last_activity_date );
 				}
+
+				/**
+				 * Filter the row data for the Analysis Overview list table.
+				 *
+				 * @hook sensei_analysis_overview_column_data
+				 *
+				 * @param {array} $column_data Array of column data for the report table.
+				 * @param {object|WP_Post|WP_User} $item Current row object.
+				 * @param {Sensei_Analysis_Overview_List_Table} $this Current instance of the list table.
+				 * @return {array} Filtered array of column data for the report table.
+				 */
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
@@ -688,7 +869,19 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( isset( $args['orderby'] ) && ( 'count_of_completions' === $args['orderby'] ) ) {
 			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_non_user_query' ), 10, 2 );
 		}
-		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+
+		/**
+		 * Filter the query arguments for courses in the Analysis Overview list table.
+		 *
+		 * @hook sensei_analysis_overview_filter_courses
+		 *
+		 * @param {array} $course_args Array of query arguments for courses.
+		 * @return {array} Filtered array of query arguments for courses.
+		 */
+		$course_args = apply_filters( 'sensei_analysis_overview_filter_courses', $course_args );
+
+		$courses_query = new WP_Query( $course_args );
+
 		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_non_user_query' ), 10, 2 );
 		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
@@ -732,8 +925,19 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
+
+		/**
+		 * Filter the query arguments for lessons in the Analysis Overview list table.
+		 *
+		 * @hook sensei_analysis_overview_filter_lessons
+		 *
+		 * @param {array} $lessons_args Array of query arguments for lessons.
+		 * @return {array} Filtered array of query arguments for lessons.
+		 */
+		$lessons_args = apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args );
+
 		// Using WP_Query as get_posts() doesn't support 'found_posts'.
-		$lessons_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args ) );
+		$lessons_query = new WP_Query( $lessons_args );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
 		$this->total_items = $lessons_query->found_posts;
 		return $lessons_query->posts;
@@ -757,10 +961,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$args['fields'] = array( 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' );
 
 		/**
-		 * Filter the WP_User_Query arguments
+		 * Filter the query arguments for users in the Analysis Overview list table.
 		 *
-		 * @since 1.6.0
-		 * @param $args
+		 * @hook sensei_analysis_overview_filter_users
+		 *
+		 * @param {array} $args Array of query arguments for users.
+		 * @return {array} Filtered array of query arguments for users.
 		 */
 		$args = apply_filters( 'sensei_analysis_overview_filter_users', $args );
 
@@ -1332,7 +1538,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		global $wpdb;
 		$lessons      = Sensei()->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids' );
 		$lesson_ids   = '0';
-		$lesson_count = count( $lessons );
+		$lesson_count = is_countable( $lessons ) ? count( $lessons ) : 0;
 		if ( 0 < $lesson_count ) {
 			$lesson_ids = implode( ',', $lessons );
 		};
@@ -1340,7 +1546,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$default_args  = array(
 			'fields' => 'ids',
 		);
-		$modules_count = count( wp_get_object_terms( $lessons, 'module', $default_args ) );
+		$modules       = wp_get_object_terms( $lessons, 'module', $default_args );
+		$modules_count = is_countable( $modules ) ? count( $modules ) : 0;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		$lesson_completion_info                      = $wpdb->get_row(
 			$wpdb->prepare(

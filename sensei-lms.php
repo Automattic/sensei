@@ -3,13 +3,13 @@
  * Plugin Name: Sensei LMS
  * Plugin URI: https://senseilms.com/
  * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
- * Version: 4.16.0
+ * Version: 4.19.1
  * Author: Automattic
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Requires at least: 6.0
- * Tested up to: 6.2
- * Requires PHP: 7.3
+ * Requires at least: 6.2
+ * Tested up to: 6.4
+ * Requires PHP: 7.4
  * Text Domain: sensei-lms
  * Domain path: /lang/
  */
@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'SENSEI_LMS_VERSION' ) ) {
-	define( 'SENSEI_LMS_VERSION', '4.16.0' ); // WRCS: DEFINED_VERSION.
+	define( 'SENSEI_LMS_VERSION', '4.19.1' ); // WRCS: DEFINED_VERSION.
 }
 
 if ( ! defined( 'SENSEI_LMS_PLUGIN_FILE' ) ) {
@@ -87,6 +87,13 @@ if ( class_exists( 'Sensei_Main', false ) ) {
  * Autoload the vendor dependencies. This includes the prefixed vendor dependencies as well.
  */
 require SENSEI_LMS_PLUGIN_PATH . 'vendor/autoload.php';
+
+/**
+ * Load packages and libraries.
+ */
+if ( ! defined( 'SENSEI_DO_NOT_LOAD_ACTION_SCHEDULER' ) || ! SENSEI_DO_NOT_LOAD_ACTION_SCHEDULER ) {
+	require SENSEI_LMS_PLUGIN_PATH . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
+}
 
 require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
 if ( ! Sensei_Dependency_Checker::check_php_requirement() ) {

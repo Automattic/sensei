@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
+
 /**
  * Class Quiz_Progress_Repository_Factory.
  *
@@ -17,23 +19,32 @@ namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 class Quiz_Progress_Repository_Factory {
 
 	/**
-	 * Use tables based progress flag.
+	 * The flag if the tables based implementation is available for use.
 	 *
 	 * @var bool
 	 */
-	private $use_tables;
+	private $tables_enabled;
+
+	/**
+	 * The flag if we read progress from tables.
+	 *
+	 * @var bool
+	 */
+	private $read_tables;
 
 	/**
 	 * Quiz_Progress_Repository_Factory constructor.
 	 *
-	 * @param bool $use_tables Use tables based progress flag.
+	 * @param bool $tables_enabled Is tables based progress enabled.
+	 * @param bool $read_tables Is reading from tables enabled.
 	 */
-	public function __construct( bool $use_tables ) {
-		$this->use_tables = $use_tables;
+	public function __construct( bool $tables_enabled, bool $read_tables ) {
+		$this->tables_enabled = $tables_enabled;
+		$this->read_tables    = $read_tables;
 	}
 
 	/**
-	 * Creates a new quiz progress repository.
+	 * Create a new quiz progress repository.
 	 *
 	 * @internal
 	 *
@@ -42,10 +53,36 @@ class Quiz_Progress_Repository_Factory {
 	public function create(): Quiz_Progress_Repository_Interface {
 		global $wpdb;
 
-		return new Aggregate_Quiz_Progress_Repository(
+		if ( ! $this->tables_enabled ) {
+			return new Comments_Based_Quiz_Progress_Repository();
+		}
+
+		if ( ! $this->read_tables ) {
+			return new Comment_Reading_Aggregate_Quiz_Progress_Repository(
+				new Comments_Based_Quiz_Progress_Repository(),
+				new Tables_Based_Quiz_Progress_Repository( $wpdb )
+			);
+		}
+
+		return new Table_Reading_Aggregate_Quiz_Progress_Repository(
 			new Comments_Based_Quiz_Progress_Repository(),
 			new Tables_Based_Quiz_Progress_Repository( $wpdb ),
-			$this->use_tables
+			new Comments_Based_Lesson_Progress_Repository()
 		);
+	}
+
+	/**
+	 * Create a new tables based quiz progress repository.
+	 *
+	 * @internal
+	 *
+	 * @since 4.17.0
+	 *
+	 * @return Tables_Based_Quiz_Progress_Repository
+	 */
+	public function create_tables_based_repository(): Tables_Based_Quiz_Progress_Repository {
+		global $wpdb;
+
+		return new Tables_Based_Quiz_Progress_Repository( $wpdb );
 	}
 }

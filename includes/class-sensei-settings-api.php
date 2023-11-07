@@ -30,6 +30,20 @@ class Sensei_Settings_API {
 	public $settings_version;
 
 	/**
+	 * Array of fields that have not been added to a section.
+	 *
+	 * @var array|null
+	 */
+	public $remaining_fields;
+
+	/**
+	 * Page's hook suffix.
+	 *
+	 * @var string|false
+	 */
+	public $hook = false;
+
+	/**
 	 * Constructor.
 	 *
 	 * @access public
@@ -250,7 +264,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	private function create_tabs() {
-		if ( count( $this->sections ) > 0 ) {
+		if ( $this->sections ) {
 			$tabs = array();
 			foreach ( $this->sections as $k => $v ) {
 				$tabs[ $k ] = $v;
@@ -267,7 +281,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function create_sections() {
-		if ( count( $this->sections ) > 0 ) {
+		if ( $this->sections ) {
 			foreach ( $this->sections as $k => $v ) {
 				add_settings_section( $k, $v['name'], array( $this, 'section_description' ), $this->token );
 			}
@@ -282,7 +296,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function create_fields() {
-		if ( count( $this->sections ) > 0 ) {
+		if ( $this->sections ) {
 
 			foreach ( $this->fields as $k => $v ) {
 				$method = $this->determine_method( $v, 'form' );
@@ -479,9 +493,10 @@ class Sensei_Settings_API {
 		 *
 		 * @since 4.1.0
 		 *
-		 * @hook  sensei_settings_woocommerce_hide  Hook used to hide woocommerce promo banner and section.
+		 * @hook sensei_settings_woocommerce_hide  Hook used to hide woocommerce promo banner and section.
 		 *
-		 * @return {boolean}                        Returns a boolean value that defines if the woocommerce promo banner should be hidden.
+		 * @param {bool} $hide_woocommerce_settings Defines if the woocommerce promo banner should be hidden.
+		 * @return {bool} Returns a boolean value that defines if the woocommerce promo banner should be hidden.
 		 */
 		$hide_woocommerce_settings = apply_filters( 'sensei_settings_woocommerce_hide', false );
 		if ( 'woocommerce-settings' === $section_id && ! $hide_woocommerce_settings ) {
@@ -495,7 +510,8 @@ class Sensei_Settings_API {
 		 *
 		 * @hook  sensei_settings_content_drip_hide  Hook used to hide content drip promo banner and section.
 		 *
-		 * @return {boolean}                        Returns a boolean value that defines if the content drip promo banner should be hidden.
+		 * @param {bool} $hide_content_drip_settings Defines if the content drip promo banner should be hidden.
+		 * @return {bool} Returns a boolean value that defines if the content drip promo banner should be hidden.
 		 */
 		$hide_content_drip_settings = apply_filters( 'sensei_settings_content_drip_hide', false );
 		if ( 'sensei-content-drip-settings' === $section_id && ! $hide_content_drip_settings ) {
@@ -602,9 +618,10 @@ class Sensei_Settings_API {
 	public function form_field_text( $args ) {
 		$options = $this->get_settings();
 
-		$type = in_array( $args['data']['type'] ?? '', [ 'email', 'text' ], true ) ? $args['data']['type'] : 'text';
+		$type     = in_array( $args['data']['type'] ?? '', [ 'email', 'text' ], true ) ? $args['data']['type'] : 'text';
+		$multiple = isset( $args['data']['multiple'] ) ? ' multiple ' : '';
 
-		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="' . esc_attr( $type ) . '" value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
+		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="' . esc_attr( $type ) . '" ' . esc_attr( $multiple ) . ' value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
 		if ( isset( $args['data']['description'] ) ) {
 			echo '<span class="description">' . wp_kses_post( $args['data']['description'] ) . '</span>' . "\n";
 		}
@@ -1093,8 +1110,8 @@ class Sensei_Settings_API {
 	 *
 	 * @access protected
 	 * @since  1.0.0
-	 * @param  string $key
-	 * @param  array  $data
+	 * @param  string $key  Field key.
+	 * @param  array  $data Field data.
 	 * @return void
 	 */
 	protected function add_error( $key, $data ) {
@@ -1115,7 +1132,7 @@ class Sensei_Settings_API {
 	 * @return  void
 	 */
 	protected function parse_errors() {
-		if ( count( $this->errors ) > 0 ) {
+		if ( $this->errors ) {
 			foreach ( $this->errors as $k => $v ) {
 				add_settings_error( $this->token . '-errors', $k, $v, 'error' );
 			}

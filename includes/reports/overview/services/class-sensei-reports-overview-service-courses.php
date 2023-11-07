@@ -125,7 +125,7 @@ class Sensei_Reports_Overview_Service_Courses {
 		) averages_by_course'
 		);
 
-		return doubleval( $result->courses_average );
+		return floatval( $result->courses_average );
 	}
 
 	/**

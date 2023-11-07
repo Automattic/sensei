@@ -133,10 +133,30 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				}
 				break;
 		}
-		// Backwards compatible
+
+		/**
+		 * Filter the columns that are going to be used in the Course Analysis list table.
+		 * Backwards compatible filter. Use sensei_analysis_course_columns instead.
+		 *
+		 * @hook sensei_analysis_course_{view}_columns
+		 *
+		 * @param {array}                             $columns The array of columns to use in the table.
+		 * @param {Sensei_Analysis_Course_List_Table} $this    The current instance of the class.
+		 * @return {array} $columns The array of columns to use with the table.
+		*/
 		$columns = apply_filters( 'sensei_analysis_course_' . $this->view . '_columns', $columns, $this );
-		// Moving forward, single filter with args
+
+		/**
+		 * Filter the columns that are going to be used in the Course Analysis list table.
+		 *
+		 * @hook sensei_analysis_course_columns
+		 *
+		 * @param {array}                             $columns The array of columns to use in the table.
+		 * @param {Sensei_Analysis_Course_List_Table} $this    The current instance of the class.
+		 * @return {array} $columns The array of columns to use with the table.
+		 */
 		$columns = apply_filters( 'sensei_analysis_course_columns', $columns, $this );
+
 		return $columns;
 	}
 
@@ -168,10 +188,30 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				}
 				break;
 		}
-		// Backwards compatible
+
+		/**
+		 * Filter the sortable columns that are going to be used in the Course Analysis list table.
+		 * Backwards compatible filter. Use sensei_analysis_course_columns_sortable instead.
+		 *
+		 * @hook sensei_analysis_course_{view}_columns_sortable
+		 *
+		 * @param {array}                             $columns The array of sortable columns to use in the table.
+		 * @param {Sensei_Analysis_Course_List_Table} $this    The current instance of the class.
+		 * @return {array} The array of sortable columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_course_' . $this->view . '_columns_sortable', $columns, $this );
-		// Moving forward, single filter with args
+
+		/**
+		 * Filter the sortable columns that are going to be used in the Course Analysis list table.
+		 *
+		 * @hook sensei_analysis_course_columns_sortable
+		 *
+		 * @param {array}                             $columns The array of sortable columns to use in the table.
+		 * @param {Sensei_Analysis_Course_List_Table} $this    The current instance of the class.
+		 * @return {array} The array of sortable columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_course_columns_sortable', $columns, $this );
+
 		return $columns;
 	}
 
@@ -204,6 +244,15 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$this->search = $search;
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
+		/**
+		 * Filter the number of items per page for the Course Analysis list table.
+		 *
+		 * @hook sensei_comments_per_page
+		 *
+		 * @param {int} $per_page The number of items per page.
+		 * @param {string} $screen The current screen.
+		 * @return {int} The number of items per page.
+		 */
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
 
 		$paged  = $this->get_pagenum();
@@ -391,12 +440,22 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 					$status          = __( 'Not started', 'sensei-lms' );
 					$user_start_date = $user_end_date = $status_class = $grade = '';
 
-					$lesson_args   = array(
+					$lesson_args = array(
 						'post_id' => $item->ID,
 						'user_id' => $this->user_id,
 						'type'    => 'sensei_lesson_status',
 						'status'  => 'any',
 					);
+					/**
+					 * Filter the lesson status arguments for the Course Analysis list table.
+					 *
+					 * @hook sensei_analysis_course_user_lesson
+					 *
+					 * @param {array}  $lesson_args The lesson status arguments.
+					 * @param {object} $item The current item.
+					 * @param {int}    $user_id The user ID.
+					 * @return {array} The lesson status arguments.
+					 */
 					$lesson_status = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_user_lesson', $lesson_args, $item, $this->user_id ), true );
 
 					if ( ! empty( $lesson_status ) ) {
@@ -467,20 +526,38 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				// Display lessons for this Course regardless of users
 				else {
 					// Get Learners (i.e. those who have started)
-					$lesson_args     = array(
+					$lesson_args = array(
 						'post_id' => $item->ID,
 						'type'    => 'sensei_lesson_status',
 						'status'  => 'any',
 					);
+					/**
+					 * Filter the lesson learners activity arguments for the Course Analysis list table.
+					 *
+					 * @hook sensei_analysis_lesson_learners
+					 *
+					 * @param {array}  $lesson_args The lesson learners activity arguments.
+					 * @param {object} $item The current item.
+					 * @return {array} The lesson learners activity arguments.
+					 */
 					$lesson_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item ) );
 
 					// Get Course Completions
-					$lesson_args        = array(
+					$lesson_args = array(
 						'post_id' => $item->ID,
 						'type'    => 'sensei_lesson_status',
 						'status'  => array( 'complete', 'graded', 'passed', 'failed' ),
 						'count'   => true,
 					);
+					/**
+					 * Filter the lesson completions activity arguments for the Course Analysis list table.
+					 *
+					 * @hook sensei_analysis_lesson_completions
+					 *
+					 * @param {array}  $lesson_args The lesson completions activity arguments.
+					 * @param {object} $item The current item.
+					 * @return {array} The lesson completions activity arguments.
+					 */
 					$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
 
 					$lesson_average_grade = __( 'N/A', 'sensei-lms' );
@@ -494,11 +571,20 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 							'meta_key' => 'grade',
 						);
 						add_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
+						/**
+						 * Filter the lesson grades activity arguments for the Course Analysis list table.
+						 *
+						 * @hook sensei_analysis_lesson_grades
+						 *
+						 * @param {array}  $grade_args The lesson grades activity arguments.
+						 * @param {object} $item The current item.
+						 * @return {array} The lesson grades activity arguments.
+						 */
 						$lesson_grades = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true );
 						remove_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 
 						$grade_count          = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
-						$grade_total          = ! empty( $lesson_grades->meta_sum ) ? doubleval( $lesson_grades->meta_sum ) : 0;
+						$grade_total          = ! empty( $lesson_grades->meta_sum ) ? floatval( $lesson_grades->meta_sum ) : 0;
 						$lesson_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
 					}
 					// Output lesson data
@@ -562,7 +648,14 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				'search' => '*' . $this->search . '*',
 				'fields' => 'ID',
 			);
-			// Filter for extending
+			/**
+			 * Filter the user arguments for the Course Analysis list table.
+			 *
+			 * @hook sensei_analysis_course_search_users
+			 *
+			 * @param {array} $user_args The user arguments.
+			 * @return {array} The user arguments.
+			 */
 			$user_args = apply_filters( 'sensei_analysis_course_search_users', $user_args );
 			if ( ! empty( $user_args ) ) {
 				$learners_search = new WP_User_Query( $user_args );
@@ -571,6 +664,14 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			}
 		}
 
+		/**
+		 * Filter the course activity arguments for the Course Analysis list table.
+		 *
+		 * @hook sensei_analysis_course_filter_statuses
+		 *
+		 * @param {array} $activity_args The course statuses arguments.
+		 * @return {array} The course statuses arguments.
+		 */
 		$activity_args = apply_filters( 'sensei_analysis_course_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
@@ -627,8 +728,17 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		}
 
 		// Using WP_Query as get_posts() doesn't support 'found_posts'
+		/**
+		 * Filter the lessons arguments for the Course Analysis list table.
+		 *
+		 * @hook sensei_analysis_course_filter_lessons
+		 *
+		 * @param {array} $lessons_args The lessons arguments.
+		 * @return {array} The lessons arguments.
+		 */
 		$lessons_query     = new WP_Query( apply_filters( 'sensei_analysis_course_filter_lessons', $lessons_args ) );
 		$this->total_items = $lessons_query->found_posts;
+
 		return $lessons_query->posts;
 	}
 
@@ -650,6 +760,14 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				$text = __( 'No lessons found.', 'sensei-lms' );
 				break;
 		}
+		/**
+		 * Filter the text to display when no items are found in the Course Analysis list table.
+		 *
+		 * @hook sensei_analysis_course_no_items_text
+		 *
+		 * @param {string} $text The text to display.
+		 * @return {string} Filtered text.
+		 */
 		echo wp_kses_post( apply_filters( 'sensei_analysis_course_no_items_text', $text ) );
 	}
 
@@ -699,6 +817,14 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$menu['lesson'] = sprintf( '<a href="%s" class="%s">%s</a>', esc_url( $lessons_url ), esc_attr( $lessons_class ), esc_html( $lessons_text ) );
 		$menu['user']   = sprintf( '<a href="%s" class="%s">%s</a>', esc_url( $learners_url ), esc_attr( $learners_class ), esc_html( $learners_text ) );
 
+		/**
+		 * Filter the sub menu for the Course Analysis list table.
+		 *
+		 * @hook sensei_analysis_course_sub_menu
+		 *
+		 * @param {array} $menu The sub menu.
+		 * @return {array} The filtered sub menu.
+		 */
 		return apply_filters( 'sensei_analysis_course_sub_menu', $menu );
 	}
 
@@ -724,6 +850,15 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
+
+		/**
+		 * Filter the search button text for the Course Analysis list table.
+		 *
+		 * @hook sensei_list_table_search_button_text
+		 *
+		 * @param {string} $text The search button text.
+		 * @return {string} The filtered search button text.
+		 */
 		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 

@@ -8,9 +8,7 @@
 namespace Sensei\Internal\Emails\Generators;
 
 use Sensei\Internal\Emails\Email_Repository;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -75,7 +73,7 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_user_lesson_end', [ $this, 'student_completed_lesson_mail_to_teacher' ], 10, 2 );
+		$this->maybe_add_action( 'sensei_user_lesson_end', [ $this, 'student_completed_lesson_mail_to_teacher' ], 10, 2 );
 	}
 
 	/**
@@ -88,7 +86,7 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	 */
 	public function student_completed_lesson_mail_to_teacher( $student_id, $lesson_id ) {
 		$lesson_progress = $this->lesson_progress_repository->get( $lesson_id, $student_id );
-		if ( ! $lesson_progress || ! in_array( $lesson_progress->get_status(), [ Lesson_Progress::STATUS_COMPLETE, Quiz_Progress::STATUS_PASSED ], true ) ) {
+		if ( ! $lesson_progress || ! $lesson_progress->is_complete() ) {
 			return;
 		}
 

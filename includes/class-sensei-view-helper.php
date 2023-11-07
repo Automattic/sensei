@@ -47,8 +47,11 @@ class Sensei_View_Helper {
 		 *
 		 * @since 1.9.13
 		 *
-		 * @param string|int $points the quiz question points
-		 * @param string $formatted_points the formatted point output
+		 * @hook sensei_quiz_question_points_format
+		 *
+		 * @param {string|int} $points           The quiz question points.
+		 * @param {string}     $formatted_points The formatted point output.
+		 * @return {string} The formatted point output.
 		 */
 		$filtered_formatted_points = apply_filters( 'sensei_quiz_question_points_format', $formatted_points, $points );
 

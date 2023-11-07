@@ -12,7 +12,7 @@ namespace Sensei\Internal\Installer;
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.16.1
  */
 class Updates_Factory {
 	/**

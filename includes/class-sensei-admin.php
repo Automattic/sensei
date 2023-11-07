@@ -355,8 +355,34 @@ class Sensei_Admin {
 	 * @return bool Returns true if admin custom styles are allowed.
 	 */
 	private function are_custom_admin_styles_allowed( $post_type, $hook_suffix, $screen ) {
-		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
+		/**
+		 * Filter the list of post types where the admin custom styles should be loaded.
+		 *
+		 * @hook sensei_scripts_allowed_post_types
+		 *
+		 * @param {array} $allowed_post_types The list of post types where the admin custom styles should be loaded.
+		 * @return {array} Filtered list of allowed post types.
+		 */
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
+
+		/**
+		 * Filter the list of admin pages where the admin custom styles should be loaded.
+		 *
+		 * @hook sensei_scripts_allowed_post_type_pages
+		 *
+		 * @param {array} $allowed_post_type_pages The list of admin pages where the admin custom styles should be loaded.
+		 * @return {array} Filtered list of allowed admin pages.
+		 */
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
+
+		/**
+		 * Filter the list of admin pages slugs where the admin custom styles should be loaded.
+		 *
+		 * @hook sensei_scripts_allowed_pages
+		 *
+		 * @param {array} $allowed_pages The list of admin pages slugs where the admin custom styles should be loaded.
+		 * @return {array} Filtered list of allowed admin pages.
+		 */
 		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', Sensei_Analysis::PAGE_SLUG, 'sensei_learners', 'sensei_updates', 'sensei-settings', 'sensei_learners', Sensei_Course::SHOWCASE_COURSES_SLUG, $this->lesson_order_page_slug, $this->course_order_page_slug ) );
 		$module_pages_screen_ids = [ 'edit-module' ];
 
@@ -766,7 +792,7 @@ class Sensei_Admin {
 		}
 
 		// Persist new lesson order to course meta.
-		$new_lesson_order_string = join( ',', $new_lesson_order );
+		$new_lesson_order_string = implode( ',', $new_lesson_order );
 		update_post_meta( $course_id, '_lesson_order', $new_lesson_order_string );
 	}
 
@@ -869,12 +895,12 @@ class Sensei_Admin {
 		 * Filter arguments for `wp_insert_post` when duplicating a Sensei
 		 * post. This may be a Course, Lesson, or Quiz.
 		 *
-		 * @hook  sensei_duplicate_post_args
 		 * @since 3.11.0
+		 *
+		 * @hook  sensei_duplicate_post_args
 		 *
 		 * @param {array}   $new_post The arguments for duplicating the post.
 		 * @param {WP_Post} $post     The original post being duplicated.
-		 *
 		 * @return {array}  The new arguments to be handed to `wp_insert_post`.
 		 */
 		$new_post = apply_filters( 'sensei_duplicate_post_args', $new_post, $post );
@@ -884,18 +910,18 @@ class Sensei_Admin {
 		if ( ! is_wp_error( $new_post_id ) ) {
 
 			$post_meta = get_post_custom( $post->ID );
-			if ( $post_meta && count( $post_meta ) > 0 ) {
+			if ( $post_meta ) {
 
 				/**
 				 * Ignored meta fields when duplicating a post.
 				 *
-				 * @hook  sensei_duplicate_post_ignore_meta
 				 * @since 3.7.0
+				 *
+				 * @hook  sensei_duplicate_post_ignore_meta
 				 *
 				 * @param {array}   $meta_keys The meta keys to be ignored.
 				 * @param {WP_Post} $new_post  The new duplicate post.
 				 * @param {WP_Post} $post      The original post that's being duplicated.
-				 *
 				 * @return {array} $meta_keys The meta keys to be ignored.
 				 */
 				$ignore_meta = apply_filters( 'sensei_duplicate_post_ignore_meta', [ '_quiz_lesson', '_quiz_id', '_lesson_quiz', '_lesson_prerequisite' ], $new_post, $post );
@@ -1088,7 +1114,7 @@ class Sensei_Admin {
 
 		$html = '';
 
-		if ( 0 == count( $settings ) ) {
+		if ( ! $settings ) {
 			return $html;
 		}
 
@@ -1379,7 +1405,7 @@ class Sensei_Admin {
 
 								$courses = Sensei()->course->get_all_courses();
 
-								if ( 0 < count( $courses ) ) {
+								if ( $courses ) {
 
 									// order the courses as set by the users
 									$all_course_ids = array();

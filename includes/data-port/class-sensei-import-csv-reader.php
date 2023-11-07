@@ -91,10 +91,10 @@ class Sensei_Import_CSV_Reader {
 		 *
 		 * @since 3.2.0
 		 * @since 3.3.0 Updated the default to `false`, so it'll get through the delimiter detection.
+		 *
 		 * @hook sensei_import_csv_delimiter
 		 *
 		 * @param {string} $delimiter The CSV file delimiter.
-		 *
 		 * @return {false|string} CSV file delimiter or false to skip.
 		 */
 		$forced_delimiter = apply_filters( 'sensei_import_csv_delimiter', false );
@@ -108,10 +108,10 @@ class Sensei_Import_CSV_Reader {
 		 * Filters the CSV delimiter options.
 		 *
 		 * @since 3.3.0
+		 *
 		 * @hook sensei_import_csv_delimiter_options
 		 *
 		 * @param {string[]} $delimiters The CSV file delimiter options.
-		 *
 		 * @return {array} CSV delimiter options.
 		 */
 		$delimiters         = apply_filters( 'sensei_import_csv_delimiter_options', [ ',', ';', "\t", '|' ] );
@@ -140,14 +140,14 @@ class Sensei_Import_CSV_Reader {
 	 */
 	private function get_columns_number() {
 		$this->file->seek( 0 );
-		$first_line_columns = count( $this->file->current() );
+		$first_line_columns = is_countable( $this->file->current() ) ? count( $this->file->current() ) : 0;
 
 		// Skip the header.
 		$this->file->next();
 
 		while ( ! $this->file->eof() ) {
 			$second_line         = $this->file->current();
-			$second_line_columns = count( $second_line );
+			$second_line_columns = is_countable( $second_line ) ? count( $second_line ) : 0;
 
 			// SplFileObject->current() returns [ 0 => null ] on empty lines.
 			if ( 1 === $second_line_columns && empty( $second_line[0] ) ) {
@@ -197,7 +197,7 @@ class Sensei_Import_CSV_Reader {
 		while ( $lines_processed < $this->lines_per_batch ) {
 			$lines_processed++;
 
-			$indexed_line = $this->file->current();
+			$indexed_line = is_array( $this->file->current() ) ? $this->file->current() : [];
 
 			// SplFileObject->current() returns [ 0 => null ] on empty lines.
 			if ( 1 < count( $indexed_line ) || ( 1 === count( $indexed_line ) && ! empty( $indexed_line[0] ) ) ) {

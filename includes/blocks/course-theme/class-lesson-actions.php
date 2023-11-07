@@ -161,6 +161,12 @@ class Lesson_Actions {
 
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
+		$is_learning_mode = \Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+
+		if ( $is_learning_mode && 'quiz' === get_post_type() ) {
+			return '';
+		}
+
 		if (
 			! Sensei_Course::is_user_enrolled( $course_id )
 		) {

@@ -114,10 +114,13 @@ class Sensei_Course_Enrolment {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool|null $is_enrolled If a boolean, that value will be used. Null values will keep default behavior.
-		 * @param int       $user_id     User ID.
-		 * @param int       $course_id   Course post ID.
-		 * @param bool      $check_cache Advise hooked method if cached values should be trusted.
+		 * @hook sensei_is_enrolled
+		 *
+		 * @param {bool|null} $is_enrolled If a boolean, that value will be used. Null values will keep default behavior.
+		 * @param {int}       $user_id     User ID.
+		 * @param {int}       $course_id   Course post ID.
+		 * @param {bool}      $check_cache Advise hooked method if cached values should be trusted.
+		 * @return {bool|null} Filtered value.
 		 */
 		$is_enrolled = apply_filters( 'sensei_is_enrolled', null, $user_id, $this->course_id, $check_cache );
 		if ( null !== $is_enrolled ) {
@@ -338,11 +341,14 @@ class Sensei_Course_Enrolment {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool                                     $store_results      Whether to store the results.
-		 * @param int                                      $user_id            User ID.
-		 * @param int                                      $course_id          Course post ID.
-		 * @param bool                                     $had_existing_value True if a stale enrolment result is already stored.
-		 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results  Enrolment results object.
+		 * @hook sensei_course_enrolment_store_results
+		 *
+		 * @param {bool}                                     $store_results      Whether to store the results.
+		 * @param {int}                                      $user_id            User ID.
+		 * @param {int}                                      $course_id          Course post ID.
+		 * @param {bool}                                     $had_existing_value True if a stale enrolment result is already stored.
+		 * @param {Sensei_Course_Enrolment_Provider_Results} $enrolment_results  Enrolment results object.
+		 * @return {bool} Filtered value.
 		 */
 		$store_results = apply_filters( 'sensei_course_enrolment_store_results', true, $user_id, $this->course_id, $had_existing_value, $enrolment_results );
 

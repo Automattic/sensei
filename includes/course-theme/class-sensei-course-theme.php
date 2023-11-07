@@ -94,6 +94,9 @@ class Sensei_Course_Theme {
 
 		// Prevent module links in learning mode.
 		add_filter( 'sensei_do_link_to_module', [ $this, 'prevent_link_to_module' ] );
+
+		// Add custom body class.
+		add_filter( 'body_class', [ $this, 'add_body_class' ] );
 	}
 
 	/**
@@ -162,7 +165,7 @@ class Sensei_Course_Theme {
 
 		add_filter( 'sensei_use_sensei_template', '__return_false' );
 		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], 9 );
 
 		add_action( 'template_redirect', [ $this, 'admin_menu_init' ], 20 );
 		add_action( 'admin_init', [ $this, 'admin_menu_init' ], 20 );
@@ -606,5 +609,25 @@ class Sensei_Course_Theme {
 			wp_safe_redirect( get_permalink( $module_lessons[0] ) );
 			die();
 		}
+	}
+
+	/**
+	 * Add current theme's text domain to body class.
+	 *
+	 * @since 4.17.0
+	 * @internal
+	 *
+	 * @param  array $classes Existing body classes.
+	 * @return array          Body classes with theme slug added.
+	 */
+	public function add_body_class( $classes ) {
+		$theme       = wp_get_theme();
+		$text_domain = $theme->get( 'TextDomain' );
+
+		if ( ! empty( $text_domain ) ) {
+			$classes[] = 'sensei-' . $theme->get( 'TextDomain' );
+		}
+
+		return $classes;
 	}
 }

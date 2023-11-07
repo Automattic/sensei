@@ -26,7 +26,7 @@ const CourseVideoSidebar = () => {
 	return (
 		<PanelBody title={ __( 'Video', 'sensei-lms' ) } initialOpen={ true }>
 			<ToggleControl
-				label={ __( 'Autocomplete Lesson', 'sensei-lms' ) }
+				label={ __( 'Autocomplete lesson', 'sensei-lms' ) }
 				checked={ autocomplete }
 				onChange={ setAutocomplete }
 				help={ __( 'Complete lesson when video ends.', 'sensei-lms' ) }

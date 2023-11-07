@@ -2,10 +2,10 @@
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
 Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, imranh920, jakeom, luchad0res, merkushin, m1r0, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 6.0
-Tested up to: 6.2
-Requires PHP: 7.3
-Stable tag: 4.16.0
+Requires at least: 6.2
+Tested up to: 6.4
+Requires PHP: 7.4
+Stable tag: 4.19.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,7 +120,7 @@ To find out how to submit a course to the Sensei LMS showcase, and the requireme
 
 = Does Sensei support live courses, Zoom integration, or webinars? =
 
-Yes! You can add links to Zoom, Google Meet, or whatever platform you choose in a course lesson. In addition, Sensei includes a meeting lesson type you can select when creating a new lesson to help make this even easier.
+Yes! You can add links to Zoom, Google Meet, or whatever platform you choose in a course lesson. In addition, Sensei includes a meeting lesson layout you can select when creating a new lesson to help make this even easier.
 
 = Does Sensei work in WordPress Multisite? =
 
@@ -132,7 +132,7 @@ Sensei LMS is compatible with Sensei Pro and [WooCommerce Memberships](https://w
 
 See [Selling Courses as a Membership](https://senseilms.com/documentation/selling-courses-as-a-membership/) for more details.
 
-= Does Sensei work in my language =
+= Does Sensei work in my language? =
 
 Community members have translated the free Sensei LMS plugin [into 18 languages](https://translate.wordpress.org/projects/wp-plugins/sensei-lms/), while Sensei Pro has been [professionally translated into 16 languages](https://translate.wordpress.com/projects/sensei/). We welcome contributions to improve even more.
 
@@ -144,47 +144,46 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
-### 4.16.0 - 2023-07-13
+### 4.19.1 - 2023-11-06
+#### Fixed
+- Email editor styles getting leaked into other templates in site editor [#7258](https://github.com/Automattic/sensei/pull/7258)
+
+### 4.19.0 - 2023-11-01
 #### Added
-- Enable to select how to generate lessons when a course is created [#6999](https://github.com/Automattic/sensei/pull/6999)
+- Add a setting to not allow self-enrollment on courses [#7231](https://github.com/Automattic/sensei/pull/7231)
 
 #### Changed
-- Bump minimum required PHP version to 7.3 [#7005](https://github.com/Automattic/sensei/pull/7005)
+- Update style of "Awaiting Grade" notice in Learning Mode [#7197](https://github.com/Automattic/sensei/pull/7197)
+- Update style of "Your Grade" notice in Learning Mode [#7197](https://github.com/Automattic/sensei/pull/7197)
+
+#### Removed
+- Eliminate usage of temporary Course theme hook [#7219](https://github.com/Automattic/sensei/pull/7219)
 
 #### Fixed
-- Fix Continue Course block not redirecting to first lesson in some cases [#6997](https://github.com/Automattic/sensei/pull/6997)
-- Fix emails not using the From Name/Email settings [#6968](https://github.com/Automattic/sensei/pull/6968)
-- Fix PHP 8.1 autovivification of falsy value deprecation message [#7015](https://github.com/Automattic/sensei/pull/7015)
-- Removed Beta label from Editor Menu [#6989](https://github.com/Automattic/sensei/pull/6989)
+- Fix course notices that are intended to be displayed only on the course page but were currently appearing on the courses archive page [#7231](https://github.com/Automattic/sensei/pull/7231)
+- Fix padding in site editor that prevents full-width alignment from working [#7233](https://github.com/Automattic/sensei/pull/7233)
 
-### 4.15.1 - 2023-06-22
-#### Added
-- Add Enrolled and Completion columns on the reports course page. [#6966](https://github.com/Automattic/sensei/pull/6966)
-
-#### Fixed
-- Avoid an error with getting future post URL for a scheduled sensei_email post. [#6975](https://github.com/Automattic/sensei/pull/6975)
-- Fix auto grading for non-multiple choice questions. [#6984](https://github.com/Automattic/sensei/pull/6984)
-- Fix auto grading not working for multiple choice questions when multiple correct answers. [#6906](https://github.com/Automattic/sensei/pull/6906)
-- Fix Course Wizard spacing issue when using latest Gutenberg. [#6940](https://github.com/Automattic/sensei/pull/6940)
-- Fix editor block error when updating an email. [#6936](https://github.com/Automattic/sensei/pull/6936)
-- Fix resetting a quiz also resets the course start date. [#6643](https://github.com/Automattic/sensei/pull/6643)
-- In lesson complete email use course author as lesson teacher. [#6977](https://github.com/Automattic/sensei/pull/6977)
-- Fix conflicts with modules using the same name. [#6437](https://github.com/Automattic/sensei/pull/6437)
-
-### 4.15.0 - 2023-06-01
+### 4.18.0 - 2023-10-12
 #### Security
-- Fix shortcodes being called in teacher's messages.
-- Remove private custom post types from sitemaps.
+- Escape class attributes in Student Courses and Course Results block
 
 #### Changed
-- Review the Learning mode default template typography, spacing and alignment.
-- Improve Global Style support in Learning mode templates.
+- Changed styles for graded question answer feedbacks [#7171](https://github.com/Automattic/sensei/pull/7171)
+- Updated styling of graded quizzes footer in learning mode [#7202](https://github.com/Automattic/sensei/pull/7202)
+- Updated the login page style and fixed issue of "My Messages" button rendering when logged out [#7204](https://github.com/Automattic/sensei/pull/7204)
+- Changed footer style for quizzes awaiting grading [#7190](https://github.com/Automattic/sensei/pull/7190)
+- Add success message styles [#7209](https://github.com/Automattic/sensei/pull/7209)
+- Bump minimum required PHP version to 7.4 [#7195](https://github.com/Automattic/sensei/pull/7195)
+- Improve support for PHP 8.1 [#7198](https://github.com/Automattic/sensei/pull/7198)
 
 #### Fixed
-- Block triggering wp_mail for temporary users even on non-frontend context.
-- Don't re-create emails on plugin update.
-- Fix auto grading not working on the Grading page for multiple choice questions.
-- Fix blocks initialization.
-- Fix email body rendered in the front-end in some cases.
-- Fix Kadence blocks crashing lesson editor.
-- Fix MailPoet error when running job.
+- Fix "Next Lesson" button not visible on completed lessons [#7169](https://github.com/Automattic/sensei/pull/7169)
+- Fix additional css classes for Student Courses block [#7174](https://github.com/Automattic/sensei/pull/7174)
+- Fixed back to lesson block to apply block styles in quiz navigation area [#7186](https://github.com/Automattic/sensei/pull/7186)
+- Fix formatting of Course List block on course archive page [#7180](https://github.com/Automattic/sensei/pull/7180)
+- Fix student progress reset not working in some cases [#7181](https://github.com/Automattic/sensei/pull/7181)
+- Improve performance by reducing the number of queries that run on page load [#6819](https://github.com/Automattic/sensei/pull/6819)
+- Split manual enrollment title in order to allow different gender on the translation [#7165](https://github.com/Automattic/sensei/pull/7165)
+
+#### Development
+- Updated the "login-form" template [#7204](https://github.com/Automattic/sensei/pull/7204)

@@ -1,24 +1,141 @@
 @import '../answer-blocks/option-toggle';
+@import '~@wordpress/base-styles/breakpoints';
 
 /**
  * Sensei question and question block styles shared between frontend and editor.
  */
 
+$question-input-border-color: var(--wp--preset--color--foreground, #155E65 );
+
+.wp-block-sensei-lms-question-description {
+	margin-bottom: 20px;
+
+	*:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.wp-block-sensei-lms-quiz {
+	.wp-block-sensei-lms-quiz-question {
+		margin-top: clamp(3.75rem, 2.596rem + 3.846vw, 5rem);
+	}
+
+	.sensei-lms-question-block__title {
+		flex-grow: 1;
+		line-height: 1;
+
+		textarea {
+			display: block;
+			padding: 0;
+			margin: 0;
+		}
+	}
+
+	.sensei-lms-question-block__header {
+		margin-bottom: clamp(1.25rem, 0.096rem + 3.846vw, 2.5rem);
+		padding: 0;
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		line-height: 1;
+
+		.sensei-lms-question-block__title {
+			textarea {
+				font-size: inherit;
+			}
+		}
+
+		.question-title {
+			margin: 0;
+			padding: 0;
+		}
+
+		.grade {
+			line-height: 1;
+		}
+	}
+
+	.wp-block-sensei-lms-question-answers__filename {
+		margin-bottom: 20px;
+	}
+
+	.wp-block-sensei-lms-question-answers__preview {
+		max-height: 480px;
+	}
+}
+
+.wp-block-sensei-lms-question-answers {
+	color: inherit;
+
+	li:not(:last-child) {
+		margin-bottom: 1.25rem;
+	}
+
+	.wp-editor-wrap {
+		& * {
+			background: transparent;
+		}
+	}
+
+	input {
+		color: inherit;
+	}
+
+	input[type="text"]:not(.components-form-token-field__input) {
+		border: 0px;
+		border-bottom: 1px solid $question-input-border-color;
+		background-color: transparent;
+		font-family: inherit;
+		font-size: inherit;
+		padding: 0;
+		&:focus-visible {
+			outline: none;
+		}
+	}
+
+	input[type="text"]:not(.gapfill-answer-gap) {
+		width: 100%;
+		@media (min-width: $break-small) {
+			width: 490px;
+		}
+	}
+
+	.wp-editor-container {
+		border: 1px solid $question-input-border-color;
+	}
+
+	.sensei-lms-question-block__file-upload {
+		display: inline-block;
+	}
+
+	.sensei-lms-question-block__file-input {
+		display: none;
+	}
+
+	.max_upload_size {
+		margin-top: 20px;
+	}
+}
+
 .sensei-lms-question__answer-feedback {
 	--color: #DCDCDE;
-	$horizontal-padding: 24px;
-	border: 1px solid var(--color);
+	border: 2px solid var(--border-color);
 	border-radius: 1px;
+	font-family: var(--wp--preset--font-family--system, var(--wp--preset--font-family--body-font));
 	margin: 12px auto;
+	color: #1e1e1e;
+	font-size: 1.125rem;
 
 	&--correct {
-		--color: #B8E6BF;
-		--icon: '\f058';
+		--color: #d6edda;
+		--border-color: #5c936b;
+		--icon: "\f15e";
 	}
 
 	&--incorrect {
-		--color: #F7DCC6;
-		--icon: '\f057';
+		--border-color: #cf8b25;
+		--color: #faebe0;
+		--icon: "\f335";
 	}
 
 	&.empty {
@@ -27,21 +144,20 @@
 
 	&__header {
 		display: flex;
-		padding: 6px $horizontal-padding;
+		padding: 14px;
 		background: var(--color);
-		font-size: 80%;
 		align-items: center;
 	}
 	&__title {
 		flex: 1;
 	}
 
-	&__points {
-		font-weight: bold;
+	&__content {
+		padding: 18px;
 	}
 
-	&__content {
-		padding: 12px $horizontal-padding;
+	&__answer-notes > *:first-child {
+		margin-top: 0;
 	}
 
 	&__correct-answer {
@@ -64,10 +180,18 @@
 		}
 	}
 
-	&__icon:after {
-		content: var(--icon);
-		font-family: FontAwesomeSensei, FontAwesome, sans-serif;
-		margin-right: 6px;
+	&__icon {
+		display: flex;
+
+		&:after {
+			box-sizing: border-box;
+			color: var(--border-color);
+			content: var(--icon);
+			font-family: dashicons, sans-serif;
+			font-size: 1.5rem;
+			line-height: 1;
+			margin-right: 8px;
+		}
 	}
 
 }

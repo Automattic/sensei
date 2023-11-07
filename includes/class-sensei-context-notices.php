@@ -114,11 +114,11 @@ class Sensei_Context_Notices {
 		 * Filter the Course Theme notices.
 		 *
 		 * @since 3.15.0
+		 *
 		 * @hook sensei_context_notices
 		 *
 		 * @param {array}  $notices Course Theme notices.
 		 * @param {string} $context  The context.
-		 *
 		 * @return {array} Filtered Course Theme notices.
 		 */
 		return apply_filters( 'sensei_context_notices', $this->notices, $this->context );

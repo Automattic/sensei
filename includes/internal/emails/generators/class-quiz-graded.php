@@ -42,7 +42,7 @@ class Quiz_Graded extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_user_quiz_grade', array( $this, 'quiz_graded_mail_to_student' ), 10, 5 );
+		$this->maybe_add_action( 'sensei_user_quiz_grade', array( $this, 'quiz_graded_mail_to_student' ), 10, 5 );
 	}
 
 	/**

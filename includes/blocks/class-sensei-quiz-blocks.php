@@ -37,8 +37,9 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 		/**
 		 * Filters the quiz ordering type promo toggle.
 		 *
-		 * @hook  sensei_quiz_ordering_question_type_hide
 		 * @since 4.1.0
+		 *
+		 * @hook  sensei_quiz_ordering_question_type_hide
 		 *
 		 * @param  {bool} $ordering_question_type_hide Whether to hide the ordering question type promo.
 		 * @return {bool} Whether to hide the ordering question type promo.
@@ -82,6 +83,9 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 			[ 'sensei-lms/quiz-question' ],
 		];
 		$post_type_object->template_lock = 'insert';
+
+		// The checkboxes look broken otherwise because the checkmark comes from dashicons.
+		wp_enqueue_style( 'dashicons' );
 	}
 
 
