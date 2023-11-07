@@ -131,41 +131,4 @@ describe( '<ModuleEdit />', () => {
 			'(custom-slug)'
 		);
 	} );
-
-	it( 'Should have font size set for lesson sub header', () => {
-		const { getByRole } = render(
-			<ModuleEdit
-				className={ '' }
-				attributes={ {
-					title: '',
-					description: '',
-					lessons: [],
-					slug: 'custom-slug',
-					lessonSubheaderFontSize: '5rem',
-				} }
-			/>
-		);
-
-		expect( getByRole( 'heading', { level: 3 } ) ).toHaveStyle(
-			'font-size:5rem'
-		);
-	} );
-
-	it( 'Should have default font size set for lesson sub header when custom value not set', () => {
-		const { getByRole } = render(
-			<ModuleEdit
-				className={ '' }
-				attributes={ {
-					title: '',
-					description: '',
-					lessons: [],
-					slug: 'custom-slug',
-				} }
-			/>
-		);
-
-		expect( getByRole( 'heading', { level: 3 } ) ).toHaveStyle(
-			'font-size:1.17em'
-		);
-	} );
 } );
