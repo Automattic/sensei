@@ -80,12 +80,6 @@ class Sensei_Course_Outline_Module_Block {
 			}
 		}
 
-		$lesson_subheader_style = '';
-
-		if ( ! empty( $block['attributes']['lessonSubheaderFontSize'] ) ) {
-			$lesson_subheader_style = 'font-size:' . $block['attributes']['lessonSubheaderFontSize'] . ';';
-		}
-
 		return '
 			<section ' . $this->get_block_html_attributes( $class_name, $block['attributes'], $outline_attributes ) . '>
 				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__header', $header_css ) . '>
@@ -100,7 +94,7 @@ class Sensei_Course_Outline_Module_Block {
 					' . $style_header . '
 				<div class="wp-block-sensei-lms-collapsible sensei-collapsible__content">
 					' . $description . '
-					<h3 style="' . esc_attr( $lesson_subheader_style ) . '" class="wp-block-sensei-lms-course-outline-module__lessons-title">
+					<h3 class="wp-block-sensei-lms-course-outline-module__lessons-title">
 						' . esc_html__( 'Lessons', 'sensei-lms' ) . '
 					</h3>' .
 			implode(
