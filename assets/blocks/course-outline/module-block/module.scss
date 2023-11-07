@@ -1,5 +1,27 @@
 $block: '.wp-block-sensei-lms-course-outline-module';
 
+body.theme-course {
+	&.is-blue,
+	&.is-dark,
+	&.is-gold {
+		.wp-block-sensei-lms-course-outline {
+			#{$block}__title {
+				font-size: var(--wp--preset--font-size--medium);
+			}
+		}
+	}
+
+	.wp-block-sensei-lms-course-outline {
+		#{$block}__title {
+			padding-top: 0;
+		}
+
+		#{$block}__lessons-title {
+			font-size: var(--wp--preset--font-size--small);
+		}
+	}
+}
+
 .wp-block-sensei-lms-course-outline #{$block}, .wp-block #{$block} {
 	margin: 1em 0;
 
