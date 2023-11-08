@@ -42,11 +42,15 @@ $block: '.wp-block-sensei-lms-course-outline-module';
 		color: inherit;
 		display: flex;
 		flex: 1;
-		font-size: 1.1em;
+		font-size: 20px;
 		font-weight: inherit;
     	flex-flow: wrap;
 		margin: 0;
 		padding: 0;
+
+		textarea {
+			font-size: inherit;
+		}
 
 		&::before, &::after {
 			content: none;
@@ -73,7 +77,7 @@ $block: '.wp-block-sensei-lms-course-outline-module';
 
 	#{$block}__lessons-title {
 		padding: 5px $spacing;
-		font-size: 11px;
+		font-size: 14px;
 		margin: 0;
 		font-weight: 600;
 		color: inherit;
