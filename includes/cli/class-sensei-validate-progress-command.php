@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Validate_Progress_Command {
 	/**
-	 * Seed the database.
+	 * Validate the progress migrated data.
 	 *
 	 * @since 4.19.1
 	 *
@@ -53,7 +53,7 @@ class Sensei_Validate_Progress_Command {
 
 			if ( $error->has_data() ) {
 				$error_data = $error->get_data();
-				$error_data = is_array( $error_data[0] ) ? $error_data : [ $error_data ];
+				$error_data = isset( $error_data[0] ) && is_array( $error_data[0] ) ? $error_data : [ $error_data ];
 
 				WP_CLI\Utils\format_items(
 					'table',
