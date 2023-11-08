@@ -1,3 +1,16 @@
 /*
 * Styles specific to default variation
 */
+.theme-course {
+	.wp-block-sensei-lms-course-outline {
+		$block: '.wp-block-sensei-lms-course-outline-module';
+
+		#{$block} {
+			&__header {
+				#{$block}__title {
+					font-size: clamp(1.25rem, 0.893rem + 0.952vw, 1.75rem);
+				}
+			}
+		}
+	}
+}
