@@ -11,7 +11,7 @@ import { forwardRef } from '@wordpress/element';
 import { ENTER, BACKSPACE } from '@wordpress/keycodes';
 
 /**
- * Single line input component.
+ * Single line input component, used for the editor only.
  *
  * @param {Object}   props           Component props.
  * @param {Function} props.onChange  Change callback.
