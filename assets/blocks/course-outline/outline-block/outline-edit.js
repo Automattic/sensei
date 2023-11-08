@@ -7,7 +7,12 @@ import {
 } from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createContext, useCallback, useEffect } from '@wordpress/element';
+import {
+	createContext,
+	useCallback,
+	useEffect,
+	useState,
+} from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -18,6 +23,7 @@ import { useCourseLessonsStatusSync } from '../status-preview/use-course-lessons
 import { COURSE_STORE } from '../course-outline-store';
 import { useBlocksCreator } from '../use-block-creator';
 import OutlineAppender from './outline-appender';
+import LessonsModal from './existing-lessons-modal';
 import OutlinePlaceholder from './outline-placeholder';
 import useSenseiProSettings from './use-sensei-pro-settings';
 import { applyFilters } from '@wordpress/hooks';
@@ -80,8 +86,21 @@ const OutlineEdit = ( props ) => {
 
 	useCourseLessonsStatusSync( clientId, attributes.isPreview );
 
+	const [
+		isExistingLessonsModalOpen,
+		setExistingLessonsModalOpen,
+	] = useState( false );
+
+	const closeExistingLessonsModal = () =>
+		setExistingLessonsModalOpen( false );
+
 	const AppenderComponent = useCallback(
-		() => <OutlineAppender clientId={ clientId } />,
+		() => (
+			<OutlineAppender
+				clientId={ clientId }
+				openModal={ () => setExistingLessonsModalOpen( true ) }
+			/>
+		),
 		[ clientId ]
 	);
 
@@ -93,29 +112,39 @@ const OutlineEdit = ( props ) => {
 		}
 	}, [ removeCourseOutlineGeneratorUpsell ] );
 
-	return isEmpty ? (
-		<OutlinePlaceholder
-			addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
-			addBlocks={ setBlocks }
-			openTailoredModal={ openTailoredModal }
-		/>
-	) : (
-		<OutlineAttributesContext.Provider
-			value={ {
-				outlineAttributes: attributes,
-				outlineSetAttributes: setAttributes,
-				outlineClassName: className,
-			} }
-		>
-			<OutlineSettings { ...props } />
-
-			<section className={ className }>
-				<InnerBlocks
-					allowedBlocks={ ALLOWED_BLOCKS }
-					renderAppender={ AppenderComponent }
+	return (
+		<div>
+			{ isEmpty ? (
+				<OutlinePlaceholder
+					addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
+					addBlocks={ setBlocks }
+					openTailoredModal={ openTailoredModal }
 				/>
-			</section>
-		</OutlineAttributesContext.Provider>
+			) : (
+				<OutlineAttributesContext.Provider
+					value={ {
+						outlineAttributes: attributes,
+						outlineSetAttributes: setAttributes,
+						outlineClassName: className,
+					} }
+				>
+					<OutlineSettings { ...props } />
+
+					<section className={ className }>
+						<InnerBlocks
+							allowedBlocks={ ALLOWED_BLOCKS }
+							renderAppender={ AppenderComponent }
+						/>
+					</section>
+				</OutlineAttributesContext.Provider>
+			) }
+			{ isExistingLessonsModalOpen && (
+				<LessonsModal
+					clientId={ clientId }
+					onClose={ closeExistingLessonsModal }
+				/>
+			) }
+		</div>
 	);
 };
 
