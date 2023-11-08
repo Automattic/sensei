@@ -17,10 +17,10 @@ import { useAddExistingLessons } from './use-add-existing-lessons';
  * Lessons modal content.
  *
  * @param {Object}   props
- * @param {string}   props.clientId Quiz block ID.
+ * @param {string}   props.clientId Outline block ID.
  * @param {Function} props.onClose  Close callback.
  */
-const QuestionsModal = ( { clientId, onClose } ) => {
+const LessonsModal = ( { clientId, onClose } ) => {
 	const addExistingLessons = useAddExistingLessons( clientId );
 
 	const [ filters, setFilters ] = useState( {
@@ -32,7 +32,7 @@ const QuestionsModal = ( { clientId, onClose } ) => {
 
 	return (
 		<Modal
-			className="sensei-lms-quiz-block__existing-lessons-modal"
+			className="sensei-lms-course-outline-block__existing-lessons-modal"
 			title={ __( 'Lessons', 'sensei-lms' ) }
 			onRequestClose={ onClose }
 		>
@@ -40,7 +40,7 @@ const QuestionsModal = ( { clientId, onClose } ) => {
 				<Notice
 					status="error"
 					isDismissible={ false }
-					className="sensei-lms-quiz-block__existing-lessons-modal__notice"
+					className="sensei-lms-course-outline-block__existing-lessons-modal__notice"
 				>
 					{ __(
 						'Unable to add the selected lesson(s). Please make sure you are still logged in and try again.',
@@ -56,8 +56,8 @@ const QuestionsModal = ( { clientId, onClose } ) => {
 				setSelectedLessonIds={ setSelectedLessonIds }
 			/>
 			<Actions
-				selectedQuestionIds={ selectedLessonIds }
-				setSelectedQuestionIds={ setSelectedLessonIds }
+				selectedLessonIds={ selectedLessonIds }
+				setSelectedLessonIds={ setSelectedLessonIds }
 				onAdd={ addExistingLessons }
 				closeModal={ onClose }
 				setErrorAddingSelected={ setErrorAddingSelected }
@@ -66,4 +66,4 @@ const QuestionsModal = ( { clientId, onClose } ) => {
 	);
 };
 
-export default QuestionsModal;
+export default LessonsModal;

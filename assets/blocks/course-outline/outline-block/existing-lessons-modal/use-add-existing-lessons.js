@@ -7,16 +7,16 @@ import apiFetch from '@wordpress/api-fetch';
 ///**
 //* Internal dependencies
 //*/
-//import { createQuestionBlock, findQuestionBlock } from '../data';
-const createQuestionBlock = ( item ) => item;
-const findQuestionBlock = ( questionBlocks, item ) => ( {
-	questionBlocks,
+//import { createLessonBlock, findLessonBlock } from '../data';
+const createLessonBlock = ( item ) => item;
+const findLessonBlock = ( lessonBlocks, item ) => ( {
+	lessonBlocks,
 	item,
 } );
-//import { useNextQuestionIndex } from './next-question-index';
-const useNextQuestionIndex = ( clientId ) => clientId;
+//import { useNextLessonIndex } from './next-lesson-index';
+const useNextLessonIndex = ( clientId ) => clientId;
 
-const API_PATH = '/sensei-internal/v1/question-options';
+const API_PATH = '/sensei-internal/v1/lesson-options';
 
 /**
  * Add existing lessons to the course outline block.
@@ -25,19 +25,19 @@ const API_PATH = '/sensei-internal/v1/question-options';
  * @return {Function} Function that takes an array of lesson IDs and returns a Promise.
  */
 export const useAddExistingLessons = ( clientId ) => {
-	const questionBlocks = select( 'core/block-editor' ).getBlocks( clientId );
+	const lessonBlocks = select( 'core/block-editor' ).getBlocks( clientId );
 	const { insertBlock } = useDispatch( 'core/block-editor' );
-	const nextInsertIndex = useNextQuestionIndex( clientId );
+	const nextInsertIndex = useNextLessonIndex( clientId );
 
-	return ( questionIds ) => {
-		const newQuestionIds = questionIds.filter( ( questionId ) => {
+	return ( lessonIds ) => {
+		const newLessonIds = lessonIds.filter( ( lessonId ) => {
 			return (
-				questionBlocks.length === 0 ||
-				! findQuestionBlock( questionBlocks, { id: questionId } )
+				lessonBlocks.length === 0 ||
+				! findLessonBlock( lessonBlocks, { id: lessonId } )
 			);
 		} );
 
-		if ( newQuestionIds.length === 0 ) {
+		if ( newLessonIds.length === 0 ) {
 			return Promise.resolve( {} );
 		}
 
@@ -45,13 +45,13 @@ export const useAddExistingLessons = ( clientId ) => {
 		let insertIndex = nextInsertIndex;
 
 		return apiFetch( {
-			path: API_PATH + '?question_ids=' + newQuestionIds.join( ',' ),
+			path: API_PATH + '?lesson_ids=' + newLessonIds.join( ',' ),
 			method: 'GET',
 		} ).then( ( res ) => {
 			if ( Array.isArray( res ) && res.length > 0 ) {
 				res.forEach( ( item ) => {
 					insertBlock(
-						createQuestionBlock( item ),
+						createLessonBlock( item ),
 						insertIndex,
 						clientId,
 						false
