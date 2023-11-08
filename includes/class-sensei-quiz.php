@@ -1724,8 +1724,8 @@ class Sensei_Quiz {
 		}
 
 		// Don't use pagination if quiz has been completed.
-		$quiz_progress  = Sensei()->quiz_progress_repository->get( $quiz_id, get_current_user_id() );
-		$quiz_completed = $quiz_progress && 'in-progress' !== $quiz_progress->get_status();
+		$quiz_progress   = Sensei()->quiz_progress_repository->get( $quiz_id, get_current_user_id() );
+		$quiz_completed  = $quiz_progress && $quiz_progress->is_quiz_submitted();
 
 		$sensei_question_loop['questions'] = $quiz_completed ? $all_questions : $loop_questions;
 		$sensei_question_loop['quiz_id']   = $quiz_id;
