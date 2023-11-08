@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix the gap fill question to accept "0" as the right answer

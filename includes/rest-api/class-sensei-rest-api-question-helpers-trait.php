@@ -612,7 +612,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$text_values = explode( '||', $right_answer_meta );
 
 		$result['before'] = isset( $text_values[0] ) ? $text_values[0] : '';
-		$result['gap']    = empty( $text_values[1] ) ? [] : explode( '|', $text_values[1] );
+		$result['gap']    = ( ! isset( $text_values[1] ) || '' === $text_values[1] ) ? [] : explode( '|', $text_values[1] );
 		$result['after']  = isset( $text_values[2] ) ? $text_values[2] : '';
 
 		return $result;
