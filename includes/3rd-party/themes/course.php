@@ -61,5 +61,9 @@ function sensei_load_styles_for_course_theme_variation( $variation_name ) {
 		return;
 	}
 
-	Sensei()->assets->enqueue( 'course-learning-mode-variation', 'css/3rd-party/themes/course/' . $variation_name . '.css', [] );
+	// Styles that are loaded all across when on course theme.
+	Sensei()->assets->enqueue( 'course-theme-styles', 'css/3rd-party/themes/course/style.css' );
+
+	// Variation specific styles, can override the above styles.
+	Sensei()->assets->enqueue( 'course-theme-style-variations', 'css/3rd-party/themes/course/' . $variation_name . '.css', [ 'course-theme-styles' ] );
 }

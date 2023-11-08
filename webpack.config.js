@@ -131,10 +131,11 @@ const files = [
 	'course-theme/learning-mode-templates/styles.scss',
 	'css/3rd-party/themes/astra/learning-mode.scss',
 	'css/3rd-party/themes/course/learning-mode.scss',
-	'css/3rd-party/themes/course/default.scss',
 	'css/3rd-party/themes/course/blue.scss',
-	'css/3rd-party/themes/course/gold.scss',
 	'css/3rd-party/themes/course/dark.scss',
+	'css/3rd-party/themes/course/default.scss',
+	'css/3rd-party/themes/course/gold.scss',
+	'css/3rd-party/themes/course/style.scss',
 	'css/3rd-party/themes/divi/learning-mode.scss',
 	'css/3rd-party/themes/divi/learning-mode.editor.scss',
 ];
