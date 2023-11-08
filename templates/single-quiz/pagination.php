@@ -19,6 +19,7 @@ $sensei_is_quiz_completed    = Sensei_Quiz::is_quiz_completed();
 $sensei_is_reset_allowed     = Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id() );
 $sensei_has_actions          = $sensei_is_reset_allowed || ! $sensei_is_quiz_completed;
 $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
+$sensei_next_question_count  = min( $sensei_question_loop['total'] - $sensei_question_loop['current_page'] * $sensei_question_loop['posts_per_page'], $sensei_question_loop['posts_per_page'] );
 
 ?>
 
@@ -71,7 +72,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__prev-button"
 						style="<?php echo esc_attr( $sensei_button_inline_styles ); ?>"
 					>
-						<?php esc_attr_e( 'Previous Question', 'sensei-lms' ); ?>
+						<?php echo esc_attr( _n( 'Previous Question', 'Previous Questions', $sensei_question_loop['posts_per_page'], 'sensei-lms' ) ); ?>
 					</button>
 				</div>
 			<?php endif ?>
@@ -86,7 +87,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__next-button"
 						style="<?php echo esc_attr( $sensei_button_inline_styles ); ?>"
 					>
-						<?php esc_attr_e( 'Next Question', 'sensei-lms' ); ?>
+						<?php echo esc_attr( _n( 'Next Question', 'Next Questions', $sensei_next_question_count, 'sensei-lms' ) ); ?>
 					</button>
 				</div>
 			<?php elseif ( $sensei_is_quiz_available && ! $sensei_is_quiz_completed ) : ?>
