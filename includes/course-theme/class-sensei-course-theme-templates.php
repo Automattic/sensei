@@ -163,7 +163,7 @@ class Sensei_Course_Theme_Templates {
 
 		$progress = Sensei()->quiz_progress_repository->get( $post->ID, get_current_user_id() );
 
-		$has_submitted_quiz = $progress && in_array( $progress->get_status(), [ 'ungraded', 'graded', 'passed', 'failed' ], true );
+		$has_submitted_quiz = $progress && $progress->is_quiz_submitted();
 
 		if ( 'quiz' !== $post->post_type || $has_submitted_quiz ) {
 			return false;

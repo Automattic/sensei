@@ -134,6 +134,15 @@ interface Quiz_Progress_Interface {
 	public function get_status(): ?string;
 
 	/**
+	 * Returns whether the quiz is submitted.
+	 *
+	 * @internal
+	 *
+	 * @return bool
+	 */
+	public function is_quiz_submitted(): bool;
+
+	/**
 	 * Get the quiz start date.
 	 *
 	 * @internal
