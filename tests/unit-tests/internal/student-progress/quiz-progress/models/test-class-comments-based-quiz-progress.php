@@ -13,10 +13,10 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetId_ConstructedWithId_ReturnsSameId(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
+		$quiz_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_id();
+		$actual = $quiz_progress->get_id();
 
 		/* Assert. */
 		self::assertSame( 1, $actual );
@@ -24,10 +24,10 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetQuizId_ConstructedWithQuizId_ReturnsSameQuizId(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
+		$quiz_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_quiz_id();
+		$actual = $quiz_progress->get_quiz_id();
 
 		/* Assert. */
 		self::assertSame( 2, $actual );
@@ -35,10 +35,10 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetUserId_ConstructedWithUserId_ReturnsSameUserId(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
+		$quiz_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_user_id();
+		$actual = $quiz_progress->get_user_id();
 
 		/* Assert. */
 		self::assertSame( 3, $actual );
@@ -46,21 +46,48 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetStatus_ConstructedWithStatus_ReturnsSameStatus(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
+		$quiz_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_status();
+		$actual = $quiz_progress->get_status();
 
 		/* Assert. */
 		self::assertSame( 'in-progress', $actual );
 	}
 
-	public function testGetStartedAt_ConstructedWithStartedAt_ReturnsSameStartedAt(): void {
+	/**
+	 * Test that the quiz is considered submitted based on the quiz progress status.
+	 *
+	 * @dataProvider providerIsQuizSubmitted_ConstructedWithStatus_ReturnsMatchingValue
+	 */
+	public function testIsQuizSubmitted_ConstructedWithStatus_ReturnsMatchingValue( string $status, bool $expected ): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
+		$quiz_progress = $this->create_progress( $status );
 
 		/* Act. */
-		$actual = $course_progress->get_started_at()->format( 'Y-m-d H:i:s' );
+		$actual = $quiz_progress->is_quiz_submitted();
+
+		/* Assert. */
+		self::assertSame( $expected, $actual );
+	}
+
+	public function providerIsQuizSubmitted_ConstructedWithStatus_ReturnsMatchingValue(): array {
+		return array(
+			'quiz in progress'                => array( 'in-progress', false ),
+			'quiz graded'                     => array( 'graded', true ),
+			'quiz failed'                     => array( 'failed', true ),
+			'quiz passed'                     => array( 'passed', true ),
+			'quiz ungraded'                   => array( 'ungraded', true ),
+			'lesson complete (legacy status)' => array( 'complete', false ),
+		);
+	}
+
+	public function testGetStartedAt_ConstructedWithStartedAt_ReturnsSameStartedAt(): void {
+		/* Arrange. */
+		$quiz_progress = $this->create_progress();
+
+		/* Act. */
+		$actual = $quiz_progress->get_started_at()->format( 'Y-m-d H:i:s' );
 
 		/* Assert. */
 		self::assertSame( '2020-01-01 00:00:00', $actual );
@@ -68,10 +95,10 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetCompletedAt_ConstructedWithCompletedAt_ReturnsSameCompletedAt(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
+		$quiz_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_completed_at()->format( 'Y-m-d H:i:s' );
+		$actual = $quiz_progress->get_completed_at()->format( 'Y-m-d H:i:s' );
 
 		/* Assert. */
 		self::assertSame( '2020-01-01 00:00:01', $actual );
@@ -79,10 +106,10 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetCreatedAt_ConstructedWithCreatedAt_ReturnsSameCreatedAt(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
+		$quiz_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_created_at()->format( 'Y-m-d H:i:s' );
+		$actual = $quiz_progress->get_created_at()->format( 'Y-m-d H:i:s' );
 
 		/* Assert. */
 		self::assertSame( '2020-01-01 00:00:02', $actual );
@@ -90,10 +117,10 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetUpdatedAt_ConstructedWithUpdatedAt_ReturnsSameUpdatedAt(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
+		$quiz_progress = $this->create_progress();
 
 		/* Act. */
-		$actual = $course_progress->get_updated_at()->format( 'Y-m-d H:i:s' );
+		$actual = $quiz_progress->get_updated_at()->format( 'Y-m-d H:i:s' );
 
 		/* Assert. */
 		self::assertSame( '2020-01-01 00:00:03', $actual );
@@ -101,11 +128,11 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetUpdatedAt_WhenUpdatedAtSet_ReturnsSameUpdatedAt(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
-		$course_progress->set_updated_at( new \DateTime( '2020-01-01 00:00:04' ) );
+		$quiz_progress = $this->create_progress();
+		$quiz_progress->set_updated_at( new \DateTime( '2020-01-01 00:00:04' ) );
 
 		/* Act. */
-		$actual = $course_progress->get_updated_at()->format( 'Y-m-d H:i:s' );
+		$actual = $quiz_progress->get_updated_at()->format( 'Y-m-d H:i:s' );
 
 		/* Assert. */
 		self::assertSame( '2020-01-01 00:00:04', $actual );
@@ -113,11 +140,11 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetStatus_WhenGradeCalled_ReturnsGradedStatus(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
-		$course_progress->grade();
+		$quiz_progress = $this->create_progress();
+		$quiz_progress->grade();
 
 		/* Act. */
-		$actual = $course_progress->get_status();
+		$actual = $quiz_progress->get_status();
 
 		/* Assert. */
 		self::assertSame( 'graded', $actual );
@@ -125,11 +152,11 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetStatus_WhenFailCalled_ReturnsFailedStatus(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
-		$course_progress->fail();
+		$quiz_progress = $this->create_progress();
+		$quiz_progress->fail();
 
 		/* Act. */
-		$actual = $course_progress->get_status();
+		$actual = $quiz_progress->get_status();
 
 		/* Assert. */
 		self::assertSame( 'failed', $actual );
@@ -137,11 +164,11 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetStatus_WhenPassCalled_ReturnsPassedStatus(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
-		$course_progress->pass();
+		$quiz_progress = $this->create_progress();
+		$quiz_progress->pass();
 
 		/* Act. */
-		$actual = $course_progress->get_status();
+		$actual = $quiz_progress->get_status();
 
 		/* Assert. */
 		self::assertSame( 'passed', $actual );
@@ -149,11 +176,11 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetStatus_WhenUngradeCalled_ReturnsUngradedStatus(): void {
 		/* Arrange. */
-		$course_progress = $this->create_progress();
-		$course_progress->ungrade();
+		$quiz_progress = $this->create_progress();
+		$quiz_progress->ungrade();
 
 		/* Act. */
-		$actual = $course_progress->get_status();
+		$actual = $quiz_progress->get_status();
 
 		/* Assert. */
 		self::assertSame( 'ungraded', $actual );
