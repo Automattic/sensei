@@ -136,7 +136,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		 *
 		 * Backwards compatible filter name, moving forward should have single filter name.
 		 *
-		 * @deprecated $$next-version$$ Use sensei_analysis_overview_columns instead.
+		 * @deprecated 4.19.0 Use sensei_analysis_overview_columns instead.
 		 *
 		 * @hook sensei_analysis_overview_{type}_columns
 		 *
@@ -147,7 +147,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$columns = apply_filters_deprecated(
 			'sensei_analysis_overview_' . $this->type . '_columns',
 			array( $columns, $this ),
-			'$$next-version$$',
+			'4.19.0',
 			'sensei_analysis_overview_columns'
 		);
 
@@ -240,7 +240,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		 *
 		 * Backwards compatible filter name, moving forward should have single filter name.
 		 *
-		 * @deprecated $$next-version$$ Use sensei_analysis_overview_columns_sortable instead.
+		 * @deprecated 4.19.0 Use sensei_analysis_overview_columns_sortable instead.
 		 *
 		 * @hook sensei_analysis_overview_{type}_columns_sortable
 		 *
@@ -251,7 +251,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$columns = apply_filters_deprecated(
 			'sensei_analysis_overview_' . $this->type . '_columns_sortable',
 			array( $columns, $this ),
-			'$$next-version$$',
+			'4.19.0',
 			'sensei_analysis_overview_columns_sortable'
 		);
 

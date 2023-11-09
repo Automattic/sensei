@@ -21,4 +21,4 @@ function sensei_load_learning_mode_styles_for_astra_theme() {
 	}
 }
 
-add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_styles_for_astra_theme' );
+add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_styles_for_astra_theme', 11 );

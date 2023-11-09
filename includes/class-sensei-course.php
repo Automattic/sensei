@@ -650,9 +650,7 @@ class Sensei_Course {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'integer',
-				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
 		register_post_meta(
@@ -663,9 +661,17 @@ class Sensei_Course {
 				'single'            => true,
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
-				'auth_callback'     => function ( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
+				'auth_callback'     => [ $this, 'post_meta_auth_callback' ],
+			]
+		);
+		register_post_meta(
+			'course',
+			'_sensei_self_enrollment_not_allowed',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
 		register_post_meta(
@@ -675,9 +681,7 @@ class Sensei_Course {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'boolean',
-				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
 		register_post_meta(
@@ -687,9 +691,7 @@ class Sensei_Course {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'boolean',
-				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
 		/**
@@ -703,6 +705,21 @@ class Sensei_Course {
 		 * @return {string[]} Filtered meta field key names.
 		 */
 		$this->meta_fields = apply_filters( 'sensei_course_meta_fields', [ 'course_prerequisite', 'course_featured', 'course_video_embed' ] );
+	}
+
+	/**
+	 * Add the course meta boxes.
+	 *
+	 * @internal
+	 *
+	 * @param bool   $allowed  Whether the user can add the meta.
+	 * @param string $meta_key The meta key.
+	 * @param int    $post_id  The post ID where the meta key is being edited.
+	 *
+	 * @return boolean Whether the user can edit the meta key.
+	 */
+	public function post_meta_auth_callback( $allowed, $meta_key, $post_id ) {
+		return current_user_can( 'edit_post', $post_id );
 	}
 
 	/**
@@ -2302,9 +2319,7 @@ class Sensei_Course {
 	 * Returns a list of all courses
 	 *
 	 * @since 1.8.0
-	 * @return array $courses{
-	 *  @type $course WP_Post
-	 * }
+	 * @return WP_Post[]
 	 */
 	public static function get_all_courses() {
 
@@ -3719,6 +3734,8 @@ class Sensei_Course {
 	/**
 	 * Check if a user can manually enrol themselves.
 	 *
+	 * @since 4.19.0 Add a check whether self-enrollment is not allowed.
+	 *
 	 * @param int $course_id Course post ID.
 	 *
 	 * @return bool
@@ -3728,7 +3745,10 @@ class Sensei_Course {
 		// Check if the user is already enrolled through any provider.
 		$is_user_enrolled = self::is_user_enrolled( $course_id, get_current_user_id() );
 
-		$default_can_user_manually_enrol = is_user_logged_in() && ! $is_user_enrolled;
+		// Check if self-enrollment is not allowed for this course.
+		$is_self_enrollment_not_allowed = self::is_self_enrollment_not_allowed( $course_id );
+
+		$default_can_user_manually_enrol = is_user_logged_in() && ! $is_user_enrolled && ! $is_self_enrollment_not_allowed;
 
 		$can_user_manually_enrol = apply_filters_deprecated(
 			'sensei_display_start_course_form',
@@ -3749,6 +3769,32 @@ class Sensei_Course {
 		 * @return {bool} Filtered value.
 		 */
 		return (bool) apply_filters( 'sensei_can_user_manually_enrol', $can_user_manually_enrol, $course_id );
+	}
+
+	/**
+	 * Check if self-enrollment is not allowed for the given course.
+	 *
+	 * @since 4.19.0
+	 *
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return boolean Whether self-enrollment is not allowed.
+	 */
+	public static function is_self_enrollment_not_allowed( $course_id ) {
+		$self_enrollment_not_allowed = (bool) get_post_meta( $course_id, '_sensei_self_enrollment_not_allowed', true );
+
+		/**
+		 * Check if self-enrollment is not allowed.
+		 *
+		 * @since 4.19.0
+		 *
+		 * @hook sensei_self_enrollment_not_allowed
+		 *
+		 * @param {bool} $self_enrollment_not_allowed True if self-enrollment is not allowed, false otherwise.
+		 * @param {int}  $course_id                   Course post ID.
+		 * @return {bool} Filtered value.
+		 */
+		return (bool) apply_filters( 'sensei_self_enrollment_not_allowed', $self_enrollment_not_allowed, $course_id );
 	}
 
 	/**
@@ -3775,7 +3821,7 @@ class Sensei_Course {
 
 		if ( self::can_current_user_manually_enrol( $post->ID ) ) {
 				sensei_start_course_form( $post->ID );
-		} else {
+		} elseif ( ! self::is_self_enrollment_not_allowed( $post->ID ) ) {
 			if ( get_option( 'users_can_register' ) ) {
 
 				// set the permissions message
@@ -4099,6 +4145,29 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Show a message telling the user that they are not allowed to self enroll if the setting is enabled.
+	 *
+	 * @since 4.19.0
+	 *
+	 * @internal
+	 */
+	public static function self_enrollment_not_allowed_message() {
+		$course_id = get_the_ID();
+		$user_id   = get_current_user_id();
+
+		if ( false === $course_id ) {
+			return;
+		}
+
+		if ( self::is_self_enrollment_not_allowed( $course_id ) && ! self::is_user_enrolled( $course_id, $user_id ) ) {
+			Sensei()->notices->add_notice(
+				__( 'Please contact the course administrator to sign up for this course.', 'sensei-lms' ),
+				'info'
+			);
+		}
+	}
+
+	/**
 	 * Generate the HTML of the course prerequisite notice.
 	 *
 	 * @param int $course_id The course id.
@@ -4313,6 +4382,8 @@ class Sensei_Course {
 		// Course prerequisite completion message.
 		add_action( 'sensei_single_course_content_inside_before', [ 'Sensei_Course', 'prerequisite_complete_message' ], 20 );
 
+		// Self-enrollment not allowed message.
+		add_action( 'sensei_single_course_content_inside_before', [ 'Sensei_Course', 'self_enrollment_not_allowed_message' ], 20 );
 	}
 
 	/**
@@ -4335,6 +4406,9 @@ class Sensei_Course {
 
 		// Course prerequisite completion message.
 		remove_action( 'sensei_single_course_content_inside_before', [ 'Sensei_Course', 'prerequisite_complete_message' ], 20 );
+
+		// Self-enrollment not allowed message.
+		remove_action( 'sensei_single_course_content_inside_before', [ 'Sensei_Course', 'self_enrollment_not_allowed_message' ], 20 );
 
 		// Add message links to courses.
 		remove_action( 'sensei_single_course_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 35 );

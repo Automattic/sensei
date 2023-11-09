@@ -25,6 +25,7 @@
 		<InternalClass errorLevel="suppress" />
 		<InternalMethod errorLevel="suppress" />
 		<MissingReturnType errorLevel="suppress" />
+		<RedundantCastGivenDocblockType errorLevel="suppress" />
 		<PropertyNotSetInConstructor>
 			<errorLevel type="suppress">
 				<referencedProperty name="Sensei_Main::$course_progress_repository_factory" />
@@ -32,6 +33,20 @@
 				<referencedProperty name="Sensei_Main::$quiz_progress_repository_factory" />
 			</errorLevel>
 		</PropertyNotSetInConstructor>
-		<RedundantCastGivenDocblockType errorLevel="suppress" />
+		<UndefinedClass>
+			<errorLevel type="suppress">
+				<referencedClass name="WP_CLI" />
+			</errorLevel>
+		</UndefinedClass>
+		<UndefinedFunction>
+			<errorLevel type="suppress">
+				<referencedFunction name="WP_CLI\Utils\format_items" />
+			</errorLevel>
+		</UndefinedFunction>
+		<InvalidScalarArgument>
+			<errorLevel type="suppress">
+				<referencedFunction name="esc_attr" />
+			</errorLevel>
+		</InvalidScalarArgument>
 	</issueHandlers>
 </psalm>

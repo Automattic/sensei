@@ -122,7 +122,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 			// At the moment we don't care about post meta for course progress.
 			if ( 'sensei_lesson_status' === $progress_comment->comment_type ) {
 				// Map the post ID to the comment ID. Is used later to map post meta to the comment ID.
-				$post_ids[ $progress_comment->comment_post_ID ] = $progress_comment->comment_ID;
+				$post_ids[ $progress_comment->comment_post_ID ][] = $progress_comment->comment_ID;
 			}
 		}
 
@@ -188,8 +188,10 @@ class Student_Progress_Migration extends Migration_Abstract {
 					$mapped_meta[ $comment_id ]['status'] = $comment_status;
 				}
 			} else {
-				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				$mapped_meta[ $comment_id ][ $meta->meta_key ] = $meta->meta_value;
+				foreach ( $post_ids[ $meta->post_id ] as $comment_id ) {
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					$mapped_meta[ $comment_id ][ $meta->meta_key ] = $meta->meta_value;
+				}
 			}
 		}
 

@@ -9,6 +9,7 @@ namespace Sensei\Internal\Quiz_Submission\Grade\Repositories;
 
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,21 +26,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Grade_Repository_Factory {
 
 	/**
-	 * Use tables based implementation.
+	 * Is tables based progress feature flag enabled.
 	 *
-	 * @var bool $use_tables
+	 * @var bool
 	 */
-	private $use_tables;
+	private $tables_enabled;
+
+	/**
+	 * Read from tables.
+	 *
+	 * @var bool
+	 */
+	private $read_tables;
 
 	/**
 	 * Grade_Repository_Factory constructor.
 	 *
 	 * @internal
 	 *
-	 * @param bool $use_tables The flag if the tables based implementation is available for use.
+	 * @param bool $tables_enabled Is tables based progress feature flag enabled.
+	 * @param bool $read_tables    Read from tables.
 	 */
-	public function __construct( bool $use_tables ) {
-		$this->use_tables = $use_tables;
+	public function __construct( bool $tables_enabled, bool $read_tables ) {
+		$this->tables_enabled = $tables_enabled;
+		$this->read_tables    = $read_tables;
 	}
 
 	/**
@@ -52,13 +62,26 @@ class Grade_Repository_Factory {
 	public function create(): Grade_Repository_Interface {
 		global $wpdb;
 
-		return new Aggregate_Grade_Repository(
+		if ( ! $this->tables_enabled ) {
+			return new Comments_Based_Grade_Repository();
+		}
+
+		if ( ! $this->read_tables ) {
+			return new Comment_Reading_Aggregate_Grade_Repository(
+				new Comments_Based_Grade_Repository(),
+				new Tables_Based_Grade_Repository( $wpdb ),
+				new Tables_Based_Submission_Repository( $wpdb ),
+				new Tables_Based_Answer_Repository( $wpdb ),
+				new Comments_Based_Answer_Repository()
+			);
+		}
+
+		return new Table_Reading_Aggregate_Grade_Repository(
 			new Comments_Based_Grade_Repository(),
 			new Tables_Based_Grade_Repository( $wpdb ),
-			new Tables_Based_Submission_Repository( $wpdb ),
+			new Comments_Based_Submission_Repository(),
 			new Tables_Based_Answer_Repository( $wpdb ),
-			new Comments_Based_Answer_Repository(),
-			$this->use_tables
+			new Comments_Based_Answer_Repository()
 		);
 	}
 }
