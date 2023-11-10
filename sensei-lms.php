@@ -116,6 +116,8 @@ if ( ! function_exists( 'Sensei' ) ) {
 	 * phpcs:disable WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 	 *
 	 * @since 1.8.0
+	 *
+	 * @return Sensei_Main
 	 */
 	function Sensei() {
 		// phpcs:enable
