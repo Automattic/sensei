@@ -113,6 +113,12 @@ export const createButtonBlockType = ( {
 			},
 			usesContext: [ 'postType' ],
 			supports: {
+				__experimentalBorder: {
+					color: true,
+					width: true,
+					style: true,
+				},
+				border: true,
 				color: {
 					gradients: true,
 					link: true,
