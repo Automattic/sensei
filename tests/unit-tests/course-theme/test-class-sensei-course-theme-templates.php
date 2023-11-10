@@ -16,6 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Theme_Templates_Test extends WP_UnitTestCase {
 
+	/**
+	 * Sensei factory.
+	 *
+	 * @var Sensei_Facotry
+	 */
+	protected $factory;
+
+	public function setUp(): void {
+		parent::setUp();
+		$this->factory = new Sensei_Factory();
+	}
+
 	public function testSenseiCourseThemeTemplates_WhenClassInitialized_PatternCreationFunctionIsAttachedWithInit() {
 		/* Arrange */
 		$registry = \WP_Block_Patterns_Registry::get_instance();
@@ -92,5 +104,71 @@ class Sensei_Course_Theme_Templates_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$this->assertCount( 2, $filtered_templates );
+	}
+
+	public function testShouldUseQuizTemplate_QuizPassed_ReturnsFalse(): void {
+		/* Arrange. */
+		global $post;
+
+		$lesson_id = $this->factory->lesson->create();
+		$quiz      = $this->factory->quiz->create_and_get( array( 'post_parent' => $lesson_id ) );
+		$user      = $this->factory->user->create_and_get();
+		$post      = $quiz;
+		wp_set_current_user( $user->ID );
+
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user->ID );
+		$quiz_progress = Sensei()->quiz_progress_repository->create( $quiz->ID, $user->ID );
+		$quiz_progress->pass();
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
+
+		/* Act. */
+		$actual = Sensei_Course_Theme_Templates::instance()->should_use_quiz_template();
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
+	public function testShouldUseQuizTemplate_QuizStarted_ReturnsTrue(): void {
+		/* Arrange. */
+		global $post;
+
+		$lesson_id = $this->factory->lesson->create();
+		$quiz      = $this->factory->quiz->create_and_get( array( 'post_parent' => $lesson_id ) );
+		$user      = $this->factory->user->create_and_get();
+		$post      = $quiz;
+		wp_set_current_user( $user->ID );
+
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user->ID );
+		$quiz_progress = Sensei()->quiz_progress_repository->create( $quiz->ID, $user->ID );
+		$quiz_progress->start();
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
+
+		/* Act. */
+		$actual = Sensei_Course_Theme_Templates::instance()->should_use_quiz_template();
+
+		/* Assert. */
+		$this->assertTrue( $actual );
+	}
+
+	public function testShouldUseQuizTemplate_NonQuizPost_ReturnFalse(): void {
+		/* Arrange. */
+		global $post;
+
+		$lesson = $this->factory->lesson->create_and_get();
+		$quiz   = $this->factory->quiz->create_and_get( array( 'post_parent' => $lesson->ID ) );
+		$user   = $this->factory->user->create_and_get();
+		$post   = $lesson;
+		wp_set_current_user( $user->ID );
+
+		Sensei()->lesson_progress_repository->create( $lesson->ID, $user->ID );
+		$quiz_progress = Sensei()->quiz_progress_repository->create( $quiz->ID, $user->ID );
+		$quiz_progress->start();
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
+
+		/* Act. */
+		$actual = Sensei_Course_Theme_Templates::instance()->should_use_quiz_template();
+
+		/* Assert. */
+		$this->assertFalse( $actual );
 	}
 }
