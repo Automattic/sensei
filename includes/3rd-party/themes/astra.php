@@ -31,7 +31,12 @@ function sensei_admin_load_learning_mode_style_for_astra_theme() {
 		return;
 	}
 
-	$screen           = get_current_screen();
+	$screen = get_current_screen();
+
+	if ( ! $screen ) {
+		return;
+	}
+
 	$is_lesson_editor = 'lesson' === $screen->post_type && 'post' === $screen->base;
 	$is_site_editor   = 'site-editor' === $screen->id;
 
