@@ -270,6 +270,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 			);
 		}
 
+		if ( Sensei()->feature_flags->is_enabled( 'experimental_features_ui' ) ) {
+			$sections['sensei-experimental-features'] = array(
+				'name'        => __( 'Experimental Features', 'sensei-lms' ),
+				'description' => __( 'Experimental features that are incomplete and not yet ready for production.', 'sensei-lms' ),
+			);
+		}
+
 		/**
 		 * Filters settings tabs.
 		 *
@@ -834,6 +841,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'email-notification-settings',
 			'required'    => 1,
 		);
+
+		if ( Sensei()->feature_flags->is_enabled( 'experimental_features_ui' ) ) {
+			$fields['experimental_progress_storage'] = array(
+				'name'        => __( 'High-Performance Progress Storage', 'sensei-lms' ),
+				'description' => __( 'Store the progress of your students in separate tables. This feature is currently in development and should be used with caution.', 'sensei-lms' ),
+				'type'        => 'checkbox',
+				'default'     => false,
+				'section'     => 'sensei-experimental-features',
+			);
+		}
 
 		/**
 		 * Filters settings fields.
