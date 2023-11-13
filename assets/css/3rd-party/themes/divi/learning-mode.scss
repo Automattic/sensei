@@ -3,6 +3,13 @@ $desktop_min_width: 783px;
 	--sensei-lm-header-height:70px;
 }
 
+.sensei-course-theme {
+	.wp-block-sensei-lms-lesson-actions {
+		.wp-block-button__link {
+			line-height: 100%;
+		}
+	}
+}
 
 // Reset the title bottom padding
 .wp-site-blocks :is(h1, h2, h3, h4, h5, h6) {

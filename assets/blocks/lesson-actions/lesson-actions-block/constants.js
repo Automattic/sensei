@@ -1,13 +1,17 @@
 // The action blocks, ordered.
 export const ACTION_BLOCKS = [
-	'sensei-lms/button-view-quiz',
 	'sensei-lms/button-complete-lesson',
+	'sensei-lms/button-view-quiz',
+	'sensei-lms/button-lesson-completed',
 	'sensei-lms/button-next-lesson',
 	'sensei-lms/button-reset-lesson',
 ];
 
 export const BLOCKS_DEFAULT_ATTRIBUTES = {
 	'sensei-lms/button-complete-lesson': {
+		inContainer: true,
+	},
+	'sensei-lms/button-lesson-completed': {
 		inContainer: true,
 	},
 	'sensei-lms/button-next-lesson': {
@@ -32,6 +36,7 @@ export const IN_PROGRESS_PREVIEW = 'in-progress';
 export const PREVIEW_STATE = {
 	[ COMPLETED_PREVIEW ]: [
 		'sensei-lms/button-next-lesson',
+		'sensei-lms/button-lesson-completed',
 		'sensei-lms/button-reset-lesson',
 	],
 	[ IN_PROGRESS_PREVIEW ]: [
