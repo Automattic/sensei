@@ -263,7 +263,7 @@ body {
 		margin: 0 0 32px;
 	}
 
-	.wp-block-button__link {
+	.wp-block-button__link, .is-primary {
 		background-color: var(--wp--preset--color--background);
 		color: var(--wp--preset--color--primary);
 	}
