@@ -3649,7 +3649,7 @@ class Sensei_Lesson {
 
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 
-		return ! empty( $quiz_progress ) && in_array( $quiz_progress->get_status(), [ 'ungraded', 'passed', 'failed', 'graded' ], true );
+		return ! empty( $quiz_progress ) && $quiz_progress->is_quiz_submitted();
 	}
 
 
