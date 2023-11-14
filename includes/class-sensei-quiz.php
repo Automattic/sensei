@@ -2436,19 +2436,30 @@ class Sensei_Quiz {
 			return null;
 		}
 
-		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$quiz_id       = (int) Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_progress ) {
+			return null;
+		}
 
-		$is_complete = $lesson_status && in_array( $lesson_status->comment_approved, [ 'complete', 'graded', 'passed', 'failed' ], true );
+		$is_quiz_complete = in_array(
+			$quiz_progress->get_status(),
+			[
+				Quiz_Progress_Interface::STATUS_GRADED,
+				Quiz_Progress_Interface::STATUS_PASSED,
+				Quiz_Progress_Interface::STATUS_FAILED,
+			],
+			true
+		);
 
-		if ( ! $is_complete ) {
+		if ( ! $is_quiz_complete ) {
 			return null;
 		}
 
 		$is_pass_required = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
 		$is_reset_allowed = self::is_reset_allowed( $lesson_id );
 
-		if ( $is_pass_required && 'failed' === $lesson_status->comment_approved ) {
-
+		if ( $is_pass_required && Quiz_Progress_Interface::STATUS_FAILED === $quiz_progress->get_status() ) {
 			if ( $is_reset_allowed ) {
 				return null;
 			}
