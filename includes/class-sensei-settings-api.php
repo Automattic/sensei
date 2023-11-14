@@ -1076,7 +1076,7 @@ class Sensei_Settings_API {
 
 				if ( function_exists( $method ) ) {
 					$is_valid = $method( $value );
-				} else if ( method_exists( $this, $method ) ) {
+				} elseif ( method_exists( $this, $method ) ) {
 					$is_valid = $this->$method( $value );
 				}
 
