@@ -1,11 +1,13 @@
 .wp-block-sensei-lms-lesson-actions {
 	&__preview-completed {
-		.wp-block-sensei-lms-button-complete-lesson {
+		.wp-block-sensei-lms-button-complete-lesson,
+		&.wp-block-sensei-lms-lesson-actions__preview-site-editor .wp-block-sensei-lms-button-view-quiz {
 			opacity: 0.1;
 		}
 	}
 	&__preview-in-progress {
 		.wp-block-sensei-lms-button-reset-lesson,
+		.wp-block-sensei-lms-button-lesson-completed,
 		.wp-block-sensei-lms-button-next-lesson {
 			opacity: 0.1;
 		}
