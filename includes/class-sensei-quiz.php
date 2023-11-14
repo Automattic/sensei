@@ -1291,13 +1291,23 @@ class Sensei_Quiz {
 		$encoded_feedback = get_transient( $transient_key );
 
 		// get the data if nothing was stored in the transient
-		if ( empty( $encoded_feedback ) || ! $encoded_feedback ) {
+		if ( ! $encoded_feedback ) {
+			$quiz_id    = (int) Sensei()->lesson->lesson_quizzes( $lesson_id );
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			if ( ! $submission ) {
+				return false;
+			}
 
-			$encoded_feedback = Sensei_Utils::get_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
+			$encoded_feedback = array();
+			$grades           = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
+			foreach ( $grades as $grade ) {
+				$encoded_feedback[ $grade->get_question_id() ] = $grade->get_feedback();
+			}
 
 			// set the transient with the new valid data for faster retrieval in future
-			set_transient( $transient_key, $encoded_feedback, 10 * DAY_IN_SECONDS );
-
+			if ( $encoded_feedback ) {
+				set_transient( $transient_key, $encoded_feedback, 10 * DAY_IN_SECONDS );
+			}
 		}
 
 		// if there is no data for this user
