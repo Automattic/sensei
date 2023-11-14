@@ -50,18 +50,19 @@ class Sensei_Update_Legacy_Quiz_Data extends Sensei_Background_Job_Batch {
 		 */
 		foreach ( $answer_comments as $comment ) {
 			$answer_value = $comment->comment_content;
-			$question_id  = $comment->comment_post_ID;
-			$user_id      = $comment->user_id;
+			$comment_id   = (int) $comment->comment_ID;
+			$question_id  = (int) $comment->comment_post_ID;
+			$user_id      = (int) $comment->user_id;
 			$quiz_id      = (int) get_post_meta( $question_id, '_quiz_id', true );
-			$points       = get_comment_meta( $comment->comment_ID, 'user_grade', true );
+			$points       = get_comment_meta( $comment_id, 'user_grade', true );
 			$submission   = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
 			$answer       = Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer_value );
 
 			if ( is_numeric( $points ) ) {
-				$feedback = get_comment_meta( $comment->comment_ID, 'answer_note', true );
+				$feedback = get_comment_meta( $comment_id, 'answer_note', true );
 				$feedback = false === $feedback ? null : $feedback;
 
-				Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points, $feedback );
+				Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, (int) $points, $feedback );
 			}
 
 			wp_delete_comment( $comment ); // Soft delete.
