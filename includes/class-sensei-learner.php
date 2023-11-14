@@ -557,7 +557,7 @@ class Sensei_Learner {
 	 *
 	 * @param int $user_id User ID.
 	 *
-	 * @return bool|mixed|void
+	 * @return string
 	 */
 	public static function get_full_name( $user_id ) {
 
@@ -565,7 +565,7 @@ class Sensei_Learner {
 
 		if ( empty( $user_id ) || ! ( 0 < intval( $user_id ) )
 			|| ! ( get_userdata( $user_id ) ) ) {
-			return false;
+			return '';
 		}
 
 		// Get the user details.

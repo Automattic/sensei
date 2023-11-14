@@ -17,10 +17,6 @@
       <code>$screen-&gt;id</code>
       <code>$screen-&gt;post_type</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedFunction occurrences="2">
-      <code>'sensei_admin_load_learning_mode_style_for_course_theme'</code>
-      <code>'sensei_load_learning_mode_style_for_course_theme'</code>
-    </UndefinedFunction>
   </file>
   <file src="includes/admin/class-sensei-admin-notices.php">
     <DocblockTypeContradiction occurrences="2">
@@ -105,10 +101,9 @@
     <DocblockTypeContradiction occurrences="1">
       <code>false === $mysql_date</code>
     </DocblockTypeContradiction>
-    <InvalidScalarArgument occurrences="6">
+    <InvalidScalarArgument occurrences="5">
       <code>$_POST['data']['comment_id']</code>
       <code>$_POST['data']['post_id']</code>
-      <code>$full_name</code>
       <code>$lesson_id</code>
       <code>wp_unslash( $_GET['course_id'] ?? 0 )</code>
       <code>wp_unslash( $_GET['lesson_id'] ?? 0 )</code>
@@ -163,13 +158,8 @@
       <code>$learner-&gt;user_id</code>
       <code>$learner-&gt;user_login</code>
     </InvalidPropertyFetch>
-    <InvalidScalarArgument occurrences="6">
-      <code>$course-&gt;ID</code>
-      <code>$full_name</code>
-      <code>$full_name</code>
+    <InvalidScalarArgument occurrences="1">
       <code>$this-&gt;total_items</code>
-      <code>$user_id</code>
-      <code>Sensei_Learner::get_full_name( $learner-&gt;user_id )</code>
     </InvalidScalarArgument>
     <PossiblyInvalidPropertyFetch occurrences="3">
       <code>$course-&gt;ID</code>
@@ -200,17 +190,6 @@
     <InvalidArgument occurrences="1">
       <code>'course-category'</code>
     </InvalidArgument>
-    <InvalidScalarArgument occurrences="9">
-      <code>$form_course_id</code>
-      <code>$form_lesson_id</code>
-      <code>$post_id</code>
-      <code>$post_id</code>
-      <code>$post_id</code>
-      <code>$post_id</code>
-      <code>$post_id</code>
-      <code>$title</code>
-      <code>$title</code>
-    </InvalidScalarArgument>
     <PossibleRawObjectIteration occurrences="1">
       <code>$cats</code>
     </PossibleRawObjectIteration>
@@ -553,10 +532,6 @@
     </PossiblyInvalidArgument>
   </file>
   <file src="includes/admin/tools/views/html-enrolment-debug-form.php">
-    <InvalidScalarArgument occurrences="2">
-      <code>$course_value</code>
-      <code>$user_value</code>
-    </InvalidScalarArgument>
     <RawObjectIteration occurrences="2">
       <code>$courses</code>
       <code>$users</code>
@@ -569,11 +544,6 @@
     <PossiblyFalseArgument occurrences="1">
       <code>$view_course_url</code>
     </PossiblyFalseArgument>
-  </file>
-  <file src="includes/admin/tools/views/html-recalculate-course-enrolment-form.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$course_value</code>
-    </InvalidScalarArgument>
   </file>
   <file src="includes/admin/views/html-admin-page-tools-header.php">
     <RedundantConditionGivenDocblockType occurrences="2">
@@ -663,11 +633,6 @@
     <PossiblyFalseArgument occurrences="1">
       <code>wp_date( 'F jS, Y' )</code>
     </PossiblyFalseArgument>
-  </file>
-  <file src="includes/blocks/class-sensei-block-contact-teacher.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>absint( $post-&gt;ID )</code>
-    </InvalidScalarArgument>
   </file>
   <file src="includes/blocks/class-sensei-block-helpers.php">
     <DocblockTypeContradiction occurrences="1">
@@ -886,9 +851,6 @@
     <InvalidArgument occurrences="1">
       <code>'course-category'</code>
     </InvalidArgument>
-    <InvalidScalarArgument occurrences="1">
-      <code>$default_option</code>
-    </InvalidScalarArgument>
     <MissingClosureParamType occurrences="1">
       <code>$category</code>
     </MissingClosureParamType>
@@ -960,13 +922,10 @@
     <InvalidReturnType occurrences="1">
       <code>object</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="6">
-      <code>$course-&gt;ID</code>
-      <code>$course-&gt;ID</code>
+    <InvalidScalarArgument occurrences="2">
       <code>$course_id</code>
       <code>$course_id</code>
       <code>'50'</code>
-      <code>intval( $course-&gt;ID )</code>
     </InvalidScalarArgument>
     <MissingDocblockType occurrences="2">
       <code>private $course_order_page_slug;</code>
@@ -1059,10 +1018,6 @@
     <InvalidReturnType occurrences="1">
       <code>data</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="2">
-      <code>$user_name</code>
-      <code>$user_name</code>
-    </InvalidScalarArgument>
     <MissingParamType occurrences="4">
       <code>$args</code>
       <code>$args</code>
@@ -1111,9 +1066,6 @@
     <InvalidReturnType occurrences="1">
       <code>data</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="1">
-      <code>$user_name</code>
-    </InvalidScalarArgument>
     <MissingParamType occurrences="4">
       <code>$args</code>
       <code>$lesson_id</code>
@@ -1249,10 +1201,8 @@
     <InvalidArgument occurrences="1">
       <code>$user_id</code>
     </InvalidArgument>
-    <InvalidScalarArgument occurrences="3">
+    <InvalidScalarArgument occurrences="1">
       <code>$type</code>
-      <code>$user_name</code>
-      <code>$user_name</code>
     </InvalidScalarArgument>
     <InvalidStringClass occurrences="2">
       <code>new $object_name( $data )</code>
@@ -1298,11 +1248,6 @@
     <DocblockTypeContradiction occurrences="1">
       <code>null === self::$instance</code>
     </DocblockTypeContradiction>
-  </file>
-  <file src="includes/class-sensei-cli.php">
-    <UndefinedClass occurrences="1">
-      <code>WP_CLI</code>
-    </UndefinedClass>
   </file>
   <file src="includes/class-sensei-core-lesson-modules.php">
     <MissingParamType occurrences="1">
@@ -1497,7 +1442,7 @@
       <code>int</code>
       <code>string</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="13">
+    <InvalidScalarArgument occurrences="10">
       <code>$course-&gt;post_author</code>
       <code>$course-&gt;post_author</code>
       <code>$i</code>
@@ -1505,27 +1450,10 @@
       <code>$i</code>
       <code>$i</code>
       <code>$id</code>
-      <code>$progress_percentage</code>
       <code>[ $width, $height ]</code>
       <code>[ $width, $height ]</code>
-      <code>absint( $course_item-&gt;ID )</code>
-      <code>absint( $post_item-&gt;ID )</code>
       <code>round( $progress_percentage )</code>
     </InvalidScalarArgument>
-    <MissingClosureParamType occurrences="12">
-      <code>$allowed</code>
-      <code>$allowed</code>
-      <code>$allowed</code>
-      <code>$allowed</code>
-      <code>$meta_key</code>
-      <code>$meta_key</code>
-      <code>$meta_key</code>
-      <code>$meta_key</code>
-      <code>$post_id</code>
-      <code>$post_id</code>
-      <code>$post_id</code>
-      <code>$post_id</code>
-    </MissingClosureParamType>
     <MissingDocblockType occurrences="1">
       <code>public $token;</code>
     </MissingDocblockType>
@@ -1805,9 +1733,6 @@
   </file>
   <file src="includes/class-sensei-grading-main.php">
     <ArgumentTypeCoercion occurrences="1"/>
-    <InvalidScalarArgument occurrences="1">
-      <code>$title</code>
-    </InvalidScalarArgument>
     <MissingParamType occurrences="1">
       <code>$args</code>
     </MissingParamType>
@@ -1834,16 +1759,11 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/class-sensei-grading-user-quiz.php">
-    <InvalidScalarArgument occurrences="12">
-      <code>$count</code>
-      <code>$graded_count</code>
+    <InvalidScalarArgument occurrences="6">
       <code>$lesson_status_id</code>
       <code>$quiz_grade</code>
       <code>$quiz_grade</code>
       <code>$quiz_grade_total</code>
-      <code>$this-&gt;quiz_id</code>
-      <code>$this-&gt;user_id</code>
-      <code>$user_question_grade</code>
       <code>$user_quiz_grade_total</code>
       <code>$user_quiz_grade_total</code>
       <code>$user_quiz_grade_total</code>
@@ -1871,12 +1791,6 @@
       <code>int</code>
       <code>string</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="4">
-      <code>$user_name</code>
-      <code>$user_name</code>
-      <code>absint( $course_id )</code>
-      <code>absint( $lesson_id )</code>
-    </InvalidScalarArgument>
     <MissingParamType occurrences="10">
       <code>$course_id</code>
       <code>$file</code>
@@ -1953,9 +1867,6 @@
     <InvalidGlobal occurrences="1">
       <code>global $current_user;</code>
     </InvalidGlobal>
-    <InvalidScalarArgument occurrences="1">
-      <code>$name</code>
-    </InvalidScalarArgument>
   </file>
   <file src="includes/class-sensei-learner.php">
     <DocblockTypeContradiction occurrences="5">
@@ -2022,10 +1933,8 @@
     <InvalidReturnType occurrences="1">
       <code>int|null</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="20">
+    <InvalidScalarArgument occurrences="17">
       <code>$course_id</code>
-      <code>$i</code>
-      <code>$i</code>
       <code>$id</code>
       <code>$pre_requisite_id</code>
       <code>$question_id</code>
@@ -2041,7 +1950,6 @@
       <code>$this-&gt;get_course_id( $post-&gt;ID )</code>
       <code>$total_right</code>
       <code>$total_wrong</code>
-      <code>absint( $post_item-&gt;ID )</code>
       <code>array( $width, $height )</code>
     </InvalidScalarArgument>
     <MissingClosureParamType occurrences="1">
@@ -2279,7 +2187,7 @@
     <InvalidReturnType occurrences="1">
       <code>string</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="9">
+    <InvalidScalarArgument occurrences="8">
       <code>$comment-&gt;comment_ID</code>
       <code>$comment-&gt;comment_post_ID</code>
       <code>$comment-&gt;comment_post_ID</code>
@@ -2288,7 +2196,6 @@
       <code>$post-&gt;ID</code>
       <code>$post-&gt;post_author</code>
       <code>$post_id</code>
-      <code>absint( $post-&gt;ID )</code>
     </InvalidScalarArgument>
     <MissingParamType occurrences="9">
       <code>$comment_id</code>
@@ -2402,7 +2309,7 @@
       <code>WP_Query</code>
       <code>integer</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="11">
+    <InvalidScalarArgument occurrences="8">
       <code>$course-&gt;post_author</code>
       <code>$course_id</code>
       <code>$course_id</code>
@@ -2411,9 +2318,7 @@
       <code>$post_after-&gt;post_author</code>
       <code>$term</code>
       <code>$term</code>
-      <code>absint( $module-&gt;term_id )</code>
       <code>esc_attr( $_POST['course_id'] )</code>
-      <code>intval( $course-&gt;ID )</code>
     </InvalidScalarArgument>
     <MissingParamType occurrences="21">
       <code>$args</code>
@@ -2655,9 +2560,7 @@
       <code>public static function gap_fill_load_question_data( $question_data, $question_id, $quiz_id ) {</code>
       <code>public static function multiple_choice_load_question_data( $question_data, $question_id, $quiz_id ) {</code>
     </InvalidDocblock>
-    <InvalidScalarArgument occurrences="7">
-      <code>$attachment_src[1]</code>
-      <code>$attachment_src[2]</code>
+    <InvalidScalarArgument occurrences="5">
       <code>$id</code>
       <code>$question_id</code>
       <code>$question_id</code>
@@ -2864,9 +2767,6 @@
     <DocblockTypeContradiction occurrences="1">
       <code>isset( $input )</code>
     </DocblockTypeContradiction>
-    <InvalidDocblock occurrences="1">
-      <code>protected function determine_method( $data, $type = 'form' ) {</code>
-    </InvalidDocblock>
     <InvalidReturnStatement occurrences="3">
       <code>$input</code>
       <code>(bool) $input</code>
@@ -2880,25 +2780,6 @@
       <code>$section</code>
       <code>$type</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="17">
-      <code>$errors</code>
-      <code>$fields</code>
-      <code>$has_imageselector</code>
-      <code>$has_range</code>
-      <code>$has_tabs</code>
-      <code>$menu_label</code>
-      <code>$name</code>
-      <code>$page_slug</code>
-      <code>$sections</code>
-      <code>$settings</code>
-      <code>$settings_version</code>
-      <code>$tabs</code>
-      <code>$this-&gt;fields</code>
-      <code>$this-&gt;token</code>
-      <code>$this-&gt;token_legacy</code>
-      <code>$token</code>
-      <code>$token_legacy</code>
-    </MissingPropertyType>
     <PossiblyFalseArgument occurrences="1">
       <code>$input[ $k ]</code>
     </PossiblyFalseArgument>
@@ -2978,7 +2859,7 @@
     <MissingDocblockType occurrences="1">
       <code>public function teacher_filter_query_modify( $query ) {</code>
     </MissingDocblockType>
-    <MissingParamType occurrences="23">
+    <MissingParamType occurrences="21">
       <code>$clauses</code>
       <code>$column</code>
       <code>$columns</code>
@@ -2999,7 +2880,6 @@
       <code>$query</code>
       <code>$questions</code>
       <code>$quiz_id</code>
-      <code>$teacher_id</code>
       <code>$wp_query</code>
       <code>$wp_query</code>
     </MissingParamType>
@@ -3244,13 +3124,11 @@
     <InvalidNullableReturnType occurrences="1">
       <code>bool</code>
     </InvalidNullableReturnType>
-    <InvalidReturnStatement occurrences="3">
+    <InvalidReturnStatement occurrences="2">
       <code>$activity_logged</code>
       <code>$activity_logged</code>
-      <code>$success</code>
     </InvalidReturnStatement>
-    <InvalidReturnType occurrences="3">
-      <code>bool</code>
+    <InvalidReturnType occurrences="2">
       <code>boolean</code>
       <code>boolean</code>
     </InvalidReturnType>
@@ -3272,14 +3150,13 @@
       <code>require_once ABSPATH . 'wp-admin/includes/image.php'</code>
       <code>require_once ABSPATH . 'wp-admin/includes/plugin-install.php'</code>
     </MissingFile>
-    <MissingParamType occurrences="18">
+    <MissingParamType occurrences="17">
       <code>$attributes</code>
       <code>$course_id</code>
       <code>$data_key</code>
       <code>$file</code>
       <code>$from_course</code>
       <code>$key</code>
-      <code>$mode</code>
       <code>$options</code>
       <code>$plugin_class_to_look_for</code>
       <code>$plugin_registered_path</code>
@@ -3402,7 +3279,7 @@
       <code>$main_plugin_file_name</code>
       <code>$plugin</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="12">
+    <MissingPropertyType occurrences="11">
       <code>$id</code>
       <code>$plugin_path</code>
       <code>$plugin_url</code>
@@ -3411,7 +3288,6 @@
       <code>$this-&gt;plugin_path</code>
       <code>$this-&gt;plugin_url</code>
       <code>$this-&gt;post_types-&gt;role_caps</code>
-      <code>$this-&gt;settings-&gt;settings</code>
       <code>$this-&gt;version</code>
       <code>$token</code>
       <code>$version</code>
@@ -3499,10 +3375,6 @@
       <code>$user_id</code>
       <code>$user_id</code>
     </PossiblyInvalidCast>
-    <UndefinedClass occurrences="2">
-      <code>WP_CLI</code>
-      <code>WP_CLI</code>
-    </UndefinedClass>
   </file>
   <file src="includes/course-theme/class-sensei-course-theme-compat.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -3576,9 +3448,6 @@
       <code>! self::$instance</code>
       <code>self::$instance</code>
     </DocblockTypeContradiction>
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
     <PossiblyFalseArgument occurrences="1">
       <code>get_permalink()</code>
     </PossiblyFalseArgument>
@@ -3842,9 +3711,6 @@
       <code>get_import_id</code>
       <code>is_complete</code>
     </PossiblyNullReference>
-    <UndefinedClass occurrences="1">
-      <code>WP_CLI</code>
-    </UndefinedClass>
     <UndefinedConstant occurrences="1">
       <code>DAY_IN_SECONDS</code>
     </UndefinedConstant>
@@ -5186,15 +5052,6 @@
     <InvalidFalsableReturnType occurrences="1">
       <code>string</code>
     </InvalidFalsableReturnType>
-    <InvalidReturnStatement occurrences="1">
-      <code>$user_name</code>
-    </InvalidReturnStatement>
-    <InvalidScalarArgument occurrences="1">
-      <code>$user_name</code>
-    </InvalidScalarArgument>
-    <NullableReturnStatement occurrences="1">
-      <code>$user_name</code>
-    </NullableReturnStatement>
     <PropertyNotSetInConstructor occurrences="4">
       <code>Sensei_Reports_Overview_List_Table_Students</code>
       <code>Sensei_Reports_Overview_List_Table_Students</code>
