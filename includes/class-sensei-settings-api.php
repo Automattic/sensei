@@ -13,20 +13,102 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Settings_API {
 
+	/**
+	 * Page token.
+	 *
+	 * @var string
+	 */
 	public $token;
+
+	/**
+	 * Legacy page token.
+	 *
+	 * @var string
+	 */
 	public $token_legacy;
+
+	/**
+	 * Page slug.
+	 *
+	 * @var string
+	 */
 	public $page_slug;
+
+	/**
+	 * Page name.
+	 *
+	 * @var string
+	 */
 	public $name;
+
+	/**
+	 * Menu label.
+	 *
+	 * @var string
+	 */
 	public $menu_label;
+
+	/**
+	 * Settings.
+	 *
+	 * @var array
+	 */
 	public $settings;
+
+	/**
+	 * Settings sections.
+	 *
+	 * @var array
+	 */
 	public $sections;
+
+	/**
+	 * Settings fields.
+	 *
+	 * @var array
+	 */
 	public $fields;
+
+	/**
+	 * Errors.
+	 *
+	 * @var array
+	 */
 	public $errors;
 
+	/**
+	 * Whether the settings page has a range field.
+	 *
+	 * @var bool
+	 */
 	public $has_range;
+
+	/**
+	 * Whether the settings page has an imageselector field.
+	 *
+	 * @var bool
+	 */
 	public $has_imageselector;
+
+	/**
+	 * Whether the settings page has tabs.
+	 *
+	 * @var bool
+	 */
 	public $has_tabs;
+
+	/**
+	 * Settings tabs.
+	 *
+	 * @var array
+	 */
 	private $tabs;
+
+	/**
+	 * Settings version.
+	 *
+	 * @var string
+	 */
 	public $settings_version;
 
 	/**
@@ -328,7 +410,7 @@ class Sensei_Settings_API {
 	 * @access protected
 	 * @since  1.0.0
 	 * @param  array $data
-	 * @return callable,  array or string
+	 * @return callable|array|string
 	 */
 	protected function determine_method( $data, $type = 'form' ) {
 		$method = '';
@@ -994,10 +1076,8 @@ class Sensei_Settings_API {
 
 				if ( function_exists( $method ) ) {
 					$is_valid = $method( $value );
-				} else {
-					if ( method_exists( $this, $method ) ) {
-						$is_valid = $this->$method( $value );
-					}
+				} else if ( method_exists( $this, $method ) ) {
+					$is_valid = $this->$method( $value );
 				}
 
 				if ( ! $is_valid ) {

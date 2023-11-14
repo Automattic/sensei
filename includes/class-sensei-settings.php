@@ -1,4 +1,7 @@
 <?php
+
+use Sensei\Internal\Installer\Schema;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -46,6 +49,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Mark settings section as visited on ajax action received.
 		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'mark_section_as_visited' ] );
+
+		// Do preparation for enabled experimental features.
+		add_action( 'update_option_sensei-settings', [ $this, 'experimental_features_saved' ], 10, 2 );
 	}
 
 	/**
@@ -1021,6 +1027,28 @@ class Sensei_Settings extends Sensei_Settings_API {
 					'settings' => implode( ',', $fields ),
 				]
 			);
+		}
+	}
+
+	/**
+	 * Do preparation when the experimental features setting were saved.
+	 *
+	 * @access private
+	 * @since $$next-version$$
+	 *
+	 * @param array $old_value The old settings value.
+	 * @param array $value     The new settings value.
+	 */
+	public function experimental_features_saved( $old_value, $value ) {
+		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && ! defined( 'REST_REQUEST' ) && 'options' === get_current_screen()->id ) ) {
+			return;
+		}
+
+		$old_hpps = isset( $old_value['experimental_progress_storage'] ) ? $old_value['experimental_progress_storage'] : false;
+		$new_hpps = isset( $value['experimental_progress_storage'] ) ? $value['experimental_progress_storage'] : false;
+
+		if ( $new_hpps !== $old_hpps && $new_hpps ) {
+			( new Schema( Sensei()->feature_flags ) )->create_tables();
 		}
 	}
 

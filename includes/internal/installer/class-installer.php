@@ -84,7 +84,7 @@ class Installer {
 	 */
 	public static function instance( ?string $version = null ): self {
 		if ( ! self::$instance ) {
-			$schema = new Schema( Sensei()->feature_flags );
+			$schema         = new Schema( Sensei()->feature_flags );
 			self::$instance = new self( $schema, new Updates_Factory(), $version );
 		}
 

@@ -627,11 +627,11 @@ class Sensei_Main {
 
 		// Student progress repositories.
 		$tables_enabled = isset( $this->settings->settings['experimental_progress_storage'] )
-			&& ( true == $this->settings->settings['experimental_progress_storage'] );
+			&& ( true === $this->settings->settings['experimental_progress_storage'] );
 
 		if ( $tables_enabled ) {
+			// Enable tables based progress feature flag.
 			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
-			( new Schema( $this->feature_flags ) )->create_tables();
 		}
 
 		/**
