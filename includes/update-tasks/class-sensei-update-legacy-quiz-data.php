@@ -91,6 +91,6 @@ class Sensei_Update_Legacy_Quiz_Data extends Sensei_Background_Job_Batch {
 			return $comments;
 		}
 
-		return [ $comments ];
+		return array( $comments );
 	}
 }
