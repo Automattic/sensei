@@ -181,7 +181,7 @@ class Sensei_Course_List_Block_Patterns {
 				],
 			'course-grid-with-background' =>
 				[
-					'title'      => __( 'Course List - Grid', 'sensei-lms' ),
+					'title'      => __( 'Course List', 'sensei-lms' ),
 					'categories' => array( 'sensei-lms' ),
 					'content'    => '<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"5rem","right":"20px","left":"20px","bottom":"100px"},"blockGap":"0px"},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"backgroundColor":"foreground","textColor":"background","className":"sensei-course-theme-course-list-pattern","layout":{"type":"constrained","contentSize":""}} -->
 						<div class="wp-block-group alignfull sensei-course-theme-course-list-pattern has-background-color has-foreground-background-color has-text-color has-background has-link-color" style="padding-top:5rem;padding-right:20px;padding-bottom:100px;padding-left:20px"><!-- wp:group {"style":{"border":{"left":{"color":"var:preset|color|background","width":"1px"}},"spacing":{"padding":{"left":"20px"},"margin":{"bottom":"40px"}}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"space-between"}} -->

@@ -107,7 +107,7 @@ class Sensei_Block_Patterns {
 			}
 		} elseif ( 'page' === $post_type ) {
 			$block_patterns = [
-				'landing-page-grid',
+				'landing-page',
 			];
 		}
 

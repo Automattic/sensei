@@ -6,10 +6,10 @@
  */
 
 ob_start();
-require __DIR__ . '/templates/landing-page-grid.php';
+require __DIR__ . '/templates/landing-page.php';
 
 return [
-	'title'      => __( 'Landing Page - Grid', 'sensei-lms' ),
+	'title'      => __( 'Landing Page', 'sensei-lms' ),
 	'categories' => [ \Sensei_Block_Patterns::get_patterns_category_name() ],
 	'content'    => ob_get_clean(),
 ];

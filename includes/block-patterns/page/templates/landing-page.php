@@ -1,6 +1,6 @@
 <?php
 /**
- * Default Landing Page - Grid pattern content.
+ * Default Landing Page pattern content.
  *
  * @package sensei-lms
  */
