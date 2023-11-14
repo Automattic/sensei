@@ -389,6 +389,10 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$submission    = $this->createMock( Submission_Interface::class );
 		$submission->method( 'get_id' )->willReturn( $submission_id );
 
+		$quiz_answer_repository     = Sensei()->quiz_answer_repository;
+		$quiz_grade_repository      = Sensei()->quiz_grade_repository;
+		$quiz_submission_repository = Sensei()->quiz_submission_repository;
+
 		Sensei()->quiz_answer_repository     = $this->createMock( Answer_Repository_Interface::class );
 		Sensei()->quiz_grade_repository      = $this->createMock( Grade_Repository_Interface::class );
 		Sensei()->quiz_submission_repository = $this->createMock( Submission_Repository_Interface::class );
@@ -413,6 +417,11 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 			->with( $submission );
 
 		Sensei_Utils::sensei_delete_quiz_answers( 1, 1 );
+
+		/* Reset. */
+		Sensei()->quiz_answer_repository     = $quiz_answer_repository;
+		Sensei()->quiz_grade_repository      = $quiz_grade_repository;
+		Sensei()->quiz_submission_repository = $quiz_submission_repository;
 	}
 
 	/**
