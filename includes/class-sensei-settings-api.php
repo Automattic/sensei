@@ -148,6 +148,10 @@ class Sensei_Settings_API {
 		$this->tabs              = array();
 		$this->settings_version  = '';
 
+		// Set default empty values for properties.
+		$this->name       = '';
+		$this->menu_label = '';
+		$this->settings   = array();
 	}
 
 	/**
@@ -1074,9 +1078,9 @@ class Sensei_Settings_API {
 				// Check if the field is valid.
 				$method = $this->determine_method( $v, 'check' );
 
-				if ( function_exists( $method ) ) {
+				if ( is_string( $method ) && function_exists( $method ) ) {
 					$is_valid = $method( $value );
-				} elseif ( method_exists( $this, $method ) ) {
+				} elseif ( is_string( $method ) && method_exists( $this, $method ) ) {
 					$is_valid = $this->$method( $value );
 				}
 
@@ -1087,12 +1091,10 @@ class Sensei_Settings_API {
 
 				$method = $this->determine_method( $v, 'validate' );
 
-				if ( function_exists( $method ) ) {
+				if ( is_string( $method ) && function_exists( $method ) ) {
 					$options[ $k ] = $method( $value );
-				} else {
-					if ( method_exists( $this, $method ) ) {
-						$options[ $k ] = $this->$method( $value );
-					}
+				} elseif ( is_string( $method ) && method_exists( $this, $method ) ) {
+					$options[ $k ] = $this->$method( $value );
 				}
 			}
 		}
