@@ -1040,6 +1040,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @param array $value     The new settings value.
 	 */
 	public function experimental_features_saved( $old_value, $value ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && ! defined( 'REST_REQUEST' ) && 'options' === get_current_screen()->id ) ) {
 			return;
 		}
