@@ -105,10 +105,9 @@
     <DocblockTypeContradiction occurrences="1">
       <code>false === $mysql_date</code>
     </DocblockTypeContradiction>
-    <InvalidScalarArgument occurrences="6">
+    <InvalidScalarArgument occurrences="5">
       <code>$_POST['data']['comment_id']</code>
       <code>$_POST['data']['post_id']</code>
-      <code>$full_name</code>
       <code>$lesson_id</code>
       <code>wp_unslash( $_GET['course_id'] ?? 0 )</code>
       <code>wp_unslash( $_GET['lesson_id'] ?? 0 )</code>
@@ -166,11 +165,8 @@
       <code>$learner-&gt;user_id</code>
       <code>$learner-&gt;user_login</code>
     </InvalidPropertyFetch>
-    <InvalidScalarArgument occurrences="4">
-      <code>$full_name</code>
-      <code>$full_name</code>
+    <InvalidScalarArgument occurrences="1">
       <code>$this-&gt;total_items</code>
-      <code>Sensei_Learner::get_full_name( $learner-&gt;user_id )</code>
     </InvalidScalarArgument>
     <PossiblyInvalidPropertyFetch occurrences="3">
       <code>$course-&gt;ID</code>
@@ -201,10 +197,6 @@
     <InvalidArgument occurrences="1">
       <code>'course-category'</code>
     </InvalidArgument>
-    <InvalidScalarArgument occurrences="2">
-      <code>$title</code>
-      <code>$title</code>
-    </InvalidScalarArgument>
     <PossibleRawObjectIteration occurrences="1">
       <code>$cats</code>
     </PossibleRawObjectIteration>
@@ -655,11 +647,6 @@
       <code>wp_date( 'F jS, Y' )</code>
     </PossiblyFalseArgument>
   </file>
-  <file src="includes/blocks/class-sensei-block-contact-teacher.php">
-    <MissingPropertyType occurrences="1">
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-    </MissingPropertyType>
-  </file>
   <file src="includes/blocks/class-sensei-block-helpers.php">
     <DocblockTypeContradiction occurrences="1">
       <code>! isset( $value )</code>
@@ -843,10 +830,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="includes/blocks/class-sensei-learner-messages-button-block.php">
-    <MissingPropertyType occurrences="2">
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-    </MissingPropertyType>
     <PossiblyFalseArgument occurrences="1">
       <code>get_post_type_archive_link( 'sensei_message' )</code>
     </PossiblyFalseArgument>
@@ -1117,10 +1100,6 @@
     <InvalidReturnType occurrences="1">
       <code>data</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="2">
-      <code>$user_name</code>
-      <code>$user_name</code>
-    </InvalidScalarArgument>
     <MissingParamType occurrences="4">
       <code>$args</code>
       <code>$args</code>
@@ -1169,9 +1148,6 @@
     <InvalidReturnType occurrences="1">
       <code>data</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="1">
-      <code>$user_name</code>
-    </InvalidScalarArgument>
     <MissingParamType occurrences="4">
       <code>$args</code>
       <code>$lesson_id</code>
@@ -1324,10 +1300,8 @@
     <InvalidArgument occurrences="1">
       <code>$user_id</code>
     </InvalidArgument>
-    <InvalidScalarArgument occurrences="3">
+    <InvalidScalarArgument occurrences="1">
       <code>$type</code>
-      <code>$user_name</code>
-      <code>$user_name</code>
     </InvalidScalarArgument>
     <InvalidStringClass occurrences="2">
       <code>new $object_name( $data )</code>
@@ -1618,31 +1592,8 @@
       <code>$user_id</code>
       <code>$user_id</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="24">
+    <MissingPropertyType occurrences="1">
       <code>$token</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
     </MissingPropertyType>
     <NullArgument occurrences="4">
       <code>null</code>
@@ -1816,30 +1767,6 @@
       <code>$user_id</code>
       <code>$user_id</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="22">
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-    </MissingPropertyType>
     <PropertyNotSetInConstructor occurrences="3">
       <code>$_from_address</code>
       <code>$_from_name</code>
@@ -1878,19 +1805,7 @@
       <code>$post_id</code>
       <code>$title</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="20">
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
+    <MissingPropertyType occurrences="8">
       <code>Sensei()-&gt;template_url</code>
       <code>Sensei()-&gt;template_url</code>
       <code>Sensei()-&gt;template_url</code>
@@ -1969,9 +1884,6 @@
       <code>$counts['passed']</code>
       <code>$counts['ungraded']</code>
     </InvalidArrayAccess>
-    <InvalidScalarArgument occurrences="1">
-      <code>$title</code>
-    </InvalidScalarArgument>
     <MissingParamType occurrences="1">
       <code>$args</code>
     </MissingParamType>
@@ -2043,12 +1955,10 @@
       <code>int</code>
       <code>string</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="5">
+    <InvalidScalarArgument occurrences="3">
       <code>$quiz_lesson_id</code>
       <code>$quiz_lesson_id</code>
       <code>$quiz_lesson_id</code>
-      <code>$user_name</code>
-      <code>$user_name</code>
     </InvalidScalarArgument>
     <MissingParamType occurrences="10">
       <code>$course_id</code>
@@ -2127,12 +2037,7 @@
     <InvalidGlobal occurrences="1">
       <code>global $current_user;</code>
     </InvalidGlobal>
-    <InvalidScalarArgument occurrences="1">
-      <code>$name</code>
-    </InvalidScalarArgument>
-    <MissingPropertyType occurrences="3">
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
+    <MissingPropertyType occurrences="1">
       <code>Sensei()-&gt;token</code>
     </MissingPropertyType>
   </file>
@@ -2280,14 +2185,10 @@
       <code>$user_id</code>
       <code>$widget</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="7">
+    <MissingPropertyType occurrences="3">
       <code>$allowed_html</code>
       <code>$meta_fields</code>
       <code>$token</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
     </MissingPropertyType>
     <NullableReturnStatement occurrences="3">
       <code>$this-&gt;get_videopress_thumbnail( $url )</code>
@@ -2501,14 +2402,10 @@
       <code>$query</code>
       <code>$user_id</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="7">
+    <MissingPropertyType occurrences="3">
       <code>$meta_fields</code>
       <code>$post_type</code>
       <code>$token</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
     </MissingPropertyType>
     <PossiblyFalseArgument occurrences="6">
       <code>get_permalink( $content_post_id )</code>
@@ -2639,12 +2536,10 @@
       <code>$title</code>
       <code>$user_id</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="10">
+    <MissingPropertyType occurrences="8">
       <code>$file</code>
       <code>$order_page_slug</code>
       <code>$taxonomy</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
       <code>Sensei()-&gt;template_url</code>
       <code>Sensei()-&gt;template_url</code>
       <code>Sensei()-&gt;template_url</code>
@@ -2792,15 +2687,10 @@
     <InvalidStringClass occurrences="1">
       <code>new $class_name()</code>
     </InvalidStringClass>
-    <MissingPropertyType occurrences="8">
+    <MissingPropertyType occurrences="3">
       <code>$role_caps</code>
       <code>$slider_labels</code>
       <code>$token</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
     </MissingPropertyType>
     <PossiblyFalseArgument occurrences="4">
       <code>get_permalink( $post_ID )</code>
@@ -3130,9 +3020,6 @@
     <DocblockTypeContradiction occurrences="1">
       <code>isset( $input )</code>
     </DocblockTypeContradiction>
-    <InvalidDocblock occurrences="1">
-      <code>protected function determine_method( $data, $type = 'form' ) {</code>
-    </InvalidDocblock>
     <InvalidReturnStatement occurrences="3">
       <code>$input</code>
       <code>(bool) $input</code>
@@ -3146,25 +3033,6 @@
       <code>$section</code>
       <code>$type</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="17">
-      <code>$errors</code>
-      <code>$fields</code>
-      <code>$has_imageselector</code>
-      <code>$has_range</code>
-      <code>$has_tabs</code>
-      <code>$menu_label</code>
-      <code>$name</code>
-      <code>$page_slug</code>
-      <code>$sections</code>
-      <code>$settings</code>
-      <code>$settings_version</code>
-      <code>$tabs</code>
-      <code>$this-&gt;fields</code>
-      <code>$this-&gt;token</code>
-      <code>$this-&gt;token_legacy</code>
-      <code>$token</code>
-      <code>$token_legacy</code>
-    </MissingPropertyType>
     <PossiblyFalseArgument occurrences="1">
       <code>$input[ $k ]</code>
     </PossiblyFalseArgument>
@@ -3627,10 +3495,8 @@
       <code>$trigger_completion_action</code>
       <code>$user_id</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="3">
+    <MissingPropertyType occurrences="1">
       <code>Sensei()-&gt;plugin_url</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
     </MissingPropertyType>
     <PossibleRawObjectIteration occurrences="1">
       <code>$attributes</code>
@@ -3692,10 +3558,6 @@
     <InvalidReturnStatement occurrences="1">
       <code>$default</code>
     </InvalidReturnStatement>
-    <MissingPropertyType occurrences="2">
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-    </MissingPropertyType>
     <TypeDoesNotContainNull occurrences="4">
       <code>'brackets' === $format</code>
       <code>'full' === $format</code>
@@ -3759,7 +3621,7 @@
       <code>$main_plugin_file_name</code>
       <code>$plugin</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="13">
+    <MissingPropertyType occurrences="11">
       <code>$id</code>
       <code>$plugin_path</code>
       <code>$plugin_url</code>
@@ -3768,11 +3630,9 @@
       <code>$this-&gt;plugin_path</code>
       <code>$this-&gt;plugin_url</code>
       <code>$this-&gt;post_types-&gt;role_caps</code>
-      <code>$this-&gt;settings-&gt;settings</code>
       <code>$this-&gt;version</code>
       <code>$token</code>
       <code>$version</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
     </MissingPropertyType>
     <PossiblyFalseArgument occurrences="2">
       <code>get_the_ID()</code>
@@ -3952,10 +3812,6 @@
       <code>! self::$instance</code>
       <code>self::$instance</code>
     </DocblockTypeContradiction>
-    <MissingPropertyType occurrences="2">
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-    </MissingPropertyType>
     <PossiblyFalseArgument occurrences="1">
       <code>get_permalink()</code>
     </PossiblyFalseArgument>
@@ -5617,15 +5473,6 @@
     <InvalidFalsableReturnType occurrences="1">
       <code>string</code>
     </InvalidFalsableReturnType>
-    <InvalidReturnStatement occurrences="1">
-      <code>$user_name</code>
-    </InvalidReturnStatement>
-    <InvalidScalarArgument occurrences="1">
-      <code>$user_name</code>
-    </InvalidScalarArgument>
-    <NullableReturnStatement occurrences="1">
-      <code>$user_name</code>
-    </NullableReturnStatement>
     <PropertyNotSetInConstructor occurrences="4">
       <code>Sensei_Reports_Overview_List_Table_Students</code>
       <code>Sensei_Reports_Overview_List_Table_Students</code>
@@ -6182,13 +6029,6 @@
       <code>$post</code>
       <code>$version</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="5">
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-    </MissingPropertyType>
     <PossiblyFalseArgument occurrences="2">
       <code>get_the_ID()</code>
       <code>get_the_ID()</code>
@@ -6339,11 +6179,6 @@
       <code>$course_status</code>
       <code>$user_id</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="3">
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-    </MissingPropertyType>
     <PossiblyInvalidArgument occurrences="3">
       <code>$category_output</code>
       <code>$course</code>
@@ -6360,10 +6195,6 @@
     <InvalidReturnType occurrences="1">
       <code>mixed</code>
     </InvalidReturnType>
-    <MissingPropertyType occurrences="2">
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-    </MissingPropertyType>
   </file>
   <file src="includes/template-functions.php">
     <DocblockTypeContradiction occurrences="4">
@@ -6402,13 +6233,9 @@
       <code>$question_type</code>
       <code>$template_name</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="8">
+    <MissingPropertyType occurrences="4">
       <code>Sensei()-&gt;modules-&gt;taxonomy</code>
       <code>Sensei()-&gt;modules-&gt;taxonomy</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
-      <code>Sensei()-&gt;settings-&gt;settings</code>
       <code>Sensei()-&gt;template_url</code>
       <code>Sensei()-&gt;template_url</code>
     </MissingPropertyType>
