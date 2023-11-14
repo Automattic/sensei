@@ -113,7 +113,7 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 	}
 
 	private function create_tables(): void {
-		$schema = new Schema();
+		$schema = new Schema( Sensei()->feature_flags );
 		$schema->create_tables();
 	}
 }

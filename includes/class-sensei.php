@@ -2,6 +2,7 @@
 
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Emails\Email_Customization;
+use Sensei\Internal\Installer\Schema;
 use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Migration\Migration_Tool;
 use Sensei\Internal\Migration\Migration_Job;
@@ -625,7 +626,14 @@ class Sensei_Main {
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
 		// Student progress repositories.
-		$tables_enabled = $this->feature_flags->is_enabled( 'tables_based_progress' );
+		$tables_enabled = isset( $this->settings->settings['experimental_progress_storage'] )
+			&& ( true === $this->settings->settings['experimental_progress_storage'] );
+
+		if ( $tables_enabled ) {
+			// Enable tables based progress feature flag.
+			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
+		}
+
 		/**
 		 * Filter whether to read student progress from tables.
 		 *
