@@ -22,6 +22,8 @@ import {
 	INNER_BLOCKS_TEMPLATE,
 	IN_PROGRESS_PREVIEW,
 } from './constants';
+import { useSelect } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 
 const courseThemeEnabled = window?.sensei?.courseThemeEnabled || false;
 
@@ -45,6 +47,11 @@ const LessonActionsEdit = ( props ) => {
 	const [ previewState, onPreviewChange ] = usePreviewState(
 		IN_PROGRESS_PREVIEW
 	);
+	const { isSiteEditor } = useSelect( ( select ) => {
+		return {
+			isSiteEditor: ! select( editorStore ).getCurrentPostId(),
+		};
+	} );
 
 	const toggleBlocks = useToggleBlocks( {
 		parentClientId: clientId,
@@ -59,12 +66,13 @@ const LessonActionsEdit = ( props ) => {
 	} );
 
 	const hasQuiz = useHasQuiz();
-	const quizStateClass = hasQuiz ? 'has-quiz' : 'no-quiz';
+	const quizStateClass = hasQuiz || isSiteEditor ? 'has-quiz' : 'no-quiz';
 
 	const completeLessonAllowed = useCompleteLessonAllowed( hasQuiz );
 	const completeLessonAllowedClass = completeLessonAllowed
 		? 'allowed'
 		: 'not-allowed';
+	const isInSiteEditorClass = isSiteEditor ? 'site-editor' : 'lesson-editor';
 
 	if ( courseThemeEnabled ) {
 		return null;
@@ -87,7 +95,8 @@ const LessonActionsEdit = ( props ) => {
 					className,
 					`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`,
 					`wp-block-sensei-lms-lesson-actions__${ quizStateClass }`,
-					`wp-block-sensei-lms-lesson-actions__complete_lessons-${ completeLessonAllowedClass }`
+					`wp-block-sensei-lms-lesson-actions__complete_lessons-${ completeLessonAllowedClass }`,
+					`wp-block-sensei-lms-lesson-actions__preview-${ isInSiteEditorClass }`
 				) }
 			>
 				<div className="sensei-buttons-container">

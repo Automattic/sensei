@@ -5,7 +5,9 @@
  * @package sensei
  */
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * WP-CLI command that helps with seeding the database.

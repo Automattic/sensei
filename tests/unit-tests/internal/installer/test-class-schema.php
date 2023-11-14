@@ -23,7 +23,7 @@ class Schema_Test extends \WP_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->schema = new Schema();
+		$this->schema = new Schema( Sensei()->feature_flags );
 	}
 
 	public function testCreateTables_WhenCalled_ShouldCreateTheTablesDefinedInGetTables(): void {
