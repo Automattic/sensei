@@ -1,5 +1,6 @@
 <?php
 
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -2403,9 +2404,14 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			return false;
+		}
 
-		return $lesson_status && 'ungraded' === $lesson_status->comment_approved;
+		$progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+
+		return $progress && Quiz_Progress_Interface::STATUS_UNGRADED === $progress->get_status();
 	}
 
 	/**
