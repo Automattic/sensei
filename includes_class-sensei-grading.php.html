@@ -720,7 +720,6 @@ class Sensei_Grading {
 	 */
 	public function admin_process_grading_submission() {
 
-		// NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry.
 		if ( ! isset( $_POST['sensei_manual_grade'] )
 			|| ! wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' )
 			|| ! isset( $_GET['quiz_id'] )
