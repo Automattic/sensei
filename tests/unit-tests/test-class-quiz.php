@@ -2447,7 +2447,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 				],
 			]
 		);
-		$quiz_id = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
 
 		$progress = $this->createMock( Quiz_Progress_Interface::class );
 		$progress->method( 'get_status' )
@@ -2479,7 +2479,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 				],
 			]
 		);
-		$quiz_id = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
 
 		$progress = $this->createMock( Quiz_Progress_Interface::class );
 		$progress->method( 'get_status' )
