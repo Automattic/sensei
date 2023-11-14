@@ -92,17 +92,18 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$settings = Sensei()->settings;
 
-		$new = $settings->get_settings();
+		$new                                  = $settings->get_settings();
 		$new['experimental_progress_storage'] = true;
 
-		$old = $settings->get_settings();
+		$old                                  = $settings->get_settings();
 		$old['experimental_progress_storage'] = false;
 
 		$this->simulateSettingsRequest();
 
 		global $wpdb;
-		$tables = (new Schema( Sensei()->feature_flags ))->get_tables();
+		$tables = ( new Schema( Sensei()->feature_flags ) )->get_tables();
 		foreach ( $tables as $table ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.SchemaChange
 			$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
 		}
 
@@ -112,6 +113,7 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$created_tables = array();
 		foreach ( $tables as $table ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$results = $wpdb->get_col( "SHOW TABLES LIKE '{$table}'" );
 			if ( in_array( $table, $results, true ) ) {
 				$created_tables[] = $table;

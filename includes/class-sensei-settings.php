@@ -1048,6 +1048,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$new_hpps = isset( $value['experimental_progress_storage'] ) ? $value['experimental_progress_storage'] : false;
 
 		if ( $new_hpps !== $old_hpps && $new_hpps ) {
+			// Enablee the feature flag to make progress tables available.
+			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
 			( new Schema( Sensei()->feature_flags ) )->create_tables();
 		}
 	}
