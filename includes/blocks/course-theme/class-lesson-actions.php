@@ -111,7 +111,7 @@ class Lesson_Actions {
 		$label = __( 'Next Lesson', 'sensei-lms' );
 		$icon  = \Sensei()->assets->get_icon( 'arrow-right' );
 
-		return ( "<a class='wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__next-lesson has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
+		return ( "<a class='wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__next-lesson is-primary has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
 
 	}
 

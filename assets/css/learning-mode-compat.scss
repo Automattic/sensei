@@ -321,3 +321,13 @@ $breakpoint: 782px;
 		line-height: normal;
 	}
 }
+
+.wp-block-sensei-lms-course-theme-lesson-actions,
+.wp-block-sensei-lms-quiz-actions {
+
+	.wp-block-button.is-style-outline {
+		.wp-block-button__link {
+			border: none;
+		}
+	}
+}
