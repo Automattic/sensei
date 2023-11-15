@@ -1914,7 +1914,10 @@ class Sensei_Quiz {
 			&lt;?php endif ?>
 
 			&lt;?php if ( $is_learning_mode &amp;&amp; $post_grade_action ) : ?>
-				&lt;?php echo wp_kses_post( $post_grade_action ); ?>
+				&lt;?php
+					$allowed_html = self::get_allowed_html_for_modal_form();
+					echo wp_kses( $post_grade_action, $allowed_html );
+				?>
 			&lt;?php endif ?>
 
 			&lt;?php if ( $is_awaiting_grade &amp;&amp; $is_learning_mode ) : ?>
@@ -2516,6 +2519,45 @@ class Sensei_Quiz {
 					esc_html( $button_text ) .
 				'&lt;/a>
 			&lt;/div>'
+		);
+	}
+
+	/**
+	 * Returns allowed HTML elements apart from posts for Kses.
+	 *
+	 * @return array Allowed HTML for modal forms in Kses.
+	 */
+	public static function get_allowed_html_for_modal_form() {
+		return array_merge(
+			wp_kses_allowed_html( 'post' ),
+			array(
+				'form'     => array(
+					'action'   => array(),
+					'class'    => array(),
+					'method'   => array(),
+					'name'     => array(),
+					'onsubmit' => array(),
+				),
+				'input'    => array(
+					'class' => array(),
+					'name'  => array(),
+					'type'  => array(),
+					'value' => array(),
+					'id'    => array(),
+				),
+				'textarea' => array(
+					'name'        => array(),
+					'placeholder' => array(),
+					'rows'        => array(),
+					'required'    => array(),
+				),
+				'svg'      => array(
+					'class' => array(),
+				),
+				'use'      => array(
+					'href' => array(),
+				),
+			)
 		);
 	}
 }
