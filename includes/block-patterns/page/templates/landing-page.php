@@ -51,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- wp:post-template {"align":"wide"} -->
 		<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"},"blockGap":"0px"},"border":{"width":"0px","style":"none"}},"layout":{"inherit":false}} -->
 		<div class="wp-block-group alignfull" style="border-style:none;border-width:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px">
-			<!-- wp:post-featured-image {"isLink":true,"height":"200px","lock":{"move":false,"remove":false},"align":"full","style":{"border":{"width":"1px"}},"borderColor":"background"} /-->
+			<!-- wp:post-featured-image {"isLink":true,"height":"200px","lock":{"move":false,"remove":false},"align":"full","style":{"border":{"radius":"4px","width":"1px"}},"borderColor":"background"} /-->
 
 			<!-- wp:sensei-lms/course-categories {"options":{"backgroundColor":"#F1EDE7","textColor":"#00594F"},"style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}}} -->
 			<div style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;--sensei-lms-course-categories-background-color:#F1EDE7;--sensei-lms-course-categories-text-color:#00594F" class="wp-block-sensei-lms-course-categories"></div>
