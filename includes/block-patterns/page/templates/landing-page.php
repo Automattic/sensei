@@ -22,8 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"center"}} -->
 	<div class="wp-block-buttons">
-		<!-- wp:button {"backgroundColor":"primary","textColor":"background","style":{"border":{"radius":"8px"}}} -->
-		<div class="wp-block-button"><a class="wp-block-button__link has-background-color has-primary-background-color has-text-color has-background wp-element-button" style="border-radius:8px"><?php echo esc_html__( 'START LEARNING NOW', 'sensei-lms' ); ?></a></div>
+		<!-- wp:button {"backgroundColor":"primary","textColor":"background"} -->
+		<div class="wp-block-button"><a class="wp-block-button__link has-background-color has-primary-background-color has-text-color has-background wp-element-button"><?php echo esc_html__( 'START LEARNING NOW', 'sensei-lms' ); ?></a></div>
 		<!-- /wp:button -->
 	</div>
 	<!-- /wp:buttons -->
@@ -64,16 +64,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- wp:post-excerpt {"textAlign":"left","lock":{"move":false,"remove":false},"style":{"spacing":{"padding":{"top":"22px","right":"0px","bottom":"17px","left":"0px"},"margin":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}},"className":"sensei-post-excerpt-no-margin"} /-->
 
 			<!-- wp:sensei-lms/course-actions {"lock":{"move":false,"remove":false}} -->
-			<!-- wp:sensei-lms/button-take-course {"align":"full","borderRadius":8,"backgroundColor":"background","textColor":"foreground"} -->
-			<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><button class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background" style="border-radius:8px"><?php echo esc_html__( 'Start', 'sensei-lms' ); ?></button></div>
+			<!-- wp:sensei-lms/button-take-course {"align":"full","backgroundColor":"background","textColor":"foreground"} -->
+			<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><button class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background"><?php echo esc_html__( 'Start', 'sensei-lms' ); ?></button></div>
 			<!-- /wp:sensei-lms/button-take-course -->
 
-			<!-- wp:sensei-lms/button-continue-course {"align":"full","borderRadius":8,"backgroundColor":"background","textColor":"foreground"} -->
-			<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background" style="border-radius:8px"><?php echo esc_html__( 'Continue', 'sensei-lms' ); ?></a></div>
+			<!-- wp:sensei-lms/button-continue-course {"align":"full","backgroundColor":"background","textColor":"foreground"} -->
+			<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background"><?php echo esc_html__( 'Continue', 'sensei-lms' ); ?></a></div>
 			<!-- /wp:sensei-lms/button-continue-course -->
 
-			<!-- wp:sensei-lms/button-view-results {"align":"full","borderRadius":8,"className":"is-style-default","backgroundColor":"background","textColor":"foreground"} -->
-			<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background" style="border-radius:8px"><?php echo esc_html__( 'Results', 'sensei-lms' ); ?></a></div>
+			<!-- wp:sensei-lms/button-view-results {"align":"full","className":"is-style-default","backgroundColor":"background","textColor":"foreground"} -->
+			<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background"><?php echo esc_html__( 'Results', 'sensei-lms' ); ?></a></div>
 			<!-- /wp:sensei-lms/button-view-results -->
 			<!-- /wp:sensei-lms/course-actions -->
 		</div>
@@ -138,8 +138,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"right","verticalAlignment":"center"}} -->
 		<div class="wp-block-buttons">
-			<!-- wp:button {"backgroundColor":"foreground","textColor":"background","style":{"border":{"radius":"8px"}}} -->
-			<div class="wp-block-button"><a class="wp-block-button__link has-background-color has-foreground-background-color has-text-color has-background wp-element-button" style="border-radius:8px"><?php echo esc_html__( 'Join Our Mailing List', 'sensei-lms' ); ?></a></div>
+			<!-- wp:button {"backgroundColor":"foreground","textColor":"background"} -->
+			<div class="wp-block-button"><a class="wp-block-button__link has-background-color has-foreground-background-color has-text-color has-background wp-element-button"><?php echo esc_html__( 'Join Our Mailing List', 'sensei-lms' ); ?></a></div>
 			<!-- /wp:button -->
 		</div>
 		<!-- /wp:buttons -->
