@@ -257,7 +257,8 @@ body {
 	margin: 1.5rem 0;
 }
 
-.sensei-course-theme-quiz-graded-notice {
+.sensei-course-theme-quiz-graded-notice,
+.sensei-course-theme-locked-lesson-notice {
 	&__text {
 		margin: 0 0 32px;
 	}
