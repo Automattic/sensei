@@ -852,7 +852,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			$fields['experimental_progress_storage']                 = array(
 				'name'        => __( 'High-Performance Progress Storage', 'sensei-lms' ),
 				'description' => __( 'Store the progress of your students in separate tables. This feature is currently in development and should be used with caution.', 'sensei-lms' ),
-				'form'        => 'render_progress_storage_feature',
 				'type'        => 'checkbox',
 				'default'     => false,
 				'section'     => 'sensei-experimental-features',
@@ -1079,31 +1078,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 	}
 
 	/**
-	 * Renders the High-Performance Progress Storage feature setting.
-	 *
-	 * @param array $args The field arguments.
-	 */
-	public function render_progress_storage_feature( $args ) {
-
-		$settings = $this->get_settings();
-		$key      = $args['key'];
-		$value    = $settings[ $key ];
-		?>
-			<label>
-				<input
-					type="checkbox"
-					id="sensei_experimental_progress_storage_feature"
-					name="<?php echo esc_attr( "{$this->token}[{$key}]" ) ?>"
-					value="<?php echo esc_attr( $value ) ?>"
-					<?php checked( $value, $value, true ); ?>
-				/>
-				<?php echo esc_html( $args['data']['description'] ) ?>
-			</label>
-		<?php
-		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
-	}
-
-	/**
 	 * Renders the High-Performance Progress Storage repository setting.
 	 *
 	 * @param array $args The field arguments.
@@ -1138,6 +1112,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			</ul>
 		</div>
 		<?php
+		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
 	}
 
 	/**
@@ -1162,12 +1137,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 					name="<?php echo esc_attr( "{$this->token}[{$key}]" ) ?>"
 					value="<?php echo esc_attr( $value ) ?>"
 					<?php disabled( true, $disabled, true ); ?>
-					<?php checked( $value, $value, true ); ?>
+					<?php checked( $value, true, true ); ?>
 				/>
 				<?php echo esc_html( $args['data']['description'] ) ?>
 			</label>
 		</div>
 		<?php
+		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
 	}
 
 	/**

@@ -1,8 +1,10 @@
 jQuery( document ).ready( function ( $ ) {
-	const progressStorage = $(
-		'#sensei_experimental_progress_storage_feature'
-	);
+	const progressStorage = $( '#experimental_progress_storage' );
 	progressStorage.on( 'change', function () {
-		$( '.sensei-settings_progress-storage-settings' ).toggle();
+		if ( $( this ).is( ':checked' ) ) {
+			$( '.sensei-settings_progress-storage-settings' ).show();
+		} else {
+			$( '.sensei-settings_progress-storage-settings' ).hide();
+		}
 	} );
 } );
