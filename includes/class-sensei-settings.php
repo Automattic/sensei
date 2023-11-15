@@ -1092,7 +1092,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$disabled      = false; // Disable when storages are not in sync.
 		?>
 		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
-			<h4><?php echo __( 'Progress storage repository', 'sensei-lms' ); ?></h4>
+			<h4><?php echo esc_html( __( 'Progress storage repository', 'sensei-lms' ) ); ?></h4>
 			<p><?php echo esc_html( $args['data']['description'] ); ?></p>
 			<ul>
 				<?php foreach ( $args['data']['options'] as $option_value => $option_name ) : ?>
@@ -1130,7 +1130,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$disabled      = false; // Disable when migrtion is in progress.
 		?>
 		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
-			<h4><?php echo __( 'Progress storage synchronization', 'sensei-lms' ); ?></h4>
+			<h4><?php echo esc_html( __( 'Progress storage synchronization', 'sensei-lms' ) ); ?></h4>
 			<label>
 				<input
 					type="checkbox"
