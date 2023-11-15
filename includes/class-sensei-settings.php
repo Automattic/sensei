@@ -857,7 +857,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 				'section'     => 'sensei-experimental-features',
 			);
 			$fields['experimental_progress_storage_repository']      = array(
-				'name'        => '',//,
+				'name'        => '', // ,
 				'description' => __( 'Choose a repository to store the progress and quiz submissions of your students.', 'sensei-lms' ),
 				'form'        => 'render_progress_storage_repositories',
 				'type'        => 'radio',
@@ -1087,12 +1087,12 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$settings      = $this->get_settings();
 		$key           = $args['key'];
 		$value         = $settings[ $key ];
-		$visible       = $settings[ 'experimental_progress_storage' ] ?? false;
+		$visible       = $settings['experimental_progress_storage'] ?? false;
 		$block_display = $visible ? 'block' : 'none';
 		$disabled      = false; // Disable when storages are not in sync.
 		?>
-		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ) ?>">
-			<h4><?php echo __( 'Progress storage repository', 'sensei-lms' ) ?></h4>
+		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
+			<h4><?php echo __( 'Progress storage repository', 'sensei-lms' ); ?></h4>
 			<p><?php echo esc_html( $args['data']['description'] ); ?></p>
 			<ul>
 				<?php foreach ( $args['data']['options'] as $option_value => $option_name ) : ?>
@@ -1100,12 +1100,12 @@ class Sensei_Settings extends Sensei_Settings_API {
 					<label>
 						<input
 							type="radio"
-							name="<?php echo esc_attr( "{$this->token}[{$key}]" ) ?>"
-							value="<?php echo esc_attr( $option_value ) ?>"
+							name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
+							value="<?php echo esc_attr( $option_value ); ?>"
 							<?php disabled( true, $disabled, true ); ?>
 							<?php checked( $option_value, $value, true ); ?>
 						/>
-						<?php echo esc_html( $option_name ) ?>
+						<?php echo esc_html( $option_name ); ?>
 					</label>
 				</li>
 				<?php endforeach; ?>
@@ -1125,21 +1125,21 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$settings      = $this->get_settings();
 		$key           = $args['key'];
 		$value         = $settings[ $key ];
-		$visible       = $settings[ 'experimental_progress_storage' ] ?? false;
+		$visible       = $settings['experimental_progress_storage'] ?? false;
 		$block_display = $visible ? 'block' : 'none';
 		$disabled      = false; // Disable when migrtion is in progress.
 		?>
-		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ) ?>">
-			<h4><?php echo __( 'Progress storage synchronization', 'sensei-lms' ) ?></h4>
+		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
+			<h4><?php echo __( 'Progress storage synchronization', 'sensei-lms' ); ?></h4>
 			<label>
 				<input
 					type="checkbox"
-					name="<?php echo esc_attr( "{$this->token}[{$key}]" ) ?>"
-					value="<?php echo esc_attr( $value ) ?>"
+					name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
+					value="<?php echo esc_attr( $value ); ?>"
 					<?php disabled( true, $disabled, true ); ?>
 					<?php checked( $value, true, true ); ?>
 				/>
-				<?php echo esc_html( $args['data']['description'] ) ?>
+				<?php echo esc_html( $args['data']['description'] ); ?>
 			</label>
 		</div>
 		<?php
