@@ -4,6 +4,7 @@ namespace SenseiTest\Internal\Migration\Migrations;
 
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 use Sensei_Factory;
+use Sensei_Utils;
 
 /**
  * Class Student_Progress_Migration_Test
@@ -61,8 +62,8 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 			)
 		);
 
-		\Sensei_Utils::start_user_on_course( 1, $course_id );
-		\Sensei_Utils::user_start_lesson( 1, $lesson_id, true );
+		Sensei_Utils::start_user_on_course( 1, $course_id );
+		Sensei_Utils::user_start_lesson( 1, $lesson_id, true );
 
 		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
 
@@ -94,11 +95,18 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 				),
 			)
 		);
+		$user_1    = $this->factory->user->create();
+		$user_2    = $this->factory->user->create();
+
 		update_post_meta( $quiz_id, '_quiz_lesson', $lesson_id );
 
-		\Sensei_Utils::start_user_on_course( 1, $course_id );
-		\Sensei_Utils::user_start_lesson( 1, $lesson_id, true );
-		\Sensei_Utils::user_passed_quiz( $quiz_id, 1 );
+		Sensei_Utils::start_user_on_course( $user_1, $course_id );
+		Sensei_Utils::user_start_lesson( $user_1, $lesson_id, true );
+		Sensei_Utils::user_passed_quiz( $quiz_id, $user_1 );
+
+		Sensei_Utils::start_user_on_course( $user_2, $course_id );
+		Sensei_Utils::user_start_lesson( $user_2, $lesson_id, true );
+		Sensei_Utils::user_passed_quiz( $quiz_id, $user_2 );
 
 		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
 
@@ -109,19 +117,37 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$actual_rows = $this->get_table_based_progress();
 		$expected    = array(
 			array(
-				'user_id' => 1,
+				'user_id' => $user_1,
 				'post_id' => $course_id,
 				'status'  => 'in-progress',
 				'type'    => 'course',
 			),
 			array(
-				'user_id' => 1,
+				'user_id' => $user_1,
 				'post_id' => $lesson_id,
 				'status'  => 'complete',
 				'type'    => 'lesson',
 			),
 			array(
-				'user_id' => 1,
+				'user_id' => $user_1,
+				'post_id' => $quiz_id,
+				'status'  => 'passed',
+				'type'    => 'quiz',
+			),
+			array(
+				'user_id' => $user_2,
+				'post_id' => $course_id,
+				'status'  => 'in-progress',
+				'type'    => 'course',
+			),
+			array(
+				'user_id' => $user_2,
+				'post_id' => $lesson_id,
+				'status'  => 'complete',
+				'type'    => 'lesson',
+			),
+			array(
+				'user_id' => $user_2,
 				'post_id' => $quiz_id,
 				'status'  => 'passed',
 				'type'    => 'quiz',
@@ -133,7 +159,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 	private function get_table_based_progress(): array {
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$rows = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}sensei_lms_progress" );
+		$rows = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}sensei_lms_progress ORDER BY user_id" );
 
 		$result = array();
 		foreach ( $rows as $row ) {

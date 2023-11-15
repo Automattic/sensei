@@ -70,6 +70,7 @@ const files = [
 	'blocks/single-course-style.scss',
 	'blocks/single-course-style-editor.scss',
 	'blocks/single-lesson.js',
+	'blocks/lesson-action-blocks.js',
 	'blocks/global-blocks.js',
 	'blocks/global-blocks-style.scss',
 	'blocks/global-blocks-style-editor.scss',

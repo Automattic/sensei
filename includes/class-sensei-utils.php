@@ -425,12 +425,16 @@ class Sensei_Utils {
 	/**
 	 * Grade question
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @param  integer $question_id ID of question
 	 * @param  integer $grade       Grade received
 	 * @param int     $user_id
 	 * @return boolean
 	 */
 	public static function sensei_grade_question( $question_id = 0, $grade = 0, $user_id = 0 ) {
+		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Quiz::set_user_grades' );
+
 		if ( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
 		}
@@ -457,7 +461,19 @@ class Sensei_Utils {
 		return $activity_logged;
 	}
 
+	/**
+	 * Delete the question grade.
+	 *
+	 * @deprecated $$next-version$$
+	 *
+	 * @param int $question_id The question ID.
+	 * @param int $user_id The user ID. Defaults to the current user ID.
+	 *
+	 * @return bool
+	 */
 	public static function sensei_delete_question_grade( $question_id = 0, $user_id = 0 ) {
+		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Quiz::set_user_grades' );
+
 		if ( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
 		}
@@ -674,11 +690,15 @@ class Sensei_Utils {
 	/**
 	 * Returns the user_grade for a specific question and user, or sensei_user_answer entry
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @param mixed $question
 	 * @param int   $user_id
 	 * @return string
 	 */
 	public static function sensei_get_user_question_grade( $question = 0, $user_id = 0 ) {
+		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Quiz::get_user_grades' );
+
 		$question_grade = false;
 		if ( $question ) {
 			if ( is_object( $question ) ) {
@@ -777,12 +797,16 @@ class Sensei_Utils {
 	/**
 	 * Add answer notes to question
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @param  integer $question_id ID of question
 	 * @param  integer $user_id     ID of user
 	 * @param string  $notes
 	 * @return boolean
 	 */
 	public static function sensei_add_answer_notes( $question_id = 0, $user_id = 0, $notes = '' ) {
+		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Quiz::save_user_answers_feedback' );
+
 		if ( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
 		}
@@ -1655,91 +1679,94 @@ class Sensei_Utils {
 	 * @return boolean
 	 */
 	public static function user_completed_lesson( $lesson = 0, $user_id = 0 ): bool {
-		if ( $lesson ) {
-			$lesson_id = 0;
-			if ( is_object( $lesson ) ) {
-				$user_lesson_status = $lesson->comment_approved;
-				$lesson_id          = $lesson->comment_post_ID;
-			} elseif ( ! is_numeric( $lesson ) ) {
-				$user_lesson_status = $lesson;
-			} else {
-				if ( ! $user_id ) {
-					$user_id = get_current_user_id();
-				}
 
-				// the user is not logged in
-				if ( 0 >= (int) $user_id ) {
-					return false;
-				}
+		if ( ! $lesson ) {
+			return false;
+		}
 
-				$lesson_id = (int) $lesson;
-				$user_id   = (int) $user_id;
-
-				$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
-				if ( $lesson_progress ) {
-					$user_lesson_status = $lesson_progress->get_status();
-				} else {
-					return false; // No progress means not complete
-				}
-
-				// In the comments-based progress we use one entry to store both the lesson progress and the quiz progress.
-				// In the tables-based progress we split them. Here is important to use the quiz proress if the quiz pass is required.
-				$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-				if ( $lesson_quiz_id ) {
-					$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
-					if ( $pass_required ) {
-						$quiz_progress = Sensei()->quiz_progress_repository->get( $lesson_quiz_id, $user_id );
-						if ( $quiz_progress ) {
-							$user_lesson_status = $quiz_progress->get_status();
-						} else {
-							return false;
-						}
-					}
-				}
+		$lesson_id = 0;
+		if ( is_object( $lesson ) ) {
+			$user_lesson_status = $lesson->comment_approved;
+			$lesson_id          = $lesson->comment_post_ID;
+		} elseif ( ! is_numeric( $lesson ) ) {
+			$user_lesson_status = $lesson;
+		} else {
+			if ( ! $user_id ) {
+				$user_id = get_current_user_id();
 			}
 
-			/**
-			 * Filter the user lesson status
-			 *
-			 * @since 1.9.7
-			 *
-			 * @hook sensei_user_completed_lesson
-			 *
-			 * @param {string} $user_lesson_status User lesson status.
-			 * @param {int}    $lesson_id          ID of lesson.
-			 * @param {int}    $user_id            ID of user.
-			 * @return {string} Filtered user lesson status.
-			 */
-			$user_lesson_status = apply_filters( 'sensei_user_completed_lesson', $user_lesson_status, $lesson_id, $user_id );
-
-			if ( 'in-progress' === $user_lesson_status ) {
+			// the user is not logged in
+			if ( 0 >= (int) $user_id ) {
 				return false;
 			}
 
-			// Check for Passed or Completed Setting
-			// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
-			switch ( $user_lesson_status ) {
-				case 'complete':
-				case 'graded':
-				case 'passed':
-					return true;
+			$lesson_id = (int) $lesson;
+			$user_id   = (int) $user_id;
 
-				case 'failed':
-					// This may be 'completed' depending on...
-					if ( $lesson_id ) {
-						// Get Quiz ID, this won't be needed once all Quiz meta fields are stored on the Lesson
-						$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-						if ( $lesson_quiz_id ) {
-							// ...the quiz pass setting
-							$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
-							if ( empty( $pass_required ) ) {
-								// We just require the user to have done the quiz, not to have passed
-								return true;
-							}
+			$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+			if ( $lesson_progress ) {
+				$user_lesson_status = $lesson_progress->get_status();
+			} else {
+				return false; // No progress means not complete
+			}
+
+			// In the comments-based progress we use one entry to store both the lesson progress and the quiz progress.
+			// In the tables-based progress we split them. Here is important to use the quiz proress if the quiz pass is required.
+			$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+			if ( $lesson_quiz_id ) {
+				$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
+				if ( $pass_required ) {
+					$quiz_progress = Sensei()->quiz_progress_repository->get( $lesson_quiz_id, $user_id );
+					if ( $quiz_progress ) {
+						$user_lesson_status = $quiz_progress->get_status();
+					} else {
+						return false;
+					}
+				}
+			}
+		}
+
+		/**
+		 * Filter the user lesson status
+		 *
+		 * @since 1.9.7
+		 *
+		 * @hook sensei_user_completed_lesson
+		 *
+		 * @param {string} $user_lesson_status User lesson status.
+		 * @param {int}    $lesson_id          ID of lesson.
+		 * @param {int}    $user_id            ID of user.
+		 * @return {string} Filtered user lesson status.
+		 */
+		$user_lesson_status = apply_filters( 'sensei_user_completed_lesson', $user_lesson_status, $lesson_id, $user_id );
+
+		if ( 'in-progress' === $user_lesson_status ) {
+			return false;
+		}
+
+		// Check for Passed or Completed Setting
+		// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
+		switch ( $user_lesson_status ) {
+			case 'complete':
+			case 'graded':
+			case 'passed':
+				return true;
+
+			case 'failed':
+				// This may be 'completed' depending on...
+				if ( $lesson_id ) {
+					// Get Quiz ID, this won't be needed once all Quiz meta fields are stored on the Lesson
+					$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+					if ( $lesson_quiz_id ) {
+						// ...the quiz pass setting
+						$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
+						if ( empty( $pass_required ) ) {
+							// We just require the user to have done the quiz, not to have passed
+							return true;
 						}
 					}
-					return false;
-			}
+				}
+				return false;
 		}
 
 		return false;
@@ -2969,6 +2996,18 @@ class Sensei_Utils {
 	 */
 	public static function is_fse_theme() {
 		return function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
+	}
+
+	/**
+	 * Check if the current screen is a site editor page.
+	 *
+	 * @return bool
+	 */
+	public static function is_site_editor() {
+
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+		return ! empty( $screen ) && in_array( $screen->id, [ 'widgets', 'site-editor', 'customize', 'appearance_page_gutenberg-edit-site' ], true );
 	}
 }
 

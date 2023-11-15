@@ -65,5 +65,9 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 			'sensei-global-blocks-editor-style',
 			'blocks/global-blocks-style-editor.css'
 		);
+
+		if ( Sensei_Utils::is_site_editor() ) {
+			Sensei()->assets->enqueue( 'sensei-lesson-action-blocks', 'blocks/lesson-action-blocks.js', [ 'sensei-global-blocks' ], true );
+		}
 	}
 }

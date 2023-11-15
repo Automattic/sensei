@@ -417,7 +417,7 @@ class Sensei_Quiz {
 	 * @param int $lesson_id
 	 * @param int $user_id
 	 *
-	 * @return array|false $answers or false
+	 * @return array<int, string>|false $answers or false
 	 */
 	public function get_user_answers( $lesson_id, $user_id ) {
 
@@ -997,10 +997,9 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Get the user question answer
+	 * Get the user question answer.
 	 *
-	 * This function gets the users saved answer on given quiz for the given question parameter
-	 * this function allows for a fallback to users still using the question saved data from before 1.7.4
+	 * This function gets the users saved answer on given quiz for the given question parameter.
 	 *
 	 * @since 1.7.4
 	 *
@@ -1008,7 +1007,7 @@ class Sensei_Quiz {
 	 * @param int $question_id
 	 * @param int $user_id ( optional )
 	 *
-	 * @return bool|null $answers_submitted
+	 * @return string|null|false
 	 */
 	public function get_user_question_answer( $lesson_id, $question_id, $user_id = 0 ) {
 
@@ -1032,28 +1031,7 @@ class Sensei_Quiz {
 
 		$users_answers = $this->get_user_answers( $lesson_id, $user_id );
 
-		if ( ! $users_answers || empty( $users_answers )
-		|| ! is_array( $users_answers ) || ! isset( $users_answers[ $question_id ] ) ) {
-
-			// Fallback for pre 1.7.4 data
-			$comment = Sensei_Utils::sensei_check_for_activity(
-				array(
-					'post_id' => $question_id,
-					'user_id' => $user_id,
-					'type'    => 'sensei_user_answer',
-				),
-				true
-			);
-
-			if ( ! isset( $comment->comment_content ) ) {
-				return null;
-			}
-
-			return maybe_unserialize( base64_decode( $comment->comment_content ) );
-		}
-
-		return $users_answers[ $question_id ];
-
+		return $users_answers[ $question_id ] ?? null;
 	}
 
 	/**
@@ -1192,7 +1170,7 @@ class Sensei_Quiz {
 	 * @param int $question_id
 	 * @param int $user_id ( optional )
 	 *
-	 * @return bool $question_grade
+	 * @return int|false
 	 */
 	public function get_user_question_grade( $lesson_id, $question_id, $user_id = 0 ) {
 
@@ -1206,32 +1184,9 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		$all_user_grades = self::get_user_grades( $lesson_id, $user_id );
+		$all_user_grades = $this->get_user_grades( $lesson_id, $user_id );
 
-		if ( ! $all_user_grades || ! isset( $all_user_grades[ $question_id ] ) ) {
-			$fall_back_grade = false;
-
-			if ( 0 === $user_id ) {
-				return $fall_back_grade;
-			}
-
-			// fallback to data pre 1.7.4
-			$args = array(
-				'post_id' => $question_id,
-				'user_id' => $user_id,
-				'type'    => 'sensei_user_answer',
-			);
-
-			$question_activity = Sensei_Utils::sensei_check_for_activity( $args, true );
-			if ( isset( $question_activity->comment_ID ) ) {
-				$fall_back_grade = get_comment_meta( $question_activity->comment_ID, 'user_grade', true );
-			}
-
-			return $fall_back_grade;
-
-		}
-
-		return $all_user_grades[ $question_id ];
+		return $all_user_grades[ $question_id ] ?? false;
 
 	}
 
@@ -1392,34 +1347,15 @@ class Sensei_Quiz {
 		// get all the feedback for the user on the given lesson
 		$all_feedback = $this->get_user_answers_feedback( $lesson_id, $user_id );
 
-		if ( ! $all_feedback || empty( $all_feedback )
-			|| ! is_array( $all_feedback ) || empty( $all_feedback[ $question_id ] ) ) {
+		if ( ! is_array( $all_feedback ) || empty( $all_feedback[ $question_id ] ) ) {
+			$feedback       = get_post_meta( $question_id, '_answer_feedback', true );
+			$user_grade     = $this->get_user_question_grade( $lesson_id, $question_id, $user_id );
+			$answer_correct = is_int( $user_grade ) && $user_grade > 0;
 
-			// fallback to data pre 1.7.4
-			// setup the sensei data query
-			$args              = array(
-				'post_id' => $question_id,
-				'user_id' => $user_id,
-				'type'    => 'sensei_user_answer',
-			);
-			$question_activity = Sensei_Utils::sensei_check_for_activity( $args, true );
+			$feedback_block = $answer_correct ? self::get_correct_answer_feedback( $question_id ) : self::get_incorrect_answer_feedback( $question_id );
 
-			// set the default to false and return that if no old data is available.
-			if ( isset( $question_activity->comment_ID ) ) {
-				$feedback = base64_decode( get_comment_meta( $question_activity->comment_ID, 'answer_note', true ) );
-			}
-
-			// finally use the default question feedback
-			if ( empty( $feedback ) ) {
-				$feedback       = get_post_meta( $question_id, '_answer_feedback', true );
-				$user_grade     = $this->get_user_question_grade( $lesson_id, $question_id, $user_id );
-				$answer_correct = is_int( $user_grade ) && $user_grade > 0;
-
-				$feedback_block = $answer_correct ? self::get_correct_answer_feedback( $question_id ) : self::get_incorrect_answer_feedback( $question_id );
-
-				if ( $feedback_block ) {
-					$feedback = $feedback_block;
-				}
+			if ( $feedback_block ) {
+				$feedback = $feedback_block;
 			}
 		} else {
 			$feedback = $all_feedback[ $question_id ];
@@ -1725,7 +1661,7 @@ class Sensei_Quiz {
 
 		// Don't use pagination if quiz has been completed.
 		$quiz_progress  = Sensei()->quiz_progress_repository->get( $quiz_id, get_current_user_id() );
-		$quiz_completed = $quiz_progress && 'in-progress' !== $quiz_progress->get_status();
+		$quiz_completed = $quiz_progress && $quiz_progress->is_quiz_submitted();
 
 		$sensei_question_loop['questions'] = $quiz_completed ? $all_questions : $loop_questions;
 		$sensei_question_loop['quiz_id']   = $quiz_id;

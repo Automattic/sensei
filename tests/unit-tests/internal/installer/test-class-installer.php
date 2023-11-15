@@ -41,7 +41,8 @@ class Installer_Test extends \WP_UnitTestCase {
 
 	public function testInit_WhenCalled_RegistersHooks(): void {
 		/* Arrange. */
-		$installer = new Installer( new Schema(), new Updates_Factory(), SENSEI_LMS_VERSION );
+		$schema    = $this->createMock( Schema::class );
+		$installer = new Installer( $schema, new Updates_Factory(), SENSEI_LMS_VERSION );
 
 		/* Act. */
 		$installer->init();
@@ -314,11 +315,12 @@ class Installer_Test extends \WP_UnitTestCase {
 		$initial_wp_filter = $wp_filter;
 		$wp_filter         = [];
 
+		$schema          = $this->createMock( Schema::class );
 		$updates         = $this->createMock( \Sensei_Updates::class );
 		$updates_factory = $this->createMock( Updates_Factory::class );
 		$updates_factory->method( 'create' )->willReturn( $updates );
 
-		$installer = new Installer( new Schema(), $updates_factory, SENSEI_LMS_VERSION );
+		$installer = new Installer( $schema, $updates_factory, SENSEI_LMS_VERSION );
 		$installer->init();
 
 		/* Expect & Act. */

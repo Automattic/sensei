@@ -237,10 +237,10 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 		);
 
 		// make sure it blocks invalid parameters and returns false
-		$this->assertFalse( Sensei_Learner::get_full_name( '' ), 'Invalid user_id should return false' );
-		$this->assertFalse( Sensei_Learner::get_full_name( -200 ), 'Invalid user_id should return false' );
-		$this->assertFalse( Sensei_Learner::get_full_name( 'abc' ), 'Invalid user_id should return false' );
-		$this->assertFalse( Sensei_Learner::get_full_name( 4000000 ), 'Invalid user_id should return false' );
+		$this->assertEmpty( Sensei_Learner::get_full_name( '' ), 'Invalid user_id should return false' );
+		$this->assertEmpty( Sensei_Learner::get_full_name( -200 ), 'Invalid user_id should return false' );
+		$this->assertEmpty( Sensei_Learner::get_full_name( 'abc' ), 'Invalid user_id should return false' );
+		$this->assertEmpty( Sensei_Learner::get_full_name( 4000000 ), 'Invalid user_id should return false' );
 
 	}
 

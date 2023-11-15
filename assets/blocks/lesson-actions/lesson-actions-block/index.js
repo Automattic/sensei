@@ -11,6 +11,7 @@ export default {
 	metadata,
 	example: {
 		innerBlocks: [
+			{ name: 'sensei-lms/button-lesson-completed' },
 			{ name: 'sensei-lms/button-complete-lesson' },
 			{ name: 'sensei-lms/button-next-lesson' },
 			{ name: 'sensei-lms/button-reset-lesson' },
