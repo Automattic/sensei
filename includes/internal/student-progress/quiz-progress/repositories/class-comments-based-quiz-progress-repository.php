@@ -59,6 +59,10 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @return Quiz_Progress_Interface
 	 */
 	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress_Interface {
+		if ( ! $user_id ) {
+			return null;
+		}
+
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 		if ( ! $lesson_id ) {
 			return null;
