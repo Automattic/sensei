@@ -849,13 +849,35 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		if ( Sensei()->feature_flags->is_enabled( 'experimental_features_ui' ) ) {
-			$fields['experimental_progress_storage'] = array(
+			$fields['experimental_progress_storage']                 = array(
 				'name'        => __( 'High-Performance Progress Storage', 'sensei-lms' ),
 				'description' => __( 'Store the progress of your students in separate tables. This feature is currently in development and should be used with caution.', 'sensei-lms' ),
+				'form'        => 'render_progress_storage_feature',
 				'type'        => 'checkbox',
 				'default'     => false,
 				'section'     => 'sensei-experimental-features',
 			);
+			$fields['experimental_progress_storage_repository']      = array(
+				'name'        => '',//,
+				'description' => __( 'Choose a repository to store the progress and quiz submissions of your students.', 'sensei-lms' ),
+				'form'        => 'render_progress_storage_repositories',
+				'type'        => 'radio',
+				'default'     => 'legacy',
+				'section'     => 'sensei-experimental-features',
+				'options'     => array(
+					'comments'      => __( 'WordPress comments based storage (legacy)', 'sensei-lms' ),
+					'custom_tables' => __( 'High-Performance progress storage (experimental)', 'sensei-lms' ),
+				),
+			);
+			$fields['experimental_progress_storage_synchronization'] = array(
+				'name'        => '',
+				'description' => __( 'Synchronize the student progress between storages.', 'sensei-lms' ),
+				'form'        => 'render_progress_storage_synchronization',
+				'type'        => 'checkbox',
+				'default'     => false,
+				'section'     => 'sensei-experimental-features',
+			);
+
 		}
 
 		/**
@@ -1054,6 +1076,98 @@ class Sensei_Settings extends Sensei_Settings_API {
 			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
 			( new Schema( Sensei()->feature_flags ) )->create_tables();
 		}
+	}
+
+	/**
+	 * Renders the High-Performance Progress Storage feature setting.
+	 *
+	 * @param array $args The field arguments.
+	 */
+	public function render_progress_storage_feature( $args ) {
+
+		$settings = $this->get_settings();
+		$key      = $args['key'];
+		$value    = $settings[ $key ];
+		?>
+			<label>
+				<input
+					type="checkbox"
+					id="sensei_experimental_progress_storage_feature"
+					name="<?php echo esc_attr( "{$this->token}[{$key}]" ) ?>"
+					value="<?php echo esc_attr( $value ) ?>"
+					<?php checked( $value, $value, true ); ?>
+				/>
+				<?php echo esc_html( $args['data']['description'] ) ?>
+			</label>
+		<?php
+		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
+	}
+
+	/**
+	 * Renders the High-Performance Progress Storage repository setting.
+	 *
+	 * @param array $args The field arguments.
+	 */
+	public function render_progress_storage_repositories( $args ) {
+
+		$settings      = $this->get_settings();
+		$key           = $args['key'];
+		$value         = $settings[ $key ];
+		$visible       = $settings[ 'experimental_progress_storage' ] ?? false;
+		$block_display = $visible ? 'block' : 'none';
+		$disabled      = false; // Disable when storages are not in sync.
+		?>
+		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ) ?>">
+			<h4><?php echo __( 'Progress storage repository', 'sensei-lms' ) ?></h4>
+			<p><?php echo esc_html( $args['data']['description'] ); ?></p>
+			<ul>
+				<?php foreach ( $args['data']['options'] as $option_value => $option_name ) : ?>
+				<li>
+					<label>
+						<input
+							type="radio"
+							name="<?php echo esc_attr( "{$this->token}[{$key}]" ) ?>"
+							value="<?php echo esc_attr( $option_value ) ?>"
+							<?php disabled( true, $disabled, true ); ?>
+							<?php checked( $option_value, $value, true ); ?>
+						/>
+						<?php echo esc_html( $option_name ) ?>
+					</label>
+				</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Renders the High-Performance Progress Storage synchronization setting.
+	 *
+	 * @param array $args The field arguments.
+	 */
+	public function render_progress_storage_synchronization( $args ) {
+
+		$settings      = $this->get_settings();
+		$key           = $args['key'];
+		$value         = $settings[ $key ];
+		$visible       = $settings[ 'experimental_progress_storage' ] ?? false;
+		$block_display = $visible ? 'block' : 'none';
+		$disabled      = false; // Disable when migrtion is in progress.
+		?>
+		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ) ?>">
+			<h4><?php echo __( 'Progress storage synchronization', 'sensei-lms' ) ?></h4>
+			<label>
+				<input
+					type="checkbox"
+					name="<?php echo esc_attr( "{$this->token}[{$key}]" ) ?>"
+					value="<?php echo esc_attr( $value ) ?>"
+					<?php disabled( true, $disabled, true ); ?>
+					<?php checked( $value, $value, true ); ?>
+				/>
+				<?php echo esc_html( $args['data']['description'] ) ?>
+			</label>
+		</div>
+		<?php
 	}
 
 	/**
