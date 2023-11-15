@@ -52,6 +52,7 @@ $sensei_is_quiz_completed    = Sensei_Quiz::is_quiz_completed();
 $sensei_is_reset_allowed     = Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id() );
 $sensei_has_actions          = $sensei_is_reset_allowed || ! $sensei_is_quiz_completed;
 $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
+$sensei_next_question_count  = min( $sensei_question_loop['total'] - $sensei_question_loop['current_page'] * $sensei_question_loop['posts_per_page'], $sensei_question_loop['posts_per_page'] );
 
 ?>
 
@@ -92,32 +93,8 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 		?>
 	&lt;/div>
 
-	&lt;div class="sensei-quiz-actions">
-		&lt;?php if ( $sensei_is_quiz_available &amp;&amp; $sensei_has_actions ) : ?>
-			&lt;div class="sensei-quiz-actions-secondary">
-				&lt;?php if ( $sensei_is_reset_allowed ) : ?>
-					&lt;div class="sensei-quiz-action">
-						&lt;button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission">
-							&lt;?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>
-						&lt;/button>
-
-						&lt;input type="hidden" name="woothemes_sensei_reset_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_reset_quiz_nonce" value="&lt;?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
-					&lt;/div>
-				&lt;?php endif ?>
-
-				&lt;?php if ( ! $sensei_is_quiz_completed ) : ?>
-					&lt;div class="sensei-quiz-action">
-						&lt;button type="submit" name="quiz_save" form="sensei-quiz-form" class="quiz-submit save sensei-stop-double-submission">
-							&lt;?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
-						&lt;/button>
-
-						&lt;input type="hidden" name="woothemes_sensei_save_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_save_quiz_nonce" value="&lt;?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
-					&lt;/div>
-				&lt;?php endif ?>
-			&lt;/div>
-		&lt;?php endif ?>
-
-		&lt;div class="sensei-quiz-actions-primary wp-block-buttons">
+	&lt;div class="sensei-quiz-actions wp-block-sensei-lms-quiz-actions">
+		&lt;div class="sensei-quiz-actions-primary">
 			&lt;?php if ( $sensei_question_loop['current_page'] > 1 ) : ?>
 				&lt;div class="sensei-quiz-action wp-block-button is-style-outline">
 					&lt;button
@@ -128,7 +105,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__prev-button"
 						style="&lt;?php echo esc_attr( $sensei_button_inline_styles ); ?>"
 					>
-						&lt;?php esc_attr_e( 'Previous', 'sensei-lms' ); ?>
+						&lt;?php echo esc_attr( _n( 'Previous Question', 'Previous Questions', $sensei_question_loop['posts_per_page'], 'sensei-lms' ) ); ?>
 					&lt;/button>
 				&lt;/div>
 			&lt;?php endif ?>
@@ -143,7 +120,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__next-button"
 						style="&lt;?php echo esc_attr( $sensei_button_inline_styles ); ?>"
 					>
-						&lt;?php esc_attr_e( 'Next', 'sensei-lms' ); ?>
+						&lt;?php echo esc_attr( _n( 'Next Question', 'Next Questions', $sensei_next_question_count, 'sensei-lms' ) ); ?>
 					&lt;/button>
 				&lt;/div>
 			&lt;?php elseif ( $sensei_is_quiz_available &amp;&amp; ! $sensei_is_quiz_completed ) : ?>
@@ -155,13 +132,37 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 						class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission"
 						style="&lt;?php echo esc_attr( $sensei_button_inline_styles ); ?>"
 					>
-						&lt;?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>
+						&lt;?php esc_attr_e( 'Complete Quiz', 'sensei-lms' ); ?>
 					&lt;/button>
 
 					&lt;input type="hidden" name="woothemes_sensei_complete_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_complete_quiz_nonce" value="&lt;?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
 				&lt;/div>
 			&lt;?php endif ?>
 		&lt;/div>
+
+		&lt;?php if ( $sensei_is_quiz_available &amp;&amp; $sensei_has_actions ) : ?>
+			&lt;div class="sensei-quiz-actions-secondary">
+				&lt;?php if ( $sensei_is_reset_allowed ) : ?>
+					&lt;div class="sensei-quiz-action">
+						&lt;button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission sensei-course-theme__button is-link">
+							&lt;?php esc_attr_e( 'Restart Quiz', 'sensei-lms' ); ?>
+						&lt;/button>
+
+						&lt;input type="hidden" name="woothemes_sensei_reset_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_reset_quiz_nonce" value="&lt;?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
+					&lt;/div>
+				&lt;?php endif ?>
+
+				&lt;?php if ( ! $sensei_is_quiz_completed ) : ?>
+					&lt;div class="sensei-quiz-action">
+						&lt;button type="submit" name="quiz_save" form="sensei-quiz-form" class="quiz-submit save sensei-stop-double-submission sensei-course-theme__button is-link">
+							&lt;?php esc_attr_e( 'Save Progress', 'sensei-lms' ); ?>
+						&lt;/button>
+
+						&lt;input type="hidden" name="woothemes_sensei_save_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_save_quiz_nonce" value="&lt;?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
+					&lt;/div>
+				&lt;?php endif ?>
+			&lt;/div>
+		&lt;?php endif ?>
 	&lt;/div>
 &lt;/div>
 </code></pre>
