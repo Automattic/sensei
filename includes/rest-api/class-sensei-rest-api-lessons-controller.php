@@ -103,6 +103,56 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 				'auth_callback' => [ $this, 'auth_callback' ],
 			]
 		);
+
+		// add a route to duplicate a lesson and attach it to a course.
+		register_rest_route(
+			'sensei/v1',
+			'/lessons/(?P<id>[\d]+)/duplicate',
+			[
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'duplicate_lesson' ],
+				'permission_callback' => [ $this, 'duplicate_lesson_permissions_check' ],
+				'args'                => [
+					'id'        => [
+						'description' => __( 'The ID of the lesson to duplicate.', 'sensei-lms' ),
+						'type'        => 'integer',
+					],
+					'course_id' => [
+						'description' => __( 'The ID of the course to attach the duplicated lesson to.', 'sensei-lms' ),
+						'type'        => 'integer',
+					],
+				],
+			]
+		);
+	}
+
+	public function duplicate_lesson( $request ) {
+		$lesson_id = $request->get_param( 'id' );
+		$course_id = $request->get_param( 'course_id' );
+
+
+	}
+
+	public function duplicate_lesson_permissions_check( $request ): bool {
+		$lesson_id = $request->get_param( 'id' );
+		$course_id = $request->get_param( 'course_id' );
+
+		if ( ! $lesson_id || ! $course_id ) {
+			return false;
+		}
+
+		$lesson = get_post( $lesson_id );
+		$course = get_post( $course_id );
+
+		if ( ! $lesson || ! $course ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'edit_post', $lesson_id ) || ! current_user_can( 'edit_post', $course_id ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

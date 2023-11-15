@@ -34,7 +34,7 @@ class Course_Lessons_Duplicator {
 	 * Course_Lessons_Duplicator contructor.
 	 */
 	public function __construct() {
-		 $this->post_duplicator       = new Post_Duplicator();
+		$this->post_duplicator        = new Post_Duplicator();
 		$this->lesson_quiz_duplicator = new Lesson_Quiz_Duplicator();
 	}
 
@@ -75,6 +75,7 @@ class Course_Lessons_Duplicator {
 		return count( $lessons );
 
 	}
+
 	/**
 	 * Update prerequisite ids after course duplication.
 	 *
