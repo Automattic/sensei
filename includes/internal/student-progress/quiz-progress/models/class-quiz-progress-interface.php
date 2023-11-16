@@ -143,6 +143,15 @@ interface Quiz_Progress_Interface {
 	public function is_quiz_submitted(): bool;
 
 	/**
+	 * Returns whether the quiz is completed.
+	 *
+	 * @internal
+	 *
+	 * @return bool
+	 */
+	public function is_quiz_completed(): bool;
+
+	/**
 	 * Get the quiz start date.
 	 *
 	 * @internal

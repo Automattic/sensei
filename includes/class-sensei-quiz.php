@@ -2438,21 +2438,7 @@ class Sensei_Quiz {
 
 		$quiz_id       = (int) Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
-		if ( ! $quiz_progress ) {
-			return null;
-		}
-
-		$is_quiz_complete = in_array(
-			$quiz_progress->get_status(),
-			[
-				Quiz_Progress_Interface::STATUS_GRADED,
-				Quiz_Progress_Interface::STATUS_PASSED,
-				Quiz_Progress_Interface::STATUS_FAILED,
-			],
-			true
-		);
-
-		if ( ! $is_quiz_complete ) {
+		if ( ! $quiz_progress || ! $quiz_progress->is_quiz_completed() ) {
 			return null;
 		}
 
