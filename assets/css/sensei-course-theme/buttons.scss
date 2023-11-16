@@ -1,4 +1,4 @@
-$breakpoint: 782px;
+@import "~@wordpress/base-styles/breakpoints";
 
 .sensei-course-theme .wp-block-buttons {
 	display: flex;
@@ -14,8 +14,6 @@ $breakpoint: 782px;
 	justify-content: center;
 	white-space: nowrap;
 	width: auto;
-	padding: 1rem 32px;
-	line-height: 100%;
 
 	&.has-icon {
 		display: flex;
@@ -24,6 +22,32 @@ $breakpoint: 782px;
 		svg {
 			width: 16px;
 			height: 16px;
+		}
+	}
+}
+
+.wp-block-sensei-lms-course-theme-lesson-actions,
+.wp-block-sensei-lms-quiz-actions {
+
+	.sensei-course-theme-lesson-actions__next-lesson.has-icon {
+		display: flex;
+	}
+
+	@media screen and (max-width: $break-medium) {
+
+		.sensei-quiz-actions-primary {
+			flex-direction: column;
+
+			* {
+				flex: 1 1 0;
+				width: 100%;
+			}
+		}
+
+		.is-style-outline {
+			.wp-element-button.wp-block-button__link.sensei-course-theme__button {
+				width: 100%;
+			}
 		}
 	}
 }

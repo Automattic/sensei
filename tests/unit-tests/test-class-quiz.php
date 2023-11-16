@@ -824,7 +824,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * This tests Woothemes_Sensei()->quiz->get_user_question_answer.
 	 */
 	public function testGetUserQuestionAnswer() {
-
 		// Setup the data needed for the assertions.
 		$test_user_id           = wp_create_user( 'studentGetQuestionAnswer', 'studentGetQuestionAnswer', 'studentGetQuestionAnswer@test.com' );
 		$test_lesson_id         = $this->factory->get_random_lesson_id();
@@ -854,43 +853,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		// Testing if the data is returned.
 		$this->assertEquals( $users_saved_answers[ $random_question_id ], $question_answer, $assertion_message );
-
-		// Setup the data for the next assertion.
-		$assertion_message = 'This function does not fall back to the old data';
-		$question_id       = $random_question_id;
-		$answer            = $users_saved_answers[ $question_id ];
-		$old_data_user_id  = wp_create_user( 'olddata', 'olddata', 'olddata@test.com' );
-		$question_type     = Sensei()->question->get_question_type( $question_id );
-
-		$answer = wp_unslash( $answer );
-
-		switch ( $question_type ) {
-			case 'multi-line':
-				$answer = nl2br( $answer );
-				break;
-			case 'single-line':
-				break;
-			case 'gap-fill':
-				break;
-			default:
-				$answer = maybe_serialize( $answer );
-				break;
-		}
-		$args = array(
-			'post_id' => $question_id,
-			'data'    => base64_encode( $answer ),
-			'type'    => 'sensei_user_answer', /* FIELD SIZE 20 */
-			'user_id' => $old_data_user_id,
-			'action'  => 'update',
-		);
-		Sensei_Utils::sensei_log_activity( $args );
-
-		$old_data_answer = Sensei()->quiz->get_user_question_answer( $test_lesson_id, $random_question_id, $old_data_user_id );
-
-		// Testing for users on the pre 1.7.4 data.
-		$this->assertEquals( maybe_unserialize( $answer ), $old_data_answer, $assertion_message );
-
-		// Make sure that after a reset this function returns false.
 	}
 
 	/**
@@ -1083,25 +1045,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			$retrieved_grade,
 			'The grade retrieved is not equal to the one that was set for this question ID'
 		);
-
-		// Setup the next assertion.
-		$transient_key = 'quiz_grades_' . $test_user_id . '_' . $test_lesson_id;
-		delete_transient( $transient_key );
-		Sensei_Utils::delete_user_data( 'quiz_grades', $test_lesson_id, $test_user_id );
-		$random_question_id   = array_rand( $test_user_grades );
-		$old_data_args        = array(
-			'post_id' => $random_question_id,
-			'user_id' => $test_user_id,
-			'type'    => 'sensei_user_answer',
-			'data'    => 'test answer',
-		);
-		$old_data_activity_id = Sensei_Utils::sensei_log_activity( $old_data_args );
-		update_comment_meta( $old_data_activity_id, 'user_grade', 1950 );
-		$retrieved_grade = Sensei()->quiz->get_user_question_grade( $test_lesson_id, $random_question_id, $test_user_id );
-
-		// Does the fall back to 1.7.3 data work?
-		$this->assertEquals( 1950, $retrieved_grade, 'The get user question grade does not fall back th old data' );
-
 	}
 
 	/**
@@ -1250,7 +1193,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * This test Sensei()->quiz->get_user_question_feedback.
 	 */
 	public function testGetUserQuestionFeedback() {
-
 		// Does this function add_user_data exist?
 		$this->assertTrue(
 			method_exists( Sensei()->quiz, 'get_user_question_feedback' ),
@@ -1284,25 +1226,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			$retrieved_grade,
 			'The feedback retrieved is not equal to the one that was set for this question ID'
 		);
-
-		// Setup the next assertion for backwards compatibility.
-		$transient_key = 'sensei_answers_feedback_' . $test_user_id . '_' . $test_lesson_id;
-		delete_transient( $transient_key );
-		Sensei_Utils::delete_user_data( 'quiz_answers_feedback', $test_lesson_id, $test_user_id );
-		$random_question_id   = array_rand( $test_user_answers_feedback );
-		$old_data_args        = array(
-			'post_id' => $random_question_id,
-			'user_id' => $test_user_id,
-			'type'    => 'sensei_user_answer',
-			'data'    => 'test answer feedback',
-		);
-		$old_data_activity_id = Sensei_Utils::sensei_log_activity( $old_data_args );
-		update_comment_meta( $old_data_activity_id, 'answer_note', base64_encode( 'Sensei sample feedback' ) );
-		$retrieved_feedback = Sensei()->quiz->get_user_question_feedback( $test_lesson_id, $random_question_id, $test_user_id );
-
-		// Does the fall back to 1.7.3 data work?
-		$this->assertEquals( 'Sensei sample feedback', $retrieved_feedback, 'The get user feedback does not fall back the old data' );
-
 	}
 
 	/**

@@ -32,8 +32,8 @@ if ( ! function_exists( 'sensei_quiz_grade_notices_map' ) ) {
 			<?php if ( isset( $notice['actions'] ) && ! empty( $notice['actions'] ) ) { ?>
 			<div class='sensei-course-theme-quiz-graded-notice__actions'>
 				<?php
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No user data is being outputted.
-					echo implode( '', $notice['actions'] );
+					$allowed_html = Sensei_Quiz::get_allowed_html_for_modal_form();
+					echo wp_kses( implode( '', $notice['actions'] ), $allowed_html );
 				?>
 			</div>
 			<?php } ?>

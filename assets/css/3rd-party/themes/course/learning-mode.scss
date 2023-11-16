@@ -257,7 +257,8 @@ body {
 	margin: 1.5rem 0;
 }
 
-.sensei-course-theme-quiz-graded-notice {
+.sensei-course-theme-quiz-graded-notice,
+.sensei-course-theme-locked-lesson-notice {
 	&__text {
 		margin: 0 0 32px;
 	}
@@ -290,5 +291,17 @@ body {
 .sensei-course-theme-locked-lesson-notice__actions {
 	.sensei-course-theme__button {
 		color: var(--wp--preset--color--background, #1e1e1e);
+	}
+}
+
+.sensei-course-theme__quiz__footer {
+	.sensei-quiz-pagination {
+		.sensei-quiz-pagination__list {
+			.page-numbers {
+				.page-numbers {
+					font-size: var(--wp--custom--typography--font-sizes--normal);
+				}
+			}
+		}
 	}
 }
