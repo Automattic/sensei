@@ -100,11 +100,12 @@ export default [
 		},
 	},
 	{
+		// Deprecated since Sensei 4.19.2.
 		...courseThemeLessonActionsMeta,
 		...meta,
 		title: __( 'Lesson Actions (Learning Mode)', 'sensei-lms' ),
 		description: __(
-			'Display buttons for actions the learner can take for the current lesson.',
+			'(Deprecated) Display buttons for actions the learner can take for the current lesson.',
 			'sensei-lms'
 		),
 		attributes: {
