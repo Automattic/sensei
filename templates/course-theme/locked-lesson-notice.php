@@ -36,7 +36,7 @@ if ( ! function_exists( 'sensei_locked_lesson_notices_map' ) ) {
 				</div>
 			</div>
 			<?php } ?>
-			<h2 class="sensei-course-theme-locked-lesson-notice__text"><?php echo wp_kses_post( $notice['text'] ); ?></h2>
+			<p class="sensei-course-theme-locked-lesson-notice__text"><?php echo wp_kses_post( $notice['text'] ); ?></p>
 
 			<?php if ( ! empty( $notice['actions'] ) ) { ?>
 				<div class="sensei-course-theme-locked-lesson-notice__actions">

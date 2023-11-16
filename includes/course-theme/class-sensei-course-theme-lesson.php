@@ -306,12 +306,12 @@ class Sensei_Course_Theme_Lesson {
 				[
 					'label' => __( 'Take course', 'sensei-lms' ),
 					'url'   => Sensei()->lesson->get_take_course_url( $course_id ),
-					'style' => 'primary',
+					'style' => 'primary wp-block-button__link wp-element-button',
 				],
 				[
 					'label' => __( 'Sign in', 'sensei-lms' ),
 					'url'   => $sign_in_url,
-					'style' => 'secondary',
+					'style' => 'secondary wp-element-button is-link',
 				],
 			];
 
