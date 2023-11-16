@@ -332,6 +332,44 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertTrue( $is_rest_request );
 	}
 
+	public function testIsFrontendRequest_WhenFrontendRequest_ReturnsTrue() {
+		/* Act. */
+		$is_frontend_request = Sensei_Utils::is_frontend_request();
+
+		/* Assert. */
+		$this->assertTrue( $is_frontend_request );
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function testIsFrontendRequest_WhenRestRequest_ReturnsFalse() {
+		/* Arrange. */
+		define( 'REST_REQUEST', true );
+
+		/* Act. */
+		$is_frontend_request = Sensei_Utils::is_frontend_request();
+
+		/* Assert. */
+		$this->assertFalse( $is_frontend_request );
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function testIsFrontendRequest_WhenAdminRequest_ReturnsFalse() {
+		/* Arrange. */
+		define( 'WP_ADMIN', true );
+
+		/* Act. */
+		$is_frontend_request = Sensei_Utils::is_frontend_request();
+
+		/* Assert. */
+		$this->assertFalse( $is_frontend_request );
+	}
+
 	public function testSenseiDeleteQuizAnswers_WhenNoQuizProvided_ReturnsFalse() {
 		/* Act. */
 		$result = Sensei_Utils::sensei_delete_quiz_answers( 0, 1 );

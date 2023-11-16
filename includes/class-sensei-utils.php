@@ -2512,6 +2512,17 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Check if this is a frontend request.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return bool
+	 */
+	public static function is_frontend_request(): bool {
+		return ! self::is_rest_request() && ! is_admin();
+	}
+
+	/**
 	 * Add user to course.
 	 *
 	 * @param int $user_id The user ID.
