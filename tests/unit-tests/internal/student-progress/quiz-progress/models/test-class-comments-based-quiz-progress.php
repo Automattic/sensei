@@ -82,6 +82,33 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * Test that the quiz is considered completed based on the quiz progress status.
+	 *
+	 * @dataProvider providerIsQuizCompleted_ConstructedWithStatus_ReturnsMatchingValue
+	 */
+	public function testIsQuizCompleted_ConstructedWithStatus_ReturnsMatchingValue( string $status, bool $expected ): void {
+		/* Arrange. */
+		$quiz_progress = $this->create_progress( $status );
+
+		/* Act. */
+		$actual = $quiz_progress->is_quiz_completed();
+
+		/* Assert. */
+		self::assertSame( $expected, $actual );
+	}
+
+	public function providerIsQuizCompleted_ConstructedWithStatus_ReturnsMatchingValue(): array {
+		return array(
+			'quiz in progress'                => array( 'in-progress', false ),
+			'quiz graded'                     => array( 'graded', true ),
+			'quiz failed'                     => array( 'failed', true ),
+			'quiz passed'                     => array( 'passed', true ),
+			'quiz ungraded'                   => array( 'ungraded', false ),
+			'lesson complete (legacy status)' => array( 'complete', false ),
+		);
+	}
+
 	public function testGetStartedAt_ConstructedWithStartedAt_ReturnsSameStartedAt(): void {
 		/* Arrange. */
 		$quiz_progress = $this->create_progress();

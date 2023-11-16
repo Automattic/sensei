@@ -1,5 +1,6 @@
 <?php
 
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1291,13 +1292,23 @@ class Sensei_Quiz {
 		$encoded_feedback = get_transient( $transient_key );
 
 		// get the data if nothing was stored in the transient
-		if ( empty( $encoded_feedback ) || ! $encoded_feedback ) {
+		if ( ! $encoded_feedback ) {
+			$quiz_id    = (int) Sensei()->lesson->lesson_quizzes( $lesson_id );
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			if ( ! $submission ) {
+				return false;
+			}
 
-			$encoded_feedback = Sensei_Utils::get_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
+			$encoded_feedback = array();
+			$grades           = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
+			foreach ( $grades as $grade ) {
+				$encoded_feedback[ $grade->get_question_id() ] = $grade->get_feedback();
+			}
 
 			// set the transient with the new valid data for faster retrieval in future
-			set_transient( $transient_key, $encoded_feedback, 10 * DAY_IN_SECONDS );
-
+			if ( $encoded_feedback ) {
+				set_transient( $transient_key, $encoded_feedback, 10 * DAY_IN_SECONDS );
+			}
 		}
 
 		// if there is no data for this user
@@ -2396,9 +2407,14 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			return false;
+		}
 
-		return $lesson_status && 'ungraded' === $lesson_status->comment_approved;
+		$progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+
+		return $progress && Quiz_Progress_Interface::STATUS_UNGRADED === $progress->get_status();
 	}
 
 	/**
@@ -2423,19 +2439,16 @@ class Sensei_Quiz {
 			return null;
 		}
 
-		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
-
-		$is_complete = $lesson_status && in_array( $lesson_status->comment_approved, [ 'complete', 'graded', 'passed', 'failed' ], true );
-
-		if ( ! $is_complete ) {
+		$quiz_id       = (int) Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_progress || ! $quiz_progress->is_quiz_completed() ) {
 			return null;
 		}
 
 		$is_pass_required = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
 		$is_reset_allowed = self::is_reset_allowed( $lesson_id );
 
-		if ( $is_pass_required && 'failed' === $lesson_status->comment_approved ) {
-
+		if ( $is_pass_required && Quiz_Progress_Interface::STATUS_FAILED === $quiz_progress->get_status() ) {
 			if ( $is_reset_allowed ) {
 				return null;
 			}

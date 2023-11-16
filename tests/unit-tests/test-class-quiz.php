@@ -2,6 +2,8 @@
 
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
 
 class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
@@ -2432,5 +2434,69 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		foreach ( $classes as $class ) {
 			$this->assertStringContainsString( $class, $html );
 		}
+	}
+
+	public function testIsQuizAwaitingGradeForUser_IsUngraded_ReturnsTrue() {
+		/* Arrange */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'post_parent' => $course_id,
+				'meta_input'  => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+
+		$progress = $this->createMock( Quiz_Progress_Interface::class );
+		$progress->method( 'get_status' )
+			->willReturn( Quiz_Progress_Interface::STATUS_UNGRADED );
+
+		$quiz_progress_repository          = Sensei()->quiz_progress_repository;
+		Sensei()->quiz_progress_repository = $this->createMock( Quiz_Progress_Repository_Interface::class );
+		Sensei()->quiz_progress_repository->method( 'get' )
+			->willReturn( $progress );
+
+		/* Act */
+		$result = Sensei_Quiz::is_quiz_awaiting_grade_for_user( $lesson_id, 1 );
+
+		/* Assert */
+		$this->assertTrue( $result );
+
+		/* Reset */
+		Sensei()->quiz_progress_repository = $quiz_progress_repository;
+	}
+
+	public function testIsQuizAwaitingGradeForUser_IsNotUngraded_ReturnsFalse() {
+		/* Arrange */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'post_parent' => $course_id,
+				'meta_input'  => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+
+		$progress = $this->createMock( Quiz_Progress_Interface::class );
+		$progress->method( 'get_status' )
+			->willReturn( Quiz_Progress_Interface::STATUS_GRADED );
+
+		$quiz_progress_repository          = Sensei()->quiz_progress_repository;
+		Sensei()->quiz_progress_repository = $this->createMock( Quiz_Progress_Repository_Interface::class );
+		Sensei()->quiz_progress_repository->method( 'get' )
+			->willReturn( $progress );
+
+		/* Act */
+		$result = Sensei_Quiz::is_quiz_awaiting_grade_for_user( $lesson_id, 1 );
+
+		/* Assert */
+		$this->assertFalse( $result );
+
+		/* Reset */
+		Sensei()->quiz_progress_repository = $quiz_progress_repository;
 	}
 }
