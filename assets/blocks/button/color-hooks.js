@@ -80,7 +80,7 @@ const removeColorProps = ( props ) => ( {
 		''
 	),
 	style: omitBy( props?.style, ( value, key ) =>
-		key.match( /(color|background|background-color)/ )
+		key.match( /(color|background|background-color|border)/ )
 	),
 } );
 
