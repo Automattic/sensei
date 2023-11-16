@@ -176,7 +176,7 @@ class Sensei_Notices {
 	 * @return void
 	 */
 	public function maybe_load_notices() {
-		if ( is_user_logged_in() ) {
+		if ( is_user_logged_in() &amp;&amp; Sensei_Utils::is_frontend_request() ) {
 			$user_id = get_current_user_id();
 			$values  = get_user_meta( $user_id, self::USER_META_KEY );
 
@@ -194,7 +194,7 @@ class Sensei_Notices {
 	 * @return void
 	 */
 	public function maybe_persist_notices() {
-		if ( ! empty( $this->notices ) &amp;&amp; is_user_logged_in() ) {
+		if ( ! empty( $this->notices ) &amp;&amp; is_user_logged_in() &amp;&amp; Sensei_Utils::is_frontend_request() ) {
 			update_user_meta( get_current_user_id(), self::USER_META_KEY, $this->notices );
 			$this->clear_notices();
 		}
