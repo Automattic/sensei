@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix deprecation notice when user is not logged in
