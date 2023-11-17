@@ -55,7 +55,7 @@ class Sensei_Course_Outline_Course_Block {
 		$post_id    = $outline['post_id'];
 
 		if ( empty( $blocks ) ) {
-			Sensei()->notices->add_notice( __( 'There is no published content in this course yet.', 'sensei-lms' ), 'info', 'sensei-course-outline-no-content' );
+			Sensei()->notices->add_notice( __( 'There is no published lessons in this course yet.', 'sensei-lms' ), 'info', 'sensei-course-outline-no-content' );
 			return '';
 		}
 
