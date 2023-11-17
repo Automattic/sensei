@@ -861,10 +861,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 				'description' => __( 'Choose a repository to store the progress and quiz submissions of your students.', 'sensei-lms' ),
 				'form'        => 'render_progress_storage_repositories',
 				'type'        => 'radio',
-				'default'     => 'legacy',
+				'default'     => 'comments',
 				'section'     => 'sensei-experimental-features',
 				'options'     => array(
-					'comments'      => __( 'WordPress comments based storage (legacy)', 'sensei-lms' ),
+					'comments'      => __( 'WordPress comments based storage', 'sensei-lms' ),
 					'custom_tables' => __( 'High-Performance progress storage (experimental)', 'sensei-lms' ),
 				),
 			);
