@@ -876,7 +876,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 				'default'     => false,
 				'section'     => 'sensei-experimental-features',
 			);
-
 		}
 
 		/**
@@ -1135,7 +1134,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 				<input
 					type="checkbox"
 					name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
-					value="<?php echo esc_attr( $value ); ?>"
+					value="1"
 					<?php disabled( true, $disabled, true ); ?>
 					<?php checked( $value, true, true ); ?>
 				/>

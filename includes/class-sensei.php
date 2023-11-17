@@ -629,6 +629,9 @@ class Sensei_Main {
 		$tables_enabled = isset( $this->settings->settings['experimental_progress_storage'] )
 			&& ( true === $this->settings->settings['experimental_progress_storage'] );
 
+		$read_from_tables_setting = isset( $this->settings->settings['experimental_progress_storage_repository'] )
+			&& ( 'custom_tables' === $this->settings->settings['experimental_progress_storage_repository'] );
+
 		if ( $tables_enabled ) {
 			// Enable tables based progress feature flag.
 			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
@@ -641,10 +644,10 @@ class Sensei_Main {
 		 *
 		 * @hook  sensei_student_progress_read_from_tables
 		 *
-		 * @param {bool} $read_from_tables Whether to read student progress from tables. Default false.
+		 * @param {bool} $read_from_tables Whether to read student progress from tables.
 		 * @return {bool} Whether to read student progress from tables.
 		 */
-		$read_from_tables                         = apply_filters( 'sensei_student_progress_read_from_tables', false );
+		$read_from_tables                         = apply_filters( 'sensei_student_progress_read_from_tables', $read_from_tables_setting );
 		$this->course_progress_repository_factory = new Course_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
 		$this->course_progress_repository         = $this->course_progress_repository_factory->create();
 		$this->lesson_progress_repository_factory = new Lesson_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
