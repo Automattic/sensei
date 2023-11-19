@@ -38,7 +38,7 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		Sensei()->notices->maybe_print_notices();
 		$result = ob_get_clean();
 
-		$this->assertStringContainsString( 'There is no published lessons in this course yet.', $result );
+		$this->assertStringContainsString( 'There are no published lessons in this course yet.', $result );
 	}
 
 	/**
