@@ -6,6 +6,9 @@
  * @since 3.9.0
  */
 
+use Sensei\Admin\Content_Duplicators\Lesson_Quiz_Duplicator;
+use Sensei\Admin\Content_Duplicators\Post_Duplicator;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly.
@@ -107,17 +110,17 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 		// add a route to duplicate a lesson and attach it to a course.
 		register_rest_route(
 			'sensei/v1',
-			'/lessons/(?P<id>[\d]+)/duplicate',
+			'/lessons/duplicate',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'duplicate_lesson' ],
 				'permission_callback' => [ $this, 'duplicate_lesson_permissions_check' ],
 				'args'                => [
-					'id'        => [
-						'description' => __( 'The ID of the lesson to duplicate.', 'sensei-lms' ),
+					'lesson_ids' => [
+						'description' => __( 'The IDs of lessons to duplicate.', 'sensei-lms' ),
 						'type'        => 'integer',
 					],
-					'course_id' => [
+					'course_id'  => [
 						'description' => __( 'The ID of the course to attach the duplicated lesson to.', 'sensei-lms' ),
 						'type'        => 'integer',
 					],
@@ -126,13 +129,64 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 		);
 	}
 
+	/**
+	 * Duplicate a lesson and attach it to a course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
 	public function duplicate_lesson( $request ) {
-		$lesson_id = $request->get_param( 'id' );
-		$course_id = $request->get_param( 'course_id' );
+		$lesson_ids = $request->get_param( 'lesson_ids' );
+		$course_id  = $request->get_param( 'course_id' );
 
+		$response = new WP_REST_Response();
+		if ( empty( $lesson_ids ) ) {
+			$response->set_data( [] );
 
+			return $response;
+		}
+
+		$lessons = get_posts(
+			[
+				'post__in'       => $lesson_ids,
+				'post_type'      => 'question',
+				'posts_per_page' => -1,
+			]
+		);
+		$course  = get_post( $course_id );
+
+		if ( empty( $lesson ) || ! $course ) {
+			return new WP_Error( 'sensei_rest_invalid_id', __( 'Invalid ID(s) provided.', 'sensei-lms' ), [ 'status' => 404 ] );
+		}
+
+		$post_duplicator        = new Post_Duplicator();
+		$lesson_quiz_duplicator = new Lesson_Quiz_Duplicator();
+
+		$duplicated_lessons = array();
+		foreach ( $lessons as $lesson ) {
+			$duplicated_lesson = $post_duplicator->duplicate( $lesson, null, true );
+
+			$lesson_quiz_duplicator->duplicate( $lesson->ID, $duplicated_lesson->ID );
+			update_post_meta( $duplicated_lesson->ID, '_lesson_course', $course_id );
+
+			$duplicated_lessons[] = $duplicated_lesson;
+		}
+
+		$response->set_data( $duplicated_lessons );
+
+		return $response;
 	}
 
+	/**
+	 * Check if the current user can duplicate a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return bool Whether the user can duplicate the lesson.
+	 */
 	public function duplicate_lesson_permissions_check( $request ): bool {
 		$lesson_id = $request->get_param( 'id' );
 		$course_id = $request->get_param( 'course_id' );
