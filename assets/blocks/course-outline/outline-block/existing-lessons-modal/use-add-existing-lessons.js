@@ -1,22 +1,33 @@
 /**
  * WordPress dependencies
  */
-import { select, useDispatch } from '@wordpress/data';
+import { createBlock } from '@wordpress/blocks';
+import { select, useDispatch, useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 
-///**
-//* Internal dependencies
-//*/
-//import { createLessonBlock, findLessonBlock } from '../data';
-const createLessonBlock = ( item ) => item;
-const findLessonBlock = ( lessonBlocks, item ) => ( {
-	lessonBlocks,
-	item,
-} );
-//import { useNextLessonIndex } from './next-lesson-index';
-const useNextLessonIndex = ( clientId ) => clientId;
+/**
+ * Lesson type difinition.
+ *
+ * @typedef {Object} Lesson
+ * @property {number} id    Lesson ID.
+ * @property {string} title Lesson title
+ */
 
-const API_PATH = '/sensei-internal/v1/lesson-options';
+/**
+ * Find a question block based on question ID, or title if ID is missing.
+ *
+ * @param {Array}  blocks
+ * @param {Lesson} item
+ */
+export const findLessonBlock = ( blocks, { id, title } ) => {
+	const compare = ( { attributes } ) =>
+		id === attributes.id ||
+		( ! attributes.id && attributes.title && attributes.title === title );
+
+	return blocks.find( compare );
+};
+
+const API_PATH = '/sensei-internal/v1/lessons';
 
 /**
  * Add existing lessons to the course outline block.
@@ -27,7 +38,10 @@ const API_PATH = '/sensei-internal/v1/lesson-options';
 export const useAddExistingLessons = ( clientId ) => {
 	const lessonBlocks = select( 'core/block-editor' ).getBlocks( clientId );
 	const { insertBlock } = useDispatch( 'core/block-editor' );
-	const nextInsertIndex = useNextLessonIndex( clientId );
+	const nextInsertIndex = useSelect(
+		() => select( 'core/block-editor' ).getBlockCount( clientId ),
+		[]
+	);
 
 	return ( lessonIds ) => {
 		const newLessonIds = lessonIds.filter( ( lessonId ) => {
@@ -45,13 +59,20 @@ export const useAddExistingLessons = ( clientId ) => {
 		let insertIndex = nextInsertIndex;
 
 		return apiFetch( {
-			path: API_PATH + '?lesson_ids=' + newLessonIds.join( ',' ),
-			method: 'GET',
+			path: API_PATH,
+			method: 'POST',
+			data: {
+				lesson_ids: newLessonIds.join( ',' ),
+			},
 		} ).then( ( res ) => {
 			if ( Array.isArray( res ) && res.length > 0 ) {
 				res.forEach( ( item ) => {
 					insertBlock(
-						createLessonBlock( item ),
+						createBlock( 'sensei-lms/course-outline-lesson', {
+							title: item.title,
+							type: 'lesson',
+							id: item.id,
+						} ),
 						insertIndex,
 						clientId,
 						false
