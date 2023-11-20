@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Update frontend message when there's no published lessons on the course for a more clear message
