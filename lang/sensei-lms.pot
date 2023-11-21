@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-11-21T20:16:27+00:00\n"
+"POT-Creation-Date: 2023-11-21T21:11:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: sensei-lms\n"
@@ -5496,11 +5496,11 @@ msgstr ""
 msgid "Select a Page:"
 msgstr ""
 
-#: includes/class-sensei-settings.php:1113
+#: includes/class-sensei-settings.php:1117
 msgid "Enable for all courses"
 msgstr ""
 
-#: includes/class-sensei-settings.php:1122
+#: includes/class-sensei-settings.php:1126
 msgid "Customize Colors"
 msgstr ""
 
