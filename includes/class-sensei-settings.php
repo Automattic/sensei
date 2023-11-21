@@ -1079,6 +1079,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$old_hpps_sync = isset( $old_value['experimental_progress_storage_synchronization'] ) ? $old_value['experimental_progress_storage_synchronization'] : false;
 		$new_hpps_sync = isset( $value['experimental_progress_storage_synchronization'] ) ? $value['experimental_progress_storage_synchronization'] : false;
 
+		Sensei()->init_migration_scheduler();
 		$migration_scheduler = Sensei()->migration_scheduler;
 		if ( $new_hpps_sync !== $old_hpps_sync && $new_hpps_sync && ! is_null( $migration_scheduler ) ) {
 			// Dpop existing tables and clear the migration state.
@@ -1172,7 +1173,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Disables the checkbox if the migration is in progress or HPPS storage is in use.
 		$hpps_repository_in_use = 'custom_tables' === ( $settings['experimental_progress_storage_repository'] ?? null );
-		$disabled               = $migration_in_progress || $hpps_repository_in_use || is_null( $migration_scheduler );
+		$disabled               = $migration_in_progress || $hpps_repository_in_use || is_null( Sensei()->action_scheduler );
 		?>
 		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
 			<h4><?php echo esc_html( __( 'Progress storage synchronization', 'sensei-lms' ) ); ?></h4>
@@ -1186,6 +1187,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 				/>
 				<?php echo esc_html( $args['data']['description'] ); ?>
 			</label>
+
+			<?php if ( $disabled ) : ?>
+				<input type="hidden" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" value="<?php echo esc_attr( $value ); ?>" />
+			<?php endif; ?>
 
 			<?php if ( $value ) : ?>
 				<?php if ( $migration_in_progress ) : ?>

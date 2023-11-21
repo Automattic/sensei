@@ -1,6 +1,8 @@
 <?php
 
 use Sensei\Installer\Installer;
+use Sensei\Internal\Action_Scheduler\Action_Scheduler;
+use Sensei\Internal\Migration\Migration_Job_Scheduler;
 
 class Sensei_Globals_Test extends WP_UnitTestCase {
 	/**
@@ -165,6 +167,32 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 		remove_filter( 'sensei_comment_counts_include_sensei_comments', '__return_false' );
 
 		$this->assertEquals( (array) $stats_without_sensei, (array) $stats, 'Stats should be what we passed back' );
+	}
+
+	public function testInitMigrationScheduler_NoActionScheduler_DoesntInitializeMigrationScheduler() {
+		/* Arrange. */
+		$sensei = Sensei();
+		$sensei->action_scheduler    = null;
+		$sensei->migration_scheduler = null;
+
+		/* Act. */
+		$sensei->init_migration_scheduler();
+
+		/* Assert. */
+		$this->assertNull( $sensei->migration_scheduler );
+	}
+
+	public function testInitMigrationScheduler_WithActionScheduler_DoesntInitializeMigrationScheduler() {
+		/* Arrange. */
+		$sensei = Sensei();
+		$sensei->action_scheduler    = $this->createMock( Action_Scheduler::class );
+		$sensei->migration_scheduler = null;
+
+		/* Act. */
+		$sensei->init_migration_scheduler();
+
+		/* Assert. */
+		$this->assertInstanceOf( Migration_Job_Scheduler::class, $sensei->migration_scheduler );
 	}
 
 	/**
