@@ -1080,8 +1080,12 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$new_hpps_sync = isset( $value['experimental_progress_storage_synchronization'] ) ? $value['experimental_progress_storage_synchronization'] : false;
 
 		if ( $new_hpps_sync !== $old_hpps_sync && $new_hpps_sync ) {
+			// Dpop existing tables and clear the migration state.
 			( new Eraser() )->erase();
 			Sensei()->migration_scheduler->clear_state();
+
+			// Recreate tables and  schedule the migration.
+			( new Schema( Sensei()->feature_flags ) )->create_tables();
 			Sensei()->migration_scheduler->schedule();
 		}
 	}
@@ -1149,13 +1153,23 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 */
 	public function render_progress_storage_synchronization( $args ) {
 
+		// Checkbox field.
 		$settings              = $this->get_settings();
 		$key                   = $args['key'];
 		$value                 = $settings[ $key ];
+
+		// Setting visibility.
 		$visible               = $settings['experimental_progress_storage'] ?? false;
 		$block_display         = $visible ? 'block' : 'none';
+
+		// Migration state.
 		$migration_in_progress = Sensei()->migration_scheduler->is_in_progress();
+		$migration_complete    = Sensei()->migration_scheduler->is_complete();
 		$migration_errors      = Sensei()->migration_scheduler->get_errors();
+		//
+		// Disables the checkbox if the migration is in progress or HPPS storage is in use.
+		$hpps_repository_in_use = 'custom_tables' === ( $settings['experimental_progress_storage_repository'] ?? null );
+		$disabled               = $migration_in_progress || $hpps_repository_in_use;
 		?>
 		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
 			<h4><?php echo esc_html( __( 'Progress storage synchronization', 'sensei-lms' ) ); ?></h4>
@@ -1164,29 +1178,42 @@ class Sensei_Settings extends Sensei_Settings_API {
 					type="checkbox"
 					name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
 					value="1"
-					<?php disabled( true, $migration_in_progress, true ); ?>
+					<?php disabled( true, $disabled, true ); ?>
 					<?php checked( $value, true, true ); ?>
 				/>
 				<?php echo esc_html( $args['data']['description'] ); ?>
 			</label>
-			<?php if ( $migration_in_progress ) : ?>
-			<p>
-				<?php
-				echo __( 'Data migration is in progress. Please wait for it to switch repository.', 'sensei-lms' );
-				?>
-			</p>
-			<?php endif; ?>
-			<?php if ( ! empty( $migration_errors ) ) : ?>
-			<p>
-				<?php
-				echo __( 'Data migration failed.', 'sensei-lms' );
-				?>
-			</p>
-			<ul>
-				<?php foreach ( $migration_errors as $error ) : ?>
-				<li><?php echo esc_html( $error ); ?></li>
-				<?php endforeach; ?>
-			</ul>
+
+			<?php if ( $value ) : ?>
+				<?php if ( $migration_in_progress ) : ?>
+				<p>
+					<?php
+					echo __( 'Data migration is in progress. Please wait for it to switch repository.', 'sensei-lms' );
+					?>
+				</p>
+				<?php elseif ( $migration_complete && empty( $migration_errors ) ): ?>
+				<p>
+					<?php
+					echo __( 'Migration complete and data synchronization enabled.', 'sensei-lms' );
+					?>
+				</p>
+				<?php elseif ( ! empty( $migration_errors ) ) : ?>
+				<p>
+					<?php
+					echo __( 'Data migration failed.', 'sensei-lms' );
+					?>
+				</p>
+				<ul>
+					<?php foreach ( $migration_errors as $error ) : ?>
+					<li><?php echo esc_html( $error ); ?></li>
+					<?php endforeach; ?>
+				</ul>
+				<?php else: ?>
+				<p>
+					<?php
+					echo __( 'Waiting for data migration to start.', 'sensei-lms' );
+					?>
+				<?php endif; ?>
 			<?php endif; ?>
 		</div>
 		<?php
