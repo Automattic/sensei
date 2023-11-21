@@ -302,4 +302,34 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		$actual = get_option( Migration_Job_Scheduler::STARTED_OPTION_NAME );
 		$this->assertFalse( $actual );
 	}
+
+	public function testGetErrors_WhenNoErrors_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		delete_option( Migration_Job_Scheduler::ERRORS_OPTION_NAME );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+		$expected         = [];
+
+		/* Act. */
+		$actual = $job_scheduler->get_errors();
+
+		/* Assert. */
+		$this->assertSame( $expected, $actual );
+	}
+
+	public function testGetErrors_WhenErrorsExist_ReturnsErrors(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::ERRORS_OPTION_NAME, [ 'error 1', 'error 2' ] );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+		$expected         = [ 'error 1', 'error 2' ];
+
+		/* Act. */
+		$actual = $job_scheduler->get_errors();
+
+		/* Assert. */
+		$this->assertSame( $expected, $actual );
+	}
 }
