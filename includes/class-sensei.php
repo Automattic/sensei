@@ -625,7 +625,6 @@ class Sensei_Main {
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
-
 		// Student progress repositories.
 		$tables_enabled = isset( $this->settings->settings['experimental_progress_storage'] )
 			&& ( true === $this->settings->settings['experimental_progress_storage'] )
@@ -674,7 +673,9 @@ class Sensei_Main {
 		// Student progress migration.
 		if ( $tables_enabled && $this->action_scheduler ) {
 			$this->init_migration_scheduler();
-			( new Migration_Tool( \Sensei_Tools::instance(), $this->migration_scheduler ) )->init();
+			if ( ! is_null( $this->migration_scheduler ) ) {
+				( new Migration_Tool( \Sensei_Tools::instance(), $this->migration_scheduler ) )->init();
+			}
 		}
 
 		// Init student progress handlers.

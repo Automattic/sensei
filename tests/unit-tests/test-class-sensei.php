@@ -171,7 +171,7 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 
 	public function testInitMigrationScheduler_NoActionScheduler_DoesntInitializeMigrationScheduler() {
 		/* Arrange. */
-		$sensei = Sensei();
+		$sensei                      = Sensei();
 		$sensei->action_scheduler    = null;
 		$sensei->migration_scheduler = null;
 
@@ -184,7 +184,7 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 
 	public function testInitMigrationScheduler_WithActionScheduler_DoesntInitializeMigrationScheduler() {
 		/* Arrange. */
-		$sensei = Sensei();
+		$sensei                      = Sensei();
 		$sensei->action_scheduler    = $this->createMock( Action_Scheduler::class );
 		$sensei->migration_scheduler = null;
 
