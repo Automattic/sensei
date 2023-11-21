@@ -131,6 +131,15 @@ class Migration_Job_Scheduler {
 		return $stared && ! $completed;
 	}
 
+	/**
+	 * Get the migration errors.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return array
+	 */
 	public function get_errors(): array {
 		return (array) get_option( self::ERRORS_OPTION_NAME, [] );
 	}
@@ -191,7 +200,7 @@ class Migration_Job_Scheduler {
 	 *
 	 * @since $$next-version$$
 	 */
-	function clear_state(): void {
+	public function clear_state(): void {
 		delete_option( self::STARTED_OPTION_NAME );
 		delete_option( self::COMPLETED_OPTION_NAME );
 		delete_option( self::ERRORS_OPTION_NAME );

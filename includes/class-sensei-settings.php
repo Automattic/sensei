@@ -1128,7 +1128,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<?php if ( $sync_disabled ) : ?>
 			<p>
 				<?php
-				echo __( 'Enable storage synchronization and wait for full synchronization to complete before switching to another repository.', 'sensei-lms' );
+				echo esc_html( __( 'Enable storage synchronization and wait for full synchronization to complete before switching to another repository.', 'sensei-lms' ) );
 				?>
 			</p>
 			<?php endif; ?>
@@ -1136,7 +1136,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<?php if ( ! $sync_disabled && $migration_incomplete ) : ?>
 			<p>
 				<?php
-				echo __( 'Wait for full synchronization to complete before switching to another repository.', 'sensei-lms' );
+				echo esc_html( __( 'Wait for full synchronization to complete before switching to another repository.', 'sensei-lms' ) );
 				?>
 			</p>
 			<?php endif; ?>
@@ -1154,13 +1154,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 	public function render_progress_storage_synchronization( $args ) {
 
 		// Checkbox field.
-		$settings              = $this->get_settings();
-		$key                   = $args['key'];
-		$value                 = $settings[ $key ];
+		$settings = $this->get_settings();
+		$key      = $args['key'];
+		$value    = $settings[ $key ];
 
 		// Setting visibility.
-		$visible               = $settings['experimental_progress_storage'] ?? false;
-		$block_display         = $visible ? 'block' : 'none';
+		$visible       = $settings['experimental_progress_storage'] ?? false;
+		$block_display = $visible ? 'block' : 'none';
 
 		// Migration state.
 		$migration_in_progress = Sensei()->migration_scheduler->is_in_progress();
@@ -1188,19 +1188,19 @@ class Sensei_Settings extends Sensei_Settings_API {
 				<?php if ( $migration_in_progress ) : ?>
 				<p>
 					<?php
-					echo __( 'Data migration is in progress. Please wait for it to switch repository.', 'sensei-lms' );
+					echo esc_html( __( 'Data migration is in progress. Please wait for it to switch repository.', 'sensei-lms' ) );
 					?>
 				</p>
-				<?php elseif ( $migration_complete && empty( $migration_errors ) ): ?>
+				<?php elseif ( $migration_complete && empty( $migration_errors ) ) : ?>
 				<p>
 					<?php
-					echo __( 'Migration complete and data synchronization enabled.', 'sensei-lms' );
+					echo esc_html( __( 'Migration complete and data synchronization enabled.', 'sensei-lms' ) );
 					?>
 				</p>
 				<?php elseif ( ! empty( $migration_errors ) ) : ?>
 				<p>
 					<?php
-					echo __( 'Data migration failed.', 'sensei-lms' );
+					echo esc_html( __( 'Data migration failed.', 'sensei-lms' ) );
 					?>
 				</p>
 				<ul>
@@ -1208,11 +1208,12 @@ class Sensei_Settings extends Sensei_Settings_API {
 					<li><?php echo esc_html( $error ); ?></li>
 					<?php endforeach; ?>
 				</ul>
-				<?php else: ?>
+				<?php else : ?>
 				<p>
 					<?php
-					echo __( 'Waiting for data migration to start.', 'sensei-lms' );
+					echo esc_html( __( 'Waiting for data migration to start.', 'sensei-lms' ) );
 					?>
+				</p>
 				<?php endif; ?>
 			<?php endif; ?>
 		</div>

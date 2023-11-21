@@ -7,7 +7,6 @@
 
 namespace Sensei\Internal\Installer;
 
-
 /**
  * Earaer class. Used to delete all progress tables.
  *
