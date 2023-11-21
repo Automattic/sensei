@@ -2,7 +2,6 @@
 
 namespace SenseiTest\Internal\Migration;
 
-use parallel\Runtime;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Migration\Migration_Job;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
@@ -214,5 +213,93 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$job_scheduler->run_job( $migration_job_1->get_name() );
+	}
+
+	public function testIsInProgress_WasInProgress_ReturnsTrue(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::STARTED_OPTION_NAME, 1 );
+		delete_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		/* Act. */
+		$actual = $job_scheduler->is_in_progress();
+
+		/* Assert. */
+		$this->assertTrue( $actual );
+	}
+
+	public function testIsInProgress_WasNotStarted_ReturnsFalse(): void {
+		/* Arrange. */
+		delete_option( Migration_Job_Scheduler::STARTED_OPTION_NAME );
+		delete_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		/* Act. */
+		$actual = $job_scheduler->is_in_progress();
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
+	public function testIsInProgress_HasFinished_ReturnsFalse(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::STARTED_OPTION_NAME, 1 );
+		update_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME, 2 );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		/* Act. */
+		$actual = $job_scheduler->is_in_progress();
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
+	public function testIsComplete_WasComplete_ReturnsTrue(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME, 1 );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		/* Act. */
+		$actual = $job_scheduler->is_complete();
+
+		/* Assert. */
+		$this->assertTrue( $actual );
+	}
+
+	public function testIsComplete_WasNotComplete_ReturnsFalse(): void {
+		/* Arrange. */
+		delete_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		/* Act. */
+		$actual = $job_scheduler->is_complete();
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
+	public function testClearState_DataExists_DeletesData(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::STARTED_OPTION_NAME, 1 );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		/* Act. */
+		$job_scheduler->clear_state();
+
+		/* Assert. */
+		$actual = get_option( Migration_Job_Scheduler::STARTED_OPTION_NAME );
+		$this->assertFalse( $actual );
 	}
 }
