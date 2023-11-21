@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix error with the "no published content" notice being displayed on the frontend for users who created a course on the editor
