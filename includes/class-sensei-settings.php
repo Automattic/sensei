@@ -1168,8 +1168,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$migration_scheduler   = Sensei()->migration_scheduler;
 		$migration_in_progress = $migration_scheduler && $migration_scheduler->is_in_progress();
 		$migration_complete    = $migration_scheduler && $migration_scheduler->is_complete();
-		$migration_errors      = $migration_scheduler && $migration_scheduler->get_errors();
-		//
+		$migration_errors      = ! is_null( $migration_scheduler ) ? $migration_scheduler->get_errors() : array();
+
 		// Disables the checkbox if the migration is in progress or HPPS storage is in use.
 		$hpps_repository_in_use = 'custom_tables' === ( $settings['experimental_progress_storage_repository'] ?? null );
 		$disabled               = $migration_in_progress || $hpps_repository_in_use || is_null( $migration_scheduler );
