@@ -52,7 +52,7 @@ add_action( 'course_theme_variation_loaded', 'sensei_load_styles_for_course_them
  *
  * @param string $variation_name The current theme variation.
  *
- * @since $$next-version$$
+ * @since 4.19.2
  */
 function sensei_load_styles_for_course_theme_variation( $variation_name ) {
 	if ( empty( $variation_name ) ) {

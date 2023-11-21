@@ -96,7 +96,7 @@ class Sensei_Updates {
 	/**
 	 * Enqueue job to update the legacy quiz data.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.2
 	 */
 	private function v4_19_2_update_legacy_quiz_data() {
 		$legacy_answers_count = (int) Sensei_Utils::sensei_check_for_activity(
