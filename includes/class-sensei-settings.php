@@ -1083,11 +1083,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 		if ( $new_hpps_sync !== $old_hpps_sync && $new_hpps_sync && ! is_null( $migration_scheduler ) ) {
 			// Dpop existing tables and clear the migration state.
 			( new Eraser() )->erase();
-			Sensei()->migration_scheduler->clear_state();
+			$migration_scheduler->clear_state();
 
 			// Recreate tables and  schedule the migration.
 			( new Schema( Sensei()->feature_flags ) )->create_tables();
-			Sensei()->migration_scheduler->schedule();
+			$migration_scheduler->schedule();
 		}
 	}
 
@@ -1105,7 +1105,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$block_display        = $visible ? 'block' : 'none';
 		$sync_disabled        = ! (bool) ( $settings['experimental_progress_storage_synchronization'] ?? false );
 		$migration_scheduler  = Sensei()->migration_scheduler;
-		$migration_incomplete = ! $migration_scheduler || ! Sensei()->migration_scheduler->is_complete();
+		$migration_incomplete = ! $migration_scheduler || ! $migration_scheduler->is_complete();
 		?>
 		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
 			<h4><?php echo esc_html( __( 'Progress storage repository', 'sensei-lms' ) ); ?></h4>
@@ -1168,11 +1168,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$migration_scheduler   = Sensei()->migration_scheduler;
 		$migration_in_progress = $migration_scheduler && $migration_scheduler->is_in_progress();
 		$migration_complete    = $migration_scheduler && $migration_scheduler->is_complete();
-		$migration_errors      = $migration_scheduler->get_errors();
+		$migration_errors      = $migration_scheduler && $migration_scheduler->get_errors();
 		//
 		// Disables the checkbox if the migration is in progress or HPPS storage is in use.
 		$hpps_repository_in_use = 'custom_tables' === ( $settings['experimental_progress_storage_repository'] ?? null );
-		$disabled               = $migration_in_progress || $hpps_repository_in_use || ! $migration_scheduler;
+		$disabled               = $migration_in_progress || $hpps_repository_in_use || is_null( $migration_scheduler );
 		?>
 		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
 			<h4><?php echo esc_html( __( 'Progress storage synchronization', 'sensei-lms' ) ); ?></h4>
@@ -1211,7 +1211,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 					<li><?php echo esc_html( $error ); ?></li>
 					<?php endforeach; ?>
 				</ul>
-				<?php elseif ( ! $migration_scheduler ) : ?>
+				<?php elseif ( is_null( $migration_scheduler ) ) : ?>
 				<p>
 					<?php
 					echo esc_html( __( 'Cannot get the migration status.', 'sensei-lms' ) );
