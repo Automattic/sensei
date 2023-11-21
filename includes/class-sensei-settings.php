@@ -1040,6 +1040,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @param array $value     The new settings value.
 	 */
 	public function experimental_features_saved( $old_value, $value ) {
+		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+			return;
+		}
+
 		$screen = get_current_screen();
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && ! defined( 'REST_REQUEST' ) && $screen && 'options' === $screen->id ) ) {
@@ -1050,7 +1054,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$new_hpps = isset( $value['experimental_progress_storage'] ) ? $value['experimental_progress_storage'] : false;
 
 		if ( $new_hpps !== $old_hpps && $new_hpps ) {
-			// Enablee the feature flag to make progress tables available.
+			// Enable the feature flag to make progress tables available.
 			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
 			( new Schema( Sensei()->feature_flags ) )->create_tables();
 		}
