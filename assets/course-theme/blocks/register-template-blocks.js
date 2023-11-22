@@ -28,8 +28,6 @@ export function registerTemplateBlocks( blocks ) {
 	toggleBlockRegistration( true );
 
 	// TODO Only subscribe when in the post editor.
-	// Commented this out as it breaks the editor. Need to find a proper way to unregister blocks
-	// for templates other than lesson or quiz.
 	subscribe( () => {
 		const postType = select( 'core/editor' )?.getCurrentPostType();
 		const editPost = select( 'core/edit-post' );
