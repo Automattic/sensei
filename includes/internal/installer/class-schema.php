@@ -21,7 +21,7 @@ class Schema {
 	/**
 	 * Feature flags.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.2
 	 * @var Sensei_Feature_Flags
 	 */
 	private Sensei_Feature_Flags $feature_flags;
@@ -39,7 +39,7 @@ class Schema {
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.2
 	 *
 	 * @param Sensei_Feature_Flags $feature_flags Feature flags.
 	 */

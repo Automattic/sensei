@@ -3,7 +3,7 @@
  * File containing the Sensei_Lesson_Completed_Block class.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.19.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

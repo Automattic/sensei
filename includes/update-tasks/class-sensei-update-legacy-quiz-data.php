@@ -2,7 +2,7 @@
 /**
  * File containing the class Sensei_Update_Legacy_Quiz_Data.
  *
- * @since $$next-version$$
+ * @since 4.19.2
  * @package sensei
  */
 

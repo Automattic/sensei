@@ -29,7 +29,7 @@ class Lesson_Actions {
 	/**
 	 * Lesson_Actions constructor.
 	 *
-	 * @deprecated $$next-version$$ Use the normal Lesson Actions block (Sensei_Lesson_Actions_Block) instead.
+	 * @deprecated 4.19.2 Use the normal Lesson Actions block (Sensei_Lesson_Actions_Block) instead.
 	 */
 	public function __construct() {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;

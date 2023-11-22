@@ -21,7 +21,7 @@ use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submiss
 /**
  * Class responsible for validation of the migrated quiz submission data.
  *
- * @since $$next-version$$
+ * @since 4.19.2
  */
 class Quiz_Submission_Validation {
 	/**
@@ -36,7 +36,7 @@ class Quiz_Submission_Validation {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.2
 	 */
 	public function run(): void {
 		$this->errors = array();
@@ -55,7 +55,7 @@ class Quiz_Submission_Validation {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.2
 	 *
 	 * @return bool
 	 */
@@ -68,7 +68,7 @@ class Quiz_Submission_Validation {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.2
 	 *
 	 * @return Validation_Error[]
 	 */
