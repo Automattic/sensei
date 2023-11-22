@@ -629,16 +629,16 @@ class Sensei_Main {
 		$tables_feature_enabled = isset( $this->settings->settings['experimental_progress_storage'] )
 			&& ( true === $this->settings->settings['experimental_progress_storage'] );
 
+		if ( $tables_feature_enabled ) {
+			// Enable tables based progress feature flag.
+			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
+		}
+
 		$tables_sync_enabled = $tables_feature_enabled
 			&& ( true === $this->settings->settings['experimental_progress_storage_synchronization'] );
 
 		$read_from_tables_setting = isset( $this->settings->settings['experimental_progress_storage_repository'] )
 			&& ( 'custom_tables' === $this->settings->settings['experimental_progress_storage_repository'] );
-
-		if ( $tables_sync_enabled ) {
-			// Enable tables based progress feature flag.
-			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
-		}
 
 		/**
 		 * Filter whether to read student progress from tables.
