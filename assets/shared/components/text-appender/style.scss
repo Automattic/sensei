@@ -20,5 +20,10 @@
 
 	&__menu .components-dropdown-menu__menu-item {
 		min-width: 175px;
+
+		> svg {
+			height: 24px;
+			width: 24px;
+		}
 	}
 }
