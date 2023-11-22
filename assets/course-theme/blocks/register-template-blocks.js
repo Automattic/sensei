@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { registerBlockType, unregisterBlockType } from '@wordpress/blocks';
-import { select, subscribe } from '@wordpress/data';
+// import { select, subscribe } from '@wordpress/data';
 
 /**
  * Makes sure the template blocks are only registered when in the site or widget editor, or editing the template from
@@ -28,16 +28,18 @@ export function registerTemplateBlocks( blocks ) {
 	toggleBlockRegistration( true );
 
 	// TODO Only subscribe when in the post editor.
-	subscribe( () => {
-		const postType = select( 'core/editor' )?.getCurrentPostType();
-		const editPost = select( 'core/edit-post' );
+	// Commented this out as it breaks the editor. Need to find a proper way to unregister blocks
+	// for templates other than lesson or quiz.
+	// subscribe( () => {
+	// 	const postType = select( 'core/editor' )?.getCurrentPostType();
+	// 	const editPost = select( 'core/edit-post' );
 
-		if ( ! postType || ! editPost ) {
-			return;
-		}
+	// 	if ( ! postType || ! editPost ) {
+	// 		return;
+	// 	}
 
-		const isTemplate =
-			'lesson' === postType && editPost.isEditingTemplate();
-		toggleBlockRegistration( isTemplate );
-	} );
+	// 	const isTemplate =
+	// 		'lesson' === postType && editPost.isEditingTemplate();
+	// 	toggleBlockRegistration( isTemplate );
+	// } );
 }
