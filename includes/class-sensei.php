@@ -662,7 +662,7 @@ class Sensei_Main {
 		$this->quiz_grade_repository      = ( new Grade_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
 
 		// Progress tables eraser.
-		if ( ! $tables_enabled ) {
+		if ( $tables_enabled ) {
 			( new Progress_Tables_Eraser() )->init();
 		}
 
