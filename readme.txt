@@ -144,7 +144,7 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
-### 4.19.2 - 2023-11-22
+### 4.19.2 - 2023-11-23
 #### Added
 - Style Lesson Actions block in Learning Mode [#7224](https://github.com/Automattic/sensei/pull/7224)
 - Change border color and width of Lesson Actions block in Learning Mode [#7283](https://github.com/Automattic/sensei/pull/7283)
@@ -166,6 +166,8 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Distorted site logo in Learning Mode [#7275](https://github.com/Automattic/sensei/pull/7275)
 - Gap fill question to accept "0" as a right answer [#7273](https://github.com/Automattic/sensei/pull/7273)
 - "Pending Grade" button is too wide for some themes [#7287](https://github.com/Automattic/sensei/pull/7287)
+- Fix broken Learning Mode templates on Gutenberg 17.1.0 [#7317](https://github.com/Automattic/sensei/pull/7317)
+- Fix dropdown menu icon size [#7316](https://github.com/Automattic/sensei/pull/7316)
 
 #### Development
 - Add stylesheets for Course theme variations [#7256](https://github.com/Automattic/sensei/pull/7256)
