@@ -1116,6 +1116,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 				<li>
 					<label>
 						<input
+							class="sensei-settings_progress-storage-repository"
 							type="radio"
 							name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
 							value="<?php echo esc_attr( $option_value ); ?>"
@@ -1179,6 +1180,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<h4><?php echo esc_html( __( 'Progress storage synchronization', 'sensei-lms' ) ); ?></h4>
 			<label>
 				<input
+					class="sensei-settings_progress-storage-synchronization"
 					type="checkbox"
 					name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
 					value="1"
