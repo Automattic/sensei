@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-11-21T21:11:58+00:00\n"
+"POT-Creation-Date: 2023-11-23T10:59:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: sensei-lms\n"
@@ -9254,82 +9254,82 @@ msgid "Display pagination and actions the learner can take for the current quiz 
 msgstr ""
 
 #: assets/course-theme/blocks/template-style/template-style-block.js:19
-#: assets/dist/course-theme/blocks/index.js:349
+#: assets/dist/course-theme/blocks/index.js:350
 msgid "Template Style"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/spacer-block.js:34
-#: assets/dist/course-theme/blocks/index.js:374
+#: assets/dist/course-theme/blocks/index.js:375
 msgid "Spacer (Auto)"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/spacer-block.js:40
-#: assets/dist/course-theme/blocks/index.js:374
+#: assets/dist/course-theme/blocks/index.js:375
 msgid "Automatically fill space between blocks."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.js:86
-#: assets/dist/course-theme/blocks/index.js:383
+#: assets/dist/course-theme/blocks/index.js:384
 msgid "Interface Element"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:57
-#: assets/dist/course-theme/blocks/index.js:391
+#: assets/dist/course-theme/blocks/index.js:392
 msgid "Fixed Header"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:58
-#: assets/dist/course-theme/blocks/index.js:391
+#: assets/dist/course-theme/blocks/index.js:392
 msgid "Header area that stays fixed on top of the screen."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:78
-#: assets/dist/course-theme/blocks/index.js:391
+#: assets/dist/course-theme/blocks/index.js:392
 msgid "Sidebar Menu"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:79
-#: assets/dist/course-theme/blocks/index.js:391
+#: assets/dist/course-theme/blocks/index.js:392
 msgid "A sidebar displayed as an overlay menu on mobile screens. Add the \"Sidebar Toggle\" block to a header to allow opening and closing."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:97
-#: assets/dist/course-theme/blocks/index.js:391
+#: assets/dist/course-theme/blocks/index.js:392
 msgid "Main Content"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:98
-#: assets/dist/course-theme/blocks/index.js:391
+#: assets/dist/course-theme/blocks/index.js:392
 msgid "Content Area."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:113
-#: assets/dist/course-theme/blocks/index.js:393
+#: assets/dist/course-theme/blocks/index.js:394
 msgid "Two-column Layout"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:114
-#: assets/dist/course-theme/blocks/index.js:393
+#: assets/dist/course-theme/blocks/index.js:394
 msgid "Layout with a fixed left or right sidebar."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:151
-#: assets/dist/course-theme/blocks/index.js:393
+#: assets/dist/course-theme/blocks/index.js:394
 msgid "Video Container"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:152
-#: assets/dist/course-theme/blocks/index.js:393
+#: assets/dist/course-theme/blocks/index.js:394
 msgid "Container for a video with a sidebar."
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:179
-#: assets/dist/course-theme/blocks/index.js:393
+#: assets/dist/course-theme/blocks/index.js:394
 msgid "Content Footer"
 msgstr ""
 
 #: assets/course-theme/blocks/ui/ui-block.variations.js:180
-#: assets/dist/course-theme/blocks/index.js:393
+#: assets/dist/course-theme/blocks/index.js:394
 msgid "Navigation area below the content."
 msgstr ""
 
