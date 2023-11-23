@@ -88,7 +88,7 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	 * @return string
 	 */
 	public function get_description() {
-		return __( 'Delete student progress and quiz submission tables. This will delete those tables, but won\'t affect comment-based data.', 'sensei-lms' );
+		return __( 'Delete student progress and quiz submission tables. This will delete those tables, but won\'t affect comment-based data. The tables can be deleted only if progress sync is disabled (Settings -> Experimental Features).', 'sensei-lms' );
 	}
 
 	/**
