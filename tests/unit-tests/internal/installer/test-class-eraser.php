@@ -14,7 +14,7 @@ class Eraser_Test extends \WP_UnitTestCase {
 		$eraser = new Eraser();
 
 		/* Act. */
-		$actual = $eraser->erase();
+		$actual = $eraser->drop_tables();
 
 		/* Assert. */
 		global $wpdb;

@@ -111,7 +111,7 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 			exit;
 		}
 
-		$results = $this->eraser->erase();
+		$results = $this->eraser->drop_tables();
 
 		if ( count( $results ) > 0 ) {
 			$message = sprintf(

@@ -1083,7 +1083,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$migration_scheduler = Sensei()->migration_scheduler;
 		if ( $new_hpps_sync !== $old_hpps_sync && $new_hpps_sync && ! is_null( $migration_scheduler ) ) {
 			// Dpop existing tables and clear the migration state.
-			( new Eraser() )->erase();
+			( new Eraser() )->drop_tables();
 			$migration_scheduler->clear_state();
 
 			// Recreate tables and  schedule the migration.

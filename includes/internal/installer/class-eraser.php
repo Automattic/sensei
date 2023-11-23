@@ -21,7 +21,7 @@ class Eraser {
 	 *
 	 * @return array
 	 */
-	public function erase(): array {
+	public function drop_tables(): array {
 		global $wpdb;
 
 		$results = array();
