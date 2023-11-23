@@ -1,5 +1,3 @@
-import { on } from 'events';
-
 jQuery( document ).ready( function ( $ ) {
 	// Show more HPPS settings when the feature is enabled.
 	const progressStorage = $( '#experimental_progress_storage' );
