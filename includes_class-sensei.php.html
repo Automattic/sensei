@@ -35,9 +35,7 @@
 
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Emails\Email_Customization;
-use Sensei\Internal\Installer\Schema;
 use Sensei\Internal\Installer\Updates_Factory;
-use Sensei\Internal\Migration\Migration_Tool;
 use Sensei\Internal\Migration\Migration_Job;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Migration\Migrations\Quiz_Migration;
@@ -708,9 +706,6 @@ class Sensei_Main {
 		// Student progress migration.
 		if ( $tables_sync_enabled &amp;&amp; $this->action_scheduler ) {
 			$this->init_migration_scheduler();
-			if ( ! is_null( $this->migration_scheduler ) ) {
-				( new Migration_Tool( \Sensei_Tools::instance(), $this->migration_scheduler ) )->init();
-			}
 		}
 
 		// Init student progress handlers.
