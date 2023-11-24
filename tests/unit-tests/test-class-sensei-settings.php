@@ -134,13 +134,6 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 
 		$this->simulateSettingsRequest();
 
-		global $wpdb;
-		$tables = ( new Schema( Sensei()->feature_flags ) )->get_tables();
-		foreach ( $tables as $table ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.SchemaChange
-			$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
-		}
-
 		$has_logged_event = false;
 		$sensei_log_event = function( $log_event, $event_name, $event_properties ) use ( &$has_logged_event ) {
 			if ( 'hpps_status_change' === $event_name ) {
@@ -167,13 +160,6 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		$old['experimental_progress_storage_repository'] = 'custom_tables';
 
 		$this->simulateSettingsRequest();
-
-		global $wpdb;
-		$tables = ( new Schema( Sensei()->feature_flags ) )->get_tables();
-		foreach ( $tables as $table ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.SchemaChange
-			$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
-		}
 
 		$has_logged_event = false;
 		$sensei_log_event = function( $log_event, $event_name, $event_properties ) use ( &$has_logged_event ) {
