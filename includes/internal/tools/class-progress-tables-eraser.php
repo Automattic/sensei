@@ -88,7 +88,7 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	 * @return string
 	 */
 	public function get_description() {
-		return __( 'Delete student progress and quiz submission tables. This will delete those tables, but won\'t affect comment-based data.', 'sensei-lms' );
+		return __( 'Delete student progress and quiz submission tables. This will delete those tables, but won\'t affect comment-based data. The tables can be deleted only if progress sync is disabled (Settings -> Experimental Features).', 'sensei-lms' );
 	}
 
 	/**
@@ -136,6 +136,14 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	 * @return bool True if tool is available.
 	 */
 	public function is_available() {
+		$sync       = (bool) ( Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false );
+		$repository = Sensei()->settings->settings['experimental_progress_storage_repository'] ?? 'comments';
+
+		// Disable the tool if tables are in use.
+		if ( $sync || 'comments' !== $repository ) {
+			return false;
+		}
+
 		global $wpdb;
 
 		foreach ( $this->eraser->get_tables() as $table ) {
