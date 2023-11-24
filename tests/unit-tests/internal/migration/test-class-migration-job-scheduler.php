@@ -167,6 +167,34 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		$job_scheduler->run_job( $migration_job->get_name() );
 	}
 
+	public function testRunJob_WhenJobIsComplete_LogsEvent() {
+		/* Arrange. */
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$migration_job    = $this->createMock( Migration_Job::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		$migration_job->method( 'is_complete' )
+			->willReturn( true );
+		$migration_job->method( 'get_name' )
+			->willReturn( 'foo' );
+
+		$job_scheduler->register_job( $migration_job );
+
+		$has_logged_event = false;
+		$sensei_log_event = function( $log_event, $event_name, $event_properties ) use ( &$has_logged_event ) {
+			if ( 'hpps_migration_complete' === $event_name ) {
+				$has_logged_event = true;
+			}
+		};
+		add_action( 'sensei_log_event', $sensei_log_event, 10, 3 );
+
+		/* Act. */
+		$job_scheduler->run_job( $migration_job->get_name() );
+
+		/* Assert. */
+		$this->assertTrue( $has_logged_event );
+	}
+
 	public function testRunJob_WhenJobIsNotComplete_SchedulesAction() {
 		/* Arrange. */
 		$action_scheduler = $this->createMock( Action_Scheduler::class );
