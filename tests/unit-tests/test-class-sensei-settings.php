@@ -153,10 +153,10 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$settings = Sensei()->settings;
 
-		$new                                  = $settings->get_settings();
+		$new = $settings->get_settings();
 		$new['experimental_progress_storage_repository'] = 'comments';
 
-		$old                                  = $settings->get_settings();
+		$old = $settings->get_settings();
 		$old['experimental_progress_storage_repository'] = 'custom_tables';
 
 		$this->simulateSettingsRequest();
