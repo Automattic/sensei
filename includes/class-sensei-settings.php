@@ -1074,10 +1074,20 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$old_hpps = isset( $old_value['experimental_progress_storage'] ) ? $old_value['experimental_progress_storage'] : false;
 		$new_hpps = isset( $value['experimental_progress_storage'] ) ? $value['experimental_progress_storage'] : false;
 
-		if ( $new_hpps !== $old_hpps && $new_hpps ) {
-			// Enable the feature flag to make progress tables available.
-			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
-			( new Schema( Sensei()->feature_flags ) )->create_tables();
+		if ( $new_hpps !== $old_hpps ) {
+
+			sensei_log_event(
+				'hpps_status_change',
+				array(
+					'enabled' => $new_hpps,
+				)
+			);
+
+			if ( $new_hpps ) {
+				// Enable the feature flag to make progress tables available.
+				add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
+				( new Schema( Sensei()->feature_flags ) )->create_tables();
+			}
 		}
 
 		$old_hpps_sync = isset( $old_value['experimental_progress_storage_synchronization'] ) ? $old_value['experimental_progress_storage_synchronization'] : false;
@@ -1093,6 +1103,17 @@ class Sensei_Settings extends Sensei_Settings_API {
 			// Recreate tables and  schedule the migration.
 			( new Schema( Sensei()->feature_flags ) )->create_tables();
 			$migration_scheduler->schedule();
+		}
+
+		$old_hpps_repository = isset( $old_value['experimental_progress_storage_repository'] ) ? $old_value['experimental_progress_storage_repository'] : false;
+		$new_hpps_repository = isset( $value['experimental_progress_storage_repository'] ) ? $value['experimental_progress_storage_repository'] : false;
+		if ( $new_hpps_repository !== $old_hpps_repository && ! is_null( $migration_scheduler ) ) {
+			sensei_log_event(
+				'hpps_repository_change',
+				array(
+					'repository' => $new_hpps_repository,
+				)
+			);
 		}
 	}
 

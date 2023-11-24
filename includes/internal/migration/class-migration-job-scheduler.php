@@ -187,6 +187,7 @@ class Migration_Job_Scheduler {
 				$this->schedule_job( $next_job );
 			} else {
 				$this->complete();
+				$this->log_migration_complete_event();
 			}
 		} else {
 			$this->schedule_job( $job );
@@ -263,5 +264,22 @@ class Migration_Job_Scheduler {
 	 */
 	private function complete(): void {
 		update_option( self::COMPLETED_OPTION_NAME, microtime( true ) );
+	}
+
+	/**
+	 * Log migration complete event.
+	 */
+	private function log_migration_complete_event() {
+		$started   = get_option( self::STARTED_OPTION_NAME, 0 );
+		$completed = get_option( self::COMPLETED_OPTION_NAME, 0 );
+		$duration  = $completed - $started;
+		$errors    = $this->get_errors();
+		sensei_log_event(
+			'hpps_migration_complete',
+			array(
+				'duration' => $duration,
+				'errors'   => count( $errors ),
+			)
+		);
 	}
 }
