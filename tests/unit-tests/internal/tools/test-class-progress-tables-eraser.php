@@ -63,7 +63,7 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 		$description = $this->eraser->get_description();
 
 		/* Assert. */
-		self::assertSame( 'Delete student progress and quiz submission tables. This will delete those tables, but won\'t affect comment-based data.', $description );
+		self::assertSame( 'Delete student progress and quiz submission tables. This will delete those tables, but won\'t affect comment-based data. The tables can be deleted only if progress sync is disabled (Settings -> Experimental Features).', $description );
 	}
 
 	public function testProcess_ConfirmationProvided_DeletesTables(): void {
