@@ -23,6 +23,13 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interfac
  */
 class Student_Progress_Migration extends Migration_Abstract {
 	/**
+	 * The name of the option that stores the last comment ID that was migrated.
+	 *
+	 * @var string
+	 */
+	public const LARST_COMMENT_ID_OPTION_NAME = 'sensei_migrated_progress_last_comment_id';
+
+	/**
 	 * The course progress data to insert.
 	 *
 	 * @var array
@@ -63,7 +70,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 * @return int The number of rows inserted.
 	 */
 	public function run( bool $dry_run = true ) {
-		$since_comment_id                                      = (int) get_option( 'sensei_migrated_progress_last_comment_id', 0 );
+		$since_comment_id                                      = (int) get_option( self::LARST_COMMENT_ID_OPTION_NAME, 0 );
 		[ $progress_comments, $mapped_meta, $last_comment_id ] = $this->get_comments_and_meta( $since_comment_id, $dry_run );
 
 		if ( empty( $progress_comments ) ) {
@@ -78,7 +85,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		$this->prepare_progress_to_insert( $progress_comments, $mapped_meta );
 		$inserted_rows = $this->insert_with_batches( $dry_run );
 
-		update_option( 'sensei_migrated_progress_last_comment_id', $last_comment_id );
+		update_option( self::LARST_COMMENT_ID_OPTION_NAME, $last_comment_id );
 
 		return $inserted_rows;
 	}

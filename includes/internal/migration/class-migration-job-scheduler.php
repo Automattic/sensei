@@ -8,6 +8,8 @@
 namespace Sensei\Internal\Migration;
 
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
+use Sensei\Internal\Migration\Migrations\Quiz_Migration;
+use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -102,6 +104,47 @@ class Migration_Job_Scheduler {
 	}
 
 	/**
+	 * Check if the migration is complete.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return bool
+	 */
+	public function is_complete(): bool {
+		return (bool) get_option( self::COMPLETED_OPTION_NAME, false );
+	}
+
+	/**
+	 * Check if the migration is in progress.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return bool
+	 */
+	public function is_in_progress(): bool {
+		$stared    = (bool) get_option( self::STARTED_OPTION_NAME, false );
+		$completed = (bool) get_option( self::COMPLETED_OPTION_NAME, false );
+		return $stared && ! $completed;
+	}
+
+	/**
+	 * Get the migration errors.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return array
+	 */
+	public function get_errors(): array {
+		return (array) get_option( self::ERRORS_OPTION_NAME, [] );
+	}
+
+	/**
 	 * Schedule a job.
 	 *
 	 * @param Migration_Job $job The migration job.
@@ -148,6 +191,21 @@ class Migration_Job_Scheduler {
 		} else {
 			$this->schedule_job( $job );
 		}
+	}
+
+	/**
+	 * Clear migration state.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 */
+	public function clear_state(): void {
+		delete_option( self::STARTED_OPTION_NAME );
+		delete_option( self::COMPLETED_OPTION_NAME );
+		delete_option( self::ERRORS_OPTION_NAME );
+		delete_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME );
+		delete_option( Student_Progress_Migration::LARST_COMMENT_ID_OPTION_NAME );
 	}
 
 	/**

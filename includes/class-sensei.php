@@ -2,9 +2,7 @@
 
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Emails\Email_Customization;
-use Sensei\Internal\Installer\Schema;
 use Sensei\Internal\Installer\Updates_Factory;
-use Sensei\Internal\Migration\Migration_Tool;
 use Sensei\Internal\Migration\Migration_Job;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Migration\Migrations\Quiz_Migration;
@@ -626,16 +624,19 @@ class Sensei_Main {
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
 		// Student progress repositories.
-		$tables_enabled = isset( $this->settings->settings['experimental_progress_storage'] )
+		$tables_feature_enabled = isset( $this->settings->settings['experimental_progress_storage'] )
 			&& ( true === $this->settings->settings['experimental_progress_storage'] );
 
-		$read_from_tables_setting = isset( $this->settings->settings['experimental_progress_storage_repository'] )
-			&& ( 'custom_tables' === $this->settings->settings['experimental_progress_storage_repository'] );
-
-		if ( $tables_enabled ) {
+		if ( $tables_feature_enabled ) {
 			// Enable tables based progress feature flag.
 			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
 		}
+
+		$tables_sync_enabled = $tables_feature_enabled
+			&& ( true === $this->settings->settings['experimental_progress_storage_synchronization'] );
+
+		$read_from_tables_setting = isset( $this->settings->settings['experimental_progress_storage_repository'] )
+			&& ( 'custom_tables' === $this->settings->settings['experimental_progress_storage_repository'] );
 
 		/**
 		 * Filter whether to read student progress from tables.
@@ -648,38 +649,31 @@ class Sensei_Main {
 		 * @return {bool} Whether to read student progress from tables.
 		 */
 		$read_from_tables                         = apply_filters( 'sensei_student_progress_read_from_tables', $read_from_tables_setting );
-		$this->course_progress_repository_factory = new Course_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
+		$this->course_progress_repository_factory = new Course_Progress_Repository_Factory( $tables_sync_enabled, $read_from_tables );
 		$this->course_progress_repository         = $this->course_progress_repository_factory->create();
-		$this->lesson_progress_repository_factory = new Lesson_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
+		$this->lesson_progress_repository_factory = new Lesson_Progress_Repository_Factory( $tables_sync_enabled, $read_from_tables );
 		$this->lesson_progress_repository         = $this->lesson_progress_repository_factory->create();
-		$this->quiz_progress_repository_factory   = new Quiz_Progress_Repository_Factory( $tables_enabled, $read_from_tables );
+		$this->quiz_progress_repository_factory   = new Quiz_Progress_Repository_Factory( $tables_sync_enabled, $read_from_tables );
 		$this->quiz_progress_repository           = $this->quiz_progress_repository_factory->create();
+
+		// Quiz submission repositories.
+		$this->quiz_submission_repository = ( new Submission_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
+		$this->quiz_answer_repository     = ( new Answer_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
+		$this->quiz_grade_repository      = ( new Grade_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
+
+		// Progress tables eraser.
+		if ( $tables_feature_enabled ) {
+			( new Progress_Tables_Eraser() )->init();
+		}
 
 		if ( class_exists( 'ActionScheduler_Versions' ) ) {
 			$this->action_scheduler = new Action_Scheduler();
 		}
 
 		// Student progress migration.
-		if ( $tables_enabled && $this->action_scheduler ) {
-			$this->migration_scheduler = new Migration_Job_Scheduler( $this->action_scheduler );
-			$this->migration_scheduler->register_job(
-				new Migration_Job( 'student_progress_migration', new Student_Progress_Migration() )
-			);
-			$this->migration_scheduler->register_job(
-				new Migration_Job( 'quiz_migration', new Quiz_Migration() )
-			);
-			( new Migration_Tool( \Sensei_Tools::instance(), $this->migration_scheduler ) )->init();
+		if ( $tables_sync_enabled && $this->action_scheduler ) {
+			$this->init_migration_scheduler();
 		}
-
-		// Progress tables eraser.
-		if ( ! $tables_enabled ) {
-			( new Progress_Tables_Eraser() )->init();
-		}
-
-		// Quiz submission repositories.
-		$this->quiz_submission_repository = ( new Submission_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
-		$this->quiz_answer_repository     = ( new Answer_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
-		$this->quiz_grade_repository      = ( new Grade_Repository_Factory( $tables_enabled, $read_from_tables ) )->create();
 
 		// Init student progress handlers.
 		( new Course_Deleted_Handler( $this->course_progress_repository ) )->init();
@@ -712,6 +706,23 @@ class Sensei_Main {
 				new Sensei\Emails\MailPoet\Main( $mailpoet_api );
 			}
 		}
+	}
+
+	/**
+	 * Try to initialize Migration_Job_Scheduler.
+	 */
+	public function init_migration_scheduler(): void {
+		if ( ! $this->action_scheduler ) {
+			return;
+		}
+
+		$this->migration_scheduler = new Migration_Job_Scheduler( $this->action_scheduler );
+		$this->migration_scheduler->register_job(
+			new Migration_Job( 'student_progress_migration', new Student_Progress_Migration() )
+		);
+		$this->migration_scheduler->register_job(
+			new Migration_Job( 'quiz_migration', new Quiz_Migration() )
+		);
 	}
 
 	/**

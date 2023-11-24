@@ -63,7 +63,7 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 		$description = $this->eraser->get_description();
 
 		/* Assert. */
-		self::assertSame( 'Delete student progress and quiz submission tables. This will delete those tables, but won\'t affect comment-based data.', $description );
+		self::assertSame( 'Delete student progress and quiz submission tables. This will delete those tables, but won\'t affect comment-based data. The tables can be deleted only if progress sync is disabled (Settings -> Experimental Features).', $description );
 	}
 
 	public function testProcess_ConfirmationProvided_DeletesTables(): void {
@@ -104,11 +104,48 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 		self::assertTrue( $table_exists );
 	}
 
-	public function testIsAvailable_Always_ReturnsTrue(): void {
+	public function testIsAvailable_HppsSyncEnabled_ReturnsFalse(): void {
+		/* Arrange. */
+		$settings                    = Sensei()->settings->settings;
+		Sensei()->settings->settings = array( 'experimental_progress_storage_synchronization' => true );
+
 		/* Act. */
 		$result = $this->eraser->is_available();
 
 		/* Assert. */
+		Sensei()->settings->settings = $settings;
+		self::assertFalse( $result );
+	}
+
+	public function testIsAvailable_HppsRepositoryWasTables_ReturnsFalse(): void {
+		/* Arrange. */
+		$settings                    = Sensei()->settings->settings;
+		Sensei()->settings->settings = array(
+			'experimental_progress_storage_synchronization' => false,
+			'experimental_progress_storage_repository' => 'custom_tables',
+		);
+
+		/* Act. */
+		$result = $this->eraser->is_available();
+
+		/* Assert. */
+		Sensei()->settings->settings = $settings;
+		self::assertFalse( $result );
+	}
+
+	public function testIsAvailable_HppsSyncDisabledAndRepositoryWasComments_ReturnsTrue(): void {
+		/* Arrange. */
+		$settings                    = Sensei()->settings->settings;
+		Sensei()->settings->settings = array(
+			'experimental_progress_storage_synchronization' => false,
+			'experimental_progress_storage_repository' => 'comments',
+		);
+
+		/* Act. */
+		$result = $this->eraser->is_available();
+
+		/* Assert. */
+		Sensei()->settings->settings = $settings;
 		self::assertTrue( $result );
 	}
 
