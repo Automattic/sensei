@@ -92,7 +92,7 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 	 * Test that the View Quiz block is displayed in various scenarios.
 	 */
 	public function testViewQuizDisplayed() {
-		$view_quiz = new Sensei_View_Quiz_Block();
+		$view_quiz = new Sensei_Take_Quiz_Block();
 
 		$user_id            = $this->login_as_student()->get_user_by_role( 'subscriber' );
 		$course_id          = $this->factory->course->create();
