@@ -167,6 +167,9 @@ class Migration_Job_Scheduler {
 	 * @param string $job_name The job name.
 	 */
 	public function run_job( string $job_name ): void {
+		// Temporarily workaround: increase the time limit.
+		set_time_limit( 0 );
+
 		if ( $this->is_first_run() ) {
 			$this->start();
 		}
