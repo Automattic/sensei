@@ -371,7 +371,7 @@ class Quiz_Migration extends Migration_Abstract {
 
 		$row_values = array();
 		foreach ( $columns as $column => $placeholder ) {
-			if ( ! isset( $row[ $column ] ) || is_null( $row[ $column ] ) ) {
+			if ( ! isset( $values[ $column ] ) || is_null( $values[ $column ] ) ) {
 				$row_values[] = 'NULL';
 			} else {
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- $placeholder is a placeholder.
