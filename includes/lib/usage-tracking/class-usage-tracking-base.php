@@ -377,7 +377,7 @@ abstract class Sensei_Usage_Tracking_Base {
 		 */
 		$theme = wp_get_theme();
 
-		$is_hpps_enabled =  Sensei()->settings->settings['experimental_progress_storage'] ?? false;
+		$is_hpps_enabled = Sensei()->settings->settings['experimental_progress_storage'] ?? false;
 
 		$system_data                         = array();
 		$system_data['wp_version']           = $wp_version;
