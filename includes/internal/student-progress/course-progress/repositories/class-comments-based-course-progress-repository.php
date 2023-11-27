@@ -66,6 +66,10 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 * @return Comments_Based_Course_Progress|null The course progress.
 	 */
 	public function get( int $course_id, int $user_id ): ?Course_Progress_Interface {
+		if ( ! $user_id ) {
+			return null;
+		}
+
 		$activity_args = [
 			'post_id' => $course_id,
 			'user_id' => $user_id,
@@ -147,6 +151,10 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 * @return bool Whether the course progress exists.
 	 */
 	public function has( int $course_id, int $user_id ): bool {
+		if ( ! $user_id ) {
+			return false;
+		}
+
 		$activity_args = [
 			'post_id' => $course_id,
 			'user_id' => $user_id,
