@@ -2,10 +2,10 @@
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
 Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, imranh920, jakeom, luchad0res, merkushin, m1r0, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 6.1
-Tested up to: 6.3
+Requires at least: 6.2
+Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 4.19.0
+Stable tag: 4.19.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -144,6 +144,38 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.19.2 - 2023-11-23
+#### Added
+- Style Lesson Actions block in Learning Mode [#7224](https://github.com/Automattic/sensei/pull/7224)
+- Change border color and width of Lesson Actions block in Learning Mode [#7283](https://github.com/Automattic/sensei/pull/7283)
+
+#### Changed
+- Migrate legacy quiz data [#7289](https://github.com/Automattic/sensei/pull/7289)
+- "Not Enrolled" notice in Learning Mode [#7263](https://github.com/Automattic/sensei/pull/7263)
+- Design for footer in multi-page quizzes [#7268](https://github.com/Automattic/sensei/pull/7268)
+- Style of Learning Mode notice that is displayed when a student is not logged in [#7264](https://github.com/Automattic/sensei/pull/7264)
+- Message when there are no published lessons in a course [#7300](https://github.com/Automattic/sensei/pull/7300)
+
+#### Fixed
+- Contact Teacher form in Learning Mode quiz footer [#7257](https://github.com/Automattic/sensei/pull/7257)
+- Contact Teacher button is full width in Learning Mode [#7288](https://github.com/Automattic/sensei/pull/7288)
+- Deprecation notice when user is not logged in [#7294](https://github.com/Automattic/sensei/pull/7294)
+- "No published content" notice being displayed for users who created a course in the editor [#7284](https://github.com/Automattic/sensei/pull/7284)
+- How we determine whether a quiz has been submitted [#7278](https://github.com/Automattic/sensei/pull/7278)
+- Module spacing when Learning Mode is not enabled [#7272](https://github.com/Automattic/sensei/pull/7272)
+- Distorted site logo in Learning Mode [#7275](https://github.com/Automattic/sensei/pull/7275)
+- Gap fill question to accept "0" as a right answer [#7273](https://github.com/Automattic/sensei/pull/7273)
+- "Pending Grade" button is too wide for some themes [#7287](https://github.com/Automattic/sensei/pull/7287)
+- Fix broken Learning Mode templates on Gutenberg 17.1.0 [#7317](https://github.com/Automattic/sensei/pull/7317)
+- Fix dropdown menu icon size [#7316](https://github.com/Automattic/sensei/pull/7316)
+
+#### Development
+- Add stylesheets for Course theme variations [#7256](https://github.com/Automattic/sensei/pull/7256)
+
+### 4.19.1 - 2023-11-06
+#### Fixed
+- Email editor styles getting leaked into other templates in site editor [#7258](https://github.com/Automattic/sensei/pull/7258)
+
 ### 4.19.0 - 2023-11-01
 #### Added
 - Add a setting to not allow self-enrollment on courses [#7231](https://github.com/Automattic/sensei/pull/7231)
@@ -158,52 +190,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 #### Fixed
 - Fix course notices that are intended to be displayed only on the course page but were currently appearing on the courses archive page [#7231](https://github.com/Automattic/sensei/pull/7231)
 - Fix padding in site editor that prevents full-width alignment from working [#7233](https://github.com/Automattic/sensei/pull/7233)
-
-### 4.18.0 - 2023-10-12
-#### Security
-- Escape class attributes in Student Courses and Course Results block
-
-#### Changed
-- Changed styles for graded question answer feedbacks [#7171](https://github.com/Automattic/sensei/pull/7171)
-- Updated styling of graded quizzes footer in learning mode [#7202](https://github.com/Automattic/sensei/pull/7202)
-- Updated the login page style and fixed issue of "My Messages" button rendering when logged out [#7204](https://github.com/Automattic/sensei/pull/7204)
-- Changed footer style for quizzes awaiting grading [#7190](https://github.com/Automattic/sensei/pull/7190)
-- Add success message styles [#7209](https://github.com/Automattic/sensei/pull/7209)
-- Bump minimum required PHP version to 7.4 [#7195](https://github.com/Automattic/sensei/pull/7195)
-- Improve support for PHP 8.1 [#7198](https://github.com/Automattic/sensei/pull/7198)
-
-#### Fixed
-- Fix "Next Lesson" button not visible on completed lessons [#7169](https://github.com/Automattic/sensei/pull/7169)
-- Fix additional css classes for Student Courses block [#7174](https://github.com/Automattic/sensei/pull/7174)
-- Fixed back to lesson block to apply block styles in quiz navigation area [#7186](https://github.com/Automattic/sensei/pull/7186)
-- Fix formatting of Course List block on course archive page [#7180](https://github.com/Automattic/sensei/pull/7180)
-- Fix student progress reset not working in some cases [#7181](https://github.com/Automattic/sensei/pull/7181)
-- Improve performance by reducing the number of queries that run on page load [#6819](https://github.com/Automattic/sensei/pull/6819)
-- Split manual enrollment title in order to allow different gender on the translation [#7165](https://github.com/Automattic/sensei/pull/7165)
-
-#### Development
-- Updated the "login-form" template [#7204](https://github.com/Automattic/sensei/pull/7204)
-
-### 4.17.0 - 2023-09-13
-#### Added
-- Added header on the learning mode template of quizzes [#7087](https://github.com/Automattic/sensei/pull/7087)
-- Log active theme name on plugin deactivation [#7155](https://github.com/Automattic/sensei/pull/7155)
-
-#### Changed
-- Change "Lesson Type" to "Lesson Layout" in wizard [#7111](https://github.com/Automattic/sensei/pull/7111)
-- Change all question styles for quizzes in learning mode [#7163](https://github.com/Automattic/sensei/pull/7163)
-- Changed the footer styles of Quiz template [#7163](https://github.com/Automattic/sensei/pull/7163)
-- Display "Default Lesson" first in lesson wizard [#7119](https://github.com/Automattic/sensei/pull/7119)
-- Style changes of the navigation and title area of quiz in learning mode [#7093](https://github.com/Automattic/sensei/pull/7093)
-- Update style of quiz questions that have been submitted for grading [#7163](https://github.com/Automattic/sensei/pull/7163)
-
-#### Fixed
-- Button and Image style fix for lessons in learning mode in Course theme [#7059](https://github.com/Automattic/sensei/pull/7059)
-- Fixed AI course outline generator not working in WCPC [#7157](https://github.com/Automattic/sensei/pull/7157)
-- Fixed extra header element in lesson content [#7063](https://github.com/Automattic/sensei/pull/7063)
-- Fix PHP 8.2 compatibilty issue: creation of dynamic property. [#7120](https://github.com/Automattic/sensei/pull/7120)
-- Fix stuck in infinite loop issue on My Messages page in Astra theme [#7138](https://github.com/Automattic/sensei/pull/7138)
-- Incorrect lesson layout sometimes added in editor [#7164](https://github.com/Automattic/sensei/pull/7164)
-
-#### Development
-- Update question type templates [#7163](https://github.com/Automattic/sensei/pull/7163)

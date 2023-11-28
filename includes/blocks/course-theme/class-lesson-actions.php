@@ -28,6 +28,8 @@ class Lesson_Actions {
 
 	/**
 	 * Lesson_Actions constructor.
+	 *
+	 * @deprecated 4.19.2 Use the normal Lesson Actions block (Sensei_Lesson_Actions_Block) instead.
 	 */
 	public function __construct() {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
@@ -111,7 +113,7 @@ class Lesson_Actions {
 		$label = __( 'Next Lesson', 'sensei-lms' );
 		$icon  = \Sensei()->assets->get_icon( 'arrow-right' );
 
-		return ( "<a class='wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__next-lesson has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
+		return ( "<a class='wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__next-lesson is-primary has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
 
 	}
 

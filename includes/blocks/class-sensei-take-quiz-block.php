@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_View_Quiz_Block class.
+ * File containing the Sensei_Take_Quiz_Block class.
  *
  * @package sensei
  * @since 3.8.0
@@ -11,12 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_View_Quiz_Block is responsible for rendering the 'View Quiz' block.
+ * Class Sensei_Take_Quiz_Block is responsible for rendering the "Take Quiz" block.
  */
-class Sensei_View_Quiz_Block {
+class Sensei_Take_Quiz_Block {
 
 	/**
-	 * Sensei_View_Quiz_Block constructor.
+	 * Sensei_Take_Quiz_Block constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
@@ -44,9 +44,13 @@ class Sensei_View_Quiz_Block {
 			return '';
 		}
 
-		$quiz_permalink = Sensei()->lesson->get_quiz_permalink( $lesson_id );
+		$user_id           = get_current_user_id();
+		$quiz_permalink    = Sensei()->lesson->get_quiz_permalink( $lesson_id );
+		$is_quiz_submitted = Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id );
+		$course_id         = Sensei()->lesson->get_course_id( $lesson_id );
+		$is_learning_mode  = \Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
 
-		if ( ! $quiz_permalink ) {
+		if ( ! $quiz_permalink || ( $is_learning_mode && $is_quiz_submitted ) ) {
 			return '';
 		}
 

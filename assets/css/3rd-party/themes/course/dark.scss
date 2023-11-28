@@ -1,0 +1,14 @@
+/*
+* Styles specific to dark variation
+*/
+.sensei-course-theme__quiz__footer {
+	.sensei-quiz-pagination {
+		.sensei-quiz-pagination__list {
+			.page-numbers {
+				.page-numbers {
+					font-size: var(--wp--custom--typography--font-sizes--fixed);
+				}
+			}
+		}
+	}
+}

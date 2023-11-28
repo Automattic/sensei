@@ -156,29 +156,35 @@ const useEditorPlayer = ( videoBlock ) => {
 			return;
 		}
 
+		const editorCanvasIframe = document.querySelector(
+			'iframe[name="editor-canvas"]'
+		);
+		const doc = editorCanvasIframe?.contentDocument || document;
+		const w = editorCanvasIframe?.contentWindow || window;
+
 		const isJetpackVideoPress = !! videoBlock.attributes
 			.videoPressClassNames;
 
 		// Video file block.
 		if ( 'core/video' === videoBlock.name && ! isJetpackVideoPress ) {
-			const video = document.querySelector(
+			const video = doc.querySelector(
 				`#block-${ videoBlock.clientId } video`
 			);
 
 			if ( video ) {
-				setPlayer( new Player( video ) );
+				setPlayer( new Player( video, w ) );
 			}
 
 			return;
 		}
 
 		// Embed block (iframe).
-		const sandboxIframe = document.querySelector(
+		const sandboxIframe = doc.querySelector(
 			`#block-${ videoBlock.clientId } iframe`
 		);
-		const w = sandboxIframe?.contentWindow;
-		const doc = sandboxIframe?.contentDocument;
-		const playerIframe = doc?.querySelector( 'iframe' );
+		const sandboxWindow = sandboxIframe?.contentWindow;
+		const sandboxDoc = sandboxIframe?.contentDocument;
+		const playerIframe = sandboxDoc?.querySelector( 'iframe' );
 
 		// Skip if iframe is not found.
 		if ( ! playerIframe ) {
@@ -186,18 +192,23 @@ const useEditorPlayer = ( videoBlock ) => {
 		}
 
 		const setIframePlayer = () => {
-			setPlayer( new Player( playerIframe, w ) );
+			setPlayer( new Player( playerIframe, sandboxWindow ) );
 		};
 
 		const { providerNameSlug } = videoBlock.attributes;
 
 		if ( 'videopress' === providerNameSlug || isJetpackVideoPress ) {
-			setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
+			setPlayer(
+				new Player(
+					sandboxDoc.querySelector( 'iframe' ),
+					sandboxWindow
+				)
+			);
 		} else if ( 'youtube' === providerNameSlug ) {
-			prepareYouTubeIframe( playerIframe, w );
-			addScript( doc, YOUTUBE_API_SRC, setIframePlayer );
+			prepareYouTubeIframe( playerIframe, sandboxWindow );
+			addScript( sandboxDoc, YOUTUBE_API_SRC, setIframePlayer );
 		} else if ( 'vimeo' === providerNameSlug ) {
-			addScript( doc, VIMEO_API_SRC, setIframePlayer );
+			addScript( sandboxDoc, VIMEO_API_SRC, setIframePlayer );
 		}
 	}, [ fetching, preview, isBlockSelected, lastBlockAttributeChange ] );
 

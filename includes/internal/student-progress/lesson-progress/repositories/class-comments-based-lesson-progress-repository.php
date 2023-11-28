@@ -67,6 +67,10 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @return Lesson_Progress_Interface|null The lesson progress or null if not found.
 	 */
 	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress_Interface {
+		if ( ! $user_id ) {
+			return null;
+		}
+
 		$activity_args = [
 			'post_id' => $lesson_id,
 			'user_id' => $user_id,
@@ -90,6 +94,10 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @return bool
 	 */
 	public function has( int $lesson_id, int $user_id ): bool {
+		if ( ! $user_id ) {
+			return false;
+		}
+
 		$activity_args = [
 			'post_id' => $lesson_id,
 			'user_id' => $user_id,
@@ -201,6 +209,10 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @return int
 	 */
 	public function count( int $course_id, int $user_id ): int {
+		if ( ! $user_id ) {
+			return 0;
+		}
+
 		$lessons = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
 
 		if ( empty( $lessons ) ) {

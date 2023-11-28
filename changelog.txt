@@ -1,5 +1,37 @@
 *** Changelog ***
 
+## 4.19.2 - 2023-11-23
+### Added
+- Style Lesson Actions block in Learning Mode [#7224](https://github.com/Automattic/sensei/pull/7224)
+- Change border color and width of Lesson Actions block in Learning Mode [#7283](https://github.com/Automattic/sensei/pull/7283)
+
+### Changed
+- Migrate legacy quiz data [#7289](https://github.com/Automattic/sensei/pull/7289)
+- "Not Enrolled" notice in Learning Mode [#7263](https://github.com/Automattic/sensei/pull/7263)
+- Design for footer in multi-page quizzes [#7268](https://github.com/Automattic/sensei/pull/7268)
+- Style of Learning Mode notice that is displayed when a student is not logged in [#7264](https://github.com/Automattic/sensei/pull/7264)
+- Message when there are no published lessons in a course [#7300](https://github.com/Automattic/sensei/pull/7300)
+
+### Fixed
+- Contact Teacher form in Learning Mode quiz footer [#7257](https://github.com/Automattic/sensei/pull/7257)
+- Contact Teacher button is full width in Learning Mode [#7288](https://github.com/Automattic/sensei/pull/7288)
+- Deprecation notice when user is not logged in [#7294](https://github.com/Automattic/sensei/pull/7294)
+- "No published content" notice being displayed for users who created a course in the editor [#7284](https://github.com/Automattic/sensei/pull/7284)
+- How we determine whether a quiz has been submitted [#7278](https://github.com/Automattic/sensei/pull/7278)
+- Module spacing when Learning Mode is not enabled [#7272](https://github.com/Automattic/sensei/pull/7272)
+- Distorted site logo in Learning Mode [#7275](https://github.com/Automattic/sensei/pull/7275)
+- Gap fill question to accept "0" as a right answer [#7273](https://github.com/Automattic/sensei/pull/7273)
+- "Pending Grade" button is too wide for some themes [#7287](https://github.com/Automattic/sensei/pull/7287)
+- Fix broken Learning Mode templates on Gutenberg 17.1.0 [#7317](https://github.com/Automattic/sensei/pull/7317)
+- Fix dropdown menu icon size [#7316](https://github.com/Automattic/sensei/pull/7316)
+
+### Development
+- Add stylesheets for Course theme variations [#7256](https://github.com/Automattic/sensei/pull/7256)
+
+## 4.19.1 - 2023-11-06
+### Fixed
+- Email editor styles getting leaked into other templates in site editor [#7258](https://github.com/Automattic/sensei/pull/7258)
+
 ## 4.19.0 - 2023-11-01
 ### Added
 - Add a setting to not allow self-enrollment on courses [#7231](https://github.com/Automattic/sensei/pull/7231)
@@ -21,7 +53,7 @@
 
 ### Changed
 - Changed styles for graded question answer feedbacks [#7171](https://github.com/Automattic/sensei/pull/7171)
-- Updated styling of graded quizzes footer in learning mode [#7202](https://github.com/Automattic/sensei/pull/7202)
+- Updated styling of graded quizzes footer in Learning Mode [#7202](https://github.com/Automattic/sensei/pull/7202)
 - Updated the login page style and fixed issue of "My Messages" button rendering when logged out [#7204](https://github.com/Automattic/sensei/pull/7204)
 - Changed footer style for quizzes awaiting grading [#7190](https://github.com/Automattic/sensei/pull/7190)
 - Add success message styles [#7209](https://github.com/Automattic/sensei/pull/7209)
@@ -42,19 +74,19 @@
 
 ## 4.17.0 - 2023-09-13
 ### Added
-- Added header on the learning mode template of quizzes [#7087](https://github.com/Automattic/sensei/pull/7087)
+- Added header on the Learning Mode template of quizzes [#7087](https://github.com/Automattic/sensei/pull/7087)
 - Log active theme name on plugin deactivation [#7155](https://github.com/Automattic/sensei/pull/7155)
 
 ### Changed
 - Change "Lesson Type" to "Lesson Layout" in wizard [#7111](https://github.com/Automattic/sensei/pull/7111)
-- Change all question styles for quizzes in learning mode [#7163](https://github.com/Automattic/sensei/pull/7163)
+- Change all question styles for quizzes in Learning Mode [#7163](https://github.com/Automattic/sensei/pull/7163)
 - Changed the footer styles of Quiz template [#7163](https://github.com/Automattic/sensei/pull/7163)
 - Display "Default Lesson" first in lesson wizard [#7119](https://github.com/Automattic/sensei/pull/7119)
-- Style changes of the navigation and title area of quiz in learning mode [#7093](https://github.com/Automattic/sensei/pull/7093)
+- Style changes of the navigation and title area of quiz in Learning Mode [#7093](https://github.com/Automattic/sensei/pull/7093)
 - Update style of quiz questions that have been submitted for grading [#7163](https://github.com/Automattic/sensei/pull/7163)
 
 ### Fixed
-- Button and Image style fix for lessons in learning mode in Course theme [#7059](https://github.com/Automattic/sensei/pull/7059)
+- Button and Image style fix for lessons in Learning Mode in Course theme [#7059](https://github.com/Automattic/sensei/pull/7059)
 - Fixed AI course outline generator not working in WCPC [#7157](https://github.com/Automattic/sensei/pull/7157)
 - Fixed extra header element in lesson content [#7063](https://github.com/Automattic/sensei/pull/7063)
 - Fix PHP 8.2 compatibilty issue: creation of dynamic property. [#7120](https://github.com/Automattic/sensei/pull/7120)
@@ -225,7 +257,7 @@
 - Fix: Remove separator from course list pattern [#6435](https://github.com/Automattic/sensei/pull/6435)
 - Fix: Alignment of url buttons for Blockbase/Astra themes [#5814](https://github.com/Automattic/sensei/pull/5814)
 - Fix: Type error when `the_content` is not a string [#6484](https://github.com/Automattic/sensei/pull/6484)
-- Fix: `the_content` hook called twice when viewing a lesson in learning mode [#6438](https://github.com/Automattic/sensei/pull/6438)
+- Fix: `the_content` hook called twice when viewing a lesson in Learning Mode [#6438](https://github.com/Automattic/sensei/pull/6438)
 - Tweak: Suppress theme without comments.php deprecation message [#6453](https://github.com/Automattic/sensei/pull/6453)
 - Tweak: Round course progress to integer [#6232](https://github.com/Automattic/sensei/pull/6232)
 
@@ -259,7 +291,7 @@
 - Add: Add  `Sensei_Data_Port_Utilities::get_demo_course_id()` helper method [#6328](https://github.com/Automattic/sensei/pull/6328)
 - Add: Add filters for course actions buttons [#6296](https://github.com/Automattic/sensei/pull/6296)
 - Add: Course list button editing [#6324](https://github.com/Automattic/sensei/pull/6324)
-- Fix: Fix sidebar position for learning mode [#6210](https://github.com/Automattic/sensei/pull/6210)
+- Fix: Fix sidebar position for Learning Mode [#6210](https://github.com/Automattic/sensei/pull/6210)
 - Fix: Fix testimonial margin for block patterns [#6216](https://github.com/Automattic/sensei/pull/6216)
 - Fix: Ensure passing an integer module id [#6229](https://github.com/Automattic/sensei/pull/6229)
 - Fix: Ensure `is_plugin_active` call doesn't give an error [#6249](https://github.com/Automattic/sensei/pull/6249)
@@ -299,7 +331,7 @@
     - Enable Learning Mode blocks to be configured by theme.json [#6067](https://github.com/Automattic/sensei/pull/6067)
     - Skip opinionated styles when the active theme declares support for it [#6066](https://github.com/Automattic/sensei/pull/6066)
     - Enable customization of the lesson status icons [#6070](https://github.com/Automattic/sensei/pull/6070)
-    - Fix sidebar position for learning mode [#6210](https://github.com/Automattic/sensei/pull/6210)
+    - Fix sidebar position for Learning Mode [#6210](https://github.com/Automattic/sensei/pull/6210)
     - Update section headings in Landing Page and Course List patterns [#6217](https://github.com/Automattic/sensei/pull/6217)
     - Fix mail list br tag escape in landing page [#6214](https://github.com/Automattic/sensei/pull/6214)
 - New: Course Settings
@@ -378,7 +410,7 @@
     - Fix message sent notice [#5843](https://github.com/Automattic/sensei/pull/5843)
     - Replace customize links [#5842](https://github.com/Automattic/sensei/pull/5842)
     - Add featured video to lesson patterns, update pattern looks [#5789](https://github.com/Automattic/sensei/pull/5789)
-    - Add some usage tracking data for learning mode [#5760](https://github.com/Automattic/sensei/pull/5760)
+    - Add some usage tracking data for Learning Mode [#5760](https://github.com/Automattic/sensei/pull/5760)
     - Fix non-video lessons for Video templates. [#5825](https://github.com/Automattic/sensei/pull/5825)
     - Fix featured video sizing [#5812](https://github.com/Automattic/sensei/pull/5812)
     - Update lesson properties block to use with LM templates [#5721](https://github.com/Automattic/sensei/pull/5721)
@@ -410,7 +442,7 @@
 - Add: Fix comparison that was not properly checking for option [#5678](https://github.com/Automattic/sensei/pull/5678)
 - Add: Add persistence to the Sensei Notices API, using user metas [#5569](https://github.com/Automattic/sensei/pull/5569)
 - Fix: Remove the check so that meta data can be saved again [#5830](https://github.com/Automattic/sensei/pull/5830)
-- Fix: Prevent modules to be linked in learning mode [#5809](https://github.com/Automattic/sensei/pull/5809)
+- Fix: Prevent modules to be linked in Learning Mode [#5809](https://github.com/Automattic/sensei/pull/5809)
 - Fix: Fix draft lessons not getting duplicated with course [#5764](https://github.com/Automattic/sensei/pull/5558com/Automattic/sensei/pull/5764)
 - Fix: Move blocks title, description, keywords to block.json and fix localization [#5782](https://github.com/Automattic/sensei/pull/5558com/Automattic/sensei/pull/5782)
 
@@ -453,10 +485,10 @@
     - Make the Course List block with inner blocks globally available [#5473](https://github.com/Automattic/sensei/pull/5473)
     - Add notice to show invalid usage when blocks are used out of course context [#5489](https://github.com/Automattic/sensei/pull/5489)
 - Add: Support for passing a custom footer to the Modal component [#5503](https://github.com/Automattic/sensei/pull/5503)
-- Fix: Template selection logic when learning mode is active [#5514](https://github.com/Automattic/sensei/pull/5514)
+- Fix: Template selection logic when Learning Mode is active [#5514](https://github.com/Automattic/sensei/pull/5514)
 - Fix: Course Outline - Show private lessons only for those who can view them. [#5468](https://github.com/Automattic/sensei/pull/5468)
 - Tweak: Combine PHP and JS strings in POT generation command [#5486](https://github.com/Automattic/sensei/pull/5486)
-- Tweak: Remove 'new' badge for learning mode [#5474](https://github.com/Automattic/sensei/pull/5474)
+- Tweak: Remove 'new' badge for Learning Mode [#5474](https://github.com/Automattic/sensei/pull/5474)
 - Tweak: Modify title for course theme lesson actions block to avoid confusion [#5470](https://github.com/Automattic/sensei/pull/5470)
 
 ## 4.6.2 - 2022-08-17
@@ -564,7 +596,7 @@
 
 ## 4.4.2 - 2022-05-23
 
-- Fix: Modules page not found error in learning mode [#5144](https://github.com/Automattic/sensei/pull/5144) 👏 @jeremyfelt
+- Fix: Modules page not found error in Learning Mode [#5144](https://github.com/Automattic/sensei/pull/5144) 👏 @jeremyfelt
 - Fix: Teacher name getting appended and duplicated in module title in course edit [#5114](https://github.com/Automattic/sensei/pull/5114)
 - Fix: Lessons not getting assigned to modules if the course is assigned to a teacher [#5151](https://github.com/Automattic/sensei/pull/5151)
 - Fix: Add student to course form not visible if Sensei Pro or Content Drip is enabled [#5164](https://github.com/Automattic/sensei/pull/5164)
@@ -639,7 +671,7 @@
 - New: Display email address on "Students taking this course" report [#4955](https://github.com/Automattic/sensei/pull/4955)
 - Tweak: Improve the students export performance [#4932](https://github.com/Automattic/sensei/pull/4932)
 - Tweak: Extract `get_courses` with dependent methods from `Sensei_Analysis_Overview_List_Table` [#4938](https://github.com/Automattic/sensei/pull/4938)
-- Tweak: Move focus toggle to the sidebar in learning mode [#4942](https://github.com/Automattic/sensei/pull/4942)
+- Tweak: Move focus toggle to the sidebar in Learning Mode [#4942](https://github.com/Automattic/sensei/pull/4942)
 - Tweak: Refactor the students overview report code [#4947](https://github.com/Automattic/sensei/pull/4947)
 - Tweak: Refactor lesson code from reports overview [#4964](https://github.com/Automattic/sensei/pull/4964)
 - Tweak: Remove sortable from columns that can't be sorted [#4965](https://github.com/Automattic/sensei/pull/4965)
@@ -671,7 +703,7 @@
 - New: Add activity date filters to the courses report screen [#4909](https://github.com/Automattic/sensei/pull/4909)
 - New: Add days to completion total for courses [#4910](https://github.com/Automattic/sensei/pull/4910)
 - New: Add totals to reports->lessons column headers [#4911](https://github.com/Automattic/sensei/pull/4911)
-- New: Add the video embed from legacy meta box to learning mode [#4912](https://github.com/Automattic/sensei/pull/4912)
+- New: Add the video embed from legacy meta box to Learning Mode [#4912](https://github.com/Automattic/sensei/pull/4912)
 - Tweak: Rename Analysis to Reports [#4853](https://github.com/Automattic/sensei/pull/4853)
 - Tweak: Remove the reports totals sidebar [#4854](https://github.com/Automattic/sensei/pull/4854)
 - Tweak: Update navigation on Reports page [#4868](https://github.com/Automattic/sensei/pull/4868)
@@ -710,7 +742,7 @@
 - Fix: Issue causing debug text on activate [#4824](https://github.com/Automattic/sensei/pull/4824)
 - Fix: Course ordering not working on admin dashboard and shortcode pages [#4837](https://github.com/Automattic/sensei/pull/4837)
 - Fix: Allow user to re-enroll even when removed [#4848](https://github.com/Automattic/sensei/pull/4848)
-- Fix: Legacy quiz styles in learning mode [#4849](https://github.com/Automattic/sensei/pull/4849)
+- Fix: Legacy quiz styles in Learning Mode [#4849](https://github.com/Automattic/sensei/pull/4849)
 - Fix: addEventListener when no element is found [#4858](https://github.com/Automattic/sensei/pull/4858)
 
 ## 4.0.2 - 2022-02-17
@@ -768,9 +800,9 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
     - Add course type to analysis links  [#4712](https://github.com/Automattic/sensei/pull/4712)
 - New: Learning Mode, a new course theme option for a distraction-free learner experience.
     - Add blocks from quiz template  [#4647](https://github.com/Automattic/sensei/pull/4647)
-    - Hide admin bar for non editor users on learning mode pages.  [#4652](https://github.com/Automattic/sensei/pull/4652)
+    - Hide admin bar for non editor users on Learning Mode pages.  [#4652](https://github.com/Automattic/sensei/pull/4652)
     - Update color customization  [#4650](https://github.com/Automattic/sensei/pull/4650)
-    - Fix/learning mode a11y  [#4665](https://github.com/Automattic/sensei/pull/4665)
+    - Fix/Learning Mode a11y  [#4665](https://github.com/Automattic/sensei/pull/4665)
     - Add site logo block fallback  [#4655](https://github.com/Automattic/sensei/pull/4655)
     - Fix quiz buttons styles  [#4676](https://github.com/Automattic/sensei/pull/4676)
     - Add "New" badge to Learning Mode  [#4681](https://github.com/Automattic/sensei/pull/4681)
@@ -783,11 +815,11 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
     - Use course theme in the editor when needed  [#4697](https://github.com/Automattic/sensei/pull/4697)
     - Fix template post type filtering  [#4716](https://github.com/Automattic/sensei/pull/4716)
     - Fix block spacing when using course theme in the editor  [#4719](https://github.com/Automattic/sensei/pull/4719)
-    - Update learning mode banner copy  [#4723](https://github.com/Automattic/sensei/pull/4723)
+    - Update Learning Mode banner copy  [#4723](https://github.com/Automattic/sensei/pull/4723)
     - Add quiz progress bar and exit course blocks  [#4668](https://github.com/Automattic/sensei/pull/4668)
-    - Fix quiz question number on learning mode  [#4679](https://github.com/Automattic/sensei/pull/4679)
+    - Fix quiz question number on Learning Mode  [#4679](https://github.com/Automattic/sensei/pull/4679)
     - Fix collapsible height with a loaded font  [#4677](https://github.com/Automattic/sensei/pull/4677)
-    - Fix preview learning mode in a course with disabled learning mode  [#4678](https://github.com/Automattic/sensei/pull/4678)
+    - Fix preview Learning Mode in a course with disabled Learning Mode  [#4678](https://github.com/Automattic/sensei/pull/4678)
 - Remove deprecated functionality  [#4667](https://github.com/Automattic/sensei/pull/4667)
 - Fix quiz answer notes issues  [#4685](https://github.com/Automattic/sensei/pull/4685)
 

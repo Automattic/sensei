@@ -32,7 +32,7 @@ export function registerTemplateBlocks( blocks ) {
 		const postType = select( 'core/editor' )?.getCurrentPostType();
 		const editPost = select( 'core/edit-post' );
 
-		if ( ! postType || ! editPost ) {
+		if ( ! postType || ! editPost || 'wp_template' === postType ) {
 			return;
 		}
 

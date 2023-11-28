@@ -36,13 +36,6 @@ class Quiz_Migration extends Migration_Abstract {
 	private $dry_run = true;
 
 	/**
-	 * The last insert query.
-	 *
-	 * @var string
-	 */
-	private $last_insert_query = '';
-
-	/**
 	 * The size of a batch or how many quiz submissions to migrate in a single run.
 	 *
 	 * @var int
@@ -74,10 +67,6 @@ class Quiz_Migration extends Migration_Abstract {
 			return 0;
 		}
 
-		if ( $this->dry_run ) {
-			$this->stop_insert_query_execution();
-		}
-
 		$quiz_data = $this->get_quiz_data( $comments );
 		foreach ( $comments as $comment ) {
 			$submission_id = $this->insert_quiz_submission( $comment, $quiz_data );
@@ -87,10 +76,6 @@ class Quiz_Migration extends Migration_Abstract {
 
 			$answer_ids = $this->insert_quiz_answers( $comment, $quiz_data, $submission_id );
 			$this->insert_quiz_grades( $comment, $quiz_data, $answer_ids );
-		}
-
-		if ( $this->dry_run ) {
-			$this->enable_insert_query_execution();
 		}
 
 		$last_comment_id = end( $comments )->comment_ID;
@@ -183,36 +168,35 @@ class Quiz_Migration extends Migration_Abstract {
 			? (float) $quiz_data[ $comment->comment_ID ]['grade']
 			: null;
 
-		global $wpdb;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$success = (bool) $wpdb->insert(
-			$wpdb->prefix . 'sensei_lms_quiz_submissions',
-			[
-				'quiz_id'     => $quiz_id,
-				'user_id'     => $comment->user_id,
-				'final_grade' => $final_grade,
-				'created_at'  => $comment->comment_date_gmt,
-				'updated_at'  => $comment->comment_date_gmt,
-			],
-			[
-				'%d',
-				'%d',
-				is_null( $final_grade ) ? null : '%f',
-				'%s',
-				'%s',
-			]
+		$columns = array(
+			'quiz_id'     => '%d',
+			'user_id'     => '%d',
+			'final_grade' => is_null( $final_grade ) ? null : '%f',
+			'created_at'  => '%s',
+			'updated_at'  => '%s',
 		);
 
+		$values = array(
+			'quiz_id'     => $quiz_id,
+			'user_id'     => $comment->user_id,
+			'final_grade' => $final_grade,
+			'created_at'  => $comment->comment_date_gmt,
+			'updated_at'  => $comment->comment_date_gmt,
+		);
+
+		$query = $this->get_insert_query( 'sensei_lms_quiz_submissions', $columns, $values );
+
 		if ( $this->dry_run ) {
-			echo esc_html( $this->last_insert_query . "\n" );
+			echo esc_html( $query . "\n" );
 			return 1;
 		}
 
-		if ( false === $success ) {
-			$this->add_error( $wpdb->last_error );
+		$result = $this->db_query( $query );
+		if ( ! $result ) {
 			return null;
 		}
+
+		global $wpdb;
 
 		return $wpdb->insert_id;
 	}
@@ -246,37 +230,34 @@ class Quiz_Migration extends Migration_Abstract {
 
 		$answer_ids = array();
 		foreach ( $quiz_answers as $question_id => $value ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-			$success = (bool) $wpdb->insert(
-				$wpdb->prefix . 'sensei_lms_quiz_answers',
-				[
-					'submission_id' => $submission_id,
-					'question_id'   => $question_id,
-					'value'         => $value,
-					'created_at'    => $comment->comment_date_gmt,
-					'updated_at'    => $comment->comment_date_gmt,
-				],
-				[
-					'%d',
-					'%d',
-					'%s',
-					'%s',
-					'%s',
-				]
+			$columns = array(
+				'submission_id' => '%d',
+				'question_id'   => '%d',
+				'value'         => '%s',
+				'created_at'    => '%s',
+				'updated_at'    => '%s',
 			);
 
+			$values = array(
+				'submission_id' => $submission_id,
+				'question_id'   => $question_id,
+				'value'         => $value,
+				'created_at'    => $comment->comment_date_gmt,
+				'updated_at'    => $comment->comment_date_gmt,
+			);
+
+			$query = $this->get_insert_query( 'sensei_lms_quiz_answers', $columns, $values );
+
 			if ( $this->dry_run ) {
-				echo esc_html( $this->last_insert_query . "\n" );
+				echo esc_html( $query . "\n" );
 				$answer_ids[ $question_id ] = 1;
 				continue;
 			}
 
-			if ( false === $success ) {
-				$this->add_error( $wpdb->last_error );
-				continue;
+			$result = $this->db_query( $query );
+			if ( $result ) {
+				$answer_ids[ $question_id ] = $wpdb->insert_id;
 			}
-
-			$answer_ids[ $question_id ] = $wpdb->insert_id;
 		}
 
 		return $answer_ids;
@@ -308,69 +289,96 @@ class Quiz_Migration extends Migration_Abstract {
 
 		$grade_ids = array();
 		foreach ( $quiz_grades as $question_id => $points ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-			$success = (bool) $wpdb->insert(
-				$wpdb->prefix . 'sensei_lms_quiz_grades',
-				[
-					'answer_id'   => $answer_ids[ $question_id ],
-					'question_id' => $question_id,
-					'points'      => $points,
-					'feedback'    => $quiz_answers_feedback[ $question_id ] ?? null,
-					'created_at'  => $comment->comment_date_gmt,
-					'updated_at'  => $comment->comment_date_gmt,
-				],
-				[
-					'%d',
-					'%d',
-					'%d',
-					isset( $quiz_answers_feedback[ $question_id ] ) ? '%s' : null,
-					'%s',
-					'%s',
-				]
+			$columns = array(
+				'answer_id'   => '%d',
+				'question_id' => '%d',
+				'points'      => '%d',
+				'feedback'    => isset( $quiz_answers_feedback[ $question_id ] ) ? '%s' : null,
+				'created_at'  => '%s',
+				'updated_at'  => '%s',
 			);
 
+			$values = array(
+				'answer_id'   => $answer_ids[ $question_id ],
+				'question_id' => $question_id,
+				'points'      => $points,
+				'feedback'    => $quiz_answers_feedback[ $question_id ] ?? null,
+				'created_at'  => $comment->comment_date_gmt,
+				'updated_at'  => $comment->comment_date_gmt,
+			);
+
+			$query = $this->get_insert_query( 'sensei_lms_quiz_grades', $columns, $values );
+
 			if ( $this->dry_run ) {
-				echo esc_html( $this->last_insert_query . "\n" );
+				echo esc_html( $query . "\n" );
 				continue;
 			}
 
-			if ( false === $success ) {
-				$this->add_error( $wpdb->last_error );
+			$result = $this->db_query( $query );
+			if ( $result ) {
+				$grade_ids[ $question_id ] = $wpdb->insert_id;
 			}
-
-			$grade_ids[ $question_id ] = $wpdb->insert_id;
 		}
 
 		return $grade_ids;
 	}
 
 	/**
-	 * Stop the execution of WPDB INSERT queries.
-	 */
-	private function stop_insert_query_execution(): void {
-		add_filter( 'query', [ $this, 'stop_insert_query_execution_hook' ] );
-	}
-
-	/**
-	 * Enable the execution of WPDB INSERT queries.
-	 */
-	private function enable_insert_query_execution(): void {
-		remove_filter( 'query', [ $this, 'stop_insert_query_execution_hook' ] );
-	}
-
-	/**
-	 * The hook that stops the execution of WPDB INSERT queries.
+	 * Execute a database query.
 	 *
-	 * @param string $query The database query.
+	 * @param string $query The query to execute.
+	 * @return int Number of rows affected.
+	 */
+	private function db_query( string $query ): int {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$result = $wpdb->query( $query );
+
+		if ( '' !== $wpdb->last_error ) {
+			$this->add_error( $wpdb->last_error );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Get the insert query for the table.
+	 *
+	 * @param string $table The table name. This should not include the prefix.
+	 * @param array  $columns The columns. Keys are column names, values are placeholders.
+	 * @param array  $values The values. Keys are column names, values are the actual values.
 	 *
 	 * @return string
 	 */
-	public function stop_insert_query_execution_hook( $query ) {
-		if ( str_starts_with( $query, 'INSERT' ) ) {
-			$this->last_insert_query = $query;
-			return '';
+	private function get_insert_query( string $table, array $columns, array $values ): string {
+		global $wpdb;
+		$table      = $wpdb->prefix . $table;
+		$column_sql = implode( ',', array_map( fn( $column ) => "`$column`", array_keys( $columns ) ) );
+		$value_sql  = $this->generate_column_clauses( $columns, $values );
+		return "INSERT IGNORE INTO $table ($column_sql) VALUES $value_sql;"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, -- $insert_query is hardcoded, $value_sql is already escaped.
+	}
+
+	/**
+	 * Generate values clauses to be used in INSERT statements.
+	 *
+	 * @param array $columns Columns to be used in the INSERT statement. Keys are column names, values are placeholders.
+	 * @param array $values Actual data to migrate. Keys are column names, values are the actual values.
+	 * @return string SQL clause for values.
+	 */
+	private function generate_column_clauses( array $columns, array $values ): string {
+		global $wpdb;
+
+		$row_values = array();
+		foreach ( $columns as $column => $placeholder ) {
+			if ( ! isset( $values[ $column ] ) || is_null( $values[ $column ] ) ) {
+				$row_values[] = 'NULL';
+			} else {
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- $placeholder is a placeholder.
+				$row_values[] = $wpdb->prepare( $placeholder, $values[ $column ] );
+			}
 		}
 
-		return $query;
+		return '(' . implode( ',', $row_values ) . ')';
 	}
 }

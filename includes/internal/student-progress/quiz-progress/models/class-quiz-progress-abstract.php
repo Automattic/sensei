@@ -204,6 +204,39 @@ class Quiz_Progress_Abstract implements Quiz_Progress_Interface {
 	}
 
 	/**
+	 * Returns whether the quiz is submitted.
+	 *
+	 * @internal
+	 *
+	 * @return bool
+	 */
+	public function is_quiz_submitted(): bool {
+		$submitted_statuses = array(
+			Quiz_Progress_Interface::STATUS_UNGRADED,
+			Quiz_Progress_Interface::STATUS_GRADED,
+			Quiz_Progress_Interface::STATUS_PASSED,
+			Quiz_Progress_Interface::STATUS_FAILED,
+		);
+		return in_array( $this->status, $submitted_statuses, true );
+	}
+
+	/**
+	 * Returns whether the quiz is completed.
+	 *
+	 * @internal
+	 *
+	 * @return bool
+	 */
+	public function is_quiz_completed(): bool {
+		$completed_statuses = array(
+			Quiz_Progress_Interface::STATUS_GRADED,
+			Quiz_Progress_Interface::STATUS_PASSED,
+			Quiz_Progress_Interface::STATUS_FAILED,
+		);
+		return in_array( $this->status, $completed_statuses, true );
+	}
+
+	/**
 	 * Get the quiz start date.
 	 *
 	 * @internal

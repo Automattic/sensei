@@ -158,7 +158,6 @@ $breakpoint: 782px;
 		}
 	}
 
-	background: transparent;
 	border: none;
 	border-radius: 2px;
 	cursor: pointer;
@@ -167,7 +166,6 @@ $breakpoint: 782px;
 	font-weight: 400;
 	letter-spacing: normal;
 	margin: 0;
-	padding: 0;
 	text-align: center;
 	text-decoration: none !important;
 	text-transform: unset;
@@ -184,7 +182,6 @@ $breakpoint: 782px;
 		justify-content: center;
 		padding: 0.83em 1.11em;
 		text-decoration: none;
-		width: 100%; // Fix the animation issue.
 
 		@media screen and (max-width: $breakpoint) {
 			padding: 0.83em 0.556em;
@@ -297,6 +294,30 @@ $breakpoint: 782px;
 	}
 }
 
+.sensei-course-theme,
+.editor-styles-wrapper {
+	.wp-block-sensei-lms-lesson-actions {
+		.wp-block-sensei-button.wp-block-button {
+			&.is-style-outline,
+			&.is-style-default {
+				border: none;
+
+				.wp-block-button__link {
+					border: solid 1px var(--sensei-secondary-color);
+				}
+			}
+		}
+
+		.wp-block-sensei-button.wp-block-button.is-style-default {
+			background-color: unset;
+
+			.wp-block-button__link {
+				background-color: var(--sensei-secondary-color);
+			}
+		}
+	}
+}
+
 /* Quiz Notice */
 .sensei-course-theme-quiz-graded-notice {
 	&__title {
@@ -308,5 +329,22 @@ $breakpoint: 782px;
 	&__text {
 		font-size: 18px;
 		line-height: normal;
+	}
+}
+
+
+.wp-block-post-content {
+	.sensei-contact-teacher-wrapper {
+		display: flex;
+  }
+}
+
+.wp-block-sensei-lms-course-theme-lesson-actions,
+.wp-block-sensei-lms-quiz-actions {
+
+	.wp-block-button.is-style-outline {
+		.wp-block-button__link {
+			border: none;
+		}
 	}
 }

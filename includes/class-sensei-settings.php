@@ -1,4 +1,8 @@
 <?php
+
+use Sensei\Internal\Installer\Eraser;
+use Sensei\Internal\Installer\Schema;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -46,6 +50,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Mark settings section as visited on ajax action received.
 		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'mark_section_as_visited' ] );
+
+		// Do preparation for enabled experimental features.
+		add_action( 'update_option_sensei-settings', [ $this, 'experimental_features_saved' ], 10, 2 );
 	}
 
 	/**
@@ -267,6 +274,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 			$sections['sensei-content-drip-settings'] = array(
 				'name'        => __( 'Content Drip', 'sensei-lms' ),
 				'description' => __( 'Optional settings for the Content Drip extension.', 'sensei-lms' ),
+			);
+		}
+
+		if ( Sensei()->feature_flags->is_enabled( 'experimental_features_ui' ) ) {
+			$sections['sensei-experimental-features'] = array(
+				'name'        => __( 'Experimental Features', 'sensei-lms' ),
+				'description' => __( 'Experimental features that are incomplete and not yet ready for production.', 'sensei-lms' ),
 			);
 		}
 
@@ -835,6 +849,36 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'required'    => 1,
 		);
 
+		if ( Sensei()->feature_flags->is_enabled( 'experimental_features_ui' ) ) {
+			$fields['experimental_progress_storage']                 = array(
+				'name'        => __( 'High-Performance Progress Storage', 'sensei-lms' ),
+				'description' => __( 'Store the progress of your students in separate tables. This feature is currently in development and should be used with caution.', 'sensei-lms' ),
+				'type'        => 'checkbox',
+				'default'     => false,
+				'section'     => 'sensei-experimental-features',
+			);
+			$fields['experimental_progress_storage_repository']      = array(
+				'name'        => '', // ,
+				'description' => __( 'Choose a repository to store the progress and quiz submissions of your students.', 'sensei-lms' ),
+				'form'        => 'render_progress_storage_repositories',
+				'type'        => 'radio',
+				'default'     => 'comments',
+				'section'     => 'sensei-experimental-features',
+				'options'     => array(
+					'comments'      => __( 'WordPress comments based storage', 'sensei-lms' ),
+					'custom_tables' => __( 'High-Performance progress storage (experimental)', 'sensei-lms' ),
+				),
+			);
+			$fields['experimental_progress_storage_synchronization'] = array(
+				'name'        => '',
+				'description' => __( 'Synchronize the student progress between storages.', 'sensei-lms' ),
+				'form'        => 'render_progress_storage_synchronization',
+				'type'        => 'checkbox',
+				'default'     => false,
+				'section'     => 'sensei-experimental-features',
+			);
+		}
+
 		/**
 		 * Filters settings fields.
 		 *
@@ -1005,6 +1049,195 @@ class Sensei_Settings extends Sensei_Settings_API {
 				]
 			);
 		}
+	}
+
+	/**
+	 * Do preparation when the experimental features setting were saved.
+	 *
+	 * @access private
+	 * @since 4.19.2
+	 *
+	 * @param array $old_value The old settings value.
+	 * @param array $value     The new settings value.
+	 */
+	public function experimental_features_saved( $old_value, $value ) {
+		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+			return;
+		}
+
+		$screen = get_current_screen();
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && ! defined( 'REST_REQUEST' ) && $screen && 'options' === $screen->id ) ) {
+			return;
+		}
+
+		$old_hpps = isset( $old_value['experimental_progress_storage'] ) ? $old_value['experimental_progress_storage'] : false;
+		$new_hpps = isset( $value['experimental_progress_storage'] ) ? $value['experimental_progress_storage'] : false;
+
+		if ( $new_hpps !== $old_hpps && $new_hpps ) {
+			// Enable the feature flag to make progress tables available.
+			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
+			( new Schema( Sensei()->feature_flags ) )->create_tables();
+		}
+
+		$old_hpps_sync = isset( $old_value['experimental_progress_storage_synchronization'] ) ? $old_value['experimental_progress_storage_synchronization'] : false;
+		$new_hpps_sync = isset( $value['experimental_progress_storage_synchronization'] ) ? $value['experimental_progress_storage_synchronization'] : false;
+
+		Sensei()->init_migration_scheduler();
+		$migration_scheduler = Sensei()->migration_scheduler;
+		if ( $new_hpps_sync !== $old_hpps_sync && $new_hpps_sync && ! is_null( $migration_scheduler ) ) {
+			// Drop existing tables and clear the migration state.
+			( new Eraser() )->drop_tables();
+			$migration_scheduler->clear_state();
+
+			// Recreate tables and  schedule the migration.
+			( new Schema( Sensei()->feature_flags ) )->create_tables();
+			$migration_scheduler->schedule();
+		}
+	}
+
+	/**
+	 * Renders the High-Performance Progress Storage repository setting.
+	 *
+	 * @param array $args The field arguments.
+	 */
+	public function render_progress_storage_repositories( $args ) {
+
+		$settings             = $this->get_settings();
+		$key                  = $args['key'];
+		$value                = $settings[ $key ];
+		$visible              = $settings['experimental_progress_storage'] ?? false;
+		$block_display        = $visible ? 'block' : 'none';
+		$sync_disabled        = ! (bool) ( $settings['experimental_progress_storage_synchronization'] ?? false );
+		$migration_scheduler  = Sensei()->migration_scheduler;
+		$migration_incomplete = ! $migration_scheduler || ! $migration_scheduler->is_complete();
+		?>
+		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
+			<h4><?php echo esc_html( __( 'Progress storage repository', 'sensei-lms' ) ); ?></h4>
+			<p><?php echo esc_html( $args['data']['description'] ); ?></p>
+			<ul>
+				<?php foreach ( $args['data']['options'] as $option_value => $option_name ) : ?>
+				<li>
+					<label>
+						<input
+							class="sensei-settings_progress-storage-repository"
+							type="radio"
+							name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
+							value="<?php echo esc_attr( $option_value ); ?>"
+							<?php disabled( $sync_disabled || $migration_incomplete ); ?>
+							<?php checked( $option_value, $value, true ); ?>
+						/>
+						<?php echo esc_html( $option_name ); ?>
+					</label>
+				</li>
+				<?php endforeach; ?>
+			</ul>
+
+			<?php if ( $sync_disabled ) : ?>
+			<p>
+				<?php
+				echo esc_html( __( 'Enable storage synchronization and wait for full synchronization to complete before switching to another repository.', 'sensei-lms' ) );
+				?>
+			</p>
+			<?php endif; ?>
+
+			<?php if ( ! $sync_disabled && $migration_incomplete ) : ?>
+			<p>
+				<?php
+				echo esc_html( __( 'Wait for full synchronization to complete before switching to another repository.', 'sensei-lms' ) );
+				?>
+			</p>
+			<?php endif; ?>
+
+		</div>
+		<?php
+		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
+	}
+
+	/**
+	 * Renders the High-Performance Progress Storage synchronization setting.
+	 *
+	 * @param array $args The field arguments.
+	 */
+	public function render_progress_storage_synchronization( $args ) {
+
+		// Checkbox field.
+		$settings = $this->get_settings();
+		$key      = $args['key'];
+		$value    = $settings[ $key ];
+
+		// Setting visibility.
+		$visible       = $settings['experimental_progress_storage'] ?? false;
+		$block_display = $visible ? 'block' : 'none';
+
+		// Migration state.
+		$migration_scheduler   = Sensei()->migration_scheduler;
+		$migration_in_progress = $migration_scheduler && $migration_scheduler->is_in_progress();
+		$migration_complete    = $migration_scheduler && $migration_scheduler->is_complete();
+		$migration_errors      = ! is_null( $migration_scheduler ) ? $migration_scheduler->get_errors() : array();
+
+		// Disables the checkbox if the migration is in progress or HPPS storage is in use.
+		$hpps_repository_in_use = 'custom_tables' === ( $settings['experimental_progress_storage_repository'] ?? null );
+		$disabled               = $migration_in_progress || $hpps_repository_in_use || is_null( Sensei()->action_scheduler );
+		?>
+		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
+			<h4><?php echo esc_html( __( 'Progress storage synchronization', 'sensei-lms' ) ); ?></h4>
+			<label>
+				<input
+					class="sensei-settings_progress-storage-synchronization"
+					type="checkbox"
+					name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
+					value="1"
+					<?php disabled( true, $disabled, true ); ?>
+					<?php checked( $value, true, true ); ?>
+				/>
+				<?php echo esc_html( $args['data']['description'] ); ?>
+			</label>
+
+			<?php if ( $disabled ) : ?>
+				<input type="hidden" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" value="<?php echo esc_attr( $value ); ?>" />
+			<?php endif; ?>
+
+			<?php if ( $value ) : ?>
+				<?php if ( $migration_in_progress ) : ?>
+				<p>
+					<?php
+					echo esc_html( __( 'Data migration is in progress. Please wait for it to switch repository.', 'sensei-lms' ) );
+					?>
+				</p>
+				<?php elseif ( $migration_complete && empty( $migration_errors ) ) : ?>
+				<p>
+					<?php
+					echo esc_html( __( 'Migration complete and data synchronization enabled.', 'sensei-lms' ) );
+					?>
+				</p>
+				<?php elseif ( ! empty( $migration_errors ) ) : ?>
+				<p>
+					<?php
+					echo esc_html( __( 'Data migration failed.', 'sensei-lms' ) );
+					?>
+				</p>
+				<ul>
+					<?php foreach ( $migration_errors as $error ) : ?>
+					<li><?php echo esc_html( $error ); ?></li>
+					<?php endforeach; ?>
+				</ul>
+				<?php elseif ( is_null( $migration_scheduler ) ) : ?>
+				<p>
+					<?php
+					echo esc_html( __( 'Cannot get the migration status.', 'sensei-lms' ) );
+					?>
+				<?php else : ?>
+				<p>
+					<?php
+					echo esc_html( __( 'Waiting for data migration to start.', 'sensei-lms' ) );
+					?>
+				</p>
+				<?php endif; ?>
+			<?php endif; ?>
+		</div>
+		<?php
+		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
 	}
 
 	/**
