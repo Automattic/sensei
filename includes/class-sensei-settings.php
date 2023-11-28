@@ -1215,7 +1215,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 				</p>
 					<?php if ( ! empty( $failed_jobs_errors ) ) : ?>
 					<p>
-						<?php echo esc_html( __( 'Some migration jobs failed. You can try to disable synchronization and enable it again to restart migration. Log for failed jobs:', 'sensei-lms' ) ) ?>
+						<?php echo esc_html( __( 'Some migration jobs failed. You can try to disable synchronization and enable it again to restart migration. Log for failed jobs:', 'sensei-lms' ) ); ?>
 					</p>
 					<ul>
 						<?php foreach ( $failed_jobs_errors as $error ) : ?>
