@@ -1110,7 +1110,44 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$value    = $settings[ $key ];
 
 		// Disables the checkbox if we can't set time limit. That's our current limitation for running migrations.
-		$disabled  = ! set_time_limit( 0 );
+		$disabled                    = true;
+		$disabled_messages           = array();
+		$xdebug_enabled              = false;
+		$set_time_limit_disabled     = true;
+		$original_max_execution_time = (int) ini_get( 'max_execution_time' );
+		if ( 0 !== $original_max_execution_time && function_exists( 'set_time_limit' ) ) {
+			$set_time_limit_disabled    = false;
+			$disabled                   = ! set_time_limit( 0 );
+			$xdebug_enabled             = extension_loaded( 'xdebug' );
+			$current_max_execution_time = (int) ini_get( 'max_execution_time' );
+			if ( $disabled && 0 === $current_max_execution_time ) {
+				$disabled = false;
+			}
+		}
+
+		if ( $disabled ) {
+			if ( $set_time_limit_disabled ) {
+				$disabled_messages[] = sprintf(
+					// translators: Placeholder is a link to `set_time_limit` function documentation.
+					__( '%s function is disabled in your PHP configuration.', 'sensei-lms' ),
+					'<a href="https://www.php.net/manual/en/function.set-time-limit.php" target="_blank" rel="noopener noreferrer">set_time_limit</a>'
+				);
+			}
+			if ( $xdebug_enabled ) {
+				$disabled_messages[] = __( 'Xdebug is enabled. It may affect the result of running `set_time_limit`. Please, condider disabling it.', 'sensei-lms' );
+			}
+			$disabled_messages[] = __( 'We execute long-running migrations to make the feature work.', 'sensei-lms' );
+			$disabled_messages[] = sprintf(
+				// translators: Placeholder is a link to `max_execution_time` configuration option documentation.
+				__( 'Because of that, we need to set %s for PHP scripts.', 'sensei-lms' ),
+				'<a href="https://www.php.net/manual/en/info.configuration.php#ini.max-execution-time" target="_blank" rel="noopener noreferrer">max_execution_time</a>'
+			);
+			$disabled_messages[] = sprintf(
+				// translators: Placeholder is a link to `set_time_limit` function documentation.
+				__( "Unfortunately, we can't use %s on your server and we had to disable the feature entirely.", 'sensei-lms' ),
+				'<a href="https://www.php.net/manual/en/function.set-time-limit.php" target="_blank" rel="noopener noreferrer">set_time_limit</a>'
+			);
+		}
 		?>
 		<div>
 			<label>
@@ -1128,9 +1165,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<?php if ( $disabled ) : ?>
 				<input type="hidden" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" value="<?php echo esc_attr( $value ); ?>" />
 				<p>
-					<?php echo esc_html( __( 'Currently, to make the feature work, we need to execute long-running migrations.', 'sensei-lms' ) ) ?><br />
-					<?php echo esc_html( __( 'Because of that, we need to set `max_execution_time` for PHP scripts.', 'sensei-lms' ) ) ?><br />
-					<?php echo esc_html( __( 'Unfortunately, we can\'t use `set_time_limit` on your server and we had to disable the feature entirely', 'sensei-lms' ) ) ?>.
+					<?php if ( ! empty( $disabled_messages ) ) : ?>
+						<?php echo wp_kses_post( implode( '<br />', $disabled_messages ) ); ?>
+					<?php endif; ?>
 				</p>
 			<?php endif; ?>
 		</div>
