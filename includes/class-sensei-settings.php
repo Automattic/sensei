@@ -1118,7 +1118,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$xdebug_enabled              = extension_loaded( 'xdebug' );
 		if ( 0 !== $original_max_execution_time && ! $set_time_limit_disabled ) {
 			// Set max execution time to 0 to check if we can set it in migrtions.
-			$disabled_feature                   = ! set_time_limit( 0 );
+			$disabled_feature           = ! set_time_limit( 0 );
 			$current_max_execution_time = (int) ini_get( 'max_execution_time' );
 			if ( $disabled_feature && 0 === $current_max_execution_time ) {
 				$disabled_feature = false;
@@ -1137,6 +1137,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			}
 			if ( $xdebug_enabled ) {
 				$disabled_messages[] = sprintf(
+					// translators: Placeholder is a link to Xdebug website.
 					__( '%s is interfering with this feature. Please, consider disabling it.', 'sensei-lms' ),
 					'<a href="https://xdebug.org/" target="_blank" rel="noopener noreferrer">Xdebug</a>'
 				);
