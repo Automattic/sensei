@@ -132,7 +132,6 @@ class Action_Scheduler {
 	 * @return array The action logs.
 	 */
 	public function get_action_logs( string $action_id ): array {
-		$args['group'] = self::GROUP_ID;
 		return ActionScheduler_Logger::instance()->get_logs( $action_id );
 	}
 }
