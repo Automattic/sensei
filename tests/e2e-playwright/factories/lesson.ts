@@ -4,7 +4,7 @@ export const lessonActionsBlock = `<!-- wp:sensei-lms/lesson-actions -->
 		<!-- wp:sensei-lms/button-view-quiz {"inContainer":true} -->
 	<div class="wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper">
 	<div class="wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left">
-	<button class="wp-block-button__link">View Quiz</button>
+	<button class="wp-block-button__link">Take Quiz</button>
 	</div>
 	</div>
 	<!-- /wp:sensei-lms/button-view-quiz -->

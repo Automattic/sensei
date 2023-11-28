@@ -89,10 +89,10 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that the View Quiz block is displayed in various scenarios.
+	 * Test that the Take Quiz block is displayed in various scenarios.
 	 */
-	public function testViewQuizDisplayed() {
-		$view_quiz = new Sensei_View_Quiz_Block();
+	public function testTakeQuizDisplayed() {
+		$take_quiz = new Sensei_Take_Quiz_Block();
 
 		$user_id            = $this->login_as_student()->get_user_by_role( 'subscriber' );
 		$course_id          = $this->factory->course->create();
@@ -106,7 +106,7 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 		$lesson_id          = $this->factory->lesson->create( $course_lesson_args );
 		$this->set_current_lesson( $lesson_id );
 
-		$this->assertEmpty( $view_quiz->render( [], '' ), 'View quiz button is displayed when there is no quiz to the lesson.' );
+		$this->assertEmpty( $take_quiz->render( [], '' ), 'Take Quiz button is displayed when there is no quiz to the lesson.' );
 
 		$quiz_args = [
 			'post_parent' => $lesson_id,
@@ -115,10 +115,10 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 			],
 		];
 		$this->factory->quiz->create( $quiz_args );
-		$this->assertNotEmpty( $view_quiz->render( [], '' ), 'View quiz button is not displayed when there is a quiz to the lesson.' );
+		$this->assertNotEmpty( $take_quiz->render( [], '' ), 'Take Quiz button is not displayed when there is a quiz to the lesson.' );
 
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
-		$this->assertNotEmpty( $view_quiz->render( [], '' ), 'View quiz button is not displayed when the user has completed the lesson.' );
+		$this->assertNotEmpty( $take_quiz->render( [], '' ), 'Take quiz button is not displayed when the user has completed the lesson.' );
 	}
 
 	/**

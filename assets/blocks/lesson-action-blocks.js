@@ -6,7 +6,7 @@ import {
 	LessonActionsBlock,
 	LessonCompletedBlock,
 	NextLessonBlock,
-	ViewQuizBlock,
+	TakeQuizBlock,
 	ResetLessonBlock,
 } from './lesson-actions';
 import registerSenseiBlocks from './register-sensei-blocks';
@@ -16,6 +16,6 @@ registerSenseiBlocks( [
 	LessonCompletedBlock,
 	CompleteLessonBlock,
 	NextLessonBlock,
-	ViewQuizBlock,
+	TakeQuizBlock,
 	ResetLessonBlock,
 ] );
