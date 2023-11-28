@@ -1109,20 +1109,23 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$key      = $args['key'];
 		$value    = $settings[ $key ];
 
-		// Disables the checkbox if we can't set time limit. That's our current limitation for running migrations.
+		// Disable the checkbox if we can't set time limit. That's our current limitation for running migrations.
 		$disabled                    = true;
 		$disabled_messages           = array();
 		$xdebug_enabled              = false;
 		$set_time_limit_disabled     = true;
 		$original_max_execution_time = (int) ini_get( 'max_execution_time' );
 		if ( 0 !== $original_max_execution_time && function_exists( 'set_time_limit' ) ) {
-			$set_time_limit_disabled    = false;
+			$set_time_limit_disabled = false;
+			// Set max execution time to 0 to check if we can set it in migrtions.
 			$disabled                   = ! set_time_limit( 0 );
 			$xdebug_enabled             = extension_loaded( 'xdebug' );
 			$current_max_execution_time = (int) ini_get( 'max_execution_time' );
 			if ( $disabled && 0 === $current_max_execution_time ) {
 				$disabled = false;
 			}
+			// Restore original max execution time.
+			set_time_limit( $original_max_execution_time );
 		}
 
 		if ( $disabled ) {
