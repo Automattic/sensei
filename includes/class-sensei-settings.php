@@ -1179,6 +1179,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 		// Disables the checkbox if the migration is in progress or HPPS storage is in use.
 		$hpps_repository_in_use = 'custom_tables' === ( $settings['experimental_progress_storage_repository'] ?? null );
 		$disabled               = $migration_in_progress || $hpps_repository_in_use || is_null( Sensei()->action_scheduler );
+
+		// Migration job errors.
+		$failed_jobs_errors = array();
+		if ( $migration_scheduler && $migration_scheduler->has_failed_jobs() ) {
+			// If there are failed jobs, the checkbox should enabled to make it possible to restart the migration.
+			$disabled           = false;
+			$failed_jobs_errors = $migration_scheduler->get_failed_jobs_errors();
+		}
 		?>
 		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
 			<h4><?php echo esc_html( __( 'Progress storage synchronization', 'sensei-lms' ) ); ?></h4>
@@ -1205,6 +1213,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 					echo esc_html( __( 'Data migration is in progress. Please wait for it to switch repository.', 'sensei-lms' ) );
 					?>
 				</p>
+					<?php if ( ! empty( $failed_jobs_errors ) ) : ?>
+					<p>Some migration jobs failed. You can try to disable synchronization and enable it again to restart migration. Log for failed jobs:</p>
+					<ul>
+						<?php foreach ( $failed_jobs_errors as $error ) : ?>
+						<li><?php echo esc_html( $error ); ?></li>
+					<?php endforeach; ?>
+					</ul>
+					<?php endif; ?>
 				<?php elseif ( $migration_complete && empty( $migration_errors ) ) : ?>
 				<p>
 					<?php

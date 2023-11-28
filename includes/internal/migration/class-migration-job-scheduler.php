@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Migration;
 
+use ActionScheduler_Store;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Migration\Migrations\Quiz_Migration;
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
@@ -191,6 +192,64 @@ class Migration_Job_Scheduler {
 		} else {
 			$this->schedule_job( $job );
 		}
+	}
+
+	/**
+	 * Return if there are failed migration jobs.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return true
+	 */
+	public function has_failed_jobs(): bool {
+		$started_at = ( new \DateTime() )->setTimestamp( get_option( self::STARTED_OPTION_NAME, 0 ) );
+
+		$failed_jobs = $this->action_scheduler->get_scheduled_actions(
+			array(
+				'status'       => ActionScheduler_Store::STATUS_FAILED,
+				'date'         => $started_at,
+				'date_compare' => '>',
+			)
+		);
+
+		return ! empty( $failed_jobs );
+	}
+
+	/**
+	 * Get error messages for failed jobs.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string[]
+	 */
+	public function get_failed_jobs_errors(): array {
+		$started_at = ( new \DateTime() )->setTimestamp( get_option( self::STARTED_OPTION_NAME, 0 ) );
+
+		$failed_jobs = $this->action_scheduler->get_scheduled_actions(
+			array(
+				'status'       => ActionScheduler_Store::STATUS_FAILED,
+				'date'         => $started_at,
+				'date_compare' => '>',
+			)
+		);
+
+		if ( empty( $failed_jobs ) ) {
+			return array();
+		}
+
+		$failed_jobs_logs = array();
+		foreach ( $failed_jobs as $failed_job ) {
+			$log_entries = $this->action_scheduler->get_action_logs( $failed_job );
+			foreach ( $log_entries as $log_entry ) {
+				$failed_jobs_logs[] = $log_entry->get_message();
+			}
+		}
+
+		return $failed_jobs_logs;
 	}
 
 	/**
