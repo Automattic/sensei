@@ -332,4 +332,50 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( $expected, $actual );
 	}
+
+	public function testInit_Always_AddsUnexpectedShutdownHook(): void {
+		/* Arrange. */
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		/* Act. */
+		$job_scheduler->init();
+
+		/* Assert. */
+		$actual   = has_action( 'action_scheduler_unexpected_shutdown', [ $job_scheduler, 'collect_failed_job_errors' ] );
+		$expected = 10;
+		$this->assertSame( $expected, $actual );
+	}
+
+	public function testCollectFailedJobErrors_Always_UpdatesErrorsOption(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::ERRORS_OPTION_NAME, array( 'a' ) );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		/* Act. */
+		$job_scheduler->collect_failed_job_errors( 'b', array( 'message' => 'c' ) );
+
+		/* Assert. */
+		$actual   = get_option( Migration_Job_Scheduler::ERRORS_OPTION_NAME );
+		$expected = array( 'a', 'c' );
+		$this->assertSame( $expected, $actual );
+	}
+
+	public function testIntegration_CollectFailedJobErrors_Always_UpdatesErrorsOptionWithEmptyArray(): void {
+		/* Arrange. */
+		delete_option( Migration_Job_Scheduler::ERRORS_OPTION_NAME );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		/* Act. */
+		$job_scheduler->collect_failed_job_errors( 'b', array( 'message' => 'c' ) );
+		$actual = get_option( Migration_Job_Scheduler::ERRORS_OPTION_NAME );
+
+		/* Assert. */
+		$expected = array( 'c' );
+		$this->assertSame( $expected, $actual );
+	}
 }
