@@ -2,6 +2,7 @@
 
 use Sensei\Internal\Installer\Eraser;
 use Sensei\Internal\Installer\Schema;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -864,10 +865,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 				'type'        => 'radio',
 				'default'     => 'comments',
 				'section'     => 'sensei-experimental-features',
-				'options'     => array(
-					'comments'      => __( 'WordPress comments based storage', 'sensei-lms' ),
-					'custom_tables' => __( 'High-Performance progress storage (experimental)', 'sensei-lms' ),
-				),
+				'options'     => Progress_Storage_Settings::get_storage_repositories(),
 			);
 			$fields['experimental_progress_storage_synchronization'] = array(
 				'name'        => '',
