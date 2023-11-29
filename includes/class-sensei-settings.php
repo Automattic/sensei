@@ -1179,13 +1179,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 		// Disables the checkbox if the migration is in progress or HPPS storage is in use.
 		$hpps_repository_in_use = 'custom_tables' === ( $settings['experimental_progress_storage_repository'] ?? null );
 		$disabled               = $migration_in_progress || $hpps_repository_in_use || is_null( Sensei()->action_scheduler );
-
-		// Migration job errors.
-		$failed_jobs_errors = array();
-		if ( $migration_scheduler && $migration_scheduler->has_failed_jobs() ) {
-			// If there are failed jobs, the checkbox should enabled to make it possible to restart the migration.
-			$disabled           = false;
-			$failed_jobs_errors = $migration_scheduler->get_failed_jobs_errors();
+		if ( $migration_errors ) {
+			// Enable the checkbox if there are errors to allow the user to retry.
+			$disabled = false;
 		}
 		?>
 		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
@@ -1213,33 +1209,12 @@ class Sensei_Settings extends Sensei_Settings_API {
 					echo esc_html( __( 'Data migration is in progress. Please wait for it to switch repository.', 'sensei-lms' ) );
 					?>
 				</p>
-					<?php if ( ! empty( $failed_jobs_errors ) ) : ?>
-					<p>
-						<?php echo esc_html( __( 'Some migration jobs failed. You can try to disable synchronization and enable it again to restart migration. Log for failed jobs:', 'sensei-lms' ) ); ?>
-					</p>
-					<ul>
-						<?php foreach ( $failed_jobs_errors as $error ) : ?>
-						<li><?php echo esc_html( $error ); ?></li>
-					<?php endforeach; ?>
-					</ul>
-					<?php endif; ?>
 				<?php elseif ( $migration_complete && empty( $migration_errors ) ) : ?>
 				<p>
 					<?php
 					echo esc_html( __( 'Migration complete and data synchronization enabled.', 'sensei-lms' ) );
 					?>
 				</p>
-				<?php elseif ( ! empty( $migration_errors ) ) : ?>
-				<p>
-					<?php
-					echo esc_html( __( 'Data migration failed.', 'sensei-lms' ) );
-					?>
-				</p>
-				<ul>
-					<?php foreach ( $migration_errors as $error ) : ?>
-					<li><?php echo esc_html( $error ); ?></li>
-					<?php endforeach; ?>
-				</ul>
 				<?php elseif ( is_null( $migration_scheduler ) ) : ?>
 				<p>
 					<?php
@@ -1251,6 +1226,19 @@ class Sensei_Settings extends Sensei_Settings_API {
 					echo esc_html( __( 'Waiting for data migration to start.', 'sensei-lms' ) );
 					?>
 				</p>
+				<?php endif; ?>
+
+				<?php if ( ! empty( $migration_errors ) ) : ?>
+				<p>
+					<?php
+					echo esc_html( __( 'Errors occurred during migration:', 'sensei-lms' ) );
+					?>
+				</p>
+				<ul class="ul-disc">
+					<?php foreach ( $migration_errors as $error ) : ?>
+					<li><?php echo esc_html( $error ); ?></li>
+					<?php endforeach; ?>
+				</ul>
 				<?php endif; ?>
 			<?php endif; ?>
 		</div>

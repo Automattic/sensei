@@ -7,7 +7,6 @@
 
 namespace Sensei\Internal\Migration;
 
-use ActionScheduler_Store;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Migration\Migrations\Quiz_Migration;
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
@@ -73,6 +72,10 @@ class Migration_Job_Scheduler {
 	 */
 	public function __construct( Action_Scheduler $action_scheduler ) {
 		$this->action_scheduler = $action_scheduler;
+	}
+
+	public function init(): void {
+		add_action( 'action_scheduler_unexpected_shutdown', [ $this, 'collect_failed_job_errors' ], 10, 2 );
 	}
 
 	/**
@@ -159,6 +162,21 @@ class Migration_Job_Scheduler {
 	}
 
 	/**
+	 * Handle unexpected job error and add it to migration errors.
+	 *
+	 * @internal
+	 *
+	 * @access private
+	 *
+	 * @since $$next-version$$
+	 * @param string $action_id The action ID.
+	 * @param array  $error     The error.
+	 */
+	public function collect_failed_job_errors( $action_id, $error ) {
+		$this->add_error( array( $error['message'] ) );
+	}
+
+	/**
 	 * Run the job.
 	 *
 	 * @internal
@@ -177,9 +195,7 @@ class Migration_Job_Scheduler {
 		$job->run();
 
 		if ( $job->get_errors() ) {
-			$migration_errors = (array) get_option( self::ERRORS_OPTION_NAME, [] );
-			$migration_errors = array_merge( $migration_errors, $job->get_errors() );
-			update_option( self::ERRORS_OPTION_NAME, $migration_errors );
+			$this->add_error( $job->get_errors() );
 		}
 
 		if ( $job->is_complete() ) {
@@ -192,64 +208,6 @@ class Migration_Job_Scheduler {
 		} else {
 			$this->schedule_job( $job );
 		}
-	}
-
-	/**
-	 * Return if there are failed migration jobs.
-	 *
-	 * @internal
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @return true
-	 */
-	public function has_failed_jobs(): bool {
-		$started_at = ( new \DateTime() )->setTimestamp( get_option( self::STARTED_OPTION_NAME, 0 ) );
-
-		$failed_jobs = $this->action_scheduler->get_scheduled_actions(
-			array(
-				'status'       => ActionScheduler_Store::STATUS_FAILED,
-				'date'         => $started_at,
-				'date_compare' => '>',
-			)
-		);
-
-		return ! empty( $failed_jobs );
-	}
-
-	/**
-	 * Get error messages for failed jobs.
-	 *
-	 * @internal
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @return string[]
-	 */
-	public function get_failed_jobs_errors(): array {
-		$started_at = ( new \DateTime() )->setTimestamp( get_option( self::STARTED_OPTION_NAME, 0 ) );
-
-		$failed_jobs = $this->action_scheduler->get_scheduled_actions(
-			array(
-				'status'       => ActionScheduler_Store::STATUS_FAILED,
-				'date'         => $started_at,
-				'date_compare' => '>',
-			)
-		);
-
-		if ( empty( $failed_jobs ) ) {
-			return array();
-		}
-
-		$failed_jobs_logs = array();
-		foreach ( $failed_jobs as $failed_job ) {
-			$log_entries = $this->action_scheduler->get_action_logs( $failed_job );
-			foreach ( $log_entries as $log_entry ) {
-				$failed_jobs_logs[] = $log_entry->get_message();
-			}
-		}
-
-		return $failed_jobs_logs;
 	}
 
 	/**
@@ -295,6 +253,17 @@ class Migration_Job_Scheduler {
 	 */
 	private function get_job_hook_name( Migration_Job $job ): string {
 		return self::HOOK_NAMESPACE . $job->get_name();
+	}
+
+	/**
+	 * Add errors to the migration errors.
+	 *
+	 * @param array $errors The errors to add.
+	 */
+	private function add_error( array $errors ) {
+		$migration_errors = (array) get_option( self::ERRORS_OPTION_NAME, [] );
+		$migration_errors = array_merge( $migration_errors, $errors );
+		update_option( self::ERRORS_OPTION_NAME, $migration_errors );
 	}
 
 	/**

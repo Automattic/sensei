@@ -717,6 +717,7 @@ class Sensei_Main {
 		}
 
 		$this->migration_scheduler = new Migration_Job_Scheduler( $this->action_scheduler );
+		$this->migration_scheduler->init();
 		$this->migration_scheduler->register_job(
 			new Migration_Job( 'student_progress_migration', new Student_Progress_Migration() )
 		);

@@ -9,8 +9,6 @@
 
 namespace Sensei\Internal\Action_Scheduler;
 
-use ActionScheduler_Logger;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -105,34 +103,4 @@ class Action_Scheduler {
 	public function has_scheduled_action( string $hook, array $args = null ): bool {
 		return as_has_scheduled_action( $hook, $args, self::GROUP_ID );
 	}
-
-	/**
-	 * Get scheduled actions. This is a wrapper for as_get_scheduled_actions() that sets the group ID.
-	 *
-	 * @internal
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Arguments to pass to as_get_scheduled_actions().
-	 * @return int[] The scheduled action IDs.
-	 */
-	public function get_scheduled_actions( array $args ): array {
-		$args['group'] = self::GROUP_ID;
-		return as_get_scheduled_actions( $args, 'ids' );
-	}
-
-	/**
-	 * Get logs for an action.
-	 *
-	 * @internal
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param string $action_id The action ID.
-	 * @return array The action logs.
-	 */
-	public function get_action_logs( string $action_id ): array {
-		return ActionScheduler_Logger::instance()->get_logs( $action_id );
-	}
 }
-
