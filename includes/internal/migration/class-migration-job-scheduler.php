@@ -74,6 +74,9 @@ class Migration_Job_Scheduler {
 		$this->action_scheduler = $action_scheduler;
 	}
 
+	/**
+	 * Initialize the migration job scheduler.
+	 */
 	public function init(): void {
 		add_action( 'action_scheduler_unexpected_shutdown', [ $this, 'collect_failed_job_errors' ], 10, 2 );
 	}
