@@ -1131,7 +1131,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			if ( $set_time_limit_disabled ) {
 				$disabled_messages[] = sprintf(
 					// translators: Placeholder is a link to `set_time_limit` function documentation.
-					__( '%s function is disabled in your PHP configuration.', 'sensei-lms' ),
+					__( "The feature can't be enabled because the %s function is disabled in your PHP configuration.", 'sensei-lms' ),
 					'<a href="https://www.php.net/manual/en/function.set-time-limit.php" target="_blank" rel="noopener noreferrer">set_time_limit</a>'
 				);
 			}
