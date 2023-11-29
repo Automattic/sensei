@@ -863,7 +863,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 				'description' => __( 'Choose a repository to store the progress and quiz submissions of your students.', 'sensei-lms' ),
 				'form'        => 'render_progress_storage_repositories',
 				'type'        => 'radio',
-				'default'     => 'comments',
+				'default'     => Progress_Storage_Settings::COMMENTS_STORAGE,
 				'section'     => 'sensei-experimental-features',
 				'options'     => Progress_Storage_Settings::get_storage_repositories(),
 			);
@@ -1196,7 +1196,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$migration_errors      = ! is_null( $migration_scheduler ) ? $migration_scheduler->get_errors() : array();
 
 		// Disables the checkbox if the migration is in progress or HPPS storage is in use.
-		$hpps_repository_in_use = 'custom_tables' === ( $settings['experimental_progress_storage_repository'] ?? null );
+		$hpps_repository_in_use = Progress_Storage_Settings::TABLES_STORAGE === ( $settings['experimental_progress_storage_repository'] ?? null );
 		$disabled               = $migration_in_progress || $hpps_repository_in_use || is_null( Sensei()->action_scheduler );
 		?>
 		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">

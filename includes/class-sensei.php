@@ -13,6 +13,7 @@ use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
@@ -636,7 +637,7 @@ class Sensei_Main {
 			&& ( true === $this->settings->settings['experimental_progress_storage_synchronization'] );
 
 		$read_from_tables_setting = isset( $this->settings->settings['experimental_progress_storage_repository'] )
-			&& ( 'custom_tables' === $this->settings->settings['experimental_progress_storage_repository'] );
+			&& ( Progress_Storage_Settings::TABLES_STORAGE === $this->settings->settings['experimental_progress_storage_repository'] );
 
 		/**
 		 * Filter whether to read student progress from tables.
