@@ -1174,6 +1174,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$migration_scheduler   = Sensei()->migration_scheduler;
 		$migration_in_progress = $migration_scheduler && $migration_scheduler->is_in_progress();
 		$migration_complete    = $migration_scheduler && $migration_scheduler->is_complete();
+		$migration_failed      = $migration_scheduler && $migration_scheduler->is_failed();
 		$migration_errors      = ! is_null( $migration_scheduler ) ? $migration_scheduler->get_errors() : array();
 
 		// Disables the checkbox if the migration is in progress or HPPS storage is in use.
@@ -1213,6 +1214,18 @@ class Sensei_Settings extends Sensei_Settings_API {
 				<p>
 					<?php
 					echo esc_html( __( 'Migration complete and data synchronization enabled.', 'sensei-lms' ) );
+					?>
+				</p>
+				<?php elseif ( $migration_complete && ! empty( $migration_errors ) ) : ?>
+				<p>
+					<?php
+					echo esc_html( __( 'Migration complete, but errors occurred during data synchronization.', 'sensei-lms' ) );
+					?>
+				</p>
+				<?php elseif ( $migration_failed ) : ?>
+				<p>
+					<?php
+					echo esc_html( __( 'Migration failed. Please retry.', 'sensei-lms' ) );
 					?>
 				</p>
 				<?php elseif ( is_null( $migration_scheduler ) ) : ?>

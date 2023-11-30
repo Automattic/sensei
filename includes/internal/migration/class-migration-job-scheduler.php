@@ -7,7 +7,6 @@
 
 namespace Sensei\Internal\Migration;
 
-use ActionScheduler_Store;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Migration\Migrations\Quiz_Migration;
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
@@ -32,6 +31,13 @@ class Migration_Job_Scheduler {
 	private const HOOK_NAMESPACE = 'sensei_lms_migration_job_';
 
 	/**
+	 * Current migration job status option name.
+	 *
+	 * @var string
+	 */
+	public const STATUS_OPTION_NAME = 'sensei_lms_migration_job_status';
+
+	/**
 	 * Migration errors option name.
 	 *
 	 * @var string
@@ -51,6 +57,11 @@ class Migration_Job_Scheduler {
 	 * @var string
 	 */
 	public const COMPLETED_OPTION_NAME = 'sensei_lms_migration_job_completed';
+
+	public const STATUS_NOT_STARTED = 'not_started';
+	public const STATUS_IN_PROGRESS = 'in_progress';
+	public const STATUS_COMPLETE    = 'complete';
+	public const STATUS_FAILED      = 'failed';
 
 	/**
 	 * Action_Scheduler instance.
@@ -121,7 +132,24 @@ class Migration_Job_Scheduler {
 	 * @return bool
 	 */
 	public function is_complete(): bool {
-		return (bool) get_option( self::COMPLETED_OPTION_NAME, false );
+		$status = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
+
+		return self::STATUS_COMPLETE === $status;
+	}
+
+	/**
+	 * Check if the migration is failed.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return bool
+	 */
+	public function is_failed(): bool {
+		$status = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
+
+		return self::STATUS_FAILED === $status;
 	}
 
 	/**
@@ -134,9 +162,9 @@ class Migration_Job_Scheduler {
 	 * @return bool
 	 */
 	public function is_in_progress(): bool {
-		$stared    = (bool) get_option( self::STARTED_OPTION_NAME, false );
-		$completed = (bool) get_option( self::COMPLETED_OPTION_NAME, false );
-		return $stared && ! $completed;
+		$status = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
+
+		return self::STATUS_IN_PROGRESS === $status;
 	}
 
 	/**
@@ -177,11 +205,16 @@ class Migration_Job_Scheduler {
 	 * @param array  $error     The error.
 	 */
 	public function collect_failed_job_errors( $action_id, $error ) {
-		if ( ! $this->is_migrtion_action( $action_id ) ) {
+		if ( ! $this->is_migration_action( $action_id ) ) {
 			return;
 		}
 
 		$this->add_error( array( $error['message'] ) );
+
+		$current_status = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
+		if ( self::STATUS_FAILED !== $current_status ) {
+			$this->complete( self::STATUS_FAILED );
+		}
 	}
 
 	/**
@@ -190,7 +223,7 @@ class Migration_Job_Scheduler {
 	 * @param string $action_id The action ID.
 	 * @return bool
 	 */
-	private function is_migrtion_action( $action_id ): bool {
+	private function is_migration_action( $action_id ): bool {
 		// Make sure the action ID is a string.
 		$action_id = (string) $action_id;
 
@@ -244,7 +277,7 @@ class Migration_Job_Scheduler {
 			if ( $next_job ) {
 				$this->schedule_job( $next_job );
 			} else {
-				$this->complete();
+				$this->complete( self::STATUS_COMPLETE );
 			}
 		} else {
 			$this->schedule_job( $job );
@@ -259,6 +292,7 @@ class Migration_Job_Scheduler {
 	 * @since $$next-version$$
 	 */
 	public function clear_state(): void {
+		delete_option( self::STATUS_OPTION_NAME );
 		delete_option( self::STARTED_OPTION_NAME );
 		delete_option( self::COMPLETED_OPTION_NAME );
 		delete_option( self::ERRORS_OPTION_NAME );
@@ -313,16 +347,16 @@ class Migration_Job_Scheduler {
 	 * @return bool
 	 */
 	private function is_first_run(): bool {
-		$started   = get_option( self::STARTED_OPTION_NAME, 0 );
-		$completed = get_option( self::COMPLETED_OPTION_NAME, 0 );
+		$current = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
 
-		return $started < $completed || 0 === $started;
+		return self::STATUS_NOT_STARTED === $current;
 	}
 
 	/**
 	 * Set start time.
 	 */
 	private function start(): void {
+		update_option( self::STATUS_OPTION_NAME, self::STATUS_IN_PROGRESS );
 		update_option( self::STARTED_OPTION_NAME, microtime( true ) );
 		delete_option( self::COMPLETED_OPTION_NAME );
 	}
@@ -330,7 +364,8 @@ class Migration_Job_Scheduler {
 	/**
 	 * Set completion time.
 	 */
-	private function complete(): void {
+	private function complete( string $status ): void {
+		update_option( self::STATUS_OPTION_NAME, $status );
 		update_option( self::COMPLETED_OPTION_NAME, microtime( true ) );
 	}
 }
