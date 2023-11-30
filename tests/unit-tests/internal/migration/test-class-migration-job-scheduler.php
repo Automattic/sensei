@@ -357,7 +357,7 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		$job = $this->createMock( Migration_Job::class );
 		$job->method( 'get_name' )->willReturn( 'x' );
 
-		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+		$job_scheduler = new Migration_Job_Scheduler( $action_scheduler );
 		$job_scheduler->register_job( $job );
 
 		/* Act. */
@@ -379,7 +379,7 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		$job = $this->createMock( Migration_Job::class );
 		$job->method( 'get_name' )->willReturn( 'x' );
 
-		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+		$job_scheduler = new Migration_Job_Scheduler( $action_scheduler );
 		$job_scheduler->register_job( $job );
 
 		/* Act. */
