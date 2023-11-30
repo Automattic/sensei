@@ -117,6 +117,6 @@ class Action_Scheduler {
 	 */
 	public function get_scheduled_actions( array $args, $return_format = null ): array {
 		$args['group'] = self::GROUP_ID;
-		return as_get_scheduled_actions( $args, $return_format );
+		return as_get_scheduled_actions( $args, $return_format ?? 'OBJECT' );
 	}
 }
