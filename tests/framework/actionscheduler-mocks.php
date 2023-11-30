@@ -174,7 +174,7 @@ function as_has_scheduled_action( $hook, $args = array(), $group = '' ) {
 	return false;
 }
 
-function as_get_scheduled_actions( $args = array(), $return_format = OBJECT ) {
+function as_get_scheduled_actions( $args = array(), $return_format = 'OBJECT' ) {
 	_as_add_call( __FUNCTION__ );
 
 	$matches = [];
