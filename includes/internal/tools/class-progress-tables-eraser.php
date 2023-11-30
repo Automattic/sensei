@@ -137,11 +137,8 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	 * @return bool True if tool is available.
 	 */
 	public function is_available() {
-		$sync       = Progress_Storage_Settings::is_sync_enabled();
-		$repository = Progress_Storage_Settings::get_current_repository();
-
 		// Disable the tool if tables are in use.
-		if ( $sync || Progress_Storage_Settings::COMMENTS_STORAGE !== $repository ) {
+		if ( Progress_Storage_Settings::is_sync_enabled() || Progress_Storage_Settings::is_tables_repository() ) {
 			return false;
 		}
 

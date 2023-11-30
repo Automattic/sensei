@@ -64,6 +64,24 @@ class Progress_Storage_Settings {
 	}
 
 	/**
+	 * Returns true if the comments repository is enabled.
+	 *
+	 * @return bool
+	 */
+	public static function is_comments_repository(): bool {
+		return self::COMMENTS_STORAGE === self::get_current_repository();
+	}
+
+	/**
+	 * Returns true if the tables repository is enabled.
+	 *
+	 * @return bool
+	 */
+	public static function is_tables_repository(): bool {
+		return self::TABLES_STORAGE === self::get_current_repository();
+	}
+
+	/**
 	 * Returns true if the HPPS synchronization is enabled.
 	 *
 	 * @return bool

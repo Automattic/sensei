@@ -68,13 +68,12 @@ class Progress_Storage_Settings_Test extends \WP_UnitTestCase {
 		$this->assertSame( Progress_Storage_Settings::COMMENTS_STORAGE, $repository );
 	}
 
-
 	/**
 	 * Test that the method return the expected value.
 	 *
 	 * @dataProvider providerGetCurrentRepository_WhenRepositoryNotSet_ReturnsDefault
 	 */
-	public function testGetCurrentRepository_WhenRepositorySet_ReturnsDefault( $repository ): void {
+	public function testGetCurrentRepository_WhenRepositorySet_ReturnsSameRepository( $repository ): void {
 		/* Arrange. */
 		Sensei()->settings->settings['experimental_progress_storage_repository'] = $repository;
 
@@ -89,6 +88,74 @@ class Progress_Storage_Settings_Test extends \WP_UnitTestCase {
 		return array(
 			'comment-based' => array( 'comments' ),
 			'table-based'   => array( 'custom_tables' ),
+		);
+	}
+
+	public function testIsCommentsRepository_WhenRepositoryNotSet_ReturnsTrue(): void {
+		/* Arrange. */
+		unset( Sensei()->settings->settings['experimental_progress_storage_repository'] );
+
+		/* Act. */
+		$actual = Progress_Storage_Settings::is_comments_repository();
+
+		/* Assert. */
+		$this->assertTrue( $actual );
+	}
+
+	/**
+	 * Test that the method return the expected value.
+	 *
+	 * @dataProvider providerIsCommentsRepository_WhenRepositorySet_ReturnsExpectedValue
+	 */
+	public function testIsCommentsRepository_WhenRepositorySet_ReturnsExpectedValue( $repository, $expected ): void {
+		/* Arrange. */
+		Sensei()->settings->settings['experimental_progress_storage_repository'] = $repository;
+
+		/* Act. */
+		$actual = Progress_Storage_Settings::is_comments_repository();
+
+		/* Assert. */
+		$this->assertSame( $expected, $actual );
+	}
+
+	public function providerIsCommentsRepository_WhenRepositorySet_ReturnsExpectedValue(): array {
+		return array(
+			'comment-based' => array( 'comments', true ),
+			'table-based'   => array( 'custom_tables', false ),
+		);
+	}
+
+	public function testIsTablesRepository_WhenRepositoryNotSet_ReturnsFalse(): void {
+		/* Arrange. */
+		unset( Sensei()->settings->settings['experimental_progress_storage_repository'] );
+
+		/* Act. */
+		$actual = Progress_Storage_Settings::is_tables_repository();
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
+	/**
+	 * Test that the method return the expected value.
+	 *
+	 * @dataProvider providerIsTablesRepository_WhenRepositorySet_ReturnsExpectedValue
+	 */
+	public function testIsTablesRepository_WhenRepositorySet_ReturnsExpectedValue( $repository, $expected ): void {
+		/* Arrange. */
+		Sensei()->settings->settings['experimental_progress_storage_repository'] = $repository;
+
+		/* Act. */
+		$actual = Progress_Storage_Settings::is_tables_repository();
+
+		/* Assert. */
+		$this->assertSame( $expected, $actual );
+	}
+
+	public function providerIsTablesRepository_WhenRepositorySet_ReturnsExpectedValue(): array {
+		return array(
+			'comment-based' => array( 'comments', false ),
+			'table-based'   => array( 'custom_tables', true ),
 		);
 	}
 
@@ -125,4 +192,6 @@ class Progress_Storage_Settings_Test extends \WP_UnitTestCase {
 			'sync disabled' => array( false ),
 		);
 	}
+
+
 }
