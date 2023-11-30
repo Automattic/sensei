@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Migration;
 
+use ActionScheduler_Store;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Migration\Migrations\Quiz_Migration;
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
@@ -176,7 +177,44 @@ class Migration_Job_Scheduler {
 	 * @param array  $error     The error.
 	 */
 	public function collect_failed_job_errors( $action_id, $error ) {
+		if ( ! $this->is_migrtion_action( $action_id ) ) {
+			return;
+		}
+
 		$this->add_error( array( $error['message'] ) );
+	}
+
+	/**
+	 * Check if the action is a migration action.
+	 *
+	 * @param string $action_id The action ID.
+	 * @return bool
+	 */
+	private function is_migrtion_action( $action_id ): bool {
+		// Make sure the action ID is a string.
+		$action_id = (string) $action_id;
+
+		$hooks = array();
+		foreach ( $this->jobs as $job ) {
+			$hooks[] = $this->get_job_hook_name( $job );
+		}
+
+		$args = array(
+			'status' => 'failed',
+		);
+
+		foreach ( $hooks as $hook ) {
+			$args['hook'] = $hook;
+
+			$action_ids = $this->action_scheduler->get_scheduled_actions( $args, 'ids' );
+			// Make sure the action IDs are strings.
+			$action_ids = array_map( 'strval', $action_ids );
+			if ( in_array( $action_id, $action_ids, true ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
