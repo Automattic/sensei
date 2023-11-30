@@ -352,7 +352,13 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		update_option( Migration_Job_Scheduler::ERRORS_OPTION_NAME, array( 'a' ) );
 
 		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$action_scheduler->method( 'get_scheduled_actions' )->willReturn( array( 'b' ) );
+
+		$job = $this->createMock( Migration_Job::class );
+		$job->method( 'get_name' )->willReturn( 'x' );
+
 		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+		$job_scheduler->register_job( $job );
 
 		/* Act. */
 		$job_scheduler->collect_failed_job_errors( 'b', array( 'message' => 'c' ) );
@@ -363,12 +369,18 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		$this->assertSame( $expected, $actual );
 	}
 
-	public function testIntegration_CollectFailedJobErrors_Always_UpdatesErrorsOptionWithEmptyArray(): void {
+	public function testCollectFailedJobErrors_Always_UpdatesErrorsOptionWithEmptyArray(): void {
 		/* Arrange. */
 		delete_option( Migration_Job_Scheduler::ERRORS_OPTION_NAME );
 
 		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$action_scheduler->method( 'get_scheduled_actions' )->willReturn( array( 'b' ) );
+
+		$job = $this->createMock( Migration_Job::class );
+		$job->method( 'get_name' )->willReturn( 'x' );
+
 		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+		$job_scheduler->register_job( $job );
 
 		/* Act. */
 		$job_scheduler->collect_failed_job_errors( 'b', array( 'message' => 'c' ) );
