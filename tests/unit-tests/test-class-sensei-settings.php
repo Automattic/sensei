@@ -202,13 +202,14 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		$settings->experimental_features_saved( $old, $new );
 
 		/* Assert. */
+		$updated_settings = $settings->get_settings();
 		$expected = array(
 			'experimental_progress_storage_synchronization' => 0,
 			'experimental_progress_storage_repository' => 'comments',
 		);
 		$actual   = array(
-			'experimental_progress_storage_synchronization' => $settings->get( 'experimental_progress_storage_synchronization' ),
-			'experimental_progress_storage_repository' => $settings->get( 'experimental_progress_storage_repository' ),
+			'experimental_progress_storage_synchronization' => $updated_settings['experimental_progress_storage_synchronization'],
+			'experimental_progress_storage_repository' => $updated_settings['experimental_progress_storage_repository'],
 		);
 		$this->assertSame( $expected, $actual );
 	}
