@@ -155,13 +155,13 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$settings = Sensei()->settings;
 
-		$new = $settings->get_settings();
-		$new['experimental_progress_storage']                 = true;
+		$new                                  = $settings->get_settings();
+		$new['experimental_progress_storage'] = true;
 		$new['experimental_progress_storage_synchronization'] = true;
 		$new['experimental_progress_storage_repository']      = 'comments';
 
-		$old = $settings->get_settings();
-		$old['experimental_progress_storage']                 = true;
+		$old                                  = $settings->get_settings();
+		$old['experimental_progress_storage'] = true;
 		$old['experimental_progress_storage_synchronization'] = true;
 		$old['experimental_progress_storage_repository']      = 'custom_tables';
 
@@ -186,13 +186,13 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$settings = Sensei()->settings;
 
-		$new = $settings->get_settings();
-		$new['experimental_progress_storage']                 = false;
+		$new                                  = $settings->get_settings();
+		$new['experimental_progress_storage'] = false;
 		$new['experimental_progress_storage_synchronization'] = true;
 		$new['experimental_progress_storage_repository']      = 'custom_tables';
 
-		$old = $settings->get_settings();
-		$old['experimental_progress_storage']                 = true;
+		$old                                  = $settings->get_settings();
+		$old['experimental_progress_storage'] = true;
 		$old['experimental_progress_storage_synchronization'] = true;
 		$old['experimental_progress_storage_repository']      = 'custom_tables';
 
@@ -204,11 +204,11 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$expected = array(
 			'experimental_progress_storage_synchronization' => false,
-			'experimental_progress_storage_repository'      => 'comments',
+			'experimental_progress_storage_repository' => 'comments',
 		);
 		$actual   = array(
 			'experimental_progress_storage_synchronization' => $settings->get( 'experimental_progress_storage_synchronization' ),
-			'experimental_progress_storage_repository'      => $settings->get( 'experimental_progress_storage_repository' ),
+			'experimental_progress_storage_repository' => $settings->get( 'experimental_progress_storage_repository' ),
 		);
 		$this->assertSame( $expected, $actual );
 	}
