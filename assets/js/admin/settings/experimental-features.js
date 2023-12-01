@@ -5,9 +5,9 @@ jQuery( document ).ready( function ( $ ) {
 	);
 	progressStorageFeature.on( 'change', function () {
 		if ( $( this ).is( ':checked' ) ) {
-			$( '.sensei-settings_progress-storage-settings' ).show();
+			$( '.sensei-settings__progress-storage-settings' ).show();
 		} else {
-			$( '.sensei-settings_progress-storage-settings' ).hide();
+			$( '.sensei-settings__progress-storage-settings' ).hide();
 		}
 	} );
 
@@ -17,17 +17,20 @@ jQuery( document ).ready( function ( $ ) {
 		'.sensei-settings_progress-storage-synchronization'
 	);
 	syncProgress.on( 'change', function () {
-		let repository_options = $(
+		const savedState = $( this ).data( 'saved-state' );
+		let repositoryOptions = $(
 			'.sensei-settings_progress-storage-repository'
 		);
 		if ( $( this ).is( ':checked' ) ) {
-			repository_options.prop( 'disabled', false );
+			if ( savedState > 0 ) {
+				repositoryOptions.prop( 'disabled', false );
+			}
 		} else {
 			// ensure comments are selected
-			repository_options
+			repositoryOptions
 				.filter( '[value="comments"]' )
 				.prop( 'checked', true );
-			repository_options.prop( 'disabled', true );
+			repositoryOptions.prop( 'disabled', true );
 		}
 	} );
 } );
