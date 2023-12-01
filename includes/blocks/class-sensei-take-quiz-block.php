@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_View_Quiz_Block class.
+ * File containing the Sensei_Take_Quiz_Block class.
  *
  * @package sensei
  * @since 3.8.0
@@ -11,12 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_View_Quiz_Block is responsible for rendering the 'View Quiz' block.
+ * Class Sensei_Take_Quiz_Block is responsible for rendering the "Take Quiz" block.
  */
-class Sensei_View_Quiz_Block {
+class Sensei_Take_Quiz_Block {
 
 	/**
-	 * Sensei_View_Quiz_Block constructor.
+	 * Sensei_Take_Quiz_Block constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(

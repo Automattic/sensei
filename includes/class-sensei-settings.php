@@ -853,6 +853,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			$fields['experimental_progress_storage']                 = array(
 				'name'        => __( 'High-Performance Progress Storage', 'sensei-lms' ),
 				'description' => __( 'Store the progress of your students in separate tables. This feature is currently in development and should be used with caution.', 'sensei-lms' ),
+				'form'        => 'render_progress_storage_feature',
 				'type'        => 'checkbox',
 				'default'     => false,
 				'section'     => 'sensei-experimental-features',
@@ -1074,10 +1075,20 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$old_hpps = isset( $old_value['experimental_progress_storage'] ) ? $old_value['experimental_progress_storage'] : false;
 		$new_hpps = isset( $value['experimental_progress_storage'] ) ? $value['experimental_progress_storage'] : false;
 
-		if ( $new_hpps !== $old_hpps && $new_hpps ) {
-			// Enable the feature flag to make progress tables available.
-			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
-			( new Schema( Sensei()->feature_flags ) )->create_tables();
+		if ( $new_hpps !== $old_hpps ) {
+
+			sensei_log_event(
+				'hpps_status_change',
+				array(
+					'enabled' => $new_hpps,
+				)
+			);
+
+			if ( $new_hpps ) {
+				// Enable the feature flag to make progress tables available.
+				add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
+				( new Schema( Sensei()->feature_flags ) )->create_tables();
+			}
 		}
 
 		$old_hpps_sync = isset( $old_value['experimental_progress_storage_synchronization'] ) ? $old_value['experimental_progress_storage_synchronization'] : false;
@@ -1094,8 +1105,91 @@ class Sensei_Settings extends Sensei_Settings_API {
 			( new Schema( Sensei()->feature_flags ) )->create_tables();
 			$migration_scheduler->schedule();
 		}
+
+		$old_hpps_repository = isset( $old_value['experimental_progress_storage_repository'] ) ? $old_value['experimental_progress_storage_repository'] : false;
+		$new_hpps_repository = isset( $value['experimental_progress_storage_repository'] ) ? $value['experimental_progress_storage_repository'] : false;
+		if ( $new_hpps_repository !== $old_hpps_repository && ! is_null( $migration_scheduler ) ) {
+			sensei_log_event(
+				'hpps_repository_change',
+				array(
+					'repository' => $new_hpps_repository,
+				)
+			);
+		}
 	}
 
+	/**
+	 * Renders the High-Performance Progress Storage feature setting.
+	 *
+	 * @param array $args The field arguments.
+	 */
+	public function render_progress_storage_feature( $args ) {
+
+		// Checkbox field.
+		$settings = $this->get_settings();
+		$key      = $args['key'];
+		$value    = $settings[ $key ];
+
+		// Disable the checkbox if we can't set time limit. That's our current limitation for running migrations.
+		$disabled_feature            = true;
+		$disabled_messages           = array();
+		$original_max_execution_time = (int) ini_get( 'max_execution_time' );
+		$disabled_php_functions      = array_map( 'trim', explode( ',', ini_get( 'disable_functions' ) ) );
+		$set_time_limit_disabled     = in_array( 'set_time_limit', $disabled_php_functions, true );
+		$xdebug_enabled              = extension_loaded( 'xdebug' );
+		if ( 0 !== $original_max_execution_time && ! $set_time_limit_disabled ) {
+			// Set max execution time to 0 to check if we can set it in migrtions.
+			$disabled_feature           = ! set_time_limit( 0 );
+			$current_max_execution_time = (int) ini_get( 'max_execution_time' );
+			if ( $disabled_feature && 0 === $current_max_execution_time ) {
+				$disabled_feature = false;
+			}
+			// Restore original max execution time.
+			set_time_limit( $original_max_execution_time );
+		}
+
+		if ( $disabled_feature ) {
+			if ( $set_time_limit_disabled ) {
+				$disabled_messages[] = sprintf(
+					// translators: Placeholder is a link to `set_time_limit` function documentation.
+					__( "The feature can't be enabled because the %s function is disabled in your PHP configuration.", 'sensei-lms' ),
+					'<a href="https://www.php.net/manual/en/function.set-time-limit.php" target="_blank" rel="noopener noreferrer">set_time_limit</a>'
+				);
+			}
+			if ( $xdebug_enabled ) {
+				$disabled_messages[] = sprintf(
+					// translators: Placeholder is a link to Xdebug website.
+					__( '%s is interfering with this feature. Please, consider disabling it.', 'sensei-lms' ),
+					'<a href="https://xdebug.org/" target="_blank" rel="noopener noreferrer">Xdebug</a>'
+				);
+			}
+		}
+		?>
+		<div>
+			<label>
+				<input
+					class="sensei-settings_progress-storage-feature"
+					type="checkbox"
+					name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
+					value="1"
+					<?php disabled( true, $disabled_feature, true ); ?>
+					<?php checked( $value, true, true ); ?>
+				/>
+				<?php echo esc_html( $args['data']['description'] ); ?>
+			</label>
+
+			<?php if ( $disabled_feature ) : ?>
+				<input type="hidden" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" value="<?php echo esc_attr( $value ); ?>" />
+				<p>
+					<?php if ( ! empty( $disabled_messages ) ) : ?>
+						<?php echo wp_kses_post( implode( '<br />', $disabled_messages ) ); ?>
+					<?php endif; ?>
+				</p>
+			<?php endif; ?>
+		</div>
+		<?php
+		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
+	}
 	/**
 	 * Renders the High-Performance Progress Storage repository setting.
 	 *
@@ -1151,7 +1245,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		</div>
 		<?php
-		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
 	}
 
 	/**
@@ -1256,7 +1349,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<?php endif; ?>
 		</div>
 		<?php
-		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
 	}
 
 	/**

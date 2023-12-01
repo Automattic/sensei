@@ -260,6 +260,13 @@ class Migration_Job_Scheduler {
 	 * @param string $job_name The job name.
 	 */
 	public function run_job( string $job_name ): void {
+		// Temporarily workaround: increase the time limit.
+		$max_execution_time = (int) ini_get( 'max_execution_time' );
+		if ( 0 !== $max_execution_time && function_exists( 'set_time_limit' ) ) {
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			@set_time_limit( 0 );
+		}
+
 		if ( $this->is_first_run() ) {
 			$this->start();
 		}
@@ -278,6 +285,7 @@ class Migration_Job_Scheduler {
 				$this->schedule_job( $next_job );
 			} else {
 				$this->complete( self::STATUS_COMPLETE );
+				$this->log_migration_complete_event();
 			}
 		} else {
 			$this->schedule_job( $job );
@@ -367,5 +375,22 @@ class Migration_Job_Scheduler {
 	private function complete( string $status ): void {
 		update_option( self::STATUS_OPTION_NAME, $status );
 		update_option( self::COMPLETED_OPTION_NAME, microtime( true ) );
+	}
+
+	/**
+	 * Log migration complete event.
+	 */
+	private function log_migration_complete_event() {
+		$started   = get_option( self::STARTED_OPTION_NAME, 0 );
+		$completed = get_option( self::COMPLETED_OPTION_NAME, 0 );
+		$duration  = $completed - $started;
+		$errors    = $this->get_errors();
+		sensei_log_event(
+			'hpps_migration_complete',
+			array(
+				'duration' => $duration,
+				'errors'   => count( $errors ),
+			)
+		);
 	}
 }

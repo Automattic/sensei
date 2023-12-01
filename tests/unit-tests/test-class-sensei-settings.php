@@ -122,6 +122,60 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		$this->assertEqualSets( $tables, $created_tables );
 	}
 
+	public function testExperimentalFeaturesSaved_HppsSettingHasEnabled_LogsEvent() {
+		/* Arrange. */
+		$settings = Sensei()->settings;
+
+		$new                                  = $settings->get_settings();
+		$new['experimental_progress_storage'] = true;
+
+		$old                                  = $settings->get_settings();
+		$old['experimental_progress_storage'] = false;
+
+		$this->simulateSettingsRequest();
+
+		$has_logged_event = false;
+		$sensei_log_event = function( $log_event, $event_name, $event_properties ) use ( &$has_logged_event ) {
+			if ( 'hpps_status_change' === $event_name ) {
+				$has_logged_event = true;
+			}
+		};
+		add_action( 'sensei_log_event', $sensei_log_event, 10, 3 );
+
+		/* Act. */
+		$settings->experimental_features_saved( $old, $new );
+
+		/* Assert. */
+		$this->assertTrue( $has_logged_event );
+	}
+
+	public function testExperimentalFeaturesSaved_HppsRepositoryChanged_LogsEvent() {
+		/* Arrange. */
+		$settings = Sensei()->settings;
+
+		$new = $settings->get_settings();
+		$new['experimental_progress_storage_repository'] = 'comments';
+
+		$old = $settings->get_settings();
+		$old['experimental_progress_storage_repository'] = 'custom_tables';
+
+		$this->simulateSettingsRequest();
+
+		$has_logged_event = false;
+		$sensei_log_event = function( $log_event, $event_name, $event_properties ) use ( &$has_logged_event ) {
+			if ( 'hpps_repository_change' === $event_name ) {
+				$has_logged_event = true;
+			}
+		};
+		add_action( 'sensei_log_event', $sensei_log_event, 10, 3 );
+
+		/* Act. */
+		$settings->experimental_features_saved( $old, $new );
+
+		/* Assert. */
+		$this->assertTrue( $has_logged_event );
+	}
+
 	/**
 	 * Test logging of settings only on user update.
 	 *
