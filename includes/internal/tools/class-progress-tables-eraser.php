@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Tools;
 
 use Sensei\Internal\Installer\Eraser;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei_Tool_Interactive_Interface;
 use Sensei_Tool_Interface;
 use Sensei_Tools;
@@ -136,11 +137,8 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	 * @return bool True if tool is available.
 	 */
 	public function is_available() {
-		$sync       = (bool) ( Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false );
-		$repository = Sensei()->settings->settings['experimental_progress_storage_repository'] ?? 'comments';
-
 		// Disable the tool if tables are in use.
-		if ( $sync || 'comments' !== $repository ) {
+		if ( Progress_Storage_Settings::is_sync_enabled() || Progress_Storage_Settings::is_tables_repository() ) {
 			return false;
 		}
 
