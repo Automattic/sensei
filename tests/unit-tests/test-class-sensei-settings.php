@@ -203,12 +203,43 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = array(
-			'experimental_progress_storage_synchronization' => false,
+			'experimental_progress_storage_synchronization' => 0,
 			'experimental_progress_storage_repository' => 'comments',
 		);
 		$actual   = array(
 			'experimental_progress_storage_synchronization' => $settings->get( 'experimental_progress_storage_synchronization' ),
 			'experimental_progress_storage_repository' => $settings->get( 'experimental_progress_storage_repository' ),
+		);
+		$this->assertSame( $expected, $actual );
+	}
+
+	public function testBeforeExperimentalFeaturesSaved_HppsWasDisabled_DeletesOtherHppsSettings() {
+		/* Arrange. */
+		$settings = Sensei()->settings;
+
+		$new                                  = $settings->get_settings();
+		$new['experimental_progress_storage'] = false;
+		$new['experimental_progress_storage_synchronization'] = true;
+		$new['experimental_progress_storage_repository']      = 'custom_tables';
+
+		$old                                  = $settings->get_settings();
+		$old['experimental_progress_storage'] = true;
+		$old['experimental_progress_storage_synchronization'] = true;
+		$old['experimental_progress_storage_repository']      = 'custom_tables';
+
+		$this->simulateSettingsRequest();
+
+		/* Act. */
+		$actual = $settings->before_experimental_features_saved( $new, $old );
+
+		/* Assert. */
+		$expected = array(
+			'experimental_progress_storage_synchronization' => false,
+			'experimental_progress_storage_repository' => false,
+		);
+		$actual   = array(
+			'experimental_progress_storage_synchronization' => array_key_exists( 'experimental_progress_storage_synchronization', $actual ),
+			'experimental_progress_storage_repository' => array_key_exists( 'experimental_progress_storage_repository', $actual ),
 		);
 		$this->assertSame( $expected, $actual );
 	}

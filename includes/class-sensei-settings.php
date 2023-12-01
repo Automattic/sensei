@@ -47,6 +47,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$this->get_settings();
 
 		// Log when settings are updated by the user.
+		add_filter( 'pre_update_option_sensei-settings', [ $this, 'before_experimental_features_saved' ], 100, 2 );
 		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 2 );
 
 		// Mark settings section as visited on ajax action received.
@@ -1051,6 +1052,53 @@ class Sensei_Settings extends Sensei_Settings_API {
 	}
 
 	/**
+	 * Ensure that the experimental features settings are consistent.
+	 *
+	 * @access private
+	 * @since $$next-version$$
+	 *
+	 * @param array $value     The new settings value.
+	 * @param array $old_value The old settings value.
+	 * @return array Updated settings value.
+	 */
+	public function before_experimental_features_saved( $value, $old_value ) {
+		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+			return $value;
+		}
+
+		$screen = get_current_screen();
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && ! defined( 'REST_REQUEST' ) && $screen && 'options' === $screen->id ) ) {
+			return $value;
+		}
+
+		$old_hpps = (bool) ( $old_value['experimental_progress_storage'] ?? false );
+		$new_hpps = (bool) ( $value['experimental_progress_storage'] ?? false );
+
+		if ( $new_hpps !== $old_hpps ) {
+			if ( $new_hpps ) {
+				// If the feature is being enabled, set the default values for the repository.
+				// We don't set the default value for the synchronization because it's okay to change it at this moment.
+				$value['experimental_progress_storage_repository'] = Progress_Storage_Settings::COMMENTS_STORAGE;
+			} else {
+				// If the feature is being disabled, clear the values for the other settings.
+				unset( $value['experimental_progress_storage_repository'] );
+				unset( $value['experimental_progress_storage_synchronization'] );
+			}
+		}
+
+		if ( $new_hpps ) {
+			$sync_enabled = (bool) ( $value['experimental_progress_storage_synchronization'] ?? false );
+			if ( ! $sync_enabled ) {
+				// If the synchronization is disabled, set the default value for the repository setting.
+				$value['experimental_progress_storage_repository'] = Progress_Storage_Settings::COMMENTS_STORAGE;
+			}
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Do preparation when the experimental features setting were saved.
 	 *
 	 * @access private
@@ -1081,19 +1129,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 			);
 
 			if ( $new_hpps ) {
-				// Set the default value for the repository setting.
-				Sensei()->settings->set( 'experimental_progress_storage_repository', Progress_Storage_Settings::COMMENTS_STORAGE );
-				$value['experimental_progress_storage_repository'] = Progress_Storage_Settings::COMMENTS_STORAGE;
-
 				// Enable the feature flag to make progress tables available.
 				add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
 				( new Schema( Sensei()->feature_flags ) )->create_tables();
-			} else {
-				// Reset other settings to their default values when the feature is disabled.
-				Sensei()->settings->set( 'experimental_progress_storage_repository', Progress_Storage_Settings::COMMENTS_STORAGE );
-				Sensei()->settings->set( 'experimental_progress_storage_synchronization', false );
-				$value['experimental_progress_storage_repository']      = Progress_Storage_Settings::COMMENTS_STORAGE;
-				$value['experimental_progress_storage_synchronization'] = false;
 			}
 		}
 
