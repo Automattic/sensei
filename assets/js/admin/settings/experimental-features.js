@@ -1,7 +1,9 @@
 jQuery( document ).ready( function ( $ ) {
 	// Show more HPPS settings when the feature is enabled.
-	const progressStorage = $( '#experimental_progress_storage' );
-	progressStorage.on( 'change', function () {
+	const progressStorageFeature = $(
+		'.sensei-settings_progress-storage-feature'
+	);
+	progressStorageFeature.on( 'change', function () {
 		if ( $( this ).is( ':checked' ) ) {
 			$( '.sensei-settings_progress-storage-settings' ).show();
 		} else {
