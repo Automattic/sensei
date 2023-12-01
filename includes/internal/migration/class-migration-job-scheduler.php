@@ -370,7 +370,9 @@ class Migration_Job_Scheduler {
 	}
 
 	/**
-	 * Set completion time.
+	 * Set completion status and time.
+	 *
+	 * @param string $status The migration status.
 	 */
 	private function complete( string $status ): void {
 		update_option( self::STATUS_OPTION_NAME, $status );
