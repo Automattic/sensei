@@ -182,38 +182,6 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		$this->assertTrue( $has_logged_event );
 	}
 
-	public function testExperimentalFeaturesSaved_HppsWasDisabled_ResetsOtherSettingsToDefaults() {
-		/* Arrange. */
-		$settings = Sensei()->settings;
-
-		$new                                  = $settings->get_settings();
-		$new['experimental_progress_storage'] = false;
-		$new['experimental_progress_storage_synchronization'] = true;
-		$new['experimental_progress_storage_repository']      = 'custom_tables';
-
-		$old                                  = $settings->get_settings();
-		$old['experimental_progress_storage'] = true;
-		$old['experimental_progress_storage_synchronization'] = true;
-		$old['experimental_progress_storage_repository']      = 'custom_tables';
-
-		$this->simulateSettingsRequest();
-
-		/* Act. */
-		$settings->experimental_features_saved( $old, $new );
-
-		/* Assert. */
-		$updated_settings = $settings->get_settings();
-		$expected = array(
-			'experimental_progress_storage_synchronization' => 0,
-			'experimental_progress_storage_repository' => 'comments',
-		);
-		$actual   = array(
-			'experimental_progress_storage_synchronization' => $updated_settings['experimental_progress_storage_synchronization'],
-			'experimental_progress_storage_repository' => $updated_settings['experimental_progress_storage_repository'],
-		);
-		$this->assertSame( $expected, $actual );
-	}
-
 	public function testBeforeExperimentalFeaturesSaved_HppsWasDisabled_DeletesOtherHppsSettings() {
 		/* Arrange. */
 		$settings = Sensei()->settings;
