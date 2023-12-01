@@ -130,20 +130,26 @@ function as_next_scheduled_action( $hook, $args = null, $group = '' ) {
 function as_schedule_single_action( $timestamp, $hook, $args = array(), $group = '' ) {
 	_as_add_call( __FUNCTION__ );
 
+	$id = count( $GLOBALS['scheduled_actions'] ?? array() ) + 1;
+
 	$GLOBALS['scheduled_actions'][] = [
+		'id'    => $id,
 		'time'  => $timestamp,
 		'hook'  => $hook,
 		'args'  => $args,
 		'group' => $group,
 	];
 
-	return true;
+	return $id;
 }
 
 function as_schedule_recurring_action( $timestamp, $interval_in_seconds, $hook, $args = array(), $group = '' ) {
 	_as_add_call( __FUNCTION__ );
 
+	$id = count( $GLOBALS['scheduled_actions'] ?? array() ) + 1;
+
 	$GLOBALS['scheduled_actions'][] = [
+		'id'                  => $id,
 		'time'                => $timestamp,
 		'interval_in_seconds' => $interval_in_seconds,
 		'hook'                => $hook,
@@ -151,7 +157,7 @@ function as_schedule_recurring_action( $timestamp, $interval_in_seconds, $hook, 
 		'group'               => $group,
 	];
 
-	return true;
+	return $id;
 }
 
 function as_has_scheduled_action( $hook, $args = array(), $group = '' ) {
@@ -166,4 +172,27 @@ function as_has_scheduled_action( $hook, $args = array(), $group = '' ) {
 	}
 
 	return false;
+}
+
+function as_get_scheduled_actions( $args = array(), $return_format = 'OBJECT' ) {
+	_as_add_call( __FUNCTION__ );
+
+	$matches = [];
+
+	foreach ( $GLOBALS['scheduled_actions'] as $action ) {
+		if ( _as_match_action( $action, $args ) ) {
+			$matches[] = $action;
+		}
+	}
+
+	if ( 'ids' === $return_format ) {
+		return array_map(
+			function( $action ) {
+				return $action['id'];
+			},
+			$matches
+		);
+	}
+
+	return $matches;
 }
