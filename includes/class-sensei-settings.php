@@ -1236,7 +1236,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 				</p>
 			<?php endif; ?>
 		<?php if ( ! $value ) : ?>
-			<div class="sensei-settings__notice sensei-settings__notice--info sensei-settings__progress-storage-settings hidden">
+			<div class="notice notice-info inline sensei-settings__progress-storage-settings hidden">
 				<p>
 					<?php
 					echo esc_html( __( 'Save changes to make synchronization setting available.', 'sensei-lms' ) );
