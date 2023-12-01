@@ -1235,9 +1235,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 					<?php endif; ?>
 				</p>
 			<?php endif; ?>
-		</div>
 		<?php if ( ! $value ) : ?>
-			<div class="notice notice-info sensei-settings_progress-storage-settings hidden">
+			<div class="sensei-settings__notice sensei-settings__notice--info sensei-settings__progress-storage-settings hidden">
 				<p>
 					<?php
 					echo esc_html( __( 'Save changes to make synchronization setting available.', 'sensei-lms' ) );
@@ -1245,6 +1244,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 				</p>
 			</div>
 		<?php endif; ?>
+		</div>
 		<?php
 		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
 	}
@@ -1264,7 +1264,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$migration_scheduler  = Sensei()->migration_scheduler;
 		$migration_incomplete = ! $migration_scheduler || ! $migration_scheduler->is_complete();
 		?>
-		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
+		<div class="sensei-settings__progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
 			<h4><?php echo esc_html( __( 'Progress storage repository', 'sensei-lms' ) ); ?></h4>
 			<p><?php echo esc_html( $args['data']['description'] ); ?></p>
 			<ul>
@@ -1336,7 +1336,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			$disabled = false;
 		}
 		?>
-		<div class="sensei-settings_progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
+		<div class="sensei-settings__progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
 			<h4><?php echo esc_html( __( 'Progress storage synchronization', 'sensei-lms' ) ); ?></h4>
 			<label>
 				<input

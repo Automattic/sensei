@@ -5,9 +5,9 @@ jQuery( document ).ready( function ( $ ) {
 	);
 	progressStorageFeature.on( 'change', function () {
 		if ( $( this ).is( ':checked' ) ) {
-			$( '.sensei-settings_progress-storage-settings' ).show();
+			$( '.sensei-settings__progress-storage-settings' ).show();
 		} else {
-			$( '.sensei-settings_progress-storage-settings' ).hide();
+			$( '.sensei-settings__progress-storage-settings' ).hide();
 		}
 	} );
 
