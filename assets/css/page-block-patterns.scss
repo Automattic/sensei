@@ -1,11 +1,5 @@
-/* Fix spacing issues too (e.g. header in Divi). */
 body,
 .editor-styles-wrapper {
-	.sensei-pattern-header-link {
-		font-family: var(--wp--preset--font-family--system);
-		font-size: var(--wp--preset--font-size--x-small);
-	}
-
 	.sensei-landing-pattern-header {
 		h1 {
 			font-size: var(--wp--preset--font-size--xx-large, 48px);
@@ -16,16 +10,21 @@ body,
 		}
 	}
 
-	.wp-sensei-testimonial-pattern p {
-		font-family: var(--wp--preset--font-family--system);
-		font-size: var(--wp--preset--font-size--x-small, 1.125rem);
-	}
-
 	.sensei-blog-posts-pattern .wp-block-post-excerpt__excerpt {
 		display: -webkit-box;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 4;
+	}
+
+	.sensei-pattern-header-link {
+		font-family: var(--wp--preset--font-family--system);
+		font-size: var(--wp--preset--font-size--x-small);
+	}
+
+	.wp-sensei-testimonial-pattern p {
+		font-family: var(--wp--preset--font-family--system);
+		font-size: var(--wp--preset--font-size--x-small, 1.125rem);
 	}
 }
