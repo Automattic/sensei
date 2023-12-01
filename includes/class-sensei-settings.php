@@ -1077,8 +1077,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		if ( $new_hpps !== $old_hpps ) {
 			if ( $new_hpps ) {
-				// If the feature is being enabled, set the default values for the repository.
-				// We don't set the default value for the synchronization because it's okay to change it at this moment.
+				// If the feature is being enabled, set the default values for the other settings.
+				$value['experimental_progress_storage_synchronization'] = false;
 				$value['experimental_progress_storage_repository'] = Progress_Storage_Settings::COMMENTS_STORAGE;
 			} else {
 				// If the feature is being disabled, clear the values for the other settings.
@@ -1217,6 +1217,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<label>
 				<input
 					class="sensei-settings_progress-storage-feature"
+					data-saved-state="<?php echo esc_attr( (int) $value ); ?>"
 					type="checkbox"
 					name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
 					value="1"
@@ -1235,6 +1236,15 @@ class Sensei_Settings extends Sensei_Settings_API {
 				</p>
 			<?php endif; ?>
 		</div>
+		<?php if ( ! $value ) : ?>
+			<div class="notice notice-info sensei-settings_progress-storage-settings hidden">
+				<p>
+					<?php
+					echo esc_html( __( 'Save changes to make synchronization setting available.', 'sensei-lms' ) );
+					?>
+				</p>
+			</div>
+		<?php endif; ?>
 		<?php
 		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
 	}
@@ -1320,7 +1330,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Disables the checkbox if the migration is in progress or HPPS storage is in use.
 		$hpps_repository_in_use = Progress_Storage_Settings::TABLES_STORAGE === ( $settings['experimental_progress_storage_repository'] ?? null );
-		$disabled               = $migration_in_progress || $hpps_repository_in_use || is_null( Sensei()->action_scheduler );
+		$disabled               = ! $visible || $migration_in_progress || $hpps_repository_in_use || is_null( Sensei()->action_scheduler );
 		if ( $migration_errors ) {
 			// Enable the checkbox if there are errors to allow the user to retry.
 			$disabled = false;
@@ -1331,6 +1341,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<label>
 				<input
 					class="sensei-settings_progress-storage-synchronization"
+					data-saved-state="<?php echo esc_attr( (int) ( $value && $migration_complete ) ); ?>"
 					type="checkbox"
 					name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
 					value="1"
