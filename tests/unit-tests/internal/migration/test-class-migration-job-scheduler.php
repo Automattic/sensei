@@ -218,6 +218,7 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 
 	public function testRunJob_WhenMultipleJobs_SchedulesNextJob() {
 		/* Arrange. */
+		Sensei()->settings->set( 'experimental_progress_storage_synchronization', true );
 		$action_scheduler = $this->createMock( Action_Scheduler::class );
 		$migration_job_1  = $this->createMock( Migration_Job::class );
 		$migration_job_2  = $this->createMock( Migration_Job::class );

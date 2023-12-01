@@ -672,7 +672,7 @@ class Sensei_Main {
 		}
 
 		// Student progress migration.
-		if ( $tables_sync_enabled && $this->action_scheduler ) {
+		if ( $tables_feature_enabled && $this->action_scheduler ) {
 			$this->init_migration_scheduler();
 		}
 
