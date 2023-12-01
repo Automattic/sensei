@@ -47,13 +47,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$this->get_settings();
 
 		// Log when settings are updated by the user.
-		add_filter( 'pre_update_option_sensei-settings', [ $this, 'before_experimental_features_saved' ], 100, 2 );
 		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 2 );
 
 		// Mark settings section as visited on ajax action received.
 		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'mark_section_as_visited' ] );
 
 		// Do preparation for enabled experimental features.
+		add_filter( 'pre_update_option_sensei-settings', [ $this, 'before_experimental_features_saved' ], 10, 2 );
 		add_action( 'update_option_sensei-settings', [ $this, 'experimental_features_saved' ], 10, 2 );
 	}
 
