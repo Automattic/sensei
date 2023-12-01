@@ -5,7 +5,9 @@
  * @package sensei-tests
  */
 
+use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Installer\Schema;
+use Sensei\Internal\Migration\Migration_Job_Scheduler;
 
 /**
  * Class for testing Sensei Settings.
@@ -154,10 +156,14 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		$settings = Sensei()->settings;
 
 		$new = $settings->get_settings();
-		$new['experimental_progress_storage_repository'] = 'comments';
+		$new['experimental_progress_storage']                 = true;
+		$new['experimental_progress_storage_synchronization'] = true;
+		$new['experimental_progress_storage_repository']      = 'comments';
 
 		$old = $settings->get_settings();
-		$old['experimental_progress_storage_repository'] = 'custom_tables';
+		$old['experimental_progress_storage']                 = true;
+		$old['experimental_progress_storage_synchronization'] = true;
+		$old['experimental_progress_storage_repository']      = 'custom_tables';
 
 		$this->simulateSettingsRequest();
 
@@ -174,6 +180,37 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertTrue( $has_logged_event );
+	}
+
+	public function testExperimentalFeaturesSaved_HppsWasDisabled_ResetsOtherSettingsToDefaults() {
+		/* Arrange. */
+		$settings = Sensei()->settings;
+
+		$new = $settings->get_settings();
+		$new['experimental_progress_storage']                 = false;
+		$new['experimental_progress_storage_synchronization'] = true;
+		$new['experimental_progress_storage_repository']      = 'custom_tables';
+
+		$old = $settings->get_settings();
+		$old['experimental_progress_storage']                 = true;
+		$old['experimental_progress_storage_synchronization'] = true;
+		$old['experimental_progress_storage_repository']      = 'custom_tables';
+
+		$this->simulateSettingsRequest();
+
+		/* Act. */
+		$settings->experimental_features_saved( $old, $new );
+
+		/* Assert. */
+		$expected = array(
+			'experimental_progress_storage_synchronization' => false,
+			'experimental_progress_storage_repository'      => 'comments',
+		);
+		$actual   = array(
+			'experimental_progress_storage_synchronization' => $settings->get( 'experimental_progress_storage_synchronization' ),
+			'experimental_progress_storage_repository'      => $settings->get( 'experimental_progress_storage_repository' ),
+		);
+		$this->assertSame( $expected, $actual );
 	}
 
 	/**

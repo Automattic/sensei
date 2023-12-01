@@ -10,6 +10,7 @@ namespace Sensei\Internal\Migration;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Migration\Migrations\Quiz_Migration;
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -281,7 +282,7 @@ class Migration_Job_Scheduler {
 
 		if ( $job->is_complete() ) {
 			$next_job = $this->get_next_job( $job );
-			if ( $next_job ) {
+			if ( $next_job && Progress_Storage_Settings::is_sync_enabled() ) {
 				$this->schedule_job( $next_job );
 			} else {
 				$this->complete( self::STATUS_COMPLETE );

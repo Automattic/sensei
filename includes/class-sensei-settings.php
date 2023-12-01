@@ -1070,11 +1070,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 			return;
 		}
 
-		$old_hpps = isset( $old_value['experimental_progress_storage'] ) ? $old_value['experimental_progress_storage'] : false;
-		$new_hpps = isset( $value['experimental_progress_storage'] ) ? $value['experimental_progress_storage'] : false;
-
+		$old_hpps = (bool) ( $old_value['experimental_progress_storage'] ?? false );
+		$new_hpps = (bool) ( $value['experimental_progress_storage'] ?? false );
 		if ( $new_hpps !== $old_hpps ) {
-
 			sensei_log_event(
 				'hpps_status_change',
 				array(
@@ -1083,18 +1081,32 @@ class Sensei_Settings extends Sensei_Settings_API {
 			);
 
 			if ( $new_hpps ) {
+				// Set the default value for the repository setting.
+				Sensei()->settings->set( 'experimental_progress_storage_repository', Progress_Storage_Settings::COMMENTS_STORAGE );
+				$value['experimental_progress_storage_repository'] = Progress_Storage_Settings::COMMENTS_STORAGE;
+
 				// Enable the feature flag to make progress tables available.
 				add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
 				( new Schema( Sensei()->feature_flags ) )->create_tables();
+			} else {
+				// Reset other settings to their default values when the feature is disabled.
+				Sensei()->settings->set( 'experimental_progress_storage_repository', Progress_Storage_Settings::COMMENTS_STORAGE );
+				Sensei()->settings->set( 'experimental_progress_storage_synchronization', false );
+				$value['experimental_progress_storage_repository']      = Progress_Storage_Settings::COMMENTS_STORAGE;
+				$value['experimental_progress_storage_synchronization'] = false;
 			}
 		}
 
-		$old_hpps_sync = isset( $old_value['experimental_progress_storage_synchronization'] ) ? $old_value['experimental_progress_storage_synchronization'] : false;
-		$new_hpps_sync = isset( $value['experimental_progress_storage_synchronization'] ) ? $value['experimental_progress_storage_synchronization'] : false;
-
+		// Make sure the migration scheduler is initialized.
 		Sensei()->init_migration_scheduler();
 		$migration_scheduler = Sensei()->migration_scheduler;
-		if ( $new_hpps_sync !== $old_hpps_sync && $new_hpps_sync && ! is_null( $migration_scheduler ) ) {
+		if ( is_null( $migration_scheduler ) ) {
+			return;
+		}
+
+		$old_sync = (bool) ( $old_value['experimental_progress_storage_synchronization'] ?? false );
+		$new_sync = (bool) ( $value['experimental_progress_storage_synchronization'] ?? false );
+		if ( $new_sync !== $old_sync && $new_sync ) {
 			// Drop existing tables and clear the migration state.
 			( new Eraser() )->drop_tables();
 			$migration_scheduler->clear_state();
@@ -1104,13 +1116,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 			$migration_scheduler->schedule();
 		}
 
-		$old_hpps_repository = isset( $old_value['experimental_progress_storage_repository'] ) ? $old_value['experimental_progress_storage_repository'] : false;
-		$new_hpps_repository = isset( $value['experimental_progress_storage_repository'] ) ? $value['experimental_progress_storage_repository'] : false;
-		if ( $new_hpps_repository !== $old_hpps_repository && ! is_null( $migration_scheduler ) ) {
+		$old_repository = $old_value['experimental_progress_storage_repository'] ?? Progress_Storage_Settings::COMMENTS_STORAGE;
+		$new_repository = $value['experimental_progress_storage_repository'] ?? Progress_Storage_Settings::COMMENTS_STORAGE;
+		if ( $new_repository !== $old_repository ) {
 			sensei_log_event(
 				'hpps_repository_change',
 				array(
-					'repository' => $new_hpps_repository,
+					'repository' => $new_repository,
 				)
 			);
 		}
