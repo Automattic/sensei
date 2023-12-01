@@ -1079,7 +1079,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			if ( $new_hpps ) {
 				// If the feature is being enabled, set the default values for the other settings.
 				$value['experimental_progress_storage_synchronization'] = false;
-				$value['experimental_progress_storage_repository'] = Progress_Storage_Settings::COMMENTS_STORAGE;
+				$value['experimental_progress_storage_repository']      = Progress_Storage_Settings::COMMENTS_STORAGE;
 			} else {
 				// If the feature is being disabled, clear the values for the other settings.
 				unset( $value['experimental_progress_storage_repository'] );
