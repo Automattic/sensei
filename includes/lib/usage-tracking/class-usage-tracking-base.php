@@ -6,6 +6,8 @@
  * @package Sensei
  */
 
+use Sensei\Internal\Services\Progress_Storage_Settings;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -377,8 +379,8 @@ abstract class Sensei_Usage_Tracking_Base {
 		 */
 		$theme = wp_get_theme();
 
-		$is_hpps_enabled = Sensei()->settings->settings['experimental_progress_storage'] ?? false;
-		$hpps_repository = Sensei()->settings->settings['experimental_progress_storage_repository'] ?? 'comments';
+		$is_hpps_enabled = Progress_Storage_Settings::is_hpps_enabled();
+		$hpps_repository = Progress_Storage_Settings::get_current_repository();
 
 		$system_data                         = array();
 		$system_data['wp_version']           = $wp_version;
