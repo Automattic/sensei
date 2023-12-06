@@ -63,7 +63,7 @@ class Sensei_Continue_Course_Block {
 		}
 
 		$target_post_id = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_id, $user_id );
-		$target_url     = get_permalink( absint( $target_post_id ?? $course_id ) );
+		$target_url     = get_permalink( $target_post_id );
 		if ( ! $target_url ) {
 			return '';
 		}
