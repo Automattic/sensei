@@ -474,6 +474,13 @@ class Sensei_Course {
 				sprintf( 'window.sensei = window.sensei || {}; window.sensei.courseSettingsSidebar = %s;', $settings_sidebar ),
 				'before'
 			);
+
+			$current_user_id    = get_current_user_id();
+			$has_created_course = count_user_posts( $current_user_id, 'course' ) > 0;
+
+			if ( ! $has_created_course ) {
+				Sensei()->assets->enqueue( 'sensei-admin-first-course-creation-notice', 'js/admin/first-course-creation-notice.js', [ 'sensei-admin-course-edit' ], true );
+			}
 		}
 
 		if ( 'edit-course' === $screen->id ) {
