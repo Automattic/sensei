@@ -71,3 +71,53 @@ describe( 'hasPublishedLessonInOutline', () => {
 		expect( result ).toBe( false );
 	} );
 } );
+
+describe( 'handleCourseOutlineBlockIncomplete', () => {
+	beforeEach( () => {
+		handleCourseOutlineBlockIncomplete.mockImplementation(
+			jest.requireActual( './first-course-creation-notice' )
+				.handleCourseOutlineBlockIncomplete
+		);
+		getFirstBlockByName.mockClear();
+		hasOutlineBlock.mockClear();
+		createBlock.mockClear();
+	} );
+	it( 'should create and insert a block when no course outline block exists', () => {
+		// Mock hasOutlineBlock to return falsy.
+		getFirstBlockByName.mockImplementation( () => null );
+		const mockInsertBlock = jest.fn();
+		dispatch.mockImplementation( () => ( {
+			insertBlock: mockInsertBlock,
+			selectBlock: jest.fn(),
+		} ) );
+
+		handleCourseOutlineBlockIncomplete();
+
+		// Ensure createBlock and insertBlock were called with the correct parameters.
+		expect( createBlock ).toHaveBeenCalledWith(
+			'sensei-lms/course-outline'
+		);
+		expect( mockInsertBlock ).toHaveBeenCalled();
+	} );
+
+	it( 'should focus on the existing course outline block when it exists', () => {
+		// Mock hasOutlineBlock to return a truthy value.
+		getFirstBlockByName.mockImplementation( () => ( {
+			clientId: 'existing-block-id',
+		} ) );
+		const mockInsertBlock = jest.fn();
+		const mockSelectBlock = jest.fn();
+		dispatch.mockImplementation( () => ( {
+			insertBlock: mockInsertBlock,
+			selectBlock: mockSelectBlock,
+		} ) );
+
+		handleCourseOutlineBlockIncomplete();
+
+		// Ensure selectBlock was called with the correct parameters.
+		expect( mockSelectBlock ).toHaveBeenCalledWith( 'existing-block-id' );
+		// Ensure createBlock and insertBlock were not called.
+		expect( createBlock ).not.toHaveBeenCalled();
+		expect( mockInsertBlock ).not.toHaveBeenCalled();
+	} );
+} );
