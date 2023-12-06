@@ -1,8 +1,14 @@
-import { getFirstBlockByName } from '../../blocks/course-outline/data';
-import { select, subscribe, dispatch } from '@wordpress/data';
+/**
+ * WordPress dependencies
+ */
 import { createBlock } from '@wordpress/blocks';
-import { __ } from '@wordpress/i18n';
+import { select, subscribe, dispatch } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
+import { __ } from '@wordpress/i18n';
+/**
+ * Internal dependencies
+ */
+import { getFirstBlockByName } from '../../blocks/course-outline/data';
 
 export const hasOutlineBlock = () =>
 	getFirstBlockByName(
