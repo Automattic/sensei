@@ -82,7 +82,7 @@ export const handleFirstCourseCreationHelperNotice = () => {
 			removeNotice( noticeId );
 		}
 
-		// If the notice hasn't been created, and the course outline block hasn't been created, and the first course notice hasn't been dismissed, and there are no published lessons in the outline, create the notice.
+		// If the notice hasn't been created, and notice hasn't been dismissed, and either the course outline block hasn't been created OR there are no published lessons in the outline, create the notice.
 		if (
 			! noticeCreated &&
 			! isFirstCourseNoticeDismissed &&
