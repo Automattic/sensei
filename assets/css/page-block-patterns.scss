@@ -3,6 +3,7 @@ body,
 	.sensei-landing-pattern-header {
 		h1 {
 			font-size: var(--wp--preset--font-size--xx-large, 48px);
+			line-height: var(--wp--preset--font-size--xx-large, 48px);
 		}
 
 		p {
@@ -20,11 +21,12 @@ body,
 
 	.sensei-pattern-header-link {
 		font-family: var(--wp--preset--font-family--system);
-		font-size: var(--wp--preset--font-size--x-small);
+		font-size: var(--wp--preset--font-size--small);
 	}
 
+	// TODO: Fix this. I changed the quote from an `h2` to a `p`. This CSS shouldn't apply to it.
 	.wp-sensei-testimonial-pattern p {
 		font-family: var(--wp--preset--font-family--system);
-		font-size: var(--wp--preset--font-size--x-small, 1.125rem);
+		font-size: var(--wp--preset--font-size--small);
 	}
 }
