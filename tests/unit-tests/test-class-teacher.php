@@ -1,7 +1,7 @@
 <?php
 
 class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
-	use Sensei_Test_Login_Helpers;
+	use Sensei_Test_Login_Helpers, Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
 	 * Factory object.
@@ -500,5 +500,62 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		Sensei()->teacher->update_course_lessons_author( $course['course_id'], $new_teacher_id );
 
 		$this->assertPostAuthor( $new_teacher_id, $course['lesson_ids'], 'All lessons must be from teacher B now' );
+	}
+
+	public function testFilterLearnersQuery_WhenTeacherHasStudents_IncludesOnlyTheTeacherStudents() {
+		// Arrange.
+		$nonteacher_student_id = $this->factory->user->create();
+		$nonteacher_course_id  = $this->factory->course->create();
+
+		$this->login_as_teacher();
+		$teacher_student_id_1 = $this->factory->user->create();
+		$teacher_student_id_2 = $this->factory->user->create();
+		$teacher_course_id    = $this->factory->course->create();
+
+		$this->manuallyEnrolStudentInCourse( $nonteacher_student_id, $nonteacher_course_id );
+		$this->manuallyEnrolStudentInCourse( $teacher_student_id_1, $teacher_course_id );
+		$this->manuallyEnrolStudentInCourse( $teacher_student_id_2, $teacher_course_id );
+
+		set_current_screen( 'sensei-lms_page_sensei_learners' ); // Pretend we're on the students admin screen.
+
+		// Act.
+		$sql = Sensei()->teacher->filter_learners_query( 'WHERE 1=1' );
+
+		// Assert.
+		$this->assertSame( "WHERE 1=1 AND u.ID IN ($teacher_student_id_1,$teacher_student_id_2)", $sql );
+	}
+
+	public function testFilterLearnersQuery_WhenTheCurrentUserIsNoATeacher_ReturnsSameInput() {
+		// Arrange.
+		$nonteacher_student_id = $this->factory->user->create();
+		$nonteacher_course_id  = $this->factory->course->create();
+
+		$this->manuallyEnrolStudentInCourse( $nonteacher_student_id, $nonteacher_course_id );
+
+		set_current_screen( 'sensei-lms_page_sensei_learners' ); // Pretend we're on the students admin screen.
+
+		// Act.
+		$sql = Sensei()->teacher->filter_learners_query( 'WHERE 1=1' );
+
+		// Assert.
+		$this->assertSame( 'WHERE 1=1', $sql );
+	}
+
+	public function testFilterLearnersQuery_WhenTheTeacherHasNoStudents_ReturnsUserIdOfZero() {
+		// Arrange.
+		$nonteacher_student_id = $this->factory->user->create();
+		$nonteacher_course_id  = $this->factory->course->create();
+
+		$this->manuallyEnrolStudentInCourse( $nonteacher_student_id, $nonteacher_course_id );
+
+		$this->login_as_teacher();
+
+		set_current_screen( 'sensei-lms_page_sensei_learners' ); // Pretend we're on the students admin screen.
+
+		// Act.
+		$sql = Sensei()->teacher->filter_learners_query( 'WHERE 1=1' );
+
+		// Assert.
+		$this->assertSame( 'WHERE 1=1 AND u.ID IN (0)', $sql );
 	}
 }

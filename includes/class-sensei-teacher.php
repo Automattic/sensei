@@ -65,6 +65,9 @@ class Sensei_Teacher {
 
 		add_action( 'pre_get_posts', array( $this, 'filter_queries' ) );
 
+		// Show only the students belonging to the teacher on the students screen.
+		add_filter( 'sensei_learners_query', array( $this, 'filter_learners_query' ) );
+
 		// filter the quiz submissions
 		add_filter( 'sensei_check_for_activity', array( $this, 'filter_grading_activity_queries' ) );
 
@@ -809,6 +812,33 @@ class Sensei_Teacher {
 				$query->set( 'author', apply_filters( 'sensei_filter_queries_set_author', $current_user->ID, $screen->id ) );
 				break;
 		}
+	}
+
+	/**
+	 * Filter the learners query to show
+	 * only users that belong to the current logged teacher.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $sql The learners SQL query.
+	 *
+	 * @return string
+	 */
+	public function filter_learners_query( string $sql ): string {
+		if ( ! $this->is_admin_teacher() ) {
+			return $sql;
+		}
+
+		$teacher_learner_ids = $this->get_learner_ids_for_courses_with_edit_permission();
+		if ( ! $teacher_learner_ids ) {
+			$teacher_learner_ids = [ 0 ]; // Show no learners.
+		}
+
+		return str_replace(
+			'WHERE 1=1',
+			'WHERE 1=1 AND u.ID IN (' . implode( ',', array_map( 'absint', $teacher_learner_ids ) ) . ')',
+			$sql
+		);
 	}
 
 	/**
