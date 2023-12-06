@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Fix continue course button not working when using plain permalinks
+Continue course button not working when using plain permalinks
