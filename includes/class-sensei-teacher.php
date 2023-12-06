@@ -770,7 +770,7 @@ class Sensei_Teacher {
 
 	/**
 	 * Filter the post queries to show
-	 * only lesson /course and users that belong
+	 * only lesson/course that belong
 	 * to the current logged teacher.
 	 *
 	 * @since 1.8.0
