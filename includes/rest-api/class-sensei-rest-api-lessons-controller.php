@@ -109,7 +109,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 
 		// add a route to duplicate a lesson and attach it to a course.
 		register_rest_route(
-			'sensei/v1',
+			'sensei-internal/v1',
 			'/lessons/duplicate',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
@@ -118,7 +118,10 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 				'args'                => [
 					'lesson_ids' => [
 						'description' => __( 'The IDs of lessons to duplicate.', 'sensei-lms' ),
-						'type'        => 'integer',
+						'type'        => 'array',
+						'items'       => [
+							'type' => 'integer',
+						],
 					],
 					'course_id'  => [
 						'description' => __( 'The ID of the course to attach the duplicated lesson to.', 'sensei-lms' ),
@@ -150,14 +153,14 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 
 		$lessons = get_posts(
 			[
-				'post__in'       => $lesson_ids,
-				'post_type'      => 'question',
+				'post__in'       => (array) $lesson_ids,
+				'post_type'      => 'lesson',
 				'posts_per_page' => -1,
 			]
 		);
 		$course  = get_post( $course_id );
 
-		if ( empty( $lesson ) || ! $course ) {
+		if ( empty( $lessons ) || ! $course ) {
 			return new WP_Error( 'sensei_rest_invalid_id', __( 'Invalid ID(s) provided.', 'sensei-lms' ), [ 'status' => 404 ] );
 		}
 
@@ -180,7 +183,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
-	 * Check if the current user can duplicate a lesson.
+	 * Check if the current user can duplicate lessons.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -188,21 +191,33 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	 * @return bool Whether the user can duplicate the lesson.
 	 */
 	public function duplicate_lesson_permissions_check( $request ): bool {
-		$lesson_id = $request->get_param( 'id' );
-		$course_id = $request->get_param( 'course_id' );
+		$lesson_ids = $request->get_param( 'lesson_ids' );
+		$course_id  = $request->get_param( 'course_id' );
 
-		if ( ! $lesson_id || ! $course_id ) {
+		if ( ! $lesson_ids || ! $course_id ) {
 			return false;
 		}
 
-		$lesson = get_post( $lesson_id );
-		$course = get_post( $course_id );
+		$lessons = get_posts(
+			[
+				'post__in'       => (array) $lesson_ids,
+				'post_type'      => 'lesson',
+				'posts_per_page' => -1,
+			]
+		);
+		$course  = get_post( $course_id );
 
-		if ( ! $lesson || ! $course ) {
+		if ( ! $lessons || ! $course ) {
 			return false;
 		}
 
-		if ( ! current_user_can( 'edit_post', $lesson_id ) || ! current_user_can( 'edit_post', $course_id ) ) {
+		foreach ( $lessons as $lesson ) {
+			if ( ! current_user_can( 'edit_post', $lesson->ID ) ) {
+				return false;
+			}
+		}
+
+		if ( ! current_user_can( 'edit_post', $course_id ) ) {
 			return false;
 		}
 
