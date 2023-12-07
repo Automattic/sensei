@@ -63,8 +63,13 @@ class Sensei_Continue_Course_Block {
 		}
 
 		$target_post_id = Sensei_Utils::get_target_page_post_id_for_continue_url( $course_id, $user_id );
+		$target_url     = get_permalink( $target_post_id );
+		if ( ! $target_url ) {
+			return '';
+		}
 
-		return '<form action="' . esc_url( get_permalink( absint( $target_post_id ?? $course_id ) ) ) . '" method="get" class="sensei-block-wrapper sensei-cta">' .
+		return '<form action="' . esc_url( $target_url ) . '" method="get" class="sensei-block-wrapper sensei-cta">' .
+			Sensei_Utils::output_query_params_as_inputs( [], $target_url, false ) .
 			preg_replace(
 				'/<a(.*)>/',
 				'<button type="submit" $1>',

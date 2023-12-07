@@ -243,12 +243,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $array_zipped );
 	}
 
-	/**
-	 * Test that the query params inputs are correct.
-	 *
-	 * @covers Sensei_Utils::output_query_params_as_inputs
-	 */
-	public function testOutputQueryParamsAsInputs() {
+	public function testOutputQueryParamsAsInputs_NoUrlIsProvided_OutputInputsUsingCurrentUrlParams() {
 		/* Arrange. */
 		$_GET = [
 			'param_1' => 'value_1',
@@ -257,12 +252,33 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 		/* Act. */
 		ob_start();
-		Sensei_Utils::output_query_params_as_inputs( [ 'param_2' ] );
-		$output = ob_get_clean();
+		Sensei_Utils::output_query_params_as_inputs();
+		$result = ob_get_clean();
 
 		/* Assert. */
-		$this->assertStringContainsString( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
-		$this->assertStringNotContainsString( 'param_2', $output, 'Output should not contain the excluded query param input.' );
+		$this->assertSame( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
+	}
+
+	public function testOutputQueryParamsAsInputs_WhenUrlIsProvidedAndEchoIsFalse_ReturnsCorrectInputs() {
+		/* Arrange. */
+		$url = 'https://example.com?param_1=value_1&param_2=value_2';
+
+		/* Act. */
+		$result = Sensei_Utils::output_query_params_as_inputs( [], $url, false );
+
+		/* Assert. */
+		$this->assertSame( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
+	}
+
+	public function testOutputQueryParamsAsInputs_WhenAParamIsExcluded_ReturnsCorrectInputs() {
+		/* Arrange. */
+		$url = 'https://example.com?param_1=value_1&param_2=value_2';
+
+		/* Act. */
+		$result = Sensei_Utils::output_query_params_as_inputs( [ 'param_2' ], $url, false );
+
+		/* Assert. */
+		$this->assertSame( '<input type="hidden" name="param_1" value="value_1">', $result );
 	}
 
 	/**
