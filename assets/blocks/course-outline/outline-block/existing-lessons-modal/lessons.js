@@ -32,11 +32,53 @@ const Lessons = ( {
 
 	// Lessons by current filter.
 	let lessons = useSelect(
-		( select ) =>
-			select( 'core' ).getEntityRecords( 'postType', 'lesson', {
-				per_page: 100,
-				...omitBy( filters, ( v ) => v === '' ),
-			} ),
+		( select ) => {
+			let foundLessons = select( 'core' ).getEntityRecords(
+				'postType',
+				'lesson',
+				{
+					per_page: 100,
+					...omitBy( filters, ( v ) => v === '' ),
+				}
+			);
+
+			const courseIds = foundLessons
+				? foundLessons
+						.filter( ( lesson ) => lesson.meta._lesson_course )
+						.map( ( lesson ) => lesson.meta._lesson_course )
+				: [];
+
+			const courses = select( 'core' ).getEntityRecords(
+				'postType',
+				'course',
+				{
+					per_page: 100,
+					include: courseIds,
+				}
+			);
+
+			// Add course field to lessons.
+			if ( foundLessons && courses ) {
+				foundLessons = foundLessons.map( ( lesson ) => {
+					const courseId = lesson.meta._lesson_course;
+					if ( ! courseId ) {
+						return lesson;
+					}
+
+					const course = courses.find( ( c ) => c.id === courseId );
+					if ( ! course ) {
+						return lesson;
+					}
+
+					return {
+						...lesson,
+						course,
+					};
+				} );
+			}
+
+			return foundLessons;
+		},
 		[ filters ]
 	);
 
@@ -78,7 +120,7 @@ const Lessons = ( {
 	};
 
 	const lessonsMap = ( lesson ) => {
-		const course = lesson.course?.title || '';
+		const course = lesson.course?.title.raw || '';
 		const lessonId = lesson.id;
 		const title = lesson.title.raw;
 
