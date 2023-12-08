@@ -1,4 +1,7 @@
 <?php
+
+use Sensei\Internal\Services\Progress_Storage_Settings;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -820,24 +823,51 @@ class Sensei_Teacher {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param string $sql The learners SQL query.
+	 * @param string $learners_sql The learners SQL query.
 	 *
 	 * @return string
 	 */
-	public function filter_learners_query( string $sql ): string {
+	public function filter_learners_query( string $learners_sql ): string {
 		if ( ! $this->is_admin_teacher() ) {
-			return $sql;
+			return $learners_sql;
 		}
 
-		$teacher_learner_ids = $this->get_learner_ids_for_courses_with_edit_permission();
-		if ( ! $teacher_learner_ids ) {
-			$teacher_learner_ids = [ 0 ]; // Show no learners.
+		// For teachers, courses are filtered to those which belong to the teacher
+		// as they don't have access to course belonging to other users.
+		$course_query = new WP_Query(
+			[
+				'posts_per_page' => -1,
+				'post_type'      => 'course',
+				'post_status'    => 'any',
+				'fields'         => 'ids',
+			]
+		);
+
+		$teacher_course_ids = $course_query->posts;
+		if ( ! $teacher_course_ids ) {
+			$teacher_course_ids = [ 0 ]; // Show no learners.
+		}
+
+		$teacher_course_ids_imploded = implode( ',', array_map( 'absint', $teacher_course_ids ) );
+
+		global $wpdb;
+		if ( Progress_Storage_Settings::is_tables_repository() ) {
+			$replacement_sql = "
+INNER JOIN {$wpdb->prefix}sensei_lms_progress AS progress ON u.ID = progress.user_id
+WHERE 1=1
+AND progress.post_id IN ($teacher_course_ids_imploded)";
+		} else {
+			$replacement_sql = "
+INNER JOIN $wpdb->comments AS comments ON u.ID = comments.user_id
+WHERE 1=1
+AND comments.comment_post_ID IN ($teacher_course_ids_imploded)
+AND comments.comment_type = 'sensei_course_status'";
 		}
 
 		return str_replace(
 			'WHERE 1=1',
-			'WHERE 1=1 AND u.ID IN (' . implode( ',', array_map( 'absint', $teacher_learner_ids ) ) . ')',
-			$sql
+			$replacement_sql,
+			$learners_sql
 		);
 	}
 
