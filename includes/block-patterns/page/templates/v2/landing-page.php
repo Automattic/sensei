@@ -7,7 +7,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
-	// TODO: Why isn't Landing Page listed in site editor patterns?
 }
 
 ?>
