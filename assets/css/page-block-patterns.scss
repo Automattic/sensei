@@ -11,12 +11,19 @@ body,
 		}
 	}
 
-	.sensei-blog-posts-pattern .wp-block-post-excerpt__excerpt {
-		display: -webkit-box;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 4;
+	.sensei-blog-posts-pattern {
+		.wp-block-post-template {
+			margin: 0;
+			padding: 0;
+		}
+
+		.wp-block-post-excerpt__excerpt {
+			display: -webkit-box;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 4;
+		}
 	}
 
 	.sensei-pattern-header-link {
@@ -24,7 +31,6 @@ body,
 		font-size: var(--wp--preset--font-size--small);
 	}
 
-	// TODO: Fix this. I changed the quote from an `h2` to a `p`. This CSS shouldn't apply to it.
 	.wp-sensei-testimonial-pattern p {
 		font-family: var(--wp--preset--font-family--system);
 		font-size: var(--wp--preset--font-size--small);
