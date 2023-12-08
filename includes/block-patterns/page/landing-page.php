@@ -6,7 +6,7 @@
  */
 
 ob_start();
-require __DIR__ . '/templates/landing-page.php';
+require __DIR__ . '/templates/v2/landing-page.php';
 
 return [
 	'title'      => __( 'Landing Page', 'sensei-lms' ),
