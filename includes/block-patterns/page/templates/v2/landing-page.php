@@ -73,7 +73,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"80px","bottom":"80px","left":"20px","right":"20px"},"blockGap":"0px"}},"className":"sensei-blog-posts-pattern","layout":{"type":"constrained","contentSize":"1000px"}} -->
 <div class="wp-block-group alignfull sensei-blog-posts-pattern" style="padding-top:80px;padding-right:20px;padding-bottom:80px;padding-left:20px"><!-- wp:group {"style":{"spacing":{"padding":{"left":"20px"},"margin":{"bottom":"40px"}},"border":{"left":{"width":"1px","style":"solid"}}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"space-between","verticalAlignment":"top"}} -->
 <div class="wp-block-group" style="border-left-style:solid;border-left-width:1px;margin-bottom:40px;padding-left:20px"><!-- wp:heading {"style":{"typography":{"textTransform":"uppercase","fontStyle":"normal","fontWeight":"700"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}},"fontSize":"medium"} -->
-<h2 class="wp-block-heading has-medium-font-size" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;font-style:normal;font-weight:700;text-transform:uppercase"><?php echo esc_html__( 'Blog posts', 'sensei-lms' ); ?></h2>
+<h2 class="wp-block-heading has-medium-font-size" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;font-style:normal;font-weight:700;text-transform:uppercase"><?php echo esc_html__( 'Blog Posts', 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"className":"sensei-pattern-header-link","fontSize":"small","fontFamily":"system"} -->
