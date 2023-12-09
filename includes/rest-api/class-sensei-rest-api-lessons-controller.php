@@ -22,6 +22,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	/**
+	 * REST API namespace.
+	 *
+	 * @var string
+	 */
+	private $namespace = 'sensei-internal/v1';
+
+	/**
 	 * Sensei_REST_API_Lessons_Controller constructor.
 	 *
 	 * @param string $post_type The post type.
@@ -107,14 +114,13 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 			]
 		);
 
-		// add a route to duplicate a lesson and attach it to a course.
 		register_rest_route(
-			'sensei-internal/v1',
-			'/lessons/duplicate',
+			$this->namespace,
+			'/lessons/prepare',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'duplicate_lesson' ],
-				'permission_callback' => [ $this, 'duplicate_lesson_permissions_check' ],
+				'callback'            => [ $this, 'prepare_lessons' ],
+				'permission_callback' => [ $this, 'prepare_lessons_permissions_check' ],
 				'args'                => [
 					'lesson_ids' => [
 						'description' => __( 'The IDs of lessons to duplicate.', 'sensei-lms' ),
@@ -133,30 +139,31 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
-	 * Duplicate a lesson and attach it to a course.
+	 * Prepare lessons to attach to a course. This duplicates lessons if they are already related to a course.
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
-	public function duplicate_lesson( $request ) {
+	public function prepare_lessons( $request ) {
 		$lesson_ids = $request->get_param( 'lesson_ids' );
 		$course_id  = $request->get_param( 'course_id' );
 
 		$response = new WP_REST_Response();
 		if ( empty( $lesson_ids ) ) {
-			$response->set_data( [] );
+			$response->set_data( array() );
 
 			return $response;
 		}
 
 		$lessons = get_posts(
-			[
+			array(
 				'post__in'       => (array) $lesson_ids,
 				'post_type'      => 'lesson',
+				'post_status'    => array( 'publish', 'draft' ),
 				'posts_per_page' => -1,
-			]
+			)
 		);
 		$course  = get_post( $course_id );
 
@@ -169,12 +176,22 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 
 		$duplicated_lessons = array();
 		foreach ( $lessons as $lesson ) {
-			$duplicated_lesson = $post_duplicator->duplicate( $lesson, null, true );
+			$attached_course_id = get_post_meta( $lesson->ID, '_lesson_course', true );
+			if ( $attached_course_id && $attached_course_id === $course_id ) {
+				// lesson is already attached to the course.
+				continue;
+			}
 
-			$lesson_quiz_duplicator->duplicate( $lesson->ID, $duplicated_lesson->ID );
-			update_post_meta( $duplicated_lesson->ID, '_lesson_course', $course_id );
+			if ( $attached_course_id ) {
+				// duplicate the lesson if it is already attached to another course.
+				$add_lesson = $post_duplicator->duplicate( $lesson, null, true );
 
-			$duplicated_lessons[] = $duplicated_lesson;
+				$lesson_quiz_duplicator->duplicate( $lesson->ID, $add_lesson->ID );
+			} else {
+				$add_lesson = $lesson;
+			}
+
+			$duplicated_lessons[] = $add_lesson;
 		}
 
 		$response->set_data( $duplicated_lessons );
@@ -183,14 +200,14 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
-	 * Check if the current user can duplicate lessons.
+	 * Check if the current user can prepare lessons to attach to a course.
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return bool Whether the user can duplicate the lesson.
 	 */
-	public function duplicate_lesson_permissions_check( $request ): bool {
+	public function prepare_lessons_permissions_check( $request ): bool {
 		$lesson_ids = $request->get_param( 'lesson_ids' );
 		$course_id  = $request->get_param( 'course_id' );
 
@@ -199,11 +216,12 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 		}
 
 		$lessons = get_posts(
-			[
+			array(
 				'post__in'       => (array) $lesson_ids,
 				'post_type'      => 'lesson',
+				'post_status'    => array( 'publish', 'draft' ),
 				'posts_per_page' => -1,
-			]
+			)
 		);
 		$course  = get_post( $course_id );
 
