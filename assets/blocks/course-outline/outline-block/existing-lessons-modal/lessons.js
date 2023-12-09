@@ -33,13 +33,22 @@ const Lessons = ( {
 	// Lessons by current filter.
 	let lessons = useSelect(
 		( select ) => {
+			const courseId = select( 'core/editor' ).getCurrentPostId();
+
 			let foundLessons = select( 'core' ).getEntityRecords(
 				'postType',
 				'lesson',
 				{
+					status: [ 'publish', 'draft' ],
 					per_page: 100,
 					...omitBy( filters, ( v ) => v === '' ),
 				}
+			);
+
+			foundLessons = foundLessons?.filter(
+				( lesson ) =>
+					! lesson.meta._lesson_course ||
+					lesson.meta._lesson_course !== courseId
 			);
 
 			const courseIds = foundLessons
@@ -60,12 +69,14 @@ const Lessons = ( {
 			// Add course field to lessons.
 			if ( foundLessons && courses ) {
 				foundLessons = foundLessons.map( ( lesson ) => {
-					const courseId = lesson.meta._lesson_course;
+					const lessonCourseId = lesson.meta._lesson_course;
 					if ( ! courseId ) {
 						return lesson;
 					}
 
-					const course = courses.find( ( c ) => c.id === courseId );
+					const course = courses.find(
+						( c ) => c.id === lessonCourseId
+					);
 					if ( ! course ) {
 						return lesson;
 					}

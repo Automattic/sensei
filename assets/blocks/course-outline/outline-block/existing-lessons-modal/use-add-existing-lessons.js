@@ -27,7 +27,7 @@ export const findLessonBlock = ( blocks, { id, title } ) => {
 	return blocks.find( compare );
 };
 
-const API_PATH = '/sensei-internal/v1/lessons/duplicate';
+const API_PATH = '/sensei-internal/v1/lessons/prepare';
 
 /**
  * Add existing lessons to the course outline block.
