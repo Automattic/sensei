@@ -1180,11 +1180,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Disable the checkbox if we can't set time limit. That's our current limitation for running migrations.
 		$disabled_feature            = true;
-		$disabled_messages           = array();
 		$original_max_execution_time = (int) ini_get( 'max_execution_time' );
 		$disabled_php_functions      = array_map( 'trim', explode( ',', ini_get( 'disable_functions' ) ) );
 		$set_time_limit_disabled     = in_array( 'set_time_limit', $disabled_php_functions, true );
-		$xdebug_enabled              = extension_loaded( 'xdebug' );
 		if ( 0 !== $original_max_execution_time && ! $set_time_limit_disabled ) {
 			// Set max execution time to 0 to check if we can set it in migrtions.
 			$disabled_feature           = ! set_time_limit( 0 );
@@ -1194,23 +1192,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			}
 			// Restore original max execution time.
 			set_time_limit( $original_max_execution_time );
-		}
-
-		if ( $disabled_feature ) {
-			if ( $set_time_limit_disabled ) {
-				$disabled_messages[] = sprintf(
-					// translators: Placeholder is a link to `set_time_limit` function documentation.
-					__( "The feature can't be enabled because the %s function is disabled in your PHP configuration.", 'sensei-lms' ),
-					'<a href="https://www.php.net/manual/en/function.set-time-limit.php" target="_blank" rel="noopener noreferrer">set_time_limit</a>'
-				);
-			}
-			if ( $xdebug_enabled ) {
-				$disabled_messages[] = sprintf(
-					// translators: Placeholder is a link to Xdebug website.
-					__( '%s is interfering with this feature. Please, consider disabling it.', 'sensei-lms' ),
-					'<a href="https://xdebug.org/" target="_blank" rel="noopener noreferrer">Xdebug</a>'
-				);
-			}
 		}
 		?>
 		<div>
@@ -1230,9 +1211,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<?php if ( $disabled_feature ) : ?>
 				<input type="hidden" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" value="<?php echo esc_attr( $value ); ?>" />
 				<p>
-					<?php if ( ! empty( $disabled_messages ) ) : ?>
-						<?php echo wp_kses_post( implode( '<br />', $disabled_messages ) ); ?>
-					<?php endif; ?>
+					<?php
+					echo esc_html( __( 'While HPPS is in its early experimental stage, the functionalities may be temporarily unavailable.', 'sensei-lms' ) );
+					?>
 				</p>
 			<?php endif; ?>
 		<?php if ( ! $value ) : ?>
