@@ -17,7 +17,7 @@
     "url": "https://github.com/Automattic/sensei/issues"
   },
   "engines": {
-    "npm": "^9.3.1",
+    "npm": "^9.3.1 || ^10",
     "node": "^18.14.0"
   },
   "dependencies": {
