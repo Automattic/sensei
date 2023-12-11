@@ -560,7 +560,7 @@ AND comments.comment_type = 'sensei_course_status'";
 
 	public function testFilterLearnersQuery_WhenTheTeacherHasNoCourses_ReturnsCourseIdOfZero() {
 		// Arrange.
-		$nonteacher_course_id  = $this->factory->course->create();
+		$nonteacher_course_id = $this->factory->course->create();
 
 		$this->login_as_teacher();
 
