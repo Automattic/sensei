@@ -35,6 +35,7 @@ import InvalidUsageError from '../../shared/components/invalid-usage';
  * @param {Object}   props.attributes              Component attributes.
  * @param {number}   props.attributes.height       The height of the progress bar.
  * @param {number}   props.attributes.borderRadius The border radius of the progress bar.
+ * @param {boolean}  props.attributes.isPreview    Whether block is rendered in a preview.
  * @param {Function} props.setAttributes           Callback to set the component attributes.
  */
 export const CourseProgressEdit = ( props ) => {
@@ -45,7 +46,7 @@ export const CourseProgressEdit = ( props ) => {
 		barBackgroundColor,
 		textColor,
 		context: { postType },
-		attributes: { height, borderRadius },
+		attributes: { height, borderRadius, isPreview },
 		setAttributes,
 	} = props;
 
@@ -93,7 +94,7 @@ export const CourseProgressEdit = ( props ) => {
 	return (
 		<>
 			<ProgressBar
-				totalCount={ totalLessonsCount }
+				totalCount={ isPreview ? 3 : totalLessonsCount }
 				completedCount={ completedLessonsCount }
 				wrapperAttributes={ wrapperAttributes }
 				barWrapperAttributes={ barWrapperAttributes }
