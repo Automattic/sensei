@@ -1490,11 +1490,6 @@ class Sensei_Utils {
 		}
 
 		$lessons_completed  = 0;
-		$lesson_status_args = array(
-			'user_id' => $user_id,
-			'status'  => 'any',
-			'type'    => 'sensei_lesson_status', /* FIELD SIZE 20 */
-		);
 
 		// Grab all of this Courses' lessons, looping through each...
 		$lesson_ids    = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
@@ -1508,7 +1503,6 @@ class Sensei_Utils {
 			// .........then the lesson is 'passed'
 			// ...if all lessons 'passed' then update the course status to complete
 		// The below checks if a lesson is fully completed, though maybe should be Utils::user_completed_lesson()
-		$lesson_status_args['post__in'] = $lesson_ids;
 		$lesson_progress_args           = array(
 			'user_id'   => $user_id,
 			'lesson_id' => $lesson_ids,
