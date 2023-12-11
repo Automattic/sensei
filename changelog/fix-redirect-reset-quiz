@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Restart quiz redirects to the course complete page if the course was completed
