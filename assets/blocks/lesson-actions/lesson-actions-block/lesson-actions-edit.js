@@ -48,8 +48,9 @@ const LessonActionsEdit = ( props ) => {
 		IN_PROGRESS_PREVIEW
 	);
 	const { isSiteEditor } = useSelect( ( select ) => {
+		const currentPostId = select( editorStore ).getCurrentPostId();
 		return {
-			isSiteEditor: ! select( editorStore ).getCurrentPostId(),
+			isSiteEditor: ! Number.isInteger( currentPostId ),
 		};
 	} );
 

@@ -425,7 +425,7 @@ class Sensei_Utils {
 	/**
 	 * Grade question
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.19.2
 	 *
 	 * @param  integer $question_id ID of question
 	 * @param  integer $grade       Grade received
@@ -433,7 +433,7 @@ class Sensei_Utils {
 	 * @return boolean
 	 */
 	public static function sensei_grade_question( $question_id = 0, $grade = 0, $user_id = 0 ) {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Quiz::set_user_grades' );
+		_deprecated_function( __METHOD__, '4.19.2', 'Sensei_Quiz::set_user_grades' );
 
 		if ( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
@@ -464,7 +464,7 @@ class Sensei_Utils {
 	/**
 	 * Delete the question grade.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.19.2
 	 *
 	 * @param int $question_id The question ID.
 	 * @param int $user_id The user ID. Defaults to the current user ID.
@@ -472,7 +472,7 @@ class Sensei_Utils {
 	 * @return bool
 	 */
 	public static function sensei_delete_question_grade( $question_id = 0, $user_id = 0 ) {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Quiz::set_user_grades' );
+		_deprecated_function( __METHOD__, '4.19.2', 'Sensei_Quiz::set_user_grades' );
 
 		if ( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
@@ -690,14 +690,14 @@ class Sensei_Utils {
 	/**
 	 * Returns the user_grade for a specific question and user, or sensei_user_answer entry
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.19.2
 	 *
 	 * @param mixed $question
 	 * @param int   $user_id
 	 * @return string
 	 */
 	public static function sensei_get_user_question_grade( $question = 0, $user_id = 0 ) {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Quiz::get_user_grades' );
+		_deprecated_function( __METHOD__, '4.19.2', 'Sensei_Quiz::get_user_grades' );
 
 		$question_grade = false;
 		if ( $question ) {
@@ -797,7 +797,7 @@ class Sensei_Utils {
 	/**
 	 * Add answer notes to question
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.19.2
 	 *
 	 * @param  integer $question_id ID of question
 	 * @param  integer $user_id     ID of user
@@ -805,7 +805,7 @@ class Sensei_Utils {
 	 * @return boolean
 	 */
 	public static function sensei_add_answer_notes( $question_id = 0, $user_id = 0, $notes = '' ) {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Quiz::save_user_answers_feedback' );
+		_deprecated_function( __METHOD__, '4.19.2', 'Sensei_Quiz::save_user_answers_feedback' );
 
 		if ( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
@@ -2514,7 +2514,7 @@ class Sensei_Utils {
 	/**
 	 * Check if this is a frontend request.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.2
 	 *
 	 * @return bool
 	 */
@@ -2792,20 +2792,44 @@ class Sensei_Utils {
 	 *
 	 * @since 4.2.0
 	 *
-	 * @param array $excluded The query params that should be excluded.
+	 * @param array  $excluded The query params that should be excluded.
+	 * @param string $url The URL to parse the query params from. If empty, the current URL will be used.
+	 * @param bool   $echo Whether to echo the output or return it.
+	 *
+	 * @return string|void The HTML output if `$echo` is false, null otherwise.
 	 */
-	public static function output_query_params_as_inputs( array $excluded = [] ) {
+	public static function output_query_params_as_inputs( array $excluded = [], string $url = '', bool $echo = true ) {
 		// phpcs:ignore WordPress.Security.NonceVerification -- The nonce should be checked before calling this method.
-		foreach ( $_GET as $name => $value ) {
+		$query_params = $_GET;
+		if ( $url ) {
+			parse_str( wp_parse_url( $url, PHP_URL_QUERY ), $query_params );
+		}
+
+		$output = '';
+		foreach ( $query_params as $name => $value ) {
 			if ( in_array( $name, $excluded, true ) ) {
 				continue;
 			}
 
-			?>
-			<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( wp_unslash( $value ) ); ?>">
-			<?php
+			$output .= '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( wp_unslash( $value ) ) . '">';
 		}
+
+		if ( ! $echo ) {
+			return $output;
+		}
+
+		echo wp_kses(
+			$output,
+			[
+				'input' => [
+					'type'  => [],
+					'name'  => [],
+					'value' => [],
+				],
+			]
+		);
 	}
+
 	/**
 	 * Format the last activity date to a more readable form.
 	 *

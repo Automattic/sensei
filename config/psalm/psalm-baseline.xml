@@ -881,7 +881,7 @@
       <code>$lesson-&gt;ID</code>
     </PossiblyInvalidPropertyFetch>
   </file>
-  <file src="includes/blocks/class-sensei-view-quiz-block.php">
+  <file src="includes/blocks/class-sensei-take-quiz-block.php">
     <InvalidScalarArgument occurrences="1">
       <code>$course_id</code>
     </InvalidScalarArgument>

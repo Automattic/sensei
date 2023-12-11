@@ -50,6 +50,7 @@ const files = [
 	'js/modules-admin.js',
 	'js/ranges.js',
 	'js/settings.js',
+	'js/admin/settings/experimental-features.js',
 	'js/user-dashboard.js',
 	'js/stop-double-submission.js',
 	'js/question-answer-tinymce-editor.js',

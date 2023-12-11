@@ -14,14 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * WP-CLI command that validates the quiz submission data.
  *
- * @since $$next-version$$
+ * @since 4.19.2
  */
 class Sensei_Validate_Quiz_Submission_Command {
 
 	/**
 	 * Validate the quiz submission migrated data.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.19.2
 	 *
 	 * @param array $args       Command arguments.
 	 * @param array $assoc_args Command arguments with names.

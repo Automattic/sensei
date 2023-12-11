@@ -3,6 +3,7 @@
  */
 @import 'fontawesome';
 @import 'mixins';
+@import "notices";
 @import "~@wordpress/base-styles/breakpoints";
 
 /**
@@ -16,89 +17,6 @@
 		margin: 0;
 		padding: 0;
 		visibility: hidden;
-	}
-}
-
-/**
- * Sensei Notices
- */
-.sensei-message {
-	clear: both;
-	margin-top: 1.387em;
-	margin-bottom: 1.618em;
-	padding: 1em 1.618em;
-	border: none !important;
-	@include border_radius(5px);
-
-	a {
-		text-decoration: underline;
-
-		&:hover {
-			text-decoration: none;
-		}
-	}
-
-	&:after {
-		content: '';
-		clear: both;
-		display: block;
-	}
-
-	&:before {
-		@include iconbefore();
-		font-size: 1.387em;
-		position: relative;
-		top: .1em;
-	}
-
-	&.info {
-		background: #eee;
-
-		&:before {
-			content: '\f05a';
-		}
-
-		a {
-			color: darken($color_body, 10%);
-
-			&:hover {
-				color: darken($color_body, 15%);
-			}
-		}
-	}
-
-	&.alert {
-		background: #ffd9c8;
-
-		&:before {
-			color: $error;
-			content: '\f071';
-		}
-
-		a {
-			color: darken($error, 10%);
-
-			&:hover {
-				color: darken($error, 15%);
-			}
-		}
-	}
-
-	&.success {
-		background: lighten( $success, 35% );
-
-		&:before {
-			color: $success;
-			content: '\f058';
-		}
-
-		a {
-			color: darken($success, 10%);
-
-			&:hover {
-				color: darken($success, 15%);
-			}
-		}
 	}
 }
 
