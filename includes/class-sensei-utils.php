@@ -2792,20 +2792,44 @@ class Sensei_Utils {
 	 *
 	 * @since 4.2.0
 	 *
-	 * @param array $excluded The query params that should be excluded.
+	 * @param array  $excluded The query params that should be excluded.
+	 * @param string $url The URL to parse the query params from. If empty, the current URL will be used.
+	 * @param bool   $echo Whether to echo the output or return it.
+	 *
+	 * @return string|void The HTML output if `$echo` is false, null otherwise.
 	 */
-	public static function output_query_params_as_inputs( array $excluded = [] ) {
+	public static function output_query_params_as_inputs( array $excluded = [], string $url = '', bool $echo = true ) {
 		// phpcs:ignore WordPress.Security.NonceVerification -- The nonce should be checked before calling this method.
-		foreach ( $_GET as $name => $value ) {
+		$query_params = $_GET;
+		if ( $url ) {
+			parse_str( wp_parse_url( $url, PHP_URL_QUERY ), $query_params );
+		}
+
+		$output = '';
+		foreach ( $query_params as $name => $value ) {
 			if ( in_array( $name, $excluded, true ) ) {
 				continue;
 			}
 
-			?>
-			<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( wp_unslash( $value ) ); ?>">
-			<?php
+			$output .= '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( wp_unslash( $value ) ) . '">';
 		}
+
+		if ( ! $echo ) {
+			return $output;
+		}
+
+		echo wp_kses(
+			$output,
+			[
+				'input' => [
+					'type'  => [],
+					'name'  => [],
+					'value' => [],
+				],
+			]
+		);
 	}
+
 	/**
 	 * Format the last activity date to a more readable form.
 	 *
