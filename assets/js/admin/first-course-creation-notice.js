@@ -54,6 +54,8 @@ export const hasPublishedLessonInOutline = ( blocks ) => {
 // Detect when a user selects a Sensei pattern.
 let selectedSenseiPattern = false;
 
+export const isSenseiPatternSelected = () => selectedSenseiPattern;
+
 const rewrittenActions = {};
 const originalActions = {};
 
@@ -140,7 +142,7 @@ export const handleFirstCourseCreationHelperNotice = () => {
 
 	subscribe( () => {
 		if (
-			selectedSenseiPattern &&
+			isSenseiPatternSelected() &&
 			noticeCreated &&
 			! noticeRemoved &&
 			hasOutlineBlock() &&
@@ -153,7 +155,7 @@ export const handleFirstCourseCreationHelperNotice = () => {
 
 		// If the user selects a Sensei pattern, and the notice hasn't been created, and notice hasn't been dismissed, and either the course outline block hasn't been created OR there are no published lessons in the outline, create the notice.
 		if (
-			selectedSenseiPattern &&
+			isSenseiPatternSelected() &&
 			! noticeCreated &&
 			! isFirstCourseNoticeDismissed &&
 			! (
