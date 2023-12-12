@@ -34,17 +34,14 @@ export const handleCourseOutlineBlockIncomplete = async () => {
 // If the function isn't globally available, the link button doesn't find the reference.
 window.handleCourseOutlineBlockIncomplete = handleCourseOutlineBlockIncomplete;
 
-export const hasPublishedLessonInOutline = ( blocks ) => {
+export const hasLessonInOutline = ( blocks ) => {
 	return blocks.some( ( block ) => {
-		if (
-			block.name === 'sensei-lms/course-outline-lesson' &&
-			! block.attributes.draft
-		) {
+		if ( block.name === 'sensei-lms/course-outline-lesson' ) {
 			return true;
 		}
 
 		if ( block.innerBlocks?.length ) {
-			return hasPublishedLessonInOutline( block.innerBlocks );
+			return hasLessonInOutline( block.innerBlocks );
 		}
 
 		return false;
@@ -146,7 +143,7 @@ export const handleFirstCourseCreationHelperNotice = () => {
 			noticeCreated &&
 			! noticeRemoved &&
 			hasOutlineBlock() &&
-			hasPublishedLessonInOutline( [ hasOutlineBlock() ] )
+			hasLessonInOutline( [ hasOutlineBlock() ] )
 		) {
 			noticeRemoved = true;
 			noticeCreated = false;
@@ -159,8 +156,7 @@ export const handleFirstCourseCreationHelperNotice = () => {
 			! noticeCreated &&
 			! isFirstCourseNoticeDismissed &&
 			! (
-				hasOutlineBlock() &&
-				hasPublishedLessonInOutline( [ hasOutlineBlock() ] )
+				hasOutlineBlock() && hasLessonInOutline( [ hasOutlineBlock() ] )
 			)
 		) {
 			noticeCreated = true;

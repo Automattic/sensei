@@ -10,7 +10,7 @@ import {
 	hasOutlineBlock,
 	handleCourseOutlineBlockIncomplete,
 	handleFirstCourseCreationHelperNotice,
-	hasPublishedLessonInOutline,
+	hasLessonInOutline,
 } from './first-course-creation-notice';
 import { getFirstBlockByName } from '../../blocks/course-outline/data';
 
@@ -45,28 +45,27 @@ jest.mock( './first-course-creation-notice' );
 jest.mock( '../../blocks/course-outline/data' );
 
 describe( 'hasPublishedLessonInOutline', () => {
-	it( 'should return true when there is a published lesson in the outline', () => {
+	it( 'should return true when there is a lesson in the outline', () => {
 		const blocks = [
 			{
 				name: 'sensei-lms/course-outline-lesson',
-				attributes: { draft: false },
 			},
 		];
 
-		hasPublishedLessonInOutline.mockImplementation(
+		hasLessonInOutline.mockImplementation(
 			jest.requireActual( './first-course-creation-notice' )
 				.hasPublishedLessonInOutline
 		);
 
-		const result = hasPublishedLessonInOutline( blocks );
+		const result = hasLessonInOutline( blocks );
 
 		expect( result ).toBe( true );
 	} );
 
-	it( 'should return false when there is no published lesson in the outline', () => {
+	it( 'should return false when there is no lesson in the outline', () => {
 		const blocks = [ { name: 'some-other-block' } ];
 
-		const result = hasPublishedLessonInOutline( blocks );
+		const result = hasLessonInOutline( blocks );
 
 		expect( result ).toBe( false );
 	} );
