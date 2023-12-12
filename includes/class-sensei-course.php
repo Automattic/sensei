@@ -475,8 +475,15 @@ class Sensei_Course {
 				'before'
 			);
 
-			$current_user_id    = get_current_user_id();
-			$has_created_course = count_user_posts( $current_user_id, 'course' ) > 0;
+			$course_by_user_args = array(
+				'post_type'      => 'course',
+				'post_status'    => 'any',
+				'author'         => get_current_user_id(),
+				'posts_per_page' => 1,
+			);
+
+			$user_courses       = get_posts( $course_by_user_args );
+			$has_created_course = count( $user_courses ) > 0;
 
 			if ( ! $has_created_course ) {
 				Sensei()->assets->enqueue( 'sensei-admin-first-course-creation-notice', 'js/admin/first-course-creation-notice.js', [ 'sensei-admin-course-edit' ], true );
