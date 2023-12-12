@@ -34,6 +34,7 @@ jest.mock( '@wordpress/data', () => ( {
 		getBlocks: jest.fn(),
 	} ) ),
 	subscribe: jest.fn(),
+	use: jest.fn(),
 } ) );
 
 jest.mock( '@wordpress/i18n', () => ( {
