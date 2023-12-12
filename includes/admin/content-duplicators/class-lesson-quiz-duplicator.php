@@ -20,6 +20,9 @@ class Lesson_Quiz_Duplicator {
 	 */
 	private Post_Duplicator $post_duplicator;
 
+	/**
+	 * Lesson_Quiz_Duplicator constructor.
+	 */
 	public function __construct() {
 		$this->post_duplicator = new Post_Duplicator();
 	}
@@ -30,7 +33,7 @@ class Lesson_Quiz_Duplicator {
 	 * @param int $old_lesson_id ID of original lesson.
 	 * @param int $new_lesson_id ID of duplicate lesson.
 	 */
-	public function duplicate ( int $old_lesson_id, int $new_lesson_id ): void {
+	public function duplicate( int $old_lesson_id, int $new_lesson_id ): void {
 		$old_quiz_id = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
 
 		if ( empty( $old_quiz_id ) ) {

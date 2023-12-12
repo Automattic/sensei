@@ -75,7 +75,7 @@ class Sensei_REST_API_Lesson_Actions_Controller_Tests extends WP_Test_REST_TestC
 			'course_id'  => $course2_id,
 		);
 
-		$request  = new WP_REST_Request( 'POST', self::REST_ROUTE . 'prepare' );
+		$request = new WP_REST_Request( 'POST', self::REST_ROUTE . 'prepare' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body( wp_json_encode( $body ) );
 
@@ -86,7 +86,7 @@ class Sensei_REST_API_Lesson_Actions_Controller_Tests extends WP_Test_REST_TestC
 		$this->assertEquals( $response->get_status(), 200 );
 		$this->assertCount( 2, $response->get_data() );
 
-		$ids = wp_list_pluck( $response->get_data(), 'ID' );
+		$ids    = wp_list_pluck( $response->get_data(), 'ID' );
 		$titles = wp_list_pluck( $response->get_data(), 'post_title' );
 
 		$this->assertNotContains( $lesson_id, $ids );
