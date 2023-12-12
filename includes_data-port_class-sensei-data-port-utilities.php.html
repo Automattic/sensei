@@ -59,7 +59,14 @@ class Sensei_Data_Port_Utilities {
 	 * @return WP_User|WP_Error  WP_User on success, WP_Error on failure.
 	 */
 	public static function create_user( $username, $email = '', $role = '' ) {
-		$user = get_user_by( 'login', $username );
+		$user = null;
+		if ( $email ) {
+			$user = get_user_by( 'email', $email );
+		}
+
+		if ( ! $user ) {
+			$user = get_user_by( 'login', $username );
+		}
 
 		if ( ! $user ) {
 			$user_id = wp_create_user( $username, wp_generate_password(), $email );
