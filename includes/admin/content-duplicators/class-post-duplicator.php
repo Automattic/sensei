@@ -18,16 +18,17 @@ class Post_Duplicator {
 	/**
 	 * Duplicate post.
 	 *
-	 * @param  object       $post          Post to be duplicated.
-	 * @param  string|null  $suffix        Suffix for duplicated post title. Default: null.
-	 * @param  boolean      $ignore_course Ignore lesson course when dulicating. Default: false.
+	 * @param  object      $post          Post to be duplicated.
+	 * @param  string|null $suffix        Suffix for duplicated post title. Default: null.
+	 * @param  boolean     $ignore_course Ignore lesson course when dulicating. Default: false.
 	 * @return object                 Duplicate post object.
 	 */
-	public function duplicate( object $post, ?string $suffix = null, bool $ignore_course = false): ?WP_Post {
+	public function duplicate( object $post, ?string $suffix = null, bool $ignore_course = false ): ?WP_Post {
 		$new_post = array();
 
+		$fields = array( 'ID', 'post_status', 'post_date', 'post_date_gmt', 'post_name', 'post_modified', 'post_modified_gmt', 'guid', 'comment_count' );
 		foreach ( $post as $k => $v ) {
-			if ( ! in_array( $k, array( 'ID', 'post_status', 'post_date', 'post_date_gmt', 'post_name', 'post_modified', 'post_modified_gmt', 'guid', 'comment_count' ) ) ) {
+			if ( ! in_array( $k, $fields, true ) ) {
 				$new_post[ $k ] = $v;
 			}
 		}
@@ -73,7 +74,7 @@ class Post_Duplicator {
 		$new_post_id = wp_insert_post( $new_post );
 
 		if ( is_wp_error( $new_post_id ) ) {
-			return  null;
+			return null;
 		}
 
 		$post_meta = get_post_custom( $post->ID );
@@ -101,7 +102,7 @@ class Post_Duplicator {
 			foreach ( $post_meta as $key => $meta ) {
 				foreach ( $meta as $value ) {
 					$value = maybe_unserialize( $value );
-					if ( ! in_array( $key, $ignore_meta ) ) {
+					if ( ! in_array( $key, $ignore_meta, true ) ) {
 						add_post_meta( $new_post_id, $key, $value );
 					}
 				}
