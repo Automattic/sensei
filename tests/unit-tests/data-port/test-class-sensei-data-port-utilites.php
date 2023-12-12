@@ -42,6 +42,30 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 		$this->assertContains( 'teacher', $user->roles );
 	}
 
+	public function testCreateUser_WhenUsernameIsNotMatching_FindsUserByEmail() {
+		$user_id       = $this->factory->user->create(
+			[
+				'user_login' => 'test',
+				'user_email' => 'test@example.com',
+			]
+		);
+		$found_user_id = Sensei_Data_Port_Utilities::create_user( 'handsome_potato', 'test@example.com' )->ID;
+
+		$this->assertEquals( $user_id, $found_user_id );
+	}
+
+	public function testCreateUser_WhenEmailIsNotMatching_FindsUserByUsername() {
+		$user_id       = $this->factory->user->create(
+			[
+				'user_login' => 'test',
+				'user_email' => 'test@example.com',
+			]
+		);
+		$found_user_id = Sensei_Data_Port_Utilities::create_user( 'test', 'notfound@example.com' )->ID;
+
+		$this->assertEquals( $user_id, $found_user_id );
+	}
+
 	/**
 	 * Tests a simple term name path with one entry.
 	 */

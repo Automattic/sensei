@@ -70,7 +70,17 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			'action'      => '',
 		);
 
+		/**
+		 * Filter columns for the grading list table.
+		 *
+		 * @hook sensei_grading_default_columns
+		 *
+		 * @param {array} Columns.
+		 * @param {Sensei_Grading_Main} The grading list table.
+		 * @return {array} Filtered columns.
+		 */
 		$columns = apply_filters( 'sensei_grading_default_columns', $columns, $this );
+
 		return $columns;
 	}
 
@@ -89,7 +99,18 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			'user_status' => array( 'user_status', false ),
 			'user_grade'  => array( 'user_grade', false ),
 		);
+
+		/**
+		 * Filter sortable columns for the grading list table.
+		 *
+		 * @hook sensei_grading_default_columns_sortable
+		 *
+		 * @param {array} Sortable columns.
+		 * @param {Sensei_Grading_Main} The grading list table.
+		 * @return {array} Filtered sortable columns.
+		 */
 		$columns = apply_filters( 'sensei_grading_default_columns_sortable', $columns, $this );
+
 		return $columns;
 	}
 
@@ -127,8 +148,17 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				'search' => '*' . $this->search . '*',
 				'fields' => 'ID',
 			);
-			// Filter for extending
+
+			/**
+			 * Filter user searching arguments in Grading.
+			 *
+			 * @hook sensei_grading_search_users
+			 *
+			 * @param {array} $user_args User search arguments.
+			 * @return {array} Filtered user search arguments.
+			 */
 			$user_args = apply_filters( 'sensei_grading_search_users', $user_args );
+
 			if ( ! empty( $user_args ) ) {
 				$learners_search = new WP_User_Query( $user_args );
 				// Store for reuse on counts
@@ -137,6 +167,16 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		}
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
+
+		/**
+		 * Filter number of comments per page.
+		 *
+		 * @hook sensei_comments_per_page
+		 *
+		 * @param {int} $per_page Comments per page.
+		 * @param {string} $comments_type Type of comments.
+		 * @return {int} Filtered comments per page.
+		 */
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
 
 		$paged  = $this->get_pagenum();
@@ -187,6 +227,14 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				break;
 		}
 
+		/**
+		 * Filter activity statuses arguments for Grading.
+		 *
+		 * @hook sensei_grading_filter_statuses
+		 *
+		 * @param {array} $activity_args Student activity arguments.
+		 * @return {array} Filtered activity arguments.
+		 */
 		$activity_args = apply_filters( 'sensei_grading_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
@@ -305,6 +353,16 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			)
 		) . '">' . esc_html( get_the_title( $item->comment_post_ID ) ) . '</a>';
 
+		/**
+		 * Filter columns data for the Grading list table.
+		 *
+		 * @hook sensei_grading_main_column_data
+		 *
+		 * @param {array}  $column_data Column data for a row.
+		 * @param {object} $item Activity comment object.
+		 * @param {int}    $course_id The course ID.
+		 * @return {array} Filtered column data.
+		 */
 		$column_data = apply_filters(
 			'sensei_grading_main_column_data',
 			array(
@@ -415,6 +473,15 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
+
+		/**
+		 * Filter the search button text for the list table.
+		 *
+		 * @hook sensei_list_table_search_button_text
+		 *
+		 * @param {string} $text The search button text.
+		 * @return {string} The filtered search button text.
+		 */
 		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 
@@ -472,7 +539,29 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				break;
 		endswitch;
 
-		$counts = Sensei()->grading->count_statuses( apply_filters( 'sensei_grading_count_statues', $count_args ) );
+		/**
+		 * Filter count statuses arguments in Grading.
+		 *
+		 * @hook sensei_grading_count_statues
+		 *
+		 * @deprecated 4.19.0 Contains typo. Use sensei_grading_count_statuses.
+		 *
+		 * @param {array} $count_args Count statuses arguments.
+		 * @return {array} Filtered count arguments.
+		 */
+		$count_args = apply_filters_deprecated( 'sensei_grading_count_statues', array( $count_args ), '4.19.0', 'sensei_grading_count_statuses' );
+
+		/**
+		 * Filter count statuses arguments in Grading.
+		 *
+		 * @hook sensei_grading_count_statuses
+		 *
+		 * @param {array} $count_args Count statuses arguments.
+		 * @return {array} Filtered count arguments.
+		 */
+		$count_args = apply_filters( 'sensei_grading_count_statuses', $count_args );
+
+		$counts = Sensei()->grading->count_statuses( $count_args );
 
 		$inprogress_lessons_count = $counts['in-progress'];
 		$ungraded_lessons_count   = $counts['ungraded'];
@@ -517,6 +606,14 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			number_format( (int) $inprogress_lessons_count )
 		);
 
+		/**
+		 * Filter submenu for Grading.
+		 *
+		 * @hook sensei_grading_sub_menu
+		 *
+		 * @param {array} $submunu Submenu.
+		 * @return {array} Filtered submenu.
+		 */
 		return apply_filters( 'sensei_grading_sub_menu', $menu );
 	}
 

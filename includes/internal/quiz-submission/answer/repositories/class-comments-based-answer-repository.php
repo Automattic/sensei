@@ -7,7 +7,9 @@
 
 namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Comments_Based_Answer;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,13 +28,14 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int    $submission_id The submission ID.
-	 * @param int    $question_id   The question ID.
-	 * @param string $value         The answer value.
+	 * @param Submission_Interface $submission  The submission.
+	 * @param int                  $question_id The question ID.
+	 * @param string               $value       The answer value.
 	 *
-	 * @return Answer The answer model.
+	 * @return Answer_Interface The answer model.
 	 */
-	public function create( int $submission_id, int $question_id, string $value ): Answer {
+	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer_Interface {
+		$submission_id               = $submission->get_id();
 		$answers_map                 = $this->get_answers_map( $submission_id );
 		$answers_map[ $question_id ] = $value;
 		$questions_asked_csv         = implode( ',', array_keys( $answers_map ) );
@@ -42,7 +45,7 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 
 		$created_at = current_datetime();
 
-		return new Answer( 0, $submission_id, $question_id, $value, $created_at, $created_at );
+		return new Comments_Based_Answer( $submission_id, $question_id, $value, $created_at, $created_at );
 	}
 
 	/**
@@ -52,14 +55,14 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 *
-	 * @return Answer[] An array of answers.
+	 * @return Answer_Interface[] An array of answers.
 	 */
 	public function get_all( int $submission_id ): array {
 		$answers    = [];
 		$created_at = current_datetime();
 
 		foreach ( $this->get_answers_map( $submission_id ) as $question_id => $value ) {
-			$answers[] = new Answer( 0, $submission_id, $question_id, $value, $created_at, $created_at );
+			$answers[] = new Comments_Based_Answer( $submission_id, $question_id, $value, $created_at, $created_at );
 		}
 
 		return $answers;
@@ -70,11 +73,11 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int $submission_id The submission ID.
+	 * @param Submission_Interface $submission The submission.
 	 */
-	public function delete_all( int $submission_id ): void {
-		delete_comment_meta( $submission_id, 'quiz_answers' );
-		delete_comment_meta( $submission_id, 'questions_asked' );
+	public function delete_all( Submission_Interface $submission ): void {
+		delete_comment_meta( $submission->get_id(), 'quiz_answers' );
+		delete_comment_meta( $submission->get_id(), 'questions_asked' );
 	}
 
 	/**

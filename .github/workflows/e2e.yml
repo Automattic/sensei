@@ -60,3 +60,12 @@ jobs:
                   path: playwright-report/
                   retention-days: 30
                   if-no-files-found: ignore
+            - name: Slack Notification on Failure
+              uses: rtCamp/action-slack-notify@v2
+              if: ${{ failure() && github.event_name == 'push' }}
+              env:
+                SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
+                SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+                SLACK_TITLE: 'E2E Testing'
+                SLACK_COLOR: 'error'
+                SLACK_FOOTER: ''

@@ -2,8 +2,9 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Answer\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Comments_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei_Utils;
 
 /**
@@ -29,11 +30,11 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id         = $this->factory->lesson->create();
 		$user_id           = $this->factory->user->create();
-		$submission_id     = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 		$answer_repository = new Comments_Based_Answer_Repository();
+		$submission        = $this->create_submission( $lesson_id, $user_id );
 
 		/* Act. */
-		$answer = $answer_repository->create( $submission_id, 1, 'Yes' );
+		$answer = $answer_repository->create( $submission, 1, 'Yes' );
 
 		/* Assert. */
 		$expected = [
@@ -48,12 +49,12 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id         = $this->factory->lesson->create();
 		$user_id           = $this->factory->user->create();
-		$submission_id     = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$submission        = $this->create_submission( $lesson_id, $user_id );
 		$answer_repository = new Comments_Based_Answer_Repository();
 
 		/* Act. */
-		$answer_repository->create( $submission_id, 1, 'Yes' );
-		$answer_repository->create( $submission_id, 2, 'No' );
+		$answer_repository->create( $submission, 1, 'Yes' );
+		$answer_repository->create( $submission, 2, 'No' );
 
 		/* Assert. */
 		$this->assertSame(
@@ -61,7 +62,7 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 				1 => 'Yes',
 				2 => 'No',
 			],
-			get_comment_meta( $submission_id, 'quiz_answers', true )
+			get_comment_meta( $submission->get_id(), 'quiz_answers', true )
 		);
 	}
 
@@ -69,17 +70,17 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id         = $this->factory->lesson->create();
 		$user_id           = $this->factory->user->create();
-		$submission_id     = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$submission        = $this->create_submission( $lesson_id, $user_id );
 		$answer_repository = new Comments_Based_Answer_Repository();
 
 		/* Act. */
-		$answer_repository->create( $submission_id, 1, 'Yes' );
-		$answer_repository->create( $submission_id, 2, 'No' );
+		$answer_repository->create( $submission, 1, 'Yes' );
+		$answer_repository->create( $submission, 2, 'No' );
 
 		/* Assert. */
 		$this->assertSame(
 			'1,2',
-			get_comment_meta( $submission_id, 'questions_asked', true )
+			get_comment_meta( $submission->get_id(), 'questions_asked', true )
 		);
 	}
 
@@ -87,14 +88,14 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id         = $this->factory->lesson->create();
 		$user_id           = $this->factory->user->create();
-		$submission_id     = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$submission        = $this->create_submission( $lesson_id, $user_id );
 		$answer_repository = new Comments_Based_Answer_Repository();
 
-		$answer_1 = $answer_repository->create( $submission_id, 1, 'Yes' );
-		$answer_2 = $answer_repository->create( $submission_id, 2, 'No' );
+		$answer_1 = $answer_repository->create( $submission, 1, 'Yes' );
+		$answer_2 = $answer_repository->create( $submission, 2, 'No' );
 
 		/* Act. */
-		$answers = $answer_repository->get_all( $submission_id );
+		$answers = $answer_repository->get_all( $submission->get_id() );
 
 		/* Assert. */
 		$this->assertSame(
@@ -109,26 +110,38 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	private function create_submission( $lesson_id, $user_id ): Comments_Based_Submission {
+		$submission_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		return new Comments_Based_Submission(
+			$submission_id,
+			$lesson_id,
+			$user_id,
+			null,
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable()
+		);
+	}
+
 	public function testDeleteAll_WhenCalled_DeletesAllGrades(): void {
 		/* Arrange. */
 		$lesson_id         = $this->factory->lesson->create();
 		$user_id           = $this->factory->user->create();
-		$submission_id     = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$submission        = $this->create_submission( $lesson_id, $user_id );
 		$answer_repository = new Comments_Based_Answer_Repository();
 
-		$answer_repository->create( $submission_id, 1, 'Yes' );
+		$answer_repository->create( $submission, 1, 'Yes' );
 
 		/* Act. */
-		$answer_repository->delete_all( $submission_id );
+		$answer_repository->delete_all( $submission );
 
 		/* Assert. */
 		$this->assertSame(
 			[],
-			$answer_repository->get_all( $submission_id )
+			$answer_repository->get_all( $submission->get_id() )
 		);
 	}
 
-	private function export_answer( Answer $answer ): array {
+	private function export_answer( Comments_Based_Answer $answer ): array {
 		return [
 			'question_id' => $answer->get_question_id(),
 			'value'       => $answer->get_value(),

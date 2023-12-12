@@ -192,6 +192,14 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	public function get_known_bulk_actions() {
 		$known_bulk_actions = $this->known_bulk_actions;
 
+		/**
+		 * Filter the known bulk actions.
+		 *
+		 * @hook sensei_learners_admin_get_known_bulk_actions
+		 *
+		 * @param {array} $known_bulk_actions The known bulk actions.
+		 * @return {array} Filtered known bulk actions.
+		 */
 		return (array) apply_filters( 'sensei_learners_admin_get_known_bulk_actions', $known_bulk_actions );
 	}
 

@@ -2,7 +2,7 @@
 
 namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
 
 /**
@@ -112,6 +112,17 @@ class Comments_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $this->export_progress( $progress ), $this->export_progress( $actual ) );
 	}
 
+	public function testSave_WhenNonCommentsBasedProgressGiven_ThrowsException(): void {
+		/* Arrange. */
+		$progress   = $this->createMock( Lesson_Progress_Interface::class );
+		$repository = new Comments_Based_Lesson_Progress_Repository();
+
+		/* Expect&Act. */
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Expected Comments_Based_Lesson_Progress, got ' . get_class( $progress ) . '.' );
+		$repository->save( $progress );
+	}
+
 	public function testCount_WhenNoProgress_ReturnsZero(): void {
 		/* Arrange. */
 		$course_id  = $this->factory->course->create();
@@ -154,7 +165,73 @@ class Comments_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertFalse( $repository->has( $lesson_id, $user_id ) );
 	}
 
-	private function export_progress( Lesson_Progress $progress ): array {
+	public function testDeleteForLesson_WhenLessonGiven_DeletesProgressForLesson(): void {
+		/* Arrange. */
+		$lesson_id              = $this->factory->lesson->create();
+		$second_lesson_id       = $this->factory->lesson->create();
+		$user_id                = $this->factory->user->create();
+		$repository             = new Comments_Based_Lesson_Progress_Repository();
+		$progress_to_be_deleted = $repository->create( $lesson_id, $user_id );
+		$progress_to_be_kept    = $repository->create( $second_lesson_id, $user_id );
+
+		/* Act. */
+		$repository->delete_for_lesson( $lesson_id );
+
+		/* Assert. */
+		self::assertFalse( $repository->has( $lesson_id, $user_id ) );
+		self::assertTrue( $repository->has( $second_lesson_id, $user_id ) );
+	}
+
+	public function testDeleteForUser_WhenUserGiven_DeletesProgressForUser(): void {
+		/* Arrange. */
+		$lesson_id              = $this->factory->lesson->create();
+		$user_id                = $this->factory->user->create();
+		$deleted_user_id        = $this->factory->user->create();
+		$repository             = new Comments_Based_Lesson_Progress_Repository();
+		$progress_to_be_deleted = $repository->create( $lesson_id, $user_id );
+		$progress_to_be_kept    = $repository->create( $lesson_id, $deleted_user_id );
+
+		/* Act. */
+		$repository->delete_for_user( $deleted_user_id );
+
+		/* Assert. */
+		self::assertFalse( $repository->has( $lesson_id, $deleted_user_id ) );
+		self::assertTrue( $repository->has( $lesson_id, $user_id ) );
+	}
+
+	public function testFind_ArgumentsGiven_ReturnsMatchingProgress(): void {
+		/* Arrange. */
+		$lesson_ids = $this->factory->lesson->create_many( 5 );
+		$user_id    = $this->factory->user->create();
+
+		$repository       = new Comments_Based_Lesson_Progress_Repository();
+		$created_progress = [];
+		foreach ( $lesson_ids as $lesson_id ) {
+			$created_progress[] = $repository->create( $lesson_id, $user_id );
+		}
+
+		$expected = array();
+		for ( $i = 0; $i < 3; $i++ ) {
+			$progress = $created_progress[ $i ];
+			$progress->complete();
+			$repository->save( $progress );
+			$expected[] = $this->export_progress( $progress );
+		}
+
+		/* Act. */
+		$found_progress = $repository->find(
+			array(
+				'user_id' => $user_id,
+				'status'  => 'complete',
+			)
+		);
+		$actual         = array_map( array( $this, 'export_progress' ), $found_progress );
+
+		/* Assert. */
+		self::assertSame( $expected, $actual );
+	}
+
+	private function export_progress( Lesson_Progress_Interface $progress ): array {
 		return [
 			'user_id'   => $progress->get_user_id(),
 			'lesson_id' => $progress->get_lesson_id(),

@@ -8,6 +8,7 @@ $breakpoint: 782px;
 */
 @import 'sensei-course-theme/theme-fixes';
 @import 'sensei-course-theme/buttons';
+@import 'sensei-course-theme/quiz-compat';
 
 :root {
 	font-size: 100%;
@@ -146,8 +147,8 @@ $breakpoint: 782px;
 		font-family: inherit;
 		font-weight: inherit;
 		font-size: inherit;
-		background-color: inherit !important;
-		color: inherit !important;
+		background-color: inherit;
+		color: inherit;
 		text-transform: unset;
 
 		&:hover {
@@ -157,7 +158,6 @@ $breakpoint: 782px;
 		}
 	}
 
-	background: transparent;
 	border: none;
 	border-radius: 2px;
 	cursor: pointer;
@@ -166,7 +166,6 @@ $breakpoint: 782px;
 	font-weight: 400;
 	letter-spacing: normal;
 	margin: 0;
-	padding: 0;
 	text-align: center;
 	text-decoration: none !important;
 	text-transform: unset;
@@ -176,12 +175,13 @@ $breakpoint: 782px;
 	&.is-link,
 	&.wp-block-button > .wp-block-button__link {
 		border-radius: 2px;
+		box-sizing: border-box;
+		display: inline-block;
 		font-weight: 400;
+		height: 100%;
+		justify-content: center;
 		padding: 0.83em 1.11em;
 		text-decoration: none;
-		height: 100%;
-		width: 100%; // Fix the animation issue.
-		justify-content: center;
 
 		@media screen and (max-width: $breakpoint) {
 			padding: 0.83em 0.556em;
@@ -207,7 +207,7 @@ $breakpoint: 782px;
 		background-color: var(--sensei-secondary-color);
 		color: var(--sensei-button-text-color);
 
-		&:hover {
+		&:not(.sensei-course-theme-quiz-graded-notice__pending-grade):hover {
 			color: var(--sensei-button-fill-hover-color);
 			background-color: var(--sensei-primary-color);
 			border-color: var(--sensei-primary-color);
@@ -290,6 +290,61 @@ $breakpoint: 782px;
 
 		&:disabled {
 			cursor: not-allowed;
+		}
+	}
+}
+
+.sensei-course-theme,
+.editor-styles-wrapper {
+	.wp-block-sensei-lms-lesson-actions {
+		.wp-block-sensei-button.wp-block-button {
+			&.is-style-outline,
+			&.is-style-default {
+				border: none;
+
+				.wp-block-button__link {
+					border: solid 1px var(--sensei-secondary-color);
+				}
+			}
+		}
+
+		.wp-block-sensei-button.wp-block-button.is-style-default {
+			background-color: unset;
+
+			.wp-block-button__link {
+				background-color: var(--sensei-secondary-color);
+			}
+		}
+	}
+}
+
+/* Quiz Notice */
+.sensei-course-theme-quiz-graded-notice {
+	&__title {
+		font-size: 24px;
+		font-weight: 700;
+		line-height: normal;
+	}
+
+	&__text {
+		font-size: 18px;
+		line-height: normal;
+	}
+}
+
+
+.wp-block-post-content {
+	.sensei-contact-teacher-wrapper {
+		display: flex;
+  }
+}
+
+.wp-block-sensei-lms-course-theme-lesson-actions,
+.wp-block-sensei-lms-quiz-actions {
+
+	.wp-block-button.is-style-outline {
+		.wp-block-button__link {
+			border: none;
 		}
 	}
 }

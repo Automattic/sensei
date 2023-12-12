@@ -52,6 +52,15 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 			'status'    => __( 'Status', 'sensei-lms' ),
 			'grade'     => __( 'Grade', 'sensei-lms' ),
 		);
+		/**
+		 * Filter the columns that are going to be used in the table
+		 *
+		 * @hook sensei_analysis_lesson_columns
+		 *
+		 * @param {array}                             $columns    The array of columns to use with the table.
+		 * @param {Sensei_Analysis_Lesson_List_Table} $list_table The current instance of the class
+		 * @return {array} The array of columns to use with the table.
+		 */
 		$columns = apply_filters( 'sensei_analysis_lesson_columns', $columns, $this );
 		return $columns;
 	}
@@ -66,6 +75,16 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$columns = array(
 			'completed' => array( 'comment_date', false ),
 		);
+
+		/**
+		 * Filter the sortable columns that are going to be used in the table
+		 *
+		 * @hook sensei_analysis_lesson_columns_sortable
+		 *
+		 * @param {array}                             $columns    The array of sortable columns to use with the table.
+		 * @param {Sensei_Analysis_Lesson_List_Table} $list_table The current instance of the class
+		 * @return {array} The array of soratable columns to use with the table.
+		 */
 		$columns = apply_filters( 'sensei_analysis_lesson_columns_sortable', $columns, $this );
 		return $columns;
 	}
@@ -99,6 +118,15 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$this->search = $search;
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
+		/**
+		 * Filter the number of items per page that are going to be used in the table
+		 *
+		 * @hook sensei_comments_per_page
+		 *
+		 * @param {int} $per_page The number of items per page to use with the table.
+		 * @param {string} $type The type of items to display.
+		 * @return {int} The number of items per page to use with the table.
+		 */
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
 
 		$paged  = $this->get_pagenum();
@@ -287,7 +315,14 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 				'search' => '*' . $this->search . '*',
 				'fields' => 'ID',
 			);
-			// Filter for extending
+			/**
+			 * Filter the user arguments used to search for users
+			 *
+			 * @hook sensei_analysis_lesson_search_users
+			 *
+			 * @param {array} $user_args The arguments to find users.
+			 * @return {array} The array of user argument.
+			 */
 			$user_args = apply_filters( 'sensei_analysis_lesson_search_users', $user_args );
 			if ( ! empty( $user_args ) ) {
 				$learners_search = new WP_User_Query( $user_args );
@@ -296,6 +331,14 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 			}
 		}
 
+		/**
+		 * Filter the arguments used to search for activity
+		 *
+		 * @hook sensei_analysis_lesson_filter_statuses
+		 *
+		 * @param {array} $activity_args The arguments to find activity.
+		 * @return {array} The array of activity argument.
+		 */
 		$activity_args = apply_filters( 'sensei_analysis_lesson_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
@@ -366,6 +409,15 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
+
+		/**
+		 * Filter the search button text for the list table.
+		 *
+		 * @hook sensei_list_table_search_button_text
+		 *
+		 * @param {string} $text The text for the search button.
+		 * @return {string} The text for the search button.
+		 */
 		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 

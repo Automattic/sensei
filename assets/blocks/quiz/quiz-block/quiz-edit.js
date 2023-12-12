@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useState, useCallback } from '@wordpress/element';
 
@@ -68,8 +68,10 @@ const QuizEdit = ( props ) => {
 	const showPaginationProgressBar =
 		pagination?.paginationNumber && pagination?.showProgressBar;
 
+	const blockProps = useBlockProps();
+
 	return (
-		<>
+		<div { ...blockProps }>
 			<QuizValidationResult { ...props } />
 			<div className="sensei-lms-quiz-block__separator">
 				<Slot name="SenseiQuizHeader" />
@@ -99,7 +101,7 @@ const QuizEdit = ( props ) => {
 
 			<div className="sensei-lms-quiz-block__separator" />
 			<QuizSettings { ...props } />
-		</>
+		</div>
 	);
 };
 

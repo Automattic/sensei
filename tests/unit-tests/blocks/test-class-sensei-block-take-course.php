@@ -27,6 +27,13 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	private $course;
 
 	/**
+	 * Keep initial state of Sensei()->notices.
+	 *
+	 * @var Sensei_Notices|null
+	 */
+	private $initial_notices;
+
+	/**
 	 * Set up the test.
 	 */
 	public function setUp(): void {
@@ -40,11 +47,15 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 		$this->course    = $this->factory->course->create_and_get( [ 'post_name' => 'take-block-course' ] );
 		$GLOBALS['post'] = $this->course;
 
+		$this->initial_notices = Sensei()->notices;
+
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-take-course' );
+
+		Sensei()->notices = $this->initial_notices;
 	}
 
 	public static function tearDownAfterClass(): void {
@@ -79,9 +90,9 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 		$nonce  = '/<input type="hidden" id="woothemes_sensei_start_course_noonce" name="woothemes_sensei_start_course_noonce" value=".+" \/>/';
 		$action = '<input type="hidden" name="course_start" value="1" />';
 
-		$this->assertRegExp( $form, $result, 'Should be wrapped in a form tag' );
+		$this->assertMatchesRegularExpression( $form, $result, 'Should be wrapped in a form tag' );
 		$this->assertStringContainsString( $action, $result, 'Should have course_start action input field' );
-		$this->assertRegExp( $nonce, $result, 'Should have nonce input field' );
+		$this->assertMatchesRegularExpression( $nonce, $result, 'Should have nonce input field' );
 		$this->assertStringContainsString( '<button class="sensei-stop-double-submission sensei-stop-double-submission wp-block-button__link">Take Course</button>', $result, 'Should contain block content' );
 
 	}
@@ -107,7 +118,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 		$form = '/^\s*<form method="GET" action=".*page_id=' . $my_courses_page_id . '">.+<\/form>\s*$/ms';
 
-		$this->assertRegExp( $form, $result, 'Should be wrapped in a form tag' );
+		$this->assertMatchesRegularExpression( $form, $result, 'Should be wrapped in a form tag' );
 		$this->assertStringContainsString( '<button class="sensei-stop-double-submission wp-block-button__link">Take Course</button>', $result, 'Should contain block content' );
 	}
 
@@ -115,6 +126,8 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	 * When the course has an unmet prerequisite, button is disabled with a message.
 	 */
 	public function testDisabledWhenPrerequisiteUnmet() {
+		$GLOBALS['wp_query']->is_single = true;
+
 		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
 		$property->setAccessible( true );
 		$property->setValue( Sensei()->notices, false );
@@ -133,7 +146,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 		$actual_notices = ob_get_clean();
 		$notice         = '/You must first complete <a .*>' . preg_quote( $course_pre->post_title, '/' ) . '<\/a> before taking this course/';
 
-		$this->assertRegExp( $notice, $actual_notices, 'Should contain notice of the prerequisite course' );
+		$this->assertMatchesRegularExpression( $notice, $actual_notices, 'Should contain notice of the prerequisite course' );
 
 	}
 
@@ -166,5 +179,66 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 		$result = do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
 
 		$this->assertEmpty( $result );
+	}
+
+	/**
+	 * Self-Enrollment Not Allowed.
+	 */
+	public function testRenderTakeCourseBlock_WhenSelfEnrollmentIsNotAllowed_AddsNotice() {
+		/* Arrange. */
+		$GLOBALS['wp_query']->is_single = true;
+
+		$this->login_as_student();
+		update_post_meta( $this->course->ID, '_sensei_self_enrollment_not_allowed', true );
+
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		/* Expect & Act */
+		$notices->expects( self::once() )
+			->method( 'add_notice' )
+			->with( $this->stringContains( 'Please contact the course administrator to sign up for this course.' ) );
+		do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
+	}
+
+	/**
+	 * Self-Enrollment Not In Course Page.
+	 */
+	public function testRenderTakeCourseBlock_WhenSelfEnrollmentIsNotAllowedAndNotInSinglePost_DoesNotAddNotice() {
+		/* Arrange. */
+		$GLOBALS['wp_query']->is_single = false;
+
+		$this->login_as_student();
+		update_post_meta( $this->course->ID, '_sensei_self_enrollment_not_allowed', true );
+
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		/* Expect & Act */
+		$notices->expects( self::never() )
+			->method( 'add_notice' );
+		do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
+	}
+
+	/**
+	 * Self-Enrollment Not Allowed And User Is Enrolled.
+	 */
+	public function testRenderTakeCourseBlock_WhenSelfEnrollmentIsNotAllowedAndUserIsEnrolled_DoesNotAddNotice() {
+		/* Arrange. */
+		$GLOBALS['wp_query']->is_single = true;
+
+		$student = $this->factory->user->create();
+		$this->manuallyEnrolStudentInCourse( $student, $this->course->ID );
+
+		$this->login_as( $student );
+		update_post_meta( $this->course->ID, '_sensei_self_enrollment_not_allowed', true );
+
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		/* Expect & Act */
+		$notices->expects( self::never() )
+			->method( 'add_notice' );
+		do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
 	}
 }

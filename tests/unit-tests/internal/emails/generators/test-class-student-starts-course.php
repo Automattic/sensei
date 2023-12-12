@@ -9,7 +9,7 @@ use Sensei_Factory;
 /**
  * Tests for Sensei\Internal\Emails\Student_Starts_Course class.
  *
- * @covers \Sensei\Internal\Emails\Student_Starts_Course
+ * @covers \Sensei\Internal\Emails\Generators\Student_Starts_Course
  */
 class Student_Starts_Course_Test extends \WP_UnitTestCase {
 
@@ -31,7 +31,9 @@ class Student_Starts_Course_Test extends \WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory          = new Sensei_Factory();
-		$this->email_repository = new Email_Repository();
+		$this->email_repository = $this->createMock( Email_Repository::class );
+		$this->email_repository->method( 'get' )
+			->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
 	}
 
 	public function testGenerateEmail_WhenCalledByStudentStartCourseEvent_CallsEmailSendingActionWithRightData() {

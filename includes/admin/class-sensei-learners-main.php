@@ -207,12 +207,14 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		 *
 		 * Filters the columns that are displayed in learner management
 		 *
+		 * @hook sensei_learners_default_columns
+		 *
 		 * @param {array}   $columns              The default columns.
 		 * @param {object}  $sensei_learners_main Sensei_Learners_Main instance.
-		 *
 		 * @return {array} The modified default columns
 		 */
 		$columns = apply_filters( 'sensei_learners_default_columns', $columns, $this );
+
 		return $columns;
 	}
 
@@ -248,7 +250,17 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			);
 		}
 
+		/**
+		 * Filter the columns that are sortable in learner management.
+		 *
+		 * @hook sensei_learners_default_columns_sortable
+		 *
+		 * @param {array}   $columns    The sortable columns.
+		 * @param {object}  $list_table Sensei_Learners_Main instance.
+		 * @return {array} The modified sortable columns
+		 */
 		$columns = apply_filters( 'sensei_learners_default_columns_sortable', $columns, $this );
+
 		return $columns;
 	}
 
@@ -290,6 +302,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		// phpcs:enable WordPress.Security.NonceVerification
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
+		/**
+		 * Filter the number of items per page in learner management.
+		 *
+		 * @hook sensei_comments_per_page
+		 *
+		 * @param {int} $per_page The number of items per page.
+		 * @param {string} $type The type of items to display.
+		 * @return {int} The modified number of items per page.
+		 */
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
 
 		$paged  = $this->get_pagenum();
@@ -395,20 +416,20 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				if ( Sensei()->feature_flags->is_enabled( 'enrolment_provider_tooltip' ) ) {
 					if ( ! empty( $provider_results ) ) {
-						$enrolment_tooltip_html = [ '<ul class="enrolment-helper">' ];
+						$tooltip_html_parts = [ '<ul class="enrolment-helper">' ];
 
 						foreach ( $provider_results as $id => $result ) {
 							$name       = Sensei_Course_Enrolment_Manager::instance()->get_enrolment_provider_name_by_id( $id ) ?? $id;
 							$item_class = $result ? 'provides-enrolment' : 'does-not-provide-enrolment';
 
-							$enrolment_tooltip_html[] =
+							$tooltip_html_parts[] =
 								'<li class="' . esc_attr( $item_class ) . '">' .
 									esc_html( $name ) .
 								'</li>';
 						}
 
-						$enrolment_tooltip_html[] = '</ul>';
-						$enrolment_tooltip_html   = implode( '', $enrolment_tooltip_html );
+						$tooltip_html_parts[]   = '</ul>';
+						$enrolment_tooltip_html = implode( '', $tooltip_html_parts );
 					} else {
 						$enrolment_tooltip_html = esc_html__( 'No enrollment data was found.', 'sensei-lms' );
 					}
@@ -770,6 +791,14 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$course_args['s'] = $args['search'];
 		}
 
+		/**
+		 * Filter arguments for the course query on the student management screen.
+		 *
+		 * @hook sensei_learners_filter_courses
+		 *
+		 * @param {array} $course_args Course query arguments.
+		 * @return {array} The modified arguments.
+		 */
 		$courses_query = new WP_Query( apply_filters( 'sensei_learners_filter_courses', $course_args ) );
 
 		$this->total_items = $courses_query->found_posts;
@@ -806,6 +835,14 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$lesson_args['s'] = $args['search'];
 		}
 
+		/**
+		 * Filter arguments for the lesson query on the student management screen.
+		 *
+		 * @hook sensei_learners_filter_lessons
+		 *
+		 * @param {array} $lesson_args Lesson query arguments.
+		 * @return {array} The modified arguments.
+		 */
 		$lessons_query = new WP_Query( apply_filters( 'sensei_learners_filter_lessons', $lesson_args ) );
 
 		$this->total_items = $lessons_query->found_posts;
@@ -859,6 +896,14 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$activity_args['user_id'] = $user_ids;
 		}
 
+		/**
+		 * Filter arguments for the learners activity on the student management screen.
+		 *
+		 * @hook sensei_learners_filter_users
+		 *
+		 * @param {array} $activity_args Activity query arguments.
+		 * @return {array} The modified arguments.
+		 */
 		$activity_args = apply_filters( 'sensei_learners_filter_users', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice.
@@ -904,9 +949,11 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		/**
 		 * Allows user search arguments modification in learner management.
 		 *
-		 * @param array $user_args {
-		 *     @type string 'search' The search argument as used in WP_User_Query.
-		 * }
+		 * @hook sensei_learners_search_users
+		 *
+		 * @param    {array}   $user_args             Search user arguments.
+		 * @property {string} `$user_args['search']` The search string, used as in WP_User_Query.
+		 * @return {array} The modified arguments.
 		 */
 		$user_args = apply_filters( 'sensei_learners_search_users', $user_args );
 
@@ -973,6 +1020,14 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$text = __( 'No courses found.', 'sensei-lms' );
 				break;
 		}
+		/**
+		 * Filter the text displayed when no items are found.
+		 *
+		 * @hook sensei_learners_no_items_text
+		 *
+		 * @param {string} $text The text to display.
+		 * @return {string} The modified text.
+		 */
 		echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
 	}
 
@@ -1035,6 +1090,14 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$menu['lessons'] = $this->lessons_link();
 		}
 
+		/**
+		 * Filter the sub menu items for the learner management screen.
+		 *
+		 * @hook sensei_learners_sub_menu
+		 *
+		 * @param {array} $menu The menu items.
+		 * @return {array} The modified menu items.
+		 */
 		return apply_filters( 'sensei_learners_sub_menu', $menu );
 	}
 
@@ -1065,6 +1128,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification
 			return;
 		}
+
+		/**
+		 * Filter the search box button text on the learner management screen.
+		 *
+		 * @hook sensei_list_table_search_button_text
+		 *
+		 * @param {string} $text The text to display.
+		 * @return {string} The modified text.
+		 */
 		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 
@@ -1148,19 +1220,19 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			return;
 		}
 
-		$post_type      = '';
+		$box_title      = '';
 		$post_title     = '';
 		$form_post_type = '';
 		$form_course_id = 0;
 		$form_lesson_id = 0;
 		if ( $this->course_id && ! $this->lesson_id ) {
 			$post_title     = get_the_title( $this->course_id );
-			$post_type      = __( 'Course', 'sensei-lms' );
+			$box_title      = __( 'Add Student to Course', 'sensei-lms' );
 			$form_post_type = 'course';
 			$form_course_id = $this->course_id;
 		} elseif ( $this->course_id && $this->lesson_id ) {
 			$post_title     = get_the_title( $this->lesson_id );
-			$post_type      = __( 'Lesson', 'sensei-lms' );
+			$box_title      = __( 'Add Student to Lesson', 'sensei-lms' );
 			$form_post_type = 'lesson';
 			$form_course_id = $this->course_id;
 			$form_lesson_id = $this->lesson_id;
@@ -1172,10 +1244,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		?>
 		<div class="postbox">
 			<h2 id="add-student-to-course-header">
-				<?php
-				// translators: Placeholder is the post type.
-				printf( esc_html__( 'Add Student to %1$s', 'sensei-lms' ), esc_html( $post_type ) );
-				?>
+				<?php echo esc_html( $box_title ); ?>
 			</h2>
 			<div class="inside">
 				<form name="add_learner" action="" method="post">

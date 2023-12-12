@@ -2,10 +2,10 @@
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
 Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, imranh920, jakeom, luchad0res, merkushin, m1r0, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 6.0
-Tested up to: 6.2
-Requires PHP: 7.3
-Stable tag: 4.15.1
+Requires at least: 6.2
+Tested up to: 6.4
+Requires PHP: 7.4
+Stable tag: 4.19.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,7 +120,7 @@ To find out how to submit a course to the Sensei LMS showcase, and the requireme
 
 = Does Sensei support live courses, Zoom integration, or webinars? =
 
-Yes! You can add links to Zoom, Google Meet, or whatever platform you choose in a course lesson. In addition, Sensei includes a meeting lesson type you can select when creating a new lesson to help make this even easier.
+Yes! You can add links to Zoom, Google Meet, or whatever platform you choose in a course lesson. In addition, Sensei includes a meeting lesson layout you can select when creating a new lesson to help make this even easier.
 
 = Does Sensei work in WordPress Multisite? =
 
@@ -132,7 +132,7 @@ Sensei LMS is compatible with Sensei Pro and [WooCommerce Memberships](https://w
 
 See [Selling Courses as a Membership](https://senseilms.com/documentation/selling-courses-as-a-membership/) for more details.
 
-= Does Sensei work in my language =
+= Does Sensei work in my language? =
 
 Community members have translated the free Sensei LMS plugin [into 18 languages](https://translate.wordpress.org/projects/wp-plugins/sensei-lms/), while Sensei Pro has been [professionally translated into 16 languages](https://translate.wordpress.com/projects/sensei/). We welcome contributions to improve even more.
 
@@ -144,50 +144,49 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
-### 4.15.1 - 2023-06-22
+### 4.19.2 - 2023-11-23
 #### Added
-- Add Enrolled and Completion columns on the reports course page. [#6966](https://github.com/Automattic/sensei/pull/6966)
-
-#### Fixed
-- Avoid an error with getting future post URL for a scheduled sensei_email post. [#6975](https://github.com/Automattic/sensei/pull/6975)
-- Fix auto grading for non-multiple choice questions. [#6984](https://github.com/Automattic/sensei/pull/6984)
-- Fix auto grading not working for multiple choice questions when multiple correct answers. [#6906](https://github.com/Automattic/sensei/pull/6906)
-- Fix Course Wizard spacing issue when using latest Gutenberg. [#6940](https://github.com/Automattic/sensei/pull/6940)
-- Fix editor block error when updating an email. [#6936](https://github.com/Automattic/sensei/pull/6936)
-- Fix resetting a quiz also resets the course start date. [#6643](https://github.com/Automattic/sensei/pull/6643)
-- In lesson complete email use course author as lesson teacher. [#6977](https://github.com/Automattic/sensei/pull/6977)
-- Fix conflicts with modules using the same name. [#6437](https://github.com/Automattic/sensei/pull/6437)
-
-### 4.15.0 - 2023-06-01
-#### Security
-- Fix shortcodes being called in teacher's messages.
-- Remove private custom post types from sitemaps.
+- Style Lesson Actions block in Learning Mode [#7224](https://github.com/Automattic/sensei/pull/7224)
+- Change border color and width of Lesson Actions block in Learning Mode [#7283](https://github.com/Automattic/sensei/pull/7283)
 
 #### Changed
-- Review the Learning mode default template typography, spacing and alignment.
-- Improve Global Style support in Learning mode templates.
+- Migrate legacy quiz data [#7289](https://github.com/Automattic/sensei/pull/7289)
+- "Not Enrolled" notice in Learning Mode [#7263](https://github.com/Automattic/sensei/pull/7263)
+- Design for footer in multi-page quizzes [#7268](https://github.com/Automattic/sensei/pull/7268)
+- Style of Learning Mode notice that is displayed when a student is not logged in [#7264](https://github.com/Automattic/sensei/pull/7264)
+- Message when there are no published lessons in a course [#7300](https://github.com/Automattic/sensei/pull/7300)
 
 #### Fixed
-- Block triggering wp_mail for temporary users even on non-frontend context.
-- Don't re-create emails on plugin update.
-- Fix auto grading not working on the Grading page for multiple choice questions.
-- Fix blocks initialization.
-- Fix email body rendered in the front-end in some cases.
-- Fix Kadence blocks crashing lesson editor.
-- Fix MailPoet error when running job.
+- Contact Teacher form in Learning Mode quiz footer [#7257](https://github.com/Automattic/sensei/pull/7257)
+- Contact Teacher button is full width in Learning Mode [#7288](https://github.com/Automattic/sensei/pull/7288)
+- Deprecation notice when user is not logged in [#7294](https://github.com/Automattic/sensei/pull/7294)
+- "No published content" notice being displayed for users who created a course in the editor [#7284](https://github.com/Automattic/sensei/pull/7284)
+- How we determine whether a quiz has been submitted [#7278](https://github.com/Automattic/sensei/pull/7278)
+- Module spacing when Learning Mode is not enabled [#7272](https://github.com/Automattic/sensei/pull/7272)
+- Distorted site logo in Learning Mode [#7275](https://github.com/Automattic/sensei/pull/7275)
+- Gap fill question to accept "0" as a right answer [#7273](https://github.com/Automattic/sensei/pull/7273)
+- "Pending Grade" button is too wide for some themes [#7287](https://github.com/Automattic/sensei/pull/7287)
+- Fix broken Learning Mode templates on Gutenberg 17.1.0 [#7317](https://github.com/Automattic/sensei/pull/7317)
+- Fix dropdown menu icon size [#7316](https://github.com/Automattic/sensei/pull/7316)
 
-### 4.14.0 - 2023-05-10
+#### Development
+- Add stylesheets for Course theme variations [#7256](https://github.com/Automattic/sensei/pull/7256)
+
+### 4.19.1 - 2023-11-06
+#### Fixed
+- Email editor styles getting leaked into other templates in site editor [#7258](https://github.com/Automattic/sensei/pull/7258)
+
+### 4.19.0 - 2023-11-01
 #### Added
-- Ability to set conditions on admin notices based on a date range
-- Add disclamer with the reason that Sensei Pro can't be updated when license is not active
-- Add quiz generation using AI button in quiz block
+- Add a setting to not allow self-enrollment on courses [#7231](https://github.com/Automattic/sensei/pull/7231)
 
 #### Changed
-- Use non-deprecated attribute to load SVG icons.
+- Update style of "Awaiting Grade" notice in Learning Mode [#7197](https://github.com/Automattic/sensei/pull/7197)
+- Update style of "Your Grade" notice in Learning Mode [#7197](https://github.com/Automattic/sensei/pull/7197)
+
+#### Removed
+- Eliminate usage of temporary Course theme hook [#7219](https://github.com/Automattic/sensei/pull/7219)
 
 #### Fixed
-- Don't send e-mails to Guest/Preview users
-- Fix PHP Warning with Divi when using Learning Mode Video theme
-- Fix Sensei admin notice styles
-- Missing email page template link on the editor
-- Removed unused calls to SenseiLMS.com for the old extensions page
+- Fix course notices that are intended to be displayed only on the course page but were currently appearing on the courses archive page [#7231](https://github.com/Automattic/sensei/pull/7231)
+- Fix padding in site editor that prevents full-width alignment from working [#7233](https://github.com/Automattic/sensei/pull/7233)

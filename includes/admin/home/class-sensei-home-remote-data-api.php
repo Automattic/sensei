@@ -67,10 +67,10 @@ class Sensei_Home_Remote_Data_API {
 		 * Filter if we should retry errors when fetching remote data.
 		 *
 		 * @since 4.8.0
+		 *
 		 * @hook sensei_home_remote_data_retry_error
 		 *
 		 * @param {bool} $retry_error If we should retry errors. Default true.
-		 *
 		 * @return {bool} If we should retry errors.
 		 */
 		$retry_error = apply_filters( 'sensei_home_remote_data_retry_error', true );
@@ -92,7 +92,9 @@ class Sensei_Home_Remote_Data_API {
 				$data = false;
 			}
 
-			unset( $data['_fetched'] );
+			if ( is_array( $data ) ) {
+				unset( $data['_fetched'] );
+			}
 		}
 
 		if ( false === $data ) {
@@ -184,10 +186,10 @@ class Sensei_Home_Remote_Data_API {
 		 * Filter the primary plugin slug.
 		 *
 		 * @since 4.8.0
+		 *
 		 * @hook sensei_home_remote_data_primary_plugin_slug
 		 *
 		 * @param {string} $primary_plugin_slug The primary plugin slug.
-		 *
 		 * @return {string} The filtered primary plugin slug.
 		 */
 		return apply_filters( 'sensei_home_remote_data_primary_plugin_slug', $this->primary_plugin_slug );
@@ -203,10 +205,10 @@ class Sensei_Home_Remote_Data_API {
 		 * Filter the other plugins used for Sensei Home.
 		 *
 		 * @since 4.8.0
+		 *
 		 * @hook sensei_home_remote_data_other_plugins
 		 *
 		 * @param {array} $other_plugins The other plugins.
-		 *
 		 * @return {array} The filtered other plugins.
 		 */
 		return array_diff( apply_filters( 'sensei_home_remote_data_other_plugins', [] ), [ $this->get_primary_plugin_slug() ] );

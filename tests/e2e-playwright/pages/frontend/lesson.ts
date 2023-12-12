@@ -11,8 +11,11 @@ export class LessonPage {
 	}
 
 	get completeLessonButton(): Locator {
-		return this.page.locator( `button >> "Complete Lesson"` ).first();
+		return this.page
+			.locator( 'button:visible >> "Complete Lesson"' )
+			.first();
 	}
+
 	async clickCompleteLesson(): Promise< unknown > {
 		// Workaround on misclicking? in Learning mode.
 		await this.completeLessonButton.focus();

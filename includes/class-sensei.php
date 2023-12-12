@@ -1,18 +1,30 @@
 <?php
 
+use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Emails\Email_Customization;
+use Sensei\Internal\Installer\Updates_Factory;
+use Sensei\Internal\Migration\Migration_Job;
+use Sensei\Internal\Migration\Migration_Job_Scheduler;
+use Sensei\Internal\Migration\Migrations\Quiz_Migration;
+use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
+use Sensei\Internal\Tools\Progress_Tables_Eraser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -253,6 +265,22 @@ class Sensei_Main {
 	public $admin_notices;
 
 	/**
+	 * WPML compatibility class.
+	 *
+	 * @var Sensei_WPML
+	 *
+	 * @psalm-suppress PropertyNotSetInConstructor
+	 */
+	public $sensei_wpml;
+
+	/**
+	 * Course progress repository factory.
+	 *
+	 * @var Course_Progress_Repository_Factory
+	 */
+	public $course_progress_repository_factory;
+
+	/**
 	 * Course progress repository.
 	 *
 	 * @var Course_Progress_Repository_Interface
@@ -260,11 +288,25 @@ class Sensei_Main {
 	public $course_progress_repository;
 
 	/**
+	 * Lesson progress repository factory.
+	 *
+	 * @var Lesson_Progress_Repository_Factory
+	 */
+	public $lesson_progress_repository_factory;
+
+	/**
 	 * Lesson progress repository.
 	 *
 	 * @var Lesson_Progress_Repository_Interface
 	 */
 	public $lesson_progress_repository;
+
+	/**
+	 * Quiz progress repository factory.
+	 *
+	 * @var Quiz_Progress_Repository_Factory
+	 */
+	public $quiz_progress_repository_factory;
 
 	/**
 	 * Quiz progress repository.
@@ -295,6 +337,20 @@ class Sensei_Main {
 	public $quiz_grade_repository;
 
 	/**
+	 * Migration job scheduler.
+	 *
+	 * @var Migration_Job_Scheduler|null
+	 */
+	public $migration_scheduler;
+
+	/**
+	 * Action scheduler.
+	 *
+	 * @var Action_Scheduler|null
+	 */
+	public $action_scheduler;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -306,8 +362,16 @@ class Sensei_Main {
 		$this->main_plugin_file_name = $main_plugin_file_name;
 		$this->plugin_url            = trailingslashit( plugins_url( '', $this->main_plugin_file_name ) );
 		$this->plugin_path           = trailingslashit( dirname( $this->main_plugin_file_name ) );
-		$this->template_url          = apply_filters( 'sensei_template_url', 'sensei/' );
-		$this->version               = isset( $args['version'] ) ? $args['version'] : null;
+		/**
+		 * Filter the template url.
+		 *
+		 * @hook sensei_template_url
+		 *
+		 * @param {string} $template_url The template url.
+		 * @return {string} Filtered template url.
+		 */
+		$this->template_url = apply_filters( 'sensei_template_url', 'sensei/' );
+		$this->version      = isset( $args['version'] ) ? $args['version'] : null;
 
 		// Only set the install version if it is included in alloptions. This prevents a query on every page load.
 		$alloptions            = wp_load_alloptions();
@@ -556,19 +620,67 @@ class Sensei_Main {
 		$this->learner_profiles = new Sensei_Learner_Profiles();
 
 		// Load WPML compatibility class
-		$this->Sensei_WPML = new Sensei_WPML();
+		$this->sensei_wpml = new Sensei_WPML();
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
 		// Student progress repositories.
-		$this->course_progress_repository = ( new Course_Progress_Repository_Factory() )->create();
-		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory() )->create();
-		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory() )->create();
+		$tables_feature_enabled = isset( $this->settings->settings['experimental_progress_storage'] )
+			&& ( true === $this->settings->settings['experimental_progress_storage'] );
+
+		if ( $tables_feature_enabled ) {
+			// Enable tables based progress feature flag.
+			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
+		}
+
+		$tables_sync_enabled = $tables_feature_enabled
+			&& ( true === $this->settings->settings['experimental_progress_storage_synchronization'] );
+
+		$read_from_tables_setting = isset( $this->settings->settings['experimental_progress_storage_repository'] )
+			&& ( Progress_Storage_Settings::TABLES_STORAGE === $this->settings->settings['experimental_progress_storage_repository'] );
+
+		/**
+		 * Filter whether to read student progress from tables.
+		 *
+		 * @since $$next_version$$
+		 *
+		 * @hook  sensei_student_progress_read_from_tables
+		 *
+		 * @param {bool} $read_from_tables Whether to read student progress from tables.
+		 * @return {bool} Whether to read student progress from tables.
+		 */
+		$read_from_tables                         = apply_filters( 'sensei_student_progress_read_from_tables', $read_from_tables_setting );
+		$this->course_progress_repository_factory = new Course_Progress_Repository_Factory( $tables_sync_enabled, $read_from_tables );
+		$this->course_progress_repository         = $this->course_progress_repository_factory->create();
+		$this->lesson_progress_repository_factory = new Lesson_Progress_Repository_Factory( $tables_sync_enabled, $read_from_tables );
+		$this->lesson_progress_repository         = $this->lesson_progress_repository_factory->create();
+		$this->quiz_progress_repository_factory   = new Quiz_Progress_Repository_Factory( $tables_sync_enabled, $read_from_tables );
+		$this->quiz_progress_repository           = $this->quiz_progress_repository_factory->create();
 
 		// Quiz submission repositories.
-		$this->quiz_submission_repository = ( new Submission_Repository_Factory() )->create();
-		$this->quiz_answer_repository     = ( new Answer_Repository_Factory() )->create();
-		$this->quiz_grade_repository      = ( new Grade_Repository_Factory() )->create();
+		$this->quiz_submission_repository = ( new Submission_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
+		$this->quiz_answer_repository     = ( new Answer_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
+		$this->quiz_grade_repository      = ( new Grade_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
+
+		// Progress tables eraser.
+		if ( $tables_feature_enabled ) {
+			( new Progress_Tables_Eraser() )->init();
+		}
+
+		if ( class_exists( 'ActionScheduler_Versions' ) ) {
+			$this->action_scheduler = new Action_Scheduler();
+		}
+
+		// Student progress migration.
+		if ( $tables_feature_enabled && $this->action_scheduler ) {
+			$this->init_migration_scheduler();
+		}
+
+		// Init student progress handlers.
+		( new Course_Deleted_Handler( $this->course_progress_repository ) )->init();
+		( new Lesson_Deleted_Handler( $this->lesson_progress_repository ) )->init();
+		( new Quiz_Deleted_Handler( $this->quiz_progress_repository ) )->init();
+		( new User_Deleted_Handler( $this->course_progress_repository, $this->lesson_progress_repository, $this->quiz_progress_repository ) )->init();
 
 		// Cron for periodically cleaning guest user related data.
 		Sensei_Temporary_User_Cleaner::instance()->init();
@@ -577,15 +689,16 @@ class Sensei_Main {
 		if ( $email_customization_enabled ) {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
 		}
+
 		// MailPoet integration.
 		/**
 		 * Integrate MailPoet by adding lists for courses and groups.
 		 *
-		 * @hook  sensei_email_mailpoet_feature
 		 * @since 4.13.0
 		 *
-		 * @param {bool} $enable Enable feature. Default true.
+		 * @hook  sensei_email_mailpoet_feature
 		 *
+		 * @param {bool} $enable Enable feature. Default true.
 		 * @return {bool} Whether to enable feature.
 		 */
 		if ( apply_filters( 'sensei_email_mailpoet_feature', true ) ) {
@@ -594,6 +707,24 @@ class Sensei_Main {
 				new Sensei\Emails\MailPoet\Main( $mailpoet_api );
 			}
 		}
+	}
+
+	/**
+	 * Try to initialize Migration_Job_Scheduler.
+	 */
+	public function init_migration_scheduler(): void {
+		if ( ! $this->action_scheduler ) {
+			return;
+		}
+
+		$this->migration_scheduler = new Migration_Job_Scheduler( $this->action_scheduler );
+		$this->migration_scheduler->init();
+		$this->migration_scheduler->register_job(
+			new Migration_Job( 'student_progress_migration', new Student_Progress_Migration() )
+		);
+		$this->migration_scheduler->register_job(
+			new Migration_Job( 'quiz_migration', new Quiz_Migration() )
+		);
 	}
 
 	/**
@@ -642,7 +773,6 @@ class Sensei_Main {
 
 		// check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
 		add_action( 'admin_init', array( $this, 'flush_rewrite_rules' ), 101 );
-		add_action( 'init', array( $this, 'update' ) );
 
 		// Add plugin action links filter
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
@@ -780,8 +910,12 @@ class Sensei_Main {
 	 * Checks for plugin update tasks and ensures the current version is set.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @deprecated 4.16.1
 	 */
 	public function update() {
+		_deprecated_function( __METHOD__, '4.16.1' );
+
 		$current_version = get_option( 'sensei-version' );
 		$is_new_install  = ! $current_version && ! $this->course_exists();
 		$is_upgrade      = $current_version && version_compare( $this->version, $current_version, '>' );
@@ -791,8 +925,50 @@ class Sensei_Main {
 			$this->register_plugin_version( $is_new_install );
 		}
 
-		$this->updates = new Sensei_Updates( $current_version, $is_new_install, $is_upgrade );
+		$updates_factory = new Updates_Factory();
+		$this->updates   = $updates_factory->create( $current_version, $is_upgrade, $is_new_install );
 		$this->updates->run_updates();
+	}
+
+	/**
+	 * Helper function to check to see if any courses exist in the database.
+	 *
+	 * @deprecated 4.16.1
+	 *
+	 * @return bool
+	 */
+	private function course_exists(): bool {
+		_deprecated_function( __METHOD__, '4.16.1' );
+
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lightweight query run only once before post type is registered.
+		$course_sample_id = (int) $wpdb->get_var( "SELECT `ID` FROM {$wpdb->posts} WHERE `post_type`='course' LIMIT 1" );
+
+		return ! empty( $course_sample_id );
+	}
+
+	/**
+	 * Register the plugin's version.
+	 *
+	 * @access public
+	 * @since  1.0.0
+	 * @param boolean $is_new_install Is this a new install.
+	 * @return void
+	 *
+	 * @deprecated 4.16.1
+	 */
+	private function register_plugin_version( $is_new_install ) {
+		_deprecated_function( __METHOD__, '4.16.1' );
+
+		if ( isset( $this->version ) ) {
+
+			update_option( 'sensei-version', $this->version );
+
+			if ( $is_new_install ) {
+				update_option( 'sensei-install-version', $this->version );
+			}
+		}
 	}
 
 	/**
@@ -838,20 +1014,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Helper function to check to see if any courses exists in the database.
-	 *
-	 * @return bool
-	 */
-	private function course_exists() {
-		global $wpdb;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lightweight query run only once before post type is registered.
-		$course_sample_id = (int) $wpdb->get_var( "SELECT `ID` FROM {$wpdb->posts} WHERE `post_type`='course' LIMIT 1" );
-
-		return ! empty( $course_sample_id );
-	}
-
-	/**
 	 * Run on activation of the plugin.
 	 *
 	 * @access public
@@ -876,25 +1038,6 @@ class Sensei_Main {
 		}
 
 		update_option( 'sensei_installed', 1 );
-	}
-
-	/**
-	 * Register the plugin's version.
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @param boolean $is_new_install Is this a new install.
-	 * @return void
-	 */
-	private function register_plugin_version( $is_new_install ) {
-		if ( isset( $this->version ) ) {
-
-			update_option( 'sensei-version', $this->version );
-
-			if ( $is_new_install ) {
-				update_option( 'sensei-install-version', $this->version );
-			}
-		}
 	}
 
 	/**
@@ -943,6 +1086,17 @@ class Sensei_Main {
 	 * @return int
 	 */
 	public function get_page_id( $page ) {
+
+		/**
+		 * Filter the page ID.
+		 *
+		 * {page} is the page name.
+		 *
+		 * @hook sensei_get_{page}_page_id
+		 *
+		 * @param {int} $page The page ID.
+		 * @return {int} Filtered page ID.
+		 */
 		$page = apply_filters( 'sensei_get_' . esc_attr( $page ) . '_page_id', get_option( 'sensei_' . esc_attr( $page ) . '_page_id' ) );
 		return ( $page ) ? $page : -1;
 	}
@@ -1052,8 +1206,11 @@ class Sensei_Main {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool $includes_sensei_comments Whether the count already includes Sensei's comments.
-		 * @param int  $post_id                  Post ID.
+		 * @hook sensei_comment_counts_include_sensei_comments
+		 *
+		 * @param {bool} $includes_sensei_comments Whether the count already includes Sensei's comments.
+		 * @param {int}  $post_id                  Post ID.
+		 * @return {bool} Whether the count already includes Sensei's comments.
 		 */
 		return apply_filters( 'sensei_comment_counts_include_sensei_comments', $includes_sensei_comments, $post_id );
 	}
@@ -1193,6 +1350,16 @@ class Sensei_Main {
 
 		// Only return sizes we define in settings.
 		if ( ! in_array( $image_size, array( 'course_archive_image', 'course_single_image', 'lesson_archive_image', 'lesson_single_image' ), true ) ) {
+			/**
+			 * Filter the image size.
+			 *
+			 * {image_size} is NOT one of: course_archive_image, course_single_image, lesson_archive_image, lesson_single_image.
+			 *
+			 * @hook sensei_get_image_size_{image_size}
+			 *
+			 * @param {string} $image_size Image Size.
+			 * @return {string} Filtered image size.
+			 */
 			return apply_filters( 'sensei_get_image_size_' . $image_size, '' );
 		}
 
@@ -1218,6 +1385,16 @@ class Sensei_Main {
 		$size['height'] = isset( $size['height'] ) ? $size['height'] : '100';
 		$size['crop']   = isset( $size['crop'] ) ? $size['crop'] : 0;
 
+		/**
+		 * Filter the image size.
+		 *
+		 * {image_size} is one of: course_archive_image, course_single_image, lesson_archive_image, lesson_single_image.
+		 *
+		 * @hook sensei_get_image_size_{image_size}
+		 *
+		 * @param {string} $image_size Image Size.
+		 * @return {string} Filtered image size.
+		*/
 		return apply_filters( 'sensei_get_image_size_' . $image_size, $size );
 	}
 
@@ -1471,7 +1648,6 @@ class Sensei_Main {
 	public function is_general_configuration_page() {
 		return isset( $_GET['page'] ) && 'sensei-settings' === trim( $_GET['page'] ) && ( ! isset( $_GET['tab'] ) || 'general' === trim( $_GET['tab'] ) );
 	}
-
 
 		/**
 		 * Returns the admin configuration url for the admin general configuration page

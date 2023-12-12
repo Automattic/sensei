@@ -34,3 +34,27 @@ jobs:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
                   path: ${{ github.workspace }}/sensei-lms/
                   retention-days: 7
+
+    syntax-check:
+        name: PHP Syntax Check
+        needs: build
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                php: [7.4, 8.1]
+        steps:
+            - name: Download Build Artifact
+              uses: actions/download-artifact@v3
+              with:
+                  name: sensei-lms-${{ github.event.pull_request.head.sha }}
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  tools: phplint
+                  coverage: none
+
+            - name: Check Syntax
+              run: phplint ./sensei-lms

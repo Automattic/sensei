@@ -9,7 +9,7 @@ use Sensei_Factory;
 /**
  * Tests for Sensei\Internal\Emails\Student_Message_Reply class.
  *
- * @covers \Sensei\Internal\Emails\Student_Message_Reply
+ * @covers \Sensei\Internal\Emails\Generators\Student_Message_Reply
  */
 class Student_Message_Reply_Test extends \WP_UnitTestCase {
 
@@ -52,7 +52,9 @@ class Student_Message_Reply_Test extends \WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory          = new Sensei_Factory();
-		$this->email_repository = new Email_Repository();
+		$this->email_repository = $this->createMock( Email_Repository::class );
+		$this->email_repository->method( 'get' )
+			->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
 
 		// Create some test data.
 		$this->student_id = $this->factory->user->create(

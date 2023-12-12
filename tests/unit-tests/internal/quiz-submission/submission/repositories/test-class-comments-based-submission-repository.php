@@ -3,7 +3,7 @@
 namespace SenseiTest\Internal\Quiz_Submission\Submission\Repositories;
 
 use RuntimeException;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei_Utils;
 
@@ -70,7 +70,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$repository_mock
 			->expects( $this->once() )
 			->method( 'get' )
-			->willReturn( $this->createMock( Submission::class ) );
+			->willReturn( $this->createMock( Comments_Based_Submission::class ) );
 
 		$repository_mock
 			->expects( $this->never() )
@@ -114,7 +114,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$this->assertNull( $submission );
 	}
 
-	public function testGet_WhenLessonStatusFound_ReturnsSubmission(): void {
+	public function testGet_WhenNoQuestionsSubmitted_ReturnsNull(): void {
 		/* Arrange. */
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
@@ -127,12 +127,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$submission = $repository->get( $quiz_id, $user_id );
 
 		/* Assert. */
-		$expected = [
-			'quiz_id'     => $quiz_id,
-			'user_id'     => $user_id,
-			'final_grade' => null,
-		];
-		$this->assertSame( $expected, $this->export_submission( $submission ) );
+		$this->assertNull( $submission );
 	}
 
 	public function testGet_WhenFinalGradeIsZero_ReturnsSubmissionWithZeroFinalGrade(): void {
@@ -142,29 +137,17 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 		$repository = new Comments_Based_Submission_Repository();
 
-		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$submission_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
-		$repository->create( $quiz_id, $user_id, 0 );
+		$submission = $repository->create( $quiz_id, $user_id, 0 );
+
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
 
 		/* Act. */
 		$submission = $repository->get( $quiz_id, $user_id );
 
 		/* Assert. */
 		$this->assertSame( 0.0, $submission->get_final_grade() );
-	}
-
-	public function testGetQuestionIds_WhenLessonStatusNotFound_ReturnsEmptyArray(): void {
-		/* Arrange. */
-		$lesson_id  = $this->factory->lesson->create();
-		$user_id    = $this->factory->user->create();
-		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new Comments_Based_Submission_Repository();
-
-		/* Act. */
-		$question_ids = $repository->get_question_ids( $quiz_id, $user_id );
-
-		/* Assert. */
-		$this->assertSame( [], $question_ids );
 	}
 
 	public function testGetQuestionIds_WhenLessonStatusFound_ReturnsQuestionIds(): void {
@@ -179,7 +162,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		update_comment_meta( $comment_id, 'questions_asked', implode( ',', [ 1, 2, 3 ] ) );
 
 		/* Act. */
-		$question_ids = $repository->get_question_ids( $quiz_id, $user_id );
+		$question_ids = $repository->get_question_ids( $comment_id );
 
 		/* Assert. */
 		$this->assertSame( [ 1, 2, 3 ], $question_ids );
@@ -192,10 +175,10 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 		$repository = new Comments_Based_Submission_Repository();
 
-		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		/* Act. */
-		$question_ids = $repository->get_question_ids( $quiz_id, $user_id );
+		$question_ids = $repository->get_question_ids( $comment_id );
 
 		/* Assert. */
 		$this->assertSame( [], $question_ids );
@@ -203,7 +186,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
 	public function testSave_WhenLessonStatusNotFound_ThrowsException(): void {
 		/* Arrange. */
-		$submission = $this->createMock( Submission::class );
+		$submission = $this->createMock( Comments_Based_Submission::class );
 		$repository = new Comments_Based_Submission_Repository();
 
 		/* Assert. */
@@ -221,9 +204,11 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 		$repository = new Comments_Based_Submission_Repository();
 
-		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$submission_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		$submission = $repository->create( $quiz_id, $user_id );
+
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
 
 		/* Act. */
 		$submission->set_final_grade( 12.34 );
@@ -243,7 +228,9 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 		$repository = new Comments_Based_Submission_Repository();
 
-		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$submission_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
 
 		$submission = $repository->create( $quiz_id, $user_id, 12.34 );
 
@@ -257,7 +244,27 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	private function export_submission( Submission $submission ): array {
+	public function testDelete_WhenCalled_DeletesTheGrade(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$repository = new Comments_Based_Submission_Repository();
+
+		$submission_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
+
+		$submission = $repository->create( $quiz_id, $user_id, 12.34 );
+
+		/* Act. */
+		$repository->delete( $submission );
+
+		/* Assert. */
+		$this->assertNull( $repository->get( $quiz_id, $user_id )->get_final_grade() );
+	}
+
+	private function export_submission( Comments_Based_Submission $submission ): array {
 		return [
 			'quiz_id'     => $submission->get_quiz_id(),
 			'user_id'     => $submission->get_user_id(),

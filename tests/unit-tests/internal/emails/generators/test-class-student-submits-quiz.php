@@ -9,7 +9,7 @@ use Sensei_Factory;
 /**
  * Tests for Sensei\Internal\Emails\Student_Submits_Quiz class.
  *
- * @covers \Sensei\Internal\Emails\Student_Submits_Quiz
+ * @covers \Sensei\Internal\Emails\Generators\Student_Submits_Quiz
  */
 class Student_Submits_Quiz_Test extends \WP_UnitTestCase {
 	use \Sensei_Course_Enrolment_Test_Helpers;
@@ -34,7 +34,9 @@ class Student_Submits_Quiz_Test extends \WP_UnitTestCase {
 		$this->prepareEnrolmentManager();
 
 		$this->factory          = new Sensei_Factory();
-		$this->email_repository = new Email_Repository();
+		$this->email_repository = $this->createMock( Email_Repository::class );
+		$this->email_repository->method( 'get' )
+			->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
 	}
 
 	/**

@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     2.0.0
+ * @version     4.18.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -39,7 +39,7 @@ do_action( 'sensei_login_form_before' );
 
 				<label for="sensei_user_login"><?php esc_html_e( 'Username or Email', 'sensei-lms' ); ?> </label>
 
-				<input type="text" name="log" id="sensei_user_login" class="input" value="" size="20">
+				<input type="text" name="log" id="sensei_user_login" class="input input-text" value="" size="20">
 
 	</p>
 
@@ -47,7 +47,7 @@ do_action( 'sensei_login_form_before' );
 
 				<label for="sensei_user_pass"> <?php esc_html_e( 'Password', 'sensei-lms' ); ?>  </label>
 
-				<input type="password" name="pwd" id="sensei_user_pass" class="input txt text" value="" size="20">
+				<input type="password" name="pwd" id="sensei_user_pass" class="input txt text input-text" value="" size="20">
 
 	</p>
 
@@ -64,7 +64,7 @@ do_action( 'sensei_login_form_before' );
 
 	<p class='sensei-login-submit'>
 
-		<input type="submit" class="button" name="login" value="<?php esc_attr_e( 'Login', 'sensei-lms' ); ?>" />
+		<input type="submit" class="button wp-element-button" name="login" value="<?php esc_attr_e( 'Login', 'sensei-lms' ); ?>" />
 
 		<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>"><?php esc_html_e( 'Lost your password?', 'sensei-lms' ); ?></a>
 

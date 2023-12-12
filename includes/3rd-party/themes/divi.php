@@ -134,9 +134,6 @@ function sensei_admin_load_learning_mode_style_for_divi_theme() {
 
 }
 
-add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_course_theme' );
-add_action( 'admin_enqueue_scripts', 'sensei_admin_load_learning_mode_style_for_course_theme' );
-
 add_action( 'template_redirect', 'sensei_fix_divi_learning_mode_video_template_excerpt' );
-add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_divi_theme' );
-add_action( 'admin_enqueue_scripts', 'sensei_admin_load_learning_mode_style_for_divi_theme' );
+add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_divi_theme', 11 );
+add_action( 'admin_enqueue_scripts', 'sensei_admin_load_learning_mode_style_for_divi_theme', 11 );

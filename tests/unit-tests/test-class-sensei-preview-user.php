@@ -55,7 +55,7 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 
 		$this->assertNotEquals( $admin_id, get_current_user_id(), 'Current user should be changed.' );
 		$preview_user = wp_get_current_user();
-		$this->assertRegexp( '/^Preview Student.*$/', $preview_user->display_name, 'Current user should be a preview student.' );
+		$this->assertMatchesRegularExpression( '/^Preview Student.*$/', $preview_user->display_name, 'Current user should be a preview student.' );
 
 		// Switch off preview user.
 

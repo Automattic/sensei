@@ -75,12 +75,12 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 		/**
 		 * Customize the course block template.
 		 *
-		 * @hook  sensei_course_block_template
 		 * @since 3.9.0
+		 *
+		 * @hook  sensei_course_block_template
 		 *
 		 * @param {string[][]} $template          Array of blocks to use as the default initial state for a course.
 		 * @param {string[][]} $original_template Original block template.
-		 *
 		 * @return {string[][]} Array of blocks to use as the default initial state for a course.
 		 */
 		$post_type_object->template = apply_filters( 'sensei_course_block_template', $block_template, $post_type_object->template ?? [] );

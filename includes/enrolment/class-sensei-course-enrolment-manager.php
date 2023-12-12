@@ -80,8 +80,10 @@ class Sensei_Course_Enrolment_Manager {
 		add_action( 'sensei_before_learners_enrolled_courses_query', [ $this, 'recalculate_enrolments' ] );
 		add_action( 'transition_post_status', [ $this, 'recalculate_on_course_post_status_change' ], 10, 3 );
 
-		add_action( 'shutdown', [ Sensei_Enrolment_Provider_State_Store::class, 'persist_all' ] );
-		add_action( 'shutdown', [ Sensei_Enrolment_Provider_Journal_Store::class, 'persist_all' ] );
+		if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+			add_action( 'shutdown', [ Sensei_Enrolment_Provider_State_Store::class, 'persist_all' ] );
+			add_action( 'shutdown', [ Sensei_Enrolment_Provider_Journal_Store::class, 'persist_all' ] );
+		}
 	}
 
 	/**
@@ -106,9 +108,12 @@ class Sensei_Course_Enrolment_Manager {
 		/**
 		 * Fetch all registered course enrolment providers.
 		 *
-		 * @param Sensei_Course_Enrolment_Provider_Interface[] $providers List of enrolment providers instances.
-		 *
 		 * @since 3.0.0
+		 *
+		 * @hook sensei_course_enrolment_providers
+		 *
+		 * @param {Sensei_Course_Enrolment_Provider_Interface[]} $providers List of enrolment providers instances.
+		 * @return {Sensei_Course_Enrolment_Provider_Interface[]} Filtered list of enrolment providers instances.
 		 */
 		$providers = apply_filters( 'sensei_course_enrolment_providers', $providers );
 		foreach ( $providers as $provider ) {
@@ -229,7 +234,10 @@ class Sensei_Course_Enrolment_Manager {
 		 *
 		 * @since 4.5.2
 		 *
-		 * @param Sensei_Course_Enrolment_Provider_Interface[] $providers List of enrolment providers instances.
+		 * @hook sensei_course_enrolment_providers_prevent_manual_enrol
+		 *
+		 * @param {Sensei_Course_Enrolment_Provider_Interface[]} $providers List of enrolment providers instances.
+		 * @return {Sensei_Course_Enrolment_Provider_Interface[]} Filtered list of enrolment providers instances.
 		 */
 		$all_providers = apply_filters( 'sensei_course_enrolment_providers_prevent_manual_enrol', $all_providers );
 
@@ -388,7 +396,10 @@ class Sensei_Course_Enrolment_Manager {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool $should_defer_enrolment_check True if enrolment checks should be deferred to the end of the request.
+		 * @hook sensei_should_defer_enrolment_check
+		 *
+		 * @param {bool} $should_defer_enrolment_check True if enrolment checks should be deferred to the end of the request.
+		 * @return {bool} Filtered value.
 		 */
 		return apply_filters( 'sensei_should_defer_enrolment_check', $should_defer_enrolment_check );
 	}

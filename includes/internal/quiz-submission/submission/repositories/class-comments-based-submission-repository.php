@@ -7,10 +7,11 @@
 
 namespace Sensei\Internal\Quiz_Submission\Submission\Repositories;
 
-use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use RuntimeException;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei_Utils;
 use WP_Comment;
 
@@ -35,10 +36,10 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
-	 * @return Submission       The course progress.
-	 * @throws RuntimeException In case the lesson status is missing.
+	 * @return Submission_Interface The quiz submission.
+	 * @throws RuntimeException     In case the lesson status is missing.
 	 */
-	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
+	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
 		$status_comment = $this->get_status_comment( $quiz_id, $user_id );
 
 		if ( ! $status_comment ) {
@@ -51,7 +52,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 
 		$created_at = $this->get_created_date( $status_comment );
 
-		return new Submission(
+		return new Comments_Based_Submission(
 			$status_comment->comment_ID,
 			$quiz_id,
 			$user_id,
@@ -70,9 +71,9 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
-	 * @return Submission The course progress.
+	 * @return Submission_Interface The quiz submission.
 	 */
-	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
+	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
 		$submission = $this->get( $quiz_id, $user_id );
 
 		if ( $submission ) {
@@ -83,26 +84,29 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	}
 
 	/**
-	 * Gets a course progress.
+	 * Gets a quiz submission.
 	 *
 	 * @internal
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Submission|null The quiz submission.
+	 * @return Submission_Interface|null The quiz submission.
 	 */
-	public function get( int $quiz_id, int $user_id ): ?Submission {
+	public function get( int $quiz_id, int $user_id ): ?Submission_Interface {
 		$status_comment = $this->get_status_comment( $quiz_id, $user_id );
 
-		if ( ! $status_comment ) {
+		if (
+			! $status_comment
+			|| ! $this->get_question_ids( $status_comment->comment_ID )
+		) {
 			return null;
 		}
 
 		$final_grade = get_comment_meta( $status_comment->comment_ID, 'grade', true );
 		$created_at  = $this->get_created_date( $status_comment );
 
-		return new Submission(
+		return new Comments_Based_Submission(
 			$status_comment->comment_ID,
 			$quiz_id,
 			$user_id,
@@ -113,22 +117,16 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	}
 
 	/**
-	 * Get the question IDs related to this quiz submission.
+	 * Get the questions related to the quiz submission.
 	 *
 	 * @internal
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
+	 * @param int $submission_id The quiz submission ID.
 	 *
 	 * @return array An array of question post IDs.
 	 */
-	public function get_question_ids( int $quiz_id, int $user_id ): array {
-		$status_comment = $this->get_status_comment( $quiz_id, $user_id );
-		if ( ! $status_comment ) {
-			return [];
-		}
-
-		$questions_asked_csv = get_comment_meta( $status_comment->comment_ID, 'questions_asked', true );
+	public function get_question_ids( int $submission_id ): array {
+		$questions_asked_csv = get_comment_meta( $submission_id, 'questions_asked', true );
 		if ( ! $questions_asked_csv ) {
 			return [];
 		}
@@ -144,11 +142,11 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The quiz submission.
+	 * @param Submission_Interface $submission The quiz submission.
 	 *
 	 * @throws RuntimeException In case the lesson status is missing.
 	 */
-	public function save( Submission $submission ): void {
+	public function save( Submission_Interface $submission ): void {
 		$status_comment = $this->get_status_comment( $submission->get_quiz_id(), $submission->get_user_id() );
 
 		if ( ! $status_comment ) {
@@ -160,6 +158,17 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		} else {
 			delete_comment_meta( $status_comment->comment_ID, 'grade' );
 		}
+	}
+
+	/**
+	 * Delete the quiz submission.
+	 *
+	 * @internal
+	 *
+	 * @param Submission_Interface $submission The quiz submission.
+	 */
+	public function delete( Submission_Interface $submission ): void {
+		delete_comment_meta( $submission->get_id(), 'grade' );
 	}
 
 	/**
@@ -195,7 +204,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		$start_date = get_comment_meta( $status_comment->comment_ID, 'start', true );
 
 		return $start_date
-			? new DateTime( $start_date, wp_timezone() )
-			: current_datetime();
+			? new DateTimeImmutable( $start_date, wp_timezone() )
+			: new DateTimeImmutable( 'now', wp_timezone() );
 	}
 }

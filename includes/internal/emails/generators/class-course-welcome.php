@@ -41,7 +41,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_user_course_start', [ $this, 'welcome_to_course_for_student' ], 10, 2 );
+		$this->maybe_add_action( 'sensei_user_course_start', [ $this, 'welcome_to_course_for_student' ], 10, 2 );
 	}
 
 	/**

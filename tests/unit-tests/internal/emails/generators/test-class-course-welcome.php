@@ -59,13 +59,18 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 
 	public function testInit_WhenCalled_AddsHooksForInitializingIndividualEmails() {
 		/* Arrange. */
+		$email = new \WP_Post( (object) [ 'post_status' => 'publish' ] );
+
 		$email_repository = $this->createMock( Email_Repository::class );
 		$generator        = new Course_Welcome( $email_repository );
+
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( $email );
 
 		/* Act. */
 		$generator->init();
 
 		/* Assert. */
+		do_action( 'sensei_user_course_start', 1, 1 );
 		$priority = has_action( 'sensei_user_course_start', [ $generator, 'welcome_to_course_for_student' ] );
 		self::assertSame( 10, $priority );
 	}

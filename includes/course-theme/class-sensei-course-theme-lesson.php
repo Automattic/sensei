@@ -6,6 +6,9 @@
  * @since 3.15.0
  */
 
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -101,9 +104,9 @@ class Sensei_Course_Theme_Lesson {
 		$notices       = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' );
 		$quiz_id       = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$user_answers  = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
-		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 
-		if ( $this->maybe_add_lesson_quiz_progress_notice( $user_answers, $lesson_status, $quiz_id, $notices ) ) {
+		if ( $this->maybe_add_lesson_quiz_progress_notice( $user_answers, $quiz_progress, $quiz_id, $notices ) ) {
 			return;
 		}
 
@@ -117,9 +120,9 @@ class Sensei_Course_Theme_Lesson {
 		$passmark_rounded = Sensei_Utils::round( $passmark, 2 );
 		$pass_required    = get_post_meta( $quiz_id, '_pass_required', true );
 
-		if ( 'ungraded' === $lesson_status->comment_approved ) {
+		if ( 'ungraded' === $quiz_progress->get_status() ) {
 			$text = __( 'Awaiting grade', 'sensei-lms' );
-		} elseif ( 'failed' === $lesson_status->comment_approved ) {
+		} elseif ( 'failed' === $quiz_progress->get_status() ) {
 			// translators: Placeholders are the required grade and the actual grade, respectively.
 			$text = sprintf( __( 'You require %1$s%% to pass this lesson\'s quiz. Your grade is %2$s%%.', 'sensei-lms' ), '<strong>' . $passmark_rounded . '</strong>', '<strong>' . $grade_rounded . '</strong>' );
 		} else {
@@ -141,15 +144,15 @@ class Sensei_Course_Theme_Lesson {
 	/**
 	 * Maybe add lesson quiz progress notice.
 	 *
-	 * @param array|false            $user_answers  User answers.
-	 * @param object|false           $lesson_status Lesson status.
-	 * @param int                    $quiz_id       Quiz ID.
-	 * @param Sensei_Context_Notices $notices       Notices instance.
+	 * @param array|false                  $user_answers  User answers.
+	 * @param Quiz_Progress_Interface|null $quiz_progress Quiz progress.
+	 * @param int                          $quiz_id       Quiz ID.
+	 * @param Sensei_Context_Notices       $notices       Notices instance.
 	 *
 	 * @return bool Whether notice was added.
 	 */
-	private function maybe_add_lesson_quiz_progress_notice( $user_answers, $lesson_status, $quiz_id, $notices ) {
-		if ( ! $user_answers || empty( $user_answers ) || ! is_array( $user_answers ) || empty( $lesson_status ) || 'in-progress' !== $lesson_status->comment_approved ) {
+	private function maybe_add_lesson_quiz_progress_notice( $user_answers, $quiz_progress, $quiz_id, $notices ) {
+		if ( ! is_array( $user_answers ) || count( $user_answers ) === 0 || empty( $quiz_progress ) || 'in-progress' !== $quiz_progress->get_status() ) {
 			return false;
 		}
 
@@ -213,7 +216,13 @@ class Sensei_Course_Theme_Lesson {
 		$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
 
 		if ( $lesson_prerequisite > 0 ) {
-			$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_prerequisite, $user_id );
+			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_prerequisite );
+			if ( $quiz_id ) {
+				// If the leesons has a quiz, use the quiz progress instead.
+				$prerequisite_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+			} else {
+				$prerequisite_progress = Sensei()->lesson_progress_repository->get( $lesson_prerequisite, $user_id );
+			}
 
 			$prerequisite_lesson_link = '<a href="'
 				. esc_url( get_permalink( $lesson_prerequisite ) )
@@ -224,7 +233,7 @@ class Sensei_Course_Theme_Lesson {
 				. esc_html__( 'prerequisites', 'sensei-lms' )
 				. '</a>';
 
-			$text = ! empty( $lesson_status ) && 'ungraded' === $lesson_status->comment_approved
+			$text = ! empty( $prerequisite_progress ) && 'ungraded' === $prerequisite_progress->get_status()
 				// translators: Placeholder is the link to the prerequisite lesson.
 				? sprintf( esc_html__( 'You will be able to view this lesson once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
 				// translators: Placeholder is the link to the prerequisite lesson.
@@ -241,8 +250,9 @@ class Sensei_Course_Theme_Lesson {
 	 * @return void
 	 */
 	private function maybe_add_not_enrolled_notice() {
-		$lesson_id = \Sensei_Utils::get_current_lesson();
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+		$lesson_id  = \Sensei_Utils::get_current_lesson();
+		$course_id  = Sensei()->lesson->get_course_id( $lesson_id );
+		$is_preview = $lesson_id && Sensei_Utils::is_preview_lesson( $lesson_id );
 
 		if ( Sensei_Course::is_user_enrolled( $course_id ) ) {
 			return;
@@ -252,6 +262,24 @@ class Sensei_Course_Theme_Lesson {
 		$notice_key   = 'locked_lesson';
 		$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
 		$notice_icon  = 'lock';
+
+		if ( $is_preview ) {
+			$notice_title = __( 'This is a preview lesson', 'sensei-lms' );
+			$notice_icon  = 'eye';
+		}
+
+		// Check if self-enrollment is allowed.
+		if ( Sensei_Course::is_self_enrollment_not_allowed( $course_id ) ) {
+			$notices->add_notice(
+				$notice_key,
+				__( 'Please contact the course administrator to take this lesson.', 'sensei-lms' ),
+				$notice_title,
+				[],
+				$notice_icon
+			);
+
+			return;
+		}
 
 		// Course prerequisite notice.
 		if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
@@ -278,21 +306,19 @@ class Sensei_Course_Theme_Lesson {
 				[
 					'label' => __( 'Take course', 'sensei-lms' ),
 					'url'   => Sensei()->lesson->get_take_course_url( $course_id ),
-					'style' => 'primary',
+					'style' => 'primary wp-block-button__link wp-element-button',
 				],
 				[
 					'label' => __( 'Sign in', 'sensei-lms' ),
 					'url'   => $sign_in_url,
-					'style' => 'secondary',
+					'style' => 'secondary wp-element-button is-link',
 				],
 			];
 
 			$notice_text = __( 'Please register or sign in to access the course content.', 'sensei-lms' );
 
-			if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
-				$notice_text  = __( 'Register or sign in to take this lesson.', 'sensei-lms' );
-				$notice_title = __( 'This is a preview lesson', 'sensei-lms' );
-				$notice_icon  = 'eye';
+			if ( $is_preview ) {
+				$notice_text = __( 'Register or sign in to take this lesson.', 'sensei-lms' );
 			}
 
 			$notices->add_notice(
@@ -312,16 +338,16 @@ class Sensei_Course_Theme_Lesson {
 			'<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
 				<input type="hidden" name="course_start" value="1" />
 				' . $nonce . '
-				<button type="submit" class="sensei-course-theme__button is-primary">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
+				<div class="wp-block-button">
+					<button type="submit" class="sensei-course-theme__button is-primary wp-block-button__link">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
+				</div>
 			</form>',
 		];
 
 		$notice_text = __( 'Please register for this course to access the content.', 'sensei-lms' );
 
-		if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
-			$notice_text  = __( 'Register for this course to take this lesson.', 'sensei-lms' );
-			$notice_title = __( 'This is a preview lesson', 'sensei-lms' );
-			$notice_icon  = 'eye';
+		if ( $is_preview ) {
+			$notice_text = __( 'Register for this course to take this lesson.', 'sensei-lms' );
 		}
 
 		$notices->add_notice(

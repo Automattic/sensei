@@ -1,6 +1,7 @@
 <?php
 
 class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
+	use Sensei_File_System_Helper;
 
 	/**
 	 * @var Sensei_Unsupported_Theme_Handler_CPT The request handler to test.
@@ -154,6 +155,58 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 		$this->handler->handle_request();
 		$this->handler->cpt_page_content_filter( '' );
 		$this->assertEquals( 0, did_action( 'sensei_pagination' ) );
+	}
+
+	public function testSingleLesson_WhenInFSEThemes_DoesNotForcePageTemplate() {
+		/* Arrange */
+		$theme_directory = get_template_directory() . '/templates';
+		$index_file      = $theme_directory . '/index.html';
+		$lesson_handler  = new Sensei_Unsupported_Theme_Handler_CPT( 'lesson' );
+		add_filter(
+			'page_template',
+			function () {
+				return 'not-test-template';
+			}
+		);
+
+		// Remove the 'templates/index.html' file if it exists.
+		if ( file_exists( $index_file ) ) {
+			unlink( $index_file );
+		}
+
+		// Create the 'templates' directory if it doesn't exist.
+		if ( ! is_dir( $theme_directory ) ) {
+			mkdir( $theme_directory );
+		}
+
+		$this->create_index_file( $index_file );
+
+		/* Act */
+		$template = $lesson_handler->force_page_template( 'test-template' );
+
+		/* Assert */
+		$this->assertEquals( 'test-template', $template );
+
+		// Clean up.
+		unlink( $index_file );
+		rmdir( $theme_directory );
+	}
+
+	public function testSingleLesson_WhenNotFSEThemes_ForcesPageTemplate() {
+		/* Arrange */
+		$lesson_handler = new Sensei_Unsupported_Theme_Handler_CPT( 'lesson' );
+		add_filter(
+			'page_template',
+			function () {
+				return 'not-test-template';
+			}
+		);
+
+		/* Act */
+		$template = $lesson_handler->force_page_template( 'test-template' );
+
+		/* Assert */
+		$this->assertNotEquals( 'test-template', $template );
 	}
 
 	/**

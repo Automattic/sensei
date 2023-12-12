@@ -189,7 +189,6 @@ class Sensei_Admin_Notices {
 		 *
 		 * @param {array}    $notices The admin notices.
 		 * @param {int|null} $max_age The max age (seconds) of the source data.
-		 *
 		 * @return {array} The admin notices.
 		 */
 		$notices = apply_filters( 'sensei_admin_notices', $notices, $max_age );
@@ -489,6 +488,7 @@ class Sensei_Admin_Notices {
 		 * Filter the array of screen IDs that are part of Sensei, and where we should show Sensei notices on.
 		 *
 		 * @since 4.12.0
+		 *
 		 * @hook sensei_notices_screen_ids
 		 *
 		 * @param {array} Array of Screen IDs that are part of Sensei.

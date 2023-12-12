@@ -51,6 +51,7 @@ const CourseGeneralSidebar = () => {
 	const featured = meta._course_featured;
 	const prerequisite = meta._course_prerequisite;
 	const notification = meta.disable_notification;
+	const selfEnrollmentNotAllowed = meta._sensei_self_enrollment_not_allowed;
 	const openAccess = meta._open_access;
 
 	useEffect( () =>
@@ -171,13 +172,31 @@ const CourseGeneralSidebar = () => {
 				/>
 			) : null }
 
+			<HorizontalRule />
+
+			<h3>{ __( 'Enrollment', 'sensei-lms' ) }</h3>
+			<CheckboxControl
+				label={ __( "Don't allow self-enrollment", 'sensei-lms' ) }
+				checked={ selfEnrollmentNotAllowed }
+				onChange={ ( checked ) =>
+					setMeta( {
+						...meta,
+						_sensei_self_enrollment_not_allowed: checked,
+					} )
+				}
+				help={ __(
+					'Students need to be manually enrolled by teachers or administrators. Not available for paid courses.',
+					'sensei-lms'
+				) }
+			/>
+
 			{ window.sensei.courseSettingsSidebar.features?.open_access && (
 				<>
 					<HorizontalRule />
 
 					<h3>{ __( 'Access', 'sensei-lms' ) }</h3>
 					<CheckboxControl
-						label={ __( 'Open Access', 'sensei-lms' ) }
+						label={ __( 'Open access', 'sensei-lms' ) }
 						checked={ openAccess }
 						onChange={ ( checked ) =>
 							setMeta( { ...meta, _open_access: checked } )
@@ -194,7 +213,7 @@ const CourseGeneralSidebar = () => {
 
 			<h3>{ __( 'Featured Course', 'sensei-lms' ) }</h3>
 			<CheckboxControl
-				label={ __( 'Feature this course.', 'sensei-lms' ) }
+				label={ __( 'Feature this course', 'sensei-lms' ) }
 				checked={ featured == 'featured' }
 				onChange={ ( checked ) =>
 					setMeta( {
@@ -209,7 +228,7 @@ const CourseGeneralSidebar = () => {
 			<h3>{ __( 'Course Notifications', 'sensei-lms' ) }</h3>
 			<CheckboxControl
 				label={ __(
-					'Disable notifications on this course?',
+					'Disable notifications on this course',
 					'sensei-lms'
 				) }
 				checked={ notification }

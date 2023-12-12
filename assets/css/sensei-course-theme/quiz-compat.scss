@@ -1,0 +1,115 @@
+/* This file loads for all themes except Course. */
+@import '../../shared/styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
+
+$textColor: #1E1E1E;
+
+.sensei-course-theme__quiz {
+	&__main-content {
+		.wp-block-post-title {
+			margin-bottom: 3.75rem;
+
+			@media (min-width: $break-medium) {
+				margin-bottom: 2.5rem;
+			}
+		}
+
+		.sensei-lms-quiz-back-to-lesson {
+			color: inherit;
+		}
+	}
+}
+
+.wp-block-sensei-lms-question-answers {
+	& * {
+		font-size: 1.125rem;
+	}
+
+	&__filename {
+		color: $textColor;
+		font-size: 18px;
+		font-style: normal;
+		font-weight: 400;
+
+		a {
+			color: #155E65
+		}
+	}
+
+	&__answer {
+		color: $gray-50;
+	}
+}
+
+.wp-block-sensei-lms-quiz {
+	.sensei-lms-question-block__title {
+		font-family: var(--wp--preset--font-family--system);
+
+		textarea {
+			font-size: inherit;
+			font-family: inherit;
+			font-weight: inherit;
+		}
+	}
+}
+
+.wp-block-sensei-lms-quiz-actions {
+	button:disabled {
+		opacity: 0.6;
+	}
+
+	.sensei-quiz-actions-secondary {
+		.sensei-course-theme__button.is-link {
+			color: var(--sensei-primary-color);
+		}
+	}
+}
+
+#sensei-quiz-list {
+	margin: 0 0 3.75rem 0;
+}
+
+.quiz {
+	form {
+		#sensei-quiz-list {
+			color: $textColor;
+
+			/* Some themes directly target inputs */
+			input {
+				color: $textColor;
+			}
+
+			li {
+				.wp-block-sensei-lms-question-answers,
+				.wp-block-sensei-lms-question-description {
+					font-size: 1.125rem;
+				}
+
+				h2 {
+					font-size: clamp(1.5rem, 0.808rem + 2.308vw, 2.25rem);
+					font-weight: 400;
+				}
+
+				> .question-title {
+					display: block;
+					margin: 0 0 1em;
+					font-weight: 400;
+
+					> span {
+						font-size: clamp(1rem, 0.538rem + 1.538vw, 1.5rem);
+					}
+				}
+
+				.max_upload_size {
+					font-size: 0.875rem;
+				}
+			}
+		}
+	}
+}
+
+.wp-block-sensei-lms-quiz-actions {
+	.sensei-course-theme__button.is-primary {
+		width: auto;
+	}
+}

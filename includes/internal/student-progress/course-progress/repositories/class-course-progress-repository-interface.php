@@ -7,7 +7,7 @@
 
 namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -28,9 +28,9 @@ interface Course_Progress_Repository_Interface {
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Course_Progress The course progress.
+	 * @return Course_Progress_Interface The course progress.
 	 */
-	public function create( int $course_id, int $user_id ): Course_Progress;
+	public function create( int $course_id, int $user_id ): Course_Progress_Interface;
 
 	/**
 	 * Gets a course progress.
@@ -39,9 +39,9 @@ interface Course_Progress_Repository_Interface {
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Course_Progress|null The course progress.
+	 * @return Course_Progress_Interface|null The course progress.
 	 */
-	public function get( int $course_id, int $user_id ): ?Course_Progress;
+	public function get( int $course_id, int $user_id ): ?Course_Progress_Interface;
 
 	/**
 	 * Checks if a course progress exists.
@@ -59,16 +59,44 @@ interface Course_Progress_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param Course_Progress $course_progress The course progress.
+	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
-	public function save( Course_Progress $course_progress ): void;
+	public function save( Course_Progress_Interface $course_progress ): void;
 
 	/**
 	 * Delete course progress.
 	 *
 	 * @internal
 	 *
-	 * @param Course_Progress $course_progress The course progress.
+	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
-	public function delete( Course_Progress $course_progress ): void;
+	public function delete( Course_Progress_Interface $course_progress ): void;
+
+	/**
+	 * Delete course progress for a given course.
+	 *
+	 * @internal
+	 *
+	 * @param int $course_id The course ID.
+	 */
+	public function delete_for_course( int $course_id ): void;
+
+	/**
+	 * Delete course progress for a given user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function delete_for_user( int $user_id ): void;
+
+	/**
+	 * Find course progress.
+	 *
+	 * @internal
+	 *
+	 * @param array $args The arguments.
+	 * @return Course_Progress_Interface[] The course progress.
+	 */
+	public function find( array $args ): array;
 }

@@ -42,8 +42,7 @@
       "type": "integer"
     },
     "isPreview": {
-      "type": "boolean",
-      "default": false
+      "type": "boolean"
     }
   },
   "usesContext": [ "postType" ],

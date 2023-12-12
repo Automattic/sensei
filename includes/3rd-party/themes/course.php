@@ -6,13 +6,6 @@
  */
 
 /**
- * Don't load Learning Mode styles from Course theme.
- */
-function sensei_disable_learning_mode_style_for_course_theme() {
-	add_filter( 'course_learning_mode_load_styles', '__return_false' );
-}
-
-/**
  * Enqueue Course theme-specific Learning Mode styles.
  */
 function sensei_load_learning_mode_style_for_course_theme() {
@@ -50,9 +43,24 @@ function sensei_admin_load_learning_mode_style_for_course_theme() {
 			'screen'
 		);
 	}
-
 }
 
-add_action( 'wp', 'sensei_disable_learning_mode_style_for_course_theme' );
-add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_course_theme' );
-add_action( 'admin_enqueue_scripts', 'sensei_admin_load_learning_mode_style_for_course_theme' );
+add_action( 'course_theme_variation_loaded', 'sensei_load_styles_for_course_theme_variation' );
+
+/**
+ * Enqueue the specific stylesheet for current course theme variation.
+ *
+ * @param string $variation_name The current theme variation.
+ *
+ * @since 4.19.2
+ */
+function sensei_load_styles_for_course_theme_variation( $variation_name ) {
+	if ( empty( $variation_name ) ) {
+		return;
+	}
+
+	Sensei()->assets->enqueue( 'course-learning-mode-variation', 'css/3rd-party/themes/course/' . $variation_name . '.css', [] );
+}
+
+add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_course_theme', 11 );
+add_action( 'admin_enqueue_scripts', 'sensei_admin_load_learning_mode_style_for_course_theme', 11 );

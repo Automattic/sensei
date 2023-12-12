@@ -159,7 +159,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
-		$this->assertRegExp( '/Please complete the .* to view this lesson content/', $html, 'Should return prerequisite notice' );
+		$this->assertMatchesRegularExpression( '/Please complete the .* to view this lesson content/', $html, 'Should return prerequisite notice' );
 	}
 
 	/**
@@ -184,7 +184,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
-		$this->assertRegExp( '/You will be able to view this lesson once the .* are completed and graded./', $html, 'Should return ungraded prerequisite notice' );
+		$this->assertMatchesRegularExpression( '/You will be able to view this lesson once the .* are completed and graded./', $html, 'Should return ungraded prerequisite notice' );
 	}
 
 	/**
@@ -213,7 +213,39 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
-		$this->assertRegExp( '/You must first complete .* before taking this course./', $html, 'Should return course prerequisite notice' );
+		$this->assertMatchesRegularExpression( '/You must first complete .* before taking this course./', $html, 'Should return course prerequisite notice' );
+	}
+
+	/**
+	 * Testing not allowed self-enrollment notice.
+	 */
+	public function testCourseNotAllowedSelfEnrollmentNotice() {
+		/* Arrange. */
+		$prerequisite_course_id = $this->factory->course->create();
+		$course_id              = $this->factory->course->create(
+			[
+				'meta_input' => [
+					'_sensei_self_enrollment_not_allowed' => true,
+				],
+			]
+		);
+		$lesson                 = $this->factory->lesson->create_and_get(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+		$GLOBALS['post']        = $lesson;
+
+		$this->login_as_student();
+		\Sensei_Course_Theme_Lesson::instance()->init();
+
+		/* Act. */
+		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'Please contact the course administrator to take this lesson.', $html, 'Should return not allowed self-enrollment notice' );
 	}
 
 	/**

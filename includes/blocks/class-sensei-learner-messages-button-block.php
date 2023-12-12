@@ -63,7 +63,7 @@ class Sensei_Learner_Messages_Button_Block {
 	 * @return string Link to the learner messages button.
 	 */
 	public function render_learner_messages_block( $attributes, $content ): string {
-		if ( Sensei()->settings->settings['messages_disable'] ?? false ) {
+		if ( ! is_user_logged_in() || Sensei()->settings->settings['messages_disable'] ?? false ) {
 			return '';
 		}
 

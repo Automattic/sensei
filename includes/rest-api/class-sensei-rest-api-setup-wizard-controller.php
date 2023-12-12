@@ -615,7 +615,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			sensei_log_event(
 				'setup_wizard_purpose_continue',
 				[
-					'purpose'         => join( ',', $setup_purpose_data['selected'] ?? [] ),
+					'purpose'         => implode( ',', $setup_purpose_data['selected'] ?? [] ),
 					'purpose_details' => $setup_purpose_data['other'] ?? '',
 				]
 			);

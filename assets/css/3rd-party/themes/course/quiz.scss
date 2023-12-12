@@ -1,0 +1,44 @@
+@import '../../../../shared/styles/variables';
+
+.wp-block-sensei-lms-quiz {
+	.wp-block-sensei-lms-question-answers {
+		&__answer {
+			color: $gray-50;
+		}
+
+		&__preview {
+			border: 1px solid var(--wp--preset--color--foreground);
+			border-radius: 4px;
+		}
+	}
+}
+
+.wp-block-sensei-lms-quiz-actions {
+	button:disabled {
+		opacity: 0.4;
+	}
+}
+
+#sensei-quiz-list {
+	margin: 0 0 clamp(3.75rem, 2.5rem + 3.333vw, 5rem) 0;
+}
+
+.quiz {
+	.sensei-course-theme__quiz {
+		&__main-content {
+			.wp-block-post-title {
+				margin-bottom: 3.75rem;
+			}
+		}
+	}
+
+	.sensei-quiz-actions {
+		.sensei-quiz-actions-secondary {
+			.sensei-quiz-action {
+				button {
+					font-family: var( --wp--preset--font-family--body );
+				}
+			}
+		}
+	}
+}

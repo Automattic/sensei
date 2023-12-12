@@ -241,12 +241,11 @@ class Sensei_Grading_User_Quiz {
 				 * }
 				 * @param {string} $type
 				 * @param {int}    $question_id
-				 *
 				 * @return {array|null}
 				 */
 				$possibly_new_args = apply_filters( 'sensei_grading_display_quiz_question', null, $type, $question_id, $right_answer, $user_answer_content );
 
-				if ( null !== $possibly_new_args && 0 < count( $possibly_new_args ) ) {
+				if ( null !== $possibly_new_args && $possibly_new_args ) {
 					$type_name           = $possibly_new_args['type_name'] ?? $type_name;
 					$right_answer        = $possibly_new_args['right_answer'] ?? $right_answer;
 					$user_answer_content = $possibly_new_args['user_answer_content'] ?? $user_answer_content;
@@ -311,7 +310,19 @@ class Sensei_Grading_User_Quiz {
 						</div>
 					</div>
 					<div class="sensei-grading-answer">
-						<h4><?php echo wp_kses_post( apply_filters( 'sensei_question_title', $question->post_title ) ); ?></h4>
+						<h4>
+						<?php
+							/**
+							 * Filters the question title.
+							 *
+							 * @hook sensei_question_title
+							 *
+							 * @param {string} $question_title The question title.
+							 * @return {string} Filtered question title.
+							 */
+							echo wp_kses_post( apply_filters( 'sensei_question_title', $question->post_title ) );
+						?>
+						</h4>
 						<?php
 						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped before core filter applied.
 						echo Sensei_Question::get_the_question_description( $question_id );
@@ -328,7 +339,17 @@ class Sensei_Grading_User_Quiz {
 								$_user_answer = htmlspecialchars_decode( $_user_answer );
 							}
 
-							$html = wp_kses_post( apply_filters( 'sensei_answer_text', $_user_answer ) );
+							/**
+							 * Filter user answer text.
+							 *
+							 * @hook sensei_answer_text
+							 *
+							 * @param {string} Answer text.
+							 * @return {string} Filtered answer text.
+							 */
+							$_user_answer = apply_filters( 'sensei_answer_text', $_user_answer );
+
+							$html = wp_kses_post( $_user_answer );
 							$html = '<html><head><title></title></head><body>' . $html . '</body></html>';
 							?>
 							<iframe class="user-answer" srcdoc="<?php echo esc_attr( $html ); ?>" sandbox="allow-same-origin" height="auto"></iframe>
@@ -346,6 +367,14 @@ class Sensei_Grading_User_Quiz {
 									$_right_answer = htmlspecialchars_decode( nl2br( $_right_answer ) );
 								}
 
+								/**
+								 * Filter user answer text.
+								 *
+								 * @hook sensei_answer_text
+								 *
+								 * @param {string} Answer text.
+								 * @return {string} Filtered answer text.
+								 */
 								echo wp_kses_post( apply_filters( 'sensei_answer_text', $_right_answer ) ) . '<br>';
 
 							}

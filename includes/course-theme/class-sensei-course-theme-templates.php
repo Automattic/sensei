@@ -70,6 +70,7 @@ class Sensei_Course_Theme_Templates {
 		add_filter( 'pre_get_block_file_template', [ $this, 'get_single_block_template' ], 10, 3 );
 		add_filter( 'theme_lesson_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
 		add_filter( 'theme_quiz_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
+		add_action( 'init', [ $this, 'load_course_theme_patterns' ] );
 
 	}
 
@@ -156,12 +157,15 @@ class Sensei_Course_Theme_Templates {
 	public function should_use_quiz_template() {
 		$post = get_post();
 
-		$lesson_id = \Sensei_Utils::get_current_lesson();
-		$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
+		if ( ! $post || ! ( $post instanceof WP_Post ) ) {
+			return false;
+		}
 
-		$has_submitted_quiz = $status && in_array( $status->comment_approved, [ 'ungraded', 'graded', 'passed', 'failed' ], true );
+		$progress = Sensei()->quiz_progress_repository->get( $post->ID, get_current_user_id() );
 
-		if ( ! $post || 'quiz' !== $post->post_type || $has_submitted_quiz ) {
+		$has_submitted_quiz = $progress && $progress->is_quiz_submitted();
+
+		if ( 'quiz' !== $post->post_type || $has_submitted_quiz ) {
 			return false;
 		}
 
@@ -271,6 +275,9 @@ class Sensei_Course_Theme_Templates {
 			return $templates;
 		}
 
+		// Remove the default lesson template for course theme.
+		$templates = $this->filter_single_lesson_template_in_learning_mode( $templates, wp_get_theme()->get( 'Name' ) );
+
 		$course_theme_templates = $this->get_block_templates();
 		$extra_templates        = array_values( $course_theme_templates );
 
@@ -300,7 +307,6 @@ class Sensei_Course_Theme_Templates {
 	 * @return array
 	 */
 	public function get_block_templates() {
-
 		$this->load_file_templates();
 
 		$db_templates = $this->get_custom_templates();
@@ -316,9 +322,12 @@ class Sensei_Course_Theme_Templates {
 			} else {
 				// Prefill the template contents from their content files.
 				if ( ! empty( $template['content'] ) && file_exists( $template['content'] ) ) {
-					// Get the block template html.
+
+					$extension = pathinfo( $template['content'], PATHINFO_EXTENSION );
+
+					// Get the block template markup.
 					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-					$html = file_get_contents( $template['content'] );
+					$html = 'html' === $extension ? file_get_contents( $template['content'] ) : $this->get_markup_from_php_template_path( $template['content'] );
 
 					// Get the block template styles.
 					$css = '';
@@ -499,5 +508,70 @@ class Sensei_Course_Theme_Templates {
 		return false;
 	}
 
+	/**
+	 * Loads and registers the learning mode specific patterns prior to loading the templates so that their
+	 * reference can be used in the LM templates.
+	 *
+	 * @internal
+	 *
+	 * @since 4.17.0
+	 */
+	public function load_course_theme_patterns() : void {
+		$pattern_files = glob( Sensei_Course_Theme::instance()->get_course_theme_root() . '/patterns/*.html' );
 
+		foreach ( $pattern_files as $pattern_file ) {
+			$pattern_title = basename( $pattern_file, '.html' );
+
+			register_block_pattern(
+				'sensei-course-theme/' . $pattern_title,
+				[
+					'title'    => $pattern_title,
+					'inserter' => false,
+					'content'  => file_get_contents( $pattern_file ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Using local file.
+				]
+			);
+		}
+	}
+
+	/**
+	 * Filters the block templates to hide the lesson template in the post editor if the course does not have learning mode enabled.
+	 *
+	 * @param array  $current_templates The block templates.
+	 * @param string $theme_name The theme name.
+	 *
+	 * @since 4.16.1
+	 *
+	 * @internal
+	 *
+	 * @return array The filtered block templates.
+	 */
+	public function filter_single_lesson_template_in_learning_mode( $current_templates, $theme_name ) {
+		return array_filter(
+			$current_templates,
+			function( $template ) use ( $theme_name ) {
+				$is_course_theme = 'Course' === $theme_name;
+				return ! ( $is_course_theme && 'course//single-lesson' === $template->id );
+			}
+		);
+	}
+
+	/**
+	 * Get the markup content from a PHP template path.
+	 * This way, we can use translatable strings in the templates
+	 * which is not possible with the HTML files.
+	 *
+	 * @param string $template_path The path to the PHP template.
+	 *
+	 * @return string
+	 */
+	private function get_markup_from_php_template_path( $template_path ) {
+		ob_start();
+		/**
+		 * Suppressing the phpcs warning for the include statement.
+		 *
+		 * @psalm-suppress UnresolvableInclude
+		 */
+		include $template_path; // phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable
+		return ob_get_clean();
+	}
 }

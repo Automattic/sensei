@@ -7,7 +7,7 @@
 
 namespace Sensei\Internal\Quiz_Submission\Submission\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,9 +30,9 @@ interface Submission_Repository_Interface {
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
-	 * @return Submission The quiz submission.
+	 * @return Submission_Interface The quiz submission.
 	 */
-	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission;
+	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface;
 
 	/**
 	 * Get or create a new quiz submission if it doesn't exist.
@@ -43,9 +43,9 @@ interface Submission_Repository_Interface {
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
-	 * @return Submission The quiz submission.
+	 * @return Submission_Interface The quiz submission.
 	 */
-	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission;
+	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface;
 
 	/**
 	 * Gets a quiz submission.
@@ -55,28 +55,36 @@ interface Submission_Repository_Interface {
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 *
-	 * @return Submission|null The quiz submission.
+	 * @return Submission_Interface|null The quiz submission.
 	 */
-	public function get( int $quiz_id, int $user_id ): ?Submission;
+	public function get( int $quiz_id, int $user_id ): ?Submission_Interface;
 
 	/**
-	 * Get the question IDs related to this quiz submission.
+	 * Get the questions related to the quiz submission.
 	 *
 	 * @internal
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
+	 * @param int $submission_id The quiz submission ID.
 	 *
 	 * @return array An array of question post IDs.
 	 */
-	public function get_question_ids( int $quiz_id, int $user_id ): array;
+	public function get_question_ids( int $submission_id ): array;
 
 	/**
 	 * Save quiz submission.
 	 *
 	 * @internal
 	 *
-	 * @param Submission $submission The quiz submission.
+	 * @param Submission_Interface $submission The quiz submission.
 	 */
-	public function save( Submission $submission ): void;
+	public function save( Submission_Interface $submission ): void;
+
+	/**
+	 * Delete the quiz submission.
+	 *
+	 * @internal
+	 *
+	 * @param Submission_Interface $submission The quiz submission.
+	 */
+	public function delete( Submission_Interface $submission ): void;
 }

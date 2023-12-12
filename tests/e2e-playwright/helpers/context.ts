@@ -60,10 +60,18 @@ export const createAdminContext = async (
 };
 
 export const login = async ( page: Page, user: User ): Promise< Page > => {
-	await page.goto( 'http://localhost:8889/wp-login.php' );
-	await page.locator( 'input[name="log"]' ).fill( user.username );
-	await page.locator( 'input[name="pwd"]' ).fill( user.password );
-	await page.locator( 'text=Log In' ).click();
+	const response = await page.request.post(
+		'http://localhost:8889/wp-login.php',
+		{
+			failOnStatusCode: true,
+			form: {
+				log: user.username,
+				pwd: user.password,
+			},
+		}
+	);
+
+	await response.dispose();
 
 	return page;
 };

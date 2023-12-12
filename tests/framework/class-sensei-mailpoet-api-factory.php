@@ -119,12 +119,13 @@ class Sensei_MailPoetMockAPI_Test {
 	 */
 	public function addList( $list ) {
 		$new_list      = array(
-			'id'          => wp_rand( 100, 500 ),
+			'id'          => intval( wp_unique_id() ),
 			'name'        => $list['name'],
 			'description' => $list['description'],
 			'subscribers' => array(),
 		);
 		$this->lists[] = $new_list;
+
 		return $new_list;
 	}
 
@@ -138,7 +139,7 @@ class Sensei_MailPoetMockAPI_Test {
 			}
 		}
 
-		$id                       = wp_rand( 10, 50 );
+		$id                       = intval( wp_unique_id() );
 		$subscriber               = array(
 			'id'         => $id,
 			'email'      => $email,
@@ -147,6 +148,7 @@ class Sensei_MailPoetMockAPI_Test {
 			'list_ids'   => array(),
 		);
 		$this->subscribers[ $id ] = $subscriber;
+
 		return $subscriber;
 	}
 
@@ -155,9 +157,11 @@ class Sensei_MailPoetMockAPI_Test {
 	 */
 	public function subscribeToList( $id, $list_id, $options ) {
 		$list_index = $this->getListIndex( $list_id );
+
 		if ( ! in_array( $id, $this->lists[ $list_index ]['subscribers'], true ) ) {
 			$this->lists[ $list_index ]['subscribers'][] = $id;
 		}
+
 		return true;
 	}
 
@@ -181,6 +185,7 @@ class Sensei_MailPoetMockAPI_Test {
 	public function getSubscribers( $args ) {
 		$list_id    = $args['listId'];
 		$list_index = $this->getListIndex( $list_id );
+
 		return $this->lists[ $list_index ]['subscribers'];
 	}
 

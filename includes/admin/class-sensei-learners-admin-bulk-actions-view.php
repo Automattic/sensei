@@ -103,6 +103,14 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
+		/**
+		 * Filter the search button text.
+		 *
+		 * @hook sensei_list_table_search_button_text
+		 *
+		 * @param {string} $text The search button text.
+		 * @return {string} The filtered text.
+		 */
 		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 
@@ -141,6 +149,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			'actions'            => '',
 		);
 
+		/**
+		 * Filter columns for the learners admin table.
+		 *
+		 * @param {array}                                   $columns The Columns.
+		 * @param {Sensei_Learners_Admin_Bulk_Actions_View} $view The View.
+		 * @return {array} Filtered columns.
+		 */
 		return apply_filters( 'sensei_learners_admin_default_columns', $columns, $this );
 	}
 
@@ -153,6 +168,14 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$columns = array(
 			'learner' => array( 'learner', false ),
 		);
+
+		/**
+		 * Filter sortable columns for the learners admin table.
+		 *
+		 * @param {array}                                   $columns The sortable columns.
+		 * @param {Sensei_Learners_Admin_Bulk_Actions_View} $view The View.
+		 * @return {array} Filtered columns.
+		 */
 		return apply_filters( 'sensei_learner_admin_default_columns_sortable', $columns, $this );
 	}
 
@@ -218,11 +241,12 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		/**
 		 * Filter sensei_learner_admin_get_row_data, for adding/removing row data.
 		 *
-		 * @param array                                   $row_data The Row Data.
-		 * @param mixed|object                            $item The Item (learner query row).
-		 * @param Sensei_Learners_Admin_Bulk_Actions_View $view The View.
+		 * @hook sensei_learner_admin_get_row_data
 		 *
-		 * @return array
+		 * @param {array}                                   $row_data The Row Data.
+		 * @param {mixed|object}                            $item The Item (learner query row).
+		 * @param {Sensei_Learners_Admin_Bulk_Actions_View} $view The View.
+		 * @return {array} Filtered row data.
 		 */
 		$row_data         = apply_filters( 'sensei_learner_admin_get_row_data', $row_data, $item, $this );
 		$escaped_row_data = array();
@@ -319,6 +343,14 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$text    = '<div class="sensei-students__call-to-action"><div>' . $message . '</div><div>' . $button . '</div></div>';
 		}
 
+		/**
+		 * Filter the text displayed when no items are found.
+		 *
+		 * @hook sensei_learners_no_items_text
+		 *
+		 * @param {string} $text The text.
+		 * @return {string} The filtered text.
+		 */
 		echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
 	}
 
@@ -354,19 +386,25 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 	/**
-	 * Helper method to display the bulk action selector.
+	 * Gets the HTML for the bulk action dropdown.
+	 *
+	 * @return string HTML for the bulk action dropdown.
 	 */
-	private function render_bulk_action_select_box() {
-		?>
-		<select id="bulk-action-selector-top" name="sensei_bulk_action_select" class="sensei-student-bulk-actions__placeholder-dropdown sensei-bulk-action-select">
-			<option value="0"><?php echo esc_html( __( 'Select Bulk Actions', 'sensei-lms' ) ); ?></option>
-			<?php
-			foreach ( $this->controller->get_known_bulk_actions() as $value => $translation ) {
-				echo '<option value="' . esc_attr( $value ) . '">' . esc_html( $translation ) . '</option>';
-			}
-			?>
-		</select>
-		<?php
+	private function get_bulk_action_dropdown_html() {
+		$html = '';
+
+		$html .= '<select id="bulk-action-selector-top" name="sensei_bulk_action_select" class="sensei-student-bulk-actions__placeholder-dropdown sensei-bulk-action-select">';
+		$html .= '<option value="0">';
+		$html .= esc_html( __( 'Select Bulk Actions', 'sensei-lms' ) );
+		$html .= '</option>';
+
+		foreach ( $this->controller->get_known_bulk_actions() as $value => $translation ) {
+			$html .= '<option value="' . esc_attr( $value ) . '">' . esc_html( $translation ) . '</option>';
+		}
+
+		$html .= '</select>';
+
+		return $html;
 	}
 
 	/**
@@ -388,14 +426,15 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 					<div class="sensei-student-bulk-actions__bulk_actions_container">
 						<?php
 						echo wp_kses(
-							$this->render_bulk_action_select_box(),
+							$this->get_bulk_action_dropdown_html(),
 							array(
 								'option' => array(
 									'value' => array(),
 								),
 								'select' => array(
-									'id'   => array(),
-									'name' => array(),
+									'id'    => array(),
+									'class' => array(),
+									'name'  => array(),
 								),
 							)
 						);
@@ -531,6 +570,15 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			}
 		} else {
 			$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
+			/**
+			 * Filter the number of items per page for the comments list table.
+			 *
+			 * @hook sensei_comments_per_page
+			 *
+			 * @param {int} $per_page The number of items to be displayed.
+			 * @param {string} $type The type of items to be displayed.
+			 * @return {int} The filtered number of items to be displayed.
+			 */
 			$per_page = absint( apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' ) );
 		}
 
