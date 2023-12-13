@@ -832,18 +832,7 @@ class Sensei_Teacher {
 			return $learners_sql;
 		}
 
-		// For teachers, courses are filtered to those which belong to the teacher
-		// as they don't have access to course belonging to other users.
-		$course_query = new WP_Query(
-			[
-				'posts_per_page' => -1,
-				'post_type'      => 'course',
-				'post_status'    => 'any',
-				'fields'         => 'ids',
-			]
-		);
-
-		$teacher_course_ids = $course_query->posts;
+		$teacher_course_ids = $this->get_teacher_courses( get_current_user_id(), true );
 		if ( ! $teacher_course_ids ) {
 			$teacher_course_ids = [ 0 ]; // Show no learners.
 		}
