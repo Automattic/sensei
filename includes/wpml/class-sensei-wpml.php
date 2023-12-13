@@ -68,8 +68,8 @@ class Sensei_WPML {
 	public function set_language_details_when_lesson_created( $lesson_id, $course_id ) {
 
 		// Get course language_code.
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$language_code = apply_filters(
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			'wpml_element_language_code',
 			null,
 			array(
@@ -106,8 +106,8 @@ class Sensei_WPML {
 	public function set_language_details_when_quiz_created( $quiz_id, $lesson_id ) {
 
 		// Get lesson language_code.
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$language_code = apply_filters(
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			'wpml_element_language_code',
 			null,
 			array(
