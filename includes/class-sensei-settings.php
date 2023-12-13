@@ -854,7 +854,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		if ( Sensei()->feature_flags->is_enabled( 'experimental_features_ui' ) ) {
 			$fields['experimental_progress_storage']                 = array(
 				'name'        => __( 'High-Performance Progress Storage', 'sensei-lms' ),
-				'description' => __( 'Store the progress of your students in separate tables. This feature is currently in development and should be used with caution.', 'sensei-lms' ),
+				'description' => __( 'Store the progress of your students in separate tables.', 'sensei-lms' ),
 				'form'        => 'render_progress_storage_feature',
 				'type'        => 'checkbox',
 				'default'     => false,
@@ -1212,7 +1212,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 				<input type="hidden" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" value="<?php echo esc_attr( $value ); ?>" />
 				<p>
 					<?php
-					echo esc_html( __( 'While HPPS is in its early experimental stage, the functionalities may be temporarily unavailable.', 'sensei-lms' ) );
+					echo esc_html( __( 'As this feature is currently experimental, it may not be available yet on some sites.', 'sensei-lms' ) );
 					?>
 				</p>
 			<?php endif; ?>
