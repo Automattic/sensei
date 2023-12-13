@@ -818,8 +818,10 @@ class Sensei_Teacher {
 	}
 
 	/**
-	 * Filter the learners query to show
-	 * only users that belong to the current logged teacher.
+	 * Filter the learners query to only show learners associated to the current teacher.
+	 *
+	 * To determine if a learner is associated to a teacher, we check if the learner has
+	 * progress for a course that belongs to the teacher.
 	 *
 	 * @since $$next-version$$
 	 *
