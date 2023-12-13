@@ -38,7 +38,7 @@ class Sensei_WPML {
 		*
 		* @param string  $email_address Recipient's email address
 		*/
-		do_action( 'wpml_switch_language_for_email', $email_address );
+		do_action( 'wpml_switch_language_for_email', $email_address ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	}
 
 	/**
@@ -55,7 +55,7 @@ class Sensei_WPML {
 		*
 		* @since 1.9.7
 		*/
-		do_action( 'wpml_restore_language_from_email' );
+		do_action( 'wpml_restore_language_from_email' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	}
 
 	/**
@@ -68,6 +68,7 @@ class Sensei_WPML {
 	public function set_language_details_when_lesson_created( $lesson_id, $course_id ) {
 
 		// Get course language_code.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$language_code = apply_filters(
 			'wpml_element_language_code',
 			null,
@@ -78,6 +79,7 @@ class Sensei_WPML {
 		);
 		if ( ! $language_code ) {
 			// Use current language if course language is not set.
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$language_code = apply_filters( 'wpml_current_language', null );
 		}
 
@@ -89,6 +91,7 @@ class Sensei_WPML {
 		);
 
 		// Set language details for the lesson.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		do_action( 'wpml_set_element_language_details', $args );
 	}
 
@@ -103,6 +106,7 @@ class Sensei_WPML {
 	public function set_language_details_when_quiz_created( $quiz_id, $lesson_id ) {
 
 		// Get lesson language_code.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$language_code = apply_filters(
 			'wpml_element_language_code',
 			null,
@@ -113,6 +117,7 @@ class Sensei_WPML {
 		);
 		if ( ! $language_code ) {
 			// Use current language if lesson language is not set.
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$language_code = apply_filters( 'wpml_current_language', null );
 		}
 
@@ -124,6 +129,7 @@ class Sensei_WPML {
 		);
 
 		// Set language details for the lesson.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		do_action( 'wpml_set_element_language_details', $args );
 	}
 }
