@@ -827,7 +827,7 @@ class Sensei_Teacher {
 	 *
 	 * @return string
 	 */
-	public function filter_learners_query( string $learners_sql ): string {
+	public function filter_learners_query( $learners_sql ) {
 		if ( ! $this->is_admin_teacher() ) {
 			return $learners_sql;
 		}
