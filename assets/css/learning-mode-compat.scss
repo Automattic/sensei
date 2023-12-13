@@ -3,8 +3,8 @@
 $breakpoint: 782px;
 
 /*
-  This style files are only required when the current theme don't provide learning mode customizations.
-  Block based themes should declare add_theme_support('sensei-learning-mode'); to enable customization via theme.json
+  This style file is only required when the current theme doesn't provide customizations for Learning Mode.
+  Block based themes should declare add_theme_support('sensei-learning-mode'); to enable customization via theme.json.
 */
 @import 'sensei-course-theme/theme-fixes';
 @import 'sensei-course-theme/buttons';
