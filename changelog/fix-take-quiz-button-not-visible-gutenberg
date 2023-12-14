@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Resolved the issue of the 'Take Quiz' button not displaying in the site editor when Gutenberg is enabled

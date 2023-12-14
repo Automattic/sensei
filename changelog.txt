@@ -1,5 +1,20 @@
 *** Changelog ***
 
+## 4.20.0 - 2023-12-14
+### Changed
+- Open the Lesson editor in the same tab when link is clicked in the Course Outline block [#7344](https://github.com/Automattic/sensei/pull/7344)
+- Rename "View Quiz" block to "Take Quiz" [#7332](https://github.com/Automattic/sensei/pull/7332)
+
+### Fixed
+- Continue course button not working when using plain permalinks [#7358](https://github.com/Automattic/sensei/pull/7358)
+- Fix preview styles for course blocks on the editor [#7307](https://github.com/Automattic/sensei/pull/7307)
+- Importer not finding existing users in some cases [#7361](https://github.com/Automattic/sensei/pull/7361)
+- Improve styling of Landing Page and Course List patterns [#7292](https://github.com/Automattic/sensei/pull/7292)
+- Resolved the issue of the 'Take Quiz' button not displaying in the site editor when Gutenberg is enabled [#7341](https://github.com/Automattic/sensei/pull/7341)
+- Restart quiz redirects to the course complete page if the course was completed [#7377](https://github.com/Automattic/sensei/pull/7377)
+- Scope CSS to Learning Mode templates only [#7382](https://github.com/Automattic/sensei/pull/7382)
+- Teachers can no longer see all students in the Students screen [#7367](https://github.com/Automattic/sensei/pull/7367)
+
 ## 4.19.2 - 2023-11-23
 ### Added
 - Style Lesson Actions block in Learning Mode [#7224](https://github.com/Automattic/sensei/pull/7224)
