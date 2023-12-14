@@ -145,6 +145,9 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 == Changelog ==
 
 ### 4.20.0 - 2023-12-14
+#### Added
+- Introduce an experimental feature: High-Performance Progress Storage. It allows student progress data to be stored in an optimized way, using custom tables. The feature is disabled by default and can be enabled from the settings page.
+
 #### Changed
 - Open the Lesson editor in the same tab when link is clicked in the Course Outline block [#7344](https://github.com/Automattic/sensei/pull/7344)
 - Rename "View Quiz" block to "Take Quiz" [#7332](https://github.com/Automattic/sensei/pull/7332)
