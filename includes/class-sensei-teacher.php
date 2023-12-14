@@ -823,7 +823,7 @@ class Sensei_Teacher {
 	 * To determine if a learner is associated to a teacher, we check if the learner has
 	 * progress for a course that belongs to the teacher.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.0
 	 *
 	 * @param string $learners_sql The learners SQL query.
 	 *

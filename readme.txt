@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.2
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 4.19.2
+Stable tag: 4.20.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -144,6 +144,24 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.20.0 - 2023-12-14
+#### Added
+- Introduce an experimental feature: High-Performance Progress Storage. It allows student progress data to be stored in an optimized way, using custom tables. The feature is disabled by default and can be enabled from the settings page.
+
+#### Changed
+- Open the Lesson editor in the same tab when link is clicked in the Course Outline block [#7344](https://github.com/Automattic/sensei/pull/7344)
+- Rename "View Quiz" block to "Take Quiz" [#7332](https://github.com/Automattic/sensei/pull/7332)
+
+#### Fixed
+- Continue course button not working when using plain permalinks [#7358](https://github.com/Automattic/sensei/pull/7358)
+- Fix preview styles for course blocks on the editor [#7307](https://github.com/Automattic/sensei/pull/7307)
+- Importer not finding existing users in some cases [#7361](https://github.com/Automattic/sensei/pull/7361)
+- Improve styling of Landing Page and Course List patterns [#7292](https://github.com/Automattic/sensei/pull/7292)
+- Resolved the issue of the 'Take Quiz' button not displaying in the site editor when Gutenberg is enabled [#7341](https://github.com/Automattic/sensei/pull/7341)
+- Restart quiz redirects to the course complete page if the course was completed [#7377](https://github.com/Automattic/sensei/pull/7377)
+- Scope CSS to Learning Mode templates only [#7382](https://github.com/Automattic/sensei/pull/7382)
+- Teachers can no longer see all students in the Students screen [#7367](https://github.com/Automattic/sensei/pull/7367)
+
 ### 4.19.2 - 2023-11-23
 #### Added
 - Style Lesson Actions block in Learning Mode [#7224](https://github.com/Automattic/sensei/pull/7224)
@@ -175,18 +193,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 ### 4.19.1 - 2023-11-06
 #### Fixed
 - Email editor styles getting leaked into other templates in site editor [#7258](https://github.com/Automattic/sensei/pull/7258)
-
-### 4.19.0 - 2023-11-01
-#### Added
-- Add a setting to not allow self-enrollment on courses [#7231](https://github.com/Automattic/sensei/pull/7231)
-
-#### Changed
-- Update style of "Awaiting Grade" notice in Learning Mode [#7197](https://github.com/Automattic/sensei/pull/7197)
-- Update style of "Your Grade" notice in Learning Mode [#7197](https://github.com/Automattic/sensei/pull/7197)
-
-#### Removed
-- Eliminate usage of temporary Course theme hook [#7219](https://github.com/Automattic/sensei/pull/7219)
-
-#### Fixed
-- Fix course notices that are intended to be displayed only on the course page but were currently appearing on the courses archive page [#7231](https://github.com/Automattic/sensei/pull/7231)
-- Fix padding in site editor that prevents full-width alignment from working [#7233](https://github.com/Automattic/sensei/pull/7233)

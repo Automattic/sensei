@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Helpers related to the High-Performance Progress Storage feature.
  *
- * @since $$next-version$$
+ * @since 4.20.0
  */
 trait Sensei_HPPS_Helpers {
 	private function enable_hpps_tables_repository() {
