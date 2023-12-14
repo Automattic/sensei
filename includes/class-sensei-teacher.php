@@ -68,7 +68,7 @@ class Sensei_Teacher {
 
 		add_action( 'pre_get_posts', array( $this, 'filter_queries' ) );
 
-		// Show only the students belonging to the teacher on the students screen.
+		// Filter the learners on the Students screen to only show those associated with the current teacher.
 		add_filter( 'sensei_learners_query', array( $this, 'filter_learners_query' ) );
 
 		// filter the quiz submissions
@@ -818,7 +818,7 @@ class Sensei_Teacher {
 	}
 
 	/**
-	 * Filter the learners query to only show learners associated to the current teacher.
+	 * Filter the learners query to only show learners associated with the current teacher.
 	 *
 	 * To determine if a learner is associated to a teacher, we check if the learner has
 	 * progress for a course that belongs to the teacher.
