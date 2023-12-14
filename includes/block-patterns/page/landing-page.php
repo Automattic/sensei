@@ -1,12 +1,12 @@
 <?php
 /**
- * Landing page with Course List as List.
+ * Landing page with Course List as Grid.
  *
  * @package sensei-lms
  */
 
 ob_start();
-require __DIR__ . '/templates/landing-page-list.php';
+require __DIR__ . '/templates/v2/landing-page.php';
 
 return [
 	'title'      => __( 'Landing Page', 'sensei-lms' ),

@@ -844,11 +844,9 @@ class Sensei_Quiz {
 		$course_id       = Sensei()->lesson->get_course_id( $lesson_id );
 		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
 		if ( $course_progress ) {
-			if ( ! $course_progress->get_started_at() ) {
-				$course_progress->start();
+			$course_progress->start( $course_progress->get_started_at() );
 
-				Sensei()->course_progress_repository->save( $course_progress );
-			}
+			Sensei()->course_progress_repository->save( $course_progress );
 
 			// Reset the course progress metadata.
 			$course_progress_metadata = [

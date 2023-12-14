@@ -1,68 +1,38 @@
 body,
 .editor-styles-wrapper {
-	h5.sensei-pattern-heading {
-		font-size: var( --wp--preset--font-size--medium, 1.75rem );
-	}
-
-	.sensei-pattern-header-link {
-		font-size: var( --wp--preset--font-size--x-small, 1.125rem );
-		font-family: var(--wp--preset--font-family--system);
-	}
-
-	.sensei-pattern-no-underline a {
-		text-decoration: none;
-	}
-
 	.sensei-landing-pattern-header {
 		h1 {
-			font-size: var( --wp--preset--font-size--xx-large );
-			font-family: var( --wp--preset--font-family--heading );
+			font-size: var(--wp--preset--font-size--xx-large, 48px);
+			line-height: var(--wp--preset--font-size--xx-large, 48px);
 		}
 
 		p {
-			font-size: var( --wp--custom--typography--font-sizes--normal, 1.5rem );
-			font-family: var( --wp--preset--font-family--body );
-		}
-
-		.wp-block-button__link {
-			font-size: var( --wp--custom--typography--font-sizes--button, 1.3rem );
-			font-family: var( --wp--preset--font-family--heading );
-		}
-	}
-
-	.wp-sensei-testimonial-pattern {
-		h2 {
-			font-size: var( --wp--preset--font-size--x-large, 3rem );
-			font-family: var( --wp--preset--font-family--heading );
-		}
-
-		h2 + p {
-			font-weight: 700;
-		}
-
-		p {
-			font-size: var( --wp--preset--font-size--x-small, 1.125rem );
-			font-family: var(--wp--preset--font-family--system);
-			font-weight: 400;
+			font-size: var(--wp--preset--font-size--medium);
 		}
 	}
 
 	.sensei-blog-posts-pattern {
-		.wp-block-post-title {
-			font-size: var( --wp--preset--font-size--x-large, 3rem );
-			font-family: var( --wp--preset--font-family--header );
+		.wp-block-post-template {
+			margin: 0;
+			padding: 0;
 		}
 
 		.wp-block-post-excerpt__excerpt {
+			display: -webkit-box;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			display: -webkit-box;
 			-webkit-box-orient: vertical;
 			-webkit-line-clamp: 4;
 		}
 	}
 
-	.sensei-pattern-mail-list .wp-block-button__link {
-		font-size: var( --wp--custom--typography--font-sizes--button );
+	.sensei-pattern-header-link {
+		font-family: var(--wp--preset--font-family--system);
+		font-size: var(--wp--preset--font-size--small);
+	}
+
+	.wp-sensei-testimonial-pattern p {
+		font-family: var(--wp--preset--font-family--system);
+		font-size: var(--wp--preset--font-size--small);
 	}
 }
