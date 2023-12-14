@@ -31,27 +31,18 @@ export default {
 		},
 		innerBlocks: [
 			{
-				name: 'sensei-lms/course-outline-module',
+				name: 'sensei-lms/course-outline-lesson',
 				attributes: {
-					title: __( 'Module', 'sensei-lms' ),
-					description: __( 'About Module', 'sensei-lms' ),
+					title: __( 'Lesson 1', 'sensei-lms' ),
+					id: 1,
+					draft: false,
+					isExample: true,
 				},
-				innerBlocks: [
-					{
-						name: 'sensei-lms/course-outline-lesson',
-						attributes: {
-							title: __( 'Lesson', 'sensei-lms' ),
-							id: 1,
-							draft: false,
-							isExample: true,
-						},
-					},
-				],
 			},
 			{
 				name: 'sensei-lms/course-outline-lesson',
 				attributes: {
-					title: __( 'First Lesson', 'sensei-lms' ),
+					title: __( 'Lesson 2', 'sensei-lms' ),
 					id: 2,
 					draft: false,
 					isExample: true,
@@ -60,7 +51,7 @@ export default {
 			{
 				name: 'sensei-lms/course-outline-lesson',
 				attributes: {
-					title: __( 'Second Lesson', 'sensei-lms' ),
+					title: __( 'Lesson 3', 'sensei-lms' ),
 					id: 3,
 					draft: false,
 					isExample: true,

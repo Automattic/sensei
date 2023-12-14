@@ -1712,9 +1712,10 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 
+		$course_start_date    = new DateTime( '-1 day' );
 		$course_progress_mock = $this->createMock( Course_Progress_Interface::class );
 		$course_progress_mock->method( 'get_started_at' )
-			->willReturn( new DateTime( 'now' ) );
+			->willReturn( $course_start_date );
 
 		$_course_progress_repository     = Sensei()->course_progress_repository;
 		$course_progress_repository_mock = $this->createMock( Course_Progress_Repository_Interface::class );
@@ -1725,7 +1726,46 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$course_progress_mock
-			->expects( $this->never() )
+			->expects( $this->once() )
+			->method( 'start' )
+			->with( $course_start_date );
+
+		/* Act. */
+		Sensei()->course_progress_repository = $course_progress_repository_mock;
+		ob_start();
+		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+		ob_end_clean();
+		Sensei()->course_progress_repository = $_course_progress_repository; // Reset.
+	}
+
+	public function testResetUserLessonData_WhenCourseCompleted_ResetsTheCourseStatus() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id, true );
+
+		$course_progress_mock = $this->createMock( Course_Progress_Interface::class );
+		$course_progress_mock->method( 'get_started_at' )
+			->willReturn( new DateTime() );
+
+		$_course_progress_repository     = Sensei()->course_progress_repository;
+		$course_progress_repository_mock = $this->createMock( Course_Progress_Repository_Interface::class );
+		$course_progress_repository_mock
+			->method( 'get' )
+			->with( $course_id, $user_id )
+			->willReturn( $course_progress_mock );
+
+		/* Assert. */
+		$course_progress_mock
+			->expects( $this->once() )
 			->method( 'start' );
 
 		/* Act. */

@@ -35,6 +35,11 @@ export default createButtonBlockType( {
 				default: __( 'Take Course', 'sensei-lms' ),
 			},
 		},
+		example: {
+			attributes: {
+				align: 'left',
+			},
+		},
 	},
 	invalidUsage: {
 		message: __(

@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Importer not finding existing users in some cases
