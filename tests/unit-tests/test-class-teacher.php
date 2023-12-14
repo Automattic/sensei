@@ -1,7 +1,7 @@
 <?php
 
 class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
-	use Sensei_Test_Login_Helpers;
+	use Sensei_Test_Login_Helpers, Sensei_HPPS_Helpers;
 
 	/**
 	 * Factory object.
@@ -500,5 +500,81 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		Sensei()->teacher->update_course_lessons_author( $course['course_id'], $new_teacher_id );
 
 		$this->assertPostAuthor( $new_teacher_id, $course['lesson_ids'], 'All lessons must be from teacher B now' );
+	}
+
+	public function testFilterLearnersQuery_WhenUserIsNoATeacher_ReturnsSameInput() {
+		// Arrange.
+		set_current_screen( 'sensei-lms_page_sensei_learners' ); // Pretend we're on the students admin screen.
+
+		// Act.
+		$sql = Sensei()->teacher->filter_learners_query( 'WHERE 1=1' );
+
+		// Assert.
+		$this->assertSame( 'WHERE 1=1', $sql );
+	}
+
+	public function testFilterLearnersQuery_WhenHPPSIsEnabledAndTeacherHasCourses_ReturnsCorrectCustomTablesQuery() {
+		$nonteacher_course_id = $this->factory->course->create();
+
+		$this->login_as_teacher();
+		$teacher_course_id_1 = $this->factory->course->create();
+		$teacher_course_id_2 = $this->factory->course->create();
+
+		$this->enable_hpps_tables_repository();
+		set_current_screen( 'sensei-lms_page_sensei_learners' ); // Pretend we're on the students admin screen.
+
+		// Act.
+		$sql = Sensei()->teacher->filter_learners_query( 'WHERE 1=1' );
+
+		// Assert.
+		$expected = "
+INNER JOIN wptests_sensei_lms_progress AS progress ON u.ID = progress.user_id
+WHERE 1=1
+AND progress.post_id IN ($teacher_course_id_1,$teacher_course_id_2)";
+		$this->assertSame( $expected, $sql );
+
+		// Reset.
+		$this->reset_hpps_repository();
+	}
+
+	public function testFilterLearnersQuery_WhenHPPSIsDisabledAndTeacherHasCourses_ReturnsCorrectCommentsQuery() {
+		$nonteacher_course_id = $this->factory->course->create();
+
+		$this->login_as_teacher();
+		$teacher_course_id_1 = $this->factory->course->create();
+		$teacher_course_id_2 = $this->factory->course->create();
+
+		set_current_screen( 'sensei-lms_page_sensei_learners' ); // Pretend we're on the students admin screen.
+
+		// Act.
+		$sql = Sensei()->teacher->filter_learners_query( 'WHERE 1=1' );
+
+		// Assert.
+		$expected = "
+INNER JOIN wptests_comments AS comments ON u.ID = comments.user_id
+WHERE 1=1
+AND comments.comment_post_ID IN ($teacher_course_id_1,$teacher_course_id_2)
+AND comments.comment_type = 'sensei_course_status'";
+		$this->assertSame( $expected, $sql );
+	}
+
+	public function testFilterLearnersQuery_WhenTheTeacherHasNoCourses_ReturnsCourseIdOfZero() {
+		// Arrange.
+		$nonteacher_course_id = $this->factory->course->create();
+
+		$this->login_as_teacher();
+
+		set_current_screen( 'sensei-lms_page_sensei_learners' ); // Pretend we're on the students admin screen.
+
+		// Act.
+		$sql = Sensei()->teacher->filter_learners_query( 'WHERE 1=1' );
+
+		// Assert.
+		$expected = "
+INNER JOIN wptests_comments AS comments ON u.ID = comments.user_id
+WHERE 1=1
+AND comments.comment_post_ID IN (0)
+AND comments.comment_type = 'sensei_course_status'";
+		$this->assertSame( $expected, $sql );
 	}
 }

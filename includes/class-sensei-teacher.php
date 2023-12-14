@@ -1,4 +1,7 @@
 <?php
+
+use Sensei\Internal\Services\Progress_Storage_Settings;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -64,6 +67,9 @@ class Sensei_Teacher {
 		add_filter( 'wp_count_posts', array( $this, 'list_table_counts' ), 10, 3 );
 
 		add_action( 'pre_get_posts', array( $this, 'filter_queries' ) );
+
+		// Filter the learners on the Students screen to only show those associated with the current teacher.
+		add_filter( 'sensei_learners_query', array( $this, 'filter_learners_query' ) );
 
 		// filter the quiz submissions
 		add_filter( 'sensei_check_for_activity', array( $this, 'filter_grading_activity_queries' ) );
@@ -767,7 +773,7 @@ class Sensei_Teacher {
 
 	/**
 	 * Filter the post queries to show
-	 * only lesson /course and users that belong
+	 * only lesson/course that belong
 	 * to the current logged teacher.
 	 *
 	 * @since 1.8.0
@@ -809,6 +815,51 @@ class Sensei_Teacher {
 				$query->set( 'author', apply_filters( 'sensei_filter_queries_set_author', $current_user->ID, $screen->id ) );
 				break;
 		}
+	}
+
+	/**
+	 * Filter the learners query to only show learners associated with the current teacher.
+	 *
+	 * To determine if a learner is associated to a teacher, we check if the learner has
+	 * progress for a course that belongs to the teacher.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $learners_sql The learners SQL query.
+	 *
+	 * @return string
+	 */
+	public function filter_learners_query( $learners_sql ) {
+		if ( ! $this->is_admin_teacher() ) {
+			return $learners_sql;
+		}
+
+		$teacher_course_ids = $this->get_teacher_courses( get_current_user_id(), true );
+		if ( ! $teacher_course_ids ) {
+			$teacher_course_ids = [ 0 ]; // Show no learners.
+		}
+
+		$teacher_course_ids_imploded = implode( ',', array_map( 'absint', $teacher_course_ids ) );
+
+		global $wpdb;
+		if ( Progress_Storage_Settings::is_tables_repository() ) {
+			$replacement_sql = "
+INNER JOIN {$wpdb->prefix}sensei_lms_progress AS progress ON u.ID = progress.user_id
+WHERE 1=1
+AND progress.post_id IN ($teacher_course_ids_imploded)";
+		} else {
+			$replacement_sql = "
+INNER JOIN $wpdb->comments AS comments ON u.ID = comments.user_id
+WHERE 1=1
+AND comments.comment_post_ID IN ($teacher_course_ids_imploded)
+AND comments.comment_type = 'sensei_course_status'";
+		}
+
+		return str_replace(
+			'WHERE 1=1',
+			$replacement_sql,
+			$learners_sql
+		);
 	}
 
 	/**
