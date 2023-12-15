@@ -46,17 +46,19 @@ jest.mock( './first-course-creation-notice' );
 jest.mock( '../../blocks/course-outline/data' );
 
 describe( 'hasPublishedLessonInOutline', () => {
+	beforeEach( () => {
+		hasLessonInOutline.mockImplementation(
+			jest.requireActual( './first-course-creation-notice' )
+				.hasLessonInOutline
+		);
+	} );
+
 	it( 'should return true when there is a lesson in the outline', () => {
 		const blocks = [
 			{
 				name: 'sensei-lms/course-outline-lesson',
 			},
 		];
-
-		hasLessonInOutline.mockImplementation(
-			jest.requireActual( './first-course-creation-notice' )
-				.hasPublishedLessonInOutline
-		);
 
 		const result = hasLessonInOutline( blocks );
 
