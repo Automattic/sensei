@@ -119,6 +119,7 @@ class Sensei_Unit_Tests_Bootstrap {
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-manual-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-scheduler-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-test-redirect-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-hpps-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-background-job-stub.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-sensei-factory.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-wp-unittest-factory-for-post-sensei.php';
