@@ -128,6 +128,7 @@ export const handleFirstCourseCreationHelperNotice = () => {
 		firstCourseNoticeDismissedKey
 	);
 	const noticeId = 'course-outline-block-setup-incomplete';
+	const isNewCourse = window?.sensei?.isNewCourse;
 
 	let noticeCreated = false;
 	let noticeRemoved = false;
@@ -139,7 +140,6 @@ export const handleFirstCourseCreationHelperNotice = () => {
 
 	subscribe( () => {
 		if (
-			isSenseiPatternSelected() &&
 			noticeCreated &&
 			! noticeRemoved &&
 			hasOutlineBlock() &&
@@ -150,9 +150,9 @@ export const handleFirstCourseCreationHelperNotice = () => {
 			removeNotice( noticeId );
 		}
 
-		// If the user selects a Sensei pattern, and the notice hasn't been created, and notice hasn't been dismissed, and either the course outline block hasn't been created OR there are no published lessons in the outline, create the notice.
+		// If the user selects a Sensei pattern or editing an existing Course, and the notice hasn't been created, and notice hasn't been dismissed, and either the course outline block hasn't been created OR there are no published lessons in the outline, create the notice.
 		if (
-			isSenseiPatternSelected() &&
+			( isNewCourse ? isSenseiPatternSelected() : true ) &&
 			! noticeCreated &&
 			! isFirstCourseNoticeDismissed &&
 			! (
