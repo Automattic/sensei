@@ -475,17 +475,25 @@ class Sensei_Course {
 				'before'
 			);
 
-			$course_by_user_args = array(
-				'post_type'      => 'course',
-				'post_status'    => 'any',
+			$lessons_by_user_args = array(
 				'author'         => get_current_user_id(),
+				'fields'         => 'all',
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Runs only once during Course editor loading.
+					array(
+						'key'     => '_lesson_course',
+						'value'   => 0,
+						'compare' => '>',
+					),
+				),
 				'posts_per_page' => 1,
+				'post_status'    => 'any',
+				'post_type'      => 'lesson',
 			);
 
-			$user_courses       = get_posts( $course_by_user_args );
-			$has_created_course = count( $user_courses ) > 0;
+			$user_lessons_query       = new WP_Query( $lessons_by_user_args );
+			$has_lessons_with_courses = count( $user_lessons_query->posts ) > 0;
 
-			if ( ! $has_created_course ) {
+			if ( ! $has_lessons_with_courses ) {
 				Sensei()->assets->enqueue( 'sensei-admin-first-course-creation-notice', 'js/admin/first-course-creation-notice.js', [ 'sensei-admin-course-edit' ], true );
 			}
 		}
