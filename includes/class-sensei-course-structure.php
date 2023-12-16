@@ -529,6 +529,8 @@ class Sensei_Course_Structure {
 		 *
 		 * @since $$next-version$$
 		 *
+		 * @hook sensei_course_structure_lesson_created
+		 *
 		 * @param int $lesson_id Lesson post ID.
 		 * @param int $course_id Course post ID.
 		 */
@@ -569,6 +571,8 @@ class Sensei_Course_Structure {
 		 * Fires after a quiz is created while saving the course structure.
 		 *
 		 * @since $$next-version$$
+		 *
+		 * @hook sensei_course_structure_quiz_created
 		 *
 		 * @param int $quiz_id   Quiz post ID.
 		 * @param int $lesson_id Course post ID.
