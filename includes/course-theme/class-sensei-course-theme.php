@@ -443,7 +443,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @param string|null $post_type The post type to customize.
 	 *
-	 * @return The customization url
+	 * @return string The customization url.
 	 */
 	public static function get_learning_mode_fse_url( string $post_type = null ) : string {
 		// Get the post type manually if not provided.
