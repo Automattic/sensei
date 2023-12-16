@@ -460,7 +460,7 @@ class Sensei_Course_Theme {
 	}
 
 	/**
-	 * Returnds the url for customizing Learning Mode template colors.
+	 * Returns the url for customizing Learning Mode template colors.
 	 */
 	public static function get_learning_mode_customizer_url(): string {
 			// Get the last modified lesson.
