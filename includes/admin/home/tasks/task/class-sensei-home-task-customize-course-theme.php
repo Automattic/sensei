@@ -47,7 +47,7 @@ class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_url(): ?string {
-		return admin_url( 'site-editor.php' );
+		return Sensei_Course_Theme::get_learning_mode_fse_url();
 	}
 
 	/**
