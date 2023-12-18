@@ -128,7 +128,7 @@ class Migration_Job_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.0
 	 *
 	 * @return bool
 	 */
@@ -143,7 +143,7 @@ class Migration_Job_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.0
 	 *
 	 * @return bool
 	 */
@@ -158,7 +158,7 @@ class Migration_Job_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.0
 	 *
 	 * @return bool
 	 */
@@ -173,7 +173,7 @@ class Migration_Job_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.0
 	 *
 	 * @return array
 	 */
@@ -201,7 +201,7 @@ class Migration_Job_Scheduler {
 	 *
 	 * @access private
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.0
 	 * @param string $action_id The action ID.
 	 * @param array  $error     The error.
 	 */
@@ -298,7 +298,7 @@ class Migration_Job_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.0
 	 */
 	public function clear_state(): void {
 		delete_option( self::STATUS_OPTION_NAME );
