@@ -2835,7 +2835,7 @@ class Sensei_Utils {
 	 */
 	public static function format_last_activity_date( string $date ) {
 		$timezone     = new DateTimeZone( 'GMT' );
-		$now          = new DateTime( 'now', $timezone );
+		$now          = Sensei()->clock->now( $timezone );
 		$date         = new DateTime( $date, $timezone );
 		$diff_in_days = $now->diff( $date )->days;
 

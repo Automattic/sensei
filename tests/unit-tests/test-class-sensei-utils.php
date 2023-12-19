@@ -16,6 +16,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
  */
 class Sensei_Utils_Test extends WP_UnitTestCase {
 	use \Sensei_File_System_Helper;
+	use \Sensei_Clock_Helpers;
 
 	/**
 	 * Setup function.
@@ -286,10 +287,14 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	 *
 	 * @dataProvider lastActivityDateTestingData
 	 */
-	public function testFormatLastActivityDate_WhenCalled_ReturnsCorrectlyFormattedDates( $minutes_count, $expected_output ) {
+	public function testFormatLastActivityDate_WhenCalled_ReturnsCorrectlyFormattedDates( $seconds_count, $expected_output ) {
 		/* Arrange */
-		$gmt_time           = gmdate( 'Y-m-d H:i:s', strtotime( '-' . $minutes_count . ' seconds' ) );
-		$date_as_per_format = wp_date( get_option( 'date_format' ), ( new DateTime( $gmt_time ) )->getTimestamp(), new DateTimeZone( 'GMT' ) );
+		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'GMT' ) );
+		$this->set_clock_to( $current_datetime->getTimestamp() );
+
+		$test_time          = $current_datetime->getTimestamp() - $seconds_count;
+		$gmt_time           = gmdate( 'Y-m-d H:i:s', $test_time );
+		$date_as_per_format = wp_date( get_option( 'date_format' ), $test_time, new DateTimeZone( 'GMT' ) );
 
 		/* Act */
 		$actual = Sensei_Utils::format_last_activity_date( $gmt_time );
@@ -297,6 +302,8 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		/* Assert */
 		$expected = empty( $expected_output ) ? $date_as_per_format : $expected_output;
 		self::assertEquals( $expected, $actual, 'Last activity date is not being formatted correctly' );
+
+		$this->reset_clock();
 	}
 
 	public function testSenseiGradeQuiz_WhenCalled_UpdatesTheFinalGrade() {
