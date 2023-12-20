@@ -3,7 +3,7 @@
  */
 import { useDispatch } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { store as editorStore } from '@wordpress/editor';
 
 /**
@@ -46,6 +46,17 @@ const EditorWizardModal = () => {
 		setDefaultPattern();
 		onWizardCompletion();
 	};
+
+	const { setShowWelcomeGuide } =
+		useDispatch( 'automattic/wpcom-welcome-guide' ) ?? {};
+
+	useEffect( () => {
+		if ( setShowWelcomeGuide ) {
+			setShowWelcomeGuide( false, {
+				onlyLocal: true,
+			} );
+		}
+	}, [ setShowWelcomeGuide ] );
 
 	return (
 		open && (
