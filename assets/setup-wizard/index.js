@@ -92,6 +92,7 @@ const SenseiSetupWizardPage = () => {
 	return (
 		<QueryStringRouter
 			paramName={ PARAM_NAME }
+			routes={ steps.map( ( step ) => step.key ) }
 			defaultRoute={ steps[ 0 ].key }
 		>
 			<Fullscreen />
