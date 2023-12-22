@@ -4463,7 +4463,7 @@ class Sensei_Course {
 	 */
 	public static function alter_redirect_url_after_enrolment( $url, $post ) {
 		// Only redirect to the lesson if the course is published.
-		if ( $post->post_status !== 'publish' ) {
+		if ( 'publish' !== $post->post_status ) {
 			return $url;
 		}
 
