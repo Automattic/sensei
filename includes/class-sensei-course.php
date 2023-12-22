@@ -4462,6 +4462,10 @@ class Sensei_Course {
 	 * @return String
 	 */
 	public static function alter_redirect_url_after_enrolment( $url, $post ) {
+		// Only redirect to the lesson if the course is published.
+		if ( $post->post_status !== 'publish' ) {
+			return $url;
+		}
 
 		$course_id = $post->ID;
 		if ( Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
