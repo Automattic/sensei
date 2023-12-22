@@ -246,7 +246,7 @@ class Sensei_Course_Outline_Block {
 	public function frontend_notices() {
 		$post = get_post();
 
-		if ( ! $post || 'course' !== $post->post_type || is_admin() ) {
+		if ( ! is_object( $post ) || 'course' !== $post->post_type || is_admin() ) {
 			return;
 		}
 
@@ -259,7 +259,7 @@ class Sensei_Course_Outline_Block {
 		if ( Sensei_Course::can_current_user_edit_course( $course_id ) ) {
 			$cta = sprintf(
 				'<a href="%s">%s</a>',
-				esc_url( get_edit_post_link( $course_id ) ),
+				esc_url( get_edit_post_link( $course_id ) || '' ),
 				__( 'your lessons', 'sensei-lms' )
 			);
 
@@ -288,7 +288,7 @@ class Sensei_Course_Outline_Block {
 			if ( Sensei_Course::can_current_user_edit_course( $course_id ) ) {
 				$cta = sprintf(
 					'<a href="%s">%s</a>',
-					esc_url( get_edit_post_link( $course_id ) ),
+					esc_url( get_edit_post_link( $course_id ) || '' ),
 					__( 'publish the course', 'sensei-lms' )
 				);
 
