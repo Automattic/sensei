@@ -114,6 +114,7 @@ class Sensei_Usage_Tracking_Data {
 			'paid'     => 0,
 			'courses'  => post_type_exists( 'course' ) ? wp_count_posts( 'course' )->publish : 0,
 			'learners' => self::get_learner_count(),
+			'is_wpcom' => get_option( 'wpcom_active_subscriptions' ) ? 1 : 0,
 		];
 
 		/**
