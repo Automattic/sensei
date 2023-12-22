@@ -8,7 +8,7 @@ use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
  * @group course-structure
  */
 class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
-
+	use Sensei_Test_Login_Helpers;
 	use ArraySubsetAsserts;
 
 	/**
@@ -21,24 +21,43 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		Sensei()->blocks->course->outline->clear_block_content();
 	}
 
-	/**
-	 * Test that a message is shown when there is no content.
-	 */
-	public function testEmptyBlock() {
+	public function testOutlineNotices_WhenNoLessonsAccessingAsStudent_PrintsMessageWithoutCTA() {
+		// Arrange.
+		$this->login_as_student();
+
 		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
 		$property->setAccessible( true );
 		$property->setValue( Sensei()->notices, false );
 
-		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
+		$course_id       = $this->factory->course->create();
+		$GLOBALS['post'] = (object) [
+			'ID'        => $course_id,
+			'post_type' => 'course',
+		];
 
-		$this->mockPostCourseStructure( [] );
+		$outline_block = new Sensei_Course_Outline_Block();
 
+		// Act.
+		$outline_block->frontend_notices();
 		ob_start();
-		do_blocks( $post_content );
 		Sensei()->notices->maybe_print_notices();
 		$result = ob_get_clean();
 
+		// Assert.
 		$this->assertStringContainsString( 'There are no published lessons in this course yet.', $result );
+		$this->assertStringNotContainsString( "When you're ready, let's publish", $result );
+	}
+
+	public function testOutlineBlock_WithoutLessons_ReturnsEmpty() {
+		// Arrange.
+		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
+		$this->mockPostCourseStructure( [] );
+
+		// Act.
+		$result = do_blocks( $post_content );
+
+		// Assert.
+		$this->assertEmpty( $result );
 	}
 
 	/**
