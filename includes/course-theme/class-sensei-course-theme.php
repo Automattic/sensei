@@ -466,7 +466,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @return string The template ID.
 	 */
-	public static function get_learning_mode_template_id ( $post_type = null ) : string {
+	public static function get_learning_mode_template_id( $post_type = null ) : string {
 		return self::THEME_NAME . '//' . $post_type;
 	}
 

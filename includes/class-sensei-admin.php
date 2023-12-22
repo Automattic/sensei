@@ -1891,7 +1891,7 @@ class Sensei_Admin {
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$post_id = isset( $_GET['postId'] ) ? sanitize_text_field( wp_unslash( $_GET['postId'] ) ) : '';
 
-				if ( $post_id === Sensei_Course_Theme::get_learning_mode_template_id( 'lesson' ) ) {
+				if ( Sensei_Course_Theme::get_learning_mode_template_id( 'lesson' ) === $post_id ) {
 					Sensei_Home_Task_Customize_Course_Theme::mark_completed();
 				}
 			}
