@@ -1888,7 +1888,11 @@ class Sensei_Admin {
 		// the site editor or the customizer with the Course theme installed.
 		if ( Sensei_Home_Task_Customize_Course_Theme::is_active() ) {
 			if ( in_array( $pagenow, [ 'site-editor.php', 'customize.php' ], true ) ) {
-				Sensei_Home_Task_Customize_Course_Theme::mark_completed();
+				$post_id = isset( $_GET['postId'] ) ? sanitize_text_field( $_GET['postId'] ) : '';
+
+				if ( $post_id === Sensei_Course_Theme::get_learning_mode_template_id( 'lesson' ) ) {
+					Sensei_Home_Task_Customize_Course_Theme::mark_completed();
+				}
 			}
 		}
 	}

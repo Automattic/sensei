@@ -456,7 +456,18 @@ class Sensei_Course_Theme {
 			$post_type = 'lesson';
 		}
 
-		return admin_url( 'site-editor.php?postType=wp_template&postId=' . self::THEME_NAME . '//' . $post_type );
+		return admin_url( 'site-editor.php?postType=wp_template&postId=' . self::get_learning_mode_template_id( $post_type ) );
+	}
+
+	/**
+	 * Returns the template ID of the post type for Learning Mode.
+	 *
+	 * @param string|null $post_type The post type to generate the template ID for.
+	 *
+	 * @return string The template ID.
+	 */
+	public static function get_learning_mode_template_id ( $post_type = null ) : string {
+		return self::THEME_NAME . '//' . $post_type;
 	}
 
 	/**
