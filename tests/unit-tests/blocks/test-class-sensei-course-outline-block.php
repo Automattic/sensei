@@ -21,13 +21,10 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		Sensei()->blocks->course->outline->clear_block_content();
 	}
 
-	public function testOutlineNotices_WhenNoLessonsAccessingAsStudent_PrintsMessageWithoutCTA() {
+	public function testOutlineNotices_WhenNoLessonsAsStudent_PrintsMessageWithoutCTA() {
 		// Arrange.
 		$this->login_as_student();
-
-		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
-		$property->setAccessible( true );
-		$property->setValue( Sensei()->notices, false );
+		$this->mock_sensei_notices();
 
 		$course_id       = $this->factory->course->create();
 		$GLOBALS['post'] = (object) [
@@ -35,17 +32,107 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 			'post_type' => 'course',
 		];
 
-		$outline_block = new Sensei_Course_Outline_Block();
-
 		// Act.
-		$outline_block->frontend_notices();
-		ob_start();
-		Sensei()->notices->maybe_print_notices();
-		$result = ob_get_clean();
+		$result = $this->render_and_get_frontend_notices();
 
 		// Assert.
 		$this->assertStringContainsString( 'There are no published lessons in this course yet.', $result );
 		$this->assertStringNotContainsString( "When you're ready, let's publish", $result );
+	}
+
+	public function testOutlineNotices_WhenNoLessonsAsAdmin_PrintsMessageWithCTA() {
+		// Arrange.
+		$this->login_as_admin();
+		$this->mock_sensei_notices();
+
+		$course_id       = $this->factory->course->create();
+		$GLOBALS['post'] = (object) [
+			'ID'        => $course_id,
+			'post_type' => 'course',
+		];
+
+		// Act.
+		$result = $this->render_and_get_frontend_notices();
+
+		// Assert.
+		$this->assertStringContainsString( 'There are no published lessons in this course yet.', $result );
+		$this->assertStringContainsString( "When you're ready, let's publish", $result );
+	}
+
+	public function testOutlineNotices_WhenHavingDraftLessonsAsAdmin_PrintsMessageWithCTA() {
+		// Arrange.
+		$this->login_as_admin();
+		$this->mock_sensei_notices();
+
+		$course_id       = $this->factory->course->create();
+		$lesson_id       = $this->factory->lesson->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+		$GLOBALS['post'] = (object) [
+			'ID'        => $course_id,
+			'post_type' => 'course',
+		];
+
+		add_post_meta( $lesson_id, '_lesson_course', $course_id, true );
+
+		// Act.
+		$result = $this->render_and_get_frontend_notices();
+
+		// Assert.
+		$this->assertStringContainsString( 'Unpublished lessons are only visible in preview mode.', $result );
+		$this->assertStringContainsString( "When you're ready, let's publish", $result );
+	}
+
+	public function testOutlineNotices_WhenHavingDraftLessonsAsStudent_PrintsMessageWithoutCTA() {
+		// Arrange.
+		$this->login_as_student();
+		$this->mock_sensei_notices();
+
+		$course_id       = $this->factory->course->create();
+		$lesson_id       = $this->factory->lesson->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+		$GLOBALS['post'] = (object) [
+			'ID'        => $course_id,
+			'post_type' => 'course',
+		];
+
+		add_post_meta( $lesson_id, '_lesson_course', $course_id, true );
+
+		// Act.
+		$result = $this->render_and_get_frontend_notices();
+
+		// Assert.
+		$this->assertStringContainsString( 'There are no published lessons in this course yet.', $result );
+		$this->assertStringNotContainsString( "When you're ready, let's publish", $result );
+	}
+
+	public function testOutlineNotices_WhenComingFromDraftCourseRegistrationRedirect_PrintsMessageWithCTA() {
+		// Arrange.
+		$this->login_as_admin();
+		$this->mock_sensei_notices();
+
+		$course_id           = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+		$GLOBALS['post']     = (object) [
+			'ID'        => $course_id,
+			'post_type' => 'course',
+		];
+		$_GET['draftcourse'] = 'true';
+
+		// Act.
+		$result = $this->render_and_get_frontend_notices();
+
+		// Assert.
+		$this->assertStringContainsString( 'Cannot register for an unpublished course.', $result );
+		$this->assertStringContainsString( 'publish the course', $result );
 	}
 
 	public function testOutlineBlock_WithoutLessons_ReturnsEmpty() {
@@ -266,5 +353,28 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		$instances = new ReflectionProperty( Sensei_Course_Structure::class, 'instances' );
 		$instances->setAccessible( true );
 		$instances->setValue( [ 0 => $mock ] );
+	}
+
+	/**
+	 * Mock Sensei notices.
+	 */
+	private function mock_sensei_notices() {
+		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
+		$property->setAccessible( true );
+		$property->setValue( Sensei()->notices, false );
+	}
+
+	/**
+	 * Render the block and get the frontend notices.
+	 *
+	 * @return string
+	 */
+	private function render_and_get_frontend_notices() {
+		$outline_block = new Sensei_Course_Outline_Block();
+
+		$outline_block->frontend_notices();
+		ob_start();
+		Sensei()->notices->maybe_print_notices();
+		return ob_get_clean();
 	}
 }
