@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { store as editorStore } from '@wordpress/editor';
@@ -50,13 +50,23 @@ const EditorWizardModal = () => {
 	const { setShowWelcomeGuide } =
 		useDispatch( 'automattic/wpcom-welcome-guide' ) ?? {};
 
+	const { isShowWelcomeGuide } = useSelect( ( select ) => {
+		const { isWelcomeGuideShown } =
+			select( 'automattic/wpcom-welcome-guide' ) ?? {};
+		return {
+			isShowWelcomeGuide: isWelcomeGuideShown
+				? isWelcomeGuideShown()
+				: false,
+		};
+	}, [] );
+
 	useEffect( () => {
-		if ( setShowWelcomeGuide ) {
-			setShowWelcomeGuide( false, {
+		if ( setShowWelcomeGuide && isShowWelcomeGuide ) {
+			setShowWelcomeGuide( undefined, {
 				onlyLocal: true,
 			} );
 		}
-	}, [ setShowWelcomeGuide ] );
+	}, [ setShowWelcomeGuide, isShowWelcomeGuide ] );
 
 	return (
 		open && (
