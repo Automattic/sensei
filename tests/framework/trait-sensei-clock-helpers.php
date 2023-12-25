@@ -36,7 +36,6 @@ trait Sensei_Clock_Helpers {
 			$return_values[] = new \DateTimeImmutable( "@$ts", new \DateTimeZone( $timezone ) );
 		}
 
-
 		$clock = $this->createMock( Clock_Interface::class );
 		$clock->method( 'now' )
 			->willReturnOnConsecutiveCalls(

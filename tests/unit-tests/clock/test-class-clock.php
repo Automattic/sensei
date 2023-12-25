@@ -5,6 +5,8 @@ namespace SenseiTest\Clock;
 use Sensei\Clock\Clock;
 
 /**
+ * Test the Clock class.
+ *
  * @covers Sensei\Clock\Clock
  */
 class Clock_Test extends \WP_UnitTestCase {
