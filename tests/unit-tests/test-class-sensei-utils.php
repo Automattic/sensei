@@ -643,7 +643,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	public function testUpdateCourseStatus_WhenPreviousStatusNotFound_PassesNullAsPreviousStatusToTheAction(): void {
 		/* Arrange. */
 		$previous_status = 'not-set';
-		$action = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
+		$action          = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
 			$previous_status = $prev_status;
 		};
 		add_action( 'sensei_course_status_updated', $action, 10, 5 );
@@ -660,7 +660,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		Sensei()->course_progress_repository->create( 2, 1 );
 
 		$previous_status = 'not-set';
-		$action = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
+		$action          = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
 			$previous_status = $prev_status;
 		};
 		add_action( 'sensei_course_status_updated', $action, 10, 5 );
