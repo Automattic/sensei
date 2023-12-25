@@ -82,15 +82,15 @@ class Course_Completed extends Email_Generators_Abstract {
 	/**
 	 * Returns true if the email should be skipped.
 	 *
-	 * @param string      $status     The status.
+	 * @param string      $status          The status.
 	 * @param string|null $previous_status The previous status.
-	 * @param int         $student_id The learner ID.
-	 * @param int         $course_id  The course ID.
+	 * @param int         $course_id       The course ID.
+	 * @param int         $student_id      The learner ID.
 	 * @return bool
 	 */
 	private function should_skip_sending( $status, $previous_status, $course_id, $student_id ) {
 		// Skip sending if the status is not complete or if the status was already complete.
-		if ( 'complete' !== $status || 'complete' === $previous_status) {
+		if ( 'complete' !== $status || 'complete' === $previous_status ) {
 			return true;
 		}
 
