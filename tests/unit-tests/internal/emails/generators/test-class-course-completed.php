@@ -85,7 +85,7 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		);
 
 		/* Act. */
-		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID, 'in-progress' );
+		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID, 0, 'in-progress' );
 
 		/* Assert. */
 		self::assertEquals( 'course_completed', $email_data['name'] );
@@ -123,7 +123,7 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		);
 
 		/* Act. */
-		do_action( 'sensei_course_status_updated', 'in-progress', $student_id, $course->ID, 'in-progress' );
+		do_action( 'sensei_course_status_updated', 'in-progress', $student_id, $course->ID, 0, 'in-progress' );
 
 		/* Assert. */
 		self::assertEmpty( $email_data['name'] );
@@ -156,7 +156,7 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		);
 
 		/* Act. */
-		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID, 'in-progress' );
+		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID, 0, 'in-progress' );
 
 		/* Assert. */
 		self::assertEmpty( $email_data['name'] );
@@ -190,7 +190,7 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		);
 
 		/* Act. */
-		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID, 'complete' );
+		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID, 0, 'complete' );
 
 		/* Assert. */
 		self::assertEmpty( $email_data['name'] );

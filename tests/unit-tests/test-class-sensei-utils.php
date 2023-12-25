@@ -502,7 +502,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( 2, $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsNextLessonIdIfPreviousLessonIsCompleted() {
+	public function testGetTargetResumeId_WhenPreviousLessonWasCompleted_ReturnsNextLessonId() {
 		/* Arrange */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
@@ -520,7 +520,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_lessons['lesson_ids'][1], $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsLastLessonIdIfNotCompleted() {
+	public function testGetTargetResumeId_WhenPreviousLessonWasNotCompleted_ReturnsLastLessonId() {
 		/* Arrange */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
@@ -554,7 +554,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_lessons['lesson_ids'][0], $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfAllLessonsAreCompleted() {
+	public function testGetTargetResumeId_WhenAllLessonsAreCompleted_ReturnsCourseId() {
 		/* Arrange */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
@@ -574,7 +574,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_lessons['course_id'], $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfItHasNoLessons() {
+	public function testGetTargetResumeId_WhenItHasNoLessons_ReturnsCourseId() {
 		/* Arrange */
 		$course_id = $this->factory->course->create();
 		$user_id   = $this->factory->user->create();
@@ -638,5 +638,37 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 		unlink( $index_file );
 		rmdir( $theme_directory );
+	}
+
+	public function testUpdateCourseStatus_WhenPreviousStatusNotFound_PassesNullAsPreviousStatusToTheAction(): void {
+		/* Arrange. */
+		$previous_status = 'not-set';
+		$action = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
+			$previous_status = $prev_status;
+		};
+		add_action( 'sensei_course_status_updated', $action, 10, 5 );
+
+		/* Act. */
+		Sensei_Utils::update_course_status( 1, 2, 'in-progress' );
+
+		/* Assert. */
+		$this->assertNull( $previous_status );
+	}
+
+	public function testUpdateCourseStatus_WhenPreviousStatusFound_PassesSameStatusAsPreviousStatusToTheAction(): void {
+		/* Arrange. */
+		Sensei()->course_progress_repository->create( 2, 1 );
+
+		$previous_status = 'not-set';
+		$action = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
+			$previous_status = $prev_status;
+		};
+		add_action( 'sensei_course_status_updated', $action, 10, 5 );
+
+		/* Act. */
+		Sensei_Utils::update_course_status( 1, 2, 'complete' );
+
+		/* Assert. */
+		$this->assertSame( 'in-progress', $previous_status );
 	}
 }

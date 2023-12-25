@@ -1930,8 +1930,8 @@ class Sensei_Utils {
 	public static function update_course_status( $user_id, $course_id, $status = 'in-progress', $metadata = array() ) {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
-			$existing_status_comment = self::user_course_status( $course_id, $user_id );
-			$previous_status         = $existing_status_comment ? $existing_status_comment->comment_approved : null;
+			$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
+			$previous_status = $course_progress ? $course_progress->get_status() : null;
 
 			$args = array(
 				'user_id'  => $user_id,

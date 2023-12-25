@@ -42,7 +42,7 @@ class Course_Completed extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		$this->maybe_add_action( 'sensei_course_status_updated', [ $this, 'completed_course_mail_to_student' ], 10, 4 );
+		$this->maybe_add_action( 'sensei_course_status_updated', [ $this, 'completed_course_mail_to_student' ], 10, 5 );
 	}
 
 	/**
@@ -51,11 +51,12 @@ class Course_Completed extends Email_Generators_Abstract {
 	 * @param string      $status     The status.
 	 * @param int         $student_id The learner ID.
 	 * @param int         $course_id  The course ID.
+	 * @param int         $comment_id The comment ID.
 	 * @param string|null $previous_status The previous status.
 	 *
 	 * @access private
 	 */
-	public function completed_course_mail_to_student( $status = 'in-progress', $student_id = 0, $course_id = 0, $previous_status = null ) {
+	public function completed_course_mail_to_student( $status = 'in-progress', $student_id = 0, $course_id = 0, $comment_id = 0, $previous_status = null ) {
 
 		if ( $this->should_skip_sending( $status, $previous_status, $course_id, $student_id ) ) {
 			return;
