@@ -1930,6 +1930,9 @@ class Sensei_Utils {
 	public static function update_course_status( $user_id, $course_id, $status = 'in-progress', $metadata = array() ) {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
+			$existing_status_comment = self::user_course_status( $course_id, $user_id );
+			$previous_status         = $existing_status_comment ? $existing_status_comment->comment_approved : null;
+
 			$args = array(
 				'user_id'  => $user_id,
 				'username' => get_userdata( $user_id )->user_login ?? null,
@@ -1945,7 +1948,22 @@ class Sensei_Utils {
 					update_comment_meta( $comment_id, $key, $value );
 				}
 			}
-			do_action( 'sensei_course_status_updated', $status, $user_id, $course_id, $comment_id );
+
+			/**
+			 * Fires when a course status is updated.
+			 *
+			 * @hook sensei_course_status_updated
+			 *
+			 * @since 1.7.0
+			 * @since $$next-version$$ $old_status parameter added.
+			 *
+			 * @param string      $status          The status.
+			 * @param int         $user_id         The user ID.
+			 * @param int         $course_id       The course ID.
+			 * @param int         $comment_id      The comment ID.
+			 * @param string|null $previous_status The old status. Null if previous status was not set.
+			 */
+			do_action( 'sensei_course_status_updated', $status, $user_id, $course_id, $comment_id, $previous_status );
 		}
 		return $comment_id;
 	}
