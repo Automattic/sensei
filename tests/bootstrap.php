@@ -93,8 +93,7 @@ class Sensei_Unit_Tests_Bootstrap {
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-clock-stub.php';
 
 		// Set the clock to a fixed time.
-		$clock = new Sensei_Clock_Stub();
-		return $clock;
+		return new Sensei_Clock_Stub();
 	}
 
 	/**
