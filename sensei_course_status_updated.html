@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_home_promo_banner_show - Sensei LMS Hook Docs</title>
+	<title>Action: sensei_course_status_updated - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_home_promo_banner_show</h1>
+	<h1 class="page-title">Action: sensei_course_status_updated</h1>
 	
 
 	
@@ -43,14 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_home_promo_banner_show">apply_filters( 'sensei_home_promo_banner_show', <span class="signature">$show_promo_banner )</span><span class="type-signature"> &rarr; {bool}</span></h4>
+    <h4 class="name" id="sensei_course_status_updated">do_action( 'sensei_course_status_updated', <span class="signature">string, int, int, int, string|null )</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter to disable the promotional banner in Sensei Home.</p>
+    <p>Fires when a course status is updated.</p>
 </div>
 
 
@@ -84,15 +84,10 @@
 
         <tr>
             
-                <td class="name"><code>$show_promo_banner</code></td>
+                <td class="name"><code>string</code></td>
             
 
             <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
             
             </td>
 
@@ -100,7 +95,79 @@
 
             
 
-            <td class="description last"><p>True if promotional banner must be shown.</p></td>
+            <td class="description last"><p>$status          The status.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>int</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>$user_id         The user ID.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>int</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>$course_id       The course ID.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>int</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>$comment_id      The comment ID.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>string|null</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>$previous_status The previous status. Null if previous status was not set.</p></td>
         </tr>
 
     
@@ -118,7 +185,7 @@
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>4.8.0</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$ $previous_status parameter added.</li></ul></dd>
     
 
     
@@ -144,7 +211,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_admin_home_promo-banner_class-sensei-home-promo-banner-provider.php.html">includes/admin/home/promo-banner/class-sensei-home-promo-banner-provider.php</a>, <a href="includes_admin_home_promo-banner_class-sensei-home-promo-banner-provider.php.html#line22">line 22</a>
+        <a href="includes_class-sensei-utils.php.html">includes/class-sensei-utils.php</a>, <a href="includes_class-sensei-utils.php.html#line1952">line 1952</a>
     </li></ul></dd>
     
 
@@ -167,28 +234,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Filtered value.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">bool</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
