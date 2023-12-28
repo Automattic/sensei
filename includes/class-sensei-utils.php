@@ -1955,13 +1955,13 @@ class Sensei_Utils {
 			 * @hook sensei_course_status_updated
 			 *
 			 * @since 1.7.0
-			 * @since $$next-version$$ $old_status parameter added.
+			 * @since $$next-version$$ $previous_status parameter added.
 			 *
 			 * @param string      $status          The status.
 			 * @param int         $user_id         The user ID.
 			 * @param int         $course_id       The course ID.
 			 * @param int         $comment_id      The comment ID.
-			 * @param string|null $previous_status The old status. Null if previous status was not set.
+			 * @param string|null $previous_status The previous status. Null if previous status was not set.
 			 */
 			do_action( 'sensei_course_status_updated', $status, $user_id, $course_id, $comment_id, $previous_status );
 		}
