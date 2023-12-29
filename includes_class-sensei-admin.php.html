@@ -2175,6 +2175,7 @@ class Sensei_Admin {
 			&lt;script>
 				window.sensei = window.sensei || {};
 				window.sensei.pluginUrl = '&lt;?php echo esc_url( Sensei()->plugin_url ); ?>';
+				window.sensei.isCourseThemeInstalled = &lt;?php echo wp_get_theme( 'course' )->exists() ? 'true' : 'false'; ?>;
 			&lt;/script>
 			&lt;?php
 		}
