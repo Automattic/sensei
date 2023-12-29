@@ -13,6 +13,8 @@ import { useEffect } from '@wordpress/element';
  */
 import QueryStringRouter, { Route, useQueryStringRouter } from './index';
 
+const routes = [ 'one', 'two', 'three' ];
+
 const GoToSecondRoute = () => {
 	const { goTo } = useQueryStringRouter();
 
@@ -26,7 +28,11 @@ const GoToSecondRoute = () => {
 describe( '<Route />', () => {
 	it( 'Should render the default route', () => {
 		const { queryByText } = render(
-			<QueryStringRouter queryStringName="route" defaultRoute="one">
+			<QueryStringRouter
+				queryStringName="route"
+				routes={ routes }
+				defaultRoute="one"
+			>
 				<Route route="one">One</Route>
 				<Route route="two">Two</Route>
 			</QueryStringRouter>
@@ -37,7 +43,11 @@ describe( '<Route />', () => {
 
 	it( 'Should render the current route', () => {
 		const { queryByText } = render(
-			<QueryStringRouter queryStringName="route" defaultRoute="one">
+			<QueryStringRouter
+				queryStringName="route"
+				routes={ routes }
+				defaultRoute="one"
+			>
 				<Route route="one">One</Route>
 				<Route route="two">Two</Route>
 				<GoToSecondRoute />

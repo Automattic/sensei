@@ -2142,6 +2142,7 @@ class Sensei_Admin {
 			<script>
 				window.sensei = window.sensei || {};
 				window.sensei.pluginUrl = '<?php echo esc_url( Sensei()->plugin_url ); ?>';
+				window.sensei.isCourseThemeInstalled = <?php echo wp_get_theme( 'course' )->exists() ? 'true' : 'false'; ?>;
 			</script>
 			<?php
 		}

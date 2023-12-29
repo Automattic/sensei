@@ -65,7 +65,7 @@ const getInstallDescription = ( slug, features ) => {
  * Purpose step for Setup Wizard.
  */
 const Purpose = () => {
-	const { goTo } = useQueryStringRouter();
+	const { goNext } = useQueryStringRouter();
 
 	const {
 		stepData,
@@ -94,10 +94,6 @@ const Purpose = () => {
 		} ) );
 	};
 
-	const goToNextStep = () => {
-		goTo( 'theme' );
-	};
-
 	const submitPage = () => {
 		const features = purposes
 			.filter( ( i ) => i.feature && selected.includes( i.id ) )
@@ -105,7 +101,7 @@ const Purpose = () => {
 
 		submitStep(
 			{ purpose: { selected, other }, features: { selected: features } },
-			{ onSuccess: goToNextStep }
+			{ onSuccess: goNext }
 		);
 	};
 
@@ -193,7 +189,7 @@ const Purpose = () => {
 					<button
 						disabled={ isSubmitting }
 						className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
-						onClick={ goToNextStep }
+						onClick={ goNext }
 					>
 						{ __( 'Skip customization', 'sensei-lms' ) }
 					</button>
