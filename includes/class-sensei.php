@@ -386,7 +386,6 @@ class Sensei_Main {
 		$alloptions            = wp_load_alloptions();
 		$this->install_version = $alloptions['sensei-install-version'] ?? null;
 
-		// Init the clock.
 		/**
 		 * Filter the clock.
 		 *
@@ -397,8 +396,7 @@ class Sensei_Main {
 		 * @param {Clock_Interface} $clock The clock.
 		 * @return {Clock_Interface} Filtered clock.
 		 */
-		$clock       = apply_filters( 'sensei_clock_init', new Clock( wp_timezone() ) );
-		$this->clock = $clock;
+		$this->clock = apply_filters( 'sensei_clock_init', new Clock( wp_timezone() ) );
 
 		// Initialize the core Sensei functionality
 		$this->init();
