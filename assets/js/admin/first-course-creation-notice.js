@@ -11,14 +11,14 @@ import { find as findObject } from 'lodash';
  */
 import { getFirstBlockByName } from '../../blocks/course-outline/data';
 
-export const hasOutlineBlock = () =>
+export const getOutlineBlock = () =>
 	getFirstBlockByName(
 		'sensei-lms/course-outline',
 		select( 'core/block-editor' ).getBlocks()
 	);
 
 export const handleCourseOutlineBlockIncomplete = async () => {
-	let courseOutlineBlock = hasOutlineBlock();
+	let courseOutlineBlock = getOutlineBlock();
 
 	// If the course outline block doesn't exist, create it and insert it.
 	if ( ! courseOutlineBlock ) {
@@ -142,8 +142,8 @@ export const handleFirstCourseCreationHelperNotice = () => {
 		if (
 			noticeCreated &&
 			! noticeRemoved &&
-			hasOutlineBlock() &&
-			hasLessonInOutline( [ hasOutlineBlock() ] )
+			getOutlineBlock() &&
+			hasLessonInOutline( [ getOutlineBlock() ] )
 		) {
 			noticeRemoved = true;
 			noticeCreated = false;
@@ -156,7 +156,7 @@ export const handleFirstCourseCreationHelperNotice = () => {
 			! noticeCreated &&
 			! isFirstCourseNoticeDismissed &&
 			! (
-				hasOutlineBlock() && hasLessonInOutline( [ hasOutlineBlock() ] )
+				getOutlineBlock() && hasLessonInOutline( [ getOutlineBlock() ] )
 			)
 		) {
 			noticeCreated = true;

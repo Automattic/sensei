@@ -7,7 +7,7 @@ import { dispatch, select, subscribe } from '@wordpress/data';
  * Internal dependencies
  */
 import {
-	hasOutlineBlock,
+	getOutlineBlock,
 	handleCourseOutlineBlockIncomplete,
 	handleFirstCourseCreationHelperNotice,
 	hasLessonInOutline,
@@ -81,7 +81,7 @@ describe( 'handleCourseOutlineBlockIncomplete', () => {
 				.handleCourseOutlineBlockIncomplete
 		);
 		getFirstBlockByName.mockClear();
-		hasOutlineBlock.mockClear();
+		getOutlineBlock.mockClear();
 		createBlock.mockClear();
 	} );
 	it( 'should create and insert a block when no course outline block exists', () => {
