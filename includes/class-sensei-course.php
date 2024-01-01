@@ -728,6 +728,17 @@ class Sensei_Course {
 				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
+		register_post_meta(
+			'course',
+			'_new_post',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'default'       => true,
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
+			]
+		);
 		/**
 		 * Sets up the meta fields saved on course save in WP admin.
 		 *
