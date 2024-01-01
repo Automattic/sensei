@@ -2,10 +2,9 @@
  * WordPress dependencies
  */
 import { createBlock } from '@wordpress/blocks';
-import { select, subscribe, dispatch, use } from '@wordpress/data';
+import { select, subscribe, dispatch } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { __ } from '@wordpress/i18n';
-import { find as findObject } from 'lodash';
 /**
  * Internal dependencies
  */
