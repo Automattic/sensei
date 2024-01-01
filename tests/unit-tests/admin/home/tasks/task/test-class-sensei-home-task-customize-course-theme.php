@@ -66,4 +66,14 @@ class Sensei_Home_Task_Customize_Course_Theme_Test extends WP_UnitTestCase {
 		// Assert.
 		$this->assertTrue( $this->task->is_active() );
 	}
+
+	public function testGetTitle_WhenCalled_ReturnsProperTitle() {
+		// Assert.
+		$this->assertEquals( 'Customize your lesson template', $this->task->get_title() );
+	}
+
+	public function testGetURL_WhenCalled_ReturnsFSETemplateURLOfLesson() {
+		// Assert.
+		$this->assertStringContainsString( 'sensei-course-theme//lesson', $this->task->get_url() );
+	}
 }

@@ -16,18 +16,14 @@ import { HOME_PATH } from '../constants';
  * Welcome step for Setup Wizard.
  */
 const Welcome = () => {
-	const { goTo } = useQueryStringRouter();
+	const { goNext } = useQueryStringRouter();
 
 	const { submitStep, isSubmitting, errorNotice } = useSetupWizardStep(
 		'welcome'
 	);
 
-	const onSubmitSuccess = () => {
-		goTo( 'purpose' );
-	};
-
 	const submitPage = () => {
-		submitStep( {}, { onSuccess: onSubmitSuccess } );
+		submitStep( {}, { onSuccess: goNext } );
 	};
 
 	/**
