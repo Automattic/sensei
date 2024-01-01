@@ -18,17 +18,17 @@ export const getOutlineBlock = () =>
 	);
 
 export const handleCourseOutlineBlockIncomplete = async () => {
-	let courseOutlineBlock = getOutlineBlock();
+	const courseOutlineBlock = getOutlineBlock();
 
-	// If the course outline block doesn't exist, create it and insert it.
-	if ( ! courseOutlineBlock ) {
-		const { insertBlock } = dispatch( 'core/block-editor' );
-
-		courseOutlineBlock = createBlock( 'sensei-lms/course-outline' );
-		await insertBlock( courseOutlineBlock );
+	// If the course outline block exists, just select it.
+	if ( courseOutlineBlock ) {
+		dispatch( 'core/editor' ).selectBlock( courseOutlineBlock.clientId );
+		return;
 	}
 
-	dispatch( 'core/editor' ).selectBlock( courseOutlineBlock.clientId );
+	const { insertBlock } = dispatch( 'core/block-editor' );
+
+	insertBlock( createBlock( 'sensei-lms/course-outline' ) );
 };
 
 // If the function isn't globally available, the link button doesn't find the reference.
