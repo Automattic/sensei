@@ -48,80 +48,10 @@ export const hasLessonInOutline = ( blocks ) => {
 	} );
 };
 
-// Detect when a user selects a Sensei pattern.
-let selectedSenseiPattern = false;
-
-export const isSenseiPatternSelected = () => selectedSenseiPattern;
-
-const rewrittenActions = {};
-const originalActions = {};
-
-const checkIfAnySenseiPatternGotInserted = ( ...args ) => {
-	const meta = findObject( args, ( item ) => item?.patternName );
-	let patternName = meta?.patternName;
-	if ( patternName && patternName.includes( 'sensei' ) ) {
-		selectedSenseiPattern = true;
-	}
-};
-
-const REDUX_ACTION_OVERRIDERS = {
-	'core/block-editor': {
-		insertBlocks: checkIfAnySenseiPatternGotInserted,
-	},
-	'core/editor': {
-		resetEditorBlocks: checkIfAnySenseiPatternGotInserted,
-	},
-};
-
-use( ( registry ) => ( {
-	dispatch: ( namespace ) => {
-		const namespaceName =
-			typeof namespace === 'object' ? namespace.name : namespace;
-		const actions = { ...registry.dispatch( namespaceName ) };
-		const overriderActions = REDUX_ACTION_OVERRIDERS[ namespaceName ];
-
-		if ( overriderActions ) {
-			Object.keys( overriderActions ).forEach( ( actionName ) => {
-				const originalAction = actions[ actionName ];
-				const newAction = overriderActions[ actionName ];
-
-				if ( ! rewrittenActions[ namespaceName ] ) {
-					rewrittenActions[ namespaceName ] = {};
-				}
-				if ( ! originalActions[ namespaceName ] ) {
-					originalActions[ namespaceName ] = {};
-				}
-
-				if (
-					! originalActions[ namespaceName ][ actionName ] ||
-					originalActions[ namespaceName ][ actionName ] !==
-						originalAction
-				) {
-					originalActions[ namespaceName ][
-						actionName
-					] = originalAction;
-					rewrittenActions[ namespaceName ][ actionName ] = (
-						...args
-					) => {
-						try {
-							newAction( ...args );
-						} catch ( err ) {}
-						return originalAction( ...args );
-					};
-				}
-
-				actions[ actionName ] =
-					rewrittenActions[ namespaceName ][ actionName ];
-			} );
-		}
-
-		return actions;
-	},
-} ) );
-
 export const handleFirstCourseCreationHelperNotice = () => {
 	const { createInfoNotice, removeNotice } = dispatch( 'core/notices' );
 	const userId = select( 'core' ).getCurrentUser()?.id;
+	const { getEditedPostAttribute } = select( 'core/editor' );
 	const firstCourseNoticeDismissedKey =
 		'sensei-lms-first-course-notice-dismissed-' + userId;
 	const isFirstCourseNoticeDismissed = !! window.localStorage.getItem(
@@ -139,6 +69,9 @@ export const handleFirstCourseCreationHelperNotice = () => {
 	);
 
 	subscribe( () => {
+		const patternSelected =
+			! isNewCourse ||
+			false === getEditedPostAttribute( 'meta' )?._new_post;
 		if (
 			noticeCreated &&
 			! noticeRemoved &&
@@ -152,7 +85,7 @@ export const handleFirstCourseCreationHelperNotice = () => {
 
 		// If the user selects a Sensei pattern or editing an existing Course, and the notice hasn't been created, and notice hasn't been dismissed, and either the course outline block hasn't been created OR there are no published lessons in the outline, create the notice.
 		if (
-			( isNewCourse ? isSenseiPatternSelected() : true ) &&
+			patternSelected &&
 			! noticeCreated &&
 			! isFirstCourseNoticeDismissed &&
 			! (
