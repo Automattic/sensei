@@ -305,7 +305,7 @@ class Sensei_Course_Outline_Block {
 
 		} elseif ( $has_draft ) {
 			// Notice for draft lessons. It only happens for who can read private posts, otherwise draft lessons aren't returned.
-			$message = __( 'Unpublished lessons are only visible in preview mode.', 'sensei-lms' );
+			$message = __( 'Draft lessons are only visible in preview mode.', 'sensei-lms' );
 			if ( $edit_lessons_message ) {
 				$message = $edit_lessons_message . ' ' . $message;
 			}

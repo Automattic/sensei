@@ -81,7 +81,7 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		$result = $this->render_and_get_frontend_notices();
 
 		// Assert.
-		$this->assertStringContainsString( 'Unpublished lessons are only visible in preview mode.', $result );
+		$this->assertStringContainsString( 'Draft lessons are only visible in preview mode.', $result );
 		$this->assertStringContainsString( "When you're ready, let's publish", $result );
 	}
 
