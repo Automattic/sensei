@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Set email template only for sensei_email post type.

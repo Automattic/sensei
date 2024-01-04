@@ -63,7 +63,7 @@ test.describe.serial( 'Setup Wizard @setup', () => {
 
 		test( 'marks purpose step done and goes to features step', async () => {
 			await expect(
-				page.locator( 'text=Use our default theme' )
+				page.locator( 'text=Help us improve your Sensei experience' )
 			).toHaveCount( 1 );
 		} );
 	} );
