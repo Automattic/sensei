@@ -250,31 +250,23 @@ class Sensei_Course_Outline_Block {
 			return;
 		}
 
-		$course_id            = $post->ID;
-		$structure            = Sensei_Course_Structure::instance( $course_id )->get( 'view' );
-		$has_draft            = $this->has_draft( $structure );
-		$edit_lessons_message = '';
-
-		// Complete message with CTA if user can edit the course.
-		if ( Sensei_Course::can_current_user_edit_course( $course_id ) ) {
-			$cta = sprintf(
-				'<a href="%s">%s</a>',
-				esc_url( get_edit_post_link( $course_id ) ?? '' ),
-				__( 'your lessons', 'sensei-lms' )
-			);
-
-			$edit_lessons_message = sprintf(
-				/* translators: %s: Edit course link. */
-				__( "When you're ready, let's publish %s in order to make them available to your students.", 'sensei-lms' ),
-				$cta
-			);
-		}
+		$course_id       = $post->ID;
+		$structure       = Sensei_Course_Structure::instance( $course_id )->get( 'view' );
+		$has_draft       = $this->has_draft( $structure );
+		$can_edit_course = Sensei_Course::can_current_user_edit_course( $course_id );
 
 		// Notice for empty structure. Notice that draft lessons don't return for students, so it's considered empty.
 		if ( empty( $structure ) ) {
 			$message = __( 'There are no published lessons in this course yet.', 'sensei-lms' );
-			if ( $edit_lessons_message ) {
-				$message = $edit_lessons_message . ' ' . $message;
+
+			if ( $can_edit_course ) {
+				$cta = sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( get_edit_post_link( $course_id ) ?? '' ),
+					__( 'Add some now.', 'sensei-lms' )
+				);
+
+				$message = $message . ' ' . $cta;
 			}
 
 			Sensei()->notices->add_notice( $message, 'info', 'sensei-course-outline-no-content' );
@@ -285,7 +277,7 @@ class Sensei_Course_Outline_Block {
 			// Notice when trying to register in a draft course.
 			$message = __( 'Cannot register for an unpublished course.', 'sensei-lms' );
 
-			if ( Sensei_Course::can_current_user_edit_course( $course_id ) ) {
+			if ( $can_edit_course ) {
 				$cta = sprintf(
 					'<a href="%s">%s</a>',
 					esc_url( get_edit_post_link( $course_id ) ?? '' ),
@@ -298,7 +290,7 @@ class Sensei_Course_Outline_Block {
 					$cta
 				);
 
-				$message .= ' ' . $publish_message;
+				$message = $message . ' ' . $publish_message;
 			}
 
 			Sensei()->notices->add_notice( $message, 'info', 'sensei-course-outline-drafts' );
@@ -306,7 +298,28 @@ class Sensei_Course_Outline_Block {
 		} elseif ( $has_draft ) {
 			// Notice for draft lessons. It only happens for who can read private posts, otherwise draft lessons aren't returned.
 			$message = __( 'Draft lessons are only visible in preview mode.', 'sensei-lms' );
-			if ( $edit_lessons_message ) {
+
+			if ( $can_edit_course ) {
+				$link = add_query_arg(
+					[
+						'post_status'   => 'draft',
+						'post_type'     => 'lesson',
+						'lesson_course' => $course_id,
+					],
+					admin_url( 'edit.php' )
+				);
+				$cta  = sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( $link ?? '' ),
+					__( 'your lessons', 'sensei-lms' )
+				);
+
+				$edit_lessons_message = sprintf(
+					/* translators: %s: Edit course link. */
+					__( "When you're ready, let's publish %s in order to make them available to your students.", 'sensei-lms' ),
+					$cta
+				);
+
 				$message = $edit_lessons_message . ' ' . $message;
 			}
 

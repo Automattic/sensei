@@ -56,7 +56,7 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 
 		// Assert.
 		$this->assertStringContainsString( 'There are no published lessons in this course yet.', $result );
-		$this->assertStringContainsString( "When you're ready, let's publish", $result );
+		$this->assertStringContainsString( 'Add some now.', $result );
 	}
 
 	public function testOutlineNotices_WhenHavingDraftLessonsAsAdmin_PrintsMessageWithCTA() {
