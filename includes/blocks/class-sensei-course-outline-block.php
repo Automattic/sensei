@@ -310,7 +310,7 @@ class Sensei_Course_Outline_Block {
 				);
 				$cta  = sprintf(
 					'<a href="%s">%s</a>',
-					esc_url( $link ?? '' ),
+					esc_url( $link ),
 					__( 'your lessons', 'sensei-lms' )
 				);
 
