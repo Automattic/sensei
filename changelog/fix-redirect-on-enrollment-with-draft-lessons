@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Fix an redirect issue when course editor enroll to a course containing only draft lessons
+Redirect properly when course editor enrols in a course containing only draft lessons

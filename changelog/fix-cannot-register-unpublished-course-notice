@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Fix issue with the message "Cannot register for an unpublished course" that was not being displayed
+Message "Cannot register for an unpublished course" was not being displayed
