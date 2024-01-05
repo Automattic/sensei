@@ -267,7 +267,6 @@ class Sensei_Course_Outline_Block {
 					],
 					admin_url( 'edit.php' )
 				);
-
 				$cta  = sprintf(
 					'<a href="%s">%s</a>',
 					esc_url( $link ),
