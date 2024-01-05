@@ -303,10 +303,6 @@ class Sensei_Settings_API {
 			foreach ( $this->tabs as $k => $v ) {
 				$classes = 'tab';
 
-				if ( 'default-settings' === $k ) {
-					$classes .= ' current';
-				}
-
 				$sections[ $k ] = array(
 					'href'  => isset( $v['href'] )
 						? esc_attr( $v['href'] )

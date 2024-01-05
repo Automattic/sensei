@@ -10,9 +10,16 @@ jQuery( document ).ready( function ( $ ) {
 
 	function show( sectionId = '' ) {
 		$senseiSettings.find( `section#${ sectionId }` ).show();
-		$senseiSettings
-			.find( `[href="#${ sectionId }"]` )
-			.addClass( 'current' );
+
+		let $tabLink = $senseiSettings.find(
+			`a.tab[href="${ window.location.href }"]`
+		);
+		if ( ! $tabLink.length ) {
+			$tabLink = $senseiSettings.find( `a.tab[href$="#${ sectionId }"]` );
+		}
+
+		$tabLink.addClass( 'current' );
+
 		sensei_log_event( 'settings_view', { view: sectionId } );
 		markSectionAsVisited( sectionId );
 	}
