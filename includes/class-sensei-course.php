@@ -735,7 +735,7 @@ class Sensei_Course {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'boolean',
-				'default'       => true,
+				'default'       => null,
 				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
