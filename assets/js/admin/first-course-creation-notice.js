@@ -51,6 +51,7 @@ export const handleFirstCourseCreationHelperNotice = () => {
 	const { createInfoNotice, removeNotice } = dispatch( 'core/notices' );
 	const userId = select( 'core' ).getCurrentUser()?.id;
 	const { getEditedPostAttribute } = select( 'core/editor' );
+	const { editPost } = dispatch( 'core/editor' );
 	const firstCourseNoticeDismissedKey =
 		'sensei-lms-first-course-notice-dismissed-' + userId;
 	const isFirstCourseNoticeDismissed = !! window.localStorage.getItem(
@@ -67,10 +68,21 @@ export const handleFirstCourseCreationHelperNotice = () => {
 		'sensei-lms'
 	);
 
+	let isNewPostMetaSet = false;
+
 	subscribe( () => {
+		if ( isNewCourse && ! isNewPostMetaSet ) {
+			if ( getOutlineBlock() ) {
+				isNewPostMetaSet = true;
+				editPost( {
+					meta: { _new_post: true },
+				} );
+			}
+		}
 		const patternSelected =
 			! isNewCourse ||
-			false === getEditedPostAttribute( 'meta' )?._new_post;
+			( isNewPostMetaSet &&
+				false === getEditedPostAttribute( 'meta' )?._new_post );
 		if (
 			noticeCreated &&
 			! noticeRemoved &&
