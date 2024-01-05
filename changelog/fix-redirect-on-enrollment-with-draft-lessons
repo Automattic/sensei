@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Redirect properly when course editor enrols in a course containing only draft lessons
