@@ -16,7 +16,7 @@ export const getOutlineBlock = () =>
 		select( 'core/block-editor' ).getBlocks()
 	);
 
-export const handleCourseOutlineBlockIncomplete = async () => {
+export const handleCourseOutlineBlockIncomplete = () => {
 	const courseOutlineBlock = getOutlineBlock();
 
 	// If the course outline block exists, just select it.
