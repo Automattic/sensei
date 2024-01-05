@@ -74,6 +74,6 @@ class Sensei_Home_Task_Customize_Course_Theme_Test extends WP_UnitTestCase {
 
 	public function testGetURL_WhenCalled_ReturnsFSETemplateURLOfLesson() {
 		// Assert.
-		$this->assertStringContainsString( 'sensei-course-theme//lesson', $this->task->get_url() );
+		$this->assertStringContainsString( 'sensei-course-theme%2F%2Flesson&canvas=edit', $this->task->get_url() );
 	}
 }
