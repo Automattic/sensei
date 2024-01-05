@@ -260,9 +260,17 @@ class Sensei_Course_Outline_Block {
 			$message = __( 'There are no published lessons in this course yet.', 'sensei-lms' );
 
 			if ( $can_edit_course ) {
-				$cta = sprintf(
+				$link = add_query_arg(
+					[
+						'post_type'     => 'lesson',
+						'lesson_course' => $course_id,
+					],
+					admin_url( 'edit.php' )
+				);
+
+				$cta  = sprintf(
 					'<a href="%s">%s</a>',
-					esc_url( get_edit_post_link( $course_id ) ?? '' ),
+					esc_url( $link ),
 					__( 'Add some now.', 'sensei-lms' )
 				);
 
