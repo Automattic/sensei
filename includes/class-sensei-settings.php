@@ -1225,6 +1225,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 				</p>
 			</div>
 		<?php endif; ?>
+			<h4><?php esc_html_e( 'Instructions', 'sensei-lms' ); ?></h4>
+			<p><?php esc_html_e( 'To enable High-Performance Progress Storage, follow these steps:', 'sensei-lms' ); ?></p>
+			<ol>
+				<li><?php esc_html_e( 'Select the "Store the progress of your students in separate tables" checkbox and save the changes.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'Select the "Synchronize the student progress between storages" checkbox and save the changes.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'Wait until the "Migration complete and data synchronization enabled" message is displayed. This may take awhile and you will need to refresh the page to see the updated status.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'Select the "High-Performance progress storage (experimental)" option and save the changes.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'You are now using High-Performance Progress Storage!', 'sensei-lms' ); ?></li>
+			</ol>
+			<p><?php echo wp_kses_post( __( 'To learn more about the feature, check the <a href="https://senseilms.com/documentation/high-performance-progress-storage/" target="_blank">docs</a>.', 'sensei-lms' ) ); ?></p>
 		</div>
 		<?php
 		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
@@ -1246,14 +1256,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$migration_incomplete = ! $migration_scheduler || ! $migration_scheduler->is_complete();
 		?>
 		<div class="sensei-settings__progress-storage-settings" style="display: <?php echo esc_attr( $block_display ); ?>">
-			<h4><?php esc_html_e( 'Instructions', 'sensei-lms' ); ?></h4>
-			<p><?php esc_html_e( 'To enable High-Performance Progress Storage, follow these steps:', 'sensei-lms' ); ?></p>
-			<ol>
-				<li><?php esc_html_e( 'Turn on the storage synchronization.', 'sensei-lms' ); ?></li>
-				<li><?php esc_html_e( 'Wait for the data synchronization migration to complete.', 'sensei-lms' ); ?></li>
-				<li><?php esc_html_e( 'Select the "High-Performance progress storage" option.', 'sensei-lms' ); ?></li>
-			</ol>
-			<p><?php echo wp_kses_post( __( 'Find out more about the feature in the <a href="https://senseilms.com/documentation/high-performance-progress-storage/" target="_blank">docs</a>.', 'sensei-lms' ) ); ?></p>
 			<h4><?php echo esc_html( __( 'Progress storage repository', 'sensei-lms' ) ); ?></h4>
 			<p><?php echo esc_html( $args['data']['description'] ); ?></p>
 			<ul>
