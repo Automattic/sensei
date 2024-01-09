@@ -200,7 +200,7 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 		$this->assertTrue( ( (int) Sensei()->settings->get( 'course_page' ) ) > 0 );
 		$this->assertTrue( ( (int) Sensei()->settings->get( 'my_course_page' ) ) > 0 );
 		$this->assertTrue( ( (int) Sensei()->settings->get( 'course_completed_page' ) ) > 0 );
-  	}
+	}
 
 	public function testConstructor_Always_InitializesClockProperty() {
 		/* Arrange. */
