@@ -31,10 +31,20 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	} );
 
+	/**
+	 * Change the current browser URL.
+	 *
+	 * @param {string} url
+	 */
 	function changeCurrentUrl( url ) {
 		window.history.pushState( {}, null, url );
 	}
 
+	/**
+	 * Update the hidden referer field.
+	 *
+	 * @param {string} url
+	 */
 	function updateReferer( url ) {
 		const urlObject = new URL( url );
 
@@ -42,11 +52,19 @@ jQuery( document ).ready( function ( $ ) {
 			.val( urlObject.pathname + urlObject.search );
 	}
 
+	/**
+	 * Hide all sections.
+	 */
 	function hideAllSections() {
 		$senseiSettings.find( 'section' )
 			.hide();
 	}
 
+	/**
+	 * Show a settings section.
+	 *
+	 * @param {string} sectionId
+	 */
 	function showSection( sectionId ) {
 		hideAllSections();
 		hideSettingsFormElements( sectionId );
@@ -68,12 +86,18 @@ jQuery( document ).ready( function ( $ ) {
 	/**
 	 * Get section id from the current URL.
 	 *
-	 * @returns string
+	 * @returns {string}
 	 */
 	function getCurrentSectionId() {
 		return getSectionIdFromUrl( window.location.href );
 	}
 
+	/**
+	 * Get section id from a URL.
+	 *
+	 * @param {string} url
+	 * @returns {string}
+	 */
 	function getSectionIdFromUrl( url ) {
 		const urlParams = new URLSearchParams( url );
 
@@ -82,12 +106,22 @@ jQuery( document ).ready( function ( $ ) {
 			|| 'default-settings';
 	}
 
+	/**
+	 * Check if a section exists.
+	 *
+	 * @param {string} sectionId
+	 * @returns {boolean}
+	 */
 	function sectionExists( sectionId ) {
 		return $( '#' + sectionId ).length > 0;
 	}
 
-	function hideSettingsFormElements() {
-		const sectionId = getCurrentSectionId();
+	/**
+	 * Hide the header and submit button if there are no settings in the section.
+	 *
+	 * @param {string} sectionId
+	 */
+	function hideSettingsFormElements( sectionId ) {
 		if ( sectionId === 'woocommerce-settings' ) {
 			const formRows = $senseiSettings.find( '#woocommerce-settings tr' );
 			// Hide header and submit if there is not settings form in section
@@ -109,6 +143,11 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	}
 
+	/**
+	 * Hide the header and submit button.
+	 *
+	 * @param {boolean} shouldHide
+	 */
 	function hideHeaderAndSubmit( shouldHide ) {
 		if ( shouldHide ) {
 			$senseiSettings.find( '#submit' ).hide();
@@ -119,6 +158,12 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	}
 
+	/**
+	 * Mark a section as visited.
+	 * This is used to track which sections are being used.
+	 *
+	 * @param {string} sectionId
+	 */
 	function markSectionAsVisited( sectionId ) {
 		const data = new FormData();
 		data.append( 'action', 'sensei_settings_section_visited' );
