@@ -46,7 +46,7 @@ class Sensei_Home_Task_Configure_Learning_Mode implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_url(): ?string {
-		return admin_url( 'admin.php?page=sensei-settings#appearance-settings' );
+		return admin_url( 'admin.php?page=sensei-settings&tab=appearance-settings' );
 	}
 
 	/**
