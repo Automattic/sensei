@@ -258,11 +258,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
 		$this->prevent_wp_redirect();
 
-		try {
-			Sensei_Utils::update_course_status( $student, $this->course2->ID, 'complete' );
-		} catch ( Sensei_WP_Redirect_Exception $e ) {
-			assert( true );
-		}
+		$this->expectException( Sensei_WP_Redirect_Exception::class );
+		Sensei_Utils::update_course_status( $student, $this->course2->ID, 'complete' );
 
 		$_GET['course-list-student-course-filter-13'] = 'completed';
 
@@ -287,11 +284,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		// Complete.
 		$this->prevent_wp_redirect();
 
-		try {
-			Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
-		} catch ( Sensei_WP_Redirect_Exception $e ) {
-			assert( true );
-		}
+		$this->expectException( Sensei_WP_Redirect_Exception::class );
+		Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
 
 		// Featured.
 		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
@@ -323,11 +317,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 
 		$this->prevent_wp_redirect();
 
-		try {
-			Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
-		} catch ( Sensei_WP_Redirect_Exception $e ) {
-			assert( true );
-		}
+		$this->expectException( Sensei_WP_Redirect_Exception::class );
+		Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
 
 		// Featured.
 		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
