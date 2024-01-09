@@ -1,51 +1,105 @@
 jQuery( document ).ready( function ( $ ) {
 	/***** Settings Tabs *****/
 	const $senseiSettings = $( '#woothemes-sensei.sensei-settings' );
-	const PREVIOUS_SECTION_ID_KEY = 'sensei-settings-previous-section-id';
 
-	function hideAllSections() {
-		$senseiSettings.find( 'section' ).hide();
-		$senseiSettings.find( 'a.tab' ).removeClass( 'current' );
-	}
+	// Hide header and submit on page load if needed
+	hideSettingsFormElements();
 
-	function show( sectionId = '' ) {
-		$senseiSettings.find( `section#${ sectionId }` ).show();
+	// Show the current section.
+	showSection( getCurrentSectionId() );
 
-		let $tabLink = $senseiSettings.find(
-			`a.tab[href="${ window.location.href }"]`
-		);
-		if ( ! $tabLink.length ) {
-			$tabLink = $senseiSettings.find( `a.tab[href$="#${ sectionId }"]` );
+	// Switch to the section when the tab is clicked.
+	$senseiSettings.find( 'a.tab:not(.external)' ).on( 'click', function ( e ) {
+		const sectionUrl = $( this ).attr( 'href' );
+		const sectionId = getSectionIdFromUrl( sectionUrl );
+
+		if ( ! sectionExists( sectionId ) ) {
+			return true;
 		}
 
-		$tabLink.addClass( 'current' );
+		changeCurrentUrl( sectionUrl );
+		hideSettingsFormElements();
+		showSection( sectionId );
+
+		e.preventDefault();
+	} );
+
+	// Change the section when the navigates the session history.
+	addEventListener( 'popstate', ( e ) => {
+		const sectionId = getSectionIdFromUrl( window.location.href );
+
+		if ( sectionExists( sectionId ) ) {
+			updateReferer( window.location.href );
+			showSection( sectionId );
+		}
+	} );
+
+	function changeCurrentUrl( url ) {
+		window.history.pushState( {}, null, url );
+
+		updateReferer( url );
+	}
+
+	function updateReferer( url ) {
+		const urlObject = new URL( url );
+
+		$senseiSettings.find( 'input[name="_wp_http_referer"]' )
+			.val( urlObject.pathname + urlObject.search );
+	}
+
+	function hideAllSections() {
+		$senseiSettings.find( 'section' )
+			.hide();
+	}
+
+	function showSection( sectionId ) {
+		hideAllSections();
+
+		$senseiSettings.find( `section#${ sectionId }` )
+			.show();
+
+		$senseiSettings.find( 'a.tab.current' )
+			.removeClass( 'current' )
+
+		$senseiSettings
+			.find( `a.tab[href*="tab=${ sectionId }"]` )
+			.addClass( 'current' );
 
 		sensei_log_event( 'settings_view', { view: sectionId } );
 		markSectionAsVisited( sectionId );
 	}
 
 	/**
-	 * Get section id from the URL hash.
+	 * Get section id from the current URL.
 	 *
-	 * @returns string|null
+	 * @returns string
 	 */
-	function getSectionIdFromUrl() {
-		return window.location.hash?.replace( '#', '' );
+	function getCurrentSectionId() {
+		return getSectionIdFromUrl( window.location.href );
 	}
 
-	// Hide header and submit on page load if needed
-	hideSettingsFormElements();
+	function getSectionIdFromUrl( url ) {
+		const urlParams = new URLSearchParams( url );
+
+		return urlParams.get( 'tab' )
+			|| url.split( '#' )[1]
+			|| 'default-settings';
+	}
+
+	function sectionExists( sectionId ) {
+		return $( '#' + sectionId ).length > 0;
+	}
 
 	function hideSettingsFormElements() {
-		const urlHashSectionId = getSectionIdFromUrl();
-		if ( urlHashSectionId === 'woocommerce-settings' ) {
+		const sectionId = getCurrentSectionId();
+		if ( sectionId === 'woocommerce-settings' ) {
 			const formRows = $senseiSettings.find( '#woocommerce-settings tr' );
 			// Hide header and submit if there is not settings form in section
 			hideHeaderAndSubmit(
 				! formRows.length &&
 					$senseiSettings.find( '#sensei-promo-banner' )
 			);
-		} else if ( urlHashSectionId === 'sensei-content-drip-settings' ) {
+		} else if ( sectionId === 'sensei-content-drip-settings' ) {
 			const formRows = $senseiSettings.find(
 				'#sensei-content-drip-settings tr'
 			);
@@ -67,88 +121,6 @@ jQuery( document ).ready( function ( $ ) {
 			$senseiSettings.find( '#submit' ).show();
 			$senseiSettings.find( 'h2' ).show();
 		}
-	}
-
-	window.onhashchange = hideSettingsFormElements;
-
-	// Show general settings section if no section is selected in url hash.
-	// Otherwise, show the section from the URL hash or the last visited section.
-	const defaultSectionId = 'default-settings';
-	const urlHashSectionId = getSectionIdFromUrl();
-	hideAllSections();
-	if ( urlHashSectionId ) {
-		show( urlHashSectionId );
-	} else if ( hasPreviousSectionId() ) {
-		showPreviousSection();
-	} else {
-		show( defaultSectionId );
-	}
-
-	$senseiSettings.find( 'a.tab' ).on( 'click', function ( e ) {
-		const queryString = window.location.search;
-		const urlParams = new URLSearchParams( queryString );
-
-		const href = $( this ).attr( 'href' );
-		if ( urlParams.has( 'tab' ) || ! href?.includes( '#' ) ) {
-			return true;
-		}
-
-		e.preventDefault();
-		const sectionId = href.split( '#' )[ 1 ];
-		window.location.hash = '#' + sectionId;
-		hideAllSections();
-		show( sectionId );
-		return false;
-	} );
-
-	// Store the current section id in the session when the form is submitted.
-	// This is used to redirect back to the last visited section when the user submits the form.
-	$senseiSettings
-		.find( '#sensei-settings-form' )
-		.on( 'submit', storeCurrentSectionId );
-
-	/**
-	 * Store the current section id in the session.
-	 */
-	function storeCurrentSectionId() {
-		const sectionId = getSectionIdFromUrl();
-
-		if ( sectionId ) {
-			window.sessionStorage.setItem( PREVIOUS_SECTION_ID_KEY, sectionId );
-		}
-	}
-
-	/**
-	 * Get the last visited section id from the session.
-	 *
-	 * @returns string|null
-	 */
-	function getPreviousSectionId() {
-		return window.sessionStorage.getItem( PREVIOUS_SECTION_ID_KEY );
-	}
-
-	/**
-	 * Check if the last visited section id is stored in the session.
-	 *
-	 * @returns boolean
-	 */
-	function hasPreviousSectionId() {
-		return !! getPreviousSectionId();
-	}
-
-	/**
-	 * Show the last visited section and update the URL.
-	 */
-	function showPreviousSection() {
-		const previousSectionId = getPreviousSectionId();
-		if ( ! previousSectionId ) {
-			return;
-		}
-
-		window.location.hash = '#' + previousSectionId;
-		show( previousSectionId );
-
-		window.sessionStorage.removeItem( PREVIOUS_SECTION_ID_KEY );
 	}
 
 	function markSectionAsVisited( sectionId ) {
