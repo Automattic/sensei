@@ -1,5 +1,7 @@
 <?php
 
+use Sensei\Clock\Clock;
+use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Emails\Email_Customization;
 use Sensei\Internal\Installer\Updates_Factory;
@@ -351,6 +353,13 @@ class Sensei_Main {
 	public $action_scheduler;
 
 	/**
+	 * Clock.
+	 *
+	 * @var Clock_Interface
+	 */
+	public $clock;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -376,6 +385,18 @@ class Sensei_Main {
 		// Only set the install version if it is included in alloptions. This prevents a query on every page load.
 		$alloptions            = wp_load_alloptions();
 		$this->install_version = $alloptions['sensei-install-version'] ?? null;
+
+		/**
+		 * Filter the clock.
+		 *
+		 * @hook sensei_clock_init
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {Clock_Interface} $clock The clock.
+		 * @return {Clock_Interface} Filtered clock.
+		 */
+		$this->clock = apply_filters( 'sensei_clock_init', new Clock( wp_timezone() ) );
 
 		// Initialize the core Sensei functionality
 		$this->init();
