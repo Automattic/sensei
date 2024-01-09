@@ -35,6 +35,7 @@ class Settings_Menu_Test extends \WP_UnitTestCase {
 				'name'        => 'Emails',
 				'description' => 'Settings for email notifications sent from your site.',
 				'href'        => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' ),
+				'external'    => true,
 			],
 		];
 		self::assertSame( $expected, $sections );
