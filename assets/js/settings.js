@@ -2,9 +2,6 @@ jQuery( document ).ready( function ( $ ) {
 	/***** Settings Tabs *****/
 	const $senseiSettings = $( '#woothemes-sensei.sensei-settings' );
 
-	// Hide header and submit on page load if needed
-	hideSettingsFormElements();
-
 	// Show the current section.
 	showSection( getCurrentSectionId() );
 
@@ -18,7 +15,7 @@ jQuery( document ).ready( function ( $ ) {
 		}
 
 		changeCurrentUrl( sectionUrl );
-		hideSettingsFormElements();
+		updateReferer( sectionUrl );
 		showSection( sectionId );
 
 		e.preventDefault();
@@ -36,8 +33,6 @@ jQuery( document ).ready( function ( $ ) {
 
 	function changeCurrentUrl( url ) {
 		window.history.pushState( {}, null, url );
-
-		updateReferer( url );
 	}
 
 	function updateReferer( url ) {
@@ -54,6 +49,7 @@ jQuery( document ).ready( function ( $ ) {
 
 	function showSection( sectionId ) {
 		hideAllSections();
+		hideSettingsFormElements( sectionId );
 
 		$senseiSettings.find( `section#${ sectionId }` )
 			.show();
