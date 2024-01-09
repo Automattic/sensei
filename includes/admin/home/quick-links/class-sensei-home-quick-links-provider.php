@@ -53,7 +53,7 @@ class Sensei_Home_Quick_Links_Provider {
 	/**
 	 * Return the correct email notification settings based on the feature flag.
 	 *
-	 * @return array The magical link to create a demo course or the link to edit the demo course.
+	 * @return string The magical link to create a demo course or the link to edit the demo course.
 	 */
 	private function get_email_notification_url() {
 		if ( Sensei()->feature_flags->is_enabled( 'email_customization' ) ) {
