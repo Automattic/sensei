@@ -14,7 +14,7 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$wpml = new Sensei_WPML();
 
-		$filter_applied = false;
+		$filter_applied   = false;
 		$filter_funtction = function( $language_code, $element_data ) use ( &$filter_applied ) {
 			$filter_applied = true;
 			return $language_code;
@@ -40,7 +40,7 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 		};
 		add_filter( 'wpml_element_language_code', $filter_language_code_funtction, 10, 2 );
 
-		$filter_applied = false;
+		$filter_applied   = false;
 		$filter_funtction = function( $language_code ) use ( &$filter_applied ) {
 			$filter_applied = true;
 			return $language_code;
@@ -61,7 +61,7 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$wpml = new Sensei_WPML();
 
-		$filter_applied = false;
+		$filter_applied   = false;
 		$filter_funtction = function( $data ) use ( &$filter_applied ) {
 			$filter_applied = true;
 			return $data;
@@ -82,7 +82,7 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$wpml = new Sensei_WPML();
 
-		$filter_applied = false;
+		$filter_applied   = false;
 		$filter_funtction = function( $language_code, $element_data ) use ( &$filter_applied ) {
 			$filter_applied = true;
 			return $language_code;
@@ -108,7 +108,7 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 		};
 		add_filter( 'wpml_element_language_code', $filter_language_code_funtction, 10, 2 );
 
-		$filter_applied = false;
+		$filter_applied   = false;
 		$filter_funtction = function( $language_code ) use ( &$filter_applied ) {
 			$filter_applied = true;
 			return $language_code;
@@ -128,7 +128,7 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$wpml = new Sensei_WPML();
 
-		$filter_applied = false;
+		$filter_applied   = false;
 		$filter_funtction = function( $data ) use ( &$filter_applied ) {
 			$filter_applied = true;
 			return $data;
