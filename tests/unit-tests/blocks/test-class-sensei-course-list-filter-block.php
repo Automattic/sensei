@@ -9,6 +9,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
+	use Sensei_Test_Redirect_Helpers;
 
 	/**
 	 * Factory for setting up testing data.
@@ -63,6 +64,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	 * Set up the test.
 	 */
 	public function setUp(): void {
+		Sensei()->setup_wizard->pages->create_pages();
 		global $wp_version;
 
 		$version = str_replace( '-src', '', $wp_version );
@@ -254,7 +256,11 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->login_as( $student );
 		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
 		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
+		$this->prevent_wp_redirect();
+
+		$this->expectException( Sensei_WP_Redirect_Exception::class );
 		Sensei_Utils::update_course_status( $student, $this->course2->ID, 'complete' );
+
 		$_GET['course-list-student-course-filter-13'] = 'completed';
 
 		/* ACT */
@@ -276,6 +282,9 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
 		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
 		// Complete.
+		$this->prevent_wp_redirect();
+
+		$this->expectException( Sensei_WP_Redirect_Exception::class );
 		Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
 
 		// Featured.
@@ -305,6 +314,10 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
 		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
 		// Complete.
+
+		$this->prevent_wp_redirect();
+
+		$this->expectException( Sensei_WP_Redirect_Exception::class );
 		Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
 
 		// Featured.

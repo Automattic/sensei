@@ -47,7 +47,12 @@ class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_url(): ?string {
-		return Sensei_Course_Theme::get_learning_mode_fse_url();
+		return add_query_arg(
+			[
+				'canvas' => 'edit',
+			],
+			Sensei_Course_Theme::get_learning_mode_fse_url()
+		);
 	}
 
 	/**
