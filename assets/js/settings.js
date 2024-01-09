@@ -21,7 +21,7 @@ jQuery( document ).ready( function ( $ ) {
 		e.preventDefault();
 	} );
 
-	// Change the section when the navigates the session history.
+	// Change the section when the user navigates the session history.
 	addEventListener( 'popstate', ( e ) => {
 		const sectionId = getSectionIdFromUrl( window.location.href );
 
