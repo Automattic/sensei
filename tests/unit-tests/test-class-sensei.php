@@ -1,6 +1,6 @@
 <?php
 
-use Sensei\Installer\Installer;
+use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 
@@ -200,6 +200,14 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 		$this->assertTrue( ( (int) Sensei()->settings->get( 'course_page' ) ) > 0 );
 		$this->assertTrue( ( (int) Sensei()->settings->get( 'my_course_page' ) ) > 0 );
 		$this->assertTrue( ( (int) Sensei()->settings->get( 'course_completed_page' ) ) > 0 );
+  }
+
+	public function testConstructor_Always_InitializesClockProperty() {
+		/* Arrange. */
+		$sensei = Sensei();
+
+		/* Assert. */
+		$this->assertInstanceOf( Clock_Interface::class, $sensei->clock );
 	}
 
 	/**
