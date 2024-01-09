@@ -1725,6 +1725,7 @@ class Sensei_Main {
 		$this->add_sensei_admin_caps();
 		$this->add_editor_caps();
 		$this->assign_role_caps();
+		Sensei()->setup_wizard->pages->create_pages();
 
 		// Flush rules.
 		add_action( 'activated_plugin', array( __CLASS__, 'activation_flush_rules' ), 10 );
