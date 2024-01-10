@@ -183,9 +183,12 @@ class Sensei_Home_Tasks_Provider {
 		if ( self::$attached_hooks ) {
 			return;
 		}
+
 		self::$attached_hooks = true;
 
-		// Attach the hooks only on atomic sites.
+		add_action( 'save_post_course', [ $this, 'log_course_completion_tasks' ], 10, 3 );
+
+		// Attach some hooks only for Atomic sites.
 		if ( ! Sensei_Utils::is_atomic_platform() ) {
 			return;
 		}
@@ -193,7 +196,6 @@ class Sensei_Home_Tasks_Provider {
 		// Attach the update_tasks_statuses method to filters and actions
 		// that can affect the status of the Sensei Home tasks.
 		add_action( 'save_post_course', [ $this, 'update_tasks_statuses' ] );
-		add_action( 'save_post_course', [ $this, 'log_course_completion_tasks' ], 10, 3 );
 		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'update_tasks_statuses' ] );
 	}
 
