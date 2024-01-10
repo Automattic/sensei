@@ -192,7 +192,8 @@ class Sensei_Home_Tasks_Provider {
 
 		// Attach the update_tasks_statuses method to filters and actions
 		// that can affect the status of the Sensei Home tasks.
-		add_filter( 'save_post_course', [ $this, 'update_tasks_statuses' ] );
+		add_action( 'save_post_course', [ $this, 'update_tasks_statuses' ] );
+		add_action( 'save_post_course', [ $this, 'log_course_completion_tasks' ], 10, 3 );
 		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'update_tasks_statuses' ] );
 	}
 
@@ -211,5 +212,44 @@ class Sensei_Home_Tasks_Provider {
 		// Overwrite the existing values with the new ones before updating.
 		$tasks_statuses = array_merge( get_option( self::CALYPSO_LAUNCHPAD_STATUSES_NAME, [] ), $tasks_statuses );
 		update_option( self::CALYPSO_LAUNCHPAD_STATUSES_NAME, $tasks_statuses );
+	}
+
+	/**
+	 * Logs completion of the "Create your first course" and "Publish your first course" tasks.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post    Post object.
+	 * @param bool    $update  Whether this is an existing post being updated.
+	 */
+	public function log_course_completion_tasks( $post_id, $post, $update ) {
+		if ( ! $update ) {
+			return;
+		}
+
+		if ( (bool) get_option( self::COMPLETED_TASKS_OPTION_KEY, false ) ) {
+			return;
+		}
+
+		// Handle "Create your first course" task completion.
+		if ( 'draft' === $post->post_status ) {
+			$create_first_course_task = new Sensei_Home_Task_Create_First_Course();
+
+			if ( ! $create_first_course_task->is_completed() ) {
+				sensei_log_event( 'home_task_complete', [ 'type' => $create_first_course_task::get_id() ] );
+				update_option( Sensei_Home_Task_Create_First_Course::CREATED_FIRST_COURSE_OPTION_KEY, 1, false );
+			}
+		} elseif ( 'publish' === $post->post_status ) { // Handle "Publish your first course" task completion.
+			$publish_first_course_task = new Sensei_Home_Task_Publish_First_Course();
+
+			// Log task completion event if this is the first published course.
+			if ( ! $publish_first_course_task->is_completed() ) {
+				sensei_log_event( 'home_task_complete', [ 'type' => $publish_first_course_task::get_id() ] );
+				update_option( Sensei_Home_Task_Publish_First_Course::PUBLISHED_FIRST_COURSE_OPTION_KEY, 1, false );
+			}
+		}
 	}
 }
