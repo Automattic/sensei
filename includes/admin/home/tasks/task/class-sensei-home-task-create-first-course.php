@@ -66,8 +66,8 @@ class Sensei_Home_Task_Create_First_Course implements Sensei_Home_Task {
 
 		// Option does not exist.
 		if ( -1 === $task_completed ) {
-			$prefix         = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Safe-ish and rare query.
+			$prefix = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe-ish and should only run once.
 			$result         = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='course' AND post_status IN ('publish', 'draft') AND post_name NOT LIKE %s", "{$prefix}%" ) );
 			$task_completed = ( $result > 0 ) ? 1 : 0;
 
