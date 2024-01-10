@@ -36,13 +36,12 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 		parent::setUp();
 		$this->task    = new Sensei_Home_Task_Publish_First_Course();
 		$this->factory = new Sensei_Factory();
-		self::flush_cache();
-		$this->assertFalse( $this->task->is_completed() );
 	}
 
-	/*
-	 * Tests for the method isCompleted:
-	 */
+	public function tearDown(): void {
+		parent::tearDown();
+		$this->factory->tearDown();
+	}
 
 	/**
 	 * Verifies if isCompleted returns false when there is no course registered.
@@ -50,9 +49,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 	 * @covers Sensei_Home_Task_Publish_First_Course::is_completed
 	 */
 	public function testIsCompleted_NoCourseIsRegistered_ReturnsFalse() {
-		// Arrange
-		self::flush_cache();
-
 		// Act
 		$is_completed = $this->task->is_completed();
 
@@ -73,7 +69,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'draft',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$is_completed = $this->task->is_completed();
@@ -96,7 +91,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'draft',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$is_completed = $this->task->is_completed();
@@ -124,7 +118,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'draft',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$is_completed = $this->task->is_completed();
@@ -146,7 +139,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'publish',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$is_completed = $this->task->is_completed();
@@ -168,7 +160,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'publish',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$is_completed = $this->task->is_completed();
@@ -196,7 +187,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'publish',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$is_completed = $this->task->is_completed();
@@ -225,7 +215,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'draft',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$is_completed = $this->task->is_completed();
@@ -253,7 +242,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'publish',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$url = $this->task->get_url();
@@ -275,7 +263,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'publish',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$url = $this->task->get_url();
@@ -290,9 +277,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 	 * @covers Sensei_Home_Task_Publish_First_Course::get_url
 	 */
 	public function testGetUrl_NoCourseIsRegistered_ReturnsCreateANewPost() {
-		// Arrange
-		self::flush_cache();
-
 		// Act
 		$url = $this->task->get_url();
 
@@ -315,7 +299,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'draft',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$url = $this->task->get_url();
@@ -338,7 +321,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'draft',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$url = $this->task->get_url();
