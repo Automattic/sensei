@@ -2,33 +2,134 @@ jQuery( document ).ready( function ( $ ) {
 	/***** Settings Tabs *****/
 	const $senseiSettings = $( '#woothemes-sensei.sensei-settings' );
 
-	function hideAllSections() {
-		$senseiSettings.find( 'section' ).hide();
-		$senseiSettings.find( 'a.tab' ).removeClass( 'current' );
+	// Show the current section.
+	showSection( getCurrentSectionId() );
+
+	// Switch to the section when the tab is clicked.
+	$senseiSettings.find( 'a.tab:not(.external)' ).on( 'click', function ( e ) {
+		const sectionUrl = $( this ).attr( 'href' );
+		const sectionId = getSectionIdFromUrl( sectionUrl );
+
+		if ( ! sectionExists( sectionId ) ) {
+			return true;
+		}
+
+		changeCurrentUrl( sectionUrl );
+		updateReferer( sectionUrl );
+		showSection( sectionId );
+
+		e.preventDefault();
+	} );
+
+	// Change the section when the user navigates the session history.
+	addEventListener( 'popstate', ( e ) => {
+		const sectionId = getSectionIdFromUrl( window.location.href );
+
+		if ( sectionExists( sectionId ) ) {
+			updateReferer( window.location.href );
+			showSection( sectionId );
+		}
+	} );
+
+	/**
+	 * Change the current browser URL.
+	 *
+	 * @param {string} url
+	 */
+	function changeCurrentUrl( url ) {
+		window.history.pushState( {}, null, url );
 	}
 
-	function show( sectionId = '' ) {
-		$senseiSettings.find( `section#${ sectionId }` ).show();
+	/**
+	 * Update the hidden referer field.
+	 *
+	 * @param {string} url
+	 */
+	function updateReferer( url ) {
+		const urlObject = new URL( url );
+
+		$senseiSettings.find( 'input[name="_wp_http_referer"]' )
+			.val( urlObject.pathname + urlObject.search );
+	}
+
+	/**
+	 * Hide all sections.
+	 */
+	function hideAllSections() {
+		$senseiSettings.find( 'section' )
+			.hide();
+	}
+
+	/**
+	 * Show a settings section.
+	 *
+	 * @param {string} sectionId
+	 */
+	function showSection( sectionId ) {
+		hideAllSections();
+		hideSettingsFormElements( sectionId );
+
+		$senseiSettings.find( `section#${ sectionId }` )
+			.show();
+
+		$senseiSettings.find( 'a.tab.current' )
+			.removeClass( 'current' )
+
 		$senseiSettings
-			.find( `[href="#${ sectionId }"]` )
+			.find( `a.tab[href*="tab=${ sectionId }"]` )
 			.addClass( 'current' );
+
 		sensei_log_event( 'settings_view', { view: sectionId } );
 		markSectionAsVisited( sectionId );
 	}
 
-	// Hide header and submit on page load if needed
-	hideSettingsFormElements();
+	/**
+	 * Get section id from the current URL.
+	 *
+	 * @returns {string}
+	 */
+	function getCurrentSectionId() {
+		return getSectionIdFromUrl( window.location.href );
+	}
 
-	function hideSettingsFormElements() {
-		const urlHashSectionId = window.location.hash?.replace( '#', '' );
-		if ( urlHashSectionId === 'woocommerce-settings' ) {
+	/**
+	 * Get section id from a URL.
+	 *
+	 * @param {string} url
+	 * @returns {string}
+	 */
+	function getSectionIdFromUrl( url ) {
+		const urlParams = new URLSearchParams( url );
+
+		return urlParams.get( 'tab' )
+			|| url.split( '#' )[1]
+			|| 'default-settings';
+	}
+
+	/**
+	 * Check if a section exists.
+	 *
+	 * @param {string} sectionId
+	 * @returns {boolean}
+	 */
+	function sectionExists( sectionId ) {
+		return $( '#' + sectionId ).length > 0;
+	}
+
+	/**
+	 * Hide the header and submit button if there are no settings in the section.
+	 *
+	 * @param {string} sectionId
+	 */
+	function hideSettingsFormElements( sectionId ) {
+		if ( sectionId === 'woocommerce-settings' ) {
 			const formRows = $senseiSettings.find( '#woocommerce-settings tr' );
 			// Hide header and submit if there is not settings form in section
 			hideHeaderAndSubmit(
 				! formRows.length &&
 					$senseiSettings.find( '#sensei-promo-banner' )
 			);
-		} else if ( urlHashSectionId === 'sensei-content-drip-settings' ) {
+		} else if ( sectionId === 'sensei-content-drip-settings' ) {
 			const formRows = $senseiSettings.find(
 				'#sensei-content-drip-settings tr'
 			);
@@ -42,6 +143,11 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	}
 
+	/**
+	 * Hide the header and submit button.
+	 *
+	 * @param {boolean} shouldHide
+	 */
 	function hideHeaderAndSubmit( shouldHide ) {
 		if ( shouldHide ) {
 			$senseiSettings.find( '#submit' ).hide();
@@ -52,35 +158,12 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	}
 
-	window.onhashchange = hideSettingsFormElements;
-
-	// Show general settings section if no section is selected in url hasn.
-	const defaultSectionId = 'default-settings';
-	const urlHashSectionId = window.location.hash?.replace( '#', '' );
-	hideAllSections();
-	if ( urlHashSectionId ) {
-		show( urlHashSectionId );
-	} else {
-		show( defaultSectionId );
-	}
-
-	$senseiSettings.find( 'a.tab' ).on( 'click', function ( e ) {
-		const queryString = window.location.search;
-		const urlParams = new URLSearchParams( queryString );
-
-		const href = $( this ).attr( 'href' );
-		if ( urlParams.has( 'tab' ) || ! href?.includes( '#' ) ) {
-			return true;
-		}
-
-		e.preventDefault();
-		const sectionId = href.split( '#' )[ 1 ];
-		window.location.hash = '#' + sectionId;
-		hideAllSections();
-		show( sectionId );
-		return false;
-	} );
-
+	/**
+	 * Mark a section as visited.
+	 * This is used to track which sections are being used.
+	 *
+	 * @param {string} sectionId
+	 */
 	function markSectionAsVisited( sectionId ) {
 		const data = new FormData();
 		data.append( 'action', 'sensei_settings_section_visited' );

@@ -309,9 +309,6 @@
       <code>$extensions</code>
       <code>self::$instance</code>
     </DocblockTypeContradiction>
-    <InvalidPropertyAssignmentValue occurrences="1">
-      <code>new Sensei_Setup_Wizard_Pages()</code>
-    </InvalidPropertyAssignmentValue>
     <InvalidPropertyFetch occurrences="1">
       <code>$extension-&gt;price</code>
     </InvalidPropertyFetch>
@@ -324,9 +321,6 @@
     <PossiblyNullPropertyFetch occurrences="1">
       <code>$screen-&gt;id</code>
     </PossiblyNullPropertyFetch>
-    <UndefinedDocblockClass occurrences="1">
-      <code>Sensei_Setup</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="includes/admin/class-sensei-status.php">
     <DocblockTypeContradiction occurrences="2">
@@ -462,18 +456,6 @@
     <RedundantPropertyInitializationCheck occurrences="1">
       <code>isset( $this-&gt;local_plugin_updates )</code>
     </RedundantPropertyInitializationCheck>
-  </file>
-  <file src="includes/admin/home/quick-links/class-sensei-home-quick-links-provider.php">
-    <InvalidArgument occurrences="1">
-      <code>$this-&gt;get_email_notification_url()</code>
-    </InvalidArgument>
-    <InvalidReturnStatement occurrences="2">
-      <code>'/admin.php?page=sensei-settings#email-notification-settings'</code>
-      <code>'admin.php?page=sensei-settings&amp;tab=email-notification-settings'</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>array</code>
-    </InvalidReturnType>
   </file>
   <file src="includes/admin/home/tasks/class-sensei-home-tasks-provider.php">
     <PossiblyInvalidPropertyFetch occurrences="1">
@@ -735,18 +717,11 @@
     </PossiblyFalseArgument>
   </file>
   <file src="includes/blocks/class-sensei-continue-course-block.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$course_id</code>
-    </DocblockTypeContradiction>
-    <PossiblyFalseArgument occurrences="4">
+    <PossiblyFalseArgument occurrences="3">
       <code>$course_id</code>
       <code>$course_id</code>
       <code>$course_id</code>
-      <code>get_permalink( absint( $target_post_id ?? $course_id ) )</code>
     </PossiblyFalseArgument>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$target_post_id</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="includes/blocks/class-sensei-course-blocks.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -1080,10 +1055,6 @@
     <TooManyArguments occurrences="1">
       <code>esc_html( sprintf( __( 'Please supply a %1$s ID.', 'sensei-lms' ) ), $post_type )</code>
     </TooManyArguments>
-    <UndefinedDocblockClass occurrences="2">
-      <code>Sensei()-&gt;setup_wizard-&gt;pages</code>
-      <code>Sensei()-&gt;setup_wizard-&gt;pages</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="includes/class-sensei-analysis-course-list-table.php">
     <ArgumentTypeCoercion occurrences="1"/>
@@ -2877,9 +2848,7 @@
     <DeprecatedProperty occurrences="1">
       <code>$this-&gt;file</code>
     </DeprecatedProperty>
-    <DocblockTypeContradiction occurrences="7">
-      <code>! $encoded_feedback</code>
-      <code>! $encoded_feedback</code>
+    <DocblockTypeContradiction occurrences="5">
       <code>! is_array( $quiz_answers )</code>
       <code>! is_array( $quiz_answers )</code>
       <code>! is_array( $unprepared_answers )</code>
@@ -3896,7 +3865,6 @@
       <code>! self::$instance</code>
       <code>self::$instance</code>
     </DocblockTypeContradiction>
-    <InvalidArgument occurrences="1"/>
     <MissingPropertyType occurrences="1">
       <code>Sensei()-&gt;plugin_url</code>
     </MissingPropertyType>
@@ -3915,9 +3883,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$original_theme</code>
     </PropertyNotSetInConstructor>
-    <UndefinedDocblockClass occurrences="1">
-      <code>The</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="includes/course-video/blocks/class-sensei-course-video-blocks-embed-extension.php">
     <DeprecatedMethod occurrences="2">
@@ -5983,9 +5948,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Setup_Wizard_Controller</code>
     </PropertyNotSetInConstructor>
-    <UndefinedDocblockClass occurrences="1">
-      <code>$this-&gt;setup_wizard-&gt;pages</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-theme-controller.php">
     <ArgumentTypeCoercion occurrences="1"/>

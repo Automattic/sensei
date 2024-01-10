@@ -35,7 +35,7 @@ const CourseThemeSidebar = () => {
 		>
 			{ globalLearningModeEnabled ? (
 				<p>
-					<a href="/wp-admin/admin.php?page=sensei-settings#appearance-settings">
+					<a href="/wp-admin/admin.php?page=sensei-settings&tab=appearance-settings">
 						{ __(
 							'Learning Mode is enabled globally.',
 							'sensei-lms'
@@ -56,7 +56,7 @@ const CourseThemeSidebar = () => {
 						}
 					/>
 					<p>
-						<a href="/wp-admin/admin.php?page=sensei-settings#appearance-settings">
+						<a href="/wp-admin/admin.php?page=sensei-settings&tab=appearance-settings">
 							{ __( 'Change Template', 'sensei-lms' ) }
 						</a>
 					</p>
