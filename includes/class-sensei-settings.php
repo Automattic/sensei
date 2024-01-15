@@ -860,6 +860,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 				'default'     => false,
 				'section'     => 'sensei-experimental-features',
 			);
+			$fields['experimental_progress_storage_synchronization'] = array(
+				'name'        => '',
+				'description' => __( 'Synchronize the student progress between storages.', 'sensei-lms' ),
+				'form'        => 'render_progress_storage_synchronization',
+				'type'        => 'checkbox',
+				'default'     => false,
+				'section'     => 'sensei-experimental-features',
+			);
 			$fields['experimental_progress_storage_repository']      = array(
 				'name'        => '', // ,
 				'description' => __( 'Choose a repository to store the progress and quiz submissions of your students.', 'sensei-lms' ),
@@ -868,14 +876,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 				'default'     => Progress_Storage_Settings::COMMENTS_STORAGE,
 				'section'     => 'sensei-experimental-features',
 				'options'     => Progress_Storage_Settings::get_storage_repositories(),
-			);
-			$fields['experimental_progress_storage_synchronization'] = array(
-				'name'        => '',
-				'description' => __( 'Synchronize the student progress between storages.', 'sensei-lms' ),
-				'form'        => 'render_progress_storage_synchronization',
-				'type'        => 'checkbox',
-				'default'     => false,
-				'section'     => 'sensei-experimental-features',
 			);
 		}
 
