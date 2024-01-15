@@ -1579,9 +1579,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 			if ( isset( $_POST['section_id'] ) ) {
 				$section_id = sanitize_key( $_POST['section_id'] );
 				$visited    = get_option( self::VISITED_SECTIONS_OPTION_KEY, [] );
+
 				if ( ! in_array( $section_id, $visited, true ) ) {
 					$visited[] = $section_id;
 					update_option( self::VISITED_SECTIONS_OPTION_KEY, $visited );
+
+					if ( 'appearance-settings' === $section_id ) {
+						sensei_log_event( 'home_task_complete', [ 'type' => Sensei_Home_Task_Configure_Learning_Mode::get_id() ] );
+					}
 				}
 			}
 		}
