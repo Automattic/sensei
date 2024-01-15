@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.8.0
  */
 class Sensei_Home_Task_Create_First_Course implements Sensei_Home_Task {
+	const CREATED_FIRST_COURSE_OPTION_KEY = 'sensei_home_task_created_first_course';
+
 	/**
 	 * The ID for the task.
 	 *
@@ -59,21 +61,19 @@ class Sensei_Home_Task_Create_First_Course implements Sensei_Home_Task {
 	 */
 	public function is_completed(): bool {
 		global $wpdb;
-		$cache_key   = 'home/tasks/create-first-course';
-		$cache_group = 'sensei/temporary';
-		$result      = wp_cache_get( $cache_key, $cache_group );
-		if ( false === $result ) {
-			$prefix = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Safe-ish and rare query.
-			$result = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='course' AND post_status IN ('publish', 'draft') AND post_name NOT LIKE %s", "{$prefix}%" ) );
-			if ( null === $result ) {
-				$result = 0;
-			} else {
-				$result = (int) $result;
-				wp_cache_set( $cache_key, $result, $cache_group, 60 );
-			}
-		}
-		return $result > 0;
-	}
 
+		$task_completed = get_option( self::CREATED_FIRST_COURSE_OPTION_KEY, -1 );
+
+		// Option does not exist.
+		if ( -1 === $task_completed ) {
+			$prefix = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe-ish and should only run once.
+			$result         = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='course' AND post_status IN ('publish', 'draft') AND post_name NOT LIKE %s", "{$prefix}%" ) );
+			$task_completed = ( $result > 0 ) ? 1 : 0;
+
+			update_option( self::CREATED_FIRST_COURSE_OPTION_KEY, $task_completed, false );
+		}
+
+		return (bool) $task_completed;
+	}
 }

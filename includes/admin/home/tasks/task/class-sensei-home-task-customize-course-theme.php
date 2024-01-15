@@ -71,6 +71,7 @@ class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	 */
 	public static function mark_completed() {
 		update_option( self::CUSTOMIZED_COURSE_THEME_OPTION_KEY, true, false );
+		sensei_log_event( 'home_task_complete', [ 'type' => self::get_id() ] );
 	}
 
 	/**
