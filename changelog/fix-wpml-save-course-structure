@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Add translations for lessons and quizzes that were created while saving the course structure
+WPML compatibility fix: Add translations for lessons and quizzes that were created while saving the course structure.

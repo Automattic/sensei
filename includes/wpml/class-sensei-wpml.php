@@ -62,6 +62,9 @@ class Sensei_WPML {
 	 * Set language details for the lesson when it is created.
 	 *
 	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
 	 */
@@ -74,7 +77,7 @@ class Sensei_WPML {
 			null,
 			array(
 				'element_id'   => $course_id,
-				'element_type' => 'post_course',
+				'element_type' => 'course',
 			)
 		);
 		if ( ! $language_code ) {
@@ -96,9 +99,11 @@ class Sensei_WPML {
 	}
 
 	/**
-	 * Set language details for the lesson when it is created.
+	 * Set language details for the quiz when it is created.
 	 *
 	 * @since $$next-version$$
+	 *
+	 * @internal
 	 *
 	 * @param int $quiz_id   Quiz ID.
 	 * @param int $lesson_id Lesson ID.
@@ -112,7 +117,7 @@ class Sensei_WPML {
 			null,
 			array(
 				'element_id'   => $lesson_id,
-				'element_type' => 'post_lesson',
+				'element_type' => 'lesson',
 			)
 		);
 		if ( ! $language_code ) {

@@ -531,8 +531,8 @@ class Sensei_Course_Structure {
 		 *
 		 * @hook sensei_course_structure_lesson_created
 		 *
-		 * @param int $lesson_id Lesson post ID.
-		 * @param int $course_id Course post ID.
+		 * @param {int} $lesson_id Lesson post ID.
+		 * @param {int} $course_id Course post ID.
 		 */
 		do_action( 'sensei_course_structure_lesson_created', $lesson_id, $this->course_id );
 
@@ -574,8 +574,8 @@ class Sensei_Course_Structure {
 		 *
 		 * @hook sensei_course_structure_quiz_created
 		 *
-		 * @param int $quiz_id   Quiz post ID.
-		 * @param int $lesson_id Course post ID.
+		 * @param {int} $quiz_id   Quiz post ID.
+		 * @param {int} $lesson_id Course post ID.
 		 */
 		do_action( 'sensei_course_structure_quiz_created', $quiz_id, $lesson_id );
 	}
