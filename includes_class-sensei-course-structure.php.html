@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Source: includes/class-sensei-course-structure.php - Sensei LMS Hook Docs</title>
+
+	<script src="scripts/prettify/prettify.js"> </script>
+	<script src="scripts/prettify/lang-css.js"> </script>
+	<!--[if lt IE 9]>
+	  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+	<link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+
+	<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono|IBM+Plex+Sans:300,400|Playfair+Display:900&display=swap" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div id="main">
+
+	
+	<h1 class="page-title">Source: includes/class-sensei-course-structure.php</h1>
+	
+
+	
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;?php
+/**
+ * File containing the class Sensei_Course_Structure.
+ *
+ * @package sensei
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Contains methods for retrieving and saving a Sensei course's structure.
+ *
+ * @since 3.6.0
+ */
+class Sensei_Course_Structure {
+	/**
+	 * Course instances.
+	 *
+	 * @var self[]
+	 */
+	private static $instances = [];
+
+	/**
+	 * The course post ID.
+	 *
+	 * @var int
+	 */
+	private $course_id;
+
+	/**
+	 * Get an instance of this class for a course.
+	 *
+	 * @param int $course_id The course post ID.
+	 *
+	 * @return static
+	 */
+	public static function instance( int $course_id ) : self {
+		if ( ! isset( self::$instances[ $course_id ] ) ) {
+			self::$instances[ $course_id ] = new static( $course_id );
+		}
+
+		return self::$instances[ $course_id ];
+	}
+
+	/**
+	 * Sensei_Course_Structure constructor.
+	 *
+	 * @param int $course_id The course post ID.
+	 */
+	private function __construct( int $course_id ) {
+		$this->course_id = $course_id;
+	}
+
+	/**
+	 * Get the course structure.
+	 *
+	 * @see Sensei_Course_Structure::prepare_lesson()
+	 * @see Sensei_Course_Structure::prepare_module()
+	 *
+	 * @param string  $context  Context that structure is being retrieved for. Possible values: edit, view.
+	 * @param boolean $no_cache Avoid query cache.
+	 *
+	 * @return array {
+	 *     An array which has course structure information.
+	 *
+	 *     @type array Each element is an array with either module or lesson information as defined in prepare_lesson()
+	 *                 and prepare_module().
+	 * }
+	 */
+	public function get( $context = 'view', $no_cache = false ) {
+		if ( $no_cache ) {
+			add_filter( 'posts_where', [ $this, 'filter_no_cache_where' ] );
+		}
+
+		$context = in_array( $context, [ 'view', 'edit' ], true ) ? $context : 'view';
+
+		$structure = [];
+
+		$published_lessons_only = 'view' === $context &amp;&amp; ! current_user_can( 'read_private_posts' );
+		$post_status            = $published_lessons_only ? 'publish' : 'any';
+		$no_module_lessons      = wp_list_pluck( Sensei()->modules->get_none_module_lessons( $this->course_id, $post_status ), 'ID' );
+		$modules                = $this->get_modules();
+
+		foreach ( $modules as $module_term ) {
+			$module = $this->prepare_module( $module_term, $post_status );
+			if ( ! empty( $module['lessons'] ) || 'edit' === $context ) {
+				$structure[] = $module;
+			}
+		}
+
+		foreach ( $no_module_lessons as $lesson_id ) {
+			$lesson = get_post( $lesson_id );
+			if ( ! $lesson ) {
+				continue;
+			}
+
+			$structure[] = $this->prepare_lesson( $lesson );
+		}
+
+		if ( $no_cache ) {
+			remove_filter( 'posts_where', [ $this, 'filter_no_cache_where' ] );
+		}
+
+		return $structure;
+	}
+
+	/**
+	 * Filter where adding an extra condition to avoid cache.
+	 *
+	 * @access private
+	 *
+	 * @param string $where Current where.
+	 *
+	 * @return string Where with extra condition to avoid cache.
+	 */
+	public function filter_no_cache_where( $where ) {
+		$time = time();
+
+		return $where . ' AND ' . $time . ' = ' . $time;
+	}
+
+	/**
+	 * Prepare the result for a module.
+	 *
+	 * @see Sensei_Course_Structure::prepare_lesson()
+	 *
+	 * @param WP_Term      $module_term        Module term.
+	 * @param array|string $lesson_post_status Lesson post status(es).
+	 *
+	 * @return array {
+	 *     An array which has module information.
+	 *
+	 *     @type string $type        The type of the array which is 'module'.
+	 *     @type int    $id          The module term id.
+	 *     @type string $title       The module name.
+	 *     @type string $teacher     Name of the teacher of this module, gets populated only in admin panel for admins and if the teacher is not admin.
+	 *     @type int    $teacherId   ID of the module author, used by block editor to detect change of teacher.
+	 *     @type string $lastTitle   Used in the block editor for unchanged title state reference.
+	 *     @type string $slug        Slug of the module, not empty only if the slug is custom.
+	 *     @type string $description The module description.
+	 *     @type array  $lessons     An array of the module lessons. See Sensei_Course_Structure::prepare_lesson().
+	 * }
+	 */
+	private function prepare_module( WP_Term $module_term, $lesson_post_status ) : array {
+		$lessons      = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
+		$author       = Sensei_Core_Modules::get_term_author( $module_term->slug );
+		$default_slug = $this->get_module_slug( $module_term->name );
+		$module       = [
+			'type'        => 'module',
+			'id'          => $module_term->term_id,
+			'title'       => $module_term->name,
+			'description' => $module_term->description,
+			'teacher'     => user_can( $author, 'manage_options' ) ? '' : $author->display_name,
+			'teacherId'   => $author->ID,
+			'lastTitle'   => $module_term->name,
+			'slug'        => $module_term->slug === $default_slug ? '' : $module_term->slug,
+			'lessons'     => [],
+		];
+
+		foreach ( $lessons as $lesson ) {
+			$module['lessons'][] = $this->prepare_lesson( $lesson );
+		}
+
+		return $module;
+	}
+
+	/**
+	 * Prepare the result for a lesson.
+	 *
+	 * @param WP_Post $lesson_post Lesson post object.
+	 *
+	 * @return array {
+	 *     An array which has lesson information.
+	 *
+	 *     @type string $type  The type of the array which is 'lesson'.
+	 *     @type int    $id    The lesson post id.
+	 *     @type string $title The lesson title.
+	 *     @type bool   $draft True if the lesson is a draft.
+	 * }
+	 */
+	private function prepare_lesson( WP_Post $lesson_post ) : array {
+		return [
+			'type'    => 'lesson',
+			'id'      => $lesson_post->ID,
+			'title'   => $lesson_post->post_title,
+			'draft'   => 'draft' === $lesson_post->post_status,
+			'preview' => Sensei_Utils::is_preview_lesson( $lesson_post->ID ),
+		];
+	}
+
+	/**
+	 * Get the lessons for a module.
+	 *
+	 * @param int          $module_term_id     Term ID for the module.
+	 * @param array|string $lesson_post_status Lesson post status(es).
+	 *
+	 * @return WP_Post[]
+	 */
+	private function get_module_lessons( int $module_term_id, $lesson_post_status ) : array {
+		$lessons_query = Sensei()->modules->get_lessons_query( $this->course_id, $module_term_id, $lesson_post_status );
+
+		return $lessons_query instanceof WP_Query ? $lessons_query->posts : [];
+	}
+
+	/**
+	 * Get module terms in the correct order.
+	 *
+	 * @return WP_Term[]
+	 */
+	private function get_modules() : array {
+		$modules = Sensei()->modules->get_course_modules( $this->course_id );
+
+		if ( is_wp_error( $modules ) ) {
+			$modules = [];
+		}
+
+		return $modules;
+	}
+
+	/**
+	 * Save a new course structure.
+	 *
+	 * @see Sensei_Course_Structure::get()
+	 *
+	 * @param array $raw_structure Course structure to save in its raw, un-sanitized form as returned by get().
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function save( array $raw_structure ) {
+		$structure = $this->sanitize_structure( $raw_structure );
+		if ( is_wp_error( $structure ) ) {
+			return $structure;
+		}
+
+		$current_structure                                 = $this->get( 'edit' );
+		list( $current_lesson_ids, $current_module_ids,  ) = $this->flatten_structure( $current_structure );
+
+		$lesson_ids   = [];
+		$module_order = [];
+		$lesson_order = [];
+		foreach ( $structure as $item ) {
+			if ( 'module' === $item['type'] ) {
+				$save_module_result = $this->save_module( $item );
+				if ( ! $save_module_result ) {
+					return false;
+				}
+
+				list( $module_id, $module_lesson_ids ) = $save_module_result;
+
+				$lesson_ids     = array_merge( $lesson_ids, $module_lesson_ids );
+				$module_order[] = $module_id;
+
+			} elseif ( 'lesson' === $item['type'] ) {
+				$lesson_id = $this->save_lesson( $item );
+				if ( ! $lesson_id ) {
+					return false;
+				}
+
+				$lesson_ids[]   = $lesson_id;
+				$lesson_order[] = $lesson_id;
+
+				update_post_meta( $lesson_id, '_order_' . $this->course_id, count( $lesson_order ) );
+			}
+		}
+		// Save the module association.
+		$module_diff = array_diff( $current_module_ids, $module_order );
+		if ( ! empty( $module_diff ) || count( $current_module_ids ) !== count( $module_order ) ) {
+			wp_set_object_terms( $this->course_id, $module_order, 'module' );
+		}
+
+		// Save the module order.
+		$this->save_module_order( $module_order );
+
+		// Save the lesson order.
+		update_post_meta( $this->course_id, '_lesson_order', implode( ',', $lesson_order ) );
+
+		// Delete removed modules and lessons.
+		$delete_lesson_ids = array_diff( $current_lesson_ids, $lesson_ids );
+		foreach ( $delete_lesson_ids as $lesson_id ) {
+			$this->clear_lesson_associations( $lesson_id );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Save a module item.
+	 *
+	 * @see Sensei_Course_Structure::prepare_module()
+	 *
+	 * @param array $item Item to save as returned from prepare_module().
+	 *
+	 * @return false|array[] {
+	 *     If successful, we return this:
+	 *
+	 *     @type int   $0 $module_id  Saved module ID.
+	 *     @type array $1 $lesson_ids All the lesson IDs from this module.
+	 * }
+	 */
+	private function save_module( array $item ) {
+		if ( $item['id'] || $item['slug'] ) {
+			$term         = get_term( $item['id'], 'module' );
+			$default_slug = $this->get_module_slug( $item['title'] );
+			// Custom slug gets priority over conventional slug.
+			$slug = $item['slug'] ?? $default_slug;
+
+			if ( ! $term || $term->slug !== $slug ) {
+				$existing_module = $this->try_get_existing_module_by_slug_or_title_for_author( $slug, $item['title'] );
+				if ( $existing_module ) {
+					$temp_item       = $item;
+					$temp_item['id'] = $existing_module->term_id;
+					$module_id       = $this->update_module( $temp_item );
+				} else {
+					$module_id = $this->create_module( $item );
+				}
+			} else {
+				$module_id = $this->update_module( $item );
+			}
+		} else {
+			$module_id = $this->create_module( $item );
+		}
+
+		if ( ! $module_id ) {
+			return false;
+		}
+
+		$lesson_ids       = [];
+		$lesson_order_key = '_order_module_' . $module_id;
+
+		foreach ( $item['lessons'] as $lesson_item ) {
+			$lesson_id = $this->save_lesson( $lesson_item, $module_id );
+			if ( ! $lesson_id ) {
+				return false;
+			}
+
+			wp_set_object_terms( $lesson_id, [ $module_id ], 'module' );
+			update_post_meta( $lesson_id, $lesson_order_key, count( $lesson_ids ) );
+			delete_post_meta( $lesson_id, '_order_' . $this->course_id );
+
+			$lesson_ids[] = $lesson_id;
+		}
+
+		if ( $item['slug'] ) {
+			// If a custom slug is defined, remove any unused module generated when changing teacher.
+			$previous_term = get_term_by( 'slug', $this->get_module_slug( $item['lastTitle'] ), 'module' );
+			$previous_term &amp;&amp; Sensei()->modules->remove_if_unused( $previous_term->term_id );
+		}
+
+		// If the previous id does not match the current id, remove the previous module.
+		if ( $item['id'] &amp;&amp; $item['id'] !== $module_id ) {
+			wp_remove_object_terms( $this->course_id, $item['id'], 'module' );
+			Sensei()->modules->remove_if_unused( $item['id'] );
+		}
+
+		Sensei_Core_Modules::update_module_teacher_meta( $module_id, get_post( $this->course_id )->post_author );
+
+		return [
+			$module_id,
+			$lesson_ids,
+		];
+	}
+
+	/**
+	 * Attempt to find an existing module available to the user.
+	 *
+	 * @param string $module_name Module name.
+	 *
+	 * @return int|null Term ID if found.
+	 */
+	private function get_existing_module( string $module_name ) {
+		$slug            = $this->get_module_slug( $module_name );
+		$existing_module = get_term_by( 'slug', $slug, 'module' );
+
+		if ( $existing_module ) {
+			return (int) $existing_module->term_id;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Create a module.
+	 *
+	 * @param array $item Item to create.
+	 *
+	 * @return false|int
+	 */
+	private function create_module( array $item ) {
+		$args = [
+			'description' => $item['description'],
+			'slug'        => $item['slug'] ?? $this->get_module_slug( $item['title'] ),
+		];
+
+		$create_result = wp_insert_term( $item['title'], 'module', $args );
+		if ( is_wp_error( $create_result ) ) {
+			return false;
+		}
+
+		return (int) $create_result['term_id'];
+	}
+
+	/**
+	 * Update an existing module.
+	 *
+	 * @param array $item Item to save.
+	 *
+	 * @return false|int
+	 */
+	private function update_module( array $item ) {
+		$term = get_term( $item['id'], 'module' );
+
+		$changed_args = [];
+		if ( $term->name !== $item['title'] ) {
+			$changed_args['name'] = $item['title'];
+		}
+		if ( $term->description !== $item['description'] ) {
+			$changed_args['description'] = $item['description'];
+		}
+		if ( $item['slug'] &amp;&amp; $term->slug !== $item['slug'] ) {
+			$changed_args['slug'] = $item['slug'];
+		}
+
+		if ( ! empty( $changed_args ) ) {
+			$change_result = wp_update_term(
+				$item['id'],
+				'module',
+				$changed_args
+			);
+
+			if ( is_wp_error( $change_result ) ) {
+				return false;
+			}
+		}
+
+		return $term->term_id;
+	}
+
+	/**
+	 * Get module slug.
+	 *
+	 * @param string $title Module title.
+	 *
+	 * @return string Slug.
+	 */
+	private function get_module_slug( $title ) {
+		$teacher_user_id = get_post( $this->course_id )->post_author;
+
+		return user_can( $teacher_user_id, 'manage_options' )
+			? sanitize_title( $title )
+			: intval( $teacher_user_id ) . '-' . sanitize_title( $title );
+	}
+
+	/**
+	 * Save module order.
+	 *
+	 * @param array $module_order Module order to save.
+	 */
+	public function save_module_order( array $module_order ) {
+		$current_module_order_raw = get_post_meta( $this->course_id, '_module_order', true );
+		$current_module_order     = $current_module_order_raw ? array_map( 'intval', $current_module_order_raw ) : [];
+
+		if (
+			( $current_module_order || ! empty( $module_order ) )
+			&amp;&amp; ( $current_module_order !== $module_order )
+		) {
+			if ( empty( $module_order ) ) {
+				delete_post_meta( $this->course_id, '_module_order' );
+			} else {
+				update_post_meta( $this->course_id, '_module_order', array_map( 'strval', $module_order ) );
+			}
+		}
+	}
+
+	/**
+	 * Save a lesson item.
+	 *
+	 * @see Sensei_Course_Structure::prepare_lesson()
+	 *
+	 * @param array $item      Item to save.
+	 * @param int   $module_id Module ID.
+	 *
+	 * @return false|int
+	 */
+	private function save_lesson( array $item, int $module_id = null ) {
+		if ( $item['id'] ) {
+			$lesson_id = $this->update_lesson( $item );
+		} else {
+			$lesson_id = $this->create_lesson( $item );
+		}
+
+		if ( $lesson_id ) {
+			if ( ! $module_id ) {
+				$module_id = [];
+			}
+
+			wp_set_object_terms( $lesson_id, $module_id, 'module' );
+		}
+
+		return $lesson_id;
+	}
+
+	/**
+	 * Create a lesson.
+	 *
+	 * @param array $item Item to create.
+	 *
+	 * @return false|int
+	 */
+	private function create_lesson( array $item ) {
+		$post_args = [
+			'post_title'  => $item['title'],
+			'post_type'   => 'lesson',
+			'post_status' => 'draft',
+			'meta_input'  => [
+				'_lesson_course' => $this->course_id,
+				'_new_post'      => true,
+			],
+		];
+
+		$lesson_id = wp_insert_post( $post_args );
+		if ( ! $lesson_id ) {
+			return false;
+		}
+
+		/**
+		 * Fires after a lesson is created while saving the course structure.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @hook sensei_course_structure_lesson_created
+		 *
+		 * @param {int} $lesson_id Lesson post ID.
+		 * @param {int} $course_id Course post ID.
+		 */
+		do_action( 'sensei_course_structure_lesson_created', $lesson_id, $this->course_id );
+
+		$this->create_quiz( $lesson_id );
+
+		return $lesson_id;
+	}
+
+	/**
+	 * Create an empty quiz for the lesson.
+	 *
+	 * @param int $lesson_id Lesson ID to create quiz for.
+	 */
+	private function create_quiz( int $lesson_id ) {
+		$lesson = get_post( $lesson_id );
+
+		$post_args = [
+			'post_content' => '',
+			'post_status'  => $lesson->post_status,
+			'post_title'   => $lesson->post_title,
+			'post_type'    => 'quiz',
+			'post_parent'  => $lesson_id,
+			'meta_input'   => [
+				'_quiz_lesson' => $lesson_id,
+			],
+		];
+
+		$quiz_id = wp_insert_post( $post_args );
+		if ( ! $quiz_id ) {
+			return;
+		}
+
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		/**
+		 * Fires after a quiz is created while saving the course structure.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @hook sensei_course_structure_quiz_created
+		 *
+		 * @param {int} $quiz_id   Quiz post ID.
+		 * @param {int} $lesson_id Course post ID.
+		 */
+		do_action( 'sensei_course_structure_quiz_created', $quiz_id, $lesson_id );
+	}
+
+	/**
+	 * Update an existing lesson.
+	 *
+	 * @param array $item Item to save.
+	 *
+	 * @return false|int
+	 */
+	private function update_lesson( array $item ) {
+		$lesson = get_post( $item['id'] );
+		if ( $lesson->post_title !== $item['title'] ) {
+			$post_args = [
+				'ID'         => $lesson->ID,
+				'post_title' => $item['title'],
+			];
+
+			$update_result = wp_update_post( $post_args );
+			if ( ! $update_result || is_wp_error( $update_result ) ) {
+				return false;
+			}
+		}
+
+		$current_course = (int) get_post_meta( $lesson->ID, '_lesson_course', true );
+		if ( $this->course_id !== $current_course ) {
+			$this->clear_lesson_associations( $lesson->ID );
+			update_post_meta( $lesson->ID, '_lesson_course', $this->course_id );
+		}
+
+		return $lesson->ID;
+	}
+
+	/**
+	 * Clear any previous associations a lesson had with a course.
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	private function clear_lesson_associations( int $lesson_id ) {
+		delete_post_meta( $lesson_id, '_lesson_course' );
+		$lesson_modules = get_the_terms( $lesson_id, 'module' );
+		if ( is_array( $lesson_modules ) ) {
+			foreach ( $lesson_modules as $module ) {
+				delete_post_meta( $lesson_id, '_order_module_' . $module->term_id );
+			}
+		}
+
+		wp_set_object_terms( $lesson_id, [], 'module' );
+	}
+
+	/**
+	 * Parses the lesson IDs and module IDs from the structure.
+	 *
+	 * @see Sensei_Course_Structure::get()
+	 *
+	 * @param array $structure Structure to flatten as returned by get().
+	 *
+	 * @return array[] {
+	 *     @type array $0 $lesson_ids    All the lesson IDs.
+	 *     @type array $1 $module_ids    All the module IDs.
+	 *     @type array $2 $module_titles All the module titles.
+	 * }
+	 */
+	private function flatten_structure( array $structure ) : array {
+		$lesson_ids    = [];
+		$module_ids    = [];
+		$module_titles = [];
+
+		foreach ( $structure as $item ) {
+			if ( ! isset( $item['type'] ) ) {
+				continue;
+			}
+
+			if ( 'module' === $item['type'] ) {
+				if ( ! empty( $item['id'] ) ) {
+					$module_ids[] = $item['id'];
+				}
+
+				if ( isset( $item['title'] ) ) {
+					$module_titles[] = $item['title'];
+				}
+
+				if ( ! empty( $item['lessons'] ) ) {
+					foreach ( $item['lessons'] as $lesson_item ) {
+						if ( ! empty( $lesson_item['id'] ) ) {
+							$lesson_ids[] = $lesson_item['id'];
+						}
+					}
+				}
+			} elseif ( 'lesson' === $item['type'] &amp;&amp; ! empty( $item['id'] ) ) {
+				$lesson_ids[] = $item['id'];
+			}
+		}
+
+		return [
+			$lesson_ids,
+			$module_ids,
+			$module_titles,
+		];
+	}
+
+	/**
+	 * Parse, validate, and sanitize the structure input.
+	 *
+	 * @see Sensei_Course_Structure::get()
+	 *
+	 * @param array $raw_structure Structure array as returned by get().
+	 *
+	 * @return WP_Error|array False if the input is invalid.
+	 */
+	private function sanitize_structure( array $raw_structure ) {
+		list( $lesson_ids, $module_ids, $module_titles ) = $this->flatten_structure( $raw_structure );
+		$module_titles                                   = array_filter( $module_titles );
+
+		if (
+			array_unique( $module_ids ) !== $module_ids
+			|| array_unique( $lesson_ids ) !== $lesson_ids
+		) {
+			return new WP_Error(
+				'sensei_course_structure_duplicate_items',
+				__( 'Individual lesson or modules cannot appear multiple times in the same course.', 'sensei-lms' )
+			);
+		}
+
+		if ( array_unique( $module_titles ) !== $module_titles ) {
+			return new WP_Error(
+				'sensei_course_structure_duplicate_module_title',
+				__( 'Different modules cannot have the same name.', 'sensei-lms' )
+			);
+		}
+
+		$structure = [];
+
+		foreach ( $raw_structure as $raw_item ) {
+			if ( ! is_array( $raw_item ) ) {
+				return new WP_Error(
+					'sensei_course_structure_invalid_item',
+					__( 'Each item must be an array.', 'sensei-lms' )
+				);
+			}
+
+			$item = $this->sanitize_item( $raw_item );
+			if ( is_wp_error( $item ) ) {
+				return $item;
+			}
+
+			$structure[] = $item;
+		}
+
+		return $structure;
+	}
+
+	/**
+	 * Validate and sanitize input item of structure.
+	 *
+	 * @see Sensei_Course_Structure::prepare_lesson()
+	 * @see Sensei_Course_Structure::prepare_module()
+	 *
+	 * @param array $raw_item Module or lesson as returned by prepare_lesson or prepare_module.
+	 *
+	 * @return array|WP_Error
+	 */
+	private function sanitize_item( array $raw_item ) {
+		$validate = $this->validate_item_structure( $raw_item );
+		if ( is_wp_error( $validate ) ) {
+			return $validate;
+		}
+
+		$item = [
+			'type'  => $raw_item['type'],
+			'id'    => ! empty( $raw_item['id'] ) ? intval( $raw_item['id'] ) : null,
+			'title' => trim( sanitize_text_field( $raw_item['title'] ) ),
+		];
+
+		if ( 'module' === $raw_item['type'] ) {
+			if ( $item['id'] ) {
+				$term = get_term( $item['id'], 'module' );
+				// Because term may get deleted in some cases during the process of changing the course teacher
+				// which takes place before saving structure.
+				if ( ! $term &amp;&amp; $raw_item['lastTitle'] ) {
+					// During the teacher changing process of courses, modules are created or fetched using the
+					// existing title, not the one that is sent in the course structure save process.
+					$term       = $this->get_existing_module( $raw_item['lastTitle'] );
+					$item['id'] = $term;
+				}
+				if ( ! $term || is_wp_error( $term ) ) {
+					return new WP_Error(
+						'sensei_course_structure_missing_module',
+						// translators: Placeholder is ID for module.
+						sprintf( __( 'Module with id "%d" was not found', 'sensei-lms' ), $item['id'] )
+					);
+				}
+			} else {
+				// Attempt to find an existing module available to the user.
+				$item['id'] = $this->get_existing_module( $item['title'] );
+			}
+
+			$item['description'] = isset( $raw_item['description'] ) ? trim( wp_kses_post( $raw_item['description'] ) ) : null;
+			$item['slug']        = ! empty( $raw_item['slug'] ) ? trim( sanitize_text_field( $raw_item['slug'] ) ) : null;
+			$item['lastTitle']   = ! empty( $raw_item['lastTitle'] ) ? trim( sanitize_text_field( $raw_item['lastTitle'] ) ) : null;
+			$item['lessons']     = [];
+
+			if ( $item['slug'] ) {
+				$course_name = Sensei_Teacher::is_module_in_use_by_different_course_and_teacher( $item['slug'], $this->course_id, absint( $raw_item['teacherId'] ) );
+				if ( $course_name ) {
+					return new WP_Error(
+						'module_in_use_in_different_course_by_different_teacher',
+						sprintf(
+						/* translators: Placeholder 1 is the module slug and 2 is course name. */
+							__( 'Slug %1$s exists and is being used in %2$s course', 'sensei-lms' ),
+							$item['slug'],
+							$course_name
+						)
+					);
+				}
+
+				if ( Sensei_Core_Modules::get_term_author( $item['slug'] )->ID !== wp_get_current_user()->ID &amp;&amp;
+					! current_user_can( 'manage_options' ) &amp;&amp;
+					get_term_by( 'slug', $item['slug'], 'module' )
+				) {
+					return new WP_Error(
+						'module_belongs_to_another_user',
+						sprintf(
+						/* translators: Placeholder is the module slug. */
+							__( 'A module with the slug %s is already owned by another teacher', 'sensei-lms' ),
+							$item['slug']
+						)
+					);
+				}
+			}
+
+			foreach ( $raw_item['lessons'] as $raw_lesson ) {
+				$lesson = $this->sanitize_item( $raw_lesson );
+				if ( is_wp_error( $lesson ) ) {
+					return $lesson;
+				}
+
+				if ( 'lesson' !== $lesson['type'] ) {
+					return new WP_Error(
+						'sensei_course_structure_invalid_module_lesson',
+						__( 'Module lessons array can only contain lessons.', 'sensei-lms' )
+					);
+				}
+
+				$item['lessons'][] = $lesson;
+			}
+		} elseif ( 'lesson' === $raw_item['type'] ) {
+			if ( $item['id'] ) {
+				$lesson = get_post( $item['id'] );
+				if ( ! $lesson || in_array( $lesson->post_status, [ 'trash', 'auto-draft' ], true ) || 'lesson' !== $lesson->post_type ) {
+					return new WP_Error(
+						'sensei_course_structure_missing_lesson',
+						// translators: Placeholder is ID for lesson.
+						sprintf( __( 'Lesson with id "%d" was not found', 'sensei-lms' ), $item['id'] )
+					);
+				}
+			}
+		}
+
+		return $item;
+	}
+
+	/**
+	 * Validate item is build correctly.
+	 *
+	 * @see Sensei_Course_Structure::prepare_lesson()
+	 * @see Sensei_Course_Structure::prepare_module()
+	 *
+	 * @param array $raw_item Raw item to sanitize.
+	 *
+	 * @return true|WP_Error
+	 */
+	private function validate_item_structure( array $raw_item ) {
+		if ( ! isset( $raw_item['type'] ) || ! in_array( $raw_item['type'], [ 'module', 'lesson' ], true ) ) {
+			return new WP_Error(
+				'sensei_course_structure_invalid_item_type',
+				__( 'All items must have a `type` set.', 'sensei-lms' )
+			);
+		}
+
+		if ( ! isset( $raw_item['title'] ) || '' === trim( sanitize_text_field( $raw_item['title'] ) ) ) {
+			if ( 'module' === $raw_item['type'] ) {
+				return new WP_Error(
+					'sensei_course_structure_modules_missing_title',
+					__( 'Please ensure all modules have a name before saving.', 'sensei-lms' )
+				);
+			}
+
+			return new WP_Error(
+				'sensei_course_structure_lessons_missing_title',
+				__( 'Please ensure all lessons have a name before saving.', 'sensei-lms' )
+			);
+		}
+
+		if (
+			'module' === $raw_item['type']
+			&amp;&amp; (
+				! isset( $raw_item['lessons'] )
+				|| ! is_array( $raw_item['lessons'] )
+			)
+		) {
+			return new WP_Error(
+				'sensei_course_structure_missing_lessons',
+				__( 'Module items must include a `lessons` array.', 'sensei-lms' )
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Sort structure.
+	 *
+	 * @param array  $structure Structure to be sorted.
+	 * @param int[]  $order     Order to sort the lessons.
+	 * @param string $type      Type to be sorted (lesson or module).
+	 *
+	 * @return array Sorted structure.
+	 */
+	public static function sort_structure( $structure, $order, $type ) {
+		if ( ! empty( $order )
+		&amp;&amp; [ 0 ] !== $order ) {
+			usort(
+				$structure,
+				function( $a, $b ) use ( $order, $type ) {
+					// One of the types is not being sorted.
+					if ( $type !== $a['type'] || $type !== $b['type'] ) {
+						// If types are equal, keep in the current positions.
+						if ( $a['type'] === $b['type'] ) {
+							return 0;
+						}
+
+						// Always keep the modules before the lessons.
+						return 'module' === $a['type'] ? - 1 : 1;
+					}
+
+					$a_position = array_search( $a['id'], $order, true );
+					$b_position = array_search( $b['id'], $order, true );
+
+					// If both weren't sorted, keep the current positions.
+					if ( false === $a_position &amp;&amp; false === $b_position ) {
+						return 0;
+					}
+
+					// Keep not sorted items in the end.
+					if ( false === $a_position ) {
+						return 1;
+					}
+
+					return false === $b_position || $a_position &lt; $b_position ? - 1 : 1;
+				}
+			);
+		}
+
+		return $structure;
+	}
+
+	/**
+	 * Get first incomplete lesson ID or `false` if there is none.
+	 *
+	 * @return int|false
+	 */
+	public function get_first_incomplete_lesson_id() {
+		list( $lesson_ids, ) = $this->flatten_structure( $this->get() );
+		foreach ( $lesson_ids as $lesson_id ) {
+			if ( ! Sensei_Utils::user_completed_lesson( $lesson_id ) ) {
+				return $lesson_id;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Try getting an existing module by custom slug, default slug, or name for course teacher.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param string $slug  The slug of the module.
+	 * @param string $title The title of the module.
+	 *
+	 * @return WP_Term|null The module if it exists, null otherwise.
+	 */
+	private function try_get_existing_module_by_slug_or_title_for_author( $slug, $title ) {
+		$default_slug = $this->get_module_slug( $title );
+
+		// First try to get an existing module directly by the provided slug.
+		$existing_module = get_term_by( 'slug', $slug, 'module' );
+
+		// If not found, try to find if this teacher already has a module for this, with the default slug.
+		if ( ! $existing_module &amp;&amp; $slug !== $default_slug ) {
+			$existing_module = get_term_by( 'slug', $default_slug, 'module' );
+		}
+
+		$author = get_post( $this->course_id )->post_author;
+		// If not found, try to find module for this teacher using term-meta.
+		if ( ! $existing_module &amp;&amp; ! user_can( $author, 'manage_options' ) ) {
+			$modules = get_terms(
+				array(
+					'taxonomy'   => 'module',
+					'name'       => $title,
+					'hide_empty' => false,
+					'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Only executed while saving, not too many data possibly.
+						array(
+							'key'     => 'module_author',
+							'value'   => $author,
+							'compare' => '=',
+						),
+					),
+				)
+			);
+			if ( ! empty( $modules ) ) {
+				$existing_module = $modules[0];
+			}
+		}
+		return $existing_module;
+	}
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+	<footer>
+		<a href="https://senseilms.com/">SenseiLMS.com</a> &bull;
+		<a href="https://github.com/automattic/sensei">Sensei LMS on GitHub</a>
+	</footer>
+
+
+</div>
+
+<nav>
+	<h2><a href="index.html">Home</a></h2><h3>Actions</h3><ul><li><a href="sensei_course_learning_mode_load_override_styles.html">sensei_course_learning_mode_load_override_styles</a></li><li><a href="sensei_course_learning_mode_load_theme.html">sensei_course_learning_mode_load_theme</a></li><li><a href="sensei_course_learning_mode_override_theme.html">sensei_course_learning_mode_override_theme</a></li><li><a href="sensei_course_new_teacher_assigned.html">sensei_course_new_teacher_assigned</a></li><li><a href="sensei_course_status_updated.html">sensei_course_status_updated</a></li><li><a href="sensei_course_structure_lesson_created.html">sensei_course_structure_lesson_created</a></li><li><a href="sensei_course_structure_quiz_created.html">sensei_course_structure_quiz_created</a></li><li><a href="sensei_data_port_complete.html">sensei_data_port_complete</a></li><li><a href="sensei_disable_legacy_emails.html">sensei_disable_legacy_emails</a></li><li><a href="sensei_email_mailpoet_sync_subscribers.html">sensei_email_mailpoet_sync_subscribers</a></li><li><a href="sensei_email_send.html">sensei_email_send</a></li><li><a href="sensei_lesson_video.html">sensei_lesson_video</a></li><li><a href="sensei_loaded.html">sensei_loaded</a></li><li><a href="sensei_new_private_message.html">sensei_new_private_message</a></li><li><a href="sensei_quiz_question_answers_inside_after.html">sensei_quiz_question_answers_inside_after</a></li><li><a href="sensei_quiz_question_answers_inside_before.html">sensei_quiz_question_answers_inside_before</a></li><li><a href="sensei_reports_overview_after_top_filters.html">sensei_reports_overview_after_top_filters</a></li><li><a href="sensei_reports_overview_before_top_filters.html">sensei_reports_overview_before_top_filters</a></li><li><a href="sensei_reports_overview_students_data_provider_pre_user_query.html">sensei_reports_overview_students_data_provider_pre_user_query</a></li><li><a href="sensei_rest_api_category_question_saved.html">sensei_rest_api_category_question_saved</a></li><li><a href="sensei_rest_api_lesson_quiz_update.html">sensei_rest_api_lesson_quiz_update</a></li><li><a href="sensei_rest_api_question_saved.html">sensei_rest_api_question_saved</a></li><li><a href="sensei_settings_after_links.html">sensei_settings_after_links</a></li><li><a href="sensei_tools_listing_after_%257B$tool_id%257D.html">sensei_tools_listing_after_{$tool_id}</a></li><li><a href="sensei_user_lesson_start.html">sensei_user_lesson_start</a></li></ul><h3>Filters</h3><ul><li><a href="sensei_add_comment_indexes.html">sensei_add_comment_indexes</a></li><li><a href="sensei_admin_notices.html">sensei_admin_notices</a></li><li><a href="sensei_analysis_course_columns.html">sensei_analysis_course_columns</a></li><li><a href="sensei_analysis_course_columns_sortable.html">sensei_analysis_course_columns_sortable</a></li><li><a href="sensei_analysis_course_completions.html">sensei_analysis_course_completions</a></li><li><a href="sensei_analysis_course_filter_lessons.html">sensei_analysis_course_filter_lessons</a></li><li><a href="sensei_analysis_course_filter_statuses.html">sensei_analysis_course_filter_statuses</a></li><li><a href="sensei_analysis_course_no_items_text.html">sensei_analysis_course_no_items_text</a></li><li><a href="sensei_analysis_course_percentage.html">sensei_analysis_course_percentage</a></li><li><a href="sensei_analysis_course_search_users.html">sensei_analysis_course_search_users</a></li><li><a href="sensei_analysis_course_sub_menu.html">sensei_analysis_course_sub_menu</a></li><li><a href="sensei_analysis_course_user_lesson.html">sensei_analysis_course_user_lesson</a></li><li><a href="sensei_analysis_course_%257Bview%257D_columns.html">sensei_analysis_course_{view}_columns</a></li><li><a href="sensei_analysis_course_%257Bview%257D_columns_sortable.html">sensei_analysis_course_{view}_columns_sortable</a></li><li><a href="sensei_analysis_lesson_columns.html">sensei_analysis_lesson_columns</a></li><li><a href="sensei_analysis_lesson_columns_sortable.html">sensei_analysis_lesson_columns_sortable</a></li><li><a href="sensei_analysis_lesson_completions.html">sensei_analysis_lesson_completions</a></li><li><a href="sensei_analysis_lesson_filter_statuses.html">sensei_analysis_lesson_filter_statuses</a></li><li><a href="sensei_analysis_lesson_grades.html">sensei_analysis_lesson_grades</a></li><li><a href="sensei_analysis_lesson_learners.html">sensei_analysis_lesson_learners</a></li><li><a href="sensei_analysis_lesson_search_users.html">sensei_analysis_lesson_search_users</a></li><li><a href="sensei_analysis_nav_title.html">sensei_analysis_nav_title</a></li><li><a href="sensei_analysis_overview_column_data.html">sensei_analysis_overview_column_data</a></li><li><a href="sensei_analysis_overview_columns.html">sensei_analysis_overview_columns</a></li><li><a href="sensei_analysis_overview_columns_sortable.html">sensei_analysis_overview_columns_sortable</a></li><li><a href="sensei_analysis_overview_courses_columns.html">sensei_analysis_overview_courses_columns</a></li><li><a href="sensei_analysis_overview_courses_columns_sortable.html">sensei_analysis_overview_courses_columns_sortable</a></li><li><a href="sensei_analysis_overview_filter_courses.html">sensei_analysis_overview_filter_courses</a></li><li><a href="sensei_analysis_overview_filter_lessons.html">sensei_analysis_overview_filter_lessons</a></li><li><a href="sensei_analysis_overview_filter_users.html">sensei_analysis_overview_filter_users</a></li><li><a href="sensei_analysis_overview_lessons_columns.html">sensei_analysis_overview_lessons_columns</a></li><li><a href="sensei_analysis_overview_lessons_columns_sortable.html">sensei_analysis_overview_lessons_columns_sortable</a></li><li><a href="sensei_analysis_overview_users_columns.html">sensei_analysis_overview_users_columns</a></li><li><a href="sensei_analysis_overview_users_columns_sortable.html">sensei_analysis_overview_users_columns_sortable</a></li><li><a href="sensei_analysis_overview_%257Btype%257D_columns.html">sensei_analysis_overview_{type}_columns</a></li><li><a href="sensei_analysis_overview_%257Btype%257D_columns_sortable.html">sensei_analysis_overview_{type}_columns_sortable</a></li><li><a href="sensei_analysis_sub_menu.html">sensei_analysis_sub_menu</a></li><li><a href="sensei_analysis_user_courses_ended.html">sensei_analysis_user_courses_ended</a></li><li><a href="sensei_analysis_user_courses_started.html">sensei_analysis_user_courses_started</a></li><li><a href="sensei_analysis_user_lesson_grades.html">sensei_analysis_user_lesson_grades</a></li><li><a href="sensei_analysis_user_profile_columns.html">sensei_analysis_user_profile_columns</a></li><li><a href="sensei_analysis_user_profile_columns_sortable.html">sensei_analysis_user_profile_columns_sortable</a></li><li><a href="sensei_analysis_user_profile_filter_statuses.html">sensei_analysis_user_profile_filter_statuses</a></li><li><a href="sensei_answer_text.html">sensei_answer_text</a></li><li><a href="sensei_archive_courses_per_page.html">sensei_archive_courses_per_page</a></li><li><a href="sensei_autogradable_question_types.html">sensei_autogradable_question_types</a></li><li><a href="sensei_background_job_actions.html">sensei_background_job_actions</a></li><li><a href="sensei_block_type_args.html">sensei_block_type_args</a></li><li><a href="sensei_breadcrumb_output.html">sensei_breadcrumb_output</a></li><li><a href="sensei_breadcrumb_separator.html">sensei_breadcrumb_separator</a></li><li><a href="sensei_can_access_course_content.html">sensei_can_access_course_content</a></li><li><a href="sensei_can_use_users_relationship.html">sensei_can_use_users_relationship</a></li><li><a href="sensei_can_user_manually_enrol.html">sensei_can_user_manually_enrol</a></li><li><a href="sensei_can_user_view_lesson.html">sensei_can_user_view_lesson</a></li><li><a href="sensei_can_user_view_module.html">sensei_can_user_view_module</a></li><li><a href="sensei_check_for_activity.html">sensei_check_for_activity</a></li><li><a href="sensei_clock_init.html">sensei_clock_init</a></li><li><a href="sensei_comment_counts_include_sensei_comments.html">sensei_comment_counts_include_sensei_comments</a></li><li><a href="sensei_comments_per_page.html">sensei_comments_per_page</a></li><li><a href="sensei_complete_lesson_redirect_url.html">sensei_complete_lesson_redirect_url</a></li><li><a href="sensei_context_notices.html">sensei_context_notices</a></li><li><a href="sensei_count_statuses.html">sensei_count_statuses</a></li><li><a href="sensei_count_statuses_args.html">sensei_count_statuses_args</a></li><li><a href="sensei_course_archive_page_url.html">sensei_course_archive_page_url</a></li><li><a href="sensei_course_block_template.html">sensei_course_block_template</a></li><li><a href="sensei_course_category_slug.html">sensei_course_category_slug</a></li><li><a href="sensei_course_complete_prerequisite_message.html">sensei_course_complete_prerequisite_message</a></li><li><a href="sensei_course_completed_page_template.html">sensei_course_completed_page_template</a></li><li><a href="sensei_course_completed_page_url.html">sensei_course_completed_page_url</a></li><li><a href="sensei_course_completion_percentage.html">sensei_course_completion_percentage</a></li><li><a href="sensei_course_completion_statement.html">sensei_course_completion_statement</a></li><li><a href="sensei_course_content_has_access.html">sensei_course_content_has_access</a></li><li><a href="sensei_course_count.html">sensei_course_count</a></li><li><a href="sensei_course_custom_navigation_tabs.html">sensei_course_custom_navigation_tabs</a></li><li><a href="sensei_course_enrolment_providers.html">sensei_course_enrolment_providers</a></li><li><a href="sensei_course_enrolment_providers_prevent_manual_enrol.html">sensei_course_enrolment_providers_prevent_manual_enrol</a></li><li><a href="sensei_course_enrolment_store_results.html">sensei_course_enrolment_store_results</a></li><li><a href="sensei_course_get_lessons.html">sensei_course_get_lessons</a></li><li><a href="sensei_course_image_html.html">sensei_course_image_html</a></li><li><a href="sensei_course_is_prerequisite_complete.html">sensei_course_is_prerequisite_complete</a></li><li><a href="sensei_course_learning_mode_enabled.html">sensei_course_learning_mode_enabled</a></li><li><a href="sensei_course_learning_mode_theme_override_enabled.html">sensei_course_learning_mode_theme_override_enabled</a></li><li><a href="sensei_course_list_block_patterns_extra_links.html">sensei_course_list_block_patterns_extra_links</a></li><li><a href="sensei_course_loop_content_class.html">sensei_course_loop_content_class</a></li><li><a href="sensei_course_loop_number_of_columns.html">sensei_course_loop_number_of_columns</a></li><li><a href="sensei_course_meta_default_save.html">sensei_course_meta_default_save</a></li><li><a href="sensei_course_meta_fields.html">sensei_course_meta_fields</a></li><li><a href="sensei_course_open_access.html">sensei_course_open_access</a></li><li><a href="sensei_course_pass_grade.html">sensei_course_pass_grade</a></li><li><a href="sensei_course_placeholder_image_url.html">sensei_course_placeholder_image_url</a></li><li><a href="sensei_course_progress_stats.html">sensei_course_progress_stats</a></li><li><a href="sensei_course_show_lessons.html">sensei_course_show_lessons</a></li><li><a href="sensei_course_slug.html">sensei_course_slug</a></li><li><a href="sensei_course_the_title.html">sensei_course_the_title</a></li><li><a href="sensei_course_user_grade.html">sensei_course_user_grade</a></li><li><a href="sensei_courses_navigation_sidebar.html">sensei_courses_navigation_sidebar</a></li><li><a href="sensei_courses_page_template.html">sensei_courses_page_template</a></li><li><a href="sensei_csv_export_filename.html">sensei_csv_export_filename</a></li><li><a href="sensei_custom_navigation_allowed_screens.html">sensei_custom_navigation_allowed_screens</a></li><li><a href="sensei_default_feature_flag_settings.html">sensei_default_feature_flag_settings</a></li><li><a href="sensei_disable_styles.html">sensei_disable_styles</a></li><li><a href="sensei_do_link_to_module.html">sensei_do_link_to_module</a></li><li><a href="sensei_duplicate_post_args.html">sensei_duplicate_post_args</a></li><li><a href="sensei_duplicate_post_ignore_meta.html">sensei_duplicate_post_ignore_meta</a></li><li><a href="sensei_email.html">sensei_email</a></li><li><a href="sensei_email_classes.html">sensei_email_classes</a></li><li><a href="sensei_email_course_teachers.html">sensei_email_course_teachers</a></li><li><a href="sensei_email_data.html">sensei_email_data</a></li><li><a href="sensei_email_generators.html">sensei_email_generators</a></li><li><a href="sensei_email_heading.html">sensei_email_heading</a></li><li><a href="sensei_email_is_available.html">sensei_email_is_available</a></li><li><a href="sensei_email_list_columns.html">sensei_email_list_columns</a></li><li><a href="sensei_email_list_row_actions.html">sensei_email_list_row_actions</a></li><li><a href="sensei_email_list_row_data.html">sensei_email_list_row_data</a></li><li><a href="sensei_email_mailpoet_feature.html">sensei_email_mailpoet_feature</a></li><li><a href="sensei_email_replacements.html">sensei_email_replacements</a></li><li><a href="sensei_email_seeder_data.html">sensei_email_seeder_data</a></li><li><a href="sensei_email_subject.html">sensei_email_subject</a></li><li><a href="sensei_enable_enrolment_provider_journal.html">sensei_enable_enrolment_provider_journal</a></li><li><a href="sensei_enrolment_course_calculation_job_batch_size.html">sensei_enrolment_course_calculation_job_batch_size</a></li><li><a href="sensei_enrolment_history_size.html">sensei_enrolment_history_size</a></li><li><a href="sensei_enrolment_learner_calculation_job_batch_size.html">sensei_enrolment_learner_calculation_job_batch_size</a></li><li><a href="sensei_enrolment_message_log_size.html">sensei_enrolment_message_log_size</a></li><li><a href="sensei_event_logging_base_fields.html">sensei_event_logging_base_fields</a></li><li><a href="sensei_existing_questions_query_results.html">sensei_existing_questions_query_results</a></li><li><a href="sensei_feature_course_preview_lessons.html">sensei_feature_course_preview_lessons</a></li><li><a href="sensei_feature_open_access_courses.html">sensei_feature_open_access_courses</a></li><li><a href="sensei_feature_preview_students.html">sensei_feature_preview_students</a></li><li><a href="sensei_file_upload_args.html">sensei_file_upload_args</a></li><li><a href="sensei_file_upload_file_prefix.html">sensei_file_upload_file_prefix</a></li><li><a href="sensei_filter_category_questions_by_author.html">sensei_filter_category_questions_by_author</a></li><li><a href="sensei_filter_module_terms_by_owner.html">sensei_filter_module_terms_by_owner</a></li><li><a href="sensei_filter_queries_set_author.html">sensei_filter_queries_set_author</a></li><li><a href="sensei_frontend_learner_enrolment_handler.html">sensei_frontend_learner_enrolment_handler</a></li><li><a href="sensei_gap_fill_case_sensitive_grading.html">sensei_gap_fill_case_sensitive_grading</a></li><li><a href="sensei_get_all_courses.html">sensei_get_all_courses</a></li><li><a href="sensei_get_image_size_%25257Bimage_size%25257D.html">sensei_get_image_size_{image_size}</a></li><li><a href="sensei_get_question_grade.html">sensei_get_question_grade</a></li><li><a href="sensei_get_question_template_data.html">sensei_get_question_template_data</a></li><li><a href="sensei_get_%257Bpage%257D_page_id.html">sensei_get_{page}_page_id</a></li><li><a href="sensei_grade_question_auto.html">sensei_grade_question_auto</a></li><li><a href="sensei_grading_allowed_user_ids.html">sensei_grading_allowed_user_ids</a></li><li><a href="sensei_grading_count_statues.html">sensei_grading_count_statues</a></li><li><a href="sensei_grading_count_statuses.html">sensei_grading_count_statuses</a></li><li><a href="sensei_grading_default_columns.html">sensei_grading_default_columns</a></li><li><a href="sensei_grading_default_columns_sortable.html">sensei_grading_default_columns_sortable</a></li><li><a href="sensei_grading_display_quiz_question.html">sensei_grading_display_quiz_question</a></li><li><a href="sensei_grading_filter_courses.html">sensei_grading_filter_courses</a></li><li><a href="sensei_grading_filter_lessons.html">sensei_grading_filter_lessons</a></li><li><a href="sensei_grading_filter_statuses.html">sensei_grading_filter_statuses</a></li><li><a href="sensei_grading_main_column_data.html">sensei_grading_main_column_data</a></li><li><a href="sensei_grading_nav_title.html">sensei_grading_nav_title</a></li><li><a href="sensei_grading_search_users.html">sensei_grading_search_users</a></li><li><a href="sensei_grading_sub_menu.html">sensei_grading_sub_menu</a></li><li><a href="sensei_guest_user_supported_actions.html">sensei_guest_user_supported_actions</a></li><li><a href="sensei_home_is_plugin_licensed_%257B$plugin_slug%257D.html">sensei_home_is_plugin_licensed_{$plugin_slug}</a></li><li><a href="sensei_home_promo_banner_show.html">sensei_home_promo_banner_show</a></li><li><a href="sensei_home_remote_data_other_plugins.html">sensei_home_remote_data_other_plugins</a></li><li><a href="sensei_home_remote_data_primary_plugin_slug.html">sensei_home_remote_data_primary_plugin_slug</a></li><li><a href="sensei_home_remote_data_retry_error.html">sensei_home_remote_data_retry_error</a></li><li><a href="sensei_home_support_ticket_creation_upsell_show.html">sensei_home_support_ticket_creation_upsell_show</a></li><li><a href="sensei_home_tasks.html">sensei_home_tasks</a></li><li><a href="sensei_icon_href.html">sensei_icon_href</a></li><li><a href="sensei_import_attachment_request_timeout.html">sensei_import_attachment_request_timeout</a></li><li><a href="sensei_import_csv_delimiter.html">sensei_import_csv_delimiter</a></li><li><a href="sensei_import_csv_delimiter_options.html">sensei_import_csv_delimiter_options</a></li><li><a href="sensei_is_enrolled.html">sensei_is_enrolled</a></li><li><a href="sensei_is_enrolment_background_job_enabled.html">sensei_is_enrolment_background_job_enabled</a></li><li><a href="sensei_is_legacy_enrolled.html">sensei_is_legacy_enrolled</a></li><li><a href="sensei_is_login_required.html">sensei_is_login_required</a></li><li><a href="sensei_learner_admin_get_row_data.html">sensei_learner_admin_get_row_data</a></li><li><a href="sensei_learner_courses_page_template.html">sensei_learner_courses_page_template</a></li><li><a href="sensei_learner_enrolled_courses_args.html">sensei_learner_enrolled_courses_args</a></li><li><a href="sensei_learner_full_name.html">sensei_learner_full_name</a></li><li><a href="sensei_learner_profile_courses_heading.html">sensei_learner_profile_courses_heading</a></li><li><a href="sensei_learner_profile_courses_heading_name.html">sensei_learner_profile_courses_heading_name</a></li><li><a href="sensei_learner_profile_info_avatar.html">sensei_learner_profile_info_avatar</a></li><li><a href="sensei_learner_profile_info_bio.html">sensei_learner_profile_info_bio</a></li><li><a href="sensei_learner_profile_info_name.html">sensei_learner_profile_info_name</a></li><li><a href="sensei_learner_profile_permalink.html">sensei_learner_profile_permalink</a></li><li><a href="sensei_learner_profiles_url_base.html">sensei_learner_profiles_url_base</a></li><li><a href="sensei_learners_add_learner_redirect_url.html">sensei_learners_add_learner_redirect_url</a></li><li><a href="sensei_learners_admin_get_known_bulk_actions.html">sensei_learners_admin_get_known_bulk_actions</a></li><li><a href="sensei_learners_default_columns.html">sensei_learners_default_columns</a></li><li><a href="sensei_learners_default_columns_sortable.html">sensei_learners_default_columns_sortable</a></li><li><a href="sensei_learners_filter_courses.html">sensei_learners_filter_courses</a></li><li><a href="sensei_learners_filter_lessons.html">sensei_learners_filter_lessons</a></li><li><a href="sensei_learners_filter_users.html">sensei_learners_filter_users</a></li><li><a href="sensei_learners_learner_updated.html">sensei_learners_learner_updated</a></li><li><a href="sensei_learners_nav_title.html">sensei_learners_nav_title</a></li><li><a href="sensei_learners_no_items_text.html">sensei_learners_no_items_text</a></li><li><a href="sensei_learners_query.html">sensei_learners_query</a></li><li><a href="sensei_learners_search_users.html">sensei_learners_search_users</a></li><li><a href="sensei_learners_sub_menu.html">sensei_learners_sub_menu</a></li><li><a href="sensei_learning_mode_block_templates.html">sensei_learning_mode_block_templates</a></li><li><a href="sensei_learning_mode_lesson_status_icon.html">sensei_learning_mode_lesson_status_icon</a></li><li><a href="sensei_lesson_archive_title.html">sensei_lesson_archive_title</a></li><li><a href="sensei_lesson_block_template.html">sensei_lesson_block_template</a></li><li><a href="sensei_lesson_content_drip_hide.html">sensei_lesson_content_drip_hide</a></li><li><a href="sensei_lesson_count.html">sensei_lesson_count</a></li><li><a href="sensei_lesson_course_signup_notice_level.html">sensei_lesson_course_signup_notice_level</a></li><li><a href="sensei_lesson_course_signup_notice_message.html">sensei_lesson_course_signup_notice_message</a></li><li><a href="sensei_lesson_excerpt.html">sensei_lesson_excerpt</a></li><li><a href="sensei_lesson_placeholder_image_url.html">sensei_lesson_placeholder_image_url</a></li><li><a href="sensei_lesson_prerequisite.html">sensei_lesson_prerequisite</a></li><li><a href="sensei_lesson_preview_title_text.html">sensei_lesson_preview_title_text</a></li><li><a href="sensei_lesson_quiz_questions.html">sensei_lesson_quiz_questions</a></li><li><a href="sensei_lesson_show_course_signup_notice.html">sensei_lesson_show_course_signup_notice</a></li><li><a href="sensei_lesson_slug.html">sensei_lesson_slug</a></li><li><a href="sensei_lesson_tag_archive_description.html">sensei_lesson_tag_archive_description</a></li><li><a href="sensei_lesson_tag_archive_title.html">sensei_lesson_tag_archive_title</a></li><li><a href="sensei_lesson_tag_slug.html">sensei_lesson_tag_slug</a></li><li><a href="sensei_lesson_take_course_url.html">sensei_lesson_take_course_url</a></li><li><a href="sensei_list_bulk_actions.html">sensei_list_bulk_actions</a></li><li><a href="sensei_list_table_search_button_text.html">sensei_list_table_search_button_text</a></li><li><a href="sensei_lms_schema_get_tables.html">sensei_lms_schema_get_tables</a></li><li><a href="sensei_load_default_supported_theme_wrappers.html">sensei_load_default_supported_theme_wrappers</a></li><li><a href="sensei_locate_template.html">sensei_locate_template</a></li><li><a href="sensei_log_event.html">sensei_log_event</a></li><li><a href="sensei_login_logout_menu_title.html">sensei_login_logout_menu_title</a></li><li><a href="sensei_login_success_redirect_url.html">sensei_login_success_redirect_url</a></li><li><a href="sensei_login_url.html">sensei_login_url</a></li><li><a href="sensei_message_archive_title.html">sensei_message_archive_title</a></li><li><a href="sensei_messages_send_message_link.html">sensei_messages_send_message_link</a></li><li><a href="sensei_messages_slug.html">sensei_messages_slug</a></li><li><a href="sensei_module_archive_description.html">sensei_module_archive_description</a></li><li><a href="sensei_module_archive_title.html">sensei_module_archive_title</a></li><li><a href="sensei_module_course_column_max_links_count.html">sensei_module_course_column_max_links_count</a></li><li><a href="sensei_module_course_signup_notice_level.html">sensei_module_course_signup_notice_level</a></li><li><a href="sensei_module_course_signup_notice_message.html">sensei_module_course_signup_notice_message</a></li><li><a href="sensei_module_show_course_signup_notice.html">sensei_module_show_course_signup_notice</a></li><li><a href="sensei_module_slug.html">sensei_module_slug</a></li><li><a href="sensei_modules_title.html">sensei_modules_title</a></li><li><a href="sensei_multiple_question_slug.html">sensei_multiple_question_slug</a></li><li><a href="sensei_my_courses_per_page.html">sensei_my_courses_per_page</a></li><li><a href="sensei_notice.html">sensei_notice</a></li><li><a href="sensei_notices_screen_ids.html">sensei_notices_screen_ids</a></li><li><a href="sensei_notify_admin_new_course_creation.html">sensei_notify_admin_new_course_creation</a></li><li><a href="sensei_placeholder_thumbnail.html">sensei_placeholder_thumbnail</a></li><li><a href="sensei_pre_grade_question_auto.html">sensei_pre_grade_question_auto</a></li><li><a href="sensei_pre_kses.html">sensei_pre_kses</a></li><li><a href="sensei_question_answer_message_correct_answer.html">sensei_question_answer_message_correct_answer</a></li><li><a href="sensei_question_answer_message_css_class.html">sensei_question_answer_message_css_class</a></li><li><a href="sensei_question_answer_message_grade.html">sensei_question_answer_message_grade</a></li><li><a href="sensei_question_answer_message_text.html">sensei_question_answer_message_text</a></li><li><a href="sensei_question_answer_notes.html">sensei_question_answer_notes</a></li><li><a href="sensei_question_category_slug.html">sensei_question_category_slug</a></li><li><a href="sensei_question_classes.html">sensei_question_classes</a></li><li><a href="sensei_question_image_size.html">sensei_question_image_size</a></li><li><a href="sensei_question_show_answers.html">sensei_question_show_answers</a></li><li><a href="sensei_question_title.html">sensei_question_title</a></li><li><a href="sensei_question_type_slug.html">sensei_question_type_slug</a></li><li><a href="sensei_question_type_specific_properties.html">sensei_question_type_specific_properties</a></li><li><a href="sensei_question_types.html">sensei_question_types</a></li><li><a href="sensei_questions_get_correct_answer.html">sensei_questions_get_correct_answer</a></li><li><a href="sensei_quiz_answer_file_upload_types.html">sensei_quiz_answer_file_upload_types</a></li><li><a href="sensei_quiz_course_signup_notice_message.html">sensei_quiz_course_signup_notice_message</a></li><li><a href="sensei_quiz_enable_block_based_editor.html">sensei_quiz_enable_block_based_editor</a></li><li><a href="sensei_quiz_ordering_question_type_hide.html">sensei_quiz_ordering_question_type_hide</a></li><li><a href="sensei_quiz_pagination_args.html">sensei_quiz_pagination_args</a></li><li><a href="sensei_quiz_panel_add.html">sensei_quiz_panel_add</a></li><li><a href="sensei_quiz_question_ai_upsell_scripts.html">sensei_quiz_question_ai_upsell_scripts</a></li><li><a href="sensei_quiz_question_points_format.html">sensei_quiz_question_points_format</a></li><li><a href="sensei_quiz_settings.html">sensei_quiz_settings</a></li><li><a href="sensei_quiz_slug.html">sensei_quiz_slug</a></li><li><a href="sensei_quiz_type_slug.html">sensei_quiz_type_slug</a></li><li><a href="sensei_register_post_type_course.html">sensei_register_post_type_course</a></li><li><a href="sensei_register_post_type_lesson.html">sensei_register_post_type_lesson</a></li><li><a href="sensei_register_post_type_question.html">sensei_register_post_type_question</a></li><li><a href="sensei_register_post_type_quiz.html">sensei_register_post_type_quiz</a></li><li><a href="sensei_register_post_type_sensei_message.html">sensei_register_post_type_sensei_message</a></li><li><a href="sensei_registration_redirect.html">sensei_registration_redirect</a></li><li><a href="sensei_registration_url.html">sensei_registration_url</a></li><li><a href="sensei_reports_overview_export_button_url.html">sensei_reports_overview_export_button_url</a></li><li><a href="sensei_rest_api_lesson_quiz_response.html">sensei_rest_api_lesson_quiz_response</a></li><li><a href="sensei_rest_api_schema_question_type.html">sensei_rest_api_schema_question_type</a></li><li><a href="sensei_rest_api_schema_single_question.html">sensei_rest_api_schema_single_question</a></li><li><a href="sensei_restrict_posts_menu_page.html">sensei_restrict_posts_menu_page</a></li><li><a href="sensei_results_links.html">sensei_results_links</a></li><li><a href="sensei_round_mode.html">sensei_round_mode</a></li><li><a href="sensei_round_precision.html">sensei_round_precision</a></li><li><a href="sensei_scheduler_class.html">sensei_scheduler_class</a></li><li><a href="sensei_scripts_allowed_pages.html">sensei_scripts_allowed_pages</a></li><li><a href="sensei_scripts_allowed_post_type_pages.html">sensei_scripts_allowed_post_type_pages</a></li><li><a href="sensei_scripts_allowed_post_types.html">sensei_scripts_allowed_post_types</a></li><li><a href="sensei_self_enrollment_not_allowed.html">sensei_self_enrollment_not_allowed</a></li><li><a href="sensei_send_emails.html">sensei_send_emails</a></li><li><a href="sensei_settings_content.html">sensei_settings_content</a></li><li><a href="sensei_settings_content_drip_hide.html">sensei_settings_content_drip_hide</a></li><li><a href="sensei_settings_fields.html">sensei_settings_fields</a></li><li><a href="sensei_settings_tabs.html">sensei_settings_tabs</a></li><li><a href="sensei_settings_woocommerce_hide.html">sensei_settings_woocommerce_hide</a></li><li><a href="sensei_shortcode_user_courses_display_course_toggle_actions.html">sensei_shortcode_user_courses_display_course_toggle_actions</a></li><li><a href="sensei_should_defer_enrolment_check.html">sensei_should_defer_enrolment_check</a></li><li><a href="sensei_show_admin_notices_%257B$screen_id%257D.html">sensei_show_admin_notices_{$screen_id}</a></li><li><a href="sensei_show_enrolment_debug_button.html">sensei_show_enrolment_debug_button</a></li><li><a href="sensei_show_lesson_numbers.html">sensei_show_lesson_numbers</a></li><li><a href="sensei_show_main_footer.html">sensei_show_main_footer</a></li><li><a href="sensei_show_main_header.html">sensei_show_main_header</a></li><li><a href="sensei_single_title.html">sensei_single_title</a></li><li><a href="sensei_start_course_redirect_url.html">sensei_start_course_redirect_url</a></li><li><a href="sensei_student_groups_hide.html">sensei_student_groups_hide</a></li><li><a href="sensei_student_progress_read_from_tables.html">sensei_student_progress_read_from_tables</a></li><li><a href="sensei_students_report_last_activity_filter_enabled.html">sensei_students_report_last_activity_filter_enabled</a></li><li><a href="sensei_teacher_archive_query.html">sensei_teacher_archive_query</a></li><li><a href="sensei_teachers_shortcode_list_item.html">sensei_teachers_shortcode_list_item</a></li><li><a href="sensei_template_url.html">sensei_template_url</a></li><li><a href="sensei_the_module_description.html">sensei_the_module_description</a></li><li><a href="sensei_the_module_id.html">sensei_the_module_id</a></li><li><a href="sensei_the_module_permalink.html">sensei_the_module_permalink</a></li><li><a href="sensei_the_module_status_html.html">sensei_the_module_status_html</a></li><li><a href="sensei_the_module_title.html">sensei_the_module_title</a></li><li><a href="sensei_the_no_permissions_message.html">sensei_the_no_permissions_message</a></li><li><a href="sensei_the_no_permissions_title.html">sensei_the_no_permissions_title</a></li><li><a href="sensei_the_question_number.html">sensei_the_question_number</a></li><li><a href="sensei_the_title_classes.html">sensei_the_title_classes</a></li><li><a href="sensei_the_title_html_tag.html">sensei_the_title_html_tag</a></li><li><a href="sensei_tools.html">sensei_tools</a></li><li><a href="sensei_usage_tracking_data.html">sensei_usage_tracking_data</a></li><li><a href="sensei_use_wp_register_link.html">sensei_use_wp_register_link</a></li><li><a href="sensei_user_completed_lesson.html">sensei_user_completed_lesson</a></li><li><a href="sensei_user_course_status_%257Bstatus%257D.html">sensei_user_course_status_{status}</a></li><li><a href="sensei_user_courses_filter_options.html">sensei_user_courses_filter_options</a></li><li><a href="sensei_user_courses_query.html">sensei_user_courses_query</a></li><li><a href="sensei_user_question_feedback.html">sensei_user_question_feedback</a></li><li><a href="sensei_user_quiz_status.html">sensei_user_quiz_status</a></li><li><a href="sensei_user_quiz_status_%257Bstatus%257D.html">sensei_user_quiz_status_{status}</a></li><li><a href="sensei_user_started_course.html">sensei_user_started_course</a></li><li><a href="sensei_video_position.html">sensei_video_position</a></li><li><a href="sensei_wpcom_product_slugs.html">sensei_wpcom_product_slugs</a></li><li><a href="widget_course_categories_args.html">widget_course_categories_args</a></li><li><a href="widget_course_categories_dropdown_args.html">widget_course_categories_dropdown_args</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
