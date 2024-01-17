@@ -61,7 +61,7 @@ class Sensei_WPML {
 	/**
 	 * Set language details for the lesson when it is created.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.1
 	 *
 	 * @internal
 	 *
@@ -101,7 +101,7 @@ class Sensei_WPML {
 	/**
 	 * Set language details for the quiz when it is created.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.1
 	 *
 	 * @internal
 	 *

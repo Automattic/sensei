@@ -221,7 +221,7 @@ class Sensei_Home_Tasks_Provider {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.1
 	 *
 	 * @param int     $post_id Post ID.
 	 * @param WP_Post $post    Post object.

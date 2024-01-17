@@ -391,7 +391,7 @@ class Sensei_Main {
 		 *
 		 * @hook sensei_clock_init
 		 *
-		 * @since $$next-version$$
+		 * @since 4.20.1
 		 *
 		 * @param {Clock_Interface} $clock The clock.
 		 * @return {Clock_Interface} Filtered clock.

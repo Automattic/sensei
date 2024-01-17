@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Helpers related to the clock.
  *
- * @since $$next-version$$
+ * @since 4.20.1
  */
 trait Sensei_Clock_Helpers {
 

@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Clock
  *
- * @since $$next-version$$
+ * @since 4.20.1
  */
 class Clock implements Clock_Interface {
 	/**
