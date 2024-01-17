@@ -82,6 +82,14 @@ describe( '<CourseDetailsStep />', () => {
 			description: NEW_DESCRIPTION,
 		} );
 	} );
+
+	it( 'Focuses the Course Title input.', () => {
+		const { queryByLabelText } = render(
+			<CourseDetailsStep wizardData={ {} } setWizardData={ () => {} } />
+		);
+
+		expect( queryByLabelText( 'Course Title' ) ).toHaveFocus();
+	} );
 } );
 
 describe( '<CourseDetailsStep.Actions />', () => {
