@@ -527,7 +527,7 @@ class Sensei_Course_Structure {
 		/**
 		 * Fires after a lesson is created while saving the course structure.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.20.1
 		 *
 		 * @hook sensei_course_structure_lesson_created
 		 *
@@ -570,7 +570,7 @@ class Sensei_Course_Structure {
 		/**
 		 * Fires after a quiz is created while saving the course structure.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.20.1
 		 *
 		 * @hook sensei_course_structure_quiz_created
 		 *

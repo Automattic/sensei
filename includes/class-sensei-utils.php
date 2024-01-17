@@ -1955,7 +1955,7 @@ class Sensei_Utils {
 			 * @hook sensei_course_status_updated
 			 *
 			 * @since 1.7.0
-			 * @since $$next-version$$ $previous_status parameter added.
+			 * @since 4.20.1 $previous_status parameter added.
 			 *
 			 * @param string      $status          The status.
 			 * @param int         $user_id         The user ID.
