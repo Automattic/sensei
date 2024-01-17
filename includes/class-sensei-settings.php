@@ -860,6 +860,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 				'default'     => false,
 				'section'     => 'sensei-experimental-features',
 			);
+			$fields['experimental_progress_storage_synchronization'] = array(
+				'name'        => '',
+				'description' => __( 'Synchronize the student progress between storages.', 'sensei-lms' ),
+				'form'        => 'render_progress_storage_synchronization',
+				'type'        => 'checkbox',
+				'default'     => false,
+				'section'     => 'sensei-experimental-features',
+			);
 			$fields['experimental_progress_storage_repository']      = array(
 				'name'        => '', // ,
 				'description' => __( 'Choose a repository to store the progress and quiz submissions of your students.', 'sensei-lms' ),
@@ -868,14 +876,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 				'default'     => Progress_Storage_Settings::COMMENTS_STORAGE,
 				'section'     => 'sensei-experimental-features',
 				'options'     => Progress_Storage_Settings::get_storage_repositories(),
-			);
-			$fields['experimental_progress_storage_synchronization'] = array(
-				'name'        => '',
-				'description' => __( 'Synchronize the student progress between storages.', 'sensei-lms' ),
-				'form'        => 'render_progress_storage_synchronization',
-				'type'        => 'checkbox',
-				'default'     => false,
-				'section'     => 'sensei-experimental-features',
 			);
 		}
 
@@ -1220,11 +1220,21 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<div class="notice notice-info inline sensei-settings__progress-storage-settings hidden">
 				<p>
 					<?php
-					echo esc_html( __( 'Save changes to make synchronization setting available.', 'sensei-lms' ) );
+					echo esc_html( __( 'Save changes to make the feature settings available.', 'sensei-lms' ) );
 					?>
 				</p>
 			</div>
 		<?php endif; ?>
+			<h4><?php esc_html_e( 'Instructions', 'sensei-lms' ); ?></h4>
+			<p><?php esc_html_e( 'To enable High-Performance Progress Storage, follow these steps:', 'sensei-lms' ); ?></p>
+			<ol>
+				<li><?php esc_html_e( 'Select the "Store the progress of your students in separate tables" checkbox and save the changes.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'Select the "Synchronize the student progress between storages" checkbox and save the changes.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'Wait until the "Migration complete and data synchronization enabled" message is displayed. This may take awhile and you will need to refresh the page to see the updated status.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'Select the "High-Performance progress storage (experimental)" option and save the changes.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'You are now using High-Performance Progress Storage!', 'sensei-lms' ); ?></li>
+			</ol>
+			<p><?php echo wp_kses_post( __( 'To learn more about the feature, check the <a href="https://senseilms.com/documentation/high-performance-progress-storage/" target="_blank">docs</a>.', 'sensei-lms' ) ); ?></p>
 		</div>
 		<?php
 		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
