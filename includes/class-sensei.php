@@ -470,7 +470,7 @@ class Sensei_Main {
 	 * @param array       $options Options.
 	 */
 	public function maybe_initiate_rewrite_rules_flush_on_translation_update( $upgrader_object, $options ) {
-		if ( $options['type'] == 'translation' ) {
+		if ( 'translation' === $options['type'] ) {
 			$this->initiate_rewrite_rules_flush();
 		}
 	}
