@@ -54,7 +54,7 @@ const CourseDetailsStep = ( { wizardData, setWizardData } ) => {
 						value={ wizardData.title ?? '' }
 						onChange={ updateCourseTitle }
 						maxLength={ 40 }
-						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					/>
 					<LimitedTextControl
 						className="sensei-editor-wizard-step__form-control"
@@ -62,7 +62,7 @@ const CourseDetailsStep = ( { wizardData, setWizardData } ) => {
 						value={ wizardData.description ?? '' }
 						onChange={ updateCourseDescription }
 						maxLength={ 350 }
-						multiline={ true }
+						multiline
 					/>
 				</div>
 			</div>
