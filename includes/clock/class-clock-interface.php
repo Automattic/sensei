@@ -12,7 +12,7 @@ use DateTimeZone;
 /**
  * Interface Clock_Interface
  *
- * @since $$next-version$$
+ * @since 4.20.1
  */
 interface Clock_Interface {
 	/**

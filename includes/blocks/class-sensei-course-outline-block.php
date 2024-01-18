@@ -241,7 +241,7 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.1
 	 */
 	public function frontend_notices() {
 		$post = get_post();

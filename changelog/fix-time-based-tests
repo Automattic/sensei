@@ -1,4 +1,0 @@
-Significance: patch
-Type: development
-
-Introduce Clock interface and corresponding public property for Sensei object.
