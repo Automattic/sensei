@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Flush rewrite rules when the website language was changed or the translation was updated.

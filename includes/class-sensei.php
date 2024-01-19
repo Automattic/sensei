@@ -434,11 +434,45 @@ class Sensei_Main {
 		// Localisation
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
+		add_action( 'update_option_WPLANG', array( $this, 'maybe_initiate_rewrite_rules_flush_after_language_change' ), 10, 2 );
+		add_action( 'upgrader_process_complete', array( $this, 'maybe_initiate_rewrite_rules_flush_on_translation_update' ), 10, 2 );
 
 		$this->initialize_cache_groups();
 		$this->initialize_global_objects();
 		$this->initialize_cli();
 		$this->initialize_3rd_party_compatibility();
+	}
+
+	/**
+	 * Maybe initiate rewrite rules flush when WordPress language has been changed.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param mixed $old_value Old value.
+	 * @param mixed $new_value New value.
+	 */
+	public function maybe_initiate_rewrite_rules_flush_after_language_change( $old_value, $new_value ) {
+		if ( $old_value !== $new_value ) {
+			$this->initiate_rewrite_rules_flush();
+		}
+	}
+
+	/**
+	 * Maybe initiate rewrite rules flush when WordPress translation has been updated.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_Upgrader $upgrader_object Upgrader object.
+	 * @param array       $options Options.
+	 */
+	public function maybe_initiate_rewrite_rules_flush_on_translation_update( $upgrader_object, $options ) {
+		if ( 'translation' === $options['type'] ) {
+			$this->initiate_rewrite_rules_flush();
+		}
 	}
 
 	/**
