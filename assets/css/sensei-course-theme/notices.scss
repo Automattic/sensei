@@ -60,6 +60,10 @@ body.sensei-course-theme {
 		color: inherit;
 		display: flex;
 
+		&.sensei-course-theme__button.is-link {
+			display: flex;
+		}
+
 		&:active {
 			background-color: inherit;
 		}
@@ -81,8 +85,7 @@ body.sensei-course-theme {
 	}
 }
 
-/* Quiz notice on quiz page */
-.sensei-course-theme-quiz-graded-notice {
+@mixin sensei-lm-notice-styles {
 	/* --content-padding comes from mobile.scss */
 	margin-left: calc(var(--content-padding) * -1);
 	margin-right: calc(var(--content-padding) * -1);
@@ -115,6 +118,11 @@ body.sensei-course-theme {
 			flex-direction: row;
 		}
 	}
+}
+
+/* Quiz notice on quiz page */
+.sensei-course-theme-quiz-graded-notice {
+	@include sensei-lm-notice-styles;
 
 	&__pending-grade {
 		opacity: 0.6;
@@ -143,6 +151,8 @@ body.sensei-course-theme {
 
 /* Locked lesson notice */
 .sensei-course-theme-locked-lesson-notice {
+	@include sensei-lm-notice-styles;
+
 	&__header {
 		display: flex;
 		padding-bottom: 18px;
@@ -166,10 +176,11 @@ body.sensei-course-theme {
 		}
 	}
 
-	&__text {
+	& > &__text {
 		font-size: 24px;
 		font-weight: 700;
 		line-height: 1.3;
+		margin-bottom: 20px;
 
 		a {
 			color: inherit;
@@ -178,10 +189,20 @@ body.sensei-course-theme {
 	}
 
 	&__actions {
-		display: flex;
-		list-style: none;
-		margin: 18px 0 0;
-		padding: 0;
-		gap: 12px;
+		font-size: 18px;
+
+		@media (min-width: $break-medium) {
+			justify-content: space-between;
+		}
+
+		.is-secondary.sensei-course-theme__button {
+			background-color: transparent;
+			border: none;
+			display: block;
+			font-family: var(--wp--preset--font-family--body);
+			text-transform: none;
+			font-weight: normal;
+			font-size: 18px;
+		}
 	}
 }

@@ -45,8 +45,6 @@ function sensei_admin_load_learning_mode_style_for_course_theme() {
 	}
 }
 
-add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_course_theme' );
-add_action( 'admin_enqueue_scripts', 'sensei_admin_load_learning_mode_style_for_course_theme' );
 add_action( 'course_theme_variation_loaded', 'sensei_load_styles_for_course_theme_variation' );
 
 /**
@@ -54,7 +52,7 @@ add_action( 'course_theme_variation_loaded', 'sensei_load_styles_for_course_them
  *
  * @param string $variation_name The current theme variation.
  *
- * @since $$next-version$$
+ * @since 4.19.2
  */
 function sensei_load_styles_for_course_theme_variation( $variation_name ) {
 	if ( empty( $variation_name ) ) {
@@ -67,3 +65,6 @@ function sensei_load_styles_for_course_theme_variation( $variation_name ) {
 	// Variation specific styles, can override the above styles.
 	Sensei()->assets->enqueue( 'course-theme-style-variations', 'css/3rd-party/themes/course/' . $variation_name . '.css', [ 'course-theme-styles' ] );
 }
+
+add_action( 'wp_enqueue_scripts', 'sensei_load_learning_mode_style_for_course_theme', 11 );
+add_action( 'admin_enqueue_scripts', 'sensei_admin_load_learning_mode_style_for_course_theme', 11 );

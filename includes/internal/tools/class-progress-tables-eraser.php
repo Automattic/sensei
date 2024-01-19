@@ -7,7 +7,8 @@
 
 namespace Sensei\Internal\Tools;
 
-use Sensei\Internal\Installer\Schema;
+use Sensei\Internal\Installer\Eraser;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei_Tool_Interactive_Interface;
 use Sensei_Tool_Interface;
 use Sensei_Tools;
@@ -30,6 +31,20 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	 * @var string
 	 */
 	const NONCE_ACTION = 'sensei-tools-progress-tables-eraser';
+
+	/**
+	 * Eraser instance.
+	 *
+	 * @var Eraser
+	 */
+	private $eraser;
+
+	/**
+	 * Progress_Tables_Eraser constructor.
+	 */
+	public function __construct() {
+		$this->eraser = new Eraser();
+	}
 
 	/**
 	 * Initialize the tool.
@@ -74,7 +89,7 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	 * @return string
 	 */
 	public function get_description() {
-		return __( 'Delete student progress and quiz submission tables. This will delete those tables, but won\'t affect comment-based data.', 'sensei-lms' );
+		return __( 'Delete student progress and quiz submission tables. This will delete those tables, but won\'t affect comment-based data. The tables can be deleted only if progress sync is disabled (Settings -> Experimental Features).', 'sensei-lms' );
 	}
 
 	/**
@@ -97,17 +112,7 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 			exit;
 		}
 
-		global $wpdb;
-
-		$results = array();
-		foreach ( $this->get_tables() as $table ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange
-				$wpdb->query( "DROP TABLE $table" );
-				$results[] = $table;
-			}
-		}
+		$results = $this->eraser->drop_tables();
 
 		if ( count( $results ) > 0 ) {
 			$message = sprintf(
@@ -115,15 +120,6 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 				__( 'The following tables have been deleted: %s', 'sensei-lms' ),
 				implode( ', ', $results )
 			);
-
-			/**
-			 * Fires after progress tables are deleted.
-			 *
-			 * @since 4.19.0
-			 *
-			 * @param array $tables List of deleted tables.
-			 */
-			do_action( 'sensei_tools_progress_tables_deleted', $results );
 		} else {
 			$message = __( 'No tables were deleted.', 'sensei-lms' );
 		}
@@ -141,9 +137,14 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	 * @return bool True if tool is available.
 	 */
 	public function is_available() {
+		// Disable the tool if tables are in use.
+		if ( Progress_Storage_Settings::is_sync_enabled() || Progress_Storage_Settings::is_tables_repository() ) {
+			return false;
+		}
+
 		global $wpdb;
 
-		foreach ( $this->get_tables() as $table ) {
+		foreach ( $this->eraser->get_tables() as $table ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
 				return true;
@@ -169,21 +170,5 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 	 */
 	private function get_tool_url(): string {
 		return admin_url( 'admin.php?page=sensei-tools&tool=' . $this->get_id() );
-	}
-
-	/**
-	 * Get the tables to delete.
-	 *
-	 * @return array
-	 */
-	private function get_tables(): array {
-		global $wpdb;
-
-		return array(
-			"{$wpdb->prefix}sensei_lms_progress",
-			"{$wpdb->prefix}sensei_lms_quiz_submissions",
-			"{$wpdb->prefix}sensei_lms_quiz_answers",
-			"{$wpdb->prefix}sensei_lms_quiz_grades",
-		);
 	}
 }

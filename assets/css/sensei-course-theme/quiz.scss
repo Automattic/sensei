@@ -6,8 +6,15 @@ $vertical-spacing-desktop: 80px;
 
 .sensei-course-theme__quiz {
 	&__main-content {
+		--sensei-quiz-main-content-top-padding: clamp(2.5rem, 1.346rem + 3.846vw, 3.75rem);
+		--sensei-quiz-main-content-sticky-timer-padding: 0px;
+
+		&.sensei-course-theme__main-content--sticky-quiz-timer {
+			--sensei-quiz-main-content-sticky-timer-padding: 2.5rem;
+		}
+
 		margin-bottom: $vertical-spacing;
-		padding-top: clamp(2.5rem, 1.346rem + 3.846vw, 3.75rem);
+		padding-top: calc( var(--sensei-quiz-main-content-top-padding) + var(--sensei-quiz-main-content-sticky-timer-padding) );
 
 		@media (min-width: $break-medium) {
 			margin-bottom: $vertical-spacing-desktop;
@@ -179,7 +186,7 @@ $vertical-spacing-desktop: 80px;
 				flex-direction: row;
 
 				.sensei-quiz-action {
-					flex: unset;
+					white-space: nowrap;
 				}
 
 				.sensei-quiz-actions-secondary {

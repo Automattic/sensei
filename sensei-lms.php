@@ -3,7 +3,7 @@
  * Plugin Name: Sensei LMS
  * Plugin URI: https://senseilms.com/
  * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
- * Version: 4.19.1
+ * Version: 4.20.1
  * Author: Automattic
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -14,29 +14,12 @@
  * Domain path: /lang/
  */
 
-/**
- * Copyright 2013-2022 Automattic
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 if ( ! defined( 'SENSEI_LMS_VERSION' ) ) {
-	define( 'SENSEI_LMS_VERSION', '4.19.1' ); // WRCS: DEFINED_VERSION.
+	define( 'SENSEI_LMS_VERSION', '4.20.1' ); // WRCS: DEFINED_VERSION.
 }
 
 if ( ! defined( 'SENSEI_LMS_PLUGIN_FILE' ) ) {
@@ -116,6 +99,8 @@ if ( ! function_exists( 'Sensei' ) ) {
 	 * phpcs:disable WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 	 *
 	 * @since 1.8.0
+	 *
+	 * @return Sensei_Main
 	 */
 	function Sensei() {
 		// phpcs:enable

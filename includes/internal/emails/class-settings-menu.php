@@ -44,6 +44,7 @@ class Settings_Menu {
 			'name'        => __( 'Emails', 'sensei-lms' ),
 			'description' => __( 'Settings for email notifications sent from your site.', 'sensei-lms' ),
 			'href'        => admin_url( 'admin.php?page=sensei-settings&tab=email-notification-settings' ),
+			'external'    => true,
 		);
 		return $sections;
 	}

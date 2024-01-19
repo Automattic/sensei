@@ -218,7 +218,7 @@ class Sensei_Lesson {
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'New Lesson', 'sensei-lms' ); ?></a>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings&tab=lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
@@ -3649,7 +3649,7 @@ class Sensei_Lesson {
 
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 
-		return ! empty( $quiz_progress ) && in_array( $quiz_progress->get_status(), [ 'ungraded', 'passed', 'failed', 'graded' ], true );
+		return ! empty( $quiz_progress ) && $quiz_progress->is_quiz_submitted();
 	}
 
 

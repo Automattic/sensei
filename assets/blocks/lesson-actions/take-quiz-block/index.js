@@ -9,14 +9,14 @@ import { __ } from '@wordpress/i18n';
 import { BlockStyles, createButtonBlockType } from '../../button';
 
 /**
- * View quiz button block.
+ * Take Quiz button block.
  */
 export default createButtonBlockType( {
 	settings: {
 		name: 'sensei-lms/button-view-quiz',
-		title: __( 'View Quiz', 'sensei-lms' ),
+		title: __( 'Take Quiz', 'sensei-lms' ),
 		parent: [ 'sensei-lms/lesson-actions' ],
-		description: __( 'Enable a student to view the quiz.', 'sensei-lms' ),
+		description: __( 'Enable a student to take the quiz.', 'sensei-lms' ),
 		keywords: [
 			__( 'Quiz', 'sensei-lms' ),
 			__( 'Lesson', 'sensei-lms' ),
@@ -24,7 +24,7 @@ export default createButtonBlockType( {
 		],
 		attributes: {
 			text: {
-				default: __( 'View Quiz', 'sensei-lms' ),
+				default: __( 'Take Quiz', 'sensei-lms' ),
 			},
 		},
 		styles: [

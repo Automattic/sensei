@@ -530,6 +530,8 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		$quiz_id = $this->maybe_create_quiz_for_lesson( $lesson_id, $quiz_args );
 
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
 		if ( $number > 0 ) {
 			update_post_meta( $lesson_id, '_quiz_has_questions', true );
 		}

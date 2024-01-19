@@ -1264,7 +1264,7 @@ class Sensei_Frontend {
 				if ( false !== $redirect_url ) {
 					?>
 
-					<script type="text/javascript"> window.location = '<?php echo esc_url( $redirect_url ); ?>'; </script>
+					<script type="text/javascript"> window.location = '<?php echo esc_url_raw( $redirect_url ); ?>'; </script>
 
 					<?php
 				}

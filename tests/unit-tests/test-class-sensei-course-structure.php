@@ -25,7 +25,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	/**
 	 * Test getting course structure when just lessons when one lesson is unpublished in view context.
 	 */
-	public function testGetJustLessonsView() {
+	public function testGet_WithViewContextWhenStructureSavedWithLessonsOnly_ReturnSameStructureWithIdsAndTypes() {
 		$course_id          = $this->factory->course->create();
 		$course_lesson_args = [
 			'meta_input' => [
@@ -66,7 +66,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	/**
 	 * Test getting course structure when just lessons when one lesson is unpublished in edit context.
 	 */
-	public function testGetJustLessonsEdit() {
+	public function testGet_WithEditContextWhenStructureSavedWithLessonsOnly_ReturnsSameStuctureWithIdsAndTypes() {
 		$course_id          = $this->factory->course->create();
 		$course_lesson_args = [
 			'meta_input' => [
@@ -107,7 +107,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	/**
 	 * Test getting course structure when just modules on the first level.
 	 */
-	public function testGetJustModules() {
+	public function testGet_WithViewContextWhenStructureSavedWithModulesOnly_ReturnsSameStructure() {
 		$course_id = $this->factory->course->create();
 
 		$lessons = $this->factory->lesson->create_many( 4 );
@@ -156,7 +156,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	/**
 	 * Test getting course structure when just modules with no lessons and one rogue lesson while in edit context.
 	 */
-	public function testGetModulesWithEmptyLessonsEdit() {
+	public function testGet_WithEditContextWhenStructureSavedWithModulesWithEmptyLessons_ReturnsSameStructure() {
 		$this->login_as_admin();
 
 		$course_id = $this->factory->course->create();
@@ -1654,7 +1654,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		}
 	}
 
-	public function testGetForEditMode_WhenCalled_ReturnsTeacherNameWithModulesProperly() {
+	public function testGet_CalledAsAdminWithEditContextAndTeacherAssignedToModule_ReturnsTeacherNameWithModulesProperly() {
 		/* Arrange */
 		global $current_screen;
 		$initial_current_screen = $current_screen;
@@ -1714,5 +1714,61 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		// Reset $current_screen. This is needed for WordPress <= 5.8.
 		// @see https://core.trac.wordpress.org/ticket/53431
 		$current_screen = $initial_current_screen;
+	}
+
+	public function testSave_WithNewLesson_FiresLessonCreatedAction() {
+		/* Arrange. */
+		$this->login_as_teacher();
+
+		$course_id = $this->factory->course->create();
+
+		$new_structure = array(
+			array(
+				'type'  => 'lesson',
+				'title' => 'New lesson',
+			),
+		);
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		$lesson_created_action_fired = false;
+		$action                      = function( $lesson_id, $course_id ) use ( &$lesson_created_action_fired ) {
+			$lesson_created_action_fired = true;
+		};
+		add_action( 'sensei_course_structure_lesson_created', $action, 10, 2 );
+
+		/* Act. */
+		$course_structure->save( $new_structure );
+
+		/* Assert. */
+		$this->assertTrue( $lesson_created_action_fired );
+	}
+
+	public function testSave_WithNewLesson_FiresQuizCreatedAction() {
+		/* Arrange. */
+		$this->login_as_teacher();
+
+		$course_id = $this->factory->course->create();
+
+		$new_structure = array(
+			array(
+				'type'  => 'lesson',
+				'title' => 'New lesson',
+			),
+		);
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		$quiz_created_action_fired = false;
+		$action                    = function( $quiz, $lesson ) use ( &$quiz_created_action_fired ) {
+			$quiz_created_action_fired = true;
+		};
+		add_action( 'sensei_course_structure_quiz_created', $action, 10, 2 );
+
+		/* Act. */
+		$course_structure->save( $new_structure );
+
+		/* Assert. */
+		$this->assertTrue( $quiz_created_action_fired );
 	}
 }

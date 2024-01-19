@@ -2,6 +2,8 @@
 
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
 
 class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
@@ -824,7 +826,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * This tests Woothemes_Sensei()->quiz->get_user_question_answer.
 	 */
 	public function testGetUserQuestionAnswer() {
-
 		// Setup the data needed for the assertions.
 		$test_user_id           = wp_create_user( 'studentGetQuestionAnswer', 'studentGetQuestionAnswer', 'studentGetQuestionAnswer@test.com' );
 		$test_lesson_id         = $this->factory->get_random_lesson_id();
@@ -854,43 +855,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		// Testing if the data is returned.
 		$this->assertEquals( $users_saved_answers[ $random_question_id ], $question_answer, $assertion_message );
-
-		// Setup the data for the next assertion.
-		$assertion_message = 'This function does not fall back to the old data';
-		$question_id       = $random_question_id;
-		$answer            = $users_saved_answers[ $question_id ];
-		$old_data_user_id  = wp_create_user( 'olddata', 'olddata', 'olddata@test.com' );
-		$question_type     = Sensei()->question->get_question_type( $question_id );
-
-		$answer = wp_unslash( $answer );
-
-		switch ( $question_type ) {
-			case 'multi-line':
-				$answer = nl2br( $answer );
-				break;
-			case 'single-line':
-				break;
-			case 'gap-fill':
-				break;
-			default:
-				$answer = maybe_serialize( $answer );
-				break;
-		}
-		$args = array(
-			'post_id' => $question_id,
-			'data'    => base64_encode( $answer ),
-			'type'    => 'sensei_user_answer', /* FIELD SIZE 20 */
-			'user_id' => $old_data_user_id,
-			'action'  => 'update',
-		);
-		Sensei_Utils::sensei_log_activity( $args );
-
-		$old_data_answer = Sensei()->quiz->get_user_question_answer( $test_lesson_id, $random_question_id, $old_data_user_id );
-
-		// Testing for users on the pre 1.7.4 data.
-		$this->assertEquals( maybe_unserialize( $answer ), $old_data_answer, $assertion_message );
-
-		// Make sure that after a reset this function returns false.
 	}
 
 	/**
@@ -1083,25 +1047,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			$retrieved_grade,
 			'The grade retrieved is not equal to the one that was set for this question ID'
 		);
-
-		// Setup the next assertion.
-		$transient_key = 'quiz_grades_' . $test_user_id . '_' . $test_lesson_id;
-		delete_transient( $transient_key );
-		Sensei_Utils::delete_user_data( 'quiz_grades', $test_lesson_id, $test_user_id );
-		$random_question_id   = array_rand( $test_user_grades );
-		$old_data_args        = array(
-			'post_id' => $random_question_id,
-			'user_id' => $test_user_id,
-			'type'    => 'sensei_user_answer',
-			'data'    => 'test answer',
-		);
-		$old_data_activity_id = Sensei_Utils::sensei_log_activity( $old_data_args );
-		update_comment_meta( $old_data_activity_id, 'user_grade', 1950 );
-		$retrieved_grade = Sensei()->quiz->get_user_question_grade( $test_lesson_id, $random_question_id, $test_user_id );
-
-		// Does the fall back to 1.7.3 data work?
-		$this->assertEquals( 1950, $retrieved_grade, 'The get user question grade does not fall back th old data' );
-
 	}
 
 	/**
@@ -1250,7 +1195,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * This test Sensei()->quiz->get_user_question_feedback.
 	 */
 	public function testGetUserQuestionFeedback() {
-
 		// Does this function add_user_data exist?
 		$this->assertTrue(
 			method_exists( Sensei()->quiz, 'get_user_question_feedback' ),
@@ -1284,25 +1228,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			$retrieved_grade,
 			'The feedback retrieved is not equal to the one that was set for this question ID'
 		);
-
-		// Setup the next assertion for backwards compatibility.
-		$transient_key = 'sensei_answers_feedback_' . $test_user_id . '_' . $test_lesson_id;
-		delete_transient( $transient_key );
-		Sensei_Utils::delete_user_data( 'quiz_answers_feedback', $test_lesson_id, $test_user_id );
-		$random_question_id   = array_rand( $test_user_answers_feedback );
-		$old_data_args        = array(
-			'post_id' => $random_question_id,
-			'user_id' => $test_user_id,
-			'type'    => 'sensei_user_answer',
-			'data'    => 'test answer feedback',
-		);
-		$old_data_activity_id = Sensei_Utils::sensei_log_activity( $old_data_args );
-		update_comment_meta( $old_data_activity_id, 'answer_note', base64_encode( 'Sensei sample feedback' ) );
-		$retrieved_feedback = Sensei()->quiz->get_user_question_feedback( $test_lesson_id, $random_question_id, $test_user_id );
-
-		// Does the fall back to 1.7.3 data work?
-		$this->assertEquals( 'Sensei sample feedback', $retrieved_feedback, 'The get user feedback does not fall back the old data' );
-
 	}
 
 	/**
@@ -1787,9 +1712,10 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 
+		$course_start_date    = new DateTime( '-1 day' );
 		$course_progress_mock = $this->createMock( Course_Progress_Interface::class );
 		$course_progress_mock->method( 'get_started_at' )
-			->willReturn( new DateTime( 'now' ) );
+			->willReturn( $course_start_date );
 
 		$_course_progress_repository     = Sensei()->course_progress_repository;
 		$course_progress_repository_mock = $this->createMock( Course_Progress_Repository_Interface::class );
@@ -1800,7 +1726,46 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$course_progress_mock
-			->expects( $this->never() )
+			->expects( $this->once() )
+			->method( 'start' )
+			->with( $course_start_date );
+
+		/* Act. */
+		Sensei()->course_progress_repository = $course_progress_repository_mock;
+		ob_start();
+		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+		ob_end_clean();
+		Sensei()->course_progress_repository = $_course_progress_repository; // Reset.
+	}
+
+	public function testResetUserLessonData_WhenCourseCompleted_ResetsTheCourseStatus() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id, true );
+
+		$course_progress_mock = $this->createMock( Course_Progress_Interface::class );
+		$course_progress_mock->method( 'get_started_at' )
+			->willReturn( new DateTime() );
+
+		$_course_progress_repository     = Sensei()->course_progress_repository;
+		$course_progress_repository_mock = $this->createMock( Course_Progress_Repository_Interface::class );
+		$course_progress_repository_mock
+			->method( 'get' )
+			->with( $course_id, $user_id )
+			->willReturn( $course_progress_mock );
+
+		/* Assert. */
+		$course_progress_mock
+			->expects( $this->once() )
 			->method( 'start' );
 
 		/* Act. */
@@ -2509,5 +2474,69 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		foreach ( $classes as $class ) {
 			$this->assertStringContainsString( $class, $html );
 		}
+	}
+
+	public function testIsQuizAwaitingGradeForUser_IsUngraded_ReturnsTrue() {
+		/* Arrange */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'post_parent' => $course_id,
+				'meta_input'  => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+
+		$progress = $this->createMock( Quiz_Progress_Interface::class );
+		$progress->method( 'get_status' )
+			->willReturn( Quiz_Progress_Interface::STATUS_UNGRADED );
+
+		$quiz_progress_repository          = Sensei()->quiz_progress_repository;
+		Sensei()->quiz_progress_repository = $this->createMock( Quiz_Progress_Repository_Interface::class );
+		Sensei()->quiz_progress_repository->method( 'get' )
+			->willReturn( $progress );
+
+		/* Act */
+		$result = Sensei_Quiz::is_quiz_awaiting_grade_for_user( $lesson_id, 1 );
+
+		/* Assert */
+		$this->assertTrue( $result );
+
+		/* Reset */
+		Sensei()->quiz_progress_repository = $quiz_progress_repository;
+	}
+
+	public function testIsQuizAwaitingGradeForUser_IsNotUngraded_ReturnsFalse() {
+		/* Arrange */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'post_parent' => $course_id,
+				'meta_input'  => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+
+		$progress = $this->createMock( Quiz_Progress_Interface::class );
+		$progress->method( 'get_status' )
+			->willReturn( Quiz_Progress_Interface::STATUS_GRADED );
+
+		$quiz_progress_repository          = Sensei()->quiz_progress_repository;
+		Sensei()->quiz_progress_repository = $this->createMock( Quiz_Progress_Repository_Interface::class );
+		Sensei()->quiz_progress_repository->method( 'get' )
+			->willReturn( $progress );
+
+		/* Act */
+		$result = Sensei_Quiz::is_quiz_awaiting_grade_for_user( $lesson_id, 1 );
+
+		/* Assert */
+		$this->assertFalse( $result );
+
+		/* Reset */
+		Sensei()->quiz_progress_repository = $quiz_progress_repository;
 	}
 }

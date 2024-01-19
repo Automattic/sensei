@@ -16,6 +16,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
  */
 class Sensei_Utils_Test extends WP_UnitTestCase {
 	use \Sensei_File_System_Helper;
+	use \Sensei_Clock_Helpers;
 
 	/**
 	 * Setup function.
@@ -243,12 +244,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $array_zipped );
 	}
 
-	/**
-	 * Test that the query params inputs are correct.
-	 *
-	 * @covers Sensei_Utils::output_query_params_as_inputs
-	 */
-	public function testOutputQueryParamsAsInputs() {
+	public function testOutputQueryParamsAsInputs_NoUrlIsProvided_OutputInputsUsingCurrentUrlParams() {
 		/* Arrange. */
 		$_GET = [
 			'param_1' => 'value_1',
@@ -257,12 +253,33 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 		/* Act. */
 		ob_start();
-		Sensei_Utils::output_query_params_as_inputs( [ 'param_2' ] );
-		$output = ob_get_clean();
+		Sensei_Utils::output_query_params_as_inputs();
+		$result = ob_get_clean();
 
 		/* Assert. */
-		$this->assertStringContainsString( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
-		$this->assertStringNotContainsString( 'param_2', $output, 'Output should not contain the excluded query param input.' );
+		$this->assertSame( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
+	}
+
+	public function testOutputQueryParamsAsInputs_WhenUrlIsProvidedAndEchoIsFalse_ReturnsCorrectInputs() {
+		/* Arrange. */
+		$url = 'https://example.com?param_1=value_1&param_2=value_2';
+
+		/* Act. */
+		$result = Sensei_Utils::output_query_params_as_inputs( [], $url, false );
+
+		/* Assert. */
+		$this->assertSame( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
+	}
+
+	public function testOutputQueryParamsAsInputs_WhenAParamIsExcluded_ReturnsCorrectInputs() {
+		/* Arrange. */
+		$url = 'https://example.com?param_1=value_1&param_2=value_2';
+
+		/* Act. */
+		$result = Sensei_Utils::output_query_params_as_inputs( [ 'param_2' ], $url, false );
+
+		/* Assert. */
+		$this->assertSame( '<input type="hidden" name="param_1" value="value_1">', $result );
 	}
 
 	/**
@@ -270,10 +287,14 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	 *
 	 * @dataProvider lastActivityDateTestingData
 	 */
-	public function testFormatLastActivityDate_WhenCalled_ReturnsCorrectlyFormattedDates( $minutes_count, $expected_output ) {
+	public function testFormatLastActivityDate_WhenCalled_ReturnsCorrectlyFormattedDates( $seconds_count, $expected_output ) {
 		/* Arrange */
-		$gmt_time           = gmdate( 'Y-m-d H:i:s', strtotime( '-' . $minutes_count . ' seconds' ) );
-		$date_as_per_format = wp_date( get_option( 'date_format' ), ( new DateTime( $gmt_time ) )->getTimestamp(), new DateTimeZone( 'GMT' ) );
+		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'GMT' ) );
+		$this->set_clock_to( $current_datetime->getTimestamp() );
+
+		$test_time          = $current_datetime->getTimestamp() - $seconds_count;
+		$gmt_time           = gmdate( 'Y-m-d H:i:s', $test_time );
+		$date_as_per_format = wp_date( get_option( 'date_format' ), $test_time, new DateTimeZone( 'GMT' ) );
 
 		/* Act */
 		$actual = Sensei_Utils::format_last_activity_date( $gmt_time );
@@ -281,6 +302,8 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		/* Assert */
 		$expected = empty( $expected_output ) ? $date_as_per_format : $expected_output;
 		self::assertEquals( $expected, $actual, 'Last activity date is not being formatted correctly' );
+
+		$this->reset_clock();
 	}
 
 	public function testSenseiGradeQuiz_WhenCalled_UpdatesTheFinalGrade() {
@@ -330,6 +353,44 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertTrue( $is_rest_request );
+	}
+
+	public function testIsFrontendRequest_WhenFrontendRequest_ReturnsTrue() {
+		/* Act. */
+		$is_frontend_request = Sensei_Utils::is_frontend_request();
+
+		/* Assert. */
+		$this->assertTrue( $is_frontend_request );
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function testIsFrontendRequest_WhenRestRequest_ReturnsFalse() {
+		/* Arrange. */
+		define( 'REST_REQUEST', true );
+
+		/* Act. */
+		$is_frontend_request = Sensei_Utils::is_frontend_request();
+
+		/* Assert. */
+		$this->assertFalse( $is_frontend_request );
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function testIsFrontendRequest_WhenAdminRequest_ReturnsFalse() {
+		/* Arrange. */
+		define( 'WP_ADMIN', true );
+
+		/* Act. */
+		$is_frontend_request = Sensei_Utils::is_frontend_request();
+
+		/* Assert. */
+		$this->assertFalse( $is_frontend_request );
 	}
 
 	public function testSenseiDeleteQuizAnswers_WhenNoQuizProvided_ReturnsFalse() {
@@ -389,6 +450,10 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$submission    = $this->createMock( Submission_Interface::class );
 		$submission->method( 'get_id' )->willReturn( $submission_id );
 
+		$quiz_answer_repository     = Sensei()->quiz_answer_repository;
+		$quiz_grade_repository      = Sensei()->quiz_grade_repository;
+		$quiz_submission_repository = Sensei()->quiz_submission_repository;
+
 		Sensei()->quiz_answer_repository     = $this->createMock( Answer_Repository_Interface::class );
 		Sensei()->quiz_grade_repository      = $this->createMock( Grade_Repository_Interface::class );
 		Sensei()->quiz_submission_repository = $this->createMock( Submission_Repository_Interface::class );
@@ -413,6 +478,11 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 			->with( $submission );
 
 		Sensei_Utils::sensei_delete_quiz_answers( 1, 1 );
+
+		/* Reset. */
+		Sensei()->quiz_answer_repository     = $quiz_answer_repository;
+		Sensei()->quiz_grade_repository      = $quiz_grade_repository;
+		Sensei()->quiz_submission_repository = $quiz_submission_repository;
 	}
 
 	/**
@@ -439,7 +509,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( 2, $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsNextLessonIdIfPreviousLessonIsCompleted() {
+	public function testGetTargetResumeId_WhenPreviousLessonWasCompleted_ReturnsNextLessonId() {
 		/* Arrange */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
@@ -457,7 +527,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_lessons['lesson_ids'][1], $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsLastLessonIdIfNotCompleted() {
+	public function testGetTargetResumeId_WhenPreviousLessonWasNotCompleted_ReturnsLastLessonId() {
 		/* Arrange */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
@@ -491,7 +561,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_lessons['lesson_ids'][0], $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfAllLessonsAreCompleted() {
+	public function testGetTargetResumeId_WhenAllLessonsAreCompleted_ReturnsCourseId() {
 		/* Arrange */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
@@ -511,7 +581,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_lessons['course_id'], $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfItHasNoLessons() {
+	public function testGetTargetResumeId_WhenItHasNoLessons_ReturnsCourseId() {
 		/* Arrange */
 		$course_id = $this->factory->course->create();
 		$user_id   = $this->factory->user->create();
@@ -575,5 +645,37 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 		unlink( $index_file );
 		rmdir( $theme_directory );
+	}
+
+	public function testUpdateCourseStatus_WhenPreviousStatusNotFound_PassesNullAsPreviousStatusToTheAction(): void {
+		/* Arrange. */
+		$previous_status = 'not-set';
+		$action          = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
+			$previous_status = $prev_status;
+		};
+		add_action( 'sensei_course_status_updated', $action, 10, 5 );
+
+		/* Act. */
+		Sensei_Utils::update_course_status( 1, 2, 'in-progress' );
+
+		/* Assert. */
+		$this->assertNull( $previous_status );
+	}
+
+	public function testUpdateCourseStatus_WhenPreviousStatusFound_PassesSameStatusAsPreviousStatusToTheAction(): void {
+		/* Arrange. */
+		Sensei()->course_progress_repository->create( 2, 1 );
+
+		$previous_status = 'not-set';
+		$action          = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
+			$previous_status = $prev_status;
+		};
+		add_action( 'sensei_course_status_updated', $action, 10, 5 );
+
+		/* Act. */
+		Sensei_Utils::update_course_status( 1, 2, 'complete' );
+
+		/* Assert. */
+		$this->assertSame( 'in-progress', $previous_status );
 	}
 }

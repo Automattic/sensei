@@ -47,7 +47,7 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		self::resetEnrolmentProviders();
 	}
 
-	public function testGenerateEmail_WhenCalledByStudentCompletedCourseEvent_CallsStudentEmailSendingActionWithRightData() {
+	public function testGenerateEmail_WhenStudentEnrolledAndCompletedTheCourse_CallsStudentEmailSendingActionWithRightData() {
 		/* Arrange. */
 		$student_id    = $this->factory->user->create(
 			[
@@ -85,7 +85,7 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		);
 
 		/* Act. */
-		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID );
+		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID, 0, 'in-progress' );
 
 		/* Assert. */
 		self::assertEquals( 'course_completed', $email_data['name'] );
@@ -96,7 +96,7 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		self::assertNotEmpty( $email_data['data']['test@a.com']['completed:url'] );
 	}
 
-	public function testGenerateEmail_WhenCalledByStudentUpdatedCourseEvent_DoesNotCallStudentEmailIfCourseNotCompleted() {
+	public function testGenerateEmail_WhenCourseNotCompleted_DoesNotCallStudentEmail() {
 		/* Arrange. */
 		$student_id = $this->factory->user->create(
 			[
@@ -123,13 +123,13 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		);
 
 		/* Act. */
-		do_action( 'sensei_course_status_updated', 'in-progress', $student_id, $course->ID );
+		do_action( 'sensei_course_status_updated', 'in-progress', $student_id, $course->ID, 0, 'in-progress' );
 
 		/* Assert. */
 		self::assertEmpty( $email_data['name'] );
 	}
 
-	public function testGenerateEmail_WhenCalledByStudentUpdatedCourseEvent_DoesNotCallStudentEmailIfStudentNotEnrolled() {
+	public function testGenerateEmail_WhenStudentNotEnrolled_DoesNotCallStudentEmail() {
 		/* Arrange. */
 		$student_id = $this->factory->user->create(
 			[
@@ -156,9 +156,44 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		);
 
 		/* Act. */
-		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID );
+		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID, 0, 'in-progress' );
 
 		/* Assert. */
 		self::assertEmpty( $email_data['name'] );
 	}
+
+	public function testGenerateEmail_WhenCourseWasCompletedEarlier_DoesNotCallStudentEmail() {
+		/* Arrange. */
+		$student_id = $this->factory->user->create(
+			[
+				'user_email' => 'test@a.com',
+			]
+		);
+		$course     = $this->factory->course->create_and_get();
+		$this->manuallyEnrolStudentInCourse( $student_id, $course->ID );
+
+		( new Course_Completed( $this->email_repository ) )->init();
+
+		$email_data = [
+			'name' => '',
+			'data' => null,
+		];
+
+		add_action(
+			'sensei_email_send',
+			function ( $email_name, $replacements ) use ( &$email_data ) {
+				$email_data['name'] = $email_name;
+				$email_data['data'] = $replacements;
+			},
+			10,
+			2
+		);
+
+		/* Act. */
+		do_action( 'sensei_course_status_updated', 'complete', $student_id, $course->ID, 0, 'complete' );
+
+		/* Assert. */
+		self::assertEmpty( $email_data['name'] );
+	}
+
 }

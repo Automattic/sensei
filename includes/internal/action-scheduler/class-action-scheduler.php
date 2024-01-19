@@ -103,5 +103,20 @@ class Action_Scheduler {
 	public function has_scheduled_action( string $hook, array $args = null ): bool {
 		return as_has_scheduled_action( $hook, $args, self::GROUP_ID );
 	}
-}
 
+	/**
+	 * Get the next scheduled action.
+	 *
+	 * @internal
+	 *
+	 * @since 4.20.0
+	 *
+	 * @param array  $args          Args that have been passed to the action scheduler.
+	 * @param string $return_format OBJECT, ARRAY_A, or 'ids'.
+	 * @return array The scheduled actions.
+	 */
+	public function get_scheduled_actions( array $args, $return_format = null ): array {
+		$args['group'] = self::GROUP_ID;
+		return as_get_scheduled_actions( $args, $return_format ?? 'OBJECT' );
+	}
+}

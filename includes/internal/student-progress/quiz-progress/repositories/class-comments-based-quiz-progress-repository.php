@@ -59,6 +59,10 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @return Quiz_Progress_Interface
 	 */
 	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress_Interface {
+		if ( ! $user_id ) {
+			return null;
+		}
+
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 		if ( ! $lesson_id ) {
 			return null;
@@ -87,6 +91,10 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @return bool
 	 */
 	public function has( int $quiz_id, int $user_id ): bool {
+		if ( ! $user_id ) {
+			return false;
+		}
+
 		$lesson_id     = Sensei()->quiz->get_lesson_id( $quiz_id );
 		$activity_args = [
 			'post_id' => $lesson_id,
@@ -164,6 +172,10 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @param int $user_id User identifier.
 	 */
 	public function delete_for_user( int $user_id ): void {
+		if ( ! $user_id ) {
+			return;
+		}
+
 		$activity_args = [
 			'user_id' => $user_id,
 			'type'    => 'sensei_lesson_status',

@@ -36,6 +36,7 @@ export const getGradientClass = ( gradientSlug ) => {
 export const getColorAndStyleProps = ( { attributes, colors } ) => {
 	const {
 		backgroundColor,
+		borderColor,
 		customBackgroundColor,
 		textColor,
 		customTextColor,
@@ -47,13 +48,15 @@ export const getColorAndStyleProps = ( { attributes, colors } ) => {
 		'background-color',
 		backgroundColor
 	);
+
 	if ( ! style.color ) style.color = {};
 	if ( customBackgroundColor ) style.color.background = customBackgroundColor;
 	if ( customTextColor ) style.color.text = customTextColor;
 
+	const borderColorClass = getColorClassName( 'border-color', borderColor );
 	const gradientClass = getGradientClass( gradient );
 	const textClass = getColorClassName( 'color', textColor );
-	const className = classnames( textClass, gradientClass, {
+	const className = classnames( textClass, gradientClass, borderColorClass, {
 		// Don't apply the background class if there's a custom gradient
 		[ backgroundClass ]: ! style?.color?.gradient && !! backgroundClass,
 		'has-text-color': textColor || style?.color?.text,
@@ -62,6 +65,7 @@ export const getColorAndStyleProps = ( { attributes, colors } ) => {
 			style?.color?.background ||
 			gradient ||
 			style?.color?.gradient,
+		'has-border-color': borderColor,
 	} );
 	const styleProp =
 		style?.color?.background || style?.color?.text || style?.color?.gradient
@@ -75,6 +79,14 @@ export const getColorAndStyleProps = ( { attributes, colors } ) => {
 					color: style?.color?.text ? style.color.text : undefined,
 			  }
 			: {};
+
+	if ( style?.border?.color ) {
+		styleProp.borderColor = style.border.color;
+	}
+
+	if ( style?.border?.width ) {
+		styleProp.borderWidth = style.border.width;
+	}
 
 	// This is needed only for themes that don't load their color stylesheets in the editor
 	// We force an inline style to apply the color.

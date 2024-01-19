@@ -23,21 +23,23 @@ const QueryStringRouterContext = createContext();
  * Query string router component.
  * It creates a provider with the following values in the context:
  * - `currentRoute`: The string of the current route.
- * - `goTo`: Functions that send the user to another route.
+ * - `goNext`: Function that send the user to the next route.
+ * - `goTo`: Function that send the user to another route.
  *
- * @param {Object} props
- * @param {string} props.paramName    Param used as reference in the query string.
- * @param {string} props.defaultRoute Default route to open if there is nothing in the URL.
- * @param {Object} props.children     Render this children if it matches the route.
+ * @param {Object}   props
+ * @param {string}   props.paramName    Param used as reference in the query string.
+ * @param {string[]} props.routes       Routes of the navigation.
+ * @param {string}   props.defaultRoute Default route to open if there is nothing in the URL.
+ * @param {Object}   props.children     Render this children if it matches the route.
  */
-const QueryStringRouter = ( { paramName, defaultRoute, children } ) => {
+const QueryStringRouter = ( { paramName, routes, defaultRoute, children } ) => {
 	// Current route.
 	const [ currentRoute, setRoute ] = useState( getParam( paramName ) );
 
 	// Provider value.
 	const providerValue = useMemo( () => {
 		/**
-		 * Functions that send the user to another route.
+		 * Function that send the user to another route.
 		 * It changes the URL and update the state of the current route.
 		 *
 		 * @param {string}  newRoute New route to send the user.
@@ -48,15 +50,31 @@ const QueryStringRouter = ( { paramName, defaultRoute, children } ) => {
 			setRoute( newRoute );
 		};
 
+		/**
+		 * Function that send the user to the next route, in a linear navigation.
+		 * It changes the URL and update the state of the current route.
+		 */
+		const goNext = () => {
+			const currentIndex = routes.findIndex(
+				( route ) => route === currentRoute
+			);
+			const nextRoute = routes[ currentIndex + 1 ];
+
+			if ( nextRoute ) {
+				goTo( nextRoute );
+			}
+		};
+
 		if ( ! currentRoute ) {
 			goTo( defaultRoute, true );
 		}
 
 		return {
 			currentRoute,
+			goNext,
 			goTo,
 		};
-	}, [ currentRoute, paramName, defaultRoute ] );
+	}, [ currentRoute, paramName, routes, defaultRoute ] );
 
 	// Handle history changes through popstate.
 	useEventListener(

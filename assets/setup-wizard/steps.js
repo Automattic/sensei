@@ -33,6 +33,10 @@ const steps = [
 		key: 'features',
 		container: <Features />,
 	},
-];
+].filter(
+	// Remove theme step if it's already installed.
+	( step ) =>
+		! ( 'theme' === step.key && window.sensei.isCourseThemeInstalled )
+);
 
 export default steps;

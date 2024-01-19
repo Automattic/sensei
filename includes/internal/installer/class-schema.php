@@ -8,6 +8,8 @@
 
 namespace Sensei\Internal\Installer;
 
+use Sensei_Feature_Flags;
+
 /**
  * Schema class.
  *
@@ -16,6 +18,14 @@ namespace Sensei\Internal\Installer;
  * @since 4.16.1
  */
 class Schema {
+	/**
+	 * Feature flags.
+	 *
+	 * @since 4.19.2
+	 * @var Sensei_Feature_Flags
+	 */
+	private Sensei_Feature_Flags $feature_flags;
+
 	/*
 	 * Indexes have a maximum size of 767 bytes. Historically, we haven't need to be concerned about that.
 	 * As of WP 4.2, however, they moved to utf8mb4, which uses 4 bytes per character. This means that an index which
@@ -25,6 +35,17 @@ class Schema {
 	 * @var int
 	 */
 	const MAX_INDEX_LENGTH = 191;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 4.19.2
+	 *
+	 * @param Sensei_Feature_Flags $feature_flags Feature flags.
+	 */
+	public function __construct( Sensei_Feature_Flags $feature_flags ) {
+		$this->feature_flags = $feature_flags;
+	}
 
 	/**
 	 * Set up the database tables which the plugin needs to function.
@@ -152,7 +173,7 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 		global $wpdb;
 
 		$tables = [];
-		if ( Sensei()->feature_flags->is_enabled( 'tables_based_progress' ) ) {
+		if ( $this->feature_flags->is_enabled( 'tables_based_progress' ) ) {
 			$tables[] = "{$wpdb->prefix}sensei_lms_progress";
 			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_submissions";
 			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_answers";

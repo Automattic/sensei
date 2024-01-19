@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @covers Sensei_Home_Task_Create_First_Course
  */
-class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
+class Sensei_Home_Task_Create_First_Course_Test extends WP_UnitTestCase {
 	/**
 	 * The task under test
 	 *
@@ -36,7 +36,17 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 		parent::setUp();
 		$this->task    = new Sensei_Home_Task_Create_First_Course();
 		$this->factory = new Sensei_Factory();
-		self::flush_cache();
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+		$this->factory->tearDown();
+	}
+
+	/**
+	 * Verify that is_completed returns false initially.
+	 */
+	public function testIsCompleted_Initially_ReturnsFalse() {
 		$this->assertFalse( $this->task->is_completed() );
 	}
 
@@ -51,7 +61,6 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'draft',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$is_completed = $this->task->is_completed();
@@ -59,6 +68,7 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 		// Assert
 		$this->assertTrue( $is_completed );
 	}
+
 	/**
 	 * Verify if is_completed returns false when a course that doesn't have the sample course slug is on trash.
 	 */
@@ -70,7 +80,6 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'trash',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$is_completed = $this->task->is_completed();
@@ -90,7 +99,6 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'draft',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$is_completed = $this->task->is_completed();
@@ -116,7 +124,6 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 				'post_status' => 'draft',
 			]
 		);
-		self::flush_cache();
 
 		// Act
 		$is_completed = $this->task->is_completed();

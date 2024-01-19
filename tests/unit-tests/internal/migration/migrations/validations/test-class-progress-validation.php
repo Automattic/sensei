@@ -3,6 +3,7 @@
 namespace SenseiTest\Internal\Migration\Validations;
 
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
+use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 use Sensei\Internal\Migration\Validations\Progress_Validation;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
@@ -65,7 +66,7 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$progress_validation = new Progress_Validation();
 
 		$this->directlyEnrolStudent( 1, $course_id );
-		$this->mask_migration_as_complete();
+		$this->migrate_progress();
 
 		/* Act. */
 		$progress_validation->run();
@@ -82,8 +83,8 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$progress_repository = new Tables_Based_Course_Progress_Repository( $wpdb );
 
 		$this->directlyEnrolStudent( 1, $course_id );
+		$this->migrate_progress();
 		$progress_repository->delete_for_course( $course_id );
-		$this->mask_migration_as_complete();
 
 		/* Act. */
 		$progress_validation->run();
@@ -103,10 +104,11 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$progress_repository = new Tables_Based_Course_Progress_Repository( $wpdb );
 
 		$this->directlyEnrolStudent( 1, $course_id );
+		$this->migrate_progress();
+
 		$progress = $progress_repository->get( $course_id, 1 );
 		$progress->complete();
 		$progress_repository->save( $progress );
-		$this->mask_migration_as_complete();
 
 		/* Act. */
 		$progress_validation->run();
@@ -124,7 +126,7 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$progress_validation = new Progress_Validation();
 
 		Sensei_Utils::user_start_lesson( 1, $lesson_id );
-		$this->mask_migration_as_complete();
+		$this->migrate_progress();
 
 		/* Act. */
 		$progress_validation->run();
@@ -141,8 +143,8 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$progress_repository = new Tables_Based_Lesson_Progress_Repository( $wpdb );
 
 		Sensei_Utils::user_start_lesson( 1, $lesson_id );
+		$this->migrate_progress();
 		$progress_repository->delete_for_lesson( $lesson_id );
-		$this->mask_migration_as_complete();
 
 		/* Act. */
 		$progress_validation->run();
@@ -162,10 +164,10 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$progress_repository = new Tables_Based_Lesson_Progress_Repository( $wpdb );
 
 		Sensei_Utils::user_start_lesson( 1, $lesson_id );
+		$this->migrate_progress();
 		$progress = $progress_repository->get( $lesson_id, 1 );
 		$progress->complete();
 		$progress_repository->save( $progress );
-		$this->mask_migration_as_complete();
 
 		/* Act. */
 		$progress_validation->run();
@@ -187,8 +189,7 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		add_filter( 'sensei_is_enrolled', '__return_true' );
 		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
 		Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, 1 );
-		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, 1 );
-		$this->mask_migration_as_complete();
+		$this->migrate_progress();
 
 		/* Act. */
 		$progress_validation->run();
@@ -209,9 +210,8 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		add_filter( 'sensei_is_enrolled', '__return_true' );
 		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
 		Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, 1 );
-		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, 1 );
+		$this->migrate_progress();
 		$progress_repository->delete_for_quiz( $quiz_id );
-		$this->mask_migration_as_complete();
 
 		/* Act. */
 		$progress_validation->run();
@@ -235,11 +235,10 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		add_filter( 'sensei_is_enrolled', '__return_true' );
 		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
 		Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, 1 );
-		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, 1 );
+		$this->migrate_progress();
 		$progress = $progress_repository->get( $quiz_id, 1 );
 		$progress->pass();
 		$progress_repository->save( $progress );
-		$this->mask_migration_as_complete();
 
 		/* Act. */
 		$progress_validation->run();
@@ -249,6 +248,24 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 			'Data mismatch between comments and tables based progress.',
 			$this->get_first_error_message( $progress_validation )
 		);
+	}
+
+	private function migrate_progress() {
+		$this->cleanup_custom_tables();
+
+		( new Student_Progress_Migration() )->run( false );
+
+		$this->mask_migration_as_complete();
+	}
+
+	private function cleanup_custom_tables() {
+		global $wpdb;
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_progress" );
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades" );
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_answers" );
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_submissions" );
+		// phpcs:enable
 	}
 
 	private function mask_migration_as_complete(): void {

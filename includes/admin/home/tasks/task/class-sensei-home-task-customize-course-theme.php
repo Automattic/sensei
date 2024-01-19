@@ -38,7 +38,7 @@ class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_title(): string {
-		return __( 'Customize your theme', 'sensei-lms' );
+		return __( 'Customize your lesson template', 'sensei-lms' );
 	}
 
 	/**
@@ -47,7 +47,12 @@ class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_url(): ?string {
-		return admin_url( 'site-editor.php' );
+		return add_query_arg(
+			[
+				'canvas' => 'edit',
+			],
+			Sensei_Course_Theme::get_learning_mode_fse_url()
+		);
 	}
 
 	/**
@@ -66,6 +71,7 @@ class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	 */
 	public static function mark_completed() {
 		update_option( self::CUSTOMIZED_COURSE_THEME_OPTION_KEY, true, false );
+		sensei_log_event( 'home_task_complete', [ 'type' => self::get_id() ] );
 	}
 
 	/**

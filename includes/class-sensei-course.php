@@ -412,7 +412,7 @@ class Sensei_Course {
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>"><?php esc_html_e( 'New Course', 'sensei-lms' ); ?></a>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=course-order' ) ); ?>"><?php esc_html_e( 'Order Courses', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings#course-settings' ) ); ?>"><?php esc_html_e( 'Course Settings', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings&tab=course-settings' ) ); ?>"><?php esc_html_e( 'Course Settings', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
@@ -4462,6 +4462,10 @@ class Sensei_Course {
 	 * @return String
 	 */
 	public static function alter_redirect_url_after_enrolment( $url, $post ) {
+		// Only redirect to the lesson if the course is published.
+		if ( 'publish' !== $post->post_status ) {
+			return $url;
+		}
 
 		$course_id = $post->ID;
 		if ( Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {

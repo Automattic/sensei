@@ -8,6 +8,9 @@
 namespace Sensei\Internal\Migration;
 
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
+use Sensei\Internal\Migration\Migrations\Quiz_Migration;
+use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,6 +30,13 @@ class Migration_Job_Scheduler {
 	 * @var string
 	 */
 	private const HOOK_NAMESPACE = 'sensei_lms_migration_job_';
+
+	/**
+	 * Current migration job status option name.
+	 *
+	 * @var string
+	 */
+	public const STATUS_OPTION_NAME = 'sensei_lms_migration_job_status';
 
 	/**
 	 * Migration errors option name.
@@ -49,6 +59,11 @@ class Migration_Job_Scheduler {
 	 */
 	public const COMPLETED_OPTION_NAME = 'sensei_lms_migration_job_completed';
 
+	public const STATUS_NOT_STARTED = 'not_started';
+	public const STATUS_IN_PROGRESS = 'in_progress';
+	public const STATUS_COMPLETE    = 'complete';
+	public const STATUS_FAILED      = 'failed';
+
 	/**
 	 * Action_Scheduler instance.
 	 *
@@ -70,6 +85,13 @@ class Migration_Job_Scheduler {
 	 */
 	public function __construct( Action_Scheduler $action_scheduler ) {
 		$this->action_scheduler = $action_scheduler;
+	}
+
+	/**
+	 * Initialize the migration job scheduler.
+	 */
+	public function init(): void {
+		add_action( 'action_scheduler_unexpected_shutdown', [ $this, 'collect_failed_job_errors' ], 10, 2 );
 	}
 
 	/**
@@ -102,6 +124,64 @@ class Migration_Job_Scheduler {
 	}
 
 	/**
+	 * Check if the migration is complete.
+	 *
+	 * @internal
+	 *
+	 * @since 4.20.0
+	 *
+	 * @return bool
+	 */
+	public function is_complete(): bool {
+		$status = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
+
+		return self::STATUS_COMPLETE === $status;
+	}
+
+	/**
+	 * Check if the migration is failed.
+	 *
+	 * @internal
+	 *
+	 * @since 4.20.0
+	 *
+	 * @return bool
+	 */
+	public function is_failed(): bool {
+		$status = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
+
+		return self::STATUS_FAILED === $status;
+	}
+
+	/**
+	 * Check if the migration is in progress.
+	 *
+	 * @internal
+	 *
+	 * @since 4.20.0
+	 *
+	 * @return bool
+	 */
+	public function is_in_progress(): bool {
+		$status = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
+
+		return self::STATUS_IN_PROGRESS === $status;
+	}
+
+	/**
+	 * Get the migration errors.
+	 *
+	 * @internal
+	 *
+	 * @since 4.20.0
+	 *
+	 * @return array
+	 */
+	public function get_errors(): array {
+		return (array) get_option( self::ERRORS_OPTION_NAME, [] );
+	}
+
+	/**
 	 * Schedule a job.
 	 *
 	 * @param Migration_Job $job The migration job.
@@ -115,6 +195,63 @@ class Migration_Job_Scheduler {
 	}
 
 	/**
+	 * Handle unexpected job error and add it to migration errors.
+	 *
+	 * @internal
+	 *
+	 * @access private
+	 *
+	 * @since 4.20.0
+	 * @param string $action_id The action ID.
+	 * @param array  $error     The error.
+	 */
+	public function collect_failed_job_errors( $action_id, $error ) {
+		if ( ! $this->is_migration_action( $action_id ) ) {
+			return;
+		}
+
+		$this->add_error( array( $error['message'] ) );
+
+		$current_status = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
+		if ( self::STATUS_FAILED !== $current_status ) {
+			$this->complete( self::STATUS_FAILED );
+		}
+	}
+
+	/**
+	 * Check if the action is a migration action.
+	 *
+	 * @param string $action_id The action ID.
+	 * @return bool
+	 */
+	private function is_migration_action( $action_id ): bool {
+		// Make sure the action ID is a string.
+		$action_id = (string) $action_id;
+
+		$hooks = array();
+		foreach ( $this->jobs as $job ) {
+			$hooks[] = $this->get_job_hook_name( $job );
+		}
+
+		$args = array(
+			'status' => 'failed',
+		);
+
+		foreach ( $hooks as $hook ) {
+			$args['hook'] = $hook;
+
+			$action_ids = $this->action_scheduler->get_scheduled_actions( $args, 'ids' );
+			// Make sure the action IDs are strings.
+			$action_ids = array_map( 'strval', $action_ids );
+			if ( in_array( $action_id, $action_ids, true ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Run the job.
 	 *
 	 * @internal
@@ -124,6 +261,13 @@ class Migration_Job_Scheduler {
 	 * @param string $job_name The job name.
 	 */
 	public function run_job( string $job_name ): void {
+		// Temporarily workaround: increase the time limit.
+		$max_execution_time = (int) ini_get( 'max_execution_time' );
+		if ( 0 !== $max_execution_time && function_exists( 'set_time_limit' ) ) {
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			@set_time_limit( 0 );
+		}
+
 		if ( $this->is_first_run() ) {
 			$this->start();
 		}
@@ -133,21 +277,36 @@ class Migration_Job_Scheduler {
 		$job->run();
 
 		if ( $job->get_errors() ) {
-			$migration_errors = (array) get_option( self::ERRORS_OPTION_NAME, [] );
-			$migration_errors = array_merge( $migration_errors, $job->get_errors() );
-			update_option( self::ERRORS_OPTION_NAME, $migration_errors );
+			$this->add_error( $job->get_errors() );
 		}
 
 		if ( $job->is_complete() ) {
 			$next_job = $this->get_next_job( $job );
-			if ( $next_job ) {
+			if ( $next_job && Progress_Storage_Settings::is_sync_enabled() ) {
 				$this->schedule_job( $next_job );
 			} else {
-				$this->complete();
+				$this->complete( self::STATUS_COMPLETE );
+				$this->log_migration_complete_event();
 			}
 		} else {
 			$this->schedule_job( $job );
 		}
+	}
+
+	/**
+	 * Clear migration state.
+	 *
+	 * @internal
+	 *
+	 * @since 4.20.0
+	 */
+	public function clear_state(): void {
+		delete_option( self::STATUS_OPTION_NAME );
+		delete_option( self::STARTED_OPTION_NAME );
+		delete_option( self::COMPLETED_OPTION_NAME );
+		delete_option( self::ERRORS_OPTION_NAME );
+		delete_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME );
+		delete_option( Student_Progress_Migration::LARST_COMMENT_ID_OPTION_NAME );
 	}
 
 	/**
@@ -181,29 +340,60 @@ class Migration_Job_Scheduler {
 	}
 
 	/**
+	 * Add errors to the migration errors.
+	 *
+	 * @param array $errors The errors to add.
+	 */
+	private function add_error( array $errors ) {
+		$migration_errors = (array) get_option( self::ERRORS_OPTION_NAME, [] );
+		$migration_errors = array_merge( $migration_errors, $errors );
+		update_option( self::ERRORS_OPTION_NAME, $migration_errors );
+	}
+
+	/**
 	 * Check if this is the first run of the job.
 	 *
 	 * @return bool
 	 */
 	private function is_first_run(): bool {
-		$started   = get_option( self::STARTED_OPTION_NAME, 0 );
-		$completed = get_option( self::COMPLETED_OPTION_NAME, 0 );
+		$current = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
 
-		return $started < $completed || 0 === $started;
+		return self::STATUS_NOT_STARTED === $current;
 	}
 
 	/**
 	 * Set start time.
 	 */
 	private function start(): void {
+		update_option( self::STATUS_OPTION_NAME, self::STATUS_IN_PROGRESS );
 		update_option( self::STARTED_OPTION_NAME, microtime( true ) );
 		delete_option( self::COMPLETED_OPTION_NAME );
 	}
 
 	/**
-	 * Set completion time.
+	 * Set completion status and time.
+	 *
+	 * @param string $status The migration status.
 	 */
-	private function complete(): void {
+	private function complete( string $status ): void {
+		update_option( self::STATUS_OPTION_NAME, $status );
 		update_option( self::COMPLETED_OPTION_NAME, microtime( true ) );
+	}
+
+	/**
+	 * Log migration complete event.
+	 */
+	private function log_migration_complete_event() {
+		$started   = get_option( self::STARTED_OPTION_NAME, 0 );
+		$completed = get_option( self::COMPLETED_OPTION_NAME, 0 );
+		$duration  = $completed - $started;
+		$errors    = $this->get_errors();
+		sensei_log_event(
+			'hpps_migration_complete',
+			array(
+				'duration' => $duration,
+				'errors'   => count( $errors ),
+			)
+		);
 	}
 }

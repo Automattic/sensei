@@ -16,7 +16,7 @@ if ( ! function_exists( 'sensei_locked_lesson_notices_map' ) ) {
 	/**
 	 * Notices map to echo notices HTML.
 	 *
-	 * @param array $notice
+	 * @param array $notice The notice.
 	 */
 	function sensei_locked_lesson_notices_map( $notice ) {
 		?>
@@ -36,7 +36,7 @@ if ( ! function_exists( 'sensei_locked_lesson_notices_map' ) ) {
 				</div>
 			</div>
 			<?php } ?>
-			<div class="sensei-course-theme-locked-lesson-notice__text"><?php echo wp_kses_post( $notice['text'] ); ?></div>
+			<p class="sensei-course-theme-locked-lesson-notice__text"><?php echo wp_kses_post( $notice['text'] ); ?></p>
 
 			<?php if ( ! empty( $notice['actions'] ) ) { ?>
 				<div class="sensei-course-theme-locked-lesson-notice__actions">
@@ -52,7 +52,7 @@ if ( ! function_exists( 'sensei_locked_lesson_notice_actions_map' ) ) {
 	/**
 	 * Notice actions map to echo the actions.
 	 *
-	 * @param array|string $action
+	 * @param array|string $action Notice actions.
 	 */
 	function sensei_locked_lesson_notice_actions_map( $action ) {
 		?>

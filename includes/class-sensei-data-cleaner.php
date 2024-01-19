@@ -92,10 +92,12 @@ class Sensei_Data_Cleaner {
 		'sensei-cancelled-wccom-connect-dismissed',
 		'sensei_course_theme_query_var_flushed',
 		'sensei_settings_sections_visited',
-		'sensei_home_tasks_list_is_completed',
-		'sensei_home_tasks_dismissed',
-		'sensei_home_task_visited_woocommerce',
+		'sensei_home_task_created_first_course',
+		'sensei_home_task_published_first_course',
 		'sensei_home_task_visited_course_theme_customizer',
+		'sensei_home_task_visited_woocommerce',
+		'sensei_home_tasks_dismissed',
+		'sensei_home_tasks_list_is_completed',
 	);
 
 	/**
