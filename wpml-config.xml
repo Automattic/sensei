@@ -27,8 +27,9 @@
 		</key>
 	</admin-texts>
 	<gutenberg-blocks>
-		<gutenberg-block type="sensei-lms/course-outline-lesson" translate="0">
-			<key name="id" type="post-ids" sub-type="lesson"/>
+		<gutenberg-block type="sensei-lms/course-outline-lesson" translate="1">
+			<key name="id" type="post-ids" sub-type="lesson" />
+			<key name="title" />
 		</gutenberg-block>
 	</gutenberg-blocks>
 </wpml-config>
