@@ -1,6 +1,7 @@
 .sensei-lms-quiz-block {
-	&__questions-modal {
-		width: 100%;
+	//
+	&__existing-lessons-modal {
+		min-width: 566px;
 		max-width: 697px;
 
 		/* Reset some components styles */
@@ -15,7 +16,7 @@
 			margin: 0 0 15px;
 		}
 
-		&__questions {
+		&__existing-lessons {
 			overflow: auto;
 			height: calc(100vh - 225px);
 
@@ -70,11 +71,11 @@
 			}
 		}
 
-		&__question-checkbox {
+		&__lesson-checkbox {
 			width: 1px;
 		}
 
-		&__question-title {
+		&__lesson-title {
 			font-weight: 700;
 			white-space: nowrap;
 			text-overflow: ellipsis;
@@ -82,6 +83,12 @@
 			max-width: 250px;
 			@media (max-width: 500px) {
 				max-width: 100px;
+			}
+		}
+
+		&__course-title {
+			&--not-found {
+				color: rgba( 0, 0, 0, 0.5 );
 			}
 		}
 

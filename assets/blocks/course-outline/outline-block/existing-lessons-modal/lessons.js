@@ -74,11 +74,17 @@ const Lessons = ( {
 						return lesson;
 					}
 
-					const course = courses.find(
+					let course = courses.find(
 						( c ) => c.id === lessonCourseId
 					);
+
 					if ( ! course ) {
-						return lesson;
+						course = {
+							id: undefined,
+							title: {
+								raw: __( 'Course not assigned', 'sensei-lms' ),
+							},
+						};
 					}
 
 					return {
@@ -131,7 +137,12 @@ const Lessons = ( {
 	};
 
 	const lessonsMap = ( lesson ) => {
-		const course = lesson.course?.title.raw || '';
+		const course =
+			lesson.course?.title.raw || __( 'Loading…', 'sensei-lms' );
+		const courseNotFoundClass =
+			lesson.course?.id === undefined
+				? 'sensei-lms-quiz-block__existing-lessons-modal__course-title--not-found'
+				: '';
 		const lessonId = lesson.id;
 		const title = lesson.title.raw;
 
@@ -153,7 +164,7 @@ const Lessons = ( {
 						{ title }
 					</label>
 				</td>
-				<td>{ course }</td>
+				<td className={ courseNotFoundClass }>{ course }</td>
 			</tr>
 		);
 	};
