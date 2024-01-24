@@ -2,16 +2,16 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 4.20.1\n"
+"Project-Id-Version: Sensei LMS 4.20.2-a.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-01-17T12:10:40+00:00\n"
+"POT-Creation-Date: 2024-01-24T12:15:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.8.1\n"
+"X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: sensei-lms\n"
 
 #. Plugin Name of the plugin
@@ -793,7 +793,7 @@ msgstr ""
 #: includes/block-patterns/page/templates/v1/landing-page-grid.php:72
 #: includes/block-patterns/page/templates/v1/landing-page-list.php:82
 #: includes/block-patterns/page/templates/v2/landing-page.php:61
-#: assets/admin/editor-wizard/steps/course-details-step.js:85
+#: assets/admin/editor-wizard/steps/course-details-step.js:86
 #: assets/admin/editor-wizard/steps/lesson-details-step.js:72
 #: assets/blocks/course-actions-block/continue-course/index.js:28
 #: assets/blocks/course-actions-block/continue-course/index.js:33
@@ -5785,17 +5785,17 @@ msgstr ""
 msgid "Points: %s"
 msgstr ""
 
-#: includes/class-sensei.php:493
-#: includes/class-sensei.php:502
+#: includes/class-sensei.php:527
+#: includes/class-sensei.php:536
 msgid "Cheatin&#8217; huh?"
 msgstr ""
 
 #. translators: Docs as in Documentation
-#: includes/class-sensei.php:1597
+#: includes/class-sensei.php:1631
 msgid "Docs"
 msgstr ""
 
-#: includes/class-sensei.php:1615
+#: includes/class-sensei.php:1649
 msgctxt "plugin action link"
 msgid "Configure"
 msgstr ""
@@ -7294,7 +7294,7 @@ msgstr ""
 msgid "Take This Course"
 msgstr ""
 
-#: sensei-lms.php:82
+#: sensei-lms.php:65
 msgid "Deactivate other instances of Sensei LMS before activating this plugin."
 msgstr ""
 
@@ -7598,12 +7598,12 @@ msgstr ""
 msgid "Course Title"
 msgstr ""
 
-#: assets/admin/editor-wizard/steps/course-details-step.js:60
+#: assets/admin/editor-wizard/steps/course-details-step.js:61
 #: assets/dist/admin/editor-wizard/index.js:73
 msgid "Course Description"
 msgstr ""
 
-#: assets/admin/editor-wizard/steps/course-details-step.js:71
+#: assets/admin/editor-wizard/steps/course-details-step.js:72
 #: assets/dist/admin/editor-wizard/index.js:73
 msgid "Illustration of course sample with some placeholders."
 msgstr ""
