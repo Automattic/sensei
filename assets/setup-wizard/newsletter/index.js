@@ -14,11 +14,7 @@ import { H } from '../../shared/components/section';
  * Newsletter step for Setup Wizard.
  */
 const Newsletter = () => {
-	const { goTo } = useQueryStringRouter();
-
-	const goToNextStep = () => {
-		goTo( 'features' );
-	};
+	const { goNext } = useQueryStringRouter();
 
 	return (
 		<>
@@ -36,11 +32,11 @@ const Newsletter = () => {
 					) }
 				</p>
 				<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
-					<SignupForm onSubmit={ goToNextStep } />
+					<SignupForm onSubmit={ goNext } />
 					<div className="sensei-setup-wizard__action-skip">
 						<button
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
-							onClick={ goToNextStep }
+							onClick={ goNext }
 						>
 							{ __( 'Skip newsletter signup', 'sensei-lms' ) }
 						</button>

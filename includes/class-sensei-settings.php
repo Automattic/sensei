@@ -854,8 +854,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 		if ( Sensei()->feature_flags->is_enabled( 'experimental_features_ui' ) ) {
 			$fields['experimental_progress_storage']                 = array(
 				'name'        => __( 'High-Performance Progress Storage', 'sensei-lms' ),
-				'description' => __( 'Store the progress of your students in separate tables. This feature is currently in development and should be used with caution.', 'sensei-lms' ),
+				'description' => __( 'Store the progress of your students in separate tables.', 'sensei-lms' ),
 				'form'        => 'render_progress_storage_feature',
+				'type'        => 'checkbox',
+				'default'     => false,
+				'section'     => 'sensei-experimental-features',
+			);
+			$fields['experimental_progress_storage_synchronization'] = array(
+				'name'        => '',
+				'description' => __( 'Synchronize the student progress between storages.', 'sensei-lms' ),
+				'form'        => 'render_progress_storage_synchronization',
 				'type'        => 'checkbox',
 				'default'     => false,
 				'section'     => 'sensei-experimental-features',
@@ -868,14 +876,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 				'default'     => Progress_Storage_Settings::COMMENTS_STORAGE,
 				'section'     => 'sensei-experimental-features',
 				'options'     => Progress_Storage_Settings::get_storage_repositories(),
-			);
-			$fields['experimental_progress_storage_synchronization'] = array(
-				'name'        => '',
-				'description' => __( 'Synchronize the student progress between storages.', 'sensei-lms' ),
-				'form'        => 'render_progress_storage_synchronization',
-				'type'        => 'checkbox',
-				'default'     => false,
-				'section'     => 'sensei-experimental-features',
 			);
 		}
 
@@ -1055,7 +1055,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Ensure that the experimental features settings are consistent.
 	 *
 	 * @access private
-	 * @since $$next-version$$
+	 * @since 4.20.0
 	 *
 	 * @param array $value     The new settings value.
 	 * @param array $old_value The old settings value.
@@ -1180,11 +1180,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Disable the checkbox if we can't set time limit. That's our current limitation for running migrations.
 		$disabled_feature            = true;
-		$disabled_messages           = array();
 		$original_max_execution_time = (int) ini_get( 'max_execution_time' );
 		$disabled_php_functions      = array_map( 'trim', explode( ',', ini_get( 'disable_functions' ) ) );
 		$set_time_limit_disabled     = in_array( 'set_time_limit', $disabled_php_functions, true );
-		$xdebug_enabled              = extension_loaded( 'xdebug' );
 		if ( 0 !== $original_max_execution_time && ! $set_time_limit_disabled ) {
 			// Set max execution time to 0 to check if we can set it in migrtions.
 			$disabled_feature           = ! set_time_limit( 0 );
@@ -1194,23 +1192,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			}
 			// Restore original max execution time.
 			set_time_limit( $original_max_execution_time );
-		}
-
-		if ( $disabled_feature ) {
-			if ( $set_time_limit_disabled ) {
-				$disabled_messages[] = sprintf(
-					// translators: Placeholder is a link to `set_time_limit` function documentation.
-					__( "The feature can't be enabled because the %s function is disabled in your PHP configuration.", 'sensei-lms' ),
-					'<a href="https://www.php.net/manual/en/function.set-time-limit.php" target="_blank" rel="noopener noreferrer">set_time_limit</a>'
-				);
-			}
-			if ( $xdebug_enabled ) {
-				$disabled_messages[] = sprintf(
-					// translators: Placeholder is a link to Xdebug website.
-					__( '%s is interfering with this feature. Please, consider disabling it.', 'sensei-lms' ),
-					'<a href="https://xdebug.org/" target="_blank" rel="noopener noreferrer">Xdebug</a>'
-				);
-			}
 		}
 		?>
 		<div>
@@ -1230,20 +1211,30 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<?php if ( $disabled_feature ) : ?>
 				<input type="hidden" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" value="<?php echo esc_attr( $value ); ?>" />
 				<p>
-					<?php if ( ! empty( $disabled_messages ) ) : ?>
-						<?php echo wp_kses_post( implode( '<br />', $disabled_messages ) ); ?>
-					<?php endif; ?>
+					<?php
+					echo esc_html( __( 'As this feature is currently experimental, it may not be available yet on some sites.', 'sensei-lms' ) );
+					?>
 				</p>
 			<?php endif; ?>
 		<?php if ( ! $value ) : ?>
 			<div class="notice notice-info inline sensei-settings__progress-storage-settings hidden">
 				<p>
 					<?php
-					echo esc_html( __( 'Save changes to make synchronization setting available.', 'sensei-lms' ) );
+					echo esc_html( __( 'Save changes to make the feature settings available.', 'sensei-lms' ) );
 					?>
 				</p>
 			</div>
 		<?php endif; ?>
+			<h4><?php esc_html_e( 'Instructions', 'sensei-lms' ); ?></h4>
+			<p><?php esc_html_e( 'To enable High-Performance Progress Storage, follow these steps:', 'sensei-lms' ); ?></p>
+			<ol>
+				<li><?php esc_html_e( 'Select the "Store the progress of your students in separate tables" checkbox and save the changes.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'Select the "Synchronize the student progress between storages" checkbox and save the changes.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'Wait until the "Migration complete and data synchronization enabled" message is displayed. This may take awhile and you will need to refresh the page to see the updated status.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'Select the "High-Performance progress storage (experimental)" option and save the changes.', 'sensei-lms' ); ?></li>
+				<li><?php esc_html_e( 'You are now using High-Performance Progress Storage!', 'sensei-lms' ); ?></li>
+			</ol>
+			<p><?php echo wp_kses_post( __( 'To learn more about the feature, check the <a href="https://senseilms.com/documentation/high-performance-progress-storage/" target="_blank">docs</a>.', 'sensei-lms' ) ); ?></p>
 		</div>
 		<?php
 		Sensei()->assets->enqueue( 'sensei-experimental-features-progress-storage', 'js/admin/settings/experimental-features.js', array( 'jquery' ), true );
@@ -1565,9 +1556,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 			if ( isset( $_POST['section_id'] ) ) {
 				$section_id = sanitize_key( $_POST['section_id'] );
 				$visited    = get_option( self::VISITED_SECTIONS_OPTION_KEY, [] );
+
 				if ( ! in_array( $section_id, $visited, true ) ) {
 					$visited[] = $section_id;
 					update_option( self::VISITED_SECTIONS_OPTION_KEY, $visited );
+
+					if ( 'appearance-settings' === $section_id ) {
+						sensei_log_event( 'home_task_complete', [ 'type' => Sensei_Home_Task_Configure_Learning_Mode::get_id() ] );
+					}
 				}
 			}
 		}

@@ -37,6 +37,7 @@ Both the PR author and reviewer are responsible for ensuring the checklist is co
 - [ ] New UIs are responsive and use a [mobile-first approach](https://zellwk.com/blog/how-to-write-mobile-first-css/)
 - [ ] New UIs match the designs
 - [ ] Different user privileges (admin, teacher, subscriber) are tested as appropriate
+- [ ] Legacy courses (course without blocks) are tested
 - [ ] Code is tested on the minimum supported PHP and WordPress versions
 - [ ] User interface changes have been tested on the latest versions of Chrome, Firefox and Safari
 - [ ] "Needs Documentation" label is added if this change requires updates to documentation

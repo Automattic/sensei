@@ -1,5 +1,46 @@
 *** Changelog ***
 
+## 4.20.1 - 2024-01-17
+### Added
+- Log event when task on Sensei Home is completed [#7430](https://github.com/Automattic/sensei/pull/7430)
+
+### Changed
+- Create all necessary Sensei pages on plugin activation [#7426](https://github.com/Automattic/sensei/pull/7426)
+- Do not display course theme step on Setup Wizard if theme is already installed [#7401](https://github.com/Automattic/sensei/pull/7401)
+- Hide Gutenberg tour modal in Sensei new Course editor [#7399](https://github.com/Automattic/sensei/pull/7399)
+- Include instructions to the High-Performance Progress Storage settings screen [#7420](https://github.com/Automattic/sensei/pull/7420)
+- Take user to Learning Mode Lesson Template in Setup task instead of only site editor [#7393](https://github.com/Automattic/sensei/pull/7393)
+- Update course notices to have a CTA for course editors [#7403](https://github.com/Automattic/sensei/pull/7403)
+
+### Fixed
+- Don't send Course Completion email twice (when the course is already completed) [#7405](https://github.com/Automattic/sensei/pull/7405)
+- Message "Cannot register for an unpublished course" was not being displayed [#7403](https://github.com/Automattic/sensei/pull/7403)
+- Redirect properly when course editor enrols in a course containing only draft lessons [#7403](https://github.com/Automattic/sensei/pull/7403)
+- Set email template only for sensei_email post type. [#7402](https://github.com/Automattic/sensei/pull/7402)
+- Settings form not redirecting to the correct tab when submitted [#7424](https://github.com/Automattic/sensei/pull/7424)
+- WPML compatibility fix: Add translations for lessons and quizzes that were created while saving the course structure. [#7383](https://github.com/Automattic/sensei/pull/7383)
+
+### Development
+- Introduce Clock interface and corresponding public property for Sensei object. [#7395](https://github.com/Automattic/sensei/pull/7395)
+
+## 4.20.0 - 2023-12-14
+### Added
+- Introduce an experimental feature: High-Performance Progress Storage. It allows student progress data to be stored in an optimized way, using custom tables. The feature is disabled by default and can be enabled from the settings page.
+
+### Changed
+- Open the Lesson editor in the same tab when link is clicked in the Course Outline block [#7344](https://github.com/Automattic/sensei/pull/7344)
+- Rename "View Quiz" block to "Take Quiz" [#7332](https://github.com/Automattic/sensei/pull/7332)
+
+### Fixed
+- Continue course button not working when using plain permalinks [#7358](https://github.com/Automattic/sensei/pull/7358)
+- Fix preview styles for course blocks on the editor [#7307](https://github.com/Automattic/sensei/pull/7307)
+- Importer not finding existing users in some cases [#7361](https://github.com/Automattic/sensei/pull/7361)
+- Improve styling of Landing Page and Course List patterns [#7292](https://github.com/Automattic/sensei/pull/7292)
+- Resolved the issue of the 'Take Quiz' button not displaying in the site editor when Gutenberg is enabled [#7341](https://github.com/Automattic/sensei/pull/7341)
+- Restart quiz redirects to the course complete page if the course was completed [#7377](https://github.com/Automattic/sensei/pull/7377)
+- Scope CSS to Learning Mode templates only [#7382](https://github.com/Automattic/sensei/pull/7382)
+- Teachers can no longer see all students in the Students screen [#7367](https://github.com/Automattic/sensei/pull/7367)
+
 ## 4.19.2 - 2023-11-23
 ### Added
 - Style Lesson Actions block in Learning Mode [#7224](https://github.com/Automattic/sensei/pull/7224)

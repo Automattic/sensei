@@ -33,9 +33,9 @@ class Sensei_Home_Quick_Links_Provider {
 				__( 'Settings', 'sensei-lms' ),
 				[
 					$this->create_item( __( 'Email notifications', 'sensei-lms' ), admin_url( $this->get_email_notification_url() ) ),
-					$this->create_item( __( 'Learning mode', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#appearance-settings' ) ),
-					$this->create_item( __( 'WooCommerce', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#woocommerce-settings' ) ),
-					$this->create_item( __( 'Content drip', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#sensei-content-drip-settings' ) ),
+					$this->create_item( __( 'Learning mode', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings&tab=appearance-settings' ) ),
+					$this->create_item( __( 'WooCommerce', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings&tab=woocommerce-settings' ) ),
+					$this->create_item( __( 'Content drip', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings&tab=sensei-content-drip-settings' ) ),
 				]
 			),
 			$this->create_category(
@@ -53,14 +53,14 @@ class Sensei_Home_Quick_Links_Provider {
 	/**
 	 * Return the correct email notification settings based on the feature flag.
 	 *
-	 * @return array The magical link to create a demo course or the link to edit the demo course.
+	 * @return string The magical link to create a demo course or the link to edit the demo course.
 	 */
 	private function get_email_notification_url() {
 		if ( Sensei()->feature_flags->is_enabled( 'email_customization' ) ) {
 			return 'admin.php?page=sensei-settings&tab=email-notification-settings';
 		}
 
-		return '/admin.php?page=sensei-settings#email-notification-settings';
+		return '/admin.php?page=sensei-settings&tab=email-notification-settings';
 	}
 
 	/**

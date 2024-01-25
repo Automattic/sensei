@@ -16,6 +16,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
  */
 class Sensei_Utils_Test extends WP_UnitTestCase {
 	use \Sensei_File_System_Helper;
+	use \Sensei_Clock_Helpers;
 
 	/**
 	 * Setup function.
@@ -286,10 +287,14 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	 *
 	 * @dataProvider lastActivityDateTestingData
 	 */
-	public function testFormatLastActivityDate_WhenCalled_ReturnsCorrectlyFormattedDates( $minutes_count, $expected_output ) {
+	public function testFormatLastActivityDate_WhenCalled_ReturnsCorrectlyFormattedDates( $seconds_count, $expected_output ) {
 		/* Arrange */
-		$gmt_time           = gmdate( 'Y-m-d H:i:s', strtotime( '-' . $minutes_count . ' seconds' ) );
-		$date_as_per_format = wp_date( get_option( 'date_format' ), ( new DateTime( $gmt_time ) )->getTimestamp(), new DateTimeZone( 'GMT' ) );
+		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'GMT' ) );
+		$this->set_clock_to( $current_datetime->getTimestamp() );
+
+		$test_time          = $current_datetime->getTimestamp() - $seconds_count;
+		$gmt_time           = gmdate( 'Y-m-d H:i:s', $test_time );
+		$date_as_per_format = wp_date( get_option( 'date_format' ), $test_time, new DateTimeZone( 'GMT' ) );
 
 		/* Act */
 		$actual = Sensei_Utils::format_last_activity_date( $gmt_time );
@@ -297,6 +302,8 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		/* Assert */
 		$expected = empty( $expected_output ) ? $date_as_per_format : $expected_output;
 		self::assertEquals( $expected, $actual, 'Last activity date is not being formatted correctly' );
+
+		$this->reset_clock();
 	}
 
 	public function testSenseiGradeQuiz_WhenCalled_UpdatesTheFinalGrade() {
@@ -502,7 +509,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( 2, $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsNextLessonIdIfPreviousLessonIsCompleted() {
+	public function testGetTargetResumeId_WhenPreviousLessonWasCompleted_ReturnsNextLessonId() {
 		/* Arrange */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
@@ -520,7 +527,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_lessons['lesson_ids'][1], $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsLastLessonIdIfNotCompleted() {
+	public function testGetTargetResumeId_WhenPreviousLessonWasNotCompleted_ReturnsLastLessonId() {
 		/* Arrange */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
@@ -554,7 +561,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_lessons['lesson_ids'][0], $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfAllLessonsAreCompleted() {
+	public function testGetTargetResumeId_WhenAllLessonsAreCompleted_ReturnsCourseId() {
 		/* Arrange */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
@@ -574,7 +581,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_lessons['course_id'], $result );
 	}
 
-	public function testGetTargetResumeId_WhenCalled_ReturnsCourseIdIfItHasNoLessons() {
+	public function testGetTargetResumeId_WhenItHasNoLessons_ReturnsCourseId() {
 		/* Arrange */
 		$course_id = $this->factory->course->create();
 		$user_id   = $this->factory->user->create();
@@ -638,5 +645,37 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 		unlink( $index_file );
 		rmdir( $theme_directory );
+	}
+
+	public function testUpdateCourseStatus_WhenPreviousStatusNotFound_PassesNullAsPreviousStatusToTheAction(): void {
+		/* Arrange. */
+		$previous_status = 'not-set';
+		$action          = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
+			$previous_status = $prev_status;
+		};
+		add_action( 'sensei_course_status_updated', $action, 10, 5 );
+
+		/* Act. */
+		Sensei_Utils::update_course_status( 1, 2, 'in-progress' );
+
+		/* Assert. */
+		$this->assertNull( $previous_status );
+	}
+
+	public function testUpdateCourseStatus_WhenPreviousStatusFound_PassesSameStatusAsPreviousStatusToTheAction(): void {
+		/* Arrange. */
+		Sensei()->course_progress_repository->create( 2, 1 );
+
+		$previous_status = 'not-set';
+		$action          = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
+			$previous_status = $prev_status;
+		};
+		add_action( 'sensei_course_status_updated', $action, 10, 5 );
+
+		/* Act. */
+		Sensei_Utils::update_course_status( 1, 2, 'complete' );
+
+		/* Assert. */
+		$this->assertSame( 'in-progress', $previous_status );
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-use Sensei\Installer\Installer;
+use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 
@@ -193,6 +193,85 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertInstanceOf( Migration_Job_Scheduler::class, $sensei->migration_scheduler );
+	}
+
+	public function testActivate_WhenSenseiIsActivated_CreatesAllSenseiPages() {
+		/* Assert. */
+		$this->assertTrue( ( (int) Sensei()->settings->get( 'course_page' ) ) > 0 );
+		$this->assertTrue( ( (int) Sensei()->settings->get( 'my_course_page' ) ) > 0 );
+		$this->assertTrue( ( (int) Sensei()->settings->get( 'course_completed_page' ) ) > 0 );
+	}
+
+	public function testConstructor_Always_InitializesClockProperty() {
+		/* Arrange. */
+		$sensei = Sensei();
+
+		/* Assert. */
+		$this->assertInstanceOf( Clock_Interface::class, $sensei->clock );
+	}
+
+	public function testConstruct_Always_AddsActionOnUpdateOptionWplang() {
+		/* Arrange. */
+		$sensei = Sensei();
+
+		/* Assert. */
+		$this->assertSame( 10, has_action( 'update_option_WPLANG', [ $sensei, 'maybe_initiate_rewrite_rules_flush_after_language_change' ] ) );
+	}
+
+	public function testConstruct_Always_AddsActionOnUpgraderProcessComplete() {
+		/* Arrange. */
+		$sensei = Sensei();
+
+		/* Assert. */
+		$this->assertSame( 10, has_action( 'upgrader_process_complete', [ $sensei, 'maybe_initiate_rewrite_rules_flush_on_translation_update' ] ) );
+	}
+
+	public function testMaybeInitiateRewriteRulesFlushAfterLanguageChange_WhenLanguageChanged_UpdatesOption() {
+		/* Arrange. */
+		$sensei = Sensei();
+		update_option( 'sensei_flush_rewrite_rules', '0' );
+
+		/* Act. */
+		$sensei->maybe_initiate_rewrite_rules_flush_after_language_change( 'a', 'b' );
+
+		/* Assert. */
+		$this->assertSame( '1', get_option( 'sensei_flush_rewrite_rules' ) );
+	}
+
+	public function testMaybeInitiateRewriteRulesFlushAfterLanguageChange_WhenLanguageNotChanged_DoesntUpdateOption() {
+		/* Arrange. */
+		$sensei = Sensei();
+		update_option( 'sensei_flush_rewrite_rules', '0' );
+
+		/* Act. */
+		$sensei->maybe_initiate_rewrite_rules_flush_after_language_change( 'a', 'a' );
+
+		/* Assert. */
+		$this->assertSame( '0', get_option( 'sensei_flush_rewrite_rules' ) );
+	}
+
+	public function testMaybeInitiateRewriteRulesFlushOnTranslationUpdate_WhenNonTranslationUpdate_DoesntUpdateOption() {
+		/* Arrange. */
+		$sensei = Sensei();
+		update_option( 'sensei_flush_rewrite_rules', '0' );
+
+		/* Act. */
+		$sensei->maybe_initiate_rewrite_rules_flush_on_translation_update( new stdClass(), array( 'type' => 'a' ) );
+
+		/* Assert. */
+		$this->assertSame( '0', get_option( 'sensei_flush_rewrite_rules' ) );
+	}
+
+	public function testMaybeInitiateRewriteRulesFlushOnTranslationUpdate_WhenTranslationUpdate_UpdatesOption() {
+		/* Arrange. */
+		$sensei = Sensei();
+		update_option( 'sensei_flush_rewrite_rules', '0' );
+
+		/* Act. */
+		$sensei->maybe_initiate_rewrite_rules_flush_on_translation_update( new stdClass(), array( 'type' => 'translation' ) );
+
+		/* Assert. */
+		$this->assertSame( '1', get_option( 'sensei_flush_rewrite_rules' ) );
 	}
 
 	/**

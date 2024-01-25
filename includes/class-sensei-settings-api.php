@@ -299,18 +299,24 @@ class Sensei_Settings_API {
 			$html .= '<ul id="settings-sections" class="subsubsub hide-if-no-js">' . "\n";
 
 			$sections = array();
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+			$current_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'default-settings';
 
 			foreach ( $this->tabs as $k => $v ) {
 				$classes = 'tab';
 
-				if ( 'default-settings' === $k ) {
+				if ( $current_tab === $k ) {
 					$classes .= ' current';
+				}
+
+				if ( ! empty( $v['external'] ) ) {
+					$classes .= ' external';
 				}
 
 				$sections[ $k ] = array(
 					'href'  => isset( $v['href'] )
 						? esc_attr( $v['href'] )
-						: admin_url( 'admin.php?page=' . $this->token . '#' . esc_attr( $k ) ),
+						: admin_url( 'admin.php?page=' . $this->token . '&tab=' . esc_attr( $k ) ),
 					'name'  => esc_attr( $v['name'] ),
 					'class' => esc_attr( $classes ),
 				);

@@ -109,7 +109,7 @@ class Action_Scheduler {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.0
 	 *
 	 * @param array  $args          Args that have been passed to the action scheduler.
 	 * @param string $return_format OBJECT, ARRAY_A, or 'ids'.

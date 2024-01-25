@@ -15,7 +15,7 @@ import { logEvent } from '../../shared/helpers/log-event';
  * Usage Tracking step for Setup Wizard.
  */
 const UsageTracking = () => {
-	const { goTo } = useQueryStringRouter();
+	const { goNext } = useQueryStringRouter();
 
 	const { submitStep, isSubmitting, errorNotice } = useSetupWizardStep(
 		'tracking'
@@ -24,7 +24,7 @@ const UsageTracking = () => {
 	const onSubmitSuccess = ( allowUsageTracking ) => () => {
 		logEvent.enable( allowUsageTracking );
 
-		goTo( 'newsletter' );
+		goNext();
 	};
 
 	const submitPage = ( allowUsageTracking ) => () => {
