@@ -13,11 +13,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Sensei_WPML
  */
 class Sensei_WPML {
+	/**
+	 * Sensei_WPML constructor.
+	 */
 	public function __construct() {
 		add_action( 'sensei_before_mail', array( $this, 'sensei_before_mail' ) );
 		add_action( 'sensei_after_sending_email', array( $this, 'sensei_after_sending_email' ) );
 		add_action( 'sensei_course_structure_lesson_created', array( $this, 'set_language_details_when_lesson_created' ), 10, 2 );
 		add_action( 'sensei_course_structure_quiz_created', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
+
+		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_lesson_course_before_copied' ), 10, 4 );
+		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_course_prerequisite_before_copied' ), 10, 4 );
+		add_action( 'wpml_pro_translation_completed', array( $this, 'update_lessons_fields_on_course_translation_created' ), 10, 1 );
+		add_action( 'wpml_pro_translation_completed', array( $this, 'update_lesson_taxonomies_on_lesson_translation_created' ), 10, 1 );
 	}
 
 	/**
@@ -136,5 +144,236 @@ class Sensei_WPML {
 		// Set language details for the lesson.
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		do_action( 'wpml_set_element_language_details', $args );
+	}
+
+	/**
+	 * Update course prerequisite before copied.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param mixed  $copied_value Copied value.
+	 * @param int    $post_id_from Post ID from.
+	 * @param int    $post_id_to   Post ID to.
+	 * @param string $meta_key     Meta key.
+	 * @return mixed
+	 */
+	public function update_course_prerequisite_before_copied( $copied_value, $post_id_from, $post_id_to, $meta_key ) {
+		if ( '_course_prerequisite' !== $meta_key ) {
+			return $copied_value;
+		}
+
+		if ( empty( $copied_value ) ) {
+			return $copied_value;
+		}
+
+		$course_id = (int) $copied_value;
+
+		$target_language_code = apply_filters(
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			'wpml_element_language_code',
+			null,
+			array(
+				'element_id'   => $post_id_to,
+				'element_type' => 'course',
+			)
+		);
+
+		if ( ! $target_language_code ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			$target_language_code = apply_filters( 'wpml_current_language', null );
+		}
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		return apply_filters( 'wpml_object_id', $course_id, 'course', false, $target_language_code );
+	}
+
+	/**
+	 * Update lesson course before copied.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param mixed  $copied_value Copied value.
+	 * @param int    $post_id_from Post ID from.
+	 * @param int    $post_id_to   Post ID to.
+	 * @param string $meta_key     Meta key.
+	 * @return mixed
+	 */
+	public function update_lesson_course_before_copied( $copied_value, $post_id_from, $post_id_to, $meta_key ) {
+		if ( '_lesson_course' !== $meta_key ) {
+			return $copied_value;
+		}
+
+		if ( empty( $copied_value ) ) {
+			return $copied_value;
+		}
+
+		$course_id = (int) $copied_value;
+
+		$target_language_code = apply_filters(
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			'wpml_element_language_code',
+			null,
+			array(
+				'element_id'   => $post_id_to,
+				'element_type' => 'lesson',
+			)
+		);
+
+		if ( ! $target_language_code ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			$target_language_code = apply_filters( 'wpml_current_language', null );
+		}
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		return apply_filters( 'wpml_object_id', $course_id, 'course', false, $target_language_code );
+	}
+
+	/**
+	 * Update lesson order within a module before the field is copied.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param mixed  $copied_value Copied value.
+	 * @param int    $post_id_from Post ID from.
+	 * @param int    $post_id_to   Post ID to.
+	 * @param string $meta_key     Meta key.
+	 * @return mixed
+	 */
+	public function update_order_module_before_copied( $copied_value, $post_id_from, $post_id_to, $meta_key ) {
+		if ( '_lesson_course' !== $meta_key ) {
+			return $copied_value;
+		}
+
+		if ( empty( $copied_value ) ) {
+			return $copied_value;
+		}
+
+		$course_id = (int) $copied_value;
+
+		$target_language_code = apply_filters(
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			'wpml_element_language_code',
+			null,
+			array(
+				'element_id'   => $post_id_to,
+				'element_type' => 'lesson',
+			)
+		);
+
+		if ( ! $target_language_code ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			$target_language_code = apply_filters( 'wpml_current_language', null );
+		}
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		return apply_filters( 'wpml_object_id', $course_id, 'course', false, $target_language_code );
+	}
+
+	/**
+	 * Save lessons fields on course translation created.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param int $new_course_id New course ID.
+	 */
+	public function update_lessons_fields_on_course_translation_created( $new_course_id ) {
+		if ( 'course' !== get_post_type( $new_course_id ) ) {
+			return;
+		}
+
+		$details = apply_filters(
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			'wpml_element_language_details',
+			null,
+			array(
+				'element_id'   => $new_course_id,
+				'element_type' => 'course',
+			)
+		);
+		if ( empty( $details ) ) {
+			return;
+		}
+
+		$details = (array) $details;
+		if ( empty( $details['source_language_code'] ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$master_id = apply_filters( 'wpml_object_id', $new_course_id, 'course', false, $details['source_language_code'] );
+		if ( empty( $master_id ) || $master_id === $new_course_id ) {
+			return;
+		}
+
+		$lesson_ids = Sensei()->course->course_lessons( $master_id, 'any', 'ids' );
+		foreach ( $lesson_ids as $lesson_id ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			do_action( 'wpml_sync_custom_field', $lesson_id, '_lesson_course' );
+		}
+	}
+
+	/**
+	 * Update lesson taxonomies on lesson translation created.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param int $new_lesson_id New lesson ID.
+	 */
+	public function update_lesson_taxonomies_on_lesson_translation_created( $new_lesson_id ) {
+		if ( 'lesson' !== get_post_type( $new_lesson_id ) ) {
+			return;
+		}
+
+		$details = apply_filters(
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			'wpml_element_language_details',
+			null,
+			array(
+				'element_id'   => $new_lesson_id,
+				'element_type' => 'lesson',
+			)
+		);
+		if ( empty( $details ) ) {
+			return;
+		}
+
+		$details = (array) $details;
+		if ( empty( $details['source_language_code'] ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$master_id = apply_filters( 'wpml_object_id', $new_lesson_id, 'lesson', false, $details['source_language_code'] );
+		if ( empty( $master_id ) || $master_id === $new_lesson_id ) {
+			return;
+		}
+
+		$terms = wp_get_object_terms( $master_id, 'module', array( 'fields' => 'ids' ) );
+		if ( empty( $terms ) ) {
+			return;
+		}
+
+		$new_terms = array();
+		foreach ( $terms as $term_id ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			$new_term = apply_filters( 'wpml_object_id', $term_id, 'module', false, $details['language_code'] );
+			delete_post_meta( $new_lesson_id, '_order_module_' . intval( $term_id ) );
+
+			$order = get_post_meta( $master_id, '_order_module_' . intval( $term_id ), true );
+			update_post_meta( $new_lesson_id, '_order_module_' . intval( $new_term ), $order );
+			$new_terms[] = $new_term;
+		}
+
+		wp_set_object_terms( $new_lesson_id, $new_terms, 'module' );
 	}
 }

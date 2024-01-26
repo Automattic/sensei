@@ -2,10 +2,18 @@
 	<custom-fields>
 		<custom-field action="copy">_lesson_complexity</custom-field>
 		<custom-field action="copy">_lesson_length</custom-field>
-		<custom-field action="translate">_lesson_prerequisite</custom-field>
-		<custom-field action="translate">_lesson_course</custom-field>
-		<custom-field action="translate">_course_prerequisite</custom-field>
-		<custom-field action="translate">_course_woocommerce_product</custom-field>
+		<custom-field action="copy">_lesson_prerequisite</custom-field>
+		<custom-field action="copy">_lesson_course</custom-field>
+		<custom-field action="copy">_quiz_lesson</custom-field>
+		<custom-field action="copy">_course_prerequisite</custom-field>
+		<custom-field action="copy">_course_video_embed</custom-field>
+		<custom-field action="copy">_course_featured</custom-field>
+		<custom-field action="copy">sensei_course_video_required</custom-field>
+		<custom-field action="copy">sensei_course_video_autopause</custom-field>
+		<custom-field action="copy">sensei_course_video_autocomplete</custom-field>
+		<custom-field action="copy">_sensei_self_enrollment_not_allowed</custom-field>
+		<custom-field action="copy">_open_access</custom-field>
+		<custom-field action="copy">disable_notification</custom-field>
 	</custom-fields>
 	<custom-types>
 		<custom-type translate="1">course</custom-type>
