@@ -36,7 +36,10 @@ const API_PATH = '/sensei-internal/v1/lessons/prepare';
  * @return {Function} Function that takes an array of lesson IDs and returns a Promise.
  */
 export const useAddExistingLessons = ( clientId ) => {
-	const lessonBlocks = select( 'core/block-editor' ).getBlocks( clientId );
+	const lessonBlocks = useSelect(
+		() => select( 'core/block-editor' ).getBlocks( clientId ),
+		[]
+	);
 	const { insertBlock } = useDispatch( 'core/block-editor' );
 	const nextInsertIndex = useSelect(
 		() => select( 'core/block-editor' ).getBlockCount( clientId ),
@@ -46,7 +49,6 @@ export const useAddExistingLessons = ( clientId ) => {
 		() => select( 'core/editor' ).getCurrentPostId(),
 		[]
 	);
-	//const { setBlocks } = useBlocksCreator( clientId );
 
 	return ( lessonIds ) => {
 		const newLessonIds = lessonIds.filter( ( lessonId ) => {
