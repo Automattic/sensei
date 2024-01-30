@@ -401,6 +401,9 @@
     <DocblockTypeContradiction occurrences="1">
       <code>is_wp_error( $new_post_id )</code>
     </DocblockTypeContradiction>
+    <RawObjectIteration occurrences="1">
+      <code>$post</code>
+    </RawObjectIteration>
   </file>
   <file src="includes/admin/home/class-sensei-home-guides-provider.php">
     <UndefinedConstant occurrences="1">
