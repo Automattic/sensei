@@ -12,8 +12,7 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Clock_Helpers;
 
-	public function tear_down()
-	{
+	public function tear_down() {
 		$this->reset_clock();
 		parent::tear_down();
 	}
