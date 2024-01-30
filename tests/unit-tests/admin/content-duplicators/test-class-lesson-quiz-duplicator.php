@@ -1,6 +1,6 @@
 <?php
 
-namespace SensiTest\Admin\Content_Duplicators;
+namespace SenseiTest\Admin\Content_Duplicators;
 
 use Sensei\Admin\Content_Duplicators\Lesson_Quiz_Duplicator;
 use Sensei_Factory;
