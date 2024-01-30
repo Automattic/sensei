@@ -662,7 +662,7 @@ class Sensei_Admin {
 			$post_duplicator = new Post_Duplicator();
 			$new_post        = $post_duplicator->duplicate( $post );
 
-			if ( $new_post && ! is_wp_error( $new_post ) ) {
+			if ( ! is_wp_error( $new_post ) && $new_post ) {
 
 				if ( 'lesson' == $new_post->post_type ) {
 					$lesson_quiz_duplicator = new Lesson_Quiz_Duplicator();

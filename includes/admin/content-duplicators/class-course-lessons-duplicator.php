@@ -52,6 +52,10 @@ class Course_Lessons_Duplicator {
 
 		foreach ( $lessons as $lesson ) {
 			$new_lesson = $this->post_duplicator->duplicate( $lesson, '', true );
+			if ( ! $new_lesson ) {
+				continue;
+			}
+
 			add_post_meta( $new_lesson->ID, '_lesson_course', $new_course_id );
 
 			$update_prerequisite_object = $this->get_prerequisite_update_object( $lesson->ID, $new_lesson->ID );
@@ -63,8 +67,8 @@ class Course_Lessons_Duplicator {
 			$new_lesson_id_lookup[ $lesson->ID ] = $new_lesson->ID;
 			$this->lesson_quiz_duplicator->duplicate( $lesson->ID, $new_lesson->ID );
 
-			// Update the _order_<course-id> meta on the lesson.
-			$this->update_lesson_order_on_lesson( $new_lesson, $old_course_id, $new_course_id );
+			// Update the _order_{course_id} meta on the lesson.
+			$this->update_lesson_order_on_lesson( $new_lesson->ID, $old_course_id, $new_course_id );
 		}
 
 		$this->update_lesson_prerequisite_ids( $lessons_to_update, $new_lesson_id_lookup );
@@ -143,15 +147,15 @@ class Course_Lessons_Duplicator {
 	}
 
 	/**
-	 * Update the _order_<course-id> on a newly duplicated Lesson to use the new Course ID.
+	 * Update the _order_{course_id} on a newly duplicated Lesson to use the new Course ID.
 	 *
-	 * @param WP_Post $lesson        The new Lesson.
-	 * @param int     $old_course_id The ID of the old Course that was duplicated.
-	 * @param int     $new_course_id The ID of the new Course.
+	 * @param int $new_lesson_id The new Lesson.
+	 * @param int $old_course_id The ID of the old Course that was duplicated.
+	 * @param int $new_course_id The ID of the new Course.
 	 */
-	private function update_lesson_order_on_lesson( WP_Post $lesson, int $old_course_id, int $new_course_id ): void {
-		$lesson_order_value = get_post_meta( $lesson->ID, "_order_$old_course_id", true );
-		update_post_meta( $lesson->ID, "_order_$new_course_id", $lesson_order_value );
-		delete_post_meta( $lesson->ID, "_order_$old_course_id" );
+	private function update_lesson_order_on_lesson( int $new_lesson_id, int $old_course_id, int $new_course_id ): void {
+		$lesson_order_value = get_post_meta( $new_lesson_id, "_order_$old_course_id", true );
+		update_post_meta( $new_lesson_id, "_order_$new_course_id", $lesson_order_value );
+		delete_post_meta( $new_lesson_id, "_order_$old_course_id" );
 	}
 }

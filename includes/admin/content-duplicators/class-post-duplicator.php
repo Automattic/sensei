@@ -18,22 +18,23 @@ class Post_Duplicator {
 	/**
 	 * Duplicate post.
 	 *
-	 * @param  object      $post          Post to be duplicated.
+	 * @param  WP_Post     $post          Post to be duplicated.
 	 * @param  string|null $suffix        Suffix for duplicated post title. Default: null.
 	 * @param  boolean     $ignore_course Ignore lesson course when dulicating. Default: false.
-	 * @return object                 Duplicate post object.
+	 * @return WP_Post|null Duplicate post object.
 	 */
-	public function duplicate( object $post, ?string $suffix = null, bool $ignore_course = false ): ?WP_Post {
+	public function duplicate( WP_Post $post, ?string $suffix = null, bool $ignore_course = false ): ?WP_Post {
 		$new_post = array();
 
-		$fields = array( 'ID', 'post_status', 'post_date', 'post_date_gmt', 'post_name', 'post_modified', 'post_modified_gmt', 'guid', 'comment_count' );
-		foreach ( $post as $k => $v ) {
-			if ( ! in_array( $k, $fields, true ) ) {
-				$new_post[ $k ] = $v;
+		$fields = array( 'ID', 'post_title', 'post_status', 'post_date', 'post_date_gmt', 'post_name', 'post_modified', 'post_modified_gmt', 'guid', 'comment_count' );
+		foreach ( $fields as $field ) {
+			if ( ! isset( $post->$field ) ) {
+				continue;
 			}
+			$new_post[ $field ] = $post->$field;
 		}
 
-		$new_post['post_title']       .= $suffix;
+		$new_post['post_title']        = ( $new_post['post_title'] ?? '' ) . $suffix;
 		$new_post['post_date']         = current_time( 'mysql' );
 		$new_post['post_date_gmt']     = get_gmt_from_date( $new_post['post_date'] );
 		$new_post['post_modified']     = $new_post['post_date'];
@@ -73,7 +74,7 @@ class Post_Duplicator {
 
 		$new_post_id = wp_insert_post( $new_post );
 
-		if ( is_wp_error( $new_post_id ) ) {
+		if ( is_wp_error( $new_post_id ) || 0 === $new_post_id ) {
 			return null;
 		}
 
@@ -115,7 +116,7 @@ class Post_Duplicator {
 
 		foreach ( $taxonomies as $slug => $tax ) {
 			$terms = get_the_terms( $post->ID, $slug );
-			if ( isset( $terms ) && is_array( $terms ) && 0 < count( $terms ) ) {
+			if ( is_array( $terms ) && 0 < count( $terms ) ) {
 				foreach ( $terms as $term ) {
 					wp_set_object_terms( $new_post_id, $term->term_id, $slug, true );
 				}
@@ -123,6 +124,9 @@ class Post_Duplicator {
 		}
 
 		$new_post = get_post( $new_post_id );
+		if ( ! $new_post instanceof \WP_Post ) {
+			return null;
+		}
 
 		return $new_post;
 	}

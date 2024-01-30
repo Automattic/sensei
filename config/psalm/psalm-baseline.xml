@@ -406,6 +406,11 @@
       <code>$remote-&gt;version</code>
     </UndefinedPropertyFetch>
   </file>
+  <file src="includes/admin/content-duplicators/class-post-duplicator.php">
+    <DocblockTypeContradiction occurrences="1">
+      <code>is_wp_error( $new_post_id )</code>
+    </DocblockTypeContradiction>
+  </file>
   <file src="includes/admin/home/class-sensei-home-guides-provider.php">
     <UndefinedConstant occurrences="1">
       <code>HOUR_IN_SECONDS</code>
@@ -950,13 +955,9 @@
     </PossiblyFalseArgument>
   </file>
   <file src="includes/class-sensei-admin.php">
-    <ArgumentTypeCoercion occurrences="3">
+    <ArgumentTypeCoercion occurrences="1">
       <code>$args</code>
-      <code>$new_lesson</code>
     </ArgumentTypeCoercion>
-    <FalsableReturnStatement occurrences="1">
-      <code>false</code>
-    </FalsableReturnStatement>
     <InvalidArgument occurrences="6">
       <code>$args</code>
       <code>'screen'</code>
@@ -965,18 +966,8 @@
       <code>true</code>
       <code>true</code>
     </InvalidArgument>
-    <InvalidNullableReturnType occurrences="1">
-      <code>array</code>
-    </InvalidNullableReturnType>
-    <InvalidReturnStatement occurrences="1">
-      <code>$new_post</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>object</code>
-    </InvalidReturnType>
-    <InvalidScalarArgument occurrences="3">
+    <InvalidScalarArgument occurrences="2">
       <code>$course_id</code>
-      <code>$old_quiz_id</code>
       <code>'50'</code>
     </InvalidScalarArgument>
     <MissingDocblockType occurrences="2">
@@ -1001,15 +992,10 @@
       <code>$lesson_order_page_slug</code>
       <code>Sensei()-&gt;plugin_url</code>
     </MissingPropertyType>
-    <NullableReturnStatement occurrences="2">
-      <code>$new_post</code>
-      <code>null</code>
-    </NullableReturnStatement>
-    <PossiblyInvalidArgument occurrences="4">
+    <PossiblyInvalidArgument occurrences="3">
       <code>$data</code>
       <code>$data</code>
       <code>$post</code>
-      <code>get_post( $old_quiz_id )</code>
     </PossiblyInvalidArgument>
     <PossiblyInvalidPropertyFetch occurrences="8">
       <code>$course-&gt;ID</code>
@@ -1040,17 +1026,13 @@
       <code>$_GET['post']</code>
       <code>$_REQUEST['event_name']</code>
     </PossiblyUndefinedArrayOffset>
-    <RedundantConditionGivenDocblockType occurrences="10">
-      <code>! is_wp_error( $new_post_id )</code>
+    <RedundantConditionGivenDocblockType occurrences="6">
+      <code>! is_wp_error( $new_post )</code>
       <code>! is_wp_error( $post )</code>
-      <code>$new_post</code>
-      <code>$new_post</code>
       <code>$num_posts</code>
       <code>$num_posts</code>
-      <code>is_null( $update_prerequisite_object )</code>
       <code>isset( $hook_suffix )</code>
       <code>isset( $post_type )</code>
-      <code>isset( $terms )</code>
     </RedundantConditionGivenDocblockType>
     <TooManyArguments occurrences="1">
       <code>esc_html( sprintf( __( 'Please supply a %1$s ID.', 'sensei-lms' ) ), $post_type )</code>
@@ -5669,6 +5651,9 @@
       <code>Sensei_REST_API_Import_Controller</code>
     </PropertyNotSetInConstructor>
   </file>
+  <file src="includes/rest-api/class-sensei-rest-api-lesson-actions-controller.php">
+    <InvalidArgument occurrences="2"/>
+  </file>
   <file src="includes/rest-api/class-sensei-rest-api-lesson-quiz-controller.php">
     <DocblockTypeContradiction occurrences="1">
       <code>is_wp_error( $quiz_id )</code>
@@ -6364,11 +6349,6 @@
     <RedundantCast occurrences="1">
       <code>(int) $offset</code>
     </RedundantCast>
-  </file>
-  <file src="includes/wpml/class-sensei-wpml.php">
-    <MissingParamType occurrences="1">
-      <code>$email_address</code>
-    </MissingParamType>
   </file>
   <file src="sensei-lms.php">
     <InvalidGlobal occurrences="1">

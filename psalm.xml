@@ -31,6 +31,7 @@
 				<referencedProperty name="Sensei_Main::$course_progress_repository_factory" />
 				<referencedProperty name="Sensei_Main::$lesson_progress_repository_factory" />
 				<referencedProperty name="Sensei_Main::$quiz_progress_repository_factory" />
+				<referencedProperty name="Sensei_REST_API_Lesson_Actions_Controller::$schema" />
 			</errorLevel>
 		</PropertyNotSetInConstructor>
 		<UndefinedClass>
