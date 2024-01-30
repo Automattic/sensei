@@ -2,6 +2,8 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { ExternalLink } from '@wordpress/components';
 
 /**
  * A single tour step.
@@ -165,6 +167,30 @@ function getTourSteps() {
 				classNames: {
 					desktop: '',
 					mobile: '',
+				},
+			},
+		},
+		{
+			slug: 'congratulations',
+			meta: {
+				heading: __( 'Congratulations!', 'sensei-lms' ),
+				descriptions: {
+					desktop: () =>
+						createInterpolateElement(
+							__(
+								"You've mastered the basics. View the <link_to_course_outline_block_doc>course outline docs</link_to_course_outline_block_doc> to learn more. <tour_restart_url>Restart tour</tour_restart_url>",
+								'sensei-lms'
+							),
+							{
+								link_to_course_outline_block_doc: (
+									<ExternalLink
+										href="https://senseilms.com/documentation/courses/#course-outline"
+										children={ null }
+									/>
+								),
+								tour_restart_url: <span></span>,
+							}
+						),
 				},
 			},
 		},
