@@ -26,15 +26,14 @@ class Post_Duplicator {
 	public function duplicate( WP_Post $post, ?string $suffix = null, bool $ignore_course = false ): ?WP_Post {
 		$new_post = array();
 
-		$fields = array( 'ID', 'post_title', 'post_status', 'post_date', 'post_date_gmt', 'post_name', 'post_modified', 'post_modified_gmt', 'guid', 'comment_count' );
-		foreach ( $fields as $field ) {
-			if ( ! isset( $post->$field ) ) {
-				continue;
+		$fields = array( 'ID', 'post_status', 'post_date', 'post_date_gmt', 'post_name', 'post_modified', 'post_modified_gmt', 'guid', 'comment_count' );
+		foreach ( $post as $field => $value ) {
+			if ( ! in_array( $field, $fields, true ) ) {
+				$new_post[ $field ] = $value;
 			}
-			$new_post[ $field ] = $post->$field;
 		}
 
-		$new_post['post_title']        = ( $new_post['post_title'] ?? '' ) . $suffix;
+		$new_post['post_title']       .= $suffix;
 		$new_post['post_date']         = current_time( 'mysql' );
 		$new_post['post_date_gmt']     = get_gmt_from_date( $new_post['post_date'] );
 		$new_post['post_modified']     = $new_post['post_date'];
