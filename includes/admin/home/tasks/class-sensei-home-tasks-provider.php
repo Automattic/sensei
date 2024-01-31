@@ -18,11 +18,18 @@ class Sensei_Home_Tasks_Provider {
 	const COMPLETED_TASKS_OPTION_KEY = 'sensei_home_tasks_list_is_completed';
 
 	/**
-	 * Tells if the WP hooks were attached or not.
+	 * Tells if the tasks are initialized.
 	 *
 	 * @var bool
 	 */
-	private static $attached_hooks = false;
+	private static $initialized = false;
+
+	/**
+	 * The task instances.
+	 *
+	 * @var Sensei_Home_Task[]
+	 */
+	private $tasks = [];
 
 	/**
 	 * The option name that wp-calypso automatically fetches to use
@@ -36,7 +43,63 @@ class Sensei_Home_Tasks_Provider {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		$this->attach_tasks_statuses_hooks();
+		$this->init();
+	}
+
+	/**
+	 * Attaches required hooks.
+	 */
+	private function init() {
+		// Run the initialization only once.
+		if ( self::$initialized ) {
+			return;
+		}
+
+		self::$initialized = true;
+
+		$this->init_tasks();
+
+		add_action( 'save_post_course', [ $this, 'log_course_completion_tasks' ], 10, 3 );
+
+		// Attach some hooks only for Atomic sites.
+		if ( ! Sensei_Utils::is_atomic_platform() ) {
+			return;
+		}
+
+		// Attach the update_tasks_statuses method to filters and actions
+		// that can affect the status of the Sensei Home tasks.
+		add_action( 'save_post_course', [ $this, 'update_tasks_statuses' ] );
+		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'update_tasks_statuses' ] );
+	}
+
+	/**
+	 * Initializes the tasks.
+	 */
+	private function init_tasks() {
+		$this->tasks = [
+			new Sensei_Home_Task_Setup_Site(),
+			new Sensei_Home_Task_Create_First_Course(),
+			new Sensei_Home_Task_Configure_Learning_Mode(),
+			new Sensei_Home_Task_Publish_First_Course(),
+		];
+
+		if ( Sensei_Home_Task_Sell_Course_With_WooCommerce::is_active() ) {
+			$this->tasks[] = new Sensei_Home_Task_Sell_Course_With_WooCommerce();
+		}
+
+		if ( Sensei_Home_Task_Customize_Course_Theme::is_active() ) {
+			$this->tasks[] = new Sensei_Home_Task_Customize_Course_Theme();
+		}
+
+		if ( Sensei_Home_Task_Launch_Site::is_active() ) {
+			$this->tasks[] = new Sensei_Home_Task_Launch_Site();
+		}
+
+		foreach ( $this->tasks as $task ) {
+			if ( method_exists( $task, 'init' ) ) {
+				$task->init();
+			}
+		}
 	}
 
 	/**
@@ -59,30 +122,9 @@ class Sensei_Home_Tasks_Provider {
 	 * @return array[]
 	 */
 	private function get_tasks(): array {
-		// TODO Implement the logic for this.
-		$core_tasks = [
-			new Sensei_Home_Task_Setup_Site(),
-			new Sensei_Home_Task_Create_First_Course(),
-			new Sensei_Home_Task_Configure_Learning_Mode(),
-			new Sensei_Home_Task_Publish_First_Course(),
-		];
-
-		if ( Sensei_Home_Task_Sell_Course_With_WooCommerce::is_active() ) {
-			$core_tasks[] = new Sensei_Home_Task_Sell_Course_With_WooCommerce();
-		}
-
-		if ( Sensei_Home_Task_Customize_Course_Theme::is_active() ) {
-			$core_tasks[] = new Sensei_Home_Task_Customize_Course_Theme();
-		}
-
 		$tasks = [];
-		/**
-		 * Each one of the core tasks.
-		 *
-		 * @var Sensei_Home_Task $core_task
-		 */
-		foreach ( $core_tasks as $core_task ) {
-			$tasks[ $core_task::get_id() ] = $this->map_task( $core_task );
+		foreach ( $this->tasks as $task ) {
+			$tasks[ $task::get_id() ] = $this->map_task( $task );
 		}
 
 		/**
@@ -105,7 +147,8 @@ class Sensei_Home_Tasks_Provider {
 	}
 
 	/**
-	 * Maps a specific Sensei_Home_Task to a basic array structure. Will execute the code in `is_completed` for all entries.
+	 * Maps a specific Sensei_Home_Task to a basic array structure. Will execute the code in `is_completed` for all
+	 * entries.
 	 *
 	 * @param Sensei_Home_Task $task The actual task to map.
 	 * @return array
@@ -173,30 +216,6 @@ class Sensei_Home_Tasks_Provider {
 	 */
 	public function mark_as_completed( $completed = true ) {
 		update_option( self::COMPLETED_TASKS_OPTION_KEY, $completed, false );
-	}
-
-	/**
-	 * Attaches required hooks.
-	 */
-	private function attach_tasks_statuses_hooks() {
-		// Attach the hooks only once.
-		if ( self::$attached_hooks ) {
-			return;
-		}
-
-		self::$attached_hooks = true;
-
-		add_action( 'save_post_course', [ $this, 'log_course_completion_tasks' ], 10, 3 );
-
-		// Attach some hooks only for Atomic sites.
-		if ( ! Sensei_Utils::is_atomic_platform() ) {
-			return;
-		}
-
-		// Attach the update_tasks_statuses method to filters and actions
-		// that can affect the status of the Sensei Home tasks.
-		add_action( 'save_post_course', [ $this, 'update_tasks_statuses' ] );
-		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'update_tasks_statuses' ] );
 	}
 
 	/**
