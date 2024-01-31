@@ -315,25 +315,33 @@ class Sensei_WPML {
 
 		$lesson_ids = Sensei()->course->course_lessons( $master_id, 'any', 'ids' );
 		foreach ( $lesson_ids as $lesson_id ) {
+			// Create translatons if they don't exist.
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			$is_translated = apply_filters( 'wpml_element_has_translations', '', $lesson_id, 'lesson' );
+			if ( ! $is_translated ) {
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+				do_action( 'wpml_admin_make_post_duplicates', $lesson_id );
+
+				$translations = apply_filters( 'wpml_post_duplicates', $lesson_id );
+				foreach ( $translations as $translated_lesson_id ) {
+					$this->update_translated_lesson_properties( $lesson_id, (int) $translated_lesson_id, $new_course_id );
+				}
+			}
+
+			// Sync lesson course field across translations.
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			do_action( 'wpml_sync_custom_field', $lesson_id, '_lesson_course' );
 		}
 	}
 
 	/**
-	 * Update lesson taxonomies on lesson translation created.
+	 * Update lesson taxonomies and lesson course for a translated lesson.
 	 *
-	 * @since $$next-version$$
-	 *
-	 * @internal
-	 *
+	 * @param int $master_lesson_id Original lesson ID.
 	 * @param int $new_lesson_id New lesson ID.
+	 * @param int $new_course_id New course ID.
 	 */
-	public function update_lesson_taxonomies_on_lesson_translation_created( $new_lesson_id ) {
-		if ( 'lesson' !== get_post_type( $new_lesson_id ) ) {
-			return;
-		}
-
+	private function update_translated_lesson_properties( $master_lesson_id, $new_lesson_id, $new_course_id ) {
 		$details = apply_filters(
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			'wpml_element_language_details',
@@ -343,22 +351,16 @@ class Sensei_WPML {
 				'element_type' => 'lesson',
 			)
 		);
+
 		if ( empty( $details ) ) {
 			return;
 		}
 
-		$details = (array) $details;
-		if ( empty( $details['source_language_code'] ) ) {
-			return;
-		}
+		// Update lesson course.
+		update_post_meta( $new_lesson_id, '_lesson_course', $new_course_id );
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		$master_id = apply_filters( 'wpml_object_id', $new_lesson_id, 'lesson', false, $details['source_language_code'] );
-		if ( empty( $master_id ) || $master_id === $new_lesson_id ) {
-			return;
-		}
-
-		$terms = wp_get_object_terms( $master_id, 'module', array( 'fields' => 'ids' ) );
+		// Update lesson taxonomies.
+		$terms = wp_get_object_terms( $master_lesson_id, 'module', array( 'fields' => 'ids' ) );
 		if ( empty( $terms ) ) {
 			return;
 		}
@@ -369,7 +371,7 @@ class Sensei_WPML {
 			$new_term = apply_filters( 'wpml_object_id', $term_id, 'module', false, $details['language_code'] );
 			delete_post_meta( $new_lesson_id, '_order_module_' . intval( $term_id ) );
 
-			$order = get_post_meta( $master_id, '_order_module_' . intval( $term_id ), true );
+			$order = get_post_meta( $master_lesson_id, '_order_module_' . intval( $term_id ), true );
 			update_post_meta( $new_lesson_id, '_order_module_' . intval( $new_term ), $order );
 			$new_terms[] = $new_term;
 		}
