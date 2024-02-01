@@ -182,11 +182,12 @@ class Sensei_Course_Structure {
 	 */
 	private function prepare_lesson( WP_Post $lesson_post ) : array {
 		return [
-			'type'    => 'lesson',
-			'id'      => $lesson_post->ID,
-			'title'   => $lesson_post->post_title,
-			'draft'   => 'draft' === $lesson_post->post_status,
-			'preview' => Sensei_Utils::is_preview_lesson( $lesson_post->ID ),
+			'type'           => 'lesson',
+			'id'             => $lesson_post->ID,
+			'title'          => $lesson_post->post_title,
+			'draft'          => 'draft' === $lesson_post->post_status,
+			'preview'        => Sensei_Utils::is_preview_lesson( $lesson_post->ID ),
+			'initialContent' => get_post_meta( $lesson_post->ID, '_initial_content', true ),
 		];
 	}
 
