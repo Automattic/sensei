@@ -1,10 +1,11 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
-import { Button } from '@wordpress/components';
+import { useEffect } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -24,6 +25,19 @@ const LessonDetailsStep = ( { wizardData, setWizardData } ) => {
 		wizardData,
 		setWizardData
 	);
+
+	const lessonMeta = useSelect( ( select ) =>
+		select( 'core/editor' ).getCurrentPostAttribute( 'meta' )
+	);
+
+	useEffect( () => {
+		if ( lessonMeta && lessonMeta._initial_content ) {
+			setWizardData( {
+				...wizardData,
+				description: lessonMeta._initial_content,
+			} );
+		}
+	}, [ lessonMeta ] );
 
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
