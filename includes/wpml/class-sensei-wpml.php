@@ -275,6 +275,10 @@ class Sensei_WPML {
 
 		$lesson_ids = Sensei()->course->course_lessons( $master_id, 'any', 'ids' );
 		foreach ( $lesson_ids as $lesson_id ) {
+			if ( ! is_int( $lesson_id ) ) {
+				$lesson_id = (int) $lesson_id;
+			}
+
 			// Create translatons if they don't exist.
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$is_translated = apply_filters( 'wpml_element_has_translations', '', $lesson_id, 'lesson' );
@@ -363,7 +367,7 @@ class Sensei_WPML {
 
 		// Update lesson taxonomies.
 		$terms = wp_get_object_terms( $master_lesson_id, 'module', array( 'fields' => 'ids' ) );
-		if ( empty( $terms ) ) {
+		if ( empty( $terms ) || is_wp_error( $terms ) || ! is_array( $terms ) ) {
 			return;
 		}
 
