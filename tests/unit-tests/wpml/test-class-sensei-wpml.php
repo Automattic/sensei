@@ -124,6 +124,7 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 
 		$this->assertTrue( $filter_applied );
 	}
+
 	public function testSetLanguageDetailsWhenQuizCreated_WhenCalled_AppliesWpmlSetElementLanguageDetails() {
 		/* Arrange. */
 		$wpml = new Sensei_WPML();
@@ -143,5 +144,51 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 		remove_filter( 'wpml_set_element_language_details', $filter_function, 10 );
 
 		$this->assertTrue( $filter_applied );
+	}
+
+	public function UpdateCoursePrerequisiteBeforeCopied_WhenCalled_ReturnsMatchingPrerequisiteForNewCourse() {
+		/* Arrange. */
+		$wpml = new Sensei_WPML();
+
+		$language_code_filter = function( $language_code, $element_data ) {
+			return 'a';
+		};
+		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 2 );
+
+		$object_id_fitler = function( $object_id, $element_type, $return_original_if_missing, $args ) {
+			return 4;
+		};
+		add_filter( 'wpml_object_id', $object_id_fitler, 10, 4 );
+
+		/* Act. */
+		$actual = $wpml->update_course_prerequisite_before_copied( 1, 2, 3, '_course_prerequisite' );
+		remove_filter( 'wpml_element_language_code', $language_code_filter, 10, 2 );
+		remove_filter( 'wpml_object_id', $object_id_fitler, 10, 4 );
+
+		/* Assert. */
+		$this->assertSame( 4, $actual );
+	}
+
+	public function updateLessonCourseBeforeCopied_WhenCalled_ReturnsMatchingCourseForNewLesson() {
+		/* Arrange. */
+		$wpml = new Sensei_WPML();
+
+		$language_code_filter = function( $language_code, $element_data ) {
+			return 'a';
+		};
+		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 2 );
+
+		$object_id_fitler = function( $object_id, $element_type, $return_original_if_missing, $args ) {
+			return 4;
+		};
+		add_filter( 'wpml_object_id', $object_id_fitler, 10, 4 );
+
+		/* Act. */
+		$actual = $wpml->update_lesson_course_before_copied( 1, 2, 3, '_lesson_course' );
+		remove_filter( 'wpml_element_language_code', $language_code_filter, 10, 2 );
+		remove_filter( 'wpml_object_id', $object_id_fitler, 10, 4 );
+
+		/* Assert. */
+		$this->assertSame( 4, $actual );
 	}
 }
