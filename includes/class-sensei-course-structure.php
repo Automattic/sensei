@@ -834,6 +834,7 @@ class Sensei_Course_Structure {
 					);
 				}
 			}
+			$item['initialContent'] = ! empty( $raw_item['initialContent'] ) ? trim( wp_kses_post( $raw_item['initialContent'] ) ) : null;
 		}
 
 		return $item;
