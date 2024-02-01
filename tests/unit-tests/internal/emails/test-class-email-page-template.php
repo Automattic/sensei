@@ -23,7 +23,8 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 
-		self::$initial_request_uri = $_SERVER['REQUEST_URI'];
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		self::$initial_request_uri = wp_unslash( $_SERVER['REQUEST_URI'] );
 	}
 
 	public function setUp(): void {
