@@ -24,6 +24,10 @@ const LessonPatternsStep = ( { wizardData, ...props } ) => {
 		replaces[ 'sensei-content-title' ] = wizardData.title;
 	}
 
+	if ( wizardData.description ) {
+		replaces[ 'sensei-content-description' ] = wizardData.description;
+	}
+
 	const shouldHideEditorWizardUpsell = useHideEditorWizardUpsell();
 
 	return (
