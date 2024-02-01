@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <!-- wp:group {"backgroundColor":"tertiary"} -->
-<div class="wp-block-group has-tertiary-background-color has-background"><!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'Write your discussion question topic or prompt here.', 'sensei-lms' ); ?>"} -->
-<p></p>
+<div class="wp-block-group has-tertiary-background-color has-background"><!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'Write your discussion question topic or prompt here.', 'sensei-lms' ); ?>","className":"sensei-content-description"} -->
+<p class="sensei-content-description"></p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:group -->
 
