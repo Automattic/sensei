@@ -214,8 +214,10 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 
 	public function testUpdateLessonPropertiesOnCourseTranslationCreated_WhenCalled_CreatesLessonTranslations() {
 		/* Arrange. */
-		$new_course_id = $this->factory->course->create();
-		$old_course    = $this->factory->get_course_with_lessons( array( 'lesson_count' => 2 ) );
+		$new_course_id  = $this->factory->course->create();
+		$new_lesson1_id = $this->factory->lesson->create();
+		$new_lesson2_id = $this->factory->lesson->create();
+		$old_course     = $this->factory->get_course_with_lessons( array( 'lesson_count' => 2 ) );
 
 		$wpml = new Sensei_WPML();
 
@@ -232,7 +234,7 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 				return $old_course['course_id'];
 			}
 
-			return 4;
+			return 0;
 		};
 		add_filter( 'wpml_object_id', $object_id_fitler, 10, 4 );
 
@@ -247,8 +249,12 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 		};
 		add_action( 'wpml_admin_make_post_duplicates', $admin_make_post_duplicates_acton, 10, 1 );
 
-		$post_duplicates_filter = function( $post_id ) {
-			return array( 'a' => 1 );
+		$new_lesson_ids         = array( $new_lesson1_id, $new_lesson2_id );
+		$post_duplicates_filter = function( $post_id ) use ( &$new_lesson_ids ) {
+			$lesson_id = array_shift( $new_lesson_ids );
+			return array(
+				'a' => $lesson_id,
+			);
 		};
 		add_filter( 'wpml_post_duplicates', $post_duplicates_filter, 10, 1 );
 
@@ -260,8 +266,15 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 		remove_filter( 'wpml_object_id', $object_id_fitler );
 		remove_filter( 'wpml_element_has_translations', $element_has_translations_filter );
 		remove_action( 'wpml_admin_make_post_duplicates', $admin_make_post_duplicates_acton );
+		remove_filter( 'wpml_post_duplicates', $post_duplicates_filter );
 
 		$this->assertSame( 2, $created_lessons );
 
+		$expected = array( $new_course_id, $new_course_id );
+		$actual   = array(
+			(int) get_post_meta( $new_lesson1_id, '_lesson_course', true ),
+			(int) get_post_meta( $new_lesson2_id, '_lesson_course', true ),
+		);
+		$this->assertSame( $expected, $actual, 'Lesson course should be set to the new course in lesson translations' );
 	}
 }
