@@ -282,6 +282,7 @@ class Sensei_WPML {
 				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 				do_action( 'wpml_admin_make_post_duplicates', $lesson_id );
 
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 				$translations = apply_filters( 'wpml_post_duplicates', $lesson_id );
 				foreach ( $translations as $translated_lesson_id ) {
 					$this->update_lesson_course( (int) $translated_lesson_id, $new_course_id );
@@ -328,7 +329,7 @@ class Sensei_WPML {
 	 * @param int      $new_lesson_id    New lesson ID.
 	 * @param int|null $master_lesson_id Original lesson ID.
 	 */
-	private function update_translated_lesson_taxonomies( $new_lesson_id, $master_lesson_id = null) {
+	private function update_translated_lesson_taxonomies( $new_lesson_id, $master_lesson_id = null ) {
 		$details = apply_filters(
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			'wpml_element_language_details',
