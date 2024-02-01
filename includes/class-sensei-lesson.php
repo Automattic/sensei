@@ -158,6 +158,7 @@ class Sensei_Lesson {
 
 		// Log event on the initial publish for a lesson.
 		add_action( 'sensei_lesson_initial_publish', [ $this, 'log_initial_publish_event' ] );
+		add_action( 'init', [ $this, 'set_up_meta_fields' ] );
 	}
 
 	/**
@@ -5357,6 +5358,39 @@ class Sensei_Lesson {
 
 		return false;
 
+	}
+
+	/**
+	 * Register the meta fields for the lesson post type.
+	 *
+	 * @return void
+	 */
+	public function set_up_meta_fields() {
+		register_post_meta(
+			'lesson',
+			'_initial_content',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'string',
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
+			]
+		);
+	}
+
+	/**
+	 * Check if user can update lesson meta.
+	 *
+	 * @internal
+	 *
+	 * @param bool   $allowed  Whether the user can add the meta.
+	 * @param string $meta_key The meta key.
+	 * @param int    $post_id  The post ID where the meta key is being edited.
+	 *
+	 * @return boolean Whether the user can edit the meta.
+	 */
+	public function post_meta_auth_callback( $allowed, $meta_key, $post_id ) {
+		return current_user_can( 'edit_post', $post_id );
 	}
 
 	/**
