@@ -1,3 +1,5 @@
+@import "~@wordpress/base-styles/breakpoints";
+
 body {
 	--wp--custom--form--color--background: var(--sensei-background-color);
 	--wp--custom--form--border--width: 1.5px;
@@ -7,7 +9,7 @@ body {
 	--wp--custom--form--color--text: inherit;
 	--wp--custom--form--padding: 6px 8px;
 	--wp--custom--list--spacing--padding--left: 16px;
-	--wp--custom--layout--content-size: 830px;
+	--wp--custom--layout--content-size: 900px;
 	--wp--custom--layout--wide-size: 1100px;
 	--wp--style--root--padding-top: 0px !important;
 	--wp--style--root--padding-bottom: 0px;
@@ -28,16 +30,9 @@ body {
 	color: var(--sensei-background-color);
 }
 
-.wp-site-blocks {
+.sensei-course-theme__main-content,
+.sensei-course-theme__quiz__footer__wrapper {
 	padding: 0 var(--content-padding);
-}
-
-.sensei-course-theme__main-content {
-	> * {
-		max-width: var(--content-size) !important;
-		margin-left: auto;
-		margin-right: auto;
-	}
 }
 
 /**
@@ -61,13 +56,13 @@ body {
 	.wp-block-post-content {
 		margin-top: 40px;
 
-		& > *, .wp-block-group__inner-container > * {
+		& > *, & ~ div > *, .wp-block-group__inner-container > * {
 			max-width: var(--content-size) !important;
 			margin-left: auto;
 			margin-right: auto;
 		}
 
-		&, & > & {
+		&, & > &, & ~ div {
 			max-width: unset !important;
 			width: unset !important;
 			padding: 0 !important;
@@ -96,6 +91,54 @@ body {
 
 		.post-nav-links {
 			display: none;
+		}
+	}
+
+
+	@media screen and (max-width: $break-medium) {
+		.sensei-lesson-footer {
+
+			display: block;
+
+			* {
+				float: none;
+			}
+
+			.sensei-buttons-container {
+				display: flex;
+				justify-content: space-between;
+				gap: 1.25rem;
+				margin: 0;
+
+				& > * {
+					flex: 1 0 0;
+				}
+
+				.sensei-buttons-container__button-block {
+					padding: 0;
+				}
+
+				.wp-block-button,
+				.wp-block-button__link {
+					width: 100%;
+				}
+			}
+		}
+	}
+
+	.wp-block-post-content {
+		.wp-block-sensei-lms-lesson-actions {
+			display: none;
+		}
+	}
+
+	&.sensei-default {
+		.sensei-course-theme__main-content {
+			> * {
+				max-width: var(--content-size) !important;
+				margin-left: auto;
+				margin-right: auto;
+			}
 		}
 	}
 }

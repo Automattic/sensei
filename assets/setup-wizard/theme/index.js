@@ -22,7 +22,7 @@ import SmallScreen from './small-screen';
  * Theme step for Setup Wizard.
  */
 const Theme = () => {
-	const { goTo } = useQueryStringRouter();
+	const { goNext } = useQueryStringRouter();
 	const [ isBigScreen, setIsBigScreen ] = useState( false );
 	const [ isScrolled, setIsScrolled ] = useState( false );
 	const themeContentRef = useRef();
@@ -72,14 +72,10 @@ const Theme = () => {
 		} );
 	};
 
-	const goToNextStep = () => {
-		goTo( 'tracking' );
-	};
-
 	const submitPage = ( installSenseiTheme ) => () => {
 		submitStep(
 			{ theme: { install_sensei_theme: installSenseiTheme } },
-			{ onSuccess: goToNextStep }
+			{ onSuccess: goNext }
 		);
 	};
 

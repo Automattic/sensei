@@ -335,7 +335,19 @@ class Sensei_Grading {
 
 		}
 		?>
-			<h1><?php echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) ); ?></h1>
+			<h1>
+			<?php
+			/**
+			 * Filter the title of the Grading page.
+			 *
+			 * @hook sensei_grading_nav_title
+			 *
+			 * @param {string} $title
+			 * @return {string} Filtered title.
+			 */
+			echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) );
+			?>
+			</h1>
 		<?php
 	}
 
@@ -377,7 +389,19 @@ class Sensei_Grading {
 
 		}
 		?>
-			<h2><?php echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) ); ?></h2>
+			<h2>
+			<?php
+			/**
+			 * Filter the title of the Grading page.
+			 *
+			 * @hook sensei_grading_nav_title
+			 *
+			 * @param {string} $title
+			 * @return {string} Filtered title.
+			 */
+			echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) );
+			?>
+			</h2>
 		<?php
 	}
 
@@ -426,11 +450,14 @@ class Sensei_Grading {
 		/**
 		 * Filter fires inside Sensei_Grading::count_statuses
 		 *
-		 * Alter the post_in array to determine which posts the
-		 * comment query should be limited to.
+		 * Alter the post_in array to determine which posts the comment query should be limited to.
 		 *
 		 * @since 1.8.0
-		 * @param array $args
+		 *
+		 * @hook sensei_count_statuses_args
+		 *
+		 * @param {array} $args Array of arguments for the query.
+		 * @return {array} Filtered arguments.
 		 */
 		$args = apply_filters( 'sensei_count_statuses_args', $args );
 
@@ -498,6 +525,15 @@ class Sensei_Grading {
 			$counts['complete'] = 0;
 		}
 
+		/**
+		 * Filter the counts of statuses for a given type.
+		 *
+		 * @hook sensei_count_statuses
+		 *
+		 * @param {array} $counts Array of counts for each status.
+		 * @param {string} $type Type of status to count: sensei_course_status or sensei_lesson_status.
+		 * @return {array} Filtered counts.
+		 */
 		return apply_filters( 'sensei_count_statuses', $counts, $type );
 	}
 
@@ -520,10 +556,18 @@ class Sensei_Grading {
 			'suppress_filters' => 0,
 			'fields'           => 'ids',
 		);
-		$courses     = get_posts( apply_filters( 'sensei_grading_filter_courses', $course_args ) );
+		/**
+		 * Filter the arguments used to query for courses in the grading dropdown.
+		 *
+		 * @hook sensei_grading_filter_courses
+		 *
+		 * @param {array} $course_args Array of arguments for the query.
+		 * @return {array} Filtered arguments.
+		 */
+		$courses = get_posts( apply_filters( 'sensei_grading_filter_courses', $course_args ) );
 
 		$html .= '<option value="">' . __( 'Select a course', 'sensei-lms' ) . '</option>';
-		if ( count( $courses ) > 0 ) {
+		if ( $courses ) {
 			foreach ( $courses as $course_id ) {
 				$html .= '<option value="' . esc_attr( absint( $course_id ) ) . '" ' . selected( $course_id, $selected_course_id, false ) . '>' . esc_html( get_the_title( $course_id ) ) . '</option>' . "\n";
 			}
@@ -611,10 +655,18 @@ class Sensei_Grading {
 				'suppress_filters' => 0,
 				'fields'           => 'ids',
 			);
-			$lessons     = get_posts( apply_filters( 'sensei_grading_filter_lessons', $lesson_args ) );
+			/**
+			 * Filter the arguments used to query for lessons in the grading dropdown.
+			 *
+			 * @hook sensei_grading_filter_lessons
+			 *
+			 * @param {array} $lesson_args Array of arguments for the query.
+			 * @return {array} Filtered arguments.
+			 */
+			$lessons = get_posts( apply_filters( 'sensei_grading_filter_lessons', $lesson_args ) );
 
 			$html .= '<option value="">' . esc_html__( 'Select a lesson', 'sensei-lms' ) . '</option>';
-			if ( count( $lessons ) > 0 ) {
+			if ( $lessons ) {
 				foreach ( $lessons as $lesson_id ) {
 					$html .= '<option value="' . esc_attr( absint( $lesson_id ) ) . '" ' . selected( $lesson_id, $selected_lesson_id, false ) . '>' . esc_html( get_the_title( $lesson_id ) ) . '</option>' . "\n";
 				}
@@ -635,7 +687,6 @@ class Sensei_Grading {
 	 */
 	public function admin_process_grading_submission() {
 
-		// NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry.
 		if ( ! isset( $_POST['sensei_manual_grade'] )
 			|| ! wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' )
 			|| ! isset( $_GET['quiz_id'] )
@@ -688,12 +739,16 @@ class Sensei_Grading {
 		// store the feedback from grading
 		Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id, $user_id );
 
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $quiz_lesson_id, $user_id );
+		if ( ! $lesson_progress ) {
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id );
+		}
+
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 		if ( ! $quiz_progress ) {
 			return false;
 		}
 
-		$lesson_status   = 'ungraded';
 		$lesson_metadata = [];
 		$quiz_progress->ungrade();
 
@@ -712,21 +767,27 @@ class Sensei_Grading {
 			if ( $pass_required ) {
 				// Student has reached the pass mark and lesson is complete.
 				if ( $quiz_passmark <= $grade ) {
-					$lesson_status = 'passed';
+					// Due to our internal logic, we need to complete the lesson first.
+					// This is because in the comments-based version the lesson status is used for both the lesson and the quiz.
+					$lesson_progress->complete();
 					$quiz_progress->pass();
 				} else {
-					$lesson_status = 'failed';
 					$quiz_progress->fail();
 				}
 			}
 
 			// Student only has to partake the quiz.
 			else {
-				$lesson_status = 'graded';
+				$lesson_progress->complete();
 				$quiz_progress->grade();
 			}
 		}
 
+		// Due to our internal logic, we need to save the lesson progress first.
+		// This is because in the comments-based version the lesson status is used for both the lesson and the quiz.
+		// And in this context the quiz status should be preserved in the comments-based version.
+		// For the tables-based version the order does not matter.
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
 		Sensei()->quiz_progress_repository->save( $quiz_progress );
 		if ( count( $lesson_metadata ) ) {
 			foreach ( $lesson_metadata as $key => $value ) {
@@ -734,21 +795,13 @@ class Sensei_Grading {
 			}
 		}
 
-		if ( in_array( $lesson_status, [ 'passed', 'graded' ], true ) ) {
+		if ( $lesson_progress->is_complete() ) {
 
-			/**
-			 * Summary.
-			 *
-			 * Description.
-			 *
-			 * @since 1.7.0
-			 *
-			 * @param int  $user_id
-			 * @param int $quiz_lesson_id
-			 */
+			/* The action is documented in includes/class-sensei-utils.php */
 			do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
 
 		}
+
 		if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
 
 			$load_url = add_query_arg( array( 'message' => 'graded' ) );
@@ -902,15 +955,14 @@ class Sensei_Grading {
 		$quiz_autogradable = true;
 
 		/**
-		 * Filter the types of question types that can be automatically graded.
+		 * Filter question types that can be automatically graded.
 		 *
 		 * This filter fires inside the auto grade quiz function and provides you with the default list.
 		 *
-		 * @param array {
-		 *      'multiple-choice',
-		 *      'boolean',
-		 *      'gap-fill'.
-		 * }
+		 * @hook sensei_autogradable_question_types
+		 *
+		 * @param {array} Types of questions, default: array( 'multiple-choice', 'boolean', 'gap-fill' ).
+		 * @return {array} Filtered array of question types.
 		 */
 		$autogradable_question_types = apply_filters( 'sensei_autogradable_question_types', array( 'multiple-choice', 'boolean', 'gap-fill' ) );
 
@@ -995,10 +1047,13 @@ class Sensei_Grading {
 		 * in the sensei_grade_question_auto function. It fires irrespective of the question type. If you return a value
 		 * other than false the auto grade functionality will be ignored and your supplied grade will be user for this question.
 		 *
-		 * @param int $question_grade default false
-		 * @param int $question_id
-		 * @param string $question_type one of the Sensei question type.
-		 * @param string $answer user supplied question answer
+		 * @hook sensei_pre_grade_question_auto
+		 *
+		 * @param {int|false} $question_grade Question grade, default false.
+		 * @param {int}       $question_id    ID of the question being graded.
+		 * @param {string}    $question_type  One of the Sensei question type.
+		 * @param {string}    $answer         User supplied question answer.
+		 * @return {int|false} Filtered question grade.
 		 */
 		$question_grade = apply_filters( 'sensei_pre_grade_question_auto', false, $question_id, $question_type, $answer );
 
@@ -1040,10 +1095,13 @@ class Sensei_Grading {
 			 * This filter is applied the context of ta single question within the sensei_grade_question_auto function.
 			 * It fires for all other questions types. It does not apply to 'multiple-choice'  , 'boolean' and gap-fill.
 			 *
-			 * @param int $question_grade default zero
-			 * @param int $question_id
-			 * @param string $question_type one of the Sensei question type.
-			 * @param string $answer user supplied question answer
+			 * @hook sensei_grade_question_auto
+			 *
+			 * @param {int}    $question_grade Question grade.
+			 * @param {int}    $question_id    ID of the question being graded.
+			 * @param {string} $question_type  One of the Sensei question type.
+			 * @param {string} $answer         User supplied question answer
+			 * @return {int} Filtered question grade.
 			 */
 			$question_grade = (int) apply_filters( 'sensei_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
 
@@ -1074,9 +1132,12 @@ class Sensei_Grading {
 		 * alter the value simply use this code in your plugin or the themes functions.php
 		 * add_filter( 'sensei_gap_fill_case_sensitive_grading','__return_true' );
 		 *
-		 * @param bool $do_case_sensitive_comparison default false.
-		 *
 		 * @since 1.9.0
+		 *
+		 * @hook sensei_gap_fill_case_sensitive_grading
+		 *
+		 * @param {bool} $do_case_sensitive_comparison Whether to do case sensitive comparison or not, default false.
+		 * @return {bool} Filtered value.
 		 */
 		$do_case_sensitive_comparison = apply_filters( 'sensei_gap_fill_case_sensitive_grading', false );
 
@@ -1286,7 +1347,7 @@ class Sensei_Grading {
 			) averages_by_course"
 		);
 
-		return doubleval( $result->courses_average );
+		return floatval( $result->courses_average );
 	}
 }
 

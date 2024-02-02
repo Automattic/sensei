@@ -222,6 +222,8 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 			$courses = apply_filters( 'sensei_widget_course_component_get_courses_' . $component, array(), $instance );
 		}
 
+		$courses = is_array( $courses ) ? $courses : [];
+
 		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes.
 		if ( ! empty( $instance['limit'] ) && intval( $instance['limit'] ) >= 1 && intval( $instance['limit'] ) < count( $courses ) ) {
 			$courses = array_slice( $courses, 0, intval( $instance['limit'] ) );

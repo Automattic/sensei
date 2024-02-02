@@ -1,6 +1,8 @@
 <?php
 
 class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
+
 	public function setUp(): void {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
@@ -135,6 +137,32 @@ class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 			],
 			[
 				'user_email' => 'user3@example.com',
+			],
+		];
+
+		self::assertSame( $expected, $this->exportLearners( $learners ) );
+	}
+
+	public function testGetAll_WhenTeacherOnTheStudentsScreen_ReturnsOnlyTeacherStudents() {
+		// Arrange.
+		$nonteacher_student_id = $this->factory->user->create( [ 'user_email' => 'nonteacher_student@example.com' ] );
+		$teacher_student_id    = $this->factory->user->create( [ 'user_email' => 'teacher_student@example.com' ] );
+		$nonteacher_course_id  = $this->factory->course->create();
+		$this->login_as_teacher();
+		$teacher_course_id = $this->factory->course->create();
+
+		Sensei_Utils::user_start_course( $nonteacher_student_id, $nonteacher_course_id );
+		Sensei_Utils::user_start_course( $teacher_student_id, $teacher_course_id );
+
+		set_current_screen( 'sensei-lms_page_sensei_learners' ); // Pretend we're on the students admin screen.
+
+		// Act.
+		$learners = ( new Sensei_Db_Query_Learners( [] ) )->get_all();
+
+		// Assert.
+		$expected = [
+			[
+				'user_email' => 'teacher_student@example.com',
 			],
 		];
 

@@ -31,7 +31,9 @@ class Teacher_Message_Reply_Test extends \WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory          = new Sensei_Factory();
-		$this->email_repository = new Email_Repository();
+		$this->email_repository = $this->createMock( Email_Repository::class );
+		$this->email_repository->method( 'get' )
+			->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
 	}
 
 	public function testStudentRepliesMail_WhenCalled_CallsEmailSendingActionWithRightData() {

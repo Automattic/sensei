@@ -61,7 +61,10 @@ export default class PostType {
 	}
 
 	async goToPreview(): Promise< Page > {
-		await this.page.locator( 'button:has-text("Preview")' ).first().click();
+		await this.page
+			.getByRole( 'button', { name: 'Preview' } )
+			.first()
+			.click();
 
 		const [ previewPage ] = await Promise.all( [
 			this.page.waitForEvent( 'popup' ),

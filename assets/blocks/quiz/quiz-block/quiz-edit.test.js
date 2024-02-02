@@ -28,6 +28,13 @@ jest.mock( '../../../shared/blocks/use-auto-inserter', () => ( {
 	useAutoInserter: jest.fn(),
 } ) );
 
+jest.mock( '@wordpress/block-editor', () => ( {
+	...jest.requireActual( '@wordpress/block-editor' ),
+	useBlockProps: jest.fn().mockImplementation( () => ( {
+		className: 'test',
+	} ) ),
+} ) );
+
 describe( 'addQuestionGeneratorUpsellButtonToQuizBlock', () => {
 	beforeAll( () => {
 		useSelect.mockReturnValue( {} );

@@ -1,0 +1,10 @@
+div.wp-block-button.is-style-outline > .wp-block-button__link:not(.has-text-color) {
+	color: inherit;
+}
+
+.editor-styles-wrapper {
+	.wp-block-sensei-lms-lesson-actions .wp-block-button.is-style-default > .wp-block-button__link {
+		font-size: inherit;
+		line-height: inherit;
+	}
+}

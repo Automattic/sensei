@@ -81,5 +81,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	</section> <!-- article .lesson-content -->
 
-</article> <!-- article .(<?php echo esc_attr( join( ' ', get_post_class( array( 'lesson', 'post' ) ) ) ); ?>  -->
+</article> <!-- article .(<?php echo esc_attr( implode( ' ', get_post_class( array( 'lesson', 'post' ) ) ) ); ?>  -->
 

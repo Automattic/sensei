@@ -94,6 +94,9 @@ class Sensei_Course_Theme {
 
 		// Prevent module links in learning mode.
 		add_filter( 'sensei_do_link_to_module', [ $this, 'prevent_link_to_module' ] );
+
+		// Add custom body class.
+		add_filter( 'body_class', [ $this, 'add_body_class' ] );
 	}
 
 	/**
@@ -440,7 +443,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @param string|null $post_type The post type to customize.
 	 *
-	 * @return The customization url
+	 * @return string The customization url.
 	 */
 	public static function get_learning_mode_fse_url( string $post_type = null ) : string {
 		// Get the post type manually if not provided.
@@ -453,11 +456,22 @@ class Sensei_Course_Theme {
 			$post_type = 'lesson';
 		}
 
-		return admin_url( 'site-editor.php?postType=wp_template&postId=' . self::THEME_NAME . '//' . $post_type );
+		return admin_url( 'site-editor.php?postType=wp_template&postId=' . self::get_learning_mode_template_id( $post_type ) );
 	}
 
 	/**
-	 * Returnds the url for customizing Learning Mode template colors.
+	 * Returns the template ID of the post type for Learning Mode.
+	 *
+	 * @param string|null $post_type The post type to generate the template ID for.
+	 *
+	 * @return string The template ID.
+	 */
+	public static function get_learning_mode_template_id( $post_type = null ) : string {
+		return self::THEME_NAME . '//' . $post_type;
+	}
+
+	/**
+	 * Returns the url for customizing Learning Mode template colors.
 	 */
 	public static function get_learning_mode_customizer_url(): string {
 			// Get the last modified lesson.
@@ -606,5 +620,25 @@ class Sensei_Course_Theme {
 			wp_safe_redirect( get_permalink( $module_lessons[0] ) );
 			die();
 		}
+	}
+
+	/**
+	 * Add current theme's text domain to body class.
+	 *
+	 * @since 4.17.0
+	 * @internal
+	 *
+	 * @param  array $classes Existing body classes.
+	 * @return array          Body classes with theme slug added.
+	 */
+	public function add_body_class( $classes ) {
+		$theme       = wp_get_theme();
+		$text_domain = $theme->get( 'TextDomain' );
+
+		if ( ! empty( $text_domain ) ) {
+			$classes[] = 'sensei-' . $theme->get( 'TextDomain' );
+		}
+
+		return $classes;
 	}
 }

@@ -4,15 +4,11 @@
 import { useContext } from '@wordpress/element';
 
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * Internal dependencies
  */
 import { AnswerFeedbackToggle } from '../answer-feedback-block/answer-feedback-toggle';
 import { QuestionContext } from '../question-block/question-context';
+import { useBlockProps } from '@wordpress/block-editor';
 
 /**
  * Question Description control.
@@ -26,8 +22,13 @@ const QuestionAnswers = () => {
 		hasSelected,
 		canHaveFeedback,
 	} = useContext( QuestionContext );
+
+	const blockProps = useBlockProps( {
+		className: 'sensei-lms-question-answers-block',
+	} );
+
 	return (
-		<div className={ classnames( 'sensei-lms-question-answers-block' ) }>
+		<div { ...blockProps }>
 			{ AnswerBlock?.edit && (
 				<>
 					<AnswerBlock.edit

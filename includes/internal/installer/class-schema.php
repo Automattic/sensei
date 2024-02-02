@@ -3,28 +3,49 @@
  * File containing the class \Sensei\Internal\Installer\Schema.
  *
  * @package sensei
- * @since   $$next-version$$
+ * @since   4.16.1
  */
 
 namespace Sensei\Internal\Installer;
+
+use Sensei_Feature_Flags;
 
 /**
  * Schema class.
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.16.1
  */
 class Schema {
+	/**
+	 * Feature flags.
+	 *
+	 * @since 4.19.2
+	 * @var Sensei_Feature_Flags
+	 */
+	private Sensei_Feature_Flags $feature_flags;
+
 	/*
 	 * Indexes have a maximum size of 767 bytes. Historically, we haven't need to be concerned about that.
 	 * As of WP 4.2, however, they moved to utf8mb4, which uses 4 bytes per character. This means that an index which
 	 * used to have room for floor(767/3) = 255 characters, now only has room for floor(767/4) = 191 characters.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 * @var int
 	 */
 	const MAX_INDEX_LENGTH = 191;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 4.19.2
+	 *
+	 * @param Sensei_Feature_Flags $feature_flags Feature flags.
+	 */
+	public function __construct( Sensei_Feature_Flags $feature_flags ) {
+		$this->feature_flags = $feature_flags;
+	}
 
 	/**
 	 * Set up the database tables which the plugin needs to function.
@@ -35,7 +56,7 @@ class Schema {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 */
 	public function create_tables() {
 		global $wpdb;
@@ -62,7 +83,7 @@ class Schema {
 	 * @internal
 	 *
 	 * @see https://codex.wordpress.org/Creating_Tables_with_Plugins#Creating_or_Updating_the_Table
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @return string The schema query.
 	 */
@@ -71,7 +92,8 @@ class Schema {
 
 		$collate = $wpdb->get_charset_collate();
 
-		return "
+		$table_queries = [
+			"{$wpdb->prefix}sensei_lms_progress"         => "
 CREATE TABLE {$wpdb->prefix}sensei_lms_progress (
 	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
 	post_id bigint UNSIGNED NOT NULL,
@@ -87,6 +109,8 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_progress (
 	UNIQUE KEY user_progress (post_id, user_id, type),
 	KEY status (status)
 ) $collate;
+",
+			"{$wpdb->prefix}sensei_lms_quiz_submissions" => "
 CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_submissions (
 	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
 	quiz_id bigint UNSIGNED NOT NULL,
@@ -97,6 +121,8 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_submissions (
 	PRIMARY KEY  (id),
 	UNIQUE KEY user_quiz (quiz_id, user_id)
 ) $collate;
+",
+			"{$wpdb->prefix}sensei_lms_quiz_answers"     => "
 CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_answers (
 	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
 	submission_id bigint UNSIGNED NOT NULL,
@@ -107,6 +133,8 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_answers (
 	PRIMARY KEY  (id),
 	UNIQUE KEY question_submission (submission_id, question_id)
 ) $collate;
+",
+			"{$wpdb->prefix}sensei_lms_quiz_grades"      => "
 CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
 	answer_id bigint UNSIGNED NOT NULL,
@@ -117,7 +145,18 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 	updated_at datetime NOT NULL,
 	PRIMARY KEY  (id),
 	UNIQUE KEY question_answer (answer_id, question_id)
-) $collate;";
+) $collate;
+",
+		];
+
+		$query = '';
+		foreach ( $this->get_tables() as $table ) {
+			if ( isset( $table_queries[ $table ] ) ) {
+				$query .= $table_queries[ $table ];
+			}
+		}
+
+		return $query;
 	}
 
 	/**
@@ -126,28 +165,32 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @return array Database tables.
 	 */
 	public function get_tables(): array {
 		global $wpdb;
 
-		$tables = [
-			"{$wpdb->prefix}sensei_lms_progress",
-			"{$wpdb->prefix}sensei_lms_quiz_submissions",
-			"{$wpdb->prefix}sensei_lms_quiz_answers",
-			"{$wpdb->prefix}sensei_lms_quiz_grades",
-		];
+		$tables = [];
+		if ( $this->feature_flags->is_enabled( 'tables_based_progress' ) ) {
+			$tables[] = "{$wpdb->prefix}sensei_lms_progress";
+			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_submissions";
+			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_answers";
+			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_grades";
+		}
 
 		/**
 		 * Filter the list of known tables.
 		 *
 		 * If plugins need to add new tables, they can inject them here.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.16.1
 		 *
-		 * @param array $tables An array of Sensei specific database table names.
+		 * @hook sensei_lms_schema_get_tables
+		 *
+		 * @param {array} $tables An array of Sensei specific database table names.
+		 * @return {array} Filtered array of Sensei specific database table names.
 		 */
 		$tables = apply_filters( 'sensei_lms_schema_get_tables', $tables );
 

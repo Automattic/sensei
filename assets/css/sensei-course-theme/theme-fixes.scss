@@ -38,11 +38,13 @@
 	width: auto;
 }
 
-[class*='__inner-container'] {
-	> *, > .wp-block-group, > .wp-block-cover {
-		&:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright):not(.is-style-wide) {
-			max-width: unset;
-			margin: unset;
+.sensei-twentytwenty {
+	[class*='__inner-container'] {
+		> *, > .wp-block-group, > .wp-block-cover {
+			&:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright):not(.is-style-wide) {
+				max-width: unset;
+				margin: unset;
+			}
 		}
 	}
 }

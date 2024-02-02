@@ -66,6 +66,7 @@ class Sensei_Home_Task_Sell_Course_With_WooCommerce implements Sensei_Home_Task 
 	 */
 	public static function mark_completed() {
 		update_option( self::VISITED_WOOCOMMERCE_ADMIN_OPTION_KEY, true, false );
+		sensei_log_event( 'home_task_complete', [ 'type' => self::get_id() ] );
 	}
 
 	/**

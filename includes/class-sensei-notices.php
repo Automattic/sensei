@@ -91,10 +91,10 @@ class Sensei_Notices {
 		 * Allows to modify a sensei notice that will be shown to the user.
 		 *
 		 * @since 4.7.0
+		 *
 		 * @hook sensei_notice
 		 *
 		 * @param {array} $notice The notice data.
-		 *
 		 * @return {array|null} The notice data. Or return null if you want to prevent the notice showing up.
 		 */
 		$notice = apply_filters( 'sensei_notice', $notice );
@@ -143,7 +143,7 @@ class Sensei_Notices {
 	 * @return void
 	 */
 	public function maybe_load_notices() {
-		if ( is_user_logged_in() ) {
+		if ( is_user_logged_in() && Sensei_Utils::is_frontend_request() ) {
 			$user_id = get_current_user_id();
 			$values  = get_user_meta( $user_id, self::USER_META_KEY );
 
@@ -161,7 +161,7 @@ class Sensei_Notices {
 	 * @return void
 	 */
 	public function maybe_persist_notices() {
-		if ( ! empty( $this->notices ) && is_user_logged_in() ) {
+		if ( ! empty( $this->notices ) && is_user_logged_in() && Sensei_Utils::is_frontend_request() ) {
 			update_user_meta( get_current_user_id(), self::USER_META_KEY, $this->notices );
 			$this->clear_notices();
 		}

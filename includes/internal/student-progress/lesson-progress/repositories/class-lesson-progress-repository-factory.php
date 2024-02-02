@@ -20,19 +20,28 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Lesson_Progress_Repository_Factory {
 	/**
-	 * Use tables based progress flag.
+	 * Is tables based progress feature flag enabled.
 	 *
 	 * @var bool
 	 */
-	private $use_tables;
+	private $tables_enabled;
+
+	/**
+	 * Read from tables flag.
+	 *
+	 * @var bool
+	 */
+	private $read_tables;
 
 	/**
 	 * Lesson_Progress_Repository_Factory constructor.
 	 *
-	 * @param bool $use_tables Use tables based progress flag.
+	 * @param bool $tables_enabled Is tables based progress feature flag enabled.
+	 * @param bool $read_tables Read from tables flag.
 	 */
-	public function __construct( bool $use_tables ) {
-		$this->use_tables = $use_tables;
+	public function __construct( bool $tables_enabled, bool $read_tables ) {
+		$this->tables_enabled = $tables_enabled;
+		$this->read_tables    = $read_tables;
 	}
 
 	/**
@@ -45,10 +54,31 @@ class Lesson_Progress_Repository_Factory {
 	public function create(): Lesson_Progress_Repository_Interface {
 		global $wpdb;
 
-		return new Aggregate_Lesson_Progress_Repository(
+		if ( ! $this->tables_enabled ) {
+			return new Comments_Based_Lesson_Progress_Repository();
+		}
+
+		if ( ! $this->read_tables ) {
+			return new Comment_Reading_Aggregate_Lesson_Progress_Repository(
+				new Comments_Based_Lesson_Progress_Repository(),
+				new Tables_Based_Lesson_Progress_Repository( $wpdb )
+			);
+		}
+
+		return new Table_Reading_Aggregate_Lesson_Progress_Repository(
 			new Comments_Based_Lesson_Progress_Repository(),
-			new Tables_Based_Lesson_Progress_Repository( $wpdb ),
-			$this->use_tables
+			new Tables_Based_Lesson_Progress_Repository( $wpdb )
 		);
+	}
+
+	/**
+	 * Creates a comments-based lesson progress repository.
+	 *
+	 * @internal
+	 *
+	 * @return Comments_Based_Lesson_Progress_Repository The repository.
+	 */
+	public function create_comments_based_repository(): Comments_Based_Lesson_Progress_Repository {
+		return new Comments_Based_Lesson_Progress_Repository();
 	}
 }

@@ -87,9 +87,28 @@ class Sensei_Updates {
 		$this->v3_9_remove_abandoned_multiple_question();
 		$this->v4_10_update_install_time();
 		$this->v4_12_create_default_emails();
+		$this->v4_19_2_update_legacy_quiz_data();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Enqueue job to update the legacy quiz data.
+	 *
+	 * @since 4.19.2
+	 */
+	private function v4_19_2_update_legacy_quiz_data() {
+		$legacy_answers_count = (int) Sensei_Utils::sensei_check_for_activity(
+			array(
+				'type'   => 'sensei_user_answer',
+				'status' => 'log',
+			)
+		);
+
+		if ( $legacy_answers_count ) {
+			Sensei_Scheduler::instance()->schedule_job( new Sensei_Update_Legacy_Quiz_Data() );
+		}
 	}
 
 	/**
@@ -154,12 +173,12 @@ class Sensei_Updates {
 		/**
 		 * Filter to disable attempts at adding the comment indexes.
 		 *
-		 * @hook sensei_add_comment_indexes
 		 * @since 3.7.0
 		 *
-		 * @param {bool} $do_add_indexes True if indexes should be added to comment table.
+		 * @hook sensei_add_comment_indexes
 		 *
-		 * @return {bool}
+		 * @param {bool} $do_add_indexes True if indexes should be added to comment table.
+		 * @return {bool} Filtered value.
 		 */
 		if ( ! apply_filters( 'sensei_add_comment_indexes', true ) ) {
 			return;

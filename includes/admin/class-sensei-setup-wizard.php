@@ -55,7 +55,7 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Creation of Sensei pages.
 	 *
-	 * @var Sensei_Setup Wizard_Pages
+	 * @var Sensei_Setup_Wizard_Pages
 	 */
 	public $pages;
 

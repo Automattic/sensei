@@ -92,11 +92,11 @@ class Sensei_Block_Patterns {
 			];
 		} elseif ( 'lesson' === $post_type ) {
 			$block_patterns = [
+				'default',
 				'video-lesson',
 				'default-with-quiz',
 				'zoom-meeting',
 				'files-to-download',
-				'default',
 			];
 
 			if (
@@ -107,8 +107,7 @@ class Sensei_Block_Patterns {
 			}
 		} elseif ( 'page' === $post_type ) {
 			$block_patterns = [
-				'landing-page-list',
-				'landing-page-grid',
+				'landing-page',
 			];
 		}
 

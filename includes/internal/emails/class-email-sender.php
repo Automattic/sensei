@@ -93,7 +93,7 @@ class Email_Sender {
 	public function send_email( $email_name, $replacements, $usage_tracking_type ) {
 		$email_post = $this->get_email_post_by_name( $email_name );
 
-		if ( ! $email_post ) {
+		if ( ! $email_post || 'publish' !== $email_post->post_status ) {
 			return;
 		}
 
@@ -104,13 +104,13 @@ class Email_Sender {
 		 * Filter the email replacements.
 		 *
 		 * @since 4.12.0
+		 *
 		 * @hook sensei_email_replacements
 		 *
-		 * @param {Array}        $replacements The email replacements.
+		 * @param {array}        $replacements The email replacements.
 		 * @param {string}       $email_name   The email name.
 		 * @param {WP_Post}      $email_post   The email post.
 		 * @param {Email_Sender} $email_sender The email sender class instance.
-		 *
 		 * @return {Array} The email replacements.
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
@@ -130,8 +130,7 @@ class Email_Sender {
 					$recipient,
 					$subject,
 					$message,
-					$this->get_email_headers(),
-					null
+					$this->get_email_headers()
 				);
 				sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
 			}
@@ -333,6 +332,14 @@ class Email_Sender {
 			$reply_to_address = $settings['email_reply_to_address'];
 			$reply_to_name    = isset( $settings['email_reply_to_name'] ) ? $settings['email_reply_to_name'] : '';
 			$headers[]        = "Reply-To: $reply_to_name <$reply_to_address>";
+		}
+
+		if ( ! empty( $settings['email_cc'] ) ) {
+			$headers[] = 'Cc: ' . $settings['email_cc'];
+		}
+
+		if ( ! empty( $settings['email_bcc'] ) ) {
+			$headers[] = 'Bcc: ' . $settings['email_bcc'];
 		}
 
 		return $headers;

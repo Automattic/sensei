@@ -154,7 +154,7 @@ function sensei_get_modules_and_lessons( $course_id ) {
 		foreach ( (array) $course_modules as $module ) {
 			$module_lessons = Sensei()->modules->get_lessons( $course_id, $module->term_id );
 
-			if ( count( $module_lessons ) === 0 ) {
+			if ( ! $module_lessons ) {
 				continue;
 			}
 
@@ -259,7 +259,7 @@ function sensei_get_navigation_link_text( $item ) {
  * Returns navigation links for the modules and lessons in a course.
  *
  * @since  1.0.9
- * @param  integer $lesson_id Lesson ID.
+ * @param  int|null $lesson_id Lesson ID.
  * @return array Multi-dimensional array of previous and next links.
  */
 function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
@@ -488,9 +488,12 @@ function sensei_the_module_permalink() {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param string $module_url
-	 * @param int $module_term_id
-	 * @param string $course_id
+	 * @hook sensei_the_module_permalink
+	 *
+	 * @param {string} $module_url     The module permalink url.
+	 * @param {int}    $module_term_id The module term id.
+	 * @param {string} $course_id      The course id.
+	 * @return {string} The module permalink url.
 	 */
 	 echo esc_url_raw( apply_filters( 'sensei_the_module_permalink', $module_url, $module_term_id, $course_id ) );
 
@@ -519,9 +522,12 @@ function sensei_get_the_module_title() {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param $module_title
-	 * @param $module_term_id
-	 * @param $course_id
+	 * @hook sensei_the_module_title
+	 *
+	 * @param {string} $module_title   The module title.
+	 * @param {int}    $module_term_id The module term id.
+	 * @param {int}    $course_id      The course id.
+	 * @return {string} The module title.
 	 */
 	return apply_filters( 'sensei_the_module_title', $module_title, $module_term_id, $course_id );
 
@@ -590,9 +596,12 @@ function sensei_get_the_module_status() {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param $module_status_html
-	 * @param $module_term_id
-	 * @param $course_id
+	 * @hook sensei_the_module_status_html
+	 *
+	 * @param {string} $module_status_html The module status html.
+	 * @param {int}    $module_term_id     The module term id.
+	 * @param {int}    $course_id          The course id.
+	 * @return {string} The module status html.
 	 */
 	return apply_filters( 'sensei_the_module_status_html', $module_status_html, $module_term_id, $course_id );
 
@@ -629,7 +638,10 @@ function sensei_get_the_module_id() {
 	 *
 	 * @since 1.9.7
 	 *
-	 * @param int $module_term_id Module ID.
+	 * @hook sensei_the_module_id
+	 *
+	 * @param {int} $module_term_id Module ID.
+	 * @return {int} Module ID.
 	 */
 	return apply_filters( 'sensei_the_module_id', $module_term_id );
 }
@@ -683,7 +695,11 @@ function sensei_quiz_has_questions() {
 
 	global $sensei_question_loop;
 
-	$questions_count = count( $sensei_question_loop['questions'] );
+	if ( empty( $sensei_question_loop['questions'] ) ) {
+		return false;
+	}
+
+	$questions_count = is_countable( $sensei_question_loop['questions'] ) ? count( $sensei_question_loop['questions'] ) : 0;
 
 	if ( 0 === $questions_count ) {
 		return false;
@@ -722,8 +738,37 @@ function sensei_the_question_content() {
 	$question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
 
 	// load the template that displays the question information.
-	Sensei_Question::load_question_template( $question_type );
+	?>
 
+	<div class="wp-block-sensei-lms-question-answers">
+		<?php
+			/**
+			 * Fires before the question answers are displayed inside the answers block.
+			 *
+			 * @hook sensei_quiz_question_answers_inside_before
+			 *
+			 * @since 4.17.0
+			 *
+			 * @param {int} $question_id The ID of the question.
+			 */
+			do_action( 'sensei_quiz_question_answers_inside_before', $sensei_question_loop['current_question']->ID );
+
+			Sensei_Question::load_question_template( $question_type );
+
+			/**
+			 * Fires after the question answers are displayed inside the answers block.
+			 *
+			 * @hook sensei_quiz_question_answers_inside_after
+			 *
+			 * @since 4.17.0
+			 *
+			 * @param {int} $question_id The ID of the question.
+			 */
+			do_action( 'sensei_quiz_question_answers_inside_after', $sensei_question_loop['current_question']->ID );
+		?>
+	</div>
+
+	<?php
 }
 
 /**
@@ -738,14 +783,18 @@ function sensei_the_question_class() {
 	$question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
 
 	/**
-	 * filter the sensei question class within
-	 * the quiz question loop.
+	 * filter the sensei question class within the quiz question loop.
 	 *
 	 * @since 1.9.0
+	 *
+	 * @hook sensei_question_classes
+	 *
+	 * @param {array} $classes The classes to be applied to the question.
+	 * @return {array} The classes to be applied to the question.
 	 */
 	 $classes = apply_filters( 'sensei_question_classes', array( $question_type ) );
 
-	$html_classes = '';
+	$html_classes = 'wp-block-sensei-lms-quiz-question ';
 	foreach ( $classes as $class ) {
 
 		$html_classes .= $class . ' ';
@@ -830,9 +879,14 @@ function sensei_the_single_lesson_meta() {
 
 	}
 
+	$lesson_id = get_the_ID();
+	if ( ! $lesson_id ) {
+		return;
+	}
+
 	// Get the meta info
-	$lesson_course_id = absint( get_post_meta( get_the_ID(), '_lesson_course', true ) );
-	$is_preview       = Sensei_Utils::is_preview_lesson( get_the_ID() );
+	$lesson_course_id = absint( get_post_meta( $lesson_id, '_lesson_course', true ) );
+	$is_preview       = $lesson_id && Sensei_Utils::is_preview_lesson( $lesson_id );
 
 	// Complete Lesson Logic
 	do_action( 'sensei_complete_lesson' );
@@ -843,6 +897,17 @@ function sensei_the_single_lesson_meta() {
 		?>
 		<section class="lesson-meta">
 			<?php
+			/**
+			 * Filters the position of the video in the lesson meta.
+			 *
+			 * Fires before the lesson meta is displayed.
+			 *
+			 * @hook sensei_video_position
+			 *
+			 * @param {string} $position  The position of the video in the lesson meta, default: top.
+			 * @param {int}    $lesson_id The lesson ID.
+			 * @return {string} The position of the video in the lesson meta.
+			 */
 			if ( apply_filters( 'sensei_video_position', 'top', get_the_ID() ) == 'bottom' ) {
 
 				do_action( 'sensei_lesson_video', get_the_ID() );
@@ -875,10 +940,14 @@ function sensei_the_single_lesson_meta() {
 function get_sensei_header() {
 
 	/**
-	 * Allow user to stop the output of
-	 * get_sensei_header which also includes a call to get_header.
+	 * Allow user to stop the output of get_sensei_header which also includes a call to get_header.
 	 *
-	 * @since 1.9.5 introduced
+	 * @since 1.9.5
+	 *
+	 * @hook sensei_show_main_header
+	 *
+	 * @param {bool} $show_main_header Whether to show the main header.
+	 * @return {bool} Whether to show the main header.
 	 */
 	if ( ! apply_filters( 'sensei_show_main_header', true ) ) {
 		return;
@@ -912,10 +981,14 @@ function get_sensei_header() {
 function get_sensei_footer() {
 
 	/**
-	 * Allow user to stop the output of
-	 * get_sensei_footer which also includes a call to get_header.
+	 * Allow user to stop the output of get_sensei_footer which also includes a call to get_header.
 	 *
-	 * @since 1.9.5 introduced
+	 * @since 1.9.5
+	 *
+	 * @hook sensei_show_main_footer
+	 *
+	 * @param {bool} $show_main_footer Whether to show the main footer.
+	 * @return {bool} Whether to show the main footer.
 	 */
 	if ( ! apply_filters( 'sensei_show_main_footer', true ) ) {
 		return;
@@ -955,11 +1028,14 @@ function get_sensei_footer() {
 function the_no_permissions_title() {
 
 	/**
-	 * Filter the no permissions title just before it is echo'd on the
-	 * no-permissions.php file.
+	 * Filter the no permissions title just before it is echo'd on the no-permissions.php file.
 	 *
 	 * @since 1.9.0
-	 * @param $no_permissions_title
+	 *
+	 * @hook sensei_the_no_permissions_title
+	 *
+	 * @param {string} $no_permissions_title The no permissions title.
+	 * @return {string} Filtered no permissions title.
 	 */
 	echo wp_kses_post( apply_filters( 'sensei_the_no_permissions_title', Sensei()->permissions_message['title'] ) );
 
@@ -973,11 +1049,15 @@ function the_no_permissions_title() {
 function the_no_permissions_message( $post_id ) {
 
 	/**
-	 * Filter the no permissions message just before it is echo'd on the
-	 * no-permissions.php file.
+	 * Filter the no permissions message just before it is echo'd on the no-permissions.php file.
 	 *
 	 * @since 1.9.0
-	 * @param $no_permissions_message
+	 *
+	 * @hook sensei_the_no_permissions_message
+	 *
+	 * @param {string} $no_permissions_message The no permissions message.
+	 * @param {int}    $post_id                The post ID.
+	 * @return {string} Filtered no permissions message.
 	 */
 	echo wp_kses_post( apply_filters( 'sensei_the_no_permissions_message', Sensei()->permissions_message['message'], $post_id ) );
 }
@@ -1139,8 +1219,13 @@ function sensei_get_template( $template_name, $args, $path ) {
  */
 function get_the_lesson_status_class() {
 
+	$lesson_id = get_the_ID();
+	if ( ! $lesson_id ) {
+		return '';
+	}
+
 	$status_class     = '';
-	$lesson_completed = Sensei_Utils::user_completed_lesson( get_the_ID(), get_current_user_id() );
+	$lesson_completed = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
 
 	if ( $lesson_completed ) {
 		$status_class = 'completed';
@@ -1175,7 +1260,10 @@ function sensei_get_the_module_description() {
 	 *
 	 * This fires within the sensei_get_the_module_description function.
 	 *
-	 * @param $module_description Module Description.
+	 * @hook sensei_the_module_description
+	 *
+	 * @param {string} $module_description Module Description.
+	 * @return {string} Filtered module description.
 	 */
 	return apply_filters( 'sensei_the_module_description', $module_description );
 }

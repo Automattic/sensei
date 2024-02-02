@@ -111,7 +111,7 @@ class Sensei_Temporary_User {
 	 *
 	 * @param string $query The user query.
 	 */
-	public static function filter_learners_query( string $query ) {
+	public static function filter_learners_query( $query ) {
 
 		return str_replace(
 			'WHERE 1=1',

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<psalm
+	autoloader="config/psalm/psalm-loader.php"
+	errorBaseline="config/psalm/psalm-baseline.xml"
+	memoizeMethodCallResults="true"
+ >
+	<projectFiles>
+		<file name="sensei-lms.php" />
+		<directory name="includes" />
+		<ignoreFiles allowMissingFiles="true">
+			<directory name="config" />
+			<directory name="includes/internal/emails/views" />
+			<directory name="sample-data" />
+			<directory name="third-party" />
+			<directory name="vendor" />
+			<directory name="vendor-bin" />
+			<directory name="widgets" />
+		</ignoreFiles>
+	</projectFiles>
+	<stubs>
+		<file name="sensei-lms.php" />
+		<file name="includes/template-functions.php" />
+	</stubs>
+	<issueHandlers>
+		<InternalClass errorLevel="suppress" />
+		<InternalMethod errorLevel="suppress" />
+		<MissingReturnType errorLevel="suppress" />
+		<RedundantCastGivenDocblockType errorLevel="suppress" />
+		<PropertyNotSetInConstructor>
+			<errorLevel type="suppress">
+				<referencedProperty name="Sensei_Main::$course_progress_repository_factory" />
+				<referencedProperty name="Sensei_Main::$lesson_progress_repository_factory" />
+				<referencedProperty name="Sensei_Main::$quiz_progress_repository_factory" />
+			</errorLevel>
+		</PropertyNotSetInConstructor>
+		<UndefinedClass>
+			<errorLevel type="suppress">
+				<referencedClass name="WP_CLI" />
+			</errorLevel>
+		</UndefinedClass>
+		<UndefinedFunction>
+			<errorLevel type="suppress">
+				<referencedFunction name="WP_CLI\Utils\format_items" />
+			</errorLevel>
+		</UndefinedFunction>
+		<InvalidScalarArgument>
+			<errorLevel type="suppress">
+				<referencedFunction name="esc_attr" />
+			</errorLevel>
+		</InvalidScalarArgument>
+	</issueHandlers>
+</psalm>

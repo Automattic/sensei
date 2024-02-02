@@ -124,7 +124,7 @@ class Email_Page_Template {
 
 		$post_type = $query['post_type'] ?? get_post_type();
 
-		if ( ! empty( $post_type ) && Email_Post_Type::POST_TYPE !== $post_type ) {
+		if ( empty( $post_type ) || Email_Post_Type::POST_TYPE !== $post_type ) {
 			return $original_templates;
 		}
 

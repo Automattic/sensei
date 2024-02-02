@@ -1,4 +1,7 @@
 <?php
+
+use Sensei\Internal\Services\Progress_Storage_Settings;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -64,6 +67,9 @@ class Sensei_Teacher {
 		add_filter( 'wp_count_posts', array( $this, 'list_table_counts' ), 10, 3 );
 
 		add_action( 'pre_get_posts', array( $this, 'filter_queries' ) );
+
+		// Filter the learners on the Students screen to only show those associated with the current teacher.
+		add_filter( 'sensei_learners_query', array( $this, 'filter_learners_query' ) );
 
 		// filter the quiz submissions
 		add_filter( 'sensei_check_for_activity', array( $this, 'filter_grading_activity_queries' ) );
@@ -767,7 +773,7 @@ class Sensei_Teacher {
 
 	/**
 	 * Filter the post queries to show
-	 * only lesson /course and users that belong
+	 * only lesson/course that belong
 	 * to the current logged teacher.
 	 *
 	 * @since 1.8.0
@@ -796,17 +802,64 @@ class Sensei_Teacher {
 			case 'question':
 			case 'lesson_page_module-order':
 				/**
-				 * sensei_filter_queries_set_author
-				 * Filter the author Sensei set for queries
+				 * Filter the author Sensei set for queries.
 				 *
 				 * @since 1.8.0
 				 *
-				 * @param int $user_id
-				 * @param string $screen_id
+				 * @hook sensei_filter_queries_set_author
+				 *
+				 * @param {int}    $user_id   The user ID to set as author.
+				 * @param {string} $screen_id The current screen ID.
+				 * @return {int} Filtered author ID.
 				 */
 				$query->set( 'author', apply_filters( 'sensei_filter_queries_set_author', $current_user->ID, $screen->id ) );
 				break;
 		}
+	}
+
+	/**
+	 * Filter the learners query to only show learners associated with the current teacher.
+	 *
+	 * To determine if a learner is associated to a teacher, we check if the learner has
+	 * progress for a course that belongs to the teacher.
+	 *
+	 * @since 4.20.0
+	 *
+	 * @param string $learners_sql The learners SQL query.
+	 *
+	 * @return string
+	 */
+	public function filter_learners_query( $learners_sql ) {
+		if ( ! $this->is_admin_teacher() ) {
+			return $learners_sql;
+		}
+
+		$teacher_course_ids = $this->get_teacher_courses( get_current_user_id(), true );
+		if ( ! $teacher_course_ids ) {
+			$teacher_course_ids = [ 0 ]; // Show no learners.
+		}
+
+		$teacher_course_ids_imploded = implode( ',', array_map( 'absint', $teacher_course_ids ) );
+
+		global $wpdb;
+		if ( Progress_Storage_Settings::is_tables_repository() ) {
+			$replacement_sql = "
+INNER JOIN {$wpdb->prefix}sensei_lms_progress AS progress ON u.ID = progress.user_id
+WHERE 1=1
+AND progress.post_id IN ($teacher_course_ids_imploded)";
+		} else {
+			$replacement_sql = "
+INNER JOIN $wpdb->comments AS comments ON u.ID = comments.user_id
+WHERE 1=1
+AND comments.comment_post_ID IN ($teacher_course_ids_imploded)
+AND comments.comment_type = 'sensei_course_status'";
+		}
+
+		return str_replace(
+			'WHERE 1=1',
+			$replacement_sql,
+			$learners_sql
+		);
 	}
 
 	/**
@@ -841,11 +894,13 @@ class Sensei_Teacher {
 			/**
 			 * Allows to change the list of teacher IDs with grading access allowed for a given course ID.
 			 *
-			 * @hook   sensei_grading_allowed_user_ids
-			 * @since  4.9.0
+			 * @since 4.9.0
 			 *
-			 * @param {int[]} $user_ids The list of user IDs with access granted. By default the course author.
-			 * @param {int} $course_id The course ID.
+			 * @hook sensei_grading_allowed_user_ids
+			 *
+			 * @param {int[]} $user_ids  The list of user IDs with access granted. By default the course author.
+			 * @param {int}   $course_id The course ID.
+			 * @return {int[]} Filtered list of user IDs with access granted.
 			 */
 			$allowed_user_ids = apply_filters( 'sensei_grading_allowed_user_ids', [ intval( $course->post_author ) ], $course_id );
 			if ( ! isset( $course->post_author ) || ! in_array( intval( get_current_user_id() ), $allowed_user_ids, true ) ) {
@@ -952,7 +1007,11 @@ class Sensei_Teacher {
 		 * Change the query on the teacher author archive template
 		 *
 		 * @since 1.8.4
-		 * @param WP_Query $query
+		 *
+		 * @hook sensei_teacher_archive_query
+		 *
+		 * @param {WP_Query} $query The query object.
+		 * @return {WP_Query} The filtered query object.
 		 */
 		return apply_filters( 'sensei_teacher_archive_query', $query );
 
@@ -963,8 +1022,8 @@ class Sensei_Teacher {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param $teacher_id
-	 * @param $course_id
+	 * @param int $teacher_id The ID of the teacher.
+	 * @param int $course_id  The ID of the course.
 	 * @return bool
 	 */
 	public function teacher_course_assigned_notification( $teacher_id, $course_id ) {
@@ -1006,12 +1065,14 @@ class Sensei_Teacher {
 		}
 
 		/**
-		 * Filter the option to send admin notification emails when teachers creation
-		 * course.
+		 * Filter the option to send admin notification emails when teachers creation course.
 		 *
 		 * @since 1.8.0
 		 *
-		 * @param bool $on default true
+		 * @hook sensei_notify_admin_new_course_creation
+		 *
+		 * @param {bool} $on The option of whether admin notification emails should be sent, default true.
+		 * @return {bool} Filtered option.
 		 */
 		if ( ! apply_filters( 'sensei_notify_admin_new_course_creation', true ) ) {
 			return false;
@@ -1032,20 +1093,28 @@ class Sensei_Teacher {
 		do_action( 'sensei_before_mail', $recipient );
 
 		/**
-		 * Filter the email Header for the admin-teacher-new-course-created template
+		 * Filter the email header for the admin-teacher-new-course-created template
 		 *
 		 * @since 1.8.0
-		 * @param string $template
+		 *
+		 * @hook sensei_email_heading
+		 *
+		 * @param {string} $heading  Email heading, default: New course created.
+		 * @param {string} $template Template name.
+		 * @return {string} Filtered heading.
 		 */
 		$heading = apply_filters( 'sensei_email_heading', __( 'New course created.', 'sensei-lms' ), $template );
 
 		/**
-		 * Filter the email subject for the the
-		 * admin-teacher-new-course-created template
+		 * Filter the email subject for the the admin-teacher-new-course-created template.
 		 *
 		 * @since 1.8.0
-		 * @param string $subject default New course assigned to you
-		 * @param string $template
+		 *
+		 * @hook sensei_email_subject
+		 *
+		 * @param {string} $subject The email subject, default: New course created by {teacher name}.
+		 * @param {string} $template Template name.
+		 * @return {string} Filtered subject.
 		 */
 		$subject = apply_filters(
 			'sensei_email_subject',
@@ -1070,8 +1139,12 @@ class Sensei_Teacher {
 		 * Filter the sensei email data for the admin-teacher-new-course-created template
 		 *
 		 * @since 1.8.0
-		 * @param array $email_data
-		 * @param string $template
+		 *
+		 * @hook sensei_email_data
+		 *
+		 * @param {array}  $email_data The email data array.
+		 * @param {string} $template   Template name.
+		 * @return {array} Filtered email data array.
 		 */
 		$sensei_email_data = apply_filters( 'sensei_email_data', $email_data, $template );
 
@@ -1658,9 +1731,11 @@ class Sensei_Teacher {
 		 *
 		 * @since 1.8.7
 		 *
-		 * @param bool $restrict default true
+		 * @hook sensei_restrict_posts_menu_page
+		 *
+		 * @param {bool} $restrict Whether to hide the posts menu page, default true.
+		 * @return {bool} Filtered option.
 		 */
-
 		$restrict = apply_filters( 'sensei_restrict_posts_menu_page', true );
 
 		if ( in_array( 'teacher', (array) $user->roles ) && ! current_user_can( 'delete_posts' ) && $restrict ) {

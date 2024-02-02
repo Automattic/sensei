@@ -519,14 +519,26 @@ class Sensei_Course_Structure {
 			],
 		];
 
-		$post_id = wp_insert_post( $post_args );
-		if ( ! $post_id ) {
+		$lesson_id = wp_insert_post( $post_args );
+		if ( ! $lesson_id ) {
 			return false;
 		}
 
-		$this->create_quiz( $post_id );
+		/**
+		 * Fires after a lesson is created while saving the course structure.
+		 *
+		 * @since 4.20.1
+		 *
+		 * @hook sensei_course_structure_lesson_created
+		 *
+		 * @param {int} $lesson_id Lesson post ID.
+		 * @param {int} $course_id Course post ID.
+		 */
+		do_action( 'sensei_course_structure_lesson_created', $lesson_id, $this->course_id );
 
-		return $post_id;
+		$this->create_quiz( $lesson_id );
+
+		return $lesson_id;
 	}
 
 	/**
@@ -549,8 +561,23 @@ class Sensei_Course_Structure {
 		];
 
 		$quiz_id = wp_insert_post( $post_args );
+		if ( ! $quiz_id ) {
+			return;
+		}
+
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
+		/**
+		 * Fires after a quiz is created while saving the course structure.
+		 *
+		 * @since 4.20.1
+		 *
+		 * @hook sensei_course_structure_quiz_created
+		 *
+		 * @param {int} $quiz_id   Quiz post ID.
+		 * @param {int} $lesson_id Course post ID.
+		 */
+		do_action( 'sensei_course_structure_quiz_created', $quiz_id, $lesson_id );
 	}
 
 	/**

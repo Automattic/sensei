@@ -19,8 +19,13 @@ body, .editor-styles-wrapper {
 	--sensei-text-color: var(--sensei-text-color-global, var(--sensei-course-theme-foreground-color, var(--wp--preset--color--text, var(--wp--preset--color--foreground, #1E1E1E))));
 
 	--border-color: rgba(125, 125, 125, 0.3);
-	-webkit-font-smoothing: antialiased;
+}
+
+.editor-styles-wrapper .sensei-course-theme__frame,
+.editor-styles-wrapper .sensei-course-theme__main-content,
+.sensei-course-theme {
 	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
 }
 
 .sensei-course-theme__frame {

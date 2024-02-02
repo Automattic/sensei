@@ -16,13 +16,13 @@ if ( ! function_exists( 'sensei_quiz_grade_notices_map' ) ) {
 	/**
 	 * Notices map to echo notices HTML.
 	 *
-	 * @param array $notice
+	 * @param array $notice Quiz grade notice.
 	 */
 	function sensei_quiz_grade_notices_map( $notice ) {
 		?>
 		<div class='sensei-course-theme__frame sensei-lms-notice sensei-course-theme-quiz-graded-notice'>
 			<?php if ( isset( $notice['title'] ) && ! empty( $notice['title'] ) ) { ?>
-			<div class='sensei-course-theme-quiz-graded-notice__title'><?php echo wp_kses_post( $notice['title'] ); ?></div>
+			<h2 class='sensei-course-theme-quiz-graded-notice__title'><?php echo wp_kses_post( $notice['title'] ); ?></h2>
 			<?php } ?>
 
 			<?php if ( isset( $notice['text'] ) && ! empty( $notice['text'] ) ) { ?>
@@ -32,8 +32,8 @@ if ( ! function_exists( 'sensei_quiz_grade_notices_map' ) ) {
 			<?php if ( isset( $notice['actions'] ) && ! empty( $notice['actions'] ) ) { ?>
 			<div class='sensei-course-theme-quiz-graded-notice__actions'>
 				<?php
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No user data is being outputted.
-					echo implode( '', $notice['actions'] );
+					$allowed_html = Sensei_Quiz::get_allowed_html_for_modal_form();
+					echo wp_kses( implode( '', $notice['actions'] ), $allowed_html );
 				?>
 			</div>
 			<?php } ?>

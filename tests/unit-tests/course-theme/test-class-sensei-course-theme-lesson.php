@@ -217,6 +217,38 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Testing not allowed self-enrollment notice.
+	 */
+	public function testCourseNotAllowedSelfEnrollmentNotice() {
+		/* Arrange. */
+		$prerequisite_course_id = $this->factory->course->create();
+		$course_id              = $this->factory->course->create(
+			[
+				'meta_input' => [
+					'_sensei_self_enrollment_not_allowed' => true,
+				],
+			]
+		);
+		$lesson                 = $this->factory->lesson->create_and_get(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+		$GLOBALS['post']        = $lesson;
+
+		$this->login_as_student();
+		\Sensei_Course_Theme_Lesson::instance()->init();
+
+		/* Act. */
+		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'Please contact the course administrator to take this lesson.', $html, 'Should return not allowed self-enrollment notice' );
+	}
+
+	/**
 	 * Testing logged out notice.
 	 */
 	public function testLoggedOutNotice() {

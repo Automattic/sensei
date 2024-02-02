@@ -40,6 +40,12 @@ class Sensei_Unit_Tests_Bootstrap {
 		// Prevent requests from `WP_Http::request` while testing.
 		tests_add_filter( 'pre_http_request', [ $this, 'prevent_requests' ], 99 );
 
+		// Enable features.
+		tests_add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
+
+		// Init clock.
+		tests_add_filter( 'sensei_clock_init', [ $this, 'init_clock' ] );
+
 		/*
 		* Load PHPUnit Polyfills for the WP testing suite.
 		* @see https://github.com/WordPress/wordpress-develop/pull/1563/
@@ -73,12 +79,21 @@ class Sensei_Unit_Tests_Bootstrap {
 	 * @since 1.9
 	 */
 	public function load_sensei() {
-		require_once $this->plugin_dir . '/sensei-lms.php';
-
 		// Testing setup for scheduler.
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-scheduler-shim.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/actionscheduler-mocks.php';
+
+		require_once $this->plugin_dir . '/sensei-lms.php';
 
 		add_filter( 'sensei_scheduler_class', [ __CLASS__, 'scheduler_use_shim' ] );
+	}
+
+	public function init_clock() {
+		// Testing setup for clock.
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-clock-stub.php';
+
+		// Set the clock to a fixed time.
+		return new Sensei_Clock_Stub();
 	}
 
 	/**
@@ -115,6 +130,8 @@ class Sensei_Unit_Tests_Bootstrap {
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-manual-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-scheduler-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-test-redirect-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-hpps-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-clock-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-background-job-stub.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-sensei-factory.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-wp-unittest-factory-for-post-sensei.php';

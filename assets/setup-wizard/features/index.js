@@ -83,7 +83,7 @@ const Features = () => {
 	const installActions = useMemo( () => {
 		const list = getFeatureActions( featuresData );
 
-		if ( installSenseiTheme ) {
+		if ( installSenseiTheme && ! window.sensei.isCourseThemeInstalled ) {
 			list.push( getThemeAction() );
 		}
 

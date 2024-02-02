@@ -55,20 +55,11 @@ class Sensei_Course_Outline_Course_Block {
 		$post_id    = $outline['post_id'];
 
 		if ( empty( $blocks ) ) {
-			Sensei()->notices->add_notice( __( 'There is no published content in this course yet.', 'sensei-lms' ), 'info', 'sensei-course-outline-no-content' );
 			return '';
 		}
 
 		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $attributes );
 		$css        = Sensei_Block_Helpers::build_styles( $attributes );
-
-		if ( ! empty( $attributes['preview_drafts'] ) ) {
-			Sensei()->notices->add_notice( __( 'One or more lessons in this course are not published. Unpublished lessons and empty modules are only displayed in preview mode and will not be displayed to students.', 'sensei-lms' ), 'info', 'sensei-course-outline-drafts' );
-		}
-		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( isset( $_GET['draftcourse'] ) && 'true' === $_GET['draftcourse'] ) {
-			Sensei()->notices->add_notice( __( 'Cannot register for an unpublished course.  Please publish the course first.', 'sensei-lms' ), 'info', 'sensei-course-outline-drafts' );
-		}
 
 		return '
 			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', 'sensei-block-wrapper', $class_name ], $css ) . '>

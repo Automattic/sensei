@@ -130,8 +130,10 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 	 * @param string $url URL.
 	 */
 	public function go_to( $url ) {
+		ob_start();
 		wp_set_current_user( $this->get_user_by_role( 'administrator' ) );
 		parent::go_to( $url );
+		ob_end_clean();
 	}
 
 

@@ -90,16 +90,16 @@ class Sensei_Home_Tasks_Provider {
 		 *
 		 * @since 4.8.0
 		 *
-		 * @param array $tasks {
-		 *  A dictionary of tasks indexed by task ID.
+		 * @hook sensei_home_tasks
 		 *
-		 *  @type string $id The task ID. Must be unique.
-		 *  @type string $title The task title.
-		 *  @type int $priority Number used in frontend to sort tasks in ascending order.
-		 *  @type string $url Optional. Destination URL for users when clicking on the task.
-		 *  @type string $image Optional. Source url or path for the featured image when this task is the first pending one.
-		 *  @type bool $done Whether the task is considered done or not.
-		 * }
+		 * @param    {array[]} $tasks                A dictionary of tasks indexed by task ID.
+		 * @property {string} `$tasks[]['id']`       The task ID. Must be unique.
+		 * @property {string} `$tasks[]['title']`    The task title.
+		 * @property {int}    `$tasks[]['priority']` Number used in frontend to sort tasks in ascending order.
+		 * @property {string} `$tasks[]['url']`      Optional. Destination URL for users when clicking on the task.
+		 * @property {string} `$tasks[]['image']`    Optional. Source url or path for the featured image when this task is the first pending one.
+		 * @property {bool}   `$tasks[]['done']`     Whether the task is considered done or not.
+		 * @return {array} Filtered tasks.
 		 */
 		return apply_filters( 'sensei_home_tasks', $tasks );
 	}
@@ -183,16 +183,19 @@ class Sensei_Home_Tasks_Provider {
 		if ( self::$attached_hooks ) {
 			return;
 		}
+
 		self::$attached_hooks = true;
 
-		// Attach the hooks only on atomic sites.
+		add_action( 'save_post_course', [ $this, 'log_course_completion_tasks' ], 10, 3 );
+
+		// Attach some hooks only for Atomic sites.
 		if ( ! Sensei_Utils::is_atomic_platform() ) {
 			return;
 		}
 
 		// Attach the update_tasks_statuses method to filters and actions
 		// that can affect the status of the Sensei Home tasks.
-		add_filter( 'save_post_course', [ $this, 'update_tasks_statuses' ] );
+		add_action( 'save_post_course', [ $this, 'update_tasks_statuses' ] );
 		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'update_tasks_statuses' ] );
 	}
 
@@ -211,5 +214,44 @@ class Sensei_Home_Tasks_Provider {
 		// Overwrite the existing values with the new ones before updating.
 		$tasks_statuses = array_merge( get_option( self::CALYPSO_LAUNCHPAD_STATUSES_NAME, [] ), $tasks_statuses );
 		update_option( self::CALYPSO_LAUNCHPAD_STATUSES_NAME, $tasks_statuses );
+	}
+
+	/**
+	 * Logs completion of the "Create your first course" and "Publish your first course" tasks.
+	 *
+	 * @internal
+	 *
+	 * @since 4.20.1
+	 *
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post    Post object.
+	 * @param bool    $update  Whether this is an existing post being updated.
+	 */
+	public function log_course_completion_tasks( $post_id, $post, $update ) {
+		if ( ! $update ) {
+			return;
+		}
+
+		if ( (bool) get_option( self::COMPLETED_TASKS_OPTION_KEY, false ) ) {
+			return;
+		}
+
+		// Handle "Create your first course" task completion.
+		if ( 'draft' === $post->post_status ) {
+			$create_first_course_task = new Sensei_Home_Task_Create_First_Course();
+
+			if ( ! $create_first_course_task->is_completed() ) {
+				sensei_log_event( 'home_task_complete', [ 'type' => $create_first_course_task::get_id() ] );
+				update_option( Sensei_Home_Task_Create_First_Course::CREATED_FIRST_COURSE_OPTION_KEY, 1, false );
+			}
+		} elseif ( 'publish' === $post->post_status ) { // Handle "Publish your first course" task completion.
+			$publish_first_course_task = new Sensei_Home_Task_Publish_First_Course();
+
+			// Log task completion event if this is the first published course.
+			if ( ! $publish_first_course_task->is_completed() ) {
+				sensei_log_event( 'home_task_complete', [ 'type' => $publish_first_course_task::get_id() ] );
+				update_option( Sensei_Home_Task_Publish_First_Course::PUBLISHED_FIRST_COURSE_OPTION_KEY, 1, false );
+			}
+		}
 	}
 }

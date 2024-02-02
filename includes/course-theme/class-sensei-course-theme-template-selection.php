@@ -83,7 +83,7 @@ class Sensei_Course_Theme_Template_Selection {
 					'name'        => 'default',
 					'title'       => __( 'Default', 'sensei-lms' ),
 					'content'     => [
-						'lesson' => "$base_path/default/lesson.html",
+						'lesson' => "$base_path/default/lesson.php",
 						'quiz'   => $quiz_path,
 					],
 					'version'     => '1.0.0',
@@ -159,13 +159,13 @@ class Sensei_Course_Theme_Template_Selection {
 		 * Filters the Learning Mode block templates list. Allows to add additional ones too.
 		 *
 		 * @since 4.7.0
+		 *
 		 * @hook  sensei_learning_mode_block_templates
 		 *
-		 * @param Sensei_Course_Theme_Template[] $templates {
-		 *     The list of Learning Mode block templates. If adding a new template then it's key
-		 *     should be the template name.
-		 *
-		 * @return Sensei_Course_Theme_Template[] The list of extra learning mode block templates.
+		 * @param {Sensei_Course_Theme_Template[]} $templates The list of Learning Mode block templates.
+		 *                                                    If adding a new template then it's key
+		 *                                                    should be the template name.
+		 * @return {Sensei_Course_Theme_Template[]} The list of extra learning mode block templates.
 		 */
 		return apply_filters( 'sensei_learning_mode_block_templates', $templates );
 	}

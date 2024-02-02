@@ -276,8 +276,18 @@ div.question_boolean_fields {
 	}
 }
 
-.sensei-settings .sensei-custom-navigation__heading {
-	flex-flow: column wrap;
+.sensei-settings {
+	.sensei-custom-navigation__heading {
+		flex-flow: column wrap;
+	}
+
+	.sensei-custom-navigation__links a {
+		top: 0;
+
+		&:focus {
+			box-shadow: none;
+		}
+	}
 }
 
 .sensei-custom-navigation__separator {

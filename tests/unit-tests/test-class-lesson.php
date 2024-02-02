@@ -824,7 +824,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="http://example.org/wp-admin/post-new.php?post_type=lesson">New Lesson</a>
 					<a href="http://example.org/wp-admin/admin.php?page=lesson-order">Order Lessons</a>
-					<a href="http://example.org/wp-admin/admin.php?page=sensei-settings#lesson-settings">Lesson Settings</a>
+					<a href="http://example.org/wp-admin/admin.php?page=sensei-settings&#038;tab=lesson-settings">Lesson Settings</a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
@@ -1153,8 +1153,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		self::assertNull( $result );
 	}
 
-	public function testCourseSignupLink_WhenSignupNoticeNeeded_AddsNotice(): void {
+	public function testCourseSignupLink_WhenSignupNoticeNeededAndCourseAllowsSelfEnrollment_AddsNotice(): void {
 		/* Arrange */
+		global $post;
+		$lesson_id        = $this->factory->lesson->create();
+		$post             = get_post( $lesson_id );
 		$notices          = $this->createMock( Sensei_Notices::class );
 		Sensei()->notices = $notices;
 
@@ -1165,7 +1168,31 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		Sensei()->lesson = $lesson;
 
 		/* Expect & Act */
-		$notices->expects( self::once() )->method( 'add_notice' );
+		$notices->expects( self::once() )
+			->method( 'add_notice' )
+			->with( $this->stringContains( 'Please sign up for' ) );
+		$result = Sensei_Lesson::course_signup_link();
+	}
+
+	public function testCourseSignupLink_WhenSignupNoticeNeededAndCourseDoesntAllowSelfEnrollment_AddsNotice(): void {
+		/* Arrange */
+		global $post;
+		$lesson_id        = $this->factory->lesson->create();
+		$post             = get_post( $lesson_id );
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		$course = $this->factory->course->create_and_get();
+		update_post_meta( $course->ID, '_sensei_self_enrollment_not_allowed', true );
+
+		$lesson = $this->createMock( Sensei_Lesson::class );
+		$lesson->method( 'get_course_id' )->willReturn( $course->ID );
+		Sensei()->lesson = $lesson;
+
+		/* Expect & Act */
+		$notices->expects( self::once() )
+			->method( 'add_notice' )
+			->with( 'Please contact the course administrator to access the course content.' );
 		$result = Sensei_Lesson::course_signup_link();
 	}
 

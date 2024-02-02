@@ -3,7 +3,7 @@ $breakpoint: 782px;
 .sensei-course-theme .sensei-course-theme-lesson-actions,
 .editor-styles-wrapper .sensei-course-theme-lesson-actions {
 	display: flex;
-	gap: 16px;
+	gap: 20px;
 	list-style: none;
 
 	&__complete-lesson-form {
@@ -15,14 +15,11 @@ $breakpoint: 782px;
 		justify-content: center;
 		width: 100%;
 
-		 & > *, .wp-block-button, &__next-lesson {
-			flex: 1;
-		 }
-
-		 .wp-block-button {
-			height: 100%;
+		& > *, .wp-block-button, &__next-lesson {
+			flex: 1 1 0;
+			padding-left: 0;
+			padding-right: 0;
 		}
-
 	}
 }
 

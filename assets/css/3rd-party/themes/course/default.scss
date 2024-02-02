@@ -1,0 +1,10 @@
+/*
+* Styles specific to default variation
+*/
+.wp-block-sensei-lms-course-theme-notices {
+	.sensei-course-theme-locked-lesson-notice {
+		.is-link.sensei-course-theme__button {
+			font-size: clamp(1.313rem, 1.188rem + 0.417vw, 1.5rem);
+		}
+	}
+}

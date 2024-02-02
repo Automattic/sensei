@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.8.0
  */
 class Sensei_Home_Task_Publish_First_Course implements Sensei_Home_Task {
+	const PUBLISHED_FIRST_COURSE_OPTION_KEY = 'sensei_home_task_published_first_course';
+
 	/**
 	 * The ID for the task.
 	 *
@@ -67,8 +69,17 @@ class Sensei_Home_Task_Publish_First_Course implements Sensei_Home_Task {
 	 * @return bool
 	 */
 	public function is_completed(): bool {
-		$result = $this->load_result();
-		return null !== $result && '1' === $result->published;
+		$task_completed = get_option( self::PUBLISHED_FIRST_COURSE_OPTION_KEY, -1 );
+
+		// Option does not exist.
+		if ( -1 === $task_completed ) {
+			$result         = $this->load_result();
+			$task_completed = ( null !== $result && '1' === $result->published ) ? 1 : 0;
+
+			update_option( self::PUBLISHED_FIRST_COURSE_OPTION_KEY, $task_completed, false );
+		}
+
+		return (bool) $task_completed;
 	}
 
 	/**

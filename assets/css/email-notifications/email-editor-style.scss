@@ -1,7 +1,6 @@
-@import './email-style.scss';
-
 // Style applied only when the user is editing the Sensei Email content
 .post-type-sensei_email, .editor-styles-wrapper:has(.email__wrapper) {
+	@import './email-style.scss';
 
 	.wp-block-post-content *,
 	.block-editor-block-list__layout * {

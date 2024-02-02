@@ -309,9 +309,9 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 		$course_lessons = Sensei()->course->course_lessons( $course_id );
 
 		foreach ( $course_lessons as $lesson ) {
-			$lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
-			if ( $lesson_status ) {
-				$dates[] = strtotime( $lesson_status->comment_date_gmt );
+			$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson->ID, $user_id );
+			if ( $lesson_progress ) {
+				$dates[] = $lesson_progress->get_updated_at()->getTimestamp();
 			}
 		}
 
@@ -401,13 +401,13 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 		 * Show the enrolment debug button on learner management.
 		 *
 		 * @since 3.7.0
+		 *
 		 * @hook sensei_show_enrolment_debug_button
 		 *
 		 * @param {bool} $show_button Whether to show the button.
 		 * @param {int}  $user_id     User ID.
 		 * @param {int}  $course_id   Course ID.
-		 *
-		 * @return {bool}
+		 * @return {bool} Filtered value.
 		 */
 		$show_button = apply_filters( 'sensei_show_enrolment_debug_button', false, $item->user_id, $course_id );
 		if (

@@ -3,7 +3,7 @@
  * File containing the class \Sensei\Internal\Installer\Installer.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.16.1
  */
 
 namespace Sensei\Internal\Installer;
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.16.1
  */
 class Installer {
 
@@ -29,7 +29,7 @@ class Installer {
 	/**
 	 * Instance of the class.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 * @var self
 	 */
 	private static $instance;
@@ -37,7 +37,7 @@ class Installer {
 	/**
 	 * The database schema class.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 * @var Schema
 	 */
 	private $schema;
@@ -60,7 +60,7 @@ class Installer {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @param Schema          $schema Schema migration object.
 	 * @param Updates_Factory $updates_factory Updates factory object.
@@ -77,14 +77,15 @@ class Installer {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @param string|null $version Current Sensei version.
 	 * @return self
 	 */
 	public static function instance( ?string $version = null ): self {
 		if ( ! self::$instance ) {
-			self::$instance = new self( new Schema(), new Updates_Factory(), $version );
+			$schema         = new Schema( Sensei()->feature_flags );
+			self::$instance = new self( $schema, new Updates_Factory(), $version );
 		}
 
 		return self::$instance;
@@ -95,7 +96,7 @@ class Installer {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 */
 	public function init() {
 		register_activation_hook( SENSEI_LMS_PLUGIN_FILE, [ $this, 'install' ] );
@@ -110,7 +111,7 @@ class Installer {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 */
 	public function install() {
 		if (
@@ -130,7 +131,7 @@ class Installer {
 		/**
 		 * Fires after the installation completes.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.16.1
 		 */
 		do_action( 'sensei_lms_installed' );
 	}
@@ -140,7 +141,7 @@ class Installer {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 */
 	public function update(): void {
 		$current_version = get_option( self::SENSEI_VERSION_OPTION_NAME );
@@ -156,7 +157,7 @@ class Installer {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @return Schema
 	 */
@@ -167,7 +168,7 @@ class Installer {
 	/**
 	 * Check if the installer is running.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @return bool
 	 */
@@ -178,7 +179,7 @@ class Installer {
 	/**
 	 * Determine if the installer needs to be run by checking the plugin's version.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @return bool
 	 */
@@ -191,7 +192,7 @@ class Installer {
 	/**
 	 * Update the plugin's version to the current one.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.16.1
 	 *
 	 * @param bool $is_new_install Whether this is a new install.
 	 */

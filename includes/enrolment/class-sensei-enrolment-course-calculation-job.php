@@ -62,8 +62,11 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param int  $batch_size       Batch size to filter.
-		 * @param int  $course_id        Course ID we're running.
+		 * @hook sensei_enrolment_course_calculation_job_batch_size
+		 *
+		 * @param {int} $batch_size Batch size to filter.
+		 * @param {int} $course_id  Course ID we're running.
+		 * @return {int} Filtered batch size.
 		 */
 		$this->batch_size = apply_filters( 'sensei_enrolment_course_calculation_job_batch_size', self::DEFAULT_BATCH_SIZE, $this->course_id );
 	}

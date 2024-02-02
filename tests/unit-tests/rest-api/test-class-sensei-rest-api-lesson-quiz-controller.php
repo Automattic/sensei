@@ -331,6 +331,50 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * Tests gap fill question answer with gap "0".
+	 */
+	public function testGetGapFillQuestion_WhenGapIs0_ReturnsGap0() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+		$this->factory->question->create(
+			[
+				'quiz_id'                                => $quiz_id,
+				'question_type'                          => 'gap-fill',
+				'add_question_right_answer_gapfill_pre'  => 'BEFORE',
+				'add_question_right_answer_gapfill_gap'  => '0',
+				'add_question_right_answer_gapfill_post' => 'AFTER',
+			]
+		);
+
+		$response_data = $this->send_get_request( $lesson_id );
+
+		$this->assertEquals( '0', $response_data['questions'][0]['answer']['gap'][0] );
+	}
+
+	/**
+	 * Tests gap fill question answer with empty gap.
+	 */
+	public function testGetGapFillQuestion_WhenGapIsEmptyString_ReturnsEmptyGap() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+		$this->factory->question->create(
+			[
+				'quiz_id'                                => $quiz_id,
+				'question_type'                          => 'gap-fill',
+				'add_question_right_answer_gapfill_pre'  => 'BEFORE',
+				'add_question_right_answer_gapfill_gap'  => '',
+				'add_question_right_answer_gapfill_post' => 'AFTER',
+			]
+		);
+
+		$response_data = $this->send_get_request( $lesson_id );
+
+		$this->assertEquals( [], $response_data['questions'][0]['answer']['gap'] );
+	}
+
+	/**
 	 * Tests single line question properties.
 	 */
 	public function testGetSingleLineQuestion() {
