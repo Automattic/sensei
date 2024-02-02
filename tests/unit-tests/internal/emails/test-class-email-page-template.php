@@ -13,7 +13,19 @@ use WP_Post;
  * @covers \Sensei\Internal\Emails\Email_Page_Template
  */
 class Email_Page_Template_Test extends \WP_UnitTestCase {
+	/**
+	 * The URI which was given in order to access this page.
+	 *
+	 * @var string
+	 */
+	private static $initial_request_uri;
 
+	public static function setUpBeforeClass(): void {
+		parent::setUpBeforeClass();
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		self::$initial_request_uri = wp_unslash( $_SERVER['REQUEST_URI'] );
+	}
 
 	public function setUp(): void {
 		parent::setUp();
@@ -22,6 +34,11 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 		add_filter( 'get_block_templates', [ $this, 'get_block_templates' ], 10, 3 );
 	}
 
+	public function tearDown(): void {
+		parent::tearDown();
+
+		$_SERVER['REQUEST_URI'] = self::$initial_request_uri;
+	}
 
 	public function testHasInit_Always_RegistersFilters() {
 
@@ -94,10 +111,11 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 	public function testAddEmailTemplate_TemplateGiven_ReturnsUpdatedList() {
 
 		/* Arrange. */
-		$repository           = $this->createMock( Email_Page_Template_Repository::class );
-		$page_template        = new Email_Page_Template( $repository );
-		$default_list         = [ $this->createMock( \WP_Block_Template::class ) ];
-		$template_to_be_added = $this->createMock( \WP_Block_Template::class );
+		$_SERVER['REQUEST_URI'] = '/wp-admin/site-editor.php';
+		$repository             = $this->createMock( Email_Page_Template_Repository::class );
+		$page_template          = new Email_Page_Template( $repository );
+		$default_list           = [ $this->createMock( \WP_Block_Template::class ) ];
+		$template_to_be_added   = $this->createMock( \WP_Block_Template::class );
 
 		$repository
 			->method( 'get' )
@@ -132,7 +150,7 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 		self::assertSame( $default_list, $result );
 	}
 
-	public function testAddEmailTemplate_GivenQuerySpecifPostType_ReturnsDefaultTemplate() {
+	public function testAddEmailTemplate_GivenQuerySpecificPostType_ReturnsDefaultTemplate() {
 
 		/* Arrange. */
 		$repository    = $this->createMock( Email_Page_Template_Repository::class );
@@ -146,18 +164,23 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 		self::assertSame( $default_list, $result );
 	}
 
-	public function testAddEmailTemplate_GivenQueryWithoutPostType_ReturnsDefaultTemplate() {
-
+	public function testAddEmailTemplate_GivenQueryWithoutPostType_ReturnsUpdatedList() {
 		/* Arrange. */
-		$repository    = $this->createMock( Email_Page_Template_Repository::class );
-		$page_template = new Email_Page_Template( $repository );
-		$default_list  = [ $this->createMock( \WP_Block_Template::class ) ];
+		$_SERVER['REQUEST_URI'] = '/wp-admin/site-editor.php';
+		$repository             = $this->createMock( Email_Page_Template_Repository::class );
+		$page_template          = new Email_Page_Template( $repository );
+		$default_list           = [ $this->createMock( \WP_Block_Template::class ) ];
+		$template_to_be_added   = $this->createMock( \WP_Block_Template::class );
+
+		$repository
+			->method( 'get' )
+			->willReturn( $template_to_be_added );
 
 		/* Act. */
 		$result = $page_template->add_email_template( $default_list, [], 'wp_template' );
 
 		/* Assert. */
-		self::assertSame( $default_list, $result );
+		self::assertSame( $template_to_be_added, $result[1] );
 	}
 
 	public function testAddEmailTemplate_WhenPostTypeIsIncorrect_ReturnsDefaultList() {
@@ -201,10 +224,11 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 	public function testAddEmailTemplate_WhenThereIsNoTemplateStoredOnDB_ReturnsFromFile() {
 
 		/* Arrange. */
-		$repository           = $this->createMock( Email_Page_Template_Repository::class );
-		$page_template        = new Email_Page_Template( $repository );
-		$default_list         = [ $this->createMock( \WP_Block_Template::class ) ];
-		$template_to_be_added = $this->createMock( \WP_Block_Template::class );
+		$_SERVER['REQUEST_URI'] = '/wp-admin/site-editor.php';
+		$repository             = $this->createMock( Email_Page_Template_Repository::class );
+		$page_template          = new Email_Page_Template( $repository );
+		$default_list           = [ $this->createMock( \WP_Block_Template::class ) ];
+		$template_to_be_added   = $this->createMock( \WP_Block_Template::class );
 
 		$repository
 			->method( 'get' )
