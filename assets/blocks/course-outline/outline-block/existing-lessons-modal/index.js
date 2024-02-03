@@ -48,7 +48,7 @@ const ExistingLessonsModal = ( { clientId, onClose } ) => {
 					) }
 				</Notice>
 			) }
-			<Filter filters={ filters } setFilters={ setFilters } />
+			<Filter setFilters={ setFilters } />
 			<Lessons
 				clientId={ clientId }
 				filters={ filters }
