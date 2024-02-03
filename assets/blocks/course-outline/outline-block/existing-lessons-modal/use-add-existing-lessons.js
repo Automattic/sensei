@@ -14,7 +14,7 @@ import apiFetch from '@wordpress/api-fetch';
  */
 
 /**
- * Find a question block based on question ID, or title if ID is missing.
+ * Find a lesson block based on lesson ID, or title if ID is missing.
  *
  * @param {Array}  blocks
  * @param {Lesson} item
