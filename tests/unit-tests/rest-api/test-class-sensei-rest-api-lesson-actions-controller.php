@@ -35,7 +35,7 @@ class Sensei_REST_API_Lesson_Actions_Controller_Tests extends WP_Test_REST_TestC
 		$this->factory = new Sensei_Factory();
 	}
 
-	public function testPrepare_LessonsGiven_ReturnsPreparedLessons() {
+	public function testAttach_LessonsGiven_ReturnsPreparedLessons() {
 		/* Arrange. */
 		$this->login_as_teacher();
 
@@ -75,7 +75,7 @@ class Sensei_REST_API_Lesson_Actions_Controller_Tests extends WP_Test_REST_TestC
 			'course_id'  => $course2_id,
 		);
 
-		$request = new WP_REST_Request( 'POST', self::REST_ROUTE . 'prepare' );
+		$request = new WP_REST_Request( 'POST', self::REST_ROUTE . 'attach' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body( wp_json_encode( $body ) );
 
