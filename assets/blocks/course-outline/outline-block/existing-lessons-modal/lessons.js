@@ -11,6 +11,72 @@ import { CheckboxControl, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
+ * Select lessons by filters.
+ *
+ * @param {Function} select  Data select function.
+ * @param {Object}   filters Filters object.
+ * @return {Object[]} Lessons.
+ */
+const selectLessons = ( select, filters ) => {
+	const courseId = select( 'core/editor' ).getCurrentPostId();
+
+	let foundLessons = select( 'core' ).getEntityRecords(
+		'postType',
+		'lesson',
+		{
+			status: [ 'publish', 'draft' ],
+			per_page: 100,
+			...omitBy( filters, ( v ) => v === '' ),
+		}
+	);
+
+	foundLessons = foundLessons?.filter(
+		( lesson ) =>
+			! lesson.meta._lesson_course ||
+			lesson.meta._lesson_course !== courseId
+	);
+
+	const courseIds = foundLessons
+		? foundLessons
+				.filter( ( lesson ) => lesson.meta._lesson_course )
+				.map( ( lesson ) => lesson.meta._lesson_course )
+		: [];
+
+	const courses = select( 'core' ).getEntityRecords( 'postType', 'course', {
+		per_page: 100,
+		include: courseIds,
+	} );
+	const mappedCourses = keyBy( courses, 'id' );
+
+	// Add course field to lessons.
+	if ( ! isEmpty( foundLessons ) && ! isEmpty( mappedCourses ) ) {
+		foundLessons = foundLessons.map( ( lesson ) => {
+			const lessonCourseId = lesson.meta._lesson_course;
+			if ( ! courseId ) {
+				return lesson;
+			}
+
+			let course = mappedCourses[ lessonCourseId ] || undefined;
+			if ( ! course ) {
+				course = {
+					id: undefined,
+					title: {
+						raw: __( 'Course not assigned', 'sensei-lms' ),
+					},
+				};
+			}
+
+			return {
+				...lesson,
+				course,
+			};
+		} );
+	}
+
+	return foundLessons;
+};
+
+/**
  * Lessons for selection.
  *
  * @param {Object}   props
@@ -33,66 +99,7 @@ const Lessons = ( {
 	// Lessons by current filter.
 	let lessons = useSelect(
 		( select ) => {
-			const courseId = select( 'core/editor' ).getCurrentPostId();
-
-			let foundLessons = select( 'core' ).getEntityRecords(
-				'postType',
-				'lesson',
-				{
-					status: [ 'publish', 'draft' ],
-					per_page: 100,
-					...omitBy( filters, ( v ) => v === '' ),
-				}
-			);
-
-			foundLessons = foundLessons?.filter(
-				( lesson ) =>
-					! lesson.meta._lesson_course ||
-					lesson.meta._lesson_course !== courseId
-			);
-
-			const courseIds = foundLessons
-				? foundLessons
-						.filter( ( lesson ) => lesson.meta._lesson_course )
-						.map( ( lesson ) => lesson.meta._lesson_course )
-				: [];
-
-			const courses = select( 'core' ).getEntityRecords(
-				'postType',
-				'course',
-				{
-					per_page: 100,
-					include: courseIds,
-				}
-			);
-			const mappedCourses = keyBy( courses, 'id' );
-
-			// Add course field to lessons.
-			if ( ! isEmpty( foundLessons ) && ! isEmpty( mappedCourses ) ) {
-				foundLessons = foundLessons.map( ( lesson ) => {
-					const lessonCourseId = lesson.meta._lesson_course;
-					if ( ! courseId ) {
-						return lesson;
-					}
-
-					let course = mappedCourses[ lessonCourseId ] || undefined;
-					if ( ! course ) {
-						course = {
-							id: undefined,
-							title: {
-								raw: __( 'Course not assigned', 'sensei-lms' ),
-							},
-						};
-					}
-
-					return {
-						...lesson,
-						course,
-					};
-				} );
-			}
-
-			return foundLessons;
+			return selectLessons( select, filters );
 		},
 		[ filters ]
 	);
