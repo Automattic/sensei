@@ -191,7 +191,7 @@ const Lessons = ( {
 				<tbody>
 					{ lessons.length === 0 ? (
 						<tr>
-							<td colSpan="4">
+							<td colSpan="3">
 								<p>
 									{ __( 'No lessons found.', 'sensei-lms' ) }
 								</p>
