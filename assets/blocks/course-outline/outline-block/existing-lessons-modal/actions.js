@@ -48,7 +48,7 @@ const Actions = ( {
 			  );
 
 	return (
-		<ul className="sensei-lms-quiz-block__existing-lessons-modal__actions">
+		<ul className="wp-block-sensei-lms-course-outline__existing-lessons-modal__actions">
 			{ selectedLessonIds.length > 0 && (
 				<li>
 					<Button isTertiary onClick={ clearSelected }>
