@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { uniq, omitBy } from 'lodash';
+import { isEmpty, keyBy, omitBy, uniq } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -65,19 +65,17 @@ const Lessons = ( {
 					include: courseIds,
 				}
 			);
+			const mappedCourses = keyBy( courses, 'id' );
 
 			// Add course field to lessons.
-			if ( foundLessons && courses ) {
+			if ( ! isEmpty( foundLessons ) && ! isEmpty( mappedCourses ) ) {
 				foundLessons = foundLessons.map( ( lesson ) => {
 					const lessonCourseId = lesson.meta._lesson_course;
 					if ( ! courseId ) {
 						return lesson;
 					}
 
-					let course = courses.find(
-						( c ) => c.id === lessonCourseId
-					);
-
+					let course = mappedCourses[ lessonCourseId ] || undefined;
 					if ( ! course ) {
 						course = {
 							id: undefined,
