@@ -101,7 +101,7 @@ const Lessons = ( {
 
 	if ( ! lessons ) {
 		return (
-			<div className="sensei-lms-quiz-block__existing-lessons-modal__existing-lessons sensei-lms-quiz-block__existing-lessons-modal__existing-lessons--loading">
+			<div className="wp-block-sensei-lms-course-outline__existing-lessons-modal__existing-lessons wp-block-sensei-lms-course-outline__existing-lessons-modal__existing-lessons--loading">
 				<Spinner />
 			</div>
 		);
@@ -141,7 +141,7 @@ const Lessons = ( {
 			lesson.course?.title.raw || __( 'Loading…', 'sensei-lms' );
 		const courseNotFoundClass =
 			lesson.course?.id === undefined
-				? 'sensei-lms-quiz-block__existing-lessons-modal__course-title--not-found'
+				? 'wp-block-sensei-lms-course-outline__existing-lessons-modal__course-title--not-found'
 				: '';
 		const lessonId = lesson.id;
 		const title = lesson.title.raw;
@@ -156,7 +156,7 @@ const Lessons = ( {
 						onChange={ toggleLesson( lessonId ) }
 					/>
 				</td>
-				<td className="sensei-lms-quiz-block__existing-lessons-modal__lesson-title">
+				<td className="wp-block-sensei-lms-course-outline__existing-lessons-modal__lesson-title">
 					<label
 						htmlFor={ `existing-lesson-${ lessonId }` }
 						title={ title }
@@ -170,11 +170,11 @@ const Lessons = ( {
 	};
 
 	return (
-		<div className="sensei-lms-quiz-block__existing-lessons-modal__lessons">
-			<table className="sensei-lms-quiz-block__existing-lessons-modal__table">
+		<div className="wp-block-sensei-lms-course-outline__existing-lessons-modal__lessons">
+			<table className="wp-block-sensei-lms-course-outline__existing-lessons-modal__table">
 				<thead>
 					<tr>
-						<th className="sensei-lms-quiz-block__existing-lessons-modal__lesson-checkbox">
+						<th className="wp-block-sensei-lms-course-outline__existing-lessons-modal__lesson-checkbox">
 							<CheckboxControl
 								title={ __(
 									'Toggle all visible lessons selection.',
