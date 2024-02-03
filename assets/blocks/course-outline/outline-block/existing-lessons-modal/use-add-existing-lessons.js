@@ -6,7 +6,7 @@ import { select, useDispatch, useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
- * Lesson type difinition.
+ * Lesson type definition.
  *
  * @typedef {Object} Lesson
  * @property {number} id    Lesson ID.
