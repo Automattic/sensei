@@ -47,6 +47,9 @@ const Actions = ( {
 					selectedLessonIds.length
 			  );
 
+	const isAddButtonDisabled =
+		isAddingSelected || selectedLessonIds.length === 0;
+
 	return (
 		<ul className="wp-block-sensei-lms-course-outline__existing-lessons-modal__actions">
 			{ selectedLessonIds.length > 0 && (
@@ -58,7 +61,7 @@ const Actions = ( {
 			) }
 			<li>
 				<Button
-					disabled={ isAddingSelected }
+					disabled={ isAddButtonDisabled }
 					onClick={ addSelected }
 					isPrimary
 				>
