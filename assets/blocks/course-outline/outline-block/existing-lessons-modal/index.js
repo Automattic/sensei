@@ -20,7 +20,7 @@ import { useAddExistingLessons } from './use-add-existing-lessons';
  * @param {string}   props.clientId Outline block ID.
  * @param {Function} props.onClose  Close callback.
  */
-const LessonsModal = ( { clientId, onClose } ) => {
+const ExistingLessonsModal = ( { clientId, onClose } ) => {
 	const addExistingLessons = useAddExistingLessons( clientId );
 
 	const [ filters, setFilters ] = useState( {
@@ -66,4 +66,4 @@ const LessonsModal = ( { clientId, onClose } ) => {
 	);
 };
 
-export default LessonsModal;
+export default ExistingLessonsModal;

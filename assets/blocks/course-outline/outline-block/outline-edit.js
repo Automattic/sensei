@@ -23,7 +23,7 @@ import { useCourseLessonsStatusSync } from '../status-preview/use-course-lessons
 import { COURSE_STORE } from '../course-outline-store';
 import { useBlocksCreator } from '../use-block-creator';
 import OutlineAppender from './outline-appender';
-import LessonsModal from './existing-lessons-modal';
+import ExistingLessonsModal from './existing-lessons-modal';
 import OutlinePlaceholder from './outline-placeholder';
 import useSenseiProSettings from './use-sensei-pro-settings';
 import { applyFilters } from '@wordpress/hooks';
@@ -139,7 +139,7 @@ const OutlineEdit = ( props ) => {
 				</OutlineAttributesContext.Provider>
 			) }
 			{ isExistingLessonsModalOpen && (
-				<LessonsModal
+				<ExistingLessonsModal
 					clientId={ clientId }
 					onClose={ closeExistingLessonsModal }
 				/>
