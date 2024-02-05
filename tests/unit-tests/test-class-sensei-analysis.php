@@ -21,12 +21,7 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 		Sensei_Test_Events::reset();
 
 		// Disable `wp_die`.
-		add_filter(
-			'wp_die_handler',
-			function() {
-				return '__return_false';
-			}
-		);
+		add_filter( 'wp_die_handler', [ $this, 'disable_wp_die' ] );
 	}
 
 	public static function setUpBeforeClass(): void {
@@ -257,6 +252,41 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 		$this->assertSame( 'user-courses', $events[0]['url_args']['view'] );
 	}
 
+	public function testAnalysisPage_WhenNotAllowedToViewUser_ThrowsException() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+		remove_filter( 'wp_die_handler', [ $this, 'disable_wp_die' ] );
+
+		$_GET = [
+			'user_id' => 1,
+		];
+
+		/* Assert */
+		$this->expectException( 'WPDieException' );
+		$this->expectExceptionMessage( 'Invalid user' );
+
+		/* Act */
+		$analysis_mock->analysis_page();
+	}
+
+	public function testAnalysisPage_WhenViewingUserAsAdmin_LoadsPage() {
+		/* Arrange */
+		$this->login_as_admin();
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+		remove_filter( 'wp_die_handler', [ $this, 'disable_wp_die' ] );
+
+		$_GET = [
+			'user_id' => 1,
+		];
+
+		/* Act */
+		$analysis_mock->analysis_page();
+
+		/* Assert */
+		$this->expectNotToPerformAssertions();
+	}
+
 	/**
 	 * Returns a partial mock object for the specified class
 	 * with all of its methods mocked but one.
@@ -273,5 +303,14 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 			$class_name,
 			array_diff( $class_methods, [ $method ] )
 		);
+	}
+
+	/**
+	 * Disable the `wp_die` handler.
+	 *
+	 * @return string
+	 */
+	public function disable_wp_die() {
+		return '__return_false';
 	}
 }

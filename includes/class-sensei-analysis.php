@@ -919,9 +919,8 @@ class Sensei_Analysis {
 
 		if (
 			$user_id
-			&& (
-				! in_array( $user_id, Sensei()->teacher->get_learner_ids_for_courses_with_edit_permission(), true )
-			)
+			&& ! current_user_can( 'manage_options' ) // Admins can access any user.
+			&& ! in_array( $user_id, Sensei()->teacher->get_learner_ids_for_courses_with_edit_permission(), true )
 		) {
 			wp_die( esc_html__( 'Invalid user', 'sensei-lms' ), 404 );
 		}
