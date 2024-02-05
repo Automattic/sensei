@@ -38,6 +38,7 @@ class Remove_From_Course_Action extends Action {
 	 */
 	public function load_fields() {
 		$courses = Sensei_Workflow_Helper::get_courses_field();
+		$courses->set_required();
 		$this->add_field( $courses );
 	}
 
