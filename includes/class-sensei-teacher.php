@@ -1205,51 +1205,35 @@ AND comments.comment_type = 'sensei_course_status'";
 			return [];
 		}
 
-		$learner_ids_for_courses_with_edit_permission = [];
+		$course_ids             = wp_list_pluck( $courses_with_edit_permission, 'ID' );
+		$course_ids_placeholder = implode( ',', array_fill( 0, count( $course_ids ), '%d' ) );
 
-		foreach ( $courses_with_edit_permission as $course ) {
-
-			$course_learner_ids = array();
-			$activity_comments  = Sensei_Utils::sensei_check_for_activity(
-				array(
-					'post_id' => $course->ID,
-					'type'    => 'sensei_course_status',
-					'field'   => 'user_id',
-				),
-				true
+		global $wpdb;
+		if ( Progress_Storage_Settings::is_tables_repository() ) {
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Using a direct query for performance reasons.
+			$learner_ids = (array) $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT DISTINCT user_id
+					FROM {$wpdb->prefix}sensei_lms_progress
+					WHERE type = 'course'
+					AND post_id IN ( $course_ids_placeholder )",
+					$course_ids
+				)
 			);
-
-			if ( empty( $activity_comments ) || ( is_array( $activity_comments ) && ! ( count( $activity_comments ) > 0 ) ) ) {
-				continue; // skip to the next course as there are no users on this course
-			}
-
-			// it could be an array of comments or a single comment
-			if ( is_array( $activity_comments ) ) {
-
-				foreach ( $activity_comments as $comment ) {
-
-					$user = get_userdata( $comment->user_id );
-
-					if ( empty( $user ) ) {
-						// next comment in this array
-						continue;
-					}
-
-					$course_learner_ids[] = $user->ID;
-				}
-			} else {
-
-				$user                 = get_userdata( $activity_comments->user_id );
-				$course_learner_ids[] = $user->ID;
-
-			}
-
-			// add learners on this course to the all courses learner list
-			$learner_ids_for_courses_with_edit_permission = array_merge( $learner_ids_for_courses_with_edit_permission, $course_learner_ids );
-
+		} else {
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Using a direct query for performance reasons.
+			$learner_ids = (array) $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT DISTINCT user_id
+					FROM {$wpdb->comments}
+					WHERE comment_type = 'sensei_course_status'
+					AND comment_post_ID IN ( $course_ids_placeholder )",
+					$course_ids
+				)
+			);
 		}
 
-		return $learner_ids_for_courses_with_edit_permission;
+		return array_map( 'intval', $learner_ids );
 	}
 
 	/**
