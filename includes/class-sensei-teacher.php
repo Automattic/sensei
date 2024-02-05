@@ -1216,7 +1216,7 @@ AND comments.comment_type = 'sensei_course_status'";
 					"SELECT DISTINCT user_id
 					FROM {$wpdb->prefix}sensei_lms_progress
 					WHERE type = 'course'
-					AND post_id IN ( $course_ids_placeholder )",
+					AND post_id IN ( $course_ids_placeholder )", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
 					$course_ids
 				)
 			);
@@ -1227,7 +1227,7 @@ AND comments.comment_type = 'sensei_course_status'";
 					"SELECT DISTINCT user_id
 					FROM {$wpdb->comments}
 					WHERE comment_type = 'sensei_course_status'
-					AND comment_post_ID IN ( $course_ids_placeholder )",
+					AND comment_post_ID IN ( $course_ids_placeholder )", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
 					$course_ids
 				)
 			);
