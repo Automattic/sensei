@@ -80,6 +80,27 @@ describe( '<LessonDetailsStep />', () => {
 			ANY_LESSON_TITLE
 		);
 	} );
+
+	it( 'Should call initial lesson content setter when available', () => {
+		const wizardDataSetter = jest.fn();
+		const initialContent = 'test content';
+		useDispatch.mockReturnValue( { editPost: jest.fn() } );
+		useSelect.mockReturnValue( {
+			postTitle: ANY_LESSON_TITLE,
+			_initial_content: initialContent,
+		} );
+
+		render(
+			<LessonDetailsStep
+				wizardData={ {} }
+				setWizardData={ wizardDataSetter }
+			/>
+		);
+
+		expect( wizardDataSetter ).toBeCalledWith( {
+			description: initialContent,
+		} );
+	} );
 } );
 
 describe( '<LessonDetailsStep.Actions />', () => {
