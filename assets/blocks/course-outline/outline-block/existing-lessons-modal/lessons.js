@@ -80,16 +80,16 @@ const selectLessons = ( select, filters ) => {
  * Lessons for selection.
  *
  * @param {Object}   props
- * @param {string}   props.clientId             Outline block ID.
- * @param {Object}   props.filters              Filters object.
- * @param {number[]} props.selectedLessonIds    Seleted lesson IDs.
- * @param {Object}   props.setSelectedLessonIds Seleted lesson IDs state setter.
+ * @param {string}   props.clientId           Outline block ID.
+ * @param {Object}   props.filters            Filters object.
+ * @param {Object[]} props.selectedLessons    Seleted lessons.
+ * @param {Function} props.setSelectedLessons Seleted lessons state setter.
  */
 const Lessons = ( {
 	clientId,
 	filters,
-	selectedLessonIds,
-	setSelectedLessonIds,
+	selectedLessons,
+	setSelectedLessons,
 } ) => {
 	// Ids of the already added lessons.
 	const addedLessonIds = useSelect( ( select ) =>
@@ -119,24 +119,26 @@ const Lessons = ( {
 
 	const allChecked =
 		lessons.length > 0 &&
-		lessons.every( ( lesson ) => selectedLessonIds.includes( lesson.id ) );
+		lessons.every( ( lesson ) => selectedLessons.includes( lesson.id ) );
 
 	const toggleAllHandler = ( checked ) => {
-		const lessonIds = lessons.map( ( lesson ) => lesson.id );
+		//const lessonIds = lessons.map( ( lesson ) => lesson.id );
 
-		setSelectedLessonIds( ( prev ) =>
+		setSelectedLessons( ( prev ) =>
 			checked
-				? uniq( [ ...prev, ...lessonIds ] )
-				: prev.filter( ( lesson ) => ! lessonIds.includes( lesson ) )
+				? uniq( [ ...prev, ...lessons ] )
+				: prev.filter( ( lesson ) => ! lessons.includes( lesson ) )
 		);
 	};
 
-	const toggleLesson = ( lessonId ) => ( checked ) => {
+	const toggleLesson = ( lesson ) => ( checked ) => {
 		if ( checked ) {
-			setSelectedLessonIds( ( prev ) => [ ...prev, lessonId ] );
+			setSelectedLessons( ( prev ) => [ ...prev, lesson ] );
 		} else {
-			setSelectedLessonIds( ( prev ) =>
-				prev.filter( ( id ) => id !== lessonId )
+			setSelectedLessons( ( prev ) =>
+				prev.filter(
+					( existingLesson ) => existingLesson.id !== lesson.id
+				)
 			);
 		}
 	};
@@ -157,8 +159,8 @@ const Lessons = ( {
 					<CheckboxControl
 						id={ `existing-lesson-${ lessonId }` }
 						title={ title }
-						checked={ selectedLessonIds.includes( lessonId ) }
-						onChange={ toggleLesson( lessonId ) }
+						checked={ selectedLessons.includes( lesson ) }
+						onChange={ toggleLesson( lesson ) }
 					/>
 				</td>
 				<td className="wp-block-sensei-lms-course-outline__existing-lessons-modal__lesson-title">
