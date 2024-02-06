@@ -650,6 +650,19 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		);
 		$structure = array(
 			array(
+				'type'    => 'module',       // Tests that it works when lesson is in a module.
+				'title'   => 'Module with Some Lessons',
+				'lessons' => [
+					[
+						'type'           => 'lesson',
+						'title'          => 'Lesson in Module',
+						'draft'          => true,
+						'preview'        => false,
+						'initialContent' => 'Test Content M1',
+					],
+				],
+			),
+			array(
 				'type'           => 'lesson', // Tests that the initial content is only saved.
 				'title'          => 'Lesson 1',
 				'draft'          => true,
@@ -689,14 +702,20 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		$response_data = $response->get_data();
 
 		$this->assertEquals( $response->get_status(), 200 );
-		$this->assertEquals( 'Test Content 1', $response_data[0]['initialContent'] );
-		$this->assertEmpty( $response_data[1]['initialContent'] );
+		$this->assertEquals( 'Test Content M1', $response_data[0]['lessons'][0]['initialContent'] );
+		$this->assertEquals( 'Test Content 1', $response_data[1]['initialContent'] );
 		$this->assertEmpty( $response_data[2]['initialContent'] );
 		$this->assertEmpty( $response_data[3]['initialContent'] );
+		$this->assertEmpty( $response_data[4]['initialContent'] );
 		$this->assertEquals(
 			'<!-- wp:paragraph --><p>Test Content 1</p>
 <!-- /wp:paragraph -->',
-			get_post( $response_data[0]['id'] )->post_content
+			get_post( $response_data[1]['id'] )->post_content
+		);
+		$this->assertEquals(
+			'<!-- wp:paragraph --><p>Test Content M1</p>
+<!-- /wp:paragraph -->',
+			get_post( $response_data[0]['lessons'][0]['id'] )->post_content
 		);
 	}
 }
