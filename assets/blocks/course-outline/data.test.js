@@ -28,13 +28,16 @@ describe( 'extractStructure', () => {
 				innerBlocks: [
 					{
 						name: 'sensei-lms/course-outline-lesson',
-						attributes: { title: 'M1L1' },
+						attributes: {
+							title: 'M1L1',
+							initialContent: 'M1L1 content',
+						},
 						innerBlocks: [],
 						isValid: true,
 					},
 					{
 						name: 'sensei-lms/course-outline-lesson',
-						attributes: { title: 'M1L2' },
+						attributes: { title: 'M1L2', initialContent: '' },
 						innerBlocks: [],
 						isValid: true,
 					},
@@ -43,7 +46,7 @@ describe( 'extractStructure', () => {
 			},
 			{
 				name: 'sensei-lms/course-outline-lesson',
-				attributes: { title: 'L2' },
+				attributes: { title: 'L2', initialContent: 'L2 content' },
 				innerBlocks: [],
 				isValid: true,
 			},
@@ -57,16 +60,46 @@ describe( 'extractStructure', () => {
 
 		expect( data ).toEqual( [
 			{
+				id: undefined,
+				lastTitle: undefined,
 				type: 'module',
 				description: 'Module 1',
 				title: 'M1',
 				lessons: [
-					{ type: 'lesson', title: 'M1L1' },
-					{ type: 'lesson', title: 'M1L2' },
+					{
+						draft: undefined,
+						id: undefined,
+						initialContent: 'M1L1 content',
+						preview: undefined,
+						title: 'M1L1',
+						type: 'lesson',
+					},
+					{
+						draft: undefined,
+						id: undefined,
+						initialContent: '',
+						preview: undefined,
+						title: 'M1L2',
+						type: 'lesson',
+					},
 				],
 			},
-			{ type: 'lesson', title: 'L2' },
-			{ type: 'lesson', title: 'L3', draft: true, preview: true },
+			{
+				draft: undefined,
+				id: undefined,
+				initialContent: 'L2 content',
+				preview: undefined,
+				title: 'L2',
+				type: 'lesson',
+			},
+			{
+				draft: true,
+				id: undefined,
+				preview: true,
+				initialContent: undefined,
+				title: 'L3',
+				type: 'lesson',
+			},
 		] );
 	} );
 } );
@@ -87,6 +120,7 @@ describe( 'syncStructureToBlocks', () => {
 						title: 'M1L1',
 						id: 3,
 						style: { color: 'red' },
+						initialContent: 'M1L1 content',
 					} ),
 					createBlock( 'sensei-lms/course-outline-lesson', {
 						title: 'M1L3 New',
@@ -102,11 +136,17 @@ describe( 'syncStructureToBlocks', () => {
 				title: 'L2',
 				id: 8,
 				style: { color: 'red' },
+				initialContent: 'L2 content',
 			} ),
 		];
 
 		const changed = [
-			{ type: 'lesson', title: 'L2', id: 8 },
+			{
+				type: 'lesson',
+				title: 'L2',
+				id: 8,
+				initialContent: 'L2 content1',
+			},
 			{
 				type: 'module',
 				description: 'Module 1',
@@ -114,7 +154,12 @@ describe( 'syncStructureToBlocks', () => {
 				title: 'M1',
 				lessons: [
 					{ type: 'lesson', title: 'M1L2', id: 4 },
-					{ type: 'lesson', title: 'M1L1', id: 3 },
+					{
+						type: 'lesson',
+						title: 'M1L1',
+						id: 3,
+						initialContent: 'M1L1 content',
+					},
 				],
 			},
 		];
@@ -124,7 +169,12 @@ describe( 'syncStructureToBlocks', () => {
 		expect( newBlocks ).toEqual( [
 			{
 				name: 'sensei-lms/course-outline-lesson',
-				attributes: { title: 'L2', id: 8, style: { color: 'red' } },
+				attributes: {
+					title: 'L2',
+					id: 8,
+					style: { color: 'red' },
+					initialContent: 'L2 content1',
+				},
 				innerBlocks: [],
 				clientId: blocks[ 1 ].clientId,
 				isValid: true,
@@ -146,6 +196,7 @@ describe( 'syncStructureToBlocks', () => {
 							title: 'M1L2',
 							id: 4,
 							style: {},
+							initialContent: '',
 						},
 						innerBlocks: [],
 						isValid: true,
@@ -157,6 +208,7 @@ describe( 'syncStructureToBlocks', () => {
 							title: 'M1L1',
 							id: 3,
 							style: { color: 'red' },
+							initialContent: 'M1L1 content',
 						},
 						innerBlocks: [],
 						clientId: blocks[ 0 ].innerBlocks[ 1 ].clientId,
@@ -325,6 +377,7 @@ describe( 'syncStructureToBlocks', () => {
 				description: 'Lesson 1 description updated',
 				id: 99,
 				style: { color: 'blue' },
+				initialContent: '',
 			},
 			innerBlocks: [],
 			isValid: true,
