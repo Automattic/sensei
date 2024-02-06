@@ -18,13 +18,13 @@ import LessonPatternsStep from './lesson-patterns-step';
 import PatternsStep from './patterns-step';
 
 jest.mock( '@wordpress/data' );
-jest.mock( '@wordpress/editor' );
 jest.mock( './patterns-step' );
 
 const mockFunction = jest.fn();
 
 describe( '<LessonPatternsStep />', () => {
 	beforeAll( () => {
+		jest.clearAllMocks();
 		when( PatternsStep ).mockImplementation( ( props ) => {
 			mockFunction( props );
 			return (
