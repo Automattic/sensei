@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.22.0@fc2c6ab4d5fa5d644d8617089f012f3bb84b8703">
+  <file src="includes/3rd-party/automatewoo/actions/class-add-to-course-action.php">
+    <UndefinedClass occurrences="1">
+      <code>Action</code>
+    </UndefinedClass>
+  </file>
+  <file src="includes/3rd-party/automatewoo/actions/class-remove-from-course-action.php">
+    <UndefinedClass occurrences="1">
+      <code>Action</code>
+    </UndefinedClass>
+  </file>
+  <file src="includes/3rd-party/automatewoo/automatewoo.php">
+    <MissingDependency occurrences="2">
+      <code>Actions\Add_To_Course_Action</code>
+      <code>Actions\Remove_From_Course_Action</code>
+    </MissingDependency>
+  </file>
   <file src="includes/3rd-party/themes/course.php">
     <PossiblyNullPropertyFetch occurrences="3">
       <code>$screen-&gt;base</code>
@@ -6364,11 +6380,6 @@
     <RedundantCast occurrences="1">
       <code>(int) $offset</code>
     </RedundantCast>
-  </file>
-  <file src="includes/wpml/class-sensei-wpml.php">
-    <MissingParamType occurrences="1">
-      <code>$email_address</code>
-    </MissingParamType>
   </file>
   <file src="sensei-lms.php">
     <InvalidGlobal occurrences="1">
