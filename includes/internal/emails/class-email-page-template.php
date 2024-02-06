@@ -11,9 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-
-
-
 /**
  * The class responsible for handling the email page template.
  *
@@ -58,7 +55,6 @@ class Email_Page_Template {
 	public function init(): void {
 		add_filter( 'pre_get_block_file_template', [ $this, 'get_from_file' ], 10, 3 );
 		add_filter( 'get_block_templates', [ $this, 'add_email_template' ], 10, 3 );
-
 		add_filter( 'get_block_template', [ $this, 'get_template' ], 10, 3 );
 	}
 
@@ -107,35 +103,39 @@ class Email_Page_Template {
 	}
 
 	/**
-	 * Return sensei email's template from file when there is no template on the database.
+	 * Add Sensei email template.
 	 *
 	 * @internal
 	 *
-	 * @param WP_Block_Template $original_templates Original template.
-	 * @param string            $query          Original query to load the template.
-	 * @param string            $template_type     The template type "wp_template" or "wp_template_part".
+	 * @param WP_Block_Template $query_result   Array of found block templates.
+	 * @param array             $query          Arguments to retrieve templates.
+	 * @param string            $template_type  wp_template or wp_template_part.
 	 *
 	 * @return WP_Block_Template The original or the email template.
 	 */
-	public function add_email_template( $original_templates, $query, $template_type ) {
+	public function add_email_template( $query_result, $query, $template_type ) {
+		if ( ! \Sensei_Course_Theme_Editor::is_site_editor_request() ) {
+			return $query_result;
+		}
+
 		if ( 'wp_template' !== $template_type || ! empty( $query['theme'] ) ) {
-			return $original_templates;
+			return $query_result;
 		}
 
 		$post_type = $query['post_type'] ?? get_post_type();
 
-		if ( empty( $post_type ) || Email_Post_Type::POST_TYPE !== $post_type ) {
-			return $original_templates;
+		if ( ! empty( $post_type ) && Email_Post_Type::POST_TYPE !== $post_type ) {
+			return $query_result;
 		}
 
 		$from_db = $this->repository->get( self::ID );
 
 		if ( ! empty( $from_db ) ) {
-			$original_templates[] = $from_db;
-		} else {
-			$original_templates[] = $this->repository->get_from_file( self::TEMPLATE_PATH, self::ID );
+			$query_result[] = $from_db;
+		} else {  // Use the PHP email template.
+			$query_result[] = $this->repository->get_from_file( self::TEMPLATE_PATH, self::ID );
 		}
 
-		return $original_templates;
+		return $query_result;
 	}
 }
