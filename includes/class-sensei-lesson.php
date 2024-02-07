@@ -5390,7 +5390,7 @@ class Sensei_Lesson {
 	 * @return boolean Whether the user can edit the meta.
 	 */
 	public function post_meta_auth_callback( $allowed, $meta_key, $post_id ) {
-		return current_user_can( 'edit_post', $post_id );
+		return current_user_can( 'edit_lessons', $post_id );
 	}
 
 	/**
