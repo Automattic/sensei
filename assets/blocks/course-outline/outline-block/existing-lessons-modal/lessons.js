@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, keyBy, omitBy, uniq } from 'lodash';
+import { omitBy, uniq } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -18,60 +18,17 @@ import { __ } from '@wordpress/i18n';
  * @return {Object[]} Lessons.
  */
 const selectLessons = ( select, filters ) => {
-	const courseId = select( 'core/editor' ).getCurrentPostId();
-
-	let foundLessons = select( 'core' ).getEntityRecords(
+	const foundLessons = select( 'core' ).getEntityRecords(
 		'postType',
 		'lesson',
 		{
 			status: [ 'publish', 'draft' ],
+			metaKey: '_lesson_course',
+			metaValue: 0,
 			per_page: 100,
 			...omitBy( filters, ( v ) => v === '' ),
 		}
 	);
-
-	foundLessons = foundLessons?.filter(
-		( lesson ) =>
-			! lesson.meta._lesson_course ||
-			lesson.meta._lesson_course !== courseId
-	);
-
-	const courseIds = foundLessons
-		? foundLessons
-				.filter( ( lesson ) => lesson.meta._lesson_course )
-				.map( ( lesson ) => lesson.meta._lesson_course )
-		: [];
-
-	const courses = select( 'core' ).getEntityRecords( 'postType', 'course', {
-		per_page: 100,
-		include: courseIds,
-	} );
-	const mappedCourses = keyBy( courses, 'id' );
-
-	// Add course field to lessons.
-	if ( ! isEmpty( foundLessons ) && ! isEmpty( mappedCourses ) ) {
-		foundLessons = foundLessons.map( ( lesson ) => {
-			const lessonCourseId = lesson.meta._lesson_course;
-			if ( ! courseId ) {
-				return lesson;
-			}
-
-			let course = mappedCourses[ lessonCourseId ] || undefined;
-			if ( ! course ) {
-				course = {
-					id: undefined,
-					title: {
-						raw: __( 'Course not assigned', 'sensei-lms' ),
-					},
-				};
-			}
-
-			return {
-				...lesson,
-				course,
-			};
-		} );
-	}
 
 	return foundLessons;
 };
@@ -80,16 +37,16 @@ const selectLessons = ( select, filters ) => {
  * Lessons for selection.
  *
  * @param {Object}   props
- * @param {string}   props.clientId             Outline block ID.
- * @param {Object}   props.filters              Filters object.
- * @param {number[]} props.selectedLessonIds    Seleted lesson IDs.
- * @param {Object}   props.setSelectedLessonIds Seleted lesson IDs state setter.
+ * @param {string}   props.clientId           Outline block ID.
+ * @param {Object}   props.filters            Filters object.
+ * @param {Object[]} props.selectedLessons    Seleted lessons.
+ * @param {Function} props.setSelectedLessons Seleted lessons state setter.
  */
 const Lessons = ( {
 	clientId,
 	filters,
-	selectedLessonIds,
-	setSelectedLessonIds,
+	selectedLessons,
+	setSelectedLessons,
 } ) => {
 	// Ids of the already added lessons.
 	const addedLessonIds = useSelect( ( select ) =>
@@ -119,35 +76,31 @@ const Lessons = ( {
 
 	const allChecked =
 		lessons.length > 0 &&
-		lessons.every( ( lesson ) => selectedLessonIds.includes( lesson.id ) );
+		lessons.every( ( lesson ) => selectedLessons.includes( lesson.id ) );
 
 	const toggleAllHandler = ( checked ) => {
-		const lessonIds = lessons.map( ( lesson ) => lesson.id );
+		//const lessonIds = lessons.map( ( lesson ) => lesson.id );
 
-		setSelectedLessonIds( ( prev ) =>
+		setSelectedLessons( ( prev ) =>
 			checked
-				? uniq( [ ...prev, ...lessonIds ] )
-				: prev.filter( ( lesson ) => ! lessonIds.includes( lesson ) )
+				? uniq( [ ...prev, ...lessons ] )
+				: prev.filter( ( lesson ) => ! lessons.includes( lesson ) )
 		);
 	};
 
-	const toggleLesson = ( lessonId ) => ( checked ) => {
+	const toggleLesson = ( lesson ) => ( checked ) => {
 		if ( checked ) {
-			setSelectedLessonIds( ( prev ) => [ ...prev, lessonId ] );
+			setSelectedLessons( ( prev ) => [ ...prev, lesson ] );
 		} else {
-			setSelectedLessonIds( ( prev ) =>
-				prev.filter( ( id ) => id !== lessonId )
+			setSelectedLessons( ( prev ) =>
+				prev.filter(
+					( existingLesson ) => existingLesson.id !== lesson.id
+				)
 			);
 		}
 	};
 
 	const lessonsMap = ( lesson ) => {
-		const course =
-			lesson.course?.title.raw || __( 'Loading…', 'sensei-lms' );
-		const courseNotFoundClass =
-			lesson.course?.id === undefined
-				? 'wp-block-sensei-lms-course-outline__existing-lessons-modal__course-title--not-found'
-				: '';
 		const lessonId = lesson.id;
 		const title = lesson.title.raw;
 
@@ -157,8 +110,8 @@ const Lessons = ( {
 					<CheckboxControl
 						id={ `existing-lesson-${ lessonId }` }
 						title={ title }
-						checked={ selectedLessonIds.includes( lessonId ) }
-						onChange={ toggleLesson( lessonId ) }
+						checked={ selectedLessons.includes( lesson ) }
+						onChange={ toggleLesson( lesson ) }
 					/>
 				</td>
 				<td className="wp-block-sensei-lms-course-outline__existing-lessons-modal__lesson-title">
@@ -169,7 +122,6 @@ const Lessons = ( {
 						{ title }
 					</label>
 				</td>
-				<td className={ courseNotFoundClass }>{ course }</td>
 			</tr>
 		);
 	};
@@ -190,13 +142,12 @@ const Lessons = ( {
 							/>
 						</th>
 						<th>{ __( 'Lesson', 'sensei-lms' ) }</th>
-						<th>{ __( 'Course', 'sensei-lms' ) }</th>
 					</tr>
 				</thead>
 				<tbody>
 					{ lessons.length === 0 ? (
 						<tr>
-							<td colSpan="3">
+							<td colSpan="2">
 								<p>
 									{ __( 'No lessons found.', 'sensei-lms' ) }
 								</p>

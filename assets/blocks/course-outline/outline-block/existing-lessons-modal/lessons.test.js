@@ -26,13 +26,12 @@ describe( '<Lessons />', () => {
 			<Lessons
 				clientId={ 1 }
 				filters={ [] }
-				selectedLessonIds={ [] }
-				setSelectedLessonIds={ () => {} }
+				selectedLessons={ [] }
+				setSelectedLessons={ () => {} }
 			/>
 		);
 
 		expect( getByText( 'Lesson' ) ).toBeVisible();
-		expect( getByText( 'Course' ) ).toBeVisible();
 	} );
 
 	it( 'Should render lessons', () => {
@@ -42,13 +41,8 @@ describe( '<Lessons />', () => {
 				title: {
 					raw: 'Lesson 1',
 				},
-				course: {
-					title: {
-						raw: 'Course 1',
-					},
-				},
 				meta: {
-					_lesson_course: 1,
+					_lesson_course: 0,
 				},
 			},
 		] );
@@ -56,12 +50,11 @@ describe( '<Lessons />', () => {
 			<Lessons
 				clientId={ 1 }
 				filters={ [] }
-				selectedLessonIds={ [] }
-				setSelectedLessonIds={ () => {} }
+				selectedLessons={ [] }
+				setSelectedLessons={ () => {} }
 			/>
 		);
 
 		expect( getByText( 'Lesson 1' ) ).toBeVisible();
-		expect( getByText( 'Course 1' ) ).toBeVisible();
 	} );
 } );

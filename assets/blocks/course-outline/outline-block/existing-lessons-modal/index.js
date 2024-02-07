@@ -28,7 +28,7 @@ const ExistingLessonsModal = ( { clientId, onClose } ) => {
 	} );
 
 	const [ errorAddingSelected, setErrorAddingSelected ] = useState( false );
-	const [ selectedLessonIds, setSelectedLessonIds ] = useState( [] );
+	const [ selectedLessons, setSelectedLessons ] = useState( [] );
 
 	return (
 		<Modal
@@ -52,12 +52,12 @@ const ExistingLessonsModal = ( { clientId, onClose } ) => {
 			<Lessons
 				clientId={ clientId }
 				filters={ filters }
-				selectedLessonIds={ selectedLessonIds }
-				setSelectedLessonIds={ setSelectedLessonIds }
+				selectedLessons={ selectedLessons }
+				setSelectedLessons={ setSelectedLessons }
 			/>
 			<Actions
-				selectedLessonIds={ selectedLessonIds }
-				setSelectedLessonIds={ setSelectedLessonIds }
+				selectedLessons={ selectedLessons }
+				setSelectedLessons={ setSelectedLessons }
 				onAdd={ addExistingLessons }
 				closeModal={ onClose }
 				setErrorAddingSelected={ setErrorAddingSelected }

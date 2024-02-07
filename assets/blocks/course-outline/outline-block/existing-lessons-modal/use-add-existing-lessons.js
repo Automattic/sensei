@@ -3,7 +3,6 @@
  */
 import { createBlock } from '@wordpress/blocks';
 import { select, useDispatch, useSelect } from '@wordpress/data';
-import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Lesson type definition.
@@ -27,8 +26,6 @@ export const findLessonBlock = ( blocks, { id, title } ) => {
 	return blocks.find( compare );
 };
 
-const API_PATH = '/sensei-internal/v1/lessons/attach';
-
 /**
  * Add existing lessons to the course outline block.
  *
@@ -45,50 +42,37 @@ export const useAddExistingLessons = ( clientId ) => {
 		() => select( 'core/block-editor' ).getBlockCount( clientId ),
 		[]
 	);
-	const courseId = useSelect(
-		() => select( 'core/editor' ).getCurrentPostId(),
-		[]
-	);
 
-	return ( lessonIds ) => {
-		const newLessonIds = lessonIds.filter( ( lessonId ) => {
+	return ( lessons ) => {
+		const newLessons = lessons.filter( ( lesson ) => {
 			return (
 				lessonBlocks.length === 0 ||
-				! findLessonBlock( lessonBlocks, { id: lessonId } )
+				! findLessonBlock( lessonBlocks, { id: lesson.id } )
 			);
 		} );
 
-		if ( newLessonIds.length === 0 ) {
+		if ( newLessons.length === 0 ) {
 			return Promise.resolve( {} );
 		}
 
 		// Put this before the auto-block.
 		let insertIndex = nextInsertIndex;
+		lessons.forEach( ( item ) => {
+			insertBlock(
+				createBlock( 'sensei-lms/course-outline-lesson', {
+					id: item.id,
+					type: 'lesson',
+					title: item.title.raw,
+					draft: item.post_status === 'draft',
+				} ),
+				insertIndex,
+				clientId,
+				false
+			);
 
-		return apiFetch( {
-			path: API_PATH,
-			method: 'POST',
-			data: {
-				lesson_ids: newLessonIds,
-				course_id: courseId,
-			},
-		} ).then( ( res ) => {
-			if ( Array.isArray( res ) && res.length > 0 ) {
-				res.forEach( ( item ) => {
-					insertBlock(
-						createBlock( 'sensei-lms/course-outline-lesson', {
-							title: item.post_title,
-							type: 'lesson',
-							id: item.ID,
-						} ),
-						insertIndex,
-						clientId,
-						false
-					);
-
-					insertIndex++;
-				} );
-			}
+			insertIndex++;
 		} );
+
+		return Promise.resolve( {} );
 	};
 };

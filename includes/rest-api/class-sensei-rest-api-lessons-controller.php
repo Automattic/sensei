@@ -27,6 +27,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	public function __construct( $post_type ) {
 		parent::__construct( $post_type );
 		$this->init_post_meta();
+		$this->add_meta_query();
 	}
 
 	/**
@@ -104,6 +105,70 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 				'auth_callback' => [ $this, 'auth_callback' ],
 			]
 		);
+	}
+
+	/**
+	 * Add filter to add meta query to the lesson query.
+	 *
+	 * @since $$next-version$$
+	 */
+	private function add_meta_query() {
+		add_filter( 'rest_lesson_query', [ $this, 'add_meta_query_args' ], 10, 2 );
+	}
+
+	/**
+	 * Add meta query to the lesson query.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param array           $args    Query args.
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return array Modified query args.
+	 */
+	public function add_meta_query_args( $args, $request ) {
+
+		$meta_key          = $request->get_param( 'metaKey' );
+		$allowed_meta_keys = array( '_lesson_course', '_lesson_complexity', '_lesson_length', '_lesson_preview' );
+
+		if ( isset( $meta_key ) && in_array( $meta_key, $allowed_meta_keys, true ) ) {
+			$meta_query = $args['meta_query'] ?? array();
+			$meta_value = $request->get_param( 'metaValue' );
+			$meta_key   = esc_sql( $meta_key );
+
+			if ( empty( $meta_value ) ) {
+				$meta_query[] = array(
+					'relation' => 'OR',
+					array(
+						'key'     => $meta_key,
+						'compare' => 'NOT EXISTS',
+					),
+					array(
+						'key'     => $meta_key,
+						'value'   => '',
+						'compare' => '=',
+					),
+					array(
+						'key'     => $meta_key,
+						'value'   => '0',
+						'compare' => '=',
+					),
+				);
+			} else {
+				$meta_value   = esc_sql( $meta_value );
+				$meta_query[] = [
+					'key'     => $meta_key,
+					'value'   => $meta_value,
+					'compare' => '=',
+				];
+			}
+
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			$args['meta_query'] = $meta_query;
+		}
+
+		return $args;
 	}
 
 	/**

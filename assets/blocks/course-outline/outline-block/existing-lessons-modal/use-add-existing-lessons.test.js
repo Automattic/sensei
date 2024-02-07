@@ -37,16 +37,11 @@ describe( 'useAddExistingLessons', () => {
 	it( 'Should create a block for each lesson', async () => {
 		const addExistingLessons = useAddExistingLessons( 1 );
 
-		apiFetch.mockResolvedValue( [
+		const lessons = [
 			{
 				id: 1,
 				title: {
 					raw: 'Lesson 1',
-				},
-				course: {
-					title: {
-						raw: 'Course 1',
-					},
 				},
 				meta: {
 					_lesson_course: 1,
@@ -57,18 +52,15 @@ describe( 'useAddExistingLessons', () => {
 				title: {
 					raw: 'Lesson 2',
 				},
-				course: {
-					title: {
-						raw: 'Course 2',
-					},
-				},
 				meta: {
 					_lesson_course: 2,
 				},
 			},
-		] );
+		];
 
-		await addExistingLessons( [ 1, 2 ] );
+		apiFetch.mockResolvedValue( lessons );
+
+		await addExistingLessons( lessons );
 
 		expect( createBlock ).toHaveBeenCalledTimes( 2 );
 	} );
