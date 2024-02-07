@@ -144,6 +144,15 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.20.2 - 2024-02-07
+#### Changed
+- Auto-focus the course title field when creating a new course [#7434](https://github.com/Automattic/sensei/pull/7434)
+
+#### Fixed
+- Fixed Sensei Email template not available in site editor [#7463](https://github.com/Automattic/sensei/pull/7463)
+- Flush rewrite rules when the website language was changed or the translation was updated. [#7435](https://github.com/Automattic/sensei/pull/7435)
+- Memory issue on the student reports screen [#7468](https://github.com/Automattic/sensei/pull/7468)
+
 ### 4.20.1 - 2024-01-17
 #### Added
 - Log event when task on Sensei Home is completed [#7430](https://github.com/Automattic/sensei/pull/7430)
@@ -184,31 +193,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Restart quiz redirects to the course complete page if the course was completed [#7377](https://github.com/Automattic/sensei/pull/7377)
 - Scope CSS to Learning Mode templates only [#7382](https://github.com/Automattic/sensei/pull/7382)
 - Teachers can no longer see all students in the Students screen [#7367](https://github.com/Automattic/sensei/pull/7367)
-
-### 4.19.2 - 2023-11-23
-#### Added
-- Style Lesson Actions block in Learning Mode [#7224](https://github.com/Automattic/sensei/pull/7224)
-- Change border color and width of Lesson Actions block in Learning Mode [#7283](https://github.com/Automattic/sensei/pull/7283)
-
-#### Changed
-- Migrate legacy quiz data [#7289](https://github.com/Automattic/sensei/pull/7289)
-- "Not Enrolled" notice in Learning Mode [#7263](https://github.com/Automattic/sensei/pull/7263)
-- Design for footer in multi-page quizzes [#7268](https://github.com/Automattic/sensei/pull/7268)
-- Style of Learning Mode notice that is displayed when a student is not logged in [#7264](https://github.com/Automattic/sensei/pull/7264)
-- Message when there are no published lessons in a course [#7300](https://github.com/Automattic/sensei/pull/7300)
-
-#### Fixed
-- Contact Teacher form in Learning Mode quiz footer [#7257](https://github.com/Automattic/sensei/pull/7257)
-- Contact Teacher button is full width in Learning Mode [#7288](https://github.com/Automattic/sensei/pull/7288)
-- Deprecation notice when user is not logged in [#7294](https://github.com/Automattic/sensei/pull/7294)
-- "No published content" notice being displayed for users who created a course in the editor [#7284](https://github.com/Automattic/sensei/pull/7284)
-- How we determine whether a quiz has been submitted [#7278](https://github.com/Automattic/sensei/pull/7278)
-- Module spacing when Learning Mode is not enabled [#7272](https://github.com/Automattic/sensei/pull/7272)
-- Distorted site logo in Learning Mode [#7275](https://github.com/Automattic/sensei/pull/7275)
-- Gap fill question to accept "0" as a right answer [#7273](https://github.com/Automattic/sensei/pull/7273)
-- "Pending Grade" button is too wide for some themes [#7287](https://github.com/Automattic/sensei/pull/7287)
-- Fix broken Learning Mode templates on Gutenberg 17.1.0 [#7317](https://github.com/Automattic/sensei/pull/7317)
-- Fix dropdown menu icon size [#7316](https://github.com/Automattic/sensei/pull/7316)
-
-#### Development
-- Add stylesheets for Course theme variations [#7256](https://github.com/Automattic/sensei/pull/7256)
