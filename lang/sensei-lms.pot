@@ -2,16 +2,16 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 4.20.2-a.1\n"
+"Project-Id-Version: Sensei LMS 4.20.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-01-24T12:15:54+00:00\n"
+"POT-Creation-Date: 2024-02-07T13:42:13+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.9.0\n"
+"X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: sensei-lms\n"
 
 #. Plugin Name of the plugin
@@ -2700,7 +2700,7 @@ msgstr ""
 msgid "Invalid request"
 msgstr ""
 
-#: includes/class-sensei-analysis.php:926
+#: includes/class-sensei-analysis.php:925
 msgid "Invalid user"
 msgstr ""
 
@@ -5633,7 +5633,7 @@ msgstr ""
 
 #: includes/class-sensei-teacher.php:140
 #: includes/class-sensei-teacher.php:255
-#: includes/class-sensei-teacher.php:1346
+#: includes/class-sensei-teacher.php:1330
 #: assets/dist/js/admin/course-edit.js:73
 #: assets/js/admin/course-general-sidebar.js:122
 msgid "Teacher"
@@ -5647,12 +5647,12 @@ msgstr ""
 msgid "New course created by"
 msgstr ""
 
-#: includes/class-sensei-teacher.php:1493
+#: includes/class-sensei-teacher.php:1477
 msgid "Show all teachers"
 msgstr ""
 
 #. translators: Placeholder is the author name.
-#: includes/class-sensei-teacher.php:1819
+#: includes/class-sensei-teacher.php:1803
 msgid "All courses by %s"
 msgstr ""
 
@@ -10252,6 +10252,70 @@ msgstr ""
 #: assets/dist/setup-wizard/index.js:422
 #: assets/setup-wizard/welcome/index.js:76
 msgid "Skip onboarding"
+msgstr ""
+
+#: assets/tour/course/steps.js:37
+msgid "Welcome to the Course Outline block"
+msgstr ""
+
+#: assets/tour/course/steps.js:42
+msgid "Take this short tour to learn how to create your course outline right in the editor. Click an option in the block to get started."
+msgstr ""
+
+#: assets/tour/course/steps.js:62
+msgid "Renaming an existing lesson"
+msgstr ""
+
+#: assets/tour/course/steps.js:64
+msgid "Click on an existing lesson to select it. Then give it a new name."
+msgstr ""
+
+#: assets/tour/course/steps.js:81
+msgid "Adding a module"
+msgstr ""
+
+#: assets/tour/course/steps.js:83
+msgid "A module is a container for a group of related lessons in a course. Click + to open the inserter. Then click the Module option."
+msgstr ""
+
+#: assets/tour/course/steps.js:100
+msgid "Adding a new lesson"
+msgstr ""
+
+#: assets/tour/course/steps.js:102
+msgid "Click + to open the inserter. Then click the Lesson option."
+msgstr ""
+
+#: assets/tour/course/steps.js:119
+msgid "Deleting a lesson"
+msgstr ""
+
+#: assets/tour/course/steps.js:121
+msgid "Use the Options menu in the toolbar to delete a selected lesson."
+msgstr ""
+
+#: assets/tour/course/steps.js:138
+msgid "Saving lessons"
+msgstr ""
+
+#: assets/tour/course/steps.js:140
+msgid "Click the “Save to edit lesson” option in the toolbar to save all lessons."
+msgstr ""
+
+#: assets/tour/course/steps.js:157
+msgid "Editing a lesson"
+msgstr ""
+
+#: assets/tour/course/steps.js:159
+msgid "Use the “Edit lesson” option in the toolbar to navigate to the lesson editor and add your content."
+msgstr ""
+
+#: assets/tour/course/steps.js:176
+msgid "Congratulations!"
+msgstr ""
+
+#: assets/tour/course/steps.js:179
+msgid "You've mastered the basics. View the <link_to_course_outline_block_doc>course outline docs</link_to_course_outline_block_doc> to learn more. <tour_restart_url>Restart tour</tour_restart_url>"
 msgstr ""
 
 #: assets/blocks/conditional-content-block/block.json

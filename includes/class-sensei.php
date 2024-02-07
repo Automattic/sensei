@@ -448,7 +448,7 @@ class Sensei_Main {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.2
 	 *
 	 * @param mixed $old_value Old value.
 	 * @param mixed $new_value New value.
@@ -464,7 +464,7 @@ class Sensei_Main {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.2
 	 *
 	 * @param WP_Upgrader $upgrader_object Upgrader object.
 	 * @param array       $options Options.
