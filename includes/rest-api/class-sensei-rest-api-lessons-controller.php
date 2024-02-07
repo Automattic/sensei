@@ -135,9 +135,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 		if ( isset( $meta_key ) && in_array( $meta_key, $allowed_meta_keys, true ) ) {
 			$meta_query = $args['meta_query'] ?? array();
 			$meta_value = $request->get_param( 'metaValue' );
-
 			$meta_key   = esc_sql( $meta_key );
-			$meta_value = esc_sql( $meta_value );
 
 			if ( empty( $meta_value ) ) {
 				$meta_query[] = array(
@@ -158,6 +156,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 					),
 				);
 			} else {
+				$meta_value   = esc_sql( $meta_value );
 				$meta_query[] = [
 					'key'     => $meta_key,
 					'value'   => $meta_value,

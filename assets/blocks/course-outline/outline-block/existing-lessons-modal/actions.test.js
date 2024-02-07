@@ -10,11 +10,41 @@ import '@testing-library/jest-dom';
 import Actions from './actions';
 
 describe( '<Actions />', () => {
+	const lessons = [
+		{
+			id: 1,
+			title: {
+				raw: 'Lesson 1',
+			},
+			meta: {
+				_lesson_course: 0,
+			},
+		},
+		{
+			id: 2,
+			title: {
+				raw: 'Lesson 2',
+			},
+			meta: {
+				_lesson_course: 0,
+			},
+		},
+		{
+			id: 3,
+			title: {
+				raw: 'Lesson 3',
+			},
+			meta: {
+				_lesson_course: 0,
+			},
+		},
+	];
+
 	it( 'Should have Add Selected button when nothing selected', () => {
 		const { getByText } = render(
 			<Actions
-				selectedLessonIds={ [] }
-				setSelectedLessonIds={ () => {} }
+				selectedLessons={ [] }
+				setSelectedLessons={ () => {} }
 				onAdd={ () => {} }
 				closeModal={ () => {} }
 				setErrorAddingSelected={ () => {} }
@@ -27,8 +57,8 @@ describe( '<Actions />', () => {
 	it( 'Should have Add Selected button with a number of selected lessons', () => {
 		const { getByText } = render(
 			<Actions
-				selectedLessonIds={ [ 1, 2, 3 ] }
-				setSelectedLessonIds={ () => {} }
+				selectedLessons={ lessons }
+				setSelectedLessons={ () => {} }
 				onAdd={ () => {} }
 				closeModal={ () => {} }
 				setErrorAddingSelected={ () => {} }
@@ -43,8 +73,8 @@ describe( '<Actions />', () => {
 
 		const { getByText } = render(
 			<Actions
-				selectedLessonIds={ [ 1, 2, 3 ] }
-				setSelectedLessonIds={ () => {} }
+				selectedLessons={ lessons }
+				setSelectedLessons={ () => {} }
 				onAdd={ onAdd }
 				closeModal={ () => {} }
 				setErrorAddingSelected={ () => {} }
