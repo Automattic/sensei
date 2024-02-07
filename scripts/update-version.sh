@@ -26,11 +26,11 @@ if [[ "$OS_TYPE" == "Darwin" ]]; then
     # You are on macOS
 
 	# Update version in sensei-lms.php
-	sed -E -i '' "s/\* Version: [0-9]+\.[0-9]+\.[0-9]+/\* Version: $VERSION/" "$CURRENT_DIR/sensei-lms.php"
+	sed -E -i '' "s/\* Version: .*/\* Version: $VERSION/" "$CURRENT_DIR/sensei-lms.php"
 
 	# Find constant and replace the version in sensei-lms.php:
 	#	define( 'SENSEI_LMS_VERSION', '4.15.0' ); // WRCS: DEFINED_VERSION.
-	sed -E -i '' "s/'SENSEI_LMS_VERSION', '[0-9]+\.[0-9]+\.[0-9]+/'SENSEI_LMS_VERSION', '$VERSION/" "$CURRENT_DIR/sensei-lms.php"
+	sed -E -i '' "s/'SENSEI_LMS_VERSION', '[^']*'/'SENSEI_LMS_VERSION', '$VERSION'/" "$CURRENT_DIR/sensei-lms.php"
 
 	# Update version in the Stable Tag comment in readme.txt
 	# Stable tag: 4.15.0
@@ -39,11 +39,11 @@ elif [[ "$OS_TYPE" == "Linux" ]]; then
 	# You are on Linux
 
 	# Update version in sensei-lms.php
-	sed -E -i'' "s/\* Version: [0-9]+\.[0-9]+\.[0-9]+/\* Version: $VERSION/" "$CURRENT_DIR/sensei-lms.php"
+	sed -E -i'' "s/\* Version: .*/\* Version: $VERSION/" "$CURRENT_DIR/sensei-lms.php"
 
 	# Find constant and replace the version in sensei-lms.php:
 	#	define( 'SENSEI_LMS_VERSION', '4.15.0' ); // WRCS: DEFINED_VERSION.
-	sed -E -i'' "s/'SENSEI_LMS_VERSION', '[0-9]+\.[0-9]+\.[0-9]+/'SENSEI_LMS_VERSION', '$VERSION/" "$CURRENT_DIR/sensei-lms.php"
+	sed -E -i'' "s/'SENSEI_LMS_VERSION', '[^']*'/'SENSEI_LMS_VERSION', '$VERSION'/" "$CURRENT_DIR/sensei-lms.php"
 
 	# Update version in the Stable Tag comment in readme.txt
 	# Stable tag: 4.15.0
