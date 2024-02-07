@@ -52,7 +52,7 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$this->login_as_teacher();
 
-		$has_course_id = false;
+		$has_course_id            = false;
 		$rest_lesson_query_filter = function( $args ) use ( &$has_course_id ) {
 			$meta_query = $args['meta_query'] ?? array();
 			if ( ! empty( $meta_query ) ) {
@@ -73,11 +73,15 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 		new \Sensei_REST_API_Lessons_Controller( 'lesson' );
 
 		/* Act. */
-		$request  = new WP_REST_Request( 'GET', '/wp/v2/lessons' );
-		$request->set_query_params( array( 'metaKey' => '_lesson_course', 'metaValue' => 1 ) );
+		$request = new WP_REST_Request( 'GET', '/wp/v2/lessons' );
+		$request->set_query_params(
+			array(
+				'metaKey'   => '_lesson_course',
+				'metaValue' => 1,
+			)
+		);
 		$this->server->dispatch( $request );
 		remove_filter( 'rest_lesson_query', $rest_lesson_query_filter, 11 );
-
 
 		/* Assert. */
 		$this->assertTrue( $has_course_id );
@@ -87,7 +91,7 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$this->login_as_teacher();
 
-		$has_compare_not_exists = false;
+		$has_compare_not_exists   = false;
 		$rest_lesson_query_filter = function( $args ) use ( &$has_compare_not_exists ) {
 			$meta_query = $args['meta_query'] ?? array();
 			if ( ! empty( $meta_query ) ) {
@@ -114,11 +118,15 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 		new \Sensei_REST_API_Lessons_Controller( 'lesson' );
 
 		/* Act. */
-		$request  = new WP_REST_Request( 'GET', '/wp/v2/lessons' );
-		$request->set_query_params( array( 'metaKey' => '_lesson_course', 'metaValue' => 0 ) );
+		$request = new WP_REST_Request( 'GET', '/wp/v2/lessons' );
+		$request->set_query_params(
+			array(
+				'metaKey'   => '_lesson_course',
+				'metaValue' => 0,
+			)
+		);
 		$this->server->dispatch( $request );
 		remove_filter( 'rest_lesson_query', $rest_lesson_query_filter, 11 );
-
 
 		/* Assert. */
 		$this->assertTrue( $has_compare_not_exists );

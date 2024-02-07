@@ -165,6 +165,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 				];
 			}
 
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			$args['meta_query'] = $meta_query;
 		}
 
