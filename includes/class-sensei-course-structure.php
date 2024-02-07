@@ -488,16 +488,6 @@ class Sensei_Course_Structure {
 	 */
 	private function save_lesson( array $item, int $module_id = null ) {
 		if ( $item['id'] ) {
-
-			// If the lesson is already associated with a different course, duplicate it.
-			$lesson_course_id = Sensei()->lesson->get_course_id( $item['id'] );
-			if ( $lesson_course_id && $lesson_course_id !== $this->course_id ) {
-				$item = $this->duplicate_lesson( $item );
-				if ( ! $item ) {
-					return false;
-				}
-			}
-
 			$lesson_id = $this->update_lesson( $item );
 		} else {
 			$lesson_id = $this->create_lesson( $item );
@@ -638,32 +628,6 @@ class Sensei_Course_Structure {
 		}
 
 		wp_set_object_terms( $lesson_id, [], 'module' );
-	}
-
-	/**
-	 * Duplicate a lesson.
-	 *
-	 * @param array $item Item to duplicate.
-	 * @return array|null Duplicated item.
-	 */
-	private function duplicate_lesson( array $item ): ?array {
-		$original_lesson = get_post( $item['id'] );
-		if ( ! $original_lesson ) {
-			return null;
-		}
-
-		$post_duplicator   = new Post_Duplicator();
-		$duplicated_lesson = $post_duplicator->duplicate( $original_lesson, null, true );
-		if ( ! $duplicated_lesson ) {
-			return null;
-		}
-
-		$lesson_quiz_duplicator = new Lesson_Quiz_Duplicator();
-		$lesson_quiz_duplicator->duplicate( $original_lesson->ID, $duplicated_lesson->ID );
-
-		$item['id'] = $duplicated_lesson->ID;
-
-		return $item;
 	}
 
 	/**

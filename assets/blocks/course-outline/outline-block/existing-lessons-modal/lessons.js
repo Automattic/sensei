@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, keyBy, omitBy, uniq } from 'lodash';
+import { omitBy, uniq } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -18,60 +18,17 @@ import { __ } from '@wordpress/i18n';
  * @return {Object[]} Lessons.
  */
 const selectLessons = ( select, filters ) => {
-	const courseId = select( 'core/editor' ).getCurrentPostId();
-
-	let foundLessons = select( 'core' ).getEntityRecords(
+	const foundLessons = select( 'core' ).getEntityRecords(
 		'postType',
 		'lesson',
 		{
 			status: [ 'publish', 'draft' ],
+			metaKey: '_lesson_course',
+			metaValue: 0,
 			per_page: 100,
 			...omitBy( filters, ( v ) => v === '' ),
 		}
 	);
-
-	foundLessons = foundLessons?.filter(
-		( lesson ) =>
-			! lesson.meta._lesson_course ||
-			lesson.meta._lesson_course !== courseId
-	);
-
-	const courseIds = foundLessons
-		? foundLessons
-				.filter( ( lesson ) => lesson.meta._lesson_course )
-				.map( ( lesson ) => lesson.meta._lesson_course )
-		: [];
-
-	const courses = select( 'core' ).getEntityRecords( 'postType', 'course', {
-		per_page: 100,
-		include: courseIds,
-	} );
-	const mappedCourses = keyBy( courses, 'id' );
-
-	// Add course field to lessons.
-	if ( ! isEmpty( foundLessons ) && ! isEmpty( mappedCourses ) ) {
-		foundLessons = foundLessons.map( ( lesson ) => {
-			const lessonCourseId = lesson.meta._lesson_course;
-			if ( ! courseId ) {
-				return lesson;
-			}
-
-			let course = mappedCourses[ lessonCourseId ] || undefined;
-			if ( ! course ) {
-				course = {
-					id: undefined,
-					title: {
-						raw: __( 'Course not assigned', 'sensei-lms' ),
-					},
-				};
-			}
-
-			return {
-				...lesson,
-				course,
-			};
-		} );
-	}
 
 	return foundLessons;
 };
@@ -144,12 +101,6 @@ const Lessons = ( {
 	};
 
 	const lessonsMap = ( lesson ) => {
-		const course =
-			lesson.course?.title.raw || __( 'Loading…', 'sensei-lms' );
-		const courseNotFoundClass =
-			lesson.course?.id === undefined
-				? 'wp-block-sensei-lms-course-outline__existing-lessons-modal__course-title--not-found'
-				: '';
 		const lessonId = lesson.id;
 		const title = lesson.title.raw;
 
@@ -171,7 +122,6 @@ const Lessons = ( {
 						{ title }
 					</label>
 				</td>
-				<td className={ courseNotFoundClass }>{ course }</td>
 			</tr>
 		);
 	};
@@ -192,13 +142,12 @@ const Lessons = ( {
 							/>
 						</th>
 						<th>{ __( 'Lesson', 'sensei-lms' ) }</th>
-						<th>{ __( 'Course', 'sensei-lms' ) }</th>
 					</tr>
 				</thead>
 				<tbody>
 					{ lessons.length === 0 ? (
 						<tr>
-							<td colSpan="3">
+							<td colSpan="2">
 								<p>
 									{ __( 'No lessons found.', 'sensei-lms' ) }
 								</p>
