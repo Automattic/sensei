@@ -33,7 +33,7 @@ const ExistingLessonsModal = ( { clientId, onClose } ) => {
 	return (
 		<Modal
 			className="wp-block-sensei-lms-course-outline__existing-lessons-modal"
-			title={ __( 'Lessons', 'sensei-lms' ) }
+			title={ __( 'Available Lessons', 'sensei-lms' ) }
 			onRequestClose={ onClose }
 		>
 			{ errorAddingSelected && (
