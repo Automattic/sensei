@@ -19,6 +19,10 @@ export const registerTestLessonBlock = ( settings = {} ) => {
 				type: 'string',
 				default: '',
 			},
+			initialContent: {
+				type: 'string',
+				default: '',
+			},
 			style: {
 				type: 'object',
 				default: {},

@@ -20,6 +20,10 @@
       "type": "string",
       "default": ""
     },
+    "initialContent": {
+      "type": "string",
+      "default": ""
+    },
     "draft": {
       "type": "boolean",
       "default": true

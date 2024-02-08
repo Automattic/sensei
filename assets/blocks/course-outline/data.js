@@ -24,9 +24,10 @@ import { curry, invert } from 'lodash';
  */
 /**
  * @typedef CourseLessonData
- * @param {string}  type  Block type ('lesson')
- * @param {string?} title Lesson title
- * @param {number?} id    Lesson ID
+ * @param {string}  type           Block type ('lesson')
+ * @param {string?} title          Lesson title
+ * @param {number?} id             Lesson ID
+ * @param {string?} initialContent Initial lesson content.
  */
 
 export const blockNames = {
@@ -141,6 +142,7 @@ export const extractStructure = ( blocks ) => {
 		lesson: ( block ) => ( {
 			draft: block.attributes.draft,
 			preview: block.attributes.preview,
+			initialContent: block.attributes.initialContent,
 		} ),
 	};
 

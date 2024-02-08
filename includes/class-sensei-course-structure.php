@@ -182,11 +182,12 @@ class Sensei_Course_Structure {
 	 */
 	private function prepare_lesson( WP_Post $lesson_post ) : array {
 		return [
-			'type'    => 'lesson',
-			'id'      => $lesson_post->ID,
-			'title'   => $lesson_post->post_title,
-			'draft'   => 'draft' === $lesson_post->post_status,
-			'preview' => Sensei_Utils::is_preview_lesson( $lesson_post->ID ),
+			'type'           => 'lesson',
+			'id'             => $lesson_post->ID,
+			'title'          => $lesson_post->post_title,
+			'draft'          => 'draft' === $lesson_post->post_status,
+			'preview'        => Sensei_Utils::is_preview_lesson( $lesson_post->ID ),
+			'initialContent' => get_post_meta( $lesson_post->ID, '_initial_content', true ),
 		];
 	}
 
@@ -502,6 +503,23 @@ class Sensei_Course_Structure {
 	}
 
 	/**
+	 * Get initial content markup.
+	 * This is the content that is shown to the user when they first view the lesson.
+	 *
+	 * @param string $text_content Text content.
+	 *
+	 * @return string Markup or empty.
+	 */
+	private function get_lesson_content_markup( $text_content ) {
+		$markup = '';
+		if ( $text_content ) {
+			$markup = '<!-- wp:paragraph -->' . wpautop( $text_content ) . '<!-- /wp:paragraph -->';
+		}
+
+		return $markup;
+	}
+
+	/**
 	 * Create a lesson.
 	 *
 	 * @param array $item Item to create.
@@ -510,16 +528,19 @@ class Sensei_Course_Structure {
 	 */
 	private function create_lesson( array $item ) {
 		$post_args = [
-			'post_title'  => $item['title'],
-			'post_type'   => 'lesson',
-			'post_status' => 'draft',
-			'meta_input'  => [
-				'_lesson_course' => $this->course_id,
-				'_new_post'      => true,
+			'post_title'   => $item['title'],
+			'post_type'    => 'lesson',
+			'post_status'  => 'draft',
+			'post_content' => $this->get_lesson_content_markup( $item['initialContent'] ?? '' ),
+			'meta_input'   => [
+				'_lesson_course'   => $this->course_id,
+				'_new_post'        => true,
+				'_initial_content' => $item['initialContent'],
 			],
 		];
 
 		$lesson_id = wp_insert_post( $post_args );
+
 		if ( ! $lesson_id ) {
 			return false;
 		}
@@ -834,6 +855,7 @@ class Sensei_Course_Structure {
 					);
 				}
 			}
+			$item['initialContent'] = ! empty( $raw_item['initialContent'] ) ? trim( wp_kses_post( $raw_item['initialContent'] ) ) : null;
 		}
 
 		return $item;
