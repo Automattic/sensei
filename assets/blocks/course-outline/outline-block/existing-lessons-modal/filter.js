@@ -30,10 +30,10 @@ const Filter = ( { setFilters } ) => {
 		}, wait );
 
 	return (
-		<ul className="wp-block-sensei-lms-course-outline__existing-lessons-modal__filters">
+		<ul className="sensei-lms-existing-lessons-modal__filters">
 			<li>
 				<InputControl
-					className="wp-block-sensei-lms-course-outline__existing-lessons-modal__search-input"
+					className="sensei-lms-existing-lessons-modal__search-input"
 					placeholder={ __( 'Search lessons', 'sensei-lms' ) }
 					iconRight={ search }
 					onChange={ createFilterChangeHandler( 'search', 400 ) }

@@ -63,7 +63,7 @@ const Lessons = ( {
 
 	if ( ! lessons ) {
 		return (
-			<div className="wp-block-sensei-lms-course-outline__existing-lessons-modal__existing-lessons wp-block-sensei-lms-course-outline__existing-lessons-modal__existing-lessons--loading">
+			<div className="sensei-lms-existing-lessons-modal__lessons sensei-lms-existing-lessons-modal__lessons--loading">
 				<Spinner />
 			</div>
 		);
@@ -112,7 +112,7 @@ const Lessons = ( {
 						onChange={ toggleLesson( lesson ) }
 					/>
 				</td>
-				<td className="wp-block-sensei-lms-course-outline__existing-lessons-modal__lesson-title">
+				<td className="sensei-lms-existing-lessons-modal__lesson-title">
 					<label
 						htmlFor={ `existing-lesson-${ lessonId }` }
 						title={ title }
@@ -125,11 +125,11 @@ const Lessons = ( {
 	};
 
 	return (
-		<div className="wp-block-sensei-lms-course-outline__existing-lessons-modal__lessons">
-			<table className="wp-block-sensei-lms-course-outline__existing-lessons-modal__table">
+		<div className="sensei-lms-existing-lessons-modal__lessons">
+			<table className="sensei-lms-existing-lessons-modal__lessons-table">
 				<thead>
 					<tr>
-						<th className="wp-block-sensei-lms-course-outline__existing-lessons-modal__lesson-checkbox">
+						<th className="sensei-lms-existing-lessons-modal__lesson-checkbox">
 							<CheckboxControl
 								title={ __(
 									'Toggle all visible lessons selection.',

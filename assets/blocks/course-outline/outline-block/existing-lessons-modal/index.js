@@ -32,7 +32,7 @@ const ExistingLessonsModal = ( { clientId, onClose } ) => {
 
 	return (
 		<Modal
-			className="wp-block-sensei-lms-course-outline__existing-lessons-modal"
+			className="sensei-lms-existing-lessons-modal"
 			title={ __( 'Available Lessons', 'sensei-lms' ) }
 			onRequestClose={ onClose }
 		>
@@ -40,7 +40,7 @@ const ExistingLessonsModal = ( { clientId, onClose } ) => {
 				<Notice
 					status="error"
 					isDismissible={ false }
-					className="wp-block-sensei-lms-course-outline__existing-lessons-modal__notice"
+					className="sensei-lms-existing-lessons-modal__notice"
 				>
 					{ __(
 						'Unable to add the selected lesson(s). Please make sure you are still logged in and try again.',

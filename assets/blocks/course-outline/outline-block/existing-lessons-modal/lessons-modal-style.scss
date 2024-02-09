@@ -1,4 +1,4 @@
-.wp-block-sensei-lms-course-outline__existing-lessons-modal {
+.sensei-lms-existing-lessons-modal {
 	min-width: 566px;
 	max-width: 697px;
 
@@ -14,7 +14,7 @@
 		margin: 0 0 15px;
 	}
 
-	&__existing-lessons {
+	&__lessons {
 		overflow: auto;
 		height: calc(100vh - 225px);
 
@@ -43,7 +43,7 @@
 		background-color: #F3F4F5;
 	}
 
-	&__table {
+	&__lessons-table {
 		width: 100%;
 		border-collapse: collapse;
 		border-spacing: 0;
