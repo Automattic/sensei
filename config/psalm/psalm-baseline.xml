@@ -5254,9 +5254,6 @@
       <code>Sensei_REST_API_Import_Controller</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="includes/rest-api/class-sensei-rest-api-lesson-actions-controller.php">
-    <InvalidArgument occurrences="2"/>
-  </file>
   <file src="includes/rest-api/class-sensei-rest-api-lesson-quiz-controller.php">
     <ArgumentTypeCoercion occurrences="1"/>
     <DocblockTypeContradiction occurrences="1">
