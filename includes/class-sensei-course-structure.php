@@ -5,9 +5,6 @@
  * @package sensei
  */
 
-use Sensei\Admin\Content_Duplicators\Lesson_Quiz_Duplicator;
-use Sensei\Admin\Content_Duplicators\Post_Duplicator;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
