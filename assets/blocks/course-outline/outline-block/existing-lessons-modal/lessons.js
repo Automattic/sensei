@@ -76,11 +76,9 @@ const Lessons = ( {
 
 	const allChecked =
 		lessons.length > 0 &&
-		lessons.every( ( lesson ) => selectedLessons.includes( lesson.id ) );
+		lessons.every( ( lesson ) => selectedLessons.includes( lesson ) );
 
 	const toggleAllHandler = ( checked ) => {
-		//const lessonIds = lessons.map( ( lesson ) => lesson.id );
-
 		setSelectedLessons( ( prev ) =>
 			checked
 				? uniq( [ ...prev, ...lessons ] )
