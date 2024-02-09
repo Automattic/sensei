@@ -1,9 +1,8 @@
 /**
- * External dependencies
+ * WordPress dependencies
  */
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
-import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -57,8 +56,6 @@ describe( 'useAddExistingLessons', () => {
 				},
 			},
 		];
-
-		apiFetch.mockResolvedValue( lessons );
 
 		await addExistingLessons( lessons );
 
