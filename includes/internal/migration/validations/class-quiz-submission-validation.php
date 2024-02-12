@@ -182,7 +182,7 @@ class Quiz_Submission_Validation {
 	 * @param Submission_Interface $tables_based_submission   Tables based progress.
 	 */
 	private function compare_submission( Submission_Interface $comments_based_submission, Submission_Interface $tables_based_submission ): void {
-		// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- Intended.
+		// phpcs:ignore Universal.Operators.StrictComparisons.LooseComparison -- Intended.
 		if ( $this->get_submission_data( $comments_based_submission ) != $this->get_submission_data( $tables_based_submission ) ) {
 			$this->add_mismatch_submission_error( $comments_based_submission, $tables_based_submission );
 		}
@@ -261,7 +261,7 @@ class Quiz_Submission_Validation {
 
 		$common_keys = array_intersect( $comments_based_keys, $tables_based_keys );
 		foreach ( $common_keys as $question_id ) {
-			// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- Intended.
+			// phpcs:ignore Universal.Operators.StrictComparisons.LooseComparison -- Intended.
 			if ( $comments_based_answers[ $question_id ]['value'] != $tables_based_answers[ $question_id ]['value'] ) {
 				$this->add_error(
 					'Answers mismatch.',
@@ -356,7 +356,7 @@ class Quiz_Submission_Validation {
 				'points'   => $tables_based_grades[ $question_id ]['points'],
 				'feedback' => $tables_based_grades[ $question_id ]['feedback'],
 			);
-			// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- Intended.
+			// phpcs:ignore Universal.Operators.StrictComparisons.LooseComparison -- Intended.
 			if ( $comments_based_grade != $tables_based_grade ) {
 				$this->add_error(
 					'Grades mismatch.',

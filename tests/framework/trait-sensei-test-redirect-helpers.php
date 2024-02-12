@@ -18,7 +18,8 @@ trait Sensei_Test_Redirect_Helpers {
 	 * Throws a Sensei_WP_Redirect_Exception instead.
 	 */
 	private function prevent_wp_redirect(): void {
-		$callback = function( $location, $status ) {
+		$callback = function ( $location, $status ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new Sensei_WP_Redirect_Exception( $location, $status );
 		};
 

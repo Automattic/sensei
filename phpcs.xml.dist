@@ -23,7 +23,7 @@
 	<!-- Rules -->
 	<rule ref="PHPCompatibilityWP"/>
 	<rule ref="WordPress">
-		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
 	</rule>
 	<rule ref="WordPress-Docs" />
 	<rule ref="WordPress-Extra" />
@@ -39,7 +39,7 @@
 		<include-pattern>/includes/class-sensei-dependency-checker.php</include-pattern>
 	</rule>
 
-	<rule ref="Generic.Arrays.DisallowShortArraySyntax">
+	<rule ref="Universal.Arrays.DisallowShortArraySyntax">
 		<include-pattern>/sensei-lms.php</include-pattern>
 		<include-pattern>/uninstall.php</include-pattern>
 		<include-pattern>/includes/class-sensei-dependency-checker.php</include-pattern>

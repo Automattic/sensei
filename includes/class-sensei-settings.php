@@ -1016,7 +1016,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			$old_field_value = isset( $old_value[ $field ] ) ? $old_value[ $field ] : '';
 			$new_field_value = isset( $value[ $field ] ) ? $value[ $field ] : '';
 
-			// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- Loose comparison is okay for checking for changes.
+			// phpcs:ignore Universal.Operators.StrictComparisons -- Loose comparison is okay for checking for changes.
 			if ( $new_field_value != $old_field_value ) {
 				// Create an array for this section of settings if needed.
 				$section = $field_config['section'];
