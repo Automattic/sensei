@@ -25,7 +25,7 @@ class Sensei_Usage_Tracking_Data {
 	 **/
 	public static function get_usage_data(): array {
 		$usage_data = array_merge(
-			Sensei_Usage_Tracking_Data::get_event_logging_base_fields(),
+			self::get_event_logging_base_fields(),
 			self::get_question_type_count(),
 			self::get_quiz_stats(),
 			[
