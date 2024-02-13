@@ -8,6 +8,7 @@ const CopyPlugin = require( 'copy-webpack-plugin' );
 const SVGSpritemapPlugin = require( 'svg-spritemap-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
+const { DefinePlugin } = require( 'webpack' );
 
 /**
  * WordPress dependencies
@@ -236,7 +237,6 @@ function getWebpackConfig( env, argv ) {
 		( plugin ) =>
 			plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 	);
-
 	return {
 		...webpackConfig,
 		context: path.resolve( __dirname, 'assets' ),
@@ -265,6 +265,14 @@ function getWebpackConfig( env, argv ) {
 				injectPolyfill: true,
 				combineAssets: COMBINE_ASSETS,
 				outputFormat: COMBINE_ASSETS ? 'json' : 'php',
+				requestToExternal( request ) {
+					// The extraction logic will only extract a package if requestToExternal
+					// explicitly returns undefined for the given request. Null
+					// shortcuts the logic such that react-i18n will be bundled.
+					if ( request === '@wordpress/react-i18n' ) {
+						return null;
+					}
+				},
 			} ),
 			new GenerateChunksMapPlugin( {
 				output: path.resolve(
@@ -292,7 +300,19 @@ function getWebpackConfig( env, argv ) {
 					prefix: 'sensei-sprite-',
 				},
 			} ),
+			new DefinePlugin( {
+				__i18n_text_domain__: JSON.stringify( 'default' ),
+			} ),
 		],
+		resolve: {
+			...webpackConfig.resolve,
+			// Remove "calypso:src" from the mainFields list to avoid using the source files
+			mainFields: [ 'browser', 'module', 'main' ],
+			fallback: {
+				fs: false,
+				path: false,
+			},
+		},
 	};
 }
 

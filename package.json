@@ -21,6 +21,10 @@
     "node": "^18.14.0"
   },
   "dependencies": {
+    "@automattic/calypso-color-schemes": "3.1.1",
+    "@automattic/color-studio": "2.5.0",
+    "@automattic/components": "2.0.1",
+    "@automattic/tour-kit": "1.1.1",
     "@wordpress/api-fetch": "wp-5.9",
     "@wordpress/base-styles": "wp-5.9",
     "@wordpress/block-editor": "wp-5.9",
@@ -46,6 +50,7 @@
     "classnames": "2.3.1",
     "interpolate-components": "1.1.1",
     "lodash": "4.17.21",
+    "qrcode.react": "3.1.0",
     "react-animate-height": "2.0.23",
     "terser-webpack-plugin": "5.3.1",
     "uuid": "3.3.2",
