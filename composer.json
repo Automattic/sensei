@@ -8,7 +8,6 @@
 		"php": "^7.4 || ^8",
 		"automattic/jetpack-changelogger": "3.3.5",
 		"bamarni/composer-bin-plugin": "1.8.2",
-		"dealerdirect/phpcodesniffer-composer-installer": "1.0.0",
 		"dms/phpunit-arraysubset-asserts": "0.5.0",
 		"humbug/php-scoper": "0.15.0",
 		"pelago/emogrifier": "7.0.0",
@@ -16,7 +15,6 @@
 		"phpcompatibility/phpcompatibility-wp": "2.1.4",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
 		"sirbrillig/phpcs-variable-analysis": "2.11.16",
-		"squizlabs/php_codesniffer": "3.7.2",
 		"symfony/polyfill-php80": "1.16.0",
 		"vimeo/psalm": "4.22.0",
 		"wp-coding-standards/wpcs": "3.0.1",
@@ -98,8 +96,8 @@
 			"php": "7.4"
 		},
 		"allow-plugins": {
-			"dealerdirect/phpcodesniffer-composer-installer": true,
-			"bamarni/composer-bin-plugin": true
+			"bamarni/composer-bin-plugin": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
 	},
 	"extra": {
