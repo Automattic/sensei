@@ -266,7 +266,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	private function assert_comments_based_course_progress( Course_Progress_Interface $course_progress ): void {
 		if ( ! $course_progress instanceof Comments_Based_Course_Progress ) {
 			$actual_type = get_class( $course_progress );
-			throw new \InvalidArgumentException( "Expected Comments_Based_Course_Progress, got {$actual_type}." );
+			throw new \InvalidArgumentException( esc_html( "Expected Comments_Based_Course_Progress, got {$actual_type}." ) );
 		}
 	}
 

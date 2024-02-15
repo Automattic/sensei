@@ -66,9 +66,8 @@ class Sensei_Unit_Tests_Bootstrap {
 	 * @return mixed
 	 */
 	public function prevent_requests( $preempt ) {
-		$error = 'You should use the filter `pre_http_request` to prevent requests in the tests';
 		if ( false === $preempt ) {
-			throw new Exception( $error );
+			throw new Exception( 'You should use the filter `pre_http_request` to prevent requests in the tests' );
 		}
 		return $preempt;
 	}
