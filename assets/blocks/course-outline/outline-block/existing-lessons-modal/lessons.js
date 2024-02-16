@@ -22,6 +22,7 @@ const selectLessons = ( select, filters ) => {
 		'postType',
 		'lesson',
 		{
+			requestSource: 'add_existing_lesson_modal',
 			status: [ 'publish', 'draft' ],
 			metaKey: '_lesson_course',
 			metaValue: 0,

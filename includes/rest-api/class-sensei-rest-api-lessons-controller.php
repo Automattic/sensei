@@ -39,71 +39,71 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 		register_post_meta(
 			'lesson',
 			'_quiz_has_questions',
-			[
+			array(
 				'show_in_rest'      => true,
 				'single'            => true,
 				'type'              => 'boolean',
-				'sanitize_callback' => function( $value ) {
+				'sanitize_callback' => function ( $value ) {
 					return $value ? 1 : 0;
 				},
-				'auth_callback'     => [ $this, 'auth_callback' ],
-			]
+				'auth_callback'     => array( $this, 'auth_callback' ),
+			)
 		);
 
 		register_post_meta(
 			'lesson',
 			'_lesson_complexity',
-			[
+			array(
 				'show_in_rest'      => true,
 				'single'            => true,
 				'type'              => 'string',
 				'default'           => 'easy',
-				'sanitize_callback' => function( $value ) {
+				'sanitize_callback' => function ( $value ) {
 					if ( '' === $value ) {
 						return $value;
 					}
 
 					return array_key_exists( $value, Sensei()->lesson->lesson_complexities() ) ? $value : 'easy';
 				},
-				'auth_callback'     => [ $this, 'auth_callback' ],
-			]
+				'auth_callback'     => array( $this, 'auth_callback' ),
+			)
 		);
 
 		register_post_meta(
 			'lesson',
 			'_lesson_length',
-			[
+			array(
 				'show_in_rest'      => true,
 				'single'            => true,
 				'type'              => 'integer',
 				'default'           => 10,
-				'sanitize_callback' => function( $value ) {
+				'sanitize_callback' => function ( $value ) {
 					return absint( $value );
 				},
-				'auth_callback'     => [ $this, 'auth_callback' ],
-			]
+				'auth_callback'     => array( $this, 'auth_callback' ),
+			)
 		);
 
 		register_post_meta(
 			'lesson',
 			'_lesson_course',
-			[
+			array(
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'integer',
-				'auth_callback' => [ $this, 'auth_callback' ],
-			]
+				'auth_callback' => array( $this, 'auth_callback' ),
+			)
 		);
 
 		register_post_meta(
 			'lesson',
 			'_lesson_preview',
-			[
+			array(
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'string',
-				'auth_callback' => [ $this, 'auth_callback' ],
-			]
+				'auth_callback' => array( $this, 'auth_callback' ),
+			)
 		);
 	}
 
@@ -113,8 +113,8 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	 * @since $$next-version$$
 	 */
 	private function custom_filter() {
-		add_filter( 'rest_lesson_query', [ $this, 'add_meta_query_args' ], 10, 2 );
-		add_filter( 'rest_lesson_query', [ $this, 'search_by_title' ], 10, 2 );
+		add_filter( 'rest_lesson_query', array( $this, 'add_meta_query_args' ), 10, 2 );
+		add_filter( 'rest_lesson_query', array( $this, 'search_by_title' ), 10, 2 );
 	}
 
 	/**
@@ -129,7 +129,9 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	 * @return array The modified query args.
 	 */
 	public function search_by_title( $args, $request ) {
-		if ( ! empty( $request['s'] ) ) {
+		$request_source = $request->get_param( 'requestSource' );
+		$search_term    = $request->get_param( 'search' );
+		if ( ! empty( $search_term ) && 'add_existing_lesson_modal' === $request_source ) {
 			$args['search_columns'] = array( 'post_title' );
 		}
 		return $args;
@@ -176,11 +178,11 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 				);
 			} else {
 				$meta_value   = esc_sql( $meta_value );
-				$meta_query[] = [
+				$meta_query[] = array(
 					'key'     => $meta_key,
 					'value'   => $meta_value,
 					'compare' => '=',
-				];
+				);
 			}
 
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
@@ -221,11 +223,11 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 			$post = get_post();
 			if ( Sensei()->lesson::lesson_quiz_has_questions( $post->ID ) && ! has_block( 'sensei-lms/quiz' ) ) {
 				$prepared['content']['raw'] .= serialize_block(
-					[
+					array(
 						'blockName'    => 'sensei-lms/quiz',
-						'innerContent' => [],
-						'attrs'        => [],
-					]
+						'innerContent' => array(),
+						'attrs'        => array(),
+					)
 				);
 			}
 		}
