@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <!-- wp:sensei-lms/featured-video /-->
 
-<!-- wp:paragraph {"placeholder":"<?php esc_attr_e( 'Include a transcript, link to a transcript, or a summary of the video.', 'sensei-lms' ); ?>"} -->
-<p></p>
+<!-- wp:paragraph {"placeholder":"<?php esc_attr_e( 'Include a transcript, link to a transcript, or a summary of the video.', 'sensei-lms' ); ?>","className":"sensei-content-description"} -->
+<p class="sensei-content-description"></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:sensei-lms/lesson-actions -->
