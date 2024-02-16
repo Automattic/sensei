@@ -73,7 +73,7 @@ jQuery( document ).ready( function ( $ ) {
 			.show();
 
 		$senseiSettings.find( 'a.tab.current' )
-			.removeClass( 'current' )
+			.removeClass( 'current' );
 
 		$senseiSettings
 			.find( `a.tab[href*="tab=${ sectionId }"]` )
@@ -171,6 +171,43 @@ jQuery( document ).ready( function ( $ ) {
 		data.append( 'nonce', window.senseiSettingsSectionVisitNonce );
 		fetch( ajaxurl, { method: 'POST', body: data } );
 	}
+
+	/***** Unique Page Settings *****/
+
+	$( '.sensei-settings-unique-page select' ).on(
+		'change',
+		disableSelectedUniquePageOptions
+	);
+
+	/**
+	 * Disable page options that are already selected in another setting.
+	 */
+	function disableSelectedUniquePageOptions() {
+		const selectedPageIds = [];
+		const $inputs = $( '.sensei-settings-unique-page select' );
+
+		$inputs.each( function () {
+			selectedPageIds.push( $( this ).val() );
+		} );
+
+		$inputs.each( function () {
+			const currentValue = $( this ).val();
+
+			$( this )
+				.find( 'option' )
+				.prop( 'disabled', false )
+				.filter( function () {
+					const optionValue = $( this ).val();
+					return (
+						optionValue !== currentValue &&
+						selectedPageIds.includes( optionValue )
+					);
+				} )
+				.prop( 'disabled', true );
+		} );
+	}
+
+	disableSelectedUniquePageOptions();
 
 	/***** Colour pickers *****/
 

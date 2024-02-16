@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Prevent selecting the same page for the Course Archive, My Courses, and Course Completed settings

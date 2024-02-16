@@ -129,4 +129,54 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 		/** Assert. */
 		$this->assertStringContainsString( '<a href="http://example.org/wp-admin/admin.php?page=sensei-settings&#038;tab=other-settings" class="tab external">Other Settings</a>', $tabs );
 	}
+
+	public function testCreateFields_WhenUniquePageIsTrue_AddsClass() {
+		/* Arrange. */
+		$settings           = new Sensei_Settings_Api();
+		$settings->sections = array(
+			'default-settings' => array(
+				'name' => 'Default Settings',
+			),
+		);
+		$settings->fields   = array(
+			'test' => array(
+				'name'        => 'Test',
+				'type'        => 'select',
+				'section'     => 'default-settings',
+				'unique_page' => true,
+			),
+		);
+
+		/* Act. */
+		$settings->create_fields();
+
+		/* Assert. */
+		global $wp_settings_fields;
+		$this->assertStringContainsString( 'sensei-settings-unique-page', $wp_settings_fields['sensei-settings']['default-settings']['test']['args']['class'] );
+	}
+
+	public function testCreateFields_WhenUniquePageIsFalse_NoClassIsAdded() {
+		/* Arrange. */
+		$settings           = new Sensei_Settings_Api();
+		$settings->sections = array(
+			'default-settings' => array(
+				'name' => 'Default Settings',
+			),
+		);
+		$settings->fields   = array(
+			'test' => array(
+				'name'        => 'Test',
+				'type'        => 'select',
+				'section'     => 'default-settings',
+				'unique_page' => false,
+			),
+		);
+
+		/* Act. */
+		$settings->create_fields();
+
+		/* Assert. */
+		global $wp_settings_fields;
+		$this->assertStringNotContainsString( 'sensei-settings-unique-page', $wp_settings_fields['sensei-settings']['default-settings']['test']['args']['class'] );
+	}
 }

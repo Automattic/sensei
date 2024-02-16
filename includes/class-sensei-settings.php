@@ -367,6 +367,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'default-settings',
 			'required'    => 0,
 			'options'     => $pages_array,
+			'unique_page' => true,
 		);
 
 		$fields['my_course_page'] = array(
@@ -377,6 +378,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'default-settings',
 			'required'    => 0,
 			'options'     => $pages_array,
+			'unique_page' => true,
 		);
 
 		$fields['course_completed_page'] = array(
@@ -387,6 +389,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'default-settings',
 			'required'    => 0,
 			'options'     => $pages_array,
+			'unique_page' => true,
 		);
 
 		$fields['placeholder_images_enable'] = array(

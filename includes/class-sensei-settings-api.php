@@ -395,6 +395,12 @@ class Sensei_Settings_API {
 				$name   = $v['name'];
 				if ( $v['type'] == 'info' ) {
 					$name = ''; }
+
+				$class = '';
+				if ( ! empty( $v['unique_page'] ) ) {
+					$class = 'sensei-settings-unique-page';
+				}
+
 				add_settings_field(
 					$k,
 					$name,
@@ -402,8 +408,9 @@ class Sensei_Settings_API {
 					$this->token,
 					$v['section'],
 					array(
-						'key'  => $k,
-						'data' => $v,
+						'key'   => $k,
+						'data'  => $v,
+						'class' => $class,
 					)
 				);
 
