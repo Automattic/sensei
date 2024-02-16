@@ -1,5 +1,8 @@
 .sensei-lms-existing-lessons-modal {
 	max-width: 697px;
+	@media ( min-width: 599px ) {
+		min-width: 597px;
+	}
 
 	/* Reset some components styles */
 	.components-base-control__field,
