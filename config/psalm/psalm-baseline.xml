@@ -397,6 +397,11 @@
       <code>$remote-&gt;version</code>
     </UndefinedPropertyFetch>
   </file>
+  <file src="includes/admin/content-duplicators/class-post-duplicator.php">
+    <DocblockTypeContradiction occurrences="1">
+      <code>is_wp_error( $new_post_id )</code>
+    </DocblockTypeContradiction>
+  </file>
   <file src="includes/admin/home/class-sensei-home-guides-provider.php">
     <UndefinedConstant occurrences="1">
       <code>HOUR_IN_SECONDS</code>
@@ -897,13 +902,9 @@
     </PossiblyFalseArgument>
   </file>
   <file src="includes/class-sensei-admin.php">
-    <ArgumentTypeCoercion occurrences="3">
+    <ArgumentTypeCoercion occurrences="1">
       <code>$args</code>
-      <code>$new_lesson</code>
     </ArgumentTypeCoercion>
-    <FalsableReturnStatement occurrences="1">
-      <code>false</code>
-    </FalsableReturnStatement>
     <InvalidArgument occurrences="6">
       <code>$args</code>
       <code>'screen'</code>
@@ -917,7 +918,6 @@
     </InvalidNullableReturnType>
     <InvalidScalarArgument occurrences="3">
       <code>$course_id</code>
-      <code>$old_quiz_id</code>
       <code>'50'</code>
     </InvalidScalarArgument>
     <MissingDocblockType occurrences="2">
@@ -977,10 +977,8 @@
       <code>$new_post</code>
       <code>$num_posts</code>
       <code>$num_posts</code>
-      <code>is_null( $update_prerequisite_object )</code>
       <code>isset( $hook_suffix )</code>
       <code>isset( $post_type )</code>
-      <code>isset( $terms )</code>
     </RedundantConditionGivenDocblockType>
     <TooManyArguments occurrences="1">
       <code>esc_html( sprintf( __( 'Please supply a %1$s ID.', 'sensei-lms' ) ), $post_type )</code>
@@ -5252,6 +5250,9 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Import_Controller</code>
     </PropertyNotSetInConstructor>
+  </file>
+  <file src="includes/rest-api/class-sensei-rest-api-lesson-actions-controller.php">
+    <InvalidArgument occurrences="2"/>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-lesson-quiz-controller.php">
     <ArgumentTypeCoercion occurrences="1"/>

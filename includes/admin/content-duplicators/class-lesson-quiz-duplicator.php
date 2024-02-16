@@ -40,10 +40,19 @@ class Lesson_Quiz_Duplicator {
 			return;
 		}
 
+		$old_quiz = get_post( $old_quiz_id );
+		if ( ! $old_quiz instanceof \WP_Post ) {
+			return;
+		}
+
 		$old_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $old_quiz_id );
 
 		// Duplicate the generic wp post information.
-		$new_quiz = $this->post_duplicator->duplicate( get_post( $old_quiz_id ), '' );
+		$new_quiz = $this->post_duplicator->duplicate( $old_quiz, '' );
+
+		if ( ! $new_quiz ) {
+			return;
+		}
 
 		// Update the new lesson data.
 		add_post_meta( $new_lesson_id, '_lesson_quiz', $new_quiz->ID );
@@ -61,7 +70,7 @@ class Lesson_Quiz_Duplicator {
 
 			// Copy the question order over to the new quiz.
 			$old_question_order = get_post_meta( $question->ID, '_quiz_question_order' . $old_quiz_id, true );
-			$new_question_order = str_ireplace( $old_quiz_id, $new_quiz->ID, $old_question_order );
+			$new_question_order = str_ireplace( (string) $old_quiz_id, (string) $new_quiz->ID, $old_question_order );
 			add_post_meta( $question->ID, '_quiz_question_order' . $new_quiz->ID, $new_question_order );
 
 			// Add question to quiz.

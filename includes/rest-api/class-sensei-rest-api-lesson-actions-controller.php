@@ -34,6 +34,13 @@ class Sensei_REST_API_Lesson_Actions_Controller extends \WP_REST_Controller {
 	protected $rest_base = 'lessons';
 
 	/**
+	 * Cached results of get_item_schema.
+	 *
+	 * @var array
+	 */
+	protected $schema;
+
+	/**
 	 * Sensei_REST_API_Lesson_Actions_Controller constructor.
 	 *
 	 * @param string $namespace Routes namespace.
@@ -108,6 +115,14 @@ class Sensei_REST_API_Lesson_Actions_Controller extends \WP_REST_Controller {
 
 		$duplicated_lessons = array();
 		foreach ( $lessons as $lesson ) {
+			if ( is_int( $lesson ) ) {
+				$lesson = get_post( $lesson );
+			}
+
+			if ( ! $lesson instanceof WP_Post ) {
+				continue;
+			}
+
 			$attached_course_id = get_post_meta( $lesson->ID, '_lesson_course', true );
 			if ( $attached_course_id && $attached_course_id === $course_id ) {
 				// lesson is already attached to the course.
@@ -117,6 +132,9 @@ class Sensei_REST_API_Lesson_Actions_Controller extends \WP_REST_Controller {
 			if ( $attached_course_id ) {
 				// duplicate the lesson if it is already attached to another course.
 				$add_lesson = $post_duplicator->duplicate( $lesson, null, true );
+				if ( ! $add_lesson ) {
+					continue;
+				}
 
 				$lesson_quiz_duplicator->duplicate( $lesson->ID, $add_lesson->ID );
 			} else {
@@ -162,6 +180,10 @@ class Sensei_REST_API_Lesson_Actions_Controller extends \WP_REST_Controller {
 		}
 
 		foreach ( $lessons as $lesson ) {
+			if ( ! $lesson instanceof WP_Post ) {
+				return false;
+			}
+
 			if ( ! current_user_can( 'edit_post', $lesson->ID ) ) {
 				return false;
 			}
