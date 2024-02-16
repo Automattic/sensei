@@ -1,0 +1,104 @@
+.sensei-lms-existing-lessons-modal {
+	max-width: 697px;
+	@media ( min-width: 599px ) {
+		min-width: 597px;
+	}
+
+	/* Reset some components styles */
+	.components-base-control__field,
+	.components-checkbox-control__input-container,
+	ul,
+	li {
+		margin: 0;
+	}
+
+	&__notice {
+		margin: 0 0 15px;
+	}
+
+	&__lessons {
+		overflow: auto;
+		height: calc( 100vh - 269px );
+
+		@media ( min-width: 599px ) {
+			max-height: calc( 100vh - 399px );
+			height: 355px;
+		}
+
+		&--loading {
+			text-align: center;
+			padding: 20px;
+		}
+	}
+
+	&__filters {
+		display: flex;
+		padding-bottom: 10px;
+
+		> li:not( :first-child ) {
+			margin-left: 10px;
+			flex-grow: 1;
+		}
+	}
+
+	&__search-input[type='text'] {
+		background-color: #f3f4f5;
+	}
+
+	&__lessons-table {
+		width: 100%;
+		border-collapse: collapse;
+		border-spacing: 0;
+
+		th {
+			position: sticky;
+			top: 0;
+			background-color: #fff;
+			padding: 8px;
+			box-shadow: inset 0 -1px 0 #ddd;
+			z-index: 99999999999999; /* Fix checkboxes over th */
+			text-align: left;
+			text-transform: uppercase;
+			font-weight: 500;
+
+			.components-checkbox-control__input-container {
+				vertical-align: top;
+			}
+		}
+		td {
+			padding: 8px;
+			vertical-align: middle;
+		}
+	}
+
+	&__lesson-checkbox {
+		width: 1px;
+	}
+
+	&__lesson-title {
+		font-weight: 700;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		max-width: 250px;
+		@media ( max-width: 500px ) {
+			max-width: 100px;
+		}
+	}
+
+	&__course-title {
+		&--not-found {
+			color: rgba( 0, 0, 0, 0.5 );
+		}
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		padding-top: 20px;
+
+		> li:not( :first-child ) {
+			margin-left: 10px;
+		}
+	}
+}
