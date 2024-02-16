@@ -15,10 +15,11 @@ import TextAppender from '../../../shared/components/text-appender';
 /**
  * Outline block appender for adding a lesson or a module.
  *
- * @param {Object} props
- * @param {string} props.clientId Outline block ID.
+ * @param {Object}   props
+ * @param {string}   props.clientId  Outline block ID.
+ * @param {Function} props.openModal Open modal callback.
  */
-const OutlineAppender = ( { clientId } ) => {
+const OutlineAppender = ( { clientId, openModal } ) => {
 	const { insertBlock } = useDispatch( 'core/block-editor' );
 	const internalBlockCount = useSelect(
 		( select ) => select( 'core/block-editor' ).getBlockCount( clientId ),
@@ -38,6 +39,11 @@ const OutlineAppender = ( { clientId } ) => {
 					clientId,
 					true
 				),
+		},
+		{
+			title: __( 'Existing Lesson(s)', 'sensei-lms' ),
+			icon: LessonIcon,
+			onClick: openModal,
 		},
 		{
 			title: __( 'Module', 'sensei-lms' ),

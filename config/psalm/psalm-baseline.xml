@@ -397,6 +397,14 @@
       <code>$remote-&gt;version</code>
     </UndefinedPropertyFetch>
   </file>
+  <file src="includes/admin/content-duplicators/class-post-duplicator.php">
+    <DocblockTypeContradiction occurrences="1">
+      <code>is_wp_error( $new_post_id )</code>
+    </DocblockTypeContradiction>
+    <RawObjectIteration occurrences="1">
+      <code>$post</code>
+    </RawObjectIteration>
+  </file>
   <file src="includes/admin/home/class-sensei-home-guides-provider.php">
     <UndefinedConstant occurrences="1">
       <code>HOUR_IN_SECONDS</code>
@@ -897,13 +905,9 @@
     </PossiblyFalseArgument>
   </file>
   <file src="includes/class-sensei-admin.php">
-    <ArgumentTypeCoercion occurrences="3">
+    <ArgumentTypeCoercion occurrences="1">
       <code>$args</code>
-      <code>$new_lesson</code>
     </ArgumentTypeCoercion>
-    <FalsableReturnStatement occurrences="1">
-      <code>false</code>
-    </FalsableReturnStatement>
     <InvalidArgument occurrences="6">
       <code>$args</code>
       <code>'screen'</code>
@@ -912,12 +916,8 @@
       <code>true</code>
       <code>true</code>
     </InvalidArgument>
-    <InvalidNullableReturnType occurrences="1">
-      <code>array</code>
-    </InvalidNullableReturnType>
-    <InvalidScalarArgument occurrences="3">
+    <InvalidScalarArgument occurrences="2">
       <code>$course_id</code>
-      <code>$old_quiz_id</code>
       <code>'50'</code>
     </InvalidScalarArgument>
     <MissingDocblockType occurrences="2">
@@ -942,9 +942,6 @@
       <code>$lesson_order_page_slug</code>
       <code>Sensei()-&gt;plugin_url</code>
     </MissingPropertyType>
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
     <PossiblyInvalidArgument occurrences="2">
       <code>$data</code>
       <code>$data</code>
@@ -971,16 +968,12 @@
       <code>$_GET['post']</code>
       <code>$_REQUEST['event_name']</code>
     </PossiblyUndefinedArrayOffset>
-    <RedundantConditionGivenDocblockType occurrences="9">
-      <code>! is_wp_error( $new_post_id )</code>
-      <code>$new_post</code>
-      <code>$new_post</code>
+    <RedundantConditionGivenDocblockType occurrences="5">
+      <code>! is_wp_error( $new_post )</code>
       <code>$num_posts</code>
       <code>$num_posts</code>
-      <code>is_null( $update_prerequisite_object )</code>
       <code>isset( $hook_suffix )</code>
       <code>isset( $post_type )</code>
-      <code>isset( $terms )</code>
     </RedundantConditionGivenDocblockType>
     <TooManyArguments occurrences="1">
       <code>esc_html( sprintf( __( 'Please supply a %1$s ID.', 'sensei-lms' ) ), $post_type )</code>
