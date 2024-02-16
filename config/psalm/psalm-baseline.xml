@@ -112,6 +112,14 @@
       <code>wp_unslash( $_GET['course_id'] ?? 0 )</code>
       <code>wp_unslash( $_GET['lesson_id'] ?? 0 )</code>
     </InvalidScalarArgument>
+    <PossiblyInvalidPropertyFetch occurrences="3">
+      <code>$course-&gt;post_author</code>
+      <code>$post-&gt;post_author</code>
+      <code>$post-&gt;post_author</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>$post-&gt;post_author</code>
+    </PossiblyNullPropertyFetch>
     <RedundantCondition occurrences="1">
       <code>isset( $this-&gt;bulk_actions_controller ) &amp;&amp; $this-&gt;bulk_actions_controller-&gt;is_current_page()</code>
     </RedundantCondition>
@@ -160,8 +168,9 @@
     <InvalidScalarArgument occurrences="1">
       <code>$this-&gt;total_items</code>
     </InvalidScalarArgument>
-    <PossiblyInvalidPropertyFetch occurrences="2">
+    <PossiblyInvalidPropertyFetch occurrences="3">
       <code>$course-&gt;ID</code>
+      <code>$course-&gt;post_title</code>
       <code>$course-&gt;post_title</code>
     </PossiblyInvalidPropertyFetch>
     <PossiblyNullPropertyAssignmentValue occurrences="1">
@@ -456,6 +465,14 @@
       <code>isset( $this-&gt;local_plugin_updates )</code>
     </RedundantPropertyInitializationCheck>
   </file>
+  <file src="includes/admin/home/tasks/class-sensei-home-tasks-provider.php">
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$post-&gt;post_title</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>$post-&gt;post_title</code>
+    </PossiblyNullPropertyFetch>
+  </file>
   <file src="includes/admin/home/tasks/task/class-sensei-home-task-sell-course-with-woocommerce.php">
     <MissingFile occurrences="1">
       <code>require_once ABSPATH . 'wp-admin/includes/plugin.php'</code>
@@ -481,11 +498,22 @@
     <MissingConstructor occurrences="1">
       <code>$results</code>
     </MissingConstructor>
+    <PossiblyInvalidArgument occurrences="2">
+      <code>$course</code>
+      <code>$course</code>
+    </PossiblyInvalidArgument>
     <PossiblyInvalidMethodCall occurrences="3">
       <code>get_provider_results</code>
       <code>get_time</code>
       <code>get_version_hash</code>
     </PossiblyInvalidMethodCall>
+    <PossiblyInvalidPropertyFetch occurrences="2">
+      <code>$course_progress-&gt;comment_approved</code>
+      <code>$course_progress-&gt;comment_date_gmt</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>$course_progress-&gt;comment_approved</code>
+    </PossiblyNullPropertyFetch>
     <UndefinedInterfaceMethod occurrences="1">
       <code>debug</code>
     </UndefinedInterfaceMethod>
@@ -497,6 +525,11 @@
     <InvalidReturnType occurrences="1">
       <code>\WP_Term[]</code>
     </InvalidReturnType>
+  </file>
+  <file src="includes/admin/tools/class-sensei-tool-recalculate-course-enrolment.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$course</code>
+    </PossiblyInvalidArgument>
   </file>
   <file src="includes/admin/tools/views/html-enrolment-debug-form.php">
     <RawObjectIteration occurrences="2">
@@ -677,6 +710,9 @@
     <PossiblyFalseArgument occurrences="1">
       <code>get_permalink()</code>
     </PossiblyFalseArgument>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$lesson-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/blocks/class-sensei-conditional-content-block.php">
     <InvalidScalarArgument occurrences="3">
@@ -696,6 +732,9 @@
     </PossiblyFalseArgument>
   </file>
   <file src="includes/blocks/class-sensei-course-blocks.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>get_post()</code>
+    </PossiblyInvalidArgument>
     <PossiblyNullPropertyAssignment occurrences="1">
       <code>$post_type_object</code>
     </PossiblyNullPropertyAssignment>
@@ -778,6 +817,11 @@
       <code>get_post_type_archive_link( 'sensei_message' )</code>
     </PossiblyFalseArgument>
   </file>
+  <file src="includes/blocks/class-sensei-lesson-actions-block.php">
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$lesson-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
+  </file>
   <file src="includes/blocks/class-sensei-lesson-blocks.php">
     <PossiblyNullPropertyAssignment occurrences="1">
       <code>$post_type_object</code>
@@ -791,6 +835,12 @@
     <PossiblyNullArgument occurrences="1">
       <code>$course_id</code>
     </PossiblyNullArgument>
+  </file>
+  <file src="includes/blocks/class-sensei-next-lesson-block.php">
+    <PossiblyInvalidPropertyFetch occurrences="2">
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/blocks/class-sensei-page-blocks.php">
     <InvalidArrayAccess occurrences="1">
@@ -810,6 +860,9 @@
     <PossiblyFalseArgument occurrences="1">
       <code>get_permalink()</code>
     </PossiblyFalseArgument>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$lesson-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/blocks/class-sensei-take-quiz-block.php">
     <InvalidScalarArgument occurrences="1">
@@ -916,10 +969,7 @@
       <code>true</code>
       <code>true</code>
     </InvalidArgument>
-    <InvalidNullableReturnType occurrences="1">
-      <code>array</code>
-    </InvalidNullableReturnType>
-    <InvalidScalarArgument occurrences="3">
+    <InvalidScalarArgument occurrences="2">
       <code>$course_id</code>
       <code>'50'</code>
     </InvalidScalarArgument>
@@ -945,17 +995,20 @@
       <code>$lesson_order_page_slug</code>
       <code>Sensei()-&gt;plugin_url</code>
     </MissingPropertyType>
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
-    <PossiblyInvalidArgument occurrences="2">
+    <PossiblyInvalidArgument occurrences="3">
       <code>$data</code>
       <code>$data</code>
+      <code>$post</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidPropertyFetch occurrences="3">
+    <PossiblyInvalidPropertyFetch occurrences="8">
       <code>$course-&gt;ID</code>
       <code>$course-&gt;ID</code>
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;post_status</code>
+      <code>$course-&gt;post_title</code>
       <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_type</code>
+      <code>$post-&gt;post_type</code>
     </PossiblyInvalidPropertyFetch>
     <PossiblyNullArgument occurrences="6">
       <code>$course_structure</code>
@@ -965,7 +1018,9 @@
       <code>$post_type-&gt;cap-&gt;edit_posts</code>
       <code>$screen</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyFetch occurrences="3">
+    <PossiblyNullPropertyFetch occurrences="5">
+      <code>$post-&gt;post_type</code>
+      <code>$post-&gt;post_type</code>
       <code>$post_type-&gt;cap</code>
       <code>$post_type-&gt;labels</code>
       <code>$screen-&gt;id</code>
@@ -974,10 +1029,9 @@
       <code>$_GET['post']</code>
       <code>$_REQUEST['event_name']</code>
     </PossiblyUndefinedArrayOffset>
-    <RedundantConditionGivenDocblockType occurrences="9">
-      <code>! is_wp_error( $new_post_id )</code>
-      <code>$new_post</code>
-      <code>$new_post</code>
+    <RedundantConditionGivenDocblockType occurrences="6">
+      <code>! is_wp_error( $new_post )</code>
+      <code>! is_wp_error( $post )</code>
       <code>$num_posts</code>
       <code>$num_posts</code>
       <code>isset( $hook_suffix )</code>
@@ -1012,6 +1066,15 @@
       <code>$search</code>
       <code>$search</code>
     </PossiblyFalsePropertyAssignmentValue>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$course-&gt;post_title</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="1">
+      <code>$course-&gt;post_title</code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>$course-&gt;post_title</code>
+    </PossiblyNullPropertyFetch>
     <PossiblyUndefinedVariable occurrences="1">
       <code>$user_email</code>
     </PossiblyUndefinedVariable>
@@ -1056,6 +1119,15 @@
       <code>$search</code>
       <code>$search</code>
     </PossiblyFalsePropertyAssignmentValue>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$lesson-&gt;post_title</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="1">
+      <code>$lesson-&gt;post_title</code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>$lesson-&gt;post_title</code>
+    </PossiblyNullPropertyFetch>
     <PropertyNotSetInConstructor occurrences="8">
       <code>Sensei_Analysis_Lesson_List_Table</code>
       <code>Sensei_Analysis_Lesson_List_Table</code>
@@ -1252,7 +1324,13 @@
     <InvalidReturnStatement occurrences="1">
       <code>$title</code>
     </InvalidReturnStatement>
-    <PossiblyNullPropertyFetch occurrences="1">
+    <PossiblyInvalidPropertyFetch occurrences="2">
+      <code>$course-&gt;post_name</code>
+      <code>$course-&gt;post_name</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullPropertyFetch occurrences="3">
+      <code>$course-&gt;post_name</code>
+      <code>$course-&gt;post_name</code>
       <code>$course-&gt;post_title</code>
     </PossiblyNullPropertyFetch>
     <PropertyNotSetInConstructor occurrences="2">
@@ -1264,10 +1342,9 @@
     </UndefinedConstant>
   </file>
   <file src="includes/class-sensei-course-structure.php">
-    <ArgumentTypeCoercion occurrences="5">
+    <ArgumentTypeCoercion occurrences="4">
       <code>$args</code>
       <code>$changed_args</code>
-      <code>$post_args</code>
       <code>$post_args</code>
       <code>$post_args</code>
     </ArgumentTypeCoercion>
@@ -1278,6 +1355,12 @@
     <FalsableReturnStatement occurrences="1">
       <code>$existing_module</code>
     </FalsableReturnStatement>
+    <InvalidArgument occurrences="1">
+      <code>$post_args</code>
+    </InvalidArgument>
+    <InvalidNullableReturnType occurrences="1">
+      <code>false|int</code>
+    </InvalidNullableReturnType>
     <InvalidReturnStatement occurrences="5">
       <code>$existing_module</code>
       <code>$lessons_query instanceof WP_Query ? $lessons_query-&gt;posts : []</code>
@@ -1290,32 +1373,59 @@
       <code>bool|WP_Error</code>
       <code>false|array[]</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="1">
+    <InvalidScalarArgument occurrences="4">
+      <code>$author</code>
       <code>$course_name</code>
+      <code>$teacher_user_id</code>
+      <code>get_post( $this-&gt;course_id )-&gt;post_author</code>
     </InvalidScalarArgument>
-    <NullableReturnStatement occurrences="1">
+    <NullableReturnStatement occurrences="2">
+      <code>$lesson-&gt;ID</code>
       <code>$term-&gt;term_id</code>
     </NullableReturnStatement>
     <PossibleRawObjectIteration occurrences="1">
       <code>$structure</code>
     </PossibleRawObjectIteration>
-    <PossiblyInvalidPropertyFetch occurrences="7">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$lesson</code>
+    </PossiblyInvalidArgument>
+    <PossiblyInvalidPropertyFetch occurrences="17">
       <code>$existing_module-&gt;term_id</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;post_status</code>
+      <code>$lesson-&gt;post_status</code>
+      <code>$lesson-&gt;post_title</code>
+      <code>$lesson-&gt;post_title</code>
+      <code>$lesson-&gt;post_type</code>
       <code>$previous_term-&gt;term_id</code>
       <code>$term-&gt;description</code>
       <code>$term-&gt;name</code>
       <code>$term-&gt;slug</code>
       <code>$term-&gt;slug</code>
       <code>$term-&gt;term_id</code>
+      <code>get_post( $this-&gt;course_id )-&gt;post_author</code>
+      <code>get_post( $this-&gt;course_id )-&gt;post_author</code>
+      <code>get_post( $this-&gt;course_id )-&gt;post_author</code>
     </PossiblyInvalidPropertyFetch>
-    <PossiblyNullArgument occurrences="1">
+    <PossiblyNullArgument occurrences="3">
       <code>$item['id']</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyFetch occurrences="4">
+    <PossiblyNullPropertyFetch occurrences="12">
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;post_status</code>
+      <code>$lesson-&gt;post_title</code>
+      <code>$lesson-&gt;post_title</code>
       <code>$term-&gt;description</code>
       <code>$term-&gt;name</code>
       <code>$term-&gt;slug</code>
       <code>$term-&gt;term_id</code>
+      <code>get_post( $this-&gt;course_id )-&gt;post_author</code>
+      <code>get_post( $this-&gt;course_id )-&gt;post_author</code>
+      <code>get_post( $this-&gt;course_id )-&gt;post_author</code>
     </PossiblyNullPropertyFetch>
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>$lessons_query instanceof WP_Query</code>
@@ -1325,9 +1435,7 @@
       <code>$lesson</code>
       <code>$modules</code>
     </UndefinedMethod>
-    <UndefinedPropertyFetch occurrences="7">
-      <code>$existing_module-&gt;term_id</code>
-      <code>$previous_term-&gt;term_id</code>
+    <UndefinedPropertyFetch occurrences="5">
       <code>$term-&gt;description</code>
       <code>$term-&gt;name</code>
       <code>$term-&gt;slug</code>
@@ -1402,7 +1510,9 @@
       <code>int</code>
       <code>string</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="13">
+    <InvalidScalarArgument occurrences="15">
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_author</code>
       <code>$course_id</code>
       <code>$course_id</code>
       <code>$i</code>
@@ -1462,13 +1572,18 @@
       <code>get_the_ID()</code>
       <code>get_the_ID()</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArgument occurrences="4">
+    <PossiblyInvalidArgument occurrences="5">
       <code>$category_output</code>
       <code>$category_output</code>
       <code>$category_output</code>
+      <code>$course</code>
       <code>$output</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidPropertyFetch occurrences="16">
+    <PossiblyInvalidPropertyFetch occurrences="25">
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_content</code>
       <code>$course_item-&gt;ID</code>
       <code>$course_item-&gt;ID</code>
       <code>$course_item-&gt;post_author</code>
@@ -1479,23 +1594,43 @@
       <code>$course_item-&gt;post_title</code>
       <code>$lesson-&gt;ID</code>
       <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_content</code>
+      <code>$post-&gt;post_name</code>
       <code>$post-&gt;post_type</code>
       <code>$post_item-&gt;ID</code>
       <code>$post_item-&gt;post_title</code>
+      <code>$sensei_settings_course_page-&gt;post_content</code>
       <code>$taxonomy_raw_obj-&gt;labels</code>
       <code>$user_info-&gt;display_name</code>
       <code>$user_info-&gt;display_name</code>
+      <code>get_post( $course_id )-&gt;post_author</code>
+      <code>get_post( get_the_ID() )-&gt;post_excerpt</code>
     </PossiblyInvalidPropertyFetch>
-    <PossiblyNullArgument occurrences="5">
+    <PossiblyNullArgument occurrences="13">
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;ID</code>
       <code>$post_type-&gt;cap-&gt;edit_post</code>
       <code>$screen</code>
+      <code>$sensei_settings_course_page-&gt;post_content</code>
       <code>get_edit_post_link( $post_item-&gt;ID )</code>
       <code>get_edit_post_link( absint( $course_prerequisite_id ) )</code>
       <code>get_post_type_object( 'course' )-&gt;cap-&gt;edit_post</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyFetch occurrences="3">
+    <PossiblyNullPropertyFetch occurrences="10">
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_content</code>
       <code>$post_type-&gt;cap</code>
+      <code>$sensei_settings_course_page-&gt;post_content</code>
       <code>$term-&gt;term_id</code>
+      <code>get_post( $course_id )-&gt;post_author</code>
+      <code>get_post( get_the_ID() )-&gt;post_excerpt</code>
       <code>get_post_type_object( 'course' )-&gt;cap</code>
     </PossiblyNullPropertyFetch>
     <PropertyNotSetInConstructor occurrences="5">
@@ -1863,10 +1998,12 @@
     </MissingPropertyType>
   </file>
   <file src="includes/class-sensei-learner.php">
-    <DocblockTypeContradiction occurrences="3">
+    <DocblockTypeContradiction occurrences="5">
       <code>! self::$instance</code>
       <code>empty( self::$learner_terms[ $user_id ] ) || self::$learner_terms[ $user_id ] instanceof WP_Error</code>
+      <code>empty( self::$learner_terms[ $user_id ] ) || self::$learner_terms[ $user_id ] instanceof WP_Error</code>
       <code>self::$instance</code>
+      <code>self::$learner_terms[ $user_id ] instanceof WP_Error</code>
     </DocblockTypeContradiction>
     <InvalidPropertyAssignmentValue occurrences="2">
       <code>self::$learner_terms</code>
@@ -1884,16 +2021,16 @@
     </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/class-sensei-lesson.php">
-    <ArgumentTypeCoercion occurrences="6">
+    <ArgumentTypeCoercion occurrences="5">
       <code>$post_type_args</code>
       <code>$post_type_args</code>
-      <code>$qargs</code>
       <code>$questions_array</code>
       <code>'WP_Post'</code>
       <code>'WP_User'</code>
     </ArgumentTypeCoercion>
-    <DocblockTypeContradiction occurrences="4">
+    <DocblockTypeContradiction occurrences="5">
       <code>! isset( $lesson_id )</code>
+      <code>! isset( $question-&gt;ID )</code>
       <code>- 1 !== $new_course</code>
       <code>-1</code>
       <code>-1 !== $new_complexity</code>
@@ -1902,12 +2039,13 @@
       <code>empty( $block['innerBlocks'][0]['attrs']['id'] ) ? null : wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) )</code>
       <code>get_permalink( $quiz_id )</code>
     </FalsableReturnStatement>
-    <InvalidArgument occurrences="6">
+    <InvalidArgument occurrences="7">
       <code>$args</code>
       <code>$post_args</code>
       <code>$post_args</code>
       <code>$post_type_args</code>
       <code>$post_type_args</code>
+      <code>$qargs</code>
       <code>'question-category'</code>
     </InvalidArgument>
     <InvalidArrayOffset occurrences="4">
@@ -1932,7 +2070,7 @@
     <InvalidReturnType occurrences="1">
       <code>int|null</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="27">
+    <InvalidScalarArgument occurrences="28">
       <code>$course_id</code>
       <code>$course_id</code>
       <code>$course_id</code>
@@ -1947,6 +2085,7 @@
       <code>$question_id</code>
       <code>$question_id</code>
       <code>$question_id</code>
+      <code>$quiz_author</code>
       <code>$quiz_id</code>
       <code>$quiz_id</code>
       <code>$quiz_id</code>
@@ -2036,7 +2175,10 @@
       <code>get_the_ID()</code>
       <code>get_the_ID()</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArgument occurrences="1">
+    <PossiblyInvalidArgument occurrences="4">
+      <code>$lesson</code>
+      <code>$lesson_prerequisite_post</code>
+      <code>get_post( get_the_ID() )</code>
       <code>get_the_term_list( $question_id, 'question-category', '', ', ', '' )</code>
     </PossiblyInvalidArgument>
     <PossiblyInvalidIterator occurrences="3">
@@ -2044,21 +2186,41 @@
       <code>$question_cats</code>
       <code>$question_cats</code>
     </PossiblyInvalidIterator>
-    <PossiblyInvalidPropertyFetch occurrences="8">
+    <PossiblyInvalidPropertyFetch occurrences="22">
+      <code>$attachment-&gt;post_title</code>
       <code>$cat-&gt;count</code>
       <code>$cat-&gt;count</code>
       <code>$cat-&gt;name</code>
       <code>$cat_question-&gt;ID</code>
       <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;post_content</code>
+      <code>$lesson-&gt;post_status</code>
+      <code>$lesson-&gt;post_title</code>
+      <code>$post-&gt;post_content</code>
+      <code>$post-&gt;post_content</code>
       <code>$question-&gt;ID</code>
+      <code>$question-&gt;ID</code>
+      <code>$question-&gt;post_content</code>
+      <code>$question-&gt;post_title</code>
+      <code>$question-&gt;post_title</code>
       <code>$question_cat-&gt;name</code>
       <code>$user_info-&gt;display_name</code>
+      <code>get_post( $quiz_id )-&gt;post_author</code>
+      <code>get_post()-&gt;post_author</code>
+      <code>get_post()-&gt;post_author</code>
     </PossiblyInvalidPropertyFetch>
-    <PossiblyNullArgument occurrences="12">
+    <PossiblyNullArgument occurrences="18">
       <code>$cat-&gt;name</code>
       <code>$edit_course_url</code>
+      <code>$lesson-&gt;post_status</code>
+      <code>$lesson-&gt;post_title</code>
       <code>$lesson_id</code>
+      <code>$post-&gt;post_content</code>
       <code>$post_type-&gt;cap-&gt;edit_post</code>
+      <code>$question-&gt;post_content</code>
+      <code>$question-&gt;post_title</code>
+      <code>$question-&gt;post_title</code>
       <code>$quiz_id</code>
       <code>get_edit_post_link( absint( $lesson_course_id ) )</code>
       <code>get_edit_post_link( absint( $lesson_prerequisite_id ) )</code>
@@ -2068,11 +2230,21 @@
       <code>get_post_type_object( 'question' )-&gt;cap-&gt;edit_post</code>
       <code>get_post_type_object( 'question' )-&gt;cap-&gt;edit_post</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyFetch occurrences="9">
+    <PossiblyNullPropertyFetch occurrences="19">
+      <code>$attachment-&gt;post_title</code>
       <code>$cat-&gt;name</code>
+      <code>$lesson-&gt;post_status</code>
+      <code>$lesson-&gt;post_title</code>
+      <code>$post-&gt;post_content</code>
       <code>$post_type-&gt;cap</code>
+      <code>$question-&gt;post_content</code>
+      <code>$question-&gt;post_title</code>
+      <code>$question-&gt;post_title</code>
       <code>$question_cat-&gt;name</code>
       <code>$screen-&gt;base</code>
+      <code>get_post( $quiz_id )-&gt;post_author</code>
+      <code>get_post()-&gt;post_author</code>
+      <code>get_post()-&gt;post_author</code>
       <code>get_post_type_object( 'course' )-&gt;cap</code>
       <code>get_post_type_object( 'lesson' )-&gt;cap</code>
       <code>get_post_type_object( 'question' )-&gt;cap</code>
@@ -2149,6 +2321,9 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$message_data</code>
     </ArgumentTypeCoercion>
+    <DocblockTypeContradiction occurrences="1">
+      <code>is_wp_error( $post )</code>
+    </DocblockTypeContradiction>
     <InvalidDocblock occurrences="2">
       <code>public function message_login() {</code>
       <code>public function stop_wp_comment_emails( $emails, $comment_id ) {</code>
@@ -2162,10 +2337,14 @@
     <InvalidReturnType occurrences="1">
       <code>string</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="4">
+    <InvalidScalarArgument occurrences="8">
       <code>$comment-&gt;comment_ID</code>
       <code>$comment-&gt;comment_post_ID</code>
+      <code>$comment-&gt;comment_post_ID</code>
       <code>$comment-&gt;user_id</code>
+      <code>$comment-&gt;user_id</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_author</code>
       <code>$post_id</code>
     </InvalidScalarArgument>
     <MissingParamType occurrences="9">
@@ -2192,16 +2371,45 @@
       <code>get_the_date()</code>
       <code>get_the_permalink( $message_post_id )</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidPropertyFetch occurrences="5">
+    <PossiblyInvalidPropertyFetch occurrences="19">
+      <code>$comment-&gt;comment_post_ID</code>
+      <code>$comment-&gt;comment_post_ID</code>
+      <code>$comment-&gt;user_id</code>
       <code>$comment_author-&gt;user_login</code>
       <code>$comment_author-&gt;user_login</code>
+      <code>$course-&gt;post_title</code>
+      <code>$message-&gt;ID</code>
+      <code>$message-&gt;ID</code>
+      <code>$message-&gt;post_type</code>
+      <code>$message-&gt;post_type</code>
+      <code>$message_post-&gt;ID</code>
+      <code>$message_post-&gt;post_type</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_author</code>
+      <code>$post-&gt;post_type</code>
       <code>$receiver-&gt;user_login</code>
       <code>$sender-&gt;display_name</code>
       <code>$sender-&gt;user_login</code>
     </PossiblyInvalidPropertyFetch>
-    <PossiblyNullArgument occurrences="1">
+    <PossiblyNullArgument occurrences="5">
+      <code>$message-&gt;ID</code>
+      <code>$message-&gt;ID</code>
+      <code>$message-&gt;ID</code>
+      <code>$message-&gt;ID</code>
       <code>$post_id</code>
     </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="9">
+      <code>$course-&gt;post_title</code>
+      <code>$message-&gt;ID</code>
+      <code>$message-&gt;ID</code>
+      <code>$message-&gt;post_type</code>
+      <code>$message-&gt;post_type</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_author</code>
+      <code>$post-&gt;post_type</code>
+    </PossiblyNullPropertyFetch>
     <PossiblyUndefinedVariable occurrences="2">
       <code>$description</code>
       <code>$label</code>
@@ -2251,7 +2459,8 @@
       <code>WP_Query</code>
       <code>integer</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="7">
+    <InvalidScalarArgument occurrences="8">
+      <code>$course-&gt;post_author</code>
       <code>$course_id</code>
       <code>$course_id</code>
       <code>$possible_user_id</code>
@@ -2305,43 +2514,52 @@
       <code>get_permalink( $course_id )</code>
       <code>get_permalink( $course_id )</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArgument occurrences="1">
+    <PossiblyInvalidArgument occurrences="3">
       <code>$module</code>
+      <code>$post</code>
+      <code>get_post( (int) $_GET['lesson_id'] )</code>
     </PossiblyInvalidArgument>
     <PossiblyInvalidIterator occurrences="1">
       <code>$terms</code>
     </PossiblyInvalidIterator>
-    <PossiblyInvalidPropertyFetch occurrences="13">
+    <PossiblyInvalidPropertyFetch occurrences="16">
       <code>$course-&gt;ID</code>
       <code>$course-&gt;ID</code>
       <code>$course-&gt;ID</code>
+      <code>$course-&gt;post_author</code>
       <code>$course-&gt;post_title</code>
       <code>$course-&gt;post_title</code>
       <code>$module-&gt;parent</code>
       <code>$module-&gt;slug</code>
+      <code>$post-&gt;post_type</code>
       <code>$slug-&gt;errors</code>
       <code>$taxonomy-&gt;cap</code>
       <code>$taxonomy-&gt;labels</code>
       <code>$term-&gt;slug</code>
       <code>$term-&gt;term_id</code>
       <code>$term-&gt;term_id</code>
+      <code>get_post( $post_ID )-&gt;post_type</code>
     </PossiblyInvalidPropertyFetch>
-    <PossiblyNullArgument occurrences="5">
+    <PossiblyNullArgument occurrences="6">
       <code>$module-&gt;description</code>
       <code>$module-&gt;slug</code>
       <code>$module-&gt;term_id</code>
       <code>$module_id</code>
+      <code>$post-&gt;post_type</code>
       <code>$post_type-&gt;cap-&gt;edit_post</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyFetch occurrences="9">
+    <PossiblyNullPropertyFetch occurrences="12">
+      <code>$course-&gt;post_author</code>
       <code>$module-&gt;description</code>
       <code>$module-&gt;parent</code>
       <code>$module-&gt;slug</code>
       <code>$module-&gt;term_id</code>
       <code>$module-&gt;term_id</code>
       <code>$module-&gt;term_id</code>
+      <code>$post-&gt;post_type</code>
       <code>$post_type-&gt;cap</code>
       <code>$term-&gt;slug</code>
+      <code>get_post( $post_ID )-&gt;post_type</code>
       <code>get_queried_object()-&gt;name</code>
     </PossiblyNullPropertyFetch>
     <RedundantCondition occurrences="2">
@@ -2382,15 +2600,13 @@
       <code>$modules</code>
       <code>$slug</code>
     </UndefinedMethod>
-    <UndefinedPropertyFetch occurrences="8">
+    <UndefinedPropertyFetch occurrences="6">
       <code>$module-&gt;parent</code>
       <code>$module-&gt;slug</code>
       <code>$module-&gt;term_id</code>
       <code>$module-&gt;term_id</code>
       <code>$module-&gt;term_id</code>
       <code>$term-&gt;slug</code>
-      <code>$term-&gt;term_id</code>
-      <code>$term-&gt;term_id</code>
     </UndefinedPropertyFetch>
   </file>
   <file src="includes/class-sensei-notices.php">
@@ -2400,6 +2616,9 @@
     <MissingPropertyType occurrences="1">
       <code>$notices</code>
     </MissingPropertyType>
+    <PossiblyInvalidArgument occurrences="1">
+      <code>get_post()</code>
+    </PossiblyInvalidArgument>
   </file>
   <file src="includes/class-sensei-posttypes.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -2414,7 +2633,8 @@
     <InvalidGlobal occurrences="1">
       <code>global $pagenow;</code>
     </InvalidGlobal>
-    <InvalidScalarArgument occurrences="4">
+    <InvalidScalarArgument occurrences="5">
+      <code>$post-&gt;ID</code>
       <code>$post-&gt;ID</code>
       <code>$post-&gt;ID</code>
       <code>$post_id</code>
@@ -2434,6 +2654,10 @@
       <code>get_permalink( $post_ID )</code>
       <code>wp_post_revision_title( (int) $_GET['revision'], false )</code>
     </PossiblyFalseArgument>
+    <PossiblyInvalidPropertyFetch occurrences="2">
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_type</code>
+    </PossiblyInvalidPropertyFetch>
     <PossiblyNullArgument occurrences="1">
       <code>get_queried_object()-&gt;ID</code>
     </PossiblyNullArgument>
@@ -2578,17 +2802,34 @@
     <PossiblyInvalidIterator occurrences="1">
       <code>$cats</code>
     </PossiblyInvalidIterator>
-    <PossiblyInvalidPropertyFetch occurrences="1">
+    <PossiblyInvalidPropertyFetch occurrences="9">
+      <code>$attachment-&gt;post_content</code>
+      <code>$attachment-&gt;post_title</code>
+      <code>$question-&gt;ID</code>
+      <code>$question-&gt;post_content</code>
+      <code>$question-&gt;post_type</code>
+      <code>$quiz-&gt;post_author</code>
+      <code>$quiz-&gt;post_type</code>
       <code>$user_lesson_status-&gt;comment_approved</code>
+      <code>get_post( $question_id )-&gt;post_content</code>
     </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="4">
+      <code>$question_description</code>
+      <code>$question_description</code>
+      <code>$question_media_title</code>
+      <code>$question_media_title</code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="4">
+      <code>$attachment-&gt;post_content</code>
+      <code>$attachment-&gt;post_title</code>
+      <code>$question-&gt;post_content</code>
+      <code>get_post( $question_id )-&gt;post_content</code>
+    </PossiblyNullPropertyFetch>
     <TypeDoesNotContainType occurrences="1">
       <code>$is_quiz_graded</code>
     </TypeDoesNotContainType>
   </file>
   <file src="includes/class-sensei-quiz.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$my_post</code>
-    </ArgumentTypeCoercion>
     <DeprecatedProperty occurrences="1">
       <code>$this-&gt;file</code>
     </DeprecatedProperty>
@@ -2599,6 +2840,9 @@
       <code>0</code>
       <code>empty( $lesson_id ) || empty( $user_id ) || ! is_array( $quiz_answers )</code>
     </DocblockTypeContradiction>
+    <InvalidArgument occurrences="1">
+      <code>$my_post</code>
+    </InvalidArgument>
     <InvalidDocblock occurrences="1">
       <code>public function reset_button_click_listener() {</code>
     </InvalidDocblock>
@@ -2679,10 +2923,23 @@
       <code>get_permalink( $lesson_id )</code>
       <code>get_the_ID()</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArgument occurrences="1">
+    <PossiblyInvalidArgument occurrences="2">
       <code>$quiz</code>
+      <code>get_post()</code>
     </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="8">
+    <PossiblyInvalidPropertyFetch occurrences="8">
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;post_author</code>
+      <code>$lesson-&gt;post_name</code>
+      <code>$question-&gt;post_content</code>
+      <code>$quiz-&gt;post_parent</code>
+      <code>$saved_lesson-&gt;post_author</code>
+      <code>$saved_lesson-&gt;post_name</code>
+      <code>$saved_lesson-&gt;post_title</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="10">
+      <code>$lesson-&gt;ID</code>
+      <code>$question-&gt;post_content</code>
       <code>$quiz_id</code>
       <code>$quiz_id</code>
       <code>$quiz_id</code>
@@ -2692,6 +2949,14 @@
       <code>$quiz_id</code>
       <code>$quiz_id</code>
     </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="6">
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;post_name</code>
+      <code>$question-&gt;post_content</code>
+      <code>$saved_lesson-&gt;post_author</code>
+      <code>$saved_lesson-&gt;post_name</code>
+      <code>$saved_lesson-&gt;post_title</code>
+    </PossiblyNullPropertyFetch>
     <RedundantConditionGivenDocblockType occurrences="2">
       <code>! is_wp_error( $grade )</code>
       <code>is_countable( $all_questions )</code>
@@ -2770,9 +3035,8 @@
     </RedundantCondition>
   </file>
   <file src="includes/class-sensei-teacher.php">
-    <ArgumentTypeCoercion occurrences="8">
+    <ArgumentTypeCoercion occurrences="7">
       <code>$args</code>
-      <code>$post_updates</code>
       <code>$user</code>
       <code>'WP_Role'</code>
       <code>'WP_Role'</code>
@@ -2790,6 +3054,9 @@
       <code>! is_array( $lessons )</code>
       <code>is_numeric( $comments )</code>
     </DocblockTypeContradiction>
+    <InvalidArgument occurrences="1">
+      <code>$post_updates</code>
+    </InvalidArgument>
     <InvalidDocblockParamName occurrences="2">
       <code>$course_id</code>
       <code>$lesson_id</code>
@@ -2798,10 +3065,10 @@
       <code>bool</code>
     </InvalidNullableReturnType>
     <InvalidScalarArgument occurrences="4">
+      <code>$course-&gt;post_author</code>
       <code>$course_id</code>
       <code>$course_id</code>
       <code>$module_course-&gt;post_author</code>
-      <code>$term_id</code>
     </InvalidScalarArgument>
     <MissingDocblockType occurrences="1">
       <code>public function teacher_filter_query_modify( $query ) {</code>
@@ -2840,24 +3107,43 @@
       <code>empty( $course_id ) || ! $course_id</code>
       <code>empty( $lesson_id ) || ! $lesson_id</code>
     </ParadoxicalCondition>
-    <PossiblyInvalidPropertyFetch occurrences="7">
+    <PossiblyInvalidPropertyFetch occurrences="15">
       <code>$author-&gt;display_name</code>
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_title</code>
       <code>$existing_module_by_slug-&gt;term_id</code>
+      <code>$lesson-&gt;ID</code>
       <code>$module_course-&gt;ID</code>
       <code>$module_course-&gt;post_author</code>
       <code>$module_course-&gt;post_title</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_author</code>
       <code>$term-&gt;slug</code>
       <code>$user-&gt;roles</code>
     </PossiblyInvalidPropertyFetch>
-    <PossiblyNullArgument occurrences="1">
+    <PossiblyNullArgument occurrences="3">
+      <code>$course-&gt;post_author</code>
+      <code>$lesson-&gt;ID</code>
       <code>$term-&gt;slug</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyFetch occurrences="2">
+    <PossiblyNullPropertyFetch occurrences="10">
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_title</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_author</code>
       <code>$screen-&gt;id</code>
       <code>$term-&gt;slug</code>
     </PossiblyNullPropertyFetch>
-    <RedundantConditionGivenDocblockType occurrences="3">
+    <RedundantConditionGivenDocblockType occurrences="4">
       <code>! empty( $course_lessons ) &amp;&amp; is_array( $course_lessons )</code>
+      <code>! is_wp_error( $search_term )</code>
       <code>is_array( $course_lessons )</code>
       <code>isset( $screen-&gt;id )</code>
     </RedundantConditionGivenDocblockType>
@@ -2871,8 +3157,7 @@
     <UndefinedMethod occurrences="1">
       <code>$new_term</code>
     </UndefinedMethod>
-    <UndefinedPropertyFetch occurrences="2">
-      <code>$existing_module_by_slug-&gt;term_id</code>
+    <UndefinedPropertyFetch occurrences="1">
       <code>$term-&gt;slug</code>
     </UndefinedPropertyFetch>
   </file>
@@ -2910,6 +3195,19 @@
     <PossiblyFalseOperand occurrences="1">
       <code>get_permalink( $post-&gt;ID )</code>
     </PossiblyFalseOperand>
+    <PossiblyInvalidPropertyFetch occurrences="3">
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_title</code>
+      <code>$post-&gt;post_type</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="1">
+      <code>$post-&gt;ID</code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="3">
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_title</code>
+      <code>$post-&gt;post_type</code>
+    </PossiblyNullPropertyFetch>
     <RedundantConditionGivenDocblockType occurrences="2">
       <code>$args &amp;&amp; is_array( $args )</code>
       <code>is_array( $args )</code>
@@ -3161,10 +3459,15 @@
       <code>get_permalink( $quiz_id )</code>
       <code>get_permalink( $quiz_id )</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidPropertyFetch occurrences="5">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$post</code>
+    </PossiblyInvalidArgument>
+    <PossiblyInvalidPropertyFetch occurrences="7">
       <code>$plugin_information-&gt;name</code>
       <code>$plugin_information-&gt;short_description</code>
       <code>$plugin_information-&gt;version</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_content</code>
       <code>get_userdata( $user_id )-&gt;user_login</code>
       <code>get_userdata( $user_id )-&gt;user_login</code>
     </PossiblyInvalidPropertyFetch>
@@ -3397,6 +3700,10 @@
     <MissingParamType occurrences="1">
       <code>$post</code>
     </MissingParamType>
+    <PossiblyInvalidPropertyFetch occurrences="2">
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_type</code>
+    </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/course-theme/class-sensei-course-theme-lesson.php">
     <DocblockTypeContradiction occurrences="2">
@@ -3633,6 +3940,10 @@
       <code>get_the_ID()</code>
       <code>get_the_ID()</code>
     </PossiblyFalseArgument>
+    <PossiblyInvalidArgument occurrences="2">
+      <code>$post</code>
+      <code>$post</code>
+    </PossiblyInvalidArgument>
   </file>
   <file src="includes/data-port/class-sensei-data-port-job.php">
     <DocblockTypeContradiction occurrences="3">
@@ -3663,6 +3974,9 @@
       <code>$second_type_order_exists ? array_search( $second_log[2]['type'], $log_order, true ) : null</code>
       <code>$uploads['error']</code>
     </PossiblyFalseArgument>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$file-&gt;post_title</code>
+    </PossiblyInvalidPropertyFetch>
     <PossiblyNullArgument occurrences="4">
       <code>$first_type_order_exists ? array_search( $first_log[2]['type'], $log_order, true ) : null</code>
       <code>$second_type_order_exists ? array_search( $second_log[2]['type'], $log_order, true ) : null</code>
@@ -3795,9 +4109,6 @@
     <UndefinedMethod occurrences="1">
       <code>$term_arr</code>
     </UndefinedMethod>
-    <UndefinedPropertyFetch occurrences="1">
-      <code>$module-&gt;term_id</code>
-    </UndefinedPropertyFetch>
   </file>
   <file src="includes/data-port/class-sensei-export-job.php">
     <DocblockTypeContradiction occurrences="1">
@@ -3904,6 +4215,17 @@
     <UndefinedPropertyFetch occurrences="1">
       <code>get_term( $module_term_id )-&gt;name</code>
     </UndefinedPropertyFetch>
+  </file>
+  <file src="includes/data-port/export-tasks/class-sensei-export-package.php">
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$file-&gt;post_title</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="1">
+      <code>$file-&gt;post_title</code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>$file-&gt;post_title</code>
+    </PossiblyNullPropertyFetch>
   </file>
   <file src="includes/data-port/export-tasks/class-sensei-export-questions.php">
     <FalsableReturnStatement occurrences="2">
@@ -4285,6 +4607,12 @@
       <code>$teacher</code>
       <code>$template</code>
     </MissingPropertyType>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$course-&gt;post_title</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>$course-&gt;post_title</code>
+    </PossiblyNullPropertyFetch>
   </file>
   <file src="includes/emails/class-sensei-email-teacher-new-message.php">
     <InvalidGlobal occurrences="1">
@@ -4299,12 +4627,16 @@
       <code>$teacher</code>
       <code>$template</code>
     </MissingPropertyType>
-    <PossiblyInvalidPropertyFetch occurrences="4">
+    <PossiblyInvalidPropertyFetch occurrences="5">
       <code>$this-&gt;learner-&gt;ID</code>
       <code>$this-&gt;learner-&gt;display_name</code>
+      <code>$this-&gt;message-&gt;post_content</code>
       <code>$this-&gt;teacher-&gt;ID</code>
       <code>$this-&gt;teacher-&gt;user_email</code>
     </PossiblyInvalidPropertyFetch>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>$this-&gt;message-&gt;post_content</code>
+    </PossiblyNullPropertyFetch>
   </file>
   <file src="includes/emails/class-sensei-email-teacher-quiz-submitted.php">
     <InvalidGlobal occurrences="1">
@@ -4386,9 +4718,8 @@
     <NullableReturnStatement occurrences="1">
       <code>$is_enrolled</code>
     </NullableReturnStatement>
-    <PossiblyInvalidArgument occurrences="2">
+    <PossiblyInvalidArgument occurrences="1">
       <code>$learner_terms</code>
-      <code>$object_ids</code>
     </PossiblyInvalidArgument>
     <PossiblyInvalidMethodCall occurrences="1">
       <code>get_version_hash</code>
@@ -4568,6 +4899,12 @@
     </UndefinedDocblockClass>
   </file>
   <file src="includes/internal/emails/class-email-preview.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>get_post( $post_id )</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>WP_Post|null</code>
+    </InvalidReturnType>
     <PossiblyFalseArgument occurrences="1">
       <code>get_the_ID()</code>
     </PossiblyFalseArgument>
@@ -4635,6 +4972,25 @@
       <code>\Sensei_Course::get_course_completed_page_url( $course_id )</code>
     </RedundantConditionGivenDocblockType>
   </file>
+  <file src="includes/internal/emails/generators/class-course-created.php">
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$course-&gt;post_author</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="1">
+      <code>$course-&gt;post_author</code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>$course-&gt;post_author</code>
+    </PossiblyNullPropertyFetch>
+  </file>
+  <file src="includes/internal/emails/generators/class-course-welcome.php">
+    <PossiblyInvalidPropertyFetch occurrences="4">
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_status</code>
+      <code>$course-&gt;post_title</code>
+    </PossiblyInvalidPropertyFetch>
+  </file>
   <file src="includes/internal/emails/generators/class-quiz-graded.php">
     <InvalidScalarArgument occurrences="3">
       <code>$course_id</code>
@@ -4644,6 +5000,10 @@
     <PossiblyFalseArgument occurrences="1">
       <code>get_permalink( $quiz_id )</code>
     </PossiblyFalseArgument>
+    <PossiblyInvalidPropertyFetch occurrences="2">
+      <code>$course-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/internal/emails/generators/class-student-completes-lesson.php">
     <InvalidScalarArgument occurrences="2">
@@ -4656,12 +5016,15 @@
     </RedundantCast>
   </file>
   <file src="includes/internal/emails/generators/class-student-message-reply.php">
-    <InvalidScalarArgument occurrences="1">
+    <InvalidScalarArgument occurrences="2">
       <code>$lesson_id</code>
+      <code>$teacher_id</code>
     </InvalidScalarArgument>
-    <PossiblyInvalidPropertyFetch occurrences="5">
+    <PossiblyInvalidPropertyFetch occurrences="7">
       <code>$message_receiver_user-&gt;ID</code>
       <code>$message_sender_user-&gt;ID</code>
+      <code>$post-&gt;post_author</code>
+      <code>$post-&gt;post_type</code>
       <code>$teacher-&gt;ID</code>
       <code>$teacher-&gt;display_name</code>
       <code>get_userdata( $recipient_id )-&gt;user_email</code>
@@ -4671,22 +5034,54 @@
     <PossiblyFalseArgument occurrences="1">
       <code>get_permalink( absint( $message_id ) )</code>
     </PossiblyFalseArgument>
+    <PossiblyInvalidPropertyFetch occurrences="4">
+      <code>$course-&gt;ID</code>
+      <code>$message-&gt;ID</code>
+      <code>$message-&gt;post_content</code>
+      <code>$message-&gt;post_title</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="4">
+      <code>$course-&gt;ID</code>
+      <code>$message-&gt;ID</code>
+      <code>$message-&gt;post_content</code>
+      <code>$message-&gt;post_title</code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="4">
+      <code>$course-&gt;ID</code>
+      <code>$message-&gt;ID</code>
+      <code>$message-&gt;post_content</code>
+      <code>$message-&gt;post_title</code>
+    </PossiblyNullPropertyFetch>
+  </file>
+  <file src="includes/internal/emails/generators/class-student-starts-course.php">
+    <PossiblyInvalidPropertyFetch occurrences="3">
+      <code>$course-&gt;post_author</code>
+      <code>$course-&gt;post_status</code>
+      <code>$course-&gt;post_title</code>
+    </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/internal/emails/generators/class-student-submits-quiz.php">
     <InvalidScalarArgument occurrences="2">
       <code>$course_id</code>
       <code>$lesson_id</code>
     </InvalidScalarArgument>
+    <PossiblyInvalidPropertyFetch occurrences="2">
+      <code>$course-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>! is_wp_error( $grade )</code>
     </RedundantConditionGivenDocblockType>
   </file>
   <file src="includes/internal/emails/generators/class-teacher-message-reply.php">
-    <InvalidScalarArgument occurrences="1">
+    <InvalidScalarArgument occurrences="2">
       <code>$comment-&gt;user_id</code>
+      <code>$teacher_id</code>
     </InvalidScalarArgument>
-    <PossiblyInvalidPropertyFetch occurrences="2">
+    <PossiblyInvalidPropertyFetch occurrences="4">
       <code>$commenter-&gt;display_name</code>
+      <code>$course-&gt;ID</code>
+      <code>$course-&gt;post_author</code>
       <code>get_userdata( $teacher_id )-&gt;user_email</code>
     </PossiblyInvalidPropertyFetch>
   </file>
@@ -4720,7 +5115,6 @@
     </PossiblyNullIterator>
   </file>
   <file src="includes/internal/quiz-submission/grade/repositories/class-tables-based-grade-repository.php">
-    <InvalidArgument occurrences="2"/>
     <PossiblyNullIterator occurrences="1">
       <code>$grade_rows</code>
     </PossiblyNullIterator>
@@ -4740,7 +5134,6 @@
     </InvalidScalarArgument>
   </file>
   <file src="includes/internal/quiz-submission/submission/repositories/class-tables-based-submission-repository.php">
-    <InvalidArgument occurrences="2"/>
     <PossiblyInvalidPropertyFetch occurrences="6">
       <code>$row-&gt;created_at</code>
       <code>$row-&gt;final_grade</code>
@@ -4756,23 +5149,14 @@
     </PossiblyNullArgument>
   </file>
   <file src="includes/internal/student-progress/course-progress/repositories/class-tables-based-course-progress-repository.php">
-    <InvalidArgument occurrences="2"/>
-    <PossiblyInvalidPropertyFetch occurrences="16">
-      <code>$row-&gt;completed_at</code>
+    <PossiblyInvalidPropertyFetch occurrences="8">
       <code>$row-&gt;completed_at</code>
       <code>$row-&gt;created_at</code>
-      <code>$row-&gt;created_at</code>
-      <code>$row-&gt;id</code>
       <code>$row-&gt;id</code>
       <code>$row-&gt;post_id</code>
-      <code>$row-&gt;post_id</code>
-      <code>$row-&gt;started_at</code>
       <code>$row-&gt;started_at</code>
       <code>$row-&gt;status</code>
-      <code>$row-&gt;status</code>
       <code>$row-&gt;updated_at</code>
-      <code>$row-&gt;updated_at</code>
-      <code>$row-&gt;user_id</code>
       <code>$row-&gt;user_id</code>
     </PossiblyInvalidPropertyFetch>
   </file>
@@ -4782,23 +5166,14 @@
     </PossiblyNullReference>
   </file>
   <file src="includes/internal/student-progress/lesson-progress/repositories/class-tables-based-lesson-progress-repository.php">
-    <InvalidArgument occurrences="2"/>
-    <PossiblyInvalidPropertyFetch occurrences="16">
-      <code>$row-&gt;completed_at</code>
+    <PossiblyInvalidPropertyFetch occurrences="8">
       <code>$row-&gt;completed_at</code>
       <code>$row-&gt;created_at</code>
-      <code>$row-&gt;created_at</code>
-      <code>$row-&gt;id</code>
       <code>$row-&gt;id</code>
       <code>$row-&gt;post_id</code>
-      <code>$row-&gt;post_id</code>
-      <code>$row-&gt;started_at</code>
       <code>$row-&gt;started_at</code>
       <code>$row-&gt;status</code>
-      <code>$row-&gt;status</code>
       <code>$row-&gt;updated_at</code>
-      <code>$row-&gt;updated_at</code>
-      <code>$row-&gt;user_id</code>
       <code>$row-&gt;user_id</code>
     </PossiblyInvalidPropertyFetch>
   </file>
@@ -4821,23 +5196,14 @@
     </InvalidScalarArgument>
   </file>
   <file src="includes/internal/student-progress/quiz-progress/repositories/class-tables-based-quiz-progress-repository.php">
-    <InvalidArgument occurrences="2"/>
-    <PossiblyInvalidPropertyFetch occurrences="16">
-      <code>$row-&gt;completed_at</code>
+    <PossiblyInvalidPropertyFetch occurrences="8">
       <code>$row-&gt;completed_at</code>
       <code>$row-&gt;created_at</code>
-      <code>$row-&gt;created_at</code>
-      <code>$row-&gt;id</code>
       <code>$row-&gt;id</code>
       <code>$row-&gt;post_id</code>
-      <code>$row-&gt;post_id</code>
-      <code>$row-&gt;started_at</code>
       <code>$row-&gt;started_at</code>
       <code>$row-&gt;status</code>
-      <code>$row-&gt;status</code>
       <code>$row-&gt;updated_at</code>
-      <code>$row-&gt;updated_at</code>
-      <code>$row-&gt;user_id</code>
       <code>$row-&gt;user_id</code>
     </PossiblyInvalidPropertyFetch>
   </file>
@@ -4900,6 +5266,13 @@
     <PossiblyFalseArgument occurrences="1">
       <code>$timestamp</code>
     </PossiblyFalseArgument>
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$post-&gt;post_excerpt</code>
+      <code>$post-&gt;post_title</code>
+      <code>$post-&gt;post_title</code>
+      <code>$post-&gt;post_type</code>
+      <code>$post-&gt;post_type</code>
+    </PossiblyInvalidPropertyFetch>
     <PropertyNotSetInConstructor occurrences="2">
       <code>$mail_poet_lists</code>
       <code>$sensei_lists</code>
@@ -4956,6 +5329,12 @@
     </UndefinedDocblockClass>
   </file>
   <file src="includes/renderers/class-sensei-renderer-single-post.php">
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$post-&gt;post_content</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>$post-&gt;post_content</code>
+    </PossiblyNullPropertyFetch>
     <PropertyNotSetInConstructor occurrences="4">
       <code>$global_pages_ref</code>
       <code>$global_post_ref</code>
@@ -5068,6 +5447,9 @@
       <code>$result[ $student_id ][ $course_id ]</code>
       <code>$result[ $student_id ][ $course_id ]</code>
     </PossiblyInvalidArrayAssignment>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$course-&gt;post_type</code>
+    </PossiblyInvalidPropertyFetch>
     <PossiblyNullArgument occurrences="1">
       <code>$edit_course_cap</code>
     </PossiblyNullArgument>
@@ -5079,6 +5461,12 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-course-structure-controller.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$course ? $course : null</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>WP_Post|null</code>
+    </InvalidReturnType>
     <PossiblyInvalidMethodCall occurrences="2">
       <code>get_error_code</code>
       <code>get_error_message</code>
@@ -5108,6 +5496,9 @@
       <code>$result[ $user_id ][ $course_id ]</code>
       <code>$result[ $user_id ][ $course_id ]</code>
     </PossiblyInvalidArrayAssignment>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$course-&gt;post_type</code>
+    </PossiblyInvalidPropertyFetch>
     <PossiblyNullArgument occurrences="1">
       <code>$edit_course_cap</code>
     </PossiblyNullArgument>
@@ -5129,14 +5520,19 @@
     <InvalidReturnType occurrences="1">
       <code>boolean</code>
     </InvalidReturnType>
-    <PossiblyNullArgument occurrences="5">
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$post-&gt;post_type</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="6">
+      <code>$post-&gt;post_type</code>
       <code>$post_id</code>
       <code>$post_id</code>
       <code>$post_type-&gt;cap-&gt;edit_post</code>
       <code>$teacher</code>
       <code>$teacher</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyFetch occurrences="1">
+    <PossiblyNullPropertyFetch occurrences="2">
+      <code>$post-&gt;post_type</code>
       <code>$post_type-&gt;cap</code>
     </PossiblyNullPropertyFetch>
     <PropertyNotSetInConstructor occurrences="1">
@@ -5255,10 +5651,10 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-lesson-quiz-controller.php">
-    <ArgumentTypeCoercion occurrences="1"/>
     <DocblockTypeContradiction occurrences="1">
       <code>is_wp_error( $quiz_id )</code>
     </DocblockTypeContradiction>
+    <InvalidArgument occurrences="1"/>
     <InvalidReturnStatement occurrences="2">
       <code>$question_id</code>
       <code>$quiz_id</code>
@@ -5266,18 +5662,40 @@
     <InvalidReturnType occurrences="1">
       <code>WP_REST_Response|WP_Error</code>
     </InvalidReturnType>
-    <PossiblyInvalidArgument occurrences="1">
+    <PossiblyInvalidArgument occurrences="6">
+      <code>$lesson</code>
+      <code>$lesson</code>
+      <code>$lesson</code>
       <code>$question</code>
+      <code>get_post( $quiz )</code>
+      <code>get_post( $quiz_id )</code>
     </PossiblyInvalidArgument>
     <PossiblyInvalidMethodCall occurrences="2">
       <code>get_error_code</code>
       <code>get_error_data</code>
     </PossiblyInvalidMethodCall>
-    <PossiblyNullArgument occurrences="2">
+    <PossiblyInvalidPropertyFetch occurrences="8">
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;post_status</code>
+      <code>$lesson-&gt;post_title</code>
+      <code>$lesson-&gt;post_type</code>
+      <code>$lesson-&gt;post_type</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="5">
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
       <code>get_post_type_object( 'lesson' )-&gt;cap-&gt;edit_post</code>
       <code>get_post_type_object( 'lesson' )-&gt;cap-&gt;edit_post</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyFetch occurrences="2">
+    <PossiblyNullPropertyFetch occurrences="6">
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;post_status</code>
+      <code>$lesson-&gt;post_title</code>
       <code>get_post_type_object( 'lesson' )-&gt;cap</code>
       <code>get_post_type_object( 'lesson' )-&gt;cap</code>
     </PossiblyNullPropertyFetch>
@@ -5297,6 +5715,15 @@
     <ParamNameMismatch occurrences="1">
       <code>$prepared</code>
     </ParamNameMismatch>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$post-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="1">
+      <code>$post-&gt;ID</code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>$post-&gt;ID</code>
+    </PossiblyNullPropertyFetch>
     <PropertyNotSetInConstructor occurrences="5">
       <code>Sensei_REST_API_Lessons_Controller</code>
       <code>Sensei_REST_API_Lessons_Controller</code>
@@ -5309,9 +5736,6 @@
     <DocblockTypeContradiction occurrences="1">
       <code>empty( $current_user )</code>
     </DocblockTypeContradiction>
-    <InvalidReturnType occurrences="1">
-      <code>true|WP_Error</code>
-    </InvalidReturnType>
     <MissingClosureParamType occurrences="4">
       <code>$object</code>
       <code>$object</code>
@@ -5351,17 +5775,22 @@
     <PossiblyInvalidArrayAccess occurrences="1">
       <code>$attachment_src[0]</code>
     </PossiblyInvalidArrayAccess>
-    <PossiblyInvalidPropertyFetch occurrences="2">
+    <PossiblyInvalidPropertyFetch occurrences="4">
+      <code>$attachment-&gt;ID</code>
+      <code>$attachment-&gt;post_title</code>
       <code>$question_category-&gt;name</code>
       <code>$question_category-&gt;term_id</code>
     </PossiblyInvalidPropertyFetch>
-    <PossiblyNullArgument occurrences="4">
+    <PossiblyNullArgument occurrences="5">
+      <code>$attachment-&gt;post_title</code>
       <code>$question_id</code>
       <code>get_post_type_object( 'multiple_question' )-&gt;cap-&gt;edit_post</code>
       <code>get_post_type_object( 'question' )-&gt;cap-&gt;edit_post</code>
       <code>get_post_type_object( 'question' )-&gt;cap-&gt;edit_post</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyFetch occurrences="3">
+    <PossiblyNullPropertyFetch occurrences="5">
+      <code>$attachment-&gt;ID</code>
+      <code>$attachment-&gt;post_title</code>
       <code>get_post_type_object( 'multiple_question' )-&gt;cap</code>
       <code>get_post_type_object( 'question' )-&gt;cap</code>
       <code>get_post_type_object( 'question' )-&gt;cap</code>
@@ -5376,10 +5805,15 @@
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-question-options-controller.php">
     <ArgumentTypeCoercion occurrences="1"/>
-    <PossiblyInvalidArgument occurrences="2">
+    <PossiblyInvalidArgument occurrences="4">
+      <code>$question</code>
+      <code>$question</code>
       <code>$question_post</code>
       <code>$question_post</code>
     </PossiblyInvalidArgument>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$question-&gt;post_type</code>
+    </PossiblyInvalidPropertyFetch>
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Question_Options_Controller</code>
     </PropertyNotSetInConstructor>
@@ -5398,25 +5832,29 @@
     <InvalidReturnStatement occurrences="1">
       <code>$question_id</code>
     </InvalidReturnStatement>
-    <InvalidReturnType occurrences="2">
+    <InvalidReturnType occurrences="1">
       <code>WP_Error|WP_Post|WP_REST_Response</code>
-      <code>true|WP_Error</code>
     </InvalidReturnType>
     <MissingClosureParamType occurrences="1">
       <code>$object</code>
     </MissingClosureParamType>
-    <PossiblyInvalidArgument occurrences="2">
+    <PossiblyInvalidArgument occurrences="3">
       <code>$post</code>
       <code>$question_id</code>
+      <code>get_post( $question_id )</code>
     </PossiblyInvalidArgument>
     <PossiblyInvalidMethodCall occurrences="1">
       <code>get_error_code</code>
     </PossiblyInvalidMethodCall>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$question-&gt;post_author</code>
+    </PossiblyInvalidPropertyFetch>
     <PossiblyNullArgument occurrences="1">
       <code>$post_type-&gt;cap-&gt;edit_posts</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyFetch occurrences="1">
+    <PossiblyNullPropertyFetch occurrences="2">
       <code>$post_type-&gt;cap</code>
+      <code>$question-&gt;post_author</code>
     </PossiblyNullPropertyFetch>
     <PropertyNotSetInConstructor occurrences="5">
       <code>Sensei_REST_API_Questions_Controller</code>
@@ -5437,6 +5875,9 @@
     </UndefinedPropertyFetch>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-send-message-controller.php">
+    <DocblockTypeContradiction occurrences="1">
+      <code>is_wp_error( $post )</code>
+    </DocblockTypeContradiction>
     <InvalidReturnStatement occurrences="4">
       <code>$fail_response</code>
       <code>$fail_response</code>
@@ -5446,13 +5887,33 @@
       <code>boolean</code>
       <code>string</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="2">
+    <InvalidScalarArgument occurrences="4">
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_author</code>
       <code>\Sensei()-&gt;lesson-&gt;get_course_id( $post-&gt;ID )</code>
       <code>\Sensei()-&gt;quiz-&gt;get_lesson_id( $post-&gt;ID )</code>
     </InvalidScalarArgument>
-    <PossiblyNullArgument occurrences="1">
+    <PossiblyInvalidPropertyFetch occurrences="6">
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_author</code>
+      <code>$post-&gt;post_type</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullArgument occurrences="3">
       <code>$message</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;ID</code>
     </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="6">
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;ID</code>
+      <code>$post-&gt;post_author</code>
+      <code>$post-&gt;post_type</code>
+    </PossiblyNullPropertyFetch>
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Send_Message_Controller</code>
     </PropertyNotSetInConstructor>
@@ -5515,6 +5976,13 @@
       <code>get_the_ID()</code>
       <code>get_the_ID()</code>
     </PossiblyFalseArgument>
+    <PossiblyInvalidPropertyFetch occurrences="2">
+      <code>$page-&gt;ID</code>
+      <code>get_post( $course_id )-&gt;post_author</code>
+    </PossiblyInvalidPropertyFetch>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>get_post( $course_id )-&gt;post_author</code>
+    </PossiblyNullPropertyFetch>
     <UndefinedClass occurrences="1">
       <code>Jetpack</code>
     </UndefinedClass>
@@ -5541,9 +6009,6 @@
     <PossiblyInvalidPropertyFetch occurrences="1">
       <code>$term-&gt;term_id</code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedPropertyFetch occurrences="1">
-      <code>$term-&gt;term_id</code>
-    </UndefinedPropertyFetch>
   </file>
   <file src="includes/shortcodes/class-sensei-shortcode-course-page.php">
     <InvalidArgument occurrences="1">
@@ -5657,9 +6122,10 @@
       <code>$course_status</code>
       <code>$user_id</code>
     </MissingParamType>
-    <PossiblyInvalidArgument occurrences="2">
+    <PossiblyInvalidArgument occurrences="3">
       <code>$category_output</code>
       <code>$course</code>
+      <code>get_post( $course_id )</code>
     </PossiblyInvalidArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>$query</code>
@@ -5719,8 +6185,9 @@
     <PossiblyFalseArgument occurrences="1">
       <code>get_permalink( $course_id )</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArgument occurrences="1">
+    <PossiblyInvalidArgument occurrences="2">
       <code>$item</code>
+      <code>get_post( $lesson_id )</code>
     </PossiblyInvalidArgument>
     <PossiblyNullArgument occurrences="2">
       <code>$lesson_id</code>
@@ -5815,6 +6282,9 @@
     <ParamNameMismatch occurrences="1">
       <code>$post_to_copy</code>
     </ParamNameMismatch>
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$course</code>
+    </PossiblyInvalidArgument>
     <PossiblyNullArgument occurrences="1">
       <code>$module-&gt;name</code>
     </PossiblyNullArgument>
@@ -5885,10 +6355,8 @@
     </PossiblyNullArgument>
   </file>
   <file src="vendor/php-stubs/wordpress-stubs/wordpress-stubs.php">
-    <InvalidDocblock occurrences="5">
-      <code>function get_category($category, $output = \OBJECT, $filter = 'raw')</code>
-      <code>function get_comment($comment = \null, $output = \OBJECT)</code>
-      <code>function get_post($post = \null, $output = \OBJECT, $filter = 'raw')</code>
+    <InvalidDocblock occurrences="2">
+      <code>function get_objects_in_term($term_ids, $taxonomies, $args = array())</code>
       <code>function wp_remote_request($url, $args = array())</code>
     </InvalidDocblock>
   </file>
