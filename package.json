@@ -21,6 +21,9 @@
     "node": "^18.14.0"
   },
   "dependencies": {
+    "@automattic/calypso-color-schemes": "^2.1.1",
+    "@automattic/components": "2.0.1",
+    "@automattic/tour-kit": "1.1.1",
     "@wordpress/api-fetch": "wp-5.9",
     "@wordpress/base-styles": "wp-5.9",
     "@wordpress/block-editor": "wp-5.9",
