@@ -53,7 +53,7 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 		$this->login_as_teacher();
 
 		$has_course_id            = false;
-		$rest_lesson_query_filter = function( $args ) use ( &$has_course_id ) {
+		$rest_lesson_query_filter = function ( $args ) use ( &$has_course_id ) {
 			$meta_query = $args['meta_query'] ?? array();
 			if ( ! empty( $meta_query ) ) {
 				foreach ( $meta_query as $meta_query_item ) {
@@ -92,7 +92,7 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 		$this->login_as_teacher();
 
 		$has_compare_not_exists   = false;
-		$rest_lesson_query_filter = function( $args ) use ( &$has_compare_not_exists ) {
+		$rest_lesson_query_filter = function ( $args ) use ( &$has_compare_not_exists ) {
 			$meta_query = $args['meta_query'] ?? array();
 			if ( ! empty( $meta_query ) ) {
 				foreach ( $meta_query as $meta_query_item ) {

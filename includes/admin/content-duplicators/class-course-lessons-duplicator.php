@@ -77,7 +77,6 @@ class Course_Lessons_Duplicator {
 		$this->update_lesson_order_on_course( $new_course_id, $new_lesson_id_lookup );
 
 		return count( $lessons );
-
 	}
 
 	/**

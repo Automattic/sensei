@@ -130,4 +130,3 @@ class Post_Duplicator {
 		return $new_post;
 	}
 }
-
