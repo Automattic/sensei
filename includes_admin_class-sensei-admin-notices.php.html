@@ -172,12 +172,13 @@ class Sensei_Admin_Notices {
 	 * @return array
 	 */
 	protected function get_notices( $max_age = null ) {
+		$cur_time      = Sensei()->clock->now()->getTimestamp();
 		$transient_key = implode( '_', [ 'sensei_notices', Sensei()->version, determine_locale() ] );
 		$data          = get_transient( $transient_key );
 		$notices       = false;
 		// If the data is too old, fetch it again.
 		if ( $max_age &amp;&amp; is_array( $data ) ) {
-			$age = time() - ( $data['_fetched'] ?? 0 );
+			$age = $cur_time - ( $data['_fetched'] ?? 0 );
 			if ( $age > $max_age ) {
 				$data = false;
 			}
@@ -203,7 +204,7 @@ class Sensei_Admin_Notices {
 				if ( $notices_response_body &amp;&amp; isset( $notices_response_body['notices'] ) ) {
 					$notices     = $notices_response_body['notices'];
 					$cached_data = [
-						'_fetched' => time(),
+						'_fetched' => $cur_time,
 						'notices'  => $notices,
 					];
 					set_transient( $transient_key, $cached_data, DAY_IN_SECONDS );
