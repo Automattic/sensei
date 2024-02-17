@@ -1,0 +1,38 @@
+@import '@automattic/tour-kit/dist/esm/styles.scss';
+@import '@automattic/tour-kit/dist/esm/variants/wpcom/styles.scss';
+
+.pagination-control {
+	margin: 0;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+
+	button.pagination-control__page {
+		border: none;
+		padding: 0;
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		cursor: pointer;
+		transition: all .2s ease-in-out;
+		background-color: var(--color-neutral-10,#c3c4c7);
+
+		&.is-current {
+			background-color: var(--wp-admin-theme-color);
+		}
+
+	}
+
+	li {
+		display: inline-flex;
+		margin: auto 4px;
+		height: 18px;
+		align-items: center;
+		border: none;
+
+		&.pagination-control__last-item {
+			margin-left: auto;
+			height: 32px;
+		}
+	}
+}
