@@ -360,6 +360,13 @@ class Sensei_Main {
 	public $clock;
 
 	/**
+	 * Sensei Tour.
+	 *
+	 * @var Sensei_Tour
+	 */
+	public $tour;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -743,6 +750,12 @@ class Sensei_Main {
 		$email_customization_enabled = $this->feature_flags->is_enabled( 'email_customization' );
 		if ( $email_customization_enabled ) {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
+		}
+
+		$tour_enabled = $this->feature_flags->is_enabled( 'onboarding_tour' );
+		if ( $tour_enabled ) {
+			$this->tour = Sensei_Tour::instance();
+			$this->tour->init();
 		}
 
 		// MailPoet integration.
