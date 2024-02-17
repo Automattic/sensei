@@ -4,25 +4,10 @@
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { ExternalLink } from '@wordpress/components';
-
 /**
- * A single tour step.
- *
- * @typedef {Object} TourStep
- *
- * @property {string}      slug                           - Identifier slug of the tour step.
- * @property {Object}      meta                           - Metadata about the tour step.
- * @property {string}      meta.heading                   - The title of the step.
- * @property {Object}      meta.descriptions              - Descriptions for different platforms.
- * @property {string}      meta.descriptions.desktop      - Desktop description.
- * @property {string|null} meta.descriptions.mobile       - Mobile description.
- * @property {Object}      meta.referenceElements         - Reference elements for different platforms.
- * @property {string}      meta.referenceElements.desktop - Reference element for desktop.
- * @property {Object}      options                        - Additional options for the tour step.
- * @property {Object}      options.classNames             - Class names for different platforms.
- * @property {string}      options.classNames.desktop     - Class name for desktop.
- * @property {string}      options.classNames.mobile      - Class name for mobile.
+ * Internal dependencies
  */
+import { TourStep } from '../types';
 
 /**
  * Returns the tour steps for the Course Outline block.
@@ -46,7 +31,7 @@ function getTourSteps() {
 					mobile: null,
 				},
 				referenceElements: {
-					desktop: '.edit-post-layout__metaboxes',
+					desktop: '',
 				},
 			},
 			options: {
@@ -54,6 +39,9 @@ function getTourSteps() {
 					desktop: '',
 					mobile: '',
 				},
+			},
+			referenceElements: {
+				desktop: '',
 			},
 		},
 		{
@@ -73,6 +61,9 @@ function getTourSteps() {
 					desktop: '',
 					mobile: '',
 				},
+			},
+			referenceElements: {
+				desktop: '',
 			},
 		},
 		{
@@ -177,7 +168,7 @@ function getTourSteps() {
 				descriptions: {
 					desktop: createInterpolateElement(
 						__(
-							"You've mastered the basics. View the <link_to_course_outline_block_doc>course outline docs</link_to_course_outline_block_doc> to learn more. <tour_restart_url>Restart tour</tour_restart_url>",
+							"You've mastered the basics. View the <link_to_course_outline_block_doc>course outline docs</link_to_course_outline_block_doc> to learn more.",
 							'sensei-lms'
 						),
 						{
@@ -187,7 +178,6 @@ function getTourSteps() {
 									children={ null }
 								/>
 							),
-							tour_restart_url: <span></span>,
 						}
 					),
 					mobile: null,
