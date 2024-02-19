@@ -1,6 +1,12 @@
 <?php
+/**
+ * Sensei Lesson Class
+ *
+ * @package sensei
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -14,8 +20,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Sensei_Lesson {
+	/**
+	 * Token for the lesson post type.
+	 *
+	 * @var string
+	 */
 	public $token;
+
+	/**
+	 * Meta fields for the lesson post type.
+	 *
+	 * @var array
+	 */
 	public $meta_fields;
+
+	/**
+	 * Allowed HTML for the lesson post type.
+	 *
+	 * @var array
+	 */
 	public $allowed_html;
 
 	/**
@@ -52,7 +75,7 @@ class Sensei_Lesson {
 
 		$this->token = 'lesson';
 
-		// Setup meta fields for this post type
+		// Setup meta fields for this post type.
 		$this->meta_fields = array( 'lesson_prerequisite', 'lesson_course', 'lesson_preview', 'lesson_length', 'lesson_complexity', 'lesson_video_embed' );
 
 		$this->question_order = '';
@@ -71,10 +94,10 @@ class Sensei_Lesson {
 			) .
 		'</em></p>';
 
-		// Admin actions
+		// Admin actions.
 		if ( is_admin() ) {
 
-			// Metabox functions
+			// Metabox functions.
 			add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'add_meta_boxes_' . $this->token, array( $this, 'add_video_meta_box' ), 10, 1 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
@@ -84,69 +107,69 @@ class Sensei_Lesson {
 			// Lesson Featured Video Thumbnail Creation.
 			add_action( 'save_post', array( $this, 'save_lesson_featured_video_thumbnail' ) );
 
-			// Custom Write Panel Columns
+			// Custom Write Panel Columns.
 			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 20, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 
-			// Add/Update question
+			// Add/Update question.
 			add_action( 'wp_ajax_lesson_update_question', array( $this, 'lesson_update_question' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_question', array( $this, 'lesson_update_question' ) );
 
-			// Update grade type
+			// Update grade type.
 			add_action( 'wp_ajax_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
 
-			// Update question order
+			// Update question order.
 			add_action( 'wp_ajax_lesson_update_question_order', array( $this, 'lesson_update_question_order' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_question_order', array( $this, 'lesson_update_question_order' ) );
 
-			// Update question order
+			// Update question order.
 			add_action( 'wp_ajax_lesson_update_question_order_random', array( $this, 'lesson_update_question_order_random' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_question_order_random', array( $this, 'lesson_update_question_order_random' ) );
 
-			// Get answer ID
+			// Get answer ID.
 			add_action( 'wp_ajax_question_get_answer_id', array( $this, 'question_get_answer_id' ) );
 			add_action( 'wp_ajax_nopriv_question_get_answer_id', array( $this, 'question_get_answer_id' ) );
 
-			// Add multiple questions
+			// Add multiple questions.
 			add_action( 'wp_ajax_lesson_add_multiple_questions', array( $this, 'lesson_add_multiple_questions' ) );
 			add_action( 'wp_ajax_nopriv_lesson_add_multiple_questions', array( $this, 'lesson_add_multiple_questions' ) );
 
-			// Remove multiple questions
+			// Remove multiple questions.
 			add_action( 'wp_ajax_lesson_remove_multiple_questions', array( $this, 'lesson_remove_multiple_questions' ) );
 			add_action( 'wp_ajax_nopriv_lesson_remove_multiple_questions', array( $this, 'lesson_remove_multiple_questions' ) );
 
-			// Get question category limit
+			// Get question category limit.
 			add_action( 'wp_ajax_get_question_category_limit', array( $this, 'get_question_category_limit' ) );
 			add_action( 'wp_ajax_nopriv_get_question_category_limit', array( $this, 'get_question_category_limit' ) );
 
-			// Add existing questions
+			// Add existing questions.
 			add_action( 'wp_ajax_lesson_add_existing_questions', array( $this, 'lesson_add_existing_questions' ) );
 			add_action( 'wp_ajax_nopriv_lesson_add_existing_questions', array( $this, 'lesson_add_existing_questions' ) );
 
-			// Filter existing questions
+			// Filter existing questions.
 			add_action( 'wp_ajax_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 			add_action( 'wp_ajax_nopriv_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 
 			// Get the prerequisite meta box content.
 			add_action( 'wp_ajax_get_prerequisite_meta_box_content', array( $this, 'handle_get_prerequisite_meta_box_content' ) );
 
-			// output bulk edit fields
+			// output bulk edit fields.
 			add_action( 'bulk_edit_custom_box', array( $this, 'all_lessons_edit_fields' ), 10, 2 );
 			add_action( 'quick_edit_custom_box', array( $this, 'all_lessons_edit_fields' ), 10, 2 );
 
-			// load quick edit default values
+			// load quick edit default values.
 			add_action( 'manage_lesson_posts_custom_column', array( $this, 'set_quick_edit_admin_defaults' ), 11, 2 );
 
-			// save bulk edit fields
+			// save bulk edit fields.
 			add_action( 'wp_ajax_save_bulk_edit_book', array( $this, 'save_all_lessons_edit_fields' ) );
 
 			add_action( 'admin_head', array( $this, 'add_custom_link_to_course' ) );
 
 			// Log lesson update.
-			add_action( 'save_post_lesson', [ $this, 'mark_updating_lesson_id' ], 10, 2 );
-			add_action( 'shutdown', [ $this, 'log_lesson_update' ] );
-			add_action( 'rest_api_init', [ $this, 'disable_log_lesson_update' ] );
+			add_action( 'save_post_lesson', array( $this, 'mark_updating_lesson_id' ), 10, 2 );
+			add_action( 'shutdown', array( $this, 'log_lesson_update' ) );
+			add_action( 'rest_api_init', array( $this, 'disable_log_lesson_update' ) );
 		} else {
 			// Frontend actions
 			// Starts lesson when the student visits for the first time and prerequisite courses have been met.
@@ -154,11 +177,11 @@ class Sensei_Lesson {
 		}
 
 		// Add custom navigation.
-		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+		add_action( 'in_admin_header', array( $this, 'add_custom_navigation' ) );
 
 		// Log event on the initial publish for a lesson.
-		add_action( 'sensei_lesson_initial_publish', [ $this, 'log_initial_publish_event' ] );
-		add_action( 'init', [ $this, 'set_up_meta_fields' ] );
+		add_action( 'sensei_lesson_initial_publish', array( $this, 'log_initial_publish_event' ) );
+		add_action( 'init', array( $this, 'set_up_meta_fields' ) );
 	}
 
 	/**
@@ -174,7 +197,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		if ( in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag' ], true ) && ( 'term' !== $screen->base ) ) {
+		if ( in_array( $screen->id, array( 'edit-lesson', 'edit-lesson-tag' ), true ) && ( 'term' !== $screen->base ) ) {
 			$this->display_lessons_navigation( $screen );
 		}
 	}
@@ -196,7 +219,7 @@ class Sensei_Lesson {
 
 		$screen = get_current_screen();
 
-		if ( $screen && in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag', 'course_page_lesson-order' ], true ) ) {
+		if ( $screen && in_array( $screen->id, array( 'edit-lesson', 'edit-lesson-tag', 'course_page_lesson-order' ), true ) ) {
 			$submenu_file = 'edit.php?post_type=lesson';
 		}
 
@@ -207,7 +230,7 @@ class Sensei_Lesson {
 	/**
 	 * Display the lessons' navigation.
 	 *
-	 * @param WP_Screen $screen
+	 * @param WP_Screen $screen The screen object.
 	 */
 	private function display_lessons_navigation( WP_Screen $screen ) {
 		?>
@@ -279,19 +302,17 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * meta_box_setup function.
-	 *
-	 * @access public
+	 * Set up the meta fields for the lesson post type.
 	 */
 	public function meta_box_setup() {
 
-		// Add Meta Box for Lesson Course
+		// Add Meta Box for Lesson Course.
 		add_meta_box( 'lesson-course', esc_html__( 'Course', 'sensei-lms' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
 
-		// Add Meta Box for Prerequisite Lesson
+		// Add Meta Box for Prerequisite Lesson.
 		add_meta_box( 'lesson-prerequisite', esc_html__( 'Prerequisite', 'sensei-lms' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'low' );
 
-		// Add Meta Box for Lesson Preview
+		// Add Meta Box for Lesson Preview.
 		add_meta_box( 'lesson-preview', esc_html__( 'Preview', 'sensei-lms' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'low' );
 
 		/**
@@ -309,33 +330,33 @@ class Sensei_Lesson {
 			add_meta_box( 'content-drip-promo', esc_html__( 'Content Drip', 'sensei-lms' ), array( $this, 'content_drip_promo_meta_box_content' ), $this->token, 'normal', 'default' );
 		}
 
-		// Add Meta Box for Lesson Information
+		// Add Meta Box for Lesson Information.
 		add_meta_box( 'lesson-info', esc_html__( 'Lesson Information', 'sensei-lms' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
 
 		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
-			// Add Meta Box for Quiz Settings
+			// Add Meta Box for Quiz Settings.
 			add_meta_box( 'lesson-quiz-settings', esc_html__( 'Quiz Settings*', 'sensei-lms' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), $this->token, 'normal', 'default' );
 
-			// Add Meta Box for Lesson Quiz Questions
+			// Add Meta Box for Lesson Quiz Questions.
 			add_meta_box( 'lesson-quiz', esc_html__( 'Quiz Questions*', 'sensei-lms' ), array( $this, 'lesson_quiz_meta_box_content' ), $this->token, 'normal', 'default' );
 		}
 
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
 
-		// Add JS scripts
+		// Add JS scripts.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		// Add CSS.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
-
 	}
 
 	/**
 	 * Add Meta Box for Video-Course Progression settings
 	 *
 	 * @access private
-	 * @param WP_Post $post
+	 *
+	 * @param WP_Post $post Lesson object.
 	 */
 	public function add_video_meta_box( $post ) {
 		$lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
@@ -374,9 +395,7 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * lesson_info_meta_box_content function.
-	 *
-	 * @access public
+	 * Output content for the lesson info meta box.
 	 */
 	public function lesson_info_meta_box_content() {
 		global $post;
@@ -389,10 +408,10 @@ class Sensei_Lesson {
 		$lesson_video_embed = Sensei_Wp_Kses::maybe_sanitize( $lesson_video_embed, $this->allowed_html );
 
 		$html = '';
-		// Lesson Length
+		// Lesson Length.
 		$html .= '<p><label for="lesson_length">' . esc_html__( 'Lesson Length in minutes', 'sensei-lms' ) . ': </label>';
 		$html .= '<input type="number" id="lesson-length" name="lesson_length" class="small-text" value="' . esc_attr( $lesson_length ) . '" /></p>' . "\n";
-		// Lesson Complexity
+		// Lesson Complexity.
 		$html     .= '<p><label for="lesson_complexity">' . esc_html__( 'Lesson Complexity', 'sensei-lms' ) . ': </label>';
 		$html     .= '<select id="lesson-complexity-options" name="lesson_complexity" class="chosen_select lesson-complexity-select">';
 			$html .= '<option value="">' . esc_html__( 'None', 'sensei-lms' ) . '</option>';
@@ -450,9 +469,7 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * lesson_prerequisite_meta_box_content function.
-	 *
-	 * @access public
+	 * Prepare to output lesson prerequisite meta box content.
 	 */
 	public function lesson_prerequisite_meta_box_content() {
 		global $post;
@@ -473,7 +490,7 @@ class Sensei_Lesson {
 	 */
 	private function output_prerequisite_meta_box_content( int $lesson_id, int $course_id = null ) {
 		// Get all the possible prerequisite lessons.
-		$posts_array = $course_id ? $this->get_prerequisites( $lesson_id, $course_id ) : [];
+		$posts_array = $course_id ? $this->get_prerequisites( $lesson_id, $course_id ) : array();
 
 		// Get the currently selected prerequisite.
 		$selected_prerequisite = get_post_meta( $lesson_id, '_lesson_prerequisite', true );
@@ -537,13 +554,13 @@ class Sensei_Lesson {
 	 * @return WP_Post[]
 	 */
 	private function get_prerequisites( int $lesson_id, int $course_id ): array {
-		$lesson_status = [ 'publish', 'draft', 'future' ];
+		$lesson_status = array( 'publish', 'draft', 'future' );
 		$modules       = Sensei()->modules->get_course_modules( $course_id );
 		$lessons       = Sensei()->modules->get_none_module_lessons( $course_id, $lesson_status );
 
 		// If the course has modules, make sure the lessons order is correct.
 		if ( $modules ) {
-			$in_module_lessons = [];
+			$in_module_lessons = array();
 			foreach ( $modules as $module_term ) {
 				$module_lessons_query = Sensei()->modules->get_lessons_query(
 					$course_id,
@@ -560,7 +577,7 @@ class Sensei_Lesson {
 		// Exclude the lesson that we are getting the prerequisites for.
 		$lessons = array_filter(
 			$lessons,
-			function( $lesson ) use ( $lesson_id ) {
+			function ( $lesson ) use ( $lesson_id ) {
 				return $lesson->ID !== $lesson_id;
 			}
 		);
@@ -601,19 +618,17 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * lesson_preview_meta_box_content function.
-	 *
-	 * @access public
+	 * Output lesson preview meta box content.
 	 */
 	public function lesson_preview_meta_box_content() {
 		global $post;
-		// Get existing post meta
+		// Get existing post meta.
 		$lesson_preview = get_post_meta( $post->ID, '_lesson_preview', true );
 		$html           = '';
 		$html          .= wp_nonce_field( 'sensei-save-post-meta', 'woo_' . $this->token . '_nonce', true, false );
 
 		$checked = '';
-		if ( isset( $lesson_preview ) && ( '' != $lesson_preview ) ) {
+		if ( isset( $lesson_preview ) && ( '' !== $lesson_preview ) ) {
 			$checked = checked( 'preview', $lesson_preview, false );
 		}
 
@@ -642,11 +657,10 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * meta_box_save function.
+	 * Save submitted meta box data.
 	 *
-	 * @access public
-	 * @param int $post_id
-	 * @return integer $post_id
+	 * @param int $post_id The post ID.
+	 * @return int $post_id The post ID.
 	 */
 	public function meta_box_save( $post_id ) {
 
@@ -662,21 +676,19 @@ class Sensei_Lesson {
 			return $post_id;
 		}
 
-		// Check if the current post type is a page
-		if ( 'page' == $_POST['post_type'] ) {
+		// Check if the current post type is a page.
+		if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
 
 			if ( ! current_user_can( 'edit_page', $post_id ) ) {
 
 				return $post_id;
 
 			}
-		} else {
-			if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		} elseif ( ! current_user_can( 'edit_post', $post_id ) ) {
 				return $post_id;
-			}
 		}
 
-		// Save the post meta data fields
+		// Save the post meta data fields.
 		if ( isset( $this->meta_fields ) && is_array( $this->meta_fields ) ) {
 
 			foreach ( $this->meta_fields as $meta_key ) {
@@ -706,7 +718,6 @@ class Sensei_Lesson {
 		$this->save_quiz_settings( $post_id, $new_settings );
 
 		return $post_id;
-
 	}
 
 	/**
@@ -718,8 +729,7 @@ class Sensei_Lesson {
 	 *
 	 * @since 3.6.0 It order all lessons that is part of a course, regardless their status.
 	 *
-	 * @access public
-	 * @param int $lesson_id
+	 * @param int $lesson_id The Lesson ID.
 	 */
 	public function add_lesson_to_course_order( $lesson_id = 0 ) {
 		$lesson_id = intval( $lesson_id );
@@ -883,24 +893,24 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * to actions when the status of the lesson changes to publish
+	 * To actions when the status of the lesson changes to publish.
 	 *
 	 * @deprecated 3.6.0
 	 *
-	 * @param string  $new_status
-	 * @param string  $old_status
-	 * @param WP_Post $post
+	 * @param string  $new_status New status.
+	 * @param string  $old_status Old status.
+	 * @param WP_Post $post       Lesson object.
 	 */
 	public function on_lesson_published( $new_status, $old_status, $post ) {
 		_deprecated_function( __METHOD__, '3.6.0' );
 
-		if ( 'lesson' != get_post_type( $post ) ) {
+		if ( 'lesson' !== get_post_type( $post ) ) {
 			return;
 		}
 
 		$lesson_id = absint( $post->ID );
 
-		if ( $new_status !== 'publish' ) {
+		if ( 'publish' !== $new_status ) {
 			return;
 		}
 
@@ -911,8 +921,8 @@ class Sensei_Lesson {
 	/**
 	 * Update the lesson quiz and all the post meta
 	 *
-	 * @access public
-	 * @return integer|boolean $post_id or false
+	 * @param int $post_id The post ID.
+	 * @return int|bool $post_id Post Id or false
 	 */
 	public function quiz_update( $post_id ) {
 		global $post;
@@ -939,7 +949,7 @@ class Sensei_Lesson {
 		// Save the Quiz
 		$quiz_id = $this->lesson_quizzes( $post_id, 'any' );
 
-		 // Sanitize and setup the post data
+		// Sanitize and setup the post data
 		$_POST = stripslashes_deep( $_POST );
 
 		// Retrieve the update lesson.
@@ -1011,20 +1021,32 @@ class Sensei_Lesson {
 				}
 			}
 
-			// Set the post terms for quiz-type
+			// Set the post terms for quiz-type.
 			wp_set_post_terms( $quiz_id, array( 'multiple-choice' ), 'quiz-type' );
+
+			/**
+			 * Fires after a quiz is created while saving a lesson in a non-block editor.
+			 *
+			 * @since $$next-version$$
+			 *
+			 * @hook sensei_lesson_quiz_created
+			 *
+			 * @param {int} $quiz_id   Quiz post ID.
+			 * @param {int} $lesson_id Course post ID.
+			 */
+			do_action( 'sensei_lesson_quiz_created', $quiz_id, $post_id );
 		}
 
-		// Add default lesson order meta value
+		// Add default lesson order meta value.
 		$course_id = get_post_meta( $post_id, '_lesson_course', true );
 		if ( $course_id ) {
 			if ( ! get_post_meta( $post_id, '_order_' . $course_id, true ) ) {
 				update_post_meta( $post_id, '_order_' . $course_id, 0 );
 			}
 		}
-		// Add reference back to the Quiz
+		// Add reference back to the Quiz.
 		update_post_meta( $post_id, '_lesson_quiz', $quiz_id );
-		// Mark if the Lesson Quiz has questions
+		// Mark if the Lesson Quiz has questions.
 		$quiz_questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
 		if ( $quiz_questions ) {
 			update_post_meta( $post_id, '_quiz_has_questions', '1' );
@@ -1032,9 +1054,8 @@ class Sensei_Lesson {
 			delete_post_meta( $post_id, '_quiz_has_questions' );
 		}
 
-		// Restore the previously disabled filter
+		// Restore the previously disabled filter.
 		add_action( 'save_post', array( $this, 'quiz_update' ) );
-
 	}
 
 	/**
@@ -1092,11 +1113,11 @@ class Sensei_Lesson {
 		// Get the meta key.
 		$meta_key = '_' . $post_key;
 
-		// ignore fields are not posted
+		// Ignore fields are not posted.
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! isset( $_POST[ $post_key ] ) ) {
 
-			// except for lesson preview checkbox field
+			// Except for lesson preview checkbox field.
 			if ( 'lesson_preview' == $post_key ) {
 
 				$_POST[ $post_key ] = '';
@@ -1109,18 +1130,18 @@ class Sensei_Lesson {
 		}
 
 		// Get the posted data and sanitize it for use as an HTML class.
-		if ( 'lesson_video_embed' == $post_key ) {
-			// phpcs:ignore WordPress.Security.NonceVerification
+		if ( 'lesson_video_embed' === $post_key ) {
+			// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$new_meta_value = isset( $_POST[ $post_key ] ) ? $_POST[ $post_key ] : '';
 			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, $this->allowed_html );
 		} else {
-			// phpcs:ignore WordPress.Security.NonceVerification
+			// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$new_meta_value = ( isset( $_POST[ $post_key ] ) ? sanitize_html_class( $_POST[ $post_key ] ) : '' );
 		}
 
-		// quick edit work around
+		// Quick edit work around.
 		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( 'lesson_preview' == $post_key && isset( $_POST['action'] ) && $_POST['action'] == 'inline-save' ) {
+		if ( 'lesson_preview' === $post_key && isset( $_POST['action'] ) && 'inline-save' === $_POST['action'] ) {
 			$new_meta_value = '-1';
 		}
 
@@ -1139,7 +1160,6 @@ class Sensei_Lesson {
 		if ( -1 != $new_meta_value ) {
 			return update_post_meta( $post_id, $meta_key, $new_meta_value );
 		}
-
 	}
 
 	/**
@@ -1451,7 +1471,6 @@ class Sensei_Lesson {
 		}
 
 		return $html;
-
 	}
 
 	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0, $context = 'quiz', $multiple_data = array() ) {
@@ -1968,7 +1987,7 @@ class Sensei_Lesson {
 		 */
 		$qry = apply_filters( 'sensei_existing_questions_query_results', $qry );
 
-		$questions              = [];
+		$questions              = array();
 		$questions['questions'] = $qry->posts;
 		$questions['count']     = intval( $qry->found_posts );
 		$questions['page']      = $page;
@@ -2114,7 +2133,7 @@ class Sensei_Lesson {
 				case 'multiple-choice':
 					$html .= '<div class="question_default_fields multiple-choice-answers ' . esc_attr( str_replace( ' hidden', '', $question_class ) ) . '">';
 
-					$answers       = [];
+					$answers       = array();
 					$right_answers = (array) $right_answer;
 					// Calculate total right answers available (defaults to 1)
 					$total_right = 0;
@@ -2431,7 +2450,6 @@ class Sensei_Lesson {
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped in the method.
 		echo $this->quiz_panel( $quiz_id );
-
 	}
 
 	/**
@@ -2513,7 +2531,6 @@ class Sensei_Lesson {
 		$html = Sensei()->admin->render_settings( $settings, $quiz_id, 'quiz-settings' );
 
 		return $html;
-
 	}
 
 	public function get_quiz_settings( $quiz_id = 0 ) {
@@ -2649,14 +2666,14 @@ class Sensei_Lesson {
 		}
 
 		// Load the lessons script.
-		Sensei()->assets->enqueue( 'sensei-lesson-metadata', 'js/admin/lesson-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
+		Sensei()->assets->enqueue( 'sensei-lesson-metadata', 'js/admin/lesson-edit.js', array( 'jquery', 'sensei-core-select2' ), true );
 
 		wp_localize_script(
 			'sensei-lesson-metadata',
 			'sensei_lesson_metadata',
-			[
+			array(
 				'get_prerequisite_meta_box_content_nonce' => wp_create_nonce( 'get_prerequisite_meta_box_content_nonce' ),
-			]
+			)
 		);
 
 		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
@@ -2674,7 +2691,7 @@ class Sensei_Lesson {
 		 * @return {bool} Whether to enqueue the scripts.
 		 */
 		if ( ! apply_filters( 'sensei_ai_quiz_generation_available', false ) ) {
-			Sensei()->assets->enqueue( 'sensei-quiz-question-ai-upsell', 'js/admin/lesson-ai.js', [], true );
+			Sensei()->assets->enqueue( 'sensei-quiz-question-ai-upsell', 'js/admin/lesson-ai.js', array(), true );
 		}
 	}
 
@@ -2686,7 +2703,7 @@ class Sensei_Lesson {
 		wp_enqueue_media();
 
 		// Load the lessons script.
-		Sensei()->assets->enqueue( 'sensei-meta-box-quiz-editor', 'js/admin/meta-box-quiz-editor.js', [ 'jquery', 'sensei-core-select2', 'jquery-ui-sortable', 'sensei-chosen-ajax' ], true );
+		Sensei()->assets->enqueue( 'sensei-meta-box-quiz-editor', 'js/admin/meta-box-quiz-editor.js', array( 'jquery', 'sensei-core-select2', 'jquery-ui-sortable', 'sensei-chosen-ajax' ), true );
 
 		// Localise script.
 		$translation_strings = array(
@@ -2715,7 +2732,7 @@ class Sensei_Lesson {
 
 		// Chosen RTL
 		if ( is_rtl() ) {
-			Sensei()->assets->enqueue( 'sensei-chosen-rtl', '../vendor/chosen/chosen-rtl.js', [ 'jquery' ], true );
+			Sensei()->assets->enqueue( 'sensei-chosen-rtl', '../vendor/chosen/chosen-rtl.js', array( 'jquery' ), true );
 		}
 	}
 
@@ -2727,9 +2744,8 @@ class Sensei_Lesson {
 	 */
 	private function enqueue_lesson_edit_scripts() {
 		// Load the quick edit screen script.
-		Sensei()->assets->enqueue( 'sensei-lesson-quick-edit', 'js/admin/lesson-quick-edit.js', [ 'jquery' ], true );
-		Sensei()->assets->enqueue( 'sensei-lesson-bulk-edit', 'js/admin/lesson-bulk-edit.js', [ 'jquery' ], true );
-
+		Sensei()->assets->enqueue( 'sensei-lesson-quick-edit', 'js/admin/lesson-quick-edit.js', array( 'jquery' ), true );
+		Sensei()->assets->enqueue( 'sensei-lesson-bulk-edit', 'js/admin/lesson-bulk-edit.js', array( 'jquery' ), true );
 	}
 
 	/**
@@ -2777,8 +2793,8 @@ class Sensei_Lesson {
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 			Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
 
-			if ( ! Sensei()->quiz->is_block_based_editor_enabled() && in_array( $post_type, [ 'question', 'lesson' ], true ) ) {
-				Sensei()->assets->enqueue( 'sensei-meta-box-quiz-editor-css', 'css/meta-box-quiz-editor.css', [ 'sensei-settings-api' ] );
+			if ( ! Sensei()->quiz->is_block_based_editor_enabled() && in_array( $post_type, array( 'question', 'lesson' ), true ) ) {
+				Sensei()->assets->enqueue( 'sensei-meta-box-quiz-editor-css', 'css/meta-box-quiz-editor.css', array( 'sensei-settings-api' ) );
 			}
 		}
 
@@ -2786,7 +2802,6 @@ class Sensei_Lesson {
 		if ( $screen && 'lesson' === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-admin-lesson-editor-styles', 'css/lesson-editor.css' );
 		}
-
 	}
 
 	/**
@@ -2799,7 +2814,7 @@ class Sensei_Lesson {
 	 * @return array            Updated array of column header labels keyed by column ID.
 	 */
 	public function add_column_headings( $defaults ) {
-		$new_columns                        = [];
+		$new_columns                        = array();
 		$new_columns['cb']                  = '<input type="checkbox" />';
 		$new_columns['title']               = _x( 'Lesson Title', 'column name', 'sensei-lms' );
 		$new_columns['lesson-course']       = _x( 'Course', 'column name', 'sensei-lms' );
@@ -2809,9 +2824,9 @@ class Sensei_Lesson {
 		}
 
 		// Make sure other sensei columns stay directly behind the new columns.
-		$other_sensei_columns = [
+		$other_sensei_columns = array(
 			'modules',
-		];
+		);
 		foreach ( $other_sensei_columns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {
 				$new_columns[ $column_key ] = $defaults[ $column_key ];
@@ -3131,7 +3146,7 @@ class Sensei_Lesson {
 				$questions = explode( ',', trim( $question_data['questions'], ',' ) );
 				$questions = array_filter(
 					$questions,
-					function( $question_id ) {
+					function ( $question_id ) {
 						return current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question_id );
 					}
 				);
@@ -3506,7 +3521,6 @@ class Sensei_Lesson {
 		}
 
 		return true;
-
 	}
 
 
@@ -3526,7 +3540,6 @@ class Sensei_Lesson {
 		);
 
 		return $lesson_complexities;
-
 	}
 
 
@@ -3642,7 +3655,7 @@ class Sensei_Lesson {
 	 *
 	 * @return bool Whether quiz is submitted.
 	 */
-	public function is_quiz_submitted( int $lesson_id, int $user_id ) : bool {
+	public function is_quiz_submitted( int $lesson_id, int $user_id ): bool {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		if ( ! $quiz_id ) {
 			return false;
@@ -3698,7 +3711,7 @@ class Sensei_Lesson {
 		$questions_array = $questions;
 
 		// If viewing quiz on frontend or in grading then only single questions must be shown.
-		$selected_questions = [];
+		$selected_questions = array();
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Input used for comparisons.
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
@@ -3706,11 +3719,11 @@ class Sensei_Lesson {
 			$submission         = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 			$selected_questions = $submission
 				? Sensei()->quiz_submission_repository->get_question_ids( $submission->get_id() )
-				: [];
+				: array();
 
 			if ( $selected_questions ) {
 				// Fetch each question in the order in which they were asked.
-				$questions = [];
+				$questions = array();
 				foreach ( $selected_questions as $question_id ) {
 					$question = get_post( $question_id );
 					if ( ! isset( $question ) || ! isset( $question->ID ) ) {
@@ -3720,7 +3733,7 @@ class Sensei_Lesson {
 				}
 			} else {
 				// Otherwise, make sure that we convert all multiple questions into single questions.
-				$existing_questions = [];
+				$existing_questions = array();
 
 				// Set array of questions that already exist so we can prevent duplicates from appearing.
 				foreach ( $questions_array as $question ) {
@@ -3732,7 +3745,7 @@ class Sensei_Lesson {
 
 				// Include only single questions in the return array.
 				$questions_loop  = $questions_array;
-				$questions_array = [];
+				$questions_array = array();
 				foreach ( $questions_loop as $question ) {
 
 					// If this is a single question then include it.
@@ -3745,21 +3758,21 @@ class Sensei_Lesson {
 						$question_number = (int) get_post_meta( $question->ID, 'number', true );
 						$quiz_author     = get_post( $quiz_id )->post_author;
 
-						$qargs = [
+						$qargs = array(
 							'post_type'        => 'question',
 							'posts_per_page'   => $question_number,
 							'orderby'          => $orderby,
-							'tax_query'        => [
-								[
+							'tax_query'        => array(
+								array(
 									'taxonomy' => 'question-category',
 									'field'    => 'term_id',
 									'terms'    => $question_cat,
-								],
-							],
+								),
+							),
 							'post_status'      => $post_status,
 							'suppress_filters' => 0,
 							'post__not_in'     => $existing_questions,
-						];
+						);
 
 						/**
 						 * When a question category is expanded to its questions, if the quiz owner is not an admin,
@@ -3818,7 +3831,7 @@ class Sensei_Lesson {
 					);
 
 					// Loop through all questions and pick the ones to be shown based on the random key selection.
-					$questions = [];
+					$questions = array();
 
 					foreach ( $questions_array as $k => $question ) {
 
@@ -3883,11 +3896,10 @@ class Sensei_Lesson {
 				$o = 1;
 				foreach ( $questions as $question ) {
 					add_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $o, true );
-					$o++;
+					++$o;
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -3980,7 +3992,6 @@ class Sensei_Lesson {
 	public static function the_lesson_image( $lesson_id = 0 ) {
 
 		echo wp_kses_post( Sensei()->lesson->lesson_image( $lesson_id ) );
-
 	}
 
 	/**
@@ -4041,7 +4052,6 @@ class Sensei_Lesson {
 		}
 
 		return $lesson_course_id;
-
 	}
 
 	/**
@@ -4057,7 +4067,7 @@ class Sensei_Lesson {
 		global $wpdb;
 
 		if ( empty( $lesson_ids ) ) {
-			return [];
+			return array();
 		}
 
 		sort( $lesson_ids, SORT_NUMERIC );
@@ -4372,7 +4382,6 @@ class Sensei_Lesson {
 		}
 
 		die();
-
 	}
 
 	/**
@@ -4407,7 +4416,6 @@ class Sensei_Lesson {
 		}
 
 		wp_localize_script( 'sensei-lesson-quick-edit', 'sensei_quick_edit_' . $post_id, $data );
-
 	}
 
 	/**
@@ -4444,7 +4452,6 @@ class Sensei_Lesson {
 		}
 
 		return array_merge( $classes, $lesson_classes );
-
 	}
 
 	/**
@@ -4500,7 +4507,7 @@ class Sensei_Lesson {
 		<header class="lesson-title">
 			<h2>
 				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ); ?>"
-				   title="<?php echo esc_attr( $heading_link_title ); ?>" >
+					title="<?php echo esc_attr( $heading_link_title ); ?>" >
 					<?php echo wp_kses_post( $count_markup ) . esc_html( get_the_title( $lesson_id ) ); ?>
 				</a>
 			</h2>
@@ -4551,7 +4558,6 @@ class Sensei_Lesson {
 		</header>
 
 		<?php
-
 	}
 
 	/**
@@ -4595,7 +4601,6 @@ class Sensei_Lesson {
 		}
 
 		return $excerpt;
-
 	}
 
 	/**
@@ -4703,7 +4708,6 @@ class Sensei_Lesson {
 		}
 
 		return Sensei_Utils::user_completed_lesson( $pre_requisite_id, $user_id );
-
 	}
 
 	/**
@@ -4714,8 +4718,8 @@ class Sensei_Lesson {
 	 *
 	 * @return int The first lesson id.
 	 */
-	public static function find_first_prerequisite_lesson( int $lesson_id, int $user_id ) : int {
-		$lesson_prerequisites = [ $lesson_id ];
+	public static function find_first_prerequisite_lesson( int $lesson_id, int $user_id ): int {
+		$lesson_prerequisites = array( $lesson_id );
 		$lesson_prerequisite  = (int) self::get_lesson_prerequisite_id( $lesson_id );
 
 		while ( $lesson_prerequisite > 0 && ! self::is_prerequisite_complete( $lesson_id, $user_id ) ) {
@@ -4742,7 +4746,6 @@ class Sensei_Lesson {
 	public static function user_not_taking_course_message() {
 
 		_deprecated_function( __METHOD__, '3.0.0' );
-
 	}
 
 	/**
@@ -4818,7 +4821,6 @@ class Sensei_Lesson {
 			$notice_level = apply_filters( 'sensei_lesson_course_signup_notice_level', 'info', $course_id );
 			Sensei()->notices->add_notice( $message, $notice_level );
 		}
-
 	}
 
 	/**
@@ -4876,7 +4878,6 @@ class Sensei_Lesson {
 			Sensei()->notices->add_notice( sprintf( esc_html__( 'You must first complete %1$s before viewing this Lesson', 'sensei-lms' ), $prerequisite_lesson_link ), 'info' );
 
 		}
-
 	}
 
 	/**
@@ -4913,7 +4914,6 @@ class Sensei_Lesson {
 		 * @return {string} HTML for the lesson archive header.
 		 */
 		echo wp_kses_post( apply_filters( 'sensei_lesson_archive_title', $html ) );
-
 	} // sensei_course_archive_header()
 
 	/**
@@ -4966,7 +4966,6 @@ class Sensei_Lesson {
 		</header>
 
 		<?php
-
 	}
 
 	/**
@@ -5002,8 +5001,8 @@ class Sensei_Lesson {
 					<p>
 
 						<a class="button"
-						   href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>"
-						   title="<?php esc_attr_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>">
+							href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>"
+							title="<?php esc_attr_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>">
 
 							<?php esc_html_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>
 
@@ -5039,7 +5038,7 @@ class Sensei_Lesson {
 	 *
 	 * @return bool
 	 */
-	public static function should_show_lesson_actions( int $lesson_id, int $user_id = 0 ) : bool {
+	public static function should_show_lesson_actions( int $lesson_id, int $user_id = 0 ): bool {
 		$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
 		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
@@ -5105,7 +5104,6 @@ class Sensei_Lesson {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -5122,7 +5120,6 @@ class Sensei_Lesson {
 		}
 
 		return $content;
-
 	}
 
 	/**
@@ -5142,7 +5139,6 @@ class Sensei_Lesson {
 				'post_per_page' => 4000,
 			)
 		);
-
 	}
 
 	/**
@@ -5211,10 +5207,10 @@ class Sensei_Lesson {
 	 * @param WP_Post $lesson The Lesson.
 	 */
 	public function log_initial_publish_event( $lesson ) {
-		$event_properties = [
+		$event_properties = array(
 			'course_id' => -1,
 			'module_id' => -1,
-		];
+		);
 
 		// Get course ID if it is set.
 		$lesson_course_id = get_post_meta( $lesson->ID, '_lesson_course', true );
@@ -5280,13 +5276,13 @@ class Sensei_Lesson {
 		$content     = $post->post_content;
 		$module_term = Sensei()->modules->get_lesson_module( $lesson_id );
 
-		$event_properties = [
+		$event_properties = array(
 			'course_id'                 => $course_id ? $course_id : -1,
 			'module_id'                 => $module_term ? $module_term->term_id : -1,
 			'lesson_id'                 => $lesson_id,
 			'has_contact_teacher_block' => has_block( 'sensei-lms/button-contact-teacher', $content ) ? 1 : 0,
 			'has_lesson_actions_block'  => has_block( 'sensei-lms/lesson-actions', $content ) ? 1 : 0,
-		];
+		);
 
 		sensei_log_event( 'lesson_update', $event_properties );
 	}
@@ -5300,7 +5296,7 @@ class Sensei_Lesson {
 	 * @access private
 	 */
 	public function disable_log_lesson_update() {
-		remove_action( 'shutdown', [ $this, 'log_lesson_update' ] );
+		remove_action( 'shutdown', array( $this, 'log_lesson_update' ) );
 	}
 
 	/**
@@ -5344,11 +5340,11 @@ class Sensei_Lesson {
 			return false;
 		}
 
-		$lesson_blocks = [
+		$lesson_blocks = array(
 			'sensei-lms/lesson-actions',
 			'sensei-lms/lesson-properties',
 			'sensei-lms/button-contact-teacher',
-		];
+		);
 
 		foreach ( $lesson_blocks as $block ) {
 			if ( has_block( $block, $lesson ) ) {
@@ -5357,7 +5353,6 @@ class Sensei_Lesson {
 		}
 
 		return false;
-
 	}
 
 	/**
@@ -5369,12 +5364,12 @@ class Sensei_Lesson {
 		register_post_meta(
 			'lesson',
 			'_initial_content',
-			[
+			array(
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'string',
-				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
-			]
+				'auth_callback' => array( $this, 'post_meta_auth_callback' ),
+			)
 		);
 	}
 
