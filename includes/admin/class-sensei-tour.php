@@ -19,9 +19,9 @@ class Sensei_Tour {
 	/**
 	 * Instance of class.
 	 *
-	 * @var self
+	 * @var self|null
 	 */
-	private static $instance;
+	private static Sensei_Tour $instance;
 
 	/**
 	 * Sensei_Tour constructor. Prevents other instances from being created outside of `self::instance()`.
