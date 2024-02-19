@@ -243,18 +243,24 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 		};
 		add_filter( 'wpml_element_has_translations', $element_has_translations_filter, 10, 0 );
 
-		$created_lessons                  = 0;
-		$admin_make_post_duplicates_acton = function () use ( &$created_lessons ) {
-			++$created_lessons;
+		$created_duplicates               = 0;
+		$admin_make_post_duplicates_acton = function ( $post_id ) use ( &$created_duplicates, $old_course ) {
+			if ( in_array( $post_id, $old_course['lesson_ids'], true ) ) {
+				++$created_duplicates;
+			}
 		};
 		add_action( 'wpml_admin_make_post_duplicates', $admin_make_post_duplicates_acton, 10, 0 );
 
 		$new_lesson_ids         = array( $new_lesson1_id, $new_lesson2_id );
-		$post_duplicates_filter = function () use ( &$new_lesson_ids ) {
-			$lesson_id = array_shift( $new_lesson_ids );
-			return array(
-				'a' => $lesson_id,
-			);
+		$post_duplicates_filter = function ( $post_id ) use ( &$new_lesson_ids, $old_course ) {
+			if ( in_array( $post_id, $old_course['lesson_ids'], true ) ) {
+				$lesson_id = array_shift( $new_lesson_ids );
+				return array(
+					'a' => $lesson_id,
+				);
+			}
+
+			return array();
 		};
 		add_filter( 'wpml_post_duplicates', $post_duplicates_filter, 10, 0 );
 
@@ -268,13 +274,122 @@ class Sensei_WPML_Test extends \WP_UnitTestCase {
 		remove_action( 'wpml_admin_make_post_duplicates', $admin_make_post_duplicates_acton );
 		remove_filter( 'wpml_post_duplicates', $post_duplicates_filter );
 
-		$this->assertSame( 2, $created_lessons );
+		$this->assertSame( 2, $created_duplicates );
 
 		$expected = array( $new_course_id, $new_course_id );
 		$actual   = array(
 			(int) get_post_meta( $new_lesson1_id, '_lesson_course', true ),
 			(int) get_post_meta( $new_lesson2_id, '_lesson_course', true ),
 		);
+		$this->assertSame( $expected, $actual, 'Lesson course should be set to the new course in lesson translations' );
+	}
+
+	public function testSetLanguageDetailsWhenQuestionCreated_WhenCalled_AppliesWpmlCurrentLanguageFilter() {
+		/* Arrange. */
+		$wpml = new Sensei_WPML();
+
+		$filter_applied  = false;
+		$filter_function = function () use ( &$filter_applied ) {
+			$filter_applied = true;
+			return 'a';
+		};
+
+		add_filter( 'wpml_current_language', $filter_function, 10, 0 );
+
+		/* Act. */
+		$wpml->set_language_details_when_question_created( 1 );
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_current_language', $filter_function, 10 );
+
+		$this->assertTrue( $filter_applied );
+	}
+
+	public function testSetLanguageDetailsWhenQuestionCreated_WhenCalled_AppliesWpmlSetElementLanguageDetails() {
+		/* Arrange. */
+		$wpml = new Sensei_WPML();
+
+		$filter_applied  = false;
+		$filter_function = function ( $data ) use ( &$filter_applied ) {
+			$filter_applied = true;
+			return $data;
+		};
+
+		add_filter( 'wpml_set_element_language_details', $filter_function, 10, 1 );
+
+		/* Act. */
+		$wpml->set_language_details_when_question_created( 1 );
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_set_element_language_details', $filter_function, 10 );
+
+		$this->assertTrue( $filter_applied );
+	}
+
+
+	public function testUpdateLessonTranslationsOnLessonTranslationCreated_WhenCalled_CreatesLessonTranslations() {
+		/* Arrange. */
+		$new_lesson_id = $this->factory->lesson->create();
+		$old_lesson    = $this->factory->lesson->create();
+
+		$wpml = new Sensei_WPML();
+
+		$element_language_details_filter = function () {
+			return array(
+				'language_code'        => 'a',
+				'source_language_code' => 'c',
+			);
+		};
+		add_filter( 'wpml_element_language_details', $element_language_details_filter, 10, 0 );
+
+		$object_id_fitler = function ( $object_id, $element_type ) use ( $new_lesson_id, $old_lesson ) {
+			if ( $new_lesson_id === $object_id && 'lesson' === $element_type ) {
+				return $old_lesson;
+			}
+
+			return 0;
+		};
+		add_filter( 'wpml_object_id', $object_id_fitler, 10, 2 );
+
+		$element_has_translations_filter = function () {
+			return false;
+		};
+		add_filter( 'wpml_element_has_translations', $element_has_translations_filter, 10, 0 );
+
+		$admin_make_post_duplicates_acton = function ( $post_id ) use ( &$created_duplicates, $old_lesson ) {
+			if ( $post_id === $old_lesson ) {
+				++$created_duplicates;
+			}
+		};
+
+		add_action( 'wpml_admin_make_post_duplicates', $admin_make_post_duplicates_acton, 10, 1 );
+
+		$post_duplicates_filter = function ( $post_id ) use ( $new_lesson_id, $old_lesson ) {
+			if ( $post_id === $old_lesson ) {
+				return array(
+					'a' => $new_lesson_id,
+				);
+			}
+
+			return array();
+		};
+
+		add_filter( 'wpml_post_duplicates', $post_duplicates_filter, 10, 1 );
+
+		/* Act. */
+		$wpml->update_lesson_translations_on_lesson_translation_created( $new_lesson_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_element_language_details', $element_language_details_filter );
+		remove_filter( 'wpml_object_id', $object_id_fitler );
+		remove_filter( 'wpml_element_has_translations', $element_has_translations_filter );
+		remove_action( 'wpml_admin_make_post_duplicates', $admin_make_post_duplicates_acton );
+		remove_filter( 'wpml_post_duplicates', $post_duplicates_filter );
+
+		$this->assertSame( 1, $created_duplicates );
+
+		$expected = $new_lesson_id;
+		$actual   = (int) get_post_meta( $new_lesson_id, '_lesson_course', true );
 		$this->assertSame( $expected, $actual, 'Lesson course should be set to the new course in lesson translations' );
 	}
 }
