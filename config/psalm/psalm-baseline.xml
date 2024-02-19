@@ -5892,6 +5892,11 @@
       <code>(int) $offset</code>
     </RedundantCast>
   </file>
+  <file src="includes/wpml/class-sensei-wpml.php">
+    <DocblockTypeContradiction occurrences="1">
+      <code>is_wp_error( $question_id )</code>
+    </DocblockTypeContradiction>
+  </file>
   <file src="sensei-lms.php">
     <InvalidGlobal occurrences="1">
       <code>global $woothemes_sensei;</code>
