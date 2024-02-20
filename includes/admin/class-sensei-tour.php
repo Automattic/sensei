@@ -60,7 +60,10 @@ class Sensei_Tour {
 		$post_type    = get_post_type();
 		$tour_loaders = [];
 
-		if ( in_array( $post_type, [ 'course', 'lesson' ], true ) ) {
+		if (
+			in_array( $post_type, [ 'course', 'lesson' ], true ) &&
+			in_array( $hook, [ 'post-new.php', 'post.php' ], true )
+		) {
 			$tour_loaders[ "sensei-$post_type-tour" ] = [
 				'path' => "admin/tour/$post_type-tour/index.js",
 			];
