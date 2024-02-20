@@ -5,6 +5,8 @@
  * @package sensei-lms
  */
 
+namespace Sensei\Admin\Tour;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -21,7 +23,7 @@ class Sensei_Tour {
 	 *
 	 * @var self|null
 	 */
-	private static Sensei_Tour $instance;
+	private static $instance;
 
 	/**
 	 * Sensei_Tour constructor. Prevents other instances from being created outside of `self::instance()`.
