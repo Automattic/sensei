@@ -1,5 +1,6 @@
 <?php
 
+use Sensei\Admin\Tour\Sensei_Tour;
 use Sensei\Clock\Clock;
 use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
