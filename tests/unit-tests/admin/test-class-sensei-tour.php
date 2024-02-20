@@ -106,4 +106,16 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 		$this->assertFalse( wp_script_is( 'sensei-course-tour' ) );
 		$this->assertTrue( wp_style_is( 'sensei-tour-styles' ) );
 	}
+
+	public function testEnqueueAdminScripts_WhenPostTypeCorrectButPageDifferent_DoesNotEnqueueTheirScriptsAndStyles() {
+		global $post;
+		$this->login_as_admin();
+		$post = $this->factory->course->create_and_get();
+
+		$this->instance->enqueue_admin_scripts( 'edit.php' );
+
+		$this->assertFalse( wp_script_is( 'sensei-lesson-tour' ) );
+		$this->assertFalse( wp_script_is( 'sensei-course-tour' ) );
+		$this->assertFalse( wp_style_is( 'sensei-tour-styles' ) );
+	}
 }
