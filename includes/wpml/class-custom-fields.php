@@ -28,6 +28,7 @@ class Custom_Fields {
 	public function init() {
 		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_lesson_course_before_copied' ), 10, 4 );
 		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_course_prerequisite_before_copied' ), 10, 4 );
+		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_quiz_id_before_copied' ), 10, 4 );
 	}
 
 	/**
@@ -129,7 +130,7 @@ class Custom_Fields {
 	 * @param string $meta_key     Meta key.
 	 * @return mixed
 	 */
-	public function update_quiz_question_order_before_copied( $copied_value, $post_id_from, $post_id_to, $meta_key ) {
+	public function update_quiz_id_before_copied( $copied_value, $post_id_from, $post_id_to, $meta_key ) {
 		if ( '_quiz_id' !== $meta_key ) {
 			return $copied_value;
 		}
