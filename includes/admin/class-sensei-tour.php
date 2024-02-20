@@ -72,13 +72,19 @@ class Sensei_Tour {
 		/**
 		 * Filters the tour loaders.
 		 *
+		 * @hook sensei_tour_loaders Load tours for Sensei.
+		 *
 		 * @since $$next-version$$
 		 *
-		 * @param array $tour_loaders The tour loaders.
+		 * @param {array} $tour_loaders The tour loaders.
+		 *
+		 * @return {array} Filtered tour loaders.
 		 */
 		$tour_loaders = apply_filters( 'sensei_tour_loaders', $tour_loaders );
 
-		Sensei()->assets->enqueue( 'sensei-tour-styles', 'admin/tour/style.css', [] );
+		if ( ! empty( $tour_loaders ) ) {
+			Sensei()->assets->enqueue( 'sensei-tour-styles', 'admin/tour/style.css', [] );
+		}
 
 		foreach ( $tour_loaders as $handle => $tour_loader ) {
 			Sensei()->assets->enqueue( $handle, $tour_loader['path'], [], true );
