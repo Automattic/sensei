@@ -14,10 +14,14 @@ module.exports = {
 		'<rootDir>/tests/e2e/',
 		'<rootDir>/tests/e2e-playwright/',
 	],
+	transformIgnorePatterns: [
+		'/node_modules/(?!(memize|is-plain-obj|@wordpress/i18n|@wordpress/shortcode)/)',
+	],
 	testEnvironment: 'jsdom',
 	moduleNameMapper: {
 		'\\.svg$': '<rootDir>/tests/__mocks__/svg.js',
 		'\\.(gif|jpg|jpeg|png)$': '<rootDir>/tests/__mocks__/image.js',
+		'^@wordpress/i18n/(.*)$': '<rootDir>/__mocks__/@wordpress/i18n/$1',
 	},
 	coverageReporters: [ 'clover' ],
 };
