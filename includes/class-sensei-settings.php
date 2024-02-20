@@ -361,7 +361,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['course_page'] = array(
 			'name'        => __( 'Course Archive Page', 'sensei-lms' ),
-			'description' => __( 'The page to use to display courses. If you leave this blank the default custom post type archive will apply.', 'sensei-lms' ),
+			'description' => sprintf(
+				// translators: Placeholder is the docs link.
+				__( 'The <a href="%s" target="_blank">page</a> to use to display courses. If you leave this blank the default custom post type archive will apply.', 'sensei-lms' ),
+				'https://senseilms.com/documentation/sensei-pages/#courses'
+			),
 			'type'        => 'select',
 			'default'     => 0,
 			'section'     => 'default-settings',
@@ -371,7 +375,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['my_course_page'] = array(
 			'name'        => __( 'My Courses Page', 'sensei-lms' ),
-			'description' => __( 'The page to use to display the courses that a user is currently taking as well as the courses a user has complete.', 'sensei-lms' ),
+			'description' => sprintf(
+				// translators: Placeholder is the docs link.
+				__( 'The <a href="%s" target="_blank">page</a> to use to display the courses that a user is currently taking as well as the courses a user has complete.', 'sensei-lms' ),
+				'https://senseilms.com/documentation/sensei-pages/#my-courses'
+			),
 			'type'        => 'select',
 			'default'     => 0,
 			'section'     => 'default-settings',
@@ -381,7 +389,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['course_completed_page'] = array(
 			'name'        => __( 'Course Completed Page', 'sensei-lms' ),
-			'description' => __( 'The page that is displayed after a student completes a course.', 'sensei-lms' ),
+			'description' => sprintf(
+				// translators: Placeholder is the docs link.
+				__( 'The <a href="%s" target="_blank">page</a> that is displayed after a student completes a course.', 'sensei-lms' ),
+				'https://senseilms.com/documentation/sensei-pages/#course-completed'
+			),
 			'type'        => 'select',
 			'default'     => 0,
 			'section'     => 'default-settings',
