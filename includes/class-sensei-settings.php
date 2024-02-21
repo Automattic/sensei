@@ -1458,11 +1458,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$key     = $args['key'];
 		$value   = $options[ $key ];
 
-		$color_customizer_url = '';
-		if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
-			$color_customizer_url = Sensei_Course_Theme::get_learning_mode_customizer_url();
-		}
-
 		?>
 		<label for="<?php echo esc_attr( $key ); ?>">
 			<input id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
@@ -1471,14 +1466,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 		<p>
 			<span class="description"><?php echo esc_html( $args['data']['description'] ); ?></span>
 		</p>
-
-		<?php if ( $color_customizer_url ) : ?>
-			<p class="extra-content">
-				<a href="<?php echo esc_url( $color_customizer_url ); ?>">
-					<?php esc_html_e( 'Customize Colors', 'sensei-lms' ); ?>
-				</a>
-			</p>
-		<?php endif; ?>
 
 		<?php
 	}
