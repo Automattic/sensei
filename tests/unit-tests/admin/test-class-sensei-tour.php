@@ -128,7 +128,7 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 		/* Act */
 		add_filter(
 			'sensei_tour_loaders',
-			function( $scripts ) {
+			function () {
 				$modified_scripts['modified-course-tour'] = [
 					'path' => 'modified-course-tour.js',
 				];
