@@ -47,7 +47,7 @@
     "@wordpress/plugins": "wp-5.9",
     "@wordpress/token-list": "wp-5.9",
     "@wordpress/url": "wp-5.9",
-    "classnames": "2.3.1",
+    "classnames": "2.5.1",
     "debug": "4.3.4",
     "interpolate-components": "1.1.1",
     "lodash": "4.17.21",
