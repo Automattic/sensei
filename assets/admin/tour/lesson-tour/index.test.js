@@ -42,6 +42,14 @@ describe( 'LessonTour', () => {
 		expect( queryByText( 'Tour Kit Output' ) ).toBeFalsy();
 	} );
 
+	test( 'should render SenseiTourKit when quiz block exists', () => {
+		// Mocking getOutlineBlock to return true.
+		getFirstBlockByName.mockReturnValueOnce( true );
+
+		const { getAllByText } = render( <LessonTour /> );
+		expect( getAllByText( 'Tour Kit Output' ) ).toBeTruthy();
+	} );
+
 	test( 'should pass the correct steps to inner block', () => {
 		// Mocking getOutlineBlock to return true. Otherwise, the component will return null.
 		getFirstBlockByName.mockReturnValueOnce( true );
