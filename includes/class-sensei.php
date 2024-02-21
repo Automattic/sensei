@@ -363,7 +363,7 @@ class Sensei_Main {
 	/**
 	 * Sensei Tour.
 	 *
-	 * @var Sensei_Tour
+	 * @var Sensei_Tour|null
 	 */
 	public $tour;
 
@@ -753,6 +753,7 @@ class Sensei_Main {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
 		}
 
+		$this->tour   = null;
 		$tour_enabled = $this->feature_flags->is_enabled( 'onboarding_tour' );
 		if ( $tour_enabled ) {
 			$this->tour = Sensei_Tour::instance();
