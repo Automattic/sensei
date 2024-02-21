@@ -21,7 +21,7 @@
     "node": "^18.14.0"
   },
   "dependencies": {
-    "@automattic/calypso-color-schemes": "^2.1.1",
+    "@automattic/calypso-color-schemes": "3.1.1",
     "@automattic/color-studio": "2.5.0",
     "@automattic/components": "2.0.1",
     "@automattic/tour-kit": "1.1.1",
