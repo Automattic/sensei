@@ -28,7 +28,7 @@ describe( '<OutlinePlaceholder />', () => {
 
 	it( 'Should render the outline placeholder correctly when feature flag is enabled', () => {
 		const { getByText } = render(
-			<OutlinePlaceholder addBlocksMock={ addBlocksMock } />
+			<OutlinePlaceholder addBlocks={ addBlocksMock } />
 		);
 
 		expect( getByText( 'Start with blank' ) ).toBeVisible();

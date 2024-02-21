@@ -273,7 +273,7 @@ class Sensei_Plugins_Installation {
 	/**
 	 * Complete installation removing the plugin from the transient.
 	 *
-	 * @param string $slug
+	 * @param string $slug Plugin slug.
 	 */
 	private function complete_installation( $slug ) {
 		$installing_plugins = $this->get_installing_plugins();
@@ -281,7 +281,7 @@ class Sensei_Plugins_Installation {
 		if ( ! empty( $installing_plugins ) ) {
 			$installing_plugins = array_filter(
 				$installing_plugins,
-				function( $plugin ) use ( $slug ) {
+				function ( $plugin ) use ( $slug ) {
 					return $plugin->product_slug !== $slug;
 				}
 			);
@@ -298,7 +298,7 @@ class Sensei_Plugins_Installation {
 	/**
 	 * Wrapper to get error message and give the `get_error_data` as fallback.
 	 *
-	 * @param WP_Error $error
+	 * @param WP_Error $error Error object.
 	 *
 	 * @return string Error message.
 	 */
@@ -424,7 +424,7 @@ class Sensei_Plugins_Installation {
 		);
 
 		if ( is_wp_error( $plugin_information ) ) {
-			throw new Exception( $this->get_error_message( $plugin_information ) );
+			throw new Exception( esc_html( $this->get_error_message( $plugin_information ) ) );
 		}
 
 		// Suppress feedback.
@@ -434,13 +434,13 @@ class Sensei_Plugins_Installation {
 		$download = $upgrader->download_package( $package );
 
 		if ( is_wp_error( $download ) ) {
-			throw new Exception( $this->get_error_message( $download ) );
+			throw new Exception( esc_html( $this->get_error_message( $download ) ) );
 		}
 
 		$working_dir = $upgrader->unpack_package( $download, true );
 
 		if ( is_wp_error( $working_dir ) ) {
-			throw new Exception( $this->get_error_message( $working_dir ) );
+			throw new Exception( esc_html( $this->get_error_message( $working_dir ) ) );
 		}
 
 		$result = $upgrader->install_package(
@@ -461,7 +461,7 @@ class Sensei_Plugins_Installation {
 		ob_end_clean();
 
 		if ( is_wp_error( $result ) ) {
-			throw new Exception( $this->get_error_message( $result ) );
+			throw new Exception( esc_html( $this->get_error_message( $result ) ) );
 		}
 	}
 
@@ -481,7 +481,7 @@ class Sensei_Plugins_Installation {
 		$result = activate_plugin( $plugin_file );
 
 		if ( is_wp_error( $result ) ) {
-			throw new Exception( $this->get_error_message( $result ) );
+			throw new Exception( esc_html( $this->get_error_message( $result ) ) );
 		}
 	}
 }

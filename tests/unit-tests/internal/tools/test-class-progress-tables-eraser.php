@@ -19,6 +19,7 @@ class Progress_Tables_Eraser_Test extends \WP_UnitTestCase {
 	private $eraser;
 
 	public function filterWpRedirect( $location, $status ) {
+		// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		throw new \Exception( $location, $status );
 	}
 
