@@ -38,4 +38,14 @@ describe( 'SenseiTourKit', () => {
 		const { queryByText } = render( <SenseiTourKit steps={ steps } /> );
 		expect( queryByText( 'WpcomTourKit output' ) ).toBeTruthy();
 	} );
+
+	test( 'should pass the correct steps to wpcomtourkit', () => {
+		const steps = getTourSteps();
+
+		render( <SenseiTourKit steps={ steps } /> );
+
+		expect(
+			mockFunction.mock.calls[ 0 ][ 0 ].config.steps[ 5 ].slug
+		).toEqual( steps[ 5 ].slug );
+	} );
 } );
