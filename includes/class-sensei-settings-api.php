@@ -819,7 +819,7 @@ class Sensei_Settings_API {
 			);
 
 			if ( isset( $args['data']['description'] ) ) {
-				echo '<p><span class="description">' . esc_html( $args['data']['description'] ) . '</span></p>' . "\n";
+				echo '<p><span class="description">' . wp_kses_post( $args['data']['description'] ) . '</span></p>' . "\n";
 			}
 		}
 	}
