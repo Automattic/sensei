@@ -34,6 +34,8 @@ class Sensei_Tour {
 	/**
 	 * Fetches an instance of the class.
 	 *
+	 * @since $$next-version$$
+	 *
 	 * @return self
 	 */
 	public static function instance() {
@@ -46,6 +48,8 @@ class Sensei_Tour {
 
 	/**
 	 * Initializes the class.
+	 *
+	 * @since $$next-version$$
 	 */
 	public function init() {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
@@ -53,6 +57,8 @@ class Sensei_Tour {
 
 	/**
 	 * Enqueue admin scripts.
+	 *
+	 * @internal
 	 *
 	 * @param string $hook The current admin page.
 	 */
