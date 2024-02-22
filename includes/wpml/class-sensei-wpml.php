@@ -348,6 +348,7 @@ class Sensei_WPML {
 			return;
 		}
 
+		$details = (array) $details;
 		if ( empty( $master_lesson_id ) ) {
 			if ( empty( $details['source_language_code'] ) ) {
 				return;
