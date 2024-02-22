@@ -7,10 +7,12 @@ import _ from 'lodash';
 /**
  * WordPress dependencies
  */
-import { useState } from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
+
 /**
  * Internal dependencies
  */
+import { SENSEI_TOUR_STORE } from '../../data/store';
 import { TourStep } from '../../types';
 
 /**
@@ -21,11 +23,18 @@ import { TourStep } from '../../types';
  * @param {Object}     [props.extraConfig={}] - Additional configuration options for the tour kit.
  */
 function SenseiTourKit( { steps, extraConfig = {} } ) {
-	const [ showTour, setShowTour ] = useState( true );
+	const { showTour } = useSelect( ( select ) => {
+		const { getIfShowTour } = select( SENSEI_TOUR_STORE );
+		return {
+			showTour: getIfShowTour(),
+		};
+	} );
+
+	const { setTourShowStatus } = useDispatch( SENSEI_TOUR_STORE );
 
 	const config = {
 		steps,
-		closeHandler: () => setShowTour( false ),
+		closeHandler: () => setTourShowStatus( false ),
 		options: {
 			effects: {
 				spotlight: null,
