@@ -66,9 +66,13 @@ const withoutLessonActions = ( block ) =>
  */
 const PatternsList = ( { onChoose } ) => {
 	const { patterns } = useSelect( ( select ) => ( {
-		patterns: select(
-			blockEditorStore
-		).__experimentalGetPatternsByBlockTypes( 'sensei-lms/post-content' ),
+		patterns:
+			select( blockEditorStore )?.getPatternsByBlockTypes(
+				'sensei-lms/post-content'
+			) ||
+			select( blockEditorStore ).__experimentalGetPatternsByBlockTypes(
+				'sensei-lms/post-content'
+			),
 	} ) );
 
 	return (
