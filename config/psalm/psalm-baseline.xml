@@ -397,6 +397,14 @@
       <code>$remote-&gt;version</code>
     </UndefinedPropertyFetch>
   </file>
+  <file src="includes/admin/content-duplicators/class-course-lessons-duplicator.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$lesson</code>
+    </PossiblyInvalidArgument>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$lesson-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
+  </file>
   <file src="includes/admin/content-duplicators/class-post-duplicator.php">
     <DocblockTypeContradiction occurrences="1">
       <code>is_wp_error( $new_post_id )</code>
@@ -486,6 +494,10 @@
       <code>get_time</code>
       <code>get_version_hash</code>
     </PossiblyInvalidMethodCall>
+    <PossiblyInvalidPropertyFetch occurrences="2">
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
     <UndefinedInterfaceMethod occurrences="1">
       <code>debug</code>
     </UndefinedInterfaceMethod>
@@ -1346,12 +1358,10 @@
       <code>$course_quizzes</code>
       <code>$url</code>
     </FalsableReturnStatement>
-    <InvalidArgument occurrences="7">
+    <InvalidArgument occurrences="5">
       <code>$lesson_args</code>
       <code>$lesson_args</code>
       <code>$lesson_args</code>
-      <code>$lesson_id</code>
-      <code>$lesson_id</code>
     </InvalidArgument>
     <InvalidArrayOffset occurrences="4">
       <code>$dimensions['height']</code>
@@ -1454,13 +1464,15 @@
       <code>get_the_ID()</code>
       <code>get_the_ID()</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArgument occurrences="4">
+    <PossiblyInvalidArgument occurrences="6">
       <code>$category_output</code>
       <code>$category_output</code>
       <code>$category_output</code>
+      <code>$lesson_id</code>
+      <code>$lesson_id</code>
       <code>$output</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidPropertyFetch occurrences="16">
+    <PossiblyInvalidPropertyFetch occurrences="21">
       <code>$course_item-&gt;ID</code>
       <code>$course_item-&gt;ID</code>
       <code>$course_item-&gt;post_author</code>
@@ -1470,9 +1482,14 @@
       <code>$course_item-&gt;post_title</code>
       <code>$course_item-&gt;post_title</code>
       <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson_item-&gt;ID</code>
       <code>$post-&gt;ID</code>
       <code>$post-&gt;post_type</code>
       <code>$post_item-&gt;ID</code>
+      <code>$post_item-&gt;ID</code>
+      <code>$post_item-&gt;post_title</code>
       <code>$post_item-&gt;post_title</code>
       <code>$taxonomy_raw_obj-&gt;labels</code>
       <code>$user_info-&gt;display_name</code>
@@ -1598,8 +1615,7 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$creds</code>
     </ArgumentTypeCoercion>
-    <InvalidArgument occurrences="4">
-      <code>$lesson_id</code>
+    <InvalidArgument occurrences="3">
       <code>true</code>
       <code>true</code>
       <code>true</code>
@@ -1651,8 +1667,9 @@
       <code>get_the_ID()</code>
       <code>wp_get_referer()</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArgument occurrences="5">
+    <PossiblyInvalidArgument occurrences="6">
       <code>$category_output</code>
+      <code>$lesson_id</code>
       <code>$tag_link</code>
       <code>$user_id</code>
       <code>$user_id</code>
@@ -2782,6 +2799,7 @@
       <code>! is_array( $lessons )</code>
       <code>is_numeric( $comments )</code>
     </DocblockTypeContradiction>
+    <InvalidArgument occurrences="1"/>
     <InvalidDocblockParamName occurrences="2">
       <code>$course_id</code>
       <code>$lesson_id</code>
@@ -2832,9 +2850,13 @@
       <code>empty( $course_id ) || ! $course_id</code>
       <code>empty( $lesson_id ) || ! $lesson_id</code>
     </ParadoxicalCondition>
-    <PossiblyInvalidPropertyFetch occurrences="7">
+    <PossiblyInvalidPropertyFetch occurrences="11">
       <code>$author-&gt;display_name</code>
       <code>$existing_module_by_slug-&gt;term_id</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;post_author</code>
       <code>$module_course-&gt;ID</code>
       <code>$module_course-&gt;post_author</code>
       <code>$module_course-&gt;post_title</code>
@@ -3079,10 +3101,6 @@
       <code>false</code>
       <code>wp_date( get_option( 'date_format' ), $date-&gt;getTimestamp(), $timezone )</code>
     </FalsableReturnStatement>
-    <InvalidArgument occurrences="2">
-      <code>$id</code>
-      <code>$lesson_id</code>
-    </InvalidArgument>
     <InvalidFalsableReturnType occurrences="1">
       <code>string</code>
     </InvalidFalsableReturnType>
@@ -3153,7 +3171,13 @@
       <code>get_permalink( $quiz_id )</code>
       <code>get_permalink( $quiz_id )</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidPropertyFetch occurrences="5">
+    <PossiblyInvalidArgument occurrences="2">
+      <code>$id</code>
+      <code>$lesson_id</code>
+    </PossiblyInvalidArgument>
+    <PossiblyInvalidPropertyFetch occurrences="7">
+      <code>$lesson-&gt;ID</code>
+      <code>$lesson-&gt;ID</code>
       <code>$plugin_information-&gt;name</code>
       <code>$plugin_information-&gt;short_description</code>
       <code>$plugin_information-&gt;version</code>
