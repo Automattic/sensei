@@ -17,6 +17,7 @@ import {
 	useLogEvent,
 } from './helpers';
 import '../../shared/data/api-fetch-preloaded-once';
+import { SENSEI_TOUR_STORE } from '../tour/data/store';
 
 /**
  * Editor wizard modal component.
@@ -25,6 +26,7 @@ const EditorWizardModal = () => {
 	const wizardDataState = useState( {} );
 	const wizardData = wizardDataState[ 0 ];
 	const { editPost, savePost } = useDispatch( editorStore );
+	const { setTourShowStatus } = useDispatch( SENSEI_TOUR_STORE ) ?? {};
 	const logEvent = useLogEvent();
 
 	const [ open, setDone ] = useWizardOpenState();
@@ -34,12 +36,19 @@ const EditorWizardModal = () => {
 		'sensei-content-description': wizardData.description,
 	} );
 
+	const showSenseiTour = ( show ) => {
+		if ( setTourShowStatus ) {
+			setTourShowStatus( show );
+		}
+	};
+
 	const onWizardCompletion = () => {
 		setDone( true );
 		editPost( {
 			meta: { _new_post: false },
 		} );
 		savePost();
+		showSenseiTour( true );
 	};
 
 	const skipWizard = () => {
@@ -61,6 +70,7 @@ const EditorWizardModal = () => {
 	}, [] );
 
 	useEffect( () => {
+		showSenseiTour( false );
 		if ( setShowWelcomeGuide && isShowWelcomeGuide ) {
 			setShowWelcomeGuide( undefined, {
 				onlyLocal: true,
