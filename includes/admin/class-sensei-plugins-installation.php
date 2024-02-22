@@ -23,7 +23,7 @@ class Sensei_Plugins_Installation {
 	 *
 	 * @var array
 	 */
-	private $deferred_actions = [];
+	private $deferred_actions = array();
 
 	/**
 	 * Instance of singleton.
@@ -38,7 +38,7 @@ class Sensei_Plugins_Installation {
 	 * It's private to prevent other instances from being created outside of `Sensei_Plugins_Installation::instance()`.
 	 */
 	private function __construct() {
-		add_action( 'shutdown', [ $this, 'run_deferred_actions' ] );
+		add_action( 'shutdown', array( $this, 'run_deferred_actions' ) );
 	}
 
 	/**
@@ -130,10 +130,10 @@ class Sensei_Plugins_Installation {
 					$installing_plugins[] = $plugin;
 				}
 
-				$this->deferred_actions[] = [
-					'func' => [ $this, 'background_installer' ],
-					'args' => [ $plugin ],
-				];
+				$this->deferred_actions[] = array(
+					'func' => array( $this, 'background_installer' ),
+					'args' => array( $plugin ),
+				);
 			}
 		}
 
@@ -148,7 +148,7 @@ class Sensei_Plugins_Installation {
 	public function get_installing_plugins() {
 		$installing_plugins = get_transient( self::INSTALLING_PLUGINS_TRANSIENT );
 
-		return $installing_plugins ? $installing_plugins : [];
+		return $installing_plugins ? $installing_plugins : array();
 	}
 
 	/**
@@ -192,7 +192,7 @@ class Sensei_Plugins_Installation {
 	private function get_installed_plugins() {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-		return array_reduce( array_keys( get_plugins() ), [ $this, 'associate_plugin_file' ] );
+		return array_reduce( array_keys( get_plugins() ), array( $this, 'associate_plugin_file' ) );
 	}
 
 	/**
@@ -250,7 +250,7 @@ class Sensei_Plugins_Installation {
 	 */
 	private function save_error( $slug, $message ) {
 
-		$message = wp_kses( $message, [] );
+		$message = wp_kses( $message, array() );
 
 		$installing_plugins = $this->get_installing_plugins();
 		$key                = array_search( $slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
@@ -263,10 +263,10 @@ class Sensei_Plugins_Installation {
 
 		sensei_log_event(
 			'setup_wizard_features_install_error',
-			[
+			array(
 				'slug'  => $slug,
 				'error' => $message,
-			]
+			)
 		);
 	}
 
@@ -291,7 +291,7 @@ class Sensei_Plugins_Installation {
 
 		sensei_log_event(
 			'setup_wizard_features_install_success',
-			[ 'slug' => $slug ]
+			array( 'slug' => $slug )
 		);
 	}
 
@@ -321,7 +321,7 @@ class Sensei_Plugins_Installation {
 		if ( ! empty( $plugin_to_install->product_slug ) ) {
 			$installed_plugins = $this->get_installed_plugins();
 			if ( empty( $installed_plugins ) ) {
-				$installed_plugins = [];
+				$installed_plugins = array();
 			}
 			$plugin_slug  = $plugin_to_install->product_slug;
 			$plugin_title = $plugin_to_install->title;
@@ -403,9 +403,9 @@ class Sensei_Plugins_Installation {
 
 		$plugin_information = plugins_api(
 			'plugin_information',
-			[
+			array(
 				'slug'   => $plugin_slug,
-				'fields' => [
+				'fields' => array(
 					'short_description' => false,
 					'sections'          => false,
 					'requires'          => false,
@@ -419,8 +419,8 @@ class Sensei_Plugins_Installation {
 					'donate_link'       => false,
 					'author_profile'    => false,
 					'author'            => false,
-				],
-			]
+				),
+			)
 		);
 
 		if ( is_wp_error( $plugin_information ) ) {
@@ -444,17 +444,17 @@ class Sensei_Plugins_Installation {
 		}
 
 		$result = $upgrader->install_package(
-			[
+			array(
 				'source'                      => $working_dir,
 				'destination'                 => WP_PLUGIN_DIR,
 				'clear_destination'           => false,
 				'abort_if_destination_exists' => false,
 				'clear_working'               => true,
-				'hook_extra'                  => [
+				'hook_extra'                  => array(
 					'type'   => 'plugin',
 					'action' => 'install',
-				],
-			]
+				),
+			)
 		);
 
 		// Discard feedback.
