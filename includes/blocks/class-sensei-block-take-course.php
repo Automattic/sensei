@@ -48,7 +48,20 @@ class Sensei_Block_Take_Course {
 		}
 
 		$course_id = $post->ID;
-		$html      = '';
+
+		/**
+		 * Filters the course ID for the take course block.
+		 *
+		 * @hook sensei_block_take_course_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} The course ID.
+		 */
+		$course_id = apply_filters( 'sensei_block_take_course_course_id', $course_id );
+
+		$html = '';
 
 		if ( 'course' !== get_post_type( $course_id ) ) {
 			return '';
@@ -117,7 +130,7 @@ class Sensei_Block_Take_Course {
 	 *
 	 * @return string The html with the added classes.
 	 */
-	private function add_button_classes( $button ) : string {
+	private function add_button_classes( $button ): string {
 		wp_enqueue_script( 'sensei-stop-double-submission' );
 
 		if ( preg_match( '/<button(.*)class="(.*)"/', $button ) ) {

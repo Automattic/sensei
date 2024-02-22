@@ -53,6 +53,18 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 * @return Course_Progress_Interface The course progress.
 	 */
 	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
+		/**
+		 * Filter the course ID for a created course progress.
+		 *
+		 * @hook sensei_course_progress_create_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_course_progress_create_course_id', $course_id );
+
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
@@ -104,6 +116,18 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 * @return Course_Progress_Interface|null The course progress or null if it does not exist.
 	 */
 	public function get( int $course_id, int $user_id ): ?Course_Progress_Interface {
+		/**
+		 * Filter the course ID for a course progress we want to get.
+		 *
+		 * @hook sensei_course_progress_get_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_course_progress_get_course_id', $course_id );
+
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -143,6 +167,18 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 * @return bool Whether the course progress exists.
 	 */
 	public function has( int $course_id, int $user_id ): bool {
+		/**
+		 * Filter the course ID for a course progress we want to check.
+		 *
+		 * @hook sensei_course_progress_has_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_course_progress_has_course_id', $course_id );
+
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -227,6 +263,18 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 * @param int $course_id The course ID.
 	 */
 	public function delete_for_course( int $course_id ): void {
+		/**
+		 * Filter the course ID for a course progress we want to delete.
+		 *
+		 * @hook sensei_course_progress_delete_for_course_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_course_progress_delete_for_course_course_id', $course_id );
+
 		$this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
@@ -292,8 +340,26 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		$where_clause = array( 'type = %s' );
 		$query_params = array( 'course' );
 		if ( ! empty( $course_id ) ) {
-			$query_params   = array_merge( $query_params, (array) $course_id );
-			$where_clause[] = 'post_id IN (' . $this->get_placeholders( (array) $course_id ) . ')';
+			$course_ids = array_map( 'intval', (array) $course_id );
+			$course_ids = array_map(
+				function ( $course_id ): int {
+					/**
+					 * Filter the course ID for a course progress we want to find.
+					 *
+					 * @hook sensei_course_progress_find_course_id
+					 *
+					 * @since $$next-version$$
+					 *
+					 * @param {int} $course_id The course ID.
+					 * @return {int} Filtered course ID.
+					 */
+					return (int) apply_filters( 'sensei_course_progress_find_course_id', $course_id );
+				},
+				$course_ids
+			);
+
+			$query_params   = array_merge( $query_params, $course_ids );
+			$where_clause[] = 'post_id IN (' . $this->get_placeholders( $course_ids ) . ')';
 		}
 
 		if ( ! empty( $user_id ) ) {
