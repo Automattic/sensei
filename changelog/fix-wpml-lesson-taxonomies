@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix an issue with using an object as array
