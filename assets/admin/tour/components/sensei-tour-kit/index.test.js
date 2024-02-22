@@ -48,4 +48,28 @@ describe( 'SenseiTourKit', () => {
 			mockFunction.mock.calls[ 0 ][ 0 ].config.steps[ 5 ].slug
 		).toEqual( steps[ 5 ].slug );
 	} );
+
+	test( 'should pass the merged config to wpcomtourkit', () => {
+		const steps = getTourSteps();
+
+		const dummyConfig = {
+			options: {
+				effects: {
+					liveResize: {
+						rootElementSelector: '.toot',
+					},
+				},
+			},
+		};
+
+		render( <SenseiTourKit steps={ steps } extraConfig={ dummyConfig } /> );
+
+		expect(
+			mockFunction.mock.calls[ 0 ][ 0 ].config.steps[ 5 ].slug
+		).toEqual( steps[ 5 ].slug );
+		expect(
+			mockFunction.mock.calls[ 0 ][ 0 ].config.options.effects.liveResize
+				.rootElementSelector
+		).toEqual( '.toot' );
+	} );
 } );
