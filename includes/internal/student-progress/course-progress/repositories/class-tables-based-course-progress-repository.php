@@ -270,7 +270,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	private function assert_tables_based_course_progress( Course_Progress_Interface $course_progress ): void {
 		if ( ! $course_progress instanceof Tables_Based_Course_Progress ) {
 			$actual_type = get_class( $course_progress );
-			throw new \InvalidArgumentException( "Expected Tables_Based_Course_Progress, got {$actual_type}." );
+			throw new \InvalidArgumentException( esc_html( "Expected Tables_Based_Course_Progress, got {$actual_type}." ) );
 		}
 	}
 

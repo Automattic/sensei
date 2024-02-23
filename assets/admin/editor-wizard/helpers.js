@@ -110,9 +110,13 @@ export const useWizardOpenState = () => {
  */
 export const useSetDefaultPattern = ( replaces ) => {
 	const { patterns } = useSelect( ( select ) => ( {
-		patterns: select(
-			blockEditorStore
-		).__experimentalGetPatternsByBlockTypes( 'sensei-lms/post-content' ),
+		patterns:
+			select( blockEditorStore )?.getPatternsByBlockTypes(
+				'sensei-lms/post-content'
+			) ||
+			select( blockEditorStore ).__experimentalGetPatternsByBlockTypes(
+				'sensei-lms/post-content'
+			),
 	} ) );
 	const { template } = useSelect( ( select ) => ( {
 		template: select( blockEditorStore ).getTemplate(),

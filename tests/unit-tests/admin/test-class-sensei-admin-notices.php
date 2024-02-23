@@ -5,16 +5,17 @@
  * @package sensei
  */
 
-use PHPUnit\Framework\Exception;
-use PHPUnit\Framework\MockObject\RuntimeException;
-use PHPUnit\Framework\ExpectationFailedException;
-use SebastianBergmann\RecursionContext\InvalidArgumentException;
-
 /**
  * Tests for Sensei_Admin_Notices class.
  */
 class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_Clock_Helpers;
+
+	public function tear_down() {
+		$this->reset_clock();
+		parent::tear_down();
+	}
 
 	/**
 	 * Test the `min_wp` condition.
@@ -526,7 +527,11 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 	 */
 	public function testGetNoticesToDisplay_GivenInstalledSince_ValidatesStrings() {
 		// Arrange.
+		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'GMT' ) );
+		$this->set_clock_to( $current_datetime->getTimestamp() );
+
 		$this->login_as_admin();
+
 		update_option( 'sensei_installed_at', 10 );
 		$all_notices = [
 			'hide-since-9'  => [
