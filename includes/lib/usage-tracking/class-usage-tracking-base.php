@@ -393,6 +393,7 @@ abstract class Sensei_Usage_Tracking_Base {
 		$system_data['hpps_repository']      = $hpps_repository;
 
 		$plugin_data = $this->get_plugin_data();
+
 		foreach ( $plugin_data as $plugin_name => $plugin_version ) {
 			if ( $this->do_track_plugin( $plugin_name ) ) {
 				$plugin_friendly_name       = preg_replace( '/[^a-z0-9]/', '_', $plugin_name );
@@ -401,7 +402,10 @@ abstract class Sensei_Usage_Tracking_Base {
 			}
 		}
 
-		return $system_data;
+		return array_merge(
+			Sensei_Usage_Tracking_Data::get_event_logging_base_fields(),
+			$system_data
+		);
 	}
 
 	/**
