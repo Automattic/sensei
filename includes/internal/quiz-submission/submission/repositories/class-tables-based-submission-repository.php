@@ -55,6 +55,18 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @return Submission_Interface The quiz submission.
 	 */
 	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
+		/**
+		 * Filters the quiz ID when quiz submission is created.
+		 *
+		 * @hook sensei_quiz_submission_create_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id The quiz ID.
+		 * @return {int} The quiz ID.
+		 */
+		$quiz_id = apply_filters( 'sensei_quiz_submission_create_quiz_id', $quiz_id );
+
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
@@ -98,6 +110,18 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @return Submission_Interface The quiz submission.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
+		/**
+		 * Filters the quiz ID when quiz submission is created.
+		 *
+		 * @hook sensei_quiz_submission_get_or_create_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id The quiz ID.
+		 * @return {int} The quiz ID.
+		 */
+		$quiz_id = apply_filters( 'sensei_quiz_submission_get_or_create_quiz_id', $quiz_id );
+
 		$submission = $this->get( $quiz_id, $user_id );
 
 		if ( $submission ) {
@@ -118,6 +142,18 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @return Submission_Interface|null The quiz submission.
 	 */
 	public function get( int $quiz_id, int $user_id ): ?Submission_Interface {
+		/**
+		 * Filters the quiz ID when quiz submission is retrieved.
+		 *
+		 * @hook sensei_quiz_submission_get_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id The quiz ID.
+		 * @return {int} The quiz ID.
+		 */
+		$quiz_id = apply_filters( 'sensei_quiz_submission_get_quiz_id', $quiz_id );
+
 		$query = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			"SELECT * FROM {$this->get_table_name()} WHERE quiz_id = %d AND user_id = %d",
@@ -152,6 +188,19 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @return array An array of question post IDs.
 	 */
 	public function get_question_ids( int $submission_id ): array {
+		/**
+		 * Filters the quiz submission ID when question IDs are retrieved.
+		 *
+		 * @hook sensei_quiz_submission_get_question_ids_submission_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int}    $submission_id The quiz submission ID.
+		 * @param {string} $context       The context.
+		 * @return {int} The quiz submission ID.
+		 */
+		$submission_id = apply_filters( 'sensei_quiz_submission_get_question_ids_submission_id', $submission_id, 'tables' );
+
 		$quiz_answers_table = $this->wpdb->prefix . 'sensei_lms_quiz_answers';
 
 		$query = $this->wpdb->prepare(

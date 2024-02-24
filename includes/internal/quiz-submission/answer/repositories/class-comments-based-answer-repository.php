@@ -35,7 +35,31 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @return Answer_Interface The answer model.
 	 */
 	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer_Interface {
-		$submission_id               = $submission->get_id();
+		/**
+		 * Filters the submission ID when quiz answer is created.
+		 *
+		 * @hook sensei_quiz_answer_create_submission_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $submission_id The submission ID.
+		 * @param {string} $context    The context.
+		 * @return {int} The submission ID.
+		 */
+		$submission_id = (int) apply_filters( 'sensei_quiz_answer_create_submission_id', $submission->get_id(), 'comments' );
+
+		/**
+		 * Filters the question ID when quiz answer is created.
+		 *
+		 * @hook sensei_quiz_answer_create_question_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $question_id The question ID.
+		 * @return {int} The question ID.
+		 */
+		$question_id = (int) apply_filters( 'sensei_quiz_answer_create_question_id', $question_id );
+
 		$answers_map                 = $this->get_answers_map( $submission_id );
 		$answers_map[ $question_id ] = $value;
 		$questions_asked_csv         = implode( ',', array_keys( $answers_map ) );
@@ -58,6 +82,19 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @return Answer_Interface[] An array of answers.
 	 */
 	public function get_all( int $submission_id ): array {
+		/**
+		 * Filters the submission ID when getting all quiz answers.
+		 *
+		 * @hook sensei_quiz_answer_get_all_submission_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int}    $submission_id The submission ID.
+		 * @param {string} $context       The context.
+		 * @return {int} The submission ID.
+		 */
+		$submission_id = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission_id, 'comments' );
+
 		$answers    = [];
 		$created_at = current_datetime();
 
@@ -76,8 +113,21 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @param Submission_Interface $submission The submission.
 	 */
 	public function delete_all( Submission_Interface $submission ): void {
-		delete_comment_meta( $submission->get_id(), 'quiz_answers' );
-		delete_comment_meta( $submission->get_id(), 'questions_asked' );
+		/**
+		 * Filters the submission ID when deleting all quiz answers.
+		 *
+		 * @hook sensei_quiz_answer_delete_all_submission_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int}    $submission_id The submission ID.
+		 * @param {string} $context       The context.
+		 * @return {int} The submission ID.
+		 */
+		$submission_id = (int) apply_filters( 'sensei_quiz_answer_delete_all_submission_id', $submission->get_id(), 'comments' );
+
+		delete_comment_meta( $submission_id, 'quiz_answers' );
+		delete_comment_meta( $submission_id, 'questions_asked' );
 	}
 
 	/**
