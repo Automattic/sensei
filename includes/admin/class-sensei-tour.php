@@ -88,11 +88,32 @@ class Sensei_Tour {
 		 */
 		$tour_loaders = apply_filters( 'sensei_tour_loaders', $tour_loaders );
 
-		if ( ! empty( $tour_loaders ) ) {
+		$incomplete_tours = [];
+
+		foreach ( $tour_loaders as $handle => $tour_loader ) {
+			/**
+			 * Filters the tour completion status.
+			 *
+			 * @hook sensei_tour_is_complete Check if a tour is complete.
+			 *
+			 * @since $$next-version$$
+			 *
+			 * @param {bool}  $is_tour_complete The tour completion status.
+			 * @param {string} $tour_id The tour ID.
+			 *
+			 * @return {bool} Filtered tour completion status.
+			 */
+			$is_tour_complete = apply_filters( 'sensei_tour_is_complete', $this->get_tour_completion_status( $handle, get_current_user_id() ), $handle );
+			if ( ! $is_tour_complete ) {
+				$incomplete_tours[ $handle ] = $tour_loader;
+			}
+		}
+
+		if ( ! empty( $incomplete_tours ) ) {
 			Sensei()->assets->enqueue( 'sensei-tour-styles', 'admin/tour/style.css', [] );
 		}
 
-		foreach ( $tour_loaders as $handle => $tour_loader ) {
+		foreach ( $incomplete_tours as $handle => $tour_loader ) {
 			Sensei()->assets->enqueue( $handle, $tour_loader['path'], [], true );
 		}
 	}
