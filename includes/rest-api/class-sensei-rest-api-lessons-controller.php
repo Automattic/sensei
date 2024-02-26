@@ -110,7 +110,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Adjust the query to include meta query args and search by title.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.21.0
 	 */
 	private function custom_filter() {
 		add_filter( 'rest_lesson_query', array( $this, 'add_meta_query_args' ), 10, 2 );
@@ -120,7 +120,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Modifies the query to search by title only.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.21.0
 	 *
 	 * @internal
 	 *
@@ -140,7 +140,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Add meta query to the lesson query.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.21.0
 	 *
 	 * @internal
 	 *

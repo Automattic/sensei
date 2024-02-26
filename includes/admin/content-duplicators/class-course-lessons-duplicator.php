@@ -12,7 +12,7 @@ use WP_Post;
 /**
  * Class Course_Lessons_Duplicator
  *
- * @since $$next-version$$
+ * @since 4.21.0
  */
 class Course_Lessons_Duplicator {
 
