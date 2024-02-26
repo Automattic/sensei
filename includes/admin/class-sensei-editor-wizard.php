@@ -80,7 +80,7 @@ class Sensei_Editor_Wizard {
 	 *
 	 * @deprecated $$next-version$$ use Sensei_Editor_Wizard::enqueue_block_editor_assets instead.
 	 */
-	public function create_pages( $hook_suffix ) {
+	public function enqueue_admin_scripts( $hook_suffix ) {
 		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Editor_Wizard::enqueue_block_editor_assets' );
 
 		$this->enqueue_block_editor_assets();
