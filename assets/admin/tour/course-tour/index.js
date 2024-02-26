@@ -17,14 +17,16 @@ export const getOutlineBlock = () =>
 		select( 'core/block-editor' ).getBlocks()
 	);
 
+const tourName = 'sensei-course-tour';
+
 export default function CourseTour() {
 	if ( ! getOutlineBlock() ) {
 		return null;
 	}
 
-	return <SenseiTourKit steps={ getTourSteps() } />;
+	return <SenseiTourKit tourName={ tourName } steps={ getTourSteps() } />;
 }
 
-registerPlugin( 'sensei-course-tour', {
+registerPlugin( tourName, {
 	render: () => <CourseTour />,
 } );

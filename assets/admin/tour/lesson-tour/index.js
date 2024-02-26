@@ -17,14 +17,16 @@ export const getQuizBlock = () =>
 		select( 'core/block-editor' ).getBlocks()
 	);
 
+const tourName = 'sensei-lesson-tour';
+
 export default function LessonTour() {
 	if ( ! getQuizBlock() ) {
 		return null;
 	}
 
-	return <SenseiTourKit steps={ getTourSteps() } />;
+	return <SenseiTourKit tourName={ tourName } steps={ getTourSteps() } />;
 }
 
-registerPlugin( 'sensei-lesson-tour', {
+registerPlugin( tourName, {
 	render: () => <LessonTour />,
 } );
