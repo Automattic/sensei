@@ -144,4 +144,30 @@ class Sensei_Tour {
 
 		update_user_meta( $user_id, 'sensei_tours', $tours );
 	}
+
+	/**
+	 * Get tour status for user.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $tour_id The tour ID.
+	 * @param int    $user_id The user ID.
+	 *
+	 * @return bool The tour status.
+	 */
+	public function get_tour_completion_status( $tour_id, $user_id = 0 ) {
+		$user_id = $user_id ? $user_id : get_current_user_id();
+
+		if ( ! $user_id ) {
+			return false;
+		}
+
+		$tours = get_user_meta( $user_id, 'sensei_tours', true );
+
+		if ( ! is_array( $tours ) ) {
+			$tours = [];
+		}
+
+		return $tours[ $tour_id ] ?? false;
+	}
 }
