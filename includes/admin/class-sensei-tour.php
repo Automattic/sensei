@@ -117,4 +117,31 @@ class Sensei_Tour {
 			Sensei()->assets->enqueue( $handle, $tour_loader['path'], [], true );
 		}
 	}
+
+	/**
+	 * Set tour status for user.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $tour_id The tour ID.
+	 * @param bool   $status  The tour status.
+	 * @param int    $user_id The user ID.
+	 */
+	public function set_tour_completion_status( $tour_id, $status, $user_id = 0 ) {
+		$user_id = $user_id ? $user_id : get_current_user_id();
+
+		if ( ! $user_id ) {
+			return;
+		}
+
+		$tours = get_user_meta( $user_id, 'sensei_tours', true );
+
+		if ( ! is_array( $tours ) ) {
+			$tours = [];
+		}
+
+		$tours[ $tour_id ] = $status;
+
+		update_user_meta( $user_id, 'sensei_tours', $tours );
+	}
 }
