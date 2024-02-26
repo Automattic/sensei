@@ -80,7 +80,7 @@ class Sensei_Editor_Wizard {
 	 *
 	 * @deprecated $$next-version$$ use Sensei_Editor_Wizard::enqueue_editor_wizard_assets instead.
 	 */
-	public function enqueue_admin_scripts( $hook_suffix ) {
+	public function enqueue_admin_scripts( $hook_suffix ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Editor_Wizard::enqueue_editor_wizard_assets' );
 
 		$this->enqueue_editor_wizard_assets();
