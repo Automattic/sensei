@@ -51,6 +51,7 @@ class Sensei_Rest_Api_Tour_Controller_Test extends \WP_UnitTestCase {
 	}
 
 	public function testSetTourCompletionStatus_WhenRequestSent_SetsMetaCorrectly() {
+		/* Arrange */
 		$this->login_as_teacher();
 
 		$request = new \WP_REST_Request( 'POST', self::REST_ROUTE );
@@ -63,9 +64,40 @@ class Sensei_Rest_Api_Tour_Controller_Test extends \WP_UnitTestCase {
 				]
 			)
 		);
-		$response = $this->server->dispatch( $request );
 
+		/* Act */
+		$this->server->dispatch( $request );
+
+		/* Assert */
 		$this->assertTrue( Sensei_Tour::instance()->get_tour_completion_status( 'test_id', get_current_user_id() ) );
 		$this->assertFalse( Sensei_Tour::instance()->get_tour_completion_status( 'test_id_1', get_current_user_id() ) );
+	}
+
+	public function testSetTourCompletionStatus_WhenRequestSentForExistingMeta_UpdatesExistingMetaCorrectly() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$user_id = get_current_user_id();
+		$tour_id = 'test_id_1';
+
+		Sensei_Tour::instance()->set_tour_completion_status( $tour_id, true, $user_id );
+		$initial_status = Sensei_Tour::instance()->get_tour_completion_status( $tour_id, $user_id );
+
+		$request = new \WP_REST_Request( 'POST', self::REST_ROUTE );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				[
+					'tour_id'  => $tour_id,
+					'complete' => false,
+				]
+			)
+		);
+
+		/* Act */
+		$this->server->dispatch( $request );
+
+		/* Assert */
+		$this->assertTrue( $initial_status );
+		$this->assertFalse( Sensei_Tour::instance()->get_tour_completion_status( $tour_id, $user_id ) );
 	}
 }
