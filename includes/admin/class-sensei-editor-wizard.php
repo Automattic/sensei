@@ -47,7 +47,7 @@ class Sensei_Editor_Wizard {
 	public function init() {
 		add_action( 'init', [ $this, 'register_post_metas' ] );
 		// Priority 9 to make sure it will run before the block editor nux on WPCOM. While this code is written, it uses priority 100.
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ], 9 );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_editor_wizard_assets' ], 9 );
 	}
 
 	/**
@@ -78,18 +78,18 @@ class Sensei_Editor_Wizard {
 	 *
 	 * @access private
 	 *
-	 * @deprecated $$next-version$$ use Sensei_Editor_Wizard::enqueue_block_editor_assets instead.
+	 * @deprecated $$next-version$$ use Sensei_Editor_Wizard::enqueue_editor_wizard_assets instead.
 	 */
 	public function enqueue_admin_scripts( $hook_suffix ) {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Editor_Wizard::enqueue_block_editor_assets' );
+		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Editor_Wizard::enqueue_editor_wizard_assets' );
 
-		$this->enqueue_block_editor_assets();
+		$this->enqueue_editor_wizard_assets();
 	}
 
 	/**
-	 * Enqueue block editor assets.
+	 * Enqueue editor wizard assets.
 	 */
-	public function enqueue_block_editor_assets() {
+	public function enqueue_editor_wizard_assets() {
 		global $pagenow;
 
 		$post_type   = get_post_type();
