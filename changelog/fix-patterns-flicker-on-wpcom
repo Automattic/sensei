@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Address the issue of patterns flickering in the editor wizard on WPCOM sites
