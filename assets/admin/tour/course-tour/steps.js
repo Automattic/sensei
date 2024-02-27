@@ -129,7 +129,7 @@ function getTourSteps() {
 				heading: __( 'Saving lessons', 'sensei-lms' ),
 				descriptions: {
 					desktop: __(
-						'Click the “Save to edit lesson” option in the toolbar to save all lessons.',
+						'Click the "Save to edit lesson" option in the toolbar to save all lessons.',
 						'sensei-lms'
 					),
 					mobile: null,
@@ -148,7 +148,7 @@ function getTourSteps() {
 				heading: __( 'Editing a lesson', 'sensei-lms' ),
 				descriptions: {
 					desktop: __(
-						'Use the “Edit lesson” option in the toolbar to navigate to the lesson editor and add your content.',
+						'Use the "Edit lesson" option in the toolbar to navigate to the lesson editor and add your content.',
 						'sensei-lms'
 					),
 					mobile: null,
