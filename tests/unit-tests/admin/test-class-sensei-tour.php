@@ -157,4 +157,23 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 		$this->assertNotEquals( $before, get_user_meta( $user_id, 'sensei_tours', true ) );
 		$this->assertTrue( get_user_meta( $user_id, 'sensei_tours', true )['test-tour-id'] );
 	}
+
+	public function testSetTourCompletionStatus_WhenCalled_UpdatesExistingMetaProperly() {
+		/* Arrange */
+		$this->login_as_admin();
+		$user_id = get_current_user_id();
+		$before  = get_user_meta( $user_id, 'sensei_tours', true );
+
+		/* Act */
+		$this->instance->set_tour_completion_status( 'test-tour-id', true, $user_id );
+		$after_true = get_user_meta( $user_id, 'sensei_tours', true );
+
+		$this->instance->set_tour_completion_status( 'test-tour-id', false, $user_id );
+		$after_false = get_user_meta( $user_id, 'sensei_tours', true );
+
+		/* Assert */
+		$this->assertEmpty( $before );
+		$this->assertTrue( $after_true['test-tour-id'] );
+		$this->assertFalse( $after_false['test-tour-id'] );
+	}
 }
