@@ -10,7 +10,7 @@ namespace Sensei\Admin\Content_Duplicators;
 /**
  * Class Lesson_Quiz_Duplicator.
  *
- * @since $$next-version$$
+ * @since 4.21.0
  */
 class Lesson_Quiz_Duplicator {
 	/**
