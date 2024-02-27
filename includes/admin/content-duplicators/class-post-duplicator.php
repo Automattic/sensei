@@ -12,7 +12,7 @@ use WP_Post;
 /**
  * Class Post_Publicator
  *
- * @since $$next-version$$
+ * @since 4.21.0
  */
 class Post_Duplicator {
 	/**
