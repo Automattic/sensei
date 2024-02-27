@@ -38,7 +38,7 @@ const EditorWizardModal = () => {
 
 	const showSenseiTour = ( show ) => {
 		if ( setTourShowStatus ) {
-			setTourShowStatus( show, true );
+			setTourShowStatus( show );
 		}
 	};
 

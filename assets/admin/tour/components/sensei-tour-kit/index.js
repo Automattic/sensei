@@ -35,7 +35,7 @@ function SenseiTourKit( { tourName, steps, extraConfig = {} } ) {
 
 	const config = {
 		steps,
-		closeHandler: () => setTourShowStatus( false, false, tourName ),
+		closeHandler: () => setTourShowStatus( false, true, tourName ),
 		options: {
 			effects: {
 				spotlight: null,

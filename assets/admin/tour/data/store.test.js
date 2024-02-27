@@ -19,7 +19,7 @@ describe( 'Sensei Tour Store', () => {
 	it( 'should set the tour show value properly', () => {
 		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus(
 			false,
-			true,
+			false,
 			'test-tour'
 		);
 		const showTour = select( SENSEI_TOUR_STORE ).getIfShowTour();
@@ -34,12 +34,12 @@ describe( 'Sensei Tour Store', () => {
 		expect( showTourAfter ).toBe( true );
 	} );
 
-	it( 'should call API fetch when onlyLocal is false', () => {
+	it( 'should call API fetch when persistOnServer is true', () => {
 		apiFetch.mockReturnValue( {} );
 
 		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus(
 			false,
-			false,
+			true,
 			'test-tour'
 		);
 
@@ -50,15 +50,31 @@ describe( 'Sensei Tour Store', () => {
 		} );
 	} );
 
-	it( 'should not call API fetch when onlyLocal is true', () => {
+	it( 'should not call API fetch when persistOnServer is false', () => {
 		apiFetch.mockReturnValue( {} );
 
 		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus(
 			false,
-			true,
+			false,
 			'test-tour'
 		);
 
 		expect( apiFetch ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should API fetch with complete = false when show and persistOnServer is true', () => {
+		apiFetch.mockReturnValue( {} );
+
+		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus(
+			true,
+			true,
+			'test-tour'
+		);
+
+		expect( apiFetch ).toHaveBeenCalledWith( {
+			data: { complete: false, tour_id: 'test-tour' },
+			method: 'POST',
+			path: 'sensei-internal/v1/tour',
+		} );
 	} );
 } );

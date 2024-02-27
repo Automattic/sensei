@@ -22,14 +22,14 @@ export const actions = {
 	/**
 	 * Sets whether the tour should be shown.
 	 *
-	 * @param {boolean} show      The lesson status.
-	 * @param {boolean} onlyLocal If the action should only be local.
-	 * @param {string}  tourName  The unique name of the tour.
+	 * @param {boolean} show            The lesson status.
+	 * @param {boolean} persistOnServer If the action should be persisted.
+	 * @param {string}  tourName        The unique name of the tour.
 	 *
 	 * @return {Object} The setTourShowStatus action.
 	 */
-	setTourShowStatus( show, onlyLocal, tourName ) {
-		if ( ! onlyLocal ) {
+	setTourShowStatus( show, persistOnServer, tourName ) {
+		if ( persistOnServer ) {
 			apiFetch( {
 				path: 'sensei-internal/v1/tour',
 				method: 'POST',
