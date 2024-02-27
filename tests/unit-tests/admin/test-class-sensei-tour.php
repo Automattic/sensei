@@ -176,4 +176,31 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 		$this->assertTrue( $after_true['test-tour-id'] );
 		$this->assertFalse( $after_false['test-tour-id'] );
 	}
+
+	public function testGetTourCompletionStatus_WhenMetaDoesNotExist_ReturnsFalse() {
+		/* Arrange */
+		$this->login_as_admin();
+		$user_id = get_current_user_id();
+
+		/* Act */
+		$is_complete = $this->instance->get_tour_completion_status( 'test-tour-id', $user_id );
+
+		/* Assert */
+		$this->assertFalse( $is_complete );
+	}
+
+	public function testGetTourCompletionStatus_WhenMetaSetToTrue_ReturnsTrueForCorrectId() {
+		/* Arrange */
+		$this->login_as_admin();
+		$user_id = get_current_user_id();
+		$this->instance->set_tour_completion_status( 'test-tour-id_1', true, $user_id );
+
+		/* Act */
+		$is_complete   = $this->instance->get_tour_completion_status( 'test-tour-id', $user_id );
+		$is_complete_1 = $this->instance->get_tour_completion_status( 'test-tour-id_1', $user_id );
+
+		/* Assert */
+		$this->assertFalse( $is_complete );
+		$this->assertTrue( $is_complete_1 );
+	}
 }
