@@ -2,10 +2,14 @@
  * WordPress dependencies
  */
 import { dispatch, select } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
+
 /**
  * Internal dependencies
  */
-import { SENSEI_TOUR_STORE } from './store'; // Replace 'your-file-path' with the correct path to your file
+import { SENSEI_TOUR_STORE } from './store';
+
+jest.mock( '@wordpress/api-fetch' );
 
 describe( 'Sensei Tour Store', () => {
 	it( 'should set the tour show value properly', () => {
@@ -24,5 +28,21 @@ describe( 'Sensei Tour Store', () => {
 
 		expect( showTour ).toBe( false );
 		expect( showTourAfter ).toBe( true );
+	} );
+
+	it( 'should call API fetch when onlyLocal is false', () => {
+		apiFetch.mockReturnValue( {} );
+
+		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus(
+			false,
+			false,
+			'test-tour'
+		);
+
+		expect( apiFetch ).toHaveBeenCalledWith( {
+			data: { complete: true, tour_id: 'test-tour' },
+			method: 'POST',
+			path: 'sensei-internal/v1/tour',
+		} );
 	} );
 } );
