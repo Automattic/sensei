@@ -87,7 +87,7 @@ class Sensei_REST_API_Tour_Controller extends \WP_REST_Controller {
 	 */
 	public function set_tour_completion_status( $request ) {
 		$complete = ! ! $request->get_param( 'complete' );
-		$tour_id  = sanitize_text_field( $request->get_param( 'tour_id' ) );
+		$tour_id  = sanitize_text_field( $request->get_param( 'tour_id' ) ?? '' );
 
 		$this->tour->set_tour_completion_status( $tour_id, $complete, get_current_user_id() );
 
