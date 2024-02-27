@@ -2,3 +2,12 @@
 @import "@automattic/components/dist/esm/pagination-control/style.scss";
 @import '@automattic/tour-kit/dist/esm/styles.scss';
 @import '@automattic/tour-kit/dist/esm/variants/wpcom/styles.scss';
+
+.wpcom-tour-kit-step-card {
+	.wpcom-tour-kit-step-card-overlay-controls {
+		padding-bottom: 0;
+	}
+	.components-card-body {
+		height: 138px;
+	}
+}
