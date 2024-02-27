@@ -12,6 +12,10 @@ import { SENSEI_TOUR_STORE } from './store';
 jest.mock( '@wordpress/api-fetch' );
 
 describe( 'Sensei Tour Store', () => {
+	beforeEach( () => {
+		apiFetch.mockClear();
+	} );
+
 	it( 'should set the tour show value properly', () => {
 		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus(
 			false,
@@ -44,5 +48,17 @@ describe( 'Sensei Tour Store', () => {
 			method: 'POST',
 			path: 'sensei-internal/v1/tour',
 		} );
+	} );
+
+	it( 'should not call API fetch when onlyLocal is true', () => {
+		apiFetch.mockReturnValue( {} );
+
+		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus(
+			false,
+			true,
+			'test-tour'
+		);
+
+		expect( apiFetch ).not.toHaveBeenCalled();
 	} );
 } );
