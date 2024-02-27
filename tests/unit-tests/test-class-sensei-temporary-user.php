@@ -28,7 +28,6 @@ class Sensei_Temporary_User_Test extends WP_UnitTestCase {
 
 		$this->factory = new Sensei_Factory();
 		Sensei_Temporary_User::init();
-
 	}
 
 	private function create_learners() {
@@ -63,7 +62,6 @@ class Sensei_Temporary_User_Test extends WP_UnitTestCase {
 		Sensei_Utils::update_course_status( $guestuser1_id, $course2_id );
 
 		return [ $course1_id ];
-
 	}
 
 	/**
@@ -160,9 +158,8 @@ class Sensei_Temporary_User_Test extends WP_UnitTestCase {
 	public function test_WPUserQuery_HasNoTemporaryUsers() {
 		$this->create_learners();
 
-		$learners = get_users();
+		$learners = get_users( array( 'fields' => 'user_email' ) );
 
-		self::assertSame( [ 'admin@example.org', 'user1@example.com', 'user2@example.com' ], wp_list_pluck( $learners, 'user_email' ) );
+		self::assertSame( array( 'admin@example.org', 'user1@example.com', 'user2@example.com' ), $learners );
 	}
-
 }
