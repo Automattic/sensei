@@ -143,4 +143,18 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 		$this->assertFalse( wp_script_is( 'sensei-course-tour' ) );
 		$this->assertTrue( wp_style_is( 'sensei-tour-styles' ) );
 	}
+
+	public function testSetTourCompletionStatus_WhenCalled_SetsNewMetaProperly() {
+		/* Arrange */
+		$this->login_as_admin();
+		$user_id = get_current_user_id();
+		$before  = get_user_meta( $user_id, 'sensei_tours', true );
+
+		/* Act */
+		$this->instance->set_tour_completion_status( 'test-tour-id', true, $user_id );
+
+		/* Assert */
+		$this->assertNotEquals( $before, get_user_meta( $user_id, 'sensei_tours', true ) );
+		$this->assertTrue( get_user_meta( $user_id, 'sensei_tours', true )['test-tour-id'] );
+	}
 }
