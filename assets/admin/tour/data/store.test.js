@@ -77,4 +77,18 @@ describe( 'Sensei Tour Store', () => {
 			path: 'sensei-internal/v1/tour',
 		} );
 	} );
+
+	it( 'should not call API fetch but set local value as expected when persistOnServer param not set', () => {
+		apiFetch.mockReturnValue( {} );
+
+		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus( false );
+		const showTour = select( SENSEI_TOUR_STORE ).getIfShowTour();
+
+		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus( true );
+		const showTourAfter = select( SENSEI_TOUR_STORE ).getIfShowTour();
+
+		expect( showTour ).toBe( false );
+		expect( showTourAfter ).toBe( true );
+		expect( apiFetch ).not.toHaveBeenCalled();
+	} );
 } );
