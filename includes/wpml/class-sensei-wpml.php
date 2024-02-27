@@ -152,7 +152,7 @@ class Sensei_WPML {
 	/**
 	 * Update course prerequisite before copied.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.21.0
 	 *
 	 * @internal
 	 *
@@ -195,7 +195,7 @@ class Sensei_WPML {
 	/**
 	 * Update lesson course before copied.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.21.0
 	 *
 	 * @internal
 	 *
@@ -238,7 +238,7 @@ class Sensei_WPML {
 	/**
 	 * Save lessons fields on course translation created.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.21.0
 	 *
 	 * @internal
 	 *
@@ -303,7 +303,7 @@ class Sensei_WPML {
 	/**
 	 * Update lesson properties on lesson translation created.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.21.0
 	 *
 	 * @internal
 	 *
