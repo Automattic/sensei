@@ -44,7 +44,6 @@ class Email_Page_Template {
 	 */
 	public function __construct( Email_Page_Template_Repository $repository ) {
 		$this->repository = $repository;
-
 	}
 
 	/**
@@ -115,6 +114,14 @@ class Email_Page_Template {
 	 */
 	public function add_email_template( $query_result, $query, $template_type ) {
 		if ( ! \Sensei_Course_Theme_Editor::is_site_editor_request() ) {
+			return $query_result;
+		}
+
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+
+		// Returning early if it's Gutenberg's template lookup ajax request,
+		// otherwise it shows the template in editor as default template.
+		if ( $uri && strpos( $uri, '/wp-json/wp/v2/templates/lookup?slug' ) !== false ) {
 			return $query_result;
 		}
 
