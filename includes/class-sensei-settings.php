@@ -460,8 +460,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['course_author'] = array(
-			'name'        => __( 'Display Course Author', 'sensei-lms' ),
-			'description' => __( 'Output the Course Author on Course archive and My Courses page.', 'sensei-lms' ),
+			'name'        => __( 'Course Author', 'sensei-lms' ),
+			'description' => __( 'Display the author on the Course Archive and My Courses pages. This setting does not apply when these pages use blocks.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'course-settings',
