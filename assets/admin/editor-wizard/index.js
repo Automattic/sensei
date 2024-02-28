@@ -10,7 +10,11 @@ import { addFilter } from '@wordpress/hooks';
 import EditorWizardModal from './editor-wizard-modal';
 
 // Hide welcome tour from WPCOM.
-addFilter( 'a8c.WpcomBlockEditorWelcomeTour.show', false );
+addFilter(
+	'a8c.WpcomBlockEditorWelcomeTour.show',
+	'sensei-lms/editor-wizard',
+	() => false
+);
 
 registerPlugin( 'sensei-editor-wizard-plugin', {
 	render: EditorWizardModal,
