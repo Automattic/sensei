@@ -25,6 +25,13 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 	protected $factory;
 
 	/**
+	 * Locally store the installed version value of Sensei to not accidentally override it globally.
+	 *
+	 * @var null|string;
+	 */
+	protected $install_version;
+
+	/**
 	 * Setup the test instance.
 	 */
 	public function setUp(): void {
@@ -32,6 +39,9 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 
 		$this->factory  = new Sensei_Factory();
 		$this->instance = Sensei_Tour::instance();
+
+		$this->install_version     = \Sensei()->install_version;
+		\Sensei()->install_version = '4.21.2';
 	}
 
 	public function tearDown(): void {
@@ -40,6 +50,7 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 		wp_dequeue_script( 'sensei-course-tour' );
 		wp_dequeue_script( 'sensei-lesson-tour' );
 		wp_dequeue_style( 'sensei-tour-styles' );
+		\Sensei()->install_version = $this->install_version;
 	}
 
 	public function testInit_WhenCalled_EnqueuesTheProperFunction() {
@@ -142,6 +153,44 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 		$this->assertTrue( wp_script_is( 'modified-course-tour' ) );
 		$this->assertFalse( wp_script_is( 'sensei-course-tour' ) );
 		$this->assertTrue( wp_style_is( 'sensei-tour-styles' ) );
+	}
+
+	public function testEnqueueAdminScripts_WhenCalled_LoadsScriptsBasedOnVersionWhenAvailable() {
+		/* Arrange */
+		global $post;
+		$this->login_as_admin();
+		$post = $this->factory->course->create_and_get();
+
+		/* Act */
+		add_filter(
+			'sensei_tour_loaders',
+			function () {
+				$modified_scripts['modified-course-tour'] = [
+					'minimum_install_version' => '4.21.1',
+					'path'                    => 'modified-course-tour.js',
+				];
+				$modified_scripts['modified-lesson-tour'] = [
+					'minimum_install_version' => '4.21.2',
+					'path'                    => 'modified-lesson-tour.js',
+				];
+				$modified_scripts['modified-sell-tour']   = [
+					'minimum_install_version' => '4.21.4',
+					'path'                    => 'modified-sell-tour.js',
+				];
+				$modified_scripts['tour-without-version'] = [
+					'path' => 'tour-without-version.js',
+				];
+				return $modified_scripts;
+			}
+		);
+
+		$this->instance->enqueue_admin_scripts( 'post-new.php' );
+
+		/* Assert */
+		$this->assertTrue( wp_script_is( 'modified-course-tour' ) );
+		$this->assertTrue( wp_script_is( 'modified-lesson-tour' ) );
+		$this->assertFalse( wp_script_is( 'sensei-sell-tour' ) );
+		$this->assertTrue( wp_script_is( 'tour-without-version' ) );
 	}
 
 	public function testSetTourCompletionStatus_WhenCalled_SetsNewMetaProperly() {
