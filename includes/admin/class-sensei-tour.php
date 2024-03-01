@@ -71,7 +71,8 @@ class Sensei_Tour {
 			in_array( $hook, [ 'post-new.php', 'post.php' ], true )
 		) {
 			$tour_loaders[ "sensei-$post_type-tour" ] = [
-				'path' => "admin/tour/$post_type-tour/index.js",
+				'minimum_install_version' => '$$next-version$$', // TODO: Add different version for lesson tour later if needed.
+				'path'                    => "admin/tour/$post_type-tour/index.js",
 			];
 		}
 
@@ -91,6 +92,17 @@ class Sensei_Tour {
 		$incomplete_tours = [];
 
 		foreach ( $tour_loaders as $handle => $tour_loader ) {
+			$install_version = \Sensei()->install_version ?? '';
+			$install_version = $install_version ? $install_version : ''; // In case the value is false, null coalescing won't work.
+			$minimum_version = $tour_loader['minimum_install_version'] ?? false;
+
+			if (
+				$minimum_version &&
+				! version_compare( $install_version, $tour_loader['minimum_install_version'] ?? '', '>=' )
+			) {
+				continue;
+			}
+
 			/**
 			 * Filters the tour completion status.
 			 *
