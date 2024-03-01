@@ -34,6 +34,12 @@ jobs:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
                   path: ${{ github.workspace }}/sensei-lms/
                   retention-days: 7
+            - name: Create comment
+              uses: peter-evans/create-or-update-comment@v4
+              with:
+                issue-number: ${{ github.event.pull_request.number }}
+                body: |
+                    Test this PR with [WordPress Playground](https://playground.wordpress.net/plugin-proxy.php?org=Automattic&repo=sensei&workflow=Plugin%20Build&artifact=sensei-lms-${{ github.event.pull_request.head.sha }}&pr=${{ github.event.pull_request.number }}).
 
     syntax-check:
         name: PHP Syntax Check
