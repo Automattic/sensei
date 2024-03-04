@@ -70,10 +70,6 @@ https://videopress.com/v/tLYw7R27
 
 [Learn more about Sensei LMS Certificates.](https://wordpress.org/plugins/sensei-certificates/)
 
-**Media and Attachments:** Upload media and files like PDFs to a separate uploads area of your course or lesson.
-
-[Learn more about Sensei LMS Media Attachments.](https://wordpress.org/plugins/sensei-media-attachments/)
-
 **Post To Course Creator:** Create courses quickly by converting existing blog posts into course lessons in just a few clicks.
 
 [Learn more about Sensei LMS Post To Course Creator.](https://wordpress.org/plugins/sensei-post-to-course/)
