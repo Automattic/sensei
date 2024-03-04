@@ -145,4 +145,32 @@ describe( 'SenseiTourKit', () => {
 			window.sensei_log_event
 		).toHaveBeenCalledWith( 'test-tracks-id', { step: 'step-2' } );
 	} );
+
+	test( 'should not call the event log function event id is not passed', () => {
+		useSelect.mockImplementation( () => ( {
+			showTour: true,
+		} ) );
+		window.sensei_log_event = jest.fn();
+
+		const { getByTestId } = render(
+			<SenseiTourKit
+				tourName="test-tour"
+				steps={ [
+					{
+						slug: 'step-1',
+					},
+					{
+						slug: 'step-2',
+					},
+					{
+						slug: 'step-2',
+					},
+				] }
+			/>
+		);
+
+		fireEvent.click( getByTestId( 'nextButton' ) );
+
+		expect( window.sensei_log_event ).not.toHaveBeenCalled();
+	} );
 } );
