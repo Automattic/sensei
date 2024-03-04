@@ -71,7 +71,8 @@ class Sensei_Tour {
 			in_array( $hook, [ 'post-new.php', 'post.php' ], true )
 		) {
 			$tour_loaders[ "sensei-$post_type-tour" ] = [
-				'path' => "admin/tour/$post_type-tour/index.js",
+				'minimum_install_version' => '$$next-version$$', // TODO: Add different version for lesson tour later if needed.
+				'path'                    => "admin/tour/$post_type-tour/index.js",
 			];
 		}
 
@@ -88,12 +89,97 @@ class Sensei_Tour {
 		 */
 		$tour_loaders = apply_filters( 'sensei_tour_loaders', $tour_loaders );
 
-		if ( ! empty( $tour_loaders ) ) {
+		$incomplete_tours = [];
+
+		foreach ( $tour_loaders as $handle => $tour_loader ) {
+			$install_version = \Sensei()->install_version ?? '';
+			$install_version = $install_version ? $install_version : ''; // In case the value is false, null coalescing won't work.
+			$minimum_version = $tour_loader['minimum_install_version'] ?? false;
+
+			if (
+				$minimum_version &&
+				! version_compare( $install_version, $tour_loader['minimum_install_version'] ?? '', '>=' )
+			) {
+				continue;
+			}
+
+			/**
+			 * Filters the tour completion status.
+			 *
+			 * @hook sensei_tour_is_complete Check if a tour is complete.
+			 *
+			 * @since $$next-version$$
+			 *
+			 * @param {bool}  $is_tour_complete The tour completion status.
+			 * @param {string} $tour_id The tour ID.
+			 *
+			 * @return {bool} Filtered tour completion status.
+			 */
+			$is_tour_complete = apply_filters( 'sensei_tour_is_complete', $this->get_tour_completion_status( $handle, get_current_user_id() ), $handle );
+			if ( ! $is_tour_complete ) {
+				$incomplete_tours[ $handle ] = $tour_loader;
+			}
+		}
+
+		if ( ! empty( $incomplete_tours ) ) {
 			Sensei()->assets->enqueue( 'sensei-tour-styles', 'admin/tour/style.css', [] );
 		}
 
-		foreach ( $tour_loaders as $handle => $tour_loader ) {
+		foreach ( $incomplete_tours as $handle => $tour_loader ) {
 			Sensei()->assets->enqueue( $handle, $tour_loader['path'], [], true );
 		}
+	}
+
+	/**
+	 * Set tour status for user.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $tour_id The tour ID.
+	 * @param bool   $status  The tour status.
+	 * @param int    $user_id The user ID.
+	 */
+	public function set_tour_completion_status( $tour_id, $status, $user_id = 0 ) {
+		$user_id = $user_id ? $user_id : get_current_user_id();
+
+		if ( ! $user_id ) {
+			return;
+		}
+
+		$tours = get_user_meta( $user_id, 'sensei_tours', true );
+
+		if ( ! is_array( $tours ) ) {
+			$tours = [];
+		}
+
+		$tours[ $tour_id ] = $status;
+
+		update_user_meta( $user_id, 'sensei_tours', $tours );
+	}
+
+	/**
+	 * Get tour status for user.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $tour_id The tour ID.
+	 * @param int    $user_id The user ID.
+	 *
+	 * @return bool The tour status.
+	 */
+	public function get_tour_completion_status( $tour_id, $user_id = 0 ) {
+		$user_id = $user_id ? $user_id : get_current_user_id();
+
+		if ( ! $user_id ) {
+			return false;
+		}
+
+		$tours = get_user_meta( $user_id, 'sensei_tours', true );
+
+		if ( ! is_array( $tours ) ) {
+			$tours = [];
+		}
+
+		return $tours[ $tour_id ] ?? false;
 	}
 }

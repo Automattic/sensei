@@ -7,25 +7,35 @@ import { createReduxStore, register } from '@wordpress/data';
  */
 import { createReducerFromActionMap } from '../../../shared/data/store-helpers';
 import { controls } from '@wordpress/data-controls';
+import apiFetch from '@wordpress/api-fetch';
 
 export const SENSEI_TOUR_STORE = 'sensei/tour';
 
-const DEFAULT_STATE = {
+export const DEFAULT_STATE = {
 	showTour: true,
 };
 
 /**
  * Tour store actions.
  */
-const actions = {
+export const actions = {
 	/**
 	 * Sets whether the tour should be shown.
 	 *
-	 * @param {boolean} show The lesson status.
+	 * @param {boolean} show            The lesson status.
+	 * @param {boolean} persistOnServer If the action should be persisted.
+	 * @param {string}  tourName        The unique name of the tour.
 	 *
 	 * @return {Object} The setTourShowStatus action.
 	 */
-	setTourShowStatus( show ) {
+	setTourShowStatus( show, persistOnServer, tourName ) {
+		if ( persistOnServer ) {
+			apiFetch( {
+				path: 'sensei-internal/v1/tour',
+				method: 'POST',
+				data: { complete: ! show, tour_id: tourName },
+			} );
+		}
 		return {
 			type: 'SET_TOUR_SHOW_STATUS',
 			showTour: show,
@@ -36,7 +46,7 @@ const actions = {
 /**
  * Tour store selectors.
  */
-const selectors = {
+export const selectors = {
 	/**
 	 * Get if the tour should be shown.
 	 *
@@ -51,7 +61,7 @@ const selectors = {
 /**
  * Tour store reducer.
  */
-const reducers = {
+export const reducers = {
 	/**
 	 * Sets the show tour status.
 	 *
@@ -70,7 +80,7 @@ const reducers = {
 	DEFAULT: ( action, state ) => state,
 };
 
-const store = createReduxStore( SENSEI_TOUR_STORE, {
+export const store = createReduxStore( SENSEI_TOUR_STORE, {
 	reducer: createReducerFromActionMap( reducers, DEFAULT_STATE ),
 	actions,
 	selectors,

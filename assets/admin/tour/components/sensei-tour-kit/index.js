@@ -19,10 +19,11 @@ import { TourStep } from '../../types';
  * Renders a tour kit component using Sensei.
  *
  * @param {Object}     props                  - Component props.
+ * @param {string}     props.tourName         - The unique name of the tour.
  * @param {TourStep[]} props.steps            - An array of steps to include in the tour.
  * @param {Object}     [props.extraConfig={}] - Additional configuration options for the tour kit.
  */
-function SenseiTourKit( { steps, extraConfig = {} } ) {
+function SenseiTourKit( { tourName, steps, extraConfig = {} } ) {
 	const { showTour } = useSelect( ( select ) => {
 		const { getIfShowTour } = select( SENSEI_TOUR_STORE );
 		return {
@@ -34,7 +35,7 @@ function SenseiTourKit( { steps, extraConfig = {} } ) {
 
 	const config = {
 		steps,
-		closeHandler: () => setTourShowStatus( false ),
+		closeHandler: () => setTourShowStatus( false, true, tourName ),
 		options: {
 			effects: {
 				spotlight: null,

@@ -2,19 +2,28 @@
  * Internal dependencies
  */
 import SenseiTourKit from './index';
+import getTourSteps from '../../course-tour/steps';
 /**
  * External dependencies
  */
-import { render } from '@testing-library/react';
+import React from 'react';
+import { fireEvent, render } from '@testing-library/react';
 import { WpcomTourKit } from '@automattic/tour-kit';
+import { when } from 'jest-when';
 /**
  * WordPress dependencies
  */
-import { when } from 'jest-when';
-import getTourSteps from '../../course-tour/steps';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 jest.mock( '@automattic/tour-kit', () => ( {
 	WpcomTourKit: jest.fn(),
+} ) );
+
+jest.mock( '@wordpress/data', () => ( {
+	useDispatch: jest.fn().mockImplementation( () => ( {} ) ),
+	createReduxStore: jest.fn(),
+	register: jest.fn(),
+	useSelect: jest.fn().mockImplementation( () => ( {} ) ),
 } ) );
 
 const mockFunction = jest.fn();
@@ -26,6 +35,12 @@ describe( 'SenseiTourKit', () => {
 			mockFunction( props );
 			return (
 				<div>
+					<button
+						data-testid="closeButton"
+						onClick={ () => props.config.closeHandler() }
+					>
+						Close
+					</button>
 					<h1>WpcomTourKit output</h1>
 				</div>
 			);
@@ -34,6 +49,9 @@ describe( 'SenseiTourKit', () => {
 
 	test( 'should render wpcomtourkit as expected', () => {
 		const steps = getTourSteps();
+		useSelect.mockImplementation( () => ( {
+			showTour: true,
+		} ) );
 
 		const { queryByText } = render( <SenseiTourKit steps={ steps } /> );
 		expect( queryByText( 'WpcomTourKit output' ) ).toBeTruthy();
@@ -71,5 +89,23 @@ describe( 'SenseiTourKit', () => {
 			mockFunction.mock.calls[ 0 ][ 0 ].config.options.effects.liveResize
 				.rootElementSelector
 		).toEqual( '.toot' );
+	} );
+
+	test( 'Closes the tour when closeHandler is called', () => {
+		const setTourShowStatus = jest.fn();
+
+		useDispatch.mockReturnValue( { setTourShowStatus } );
+
+		const { getByTestId } = render(
+			<SenseiTourKit tourName="test-tour" steps={ [] } />
+		);
+
+		fireEvent.click( getByTestId( 'closeButton' ) );
+
+		expect( setTourShowStatus ).toHaveBeenCalledWith(
+			false,
+			true,
+			'test-tour'
+		);
 	} );
 } );
