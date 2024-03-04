@@ -36,11 +36,14 @@ const EditorWizardModal = () => {
 		'sensei-content-description': wizardData.description,
 	} );
 
-	const showSenseiTour = useCallback( ( show ) => {
-		if ( setTourShowStatus ) {
-			setTourShowStatus( show );
-		}
-	}, [] );
+	const showSenseiTour = useCallback(
+		( show ) => {
+			if ( setTourShowStatus ) {
+				setTourShowStatus( show );
+			}
+		},
+		[ setTourShowStatus ]
+	);
 
 	const onWizardCompletion = () => {
 		setDone( true );
