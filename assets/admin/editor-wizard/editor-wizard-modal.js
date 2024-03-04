@@ -3,7 +3,7 @@
  */
 import { useDispatch } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useEffect, useState, useCallback } from '@wordpress/element';
 import { store as editorStore } from '@wordpress/editor';
 
 /**
@@ -36,11 +36,11 @@ const EditorWizardModal = () => {
 		'sensei-content-description': wizardData.description,
 	} );
 
-	const showSenseiTour = ( show ) => {
+	const showSenseiTour = useCallback( ( show ) => {
 		if ( setTourShowStatus ) {
 			setTourShowStatus( show );
 		}
-	};
+	}, [] );
 
 	const onWizardCompletion = () => {
 		setDone( true );
