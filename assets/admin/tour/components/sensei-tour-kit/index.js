@@ -20,10 +20,11 @@ import { TourStep } from '../../types';
  *
  * @param {Object}     props                  - Component props.
  * @param {string}     props.tourName         - The unique name of the tour.
+ * @param {string}     props.trackId          - ID of tracking event (optional). Tracking will be enabled only when provided.
  * @param {TourStep[]} props.steps            - An array of steps to include in the tour.
  * @param {Object}     [props.extraConfig={}] - Additional configuration options for the tour kit.
  */
-function SenseiTourKit( { tourName, steps, extraConfig = {} } ) {
+function SenseiTourKit( { tourName, trackId, steps, extraConfig = {} } ) {
 	const { showTour } = useSelect( ( select ) => {
 		const { getIfShowTour } = select( SENSEI_TOUR_STORE );
 		return {
@@ -32,6 +33,19 @@ function SenseiTourKit( { tourName, steps, extraConfig = {} } ) {
 	} );
 
 	const { setTourShowStatus } = useDispatch( SENSEI_TOUR_STORE );
+
+	const trackTourStepView = ( index ) => {
+		if ( ! trackId ) {
+			return;
+		}
+
+		if ( index < steps.length ) {
+			const step = steps[ index ];
+			window.sensei_log_event( trackId, {
+				step: step.slug,
+			} );
+		}
+	};
 
 	const config = {
 		steps,
@@ -55,6 +69,7 @@ function SenseiTourKit( { tourName, steps, extraConfig = {} } ) {
 				onPreviousStep: () => {},
 				onGoToStep: () => {},
 				onMaximize: () => {},
+				onStepViewOnce: trackTourStepView,
 			},
 		},
 		placement: 'bottom-start',
