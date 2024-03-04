@@ -41,6 +41,12 @@ describe( 'SenseiTourKit', () => {
 					>
 						Close
 					</button>
+					<button
+						data-testid="nextButton"
+						onClick={ () =>
+							props.config.options.callbacks.onStepViewOnce( 1 )
+						}
+					></button>
 					<h1>WpcomTourKit output</h1>
 				</div>
 			);
@@ -91,7 +97,7 @@ describe( 'SenseiTourKit', () => {
 		).toEqual( '.toot' );
 	} );
 
-	test( 'Closes the tour when closeHandler is called', () => {
+	test( 'should close the tour when closeHandler is called', () => {
 		const setTourShowStatus = jest.fn();
 
 		useDispatch.mockReturnValue( { setTourShowStatus } );
@@ -107,5 +113,36 @@ describe( 'SenseiTourKit', () => {
 			true,
 			'test-tour'
 		);
+	} );
+
+	test( 'should call the event log function when step is viewed', () => {
+		useSelect.mockImplementation( () => ( {
+			showTour: true,
+		} ) );
+		window.sensei_log_event = jest.fn();
+
+		const { getByTestId } = render(
+			<SenseiTourKit
+				trackId="test-tracks-id"
+				tourName="test-tour"
+				steps={ [
+					{
+						slug: 'step-1',
+					},
+					{
+						slug: 'step-2',
+					},
+					{
+						slug: 'step-2',
+					},
+				] }
+			/>
+		);
+
+		fireEvent.click( getByTestId( 'nextButton' ) );
+
+		expect(
+			window.sensei_log_event
+		).toHaveBeenCalledWith( 'test-tracks-id', { step: 'step-2' } );
 	} );
 } );
