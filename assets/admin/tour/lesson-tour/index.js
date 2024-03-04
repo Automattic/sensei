@@ -24,7 +24,13 @@ export default function LessonTour() {
 		return null;
 	}
 
-	return <SenseiTourKit tourName={ tourName } steps={ getTourSteps() } />;
+	return (
+		<SenseiTourKit
+			trackId="lesson_quiz_onboarding_step_complete"
+			tourName={ tourName }
+			steps={ getTourSteps() }
+		/>
+	);
 }
 
 registerPlugin( tourName, {
