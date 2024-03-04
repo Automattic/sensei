@@ -24,7 +24,13 @@ export default function CourseTour() {
 		return null;
 	}
 
-	return <SenseiTourKit tourName={ tourName } steps={ getTourSteps() } />;
+	return (
+		<SenseiTourKit
+			trackId="course_outline_onboarding_step_complete"
+			tourName={ tourName }
+			steps={ getTourSteps() }
+		/>
+	);
 }
 
 registerPlugin( tourName, {
