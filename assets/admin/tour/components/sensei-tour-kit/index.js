@@ -16,13 +16,13 @@ import { SENSEI_TOUR_STORE } from '../../data/store';
 import { TourStep } from '../../types';
 
 /**
- * Renders a tour kit component using Sensei.
+ * Renders a tour kit component for Sensei.
  *
- * @param {Object}     props                  - Component props.
- * @param {string}     props.tourName         - The unique name of the tour.
- * @param {string}     props.trackId          - ID of tracking event (optional). Tracking will be enabled only when provided.
- * @param {TourStep[]} props.steps            - An array of steps to include in the tour.
- * @param {Object}     [props.extraConfig={}] - Additional configuration options for the tour kit.
+ * @param {Object}     props                  Component props.
+ * @param {string}     props.tourName         The unique name of the tour.
+ * @param {string}     props.trackId          ID of tracking event (optional). Tracking will be enabled only when provided.
+ * @param {TourStep[]} props.steps            An array of steps to include in the tour.
+ * @param {Object}     [props.extraConfig={}] Additional configuration options for the tour kit.
  */
 function SenseiTourKit( { tourName, trackId, steps, extraConfig = {} } ) {
 	const { showTour } = useSelect( ( select ) => {
