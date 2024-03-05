@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 import LessonTour from './index';
 /**
  * External dependencies
@@ -10,7 +9,7 @@ import { render } from '@testing-library/react';
 /**
  * WordPress dependencies
  */
-import { select } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import getTourSteps from './steps';
 
 jest.mock( '../../../blocks/course-outline/data', () => ( {
@@ -29,31 +28,26 @@ const mockFunction = jest.fn();
 describe( 'LessonTour', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		select.mockReturnValue( {
-			getBlocks: () => null,
+		useSelect.mockReturnValue( {
+			quizBlock: true,
 		} );
 	} );
 
 	test( 'should render null when no quiz block', () => {
-		// Mocking getOutlineBlock to return null.
-		getFirstBlockByName.mockReturnValueOnce( null );
+		useSelect.mockReturnValue( {
+			quizBlock: null,
+		} );
 
 		const { queryByText } = render( <LessonTour /> );
 		expect( queryByText( 'Tour Kit Output' ) ).toBeFalsy();
 	} );
 
 	test( 'should render SenseiTourKit when quiz block exists', () => {
-		// Mocking getOutlineBlock to return true.
-		getFirstBlockByName.mockReturnValueOnce( true );
-
 		const { getAllByText } = render( <LessonTour /> );
 		expect( getAllByText( 'Tour Kit Output' ) ).toBeTruthy();
 	} );
 
 	test( 'should pass the correct steps to inner block', () => {
-		// Mocking getOutlineBlock to return true. Otherwise, the component will return null.
-		getFirstBlockByName.mockReturnValueOnce( true );
-
 		render( <LessonTour /> );
 
 		const tourSteps = getTourSteps();
