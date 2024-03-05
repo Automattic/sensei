@@ -116,7 +116,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		// test if the global sensei lesson class is loaded
 		$this->assertTrue( isset( Sensei()->lesson ), 'Sensei lesson class is not loaded on the global sensei Object' );
-
 	}
 
 
@@ -168,7 +167,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			Sensei_Lesson::is_prerequisite_complete( $test_lesson_id, $test_user_id, true ),
 			'Users that has completed prerequisite should return true.'
 		);
-
 	}
 
 	/**
@@ -778,7 +776,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		self::assertEmpty( $output );
-
 	}
 
 	public function providerAddCustomNavigation_WhenWrongScreen_DoesntHaveOutput(): array {
@@ -1653,7 +1650,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			'lesson_course'       => $course_id,
 			'lesson_complexity'   => 'hard',
 		);
-		$lesson   = new Sensei_Lesson();
+		$lesson    = new Sensei_Lesson();
 
 		/* Act */
 		$lesson->save_all_lessons_edit_fields();
@@ -1670,4 +1667,3 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 }
-
