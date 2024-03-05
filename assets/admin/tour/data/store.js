@@ -55,7 +55,7 @@ export const selectors = {
 	 *
 	 * @return {boolean} If the tour should be shown.
 	 */
-	getIfShowTour: ( { showTour } ) => showTour,
+	shouldShowTour: ( { showTour } ) => showTour,
 };
 
 /**

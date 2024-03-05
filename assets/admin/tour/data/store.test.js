@@ -22,13 +22,13 @@ describe( 'Sensei Tour Store', () => {
 			false,
 			'test-tour'
 		);
-		const showTour = select( SENSEI_TOUR_STORE ).getIfShowTour();
+		const showTour = select( SENSEI_TOUR_STORE ).shouldShowTour();
 		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus(
 			true,
 			true,
 			'test-tour'
 		);
-		const showTourAfter = select( SENSEI_TOUR_STORE ).getIfShowTour();
+		const showTourAfter = select( SENSEI_TOUR_STORE ).shouldShowTour();
 
 		expect( showTour ).toBe( false );
 		expect( showTourAfter ).toBe( true );
@@ -82,10 +82,10 @@ describe( 'Sensei Tour Store', () => {
 		apiFetch.mockReturnValue( {} );
 
 		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus( false );
-		const showTour = select( SENSEI_TOUR_STORE ).getIfShowTour();
+		const showTour = select( SENSEI_TOUR_STORE ).shouldShowTour();
 
 		dispatch( SENSEI_TOUR_STORE ).setTourShowStatus( true );
-		const showTourAfter = select( SENSEI_TOUR_STORE ).getIfShowTour();
+		const showTourAfter = select( SENSEI_TOUR_STORE ).shouldShowTour();
 
 		expect( showTour ).toBe( false );
 		expect( showTourAfter ).toBe( true );
