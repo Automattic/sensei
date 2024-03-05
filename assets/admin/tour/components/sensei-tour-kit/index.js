@@ -25,9 +25,9 @@ import { TourStep } from '../../types';
  */
 function SenseiTourKit( { tourName, steps, extraConfig = {} } ) {
 	const { showTour } = useSelect( ( select ) => {
-		const { getIfShowTour } = select( SENSEI_TOUR_STORE );
+		const { shouldShowTour } = select( SENSEI_TOUR_STORE );
 		return {
-			showTour: getIfShowTour(),
+			showTour: shouldShowTour(),
 		};
 	} );
 
