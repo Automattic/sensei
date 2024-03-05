@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { select } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 
 /**
@@ -11,16 +11,18 @@ import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 import SenseiTourKit from '../components/sensei-tour-kit';
 import getTourSteps from './steps';
 
-export const getQuizBlock = () =>
-	getFirstBlockByName(
-		'sensei-lms/quiz',
-		select( 'core/block-editor' ).getBlocks()
-	);
-
 const tourName = 'sensei-lesson-tour';
 
 export default function LessonTour() {
-	if ( ! getQuizBlock() ) {
+	const { quizBlock } = useSelect( ( select ) => {
+		const { getBlocks } = select( 'core/block-editor' );
+		const blocks = getBlocks();
+		return {
+			quizBlock: getFirstBlockByName( 'sensei-lms/quiz', blocks ),
+		};
+	} );
+
+	if ( ! quizBlock ) {
 		return null;
 	}
 
