@@ -26,7 +26,7 @@ const EditorWizardModal = () => {
 	const wizardDataState = useState( {} );
 	const wizardData = wizardDataState[ 0 ];
 	const { editPost, savePost } = useDispatch( editorStore );
-	const { setTourShowStatus } = useDispatch( SENSEI_TOUR_STORE ) ?? {};
+	const { setTourShowStatus } = useDispatch( SENSEI_TOUR_STORE );
 	const logEvent = useLogEvent();
 
 	const [ open, setDone ] = useWizardOpenState();
