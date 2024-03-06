@@ -17,7 +17,7 @@ import { TourStep } from '../types';
 function getTourSteps() {
 	return [
 		{
-			slug: 'outline-block',
+			slug: 'welcome',
 			meta: {
 				heading: __(
 					'Welcome to the Course Outline block',
