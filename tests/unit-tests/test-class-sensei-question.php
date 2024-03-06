@@ -21,7 +21,7 @@ class Sensei_Question_Test extends WP_UnitTestCase {
 		/* Arrange */
 		$this->login_as_student();
 
-		$this->create_graded_quiz_with_metas(
+		$question_id = $this->create_graded_quiz_with_metas_including_one_question_and_return_question_id(
 			[
 				'_pass_required'               => '',
 				'_quiz_passmark'               => '80',
@@ -44,7 +44,7 @@ class Sensei_Question_Test extends WP_UnitTestCase {
 		/* Arrange */
 		$this->login_as_student();
 
-		$this->create_graded_quiz_with_metas(
+		$question_id = $this->create_graded_quiz_with_metas_including_one_question_and_return_question_id(
 			[
 				'_pass_required'               => 'on',
 				'_quiz_passmark'               => '80',
@@ -65,7 +65,7 @@ class Sensei_Question_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<div class="sensei-lms-question__answer-feedback__answer-notes">', $output );
 	}
 
-	private function create_graded_quiz_with_metas( $metas ) {
+	private function create_graded_quiz_with_metas_including_one_question_and_return_question_id( $metas ) {
 		// Create a quiz with a question.
 		$lesson_id   = $this->factory->lesson->create();
 		$meta_input  = wp_parse_args(
@@ -94,5 +94,7 @@ class Sensei_Question_Test extends WP_UnitTestCase {
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 		$quiz_progress->grade();
 		Sensei()->quiz_progress_repository->save( $quiz_progress );
+
+		return $question_id;
 	}
 }
