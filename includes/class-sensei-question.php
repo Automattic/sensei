@@ -1038,7 +1038,7 @@ class Sensei_Question {
 		$has_answer_notes = $answer_notes && wp_strip_all_tags( $answer_notes );
 
 		?>
-		<?php if ( $$indicate_incorrect || $has_answer_notes || $correct_answer ) { ?>
+		<?php if ( $indicate_incorrect || $has_answer_notes || $correct_answer ) { ?>
 			<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
 				<?php if ( $indicate_incorrect ) { ?>
 					<div class="sensei-lms-question__answer-feedback__header">
