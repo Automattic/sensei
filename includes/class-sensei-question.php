@@ -923,7 +923,7 @@ class Sensei_Question {
 		$quiz_graded        = $user_quiz_progress && ! in_array( $user_quiz_progress->get_status(), array( 'ungraded', 'in-progress' ) );
 
 		$quiz_required_pass_grade = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-		$succeeded                = $user_quiz_grade >= $quiz_required_pass_grade;
+		$succeeded                = ! Sensei_Quiz::is_pass_required( $lesson_id ) || $user_quiz_grade >= $quiz_required_pass_grade;
 
 		if ( ! $quiz_graded ) {
 			return;
