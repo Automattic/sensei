@@ -1240,16 +1240,16 @@ class Sensei_Question {
 	 */
 	public static function get_template_data( $question_id, $quiz_id ) {
 
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$user_id   = get_current_user_id();
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
+		$user_id   = (int) get_current_user_id();
 
 		$reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
-		// backwards compatibility
+		// Backwards compatibility.
 		if ( 'on' === $reset_allowed ) {
 			$reset_allowed = 1;
 		}
 
-		// setup the question data
+		// Setup the question data.
 		$data                           = [];
 		$data['ID']                     = $question_id;
 		$data['title']                  = get_the_title( $question_id );
