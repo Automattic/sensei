@@ -1038,33 +1038,35 @@ class Sensei_Question {
 		$has_answer_notes = $answer_notes && wp_strip_all_tags( $answer_notes );
 
 		?>
-		<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
-			<?php if ( $indicate_incorrect ) { ?>
-				<div class="sensei-lms-question__answer-feedback__header">
-					<span class="sensei-lms-question__answer-feedback__icon"></span>
-					<span
-						class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
-					<?php if ( $grade && $question_grade > 0 ) { ?>
-						<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $grade ); ?></span>
-					<?php } ?>
-				</div>
-			<?php } ?>
-			<?php if ( $has_answer_notes || $correct_answer ) { ?>
-				<div class="sensei-lms-question__answer-feedback__content">
-					<?php if ( $correct_answer ) { ?>
-						<div class="sensei-lms-question__answer-feedback__correct-answer">
-							<?php echo wp_kses_post( __( 'Right Answer:', 'sensei-lms' ) ); ?>
-							<?php echo wp_kses_post( $correct_answer ); ?>
-						</div>
-					<?php } ?>
-					<?php if ( $has_answer_notes ) { ?>
-						<div class="sensei-lms-question__answer-feedback__answer-notes">
-							<?php echo wp_kses_post( $answer_notes ); ?>
-						</div>
-					<?php } ?>
-				</div>
-			<?php } ?>
-		</div>
+		<?php if ( $$indicate_incorrect || $has_answer_notes || $correct_answer ) { ?>
+			<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
+				<?php if ( $indicate_incorrect ) { ?>
+					<div class="sensei-lms-question__answer-feedback__header">
+						<span class="sensei-lms-question__answer-feedback__icon"></span>
+						<span
+							class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
+						<?php if ( $grade && $question_grade > 0 ) { ?>
+							<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $grade ); ?></span>
+						<?php } ?>
+					</div>
+				<?php } ?>
+				<?php if ( $has_answer_notes || $correct_answer ) { ?>
+					<div class="sensei-lms-question__answer-feedback__content">
+						<?php if ( $correct_answer ) { ?>
+							<div class="sensei-lms-question__answer-feedback__correct-answer">
+								<?php echo wp_kses_post( __( 'Right Answer:', 'sensei-lms' ) ); ?>
+								<?php echo wp_kses_post( $correct_answer ); ?>
+							</div>
+						<?php } ?>
+						<?php if ( $has_answer_notes ) { ?>
+							<div class="sensei-lms-question__answer-feedback__answer-notes">
+								<?php echo wp_kses_post( $answer_notes ); ?>
+							</div>
+						<?php } ?>
+					</div>
+				<?php } ?>
+			</div>
+		<?php } ?>
 		<?php if ( $grade ) { ?>
 			<style> .question-title .grade { display: none; } </style>
 		<?php } ?>
