@@ -3,7 +3,7 @@
  */
 import { useDispatch } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
-import { useEffect, useState, useCallback } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { store as editorStore } from '@wordpress/editor';
 
 /**
@@ -36,22 +36,13 @@ const EditorWizardModal = () => {
 		'sensei-content-description': wizardData.description,
 	} );
 
-	const showSenseiTour = useCallback(
-		( show ) => {
-			if ( setTourShowStatus ) {
-				setTourShowStatus( show );
-			}
-		},
-		[ setTourShowStatus ]
-	);
-
 	const onWizardCompletion = () => {
 		setDone( true );
 		editPost( {
 			meta: { _new_post: false },
 		} );
 		savePost();
-		showSenseiTour( true );
+		setTourShowStatus( true );
 	};
 
 	const skipWizard = () => {
@@ -60,8 +51,8 @@ const EditorWizardModal = () => {
 	};
 
 	useEffect( () => {
-		showSenseiTour( false );
-	}, [ showSenseiTour ] );
+		setTourShowStatus( false );
+	}, [ setTourShowStatus ] );
 
 	return (
 		open && (
