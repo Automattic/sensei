@@ -8,6 +8,7 @@ import _ from 'lodash';
  * WordPress dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useCallback } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -34,18 +35,21 @@ function SenseiTourKit( { tourName, trackId, steps, extraConfig = {} } ) {
 
 	const { setTourShowStatus } = useDispatch( SENSEI_TOUR_STORE );
 
-	const trackTourStepView = ( index ) => {
-		if ( ! trackId ) {
-			return;
-		}
+	const trackTourStepView = useCallback(
+		( index ) => {
+			if ( ! trackId ) {
+				return;
+			}
 
-		if ( index < steps.length ) {
-			const step = steps[ index ];
-			window.sensei_log_event( trackId, {
-				step: step.slug,
-			} );
-		}
-	};
+			if ( index < steps.length ) {
+				const step = steps[ index ];
+				window.sensei_log_event( trackId, {
+					step: step.slug,
+				} );
+			}
+		},
+		[ trackId, steps ]
+	);
 
 	const config = {
 		steps,
