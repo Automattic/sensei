@@ -139,7 +139,11 @@ class Sensei_Lesson {
 			add_action( 'manage_lesson_posts_custom_column', array( $this, 'set_quick_edit_admin_defaults' ), 11, 2 );
 
 			// save bulk edit fields
-			add_action( 'bulk_edit_posts', array( $this, 'save_all_lessons_edit_fields' ), 10, 2 );
+			if ( is_wp_version_compatible( '6.3' ) ) {
+				add_action( 'bulk_edit_posts', array( $this, 'save_all_lessons_edit_fields' ), 10, 2 );
+			} else {
+				add_action( 'save_post_lesson', array( $this, 'bulk_edit_save_post' ), 10, 1 );
+			}
 
 			add_action( 'admin_head', array( $this, 'add_custom_link_to_course' ) );
 
@@ -4319,6 +4323,18 @@ class Sensei_Lesson {
 				)
 			)
 		);
+	}
+
+	/**
+	 * Save bulk edit fields. It is a backword compatible function for the bulk edit pre WP 6.3.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function bulk_edit_save_post( $lesson_id ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is done in the called method.
+		$this->save_all_lessons_edit_fields( array( $lesson_id ), $_REQUEST );
 	}
 
 	/**
