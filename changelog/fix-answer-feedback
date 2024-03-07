@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Ignore Passing Grade for answer feedback when Pass Required is turned off
