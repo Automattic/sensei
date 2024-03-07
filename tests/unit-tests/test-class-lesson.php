@@ -1644,16 +1644,15 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		/* Arrange */
 		$lesson_id = $this->factory->lesson->create();
 		$course_id = $this->factory->course->create();
-		$_REQUEST  = array(
+		$data      = array(
 			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
-			'post'                => array( $lesson_id ),
 			'lesson_course'       => $course_id,
 			'lesson_complexity'   => 'hard',
 		);
 		$lesson    = new Sensei_Lesson();
 
 		/* Act */
-		$lesson->save_all_lessons_edit_fields();
+		$lesson->save_all_lessons_edit_fields( array( $lesson_id), $data );
 
 		/* Assert */
 		$expected = array(

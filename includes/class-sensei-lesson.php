@@ -139,7 +139,7 @@ class Sensei_Lesson {
 			add_action( 'manage_lesson_posts_custom_column', array( $this, 'set_quick_edit_admin_defaults' ), 11, 2 );
 
 			// save bulk edit fields
-			add_action( 'save_post', array( $this, 'save_all_lessons_edit_fields' ) );
+			add_action( 'bulk_edit_posts', array( $this, 'save_all_lessons_edit_fields' ), 10, 2 );
 
 			add_action( 'admin_head', array( $this, 'add_custom_link_to_course' ) );
 
@@ -4328,31 +4328,40 @@ class Sensei_Lesson {
 	 * @since 1.8.0
 	 *
 	 * @internal
+	 *
+	 * @param int[] $lesson_ids Lesson IDs.
+	 * @param array $data Data.
 	 */
-	public function save_all_lessons_edit_fields() {
+	public function save_all_lessons_edit_fields( $lesson_ids, $data ) {
+		$lesson_ids = array_map( 'intval', $lesson_ids );
+		$lesson_ids = array_filter( $lesson_ids );
+
 		// Verify all the data before attempting to save.
-		if ( ! isset( $_REQUEST['_edit_lessons_nonce'] )
-			|| ! check_ajax_referer( 'bulk-edit-lessons', '_edit_lessons_nonce' )
-			|| empty( $_REQUEST['post'] )
-			|| ! is_array( $_REQUEST['post'] ) ) {
+		if ( ! isset( $data['_edit_lessons_nonce'] )
+			|| ! wp_verify_nonce( (string) $data['_edit_lessons_nonce'], 'bulk-edit-lessons' )
+			|| count( $lesson_ids ) === 0 ) {
 			return;
 		}
 
 		// Get our variables.
-		$new_course            = isset( $_REQUEST['lesson_course'] ) ? sanitize_text_field( (string) wp_unslash( $_REQUEST['lesson_course'] ) ) : '';
-		$new_complexity        = isset( $_REQUEST['lesson_complexity'] ) ? sanitize_text_field( (string) wp_unslash( $_REQUEST['lesson_complexity'] ) ) : '';
-		$new_pass_required     = isset( $_REQUEST['pass_required'] ) ? sanitize_text_field( (string) wp_unslash( $_REQUEST['pass_required'] ) ) : '';
-		$new_pass_percentage   = isset( $_REQUEST['quiz_passmark'] ) ? sanitize_text_field( (string) wp_unslash( $_REQUEST['quiz_passmark'] ) ) : '';
-		$new_enable_quiz_reset = isset( $_REQUEST['enable_quiz_reset'] ) ? sanitize_text_field( (string) wp_unslash( $_REQUEST['enable_quiz_reset'] ) ) : '';
-		$show_questions        = isset( $_REQUEST['show_questions'] ) ? sanitize_text_field( (string) wp_unslash( $_REQUEST['show_questions'] ) ) : '';
-		$random_question_order = isset( $_REQUEST['random_question_order'] ) ? sanitize_text_field( (string) wp_unslash( $_REQUEST['random_question_order'] ) ) : '';
-		$quiz_grade_type       = isset( $_REQUEST['quiz_grade_type'] ) ? sanitize_text_field( (string) wp_unslash( $_REQUEST['quiz_grade_type'] ) ) : '';
+		$new_course            = isset( $data['lesson_course'] ) ? sanitize_text_field( (string) wp_unslash( $data['lesson_course'] ) ) : '';
+		$new_complexity        = isset( $data['lesson_complexity'] ) ? sanitize_text_field( (string) wp_unslash( $data['lesson_complexity'] ) ) : '';
+		$new_pass_required     = isset( $data['pass_required'] ) ? sanitize_text_field( (string) wp_unslash( $data['pass_required'] ) ) : '';
+		$new_pass_percentage   = isset( $data['quiz_passmark'] ) ? sanitize_text_field( (string) wp_unslash( $data['quiz_passmark'] ) ) : '';
+		$new_enable_quiz_reset = isset( $data['enable_quiz_reset'] ) ? sanitize_text_field( (string) wp_unslash( $data['enable_quiz_reset'] ) ) : '';
+		$show_questions        = isset( $data['show_questions'] ) ? sanitize_text_field( (string) wp_unslash( $data['show_questions'] ) ) : '';
+		$random_question_order = isset( $data['random_question_order'] ) ? sanitize_text_field( (string) wp_unslash( $data['random_question_order'] ) ) : '';
+		$quiz_grade_type       = isset( $data['quiz_grade_type'] ) ? sanitize_text_field( (string) wp_unslash( $data['quiz_grade_type'] ) ) : '';
 
-		// Store the values for all selected posts.
-		$lesson_ids = $_REQUEST['post'] ?? array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Input is sanitized in the next lines.
-		$lesson_ids = array_map( 'wp_unslash', $lesson_ids );
-		$lesson_ids = array_map( 'sanitize_text_field', $lesson_ids );
-		$lesson_ids = array_map( 'intval', $lesson_ids );
+		$new_quiz_settings = array(
+			'pass_required'         => $new_pass_required,
+			'pass_percentage'       => $new_pass_percentage,
+			'enable_quiz_reset'     => $new_enable_quiz_reset,
+			'show_questions'        => $show_questions,
+			'random_question_order' => $random_question_order,
+			'quiz_grade_type'       => $quiz_grade_type,
+		);
+
 		foreach ( $lesson_ids as $lesson_id ) {
 			// Do not save the items if the value is -1 as this means it was not changed.
 
@@ -4366,16 +4375,7 @@ class Sensei_Lesson {
 				update_post_meta( $lesson_id, '_lesson_complexity', $new_complexity );
 			}
 
-			$new_settings = array(
-				'pass_required'         => $new_pass_required,
-				'pass_percentage'       => $new_pass_percentage,
-				'enable_quiz_reset'     => $new_enable_quiz_reset,
-				'show_questions'        => $show_questions,
-				'random_question_order' => $random_question_order,
-				'quiz_grade_type'       => $quiz_grade_type,
-			);
-
-			$this->save_quiz_settings( $lesson_id, $new_settings );
+			$this->save_quiz_settings( $lesson_id, $new_quiz_settings );
 		}
 	}
 
