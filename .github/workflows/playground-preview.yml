@@ -1,0 +1,21 @@
+name: Playground Preview
+
+on:
+    workflow_run:
+        workflows: ['Plugin Build']
+        types:
+            - completed
+
+jobs:
+    playground-preview:
+        if: github.event.workflow_run.event == 'pull_request'
+        name: Playground Preview
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Create comment with Playground preview
+              uses: peter-evans/create-or-update-comment@v4
+              with:
+                issue-number: ${{ github.event.pull_request.number }}
+                body: |
+                    Test the previous changes of this PR with [WordPress Playground](https://playground.wordpress.net/#{"landingPage":"/wp-admin/admin.php?page=sensei","phpExtensionBundles":["kitchen-sink"],"steps":[{"step":"setSiteOptions","options":{"site_intent":"sensei"}},{"step":"login","username":"admin","password":"password"},{"step":"installPlugin","pluginZipFile":{"resource":"url","url":"https://playground.wordpress.net/plugin-proxy.php?org=Automattic&repo=sensei&workflow=Plugin%20Build&artifact=sensei-lms-${{ github.event.pull_request.head.sha }}&pr=${{ github.event.pull_request.number }}"}},{"step":"installTheme","themeZipFile":{"resource":"wordpress.org\/themes","slug":"course"}}]}).
