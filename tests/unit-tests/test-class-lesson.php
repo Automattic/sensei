@@ -1652,7 +1652,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$lesson    = new Sensei_Lesson();
 
 		/* Act */
-		$lesson->save_all_lessons_edit_fields( array( $lesson_id), $data );
+		$lesson->save_all_lessons_edit_fields( array( $lesson_id ), $data );
 
 		/* Assert */
 		$expected = array(
