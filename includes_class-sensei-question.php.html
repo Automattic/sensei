@@ -956,7 +956,7 @@ class Sensei_Question {
 		$quiz_graded        = $user_quiz_progress &amp;&amp; ! in_array( $user_quiz_progress->get_status(), array( 'ungraded', 'in-progress' ) );
 
 		$quiz_required_pass_grade = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-		$succeeded                = $user_quiz_grade >= $quiz_required_pass_grade;
+		$succeeded                = ! Sensei_Quiz::is_pass_required( $lesson_id ) || $user_quiz_grade >= $quiz_required_pass_grade;
 
 		if ( ! $quiz_graded ) {
 			return;
@@ -1071,33 +1071,35 @@ class Sensei_Question {
 		$has_answer_notes = $answer_notes &amp;&amp; wp_strip_all_tags( $answer_notes );
 
 		?>
-		&lt;div class="sensei-lms-question__answer-feedback &lt;?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
-			&lt;?php if ( $indicate_incorrect ) { ?>
-				&lt;div class="sensei-lms-question__answer-feedback__header">
-					&lt;span class="sensei-lms-question__answer-feedback__icon">&lt;/span>
-					&lt;span
-						class="sensei-lms-question__answer-feedback__title">&lt;?php echo wp_kses_post( $answer_feedback_title ); ?>&lt;/span>
-					&lt;?php if ( $grade &amp;&amp; $question_grade > 0 ) { ?>
-						&lt;span class="sensei-lms-question__answer-feedback__points">&lt;?php echo wp_kses_post( $grade ); ?>&lt;/span>
-					&lt;?php } ?>
-				&lt;/div>
-			&lt;?php } ?>
-			&lt;?php if ( $has_answer_notes || $correct_answer ) { ?>
-				&lt;div class="sensei-lms-question__answer-feedback__content">
-					&lt;?php if ( $correct_answer ) { ?>
-						&lt;div class="sensei-lms-question__answer-feedback__correct-answer">
-							&lt;?php echo wp_kses_post( __( 'Right Answer:', 'sensei-lms' ) ); ?>
-							&lt;?php echo wp_kses_post( $correct_answer ); ?>
-						&lt;/div>
-					&lt;?php } ?>
-					&lt;?php if ( $has_answer_notes ) { ?>
-						&lt;div class="sensei-lms-question__answer-feedback__answer-notes">
-							&lt;?php echo wp_kses_post( $answer_notes ); ?>
-						&lt;/div>
-					&lt;?php } ?>
-				&lt;/div>
-			&lt;?php } ?>
-		&lt;/div>
+		&lt;?php if ( $indicate_incorrect || $has_answer_notes || $correct_answer ) { ?>
+			&lt;div class="sensei-lms-question__answer-feedback &lt;?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
+				&lt;?php if ( $indicate_incorrect ) { ?>
+					&lt;div class="sensei-lms-question__answer-feedback__header">
+						&lt;span class="sensei-lms-question__answer-feedback__icon">&lt;/span>
+						&lt;span
+							class="sensei-lms-question__answer-feedback__title">&lt;?php echo wp_kses_post( $answer_feedback_title ); ?>&lt;/span>
+						&lt;?php if ( $grade &amp;&amp; $question_grade > 0 ) { ?>
+							&lt;span class="sensei-lms-question__answer-feedback__points">&lt;?php echo wp_kses_post( $grade ); ?>&lt;/span>
+						&lt;?php } ?>
+					&lt;/div>
+				&lt;?php } ?>
+				&lt;?php if ( $has_answer_notes || $correct_answer ) { ?>
+					&lt;div class="sensei-lms-question__answer-feedback__content">
+						&lt;?php if ( $correct_answer ) { ?>
+							&lt;div class="sensei-lms-question__answer-feedback__correct-answer">
+								&lt;?php echo wp_kses_post( __( 'Right Answer:', 'sensei-lms' ) ); ?>
+								&lt;?php echo wp_kses_post( $correct_answer ); ?>
+							&lt;/div>
+						&lt;?php } ?>
+						&lt;?php if ( $has_answer_notes ) { ?>
+							&lt;div class="sensei-lms-question__answer-feedback__answer-notes">
+								&lt;?php echo wp_kses_post( $answer_notes ); ?>
+							&lt;/div>
+						&lt;?php } ?>
+					&lt;/div>
+				&lt;?php } ?>
+			&lt;/div>
+		&lt;?php } ?>
 		&lt;?php if ( $grade ) { ?>
 			&lt;style> .question-title .grade { display: none; } &lt;/style>
 		&lt;?php } ?>
@@ -1271,16 +1273,16 @@ class Sensei_Question {
 	 */
 	public static function get_template_data( $question_id, $quiz_id ) {
 
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$user_id   = get_current_user_id();
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
+		$user_id   = (int) get_current_user_id();
 
 		$reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
-		// backwards compatibility
+		// Backwards compatibility.
 		if ( 'on' === $reset_allowed ) {
 			$reset_allowed = 1;
 		}
 
-		// setup the question data
+		// Setup the question data.
 		$data                           = [];
 		$data['ID']                     = $question_id;
 		$data['title']                  = get_the_title( $question_id );
