@@ -18,7 +18,7 @@ import { TourStep } from '../types';
 export default function getTourSteps() {
 	return [
 		{
-			slug: 'quiz-block',
+			slug: 'welcome',
 			meta: {
 				heading: __( 'Welcome to the Quiz block', 'sensei-lms' ),
 				descriptions: {

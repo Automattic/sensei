@@ -55,4 +55,12 @@ describe( 'LessonTour', () => {
 			tourSteps[ 5 ].slug
 		);
 	} );
+
+	test( 'should pass the tour id to inner block', () => {
+		render( <LessonTour /> );
+
+		expect( mockFunction.mock.calls[ 0 ][ 0 ].trackId ).toEqual(
+			'lesson_quiz_onboarding_step_complete'
+		);
+	} );
 } );

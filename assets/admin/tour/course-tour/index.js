@@ -10,6 +10,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 import SenseiTourKit from '../components/sensei-tour-kit';
 import getTourSteps from './steps';
+import { useState } from '@wordpress/element';
 
 const tourName = 'sensei-course-tour';
 
@@ -24,12 +25,19 @@ export default function CourseTour() {
 			),
 		};
 	} );
+	const [ tourSteps ] = useState( getTourSteps() );
 
 	if ( ! courseOutlineBlock ) {
 		return null;
 	}
 
-	return <SenseiTourKit tourName={ tourName } steps={ getTourSteps() } />;
+	return (
+		<SenseiTourKit
+			trackId="course_outline_onboarding_step_complete"
+			tourName={ tourName }
+			steps={ tourSteps }
+		/>
+	);
 }
 
 registerPlugin( tourName, {

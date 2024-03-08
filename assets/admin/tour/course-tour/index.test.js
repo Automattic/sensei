@@ -56,4 +56,12 @@ describe( 'CourseTour', () => {
 			tourSteps[ 5 ].slug
 		);
 	} );
+
+	test( 'should pass the tour id to inner block', () => {
+		render( <CourseTour /> );
+
+		expect( mockFunction.mock.calls[ 0 ][ 0 ].trackId ).toEqual(
+			'course_outline_onboarding_step_complete'
+		);
+	} );
 } );
