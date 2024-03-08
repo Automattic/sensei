@@ -1665,4 +1665,30 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		);
 		self::assertSame( $expected, $actual );
 	}
+
+	public function testBulkEditSavePost_WhenCalled_UpdatesPostMeta(): void {
+		/* Arrange */
+		$lesson_id = $this->factory->lesson->create();
+		$course_id = $this->factory->course->create();
+		$_REQUEST  = array(
+			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
+			'lesson_course'       => $course_id,
+			'lesson_complexity'   => 'hard',
+		);
+		$lesson    = new Sensei_Lesson();
+
+		/* Act */
+		$lesson->bulk_edit_save_post( $lesson_id );
+
+		/* Assert */
+		$expected = array(
+			'_lesson_course'     => $course_id,
+			'_lesson_complexity' => 'hard',
+		);
+		$actual   = array(
+			'_lesson_course'     => (int) get_post_meta( $lesson_id, '_lesson_course', true ),
+			'_lesson_complexity' => get_post_meta( $lesson_id, '_lesson_complexity', true ),
+		);
+		self::assertSame( $expected, $actual );
+	}
 }
