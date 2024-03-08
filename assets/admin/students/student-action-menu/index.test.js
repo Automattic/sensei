@@ -19,6 +19,14 @@ jest.mock( '@wordpress/data' );
 const studentName = 'johndoe';
 const studentDisplayName = 'John Doe';
 
+window.ResizeObserver =
+	window.ResizeObserver ||
+	jest.fn().mockImplementation( () => ( {
+		disconnect: jest.fn(),
+		observe: jest.fn(),
+		unobserve: jest.fn(),
+	} ) );
+
 describe( '<StudentActionMenu />', () => {
 	it( 'Should display modal when "Add to Course" is selected', async () => {
 		useSelect.mockReturnValue( { courses: [], isFetching: false } );

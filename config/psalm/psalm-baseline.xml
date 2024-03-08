@@ -5908,4 +5908,14 @@
       <code>function wp_remote_request($url, $args = array())</code>
     </InvalidDocblock>
   </file>
+  <file src="includes/rest-api/class-sensei-rest-api-tour-controller.php">
+	<PropertyNotSetInConstructor occurrences="1">
+	  <code>Sensei_REST_API_Tour_Controller</code>
+	</PropertyNotSetInConstructor>
+  </file>
+  <file src="includes/rest-api/class-sensei-rest-api-internal.php">
+	<PossiblyNullArgument occurrences="1">
+	  <code>Sensei()->tour</code>
+	</PossiblyNullArgument>
+  </file>
 </files>
