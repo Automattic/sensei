@@ -75,6 +75,12 @@ const NoLayoutsWarning = ( { layouts } ) => {
 		return <></>;
 	}
 
+	/**
+	 * Filters the warning message when no layouts are available.
+	 *
+	 * @param {string} message Default warning message.
+	 * @return {string} Filtered warning message.
+	 */
 	const warningMessage = applyFilters(
 		'sensei.editorWizard.noLayoutsWarning',
 		__( 'Layouts are not available', 'sensei-lms' )
