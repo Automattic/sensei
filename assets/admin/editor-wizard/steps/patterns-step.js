@@ -1,10 +1,9 @@
 /**
  * WordPress dependencies
  */
-import { Button, Notice, createSlotFill } from '@wordpress/components';
+import { Button, createSlotFill } from '@wordpress/components';
 import { store as editorStore } from '@wordpress/editor';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -57,39 +56,9 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
 			<h1 className="sensei-editor-wizard-step__sticky-title">
 				{ title }
 			</h1>
-			<NoLayoutsWarning layouts={ availableTemplates } />
 			<Slot />
 			<PatternsList onChoose={ onChoose } />
 		</div>
-	);
-};
-
-/**
- * Output a warning message if no layouts are available.
- *
- * @param {Object} props         Compoent props.
- * @param {Object} props.layouts Available layouts.
- */
-const NoLayoutsWarning = ( { layouts } ) => {
-	if ( layouts && Object.keys( layouts ).length > 0 ) {
-		return <></>;
-	}
-
-	/**
-	 * Filters the warning message when no layouts are available.
-	 *
-	 * @param {string} message Default warning message.
-	 * @return {string} Filtered warning message.
-	 */
-	const warningMessage = applyFilters(
-		'sensei.editorWizard.noLayoutsWarning',
-		__( 'Layouts are not available', 'sensei-lms' )
-	);
-
-	return (
-		<Notice status="warning" isDismissible={ false }>
-			{ warningMessage }
-		</Notice>
 	);
 };
 
