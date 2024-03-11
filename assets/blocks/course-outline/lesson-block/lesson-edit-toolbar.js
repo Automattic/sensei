@@ -56,7 +56,11 @@ const LessonEditToolbar = ( { lessonId, lessonTitle } ) => {
 
 	// Component for the "Save and edit lesson" button.
 	const savePostLink = (
-		<ToolbarItem as={ Button } onClick={ savePost }>
+		<ToolbarItem
+			as={ Button }
+			onClick={ savePost }
+			className="wp-block-sensei-lms-course-outline-lesson__save"
+		>
 			{ __( 'Save to edit lesson', 'sensei-lms' ) }
 		</ToolbarItem>
 	);
