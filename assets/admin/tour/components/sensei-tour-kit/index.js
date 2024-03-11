@@ -2,7 +2,7 @@
  * External dependencies
  */
 import WpcomTourKitMinimized from '@automattic/tour-kit/src/variants/wpcom/components/wpcom-tour-kit-minimized';
-import TourKit from '@automattic/tour-kit';
+import TourKit from '@automattic/tour-kit/src/components/tour-kit';
 import _ from 'lodash';
 
 /**

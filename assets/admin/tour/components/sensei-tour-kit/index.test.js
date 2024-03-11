@@ -13,7 +13,7 @@ import { fireEvent, render } from '@testing-library/react';
  */
 import { useDispatch, useSelect } from '@wordpress/data';
 
-jest.mock( '../sensei-tour-step', () => () => <div>Sensei Tour Step</div> );
+jest.mock( '../sensei-tour-kit-step', () => () => <div>Sensei Tour Step</div> );
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: jest.fn().mockImplementation( () => ( {} ) ),
@@ -31,7 +31,7 @@ jest.mock(
 
 const mockFunction = jest.fn();
 
-jest.mock( '@automattic/tour-kit', () => ( props ) => {
+jest.mock( '@automattic/tour-kit/src/components/tour-kit', () => ( props ) => {
 	mockFunction( props );
 
 	return (
