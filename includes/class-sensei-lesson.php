@@ -4326,7 +4326,7 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Save bulk edit fields. It is a backword compatible function for the bulk edit pre WP 6.3.
+	 * Save bulk edit fields. It is a backward compatible function for the bulk edit pre WP 6.3.
 	 *
 	 * @internal
 	 *
