@@ -2,7 +2,7 @@
  * External dependencies
  */
 import WpcomTourKitMinimized from '@automattic/tour-kit/src/variants/wpcom/components/wpcom-tour-kit-minimized';
-import TourKit from '@automattic/tour-kit/src/components/tour-kit';
+import TourKit from '@automattic/tour-kit';
 import _ from 'lodash';
 
 /**
@@ -17,7 +17,7 @@ import { useCallback } from '@wordpress/element';
 import { SENSEI_TOUR_STORE } from '../../data/store';
 import { TourStep } from '../../types';
 import { PerformStepAction, removeHighlightClasses } from '../../helper';
-import SenseiTourKitStep from '../sensei-tour-step';
+import SenseiTourKitStep from '../sensei-tour-kit-step';
 
 /**
  * Renders a tour kit component for Sensei.
