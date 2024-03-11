@@ -34,7 +34,14 @@ jobs:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
                   path: ${{ github.workspace }}/sensei-lms/
                   retention-days: 7
-            - name: Create comment
+
+    playground-preview:
+        if: github.event_name == 'pull_request'
+        name: Playground Preview
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Create comment with Playground preview
               uses: peter-evans/create-or-update-comment@v4
               with:
                 issue-number: ${{ github.event.pull_request.number }}

@@ -1,5 +1,6 @@
 <?php
 
+use Sensei\Admin\Tour\Sensei_Tour;
 use Sensei\Clock\Clock;
 use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
@@ -358,6 +359,13 @@ class Sensei_Main {
 	 * @var Clock_Interface
 	 */
 	public $clock;
+
+	/**
+	 * Sensei Tour.
+	 *
+	 * @var Sensei_Tour|null
+	 */
+	public $tour;
 
 	/**
 	 * Constructor method.
@@ -743,6 +751,13 @@ class Sensei_Main {
 		$email_customization_enabled = $this->feature_flags->is_enabled( 'email_customization' );
 		if ( $email_customization_enabled ) {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
+		}
+
+		$this->tour   = null;
+		$tour_enabled = $this->feature_flags->is_enabled( 'onboarding_tour' );
+		if ( $tour_enabled ) {
+			$this->tour = Sensei_Tour::instance();
+			$this->tour->init();
 		}
 
 		// MailPoet integration.
