@@ -1,5 +1,14 @@
 export const HIGHLIGHT_CLASS = 'sensei-tour-highlight';
 
+export function PerformStepAction( index, steps ) {
+	if ( index < steps.length ) {
+		const step = steps[ index ];
+		if ( step.action ) {
+			step.action();
+		}
+	}
+}
+
 /**
  * Highlights the elements with a border.
  *

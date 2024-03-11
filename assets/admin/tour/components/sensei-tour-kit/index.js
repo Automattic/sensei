@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import WpcomTourKitStep from '@automattic/tour-kit/src/variants/wpcom/components/wpcom-tour-kit-step';
 import WpcomTourKitMinimized from '@automattic/tour-kit/src/variants/wpcom/components/wpcom-tour-kit-minimized';
 import TourKit from '@automattic/tour-kit/src/components/tour-kit';
 import _ from 'lodash';
@@ -10,30 +9,15 @@ import _ from 'lodash';
  * WordPress dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useEffect } from '@wordpress/element';
+import { useCallback } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { SENSEI_TOUR_STORE } from '../../data/store';
 import { TourStep } from '../../types';
-import { removeHighlightClasses } from '../../helper';
-
-function PerformStepAction( index, steps ) {
-	if ( index < steps.length ) {
-		const step = steps[ index ];
-		if ( step.action ) {
-			step.action();
-		}
-	}
-}
-
-function SenseiTourKitStep( { ...props } ) {
-	useEffect( () => {
-		PerformStepAction( props.currentStepIndex, props.steps );
-	}, [ props.currentStepIndex, props.steps ] );
-	return <WpcomTourKitStep { ...props } />;
-}
+import { PerformStepAction, removeHighlightClasses } from '../../helper';
+import SenseiTourKitStep from '../sensei-tour-step';
 
 /**
  * Renders a tour kit component for Sensei.
