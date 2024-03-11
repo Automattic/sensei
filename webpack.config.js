@@ -231,6 +231,21 @@ function getWebpackConfig( env, argv ) {
 			test: /\.svg$/,
 			issuer: scriptFiles,
 			use: [ '@svgr/webpack' ],
+		},
+		{
+			test: /\.(ts|tsx|js|jsx)$/,
+			exclude: [ /node_modules\/(?!@automattic|i18n-calypso).*/ ],
+			include: [ /node_modules/ ],
+			use: {
+				loader: 'babel-loader',
+				options: {
+					presets: [
+						'@babel/preset-env',
+						'@babel/preset-react',
+						'@babel/preset-typescript',
+					],
+				},
+			},
 		}
 	);
 
