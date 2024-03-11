@@ -12,7 +12,6 @@ import { select, dispatch } from '@wordpress/data';
 import { TourStep } from '../types';
 import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 import {
-	HIGHLIGHT_CLASS,
 	highlightElementsWithBorders,
 	performStepActionsAsync,
 	removeHighlightClasses,
@@ -35,6 +34,28 @@ function insertLessonBlock( lessonTitle ) {
 			courseOutlineBlock.clientId
 		);
 	}
+}
+
+function waitForElement( selector, maxChecks = 10, delay = 300 ) {
+	return new Promise( ( resolve, reject ) => {
+		let checks = 0;
+
+		function checkElement() {
+			const element = document.querySelector( selector );
+			if ( element ) {
+				resolve( element );
+			} else {
+				checks++;
+				if ( checks >= maxChecks ) {
+					reject();
+				} else {
+					setTimeout( checkElement, delay );
+				}
+			}
+		}
+
+		checkElement();
+	} );
 }
 
 async function ensureLessonBlocksIsInEditor() {
@@ -478,54 +499,40 @@ function getTourSteps() {
 			},
 			action: async () => {
 				await ensureLessonBlocksIsInEditor();
-				let buttonSelector =
+				const buttonSelector =
 					'.block-editor-block-contextual-toolbar .block-editor-block-toolbar .wp-block-sensei-lms-course-outline-lesson__edit';
-				let lessonSelector =
+				const savedlessonSelector =
 					'.wp-block-sensei-lms-course-outline-lesson[data-lesson-id]';
 
-				const savedLesson = document.querySelector( lessonSelector );
+				const savedLesson = document.querySelector(
+					savedlessonSelector
+				);
 
 				if ( ! savedLesson ) {
-					buttonSelector = buttonSelector.replace(
-						'.wp-block-sensei-lms-course-outline-lesson__edit',
-						'.wp-block-sensei-lms-course-outline-lesson__save'
-					);
-					lessonSelector = lessonSelector.replace(
-						'[data-lesson-id]',
-						''
-					);
+					const { savePost } = dispatch( 'core/editor' );
+					await savePost();
+					await waitForElement( savedlessonSelector );
 				}
 
 				performStepActionsAsync( [
 					{
 						action: () => {
 							const lesson = document.querySelector(
-								lessonSelector
+								savedlessonSelector
 							);
 							if ( lesson ) {
 								lesson.parentElement.focus();
 							}
-							highlightElementsWithBorders( [ lessonSelector ] );
+							highlightElementsWithBorders( [
+								savedlessonSelector,
+							] );
 						},
 					},
 					{
 						action: () => {
 							highlightElementsWithBorders( [ buttonSelector ] );
-							const saveButton = document.querySelector(
-								buttonSelector
-							);
-							if ( saveButton ) {
-								saveButton
-									.closest(
-										'.components-toolbar-group.components-button'
-									)
-									.classList.add( HIGHLIGHT_CLASS );
-							}
-							if ( ! savedLesson && saveButton ) {
-								saveButton.click();
-							}
 						},
-						delay: 200,
+						delay: 400,
 					},
 				] );
 			},
