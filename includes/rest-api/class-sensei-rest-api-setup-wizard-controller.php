@@ -54,11 +54,16 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Sensei_REST_API_Setup_Wizard_Controller constructor.
 	 *
-	 * @param string $namespace Routes namespace.
+	 * @param string $namespace        Routes namespace.
+	 * @param string $rest_base_prefix A prefix for the `$rest_base`.
 	 */
-	public function __construct( $namespace ) {
+	public function __construct( $namespace, $rest_base_prefix = '' ) {
 		$this->namespace    = $namespace;
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();
+
+		if ( ! empty( $rest_base_prefix ) ) {
+			$this->rest_base = $rest_base_prefix . $this->rest_base;
+		}
 	}
 
 	/**

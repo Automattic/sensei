@@ -103,11 +103,12 @@ final class Sensei_Home {
 	/**
 	 * Gets a REST API controller for Sensei Home.
 	 *
-	 * @param string $namespace The REST API namespace.
+	 * @param string $namespace        The REST API namespace.
+	 * @param string $rest_base_prefix A prefix for the `$rest_base`, in the controller.
 	 *
 	 * @return Sensei_REST_API_Home_Controller
 	 */
-	public function get_rest_api_controller( $namespace ) {
+	public function get_rest_api_controller( $namespace, $rest_base_prefix = '' ) {
 		return new Sensei_REST_API_Home_Controller(
 			$namespace,
 			$this->quick_links_provider,
@@ -116,7 +117,8 @@ final class Sensei_Home {
 			$this->tasks_provider,
 			$this->news_provider,
 			$this->guides_provider,
-			$this->notices_provider
+			$this->notices_provider,
+			$rest_base_prefix
 		);
 	}
 
@@ -276,5 +278,4 @@ final class Sensei_Home {
 		}
 		return self::$instance;
 	}
-
 }

@@ -91,6 +91,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @param Sensei_Home_News_Provider         $news_provider         News provider.
 	 * @param Sensei_Home_Guides_Provider       $guides_provider       Guides provider.
 	 * @param Sensei_Home_Notices_Provider      $notices_provider      Notices provider.
+	 * @param string                            $rest_base_prefix      A prefix for the `$rest_base`.
 	 */
 	public function __construct(
 		$namespace,
@@ -100,7 +101,8 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 		Sensei_Home_Tasks_Provider $tasks_provider,
 		Sensei_Home_News_Provider $news_provider,
 		Sensei_Home_Guides_Provider $guides_provider,
-		Sensei_Home_Notices_Provider $notices_provider
+		Sensei_Home_Notices_Provider $notices_provider,
+		$rest_base_prefix = ''
 	) {
 		$this->namespace             = $namespace;
 		$this->quick_links_provider  = $quick_links_provider;
@@ -110,6 +112,10 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 		$this->news_provider         = $news_provider;
 		$this->guides_provider       = $guides_provider;
 		$this->notices_provider      = $notices_provider;
+
+		if ( ! empty( $rest_base_prefix ) ) {
+			$this->rest_base = $rest_base_prefix . $this->rest_base;
+		}
 	}
 
 	/**
