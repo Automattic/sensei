@@ -1,13 +1,74 @@
 /**
  * WordPress dependencies
  */
+import { createBlock } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { ExternalLink } from '@wordpress/components';
+import { select, dispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
 import { TourStep } from '../types';
+import { getFirstBlockByName } from '../../../blocks/course-outline/data';
+import {
+	HIGHLIGHT_CLASS,
+	highlightElementsWithBorders,
+	performStepActionsAsync,
+	removeHighlightClasses,
+} from '../helper';
+
+function insertLessonBlock( lessonTitle ) {
+	const courseOutlineBlock = getFirstBlockByName(
+		'sensei-lms/course-outline',
+		select( 'core/block-editor' ).getBlocks()
+	);
+
+	if ( courseOutlineBlock ) {
+		const { insertBlock } = dispatch( 'core/block-editor' );
+
+		insertBlock(
+			createBlock( 'sensei-lms/course-outline-lesson', {
+				title: lessonTitle,
+			} ),
+			undefined,
+			courseOutlineBlock.clientId
+		);
+	}
+}
+
+async function ensureLessonBlocksIsInEditor() {
+	const blankInserterSelector =
+		'.wp-block-sensei-lms-course-outline__placeholder__option-blank';
+	const lessonSelector = '.wp-block-sensei-lms-course-outline-lesson';
+
+	const lesson = document.querySelector( lessonSelector );
+
+	if ( lesson ) {
+		return;
+	}
+
+	const blankInserter = document.querySelector( blankInserterSelector );
+
+	if ( blankInserter ) {
+		await performStepActionsAsync( [
+			{
+				action: () => {
+					highlightElementsWithBorders( [ blankInserterSelector ] );
+				},
+			},
+			{
+				action: () => {
+					blankInserter.click();
+				},
+				delay: 600,
+			},
+		] );
+		return;
+	}
+
+	insertLessonBlock( 'Lesson 1' );
+}
 
 /**
  * Returns the tour steps for the Course Outline block.
@@ -43,6 +104,27 @@ function getTourSteps() {
 			referenceElements: {
 				desktop: '',
 			},
+			action: async () => {
+				performStepActionsAsync( [
+					{
+						action: () => {
+							const courseOutlineBlockSelector =
+								'[data-type="sensei-lms/course-outline"] div';
+
+							const courseOutlineBlock = document.querySelector(
+								courseOutlineBlockSelector
+							);
+							if ( courseOutlineBlock ) {
+								courseOutlineBlock.parentElement.focus();
+							}
+							highlightElementsWithBorders( [
+								courseOutlineBlockSelector,
+							] );
+						},
+						delay: 0,
+					},
+				] );
+			},
 		},
 		{
 			slug: 'renaming-existing-lesson',
@@ -65,6 +147,35 @@ function getTourSteps() {
 			referenceElements: {
 				desktop: '',
 			},
+			action: async () => {
+				await ensureLessonBlocksIsInEditor();
+				await performStepActionsAsync( [
+					{
+						action: () => {
+							const lesson = document.querySelector(
+								'[data-type="sensei-lms/course-outline-lesson"]'
+							);
+							if ( lesson ) {
+								lesson.focus();
+							}
+						},
+					},
+					{
+						action: () => {
+							const lesson = document.querySelector(
+								'[data-type="sensei-lms/course-outline-lesson"] textarea'
+							);
+							if ( lesson ) {
+								lesson.focus();
+							}
+							highlightElementsWithBorders( [
+								'[data-type="sensei-lms/course-outline-lesson"] .wp-block-sensei-lms-course-outline-lesson',
+							] );
+						},
+						delay: 100,
+					},
+				] );
+			},
 		},
 		{
 			slug: 'adding-new-module',
@@ -83,6 +194,56 @@ function getTourSteps() {
 					desktop: '',
 					mobile: '',
 				},
+			},
+			action: async () => {
+				await ensureLessonBlocksIsInEditor();
+				const inserterSelector =
+					'.wp-block-sensei-lms-course-outline .block-editor-inserter__toggle';
+				const moduleSelector =
+					'.components-dropdown-menu__popover .components-dropdown-menu__menu .components-dropdown-menu__menu-item:last-child';
+				await performStepActionsAsync( [
+					{
+						action: () => {
+							// Necessary to focus the lesson here otherwise inserter won't appear.
+							const courseOutline = document.querySelector(
+								'[data-type="sensei-lms/course-outline"]'
+							);
+							if ( courseOutline ) {
+								courseOutline.focus();
+							}
+						},
+					},
+					{
+						action: () => {
+							const inserter = document.querySelector(
+								inserterSelector
+							);
+							if ( inserter ) {
+								inserter.click();
+							}
+						},
+						delay: 400,
+					},
+					{
+						action: () => {
+							highlightElementsWithBorders( [
+								inserterSelector,
+							] );
+						},
+					},
+					{
+						action: () => {
+							highlightElementsWithBorders( [ moduleSelector ] );
+							const module = document.querySelector(
+								moduleSelector
+							);
+							if ( module ) {
+								module.focus();
+							}
+						},
+						delay: 400,
+					},
+				] );
 			},
 		},
 		{
@@ -103,6 +264,58 @@ function getTourSteps() {
 					mobile: '',
 				},
 			},
+			action: async () => {
+				await ensureLessonBlocksIsInEditor();
+				const inserterSelector =
+					'.wp-block-sensei-lms-course-outline .block-editor-inserter__toggle';
+				const insertLessonSelector =
+					'.components-dropdown-menu__popover .components-dropdown-menu__menu .components-dropdown-menu__menu-item:first-child';
+				performStepActionsAsync( [
+					{
+						action: () => {
+							// Necessary to focus the lesson here otherwise inserter won't appear.
+							const lesson = document.querySelector(
+								'[data-type="sensei-lms/course-outline-lesson"]'
+							);
+							if ( lesson ) {
+								lesson.focus();
+							}
+						},
+					},
+					{
+						action: () => {
+							const inserter = document.querySelector(
+								inserterSelector
+							);
+							if ( inserter ) {
+								inserter.click();
+							}
+						},
+						delay: 400,
+					},
+					{
+						action: () => {
+							highlightElementsWithBorders( [
+								inserterSelector,
+							] );
+						},
+					},
+					{
+						action: () => {
+							highlightElementsWithBorders( [
+								insertLessonSelector,
+							] );
+							const module = document.querySelector(
+								insertLessonSelector
+							);
+							if ( module ) {
+								module.focus();
+							}
+						},
+						delay: 400,
+					},
+				] );
+			},
 		},
 		{
 			slug: 'deleting-lesson',
@@ -121,6 +334,64 @@ function getTourSteps() {
 					desktop: '',
 					mobile: '',
 				},
+			},
+			action: async () => {
+				await ensureLessonBlocksIsInEditor();
+				const optionSelector =
+					'.block-editor-block-contextual-toolbar .components-dropdown-menu.block-editor-block-settings-menu button';
+				performStepActionsAsync( [
+					{
+						action: () => {
+							const lesson = document.querySelector(
+								'.wp-block-sensei-lms-course-outline-lesson'
+							);
+							if ( lesson ) {
+								lesson.parentElement.focus();
+							}
+							highlightElementsWithBorders( [
+								'[data-type="sensei-lms/course-outline-lesson"] .wp-block-sensei-lms-course-outline-lesson',
+							] );
+						},
+					},
+					{
+						action: () => {
+							highlightElementsWithBorders( [ optionSelector ] );
+						},
+						delay: 400,
+					},
+					{
+						action: () => {
+							const option = document.querySelector(
+								optionSelector
+							);
+							if ( option ) {
+								option.click();
+							}
+						},
+						delay: 400,
+					},
+					{
+						action: () => {
+							highlightElementsWithBorders( [ optionSelector ] );
+						},
+					},
+					{
+						action: () => {
+							const deleteButtonSelector =
+								'.block-editor-block-settings-menu__popover.components-dropdown-menu__popover .components-menu-group:last-child .components-button.components-menu-item__button:last-child';
+							const deleteButton = document.querySelector(
+								deleteButtonSelector
+							);
+							if ( deleteButton ) {
+								deleteButton.focus();
+							}
+							highlightElementsWithBorders( [
+								deleteButtonSelector,
+							] );
+						},
+						delay: 400,
+					},
+				] );
 			},
 		},
 		{
@@ -141,6 +412,51 @@ function getTourSteps() {
 					mobile: '',
 				},
 			},
+			action: async () => {
+				await ensureLessonBlocksIsInEditor();
+				const buttonSelector =
+					'.block-editor-block-contextual-toolbar .wp-block-sensei-lms-course-outline-lesson__save';
+				const unsavedLessonSelector =
+					'.wp-block-sensei-lms-course-outline-lesson:not([data-lesson-id]):not(.is-auto-draft)';
+				const additionalActionStep = [];
+
+				const unsavedLesson = document.querySelector(
+					unsavedLessonSelector
+				);
+
+				if ( ! unsavedLesson ) {
+					additionalActionStep.push( {
+						action: () => {
+							insertLessonBlock(
+								__( 'Unsaved new lesson', 'sensei-lms' )
+							);
+						},
+					} );
+				}
+
+				performStepActionsAsync( [
+					...additionalActionStep,
+					{
+						action: () => {
+							const lesson = document.querySelector(
+								unsavedLessonSelector
+							);
+							if ( lesson ) {
+								lesson.parentElement.focus();
+							}
+							highlightElementsWithBorders( [
+								unsavedLessonSelector,
+							] );
+						},
+					},
+					{
+						action: () => {
+							highlightElementsWithBorders( [ buttonSelector ] );
+						},
+						delay: 400,
+					},
+				] );
+			},
 		},
 		{
 			slug: 'editing-lesson',
@@ -159,6 +475,59 @@ function getTourSteps() {
 					desktop: '',
 					mobile: '',
 				},
+			},
+			action: async () => {
+				await ensureLessonBlocksIsInEditor();
+				let buttonSelector =
+					'.block-editor-block-contextual-toolbar .block-editor-block-toolbar .wp-block-sensei-lms-course-outline-lesson__edit';
+				let lessonSelector =
+					'.wp-block-sensei-lms-course-outline-lesson[data-lesson-id]';
+
+				const savedLesson = document.querySelector( lessonSelector );
+
+				if ( ! savedLesson ) {
+					buttonSelector = buttonSelector.replace(
+						'.wp-block-sensei-lms-course-outline-lesson__edit',
+						'.wp-block-sensei-lms-course-outline-lesson__save'
+					);
+					lessonSelector = lessonSelector.replace(
+						'[data-lesson-id]',
+						''
+					);
+				}
+
+				performStepActionsAsync( [
+					{
+						action: () => {
+							const lesson = document.querySelector(
+								lessonSelector
+							);
+							if ( lesson ) {
+								lesson.parentElement.focus();
+							}
+							highlightElementsWithBorders( [ lessonSelector ] );
+						},
+					},
+					{
+						action: () => {
+							highlightElementsWithBorders( [ buttonSelector ] );
+							const saveButton = document.querySelector(
+								buttonSelector
+							);
+							if ( saveButton ) {
+								saveButton
+									.closest(
+										'.components-toolbar-group.components-button'
+									)
+									.classList.add( HIGHLIGHT_CLASS );
+							}
+							if ( ! savedLesson && saveButton ) {
+								saveButton.click();
+							}
+						},
+						delay: 200,
+					},
+				] );
 			},
 		},
 		{
@@ -188,6 +557,9 @@ function getTourSteps() {
 					desktop: '',
 					mobile: '',
 				},
+			},
+			action: () => {
+				removeHighlightClasses();
 			},
 		},
 	];
