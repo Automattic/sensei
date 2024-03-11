@@ -11,3 +11,43 @@
 		height: 138px;
 	}
 }
+
+$shadow-width: 50px;
+$border-color: var(--wp--preset--color--foreground, #ff6ec7 );
+
+.sensei-tour-highlight {
+	border: 2px solid $border-color !important;
+	box-shadow: 0 0 $shadow-width $border-color !important;
+	box-sizing: inherit;
+}
+
+.sensei-tour-highlight.animate {
+	-webkit-animation: blink 2.0s linear infinite !important;
+	-moz-animation: blink 2.0s linear infinite !important;
+	-ms-animation: blink 2.0s linear infinite !important;
+	-o-animation: blink 2.0s linear infinite !important;
+	animation: blink 2.0s linear infinite !important;
+}
+
+@keyframes blink {
+	0% {
+		box-shadow: 0 0 $shadow-width $border-color;
+	}
+	50% {
+		box-shadow: none;
+	}
+	100% {
+		box-shadow: 0 0 $shadow-width $border-color;
+	}
+}
+@-webkit-keyframes blink {
+	0% {
+		box-shadow: 0 0 $shadow-width $border-color;
+	}
+	50% {
+		box-shadow: 0 0 0;
+	}
+	100% {
+		box-shadow: 0 0 $shadow-width $border-color;
+	}
+}
