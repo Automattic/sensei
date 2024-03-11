@@ -1,0 +1,4 @@
+Significance: minor
+Type: changed
+
+Add new params to the REST API to allow customizing the namespace and rest base.
