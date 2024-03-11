@@ -1,20 +1,39 @@
 /**
  * External dependencies
  */
-import { WpcomTourKit } from '@automattic/tour-kit';
+import WpcomTourKitStep from '@automattic/tour-kit/src/variants/wpcom/components/wpcom-tour-kit-step';
+import WpcomTourKitMinimized from '@automattic/tour-kit/src/variants/wpcom/components/wpcom-tour-kit-minimized';
+import TourKit from '@automattic/tour-kit/src/components/tour-kit';
 import _ from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { SENSEI_TOUR_STORE } from '../../data/store';
 import { TourStep } from '../../types';
+import { removeHighlightClasses } from '../../helper';
+
+function PerformStepAction( index, steps ) {
+	if ( index < steps.length ) {
+		const step = steps[ index ];
+		if ( step.action ) {
+			step.action();
+		}
+	}
+}
+
+function SenseiTourKitStep( { ...props } ) {
+	useEffect( () => {
+		PerformStepAction( props.currentStepIndex, props.steps );
+	}, [ props.currentStepIndex, props.steps ] );
+	return <WpcomTourKitStep { ...props } />;
+}
 
 /**
  * Renders a tour kit component for Sensei.
@@ -72,18 +91,32 @@ function SenseiTourKit( { tourName, trackId, steps, extraConfig = {} } ) {
 				onNextStep: () => {},
 				onPreviousStep: () => {},
 				onGoToStep: () => {},
-				onMaximize: () => {},
+				onMaximize: ( index ) => {
+					PerformStepAction( index, steps );
+				},
+				onMinimize: () => {
+					removeHighlightClasses();
+				},
 				onStepViewOnce: trackTourStepView,
 			},
 		},
 		placement: 'bottom-start',
+		renderers: {
+			tourStep: SenseiTourKitStep,
+			tourMinimized: WpcomTourKitMinimized,
+		},
 	};
 
 	if ( ! showTour ) {
 		return null;
 	}
 
-	return <WpcomTourKit config={ _.merge( config, extraConfig ) } />;
+	return (
+		<TourKit
+			__temp__className={ 'wpcom-tour-kit' }
+			config={ _.merge( config, extraConfig ) }
+		/>
+	);
 }
 
 export default SenseiTourKit;
