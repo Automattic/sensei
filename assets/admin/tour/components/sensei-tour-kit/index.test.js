@@ -3,17 +3,21 @@
  */
 import SenseiTourKit from './index';
 import getTourSteps from '../../course-tour/steps';
+import { when } from 'jest-when';
 /**
  * External dependencies
  */
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import { WpcomTourKit } from '@automattic/tour-kit';
 /**
  * WordPress dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
 
-jest.mock( '../sensei-tour-kit-step', () => () => <div>Sensei Tour Step</div> );
+jest.mock( '@automattic/tour-kit', () => ( {
+	WpcomTourKit: jest.fn(),
+} ) );
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: jest.fn().mockImplementation( () => ( {} ) ),
@@ -22,40 +26,31 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn().mockImplementation( () => ( {} ) ),
 } ) );
 
-jest.mock(
-	'@automattic/tour-kit/src/variants/wpcom/components/wpcom-tour-kit-minimized',
-	() => ( {
-		WpcomTourKitMinimized: jest.fn(),
-	} )
-);
-
 const mockFunction = jest.fn();
-
-jest.mock( '@automattic/tour-kit/src/components/tour-kit', () => ( props ) => {
-	mockFunction( props );
-
-	return (
-		<div>
-			<button
-				data-testid="closeButton"
-				onClick={ () => props.config.closeHandler() }
-			>
-				Close
-			</button>
-			<button
-				data-testid="nextButton"
-				onClick={ () =>
-					props.config.options.callbacks.onStepViewOnce( 1 )
-				}
-			></button>
-			<h1>WpcomTourKit output</h1>
-		</div>
-	);
-} );
 
 describe( 'SenseiTourKit', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		when( WpcomTourKit ).mockImplementation( ( props ) => {
+			mockFunction( props );
+			return (
+				<div>
+					<button
+						data-testid="closeButton"
+						onClick={ () => props.config.closeHandler() }
+					>
+						Close
+					</button>
+					<button
+						data-testid="nextButton"
+						onClick={ () =>
+							props.config.options.callbacks.onStepViewOnce( 1 )
+						}
+					></button>
+					<h1>WpcomTourKit output</h1>
+				</div>
+			);
+		} );
 	} );
 
 	test( 'should render wpcomtourkit as expected', () => {
