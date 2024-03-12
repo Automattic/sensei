@@ -80,10 +80,12 @@ class Sensei_Course_Pre_Publish_Panel {
 		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'draft', 'ids' );
 
 		foreach ( $lesson_ids as $lesson_id ) {
-			wp_update_post( array(
-				'ID'          => $lesson_id,
-				'post_status' => 'publish'
-			) );
+			wp_update_post(
+				array(
+					'ID'          => $lesson_id,
+					'post_status' => 'publish',
+				)
+			);
 		}
 	}
 }
