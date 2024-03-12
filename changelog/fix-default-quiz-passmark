@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Ensure that default passing grade will be "0" for any situation
