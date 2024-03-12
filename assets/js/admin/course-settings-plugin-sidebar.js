@@ -51,14 +51,14 @@ export const CourseSidebar = () => {
 		<>
 			<PluginSidebarMoreMenuItem
 				target={ pluginSidebarHandle }
-				icon={ <SenseiIcon height="20" width="20" color="#43AF99" /> }
+				icon={ <SenseiIcon height="20" width="20" /> }
 			>
 				{ __( 'Course Settings', 'sensei-lms' ) }
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar
 				name={ pluginSidebarHandle }
 				title={ __( 'Course Settings', 'sensei-lms' ) }
-				icon={ <SenseiIcon height="20" width="20" color="#43AF99" /> }
+				icon={ <SenseiIcon height="20" width="20" /> }
 			>
 				{ ! hideCoursePricing && <CoursePricingPromoSidebar /> }
 				{ ! hideAccessPeriod && <CourseAccessPeriodPromoSidebar /> }
