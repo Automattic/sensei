@@ -5,6 +5,7 @@ import {
 	PerformStepAction,
 	highlightElementsWithBorders,
 	HIGHLIGHT_CLASS,
+	removeHighlightClasses,
 } from './helper';
 
 describe( 'PerformStepAction', () => {
@@ -78,6 +79,60 @@ describe( 'highlightElementsWithBorders', () => {
 
 		selectors.forEach( ( selector ) => {
 			expect( document.querySelector( selector ) ).toBeNull();
+		} );
+	} );
+} );
+
+describe( 'removeHighlightClasses', () => {
+	const mockQuerySelectorAll = jest.spyOn( document, 'querySelectorAll' );
+
+	beforeEach( () => {
+		mockQuerySelectorAll.mockClear();
+	} );
+
+	it( 'should remove highlight class from elements with .sensei-tour-highlight class', () => {
+		const mockedElements = [
+			document.createElement( 'div' ),
+			document.createElement( 'div' ),
+		];
+
+		mockedElements.forEach( ( element ) => {
+			element.classList.add( 'sensei-tour-highlight' );
+		} );
+
+		mockQuerySelectorAll.mockReturnValue( mockedElements );
+
+		removeHighlightClasses();
+
+		expect( mockQuerySelectorAll ).toHaveBeenCalledWith(
+			'.sensei-tour-highlight'
+		);
+
+		mockedElements.forEach( ( element ) => {
+			expect( element.classList.contains( HIGHLIGHT_CLASS ) ).toBe(
+				false
+			);
+		} );
+	} );
+
+	it( 'should not remove highlight class from elements without .sensei-tour-highlight class', () => {
+		const mockedElements = [
+			document.createElement( 'div' ),
+			document.createElement( 'div' ),
+		];
+
+		mockQuerySelectorAll.mockReturnValue( mockedElements );
+
+		removeHighlightClasses();
+
+		expect( mockQuerySelectorAll ).toHaveBeenCalledWith(
+			'.sensei-tour-highlight'
+		);
+
+		mockedElements.forEach( ( element ) => {
+			expect( element.classList.contains( HIGHLIGHT_CLASS ) ).toBe(
+				false
+			);
 		} );
 	} );
 } );
