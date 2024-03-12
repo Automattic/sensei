@@ -7,6 +7,7 @@ import {
 	HIGHLIGHT_CLASS,
 	removeHighlightClasses,
 	performStepActionsAsync,
+	waitForElement,
 } from './helper';
 
 describe( 'PerformStepAction', () => {
@@ -160,12 +161,12 @@ describe( 'performStepActionsAsync', () => {
 		performStepActionsAsync( stepActions );
 
 		await jest.runAllTimers();
-		// Expect step actions to have been called in the correct order with the specified delays
 		expect( stepActions[ 0 ].action ).toHaveBeenCalledTimes( 1 );
 		await jest.runAllTimers();
 		expect( stepActions[ 1 ].action ).toHaveBeenCalledTimes( 1 );
 		await jest.runAllTimers();
 		expect( stepActions[ 2 ].action ).toHaveBeenCalledTimes( 1 );
+
 		expect( setTimeout ).toHaveBeenNthCalledWith(
 			1,
 			expect.any( Function ),
@@ -191,13 +192,44 @@ describe( 'performStepActionsAsync', () => {
 			{ action: jest.fn() },
 		];
 
-		// Call the function
 		await performStepActionsAsync( stepActions );
 
-		// Expect step actions to have been called without delay
 		expect( stepActions[ 0 ].action ).toHaveBeenCalledTimes( 1 );
 		expect( stepActions[ 1 ].action ).toHaveBeenCalledTimes( 1 );
 		expect( stepActions[ 2 ].action ).toHaveBeenCalledTimes( 1 );
 		expect( setTimeout ).toHaveBeenCalledTimes( 3 );
+	} );
+} );
+
+describe( 'waitForElement', () => {
+	beforeEach( () => {
+		jest.useFakeTimers();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	it( 'should resolve the promise when the element is available within maxChecks', async () => {
+		const selector = '.test-element';
+		const element = document.createElement( 'div' );
+		jest.spyOn( document, 'querySelector' ).mockReturnValueOnce( element );
+
+		const promise = waitForElement( selector );
+
+		jest.runAllTimers();
+
+		await expect( promise ).resolves.toBe( element );
+	} );
+
+	it( 'should reject the promise when the element is not available within maxChecks', async () => {
+		const selector = '.test-element';
+		jest.spyOn( document, 'querySelector' ).mockReturnValueOnce( null );
+
+		const promise = waitForElement( selector, 3, 100 );
+
+		jest.advanceTimersByTime( 1500 );
+
+		await expect( promise ).rejects.toBe( undefined );
 	} );
 } );
