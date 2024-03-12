@@ -18,12 +18,14 @@ import {
 	waitForElement,
 } from '../helper';
 
-function insertLessonBlock( lessonTitle ) {
-	const courseOutlineBlock = getFirstBlockByName(
+const getCourseOutlineBlock = () =>
+	getFirstBlockByName(
 		'sensei-lms/course-outline',
 		select( 'core/block-editor' ).getBlocks()
 	);
 
+function insertLessonBlock( lessonTitle ) {
+	const courseOutlineBlock = getCourseOutlineBlock();
 	if ( courseOutlineBlock ) {
 		const { insertBlock } = dispatch( 'core/block-editor' );
 
@@ -35,6 +37,14 @@ function insertLessonBlock( lessonTitle ) {
 			courseOutlineBlock.clientId
 		);
 	}
+}
+
+function focusOnCourseOutlineBlock() {
+	const courseOutlineBlock = getCourseOutlineBlock();
+	if ( ! courseOutlineBlock ) {
+		return;
+	}
+	dispatch( 'core/editor' ).selectBlock( courseOutlineBlock.clientId );
 }
 
 async function ensureLessonBlocksIsInEditor() {
@@ -110,15 +120,11 @@ function getTourSteps() {
 				performStepActionsAsync( [
 					{
 						action: () => {
+							focusOnCourseOutlineBlock();
+
 							const courseOutlineBlockSelector =
 								'[data-type="sensei-lms/course-outline"] div';
 
-							const courseOutlineBlock = document.querySelector(
-								courseOutlineBlockSelector
-							);
-							if ( courseOutlineBlock ) {
-								courseOutlineBlock.parentElement.focus();
-							}
 							highlightElementsWithBorders( [
 								courseOutlineBlockSelector,
 							] );
@@ -154,6 +160,7 @@ function getTourSteps() {
 				await performStepActionsAsync( [
 					{
 						action: () => {
+							focusOnCourseOutlineBlock();
 							const lesson = document.querySelector(
 								'[data-type="sensei-lms/course-outline-lesson"]'
 							);
@@ -206,13 +213,8 @@ function getTourSteps() {
 				await performStepActionsAsync( [
 					{
 						action: () => {
-							// Necessary to focus the lesson here otherwise inserter won't appear.
-							const courseOutline = document.querySelector(
-								'[data-type="sensei-lms/course-outline"]'
-							);
-							if ( courseOutline ) {
-								courseOutline.focus();
-							}
+							// Necessary to focus on the Course Outline block here otherwise inserter won't appear.
+							focusOnCourseOutlineBlock();
 						},
 					},
 					{
@@ -275,13 +277,8 @@ function getTourSteps() {
 				performStepActionsAsync( [
 					{
 						action: () => {
-							// Necessary to focus the lesson here otherwise inserter won't appear.
-							const lesson = document.querySelector(
-								'[data-type="sensei-lms/course-outline-lesson"]'
-							);
-							if ( lesson ) {
-								lesson.focus();
-							}
+							// Necessary to focus on the Course Outline block here otherwise inserter won't appear.
+							focusOnCourseOutlineBlock();
 						},
 					},
 					{
