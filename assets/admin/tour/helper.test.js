@@ -61,4 +61,23 @@ describe( 'highlightElementsWithBorders', () => {
 		expect( mockQuerySelector ).toHaveBeenCalledTimes( 2 );
 		expect( element2.classList.contains( HIGHLIGHT_CLASS ) ).toBe( true );
 	} );
+
+	it( 'should not add highlight class to elements that do not exist', () => {
+		const selectors = [ '.selector3', '.selector4' ];
+
+		mockQuerySelector.mockImplementation( ( selector ) => {
+			if ( selectors.includes( selector ) ) {
+				return null;
+			}
+			return document.createElement( 'div' );
+		} );
+
+		highlightElementsWithBorders( selectors );
+
+		expect( mockQuerySelector ).toHaveBeenCalledTimes( selectors.length );
+
+		selectors.forEach( ( selector ) => {
+			expect( document.querySelector( selector ) ).toBeNull();
+		} );
+	} );
 } );
