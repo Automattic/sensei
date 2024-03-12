@@ -15,6 +15,7 @@ import {
 	highlightElementsWithBorders,
 	performStepActionsAsync,
 	removeHighlightClasses,
+	waitForElement,
 } from '../helper';
 
 function insertLessonBlock( lessonTitle ) {
@@ -36,28 +37,6 @@ function insertLessonBlock( lessonTitle ) {
 	}
 }
 
-function waitForElement( selector, maxChecks = 10, delay = 300 ) {
-	return new Promise( ( resolve, reject ) => {
-		let checks = 0;
-
-		function checkElement() {
-			const element = document.querySelector( selector );
-			if ( element ) {
-				resolve( element );
-			} else {
-				checks++;
-				if ( checks >= maxChecks ) {
-					reject();
-				} else {
-					setTimeout( checkElement, delay );
-				}
-			}
-		}
-
-		checkElement();
-	} );
-}
-
 async function ensureLessonBlocksIsInEditor() {
 	const blankInserterSelector =
 		'.wp-block-sensei-lms-course-outline__placeholder__option-blank';
@@ -71,6 +50,8 @@ async function ensureLessonBlocksIsInEditor() {
 
 	const blankInserter = document.querySelector( blankInserterSelector );
 
+	// When the Course Outline block has the "Start with blank" option shown in it, instead of just inserting a lesson block,
+	// We click on that option to insert the lesson block.
 	if ( blankInserter ) {
 		await performStepActionsAsync( [
 			{
@@ -510,8 +491,8 @@ function getTourSteps() {
 
 				if ( ! savedLesson ) {
 					const { savePost } = dispatch( 'core/editor' );
-					await savePost();
-					await waitForElement( savedlessonSelector );
+					savePost();
+					await waitForElement( savedlessonSelector, 15 );
 				}
 
 				performStepActionsAsync( [

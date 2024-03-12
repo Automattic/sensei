@@ -54,3 +54,34 @@ export async function performStepActionsAsync( stepActions ) {
 		}
 	}
 }
+
+/**
+ * Waits for an element to be available in the DOM.
+ *
+ * @param {string} selector  The selector to wait for.
+ * @param {number} maxChecks The maximum number of checks to perform.
+ * @param {number} delay     The delay between checks.
+ *
+ * @return {Promise<unknown>} A promise that resolves when the element is available.
+ */
+export async function waitForElement( selector, maxChecks = 10, delay = 300 ) {
+	return new Promise( ( resolve, reject ) => {
+		let checks = 0;
+
+		function checkElement() {
+			const element = document.querySelector( selector );
+			if ( element ) {
+				resolve( element );
+			} else {
+				checks++;
+				if ( checks >= maxChecks ) {
+					reject();
+				} else {
+					setTimeout( checkElement, delay );
+				}
+			}
+		}
+
+		checkElement();
+	} );
+}
