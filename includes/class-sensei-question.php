@@ -923,7 +923,7 @@ class Sensei_Question {
 		$quiz_graded        = $user_quiz_progress && ! in_array( $user_quiz_progress->get_status(), array( 'ungraded', 'in-progress' ) );
 
 		$quiz_required_pass_grade = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-		$succeeded                = $user_quiz_grade >= $quiz_required_pass_grade;
+		$succeeded                = ! Sensei_Quiz::is_pass_required( $lesson_id ) || $user_quiz_grade >= $quiz_required_pass_grade;
 
 		if ( ! $quiz_graded ) {
 			return;
@@ -1038,33 +1038,35 @@ class Sensei_Question {
 		$has_answer_notes = $answer_notes && wp_strip_all_tags( $answer_notes );
 
 		?>
-		<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
-			<?php if ( $indicate_incorrect ) { ?>
-				<div class="sensei-lms-question__answer-feedback__header">
-					<span class="sensei-lms-question__answer-feedback__icon"></span>
-					<span
-						class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
-					<?php if ( $grade && $question_grade > 0 ) { ?>
-						<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $grade ); ?></span>
-					<?php } ?>
-				</div>
-			<?php } ?>
-			<?php if ( $has_answer_notes || $correct_answer ) { ?>
-				<div class="sensei-lms-question__answer-feedback__content">
-					<?php if ( $correct_answer ) { ?>
-						<div class="sensei-lms-question__answer-feedback__correct-answer">
-							<?php echo wp_kses_post( __( 'Right Answer:', 'sensei-lms' ) ); ?>
-							<?php echo wp_kses_post( $correct_answer ); ?>
-						</div>
-					<?php } ?>
-					<?php if ( $has_answer_notes ) { ?>
-						<div class="sensei-lms-question__answer-feedback__answer-notes">
-							<?php echo wp_kses_post( $answer_notes ); ?>
-						</div>
-					<?php } ?>
-				</div>
-			<?php } ?>
-		</div>
+		<?php if ( $indicate_incorrect || $has_answer_notes || $correct_answer ) { ?>
+			<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
+				<?php if ( $indicate_incorrect ) { ?>
+					<div class="sensei-lms-question__answer-feedback__header">
+						<span class="sensei-lms-question__answer-feedback__icon"></span>
+						<span
+							class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
+						<?php if ( $grade && $question_grade > 0 ) { ?>
+							<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $grade ); ?></span>
+						<?php } ?>
+					</div>
+				<?php } ?>
+				<?php if ( $has_answer_notes || $correct_answer ) { ?>
+					<div class="sensei-lms-question__answer-feedback__content">
+						<?php if ( $correct_answer ) { ?>
+							<div class="sensei-lms-question__answer-feedback__correct-answer">
+								<?php echo wp_kses_post( __( 'Right Answer:', 'sensei-lms' ) ); ?>
+								<?php echo wp_kses_post( $correct_answer ); ?>
+							</div>
+						<?php } ?>
+						<?php if ( $has_answer_notes ) { ?>
+							<div class="sensei-lms-question__answer-feedback__answer-notes">
+								<?php echo wp_kses_post( $answer_notes ); ?>
+							</div>
+						<?php } ?>
+					</div>
+				<?php } ?>
+			</div>
+		<?php } ?>
 		<?php if ( $grade ) { ?>
 			<style> .question-title .grade { display: none; } </style>
 		<?php } ?>
@@ -1238,16 +1240,16 @@ class Sensei_Question {
 	 */
 	public static function get_template_data( $question_id, $quiz_id ) {
 
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$user_id   = get_current_user_id();
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
+		$user_id   = (int) get_current_user_id();
 
 		$reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
-		// backwards compatibility
+		// Backwards compatibility.
 		if ( 'on' === $reset_allowed ) {
 			$reset_allowed = 1;
 		}
 
-		// setup the question data
+		// Setup the question data.
 		$data                           = [];
 		$data['ID']                     = $question_id;
 		$data['title']                  = get_the_title( $question_id );
