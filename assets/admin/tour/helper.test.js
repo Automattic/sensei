@@ -6,6 +6,7 @@ import {
 	highlightElementsWithBorders,
 	HIGHLIGHT_CLASS,
 	removeHighlightClasses,
+	performStepActionsAsync,
 } from './helper';
 
 describe( 'PerformStepAction', () => {
@@ -134,5 +135,69 @@ describe( 'removeHighlightClasses', () => {
 				false
 			);
 		} );
+	} );
+} );
+
+describe( 'performStepActionsAsync', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+		jest.useRealTimers();
+	} );
+
+	it( 'should perform step actions one after another with specified delays', async () => {
+		jest.useFakeTimers();
+		jest.spyOn( global, 'setTimeout' );
+		const stepActions = [
+			{ action: jest.fn(), delay: 100 },
+			{ action: jest.fn(), delay: 200 },
+			{ action: jest.fn() },
+		];
+
+		performStepActionsAsync( stepActions );
+
+		await jest.runAllTimers();
+		// Expect step actions to have been called in the correct order with the specified delays
+		expect( stepActions[ 0 ].action ).toHaveBeenCalledTimes( 1 );
+		await jest.runAllTimers();
+		expect( stepActions[ 1 ].action ).toHaveBeenCalledTimes( 1 );
+		await jest.runAllTimers();
+		expect( stepActions[ 2 ].action ).toHaveBeenCalledTimes( 1 );
+		expect( setTimeout ).toHaveBeenNthCalledWith(
+			1,
+			expect.any( Function ),
+			100
+		);
+		expect( setTimeout ).toHaveBeenNthCalledWith(
+			2,
+			expect.any( Function ),
+			200
+		);
+		expect( setTimeout ).toHaveBeenNthCalledWith(
+			3,
+			expect.any( Function ),
+			0
+		);
+	} );
+
+	it( 'should use setTimeout when delay is not specified', async () => {
+		jest.spyOn( global, 'setTimeout' );
+		const stepActions = [
+			{ action: jest.fn() },
+			{ action: jest.fn() },
+			{ action: jest.fn() },
+		];
+
+		// Call the function
+		await performStepActionsAsync( stepActions );
+
+		// Expect step actions to have been called without delay
+		expect( stepActions[ 0 ].action ).toHaveBeenCalledTimes( 1 );
+		expect( stepActions[ 1 ].action ).toHaveBeenCalledTimes( 1 );
+		expect( stepActions[ 2 ].action ).toHaveBeenCalledTimes( 1 );
+		expect( setTimeout ).toHaveBeenCalledTimes( 3 );
 	} );
 } );
