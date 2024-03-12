@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import {
-	PerformStepAction,
+	performStepAction,
 	highlightElementsWithBorders,
 	HIGHLIGHT_CLASS,
 	removeHighlightClasses,
@@ -10,7 +10,7 @@ import {
 	waitForElement,
 } from './helper';
 
-describe( 'PerformStepAction', () => {
+describe( 'performStepAction', () => {
 	it( 'should execute action if it exists for the given index', () => {
 		const steps = [
 			{ action: jest.fn() },
@@ -18,7 +18,7 @@ describe( 'PerformStepAction', () => {
 			{ action: jest.fn() },
 		];
 
-		PerformStepAction( 0, steps );
+		performStepAction( 0, steps );
 
 		expect( steps[ 0 ].action ).toHaveBeenCalled();
 	} );
@@ -26,7 +26,7 @@ describe( 'PerformStepAction', () => {
 	it( 'should not execute action if index is greater than or equal to steps length', () => {
 		const steps = [ { action: jest.fn() }, { action: jest.fn() } ];
 
-		PerformStepAction( 2, steps );
+		performStepAction( 2, steps );
 
 		expect( steps[ 0 ].action ).not.toHaveBeenCalled();
 		expect( steps[ 1 ].action ).not.toHaveBeenCalled();

@@ -9,11 +9,11 @@ import WpcomTourKitStep from '@automattic/tour-kit/src/variants/wpcom/components
 /**
  * Internal dependencies
  */
-import { PerformStepAction } from '../../helper';
+import { performStepAction } from '../../helper';
 
 function SenseiTourKitStep( { ...props } ) {
 	useEffect( () => {
-		PerformStepAction( props.currentStepIndex, props.steps );
+		performStepAction( props.currentStepIndex, props.steps );
 	}, [ props.currentStepIndex, props.steps ] );
 	return <WpcomTourKitStep { ...props } />;
 }

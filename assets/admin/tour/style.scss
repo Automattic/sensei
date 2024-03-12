@@ -21,6 +21,7 @@ $border-color: var(--wp--preset--color--foreground, #ff6ec7 );
 	box-sizing: inherit;
 }
 
+// Just keeping it here in case we want to add a pulsing effect.
 .sensei-tour-highlight.animate {
 	-webkit-animation: blink 2.0s linear infinite !important;
 	-moz-animation: blink 2.0s linear infinite !important;

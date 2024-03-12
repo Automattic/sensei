@@ -16,7 +16,7 @@ import { useCallback } from '@wordpress/element';
  */
 import { SENSEI_TOUR_STORE } from '../../data/store';
 import { TourStep } from '../../types';
-import { PerformStepAction, removeHighlightClasses } from '../../helper';
+import { performStepAction, removeHighlightClasses } from '../../helper';
 import SenseiTourKitStep from '../sensei-tour-kit-step';
 
 /**
@@ -76,7 +76,7 @@ function SenseiTourKit( { tourName, trackId, steps, extraConfig = {} } ) {
 				onPreviousStep: () => {},
 				onGoToStep: () => {},
 				onMaximize: ( index ) => {
-					PerformStepAction( index, steps );
+					performStepAction( index, steps );
 				},
 				onMinimize: () => {
 					removeHighlightClasses();

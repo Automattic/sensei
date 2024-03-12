@@ -1,6 +1,6 @@
 export const HIGHLIGHT_CLASS = 'sensei-tour-highlight';
 
-export function PerformStepAction( index, steps ) {
+export function performStepAction( index, steps ) {
 	if ( index < steps.length ) {
 		const step = steps[ index ];
 		if ( step.action ) {
