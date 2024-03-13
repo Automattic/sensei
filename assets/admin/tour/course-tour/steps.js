@@ -160,7 +160,6 @@ function getTourSteps() {
 				await performStepActionsAsync( [
 					{
 						action: () => {
-							focusOnCourseOutlineBlock();
 							const lesson = document.querySelector(
 								'[data-type="sensei-lms/course-outline-lesson"]'
 							);
