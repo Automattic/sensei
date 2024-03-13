@@ -104,7 +104,7 @@ export default function getTourSteps() {
 				heading: __( 'Changing the question type', 'sensei-lms' ),
 				descriptions: {
 					desktop: __(
-						'There are a variety of question types for you to choose from including Multiple Choice, True/False and File Upload. We’ll show how to configure a True/False question, but the other question types work similarly.',
+						'There are a variety of question types for you to choose from including Multiple Choice, True/False and File Upload.',
 						'sensei-lms'
 					),
 					mobile: null,
