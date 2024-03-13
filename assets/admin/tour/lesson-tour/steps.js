@@ -31,7 +31,7 @@ function focusOnQuizBlock() {
 }
 
 /**
- * Returns the tour steps for the Course Outline block.
+ * Returns the tour steps for the Quiz block.
  *
  * @return {Array.<TourStep>} An array containing the tour steps.
  */
