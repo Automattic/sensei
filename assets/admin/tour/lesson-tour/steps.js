@@ -287,6 +287,42 @@ export default function getTourSteps() {
 					mobile: '',
 				},
 			},
+			action: () => {
+				performStepActionsAsync( [
+					// Focus on question block.
+					{
+						action: () => {
+							focusOnQuestionBlock();
+						},
+					},
+					// Open answer feedback.
+					{
+						action: () => {
+							const answerFeedbackButtonSelector =
+								'.sensei-lms-question-block__answer-feedback-toggle__header';
+
+							const answerFeedbackButton = document.querySelector(
+								answerFeedbackButtonSelector
+							);
+
+							highlightElementsWithBorders( [
+								answerFeedbackButtonSelector,
+							] );
+
+							// Open answer feedback if it's not already open.
+							if (
+								null ===
+								document.querySelector(
+									'.wp-block-sensei-lms-quiz-question.is-selected.show-answer-feedback'
+								)
+							) {
+								answerFeedbackButton.click();
+							}
+						},
+						delay: 400,
+					},
+				] );
+			},
 		},
 		{
 			slug: 'adding-a-new-or-existing-question',
