@@ -20,7 +20,7 @@ class Sensei_Course_Pre_Publish_Panel {
 	 *
 	 * @var self
 	 */
-	private static $instance = null;
+	private static $instance;
 
 	/**
 	 * Sensei_Course_Pre_Publish_Panel constructor. Prevents other instances from being created outside of `self::instance()`.
