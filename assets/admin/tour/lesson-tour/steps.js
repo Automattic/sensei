@@ -44,6 +44,28 @@ function focusOnQuestionBlock() {
 	dispatch( 'core/editor' ).selectBlock( questionBlock.clientId );
 }
 
+export const beforeEach = ( step ) => {
+	// Close answer feedback as the happy path next step.
+	if ( 'adding-answer-feedback' !== step.slug ) {
+		const answerFeedbackButtonSelector =
+			'.sensei-lms-question-block__answer-feedback-toggle__header';
+
+		const answerFeedbackButton = document.querySelector(
+			answerFeedbackButtonSelector
+		);
+
+		if (
+			null !== answerFeedbackButton &&
+			null !==
+				document.querySelector(
+					'.wp-block-sensei-lms-quiz-question.show-answer-feedback'
+				)
+		) {
+			answerFeedbackButton.click();
+		}
+	}
+};
+
 /**
  * Returns the tour steps for the Quiz block.
  *
