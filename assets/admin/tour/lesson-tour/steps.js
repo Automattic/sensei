@@ -81,7 +81,11 @@ export default function getTourSteps() {
 					{
 						action: () => {
 							focusOnQuizBlock();
-
+						},
+					},
+					// Highlight quiz block.
+					{
+						action: () => {
 							const quizBlockSelector =
 								'[data-type="sensei-lms/quiz"]';
 
@@ -89,7 +93,7 @@ export default function getTourSteps() {
 								quizBlockSelector,
 							] );
 						},
-						delay: 0,
+						delay: 400,
 					},
 				] );
 			},
@@ -139,7 +143,7 @@ export default function getTourSteps() {
 
 							typeSelectorButton.click();
 						},
-						delay: 100,
+						delay: 400,
 					},
 				] );
 			},
