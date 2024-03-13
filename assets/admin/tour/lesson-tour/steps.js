@@ -4,11 +4,31 @@
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { ExternalLink } from '@wordpress/components';
+import { select, dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { TourStep } from '../types';
+import { getFirstBlockByName } from '../../../blocks/course-outline/data';
+import {
+	highlightElementsWithBorders,
+	performStepActionsAsync,
+} from '../helper';
+
+const getQuizBlock = () =>
+	getFirstBlockByName(
+		'sensei-lms/quiz',
+		select( 'core/block-editor' ).getBlocks()
+	);
+
+function focusOnQuizBlock() {
+	const quizBlock = getQuizBlock();
+	if ( ! quizBlock ) {
+		return;
+	}
+	dispatch( 'core/editor' ).selectBlock( quizBlock.clientId );
+}
 
 /**
  * Returns the tour steps for the Course Outline block.
@@ -40,6 +60,23 @@ export default function getTourSteps() {
 			},
 			referenceElements: {
 				desktop: '',
+			},
+			action: async () => {
+				performStepActionsAsync( [
+					{
+						action: () => {
+							focusOnQuizBlock();
+
+							const quizBlockSelector =
+								'[data-type="sensei-lms/quiz"]';
+
+							highlightElementsWithBorders( [
+								quizBlockSelector,
+							] );
+						},
+						delay: 0,
+					},
+				] );
 			},
 		},
 		{
