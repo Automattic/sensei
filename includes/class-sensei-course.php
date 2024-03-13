@@ -448,10 +448,12 @@ class Sensei_Course {
 	/**
 	 * Register and enqueue scripts and styles that are needed in the backend.
 	 *
+	 * @param string $hook_suffix The current admin page.
+	 *
 	 * @access private
 	 * @since 2.1.0
 	 */
-	public function register_admin_scripts() {
+	public function register_admin_scripts( $hook_suffix ) {
 		$screen = get_current_screen();
 		if ( ! $screen ) {
 			return;
@@ -474,6 +476,38 @@ class Sensei_Course {
 				sprintf( 'window.sensei = window.sensei || {}; window.sensei.courseSettingsSidebar = %s;', $settings_sidebar ),
 				'before'
 			);
+
+			$lessons_by_user_args = array(
+				'author'         => get_current_user_id(),
+				'fields'         => 'all',
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Runs only once during Course editor loading.
+					array(
+						'key'     => '_lesson_course',
+						'value'   => 0,
+						'compare' => '>',
+					),
+				),
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+				'post_type'      => 'lesson',
+			);
+
+			$user_lessons_query       = new WP_Query( $lessons_by_user_args );
+			$has_lessons_with_courses = count( $user_lessons_query->posts ) > 0;
+
+			if ( ! $has_lessons_with_courses ) {
+				$post_id     = get_the_ID();
+				$new_post    = $post_id && get_post_meta( $post_id, '_new_post', true );
+				$is_new_post = 'post-new.php' === $hook_suffix || $new_post;
+
+				wp_add_inline_script(
+					'sensei-admin-course-edit',
+					sprintf( 'window.sensei = window.sensei || {}; window.sensei.isNewCourse = %s;', ( $is_new_post ? 'true' : 'false' ) ),
+					'before'
+				);
+
+				Sensei()->assets->enqueue( 'sensei-admin-first-course-creation-notice', 'js/admin/first-course-creation-notice.js', [ 'sensei-admin-course-edit' ], true );
+			}
 		}
 
 		if ( 'edit-course' === $screen->id ) {
@@ -691,6 +725,17 @@ class Sensei_Course {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'boolean',
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
+			]
+		);
+		register_post_meta(
+			'course',
+			'_new_post',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'default'       => false,
 				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);

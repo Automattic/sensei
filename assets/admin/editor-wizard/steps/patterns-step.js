@@ -37,7 +37,7 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
 			? replacePlaceholders( blocks, replaces )
 			: blocks;
 
-		resetEditorBlocks( newBlocks );
+		resetEditorBlocks( newBlocks, { patternName: name } );
 		onCompletion();
 
 		//Auto select a template if the pattern specifies an available one.
