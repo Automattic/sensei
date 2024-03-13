@@ -41,4 +41,19 @@ $thumbnail-height: 235px;
 			color: var(--wp-admin-theme-color);
 		}
 	}
+
+	&__warning {
+		width: 100%;
+		height: calc(100% - 18px);
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+
+		&-title {
+			flex: 1;
+			padding: 10px;
+			font-size: 14px;
+			text-align: center;
+		}
+	}
 }

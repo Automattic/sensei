@@ -245,5 +245,22 @@ class Email_Page_Template_Test extends \WP_UnitTestCase {
 		self::assertSame( $template_to_be_added, $result[1] );
 	}
 
+	public function testAddEmailTemplate_WhenAjaxLookupRequest_ReturnsListWithoutUpdating() {
+		/* Arrange. */
+		$_SERVER['REQUEST_URI'] = '/wp-json/wp/v2/templates/lookup?slug=single-post-hello-world&_locale=user';
+		$repository             = $this->createMock( Email_Page_Template_Repository::class );
+		$page_template          = new Email_Page_Template( $repository );
+		$default_list           = [ $this->createMock( \WP_Block_Template::class ) ];
+		$template_to_be_added   = $this->createMock( \WP_Block_Template::class );
 
+		$repository
+			->method( 'get' )
+			->willReturn( $template_to_be_added );
+
+		/* Act. */
+		$result = $page_template->add_email_template( $default_list, [], 'wp_template' );
+
+		/* Assert. */
+		self::assertSame( $default_list, $result );
+	}
 }

@@ -46,7 +46,8 @@ class Sensei_Editor_Wizard {
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'register_post_metas' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
+		// Priority 9 to make sure it will run before the block editor nux on WPCOM. While this code is written, it uses priority 100.
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_editor_wizard_assets' ], 9 );
 	}
 
 	/**
@@ -76,13 +77,26 @@ class Sensei_Editor_Wizard {
 	 * @param string $hook_suffix The current admin page.
 	 *
 	 * @access private
+	 *
+	 * @deprecated $$next-version$$ use Sensei_Editor_Wizard::enqueue_editor_wizard_assets instead.
 	 */
-	public function enqueue_admin_scripts( $hook_suffix ) {
+	public function enqueue_admin_scripts( $hook_suffix ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Editor_Wizard::enqueue_editor_wizard_assets' );
+
+		$this->enqueue_editor_wizard_assets();
+	}
+
+	/**
+	 * Enqueue editor wizard assets.
+	 */
+	public function enqueue_editor_wizard_assets() {
+		global $pagenow;
+
 		$post_type   = get_post_type();
 		$post_id     = get_the_ID();
 		$new_post    = get_post_meta( $post_id, '_new_post', true );
 		$post_types  = [ 'course', 'lesson' ];
-		$is_new_post = 'post-new.php' === $hook_suffix || $new_post;
+		$is_new_post = 'post-new.php' === $pagenow || $new_post;
 
 		if ( $is_new_post && in_array( $post_type, $post_types, true ) ) {
 			Sensei()->assets->enqueue( 'sensei-editor-wizard-script', 'admin/editor-wizard/index.js' );
