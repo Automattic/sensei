@@ -213,6 +213,42 @@ export default function getTourSteps() {
 					mobile: '',
 				},
 			},
+			action: async () => {
+				performStepActionsAsync( [
+					// Focus on question block.
+					{
+						action: () => {
+							focusOnQuestionBlock();
+						},
+					},
+					// Focus on description field.
+					{
+						action: () => {
+							const descriptionFieldSelector =
+								'.wp-block-sensei-lms-question-description .rich-text';
+
+							const descriptionField = document.querySelector(
+								descriptionFieldSelector
+							);
+
+							descriptionField.focus();
+						},
+						delay: 400,
+					},
+					// Highlight description field.
+					{
+						action: () => {
+							const descriptionFieldSelector =
+								'.wp-block-sensei-lms-question-description .rich-text';
+
+							highlightElementsWithBorders( [
+								descriptionFieldSelector,
+							] );
+						},
+						delay: 400,
+					},
+				] );
+			},
 		},
 		{
 			slug: 'setting-correct-answer',
