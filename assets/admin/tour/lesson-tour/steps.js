@@ -166,6 +166,34 @@ export default function getTourSteps() {
 					mobile: '',
 				},
 			},
+			action: async () => {
+				performStepActionsAsync( [
+					// Focus on question block.
+					{
+						action: () => {
+							focusOnQuestionBlock();
+						},
+					},
+					// Focus on title field.
+					{
+						action: () => {
+							const titleFieldSelector =
+								'.sensei-lms-question-block__title .sensei-lms-single-line-input';
+
+							const titleField = document.querySelector(
+								titleFieldSelector
+							);
+
+							highlightElementsWithBorders( [
+								titleFieldSelector,
+							] );
+
+							titleField.focus();
+						},
+						delay: 400,
+					},
+				] );
+			},
 		},
 		{
 			slug: 'adding-question-description',
