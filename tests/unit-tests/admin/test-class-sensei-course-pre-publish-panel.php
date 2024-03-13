@@ -37,12 +37,14 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 
 		$this->factory   = new Sensei_Factory();
 		$this->course_id = $this->factory->course->create();
-		$this->lesson_id = $this->factory->lesson->create( [
-			'post_status' => 'draft',
-			'meta_input' => [
-				'_lesson_course' => $this->course_id,
-			],
-		] );
+		$this->lesson_id = $this->factory->lesson->create(
+			[
+				'post_status' => 'draft',
+				'meta_input'  => [
+					'_lesson_course' => $this->course_id,
+				],
+			]
+		);
 	}
 
 	public function tearDown(): void {
