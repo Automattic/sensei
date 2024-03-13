@@ -22,12 +22,26 @@ const getQuizBlock = () =>
 		select( 'core/block-editor' ).getBlocks()
 	);
 
+const getFirstQuestionBlock = () =>
+	getFirstBlockByName(
+		'sensei-lms/quiz-question',
+		select( 'core/block-editor' ).getBlocks()
+	);
+
 function focusOnQuizBlock() {
 	const quizBlock = getQuizBlock();
 	if ( ! quizBlock ) {
 		return;
 	}
 	dispatch( 'core/editor' ).selectBlock( quizBlock.clientId );
+}
+
+function focusOnQuestionBlock() {
+	const questionBlock = getFirstQuestionBlock();
+	if ( ! questionBlock ) {
+		return;
+	}
+	dispatch( 'core/editor' ).selectBlock( questionBlock.clientId );
 }
 
 /**
@@ -63,6 +77,7 @@ export default function getTourSteps() {
 			},
 			action: async () => {
 				performStepActionsAsync( [
+					// Focus on the Quiz block.
 					{
 						action: () => {
 							focusOnQuizBlock();
@@ -99,6 +114,34 @@ export default function getTourSteps() {
 			},
 			referenceElements: {
 				desktop: '',
+			},
+			action: async () => {
+				performStepActionsAsync( [
+					// Focus on question block.
+					{
+						action: () => {
+							focusOnQuestionBlock();
+						},
+					},
+					// Click on type selector.
+					{
+						action: () => {
+							const typeSelectorSelector =
+								'.sensei-lms-question-block__type-selector button';
+
+							const typeSelectorButton = document.querySelector(
+								typeSelectorSelector
+							);
+
+							highlightElementsWithBorders( [
+								typeSelectorSelector,
+							] );
+
+							typeSelectorButton.click();
+						},
+						delay: 100,
+					},
+				] );
 			},
 		},
 		{
