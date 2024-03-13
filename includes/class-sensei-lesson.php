@@ -5021,7 +5021,7 @@ class Sensei_Lesson {
 
 					<p>
 
-						<a class="button"
+						<a class="button quiz-view"
 						   href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>"
 						   title="<?php esc_attr_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>">
 
