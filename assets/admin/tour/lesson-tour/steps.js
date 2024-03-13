@@ -75,7 +75,7 @@ export default function getTourSteps() {
 			referenceElements: {
 				desktop: '',
 			},
-			action: async () => {
+			action: () => {
 				performStepActionsAsync( [
 					// Focus on the Quiz block.
 					{
@@ -119,7 +119,7 @@ export default function getTourSteps() {
 			referenceElements: {
 				desktop: '',
 			},
-			action: async () => {
+			action: () => {
 				performStepActionsAsync( [
 					// Focus on question block.
 					{
@@ -166,7 +166,7 @@ export default function getTourSteps() {
 					mobile: '',
 				},
 			},
-			action: async () => {
+			action: () => {
 				performStepActionsAsync( [
 					// Focus on question block.
 					{
@@ -213,7 +213,7 @@ export default function getTourSteps() {
 					mobile: '',
 				},
 			},
-			action: async () => {
+			action: () => {
 				performStepActionsAsync( [
 					// Focus on question block.
 					{
