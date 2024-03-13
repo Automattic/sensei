@@ -20,7 +20,7 @@ class Sensei_Course_Pre_Publish_Panel {
 	 *
 	 * @var self
 	 */
-	private static $instance;
+	private static $instance = null;
 
 	/**
 	 * Sensei_Course_Pre_Publish_Panel constructor. Prevents other instances from being created outside of `self::instance()`.
@@ -82,7 +82,7 @@ class Sensei_Course_Pre_Publish_Panel {
 		foreach ( $lesson_ids as $lesson_id ) {
 			wp_update_post(
 				array(
-					'ID'          => $lesson_id,
+					'ID'          => (int) $lesson_id,
 					'post_status' => 'publish',
 				)
 			);
