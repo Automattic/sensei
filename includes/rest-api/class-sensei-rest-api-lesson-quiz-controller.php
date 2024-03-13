@@ -198,19 +198,20 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		}
 
 		if ( $is_new ) {
+			update_post_meta( (int) $lesson->ID, '_lesson_quiz', (int) $quiz_id );
+			wp_set_post_terms( $quiz_id, array( 'multiple-choice' ), 'quiz-type' );
+
 			/**
 			 * Fires after a quiz is created via the REST API.
 			 *
 			 * @since $$next-version$$
 			 *
-			 * @hook sensei_rest_api_lesson_quiz_created
+			 * @hook sensei_quiz_create
 			 *
 			 * @param {int} $quiz_id   Quiz post ID.
 			 * @param {int} $lesson_id Course post ID.
 			 */
-			do_action( 'sensei_rest_api_lesson_quiz_created', (int) $quiz_id, (int) $lesson->ID );
-			update_post_meta( (int) $lesson->ID, '_lesson_quiz', (int) $quiz_id );
-			wp_set_post_terms( $quiz_id, array( 'multiple-choice' ), 'quiz-type' );
+			do_action( 'sensei_quiz_create', (int) $quiz_id, (int) $lesson->ID );
 		}
 
 		$existing_question_ids = array_map( 'intval', wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' ) );

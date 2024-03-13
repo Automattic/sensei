@@ -1763,7 +1763,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$action                    = function( $quiz, $lesson ) use ( &$quiz_created_action_fired ) {
 			$quiz_created_action_fired = true;
 		};
-		add_action( 'sensei_course_structure_quiz_created', $action, 10, 2 );
+		add_action( 'sensei_quiz_create', $action, 10, 2 );
 
 		/* Act. */
 		$course_structure->save( $new_structure );

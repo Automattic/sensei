@@ -36,7 +36,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return static
 	 */
-	public static function instance( int $course_id ) : self {
+	public static function instance( int $course_id ): self {
 		if ( ! isset( self::$instances[ $course_id ] ) ) {
 			self::$instances[ $course_id ] = new static( $course_id );
 		}
@@ -143,7 +143,7 @@ class Sensei_Course_Structure {
 	 *     @type array  $lessons     An array of the module lessons. See Sensei_Course_Structure::prepare_lesson().
 	 * }
 	 */
-	private function prepare_module( WP_Term $module_term, $lesson_post_status ) : array {
+	private function prepare_module( WP_Term $module_term, $lesson_post_status ): array {
 		$lessons      = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
 		$author       = Sensei_Core_Modules::get_term_author( $module_term->slug );
 		$default_slug = $this->get_module_slug( $module_term->name );
@@ -180,7 +180,7 @@ class Sensei_Course_Structure {
 	 *     @type bool   $draft True if the lesson is a draft.
 	 * }
 	 */
-	private function prepare_lesson( WP_Post $lesson_post ) : array {
+	private function prepare_lesson( WP_Post $lesson_post ): array {
 		return [
 			'type'           => 'lesson',
 			'id'             => $lesson_post->ID,
@@ -199,7 +199,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return WP_Post[]
 	 */
-	private function get_module_lessons( int $module_term_id, $lesson_post_status ) : array {
+	private function get_module_lessons( int $module_term_id, $lesson_post_status ): array {
 		$lessons_query = Sensei()->modules->get_lessons_query( $this->course_id, $module_term_id, $lesson_post_status );
 
 		return $lessons_query instanceof WP_Query ? $lessons_query->posts : [];
@@ -210,7 +210,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return WP_Term[]
 	 */
-	private function get_modules() : array {
+	private function get_modules(): array {
 		$modules = Sensei()->modules->get_course_modules( $this->course_id );
 
 		if ( is_wp_error( $modules ) ) {
@@ -593,12 +593,26 @@ class Sensei_Course_Structure {
 		 *
 		 * @since 4.20.1
 		 *
+		 * @deprecated $$next-version$$ Use sensei_quiz_create instead.
+		 *
 		 * @hook sensei_course_structure_quiz_created
 		 *
 		 * @param {int} $quiz_id   Quiz post ID.
 		 * @param {int} $lesson_id Course post ID.
 		 */
-		do_action( 'sensei_course_structure_quiz_created', $quiz_id, $lesson_id );
+		do_action_deprecated( 'sensei_course_structure_quiz_created', $quiz_id, $lesson_id, '$$next-version$$', 'sensei_quiz_create' );
+
+		/**
+		 * Fires after a quiz is created while saving the course structure.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @hook sensei_quiz_create
+		 *
+		 * @param {int} $quiz_id   Quiz post ID.
+		 * @param {int} $lesson_id Course post ID.
+		 */
+		do_action( 'sensei_quiz_create', $quiz_id, $lesson_id );
 	}
 
 	/**
@@ -661,7 +675,7 @@ class Sensei_Course_Structure {
 	 *     @type array $2 $module_titles All the module titles.
 	 * }
 	 */
-	private function flatten_structure( array $structure ) : array {
+	private function flatten_structure( array $structure ): array {
 		$lesson_ids    = [];
 		$module_ids    = [];
 		$module_titles = [];
@@ -923,7 +937,7 @@ class Sensei_Course_Structure {
 		&& [ 0 ] !== $order ) {
 			usort(
 				$structure,
-				function( $a, $b ) use ( $order, $type ) {
+				function ( $a, $b ) use ( $order, $type ) {
 					// One of the types is not being sorted.
 					if ( $type !== $a['type'] || $type !== $b['type'] ) {
 						// If types are equal, keep in the current positions.

@@ -1033,12 +1033,12 @@ class Sensei_Lesson {
 			 *
 			 * @since $$next-version$$
 			 *
-			 * @hook sensei_lesson_quiz_created
+			 * @hook sensei_quiz_create
 			 *
 			 * @param {int} $quiz_id   Quiz post ID.
 			 * @param {int} $lesson_id Course post ID.
 			 */
-			do_action( 'sensei_lesson_quiz_created', $quiz_id, $post_id );
+			do_action( 'sensei_quiz_create', $quiz_id, $post_id );
 		}
 
 		// Add default lesson order meta value.
