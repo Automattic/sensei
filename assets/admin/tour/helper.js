@@ -35,6 +35,8 @@ export function removeHighlightClasses() {
 	} );
 }
 
+let stepActionTimeout = null;
+
 /**
  * Performs step actions one after another.
  *
@@ -42,15 +44,16 @@ export function removeHighlightClasses() {
  */
 export async function performStepActionsAsync( stepActions ) {
 	removeHighlightClasses();
+	clearTimeout( stepActionTimeout );
 
 	for ( const stepAction of stepActions ) {
 		if ( stepAction ) {
-			await new Promise( ( resolve ) =>
-				setTimeout( () => {
+			await new Promise( ( resolve ) => {
+				stepActionTimeout = setTimeout( () => {
 					stepAction.action();
 					resolve();
-				}, stepAction.delay ?? 0 )
-			);
+				}, stepAction.delay ?? 0 );
+			} );
 		}
 	}
 }
