@@ -1,5 +1,16 @@
+/**
+ * Internal dependencies
+ */
+import { TourStep } from './types';
+
 export const HIGHLIGHT_CLASS = 'sensei-tour-highlight';
 
+/**
+ * Performs the action for the step.
+ *
+ * @param {number}           index The index of the step.
+ * @param {Array.<TourStep>} steps The steps array.
+ */
 export function performStepAction( index, steps ) {
 	if ( index < steps.length ) {
 		const step = steps[ index ];
