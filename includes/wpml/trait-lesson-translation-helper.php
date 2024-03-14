@@ -35,7 +35,7 @@ trait Lesson_Translation_Helper {
 	 * @param int      $new_lesson_id    New lesson ID.
 	 * @param int|null $master_lesson_id Original lesson ID.
 	 */
-	private function update_translated_lesson_taxonomies( $new_lesson_id, $master_lesson_id = null ) {
+	private function update_translated_lesson_properties( $new_lesson_id, $master_lesson_id = null ) {
 		$details = (array) apply_filters(
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			'wpml_element_language_details',
@@ -67,7 +67,18 @@ trait Lesson_Translation_Helper {
 			do_action( 'wpml_sync_custom_field', $master_lesson_id, '_lesson_course' );
 		}
 
-		// Update lesson taxonomies.
+		$this->set_lesson_order( $new_lesson_id, $master_lesson_id, $details );
+		$this->set_module_taxonomies( $new_lesson_id, $master_lesson_id, $details );
+	}
+
+	/**
+	 * Update lesson module taxonomies for a translated lesson.
+	 *
+	 * @param int   $new_lesson_id New lesson ID.
+	 * @param int   $master_lesson_id Original lesson ID.
+	 * @param array $details Language details.
+	 */
+	private function set_module_taxonomies( $new_lesson_id, $master_lesson_id, $details ) {
 		$terms = wp_get_object_terms( $master_lesson_id, 'module', array( 'fields' => 'ids' ) );
 		if ( empty( $terms ) || is_wp_error( $terms ) || ! is_array( $terms ) ) {
 			return;
@@ -85,5 +96,22 @@ trait Lesson_Translation_Helper {
 		}
 
 		wp_set_object_terms( $new_lesson_id, $new_terms, 'module' );
+	}
+
+	/**
+	 * Set lesson order for the translated lesson.
+	 *
+	 * @param int   $new_lesson_id New lesson ID.
+	 * @param int   $master_lesson_id Original lesson ID.
+	 * @param array $details Language details.
+	 */
+	private function set_lesson_order( $new_lesson_id, $master_lesson_id, $details ) {
+		$master_course_id = get_post_meta( $master_lesson_id, '_lesson_course', true );
+		if ( $master_course_id ) {
+			$order = (int) get_post_meta( $master_lesson_id, '_order_' . $master_course_id, true );
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			$new_course_id = apply_filters( 'wpml_object_id', $master_course_id, 'course', false, $details['language_code'] );
+			update_post_meta( $new_lesson_id, '_order_' . $new_course_id, $order );
+		}
 	}
 }

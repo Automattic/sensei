@@ -83,15 +83,16 @@ class Course_Translation {
 				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 				do_action( 'wpml_admin_make_post_duplicates', $lesson_id );
 
-				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-				$translations = apply_filters( 'wpml_post_duplicates', $lesson_id );
-				foreach ( $translations as $translated_lesson_id ) {
-					$this->update_lesson_course( (int) $translated_lesson_id, $new_course_id );
-					$this->update_translated_lesson_taxonomies( (int) $translated_lesson_id, $lesson_id );
-				}
-
-				$this->update_quiz_translations( $lesson_id );
 			}
+
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			$translations = apply_filters( 'wpml_post_duplicates', $lesson_id );
+			foreach ( $translations as $translated_lesson_id ) {
+				$this->update_lesson_course( (int) $translated_lesson_id, $new_course_id );
+				$this->update_translated_lesson_properties( (int) $translated_lesson_id, $lesson_id );
+			}
+
+			$this->update_quiz_translations( $lesson_id );
 
 			// Sync lesson course field across translations.
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound

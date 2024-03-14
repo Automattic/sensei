@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.2
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 4.20.2
+Stable tag: 4.21.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,10 +69,6 @@ https://videopress.com/v/tLYw7R27
 **Certificates:** Automatically generate beautiful downloadable PDF certificates for students when they complete a course.
 
 [Learn more about Sensei LMS Certificates.](https://wordpress.org/plugins/sensei-certificates/)
-
-**Media and Attachments:** Upload media and files like PDFs to a separate uploads area of your course or lesson.
-
-[Learn more about Sensei LMS Media Attachments.](https://wordpress.org/plugins/sensei-media-attachments/)
 
 **Post To Course Creator:** Create courses quickly by converting existing blog posts into course lessons in just a few clicks.
 
@@ -144,6 +140,20 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.21.0 - 2024-02-26
+#### Added
+- Add existing lessons in Course Outline [#7368](https://github.com/Automattic/sensei/pull/7368)
+
+#### Changed
+- Add docs links to the page settings [#7488](https://github.com/Automattic/sensei/pull/7488)
+
+#### Removed
+- Remove "Customize Colors" link for classic themes [#7491](https://github.com/Automattic/sensei/pull/7491)
+
+#### Fixed
+- Fix course/lesson patterns not working on latest Gutenberg version [#7499](https://github.com/Automattic/sensei/pull/7499)
+- Fix Course Outline for a course translated with WPML. [#7453](https://github.com/Automattic/sensei/pull/7453)
+
 ### 4.20.2 - 2024-02-07
 #### Changed
 - Auto-focus the course title field when creating a new course [#7434](https://github.com/Automattic/sensei/pull/7434)
@@ -175,21 +185,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 #### Development
 - Introduce Clock interface and corresponding public property for Sensei object. [#7395](https://github.com/Automattic/sensei/pull/7395)
-
-### 4.20.0 - 2023-12-14
-#### Added
-- Introduce an experimental feature: High-Performance Progress Storage. It allows student progress data to be stored in an optimized way, using custom tables. The feature is disabled by default and can be enabled from the settings page.
-
-#### Changed
-- Open the Lesson editor in the same tab when link is clicked in the Course Outline block [#7344](https://github.com/Automattic/sensei/pull/7344)
-- Rename "View Quiz" block to "Take Quiz" [#7332](https://github.com/Automattic/sensei/pull/7332)
-
-#### Fixed
-- Continue course button not working when using plain permalinks [#7358](https://github.com/Automattic/sensei/pull/7358)
-- Fix preview styles for course blocks on the editor [#7307](https://github.com/Automattic/sensei/pull/7307)
-- Importer not finding existing users in some cases [#7361](https://github.com/Automattic/sensei/pull/7361)
-- Improve styling of Landing Page and Course List patterns [#7292](https://github.com/Automattic/sensei/pull/7292)
-- Resolved the issue of the 'Take Quiz' button not displaying in the site editor when Gutenberg is enabled [#7341](https://github.com/Automattic/sensei/pull/7341)
-- Restart quiz redirects to the course complete page if the course was completed [#7377](https://github.com/Automattic/sensei/pull/7377)
-- Scope CSS to Learning Mode templates only [#7382](https://github.com/Automattic/sensei/pull/7382)
-- Teachers can no longer see all students in the Students screen [#7367](https://github.com/Automattic/sensei/pull/7367)

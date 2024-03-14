@@ -26,9 +26,9 @@ class Language_Details {
 	 */
 	public function init() {
 		add_action( 'sensei_course_structure_lesson_created', array( $this, 'set_language_details_when_lesson_created' ), 10, 2 );
-		add_action( 'sensei_course_structure_quiz_created', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
-		add_action( 'sensei_rest_api_lesson_quiz_created', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
-		add_action( 'sensei_lesson_quiz_created', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
+		add_action( 'sensei_quiz_create', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
+		add_action( 'sensei_quiz_create', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
+		add_action( 'sensei_quiz_create', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
 		add_action( 'sensei_rest_api_question_saved', array( $this, 'set_language_details_when_question_created' ), 10, 1 );
 	}
 
