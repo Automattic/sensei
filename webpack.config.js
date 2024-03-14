@@ -89,6 +89,7 @@ const files = [
 	'blocks/email-editor.js',
 	'css/email-notifications/email-editor-style.scss',
 	'css/email-notifications/email-style.scss',
+	'admin/course-pre-publish-panel/index.js',
 	'admin/editor-wizard/index.js',
 	'admin/editor-wizard/style.scss',
 	'admin/tour/course-tour/index.js',
