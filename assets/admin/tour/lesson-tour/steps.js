@@ -347,8 +347,19 @@ export default function getTourSteps() {
 									'.wp-block-sensei-lms-quiz-question.is-selected.show-answer-feedback'
 								)
 							) {
+								answerFeedbackButton.focus();
 								answerFeedbackButton.click();
 							}
+						},
+						delay: 400,
+					},
+					// Highlight answer feedback areas.
+					{
+						action: () => {
+							highlightElementsWithBorders( [
+								'.sensei-lms-question__answer-feedback--correct',
+								'.sensei-lms-question__answer-feedback--incorrect',
+							] );
 						},
 						delay: 400,
 					},
@@ -529,6 +540,7 @@ export default function getTourSteps() {
 								settingsButtonSelector
 							);
 							if ( settingsButton ) {
+								settingsButton.focus();
 								settingsButton.click();
 							}
 						},
