@@ -5,6 +5,9 @@ import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { ExternalLink } from '@wordpress/components';
 import { select, dispatch } from '@wordpress/data';
+import { store as blockEditorStore } from '@wordpress/block-editor';
+import { store as editPostStore } from '@wordpress/edit-post';
+import { store as editorStore } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -439,6 +442,39 @@ export default function getTourSteps() {
 					desktop: '',
 					mobile: '',
 				},
+			},
+			action: () => {
+				performStepActionsAsync( [
+					// Focus on question block.
+					{
+						action: () => {
+							focusOnQuestionBlock();
+						},
+					},
+					// Highlight question block and open sidebar settings.
+					{
+						action: () => {
+							highlightElementsWithBorders( [
+								'.wp-block-sensei-lms-quiz-question',
+							] );
+
+							const { openGeneralSidebar } = dispatch(
+								editPostStore
+							);
+							openGeneralSidebar();
+						},
+					},
+					// Highlight sidebar.
+					{
+						action: () => {
+							// It's the higher level element because it has a hidden overflow, hiding the border effect in internal elements.
+							const sidebarSelector =
+								'.interface-interface-skeleton__sidebar';
+							highlightElementsWithBorders( [ sidebarSelector ] );
+						},
+						delay: 400,
+					},
+				] );
 			},
 		},
 		{
