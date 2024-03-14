@@ -314,6 +314,33 @@ export default function getTourSteps() {
 					mobile: '',
 				},
 			},
+			action: () => {
+				performStepActionsAsync( [
+					// Focus on question block.
+					{
+						action: () => {
+							focusOnQuestionBlock();
+						},
+					},
+					// Highlight and focus correct answer toggle.
+					{
+						action: () => {
+							highlightElementsWithBorders( [
+								'.sensei-lms-question-block__answer--true-false__option:nth-child(1) .sensei-lms-question-block__answer--true-false__toggle',
+								'.sensei-lms-question-block__answer--true-false__option:nth-child(2) .sensei-lms-question-block__answer--true-false__toggle',
+							] );
+
+							const toggleButton = document.querySelector(
+								'.sensei-lms-question-block__answer--true-false__toggle'
+							);
+							if ( toggleButton ) {
+								toggleButton.focus();
+							}
+						},
+						delay: 400,
+					},
+				] );
+			},
 		},
 		{
 			slug: 'adding-answer-feedback',
