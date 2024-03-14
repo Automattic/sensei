@@ -577,4 +577,43 @@ AND comments.comment_post_ID IN (0)
 AND comments.comment_type = 'sensei_course_status'";
 		$this->assertSame( $expected, $sql );
 	}
+
+	public function testGetLearnerIdsForCoursesWithEditPermission_WhenHPPSIsDisabled_ReturnsCorrectLearnerIds() {
+		// Arrange.
+		$course_1 = $this->factory->course->create();
+		$course_2 = $this->factory->course->create();
+		$user_1   = $this->factory->user->create();
+		$user_2   = $this->factory->user->create();
+
+		Sensei_Utils::start_user_on_course( $user_1, $course_1 );
+		Sensei_Utils::start_user_on_course( $user_2, $course_2 );
+
+		// Act.
+		$learner_ids = Sensei()->teacher->get_learner_ids_for_courses_with_edit_permission();
+
+		// Assert.
+		$this->assertSame( [ $user_1, $user_2 ], $learner_ids );
+	}
+
+	public function testGetLearnerIdsForCoursesWithEditPermission_WhenHPPSIsEnabled_ReturnsCorrectLearnerIds() {
+		// Arrange.
+		$this->enable_hpps_tables_repository();
+
+		$course_1 = $this->factory->course->create();
+		$course_2 = $this->factory->course->create();
+		$user_1   = $this->factory->user->create();
+		$user_2   = $this->factory->user->create();
+
+		Sensei_Utils::start_user_on_course( $user_1, $course_1 );
+		Sensei_Utils::start_user_on_course( $user_2, $course_2 );
+
+		// Act.
+		$learner_ids = Sensei()->teacher->get_learner_ids_for_courses_with_edit_permission();
+
+		// Assert.
+		$this->assertSame( [ $user_1, $user_2 ], $learner_ids );
+
+		// Reset.
+		$this->reset_hpps_repository();
+	}
 }

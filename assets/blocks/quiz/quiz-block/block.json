@@ -24,7 +24,7 @@
 			"type": "object",
 			"default": {
 				"passRequired": false,
-				"quizPassmark": 100,
+				"quizPassmark": 0,
 				"autoGrade": true,
 				"allowRetakes": true,
 				"randomQuestionOrder": false,

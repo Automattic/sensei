@@ -1,5 +1,28 @@
 *** Changelog ***
 
+## 4.21.0 - 2024-02-26
+### Added
+- Add existing lessons in Course Outline [#7368](https://github.com/Automattic/sensei/pull/7368)
+
+### Changed
+- Add docs links to the page settings [#7488](https://github.com/Automattic/sensei/pull/7488)
+
+### Removed
+- Remove "Customize Colors" link for classic themes [#7491](https://github.com/Automattic/sensei/pull/7491)
+
+### Fixed
+- Fix course/lesson patterns not working on latest Gutenberg version [#7499](https://github.com/Automattic/sensei/pull/7499)
+- Fix Course Outline for a course translated with WPML. [#7453](https://github.com/Automattic/sensei/pull/7453)
+
+## 4.20.2 - 2024-02-07
+### Changed
+- Auto-focus the course title field when creating a new course [#7434](https://github.com/Automattic/sensei/pull/7434)
+
+### Fixed
+- Fixed Sensei Email template not available in site editor [#7463](https://github.com/Automattic/sensei/pull/7463)
+- Flush rewrite rules when the website language was changed or the translation was updated. [#7435](https://github.com/Automattic/sensei/pull/7435)
+- Memory issue on the student reports screen [#7468](https://github.com/Automattic/sensei/pull/7468)
+
 ## 4.20.1 - 2024-01-17
 ### Added
 - Log event when task on Sensei Home is completed [#7430](https://github.com/Automattic/sensei/pull/7430)

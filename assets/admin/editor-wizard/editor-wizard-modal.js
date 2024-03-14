@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { store as editorStore } from '@wordpress/editor';
@@ -17,6 +17,7 @@ import {
 	useLogEvent,
 } from './helpers';
 import '../../shared/data/api-fetch-preloaded-once';
+import { SENSEI_TOUR_STORE } from '../tour/data/store';
 
 /**
  * Editor wizard modal component.
@@ -25,6 +26,7 @@ const EditorWizardModal = () => {
 	const wizardDataState = useState( {} );
 	const wizardData = wizardDataState[ 0 ];
 	const { editPost, savePost } = useDispatch( editorStore );
+	const { setTourShowStatus } = useDispatch( SENSEI_TOUR_STORE );
 	const logEvent = useLogEvent();
 
 	const [ open, setDone ] = useWizardOpenState();
@@ -40,6 +42,7 @@ const EditorWizardModal = () => {
 			meta: { _new_post: false },
 		} );
 		savePost();
+		setTourShowStatus( true );
 	};
 
 	const skipWizard = () => {
@@ -47,26 +50,9 @@ const EditorWizardModal = () => {
 		onWizardCompletion();
 	};
 
-	const { setShowWelcomeGuide } =
-		useDispatch( 'automattic/wpcom-welcome-guide' ) ?? {};
-
-	const { isShowWelcomeGuide } = useSelect( ( select ) => {
-		const { isWelcomeGuideShown } =
-			select( 'automattic/wpcom-welcome-guide' ) ?? {};
-		return {
-			isShowWelcomeGuide: isWelcomeGuideShown
-				? isWelcomeGuideShown()
-				: false,
-		};
-	}, [] );
-
 	useEffect( () => {
-		if ( setShowWelcomeGuide && isShowWelcomeGuide ) {
-			setShowWelcomeGuide( undefined, {
-				onlyLocal: true,
-			} );
-		}
-	}, [ setShowWelcomeGuide, isShowWelcomeGuide ] );
+		setTourShowStatus( false );
+	}, [ setTourShowStatus ] );
 
 	return (
 		open && (

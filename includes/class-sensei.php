@@ -1,5 +1,6 @@
 <?php
 
+use Sensei\Admin\Tour\Sensei_Tour;
 use Sensei\Clock\Clock;
 use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
@@ -360,6 +361,13 @@ class Sensei_Main {
 	public $clock;
 
 	/**
+	 * Sensei Tour.
+	 *
+	 * @var Sensei_Tour|null
+	 */
+	public $tour;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -448,7 +456,7 @@ class Sensei_Main {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.2
 	 *
 	 * @param mixed $old_value Old value.
 	 * @param mixed $new_value New value.
@@ -464,7 +472,7 @@ class Sensei_Main {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.20.2
 	 *
 	 * @param WP_Upgrader $upgrader_object Upgrader object.
 	 * @param array       $options Options.
@@ -650,7 +658,7 @@ class Sensei_Main {
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
 			SenseiLMS_Plugin_Updater::init();
-
+			Sensei_Course_Pre_Publish_Panel::instance()->init();
 		} else {
 
 			// Load Frontend Class
@@ -743,6 +751,13 @@ class Sensei_Main {
 		$email_customization_enabled = $this->feature_flags->is_enabled( 'email_customization' );
 		if ( $email_customization_enabled ) {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
+		}
+
+		$this->tour   = null;
+		$tour_enabled = $this->feature_flags->is_enabled( 'onboarding_tour' );
+		if ( $tour_enabled ) {
+			$this->tour = Sensei_Tour::instance();
+			$this->tour->init();
 		}
 
 		// MailPoet integration.

@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
+<!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'Write lesson content...', 'sensei-lms' ); ?>","className":"sensei-content-description"} -->
+<p class="sensei-content-description"></p>
+<!-- /wp:paragraph -->
 <!-- wp:heading {"textAlign":"center"} -->
 <h2 class="has-text-align-center"><?php esc_html_e( 'Lesson Resources', 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->

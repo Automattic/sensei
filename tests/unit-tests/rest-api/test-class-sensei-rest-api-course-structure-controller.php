@@ -640,4 +640,82 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		// But the teacher for another course without that common module will be updated.
 		$this->assertEquals( get_post( $course_c['course_id'] )->post_author, $teacher_id );
 	}
+
+	public function testSaveCourseStructure_WhenCalledWithInitialContent_SavesInitialContentInLessonWhenCreating() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$structure = array(
+			array(
+				'type'    => 'module',       // Tests that it works when lesson is in a module.
+				'title'   => 'Module with Some Lessons',
+				'lessons' => [
+					[
+						'type'           => 'lesson',
+						'title'          => 'Lesson in Module',
+						'draft'          => true,
+						'preview'        => false,
+						'initialContent' => 'Test Content M1',
+					],
+				],
+			),
+			array(
+				'type'           => 'lesson', // Tests that the initial content is only saved.
+				'title'          => 'Lesson 1',
+				'draft'          => true,
+				'preview'        => false,
+				'initialContent' => 'Test Content 1',
+			),
+			array(
+				'type'           => 'lesson',
+				'title'          => 'Lesson 2',
+				'draft'          => true,
+				'preview'        => false,
+				'initialContent' => '', // Tests that it doesn't cause any problem if initialContent is empty.
+			),
+			array(
+				'type'    => 'lesson',
+				'title'   => 'Lesson 3',
+				'draft'   => true,
+				'preview' => false, // Tests that it doesn't cause any problem if initialContent is not set.
+			),
+			array(
+				'type'           => 'lesson',
+				'title'          => 'Lesson 4',
+				'draft'          => true,
+				'preview'        => false,
+				'id'             => $lesson_id,
+				'initialContent' => 'Test Content 4', // Tests that it doesn't save initialContent for existing lesson.
+			),
+		);
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure ] ) );
+
+		/* Act */
+		$response = $this->server->dispatch( $request );
+
+		/* Assert */
+		$response_data = $response->get_data();
+
+		$this->assertEquals( $response->get_status(), 200 );
+		$this->assertEquals( 'Test Content M1', $response_data[0]['lessons'][0]['initialContent'] );
+		$this->assertEquals( 'Test Content 1', $response_data[1]['initialContent'] );
+		$this->assertEmpty( $response_data[2]['initialContent'] );
+		$this->assertEmpty( $response_data[3]['initialContent'] );
+		$this->assertEmpty( $response_data[4]['initialContent'] );
+		$this->assertEquals(
+			'<!-- wp:paragraph --><p>Test Content 1</p>
+<!-- /wp:paragraph -->',
+			get_post( $response_data[1]['id'] )->post_content
+		);
+		$this->assertEquals(
+			'<!-- wp:paragraph --><p>Test Content M1</p>
+<!-- /wp:paragraph -->',
+			get_post( $response_data[0]['lessons'][0]['id'] )->post_content
+		);
+	}
 }

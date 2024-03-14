@@ -205,7 +205,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	private function assert_comments_based_quiz_progress( Quiz_Progress_Interface $quiz_progress ): void {
 		if ( ! $quiz_progress instanceof Comments_Based_Quiz_Progress ) {
 			$actual_type = get_class( $quiz_progress );
-			throw new \InvalidArgumentException( "Expected Comments_Based_Quiz_Progress, got {$actual_type}." );
+			throw new \InvalidArgumentException( esc_html( "Expected Comments_Based_Quiz_Progress, got {$actual_type}." ) );
 		}
 	}
 

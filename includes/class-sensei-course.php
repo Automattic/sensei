@@ -694,6 +694,18 @@ class Sensei_Course {
 				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
 			]
 		);
+		register_post_meta(
+			'course',
+			'sensei_course_publish_lessons',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'default'       => true,
+				'auth_callback' => [ $this, 'post_meta_auth_callback' ],
+			]
+		);
+
 		/**
 		 * Sets up the meta fields saved on course save in WP admin.
 		 *
@@ -1606,7 +1618,7 @@ class Sensei_Course {
 	 * @param string       $fields      (default: 'all').     WP only allows 3 types, but we will limit it to only 'ids' or 'all'.
 	 * @param array        $query_args  Base arguments for the WP query.
 	 *
-	 * @return WP_Post[]
+	 * @return WP_Post[]|int[] Array of lesson objects or lesson IDs.
 	 */
 	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all', $query_args = [] ) {
 

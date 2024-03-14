@@ -262,6 +262,7 @@ class Sensei_Data_Cleaner {
 		'sensei_payment_complete',
 		'sensei_products_processed',
 		'_sensei_attachment_source_key',
+		'sensei_course_publish_lessons',
 		'sensei_course_video_autocomplete',
 		'sensei_course_video_autopause',
 		'sensei_course_video_required',

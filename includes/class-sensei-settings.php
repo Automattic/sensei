@@ -361,7 +361,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['course_page'] = array(
 			'name'        => __( 'Course Archive Page', 'sensei-lms' ),
-			'description' => __( 'The page to use to display courses. If you leave this blank the default custom post type archive will apply.', 'sensei-lms' ),
+			'description' => sprintf(
+				// translators: Placeholder is the docs link.
+				__( 'The <a href="%s" target="_blank">page</a> to use to display courses. If you leave this blank the default custom post type archive will apply.', 'sensei-lms' ),
+				'https://senseilms.com/documentation/sensei-pages/#courses'
+			),
 			'type'        => 'select',
 			'default'     => 0,
 			'section'     => 'default-settings',
@@ -371,7 +375,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['my_course_page'] = array(
 			'name'        => __( 'My Courses Page', 'sensei-lms' ),
-			'description' => __( 'The page to use to display the courses that a user is currently taking as well as the courses a user has complete.', 'sensei-lms' ),
+			'description' => sprintf(
+				// translators: Placeholder is the docs link.
+				__( 'The <a href="%s" target="_blank">page</a> to use to display the courses that a user is currently taking as well as the courses a user has complete.', 'sensei-lms' ),
+				'https://senseilms.com/documentation/sensei-pages/#my-courses'
+			),
 			'type'        => 'select',
 			'default'     => 0,
 			'section'     => 'default-settings',
@@ -381,7 +389,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['course_completed_page'] = array(
 			'name'        => __( 'Course Completed Page', 'sensei-lms' ),
-			'description' => __( 'The page that is displayed after a student completes a course.', 'sensei-lms' ),
+			'description' => sprintf(
+				// translators: Placeholder is the docs link.
+				__( 'The <a href="%s" target="_blank">page</a> that is displayed after a student completes a course.', 'sensei-lms' ),
+				'https://senseilms.com/documentation/sensei-pages/#course-completed'
+			),
 			'type'        => 'select',
 			'default'     => 0,
 			'section'     => 'default-settings',
@@ -448,8 +460,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['course_author'] = array(
-			'name'        => __( 'Display Course Author', 'sensei-lms' ),
-			'description' => __( 'Output the Course Author on Course archive and My Courses page.', 'sensei-lms' ),
+			'name'        => __( 'Course Author', 'sensei-lms' ),
+			'description' => __( 'Display the author on the Course Archive and My Courses pages. This setting does not apply when these pages use blocks.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'course-settings',
@@ -782,7 +794,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$fields['email_bcc'] = array(
 			'name'          => __( 'BCC', 'sensei-lms' ),
 			'description'   => __( 'Enter email addresses to BCC on all emails. Separate multiple email addresses with commas.', 'sensei-lms' ),
-			'type'          => 'email_list',
 			'type'          => 'email',
 			'multiple'      => true,
 			'default'       => '',
@@ -1016,7 +1027,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			$old_field_value = isset( $old_value[ $field ] ) ? $old_value[ $field ] : '';
 			$new_field_value = isset( $value[ $field ] ) ? $value[ $field ] : '';
 
-			// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- Loose comparison is okay for checking for changes.
+			// phpcs:ignore Universal.Operators.StrictComparisons -- Loose comparison is okay for checking for changes.
 			if ( $new_field_value != $old_field_value ) {
 				// Create an array for this section of settings if needed.
 				$section = $field_config['section'];
@@ -1447,11 +1458,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$key     = $args['key'];
 		$value   = $options[ $key ];
 
-		$color_customizer_url = '';
-		if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
-			$color_customizer_url = Sensei_Course_Theme::get_learning_mode_customizer_url();
-		}
-
 		?>
 		<label for="<?php echo esc_attr( $key ); ?>">
 			<input id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
@@ -1460,14 +1466,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 		<p>
 			<span class="description"><?php echo esc_html( $args['data']['description'] ); ?></span>
 		</p>
-
-		<?php if ( $color_customizer_url ) : ?>
-			<p class="extra-content">
-				<a href="<?php echo esc_url( $color_customizer_url ); ?>">
-					<?php esc_html_e( 'Customize Colors', 'sensei-lms' ); ?>
-				</a>
-			</p>
-		<?php endif; ?>
 
 		<?php
 	}

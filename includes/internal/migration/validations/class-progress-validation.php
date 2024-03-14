@@ -326,7 +326,7 @@ class Progress_Validation {
 	 * @param object $tables_based_progress   Tables based progress.
 	 */
 	private function compare_progress( object $comments_based_progress, object $tables_based_progress ): void {
-		// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- Intended.
+		// phpcs:ignore Universal.Operators.StrictComparisons.LooseComparison -- Intended.
 		if ( $this->get_progress_data( $comments_based_progress ) != $this->get_progress_data( $tables_based_progress ) ) {
 			$this->add_mismatch_error( $comments_based_progress, $tables_based_progress );
 		}

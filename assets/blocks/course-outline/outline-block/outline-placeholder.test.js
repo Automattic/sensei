@@ -10,6 +10,14 @@ import '@testing-library/jest-dom';
 import OutlinePlaceholder from './outline-placeholder';
 import userEvent from '@testing-library/user-event';
 
+window.ResizeObserver =
+	window.ResizeObserver ||
+	jest.fn().mockImplementation( () => ( {
+		disconnect: jest.fn(),
+		observe: jest.fn(),
+		unobserve: jest.fn(),
+	} ) );
+
 describe( '<OutlinePlaceholder />', () => {
 	const addBlocksMock = jest.fn();
 
@@ -20,7 +28,7 @@ describe( '<OutlinePlaceholder />', () => {
 
 	it( 'Should render the outline placeholder correctly when feature flag is enabled', () => {
 		const { getByText } = render(
-			<OutlinePlaceholder addBlocksMock={ addBlocksMock } />
+			<OutlinePlaceholder addBlocks={ addBlocksMock } />
 		);
 
 		expect( getByText( 'Start with blank' ) ).toBeVisible();
