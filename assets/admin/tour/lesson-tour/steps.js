@@ -352,7 +352,7 @@ export default function getTourSteps() {
 				),
 				descriptions: {
 					desktop: __(
-						'Click + to open the inserter. Then click the New Question or Existing Question(s) option.',
+						'Click + to open the inserter. Then click the New Question, Category Question(s) or Existing Question(s) option.',
 						'sensei-lms'
 					),
 					mobile: null,
@@ -363,6 +363,50 @@ export default function getTourSteps() {
 					desktop: '',
 					mobile: '',
 				},
+			},
+			action: () => {
+				const inserterSelector =
+					'.wp-block-sensei-lms-quiz .block-editor-inserter__toggle';
+				const popoverSelector = '.components-dropdown-menu__popover';
+
+				performStepActionsAsync( [
+					// Focus on quiz block.
+					{
+						action: () => {
+							focusOnQuizBlock();
+						},
+					},
+					{
+						action: () => {
+							const inserter = document.querySelector(
+								inserterSelector
+							);
+							if ( inserter ) {
+								inserter.click();
+							}
+						},
+						delay: 400,
+					},
+					{
+						action: () => {
+							highlightElementsWithBorders( [
+								inserterSelector,
+							] );
+						},
+					},
+					{
+						action: () => {
+							highlightElementsWithBorders( [ popoverSelector ] );
+							const popover = document.querySelector(
+								popoverSelector
+							);
+							if ( popover ) {
+								popover.focus();
+							}
+						},
+						delay: 400,
+					},
+				] );
 			},
 		},
 		{
