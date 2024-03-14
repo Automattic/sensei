@@ -1,0 +1,20 @@
+.theme-course {
+	.wp-block-sensei-lms-course-outline {
+		$block: '.wp-block-sensei-lms-course-outline-module';
+
+		#{$block} {
+			&__header {
+				#{$block}__title {
+					font-size: var(--wp--preset--font-size--medium);
+					padding-top: 0;
+				}
+			}
+
+			&__lessons-title {
+				font-size: var(--wp--preset--font-size--small);
+				padding-top: 10px;
+				padding-bottom: 10px;
+			}
+		}
+	}
+}
