@@ -236,6 +236,9 @@ export default function getTourSteps() {
 				},
 			},
 			action: () => {
+				const descriptionFieldSelector =
+					'.wp-block-sensei-lms-question-description .rich-text';
+
 				performStepActionsAsync( [
 					// Focus on question block.
 					{
@@ -246,9 +249,6 @@ export default function getTourSteps() {
 					// Focus on description field.
 					{
 						action: () => {
-							const descriptionFieldSelector =
-								'.wp-block-sensei-lms-question-description .rich-text';
-
 							const descriptionField = document.querySelector(
 								descriptionFieldSelector
 							);
@@ -260,9 +260,6 @@ export default function getTourSteps() {
 					// Highlight description field.
 					{
 						action: () => {
-							const descriptionFieldSelector =
-								'.wp-block-sensei-lms-question-description .rich-text';
-
 							highlightElementsWithBorders( [
 								descriptionFieldSelector,
 							] );
