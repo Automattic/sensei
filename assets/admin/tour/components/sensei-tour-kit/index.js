@@ -118,7 +118,7 @@ function SenseiTourKit( {
 
 	return (
 		<WpcomTourKit
-			__temp__className={ 'wpcom-tour-kit' }
+			__temp__className="wpcom-tour-kit"
 			config={ _.merge( config, extraConfig ) }
 		/>
 	);

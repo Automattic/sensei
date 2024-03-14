@@ -12,13 +12,12 @@
 	}
 }
 
-$shadow-width: 30px;
-$border-color: var(--wp--preset--color--foreground, #ff6ec7 );
+$shadow-width: 10px;
+$border-color: var(--wp--preset--color--primary, #46c8ad );
 
 .sensei-tour-highlight {
-	border: 2px solid $border-color !important;
+	outline: 2px solid $border-color !important;
 	box-shadow: 0 0 $shadow-width $border-color !important;
-	box-sizing: inherit;
 }
 
 // Just keeping it here in case we want to add a pulsing effect.
