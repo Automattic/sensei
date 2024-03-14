@@ -600,7 +600,7 @@ class Sensei_Course_Structure {
 		 * @param {int} $quiz_id   Quiz post ID.
 		 * @param {int} $lesson_id Course post ID.
 		 */
-		do_action_deprecated( 'sensei_course_structure_quiz_created', $quiz_id, $lesson_id, '$$next-version$$', 'sensei_quiz_create' );
+		do_action_deprecated( 'sensei_course_structure_quiz_created', array( $quiz_id, $lesson_id ), '$$next-version$$', 'sensei_quiz_create' );
 
 		/**
 		 * Fires after a quiz is created while saving the course structure.
