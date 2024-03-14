@@ -526,7 +526,8 @@ export default function getTourSteps() {
 							const { openGeneralSidebar } = dispatch(
 								editPostStore
 							);
-							openGeneralSidebar();
+
+							openGeneralSidebar( 'edit-post/block' );
 						},
 					},
 					// Highlight sidebar.
