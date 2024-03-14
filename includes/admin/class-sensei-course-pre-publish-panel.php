@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class that handles the pre-publish panel for courses.
  *
- * @since 4.5.0
+ * @since $$next-version$$
  */
 class Sensei_Course_Pre_Publish_Panel {
 	/**
@@ -25,8 +25,7 @@ class Sensei_Course_Pre_Publish_Panel {
 	/**
 	 * Sensei_Course_Pre_Publish_Panel constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
-	private function __construct() {
-	}
+	private function __construct() {}
 
 	/**
 	 * Fetches an instance of the class.
@@ -62,6 +61,8 @@ class Sensei_Course_Pre_Publish_Panel {
 
 	/**
 	 * Maybe publish associated lessons when the course is published.
+	 *
+	 * @internal
 	 *
 	 * @param int $course_id Course ID.
 	 */
