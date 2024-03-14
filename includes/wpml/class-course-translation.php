@@ -89,7 +89,7 @@ class Course_Translation {
 			$translations = apply_filters( 'wpml_post_duplicates', $lesson_id );
 			foreach ( $translations as $translated_lesson_id ) {
 				$this->update_lesson_course( (int) $translated_lesson_id, $new_course_id );
-				$this->update_translated_lesson_taxonomies( (int) $translated_lesson_id, $lesson_id );
+				$this->update_translated_lesson_properties( (int) $translated_lesson_id, $lesson_id );
 			}
 
 			$this->update_quiz_translations( $lesson_id );
