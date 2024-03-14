@@ -170,12 +170,21 @@ export default function getTourSteps() {
 						},
 						delay: 400,
 					},
-					// Highlight options.
+					// Highlight options and select true/false type.
 					{
 						action: () => {
 							highlightElementsWithBorders( [
 								'.sensei-lms-question-block__type-selector__popover',
 							] );
+
+							const questionBlock = getFirstQuestionBlock();
+
+							dispatch( blockEditorStore ).updateBlockAttributes(
+								questionBlock.clientId,
+								{
+									type: 'boolean',
+								}
+							);
 						},
 						delay: 400,
 					},
