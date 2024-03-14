@@ -67,6 +67,15 @@ export const beforeEach = ( step ) => {
 			answerFeedbackButton.click();
 		}
 	}
+
+	// Close sidebar if's a mobile viewport.
+	const viewportWidth =
+		window.innerWidth || document.documentElement.clientWidth;
+
+	if ( viewportWidth < 782 ) {
+		const { closeGeneralSidebar } = dispatch( editPostStore );
+		closeGeneralSidebar();
+	}
 };
 
 /**
@@ -529,6 +538,7 @@ export default function getTourSteps() {
 
 							openGeneralSidebar( 'edit-post/block' );
 						},
+						delay: 400,
 					},
 					// Highlight sidebar.
 					{
