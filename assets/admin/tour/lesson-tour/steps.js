@@ -57,12 +57,12 @@ export const beforeEach = ( step ) => {
 			answerFeedbackButtonSelector
 		);
 
+		// Click to close only when it's open.
 		if (
-			null !== answerFeedbackButton &&
-			null !==
-				document.querySelector(
-					'.wp-block-sensei-lms-quiz-question.show-answer-feedback'
-				)
+			answerFeedbackButton &&
+			document.querySelector(
+				'.wp-block-sensei-lms-quiz-question.show-answer-feedback'
+			)
 		) {
 			answerFeedbackButton.click();
 		}
@@ -166,7 +166,9 @@ export default function getTourSteps() {
 								typeSelectorSelector,
 							] );
 
-							typeSelectorButton.click();
+							if ( typeSelectorButton ) {
+								typeSelectorButton.click();
+							}
 						},
 						delay: 400,
 					},
@@ -231,7 +233,9 @@ export default function getTourSteps() {
 								titleFieldSelector,
 							] );
 
-							titleField.focus();
+							if ( titleField ) {
+								titleField.focus();
+							}
 						},
 						delay: 400,
 					},
@@ -274,7 +278,9 @@ export default function getTourSteps() {
 								descriptionFieldSelector
 							);
 
-							descriptionField.focus();
+							if ( descriptionField ) {
+								descriptionField.focus();
+							}
 						},
 						delay: 400,
 					},
@@ -352,9 +358,10 @@ export default function getTourSteps() {
 							// Open answer feedback if it's not already open.
 							if (
 								null ===
-								document.querySelector(
-									'.wp-block-sensei-lms-quiz-question.is-selected.show-answer-feedback'
-								)
+									document.querySelector(
+										'.wp-block-sensei-lms-quiz-question.is-selected.show-answer-feedback'
+									) &&
+								answerFeedbackButton
 							) {
 								answerFeedbackButton.focus();
 								answerFeedbackButton.click();
