@@ -14,6 +14,7 @@ import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 import {
 	highlightElementsWithBorders,
 	performStepActionsAsync,
+	removeHighlightClasses,
 } from '../helper';
 
 const getQuizBlock = () =>
@@ -497,6 +498,9 @@ export default function getTourSteps() {
 					desktop: '',
 					mobile: '',
 				},
+			},
+			action: () => {
+				removeHighlightClasses();
 			},
 		},
 	];
