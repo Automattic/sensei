@@ -22,13 +22,13 @@ import {
 const getQuizBlock = () =>
 	getFirstBlockByName(
 		'sensei-lms/quiz',
-		select( 'core/block-editor' ).getBlocks()
+		select( blockEditorStore ).getBlocks()
 	);
 
 const getFirstQuestionBlock = () =>
 	getFirstBlockByName(
 		'sensei-lms/quiz-question',
-		select( 'core/block-editor' ).getBlocks()
+		select( blockEditorStore ).getBlocks()
 	);
 
 function focusOnQuizBlock() {
@@ -36,7 +36,7 @@ function focusOnQuizBlock() {
 	if ( ! quizBlock ) {
 		return;
 	}
-	dispatch( 'core/editor' ).selectBlock( quizBlock.clientId );
+	dispatch( editorStore ).selectBlock( quizBlock.clientId );
 }
 
 function focusOnQuestionBlock() {
@@ -44,7 +44,7 @@ function focusOnQuestionBlock() {
 	if ( ! questionBlock ) {
 		return;
 	}
-	dispatch( 'core/editor' ).selectBlock( questionBlock.clientId );
+	dispatch( editorStore ).selectBlock( questionBlock.clientId );
 }
 
 export const beforeEach = ( step ) => {
@@ -379,6 +379,7 @@ export default function getTourSteps() {
 							focusOnQuizBlock();
 						},
 					},
+					// Click on the inserter.
 					{
 						action: () => {
 							const inserter = document.querySelector(
@@ -390,6 +391,7 @@ export default function getTourSteps() {
 						},
 						delay: 400,
 					},
+					// Highlight inserter button.
 					{
 						action: () => {
 							highlightElementsWithBorders( [
@@ -397,15 +399,10 @@ export default function getTourSteps() {
 							] );
 						},
 					},
+					// Highlight options.
 					{
 						action: () => {
 							highlightElementsWithBorders( [ popoverSelector ] );
-							const popover = document.querySelector(
-								popoverSelector
-							);
-							if ( popover ) {
-								popover.focus();
-							}
 						},
 						delay: 400,
 					},
@@ -516,6 +513,7 @@ export default function getTourSteps() {
 							focusOnQuizBlock();
 						},
 					},
+					// Click on settings to open.
 					{
 						action: () => {
 							const settingsButton = document.querySelector(
@@ -527,6 +525,7 @@ export default function getTourSteps() {
 						},
 						delay: 400,
 					},
+					// Highlight settings button.
 					{
 						action: () => {
 							highlightElementsWithBorders( [
@@ -534,6 +533,7 @@ export default function getTourSteps() {
 							] );
 						},
 					},
+					// Highlight sidebar.
 					{
 						action: () => {
 							// It's the higher level element because it has a hidden overflow, hiding the border effect in internal elements.
