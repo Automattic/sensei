@@ -170,6 +170,15 @@ export default function getTourSteps() {
 						},
 						delay: 400,
 					},
+					// Highlight options.
+					{
+						action: () => {
+							highlightElementsWithBorders( [
+								'.sensei-lms-question-block__type-selector__popover',
+							] );
+						},
+						delay: 400,
+					},
 				] );
 			},
 		},
