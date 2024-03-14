@@ -361,6 +361,9 @@ export default function getTourSteps() {
 				},
 			},
 			action: () => {
+				const answerFeedbackButtonSelector =
+					'.sensei-lms-question-block__answer-feedback-toggle__header';
+
 				performStepActionsAsync( [
 					// Focus on question block.
 					{
@@ -368,19 +371,21 @@ export default function getTourSteps() {
 							focusOnQuestionBlock();
 						},
 					},
-					// Open answer feedback.
+					// Highlight answer feedback.
 					{
 						action: () => {
-							const answerFeedbackButtonSelector =
-								'.sensei-lms-question-block__answer-feedback-toggle__header';
-
-							const answerFeedbackButton = document.querySelector(
-								answerFeedbackButtonSelector
-							);
-
 							highlightElementsWithBorders( [
 								answerFeedbackButtonSelector,
 							] );
+						},
+						delay: 400,
+					},
+					// Open answer feedback.
+					{
+						action: () => {
+							const answerFeedbackButton = document.querySelector(
+								answerFeedbackButtonSelector
+							);
 
 							// Open answer feedback if it's not already open.
 							if (
