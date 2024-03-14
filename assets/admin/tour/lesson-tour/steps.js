@@ -470,6 +470,46 @@ export default function getTourSteps() {
 					mobile: '',
 				},
 			},
+			action: () => {
+				const settingsButtonSelector =
+					'.sensei-lms-quiz-block__settings-quick-nav button';
+
+				performStepActionsAsync( [
+					// Focus on quiz block.
+					{
+						action: () => {
+							focusOnQuizBlock();
+						},
+					},
+					{
+						action: () => {
+							const settingsButton = document.querySelector(
+								settingsButtonSelector
+							);
+							if ( settingsButton ) {
+								settingsButton.click();
+							}
+						},
+						delay: 400,
+					},
+					{
+						action: () => {
+							highlightElementsWithBorders( [
+								settingsButtonSelector,
+							] );
+						},
+					},
+					{
+						action: () => {
+							// It's the higher level element because it has a hidden overflow, hiding the border effect in internal elements.
+							const sidebarSelector =
+								'.interface-interface-skeleton__sidebar';
+							highlightElementsWithBorders( [ sidebarSelector ] );
+						},
+						delay: 400,
+					},
+				] );
+			},
 		},
 		{
 			slug: 'congratulations',
