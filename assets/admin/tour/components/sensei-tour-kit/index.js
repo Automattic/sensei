@@ -116,7 +116,17 @@ function SenseiTourKit( {
 		return null;
 	}
 
-	return <WpcomTourKit config={ _.merge( config, extraConfig ) } />;
+	return (
+		<>
+			{ /* Hide the metaboxes to prevent tour being over it. */ }
+			<style type="text/css">
+				{ `.edit-post-layout__metaboxes {
+					display: none;
+				}` }
+			</style>
+			<WpcomTourKit config={ _.merge( config, extraConfig ) } />
+		</>
+	);
 }
 
 export default SenseiTourKit;
