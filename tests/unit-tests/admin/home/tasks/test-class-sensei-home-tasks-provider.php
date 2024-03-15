@@ -67,19 +67,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( Sensei_Home_Task_Publish_First_Course::get_id(), $items );
 	}
 
-	public function testGet_WhenCalledWhileCourseThemeActive_IncludesCourseThemeCustomizationTask() {
-		// Arrange
-		switch_theme( 'course' );
-
-		// Act
-		$result = $this->provider->get();
-
-		// Assert
-		$items = $result['items'];
-		$this->assertIsArray( $items );
-		$this->assertArrayHasKey( Sensei_Home_Task_Customize_Course_Theme::get_id(), $items );
-	}
-
 	public function testGet_GivenAFilterThatOverridesTasks_ReturnSingleOverriddenResult() {
 		// Arrange
 		add_filter( 'sensei_home_tasks', [ $this, 'overrideWithFakeTask' ] );

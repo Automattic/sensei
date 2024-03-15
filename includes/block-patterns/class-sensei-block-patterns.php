@@ -45,7 +45,7 @@ class Sensei_Block_Patterns {
 	}
 
 	/**
-	 * Sensei_Editor_Wizard constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Sensei_Block_Patterns constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
 	}
@@ -137,7 +137,7 @@ class Sensei_Block_Patterns {
 			'core/pattern',
 			[
 				'editor_script'   => 'sensei-core-pattern-polyfill-script',
-				'render_callback' => function( $attributes ) {
+				'render_callback' => function ( $attributes ) {
 					if ( empty( $attributes['slug'] ) ) {
 						return '';
 					}
