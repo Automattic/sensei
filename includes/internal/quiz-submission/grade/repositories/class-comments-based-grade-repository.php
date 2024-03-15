@@ -158,7 +158,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 			 * @param {int}    $question_id The question ID.
 			 * @return {int} The question ID.
 			 */
-			$question_id = apply_filters( 'sensei_quiz_grade_save_many_question_id', $grade->get_question_id() );
+			$question_id                  = apply_filters( 'sensei_quiz_grade_save_many_question_id', $grade->get_question_id() );
 			$grades_map[ $question_id ]   = $grade->get_points();
 			$feedback_map[ $question_id ] = $grade->get_feedback();
 		}
