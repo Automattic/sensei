@@ -47,6 +47,7 @@ export function removeHighlightClasses() {
 }
 
 let stepActionTimeout = null;
+let rejectLastPromise = null;
 
 /**
  * Performs step actions one after another.
@@ -55,17 +56,27 @@ let stepActionTimeout = null;
  */
 export async function performStepActionsAsync( stepActions ) {
 	removeHighlightClasses();
-	clearTimeout( stepActionTimeout );
 
-	for ( const stepAction of stepActions ) {
-		if ( stepAction ) {
-			await new Promise( ( resolve ) => {
-				stepActionTimeout = setTimeout( () => {
-					stepAction.action();
-					resolve();
-				}, stepAction.delay ?? 0 );
-			} );
+	// Clear the timeout and reject the last promise if it exists, so it stops the step if actions from another step started.
+	clearTimeout( stepActionTimeout );
+	if ( rejectLastPromise ) {
+		rejectLastPromise();
+	}
+
+	try {
+		for ( const stepAction of stepActions ) {
+			if ( stepAction ) {
+				await new Promise( ( resolve, reject ) => {
+					rejectLastPromise = reject;
+					stepActionTimeout = setTimeout( () => {
+						stepAction.action();
+						resolve();
+					}, stepAction.delay ?? 0 );
+				} );
+			}
 		}
+	} catch ( e ) {
+		// Do nothing.
 	}
 }
 

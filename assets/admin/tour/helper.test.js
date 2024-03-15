@@ -199,6 +199,23 @@ describe( 'performStepActionsAsync', () => {
 		expect( stepActions[ 2 ].action ).toHaveBeenCalledTimes( 1 );
 		expect( setTimeout ).toHaveBeenCalledTimes( 3 );
 	} );
+
+	it( 'should stop previous step actions if starting a new one', async () => {
+		jest.useFakeTimers();
+		jest.spyOn( global, 'setTimeout' );
+		const stepActions = [
+			{ action: jest.fn(), delay: 100 },
+			{ action: jest.fn(), delay: 200 },
+		];
+
+		performStepActionsAsync( stepActions );
+
+		await jest.runAllTimers();
+		expect( stepActions[ 0 ].action ).toHaveBeenCalledTimes( 1 );
+		performStepActionsAsync( [] );
+		await jest.runAllTimers();
+		expect( stepActions[ 1 ].action ).not.toHaveBeenCalled();
+	} );
 } );
 
 describe( 'waitForElement', () => {
