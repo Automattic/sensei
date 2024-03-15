@@ -432,7 +432,7 @@ export default function getTourSteps() {
 				),
 				descriptions: {
 					desktop: __(
-						'Click + to open the inserter. Then click the New Question, Category Question(s) or Existing Question(s) option.',
+						'Click + to open the inserter. Then click the New Question or Existing Question(s) option.',
 						'sensei-lms'
 					),
 					mobile: null,
