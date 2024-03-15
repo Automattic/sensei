@@ -11,3 +11,43 @@
 		height: 138px;
 	}
 }
+
+$shadow-width: 10px;
+$border-color: var(--wp--preset--color--primary, #46c8ad );
+
+.sensei-tour-highlight {
+	outline: 2px solid $border-color !important;
+	box-shadow: 0 0 $shadow-width $border-color !important;
+}
+
+// Just keeping it here in case we want to add a pulsing effect.
+.sensei-tour-highlight.animate {
+	-webkit-animation: blink 2.0s linear infinite !important;
+	-moz-animation: blink 2.0s linear infinite !important;
+	-ms-animation: blink 2.0s linear infinite !important;
+	-o-animation: blink 2.0s linear infinite !important;
+	animation: blink 2.0s linear infinite !important;
+}
+
+@keyframes blink {
+	0% {
+		box-shadow: 0 0 $shadow-width $border-color;
+	}
+	50% {
+		box-shadow: none;
+	}
+	100% {
+		box-shadow: 0 0 $shadow-width $border-color;
+	}
+}
+@-webkit-keyframes blink {
+	0% {
+		box-shadow: 0 0 $shadow-width $border-color;
+	}
+	50% {
+		box-shadow: 0 0 0;
+	}
+	100% {
+		box-shadow: 0 0 $shadow-width $border-color;
+	}
+}

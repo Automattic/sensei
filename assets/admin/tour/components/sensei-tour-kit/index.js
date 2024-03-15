@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { WpcomTourKit } from '@automattic/tour-kit';
 import _ from 'lodash';
 
 /**
@@ -15,6 +14,8 @@ import { useCallback } from '@wordpress/element';
  */
 import { SENSEI_TOUR_STORE } from '../../data/store';
 import { TourStep } from '../../types';
+import { performStepAction, removeHighlightClasses } from '../../helper';
+import { WpcomTourKit } from '@automattic/tour-kit';
 
 /**
  * Renders a tour kit component for Sensei.
@@ -69,11 +70,31 @@ function SenseiTourKit( { tourName, trackId, steps, extraConfig = {} } ) {
 				},
 			},
 			callbacks: {
-				onNextStep: () => {},
-				onPreviousStep: () => {},
-				onGoToStep: () => {},
-				onMaximize: () => {},
-				onStepViewOnce: trackTourStepView,
+				onNextStep: ( index ) => {
+					performStepAction( index + 1, steps );
+				},
+				onPreviousStep: ( index ) => {
+					performStepAction( index - 1, steps );
+				},
+				onGoToStep: ( index ) => {
+					if ( index === steps.length - 1 ) {
+						performStepAction( 0, steps );
+					} else {
+						removeHighlightClasses();
+					}
+				},
+				onMaximize: ( index ) => {
+					performStepAction( index, steps );
+				},
+				onMinimize: () => {
+					removeHighlightClasses();
+				},
+				onStepViewOnce: ( index ) => {
+					if ( index === 0 ) {
+						performStepAction( index, steps );
+					}
+					trackTourStepView( index );
+				},
 			},
 		},
 		placement: 'bottom-start',
