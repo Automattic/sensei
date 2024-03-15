@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { createBlock } from '@wordpress/blocks';
 import { createInterpolateElement } from '@wordpress/element';
 import { ExternalLink } from '@wordpress/components';
 import { select, dispatch } from '@wordpress/data';
@@ -45,6 +46,29 @@ function focusOnQuestionBlock() {
 		return;
 	}
 	dispatch( editorStore ).selectBlock( questionBlock.clientId );
+}
+
+function ensureBooleanQuestionAsFirstQuestion() {
+	const questionBlock = getFirstQuestionBlock();
+
+	if ( questionBlock && 'boolean' !== questionBlock.attributes.type ) {
+		insertBooleanQuestion();
+	}
+}
+
+function insertBooleanQuestion() {
+	const quizBlock = getQuizBlock();
+	if ( quizBlock ) {
+		const { insertBlock } = dispatch( blockEditorStore );
+
+		insertBlock(
+			createBlock( 'sensei-lms/quiz-question', {
+				type: 'boolean',
+			} ),
+			0,
+			quizBlock.clientId
+		);
+	}
 }
 
 export const beforeEach = ( step ) => {
@@ -328,6 +352,7 @@ export default function getTourSteps() {
 					// Focus on question block.
 					{
 						action: () => {
+							ensureBooleanQuestionAsFirstQuestion();
 							focusOnQuestionBlock();
 						},
 					},
@@ -377,6 +402,7 @@ export default function getTourSteps() {
 					// Focus on question block.
 					{
 						action: () => {
+							ensureBooleanQuestionAsFirstQuestion();
 							focusOnQuestionBlock();
 						},
 					},
