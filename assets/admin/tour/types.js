@@ -15,6 +15,7 @@
  * @property {Object}      options.classNames             - Class names for different platforms.
  * @property {string}      options.classNames.desktop     - Class name for desktop.
  * @property {string}      options.classNames.mobile      - Class name for mobile.
+ * @property {Function}    action                         - Action to be performed when the step is shown.
  */
 
 /**

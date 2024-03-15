@@ -6,10 +6,10 @@ import getTourSteps from '../../course-tour/steps';
 /**
  * External dependencies
  */
-import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { WpcomTourKit } from '@automattic/tour-kit';
 import { when } from 'jest-when';
+import React from 'react';
 /**
  * WordPress dependencies
  */

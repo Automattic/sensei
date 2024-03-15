@@ -732,7 +732,7 @@ class Sensei_Main {
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
 			SenseiLMS_Plugin_Updater::init();
-
+			Sensei_Course_Pre_Publish_Panel::instance()->init();
 		} else {
 
 			// Load Frontend Class.

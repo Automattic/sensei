@@ -1611,19 +1611,6 @@ class Sensei_Admin {
 				add_action( $hook, [ Sensei_Home_Task_Sell_Course_With_WooCommerce::class, 'mark_completed' ] );
 			}
 		}
-
-		// Mark the Course Theme Customization as completed if we are visiting
-		// the site editor or the customizer with the Course theme installed.
-		if ( Sensei_Home_Task_Customize_Course_Theme::is_active() ) {
-			if ( in_array( $pagenow, [ 'site-editor.php', 'customize.php' ], true ) ) {
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$post_id = isset( $_GET['postId'] ) ? sanitize_text_field( wp_unslash( $_GET['postId'] ) ) : '';
-
-				if ( Sensei_Course_Theme::get_learning_mode_template_id( 'lesson' ) === $post_id ) {
-					Sensei_Home_Task_Customize_Course_Theme::mark_completed();
-				}
-			}
-		}
 	}
 
 	function sensei_add_custom_menu_items() {

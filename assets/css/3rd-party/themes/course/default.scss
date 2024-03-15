@@ -1,6 +1,19 @@
 /*
 * Styles specific to default variation
 */
+// The following .theme-course selector is used only to make this CSS more specific in some cases.
+.theme-course {
+	.wp-block-sensei-lms-course-outline {
+		$block: '.wp-block-sensei-lms-course-outline-module';
+		#{$block} {
+			&__header {
+				#{$block}__title {
+					font-size: clamp(1.25rem, 0.893rem + 0.952vw, 1.75rem);
+				}
+			}
+		}
+	}
+}
 .wp-block-sensei-lms-course-theme-notices {
 	.sensei-course-theme-locked-lesson-notice {
 		.is-link.sensei-course-theme__button {
