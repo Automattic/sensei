@@ -436,9 +436,15 @@ export default function getTourSteps() {
 						},
 						delay: 400,
 					},
-					// Highlight answer feedback areas.
+					// Focus on answer feedback field and highlight answer feedback areas.
 					{
 						action: () => {
+							document
+								.querySelector(
+									'.sensei-lms-question__answer-feedback__content .block-editor-rich-text__editable'
+								)
+								.focus();
+
 							highlightElementsWithBorders( [
 								'.sensei-lms-question__answer-feedback--correct',
 								'.sensei-lms-question__answer-feedback--incorrect',
