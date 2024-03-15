@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Source: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php - Sensei LMS Hook Docs</title>
+	<title>Action: sensei_quiz_create - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,258 +21,541 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Source: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php</h1>
+	<h1 class="page-title">Action: sensei_quiz_create</h1>
 	
 
 	
+
+
+
+
+<section>
+
+<header>
+    <h2></h2>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="sensei_quiz_create">do_action( 'sensei_quiz_create', <span class="signature">$quiz_id, $lesson_id )</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Fires after a quiz is created while saving the course structure.</p>
+</div>
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>$quiz_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Quiz post ID.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$lesson_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Course post ID.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="includes_class-sensei-course-structure.php.html">includes/class-sensei-course-structure.php</a>, <a href="includes_class-sensei-course-structure.php.html#line605">line 605</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>&lt;?php
-/**
- * Sensei Course List Block Patterns.
- *
- * @package sensei-lms
- */
+    </div>
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+    
+</article>
 
-/**
- * Sensei Course List Block Patterns class.
- */
-class Sensei_Course_List_Block_Patterns {
+</section>
 
-	/**
-	 * Register the patterns for the course list blocks.
-	 *
-	 * @access private
-	 */
-	public function register_course_list_block_patterns() {
-		$pagination =
-			'&lt;!-- wp:query-pagination {"paginationArrow":"arrow","align":"wide","layout":{"type":"flex","justifyContent":"space-between"}} -->
-				&lt;!-- wp:query-pagination-previous {"fontSize":"small"} /-->
 
-				&lt;!-- wp:query-pagination-numbers /-->
 
-				&lt;!-- wp:query-pagination-next {"fontSize":"small"} /-->
-			&lt;!-- /wp:query-pagination -->';
 
-		// Get extra links for Course List patterns.
-		$patterns_with_extra_links = [ 'course-list', 'course-grid' ];
-		$course_list_extra_links   = [];
-		foreach ( $patterns_with_extra_links as $pattern ) {
 
-			/**
-			 * Filter to add extra links to a Course List pattern. The added
-			 * links must be a valid rendered block.
-			 *
-			 * @since 4.10.0
-			 *
-			 * @hook sensei_course_list_block_patterns_extra_links
-			 *
-			 * @param {array}  $course_list_extra_links The extra links.
-			 * @param {string} $pattern                 The pattern name.
-			 * @return {array} The extra links.
-			 */
-			$course_list_extra_links[ $pattern ] = apply_filters( 'sensei_course_list_block_patterns_extra_links', [], $pattern );
-		}
 
-		$patterns = [
-			'course-list'                 =>
-			[
-				'title'       => __( 'Courses displayed in a list', 'sensei-lms' ),
-				'categories'  => array( 'query' ),
-				'blockTypes'  => array( 'core/query' ),
-				'description' => 'course-list-element',
-				'content'     => '&lt;!-- wp:query {"query":{"offset":0,"postType":"course","categoryIds":[],"tagIds":[],"order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":6},"displayLayout":{"type":"list"},"layout":{"inherit":true}} -->
-					&lt;div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view">
 
-						&lt;!-- wp:sensei-lms/course-list-filter {"align":"left","types":["student_course","categories"],"lock":{"move": true}} /-->
+<section>
 
-						&lt;!-- wp:post-template -->
+<header>
+    <h2></h2>
+    
+</header>
 
-							&lt;!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"10px","right":"10px","bottom":"10px","left":"10px"}},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
-								&lt;div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px">
+<article>
+    <div class="container-overview">
+    
+        
 
-									&lt;!-- wp:post-featured-image {"isLink":true, "height":"324px"} /-->
-									&lt;!-- wp:columns -->
-										&lt;div class="wp-block-columns">
+    
 
-											&lt;!-- wp:column {"width":"66.66%"} -->
-												&lt;div class="wp-block-column" style="flex-basis:66.66%">
-													&lt;!-- wp:sensei-lms/course-categories -->
-														&lt;div class="wp-block-sensei-lms-course-categories">&lt;/div>
-													&lt;!-- /wp:sensei-lms/course-categories -->
+    <h4 class="name" id="sensei_quiz_create">do_action( 'sensei_quiz_create', <span class="signature">$quiz_id, $lesson_id )</span><span class="type-signature"></span></h4>
 
-													&lt;!-- wp:post-title {"textAlign":"left","isLink":true} /-->
+    
 
-													&lt;!-- wp:post-author {"textAlign":"left"} /-->
 
-													&lt;!-- wp:post-excerpt {"textAlign":"left"} /-->
 
-													&lt;!-- wp:sensei-lms/course-overview /-->
+<div class="description">
+    <p>Fires after a quiz is created while saving a lesson in a non-block editor.</p>
+</div>
 
-													' . implode( "\n", $course_list_extra_links['course-list'] ) . '
 
-													&lt;!-- wp:sensei-lms/course-progress /-->
-												&lt;/div>
-											&lt;!-- /wp:column -->
 
-											&lt;!-- wp:column {"width":"33.33%"} -->
-												&lt;div class="wp-block-column" style="flex-basis:33.33%">
-													&lt;!-- wp:sensei-lms/course-actions -->
-														&lt;!-- wp:sensei-lms/button-take-course {"align":"right"} -->
-															&lt;div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right">&lt;button class="wp-block-button__link">' . esc_html__( 'Start Course', 'sensei-lms' ) . '&lt;/button>&lt;/div>
-														&lt;!-- /wp:sensei-lms/button-take-course -->
 
-														&lt;!-- wp:sensei-lms/button-continue-course {"align":"right"} -->
-															&lt;div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right">&lt;a class="wp-block-button__link">' . esc_html__( 'Continue', 'sensei-lms' ) . '&lt;/a>&lt;/div>
-														&lt;!-- /wp:sensei-lms/button-continue-course -->
 
-														&lt;!-- wp:sensei-lms/button-view-results {"align":"right","className":"is-style-default"} -->
-															&lt;div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-right">&lt;a class="wp-block-button__link">' . esc_html__( 'Visit Results', 'sensei-lms' ) . '&lt;/a>&lt;/div>
-														&lt;!-- /wp:sensei-lms/button-view-results -->
-													&lt;!-- /wp:sensei-lms/course-actions -->
-												&lt;/div>
-											&lt;!-- /wp:column -->
-										&lt;/div>
-									&lt;!-- /wp:columns -->
 
-								&lt;/div>
-							&lt;!-- /wp:group -->
-						&lt;!-- /wp:post-template -->' .
-					$pagination .
-					'&lt;/div>
-				&lt;!-- /wp:query -->',
-			],
-			'course-grid'                 =>
-				[
-					'title'       => __( 'Courses displayed in a grid', 'sensei-lms' ),
-					'categories'  => array( 'query' ),
-					'blockTypes'  => array( 'core/query' ),
-					'description' => 'course-list-element',
-					'content'     => '&lt;!-- wp:query {"query":{"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":12},"displayLayout":{"type":"flex","columns":3},"align":"wide","layout":{"inherit":true}} -->
-						&lt;div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-grid-view alignwide">
 
-							&lt;!-- wp:sensei-lms/course-list-filter {"align":"left","types":["student_course","categories"],"lock":{"move": true}} /-->
+    <h5>Parameters:</h5>
+    
 
-							&lt;!-- wp:post-template {"align":"wide"} -->
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-								&lt;!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"10px","right":"10px","bottom":"10px","left":"10px"},"blockGap":"2px"},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
-									&lt;div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px">
+        <th>Type</th>
 
-										&lt;!-- wp:post-featured-image {"isLink":true,"height":"180px","lock":{"move":true}} /-->
+        
 
-										&lt;!-- wp:sensei-lms/course-categories -->
-											&lt;div class="wp-block-sensei-lms-course-categories">&lt;/div>
-										&lt;!-- /wp:sensei-lms/course-categories -->
+        
 
-										&lt;!-- wp:post-title {"textAlign":"left","isLink":true,"lock":{"move": true},"style":{"typography":{"fontSize":"36px"}}} /-->
+        <th class="last">Description</th>
+    </tr>
+    </thead>
 
-										&lt;!-- wp:post-author {"textAlign":"left","lock":{"move": true}} /-->
+    <tbody>
+    
 
-										&lt;!-- wp:post-excerpt {"textAlign":"left","lock":{"move": true}} /-->
+        <tr>
+            
+                <td class="name"><code>$quiz_id</code></td>
+            
 
-										&lt;!-- wp:sensei-lms/course-overview /-->
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
 
-										' . implode( "\n", $course_list_extra_links['course-grid'] ) . '
 
-										&lt;!-- wp:sensei-lms/course-progress {"lock":{"move": true}} /-->
+            
+            </td>
 
-										&lt;!-- wp:sensei-lms/course-actions {"lock":{"move": true}} -->
-											&lt;!-- wp:sensei-lms/button-take-course {"align":"full"} -->
-												&lt;div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full">
-													&lt;button class="wp-block-button__link">' . esc_html__( 'Start Course', 'sensei-lms' ) . '&lt;/button>
-												&lt;/div>
-											&lt;!-- /wp:sensei-lms/button-take-course -->
+            
 
-											&lt;!-- wp:sensei-lms/button-continue-course {"align":"full"} -->
-												&lt;div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full">
-													&lt;a class="wp-block-button__link">' . esc_html__( 'Continue', 'sensei-lms' ) . '&lt;/a>
-												&lt;/div>
-											&lt;!-- /wp:sensei-lms/button-continue-course -->
+            
 
-											&lt;!-- wp:sensei-lms/button-view-results {"align":"full","className":"is-style-default"} -->
-												&lt;div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-full">
-													&lt;a class="wp-block-button__link">' . esc_html__( 'Visit Results', 'sensei-lms' ) . '&lt;/a>
-												&lt;/div>
-											&lt;!-- /wp:sensei-lms/button-view-results -->
-										&lt;!-- /wp:sensei-lms/course-actions -->
+            <td class="description last"><p>Quiz post ID.</p></td>
+        </tr>
 
-									&lt;/div>
-								&lt;!-- /wp:group -->
+    
 
-							&lt;!-- /wp:post-template -->' .
-						$pagination .
-						'&lt;/div>
-					&lt;!-- /wp:query -->',
-				],
-			'course-grid-with-background' =>
-				[
-					'title'      => __( 'Course List', 'sensei-lms' ),
-					'categories' => array( 'sensei-lms' ),
-					'content'    => '&lt;!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"80px","right":"20px","left":"20px","bottom":"100px"},"blockGap":"0px"},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"backgroundColor":"foreground","textColor":"background","className":"sensei-course-theme-course-list-pattern","layout":{"type":"constrained","contentSize":"1000px"}} -->
-						&lt;div class="wp-block-group alignfull sensei-course-theme-course-list-pattern has-background-color has-foreground-background-color has-text-color has-background has-link-color" style="padding-top:80px;padding-right:20px;padding-bottom:100px;padding-left:20px">&lt;!-- wp:group {"style":{"border":{"left":{"width":"1px","style":"solid"},"top":{},"right":{},"bottom":{}},"spacing":{"padding":{"left":"20px"},"margin":{"bottom":"40px"}}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"space-between"}} -->
-						&lt;div class="wp-block-group" style="border-left-style:solid;border-left-width:1px;margin-bottom:40px;padding-left:20px">&lt;!-- wp:heading {"style":{"typography":{"textTransform":"uppercase","fontStyle":"normal","fontWeight":"700"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}},"fontSize":"medium"} -->
-						&lt;h2 class="wp-block-heading has-medium-font-size" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;font-style:normal;font-weight:700;text-transform:uppercase">' . esc_html__( 'Course List', 'sensei-lms' ) . '&lt;/h2>
-						&lt;!-- /wp:heading -->
+        <tr>
+            
+                <td class="name"><code>$lesson_id</code></td>
+            
 
-						&lt;!-- wp:paragraph {"style":"className":"sensei-course-list-all-courses-link","fontSize":"small","fontFamily":"system"} -->
-						&lt;p class="sensei-course-list-all-courses-link has-link-color has-system-font-family has-small-font-size">&lt;a href="' . Sensei_Course::get_courses_page_url() . '" target="_blank" rel="noreferrer noopener">' . esc_html__( 'Explore all courses', 'sensei-lms' ) . '&lt;/a>&lt;/p>
-						&lt;!-- /wp:paragraph -->&lt;/div>
-						&lt;!-- /wp:group -->
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
 
-						&lt;!-- wp:query {"query":{"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":"3","inherit":false},"className":"wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list\u002d\u002dis-grid-view","layout":{"type":"default"}} -->
-						&lt;div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-grid-view">&lt;!-- wp:post-template {"align":"wide","layout":{"type":"grid","columnCount":3}} -->
-						&lt;!-- wp:group {"style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"},"blockGap":"0px"},"border":{"width":"0px","style":"none"}},"layout":{"inherit":false}} -->
-						&lt;div class="wp-block-group" style="border-style:none;border-width:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px">&lt;!-- wp:post-featured-image {"isLink":true,"height":"200px","lock":{"move":false,"remove":false},"style":{"border":{"width":"1px"}},"borderColor":"background"} /-->
 
-						&lt;!-- wp:sensei-lms/course-categories {"options":{"backgroundColor":"#F1EDE7","textColor":"#00594F"},"style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}}} -->
-						&lt;div style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;--sensei-lms-course-categories-background-color:#F1EDE7;--sensei-lms-course-categories-text-color:#00594F" class="wp-block-sensei-lms-course-categories">&lt;/div>
-						&lt;!-- /wp:sensei-lms/course-categories -->
+            
+            </td>
 
-						&lt;!-- wp:post-title {"textAlign":"left","isLink":true,"lock":{"move":false,"remove":false},"style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}}} /-->
+            
 
-						&lt;!-- wp:post-author {"textAlign":"left","lock":{"move":false,"remove":false},"style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"},"margin":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}},"fontSize":"x-small","fontFamily":"system"} /-->
+            
 
-						&lt;!-- wp:post-excerpt {"textAlign":"left","lock":{"move":false,"remove":false},"style":{"spacing":{"padding":{"top":"20px","right":"0px","bottom":"20px","left":"0px"},"margin":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}}} /-->
+            <td class="description last"><p>Course post ID.</p></td>
+        </tr>
 
-						&lt;!-- wp:sensei-lms/course-actions {"lock":{"move":false,"remove":false}} -->
-						&lt;!-- wp:sensei-lms/button-take-course {"align":"full","backgroundColor":"background","textColor":"foreground"} -->
-						&lt;div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full">&lt;button class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background">' . esc_html__( 'Start', 'sensei-lms' ) . '&lt;/button>&lt;/div>
-						&lt;!-- /wp:sensei-lms/button-take-course -->
+    
+    </tbody>
+</table>
 
-						&lt;!-- wp:sensei-lms/button-continue-course {"align":"full","backgroundColor":"background","textColor":"foreground"} -->
-						&lt;div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full">&lt;a class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background">' . esc_html__( 'Continue', 'sensei-lms' ) . '&lt;/a>&lt;/div>
-						&lt;!-- /wp:sensei-lms/button-continue-course -->
 
-						&lt;!-- wp:sensei-lms/button-view-results {"align":"full","className":"is-style-default","backgroundColor":"background","textColor":"foreground"} -->
-						&lt;div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-full">&lt;a class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background">' . esc_html__( 'Results', 'sensei-lms' ) . '&lt;/a>&lt;/div>
-						&lt;!-- /wp:sensei-lms/button-view-results -->
-						&lt;!-- /wp:sensei-lms/course-actions -->&lt;/div>
-						&lt;!-- /wp:group -->
-						&lt;!-- /wp:post-template -->&lt;/div>
-						&lt;!-- /wp:query -->&lt;/div>
-						&lt;!-- /wp:group -->',
-				],
-		];
 
-		foreach ( $patterns as $key => $pattern ) {
-			register_block_pattern(
-				$key,
-				$pattern
-			);
-		}
-	}
-}
-</code></pre>
-        </article>
-    </section>
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="includes_class-sensei-lesson.php.html">includes/class-sensei-lesson.php</a>, <a href="includes_class-sensei-lesson.php.html#line1031">line 1031</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    <h2></h2>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="sensei_quiz_create">do_action( 'sensei_quiz_create', <span class="signature">$quiz_id, $lesson_id )</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Fires after a quiz is created via the REST API.</p>
+</div>
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>$quiz_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Quiz post ID.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$lesson_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Course post ID.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="includes_rest-api_class-sensei-rest-api-lesson-quiz-controller.php.html">includes/rest-api/class-sensei-rest-api-lesson-quiz-controller.php</a>, <a href="includes_rest-api_class-sensei-rest-api-lesson-quiz-controller.php.html#line204">line 204</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+</article>
+
+</section>
 
 
 
