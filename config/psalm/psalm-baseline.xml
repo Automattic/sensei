@@ -26,10 +26,6 @@
     <MissingFile occurrences="1">
       <code>require_once ABSPATH . 'wp-admin/includes/plugin.php'</code>
     </MissingFile>
-    <MissingPropertyType occurrences="2">
-      <code>Sensei()-&gt;version</code>
-      <code>Sensei()-&gt;version</code>
-    </MissingPropertyType>
     <PossiblyFalseArgument occurrences="3">
       <code>$plugin_version</code>
       <code>$plugin_version</code>
@@ -129,9 +125,6 @@
     </UndefinedDocblockClass>
   </file>
   <file src="includes/admin/class-sensei-learners-admin-bulk-actions-controller.php">
-    <MissingPropertyType occurrences="1">
-      <code>Sensei()-&gt;version</code>
-    </MissingPropertyType>
     <PossiblyNullArgument occurrences="1">
       <code>$edit_course_cap</code>
     </PossiblyNullArgument>
@@ -324,9 +317,6 @@
       <code>! self::$instance</code>
       <code>self::$instance</code>
     </DocblockTypeContradiction>
-    <MissingPropertyType occurrences="1">
-      <code>Sensei()-&gt;plugin_path</code>
-    </MissingPropertyType>
     <PossiblyFalseArgument occurrences="1">
       <code>$installed_time</code>
     </PossiblyFalseArgument>
@@ -955,10 +945,9 @@
       <code>$post_id</code>
       <code>$settings</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="3">
+    <MissingPropertyType occurrences="2">
       <code>$course_order_page_slug</code>
       <code>$lesson_order_page_slug</code>
-      <code>Sensei()-&gt;plugin_url</code>
     </MissingPropertyType>
     <PossiblyInvalidArgument occurrences="2">
       <code>$data</code>
@@ -1640,16 +1629,6 @@
       <code>$post_id</code>
       <code>$title</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="8">
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;token</code>
-      <code>Sensei()-&gt;token</code>
-    </MissingPropertyType>
     <PossibleRawObjectIteration occurrences="1">
       <code>$tags</code>
     </PossibleRawObjectIteration>
@@ -1808,11 +1787,10 @@
       <code>$user_id</code>
       <code>$which</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="4">
+    <MissingPropertyType occurrences="3">
       <code>$file</code>
       <code>$name</code>
       <code>$page_slug</code>
-      <code>Sensei()-&gt;token</code>
     </MissingPropertyType>
     <PossiblyFalseArgument occurrences="1">
       <code>wp_json_encode( $args )</code>
@@ -1873,9 +1851,6 @@
     <InvalidGlobal occurrences="1">
       <code>global $current_user;</code>
     </InvalidGlobal>
-    <MissingPropertyType occurrences="1">
-      <code>Sensei()-&gt;token</code>
-    </MissingPropertyType>
   </file>
   <file src="includes/class-sensei-learner.php">
     <DocblockTypeContradiction occurrences="3">
@@ -1899,9 +1874,7 @@
     </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/class-sensei-lesson.php">
-    <ArgumentTypeCoercion occurrences="6">
-      <code>$post_type_args</code>
-      <code>$post_type_args</code>
+    <ArgumentTypeCoercion occurrences="4">
       <code>$qargs</code>
       <code>$questions_array</code>
       <code>'WP_Post'</code>
@@ -1976,7 +1949,7 @@
       <code>$user_id</code>
       <code>array( $width, $height )</code>
     </InvalidScalarArgument>
-    <MissingParamType occurrences="39">
+    <MissingParamType occurrences="38">
       <code>$column_name</code>
       <code>$content</code>
       <code>$context</code>
@@ -1993,7 +1966,6 @@
       <code>$lesson_id</code>
       <code>$multiple_data</code>
       <code>$page</code>
-      <code>$post_id</code>
       <code>$post_id</code>
       <code>$question_category</code>
       <code>$question_counter</code>
@@ -2017,11 +1989,6 @@
       <code>$user_id</code>
       <code>$widget</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="3">
-      <code>$allowed_html</code>
-      <code>$meta_fields</code>
-      <code>$token</code>
-    </MissingPropertyType>
     <NullableReturnStatement occurrences="3">
       <code>$this-&gt;get_videopress_thumbnail( $url )</code>
       <code>$this-&gt;get_vimeo_thumbnail( $url )</code>
@@ -2108,14 +2075,20 @@
       <code>is_array( $question_data )</code>
       <code>is_countable( $questions_array )</code>
     </RedundantCondition>
-    <RedundantConditionGivenDocblockType occurrences="6">
+    <RedundantConditionGivenDocblockType occurrences="9">
       <code>! is_wp_error( $multiple_id )</code>
       <code>$module_term</code>
       <code>$module_term</code>
       <code>- 1 !== $new_course</code>
       <code>-1 !== $new_complexity</code>
       <code>is_array( $data ) &amp;&amp; count( $data ) &gt; 0</code>
+      <code>is_array( $this-&gt;meta_fields )</code>
+      <code>isset( $this-&gt;meta_fields ) &amp;&amp; is_array( $this-&gt;meta_fields )</code>
+      <code>isset( $this-&gt;meta_fields ) &amp;&amp; is_array( $this-&gt;meta_fields )</code>
     </RedundantConditionGivenDocblockType>
+    <RedundantPropertyInitializationCheck occurrences="1">
+      <code>isset( $this-&gt;meta_fields )</code>
+    </RedundantPropertyInitializationCheck>
     <TypeDoesNotContainType occurrences="2">
       <code>! isset( $row_counter )</code>
       <code>0</code>
@@ -2298,15 +2271,10 @@
       <code>$title</code>
       <code>$user_id</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="8">
+    <MissingPropertyType occurrences="3">
       <code>$file</code>
       <code>$order_page_slug</code>
       <code>$taxonomy</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;version</code>
-      <code>Sensei()-&gt;version</code>
     </MissingPropertyType>
     <ParadoxicalCondition occurrences="1">
       <code>! $modules || empty( $modules )</code>
@@ -2762,9 +2730,6 @@
       <code>$new_value</code>
       <code>$setting</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="1">
-      <code>Sensei()-&gt;version</code>
-    </MissingPropertyType>
     <PossiblyFalseArgument occurrences="2">
       <code>\Sensei()-&gt;install_version</code>
       <code>wp_json_encode( $inline_data )</code>
@@ -2904,29 +2869,6 @@
       <code>$template_name</code>
       <code>$template_name</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="21">
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
-    </MissingPropertyType>
     <PossiblyFalseOperand occurrences="1">
       <code>get_permalink( $post-&gt;ID )</code>
     </PossiblyFalseOperand>
@@ -2983,12 +2925,6 @@
     <InvalidReturnType occurrences="1">
       <code>DateTimeImmutable[]</code>
     </InvalidReturnType>
-    <MissingPropertyType occurrences="4">
-      <code>Sensei()-&gt;version</code>
-      <code>Sensei()-&gt;version</code>
-      <code>Sensei()-&gt;version</code>
-      <code>Sensei()-&gt;version</code>
-    </MissingPropertyType>
     <PossiblyNullArgument occurrences="4">
       <code>$this-&gt;current_version</code>
       <code>$this-&gt;current_version</code>
@@ -3080,10 +3016,6 @@
       <code>$fields</code>
       <code>$fields</code>
     </MissingClosureParamType>
-    <MissingPropertyType occurrences="2">
-      <code>Sensei()-&gt;version</code>
-      <code>Sensei()-&gt;version</code>
-    </MissingPropertyType>
     <TypeDoesNotContainType occurrences="1">
       <code>false</code>
     </TypeDoesNotContainType>
@@ -3163,9 +3095,6 @@
       <code>$trigger_completion_action</code>
       <code>$user_id</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="1">
-      <code>Sensei()-&gt;plugin_url</code>
-    </MissingPropertyType>
     <PossibleRawObjectIteration occurrences="1">
       <code>$attributes</code>
     </PossibleRawObjectIteration>
@@ -3270,9 +3199,6 @@
       <code>$lesson_single_thumbnail['height']</code>
       <code>$lesson_single_thumbnail['width']</code>
     </InvalidArrayOffset>
-    <InvalidDocblockParamName occurrences="1">
-      <code>$file</code>
-    </InvalidDocblockParamName>
     <InvalidGlobal occurrences="1">
       <code>global $sensei_modules;</code>
     </InvalidGlobal>
@@ -3280,28 +3206,8 @@
       <code>$is_upgrade</code>
       <code>$lesson_id</code>
     </InvalidScalarArgument>
-    <MissingDocblockType occurrences="1">
-      <code>private $id;</code>
-    </MissingDocblockType>
-    <MissingParamType occurrences="5">
-      <code>$args</code>
-      <code>$args</code>
-      <code>$class_name</code>
-      <code>$main_plugin_file_name</code>
-      <code>$plugin</code>
-    </MissingParamType>
-    <MissingPropertyType occurrences="11">
-      <code>$id</code>
-      <code>$plugin_path</code>
-      <code>$plugin_url</code>
-      <code>$template_url</code>
-      <code>$this-&gt;plugin_path</code>
-      <code>$this-&gt;plugin_path</code>
-      <code>$this-&gt;plugin_url</code>
+    <MissingPropertyType occurrences="1">
       <code>$this-&gt;post_types-&gt;role_caps</code>
-      <code>$this-&gt;version</code>
-      <code>$token</code>
-      <code>$version</code>
     </MissingPropertyType>
     <PossiblyFalseArgument occurrences="2">
       <code>get_the_ID()</code>
@@ -3357,6 +3263,9 @@
     <RedundantCondition occurrences="1">
       <code>'Sensei_Modules' !== $class</code>
     </RedundantCondition>
+    <RedundantPropertyInitializationCheck occurrences="1">
+      <code>isset( $this-&gt;version )</code>
+    </RedundantPropertyInitializationCheck>
     <TooManyArguments occurrences="1">
       <code>init</code>
     </TooManyArguments>
@@ -3370,7 +3279,7 @@
       <code>require_once $this-&gt;resolve_path( 'includes/class-sensei-cli.php' )</code>
       <code>require_once $this-&gt;resolve_path( 'includes/hooks/template.php' )</code>
       <code>require_once $this-&gt;resolve_path( 'includes/template-functions.php' )</code>
-      <code>require_once dirname( __FILE__ ) . '/class-' . esc_attr( $this-&gt;token ) . '-' . esc_attr( $class_name ) . '.php'</code>
+      <code>require_once __DIR__ . '/class-' . esc_attr( (string) $this-&gt;token ) . '-' . esc_attr( $class_name ) . '.php'</code>
     </UnresolvableInclude>
   </file>
   <file src="includes/cli/class-sensei-db-seed-command.php">
@@ -3561,9 +3470,6 @@
       <code>! self::$instance</code>
       <code>self::$instance</code>
     </DocblockTypeContradiction>
-    <MissingPropertyType occurrences="1">
-      <code>Sensei()-&gt;plugin_url</code>
-    </MissingPropertyType>
     <PossiblyFalseArgument occurrences="3">
       <code>get_permalink( $module_lessons[0] )</code>
       <code>get_post_type()</code>
@@ -5732,11 +5638,9 @@
       <code>$question_type</code>
       <code>$template_name</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="4">
+    <MissingPropertyType occurrences="2">
       <code>Sensei()-&gt;modules-&gt;taxonomy</code>
       <code>Sensei()-&gt;modules-&gt;taxonomy</code>
-      <code>Sensei()-&gt;template_url</code>
-      <code>Sensei()-&gt;template_url</code>
     </MissingPropertyType>
     <PossiblyFalseArgument occurrences="1">
       <code>get_permalink( $course_id )</code>
@@ -5765,11 +5669,6 @@
       <code>$item-&gt;term_id</code>
       <code>$item-&gt;term_id</code>
     </UndefinedMagicPropertyFetch>
-  </file>
-  <file src="includes/theme-integrations/theme-integration-loader.php">
-    <MissingPropertyType occurrences="1">
-      <code>Sensei()-&gt;plugin_path</code>
-    </MissingPropertyType>
   </file>
   <file src="includes/unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course-archive.php">
     <DocblockTypeContradiction occurrences="1">
@@ -5818,11 +5717,6 @@
     <ParamNameMismatch occurrences="1">
       <code>$post_to_copy</code>
     </ParamNameMismatch>
-  </file>
-  <file src="includes/unsupported-theme-handlers/class-sensei-unsupported-theme-handler-lesson-tag-archive.php">
-    <MissingPropertyType occurrences="1">
-      <code>Sensei()-&gt;template_url</code>
-    </MissingPropertyType>
   </file>
   <file src="includes/unsupported-theme-handlers/class-sensei-unsupported-theme-handler-module.php">
     <InvalidScalarArgument occurrences="1">
@@ -5897,6 +5791,11 @@
     <RedundantCast occurrences="1">
       <code>(int) $offset</code>
     </RedundantCast>
+  </file>
+  <file src="includes/wpml/class-language-details.php">
+    <DocblockTypeContradiction occurrences="1">
+      <code>is_wp_error( $question_id )</code>
+    </DocblockTypeContradiction>
   </file>
   <file src="sensei-lms.php">
     <InvalidGlobal occurrences="1">
