@@ -116,12 +116,7 @@ function SenseiTourKit( {
 		return null;
 	}
 
-	return (
-		<WpcomTourKit
-			__temp__className="wpcom-tour-kit"
-			config={ _.merge( config, extraConfig ) }
-		/>
-	);
+	return <WpcomTourKit config={ _.merge( config, extraConfig ) } />;
 }
 
 export default SenseiTourKit;

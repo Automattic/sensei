@@ -39,6 +39,12 @@
       <code>DAY_IN_SECONDS</code>
     </UndefinedConstant>
   </file>
+  <file src="includes/admin/class-sensei-course-pre-publish-panel.php">
+    <DocblockTypeContradiction occurrences="2">
+      <code>! self::$instance</code>
+      <code>self::$instance</code>
+    </DocblockTypeContradiction>
+  </file>
   <file src="includes/admin/class-sensei-editor-wizard.php">
     <DocblockTypeContradiction occurrences="2">
       <code>! self::$instance</code>
