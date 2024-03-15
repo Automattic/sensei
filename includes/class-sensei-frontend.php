@@ -1209,14 +1209,26 @@ class Sensei_Frontend {
 	public function sensei_course_start() {
 		global $post, $current_user;
 
+		/**
+		 * Filter the course ID for the course being started.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @hook sensei_course_start_course_id
+		 *
+		 * @param {int} $course_id Course post ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = apply_filters( 'sensei_course_start_course_id', $post->ID );
+
 		// Handle user starting the course.
 		if (
 			is_singular( 'course' )
 			&& isset( $_POST['course_start'] )
 			&& wp_verify_nonce( $_POST['woothemes_sensei_start_course_noonce'], 'woothemes_sensei_start_course_noonce' )
-			&& Sensei_Course::can_current_user_manually_enrol( $post->ID )
-			&& Sensei_Course::is_prerequisite_complete( $post->ID )
-			&& ! post_password_required( $post->ID )
+			&& Sensei_Course::can_current_user_manually_enrol( $course_id )
+			&& Sensei_Course::is_prerequisite_complete( $course_id )
+			&& ! post_password_required( $course_id )
 		) {
 
 			/**
@@ -1231,11 +1243,11 @@ class Sensei_Frontend {
 			 * @param    {int}                     $course_id Course post ID.
 			 * @return   {callback(int, int):bool} Filtered handler.
 			 */
-			$learner_enrollment_handler = apply_filters( 'sensei_frontend_learner_enrolment_handler', [ $this, 'manually_enrol_learner' ], $current_user->ID, $post->ID );
+			$learner_enrollment_handler = apply_filters( 'sensei_frontend_learner_enrolment_handler', [ $this, 'manually_enrol_learner' ], $current_user->ID, $course_id );
 
 			$student_enrolled = false;
 			if ( is_callable( $learner_enrollment_handler ) ) {
-				$student_enrolled = call_user_func( $learner_enrollment_handler, $current_user->ID, $post->ID );
+				$student_enrolled = call_user_func( $learner_enrollment_handler, $current_user->ID, $course_id );
 			}
 
 			$this->data                        = new stdClass();
