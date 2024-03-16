@@ -34,8 +34,9 @@ class Sensei_Question {
 	 * @since  1.0.0
 	 */
 	public function __construct() {
-		$this->token          = 'question';
-		$this->meta_fields    = array( 'question_right_answer', 'question_wrong_answers' );
+		$this->token       = 'question';
+		$this->meta_fields = array( 'question_right_answer', 'question_wrong_answers' );
+
 		if ( is_admin() ) {
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-question_columns', array( $this, 'add_column_headings' ), 20, 1 );
