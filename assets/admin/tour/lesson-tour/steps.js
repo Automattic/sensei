@@ -575,10 +575,12 @@ export default function getTourSteps() {
 					// Highlight sidebar.
 					{
 						action: () => {
-							// It's the higher level element because it has a hidden overflow, hiding the border effect in internal elements.
 							const sidebarSelector =
-								'.interface-interface-skeleton__sidebar';
-							highlightElementsWithBorders( [ sidebarSelector ] );
+								'.block-editor-block-inspector .components-panel__body';
+							highlightElementsWithBorders(
+								[ sidebarSelector ],
+								'inset'
+							);
 						},
 						delay: 400,
 					},
@@ -648,10 +650,12 @@ export default function getTourSteps() {
 					// Highlight sidebar.
 					{
 						action: () => {
-							// It's the higher level element because it has a hidden overflow, hiding the border effect in internal elements.
 							const sidebarSelector =
-								'.interface-interface-skeleton__sidebar';
-							highlightElementsWithBorders( [ sidebarSelector ] );
+								'.sensei-lms-quiz-block__settings-wrapper';
+							highlightElementsWithBorders(
+								[ sidebarSelector ],
+								'inset'
+							);
 						},
 						delay: 400,
 					},

@@ -18,6 +18,11 @@ $border-color: var(--wp--preset--color--primary, #46c8ad );
 .sensei-tour-highlight {
 	outline: 2px solid $border-color !important;
 	box-shadow: 0 0 $shadow-width $border-color !important;
+
+	&--inset {
+		outline: none;
+		box-shadow: inset 0 0 $shadow-width $border-color !important;;
+	}
 }
 
 // Just keeping it here in case we want to add a pulsing effect.
