@@ -110,6 +110,7 @@ class Sensei_Analysis {
 			'students' => __( 'Students', 'sensei-lms' ),
 			'courses'  => __( 'Courses', 'sensei-lms' ),
 			'lessons'  => __( 'Lessons', 'sensei-lms' ),
+			'questions'  => __('Questions', 'sensei-lms'),
 		);
 		$current_report_key = isset( $reports[ $type ] ) ? $type : 'students';
 

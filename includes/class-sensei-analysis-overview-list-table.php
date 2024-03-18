@@ -27,9 +27,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public function __construct( $type = 'users' ) {
 		_deprecated_function( __METHOD__, '4.3.0', 'Sensei_Reports_Overview_List_Table_Factory::create()' );
 
-		$this->type      = in_array( $type, array( 'courses', 'lessons', 'users' ), true ) ? $type : 'users';
+		$this->type      = in_array( $type, array( 'courses', 'lessons', 'users', 'questions' ), true ) ? $type : 'users';
 		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
-
+print_r($type);
 		// Load Parent token into constructor.
 		parent::__construct( 'analysis_overview' );
 
@@ -221,6 +221,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'lessons':
 				$columns = array(
 					'title' => array( 'title', false ),
+				);
+				break;
+
+			case 'questions':
+				$columns = array(
+					'title'	=> array( 'display_name', false ),
 				);
 				break;
 
@@ -1091,8 +1097,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		?>
 		<form class="sensei-analysis__top-filters">
 			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 'start_date', 'end_date', 's' ] ); ?>
-
-			<?php if ( 'lessons' === $this->type ) : ?>
+			<?php if ( in_array( $this->type, [ 'lessons', 'questions' ], true )  ) : ?>
 				<label for="sensei-course-filter">
 					<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
 				</label>

@@ -63,6 +63,8 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		// Load Parent token into constructor.
 		parent::__construct( 'analysis_overview' );
 
+		var_dump($type);
+
 		$this->type          = $type;
 		$this->data_provider = $data_provider;
 
@@ -310,7 +312,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		do_action( 'sensei_reports_overview_before_top_filters', $this->type );
 		?>
 
-		<?php if ( 'lessons' === $this->type ) : ?>
+		<?php if ( in_array( $this->type, [ 'lessons', 'questions' ], true )  ) : ?>
 			<label for="sensei-course-filter">
 				<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
 
@@ -402,6 +404,10 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 			case 'lessons':
 				$report = 'lessons-overview';
+				break;
+
+			case 'questions':
+				$report = 'questions-overview';
 				break;
 
 			case 'users':
