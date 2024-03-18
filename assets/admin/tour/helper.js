@@ -23,13 +23,17 @@ export function performStepAction( index, steps ) {
 /**
  * Highlights the elements with a border.
  *
- * @param {Array} selectors An array of selectors to highlight.
+ * @param {Array}  selectors An array of selectors to highlight.
+ * @param {string} modifier  A modifier to add to the highlight class.
  */
-export function highlightElementsWithBorders( selectors ) {
+export function highlightElementsWithBorders( selectors, modifier = '' ) {
+	const modifierSuffix = modifier ? '--' + modifier : '';
+	const className = HIGHLIGHT_CLASS + modifierSuffix;
+
 	selectors.forEach( function ( selector ) {
 		const element = document.querySelector( selector );
 		if ( element ) {
-			element.classList.add( HIGHLIGHT_CLASS );
+			element.classList.add( className );
 		}
 	} );
 }

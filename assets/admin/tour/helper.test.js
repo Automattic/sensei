@@ -83,6 +83,18 @@ describe( 'highlightElementsWithBorders', () => {
 			expect( document.querySelector( selector ) ).toBeNull();
 		} );
 	} );
+
+	it( 'should add highlight class to the element with a modifier', () => {
+		const element = document.createElement( 'div' );
+
+		mockQuerySelector.mockImplementation( () => {
+			return element;
+		} );
+
+		highlightElementsWithBorders( [ 'div' ], 'modifier' );
+
+		expect( element.className ).toBe( HIGHLIGHT_CLASS + '--modifier' );
+	} );
 } );
 
 describe( 'removeHighlightClasses', () => {
