@@ -334,6 +334,10 @@ class Sensei_Learner {
 		$this->before_enrolled_courses_query( $user_id );
 
 		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
+		
+		if (is_string($query_args["post__in"])) {
+            $query_args["post__in"] = [$query_args["post__in"]];
+        }
 
 		return new WP_Query( $query_args );
 	}
