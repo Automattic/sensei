@@ -307,14 +307,29 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @return Comments_Based_Quiz_Progress The course progress.
 	 */
 	private function create_progress_from_comment( WP_Comment $comment, ?int $quiz_id = null ): Comments_Based_Quiz_Progress {
-		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
-		$meta_start   = get_comment_meta( (int) $comment->comment_ID, 'start', true );
-		$started_at   = ! empty( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
+		$status          = $comment->comment_approved;
+		$comment_date    = new DateTime( $comment->comment_date, wp_timezone() );
+		$meta_start      = get_comment_meta( (int) $comment->comment_ID, 'start', true );
+		$started_at      = ! empty( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
+		$grade           = get_comment_meta( (int) $comment->comment_ID, 'grade', true );
+		$is_graded       = is_numeric( $grade );
+		$questions_asked = get_comment_meta( (int) $comment->comment_ID, 'questions_asked', true );
+		$is_submitted    = ! empty( $questions_asked );
 
-		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
+		if ( in_array( $status, [ 'complete', 'passed', 'graded' ], true ) ) {
 			$completed_at = $comment_date;
 		} else {
 			$completed_at = null;
+		}
+
+		if ( in_array( $status, [ 'passed' ], true ) ) {
+			if ( ! $is_submitted ) {
+				// If the lesson is completed without submitting the quiz, set the quiz status to 'in-progress'.
+				$status = Quiz_Progress_Interface::STATUS_IN_PROGRESS;
+			} elseif ( ! $is_graded ) {
+				// If the lesson is completed and the quiz is not graded, set the quiz status to 'ungraded'.
+				$status = Quiz_Progress_Interface::STATUS_UNGRADED;
+			}
 		}
 
 		if ( is_null( $quiz_id ) ) {
@@ -325,7 +340,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			(int) $comment->comment_ID,
 			(int) $quiz_id,
 			(int) $comment->user_id,
-			$comment->comment_approved,
+			$status,
 			$started_at,
 			$completed_at,
 			$comment_date,
