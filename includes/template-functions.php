@@ -63,11 +63,13 @@ function sensei_start_course_form( $course_id ) {
 	if ( $prerequisite_complete ) {
 		wp_enqueue_script( 'sensei-stop-double-submission' );
 
+		$sensei_start_course_form_text = apply_filters( 'sensei_start_course_form_text', esc_html( 'Take This Course', 'sensei-lms' ) );
+
 		?><form method="POST" action="<?php echo esc_url( get_permalink( $course_id ) ); ?>">
 
 				<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_start_course_noonce' ) ); ?>" />
 
-				<span><input name="course_start" type="submit" class="course-start sensei-stop-double-submission" value="<?php esc_html_e( 'Take This Course', 'sensei-lms' ); ?>"/></span>
+				<span><input name="course_start" type="submit" class="course-start sensei-stop-double-submission" value="<?php echo esc_attr( $sensei_start_course_form_text ); ?>"/></span>
 
 			</form>
 			<?php
