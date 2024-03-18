@@ -32,6 +32,27 @@ const getFirstQuestionBlock = () =>
 		select( blockEditorStore ).getBlocks()
 	);
 
+const getFirstBooleanQuestionBlock = () => {
+	const quizBlock = getQuizBlock();
+	if ( ! quizBlock ) {
+		return null;
+	}
+
+	const questionBlocks = select( blockEditorStore ).getBlocks(
+		quizBlock.clientId
+	);
+
+	const booleanQuestionBlock = questionBlocks.find(
+		( block ) => 'boolean' === block.attributes.type
+	);
+
+	if ( ! booleanQuestionBlock ) {
+		return null;
+	}
+
+	return booleanQuestionBlock;
+};
+
 function focusOnQuizBlock() {
 	const quizBlock = getQuizBlock();
 	if ( ! quizBlock ) {
@@ -48,10 +69,18 @@ function focusOnQuestionBlock() {
 	dispatch( editorStore ).selectBlock( questionBlock.clientId );
 }
 
-function ensureBooleanQuestionAsFirstQuestion() {
-	const questionBlock = getFirstQuestionBlock();
+function focusOnBooleanQuestionBlock() {
+	const questionBlock = getFirstBooleanQuestionBlock();
+	if ( ! questionBlock ) {
+		return;
+	}
+	dispatch( editorStore ).selectBlock( questionBlock.clientId );
+}
 
-	if ( questionBlock && 'boolean' !== questionBlock.attributes.type ) {
+function ensureBooleanQuestionIsInEditor() {
+	const questionBlock = getFirstBooleanQuestionBlock();
+
+	if ( null === questionBlock ) {
 		insertBooleanQuestion();
 	}
 }
@@ -352,8 +381,8 @@ export default function getTourSteps() {
 					// Focus on question block.
 					{
 						action: () => {
-							ensureBooleanQuestionAsFirstQuestion();
-							focusOnQuestionBlock();
+							ensureBooleanQuestionIsInEditor();
+							focusOnBooleanQuestionBlock();
 						},
 					},
 					// Highlight and focus correct answer toggle.
@@ -402,8 +431,8 @@ export default function getTourSteps() {
 					// Focus on question block.
 					{
 						action: () => {
-							ensureBooleanQuestionAsFirstQuestion();
-							focusOnQuestionBlock();
+							ensureBooleanQuestionIsInEditor();
+							focusOnBooleanQuestionBlock();
 						},
 					},
 					// Highlight answer feedback.
