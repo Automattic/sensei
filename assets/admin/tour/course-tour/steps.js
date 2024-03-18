@@ -21,7 +21,7 @@ import {
 	waitForElement,
 } from '../helper';
 
-const getCourseOutlineBlock = () =>
+export const getCourseOutlineBlock = () =>
 	getFirstBlockByName(
 		'sensei-lms/course-outline',
 		select( blockEditorStore ).getBlocks()

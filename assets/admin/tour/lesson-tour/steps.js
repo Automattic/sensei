@@ -20,19 +20,19 @@ import {
 	performStepActionsAsync,
 } from '../helper';
 
-const getQuizBlock = () =>
+export const getQuizBlock = () =>
 	getFirstBlockByName(
 		'sensei-lms/quiz',
 		select( blockEditorStore ).getBlocks()
 	);
 
-const getFirstQuestionBlock = () =>
+export const getFirstQuestionBlock = () =>
 	getFirstBlockByName(
 		'sensei-lms/quiz-question',
 		select( blockEditorStore ).getBlocks()
 	);
 
-const getFirstBooleanQuestionBlock = () => {
+export const getFirstBooleanQuestionBlock = () => {
 	const quizBlock = getQuizBlock();
 	if ( ! quizBlock ) {
 		return null;
@@ -53,39 +53,39 @@ const getFirstBooleanQuestionBlock = () => {
 	return booleanQuestionBlock;
 };
 
-function focusOnQuizBlock() {
+export const focusOnQuizBlock = () => {
 	const quizBlock = getQuizBlock();
 	if ( ! quizBlock ) {
 		return;
 	}
 	dispatch( editorStore ).selectBlock( quizBlock.clientId );
-}
+};
 
-function focusOnQuestionBlock() {
+export const focusOnQuestionBlock = () => {
 	const questionBlock = getFirstQuestionBlock();
 	if ( ! questionBlock ) {
 		return;
 	}
 	dispatch( editorStore ).selectBlock( questionBlock.clientId );
-}
+};
 
-function focusOnBooleanQuestionBlock() {
+export const focusOnBooleanQuestionBlock = () => {
 	const questionBlock = getFirstBooleanQuestionBlock();
 	if ( ! questionBlock ) {
 		return;
 	}
 	dispatch( editorStore ).selectBlock( questionBlock.clientId );
-}
+};
 
-function ensureBooleanQuestionIsInEditor() {
+export const ensureBooleanQuestionIsInEditor = () => {
 	const questionBlock = getFirstBooleanQuestionBlock();
 
 	if ( null === questionBlock ) {
 		insertBooleanQuestion();
 	}
-}
+};
 
-function insertBooleanQuestion() {
+const insertBooleanQuestion = () => {
 	const quizBlock = getQuizBlock();
 	if ( quizBlock ) {
 		const { insertBlock } = dispatch( blockEditorStore );
@@ -98,16 +98,13 @@ function insertBooleanQuestion() {
 			quizBlock.clientId
 		);
 	}
-}
+};
 
 export const beforeEach = ( step ) => {
 	// Close answer feedback as the happy path next step.
 	if ( 'adding-answer-feedback' !== step.slug ) {
-		const answerFeedbackButtonSelector =
-			'.sensei-lms-question-block__answer-feedback-toggle__header';
-
 		const answerFeedbackButton = document.querySelector(
-			answerFeedbackButtonSelector
+			'.sensei-lms-question-block__answer-feedback-toggle__header'
 		);
 
 		// Click to close only when it's open.
