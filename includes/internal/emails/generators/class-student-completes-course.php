@@ -85,7 +85,7 @@ class Student_Completes_Course extends Email_Generators_Abstract {
 			'student:id'          => $student_id,
 			'student:displayname' => $student->display_name,
 			'course:id'           => $course_id,
-			'course:name'         => get_the_title( $course_id ),
+			'course:name'         => html_entity_decode( get_the_title( $course_id ) ),
 			'grade:percentage'    => $grade,
 			'manage:students'     => $manage_url,
 		];

@@ -79,7 +79,7 @@ class Student_Sends_Message extends Email_Generators_Abstract {
 					'student:displayname'    => esc_html( $student->display_name ),
 					'course:name'            => esc_html( get_the_title( $course->ID ) ),
 					'message:displaymessage' => esc_html( $message->post_content ),
-					'subject:displaysubject' => esc_html( $message->post_title ),
+					'subject:displaysubject' => html_entity_decode( esc_html( $message->post_title ) ),
 					'reply:url'              => esc_url( get_permalink( absint( $message_id ) ) ),
 				],
 			]

@@ -62,7 +62,6 @@ class Course_Completed extends Email_Generators_Abstract {
 			return;
 		}
 
-		$course    = get_post( $course_id );
 		$student   = new \WP_User( $student_id );
 		$recipient = stripslashes( $student->user_email );
 
@@ -72,7 +71,7 @@ class Course_Completed extends Email_Generators_Abstract {
 					'student:id'          => $student_id,
 					'student:displayname' => $student->display_name,
 					'course:id'           => $course_id,
-					'course:name'         => $course->post_title,
+					'course:name'         => html_entity_decode( get_the_title( $course_id ) ),
 					'completed:url'       => esc_url(
 						\Sensei_Course::get_course_completed_page_url( $course_id ) ?? get_permalink( $course_id )
 					),
