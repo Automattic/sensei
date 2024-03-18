@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Course Completed email subject with special characters being displayed incorrectly
