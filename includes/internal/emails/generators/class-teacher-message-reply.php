@@ -79,7 +79,7 @@ class Teacher_Message_Reply extends Email_Generators_Abstract {
 					'student:displayname'    => esc_html( $commenter->display_name ),
 					'course:name'            => esc_html( get_the_title( $course->ID ) ),
 					'message:displaymessage' => esc_html( $comment->comment_content ),
-					'subject:displaysubject' => esc_html( $message->post_title ),
+					'subject:displaysubject' => html_entity_decode( esc_html( $message->post_title ) ),
 					'reply:url'              => esc_url( get_comment_link( $comment ) ),
 				],
 			]

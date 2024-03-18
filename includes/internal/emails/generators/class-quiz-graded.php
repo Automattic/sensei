@@ -94,7 +94,7 @@ class Quiz_Graded extends Email_Generators_Abstract {
 				$recipient => [
 					'grade:validation' => $pass_or_fail,
 					'course:name'      => get_the_title( $course->ID ),
-					'lesson:name'      => get_the_title( $lesson->ID ),
+					'lesson:name'      => html_entity_decode( get_the_title( $lesson->ID ) ),
 					'grade:percentage' => $grade . '%',
 					'quiz:url'         => $quiz_url,
 				],

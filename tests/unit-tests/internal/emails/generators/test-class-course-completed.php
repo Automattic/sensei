@@ -57,7 +57,7 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		);
 		$course        = $this->factory->course->create_and_get(
 			[
-				'post_title' => 'Test Course',
+				'post_title' => '“Course with Special Characters…?”',
 			]
 		);
 		$completed_url = \Sensei_Course::get_course_completed_page_url( $course->ID );
@@ -91,7 +91,7 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		self::assertEquals( 'course_completed', $email_data['name'] );
 		self::assertArrayHasKey( 'test@a.com', $email_data['data'] );
 		self::assertEquals( 'Test Student', $email_data['data']['test@a.com']['student:displayname'] );
-		self::assertEquals( 'Test Course', $email_data['data']['test@a.com']['course:name'] );
+		self::assertEquals( '“Course with Special Characters…?”', $email_data['data']['test@a.com']['course:name'] );
 		self::assertArrayHasKey( 'completed:url', $email_data['data']['test@a.com'] );
 		self::assertNotEmpty( $email_data['data']['test@a.com']['completed:url'] );
 	}
@@ -195,5 +195,4 @@ class Course_Completed_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertEmpty( $email_data['name'] );
 	}
-
 }

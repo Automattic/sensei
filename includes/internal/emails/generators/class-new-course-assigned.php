@@ -82,7 +82,7 @@ class New_Course_Assigned extends Email_Generators_Abstract {
 			[
 				$recipient => [
 					'teacher:displayname' => $teacher->display_name,
-					'course:name'         => get_the_title( $course_id ),
+					'course:name'         => html_entity_decode( get_the_title( $course_id ) ),
 					'editcourse:url'      => esc_url( $edit_link ),
 				],
 			]
