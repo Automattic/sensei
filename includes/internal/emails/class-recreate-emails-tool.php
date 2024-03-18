@@ -78,7 +78,7 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 	 * @return string
 	 */
 	public function get_name() {
-		return __( 'Recreate Emails', 'sensei-lms' );
+		return __( 'Re-create Emails', 'sensei-lms' );
 	}
 
 	/**
@@ -88,7 +88,7 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 	 */
 	public function get_description() {
 		return __(
-			'Recreate all emails. Existing customizations will be lost.',
+			'Re-create all emails. Existing customizations will be lost.',
 			'sensei-lms'
 		);
 	}
@@ -101,8 +101,8 @@ class Recreate_Emails_Tool implements \Sensei_Tool_Interface {
 		$result = $this->seeder->create_all( true );
 
 		$message = $result
-			? __( 'Emails were recreated successfully.', 'sensei-lms' )
-			: __( 'There were errors while recreating emails.', 'sensei-lms' );
+			? __( 'Emails were re-created successfully.', 'sensei-lms' )
+			: __( 'There were errors while re-creating emails.', 'sensei-lms' );
 		$this->tools->add_user_message( $message, ! $result );
 	}
 
