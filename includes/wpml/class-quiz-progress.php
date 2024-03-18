@@ -53,7 +53,7 @@ class Quiz_Progress {
 			)
 		);
 
-		$original_language_code = $details['source_language_code'] ?? null;
+		$original_language_code = $details['source_language_code'] ?? $details['language_code'] ?? null;
 
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return (int) apply_filters( 'wpml_object_id', $quiz_id, 'quiz', true, $original_language_code );

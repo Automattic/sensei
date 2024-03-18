@@ -60,12 +60,12 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			throw new RuntimeException( "Can't create a lesson progress" );
 		}
 
-		$progress = $this->get( $lesson_id, $user_id );
-		if ( ! $progress ) {
+		$comment = get_comment( $comment_id );
+		if ( ! $comment ) {
 			throw new RuntimeException( 'Created lesson progress not found' );
 		}
 
-		return $progress;
+		return $this->create_progress_from_comment( $comment );
 	}
 
 	/**

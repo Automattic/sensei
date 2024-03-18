@@ -33,6 +33,9 @@ class Course_Progress {
 		add_filter( 'sensei_course_progress_delete_for_course_course_id', array( $this, 'translate_course_id' ), 10, 1 );
 		add_filter( 'sensei_course_progress_find_course_id', array( $this, 'translate_course_id' ), 10, 1 );
 		add_filter( 'sensei_lesson_progress_count_course_id', array( $this, 'translate_course_id' ), 10, 1 );
+		add_filter( 'sensei_course_start_course_id', array( $this, 'translate_course_id' ), 10, 1 );
+		add_filter( 'sensei_course_manual_enrolment_enroll_learner_course_id', array( $this, 'translate_course_id' ), 10, 1 );
+		add_filter( 'sensei_course_manual_enrolment_withdraw_learner_course_id', array( $this, 'translate_course_id' ), 10, 1 );
 	}
 
 	/**
@@ -57,7 +60,7 @@ class Course_Progress {
 			)
 		);
 
-		$original_language_code = $details['source_language_code'] ?? null;
+		$original_language_code = $details['source_language_code'] ?? $details['language_code'] ?? null;
 
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return (int) apply_filters( 'wpml_object_id', $course_id, 'course', true, $original_language_code );

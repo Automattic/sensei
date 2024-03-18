@@ -59,12 +59,12 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			throw new \RuntimeException( "Can't create a course progress" );
 		}
 
-		$progress = $this->get( $course_id, $user_id );
-		if ( ! $progress ) {
+		$comment = get_comment( $comment_id );
+		if ( ! $comment ) {
 			throw new \RuntimeException( 'Created course progress not found' );
 		}
 
-		return $progress;
+		return $this->create_progress_from_comment( $comment );
 	}
 
 	/**
