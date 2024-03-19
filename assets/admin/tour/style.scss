@@ -23,8 +23,7 @@ $border-color: var(--wp--preset--color--primary, currentcolor);
 	box-shadow: 0 0 $shadow-width $border-color !important;
 
 	&.sensei-tour-highlight--inset {
-		outline: none !important;
-		box-shadow: inset 0 0 $shadow-width $border-color !important;;
+		box-shadow: inset 0 0 $shadow-width $border-color !important;
 	}
 }
 
