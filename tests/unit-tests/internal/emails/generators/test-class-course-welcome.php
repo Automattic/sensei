@@ -91,7 +91,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		);
 		$course_id  = $factory->course->create(
 			[
-				'post_title'  => 'Test Course',
+				'post_title'  => '“Course with Special Characters…?”',
 				'post_author' => $teacher_id,
 			]
 		);
@@ -123,7 +123,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 					'student:id'          => $student_id,
 					'student:displayname' => 'Test Student',
 					'course:id'           => $course_id,
-					'course:name'         => 'Test Course',
+					'course:name'         => '“Course with Special Characters…?”',
 					'course:url'          => esc_url(
 						get_permalink( $course_id )
 					),

@@ -110,7 +110,7 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 			'course:id'           => (int) $course_id,
 			'course:name'         => get_the_title( $course_id ),
 			'lesson:id'           => (int) $lesson_id,
-			'lesson:name'         => get_the_title( $lesson_id ),
+			'lesson:name'         => html_entity_decode( get_the_title( $lesson_id ) ),
 			'manage:students'     => $manage_url,
 		];
 

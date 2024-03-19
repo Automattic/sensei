@@ -155,7 +155,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		);
 		$lesson_id        = $factory->lesson->create(
 			[
-				'post_title' => 'Test Lesson',
+				'post_title' => '“Lesson with Special Characters…?”',
 				'meta_input' => [
 					'_lesson_course' => $course_id,
 				],
@@ -193,7 +193,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 					'course:id'           => $course_id,
 					'course:name'         => 'Test Course',
 					'lesson:id'           => $lesson_id,
-					'lesson:name'         => 'Test Lesson',
+					'lesson:name'         => '“Lesson with Special Characters…?”',
 					'manage:students'     => esc_url(
 						admin_url( "admin.php?page=sensei_learners&course_id={$course_id}&lesson_id={$lesson_id}&view=learners" )
 					),
@@ -233,7 +233,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 		);
 		$lesson_id        = $factory->lesson->create(
 			[
-				'post_title' => 'Test Lesson',
+				'post_title' => '“Lesson with Special Characters…?”',
 				'meta_input' => [
 					'_lesson_course' => $course_id,
 				],
@@ -277,7 +277,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 					'course:id'           => $course_id,
 					'course:name'         => 'Test Course',
 					'lesson:id'           => $lesson_id,
-					'lesson:name'         => 'Test Lesson',
+					'lesson:name'         => '“Lesson with Special Characters…?”',
 					'manage:students'     => esc_url(
 						admin_url( "admin.php?page=sensei_learners&course_id={$course_id}&lesson_id={$lesson_id}&view=learners" )
 					),
@@ -288,7 +288,7 @@ class Student_Completes_Lesson_Test extends \WP_UnitTestCase {
 					'course:id'           => $course_id,
 					'course:name'         => 'Test Course',
 					'lesson:id'           => $lesson_id,
-					'lesson:name'         => 'Test Lesson',
+					'lesson:name'         => '“Lesson with Special Characters…?”',
 					'manage:students'     => esc_url(
 						admin_url( "admin.php?page=sensei_learners&course_id={$course_id}&lesson_id={$lesson_id}&view=learners" )
 					),

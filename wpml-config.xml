@@ -5,6 +5,8 @@
 		<custom-field action="copy">_lesson_prerequisite</custom-field>
 		<custom-field action="copy">_lesson_course</custom-field>
 		<custom-field action="copy">_quiz_lesson</custom-field>
+		<custom-field action="copy">_lesson_quiz</custom-field>
+		<custom-field action="ignore">_quiz_id</custom-field>
 		<custom-field action="copy">_course_prerequisite</custom-field>
 		<custom-field action="copy">_course_video_embed</custom-field>
 		<custom-field action="copy">_course_featured</custom-field>
@@ -38,6 +40,17 @@
 		<gutenberg-block type="sensei-lms/course-outline-lesson" translate="1">
 			<key name="id" type="post-ids" sub-type="lesson" />
 			<key name="title" />
+		</gutenberg-block>
+		<gutenberg-block type="sensei-lms/quiz-question" translate="1">
+			<key name="id" type="post-ids" sub-type="question" />
+			<key name="title" />
+			<key name="answer">
+				<key name="answers">
+					<key name="*">
+						<key name="label" />
+					</key>
+				</key>
+			</key>
 		</gutenberg-block>
 	</gutenberg-blocks>
 </wpml-config>

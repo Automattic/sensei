@@ -20,43 +20,72 @@ import {
 	performStepActionsAsync,
 } from '../helper';
 
-const getQuizBlock = () =>
+export const getQuizBlock = () =>
 	getFirstBlockByName(
 		'sensei-lms/quiz',
 		select( blockEditorStore ).getBlocks()
 	);
 
-const getFirstQuestionBlock = () =>
+export const getFirstQuestionBlock = () =>
 	getFirstBlockByName(
 		'sensei-lms/quiz-question',
 		select( blockEditorStore ).getBlocks()
 	);
 
-function focusOnQuizBlock() {
+export const getFirstBooleanQuestionBlock = () => {
+	const quizBlock = getQuizBlock();
+	if ( ! quizBlock ) {
+		return null;
+	}
+
+	const questionBlocks = select( blockEditorStore ).getBlocks(
+		quizBlock.clientId
+	);
+
+	const booleanQuestionBlock = questionBlocks.find(
+		( block ) => 'boolean' === block.attributes.type
+	);
+
+	if ( ! booleanQuestionBlock ) {
+		return null;
+	}
+
+	return booleanQuestionBlock;
+};
+
+export const focusOnQuizBlock = () => {
 	const quizBlock = getQuizBlock();
 	if ( ! quizBlock ) {
 		return;
 	}
 	dispatch( editorStore ).selectBlock( quizBlock.clientId );
-}
+};
 
-function focusOnQuestionBlock() {
+export const focusOnQuestionBlock = () => {
 	const questionBlock = getFirstQuestionBlock();
 	if ( ! questionBlock ) {
 		return;
 	}
 	dispatch( editorStore ).selectBlock( questionBlock.clientId );
-}
+};
 
-function ensureBooleanQuestionAsFirstQuestion() {
-	const questionBlock = getFirstQuestionBlock();
+export const focusOnBooleanQuestionBlock = () => {
+	const questionBlock = getFirstBooleanQuestionBlock();
+	if ( ! questionBlock ) {
+		return;
+	}
+	dispatch( editorStore ).selectBlock( questionBlock.clientId );
+};
 
-	if ( questionBlock && 'boolean' !== questionBlock.attributes.type ) {
+export const ensureBooleanQuestionIsInEditor = () => {
+	const questionBlock = getFirstBooleanQuestionBlock();
+
+	if ( null === questionBlock ) {
 		insertBooleanQuestion();
 	}
-}
+};
 
-function insertBooleanQuestion() {
+const insertBooleanQuestion = () => {
 	const quizBlock = getQuizBlock();
 	if ( quizBlock ) {
 		const { insertBlock } = dispatch( blockEditorStore );
@@ -69,16 +98,13 @@ function insertBooleanQuestion() {
 			quizBlock.clientId
 		);
 	}
-}
+};
 
 export const beforeEach = ( step ) => {
 	// Close answer feedback as the happy path next step.
 	if ( 'adding-answer-feedback' !== step.slug ) {
-		const answerFeedbackButtonSelector =
-			'.sensei-lms-question-block__answer-feedback-toggle__header';
-
 		const answerFeedbackButton = document.querySelector(
-			answerFeedbackButtonSelector
+			'.sensei-lms-question-block__answer-feedback-toggle__header'
 		);
 
 		// Click to close only when it's open.
@@ -352,8 +378,8 @@ export default function getTourSteps() {
 					// Focus on question block.
 					{
 						action: () => {
-							ensureBooleanQuestionAsFirstQuestion();
-							focusOnQuestionBlock();
+							ensureBooleanQuestionIsInEditor();
+							focusOnBooleanQuestionBlock();
 						},
 					},
 					// Highlight and focus correct answer toggle.
@@ -402,8 +428,8 @@ export default function getTourSteps() {
 					// Focus on question block.
 					{
 						action: () => {
-							ensureBooleanQuestionAsFirstQuestion();
-							focusOnQuestionBlock();
+							ensureBooleanQuestionIsInEditor();
+							focusOnBooleanQuestionBlock();
 						},
 					},
 					// Highlight answer feedback.
@@ -575,10 +601,12 @@ export default function getTourSteps() {
 					// Highlight sidebar.
 					{
 						action: () => {
-							// It's the higher level element because it has a hidden overflow, hiding the border effect in internal elements.
 							const sidebarSelector =
-								'.interface-interface-skeleton__sidebar';
-							highlightElementsWithBorders( [ sidebarSelector ] );
+								'.block-editor-block-inspector .components-panel__body';
+							highlightElementsWithBorders(
+								[ sidebarSelector ],
+								'inset'
+							);
 						},
 						delay: 400,
 					},
@@ -648,10 +676,12 @@ export default function getTourSteps() {
 					// Highlight sidebar.
 					{
 						action: () => {
-							// It's the higher level element because it has a hidden overflow, hiding the border effect in internal elements.
 							const sidebarSelector =
-								'.interface-interface-skeleton__sidebar';
-							highlightElementsWithBorders( [ sidebarSelector ] );
+								'.sensei-lms-quiz-block__settings-wrapper';
+							highlightElementsWithBorders(
+								[ sidebarSelector ],
+								'inset'
+							);
 						},
 						delay: 400,
 					},

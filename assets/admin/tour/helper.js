@@ -23,13 +23,18 @@ export function performStepAction( index, steps ) {
 /**
  * Highlights the elements with a border.
  *
- * @param {Array} selectors An array of selectors to highlight.
+ * @param {Array}  selectors An array of selectors to highlight.
+ * @param {string} modifier  A modifier to add to the highlight class.
  */
-export function highlightElementsWithBorders( selectors ) {
+export function highlightElementsWithBorders( selectors, modifier = '' ) {
 	selectors.forEach( function ( selector ) {
 		const element = document.querySelector( selector );
 		if ( element ) {
 			element.classList.add( HIGHLIGHT_CLASS );
+
+			if ( modifier ) {
+				element.classList.add( HIGHLIGHT_CLASS + '--' + modifier );
+			}
 		}
 	} );
 }
@@ -42,7 +47,12 @@ export function removeHighlightClasses() {
 		'.sensei-tour-highlight'
 	);
 	highlightedElements.forEach( function ( element ) {
-		element.classList.remove( HIGHLIGHT_CLASS );
+		// Remove class and modifiers.
+		[ ...element.classList ].forEach( ( className ) => {
+			if ( className.startsWith( HIGHLIGHT_CLASS ) ) {
+				element.classList.remove( className );
+			}
+		} );
 	} );
 }
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * File containing the Sensei_Main class.
+ *
+ * @package sensei
+ */
 
 use Sensei\Admin\Tour\Sensei_Tour;
 use Sensei\Clock\Clock;
@@ -28,6 +33,7 @@ use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
 use Sensei\Internal\Tools\Progress_Tables_Eraser;
+use Sensei\WPML\WPML;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -46,19 +52,25 @@ class Sensei_Main {
 	const LEGACY_FLAG_WITH_FRONT         = 'with_front';
 
 	/**
-	 * @var string
 	 * Reference to the main plugin file name
+	 *
+	 * @var string
 	 */
 	private $main_plugin_file_name;
 
 	/**
-	 * @var Sensei_Main $_instance to the the main and only instance of the Sensei class.
+	 * The main Sensei Instance.
+	 * $_instance to the the main and only instance of the Sensei class.
+	 *
+	 * @var Sensei_Main
 	 * @since 1.8.0
 	 */
 	protected static $_instance = null;
 
 	/**
 	 * Main reference to the plugins current version
+	 *
+	 * @var string
 	 */
 	public $version;
 
@@ -73,24 +85,43 @@ class Sensei_Main {
 
 	/**
 	 * Public token, referencing for the text domain.
+	 *
+	 * @var string
 	 */
 	public $token = 'sensei';
 
 	/**
 	 * Plugin url and path for use when access resources.
+	 *
+	 * @var string
 	 */
 	public $plugin_url;
+
+	/**
+	 * Plugin path for use when accessing resources.
+	 *
+	 * @var string
+	 */
 	public $plugin_path;
+
+	/**
+	 * Template url for use when accessing resources.
+	 *
+	 * @var string
+	 */
 	public $template_url;
 
 	/**
-	 * @var Sensei_PostTypes
 	 * All Sensei sub classes. Currently used to access functionality contained within
 	 * within Sensei sub classes e.g. Sensei()->course->all_courses()
+	 *
+	 * @var Sensei_PostTypes
 	 */
 	public $post_types;
 
 	/**
+	 * Sensei Settings instance.
+	 *
 	 * @var Sensei_Settings
 	 */
 	public $settings;
@@ -103,98 +134,135 @@ class Sensei_Main {
 	public $assets;
 
 	/**
+	 * Sensei_Course_Results instance.
+	 *
 	 * @var Sensei_Course_Results
 	 */
 	public $course_results;
 
 	/**
+	 * Sensei_Updates instance.
+	 *
 	 * @var Sensei_Updates
 	 */
 	public $updates;
 
 	/**
+	 * Sensei_Course instance.
+	 *
 	 * @var Sensei_Course
 	 */
 	public $course;
 
 	/**
+	 * Sensei_Lesson instance.
+	 *
 	 * @var Sensei_Lesson
 	 */
 	public $lesson;
 
 	/**
+	 * Sensei_Quiz instance.
+	 *
 	 * @var Sensei_Quiz
 	 */
 	public $quiz;
 
 	/**
+	 * Sensei_Question instance.
+	 *
 	 * @var Sensei_Question
 	 */
 	public $question;
 
 	/**
+	 * Sensei_Messages instance.
+	 *
 	 * @var Sensei_Messages
 	 */
 	public $messages;
 
 	/**
+	 * Sensei_Admin instance.
+	 *
 	 * @var Sensei_Admin
 	 */
 	public $admin;
 
 	/**
+	 * Sensei_Frontend instance.
+	 *
 	 * @var Sensei_Frontend
 	 */
 	public $frontend;
 
 	/**
+	 * Sensei_Notices instance.
+	 *
 	 * @var Sensei_Notices
 	 */
 	public $notices;
 
 	/**
+	 * Sensei_Theme_Integration_Loader instance.
+	 *
 	 * @var Sensei_Theme_Integration_Loader
 	 */
 	public $theme_integration_loader;
 
 	/**
+	 * Sensei_Grading instance.
+	 *
 	 * @var Sensei_Grading
 	 */
 	public $grading;
 
 	/**
+	 * Sensei_Emails instance.
+	 *
 	 * @var Sensei_Emails
 	 */
 	public $emails;
 
 	/**
+	 * Sensei_Learner_Profiles instance.
+	 *
 	 * @var Sensei_Learner_Profiles
 	 */
 	public $learner_profiles;
 
 	/**
+	 * Sensei_Teacher instance.
+	 *
 	 * @var Sensei_Teacher
 	 */
 	public $teacher;
 
 	/**
+	 * Sensei_Learner_Management instance.
+	 *
 	 * @var Sensei_Learner_Management
 	 */
 	public $learners;
 
 	/**
-	 * @var array
 	 * Global instance for access to the permissions message shown
 	 * when users do not have the right privileges to access resources.
+	 *
+	 * @var array
 	 */
 	public $permissions_message;
 
 	/**
+	 * Sensei_Core_Modules instance.
+	 *
 	 * @var Sensei_Core_Modules Sensei Modules functionality
 	 */
 	public $modules;
 
 	/**
+	 * Sensei_Analysis instance.
+	 *
 	 * @var Sensei_Analysis
 	 */
 	public $analysis;
@@ -214,9 +282,11 @@ class Sensei_Main {
 	public $usage_tracking;
 
 	/**
-	 * @var $id
+	 * Sensei plugin id.
+	 *
+	 * @var string
 	 */
-	private $id;
+	private $id = 'sensei-lms';
 
 	/**
 	 * Shortcode loader.
@@ -270,7 +340,7 @@ class Sensei_Main {
 	/**
 	 * WPML compatibility class.
 	 *
-	 * @var Sensei_WPML
+	 * @var WPML
 	 *
 	 * @psalm-suppress PropertyNotSetInConstructor
 	 */
@@ -370,12 +440,14 @@ class Sensei_Main {
 	/**
 	 * Constructor method.
 	 *
-	 * @param  string $file The base file of the plugin.
 	 * @since  1.0.0
+	 *
+	 * @param  string $main_plugin_file_name The base file of the plugin.
+	 * @param  array  $args                  The arguments to pass to the plugin.
 	 */
 	private function __construct( $main_plugin_file_name, $args ) {
 
-		// Setup object data
+		// Setup object data.
 		$this->main_plugin_file_name = $main_plugin_file_name;
 		$this->plugin_url            = trailingslashit( plugins_url( '', $this->main_plugin_file_name ) );
 		$this->plugin_path           = trailingslashit( dirname( $this->main_plugin_file_name ) );
@@ -406,19 +478,19 @@ class Sensei_Main {
 		 */
 		$this->clock = apply_filters( 'sensei_clock_init', new Clock( wp_timezone() ) );
 
-		// Initialize the core Sensei functionality
+		// Initialize the core Sensei functionality.
 		$this->init();
 
-		// Installation
+		// Installation.
 		$this->install();
 
 		// Run this on deactivation.
 		register_deactivation_hook( $this->main_plugin_file_name, array( $this, 'deactivation' ) );
 
-		// Image Sizes
+		// Image Sizes.
 		$this->init_image_sizes();
 
-		// load all hooks
+		// Load all hooks.
 		$this->load_hooks();
 
 		/**
@@ -439,7 +511,7 @@ class Sensei_Main {
 	 */
 	protected function init() {
 
-		// Localisation
+		// Localisation.
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 		add_action( 'update_option_WPLANG', array( $this, 'maybe_initiate_rewrite_rules_flush_after_language_change' ), 10, 2 );
@@ -489,8 +561,12 @@ class Sensei_Main {
 	 * Ensure that only one instance of the main Sensei class can be loaded.
 	 *
 	 * @since 1.8.0
+	 *
 	 * @static
+	 *
 	 * @see WC()
+	 *
+	 * @param array $args Arguments to pass to the plugin.
 	 * @return self
 	 */
 	public static function instance( $args ) {
@@ -505,7 +581,6 @@ class Sensei_Main {
 		}
 
 		return self::$_instance;
-
 	}
 
 	/**
@@ -514,7 +589,7 @@ class Sensei_Main {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param $plugin
+	 * @param string $plugin Plugin path.
 	 */
 	public static function activation_flush_rules( $plugin ) {
 
@@ -523,7 +598,6 @@ class Sensei_Main {
 			flush_rewrite_rules( true );
 
 		}
-
 	}
 
 	/**
@@ -661,29 +735,30 @@ class Sensei_Main {
 			Sensei_Course_Pre_Publish_Panel::instance()->init();
 		} else {
 
-			// Load Frontend Class
+			// Load Frontend Class.
 			$this->frontend = new Sensei_Frontend();
 
-			// Load built in themes support integration
+			// Load built in themes support integration.
 			$this->theme_integration_loader = new Sensei_Theme_Integration_Loader();
 
 		}
 		Sensei_Course_Video_Settings::instance()->init( $this );
 
-		// Load notice Class
+		// Load notice Class.
 		$this->notices = new Sensei_Notices();
 
-		// Load Grading Functionality
+		// Load Grading Functionality.
 		$this->grading = new Sensei_Grading( $this->main_plugin_file_name );
 
-		// Load Email Class
+		// Load Email Class.
 		$this->emails = new Sensei_Emails( $this->main_plugin_file_name );
 
-		// Load Learner Profiles Class
+		// Load Learner Profiles Class.
 		$this->learner_profiles = new Sensei_Learner_Profiles();
 
-		// Load WPML compatibility class
-		$this->sensei_wpml = new Sensei_WPML();
+		// Load WPML compatibility class.
+		$this->sensei_wpml = new WPML();
+		$this->sensei_wpml->init();
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
@@ -830,21 +905,21 @@ class Sensei_Main {
 		add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
 		add_action( 'after_setup_theme', array( $this, 'sensei_load_template_functions' ) );
 
-		// Filter comment counts
+		// Filter comment counts.
 		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 999, 2 );
 
 		add_action( 'body_class', array( $this, 'body_class' ) );
 
-		// Check for and activate JetPack LaTeX support
-		add_action( 'plugins_loaded', array( $this, 'jetpack_latex_support' ), 200 ); // Runs after Jetpack has loaded it's modules
+		// Check for and activate JetPack LaTeX support.
+		add_action( 'plugins_loaded', array( $this, 'jetpack_latex_support' ), 200 ); // Runs after Jetpack has loaded it's modules.
 
-		// Check for and activate WP QuickLaTeX support
-		add_action( 'plugins_loaded', array( $this, 'wp_quicklatex_support' ), 200 ); // Runs after Plugins have loaded
+		// Check for and activate WP QuickLaTeX support.
+		add_action( 'plugins_loaded', array( $this, 'wp_quicklatex_support' ), 200 ); // Runs after Plugins have loaded.
 
-		// check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
+		// check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1.
 		add_action( 'admin_init', array( $this, 'flush_rewrite_rules' ), 101 );
 
-		// Add plugin action links filter
+		// Add plugin action links filter.
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
 
 		/**
@@ -859,14 +934,13 @@ class Sensei_Main {
 	 * Run Sensei automatic data updates. This has been unused for many versions and should be considered destructive.
 	 *
 	 * @deprecated 3.0.0
-	 * @since   1.1.0
 	 *
-	 * @return  void
+	 * @since 1.1.0
 	 */
 	public function run_updates() {
 		_deprecated_function( __METHOD__, '3.0.0' );
 
-		// Run updates if administrator
+		// Run updates if administrator.
 		if ( current_user_can( 'manage_options' ) || current_user_can( 'manage_sensei' ) ) {
 
 			$this->updates->update();
@@ -877,9 +951,7 @@ class Sensei_Main {
 	/**
 	 * Register the widgets.
 	 *
-	 * @access public
 	 * @since  1.0.0
-	 * @return void
 	 */
 	public function register_widgets() {
 		// Widget List (key => value is filename => widget class).
@@ -900,7 +972,6 @@ class Sensei_Main {
 		}
 
 		do_action( 'sensei_register_widgets' );
-
 	}
 
 	/**
@@ -913,7 +984,6 @@ class Sensei_Main {
 	public function load_localisation() {
 
 		load_plugin_textdomain( 'sensei-lms', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
-
 	}
 
 	/**
@@ -932,11 +1002,11 @@ class Sensei_Main {
 			$wp_user_locale = get_locale();
 		}
 
-		// The "plugin_locale" filter is also used in load_plugin_textdomain()
-		$locale = apply_filters( 'plugin_locale', $wp_user_locale, $domain );
+		// The "plugin_locale" filter is also used in load_plugin_textdomain().
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$locale = (string) apply_filters( 'plugin_locale', $wp_user_locale, $domain );
 		load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
 		load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
-
 	}
 
 	/**
@@ -973,7 +1043,6 @@ class Sensei_Main {
 
 		register_activation_hook( $this->main_plugin_file_name, array( $this, 'activate_sensei' ) );
 		register_activation_hook( $this->main_plugin_file_name, array( $this, 'initiate_rewrite_rules_flush' ) );
-
 	}
 
 	/**
@@ -1121,7 +1190,6 @@ class Sensei_Main {
 
 		if ( ! current_theme_supports( 'post-thumbnails' ) ) {
 			add_theme_support( 'post-thumbnails' ); }
-
 	}
 
 	/**
@@ -1144,15 +1212,14 @@ class Sensei_Main {
 		}
 
 		return $sensei_plugin_path;
-
 	}
 
 	/**
 	 * Retrieve the ID of a specified page setting.
 	 *
-	 * @access public
 	 * @since  1.0.0
-	 * @param  string $page
+	 *
+	 * @param  string $page Page.
 	 * @return int
 	 */
 	public function get_page_id( $page ) {
@@ -1196,15 +1263,15 @@ class Sensei_Main {
 	}
 
 	/**
-	 * load_class loads in class files
+	 * Load in class files.
 	 *
-	 * @since   1.2.0
-	 * @access  public
-	 * @return  void
+	 * @since 1.2.0
+	 *
+	 * @param string $class_name Class name.
 	 */
 	public function load_class( $class_name = '' ) {
-		if ( '' != $class_name && '' != $this->token ) {
-			require_once dirname( __FILE__ ) . '/class-' . esc_attr( $this->token ) . '-' . esc_attr( $class_name ) . '.php';
+		if ( ! empty( $class_name ) && ! empty( $this->token ) ) {
+			require_once __DIR__ . '/class-' . esc_attr( (string) $this->token ) . '-' . esc_attr( $class_name ) . '.php';
 		}
 	}
 
@@ -1227,7 +1294,7 @@ class Sensei_Main {
 			// If we are getting counts for a specific, non-Sensei post, return early.
 			|| (
 				! empty( $post_id )
-				&& ! in_array( get_post_type( $post_id ), [ 'course', 'lesson', 'quiz' ], true )
+				&& ! in_array( get_post_type( $post_id ), array( 'course', 'lesson', 'quiz' ), true )
 			)
 
 			// If Sensei's comment counts aren't included, we don't need to adjust.
@@ -1266,7 +1333,7 @@ class Sensei_Main {
 		// WooCommerce includes Sensei's comments in its counts.
 		if (
 			empty( $post_id )
-			&& has_filter( 'wp_count_comments', [ 'WC_Comments', 'wp_count_comments' ] )
+			&& has_filter( 'wp_count_comments', array( 'WC_Comments', 'wp_count_comments' ) )
 		) {
 			$includes_sensei_comments = true;
 		}
@@ -1353,16 +1420,16 @@ class Sensei_Main {
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
-		$stats = [
+		$stats = array(
 			'all'            => 0,
 			'total_comments' => 0,
-		];
+		);
 
 		foreach ( (array) $counts as $row ) {
 			$row['num_comments'] = (int) $row['num_comments'];
 
 			// Don't count post-trashed toward totals.
-			if ( ! in_array( $row['comment_approved'], [ 'post-trashed', 'trash' ], true ) ) {
+			if ( ! in_array( $row['comment_approved'], array( 'post-trashed', 'trash' ), true ) ) {
 				$stats['total_comments'] += $row['num_comments'];
 
 				if ( 'spam' !== $row['comment_approved'] ) {
@@ -1381,7 +1448,7 @@ class Sensei_Main {
 			empty( $stats['total_comments'] )
 			&& 2 === count( $stats )
 		) {
-			return [];
+			return array();
 		}
 
 		return $stats;
@@ -1552,7 +1619,7 @@ class Sensei_Main {
 
 		if ( ! class_exists( 'Sensei_Modules' ) && 'Sensei_Modules' !== $class ) {
 			// Load the modules class.
-			require_once dirname( __FILE__ ) . '/class-sensei-modules.php';
+			require_once __DIR__ . '/class-sensei-modules.php';
 			$this->modules = new Sensei_Core_Modules( $this->main_plugin_file_name );
 
 		} else {
@@ -1610,7 +1677,6 @@ class Sensei_Main {
 			update_option( 'sensei_flush_rewrite_rules', '0' );
 
 		}
-
 	}
 
 	/**
@@ -1622,7 +1688,6 @@ class Sensei_Main {
 	public function initiate_rewrite_rules_flush() {
 
 		update_option( 'sensei_flush_rewrite_rules', '1' );
-
 	}
 
 	/**
@@ -1710,12 +1775,13 @@ class Sensei_Main {
 		return $this->id;
 	}
 
-		/**
-		 * Returns true if the current page is the admin general configuration page
-		 *
-		 * @return boolean true if the current page is the admin general configuration page
-		 */
+	/**
+	 * Returns true if the current page is the admin general configuration page
+	 *
+	 * @return boolean true if the current page is the admin general configuration page
+	 */
 	public function is_general_configuration_page() {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,
 		return isset( $_GET['page'] ) && 'sensei-settings' === trim( $_GET['page'] ) && ( ! isset( $_GET['tab'] ) || 'general' === trim( $_GET['tab'] ) );
 	}
 
@@ -1817,7 +1883,6 @@ class Sensei_Main {
 	private function resolve_path( $path ) {
 		return trailingslashit( $this->plugin_path ) . $path;
 	}
-
 }
 
 /**

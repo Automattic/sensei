@@ -83,6 +83,20 @@ describe( 'highlightElementsWithBorders', () => {
 			expect( document.querySelector( selector ) ).toBeNull();
 		} );
 	} );
+
+	it( 'should add highlight class to the element with a modifier', () => {
+		const element = document.createElement( 'div' );
+
+		mockQuerySelector.mockImplementation( () => {
+			return element;
+		} );
+
+		highlightElementsWithBorders( [ 'div' ], 'modifier' );
+
+		expect( element.className ).toBe(
+			`${ HIGHLIGHT_CLASS } ${ HIGHLIGHT_CLASS }--modifier`
+		);
+	} );
 } );
 
 describe( 'removeHighlightClasses', () => {
@@ -136,6 +150,30 @@ describe( 'removeHighlightClasses', () => {
 				false
 			);
 		} );
+	} );
+
+	it( 'should add remove modifier classNames', () => {
+		const mockedElement = document.createElement( 'div' );
+
+		mockedElement.classList.add(
+			'any-other-class',
+			HIGHLIGHT_CLASS,
+			HIGHLIGHT_CLASS + '--modifier'
+		);
+
+		mockQuerySelectorAll.mockReturnValue( [ mockedElement ] );
+
+		removeHighlightClasses();
+
+		expect( mockedElement.classList.contains( HIGHLIGHT_CLASS ) ).toBe(
+			false
+		);
+		expect(
+			mockedElement.classList.contains( HIGHLIGHT_CLASS + '--modifier' )
+		).toBe( false );
+		expect( mockedElement.classList.contains( 'any-other-class' ) ).toBe(
+			true
+		);
 	} );
 } );
 

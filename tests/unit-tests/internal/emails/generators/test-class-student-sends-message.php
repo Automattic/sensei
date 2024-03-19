@@ -66,7 +66,7 @@ class Student_Sends_Message_Test extends \WP_UnitTestCase {
 		$message     = $this->factory->post->create_and_get(
 			[
 				'post_type'   => 'sensei_message',
-				'post_title'  => 'Test message',
+				'post_title'  => '“Message with Special Characters…?”',
 				'post_status' => 'publish',
 				'post_author' => $student_id,
 				'meta_input'  => [
@@ -131,7 +131,7 @@ class Student_Sends_Message_Test extends \WP_UnitTestCase {
 		$message = $this->factory->post->create_and_get(
 			[
 				'post_type'   => 'sensei_message',
-				'post_title'  => 'Test message',
+				'post_title'  => '“Message with Special Characters…?”',
 				'post_status' => 'publish',
 				'post_author' => $student_id,
 				'meta_input'  => [
