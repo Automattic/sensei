@@ -27,13 +27,14 @@ export function performStepAction( index, steps ) {
  * @param {string} modifier  A modifier to add to the highlight class.
  */
 export function highlightElementsWithBorders( selectors, modifier = '' ) {
-	const modifierSuffix = modifier ? '--' + modifier : '';
-	const className = HIGHLIGHT_CLASS + modifierSuffix;
-
 	selectors.forEach( function ( selector ) {
 		const element = document.querySelector( selector );
 		if ( element ) {
-			element.classList.add( className );
+			element.classList.add( HIGHLIGHT_CLASS );
+
+			if ( modifier ) {
+				element.classList.add( HIGHLIGHT_CLASS + '--' + modifier );
+			}
 		}
 	} );
 }
@@ -46,7 +47,12 @@ export function removeHighlightClasses() {
 		'.sensei-tour-highlight'
 	);
 	highlightedElements.forEach( function ( element ) {
-		element.classList.remove( HIGHLIGHT_CLASS );
+		// Remove class and modifiers.
+		[ ...element.classList ].forEach( ( className ) => {
+			if ( className.startsWith( HIGHLIGHT_CLASS ) ) {
+				element.classList.remove( className );
+			}
+		} );
 	} );
 }
 
