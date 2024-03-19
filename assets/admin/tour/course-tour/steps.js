@@ -6,6 +6,9 @@ import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { ExternalLink } from '@wordpress/components';
 import { select, dispatch } from '@wordpress/data';
+import { store as blockEditorStore } from '@wordpress/block-editor';
+import { store as editorStore } from '@wordpress/editor';
+
 /**
  * Internal dependencies
  */
@@ -18,16 +21,16 @@ import {
 	waitForElement,
 } from '../helper';
 
-const getCourseOutlineBlock = () =>
+export const getCourseOutlineBlock = () =>
 	getFirstBlockByName(
 		'sensei-lms/course-outline',
-		select( 'core/block-editor' ).getBlocks()
+		select( blockEditorStore ).getBlocks()
 	);
 
 function insertLessonBlock( lessonTitle ) {
 	const courseOutlineBlock = getCourseOutlineBlock();
 	if ( courseOutlineBlock ) {
-		const { insertBlock } = dispatch( 'core/block-editor' );
+		const { insertBlock } = dispatch( blockEditorStore );
 
 		insertBlock(
 			createBlock( 'sensei-lms/course-outline-lesson', {
@@ -44,7 +47,7 @@ function focusOnCourseOutlineBlock() {
 	if ( ! courseOutlineBlock ) {
 		return;
 	}
-	dispatch( 'core/editor' ).selectBlock( courseOutlineBlock.clientId );
+	dispatch( editorStore ).selectBlock( courseOutlineBlock.clientId );
 }
 
 async function ensureLessonBlocksIsInEditor() {
@@ -486,7 +489,7 @@ function getTourSteps() {
 				);
 
 				if ( ! savedLesson ) {
-					const { savePost } = dispatch( 'core/editor' );
+					const { savePost } = dispatch( editorStore );
 					savePost();
 					await waitForElement( savedlessonSelector, 15 );
 				}

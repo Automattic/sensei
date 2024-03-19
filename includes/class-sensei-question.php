@@ -29,28 +29,21 @@ class Sensei_Question {
 	public $meta_fields;
 
 	/**
-	 * Question types.
-	 *
-	 * @var array
-	 */
-	public $question_types;
-
-	/**
 	 * Constructor.
 	 *
 	 * @since  1.0.0
 	 */
 	public function __construct() {
-		$this->token          = 'question';
-		$this->question_types = $this->question_types();
-		$this->meta_fields    = array( 'question_right_answer', 'question_wrong_answers' );
+		$this->token       = 'question';
+		$this->meta_fields = array( 'question_right_answer', 'question_wrong_answers' );
+
 		if ( is_admin() ) {
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-question_columns', array( $this, 'add_column_headings' ), 20, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 			add_action( 'add_meta_boxes', array( $this, 'question_edit_panel_metabox' ), 10, 2 );
 
-			// Quesitno list table filters
+			// Question list table filters
 			add_action( 'restrict_manage_posts', array( $this, 'filter_options' ) );
 			add_filter( 'request', array( $this, 'filter_actions' ) );
 
@@ -201,11 +194,14 @@ class Sensei_Question {
 				break;
 
 			case 'question-type':
-				$question_type = strip_tags( get_the_term_list( $id, 'question-type', '', ', ', '' ) );
-				$output        = '&mdash;';
-				if ( isset( $this->question_types[ $question_type ] ) ) {
-					$output = $this->question_types[ $question_type ];
+				$question_types = $this->question_types();
+				$question_type  = strip_tags( get_the_term_list( $id, 'question-type', '', ', ', '' ) );
+				$output         = '&mdash;';
+
+				if ( isset( $question_types[ $question_type ] ) ) {
+					$output = $question_types[ $question_type ];
 				}
+
 				echo esc_html( $output );
 				break;
 
@@ -234,7 +230,9 @@ class Sensei_Question {
 				$question_type = Sensei()->question->get_question_type( $post->ID );
 
 				if ( $question_type ) {
-					$type = $this->question_types[ $question_type ];
+					$question_types = $this->question_types();
+					$type           = $question_types[ $question_type ];
+
 					if ( $type ) {
 						$metabox_title = $type;
 					}
@@ -464,9 +462,11 @@ class Sensei_Question {
 			$output = '';
 
 			// Question type
-			$selected     = isset( $_GET['question_type'] ) ? $_GET['question_type'] : '';
-			$type_options = '<option value="">' . esc_html__( 'All types', 'sensei-lms' ) . '</option>';
-			foreach ( $this->question_types as $label => $type ) {
+			$selected       = isset( $_GET['question_type'] ) ? $_GET['question_type'] : '';
+			$type_options   = '<option value="">' . esc_html__( 'All types', 'sensei-lms' ) . '</option>';
+			$question_types = $this->question_types();
+
+			foreach ( $question_types as $label => $type ) {
 				$type_options .= '<option value="' . esc_attr( $label ) . '" ' . selected( $selected, $label, false ) . '>' . esc_html( $type ) . '</option>';
 			}
 
@@ -561,6 +561,7 @@ class Sensei_Question {
 
 		$question_type  = 'multiple-choice';
 		$question_types = wp_get_post_terms( $question_id, 'question-type' );
+
 		foreach ( $question_types as $type ) {
 			$question_type = $type->slug;
 		}
