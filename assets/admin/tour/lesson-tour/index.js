@@ -9,7 +9,7 @@ import { registerPlugin } from '@wordpress/plugins';
  */
 import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 import SenseiTourKit from '../components/sensei-tour-kit';
-import getTourSteps from './steps';
+import getTourSteps, { beforeEach } from './steps';
 import { useState } from '@wordpress/element';
 
 const tourName = 'sensei-lesson-tour';
@@ -33,6 +33,7 @@ export default function LessonTour() {
 			trackId="lesson_quiz_onboarding_step_complete"
 			tourName={ tourName }
 			steps={ tourSteps }
+			beforeEach={ beforeEach }
 		/>
 	);
 }

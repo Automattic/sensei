@@ -123,193 +123,208 @@ const QuizSettings = ( {
 				</Button>
 			</div>
 			<InspectorControls>
-				<PanelBody
-					title={ __( 'Quiz settings', 'sensei-lms' ) }
-					initialOpen={ true }
-				>
-					<PanelRow>
-						<ToggleControl
-							checked={ passRequired }
-							onChange={ createChangeHandler( 'passRequired' ) }
-							label={ __( 'Pass Required', 'sensei-lms' ) }
-						/>
-					</PanelRow>
-					{ passRequired && (
-						<>
-							<PanelRow>
-								<RangeControl
-									label={ __(
-										'Passing Grade (%)',
-										'sensei-lms'
-									) }
-									value={ quizPassmark }
-									onChange={ createChangeHandler(
-										'quizPassmark'
-									) }
-									min={ 0 }
-									max={ 100 }
-									initialPosition={ 100 }
-								/>
-							</PanelRow>
-							<PanelRow>
-								<div>
-									<BaseControl
-										id="sensei-lms-quiz-block-failed-feedback-options"
-										className="sensei-lms-subsection-control"
-										help={ __(
-											'What students see when reviewing their quiz after grading.',
+				<div className="sensei-lms-quiz-block__settings-wrapper">
+					<PanelBody
+						title={ __( 'Quiz settings', 'sensei-lms' ) }
+						initialOpen={ true }
+					>
+						<PanelRow>
+							<ToggleControl
+								checked={ passRequired }
+								onChange={ createChangeHandler(
+									'passRequired'
+								) }
+								label={ __( 'Pass Required', 'sensei-lms' ) }
+							/>
+						</PanelRow>
+						{ passRequired && (
+							<>
+								<PanelRow>
+									<RangeControl
+										label={ __(
+											'Passing Grade (%)',
 											'sensei-lms'
 										) }
-									>
-										<h3>
-											{ __(
-												'If student does not pass quiz',
+										value={ quizPassmark }
+										onChange={ createChangeHandler(
+											'quizPassmark'
+										) }
+										min={ 0 }
+										max={ 100 }
+										initialPosition={ 100 }
+									/>
+								</PanelRow>
+								<PanelRow>
+									<div>
+										<BaseControl
+											id="sensei-lms-quiz-block-failed-feedback-options"
+											className="sensei-lms-subsection-control"
+											help={ __(
+												'What students see when reviewing their quiz after grading.',
 												'sensei-lms'
 											) }
-										</h3>
-									</BaseControl>
-									<ToggleControl
-										checked={ failedIndicateIncorrect }
-										onChange={ createChangeHandler(
-											'failedIndicateIncorrect'
-										) }
-										label={ __(
-											'Indicate which questions are incorrect.',
-											'sensei-lms'
-										) }
-									/>
-									<ToggleControl
-										checked={ failedShowCorrectAnswers }
-										onChange={ createChangeHandler(
-											'failedShowCorrectAnswers'
-										) }
-										label={ __(
-											'Show correct answers.',
-											'sensei-lms'
-										) }
-									/>
-									<ToggleControl
-										checked={ failedShowAnswerFeedback }
-										onChange={ createChangeHandler(
-											'failedShowAnswerFeedback'
-										) }
-										label={ __(
-											'Show “Answer Feedback” text.',
-											'sensei-lms'
-										) }
-									/>
-								</div>
-							</PanelRow>
-							<hr />
-						</>
-					) }
-					<PanelRow>
-						<ToggleControl
-							checked={ autoGrade }
-							onChange={ createChangeHandler( 'autoGrade' ) }
-							label={ __( 'Auto Grade', 'sensei-lms' ) }
-							help={ __(
-								'Automatically grade Multiple Choice, True/False and Gap Fill questions that have a non-zero point value.',
-								'sensei-lms'
-							) }
-						/>
-					</PanelRow>
-					<PanelRow>
-						<ToggleControl
-							checked={ allowRetakes }
-							onChange={ createChangeHandler( 'allowRetakes' ) }
-							label={ __( 'Allow Retakes', 'sensei-lms' ) }
-						/>
-					</PanelRow>
-					<PanelRow>
-						<ToggleControl
-							checked={ randomQuestionOrder }
-							onChange={ createChangeHandler(
-								'randomQuestionOrder'
-							) }
-							label={ __(
-								'Random Question Order',
-								'sensei-lms'
-							) }
-						/>
-					</PanelRow>
-					{ randomQuestionOrder && (
-						<Fragment>
-							<PanelRow>
-								<NumberControl
-									id="sensei-quiz-settings-show-questions"
-									label={ __(
-										'Number of Questions',
-										'sensei-lms'
-									) }
-									help={ __(
-										'Display a random selection of questions.',
-										'sensei-lms'
-									) }
-									allowReset
-									resetLabel={ __( 'All', 'sensei-lms' ) }
-									min={ 0 }
-									max={ questionCount }
-									step={ 1 }
-									value={ showQuestions }
-									placeholder={ __( 'All', 'sensei-lms' ) }
-									onChange={ createChangeHandler(
-										'showQuestions'
-									) }
-								/>
-							</PanelRow>
-						</Fragment>
-					) }
-					<Slot name="SenseiQuizSettings" />
-					{ ! hideQuizTimer && (
+										>
+											<h3>
+												{ __(
+													'If student does not pass quiz',
+													'sensei-lms'
+												) }
+											</h3>
+										</BaseControl>
+										<ToggleControl
+											checked={ failedIndicateIncorrect }
+											onChange={ createChangeHandler(
+												'failedIndicateIncorrect'
+											) }
+											label={ __(
+												'Indicate which questions are incorrect.',
+												'sensei-lms'
+											) }
+										/>
+										<ToggleControl
+											checked={ failedShowCorrectAnswers }
+											onChange={ createChangeHandler(
+												'failedShowCorrectAnswers'
+											) }
+											label={ __(
+												'Show correct answers.',
+												'sensei-lms'
+											) }
+										/>
+										<ToggleControl
+											checked={ failedShowAnswerFeedback }
+											onChange={ createChangeHandler(
+												'failedShowAnswerFeedback'
+											) }
+											label={ __(
+												'Show “Answer Feedback” text.',
+												'sensei-lms'
+											) }
+										/>
+									</div>
+								</PanelRow>
+								<hr />
+							</>
+						) }
 						<PanelRow>
-							<QuizTimerPromo />
+							<ToggleControl
+								checked={ autoGrade }
+								onChange={ createChangeHandler( 'autoGrade' ) }
+								label={ __( 'Auto Grade', 'sensei-lms' ) }
+								help={ __(
+									'Automatically grade Multiple Choice, True/False and Gap Fill questions that have a non-zero point value.',
+									'sensei-lms'
+								) }
+							/>
 						</PanelRow>
-					) }
-				</PanelBody>
-				<PaginationSidebarSettings
-					settings={ pagination }
-					updatePagination={ updatePagination }
-				/>
-				<PanelColorSettings
-					title={ __( 'Color settings', 'sensei-lms' ) }
-					initialOpen={ false }
-					colorSettings={ [
-						{
-							value: buttonTextColor || undefined,
-							onChange: createChangeHandler( 'buttonTextColor' ),
-							label: __( 'Button text color', 'sensei-lms' ),
-						},
-						{
-							value: buttonBackgroundColor || undefined,
-							onChange: createChangeHandler(
-								'buttonBackgroundColor'
-							),
-							label: __(
-								'Button background color',
-								'sensei-lms'
-							),
-						},
-						{
-							value: pagination?.progressBarColor || undefined,
-							onChange: ( value ) =>
-								updatePagination( { progressBarColor: value } ),
-							label: __( 'Progress bar color', 'sensei-lms' ),
-						},
-						{
-							value:
-								pagination?.progressBarBackground || undefined,
-							onChange: ( value ) =>
-								updatePagination( {
-									progressBarBackground: value,
-								} ),
-							label: __(
-								'Progress bar background color',
-								'sensei-lms'
-							),
-						},
-					] }
-				/>
+						<PanelRow>
+							<ToggleControl
+								checked={ allowRetakes }
+								onChange={ createChangeHandler(
+									'allowRetakes'
+								) }
+								label={ __( 'Allow Retakes', 'sensei-lms' ) }
+							/>
+						</PanelRow>
+						<PanelRow>
+							<ToggleControl
+								checked={ randomQuestionOrder }
+								onChange={ createChangeHandler(
+									'randomQuestionOrder'
+								) }
+								label={ __(
+									'Random Question Order',
+									'sensei-lms'
+								) }
+							/>
+						</PanelRow>
+						{ randomQuestionOrder && (
+							<Fragment>
+								<PanelRow>
+									<NumberControl
+										id="sensei-quiz-settings-show-questions"
+										label={ __(
+											'Number of Questions',
+											'sensei-lms'
+										) }
+										help={ __(
+											'Display a random selection of questions.',
+											'sensei-lms'
+										) }
+										allowReset
+										resetLabel={ __( 'All', 'sensei-lms' ) }
+										min={ 0 }
+										max={ questionCount }
+										step={ 1 }
+										value={ showQuestions }
+										placeholder={ __(
+											'All',
+											'sensei-lms'
+										) }
+										onChange={ createChangeHandler(
+											'showQuestions'
+										) }
+									/>
+								</PanelRow>
+							</Fragment>
+						) }
+						<Slot name="SenseiQuizSettings" />
+						{ ! hideQuizTimer && (
+							<PanelRow>
+								<QuizTimerPromo />
+							</PanelRow>
+						) }
+					</PanelBody>
+					<PaginationSidebarSettings
+						settings={ pagination }
+						updatePagination={ updatePagination }
+					/>
+					<PanelColorSettings
+						title={ __( 'Color settings', 'sensei-lms' ) }
+						initialOpen={ false }
+						colorSettings={ [
+							{
+								value: buttonTextColor || undefined,
+								onChange: createChangeHandler(
+									'buttonTextColor'
+								),
+								label: __( 'Button text color', 'sensei-lms' ),
+							},
+							{
+								value: buttonBackgroundColor || undefined,
+								onChange: createChangeHandler(
+									'buttonBackgroundColor'
+								),
+								label: __(
+									'Button background color',
+									'sensei-lms'
+								),
+							},
+							{
+								value:
+									pagination?.progressBarColor || undefined,
+								onChange: ( value ) =>
+									updatePagination( {
+										progressBarColor: value,
+									} ),
+								label: __( 'Progress bar color', 'sensei-lms' ),
+							},
+							{
+								value:
+									pagination?.progressBarBackground ||
+									undefined,
+								onChange: ( value ) =>
+									updatePagination( {
+										progressBarBackground: value,
+									} ),
+								label: __(
+									'Progress bar background color',
+									'sensei-lms'
+								),
+							},
+						] }
+					/>
+				</div>
 			</InspectorControls>
 			<BlockControls>
 				<PaginationToolbarSettings

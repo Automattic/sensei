@@ -23,13 +23,18 @@ export function performStepAction( index, steps ) {
 /**
  * Highlights the elements with a border.
  *
- * @param {Array} selectors An array of selectors to highlight.
+ * @param {Array}  selectors An array of selectors to highlight.
+ * @param {string} modifier  A modifier to add to the highlight class.
  */
-export function highlightElementsWithBorders( selectors ) {
+export function highlightElementsWithBorders( selectors, modifier = '' ) {
 	selectors.forEach( function ( selector ) {
 		const element = document.querySelector( selector );
 		if ( element ) {
 			element.classList.add( HIGHLIGHT_CLASS );
+
+			if ( modifier ) {
+				element.classList.add( HIGHLIGHT_CLASS + '--' + modifier );
+			}
 		}
 	} );
 }
@@ -42,9 +47,17 @@ export function removeHighlightClasses() {
 		'.sensei-tour-highlight'
 	);
 	highlightedElements.forEach( function ( element ) {
-		element.classList.remove( HIGHLIGHT_CLASS );
+		// Remove class and modifiers.
+		[ ...element.classList ].forEach( ( className ) => {
+			if ( className.startsWith( HIGHLIGHT_CLASS ) ) {
+				element.classList.remove( className );
+			}
+		} );
 	} );
 }
+
+let stepActionTimeout = null;
+let rejectLastPromise = null;
 
 /**
  * Performs step actions one after another.
@@ -54,15 +67,26 @@ export function removeHighlightClasses() {
 export async function performStepActionsAsync( stepActions ) {
 	removeHighlightClasses();
 
-	for ( const stepAction of stepActions ) {
-		if ( stepAction ) {
-			await new Promise( ( resolve ) =>
-				setTimeout( () => {
-					stepAction.action();
-					resolve();
-				}, stepAction.delay ?? 0 )
-			);
+	// Clear the timeout and reject the last promise if it exists, so it stops the step if actions from another step started.
+	clearTimeout( stepActionTimeout );
+	if ( rejectLastPromise ) {
+		rejectLastPromise();
+	}
+
+	try {
+		for ( const stepAction of stepActions ) {
+			if ( stepAction ) {
+				await new Promise( ( resolve, reject ) => {
+					rejectLastPromise = reject;
+					stepActionTimeout = setTimeout( () => {
+						stepAction.action();
+						resolve();
+					}, stepAction.delay ?? 0 );
+				} );
+			}
 		}
+	} catch ( e ) {
+		// Do nothing.
 	}
 }
 
