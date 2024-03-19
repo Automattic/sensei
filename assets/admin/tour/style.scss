@@ -3,6 +3,10 @@
 @import '@automattic/tour-kit/dist/esm/styles.scss';
 @import '@automattic/tour-kit/dist/esm/variants/wpcom/styles.scss';
 
+.wpcom-tour-kit .tour-kit-frame__container {
+	box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.25);
+}
+
 .wpcom-tour-kit-step-card {
 	.wpcom-tour-kit-step-card-overlay-controls {
 		padding-bottom: 0;
