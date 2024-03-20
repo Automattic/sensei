@@ -626,19 +626,19 @@ class Sensei_Course_Structure {
 		 *
 		 * @since 4.20.1
 		 *
-		 * @deprecated $$next-version$$ Use sensei_quiz_create instead.
+		 * @deprecated 4.22.0 Use sensei_quiz_create instead.
 		 *
 		 * @hook sensei_course_structure_quiz_created
 		 *
 		 * @param {int} $quiz_id   Quiz post ID.
 		 * @param {int} $lesson_id Course post ID.
 		 */
-		do_action_deprecated( 'sensei_course_structure_quiz_created', array( $quiz_id, $lesson_id ), '$$next-version$$', 'sensei_quiz_create' );
+		do_action_deprecated( 'sensei_course_structure_quiz_created', array( $quiz_id, $lesson_id ), '4.22.0', 'sensei_quiz_create' );
 
 		/**
 		 * Fires after a quiz is created while saving the course structure.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.22.0
 		 *
 		 * @hook sensei_quiz_create
 		 *
