@@ -71,7 +71,7 @@ class Sensei_Tour {
 			in_array( $hook, [ 'post-new.php', 'post.php' ], true )
 		) {
 			$tour_loaders[ "sensei-$post_type-tour" ] = [
-				'minimum_install_version' => '$$next-version$$', // TODO: Add different version for lesson tour later if needed.
+				'minimum_install_version' => '4.22.0',
 				'path'                    => "admin/tour/$post_type-tour/index.js",
 			];
 		}
