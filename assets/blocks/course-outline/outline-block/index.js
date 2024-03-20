@@ -14,6 +14,15 @@ import save from './outline-save';
 export default {
 	...metadata,
 	metadata,
+	title: __( 'Course Outline', 'sensei-lms' ),
+	description: __( 'Manage your Sensei LMS course outline.', 'sensei-lms' ),
+	keywords: [
+		__( 'course', 'sensei-lms' ),
+		__( 'lessons', 'sensei-lms' ),
+		__( 'modules', 'sensei-lms' ),
+		__( 'outline', 'sensei-lms' ),
+		__( 'structure', 'sensei-lms' ),
+	],
 	styles: [
 		{
 			name: 'default',

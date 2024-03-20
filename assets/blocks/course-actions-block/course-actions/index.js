@@ -14,6 +14,19 @@ import icon from '../../../icons/buttons.svg';
 export default {
 	...metadata,
 	metadata,
+	title: __( 'Course Actions', 'sensei-lms' ),
+	description: __(
+		'Enable a student to perform specific actions for a course.',
+		'sensei-lms'
+	),
+	keywords: [
+		__( 'course', 'sensei-lms' ),
+		__( 'actions', 'sensei-lms' ),
+		__( 'buttons', 'sensei-lms' ),
+		__( 'start course', 'sensei-lms' ),
+		__( 'continue', 'sensei-lms' ),
+		__( 'visit results', 'sensei-lms' ),
+	],
 	example: {
 		innerBlocks: [
 			{

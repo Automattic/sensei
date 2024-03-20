@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { createBlock } from '@wordpress/blocks';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -14,6 +15,21 @@ import icon from '../../icons/conditional-content.svg';
 export default {
 	...metadata,
 	metadata,
+	title: __( 'Conditional Content', 'sensei-lms' ),
+	description: __(
+		'Content inside this block will be shown to the selected subgroup of users.',
+		'sensei-lms'
+	),
+	keywords: [
+		__( 'enrolled', 'sensei-lms' ),
+		__( 'content', 'sensei-lms' ),
+		__( 'locked', 'sensei-lms' ),
+		__( 'private', 'sensei-lms' ),
+		__( 'completed', 'sensei-lms' ),
+		__( 'not enrolled', 'sensei-lms' ),
+		__( 'restrict', 'sensei-lms' ),
+		__( 'access', 'sensei-lms' ),
+	],
 	icon,
 	edit,
 	save,

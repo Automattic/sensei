@@ -48,7 +48,8 @@ jQuery( document ).ready( function ( $ ) {
 	function updateReferer( url ) {
 		const urlObject = new URL( url );
 
-		$senseiSettings.find( 'input[name="_wp_http_referer"]' )
+		$senseiSettings
+			.find( 'input[name="_wp_http_referer"]' )
 			.val( urlObject.pathname + urlObject.search );
 	}
 
@@ -56,8 +57,7 @@ jQuery( document ).ready( function ( $ ) {
 	 * Hide all sections.
 	 */
 	function hideAllSections() {
-		$senseiSettings.find( 'section' )
-			.hide();
+		$senseiSettings.find( 'section' ).hide();
 	}
 
 	/**
@@ -69,11 +69,9 @@ jQuery( document ).ready( function ( $ ) {
 		hideAllSections();
 		hideSettingsFormElements( sectionId );
 
-		$senseiSettings.find( `section#${ sectionId }` )
-			.show();
+		$senseiSettings.find( `section#${ sectionId }` ).show();
 
-		$senseiSettings.find( 'a.tab.current' )
-			.removeClass( 'current' )
+		$senseiSettings.find( 'a.tab.current' ).removeClass( 'current' );
 
 		$senseiSettings
 			.find( `a.tab[href*="tab=${ sectionId }"]` )
@@ -101,9 +99,11 @@ jQuery( document ).ready( function ( $ ) {
 	function getSectionIdFromUrl( url ) {
 		const urlParams = new URLSearchParams( url );
 
-		return urlParams.get( 'tab' )
-			|| url.split( '#' )[1]
-			|| 'default-settings';
+		return (
+			urlParams.get( 'tab' ) ||
+			url.split( '#' )[ 1 ] ||
+			'default-settings'
+		);
 	}
 
 	/**

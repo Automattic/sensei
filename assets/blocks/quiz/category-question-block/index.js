@@ -17,6 +17,8 @@ import icon from '../../../icons/question.svg';
 export default {
 	...metadata,
 	metadata,
+	title: __( 'Category Question', 'sensei-lms' ),
+	description: __( 'Pull questions from a question category.', 'sensei-lms' ),
 	icon,
 	usesContext: [ 'sensei-lms/quizId' ],
 	example: {
