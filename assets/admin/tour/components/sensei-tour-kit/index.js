@@ -66,7 +66,10 @@ function SenseiTourKit( {
 
 	const config = {
 		steps,
-		closeHandler: () => setTourShowStatus( false, true, tourName ),
+		closeHandler: () => {
+			removeHighlightClasses();
+			setTourShowStatus( false, true, tourName );
+		},
 		options: {
 			effects: {
 				spotlight: null,
