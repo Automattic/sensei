@@ -1,5 +1,30 @@
 *** Changelog ***
 
+## 4.22.0 - 2024-03-20
+### Added
+- Added Course onboarding tour [#7535](https://github.com/Automattic/sensei/pull/7535)
+- Added Lesson Quiz onboarding tour [#7538](https://github.com/Automattic/sensei/pull/7538)
+- Add toggle to pre-publish panel to publish associated lessons when the course is published [#7536](https://github.com/Automattic/sensei/pull/7536)
+- Display warning when there are no layouts available. [#7530](https://github.com/Automattic/sensei/pull/7530)
+
+### Changed
+- Tweak "Configure learning mode" task description [#7540](https://github.com/Automattic/sensei/pull/7540)
+- Updated styles for module title and lesson title in Course Outline block [#7068](https://github.com/Automattic/sensei/pull/7068)
+
+### Removed
+- Remove "Customize your lesson template" from task list [#7539](https://github.com/Automattic/sensei/pull/7539)
+
+### Fixed
+- Address the issue of patterns flickering in the editor wizard on WPCOM sites [#7511](https://github.com/Automattic/sensei/pull/7511)
+- Contact Teacher and Conditional Content block not appearing in Site Editor when Gutenberg is enabled [#7541](https://github.com/Automattic/sensei/pull/7541)
+- Email subject with special characters not being displayed correctly [#7546](https://github.com/Automattic/sensei/pull/7546)
+- Email Template showing up as default template in editor when GB is installed [#7517](https://github.com/Automattic/sensei/pull/7517)
+- Ensure that default passing grade will be "0" for any situation [#7524](https://github.com/Automattic/sensei/pull/7524)
+- Fix lesson bulk edit. [#7515](https://github.com/Automattic/sensei/pull/7515)
+- Fix Sensei Pro question type not displaying in filter and table on Questions page [#7544](https://github.com/Automattic/sensei/pull/7544)
+- Ignore Passing Grade for answer feedback when Pass Required is turned off [#7525](https://github.com/Automattic/sensei/pull/7525)
+- WPML: Create quiz and question translations, update relations [#7480](https://github.com/Automattic/sensei/pull/7480)
+
 ## 4.21.0 - 2024-02-26
 ### Added
 - Add existing lessons in Course Outline [#7368](https://github.com/Automattic/sensei/pull/7368)
