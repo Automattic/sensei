@@ -135,6 +135,15 @@ class Sensei_Utils {
 		}
 
 		/**
+		 * This action runs before getting the comments for the given request.
+		 *
+		 * @hook sensei_utils_check_for_activity_before_get_comments
+		 *
+		 * @param {array} $args Search arguments.
+		 */
+		do_action( 'sensei_utils_check_for_activity_before_get_comments', $args );
+
+		/**
 		 * This filter runs inside Sensei_Utils::sensei_check_for_activity
 		 *
 		 * It runs while getting the comments for the given request.
@@ -146,6 +155,16 @@ class Sensei_Utils {
 		 * @return {int|array} Filtered activity.
 		 */
 		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ), $args );
+
+		/**
+		 * This action runs after getting the comments for the given request.
+		 *
+		 * @hook sensei_utils_check_for_activity_after_get_comments
+		 *
+		 * @param {array}     $args     Search arguments.
+		 * @param {int|array} $comments Activity.
+		 */
+		do_action( 'sensei_utils_check_for_activity_after_get_comments', $args, $comments );
 
 		// Return comments.
 		if ( $return_comments ) {
@@ -1832,6 +1851,7 @@ class Sensei_Utils {
 				),
 				true
 			);
+
 			return $user_lesson_status;
 		}
 

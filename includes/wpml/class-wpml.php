@@ -29,5 +29,8 @@ class WPML {
 		( new Language_Details() )->init();
 		( new Lesson_Progress() )->init();
 		( new Lesson_Translation() )->init();
+		( new Quiz_Progress() )->init();
+		( new Quiz_Submission() )->init();
+		( new Utils() )->init();
 	}
 }
