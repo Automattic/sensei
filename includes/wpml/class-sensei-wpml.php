@@ -12,16 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_WPML
  *
- * @deprecated $$next-version$$
+ * @deprecated 4.22.0
  */
 class Sensei_WPML {
 	/**
 	 * Sensei_WPML constructor.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.22.0
 	 */
 	public function __construct() {
-		_deprecated_function( __METHOD__, '$$next-version$$', '\Sensei\WPML\WPML::init' );
+		_deprecated_function( __METHOD__, '4.22.0', '\Sensei\WPML\WPML::init' );
 
 		add_action( 'sensei_before_mail', array( $this, 'sensei_before_mail' ) );
 		add_action( 'sensei_after_sending_email', array( $this, 'sensei_after_sending_email' ) );
@@ -30,12 +30,12 @@ class Sensei_WPML {
 	/**
 	 * Switch language for email.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.22.0
 	 *
 	 * @param string $email_address Recipient's email address.
 	 */
 	public function sensei_before_mail( $email_address ) {
-		_deprecated_function( __METHOD__, '$$next-version$$', '\Sensei\WPML\Email::sensei_before_mail' );
+		_deprecated_function( __METHOD__, '4.22.0', '\Sensei\WPML\Email::sensei_before_mail' );
 
 		/**
 		* Switch language for email
@@ -55,10 +55,10 @@ class Sensei_WPML {
 	/**
 	 * Restore language after sending email.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.22.0
 	 */
 	public function sensei_after_sending_email() {
-		_deprecated_function( __METHOD__, '$$next-version$$', '\Sensei\WPML\Email::sensei_after_sending_email' );
+		_deprecated_function( __METHOD__, '4.22.0', '\Sensei\WPML\Email::sensei_after_sending_email' );
 
 		/**
 		* Restore language after sending email
