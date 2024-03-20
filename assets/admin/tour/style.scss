@@ -5,6 +5,10 @@
 
 .wpcom-tour-kit .tour-kit-frame__container {
 	box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.25);
+
+	&:hover {
+		z-index: 9999999999;
+	}
 }
 
 .wpcom-tour-kit-step-card {
