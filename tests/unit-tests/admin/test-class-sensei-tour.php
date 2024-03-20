@@ -41,7 +41,7 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 		$this->instance = Sensei_Tour::instance();
 
 		$this->install_version     = \Sensei()->install_version;
-		\Sensei()->install_version = '4.21.2';
+		\Sensei()->install_version = '4.22.0';
 	}
 
 	public function tearDown(): void {
@@ -160,6 +160,8 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 		global $post;
 		$this->login_as_admin();
 		$post = $this->factory->course->create_and_get();
+
+		\Sensei()->install_version = '4.21.2';
 
 		/* Act */
 		add_filter(
