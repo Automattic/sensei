@@ -140,6 +140,31 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.22.0 - 2024-03-20
+#### Added
+- Added Course onboarding tour [#7535](https://github.com/Automattic/sensei/pull/7535)
+- Added Lesson Quiz onboarding tour [#7538](https://github.com/Automattic/sensei/pull/7538)
+- Add toggle to pre-publish panel to publish associated lessons when the course is published [#7536](https://github.com/Automattic/sensei/pull/7536)
+- Display warning when there are no layouts available. [#7530](https://github.com/Automattic/sensei/pull/7530)
+
+#### Changed
+- Tweak "Configure learning mode" task description [#7540](https://github.com/Automattic/sensei/pull/7540)
+- Updated styles for module title and lesson title in Course Outline block [#7068](https://github.com/Automattic/sensei/pull/7068)
+
+#### Removed
+- Remove "Customize your lesson template" from task list [#7539](https://github.com/Automattic/sensei/pull/7539)
+
+#### Fixed
+- Address the issue of patterns flickering in the editor wizard on WPCOM sites [#7511](https://github.com/Automattic/sensei/pull/7511)
+- Contact Teacher and Conditional Content block not appearing in Site Editor when Gutenberg is enabled [#7541](https://github.com/Automattic/sensei/pull/7541)
+- Email subject with special characters not being displayed correctly [#7546](https://github.com/Automattic/sensei/pull/7546)
+- Email Template showing up as default template in editor when GB is installed [#7517](https://github.com/Automattic/sensei/pull/7517)
+- Ensure that default passing grade will be "0" for any situation [#7524](https://github.com/Automattic/sensei/pull/7524)
+- Fix lesson bulk edit. [#7515](https://github.com/Automattic/sensei/pull/7515)
+- Fix Sensei Pro question type not displaying in filter and table on Questions page [#7544](https://github.com/Automattic/sensei/pull/7544)
+- Ignore Passing Grade for answer feedback when Pass Required is turned off [#7525](https://github.com/Automattic/sensei/pull/7525)
+- WPML: Create quiz and question translations, update relations [#7480](https://github.com/Automattic/sensei/pull/7480)
+
 ### 4.21.0 - 2024-02-26
 #### Added
 - Add existing lessons in Course Outline [#7368](https://github.com/Automattic/sensei/pull/7368)
@@ -162,26 +187,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Fixed Sensei Email template not available in site editor [#7463](https://github.com/Automattic/sensei/pull/7463)
 - Flush rewrite rules when the website language was changed or the translation was updated. [#7435](https://github.com/Automattic/sensei/pull/7435)
 - Memory issue on the student reports screen [#7468](https://github.com/Automattic/sensei/pull/7468)
-
-### 4.20.1 - 2024-01-17
-#### Added
-- Log event when task on Sensei Home is completed [#7430](https://github.com/Automattic/sensei/pull/7430)
-
-#### Changed
-- Create all necessary Sensei pages on plugin activation [#7426](https://github.com/Automattic/sensei/pull/7426)
-- Do not display course theme step on Setup Wizard if theme is already installed [#7401](https://github.com/Automattic/sensei/pull/7401)
-- Hide Gutenberg tour modal in Sensei new Course editor [#7399](https://github.com/Automattic/sensei/pull/7399)
-- Include instructions to the High-Performance Progress Storage settings screen [#7420](https://github.com/Automattic/sensei/pull/7420)
-- Take user to Learning Mode Lesson Template in Setup task instead of only site editor [#7393](https://github.com/Automattic/sensei/pull/7393)
-- Update course notices to have a CTA for course editors [#7403](https://github.com/Automattic/sensei/pull/7403)
-
-#### Fixed
-- Don't send Course Completion email twice (when the course is already completed) [#7405](https://github.com/Automattic/sensei/pull/7405)
-- Message "Cannot register for an unpublished course" was not being displayed [#7403](https://github.com/Automattic/sensei/pull/7403)
-- Redirect properly when course editor enrols in a course containing only draft lessons [#7403](https://github.com/Automattic/sensei/pull/7403)
-- Set email template only for sensei_email post type. [#7402](https://github.com/Automattic/sensei/pull/7402)
-- Settings form not redirecting to the correct tab when submitted [#7424](https://github.com/Automattic/sensei/pull/7424)
-- WPML compatibility fix: Add translations for lessons and quizzes that were created while saving the course structure. [#7383](https://github.com/Automattic/sensei/pull/7383)
-
-#### Development
-- Introduce Clock interface and corresponding public property for Sensei object. [#7395](https://github.com/Automattic/sensei/pull/7395)
