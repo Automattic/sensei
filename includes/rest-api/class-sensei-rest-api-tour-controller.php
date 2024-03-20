@@ -3,7 +3,7 @@
  * Sensei Tour API.
  *
  * @package sensei
- * @since   $$next-version$$
+ * @since   4.22.0
  */
 
 namespace Sensei\Admin\Tour;
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Sensei Tour REST API endpoints.
  *
- * @since   $$next-version$$
+ * @since   4.22.0
  */
 class Sensei_REST_API_Tour_Controller extends \WP_REST_Controller {
 

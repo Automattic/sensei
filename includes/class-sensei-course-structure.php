@@ -593,7 +593,7 @@ class Sensei_Course_Structure {
 		 *
 		 * @since 4.20.1
 		 *
-		 * @deprecated $$next-version$$ Use sensei_quiz_create instead.
+		 * @deprecated 4.22.0 Use sensei_quiz_create instead.
 		 *
 		 * @hook sensei_course_structure_quiz_created
 		 *
@@ -605,7 +605,7 @@ class Sensei_Course_Structure {
 		/**
 		 * Fires after a quiz is created while saving the course structure.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.22.0
 		 *
 		 * @hook sensei_quiz_create
 		 *

@@ -3,7 +3,7 @@
  * Sensei REST API: Sensei_REST_API_Tour_Controller tests
  *
  * @package sensei
- * @since   $$next-version$$
+ * @since   4.22.0
  */
 
 use Sensei\Admin\Tour\Sensei_Tour;
