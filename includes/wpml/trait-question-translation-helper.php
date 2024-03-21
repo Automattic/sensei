@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Trait Question_Translation_Helper
  *
- * @since $$next-version$$
+ * @since 4.22.0
  *
  * @internal
  */

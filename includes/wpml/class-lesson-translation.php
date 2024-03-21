@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Compatibility code with WPML.
  *
- * @since $$next-version$$
+ * @since 4.22.0
  *
  * @internal
  */
@@ -37,7 +37,7 @@ class Lesson_Translation {
 	/**
 	 * Update lesson properties on lesson translation created.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.22.0
 	 *
 	 * @internal
 	 *

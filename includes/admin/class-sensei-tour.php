@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class that handles editor wizards.
  *
- * @since $$next-version$$
+ * @since 4.22.0
  */
 class Sensei_Tour {
 
@@ -34,7 +34,7 @@ class Sensei_Tour {
 	/**
 	 * Fetches an instance of the class.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.22.0
 	 *
 	 * @return self
 	 */
@@ -49,7 +49,7 @@ class Sensei_Tour {
 	/**
 	 * Initializes the class.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.22.0
 	 */
 	public function init() {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
@@ -72,7 +72,7 @@ class Sensei_Tour {
 		) {
 			$handle                  = "sensei-$post_type-tour";
 			$tour_loaders[ $handle ] = [
-				'minimum_install_version' => '$$next-version$$', // TODO: Add different version for lesson tour later if needed.
+				'minimum_install_version' => '4.22.0',
 				'callback'                => $this->get_course_lesson_tour_enqueue_callback( $post_type, $handle ),
 			];
 		}
@@ -82,7 +82,7 @@ class Sensei_Tour {
 		 *
 		 * @hook sensei_tour_loaders Load tours for Sensei.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.22.0
 		 *
 		 * @param {array} $tour_loaders The tour loaders.
 		 *
@@ -109,7 +109,7 @@ class Sensei_Tour {
 			 *
 			 * @hook sensei_tour_is_complete Check if a tour is complete.
 			 *
-			 * @since $$next-version$$
+			 * @since 4.22.0
 			 *
 			 * @param {bool}  $is_tour_complete The tour completion status.
 			 * @param {string} $tour_id The tour ID.
@@ -134,7 +134,7 @@ class Sensei_Tour {
 	/**
 	 * Set tour status for user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.22.0
 	 *
 	 * @param string $tour_id The tour ID.
 	 * @param bool   $status  The tour status.
@@ -161,7 +161,7 @@ class Sensei_Tour {
 	/**
 	 * Get tour status for user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.22.0
 	 *
 	 * @param string $tour_id The tour ID.
 	 * @param int    $user_id The user ID.

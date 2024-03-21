@@ -3,6 +3,7 @@
  */
 import SenseiTourKit from './index';
 import getTourSteps from '../../course-tour/steps';
+import { removeHighlightClasses } from '../../helper';
 /**
  * External dependencies
  */
@@ -25,6 +26,8 @@ jest.mock( '@wordpress/data', () => ( {
 	register: jest.fn(),
 	useSelect: jest.fn().mockImplementation( () => ( {} ) ),
 } ) );
+
+jest.mock( '../../helper' );
 
 const mockFunction = jest.fn();
 
@@ -105,6 +108,9 @@ describe( 'SenseiTourKit', () => {
 
 	test( 'should close the tour when closeHandler is called', () => {
 		const setTourShowStatus = jest.fn();
+		const removeHighlight = jest.fn();
+
+		removeHighlightClasses.mockImplementation( removeHighlight );
 
 		useDispatch.mockReturnValue( { setTourShowStatus } );
 
@@ -119,6 +125,7 @@ describe( 'SenseiTourKit', () => {
 			true,
 			'test-tour'
 		);
+		expect( removeHighlight ).toHaveBeenCalled();
 	} );
 
 	test( 'should call the event log function when step is viewed', () => {

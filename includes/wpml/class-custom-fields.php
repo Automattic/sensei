@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Compatibility code with WPML.
  *
- * @since $$next-version$$
+ * @since 4.22.0
  *
  * @internal
  */
@@ -34,7 +34,7 @@ class Custom_Fields {
 	/**
 	 * Update course prerequisite before copied.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.22.0
 	 *
 	 * @internal
 	 *
@@ -77,7 +77,7 @@ class Custom_Fields {
 	/**
 	 * Update lesson course before copied.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.22.0
 	 *
 	 * @internal
 	 *
@@ -120,7 +120,7 @@ class Custom_Fields {
 	/**
 	 * Update quiz id for a question before copied.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.22.0
 	 *
 	 * @internal
 	 *

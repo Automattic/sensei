@@ -465,11 +465,14 @@ export default function getTourSteps() {
 					// Focus on answer feedback field and highlight answer feedback areas.
 					{
 						action: () => {
-							document
-								.querySelector(
-									'.sensei-lms-question__answer-feedback__content .block-editor-rich-text__editable'
-								)
-								.focus();
+							const correctAnswerField = document.querySelector(
+								'.sensei-lms-question__answer-feedback__content .block-editor-rich-text__editable'
+							);
+
+							correctAnswerField.focus();
+							correctAnswerField.scrollIntoView( {
+								block: 'center',
+							} );
 
 							highlightElementsWithBorders( [
 								'.sensei-lms-question__answer-feedback--correct',
