@@ -28,21 +28,30 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 
 		$lesson_progress = new Lesson_Progress();
 
-		add_filter( 'wpml_element_language_details', function() {
-			return array(
-				'source_language_code' => 'en',
-				'language_code' => 'fr',
-			);
-		}, 10, 0 );
+		add_filter(
+			'wpml_element_language_details',
+			function () {
+				return array(
+					'source_language_code' => 'en',
+					'language_code'        => 'fr',
+				);
+			},
+			10,
+			0
+		);
 
-		add_filter( 'wpml_object_id', function( $lesson_id, $type, $original, $original_language_code ) {
-			if ( $lesson_id === 1 && $type === 'lesson' && $original === true && $original_language_code === 'en') {
-				return 2;
-			} else {
-				return 3;
-			}
-
-		}, 10, 4 );
+		add_filter(
+			'wpml_object_id',
+			function ( $lesson_id, $type, $original, $original_language_code ) {
+				if ( 1 === $lesson_id && 'lesson' === $type && true === $original && 'en' === $original_language_code ) {
+					return 2;
+				} else {
+					return 3;
+				}
+			},
+			10,
+			4
+		);
 
 		/* Act. */
 		$actual = $lesson_progress->translate_lesson_id( $lesson_id );

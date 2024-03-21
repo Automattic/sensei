@@ -33,21 +33,30 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 
 		$course_progress = new Course_Progress();
 
-		add_filter( 'wpml_element_language_details', function() {
-			return array(
-				'source_language_code' => 'en',
-				'language_code' => 'fr',
-			);
-		}, 10, 0 );
+		add_filter(
+			'wpml_element_language_details',
+			function () {
+				return array(
+					'source_language_code' => 'en',
+					'language_code'        => 'fr',
+				);
+			},
+			10,
+			0
+		);
 
-		add_filter( 'wpml_object_id', function( $course_id, $type, $original, $original_language_code ) {
-			if ( $course_id === 1 && $type === 'course' && $original === true && $original_language_code === 'en') {
-				return 2;
-			} else {
-				return 3;
-			}
-
-		}, 10, 4 );
+		add_filter(
+			'wpml_object_id',
+			function ( $course_id, $type, $original, $original_language_code ) {
+				if ( 1 === $course_id && 'course' === $type && true === $original && 'en' === $original_language_code ) {
+					return 2;
+				} else {
+					return 3;
+				}
+			},
+			10,
+			4
+		);
 
 		/* Act. */
 		$actual = $course_progress->translate_course_id( $course_id );

@@ -27,21 +27,30 @@ class Quiz_Progress_Test extends \WP_UnitTestCase {
 
 		$quiz_progress = new Quiz_Progress();
 
-		add_filter( 'wpml_element_language_details', function() {
-			return array(
-				'source_language_code' => 'en',
-				'language_code' => 'fr',
-			);
-		}, 10, 0 );
+		add_filter(
+			'wpml_element_language_details',
+			function () {
+				return array(
+					'source_language_code' => 'en',
+					'language_code'        => 'fr',
+				);
+			},
+			10,
+			0
+		);
 
-		add_filter( 'wpml_object_id', function( $quiz_id, $type, $original, $original_language_code ) {
-			if ( $quiz_id === 1 && $type === 'quiz' && $original === true && $original_language_code === 'en') {
-				return 2;
-			} else {
-				return 3;
-			}
-
-		}, 10, 4 );
+		add_filter(
+			'wpml_object_id',
+			function ( $quiz_id, $type, $original, $original_language_code ) {
+				if ( 1 === $quiz_id && 'quiz' === $type && true === $original && 'en' === $original_language_code ) {
+					return 2;
+				} else {
+					return 3;
+				}
+			},
+			10,
+			4
+		);
 
 		/* Act. */
 		$actual = $quiz_progress->translate_quiz_id( $quiz_id );

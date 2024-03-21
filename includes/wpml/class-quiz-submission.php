@@ -37,12 +37,12 @@ class Quiz_Submission {
 	 *
 	 * @internal
 	 *
-	 * @param int $quiz Quiz ID.
+	 * @param int $quiz_id Quiz ID.
 	 * @return int
 	 */
 	public function translate_quiz_id( $quiz_id ): int {
 		$quiz_id = (int) $quiz_id;
-		$details   = (array) apply_filters(
+		$details = (array) apply_filters(
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			'wpml_element_language_details',
 			null,

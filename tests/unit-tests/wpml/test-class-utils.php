@@ -40,5 +40,4 @@ class Utils_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertFalse( has_filter( 'wpml_is_comment_query_filtered', '__return_false' ) );
 	}
-
 }
