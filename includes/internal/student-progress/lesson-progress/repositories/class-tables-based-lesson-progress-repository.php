@@ -171,7 +171,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 */
 	public function has( int $lesson_id, int $user_id ): bool {
 		/**
-		 * Filter lesson id for lesson progress creation.
+		 * Filter lesson id for lesson progress check.
 		 *
 		 * @hook sensei_lesson_progress_has_lesson_id
 		 *
@@ -266,7 +266,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 */
 	public function delete_for_lesson( int $lesson_id ): void {
 		/**
-		 * Filter lesson id for lesson progress creation.
+		 * Filter lesson id for lesson progress deletion.
 		 *
 		 * @hook sensei_lesson_progress_delete_for_lesson_lesson_id
 		 *
@@ -327,7 +327,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		}
 
 		/**
-		 * Filter course id for lesson progress creation.
+		 * Filter course id for lesson progress counting.
 		 *
 		 * @hook sensei_lesson_progress_count_course_id
 		 *
@@ -397,7 +397,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 					/**
 					 * Filter lesson id for lesson progress creation.
 					 *
-					 * @hook sensei_lesson_progress_has_lesson_id
+					 * @hook sensei_lesson_progress_find_lesson_id
 					 *
 					 * @since $$next-version$$
 					 *

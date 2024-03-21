@@ -98,9 +98,9 @@ class Sensei_Course_Manual_Enrolment_Provider extends Sensei_Course_Enrolment_St
 	public function enrol_learner( $user_id, $course_id ) {
 
 		/**
-		 * Filter the course ID for manual enrolment.
+		 * Filter the course ID for manual enrolment when the student is being added to the course.
 		 *
-		 * @hook sensei_course_manual_enrolment_course_id
+		 * @hook sensei_course_manual_enrolment_enroll_learner_course_id
 		 *
 		 * @param {int} $course_id Course post ID.
 		 * @return {int} Filtered course ID.
@@ -143,9 +143,9 @@ class Sensei_Course_Manual_Enrolment_Provider extends Sensei_Course_Enrolment_St
 	public function withdraw_learner( $user_id, $course_id ) {
 
 		/**
-		 * Filter the course ID for manual enrolment.
+		 * Filter the course ID for manual enrolment when the student is being removed from the course.
 		 *
-		 * @hook sensei_course_manual_enrolment_course_id
+		 * @hook sensei_course_manual_enrolment_withdraw_learner_course_id
 		 *
 		 * @param {int} $course_id Course post ID.
 		 * @return {int} Filtered course ID.
