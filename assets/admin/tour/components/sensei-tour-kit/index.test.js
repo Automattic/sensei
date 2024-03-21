@@ -3,6 +3,7 @@
  */
 import SenseiTourKit from './index';
 import getTourSteps from '../../course-tour/steps';
+import { removeHighlightClasses } from '../../helper';
 /**
  * External dependencies
  */
@@ -26,6 +27,8 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn().mockImplementation( () => ( {} ) ),
 } ) );
 
+jest.mock( '../../helper' );
+
 const mockFunction = jest.fn();
 
 describe( 'SenseiTourKit', () => {
@@ -42,9 +45,15 @@ describe( 'SenseiTourKit', () => {
 						Close
 					</button>
 					<button
-						data-testid="nextButton"
+						data-testid="stepViewOnceButton"
 						onClick={ () =>
 							props.config.options.callbacks.onStepViewOnce( 1 )
+						}
+					></button>
+					<button
+						data-testid="nextButton"
+						onClick={ () =>
+							props.config.options.callbacks.onNextStep( 1 )
 						}
 					></button>
 					<h1>WpcomTourKit output</h1>
@@ -99,6 +108,9 @@ describe( 'SenseiTourKit', () => {
 
 	test( 'should close the tour when closeHandler is called', () => {
 		const setTourShowStatus = jest.fn();
+		const removeHighlight = jest.fn();
+
+		removeHighlightClasses.mockImplementation( removeHighlight );
 
 		useDispatch.mockReturnValue( { setTourShowStatus } );
 
@@ -113,6 +125,7 @@ describe( 'SenseiTourKit', () => {
 			true,
 			'test-tour'
 		);
+		expect( removeHighlight ).toHaveBeenCalled();
 	} );
 
 	test( 'should call the event log function when step is viewed', () => {
@@ -139,7 +152,7 @@ describe( 'SenseiTourKit', () => {
 			/>
 		);
 
-		fireEvent.click( getByTestId( 'nextButton' ) );
+		fireEvent.click( getByTestId( 'stepViewOnceButton' ) );
 
 		expect(
 			window.sensei_log_event
@@ -169,8 +182,39 @@ describe( 'SenseiTourKit', () => {
 			/>
 		);
 
-		fireEvent.click( getByTestId( 'nextButton' ) );
+		fireEvent.click( getByTestId( 'stepViewOnceButton' ) );
 
 		expect( window.sensei_log_event ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should call the beforeEach for every step', () => {
+		useSelect.mockImplementation( () => ( {
+			showTour: true,
+		} ) );
+		const beforeEachMock = jest.fn();
+
+		const nextStep = {
+			slug: 'step-2',
+		};
+
+		const { getByTestId } = render(
+			<SenseiTourKit
+				tourName="test-tour"
+				steps={ [
+					{
+						slug: 'step-1',
+					},
+					nextStep,
+					{
+						slug: 'step-2',
+					},
+				] }
+				beforeEach={ beforeEachMock }
+			/>
+		);
+
+		fireEvent.click( getByTestId( 'nextButton' ) );
+
+		expect( beforeEachMock ).toHaveBeenCalledWith( nextStep );
 	} );
 } );

@@ -47,7 +47,7 @@ class New_Course_Assigned_Test extends \WP_UnitTestCase {
 		);
 		$course     = $this->factory->course->create_and_get(
 			[
-				'post_title'  => 'Test Course',
+				'post_title'  => '“Course with Special Characters…?”',
 				'post_author' => $teacher_id,
 			]
 		);
@@ -85,7 +85,7 @@ class New_Course_Assigned_Test extends \WP_UnitTestCase {
 		self::assertEquals( 'new_course_assigned', $email_data['name'] );
 		self::assertArrayHasKey( 'test@a.com', $email_data['data'] );
 		self::assertEquals( $user_name, $email_data['data']['test@a.com']['teacher:displayname'] );
-		self::assertEquals( 'Test Course', $email_data['data']['test@a.com']['course:name'] );
+		self::assertEquals( '“Course with Special Characters…?”', $email_data['data']['test@a.com']['course:name'] );
 		self::assertArrayHasKey( 'editcourse:url', $email_data['data']['test@a.com'] );
 		self::assertEquals( $edit_link, $email_data['data']['test@a.com']['editcourse:url'] );
 	}
@@ -101,7 +101,7 @@ class New_Course_Assigned_Test extends \WP_UnitTestCase {
 		);
 		$course     = $this->factory->course->create_and_get(
 			[
-				'post_title'  => 'Test Course',
+				'post_title'  => '“Course with Special Characters…?”',
 				'post_author' => $teacher_id,
 			]
 		);

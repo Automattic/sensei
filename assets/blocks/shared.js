@@ -27,7 +27,7 @@ let postType = null;
 const unsubscribe = subscribe( () => {
 	postType = select( 'core/editor' )?.getCurrentPostType();
 
-	if ( ! postType ) {
+	if ( ! postType || 'wp_template' === postType ) {
 		return;
 	}
 

@@ -3,6 +3,14 @@
 @import '@automattic/tour-kit/dist/esm/styles.scss';
 @import '@automattic/tour-kit/dist/esm/variants/wpcom/styles.scss';
 
+.wpcom-tour-kit .tour-kit-frame__container {
+	box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.25);
+
+	&:hover {
+		z-index: 9999999999;
+	}
+}
+
 .wpcom-tour-kit-step-card {
 	.wpcom-tour-kit-step-card-overlay-controls {
 		padding-bottom: 0;
@@ -13,11 +21,14 @@
 }
 
 $shadow-width: 10px;
-$border-color: var(--wp--preset--color--primary, #46c8ad );
+$border-color: var(--wp--preset--color--primary, currentcolor);
 
 .sensei-tour-highlight {
-	outline: 2px solid $border-color !important;
 	box-shadow: 0 0 $shadow-width $border-color !important;
+
+	&.sensei-tour-highlight--inset {
+		box-shadow: inset 0 0 $shadow-width $border-color !important;
+	}
 }
 
 // Just keeping it here in case we want to add a pulsing effect.

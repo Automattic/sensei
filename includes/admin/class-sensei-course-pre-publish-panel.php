@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class that handles the pre-publish panel for courses.
  *
- * @since $$next-version$$
+ * @since 4.22.0
  */
 class Sensei_Course_Pre_Publish_Panel {
 	/**

@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Compatibility code with WPML.
  *
- * @since $$next-version$$
+ * @since 4.22.0
  *
  * @internal
  */
@@ -114,7 +114,7 @@ class Language_Details {
 	/**
 	 * Set language details for the question when it is created.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.22.0
 	 *
 	 * @internal
 	 *

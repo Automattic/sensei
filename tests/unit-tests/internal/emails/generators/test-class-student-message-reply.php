@@ -107,7 +107,7 @@ class Student_Message_Reply_Test extends \WP_UnitTestCase {
 				'comment_post_ID'  => $course_id,
 				'user_id'          => $this->teacher_id,
 				'comment_type'     => 'comment',
-				'comment_content'  => 'Test reply',
+				'comment_content'  => '“Message Reply with Special Characters…?”',
 				'comment_approved' => 1,
 			]
 		);
@@ -171,7 +171,7 @@ class Student_Message_Reply_Test extends \WP_UnitTestCase {
 				'comment_post_ID'  => $lesson_id,
 				'user_id'          => $this->teacher_id,
 				'comment_type'     => 'comment',
-				'comment_content'  => 'Test reply',
+				'comment_content'  => '“Message Reply with Special Characters…?”',
 				'comment_approved' => 1,
 			]
 		);
@@ -235,7 +235,7 @@ class Student_Message_Reply_Test extends \WP_UnitTestCase {
 				'comment_post_ID'  => $quiz_id,
 				'user_id'          => $this->teacher_id,
 				'comment_type'     => 'comment',
-				'comment_content'  => 'Test reply',
+				'comment_content'  => '“Message Reply with Special Characters…?”',
 				'comment_approved' => 1,
 			]
 		);
@@ -297,7 +297,7 @@ class Student_Message_Reply_Test extends \WP_UnitTestCase {
 				'comment_post_ID'  => $course_id,
 				'user_id'          => $this->student_id,
 				'comment_type'     => 'comment',
-				'comment_content'  => 'Test reply',
+				'comment_content'  => '“Message Reply with Special Characters…?”',
 				'comment_approved' => 1,
 			]
 		);

@@ -24,9 +24,16 @@ import { WpcomTourKit } from '@automattic/tour-kit';
  * @param {string}     props.tourName         The unique name of the tour.
  * @param {string}     props.trackId          ID of tracking event (optional). Tracking will be enabled only when provided.
  * @param {TourStep[]} props.steps            An array of steps to include in the tour.
+ * @param {Function}   [props.beforeEach]     A function to run before each step.
  * @param {Object}     [props.extraConfig={}] Additional configuration options for the tour kit.
  */
-function SenseiTourKit( { tourName, trackId, steps, extraConfig = {} } ) {
+function SenseiTourKit( {
+	tourName,
+	trackId,
+	steps,
+	beforeEach = () => {},
+	extraConfig = {},
+} ) {
 	const { showTour } = useSelect( ( select ) => {
 		const { shouldShowTour } = select( SENSEI_TOUR_STORE );
 		return {
@@ -52,9 +59,17 @@ function SenseiTourKit( { tourName, trackId, steps, extraConfig = {} } ) {
 		[ trackId, steps ]
 	);
 
+	const runAction = ( index ) => {
+		beforeEach( steps[ index ] );
+		performStepAction( index, steps );
+	};
+
 	const config = {
 		steps,
-		closeHandler: () => setTourShowStatus( false, true, tourName ),
+		closeHandler: () => {
+			removeHighlightClasses();
+			setTourShowStatus( false, true, tourName );
+		},
 		options: {
 			effects: {
 				spotlight: null,
@@ -71,27 +86,27 @@ function SenseiTourKit( { tourName, trackId, steps, extraConfig = {} } ) {
 			},
 			callbacks: {
 				onNextStep: ( index ) => {
-					performStepAction( index + 1, steps );
+					runAction( index + 1 );
 				},
 				onPreviousStep: ( index ) => {
-					performStepAction( index - 1, steps );
+					runAction( index - 1 );
 				},
 				onGoToStep: ( index ) => {
 					if ( index === steps.length - 1 ) {
-						performStepAction( 0, steps );
+						runAction( 0 );
 					} else {
 						removeHighlightClasses();
 					}
 				},
 				onMaximize: ( index ) => {
-					performStepAction( index, steps );
+					runAction( index );
 				},
 				onMinimize: () => {
 					removeHighlightClasses();
 				},
 				onStepViewOnce: ( index ) => {
 					if ( index === 0 ) {
-						performStepAction( index, steps );
+						runAction( index );
 					}
 					trackTourStepView( index );
 				},
