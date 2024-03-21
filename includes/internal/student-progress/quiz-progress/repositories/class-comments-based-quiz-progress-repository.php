@@ -366,7 +366,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 
 		$quiz_progresses = [];
 		foreach ( $comments as $comment ) {
-			$quiz_progresses[] = $this->create_progress_from_comment( $comment, $quiz_id );
+			$quiz_progresses[] = $this->create_progress_from_comment( $comment );
 		}
 
 		return $quiz_progresses;

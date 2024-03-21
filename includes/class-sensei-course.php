@@ -2375,7 +2375,7 @@ class Sensei_Course {
 	 * Generate the course meter component
 	 *
 	 * @since 1.8.0
-	 * @param int $progress_percentage 0 - 100
+	 * @param int|float $progress_percentage 0 - 100
 	 * @return string $progress_bar_html
 	 */
 	public function get_progress_meter( $progress_percentage ) {
