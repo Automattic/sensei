@@ -1069,7 +1069,7 @@ class Sensei_Frontend {
 		 */
 
 		?>
-		<div id="my-courses" class="alignwide">
+		<div id="my-courses">
 			<?php Sensei()->notices->maybe_print_notices(); ?>
 			<div class="col2-set" id="customer_login">
 
