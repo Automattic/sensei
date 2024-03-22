@@ -74,7 +74,7 @@ require SENSEI_LMS_PLUGIN_PATH . 'vendor/autoload.php';
 /**
  * Load packages and libraries.
  */
-if ( ! defined( 'SENSEI_DO_NOT_LOAD_ACTION_SCHEDULER' ) || ! SENSEI_DO_NOT_LOAD_ACTION_SCHEDULER ) {
+if ( ! defined( 'A8C__IS_A8C_PRIVATE_BLOG' ) || ! A8C__IS_A8C_PRIVATE_BLOG ) {
 	require SENSEI_LMS_PLUGIN_PATH . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
 }
 
