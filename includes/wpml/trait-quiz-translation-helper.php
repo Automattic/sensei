@@ -35,7 +35,7 @@ trait Quiz_Translation_Helper {
 		$questions = Sensei()->quiz->get_questions( $master_quiz_id );
 		foreach ( $questions as $question ) {
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$is_question_translated = apply_filters( 'wpml_element_has_translations', '', $question->ID, 'question' );
+			$is_question_translated = apply_filters( 'wpml_element_has_translations', '', $question->ID, $question->post_type );
 			if ( ! $is_question_translated ) {
 				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 				do_action( 'wpml_admin_make_post_duplicates', $question->ID );
@@ -60,14 +60,26 @@ trait Quiz_Translation_Helper {
 			update_post_meta( $translated_quiz_id, '_quiz_lesson', $quiz_lesson_id );
 			update_post_meta( $quiz_lesson_id, '_lesson_quiz', $translated_quiz_id );
 
+			update_post_meta( $quiz_lesson_id, '_quiz_has_questions', count( $questions ) > 0 );
+
 			// Add relationship between quiz and questions.
 			if ( ! empty( $questions ) ) {
 				foreach ( $questions as $question ) {
-
 					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-					$translated_question_id = apply_filters( 'wpml_object_id', $question->ID, 'question', false, $translation_lang );
+					$translated_question_id = apply_filters( 'wpml_object_id', $question->ID, $question->post_type, false, $translation_lang );
 					if ( empty( $translated_question_id ) ) {
 						continue;
+					}
+
+					if ( 'multiple_question' === $question->post_type ) {
+						$category = (int) get_post_meta( $question->ID, 'category', true );
+						$number   = (int) get_post_meta( $question->ID, 'number', true );
+
+						// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+						$translated_category_id = apply_filters( 'wpml_object_id', $category, 'question-category', false, $translation_lang );
+
+						update_post_meta( $translated_question_id, 'category', $translated_category_id );
+						update_post_meta( $translated_question_id, 'number', $number );
 					}
 
 					update_post_meta( $translated_question_id, '_quiz_id', $translated_quiz_id );
