@@ -186,4 +186,46 @@ class Language_Details_Test extends \WP_UnitTestCase {
 
 		$this->assertTrue( $filter_applied );
 	}
+
+	public function testSetLanguageDetailsWhenMultipleQuestionCreated_WhenCalled_AppliesWpmlCurrentLanguageFilter() {
+		/* Arrange. */
+		$language_details = new Language_Details();
+
+		$filter_applied  = false;
+		$filter_function = function () use ( &$filter_applied ) {
+			$filter_applied = true;
+			return 'a';
+		};
+
+		add_filter( 'wpml_current_language', $filter_function, 10, 0 );
+
+		/* Act. */
+		$language_details->set_language_details_when_multiple_question_created( 1 );
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_current_language', $filter_function, 10 );
+
+		$this->assertTrue( $filter_applied );
+	}
+
+	public function testSetLanguageDetailsWhenMultipleQuestionCreated_WhenCalled_AppliesWpmlSetElementLanguageDetails() {
+		/* Arrange. */
+		$language_details = new Language_Details();
+
+		$filter_applied  = false;
+		$filter_function = function ( $data ) use ( &$filter_applied ) {
+			$filter_applied = true;
+			return $data;
+		};
+
+		add_filter( 'wpml_set_element_language_details', $filter_function, 10, 1 );
+
+		/* Act. */
+		$language_details->set_language_details_when_multiple_question_created( 1 );
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_set_element_language_details', $filter_function, 10 );
+
+		$this->assertTrue( $filter_applied );
+	}
 }

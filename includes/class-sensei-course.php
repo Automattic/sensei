@@ -1001,10 +1001,8 @@ class Sensei_Course {
 			if ( ! current_user_can( 'edit_page', $post_id ) ) {
 				return $post_id;
 			}
-		} else {
-			if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		} elseif ( ! current_user_can( 'edit_post', $post_id ) ) {
 				return $post_id;
-			}
 		}
 
 		// Save the post meta data fields
@@ -1013,7 +1011,6 @@ class Sensei_Course {
 				$this->save_post_meta( $meta_key, $post_id );
 			}
 		}
-
 	}
 
 	/**
@@ -1079,7 +1076,6 @@ class Sensei_Course {
 			// Update meta field with the new value
 			return update_post_meta( $post_id, $meta_key, $new_meta_value );
 		}
-
 	}
 
 	/**
@@ -1102,8 +1098,8 @@ class Sensei_Course {
 
 		$html  = '';
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="'
-				 . esc_attr( 'woo_' . $this->token . '_noonce' )
-				 . '" value="' . esc_attr( wp_create_nonce( plugin_basename( __FILE__ ) ) ) . '" />';
+				. esc_attr( 'woo_' . $this->token . '_noonce' )
+				. '" value="' . esc_attr( wp_create_nonce( plugin_basename( __FILE__ ) ) ) . '" />';
 
 		$course_id            = ( 0 < $post->ID ) ? '&course_id=' . $post->ID : '';
 		$add_lesson_admin_url = admin_url( 'post-new.php?post_type=lesson' . $course_id );
@@ -1170,7 +1166,6 @@ class Sensei_Course {
 	 * @access public
 	 * @return void
 	 */
-
 	public function course_manage_meta_box_content() {
 		global $post;
 
@@ -1337,7 +1332,6 @@ class Sensei_Course {
 		}
 
 		return $results_array;
-
 	}
 
 
@@ -1362,10 +1356,8 @@ class Sensei_Course {
 
 		if ( 0 == $amount && ( isset( Sensei()->settings->settings['course_archive_amount'] ) && 'usercourses' != $type && ( 0 < absint( Sensei()->settings->settings['course_archive_amount'] ) ) ) ) {
 			$amount = absint( Sensei()->settings->settings['course_archive_amount'] );
-		} else {
-			if ( 0 == $amount ) {
+		} elseif ( 0 == $amount ) {
 				$amount = $wp_query->get( 'posts_per_page' );
-			}
 		}
 
 		$stored_order = get_option( 'sensei_course_order', '' );
@@ -1584,7 +1576,6 @@ class Sensei_Course {
 			echo wp_kses_post( $html );
 
 		}
-
 	}
 
 
@@ -1717,7 +1708,6 @@ class Sensei_Course {
 		}
 
 		return $lessons;
-
 	}
 
 	/**
@@ -1763,7 +1753,6 @@ class Sensei_Course {
 	public function course_lessons_completed( $course_id = 0, $post_status = 'publish' ) {
 
 		return $this->course_lessons( $course_id, $post_status );
-
 	}
 
 
@@ -1790,7 +1779,6 @@ class Sensei_Course {
 		$lessons_array = get_posts( $lesson_args );
 		$count         = count( $lessons_array );
 		return $count;
-
 	}
 
 	/**
@@ -1816,7 +1804,6 @@ class Sensei_Course {
 		$count = count( $lessons_array );
 
 		return $count;
-
 	}
 
 	/**
@@ -1850,7 +1837,6 @@ class Sensei_Course {
 		$count = count( $lessons_array );
 
 		return $count;
-
 	}
 
 	/**
@@ -2225,7 +2211,7 @@ class Sensei_Course {
 			?>
 			<p class="my-messages-link-container">
 				<a class="my-messages-link" href="<?php echo esc_url( get_post_type_archive_link( 'sensei_message' ) ); ?>"
-				   title="<?php esc_attr_e( 'View & reply to private messages sent to your course & lesson teachers.', 'sensei-lms' ); ?>">
+					title="<?php esc_attr_e( 'View & reply to private messages sent to your course & lesson teachers.', 'sensei-lms' ); ?>">
 					<?php esc_html_e( 'My Messages', 'sensei-lms' ); ?>
 				</a>
 			</p>
@@ -2337,7 +2323,6 @@ class Sensei_Course {
 		echo ob_get_clean();
 
 		do_action( 'sensei_after_learner_course_content', $user );
-
 	}
 
 	/**
@@ -2368,7 +2353,6 @@ class Sensei_Course {
 		 * @return {WP_Post[]} Filtered courses.
 		 */
 		return apply_filters( 'sensei_get_all_courses', $wp_query_obj->posts );
-
 	}
 
 	/**
@@ -2391,7 +2375,6 @@ class Sensei_Course {
 			esc_attr( $progress_percentage ) . '%">' . esc_html( round( $progress_percentage ) ) . '%</span></div>';
 
 		return $progress_bar_html;
-
 	}
 
 	/**
@@ -2489,7 +2472,6 @@ class Sensei_Course {
 			echo '<div class="progress statement course-completion-rate">' . esc_html( $progress_statement ) . '</div>';
 
 		}
-
 	}
 
 	/**
@@ -2519,7 +2501,6 @@ class Sensei_Course {
 		$percentage_completed = $this->get_completion_percentage( $course_id, $user_id );
 
 		echo wp_kses_post( $this->get_progress_meter( $percentage_completed ) );
-
 	}
 
 	/**
@@ -2649,7 +2630,6 @@ class Sensei_Course {
 
 		echo '<input id="disable_sensei_course_notification" ' . checked( $checked, true, false ) . ' type="checkbox" name="disable_sensei_course_notification" >';
 		echo '<label for="disable_sensei_course_notification">' . esc_html__( 'Disable notifications on this course?', 'sensei-lms' ) . '</label>';
-
 	}
 
 	/**
@@ -2674,7 +2654,6 @@ class Sensei_Course {
 		}
 
 		update_post_meta( $course_id, 'disable_notification', $new_val );
-
 	}
 
 	/**
@@ -2800,7 +2779,6 @@ class Sensei_Course {
 		}
 
 		return $classes;
-
 	}
 
 	/**
@@ -2962,7 +2940,6 @@ class Sensei_Course {
 		}
 
 		return $query;
-
 	}
 
 	/**
@@ -2989,7 +2966,7 @@ class Sensei_Course {
 		}
 
 		// increment the counter
-		$sensei_course_loop['counter']++;
+		++$sensei_course_loop['counter'];
 
 		$extra_classes = [];
 
@@ -3020,7 +2997,6 @@ class Sensei_Course {
 		 * @return {array} Additional CSS classes.
 		 */
 		return apply_filters( 'sensei_course_loop_content_class', $extra_classes, get_post() );
-
 	}
 
 	/**
@@ -3042,7 +3018,6 @@ class Sensei_Course {
 		 * @return {int} Filtered number of columns.
 		 */
 		return apply_filters( 'sensei_course_loop_number_of_columns', 1 );
-
 	}
 
 	/**
@@ -3169,7 +3144,6 @@ class Sensei_Course {
 		</ul>
 
 		<?php
-
 	}
 
 	/**
@@ -3367,8 +3341,21 @@ class Sensei_Course {
 	 */
 	public static function get_course_completed_page_url( $course_id ) {
 		$page_id = isset( Sensei()->settings->settings['course_completed_page'] ) ? intval( Sensei()->settings->settings['course_completed_page'] ) : 0;
-		$url     = $page_id ? get_permalink( $page_id ) : '';
-		$url     = $url && 0 < $course_id ? add_query_arg( 'course_id', $course_id, $url ) : '';
+
+		/**
+		 * Filter the course completed page ID.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @hook sensei_course_completed_page_id
+		 *
+		 * @param {int} $page_id Course completed page ID.
+		 * @return {int} Course completed page ID.
+		 */
+		$page_id = apply_filters( 'sensei_course_completed_page_id', $page_id );
+
+		$url = $page_id ? get_permalink( $page_id ) : '';
+		$url = $url && 0 < $course_id ? add_query_arg( 'course_id', $course_id, $url ) : '';
 
 		/**
 		 * Filter the course completed page URL.
@@ -3464,7 +3451,6 @@ class Sensei_Course {
 		}
 
 		echo wp_kses_post( apply_filters( 'course_archive_title', $html ) );
-
 	}
 
 
@@ -3504,7 +3490,6 @@ class Sensei_Course {
 		} else {
 			return '<p class="course-excerpt">' . get_post( get_the_ID() )->post_excerpt . '</p>';
 		}
-
 	}
 
 	/**
@@ -3566,7 +3551,6 @@ class Sensei_Course {
 		 * @param string $lessons_title_html
 		 */
 		echo wp_kses_post( apply_filters( 'the_course_lessons_title', ob_get_clean() ) ); // output and filter the captured output and stop capturing.
-
 	}
 
 	/**
@@ -3649,7 +3633,6 @@ class Sensei_Course {
 
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Used for lesson loop on single course page. Reset in hook to `sensei_single_course_lessons_after`.
 		$wp_query = new WP_Query( $course_lesson_query_args );
-
 	}
 
 	/**
@@ -3954,7 +3937,6 @@ class Sensei_Course {
 		</header>
 
 		<?php
-
 	}
 
 	/**
@@ -3985,7 +3967,6 @@ class Sensei_Course {
 		$html .= '</h2>';
 
 		echo wp_kses_post( apply_filters( 'course_category_title', $html, $term->term_id ) );
-
 	}
 
 	/**
@@ -4010,7 +3991,6 @@ class Sensei_Course {
 		}
 
 		return $query;
-
 	}
 
 	/**
@@ -4070,7 +4050,6 @@ class Sensei_Course {
 		 * @return {bool} Whether the prerequisite is complete.
 		 */
 		return apply_filters( 'sensei_course_is_prerequisite_complete', $prerequisite_complete, $course_id );
-
 	}
 
 	/**
@@ -4196,7 +4175,7 @@ class Sensei_Course {
 	 *
 	 * @return string The HTML.
 	 */
-	public static function get_course_prerequisite_message( int $course_id ) : string {
+	public static function get_course_prerequisite_message( int $course_id ): string {
 		$course_prerequisite_id   = absint( get_post_meta( $course_id, '_course_prerequisite', true ) );
 		$course_title             = get_the_title( $course_prerequisite_id );
 		$prerequisite_course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) )
@@ -4434,7 +4413,6 @@ class Sensei_Course {
 
 		// Add message links to courses.
 		remove_action( 'sensei_single_course_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 35 );
-
 	}
 
 	/**
@@ -4498,7 +4476,6 @@ class Sensei_Course {
 		}
 
 		return $url;
-
 	}
 
 	/**

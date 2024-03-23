@@ -30,6 +30,7 @@ class Language_Details {
 		add_action( 'sensei_quiz_create', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
 		add_action( 'sensei_quiz_create', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
 		add_action( 'sensei_rest_api_question_saved', array( $this, 'set_language_details_when_question_created' ), 10, 1 );
+		add_action( 'sensei_rest_api_category_question_saved', array( $this, 'set_language_details_when_multiple_question_created' ), 10, 1 );
 	}
 
 	/**
@@ -134,6 +135,39 @@ class Language_Details {
 		$args = array(
 			'element_id'    => $question_id,
 			'element_type'  => 'post_question',
+			'trid'          => false,
+			'language_code' => $language_code,
+		);
+
+		// Set language details for the question.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'wpml_set_element_language_details', $args );
+	}
+
+	/**
+	 * Set language details for the multiple question when it is created.
+	 *
+	 * We use Multiple question CPT to store category question, fox example.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param int $question_id Multiple question ID.
+	 */
+	public function set_language_details_when_multiple_question_created( $question_id ) {
+		if ( is_wp_error( $question_id ) ) {
+			return;
+		}
+
+		$question_id = (int) $question_id;
+		// Get lesson language_code.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$language_code = apply_filters( 'wpml_current_language', null );
+
+		$args = array(
+			'element_id'    => $question_id,
+			'element_type'  => 'post_multiple_question',
 			'trid'          => false,
 			'language_code' => $language_code,
 		);
