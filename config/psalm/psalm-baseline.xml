@@ -114,6 +114,12 @@
       <code>wp_unslash( $_GET['course_id'] ?? 0 )</code>
       <code>wp_unslash( $_GET['lesson_id'] ?? 0 )</code>
     </InvalidScalarArgument>
+    <MissingConstructor occurrences="4">
+      <code>$bulk_actions_controller</code>
+      <code>$file</code>
+      <code>$name</code>
+      <code>$page_slug</code>
+    </MissingConstructor>
     <RedundantCondition occurrences="1">
       <code>isset( $this-&gt;bulk_actions_controller ) &amp;&amp; $this-&gt;bulk_actions_controller-&gt;is_current_page()</code>
     </RedundantCondition>
@@ -215,15 +221,11 @@
       <code>get_post_type_object( 'course' )-&gt;cap</code>
       <code>get_post_type_object( 'lesson' )-&gt;cap</code>
     </PossiblyNullPropertyFetch>
-    <PropertyNotSetInConstructor occurrences="8">
+    <PropertyNotSetInConstructor occurrences="4">
       <code>Sensei_Learners_Main</code>
       <code>Sensei_Learners_Main</code>
       <code>Sensei_Learners_Main</code>
       <code>Sensei_Learners_Main</code>
-      <code>WooThemes_Sensei_Learners_Main</code>
-      <code>WooThemes_Sensei_Learners_Main</code>
-      <code>WooThemes_Sensei_Learners_Main</code>
-      <code>WooThemes_Sensei_Learners_Main</code>
     </PropertyNotSetInConstructor>
     <RedundantCondition occurrences="1">
       <code>'course' === $form_post_type</code>
@@ -231,9 +233,6 @@
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>Sensei_Course_Enrolment_Manager::instance()-&gt;get_enrolment_provider_name_by_id( $id )</code>
     </RedundantConditionGivenDocblockType>
-    <TooManyArguments occurrences="1">
-      <code>manual_filter_visible</code>
-    </TooManyArguments>
   </file>
   <file src="includes/admin/class-sensei-plugins-installation.php">
     <ArgumentTypeCoercion occurrences="1"/>
@@ -1119,15 +1118,11 @@
       <code>$page_slug</code>
       <code>$type</code>
     </MissingPropertyType>
-    <PropertyNotSetInConstructor occurrences="8">
+    <PropertyNotSetInConstructor occurrences="4">
       <code>Sensei_Analysis_Overview_List_Table</code>
       <code>Sensei_Analysis_Overview_List_Table</code>
       <code>Sensei_Analysis_Overview_List_Table</code>
       <code>Sensei_Analysis_Overview_List_Table</code>
-      <code>WooThemes_Sensei_Analysis_Overview_List_Table</code>
-      <code>WooThemes_Sensei_Analysis_Overview_List_Table</code>
-      <code>WooThemes_Sensei_Analysis_Overview_List_Table</code>
-      <code>WooThemes_Sensei_Analysis_Overview_List_Table</code>
     </PropertyNotSetInConstructor>
     <RedundantConditionGivenDocblockType occurrences="2">
       <code>is_array( $lessons )</code>
@@ -1193,6 +1188,10 @@
     <LessSpecificReturnStatement occurrences="1">
       <code>$sensei_analysis_object</code>
     </LessSpecificReturnStatement>
+    <MissingConstructor occurrences="2">
+      <code>$file</code>
+      <code>$name</code>
+    </MissingConstructor>
     <MissingParamType occurrences="2">
       <code>$type</code>
       <code>$which</code>
@@ -1251,12 +1250,14 @@
     <InvalidReturnStatement occurrences="1">
       <code>$title</code>
     </InvalidReturnStatement>
+    <MissingConstructor occurrences="1">
+      <code>$courses_url_base</code>
+    </MissingConstructor>
     <PossiblyNullPropertyFetch occurrences="1">
       <code>$course-&gt;post_title</code>
     </PossiblyNullPropertyFetch>
-    <PropertyNotSetInConstructor occurrences="2">
+    <PropertyNotSetInConstructor occurrences="1">
       <code>$courses_url_base</code>
-      <code>WooThemes_Sensei_Course_Results</code>
     </PropertyNotSetInConstructor>
     <UndefinedConstant occurrences="1">
       <code>OBJECT</code>
@@ -1417,11 +1418,10 @@
     <MissingDocblockType occurrences="1">
       <code>public $token;</code>
     </MissingDocblockType>
-    <MissingParamType occurrences="16">
+    <MissingParamType occurrences="13">
       <code>$class</code>
       <code>$classes</code>
       <code>$course</code>
-      <code>$course_id</code>
       <code>$course_id</code>
       <code>$course_id</code>
       <code>$course_id</code>
@@ -1431,8 +1431,6 @@
       <code>$message</code>
       <code>$query</code>
       <code>$query</code>
-      <code>$should_send</code>
-      <code>$user_id</code>
       <code>$user_id</code>
     </MissingParamType>
     <MissingPropertyType occurrences="1">
@@ -1568,6 +1566,9 @@
     <DocblockTypeContradiction occurrences="1">
       <code>is_wp_error( $grade )</code>
     </DocblockTypeContradiction>
+    <MissingConstructor occurrences="1">
+      <code>$emails</code>
+    </MissingConstructor>
     <MissingParamType occurrences="22">
       <code>$comment</code>
       <code>$comment_id</code>
@@ -1713,15 +1714,11 @@
     <PossiblyFalsePropertyAssignmentValue occurrences="1">
       <code>$search</code>
     </PossiblyFalsePropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="8">
+    <PropertyNotSetInConstructor occurrences="4">
       <code>Sensei_Grading_Main</code>
       <code>Sensei_Grading_Main</code>
       <code>Sensei_Grading_Main</code>
       <code>Sensei_Grading_Main</code>
-      <code>WooThemes_Sensei_Grading_Main</code>
-      <code>WooThemes_Sensei_Grading_Main</code>
-      <code>WooThemes_Sensei_Grading_Main</code>
-      <code>WooThemes_Sensei_Grading_Main</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/class-sensei-grading-user-quiz.php">
@@ -1880,11 +1877,9 @@
       <code>'WP_Post'</code>
       <code>'WP_User'</code>
     </ArgumentTypeCoercion>
-    <DocblockTypeContradiction occurrences="4">
+    <DocblockTypeContradiction occurrences="2">
       <code>! isset( $lesson_id )</code>
-      <code>- 1 !== $new_course</code>
       <code>-1</code>
-      <code>-1 !== $new_complexity</code>
     </DocblockTypeContradiction>
     <FalsableReturnStatement occurrences="2">
       <code>empty( $block['innerBlocks'][0]['attrs']['id'] ) ? null : wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) )</code>
@@ -2075,12 +2070,10 @@
       <code>is_array( $question_data )</code>
       <code>is_countable( $questions_array )</code>
     </RedundantCondition>
-    <RedundantConditionGivenDocblockType occurrences="9">
+    <RedundantConditionGivenDocblockType occurrences="7">
       <code>! is_wp_error( $multiple_id )</code>
       <code>$module_term</code>
       <code>$module_term</code>
-      <code>- 1 !== $new_course</code>
-      <code>-1 !== $new_complexity</code>
       <code>is_array( $data ) &amp;&amp; count( $data ) &gt; 0</code>
       <code>is_array( $this-&gt;meta_fields )</code>
       <code>isset( $this-&gt;meta_fields ) &amp;&amp; is_array( $this-&gt;meta_fields )</code>
@@ -2103,9 +2096,6 @@
       <code>$which</code>
       <code>$which</code>
     </ArgumentTypeCoercion>
-    <LessSpecificImplementedReturnType occurrences="1">
-      <code>array</code>
-    </LessSpecificImplementedReturnType>
     <MissingParamType occurrences="2">
       <code>$item</code>
       <code>$token</code>
@@ -2119,15 +2109,11 @@
     <PossiblyFalsePropertyAssignmentValue occurrences="1">
       <code>false</code>
     </PossiblyFalsePropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="8">
+    <PropertyNotSetInConstructor occurrences="4">
       <code>Sensei_List_Table</code>
       <code>Sensei_List_Table</code>
       <code>Sensei_List_Table</code>
       <code>Sensei_List_Table</code>
-      <code>WooThemes_Sensei_List_Table</code>
-      <code>WooThemes_Sensei_List_Table</code>
-      <code>WooThemes_Sensei_List_Table</code>
-      <code>WooThemes_Sensei_List_Table</code>
     </PropertyNotSetInConstructor>
     <RedundantPropertyInitializationCheck occurrences="1">
       <code>isset( $this-&gt;_column_headers )</code>
@@ -2377,6 +2363,10 @@
     </UndefinedPropertyFetch>
   </file>
   <file src="includes/class-sensei-notices.php">
+    <MissingConstructor occurrences="2">
+      <code>$allowed_html</code>
+      <code>$has_printed</code>
+    </MissingConstructor>
     <MissingDocblockType occurrences="1">
       <code>protected $notices;</code>
     </MissingDocblockType>
@@ -2406,6 +2396,14 @@
     <InvalidStringClass occurrences="1">
       <code>new $class_name()</code>
     </InvalidStringClass>
+    <MissingConstructor occurrences="6">
+      <code>$course</code>
+      <code>$labels</code>
+      <code>$lesson</code>
+      <code>$messages</code>
+      <code>$question</code>
+      <code>$quiz</code>
+    </MissingConstructor>
     <MissingPropertyType occurrences="3">
       <code>$role_caps</code>
       <code>$slider_labels</code>
@@ -2425,17 +2423,12 @@
       <code>get_queried_object()-&gt;ID</code>
       <code>get_queried_object()-&gt;post_type</code>
     </PossiblyNullPropertyFetch>
-    <PropertyNotSetInConstructor occurrences="10">
+    <PropertyNotSetInConstructor occurrences="5">
       <code>$course</code>
       <code>$lesson</code>
       <code>$messages</code>
       <code>$question</code>
       <code>$quiz</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
     </PropertyNotSetInConstructor>
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>$post instanceof WP_Post</code>
@@ -2478,10 +2471,8 @@
       <code>public static function gap_fill_load_question_data( $question_data, $question_id, $quiz_id ) {</code>
       <code>public static function multiple_choice_load_question_data( $question_data, $question_id, $quiz_id ) {</code>
     </InvalidDocblock>
-    <InvalidScalarArgument occurrences="29">
+    <InvalidScalarArgument occurrences="27">
       <code>$id</code>
-      <code>$lesson_id</code>
-      <code>$lesson_id</code>
       <code>$lesson_id</code>
       <code>$lesson_id</code>
       <code>$lesson_id</code>
@@ -2633,6 +2624,11 @@
       <code>$this-&gt;get_lesson_id( $quiz_id )</code>
       <code>$this-&gt;get_lesson_id( $quiz_id )</code>
     </InvalidScalarArgument>
+    <MissingConstructor occurrences="3">
+      <code>$file</code>
+      <code>$meta_fields</code>
+      <code>$token</code>
+    </MissingConstructor>
     <MissingParamType occurrences="6">
       <code>$answers_feedback</code>
       <code>$lesson_id</code>
@@ -2721,9 +2717,6 @@
       <code>! is_array( $new_value )</code>
       <code>! is_array( $old_value )</code>
     </DocblockTypeContradiction>
-    <DuplicateArrayKey occurrences="1">
-      <code>'type'          =&gt; 'email'</code>
-    </DuplicateArrayKey>
     <InvalidArgument occurrences="1"/>
     <MissingParamType occurrences="3">
       <code>$include_milliseconds</code>
@@ -2965,9 +2958,6 @@
       <code>$count[ $key ]</code>
       <code>$count[ self::get_question_type_key( $key ) ]</code>
     </InvalidArrayOffset>
-    <InvalidClass occurrences="1">
-      <code>[ 'Sensei_learner', 'get_learner_id' ]</code>
-    </InvalidClass>
     <InvalidReturnStatement occurrences="9">
       <code>$max_modules</code>
       <code>$min_modules</code>
@@ -3731,8 +3721,9 @@
     <DocblockTypeContradiction occurrences="1">
       <code>null === $this-&gt;results</code>
     </DocblockTypeContradiction>
-    <PropertyNotSetInConstructor occurrences="2">
+    <PropertyNotSetInConstructor occurrences="3">
       <code>$tasks</code>
+      <code>Sensei_Export_Job</code>
       <code>Sensei_Export_Job</code>
     </PropertyNotSetInConstructor>
     <RedundantPropertyInitializationCheck occurrences="1">
@@ -3799,8 +3790,9 @@
     <PossiblyInvalidMethodCall occurrences="1">
       <code>add_data</code>
     </PossiblyInvalidMethodCall>
-    <PropertyNotSetInConstructor occurrences="2">
+    <PropertyNotSetInConstructor occurrences="3">
       <code>$tasks</code>
+      <code>Sensei_Import_Job</code>
       <code>Sensei_Import_Job</code>
     </PropertyNotSetInConstructor>
     <RedundantPropertyInitializationCheck occurrences="1">
@@ -3986,10 +3978,6 @@
       <code>get_error_code</code>
       <code>get_error_message</code>
     </PossiblyInvalidMethodCall>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>Sensei_Import_Course_Model</code>
-      <code>Sensei_Import_Course_Model</code>
-    </PropertyNotSetInConstructor>
     <UndefinedMethod occurrences="1">
       <code>get_associations_task</code>
     </UndefinedMethod>
@@ -4024,10 +4012,6 @@
       <code>get_error_code</code>
       <code>get_error_message</code>
     </PossiblyInvalidMethodCall>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>Sensei_Import_Lesson_Model</code>
-      <code>Sensei_Import_Lesson_Model</code>
-    </PropertyNotSetInConstructor>
     <UndefinedMethod occurrences="2">
       <code>get_associations_task</code>
       <code>translate_import_id</code>
@@ -4047,6 +4031,17 @@
     <InvalidScalarArgument occurrences="1">
       <code>$value</code>
     </InvalidScalarArgument>
+    <MissingConstructor occurrences="9">
+      <code>$line_number</code>
+      <code>$line_number</code>
+      <code>$line_number</code>
+      <code>$schema</code>
+      <code>$schema</code>
+      <code>$schema</code>
+      <code>$task</code>
+      <code>$task</code>
+      <code>$task</code>
+    </MissingConstructor>
     <NullableReturnStatement occurrences="1">
       <code>$post_id</code>
     </NullableReturnStatement>
@@ -4092,18 +4087,15 @@
       <code>null|string</code>
       <code>true|WP_Error</code>
     </InvalidReturnType>
+    <MissingConstructor occurrences="1">
+      <code>$question_type</code>
+    </MissingConstructor>
     <PossibleRawObjectIteration occurrences="1">
       <code>$meta_fields</code>
     </PossibleRawObjectIteration>
     <PossiblyInvalidArgument occurrences="1">
       <code>$post_id</code>
     </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="4">
-      <code>$question_type</code>
-      <code>Sensei_Import_Question_Model</code>
-      <code>Sensei_Import_Question_Model</code>
-      <code>Sensei_Import_Question_Model</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="includes/email-signup/class-sensei-email-signup-form.php">
     <DocblockTypeContradiction occurrences="2">
@@ -4308,9 +4300,6 @@
     </PossiblyInvalidPropertyAssignmentValue>
   </file>
   <file src="includes/enrolment/class-sensei-course-enrolment.php">
-    <InvalidClass occurrences="1">
-      <code>[ 'Sensei_learner', 'get_learner_id' ]</code>
-    </InvalidClass>
     <NullableReturnStatement occurrences="1">
       <code>$is_enrolled</code>
     </NullableReturnStatement>
@@ -4443,10 +4432,6 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$post</code>
     </MoreSpecificImplementedParamType>
-    <ParamNameMismatch occurrences="2">
-      <code>$post</code>
-      <code>$post</code>
-    </ParamNameMismatch>
     <PossiblyNullArgument occurrences="2">
       <code>get_edit_post_link( $post )</code>
       <code>get_edit_post_link( $post-&gt;ID )</code>
@@ -4563,6 +4548,21 @@
       <code>\Sensei_Course::get_course_completed_page_url( $course_id )</code>
     </RedundantConditionGivenDocblockType>
   </file>
+  <file src="includes/internal/emails/generators/class-email-generators-abstract.php">
+    <MissingConstructor occurrences="11">
+      <code>$repository</code>
+      <code>$repository</code>
+      <code>$repository</code>
+      <code>$repository</code>
+      <code>$repository</code>
+      <code>$repository</code>
+      <code>$repository</code>
+      <code>$repository</code>
+      <code>$repository</code>
+      <code>$repository</code>
+      <code>$repository</code>
+    </MissingConstructor>
+  </file>
   <file src="includes/internal/emails/generators/class-quiz-graded.php">
     <InvalidScalarArgument occurrences="3">
       <code>$course_id</code>
@@ -4647,8 +4647,26 @@
       <code>$this-&gt;wpdb-&gt;get_results( $query )</code>
     </PossiblyNullIterator>
   </file>
+  <file src="includes/internal/quiz-submission/grade/repositories/class-comment-reading-aggregate-grade-repository.php">
+    <MethodSignatureMismatch occurrences="1">
+      <code>$grades</code>
+    </MethodSignatureMismatch>
+  </file>
+  <file src="includes/internal/quiz-submission/grade/repositories/class-comments-based-grade-repository.php">
+    <MethodSignatureMismatch occurrences="1">
+      <code>$grades</code>
+    </MethodSignatureMismatch>
+  </file>
+  <file src="includes/internal/quiz-submission/grade/repositories/class-table-reading-aggregate-grade-repository.php">
+    <MethodSignatureMismatch occurrences="1">
+      <code>$grades</code>
+    </MethodSignatureMismatch>
+  </file>
   <file src="includes/internal/quiz-submission/grade/repositories/class-tables-based-grade-repository.php">
     <InvalidArgument occurrences="2"/>
+    <MethodSignatureMismatch occurrences="1">
+      <code>$grades</code>
+    </MethodSignatureMismatch>
     <PossiblyNullIterator occurrences="1">
       <code>$grade_rows</code>
     </PossiblyNullIterator>
@@ -4678,6 +4696,20 @@
       <code>$row-&gt;user_id</code>
     </PossiblyInvalidPropertyFetch>
   </file>
+  <file src="includes/internal/student-progress/course-progress/models/class-course-progress-abstract.php">
+    <MissingConstructor occurrences="10">
+      <code>$course_id</code>
+      <code>$course_id</code>
+      <code>$created_at</code>
+      <code>$created_at</code>
+      <code>$id</code>
+      <code>$id</code>
+      <code>$updated_at</code>
+      <code>$updated_at</code>
+      <code>$user_id</code>
+      <code>$user_id</code>
+    </MissingConstructor>
+  </file>
   <file src="includes/internal/student-progress/course-progress/repositories/class-comments-based-course-progress-repository.php">
     <PossiblyNullArgument occurrences="1">
       <code>$course_progress-&gt;get_status()</code>
@@ -4703,6 +4735,20 @@
       <code>$row-&gt;user_id</code>
       <code>$row-&gt;user_id</code>
     </PossiblyInvalidPropertyFetch>
+  </file>
+  <file src="includes/internal/student-progress/lesson-progress/models/class-lesson-progress-abstract.php">
+    <MissingConstructor occurrences="10">
+      <code>$created_at</code>
+      <code>$created_at</code>
+      <code>$id</code>
+      <code>$id</code>
+      <code>$lesson_id</code>
+      <code>$lesson_id</code>
+      <code>$updated_at</code>
+      <code>$updated_at</code>
+      <code>$user_id</code>
+      <code>$user_id</code>
+    </MissingConstructor>
   </file>
   <file src="includes/internal/student-progress/lesson-progress/repositories/class-comments-based-lesson-progress-repository.php">
     <PossiblyNullReference occurrences="1">
@@ -4730,10 +4776,23 @@
       <code>$row-&gt;user_id</code>
     </PossiblyInvalidPropertyFetch>
   </file>
+  <file src="includes/internal/student-progress/quiz-progress/models/class-quiz-progress-abstract.php">
+    <MissingConstructor occurrences="10">
+      <code>$created_at</code>
+      <code>$created_at</code>
+      <code>$id</code>
+      <code>$id</code>
+      <code>$quiz_id</code>
+      <code>$quiz_id</code>
+      <code>$updated_at</code>
+      <code>$updated_at</code>
+      <code>$user_id</code>
+      <code>$user_id</code>
+    </MissingConstructor>
+  </file>
   <file src="includes/internal/student-progress/quiz-progress/repositories/class-comments-based-quiz-progress-repository.php">
-    <InvalidScalarArgument occurrences="2">
+    <InvalidScalarArgument occurrences="1">
       <code>$comment-&gt;comment_post_ID</code>
-      <code>$lesson_id</code>
     </InvalidScalarArgument>
     <PossiblyInvalidIterator occurrences="2">
       <code>$comments</code>
@@ -4934,7 +4993,9 @@
       <code>ceil( $this-&gt;reports_overview_service_courses-&gt;get_courses_average_grade( $all_course_ids ) )</code>
       <code>count( $all_course_ids )</code>
     </InvalidScalarArgument>
-    <PropertyNotSetInConstructor occurrences="4">
+    <PropertyNotSetInConstructor occurrences="6">
+      <code>Sensei_Reports_Overview_List_Table_Courses</code>
+      <code>Sensei_Reports_Overview_List_Table_Courses</code>
       <code>Sensei_Reports_Overview_List_Table_Courses</code>
       <code>Sensei_Reports_Overview_List_Table_Courses</code>
       <code>Sensei_Reports_Overview_List_Table_Courses</code>
@@ -4954,7 +5015,9 @@
     <PossibleRawObjectIteration occurrences="1">
       <code>$modules_terms</code>
     </PossibleRawObjectIteration>
-    <PropertyNotSetInConstructor occurrences="4">
+    <PropertyNotSetInConstructor occurrences="6">
+      <code>Sensei_Reports_Overview_List_Table_Lessons</code>
+      <code>Sensei_Reports_Overview_List_Table_Lessons</code>
       <code>Sensei_Reports_Overview_List_Table_Lessons</code>
       <code>Sensei_Reports_Overview_List_Table_Lessons</code>
       <code>Sensei_Reports_Overview_List_Table_Lessons</code>
@@ -4968,7 +5031,9 @@
     <InvalidFalsableReturnType occurrences="1">
       <code>string</code>
     </InvalidFalsableReturnType>
-    <PropertyNotSetInConstructor occurrences="4">
+    <PropertyNotSetInConstructor occurrences="6">
+      <code>Sensei_Reports_Overview_List_Table_Students</code>
+      <code>Sensei_Reports_Overview_List_Table_Students</code>
       <code>Sensei_Reports_Overview_List_Table_Students</code>
       <code>Sensei_Reports_Overview_List_Table_Students</code>
       <code>Sensei_Reports_Overview_List_Table_Students</code>
@@ -5092,6 +5157,10 @@
     <InvalidStringClass occurrences="1">
       <code>$handler_class::get_file_config()</code>
     </InvalidStringClass>
+    <MissingConstructor occurrences="2">
+      <code>$namespace</code>
+      <code>$namespace</code>
+    </MissingConstructor>
     <PossiblyNullArgument occurrences="4">
       <code>$request-&gt;get_param( 'job_id' )</code>
       <code>$request-&gt;get_param( 'job_id' )</code>
@@ -5113,9 +5182,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$request-&gt;get_param( 'job_id' )</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>Sensei_REST_API_Export_Controller</code>
-    </PropertyNotSetInConstructor>
     <RedundantConditionGivenDocblockType occurrences="2">
       <code>$job</code>
       <code>$job</code>
@@ -5178,9 +5244,11 @@
       <code>$request-&gt;get_param( 'file_key' )</code>
       <code>$request-&gt;get_param( 'job_id' )</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>Sensei_REST_API_Import_Controller</code>
-    </PropertyNotSetInConstructor>
+  </file>
+  <file src="includes/rest-api/class-sensei-rest-api-internal.php">
+    <PossiblyNullArgument occurrences="1">
+      <code>Sensei()-&gt;tour</code>
+    </PossiblyNullArgument>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-lesson-quiz-controller.php">
     <ArgumentTypeCoercion occurrences="1"/>
@@ -5415,6 +5483,11 @@
     </PossiblyInvalidPropertyFetch>
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Theme_Controller</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="includes/rest-api/class-sensei-rest-api-tour-controller.php">
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>Sensei_REST_API_Tour_Controller</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/sensei-functions.php">
@@ -5674,20 +5747,8 @@
     <DocblockTypeContradiction occurrences="1">
       <code>empty( $post_to_copy )</code>
     </DocblockTypeContradiction>
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$post_to_copy</code>
-    </MoreSpecificImplementedParamType>
-    <ParamNameMismatch occurrences="1">
-      <code>$post_to_copy</code>
-    </ParamNameMismatch>
   </file>
   <file src="includes/unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course-results.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$post_to_copy</code>
-    </MoreSpecificImplementedParamType>
-    <ParamNameMismatch occurrences="1">
-      <code>$post_to_copy</code>
-    </ParamNameMismatch>
     <UndefinedConstant occurrences="1">
       <code>OBJECT</code>
     </UndefinedConstant>
@@ -5711,12 +5772,6 @@
       <code>! $learner_user</code>
       <code>$learner_user</code>
     </DocblockTypeContradiction>
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$post_to_copy</code>
-    </MoreSpecificImplementedParamType>
-    <ParamNameMismatch occurrences="1">
-      <code>$post_to_copy</code>
-    </ParamNameMismatch>
   </file>
   <file src="includes/unsupported-theme-handlers/class-sensei-unsupported-theme-handler-module.php">
     <InvalidScalarArgument occurrences="1">
@@ -5725,12 +5780,6 @@
     <MissingPropertyType occurrences="1">
       <code>Sensei()-&gt;modules-&gt;taxonomy</code>
     </MissingPropertyType>
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$post_to_copy</code>
-    </MoreSpecificImplementedParamType>
-    <ParamNameMismatch occurrences="1">
-      <code>$post_to_copy</code>
-    </ParamNameMismatch>
     <PossiblyNullArgument occurrences="1">
       <code>$module-&gt;name</code>
     </PossiblyNullArgument>
@@ -5793,7 +5842,8 @@
     </RedundantCast>
   </file>
   <file src="includes/wpml/class-language-details.php">
-    <DocblockTypeContradiction occurrences="1">
+    <DocblockTypeContradiction occurrences="2">
+      <code>is_wp_error( $question_id )</code>
       <code>is_wp_error( $question_id )</code>
     </DocblockTypeContradiction>
   </file>
@@ -5812,15 +5862,5 @@
       <code>function get_post($post = \null, $output = \OBJECT, $filter = 'raw')</code>
       <code>function wp_remote_request($url, $args = array())</code>
     </InvalidDocblock>
-  </file>
-  <file src="includes/rest-api/class-sensei-rest-api-tour-controller.php">
-	<PropertyNotSetInConstructor occurrences="1">
-	  <code>Sensei_REST_API_Tour_Controller</code>
-	</PropertyNotSetInConstructor>
-  </file>
-  <file src="includes/rest-api/class-sensei-rest-api-internal.php">
-	<PossiblyNullArgument occurrences="1">
-	  <code>Sensei()->tour</code>
-	</PossiblyNullArgument>
   </file>
 </files>

@@ -39,6 +39,7 @@ class Page {
 	 * @return int Translated page ID.
 	 */
 	public function get_translated_course_completed_page_id( $page_id ) {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return apply_filters( 'wpml_object_id', $page_id, 'page', true );
 	}
 }
