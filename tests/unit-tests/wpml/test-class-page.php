@@ -21,7 +21,7 @@ class Page_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$page = new Page();
 
-		$filter_applied = false;
+		$filter_applied  = false;
 		$filter_function = function ( $page_id ) use ( &$filter_applied ) {
 			$filter_applied = true;
 			return $page_id;
@@ -35,5 +35,4 @@ class Page_Test extends \WP_UnitTestCase {
 		remove_filter( 'wpml_object_id', $filter_function, 10 );
 		$this->assertTrue( $filter_applied );
 	}
-
 }
