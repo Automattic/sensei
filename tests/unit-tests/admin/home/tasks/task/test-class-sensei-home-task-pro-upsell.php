@@ -67,4 +67,22 @@ class Sensei_Home_Task_Pro_Upsell_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=sensei-home', $redirect_location );
 	}
+
+	public function testMarkCompleteAndRedirect_WhenCalled_SetsTheOptionProperly() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$this->prevent_wp_redirect();
+		$before_completed = $this->task->is_completed();
+
+		/* Act. */
+		try {
+			Sensei_Home_Task_Pro_Upsell::mark_completed_and_redirect();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$after_completed = $this->task->is_completed();
+		}
+
+		/* Assert. */
+		$this->assertFalse( $before_completed );
+		$this->assertTrue( $after_completed );
+	}
 }
