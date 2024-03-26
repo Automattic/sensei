@@ -89,7 +89,7 @@ class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 
 		/* Act */
 		try {
-			$response = $this->dispatchRequest( 'GET', '/sensei-pro-upsell-redirect' );
+			$this->dispatchRequest( 'GET', '/sensei-pro-upsell-redirect' );
 		} catch ( Sensei_WP_Redirect_Exception $e ) {
 			$redirect_location = $e->getMessage();
 		}
@@ -98,6 +98,21 @@ class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 		$this->assertSame( 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=sensei-home', $redirect_location );
 	}
 
+	public function testSenseiProUpsellRedirect_WhenCalledWithoutLoggingIn_DoesNotRedirect() {
+		/* Arrange */
+		$redirect_location = '';
+		$this->prevent_wp_redirect();
+
+		/* Act */
+		try {
+			$this->dispatchRequest( 'GET', '/sensei-pro-upsell-redirect' );
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert */
+		$this->assertEmpty( $redirect_location );
+	}
 	private function dispatchRequest( $method, $route = '' ) {
 		// Prevent requests.
 		add_filter(
