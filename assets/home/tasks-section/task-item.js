@@ -11,14 +11,20 @@ import ChevronRightIcon from '../../icons/chevron-right.svg';
 import { isUrlExternal } from '../utils';
 
 /**
+ * WordPress dependencies
+ */
+import { Icon, external } from '@wordpress/icons';
+
+/**
  * Tasks item component.
  *
- * @param {Object}  props       Component props.
- * @param {string}  props.title Item title.
- * @param {string}  props.url   Item URL.
- * @param {boolean} props.done  Whether item is completed.
+ * @param {Object}  props              Component props.
+ * @param {string}  props.title        Item title.
+ * @param {string}  props.url          Item URL.
+ * @param {boolean} props.done         Whether item is completed.
+ * @param {boolean} props.externalIcon Whether to show external icon.
  */
-const TaskItem = ( { title, url, done } ) => {
+const TaskItem = ( { title, url, done, externalIcon } ) => {
 	const Tag = done ? 'span' : 'a';
 	const isExternal = isUrlExternal( url );
 
@@ -38,7 +44,15 @@ const TaskItem = ( { title, url, done } ) => {
 				{ done && (
 					<CheckIcon className="sensei-home-tasks__check-icon" />
 				) }
-				<span className="sensei-home-tasks__item-title">{ title }</span>
+				<span className="sensei-home-tasks__item-title">
+					{ title }
+					{ externalIcon && (
+						<Icon
+							icon={ external }
+							className="sensei-home-tasks__external-icon"
+						/>
+					) }
+				</span>
 				{ ! done && (
 					<ChevronRightIcon className="sensei-home-tasks__link-chevron" />
 				) }
