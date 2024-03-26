@@ -85,4 +85,29 @@ class Sensei_Home_Task_Pro_Upsell_Test extends WP_UnitTestCase {
 		$this->assertFalse( $before_completed );
 		$this->assertTrue( $after_completed );
 	}
+
+	public function testMaybeAddExternalIconProperty_WhenCalled_ReturnsCorrectArray() {
+		/* Arrange. */
+		$task = new Sensei_Home_Task_Pro_Upsell();
+
+		/* Act. */
+		$task_array = apply_filters(
+			'sensei_home_tasks',
+			[
+				[
+					'id'    => 'test-id',
+					'title' => 'Test Title',
+					'url'   => 'http://example.com',
+				],
+				[
+					'id'    => Sensei_Home_Task_Pro_Upsell::get_id(),
+					'title' => 'Sell your course with Sensei Pro',
+				],
+			]
+		);
+
+		/* Assert. */
+		$this->assertTrue( isset( $task_array[1]['external_icon'] ) );
+		$this->assertFalse( isset( $task_array[0]['external_icon'] ) );
+	}
 }
