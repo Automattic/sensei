@@ -38,4 +38,14 @@ describe( '<TaskItem />', () => {
 
 		expect( externalIcon ).not.toBeNull();
 	} );
+
+	it( 'Should not render external icon when externalIcon prop is not set', () => {
+		const { container } = render( <TaskItem url="#" /> );
+
+		const externalIcon = container.querySelector(
+			'.sensei-home-tasks__external-icon'
+		);
+
+		expect( externalIcon ).toBeNull();
+	} );
 } );
