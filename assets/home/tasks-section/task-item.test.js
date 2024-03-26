@@ -28,4 +28,14 @@ describe( '<TaskItem />', () => {
 
 		expect( renderedTag ).toEqual( 'SPAN' );
 	} );
+
+	it( 'Should render an external icon when externalIcon prop is true', () => {
+		const { container } = render( <TaskItem url="#" externalIcon /> );
+
+		const externalIcon = container.querySelector(
+			'.sensei-home-tasks__external-icon'
+		);
+
+		expect( externalIcon ).not.toBeNull();
+	} );
 } );
