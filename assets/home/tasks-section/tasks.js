@@ -34,6 +34,8 @@ const Tasks = ( { items } ) => (
 					title={ task.title }
 					url={ task.url }
 					done={ task.done }
+					disabled={ task.disabled }
+					info={ task.info }
 				/>
 			) ) }
 		</ul>
