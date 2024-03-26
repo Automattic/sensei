@@ -141,7 +141,7 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 			'sensei_tour_loaders',
 			function () {
 				$modified_scripts['modified-course-tour'] = [
-					'path' => 'modified-course-tour.js',
+					'callback' => $this->get_callback_for_handle( 'modified-course-tour' ),
 				];
 				return $modified_scripts;
 			}
@@ -169,18 +169,18 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 			function () {
 				$modified_scripts['modified-course-tour'] = [
 					'minimum_install_version' => '4.21.1',
-					'path'                    => 'modified-course-tour.js',
+					'callback'                => $this->get_callback_for_handle( 'modified-course-tour' ),
 				];
 				$modified_scripts['modified-lesson-tour'] = [
 					'minimum_install_version' => '4.21.2',
-					'path'                    => 'modified-lesson-tour.js',
+					'callback'                => $this->get_callback_for_handle( 'modified-lesson-tour' ),
 				];
 				$modified_scripts['modified-sell-tour']   = [
 					'minimum_install_version' => '4.21.4',
-					'path'                    => 'modified-sell-tour.js',
+					'callback'                => $this->get_callback_for_handle( 'modified-sell-tour' ),
 				];
 				$modified_scripts['tour-without-version'] = [
-					'path' => 'tour-without-version.js',
+					'callback' => $this->get_callback_for_handle( 'tour-without-version' ),
 				];
 				return $modified_scripts;
 			}
@@ -253,5 +253,11 @@ class Sensei_Tour_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertFalse( $is_complete );
 		$this->assertTrue( $is_complete_1 );
+	}
+
+	public function get_callback_for_handle( $handle ) {
+		return function () use ( $handle ) {
+			Sensei()->assets->enqueue( $handle, $handle . '.js', [], true );
+		};
 	}
 }

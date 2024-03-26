@@ -70,9 +70,10 @@ class Sensei_Tour {
 			in_array( $post_type, [ 'course', 'lesson' ], true ) &&
 			in_array( $hook, [ 'post-new.php', 'post.php' ], true )
 		) {
-			$tour_loaders[ "sensei-$post_type-tour" ] = [
+			$handle                  = "sensei-$post_type-tour";
+			$tour_loaders[ $handle ] = [
 				'minimum_install_version' => '4.22.0',
-				'path'                    => "admin/tour/$post_type-tour/index.js",
+				'callback'                => $this->get_course_lesson_tour_enqueue_callback( $post_type, $handle ),
 			];
 		}
 
@@ -126,7 +127,7 @@ class Sensei_Tour {
 		}
 
 		foreach ( $incomplete_tours as $handle => $tour_loader ) {
-			Sensei()->assets->enqueue( $handle, $tour_loader['path'], [], true );
+			is_callable( $tour_loader['callback'] ) && call_user_func( $tour_loader['callback'], $hook );
 		}
 	}
 
@@ -181,5 +182,21 @@ class Sensei_Tour {
 		}
 
 		return $tours[ $tour_id ] ?? false;
+	}
+
+	/**
+	 * Get the callback to enqueue the course or lesson tour.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $post_type The post type.
+	 * @param string $handle    The script handle.
+	 *
+	 * @return callable The callback to enqueue the course or lesson tour.
+	 */
+	public function get_course_lesson_tour_enqueue_callback( $post_type, $handle ) {
+		return function () use ( $post_type, $handle ) {
+			Sensei()->assets->enqueue( $handle, "admin/tour/$post_type-tour/index.js", [], true );
+		};
 	}
 }
