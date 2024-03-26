@@ -71,6 +71,10 @@ class Sensei_Home_Tasks_Provider {
 			$core_tasks[] = new Sensei_Home_Task_Sell_Course_With_WooCommerce();
 		}
 
+		if ( Sensei_Home_Task_Pro_Upsell::is_active() ) {
+			$core_tasks[] = new Sensei_Home_Task_Pro_Upsell();
+		}
+
 		$tasks = [];
 
 		/**
