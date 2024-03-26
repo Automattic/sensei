@@ -22,7 +22,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $api_namespace;
+	protected $namespace;
 
 	/**
 	 * Routes prefix.
@@ -102,7 +102,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 		Sensei_Home_Guides_Provider $guides_provider,
 		Sensei_Home_Notices_Provider $notices_provider
 	) {
-		$this->api_namespace         = $api_namespace;
+		$this->namespace             = $api_namespace;
 		$this->quick_links_provider  = $quick_links_provider;
 		$this->help_provider         = $help_provider;
 		$this->promo_banner_provider = $promo_banner_provider;
@@ -135,7 +135,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	public function register_get_data_route() {
 		register_rest_route(
-			$this->api_namespace,
+			$this->namespace,
 			$this->rest_base,
 			[
 				[
@@ -152,7 +152,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	public function register_mark_tasks_complete_route() {
 		register_rest_route(
-			$this->api_namespace,
+			$this->namespace,
 			$this->rest_base . '/tasks/complete',
 			[
 				[
@@ -169,7 +169,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	public function register_sensei_pro_upsell_redirect_route() {
 		register_rest_route(
-			$this->api_namespace,
+			$this->namespace,
 			$this->rest_base . '/sensei-pro-upsell-redirect',
 			[
 				[
