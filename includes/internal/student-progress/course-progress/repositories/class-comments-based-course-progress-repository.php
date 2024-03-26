@@ -37,6 +37,18 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 * @throws \RuntimeException If the course progress could not be created.
 	 */
 	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
+		/**
+		 * Filter the course ID for a created course progress.
+		 *
+		 * @hook sensei_course_progress_create_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_course_progress_create_course_id', $course_id );
+
 		$metadata   = [
 			'start'    => current_time( 'mysql' ),
 			'percent'  => 0,
@@ -47,12 +59,12 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			throw new \RuntimeException( "Can't create a course progress" );
 		}
 
-		$progress = $this->get( $course_id, $user_id );
-		if ( ! $progress ) {
+		$comment = get_comment( $comment_id );
+		if ( ! $comment ) {
 			throw new \RuntimeException( 'Created course progress not found' );
 		}
 
-		return $progress;
+		return $this->create_progress_from_comment( $comment );
 	}
 
 	/**
@@ -69,6 +81,18 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		if ( ! $user_id ) {
 			return null;
 		}
+
+		/**
+		 * Filter the course ID for a course progress we want to get.
+		 *
+		 * @hook sensei_course_progress_get_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_course_progress_get_course_id', $course_id );
 
 		$activity_args = [
 			'post_id' => $course_id,
@@ -155,6 +179,18 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			return false;
 		}
 
+		/**
+		 * Filter the course ID for a course progress we want to check.
+		 *
+		 * @hook sensei_course_progress_has_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_course_progress_has_course_id', $course_id );
+
 		$activity_args = [
 			'post_id' => $course_id,
 			'user_id' => $user_id,
@@ -205,6 +241,18 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 * @param int $course_id The course ID.
 	 */
 	public function delete_for_course( int $course_id ): void {
+		/**
+		 * Filter the course ID for a course progress we want to delete.
+		 *
+		 * @hook sensei_course_progress_delete_for_course_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_course_progress_delete_for_course_course_id', $course_id );
+
 		$args = array(
 			'post_id' => $course_id,
 			'type'    => 'sensei_course_status',
@@ -287,11 +335,25 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		);
 
 		if ( isset( $args['course_id'] ) ) {
-			if ( is_array( $args['course_id'] ) ) {
-				$comments_args['post__in'] = $args['course_id'];
-			} else {
-				$comments_args['post_id'] = $args['course_id'];
-			}
+			$course_ids = array_map( 'intval', (array) $args['course_id'] );
+			$course_ids = array_map(
+				function ( $course_id ): int {
+					/**
+					 * Filter the course ID for a course progress we want to find.
+					 *
+					 * @hook sensei_course_progress_find_course_id
+					 *
+					 * @since $$next-version$$
+					 *
+					 * @param {int} $course_id The course ID.
+					 * @return {int} Filtered course ID.
+					 */
+					return (int) apply_filters( 'sensei_course_progress_find_course_id', $course_id );
+				},
+				$course_ids
+			);
+
+			$comments_args['post__in'] = $course_ids;
 		}
 
 		if ( isset( $args['user_id'] ) ) {

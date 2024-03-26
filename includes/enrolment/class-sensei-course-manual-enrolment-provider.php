@@ -14,9 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.0.0
  */
-class Sensei_Course_Manual_Enrolment_Provider
-	extends Sensei_Course_Enrolment_Stored_Status_Provider
-	implements Sensei_Course_Enrolment_Provider_Interface, Sensei_Course_Enrolment_Provider_Debug_Interface {
+class Sensei_Course_Manual_Enrolment_Provider extends Sensei_Course_Enrolment_Stored_Status_Provider implements Sensei_Course_Enrolment_Provider_Interface, Sensei_Course_Enrolment_Provider_Debug_Interface {
 	const DATA_KEY_LEGACY_MIGRATION = 'legacy_manual';
 
 	/**
@@ -98,15 +96,26 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 * @return bool
 	 */
 	public function enrol_learner( $user_id, $course_id ) {
+
+		/**
+		 * Filter the course ID for manual enrolment when the student is being added to the course.
+		 *
+		 * @hook sensei_course_manual_enrolment_enroll_learner_course_id
+		 *
+		 * @param {int} $course_id Course post ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$filtered_course_id = apply_filters( 'sensei_course_manual_enrolment_enroll_learner_course_id', $course_id );
+
 		// Check if they are already manually enrolled.
-		if ( $this->is_enrolled( $user_id, $course_id ) ) {
+		if ( $this->is_enrolled( $user_id, $filtered_course_id ) ) {
 			return true;
 		}
 
-		$this->set_enrolment_status( $user_id, $course_id, true );
-		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $course_id );
+		$this->set_enrolment_status( $user_id, $filtered_course_id, true );
+		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $filtered_course_id );
 
-		if ( ! $this->is_enrolled( $user_id, $course_id ) ) {
+		if ( ! $this->is_enrolled( $user_id, $filtered_course_id ) ) {
 			return false;
 		}
 
@@ -132,15 +141,26 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 * @return bool
 	 */
 	public function withdraw_learner( $user_id, $course_id ) {
+
+		/**
+		 * Filter the course ID for manual enrolment when the student is being removed from the course.
+		 *
+		 * @hook sensei_course_manual_enrolment_withdraw_learner_course_id
+		 *
+		 * @param {int} $course_id Course post ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$filtered_course_id = apply_filters( 'sensei_course_manual_enrolment_withdraw_learner_course_id', $course_id );
+
 		// Check if they aren't manually enrolled.
-		if ( ! $this->is_enrolled( $user_id, $course_id ) ) {
+		if ( ! $this->is_enrolled( $user_id, $filtered_course_id ) ) {
 			return true;
 		}
 
-		$this->set_enrolment_status( $user_id, $course_id, false );
-		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $course_id );
+		$this->set_enrolment_status( $user_id, $filtered_course_id, false );
+		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $filtered_course_id );
 
-		if ( $this->is_enrolled( $user_id, $course_id ) ) {
+		if ( $this->is_enrolled( $user_id, $filtered_course_id ) ) {
 			return false;
 		}
 

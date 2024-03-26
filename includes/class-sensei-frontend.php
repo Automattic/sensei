@@ -1206,69 +1206,93 @@ class Sensei_Frontend {
 		return $title;
 	} // sensei_lesson_preview_title
 
+	/**
+	 * Start a course.
+	 */
 	public function sensei_course_start() {
 		global $post, $current_user;
 
-		// Handle user starting the course.
-		if (
-			is_singular( 'course' )
-			&& isset( $_POST['course_start'] )
-			&& wp_verify_nonce( $_POST['woothemes_sensei_start_course_noonce'], 'woothemes_sensei_start_course_noonce' )
-			&& Sensei_Course::can_current_user_manually_enrol( $post->ID )
-			&& Sensei_Course::is_prerequisite_complete( $post->ID )
-			&& ! post_password_required( $post->ID )
+		/**
+		 * Filter the course ID for the course being started.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @hook sensei_course_start_course_id
+		 *
+		 * @param {int} $course_id Course post ID.
+		 * @return {int} Filtered course ID.
+		*/
+		$course_id = (int) apply_filters( 'sensei_course_start_course_id', $post->ID ?? 0 );
+
+		$nonce = isset( $_POST['woothemes_sensei_start_course_noonce'] )
+			? sanitize_text_field( wp_unslash( (string) $_POST['woothemes_sensei_start_course_noonce'] ) )
+			: '';
+
+		if ( ! is_singular( 'course' )
+			|| ! isset( $_POST['course_start'] )
+			|| ! wp_verify_nonce( $nonce, 'woothemes_sensei_start_course_noonce' )
+			|| ! Sensei_Course::can_current_user_manually_enrol( $course_id )
+			|| ! Sensei_Course::is_prerequisite_complete( $course_id )
+			|| post_password_required( $course_id )
 		) {
+			return;
+		}
 
-			/**
-			 * Lets providers give their own course sign-up handler.
-			 *
-			 * @since 3.0.0
-			 *
-			 * @hook sensei_frontend_learner_enrolment_handler
-			 *
-			 * @param    {callback(int, int):bool} $handler   Frontend enrolment handler. Takes two arguments: $user_id and $course_id. Returns `true` if successful; `false` if not.
-			 * @param    {int}                     $user_id   User ID.
-			 * @param    {int}                     $course_id Course post ID.
-			 * @return   {callback(int, int):bool} Filtered handler.
-			 */
-			$learner_enrollment_handler = apply_filters( 'sensei_frontend_learner_enrolment_handler', [ $this, 'manually_enrol_learner' ], $current_user->ID, $post->ID );
+		/**
+		 * Lets providers give their own course sign-up handler.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @hook sensei_frontend_learner_enrolment_handler
+		 *
+		 * @param    {callback(int, int):bool} $handler   Frontend enrolment handler. Takes two arguments: $user_id and $course_id. Returns `true` if successful; `false` if not.
+		 * @param    {int}                     $user_id   User ID.
+		 * @param    {int}                     $course_id Course post ID.
+		 * @return   {callback(int, int):bool} Filtered handler.
+		*/
+		$learner_enrollment_handler = apply_filters(
+			'sensei_frontend_learner_enrolment_handler',
+			array( $this, 'manually_enrol_learner' ),
+			$current_user->ID,
+			$course_id
+		);
 
-			$student_enrolled = false;
-			if ( is_callable( $learner_enrollment_handler ) ) {
-				$student_enrolled = call_user_func( $learner_enrollment_handler, $current_user->ID, $post->ID );
-			}
+		$student_enrolled = false;
+		if ( is_callable( $learner_enrollment_handler ) ) {
+			$student_enrolled = call_user_func( $learner_enrollment_handler, $current_user->ID, $course_id );
+		}
 
-			$this->data                        = new stdClass();
-			$this->data->is_user_taking_course = false;
-			if ( $student_enrolled ) {
-				$this->data->is_user_taking_course = true;
+		$this->data                        = new stdClass();
+		$this->data->is_user_taking_course = false;
+		if ( ! $student_enrolled ) {
+			return;
+		}
 
-				// Refresh page to avoid re-posting.
-				/**
-				 * Filter the URL that students are redirected to after starting a course.
-				 *
-				 * @since 1.10.0
-				 *
-				 * @hook sensei_start_course_redirect_url
-				 *
-				 * @param {string|bool}  $redirect_url URL to redirect students to after starting course. Return `false` to prevent redirect.
-				 * @param {WP_Post}      $post         Post object for course.
-				 * @return {string|bool} Filtered URL to redirect students to after starting course. Return `false` to prevent redirect.
-				 */
-				$redirect_url = apply_filters( 'sensei_start_course_redirect_url', get_permalink( $post->ID ), $post );
+		$this->data->is_user_taking_course = true;
 
-				if ( 'publish' !== get_post_status( $post ) ) {
-					wp_safe_redirect( add_query_arg( 'draftcourse', 'true', $redirect_url ) );
-					exit();
-				}
-				if ( false !== $redirect_url ) {
-					?>
+		// Refresh page to avoid re-posting.
+		/**
+		 * Filter the URL that students are redirected to after starting a course.
+		 *
+		 * @since 1.10.0
+		 *
+		 * @hook sensei_start_course_redirect_url
+		 *
+		 * @param {string|bool}  $redirect_url URL to redirect students to after starting course. Return `false` to prevent redirect.
+		 * @param {WP_Post}      $post         Post object for course.
+		 * @return {string|bool} Filtered URL to redirect students to after starting course. Return `false` to prevent redirect.
+		*/
+		$redirect_url = apply_filters( 'sensei_start_course_redirect_url', get_permalink( $post->ID ), $post );
 
-					<script type="text/javascript"> window.location = '<?php echo esc_url_raw( $redirect_url ); ?>'; </script>
+		if ( 'publish' !== get_post_status( $post ) ) {
+			wp_safe_redirect( add_query_arg( 'draftcourse', 'true', $redirect_url ) );
+			exit();
+		}
 
-					<?php
-				}
-			}
+		if ( false !== $redirect_url ) {
+			?>
+			<script type="text/javascript"> window.location = '<?php echo esc_url_raw( $redirect_url ); ?>'; </script>
+			<?php
 		}
 	}
 

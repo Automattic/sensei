@@ -135,6 +135,15 @@ class Sensei_Utils {
 		}
 
 		/**
+		 * This action runs before getting the comments for the given request.
+		 *
+		 * @hook sensei_utils_check_for_activity_before_get_comments
+		 *
+		 * @param {array} $args Search arguments.
+		 */
+		do_action( 'sensei_utils_check_for_activity_before_get_comments', $args );
+
+		/**
 		 * This filter runs inside Sensei_Utils::sensei_check_for_activity
 		 *
 		 * It runs while getting the comments for the given request.
@@ -146,6 +155,16 @@ class Sensei_Utils {
 		 * @return {int|array} Filtered activity.
 		 */
 		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ), $args );
+
+		/**
+		 * This action runs after getting the comments for the given request.
+		 *
+		 * @hook sensei_utils_check_for_activity_after_get_comments
+		 *
+		 * @param {array}     $args     Search arguments.
+		 * @param {int|array} $comments Activity.
+		 */
+		do_action( 'sensei_utils_check_for_activity_after_get_comments', $args, $comments );
 
 		// Return comments.
 		if ( $return_comments ) {
@@ -1689,7 +1708,7 @@ class Sensei_Utils {
 				$user_id = get_current_user_id();
 			}
 
-			// the user is not logged in
+			// the user is not logged in.
 			if ( 0 >= (int) $user_id ) {
 				return false;
 			}
@@ -1697,11 +1716,21 @@ class Sensei_Utils {
 			$lesson_id = (int) $lesson;
 			$user_id   = (int) $user_id;
 
+			/**
+			 * Filter lesson ID for `Sensei_Utils::user_completed_lesson` method.
+			 *
+			 * @hook sensei_utils_user_completed_lesson_lesson_id
+			 *
+			 * @param {int} $lesson_id ID of lesson.
+			 * @return {int} Filtered lesson ID.
+			 */
+			$lesson_id = apply_filters( 'sensei_utils_user_completed_lesson_lesson_id', $lesson_id );
+
 			$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 			if ( $lesson_progress ) {
 				$user_lesson_status = $lesson_progress->get_status();
 			} else {
-				return false; // No progress means not complete
+				return false; // No progress means not complete.
 			}
 
 			// In the comments-based progress we use one entry to store both the lesson progress and the quiz progress.
@@ -1739,7 +1768,8 @@ class Sensei_Utils {
 		}
 
 		// Check for Passed or Completed Setting
-		// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
+		// Should we be checking for the Course completion setting?
+		// Surely that should only affect the Course completion, not bypass each Lesson setting.
 		switch ( $user_lesson_status ) {
 			case 'complete':
 			case 'graded':
@@ -1749,13 +1779,13 @@ class Sensei_Utils {
 			case 'failed':
 				// This may be 'completed' depending on...
 				if ( $lesson_id ) {
-					// Get Quiz ID, this won't be needed once all Quiz meta fields are stored on the Lesson
+					// Get Quiz ID, this won't be needed once all Quiz meta fields are stored on the Lesson.
 					$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 					if ( $lesson_quiz_id ) {
 						// ...the quiz pass setting
 						$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
 						if ( empty( $pass_required ) ) {
-							// We just require the user to have done the quiz, not to have passed
+							// We just require the user to have done the quiz, not to have passed.
 							return true;
 						}
 					}
@@ -1772,8 +1802,8 @@ class Sensei_Utils {
 	 * @since 1.7.0
 	 * @deprecated 4.18.0 Use course progress repository instead.
 	 *
-	 * @param int $course_id
-	 * @param int $user_id
+	 * @param int $course_id Course ID.
+	 * @param int $user_id User ID.
 	 * @return object
 	 */
 	public static function user_course_status( $course_id = 0, $user_id = 0 ) {
@@ -1801,8 +1831,8 @@ class Sensei_Utils {
 	 * Returns the requested lesson status
 	 *
 	 * @since 1.7.0
-	 * @param int $lesson_id
-	 * @param int $user_id
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $user_id User ID.
 	 * @return WP_Comment|false
 	 */
 	public static function user_lesson_status( $lesson_id = 0, $user_id = 0 ) {
@@ -1821,6 +1851,7 @@ class Sensei_Utils {
 				),
 				true
 			);
+
 			return $user_lesson_status;
 		}
 

@@ -528,6 +528,19 @@ class Sensei_Course {
 	 * @return bool
 	 */
 	public static function is_user_enrolled( $course_id, $user_id = null ) {
+
+		/**
+		 * Filters the course ID for the `Sensei_Course::is_user_enrolled` method.
+		 *
+		 * @hook sensei_block_course_progress_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} The course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_course_is_user_enrolled_course_id', $course_id );
+
 		if ( empty( $course_id ) ) {
 			return false;
 		}
@@ -2362,7 +2375,7 @@ class Sensei_Course {
 	 * Generate the course meter component
 	 *
 	 * @since 1.8.0
-	 * @param int $progress_percentage 0 - 100
+	 * @param int|float $progress_percentage 0 - 100
 	 * @return string $progress_bar_html
 	 */
 	public function get_progress_meter( $progress_percentage ) {
@@ -2416,7 +2429,6 @@ class Sensei_Course {
 		 * @return {string} Filtered course completion statement.
 		 */
 		return apply_filters( 'sensei_course_completion_statement', $statement );
-
 	}
 
 	/**
@@ -2458,8 +2470,8 @@ class Sensei_Course {
 	/**
 	 * Output the course progress statement
 	 *
-	 * @param $course_id
-	 * @return void
+	 * @param int $course_id The course ID.
+	 * @param int $user_id The user ID.
 	 */
 	public function the_progress_statement( $course_id = 0, $user_id = 0 ) {
 		if ( empty( $course_id ) ) {
@@ -2515,8 +2527,8 @@ class Sensei_Course {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param int $course_id
-	 * @param int $user_id
+	 * @param int $course_id The course ID.
+	 * @param int $user_id The user ID.
 	 * @return array $completed_lesson_ids
 	 */
 	public function get_completed_lesson_ids( $course_id, $user_id = 0 ) {
@@ -2538,7 +2550,6 @@ class Sensei_Course {
 		}
 
 		return $completed_lesson_ids;
-
 	}
 
 	/**
@@ -2546,9 +2557,9 @@ class Sensei_Course {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param int $course_id
-	 * @param int $user_id
-	 * @return int $percentage
+	 * @param int $course_id The course ID.
+	 * @param int $user_id   The user ID.
+	 * @return float Percentage of the course completed.
 	 */
 	public function get_completion_percentage( $course_id, $user_id = 0 ) {
 
@@ -2579,15 +2590,14 @@ class Sensei_Course {
 		 * @return {float} Filtered percentage.
 		 */
 		return apply_filters( 'sensei_course_completion_percentage', $percentage, $course_id, $user_id );
-
 	}
 
 	/**
-	 * Block email notifications for the specific courses
-	 * that the user disabled the notifications.
+	 * Block email notifications for the specific courses that the user disabled the notifications.
 	 *
 	 * @since 1.8.0
-	 * @param $should_send
+	 *
+	 * @param bool $should_send Whether the email should be sent, initial value.
 	 * @return bool
 	 */
 	public function block_notification_emails( $should_send ) {

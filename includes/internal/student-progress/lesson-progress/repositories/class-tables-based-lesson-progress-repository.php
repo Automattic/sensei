@@ -55,6 +55,18 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
+		/**
+		 * Filter lesson id for lesson progress creation.
+		 *
+		 * @hook sensei_lesson_progress_create_lesson_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $lesson_id The lesson ID.
+		 * @return {int} Filtered lesson ID.
+		 */
+		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_create_lesson_id', $lesson_id );
+
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
@@ -107,6 +119,18 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @return Lesson_Progress_Interface|null The lesson progress or null if not found.
 	 */
 	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress_Interface {
+		/**
+		 * Filter lesson id for lesson progress creation.
+		 *
+		 * @hook sensei_lesson_progress_get_lesson_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $lesson_id The lesson ID.
+		 * @return {int} Filtered lesson ID.
+		 */
+		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_get_lesson_id', $lesson_id );
+
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -146,6 +170,18 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @return bool
 	 */
 	public function has( int $lesson_id, int $user_id ): bool {
+		/**
+		 * Filter lesson id for lesson progress check.
+		 *
+		 * @hook sensei_lesson_progress_has_lesson_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $lesson_id The lesson ID.
+		 * @return {int} Filtered lesson ID.
+		 */
+		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_has_lesson_id', $lesson_id );
+
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -229,6 +265,18 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @param int $lesson_id The lesson ID.
 	 */
 	public function delete_for_lesson( int $lesson_id ): void {
+		/**
+		 * Filter lesson id for lesson progress deletion.
+		 *
+		 * @hook sensei_lesson_progress_delete_for_lesson_lesson_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $lesson_id The lesson ID.
+		 * @return {int} Filtered lesson ID.
+		 */
+		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_delete_for_lesson_lesson_id', $lesson_id );
+
 		$this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
@@ -274,6 +322,22 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @return int
 	 */
 	public function count( int $course_id, int $user_id ): int {
+		if ( ! $user_id ) {
+			return 0;
+		}
+
+		/**
+		 * Filter course id for lesson progress counting.
+		 *
+		 * @hook sensei_lesson_progress_count_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_lesson_progress_count_course_id', $course_id );
+
 		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
 
 		if ( empty( $lesson_ids ) ) {
@@ -327,8 +391,26 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		$where_clause = array( 'type = %s' );
 		$query_params = array( 'lesson' );
 		if ( ! empty( $lesson_id ) ) {
-			$query_params   = array_merge( $query_params, (array) $lesson_id );
-			$where_clause[] = 'post_id IN (' . $this->get_placeholders( (array) $lesson_id ) . ')';
+			$lesson_ids = array_map( 'intval', (array) $lesson_id );
+			$lesson_ids = array_map(
+				function ( $lesson_id ) {
+					/**
+					 * Filter lesson id for lesson progress creation.
+					 *
+					 * @hook sensei_lesson_progress_find_lesson_id
+					 *
+					 * @since $$next-version$$
+					 *
+					 * @param {int} $lesson_id The lesson ID.
+					 * @return {int} Filtered lesson ID.
+					 */
+					return (int) apply_filters( 'sensei_lesson_progress_find_lesson_id', $lesson_id );
+				},
+				$lesson_ids
+			);
+
+			$query_params   = array_merge( $query_params, $lesson_ids );
+			$where_clause[] = 'post_id IN (' . $this->get_placeholders( $lesson_ids ) . ')';
 		}
 
 		if ( ! empty( $user_id ) ) {

@@ -37,6 +37,18 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @throws \RuntimeException When the quiz progress doesn't exist. In this implementation we re-use lesson progress.
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
+		/**
+		 * Filter quiz id for quiz progress creation.
+		 *
+		 * @hook sensei_quiz_progress_create_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id Quiz ID.
+		 * @return {int} Filtered quiz ID.
+		 */
+		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_create_quiz_id', $quiz_id );
+
 		$progress = $this->get( $quiz_id, $user_id );
 		if ( ! $progress ) {
 			/**
@@ -63,7 +75,19 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			return null;
 		}
 
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+		/**
+		 * Filter quiz id for quiz progress retrieval.
+		 *
+		 * @hook sensei_quiz_progress_get_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id Quiz ID.
+		 * @return {int} Filtered quiz ID.
+		 */
+		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_get_quiz_id', $quiz_id );
+
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
 		if ( ! $lesson_id ) {
 			return null;
 		}
@@ -95,15 +119,30 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			return false;
 		}
 
-		$lesson_id     = Sensei()->quiz->get_lesson_id( $quiz_id );
+		/**
+		 * Filter quiz id for quiz progress existence check.
+		 *
+		 * @hook sensei_quiz_progress_has_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id Quiz ID.
+		 * @return {int} Filtered quiz ID.
+		 */
+		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_has_quiz_id', $quiz_id );
+
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
+		if ( ! $lesson_id ) {
+			return false;
+		}
+
 		$activity_args = [
 			'post_id' => $lesson_id,
 			'user_id' => $user_id,
 			'type'    => 'sensei_lesson_status',
 		];
-		$count         = Sensei_Utils::sensei_check_for_activity( $activity_args );
+		$count         = (int) Sensei_Utils::sensei_check_for_activity( $activity_args );
 		return $count > 0;
-
 	}
 
 	/**
@@ -116,7 +155,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->assert_comments_based_quiz_progress( $quiz_progress );
 
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
 		$metadata  = [];
 		if ( $quiz_progress->get_started_at() ) {
 			$metadata['start'] = $quiz_progress->get_started_at()->format( 'Y-m-d H:i:s' );
@@ -127,7 +166,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		$reflection_class = new \ReflectionClass( Comments_Based_Quiz_Progress::class );
 		$status_property  = $reflection_class->getProperty( 'status' );
 		$status_property->setAccessible( true );
-		$status = $status_property->getValue( $quiz_progress );
+		$status = (string) $status_property->getValue( $quiz_progress );
 
 		Sensei_Utils::update_lesson_status( $quiz_progress->get_user_id(), $lesson_id, $status, $metadata );
 	}
@@ -151,7 +190,22 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @param int $quiz_id Quiz identifier.
 	 */
 	public function delete_for_quiz( int $quiz_id ): void {
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+		/**
+		 * Filter quiz id for quiz progress deletion.
+		 *
+		 * @hook sensei_quiz_progress_delete_for_quiz_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id Quiz ID.
+		 * @return {int} Filtered quiz ID.
+		 */
+		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_delete_for_quiz_quiz_id', $quiz_id );
+
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
+		if ( ! $lesson_id ) {
+			return;
+		}
 
 		$activity_args = [
 			'post_id' => $lesson_id,
@@ -159,8 +213,8 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		];
 		$comments      = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 		foreach ( $comments as $comment ) {
-			$this->delete_grade_and_answers( $comment->comment_ID );
-			Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $comment->user_id );
+			$this->delete_grade_and_answers( (int) $comment->comment_ID );
+			Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, (int) $comment->user_id );
 		}
 	}
 
@@ -226,8 +280,27 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		);
 
 		$quiz_id = $args['quiz_id'] ?? null;
-		if ( isset( $args['quiz_id'] ) ) {
-			$lesson_ids = Sensei()->quiz->get_lesson_ids( (array) $args['quiz_id'] );
+		if ( ! empty( $quiz_id ) ) {
+			$quiz_id = (array) $quiz_id;
+			$quiz_id = array_map( 'intval', $quiz_id );
+			$quiz_id = array_map(
+				function ( $id ) {
+					/**
+					 * Filter quiz id for quiz progress retrieval.
+					 *
+					 * @hook sensei_quiz_progress_find_quiz_id
+					 *
+					 * @since $$next-version$$
+					 *
+					 * @param {int} $quiz_id Quiz ID.
+					 * @return {int} Filtered quiz ID.
+					 */
+					return (int) apply_filters( 'sensei_quiz_progress_find_quiz_id', $id );
+				},
+				$quiz_id
+			);
+
+			$lesson_ids = Sensei()->quiz->get_lesson_ids( $quiz_id );
 			if ( ! empty( $lesson_ids ) ) {
 				$comments_args['post__in'] = $lesson_ids;
 			} else {
@@ -293,7 +366,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 
 		$quiz_progresses = [];
 		foreach ( $comments as $comment ) {
-			$quiz_progresses[] = $this->create_progress_from_comment( $comment, $quiz_id );
+			$quiz_progresses[] = $this->create_progress_from_comment( $comment );
 		}
 
 		return $quiz_progresses;

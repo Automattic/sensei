@@ -46,7 +46,6 @@ class Sensei_Course_Progress_Block {
 	public function render_course_progress( $attributes ): string {
 
 		$course_id = $attributes['postId'] ?? get_the_ID();
-
 		if ( 'course' !== get_post_type( $course_id ) ) {
 			return '';
 		}

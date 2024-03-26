@@ -40,6 +40,18 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @throws RuntimeException When the lesson progress could not be created.
 	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
+		/**
+		 * Filter lesson id for lesson progress creation.
+		 *
+		 * @hook sensei_lesson_progress_create_lesson_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $lesson_id The lesson ID.
+		 * @return {int} Filtered lesson ID.
+		 */
+		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_create_lesson_id', $lesson_id );
+
 		$metadata   = [
 			'start' => current_time( 'mysql' ),
 		];
@@ -48,12 +60,12 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			throw new RuntimeException( "Can't create a lesson progress" );
 		}
 
-		$progress = $this->get( $lesson_id, $user_id );
-		if ( ! $progress ) {
+		$comment = get_comment( $comment_id );
+		if ( ! $comment ) {
 			throw new RuntimeException( 'Created lesson progress not found' );
 		}
 
-		return $progress;
+		return $this->create_progress_from_comment( $comment );
 	}
 
 	/**
@@ -70,6 +82,18 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		if ( ! $user_id ) {
 			return null;
 		}
+
+		/**
+		 * Filter lesson id for lesson progress creation.
+		 *
+		 * @hook sensei_lesson_progress_get_lesson_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $lesson_id The lesson ID.
+		 * @return {int} Filtered lesson ID.
+		 */
+		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_get_lesson_id', $lesson_id );
 
 		$activity_args = [
 			'post_id' => $lesson_id,
@@ -97,6 +121,18 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		if ( ! $user_id ) {
 			return false;
 		}
+
+		/**
+		 * Filter lesson id for lesson progress check.
+		 *
+		 * @hook sensei_lesson_progress_has_lesson_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $lesson_id The lesson ID.
+		 * @return {int} Filtered lesson ID.
+		 */
+		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_has_lesson_id', $lesson_id );
 
 		$activity_args = [
 			'post_id' => $lesson_id,
@@ -127,9 +163,9 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		$reflection_class = new ReflectionClass( Comments_Based_Lesson_Progress::class );
 		$status_property  = $reflection_class->getProperty( 'status' );
 		$status_property->setAccessible( true );
-		$status = $status_property->getValue( $lesson_progress );
+		$status = (string) $status_property->getValue( $lesson_progress );
 
-		$comment_id = Sensei_Utils::update_lesson_status(
+		$comment_id = (int) Sensei_Utils::update_lesson_status(
 			$lesson_progress->get_user_id(),
 			$lesson_progress->get_lesson_id(),
 			$status,
@@ -173,6 +209,18 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @param int $lesson_id The lesson ID.
 	 */
 	public function delete_for_lesson( int $lesson_id ): void {
+		/**
+		 * Filter lesson id for lesson progress deletion.
+		 *
+		 * @hook sensei_lesson_progress_delete_for_lesson_lesson_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $lesson_id The lesson ID.
+		 * @return {int} Filtered lesson ID.
+		 */
+		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_delete_for_lesson_lesson_id', $lesson_id );
+
 		$args = array(
 			'post_id' => $lesson_id,
 			'type'    => 'sensei_lesson_status',
@@ -213,6 +261,18 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			return 0;
 		}
 
+		/**
+		 * Filter course id for lesson progress counting.
+		 *
+		 * @hook sensei_lesson_progress_count_course_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_lesson_progress_count_course_id', $course_id );
+
 		$lessons = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
 
 		if ( empty( $lessons ) ) {
@@ -225,7 +285,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			'type'     => 'sensei_lesson_status',
 		);
 
-		return Sensei_Utils::sensei_check_for_activity( $activity_args );
+		return (int) Sensei_Utils::sensei_check_for_activity( $activity_args );
 	}
 
 	/**
@@ -286,7 +346,25 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		);
 
 		if ( isset( $args['lesson_id'] ) ) {
-			$comments_args['post__in'] = (array) $args['lesson_id'];
+			$lesson_ids = array_map( 'intval', (array) $args['lesson_id'] );
+			$lesson_ids = array_map(
+				function ( $lesson_id ) {
+					/**
+					 * Filter lesson id when finding lesson progress.
+					 *
+					 * @hook sensei_lesson_progress_find_lesson_id
+					 *
+					 * @since $$next-version$$
+					 *
+					 * @param {int} $lesson_id The lesson ID.
+					 * @return {int} Filtered lesson ID.
+					 */
+					return (int) apply_filters( 'sensei_lesson_progress_find_lesson_id', $lesson_id );
+				},
+				$lesson_ids
+			);
+
+			$comments_args['post__in'] = $lesson_ids;
 		}
 
 		if ( isset( $args['user_id'] ) ) {

@@ -40,6 +40,18 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @throws RuntimeException     In case the lesson status is missing.
 	 */
 	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
+		/**
+		 * Filters the quiz ID when quiz submission is created.
+		 *
+		 * @hook sensei_quiz_submission_create_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id The quiz ID.
+		 * @return {int} The quiz ID.
+		*/
+		$quiz_id = apply_filters( 'sensei_quiz_submission_create_quiz_id', $quiz_id );
+
 		$status_comment = $this->get_status_comment( $quiz_id, $user_id );
 
 		if ( ! $status_comment ) {
@@ -74,6 +86,18 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @return Submission_Interface The quiz submission.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
+		/**
+		 * Filters the quiz ID when quiz submission is created.
+		 *
+		 * @hook sensei_quiz_submission_get_or_create_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id The quiz ID.
+		 * @return {int} The quiz ID.
+		 */
+		$quiz_id = apply_filters( 'sensei_quiz_submission_get_or_create_quiz_id', $quiz_id );
+
 		$submission = $this->get( $quiz_id, $user_id );
 
 		if ( $submission ) {
@@ -94,6 +118,18 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @return Submission_Interface|null The quiz submission.
 	 */
 	public function get( int $quiz_id, int $user_id ): ?Submission_Interface {
+		/**
+		 * Filters the quiz ID when quiz submission is retrieved.
+		 *
+		 * @hook sensei_quiz_submission_get_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id The quiz ID.
+		 * @return {int} The quiz ID.
+		 */
+		$quiz_id = apply_filters( 'sensei_quiz_submission_get_quiz_id', $quiz_id );
+
 		$status_comment = $this->get_status_comment( $quiz_id, $user_id );
 
 		if (
@@ -126,6 +162,19 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @return array An array of question post IDs.
 	 */
 	public function get_question_ids( int $submission_id ): array {
+		/**
+		 * Filters the quiz submission ID when getting the question IDs.
+		 *
+		 * @hook sensei_quiz_submission_get_question_ids_submission_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int}    $submission_id The quiz submission ID.
+		 * @param {string} $context       The context.
+		 * @return {int} The quiz submission ID.
+		 */
+		$submission_id = apply_filters( 'sensei_quiz_submission_get_question_ids_submission_id', $submission_id, 'comments' );
+
 		$questions_asked_csv = get_comment_meta( $submission_id, 'questions_asked', true );
 		if ( ! $questions_asked_csv ) {
 			return [];

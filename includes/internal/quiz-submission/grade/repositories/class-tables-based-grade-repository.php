@@ -57,13 +57,38 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 * @return Grade_Interface The grade.
 	 */
 	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface {
+		/**
+		 * Filters the question ID when quiz grade is created.
+		 *
+		 * @hook sensei_quiz_grade_create_question_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $question_id The question ID.
+		 * @return {int} The question ID.
+		 */
+		$question_id = apply_filters( 'sensei_quiz_grade_create_question_id', $question_id );
+
+		/**
+		 * Filters the answer ID when quiz grade is created.
+		 *
+		 * @hook sensei_quiz_grade_create_answer_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $answer_id The answer ID.
+		 * @param {string} $context The context.
+		 * @return {int} The answer ID.
+		 */
+		$answer_id = apply_filters( 'sensei_quiz_grade_create_answer_id', $answer->get_id(), 'tables' );
+
 		$current_date = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
 		$date_format  = 'Y-m-d H:i:s';
 
 		$this->wpdb->insert(
 			$this->get_table_name(),
 			[
-				'answer_id'   => $answer->get_id(),
+				'answer_id'   => $answer_id,
 				'question_id' => $question_id,
 				'points'      => $points,
 				'feedback'    => $feedback,
@@ -82,7 +107,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 
 		return new Tables_Based_Grade(
 			$this->wpdb->insert_id,
-			$answer->get_id(),
+			$answer_id,
 			$question_id,
 			$points,
 			$feedback,
@@ -101,6 +126,19 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 * @return Grade_Interface[] An array of grades.
 	 */
 	public function get_all( int $submission_id ): array {
+		/**
+		 * Filter the submission ID when getting all quiz grades.
+		 *
+		 * @hook sensei_quiz_grade_get_all_submission_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int}    $submission_id The submission ID.
+		 * @param {string} $context       The context.
+		 * @return {int} The submission ID.
+		 */
+		$submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission_id, 'tables' );
+
 		$answer_ids = $this->get_answer_ids_by_submission_id( $submission_id );
 		if ( empty( $answer_ids ) ) {
 			return [];
@@ -149,7 +187,20 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 * @param Submission_Interface $submission The submission.
 	 */
 	public function delete_all( Submission_Interface $submission ): void {
-		$answer_ids = $this->get_answer_ids_by_submission_id( $submission->get_id() );
+		/**
+		 * Filters the submission ID when deleting all quiz grades.
+		 *
+		 * @hook sensei_quiz_grade_delete_all_submission_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int}    $submission_id The submission ID.
+		 * @param {string} $context       The context.
+		 * @return {int} The submission ID.
+		 */
+		$submission_id = (int) apply_filters( 'sensei_quiz_grade_delete_all_submission_id', $submission->get_id(), 'tables' );
+
+		$answer_ids = $this->get_answer_ids_by_submission_id( $submission_id );
 		if ( empty( $answer_ids ) ) {
 			return;
 		}

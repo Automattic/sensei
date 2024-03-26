@@ -53,6 +53,18 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @return Quiz_Progress_Interface
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
+		/**
+		 * Filter quiz id for quiz progress creation.
+		 *
+		 * @hook sensei_quiz_progress_create_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id Quiz ID.
+		 * @return {int} Filtered quiz ID.
+		 */
+		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_create_quiz_id', $quiz_id );
+
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
@@ -104,6 +116,22 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @return Quiz_Progress_Interface|null
 	 */
 	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress_Interface {
+		if ( ! $user_id ) {
+			return null;
+		}
+
+		/**
+		 * Filter quiz id for quiz progress retrieval.
+		 *
+		 * @hook sensei_quiz_progress_get_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id Quiz ID.
+		 * @return {int} Filtered quiz ID.
+		 */
+		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_get_quiz_id', $quiz_id );
+
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -143,6 +171,22 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @return bool
 	 */
 	public function has( int $quiz_id, int $user_id ): bool {
+		if ( ! $user_id ) {
+			return false;
+		}
+
+		/**
+		 * Filter quiz id for quiz progress existence check.
+		 *
+		 * @hook sensei_quiz_progress_has_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id Quiz ID.
+		 * @return {int} Filtered quiz ID.
+		 */
+		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_has_quiz_id', $quiz_id );
+
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -226,6 +270,18 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @param int $quiz_id Quiz identifier.
 	 */
 	public function delete_for_quiz( int $quiz_id ): void {
+		/**
+		 * Filter quiz id for quiz progress deletion.
+		 *
+		 * @hook sensei_quiz_progress_delete_for_quiz_quiz_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $quiz_id Quiz ID.
+		 * @return {int} Filtered quiz ID.
+		 */
+		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_delete_for_quiz_quiz_id', $quiz_id );
+
 		$this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
@@ -291,8 +347,27 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		$where_clause = array( 'type = %s' );
 		$query_params = array( 'quiz' );
 		if ( ! empty( $quiz_id ) ) {
-			$query_params   = array_merge( $query_params, (array) $quiz_id );
-			$where_clause[] = 'post_id IN (' . $this->get_placeholders( (array) $quiz_id ) . ')';
+			$quiz_id = (array) $quiz_id;
+			$quiz_id = array_map( 'intval', $quiz_id );
+			$quiz_id = array_map(
+				function ( $id ) {
+					/**
+					 * Filter quiz id for quiz progress retrieval.
+					 *
+					 * @hook sensei_quiz_progress_find_quiz_id
+					 *
+					 * @since $$next-version$$
+					 *
+					 * @param {int} $quiz_id Quiz ID.
+					 * @return {int} Filtered quiz ID.
+					 */
+					return (int) apply_filters( 'sensei_quiz_progress_find_quiz_id', $id );
+				},
+				$quiz_id
+			);
+
+			$query_params   = array_merge( $query_params, $quiz_id );
+			$where_clause[] = 'post_id IN (' . $this->get_placeholders( $quiz_id ) . ')';
 		}
 
 		if ( ! empty( $user_id ) ) {
