@@ -113,6 +113,24 @@ class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 		/* Assert */
 		$this->assertEmpty( $redirect_location );
 	}
+
+	public function testSenseiProUpsellRedirect_WhenLoggedInAsNormalUser_DoesNotRedirect() {
+		/* Arrange */
+		$this->login_as_student();
+		$redirect_location = '';
+		$this->prevent_wp_redirect();
+
+		/* Act */
+		try {
+			$this->dispatchRequest( 'GET', '/sensei-pro-upsell-redirect' );
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert */
+		$this->assertEmpty( $redirect_location );
+	}
+
 	private function dispatchRequest( $method, $route = '' ) {
 		// Prevent requests.
 		add_filter(
