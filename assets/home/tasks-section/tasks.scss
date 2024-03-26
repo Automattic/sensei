@@ -32,7 +32,7 @@
 			border-top: none;
 		}
 
-		&--done {
+		&--disabled {
 			color: $gray-50;
 		}
 	}
@@ -58,5 +58,9 @@
 		width: 25px;
 		height: 25px;
 		justify-self: end;
+	}
+
+	&__icon-with-current-color {
+		fill: currentColor;
 	}
 }
