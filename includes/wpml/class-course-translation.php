@@ -24,6 +24,7 @@ class Course_Translation {
 
 	use Lesson_Translation_Helper;
 	use Quiz_Translation_Helper;
+	use WPML_API;
 
 	/**
 	 * Init hooks.
@@ -47,15 +48,7 @@ class Course_Translation {
 			return;
 		}
 
-		$details = (array) apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_details',
-			null,
-			array(
-				'element_id'   => $new_course_id,
-				'element_type' => 'course',
-			)
-		);
+		$details = $this->get_element_language_details( $new_course_id, 'course' );
 		if ( empty( $details ) ) {
 			return;
 		}
@@ -64,8 +57,7 @@ class Course_Translation {
 			return;
 		}
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		$master_id = apply_filters( 'wpml_object_id', $new_course_id, 'course', false, $details['source_language_code'] );
+		$master_id = $this->get_object_id( $new_course_id, 'course', false, $details['source_language_code'] );
 		if ( empty( $master_id ) || $master_id === $new_course_id ) {
 			return;
 		}
@@ -77,16 +69,12 @@ class Course_Translation {
 			}
 
 			// Create translatons if they don't exist.
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$is_translated = apply_filters( 'wpml_element_has_translations', '', $lesson_id, 'lesson' );
+			$is_translated = $this->has_translation_in_language( $lesson_id, 'post_lesson', $details['language_code'] );
 			if ( ! $is_translated ) {
-				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-				do_action( 'wpml_admin_make_post_duplicates', $lesson_id );
-
+				$this->admin_make_post_duplicates( $lesson_id );
 			}
 
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$translations = apply_filters( 'wpml_post_duplicates', $lesson_id );
+			$translations = $this->get_post_duplicates( $lesson_id );
 			foreach ( $translations as $translated_lesson_id ) {
 				$this->update_lesson_course( (int) $translated_lesson_id, $new_course_id );
 				$this->update_translated_lesson_properties( (int) $translated_lesson_id, $lesson_id );
@@ -95,8 +83,7 @@ class Course_Translation {
 			$this->update_quiz_translations( $lesson_id );
 
 			// Sync lesson course field across translations.
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			do_action( 'wpml_sync_custom_field', $lesson_id, '_lesson_course' );
+			$this->sync_custom_field( $lesson_id, '_lesson_course' );
 		}
 	}
 }

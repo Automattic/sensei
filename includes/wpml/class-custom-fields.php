@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 class Custom_Fields {
+	use WPML_API;
 
 	/**
 	 * Init hooks.
@@ -55,23 +56,13 @@ class Custom_Fields {
 
 		$course_id = (int) $copied_value;
 
-		$target_language_code = apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_code',
-			null,
-			array(
-				'element_id'   => $post_id_to,
-				'element_type' => 'course',
-			)
-		);
 
+		$target_language_code = $this->get_element_language_code( $post_id_to, 'course' );
 		if ( ! $target_language_code ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$target_language_code = apply_filters( 'wpml_current_language', null );
+			$target_language_code = $this->get_current_language();
 		}
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		return apply_filters( 'wpml_object_id', $course_id, 'course', false, $target_language_code );
+		return $this->get_object_id( $course_id, 'course', false, $target_language_code );
 	}
 
 	/**
@@ -98,23 +89,12 @@ class Custom_Fields {
 
 		$course_id = (int) $copied_value;
 
-		$target_language_code = apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_code',
-			null,
-			array(
-				'element_id'   => $post_id_to,
-				'element_type' => 'lesson',
-			)
-		);
-
+		$target_language_code = $this->get_element_language_code( $post_id_to, 'lesson' );
 		if ( ! $target_language_code ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$target_language_code = apply_filters( 'wpml_current_language', null );
+			$target_language_code = $this->get_current_language();
 		}
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		return apply_filters( 'wpml_object_id', $course_id, 'course', false, $target_language_code );
+		return $this->get_object_id( $course_id, 'course', false, $target_language_code );
 	}
 
 	/**
@@ -147,22 +127,11 @@ class Custom_Fields {
 			return $copied_value;
 		}
 
-		$target_language_code = apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_code',
-			null,
-			array(
-				'element_id'   => $post_id_to,
-				'element_type' => $post_type,
-			)
-		);
-
+		$target_language_code = $this->get_element_language_code( $post_id_to, $post_type );
 		if ( ! $target_language_code ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$target_language_code = apply_filters( 'wpml_current_language', null );
+			$target_language_code = $this->get_current_language();
 		}
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		return apply_filters( 'wpml_object_id', $quiz_id, 'quiz', false, $target_language_code );
+		return $this->get_object_id( $quiz_id, 'quiz', false, $target_language_code );
 	}
 }
