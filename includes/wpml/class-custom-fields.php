@@ -56,7 +56,6 @@ class Custom_Fields {
 
 		$course_id = (int) $copied_value;
 
-
 		$target_language_code = $this->get_element_language_code( $post_id_to, 'course' );
 		if ( ! $target_language_code ) {
 			$target_language_code = $this->get_current_language();

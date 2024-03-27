@@ -29,7 +29,7 @@ trait WPML_API {
 	 * @return int|null
 	 */
 	public function get_element_trid( $element_id, $element_type ) {
-		// phpcs:ignore WordPress.NamingConventions.ValidHookName.PrefixAllGlobals
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return apply_filters( 'wpml_element_trid', null, $element_id, $element_type );
 	}
 
@@ -49,6 +49,7 @@ trait WPML_API {
 			return array();
 		}
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$translations = apply_filters( 'wpml_get_element_translations', null, $trid, $element_type );
 		if ( ! $translations ) {
 			return array();
@@ -141,6 +142,7 @@ trait WPML_API {
 	 * @return int
 	 */
 	public function get_object_id( $element_id, $element_type, $return_original_if_missing = false, $language_code = null ) {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return apply_filters( 'wpml_object_id', $element_id, $element_type, $return_original_if_missing, $language_code );
 	}
 
