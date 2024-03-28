@@ -107,7 +107,7 @@ class Sensei_Home_Task_Pro_Upsell_Test extends WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertTrue( isset( $task_array[1]['external_icon'] ) );
-		$this->assertFalse( isset( $task_array[0]['external_icon'] ) );
+		$this->assertTrue( isset( $task_array[1]['show_external_icon'] ) );
+		$this->assertFalse( isset( $task_array[0]['show_external_icon'] ) );
 	}
 }

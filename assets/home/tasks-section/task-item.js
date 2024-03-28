@@ -18,13 +18,13 @@ import { Icon, external } from '@wordpress/icons';
 /**
  * Tasks item component.
  *
- * @param {Object}  props              Component props.
- * @param {string}  props.title        Item title.
- * @param {string}  props.url          Item URL.
- * @param {boolean} props.done         Whether item is completed.
- * @param {boolean} props.externalIcon Whether to show external icon.
+ * @param {Object}  props                  Component props.
+ * @param {string}  props.title            Item title.
+ * @param {string}  props.url              Item URL.
+ * @param {boolean} props.done             Whether item is completed.
+ * @param {boolean} props.showExternalIcon Whether to show external icon.
  */
-const TaskItem = ( { title, url, done, externalIcon } ) => {
+const TaskItem = ( { title, url, done, showExternalIcon } ) => {
 	const Tag = done ? 'span' : 'a';
 	const isExternal = isUrlExternal( url );
 
@@ -46,7 +46,7 @@ const TaskItem = ( { title, url, done, externalIcon } ) => {
 				) }
 				<span className="sensei-home-tasks__item-title">
 					{ title }
-					{ externalIcon && (
+					{ showExternalIcon && (
 						<Icon
 							icon={ external }
 							className="sensei-home-tasks__external-icon"

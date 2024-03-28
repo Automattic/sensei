@@ -21,7 +21,7 @@ class Sensei_Home_Task_Pro_Upsell implements Sensei_Home_Task {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_filter( 'sensei_home_tasks', [ $this, 'maybe_add_external_icon_property' ] );
+		add_filter( 'sensei_home_tasks', [ $this, 'maybe_add_show_external_icon_property' ] );
 	}
 
 	/**
@@ -31,11 +31,11 @@ class Sensei_Home_Task_Pro_Upsell implements Sensei_Home_Task {
 	 *
 	 * @return array
 	 */
-	public function maybe_add_external_icon_property( $tasks ) {
+	public function maybe_add_show_external_icon_property( $tasks ) {
 		return array_map(
 			function ( $task ): array {
 				if ( self::get_id() === $task['id'] ) {
-						$task['external_icon'] = true;
+						$task['show_external_icon'] = true;
 				}
 				return $task;
 			},
