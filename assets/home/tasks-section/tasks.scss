@@ -66,11 +66,9 @@
 		width: 20px;
 		height: 20px;
 		margin-left: 5px;
-		color: currentColor;
+	}
 
-		path {
-			fill: currentColor;
-			stroke: none;
-		}
+	&__icon-with-current-color {
+		fill: currentColor;
 	}
 }

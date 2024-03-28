@@ -49,7 +49,7 @@ const TaskItem = ( { title, url, done, showExternalIcon } ) => {
 					{ showExternalIcon && (
 						<Icon
 							icon={ external }
-							className="sensei-home-tasks__external-icon"
+							className="sensei-home-tasks__external-icon sensei-home-tasks__icon-with-current-color"
 						/>
 					) }
 				</span>

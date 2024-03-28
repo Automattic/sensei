@@ -103,13 +103,13 @@ final class Sensei_Home {
 	/**
 	 * Gets a REST API controller for Sensei Home.
 	 *
-	 * @param string $namespace The REST API namespace.
+	 * @param string $api_namespace The REST API namespace.
 	 *
 	 * @return Sensei_REST_API_Home_Controller
 	 */
-	public function get_rest_api_controller( $namespace ) {
+	public function get_rest_api_controller( $api_namespace ) {
 		return new Sensei_REST_API_Home_Controller(
-			$namespace,
+			$api_namespace,
 			$this->quick_links_provider,
 			$this->help_provider,
 			$this->promo_provider,
@@ -143,7 +143,7 @@ final class Sensei_Home {
 
 		if ( self::SCREEN_ID === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-home', 'home/index.js', [], true );
-			Sensei()->assets->enqueue( 'sensei-home-style', 'home/home.css', [ 'sensei-wp-components' ] );
+			Sensei()->assets->enqueue( 'sensei-home-style', 'home/home.css', [ 'sensei-wp-components', 'wp-components' ] );
 			Sensei()->assets->enqueue( 'sensei-dismiss-notices', 'js/admin/sensei-notice-dismiss.js', [] );
 			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin', '/sensei-internal/v1/home' ] );
 
@@ -276,5 +276,4 @@ final class Sensei_Home {
 		}
 		return self::$instance;
 	}
-
 }
