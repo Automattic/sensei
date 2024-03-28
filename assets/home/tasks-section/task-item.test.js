@@ -30,7 +30,7 @@ describe( '<TaskItem />', () => {
 	} );
 
 	it( 'Should render an external icon when externalIcon prop is true', () => {
-		const { container } = render( <TaskItem url="#" externalIcon /> );
+		const { container } = render( <TaskItem url="#" showExternalIcon /> );
 
 		const externalIcon = container.querySelector(
 			'.sensei-home-tasks__external-icon'
