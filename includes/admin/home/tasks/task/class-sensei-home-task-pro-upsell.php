@@ -117,6 +117,13 @@ class Sensei_Home_Task_Pro_Upsell implements Sensei_Home_Task {
 			return false;
 		}
 
+		// If the user does not intend to sell courses, we do not need to add this task.
+		$features = Sensei()->setup_wizard->get_wizard_user_data( 'features' );
+
+		if ( ! in_array( 'woocommerce', $features['selected'], true ) ) {
+			return false;
+		}
+
 		return ! Sensei_Plugins_Installation::instance()->is_plugin_active( 'sensei-pro' ) &&
 			! Sensei_Plugins_Installation::instance()->get_installed_plugin_path( 'woothemes-sensei.php' );
 	}
