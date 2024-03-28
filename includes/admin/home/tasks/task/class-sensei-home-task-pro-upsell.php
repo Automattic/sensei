@@ -124,7 +124,7 @@ class Sensei_Home_Task_Pro_Upsell implements Sensei_Home_Task {
 			return false;
 		}
 
-		return ! Sensei_Plugins_Installation::instance()->is_plugin_active( 'sensei-pro' ) &&
+		return ! Sensei_Plugins_Installation::instance()->get_installed_plugin_path( 'sensei-pro.php' ) &&
 			! Sensei_Plugins_Installation::instance()->get_installed_plugin_path( 'woothemes-sensei.php' );
 	}
 }
