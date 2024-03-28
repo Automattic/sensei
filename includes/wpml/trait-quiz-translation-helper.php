@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 trait Quiz_Translation_Helper {
+	use WPML_API;
 
 	/**
 	 * Update quiz translations.
@@ -31,30 +32,20 @@ trait Quiz_Translation_Helper {
 			return;
 		}
 
-		// Create translations for questions if they don't exist.
 		$questions = Sensei()->quiz->get_questions( $master_quiz_id );
 		foreach ( $questions as $question ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$is_question_translated = apply_filters( 'wpml_element_has_translations', '', $question->ID, $question->post_type );
-			if ( ! $is_question_translated ) {
-				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-				do_action( 'wpml_admin_make_post_duplicates', $question->ID );
-			}
+			$this->admin_make_post_duplicates( $question->ID );
 		}
 
 		// Create translations for the quiz if they don't exist.
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		$is_quiz_translated = apply_filters( 'wpml_element_has_translations', '', $master_quiz_id, 'quiz' );
+		$is_quiz_translated = $this->element_has_translations( $master_quiz_id, 'quiz' );
 		if ( ! $is_quiz_translated ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			do_action( 'wpml_admin_make_post_duplicates', $master_quiz_id );
+			$this->admin_make_post_duplicates( $master_quiz_id );
 		}
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		$quiz_translations = apply_filters( 'wpml_post_duplicates', $master_quiz_id );
+		$quiz_translations = $this->get_post_duplicates( $master_quiz_id );
 		foreach ( $quiz_translations as $translation_lang => $translated_quiz_id ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$quiz_lesson_id = apply_filters( 'wpml_object_id', $master_lesson_id, 'lesson', false, $translation_lang );
+			$quiz_lesson_id = $this->get_object_id( $master_lesson_id, 'lesson', false, $translation_lang );
 
 			// Update _quiz_lesson and _lesson_quiz field.
 			update_post_meta( $translated_quiz_id, '_quiz_lesson', $quiz_lesson_id );
@@ -65,8 +56,7 @@ trait Quiz_Translation_Helper {
 			// Add relationship between quiz and questions.
 			if ( ! empty( $questions ) ) {
 				foreach ( $questions as $question ) {
-					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-					$translated_question_id = apply_filters( 'wpml_object_id', $question->ID, $question->post_type, false, $translation_lang );
+					$translated_question_id = $this->get_object_id( $question->ID, $question->post_type, false, $translation_lang );
 					if ( empty( $translated_question_id ) ) {
 						continue;
 					}
@@ -75,8 +65,7 @@ trait Quiz_Translation_Helper {
 						$category = (int) get_post_meta( $question->ID, 'category', true );
 						$number   = (int) get_post_meta( $question->ID, 'number', true );
 
-						// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-						$translated_category_id = apply_filters( 'wpml_object_id', $category, 'question-category', false, $translation_lang );
+						$translated_category_id = $this->get_object_id( $category, 'question-category', false, $translation_lang );
 
 						update_post_meta( $translated_question_id, 'category', $translated_category_id );
 						update_post_meta( $translated_question_id, 'number', $number );

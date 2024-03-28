@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 class Quiz_Submission {
+	use WPML_API;
+
 	/**
 	 * Init hooks.
 	 */
@@ -42,19 +44,10 @@ class Quiz_Submission {
 	 */
 	public function translate_quiz_id( $quiz_id ): int {
 		$quiz_id = (int) $quiz_id;
-		$details = (array) apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_details',
-			null,
-			array(
-				'element_id'   => $quiz_id,
-				'element_type' => 'quiz',
-			)
-		);
+		$details = $this->get_element_language_details( $quiz_id, 'quiz' );
 
 		$original_language_code = $details['source_language_code'] ?? $details['language_code'] ?? null;
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		return (int) apply_filters( 'wpml_object_id', $quiz_id, 'quiz', true, $original_language_code );
+		return $this->get_object_id( $quiz_id, 'quiz', true, $original_language_code );
 	}
 }

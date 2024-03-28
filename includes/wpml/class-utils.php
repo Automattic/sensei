@@ -21,7 +21,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 class Utils {
-
 	/**
 	 * Init hooks.
 	 */

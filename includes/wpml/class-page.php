@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 class Page {
+	use WPML_API;
+
 	/**
 	 * Init hooks.
 	 */
@@ -39,7 +41,6 @@ class Page {
 	 * @return int Translated page ID.
 	 */
 	public function get_translated_course_completed_page_id( $page_id ) {
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		return apply_filters( 'wpml_object_id', $page_id, 'page', true );
+		return $this->get_object_id( $page_id, 'page', true );
 	}
 }

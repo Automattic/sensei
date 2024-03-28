@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 class Course_Progress {
+	use WPML_API;
+
 	/**
 	 * Init hooks.
 	 */
@@ -50,19 +52,10 @@ class Course_Progress {
 	 */
 	public function translate_course_id( $course_id ): int {
 		$course_id = (int) $course_id;
-		$details   = (array) apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_details',
-			null,
-			array(
-				'element_id'   => $course_id,
-				'element_type' => 'course',
-			)
-		);
+		$details   = $this->get_element_language_details( $course_id, 'course' );
 
 		$original_language_code = $details['source_language_code'] ?? $details['language_code'] ?? null;
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		return (int) apply_filters( 'wpml_object_id', $course_id, 'course', true, $original_language_code );
+		return $this->get_object_id( $course_id, 'course', true, $original_language_code );
 	}
 }

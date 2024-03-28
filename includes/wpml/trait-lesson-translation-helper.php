@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 trait Lesson_Translation_Helper {
+	use WPML_API;
+
 	/**
 	 * Update lesson course meta field.
 	 *
@@ -36,16 +38,7 @@ trait Lesson_Translation_Helper {
 	 * @param int|null $master_lesson_id Original lesson ID.
 	 */
 	private function update_translated_lesson_properties( $new_lesson_id, $master_lesson_id = null ) {
-		$details = (array) apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_details',
-			null,
-			array(
-				'element_id'   => $new_lesson_id,
-				'element_type' => 'lesson',
-			)
-		);
-
+		$details = $this->get_element_language_details( $new_lesson_id, 'lesson' );
 		if ( empty( $details ) ) {
 			return;
 		}
@@ -55,16 +48,14 @@ trait Lesson_Translation_Helper {
 				return;
 			}
 
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$master_lesson_id = apply_filters( 'wpml_object_id', $new_lesson_id, 'lesson', false, $details['source_language_code'] );
+			$master_lesson_id = $this->get_object_id( $new_lesson_id, 'lesson', false, $details['source_language_code'] );
 			if ( empty( $master_lesson_id ) || $master_lesson_id === $new_lesson_id ) {
 				return;
 			}
 
 			// Sync lesson course field across translations if possible.
 			// Does not work for lessons created with `wpml_post_duplicates` filter.
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			do_action( 'wpml_sync_custom_field', $master_lesson_id, '_lesson_course' );
+			$this->sync_custom_field( $master_lesson_id, '_lesson_course' );
 		}
 
 		$this->set_lesson_order( $new_lesson_id, $master_lesson_id, $details );
@@ -86,8 +77,9 @@ trait Lesson_Translation_Helper {
 
 		$new_terms = array();
 		foreach ( $terms as $term_id ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$new_term = apply_filters( 'wpml_object_id', $term_id, 'module', false, $details['language_code'] );
+			$term_id = (int) $term_id;
+
+			$new_term = $this->get_object_id( $term_id, 'module', false, $details['language_code'] );
 			delete_post_meta( $new_lesson_id, '_order_module_' . intval( $term_id ) );
 
 			$order = get_post_meta( $master_lesson_id, '_order_module_' . intval( $term_id ), true );
@@ -107,11 +99,17 @@ trait Lesson_Translation_Helper {
 	 */
 	private function set_lesson_order( $new_lesson_id, $master_lesson_id, $details ) {
 		$master_course_id = get_post_meta( $master_lesson_id, '_lesson_course', true );
-		if ( $master_course_id ) {
-			$order = (int) get_post_meta( $master_lesson_id, '_order_' . $master_course_id, true );
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$new_course_id = apply_filters( 'wpml_object_id', $master_course_id, 'course', false, $details['language_code'] );
-			update_post_meta( $new_lesson_id, '_order_' . $new_course_id, $order );
+		if ( ! $master_course_id ) {
+			return;
 		}
+
+		$order = (int) get_post_meta( $master_lesson_id, '_order_' . $master_course_id, true );
+
+		$new_course_id = $this->get_object_id( $master_course_id, 'course', false, $details['language_code'] );
+		if ( ! $new_course_id ) {
+			return;
+		}
+
+		update_post_meta( $new_lesson_id, '_order_' . $new_course_id, $order );
 	}
 }

@@ -19,22 +19,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 trait Question_Translation_Helper {
+	use WPML_API;
+
 	/**
 	 * Update question translations from lesson.
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 */
 	private function update_question_translations_from_lesson( $lesson_id ) {
-		$details = (array) apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_details',
-			null,
-			array(
-				'element_id'   => $lesson_id,
-				'element_type' => 'lesson',
-			)
-		);
-
+		$details = $this->get_element_language_details( $lesson_id, 'lesson' );
 		if ( empty( $details ) ) {
 			return;
 		}
@@ -70,8 +63,7 @@ trait Question_Translation_Helper {
 
 			$question_block = render_block( $block );
 
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$question_id = apply_filters( 'wpml_object_id', $question_id, 'question', false, $details['language_code'] );
+			$question_id = $this->get_object_id( $question_id, 'question', false, $details['language_code'] );
 
 			if ( empty( $question_id ) ) {
 				continue;
