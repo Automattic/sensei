@@ -465,6 +465,11 @@
       <code>require_once ABSPATH . 'wp-admin/includes/plugin.php'</code>
     </MissingFile>
   </file>
+  <file src="includes/admin/home/tasks/task/class-sensei-home-task-pro-upsell.php">
+	<MissingFile occurrences="1">
+	  <code>require_once ABSPATH . 'wp-admin/includes/plugin.php'</code>
+	</MissingFile>
+  </file>
   <file src="includes/admin/tools/class-sensei-tool-enrolment-debug.php">
     <FalsableReturnStatement occurrences="1">
       <code>$formatted_time</code>

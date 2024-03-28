@@ -83,7 +83,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	/**
 	 * Sensei_REST_API_Home_Controller constructor.
 	 *
-	 * @param string                            $namespace             Routes namespace.
+	 * @param string                            $api_namespace             Routes namespace.
 	 * @param Sensei_Home_Quick_Links_Provider  $quick_links_provider  Quick Links provider.
 	 * @param Sensei_Home_Help_Provider         $help_provider         Help provider.
 	 * @param Sensei_Home_Promo_Banner_Provider $promo_banner_provider Promo banner provider.
@@ -93,7 +93,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @param Sensei_Home_Notices_Provider      $notices_provider      Notices provider.
 	 */
 	public function __construct(
-		$namespace,
+		$api_namespace,
 		Sensei_Home_Quick_Links_Provider $quick_links_provider,
 		Sensei_Home_Help_Provider $help_provider,
 		Sensei_Home_Promo_Banner_Provider $promo_banner_provider,
@@ -102,7 +102,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 		Sensei_Home_Guides_Provider $guides_provider,
 		Sensei_Home_Notices_Provider $notices_provider
 	) {
-		$this->namespace             = $namespace;
+		$this->namespace             = $api_namespace;
 		$this->quick_links_provider  = $quick_links_provider;
 		$this->help_provider         = $help_provider;
 		$this->promo_banner_provider = $promo_banner_provider;
@@ -118,6 +118,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	public function register_routes() {
 		$this->register_get_data_route();
 		$this->register_mark_tasks_complete_route();
+		$this->register_sensei_pro_upsell_redirect_route();
 	}
 
 	/**
@@ -164,13 +165,30 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Register POST /tasks/sensei-pro-upsell-redirect endpoint.
+	 */
+	public function register_sensei_pro_upsell_redirect_route() {
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/sensei-pro-upsell-redirect',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'sensei_pro_upsell_redirect' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+				],
+			]
+		);
+	}
+
+	/**
 	 * Get data for Sensei Home frontend.
 	 *
 	 * @return array Setup Wizard data
 	 */
 	public function get_data() {
 		$show_extensions        = current_user_can( 'activate_plugins' ) && current_user_can( 'update_plugins' );
-		$can_user_manage_sensei = current_user_can( 'manage_sensei' );
+		$can_user_manage_sensei = current_user_can( 'manage_sensei' ); // phpcs:ignore WordPress.WP.Capabilities.Unknown -- Sensei capability.
 
 		$data = [
 			'news'            => $this->news_provider->get(),
@@ -197,5 +215,14 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	public function mark_tasks_completed() {
 		$this->tasks_provider->mark_as_completed( true );
 		return [ 'success' => true ];
+	}
+
+	/**
+	 * Redirect to the Sensei Pro upsell page.
+	 *
+	 * @return void Redirects to the Sensei Pro upsell page.
+	 */
+	public function sensei_pro_upsell_redirect() {
+		Sensei_Home_Task_Pro_Upsell::mark_completed_and_redirect();
 	}
 }

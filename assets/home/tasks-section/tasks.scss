@@ -46,6 +46,8 @@
 
 	&__item-title {
 		flex: 1;
+		display: flex;
+		align-items: center;
 	}
 
 	&__check-icon {
@@ -58,5 +60,15 @@
 		width: 25px;
 		height: 25px;
 		justify-self: end;
+	}
+
+	&__external-icon {
+		width: 20px;
+		height: 20px;
+		margin-left: 5px;
+	}
+
+	&__icon-with-current-color {
+		fill: currentColor;
 	}
 }

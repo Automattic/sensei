@@ -13,6 +13,7 @@
  */
 class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_Test_Redirect_Helpers;
 
 	/**
 	 * A server instance that we use in tests to dispatch requests.
@@ -80,11 +81,64 @@ class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
+	public function testSenseiProUpsellRedirect_WhenCalled_RedirectsToSenseiProUpsellPage() {
+		/* Arrange */
+		$this->login_as_admin();
+		$redirect_location = '';
+		$this->prevent_wp_redirect();
+
+		/* Act */
+		try {
+			$this->dispatchRequest( 'GET', '/sensei-pro-upsell-redirect' );
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert */
+		$this->assertSame( 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=sensei-home', $redirect_location );
+		$this->assertTrue( get_option( Sensei_Home_Task_Pro_Upsell::get_id(), false ) );
+	}
+
+	public function testSenseiProUpsellRedirect_WhenCalledWithoutLoggingIn_DoesNotRedirect() {
+		/* Arrange */
+		$redirect_location = '';
+		$this->prevent_wp_redirect();
+
+		/* Act */
+		try {
+			$this->dispatchRequest( 'GET', '/sensei-pro-upsell-redirect' );
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert */
+		$this->assertEmpty( $redirect_location );
+		$this->assertFalse( get_option( Sensei_Home_Task_Pro_Upsell::get_id(), false ) );
+	}
+
+	public function testSenseiProUpsellRedirect_WhenLoggedInAsNormalUser_DoesNotRedirect() {
+		/* Arrange */
+		$this->login_as_student();
+		$redirect_location = '';
+		$this->prevent_wp_redirect();
+
+		/* Act */
+		try {
+			$this->dispatchRequest( 'GET', '/sensei-pro-upsell-redirect' );
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert */
+		$this->assertEmpty( $redirect_location );
+		$this->assertFalse( get_option( Sensei_Home_Task_Pro_Upsell::get_id(), false ) );
+	}
+
 	private function dispatchRequest( $method, $route = '' ) {
 		// Prevent requests.
 		add_filter(
 			'pre_http_request',
-			function() {
+			function () {
 				return [ 'body' => '[]' ];
 			}
 		);
