@@ -143,7 +143,7 @@ trait WPML_API {
 	 */
 	public function get_object_id( $element_id, $element_type, $return_original_if_missing = false, $language_code = null ) {
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		return apply_filters( 'wpml_object_id', $element_id, $element_type, $return_original_if_missing, $language_code );
+		return (int) apply_filters( 'wpml_object_id', $element_id, $element_type, $return_original_if_missing, $language_code );
 	}
 
 	/**
@@ -174,6 +174,7 @@ trait WPML_API {
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return apply_filters( 'wpml_post_duplicates', $master_post_id );
 	}
+
 	/**
 	 * Create or update duplicate posts programatically.
 	 *

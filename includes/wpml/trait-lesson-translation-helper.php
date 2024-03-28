@@ -77,6 +77,8 @@ trait Lesson_Translation_Helper {
 
 		$new_terms = array();
 		foreach ( $terms as $term_id ) {
+			$term_id = (int) $term_id;
+
 			$new_term = $this->get_object_id( $term_id, 'module', false, $details['language_code'] );
 			delete_post_meta( $new_lesson_id, '_order_module_' . intval( $term_id ) );
 
