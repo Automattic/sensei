@@ -18,33 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Home_Task_Pro_Upsell implements Sensei_Home_Task {
 
 	/**
-	 * Constructor.
-	 */
-	public function __construct() {
-		add_filter( 'sensei_home_tasks', [ $this, 'maybe_add_show_external_icon_property' ] );
-	}
-
-	/**
-	 * Maybe add external icon to the task.
-	 *
-	 * @param array $tasks Tasks.
-	 *
-	 * @return array
-	 */
-	public function maybe_add_show_external_icon_property( $tasks ) {
-		return array_map(
-			function ( $task ): array {
-				if ( self::get_id() === $task['id'] ) {
-						$task['show_external_icon'] = true;
-				}
-				return $task;
-			},
-			$tasks
-		);
-	}
-
-
-	/**
 	 * The ID for the task.
 	 *
 	 * @return string
@@ -77,7 +50,7 @@ class Sensei_Home_Task_Pro_Upsell implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_url(): ?string {
-		return rest_url( 'sensei-internal/v1/home/sensei-pro-upsell-redirect?_wpnonce=' . wp_create_nonce( 'wp_rest' ) );
+		return rest_url( 'sensei-internal/v1/home/sensei-pro-upsell-redirect?_wpnonce=' . wp_create_nonce( 'wp_rest' ) . '&external=true' );
 	}
 
 	/**

@@ -31,7 +31,6 @@ const Tasks = ( { items } ) => (
 			{ items.map( ( task ) => (
 				<TaskItem
 					key={ task.id }
-					showExternalIcon={ task.show_external_icon }
 					title={ task.title }
 					url={ task.url }
 					done={ task.done }
