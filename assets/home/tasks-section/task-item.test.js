@@ -29,8 +29,13 @@ describe( '<TaskItem />', () => {
 		expect( renderedTag ).toEqual( 'SPAN' );
 	} );
 
-	it( 'Should render an external icon when externalIcon prop is true', () => {
-		const { container } = render( <TaskItem url="#" showExternalIcon /> );
+	it( 'Should render an external icon when externalIcon is true', () => {
+		const { container } = render(
+			<TaskItem
+				url="www.example.com/something?this=false&external=true"
+				showExternalIcon
+			/>
+		);
 
 		const externalIcon = container.querySelector(
 			'.sensei-home-tasks__external-icon'
@@ -40,7 +45,9 @@ describe( '<TaskItem />', () => {
 	} );
 
 	it( 'Should not render external icon when externalIcon prop is not set', () => {
-		const { container } = render( <TaskItem url="#" /> );
+		const { container } = render(
+			<TaskItem url="www.example.com/something?this=false" />
+		);
 
 		const externalIcon = container.querySelector(
 			'.sensei-home-tasks__external-icon'
