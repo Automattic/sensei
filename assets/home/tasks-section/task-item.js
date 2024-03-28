@@ -26,7 +26,8 @@ import { Icon, external } from '@wordpress/icons';
 const TaskItem = ( { title, url, done } ) => {
 	const Tag = done ? 'span' : 'a';
 	const isExternal =
-		isUrlExternal( url ) || url?.indexOf( 'external=true' ) >= 0;
+		isUrlExternal( url ) || url?.indexOf( 'external=true' ) >= 0; // If the URL contains 'external=true', we show the external icon,
+	// It's helpful when it's an internal URL (maybe for tracking purpose) but redirecting to an external one.
 
 	const linkProps = ! done && {
 		href: url,

@@ -50,6 +50,7 @@ class Sensei_Home_Task_Pro_Upsell implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_url(): ?string {
+		// Here external=true is used to show the external link icon in the frontend component.
 		return rest_url( 'sensei-internal/v1/home/sensei-pro-upsell-redirect?_wpnonce=' . wp_create_nonce( 'wp_rest' ) . '&external=true' );
 	}
 
