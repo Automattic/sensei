@@ -4,6 +4,20 @@
 $block: '.wp-block-sensei-lms-learner-courses';
 $courses-list: '#{$block}__courses-list';
 
+.editor-styles-wrapper #{$block} {
+	&__deprecation-notice {
+		margin-bottom: 2rem;
+
+		.components-notice__actions {
+			margin-top: 5px;
+
+			.components-button:first-child {
+				margin-left: 0;
+			}
+		}
+	}
+}
+
 .editor-styles-wrapper #{$courses-list} {
 	list-style: none;
 	padding: 0;

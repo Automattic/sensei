@@ -10,6 +10,7 @@ import { omitBy } from 'lodash';
 import { useState } from '@wordpress/element';
 import { Icon, image } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
+import { Notice } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -200,6 +201,25 @@ const LearnerCoursesEdit = ( {
 					progressBarBorderRadius: `${ options.progressBarBorderRadius }px`,
 				} }
 			>
+				<div className="wp-block-sensei-lms-learner-courses__deprecation-notice">
+					<Notice
+						status="warning"
+						isDismissible={ false }
+						actions={ [
+							{
+								label: __( 'Read more', 'sensei-lms' ),
+								url:
+									'https://senseilms.com/documentation/course-list-block/',
+								target: '_blank',
+							},
+						] }
+					>
+						{ __(
+							'This is a legacy block. We recommend using the Course List block for more customization and flexibility.',
+							'sensei-lms'
+						) }
+					</Notice>
+				</div>
 				<p className="wp-block-sensei-lms-learner-courses__filter">
 					{ filters.map( ( { label, value } ) => (
 						<a
