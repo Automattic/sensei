@@ -1,0 +1,4 @@
+Significance: patch
+Type: deprecated
+
+Deprecate Student Courses Block in favor of Course List block
