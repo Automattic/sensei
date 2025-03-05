@@ -208,9 +208,11 @@ const LearnerCoursesEdit = ( {
 						actions={ [
 							{
 								label: __( 'Read more', 'sensei-lms' ),
-								url:
-									'https://senseilms.com/documentation/course-list-block/',
-								target: '_blank',
+								onClick: () => {
+									window.open(
+										'https://senseilms.com/documentation/course-list-block/'
+									);
+								},
 							},
 						] }
 					>
