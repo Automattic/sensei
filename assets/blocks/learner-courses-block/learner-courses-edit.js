@@ -31,6 +31,15 @@ import { DEFAULT_ATTRIBUTES as COURSE_LIST_DEFAULT_ATTRIBUTES } from '../course-
 const DeprecationNotice = ( { clientId } ) => {
 	const { replaceBlock } = useDispatch( blockEditorStore );
 
+	const onReplaceClick = () => {
+		const newBlock = createBlock(
+			'core/query',
+			COURSE_LIST_DEFAULT_ATTRIBUTES
+		);
+
+		replaceBlock( clientId, newBlock );
+	};
+
 	return (
 		<div className="wp-block-sensei-lms-learner-courses__deprecation-notice">
 			<Warning
@@ -39,14 +48,7 @@ const DeprecationNotice = ( { clientId } ) => {
 						__next40pxDefaultSize
 						key="replace-block-action"
 						variant="primary"
-						onClick={ () => {
-							const newBlock = createBlock(
-								'core/query',
-								COURSE_LIST_DEFAULT_ATTRIBUTES
-							);
-
-							replaceBlock( clientId, newBlock );
-						} }
+						onClick={ onReplaceClick }
 					>
 						{ __( 'Replace', 'sensei-lms' ) }
 					</Button>,
