@@ -95,8 +95,9 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0;
 		}
 		// Sets a cache key with a determinate string length for `set_transient`.
-		$cache_key = 'get_courses_average_grade_' . md5( implode( '', $course_ids ) );
-		$average_cached = get_transient( $cache_key )
+		$cache_key      = 'get_courses_average_grade_' . md5( implode( '', $course_ids ) );
+		$average_cached = get_transient( $cache_key );
+
 		if ( false !== $average_cached ) {
 			return $average_cached;
 		}
