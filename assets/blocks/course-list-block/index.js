@@ -13,24 +13,24 @@ import './hooks';
 import icon from '../../icons/course-list.svg';
 import FeaturedLabel from './featured-label';
 
-export const registerCourseListBlock = () => {
-	const DEFAULT_ATTRIBUTES = {
-		className: 'wp-block-sensei-lms-course-list',
-		query: {
-			perPage: 3,
-			pages: 0,
-			offset: 0,
-			postType: 'course',
-			order: 'desc',
-			orderBy: 'date',
-			author: '',
-			search: '',
-			exclude: [],
-			sticky: '',
-			inherit: false,
-		},
-	};
+export const DEFAULT_ATTRIBUTES = {
+	className: 'wp-block-sensei-lms-course-list',
+	query: {
+		perPage: 3,
+		pages: 0,
+		offset: 0,
+		postType: 'course',
+		order: 'desc',
+		orderBy: 'date',
+		author: '',
+		search: '',
+		exclude: [],
+		sticky: '',
+		inherit: false,
+	},
+};
 
+export const registerCourseListBlock = () => {
 	registerBlockVariation( 'core/query', {
 		name: 'sensei-lms/course-list',
 		title: __( 'Course List', 'sensei-lms' ),
