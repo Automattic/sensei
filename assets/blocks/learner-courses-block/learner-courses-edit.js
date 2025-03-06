@@ -9,8 +9,9 @@ import { omitBy } from 'lodash';
  */
 import { useState } from '@wordpress/element';
 import { Icon, image } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
+import { Warning } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { Notice } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -202,25 +203,24 @@ const LearnerCoursesEdit = ( {
 				} }
 			>
 				<div className="wp-block-sensei-lms-learner-courses__deprecation-notice">
-					<Notice
-						status="warning"
-						isDismissible={ false }
+					<Warning
 						actions={ [
-							{
-								label: __( 'Read more', 'sensei-lms' ),
-								onClick: () => {
-									window.open(
-										'https://senseilms.com/documentation/course-list-block/'
-									);
-								},
-							},
+							<Button
+								__next40pxDefaultSize
+								key="read-more-action"
+								variant="secondary"
+								href="https://senseilms.com/documentation/course-list-block/"
+								target="_blank"
+							>
+								{ __( 'Read more', 'sensei-lms' ) }
+							</Button>,
 						] }
 					>
 						{ __(
-							'This is a legacy block. We recommend using the Course List block for more customization and flexibility.',
+							'This is a legacy block. Use the Course List block for more customization and flexibility.',
 							'sensei-lms'
 						) }
-					</Notice>
+					</Warning>
 				</div>
 				<p className="wp-block-sensei-lms-learner-courses__filter">
 					{ filters.map( ( { label, value } ) => (

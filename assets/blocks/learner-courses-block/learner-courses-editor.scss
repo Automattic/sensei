@@ -6,15 +6,7 @@ $courses-list: '#{$block}__courses-list';
 
 .editor-styles-wrapper #{$block} {
 	&__deprecation-notice {
-		margin-bottom: 2rem;
-
-		.components-notice__actions {
-			margin-top: 5px;
-
-			.components-button:first-child {
-				margin-left: 0;
-			}
-		}
+		margin-bottom: 1rem;
 	}
 }
 
