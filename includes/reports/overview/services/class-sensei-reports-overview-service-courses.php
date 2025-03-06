@@ -94,6 +94,13 @@ class Sensei_Reports_Overview_Service_Courses {
 		if ( empty( $course_ids ) ) {
 			return 0;
 		}
+		// Sets a cache key with a determinate string length for `set_transient`.
+		$cache_key = 'get_courses_average_grade_' . md5( implode( '', $course_ids ) );
+
+		if ( false !== $average_cached = get_transient( $cache_key ) ) {
+			return $average_cached;
+		}
+		
 		global $wpdb;
 		/**
 		 * The subquery calculates the average grade per course, and the outer query then calculates the
@@ -125,7 +132,10 @@ class Sensei_Reports_Overview_Service_Courses {
 		) averages_by_course'
 		);
 
-		return floatval( $result->courses_average );
+		$course_result = floatval( $result->courses_average );
+		set_transient( $cache_key, $course_result, HOUR_IN_SECONDS );
+
+		return $course_result;
 	}
 
 	/**
