@@ -193,4 +193,16 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected_persisted_set, $persisted_set, 'The state stores should NOT have been persisted without a change' );
 	}
 
+	public function testReset_WhenHasInstances_ResetsInstances() {
+		/* Arrange */
+		$state_store_instances = new ReflectionProperty( Sensei_Enrolment_Provider_State_Store::class, 'instances' );
+		$state_store_instances->setAccessible( true );
+		$state_store_instances->setValue( [ 'something' ] );
+
+		/* Act */
+		Sensei_Enrolment_Provider_State_Store::reset();
+
+		/* Assert */
+		$this->assertEmpty( $state_store_instances->getValue() );
+	}
 }

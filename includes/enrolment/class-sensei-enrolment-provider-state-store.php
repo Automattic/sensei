@@ -73,6 +73,15 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	}
 
 	/**
+	 * Reset to initial state.
+	 *
+	 * @return void
+	 */
+	public static function reset() {
+		self::$instances = [];
+	}
+
+	/**
 	 * Restore a provider state store from a serialized JSON string.
 	 *
 	 * @param string $json_string JSON representation of enrolment state.

@@ -924,8 +924,13 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	private function is_manually_enrolled( $user_id ) {
 		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
 		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+		$is_enrolled               = $manual_enrolment_provider->is_enrolled( $user_id, $this->course_id );
 
-		return $manual_enrolment_provider->is_enrolled( $user_id, $this->course_id );
+		// Reset the enrolment state store to avoid out of memory issues.
+		// TODO: This can be removed once the state store no longer holds all the data in memory.
+		Sensei_Enrolment_Provider_State_Store::reset();
+
+		return $is_enrolled;
 	}
 
 	/**
