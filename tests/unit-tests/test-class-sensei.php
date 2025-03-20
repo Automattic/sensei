@@ -63,6 +63,66 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that feed content is not displayed if the user doesn't have access to the lesson.
+	 *
+	 * @covers Sensei_Main::maybe_remove_feed_content
+	 */
+	public function testMaybeRemoveFeedContent_NoAccessForLesson_ReturnsFilteredContent() {
+		/* Arrange. */
+		$original_content = 'This is some content.';
+		$lesson           = $this->factory->lesson->create_and_get();
+		$GLOBALS['post']  = $lesson;
+
+		add_filter( 'sensei_can_user_view_lesson', '__return_false' );
+
+		/* Act. */
+		$filtered_content = Sensei()->maybe_remove_feed_content( $original_content );
+		remove_filter( 'sensei_can_user_view_lesson', '__return_false' );
+
+		/* Assert. */
+		$this->assertEquals( $filtered_content, '' );
+	}
+
+	/**
+	 * Tests that feed content is unchanged if the user has access to the lesson.
+	 *
+	 * @covers Sensei_Main::maybe_remove_feed_content
+	 */
+	public function testMaybeRemoveFeedContent_HasAccessForLesson_ReturnsOriginalContent() {
+		/* Arrange. */
+		$original_content = 'This is some content.';
+		$lesson           = $this->factory->lesson->create_and_get();
+		$GLOBALS['post']  = $lesson;
+
+		add_filter( 'sensei_can_user_view_lesson', '__return_true' );
+
+		/* Act. */
+		$filtered_content = Sensei()->maybe_remove_feed_content( $original_content );
+		remove_filter( 'sensei_can_user_view_lesson', '__return_true' );
+
+		/* Assert. */
+		$this->assertEquals( $original_content, $filtered_content );
+	}
+
+	/**
+	 * Tests that feed content is unchanged if the post is not a lesson.
+	 *
+	 * @covers Sensei_Main::maybe_remove_feed_content
+	 */
+	public function testMaybeRemoveFeedContent_NotALesson_ReturnsOriginalContent() {
+		/* Arrange. */
+		$original_content = 'This is some content.';
+		$course           = $this->factory->course->create_and_get();
+		$GLOBALS['post']  = $course;
+
+		/* Act. */
+		$filtered_content = Sensei()->maybe_remove_feed_content( $original_content );
+
+		/* Assert. */
+		$this->assertEquals( $original_content, $filtered_content );
+	}
+
+	/**
 	 * Tests to make sure that when Sensei comments are included in count (for example: with WooCommerce)
 	 * they are properly removed.
 	 */

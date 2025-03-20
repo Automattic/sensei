@@ -903,7 +903,7 @@ class Sensei_Main {
 		add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
 		add_action( 'after_setup_theme', array( $this, 'sensei_load_template_functions' ) );
 
-		// Filter comment counts.
+		add_filter( 'the_content_feed', array( $this, 'maybe_remove_feed_content' ) );
 		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 999, 2 );
 
 		add_action( 'body_class', array( $this, 'body_class' ) );
@@ -982,10 +982,10 @@ class Sensei_Main {
 	 *
 	 * @access public
 	 * @since  1.0.0
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.24.5
 	 */
 	public function load_localisation() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.24.5' );
 
 		load_plugin_textdomain( 'sensei-lms', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 	}
@@ -995,10 +995,10 @@ class Sensei_Main {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.24.5
 	 */
 	public function load_plugin_textdomain() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.24.5' );
 
 		$domain = 'sensei-lms';
 
@@ -1279,6 +1279,24 @@ class Sensei_Main {
 		if ( ! empty( $class_name ) && ! empty( $this->token ) ) {
 			require_once __DIR__ . '/class-' . esc_attr( (string) $this->token ) . '-' . esc_attr( $class_name ) . '.php';
 		}
+	}
+
+	/**
+	 * Remove feed content if the user doesn't have access to the lesson.
+	 *
+	 * @since   4.24.5
+	 * @access  private
+	 *
+	 * @param string $content The current post content.
+	 *
+	 * @return string The filtered post content.
+	 */
+	public function maybe_remove_feed_content( $content ) {
+		if ( 'lesson' === get_post_type() && ! sensei_can_user_view_lesson( get_the_ID(), get_current_user_id() ) ) {
+			return '';
+		}
+
+		return $content;
 	}
 
 	/**

@@ -140,7 +140,7 @@ class Sensei_PostTypes {
 	 */
 	public function __get( $key ) {
 		if ( 'labels' === $key ) {
-			_doing_it_wrong( __CLASS__ . '->labels', 'The "labels" property is deprecated.', '$$next-version$$' );
+			_doing_it_wrong( __CLASS__ . '->labels', 'The "labels" property is deprecated.', '4.24.5' );
 
 			return $this->get_main_post_type_labels();
 		}

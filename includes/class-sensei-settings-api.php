@@ -148,13 +148,13 @@ class Sensei_Settings_API {
 	 */
 	public function __get( $key ) {
 		if ( 'name' === $key ) {
-			_doing_it_wrong( __CLASS__ . '->name', 'The "name" property is deprecated.', '$$next-version$$' );
+			_doing_it_wrong( __CLASS__ . '->name', 'The "name" property is deprecated.', '4.24.5' );
 
 			return $this->get_name();
 		}
 
 		if ( 'menu_label' === $key ) {
-			_doing_it_wrong( __CLASS__ . '->menu_label', 'The "menu_label" property is deprecated.', '$$next-version$$' );
+			_doing_it_wrong( __CLASS__ . '->menu_label', 'The "menu_label" property is deprecated.', '4.24.5' );
 
 			return $this->get_menu_label();
 		}

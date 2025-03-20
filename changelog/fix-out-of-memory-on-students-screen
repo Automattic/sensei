@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Prevent storing enrolment data in memory on Students screen

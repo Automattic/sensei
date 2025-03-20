@@ -112,8 +112,9 @@ class Email_List_Table extends Sensei_List_Table {
 	 * @return array
 	 */
 	protected function get_row_data( $post ) {
-		$title   = _draft_or_post_title( $post );
-		$actions = $this->get_row_actions( $post );
+		$title    = _draft_or_post_title( $post );
+		$actions  = $this->get_row_actions( $post );
+		$is_draft = 'draft' === get_post_status( $post );
 
 		$is_available = $this->is_email_available( $post );
 
@@ -127,9 +128,10 @@ class Email_List_Table extends Sensei_List_Table {
 
 		$description = $is_available ?
 			sprintf(
-				'<strong><a href="%1$s" class="row-title">%2$s</a></strong>%3$s',
+				'<strong><a href="%1$s" class="row-title">%2$s</a>%3$s</strong>%4$s',
 				esc_url( (string) get_edit_post_link( $post ) ),
 				get_post_meta( $post->ID, '_sensei_email_description', true ),
+				$is_draft ? ( ' &ndash; ' . __( 'Disabled', 'sensei-lms' ) ) : '',
 				$this->row_actions( $actions )
 			) : sprintf(
 				'<strong class="sensei-email-unavailable">%1$s</strong><span class="awaiting-mod sensei-upsell-pro-badge">%2$s</span>%3$s',

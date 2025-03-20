@@ -1,4 +1,0 @@
-Significance: patch
-Type: deprecated
-
-Deprecate `load_localisation` and `load_plugin_textdomain` functions

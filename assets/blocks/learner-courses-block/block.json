@@ -14,7 +14,8 @@
     "student"
   ],
   "supports": {
-    "html": false
+    "html": false,
+    "inserter": false
   },
   "attributes": {
     "options": {

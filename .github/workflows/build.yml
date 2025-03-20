@@ -44,6 +44,9 @@ jobs:
         needs: build
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/setup-node@v4
+              with:
+                node-version: 18
             - name: Create comment with Playground preview
               uses: peter-evans/create-or-update-comment@v4
               with:

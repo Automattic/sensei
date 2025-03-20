@@ -1,4 +1,0 @@
-Significance: patch
-Type: changed
-
-Use wp_strip_all_tags instead of a discouraged strip_tags

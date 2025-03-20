@@ -107,10 +107,9 @@
     <DocblockTypeContradiction occurrences="1">
       <code>false === $mysql_date</code>
     </DocblockTypeContradiction>
-    <InvalidScalarArgument occurrences="5">
+    <InvalidScalarArgument occurrences="4">
       <code>$_POST['data']['comment_id']</code>
       <code>$_POST['data']['post_id']</code>
-      <code>$lesson_id</code>
       <code>wp_unslash( $_GET['course_id'] ?? 0 )</code>
       <code>wp_unslash( $_GET['lesson_id'] ?? 0 )</code>
     </InvalidScalarArgument>
@@ -530,12 +529,6 @@
       <code>! self::$instance</code>
       <code>self::$instance</code>
     </DocblockTypeContradiction>
-    <InvalidArgument occurrences="1">
-      <code>true</code>
-    </InvalidArgument>
-    <MissingClosureParamType occurrences="1">
-      <code>$attributes</code>
-    </MissingClosureParamType>
     <UnresolvableInclude occurrences="1">
       <code>require __DIR__ . "/{$post_type}/{$block_pattern}.php"</code>
     </UnresolvableInclude>
@@ -903,13 +896,12 @@
       <code>$course-&gt;ID</code>
       <code>$post-&gt;ID</code>
     </PossiblyInvalidPropertyFetch>
-    <PossiblyNullArgument occurrences="6">
+    <PossiblyNullArgument occurrences="5">
       <code>$course_structure</code>
       <code>$event_name</code>
       <code>$post_id</code>
       <code>$post_id</code>
       <code>$post_type-&gt;cap-&gt;edit_posts</code>
-      <code>$screen</code>
     </PossiblyNullArgument>
     <PossiblyNullPropertyFetch occurrences="3">
       <code>$post_type-&gt;cap</code>
@@ -1736,10 +1728,6 @@
     <PossiblyFalseArgument occurrences="1">
       <code>wp_json_encode( $args )</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidCast occurrences="2">
-      <code>$clean_lesson_id</code>
-      <code>$clean_user_id</code>
-    </PossiblyInvalidCast>
     <PossiblyNullArgument occurrences="3">
       <code>get_post_type_object( 'course' )-&gt;cap-&gt;edit_post</code>
       <code>get_post_type_object( 'lesson' )-&gt;cap-&gt;edit_post</code>
@@ -2866,6 +2854,10 @@
     <DocblockTypeContradiction occurrences="1">
       <code>0</code>
     </DocblockTypeContradiction>
+    <DuplicateArrayKey occurrences="2">
+      <code>$published_quiz_ids</code>
+      <code>$published_quiz_ids</code>
+    </DuplicateArrayKey>
     <InvalidArgument occurrences="11">
       <code>$key</code>
       <code>$published_quiz_ids</code>
@@ -3126,7 +3118,8 @@
     <MissingPropertyType occurrences="1">
       <code>$this-&gt;post_types-&gt;role_caps</code>
     </MissingPropertyType>
-    <PossiblyFalseArgument occurrences="2">
+    <PossiblyFalseArgument occurrences="3">
+      <code>get_the_ID()</code>
       <code>get_the_ID()</code>
       <code>get_the_ID()</code>
     </PossiblyFalseArgument>

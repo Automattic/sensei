@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.5
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 4.24.4
+Stable tag: 4.24.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,34 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.24.5 - 2025-01-16
+#### Security
+- Fix unprepared SQL
+- Remove feed content if the user doesn't have access to the lesson
+
+#### Added
+- Wrap question numbers in `<span>` tags [#7738](https://github.com/Automattic/sensei/pull/7738)
+
+#### Changed
+- Replace `date` with `gmdate` [#7735](https://github.com/Automattic/sensei/pull/7735)
+- Replace `unlink` with `wp_delete_file` [#7732](https://github.com/Automattic/sensei/pull/7732)
+- Replace `wp_json_encode` with `json_encode` [#7730](https://github.com/Automattic/sensei/pull/7730)
+- Update the placeholder to use an internal image [#7728](https://github.com/Automattic/sensei/pull/7728)
+- Replace `strip_tags` with `wp_strip_all_tags` [#7731](https://github.com/Automattic/sensei/pull/7731)
+
+#### Deprecated
+- Deprecate `load_localisation` and `load_plugin_textdomain` functions [#7713](https://github.com/Automattic/sensei/pull/7713)
+
+#### Removed
+- Remove manual loading of translations [#7713](https://github.com/Automattic/sensei/pull/7713)
+- Remove fallback code for Sensei Pro update reminder [#7729](https://github.com/Automattic/sensei/pull/7729)
+- Remove files that are already included in WordPress Core [#7727](https://github.com/Automattic/sensei/pull/7727)
+- Remove obsolete code from Students area [#7726](https://github.com/Automattic/sensei/pull/7726)
+
+#### Fixed
+- Initialize Sensei blocks for posts [#7736](https://github.com/Automattic/sensei/pull/7736)
+- Remove usage of deprecated parameters in WordPress Core functions [#7724](https://github.com/Automattic/sensei/pull/7724)
+
 ### 4.24.4 - 2024-11-12
 #### Security
 - Messages and emails accessible using the search REST API
@@ -166,22 +194,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Missing lesson status icon for "complete" status [#7667](https://github.com/Automattic/sensei/pull/7667)
 - PHP deprecation notice when opening site editor [#7668](https://github.com/Automattic/sensei/pull/7668)
 - Some reports not exporting all rows [#7670](https://github.com/Automattic/sensei/pull/7670)
-
-### 4.24.2 - 2024-08-08
-#### Security
-- Improve email templates security
-
-#### Changed
-- Pass `checks` argument to `sensei_can_user_view_lesson` filter [#7657](https://github.com/Automattic/sensei/pull/7657)
-- "Course Started" email is now "Course Enrolled" [#7661](https://github.com/Automattic/sensei/pull/7661)
-
-#### Fixed
-- Deprecation notices on PHP 8.2 [#7650](https://github.com/Automattic/sensei/pull/7650)
-- Custom styles for emails in preview and in sent messages [#7595](https://github.com/Automattic/sensei/pull/7595)
-- Keep current status for a question when it is updated [#7603](https://github.com/Automattic/sensei/pull/7603)
-- Prevent lesson loading error in Learning Mode for themes that are using referenced styles [#7658](https://github.com/Automattic/sensei/pull/7658)
-- Remove limit from report export [#7647](https://github.com/Automattic/sensei/pull/7647)
-- Set default names for modules without titles when saving course in the course tour [#7652](https://github.com/Automattic/sensei/pull/7652)
-- Replace "Continue to next lesson" with "Back to lesson" CTA in quiz when lesson is last in course [#7642](https://github.com/Automattic/sensei/pull/7642)
-- Register blocks to make their translations available in the editor [#7643](https://github.com/Automattic/sensei/pull/7643)
-- Tour modal tooltip visibility [#7653](https://github.com/Automattic/sensei/pull/7653)

@@ -7,8 +7,12 @@ import { omitBy } from 'lodash';
 /**
  * WordPress dependencies
  */
+import { useDispatch } from '@wordpress/data';
+import { createBlock } from '@wordpress/blocks';
 import { useState } from '@wordpress/element';
 import { Icon, image } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
+import { store as blockEditorStore, Warning } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -16,6 +20,57 @@ import { __ } from '@wordpress/i18n';
  */
 import ProgressBar from '../../shared/blocks/progress-bar';
 import LearnerCoursesSettings from './learner-courses-settings';
+import { DEFAULT_ATTRIBUTES as COURSE_LIST_DEFAULT_ATTRIBUTES } from '../course-list-block';
+
+/**
+ * Deprecation notice component.
+ *
+ * @param {Object} props
+ * @param {Object} props.clientId Block client ID.
+ */
+const DeprecationNotice = ( { clientId } ) => {
+	const { replaceBlock } = useDispatch( blockEditorStore );
+
+	const onReplaceClick = () => {
+		const newBlock = createBlock(
+			'core/query',
+			COURSE_LIST_DEFAULT_ATTRIBUTES
+		);
+
+		replaceBlock( clientId, newBlock );
+	};
+
+	return (
+		<div className="wp-block-sensei-lms-learner-courses__deprecation-notice">
+			<Warning
+				actions={ [
+					<Button
+						__next40pxDefaultSize
+						key="replace-block-action"
+						variant="primary"
+						onClick={ onReplaceClick }
+					>
+						{ __( 'Replace', 'sensei-lms' ) }
+					</Button>,
+					<Button
+						__next40pxDefaultSize
+						key="read-more-action"
+						variant="secondary"
+						href="https://senseilms.com/documentation/course-list-block/"
+						target="_blank"
+					>
+						{ __( 'Read more', 'sensei-lms' ) }
+					</Button>,
+				] }
+			>
+				{ __(
+					'This is a legacy block. Use the Course List block for more customization and flexibility.',
+					'sensei-lms'
+				) }
+			</Warning>
+		</div>
+	);
+};
 
 /**
  * Featured image placeholder element.
@@ -76,12 +131,14 @@ const StylesWrapper = ( {
  * Learner Settings component.
  *
  * @param {Object}   props
+ * @param {Object}   props.clientId           Block client ID.
  * @param {Object}   props.className          Block className.
  * @param {Object}   props.attributes         Block attributes.
  * @param {Object}   props.attributes.options Block options attribute.
  * @param {Function} props.setAttributes      Block set attributes function.
  */
 const LearnerCoursesEdit = ( {
+	clientId,
 	className,
 	attributes: { options },
 	setAttributes,
@@ -200,6 +257,8 @@ const LearnerCoursesEdit = ( {
 					progressBarBorderRadius: `${ options.progressBarBorderRadius }px`,
 				} }
 			>
+				<DeprecationNotice clientId={ clientId } />
+
 				<p className="wp-block-sensei-lms-learner-courses__filter">
 					{ filters.map( ( { label, value } ) => (
 						<a

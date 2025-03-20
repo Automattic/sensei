@@ -472,7 +472,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			if ( 'multiple-choice' == $type ) {
 				// these answer can be found the question generate and attach answers function
 				$question_meta                      = get_post_meta( $question->ID );
-				$user_quiz_answers[ $question->ID ] = array( 0 => 'wrong1' . rand() );
+				$user_quiz_answers[ $question->ID ] = array( 0 => 'wrong1' . wp_rand() );
 
 			} elseif ( 'boolean' == $type ) {
 
@@ -487,15 +487,15 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 			} elseif ( 'single-line' == $type ) {
 
-				$user_quiz_answers[ $question->ID ] = 'Single line answer for basic testing ' . rand();
+				$user_quiz_answers[ $question->ID ] = 'Single line answer for basic testing ' . wp_rand();
 
 			} elseif ( 'gap-fill' == $type ) {
 
-				$user_quiz_answers[ $question->ID ] = 'OneWordScentencesForSampleAnswer ' . rand();
+				$user_quiz_answers[ $question->ID ] = 'OneWordScentencesForSampleAnswer ' . wp_rand();
 
 			} elseif ( 'multi-line' == $type ) {
 
-				$user_quiz_answers[ $question->ID ] = 'Sample paragraph to test the answer ' . rand();
+				$user_quiz_answers[ $question->ID ] = 'Sample paragraph to test the answer ' . wp_rand();
 
 			} elseif ( 'file-upload' == $type ) {
 
@@ -798,7 +798,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		foreach ( $answers as $question_id => $answer ) {
 
-			$answers_feedback[ $question_id ] = 'Sample Feedback ' . rand();
+			$answers_feedback[ $question_id ] = 'Sample Feedback ' . wp_rand();
 
 		}
 

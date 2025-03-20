@@ -4,6 +4,12 @@
 $block: '.wp-block-sensei-lms-learner-courses';
 $courses-list: '#{$block}__courses-list';
 
+.editor-styles-wrapper #{$block} {
+	&__deprecation-notice {
+		margin-bottom: 1rem;
+	}
+}
+
 .editor-styles-wrapper #{$courses-list} {
 	list-style: none;
 	padding: 0;

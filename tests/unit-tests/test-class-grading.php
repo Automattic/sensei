@@ -28,7 +28,6 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		// setup the test
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->grading ), 'Sensei Grading class is not loaded' );
-
 	}
 
 	/**
@@ -183,7 +182,6 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			$response = Sensei_Grading::grade_gap_fill_question( $question_id, $not_found_item );
 			$this->assertFalse( $response, "Expecting {$not_found_item} to not match {$answer}" );
 		}
-
 	}
 
 	/**
@@ -437,6 +435,177 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$this->assignGrade( $comment_ids[5], '85' );
 
 		$this->assertEquals( ( 10 + 50 + 100 + 35 + 70 + 85 ) / 6, Sensei()->grading->get_courses_average_grade() );
+	}
+
+	public function testGetGradedLessonsCount_WhenCalled_ReturnsCorrectCount() {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = $this->factory->lesson->create_many(
+			3,
+			[
+				'meta_input' => [
+					'_lesson_course'      => $course_id,
+					'_quiz_has_questions' => 1,
+				],
+			]
+		);
+		$user_ids   = $this->factory->user->create_many( 2 );
+
+		// Start students in each lesson.
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[0], $user_ids[0], 'failed' );
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[1], $user_ids[1], 'graded' );
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[2], $user_ids[1], 'passed' );
+
+		// Assign grades.
+		$this->assignGrade( $comment_ids[0], '10' );
+		$this->assignGrade( $comment_ids[1], '50' );
+		$this->assignGrade( $comment_ids[2], '100' );
+
+		/* Act. */
+		$count = Sensei()->grading::get_graded_lessons_count();
+
+		/* Assert. */
+		$this->assertEquals( 3, $count );
+	}
+
+	public function testGetGradedLessonsSum_WhenCalled_ReturnsCorrectSum() {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = $this->factory->lesson->create_many(
+			3,
+			[
+				'meta_input' => [
+					'_lesson_course'      => $course_id,
+					'_quiz_has_questions' => 1,
+				],
+			]
+		);
+		$user_ids   = $this->factory->user->create_many( 2 );
+
+		// Start students in each lesson.
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[0], $user_ids[0], 'failed' );
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[1], $user_ids[1], 'graded' );
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[2], $user_ids[1], 'passed' );
+
+		// Assign grades.
+		$this->assignGrade( $comment_ids[0], '10' );
+		$this->assignGrade( $comment_ids[1], '50' );
+		$this->assignGrade( $comment_ids[2], '100' );
+
+		/* Act. */
+		$sum = Sensei()->grading::get_graded_lessons_sum();
+
+		/* Assert. */
+		$this->assertEquals( 160, $sum );
+	}
+
+	public function testGetUserGradedLessonsSum_WhenCalled_ReturnsCorrectSum() {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = $this->factory->lesson->create_many(
+			3,
+			[
+				'meta_input' => [
+					'_lesson_course'      => $course_id,
+					'_quiz_has_questions' => 1,
+				],
+			]
+		);
+		$user_ids   = $this->factory->user->create_many( 2 );
+
+		// Start students in each lesson.
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[0], $user_ids[0], 'failed' );
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[1], $user_ids[0], 'graded' );
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[2], $user_ids[1], 'passed' );
+
+		// Assign grades.
+		$this->assignGrade( $comment_ids[0], '10' );
+		$this->assignGrade( $comment_ids[1], '50' );
+		$this->assignGrade( $comment_ids[2], '100' );
+
+		/* Act. */
+		$sum = Sensei()->grading::get_user_graded_lessons_sum( $user_ids[0] );
+
+		/* Assert. */
+		$this->assertEquals( 60, $sum );
+	}
+
+	public function testGetLessonsUsersGradesSum_WhenCalled_ReturnsCorrectSum() {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = $this->factory->lesson->create_many(
+			2,
+			[
+				'meta_input' => [
+					'_lesson_course'      => $course_id,
+					'_quiz_has_questions' => 1,
+				],
+			]
+		);
+		$user_ids   = $this->factory->user->create_many( 2 );
+
+		// Start students in each lesson.
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[0], $user_ids[0], 'failed' );
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[0], $user_ids[1], 'graded' );
+		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[1], $user_ids[1], 'passed' );
+
+		// Assign grades.
+		$this->assignGrade( $comment_ids[0], '10' );
+		$this->assignGrade( $comment_ids[1], '50' );
+		$this->assignGrade( $comment_ids[2], '100' );
+
+		/* Act. */
+		$sum = Sensei()->grading::get_lessons_users_grades_sum( $lesson_ids[0] );
+
+		/* Assert. */
+		$this->assertEquals( 60, $sum );
+	}
+
+	public function testGetCourseUsersGradesSum_WhenCalled_ReturnsCorrectSum() {
+		/* Arrange. */
+		$course_1            = $this->factory->course->create();
+		$course_2            = $this->factory->course->create();
+		$course_1_lesson_ids = $this->factory->lesson->create_many(
+			3,
+			[
+				'meta_input' => [
+					'_lesson_course'      => $course_1,
+					'_quiz_has_questions' => 1,
+				],
+			]
+		);
+		$course_2_lesson_ids = $this->factory->lesson->create_many(
+			3,
+			[
+				'meta_input' => [
+					'_lesson_course'      => $course_2,
+					'_quiz_has_questions' => 1,
+				],
+			]
+		);
+		$user_ids            = $this->factory->user->create_many( 2 );
+
+		// Start students in each lesson.
+		$comment_ids[] = $this->startStudentInLesson( $course_1_lesson_ids[0], $user_ids[0], 'failed' );
+		$comment_ids[] = $this->startStudentInLesson( $course_1_lesson_ids[1], $user_ids[1], 'graded' );
+		$comment_ids[] = $this->startStudentInLesson( $course_1_lesson_ids[2], $user_ids[0], 'passed' );
+		$comment_ids[] = $this->startStudentInLesson( $course_2_lesson_ids[0], $user_ids[1], 'failed' );
+		$comment_ids[] = $this->startStudentInLesson( $course_2_lesson_ids[1], $user_ids[0], 'graded' );
+		$comment_ids[] = $this->startStudentInLesson( $course_2_lesson_ids[2], $user_ids[1], 'passed' );
+
+		// Assign grades.
+		$this->assignGrade( $comment_ids[0], '10' );
+		$this->assignGrade( $comment_ids[1], '50' );
+		$this->assignGrade( $comment_ids[2], '100' );
+		$this->assignGrade( $comment_ids[3], '10' );
+		$this->assignGrade( $comment_ids[4], '50' );
+		$this->assignGrade( $comment_ids[5], '100' );
+
+		/* Act. */
+		$sum = Sensei()->grading::get_course_users_grades_sum( $course_1 );
+
+		/* Assert. */
+		$this->assertEquals( 160, $sum );
 	}
 
 	/**

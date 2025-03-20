@@ -78,6 +78,13 @@ export const LessonEdit = ( props ) => {
 		},
 	};
 
+	const inputContainerClasses = classnames(
+		'wp-block-sensei-lms-course-outline-lesson__input-container',
+		{
+			'wp-block-sensei-lms-course-outline-lesson__no-status': ! postStatus,
+		}
+	);
+
 	return (
 		<>
 			<LessonSettings { ...props } { ...lessonStatus } />
@@ -86,16 +93,24 @@ export const LessonEdit = ( props ) => {
 					icon={ check }
 					className="wp-block-sensei-lms-course-outline-lesson__status"
 				/>
-				<SingleLineInput
-					className="wp-block-sensei-lms-course-outline-lesson__input"
-					placeholder={
-						placeholder || __( 'Add Lesson', 'sensei-lms' )
-					}
-					value={ title }
-					onChange={ updateTitle }
-					onKeyDown={ onKeyDown }
-					style={ { fontSize } }
-				/>
+				<div className={ inputContainerClasses }>
+					<SingleLineInput
+						className="wp-block-sensei-lms-course-outline-lesson__input"
+						placeholder={
+							placeholder || __( 'Add Lesson', 'sensei-lms' )
+						}
+						value={ title }
+						onChange={ updateTitle }
+						onKeyDown={ onKeyDown }
+						style={ { fontSize } }
+					/>
+
+					{ postStatus && (
+						<div className="wp-block-sensei-lms-course-outline-lesson__post-status">
+							{ postStatus }
+						</div>
+					) }
+				</div>
 
 				{ preview && (
 					<span className="wp-block-sensei-lms-course-outline-lesson__badge">
@@ -103,11 +118,6 @@ export const LessonEdit = ( props ) => {
 					</span>
 				) }
 
-				{ postStatus && (
-					<div className="wp-block-sensei-lms-course-outline-lesson__post-status">
-						{ postStatus }
-					</div>
-				) }
 				<Icon
 					icon={ chevronRight }
 					className="wp-block-sensei-lms-course-outline-lesson__chevron"

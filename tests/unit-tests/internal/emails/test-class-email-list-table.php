@@ -16,6 +16,7 @@ use WP_Post;
  * @covers \Sensei\Internal\Emails\Email_List_Table
  */
 class Email_List_Table_Test extends \WP_UnitTestCase {
+	use \Sensei_Test_Login_Helpers;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -170,6 +171,40 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 			$post->ID,
 			$post->post_title,
 			wp_nonce_url( "post.php?action=disable-email&amp;post=$post->ID", 'disable-email-post_' . $post->ID ),
+			Email_Preview::get_preview_link( $post->ID ),
+			'description'
+		);
+
+		$this->assertStringContainsString( $expected, $result );
+	}
+
+	public function testGetRowData_WhenHasDisabledItem_ReturnsDataWithDisabledEmailIndicator() {
+		/* Arrange. */
+		$this->login_as_admin();
+		set_current_screen( 'admin' );
+		$list_table = new Email_List_Table( new Email_Repository() );
+		$post       = $this->factory->email->create_and_get( [ 'post_status' => 'draft' ] );
+
+		update_post_meta( $post->ID, '_sensei_email_description', 'description' );
+
+		/* Act. */
+		$list_table->prepare_items();
+
+		ob_start();
+		$list_table->display_rows();
+		$result = ob_get_clean();
+
+		/* Assert. */
+		$expected = sprintf(
+			'<tr class="sensei-wp-list-table-row--disabled">' .
+			'<th class=\'cb column-cb check-column\'  ><label class="screen-reader-text">Select %2$s</label><input id="cb-select-%1$s" type="checkbox" name="email[]" value="%1$s" /></th>' .
+			'<td class=\'description column-description column-primary\' data-colname="Email" ><strong><a href="http://example.org/wp-admin/post.php?post=%1$s&#038;action=edit" class="row-title">%5$s</a> &ndash; Disabled</strong><div class="row-actions"><span class=\'edit\'><a href="http://example.org/wp-admin/post.php?post=%1$s&amp;action=edit" aria-label="Edit &#8220;%2$s&#8221;">Edit</a> | </span><span class=\'enable-email\'><a href="%3$s" aria-label="Enable &#8220;%2$s&#8221;">Enable</a> | </span><span class=\'preview-email\'><a href="%4$s" aria-label="Preview &#8220;%2$s&#8221;">Preview</a></span></div><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td>' .
+			'<td class=\'subject column-subject\' data-colname="Subject" >%2$s</td>' .
+			'<td class=\'last_modified column-last_modified\' data-colname="Last Modified" >1 second ago</td>' .
+			'</tr>',
+			$post->ID,
+			$post->post_title,
+			wp_nonce_url( "post.php?action=enable-email&amp;post=$post->ID", 'enable-email-post_' . $post->ID ),
 			Email_Preview::get_preview_link( $post->ID ),
 			'description'
 		);
