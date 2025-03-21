@@ -39,6 +39,10 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * Ensure cron job action is set up.
 	 */
 	public function testCronJobActionAdded() {
+		/* Arrange */
+		do_action( 'init' );
+
+		/* Assert */
 		$this->assertTrue( ! ! has_action( $this->usage_tracking->get_prefix() . '_usage_tracking_send_usage_data', array( $this->usage_tracking, 'send_usage_data' ) ) );
 	}
 
