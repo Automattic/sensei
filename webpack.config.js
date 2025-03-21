@@ -174,7 +174,9 @@ function getWebpackConfig() {
 			// Find where the sass-loader is installed.
 			const sassRuleIndex = use.findIndex(
 				( useRule ) =>
-					require.resolve( 'sass-loader' ) === useRule.loader
+					require.resolve(
+						'@wordpress/scripts/node_modules/sass-loader'
+					) === useRule.loader
 			);
 			const computeSourceMap =
 				use[ sassRuleIndex ].options.sourceMap ?? ! isProduction;
