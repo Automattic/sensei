@@ -67,7 +67,6 @@ class Sensei_Block_Patterns {
 	 * @access private
 	 */
 	public function register_course_list_block_patterns() {
-		require __DIR__ . '/course-list/class-sensei-course-list-block-patterns.php';
 		( new Sensei_Course_List_Block_Patterns() )->register_course_list_block_patterns();
 	}
 

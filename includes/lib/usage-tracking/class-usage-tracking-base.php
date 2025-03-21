@@ -150,6 +150,13 @@ abstract class Sensei_Usage_Tracking_Base {
 		// Init instance vars.
 		$this->job_name = $this->get_prefix() . '_usage_tracking_send_usage_data';
 
+		add_action( 'init', array( $this, 'init' ) );
+	}
+
+	/**
+	 * Initialize.
+	 */
+	public function init() {
 		// Set up schedule and action needed for cron job.
 		add_filter( 'cron_schedules', array( $this, 'add_usage_tracking_two_week_schedule' ) );
 		add_action( $this->job_name, array( $this, 'send_usage_data' ) );
@@ -214,7 +221,6 @@ abstract class Sensei_Usage_Tracking_Base {
 		$properties['_ul'] = $user->user_login;
 
 		return $this->send_tracks_request( $event, $properties, $event_timestamp );
-
 	}
 
 
@@ -288,9 +294,14 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * and schedule the job, before the user opts into tracking.
 	 */
 	public function schedule_tracking_task() {
-		if ( ! wp_next_scheduled( $this->job_name ) ) {
-			wp_schedule_event( time(), $this->get_prefix() . '_usage_tracking_two_weeks', $this->job_name );
-		}
+		add_action(
+			'init',
+			function () {
+				if ( ! wp_next_scheduled( $this->job_name ) ) {
+					wp_schedule_event( time(), $this->get_prefix() . '_usage_tracking_two_weeks', $this->job_name );
+				}
+			}
+		);
 	}
 
 	/**
