@@ -97,7 +97,6 @@
     "resolve-url-loader": "5.0.0",
     "svg-spritemap-webpack-plugin": "4.4.0",
     "typescript": "5.8.2",
-    "webpack": "5.97.1",
     "wp-hookdoc": "0.2.0"
   },
   "scripts": {
