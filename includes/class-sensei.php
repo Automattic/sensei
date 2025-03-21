@@ -1765,7 +1765,7 @@ class Sensei_Main {
 	 * @return string plugin settings URL
 	 */
 	public function get_settings_url( $plugin_id = null ) {
-		return admin_url( 'admin.php?page=sensei-settings&tab=general' );
+		return admin_url( 'admin.php?page=sensei-settings' );
 	}
 
 	/**
@@ -1806,7 +1806,7 @@ class Sensei_Main {
 	 */
 	public function is_general_configuration_page() {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,
-		return isset( $_GET['page'] ) && 'sensei-settings' === trim( $_GET['page'] ) && ( ! isset( $_GET['tab'] ) || 'general' === trim( $_GET['tab'] ) );
+		return isset( $_GET['page'] ) && 'sensei-settings' === trim( $_GET['page'] ) && ( ! isset( $_GET['tab'] ) || 'default-settings' === trim( $_GET['tab'] ) );
 	}
 
 		/**
@@ -1815,7 +1815,7 @@ class Sensei_Main {
 		 * @return string admin configuration url for the admin general configuration page
 		 */
 	public function get_general_configuration_url() {
-		return admin_url( 'admin.php?page=sensei-settings&tab=general' );
+		return admin_url( 'admin.php?page=sensei-settings&tab=default-settings' );
 	}
 
 	/**
