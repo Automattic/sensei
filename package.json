@@ -99,6 +99,9 @@
     "typescript": "5.8.2",
     "wp-hookdoc": "0.2.0"
   },
+  "overrides": {
+    "prettier": "npm:wp-prettier@3.0.3"
+  },
   "scripts": {
     "archive": "composer archive --file=$npm_package_name --format=zip",
     "build": "npm run build:assets && rm assets/dist/css/jquery-ui.js && npm run build:dependencies && npm run archive",
