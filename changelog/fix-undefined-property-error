@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix undefined property notice on WP 6.8

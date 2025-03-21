@@ -191,6 +191,7 @@ class Sensei_Course_Theme_Templates {
 			'origin'         => 'theme',
 			'is_custom'      => false,
 			'has_theme_file' => true,
+			'modified'       => null,
 			'status'         => 'publish',
 		];
 
