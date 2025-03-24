@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 /**
  * WordPress dependencies
@@ -45,11 +45,6 @@ beforeAll( () => {
 	spy = jest.spyOn( document, 'getElementById' );
 } );
 describe( '<StudentBulkActionButton />', () => {
-	const selectActionButton = () =>
-		screen.getByRole( 'button', {
-			name: 'Select Action',
-		} );
-
 	beforeAll( () => {
 		useSelect.mockReturnValue( { courses, isFetching: false } );
 	} );
@@ -68,9 +63,15 @@ describe( '<StudentBulkActionButton />', () => {
 			{ value: 'remove_progress' },
 			{ value: 'remove_enrolment' },
 		] );
-		render( <StudentBulkActionButton isDisabled={ false } /> );
+		const { getByRole } = render(
+			<StudentBulkActionButton isDisabled={ false } />
+		);
 
-		await selectActionButton().click();
+		fireEvent.click(
+			getByRole( 'button', {
+				name: 'Select Action',
+			} )
+		);
 
 		expect(
 			screen.getByText(
@@ -87,9 +88,15 @@ describe( '<StudentBulkActionButton />', () => {
 			{ value: 'remove_progress', selected: true },
 			{ value: 'remove_enrolment' },
 		] );
-		render( <StudentBulkActionButton isDisabled={ false } /> );
+		const { getByRole } = render(
+			<StudentBulkActionButton isDisabled={ false } />
+		);
 
-		await selectActionButton().click();
+		fireEvent.click(
+			getByRole( 'button', {
+				name: 'Select Action',
+			} )
+		);
 
 		expect(
 			screen.getByText(
@@ -99,15 +106,22 @@ describe( '<StudentBulkActionButton />', () => {
 			)
 		).toBeInTheDocument();
 	} );
+
 	it( 'Should render the `Remove from Course` modal', async () => {
 		setupSelector( [
 			{ value: 'enrol_restore_enrolment' },
 			{ value: 'remove_progress' },
 			{ value: 'remove_enrolment', selected: true },
 		] );
-		render( <StudentBulkActionButton isDisabled={ false } /> );
+		const { getByRole } = render(
+			<StudentBulkActionButton isDisabled={ false } />
+		);
 
-		await selectActionButton().click();
+		fireEvent.click(
+			getByRole( 'button', {
+				name: 'Select Action',
+			} )
+		);
 
 		expect(
 			screen.getByText(
