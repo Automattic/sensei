@@ -16,7 +16,8 @@ const useCourseCategoriesProps = ( attributes = {} ) => {
 	return useBlockProps( {
 		style: omitBy(
 			{
-				[ `${ CSS_VARIABLE_PREFIX }-background-color` ]: options?.backgroundColor,
+				[ `${ CSS_VARIABLE_PREFIX }-background-color` ]:
+					options?.backgroundColor,
 				[ `${ CSS_VARIABLE_PREFIX }-text-color` ]: options?.textColor,
 			},
 			isNil

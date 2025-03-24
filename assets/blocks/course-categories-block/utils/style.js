@@ -12,7 +12,8 @@ export const getStyleAndClassesFromAttributes = ( attributes = {} ) => {
 	return {
 		style: omitBy(
 			{
-				[ `${ CSS_VARIABLE_PREFIX }-background-color` ]: options?.backgroundColor,
+				[ `${ CSS_VARIABLE_PREFIX }-background-color` ]:
+					options?.backgroundColor,
 				[ `${ CSS_VARIABLE_PREFIX }-text-color` ]: options?.textColor,
 			},
 			isNil

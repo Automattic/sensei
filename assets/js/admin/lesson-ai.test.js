@@ -1,5 +1,14 @@
+/**
+ * External dependencies
+ */
 import { render } from '@testing-library/react';
+/**
+ * Internal dependencies
+ */
 import { addQuestionGeneratorUpsellButtonToQuizBlock } from './lesson-ai';
+/**
+ * WordPress dependencies
+ */
 import { Slot, SlotFillProvider } from '@wordpress/components';
 
 describe( 'addQuestionGeneratorUpsellButtonToQuizBlock', () => {

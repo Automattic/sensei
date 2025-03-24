@@ -47,9 +47,8 @@ export default ExtensionActions;
  * @return {Array|null} Array of actions, or null if it's not a valid extension.
  */
 export const useExtensionActions = ( extension ) => {
-	const { installExtension, updateExtensions } = useDispatch(
-		EXTENSIONS_STORE
-	);
+	const { installExtension, updateExtensions } =
+		useDispatch( EXTENSIONS_STORE );
 
 	if ( ! extension.product_slug ) {
 		return null;

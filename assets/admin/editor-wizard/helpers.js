@@ -16,8 +16,7 @@ import { EXTENSIONS_STORE } from '../../extensions/store';
  * Update blocks content, replacing the placeholders with a content.
  *
  * @param {Object[]} blocks   Blocks to replace with the new content.
- * @param {Object}   replaces Object containing content to be replaced. The keys are the block
- *                            classNames to find. The values are the content to be replaced.
+ * @param {Object}   replaces Object containing content to be replaced. The keys are the block classNames to find. The values are the content to be replaced.
  *
  * @return {Object[]} Blocks with the placeholders filled.
  */
@@ -103,8 +102,7 @@ export const useWizardOpenState = () => {
 /**
  * Hook to set the default post pattern with replaced content.
  *
- * @param {Object} replaces Object containing content to be replaced. The keys are the block
- *                          classNames to find. The values are the content to be replaced.
+ * @param {Object} replaces Object containing content to be replaced. The keys are the block classNames to find. The values are the content to be replaced.
  *
  * @return {Function} Function to set the default pattern.
  */
@@ -168,9 +166,8 @@ export const useLogEvent = () => {
 export const useHideEditorWizardUpsell = () => {
 	const { senseiProExtension } = useSelect(
 		( select ) => ( {
-			senseiProExtension: select(
-				EXTENSIONS_STORE
-			).getSenseiProExtension(),
+			senseiProExtension:
+				select( EXTENSIONS_STORE ).getSenseiProExtension(),
 		} ),
 		[]
 	);

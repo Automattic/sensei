@@ -1,9 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
 
 /**
  * Add placeholder to tinymce editor
  *
- * @param  editor tinymce editor.
+ * @param editor tinymce editor.
  */
 window.addPlaceholderInTinymceEditor = ( editor ) => {
 	// Remove placeholder on submit.

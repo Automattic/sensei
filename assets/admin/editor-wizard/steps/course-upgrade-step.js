@@ -18,9 +18,8 @@ import CheckIcon from '../../../icons/checked.svg';
 const CourseUpgradeStep = () => {
 	const { senseiProExtension } = useSelect(
 		( select ) => ( {
-			senseiProExtension: select(
-				EXTENSIONS_STORE
-			).getSenseiProExtension(),
+			senseiProExtension:
+				select( EXTENSIONS_STORE ).getSenseiProExtension(),
 		} ),
 		[]
 	);

@@ -130,9 +130,10 @@ const QuizValidationResult = ( { clientId, setMeta } ) => {
 		selectBlock( incompleteQuestions[ 0 ].clientId );
 	};
 
-	usePostSavingEffect( () => toggleValidationErrors( false ), [
-		toggleValidationErrors,
-	] );
+	usePostSavingEffect(
+		() => toggleValidationErrors( false ),
+		[ toggleValidationErrors ]
+	);
 
 	if ( ! incompleteQuestions.length ) return null;
 

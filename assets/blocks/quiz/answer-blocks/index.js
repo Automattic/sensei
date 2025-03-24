@@ -169,11 +169,8 @@ export const unfilteredQuestionTypes = questionTypes;
  * @param {Object}   questionTypes             The question types.
  * @param {string}   questionTypes.title       The title of the question.
  * @param {string}   questionTypes.description The description of the question.
- * @param {Function} questionTypes.edit        The block edit function for the question. Attributes under
- *                                             'answer', will be passed to this component.
- * @param {Array}    questionTypes.settings    An array of settings components to use in the sidebar.
- *                                             Attributes under 'options', will be passed to all settings
- *                                             components.
+ * @param {Function} questionTypes.edit        The block edit function for the question. Attributes under 'answer', will be passed to this component.
+ * @param {Array}    questionTypes.settings    An array of settings components to use in the sidebar. Attributes under 'options', will be passed to all settings components.
  * @param {Object}   availableCoreSettings     Core settings that can be included in custom question types.
  */
 export default applyFilters(

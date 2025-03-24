@@ -21,9 +21,8 @@ import { addUtms } from '../utils';
 const SenseiProAd = ( { show } ) => {
 	const { senseiProExtension } = useSelect(
 		( select ) => ( {
-			senseiProExtension: select(
-				EXTENSIONS_STORE
-			).getSenseiProExtension(),
+			senseiProExtension:
+				select( EXTENSIONS_STORE ).getSenseiProExtension(),
 		} ),
 		[]
 	);

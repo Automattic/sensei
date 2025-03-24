@@ -202,9 +202,8 @@ function getTourSteps() {
 						action: () => {
 							const lessonSelector =
 								'[data-type="sensei-lms/course-outline-lesson"]';
-							const lesson = document.querySelector(
-								lessonSelector
-							);
+							const lesson =
+								document.querySelector( lessonSelector );
 							if ( lesson ) {
 								lesson.focus();
 							}
@@ -272,9 +271,8 @@ function getTourSteps() {
 					{
 						action: () => {
 							scrollToCenter( inserterSelector );
-							const inserter = document.querySelector(
-								inserterSelector
-							);
+							const inserter =
+								document.querySelector( inserterSelector );
 							if ( inserter ) {
 								inserter.click();
 							}
@@ -291,9 +289,8 @@ function getTourSteps() {
 					{
 						action: () => {
 							highlightElementsWithBorders( [ moduleSelector ] );
-							const module = document.querySelector(
-								moduleSelector
-							);
+							const module =
+								document.querySelector( moduleSelector );
 							if ( module ) {
 								module.focus();
 							}
@@ -337,9 +334,8 @@ function getTourSteps() {
 					{
 						action: () => {
 							scrollToCenter( inserterSelector );
-							const inserter = document.querySelector(
-								inserterSelector
-							);
+							const inserter =
+								document.querySelector( inserterSelector );
 							if ( inserter ) {
 								inserter.click();
 							}
@@ -359,9 +355,8 @@ function getTourSteps() {
 							highlightElementsWithBorders( [
 								insertLessonSelector,
 							] );
-							const lesson = document.querySelector(
-								insertLessonSelector
-							);
+							const lesson =
+								document.querySelector( insertLessonSelector );
 							if ( lesson ) {
 								lesson.focus();
 							}
@@ -419,9 +414,8 @@ function getTourSteps() {
 					},
 					{
 						action: () => {
-							const option = document.querySelector(
-								optionSelector
-							);
+							const option =
+								document.querySelector( optionSelector );
 							if ( option ) {
 								option.click();
 							}
@@ -437,9 +431,8 @@ function getTourSteps() {
 						action: () => {
 							const deleteButtonSelector =
 								'.block-editor-block-settings-menu__popover.components-dropdown-menu__popover .components-menu-group:last-child .components-button.components-menu-item__button:last-child';
-							const deleteButton = document.querySelector(
-								deleteButtonSelector
-							);
+							const deleteButton =
+								document.querySelector( deleteButtonSelector );
 							if ( deleteButton ) {
 								deleteButton.focus();
 							}
@@ -542,9 +535,8 @@ function getTourSteps() {
 				const savedlessonSelector =
 					'.wp-block-sensei-lms-course-outline-lesson[data-lesson-id]';
 
-				const savedLesson = document.querySelector(
-					savedlessonSelector
-				);
+				const savedLesson =
+					document.querySelector( savedlessonSelector );
 
 				if ( ! savedLesson ) {
 					ensureModulesHaveTitles();
@@ -556,9 +548,8 @@ function getTourSteps() {
 				performStepActionsAsync( [
 					{
 						action: () => {
-							const lesson = document.querySelector(
-								savedlessonSelector
-							);
+							const lesson =
+								document.querySelector( savedlessonSelector );
 							if ( lesson ) {
 								lesson.parentElement.focus();
 							}

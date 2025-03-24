@@ -22,10 +22,8 @@ export default compose(
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
-		const {
-			restartImporter,
-			invalidateResolutionForStoreSelector,
-		} = dispatch( 'sensei/import' );
+		const { restartImporter, invalidateResolutionForStoreSelector } =
+			dispatch( 'sensei/import' );
 
 		return {
 			restartImporter,

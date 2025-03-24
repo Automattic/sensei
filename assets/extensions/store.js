@@ -180,9 +180,8 @@ const actions = {
 			yield actions.setExtensionsStatus( slugs, '' );
 			yield actions.removeFromQueue( process );
 
-			const nextProcess = yield select(
-				EXTENSIONS_STORE
-			).getNextProcess();
+			const nextProcess =
+				yield select( EXTENSIONS_STORE ).getNextProcess();
 
 			if ( nextProcess ) {
 				yield actions.runProcess( nextProcess );
@@ -269,10 +268,13 @@ const selectors = {
 		selectors
 			.getExtensions( args )
 			.filter( ( extension ) => status === extension.status ),
-	getSenseiProExtension: createRegistrySelector( ( selectStore ) => () =>
-		selectStore( EXTENSIONS_STORE )
-			.getExtensions()
-			.find( ( extension ) => extension.product_slug === 'sensei-pro' )
+	getSenseiProExtension: createRegistrySelector(
+		( selectStore ) => () =>
+			selectStore( EXTENSIONS_STORE )
+				.getExtensions()
+				.find(
+					( extension ) => extension.product_slug === 'sensei-pro'
+				)
 	),
 	getEntities: ( { entities }, entity ) => entities[ entity ],
 	getConnectionStatus: ( { connected } ) => connected,

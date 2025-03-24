@@ -26,7 +26,8 @@ export const useAutoInserter = (
 	const { clientId } = parentProps;
 	// console.log( 'dentro', useDispatch );
 	const {
-		__unstableMarkNextChangeAsNotPersistent: markNextChangeAsNotPersistent = noop,
+		__unstableMarkNextChangeAsNotPersistent:
+			markNextChangeAsNotPersistent = noop,
 		insertBlock,
 	} = useDispatch( 'core/block-editor' );
 

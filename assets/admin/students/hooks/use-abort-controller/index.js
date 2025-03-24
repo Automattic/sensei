@@ -19,9 +19,10 @@ export default function useAbortController() {
 		return () => getAbortController().abort();
 	}, [ getAbortController ] );
 
-	const getSignal = useCallback( () => getAbortController().signal, [
-		getAbortController,
-	] );
+	const getSignal = useCallback(
+		() => getAbortController().signal,
+		[ getAbortController ]
+	);
 
 	return { getSignal };
 }

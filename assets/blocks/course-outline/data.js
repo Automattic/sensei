@@ -195,9 +195,8 @@ export const getFirstBlockByName = ( blockName, blocks ) => {
  * @return {Array} An array of blocks.
  */
 export const getCourseInnerBlocks = ( outlineClientId, blockType ) => {
-	let allChildren = select( 'core/block-editor' ).getBlocks(
-		outlineClientId
-	);
+	let allChildren =
+		select( 'core/block-editor' ).getBlocks( outlineClientId );
 
 	allChildren = allChildren.reduce(
 		( m, block ) => [ ...m, ...block.innerBlocks ],

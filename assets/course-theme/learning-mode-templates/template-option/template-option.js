@@ -22,10 +22,10 @@ import { TemplateOptionThumbnail } from './template-option-thumbnail';
 export const TemplateOption = ( props ) => {
 	const { name, title, screenshots, onPreview } = props;
 
-	const handlePreview = useCallback( () => onPreview( name ), [
-		onPreview,
-		name,
-	] );
+	const handlePreview = useCallback(
+		() => onPreview( name ),
+		[ onPreview, name ]
+	);
 
 	return (
 		<li className="sensei-lm-template-option__container">

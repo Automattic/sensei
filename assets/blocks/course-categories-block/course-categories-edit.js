@@ -41,9 +41,8 @@ export function CourseCategoryEdit( props ) {
 	const { postId, postType } = context;
 	const { postTerms: categories, isLoading } = useCourseCategories( postId );
 
-	const { __unstableMarkNextChangeAsNotPersistent = noop } = useDispatch(
-		blockEditorStore
-	);
+	const { __unstableMarkNextChangeAsNotPersistent = noop } =
+		useDispatch( blockEditorStore );
 
 	useEffect(
 		() => {

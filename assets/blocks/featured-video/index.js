@@ -33,9 +33,8 @@ export default {
 		],
 	},
 	edit: function EditBlock( { className, clientId } ) {
-		const { replaceInnerBlocks, moveBlockToPosition } = useDispatch(
-			'core/block-editor'
-		);
+		const { replaceInnerBlocks, moveBlockToPosition } =
+			useDispatch( 'core/block-editor' );
 		const innerBlockCount = useSelect(
 			( select ) =>
 				select( 'core/block-editor' ).getBlocks( clientId ).length
@@ -54,11 +53,8 @@ export default {
 
 		const { parentBlocks, rootClientId, blockIndex } = useSelect(
 			( select ) => {
-				const {
-					getBlockParents,
-					getBlockRootClientId,
-					getBlockIndex,
-				} = select( 'core/block-editor' );
+				const { getBlockParents, getBlockRootClientId, getBlockIndex } =
+					select( 'core/block-editor' );
 				return {
 					parentBlocks: getBlockParents( clientId ),
 					rootClientId: getBlockRootClientId( clientId ),

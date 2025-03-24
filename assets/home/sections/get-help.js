@@ -40,7 +40,8 @@ const Item = ( { title, url, extraLink } ) => {
 			</div>
 			<div
 				className={ classNames( 'sensei-home__help-item__title', {
-					'sensei-home__help-item__title--disabled': ! isTitleInteractive,
+					'sensei-home__help-item__title--disabled':
+						! isTitleInteractive,
 				} ) }
 			>
 				{ isTitleInteractive ? (

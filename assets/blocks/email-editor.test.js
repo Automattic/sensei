@@ -13,8 +13,8 @@ import { addFilter } from '@wordpress/hooks';
  */
 import './email-editor';
 
-const registerTestBlock = (settings = {}) => {
-	registerBlockType('sensei-lms/test-block', {
+const registerTestBlock = ( settings = {} ) => {
+	registerBlockType( 'sensei-lms/test-block', {
 		title: 'An Example Block',
 		attributes: {
 			title: {
@@ -27,33 +27,33 @@ const registerTestBlock = (settings = {}) => {
 				__experimentalFontFamily: true,
 			},
 			alignWide: true,
-			align: ['wide', 'full'],
+			align: [ 'wide', 'full' ],
 		},
 		...settings,
-	});
+	} );
 };
 
-describe('handleEmailBlocksEditor', () => {
-	afterEach(() => {
-		unregisterBlockType('sensei-lms/test-block');
-	});
+describe( 'handleEmailBlocksEditor', () => {
+	afterEach( () => {
+		unregisterBlockType( 'sensei-lms/test-block' );
+	} );
 
-	it('should remove typography font family settings from blocks', () => {
+	it( 'should remove typography font family settings from blocks', () => {
 		registerTestBlock();
 
 		const blockTypes = getBlockTypes();
-		const { supports } = blockTypes[0];
+		const { supports } = blockTypes[ 0 ];
 
-		expect(supports.typography.__experimentalFontFamily).toBe(false);
-	});
+		expect( supports.typography.__experimentalFontFamily ).toBe( false );
+	} );
 
-	it('should be available before being removed by this function', () => {
+	it( 'should be available before being removed by this function', () => {
 		let settingsOutput = {};
 
 		addFilter(
 			'blocks.registerBlockType',
 			'sensei-lms/email-blocks-test',
-			(settings) => {
+			( settings ) => {
 				settingsOutput = settings;
 				return settings;
 			},
@@ -64,37 +64,37 @@ describe('handleEmailBlocksEditor', () => {
 
 		expect(
 			settingsOutput.supports.typography.__experimentalFontFamily
-		).toBe(true);
-	});
+		).toBe( true );
+	} );
 
-	it('should change alignWide to false in supports', () => {
+	it( 'should change alignWide to false in supports', () => {
 		registerTestBlock();
 
 		const blockTypes = getBlockTypes();
-		const { supports } = blockTypes[0];
+		const { supports } = blockTypes[ 0 ];
 
-		expect(supports.alignWide).toBe(false);
-	});
+		expect( supports.alignWide ).toBe( false );
+	} );
 
-	it('should remove wide option from align settings in supports', () => {
+	it( 'should remove wide option from align settings in supports', () => {
 		registerTestBlock();
 
 		const blockTypes = getBlockTypes();
-		const { supports } = blockTypes[0];
+		const { supports } = blockTypes[ 0 ];
 
-		expect(supports.align).toEqual(['full']);
-	});
+		expect( supports.align ).toEqual( [ 'full' ] );
+	} );
 
-	it('should not throw any error if align is not there', () => {
-		registerTestBlock({
+	it( 'should not throw any error if align is not there', () => {
+		registerTestBlock( {
 			supports: {
 				align: undefined,
 			},
-		});
+		} );
 
 		const blockTypes = getBlockTypes();
-		const { supports } = blockTypes[0];
+		const { supports } = blockTypes[ 0 ];
 
-		expect(supports.align).toEqual(undefined);
-	});
-});
+		expect( supports.align ).toEqual( undefined );
+	} );
+} );

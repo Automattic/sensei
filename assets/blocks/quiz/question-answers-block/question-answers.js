@@ -15,13 +15,8 @@ import { useBlockProps } from '@wordpress/block-editor';
  *
  */
 const QuestionAnswers = () => {
-	const {
-		answer,
-		setAttributes,
-		AnswerBlock,
-		hasSelected,
-		canHaveFeedback,
-	} = useContext( QuestionContext );
+	const { answer, setAttributes, AnswerBlock, hasSelected, canHaveFeedback } =
+		useContext( QuestionContext );
 
 	const blockProps = useBlockProps( {
 		className: 'sensei-lms-question-answers-block',

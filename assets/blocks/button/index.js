@@ -69,14 +69,12 @@ export const createButtonBlockType = ( {
 	const defaultStyle = find( styles, 'isDefault' )?.name;
 
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
-	const ButtonEditWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
-		ButtonEdit
-	);
+	const ButtonEditWithBlockStyle =
+		withDefaultBlockStyle( defaultStyle )( ButtonEdit );
 
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
-	const ButtonSaveWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
-		ButtonSave
-	);
+	const ButtonSaveWithBlockStyle =
+		withDefaultBlockStyle( defaultStyle )( ButtonSave );
 
 	return merge(
 		{
@@ -179,7 +177,8 @@ export const createButtonBlockType = ( {
 							getBlockDefaultClassName( settings.name ) +
 								'__wrapper',
 							{
-								[ `sensei-buttons-container__button-align-${ align }` ]: align,
+								[ `sensei-buttons-container__button-align-${ align }` ]:
+									align,
 							}
 						),
 					};

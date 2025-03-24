@@ -28,9 +28,8 @@ const Theme = () => {
 	const themeContentRef = useRef();
 	const scrollOffset = 70;
 
-	const { submitStep, isSubmitting, errorNotice } = useSetupWizardStep(
-		'theme'
-	);
+	const { submitStep, isSubmitting, errorNotice } =
+		useSetupWizardStep( 'theme' );
 
 	useLayoutEffect( () => {
 		const w = themeContentRef.current?.ownerDocument.defaultView;

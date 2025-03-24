@@ -174,7 +174,8 @@ export const ModuleEdit = ( props ) => {
 			/>
 			<section
 				className={ classnames( className, {
-					'wp-block-sensei-lms-course-outline-module-bordered': bordered,
+					'wp-block-sensei-lms-course-outline-module-bordered':
+						bordered,
 				} ) }
 				style={ {
 					borderColor: borderColorValue || defaultBorderColor?.color,

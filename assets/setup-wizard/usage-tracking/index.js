@@ -17,9 +17,8 @@ import { logEvent } from '../../shared/helpers/log-event';
 const UsageTracking = () => {
 	const { goNext } = useQueryStringRouter();
 
-	const { submitStep, isSubmitting, errorNotice } = useSetupWizardStep(
-		'tracking'
-	);
+	const { submitStep, isSubmitting, errorNotice } =
+		useSetupWizardStep( 'tracking' );
 
 	const onSubmitSuccess = ( allowUsageTracking ) => () => {
 		logEvent.enable( allowUsageTracking );

@@ -9,7 +9,7 @@ domReady( () => {
 	/**
 	 * Handle tasks present on the element if the element has the attribute "data-sensei-notice-tasks".
 	 *
-	 * @param  event The event to handle.
+	 * @param event The event to handle.
 	 */
 	const handleTasks = ( event ) => {
 		const { target } = event;
@@ -49,7 +49,7 @@ domReady( () => {
 	/**
 	 * Handle dismissing the notice by sending a request to the server.
 	 *
-	 * @param  element The DOM element of the container of the notice being dismissed.
+	 * @param element The DOM element of the container of the notice being dismissed.
 	 */
 	const handleDismiss = ( element ) => {
 		const formData = new FormData();

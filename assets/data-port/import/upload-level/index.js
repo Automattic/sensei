@@ -19,11 +19,8 @@ export default compose(
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
-		const {
-			deleteLevelFile,
-			uploadFileForLevel,
-			throwEarlyUploadError,
-		} = dispatch( 'sensei/import' );
+		const { deleteLevelFile, uploadFileForLevel, throwEarlyUploadError } =
+			dispatch( 'sensei/import' );
 
 		return {
 			deleteLevelFile,
