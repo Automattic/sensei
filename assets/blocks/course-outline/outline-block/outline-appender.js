@@ -44,11 +44,10 @@ const OutlineAppender = ( { clientId, openModal } ) => {
 		{
 			title: __( 'Lesson', 'sensei-lms' ),
 			icon: LessonIcon,
-			onClick: () => {
+			onClick: () =>
 				insertAndSelectBlock( 'sensei-lms/course-outline-lesson', {
 					placeholder: __( 'Lesson name', 'sensei-lms' ),
-				} );
-			},
+				} ),
 		},
 		{
 			title: __( 'Existing Lesson(s)', 'sensei-lms' ),
