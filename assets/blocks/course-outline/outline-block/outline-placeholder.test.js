@@ -71,15 +71,16 @@ describe( '<OutlinePlaceholder />', () => {
 
 			window.sensei.featureFlags.course_outline_ai = false;
 
-			const { getByText } = render(
+			const { getByText, getAllByText } = render(
 				<OutlinePlaceholder addBlock={ addBlockMock } />
 			);
 
 			expect(
-				getByText(
+				// This has an extra accessibility text.
+				getAllByText(
 					'You can use modules to group related lessons together.',
 					{ exact: false }
-				)
+				)[ 0 ]
 			).toBeTruthy();
 			expect( getByText( 'Create a module' ) ).toBeTruthy();
 			expect( getByText( 'Create a lesson' ) ).toBeTruthy();
