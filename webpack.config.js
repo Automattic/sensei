@@ -7,6 +7,7 @@ const { fromPairs } = require( 'lodash' );
 const CopyPlugin = require( 'copy-webpack-plugin' );
 const SVGSpritemapPlugin = require( 'svg-spritemap-webpack-plugin' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
+// eslint-disable-next-line import/no-extraneous-dependencies -- Leave this dependency to be managed by @wordpress/scripts
 const { DefinePlugin } = require( 'webpack' );
 
 /**
@@ -174,9 +175,7 @@ function getWebpackConfig() {
 			// Find where the sass-loader is installed.
 			const sassRuleIndex = use.findIndex(
 				( useRule ) =>
-					require.resolve(
-						'@wordpress/scripts/node_modules/sass-loader'
-					) === useRule.loader
+					require.resolve( 'sass-loader' ) === useRule.loader
 			);
 			const computeSourceMap =
 				use[ sassRuleIndex ].options.sourceMap ?? ! isProduction;

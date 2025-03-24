@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-// eslint-disable-next-line import/no-extraneous-dependencies -- Skip leave this dependency to be managed by @wordpress/scripts
+// eslint-disable-next-line import/no-extraneous-dependencies -- Leave this dependency to be managed by @wordpress/scripts
 const prettier = require( 'prettier' );
 const parserBabel = require( 'prettier/parser-babel' );
 const parserFlow = require( 'prettier/parser-flow' );
 const { parseComment } = require( '@es-joy/jsdoccomment' );
 
 // In the future this function should ideally be migrated to `comment-parser` dependency.
-// eslint-disable-next-line import/no-extraneous-dependencies -- Skip leave this dependency to be managed by @wordpress/scripts
+// eslint-disable-next-line import/no-extraneous-dependencies -- Leave this dependency to be managed by @wordpress/scripts
 const alignTransform = require( 'eslint-plugin-jsdoc/dist/alignTransform' );
 const {
 	stringify,
