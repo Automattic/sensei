@@ -35,6 +35,16 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	InnerBlocks: () => <div />,
 } ) );
 
+jest.mock( '@wordpress/edit-post', () => ( {
+	PluginPostStatusInfo: jest.fn( () => null ),
+	PluginPrePublishPanel: jest.fn( () => null ),
+} ) );
+
+jest.mock( '@wordpress/editor', () => ( {
+	PluginPostStatusInfo: jest.fn( () => null ),
+	PluginPrePublishPanel: jest.fn( () => null ),
+} ) );
+
 describe( 'addQuestionGeneratorUpsellButtonToQuizBlock', () => {
 	beforeAll( () => {
 		useSelect.mockReturnValue( {} );
