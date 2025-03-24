@@ -84,6 +84,7 @@
     "comment-parser": "1.1.5",
     "copy-webpack-plugin": "10.2.0",
     "cross-env": "7.0.2",
+    "eslint-import-resolver-typescript": "4.2.2",
     "expect-puppeteer": "4.4.0",
     "gettext-parser": "4.0.4",
     "husky": "6.0.0",
@@ -96,7 +97,7 @@
     "postcss-color-function": "4.1.0",
     "resolve-url-loader": "5.0.0",
     "svg-spritemap-webpack-plugin": "4.4.0",
-    "typescript": "5.8.2",
+    "typescript": "5.3.3",
     "wp-hookdoc": "0.2.0"
   },
   "overrides": {
