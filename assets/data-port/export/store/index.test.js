@@ -1,13 +1,13 @@
 /**
  * WordPress dependencies
  */
-import { resolveSelect, select } from '@wordpress/data';
+import { createRegistry } from '@wordpress/data';
 import { apiFetch } from '@wordpress/data-controls';
 
 /**
  * Internal dependencies
  */
-import registerExportStore, { EXPORT_STORE } from './index';
+import { EXPORT_STORE, EXPORT_STORE_OPTIONS } from './index';
 import * as actions from './actions';
 /**
  * External dependencies
@@ -25,6 +25,8 @@ jest.mock( '@wordpress/data-controls', () => {
 	};
 } );
 
+let registry, store;
+
 async function mockActiveJob( job ) {
 	apiFetch.mockImplementation( () => {
 		if ( ! job )
@@ -34,14 +36,15 @@ async function mockActiveJob( job ) {
 			};
 		else return job;
 	} );
-	select( EXPORT_STORE ).getJob();
+	registry.select( EXPORT_STORE ).getJob();
 	apiFetch.mockClear();
 }
 
 describe( 'Export store', () => {
-	let store;
 	beforeEach( () => {
-		store = registerExportStore();
+		registry = createRegistry();
+		store = registry.registerStore( EXPORT_STORE, EXPORT_STORE_OPTIONS );
+
 		apiFetch.mockClear();
 	} );
 
@@ -51,7 +54,7 @@ describe( 'Export store', () => {
 			status: { status: 'completed' },
 		} );
 
-		const job = await resolveSelect( EXPORT_STORE ).getJob();
+		const job = await registry.resolveSelect( EXPORT_STORE ).getJob();
 
 		expect( job ).toEqual( {
 			id: 5,
@@ -135,7 +138,7 @@ describe( 'Export store', () => {
 			data: { content_types: [ 'lesson', 'course' ] },
 		} );
 
-		expect( select( EXPORT_STORE ).getJob() ).toEqual( {
+		expect( registry.select( EXPORT_STORE ).getJob() ).toEqual( {
 			id: 5,
 			status: 'complete',
 		} );
@@ -190,7 +193,7 @@ describe( 'Export store', () => {
 
 		await waitFor( async () => {
 			expect( apiFetch ).toHaveBeenCalledWith( pollRequest );
-			expect( select( EXPORT_STORE ).getJob() ).toEqual( {
+			expect( registry.select( EXPORT_STORE ).getJob() ).toEqual( {
 				id: 7,
 				status: 'complete',
 				percentage: 100,
@@ -228,7 +231,7 @@ describe( 'Export store', () => {
 
 		await jest.runOnlyPendingTimers();
 
-		expect( select( EXPORT_STORE ).getError() ).toEqual(
+		expect( registry.select( EXPORT_STORE ).getError() ).toEqual(
 			'Error 1. Error 2.'
 		);
 	} );

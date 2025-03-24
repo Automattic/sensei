@@ -58,13 +58,15 @@ const selectors = {
 
 export const EXPORT_STORE = 'sensei/export';
 
+export const EXPORT_STORE_OPTIONS = {
+	reducer: createReducerFromActionMap( reducers, EMPTY_STATE ),
+	actions,
+	selectors,
+	resolvers,
+	controls: { ...dataControls, ...scheduleControls },
+};
+
 const registerExportStore = () =>
-	registerStore( EXPORT_STORE, {
-		reducer: createReducerFromActionMap( reducers, EMPTY_STATE ),
-		actions,
-		selectors,
-		resolvers,
-		controls: { ...dataControls, ...scheduleControls },
-	} );
+	registerStore( EXPORT_STORE, EXPORT_STORE_OPTIONS );
 
 export default registerExportStore;

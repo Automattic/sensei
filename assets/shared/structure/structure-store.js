@@ -7,7 +7,12 @@ import { isEqual } from 'lodash';
  * WordPress dependencies
  */
 import { apiFetch, controls as dataControls } from '@wordpress/data-controls';
-import { dispatch, registerStore, select, subscribe } from '@wordpress/data';
+import {
+	dispatch as dataDispatch,
+	select as dataSelect,
+	subscribe as dataSubscribe,
+	registerStore,
+} from '@wordpress/data';
 /**
  * Internal dependencies
  */
@@ -27,6 +32,7 @@ import '../data/api-fetch-preloaded-once';
  * @param {Function} opts.blockExists        Check if block exists.
  * @param {Function} opts.readBlock          Extract structure from block.
  * @param {Function} opts.setServerStructure Set the server structure which is used to track differences.
+ * @param {Object}   opts.registry           Data registry.
  */
 export function registerStructureStore( {
 	storeName,
@@ -38,8 +44,13 @@ export function registerStructureStore( {
 	blockExists,
 	readBlock,
 	setServerStructure,
+	registry,
 	...store
 } ) {
+	const dispatch = registry ? registry.dispatch : dataDispatch;
+	const select = registry ? registry.select : dataSelect;
+	const subscribe = registry ? registry.subscribe : dataSubscribe;
+
 	const DEFAULT_STATE = {
 		serverStructure: null,
 		editorStructure: null,
@@ -70,9 +81,8 @@ export function registerStructureStore( {
 		 * Persist editor's structure to the REST API.
 		 */
 		*saveStructure() {
-			const editorStructure = yield select(
-				storeName
-			).getEditorStructure();
+			const editorStructure =
+				yield select( storeName ).getEditorStructure();
 			try {
 				const endpoint = yield* getEndpoint();
 				const result = yield apiFetch( {
@@ -245,9 +255,8 @@ export function registerStructureStore( {
 				return;
 			}
 
-			const isSavingStructure = select(
-				storeName
-			).getIsSavingStructure();
+			const isSavingStructure =
+				select( storeName ).getIsSavingStructure();
 
 			const isSavingPost =
 				editor.isSavingPost() && ! editor.isAutosavingPost();
@@ -280,9 +289,11 @@ export function registerStructureStore( {
 		} );
 	};
 
+	const registerFn = registry ? registry.registerStore : registerStore;
+
 	return {
 		unsubscribe: subscribeToPostSave(),
-		store: registerStore( storeName, {
+		store: registerFn( storeName, {
 			reducer: createReducerFromActionMap(
 				{ ...reducers, ...store?.reducers },
 				DEFAULT_STATE
