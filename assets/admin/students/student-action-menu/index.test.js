@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 /**
  * WordPress dependencies
@@ -29,72 +29,72 @@ window.ResizeObserver =
 describe( '<StudentActionMenu />', () => {
 	it( 'Should display modal when "Add to Course" is selected', async () => {
 		useSelect.mockReturnValue( { courses: [], isFetching: false } );
-		const { getByRole, getByText } = render(
+		render(
 			<StudentActionMenu studentDisplayName={ studentDisplayName } />
 		);
 
 		// Open the dropdown menu.
-		const button = getByRole( 'button' );
+		const button = screen.getByRole( 'button' );
 
 		button.focus();
 		fireEvent.click( button );
 
 		// Click the "Add to Course" menu item.
-		const menuItem = getByText( 'Add to Course' );
+		const menuItem = screen.getByText( 'Add to Course' );
 
 		await act( async () => {
 			fireEvent.click( menuItem );
 		} );
 
-		expect( getByRole( 'dialog' ) ).toBeTruthy();
+		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
 	} );
 
 	it( 'Should display modal when "Remove from Course" is selected', async () => {
 		useSelect.mockReturnValue( { courses: [], isFetching: false } );
-		const { getByRole, getByText } = render(
+		render(
 			<StudentActionMenu studentDisplayName={ studentDisplayName } />
 		);
 
 		// Open the dropdown menu.
-		const button = getByRole( 'button' );
+		const button = screen.getByRole( 'button' );
 
 		button.focus();
 		fireEvent.click( button );
 
 		// Click the "Remove from Course" menu item.
-		const menuItem = getByText( 'Remove from Course' );
+		const menuItem = screen.getByText( 'Remove from Course' );
 
 		await act( async () => {
 			fireEvent.click( menuItem );
 		} );
 
-		expect( getByRole( 'dialog' ) ).toBeTruthy();
+		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
 	} );
 
 	it( 'Should display modal when "Reset progress" is selected', async () => {
 		useSelect.mockReturnValue( { courses: [], isFetching: false } );
-		const { getByRole, getByText } = render(
+		render(
 			<StudentActionMenu studentDisplayName={ studentDisplayName } />
 		);
 
 		// Open the dropdown menu.
-		const button = getByRole( 'button' );
+		const button = screen.getByRole( 'button' );
 
 		button.focus();
 		fireEvent.click( button );
 
 		// Click the "Reset Progress" menu item.
-		const menuItem = getByText( 'Reset Progress' );
+		const menuItem = screen.getByText( 'Reset Progress' );
 
 		await act( async () => {
 			fireEvent.click( menuItem );
 		} );
 
-		expect( getByRole( 'dialog' ) ).toBeTruthy();
+		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
 	} );
 
 	it( "Should display student's ungraded quizzes when Grading menu item is selected", () => {
-		const { getByRole, getByText } = render(
+		render(
 			<StudentActionMenu
 				studentName={ studentName }
 				studentDisplayName={ studentDisplayName }
@@ -102,13 +102,13 @@ describe( '<StudentActionMenu />', () => {
 		);
 
 		// Open the dropdown menu.
-		const button = getByRole( 'button' );
+		const button = screen.getByRole( 'button' );
 
 		button.focus();
 		fireEvent.click( button );
 
 		// Click the "Grading" menu item.
-		const menuItem = getByText( 'Grading' );
+		const menuItem = screen.getByText( 'Grading' );
 		const windowSpy = jest.spyOn( window, 'open' );
 
 		windowSpy.mockImplementation( () => null );
