@@ -333,7 +333,7 @@ class Sensei_Setup_Wizard {
 					<?php esc_html_e( 'Run the Setup Wizard', 'sensei-lms' ); ?>
 				</a>
 
-				<a class="button" href="<?php echo esc_url( $skip_url ); ?>">
+				<a class="button-secondary" href="<?php echo esc_url( $skip_url ); ?>">
 					<?php esc_html_e( 'Skip setup', 'sensei-lms' ); ?>
 				</a>
 			</p>
