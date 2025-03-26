@@ -914,7 +914,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		add_filter(
 			'is_tax',
 			function ( $is_tax, $taxonomy = '' ) {
-				if ( $taxonomy === 'course-category' ) {
+				if ( 'course-category' === $taxonomy ) {
 					return true;
 				}
 				return $is_tax;
