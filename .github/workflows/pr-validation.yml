@@ -9,7 +9,15 @@ jobs:
     name: Check Milestone
     runs-on: ubuntu-latest
     steps:
-      - if: github.event.pull_request.milestone == null
+      - name: Check PR milestone
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
         run: |
-          echo "This PR is missing a milestone."
-          exit 1
+          PR_DATA=$(gh api /repos/$REPO/pulls/$PR_NUMBER)
+          MILESTONE=$(echo $PR_DATA | jq -r '.milestone')
+          if [ "$MILESTONE" = "null" ]; then
+            echo "This PR is missing a milestone."
+            exit 1
+          fi
