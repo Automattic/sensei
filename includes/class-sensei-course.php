@@ -3487,11 +3487,12 @@ class Sensei_Course {
 			$taxonomy = $wp_query->get_queried_object();
 			$tax_obj  = get_taxonomy( $taxonomy->taxonomy );
 
-			$title = sprintf(
-				__( '%1$s Archives: %2$s', 'sensei-lms' ), // translators: Placeholders are the taxonomy name and the term name, respectively.
+			$title = $tax_obj ? sprintf(
+				// translators: Placeholders are the taxonomy name and the term name, respectively.
+				__( '%1$s Archives: %2$s', 'sensei-lms' ),
 				$tax_obj->labels->name,
 				$taxonomy->name
-			);
+			) : '';
 
 			echo wp_kses_post(
 				apply_filters( 'course_category_archive_title', $before_html . $title . $after_html )
