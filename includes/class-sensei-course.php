@@ -3486,16 +3486,16 @@ class Sensei_Course {
 			global $wp_query;
 			$taxonomy = $wp_query->get_queried_object();
 			$tax_obj  = get_taxonomy( $taxonomy->taxonomy );
-			
+
 			// translators: Placeholders are the taxonomy name and the term name, respectively.
-			$title = sprintf( 
-				__( '%1$s Archives: %2$s', 'sensei-lms' ), 
-				$tax_obj->labels->name, 
-				$taxonomy->name 
+			$title = sprintf(
+				__( '%1$s Archives: %2$s', 'sensei-lms' ),
+				$tax_obj->labels->name,
+				$taxonomy->name
 			);
-			
-			echo wp_kses_post( 
-				apply_filters( 'course_category_archive_title', $before_html . $title . $after_html ) 
+
+			echo wp_kses_post(
+				apply_filters( 'course_category_archive_title', $before_html . $title . $after_html )
 			);
 			return;
 		}
@@ -3511,13 +3511,13 @@ class Sensei_Course {
 
 		if ( Sensei()->course->course_archive_page_has_query_block() ) {
 			$archive_page_title = get_post( Sensei()->settings->get( 'course_page' ) )->post_title;
-			$default_title = 'Courses' === $archive_page_title ? $default_title : $archive_page_title;
+			$default_title      = 'Courses' === $archive_page_title ? $default_title : $archive_page_title;
 		}
 
 		$title = $titles[ $query_type ] ?? $default_title;
-		
-		echo wp_kses_post( 
-			apply_filters( 'course_archive_title', $before_html . $title . $after_html ) 
+
+		echo wp_kses_post(
+			apply_filters( 'course_archive_title', $before_html . $title . $after_html )
 		);
 	}
 
