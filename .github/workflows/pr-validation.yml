@@ -2,9 +2,7 @@ name: Pull Request Validation
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
-  pull_request_target:
-    types: [milestoned, demilestoned]
+    types: [opened, reopened, synchronize, edited]
 
 jobs:
   check-milestone:
