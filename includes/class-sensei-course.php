@@ -3487,9 +3487,8 @@ class Sensei_Course {
 			$taxonomy = $wp_query->get_queried_object();
 			$tax_obj  = get_taxonomy( $taxonomy->taxonomy );
 
-			// translators: Placeholders are the taxonomy name and the term name, respectively.
 			$title = sprintf(
-				__( '%1$s Archives: %2$s', 'sensei-lms' ),
+				__( '%1$s Archives: %2$s', 'sensei-lms' ), // translators: Placeholders are the taxonomy name and the term name, respectively.
 				$tax_obj->labels->name,
 				$taxonomy->name
 			);
