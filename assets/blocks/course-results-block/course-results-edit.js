@@ -56,7 +56,8 @@ const SampleLesson = ( { lessonNumber } ) => (
 const SampleModule = ( { moduleName, moduleBorder, headerStyles, style } ) => (
 	<section
 		className={ classnames( 'wp-block-sensei-lms-course-results__module', {
-			'wp-block-sensei-lms-course-results__module--has-border': moduleBorder,
+			'wp-block-sensei-lms-course-results__module--has-border':
+				moduleBorder,
 		} ) }
 	>
 		<header

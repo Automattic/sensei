@@ -6,7 +6,7 @@ import useAbortController from '.';
 /**
  * External dependencies
  */
-import { cleanup, renderHook } from '@testing-library/react-hooks';
+import { cleanup, renderHook } from '@testing-library/react';
 
 describe( 'useAbortController', () => {
 	it( 'Should return signal to be used on async operations', () => {

@@ -8,7 +8,10 @@ export default class QueryLoop {
 	choosePatternButton: Locator;
 	choosePatternModal: Locator;
 
-	constructor( private base: Locator, page: Page ) {
+	constructor(
+		private base: Locator,
+		page: Page
+	) {
 		this.page = page;
 		this.choosePatternButton = this.base.locator(
 			'button:has-text("Choose")'
@@ -21,7 +24,7 @@ export default class QueryLoop {
 			await this.choosePatternModal
 				.locator( `[aria-label="${ patternName }"]` )
 				.getAttribute( 'class' )
-		 )?.includes( 'active-slide' );
+		)?.includes( 'active-slide' );
 	}
 
 	async choosePattern( patternName: string ): Promise< void > {

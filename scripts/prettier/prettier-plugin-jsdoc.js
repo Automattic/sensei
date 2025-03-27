@@ -1,21 +1,23 @@
+/**
+ * External dependencies
+ */
+// eslint-disable-next-line import/no-extraneous-dependencies -- Leave this dependency to be managed by @wordpress/scripts
 const prettier = require( 'prettier' );
 const parserBabel = require( 'prettier/parser-babel' );
 const parserFlow = require( 'prettier/parser-flow' );
 const { parseComment } = require( '@es-joy/jsdoccomment' );
 
 // In the future this function should ideally be migrated to `comment-parser` dependency.
+// eslint-disable-next-line import/no-extraneous-dependencies -- Leave this dependency to be managed by @wordpress/scripts
 const alignTransform = require( 'eslint-plugin-jsdoc/dist/alignTransform' );
 const {
 	stringify,
 	transforms: { flow },
 } = require( 'comment-parser' );
 
+// Initialize with empty languages array, will be populated asynchronously
 const prettierPluginJsdoc = {
-	languages: prettier
-		.getSupportInfo()
-		.languages.filter( ( { name } ) =>
-			[ 'JavaScript', 'JSX' ].includes( name )
-		),
+	languages: [],
 	parsers: {
 		get babel() {
 			return getParserWithJSDoc( parserBabel.parsers.babel );
@@ -25,6 +27,13 @@ const prettierPluginJsdoc = {
 		},
 	},
 };
+
+// Populate languages asynchronously
+prettier.getSupportInfo().then( ( info ) => {
+	prettierPluginJsdoc.languages = info.languages.filter( ( { name } ) =>
+		[ 'JavaScript', 'JSX' ].includes( name )
+	);
+} );
 
 const getParserWithJSDoc = ( parser ) => ( {
 	...parser,

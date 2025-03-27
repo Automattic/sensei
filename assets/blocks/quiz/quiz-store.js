@@ -82,9 +82,8 @@ registerStructureStore( {
 			return;
 		}
 
-		const questionBlocks = yield select( 'core/block-editor' ).getBlocks(
-			clientId
-		);
+		const questionBlocks =
+			yield select( 'core/block-editor' ).getBlocks( clientId );
 		yield dispatch( 'core/block-editor' ).replaceInnerBlocks(
 			clientId,
 			syncQuestionBlocks( structure.questions, questionBlocks ),
@@ -128,16 +127,14 @@ registerStructureStore( {
 		const lesson = select( 'core/editor' ).getCurrentPost();
 		const serverStructure = select( QUIZ_STORE ).getServerStructure();
 
-		const questionBlocks = select( 'core/block-editor' ).getBlocks(
-			clientId
-		);
+		const questionBlocks =
+			select( 'core/block-editor' ).getBlocks( clientId );
 
 		let questions = [];
 
 		if ( 0 < questionBlocks.length && serverStructure ) {
-			const questionBlockAttributes = parseQuestionBlocks(
-				questionBlocks
-			);
+			const questionBlockAttributes =
+				parseQuestionBlocks( questionBlocks );
 
 			const serverQuestionsById = keyBy(
 				serverStructure.questions,

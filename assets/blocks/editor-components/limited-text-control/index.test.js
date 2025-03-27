@@ -55,7 +55,7 @@ describe( '<LimitedTextControl />', () => {
 		expect( queryByText( 'Characters: 10/20' ) ).toBeTruthy();
 	} );
 
-	it( 'Should not call the `onChange` method when already at maxLength capacity', () => {
+	it( 'Should not call the `onChange` method when already at maxLength capacity', async () => {
 		const onChangeMock = jest.fn();
 		const { queryByRole } = render(
 			<LimitedTextControl
@@ -65,12 +65,12 @@ describe( '<LimitedTextControl />', () => {
 			/>
 		);
 
-		userEvent.type( queryByRole( 'textbox' ), 'DEF' );
+		await userEvent.type( queryByRole( 'textbox' ), 'DEF' );
 
 		expect( onChangeMock ).toHaveBeenCalledTimes( 0 );
 	} );
 
-	it( 'Should ignore new lines', () => {
+	it( 'Should ignore new lines', async () => {
 		const onChangeMock = jest.fn();
 		const { queryByRole } = render(
 			<LimitedTextControl
@@ -82,7 +82,7 @@ describe( '<LimitedTextControl />', () => {
 
 		const element = queryByRole( 'textbox' );
 
-		userEvent.type( element, '{enter}' );
+		await userEvent.type( element, '{enter}' );
 
 		expect( onChangeMock ).toHaveBeenCalledTimes( 0 );
 	} );
@@ -144,7 +144,7 @@ describe( '<LimitedTextControl multiline={ true }/>', () => {
 		expect( queryByText( 'Characters: 10/20' ) ).toBeTruthy();
 	} );
 
-	it( 'Should not call the `onChange` method when already at maxLength capacity', () => {
+	it( 'Should not call the `onChange` method when already at maxLength capacity', async () => {
 		const onChangeMock = jest.fn();
 		const { queryByRole } = render(
 			<LimitedTextControl
@@ -155,12 +155,12 @@ describe( '<LimitedTextControl multiline={ true }/>', () => {
 			/>
 		);
 
-		userEvent.type( queryByRole( 'textbox' ), 'DEF' );
+		await userEvent.type( queryByRole( 'textbox' ), 'DEF' );
 
 		expect( onChangeMock ).toHaveBeenCalledTimes( 0 );
 	} );
 
-	it( 'Should accept new lines', () => {
+	it( 'Should accept new lines', async () => {
 		const onChangeMock = jest.fn();
 		const { queryByRole } = render(
 			<LimitedTextControl
@@ -173,7 +173,7 @@ describe( '<LimitedTextControl multiline={ true }/>', () => {
 
 		const element = queryByRole( 'textbox' );
 
-		userEvent.type( element, '{enter}' );
+		await userEvent.type( element, '{enter}' );
 
 		expect( onChangeMock ).toHaveBeenCalledTimes( 1 );
 	} );

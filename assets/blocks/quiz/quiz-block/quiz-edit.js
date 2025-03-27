@@ -46,10 +46,8 @@ const QuizEdit = ( props ) => {
 
 	useUpdateQuizHasQuestionsMeta( clientId );
 
-	const [
-		isExistingQuestionsModalOpen,
-		setExistingQuestionsModalOpen,
-	] = useState( false );
+	const [ isExistingQuestionsModalOpen, setExistingQuestionsModalOpen ] =
+		useState( false );
 
 	const closeExistingQuestionsModal = () =>
 		setExistingQuestionsModalOpen( false );

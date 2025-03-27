@@ -116,7 +116,7 @@ describe( 'useWizardOpenState', () => {
 		expect( await findByText( 'closed' ) ).toBeTruthy();
 
 		document.body.classList.remove( 'modal-open' );
-		expect( findByText( 'open' ) ).toBeTruthy();
+		expect( await findByText( 'open' ) ).toBeTruthy();
 	} );
 
 	it( 'Should be closed when wizard is done', async () => {

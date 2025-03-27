@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 
 /**
  * Track how much space the WordPress admin bar takes up at the top of the screen.
@@ -14,7 +14,6 @@ const trackAdminbarOffset = () => {
 	}
 
 	updateAdminbarOffset();
-	// eslint-disable-next-line @wordpress/no-global-event-listener
 	window.addEventListener( 'scroll', updateAdminbarOffset, {
 		capture: false,
 		passive: true,
@@ -26,7 +25,6 @@ const trackAdminbarOffset = () => {
 	 * 2. The admin bar contains an animated transition, so this transition
 	 *    needs to be completed in order to make the correct calc.
 	 */
-	// eslint-disable-next-line @wordpress/no-global-event-listener
 	window.addEventListener( 'resize', debounce( updateAdminbarOffset, 500 ) );
 
 	function updateAdminbarOffset() {
@@ -42,5 +40,4 @@ const trackAdminbarOffset = () => {
 	}
 };
 
-// eslint-disable-next-line @wordpress/no-global-event-listener
 window.addEventListener( 'DOMContentLoaded', trackAdminbarOffset );

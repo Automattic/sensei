@@ -103,25 +103,26 @@ export const ColorSettings = ( { colorSettings, props } ) => {
  *
  * @param {string} defaultStyleName Default style name.
  */
-export const withDefaultBlockStyle = ( defaultStyleName = 'default' ) => (
-	Component
-) => ( props ) => {
-	let { className } = props;
+export const withDefaultBlockStyle =
+	( defaultStyleName = 'default' ) =>
+	( Component ) =>
+	( props ) => {
+		let { className } = props;
 
-	const extraProps = {};
+		const extraProps = {};
 
-	if ( ! className || ! className.includes( 'is-style-' ) ) {
-		className = extraProps.className = [
-			className,
-			`is-style-${ defaultStyleName }`,
-		].join( ' ' );
-	}
+		if ( ! className || ! className.includes( 'is-style-' ) ) {
+			className = extraProps.className = [
+				className,
+				`is-style-${ defaultStyleName }`,
+			].join( ' ' );
+		}
 
-	const style = className.match( /is-style-(\w+)/ );
-	if ( style ) extraProps.blockStyle = style[ 1 ];
+		const style = className.match( /is-style-(\w+)/ );
+		if ( style ) extraProps.blockStyle = style[ 1 ];
 
-	return <Component { ...props } { ...extraProps } />;
-};
+		return <Component { ...props } { ...extraProps } />;
+	};
 
 /**
  * This HOC sets the default color attribute based in a probe.
@@ -134,59 +135,54 @@ export const withDefaultBlockStyle = ( defaultStyleName = 'default' ) => (
  *   },
  * } )
  *
- * @param {Object} colorConfigs Colors config object, where the key is the
- *                              default color attribute name, and the value is
- *                              an object containing style type and probeKey.
- *                              The block attributes must register an attribute
- *                              for every key.
+ * @param {Object} colorConfigs Colors config object, where the key is the default color attribute name, and the value is an object containing style type and probeKey. The block attributes must register an attribute for every key.
  *
  * @return {Function} Extended component.
  */
-export const withDefaultColor = ( colorConfigs ) => ( Component ) => (
-	props
-) => {
-	const { setAttributes, attributes } = props;
-	const colorsByProbe = useColorsByProbe();
-	const [ colorProps, setColorProps ] = useState( {} );
+export const withDefaultColor =
+	( colorConfigs ) => ( Component ) => ( props ) => {
+		const { setAttributes, attributes } = props;
+		const colorsByProbe = useColorsByProbe();
+		const [ colorProps, setColorProps ] = useState( {} );
 
-	const colorConfigsDeps = Object.keys( colorConfigs ).map(
-		( colorKey ) => attributes[ colorKey ]
-	);
-
-	useEffect( () => {
-		const newColorProps = {};
-
-		Object.entries( colorConfigs ).forEach(
-			( [ colorKey, { style, probeKey } ] ) => {
-				const probeColor = colorsByProbe[ probeKey ] || {};
-				const { slug } = probeColor;
-
-				if ( slug ) {
-					newColorProps[ colorKey ] = {
-						...probeColor,
-						className: getColorClassName( style, slug ),
-					};
-				}
-
-				if ( attributes[ colorKey ] !== slug ) {
-					const colorAttributes = {};
-					colorAttributes[ colorKey ] = slug;
-
-					// Border color is not compatible with all themes as className, so the color value is needed.
-					if ( 'border-color' === style ) {
-						colorAttributes[ `${ colorKey }Value` ] =
-							probeColor.color;
-					}
-
-					setAttributes( colorAttributes );
-				}
-			}
+		const colorConfigsDeps = Object.keys( colorConfigs ).map(
+			( colorKey ) => attributes[ colorKey ]
 		);
 
-		setColorProps( newColorProps );
+		useEffect( () => {
+			const newColorProps = {};
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- The deps are added dynamically because we get it dynamically from the attributes and we don't want add all attributes as dep.
-	}, [ colorsByProbe, setAttributes, ...colorConfigsDeps ] );
+			Object.entries( colorConfigs ).forEach(
+				( [ colorKey, { style, probeKey } ] ) => {
+					const probeColor = colorsByProbe[ probeKey ] || {};
+					const { slug } = probeColor;
 
-	return <Component { ...props } { ...colorProps } />;
-};
+					if ( slug ) {
+						newColorProps[ colorKey ] = {
+							...probeColor,
+							className: getColorClassName( style, slug ),
+						};
+					}
+
+					if ( attributes[ colorKey ] !== slug ) {
+						const colorAttributes = {};
+						colorAttributes[ colorKey ] = slug;
+
+						// Border color is not compatible with all themes as className, so the color value is needed.
+						if ( 'border-color' === style ) {
+							colorAttributes[ `${ colorKey }Value` ] =
+								probeColor.color;
+						}
+
+						setAttributes( colorAttributes );
+					}
+				}
+			);
+
+			setColorProps( newColorProps );
+
+			// eslint-disable-next-line react-hooks/exhaustive-deps -- The deps are added dynamically because we get it dynamically from the attributes and we don't want add all attributes as dep.
+		}, [ colorsByProbe, setAttributes, ...colorConfigsDeps ] );
+
+		return <Component { ...props } { ...colorProps } />;
+	};

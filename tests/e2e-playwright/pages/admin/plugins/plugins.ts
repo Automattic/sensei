@@ -101,9 +101,8 @@ export default class PluginsPage {
 		slug: string,
 		forceReactivate = false
 	): Promise< void > {
-		const deactivateLink = await this.goToPluginsAndGetDeactivationLink(
-			slug
-		);
+		const deactivateLink =
+			await this.goToPluginsAndGetDeactivationLink( slug );
 
 		if ( deactivateLink ) {
 			if ( forceReactivate ) {

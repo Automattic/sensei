@@ -13,7 +13,9 @@ import { Tooltip } from '@wordpress/components';
  */
 import TaskItem from './task-item';
 
-jest.mock( '@wordpress/components' );
+jest.mock( '@wordpress/components', () => ( {
+	Tooltip: jest.fn(),
+} ) );
 
 describe( '<TaskItem />', () => {
 	it( 'Should render an anchor when item is not completed', () => {

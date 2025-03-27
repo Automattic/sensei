@@ -58,7 +58,6 @@ export const initializePlayer = ( element, w = window ) =>
 			}
 		};
 
-		// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
 		w.addEventListener( 'message', onVideoPressMessage );
 	} );
 
@@ -183,11 +182,9 @@ export const onTimeupdate = ( player, callback, w = window ) => {
 		callback( event.data.currentTimeMs / 1000 );
 	};
 
-	// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
 	w.addEventListener( 'message', transformedCallback );
 
 	return () => {
-		// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
 		w.removeEventListener( 'message', transformedCallback );
 	};
 };
@@ -213,11 +210,9 @@ export const onEnded = ( player, callback, w = window ) => {
 		callback();
 	};
 
-	// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
 	w.addEventListener( 'message', transformedCallback );
 
 	return () => {
-		// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
 		w.removeEventListener( 'message', transformedCallback );
 	};
 };

@@ -54,7 +54,8 @@ const ButtonSave = ( { attributes, className, tagName, blockName } ) => {
 					'sensei-buttons-container__button-block',
 					getBlockDefaultClassName( blockName ) + '__wrapper',
 					{
-						[ `sensei-buttons-container__button-align-${ align }` ]: align,
+						[ `sensei-buttons-container__button-align-${ align }` ]:
+							align,
 					}
 				) }
 			>

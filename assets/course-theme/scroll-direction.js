@@ -29,7 +29,6 @@ const setScrollDirection = ( delta ) => {
 	document.body.classList.add( `${ SCROLL_CLASS }-${ direction }` );
 };
 
-// eslint-disable-next-line @wordpress/no-global-event-listener
 window.addEventListener( 'scroll', detectScrollDirection, {
 	capture: false,
 	passive: true,

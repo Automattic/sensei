@@ -18,9 +18,8 @@ import { HOME_PATH } from '../constants';
 const Welcome = () => {
 	const { goNext } = useQueryStringRouter();
 
-	const { submitStep, isSubmitting, errorNotice } = useSetupWizardStep(
-		'welcome'
-	);
+	const { submitStep, isSubmitting, errorNotice } =
+		useSetupWizardStep( 'welcome' );
 
 	const submitPage = () => {
 		submitStep( {}, { onSuccess: goNext } );

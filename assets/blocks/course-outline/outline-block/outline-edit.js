@@ -86,10 +86,8 @@ const OutlineEdit = ( props ) => {
 
 	useCourseLessonsStatusSync( clientId, attributes.isPreview );
 
-	const [
-		isExistingLessonsModalOpen,
-		setExistingLessonsModalOpen,
-	] = useState( false );
+	const [ isExistingLessonsModalOpen, setExistingLessonsModalOpen ] =
+		useState( false );
 
 	const closeExistingLessonsModal = () =>
 		setExistingLessonsModalOpen( false );

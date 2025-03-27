@@ -217,9 +217,8 @@ export default function getTourSteps() {
 							const typeSelectorSelector =
 								'.sensei-lms-question-block__type-selector button';
 
-							const typeSelectorButton = document.querySelector(
-								typeSelectorSelector
-							);
+							const typeSelectorButton =
+								document.querySelector( typeSelectorSelector );
 
 							highlightElementsWithBorders( [
 								typeSelectorSelector,
@@ -284,9 +283,8 @@ export default function getTourSteps() {
 							const titleFieldSelector =
 								'.sensei-lms-question-block__title .sensei-lms-single-line-input';
 
-							const titleField = document.querySelector(
-								titleFieldSelector
-							);
+							const titleField =
+								document.querySelector( titleFieldSelector );
 
 							highlightElementsWithBorders( [
 								titleFieldSelector,
@@ -523,9 +521,8 @@ export default function getTourSteps() {
 					// Click on the inserter.
 					{
 						action: () => {
-							const inserter = document.querySelector(
-								inserterSelector
-							);
+							const inserter =
+								document.querySelector( inserterSelector );
 							if ( inserter ) {
 								inserter.click();
 							}
@@ -597,9 +594,8 @@ export default function getTourSteps() {
 								'.wp-block-sensei-lms-quiz-question',
 							] );
 
-							const { openGeneralSidebar } = dispatch(
-								editPostStore
-							);
+							const { openGeneralSidebar } =
+								dispatch( editPostStore );
 
 							openGeneralSidebar( 'edit-post/block' );
 						},

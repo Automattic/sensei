@@ -93,7 +93,7 @@ describe( 'Block metadata', () => {
 			expect( getByText( 'Block metadata' ) ).toBeTruthy();
 		} );
 
-		it( 'Provides metadata setter to block', () => {
+		it( 'Provides metadata setter to block', async () => {
 			const Block = withBlockMeta( ( { setMeta } ) => (
 				<button
 					onClick={ () => setMeta( { secondTestMeta: 'clicked' } ) }
@@ -102,7 +102,7 @@ describe( 'Block metadata', () => {
 				</button>
 			) );
 			const { getByText } = render( <Block clientId="test-block-4" /> );
-			userEvent.click( getByText( 'Update' ) );
+			await userEvent.click( getByText( 'Update' ) );
 
 			const meta = select( STORE ).getBlockMeta(
 				'test-block-4',

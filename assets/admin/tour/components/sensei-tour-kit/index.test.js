@@ -154,9 +154,10 @@ describe( 'SenseiTourKit', () => {
 
 		fireEvent.click( getByTestId( 'stepViewOnceButton' ) );
 
-		expect(
-			window.sensei_log_event
-		).toHaveBeenCalledWith( 'test-tracks-id', { step: 'step-2' } );
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'test-tracks-id',
+			{ step: 'step-2' }
+		);
 	} );
 
 	test( 'should not call the event log function event id is not passed', () => {

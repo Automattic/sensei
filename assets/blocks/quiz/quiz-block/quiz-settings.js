@@ -285,9 +285,8 @@ const QuizSettings = ( {
 						colorSettings={ [
 							{
 								value: buttonTextColor || undefined,
-								onChange: createChangeHandler(
-									'buttonTextColor'
-								),
+								onChange:
+									createChangeHandler( 'buttonTextColor' ),
 								label: __( 'Button text color', 'sensei-lms' ),
 							},
 							{

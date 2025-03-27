@@ -1,5 +1,3 @@
-/* global FormData */
-
 /**
  * WordPress dependencies
  */

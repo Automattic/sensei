@@ -123,10 +123,10 @@ export const useBlockMeta = ( clientId ) => {
 		[ clientId, setBlockMeta ]
 	);
 
-	const meta = useMemo( () => ( { ...contextMeta, ...blockMeta } ), [
-		blockMeta,
-		contextMeta,
-	] );
+	const meta = useMemo(
+		() => ( { ...contextMeta, ...blockMeta } ),
+		[ blockMeta, contextMeta ]
+	);
 
 	return [ meta, setBlockMetaForBlock ];
 };

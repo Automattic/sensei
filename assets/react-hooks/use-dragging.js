@@ -95,7 +95,6 @@ export const useDragging = ( {
 	);
 
 	useEffect( () => {
-		/* eslint-disable @wordpress/no-global-event-listener */
 		document.addEventListener( 'mouseup', onMouseUp );
 		document.addEventListener( 'touchend', onMouseUp );
 		document.addEventListener( 'mousemove', onMouseMove );

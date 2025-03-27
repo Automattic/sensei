@@ -41,9 +41,10 @@ const SingleQuestion = ( props ) => {
 		[ setMeta ]
 	);
 
-	usePostSavingEffect( () => toggleValidationErrors( false ), [
-		toggleValidationErrors,
-	] );
+	usePostSavingEffect(
+		() => toggleValidationErrors( false ),
+		[ toggleValidationErrors ]
+	);
 
 	if ( ! validationErrors?.length ) return null;
 

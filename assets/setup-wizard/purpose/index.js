@@ -67,12 +67,8 @@ const getInstallDescription = ( slug, features ) => {
 const Purpose = () => {
 	const { goNext } = useQueryStringRouter();
 
-	const {
-		stepData,
-		submitStep,
-		isSubmitting,
-		errorNotice,
-	} = useSetupWizardStep( 'purpose' );
+	const { stepData, submitStep, isSubmitting, errorNotice } =
+		useSetupWizardStep( 'purpose' );
 
 	const { stepData: featuresData } = useSetupWizardStep( 'features' );
 

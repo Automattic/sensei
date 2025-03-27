@@ -81,7 +81,8 @@ export const LessonEdit = ( props ) => {
 	const inputContainerClasses = classnames(
 		'wp-block-sensei-lms-course-outline-lesson__input-container',
 		{
-			'wp-block-sensei-lms-course-outline-lesson__no-status': ! postStatus,
+			'wp-block-sensei-lms-course-outline-lesson__no-status':
+				! postStatus,
 		}
 	);
 

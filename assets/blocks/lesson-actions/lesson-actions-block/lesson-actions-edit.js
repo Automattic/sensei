@@ -44,9 +44,8 @@ const LessonActionsEdit = ( props ) => {
 		setAttributes,
 		attributes: { toggledBlocks },
 	} = props;
-	const [ previewState, onPreviewChange ] = usePreviewState(
-		IN_PROGRESS_PREVIEW
-	);
+	const [ previewState, onPreviewChange ] =
+		usePreviewState( IN_PROGRESS_PREVIEW );
 	const { isSiteEditor } = useSelect( ( select ) => {
 		const currentPostId = select( editorStore ).getCurrentPostId();
 		return {

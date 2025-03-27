@@ -39,7 +39,8 @@ const InputControl = ( {
 				className={ classnames(
 					'sensei-input-control__input',
 					{
-						'sensei-input-control__input--with-icon-right': iconRight,
+						'sensei-input-control__input--with-icon-right':
+							iconRight,
 					},
 					className
 				) }

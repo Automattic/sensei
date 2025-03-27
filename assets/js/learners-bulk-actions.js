@@ -158,7 +158,8 @@ jQuery( document ).ready( function () {
 		var toggleSelectCoursesIfUsersAndBulkActionValid = function () {
 			var validator = bulkUserActions.validator(),
 				bulkActionValidationResult = validator.validateBulkAction(),
-				selectedUserIdsValidationResult = validator.validateSelectedUserIds();
+				selectedUserIdsValidationResult =
+					validator.validateSelectedUserIds();
 			global.dispatchEvent(
 				new CustomEvent( 'enableDisableCourseSelectionToggle', {
 					detail: {
@@ -226,7 +227,7 @@ jQuery( document ).ready( function () {
 					$hiddenPosts.append(
 						'<p>' +
 							__(
-								'There was an error fetching courses: ',
+								'There was an error fetching courses:',
 								'sensei-lms'
 							) +
 							errorThrown.statusText +

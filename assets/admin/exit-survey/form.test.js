@@ -18,7 +18,7 @@ describe( '<ExitSurveyForm />', () => {
 		skip: () => screen.getByRole( 'button', { name: 'Skip Feedback' } ),
 	};
 
-	it( 'Submit is disabled until an item is selected and details filled out (if provided)', () => {
+	it( 'Submit is disabled until an item is selected and details filled out (if provided)', async () => {
 		const { getByLabelText, getByPlaceholderText } = render(
 			<ExitSurveyForm />
 		);
@@ -26,13 +26,15 @@ describe( '<ExitSurveyForm />', () => {
 		expect( buttons.submit() ).toBeDisabled();
 
 		// This reason does not require details.
-		userEvent.click( getByLabelText( 'I no longer need the plugin' ) );
+		await userEvent.click(
+			getByLabelText( 'I no longer need the plugin' )
+		);
 		expect( buttons.submit() ).not.toBeDisabled();
 
 		// This reason does expect details.
-		userEvent.click( getByLabelText( 'I found a better plugin' ) );
+		await userEvent.click( getByLabelText( 'I found a better plugin' ) );
 		expect( buttons.submit() ).toBeDisabled();
-		userEvent.type(
+		await userEvent.type(
 			getByPlaceholderText( "What's the name of the plugin?" ),
 			'Test detail'
 		);
@@ -40,28 +42,28 @@ describe( '<ExitSurveyForm />', () => {
 		expect( buttons.submit() ).not.toBeDisabled();
 	} );
 
-	it( 'Skip button skips submission', () => {
+	it( 'Skip button skips submission', async () => {
 		const skip = jest.fn();
 		const submit = jest.fn();
 		render( <ExitSurveyForm submit={ submit } skip={ skip } /> );
-		userEvent.click( buttons.skip() );
+		await userEvent.click( buttons.skip() );
 
 		expect( skip ).toHaveBeenCalled();
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'Submits selected reason and details', () => {
+	it( 'Submits selected reason and details', async () => {
 		const submit = jest.fn();
 		const { getByLabelText, getByPlaceholderText } = render(
 			<ExitSurveyForm submit={ submit } />
 		);
 
-		userEvent.click( getByLabelText( 'I found a better plugin' ) );
-		userEvent.type(
+		await userEvent.click( getByLabelText( 'I found a better plugin' ) );
+		await userEvent.type(
 			getByPlaceholderText( "What's the name of the plugin?" ),
 			'Test detail'
 		);
-		userEvent.click( buttons.submit() );
+		await userEvent.click( buttons.submit() );
 
 		expect( submit ).toHaveBeenCalledWith( {
 			reason: 'found-better-plugin',

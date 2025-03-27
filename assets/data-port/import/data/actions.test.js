@@ -46,8 +46,7 @@ const RESPONSE_FULL = {
 	files: {
 		courses: {
 			name: 'courses-sample.csv',
-			url:
-				'http://example.com/wp-content/uploads/2020/06/b6f91f0d_courses-sample.csv',
+			url: 'http://example.com/wp-content/uploads/2020/06/b6f91f0d_courses-sample.csv',
 		},
 	},
 	results: {

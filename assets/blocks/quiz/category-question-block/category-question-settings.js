@@ -37,9 +37,8 @@ const useCategoryQuestionsCount = ( categoryId, onError ) => {
 				parse: false,
 			} )
 				.then( ( res ) => {
-					categoriesQuestionCount[ categoryId ] = +res.headers.get(
-						'X-WP-Total'
-					);
+					categoriesQuestionCount[ categoryId ] =
+						+res.headers.get( 'X-WP-Total' );
 					setCategoriesQuestionCount( {
 						...categoriesQuestionCount,
 					} );
@@ -73,10 +72,8 @@ const CategoryQuestionSettings = ( {
 			options: { ...options, ...next },
 		} );
 
-	const [
-		questionCategories,
-		getQuestionCategoryById,
-	] = useQuestionCategories();
+	const [ questionCategories, getQuestionCategoryById ] =
+		useQuestionCategories();
 
 	const [ questionsFetchError, setQuestionsFetchError ] = useState( null );
 	const categoryQuestionsCount = useCategoryQuestionsCount(
@@ -113,9 +110,10 @@ const CategoryQuestionSettings = ( {
 							options={ categoryOptions }
 							value={ options.category ?? '' }
 							onChange={ ( nextCategoryTermId ) => {
-								const nextQuestionCategory = getQuestionCategoryById(
-									+nextCategoryTermId
-								);
+								const nextQuestionCategory =
+									getQuestionCategoryById(
+										+nextCategoryTermId
+									);
 
 								setOptions(
 									{

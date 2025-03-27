@@ -30,12 +30,9 @@ const OutlineAppender = ( { clientId, openModal } ) => {
 	const insertAndSelectBlock = useCallback(
 		( blockName, attributes = {} ) => {
 			const newBlock = createBlock( blockName, attributes );
-			insertBlock(
-				newBlock,
-				internalBlockCount,
-				clientId,
-				true
-			).then( () => selectBlock( newBlock.clientId ) );
+			insertBlock( newBlock, internalBlockCount, clientId, true ).then(
+				() => selectBlock( newBlock.clientId )
+			);
 		},
 		[ insertBlock, selectBlock, internalBlockCount, clientId ]
 	);

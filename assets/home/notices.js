@@ -63,7 +63,7 @@ const NoticeActions = ( { actions } ) => {
 	return (
 		<div className="sensei-notice__actions">
 			{ actions.map( ( action ) => (
-				<NoticeAction key={ action.url } action={ action } />
+				<NoticeAction key={ action.label } action={ action } />
 			) ) }
 		</div>
 	);

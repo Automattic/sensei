@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -34,16 +34,15 @@ describe( 'useConfirmDialogProps()', () => {
 		const { result } = renderHook( () => useConfirmDialogProps() );
 		let [ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( false );
-		const confirmResponse = act( () =>
+		act( () => {
+			// eslint-disable-next-line jest/valid-expect
 			expect(
 				confirm( 'Hey Content', { title: 'Hey Title' } )
-			).resolves.toBe( true )
-		);
+			).resolves.toBe( true );
+		} );
 		[ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( true );
 		act( () => props.onConfirm() );
-		// We need to verify AFTER calling the props.on* callback, otherwise, the promise won't be resolved yet.
-		await confirmResponse;
 		[ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( false );
 	} );
@@ -52,16 +51,15 @@ describe( 'useConfirmDialogProps()', () => {
 		const { result } = renderHook( () => useConfirmDialogProps() );
 		let [ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( false );
-		const confirmResponse = act( () =>
+		act( () => {
+			// eslint-disable-next-line jest/valid-expect
 			expect(
 				confirm( 'Hey Content', { title: 'Hey Title' } )
-			).resolves.toBe( false )
-		);
+			).resolves.toBe( false );
+		} );
 		[ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( true );
 		act( () => props.onCancel() );
-		// We need to verify AFTER calling the props.on* callback, otherwise, the promise won't be resolved yet.
-		await confirmResponse;
 		[ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( false );
 	} );

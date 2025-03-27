@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { test, expect } from '@playwright/test';
+
 /**
  * Internal dependencies
  */
-import { createCourse, createCourseCategory } from '@e2e/helpers/api';
+import { asAdmin, createCourse, createCourseCategory } from '@e2e/helpers/api';
 import PostType from '@e2e/pages/admin/post-type';
 import { editorRole } from '@e2e/helpers/context';
-import { asAdmin } from '@e2e/helpers/api';
 import { faker } from '@faker-js/faker';
 
 const { describe, use, beforeAll } = test;

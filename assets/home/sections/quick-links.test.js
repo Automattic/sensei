@@ -60,8 +60,7 @@ describe( '<QuickLinks />', () => {
 						items: [
 							{
 								title: 'internal link',
-								url:
-									'http://localhost/wp-admin/post-new.php?post_type=course',
+								url: 'http://localhost/wp-admin/post-new.php?post_type=course',
 							},
 						],
 					},

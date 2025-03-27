@@ -55,7 +55,6 @@ const toggleFocusMode = ( on?: boolean, restore?: boolean ): void => {
 	window.sessionStorage.setItem( FOCUS_MODE_CLASS, JSON.stringify( next ) );
 };
 
-// eslint-disable-next-line @wordpress/no-global-event-listener
 window.addEventListener( 'DOMContentLoaded', () => {
 	initFocusMode();
 

@@ -36,17 +36,19 @@ describe( '<OutlinePlaceholder />', () => {
 		expect( getByText( 'Generate with AI' ) ).toBeVisible();
 	} );
 
-	it( 'Should create empty lessons', () => {
+	it( 'Should create empty lessons', async () => {
 		const { getByRole } = render(
 			<OutlinePlaceholder addBlocks={ addBlocksMock } />
 		);
 
-		userEvent.click( getByRole( 'button', { name: 'Start with blank' } ) );
+		await userEvent.click(
+			getByRole( 'button', { name: 'Start with blank' } )
+		);
 
 		expect( addBlocksMock ).toHaveBeenCalled();
 	} );
 
-	it( 'Should open the tailored modal', () => {
+	it( 'Should open the tailored modal', async () => {
 		const openTailoredModalMock = jest.fn();
 
 		const { getByRole } = render(
@@ -56,7 +58,7 @@ describe( '<OutlinePlaceholder />', () => {
 			/>
 		);
 
-		userEvent.click(
+		await userEvent.click(
 			getByRole( 'button', { name: 'Generate with AI Pro' } )
 		);
 
@@ -69,15 +71,16 @@ describe( '<OutlinePlaceholder />', () => {
 
 			window.sensei.featureFlags.course_outline_ai = false;
 
-			const { getByText } = render(
+			const { getByText, getAllByText } = render(
 				<OutlinePlaceholder addBlock={ addBlockMock } />
 			);
 
 			expect(
-				getByText(
+				// This has an extra accessibility text.
+				getAllByText(
 					'You can use modules to group related lessons together.',
 					{ exact: false }
-				)
+				)[ 0 ]
 			).toBeTruthy();
 			expect( getByText( 'Create a module' ) ).toBeTruthy();
 			expect( getByText( 'Create a lesson' ) ).toBeTruthy();

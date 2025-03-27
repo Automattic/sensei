@@ -49,11 +49,12 @@ const useTriggerDependencies = ( videoBlock ) => {
 			),
 			// This prop is used to detect the case when the user edits the embed URL, doesn't change the
 			// value and clicks on "Embed" again.
-			lastBlockAttributeChange: select(
-				blockEditorStore
-			).__experimentalGetLastBlockAttributeChanges()?.[
-				videoBlock?.clientId
-			],
+			lastBlockAttributeChange:
+				select(
+					blockEditorStore
+				).__experimentalGetLastBlockAttributeChanges()?.[
+					videoBlock?.clientId
+				],
 		} ),
 		[ videoBlock?.clientId ]
 	);
@@ -111,8 +112,7 @@ const addScript = ( doc, src, onLoad ) => {
  * It prepares the YouTube iframe, enabling JS API, and adding the promise for the API Ready event.
  *
  * @param {HTMLIFrameElement} playerIframe YouTube player iframe.
- * @param {Window}            w            Window object inside the sandbox (the parent of the
- *                                         player iframe).
+ * @param {Window}            w            Window object inside the sandbox (the parent of the player iframe).
  */
 const prepareYouTubeIframe = ( playerIframe, w ) => {
 	// Update the current embed to enable JS API.
@@ -142,12 +142,8 @@ const prepareYouTubeIframe = ( playerIframe, w ) => {
 const useEditorPlayer = ( videoBlock ) => {
 	const [ player, setPlayer ] = useState();
 
-	const {
-		fetching,
-		preview,
-		isBlockSelected,
-		lastBlockAttributeChange,
-	} = useTriggerDependencies( videoBlock );
+	const { fetching, preview, isBlockSelected, lastBlockAttributeChange } =
+		useTriggerDependencies( videoBlock );
 
 	// This is delayed to make sure it will run after the effects of the other blocks, which
 	// creates the iframe and video tags.

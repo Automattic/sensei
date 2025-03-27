@@ -117,7 +117,6 @@ function attachModalEvents() {
 		} );
 
 	// Attach close event on Escape key.
-	// eslint-disable-next-line @wordpress/no-global-event-listener
 	document.addEventListener( 'keydown', ( ev ) => {
 		if ( 'Escape' === ev.key ) {
 			closeModal( ev );
@@ -126,13 +125,11 @@ function attachModalEvents() {
 }
 
 // Init modal when the DOM is fully ready.
-// eslint-disable-next-line @wordpress/no-global-event-listener
 window.addEventListener( 'load', attachModalEvents );
 
 /**
  * Support for closing the Modal on Esc key.
  */
-// eslint-disable-next-line @wordpress/no-global-event-listener
 document.addEventListener( 'keydown', ( ev ) => {
 	if ( [ 'Esc', 'Escape' ].includes( ev.key ) ) {
 		closeModal();

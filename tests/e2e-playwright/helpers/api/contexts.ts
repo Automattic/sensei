@@ -36,9 +36,9 @@ export class WpApiRequestContext {
 		url: string,
 		data: Record< string, unknown >
 	): Promise< T > {
-		const request = await this.makeRequest( data );
-		const response = await this.context.post( url, request );
-		return ( ( await response.json() ) as unknown ) as T;
+		const req = await this.makeRequest( data );
+		const response = await this.context.post( url, req );
+		return ( await response.json() ) as unknown as T;
 	}
 
 	private async getNonce(): Promise< string > {

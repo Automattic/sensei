@@ -22,7 +22,6 @@ jest.mock( './use-update-quiz-has-questions-meta' );
 jest.mock( './quiz-validation' );
 jest.mock( '../quiz-store' );
 jest.mock( './quiz-settings' );
-jest.mock( '@wordpress/edit-post', () => ( {} ) );
 
 jest.mock( '../../../shared/blocks/use-auto-inserter', () => ( {
 	useAutoInserter: jest.fn(),
@@ -33,6 +32,17 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	useBlockProps: jest.fn().mockImplementation( () => ( {
 		className: 'test',
 	} ) ),
+	InnerBlocks: () => <div />,
+} ) );
+
+jest.mock( '@wordpress/edit-post', () => ( {
+	PluginPostStatusInfo: jest.fn( () => null ),
+	PluginPrePublishPanel: jest.fn( () => null ),
+} ) );
+
+jest.mock( '@wordpress/editor', () => ( {
+	PluginPostStatusInfo: jest.fn( () => null ),
+	PluginPrePublishPanel: jest.fn( () => null ),
 } ) );
 
 describe( 'addQuestionGeneratorUpsellButtonToQuizBlock', () => {

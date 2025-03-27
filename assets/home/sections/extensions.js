@@ -22,9 +22,8 @@ const Extensions = () => {
 		const store = select( EXTENSIONS_STORE );
 
 		return {
-			isExtensionsLoading: ! store.hasFinishedResolution(
-				'getExtensions'
-			),
+			isExtensionsLoading:
+				! store.hasFinishedResolution( 'getExtensions' ),
 			extensions: store
 				.getExtensions()
 				.filter(

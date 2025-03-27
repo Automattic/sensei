@@ -63,10 +63,10 @@ describe( '<StatusControl />', () => {
 				setStatus={ setStatusMock }
 			/>
 		);
-		userEvent.click( getByLabelText( 'Completed' ) );
+		await userEvent.click( getByLabelText( 'Completed' ) );
 		expect( setStatusMock ).toBeCalledWith( Status.COMPLETED );
 
-		userEvent.click( getByLabelText( 'In Progress' ) );
+		await userEvent.click( getByLabelText( 'In Progress' ) );
 		expect( setStatusMock ).toBeCalledWith( Status.IN_PROGRESS );
 	} );
 } );

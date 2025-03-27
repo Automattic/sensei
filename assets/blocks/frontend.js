@@ -3,7 +3,6 @@
  */
 import '../js/sensei-modal';
 
-// eslint-disable-next-line @wordpress/no-global-event-listener
 window.addEventListener( 'load', () => {
 	if (
 		0 === document.querySelectorAll( '.sensei-collapsible__toggle' ).length

@@ -207,7 +207,6 @@ const submitCompleteLessonForm = () => {
  * to detect user navigating away and pause the videos.
  */
 if ( courseVideoAutoPause && document.hidden !== undefined ) {
-	// eslint-disable-next-line @wordpress/no-global-event-listener
 	document.addEventListener(
 		'visibilitychange',
 		() => {

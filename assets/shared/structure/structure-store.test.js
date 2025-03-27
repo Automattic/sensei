@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { dispatch, registerStore } from '@wordpress/data';
+import { createRegistry } from '@wordpress/data';
 import { apiFetch } from '@wordpress/data-controls';
 
 /**
@@ -13,15 +13,17 @@ import { registerStructureStore } from './structure-store';
 jest.mock( '@wordpress/data-controls' );
 describe( 'Structure store', () => {
 	const STORE = 'test';
-	let store, unsubscribe;
+	let registry, store, unsubscribe;
 	beforeAll( () => {} );
 	beforeEach( () => {
+		registry = createRegistry();
 		store = {
 			storeName: STORE,
 			getEndpoint: jest.fn(),
 			updateBlock: jest.fn(),
 			readBlock: jest.fn(),
 			blockExists: jest.fn().mockReturnValue( true ),
+			registry,
 		};
 		( { unsubscribe } = registerStructureStore( store ) );
 		const storesForRegister = {
@@ -39,7 +41,7 @@ describe( 'Structure store', () => {
 			},
 		};
 		for ( const key in storesForRegister ) {
-			registerStore( key, storesForRegister[ key ] );
+			registry.registerStore( key, storesForRegister[ key ] );
 		}
 		apiFetch.mockClear();
 		store.getEndpoint.mockImplementation( function* () {
@@ -53,7 +55,7 @@ describe( 'Structure store', () => {
 	it( 'Updates block with result from from REST API', () => {
 		apiFetch.mockReturnValueOnce( 'server' );
 
-		dispatch( STORE ).loadStructure();
+		registry.dispatch( STORE ).loadStructure();
 
 		expect( apiFetch ).toHaveBeenCalledWith( {
 			method: 'GET',
@@ -65,16 +67,19 @@ describe( 'Structure store', () => {
 	it( 'Reads structure from block', () => {
 		store.readBlock.mockReturnValue( 'old' );
 
-		dispatch( STORE ).startPostSave();
+		registry.dispatch( STORE ).startPostSave();
 
 		expect( store.readBlock ).toHaveBeenCalled();
 	} );
 
 	it( 'Saves structure when post is being saved', () => {
-		const savePost = jest.spyOn( dispatch( 'core/editor' ), 'savePost' );
+		const savePost = jest.spyOn(
+			registry.dispatch( 'core/editor' ),
+			'savePost'
+		);
 		store.readBlock.mockReturnValue( 'new' );
 		apiFetch.mockReturnValue( 'new' );
-		dispatch( 'core/editor' ).savePost();
+		registry.dispatch( 'core/editor' ).savePost();
 		expect( apiFetch ).toHaveBeenCalledWith( {
 			method: 'POST',
 			path: '/sensei-internal/v1/test-api/1',
@@ -87,23 +92,29 @@ describe( 'Structure store', () => {
 	} );
 
 	it( 'Re-saves post on change after structure save', () => {
-		const savePost = jest.spyOn( dispatch( 'core/editor' ), 'savePost' );
+		const savePost = jest.spyOn(
+			registry.dispatch( 'core/editor' ),
+			'savePost'
+		);
 		store.readBlock
 			.mockReturnValueOnce( 'old' )
 			.mockReturnValueOnce( 'new' );
 
 		apiFetch.mockReturnValue( 'new' );
 
-		dispatch( 'core/editor' ).savePost();
+		registry.dispatch( 'core/editor' ).savePost();
 
 		expect( savePost ).toHaveBeenCalledTimes( 2 );
 		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'Skips when block does not exist', () => {
-		const startPostSave = jest.spyOn( dispatch( STORE ), 'startPostSave' );
+		const startPostSave = jest.spyOn(
+			registry.dispatch( STORE ),
+			'startPostSave'
+		);
 		store.blockExists.mockReturnValue( false );
-		dispatch( 'core/editor' ).savePost();
+		registry.dispatch( 'core/editor' ).savePost();
 
 		expect( startPostSave ).not.toHaveBeenCalled();
 	} );

@@ -6,14 +6,15 @@ const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
 const CopyPlugin = require( 'copy-webpack-plugin' );
 const SVGSpritemapPlugin = require( 'svg-spritemap-webpack-plugin' );
-const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
+// eslint-disable-next-line import/no-extraneous-dependencies -- Leave this dependency to be managed by @wordpress/scripts
 const { DefinePlugin } = require( 'webpack' );
 
 /**
  * WordPress dependencies
  */
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 
 /**
  * I18n methods that should not be mangled by the compiler process
@@ -160,8 +161,8 @@ function mapFilesToEntries( filenames ) {
 
 const baseDist = 'assets/dist/';
 
-function getWebpackConfig( env, argv ) {
-	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
+function getWebpackConfig() {
+	const webpackConfig = { ...defaultConfig };
 	const styleSheetFiles = /\.(sc|sa|c)ss$/i;
 	const scriptFiles = /\.[jt]sx?$/i;
 
@@ -205,11 +206,11 @@ function getWebpackConfig( env, argv ) {
 			// Handle SVG images only in CSS files.
 			return {
 				...rule,
-				test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf|svg)$/i,
 				issuer: styleSheetFiles,
+				type: 'asset/resource',
+				use: undefined,
 				generator: {
-					...rule.generator,
-					publicPath: '../',
+					filename: 'images/[name].[hash:8][ext]',
 				},
 			};
 		}

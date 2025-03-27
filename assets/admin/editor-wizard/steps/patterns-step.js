@@ -19,9 +19,7 @@ const { Fill, Slot } = createSlotFill( 'Patterns Upsell' );
  *
  * @param {Object}   props              Component props.
  * @param {string}   props.title        Step title.
- * @param {Object}   props.replaces     Object containing content to be replaced. The keys are the
- *                                      block classNames to find. The values are the content to be
- *                                      replaced.
+ * @param {Object}   props.replaces     Object containing content to be replaced. The keys are the block classNames to find. The values are the content to be replaced.
  * @param {Function} props.onCompletion On completion callback.
  */
 const PatternsStep = ( { title, replaces, onCompletion } ) => {

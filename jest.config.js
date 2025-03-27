@@ -20,4 +20,8 @@ module.exports = {
 		'\\.(gif|jpg|jpeg|png)$': '<rootDir>/tests/__mocks__/image.js',
 	},
 	coverageReporters: [ 'clover' ],
+	transformIgnorePatterns: [ 'node_modules/(?!(client-zip|parsel-js)/)' ],
+	transform: {
+		'^.+\\.jsx?$': 'babel-jest',
+	},
 };

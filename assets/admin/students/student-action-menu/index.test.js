@@ -6,7 +6,6 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 /**
  * WordPress dependencies
  */
-import { DOWN } from '@wordpress/keycodes';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -38,10 +37,7 @@ describe( '<StudentActionMenu />', () => {
 		const button = screen.getByRole( 'button' );
 
 		button.focus();
-		fireEvent.keyDown( button, {
-			keyCode: DOWN,
-			preventDefault: () => {},
-		} );
+		fireEvent.click( button );
 
 		// Click the "Add to Course" menu item.
 		const menuItem = screen.getByText( 'Add to Course' );
@@ -63,10 +59,7 @@ describe( '<StudentActionMenu />', () => {
 		const button = screen.getByRole( 'button' );
 
 		button.focus();
-		fireEvent.keyDown( button, {
-			keyCode: DOWN,
-			preventDefault: () => {},
-		} );
+		fireEvent.click( button );
 
 		// Click the "Remove from Course" menu item.
 		const menuItem = screen.getByText( 'Remove from Course' );
@@ -88,10 +81,7 @@ describe( '<StudentActionMenu />', () => {
 		const button = screen.getByRole( 'button' );
 
 		button.focus();
-		fireEvent.keyDown( button, {
-			keyCode: DOWN,
-			preventDefault: () => {},
-		} );
+		fireEvent.click( button );
 
 		// Click the "Reset Progress" menu item.
 		const menuItem = screen.getByText( 'Reset Progress' );
@@ -115,10 +105,7 @@ describe( '<StudentActionMenu />', () => {
 		const button = screen.getByRole( 'button' );
 
 		button.focus();
-		fireEvent.keyDown( button, {
-			keyCode: DOWN,
-			preventDefault: () => {},
-		} );
+		fireEvent.click( button );
 
 		// Click the "Grading" menu item.
 		const menuItem = screen.getByText( 'Grading' );

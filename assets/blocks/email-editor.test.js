@@ -1,12 +1,17 @@
 /**
+ * WordPress dependencies
+ */
+import {
+	registerBlockType,
+	unregisterBlockType,
+	getBlockTypes,
+} from '@wordpress/blocks';
+import { addFilter } from '@wordpress/hooks';
+
+/**
  * Internal dependencies
  */
 import './email-editor';
-/**
- * WordPress dependencies
- */
-import { registerBlockType, unregisterBlockType } from '@wordpress/blocks';
-import { addFilter } from '@wordpress/hooks';
 
 const registerTestBlock = ( settings = {} ) => {
 	registerBlockType( 'sensei-lms/test-block', {
@@ -29,28 +34,17 @@ const registerTestBlock = ( settings = {} ) => {
 };
 
 describe( 'handleEmailBlocksEditor', () => {
-	beforeEach( () => {
+	afterEach( () => {
 		unregisterBlockType( 'sensei-lms/test-block' );
 	} );
 
 	it( 'should remove typography font family settings from blocks', () => {
-		let settingsOutput = {};
-
-		addFilter(
-			'blocks.registerBlockType',
-			'sensei-lms/email-blocks-test',
-			( settings ) => {
-				settingsOutput = settings;
-				return settings;
-			},
-			20
-		);
-
 		registerTestBlock();
 
-		expect(
-			settingsOutput.supports.typography.__experimentalFontFamily
-		).toBe( false );
+		const blockTypes = getBlockTypes();
+		const { supports } = blockTypes[ 0 ];
+
+		expect( supports.typography.__experimentalFontFamily ).toBe( false );
 	} );
 
 	it( 'should be available before being removed by this function', () => {
@@ -63,7 +57,7 @@ describe( 'handleEmailBlocksEditor', () => {
 				settingsOutput = settings;
 				return settings;
 			},
-			5
+			5 // Before the original filter is added.
 		);
 
 		registerTestBlock();
@@ -74,60 +68,33 @@ describe( 'handleEmailBlocksEditor', () => {
 	} );
 
 	it( 'should change alignWide to false in supports', () => {
-		let settingsOutput = {};
-
-		addFilter(
-			'blocks.registerBlockType',
-			'sensei-lms/email-blocks-test',
-			( settings ) => {
-				settingsOutput = settings;
-				return settings;
-			},
-			20
-		);
-
 		registerTestBlock();
 
-		expect( settingsOutput.supports.alignWide ).toBe( false );
+		const blockTypes = getBlockTypes();
+		const { supports } = blockTypes[ 0 ];
+
+		expect( supports.alignWide ).toBe( false );
 	} );
 
 	it( 'should remove wide option from align settings in supports', () => {
-		let settingsOutput = {};
-
-		addFilter(
-			'blocks.registerBlockType',
-			'sensei-lms/email-blocks-test',
-			( settings ) => {
-				settingsOutput = settings;
-				return settings;
-			},
-			20
-		);
-
 		registerTestBlock();
 
-		expect( settingsOutput.supports.align ).toEqual( [ 'full' ] );
+		const blockTypes = getBlockTypes();
+		const { supports } = blockTypes[ 0 ];
+
+		expect( supports.align ).toEqual( [ 'full' ] );
 	} );
 
 	it( 'should not throw any error if align is not there', () => {
-		let settingsOutput = {};
-
-		addFilter(
-			'blocks.registerBlockType',
-			'sensei-lms/email-blocks-test',
-			( settings ) => {
-				settingsOutput = settings;
-				return settings;
-			},
-			20
-		);
-
 		registerTestBlock( {
 			supports: {
 				align: undefined,
 			},
 		} );
 
-		expect( settingsOutput.supports.align ).toEqual( undefined );
+		const blockTypes = getBlockTypes();
+		const { supports } = blockTypes[ 0 ];
+
+		expect( supports.align ).toEqual( undefined );
 	} );
 } );

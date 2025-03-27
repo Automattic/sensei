@@ -6,6 +6,9 @@ import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 import { compose } from '@wordpress/compose';
 import { Icon } from '@wordpress/icons';
+/**
+ * Internal dependencies
+ */
 import AiIcon from '../../icons/ai-icon.svg';
 
 const withQuestionGeneratorUpsellButton = ( BlockEdit ) => ( props ) => {

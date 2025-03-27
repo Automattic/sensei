@@ -50,9 +50,8 @@ registerStructureStore( {
 			return;
 		}
 
-		const blocks = yield select( 'core/block-editor' ).getBlocks(
-			clientId
-		);
+		const blocks =
+			yield select( 'core/block-editor' ).getBlocks( clientId );
 		yield dispatch( 'core/block-editor' ).replaceInnerBlocks(
 			clientId,
 			syncStructureToBlocks( structure, blocks ),

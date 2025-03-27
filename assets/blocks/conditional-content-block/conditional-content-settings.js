@@ -23,9 +23,8 @@ import ToolbarDropdown from '../editor-components/toolbar-dropdown';
 const useIsConditionalBlockSelected = ( clientId ) => {
 	return useSelect(
 		( select ) => {
-			const selectedClientIds = select(
-				'core/block-editor'
-			).getSelectedBlockClientIds();
+			const selectedClientIds =
+				select( 'core/block-editor' ).getSelectedBlockClientIds();
 
 			return (
 				selectedClientIds.length === 1 &&
@@ -70,9 +69,8 @@ const ConditionalContentSettings = ( {
 	clientId,
 	hasInnerBlocks,
 } ) => {
-	const isConditionalBlockSelected = useIsConditionalBlockSelected(
-		clientId
-	);
+	const isConditionalBlockSelected =
+		useIsConditionalBlockSelected( clientId );
 	const onConditionRemoval = useOnConditionRemoval( clientId );
 
 	const toolbarOptions = Object.keys( Conditions ).map( ( optionKey ) => ( {

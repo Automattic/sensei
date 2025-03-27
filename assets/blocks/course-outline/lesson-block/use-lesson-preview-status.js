@@ -23,9 +23,8 @@ export const useLessonPreviewStatus = ( {
 	attributes: { isExample, title },
 	clientId,
 } ) => {
-	const { setLessonStatus, trackLesson, ignoreLesson } = useDispatch(
-		COURSE_STATUS_STORE
-	);
+	const { setLessonStatus, trackLesson, ignoreLesson } =
+		useDispatch( COURSE_STATUS_STORE );
 	// If the lesson has a title and it isn't an example, add it to the tracked lessons in the status store.
 	useEffect( () => {
 		if ( ! isExample ) {
