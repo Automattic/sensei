@@ -3,6 +3,7 @@
  */
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
+import { store as coreStore } from '@wordpress/core-data';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as editorStore } from '@wordpress/editor';
 import { applyFilters } from '@wordpress/hooks';
@@ -184,4 +185,27 @@ export const useHideEditorWizardUpsell = () => {
 		'senseiEditorWizardUpsellHide',
 		! senseiProExtension || senseiProExtension.is_activated === true
 	);
+};
+
+/**
+ * Hook to get the site slug.
+ *
+ * @return {string} Site slug.
+ */
+export const useSiteSlug = () => {
+	const { siteUrl } = useSelect( ( select ) => ( {
+		siteUrl: select( coreStore ).getSite()?.url,
+	} ) );
+
+	// Return the site slug without the protocol and trailing slash.
+	return siteUrl?.split( '/' ).pop();
+};
+
+/**
+ * Check if the current environment is WPCOM.
+ *
+ * @return {boolean} True if running on WPCOM.
+ */
+export const isWpcom = () => {
+	return !! window.wpcomActiveSubscriptions;
 };
