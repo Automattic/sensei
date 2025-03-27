@@ -33,7 +33,6 @@ class Sensei_Course_Theme_Editor {
 	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
-
 	}
 
 	/**
@@ -59,7 +58,6 @@ class Sensei_Course_Theme_Editor {
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_site_editor_assets' ] );
 
 		add_action( 'admin_menu', [ $this, 'add_admin_menu_site_editor_item' ], 20 );
-
 	}
 
 	/**
@@ -79,7 +77,6 @@ class Sensei_Course_Theme_Editor {
 			'edit_theme_options',
 			'site-editor.php?postType=wp_template'
 		);
-
 	}
 
 	/**
@@ -104,7 +101,6 @@ class Sensei_Course_Theme_Editor {
 				Sensei_Course_Theme::instance()->override_theme();
 			}
 		}
-
 	}
 
 	/**
@@ -210,7 +206,7 @@ class Sensei_Course_Theme_Editor {
 	 */
 	public function enqueue_site_editor_assets() {
 
-		if ( $this->lesson_has_learning_mode() || $this->is_site_editor() ) {
+		if ( $this->is_site_editor() ) {
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/index.js', [ 'sensei-shared-blocks' ] );
 			Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
 			Sensei()->assets->enqueue_style( 'sensei-learning-mode-editor' );
@@ -219,7 +215,6 @@ class Sensei_Course_Theme_Editor {
 			Sensei_Course_Theme::instance()->enqueue_fonts();
 
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'course-theme/course-theme.editor.js' );
-
 		}
 	}
 
@@ -266,5 +261,4 @@ class Sensei_Course_Theme_Editor {
 
 		return ! empty( $screen ) && in_array( $screen->id, [ 'widgets', 'site-editor', 'customize', 'appearance_page_gutenberg-edit-site' ], true );
 	}
-
 }
