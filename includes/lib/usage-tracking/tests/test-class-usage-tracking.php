@@ -39,6 +39,10 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * Ensure cron job action is set up.
 	 */
 	public function testCronJobActionAdded() {
+		/* Arrange */
+		do_action( 'init' );
+
+		/* Assert */
 		$this->assertTrue( ! ! has_action( $this->usage_tracking->get_prefix() . '_usage_tracking_send_usage_data', array( $this->usage_tracking, 'send_usage_data' ) ) );
 	}
 
@@ -56,11 +60,13 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 		// Should successfully schedule the task
 		$this->assertFalse( wp_get_schedule( $this->usage_tracking->get_prefix() . '_usage_tracking_send_usage_data' ), 'Not scheduled initial' );
 		$this->usage_tracking->schedule_tracking_task();
+		do_action( 'init' );
 		$this->assertNotFalse( wp_get_schedule( $this->usage_tracking->get_prefix() . '_usage_tracking_send_usage_data' ), 'Schedules a job' );
 		$this->assertEquals( 1, $this->event_counts['schedule_event'], 'Schedules only one job' );
 
 		// Should not duplicate when called again
 		$this->usage_tracking->schedule_tracking_task();
+		do_action( 'init' );
 		$this->assertEquals( 1, $this->event_counts['schedule_event'], 'Does not schedule an additional job' );
 	}
 
