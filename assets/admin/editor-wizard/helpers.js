@@ -207,11 +207,6 @@ export const useSiteSlug = () => {
  * @return {boolean} True if running on WPCOM.
  */
 export const isWpcom = () => {
-	// Check for WPCOM subscriptions
-	if ( window?.wpcomActiveSubscriptions ) {
-		return true;
-	}
-
 	// Check for Jetpack connection
 	if ( window?.JetpackScriptData?.connection?.connectionStatus?.isActive ) {
 		return true;
