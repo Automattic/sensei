@@ -119,7 +119,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
 
-		$this->assertStringContainsString( 'You require <strong>80</strong>% to pass this lesson\'s quiz. Your grade is <strong>0</strong>%.', $html, 'Should return quiz failed notice' );
+		$this->assertStringContainsString( 'You must score at least <strong>80</strong>% to pass this lesson\'s quiz. Your grade is <strong>0</strong>%.', $html, 'Should return quiz failed notice' );
 	}
 
 	/**
