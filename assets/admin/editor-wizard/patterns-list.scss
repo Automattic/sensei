@@ -19,6 +19,8 @@ $thumbnail-height: 235px;
 			border: 1px solid #f0f0f0;
 			height: $thumbnail-height;
 			overflow: hidden;
+			z-index: 1;
+			position: relative;
 
 			.block-editor-block-preview__container {
 				margin-top: -17px;
