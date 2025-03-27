@@ -1238,7 +1238,7 @@ class Sensei_Utils {
 
 			// Quiz grade.
 			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-			$quiz_grade = $submission ? $submission->get_final_grade() : 0;
+			$quiz_grade = ( $submission ? $submission->get_final_grade() : 0 ) ?? 0;
 
 			// Quiz passmark.
 			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
