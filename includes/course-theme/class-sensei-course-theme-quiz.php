@@ -137,7 +137,6 @@ class Sensei_Course_Theme_Quiz {
 				);
 			}
 
-
 			// Display Contact Teacher button.
 			if ( ! $reset_allowed ) {
 				$block     = new Sensei_Block_Contact_Teacher();
