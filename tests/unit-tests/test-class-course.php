@@ -54,7 +54,6 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->course ), 'Sensei Course class is not loaded' );
-
 	}
 
 	/**
@@ -80,7 +79,6 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			count( WooThemes_Sensei_Course::get_all_courses() ),
 			'The number of course returned is not equal to what is actually available'
 		);
-
 	}
 
 	/**
@@ -132,7 +130,6 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		// does it return all lessons
 		$this->assertEquals( count( $test_lessons ), count( Sensei()->course->get_completed_lesson_ids( $test_course_id, $test_user_id ) ), 'Course completed lesson count not accurate' );
-
 	}
 
 	/**
@@ -182,7 +179,6 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		}
 		// all lessons should no be completed
 		$this->assertEquals( 100, Sensei()->course->get_completion_percentage( $test_course_id, $test_user_id ), 'Course completed percentage is not accurate' );
-
 	}
 
 	/**
@@ -812,5 +808,130 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$notices->expects( self::never() )
 			->method( 'add_notice' );
 		Sensei_Course::self_enrollment_not_allowed_message();
+	}
+
+	/**
+	 * Test archive header is not output when not on course archive.
+	 *
+	 * @covers Sensei_Course::archive_header
+	 */
+	public function testArchiveHeader_WhenNotCourseArchive_DoesNotOutput() {
+		// Arrange.
+		$this->go_to( '/' ); // Go to home page.
+
+		// Act.
+		ob_start();
+		Sensei_Course::archive_header();
+		$output = ob_get_clean();
+
+		// Assert.
+		$this->assertEmpty( $output );
+	}
+
+	/**
+	 * Test archive header with default wrappers.
+	 *
+	 * @covers Sensei_Course::archive_header
+	 */
+	public function testArchiveHeader_OnCourseArchive_OutputsDefaultHeader() {
+		// Arrange.
+		$this->go_to( '/?post_type=course' );
+
+		// Mock is_post_type_archive to return true.
+		global $wp_query;
+		$wp_query->is_post_type_archive = true;
+
+		// Act.
+		ob_start();
+		Sensei_Course::archive_header();
+		$output = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( '<header class="archive-header"><h1>', $output );
+		$this->assertStringContainsString( '</h1></header>', $output );
+	}
+
+	/**
+	 * Test archive header with custom wrappers.
+	 *
+	 * @covers Sensei_Course::archive_header
+	 */
+	public function testArchiveHeader_WithCustomWrappers_OutputsCustomHeader() {
+		// Arrange.
+		$this->go_to( '/?post_type=course' );
+
+		// Mock is_post_type_archive to return true.
+		global $wp_query;
+		$wp_query->is_post_type_archive = true;
+
+		// Act.
+		ob_start();
+		Sensei_Course::archive_header( '', '<div class="custom">', '</div>' );
+		$output = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( '<div class="custom">', $output );
+		$this->assertStringContainsString( '</div>', $output );
+	}
+
+	/**
+	 * Test archive header for course category.
+	 *
+	 * @covers Sensei_Course::archive_header
+	 */
+	public function testArchiveHeader_OnCourseCategoryArchive_OutputsCategoryHeader() {
+		// Arrange.
+		// Register the taxonomy with proper labels.
+		register_taxonomy(
+			'course-category',
+			'course',
+			array(
+				'labels' => array(
+					'name' => 'Course Categories',
+				),
+			)
+		);
+
+		// Create a test category.
+		$term = wp_insert_term( 'Test Category', 'course-category' );
+		if ( is_wp_error( $term ) ) {
+			$this->fail( 'Failed to create test category: ' . $term->get_error_message() );
+		}
+
+		$term_obj = get_term( $term['term_id'], 'course-category' );
+
+		// Set up the WordPress query environment.
+		global $wp_query;
+		$wp_query                       = new WP_Query();
+		$wp_query->is_tax               = true;
+		$wp_query->is_archive           = true;
+		$wp_query->is_post_type_archive = true;
+		$wp_query->set( 'post_type', 'course' );
+		$wp_query->queried_object    = $term_obj;
+		$wp_query->queried_object_id = $term_obj->term_id;
+
+		// Mock is_tax() to return true for course-category.
+		add_filter(
+			'is_tax',
+			function ( $is_tax, $taxonomy = '' ) {
+				if ( 'course-category' === $taxonomy ) {
+					return true;
+				}
+				return $is_tax;
+			},
+			10,
+			2
+		);
+
+		// Act.
+		ob_start();
+		Sensei_Course::archive_header();
+		$output = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( 'Course Categories Archives: Test Category', $output );
+
+		// Cleanup.
+		remove_all_filters( 'is_tax' );
 	}
 }
