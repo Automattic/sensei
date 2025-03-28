@@ -202,17 +202,14 @@ export const useSiteSlug = () => {
 };
 
 /**
- * Check if the current environment is WPCOM.
+ * Determines if the current site is hosted on WordPress.com (WPCOM).
  *
- * @return {boolean} True if running on WPCOM.
+ * This function checks for the presence of `window.wpcomSiteUrl`, which is a
+ * reliable indicator set only in WordPress.com environments. This is more accurate
+ * than checking hostname patterns.
+ *
+ * @return {boolean} True if the site is hosted on WordPress.com, false otherwise.
  */
 export const isWpcom = () => {
-	// Check for Jetpack connection
-	if ( window?.JetpackScriptData?.connection?.connectionStatus?.isActive ) {
-		return true;
-	}
-
-	// Check the hostname
-	const hostname = window.location.hostname;
-	return hostname.endsWith( '.wordpress.com' );
+	return !! window?.wpcomSiteUrl;
 };
