@@ -123,8 +123,13 @@ class Sensei_Course_Theme_Lesson {
 		if ( 'ungraded' === $quiz_progress->get_status() ) {
 			$text = __( 'Awaiting grade', 'sensei-lms' );
 		} elseif ( 'failed' === $quiz_progress->get_status() ) {
-			// translators: Placeholders are the required grade and the actual grade, respectively.
-			$text = sprintf( __( 'You require %1$s%% to pass this lesson\'s quiz. Your grade is %2$s%%.', 'sensei-lms' ), '<strong>' . $passmark_rounded . '</strong>', '<strong>' . $grade_rounded . '</strong>' );
+			if ( sensei_has_translation_or_is_english( 'You must score at least %1$s%% to pass this lesson\'s quiz. Your grade is %2$s%%.' ) ) {
+				// translators: Placeholders are the required grade and the actual grade, respectively.
+				$text = sprintf( __( 'You must score at least %1$s%% to pass this lesson\'s quiz. Your grade is %2$s%%.', 'sensei-lms' ), '<strong>' . $passmark_rounded . '</strong>', '<strong>' . $grade_rounded . '</strong>' );
+			} else {
+				// translators: Placeholders are the required grade and the actual grade, respectively.
+				$text = sprintf( __( 'You require %1$s%% to pass this lesson\'s quiz. Your grade is %2$s%%.', 'sensei-lms' ), '<strong>' . $passmark_rounded . '</strong>', '<strong>' . $grade_rounded . '</strong>' );
+			}
 		} else {
 			// translators: Placeholder is the quiz grade.
 			$text = sprintf( __( 'Your Grade: %s%%', 'sensei-lms' ), '<strong class="sensei-course-theme-lesson-quiz-notice__grade">' . $grade_rounded . '</strong>' );
@@ -161,7 +166,7 @@ class Sensei_Course_Theme_Lesson {
 		$first_unanswered_question = null;
 		$filtered_user_answers     = array_filter(
 			$user_answers,
-			function( $answer ) use ( &$answers_index, &$first_unanswered_question ) {
+			function ( $answer ) use ( &$answers_index, &$first_unanswered_question ) {
 				if ( '' === $answer && null === $first_unanswered_question ) {
 					$first_unanswered_question = $answers_index;
 				}

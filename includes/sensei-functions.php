@@ -536,3 +536,15 @@ function sensei_log_jetpack_event( $event_name, $properties = [] ) {
 		$tracking->record_user_event( $event_name, $properties );
 	}
 }
+
+/**
+ * Check if the text has a translation or is in English.
+ *
+ * @since $$next-version$$
+ *
+ * @param string $text The text to check.
+ * @return bool True if the text has a translation or is in English, false otherwise.
+ */
+function sensei_has_translation_or_is_english( $text ) {
+	return get_locale() === 'en_US' || ( function_exists( 'has_translation' ) && has_translation( $text, 'sensei-lms' ) );
+}

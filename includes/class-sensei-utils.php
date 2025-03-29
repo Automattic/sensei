@@ -1175,8 +1175,14 @@ class Sensei_Utils {
 				} else {
 					$status    = 'failed';
 					$box_class = 'alert';
-					// translators: Placeholders are the required grade and the actual grade, respectively.
-					$message = sprintf( __( 'You require %1$d%% to pass this course. Your grade is %2$s%%.', 'sensei-lms' ), $passmark, $user_grade );
+
+					if ( sensei_has_translation_or_is_english( 'You must score at least %1$d%% to pass this course. Your grade is %2$s%%.' ) ) {
+						// translators: Placeholders are the required grade and the actual grade, respectively.
+						$message = sprintf( __( 'You must score at least %1$d%% to pass this course. Your grade is %2$s%%.', 'sensei-lms' ), $passmark, $user_grade );
+					} else {
+						// translators: Placeholders are the required grade and the actual grade, respectively.
+						$message = sprintf( __( 'You require %1$d%% to pass this course. Your grade is %2$s%%.', 'sensei-lms' ), $passmark, $user_grade );
+					}
 				}
 			}
 		}
@@ -1232,7 +1238,7 @@ class Sensei_Utils {
 
 			// Quiz grade.
 			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-			$quiz_grade = $submission ? $submission->get_final_grade() : 0;
+			$quiz_grade = ( $submission ? $submission->get_final_grade() : 0 ) ?? 0;
 
 			// Quiz passmark.
 			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
@@ -1327,9 +1333,14 @@ class Sensei_Utils {
 					if ( $is_lesson ) {
 						// translators: Placeholders are an opening and closing <a> tag linking to the quiz permalink.
 						$message = sprintf( __( 'You have completed this lesson\'s quiz and it will be graded soon. %1$sView the lesson quiz%2$s', 'sensei-lms' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( get_the_title( $quiz_id ) ) . '">', '</a>' );
-					} else {
-						// translators: Placeholder is the quiz passmark.
-						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$s%% to pass.', 'sensei-lms' ), self::round( $quiz_passmark, 2 ) );
+					} else { // phpcs:ignore Universal.ControlStructures.DisallowLonelyIf.Found -- Keep nested to be easier to remove later.
+						if ( sensei_has_translation_or_is_english( 'You have completed this quiz and it will be graded soon. You must score at least %1$s%% to pass.' ) ) {
+							// translators: Placeholder is the quiz passmark.
+							$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You must score at least %1$s%% to pass.', 'sensei-lms' ), self::round( $quiz_passmark, 2 ) );
+						} else {
+							// translators: Placeholder is the quiz passmark.
+							$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$s%% to pass.', 'sensei-lms' ), self::round( $quiz_passmark, 2 ) );
+						}
 					}
 
 					// Lesson status must be "failed".
@@ -1337,11 +1348,21 @@ class Sensei_Utils {
 					$status    = 'failed';
 					$box_class = 'alert';
 					if ( $is_lesson ) {
-						// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
-						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$s%%', 'sensei-lms' ), self::round( $quiz_passmark, 2 ), self::round( $quiz_grade, 2 ) );
-					} else {
-						// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
-						$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$s%%', 'sensei-lms' ), self::round( $quiz_passmark, 2 ), self::round( $quiz_grade, 2 ) );
+						if ( sensei_has_translation_or_is_english( 'You must score at least %1$d%% to pass this lesson\'s quiz. Your grade is %2$s%%' ) ) {
+							// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
+							$message = sprintf( __( 'You must score at least %1$d%% to pass this lesson\'s quiz. Your grade is %2$s%%', 'sensei-lms' ), self::round( $quiz_passmark, 2 ), self::round( $quiz_grade, 2 ) );
+						} else {
+							// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
+							$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$s%%', 'sensei-lms' ), self::round( $quiz_passmark, 2 ), self::round( $quiz_grade, 2 ) );
+						}
+					} else { // phpcs:ignore Universal.ControlStructures.DisallowLonelyIf.Found -- Keep nested to be easier to remove later.
+						if ( sensei_has_translation_or_is_english( 'You must score at least %1$d%% to pass this quiz. Your grade is %2$s%%' ) ) {
+							// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
+							$message = sprintf( __( 'You must score at least %1$d%% to pass this quiz. Your grade is %2$s%%', 'sensei-lms' ), self::round( $quiz_passmark, 2 ), self::round( $quiz_grade, 2 ) );
+						} else {
+							// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
+							$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$s%%', 'sensei-lms' ), self::round( $quiz_passmark, 2 ), self::round( $quiz_grade, 2 ) );
+						}
 					}
 
 					// Lesson/Quiz requires a pass.
@@ -1352,11 +1373,21 @@ class Sensei_Utils {
 					if ( ! Sensei_Lesson::is_prerequisite_complete( $lesson_id, get_current_user_id() ) ) {
 						$message = '';
 					} elseif ( $is_lesson ) {
-						// translators: Placeholder is the quiz passmark.
-						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'sensei-lms' ), self::round( $quiz_passmark, 2 ) );
-					} else {
-						// translators: Placeholder is the quiz passmark.
-						$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'sensei-lms' ), self::round( $quiz_passmark, 2 ) );
+						if ( sensei_has_translation_or_is_english( 'You must score at least %1$d%% to pass this lesson\'s quiz.' ) ) {
+							// translators: Placeholder is the quiz passmark.
+							$message = sprintf( __( 'You must score at least %1$d%% to pass this lesson\'s quiz.', 'sensei-lms' ), self::round( $quiz_passmark, 2 ) );
+						} else {
+							// translators: Placeholder is the quiz passmark.
+							$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'sensei-lms' ), self::round( $quiz_passmark, 2 ) );
+						}
+					} else { // phpcs:ignore Universal.ControlStructures.DisallowLonelyIf.Found -- Keep nested to be easier to remove later.
+						if ( sensei_has_translation_or_is_english( 'You must score at least %1$d%% to pass this quiz.' ) ) {
+							// translators: Placeholder is the quiz passmark.
+							$message = sprintf( __( 'You must score at least %1$d%% to pass this quiz.', 'sensei-lms' ), self::round( $quiz_passmark, 2 ) );
+						} else {
+							// translators: Placeholder is the quiz passmark.
+							$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'sensei-lms' ), self::round( $quiz_passmark, 2 ) );
+						}
 					}
 				}
 			}
