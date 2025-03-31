@@ -1223,6 +1223,7 @@ class Sensei_Admin {
 					'menu_order' => $i,
 				);
 
+				// If you face performance issues on Simple Sites, see https://github.com/Automattic/sensei/pull/7799.
 				wp_update_post( $update_args );
 
 				++$i;
