@@ -265,9 +265,18 @@ class Sensei_Course {
 						<span class="sensei-showcase-upsell__price-period"><?php esc_html_e( 'per year, 1 site', 'sensei-lms' ); ?></span>
 					</div>
 
+					<?php
+					$upsell_args = array_merge(
+						Sensei_Pro_Upsell::get_default_utm_params(),
+						[ 'utm_campaign' => 'showcase' ]
+					);
+
+					$primary_url = add_query_arg( $upsell_args, Sensei_Pro_Upsell::get_base_url() );
+					$learn_more_url = add_query_arg( $upsell_args, 'https://senseilms.com/documentation/showcase/' );
+					?>
 					<ul class="sensei-showcase-upsell__buttons">
-						<li><a href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=showcase" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--primary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Get Sensei Pro', 'sensei-lms' ); ?></a></li>
-						<li><a href="https://senseilms.com/documentation/showcase/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=showcase" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--secondary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a></li>
+						<li><a href="<?php echo esc_url( $primary_url ); ?>" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--primary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Get Sensei Pro', 'sensei-lms' ); ?></a></li>
+						<li><a href="<?php echo esc_url( $learn_more_url ); ?>" class="sensei-showcase-upsell__button sensei-showcase-upsell__button--secondary" target="_blank" rel="noreferrer"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a></li>
 					</ul>
 				</div>
 

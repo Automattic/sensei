@@ -8,6 +8,8 @@
 namespace Sensei\Internal\Emails;
 
 use Sensei_List_Table;
+use Sensei_Pro_Upsell;
+use function add_query_arg;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -237,7 +239,12 @@ class Email_List_Table extends Sensei_List_Table {
 			$actions = [
 				'upgrade-to-pro' => sprintf(
 					'<a href="%1$s" aria-label="%2$s">%2$s</a>',
-					esc_url( 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=email_customization_pro' ),
+					esc_url(
+						add_query_arg(
+							Sensei_Pro_Upsell::get_default_utm_params( 'email_customization_pro' ),
+							Sensei_Pro_Upsell::get_base_url()
+						)
+					),
 					__( 'Upgrade to Sensei Pro', 'sensei-lms' )
 				),
 			];

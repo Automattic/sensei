@@ -73,7 +73,10 @@ class Sensei_Course_Theme_Template_Selection {
 		$upsell    = [
 			'title' => __( 'Upgrade to Pro', 'sensei-lms' ),
 			'tag'   => __( 'Premium', 'sensei-lms' ),
-			'url'   => 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=learning-mode-themes',
+			'url'   => add_query_arg(
+				Sensei_Pro_Upsell::get_default_utm_params( 'learning-mode-themes' ),
+				Sensei_Pro_Upsell::get_base_url()
+			),
 		];
 
 		$templates = [
