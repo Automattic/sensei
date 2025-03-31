@@ -90,7 +90,6 @@ class Sensei_Block_Patterns {
 			];
 		} elseif ( 'lesson' === $post_type ) {
 			$block_patterns = [
-				'default',
 				'video-lesson',
 				'default-with-quiz',
 				'zoom-meeting',
