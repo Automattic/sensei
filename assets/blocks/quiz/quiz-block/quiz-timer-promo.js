@@ -5,6 +5,11 @@ import { ToggleControl, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
+ * Internal dependencies
+ */
+import { getSenseiProUpsellUrl } from '../../../admin/helpers';
+
+/**
  * Quiz block inserter for adding new or existing questions.
  */
 const QuizTimerPromo = () => {
@@ -20,7 +25,7 @@ const QuizTimerPromo = () => {
 			/>
 
 			<p>
-				<ExternalLink href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=quiz_timer">
+				<ExternalLink href={ getSenseiProUpsellUrl( 'quiz_timer' ) }>
 					{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
 				</ExternalLink>
 			</p>

@@ -6,10 +6,12 @@ import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 import { compose } from '@wordpress/compose';
 import { Icon } from '@wordpress/icons';
+
 /**
  * Internal dependencies
  */
 import AiIcon from '../../icons/ai-icon.svg';
+import { getSenseiProUpsellUrl } from '../../admin/helpers';
 
 const withQuestionGeneratorUpsellButton = ( BlockEdit ) => ( props ) => {
 	return (
@@ -20,7 +22,7 @@ const withQuestionGeneratorUpsellButton = ( BlockEdit ) => ( props ) => {
 					className="sensei-pro-ai-generate-questions-button upsell"
 					onClick={ () => {
 						window.open(
-							'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=quesion-ai',
+							getSenseiProUpsellUrl( 'question-ai' ),
 							'_blank'
 						);
 					} }

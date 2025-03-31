@@ -9,6 +9,7 @@ import { Fragment } from '@wordpress/element';
  */
 import PatternsStep from './patterns-step';
 import LogoTreeIcon from '../../../icons/logo-tree.svg';
+import { getSenseiProUpsellUrl } from '../../helpers';
 import { useHideEditorWizardUpsell } from '../helpers';
 
 /**
@@ -63,7 +64,9 @@ const UpsellBlock = () => (
 			) }{ ' ' }
 			<a
 				className="sensei-editor-wizard-patterns-upsell__link"
-				href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=lesson_patterns_editor_wizard"
+				href={ getSenseiProUpsellUrl(
+					'lesson_patterns_editor_wizard'
+				) }
 				rel="noreferrer external"
 				target="blank"
 			>

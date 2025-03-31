@@ -7,9 +7,13 @@ import { escapeHTML } from '@wordpress/escape-html';
 import { Button, ExternalLink, PanelBody } from '@wordpress/components';
 
 /**
+ * Internal dependencies
+ */
+import { getSenseiProUpsellUrl } from '../../admin/helpers';
+
+/**
  * Course Pricing Promo Sidebar component.
  */
-
 const CoursePricingPromoSidebar = () => {
 	/**
 	 * Filters to get description for pricing component.
@@ -32,9 +36,7 @@ const CoursePricingPromoSidebar = () => {
 			<p> { escapeHTML( description ) } </p>
 			<p>
 				<ExternalLink
-					href={
-						'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_pricing'
-					}
+					href={ getSenseiProUpsellUrl( 'course_pricing' ) }
 				>
 					{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
 				</ExternalLink>

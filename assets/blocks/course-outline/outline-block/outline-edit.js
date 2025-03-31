@@ -27,8 +27,7 @@ import ExistingLessonsModal from './existing-lessons-modal';
 import OutlinePlaceholder from './outline-placeholder';
 import useSenseiProSettings from './use-sensei-pro-settings';
 import { applyFilters } from '@wordpress/hooks';
-
-const SENSEI_PRO_LINK = 'https://senseilms.com/sensei-pro/';
+import { getSenseiProUpsellUrl } from '../../../admin/helpers';
 
 const ALLOWED_BLOCKS = [
 	'sensei-lms/course-outline-module',
@@ -106,7 +105,7 @@ const OutlineEdit = ( props ) => {
 		if ( removeCourseOutlineGeneratorUpsell ) {
 			window.location.hash = 'generate-course-outline-using-ai';
 		} else {
-			window.location.href = SENSEI_PRO_LINK;
+			window.location.href = getSenseiProUpsellUrl( 'outline_edit' );
 		}
 	}, [ removeCourseOutlineGeneratorUpsell ] );
 

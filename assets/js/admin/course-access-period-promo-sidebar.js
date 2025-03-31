@@ -5,6 +5,11 @@ import { ExternalLink, SelectControl, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
+ * Internal dependencies
+ */
+import { getSenseiProUpsellUrl } from '../../admin/helpers';
+
+/**
  * Course access period promo sidebar component.
  */
 const CourseAccessPeriodPromoSidebar = () => {
@@ -15,7 +20,9 @@ const CourseAccessPeriodPromoSidebar = () => {
 		>
 			<div className="sensei-course-access-period-promo">
 				<p>
-					<ExternalLink href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_access_period">
+					<ExternalLink
+						href={ getSenseiProUpsellUrl( 'course_access_period' ) }
+					>
 						{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
 					</ExternalLink>
 				</p>
