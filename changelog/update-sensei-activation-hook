@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Updated the activation logic to always enable the setup wizard on first installation
