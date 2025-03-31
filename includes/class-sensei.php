@@ -1167,7 +1167,7 @@ class Sensei_Main {
 	 */
 	public function activate_sensei() {
 		if ( false === get_option( 'sensei_installed', false ) ) {
-			// Enable the wizard on first installation
+			// Enable the wizard on first installation.
 			update_option( 'sensei_activation_redirect', 1 );
 			update_option( Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 		}
