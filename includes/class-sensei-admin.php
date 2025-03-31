@@ -444,11 +444,30 @@ class Sensei_Admin {
 		// Event logging.
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
 
+		// Add global admin data.
+		$this->localize_admin_data();
+
 		if ( $this->has_custom_navigation( $screen ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
 
 		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
+	}
+
+	/**
+	 * Localize admin data that should be available on all admin pages.
+	 *
+	 * This method adds global data to the admin scripts, such as the upsell URL.
+	 *
+	 * @since 4.24.0
+	 * @access private
+	 */
+	private function localize_admin_data() {
+		$data = [
+			'upsellUrl' => Sensei_Pro_Upsell::get_base_url(),
+		];
+
+		wp_localize_script( 'sensei-event-logging', 'sensei_admin', $data );
 	}
 
 	/**
