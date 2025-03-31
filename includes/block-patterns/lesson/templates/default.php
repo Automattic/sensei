@@ -10,32 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<!-- wp:heading {"className":"sensei-content-title"} -->
-<h2 class="sensei-content-title"><?php esc_html_e( 'Lesson Title', 'sensei-lms' ); ?></h2>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph {"className":"sensei-content-description"} -->
-<p class="sensei-content-description"><?php esc_html_e( 'Add a brief description of your lesson here. This will help students understand what they will learn.', 'sensei-lms' ); ?></p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading {"level":3} -->
-<h3><?php esc_html_e( 'Learning Objectives', 'sensei-lms' ); ?></h3>
-<!-- /wp:heading -->
-
-<!-- wp:list -->
-<ul>
-<li><?php esc_html_e( 'First learning objective', 'sensei-lms' ); ?></li>
-<li><?php esc_html_e( 'Second learning objective', 'sensei-lms' ); ?></li>
-<li><?php esc_html_e( 'Third learning objective', 'sensei-lms' ); ?></li>
-</ul>
-<!-- /wp:list -->
-
-<!-- wp:heading {"level":3} -->
-<h3><?php esc_html_e( 'Lesson Content', 'sensei-lms' ); ?></h3>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p><?php esc_html_e( 'Start writing your lesson content here. You can add text, images, videos, and other media to create an engaging learning experience.', 'sensei-lms' ); ?></p>
+<!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'Write lesson content...', 'sensei-lms' ); ?>","className":"sensei-content-description"} -->
+<p class="sensei-content-description"></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:sensei-lms/lesson-actions -->
