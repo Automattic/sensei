@@ -120,12 +120,22 @@ class Sensei_Course_Theme_Quiz {
 		} elseif ( 'failed' === $quiz_progress->get_status() ) {
 			$passmark         = get_post_meta( $quiz_id, '_quiz_passmark', true );
 			$passmark_rounded = Sensei_Utils::round( $passmark, 2 );
-			$text             = sprintf(
-				// translators: The first placeholder is the minimum grade required, and the second placeholder is the actual grade.
-				__( 'You require %1$s%% to pass this quiz. Your grade is %2$s%%.', 'sensei-lms' ),
-				$passmark_rounded,
-				$grade_rounded
-			);
+
+			if ( sensei_has_translation_or_is_english( 'You must score at least %1$s%% to pass this quiz. Your grade is %2$s%%.' ) ) {
+				$text = sprintf(
+					// translators: The first placeholder is the minimum grade required, and the second placeholder is the actual grade.
+					__( 'You must score at least %1$s%% to pass this quiz. Your grade is %2$s%%.', 'sensei-lms' ),
+					$passmark_rounded,
+					$grade_rounded
+				);
+			} else {
+				$text = sprintf(
+					// translators: The first placeholder is the minimum grade required, and the second placeholder is the actual grade.
+					__( 'You require %1$s%% to pass this quiz. Your grade is %2$s%%.', 'sensei-lms' ),
+					$passmark_rounded,
+					$grade_rounded
+				);
+			}
 
 			// Display Contact Teacher button.
 			if ( ! $reset_allowed ) {

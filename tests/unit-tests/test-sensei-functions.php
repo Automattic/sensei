@@ -147,6 +147,72 @@ class Sensei_Functions_Test extends WP_UnitTestCase {
 		$this->assertTrue( $has_checks );
 	}
 
+	public function testHasTranslationOrIsEnglish_WhenEnglishLocale_ReturnsTrue() {
+		/* Arrange. */
+		add_filter(
+			'locale',
+			function () {
+				return 'en_US';
+			}
+		);
+
+		/* Act. */
+		$result = sensei_has_translation_or_is_english( 'Some text' );
+
+		/* Assert. */
+		$this->assertTrue( $result, 'Should return true when locale is en_US' );
+	}
+
+	/**
+	 * Test that translated text in non-English locale returns true.
+	 */
+	public function testHasTranslationOrIsEnglish_WhenHasTranslation_ReturnsTrue() {
+		// Skip if has_translation doesn't exist.
+		if ( ! function_exists( 'has_translation' ) ) {
+			$this->markTestSkipped( 'has_translation function not available' );
+		}
+
+		/* Arrange. */
+		add_filter(
+			'locale',
+			function () {
+				return 'pt_BR';
+			}
+		);
+		// Load the translation file from core tests.
+		load_textdomain( 'sensei-lms', DIR_TESTDATA . '/pomo/simple.mo' );
+
+		/* Act. */
+		$result = sensei_has_translation_or_is_english( 'baba' );
+
+		/* Assert. */
+		$this->assertTrue( $result, 'Should return true when text has translation' );
+	}
+
+	/**
+	 * Test that untranslated text in non-English locale returns false.
+	 */
+	public function testHasTranslationOrIsEnglish_WhenUntranslatedTextInNonEnglishLocale_ReturnsFalse() {
+		// Skip if has_translation doesn't exist.
+		if ( ! function_exists( 'has_translation' ) ) {
+			$this->markTestSkipped( 'has_translation function not available' );
+		}
+
+		/* Arrange. */
+		add_filter(
+			'locale',
+			function () {
+				return 'pt_BR';
+			}
+		);
+
+		/* Act. */
+		$result = sensei_has_translation_or_is_english( 'Test untranslated text' );
+
+		/* Assert. */
+		$this->assertFalse( $result, 'Should return false when text has no translation' );
+	}
+
 	/**
 	 * Filter for setting theme to Twenty Sixteen.
 	 *
