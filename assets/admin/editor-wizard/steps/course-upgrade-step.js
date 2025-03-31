@@ -8,10 +8,10 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { isWpcom, useSiteSlug } from '../helpers';
 import { EXTENSIONS_STORE } from '../../../extensions/store';
 import senseiProUpsellImage from '../../../images/sensei-pro-upsell.png';
 import CheckIcon from '../../../icons/checked.svg';
+import { getSenseiProUpsellUrl } from '../../helpers';
 
 /**
  * Upgrade step during course creation wizard.
@@ -98,39 +98,16 @@ const FeatureItem = ( { children } ) => (
 	</li>
 );
 
-/**
- * Get the upgrade URL based on the environment.
- *
- * @param {string}  siteSlug       The site slug.
- * @param {boolean} isWpcomHosting Whether the site is on WPCOM.
- *
- * @return {string} The upgrade URL.
- */
-const getUpgradeUrl = ( siteSlug, isWpcomHosting ) => {
-	const sensieParams = new URLSearchParams( {
-		utm_source: 'plugin_sensei',
-		utm_medium: 'upsell',
-		utm_campaign: 'course_editor_wizard',
-	} );
-
-	return isWpcomHosting
-		? `https://wordpress.com/plugins/sensei-pro/${ siteSlug }`
-		: `https://senseilms.com/sensei-pro/?${ sensieParams.toString() }`;
-};
-
 CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
-	// eslint-disable-next-line react-hooks/rules-of-hooks
-	const siteSlug = useSiteSlug();
-	const isWpcomHosting = isWpcom();
-
 	const upgrade = () => {
 		window.open(
-			getUpgradeUrl( siteSlug, isWpcomHosting ),
+			getSenseiProUpsellUrl( 'course_editor_wizard' ),
 			'sensei-pricing',
 			'noreferrer'
 		);
 		goToNextStep();
 	};
+
 	return (
 		<>
 			<Button

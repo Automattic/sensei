@@ -3,7 +3,6 @@
  */
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
-import { store as coreStore } from '@wordpress/core-data';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as editorStore } from '@wordpress/editor';
 import { applyFilters } from '@wordpress/hooks';
@@ -185,31 +184,4 @@ export const useHideEditorWizardUpsell = () => {
 		'senseiEditorWizardUpsellHide',
 		! senseiProExtension || senseiProExtension.is_activated === true
 	);
-};
-
-/**
- * Hook to get the site slug.
- *
- * @return {string} Site slug.
- */
-export const useSiteSlug = () => {
-	const { siteUrl } = useSelect( ( select ) => ( {
-		siteUrl: select( coreStore ).getSite()?.url,
-	} ) );
-
-	// Return the site slug without the protocol and trailing slash.
-	return siteUrl?.split( '/' ).pop();
-};
-
-/**
- * Determines if the current site is hosted on WordPress.com (WPCOM).
- *
- * This function checks for the presence of `window.wpcomSiteUrl`, which is a
- * reliable indicator set only in WordPress.com environments. This is more accurate
- * than checking hostname patterns.
- *
- * @return {boolean} True if the site is hosted on WordPress.com, false otherwise.
- */
-export const isWpcom = () => {
-	return !! window?.wpcomSiteUrl;
 };
