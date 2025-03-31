@@ -237,7 +237,7 @@ class Sensei_Settings_API {
 		$image_path_mobile  = Sensei()->assets->get_image( 'purchase-sensei-pro-mobile.png' );
 		$header             = __( 'Get Sensei Pro', 'sensei-lms' );
 		$text               = __( 'Sell your courses using the most popular eCommerce platform on the web, WooCommerce.', 'sensei-lms' );
-		$url = add_query_arg(
+		$url                = add_query_arg(
 			Sensei_Pro_Upsell::get_default_utm_params( 'settings_woocommerce' ),
 			Sensei_Pro_Upsell::get_base_url()
 		);

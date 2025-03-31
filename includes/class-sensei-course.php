@@ -271,7 +271,7 @@ class Sensei_Course {
 						[ 'utm_campaign' => 'showcase' ]
 					);
 
-					$primary_url = add_query_arg( $upsell_args, Sensei_Pro_Upsell::get_base_url() );
+					$primary_url    = add_query_arg( $upsell_args, Sensei_Pro_Upsell::get_base_url() );
 					$learn_more_url = add_query_arg( $upsell_args, 'https://senseilms.com/documentation/showcase/' );
 					?>
 					<ul class="sensei-showcase-upsell__buttons">
