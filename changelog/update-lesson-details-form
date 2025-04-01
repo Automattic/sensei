@@ -1,0 +1,4 @@
+Significance: patch
+Type: added
+
+Autofocus the title input on the form render

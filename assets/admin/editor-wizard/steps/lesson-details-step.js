@@ -58,6 +58,7 @@ const LessonDetailsStep = ( { wizardData, setWizardData } ) => {
 						value={ lessonTitle }
 						onChange={ updateLessonTitle }
 						maxLength={ 40 }
+						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					/>
 				</div>
 			</div>
