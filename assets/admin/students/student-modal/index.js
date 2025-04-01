@@ -172,7 +172,6 @@ export const StudentModal = ( {
 			);
 			onClose( true );
 		} catch ( e ) {
-			console.log( 'error!!!!!!!!!!!!!!!!!', e );
 			if ( ! getSignal().aborted ) {
 				setError( true );
 				setIsSending( false );
