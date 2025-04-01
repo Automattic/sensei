@@ -215,9 +215,17 @@ describe( '<StudentModal />', () => {
 
 			fireEvent.click( await buttonByLabel( 'Remove from Course' ) );
 
-			await waitFor( () => {
-				expect( mockRequest.isDone() ).toBe( true );
-			} );
+			await waitFor(
+				() => {
+					expect(
+						screen.queryByText(
+							'Unable to remove students. Please try again.'
+						)
+					).not.toBeInTheDocument();
+					expect( mockRequest.isDone() ).toBe( true );
+				},
+				{ timeout: 500 } // Give it more time to complete to avoid flakiness.
+			);
 
 			await waitFor( () => {
 				expect( onClose ).toHaveBeenCalledWith( true );
