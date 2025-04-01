@@ -165,7 +165,7 @@ export const StudentModal = ( {
 		setIsSending( true );
 
 		try {
-			await sendAction(
+			await xsendAction(
 				students,
 				selectedCourses.map( ( course ) => course.id ),
 				{ signal: getSignal() }
