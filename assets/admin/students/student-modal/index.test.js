@@ -199,7 +199,7 @@ describe( '<StudentModal />', () => {
 		} );
 
 		it( 'Should remove the selected students from the selected course', async () => {
-			nock( NOCK_HOST_URL + '/' )
+			const mockRequest = nock( NOCK_HOST_URL + '/' )
 				.post( '/sensei-internal/v1/course-students/batch', {
 					student_ids: students,
 					course_ids: [ courses.at( 0 ).id ],
@@ -214,6 +214,10 @@ describe( '<StudentModal />', () => {
 			fireEvent.click( await courseOptionAt( 0 ) );
 
 			fireEvent.click( await buttonByLabel( 'Remove from Course' ) );
+
+			await waitFor( () => {
+				expect( mockRequest.isDone() ).toBe( true );
+			} );
 
 			await waitFor( () => {
 				expect( onClose ).toHaveBeenCalledWith( true );
