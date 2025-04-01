@@ -55,6 +55,16 @@ const SignupForm = ( { onSubmit } ) => {
 		const script = document.createElement( 'script' );
 		script.src = `${ url }&c=${ SIGNUP_CALLBACK }`;
 
+		script.onerror = () => {
+			setIsSubmitting( false );
+			setError(
+				__(
+					'Failed to connect to the server. Please try again later.',
+					'sensei-lms'
+				)
+			);
+		};
+
 		setIsSubmitting( true );
 		setError( false );
 		document.body.append( script );
