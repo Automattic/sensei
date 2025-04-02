@@ -17,8 +17,8 @@
     "url": "https://github.com/Automattic/sensei/issues"
   },
   "engines": {
-    "npm": "^9.3.1 || ^10",
-    "node": "^18.14.0"
+    "npm": ">=10.2.3",
+    "node": ">=20.10.0"
   },
   "dependencies": {
     "@automattic/calypso-color-schemes": "3.1.1",
@@ -62,7 +62,7 @@
     "whatwg-fetch": "3.6.2"
   },
   "devDependencies": {
-    "@es-joy/jsdoccomment": "0.36.1",
+    "@es-joy/jsdoccomment": "0.50.0",
     "@faker-js/faker": "8.0.2",
     "@lifeomic/attempt": "3.0.3",
     "@playwright/test": "1.49.1",
@@ -101,7 +101,11 @@
     "wp-hookdoc": "0.2.0"
   },
   "overrides": {
-    "prettier": "npm:wp-prettier@3.0.3"
+    "prettier": "npm:wp-prettier@3.0.3",
+    "react-autosize-textarea": {
+      "react": "18.3.1",
+      "react-dom": "18.3.1"
+    }
   },
   "scripts": {
     "archive": "composer archive --file=$npm_package_name --format=zip",
