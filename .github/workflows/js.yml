@@ -11,7 +11,7 @@ jobs:
         steps:
             - uses: actions/setup-node@v4
               with:
-                  node-version: ">=20.10.0"
+                  node-version-file: '.nvmrc'
             - uses: actions/checkout@v4
             - uses: actions/cache@v4
               with:
@@ -34,7 +34,7 @@ jobs:
         steps:
             - uses: actions/setup-node@v4
               with:
-                  node-version: ">=20.10.0"
+                  node-version-file: '.nvmrc'
             - uses: actions/checkout@v4
             - uses: actions/cache@v4
               with:
@@ -55,7 +55,7 @@ jobs:
         steps:
             - uses: actions/setup-node@v4
               with:
-                  node-version: ">=20.10.0"
+                  node-version-file: '.nvmrc'
             # clone the repository
             - uses: actions/checkout@v4
             - uses: actions/cache@v4
