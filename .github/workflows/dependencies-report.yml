@@ -8,12 +8,12 @@ jobs:
         runs-on: ubuntu-latest
         name: Build trunk for Dependencies Report
         steps:
-            -   uses: actions/setup-node@v4
-                with:
-                    node-version-file: '.nvmrc'
             -   uses: actions/checkout@v4
                 with:
                     ref: trunk
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version-file: '.nvmrc'
             -   shell: bash
                 name: Get trunk latest commit
                 id: trunk-commit
