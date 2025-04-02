@@ -47,7 +47,7 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
-                  node-version-file: '.nvmrc'
+                node-version-file: '.nvmrc'
             - name: Create comment with Playground preview
               uses: peter-evans/create-or-update-comment@v4
               with:
