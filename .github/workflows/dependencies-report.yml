@@ -9,8 +9,6 @@ jobs:
         name: Build trunk for Dependencies Report
         steps:
             -   uses: actions/checkout@v4
-                with:
-                    ref: trunk
             -   uses: actions/setup-node@v4
                 with:
                     node-version-file: '.nvmrc'
