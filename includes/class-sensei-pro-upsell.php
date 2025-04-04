@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Handles the generation of Pro upsell URLs.
  *
- * @since 4.23.0
+ * @since 4.24.6
  */
 class Sensei_Pro_Upsell {
 	/**
