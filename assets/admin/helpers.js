@@ -8,11 +8,11 @@
 export const getSenseiProUpsellUrl = ( campaign = '' ) => {
 	const { upsellUrl } = window.sensei_admin;
 
-	const sensieParams = new URLSearchParams( {
+	const senseiParams = new URLSearchParams( {
 		utm_source: 'plugin_sensei',
 		utm_medium: 'upsell',
 		utm_campaign: campaign,
 	} );
 
-	return `${ upsellUrl }?${ sensieParams.toString() }`;
+	return `${ upsellUrl }?${ senseiParams.toString() }`;
 };
