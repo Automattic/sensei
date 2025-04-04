@@ -239,12 +239,7 @@ class Email_List_Table extends Sensei_List_Table {
 			$actions = [
 				'upgrade-to-pro' => sprintf(
 					'<a href="%1$s" aria-label="%2$s">%2$s</a>',
-					esc_url(
-						add_query_arg(
-							Sensei_Pro_Upsell::get_default_utm_params( 'email_customization_pro' ),
-							Sensei_Pro_Upsell::get_base_url()
-						)
-					),
+					esc_url( Sensei_Pro_Upsell::get_sensei_pro_upsell_url( 'email_customization_pro' ) ),
 					__( 'Upgrade to Sensei Pro', 'sensei-lms' )
 				),
 			];

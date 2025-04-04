@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles the generation of Pro upsell URLs.
  *
  * @since 4.24.6
+ * @package sensei
  */
 class Sensei_Pro_Upsell {
 	/**
@@ -44,5 +45,19 @@ class Sensei_Pro_Upsell {
 			'utm_medium'   => 'upsell',
 			'utm_campaign' => $campaign,
 		];
+	}
+
+	/**
+	 * Get the Sensei Pro upsell URL.
+	 *
+	 * @param string $campaign The campaign name.
+	 * @return string The Sensei Pro upsell URL.
+	 */
+	public static function get_sensei_pro_upsell_url( string $campaign = 'default' ): string {
+		$base_url   = self::get_base_url();
+		$utm_params = self::get_default_utm_params( $campaign );
+
+		// Using WordPress core function to build URL with query parameters.
+		return add_query_arg( $utm_params, $base_url );
 	}
 }
