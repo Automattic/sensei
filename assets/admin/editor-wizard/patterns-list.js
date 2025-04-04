@@ -10,6 +10,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { ENTER, SPACE } from '@wordpress/keycodes';
 import { getBlockType, getBlockFromExample } from '@wordpress/blocks';
+import { useCallback } from '@wordpress/element';
 
 /**
  * It returns events to fire the click event on click, pressing enter, and pressing space.
@@ -86,10 +87,11 @@ const NoPatternsWarning = () => {
 /**
  * Patterns list component.
  *
- * @param {Object}   props          Component props.
- * @param {Function} props.onChoose Callback on choosing a pattern.
+ * @param {Object}   props                   Component props.
+ * @param {Array}    props.patternsToExclude Array of patterns to exclude.
+ * @param {Function} props.onChoose          Callback on choosing a pattern.
  */
-const PatternsList = ( { onChoose } ) => {
+const PatternsList = ( { patternsToExclude = [], onChoose } ) => {
 	const { patterns } = useSelect( ( select ) => ( {
 		patterns:
 			select( blockEditorStore )?.getPatternsByBlockTypes(
@@ -99,6 +101,17 @@ const PatternsList = ( { onChoose } ) => {
 				'sensei-lms/post-content'
 			),
 	} ) );
+
+	const patternFilter = useCallback(
+		( { name, categories } ) => {
+			return (
+				! patternsToExclude.includes( name ) &&
+				categories &&
+				categories.includes( 'sensei-lms' )
+			);
+		},
+		[ patternsToExclude ]
+	);
 
 	if ( ! patterns || patterns.length === 0 ) {
 		return <NoPatternsWarning />;
@@ -111,10 +124,7 @@ const PatternsList = ( { onChoose } ) => {
 			aria-label={ __( 'Sensei block patterns', 'sensei-lms' ) }
 		>
 			{ patterns
-				.filter(
-					( { categories } ) =>
-						categories && categories.includes( 'sensei-lms' )
-				)
+				.filter( patternFilter )
 				.map(
 					( {
 						name,

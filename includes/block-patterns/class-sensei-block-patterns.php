@@ -83,7 +83,6 @@ class Sensei_Block_Patterns {
 
 		if ( 'course' === $post_type ) {
 			$block_patterns = [
-				'default',
 				'course-default',
 				'video-hero',
 				'long-sales-page',
@@ -91,6 +90,7 @@ class Sensei_Block_Patterns {
 			];
 		} elseif ( 'lesson' === $post_type ) {
 			$block_patterns = [
+				'default',
 				'video-lesson',
 				'default-with-quiz',
 				'zoom-meeting',

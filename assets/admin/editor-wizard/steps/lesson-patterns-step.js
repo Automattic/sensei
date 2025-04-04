@@ -19,6 +19,7 @@ import { useHideEditorWizardUpsell } from '../helpers';
  */
 const LessonPatternsStep = ( { wizardData, ...props } ) => {
 	const replaces = {};
+	const excludeLessonPatterns = [ 'sensei-lms/default' ];
 
 	if ( wizardData.title ) {
 		replaces[ 'sensei-content-title' ] = wizardData.title;
@@ -35,6 +36,7 @@ const LessonPatternsStep = ( { wizardData, ...props } ) => {
 			<PatternsStep
 				title={ __( 'Lesson Layout', 'sensei-lms' ) }
 				replaces={ replaces }
+				patternsToExclude={ excludeLessonPatterns }
 				{ ...props }
 			/>
 			<PatternsStep.UpsellFill>
