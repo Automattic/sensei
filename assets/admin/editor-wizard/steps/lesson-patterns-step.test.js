@@ -48,6 +48,7 @@ describe( '<LessonPatternsStep />', () => {
 				'sensei-content-description': lessonContent,
 			},
 			title: 'Lesson Layout',
+			patternsToExclude: [ 'sensei-lms/default' ],
 		};
 
 		render(

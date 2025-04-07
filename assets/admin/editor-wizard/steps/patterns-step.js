@@ -17,12 +17,14 @@ const { Fill, Slot } = createSlotFill( 'Patterns Upsell' );
 /**
  * Choose patterns step.
  *
- * @param {Object}   props              Component props.
- * @param {string}   props.title        Step title.
- * @param {Object}   props.replaces     Object containing content to be replaced. The keys are the block classNames to find. The values are the content to be replaced.
- * @param {Function} props.onCompletion On completion callback.
+ * @param {Object}   props                   Component props.
+ * @param {string}   props.title             Step title.
+ * @param {Object}   props.replaces          Object containing content to be replaced. The keys are the block classNames to find. The values are the content to be replaced.
+ * @param {Array}    props.patternsToExclude Array of patterns to exclude.
+ * @param {Function} props.onCompletion      On completion callback.
  */
-const PatternsStep = ( { title, replaces, onCompletion } ) => {
+const PatternsStep = ( props ) => {
+	const { title, replaces, patternsToExclude, onCompletion } = props;
 	const { resetEditorBlocks, editPost } = useDispatch( editorStore );
 	const logEvent = useLogEvent();
 	const editorSettings = useSelect( ( select ) =>
@@ -55,7 +57,10 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
 				{ title }
 			</h1>
 			<Slot />
-			<PatternsList onChoose={ onChoose } />
+			<PatternsList
+				patternsToExclude={ patternsToExclude }
+				onChoose={ onChoose }
+			/>
 		</div>
 	);
 };

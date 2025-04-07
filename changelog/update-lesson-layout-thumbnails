@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Pattern previews: Ensure consistent background color in pattern previews by using theme color variables and fixing iframe sizing issues.

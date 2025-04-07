@@ -17,6 +17,7 @@ $thumbnail-height: 235px;
 
 		&-preview {
 			border: 1px solid #f0f0f0;
+			background: var(--sensei-background-color-global, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, var(--wp--preset--color--base, #FFFFFF))));
 			height: $thumbnail-height;
 			overflow: hidden;
 			z-index: 1;
