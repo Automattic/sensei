@@ -1170,9 +1170,8 @@ class Sensei_Main {
 			// Enable the wizard on first installation.
 			update_option( 'sensei_activation_redirect', 1 );
 			update_option( Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+			update_option( 'sensei_installed', 1 );
 		}
-
-		update_option( 'sensei_installed', 1 );
 	}
 
 	/**
