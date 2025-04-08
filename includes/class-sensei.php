@@ -1166,23 +1166,12 @@ class Sensei_Main {
 	 * @return void
 	 */
 	public function activate_sensei() {
-
 		if ( false === get_option( 'sensei_installed', false ) ) {
-
-			// Do not enable the wizard for sites that are created with the onboarding flow.
-			if ( 'sensei' !== get_option( 'site_intent' ) ) {
-
-				update_option( 'sensei_activation_redirect', 1 );
-				update_option( Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
-
-			} else {
-				Sensei_Setup_Wizard::instance()->finish_setup_wizard();
-			}
-		} else {
-			return;
+			// Enable the wizard on first installation.
+			update_option( 'sensei_activation_redirect', 1 );
+			update_option( Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+			update_option( 'sensei_installed', 1 );
 		}
-
-		update_option( 'sensei_installed', 1 );
 	}
 
 	/**
