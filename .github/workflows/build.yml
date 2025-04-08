@@ -9,10 +9,10 @@ jobs:
         name: Plugin Build
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
-                  node-version: 18
-            - uses: actions/checkout@v4
+                  node-version-file: '.nvmrc'
             - name: Get npm cache directory
               id: npm-cache
               run: |
@@ -44,9 +44,10 @@ jobs:
         needs: build
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
-                node-version: 18
+                node-version-file: '.nvmrc'
             - name: Create comment with Playground preview
               uses: peter-evans/create-or-update-comment@v4
               with:

@@ -8,12 +8,10 @@ jobs:
         runs-on: ubuntu-latest
         name: Build trunk for Dependencies Report
         steps:
+            -   uses: actions/checkout@v4
             -   uses: actions/setup-node@v4
                 with:
-                    node-version: 18
-            -   uses: actions/checkout@v4
-                with:
-                    ref: trunk
+                    node-version-file: '.nvmrc'
             -   shell: bash
                 name: Get trunk latest commit
                 id: trunk-commit
@@ -56,9 +54,10 @@ jobs:
         name: WordPress Dependencies Report
         runs-on: ubuntu-latest
         steps:
+            -   uses: actions/checkout@v4
             -   uses: actions/setup-node@v4
                 with:
-                    node-version: 18
+                    node-version-file: '.nvmrc'
             -   uses: actions/checkout@v4
             -   name: Get npm cache directory
                 id: npm-cache

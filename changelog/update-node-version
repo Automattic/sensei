@@ -1,0 +1,8 @@
+Significance: patch
+Type: changed
+
+Update node and npm engines versions.
+
+Also, updates:
+- @es-joy/jsdoccomment: previous version requires node up to 19
+- react-autosize-textarea: overridees peer depencency to the same react version
