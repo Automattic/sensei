@@ -458,9 +458,6 @@ class Sensei_Admin {
 	 * Localize admin data that should be available on all admin pages.
 	 *
 	 * This method adds global data to the admin scripts, such as the upsell URL.
-	 *
-	 * @since 4.24.0
-	 * @access private
 	 */
 	private function localize_admin_data() {
 		$data = [
