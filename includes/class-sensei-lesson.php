@@ -5,6 +5,8 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Sensei_Pro_Upsell;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }

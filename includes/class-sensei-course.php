@@ -3,6 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+use Sensei\Internal\Services\Sensei_Pro_Upsell;
+
 /**
  * Sensei Course Class
  *
