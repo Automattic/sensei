@@ -9,7 +9,6 @@ namespace Sensei\Internal\Emails;
 
 use Sensei_List_Table;
 use Sensei_Pro_Upsell;
-use function add_query_arg;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
