@@ -462,7 +462,8 @@ class Sensei_Admin {
 	 */
 	private function localize_admin_data() {
 		$data = [
-			'upsellUrl' => Sensei_Pro_Upsell::get_base_url(),
+			'upsellUrl'   => Sensei_Pro_Upsell::get_base_url(),
+			'checkoutUrl' => Sensei_Pro_Upsell::get_checkout_url(),
 		];
 
 		wp_localize_script( 'sensei-event-logging', 'sensei_admin', $data );

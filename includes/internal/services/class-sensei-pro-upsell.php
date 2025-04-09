@@ -38,6 +38,20 @@ class Sensei_Pro_Upsell {
 	}
 
 	/**
+	 * Get the checkout URL based on the environment.
+	 *
+	 * @return string The checkout URL.
+	 */
+	public static function get_checkout_url(): string {
+		if ( ! get_option( 'wpcom_active_subscriptions' ) ) {
+			$site_slug = wp_parse_url( get_site_url(), PHP_URL_HOST );
+			return "https://wordpress.com/checkout/{$site_slug}/sensei_pro_monthly";
+		}
+
+		return 'https://senseilms.com/checkout/?add-to-cart=7009';
+	}
+
+	/**
 	 * Get the default UTM parameters.
 	 *
 	 * @param string $campaign The campaign name.
