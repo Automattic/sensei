@@ -87,7 +87,6 @@ if (
 }
 
 require_once __DIR__ . '/includes/class-sensei-dependency-checker.php';
-require_once __DIR__ . '/includes/class-sensei-pro-upsell.php';
 if ( ! Sensei_Dependency_Checker::check_php_requirement() ) {
 	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_version_notice' ) );
 	return;

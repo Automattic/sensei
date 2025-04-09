@@ -4,7 +4,10 @@
  *
  * @package sensei-lms
  * @since   $$next-version$$
+ * @internal This class is not meant to be used by third-party code.
  */
+
+namespace Sensei\Internal\Services;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Handles the generation of Pro upsell URLs.
  *
+ * @internal This class is not meant to be used by third-party code.
  * @since $$next-version$$
  * @package sensei
  */

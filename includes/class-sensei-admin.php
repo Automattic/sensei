@@ -3,6 +3,7 @@
 use Sensei\Admin\Content_Duplicators\Course_Lessons_Duplicator;
 use Sensei\Admin\Content_Duplicators\Lesson_Quiz_Duplicator;
 use Sensei\Admin\Content_Duplicators\Post_Duplicator;
+use Sensei\Internal\Services\Sensei_Pro_Upsell;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

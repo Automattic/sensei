@@ -7,6 +7,8 @@
  * @version     4.7.0
  */
 
+use Sensei\Internal\Services\Sensei_Pro_Upsell;
+
 /**
  * Class Sensei_Course_Theme_Template_Selection
  */
