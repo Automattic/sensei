@@ -43,7 +43,7 @@ class Sensei_Pro_Upsell {
 	 * @return string The checkout URL.
 	 */
 	public static function get_checkout_url(): string {
-		if ( ! get_option( 'wpcom_active_subscriptions' ) ) {
+		if ( get_option( 'wpcom_active_subscriptions' ) ) {
 			$site_slug = wp_parse_url( get_site_url(), PHP_URL_HOST );
 			return "https://wordpress.com/checkout/{$site_slug}/sensei_pro_monthly";
 		}
