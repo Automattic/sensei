@@ -82,6 +82,7 @@ class Sensei_Home_Task_Pro_Upsell implements Sensei_Home_Task {
 				Sensei_Pro_Upsell::get_base_url()
 			)
 		);
+		exit;
 	}
 
 	/**
