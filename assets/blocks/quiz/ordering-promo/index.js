@@ -5,8 +5,10 @@ import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 import { ExternalLink } from '@wordpress/components';
 
-const PROMO_LINK =
-	'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=quiz_ordering_question_type';
+/**
+ * Internal dependencies
+ */
+import { getSenseiProUpsellUrl } from '../../../admin/helpers';
 
 function addOrderingPromoOption( options ) {
 	options.push( {
@@ -39,7 +41,9 @@ function addPromoLink( children, option ) {
 			<div className="sensei-lms-question-block__type-selector__option__description sensei-lms-question-block__type-selector__option__description--disabled">
 				{ option.description }
 			</div>
-			<ExternalLink href={ PROMO_LINK }>
+			<ExternalLink
+				href={ getSenseiProUpsellUrl( 'quiz_ordering_question_type' ) }
+			>
 				{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
 			</ExternalLink>
 		</div>

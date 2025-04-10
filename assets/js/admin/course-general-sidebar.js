@@ -18,6 +18,7 @@ import { applyFilters } from '@wordpress/hooks';
 /**
  * Internal dependencies
  */
+import { getSenseiProUpsellUrl } from '../../admin/helpers';
 import editorLifecycle from '../../shared/helpers/editor-lifecycle';
 import {
 	extractStructure,
@@ -140,7 +141,9 @@ const CourseGeneralSidebar = () => {
 			{ ! hideCoteachersUpgrade && (
 				<div className="sensei-course-coteachers-wrapper">
 					{ __( 'Multiple teachers?', 'sensei-lms' ) }{ ' ' }
-					<ExternalLink href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers">
+					<ExternalLink
+						href={ getSenseiProUpsellUrl( 'co-teachers' ) }
+					>
 						{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
 					</ExternalLink>
 				</div>

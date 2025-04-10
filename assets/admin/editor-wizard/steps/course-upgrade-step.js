@@ -11,6 +11,7 @@ import { useSelect } from '@wordpress/data';
 import { EXTENSIONS_STORE } from '../../../extensions/store';
 import senseiProUpsellImage from '../../../images/sensei-pro-upsell.png';
 import CheckIcon from '../../../icons/checked.svg';
+import { getSenseiProUpsellUrl } from '../../helpers';
 
 /**
  * Upgrade step during course creation wizard.
@@ -100,12 +101,13 @@ const FeatureItem = ( { children } ) => (
 CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 	const upgrade = () => {
 		window.open(
-			'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_editor_wizard',
+			getSenseiProUpsellUrl( 'course_editor_wizard' ),
 			'sensei-pricing',
 			'noreferrer'
 		);
 		goToNextStep();
 	};
+
 	return (
 		<>
 			<Button

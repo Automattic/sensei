@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Sensei\Internal\Services\Sensei_Pro_Upsell;
+
 /**
  * Sensei_Home_Task_Pro_Upsell.
  *
@@ -74,7 +76,13 @@ class Sensei_Home_Task_Pro_Upsell implements Sensei_Home_Task {
 		update_option( self::get_id(), true );
 
 		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- We're redirecting to an external URL.
-		wp_redirect( 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=sensei-home' );
+		wp_redirect(
+			add_query_arg(
+				Sensei_Pro_Upsell::get_default_utm_params( 'sensei-home' ),
+				Sensei_Pro_Upsell::get_base_url()
+			)
+		);
+		exit;
 	}
 
 	/**

@@ -3,6 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+use Sensei\Internal\Services\Sensei_Pro_Upsell;
+
 /**
  * A settings API (wrapping the WordPress Settings API).
  *
@@ -217,7 +219,7 @@ class Sensei_Settings_API {
 		$image_path_mobile  = Sensei()->assets->get_image( 'content-drip-promo-mobile.png' );
 		$header             = __( 'Get Sensei Pro', 'sensei-lms' );
 		$text               = __( 'Keep students engaged and improve knowledge retention by setting a delivery schedule for course content.', 'sensei-lms' );
-		$url                = 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=settings_content_drip';
+		$url                = Sensei_Pro_Upsell::get_sensei_pro_upsell_url( 'settings_content_drip' );
 		$button_text        = __( 'Upgrade to Sensei Pro', 'sensei-lms' );
 		$this->render_promo_banner( $image_path_desktop, $image_path_mobile, $header, $text, $url, $button_text );
 	}
@@ -234,7 +236,7 @@ class Sensei_Settings_API {
 		$image_path_mobile  = Sensei()->assets->get_image( 'purchase-sensei-pro-mobile.png' );
 		$header             = __( 'Get Sensei Pro', 'sensei-lms' );
 		$text               = __( 'Sell your courses using the most popular eCommerce platform on the web, WooCommerce.', 'sensei-lms' );
-		$url                = 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=settings_woocommerce';
+		$url                = Sensei_Pro_Upsell::get_sensei_pro_upsell_url( 'settings_woocommerce' );
 		$button_text        = __( 'Upgrade to Sensei Pro', 'sensei-lms' );
 		$this->render_promo_banner( $image_path_desktop, $image_path_mobile, $header, $text, $url, $button_text );
 	}

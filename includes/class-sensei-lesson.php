@@ -5,6 +5,8 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Sensei_Pro_Upsell;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -358,9 +360,17 @@ class Sensei_Lesson {
 	public function content_drip_promo_meta_box_content() {
 		?>
 		<div class="sensei-content-drip-promo">
+			<?php
+			$upsell_args = array_merge(
+				Sensei_Pro_Upsell::get_default_utm_params(),
+				[ 'utm_campaign' => 'lesson_content_drip' ]
+			);
+
+			$upsell_url = add_query_arg( $upsell_args, Sensei_Pro_Upsell::get_base_url() );
+			?>
 			<div class="sensei-content-drip-promo__descriptions">
 				<p><?php esc_html_e( 'Keep students engaged and improve knowledge retention by setting a delivery schedule for course content.', 'sensei-lms' ); ?></p>
-				<p><a href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=lesson_content_drip" target="_blank"><?php esc_html_e( 'Upgrade to Sensei Pro', 'sensei-lms' ); ?></a></p>
+				<p><a href="<?php echo esc_url( $upsell_url ); ?>" target="_blank"><?php esc_html_e( 'Upgrade to Sensei Pro', 'sensei-lms' ); ?></a></p>
 			</div>
 
 			<div class="sensei-content-drip-promo__preview">

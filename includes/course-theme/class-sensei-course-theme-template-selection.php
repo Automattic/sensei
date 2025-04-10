@@ -7,6 +7,8 @@
  * @version     4.7.0
  */
 
+use Sensei\Internal\Services\Sensei_Pro_Upsell;
+
 /**
  * Class Sensei_Course_Theme_Template_Selection
  */
@@ -73,7 +75,7 @@ class Sensei_Course_Theme_Template_Selection {
 		$upsell    = [
 			'title' => __( 'Upgrade to Pro', 'sensei-lms' ),
 			'tag'   => __( 'Premium', 'sensei-lms' ),
-			'url'   => 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=learning-mode-themes',
+			'url'   => Sensei_Pro_Upsell::get_sensei_pro_upsell_url( 'learning-mode-themes' ),
 		];
 
 		$templates = [

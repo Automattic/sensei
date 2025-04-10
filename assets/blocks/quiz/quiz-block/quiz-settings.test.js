@@ -39,7 +39,13 @@ jest.mock( '@wordpress/block-editor', () => ( {
 jest.mock( '@wordpress/data' );
 
 describe( '<QuizSettings />', () => {
+	afterEach( () => {
+		delete window.sensei_admin;
+	} );
 	beforeEach( () => {
+		window.sensei_admin = {
+			upsellUrl: 'https://senseilms.com/sensei-pro',
+		};
 		useSelect.mockImplementation( () => [
 			{
 				attributes: {
