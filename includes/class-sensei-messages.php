@@ -79,6 +79,7 @@ class Sensei_Messages {
 
 		// Redirect and show a success notice.
 		add_action( 'sensei_new_private_message', [ $this, 'show_success_notice' ], 999 );
+		add_action( 'template_redirect', array( $this, 'prevent_message_redirect' ), 1 );
 	}
 
 	public function only_show_messages_to_owner( $query ) {
@@ -1056,6 +1057,26 @@ class Sensei_Messages {
 			wp_safe_redirect( esc_url_raw( add_query_arg( [ 'send' => 'complete' ] ) ) );
 			exit;
 		}
+	}
+	/**
+ * Prevent WordPress from redirecting to pretty permalinks for messages
+ */
+	public function prevent_message_redirect() {
+	    global $wp;
+	    
+	    // Check if this is a message post
+	    if ( isset( $wp->query_vars['p'] ) ) {
+	        $post_id = $wp->query_vars['p'];
+	        if ( get_post_type( $post_id ) === $this->post_type ) {
+	            // If user doesn't have access, redirect to home
+	            if ( ! $this->view_message( $post_id ) ) {
+	                wp_safe_redirect( home_url(), 303 );
+	                exit;
+	            }
+	            // If they do have access, prevent the pretty permalink redirect
+	            remove_action( 'template_redirect', 'redirect_canonical' );
+	        }
+	    }
 	}
 
 }
