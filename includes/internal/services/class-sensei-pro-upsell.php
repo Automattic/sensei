@@ -3,7 +3,7 @@
  * File containing the Sensei_Pro_Upsell class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.24.6
  * @internal This class is not meant to be used by third-party code.
  */
 
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles the generation of Pro upsell URLs.
  *
  * @internal This class is not meant to be used by third-party code.
- * @since $$next-version$$
+ * @since 4.24.6
  * @package sensei
  */
 class Sensei_Pro_Upsell {
