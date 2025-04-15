@@ -540,7 +540,7 @@ function sensei_log_jetpack_event( $event_name, $properties = [] ) {
 /**
  * Check if the text has a translation or is in English.
  *
- * @since $$next-version$$
+ * @since 4.25.0
  *
  * @param string $text The text to check.
  * @return bool True if the text has a translation or is in English, false otherwise.

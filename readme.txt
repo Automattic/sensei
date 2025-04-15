@@ -1,11 +1,11 @@
 
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
-Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, imranh920, jakeom, luchad0res, merkushin, m1r0, onubrooks, renathoc, yscik
+Contributors: automattic, donnapep, m1r0, bogdannikolic
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 6.5
-Tested up to: 6.7
+Requires at least: 6.6
+Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 4.24.5
+Stable tag: 4.25.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,38 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.25.0 - 2025-04-15
+#### Added
+- Allow editing course archive page title from the block editor [#7786](https://github.com/Automattic/sensei/pull/7786)
+- Autofocus the title input on the form render [#7802](https://github.com/Automattic/sensei/pull/7802)
+- Clear text indicator to indicate disabled status of Emails [#7752](https://github.com/Automattic/sensei/pull/7752)
+
+#### Changed
+- Update the activation logic to always enable the setup wizard on first installation [#7800](https://github.com/Automattic/sensei/pull/7800)
+- Update Sensei Pro upgrade URL to handle WordPress.com hosted sites correctly [#7790](https://github.com/Automattic/sensei/pull/7790)
+
+#### Deprecated
+- Deprecate Student Courses Block in favor of Course List block [#7764](https://github.com/Automattic/sensei/pull/7764)
+
+#### Fixed
+- Button alignment on Setup wizard notice [#7779](https://github.com/Automattic/sensei/pull/7779)
+- Course outline: Fix focus issue on lesson/module add to inner blocks [#7783](https://github.com/Automattic/sensei/pull/7783)
+- Course pattern layout: Fix Safari render issue [#7789](https://github.com/Automattic/sensei/pull/7789)
+- Fix course ordering on wordpress.com [#7799](https://github.com/Automattic/sensei/pull/7799)
+- Fix loading some translations too early [#7780](https://github.com/Automattic/sensei/pull/7780)
+- Fix plugin configure link pointing to the wrong settings URL [#7781](https://github.com/Automattic/sensei/pull/7781)
+- Fix required quiz score texts [#7793](https://github.com/Automattic/sensei/pull/7793)
+- Fix undefined property notice on WP 6.8 [#7773](https://github.com/Automattic/sensei/pull/7773)
+- Occasional error when submitting a quiz [#7755](https://github.com/Automattic/sensei/pull/7755)
+- Pattern previews: Ensure consistent background color in pattern previews by using theme color variables and fixing iframe sizing issues [#7796](https://github.com/Automattic/sensei/pull/7796)
+- Prevent storing enrolment data in memory on Students screen [#7772](https://github.com/Automattic/sensei/pull/7772)
+- Students dropdown menu being offset in the admin panel [#7695](https://github.com/Automattic/sensei/pull/7695)
+- Workflow: Update PR milestone validation supporting task re-run [#7787](https://github.com/Automattic/sensei/pull/7787)
+- Newsletter wizard form: Handle server errors [#7801](https://github.com/Automattic/sensei/pull/7801)
+
+#### Development
+- Update NodeJS and NPM versions
+
 ### 4.24.5 - 2025-01-16
 #### Security
 - Fix unprepared SQL
@@ -186,11 +218,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 #### Development
 - Added a hook to conditionally render the lesson actions in the frontend [#7677](https://github.com/Automattic/sensei/pull/7677)
 - Filter course IDs associated with a given teacher [#7702](https://github.com/Automattic/sensei/pull/7702)
-
-### 4.24.3 - 2024-08-22
-#### Fixed
-- Ensure quiz description is displayed to the student [#7669](https://github.com/Automattic/sensei/pull/7669)
-- Incorrect URL for edited emails [#7671](https://github.com/Automattic/sensei/pull/7671)
-- Missing lesson status icon for "complete" status [#7667](https://github.com/Automattic/sensei/pull/7667)
-- PHP deprecation notice when opening site editor [#7668](https://github.com/Automattic/sensei/pull/7668)
-- Some reports not exporting all rows [#7670](https://github.com/Automattic/sensei/pull/7670)
