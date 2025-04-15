@@ -23,7 +23,7 @@
 - Fix required quiz score texts [#7793](https://github.com/Automattic/sensei/pull/7793)
 - Fix undefined property notice on WP 6.8 [#7773](https://github.com/Automattic/sensei/pull/7773)
 - Occasional error when submitting a quiz [#7755](https://github.com/Automattic/sensei/pull/7755)
-- Pattern previews: Ensure consistent background color in pattern previews by using theme color variables and fixing iframe sizing issues. [#7796](https://github.com/Automattic/sensei/pull/7796)
+- Pattern previews: Ensure consistent background color in pattern previews by using theme color variables and fixing iframe sizing issues [#7796](https://github.com/Automattic/sensei/pull/7796)
 - Prevent storing enrolment data in memory on Students screen [#7772](https://github.com/Automattic/sensei/pull/7772)
 - Students dropdown menu being offset in the admin panel [#7695](https://github.com/Automattic/sensei/pull/7695)
 - Workflow: Update PR milestone validation supporting task re-run [#7787](https://github.com/Automattic/sensei/pull/7787)
