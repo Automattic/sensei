@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix "Calling get_class() without arguments is deprecated" PHP notice
