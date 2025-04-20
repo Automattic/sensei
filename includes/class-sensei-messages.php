@@ -760,15 +760,14 @@ class Sensei_Messages {
 	}
 
 	/**
-	 * Hide content of message
+	 * Filter the content of a message.
 	 *
-	 * @param  string $content Original message content
-	 * @return string          Empty string if user does not have access to this message
+	 * @param string $content The post content.
+	 * @return string The filtered content.
 	 */
 	public function message_content( $content ) {
-		global $post;
-
-		if ( ! $post || get_post_type( $post->ID ) !== $this->post_type ) {
+		$post = get_post();
+		if ( ! ( $post instanceof WP_Post ) || get_post_type( $post->ID ) !== $this->post_type ) {
 			return $content;
 		}
 
