@@ -53,7 +53,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 */
 
 	public static function get_instance() {
-		return self::get_instance_for_subclass( get_class() );
+		return self::get_instance_for_subclass( __CLASS__ );
 	}
 
 	protected function get_prefix() {
