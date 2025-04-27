@@ -329,9 +329,12 @@ a.sensei-certificate-link {
 					margin: .53em 0;
 
 					li {
-						display: flex;
 						align-items: center;
-						line-height: 1;
+						display: flex;
+						font-weight: normal;
+						gap: 10px;
+						line-height: 1.3;
+						list-style: none;
 
 						&.right_answer {
 							color: green;
@@ -346,11 +349,8 @@ a.sensei-certificate-link {
 							color: red;
 						}
 
-						font-weight: normal;
-						list-style: none;
-
 						input {
-							margin: 0 10px 0 0;
+							margin: 0;
 						}
 
 						label {
