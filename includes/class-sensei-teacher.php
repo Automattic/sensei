@@ -107,9 +107,6 @@ class Sensei_Teacher {
 		// update lesson owner to course teacher before insert
 		add_filter( 'wp_insert_post_data', array( $this, 'update_lesson_teacher' ), 99, 2 );
 
-		// If a Teacher logs in, redirect to /wp-admin/
-		add_filter( 'wp_login', array( $this, 'teacher_login_redirect' ), 10, 2 );
-
 		add_action( 'admin_menu', array( $this, 'restrict_posts_menu_page' ), 10 );
 		add_filter( 'pre_get_comments', array( $this, 'restrict_comment_moderation' ), 10, 1 );
 
@@ -1678,7 +1675,6 @@ AND comments.comment_type = 'sensei_course_status'";
 
 	}
 
-
 	/**
 	 * Sensei_Teacher::teacher_login_redirect
 	 *
@@ -1686,11 +1682,15 @@ AND comments.comment_type = 'sensei_course_status'";
 	 *
 	 * @since 1.8.7
 	 * @access public
+	 * @deprecated $$next-version$$
+	 *
 	 * @param string $user_login
 	 * @param object $user
 	 * @return void
 	 */
 	public function teacher_login_redirect( $user_login, $user ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		// If Jetpack's redirection cookie is set, let Jetpack handle redirection.
 		if ( ! empty( $_COOKIE['jetpack_sso_redirect_to'] ) ) {
 			return;
