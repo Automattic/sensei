@@ -1684,9 +1684,8 @@ AND comments.comment_type = 'sensei_course_status'";
 	 * @since 1.8.7
 	 * @access public
 	 *
-	 * @param string $user_login
-	 * @param object $user
-	 * @return void
+	 * @param string $user_login Username.
+	 * @param object $user       WP_User object of the logged-in user.
 	 */
 	public function teacher_login_redirect( $user_login, $user ) {
 		// If Jetpack's redirection cookie is set, let Jetpack handle redirection.
@@ -1694,11 +1693,17 @@ AND comments.comment_type = 'sensei_course_status'";
 			return;
 		}
 
-		if ( ! user_can( $user, 'edit_courses' ) || empty( $_SERVER['HTTP_REFERER'] ) ) {
+		if ( ! user_can( $user, 'edit_courses' ) ) {
 			return;
 		}
 
-		$referrer       = $_SERVER['HTTP_REFERER'];
+		$referrer_raw = isset( $_SERVER['HTTP_REFERER'] ) ? wp_unslash( $_SERVER['HTTP_REFERER'] ) : '';
+		$referrer     = sanitize_text_field( $referrer_raw );
+
+		if ( empty( $referrer ) ) {
+			return;
+		}
+
 		$my_courses_url = get_permalink( Sensei()->settings->get_my_courses_page_id() );
 
 		if ( strpos( $referrer, $my_courses_url ) === false ) {
