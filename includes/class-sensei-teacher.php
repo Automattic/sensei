@@ -1697,13 +1697,7 @@ AND comments.comment_type = 'sensei_course_status'";
 			return;
 		}
 
-		$referrer_raw = '';
-
-		if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
-			$referrer_raw = wp_unslash( $_SERVER['HTTP_REFERER'] );
-		}
-
-		$referrer = esc_url_raw( $referrer_raw );
+		$referrer = isset( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : '';
 
 		if ( empty( $referrer ) ) {
 			return;
