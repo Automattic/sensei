@@ -107,8 +107,8 @@ class Sensei_Teacher {
 		// update lesson owner to course teacher before insert
 		add_filter( 'wp_insert_post_data', array( $this, 'update_lesson_teacher' ), 99, 2 );
 
-		// If a Teacher logs in, redirect to /wp-admin/
-		add_filter( 'wp_login', array( $this, 'teacher_login_redirect' ), 10, 2 );
+		// Redirect teachers to the WordPress admin dashboard after login.
+		add_filter( 'wp_login', array( $this, 'teacher_login_redirect' ), 99, 2 );
 
 		add_action( 'admin_menu', array( $this, 'restrict_posts_menu_page' ), 10 );
 		add_filter( 'pre_get_comments', array( $this, 'restrict_comment_moderation' ), 10, 1 );
@@ -1678,17 +1678,14 @@ AND comments.comment_type = 'sensei_course_status'";
 
 	}
 
-
 	/**
-	 * Sensei_Teacher::teacher_login_redirect
-	 *
-	 * Redirect teachers to /wp-admin/ after login
+	 * Redirect teachers (and admins) to the WordPress dashboard after logging in on the My Courses page.
 	 *
 	 * @since 1.8.7
 	 * @access public
-	 * @param string $user_login
-	 * @param object $user
-	 * @return void
+	 *
+	 * @param string $user_login Username.
+	 * @param object $user       WP_User object of the logged-in user.
 	 */
 	public function teacher_login_redirect( $user_login, $user ) {
 		// If Jetpack's redirection cookie is set, let Jetpack handle redirection.
@@ -1696,28 +1693,32 @@ AND comments.comment_type = 'sensei_course_status'";
 			return;
 		}
 
-		if ( user_can( $user, 'edit_courses' ) ) {
-
-			// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
-			if ( isset( $_REQUEST['redirect_to'] ) ) {
-
-				// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
-				wp_safe_redirect( wp_unslash( $_REQUEST['redirect_to'] ), 303 );
-
-				exit;
-
-			} else {
-
-				wp_redirect( admin_url(), 303 );
-
-				exit;
-
-			}
+		if ( ! user_can( $user, 'edit_courses' ) ) {
+			return;
 		}
 
+		$referrer = isset( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : '';
+
+		if ( empty( $referrer ) ) {
+			return;
+		}
+
+		$my_courses_url = get_permalink( Sensei()->settings->get_my_courses_page_id() );
+
+		if ( strpos( $referrer, $my_courses_url ) === false ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
+		if ( isset( $_REQUEST['redirect_to'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
+			wp_safe_redirect( wp_unslash( $_REQUEST['redirect_to'] ), 303 );
+			exit;
+		} else {
+			wp_redirect( admin_url(), 303 );
+			exit;
+		}
 	}
-
-
 
 	/**
 	 * Sensei_Teacher::restrict_posts_menu_page()
