@@ -139,9 +139,10 @@ $breakpoint: 782px;
 	}
 }
 
-.editor-styles-wrapper .sensei-course-theme__main-content .wp-block-button,
-.sensei-course-theme .wp-block-button,
-.sensei-course-theme__button {
+.editor-styles-wrapper .sensei-course-theme__main-content .wp-block-button, // Editor styles don't work?
+.sensei-course-theme .wp-block-button {
+// Is .sensei-course-theme__button needed? Seems to only be set on invisibile lesson action buttons?
+// .sensei-course-theme__button {
 	cursor: pointer;
 	font-family: var(--wp--preset--font-family--body-font);
 	font-size: 1.125rem;
@@ -149,9 +150,12 @@ $breakpoint: 782px;
 	letter-spacing: normal;
 	margin: 0;
 	text-align: center;
-	text-decoration: none !important;
+	text-decoration: none;
 	text-transform: unset;
 
+	// Fill button style
+	// Done: Next Lesson + Take Quiz + non-Sensei fill style (default + hover)
+	// TODO: Quiz buttons + Global styles
 	.wp-block-button__link {
 		background-color: var(--sensei-secondary-color);
 		border: solid 1px var(--sensei-secondary-color);
@@ -162,12 +166,30 @@ $breakpoint: 782px;
 		text-transform: unset;
 
 		&:hover {
-			background-color: inherit !important;
-			color: inherit !important;
-			text-decoration: none !important;
+			background-color: var(--sensei-primary-color); // Should be #155E65
+			border-color: var(--sensei-primary-color);	// Should be #155E65
+			color: var(--sensei-button-fill-hover-color);
+			text-decoration: none;
 		}
 	}
 
+	// Outline button style.
+	// Done: All LM buttons(Contact Teacher, Complete Lesson, Reset Lesson, Completed) +
+	// non-Sensei outline style (default + hover)
+	// TODO: Quiz buttons + Global styles
+	&.is-style-outline .wp-block-button__link {
+		background-color: transparent;
+		border: solid 1px var(--sensei-secondary-color);
+
+		&:hover {
+			background-color: var(--sensei-button-outline-hover-color);
+			border: solid 1px var(--sensei-secondary-color);
+			color: var(--sensei-primary-color);
+			text-decoration: none;
+		}
+	}
+
+	// TODO: Figure out what to do about all this crap.
 	&.is-primary,
 	&.is-secondary,
 	&.is-link,
@@ -201,9 +223,9 @@ $breakpoint: 782px;
 	&.is-primary,
 	&.wp-block-button:not(.is-style-outline, .is-style-link) {
 		&:not(.sensei-course-theme-quiz-graded-notice__pending-grade):hover {
-			color: var(--sensei-button-fill-hover-color);
-			background-color: var(--sensei-primary-color);
-			border-color: var(--sensei-primary-color);
+			// color: var(--sensei-button-fill-hover-color);
+			// background-color: var(--sensei-primary-color);
+			// border-color: var(--sensei-primary-color);
 		}
 
 		&:focus {
@@ -215,15 +237,17 @@ $breakpoint: 782px;
 	&.is-secondary,
 	&.wp-block-button.is-style-outline {
 		--wp--custom--button--border--color: var(--sensei-primary-color);
-		color: var(--sensei-primary-color);
+		// color: var(--sensei-primary-color);
 		flex-shrink: 0;
 
 		&:hover {
-			background-color: var(--sensei-button-outline-hover-color);
-			color: var(--sensei-primary-color);
+			// Removed as hover style is now on .wp-block-button__link element.
+			// background-color: var(--sensei-button-outline-hover-color);
+			// color: var(--sensei-primary-color);
 
 			.wp-block-button__link {
-				border-color: var(--sensei-primary-color);
+				// Breaks border of outline button on hover.
+				// border-color: var(--sensei-primary-color);
 			}
 		}
 
@@ -287,29 +311,29 @@ $breakpoint: 782px;
 	}
 }
 
-.sensei-course-theme,
-.editor-styles-wrapper {
-	.wp-block-sensei-lms-lesson-actions {
-		.wp-block-sensei-button.wp-block-button {
-			&.is-style-outline,
-			&.is-style-default {
-				border: none;
+// .sensei-course-theme,
+// .editor-styles-wrapper {
+// 	.wp-block-sensei-lms-lesson-actions {
+// 		.wp-block-sensei-button.wp-block-button {
+// 			// &.is-style-outline, // Not needed for outline style (i.e. Complete Lesson button).
+// 			&.is-style-default {
+// 				border: none;
 
-				.wp-block-button__link {
-					border: solid 1px var(--sensei-secondary-color);
-				}
-			}
-		}
+// 				.wp-block-button__link {
+// 					border: solid 1px var(--sensei-secondary-color);
+// 				}
+// 			}
+// 		}
 
-		.wp-block-sensei-button.wp-block-button.is-style-default {
-			background-color: unset;
+// 		.wp-block-sensei-button.wp-block-button.is-style-default {
+// 			background-color: unset;
 
-			.wp-block-button__link {
-				background-color: var(--sensei-secondary-color);
-			}
-		}
-	}
-}
+// 			.wp-block-button__link {
+// 				background-color: var(--sensei-secondary-color);
+// 			}
+// 		}
+// 	}
+// }
 
 /* Comments */
 .sensei-course-theme .wp-block-comments {
