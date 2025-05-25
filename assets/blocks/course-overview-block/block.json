@@ -6,6 +6,12 @@
 	"category": "sensei-lms",
 	"description": "Displays a link to the course.",
 	"textdomain": "sensei-lms",
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		}
+	},
 	"usesContext": [ "postType" ],
 	"example": {}
 }
