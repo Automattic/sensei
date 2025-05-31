@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+PHP fatal when calling array_rand on empty array
