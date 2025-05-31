@@ -3836,7 +3836,7 @@ class Sensei_Lesson {
 				$show_questions = (int) get_post_meta( $quiz_id, '_show_questions', true );
 
 				// Negative amount is considered as All (same as zero).
-				if ( $show_questions > 0 ) {
+				if ( $show_questions > 0 && ! empty( $questions_array ) ) {
 					// Get random set of array keys from selected questions array.
 					$questions_count    = is_countable( $questions_array ) ? count( $questions_array ) : 0;
 					$selected_questions = array_rand(
