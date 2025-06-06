@@ -174,7 +174,6 @@ class Sensei_Teacher {
 				'manage_sensei_grades'           => true,
 				'moderate_comments'              => true,
 				'upload_files'                   => true,
-				'edit_files'                     => true,
 
 				// Lessons
 				'publish_lessons'                => true,
