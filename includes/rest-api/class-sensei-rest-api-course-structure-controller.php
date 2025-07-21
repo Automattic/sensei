@@ -37,7 +37,7 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 	 *
 	 * @param string $namespace Routes namespace.
 	 */
-	public function __construct( $namespace ) {
+	public function __construct( $namespace ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.namespaceFound -- The variable name if defined in the WP_REST_Controller class.
 		$this->namespace = $namespace;
 	}
 
@@ -113,7 +113,27 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 			);
 		}
 
-		return $this->can_current_user_edit_course( $course->ID );
+		if ( ! $this->can_current_user_edit_course( $course->ID ) ) {
+			return false;
+		}
+
+		$structure = (array) $request->get_param( 'structure' );
+		foreach ( $structure as $item ) {
+			$type = $item['type'] ?? null;
+			$id   = $item['id'] ?? null;
+
+			if ( ! $type || ! $id ) {
+				continue;
+			}
+
+			if ( 'lesson' === $type ) {
+				if ( ! current_user_can( 'edit_post', $id ) ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**
