@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Check that author variable is of the expected type
