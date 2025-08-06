@@ -2334,7 +2334,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param string $slug
+	 * @param string $slug The term slug to get the author for.
 	 * @return WP_User|false WP_User if found, false if no valid author found.
 	 */
 	public static function get_term_author( $slug = '' ) {
