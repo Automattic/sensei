@@ -2724,15 +2724,9 @@ class Sensei_Core_Modules {
 			if ( ! user_can( $author, 'manage_options' ) && isset( $term->name ) && $author instanceof WP_User ) {
 				$term->name = $term->name . ' (' . $author->display_name . ') ';
 			}
-}
-
-			if ( ! user_can( $author, 'manage_options' ) && isset( $term->name ) ) {
-				$term->name = $term->name . ' (' . $author->display_name . ') ';
-			}
 
 			// add the term to the teachers terms
 			$users_terms[] = $term;
-
 		}
 
 		return $users_terms;
