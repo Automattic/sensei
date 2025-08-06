@@ -2334,8 +2334,8 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param $slug
-	 * @return WP_User $author if no author is found or invalid term is passed the admin user will be returned.
+	 * @param string $slug
+	 * @return WP_User|false WP_User if found, false if no valid author found.
 	 */
 	public static function get_term_author( $slug = '' ) {
 
