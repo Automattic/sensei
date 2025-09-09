@@ -12,7 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
+use Sensei_Blocks;
+use Sensei_Utils;
 
 /**
  * Display the title of the current course for the current lesson/quiz/module.
@@ -48,7 +49,19 @@ class Course_Title {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes = [] ): string {
-		$course_id = \Sensei_Utils::get_current_course();
+
+		// Get heading level from attributes.
+		$level   = isset( $attributes['level'] ) ? strtolower( (string) $attributes['level'] ) : '1';
+		$heading = 'h' . $level;
+
+		// Whitelist Heading tag.
+		$allowed = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
+		if ( ! in_array( $heading, $allowed, true ) ) {
+			$heading = 'h1';
+		}
+
+		// Get the current course ID.
+		$course_id = Sensei_Utils::get_current_course();
 
 		if ( ! $course_id ) {
 			return '';
@@ -63,7 +76,8 @@ class Course_Title {
 		$wrapper_attributes = get_block_wrapper_attributes();
 
 		return sprintf(
-			'<h2 %1s>%2$s</h2>',
+			'<%1s %2s>%3$s</%1s>',
+			$heading,
 			$wrapper_attributes,
 			$title
 		);
