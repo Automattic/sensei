@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-09-17T15:22:12+00:00\n"
+"POT-Creation-Date: 2025-09-17T15:41:14+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: sensei-lms\n"
@@ -7023,41 +7023,41 @@ msgstr ""
 msgid "Course not found."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:168
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:188
 msgid "Input for course structure was invalid."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:187
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:207
 msgid "An error occurred while saving the course structure."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:249
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:269
 msgid "Lesson post ID"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:253
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:273
 msgid "Lesson title"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:257
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:277
 msgid "Whether the lesson is currently a draft"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:279
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:299
 msgid "Module term ID"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:283
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:303
 msgid "Module title"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:287
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:307
 #: assets/blocks/course-outline/module-block/module-edit.js:232
 #: assets/dist/blocks/single-course.js:1492
 msgid "Module description"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:291
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:311
 msgid "Lessons in module"
 msgstr ""
 
