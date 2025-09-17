@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Add authorization check when updating the lesson course relation
