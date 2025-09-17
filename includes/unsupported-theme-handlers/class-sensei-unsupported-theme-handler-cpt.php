@@ -260,6 +260,6 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 */
 	private function should_show_comments(): bool {
 		return $this->is_lesson_cpt_in_block_fse_theme()
-			&& sensei_can_user_view_lesson();
+			&& sensei_can_user_view_lesson( $this->post_id );
 	}
 }
