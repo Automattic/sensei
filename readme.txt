@@ -140,7 +140,7 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
-### 4.25.1 - 2025-09-17
+### 4.25.1 - 2025-09-18
 #### Security
 - Add authorization check when updating the lesson course relation
 - Add authorization check when updating a lesson in the course structure
