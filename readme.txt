@@ -141,6 +141,10 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 == Changelog ==
 
 ### 4.25.1 - 2025-09-17
+#### Security
+- Add authorization check when updating the lesson course relation
+- Add authorization check when updating a lesson in the course structure
+
 #### Added
 - Add support for changing text color of Course Overview block [#7826](https://github.com/Automattic/sensei/pull/7826)
 
