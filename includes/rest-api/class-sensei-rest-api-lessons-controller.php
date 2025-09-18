@@ -210,7 +210,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Perform permissions check when editing the lesson course meta.
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.25.1
 	 * @access private
 	 *
 	 * @param bool   $allowed  True if allowed to view the meta field by default, false otherwise.
