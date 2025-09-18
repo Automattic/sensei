@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 4.25.0\n"
+"Project-Id-Version: Sensei LMS 4.25.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-04-15T13:39:40+00:00\n"
+"POT-Creation-Date: 2025-09-17T15:41:14+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: sensei-lms\n"
@@ -748,7 +748,7 @@ msgstr ""
 #: includes/admin/class-sensei-setup-wizard-pages.php:237
 #: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:101
 #: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:163
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:218
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:219
 #: includes/block-patterns/page/templates/v1/landing-page-grid.php:72
 #: includes/block-patterns/page/templates/v1/landing-page-list.php:82
 #: includes/block-patterns/page/templates/v2/landing-page.php:61
@@ -1430,7 +1430,7 @@ msgid "Courses displayed in a grid"
 msgstr ""
 
 #: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:184
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:189
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:190
 #: includes/block-patterns/page/templates/v2/landing-page.php:32
 #: assets/blocks/course-list-block/index.js:36
 #: assets/dist/blocks/global-blocks.js:842
@@ -1438,14 +1438,14 @@ msgstr ""
 msgid "Course List"
 msgstr ""
 
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:193
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:194
 #: includes/block-patterns/page/templates/v1/landing-page-grid.php:44
 #: includes/block-patterns/page/templates/v1/landing-page-list.php:44
 #: includes/block-patterns/page/templates/v2/landing-page.php:36
 msgid "Explore all courses"
 msgstr ""
 
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:214
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:215
 #: includes/block-patterns/page/templates/v1/landing-page-grid.php:68
 #: includes/block-patterns/page/templates/v1/landing-page-list.php:78
 #: includes/block-patterns/page/templates/v2/landing-page.php:57
@@ -1454,7 +1454,7 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:222
+#: includes/block-patterns/course-list/class-sensei-course-list-block-patterns.php:223
 #: includes/block-patterns/page/templates/v1/landing-page-grid.php:76
 #: includes/block-patterns/page/templates/v1/landing-page-list.php:86
 #: includes/block-patterns/page/templates/v2/landing-page.php:65
@@ -2176,8 +2176,8 @@ msgstr ""
 #: includes/blocks/class-sensei-learner-messages-button-block.php:76
 #: includes/class-sensei-admin.php:1630
 #: includes/class-sensei-course.php:2248
-#: includes/class-sensei-messages.php:944
-#: includes/class-sensei-messages.php:1040
+#: includes/class-sensei-messages.php:943
+#: includes/class-sensei-messages.php:1039
 #: assets/blocks/learner-messages-button-block/index.js:14
 #: assets/dist/blocks/single-page.js:360
 msgid "My Messages"
@@ -3060,7 +3060,7 @@ msgid "This student has not completed any courses yet."
 msgstr ""
 
 #: includes/class-sensei-course.php:2247
-#: includes/class-sensei-messages.php:1039
+#: includes/class-sensei-messages.php:1038
 msgid "View & reply to private messages sent to your course & lesson teachers."
 msgstr ""
 
@@ -4244,24 +4244,24 @@ msgstr ""
 msgid "You are not allowed to view this message."
 msgstr ""
 
-#: includes/class-sensei-messages.php:777
+#: includes/class-sensei-messages.php:776
 msgid "Please log in to view your messages."
 msgstr ""
 
 #. translators: Placeholders are the sender's display name and the date, respectively.
-#: includes/class-sensei-messages.php:874
-#: includes/class-sensei-messages.php:1016
+#: includes/class-sensei-messages.php:873
+#: includes/class-sensei-messages.php:1015
 msgid "Sent by %1$s on %2$s."
 msgstr ""
 
 #. translators: Placeholder is a link to post, with the post's title as the link text.
-#: includes/class-sensei-messages.php:899
+#: includes/class-sensei-messages.php:898
 msgctxt "message title with a link to the post"
 msgid "Re: %1$s"
 msgstr ""
 
 #. translators: Placeholder is the post title.
-#: includes/class-sensei-messages.php:993
+#: includes/class-sensei-messages.php:992
 msgctxt "message title without a link to the post"
 msgid "Re: %1$s"
 msgstr ""
@@ -5657,22 +5657,22 @@ msgid "Enable for all courses"
 msgstr ""
 
 #: includes/class-sensei-teacher.php:140
-#: includes/class-sensei-teacher.php:259
-#: includes/class-sensei-teacher.php:1358
+#: includes/class-sensei-teacher.php:258
+#: includes/class-sensei-teacher.php:1357
 #: assets/dist/js/admin/course-edit.js:71
 #: assets/js/admin/course-general-sidebar.js:123
 msgid "Teacher"
 msgstr ""
 
-#: includes/class-sensei-teacher.php:1129
+#: includes/class-sensei-teacher.php:1128
 msgid "New course created."
 msgstr ""
 
-#: includes/class-sensei-teacher.php:1144
+#: includes/class-sensei-teacher.php:1143
 msgid "New course created by"
 msgstr ""
 
-#: includes/class-sensei-teacher.php:1505
+#: includes/class-sensei-teacher.php:1504
 msgid "Show all teachers"
 msgstr ""
 
@@ -7023,41 +7023,41 @@ msgstr ""
 msgid "Course not found."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:168
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:188
 msgid "Input for course structure was invalid."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:187
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:207
 msgid "An error occurred while saving the course structure."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:249
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:269
 msgid "Lesson post ID"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:253
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:273
 msgid "Lesson title"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:257
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:277
 msgid "Whether the lesson is currently a draft"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:279
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:299
 msgid "Module term ID"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:283
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:303
 msgid "Module title"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:287
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:307
 #: assets/blocks/course-outline/module-block/module-edit.js:232
 #: assets/dist/blocks/single-course.js:1492
 msgid "Module description"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:291
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:311
 msgid "Lessons in module"
 msgstr ""
 
