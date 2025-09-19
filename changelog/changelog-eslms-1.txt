@@ -1,0 +1,4 @@
+Significance: patch
+Type: development
+
+Adding missing fucntionalities to Course Title Block
