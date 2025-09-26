@@ -37,7 +37,7 @@ class Sensei_Previous_Lesson_Block {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes, string $content ) : string {
+	public function render( array $attributes, string $content ): string {
 
 		$lesson = get_post();
 

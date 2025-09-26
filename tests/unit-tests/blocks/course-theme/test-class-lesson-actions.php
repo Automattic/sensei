@@ -186,7 +186,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		\Sensei_Utils::sensei_start_lesson( $lesson->ID, get_current_user_id(), true );
 
 		$GLOBALS['post'] = $lesson2;
-		$block = new Lesson_Actions();
+		$block           = new Lesson_Actions();
 
 		$this->assertStringContainsString( 'Previous Lesson', $block->render( [ 'options' => [ 'previousLesson' => true ] ] ), 'Should render "previousLesson Lesson" link if the option is enabled and there is a previous lesson in the course.' );
 	}
