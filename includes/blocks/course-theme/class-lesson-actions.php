@@ -140,7 +140,6 @@ class Lesson_Actions {
 		$icon  = \Sensei()->assets->get_icon( 'arrow-right' );
 
 		return ( "<a role='button' class='wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__next-lesson is-primary has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
-
 	}
 
 	/**
@@ -187,8 +186,7 @@ class Lesson_Actions {
 			return '';
 		}
 
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-
+		$course_id        = Sensei()->lesson->get_course_id( $lesson_id );
 		$is_learning_mode = \Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
 
 		if ( $is_learning_mode && 'quiz' === get_post_type() ) {
