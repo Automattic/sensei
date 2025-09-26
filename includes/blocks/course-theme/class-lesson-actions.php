@@ -89,13 +89,35 @@ class Lesson_Actions {
 
 		return (
 			'<div class="wp-block-button is-style-outline">' .
-				'<button disabled="disabled" class="wp-block-button__link wp-element-button sensei-course-theme-lesson-actions__completed sensei-course-theme__button is-secondary is-completed has-icon">' . $icon .
+				'<button role="status" disabled="disabled" class="wp-block-button__link wp-element-button sensei-course-theme-lesson-actions__completed sensei-course-theme__button is-secondary is-completed has-icon">' . $icon .
 					' <span>' .
 						$label .
 					'</span>' .
 				'</button>' .
 			'</div>'
 		);
+
+	}
+
+	/**
+	 * Render a link button for the previous lesson.
+	 *
+	 * @return string
+	 */
+	private function render_previous_lesson() {
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+
+		$urls = sensei_get_prev_next_lessons( $lesson_id );
+		$url  = $urls['previous']['url'] ?? null;
+
+		if ( empty( $url ) ) {
+			return '';
+		}
+
+		$label = __( 'Previous Lesson', 'sensei-lms' );
+		$icon  = \Sensei()->assets->get_icon( 'arrow-right' );
+
+		return ( "<a role='button' class='wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__prev-lesson is-primary has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
 
 	}
 
@@ -117,7 +139,7 @@ class Lesson_Actions {
 		$label = __( 'Next Lesson', 'sensei-lms' );
 		$icon  = \Sensei()->assets->get_icon( 'arrow-right' );
 
-		return ( "<a class='wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__next-lesson is-primary has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
+		return ( "<a role='button' class='wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__next-lesson is-primary has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
 
 	}
 
@@ -183,6 +205,10 @@ class Lesson_Actions {
 			$class[]   = 'lesson-completed';
 			$actions[] = $this->render_completed_lesson();
 
+			if ( ! empty( $attributes['options']['previousLesson'] ) ) {
+				$actions[] = $this->render_previous_lesson();
+			}
+
 			if ( ! empty( $attributes['options']['nextLesson'] ) ) {
 				$actions[] = $this->render_next_lesson();
 			}
@@ -195,6 +221,11 @@ class Lesson_Actions {
 
 			if ( ! empty( $quiz_permalink ) && ! $is_quiz_submitted ) {
 				$render_quiz_button = true;
+			}
+
+			// Previous button.
+			if ( ! empty( $attributes['options']['previousLesson'] ) ) {
+				$actions[] = $this->render_previous_lesson();
 			}
 
 			// Complete button.

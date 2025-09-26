@@ -34,7 +34,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<!-- wp:group {"style":{"spacing":{"margin":{"top":"40px"}}},"layout":{"type":"constrained"}} -->
 		<div class="wp-block-group" style="margin-top:40px">
-			<!-- wp:sensei-lms/page-actions {"style":{"spacing":{"blockGap":"43px"}}} /-->
 
 			<!-- wp:group {"style":{"spacing":{"margin":{"top":"20px"}}},"className":"sensei-lesson-footer","layout":{"type":"flex","flexWrap":"nowrap"}} -->
 			<div class="wp-block-group sensei-lesson-footer" style="margin-top:20px">
@@ -50,11 +49,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<!-- /wp:sensei-lms/button-view-quiz -->
 
 						<!-- wp:sensei-lms/button-lesson-completed {"inContainer":true,"className":"is-style-outline"} -->
-						<div class="wp-block-sensei-lms-button-lesson-completed is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-lesson-completed__wrapper"><div class="wp-block-sensei-lms-button-lesson-completed is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link"><?php esc_html_e( 'Completed', 'sensei-lms' ); ?></button></div></div>
+						<div class="wp-block-sensei-lms-button-lesson-completed is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-lesson-completed__wrapper"><div class="wp-block-sensei-lms-button-lesson-completed is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><button role="status" class="wp-block-button__link"><?php esc_html_e( 'Completed', 'sensei-lms' ); ?></button></div></div>
 						<!-- /wp:sensei-lms/button-lesson-completed -->
 
+						<!-- wp:sensei-lms/button-previous-lesson {"inContainer":true} -->
+						<div class="wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper"><div class="wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><span class="wp-block-button__link"><?php esc_html_e( 'Previous Lesson', 'sensei-lms' ); ?></span></div></div>
+						<!-- /wp:sensei-lms/button-previous-lesson -->
+
 						<!-- wp:sensei-lms/button-next-lesson {"inContainer":true} -->
-						<div class="wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper"><div class="wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link"><?php esc_html_e( 'Next Lesson', 'sensei-lms' ); ?></button></div></div>
+						<div class="wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper"><div class="wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><span class="wp-block-button__link"><?php esc_html_e( 'Next Lesson', 'sensei-lms' ); ?></span></div></div>
 						<!-- /wp:sensei-lms/button-next-lesson -->
 					</div>
 				</div>

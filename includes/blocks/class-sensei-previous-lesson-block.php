@@ -11,16 +11,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Next_Lesson_Block is responsible for rendering the 'Next Lesson' block.
+ * Class Sensei_Previous_Lesson_Block is responsible for rendering the 'Previous Lesson' block.
  */
-class Sensei_Next_Lesson_Block {
+class Sensei_Previous_Lesson_Block {
 
 	/**
-	 * Sensei_Next_Lesson_Block constructor.
+	 * Sensei_Previous_Lesson_Block constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/button-next-lesson',
+			'sensei-lms/button-previous-lesson',
 			[
 				'render_callback' => [ $this, 'render' ],
 			]
@@ -38,27 +38,28 @@ class Sensei_Next_Lesson_Block {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes, string $content ) : string {
+
 		$lesson = get_post();
 
-		if ( empty( $lesson ) || ! Sensei_Utils::user_completed_lesson( $lesson->ID ) ) {
+		if ( empty( $lesson ) ) {
 			return '';
 		}
 
 		$urls = sensei_get_prev_next_lessons( $lesson->ID );
 
-		if ( empty( $urls['next']['url'] ) ) {
+		if ( empty( $urls['previous']['url'] ) ) {
 			return '';
 		}
 
 		if ( ! empty( $attributes['className'] ) && false !== strpos( $attributes['className'], 'is-style-link' ) ) {
 			return preg_replace(
 				'/<a /',
-				'<a href="' . esc_url( $urls['next']['url'] ) . '" ',
+				'<a href="' . esc_url( $urls['previous']['url'] ) . '" ',
 				$content,
 				1
 			);
 		}
 
-		return '<a role="button" href="' . esc_url( $urls['next']['url'] ) . '" >' . $content . '</a>';
+		return '<a role="button" href="' . esc_url( $urls['previous']['url'] ) . '" >' . $content . '</a>';
 	}
 }

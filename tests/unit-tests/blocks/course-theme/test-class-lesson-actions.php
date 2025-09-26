@@ -146,7 +146,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test lesson actions block when user already completed the lesson.
+	 * Test lesson actions block when user is on the first lesson.
 	 */
 	public function testAlreadyCompletedShowsCompletedBadge() {
 		list( $lesson ) = $this->create_enrolled_lesson_with_quiz();
@@ -155,6 +155,40 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$block = new Lesson_Actions();
 
 		$this->assertStringContainsString( 'Completed', $block->render(), 'Should render "Completed" button if user already completed the lesson.' );
+	}
+
+	/**
+	 * Test lesson actions block when user already completed the first lesson.
+	 */
+	public function testFirstLessonNoPreviousLessonButton() {
+		$this->create_enrolled_lesson();
+
+		$block = new Lesson_Actions();
+
+		$this->assertStringNotContainsString( 'Previous Lesson', $block->render( [ 'options' => [ 'previousLesson' => true ] ] ), 'Should not render "Previous Lesson" link if the option is enabled but we are on the first lesson.' );
+	}
+
+	/**
+	 * Test lesson actions block when user already completed the first lesson.
+	 */
+	public function testSecondLessonShowPreviousLessonButton() {
+		list( $lesson, $course ) = $this->create_enrolled_lesson();
+		$lesson2                 = $this->factory->lesson->create_and_get(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course->ID,
+				],
+			]
+		);
+		$lesson_order            = [ $lesson->ID, $lesson2->ID ];
+		Sensei()->admin->save_lesson_order( implode( ',', $lesson_order ), $course->ID );
+
+		\Sensei_Utils::sensei_start_lesson( $lesson->ID, get_current_user_id(), true );
+
+		$GLOBALS['post'] = $lesson2;
+		$block = new Lesson_Actions();
+
+		$this->assertStringContainsString( 'Previous Lesson', $block->render( [ 'options' => [ 'previousLesson' => true ] ] ), 'Should render "previousLesson Lesson" link if the option is enabled and there is a previous lesson in the course.' );
 	}
 
 	/**
