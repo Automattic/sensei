@@ -63,17 +63,20 @@ class Sensei_Reports_Overview_Service_Students {
 	public function get_user_last_activity_date( int $user_id ): string {
 		global $wpdb;
 
-		$sql = "SELECT MAX({$wpdb->comments}.comment_date_gmt)
-				FROM {$wpdb->comments}
-					USE INDEX (sensei_comment_type_user_id)
-				WHERE {$wpdb->comments}.user_id = %d
-					AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
-					AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-				ORDER BY {$wpdb->comments}.comment_date_gmt DESC
-		";
-
-		$last_activity_date = $wpdb->get_var( $wpdb->prepare( $sql, $user_id ) );
-
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$last_activity_date = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT MAX({$wpdb->comments}.comment_date_gmt)
+					FROM {$wpdb->comments}
+						USE INDEX (sensei_comment_type_user_id)
+					WHERE {$wpdb->comments}.user_id = %d
+						AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
+						AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
+					ORDER BY {$wpdb->comments}.comment_date_gmt DESC
+				",
+				$user_id
+			)
+		);
 		return $last_activity_date ?? '';
 	}
 }
