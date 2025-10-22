@@ -78,7 +78,6 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		add_action( 'pre_user_query', [ $this, 'group_by_users' ] );
 
 		if ( $this->get_is_last_activity_filter_enabled() ) {
-			add_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 			add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 
 			if ( ! empty( $query_args['orderby'] ) && 'last_activity_date' === $query_args['orderby'] ) {
@@ -92,7 +91,6 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 
 		remove_action( 'pre_user_query', [ $this, 'add_pre_user_query_hook' ] );
 		remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
-		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 
 		$learners               = $wp_user_search->get_results();
@@ -191,27 +189,6 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 */
 	public function add_orderby_custom_field_to_user_query( WP_User_Query $query ) {
 		$query->query_orderby = 'ORDER BY ' . $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
-	}
-
-	/**
-	 * Add the `last_activity` field to the user query.
-	 *
-	 * @access private
-	 *
-	 * @param WP_User_Query $query The user query.
-	 */
-	public function add_last_activity_to_user_query( WP_User_Query $query ) {
-		global $wpdb;
-
-		$query->query_fields .= ", (
-			SELECT MAX({$wpdb->comments}.comment_date_gmt)
-			FROM {$wpdb->comments}
-			USE INDEX (sensei_comment_type_user_id)
-			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
-			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
-			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
-		) AS last_activity_date";
 	}
 
 	/**

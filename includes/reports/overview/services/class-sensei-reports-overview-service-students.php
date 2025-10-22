@@ -51,4 +51,29 @@ class Sensei_Reports_Overview_Service_Students {
 		$average_grade_value = ceil( $sum_result->grade_sum / $sum_result->grade_count );
 		return $average_grade_value;
 	}
+
+	/**
+	 * Retrieves the most recent activity date of a user in GMT from the comments table,
+	 * specifically for approved lesson status comments.
+	 *
+	 * @param int $user_id The ID of the user for whom the last activity is being retrieved.
+	 *
+	 * @return string The date of the user's last activity in GMT, or an empty string if no activity is found.
+	 */
+	public function get_user_last_activity_date( int $user_id ): string {
+		global $wpdb;
+
+		$sql = "SELECT MAX({$wpdb->comments}.comment_date_gmt)
+				FROM {$wpdb->comments}
+					USE INDEX (sensei_comment_type_user_id)
+				WHERE {$wpdb->comments}.user_id = %d
+					AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
+					AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
+				ORDER BY {$wpdb->comments}.comment_date_gmt DESC
+		";
+
+		$last_activity_date = $wpdb->get_var( $wpdb->prepare( $sql, $user_id ) );
+
+		return $last_activity_date ?? '';
+	}
 }

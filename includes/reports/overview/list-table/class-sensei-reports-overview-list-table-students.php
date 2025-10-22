@@ -234,10 +234,13 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			$user_average_grade .= '%';
 		}
 
-		$last_activity_date = __( 'N/A', 'sensei-lms' );
+		// Get Last User Activity Date.
+		$last_activity_date = $this->reports_overview_service_students->get_user_last_activity_date( $item->ID );
 
-		if ( ! empty( $item->last_activity_date ) ) {
-			$last_activity_date = $this->csv_output ? $item->last_activity_date : Sensei_Utils::format_last_activity_date( $item->last_activity_date );
+		if ( empty( $last_activity_date ) ) {
+			$last_activity_date = $this->csv_output ? '' : __( 'N/A', 'sensei-lms' );
+		} else {
+			$last_activity_date = $this->csv_output ? $last_activity_date : Sensei_Utils::format_last_activity_date( $last_activity_date );
 		}
 
 		/**
