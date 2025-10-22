@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Sensei Reports page times out on large sites #7857
