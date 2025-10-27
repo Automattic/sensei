@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Optimize a slow query on the reports screen
