@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Optimize a slow query on the reports screen
+Fix reports screen times out on larger sites
