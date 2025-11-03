@@ -19,7 +19,7 @@ class Sensei_Course_Completed_Actions_Block {
 	 * Sensei_Course_Completed_Actions_Block constructor.
 	 */
 	public function __construct() {
-		add_filter( 'render_block', [ $this, 'update_more_courses_button_url' ], 10, 2 );
+		add_filter( 'render_block_core/button', [ $this, 'update_more_courses_button_url' ], 10, 2 );
 	}
 
 	/**
