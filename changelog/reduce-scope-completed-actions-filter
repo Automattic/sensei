@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Sensei_Course_Completed_Actions_Block: Run filter only on core/button blocks
