@@ -1,4 +1,4 @@
 Significance: patch
-Type: changed
+Type: fixed
 
-Sensei_Course_Completed_Actions_Block: Run filter only on core/button blocks
+Prevent duplicate queries from happening on every block render
