@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix the course structure API exposing the lesson AI generated bootstrap text
