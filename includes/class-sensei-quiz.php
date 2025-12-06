@@ -2207,13 +2207,11 @@ class Sensei_Quiz {
 		$right_answers = get_post_meta( $question_id, '_question_right_answer', true );
 		$wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true );
 
-		// Multiple choice question is incomplete if there isn't at least one right answer.
-		// Wrong answers are optional - it's valid to have all answers be correct.
+		// Multiple choice question is incomplete if there isn't at least one right answer. Wrong answers are optional - it's valid to have all answers be correct.
 		if ( ! is_array( $right_answers ) || count( $right_answers ) < 1 ) {
 			return false;
 		}
 
-		// Ensure wrong_answers is an array (even if empty).
 		if ( ! is_array( $wrong_answers ) ) {
 			$wrong_answers = array();
 		}
