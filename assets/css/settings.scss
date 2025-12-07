@@ -1115,18 +1115,6 @@ $promo_highlight: #43af99;
 	}
 }
 
-.sensei-settings-tab {
-	&__badge {
-		background-color: var(--wp-admin-theme-color);
-		color: white;
-		font-size: 11px;
-		height: 16px;
-		line-height: 16px;
-		border-radius: 12px;
-		padding: 1px 5px 3px;
-	}
-}
-
 .sensei-settings {
 	&__description--small {
 		max-width: 320px;
