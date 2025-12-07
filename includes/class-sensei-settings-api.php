@@ -346,10 +346,6 @@ class Sensei_Settings_API {
 					'name'  => esc_attr( $v['name'] ),
 					'class' => esc_attr( $classes ),
 				);
-
-				if ( ! empty( $v['badge'] ) ) {
-					$sections[ $k ]['badge'] = esc_html( $v['badge'] );
-				}
 			}
 
 			$count = 1;
@@ -359,9 +355,6 @@ class Sensei_Settings_API {
 				if ( isset( $v['class'] ) && ( '' !== $v['class'] ) ) {
 					$html .= ' class="' . esc_attr( $v['class'] ) . '"'; }
 				$html .= '>' . esc_html( $v['name'] );
-				if ( ! empty( $v['badge'] ) ) {
-					$html .= ' <span class="sensei-settings-tab__badge">' . $v['badge'] . '</span>';
-				}
 				$html .= '</a>';
 				if ( $count <= count( $sections ) ) {
 					$html .= ' | '; }
