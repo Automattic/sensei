@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix lesson comments being visible to unregistered users in some cases
