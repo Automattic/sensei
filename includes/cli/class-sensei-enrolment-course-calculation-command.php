@@ -66,12 +66,6 @@ class Sensei_Enrolment_Course_Calculation_Command {
 		);
 
 		if ( $should_restart || ! $job->resume() ) {
-			$job = $job_scheduler->start_course_calculation_job( $course_id );
-
-			if ( ! $job ) {
-				WP_CLI::error( __( 'Unable to start the course enrolment calculation job.', 'sensei-lms' ) );
-			}
-
 			WP_CLI::log(
 				sprintf(
 					/* translators: Placeholder is the course ID. */
