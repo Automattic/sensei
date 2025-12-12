@@ -46,8 +46,10 @@ class Sensei_Enrolment_Course_Calculation_Command {
 			WP_CLI::error( __( 'You must provide a course ID.', 'sensei-lms' ) );
 		}
 
-		if ( 'course' !== get_post_type( $course_id ) ) {
-			WP_CLI::error( __( 'The provided course ID is not valid.', 'sensei-lms' ) );
+		$course = get_post( $course_id );
+		if ( ! $course || 'course' !== get_post_type( $course ) ) {
+			/* translators: Placeholder is the course ID. */
+			WP_CLI::error( sprintf( __( 'The course with ID %d does not exist.', 'sensei-lms' ), $course_id ) );
 		}
 
 		$job_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
