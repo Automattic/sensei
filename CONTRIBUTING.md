@@ -4,17 +4,19 @@ Thank you for considering contributing to Sensei LMS! Your contributions help ma
 
 Please read the following guidelines before contributing.
 
+Automattician? Read more at: PCYsg-15ed-p2
+
 ## Getting Started
 
 To contribute to Sensei LMS, please follow these steps:
 
 1. Make sure you [set up your development environment](https://github.com/Automattic/sensei/wiki/Setting-Up-Your-Development-Environment) to get the necessary tools in place before proceeding.
 2. Fork the Sensei LMS repository to your own account.
-2. Clone the forked repository to your local machine.
-3. Create a new branch for your contribution.
-4. Make your changes and test them thoroughly. 
-5. Commit your changes and push them to your forked repository.
-6. Create a pull request to merge your changes into the main Sensei LMS repository.
+3. Clone the forked repository to your local machine.
+4. Create a new branch for your contribution.
+5. Make your changes and test them thoroughly.
+6. Commit your changes and push them to your forked repository.
+7. Create a pull request to merge your changes into the main Sensei LMS repository.
 
 ## Issues
 
