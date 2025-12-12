@@ -54,7 +54,7 @@ describe( 'Courses List Block', () => {
 	} );
 
 	/**
-	 * This test is failing because the course list block patterns now working on WordPress 6.9. A fix was merged but not released yet.
+	 * This test is failing because the course list block patterns are now not working on WordPress 6.9. A fix was merged but not released yet.
 	 *
 	 * @see https://github.com/Automattic/sensei/issues/7873
 	 */
