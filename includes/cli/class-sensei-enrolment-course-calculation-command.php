@@ -5,8 +5,6 @@
  * @package sensei
  */
 
-use WP_CLI;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
