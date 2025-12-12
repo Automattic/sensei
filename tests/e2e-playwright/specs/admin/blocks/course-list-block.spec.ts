@@ -53,7 +53,12 @@ describe( 'Courses List Block', () => {
 		} );
 	} );
 
-	test( 'it should render a list of courses', async ( { page } ) => {
+	/**
+	 * This test is failing because the course list block patterns now working on WordPress 6.9. A fix was merged but not released yet.
+	 *
+	 * @see https://github.com/Automattic/sensei/issues/7873
+	 */
+	test.fixme( 'it should render a list of courses', async ( { page } ) => {
 		const postTypePage = new PostType( page, 'page' );
 
 		await postTypePage.goToPostTypeCreationPage();
