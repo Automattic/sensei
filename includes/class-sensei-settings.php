@@ -255,7 +255,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$sections['appearance-settings'] = array(
 			'name'        => __( 'Appearance', 'sensei-lms' ),
 			'description' => __( 'Settings that apply to the entire plugin.', 'sensei-lms' ),
-			'badge'       => __( 'new', 'sensei-lms' ),
 		);
 
 		$sections['course-settings'] = array(
