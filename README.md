@@ -77,6 +77,8 @@ The manual installation method involves downloading the plugin and uploading it 
 
 To learn more about the Sensei LMS project and how to use it effectively, check out our comprehensive [Documentation](https://senseilms.com/documentation/).
 
+Automattician? Read more at: PCYsg-15ed-p2
+
 ## Community and Support
 
 Join the growing community of Sensei LMS users and developers! Share your ideas, ask questions, and provide feedback through our [community forums](https://educatorsp2.wordpress.com/), or contact us at our [Free Support Forum](https://wordpress.org/support/plugin/sensei-lms/).
