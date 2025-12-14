@@ -184,7 +184,10 @@ class Sensei_Course_List_Block_Patterns {
 					'title'      => __( 'Course List', 'sensei-lms' ),
 					'categories' => array( 'sensei-lms' ),
 					'blockTypes' => array( 'core/query/sensei-lms/course-list' ),
-					'content'    => '<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"80px","right":"20px","left":"20px","bottom":"100px"},"blockGap":"0px"},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"backgroundColor":"foreground","textColor":"background","className":"sensei-course-theme-course-list-pattern","layout":{"type":"constrained","contentSize":"1000px"}} -->
+					'content'    => '<!-- wp:query {"query":{"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":"3","inherit":false},"className":"wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list\u002d\u002dis-grid-view","layout":{"type":"default"}} -->
+						<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-grid-view">
+
+						<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"80px","right":"20px","left":"20px","bottom":"100px"},"blockGap":"0px"},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"backgroundColor":"foreground","textColor":"background","className":"sensei-course-theme-course-list-pattern","layout":{"type":"constrained","contentSize":"1000px"}} -->
 						<div class="wp-block-group alignfull sensei-course-theme-course-list-pattern has-background-color has-foreground-background-color has-text-color has-background has-link-color" style="padding-top:80px;padding-right:20px;padding-bottom:100px;padding-left:20px"><!-- wp:group {"style":{"border":{"left":{"width":"1px","style":"solid"},"top":{},"right":{},"bottom":{}},"spacing":{"padding":{"left":"20px"},"margin":{"bottom":"40px"}}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"space-between"}} -->
 						<div class="wp-block-group" style="border-left-style:solid;border-left-width:1px;margin-bottom:40px;padding-left:20px"><!-- wp:heading {"style":{"typography":{"textTransform":"uppercase","fontStyle":"normal","fontWeight":"700"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}},"fontSize":"medium"} -->
 						<h2 class="wp-block-heading has-medium-font-size" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;font-style:normal;font-weight:700;text-transform:uppercase">' . esc_html__( 'Course List', 'sensei-lms' ) . '</h2>
@@ -195,8 +198,7 @@ class Sensei_Course_List_Block_Patterns {
 						<!-- /wp:paragraph --></div>
 						<!-- /wp:group -->
 
-						<!-- wp:query {"query":{"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":"3","inherit":false},"className":"wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list\u002d\u002dis-grid-view","layout":{"type":"default"}} -->
-						<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-grid-view"><!-- wp:post-template {"align":"wide","layout":{"type":"grid","columnCount":3}} -->
+						<!-- wp:post-template {"align":"wide","layout":{"type":"grid","columnCount":3}} -->
 						<!-- wp:group {"style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"},"blockGap":"0px"},"border":{"width":"0px","style":"none"}},"layout":{"inherit":false}} -->
 						<div class="wp-block-group" style="border-style:none;border-width:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:post-featured-image {"isLink":true,"height":"200px","lock":{"move":false,"remove":false},"style":{"border":{"width":"1px"}},"borderColor":"background"} /-->
 
@@ -225,8 +227,8 @@ class Sensei_Course_List_Block_Patterns {
 						<!-- /wp:sensei-lms/course-actions --></div>
 						<!-- /wp:group -->
 						<!-- /wp:post-template --></div>
-						<!-- /wp:query --></div>
-						<!-- /wp:group -->',
+						<!-- /wp:group --></div>
+						<!-- /wp:query -->',
 				],
 		];
 

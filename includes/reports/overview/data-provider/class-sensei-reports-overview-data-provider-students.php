@@ -203,15 +203,16 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	public function add_last_activity_to_user_query( WP_User_Query $query ) {
 		global $wpdb;
 
-		$query->query_fields .= ", (
-			SELECT MAX({$wpdb->comments}.comment_date_gmt)
-			FROM {$wpdb->comments}
-			USE INDEX (sensei_comment_type_user_id)
-			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
-			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
-			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
-		) AS last_activity_date";
+		$query->query_fields .= ', last_activity_date';
+
+		$query->query_from .= "
+			LEFT JOIN (
+				SELECT {$wpdb->comments}.user_id, MAX({$wpdb->comments}.comment_date_gmt) AS last_activity_date
+				FROM {$wpdb->comments}
+				WHERE {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
+				AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
+				GROUP BY {$wpdb->comments}.user_id
+			) AS l ON {$wpdb->users}.ID = l.user_id";
 	}
 
 	/**

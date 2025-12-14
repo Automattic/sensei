@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 4.25.0
+Stable tag: 4.25.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,26 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.25.1 - 2025-09-18
+#### Security
+- Add authorization check when updating the lesson course relation
+- Add authorization check when updating a lesson in the course structure
+
+#### Added
+- Add support for changing text color of Course Overview block [#7826](https://github.com/Automattic/sensei/pull/7826)
+
+#### Changed
+- Cleanup deprecated teacher role capabilities [#7829](https://github.com/Automattic/sensei/pull/7829)
+- Remove teacher redirect on login [#7821](https://github.com/Automattic/sensei/pull/7821)
+
+#### Fixed
+- Fix "Calling get_class() without arguments is deprecated" PHP notice [#7815](https://github.com/Automattic/sensei/pull/7815)
+- Invalid property notice for messages [#7814](https://github.com/Automattic/sensei/pull/7814)
+- Non course-list patterns showing up in the Course List block's pattern picker [#7797](https://github.com/Automattic/sensei/pull/7797)
+- PHP fatal when calling array_rand on empty array [#7828](https://github.com/Automattic/sensei/pull/7828)
+- Squished radio buttons / checkboxes for multi-line quiz answers [#7820](https://github.com/Automattic/sensei/pull/7820)
+- Update button cursor on hover for improved accessibility [#7843](https://github.com/Automattic/sensei/pull/7843)
+
 ### 4.25.0 - 2025-04-15
 #### Added
 - Allow editing course archive page title from the block editor [#7786](https://github.com/Automattic/sensei/pull/7786)
@@ -199,22 +219,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 #### Fixed
 - Initialize Sensei blocks for posts [#7736](https://github.com/Automattic/sensei/pull/7736)
 - Remove usage of deprecated parameters in WordPress Core functions [#7724](https://github.com/Automattic/sensei/pull/7724)
-
-### 4.24.4 - 2024-11-12
-#### Security
-- Messages and emails accessible using the search REST API
-
-#### Added
-- Allow additional users to manage students [#7700](https://github.com/Automattic/sensei/pull/7700)
-
-#### Fixed
-- Horizontal scroll on Course page when using Course theme [#7705](https://github.com/Automattic/sensei/pull/7705)
-- Loading some translations too early which generates a warning on WP 6.7 [#7701](https://github.com/Automattic/sensei/pull/7701)
-- PHP deprecation notice in View Results block [#7680](https://github.com/Automattic/sensei/pull/7680)
-- Hello elementor theme throwing 404 when rendering the Courses archive page [#7683](https://github.com/Automattic/sensei/pull/7683)
-- Label on course complete email received by the teacher [#7672](https://github.com/Automattic/sensei/pull/7672)
-- Timed quiz not stopping when time ends [#7675](https://github.com/Automattic/sensei/pull/7675)
-
-#### Development
-- Added a hook to conditionally render the lesson actions in the frontend [#7677](https://github.com/Automattic/sensei/pull/7677)
-- Filter course IDs associated with a given teacher [#7702](https://github.com/Automattic/sensei/pull/7702)

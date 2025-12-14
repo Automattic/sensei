@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix reports screen times out on larger sites

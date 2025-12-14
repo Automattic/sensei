@@ -62,6 +62,8 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 
 	public function get_block_instance( $block_content, $block_parent, \WP_Block $instance ) {
 		$this->block_instance = $instance;
+
+		return $block_content;
 	}
 
 	public function testCourseListBlock_AddsAttributeToInnerTakeCourseButton_WhenRendered() {

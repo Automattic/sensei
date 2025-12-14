@@ -845,10 +845,19 @@ class Sensei_Main {
 		 * @return {bool} Whether to enable feature.
 		 */
 		if ( apply_filters( 'sensei_email_mailpoet_feature', true ) ) {
-			if ( class_exists( \MailPoet\API\API::class ) ) {
-				$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
-				new Sensei\Emails\MailPoet\Main( $mailpoet_api );
-			}
+			add_action( 'mailpoet_initialized', [ $this, 'initialize_mailpoet' ] );
+		}
+	}
+
+	/**
+	 * Initialize MailPoet integration.
+	 *
+	 * @since $$next-version$$
+	 */
+	public function initialize_mailpoet() {
+		if ( class_exists( \MailPoet\API\API::class ) ) {
+			$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
+			new Sensei\Emails\MailPoet\Main( $mailpoet_api );
 		}
 	}
 
