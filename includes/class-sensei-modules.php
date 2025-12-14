@@ -2721,7 +2721,7 @@ class Sensei_Core_Modules {
 
 			$author = self::get_term_author( $term->slug );
 
-			if ( ! user_can( $author, 'manage_options' ) && isset( $term->name ) && $author instanceof WP_User ) {
+			if ( $author instanceof WP_User && ! user_can( $author, 'manage_options' ) && isset( $term->name ) ) {
 				$term->name = $term->name . ' (' . $author->display_name . ') ';
 			}
 
