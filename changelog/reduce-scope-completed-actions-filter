@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Prevent duplicate queries from happening on every block render
