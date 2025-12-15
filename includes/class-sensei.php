@@ -852,7 +852,7 @@ class Sensei_Main {
 	/**
 	 * Initialize MailPoet integration.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.25.2
 	 */
 	public function initialize_mailpoet() {
 		if ( class_exists( \MailPoet\API\API::class ) ) {
