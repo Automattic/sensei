@@ -142,7 +142,7 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 ### 4.25.2 - 2025-12-16
 #### Security
-- Fix XSS vulnerabity in the Contact Teacher block
+- Fix XSS vulnerability in the Contact Teacher block
 
 #### Removed
 - Remove "new" badge from Appearance settings tab [#7874](https://github.com/Automattic/sensei/pull/7874)
