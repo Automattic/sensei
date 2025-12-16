@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * WP-CLI command that runs the course enrolment calculation job.
  *
- * @since $$next-version$$
+ * @since 4.25.2
  */
 class Sensei_Enrolment_Course_Calculation_Command {
 

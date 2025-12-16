@@ -1,5 +1,24 @@
 *** Changelog ***
 
+## 4.25.2 - 2025-12-16
+### Security
+- Fix XSS vulnerability in the Contact Teacher block
+
+### Removed
+- Remove "new" badge from Appearance settings tab [#7874](https://github.com/Automattic/sensei/pull/7874)
+
+### Fixed
+- Allow multiple choice quiz questions with no wrong answers [#7872](https://github.com/Automattic/sensei/pull/7872)
+- Fix Course List pattern not working with newest Gutenberg [#7876](https://github.com/Automattic/sensei/pull/7876)
+- Fix error when activating MailPoet [#7864](https://github.com/Automattic/sensei/pull/7864)
+- Fix lesson comments being visible to unregistered users in some cases [#7848](https://github.com/Automattic/sensei/pull/7848)
+- Fix reports screen times out on larger sites [#7859](https://github.com/Automattic/sensei/pull/7859)
+- Fix the course structure API exposing the lesson AI generated bootstrap text [#7869](https://github.com/Automattic/sensei/pull/7869)
+- Prevent duplicate queries from happening on every block render [#7860](https://github.com/Automattic/sensei/pull/7860)
+
+### Development
+- Add CLI command for recalculating course enrolment [#7877](https://github.com/Automattic/sensei/pull/7877)
+
 ## 4.25.1 - 2025-09-18
 ### Security
 - Add authorization check when updating the lesson course relation

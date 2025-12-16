@@ -2,10 +2,10 @@
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
 Contributors: automattic, donnapep, m1r0, bogdannikolic
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 6.6
-Tested up to: 6.8
+Requires at least: 6.7
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 4.25.1
+Stable tag: 4.25.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,25 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.25.2 - 2025-12-16
+#### Security
+- Fix XSS vulnerability in the Contact Teacher block
+
+#### Removed
+- Remove "new" badge from Appearance settings tab [#7874](https://github.com/Automattic/sensei/pull/7874)
+
+#### Fixed
+- Allow multiple choice quiz questions with no wrong answers [#7872](https://github.com/Automattic/sensei/pull/7872)
+- Fix Course List pattern not working with newest Gutenberg [#7876](https://github.com/Automattic/sensei/pull/7876)
+- Fix error when activating MailPoet [#7864](https://github.com/Automattic/sensei/pull/7864)
+- Fix lesson comments being visible to unregistered users in some cases [#7848](https://github.com/Automattic/sensei/pull/7848)
+- Fix reports screen times out on larger sites [#7859](https://github.com/Automattic/sensei/pull/7859)
+- Fix the course structure API exposing the lesson AI generated bootstrap text [#7869](https://github.com/Automattic/sensei/pull/7869)
+- Prevent duplicate queries from happening on every block render [#7860](https://github.com/Automattic/sensei/pull/7860)
+
+#### Development
+- Add CLI command for recalculating course enrolment [#7877](https://github.com/Automattic/sensei/pull/7877)
+
 ### 4.25.1 - 2025-09-18
 #### Security
 - Add authorization check when updating the lesson course relation
@@ -191,31 +210,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 #### Development
 - Update NodeJS and NPM versions
-
-### 4.24.5 - 2025-01-16
-#### Security
-- Fix unprepared SQL
-- Remove feed content if the user doesn't have access to the lesson
-
-#### Added
-- Wrap question numbers in `<span>` tags [#7738](https://github.com/Automattic/sensei/pull/7738)
-
-#### Changed
-- Replace `date` with `gmdate` [#7735](https://github.com/Automattic/sensei/pull/7735)
-- Replace `unlink` with `wp_delete_file` [#7732](https://github.com/Automattic/sensei/pull/7732)
-- Replace `wp_json_encode` with `json_encode` [#7730](https://github.com/Automattic/sensei/pull/7730)
-- Update the placeholder to use an internal image [#7728](https://github.com/Automattic/sensei/pull/7728)
-- Replace `strip_tags` with `wp_strip_all_tags` [#7731](https://github.com/Automattic/sensei/pull/7731)
-
-#### Deprecated
-- Deprecate `load_localisation` and `load_plugin_textdomain` functions [#7713](https://github.com/Automattic/sensei/pull/7713)
-
-#### Removed
-- Remove manual loading of translations [#7713](https://github.com/Automattic/sensei/pull/7713)
-- Remove fallback code for Sensei Pro update reminder [#7729](https://github.com/Automattic/sensei/pull/7729)
-- Remove files that are already included in WordPress Core [#7727](https://github.com/Automattic/sensei/pull/7727)
-- Remove obsolete code from Students area [#7726](https://github.com/Automattic/sensei/pull/7726)
-
-#### Fixed
-- Initialize Sensei blocks for posts [#7736](https://github.com/Automattic/sensei/pull/7736)
-- Remove usage of deprecated parameters in WordPress Core functions [#7724](https://github.com/Automattic/sensei/pull/7724)

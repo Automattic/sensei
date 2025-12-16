@@ -254,7 +254,7 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 * Comments are only shown for lessons in block themes if the user can view
 	 * the lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.25.2
 	 *
 	 * @return bool
 	 */
