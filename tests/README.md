@@ -55,7 +55,7 @@ Run all PHP tests:
 
 Run a specific test class:
 
-    $ npm run test-php:wp-env -- --filter Sensei_Admin_Test
+    $ npm run test-php:wp-env -- --filter Sensei_Class_Admin_Test
 
 Run all Jest tests:
 
@@ -69,7 +69,7 @@ Run all PHP tests:
 
 Run a specific test class:
 
-    $ npm run test-php -- --filter Sensei_Admin_Test
+    $ npm run test-php -- --filter Sensei_Class_Admin_Test
 
 Run all Jest tests:
 
