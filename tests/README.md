@@ -9,13 +9,13 @@
 #### Prerequisites
 
 1. [Docker](https://docs.docker.com/get-docker/) installed and running.
-2. Run `npm install` in the plugin root directory.
+2. [Composer](https://getcomposer.org/) installed.
+3. Run `composer install` in the plugin root directory.
+4. Run `npm install` in the plugin root directory.
 
 #### Start the environment
 
     $ npm run wp-env start
-
-That's it. The environment includes a MySQL database and the WordPress test suite, so no additional setup is needed.
 
 ### Using a local MySQL database
 
