@@ -51,6 +51,6 @@ class Sensei_Course_Overview_Block_Test extends WP_UnitTestCase {
 
 		$result = do_blocks( self::CONTENT );
 
-		$this->assertEquals( '<div class="wp-block-sensei-lms-course-overview"><a href="http://example.org/?course=course-overview-block">Course Overview</a></div>', $result );
+		$this->assertEquals( '<div class="wp-block-sensei-lms-course-overview"><a href="' . home_url( '/' ) . '?course=course-overview-block">Course Overview</a></div>', $result );
 	}
 }

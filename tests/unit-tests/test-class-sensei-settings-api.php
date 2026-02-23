@@ -81,7 +81,7 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 		$tabs = ob_get_clean();
 
 		/** Assert. */
-		$this->assertStringContainsString( '<a href="http://example.org/wp-admin/admin.php?page=sensei-settings&#038;tab=default-settings" class="tab current">Default Settings</a>', $tabs );
+		$this->assertStringContainsString( '<a href="' . admin_url( 'admin.php' ) . '?page=sensei-settings&#038;tab=default-settings" class="tab current">Default Settings</a>', $tabs );
 	}
 
 	public function testSettingsTabs_WhenHasTabParam_AddsTheCurrentClassToTheTabLink() {
@@ -106,7 +106,7 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 		$tabs = ob_get_clean();
 
 		/** Assert. */
-		$this->assertStringContainsString( '<a href="http://example.org/wp-admin/admin.php?page=sensei-settings&#038;tab=other-settings" class="tab current">Other Settings</a>', $tabs );
+		$this->assertStringContainsString( '<a href="' . admin_url( 'admin.php' ) . '?page=sensei-settings&#038;tab=other-settings" class="tab current">Other Settings</a>', $tabs );
 	}
 
 	public function testSettingsTabs_WhenTabIsExternal_AddsTheExternalClassToTheTabLink() {
@@ -127,6 +127,6 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 		$tabs = ob_get_clean();
 
 		/** Assert. */
-		$this->assertStringContainsString( '<a href="http://example.org/wp-admin/admin.php?page=sensei-settings&#038;tab=other-settings" class="tab external">Other Settings</a>', $tabs );
+		$this->assertStringContainsString( '<a href="' . admin_url( 'admin.php' ) . '?page=sensei-settings&#038;tab=other-settings" class="tab external">Other Settings</a>', $tabs );
 	}
 }

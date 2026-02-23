@@ -133,7 +133,7 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 
 		$this->assertArraySubset(
 			[
-				'media' => 'http://example.org/wp-content/uploads/question-img.jpg',
+				'media' => wp_get_attachment_url( $image_id ),
 			],
 			$result[0]
 		);
@@ -159,7 +159,7 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 
 		$this->assertArraySubset(
 			[
-				'media' => 'http://example.org/wp-content/uploads/question-sound.mp3',
+				'media' => wp_get_attachment_url( $image_id ),
 			],
 			$result[0]
 		);

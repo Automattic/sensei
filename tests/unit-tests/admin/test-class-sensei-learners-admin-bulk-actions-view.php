@@ -112,6 +112,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View_Test extends WP_UnitTestCase {
 		$actual = ob_get_clean();
 
 		/* Assert. */
+		$expected = str_replace( 'http://example.org', site_url(), $expected );
 		self::assertSame( $expected, $actual );
 	}
 

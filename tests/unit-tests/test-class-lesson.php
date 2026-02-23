@@ -830,6 +830,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			</div>
 		</div>
 		';
+		$expected = str_replace( 'http://example.org', site_url(), $expected );
 		self::assertSame( $expected, $output );
 	}
 
@@ -972,7 +973,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			jQuery(function () {
 				jQuery("body.post-type-lesson .wrap a.page-title-action")
 					.last()
-					.after(\'<a href="http://example.org/wp-admin/post.php?post=' . $course_id . '&amp;action=edit" class="page-title-action" data-sensei-log-event="lesson_edit_course_click">Edit Course</a>\');
+					.after(\'<a href="' . admin_url( 'post.php?post=' . $course_id . '&amp;action=edit' ) . '" class="page-title-action" data-sensei-log-event="lesson_edit_course_click">Edit Course</a>\');
 			});
 		</script>
 		';

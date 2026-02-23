@@ -223,7 +223,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 
 		$this->assertArraySubset(
 			[
-				'image' => 'http://example.org/wp-content/uploads/course-img.png',
+				'image' => wp_get_attachment_url( $thumbnail_id ),
 			],
 			$result[0]
 		);
