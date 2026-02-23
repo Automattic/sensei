@@ -113,6 +113,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = str_replace( 'http://example.org', site_url(), $expected );
+
+		// Normalize smart quote entities for WP nightly compatibility.
+		$expected = str_replace( array( '&#8220;', '&#8221;' ), '"', $expected );
+		$actual   = str_replace( array( '&#8220;', '&#8221;' ), '"', $actual );
+
 		self::assertSame( $expected, $actual );
 	}
 

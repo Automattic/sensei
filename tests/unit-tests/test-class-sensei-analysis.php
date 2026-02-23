@@ -90,7 +90,12 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 		/* Assert */
 		$expected = '<h1>
 			<a href="' . admin_url( 'admin.php' ) . '?page=sensei_reports">Reports</a>&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_reports&#038;user_id=1">admin</a></span>			</h1>';
-		$this->assertEquals( $expected, $actual );
+
+		// Normalize ampersand entities for WP nightly compatibility.
+		$expected = str_replace( '&#038;', '&amp;', $expected );
+		$actual   = str_replace( '&#038;', '&amp;', $actual );
+
+		$this->assertSame( $expected, $actual );
 	}
 
 	public function testAnalysisPage_WhenNoView_LogsUsersEvent() {
