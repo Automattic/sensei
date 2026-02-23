@@ -91,7 +91,7 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 		$expected = '<h1>
 			<a href="' . admin_url( 'admin.php' ) . '?page=sensei_reports">Reports</a>&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_reports&#038;user_id=1">admin</a></span>			</h1>';
 
-		// Normalize ampersand entities for WP nightly compatibility.
+		// Normalize ampersand entities for cross-version compatibility.
 		$expected = str_replace( '&#038;', '&amp;', $expected );
 		$actual   = str_replace( '&#038;', '&amp;', $actual );
 

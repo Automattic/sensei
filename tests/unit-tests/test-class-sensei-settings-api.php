@@ -81,7 +81,7 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 		$tabs = ob_get_clean();
 
 		/** Assert. */
-		// Normalize ampersand entities for WP nightly compatibility.
+		// Normalize ampersand entities for cross-version compatibility.
 		$tabs = str_replace( '&#038;', '&amp;', $tabs );
 		$this->assertStringContainsString( '<a href="' . admin_url( 'admin.php' ) . '?page=sensei-settings&amp;tab=default-settings" class="tab current">Default Settings</a>', $tabs );
 	}
@@ -108,7 +108,7 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 		$tabs = ob_get_clean();
 
 		/** Assert. */
-		// Normalize ampersand entities for WP nightly compatibility.
+		// Normalize ampersand entities for cross-version compatibility.
 		$tabs = str_replace( '&#038;', '&amp;', $tabs );
 		$this->assertStringContainsString( '<a href="' . admin_url( 'admin.php' ) . '?page=sensei-settings&amp;tab=other-settings" class="tab current">Other Settings</a>', $tabs );
 	}
@@ -131,7 +131,7 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 		$tabs = ob_get_clean();
 
 		/** Assert. */
-		// Normalize ampersand entities for WP nightly compatibility.
+		// Normalize ampersand entities for cross-version compatibility.
 		$tabs = str_replace( '&#038;', '&amp;', $tabs );
 		$this->assertStringContainsString( '<a href="' . admin_url( 'admin.php' ) . '?page=sensei-settings&amp;tab=other-settings" class="tab external">Other Settings</a>', $tabs );
 	}
