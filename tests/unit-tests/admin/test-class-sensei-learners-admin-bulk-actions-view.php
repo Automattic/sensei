@@ -112,6 +112,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View_Test extends WP_UnitTestCase {
 		$actual = ob_get_clean();
 
 		/* Assert. */
+		$expected = str_replace( 'http://example.org', site_url(), $expected );
+
+		// Normalize all forms of double quotes for cross-version compatibility.
+		$quote_variants = array( '&#8220;', '&#8221;', "\xE2\x80\x9C", "\xE2\x80\x9D", '&ldquo;', '&rdquo;' );
+		$expected       = str_replace( $quote_variants, '"', $expected );
+		$actual         = str_replace( $quote_variants, '"', $actual );
+
 		self::assertSame( $expected, $actual );
 	}
 

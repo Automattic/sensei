@@ -325,7 +325,7 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'existant-file.png' );
 		$this->assertEquals( $thumbnail_id, $result );
 
-		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'http://example.org/wp-content/uploads/existant-file.png' );
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( wp_get_attachment_url( $thumbnail_id ) );
 		$this->assertEquals( $thumbnail_id, $result );
 	}
 
