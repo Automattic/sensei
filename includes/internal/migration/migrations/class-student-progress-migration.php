@@ -30,15 +30,6 @@ class Student_Progress_Migration extends Migration_Abstract {
 	public const LAST_COMMENT_ID_OPTION_NAME = 'sensei_migrated_progress_last_comment_id';
 
 	/**
-	 * Deprecated. Use LAST_COMMENT_ID_OPTION_NAME instead.
-	 *
-	 * @since 4.26.0
-	 * @deprecated 4.26.0
-	 * @var string
-	 */
-	public const LARST_COMMENT_ID_OPTION_NAME = self::LAST_COMMENT_ID_OPTION_NAME;
-
-	/**
 	 * The course progress data to insert.
 	 *
 	 * @var array
