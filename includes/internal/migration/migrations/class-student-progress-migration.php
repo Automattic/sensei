@@ -48,7 +48,6 @@ class Student_Progress_Migration extends Migration_Abstract {
 	/**
 	 * The size of a batch.
 	 *
-	 * @since 4.26.0
 	 * @var int
 	 */
 	private $batch_size;
@@ -56,15 +55,12 @@ class Student_Progress_Migration extends Migration_Abstract {
 	/**
 	 * The number of batches to insert in a single run.
 	 *
-	 * @since 4.26.0
 	 * @var int
 	 */
 	private $batch_count;
 
 	/**
 	 * Constructs a new instance of the migration.
-	 *
-	 * @since 4.26.0
 	 *
 	 * @param int $batch_size  The size of a batch (how many rows to insert in one insert query).
 	 * @param int $batch_count The number of batches to insert in a single run.

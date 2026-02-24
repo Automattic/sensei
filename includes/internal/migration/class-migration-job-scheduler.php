@@ -125,8 +125,6 @@ class Migration_Job_Scheduler {
 	/**
 	 * Initialize the migration job scheduler.
 	 *
-	 * @since 4.26.0
-	 *
 	 * @return void
 	 */
 	public function init(): void {
@@ -251,6 +249,7 @@ class Migration_Job_Scheduler {
 
 		$this->add_error( array( $error['message'] ) );
 
+		// Don't retry if retries were already exhausted and migration was marked failed.
 		$current_status = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
 		if ( self::STATUS_FAILED === $current_status ) {
 			return;
