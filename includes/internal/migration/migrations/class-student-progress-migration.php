@@ -64,7 +64,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		 *
 		 * @param int $batch_size The size of a batch.
 		 */
-		$this->batch_size = (int) apply_filters( 'sensei_hpps_student_progress_batch_size', $batch_size );
+		$this->batch_size = (int) apply_filters( 'sensei_migration_student_progress_batch_size', $batch_size );
 
 		/**
 		 * Filter the batch count for student progress migration.
@@ -73,7 +73,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		 *
 		 * @param int $batch_count The number of batches per run.
 		 */
-		$this->batch_count = (int) apply_filters( 'sensei_hpps_student_progress_batch_count', $batch_count );
+		$this->batch_count = (int) apply_filters( 'sensei_migration_student_progress_batch_count', $batch_count );
 	}
 
 	/**

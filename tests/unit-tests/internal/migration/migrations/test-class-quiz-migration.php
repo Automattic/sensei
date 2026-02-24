@@ -142,7 +142,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		$filter = function () {
 			return 25;
 		};
-		add_filter( 'sensei_hpps_quiz_migration_batch_size', $filter );
+		add_filter( 'sensei_migration_quiz_batch_size', $filter );
 
 		$migration  = new Quiz_Migration();
 		$reflection = new \ReflectionClass( $migration );
@@ -154,7 +154,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		$this->assertSame( 25, $batch_size_prop->getValue( $migration ) );
 
 		/* Cleanup. */
-		remove_filter( 'sensei_hpps_quiz_migration_batch_size', $filter );
+		remove_filter( 'sensei_migration_quiz_batch_size', $filter );
 	}
 
 	public function testRun_TimeExceeded_StopsEarlyAndReturnsPartialCount(): void {

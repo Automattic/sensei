@@ -264,7 +264,7 @@ class Migration_Job_Scheduler {
 		 *
 		 * @param int $max_retries Maximum retry attempts. Default 3.
 		 */
-		$max_retries = (int) apply_filters( 'sensei_hpps_migration_max_retries', 3 );
+		$max_retries = (int) apply_filters( 'sensei_migration_max_retries', 3 );
 
 		if ( $retry_count < $max_retries ) {
 			update_option( self::RETRY_COUNT_OPTION_NAME, $retry_count + 1 );
@@ -341,7 +341,7 @@ class Migration_Job_Scheduler {
 		 *
 		 * @param float $time_budget Time budget in seconds. Default 20.
 		 */
-		$time_budget = (float) apply_filters( 'sensei_hpps_migration_time_budget', 20.0 );
+		$time_budget = (float) apply_filters( 'sensei_migration_time_budget', 20.0 );
 		$job->set_time_budget( $time_budget );
 
 		$job->run();

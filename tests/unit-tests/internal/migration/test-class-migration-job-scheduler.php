@@ -514,7 +514,7 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		$filter = function () {
 			return 45.0;
 		};
-		add_filter( 'sensei_hpps_migration_time_budget', $filter );
+		add_filter( 'sensei_migration_time_budget', $filter );
 
 		/* Assert. */
 		$migration_job
@@ -526,7 +526,7 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		$job_scheduler->run_job( $migration_job->get_name() );
 
 		/* Cleanup. */
-		remove_filter( 'sensei_hpps_migration_time_budget', $filter );
+		remove_filter( 'sensei_migration_time_budget', $filter );
 	}
 
 	public function testCollectFailedJobErrors_FirstFailure_ReschedulesInsteadOfFailing(): void {
@@ -600,7 +600,7 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		$filter = function () {
 			return 1;
 		};
-		add_filter( 'sensei_hpps_migration_max_retries', $filter );
+		add_filter( 'sensei_migration_max_retries', $filter );
 
 		/* Act. */
 		$job_scheduler->collect_failed_job_errors( 'action_1', array( 'message' => 'Timeout' ) );
@@ -612,7 +612,7 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		);
 
 		/* Cleanup. */
-		remove_filter( 'sensei_hpps_migration_max_retries', $filter );
+		remove_filter( 'sensei_migration_max_retries', $filter );
 	}
 
 	public function testRunJob_SuccessfulCompletion_ResetsRetryCount(): void {

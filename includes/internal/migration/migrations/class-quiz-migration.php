@@ -55,7 +55,7 @@ class Quiz_Migration extends Migration_Abstract {
 		 *
 		 * @param int $batch_size The batch size.
 		 */
-		$this->batch_size = (int) apply_filters( 'sensei_hpps_quiz_migration_batch_size', $batch_size );
+		$this->batch_size = (int) apply_filters( 'sensei_migration_quiz_batch_size', $batch_size );
 	}
 
 	/**
