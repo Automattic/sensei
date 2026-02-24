@@ -74,13 +74,14 @@ class Quiz_Migration extends Migration_Abstract {
 			return 0;
 		}
 
-		$quiz_data      = $this->get_quiz_data( $comments );
-		$last_comment_id = end( $comments )->comment_ID;
-		$processed       = 0;
+		$quiz_data         = $this->get_quiz_data( $comments );
+		$processed         = 0;
+		$last_processed_id = null;
 
 		foreach ( $comments as $comment ) {
 			$submission_id = $this->insert_quiz_submission( $comment, $quiz_data );
 			if ( ! $submission_id ) {
+				$last_processed_id = $comment->comment_ID;
 				++$processed;
 				continue;
 			}
@@ -88,6 +89,7 @@ class Quiz_Migration extends Migration_Abstract {
 			$answer_ids = $this->insert_quiz_answers( $comment, $quiz_data, $submission_id );
 			$this->insert_quiz_grades( $comment, $quiz_data, $answer_ids );
 
+			$last_processed_id = $comment->comment_ID;
 			++$processed;
 
 			if ( $this->is_time_exceeded() ) {
@@ -95,11 +97,12 @@ class Quiz_Migration extends Migration_Abstract {
 			}
 		}
 
-		// Only advance the cursor if we haven't exceeded the time budget.
-		// If time was exceeded, we re-process the same batch on the next run.
-		// INSERT IGNORE handles already-inserted duplicates safely.
-		if ( ! $this->is_time_exceeded() ) {
-			update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_comment_id );
+		// Always advance the cursor to the last fully processed comment.
+		// Each comment is completely handled (submission + answers + grades)
+		// before $last_processed_id is updated, so no partial data is skipped.
+		// INSERT IGNORE ensures safe re-runs if any overlap occurs.
+		if ( $last_processed_id ) {
+			update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_processed_id );
 		}
 
 		return $processed;

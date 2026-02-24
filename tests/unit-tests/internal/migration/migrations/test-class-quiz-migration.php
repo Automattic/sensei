@@ -125,7 +125,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		$this->assertSame( $expected, $this->get_quiz_data( $quiz_id, $user_id ) );
 	}
 
-	public function testRun_TimeExceeded_StopsEarlyAndDoesNotAdvanceCursor(): void {
+	public function testRun_TimeExceeded_AdvancesCursorToLastProcessedComment(): void {
 		/* Arrange. */
 		$this->create_quiz_data();
 		$this->create_quiz_data();
@@ -136,17 +136,17 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		update_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
 
 		$migration = new Quiz_Migration( 100 );
-		// Set a zero time budget so it stops immediately.
+		// Set a zero time budget so it stops after the first comment.
 		$migration->set_time_budget( 0.0 );
 
 		/* Act. */
 		$migration->run( false );
 
 		/* Assert. */
-		// Cursor should NOT have advanced because time was exceeded.
-		// The same batch will be re-processed on the next run.
-		$cursor = get_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME );
-		$this->assertSame( '0', $cursor );
+		// Cursor should have advanced to the first processed comment,
+		// guaranteeing forward progress even when time is exceeded.
+		$cursor = (int) get_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME );
+		$this->assertGreaterThan( 0, $cursor );
 	}
 
 	private function create_quiz_data() {
