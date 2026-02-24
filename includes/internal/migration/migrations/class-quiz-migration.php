@@ -74,8 +74,10 @@ class Quiz_Migration extends Migration_Abstract {
 			return 0;
 		}
 
-		$quiz_data = $this->get_quiz_data( $comments );
-		$processed = 0;
+		$quiz_data      = $this->get_quiz_data( $comments );
+		$last_comment_id = end( $comments )->comment_ID;
+		$processed       = 0;
+
 		foreach ( $comments as $comment ) {
 			$submission_id = $this->insert_quiz_submission( $comment, $quiz_data );
 			if ( ! $submission_id ) {
@@ -88,17 +90,19 @@ class Quiz_Migration extends Migration_Abstract {
 
 			++$processed;
 
-			// Update cursor and stop if time budget exceeded.
-			if ( $this->is_time_exceeded() && $processed < count( $comments ) ) {
-				update_option( self::LAST_COMMENT_ID_OPTION_NAME, $comment->comment_ID );
-				return $processed;
+			if ( $this->is_time_exceeded() ) {
+				break;
 			}
 		}
 
-		$last_comment_id = end( $comments )->comment_ID;
-		update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_comment_id );
+		// Only advance the cursor if we haven't exceeded the time budget.
+		// If time was exceeded, we re-process the same batch on the next run.
+		// INSERT IGNORE handles already-inserted duplicates safely.
+		if ( ! $this->is_time_exceeded() ) {
+			update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_comment_id );
+		}
 
-		return count( $comments );
+		return $processed;
 	}
 
 	/**

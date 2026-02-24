@@ -157,7 +157,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		remove_filter( 'sensei_migration_quiz_batch_size', $filter );
 	}
 
-	public function testRun_TimeExceeded_StopsEarlyAndReturnsPartialCount(): void {
+	public function testRun_TimeExceeded_StopsEarlyAndDoesNotAdvanceCursor(): void {
 		/* Arrange. */
 		$this->create_quiz_data();
 		$this->create_quiz_data();
@@ -165,17 +165,20 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 
 		$this->cleanup_custom_tables();
 
+		update_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
+
 		$migration = new Quiz_Migration( 100 );
-		// Set a zero time budget so it stops after the first comment.
+		// Set a zero time budget so it stops immediately.
 		$migration->set_time_budget( 0.0 );
 
 		/* Act. */
-		$result = $migration->run( false );
+		$migration->run( false );
 
 		/* Assert. */
-		// Should have processed some but not all 3 quiz submissions.
-		$this->assertGreaterThan( 0, $result );
-		$this->assertLessThan( 3, $result );
+		// Cursor should NOT have advanced because time was exceeded.
+		// The same batch will be re-processed on the next run.
+		$cursor = get_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME );
+		$this->assertSame( '0', $cursor );
 	}
 
 	private function create_quiz_data() {
