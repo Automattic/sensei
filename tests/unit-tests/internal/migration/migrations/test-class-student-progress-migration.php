@@ -158,7 +158,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 
 	public function testRun_DefaultBatchSize_UsesReducedDefaults(): void {
 		/* Arrange. */
-		$migration = new Student_Progress_Migration();
+		$migration  = new Student_Progress_Migration();
 		$reflection = new \ReflectionClass( $migration );
 
 		$batch_size_prop = $reflection->getProperty( 'batch_size' );
@@ -174,7 +174,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 
 	public function testRun_BatchSizeFilter_UsesFilteredValues(): void {
 		/* Arrange. */
-		$size_filter = function () {
+		$size_filter  = function () {
 			return 10;
 		};
 		$count_filter = function () {

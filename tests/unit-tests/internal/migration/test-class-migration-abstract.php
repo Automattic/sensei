@@ -5,6 +5,8 @@ namespace SenseiTest\Internal\Migration;
 use Sensei\Internal\Migration\Migration_Abstract;
 
 /**
+ * Tests for Migration_Abstract.
+ *
  * @covers \Sensei\Internal\Migration\Migration_Abstract
  */
 class Migration_Abstract_Test extends \WP_UnitTestCase {
