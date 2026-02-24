@@ -309,7 +309,7 @@ class Migration_Job_Scheduler {
 		delete_option( self::COMPLETED_OPTION_NAME );
 		delete_option( self::ERRORS_OPTION_NAME );
 		delete_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME );
-		delete_option( Student_Progress_Migration::LARST_COMMENT_ID_OPTION_NAME );
+		delete_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME );
 	}
 
 	/**
