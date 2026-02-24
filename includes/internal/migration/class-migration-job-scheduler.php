@@ -59,6 +59,14 @@ class Migration_Job_Scheduler {
 	 */
 	public const COMPLETED_OPTION_NAME = 'sensei_lms_migration_job_completed';
 
+	/**
+	 * Migration retry count option name.
+	 *
+	 * @since 4.26.0
+	 * @var string
+	 */
+	public const RETRY_COUNT_OPTION_NAME = 'sensei_lms_migration_retry_count';
+
 	public const STATUS_NOT_STARTED = 'not_started';
 	public const STATUS_IN_PROGRESS = 'in_progress';
 	public const STATUS_COMPLETE    = 'complete';
@@ -213,7 +221,30 @@ class Migration_Job_Scheduler {
 		$this->add_error( array( $error['message'] ) );
 
 		$current_status = get_option( self::STATUS_OPTION_NAME, self::STATUS_NOT_STARTED );
-		if ( self::STATUS_FAILED !== $current_status ) {
+		if ( self::STATUS_FAILED === $current_status ) {
+			return;
+		}
+
+		$retry_count = (int) get_option( self::RETRY_COUNT_OPTION_NAME, 0 );
+
+		/**
+		 * Filter the maximum number of retry attempts for failed migrations.
+		 *
+		 * @since 4.26.0
+		 *
+		 * @param int $max_retries Maximum retry attempts. Default 3.
+		 */
+		$max_retries = (int) apply_filters( 'sensei_hpps_migration_max_retries', 3 );
+
+		if ( $retry_count < $max_retries ) {
+			update_option( self::RETRY_COUNT_OPTION_NAME, $retry_count + 1 );
+
+			// Find the failed job and reschedule it.
+			$job = $this->find_failed_job( $action_id );
+			if ( $job ) {
+				$this->schedule_job( $job );
+			}
+		} else {
 			$this->complete( self::STATUS_FAILED );
 		}
 	}
@@ -225,30 +256,36 @@ class Migration_Job_Scheduler {
 	 * @return bool
 	 */
 	private function is_migration_action( $action_id ): bool {
-		// Make sure the action ID is a string.
+		return null !== $this->find_failed_job( $action_id );
+	}
+
+	/**
+	 * Find the migration job associated with a failed action.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @param string $action_id The action ID.
+	 * @return Migration_Job|null
+	 */
+	private function find_failed_job( $action_id ): ?Migration_Job {
 		$action_id = (string) $action_id;
 
-		$hooks = array();
 		foreach ( $this->jobs as $job ) {
-			$hooks[] = $this->get_job_hook_name( $job );
-		}
-
-		$args = array(
-			'status' => 'failed',
-		);
-
-		foreach ( $hooks as $hook ) {
-			$args['hook'] = $hook;
+			$hook = $this->get_job_hook_name( $job );
+			$args = array(
+				'status' => 'failed',
+				'hook'   => $hook,
+			);
 
 			$action_ids = $this->action_scheduler->get_scheduled_actions( $args, 'ids' );
-			// Make sure the action IDs are strings.
 			$action_ids = array_map( 'strval', $action_ids );
+
 			if ( in_array( $action_id, $action_ids, true ) ) {
-				return true;
+				return $job;
 			}
 		}
 
-		return false;
+		return null;
 	}
 
 	/**
@@ -284,6 +321,7 @@ class Migration_Job_Scheduler {
 		}
 
 		if ( $job->is_complete() ) {
+			delete_option( self::RETRY_COUNT_OPTION_NAME );
 			$next_job = $this->get_next_job( $job );
 			if ( $next_job && Progress_Storage_Settings::is_sync_enabled() ) {
 				$this->schedule_job( $next_job );
@@ -310,6 +348,7 @@ class Migration_Job_Scheduler {
 		delete_option( self::ERRORS_OPTION_NAME );
 		delete_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME );
 		delete_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME );
+		delete_option( self::RETRY_COUNT_OPTION_NAME );
 	}
 
 	/**

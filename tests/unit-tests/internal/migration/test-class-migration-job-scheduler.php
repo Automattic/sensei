@@ -529,4 +529,208 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		remove_filter( 'sensei_hpps_migration_time_budget', $filter );
 	}
 
+	public function testRun_DefaultBatchSize_UsesReducedDefaults(): void {
+		/* Arrange. */
+		$migration = new Student_Progress_Migration();
+		$reflection = new \ReflectionClass( $migration );
+
+		$batch_size_prop = $reflection->getProperty( 'batch_size' );
+		$batch_size_prop->setAccessible( true );
+
+		$batch_count_prop = $reflection->getProperty( 'batch_count' );
+		$batch_count_prop->setAccessible( true );
+
+		/* Assert. */
+		$this->assertSame( 50, $batch_size_prop->getValue( $migration ) );
+		$this->assertSame( 5, $batch_count_prop->getValue( $migration ) );
+	}
+
+	public function testRun_BatchSizeFilter_UsesFilteredValues(): void {
+		/* Arrange. */
+		$size_filter = function () {
+			return 10;
+		};
+		$count_filter = function () {
+			return 2;
+		};
+		add_filter( 'sensei_hpps_student_progress_batch_size', $size_filter );
+		add_filter( 'sensei_hpps_student_progress_batch_count', $count_filter );
+
+		$migration  = new Student_Progress_Migration();
+		$reflection = new \ReflectionClass( $migration );
+
+		$batch_size_prop = $reflection->getProperty( 'batch_size' );
+		$batch_size_prop->setAccessible( true );
+
+		$batch_count_prop = $reflection->getProperty( 'batch_count' );
+		$batch_count_prop->setAccessible( true );
+
+		/* Assert. */
+		$this->assertSame( 10, $batch_size_prop->getValue( $migration ) );
+		$this->assertSame( 2, $batch_count_prop->getValue( $migration ) );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_hpps_student_progress_batch_size', $size_filter );
+		remove_filter( 'sensei_hpps_student_progress_batch_count', $count_filter );
+	}
+
+	public function testRun_TimeExceeded_StopsEarlyAndReturnsPartialCount(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'post_parent' => $course_id,
+			)
+		);
+
+		// Create progress for multiple users to ensure multiple batches.
+		for ( $i = 0; $i < 5; $i++ ) {
+			$user_id = $this->factory->user->create();
+			Sensei_Utils::start_user_on_course( $user_id, $course_id );
+		}
+
+		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
+
+		// Use batch_size=1, batch_count=10 so each row is a batch.
+		$migration = new Student_Progress_Migration( 1, 10 );
+		// Set a zero time budget so it stops after the first batch.
+		$migration->set_time_budget( 0.0 );
+
+		/* Act. */
+		$result = $migration->run( false );
+
+		/* Assert. */
+		// Should have inserted some rows but not all 5.
+		$this->assertGreaterThan( 0, $result );
+		$this->assertLessThan( 5, $result );
+	}
+
+	public function testLastCommentIdConstant_BackwardCompat_OldConstantMatchesNew(): void {
+		/* Assert. */
+		$this->assertSame(
+			Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME,
+			Student_Progress_Migration::LARST_COMMENT_ID_OPTION_NAME
+		);
+	}
+
+
+	public function testCollectFailedJobErrors_FirstFailure_ReschedulesInsteadOfFailing(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_IN_PROGRESS );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$action_scheduler->method( 'get_scheduled_actions' )->willReturn( array( 'action_1' ) );
+
+		$job = $this->createMock( Migration_Job::class );
+		$job->method( 'get_name' )->willReturn( 'test_job' );
+
+		$job_scheduler = new Migration_Job_Scheduler( $action_scheduler );
+		$job_scheduler->register_job( $job );
+
+		/* Assert. */
+		$action_scheduler
+			->expects( $this->once() )
+			->method( 'schedule_single_action' )
+			->with( 'sensei_lms_migration_job_test_job', [ 'job_name' => 'test_job' ], false );
+
+		/* Act. */
+		$job_scheduler->collect_failed_job_errors( 'action_1', array( 'message' => 'Timeout' ) );
+
+		/* Assert - status should still be in_progress, not failed. */
+		$this->assertSame(
+			Migration_Job_Scheduler::STATUS_IN_PROGRESS,
+			get_option( Migration_Job_Scheduler::STATUS_OPTION_NAME )
+		);
+	}
+
+	public function testCollectFailedJobErrors_AfterMaxRetries_MarksAsFailed(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_IN_PROGRESS );
+		update_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME, 3 );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$action_scheduler->method( 'get_scheduled_actions' )->willReturn( array( 'action_1' ) );
+
+		$job = $this->createMock( Migration_Job::class );
+		$job->method( 'get_name' )->willReturn( 'test_job' );
+
+		$job_scheduler = new Migration_Job_Scheduler( $action_scheduler );
+		$job_scheduler->register_job( $job );
+
+		/* Act. */
+		$job_scheduler->collect_failed_job_errors( 'action_1', array( 'message' => 'Timeout' ) );
+
+		/* Assert. */
+		$this->assertSame(
+			Migration_Job_Scheduler::STATUS_FAILED,
+			get_option( Migration_Job_Scheduler::STATUS_OPTION_NAME )
+		);
+	}
+
+	public function testCollectFailedJobErrors_MaxRetriesFilterable_RespectsFilter(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_IN_PROGRESS );
+		update_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME, 1 );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$action_scheduler->method( 'get_scheduled_actions' )->willReturn( array( 'action_1' ) );
+
+		$job = $this->createMock( Migration_Job::class );
+		$job->method( 'get_name' )->willReturn( 'test_job' );
+
+		$job_scheduler = new Migration_Job_Scheduler( $action_scheduler );
+		$job_scheduler->register_job( $job );
+
+		// Set max retries to 1, so retry count of 1 means we've exhausted retries.
+		$filter = function () {
+			return 1;
+		};
+		add_filter( 'sensei_hpps_migration_max_retries', $filter );
+
+		/* Act. */
+		$job_scheduler->collect_failed_job_errors( 'action_1', array( 'message' => 'Timeout' ) );
+
+		/* Assert. */
+		$this->assertSame(
+			Migration_Job_Scheduler::STATUS_FAILED,
+			get_option( Migration_Job_Scheduler::STATUS_OPTION_NAME )
+		);
+
+		/* Cleanup. */
+		remove_filter( 'sensei_hpps_migration_max_retries', $filter );
+	}
+
+	public function testRunJob_SuccessfulCompletion_ResetsRetryCount(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME, 2 );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$migration_job    = $this->createMock( Migration_Job::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		$migration_job->method( 'is_complete' )->willReturn( true );
+		$migration_job->method( 'get_name' )->willReturn( 'foo' );
+
+		$job_scheduler->register_job( $migration_job );
+
+		/* Act. */
+		$job_scheduler->run_job( $migration_job->get_name() );
+
+		/* Assert. */
+		$this->assertFalse( get_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME ) );
+	}
+
+	public function testClearState_Always_DeletesRetryCount(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME, 2 );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		/* Act. */
+		$job_scheduler->clear_state();
+
+		/* Assert. */
+		$this->assertFalse( get_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME ) );
+	}
 }
