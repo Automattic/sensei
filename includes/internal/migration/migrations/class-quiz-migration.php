@@ -22,7 +22,7 @@ use Sensei\Internal\Migration\Migration_Abstract;
  */
 class Quiz_Migration extends Migration_Abstract {
 	/**
-	 * Migration errors option name.
+	 * The name of the option that stores the last comment ID that was migrated.
 	 *
 	 * @var string
 	 */
@@ -38,12 +38,15 @@ class Quiz_Migration extends Migration_Abstract {
 	/**
 	 * The size of a batch or how many quiz submissions to migrate in a single run.
 	 *
+	 * @since 4.26.0
 	 * @var int
 	 */
 	private $batch_size;
 
 	/**
 	 * Constructs a new instance of the migration.
+	 *
+	 * @since 4.26.0
 	 *
 	 * @param int $batch_size The size of a batch or how many quiz submissions to migrate in a single run.
 	 */

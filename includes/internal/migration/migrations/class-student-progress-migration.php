@@ -32,6 +32,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 	/**
 	 * Deprecated. Use LAST_COMMENT_ID_OPTION_NAME instead.
 	 *
+	 * @since 4.26.0
 	 * @deprecated 4.26.0
 	 * @var string
 	 */
@@ -47,6 +48,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 	/**
 	 * The size of a batch.
 	 *
+	 * @since 4.26.0
 	 * @var int
 	 */
 	private $batch_size;
@@ -54,6 +56,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 	/**
 	 * The number of batches to insert in a single run.
 	 *
+	 * @since 4.26.0
 	 * @var int
 	 */
 	private $batch_count;
@@ -61,7 +64,9 @@ class Student_Progress_Migration extends Migration_Abstract {
 	/**
 	 * Constructs a new instance of the migration.
 	 *
-	 * @param int $batch_size The size of a batch (how many rows to insert in one insert query).
+	 * @since 4.26.0
+	 *
+	 * @param int $batch_size  The size of a batch (how many rows to insert in one insert query).
 	 * @param int $batch_count The number of batches to insert in a single run.
 	 */
 	public function __construct( int $batch_size = 50, int $batch_count = 5 ) {

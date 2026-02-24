@@ -108,6 +108,7 @@ class Migration_Job {
 	 * @since 4.26.0
 	 *
 	 * @param float $seconds Maximum seconds this run should take.
+	 * @return void
 	 */
 	public function set_time_budget( float $seconds ): void {
 		$this->migration->set_time_budget( $seconds );

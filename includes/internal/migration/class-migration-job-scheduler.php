@@ -67,10 +67,37 @@ class Migration_Job_Scheduler {
 	 */
 	public const RETRY_COUNT_OPTION_NAME = 'sensei_lms_migration_retry_count';
 
+	/**
+	 * Migration status: not started.
+	 *
+	 * @since 4.17.0
+	 * @var string
+	 */
 	public const STATUS_NOT_STARTED = 'not_started';
+
+	/**
+	 * Migration status: in progress.
+	 *
+	 * @since 4.17.0
+	 * @var string
+	 */
 	public const STATUS_IN_PROGRESS = 'in_progress';
-	public const STATUS_COMPLETE    = 'complete';
-	public const STATUS_FAILED      = 'failed';
+
+	/**
+	 * Migration status: complete.
+	 *
+	 * @since 4.17.0
+	 * @var string
+	 */
+	public const STATUS_COMPLETE = 'complete';
+
+	/**
+	 * Migration status: failed.
+	 *
+	 * @since 4.17.0
+	 * @var string
+	 */
+	public const STATUS_FAILED = 'failed';
 
 	/**
 	 * Action_Scheduler instance.
@@ -97,6 +124,10 @@ class Migration_Job_Scheduler {
 
 	/**
 	 * Initialize the migration job scheduler.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @return void
 	 */
 	public function init(): void {
 		add_action( 'action_scheduler_unexpected_shutdown', [ $this, 'collect_failed_job_errors' ], 10, 2 );
