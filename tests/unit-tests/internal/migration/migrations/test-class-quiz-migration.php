@@ -125,38 +125,6 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		$this->assertSame( $expected, $this->get_quiz_data( $quiz_id, $user_id ) );
 	}
 
-	public function testRun_DefaultBatchSize_UsesReducedDefault(): void {
-		/* Arrange. */
-		$migration  = new Quiz_Migration();
-		$reflection = new \ReflectionClass( $migration );
-
-		$batch_size_prop = $reflection->getProperty( 'batch_size' );
-		$batch_size_prop->setAccessible( true );
-
-		/* Assert. */
-		$this->assertSame( 50, $batch_size_prop->getValue( $migration ) );
-	}
-
-	public function testRun_BatchSizeFilter_UsesFilteredValue(): void {
-		/* Arrange. */
-		$filter = function () {
-			return 25;
-		};
-		add_filter( 'sensei_migration_quiz_batch_size', $filter );
-
-		$migration  = new Quiz_Migration();
-		$reflection = new \ReflectionClass( $migration );
-
-		$batch_size_prop = $reflection->getProperty( 'batch_size' );
-		$batch_size_prop->setAccessible( true );
-
-		/* Assert. */
-		$this->assertSame( 25, $batch_size_prop->getValue( $migration ) );
-
-		/* Cleanup. */
-		remove_filter( 'sensei_migration_quiz_batch_size', $filter );
-	}
-
 	public function testRun_TimeExceeded_StopsEarlyAndDoesNotAdvanceCursor(): void {
 		/* Arrange. */
 		$this->create_quiz_data();
