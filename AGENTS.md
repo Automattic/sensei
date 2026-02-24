@@ -81,6 +81,9 @@ All Composer production dependencies are scoped with `Sensei\ThirdParty` namespa
 - **CSS**: SCSS with WordPress Prettier config.
 - **Indentation**: Tabs (4-width) for code, spaces (2-width) for JSON/YAML.
 
+### PHP Inline Documentation
+Follow the [WordPress PHP Documentation Standards](https://developer.wordpress.org/coding-standards/inline-documentation-standards/php/).
+
 ### Naming Conventions
 
 | Type | Convention | Example |
