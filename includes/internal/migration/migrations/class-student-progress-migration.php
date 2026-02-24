@@ -27,7 +27,15 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 *
 	 * @var string
 	 */
-	public const LARST_COMMENT_ID_OPTION_NAME = 'sensei_migrated_progress_last_comment_id';
+	public const LAST_COMMENT_ID_OPTION_NAME = 'sensei_migrated_progress_last_comment_id';
+
+	/**
+	 * Deprecated. Use LAST_COMMENT_ID_OPTION_NAME instead.
+	 *
+	 * @deprecated 4.26.0
+	 * @var string
+	 */
+	public const LARST_COMMENT_ID_OPTION_NAME = self::LAST_COMMENT_ID_OPTION_NAME;
 
 	/**
 	 * The course progress data to insert.
@@ -56,9 +64,24 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 * @param int $batch_size The size of a batch (how many rows to insert in one insert query).
 	 * @param int $batch_count The number of batches to insert in a single run.
 	 */
-	public function __construct( int $batch_size = 100, int $batch_count = 10 ) {
-		$this->batch_size  = $batch_size;
-		$this->batch_count = $batch_count;
+	public function __construct( int $batch_size = 50, int $batch_count = 5 ) {
+		/**
+		 * Filter the batch size for student progress migration.
+		 *
+		 * @since 4.26.0
+		 *
+		 * @param int $batch_size The size of a batch.
+		 */
+		$this->batch_size = (int) apply_filters( 'sensei_hpps_student_progress_batch_size', $batch_size );
+
+		/**
+		 * Filter the batch count for student progress migration.
+		 *
+		 * @since 4.26.0
+		 *
+		 * @param int $batch_count The number of batches per run.
+		 */
+		$this->batch_count = (int) apply_filters( 'sensei_hpps_student_progress_batch_count', $batch_count );
 	}
 
 	/**
@@ -70,7 +93,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 * @return int The number of rows inserted.
 	 */
 	public function run( bool $dry_run = true ) {
-		$since_comment_id                                      = (int) get_option( self::LARST_COMMENT_ID_OPTION_NAME, 0 );
+		$since_comment_id                                      = (int) get_option( self::LAST_COMMENT_ID_OPTION_NAME, 0 );
 		[ $progress_comments, $mapped_meta, $last_comment_id ] = $this->get_comments_and_meta( $since_comment_id, $dry_run );
 
 		if ( empty( $progress_comments ) ) {
@@ -85,7 +108,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		$this->prepare_progress_to_insert( $progress_comments, $mapped_meta );
 		$inserted_rows = $this->insert_with_batches( $dry_run );
 
-		update_option( self::LARST_COMMENT_ID_OPTION_NAME, $last_comment_id );
+		update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_comment_id );
 
 		return $inserted_rows;
 	}
@@ -416,6 +439,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 			}
 
 			$inserted_rows += $this->db_query( $insert_query );
+
+			// Stop processing if we're running out of time.
+			if ( $this->is_time_exceeded() ) {
+				break;
+			}
 		}
 
 		return $inserted_rows;
