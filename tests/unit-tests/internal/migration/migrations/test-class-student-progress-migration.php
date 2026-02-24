@@ -232,6 +232,30 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->assertLessThan( 5, $result );
 	}
 
+	public function testRun_TimeExceeded_DoesNotAdvanceCursor(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		for ( $i = 0; $i < 3; $i++ ) {
+			$user_id = $this->factory->user->create();
+			Sensei_Utils::start_user_on_course( $user_id, $course_id );
+		}
+
+		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
+
+		$migration = new Student_Progress_Migration( 1, 10 );
+		// Zero budget so time is immediately exceeded after first batch.
+		$migration->set_time_budget( 0.0 );
+
+		/* Act. */
+		$migration->run( false );
+
+		/* Assert. */
+		// Cursor should NOT have advanced to the last fetched comment ID
+		// because time was exceeded and not all rows may have been inserted.
+		$cursor = (int) get_option( 'sensei_migrated_progress_last_comment_id', 0 );
+		$this->assertSame( 0, $cursor );
+	}
+
 	public function testLastCommentIdConstant_BackwardCompat_OldConstantMatchesNew(): void {
 		/* Assert. */
 		$this->assertSame(

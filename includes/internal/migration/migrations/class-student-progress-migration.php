@@ -108,7 +108,13 @@ class Student_Progress_Migration extends Migration_Abstract {
 		$this->prepare_progress_to_insert( $progress_comments, $mapped_meta );
 		$inserted_rows = $this->insert_with_batches( $dry_run );
 
-		update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_comment_id );
+		// Only advance the cursor if we haven't exceeded the time budget.
+		// If time was exceeded, insert_with_batches() may have stopped early,
+		// so we re-process the same batch on the next run.
+		// INSERT IGNORE handles already-inserted duplicates safely.
+		if ( ! $this->is_time_exceeded() ) {
+			update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_comment_id );
+		}
 
 		return $inserted_rows;
 	}
