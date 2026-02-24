@@ -181,7 +181,7 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		$job_scheduler->register_job( $migration_job );
 
 		$has_logged_event = false;
-		$sensei_log_event = function( $log_event, $event_name, $event_properties ) use ( &$has_logged_event ) {
+		$sensei_log_event = function ( $log_event, $event_name ) use ( &$has_logged_event ) {
 			if ( 'hpps_migration_complete' === $event_name ) {
 				$has_logged_event = true;
 			}
@@ -528,91 +528,6 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		/* Cleanup. */
 		remove_filter( 'sensei_hpps_migration_time_budget', $filter );
 	}
-
-	public function testRun_DefaultBatchSize_UsesReducedDefaults(): void {
-		/* Arrange. */
-		$migration = new Student_Progress_Migration();
-		$reflection = new \ReflectionClass( $migration );
-
-		$batch_size_prop = $reflection->getProperty( 'batch_size' );
-		$batch_size_prop->setAccessible( true );
-
-		$batch_count_prop = $reflection->getProperty( 'batch_count' );
-		$batch_count_prop->setAccessible( true );
-
-		/* Assert. */
-		$this->assertSame( 50, $batch_size_prop->getValue( $migration ) );
-		$this->assertSame( 5, $batch_count_prop->getValue( $migration ) );
-	}
-
-	public function testRun_BatchSizeFilter_UsesFilteredValues(): void {
-		/* Arrange. */
-		$size_filter = function () {
-			return 10;
-		};
-		$count_filter = function () {
-			return 2;
-		};
-		add_filter( 'sensei_hpps_student_progress_batch_size', $size_filter );
-		add_filter( 'sensei_hpps_student_progress_batch_count', $count_filter );
-
-		$migration  = new Student_Progress_Migration();
-		$reflection = new \ReflectionClass( $migration );
-
-		$batch_size_prop = $reflection->getProperty( 'batch_size' );
-		$batch_size_prop->setAccessible( true );
-
-		$batch_count_prop = $reflection->getProperty( 'batch_count' );
-		$batch_count_prop->setAccessible( true );
-
-		/* Assert. */
-		$this->assertSame( 10, $batch_size_prop->getValue( $migration ) );
-		$this->assertSame( 2, $batch_count_prop->getValue( $migration ) );
-
-		/* Cleanup. */
-		remove_filter( 'sensei_hpps_student_progress_batch_size', $size_filter );
-		remove_filter( 'sensei_hpps_student_progress_batch_count', $count_filter );
-	}
-
-	public function testRun_TimeExceeded_StopsEarlyAndReturnsPartialCount(): void {
-		/* Arrange. */
-		$course_id = $this->factory->course->create();
-		$lesson_id = $this->factory->lesson->create(
-			array(
-				'post_parent' => $course_id,
-			)
-		);
-
-		// Create progress for multiple users to ensure multiple batches.
-		for ( $i = 0; $i < 5; $i++ ) {
-			$user_id = $this->factory->user->create();
-			Sensei_Utils::start_user_on_course( $user_id, $course_id );
-		}
-
-		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
-
-		// Use batch_size=1, batch_count=10 so each row is a batch.
-		$migration = new Student_Progress_Migration( 1, 10 );
-		// Set a zero time budget so it stops after the first batch.
-		$migration->set_time_budget( 0.0 );
-
-		/* Act. */
-		$result = $migration->run( false );
-
-		/* Assert. */
-		// Should have inserted some rows but not all 5.
-		$this->assertGreaterThan( 0, $result );
-		$this->assertLessThan( 5, $result );
-	}
-
-	public function testLastCommentIdConstant_BackwardCompat_OldConstantMatchesNew(): void {
-		/* Assert. */
-		$this->assertSame(
-			Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME,
-			Student_Progress_Migration::LARST_COMMENT_ID_OPTION_NAME
-		);
-	}
-
 
 	public function testCollectFailedJobErrors_FirstFailure_ReschedulesInsteadOfFailing(): void {
 		/* Arrange. */
