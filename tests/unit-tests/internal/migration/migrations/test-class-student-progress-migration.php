@@ -207,8 +207,8 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		// Cursor should NOT have advanced to the last fetched comment ID
 		// because time was exceeded and not all rows may have been inserted.
-		$cursor = (int) get_option( 'sensei_migrated_progress_last_comment_id', 0 );
-		$this->assertSame( 0, $cursor );
+		$cursor = get_option( 'sensei_migrated_progress_last_comment_id' );
+		$this->assertSame( '0', $cursor );
 	}
 
 	private function get_table_based_progress(): array {
