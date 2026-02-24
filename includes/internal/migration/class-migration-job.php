@@ -101,5 +101,15 @@ class Migration_Job {
 	public function get_name(): string {
 		return $this->name;
 	}
-}
 
+	/**
+	 * Set the time budget for the migration.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @param float $seconds Maximum seconds this run should take.
+	 */
+	public function set_time_budget( float $seconds ): void {
+		$this->migration->set_time_budget( $seconds );
+	}
+}
