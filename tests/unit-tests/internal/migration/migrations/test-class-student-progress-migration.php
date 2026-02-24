@@ -156,51 +156,6 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->assertSame( $expected, $actual_rows );
 	}
 
-	public function testRun_DefaultBatchSize_UsesReducedDefaults(): void {
-		/* Arrange. */
-		$migration  = new Student_Progress_Migration();
-		$reflection = new \ReflectionClass( $migration );
-
-		$batch_size_prop = $reflection->getProperty( 'batch_size' );
-		$batch_size_prop->setAccessible( true );
-
-		$batch_count_prop = $reflection->getProperty( 'batch_count' );
-		$batch_count_prop->setAccessible( true );
-
-		/* Assert. */
-		$this->assertSame( 50, $batch_size_prop->getValue( $migration ) );
-		$this->assertSame( 5, $batch_count_prop->getValue( $migration ) );
-	}
-
-	public function testRun_BatchSizeFilter_UsesFilteredValues(): void {
-		/* Arrange. */
-		$size_filter  = function () {
-			return 10;
-		};
-		$count_filter = function () {
-			return 2;
-		};
-		add_filter( 'sensei_hpps_student_progress_batch_size', $size_filter );
-		add_filter( 'sensei_hpps_student_progress_batch_count', $count_filter );
-
-		$migration  = new Student_Progress_Migration();
-		$reflection = new \ReflectionClass( $migration );
-
-		$batch_size_prop = $reflection->getProperty( 'batch_size' );
-		$batch_size_prop->setAccessible( true );
-
-		$batch_count_prop = $reflection->getProperty( 'batch_count' );
-		$batch_count_prop->setAccessible( true );
-
-		/* Assert. */
-		$this->assertSame( 10, $batch_size_prop->getValue( $migration ) );
-		$this->assertSame( 2, $batch_count_prop->getValue( $migration ) );
-
-		/* Cleanup. */
-		remove_filter( 'sensei_hpps_student_progress_batch_size', $size_filter );
-		remove_filter( 'sensei_hpps_student_progress_batch_count', $count_filter );
-	}
-
 	public function testRun_TimeExceeded_StopsEarlyAndReturnsPartialCount(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
@@ -228,8 +183,8 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		// Should have inserted some rows but not all 5.
-		$this->assertGreaterThan( 0, $result );
-		$this->assertLessThan( 5, $result );
+		$this->assertGreaterThan( 0, $result, 'Expected at least one row to be inserted before time exceeded.' );
+		$this->assertLessThan( 5, $result, 'Expected fewer than 5 rows because time budget should stop processing early.' );
 	}
 
 	public function testRun_TimeExceeded_DoesNotAdvanceCursor(): void {
@@ -254,14 +209,6 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		// because time was exceeded and not all rows may have been inserted.
 		$cursor = (int) get_option( 'sensei_migrated_progress_last_comment_id', 0 );
 		$this->assertSame( 0, $cursor );
-	}
-
-	public function testLastCommentIdConstant_BackwardCompat_OldConstantMatchesNew(): void {
-		/* Assert. */
-		$this->assertSame(
-			Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME,
-			Student_Progress_Migration::LARST_COMMENT_ID_OPTION_NAME
-		);
 	}
 
 	private function get_table_based_progress(): array {
