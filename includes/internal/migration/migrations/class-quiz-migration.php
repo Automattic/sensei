@@ -47,8 +47,15 @@ class Quiz_Migration extends Migration_Abstract {
 	 *
 	 * @param int $batch_size The size of a batch or how many quiz submissions to migrate in a single run.
 	 */
-	public function __construct( int $batch_size = 100 ) {
-		$this->batch_size = $batch_size;
+	public function __construct( int $batch_size = 50 ) {
+		/**
+		 * Filter the batch size for quiz migration.
+		 *
+		 * @since 4.26.0
+		 *
+		 * @param int $batch_size The batch size.
+		 */
+		$this->batch_size = (int) apply_filters( 'sensei_hpps_quiz_migration_batch_size', $batch_size );
 	}
 
 	/**
@@ -68,14 +75,24 @@ class Quiz_Migration extends Migration_Abstract {
 		}
 
 		$quiz_data = $this->get_quiz_data( $comments );
+		$processed = 0;
 		foreach ( $comments as $comment ) {
 			$submission_id = $this->insert_quiz_submission( $comment, $quiz_data );
 			if ( ! $submission_id ) {
+				++$processed;
 				continue;
 			}
 
 			$answer_ids = $this->insert_quiz_answers( $comment, $quiz_data, $submission_id );
 			$this->insert_quiz_grades( $comment, $quiz_data, $answer_ids );
+
+			++$processed;
+
+			// Update cursor and stop if time budget exceeded.
+			if ( $this->is_time_exceeded() && $processed < count( $comments ) ) {
+				update_option( self::LAST_COMMENT_ID_OPTION_NAME, $comment->comment_ID );
+				return $processed;
+			}
 		}
 
 		$last_comment_id = end( $comments )->comment_ID;

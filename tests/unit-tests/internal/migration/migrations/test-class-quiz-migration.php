@@ -125,6 +125,59 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		$this->assertSame( $expected, $this->get_quiz_data( $quiz_id, $user_id ) );
 	}
 
+	public function testRun_DefaultBatchSize_UsesReducedDefault(): void {
+		/* Arrange. */
+		$migration  = new Quiz_Migration();
+		$reflection = new \ReflectionClass( $migration );
+
+		$batch_size_prop = $reflection->getProperty( 'batch_size' );
+		$batch_size_prop->setAccessible( true );
+
+		/* Assert. */
+		$this->assertSame( 50, $batch_size_prop->getValue( $migration ) );
+	}
+
+	public function testRun_BatchSizeFilter_UsesFilteredValue(): void {
+		/* Arrange. */
+		$filter = function () {
+			return 25;
+		};
+		add_filter( 'sensei_hpps_quiz_migration_batch_size', $filter );
+
+		$migration  = new Quiz_Migration();
+		$reflection = new \ReflectionClass( $migration );
+
+		$batch_size_prop = $reflection->getProperty( 'batch_size' );
+		$batch_size_prop->setAccessible( true );
+
+		/* Assert. */
+		$this->assertSame( 25, $batch_size_prop->getValue( $migration ) );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_hpps_quiz_migration_batch_size', $filter );
+	}
+
+	public function testRun_TimeExceeded_StopsEarlyAndReturnsPartialCount(): void {
+		/* Arrange. */
+		$this->create_quiz_data();
+		$this->create_quiz_data();
+		$this->create_quiz_data();
+
+		$this->cleanup_custom_tables();
+
+		$migration = new Quiz_Migration( 100 );
+		// Set a zero time budget so it stops after the first comment.
+		$migration->set_time_budget( 0.0 );
+
+		/* Act. */
+		$result = $migration->run( false );
+
+		/* Assert. */
+		// Should have processed some but not all 3 quiz submissions.
+		$this->assertGreaterThan( 0, $result );
+		$this->assertLessThan( 3, $result );
+	}
+
 	private function create_quiz_data() {
 		$user_id     = 1;
 		$lesson_id   = $this->factory->lesson->create();
