@@ -2,6 +2,7 @@
 .env
 .idea
 .cache
+.worktrees
 .phpunit.result.cache
 .wp-env.override.json
 assets/dist
