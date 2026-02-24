@@ -261,18 +261,21 @@ class Migration_Job_Scheduler {
 	 * @param string $job_name The job name.
 	 */
 	public function run_job( string $job_name ): void {
-		// Temporarily workaround: increase the time limit.
-		$max_execution_time = (int) ini_get( 'max_execution_time' );
-		if ( 0 !== $max_execution_time && function_exists( 'set_time_limit' ) ) {
-			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-			@set_time_limit( 0 );
-		}
-
 		if ( $this->is_first_run() ) {
 			$this->start();
 		}
 
 		$job = $this->jobs[ $job_name ];
+
+		/**
+		 * Filter the time budget (in seconds) for each migration run.
+		 *
+		 * @since 4.26.0
+		 *
+		 * @param float $time_budget Time budget in seconds. Default 20.
+		 */
+		$time_budget = (float) apply_filters( 'sensei_hpps_migration_time_budget', 20.0 );
+		$job->set_time_budget( $time_budget );
 
 		$job->run();
 

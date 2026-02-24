@@ -484,4 +484,49 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		$expected = array( 'c' );
 		$this->assertSame( $expected, $actual );
 	}
+
+	public function testRunJob_Always_SetsTimeBudgetOnJob(): void {
+		/* Arrange. */
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$migration_job    = $this->createMock( Migration_Job::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		$job_scheduler->register_job( $migration_job );
+
+		/* Assert. */
+		$migration_job
+			->expects( $this->once() )
+			->method( 'set_time_budget' )
+			->with( 20.0 );
+
+		/* Act. */
+		$job_scheduler->run_job( $migration_job->get_name() );
+	}
+
+	public function testRunJob_WithFilteredBudget_UsesFilteredValue(): void {
+		/* Arrange. */
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$migration_job    = $this->createMock( Migration_Job::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		$job_scheduler->register_job( $migration_job );
+
+		$filter = function () {
+			return 45.0;
+		};
+		add_filter( 'sensei_hpps_migration_time_budget', $filter );
+
+		/* Assert. */
+		$migration_job
+			->expects( $this->once() )
+			->method( 'set_time_budget' )
+			->with( 45.0 );
+
+		/* Act. */
+		$job_scheduler->run_job( $migration_job->get_name() );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_hpps_migration_time_budget', $filter );
+	}
+
 }
