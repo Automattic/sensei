@@ -207,6 +207,53 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->assertLessThan( 5, $result, 'Expected fewer than 5 rows because time budget should stop processing early.' );
 	}
 
+	public function testRun_AllRowsAreDuplicates_ReturnsGreaterThanZero(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
+		$user_id   = $this->factory->user->create();
+
+		Sensei_Utils::start_user_on_course( $user_id, $course_id );
+
+		update_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
+
+		// First run: inserts rows normally.
+		$this->migration->run( false );
+
+		// Simulate a crash before cursor update by resetting the cursor.
+		update_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
+
+		/* Act. */
+		// Second run: all rows are duplicates (INSERT IGNORE returns 0).
+		$result = $this->migration->run( false );
+
+		/* Assert. */
+		$this->assertGreaterThan( 0, $result, 'run() should return > 0 when comments were processed, even if all inserts were duplicates' );
+	}
+
+	public function testRun_AllRowsAreDuplicates_AdvancesCursorPastDuplicates(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
+		$user_id   = $this->factory->user->create();
+
+		Sensei_Utils::start_user_on_course( $user_id, $course_id );
+
+		update_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
+
+		// First run: inserts rows normally.
+		$this->migration->run( false );
+
+		// Simulate a crash before cursor update by resetting the cursor.
+		update_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
+
+		/* Act. */
+		// Second run: all rows are duplicates.
+		$this->migration->run( false );
+
+		/* Assert. */
+		$cursor = (int) get_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME );
+		$this->assertGreaterThan( 0, $cursor, 'Cursor should advance past duplicates' );
+	}
+
 	private function get_table_based_progress(): array {
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching

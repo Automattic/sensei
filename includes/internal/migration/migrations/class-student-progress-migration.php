@@ -68,7 +68,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 * @since 4.16.1
 	 *
 	 * @param bool $dry_run Whether to run the migration in dry-run mode.
-	 * @return int The number of rows inserted.
+	 * @return int The number of comments processed.
 	 */
 	public function run( bool $dry_run = true ) {
 		$since_comment_id                                      = (int) get_option( self::LAST_COMMENT_ID_OPTION_NAME, 0 );
@@ -83,10 +83,10 @@ class Student_Progress_Migration extends Migration_Abstract {
 			return 0;
 		}
 
-		$inserted_rows     = 0;
-		$pending_rows      = array();
-		$last_processed_id = null;
-		$last_prepared_id  = null;
+		$comments_processed = 0;
+		$pending_rows       = array();
+		$last_processed_id  = null;
+		$last_prepared_id   = null;
 
 		foreach ( $progress_comments as $progress_comment ) {
 			$meta = isset( $mapped_meta[ $progress_comment->comment_ID ] )
@@ -97,10 +97,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 
 			$pending_rows     = array_merge( $pending_rows, $rows );
 			$last_prepared_id = $progress_comment->comment_ID;
+			++$comments_processed;
 
 			// Flush when the buffer is full or time is running out.
 			if ( count( $pending_rows ) >= $this->insert_batch_size || $this->is_time_exceeded() ) {
-				$inserted_rows    += $this->insert_comment_rows( $pending_rows, $dry_run );
+				$this->insert_comment_rows( $pending_rows, $dry_run );
 				$pending_rows      = array();
 				$last_processed_id = $last_prepared_id;
 
@@ -112,7 +113,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 
 		// Flush any remaining rows.
 		if ( ! empty( $pending_rows ) ) {
-			$inserted_rows    += $this->insert_comment_rows( $pending_rows, $dry_run );
+			$this->insert_comment_rows( $pending_rows, $dry_run );
 			$last_processed_id = $last_prepared_id;
 		}
 
@@ -124,7 +125,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 			update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_processed_id );
 		}
 
-		return $inserted_rows;
+		return $comments_processed;
 	}
 
 	/**
