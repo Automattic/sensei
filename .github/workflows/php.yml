@@ -59,18 +59,18 @@ jobs:
             matrix:
                 wp: ['latest']
                 wpmu: [0]
-                php: ['7.4', '8.2']
+                php: ['7.4', '8.1', '8.2', '8.3']
                 include:
-                    - php: 7.4
+                    - php: '8.2'
                       wp: '6.7'
-                    - php: 7.4
+                    - php: '8.2'
                       wp: '6.8'
-                    - php: 7.4
+                    - php: '8.2'
                       wp: latest
                       wpmu: 1
-                    - php: 7.4
+                    - php: '8.2'
                       wp: nightly
-                    - php: 7.4
+                    - php: '8.2'
                       wp: latest
                       hpps: 1
         env:
