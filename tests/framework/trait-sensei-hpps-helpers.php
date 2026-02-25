@@ -103,7 +103,7 @@ trait Sensei_HPPS_Helpers {
 	 * @return bool
 	 */
 	public static function is_hpps_tables_mode(): bool {
-		return (bool) getenv( 'ENABLE_HPPS' );
+		return (bool) getenv( 'SENSEI_HPPS_ENABLED' );
 	}
 
 	/**
