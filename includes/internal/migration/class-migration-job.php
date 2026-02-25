@@ -59,8 +59,8 @@ class Migration_Job {
 	 * @since 4.17.0
 	 */
 	public function run(): void {
-		$rows_inserted     = $this->migration->run( false );
-		$this->is_complete = 0 === $rows_inserted;
+		$comments_processed = $this->migration->run( false );
+		$this->is_complete  = 0 === $comments_processed;
 	}
 
 	/**
