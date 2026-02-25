@@ -96,4 +96,84 @@ trait Sensei_HPPS_Helpers {
 		Sensei()->quiz_answer_repository     = $this->_quiz_answer_repository;
 		Sensei()->quiz_grade_repository      = $this->_quiz_grade_repository;
 	}
+
+	/**
+	 * Check if HPPS tables mode is enabled via the environment variable.
+	 *
+	 * @return bool
+	 */
+	public static function is_hpps_tables_mode(): bool {
+		return (bool) getenv( 'SENSEI_HPPS_ENABLED' );
+	}
+
+	/**
+	 * Skip the current test when HPPS tables mode is active.
+	 *
+	 * @param string $reason Reason for skipping.
+	 */
+	private function skip_in_hpps_mode( string $reason = 'Skipped in HPPS tables mode.' ): void {
+		if ( self::is_hpps_tables_mode() ) {
+			$this->markTestSkipped( $reason );
+		}
+	}
+
+	/**
+	 * Create course progress using the active repository.
+	 *
+	 * @param int    $user_id   User ID.
+	 * @param int    $course_id Course ID.
+	 * @param string $status    Status: 'in-progress' or 'complete'.
+	 * @return \Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface
+	 */
+	private function create_course_progress( int $user_id, int $course_id, string $status = 'in-progress' ) {
+		$progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
+		if ( ! $progress ) {
+			$progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+		}
+		if ( 'complete' === $status ) {
+			$progress->complete();
+		}
+		Sensei()->course_progress_repository->save( $progress );
+		return $progress;
+	}
+
+	/**
+	 * Create lesson progress using the active repository.
+	 *
+	 * @param int    $user_id   User ID.
+	 * @param int    $lesson_id Lesson ID.
+	 * @param string $status    Status: 'in-progress' or 'complete'.
+	 * @return \Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface
+	 */
+	private function create_lesson_progress( int $user_id, int $lesson_id, string $status = 'in-progress' ) {
+		$progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+		if ( ! $progress ) {
+			$progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+		}
+		if ( 'complete' === $status ) {
+			$progress->complete();
+		}
+		Sensei()->lesson_progress_repository->save( $progress );
+		return $progress;
+	}
+
+	/**
+	 * Create quiz progress using the active repository.
+	 *
+	 * @param int    $user_id User ID.
+	 * @param int    $quiz_id Quiz ID.
+	 * @param string $status  Status: 'in-progress' or 'complete'.
+	 * @return \Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface
+	 */
+	private function create_quiz_progress( int $user_id, int $quiz_id, string $status = 'in-progress' ) {
+		$progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+		if ( ! $progress ) {
+			$progress = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+		}
+		if ( 'complete' === $status ) {
+			$progress->complete();
+		}
+		Sensei()->quiz_progress_repository->save( $progress );
+		return $progress;
+	}
 }
