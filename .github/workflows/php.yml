@@ -62,9 +62,9 @@ jobs:
                 php: ['7.4', '8.2']
                 include:
                     - php: 7.4
-                      wp: '6.1'
+                      wp: '6.7'
                     - php: 7.4
-                      wp: '6.2'
+                      wp: '6.8'
                     - php: 7.4
                       wp: latest
                       wpmu: 1
