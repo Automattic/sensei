@@ -50,7 +50,7 @@ jobs:
             - name: Check WPCOM rules
               run: ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
     test:
-        name: "PHP Unit Tests (${{ matrix.php }}, ${{ matrix.wp }}${{ matrix.hpps == 1 && ', HPPS' || '' }})"
+        name: "PHP Unit Tests (${{ matrix.php }}, ${{ matrix.wp }}${{ matrix.wpmu == 1 && ', multisite' || '' }}${{ matrix.hpps == 1 && ', HPPS' || '' }})"
         runs-on: ubuntu-latest
         continue-on-error: ${{ matrix.wp == 'nightly' }}
         strategy:
