@@ -19,3 +19,4 @@ tests/e2e-playwright/contexts/*
 *.tsbuildinfo
 playwright-report/
 .vscode
+.worktrees/
