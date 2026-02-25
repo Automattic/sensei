@@ -30,18 +30,26 @@ class Student_Progress_Migration extends Migration_Abstract {
 	public const LAST_COMMENT_ID_OPTION_NAME = 'sensei_migrated_progress_last_comment_id';
 
 	/**
-	 * The size of a batch or how many comments to migrate in a single run.
+	 * The number of comments to fetch in a single run.
 	 *
 	 * @var int
 	 */
 	private $batch_size;
 
 	/**
+	 * The number of rows to accumulate before flushing with a multi-row INSERT.
+	 *
+	 * @var int
+	 */
+	private $insert_batch_size;
+
+	/**
 	 * Constructs a new instance of the migration.
 	 *
-	 * @param int $batch_size The size of a batch or how many comments to migrate in a single run.
+	 * @param int $batch_size The number of comments to fetch in a single run.
+	 * @param int $insert_batch_size The number of rows to accumulate before flushing.
 	 */
-	public function __construct( int $batch_size = 250 ) {
+	public function __construct( int $batch_size = 250, int $insert_batch_size = 50 ) {
 		/**
 		 * Filter the batch size for student progress migration.
 		 *
@@ -50,6 +58,8 @@ class Student_Progress_Migration extends Migration_Abstract {
 		 * @param int $batch_size The batch size.
 		 */
 		$this->batch_size = (int) apply_filters( 'sensei_migration_student_progress_batch_size', $batch_size );
+
+		$this->insert_batch_size = $insert_batch_size;
 	}
 
 	/**
@@ -74,21 +84,36 @@ class Student_Progress_Migration extends Migration_Abstract {
 		}
 
 		$inserted_rows     = 0;
+		$pending_rows      = array();
 		$last_processed_id = null;
+		$last_prepared_id  = null;
 
 		foreach ( $progress_comments as $progress_comment ) {
 			$meta = isset( $mapped_meta[ $progress_comment->comment_ID ] )
 				? $mapped_meta[ $progress_comment->comment_ID ]
 				: array();
 
-			$rows           = $this->prepare_comment_rows( $progress_comment, $meta );
-			$inserted_rows += $this->insert_comment_rows( $rows, $dry_run );
+			$rows = $this->prepare_comment_rows( $progress_comment, $meta );
 
-			$last_processed_id = $progress_comment->comment_ID;
+			$pending_rows     = array_merge( $pending_rows, $rows );
+			$last_prepared_id = $progress_comment->comment_ID;
 
-			if ( $this->is_time_exceeded() ) {
-				break;
+			// Flush when the buffer is full or time is running out.
+			if ( count( $pending_rows ) >= $this->insert_batch_size || $this->is_time_exceeded() ) {
+				$inserted_rows    += $this->insert_comment_rows( $pending_rows, $dry_run );
+				$pending_rows      = array();
+				$last_processed_id = $last_prepared_id;
+
+				if ( $this->is_time_exceeded() ) {
+					break;
+				}
 			}
+		}
+
+		// Flush any remaining rows.
+		if ( ! empty( $pending_rows ) ) {
+			$inserted_rows    += $this->insert_comment_rows( $pending_rows, $dry_run );
+			$last_processed_id = $last_prepared_id;
 		}
 
 		// Always advance the cursor to the last fully processed comment.
