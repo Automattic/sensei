@@ -141,7 +141,7 @@
     "test-js:watch": "wp-scripts test-unit-js --watch",
     "test-php": "./vendor/bin/phpunit",
     "test-php:wp-env": "wp-env run --env-cwd='wp-content/plugins/sensei' tests-cli vendor/bin/phpunit -c phpunit.xml",
-    "test-php:wp-env:hpps": "wp-env run --env-cwd='wp-content/plugins/sensei' tests-cli vendor/bin/phpunit -c phpunit-hpps.xml",
+    "test-php:wp-env:hpps": "wp-env run --env-cwd='wp-content/plugins/sensei' tests-cli env ENABLE_HPPS=1 vendor/bin/phpunit -c phpunit.xml",
     "test-php:coverage-clover": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover=coverage.xml",
     "test-php:coverage-html": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-html=coverage",
     "wp-env": "wp-env"
