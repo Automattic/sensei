@@ -11,6 +11,7 @@ use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
  */
 class Sensei_Update_Legacy_Quiz_Data_Test extends WP_UnitTestCase {
 	use Sensei_HPPS_Helpers;
+
 	/**
 	 * Sensei Factory.
 	 *

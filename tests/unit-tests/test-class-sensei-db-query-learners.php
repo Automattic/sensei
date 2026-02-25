@@ -1,7 +1,8 @@
 <?php
 
 class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
-	use Sensei_Test_Login_Helpers, Sensei_HPPS_Helpers;
+	use Sensei_Test_Login_Helpers;
+	use Sensei_HPPS_Helpers;
 
 	public function setUp(): void {
 		parent::setUp();
