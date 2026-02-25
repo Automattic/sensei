@@ -57,21 +57,27 @@ jobs:
             fail-fast: true
             max-parallel: 10
             matrix:
-                wp: ['latest']
-                php: ['7.4', '8.1', '8.2', '8.3']
                 include:
+                    - php: '7.4'
+                      wp: latest
+                    - php: '8.1'
+                      wp: latest
                     - php: '8.2'
                       wp: '6.7'
                     - php: '8.2'
                       wp: '6.8'
                     - php: '8.2'
                       wp: latest
-                      wpmu: 1
                     - php: '8.2'
-                      wp: nightly
+                      wp: latest
+                      wpmu: 1
                     - php: '8.2'
                       wp: latest
                       hpps: 1
+                    - php: '8.2'
+                      wp: nightly
+                    - php: '8.3'
+                      wp: latest
         env:
             WP_VERSION: ${{ matrix.wp }}
             WP_MULTISITE: ${{ matrix.wpmu }}
