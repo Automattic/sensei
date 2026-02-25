@@ -86,7 +86,6 @@ class Student_Progress_Migration extends Migration_Abstract {
 		$comments_processed = 0;
 		$pending_rows       = array();
 		$last_processed_id  = null;
-		$last_prepared_id   = null;
 
 		foreach ( $progress_comments as $progress_comment ) {
 			$meta = isset( $mapped_meta[ $progress_comment->comment_ID ] )
@@ -95,15 +94,14 @@ class Student_Progress_Migration extends Migration_Abstract {
 
 			$rows = $this->prepare_comment_rows( $progress_comment, $meta );
 
-			$pending_rows     = array_merge( $pending_rows, $rows );
-			$last_prepared_id = $progress_comment->comment_ID;
+			$pending_rows = array_merge( $pending_rows, $rows );
 			++$comments_processed;
 
 			// Flush when the buffer is full or time is running out.
 			if ( count( $pending_rows ) >= $this->insert_batch_size || $this->is_time_exceeded() ) {
 				$this->insert_comment_rows( $pending_rows, $dry_run );
 				$pending_rows      = array();
-				$last_processed_id = $last_prepared_id;
+				$last_processed_id = $progress_comment->comment_ID;
 
 				if ( $this->is_time_exceeded() ) {
 					break;
@@ -114,13 +112,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 		// Flush any remaining rows.
 		if ( ! empty( $pending_rows ) ) {
 			$this->insert_comment_rows( $pending_rows, $dry_run );
-			$last_processed_id = $last_prepared_id;
+			$last_processed_id = $progress_comment->comment_ID;
 		}
 
 		// Always advance the cursor to the last fully processed comment.
-		// Each comment is completely handled before $last_processed_id is
-		// updated, so no partial data is skipped. INSERT IGNORE ensures
-		// safe re-runs if any overlap occurs.
+		// INSERT IGNORE ensures safe re-runs if any overlap occurs.
 		if ( $last_processed_id ) {
 			update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_processed_id );
 		}
