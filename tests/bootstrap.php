@@ -121,7 +121,7 @@ class Sensei_Unit_Tests_Bootstrap {
 		}
 		$settings['experimental_progress_storage']                 = true;
 		$settings['experimental_progress_storage_synchronization'] = true;
-		$settings['experimental_progress_storage_repository']      = 'custom_tables';
+		$settings['experimental_progress_storage_repository']      = \Sensei\Internal\Services\Progress_Storage_Settings::TABLES_STORAGE;
 		return $settings;
 	}
 
