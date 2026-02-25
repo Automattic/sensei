@@ -119,9 +119,9 @@ class Sensei_Unit_Tests_Bootstrap {
 		if ( ! is_array( $settings ) ) {
 			$settings = array();
 		}
-		$settings['experimental_progress_storage'] = true;
+		$settings['experimental_progress_storage']                 = true;
 		$settings['experimental_progress_storage_synchronization'] = true;
-		$settings['experimental_progress_storage_repository'] = 'custom_tables';
+		$settings['experimental_progress_storage_repository']      = 'custom_tables';
 		return $settings;
 	}
 
