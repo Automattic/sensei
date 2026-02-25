@@ -96,12 +96,12 @@ class Student_Progress_Migration extends Migration_Abstract {
 
 			$pending_rows = array_merge( $pending_rows, $rows );
 			++$comments_processed;
+			$last_processed_id = $progress_comment->comment_ID;
 
 			// Flush when the buffer is full or time is running out.
 			if ( count( $pending_rows ) >= $this->insert_batch_size || $this->is_time_exceeded() ) {
 				$this->insert_comment_rows( $pending_rows, $dry_run );
-				$pending_rows      = array();
-				$last_processed_id = $progress_comment->comment_ID;
+				$pending_rows = array();
 
 				if ( $this->is_time_exceeded() ) {
 					break;
@@ -112,7 +112,6 @@ class Student_Progress_Migration extends Migration_Abstract {
 		// Flush any remaining rows.
 		if ( ! empty( $pending_rows ) ) {
 			$this->insert_comment_rows( $pending_rows, $dry_run );
-			$last_processed_id = $progress_comment->comment_ID;
 		}
 
 		// Always advance the cursor to the last fully processed comment.
