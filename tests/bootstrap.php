@@ -43,6 +43,11 @@ class Sensei_Unit_Tests_Bootstrap {
 		// Enable features.
 		tests_add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
 
+		// Enable HPPS tables mode when env var is set.
+		if ( getenv( 'ENABLE_HPPS' ) ) {
+			tests_add_filter( 'option_sensei-settings', array( $this, 'enable_hpps_settings' ) );
+		}
+
 		// Init clock.
 		tests_add_filter( 'sensei_clock_init', [ $this, 'init_clock' ] );
 
@@ -102,6 +107,22 @@ class Sensei_Unit_Tests_Bootstrap {
 	 */
 	public static function scheduler_use_shim() {
 		return Sensei_Scheduler_Shim::class;
+	}
+
+	/**
+	 * Enable HPPS settings for tables-based progress storage.
+	 *
+	 * @param mixed $settings The sensei-settings option value.
+	 * @return array
+	 */
+	public function enable_hpps_settings( $settings ) {
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
+		$settings['experimental_progress_storage']                 = true;
+		$settings['experimental_progress_storage_synchronization'] = true;
+		$settings['experimental_progress_storage_repository']      = \Sensei\Internal\Services\Progress_Storage_Settings::TABLES_STORAGE;
+		return $settings;
 	}
 
 	/**

@@ -96,4 +96,24 @@ trait Sensei_HPPS_Helpers {
 		Sensei()->quiz_answer_repository     = $this->_quiz_answer_repository;
 		Sensei()->quiz_grade_repository      = $this->_quiz_grade_repository;
 	}
+
+	/**
+	 * Check if HPPS tables mode is enabled via the environment variable.
+	 *
+	 * @return bool
+	 */
+	public static function is_hpps_tables_mode(): bool {
+		return (bool) getenv( 'ENABLE_HPPS' );
+	}
+
+	/**
+	 * Skip the current test when HPPS tables mode is active.
+	 *
+	 * @param string $reason Reason for skipping.
+	 */
+	private function skip_in_hpps_mode( string $reason = 'Skipped in HPPS tables mode.' ): void {
+		if ( self::is_hpps_tables_mode() ) {
+			$this->markTestSkipped( $reason );
+		}
+	}
 }

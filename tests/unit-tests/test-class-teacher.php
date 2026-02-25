@@ -538,6 +538,8 @@ AND progress.post_id IN ($teacher_course_id_1,$teacher_course_id_2)";
 	}
 
 	public function testFilterLearnersQuery_WhenHPPSIsDisabledAndTeacherHasCourses_ReturnsCorrectCommentsQuery() {
+		$this->skip_in_hpps_mode( 'Tests comments-based SQL query generation; incompatible with HPPS tables mode.' );
+
 		$nonteacher_course_id = $this->factory->course->create();
 
 		$this->login_as_teacher();
@@ -559,6 +561,8 @@ AND comments.comment_type = 'sensei_course_status'";
 	}
 
 	public function testFilterLearnersQuery_WhenTheTeacherHasNoCourses_ReturnsCourseIdOfZero() {
+		$this->skip_in_hpps_mode( 'Tests comments-based SQL query generation; incompatible with HPPS tables mode.' );
+
 		// Arrange.
 		$nonteacher_course_id = $this->factory->course->create();
 
