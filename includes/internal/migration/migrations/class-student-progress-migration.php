@@ -154,9 +154,8 @@ class Student_Progress_Migration extends Migration_Abstract {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$progress_comments = $wpdb->get_results( $comments_query );
 
-		$comment_ids      = array();
-		$post_ids         = array();
-		$trashed_post_ids = array();
+		$comment_ids = array();
+		$post_ids    = array();
 		foreach ( $progress_comments as $progress_comment ) {
 			$comment_ids[] = $progress_comment->comment_ID;
 
@@ -476,9 +475,9 @@ class Student_Progress_Migration extends Migration_Abstract {
 	/**
 	 * Generate SQL for data insertion.
 	 *
-	 * @param array $batch Data to generate queries for. Will be 'data' array returned by `$this->fetch_data_for_migration_for_ids()` method.
+	 * @param array $batch Row data to generate queries for.
 	 *
-	 * @return string Generated queries for insertion for this batch, would be of the form:
+	 * @return string Generated query for insertion for this batch, of the form:
 	 * INSERT IGNORE INTO $table_name ($columns) values
 	 *  ($value for row 1)
 	 *  ($value for row 2)
