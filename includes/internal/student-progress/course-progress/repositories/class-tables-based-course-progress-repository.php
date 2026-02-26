@@ -9,6 +9,8 @@ namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use Sensei\Internal\Cache_Prefix;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Tables_Based_Course_Progress;
 use wpdb;
@@ -25,6 +27,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.16.1
  */
 class Tables_Based_Course_Progress_Repository implements Course_Progress_Repository_Interface {
+	use Cache_Prefix;
+
+	/**
+	 * Cache group for course progress.
+	 *
+	 * @var string
+	 */
+	private const CACHE_GROUP = 'sensei_course_progress';
+
 	/**
 	 * WordPress database object.
 	 *
@@ -94,7 +105,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		);
 		$id = (int) $this->wpdb->insert_id;
 
-		return new Tables_Based_Course_Progress(
+		$progress = new Tables_Based_Course_Progress(
 			$id,
 			$course_id,
 			$user_id,
@@ -104,6 +115,13 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			$current_datetime,
 			$current_datetime
 		);
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			$cache_key = $course_id . '_' . $user_id;
+			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
+		}
+
+		return $progress;
 	}
 
 	/**
@@ -128,6 +146,15 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		 */
 		$course_id = (int) apply_filters( 'sensei_course_progress_get_course_id', $course_id );
 
+		$cache_key = $course_id . '_' . $user_id;
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			if ( false !== $cached ) {
+				return '__not_found__' === $cached ? null : $cached;
+			}
+		}
+
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -140,12 +167,16 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$row = $this->wpdb->get_row( $query );
 		if ( ! $row ) {
+			if ( Progress_Storage_Settings::is_cache_enabled() ) {
+				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), '__not_found__', self::CACHE_GROUP );
+			}
+
 			return null;
 		}
 
 		$timezone = new DateTimeZone( 'UTC' );
 
-		return new Tables_Based_Course_Progress(
+		$progress = new Tables_Based_Course_Progress(
 			(int) $row->id,
 			(int) $row->post_id,
 			(int) $row->user_id,
@@ -155,6 +186,12 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			new DateTimeImmutable( $row->created_at, $timezone ),
 			new DateTimeImmutable( $row->updated_at, $timezone )
 		);
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
+		}
+
+		return $progress;
 	}
 
 	/**
@@ -179,19 +216,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		 */
 		$course_id = (int) apply_filters( 'sensei_course_progress_has_course_id', $course_id );
 
-		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
-		$query      = $this->wpdb->prepare(
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			'SELECT COUNT(*) FROM ' . $table_name . ' WHERE post_id = %d AND user_id = %d AND type = %s',
-			$course_id,
-			$user_id,
-			'course'
-		);
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$count = (int) $this->wpdb->get_var( $query );
-
-		return $count > 0;
+		return null !== $this->get( $course_id, $user_id );
 	}
 
 	/**
@@ -230,6 +255,11 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				'%d',
 			]
 		);
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			$cache_key = $course_progress->get_course_id() . '_' . $course_progress->get_user_id();
+			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+		}
 	}
 
 	/**
@@ -253,6 +283,11 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				'%s',
 			]
 		);
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			$cache_key = $course_progress->get_course_id() . '_' . $course_progress->get_user_id();
+			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+		}
 	}
 
 	/**
@@ -286,6 +321,10 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				'%s',
 			]
 		);
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			self::invalidate_cache_group( self::CACHE_GROUP );
+		}
 	}
 
 	/**
@@ -307,6 +346,10 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				'%s',
 			]
 		);
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			self::invalidate_cache_group( self::CACHE_GROUP );
+		}
 	}
 
 	/**
@@ -396,11 +439,12 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			return array();
 		}
 
-		$timezone = new DateTimeZone( 'UTC' );
-
+		$timezone          = new DateTimeZone( 'UTC' );
 		$course_progresses = array();
+		$cache_values      = array();
+
 		foreach ( $rows as $row ) {
-			$course_progresses[] = new Tables_Based_Course_Progress(
+			$progress = new Tables_Based_Course_Progress(
 				(int) $row->id,
 				(int) $row->post_id,
 				(int) $row->user_id,
@@ -410,6 +454,18 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				new DateTimeImmutable( $row->created_at, $timezone ),
 				new DateTimeImmutable( $row->updated_at, $timezone )
 			);
+
+			$course_progresses[] = $progress;
+
+			if ( Progress_Storage_Settings::is_cache_enabled() ) {
+				$cache_key = $row->post_id . '_' . $row->user_id;
+
+				$cache_values[ self::get_prefixed_key( $cache_key, self::CACHE_GROUP ) ] = $progress;
+			}
+		}
+
+		if ( ! empty( $cache_values ) ) {
+			wp_cache_set_multiple( $cache_values, self::CACHE_GROUP );
 		}
 
 		return $course_progresses;
