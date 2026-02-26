@@ -1,0 +1,3 @@
+Significance: patch
+Type: changed
+Comment: Performance: Add object caching to HPPS (High-Performance Progress Storage) repositories
