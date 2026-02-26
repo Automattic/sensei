@@ -33,6 +33,8 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	/**
 	 * Cache group for quiz answers.
 	 *
+	 * @since 4.24.0
+	 *
 	 * @var string
 	 */
 	private const CACHE_GROUP = 'sensei_quiz_answers';
@@ -122,7 +124,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 			$current_datetime
 		);
 
-		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+		if ( $this->wpdb->insert_id && Progress_Storage_Settings::is_cache_enabled() ) {
 			$cache_key = (string) $submission_id;
 			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
@@ -158,7 +160,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
 			if ( false !== $cached ) {
-				return '__not_found__' === $cached ? array() : $cached;
+				return self::$cache_not_found === $cached ? array() : $cached;
 			}
 		}
 
@@ -182,7 +184,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_value = empty( $answers ) ? '__not_found__' : $answers;
+			$cache_value = empty( $answers ) ? self::$cache_not_found : $answers;
 			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $cache_value, self::CACHE_GROUP );
 		}
 

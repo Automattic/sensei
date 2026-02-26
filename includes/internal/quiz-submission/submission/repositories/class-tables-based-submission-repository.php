@@ -32,6 +32,8 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	/**
 	 * Cache group for quiz submissions.
 	 *
+	 * @since 4.24.0
+	 *
 	 * @var string
 	 */
 	private const CACHE_GROUP = 'sensei_quiz_submissions';
@@ -108,7 +110,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 			$current_datetime
 		);
 
-		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+		if ( $this->wpdb->insert_id && Progress_Storage_Settings::is_cache_enabled() ) {
 			$cache_key = $quiz_id . '_' . $user_id;
 			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $submission, self::CACHE_GROUP );
 		}
@@ -177,7 +179,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
 			if ( false !== $cached ) {
-				return '__not_found__' === $cached ? null : $cached;
+				return self::$cache_not_found === $cached ? null : $cached;
 			}
 		}
 
@@ -193,7 +195,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 
 		if ( ! $row ) {
 			if ( Progress_Storage_Settings::is_cache_enabled() ) {
-				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), '__not_found__', self::CACHE_GROUP );
+				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::$cache_not_found, self::CACHE_GROUP );
 			}
 
 			return null;

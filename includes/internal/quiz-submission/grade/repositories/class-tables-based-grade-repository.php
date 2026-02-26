@@ -32,6 +32,8 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	/**
 	 * Cache group for quiz grades.
 	 *
+	 * @since 4.24.0
+	 *
 	 * @var string
 	 */
 	private const CACHE_GROUP = 'sensei_quiz_grades';
@@ -126,7 +128,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 			$current_date
 		);
 
-		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+		if ( $this->wpdb->insert_id && Progress_Storage_Settings::is_cache_enabled() ) {
 			$cache_key = (string) $submission->get_id();
 			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
@@ -162,14 +164,14 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
 			if ( false !== $cached ) {
-				return '__not_found__' === $cached ? array() : $cached;
+				return self::$cache_not_found === $cached ? array() : $cached;
 			}
 		}
 
 		$answer_ids = $this->get_answer_ids_by_submission_id( $submission_id );
 		if ( empty( $answer_ids ) ) {
 			if ( Progress_Storage_Settings::is_cache_enabled() ) {
-				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), '__not_found__', self::CACHE_GROUP );
+				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::$cache_not_found, self::CACHE_GROUP );
 			}
 
 			return [];
@@ -194,7 +196,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_value = empty( $grades ) ? '__not_found__' : $grades;
+			$cache_value = empty( $grades ) ? self::$cache_not_found : $grades;
 			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $cache_value, self::CACHE_GROUP );
 		}
 
@@ -290,6 +292,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 * Get all answer IDs for a submission.
 	 *
 	 * @param int $submission_id The submission ID.
+	 * @return array The answer IDs.
 	 */
 	private function get_answer_ids_by_submission_id( int $submission_id ): array {
 		$answers_query = $this->wpdb->prepare(
