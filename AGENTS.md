@@ -12,8 +12,9 @@ Sensei LMS is a WordPress plugin for creating and managing online courses, lesso
 - `npm run test-js` — Jest tests
 - `npm run test-js -- --testPathPattern=path/to/test` — Single Jest test
 - `npm run test:e2e` — Playwright E2E tests (requires wp-env running)
-- `npm run lint-php` — PHP CodeSniffer
-- `npm run lint-js` — ESLint + Prettier
+- `npm run lint-php` — PHP linting (syntax + CodeSniffer)
+- `npm run lint-js` — ESLint
+- `npm run format` — Prettier formatting
 - `npm run lint-js:fix` — Auto-fix JS/CSS lint errors
 - `npm run lint-css:fix` — Auto-fix SCSS lint errors
 - `npm run changelog` — Add changelog entry (Jetpack Changelogger)
@@ -22,7 +23,7 @@ Always run linters and tests before committing to catch issues early.
 
 ## Third-Party Dependency Scoping
 
-All Composer production dependencies are scoped with `Sensei\ThirdParty` namespace prefix via php-scoper to avoid conflicts with other plugins. **Never reference an unscoped third-party namespace directly** — e.g. use `Sensei\ThirdParty\Action_Scheduler`, not `Action_Scheduler`. When adding a new Composer package: add it as a dev dependency, configure it in `config/scoper.inc.php`, then run `composer dump-autoload`.
+Composer production dependencies that may conflict with other plugins are scoped with the `Sensei\ThirdParty` namespace prefix via php-scoper. **Never reference an unscoped third-party namespace directly when a scoped version exists** — e.g. use `Sensei\ThirdParty\Pelago\Emogrifier\CssInliner`, not `Pelago\Emogrifier\CssInliner`. When adding a new Composer package: add it as a dev dependency, configure it in `config/scoper.inc.php`, then run `composer dump-autoload`.
 
 ## Key Architectural Decisions
 
