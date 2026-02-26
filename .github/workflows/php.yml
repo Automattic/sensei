@@ -69,13 +69,13 @@ jobs:
                     - php: '8.2'
                       wp: latest
                     - php: '8.2'
+                      wp: nightly
+                    - php: '8.2'
                       wp: latest
                       wpmu: 1
                     - php: '8.2'
                       wp: latest
                       hpps: 1
-                    - php: '8.2'
-                      wp: nightly
         env:
             WP_VERSION: ${{ matrix.wp }}
             WP_MULTISITE: ${{ matrix.wpmu }}
