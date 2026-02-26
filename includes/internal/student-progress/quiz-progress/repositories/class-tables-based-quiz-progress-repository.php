@@ -32,6 +32,8 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	/**
 	 * Cache group for quiz progress.
 	 *
+	 * @since 4.24.0
+	 *
 	 * @var string
 	 */
 	private const CACHE_GROUP = 'sensei_quiz_progress';
@@ -44,7 +46,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	private $wpdb;
 
 	/**
-	 * Tables_Based_Course_Progress_Repository constructor.
+	 * Tables_Based_Quiz_Progress_Repository constructor.
 	 *
 	 * @internal
 	 *
@@ -116,7 +118,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			$current_datetime
 		);
 
-		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+		if ( $id && Progress_Storage_Settings::is_cache_enabled() ) {
 			$cache_key = $quiz_id . '_' . $user_id;
 			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
 		}
@@ -155,7 +157,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
 			if ( false !== $cached ) {
-				return '__not_found__' === $cached ? null : $cached;
+				return self::$cache_not_found === $cached ? null : $cached;
 			}
 		}
 
@@ -172,7 +174,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		$row = $this->wpdb->get_row( $query );
 		if ( ! $row ) {
 			if ( Progress_Storage_Settings::is_cache_enabled() ) {
-				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), '__not_found__', self::CACHE_GROUP );
+				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::$cache_not_found, self::CACHE_GROUP );
 			}
 
 			return null;
@@ -211,18 +213,6 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		if ( ! $user_id ) {
 			return false;
 		}
-
-		/**
-		 * Filter quiz id for quiz progress existence check.
-		 *
-		 * @hook sensei_quiz_progress_has_quiz_id
-		 *
-		 * @since 4.23.1
-		 *
-		 * @param {int} $quiz_id Quiz ID.
-		 * @return {int} Filtered quiz ID.
-		 */
-		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_has_quiz_id', $quiz_id );
 
 		return null !== $this->get( $quiz_id, $user_id );
 	}
@@ -447,9 +437,10 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			return array();
 		}
 
-		$timezone     = new DateTimeZone( 'UTC' );
-		$progresses   = array();
-		$cache_values = array();
+		$timezone      = new DateTimeZone( 'UTC' );
+		$progresses    = array();
+		$cache_values  = array();
+		$cache_enabled = Progress_Storage_Settings::is_cache_enabled();
 
 		foreach ( $rows as $row ) {
 			$progress = new Tables_Based_Quiz_Progress(
@@ -465,7 +456,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 
 			$progresses[] = $progress;
 
-			if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			if ( $cache_enabled ) {
 				$cache_key = $row->post_id . '_' . $row->user_id;
 
 				$cache_values[ self::get_prefixed_key( $cache_key, self::CACHE_GROUP ) ] = $progress;

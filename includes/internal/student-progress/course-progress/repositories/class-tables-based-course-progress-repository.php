@@ -32,6 +32,8 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	/**
 	 * Cache group for course progress.
 	 *
+	 * @since 4.24.0
+	 *
 	 * @var string
 	 */
 	private const CACHE_GROUP = 'sensei_course_progress';
@@ -116,7 +118,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			$current_datetime
 		);
 
-		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+		if ( $id && Progress_Storage_Settings::is_cache_enabled() ) {
 			$cache_key = $course_id . '_' . $user_id;
 			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
 		}
@@ -151,7 +153,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
 			if ( false !== $cached ) {
-				return '__not_found__' === $cached ? null : $cached;
+				return self::$cache_not_found === $cached ? null : $cached;
 			}
 		}
 
@@ -168,7 +170,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		$row = $this->wpdb->get_row( $query );
 		if ( ! $row ) {
 			if ( Progress_Storage_Settings::is_cache_enabled() ) {
-				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), '__not_found__', self::CACHE_GROUP );
+				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::$cache_not_found, self::CACHE_GROUP );
 			}
 
 			return null;
@@ -204,18 +206,6 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 * @return bool Whether the course progress exists.
 	 */
 	public function has( int $course_id, int $user_id ): bool {
-		/**
-		 * Filter the course ID for a course progress we want to check.
-		 *
-		 * @hook sensei_course_progress_has_course_id
-		 *
-		 * @since 4.23.1
-		 *
-		 * @param {int} $course_id The course ID.
-		 * @return {int} Filtered course ID.
-		 */
-		$course_id = (int) apply_filters( 'sensei_course_progress_has_course_id', $course_id );
-
 		return null !== $this->get( $course_id, $user_id );
 	}
 
@@ -442,6 +432,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		$timezone          = new DateTimeZone( 'UTC' );
 		$course_progresses = array();
 		$cache_values      = array();
+		$cache_enabled     = Progress_Storage_Settings::is_cache_enabled();
 
 		foreach ( $rows as $row ) {
 			$progress = new Tables_Based_Course_Progress(
@@ -457,7 +448,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 
 			$course_progresses[] = $progress;
 
-			if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			if ( $cache_enabled ) {
 				$cache_key = $row->post_id . '_' . $row->user_id;
 
 				$cache_values[ self::get_prefixed_key( $cache_key, self::CACHE_GROUP ) ] = $progress;

@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Tables_Based_Lesson_Progress_Repository
  *
- * @intenal
+ * @internal
  *
  * @since 4.16.1
  */
@@ -32,6 +32,8 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 
 	/**
 	 * Cache group for lesson progress.
+	 *
+	 * @since 4.24.0
 	 *
 	 * @var string
 	 */
@@ -45,9 +47,9 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	private $wpdb;
 
 	/**
-	 * Tables_Based_Course_Progress_Repository constructor.
+	 * Tables_Based_Lesson_Progress_Repository constructor.
 	 *
-	 * @intenal
+	 * @internal
 	 *
 	 * @param wpdb $wpdb WordPress database object.
 	 */
@@ -58,7 +60,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	/**
 	 * Creates a new lesson progress.
 	 *
-	 * @intenal
+	 * @internal
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
@@ -118,7 +120,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			$current_datetime
 		);
 
-		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+		if ( $id && Progress_Storage_Settings::is_cache_enabled() ) {
 			$cache_key = $lesson_id . '_' . $user_id;
 			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
 		}
@@ -154,7 +156,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
 			if ( false !== $cached ) {
-				return '__not_found__' === $cached ? null : $cached;
+				return self::$cache_not_found === $cached ? null : $cached;
 			}
 		}
 
@@ -171,7 +173,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		$row = $this->wpdb->get_row( $query );
 		if ( ! $row ) {
 			if ( Progress_Storage_Settings::is_cache_enabled() ) {
-				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), '__not_found__', self::CACHE_GROUP );
+				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::$cache_not_found, self::CACHE_GROUP );
 			}
 
 			return null;
@@ -207,18 +209,6 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @return bool
 	 */
 	public function has( int $lesson_id, int $user_id ): bool {
-		/**
-		 * Filter lesson id for lesson progress check.
-		 *
-		 * @hook sensei_lesson_progress_has_lesson_id
-		 *
-		 * @since 4.23.1
-		 *
-		 * @param {int} $lesson_id The lesson ID.
-		 * @return {int} Filtered lesson ID.
-		 */
-		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_has_lesson_id', $lesson_id );
-
 		return null !== $this->get( $lesson_id, $user_id );
 	}
 
@@ -493,6 +483,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		$timezone          = new DateTimeZone( 'UTC' );
 		$lesson_progresses = array();
 		$cache_values      = array();
+		$cache_enabled     = Progress_Storage_Settings::is_cache_enabled();
 
 		foreach ( $rows as $row ) {
 			$progress = new Tables_Based_Lesson_Progress(
@@ -508,7 +499,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 
 			$lesson_progresses[] = $progress;
 
-			if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			if ( $cache_enabled ) {
 				$cache_key = $row->post_id . '_' . $row->user_id;
 
 				$cache_values[ self::get_prefixed_key( $cache_key, self::CACHE_GROUP ) ] = $progress;
