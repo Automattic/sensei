@@ -6,14 +6,19 @@ Sensei LMS is a WordPress plugin for creating and managing online courses, lesso
 
 - `npm start` — Dev mode with watch
 - `npm run build:assets` — Production build of JS/CSS
-- `npm run test-php` — PHPUnit tests
-- `npm run test-php tests/unit-tests/path/to/test-file` — Single test file
+- `npm run wp-env start` — Start local WordPress dev environment
+- `npm run test-php:wp-env` — PHPUnit tests (runs inside wp-env container)
+- `npm run test-php:wp-env -- --filter TestClassName` — Single test class
 - `npm run test-js` — Jest tests
 - `npm run test-js -- --testPathPattern=path/to/test` — Single Jest test
+- `npm run test:e2e` — Playwright E2E tests (requires wp-env running)
 - `npm run lint-php` — PHP CodeSniffer
 - `npm run lint-js` — ESLint + Prettier
+- `npm run lint-js:fix` — Auto-fix JS/CSS lint errors
+- `npm run lint-css:fix` — Auto-fix SCSS lint errors
 - `npm run changelog` — Add changelog entry (Jetpack Changelogger)
-- `npm run wp-env start` — Start local WordPress dev environment
+
+Always run linters and tests before committing to catch issues early.
 
 ## Third-Party Dependency Scoping
 
