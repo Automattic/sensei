@@ -34,7 +34,7 @@ trait Cache_Prefix {
 	 *
 	 * @var string
 	 */
-	private static $cache_not_found = '__not_found__';
+	private static string $cache_not_found = '__not_found__';
 
 	/**
 	 * Get prefix for use with wp_cache_set. Allows all cache in a group to be invalidated at once.
@@ -51,7 +51,10 @@ trait Cache_Prefix {
 			$prefix = microtime();
 			wp_cache_add( 'sensei_' . $group . '_cache_prefix', $prefix, $group );
 			// Re-read in case another process won the race.
-			$prefix = wp_cache_get( 'sensei_' . $group . '_cache_prefix', $group );
+			$re_read = wp_cache_get( 'sensei_' . $group . '_cache_prefix', $group );
+			if ( false !== $re_read ) {
+				$prefix = $re_read;
+			}
 		}
 
 		return 'sensei_cache_' . $prefix . '_';

@@ -451,6 +451,24 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
+	public function testCreate_CacheEnabled_FailedInsertDoesNotCache(): void {
+		/* Arrange. */
+		$wpdb            = $this->createMock( wpdb::class );
+		$wpdb->insert_id = 0;
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+		wp_cache_flush();
+
+		/* Act. */
+		$repository->create( 1, 2 );
+
+		/* Assert — nothing should be cached when insert fails. */
+		$cached = wp_cache_get( '1_2', 'sensei_course_progress' );
+		self::assertFalse( $cached );
+	}
+
 	public function testGet_CacheEnabled_ReturnsCachedValueOnSecondCall(): void {
 		/* Arrange. */
 		global $wpdb;
@@ -604,6 +622,28 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertNull( $result );
+	}
+
+	public function testGet_CacheEnabled_CreateOverwritesNotFoundSentinel(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+
+		/* Cache __not_found__ sentinel. */
+		$result = $repository->get( 1, 2 );
+		self::assertNull( $result );
+
+		/* Act — create overwrites the sentinel. */
+		$created = $repository->create( 1, 2 );
+		$fresh   = $repository->get( 1, 2 );
+
+		/* Assert — get() should return the created object, not null. */
+		self::assertNotNull( $fresh );
+		self::assertSame( $created->get_id(), $fresh->get_id() );
 	}
 
 	public function testFind_CacheEnabled_WarmsIndividualCaches(): void {

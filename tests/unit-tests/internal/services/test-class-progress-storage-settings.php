@@ -193,5 +193,88 @@ class Progress_Storage_Settings_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	public function testIsCacheEnabled_WhenTablesRepository_ReturnsTrue(): void {
+		/* Arrange. */
+		Progress_Storage_Settings::reset_cache_enabled();
+		Sensei()->settings->settings['experimental_progress_storage_repository'] = 'custom_tables';
 
+		/* Act. */
+		$result = Progress_Storage_Settings::is_cache_enabled();
+
+		/* Assert. */
+		self::assertTrue( $result );
+
+		/* Cleanup. */
+		Progress_Storage_Settings::reset_cache_enabled();
+	}
+
+	public function testIsCacheEnabled_WhenCommentsRepository_ReturnsFalse(): void {
+		/* Arrange. */
+		Progress_Storage_Settings::reset_cache_enabled();
+		Sensei()->settings->settings['experimental_progress_storage_repository'] = 'comments';
+
+		/* Act. */
+		$result = Progress_Storage_Settings::is_cache_enabled();
+
+		/* Assert. */
+		self::assertFalse( $result );
+
+		/* Cleanup. */
+		Progress_Storage_Settings::reset_cache_enabled();
+	}
+
+	public function testIsCacheEnabled_Memoized_ReturnsSameValueOnSecondCall(): void {
+		/* Arrange. */
+		Progress_Storage_Settings::reset_cache_enabled();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+
+		/* Act. */
+		$first  = Progress_Storage_Settings::is_cache_enabled();
+		$second = Progress_Storage_Settings::is_cache_enabled();
+
+		/* Assert. */
+		self::assertTrue( $first );
+		self::assertSame( $first, $second );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		Progress_Storage_Settings::reset_cache_enabled();
+	}
+
+	public function testIsCacheEnabled_FilterOverride_RespectsFilter(): void {
+		/* Arrange. */
+		Progress_Storage_Settings::reset_cache_enabled();
+		Sensei()->settings->settings['experimental_progress_storage_repository'] = 'comments';
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+
+		/* Act. */
+		$result = Progress_Storage_Settings::is_cache_enabled();
+
+		/* Assert — filter overrides the default. */
+		self::assertTrue( $result );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		Progress_Storage_Settings::reset_cache_enabled();
+	}
+
+	public function testResetCacheEnabled_AfterMemoization_AllowsRecomputation(): void {
+		/* Arrange. */
+		Progress_Storage_Settings::reset_cache_enabled();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		Progress_Storage_Settings::is_cache_enabled();
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+
+		/* Act. */
+		Progress_Storage_Settings::reset_cache_enabled();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		$result = Progress_Storage_Settings::is_cache_enabled();
+
+		/* Assert. */
+		self::assertFalse( $result );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		Progress_Storage_Settings::reset_cache_enabled();
+	}
 }
