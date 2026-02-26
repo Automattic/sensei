@@ -89,4 +89,27 @@ class Progress_Storage_Settings {
 	public static function is_sync_enabled(): bool {
 		return Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false;
 	}
+
+	/**
+	 * Returns true if HPPS caching is enabled.
+	 *
+	 * Defaults to true when using tables-based storage. Filterable via `sensei_hpps_cache_enabled`.
+	 *
+	 * @since 4.24.0
+	 *
+	 * @return bool
+	 */
+	public static function is_cache_enabled(): bool {
+		/**
+		 * Filter whether HPPS caching is enabled.
+		 *
+		 * @hook sensei_hpps_cache_enabled
+		 *
+		 * @since 4.24.0
+		 *
+		 * @param {bool} $enabled Whether caching is enabled.
+		 * @return {bool} Whether caching should be enabled.
+		 */
+		return (bool) apply_filters( 'sensei_hpps_cache_enabled', self::is_tables_repository() );
+	}
 }
