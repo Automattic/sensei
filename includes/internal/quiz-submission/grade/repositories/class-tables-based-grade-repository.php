@@ -164,14 +164,14 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
 			if ( false !== $cached ) {
-				return self::$cache_not_found === $cached ? array() : $cached;
+				return $cached;
 			}
 		}
 
 		$answer_ids = $this->get_answer_ids_by_submission_id( $submission_id );
 		if ( empty( $answer_ids ) ) {
 			if ( Progress_Storage_Settings::is_cache_enabled() ) {
-				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::$cache_not_found, self::CACHE_GROUP );
+				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), array(), self::CACHE_GROUP );
 			}
 
 			return [];
@@ -196,8 +196,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_value = empty( $grades ) ? self::$cache_not_found : $grades;
-			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $cache_value, self::CACHE_GROUP );
+			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $grades, self::CACHE_GROUP );
 		}
 
 		return $grades;

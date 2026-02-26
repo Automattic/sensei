@@ -160,7 +160,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
 			if ( false !== $cached ) {
-				return self::$cache_not_found === $cached ? array() : $cached;
+				return $cached;
 			}
 		}
 
@@ -184,8 +184,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_value = empty( $answers ) ? self::$cache_not_found : $answers;
-			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $cache_value, self::CACHE_GROUP );
+			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $answers, self::CACHE_GROUP );
 		}
 
 		return $answers;
