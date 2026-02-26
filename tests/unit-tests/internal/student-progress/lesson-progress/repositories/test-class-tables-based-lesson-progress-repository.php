@@ -564,8 +564,9 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->get( 1, 2 );
 
 		/* Assert. */
-		$cached = wp_cache_get( '1_2', 'sensei_lesson_progress' );
-		self::assertFalse( $cached );
+		/* Verify no cache prefix marker was created for this group. */
+		$cache_prefix = wp_cache_get( 'sensei_sensei_lesson_progress_cache_prefix', 'sensei_lesson_progress' );
+		self::assertFalse( $cache_prefix );
 	}
 
 	public function testDeleteForLesson_CacheEnabled_InvalidatesCacheGroup(): void {

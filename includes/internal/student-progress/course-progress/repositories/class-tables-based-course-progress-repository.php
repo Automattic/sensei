@@ -206,6 +206,18 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 * @return bool Whether the course progress exists.
 	 */
 	public function has( int $course_id, int $user_id ): bool {
+		/**
+		 * Filter the course ID for a course progress we want to check.
+		 *
+		 * @hook sensei_course_progress_has_course_id
+		 *
+		 * @since 4.23.1
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} Filtered course ID.
+		 */
+		$course_id = (int) apply_filters( 'sensei_course_progress_has_course_id', $course_id );
+
 		return null !== $this->get( $course_id, $user_id );
 	}
 

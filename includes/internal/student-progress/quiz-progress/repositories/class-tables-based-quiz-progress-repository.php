@@ -214,6 +214,18 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			return false;
 		}
 
+		/**
+		 * Filter the quiz ID for a quiz progress we want to check.
+		 *
+		 * @hook sensei_quiz_progress_has_quiz_id
+		 *
+		 * @since 4.23.1
+		 *
+		 * @param {int} $quiz_id Quiz ID.
+		 * @return {int} Filtered quiz ID.
+		 */
+		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_has_quiz_id', $quiz_id );
+
 		return null !== $this->get( $quiz_id, $user_id );
 	}
 

@@ -316,8 +316,9 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		$repository->get_all( 1 );
 
 		/* Assert. */
-		$cached = wp_cache_get( '1', 'sensei_quiz_answers' );
-		self::assertFalse( $cached );
+		/* Verify no cache prefix marker was created for this group. */
+		$cache_prefix = wp_cache_get( 'sensei_sensei_quiz_answers_cache_prefix', 'sensei_quiz_answers' );
+		self::assertFalse( $cache_prefix );
 	}
 
 	public function testCreate_CacheEnabled_InvalidatesGetAllCache(): void {

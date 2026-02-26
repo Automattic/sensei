@@ -209,6 +209,18 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @return bool
 	 */
 	public function has( int $lesson_id, int $user_id ): bool {
+		/**
+		 * Filter the lesson ID for a lesson progress we want to check.
+		 *
+		 * @hook sensei_lesson_progress_has_lesson_id
+		 *
+		 * @since 4.23.1
+		 *
+		 * @param {int} $lesson_id The lesson ID.
+		 * @return {int} Filtered lesson ID.
+		 */
+		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_has_lesson_id', $lesson_id );
+
 		return null !== $this->get( $lesson_id, $user_id );
 	}
 

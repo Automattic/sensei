@@ -464,9 +464,9 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$repository->create( 1, 2 );
 
-		/* Assert — nothing should be cached when insert fails. */
-		$cached = wp_cache_get( '1_2', 'sensei_course_progress' );
-		self::assertFalse( $cached );
+		/* Assert — nothing should be cached when insert fails (no prefix marker created). */
+		$cache_prefix = wp_cache_get( 'sensei_sensei_course_progress_cache_prefix', 'sensei_course_progress' );
+		self::assertFalse( $cache_prefix );
 	}
 
 	public function testGet_CacheEnabled_ReturnsCachedValueOnSecondCall(): void {
@@ -560,9 +560,9 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$repository->get( 1, 2 );
 
-		/* Assert - verify nothing was cached. */
-		$cached = wp_cache_get( '1_2', 'sensei_course_progress' );
-		self::assertFalse( $cached );
+		/* Assert - verify no cache prefix marker was created for this group. */
+		$cache_prefix = wp_cache_get( 'sensei_sensei_course_progress_cache_prefix', 'sensei_course_progress' );
+		self::assertFalse( $cache_prefix );
 	}
 
 	public function testHas_CacheEnabled_DelegatesToGet(): void {
