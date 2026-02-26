@@ -24,6 +24,9 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		wp_cache_flush();
 	}
 
 	public function testCreate_ParamsGiven_ReturnsGrade(): void {
@@ -329,6 +332,85 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		/* Cleanup */
 		$this->cleanup( $created );
+	}
+
+	public function testGetAll_CacheEnabled_ReturnsCachedValueOnSecondCall(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+
+		$created    = $this->create_grade_with_submission_and_answer( 4, 5, 'feedback' );
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+
+		/* Act. */
+		$grades1 = $repository->get_all( $created['submission_id'] );
+		$grades2 = $repository->get_all( $created['submission_id'] );
+
+		/* Assert. */
+		self::assertCount( 1, $grades1 );
+		self::assertCount( 1, $grades2 );
+
+		/* Cleanup. */
+		$this->cleanup( $created );
+	}
+
+	public function testGetAll_CacheEnabled_CachesEmptyResult(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+
+		/* Act. */
+		$result1 = $repository->get_all( 999 );
+		$result2 = $repository->get_all( 999 );
+
+		/* Assert. */
+		self::assertEmpty( $result1 );
+		self::assertEmpty( $result2 );
+	}
+
+	public function testDeleteAll_CacheEnabled_InvalidatesCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+
+		$created = $this->create_grade_with_submission_and_answer( 4, 5, 'feedback' );
+
+		$submission_repository = new Tables_Based_Submission_Repository( $wpdb );
+		$submission            = $submission_repository->get( 1, 2 );
+
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+
+		/* Warm cache. */
+		$repository->get_all( $created['submission_id'] );
+
+		/* Act. */
+		$repository->delete_all( $submission );
+		$result = $repository->get_all( $created['submission_id'] );
+
+		/* Assert. */
+		self::assertEmpty( $result );
+
+		/* Cleanup. */
+		$this->cleanup( $created );
+	}
+
+	public function testGetAll_CacheDisabled_DoesNotCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+		$repository->get_all( 999 );
+
+		/* Assert. */
+		$cached = wp_cache_get( '999', 'sensei_quiz_grades' );
+		self::assertFalse( $cached );
 	}
 
 	private function create_grade_with_submission_and_answer( $question_id, $points, $feedback ): array {
