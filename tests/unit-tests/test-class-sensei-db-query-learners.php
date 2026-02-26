@@ -2,6 +2,7 @@
 
 class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_HPPS_Helpers;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -144,6 +145,8 @@ class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 	}
 
 	public function testGetAll_WhenTeacherOnTheStudentsScreen_ReturnsOnlyTeacherStudents() {
+		$this->skip_in_hpps_mode( 'Sensei_Db_Query_Learners queries comments table directly; incompatible with HPPS tables mode.' );
+
 		// Arrange.
 		$nonteacher_student_id = $this->factory->user->create( [ 'user_email' => 'nonteacher_student@example.com' ] );
 		$teacher_student_id    = $this->factory->user->create( [ 'user_email' => 'teacher_student@example.com' ] );
