@@ -25,6 +25,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 		remove_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		remove_filter( 'sensei_hpps_cache_enabled', '__return_false' );
 		wp_cache_flush();
@@ -42,10 +43,10 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 			->with(
 				'sensei_lms_quiz_submissions',
 				$this->callback(
-					function ( $array ) {
-						return 1 === $array['quiz_id']
-							&& 2 === $array['user_id']
-							&& 12.34 === $array['final_grade'];
+					function ( $data ) {
+						return 1 === $data['quiz_id']
+							&& 2 === $data['user_id']
+							&& 12.34 === $data['final_grade'];
 					}
 				),
 				[
@@ -354,6 +355,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Submission_Repository( $wpdb );
 		$submission = $repository->create( 1, 2, 12.34 );
@@ -370,6 +372,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Submission_Repository( $wpdb );
 
@@ -387,6 +390,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Submission_Repository( $wpdb );
 		$submission = $repository->create( 1, 2 );
@@ -406,6 +410,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Submission_Repository( $wpdb );
 		$submission = $repository->create( 1, 2 );
@@ -424,6 +429,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Submission_Repository( $wpdb );
 		$repository->create( 1, 2 );

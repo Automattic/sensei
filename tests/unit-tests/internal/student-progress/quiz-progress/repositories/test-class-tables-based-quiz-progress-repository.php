@@ -29,6 +29,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 		remove_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		remove_filter( 'sensei_hpps_cache_enabled', '__return_false' );
 		wp_cache_flush();
@@ -46,14 +47,14 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 			->with(
 				'sensei_lms_progress',
 				$this->callback(
-					function ( $array ) {
-						return isset( $array['post_id'], $array['user_id'], $array['type'], $array['status'] )
-							&& array_key_exists( 'parent_post_id', $array )
-							&& 1 === $array['post_id']
-							&& 2 === $array['user_id']
-							&& 'quiz' === $array['type']
-							&& 'in-progress' === $array['status']
-							&& is_null( $array['parent_post_id'] );
+					function ( $data ) {
+						return isset( $data['post_id'], $data['user_id'], $data['type'], $data['status'] )
+							&& array_key_exists( 'parent_post_id', $data )
+							&& 1 === $data['post_id']
+							&& 2 === $data['user_id']
+							&& 'quiz' === $data['type']
+							&& 'in-progress' === $data['status']
+							&& is_null( $data['parent_post_id'] );
 					}
 				),
 				[
@@ -448,6 +449,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 		$progress   = $repository->create( 1, 2 );
@@ -464,6 +466,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 
@@ -481,6 +484,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 		$progress   = $repository->create( 1, 2 );
@@ -500,6 +504,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 		$progress   = $repository->create( 1, 2 );
@@ -518,6 +523,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 		$repository->create( 1, 2 );
@@ -533,6 +539,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 		$repository->create( 1, 2 );
@@ -551,6 +558,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 		$repository->create( 1, 2 );
@@ -569,6 +577,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
 		$user_id    = $this->factory->user->create();
 		$quiz_ids   = $this->factory->quiz->create_many( 3 );
@@ -586,6 +595,26 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$result = $repository->get( $quiz_ids[0], $user_id );
 		self::assertNotNull( $result );
 		self::assertSame( $quiz_ids[0], $result->get_quiz_id() );
+	}
+
+	public function testHas_CacheEnabled_DelegatesToGet(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+		$repository->create( 1, 2 );
+
+		/* Warm cache via get(). */
+		$repository->get( 1, 2 );
+
+		/* Act — has() should use cached value. */
+		$result = $repository->has( 1, 2 );
+
+		/* Assert. */
+		self::assertTrue( $result );
 	}
 
 	private function export_progress( Quiz_Progress_Interface $progress ): array {
