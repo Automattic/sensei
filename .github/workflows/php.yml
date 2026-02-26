@@ -76,8 +76,6 @@ jobs:
                       hpps: 1
                     - php: '8.2'
                       wp: nightly
-                    - php: '8.3'
-                      wp: latest
         env:
             WP_VERSION: ${{ matrix.wp }}
             WP_MULTISITE: ${{ matrix.wpmu }}
