@@ -37,6 +37,18 @@ trait Cache_Prefix {
 	private static string $cache_not_found = '__not_found__';
 
 	/**
+	 * Get the cache key that stores the prefix for a group.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $group Group of cache.
+	 * @return string Prefix meta-key.
+	 */
+	private static function get_prefix_key( string $group ): string {
+		return 'sensei_' . $group . '_cache_prefix';
+	}
+
+	/**
 	 * Get prefix for use with wp_cache_set. Allows all cache in a group to be invalidated at once.
 	 *
 	 * @since $$next-version$$
@@ -45,13 +57,14 @@ trait Cache_Prefix {
 	 * @return string Prefix.
 	 */
 	private static function get_cache_prefix( string $group ): string {
-		$prefix = wp_cache_get( 'sensei_' . $group . '_cache_prefix', $group );
+		$prefix_key = self::get_prefix_key( $group );
+		$prefix     = wp_cache_get( $prefix_key, $group );
 
 		if ( false === $prefix ) {
 			$prefix = microtime();
-			wp_cache_add( 'sensei_' . $group . '_cache_prefix', $prefix, $group );
+			wp_cache_add( $prefix_key, $prefix, $group );
 			// Re-read in case another process won the race.
-			$re_read = wp_cache_get( 'sensei_' . $group . '_cache_prefix', $group );
+			$re_read = wp_cache_get( $prefix_key, $group );
 			if ( false !== $re_read ) {
 				$prefix = $re_read;
 			}
@@ -69,7 +82,7 @@ trait Cache_Prefix {
 	 * @return bool True on success, false on failure.
 	 */
 	private static function invalidate_cache_group( string $group ): bool {
-		return wp_cache_set( 'sensei_' . $group . '_cache_prefix', microtime(), $group );
+		return wp_cache_set( self::get_prefix_key( $group ), microtime(), $group );
 	}
 
 	/**
