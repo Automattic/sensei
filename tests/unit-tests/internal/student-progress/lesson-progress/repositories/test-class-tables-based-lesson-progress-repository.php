@@ -509,8 +509,8 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$result2 = $repository->get( 999, 999 );
 
 		/* Assert. */
-		self::assertNull( $result1 );
-		self::assertNull( $result2 );
+		self::assertNull( $result1, 'First call should return null.' );
+		self::assertNull( $result2, 'Second call should return null from cache.' );
 	}
 
 	public function testSave_CacheEnabled_InvalidatesCache(): void {
@@ -618,15 +618,15 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		/* Cache __not_found__ sentinel. */
 		$result = $repository->get( 1, 2 );
-		self::assertNull( $result );
+		self::assertNull( $result, 'Initial get should return null.' );
 
 		/* Act — create overwrites the sentinel. */
 		$created = $repository->create( 1, 2 );
 		$fresh   = $repository->get( 1, 2 );
 
 		/* Assert — get() should return the created object, not null. */
-		self::assertNotNull( $fresh );
-		self::assertSame( $created->get_id(), $fresh->get_id() );
+		self::assertNotNull( $fresh, 'Get after create should not be null.' );
+		self::assertSame( $created->get_id(), $fresh->get_id(), 'Cached object should match created object.' );
 	}
 
 	public function testFind_CacheEnabled_WarmsIndividualCaches(): void {
@@ -650,8 +650,8 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert - individual caches should be warm. */
 		$result = $repository->get( $lesson_ids[0], $user_id );
-		self::assertNotNull( $result );
-		self::assertSame( $lesson_ids[0], $result->get_lesson_id() );
+		self::assertNotNull( $result, 'Individual cache should be warm after find.' );
+		self::assertSame( $lesson_ids[0], $result->get_lesson_id(), 'Cached lesson ID should match.' );
 	}
 
 	public function testHas_CacheEnabled_DelegatesToGet(): void {

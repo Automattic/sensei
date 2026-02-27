@@ -350,8 +350,8 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$grades2 = $repository->get_all( $created['submission_id'] );
 
 		/* Assert. */
-		self::assertCount( 1, $grades1 );
-		self::assertCount( 1, $grades2 );
+		self::assertCount( 1, $grades1, 'First call should return one grade.' );
+		self::assertCount( 1, $grades2, 'Second call should return one grade from cache.' );
 
 		/* Cleanup. */
 		$this->cleanup( $created );
@@ -371,8 +371,8 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$result2 = $repository->get_all( 999 );
 
 		/* Assert. */
-		self::assertEmpty( $result1 );
-		self::assertEmpty( $result2 );
+		self::assertEmpty( $result1, 'First call should return empty.' );
+		self::assertEmpty( $result2, 'Second call should return empty from cache.' );
 	}
 
 	public function testDeleteAll_CacheEnabled_InvalidatesCache(): void {
@@ -431,7 +431,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		/* Warm cache. */
 		$grades = $repository->get_all( $created['submission_id'] );
-		self::assertCount( 1, $grades );
+		self::assertCount( 1, $grades, 'Should have one grade before create.' );
 
 		/* Act — create a new grade for the same submission. */
 		$submission = $this->createMock( Tables_Based_Submission::class );
@@ -456,7 +456,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert — get_all should return fresh data including the new grade. */
 		$fresh = $repository->get_all( $created['submission_id'] );
-		self::assertCount( 2, $fresh );
+		self::assertCount( 2, $fresh, 'Should have two grades after create invalidates cache.' );
 
 		/* Cleanup. */
 		$this->cleanup( $created );
@@ -474,8 +474,8 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		/* Warm cache. */
 		$grades = $repository->get_all( $created['submission_id'] );
-		self::assertCount( 1, $grades );
-		self::assertSame( 5, $grades[0]->get_points() );
+		self::assertCount( 1, $grades, 'Should have one grade before save.' );
+		self::assertSame( 5, $grades[0]->get_points(), 'Points should be 5 before save.' );
 
 		/* Act — save_many with updated points. */
 		$submission = $this->createMock( Tables_Based_Submission::class );
@@ -494,8 +494,8 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert — get_all should return fresh data with updated points. */
 		$fresh = $repository->get_all( $created['submission_id'] );
-		self::assertCount( 1, $fresh );
-		self::assertSame( 10, $fresh[0]->get_points() );
+		self::assertCount( 1, $fresh, 'Should still have one grade after save.' );
+		self::assertSame( 10, $fresh[0]->get_points(), 'Points should be 10 after save invalidates cache.' );
 
 		/* Cleanup. */
 		$this->cleanup( $created );

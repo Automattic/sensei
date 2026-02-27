@@ -381,8 +381,8 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$result2 = $repository->get( 999, 999 );
 
 		/* Assert. */
-		self::assertNull( $result1 );
-		self::assertNull( $result2 );
+		self::assertNull( $result1, 'First call should return null.' );
+		self::assertNull( $result2, 'Second call should return null from cache.' );
 	}
 
 	public function testSave_CacheEnabled_InvalidatesCache(): void {

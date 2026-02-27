@@ -246,8 +246,8 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		$answers2 = $repository->get_all( 1 );
 
 		/* Assert. */
-		self::assertCount( 1, $answers1 );
-		self::assertCount( 1, $answers2 );
+		self::assertCount( 1, $answers1, 'First call should return one answer.' );
+		self::assertCount( 1, $answers2, 'Second call should return one answer from cache.' );
 	}
 
 	public function testGetAll_CacheEnabled_CachesEmptyResult(): void {
@@ -264,8 +264,8 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		$result2 = $repository->get_all( 999 );
 
 		/* Assert. */
-		self::assertEmpty( $result1 );
-		self::assertEmpty( $result2 );
+		self::assertEmpty( $result1, 'First call should return empty.' );
+		self::assertEmpty( $result2, 'Second call should return empty from cache.' );
 	}
 
 	public function testDeleteAll_CacheEnabled_InvalidatesCache(): void {
@@ -346,7 +346,7 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 
 		/* Warm cache. */
 		$answers = $repository->get_all( 1 );
-		self::assertCount( 1, $answers );
+		self::assertCount( 1, $answers, 'Should have one answer before create.' );
 
 		/* Act — create a new answer for the same submission. */
 		$submission = $this->createMock( Submission_Interface::class );
@@ -355,7 +355,7 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert — get_all should return fresh data including the new answer. */
 		$fresh = $repository->get_all( 1 );
-		self::assertCount( 2, $fresh );
+		self::assertCount( 2, $fresh, 'Should have two answers after create invalidates cache.' );
 	}
 
 	private function export_answer( Tables_Based_Answer $answer ): array {

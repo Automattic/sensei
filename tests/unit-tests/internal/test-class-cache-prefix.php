@@ -59,8 +59,8 @@ class Cache_Prefix_Test extends \WP_UnitTestCase {
 		$prefix = $this->helper::get_cache_prefix( 'test_group' );
 
 		/* Assert. */
-		self::assertStringStartsWith( 'sensei_cache_', $prefix );
-		self::assertStringEndsWith( '_', $prefix );
+		self::assertStringStartsWith( 'sensei_cache_', $prefix, 'Prefix should start with sensei_cache_.' );
+		self::assertStringEndsWith( '_', $prefix, 'Prefix should end with underscore.' );
 	}
 
 	public function testInvalidateCacheGroup_Called_ChangesPrefix(): void {
@@ -100,8 +100,8 @@ class Cache_Prefix_Test extends \WP_UnitTestCase {
 		$prefixed_key = $this->helper::get_prefixed_key( 'my_key', 'test_group' );
 
 		/* Assert. */
-		self::assertStringStartsWith( 'sensei_cache_', $prefixed_key );
-		self::assertStringEndsWith( '_my_key', $prefixed_key );
+		self::assertStringStartsWith( 'sensei_cache_', $prefixed_key, 'Prefixed key should start with sensei_cache_.' );
+		self::assertStringEndsWith( '_my_key', $prefixed_key, 'Prefixed key should end with the original key.' );
 	}
 
 	public function testGetPrefixedKey_CalledTwice_ReturnsSameKey(): void {

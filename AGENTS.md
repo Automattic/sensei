@@ -35,6 +35,7 @@ Composer production dependencies that may conflict with other plugins are scoped
 
 - **CRITICAL: WordPress filters persist between test cases.** Always remove filters added during a test in `tearDown()` or the test will leak state into other tests.
 - **Use `assertSame()` over `assertEquals()`** — strict type + equality comparison.
+- **Use assertion messages when a test has multiple assertions** — pass the `$message` parameter to differentiate which assertion failed (e.g., `self::assertSame( 1, $id, 'ID should be 1' )`).
 - **Text domain is `sensei-lms`** (not `sensei`). All user-facing strings MUST use this.
 - **Never concatenate translatable strings** — use `sprintf()` with placeholders.
 - **Never use `extract()`, `eval()`, or `create_function()`.**
