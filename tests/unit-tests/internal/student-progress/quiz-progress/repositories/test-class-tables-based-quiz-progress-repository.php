@@ -531,7 +531,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		/* Verify no cache prefix marker was created for this group. */
-		$cache_prefix = wp_cache_get( 'sensei_sensei_quiz_progress_cache_prefix', 'sensei_quiz_progress' );
+		$cache_prefix = wp_cache_get( 'sensei_quiz_progress_cache_prefix', 'sensei_quiz_progress' );
 		self::assertFalse( $cache_prefix );
 	}
 

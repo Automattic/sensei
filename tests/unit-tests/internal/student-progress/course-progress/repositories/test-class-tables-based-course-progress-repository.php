@@ -465,7 +465,7 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->create( 1, 2 );
 
 		/* Assert — nothing should be cached when insert fails (no prefix marker created). */
-		$cache_prefix = wp_cache_get( 'sensei_sensei_course_progress_cache_prefix', 'sensei_course_progress' );
+		$cache_prefix = wp_cache_get( 'sensei_course_progress_cache_prefix', 'sensei_course_progress' );
 		self::assertFalse( $cache_prefix );
 	}
 
@@ -561,7 +561,7 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->get( 1, 2 );
 
 		/* Assert - verify no cache prefix marker was created for this group. */
-		$cache_prefix = wp_cache_get( 'sensei_sensei_course_progress_cache_prefix', 'sensei_course_progress' );
+		$cache_prefix = wp_cache_get( 'sensei_course_progress_cache_prefix', 'sensei_course_progress' );
 		self::assertFalse( $cache_prefix );
 	}
 

@@ -437,7 +437,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		/* Verify no cache prefix marker was created for this group. */
-		$cache_prefix = wp_cache_get( 'sensei_sensei_quiz_submissions_cache_prefix', 'sensei_quiz_submissions' );
+		$cache_prefix = wp_cache_get( 'sensei_quiz_submissions_cache_prefix', 'sensei_quiz_submissions' );
 		self::assertFalse( $cache_prefix );
 	}
 

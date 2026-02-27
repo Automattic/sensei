@@ -45,7 +45,7 @@ trait Cache_Prefix {
 	 * @return string Prefix meta-key.
 	 */
 	private static function get_prefix_key( string $group ): string {
-		return 'sensei_' . $group . '_cache_prefix';
+		return $group . '_cache_prefix';
 	}
 
 	/**

@@ -415,7 +415,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		/* Verify no cache prefix marker was created for this group. */
-		$cache_prefix = wp_cache_get( 'sensei_sensei_quiz_grades_cache_prefix', 'sensei_quiz_grades' );
+		$cache_prefix = wp_cache_get( 'sensei_quiz_grades_cache_prefix', 'sensei_quiz_grades' );
 		self::assertFalse( $cache_prefix );
 	}
 
