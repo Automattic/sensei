@@ -34,6 +34,13 @@ class Progress_Storage_Settings {
 	public const TABLES_STORAGE = 'custom_tables';
 
 	/**
+	 * Memoized cache-enabled flag. Null means not yet computed.
+	 *
+	 * @var bool|null
+	 */
+	private static ?bool $cache_enabled = null;
+
+	/**
 	 * Get the storage repositories.
 	 *
 	 * @return array Returns an array of repositories where the key is the repository slug and the value is the description.
@@ -89,13 +96,6 @@ class Progress_Storage_Settings {
 	public static function is_sync_enabled(): bool {
 		return Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false;
 	}
-
-	/**
-	 * Memoized cache-enabled flag. Null means not yet computed.
-	 *
-	 * @var bool|null
-	 */
-	private static ?bool $cache_enabled = null;
 
 	/**
 	 * Returns true if HPPS caching is enabled.
