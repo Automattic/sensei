@@ -32,7 +32,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	/**
 	 * Cache group for course progress.
 	 *
-	 * @since 4.24.0
+	 * @since $$next-version$$
 	 *
 	 * @var string
 	 */

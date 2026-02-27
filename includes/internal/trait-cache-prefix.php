@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since 4.24.0
+ * @since $$next-version$$
  *
  * @see https://github.com/memcached/memcached/wiki/ProgrammingTricks#namespacing
  */
@@ -30,7 +30,7 @@ trait Cache_Prefix {
 	 * Sentinel value stored in cache to represent a confirmed "not found" result,
 	 * distinguishing it from a cache miss (which returns false).
 	 *
-	 * @since 4.24.0
+	 * @since $$next-version$$
 	 *
 	 * @var string
 	 */
@@ -39,7 +39,7 @@ trait Cache_Prefix {
 	/**
 	 * Get prefix for use with wp_cache_set. Allows all cache in a group to be invalidated at once.
 	 *
-	 * @since 4.24.0
+	 * @since $$next-version$$
 	 *
 	 * @param string $group Group of cache to get.
 	 * @return string Prefix.
@@ -63,7 +63,7 @@ trait Cache_Prefix {
 	/**
 	 * Invalidate cache group by rotating the prefix.
 	 *
-	 * @since 4.24.0
+	 * @since $$next-version$$
 	 *
 	 * @param string $group Group of cache to clear.
 	 * @return bool True on success, false on failure.
@@ -75,7 +75,7 @@ trait Cache_Prefix {
 	/**
 	 * Get a prefixed cache key.
 	 *
-	 * @since 4.24.0
+	 * @since $$next-version$$
 	 *
 	 * @param string $key   Key to prefix.
 	 * @param string $group Group of cache to get.

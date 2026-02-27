@@ -45,6 +45,7 @@ Composer production dependencies that may conflict with other plugins are scoped
 - **Branch naming**: `type/description` — e.g. `fix/course-average-query`, `add/show-tailored-course-outline`, `feature/ai-make-quiz`
 - **PRs**: Must reference an issue (`Resolves #123`), include testing instructions, and follow `.github/PULL_REQUEST_TEMPLATE.md`.
 - **Changelogs**: Every user-facing change MUST have a changelog entry before opening a PR. Run `npm run changelog` (entries stored in `changelog/`).
+- Use the `$$next-version$$` placeholder for the `@since` parameter.
 
 ## Boundaries
 

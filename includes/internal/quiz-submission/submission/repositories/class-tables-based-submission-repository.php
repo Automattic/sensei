@@ -32,7 +32,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	/**
 	 * Cache group for quiz submissions.
 	 *
-	 * @since 4.24.0
+	 * @since $$next-version$$
 	 *
 	 * @var string
 	 */

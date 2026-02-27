@@ -32,7 +32,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	/**
 	 * Cache group for quiz grades.
 	 *
-	 * @since 4.24.0
+	 * @since $$next-version$$
 	 *
 	 * @var string
 	 */

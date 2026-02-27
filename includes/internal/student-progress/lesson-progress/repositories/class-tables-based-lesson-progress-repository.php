@@ -33,7 +33,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	/**
 	 * Cache group for lesson progress.
 	 *
-	 * @since 4.24.0
+	 * @since $$next-version$$
 	 *
 	 * @var string
 	 */

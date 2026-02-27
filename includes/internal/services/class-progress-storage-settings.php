@@ -102,7 +102,7 @@ class Progress_Storage_Settings {
 	 *
 	 * Defaults to true when using tables-based storage. Filterable via `sensei_hpps_cache_enabled`.
 	 *
-	 * @since 4.24.0
+	 * @since $$next-version$$
 	 *
 	 * @return bool
 	 */
@@ -113,7 +113,7 @@ class Progress_Storage_Settings {
 			 *
 			 * @hook sensei_hpps_cache_enabled
 			 *
-			 * @since 4.24.0
+			 * @since $$next-version$$
 			 *
 			 * @param {bool} $enabled Whether caching is enabled.
 			 * @return {bool} Whether caching should be enabled.
@@ -126,7 +126,7 @@ class Progress_Storage_Settings {
 	/**
 	 * Reset the memoized cache-enabled flag. Useful for tests.
 	 *
-	 * @since 4.24.0
+	 * @since $$next-version$$
 	 *
 	 * @internal
 	 */

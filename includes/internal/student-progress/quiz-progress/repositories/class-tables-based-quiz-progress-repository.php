@@ -32,7 +32,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	/**
 	 * Cache group for quiz progress.
 	 *
-	 * @since 4.24.0
+	 * @since $$next-version$$
 	 *
 	 * @var string
 	 */
