@@ -105,7 +105,7 @@ class Migration_Job {
 	/**
 	 * Set the time budget for the migration.
 	 *
-	 * @since 4.26.0
+	 * @since $$next-version$$
 	 *
 	 * @param float $seconds Maximum seconds this run should take.
 	 * @return void

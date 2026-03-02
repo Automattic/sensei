@@ -207,7 +207,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->assertLessThan( 5, $result, 'Expected fewer than 5 rows because time budget should stop processing early.' );
 	}
 
-	public function testRun_AllRowsAreDuplicates_ReturnsGreaterThanZero(): void {
+	public function testRun_AllRowsWereDuplicates_ReturnsGreaterThanZero(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
 		$user_id   = $this->factory->user->create();
@@ -230,7 +230,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->assertGreaterThan( 0, $result, 'run() should return > 0 when comments were processed, even if all inserts were duplicates' );
 	}
 
-	public function testRun_AllRowsAreDuplicates_AdvancesCursorPastDuplicates(): void {
+	public function testRun_AllRowsWereDuplicates_AdvancesCursorPastDuplicates(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
 		$user_id   = $this->factory->user->create();

@@ -62,7 +62,7 @@ class Migration_Job_Scheduler {
 	/**
 	 * Migration retry count option name.
 	 *
-	 * @since 4.26.0
+	 * @since $$next-version$$
 	 * @var string
 	 */
 	public const RETRY_COUNT_OPTION_NAME = 'sensei_lms_migration_retry_count';
@@ -260,7 +260,7 @@ class Migration_Job_Scheduler {
 		/**
 		 * Filter the maximum number of retry attempts for failed migrations.
 		 *
-		 * @since 4.26.0
+		 * @since $$next-version$$
 		 *
 		 * @param int $max_retries Maximum retry attempts. Default 3.
 		 */
@@ -292,7 +292,7 @@ class Migration_Job_Scheduler {
 	/**
 	 * Find the migration job associated with a failed action.
 	 *
-	 * @since 4.26.0
+	 * @since $$next-version$$
 	 *
 	 * @param string $action_id The action ID.
 	 * @return Migration_Job|null
@@ -337,7 +337,7 @@ class Migration_Job_Scheduler {
 		/**
 		 * Filter the time budget (in seconds) for each migration run.
 		 *
-		 * @since 4.26.0
+		 * @since $$next-version$$
 		 *
 		 * @param float $time_budget Time budget in seconds. Default 20.
 		 */

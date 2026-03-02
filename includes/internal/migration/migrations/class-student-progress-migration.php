@@ -34,7 +34,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 *
 	 * @var int
 	 */
-	private $batch_size;
+	private $read_batch_size;
 
 	/**
 	 * The number of rows to accumulate before flushing with a multi-row INSERT.
@@ -46,18 +46,18 @@ class Student_Progress_Migration extends Migration_Abstract {
 	/**
 	 * Constructs a new instance of the migration.
 	 *
-	 * @param int $batch_size The number of comments to fetch in a single run.
+	 * @param int $read_batch_size The number of comments to fetch in a single run.
 	 * @param int $insert_batch_size The number of rows to accumulate before flushing.
 	 */
-	public function __construct( int $batch_size = 250, int $insert_batch_size = 50 ) {
+	public function __construct( int $read_batch_size = 250, int $insert_batch_size = 50 ) {
 		/**
 		 * Filter the batch size for student progress migration.
 		 *
-		 * @since 4.26.0
+		 * @since $$next-version$$
 		 *
-		 * @param int $batch_size The batch size.
+		 * @param int $read_batch_size The batch size.
 		 */
-		$this->batch_size = (int) apply_filters( 'sensei_migration_student_progress_batch_size', $batch_size );
+		$this->read_batch_size = (int) apply_filters( 'sensei_migration_student_progress_batch_size', $read_batch_size );
 
 		$this->insert_batch_size = $insert_batch_size;
 	}
@@ -133,7 +133,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 	private function get_comments_and_meta( int $after_comment_id, bool $dry_run ): array {
 		global $wpdb;
 
-		$limit = $this->batch_size;
+		$limit = $this->read_batch_size;
 
 		$comments_query = $wpdb->prepare(
 			"SELECT * FROM {$wpdb->comments} " .
