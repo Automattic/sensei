@@ -50,27 +50,30 @@ jobs:
             - name: Check WPCOM rules
               run: ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
     test:
-        name: "PHP Unit Tests (${{ matrix.php }}, ${{ matrix.wp }}${{ matrix.hpps == 1 && ', HPPS' || '' }})"
+        name: "PHP Unit Tests (${{ matrix.php }}, ${{ matrix.wp }}${{ matrix.wpmu == 1 && ', multisite' || '' }}${{ matrix.hpps == 1 && ', HPPS' || '' }})"
         runs-on: ubuntu-latest
         continue-on-error: ${{ matrix.wp == 'nightly' }}
         strategy:
             fail-fast: true
             max-parallel: 10
             matrix:
-                wp: ['latest']
-                wpmu: [0]
-                php: ['7.4', '8.2']
                 include:
-                    - php: 7.4
-                      wp: '6.1'
-                    - php: 7.4
-                      wp: '6.2'
-                    - php: 7.4
+                    - php: '7.4'
+                      wp: latest
+                    - php: '8.1'
+                      wp: latest
+                    - php: '8.2'
+                      wp: '6.7'
+                    - php: '8.2'
+                      wp: '6.8'
+                    - php: '8.2'
+                      wp: latest
+                    - php: '8.2'
+                      wp: nightly
+                    - php: '8.2'
                       wp: latest
                       wpmu: 1
-                    - php: 7.4
-                      wp: nightly
-                    - php: 7.4
+                    - php: '8.2'
                       wp: latest
                       hpps: 1
         env:
