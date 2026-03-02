@@ -337,36 +337,61 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 	public function testGetAll_CacheEnabled_ReturnsCachedValueOnSecondCall(): void {
 		/* Arrange. */
-		global $wpdb;
+		$wpdb = $this->createMock( \wpdb::class );
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
-		$created    = $this->create_grade_with_submission_and_answer( 4, 5, 'feedback' );
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_col' )
+			->willReturn( [ 1 ] );
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_results' )
+			->willReturn(
+				[
+					(object) [
+						'id'          => 1,
+						'answer_id'   => 1,
+						'question_id' => 4,
+						'points'      => 5,
+						'feedback'    => 'feedback',
+						'created_at'  => '2020-01-01 00:00:00',
+						'updated_at'  => '2020-01-01 00:00:00',
+					],
+				]
+			);
+
 		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
-		/* Act. */
-		$grades1 = $repository->get_all( $created['submission_id'] );
-		$grades2 = $repository->get_all( $created['submission_id'] );
+		/* Act - second call should use cache, not DB. */
+		$grades1 = $repository->get_all( 6 );
+		$grades2 = $repository->get_all( 6 );
 
 		/* Assert. */
 		self::assertCount( 1, $grades1, 'First call should return one grade.' );
 		self::assertCount( 1, $grades2, 'Second call should return one grade from cache.' );
-
-		/* Cleanup. */
-		$this->cleanup( $created );
 	}
 
 	public function testGetAll_CacheEnabled_CachesEmptyResult(): void {
 		/* Arrange. */
-		global $wpdb;
+		$wpdb = $this->createMock( \wpdb::class );
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_col' )
+			->willReturn( [] );
+		$wpdb
+			->expects( $this->never() )
+			->method( 'get_results' );
+
 		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
-		/* Act. */
+		/* Act - first call caches empty result, second returns from cache. */
 		$result1 = $repository->get_all( 999 );
 		$result2 = $repository->get_all( 999 );
 

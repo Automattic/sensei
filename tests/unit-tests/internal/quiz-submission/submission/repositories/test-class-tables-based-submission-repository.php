@@ -352,31 +352,50 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
 	public function testGet_CacheEnabled_ReturnsCachedValueOnSecondCall(): void {
 		/* Arrange. */
-		global $wpdb;
+		$wpdb = $this->createMock( wpdb::class );
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
-		$repository = new Tables_Based_Submission_Repository( $wpdb );
-		$submission = $repository->create( 1, 2, 12.34 );
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_row' )
+			->willReturn(
+				(object) [
+					'id'          => 1,
+					'quiz_id'     => 1,
+					'user_id'     => 2,
+					'final_grade' => 12.34,
+					'created_at'  => '2022-01-01 00:00:00',
+					'updated_at'  => '2022-01-01 00:00:00',
+				]
+			);
 
-		/* Act. */
-		$cached = $repository->get( 1, 2 );
+		$repository = new Tables_Based_Submission_Repository( $wpdb );
+
+		/* Act - first call hits DB, second call should use cache. */
+		$first  = $repository->get( 1, 2 );
+		$second = $repository->get( 1, 2 );
 
 		/* Assert. */
-		self::assertSame( $submission->get_id(), $cached->get_id() );
+		self::assertSame( $first->get_id(), $second->get_id() );
 	}
 
 	public function testGet_CacheEnabled_CachesNullAsNotFound(): void {
 		/* Arrange. */
-		global $wpdb;
+		$wpdb = $this->createMock( wpdb::class );
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_row' )
+			->willReturn( null );
+
 		$repository = new Tables_Based_Submission_Repository( $wpdb );
 
-		/* Act. */
+		/* Act - first call caches __not_found__, second returns null from cache. */
 		$result1 = $repository->get( 999, 999 );
 		$result2 = $repository->get( 999, 999 );
 
@@ -394,7 +413,6 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
 		$repository = new Tables_Based_Submission_Repository( $wpdb );
 		$submission = $repository->create( 1, 2 );
-		$repository->get( 1, 2 );
 
 		/* Act. */
 		$submission->set_final_grade( 95.5 );
@@ -414,7 +432,6 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
 		$repository = new Tables_Based_Submission_Repository( $wpdb );
 		$submission = $repository->create( 1, 2 );
-		$repository->get( 1, 2 );
 
 		/* Act. */
 		$repository->delete( $submission );

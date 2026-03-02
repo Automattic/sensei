@@ -220,28 +220,30 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testGetAll_CacheEnabled_ReturnsCachedValueOnSecondCall(): void {
 		/* Arrange. */
-		global $wpdb;
+		$wpdb = $this->createMock( wpdb::class );
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
-		$date = ( new DateTimeImmutable() )->format( 'Y-m-d H:i:s' );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$wpdb->insert(
-			$wpdb->prefix . 'sensei_lms_quiz_answers',
-			[
-				'submission_id' => 1,
-				'question_id'   => 2,
-				'value'         => 'value',
-				'created_at'    => $date,
-				'updated_at'    => $date,
-			],
-			[ '%d', '%d', '%s', '%s', '%s' ]
-		);
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_results' )
+			->willReturn(
+				[
+					(object) [
+						'id'            => 1,
+						'submission_id' => 1,
+						'question_id'   => 2,
+						'value'         => 'value',
+						'created_at'    => '2022-01-01 00:00:00',
+						'updated_at'    => '2022-01-01 00:00:00',
+					],
+				]
+			);
 
 		$repository = new Tables_Based_Answer_Repository( $wpdb );
 
-		/* Act. */
+		/* Act - second call should use cache, not DB. */
 		$answers1 = $repository->get_all( 1 );
 		$answers2 = $repository->get_all( 1 );
 
@@ -252,14 +254,19 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testGetAll_CacheEnabled_CachesEmptyResult(): void {
 		/* Arrange. */
-		global $wpdb;
+		$wpdb = $this->createMock( wpdb::class );
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_results' )
+			->willReturn( [] );
+
 		$repository = new Tables_Based_Answer_Repository( $wpdb );
 
-		/* Act. */
+		/* Act - first call caches empty result, second returns from cache. */
 		$result1 = $repository->get_all( 999 );
 		$result2 = $repository->get_all( 999 );
 

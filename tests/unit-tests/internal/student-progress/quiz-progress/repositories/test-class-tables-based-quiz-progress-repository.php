@@ -193,31 +193,54 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testGet_CacheEnabled_ReturnsCachedValueOnSecondCall(): void {
 		/* Arrange. */
-		global $wpdb;
+		$wpdb = $this->createMock( wpdb::class );
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
-		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
-		$progress   = $repository->create( 1, 2 );
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_row' )
+			->willReturn(
+				(object) [
+					'id'             => 1,
+					'post_id'        => 1,
+					'user_id'        => 2,
+					'parent_post_id' => null,
+					'type'           => 'quiz',
+					'status'         => 'in-progress',
+					'created_at'     => '2022-01-01 00:00:00',
+					'updated_at'     => '2022-01-01 00:00:00',
+					'started_at'     => '2022-01-01 00:00:00',
+					'completed_at'   => null,
+				]
+			);
 
-		/* Act. */
-		$cached_progress = $repository->get( 1, 2 );
+		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+
+		/* Act - first call hits DB, second call should use cache. */
+		$first  = $repository->get( 1, 2 );
+		$second = $repository->get( 1, 2 );
 
 		/* Assert. */
-		self::assertSame( $progress->get_id(), $cached_progress->get_id() );
+		self::assertSame( $first->get_id(), $second->get_id() );
 	}
 
 	public function testGet_CacheEnabled_CachesNullAsNotFound(): void {
 		/* Arrange. */
-		global $wpdb;
+		$wpdb = $this->createMock( wpdb::class );
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_row' )
+			->willReturn( null );
+
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 
-		/* Act. */
+		/* Act - first call caches __not_found__, second returns null from cache. */
 		$result1 = $repository->get( 999, 999 );
 		$result2 = $repository->get( 999, 999 );
 
@@ -245,10 +268,16 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testGet_CacheEnabled_CreateOverwritesNotFoundSentinel(): void {
 		/* Arrange. */
-		global $wpdb;
+		$wpdb            = $this->createMock( wpdb::class );
+		$wpdb->insert_id = 1;
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_row' )
+			->willReturn( null );
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 
@@ -401,7 +430,6 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 		$progress   = $repository->create( 1, 2 );
-		$repository->get( 1, 2 );
 
 		/* Act. */
 		$progress->pass();
@@ -456,7 +484,6 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 		$progress   = $repository->create( 1, 2 );
-		$repository->get( 1, 2 );
 
 		/* Act. */
 		$repository->delete( $progress );
@@ -498,7 +525,6 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 		$repository->create( 1, 2 );
-		$repository->get( 1, 2 );
 
 		/* Act. */
 		$repository->delete_for_quiz( 1 );
@@ -540,7 +566,6 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 		$repository->create( 1, 2 );
-		$repository->get( 1, 2 );
 
 		/* Act. */
 		$repository->delete_for_user( 2 );
@@ -585,27 +610,56 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testFind_CacheEnabled_WarmsIndividualCaches(): void {
 		/* Arrange. */
-		global $wpdb;
+		$wpdb = $this->createMock( wpdb::class );
 		wp_cache_flush();
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 
-		$user_id    = $this->factory->user->create();
-		$quiz_ids   = $this->factory->quiz->create_many( 3 );
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_results' )
+			->willReturn(
+				[
+					(object) [
+						'id'             => 1,
+						'post_id'        => 10,
+						'user_id'        => 5,
+						'parent_post_id' => null,
+						'type'           => 'quiz',
+						'status'         => 'in-progress',
+						'created_at'     => '2022-01-01 00:00:00',
+						'updated_at'     => '2022-01-01 00:00:00',
+						'started_at'     => '2022-01-01 00:00:00',
+						'completed_at'   => null,
+					],
+					(object) [
+						'id'             => 2,
+						'post_id'        => 11,
+						'user_id'        => 5,
+						'parent_post_id' => null,
+						'type'           => 'quiz',
+						'status'         => 'in-progress',
+						'created_at'     => '2022-01-01 00:00:00',
+						'updated_at'     => '2022-01-01 00:00:00',
+						'started_at'     => '2022-01-01 00:00:00',
+						'completed_at'   => null,
+					],
+				]
+			);
+
+		$wpdb
+			->expects( $this->never() )
+			->method( 'get_row' );
+
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 
-		foreach ( $quiz_ids as $quiz_id ) {
-			$repository->create( $quiz_id, $user_id );
-		}
-		wp_cache_flush();
-
 		/* Act. */
-		$repository->find( array( 'user_id' => $user_id ) );
+		$repository->find( array( 'user_id' => 5 ) );
 
-		/* Assert - individual caches should be warm. */
-		$result = $repository->get( $quiz_ids[0], $user_id );
+		/* Assert - individual caches should be warm; get() should not hit DB. */
+		$result = $repository->get( 10, 5 );
 		self::assertNotNull( $result, 'Individual cache should be warm after find.' );
-		self::assertSame( $quiz_ids[0], $result->get_quiz_id(), 'Cached quiz ID should match.' );
+		self::assertSame( 10, $result->get_quiz_id(), 'Cached quiz ID should match.' );
 	}
 
 	private function export_progress( Quiz_Progress_Interface $progress ): array {
