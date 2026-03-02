@@ -218,7 +218,17 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		 */
 		$course_id = (int) apply_filters( 'sensei_course_progress_has_course_id', $course_id );
 
-		return null !== $this->get( $course_id, $user_id );
+		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
+		$query      = $this->wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe.
+			"SELECT COUNT(*) FROM {$table_name} WHERE post_id = %d AND user_id = %d AND type = %s",
+			$course_id,
+			$user_id,
+			'course'
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		return (int) $this->wpdb->get_var( $query ) > 0;
 	}
 
 	/**

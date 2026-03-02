@@ -226,7 +226,17 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		 */
 		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_has_quiz_id', $quiz_id );
 
-		return null !== $this->get( $quiz_id, $user_id );
+		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
+		$query      = $this->wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe.
+			"SELECT COUNT(*) FROM {$table_name} WHERE post_id = %d AND user_id = %d AND type = %s",
+			$quiz_id,
+			$user_id,
+			'quiz'
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		return (int) $this->wpdb->get_var( $query ) > 0;
 	}
 
 	/**

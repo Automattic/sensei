@@ -196,8 +196,8 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$wpdb = $this->createMock( wpdb::class );
 		$wpdb
-			->method( 'get_row' )
-			->willReturn( null );
+			->method( 'get_var' )
+			->willReturn( '0' );
 		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
 
 		/* Act. */
@@ -211,20 +211,8 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$wpdb = $this->createMock( wpdb::class );
 		$wpdb
-			->method( 'get_row' )
-			->willReturn(
-				(object) [
-					'id'           => 3,
-					'post_id'      => 1,
-					'user_id'      => 2,
-					'type'         => 'course',
-					'status'       => 'in-progress',
-					'created_at'   => '2022-01-01 00:00:00',
-					'updated_at'   => '2022-01-02 00:00:00',
-					'started_at'   => '2022-01-03 00:00:00',
-					'completed_at' => '2022-01-04 00:00:00',
-				]
-			);
+			->method( 'get_var' )
+			->willReturn( '1' );
 		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
 
 		/* Act. */

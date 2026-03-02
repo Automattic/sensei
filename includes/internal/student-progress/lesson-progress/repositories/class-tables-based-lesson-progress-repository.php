@@ -221,7 +221,17 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		 */
 		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_has_lesson_id', $lesson_id );
 
-		return null !== $this->get( $lesson_id, $user_id );
+		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
+		$query      = $this->wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe.
+			"SELECT COUNT(*) FROM {$table_name} WHERE post_id = %d AND user_id = %d AND type = %s",
+			$lesson_id,
+			$user_id,
+			'lesson'
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		return (int) $this->wpdb->get_var( $query ) > 0;
 	}
 
 	/**
