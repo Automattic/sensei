@@ -151,6 +151,7 @@ class Sensei_Unit_Tests_Bootstrap {
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-scheduler-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-test-redirect-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-hpps-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-clock-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-background-job-stub.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-sensei-factory.php';
