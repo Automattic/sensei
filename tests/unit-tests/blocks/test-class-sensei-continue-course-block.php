@@ -9,6 +9,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
+	use Sensei_Progress_Test_Helpers;
 
 	/**
 	 * Continue Course block.
@@ -84,7 +85,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 	public function testRender_EnrolledAndCourseCompleted_ReturnsEmptyString() {
 		$user_id = $this->factory->user->create();
 		$this->manuallyEnrolStudentInCourse( $user_id, $this->course->ID );
-		Sensei_Utils::update_course_status( $user_id, $this->course->ID, 'complete' );
+		$this->complete_course_progress( $user_id, $this->course->ID );
 		$this->login_as( $user_id );
 
 		$result = $this->block->render( [], self::CONTENT );

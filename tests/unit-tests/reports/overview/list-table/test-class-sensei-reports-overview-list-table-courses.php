@@ -6,6 +6,7 @@
  * @covers Sensei_Reports_Overview_List_Table_Courses
  */
 class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
+	use Sensei_Progress_Test_Helpers;
 
 	private static $initial_hook_suffix;
 
@@ -89,7 +90,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$user_id = $this->factory->user->create();
 
 		$course_id = $this->factory->course->create();
-		Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		$this->complete_course_progress( $user_id, $course_id );
 
 		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
 		$service->method( 'get_courses_average_grade' )->willReturn( 2 );

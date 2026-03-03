@@ -6,6 +6,7 @@
  * @covers Sensei_Reports_Overview_List_Table_Students
  */
 class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
+	use Sensei_Progress_Test_Helpers;
 
 	/**
 	 * Factory for setting up testing data.
@@ -38,8 +39,8 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		$active_course_id    = $this->factory->course->create();
 		$completed_course_id = $this->factory->course->create();
 
-		Sensei_Utils::update_course_status( $user_id, $active_course_id, 'in-progress' );
-		Sensei_Utils::update_course_status( $user_id, $completed_course_id, 'complete' );
+		$this->start_course_progress( $user_id, $active_course_id );
+		$this->complete_course_progress( $user_id, $completed_course_id );
 
 		$student_service = $this->createMock( Sensei_Reports_Overview_Service_Students::class );
 		$student_service->method( 'get_graded_lessons_average_grade' )->willReturn( 50 );

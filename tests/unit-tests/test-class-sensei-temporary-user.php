@@ -12,6 +12,7 @@
  */
 class Sensei_Temporary_User_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_Progress_Test_Helpers;
 
 	/**
 	 * Factory object.
@@ -55,11 +56,11 @@ class Sensei_Temporary_User_Test extends WP_UnitTestCase {
 		$course1_id = $this->factory->course->create( [ 'id' => 10 ] );
 		$course2_id = $this->factory->course->create();
 
-		Sensei_Utils::update_course_status( $user1_id, $course1_id );
-		Sensei_Utils::update_course_status( $user1_id, $course2_id, 'complete' );
-		Sensei_Utils::update_course_status( $user2_id, $course1_id, 'complete' );
-		Sensei_Utils::update_course_status( $previewuser1_id, $course1_id );
-		Sensei_Utils::update_course_status( $guestuser1_id, $course2_id );
+		$this->start_course_progress( $user1_id, $course1_id );
+		$this->complete_course_progress( $user1_id, $course2_id );
+		$this->complete_course_progress( $user2_id, $course1_id );
+		$this->start_course_progress( $previewuser1_id, $course1_id );
+		$this->start_course_progress( $guestuser1_id, $course2_id );
 
 		return [ $course1_id ];
 	}

@@ -10,6 +10,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Test_Redirect_Helpers;
+	use Sensei_Progress_Test_Helpers;
 
 	/**
 	 * Factory for setting up testing data.
@@ -265,9 +266,11 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
 		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
 		$this->prevent_wp_redirect();
-
-		$this->expectException( Sensei_WP_Redirect_Exception::class );
-		Sensei_Utils::update_course_status( $student, $this->course2->ID, 'complete' );
+		try {
+			$this->complete_course_progress( $student, $this->course2->ID );
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			// Expected: course completion triggers a redirect.
+		}
 
 		$_GET['course-list-student-course-filter-13'] = 'completed';
 
@@ -291,9 +294,11 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
 		// Complete.
 		$this->prevent_wp_redirect();
-
-		$this->expectException( Sensei_WP_Redirect_Exception::class );
-		Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
+		try {
+			$this->complete_course_progress( $student, $this->course1->ID );
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			// Expected: course completion triggers a redirect.
+		}
 
 		// Featured.
 		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
@@ -322,11 +327,12 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
 		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
 		// Complete.
-
 		$this->prevent_wp_redirect();
-
-		$this->expectException( Sensei_WP_Redirect_Exception::class );
-		Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
+		try {
+			$this->complete_course_progress( $student, $this->course1->ID );
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			// Expected: course completion triggers a redirect.
+		}
 
 		// Featured.
 		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );

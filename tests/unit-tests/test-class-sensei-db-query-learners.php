@@ -3,6 +3,7 @@
 class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 	use Sensei_HPPS_Helpers;
+	use Sensei_Progress_Test_Helpers;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -22,10 +23,10 @@ class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 		$course1_id = $this->factory->course->create();
 		$course2_id = $this->factory->course->create();
 
-		Sensei_Utils::update_course_status( $user1_id, $course1_id );
-		Sensei_Utils::update_course_status( $user1_id, $course2_id, 'complete' );
-		Sensei_Utils::update_course_status( $user2_id, $course1_id, 'complete' );
-		Sensei_Utils::update_course_status( $user3_id, $course2_id );
+		$this->start_course_progress( $user1_id, $course1_id );
+		$this->complete_course_progress( $user1_id, $course2_id );
+		$this->complete_course_progress( $user2_id, $course1_id );
+		$this->start_course_progress( $user3_id, $course2_id );
 
 		$query = new Sensei_Db_Query_Learners( [] );
 
@@ -57,10 +58,10 @@ class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 		$course1_id = $this->factory->course->create();
 		$course2_id = $this->factory->course->create();
 
-		Sensei_Utils::update_course_status( $user1_id, $course1_id );
-		Sensei_Utils::update_course_status( $user1_id, $course2_id, 'complete' );
-		Sensei_Utils::update_course_status( $user2_id, $course1_id, 'complete' );
-		Sensei_Utils::update_course_status( $user3_id, $course2_id );
+		$this->start_course_progress( $user1_id, $course1_id );
+		$this->complete_course_progress( $user1_id, $course2_id );
+		$this->complete_course_progress( $user2_id, $course1_id );
+		$this->start_course_progress( $user3_id, $course2_id );
 
 		$args  = [
 			'filter_by_course_id' => $course1_id,
@@ -89,10 +90,10 @@ class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 		$course1_id = $this->factory->course->create();
 		$course2_id = $this->factory->course->create();
 
-		Sensei_Utils::update_course_status( $user1_id, $course1_id );
-		Sensei_Utils::update_course_status( $user1_id, $course2_id, 'complete' );
-		Sensei_Utils::update_course_status( $user2_id, $course1_id, 'complete' );
-		Sensei_Utils::update_course_status( $user3_id, $course2_id );
+		$this->start_course_progress( $user1_id, $course1_id );
+		$this->complete_course_progress( $user1_id, $course2_id );
+		$this->complete_course_progress( $user2_id, $course1_id );
+		$this->start_course_progress( $user3_id, $course2_id );
 
 		$args  = [
 			'filter_by_course_id' => $course1_id,
