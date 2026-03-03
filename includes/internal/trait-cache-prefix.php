@@ -61,7 +61,7 @@ trait Cache_Prefix {
 		$prefix     = wp_cache_get( $prefix_key, $group );
 
 		if ( false === $prefix ) {
-			$prefix = microtime();
+			$prefix = str_replace( ' ', '', microtime() );
 			wp_cache_add( $prefix_key, $prefix, $group );
 			// Re-read in case another process won the race.
 			$re_read = wp_cache_get( $prefix_key, $group );
@@ -82,7 +82,7 @@ trait Cache_Prefix {
 	 * @return bool True on success, false on failure.
 	 */
 	private static function invalidate_cache_group( string $group ): bool {
-		return wp_cache_set( self::get_prefix_key( $group ), microtime(), $group );
+		return wp_cache_set( self::get_prefix_key( $group ), str_replace( ' ', '', microtime() ), $group );
 	}
 
 	/**
