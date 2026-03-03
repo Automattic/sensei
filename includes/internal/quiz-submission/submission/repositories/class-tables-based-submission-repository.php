@@ -78,7 +78,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		 * @param {int} $quiz_id The quiz ID.
 		 * @return {int} The quiz ID.
 		 */
-		$quiz_id = apply_filters( 'sensei_quiz_submission_create_quiz_id', $quiz_id );
+		$quiz_id = (int) apply_filters( 'sensei_quiz_submission_create_quiz_id', $quiz_id );
 
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
@@ -111,8 +111,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		);
 
 		if ( $this->wpdb->insert_id && Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $quiz_id . '_' . $user_id;
-			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $submission, self::CACHE_GROUP );
+			wp_cache_set( self::get_prefixed_key( $this->get_cache_key( $quiz_id, $user_id ), self::CACHE_GROUP ), $submission, self::CACHE_GROUP );
 		}
 
 		return $submission;
@@ -140,7 +139,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		 * @param {int} $quiz_id The quiz ID.
 		 * @return {int} The quiz ID.
 		 */
-		$quiz_id = apply_filters( 'sensei_quiz_submission_get_or_create_quiz_id', $quiz_id );
+		$quiz_id = (int) apply_filters( 'sensei_quiz_submission_get_or_create_quiz_id', $quiz_id );
 
 		$submission = $this->get( $quiz_id, $user_id );
 
@@ -172,9 +171,9 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		 * @param {int} $quiz_id The quiz ID.
 		 * @return {int} The quiz ID.
 		 */
-		$quiz_id = apply_filters( 'sensei_quiz_submission_get_quiz_id', $quiz_id );
+		$quiz_id = (int) apply_filters( 'sensei_quiz_submission_get_quiz_id', $quiz_id );
 
-		$cache_key = $quiz_id . '_' . $user_id;
+		$cache_key = $this->get_cache_key( $quiz_id, $user_id );
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
@@ -284,8 +283,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		);
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $submission->get_quiz_id() . '_' . $submission->get_user_id();
-			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission->get_quiz_id(), $submission->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
@@ -310,9 +308,21 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		);
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $submission->get_quiz_id() . '_' . $submission->get_user_id();
-			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission->get_quiz_id(), $submission->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
+	}
+
+	/**
+	 * Get the cache key for a quiz submission.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The user ID.
+	 * @return string The cache key.
+	 */
+	private function get_cache_key( int $quiz_id, int $user_id ): string {
+		return $quiz_id . '_' . $user_id;
 	}
 
 	/**

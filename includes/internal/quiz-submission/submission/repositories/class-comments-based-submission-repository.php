@@ -50,7 +50,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		 * @param {int} $quiz_id The quiz ID.
 		 * @return {int} The quiz ID.
 		*/
-		$quiz_id = apply_filters( 'sensei_quiz_submission_create_quiz_id', $quiz_id );
+		$quiz_id = (int) apply_filters( 'sensei_quiz_submission_create_quiz_id', $quiz_id );
 
 		$status_comment = $this->get_status_comment( $quiz_id, $user_id );
 
@@ -96,7 +96,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		 * @param {int} $quiz_id The quiz ID.
 		 * @return {int} The quiz ID.
 		 */
-		$quiz_id = apply_filters( 'sensei_quiz_submission_get_or_create_quiz_id', $quiz_id );
+		$quiz_id = (int) apply_filters( 'sensei_quiz_submission_get_or_create_quiz_id', $quiz_id );
 
 		$submission = $this->get( $quiz_id, $user_id );
 
@@ -128,7 +128,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		 * @param {int} $quiz_id The quiz ID.
 		 * @return {int} The quiz ID.
 		 */
-		$quiz_id = apply_filters( 'sensei_quiz_submission_get_quiz_id', $quiz_id );
+		$quiz_id = (int) apply_filters( 'sensei_quiz_submission_get_quiz_id', $quiz_id );
 
 		$status_comment = $this->get_status_comment( $quiz_id, $user_id );
 
