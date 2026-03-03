@@ -9,6 +9,7 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Qui
 class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Test_Redirect_Helpers;
+	use Sensei_HPPS_Helpers;
 
 	/**
 	 * @var $factory
@@ -1486,6 +1487,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Quiz::is_quiz_available
 	 */
 	public function testQuizIsAvailableOnlyToCourseEnrolledUsers() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -1514,6 +1517,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Quiz::is_quiz_available
 	 */
 	public function testQuizIsAvailableIfPrerequisiteIsCompleted() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -1546,6 +1551,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Quiz::is_quiz_completed
 	 */
 	public function testQuizIsCompletedIfTheLessonStatusIsUngraded() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -1978,6 +1985,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	public function testQuizFooterActions_WhenAwaitingGradeInLearningMode_RendersAwaitingGradeButton() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2015,6 +2024,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	public function testQuizFooterActions_WhenAwaitingGradeButNotInLearningMode_DoesNotRenderAwaitingGradeButton() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2049,6 +2060,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	public function testQuizFooterActions_WhenPassedButInLearningMode_DoesNotRenderAwaitingGradeButton() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2086,6 +2099,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	public function testQuizFooterActions_WhenInProgressButInLearningMode_DoesNotRenderAwaitingGradeButton() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2124,6 +2139,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	public function testActionButtons_WhenPassedInLearningMode_ShowsTheNextLessonButton() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2174,6 +2191,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	public function testActionButtons_WhenFailedInLearningModeButPassRequired_DoesNotShowTheNextLessonButton() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2235,6 +2254,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	public function testActionButtons_WhenFailedInLearningModeButPassNotRequired_ShowsTheNextLessonButton() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2296,6 +2317,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	public function testActionButtons_WhenPassedButNotInLearningMode_DoesNotShowTheNextLessonButton() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2354,6 +2377,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	public function testActionButtons_WhenPassedButNextLessonHasLowerOrder_DoesNotShowTheNextLessonButton() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -2415,6 +2440,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	public function testActionButtons_WhenQuizPassedButOnLessonPage_DoesNotShowTheNextLessonButton() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();

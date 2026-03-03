@@ -6,6 +6,8 @@
  * @covers Sensei_Reports_Overview_Data_Provider_Courses
  */
 class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
+
 	/**
 	 * Factory for setting up testing data.
 	 *
@@ -32,6 +34,8 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	}
 
 	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsMatchingCourses() {
+		$this->skip_in_hpps_mode( 'Test manipulates comment meta directly; incompatible with HPPS tables mode.' );
+
 		/* Arrange. */
 		$user_id = $this->factory->user->create();
 
@@ -77,6 +81,8 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	}
 
 	public function testGetAll_FiltersWithLastActivity_ReturnsMatchingCourses() {
+		$this->skip_in_hpps_mode( 'Test manipulates comment meta directly; incompatible with HPPS tables mode.' );
+
 		/* Arrange. */
 		$user_id    = $this->factory->user->create();
 		$course_id  = $this->factory->course->create();

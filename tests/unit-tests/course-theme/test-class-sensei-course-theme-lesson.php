@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_HPPS_Helpers;
 
 	/**
 	 * Setup function.
@@ -111,6 +112,8 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	 * Testing quiz failed notice.
 	 */
 	public function testQuizFailedNotice() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		$lesson  = $this->create_lesson_with_submitted_answers();
 		$user_id = get_current_user_id();
 
@@ -126,6 +129,8 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	 * Testing quiz graded notice.
 	 */
 	public function testQuizGradedNotice() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		$lesson  = $this->create_lesson_with_submitted_answers();
 		$user_id = get_current_user_id();
 

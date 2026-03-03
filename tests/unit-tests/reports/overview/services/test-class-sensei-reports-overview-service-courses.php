@@ -6,6 +6,7 @@
  * @covers Sensei_Reports_Overview_Service_Courses
  */
 class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
 
 	private static $initial_hook_suffix;
 
@@ -245,6 +246,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 
 
 	public function testGetAverageDaysToCompletionWhenOneCourseExistsReturnsMatchingValue() {
+		$this->skip_in_hpps_mode( 'Test manipulates comment meta directly; incompatible with HPPS tables mode.' );
+
 		$user1_id  = $this->factory->user->create();
 		$user2_id  = $this->factory->user->create();
 		$user3_id  = $this->factory->user->create();
@@ -289,6 +292,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 	}
 
 	public function testGetAverageDaysToCompletionWhenMoreThanOneCourseExistReturnsMatchingValue() {
+		$this->skip_in_hpps_mode( 'Test manipulates comment meta directly; incompatible with HPPS tables mode.' );
+
 		$user1_id   = $this->factory->user->create();
 		$user2_id   = $this->factory->user->create();
 		$course1_id = $this->factory->course->create();

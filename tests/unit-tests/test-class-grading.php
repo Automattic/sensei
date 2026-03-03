@@ -2,6 +2,7 @@
 
 class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_HPPS_Helpers;
 
 	/**
 	 * Setup function
@@ -36,6 +37,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Grading::grading_admin_menu
 	 */
 	public function testGradingAdminMenuTitleWithoutIndicator() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		$user_id    = $this->factory->user->create();
 		$course_id  = $this->factory->course->create();
 		$lesson_ids = $this->factory->lesson->create_many( 5 );
@@ -67,6 +70,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Grading::grading_admin_menu
 	 */
 	public function testGradingAdminMenuTitleWithIndicator() {
+		$this->skip_in_hpps_mode( 'Test uses quiz-specific lesson statuses; incompatible with HPPS tables mode.' );
+
 		$user_id    = $this->factory->user->create();
 		$course_id  = $this->factory->course->create();
 		$lesson_ids = $this->factory->lesson->create_many( 5 );

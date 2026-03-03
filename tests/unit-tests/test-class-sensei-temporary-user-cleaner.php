@@ -12,6 +12,7 @@
  */
 class Sensei_Temporary_User_Cleaner_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_HPPS_Helpers;
 
 	/**
 	 * Factory object.
@@ -45,6 +46,7 @@ class Sensei_Temporary_User_Cleaner_Test extends WP_UnitTestCase {
 	}
 
 	public function testIfAGuestUserIsInactive_WhenCronEventIsFired_OnlyTheInactiveUserGetsRemoved() {
+		$this->skip_in_hpps_mode( 'Test manipulates comment meta directly; incompatible with HPPS tables mode.' );
 
 		remove_filter( 'sensei_check_for_activity', [ Sensei_Temporary_User::class, 'filter_sensei_activity' ], 10, 2 );
 

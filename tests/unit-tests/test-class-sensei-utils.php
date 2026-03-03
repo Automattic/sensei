@@ -17,6 +17,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
 class Sensei_Utils_Test extends WP_UnitTestCase {
 	use \Sensei_File_System_Helper;
 	use \Sensei_Clock_Helpers;
+	use Sensei_HPPS_Helpers;
 
 	/**
 	 * Setup function.
@@ -653,6 +654,8 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	public function testUpdateCourseStatus_WhenPreviousStatusNotFound_PassesNullAsPreviousStatusToTheAction(): void {
+		$this->skip_in_hpps_mode( 'Tests update_course_status() directly; incompatible with HPPS tables mode.' );
+
 		/* Arrange. */
 		$previous_status = 'not-set';
 		$action          = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
@@ -668,6 +671,8 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	public function testUpdateCourseStatus_WhenPreviousStatusFound_PassesSameStatusAsPreviousStatusToTheAction(): void {
+		$this->skip_in_hpps_mode( 'Tests update_course_status() directly; incompatible with HPPS tables mode.' );
+
 		/* Arrange. */
 		Sensei()->course_progress_repository->create( 2, 1 );
 

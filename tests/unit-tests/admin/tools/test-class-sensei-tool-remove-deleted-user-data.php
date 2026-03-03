@@ -11,6 +11,8 @@
  * @group tools
  */
 class Sensei_Tool_Remove_Deleted_User_Data_Tests extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
+
 	/**
 	 * Factory object.
 	 *
@@ -28,6 +30,8 @@ class Sensei_Tool_Remove_Deleted_User_Data_Tests extends WP_UnitTestCase {
 	 * Tests to make sure deleted users progress is removed and current users progress is preserved.
 	 */
 	public function testRunKeepsData() {
+		$this->skip_in_hpps_mode( 'Test verifies comment-based data cleanup; incompatible with HPPS tables mode.' );
+
 		global $wpdb;
 
 		$user_id_a = $this->factory->user->create();
