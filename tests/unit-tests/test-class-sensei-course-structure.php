@@ -7,6 +7,7 @@
  */
 class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_Progress_Test_Helpers;
 
 	/**
 	 * Set up the test.
@@ -1518,7 +1519,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->login_as_student();
 		$student_user_id = wp_get_current_user()->ID;
-		Sensei_Utils::update_lesson_status( $student_user_id, $lessons[0], 'complete' );
+		$this->complete_lesson_progress( $student_user_id, $lessons[0] );
 
 		$course_structure = Sensei_Course_Structure::instance( $course_id );
 		$this->assertEquals( $lessons[1], $course_structure->get_first_incomplete_lesson_id() );

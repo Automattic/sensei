@@ -9,6 +9,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_REST_API_Test_Helpers;
+	use Sensei_Progress_Test_Helpers;
 	/**
 	 * A server instance that we use in tests to dispatch requests.
 	 *
@@ -54,7 +55,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$student_id = $this->factory->user->create();
 
 		Sensei_Utils::user_start_course( $student_id, $course_id );
-		Sensei_Utils::update_lesson_status( $student_id, $lesson1_id, 'complete' );
+		$this->complete_lesson_progress( $student_id, $lesson1_id );
 		Sensei_Utils::user_start_lesson( $student_id, $lesson2_id );
 
 		$this->login_as_admin();
@@ -86,7 +87,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$student_id = $this->factory->user->create();
 
 		Sensei_Utils::user_start_course( $student_id, $course_id );
-		Sensei_Utils::update_lesson_status( $student_id, $lesson1_id, 'complete' );
+		$this->complete_lesson_progress( $student_id, $lesson1_id );
 		Sensei_Utils::user_start_lesson( $student_id, $lesson2_id );
 
 		$this->login_as_admin();
@@ -118,7 +119,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$student_id = $this->factory->user->create();
 
 		Sensei_Utils::user_start_course( $student_id, $course_id );
-		Sensei_Utils::update_lesson_status( $student_id, $lesson1_id, 'complete' );
+		$this->complete_lesson_progress( $student_id, $lesson1_id );
 		Sensei_Utils::user_start_lesson( $student_id, $lesson2_id );
 
 		$this->login_as_admin();
