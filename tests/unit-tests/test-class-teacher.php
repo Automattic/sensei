@@ -527,8 +527,9 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		$sql = Sensei()->teacher->filter_learners_query( 'WHERE 1=1' );
 
 		// Assert.
+		global $wpdb;
 		$expected = "
-INNER JOIN wptests_sensei_lms_progress AS progress ON u.ID = progress.user_id
+INNER JOIN {$wpdb->prefix}sensei_lms_progress AS progress ON u.ID = progress.user_id
 WHERE 1=1
 AND progress.post_id IN ($teacher_course_id_1,$teacher_course_id_2)";
 		$this->assertSame( $expected, $sql );
@@ -552,8 +553,9 @@ AND progress.post_id IN ($teacher_course_id_1,$teacher_course_id_2)";
 		$sql = Sensei()->teacher->filter_learners_query( 'WHERE 1=1' );
 
 		// Assert.
+		global $wpdb;
 		$expected = "
-INNER JOIN wptests_comments AS comments ON u.ID = comments.user_id
+INNER JOIN $wpdb->comments AS comments ON u.ID = comments.user_id
 WHERE 1=1
 AND comments.comment_post_ID IN ($teacher_course_id_1,$teacher_course_id_2)
 AND comments.comment_type = 'sensei_course_status'";
@@ -574,8 +576,9 @@ AND comments.comment_type = 'sensei_course_status'";
 		$sql = Sensei()->teacher->filter_learners_query( 'WHERE 1=1' );
 
 		// Assert.
+		global $wpdb;
 		$expected = "
-INNER JOIN wptests_comments AS comments ON u.ID = comments.user_id
+INNER JOIN $wpdb->comments AS comments ON u.ID = comments.user_id
 WHERE 1=1
 AND comments.comment_post_ID IN (0)
 AND comments.comment_type = 'sensei_course_status'";
