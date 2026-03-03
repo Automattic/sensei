@@ -119,8 +119,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		);
 
 		if ( $id && Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $course_id . '_' . $user_id;
-			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
+			wp_cache_set( self::get_prefixed_key( $this->get_cache_key( $course_id, $user_id ), self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
 		}
 
 		return $progress;
@@ -148,7 +147,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		 */
 		$course_id = (int) apply_filters( 'sensei_course_progress_get_course_id', $course_id );
 
-		$cache_key = $course_id . '_' . $user_id;
+		$cache_key = $this->get_cache_key( $course_id, $user_id );
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
@@ -269,8 +268,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		);
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $course_progress->get_course_id() . '_' . $course_progress->get_user_id();
-			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $course_progress->get_course_id(), $course_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
@@ -297,8 +295,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		);
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $course_progress->get_course_id() . '_' . $course_progress->get_user_id();
-			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $course_progress->get_course_id(), $course_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
@@ -471,9 +468,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			$course_progresses[] = $progress;
 
 			if ( $cache_enabled ) {
-				$cache_key = $row->post_id . '_' . $row->user_id;
-
-				$cache_values[ self::get_prefixed_key( $cache_key, self::CACHE_GROUP ) ] = $progress;
+				$cache_values[ self::get_prefixed_key( $this->get_cache_key( (int) $row->post_id, (int) $row->user_id ), self::CACHE_GROUP ) ] = $progress;
 			}
 		}
 
@@ -482,6 +477,19 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		}
 
 		return $course_progresses;
+	}
+
+	/**
+	 * Get the cache key for a course progress.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $course_id The course ID.
+	 * @param int $user_id   The user ID.
+	 * @return string The cache key.
+	 */
+	private function get_cache_key( int $course_id, int $user_id ): string {
+		return $course_id . '_' . $user_id;
 	}
 
 	/**

@@ -121,8 +121,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		);
 
 		if ( $id && Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $lesson_id . '_' . $user_id;
-			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
+			wp_cache_set( self::get_prefixed_key( $this->get_cache_key( $lesson_id, $user_id ), self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
 		}
 
 		return $progress;
@@ -151,7 +150,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		 */
 		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_get_lesson_id', $lesson_id );
 
-		$cache_key = $lesson_id . '_' . $user_id;
+		$cache_key = $this->get_cache_key( $lesson_id, $user_id );
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
@@ -271,8 +270,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		);
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $lesson_progress->get_lesson_id() . '_' . $lesson_progress->get_user_id();
-			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
@@ -299,8 +297,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		);
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $lesson_progress->get_lesson_id() . '_' . $lesson_progress->get_user_id();
-			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
@@ -522,9 +519,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			$lesson_progresses[] = $progress;
 
 			if ( $cache_enabled ) {
-				$cache_key = $row->post_id . '_' . $row->user_id;
-
-				$cache_values[ self::get_prefixed_key( $cache_key, self::CACHE_GROUP ) ] = $progress;
+				$cache_values[ self::get_prefixed_key( $this->get_cache_key( (int) $row->post_id, (int) $row->user_id ), self::CACHE_GROUP ) ] = $progress;
 			}
 		}
 
@@ -533,6 +528,19 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		}
 
 		return $lesson_progresses;
+	}
+
+	/**
+	 * Get the cache key for a lesson progress.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id   The user ID.
+	 * @return string The cache key.
+	 */
+	private function get_cache_key( int $lesson_id, int $user_id ): string {
+		return $lesson_id . '_' . $user_id;
 	}
 
 	/**

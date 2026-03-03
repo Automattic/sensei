@@ -119,8 +119,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		);
 
 		if ( $id && Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $quiz_id . '_' . $user_id;
-			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
+			wp_cache_set( self::get_prefixed_key( $this->get_cache_key( $quiz_id, $user_id ), self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
 		}
 
 		return $progress;
@@ -152,7 +151,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		 */
 		$quiz_id = (int) apply_filters( 'sensei_quiz_progress_get_quiz_id', $quiz_id );
 
-		$cache_key = $quiz_id . '_' . $user_id;
+		$cache_key = $this->get_cache_key( $quiz_id, $user_id );
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
@@ -276,8 +275,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		);
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $quiz_progress->get_quiz_id() . '_' . $quiz_progress->get_user_id();
-			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
@@ -304,8 +302,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		);
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = $quiz_progress->get_quiz_id() . '_' . $quiz_progress->get_user_id();
-			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
@@ -479,9 +476,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			$progresses[] = $progress;
 
 			if ( $cache_enabled ) {
-				$cache_key = $row->post_id . '_' . $row->user_id;
-
-				$cache_values[ self::get_prefixed_key( $cache_key, self::CACHE_GROUP ) ] = $progress;
+				$cache_values[ self::get_prefixed_key( $this->get_cache_key( (int) $row->post_id, (int) $row->user_id ), self::CACHE_GROUP ) ] = $progress;
 			}
 		}
 
@@ -490,6 +485,19 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		}
 
 		return $progresses;
+	}
+
+	/**
+	 * Get the cache key for a quiz progress.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The user ID.
+	 * @return string The cache key.
+	 */
+	private function get_cache_key( int $quiz_id, int $user_id ): string {
+		return $quiz_id . '_' . $user_id;
 	}
 
 	/**

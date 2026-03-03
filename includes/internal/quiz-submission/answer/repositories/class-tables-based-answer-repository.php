@@ -125,8 +125,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		);
 
 		if ( $this->wpdb->insert_id && Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = (string) $submission_id;
-			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 
 		return $answer;
@@ -155,7 +154,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		 */
 		$submission_id = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission_id, 'tables' );
 
-		$cache_key = (string) $submission_id;
+		$cache_key = $this->get_cache_key( $submission_id );
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
@@ -222,9 +221,20 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		);
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_key = (string) $submission_id;
-			wp_cache_delete( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
+	}
+
+	/**
+	 * Get the cache key for quiz answers by submission.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $submission_id The submission ID.
+	 * @return string The cache key.
+	 */
+	private function get_cache_key( int $submission_id ): string {
+		return (string) $submission_id;
 	}
 
 	/**
