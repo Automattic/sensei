@@ -51,15 +51,22 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 */
 	public function __construct( int $read_batch_size = 250, int $insert_batch_size = 50 ) {
 		/**
-		 * Filter the batch size for student progress migration.
+		 * Filter the read batch size for student progress migration.
 		 *
 		 * @since $$next-version$$
 		 *
-		 * @param int $read_batch_size The batch size.
+		 * @param int $read_batch_size The read batch size.
 		 */
-		$this->read_batch_size = (int) apply_filters( 'sensei_migration_student_progress_batch_size', $read_batch_size );
+		$this->read_batch_size = (int) apply_filters( 'sensei_migration_student_progress_read_batch_size', $read_batch_size );
 
-		$this->insert_batch_size = $insert_batch_size;
+		/**
+		 * Filter the insert batch size for student progress migration.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param int $insert_batch_size The insert batch size.
+		 */
+		$this->insert_batch_size = (int) apply_filters( 'sensei_migration_student_progress_insert_batch_size', $insert_batch_size );
 	}
 
 	/**
