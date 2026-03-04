@@ -807,7 +807,7 @@ class Sensei_Main {
 		$this->quiz_grade_repository      = ( new Grade_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
 
 		// Progress aggregate query.
-		$this->progress_aggregate_query = new Progress_Aggregate_Query();
+		$this->progress_aggregate_query = new Progress_Aggregate_Query( $tables_sync_enabled && $read_from_tables );
 
 		// Progress tables eraser.
 		if ( $tables_feature_enabled ) {

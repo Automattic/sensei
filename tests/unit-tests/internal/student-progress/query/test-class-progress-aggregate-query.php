@@ -9,7 +9,6 @@
 // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
 
 use Sensei\Internal\Student_Progress\Query\Progress_Aggregate_Query;
-use Sensei\Internal\Services\Progress_Storage_Settings;
 
 /**
  * Class Progress_Aggregate_Query_Test.
@@ -49,8 +48,6 @@ class Progress_Aggregate_Query_Test extends WP_UnitTestCase {
 	 * Test that sum_grades returns correct sum in comments mode.
 	 */
 	public function testSumGrades_CommentsMode_ReturnsCorrectSum() {
-		$this->skip_in_hpps_mode( 'Comments-mode test skipped in HPPS tables mode.' );
-
 		/* Arrange. */
 		$course_id  = $this->factory->course->create();
 		$lesson_ids = $this->factory->lesson->create_many(
@@ -73,7 +70,7 @@ class Progress_Aggregate_Query_Test extends WP_UnitTestCase {
 		add_comment_meta( $comment_ids[1], 'grade', '80' );
 		add_comment_meta( $comment_ids[2], 'grade', '40' );
 
-		$query = new Progress_Aggregate_Query();
+		$query = new Progress_Aggregate_Query( false );
 
 		/* Act. */
 		$sum = $query->sum_grades( $course_id );
@@ -86,11 +83,9 @@ class Progress_Aggregate_Query_Test extends WP_UnitTestCase {
 	 * Test that sum_grades returns 0 for an empty course.
 	 */
 	public function testSumGrades_CommentsMode_EmptyCourse_ReturnsZero() {
-		$this->skip_in_hpps_mode( 'Comments-mode test skipped in HPPS tables mode.' );
-
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
-		$query     = new Progress_Aggregate_Query();
+		$query     = new Progress_Aggregate_Query( false );
 
 		/* Act. */
 		$sum = $query->sum_grades( $course_id );
@@ -103,8 +98,6 @@ class Progress_Aggregate_Query_Test extends WP_UnitTestCase {
 	 * Test that sum_grades excludes in-progress statuses in comments mode.
 	 */
 	public function testSumGrades_CommentsMode_ExcludesInProgress() {
-		$this->skip_in_hpps_mode( 'Comments-mode test skipped in HPPS tables mode.' );
-
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 		$lesson_id = $this->factory->lesson->create(
@@ -123,7 +116,7 @@ class Progress_Aggregate_Query_Test extends WP_UnitTestCase {
 		add_comment_meta( $graded_comment, 'grade', '75' );
 		add_comment_meta( $in_progress_comment, 'grade', '50' );
 
-		$query = new Progress_Aggregate_Query();
+		$query = new Progress_Aggregate_Query( false );
 
 		/* Act. */
 		$sum = $query->sum_grades( $course_id );
@@ -164,7 +157,7 @@ class Progress_Aggregate_Query_Test extends WP_UnitTestCase {
 		$this->insert_quiz_progress( $quiz_ids[1], $user_ids[0], 'failed' );
 		$this->insert_quiz_submission( $quiz_ids[1], $user_ids[0], 40.0 );
 
-		$query = new Progress_Aggregate_Query();
+		$query = new Progress_Aggregate_Query( true );
 
 		/* Act. */
 		$sum = $query->sum_grades( $course_id );
@@ -184,7 +177,7 @@ class Progress_Aggregate_Query_Test extends WP_UnitTestCase {
 		$this->enable_hpps_tables_repository();
 
 		$course_id = $this->factory->course->create();
-		$query     = new Progress_Aggregate_Query();
+		$query     = new Progress_Aggregate_Query( true );
 
 		/* Act. */
 		$sum = $query->sum_grades( $course_id );
@@ -221,7 +214,7 @@ class Progress_Aggregate_Query_Test extends WP_UnitTestCase {
 		$this->insert_quiz_progress( $quiz_id, $user_ids[1], 'in-progress' );
 		$this->insert_quiz_submission( $quiz_id, $user_ids[1], 50.0 );
 
-		$query = new Progress_Aggregate_Query();
+		$query = new Progress_Aggregate_Query( true );
 
 		/* Act. */
 		$sum = $query->sum_grades( $course_id );
@@ -237,7 +230,7 @@ class Progress_Aggregate_Query_Test extends WP_UnitTestCase {
 	 * Test the delegated call in Sensei_Grading works in comments mode.
 	 */
 	public function testGetCourseUsersGradesSum_Delegated_CommentsMode_ReturnsCorrectSum() {
-		$this->skip_in_hpps_mode( 'Comments-mode test skipped in HPPS tables mode.' );
+		$this->skip_in_hpps_mode( 'Delegated test uses Sensei() which is wired at boot time.' );
 
 		/* Arrange. */
 		$course_id  = $this->factory->course->create();
@@ -267,6 +260,9 @@ class Progress_Aggregate_Query_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$this->enable_hpps_tables_repository();
 
+		$original_query                        = Sensei()->progress_aggregate_query;
+		Sensei()->progress_aggregate_query = new Progress_Aggregate_Query( true );
+
 		$course_id = $this->factory->course->create();
 		$lesson_id = $this->factory->lesson->create(
 			[
@@ -289,6 +285,7 @@ class Progress_Aggregate_Query_Test extends WP_UnitTestCase {
 		$this->assertSame( 95, $sum );
 
 		/* Cleanup. */
+		Sensei()->progress_aggregate_query = $original_query;
 		$this->reset_hpps_repository();
 	}
 

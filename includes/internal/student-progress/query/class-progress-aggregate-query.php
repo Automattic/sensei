@@ -7,8 +7,6 @@
 
 namespace Sensei\Internal\Student_Progress\Query;
 
-use Sensei\Internal\Services\Progress_Storage_Settings;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -26,6 +24,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Progress_Aggregate_Query {
 
 	/**
+	 * Whether to read from HPPS tables.
+	 *
+	 * @var bool
+	 */
+	private $use_tables;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param bool $use_tables Whether to read from HPPS tables.
+	 */
+	public function __construct( bool $use_tables ) {
+		$this->use_tables = $use_tables;
+	}
+
+	/**
 	 * Get the sum of all user grades for the given course.
 	 *
 	 * @since $$next-version$$
@@ -34,7 +50,7 @@ class Progress_Aggregate_Query {
 	 * @return int Sum of all grades.
 	 */
 	public function sum_grades( int $course_id ): int {
-		if ( Progress_Storage_Settings::is_tables_repository() ) {
+		if ( $this->use_tables ) {
 			return $this->sum_grades_from_tables( $course_id );
 		}
 
