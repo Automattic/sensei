@@ -6,6 +6,8 @@
  * @covers Sensei_Analysis_Course_List_Table
  */
 class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
+
 	private static $initial_hook_suffix;
 
 	/**
@@ -36,6 +38,8 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 	}
 
 	public function testPrepareItems_DateStartedFilterSet_SetsMatchingItems() {
+		$this->skip_in_hpps_mode( 'Date filtering uses comment meta which is not available in HPPS mode.' );
+
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 
@@ -72,6 +76,8 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 	}
 
 	public function testPrepareItems_DefaultDateFilterSet_SetsMatchingItems() {
+		$this->skip_in_hpps_mode( 'Date filtering uses comment meta which is not available in HPPS mode.' );
+
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 

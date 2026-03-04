@@ -2673,15 +2673,6 @@ class Sensei_Utils {
 	public static function start_user_on_course( $user_id, $course_id ) {
 		$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
 
-		// Allow further actions.
-		$course_metadata = [
-			'percent'  => 0,
-			'complete' => 0,
-		];
-		foreach ( $course_metadata as $key => $value ) {
-			update_comment_meta( $course_progress->get_id(), $key, $value );
-		}
-
 		/**
 		 * Fires when a user starts a course.
 		 *
