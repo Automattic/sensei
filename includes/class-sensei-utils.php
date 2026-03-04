@@ -1,5 +1,6 @@
 <?php
 
+use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -605,7 +606,7 @@ class Sensei_Utils {
 		if ( ! $lesson_progress ) {
 			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 			$has_questions   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
-			if ( $complete && $has_questions ) {
+			if ( $complete && $has_questions && ! Progress_Storage_Settings::is_tables_repository() ) {
 				update_comment_meta( $lesson_progress->get_id(), 'grade', 0 );
 			}
 		}
@@ -1618,14 +1619,16 @@ class Sensei_Utils {
 
 		Sensei()->course_progress_repository->save( $course_progress );
 
-		$course_progress_metadata = [
-			// How many lessons have been completed.
-			'complete' => $lessons_completed,
-			// Overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above.
-			'percent'  => self::quotient_as_absolute_rounded_percentage( $lessons_completed, $total_lessons ),
-		];
-		foreach ( $course_progress_metadata as $key => $value ) {
-			update_comment_meta( $course_progress->get_id(), $key, $value );
+		if ( ! Progress_Storage_Settings::is_tables_repository() ) {
+			$course_progress_metadata = [
+				// How many lessons have been completed.
+				'complete' => $lessons_completed,
+				// Overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above.
+				'percent'  => self::quotient_as_absolute_rounded_percentage( $lessons_completed, $total_lessons ),
+			];
+			foreach ( $course_progress_metadata as $key => $value ) {
+				update_comment_meta( $course_progress->get_id(), $key, $value );
+			}
 		}
 
 		// Allow further actions.
