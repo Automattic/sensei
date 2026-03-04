@@ -31,6 +31,9 @@ Composer production dependencies that may conflict with other plugins are scoped
 - **Blocks over shortcodes**: New UI features should use Gutenberg blocks (`assets/blocks/`), not shortcodes. Existing shortcodes are maintained for backward compatibility only.
 - **Action Scheduler over wp-cron**: Background/async processing uses Action Scheduler (`includes/background-jobs/`), not raw wp-cron.
 
+### PHP Inline Documentation
+Follow the [WordPress PHP Documentation Standards](https://developer.wordpress.org/coding-standards/inline-documentation-standards/php/).
+
 ## Common Pitfalls
 
 - **CRITICAL: WordPress filters persist between test cases.** Always remove filters added during a test in `tearDown()` or the test will leak state into other tests.

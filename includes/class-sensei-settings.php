@@ -1246,21 +1246,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$key      = $args['key'];
 		$value    = $settings[ $key ];
 
-		// Disable the checkbox if we can't set time limit. That's our current limitation for running migrations.
-		$disabled_feature            = true;
-		$original_max_execution_time = (int) ini_get( 'max_execution_time' );
-		$disabled_php_functions      = array_map( 'trim', explode( ',', ini_get( 'disable_functions' ) ) );
-		$set_time_limit_disabled     = in_array( 'set_time_limit', $disabled_php_functions, true );
-		if ( 0 !== $original_max_execution_time && ! $set_time_limit_disabled ) {
-			// Set max execution time to 0 to check if we can set it in migrtions.
-			$disabled_feature           = ! set_time_limit( 0 );
-			$current_max_execution_time = (int) ini_get( 'max_execution_time' );
-			if ( $disabled_feature && 0 === $current_max_execution_time ) {
-				$disabled_feature = false;
-			}
-			// Restore original max execution time.
-			set_time_limit( $original_max_execution_time );
-		}
 		?>
 		<div>
 			<label>
@@ -1270,20 +1255,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 					type="checkbox"
 					name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
 					value="1"
-					<?php disabled( true, $disabled_feature, true ); ?>
 					<?php checked( $value, true, true ); ?>
 				/>
 				<?php echo esc_html( $args['data']['description'] ); ?>
 			</label>
 
-			<?php if ( $disabled_feature ) : ?>
-				<input type="hidden" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" value="<?php echo esc_attr( $value ); ?>" />
-				<p>
-					<?php
-					echo esc_html( __( 'As this feature is currently experimental, it may not be available yet on some sites.', 'sensei-lms' ) );
-					?>
-				</p>
-			<?php endif; ?>
 		<?php if ( ! $value ) : ?>
 			<div class="notice notice-info inline sensei-settings__progress-storage-settings hidden">
 				<p>
