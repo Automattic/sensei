@@ -1385,28 +1385,7 @@ class Sensei_Grading {
 	 * @return int
 	 */
 	public static function get_course_users_grades_sum( $course_id ) {
-		global $wpdb;
-
-		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
-		if ( ! $lesson_ids ) {
-			return 0;
-		}
-
-		$lesson_ids_placeholder = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-		$sum_of_all_grades = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum
-				FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id )
-				WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND {$wpdb->comments}.comment_approved IN ('graded', 'passed', 'failed') AND ( {$wpdb->commentmeta}.meta_key = 'grade')
-				AND {$wpdb->comments}.comment_post_ID IN ({$lesson_ids_placeholder}) ",
-				$lesson_ids
-			)
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-
-		return $sum_of_all_grades;
+		return Sensei()->progress_aggregate_query->sum_grades( (int) $course_id );
 	}
 
 	/**

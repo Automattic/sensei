@@ -31,6 +31,7 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Re
 use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Query\Progress_Aggregate_Query;
 use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
 use Sensei\Internal\Tools\Progress_Tables_Eraser;
 use Sensei\WPML\WPML;
@@ -408,6 +409,13 @@ class Sensei_Main {
 	 * @var Grade_Repository_Interface
 	 */
 	public $quiz_grade_repository;
+
+	/**
+	 * Progress aggregate query.
+	 *
+	 * @var \Sensei\Internal\Student_Progress\Query\Progress_Aggregate_Query
+	 */
+	public $progress_aggregate_query;
 
 	/**
 	 * Migration job scheduler.
@@ -797,6 +805,9 @@ class Sensei_Main {
 		$this->quiz_submission_repository = ( new Submission_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
 		$this->quiz_answer_repository     = ( new Answer_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
 		$this->quiz_grade_repository      = ( new Grade_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
+
+		// Progress aggregate query.
+		$this->progress_aggregate_query = new Progress_Aggregate_Query();
 
 		// Progress tables eraser.
 		if ( $tables_feature_enabled ) {
