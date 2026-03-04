@@ -29,6 +29,7 @@ use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progres
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
@@ -408,6 +409,13 @@ class Sensei_Main {
 	 * @var Grade_Repository_Interface
 	 */
 	public $quiz_grade_repository;
+
+	/**
+	 * Progress query service.
+	 *
+	 * @var \Sensei\Internal\Student_Progress\Services\Progress_Query_Service_Interface
+	 */
+	public $progress_query_service;
 
 	/**
 	 * Migration job scheduler.
@@ -797,6 +805,9 @@ class Sensei_Main {
 		$this->quiz_submission_repository = ( new Submission_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
 		$this->quiz_answer_repository     = ( new Answer_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
 		$this->quiz_grade_repository      = ( new Grade_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
+
+		// Progress query service.
+		$this->progress_query_service = ( new Progress_Query_Service_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
 
 		// Progress tables eraser.
 		if ( $tables_feature_enabled ) {
