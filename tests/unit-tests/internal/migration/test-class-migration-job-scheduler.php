@@ -181,7 +181,7 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		$job_scheduler->register_job( $migration_job );
 
 		$has_logged_event = false;
-		$sensei_log_event = function( $log_event, $event_name, $event_properties ) use ( &$has_logged_event ) {
+		$sensei_log_event = function ( $log_event, $event_name ) use ( &$has_logged_event ) {
 			if ( 'hpps_migration_complete' === $event_name ) {
 				$has_logged_event = true;
 			}
@@ -483,5 +483,169 @@ class Migration_Job_Scheduler_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$expected = array( 'c' );
 		$this->assertSame( $expected, $actual );
+	}
+
+	public function testRunJob_Always_SetsTimeBudgetOnJob(): void {
+		/* Arrange. */
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$migration_job    = $this->createMock( Migration_Job::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		$job_scheduler->register_job( $migration_job );
+
+		/* Assert. */
+		$migration_job
+			->expects( $this->once() )
+			->method( 'set_time_budget' )
+			->with( 20.0 );
+
+		/* Act. */
+		$job_scheduler->run_job( $migration_job->get_name() );
+	}
+
+	public function testRunJob_WithFilteredBudget_UsesFilteredValue(): void {
+		/* Arrange. */
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$migration_job    = $this->createMock( Migration_Job::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		$job_scheduler->register_job( $migration_job );
+
+		$filter = function () {
+			return 45.0;
+		};
+		add_filter( 'sensei_migration_time_budget', $filter );
+
+		/* Assert. */
+		$migration_job
+			->expects( $this->once() )
+			->method( 'set_time_budget' )
+			->with( 45.0 );
+
+		/* Act. */
+		$job_scheduler->run_job( $migration_job->get_name() );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_migration_time_budget', $filter );
+	}
+
+	public function testCollectFailedJobErrors_FirstFailure_ReschedulesInsteadOfFailing(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_IN_PROGRESS );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$action_scheduler->method( 'get_scheduled_actions' )->willReturn( array( 'action_1' ) );
+
+		$job = $this->createMock( Migration_Job::class );
+		$job->method( 'get_name' )->willReturn( 'test_job' );
+
+		$job_scheduler = new Migration_Job_Scheduler( $action_scheduler );
+		$job_scheduler->register_job( $job );
+
+		/* Assert. */
+		$action_scheduler
+			->expects( $this->once() )
+			->method( 'schedule_single_action' )
+			->with( 'sensei_lms_migration_job_test_job', [ 'job_name' => 'test_job' ], false );
+
+		/* Act. */
+		$job_scheduler->collect_failed_job_errors( 'action_1', array( 'message' => 'Timeout' ) );
+
+		/* Assert - status should still be in_progress, not failed. */
+		$this->assertSame(
+			Migration_Job_Scheduler::STATUS_IN_PROGRESS,
+			get_option( Migration_Job_Scheduler::STATUS_OPTION_NAME )
+		);
+	}
+
+	public function testCollectFailedJobErrors_AfterMaxRetries_MarksAsFailed(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_IN_PROGRESS );
+		update_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME, 3 );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$action_scheduler->method( 'get_scheduled_actions' )->willReturn( array( 'action_1' ) );
+
+		$job = $this->createMock( Migration_Job::class );
+		$job->method( 'get_name' )->willReturn( 'test_job' );
+
+		$job_scheduler = new Migration_Job_Scheduler( $action_scheduler );
+		$job_scheduler->register_job( $job );
+
+		/* Act. */
+		$job_scheduler->collect_failed_job_errors( 'action_1', array( 'message' => 'Timeout' ) );
+
+		/* Assert. */
+		$this->assertSame(
+			Migration_Job_Scheduler::STATUS_FAILED,
+			get_option( Migration_Job_Scheduler::STATUS_OPTION_NAME )
+		);
+	}
+
+	public function testCollectFailedJobErrors_MaxRetriesFilterable_RespectsFilter(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_IN_PROGRESS );
+		update_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME, 1 );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$action_scheduler->method( 'get_scheduled_actions' )->willReturn( array( 'action_1' ) );
+
+		$job = $this->createMock( Migration_Job::class );
+		$job->method( 'get_name' )->willReturn( 'test_job' );
+
+		$job_scheduler = new Migration_Job_Scheduler( $action_scheduler );
+		$job_scheduler->register_job( $job );
+
+		// Set max retries to 1, so retry count of 1 means we've exhausted retries.
+		$filter = function () {
+			return 1;
+		};
+		add_filter( 'sensei_migration_max_retries', $filter );
+
+		/* Act. */
+		$job_scheduler->collect_failed_job_errors( 'action_1', array( 'message' => 'Timeout' ) );
+
+		/* Assert. */
+		$this->assertSame(
+			Migration_Job_Scheduler::STATUS_FAILED,
+			get_option( Migration_Job_Scheduler::STATUS_OPTION_NAME )
+		);
+
+		/* Cleanup. */
+		remove_filter( 'sensei_migration_max_retries', $filter );
+	}
+
+	public function testRunJob_SuccessfulCompletion_ResetsRetryCount(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME, 2 );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$migration_job    = $this->createMock( Migration_Job::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		$migration_job->method( 'is_complete' )->willReturn( true );
+		$migration_job->method( 'get_name' )->willReturn( 'foo' );
+
+		$job_scheduler->register_job( $migration_job );
+
+		/* Act. */
+		$job_scheduler->run_job( $migration_job->get_name() );
+
+		/* Assert. */
+		$this->assertFalse( get_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME ) );
+	}
+
+	public function testClearState_Always_DeletesRetryCount(): void {
+		/* Arrange. */
+		update_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME, 2 );
+
+		$action_scheduler = $this->createMock( Action_Scheduler::class );
+		$job_scheduler    = new Migration_Job_Scheduler( $action_scheduler );
+
+		/* Act. */
+		$job_scheduler->clear_state();
+
+		/* Assert. */
+		$this->assertFalse( get_option( Migration_Job_Scheduler::RETRY_COUNT_OPTION_NAME ) );
 	}
 }

@@ -346,6 +346,76 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that saving a lesson as an Editor preserves module order and does not
+	 * disassociate modules owned by other users.
+	 *
+	 * @covers Sensei_Lesson::add_lesson_to_course_order
+	 * @covers Sensei_Admin::save_lesson_order
+	 */
+	public function testAddLessonToCourseOrder_AsEditor_PreservesModuleOrder() {
+		if ( ! isset( Sensei()->admin ) ) {
+			Sensei()->admin = new WooThemes_Sensei_Admin();
+		}
+
+		// Create an admin user to own the modules.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		// Create a course and modules.
+		$course_id = $this->factory->course->create();
+		$module_a  = wp_insert_term( 'Module A', 'module' );
+		$module_b  = wp_insert_term( 'Module B', 'module' );
+		$module_c  = wp_insert_term( 'Module C', 'module' );
+
+		// Set admin as the module author.
+		update_term_meta( $module_a['term_id'], 'module_author', $admin_id );
+		update_term_meta( $module_b['term_id'], 'module_author', $admin_id );
+		update_term_meta( $module_c['term_id'], 'module_author', $admin_id );
+
+		// Associate modules with the course in a custom order: C, A, B.
+		$custom_order = array( $module_c['term_id'], $module_a['term_id'], $module_b['term_id'] );
+		wp_set_object_terms( $course_id, $custom_order, 'module' );
+		update_post_meta( $course_id, '_module_order', array_map( 'strval', $custom_order ) );
+
+		// Create a lesson belonging to this course.
+		$lesson_id = $this->factory->lesson->create();
+		update_post_meta( $lesson_id, '_lesson_course', $course_id );
+
+		// Verify modules are associated before switching users.
+		$modules_before = wp_get_object_terms( $course_id, 'module', array( 'fields' => 'ids' ) );
+		$this->assertCount( 3, $modules_before, 'Modules should be associated before save.' );
+
+		// Switch to an Editor user.
+		$editor_id = $this->factory->user->create( array( 'role' => 'editor' ) );
+		wp_set_current_user( $editor_id );
+		set_current_screen( 'edit-lesson' );
+		clean_object_term_cache( $course_id, 'course' );
+
+		// Trigger the lesson save hook.
+		Sensei()->lesson->add_lesson_to_course_order( $lesson_id );
+
+		// Verify module order is preserved.
+		$saved_order = get_post_meta( $course_id, '_module_order', true );
+		$this->assertEquals(
+			array_map( 'strval', $custom_order ),
+			$saved_order,
+			'Module order should be preserved when an Editor saves a lesson.'
+		);
+
+		// Verify all modules are still associated with the course.
+		// Switch back to admin to bypass the module ownership filter for this assertion.
+		wp_set_current_user( $admin_id );
+		$course_modules = wp_get_object_terms( $course_id, 'module', array( 'fields' => 'ids' ) );
+		$this->assertCount( 3, $course_modules, 'All modules should remain associated with the course.' );
+
+		// Clean up.
+		wp_delete_term( $module_a['term_id'], 'module' );
+		wp_delete_term( $module_b['term_id'], 'module' );
+		wp_delete_term( $module_c['term_id'], 'module' );
+		set_current_screen( 'front' );
+	}
+
+	/**
 	 * @covers Sensei_Lesson::lesson_has_quiz_with_graded_questions()
 	 */
 	public function testLessonHasQuizWithGradedQuestionsLessonWithNoQuiz() {

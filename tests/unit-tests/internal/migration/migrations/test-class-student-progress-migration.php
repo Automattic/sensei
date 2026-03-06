@@ -156,6 +156,104 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->assertSame( $expected, $actual_rows );
 	}
 
+	public function testRun_TimeExceeded_StopsEarlyAndAdvancesCursor(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+
+		// Create progress for multiple users.
+		for ( $i = 0; $i < 5; $i++ ) {
+			$user_id = $this->factory->user->create();
+			Sensei_Utils::start_user_on_course( $user_id, $course_id );
+		}
+
+		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
+
+		$migration = new Student_Progress_Migration( 250 );
+		// Set a zero time budget so it stops after the first comment.
+		$migration->set_time_budget( 0.0 );
+
+		/* Act. */
+		$result = $migration->run( false );
+
+		/* Assert. */
+		// At least one comment should be processed (time check is after insert).
+		$this->assertGreaterThan( 0, $result, 'Expected at least one row to be inserted.' );
+
+		// Cursor should have advanced (not stuck at 0).
+		$cursor = (int) get_option( 'sensei_migrated_progress_last_comment_id' );
+		$this->assertGreaterThan( 0, $cursor, 'Expected cursor to advance after processing at least one comment.' );
+	}
+
+	public function testRun_TimeExceeded_DoesNotProcessAllComments(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+
+		for ( $i = 0; $i < 5; $i++ ) {
+			$user_id = $this->factory->user->create();
+			Sensei_Utils::start_user_on_course( $user_id, $course_id );
+		}
+
+		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
+
+		$migration = new Student_Progress_Migration( 250 );
+		// Zero budget so time is immediately exceeded after first comment.
+		$migration->set_time_budget( 0.0 );
+
+		/* Act. */
+		$result = $migration->run( false );
+
+		/* Assert. */
+		// Should have inserted fewer than all 5 course progress rows.
+		$this->assertLessThan( 5, $result, 'Expected fewer than 5 rows because time budget should stop processing early.' );
+	}
+
+	public function testRun_AllRowsWereDuplicates_ReturnsGreaterThanZero(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
+		$user_id   = $this->factory->user->create();
+
+		Sensei_Utils::start_user_on_course( $user_id, $course_id );
+
+		update_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
+
+		// First run: inserts rows normally.
+		$this->migration->run( false );
+
+		// Simulate a crash before cursor update by resetting the cursor.
+		update_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
+
+		/* Act. */
+		// Second run: all rows are duplicates (INSERT IGNORE returns 0).
+		$result = $this->migration->run( false );
+
+		/* Assert. */
+		$this->assertGreaterThan( 0, $result, 'run() should return > 0 when comments were processed, even if all inserts were duplicates' );
+	}
+
+	public function testRun_AllRowsWereDuplicates_AdvancesCursorPastDuplicates(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
+		$user_id   = $this->factory->user->create();
+
+		Sensei_Utils::start_user_on_course( $user_id, $course_id );
+
+		update_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
+
+		// First run: inserts rows normally.
+		$this->migration->run( false );
+
+		// Simulate a crash before cursor update by resetting the cursor.
+		update_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
+
+		/* Act. */
+		// Second run: all rows are duplicates.
+		$this->migration->run( false );
+
+		/* Assert. */
+		$cursor = (int) get_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME );
+		$this->assertGreaterThan( 0, $cursor, 'Cursor should advance past duplicates' );
+	}
+
 	private function get_table_based_progress(): array {
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
