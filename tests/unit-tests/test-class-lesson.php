@@ -346,9 +346,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that saving a lesson as an Editor does not reset the module order.
+	 * Test that saving a lesson as an Editor preserves module order and does not
+	 * disassociate modules owned by other users.
 	 *
 	 * @covers Sensei_Lesson::add_lesson_to_course_order
+	 * @covers Sensei_Admin::save_lesson_order
 	 */
 	public function testAddLessonToCourseOrder_AsEditor_PreservesModuleOrder() {
 		if ( ! isset( Sensei()->admin ) ) {

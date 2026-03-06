@@ -1492,13 +1492,17 @@ class Sensei_Admin {
 		if ( $course_id ) {
 			remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
 			// Temporarily remove the module ownership filters so the full unfiltered set of modules
-			// is read back. Without this, non-admin users (e.g. Editors) would only retrieve their
-			// own modules, and saving the structure would disassociate all other modules from the course.
+			// is used throughout the read-and-save cycle. Without this, non-admin users (e.g. Editors)
+			// would only see their own modules: get_course_structure() would return a partial list,
+			// and save() — which internally re-reads the current structure for diffing — would
+			// disassociate all other modules from the course. Filters are restored after save().
 			remove_filter( 'get_terms', array( Sensei()->modules, 'filter_module_terms' ), 20 );
 			remove_filter( 'get_object_terms', array( Sensei()->modules, 'filter_course_selected_terms' ), 20 );
 
 			$course_structure = $this->get_course_structure( intval( $course_id ) );
 
+			// Restore the display-only filter early — it only appends teacher names and does not
+			// filter out terms, unlike the ownership filters which must remain off through save().
 			add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
 
 			$order            = array_map( 'absint', explode( ',', $order_string ) );
