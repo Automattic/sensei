@@ -409,6 +409,9 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$this->assertCount( 3, $course_modules, 'All modules should remain associated with the course.' );
 
 		// Clean up.
+		wp_delete_term( $module_a['term_id'], 'module' );
+		wp_delete_term( $module_b['term_id'], 'module' );
+		wp_delete_term( $module_c['term_id'], 'module' );
 		set_current_screen( 'front' );
 	}
 
