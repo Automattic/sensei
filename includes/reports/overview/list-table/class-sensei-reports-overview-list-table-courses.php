@@ -32,7 +32,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Sensei reports courses service.
 	 *
-	 * @var Sensei_Reports_Overview_Service_Courses
+	 * @var Sensei_Reports_Overview_Service_Courses_Interface
 	 */
 	private $reports_overview_service_courses;
 
@@ -40,12 +40,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Constructor
 	 *
-	 * @param Sensei_Grading                                  $grading Sensei grading related services.
-	 * @param Sensei_Course                                   $course Sensei course related services.
-	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
-	 * @param Sensei_Reports_Overview_Service_Courses         $reports_overview_service_courses reports courses service.
+	 * @param Sensei_Grading                                    $grading                          Sensei grading related services.
+	 * @param Sensei_Course                                     $course                           Sensei course related services.
+	 * @param Sensei_Reports_Overview_Data_Provider_Interface   $data_provider                    Report data provider.
+	 * @param Sensei_Reports_Overview_Service_Courses_Interface $reports_overview_service_courses  Reports courses service.
 	 */
-	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Courses $reports_overview_service_courses ) {
+	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Courses_Interface $reports_overview_service_courses ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'courses', $data_provider );
 

@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 4.4.1
  */
-class Sensei_Reports_Overview_Service_Courses {
+class Sensei_Reports_Overview_Service_Courses implements Sensei_Reports_Overview_Service_Courses_Interface {
 
 	/**
 	 * Constructor

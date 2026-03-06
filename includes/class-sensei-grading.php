@@ -19,6 +19,15 @@ class Sensei_Grading {
 	public $page_slug;
 
 	/**
+	 * Grading queries implementation.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var \Sensei\Internal\Grading\Grading_Queries_Interface|null
+	 */
+	private $grading_queries;
+
+	/**
 	 * Constructor
 	 *
 	 * @since  1.3.0
@@ -73,6 +82,31 @@ class Sensei_Grading {
 	 */
 	public function get_name() {
 		return __( 'Grading', 'sensei-lms' );
+	}
+
+	/**
+	 * Set the grading queries implementation.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param \Sensei\Internal\Grading\Grading_Queries_Interface $grading_queries Grading queries implementation.
+	 */
+	public function set_grading_queries( \Sensei\Internal\Grading\Grading_Queries_Interface $grading_queries ): void {
+		$this->grading_queries = $grading_queries;
+	}
+
+	/**
+	 * Get the grading queries implementation.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return \Sensei\Internal\Grading\Grading_Queries_Interface
+	 */
+	public function get_grading_queries(): \Sensei\Internal\Grading\Grading_Queries_Interface {
+		if ( null === $this->grading_queries ) {
+			$this->grading_queries = ( new \Sensei\Internal\Grading\Grading_Queries_Factory() )->create();
+		}
+		return $this->grading_queries;
 	}
 
 	/**
@@ -543,6 +577,19 @@ class Sensei_Grading {
 	 * @return object
 	 */
 	public function count_statuses( $args = array() ) {
+		return $this->get_grading_queries()->count_statuses( $args );
+	}
+
+	/**
+	 * Count the various statuses for Course or Lesson (legacy implementation).
+	 *
+	 * @deprecated $$next-version$$ Use Grading_Queries_Interface::count_statuses() via get_grading_queries().
+	 *
+	 * @since  1.7.0
+	 * @param  array $args (default: array())
+	 * @return object
+	 */
+	private function count_statuses_legacy( $args = array() ) {
 		global  $wpdb;
 
 		/**
@@ -1385,28 +1432,7 @@ class Sensei_Grading {
 	 * @return int
 	 */
 	public static function get_course_users_grades_sum( $course_id ) {
-		global $wpdb;
-
-		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
-		if ( ! $lesson_ids ) {
-			return 0;
-		}
-
-		$lesson_ids_placeholder = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-		$sum_of_all_grades = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum
-				FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id )
-				WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND {$wpdb->comments}.comment_approved IN ('graded', 'passed', 'failed') AND ( {$wpdb->commentmeta}.meta_key = 'grade')
-				AND {$wpdb->comments}.comment_post_ID IN ({$lesson_ids_placeholder}) ",
-				$lesson_ids
-			)
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-
-		return $sum_of_all_grades;
+		return Sensei()->grading->get_grading_queries()->get_course_users_grades_sum( (int) $course_id );
 	}
 
 	/**
@@ -1418,38 +1444,7 @@ class Sensei_Grading {
 	 * @return double Average grade of all courses.
 	 */
 	public function get_courses_average_grade() {
-		global $wpdb;
-
-		/**
-		 * The subquery calculates the average grade per course, and the outer query then calculates the
-		 * average grade of all courses. To be included in the calculation, a lesson must:
-		 *   Have a status of 'graded', 'passed' or 'failed'.
-		 *   Have grade data.
-		 *   Be associated with a course.
-		 *   Have quiz questions (checking for the existence of '_quiz_has_questions' meta is sufficient;
-		 *   if it exists its value will be 1).
-		 */
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		$result = $wpdb->get_row(
-			"SELECT AVG(course_average) as courses_average
-			FROM (
-				SELECT AVG(cm.meta_value) as course_average
-				FROM {$wpdb->comments} c
-				INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
-				INNER JOIN {$wpdb->postmeta} course ON c.comment_post_ID = course.post_id
-				INNER JOIN {$wpdb->postmeta} has_questions ON c.comment_post_ID = has_questions.post_id
-				INNER JOIN {$wpdb->posts} p ON p.ID = course.meta_value
-				WHERE c.comment_type = 'sensei_lesson_status'
-					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
-					AND cm.meta_key = 'grade'
-					AND course.meta_key = '_lesson_course'
-					AND course.meta_value <> ''
-					AND has_questions.meta_key = '_quiz_has_questions'
-				GROUP BY course.meta_value
-			) averages_by_course"
-		);
-
-		return floatval( $result->courses_average );
+		return $this->get_grading_queries()->get_courses_average_grade();
 	}
 }
 
