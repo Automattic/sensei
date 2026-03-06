@@ -29,6 +29,10 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		wp_cache_flush();
 	}
 
 	public function testCreate_ParamsGiven_InsertsToWpdb(): void {
@@ -43,14 +47,14 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 			->with(
 				'sensei_lms_progress',
 				$this->callback(
-					function( $array ) {
-						return isset( $array['post_id'], $array['user_id'], $array['type'], $array['status'] )
-							&& array_key_exists( 'parent_post_id', $array )
-							&& 1 === $array['post_id']
-							&& 2 === $array['user_id']
-							&& 'course' === $array['type']
-							&& 'in-progress' === $array['status']
-							&& is_null( $array['parent_post_id'] );
+					function ( $data ) {
+						return isset( $data['post_id'], $data['user_id'], $data['type'], $data['status'] )
+							&& array_key_exists( 'parent_post_id', $data )
+							&& 1 === $data['post_id']
+							&& 2 === $data['user_id']
+							&& 'course' === $data['type']
+							&& 'in-progress' === $data['status']
+							&& is_null( $data['parent_post_id'] );
 					}
 				),
 				[
@@ -85,6 +89,24 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 			'status'    => 'in-progress',
 		];
 		self::assertSame( $expected, $this->export_progress( $progress ) );
+	}
+
+	public function testCreate_CacheEnabled_FailedInsertDoesNotCache(): void {
+		/* Arrange. */
+		$wpdb            = $this->createMock( wpdb::class );
+		$wpdb->insert_id = 0;
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+		wp_cache_flush();
+
+		/* Act. */
+		$repository->create( 1, 2 );
+
+		/* Assert — nothing should be cached when insert fails (no prefix marker created). */
+		$cache_prefix = wp_cache_get( 'sensei_course_progress_cache_prefix', 'sensei_course_progress' );
+		self::assertFalse( $cache_prefix );
 	}
 
 	public function testGet_NotFound_ReturnsNull(): void {
@@ -188,12 +210,116 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_progress( $progress ) );
 	}
 
+	public function testGet_CacheEnabled_ReturnsCachedValueOnSecondCall(): void {
+		/* Arrange. */
+		$wpdb = $this->createMock( wpdb::class );
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_row' )
+			->willReturn(
+				(object) [
+					'id'             => 1,
+					'post_id'        => 1,
+					'user_id'        => 2,
+					'parent_post_id' => null,
+					'type'           => 'course',
+					'status'         => 'in-progress',
+					'created_at'     => '2022-01-01 00:00:00',
+					'updated_at'     => '2022-01-01 00:00:00',
+					'started_at'     => '2022-01-01 00:00:00',
+					'completed_at'   => null,
+				]
+			);
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+
+		/* Act - first call hits DB, second call should use cache. */
+		$first  = $repository->get( 1, 2 );
+		$second = $repository->get( 1, 2 );
+
+		/* Assert. */
+		self::assertSame( $first->get_id(), $second->get_id() );
+	}
+
+	public function testGet_CacheEnabled_CachesNullAsNotFound(): void {
+		/* Arrange. */
+		$wpdb = $this->createMock( wpdb::class );
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_row' )
+			->willReturn( null );
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+
+		/* Act - first call caches __not_found__, second returns null from cache. */
+		$result1 = $repository->get( 999, 999 );
+		$result2 = $repository->get( 999, 999 );
+
+		/* Assert. */
+		self::assertNull( $result1, 'First call should return null.' );
+		self::assertNull( $result2, 'Second call should return null from cache.' );
+	}
+
+	public function testGet_CacheDisabled_DoesNotCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+		$repository->create( 1, 2 );
+
+		/* Act. */
+		$repository->get( 1, 2 );
+
+		/* Assert - verify no cache prefix marker was created for this group. */
+		$cache_prefix = wp_cache_get( 'sensei_course_progress_cache_prefix', 'sensei_course_progress' );
+		self::assertFalse( $cache_prefix );
+	}
+
+	public function testGet_CacheEnabled_CreateOverwritesNotFoundSentinel(): void {
+		/* Arrange. */
+		$wpdb            = $this->createMock( wpdb::class );
+		$wpdb->insert_id = 1;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_row' )
+			->willReturn( null );
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+
+		/* Cache __not_found__ sentinel. */
+		$result = $repository->get( 1, 2 );
+		self::assertNull( $result, 'Initial get should return null.' );
+
+		/* Act — create overwrites the sentinel. */
+		$created = $repository->create( 1, 2 );
+		$fresh   = $repository->get( 1, 2 );
+
+		/* Assert — get() should return the created object, not null. */
+		self::assertNotNull( $fresh, 'Get after create should not be null.' );
+		self::assertSame( $created->get_id(), $fresh->get_id(), 'Cached object should match created object.' );
+	}
+
 	public function testHas_NotFound_ReturnsFalse(): void {
 		/* Arrange. */
 		$wpdb = $this->createMock( wpdb::class );
 		$wpdb
 			->method( 'get_var' )
-			->willReturn( 0 );
+			->willReturn( '0' );
 		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
 
 		/* Act. */
@@ -203,12 +329,12 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertFalse( $has );
 	}
 
-	public function testHas_ProgressFound_ReturnsFalse(): void {
+	public function testHas_ProgressFound_ReturnsTrue(): void {
 		/* Arrange. */
 		$wpdb = $this->createMock( wpdb::class );
 		$wpdb
 			->method( 'get_var' )
-			->willReturn( 2 );
+			->willReturn( '1' );
 		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
 
 		/* Act. */
@@ -315,6 +441,25 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
+	public function testSave_CacheEnabled_InvalidatesCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+		$progress   = $repository->create( 1, 2 );
+
+		/* Act. */
+		$progress->complete();
+		$repository->save( $progress );
+		$fresh = $repository->get( 1, 2 );
+
+		/* Assert - should get fresh data, not stale cache. */
+		self::assertSame( 'complete', $fresh->get_status() );
+	}
+
 	public function testDelete_ProgressGiven_CallsWpdbDelete(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );
@@ -350,6 +495,24 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete( $progress );
 	}
 
+	public function testDelete_CacheEnabled_InvalidatesCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+		$progress   = $repository->create( 1, 2 );
+
+		/* Act. */
+		$repository->delete( $progress );
+		$result = $repository->get( 1, 2 );
+
+		/* Assert. */
+		self::assertNull( $result );
+	}
+
 	public function testDeleteForCourse_CourseIdGiven_CallsWpdbDelete(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );
@@ -373,6 +536,24 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete_for_course( 2 );
 	}
 
+	public function testDeleteForCourse_CacheEnabled_InvalidatesCacheGroup(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+		$repository->create( 1, 2 );
+
+		/* Act. */
+		$repository->delete_for_course( 1 );
+		$result = $repository->get( 1, 2 );
+
+		/* Assert - should be null since data was deleted, and cache was invalidated. */
+		self::assertNull( $result );
+	}
+
 	public function testDeleteForUser_UserIdGiven_CallsWpdbDelete(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );
@@ -394,6 +575,24 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 				]
 			);
 		$repository->delete_for_user( 2 );
+	}
+
+	public function testDeleteForUser_CacheEnabled_InvalidatesCacheGroup(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+		$repository->create( 1, 2 );
+
+		/* Act. */
+		$repository->delete_for_user( 2 );
+		$result = $repository->get( 1, 2 );
+
+		/* Assert. */
+		self::assertNull( $result );
 	}
 
 	public function testIntegrationFind_ArgumentsGiven_ReturnsMatchingProgress(): void {
@@ -426,13 +625,67 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$actual         = array_map( array( $this, 'export_progress' ), $found_progress );
 		usort(
 			$actual,
-			function( $a, $b ) {
+			function ( $a, $b ) {
 				return $a['course_id'] <=> $b['course_id'];
 			}
 		);
 
 		/* Assert. */
 		self::assertSame( $expected, $actual );
+	}
+
+	public function testFind_CacheEnabled_WarmsIndividualCaches(): void {
+		/* Arrange. */
+		$wpdb = $this->createMock( wpdb::class );
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_results' )
+			->willReturn(
+				[
+					(object) [
+						'id'             => 1,
+						'post_id'        => 10,
+						'user_id'        => 5,
+						'parent_post_id' => null,
+						'type'           => 'course',
+						'status'         => 'in-progress',
+						'created_at'     => '2022-01-01 00:00:00',
+						'updated_at'     => '2022-01-01 00:00:00',
+						'started_at'     => '2022-01-01 00:00:00',
+						'completed_at'   => null,
+					],
+					(object) [
+						'id'             => 2,
+						'post_id'        => 11,
+						'user_id'        => 5,
+						'parent_post_id' => null,
+						'type'           => 'course',
+						'status'         => 'in-progress',
+						'created_at'     => '2022-01-01 00:00:00',
+						'updated_at'     => '2022-01-01 00:00:00',
+						'started_at'     => '2022-01-01 00:00:00',
+						'completed_at'   => null,
+					],
+				]
+			);
+
+		$wpdb
+			->expects( $this->never() )
+			->method( 'get_row' );
+
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+
+		/* Act. */
+		$repository->find( array( 'user_id' => 5 ) );
+
+		/* Assert - individual caches should be warm; get() should not hit DB. */
+		$result = $repository->get( 10, 5 );
+		self::assertNotNull( $result, 'Individual cache should be warm after find.' );
+		self::assertSame( 10, $result->get_course_id(), 'Cached course ID should match.' );
 	}
 
 	private function export_progress( Course_Progress_Interface $progress ): array {

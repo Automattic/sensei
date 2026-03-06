@@ -24,6 +24,10 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		wp_cache_flush();
 	}
 
 	public function testCreate_WhenCalled_InsertsToWpdb(): void {
@@ -40,10 +44,10 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 			->with(
 				'sensei_lms_quiz_answers',
 				$this->callback(
-					function ( $array ) {
-						return 1 === $array['submission_id']
-							&& 2 === $array['question_id']
-							&& 'value' === $array['value'];
+					function ( $data ) {
+						return 1 === $data['submission_id']
+							&& 2 === $data['question_id']
+							&& 'value' === $data['value'];
 					}
 				),
 				[
@@ -212,6 +216,153 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 			);
 
 		$repository->delete_all( $submission );
+	}
+
+	public function testGetAll_CacheEnabled_ReturnsCachedValueOnSecondCall(): void {
+		/* Arrange. */
+		$wpdb = $this->createMock( wpdb::class );
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_results' )
+			->willReturn(
+				[
+					(object) [
+						'id'            => 1,
+						'submission_id' => 1,
+						'question_id'   => 2,
+						'value'         => 'value',
+						'created_at'    => '2022-01-01 00:00:00',
+						'updated_at'    => '2022-01-01 00:00:00',
+					],
+				]
+			);
+
+		$repository = new Tables_Based_Answer_Repository( $wpdb );
+
+		/* Act - second call should use cache, not DB. */
+		$answers1 = $repository->get_all( 1 );
+		$answers2 = $repository->get_all( 1 );
+
+		/* Assert. */
+		self::assertCount( 1, $answers1, 'First call should return one answer.' );
+		self::assertCount( 1, $answers2, 'Second call should return one answer from cache.' );
+	}
+
+	public function testGetAll_CacheEnabled_CachesEmptyResult(): void {
+		/* Arrange. */
+		$wpdb = $this->createMock( wpdb::class );
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_results' )
+			->willReturn( [] );
+
+		$repository = new Tables_Based_Answer_Repository( $wpdb );
+
+		/* Act - first call caches empty result, second returns from cache. */
+		$result1 = $repository->get_all( 999 );
+		$result2 = $repository->get_all( 999 );
+
+		/* Assert. */
+		self::assertEmpty( $result1, 'First call should return empty.' );
+		self::assertEmpty( $result2, 'Second call should return empty from cache.' );
+	}
+
+	public function testDeleteAll_CacheEnabled_InvalidatesCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$submission = $this->createMock( Submission_Interface::class );
+		$submission->method( 'get_id' )->willReturn( 1 );
+
+		$date = ( new DateTimeImmutable() )->format( 'Y-m-d H:i:s' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			$wpdb->prefix . 'sensei_lms_quiz_answers',
+			[
+				'submission_id' => 1,
+				'question_id'   => 2,
+				'value'         => 'value',
+				'created_at'    => $date,
+				'updated_at'    => $date,
+			],
+			[ '%d', '%d', '%s', '%s', '%s' ]
+		);
+
+		$repository = new Tables_Based_Answer_Repository( $wpdb );
+
+		/* Warm cache. */
+		$repository->get_all( 1 );
+
+		/* Act. */
+		$repository->delete_all( $submission );
+		$result = $repository->get_all( 1 );
+
+		/* Assert. */
+		self::assertEmpty( $result );
+	}
+
+	public function testGetAll_CacheDisabled_DoesNotCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Answer_Repository( $wpdb );
+		$repository->get_all( 1 );
+
+		/* Assert. */
+		/* Verify no cache prefix marker was created for this group. */
+		$cache_prefix = wp_cache_get( 'sensei_quiz_answers_cache_prefix', 'sensei_quiz_answers' );
+		self::assertFalse( $cache_prefix );
+	}
+
+	public function testCreate_CacheEnabled_InvalidatesGetAllCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$date = ( new \DateTimeImmutable() )->format( 'Y-m-d H:i:s' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			$wpdb->prefix . 'sensei_lms_quiz_answers',
+			[
+				'submission_id' => 1,
+				'question_id'   => 2,
+				'value'         => 'value',
+				'created_at'    => $date,
+				'updated_at'    => $date,
+			],
+			[ '%d', '%d', '%s', '%s', '%s' ]
+		);
+
+		$repository = new Tables_Based_Answer_Repository( $wpdb );
+
+		/* Warm cache. */
+		$answers = $repository->get_all( 1 );
+		self::assertCount( 1, $answers, 'Should have one answer before create.' );
+
+		/* Act — create a new answer for the same submission. */
+		$submission = $this->createMock( Submission_Interface::class );
+		$submission->method( 'get_id' )->willReturn( 1 );
+		$repository->create( $submission, 3, 'new value' );
+
+		/* Assert — get_all should return fresh data including the new answer. */
+		$fresh = $repository->get_all( 1 );
+		self::assertCount( 2, $fresh, 'Should have two answers after create invalidates cache.' );
 	}
 
 	private function export_answer( Tables_Based_Answer $answer ): array {

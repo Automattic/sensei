@@ -34,6 +34,13 @@ class Progress_Storage_Settings {
 	public const TABLES_STORAGE = 'custom_tables';
 
 	/**
+	 * Memoized cache-enabled flag. Null means not yet computed.
+	 *
+	 * @var bool|null
+	 */
+	private static ?bool $cache_enabled = null;
+
+	/**
 	 * Get the storage repositories.
 	 *
 	 * @return array Returns an array of repositories where the key is the repository slug and the value is the description.
@@ -88,5 +95,42 @@ class Progress_Storage_Settings {
 	 */
 	public static function is_sync_enabled(): bool {
 		return Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false;
+	}
+
+	/**
+	 * Returns true if HPPS caching is enabled.
+	 *
+	 * Defaults to true when using tables-based storage. Filterable via `sensei_hpps_cache_enabled`.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return bool
+	 */
+	public static function is_cache_enabled(): bool {
+		if ( null === self::$cache_enabled ) {
+			/**
+			 * Filter whether HPPS caching is enabled.
+			 *
+			 * @hook sensei_hpps_cache_enabled
+			 *
+			 * @since $$next-version$$
+			 *
+			 * @param {bool} $enabled Whether caching is enabled.
+			 * @return {bool} Whether caching should be enabled.
+			 */
+			self::$cache_enabled = (bool) apply_filters( 'sensei_hpps_cache_enabled', self::is_tables_repository() );
+		}
+		return self::$cache_enabled;
+	}
+
+	/**
+	 * Reset the memoized cache-enabled flag. Useful for tests.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 */
+	public static function reset_cache_enabled(): void {
+		self::$cache_enabled = null;
 	}
 }
