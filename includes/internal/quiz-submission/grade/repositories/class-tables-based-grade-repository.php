@@ -129,7 +129,8 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		);
 
 		if ( $this->wpdb->insert_id && Progress_Storage_Settings::is_cache_enabled() ) {
-			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission->get_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
+			$cache_submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission->get_id(), 'tables' );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $cache_submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 
 		return $grade;
@@ -215,7 +216,8 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission->get_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
+			$cache_submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission->get_id(), 'tables' );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $cache_submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
@@ -251,7 +253,8 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		$this->wpdb->query( $this->wpdb->prepare( $delete_query, ...$answer_ids ) );
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
+			$cache_submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission->get_id(), 'tables' );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $cache_submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
