@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Comments_Based_Progress_Query_Service class.
+ * File containing the Comments_Based_Progress_Clauses_Service class.
  *
  * @package sensei
  */
@@ -12,16 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Comments_Based_Progress_Query_Service.
+ * Class Comments_Based_Progress_Clauses_Service.
  *
- * Comments-based implementation of the Progress_Query_Service_Interface.
+ * Comments-based implementation of the Progress_Clauses_Service_Interface.
  * Queries wp_comments and wp_commentmeta for progress data.
  *
  * @internal
  *
  * @since $$next-version$$
  */
-class Comments_Based_Progress_Query_Service implements Progress_Query_Service_Interface {
+class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Service_Interface {
 
 	/**
 	 * The WordPress database object.

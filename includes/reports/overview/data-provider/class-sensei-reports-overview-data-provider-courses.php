@@ -6,7 +6,7 @@
  */
 
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
-use Sensei\Internal\Services\Progress_Query_Service_Interface;
+use Sensei\Internal\Services\Progress_Clauses_Service_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -42,20 +42,20 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	/**
 	 * The progress query service.
 	 *
-	 * @var Progress_Query_Service_Interface
+	 * @var Progress_Clauses_Service_Interface
 	 */
-	private Progress_Query_Service_Interface $progress_query_service;
+	private Progress_Clauses_Service_Interface $progress_query_service;
 
 	/**
 	 * Constructor.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param Progress_Query_Service_Interface|null $progress_query_service The progress query service.
+	 * @param Progress_Clauses_Service_Interface|null $progress_query_service The progress query service.
 	 */
-	public function __construct( ?Progress_Query_Service_Interface $progress_query_service = null ) {
+	public function __construct( ?Progress_Clauses_Service_Interface $progress_query_service = null ) {
 		$this->progress_query_service = $progress_query_service
-			?? ( new Progress_Query_Service_Factory() )->create();
+			?? ( new Progress_Query_Service_Factory() )->create_clauses_service();
 	}
 
 	/**

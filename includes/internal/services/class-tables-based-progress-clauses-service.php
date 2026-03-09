@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Tables_Based_Progress_Query_Service class.
+ * File containing the Tables_Based_Progress_Clauses_Service class.
  *
  * @package sensei
  */
@@ -12,16 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Tables_Based_Progress_Query_Service.
+ * Class Tables_Based_Progress_Clauses_Service.
  *
- * Tables-based implementation of the Progress_Query_Service_Interface.
+ * Tables-based implementation of the Progress_Clauses_Service_Interface.
  * Queries the HPPS custom tables (sensei_lms_progress) for progress data.
  *
  * @internal
  *
  * @since $$next-version$$
  */
-class Tables_Based_Progress_Query_Service implements Progress_Query_Service_Interface {
+class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_Interface {
 
 	/**
 	 * The WordPress database object.

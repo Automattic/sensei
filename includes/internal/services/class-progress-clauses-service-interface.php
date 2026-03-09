@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Progress_Query_Service_Interface interface.
+ * File containing the Progress_Clauses_Service_Interface interface.
  *
  * @package sensei
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Interface Progress_Query_Service_Interface.
+ * Interface Progress_Clauses_Service_Interface.
  *
  * Provides methods to modify WP_Query clauses for progress-related data
  * (last activity, days to completion) in course reports.
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since $$next-version$$
  */
-interface Progress_Query_Service_Interface {
+interface Progress_Clauses_Service_Interface {
 
 	/**
 	 * Modify WP_Query clauses to add last activity date to course posts.

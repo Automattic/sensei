@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Progress_Query_Service_Factory.
  *
- * Factory that returns the correct Progress_Query_Service_Interface implementation
+ * Factory that returns the correct Progress_Clauses_Service_Interface implementation
  * based on the current progress storage settings.
  *
  * @internal
@@ -24,20 +24,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Progress_Query_Service_Factory {
 
 	/**
-	 * Create a Progress_Query_Service_Interface instance.
+	 * Create a Progress_Clauses_Service_Interface instance.
 	 *
 	 * Returns a tables-based implementation when HPPS is enabled and the tables
 	 * repository is active, otherwise returns a comments-based implementation.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @return Progress_Query_Service_Interface The progress query service.
+	 * @return Progress_Clauses_Service_Interface The progress clauses service.
 	 */
-	public function create(): Progress_Query_Service_Interface {
+	public function create_clauses_service(): Progress_Clauses_Service_Interface {
 		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
-			return new Tables_Based_Progress_Query_Service( $GLOBALS['wpdb'] );
+			return new Tables_Based_Progress_Clauses_Service( $GLOBALS['wpdb'] );
 		}
 
-		return new Comments_Based_Progress_Query_Service( $GLOBALS['wpdb'] );
+		return new Comments_Based_Progress_Clauses_Service( $GLOBALS['wpdb'] );
 	}
 }
