@@ -28,22 +28,20 @@ interface Progress_Query_Service_Interface {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array     $clauses  Associative array of the clauses for the query.
-	 * @param \WP_Query $wp_query The WP_Query instance.
+	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_last_activity_to_courses_clauses( array $clauses, \WP_Query $wp_query ): array;
+	public function add_last_activity_to_courses_clauses( array $clauses ): array;
 
 	/**
 	 * Modify WP_Query clauses to add days-to-completion data to course posts.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array     $clauses  Associative array of the clauses for the query.
-	 * @param \WP_Query $wp_query The WP_Query instance.
+	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_days_to_completion_to_courses_clauses( array $clauses, \WP_Query $wp_query ): array;
+	public function add_days_to_completion_to_courses_clauses( array $clauses ): array;
 
 	/**
 	 * Modify WP_Query clauses to filter courses by last activity date range.
