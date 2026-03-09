@@ -73,16 +73,8 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
 
-		// Build SELECT and FROM.
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
 		$query = "SELECT p.status, COUNT(*) AS total FROM {$table} p";
-
-		// If we need to exclude by user login prefix, JOIN wp_users.
-		$has_exclusion = ! empty( $args['exclude_user_login_prefixes'] );
-		if ( $has_exclusion ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb.
-			$query .= " INNER JOIN {$wpdb->users} u ON p.user_id = u.ID";
-		}
 
 		// WHERE clause: type filter.
 		$query .= $wpdb->prepare( ' WHERE p.type = %s', $args['type'] );
@@ -106,22 +98,23 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		}
 
 		// Exclude users by login prefix, with optional status override.
-		if ( $has_exclusion ) {
-			$not_like_clauses = [];
-			foreach ( $args['exclude_user_login_prefixes'] as $prefix ) {
-				$escaped_prefix     = $wpdb->esc_like( $prefix );
-				$not_like_clauses[] = $wpdb->prepare( 'u.user_login NOT LIKE %s', $escaped_prefix . '%' );
-			}
+		// Uses a separate query to avoid JOINing wp_users, which may be
+		// on a different database (e.g. learn.wordpress.org).
+		if ( ! empty( $args['exclude_user_login_prefixes'] ) ) {
+			$excluded_user_ids = $this->get_user_ids_by_login_prefixes( $args['exclude_user_login_prefixes'] );
 
-			$exclusion_sql = '( ' . implode( ' AND ', $not_like_clauses ) . ' )';
+			if ( ! empty( $excluded_user_ids ) ) {
+				$id_placeholders = implode( ', ', array_fill( 0, count( $excluded_user_ids ), '%d' ) );
 
-			if ( ! empty( $args['include_statuses_override'] ) ) {
-				$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-				$override_sql = $wpdb->prepare( "p.status IN ( $status_placeholders )", $args['include_statuses_override'] );
-				$query       .= " AND ( $exclusion_sql OR $override_sql )";
-			} else {
-				$query .= " AND $exclusion_sql";
+				if ( ! empty( $args['include_statuses_override'] ) ) {
+					$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
+					$sql                 = " AND ( p.user_id NOT IN ( $id_placeholders ) OR p.status IN ( $status_placeholders ) )";
+					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
+					$query .= $wpdb->prepare( $sql, array_merge( $excluded_user_ids, $args['include_statuses_override'] ) );
+				} else {
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
+					$query .= $wpdb->prepare( " AND p.user_id NOT IN ( $id_placeholders )", $excluded_user_ids );
+				}
 			}
 		}
 
@@ -136,5 +129,31 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		}
 
 		return $counts;
+	}
+
+	/**
+	 * Get user IDs whose login matches any of the given prefixes.
+	 *
+	 * Runs as a separate query to avoid JOINing wp_users, which may
+	 * be on a different database in some environments.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string[] $prefixes User login prefixes to match.
+	 * @return int[] Matching user IDs.
+	 */
+	private function get_user_ids_by_login_prefixes( array $prefixes ): array {
+		$wpdb = $this->wpdb;
+
+		$like_clauses = [];
+		foreach ( $prefixes as $prefix ) {
+			$escaped_prefix = $wpdb->esc_like( $prefix );
+			$like_clauses[] = $wpdb->prepare( 'user_login LIKE %s', $escaped_prefix . '%' );
+		}
+
+		$where = implode( ' OR ', $like_clauses );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic WHERE built from prepared clauses. Caching handled by callers.
+		return array_map( 'intval', $wpdb->get_col( "SELECT ID FROM {$wpdb->users} WHERE $where" ) );
 	}
 }
