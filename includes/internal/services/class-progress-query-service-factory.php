@@ -40,4 +40,22 @@ class Progress_Query_Service_Factory {
 
 		return new Comments_Based_Progress_Clauses_Service( $GLOBALS['wpdb'] );
 	}
+
+	/**
+	 * Create a Progress_Aggregation_Service_Interface instance.
+	 *
+	 * Returns a tables-based implementation when HPPS is enabled and the tables
+	 * repository is active, otherwise returns a comments-based implementation.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return Progress_Aggregation_Service_Interface The progress aggregation service.
+	 */
+	public function create_aggregation_service(): Progress_Aggregation_Service_Interface {
+		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
+			return new Tables_Based_Progress_Aggregation_Service( $GLOBALS['wpdb'] );
+		}
+
+		return new Comments_Based_Progress_Aggregation_Service( $GLOBALS['wpdb'] );
+	}
 }
