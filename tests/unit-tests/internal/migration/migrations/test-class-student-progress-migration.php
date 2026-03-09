@@ -254,6 +254,74 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->assertGreaterThan( 0, $cursor, 'Cursor should advance past duplicates' );
 	}
 
+	public function testRun_WithLessonAndQuiz_PopulatesParentPostId(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
+		$quiz_id   = $this->factory->quiz->create(
+			array(
+				'post_title' => 'Quiz 1',
+			)
+		);
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'post_title'  => 'Lesson 1',
+				'post_parent' => $course_id,
+				'meta_input'  => array(
+					'_lesson_quiz'   => $quiz_id,
+					'_lesson_course' => $course_id,
+				),
+			)
+		);
+		$user_id   = $this->factory->user->create();
+
+		update_post_meta( $quiz_id, '_quiz_lesson', $lesson_id );
+
+		Sensei_Utils::start_user_on_course( $user_id, $course_id );
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id, true );
+
+		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
+
+		/* Act. */
+		$this->migration->run( $dry_run = false ); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
+
+		/* Assert. */
+		global $wpdb;
+		$table = $wpdb->prefix . 'sensei_lms_progress';
+
+		// Course progress: parent_post_id should be NULL.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$course_parent = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT parent_post_id FROM {$table} WHERE post_id = %d AND user_id = %d AND type = 'course'", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$course_id,
+				$user_id
+			)
+		);
+		$this->assertNull( $course_parent, 'Course progress parent_post_id should be NULL.' );
+
+		// Lesson progress: parent_post_id should be the course ID.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$lesson_parent = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT parent_post_id FROM {$table} WHERE post_id = %d AND user_id = %d AND type = 'lesson'", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$lesson_id,
+				$user_id
+			)
+		);
+		$this->assertEquals( $course_id, (int) $lesson_parent, 'Lesson progress parent_post_id should be the course ID.' );
+
+		// Quiz progress: parent_post_id should be the lesson ID.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$quiz_parent = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT parent_post_id FROM {$table} WHERE post_id = %d AND user_id = %d AND type = 'quiz'", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$quiz_id,
+				$user_id
+			)
+		);
+		$this->assertEquals( $lesson_id, (int) $quiz_parent, 'Quiz progress parent_post_id should be the lesson ID.' );
+	}
+
 	private function get_table_based_progress(): array {
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching

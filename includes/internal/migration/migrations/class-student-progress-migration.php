@@ -198,8 +198,9 @@ class Student_Progress_Migration extends Migration_Abstract {
 			// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 			$post_meta_query = $wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT * FROM {$wpdb->postmeta} WHERE  meta_key IN ( %s, %s ) AND post_id IN ( {$placeholders} )",
+				"SELECT * FROM {$wpdb->postmeta} WHERE  meta_key IN ( %s, %s, %s ) AND post_id IN ( {$placeholders} )",
 				'_lesson_quiz',
+				'_lesson_course',
 				'_wp_trash_meta_comments_status',
 				...$ids
 			);
@@ -369,11 +370,13 @@ class Student_Progress_Migration extends Migration_Abstract {
 			}
 		}
 
+		$course_id = isset( $meta['_lesson_course'] ) ? (int) $meta['_lesson_course'] : null;
+
 		$rows = array(
 			array(
 				'post_id'        => (int) $comment->comment_post_ID,
 				'user_id'        => (int) $comment->user_id,
-				'parent_post_id' => null,
+				'parent_post_id' => $course_id ? $course_id : null,
 				'type'           => 'lesson',
 				'status'         => $lesson_status,
 				'started_at'     => $started_at,
@@ -412,7 +415,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 			$rows[] = array(
 				'post_id'        => (int) $quiz_id,
 				'user_id'        => (int) $comment->user_id,
-				'parent_post_id' => null,
+				'parent_post_id' => (int) $comment->comment_post_ID ? (int) $comment->comment_post_ID : null,
 				'type'           => 'quiz',
 				'status'         => $quiz_status,
 				'started_at'     => $started_at,
