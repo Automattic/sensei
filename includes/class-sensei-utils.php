@@ -603,7 +603,8 @@ class Sensei_Utils {
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			$course_id       = (int) get_post_meta( $lesson_id, '_lesson_course', true );
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id, $course_id ?: null );
 			$has_questions   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 			if ( $complete && $has_questions ) {
 				update_comment_meta( $lesson_progress->get_id(), 'grade', 0 );
