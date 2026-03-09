@@ -26,11 +26,12 @@ interface Quiz_Progress_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int $quiz_id Quiz identifier.
-	 * @param int $user_id User identifier.
+	 * @param int      $quiz_id Quiz identifier.
+	 * @param int      $user_id User identifier.
+	 * @param int|null $parent_post_id The parent post ID (lesson ID for quizzes).
 	 * @return Quiz_Progress_Interface
 	 */
-	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface;
+	public function create( int $quiz_id, int $user_id, ?int $parent_post_id = null ): Quiz_Progress_Interface;
 
 	/**
 	 * Find a quiz progress by quiz and user identifiers.
