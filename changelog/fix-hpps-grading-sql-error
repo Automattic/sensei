@@ -1,4 +1,0 @@
-Significance: minor
-Type: fixed
-
-Fix fatal SQL error on grading and reports pages when HPPS tables are enabled.

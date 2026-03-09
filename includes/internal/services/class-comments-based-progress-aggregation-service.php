@@ -122,14 +122,6 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			$counts[ $row['comment_approved'] ] = (int) $row['total'];
 		}
 
-		// Ensure default statuses are present.
-		$default_statuses = [ 'complete', 'in-progress', 'graded', 'ungraded', 'passed', 'failed' ];
-		foreach ( $default_statuses as $status ) {
-			if ( ! isset( $counts[ $status ] ) ) {
-				$counts[ $status ] = 0;
-			}
-		}
-
 		return $counts;
 	}
 }
