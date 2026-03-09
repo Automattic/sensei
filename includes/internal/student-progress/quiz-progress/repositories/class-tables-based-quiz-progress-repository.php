@@ -61,11 +61,12 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @internal
 	 *
-	 * @param int $quiz_id Quiz identifier.
-	 * @param int $user_id User identifier.
+	 * @param int      $quiz_id Quiz identifier.
+	 * @param int      $user_id User identifier.
+	 * @param int|null $parent_post_id The parent post ID (lesson ID for quizzes).
 	 * @return Quiz_Progress_Interface
 	 */
-	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
+	public function create( int $quiz_id, int $user_id, ?int $parent_post_id = null ): Quiz_Progress_Interface {
 		/**
 		 * Filter quiz id for quiz progress creation.
 		 *
@@ -85,7 +86,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			[
 				'post_id'        => $quiz_id,
 				'user_id'        => $user_id,
-				'parent_post_id' => null,
+				'parent_post_id' => $parent_post_id,
 				'type'           => 'quiz',
 				'status'         => Quiz_Progress_Interface::STATUS_IN_PROGRESS,
 				'started_at'     => $current_datetime->format( $date_format ),
@@ -96,7 +97,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			[
 				'%d',
 				'%d',
-				null,
+				$parent_post_id ? '%d' : null,
 				'%s',
 				'%s',
 				'%s',

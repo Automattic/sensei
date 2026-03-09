@@ -62,12 +62,13 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 *
 	 * @internal
 	 *
-	 * @param int $lesson_id The lesson ID.
-	 * @param int $user_id The user ID.
+	 * @param int      $lesson_id The lesson ID.
+	 * @param int      $user_id The user ID.
+	 * @param int|null $parent_post_id The parent post ID (course ID for lessons).
 	 *
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
-	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
+	public function create( int $lesson_id, int $user_id, ?int $parent_post_id = null ): Lesson_Progress_Interface {
 		/**
 		 * Filter lesson id for lesson progress creation.
 		 *
@@ -87,7 +88,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			[
 				'post_id'        => $lesson_id,
 				'user_id'        => $user_id,
-				'parent_post_id' => null,
+				'parent_post_id' => $parent_post_id,
 				'type'           => 'lesson',
 				'status'         => Lesson_Progress_Interface::STATUS_IN_PROGRESS,
 				'started_at'     => $current_datetime->format( $date_format ),
@@ -98,7 +99,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			[
 				'%d',
 				'%d',
-				null,
+				$parent_post_id ? '%d' : null,
 				'%s',
 				'%s',
 				'%s',

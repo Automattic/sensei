@@ -608,6 +608,32 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
+	public function testCreate_WhenParentPostIdProvided_StoresIt(): void {
+		/* Arrange. */
+		$quiz_id   = $this->factory->post->create( array( 'post_type' => 'quiz' ) );
+		$lesson_id = $this->factory->post->create( array( 'post_type' => 'lesson' ) );
+		$user_id   = $this->factory->user->create();
+
+		global $wpdb;
+		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+
+		/* Act. */
+		$repository->create( $quiz_id, $user_id, $lesson_id );
+
+		/* Assert. */
+		$table  = $wpdb->prefix . 'sensei_lms_progress';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$result = $wpdb->get_var(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"SELECT parent_post_id FROM {$table} WHERE post_id = %d AND user_id = %d AND type = 'quiz'",
+				$quiz_id,
+				$user_id
+			)
+		);
+		$this->assertEquals( $lesson_id, (int) $result );
+	}
+
 	public function testFind_CacheEnabled_WarmsIndividualCaches(): void {
 		/* Arrange. */
 		$wpdb = $this->createMock( wpdb::class );

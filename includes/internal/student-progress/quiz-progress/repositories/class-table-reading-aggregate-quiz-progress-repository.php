@@ -66,11 +66,12 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	/**
 	 * Creates a new quiz progress.
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
+	 * @param int      $quiz_id The quiz ID.
+	 * @param int      $user_id The user ID.
+	 * @param int|null $parent_post_id The parent post ID (lesson ID for quizzes).
 	 * @return Quiz_Progress_Interface The quiz progress.
 	 */
-	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
+	public function create( int $quiz_id, int $user_id, ?int $parent_post_id = null ): Quiz_Progress_Interface {
 		// We don't try to create comments-based quiz progress: it is part of lesson progress.
 		// The attempt to create the comments-based quiz progress will cause an exception.
 		// Try to create the comments-based lesson progress instead.
@@ -82,7 +83,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 			}
 		}
 
-		return $this->tables_based_repository->create( $quiz_id, $user_id );
+		return $this->tables_based_repository->create( $quiz_id, $user_id, $parent_post_id );
 	}
 
 	/**
