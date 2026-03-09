@@ -34,11 +34,13 @@ class Progress_Query_Service_Factory {
 	 * @return Progress_Clauses_Service_Interface The progress clauses service.
 	 */
 	public function create_clauses_service(): Progress_Clauses_Service_Interface {
+		global $wpdb;
+
 		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
-			return new Tables_Based_Progress_Clauses_Service( $GLOBALS['wpdb'] );
+			return new Tables_Based_Progress_Clauses_Service( $wpdb );
 		}
 
-		return new Comments_Based_Progress_Clauses_Service( $GLOBALS['wpdb'] );
+		return new Comments_Based_Progress_Clauses_Service( $wpdb );
 	}
 
 	/**
@@ -52,10 +54,12 @@ class Progress_Query_Service_Factory {
 	 * @return Progress_Aggregation_Service_Interface The progress aggregation service.
 	 */
 	public function create_aggregation_service(): Progress_Aggregation_Service_Interface {
+		global $wpdb;
+
 		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
-			return new Tables_Based_Progress_Aggregation_Service( $GLOBALS['wpdb'] );
+			return new Tables_Based_Progress_Aggregation_Service( $wpdb );
 		}
 
-		return new Comments_Based_Progress_Aggregation_Service( $GLOBALS['wpdb'] );
+		return new Comments_Based_Progress_Aggregation_Service( $wpdb );
 	}
 }

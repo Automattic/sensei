@@ -66,15 +66,23 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	public function add_last_activity_to_courses_clauses( array $clauses ): array {
 		$progress_table = $this->get_progress_table_name();
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is constructed from wpdb prefix.
-		$lessons_query = "SELECT lp.parent_post_id AS course_id, MAX(lp.updated_at) AS last_activity_date
+		$wpdb = $this->wpdb;
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are constructed from wpdb prefix.
+		$lessons_query = "SELECT lp.post_id AS lesson_id, MAX(lp.updated_at) AS last_activity_date
 			FROM {$progress_table} lp
 			WHERE lp.type = 'lesson'
 			AND lp.status IN ('complete', 'passed', 'graded')
-			GROUP BY lp.parent_post_id";
+			GROUP BY lp.post_id";
+
+		$course_query = "SELECT DISTINCT pm.meta_value AS course_id, lp.last_activity_date
+			FROM {$wpdb->postmeta} pm
+			JOIN ({$lessons_query}) lp ON lp.lesson_id = pm.post_id
+			AND pm.meta_key = '_lesson_course'
+			GROUP BY pm.meta_value";
 
 		$clauses['fields'] .= ', la.last_activity_date AS last_activity_date';
-		$clauses['join']   .= " LEFT JOIN ({$lessons_query}) AS la ON la.course_id = {$this->wpdb->posts}.ID";
+		$clauses['join']   .= " LEFT JOIN ({$course_query}) AS la ON la.course_id = {$wpdb->posts}.ID";
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return $clauses;
