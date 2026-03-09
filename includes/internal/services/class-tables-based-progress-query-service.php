@@ -60,11 +60,10 @@ class Tables_Based_Progress_Query_Service implements Progress_Query_Service_Inte
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array     $clauses  Associative array of the clauses for the query.
-	 * @param \WP_Query $wp_query The WP_Query instance.
+	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_last_activity_to_courses_clauses( array $clauses, \WP_Query $wp_query ): array {
+	public function add_last_activity_to_courses_clauses( array $clauses ): array {
 		$progress_table = $this->get_progress_table_name();
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is constructed from wpdb prefix.
@@ -90,11 +89,10 @@ class Tables_Based_Progress_Query_Service implements Progress_Query_Service_Inte
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array     $clauses  Associative array of the clauses for the query.
-	 * @param \WP_Query $wp_query The WP_Query instance.
+	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_days_to_completion_to_courses_clauses( array $clauses, \WP_Query $wp_query ): array {
+	public function add_days_to_completion_to_courses_clauses( array $clauses ): array {
 		$progress_table = $this->get_progress_table_name();
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is constructed from wpdb prefix.
