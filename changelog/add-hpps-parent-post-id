@@ -1,0 +1,4 @@
+Significance: minor
+Type: added
+
+Populate parent_post_id in HPPS progress table for future reusable lessons support.
