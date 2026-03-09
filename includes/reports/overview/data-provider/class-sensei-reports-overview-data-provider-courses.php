@@ -40,21 +40,21 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	private $date_to;
 
 	/**
-	 * The progress query service.
+	 * The progress clauses service.
 	 *
 	 * @var Progress_Clauses_Service_Interface
 	 */
-	private Progress_Clauses_Service_Interface $progress_query_service;
+	private Progress_Clauses_Service_Interface $progress_clauses_service;
 
 	/**
 	 * Constructor.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param Progress_Clauses_Service_Interface|null $progress_query_service The progress query service.
+	 * @param Progress_Clauses_Service_Interface|null $progress_clauses_service The progress clauses service.
 	 */
-	public function __construct( ?Progress_Clauses_Service_Interface $progress_query_service = null ) {
-		$this->progress_query_service = $progress_query_service
+	public function __construct( ?Progress_Clauses_Service_Interface $progress_clauses_service = null ) {
+		$this->progress_clauses_service = $progress_clauses_service
 			?? ( new Progress_Query_Service_Factory() )->create_clauses_service();
 	}
 
@@ -138,7 +138,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_last_activity_to_courses_query( array $clauses ): array {
-		return $this->progress_query_service->add_last_activity_to_courses_clauses( $clauses );
+		return $this->progress_clauses_service->add_last_activity_to_courses_clauses( $clauses );
 	}
 
 	/**
@@ -151,7 +151,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function filter_courses_by_last_activity( array $clauses ): array {
-		return $this->progress_query_service->filter_courses_by_last_activity(
+		return $this->progress_clauses_service->filter_courses_by_last_activity(
 			$clauses,
 			$this->date_from ?? '',
 			$this->date_to ?? ''
@@ -168,7 +168,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_days_to_completion_to_courses_query( array $clauses ): array {
-		return $this->progress_query_service->add_days_to_completion_to_courses_clauses( $clauses );
+		return $this->progress_clauses_service->add_days_to_completion_to_courses_clauses( $clauses );
 	}
 
 	/**
