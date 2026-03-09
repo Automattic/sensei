@@ -1,0 +1,15 @@
+{
+  "planPath": "docs/plans/2026-03-09-hpps-pr1-implementation.md",
+  "tasks": [
+    {"id": 7, "subject": "Task 1: Rename existing interface to Progress_Clauses_Service_Interface", "status": "pending"},
+    {"id": 8, "subject": "Task 2: Create Progress_Aggregation_Service_Interface", "status": "pending", "blockedBy": [7]},
+    {"id": 9, "subject": "Task 3: Implement Comments_Based_Progress_Aggregation_Service", "status": "pending", "blockedBy": [8]},
+    {"id": 10, "subject": "Task 4: Implement Tables_Based_Progress_Aggregation_Service", "status": "pending", "blockedBy": [8]},
+    {"id": 11, "subject": "Task 5: Expand factory with create_aggregation_service()", "status": "pending", "blockedBy": [9, 10]},
+    {"id": 12, "subject": "Task 6: Wire Sensei_Grading::count_statuses to aggregation service", "status": "pending", "blockedBy": [11]},
+    {"id": 13, "subject": "Task 7: Fix Sensei_Temporary_User::filter_count_statuses", "status": "pending", "blockedBy": [12]},
+    {"id": 14, "subject": "Task 8: Update Sensei_Teacher::limit_grading_totals if needed", "status": "pending", "blockedBy": [12]},
+    {"id": 15, "subject": "Task 9: Run full test suite, lint, changelog, push", "status": "pending", "blockedBy": [13, 14]}
+  ],
+  "lastUpdated": "2026-03-09T12:00:00Z"
+}
