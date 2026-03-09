@@ -1,4 +1,4 @@
 Significance: minor
-Type: fixed
+Type: added
 
 Add aggregation service pattern for grading queries.
