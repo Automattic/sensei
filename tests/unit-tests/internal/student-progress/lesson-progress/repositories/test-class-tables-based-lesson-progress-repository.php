@@ -655,7 +655,7 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->create( $lesson_id, $user_id, $course_id );
 
 		/* Assert. */
-		$table  = $wpdb->prefix . 'sensei_lms_progress';
+		$table = $wpdb->prefix . 'sensei_lms_progress';
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->get_var(
 			$wpdb->prepare(
