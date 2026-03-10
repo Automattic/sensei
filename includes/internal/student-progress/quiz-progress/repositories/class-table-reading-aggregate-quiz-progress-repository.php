@@ -79,8 +79,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 		if ( $lesson_id ) {
 			$lesson_progress_exists = $this->comments_based_lesson_progress_repository->has( $lesson_id, $user_id );
 			if ( ! $lesson_progress_exists ) {
-				$course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
-				$this->comments_based_lesson_progress_repository->create( $lesson_id, $user_id, $course_id ?: null );
+				$this->comments_based_lesson_progress_repository->create( $lesson_id, $user_id, \Sensei_Utils::get_lesson_course_id( $lesson_id ) );
 			}
 		}
 
@@ -124,8 +123,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 			if ( $lesson_id ) {
 				$lesson_progress_exists = $this->comments_based_lesson_progress_repository->has( $lesson_id, $quiz_progress->get_user_id() );
 				if ( ! $lesson_progress_exists ) {
-					$course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
-					$this->comments_based_lesson_progress_repository->create( $lesson_id, $quiz_progress->get_user_id(), $course_id ?: null );
+					$this->comments_based_lesson_progress_repository->create( $lesson_id, $quiz_progress->get_user_id(), \Sensei_Utils::get_lesson_course_id( $lesson_id ) );
 				}
 			}
 			$comments_based_quiz_progress = $this->comments_based_repository->get(

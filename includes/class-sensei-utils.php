@@ -603,8 +603,7 @@ class Sensei_Utils {
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$course_id       = (int) get_post_meta( $lesson_id, '_lesson_course', true );
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id, $course_id ?: null );
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id, self::get_lesson_course_id( (int) $lesson_id ) );
 			$has_questions   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 			if ( $complete && $has_questions ) {
 				update_comment_meta( $lesson_progress->get_id(), 'grade', 0 );
@@ -3194,6 +3193,32 @@ class Sensei_Utils {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 
 		return ! empty( $screen ) && in_array( $screen->id, [ 'widgets', 'site-editor', 'customize', 'appearance_page_gutenberg-edit-site' ], true );
+	}
+
+	/**
+	 * Get the course ID for a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id The lesson post ID.
+	 * @return int|null The course ID, or null if not found.
+	 */
+	public static function get_lesson_course_id( int $lesson_id ): ?int {
+		$course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
+		return $course_id ? $course_id : null;
+	}
+
+	/**
+	 * Get the lesson ID for a quiz.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz post ID.
+	 * @return int|null The lesson ID, or null if not found.
+	 */
+	public static function get_quiz_lesson_id( int $quiz_id ): ?int {
+		$lesson_id = (int) get_post_meta( $quiz_id, '_quiz_lesson', true );
+		return $lesson_id ? $lesson_id : null;
 	}
 }
 

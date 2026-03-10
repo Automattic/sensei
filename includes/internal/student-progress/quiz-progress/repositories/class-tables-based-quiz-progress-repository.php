@@ -67,6 +67,8 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @return Quiz_Progress_Interface
 	 */
 	public function create( int $quiz_id, int $user_id, ?int $parent_post_id = null ): Quiz_Progress_Interface {
+		$parent_post_id = $parent_post_id ? $parent_post_id : null;
+
 		/**
 		 * Filter quiz id for quiz progress creation.
 		 *

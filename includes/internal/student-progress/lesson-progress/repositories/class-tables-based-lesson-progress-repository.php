@@ -69,6 +69,8 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
 	public function create( int $lesson_id, int $user_id, ?int $parent_post_id = null ): Lesson_Progress_Interface {
+		$parent_post_id = $parent_post_id ? $parent_post_id : null;
+
 		/**
 		 * Filter lesson id for lesson progress creation.
 		 *

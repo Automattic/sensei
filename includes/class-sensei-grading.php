@@ -843,8 +843,7 @@ class Sensei_Grading {
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $quiz_lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$course_id       = (int) get_post_meta( $quiz_lesson_id, '_lesson_course', true );
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id, $course_id ?: null );
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id, Sensei_Utils::get_lesson_course_id( $quiz_lesson_id ) );
 		}
 
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
