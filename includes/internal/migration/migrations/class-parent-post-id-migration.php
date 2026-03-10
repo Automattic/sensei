@@ -124,15 +124,44 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$rows = $wpdb->get_results( $select_query );
 
+		if ( null === $rows ) {
+			$this->add_error( 'Database error fetching lesson progress: ' . $wpdb->last_error );
+			return $this->batch_size;
+		}
+
 		if ( empty( $rows ) ) {
 			return 0;
+		}
+
+		// Bulk-fetch _lesson_course meta for all post_ids in this batch.
+		$post_ids     = array_unique( array_map( 'intval', wp_list_pluck( $rows, 'post_id' ) ) );
+		$placeholders = implode( ',', array_fill( 0, count( $post_ids ), '%d' ) );
+
+		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+		$meta_query = $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_lesson_course' AND post_id IN ( {$placeholders} )",
+			...$post_ids
+		);
+
+		if ( $dry_run ) {
+			echo esc_html( $meta_query . "\n" );
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$meta_rows = $wpdb->get_results( $meta_query );
+		$meta_map  = array();
+		if ( $meta_rows ) {
+			foreach ( $meta_rows as $meta ) {
+				$meta_map[ (int) $meta->post_id ] = (int) $meta->meta_value;
+			}
 		}
 
 		$processed      = 0;
 		$last_processed = $last_id;
 
 		foreach ( $rows as $row ) {
-			$course_id = (int) get_post_meta( (int) $row->post_id, '_lesson_course', true );
+			$course_id = isset( $meta_map[ (int) $row->post_id ] ) ? $meta_map[ (int) $row->post_id ] : 0;
 
 			if ( $course_id ) {
 				if ( $dry_run ) {
@@ -148,10 +177,13 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 						array( '%d' )
 					);
 
-					if ( false === $result && '' !== $wpdb->last_error ) {
-						$this->add_error( $wpdb->last_error );
+					if ( false === $result ) {
+						$error_message = $wpdb->last_error ? $wpdb->last_error : "Unknown error updating lesson progress id={$row->id}";
+						$this->add_error( $error_message );
 					}
 				}
+			} else {
+				$this->add_error( "Skipped lesson progress id={$row->id}: no meta for post_id={$row->post_id}" );
 			}
 
 			$last_processed = (int) $row->id;
@@ -192,15 +224,44 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$rows = $wpdb->get_results( $select_query );
 
+		if ( null === $rows ) {
+			$this->add_error( 'Database error fetching quiz progress: ' . $wpdb->last_error );
+			return $this->batch_size;
+		}
+
 		if ( empty( $rows ) ) {
 			return 0;
+		}
+
+		// Bulk-fetch _quiz_lesson meta for all post_ids in this batch.
+		$post_ids     = array_unique( array_map( 'intval', wp_list_pluck( $rows, 'post_id' ) ) );
+		$placeholders = implode( ',', array_fill( 0, count( $post_ids ), '%d' ) );
+
+		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+		$meta_query = $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_quiz_lesson' AND post_id IN ( {$placeholders} )",
+			...$post_ids
+		);
+
+		if ( $dry_run ) {
+			echo esc_html( $meta_query . "\n" );
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$meta_rows = $wpdb->get_results( $meta_query );
+		$meta_map  = array();
+		if ( $meta_rows ) {
+			foreach ( $meta_rows as $meta ) {
+				$meta_map[ (int) $meta->post_id ] = (int) $meta->meta_value;
+			}
 		}
 
 		$processed      = 0;
 		$last_processed = $last_id;
 
 		foreach ( $rows as $row ) {
-			$lesson_id = (int) get_post_meta( (int) $row->post_id, '_quiz_lesson', true );
+			$lesson_id = isset( $meta_map[ (int) $row->post_id ] ) ? $meta_map[ (int) $row->post_id ] : 0;
 
 			if ( $lesson_id ) {
 				if ( $dry_run ) {
@@ -216,10 +277,13 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 						array( '%d' )
 					);
 
-					if ( false === $result && '' !== $wpdb->last_error ) {
-						$this->add_error( $wpdb->last_error );
+					if ( false === $result ) {
+						$error_message = $wpdb->last_error ? $wpdb->last_error : "Unknown error updating quiz progress id={$row->id}";
+						$this->add_error( $error_message );
 					}
 				}
+			} else {
+				$this->add_error( "Skipped quiz progress id={$row->id}: no meta for post_id={$row->post_id}" );
 			}
 
 			$last_processed = (int) $row->id;
