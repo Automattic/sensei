@@ -224,7 +224,7 @@ END;
 	/**
 	 * Test that new installs skip the parent_post_id backfill.
 	 */
-	public function testBackfillParentPostIdSkippedOnNewInstall() {
+	public function testBackfillParentPostId_NewInstall_Skipped() {
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$scheduler->expects( $this->never() )
 			->method( 'schedule_job_by_name' );
@@ -246,7 +246,7 @@ END;
 	/**
 	 * Test that upgrades without HPPS sync enabled skip the backfill.
 	 */
-	public function testBackfillParentPostIdSkippedWhenSyncDisabled() {
+	public function testBackfillParentPostId_SyncDisabled_Skipped() {
 		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
 		$scheduler->expects( $this->never() )
 			->method( 'schedule_job_by_name' );
@@ -268,7 +268,7 @@ END;
 	/**
 	 * Test that upgrades where previous migration is not complete skip the backfill.
 	 */
-	public function testBackfillParentPostIdSkippedWhenMigrationNotComplete() {
+	public function testBackfillParentPostId_MigrationNotComplete_Skipped() {
 		$scheduler = $this->getMockBuilder( Migration_Job_Scheduler::class )
 			->disableOriginalConstructor()
 			->setMethods( [ 'is_complete', 'schedule_job_by_name' ] )
@@ -294,7 +294,7 @@ END;
 	/**
 	 * Test that the backfill job is scheduled and status is reset when all conditions are met.
 	 */
-	public function testBackfillParentPostIdScheduledWhenConditionsMet() {
+	public function testBackfillParentPostId_AllConditionsMet_SchedulesJob() {
 		$scheduler = $this->getMockBuilder( Migration_Job_Scheduler::class )
 			->disableOriginalConstructor()
 			->setMethods( [ 'is_complete', 'schedule_job_by_name' ] )
@@ -329,7 +329,7 @@ END;
 	/**
 	 * Test that status is not reset when scheduling fails.
 	 */
-	public function testBackfillParentPostIdStatusNotResetOnSchedulingFailure() {
+	public function testBackfillParentPostId_SchedulingFails_StatusNotReset() {
 		$scheduler = $this->getMockBuilder( Migration_Job_Scheduler::class )
 			->disableOriginalConstructor()
 			->setMethods( [ 'is_complete', 'schedule_job_by_name' ] )
