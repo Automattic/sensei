@@ -110,15 +110,19 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		$table   = $wpdb->prefix . 'sensei_lms_progress';
 		$last_id = (int) get_option( self::LAST_ID_OPTION_NAME, 0 );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT id, post_id FROM {$table} WHERE type = 'lesson' AND parent_post_id IS NULL AND id > %d ORDER BY id ASC LIMIT %d",
-				$last_id,
-				$this->batch_size
-			)
+		$select_query = $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			"SELECT id, post_id FROM {$table} WHERE type = 'lesson' AND parent_post_id IS NULL AND id > %d ORDER BY id ASC LIMIT %d",
+			$last_id,
+			$this->batch_size
 		);
+
+		if ( $dry_run ) {
+			echo esc_html( $select_query . "\n" );
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$rows = $wpdb->get_results( $select_query );
 
 		if ( empty( $rows ) ) {
 			return 0;
@@ -130,18 +134,23 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		foreach ( $rows as $row ) {
 			$course_id = (int) get_post_meta( (int) $row->post_id, '_lesson_course', true );
 
-			if ( $course_id && ! $dry_run ) {
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$result = $wpdb->update(
-					$table,
-					array( 'parent_post_id' => $course_id ),
-					array( 'id' => (int) $row->id ),
-					array( '%d' ),
-					array( '%d' )
-				);
+			if ( $course_id ) {
+				if ( $dry_run ) {
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					echo esc_html( $wpdb->prepare( "UPDATE {$table} SET parent_post_id = %d WHERE id = %d", $course_id, (int) $row->id ) . "\n" );
+				} else {
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+					$result = $wpdb->update(
+						$table,
+						array( 'parent_post_id' => $course_id ),
+						array( 'id' => (int) $row->id ),
+						array( '%d' ),
+						array( '%d' )
+					);
 
-				if ( false === $result && '' !== $wpdb->last_error ) {
-					$this->add_error( $wpdb->last_error );
+					if ( false === $result && '' !== $wpdb->last_error ) {
+						$this->add_error( $wpdb->last_error );
+					}
 				}
 			}
 
@@ -169,15 +178,19 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		$table   = $wpdb->prefix . 'sensei_lms_progress';
 		$last_id = (int) get_option( self::LAST_ID_OPTION_NAME, 0 );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT id, post_id FROM {$table} WHERE type = 'quiz' AND parent_post_id IS NULL AND id > %d ORDER BY id ASC LIMIT %d",
-				$last_id,
-				$this->batch_size
-			)
+		$select_query = $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			"SELECT id, post_id FROM {$table} WHERE type = 'quiz' AND parent_post_id IS NULL AND id > %d ORDER BY id ASC LIMIT %d",
+			$last_id,
+			$this->batch_size
 		);
+
+		if ( $dry_run ) {
+			echo esc_html( $select_query . "\n" );
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$rows = $wpdb->get_results( $select_query );
 
 		if ( empty( $rows ) ) {
 			return 0;
@@ -189,18 +202,23 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		foreach ( $rows as $row ) {
 			$lesson_id = (int) get_post_meta( (int) $row->post_id, '_quiz_lesson', true );
 
-			if ( $lesson_id && ! $dry_run ) {
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$result = $wpdb->update(
-					$table,
-					array( 'parent_post_id' => $lesson_id ),
-					array( 'id' => (int) $row->id ),
-					array( '%d' ),
-					array( '%d' )
-				);
+			if ( $lesson_id ) {
+				if ( $dry_run ) {
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					echo esc_html( $wpdb->prepare( "UPDATE {$table} SET parent_post_id = %d WHERE id = %d", $lesson_id, (int) $row->id ) . "\n" );
+				} else {
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+					$result = $wpdb->update(
+						$table,
+						array( 'parent_post_id' => $lesson_id ),
+						array( 'id' => (int) $row->id ),
+						array( '%d' ),
+						array( '%d' )
+					);
 
-				if ( false === $result && '' !== $wpdb->last_error ) {
-					$this->add_error( $wpdb->last_error );
+					if ( false === $result && '' !== $wpdb->last_error ) {
+						$this->add_error( $wpdb->last_error );
+					}
 				}
 			}
 
