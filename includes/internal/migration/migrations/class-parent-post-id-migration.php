@@ -104,6 +104,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 	 *
 	 * @param bool $dry_run Whether to run in dry-run mode.
 	 * @return int The number of rows processed.
+	 * @throws \RuntimeException If the database query fails.
 	 */
 	private function backfill_lesson_progress( bool $dry_run ): int {
 		global $wpdb;
@@ -125,8 +126,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		$rows = $wpdb->get_results( $select_query );
 
 		if ( null === $rows ) {
-			$this->add_error( 'Database error fetching lesson progress: ' . $wpdb->last_error );
-			return $this->batch_size;
+			throw new \RuntimeException( esc_html( 'Database error fetching lesson progress: ' . $wpdb->last_error ) );
 		}
 
 		if ( empty( $rows ) ) {
@@ -205,6 +205,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 	 *
 	 * @param bool $dry_run Whether to run in dry-run mode.
 	 * @return int The number of rows processed.
+	 * @throws \RuntimeException If the database query fails.
 	 */
 	private function backfill_quiz_progress( bool $dry_run ): int {
 		global $wpdb;
@@ -226,8 +227,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		$rows = $wpdb->get_results( $select_query );
 
 		if ( null === $rows ) {
-			$this->add_error( 'Database error fetching quiz progress: ' . $wpdb->last_error );
-			return $this->batch_size;
+			throw new \RuntimeException( esc_html( 'Database error fetching quiz progress: ' . $wpdb->last_error ) );
 		}
 
 		if ( empty( $rows ) ) {
