@@ -77,7 +77,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		$lessons_complete = get_option( self::LESSONS_COMPLETE_OPTION_NAME, false );
 
 		if ( ! $lessons_complete ) {
-			$processed = $this->backfill_lesson_progress( $dry_run );
+			$processed = $this->backfill_progress( 'lesson', '_lesson_course', $dry_run );
 			if ( $processed > 0 ) {
 				return $processed;
 			}
@@ -87,7 +87,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 			update_option( self::LAST_ID_OPTION_NAME, 0 );
 		}
 
-		$processed = $this->backfill_quiz_progress( $dry_run );
+		$processed = $this->backfill_progress( 'quiz', '_quiz_lesson', $dry_run );
 		if ( $processed > 0 ) {
 			return $processed;
 		}
@@ -100,20 +100,23 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 	}
 
 	/**
-	 * Backfill lesson progress parent_post_id with the course ID.
+	 * Backfill parent_post_id for a given progress type.
 	 *
-	 * @param bool $dry_run Whether to run in dry-run mode.
+	 * @param string $type     The progress type ('lesson' or 'quiz').
+	 * @param string $meta_key The post meta key that holds the parent post ID.
+	 * @param bool   $dry_run  Whether to run in dry-run mode.
 	 * @return int The number of rows processed.
 	 * @throws \RuntimeException If the database query fails.
 	 */
-	private function backfill_lesson_progress( bool $dry_run ): int {
+	private function backfill_progress( string $type, string $meta_key, bool $dry_run ): int {
 		global $wpdb;
 		$table   = $wpdb->prefix . 'sensei_lms_progress';
 		$last_id = (int) get_option( self::LAST_ID_OPTION_NAME, 0 );
 
 		$select_query = $wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			"SELECT id, post_id FROM {$table} WHERE type = 'lesson' AND parent_post_id IS NULL AND id > %d ORDER BY id ASC LIMIT %d",
+			"SELECT id, post_id FROM {$table} WHERE type = %s AND parent_post_id IS NULL AND id > %d ORDER BY id ASC LIMIT %d",
+			$type,
 			$last_id,
 			$this->batch_size
 		);
@@ -126,14 +129,13 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		$rows = $wpdb->get_results( $select_query );
 
 		if ( null === $rows ) {
-			throw new \RuntimeException( esc_html( 'Database error fetching lesson progress: ' . $wpdb->last_error ) );
+			throw new \RuntimeException( esc_html( "Database error fetching {$type} progress: " . $wpdb->last_error ) );
 		}
 
 		if ( empty( $rows ) ) {
 			return 0;
 		}
 
-		// Bulk-fetch _lesson_course meta for all post_ids in this batch.
 		$post_ids     = array_unique( array_map( 'intval', wp_list_pluck( $rows, 'post_id' ) ) );
 		$placeholders = implode( ',', array_fill( 0, count( $post_ids ), '%d' ) );
 
@@ -141,7 +143,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		$meta_query = $wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_lesson_course' AND post_id IN ( {$placeholders} )",
+			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '{$meta_key}' AND post_id IN ( {$placeholders} )",
 			...$post_ids
 		);
 
@@ -162,130 +164,29 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		$last_processed = $last_id;
 
 		foreach ( $rows as $row ) {
-			$course_id = isset( $meta_map[ (int) $row->post_id ] ) ? $meta_map[ (int) $row->post_id ] : 0;
+			$parent_id = isset( $meta_map[ (int) $row->post_id ] ) ? $meta_map[ (int) $row->post_id ] : 0;
 
-			if ( $course_id ) {
+			if ( $parent_id ) {
 				if ( $dry_run ) {
 					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					echo esc_html( $wpdb->prepare( "UPDATE {$table} SET parent_post_id = %d WHERE id = %d", $course_id, (int) $row->id ) . "\n" );
+					echo esc_html( $wpdb->prepare( "UPDATE {$table} SET parent_post_id = %d WHERE id = %d", $parent_id, (int) $row->id ) . "\n" );
 				} else {
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 					$result = $wpdb->update(
 						$table,
-						array( 'parent_post_id' => $course_id ),
+						array( 'parent_post_id' => $parent_id ),
 						array( 'id' => (int) $row->id ),
 						array( '%d' ),
 						array( '%d' )
 					);
 
 					if ( false === $result ) {
-						$error_message = $wpdb->last_error ? $wpdb->last_error : "Unknown error updating lesson progress id={$row->id}";
+						$error_message = $wpdb->last_error ? $wpdb->last_error : "Unknown error updating {$type} progress id={$row->id}";
 						$this->add_error( $error_message );
 					}
 				}
 			} else {
-				$this->add_error( "Skipped lesson progress id={$row->id}: no meta for post_id={$row->post_id}" );
-			}
-
-			$last_processed = (int) $row->id;
-			++$processed;
-
-			if ( $this->is_time_exceeded() ) {
-				break;
-			}
-		}
-
-		update_option( self::LAST_ID_OPTION_NAME, $last_processed );
-
-		return $processed;
-	}
-
-	/**
-	 * Backfill quiz progress parent_post_id with the lesson ID.
-	 *
-	 * @param bool $dry_run Whether to run in dry-run mode.
-	 * @return int The number of rows processed.
-	 * @throws \RuntimeException If the database query fails.
-	 */
-	private function backfill_quiz_progress( bool $dry_run ): int {
-		global $wpdb;
-		$table   = $wpdb->prefix . 'sensei_lms_progress';
-		$last_id = (int) get_option( self::LAST_ID_OPTION_NAME, 0 );
-
-		$select_query = $wpdb->prepare(
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			"SELECT id, post_id FROM {$table} WHERE type = 'quiz' AND parent_post_id IS NULL AND id > %d ORDER BY id ASC LIMIT %d",
-			$last_id,
-			$this->batch_size
-		);
-
-		if ( $dry_run ) {
-			echo esc_html( $select_query . "\n" );
-		}
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
-		$rows = $wpdb->get_results( $select_query );
-
-		if ( null === $rows ) {
-			throw new \RuntimeException( esc_html( 'Database error fetching quiz progress: ' . $wpdb->last_error ) );
-		}
-
-		if ( empty( $rows ) ) {
-			return 0;
-		}
-
-		// Bulk-fetch _quiz_lesson meta for all post_ids in this batch.
-		$post_ids     = array_unique( array_map( 'intval', wp_list_pluck( $rows, 'post_id' ) ) );
-		$placeholders = implode( ',', array_fill( 0, count( $post_ids ), '%d' ) );
-
-		// Placeholders are built dynamically, so the sniff can't verify the count.
-		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
-		$meta_query = $wpdb->prepare(
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_quiz_lesson' AND post_id IN ( {$placeholders} )",
-			...$post_ids
-		);
-
-		if ( $dry_run ) {
-			echo esc_html( $meta_query . "\n" );
-		}
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
-		$meta_rows = $wpdb->get_results( $meta_query );
-		$meta_map  = array();
-		if ( $meta_rows ) {
-			foreach ( $meta_rows as $meta ) {
-				$meta_map[ (int) $meta->post_id ] = (int) $meta->meta_value;
-			}
-		}
-
-		$processed      = 0;
-		$last_processed = $last_id;
-
-		foreach ( $rows as $row ) {
-			$lesson_id = isset( $meta_map[ (int) $row->post_id ] ) ? $meta_map[ (int) $row->post_id ] : 0;
-
-			if ( $lesson_id ) {
-				if ( $dry_run ) {
-					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					echo esc_html( $wpdb->prepare( "UPDATE {$table} SET parent_post_id = %d WHERE id = %d", $lesson_id, (int) $row->id ) . "\n" );
-				} else {
-					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-					$result = $wpdb->update(
-						$table,
-						array( 'parent_post_id' => $lesson_id ),
-						array( 'id' => (int) $row->id ),
-						array( '%d' ),
-						array( '%d' )
-					);
-
-					if ( false === $result ) {
-						$error_message = $wpdb->last_error ? $wpdb->last_error : "Unknown error updating quiz progress id={$row->id}";
-						$this->add_error( $error_message );
-					}
-				}
-			} else {
-				$this->add_error( "Skipped quiz progress id={$row->id}: no meta for post_id={$row->post_id}" );
+				$this->add_error( "Skipped {$type} progress id={$row->id}: no meta for post_id={$row->post_id}" );
 			}
 
 			$last_processed = (int) $row->id;
