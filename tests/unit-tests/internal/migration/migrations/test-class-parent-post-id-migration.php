@@ -32,6 +32,7 @@ class Parent_Post_Id_Migration_Test extends \WP_UnitTestCase {
 		$wpdb->query( 'TRUNCATE TABLE ' . $wpdb->prefix . 'sensei_lms_progress' );
 
 		delete_option( Parent_Post_Id_Migration::LAST_ID_OPTION_NAME );
+		delete_option( Parent_Post_Id_Migration::LESSONS_COMPLETE_OPTION_NAME );
 	}
 
 	public function testRun_NoRows_ReturnsZero(): void {
@@ -135,6 +136,57 @@ class Parent_Post_Id_Migration_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$parent = $this->get_parent_post_id( $lesson_id, $user_id, 'lesson' );
 		$this->assertNull( $parent, 'Orphaned lesson progress should remain NULL.' );
+	}
+
+	public function testRun_OrphanedQuiz_RemainsNull(): void {
+		/* Arrange. */
+		$quiz_id = $this->factory->quiz->create(); // No _quiz_lesson meta.
+		$user_id = $this->factory->user->create();
+
+		$this->insert_progress_row( $quiz_id, $user_id, 'quiz' );
+
+		/* Act. */
+		$this->migration->run( false );
+
+		/* Assert. */
+		$parent = $this->get_parent_post_id( $quiz_id, $user_id, 'quiz' );
+		$this->assertNull( $parent, 'Orphaned quiz progress should remain NULL.' );
+	}
+
+	public function testRun_LessonAndQuizRows_BackfillsBothPhases(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_id,
+				),
+			)
+		);
+		$quiz_id   = $this->factory->quiz->create(
+			array(
+				'meta_input' => array(
+					'_quiz_lesson' => $lesson_id,
+				),
+			)
+		);
+		$user_id   = $this->factory->user->create();
+
+		$this->insert_progress_row( $lesson_id, $user_id, 'lesson' );
+		$this->insert_progress_row( $quiz_id, $user_id, 'quiz' );
+
+		/* Act. */
+		$result = 1;
+		while ( $result > 0 ) {
+			$result = $this->migration->run( false );
+		}
+
+		/* Assert. */
+		$lesson_parent = $this->get_parent_post_id( $lesson_id, $user_id, 'lesson' );
+		$this->assertEquals( $course_id, (int) $lesson_parent, 'Lesson progress should have the course as parent.' );
+
+		$quiz_parent = $this->get_parent_post_id( $quiz_id, $user_id, 'quiz' );
+		$this->assertEquals( $lesson_id, (int) $quiz_parent, 'Quiz progress should have the lesson as parent.' );
 	}
 
 	public function testRun_ReturnsZeroWhenComplete(): void {
