@@ -30,14 +30,14 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 	 *
 	 * @var string
 	 */
-	public const LAST_ID_OPTION_NAME = 'sensei_parent_post_id_migration_last_id';
+	public const LAST_ID_OPTION_NAME = 'sensei_migrated_parent_post_id_last_id';
 
 	/**
 	 * The name of the option that stores whether lesson backfill is complete.
 	 *
 	 * @var string
 	 */
-	private const LESSONS_COMPLETE_OPTION_NAME = 'sensei_parent_post_id_migration_lessons_complete';
+	public const LESSONS_COMPLETE_OPTION_NAME = 'sensei_migrated_parent_post_id_lessons_complete';
 
 	/**
 	 * The number of rows to process in a single run.
