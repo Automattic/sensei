@@ -137,6 +137,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		$post_ids     = array_unique( array_map( 'intval', wp_list_pluck( $rows, 'post_id' ) ) );
 		$placeholders = implode( ',', array_fill( 0, count( $post_ids ), '%d' ) );
 
+		// Placeholders are built dynamically, so the sniff can't verify the count.
 		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		$meta_query = $wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
@@ -237,6 +238,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		$post_ids     = array_unique( array_map( 'intval', wp_list_pluck( $rows, 'post_id' ) ) );
 		$placeholders = implode( ',', array_fill( 0, count( $post_ids ), '%d' ) );
 
+		// Placeholders are built dynamically, so the sniff can't verify the count.
 		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		$meta_query = $wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
