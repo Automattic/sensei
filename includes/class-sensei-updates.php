@@ -130,9 +130,15 @@ class Sensei_Updates {
 			return;
 		}
 
-		// Reset status so the job runner treats this as a fresh start.
-		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_NOT_STARTED );
-		$scheduler->schedule_job_by_name( 'parent_post_id_migration' );
+		try {
+			$scheduler->schedule_job_by_name( 'parent_post_id_migration' );
+
+			// Reset status so the job runner treats this as a fresh start.
+			update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_NOT_STARTED );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Intentional error logging for failed migration scheduling.
+			error_log( 'Sensei LMS: Failed to schedule parent_post_id backfill: ' . $e->getMessage() );
+		}
 	}
 
 	/**
