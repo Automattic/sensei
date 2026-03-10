@@ -91,7 +91,7 @@ class Sensei_Updates {
 		$this->v4_12_create_default_emails();
 		$this->v4_19_2_update_legacy_quiz_data();
 		$this->v4_24_1_update_capabilities();
-		$this->backfill_parent_post_id();
+		$this->v4_26_0_backfill_parent_post_id();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
@@ -116,7 +116,7 @@ class Sensei_Updates {
 	 *
 	 * @since $$next-version$$
 	 */
-	private function backfill_parent_post_id() {
+	private function v4_26_0_backfill_parent_post_id() {
 		if ( ! $this->is_upgrade ) {
 			return;
 		}
