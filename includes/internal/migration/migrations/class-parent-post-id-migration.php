@@ -59,7 +59,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		 *
 		 * @param int $batch_size The batch size.
 		 */
-		$this->batch_size = (int) apply_filters( 'sensei_migration_parent_post_id_batch_size', $batch_size );
+		$this->batch_size = max( 1, (int) apply_filters( 'sensei_migration_parent_post_id_batch_size', $batch_size ) );
 	}
 
 	/**
@@ -155,7 +155,12 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$meta_rows = $wpdb->get_results( $meta_query );
-		$meta_map  = array();
+
+		if ( null === $meta_rows ) {
+			throw new \RuntimeException( esc_html( "Database error fetching {$type} post meta: " . $wpdb->last_error ) );
+		}
+
+		$meta_map = array();
 		if ( $meta_rows ) {
 			foreach ( $meta_rows as $meta ) {
 				$meta_map[ (int) $meta->post_id ] = (int) $meta->meta_value;
