@@ -231,7 +231,8 @@ class Migration_Job_Scheduler {
 	 */
 	public function schedule_job_by_name( string $job_name ): void {
 		if ( ! isset( $this->jobs[ $job_name ] ) ) {
-			throw new \RuntimeException( esc_html( "Unknown job: $job_name" ) );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are not rendered as HTML.
+			throw new \RuntimeException( sprintf( 'Unknown job: %s', $job_name ) );
 		}
 
 		$this->schedule_job( $this->jobs[ $job_name ] );

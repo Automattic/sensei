@@ -130,7 +130,8 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		$rows = $wpdb->get_results( $select_query );
 
 		if ( null === $rows ) {
-			throw new \RuntimeException( esc_html( "Database error fetching {$type} progress: " . $wpdb->last_error ) );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are not rendered as HTML.
+			throw new \RuntimeException( "Database error fetching {$type} progress: " . $wpdb->last_error );
 		}
 
 		if ( empty( $rows ) ) {
@@ -157,7 +158,8 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		$meta_rows = $wpdb->get_results( $meta_query );
 
 		if ( null === $meta_rows ) {
-			throw new \RuntimeException( esc_html( "Database error fetching {$type} post meta: " . $wpdb->last_error ) );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are not rendered as HTML.
+			throw new \RuntimeException( "Database error fetching {$type} post meta: " . $wpdb->last_error );
 		}
 
 		$meta_map = array();
@@ -192,8 +194,6 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 						$this->add_error( $error_message );
 					}
 				}
-			} else {
-				$this->add_error( "Skipped {$type} progress id={$row->id}: no meta for post_id={$row->post_id}" );
 			}
 
 			$last_processed = (int) $row->id;
