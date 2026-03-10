@@ -19,6 +19,11 @@ class Parent_Post_Id_Migration_Test extends \WP_UnitTestCase {
 	 */
 	private $migration;
 
+	/**
+	 * Sensei factory.
+	 *
+	 * @var Sensei_Factory
+	 */
 	protected $factory;
 
 	protected function setUp(): void {

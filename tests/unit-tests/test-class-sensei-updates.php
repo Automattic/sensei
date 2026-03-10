@@ -24,6 +24,20 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	protected $factory;
 
 	/**
+	 * Original migration scheduler, saved before backfill tests.
+	 *
+	 * @var Migration_Job_Scheduler|null
+	 */
+	private $original_scheduler;
+
+	/**
+	 * Original sync setting, saved before backfill tests.
+	 *
+	 * @var mixed
+	 */
+	private $original_sync;
+
+	/**
 	 * Setup function.
 	 */
 	public function setUp(): void {
@@ -34,6 +48,21 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 		self::restoreShimScheduler();
 
 		$this->factory = new Sensei_Factory();
+	}
+
+	/**
+	 * Teardown function.
+	 */
+	public function tearDown(): void {
+		if ( null !== $this->original_scheduler ) {
+			Sensei()->migration_scheduler = $this->original_scheduler;
+			Sensei()->settings->settings['experimental_progress_storage_synchronization'] = $this->original_sync;
+			$this->original_scheduler = null;
+			$this->original_sync      = null;
+			delete_option( Migration_Job_Scheduler::STATUS_OPTION_NAME );
+		}
+
+		parent::tearDown();
 	}
 
 	/**
@@ -229,18 +258,11 @@ END;
 		$scheduler->expects( $this->never() )
 			->method( 'schedule_job_by_name' );
 
-		$original_scheduler           = Sensei()->migration_scheduler;
-		$original_sync                = Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false;
-		Sensei()->migration_scheduler = $scheduler;
-		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = true;
+		$this->set_backfill_test_context( $scheduler, true );
 		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_COMPLETE );
 
 		$updates = new Sensei_Updates( null, true, false );
 		$updates->run_updates();
-
-		Sensei()->migration_scheduler = $original_scheduler;
-		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = $original_sync;
-		delete_option( Migration_Job_Scheduler::STATUS_OPTION_NAME );
 	}
 
 	/**
@@ -251,18 +273,11 @@ END;
 		$scheduler->expects( $this->never() )
 			->method( 'schedule_job_by_name' );
 
-		$original_scheduler           = Sensei()->migration_scheduler;
-		$original_sync                = Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false;
-		Sensei()->migration_scheduler = $scheduler;
-		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = false;
+		$this->set_backfill_test_context( $scheduler, false );
 		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_COMPLETE );
 
 		$updates = new Sensei_Updates( '4.25.0', false, true );
 		$updates->run_updates();
-
-		Sensei()->migration_scheduler = $original_scheduler;
-		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = $original_sync;
-		delete_option( Migration_Job_Scheduler::STATUS_OPTION_NAME );
 	}
 
 	/**
@@ -279,16 +294,10 @@ END;
 		$scheduler->expects( $this->never() )
 			->method( 'schedule_job_by_name' );
 
-		$original_scheduler           = Sensei()->migration_scheduler;
-		$original_sync                = Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false;
-		Sensei()->migration_scheduler = $scheduler;
-		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = true;
+		$this->set_backfill_test_context( $scheduler, true );
 
 		$updates = new Sensei_Updates( '4.25.0', false, true );
 		$updates->run_updates();
-
-		Sensei()->migration_scheduler = $original_scheduler;
-		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = $original_sync;
 	}
 
 	/**
@@ -306,10 +315,7 @@ END;
 			->method( 'schedule_job_by_name' )
 			->with( 'parent_post_id_migration' );
 
-		$original_scheduler           = Sensei()->migration_scheduler;
-		$original_sync                = Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false;
-		Sensei()->migration_scheduler = $scheduler;
-		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = true;
+		$this->set_backfill_test_context( $scheduler, true );
 		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_COMPLETE );
 
 		$updates = new Sensei_Updates( '4.25.0', false, true );
@@ -320,10 +326,6 @@ END;
 			get_option( Migration_Job_Scheduler::STATUS_OPTION_NAME ),
 			'Migration status should be reset to NOT_STARTED after scheduling.'
 		);
-
-		Sensei()->migration_scheduler = $original_scheduler;
-		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = $original_sync;
-		delete_option( Migration_Job_Scheduler::STATUS_OPTION_NAME );
 	}
 
 	/**
@@ -341,10 +343,7 @@ END;
 			->method( 'schedule_job_by_name' )
 			->willThrowException( new \RuntimeException( 'Unknown job: parent_post_id_migration' ) );
 
-		$original_scheduler           = Sensei()->migration_scheduler;
-		$original_sync                = Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false;
-		Sensei()->migration_scheduler = $scheduler;
-		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = true;
+		$this->set_backfill_test_context( $scheduler, true );
 		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_COMPLETE );
 
 		$updates = new Sensei_Updates( '4.25.0', false, true );
@@ -355,9 +354,21 @@ END;
 			get_option( Migration_Job_Scheduler::STATUS_OPTION_NAME ),
 			'Migration status should remain COMPLETE when scheduling fails.'
 		);
+	}
 
-		Sensei()->migration_scheduler = $original_scheduler;
-		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = $original_sync;
-		delete_option( Migration_Job_Scheduler::STATUS_OPTION_NAME );
+	/**
+	 * Set up the migration scheduler mock and sync setting for backfill tests.
+	 *
+	 * Saves originals so tearDown() can restore them automatically.
+	 *
+	 * @param Migration_Job_Scheduler|\PHPUnit\Framework\MockObject\MockObject $scheduler The mock scheduler.
+	 * @param bool                                                              $sync_enabled Whether sync is enabled.
+	 */
+	private function set_backfill_test_context( $scheduler, bool $sync_enabled ): void {
+		$this->original_scheduler = Sensei()->migration_scheduler;
+		$this->original_sync      = Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false;
+
+		Sensei()->migration_scheduler = $scheduler;
+		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = $sync_enabled;
 	}
 }

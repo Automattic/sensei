@@ -72,6 +72,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 	 *
 	 * @param bool $dry_run Whether to run the migration in dry-run mode.
 	 * @return int The number of rows processed.
+	 * @throws \RuntimeException If a database query fails.
 	 */
 	public function run( bool $dry_run = true ) {
 		$lessons_complete = get_option( self::LESSONS_COMPLETE_OPTION_NAME, false );
@@ -142,8 +143,9 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 		// Placeholders are built dynamically, so the sniff can't verify the count.
 		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		$meta_query = $wpdb->prepare(
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '{$meta_key}' AND post_id IN ( {$placeholders} )",
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s AND post_id IN ( {$placeholders} )",
+			$meta_key,
 			...$post_ids
 		);
 
