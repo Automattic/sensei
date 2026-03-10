@@ -220,6 +220,24 @@ class Migration_Job_Scheduler {
 	}
 
 	/**
+	 * Schedule a specific job by name.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $job_name The job name.
+	 * @throws \RuntimeException If the job is not registered.
+	 */
+	public function schedule_job_by_name( string $job_name ): void {
+		if ( ! isset( $this->jobs[ $job_name ] ) ) {
+			throw new \RuntimeException( esc_html( "Unknown job: $job_name" ) );
+		}
+
+		$this->schedule_job( $this->jobs[ $job_name ] );
+	}
+
+	/**
 	 * Schedule a job.
 	 *
 	 * @param Migration_Job $job The migration job.

@@ -10,6 +10,8 @@ use Sensei\Internal\Emails\Email_Seeder_Data;
 use Sensei\Internal\Emails\Email_Repository;
 use Sensei\Internal\Emails\Email_Seeder;
 use Sensei\Internal\Emails\Email_Template_Repository;
+use Sensei\Internal\Migration\Migration_Job_Scheduler;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -89,6 +91,7 @@ class Sensei_Updates {
 		$this->v4_12_create_default_emails();
 		$this->v4_19_2_update_legacy_quiz_data();
 		$this->v4_24_1_update_capabilities();
+		$this->backfill_parent_post_id();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
@@ -106,6 +109,30 @@ class Sensei_Updates {
 		// Update the other roles capabilities.
 		Sensei()->add_sensei_admin_caps();
 		Sensei()->add_editor_caps();
+	}
+
+	/**
+	 * Schedule parent_post_id backfill for sites that already completed the HPPS migration.
+	 *
+	 * @since $$next-version$$
+	 */
+	private function backfill_parent_post_id() {
+		if ( ! $this->is_upgrade ) {
+			return;
+		}
+
+		if ( ! Progress_Storage_Settings::is_sync_enabled() ) {
+			return;
+		}
+
+		$scheduler = Sensei()->migration_scheduler;
+		if ( ! $scheduler || ! $scheduler->is_complete() ) {
+			return;
+		}
+
+		// Reset status so the job runner treats this as a fresh start.
+		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_NOT_STARTED );
+		$scheduler->schedule_job_by_name( 'parent_post_id_migration' );
 	}
 
 	/**
