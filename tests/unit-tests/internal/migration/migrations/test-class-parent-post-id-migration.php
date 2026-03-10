@@ -74,11 +74,9 @@ class Parent_Post_Id_Migration_Test extends \WP_UnitTestCase {
 		);
 		$user_id   = $this->factory->user->create();
 
-		// First run processes lessons (none), second processes quizzes.
 		$this->insert_progress_row( $quiz_id, $user_id, 'quiz' );
 
 		/* Act. */
-		// First call completes lesson phase (0 rows), then processes quiz.
 		$this->migration->run( false );
 
 		/* Assert. */
@@ -94,7 +92,6 @@ class Parent_Post_Id_Migration_Test extends \WP_UnitTestCase {
 		$this->insert_progress_row( $course_id, $user_id, 'course' );
 
 		/* Act. */
-		$this->migration->run( false );
 		$this->migration->run( false );
 
 		/* Assert. */
@@ -175,7 +172,7 @@ class Parent_Post_Id_Migration_Test extends \WP_UnitTestCase {
 					),
 				)
 			);
-			$user_id = $this->factory->user->create();
+			$user_id   = $this->factory->user->create();
 			$this->insert_progress_row( $lesson_id, $user_id, 'lesson' );
 		}
 
@@ -186,10 +183,10 @@ class Parent_Post_Id_Migration_Test extends \WP_UnitTestCase {
 		$final        = $migration->run( false );
 
 		/* Assert. */
-		$this->assertSame( 2, $first_batch );
-		$this->assertSame( 2, $second_batch );
-		$this->assertSame( 1, $third_batch );
-		$this->assertSame( 0, $final );
+		$this->assertSame( 2, $first_batch, 'First batch should process 2 rows.' );
+		$this->assertSame( 2, $second_batch, 'Second batch should process 2 rows.' );
+		$this->assertSame( 1, $third_batch, 'Third batch should process the remaining 1 row.' );
+		$this->assertSame( 0, $final, 'Final run should return 0 when complete.' );
 	}
 
 	/**
