@@ -124,7 +124,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 			return 0;
 		}
 
-		$processed     = 0;
+		$processed      = 0;
 		$last_processed = $last_id;
 
 		foreach ( $rows as $row ) {
@@ -132,13 +132,17 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 
 			if ( $course_id && ! $dry_run ) {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$wpdb->update(
+				$result = $wpdb->update(
 					$table,
 					array( 'parent_post_id' => $course_id ),
 					array( 'id' => (int) $row->id ),
 					array( '%d' ),
 					array( '%d' )
 				);
+
+				if ( false === $result && '' !== $wpdb->last_error ) {
+					$this->add_error( $wpdb->last_error );
+				}
 			}
 
 			$last_processed = (int) $row->id;
@@ -179,7 +183,7 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 			return 0;
 		}
 
-		$processed     = 0;
+		$processed      = 0;
 		$last_processed = $last_id;
 
 		foreach ( $rows as $row ) {
@@ -187,13 +191,17 @@ class Parent_Post_Id_Migration extends Migration_Abstract {
 
 			if ( $lesson_id && ! $dry_run ) {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$wpdb->update(
+				$result = $wpdb->update(
 					$table,
 					array( 'parent_post_id' => $lesson_id ),
 					array( 'id' => (int) $row->id ),
 					array( '%d' ),
 					array( '%d' )
 				);
+
+				if ( false === $result && '' !== $wpdb->last_error ) {
+					$this->add_error( $wpdb->last_error );
+				}
 			}
 
 			$last_processed = (int) $row->id;
