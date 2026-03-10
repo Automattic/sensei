@@ -63,6 +63,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Quiz_Progress_Interface
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
@@ -80,7 +81,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
-		$this->wpdb->insert(
+		$result           = $this->wpdb->insert(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'post_id'        => $quiz_id,
@@ -105,6 +106,9 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				'%s',
 			]
 		);
+		if ( false === $result ) {
+			throw new \RuntimeException( esc_html( 'Failed to create quiz progress: ' . $this->wpdb->last_error ) );
+		}
 		$id = (int) $this->wpdb->insert_id;
 
 		$progress = new Tables_Based_Quiz_Progress(
