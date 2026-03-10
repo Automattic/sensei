@@ -131,11 +131,15 @@ class Sensei_Updates {
 		}
 
 		try {
-			$scheduler->schedule_job_by_name( 'parent_post_id_migration' );
-
-			// Reset status so the job runner treats this as a fresh start.
+			// Reset status first to prevent duplicate scheduling from concurrent requests
+			// that all see is_complete() === true before any of them writes NOT_STARTED.
 			update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_NOT_STARTED );
+
+			$scheduler->schedule_job_by_name( 'parent_post_id_migration' );
 		} catch ( \RuntimeException $e ) {
+			// Restore status so the backfill can be retried on the next upgrade.
+			update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_COMPLETE );
+
 			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Intentional error logging for failed migration scheduling.
 			error_log( 'Sensei LMS: Failed to schedule parent_post_id backfill: ' . $e->getMessage() );
 		}
