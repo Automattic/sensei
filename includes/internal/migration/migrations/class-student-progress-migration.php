@@ -413,10 +413,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 			}
 
 			// comment_post_ID is the lesson ID (comment is on the lesson post), which is the quiz's parent.
-			$rows[] = array(
+			$parent_lesson_id = (int) $comment->comment_post_ID;
+			$rows[]           = array(
 				'post_id'        => (int) $quiz_id,
 				'user_id'        => (int) $comment->user_id,
-				'parent_post_id' => (int) $comment->comment_post_ID ? (int) $comment->comment_post_ID : null,
+				'parent_post_id' => $parent_lesson_id ? $parent_lesson_id : null,
 				'type'           => 'quiz',
 				'status'         => $quiz_status,
 				'started_at'     => $started_at,
