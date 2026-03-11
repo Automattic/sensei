@@ -843,7 +843,18 @@ class Sensei_Grading {
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $quiz_lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id );
+			try {
+				$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id );
+			} catch ( \RuntimeException $e ) {
+				error_log( 'Sensei: ' . $e->getMessage() );
+				add_settings_error(
+					'sensei_grading',
+					'progress_create_failed',
+					__( 'Could not create lesson progress record. Please try again.', 'sensei-lms' ),
+					'error'
+				);
+				return false;
+			}
 		}
 
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );

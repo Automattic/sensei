@@ -1150,9 +1150,20 @@ class Sensei_Quiz {
 			$answers_map[ $answer->get_question_id() ] = $answer;
 		}
 
-		foreach ( $quiz_grades as $question_id => $points ) {
-			$answer = $answers_map[ $question_id ];
-			Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
+		try {
+			foreach ( $quiz_grades as $question_id => $points ) {
+				$answer = $answers_map[ $question_id ];
+				Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
+			}
+		} catch ( \RuntimeException $e ) {
+			error_log( 'Sensei: ' . $e->getMessage() );
+			add_settings_error(
+				'sensei_grading',
+				'grade_create_failed',
+				__( 'Could not save quiz grades. Please try again.', 'sensei-lms' ),
+				'error'
+			);
+			return false;
 		}
 
 		$transient_key = 'quiz_grades_' . $user_id . '_' . $lesson_id;
