@@ -101,17 +101,23 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	 * @param int                  $points      The points.
 	 * @param string|null          $feedback    The feedback.
 	 *
+	 * @throws \RuntimeException If grade creation fails.
 	 * @return Grade_Interface The grade.
 	 */
 	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface {
 		$grade = $this->comments_based_repository->create( $submission, $answer, $question_id, $points, $feedback );
 
-		$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
-		$tables_based_answers    = $this->get_or_create_tables_based_answers( $submission, $tables_based_submission );
-		$tables_based_answer     = $tables_based_answers[ $question_id ] ?? null;
+		try {
+			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+			$tables_based_answers    = $this->get_or_create_tables_based_answers( $submission, $tables_based_submission );
+			$tables_based_answer     = $tables_based_answers[ $question_id ] ?? null;
 
-		if ( $tables_based_answer ) {
-			$this->tables_based_repository->create( $tables_based_submission, $tables_based_answer, $question_id, $points, $feedback );
+			if ( $tables_based_answer ) {
+				$this->tables_based_repository->create( $tables_based_submission, $tables_based_answer, $question_id, $points, $feedback );
+			}
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
 		}
 
 		return $grade;
@@ -131,7 +137,7 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 		foreach ( $comments_based_answers as $comments_based_answer ) {
 			$filtered = array_filter(
 				$tables_based_answers,
-				function( Answer_Interface $answer ) use ( $comments_based_answer ) {
+				function ( Answer_Interface $answer ) use ( $comments_based_answer ) {
 					return $answer->get_question_id() === $comments_based_answer->get_question_id();
 				}
 			);
@@ -174,35 +180,40 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	public function save_many( Submission_Interface $submission, array $grades ): void {
 		$this->comments_based_repository->save_many( $submission, $grades );
 
-		$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
-		$tables_based_grades     = $this->get_or_create_tables_based_grades_for_save(
-			$submission,
-			$tables_based_submission,
-			$grades
-		);
+		try {
+			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+			$tables_based_grades     = $this->get_or_create_tables_based_grades_for_save(
+				$submission,
+				$tables_based_submission,
+				$grades
+			);
 
-		$grades_to_save = [];
-		foreach ( $grades as $grade ) {
-			$tables_based_grade = $tables_based_grades[ $grade->get_question_id() ] ?? null;
-			if ( null === $tables_based_grade ) {
-				continue;
+			$grades_to_save = [];
+			foreach ( $grades as $grade ) {
+				$tables_based_grade = $tables_based_grades[ $grade->get_question_id() ] ?? null;
+				if ( null === $tables_based_grade ) {
+					continue;
+				}
+
+				$created_at = new DateTimeImmutable( '@' . $grade->get_created_at()->getTimestamp() );
+				$updated_at = new DateTimeImmutable( '@' . $grade->get_updated_at()->getTimestamp() );
+
+				$grades_to_save[] = new Tables_Based_Grade(
+					$tables_based_grade->get_id(),
+					$tables_based_grade->get_answer_id(),
+					$tables_based_grade->get_question_id(),
+					$grade->get_points(),
+					$grade->get_feedback(),
+					$created_at,
+					$updated_at
+				);
 			}
 
-			$created_at = new DateTimeImmutable( '@' . $grade->get_created_at()->getTimestamp() );
-			$updated_at = new DateTimeImmutable( '@' . $grade->get_updated_at()->getTimestamp() );
-
-			$grades_to_save[] = new Tables_Based_Grade(
-				$tables_based_grade->get_id(),
-				$tables_based_grade->get_answer_id(),
-				$tables_based_grade->get_question_id(),
-				$grade->get_points(),
-				$grade->get_feedback(),
-				$created_at,
-				$updated_at
-			);
+			$this->tables_based_repository->save_many( $tables_based_submission, $grades_to_save );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
 		}
-
-		$this->tables_based_repository->save_many( $tables_based_submission, $grades_to_save );
 	}
 
 	/**
@@ -227,7 +238,7 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 		foreach ( $comments_based_grades as $comments_based_grade ) {
 			$filtered = array_filter(
 				$tables_based_grades,
-				function( Grade_Interface $grade ) use ( $comments_based_grade ) {
+				function ( Grade_Interface $grade ) use ( $comments_based_grade ) {
 					return $grade->get_question_id() === $comments_based_grade->get_question_id();
 				}
 			);
@@ -263,8 +274,13 @@ class Comment_Reading_Aggregate_Grade_Repository implements Grade_Repository_Int
 	public function delete_all( Submission_Interface $submission ): void {
 		$this->comments_based_repository->delete_all( $submission );
 
-		$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
-		$this->tables_based_repository->delete_all( $tables_based_submission );
+		try {
+			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+			$this->tables_based_repository->delete_all( $tables_based_submission );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+		}
 	}
 
 	/**

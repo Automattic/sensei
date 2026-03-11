@@ -68,6 +68,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Quiz_Progress_Interface The quiz progress.
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
@@ -78,7 +79,12 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 		if ( $lesson_id ) {
 			$lesson_progress_exists = $this->comments_based_lesson_progress_repository->has( $lesson_id, $user_id );
 			if ( ! $lesson_progress_exists ) {
-				$this->comments_based_lesson_progress_repository->create( $lesson_id, $user_id );
+				try {
+					$this->comments_based_lesson_progress_repository->create( $lesson_id, $user_id );
+				} catch ( \RuntimeException $e ) {
+					// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+					error_log( 'Sensei: ' . $e->getMessage() );
+				}
 			}
 		}
 
@@ -111,7 +117,6 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 * Save quiz progress.
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress The quiz progress.
-	 * @throws RuntimeException If the comments based quiz progress is not found.
 	 */
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->tables_based_repository->save( $quiz_progress );
@@ -122,7 +127,13 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 			if ( $lesson_id ) {
 				$lesson_progress_exists = $this->comments_based_lesson_progress_repository->has( $lesson_id, $quiz_progress->get_user_id() );
 				if ( ! $lesson_progress_exists ) {
-					$this->comments_based_lesson_progress_repository->create( $lesson_id, $quiz_progress->get_user_id() );
+					try {
+						$this->comments_based_lesson_progress_repository->create( $lesson_id, $quiz_progress->get_user_id() );
+					} catch ( \RuntimeException $e ) {
+						// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+						error_log( 'Sensei: ' . $e->getMessage() );
+						return;
+					}
 				}
 			}
 			$comments_based_quiz_progress = $this->comments_based_repository->get(
@@ -131,7 +142,9 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 			);
 
 			if ( ! $comments_based_quiz_progress ) {
-				throw new RuntimeException( 'Comments based quiz progress not found.' );
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+				error_log( sprintf( 'Sensei: Comments based quiz progress not found for quiz %d, user %d.', $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() ) );
+				return;
 			}
 		}
 

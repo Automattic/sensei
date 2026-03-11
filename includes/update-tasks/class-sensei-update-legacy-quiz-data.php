@@ -67,7 +67,8 @@ class Sensei_Update_Legacy_Quiz_Data extends Sensei_Background_Job_Batch {
 				}
 			} catch ( \RuntimeException $e ) {
 				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Background task needs to log failures.
-				error_log( 'Sensei: ' . $e->getMessage() );
+				error_log( sprintf( 'Sensei: Failed to migrate comment %d (quiz %d, user %d): %s', $comment_id, $quiz_id, $user_id, $e->getMessage() ) );
+				continue;
 			}
 
 			wp_delete_comment( $comment ); // Soft delete.

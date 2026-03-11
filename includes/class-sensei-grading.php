@@ -846,6 +846,7 @@ class Sensei_Grading {
 			try {
 				$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id );
 			} catch ( \RuntimeException $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 				error_log( 'Sensei: ' . $e->getMessage() );
 				add_settings_error(
 					'sensei_grading',

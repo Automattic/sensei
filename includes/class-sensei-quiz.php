@@ -414,6 +414,7 @@ class Sensei_Quiz {
 		try {
 			$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
 		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 			error_log( 'Sensei: ' . $e->getMessage() );
 			Sensei()->notices->add_notice(
 				__( 'An error occurred while saving your answers. Please try again.', 'sensei-lms' ),
@@ -432,6 +433,7 @@ class Sensei_Quiz {
 				Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
 			}
 		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 			error_log( 'Sensei: ' . $e->getMessage() );
 			Sensei()->notices->add_notice(
 				__( 'An error occurred while saving your answers. Please try again.', 'sensei-lms' ),
@@ -974,6 +976,7 @@ class Sensei_Quiz {
 			try {
 				$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 			} catch ( \RuntimeException $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 				error_log( 'Sensei: ' . $e->getMessage() );
 				Sensei()->notices->add_notice(
 					__( 'An error occurred while submitting your quiz. Please try again.', 'sensei-lms' ),
@@ -1160,6 +1163,7 @@ class Sensei_Quiz {
 				Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
 			}
 		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 			error_log( 'Sensei: ' . $e->getMessage() );
 			add_settings_error(
 				'sensei_grading',
@@ -2471,6 +2475,7 @@ class Sensei_Quiz {
 		try {
 			$quiz_progress_repository->create( $quiz_id, $user_id );
 		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 			error_log( 'Sensei: ' . $e->getMessage() );
 			Sensei()->notices->add_notice(
 				__( 'An error occurred while loading the quiz. Please try again.', 'sensei-lms' ),

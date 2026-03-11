@@ -822,6 +822,7 @@ class Sensei_Frontend {
 						try {
 							$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
 						} catch ( \RuntimeException $e ) {
+							// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 							error_log( 'Sensei: ' . $e->getMessage() );
 							Sensei()->notices->add_notice(
 								__( 'An error occurred while completing the course. Please try again.', 'sensei-lms' ),

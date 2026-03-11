@@ -606,12 +606,13 @@ class Sensei_Utils {
 			try {
 				$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 			} catch ( \RuntimeException $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 				error_log( 'Sensei: ' . $e->getMessage() );
 				Sensei()->notices->add_notice(
 					__( 'An error occurred while starting the lesson. Please try again.', 'sensei-lms' ),
 					'alert'
 				);
-				return;
+				return false;
 			}
 			$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 			if ( $complete && $has_questions ) {
@@ -1592,6 +1593,7 @@ class Sensei_Utils {
 			try {
 				$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
 			} catch ( \RuntimeException $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 				error_log( 'Sensei: ' . $e->getMessage() );
 				Sensei()->notices->add_notice(
 					__( 'An error occurred while completing the course. Please try again.', 'sensei-lms' ),
@@ -2692,6 +2694,7 @@ class Sensei_Utils {
 		try {
 			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
 		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 			error_log( 'Sensei: ' . $e->getMessage() );
 			Sensei()->notices->add_notice(
 				__( 'An error occurred while starting the course. Please try again.', 'sensei-lms' ),

@@ -58,10 +58,16 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
+	 * @throws \RuntimeException If progress creation fails.
 	 * @return Quiz_Progress_Interface The quiz progress.
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
-		$this->tables_based_repository->create( $quiz_id, $user_id );
+		try {
+			$this->tables_based_repository->create( $quiz_id, $user_id );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+		}
 		return $this->comments_based_repository->create( $quiz_id, $user_id );
 	}
 
@@ -103,10 +109,16 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 
 		$tables_based_progress = $this->tables_based_repository->get( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
 		if ( ! $tables_based_progress ) {
-			$tables_based_progress = $this->tables_based_repository->create(
-				$quiz_progress->get_quiz_id(),
-				$quiz_progress->get_user_id()
-			);
+			try {
+				$tables_based_progress = $this->tables_based_repository->create(
+					$quiz_progress->get_quiz_id(),
+					$quiz_progress->get_user_id()
+				);
+			} catch ( \RuntimeException $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+				error_log( 'Sensei: ' . $e->getMessage() );
+				return; // Primary save already completed; skip secondary sync.
+			}
 		}
 
 		$started_at = null;
