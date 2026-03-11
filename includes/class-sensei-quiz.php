@@ -1165,12 +1165,6 @@ class Sensei_Quiz {
 		} catch ( \RuntimeException $e ) {
 			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 			error_log( 'Sensei: ' . $e->getMessage() );
-			add_settings_error(
-				'sensei_grading',
-				'grade_create_failed',
-				__( 'Could not save quiz grades. Please try again.', 'sensei-lms' ),
-				'error'
-			);
 			return false;
 		}
 

@@ -848,12 +848,6 @@ class Sensei_Grading {
 			} catch ( \RuntimeException $e ) {
 				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
 				error_log( 'Sensei: ' . $e->getMessage() );
-				add_settings_error(
-					'sensei_grading',
-					'progress_create_failed',
-					__( 'Could not create lesson progress record. Please try again.', 'sensei-lms' ),
-					'error'
-				);
 				return false;
 			}
 		}
