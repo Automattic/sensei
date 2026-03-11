@@ -66,6 +66,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @param int                  $question_id The question ID.
 	 * @param string               $value       The answer value.
 	 *
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Answer_Interface The answer model.
 	 */
 	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer_Interface {
