@@ -37,7 +37,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @return Grade_Interface The grade.
 	 */
-	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, string $feedback = null ): Grade_Interface {
+	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface {
 		/**
 		 * Filters the submission ID when quiz grade is created.
 		 *
