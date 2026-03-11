@@ -59,11 +59,17 @@ class Comment_Reading_Aggregate_Submission_Repository implements Submission_Repo
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
+	 * @throws \RuntimeException If submission creation fails.
 	 * @return Submission_Interface The quiz submission.
 	 */
 	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
 		$submission = $this->comments_based_repository->create( $quiz_id, $user_id, $final_grade );
-		$this->tables_based_repository->create( $quiz_id, $user_id, $final_grade );
+		try {
+			$this->tables_based_repository->create( $quiz_id, $user_id, $final_grade );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+		}
 
 		return $submission;
 	}
@@ -77,6 +83,7 @@ class Comment_Reading_Aggregate_Submission_Repository implements Submission_Repo
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
+	 * @throws \RuntimeException If submission creation fails.
 	 * @return Submission_Interface The quiz submission.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
@@ -120,26 +127,31 @@ class Comment_Reading_Aggregate_Submission_Repository implements Submission_Repo
 	public function save( Submission_Interface $submission ): void {
 		$this->comments_based_repository->save( $submission );
 
-		$tables_based_submission = $this->tables_based_repository->get_or_create(
-			$submission->get_quiz_id(),
-			$submission->get_user_id(),
-			$submission->get_final_grade()
-		);
+		try {
+			$tables_based_submission = $this->tables_based_repository->get_or_create(
+				$submission->get_quiz_id(),
+				$submission->get_user_id(),
+				$submission->get_final_grade()
+			);
 
-		// Make sure the dates are in UTC.
-		$created_at = new DateTimeImmutable( '@' . $submission->get_created_at()->getTimestamp() );
-		$updated_at = new DateTimeImmutable( '@' . $submission->get_updated_at()->getTimestamp() );
+			// Make sure the dates are in UTC.
+			$created_at = new DateTimeImmutable( '@' . $submission->get_created_at()->getTimestamp() );
+			$updated_at = new DateTimeImmutable( '@' . $submission->get_updated_at()->getTimestamp() );
 
-		$submission_to_save = new Tables_Based_Submission(
-			$tables_based_submission->get_id(),
-			$submission->get_quiz_id(),
-			$submission->get_user_id(),
-			$submission->get_final_grade(),
-			$created_at,
-			$updated_at
-		);
+			$submission_to_save = new Tables_Based_Submission(
+				$tables_based_submission->get_id(),
+				$submission->get_quiz_id(),
+				$submission->get_user_id(),
+				$submission->get_final_grade(),
+				$created_at,
+				$updated_at
+			);
 
-		$this->tables_based_repository->save( $submission_to_save );
+			$this->tables_based_repository->save( $submission_to_save );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+		}
 	}
 
 	/**

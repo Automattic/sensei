@@ -65,6 +65,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
@@ -82,7 +83,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
-		$this->wpdb->insert(
+		$result           = $this->wpdb->insert(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'post_id'        => $lesson_id,
@@ -107,6 +108,10 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 				'%s',
 			]
 		);
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for logging, not display.
+			throw new \RuntimeException( sprintf( 'Failed to create lesson progress for lesson %d, user %d: %s', $lesson_id, $user_id, $this->wpdb->last_error ) );
+		}
 		$id = (int) $this->wpdb->insert_id;
 
 		$progress = new Tables_Based_Lesson_Progress(

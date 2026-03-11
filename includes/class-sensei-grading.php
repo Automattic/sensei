@@ -843,7 +843,13 @@ class Sensei_Grading {
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $quiz_lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id );
+			try {
+				$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id );
+			} catch ( \RuntimeException $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
+				error_log( 'Sensei: ' . $e->getMessage() );
+				return false;
+			}
 		}
 
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );

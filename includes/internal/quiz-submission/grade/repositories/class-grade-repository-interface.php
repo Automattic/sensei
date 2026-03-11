@@ -34,9 +34,10 @@ interface Grade_Repository_Interface {
 	 * @param int                  $points      The points.
 	 * @param string|null          $feedback    The feedback.
 	 *
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Grade_Interface The grade.
 	 */
-	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, string $feedback = null ): Grade_Interface;
+	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface;
 
 	/**
 	 * Get all grades for a quiz submission.

@@ -66,6 +66,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @param int                  $question_id The question ID.
 	 * @param string               $value       The answer value.
 	 *
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Answer_Interface The answer model.
 	 */
 	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer_Interface {
@@ -97,7 +98,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
-		$this->wpdb->insert(
+		$result = $this->wpdb->insert(
 			$this->get_table_name(),
 			[
 				'submission_id' => $submission_id,
@@ -114,6 +115,11 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 				'%s',
 			]
 		);
+
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for logging, not display.
+			throw new \RuntimeException( sprintf( 'Failed to create quiz answer for submission %d, question %d: %s', $submission_id, $question_id, $this->wpdb->last_error ) );
+		}
 
 		$answer = new Tables_Based_Answer(
 			$this->wpdb->insert_id,

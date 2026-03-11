@@ -603,8 +603,18 @@ class Sensei_Utils {
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
-			$has_questions   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
+			try {
+				$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			} catch ( \RuntimeException $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
+				error_log( 'Sensei: ' . $e->getMessage() );
+				Sensei()->notices->add_notice(
+					__( 'An error occurred while starting the lesson. Please try again.', 'sensei-lms' ),
+					'alert'
+				);
+				return false;
+			}
+			$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 			if ( $complete && $has_questions ) {
 				update_comment_meta( $lesson_progress->get_id(), 'grade', 0 );
 			}
@@ -1580,7 +1590,17 @@ class Sensei_Utils {
 
 		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
 		if ( ! $course_progress ) {
-			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+			try {
+				$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+			} catch ( \RuntimeException $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
+				error_log( 'Sensei: ' . $e->getMessage() );
+				Sensei()->notices->add_notice(
+					__( 'An error occurred while completing the course. Please try again.', 'sensei-lms' ),
+					'alert'
+				);
+				return false;
+			}
 		}
 		if ( ! $course_progress->get_started_at() ) {
 			$course_progress->start();
@@ -2668,10 +2688,20 @@ class Sensei_Utils {
 	 *
 	 * @param int $user_id The user ID.
 	 * @param int $course_id The course ID.
-	 * @return int Returns the ID of the user course progress or false on failure. The progress ID might have different meanings depending on the underlying implementation.
+	 * @return int|false Returns the ID of the user course progress or false on failure. The progress ID might have different meanings depending on the underlying implementation.
 	 */
 	public static function start_user_on_course( $user_id, $course_id ) {
-		$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+		try {
+			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+			Sensei()->notices->add_notice(
+				__( 'An error occurred while starting the course. Please try again.', 'sensei-lms' ),
+				'alert'
+			);
+			return false;
+		}
 
 		// Allow further actions.
 		$course_metadata = [

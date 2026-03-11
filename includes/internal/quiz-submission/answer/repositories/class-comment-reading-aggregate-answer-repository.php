@@ -73,13 +73,19 @@ class Comment_Reading_Aggregate_Answer_Repository implements Answer_Repository_I
 	 * @param int                  $question_id The question ID.
 	 * @param string               $value       The answer value.
 	 *
+	 * @throws \RuntimeException If answer creation fails.
 	 * @return Answer_Interface The answer model.
 	 */
 	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer_Interface {
 		$answer = $this->comments_based_repository->create( $submission, $question_id, $value );
 
-		$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
-		$this->tables_based_repository->create( $tables_based_submission, $question_id, $value );
+		try {
+			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+			$this->tables_based_repository->create( $tables_based_submission, $question_id, $value );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+		}
 
 		return $answer;
 	}
@@ -107,8 +113,13 @@ class Comment_Reading_Aggregate_Answer_Repository implements Answer_Repository_I
 	public function delete_all( Submission_Interface $submission ): void {
 		$this->comments_based_repository->delete_all( $submission );
 
-		$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
-		$this->tables_based_repository->delete_all( $tables_based_submission );
+		try {
+			$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
+			$this->tables_based_repository->delete_all( $tables_based_submission );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+		}
 	}
 
 	/**

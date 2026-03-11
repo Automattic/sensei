@@ -30,6 +30,7 @@ interface Submission_Repository_Interface {
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Submission_Interface The quiz submission.
 	 */
 	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface;
@@ -43,6 +44,7 @@ interface Submission_Repository_Interface {
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Submission_Interface The quiz submission.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface;

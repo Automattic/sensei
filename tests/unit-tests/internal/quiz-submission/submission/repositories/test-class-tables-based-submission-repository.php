@@ -31,6 +31,21 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		wp_cache_flush();
 	}
 
+	public function testCreate_InsertFails_ThrowsRuntimeException(): void {
+		/* Arrange. */
+		$wpdb             = $this->createMock( wpdb::class );
+		$wpdb->last_error = 'Duplicate entry';
+		$wpdb
+			->method( 'insert' )
+			->willReturn( false );
+		$repository = new Tables_Based_Submission_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$this->expectException( \RuntimeException::class );
+		$this->expectExceptionMessage( 'Failed to create quiz submission for quiz 1, user 2: Duplicate entry' );
+		$repository->create( 1, 2 );
+	}
+
 	public function testCreate_WhenCalled_InsertsToWpdb(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );

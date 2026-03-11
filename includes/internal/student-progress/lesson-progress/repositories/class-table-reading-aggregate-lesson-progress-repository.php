@@ -50,10 +50,16 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id   The user ID.
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
-		$this->comments_based_repository->create( $lesson_id, $user_id );
+		try {
+			$this->comments_based_repository->create( $lesson_id, $user_id );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+		}
 		return $this->tables_based_repository->create( $lesson_id, $user_id );
 	}
 
@@ -91,10 +97,16 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 			$lesson_progress->get_user_id()
 		);
 		if ( ! $comments_based_progress ) {
-			$comments_based_progress = $this->comments_based_repository->create(
-				$lesson_progress->get_lesson_id(),
-				$lesson_progress->get_user_id()
-			);
+			try {
+				$comments_based_progress = $this->comments_based_repository->create(
+					$lesson_progress->get_lesson_id(),
+					$lesson_progress->get_user_id()
+				);
+			} catch ( \RuntimeException $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging secondary store sync failure.
+				error_log( 'Sensei: ' . $e->getMessage() );
+				return; // Primary save already completed; skip secondary sync.
+			}
 		}
 
 		// If the status of the lesson progress is different from the status of the comments based lesson progress,

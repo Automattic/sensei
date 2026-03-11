@@ -65,6 +65,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Submission_Interface The quiz submission.
 	 */
 	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
@@ -83,7 +84,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
-		$this->wpdb->insert(
+		$result = $this->wpdb->insert(
 			$this->get_table_name(),
 			[
 				'quiz_id'     => $quiz_id,
@@ -100,6 +101,11 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 				'%s',
 			]
 		);
+
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for logging, not display.
+			throw new \RuntimeException( sprintf( 'Failed to create quiz submission for quiz %d, user %d: %s', $quiz_id, $user_id, $this->wpdb->last_error ) );
+		}
 
 		$submission = new Tables_Based_Submission(
 			$this->wpdb->insert_id,
@@ -126,6 +132,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Submission_Interface The quiz submission.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {

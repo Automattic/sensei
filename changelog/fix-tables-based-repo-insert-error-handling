@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Add error handling for failed database inserts in tables-based progress repositories.

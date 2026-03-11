@@ -28,6 +28,8 @@ interface Quiz_Progress_Repository_Interface {
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
+	 *
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Quiz_Progress_Interface
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface;

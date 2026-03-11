@@ -411,13 +411,35 @@ class Sensei_Quiz {
 		}
 
 		// save the user data
-		$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+		try {
+			$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+			Sensei()->notices->add_notice(
+				__( 'An error occurred while saving your answers. Please try again.', 'sensei-lms' ),
+				'alert'
+			);
+			return false;
+		}
 
 		Sensei()->quiz_grade_repository->delete_all( $submission );
 		Sensei()->quiz_answer_repository->delete_all( $submission );
 
-		foreach ( $prepared_answers as $question_id => $answer ) {
-			Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
+		// If a create() fails partway through, some answers will already be saved.
+		// On retry, the delete_all() calls above clear old data before re-inserting.
+		try {
+			foreach ( $prepared_answers as $question_id => $answer ) {
+				Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
+			}
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+			Sensei()->notices->add_notice(
+				__( 'An error occurred while saving your answers. Please try again.', 'sensei-lms' ),
+				'alert'
+			);
+			return false;
 		}
 
 		// Save transient to make retrieval faster.
@@ -951,7 +973,17 @@ class Sensei_Quiz {
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			try {
+				$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			} catch ( \RuntimeException $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
+				error_log( 'Sensei: ' . $e->getMessage() );
+				Sensei()->notices->add_notice(
+					__( 'An error occurred while submitting your quiz. Please try again.', 'sensei-lms' ),
+					'alert'
+				);
+				return false;
+			}
 		}
 
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
@@ -1123,9 +1155,17 @@ class Sensei_Quiz {
 			$answers_map[ $answer->get_question_id() ] = $answer;
 		}
 
-		foreach ( $quiz_grades as $question_id => $points ) {
-			$answer = $answers_map[ $question_id ];
-			Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
+		// If a create() fails partway through, some grades will already be saved.
+		// On retry, grade_repository->delete_all() is called before re-grading.
+		try {
+			foreach ( $quiz_grades as $question_id => $points ) {
+				$answer = $answers_map[ $question_id ];
+				Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
+			}
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+			return false;
 		}
 
 		$transient_key = 'quiz_grades_' . $user_id . '_' . $lesson_id;
@@ -2426,7 +2466,17 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$quiz_progress_repository->create( $quiz_id, $user_id );
+		try {
+			$quiz_progress_repository->create( $quiz_id, $user_id );
+		} catch ( \RuntimeException $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Logging database insert failure.
+			error_log( 'Sensei: ' . $e->getMessage() );
+			Sensei()->notices->add_notice(
+				__( 'An error occurred while loading the quiz. Please try again.', 'sensei-lms' ),
+				'alert'
+			);
+			return;
+		}
 	}
 
 	/**

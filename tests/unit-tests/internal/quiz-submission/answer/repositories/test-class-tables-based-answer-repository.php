@@ -365,6 +365,23 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		self::assertCount( 2, $fresh, 'Should have two answers after create invalidates cache.' );
 	}
 
+	public function testCreate_InsertFails_ThrowsRuntimeException(): void {
+		/* Arrange. */
+		$submission = $this->createMock( Submission_Interface::class );
+		$submission->method( 'get_id' )->willReturn( 1 );
+		$wpdb             = $this->createMock( wpdb::class );
+		$wpdb->last_error = 'Duplicate entry';
+		$wpdb
+			->method( 'insert' )
+			->willReturn( false );
+		$repository = new Tables_Based_Answer_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$this->expectException( \RuntimeException::class );
+		$this->expectExceptionMessage( 'Failed to create quiz answer for submission 1, question 2: Duplicate entry' );
+		$repository->create( $submission, 2, 'answer value' );
+	}
+
 	private function export_answer( Tables_Based_Answer $answer ): array {
 		return [
 			'id'            => $answer->get_id(),

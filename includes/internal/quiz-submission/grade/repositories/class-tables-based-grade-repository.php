@@ -67,6 +67,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 * @param int                  $points      The points.
 	 * @param string|null          $feedback    The feedback.
 	 *
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Grade_Interface The grade.
 	 */
 	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface {
@@ -98,7 +99,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		$current_date = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
 		$date_format  = 'Y-m-d H:i:s';
 
-		$this->wpdb->insert(
+		$result = $this->wpdb->insert(
 			$this->get_table_name(),
 			[
 				'answer_id'   => $answer_id,
@@ -117,6 +118,11 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 				'%s',
 			]
 		);
+
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for logging, not display.
+			throw new \RuntimeException( sprintf( 'Failed to create quiz grade for answer %d, question %d: %s', $answer_id, $question_id, $this->wpdb->last_error ) );
+		}
 
 		$grade = new Tables_Based_Grade(
 			$this->wpdb->insert_id,
