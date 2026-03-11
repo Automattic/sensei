@@ -819,7 +819,16 @@ class Sensei_Frontend {
 				case __( 'Mark as Complete', 'sensei-lms' ):
 					$course_progress = Sensei()->course_progress_repository->get( $sanitized_course_id, $current_user->ID );
 					if ( null === $course_progress ) {
-						$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
+						try {
+							$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
+						} catch ( \RuntimeException $e ) {
+							error_log( 'Sensei: ' . $e->getMessage() );
+							Sensei()->notices->add_notice(
+								__( 'An error occurred while completing the course. Please try again.', 'sensei-lms' ),
+								'alert'
+							);
+							break;
+						}
 					}
 
 					$course_lesson_ids = Sensei()->course->course_lessons( $sanitized_course_id, 'any', 'ids' );
