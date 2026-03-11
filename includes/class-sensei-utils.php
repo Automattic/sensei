@@ -2697,7 +2697,7 @@ class Sensei_Utils {
 				__( 'An error occurred while starting the course. Please try again.', 'sensei-lms' ),
 				'alert'
 			);
-			return 0;
+			return false;
 		}
 
 		// Allow further actions.
