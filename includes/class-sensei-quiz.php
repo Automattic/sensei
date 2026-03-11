@@ -411,13 +411,31 @@ class Sensei_Quiz {
 		}
 
 		// save the user data
-		$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+		try {
+			$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+		} catch ( \RuntimeException $e ) {
+			error_log( 'Sensei: ' . $e->getMessage() );
+			Sensei()->notices->add_notice(
+				__( 'An error occurred while saving your answers. Please try again.', 'sensei-lms' ),
+				'alert'
+			);
+			return false;
+		}
 
 		Sensei()->quiz_grade_repository->delete_all( $submission );
 		Sensei()->quiz_answer_repository->delete_all( $submission );
 
-		foreach ( $prepared_answers as $question_id => $answer ) {
-			Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
+		try {
+			foreach ( $prepared_answers as $question_id => $answer ) {
+				Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
+			}
+		} catch ( \RuntimeException $e ) {
+			error_log( 'Sensei: ' . $e->getMessage() );
+			Sensei()->notices->add_notice(
+				__( 'An error occurred while saving your answers. Please try again.', 'sensei-lms' ),
+				'alert'
+			);
+			return false;
 		}
 
 		// Save transient to make retrieval faster.
@@ -951,7 +969,16 @@ class Sensei_Quiz {
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			try {
+				$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			} catch ( \RuntimeException $e ) {
+				error_log( 'Sensei: ' . $e->getMessage() );
+				Sensei()->notices->add_notice(
+					__( 'An error occurred while submitting your quiz. Please try again.', 'sensei-lms' ),
+					'alert'
+				);
+				return false;
+			}
 		}
 
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
@@ -2426,7 +2453,16 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$quiz_progress_repository->create( $quiz_id, $user_id );
+		try {
+			$quiz_progress_repository->create( $quiz_id, $user_id );
+		} catch ( \RuntimeException $e ) {
+			error_log( 'Sensei: ' . $e->getMessage() );
+			Sensei()->notices->add_notice(
+				__( 'An error occurred while loading the quiz. Please try again.', 'sensei-lms' ),
+				'alert'
+			);
+			return;
+		}
 	}
 
 	/**
