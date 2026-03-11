@@ -83,7 +83,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
-		$this->wpdb->insert(
+		$result = $this->wpdb->insert(
 			$this->get_table_name(),
 			[
 				'quiz_id'     => $quiz_id,
@@ -100,6 +100,10 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 				'%s',
 			]
 		);
+
+		if ( false === $result ) {
+			throw new \RuntimeException( esc_html( sprintf( 'Failed to create quiz submission for quiz %d, user %d: %s', $quiz_id, $user_id, $this->wpdb->last_error ) ) );
+		}
 
 		$submission = new Tables_Based_Submission(
 			$this->wpdb->insert_id,
