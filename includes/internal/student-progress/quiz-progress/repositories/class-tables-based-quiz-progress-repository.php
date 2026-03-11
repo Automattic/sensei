@@ -63,6 +63,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
+	 *
 	 * @throws \RuntimeException If the database insert fails.
 	 * @return Quiz_Progress_Interface
 	 */

@@ -28,6 +28,8 @@ interface Course_Progress_Repository_Interface {
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
+	 *
+	 * @throws \RuntimeException If the database insert fails.
 	 * @return Course_Progress_Interface The course progress.
 	 */
 	public function create( int $course_id, int $user_id ): Course_Progress_Interface;
