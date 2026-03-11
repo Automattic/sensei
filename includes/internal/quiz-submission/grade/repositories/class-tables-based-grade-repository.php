@@ -98,7 +98,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		$current_date = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
 		$date_format  = 'Y-m-d H:i:s';
 
-		$this->wpdb->insert(
+		$result = $this->wpdb->insert(
 			$this->get_table_name(),
 			[
 				'answer_id'   => $answer_id,
@@ -117,6 +117,10 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 				'%s',
 			]
 		);
+
+		if ( false === $result ) {
+			throw new \RuntimeException( esc_html( sprintf( 'Failed to create quiz grade for answer %d, question %d: %s', $answer_id, $question_id, $this->wpdb->last_error ) ) );
+		}
 
 		$grade = new Tables_Based_Grade(
 			$this->wpdb->insert_id,

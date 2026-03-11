@@ -51,6 +51,23 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 	}
 
 
+	public function testCreate_InsertFails_ThrowsRuntimeException(): void {
+		/* Arrange. */
+		$submission = $this->createMock( Tables_Based_Submission::class );
+		$answer     = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
+		$wpdb             = $this->createMock( \wpdb::class );
+		$wpdb->last_error = 'Duplicate entry';
+		$wpdb
+			->method( 'insert' )
+			->willReturn( false );
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$this->expectException( \RuntimeException::class );
+		$this->expectExceptionMessage( 'Failed to create quiz grade for answer 2, question 4: Duplicate entry' );
+		$repository->create( $submission, $answer, 4, 10, 'feedback' );
+	}
+
 	public function testCreate_ParamsGiven_InsertsData(): void {
 		/* Arrange */
 		$submission = $this->createMock( Tables_Based_Submission::class );
