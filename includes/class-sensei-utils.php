@@ -2688,7 +2688,7 @@ class Sensei_Utils {
 	 *
 	 * @param int $user_id The user ID.
 	 * @param int $course_id The course ID.
-	 * @return int Returns the ID of the user course progress or false on failure. The progress ID might have different meanings depending on the underlying implementation.
+	 * @return int|false Returns the ID of the user course progress or false on failure. The progress ID might have different meanings depending on the underlying implementation.
 	 */
 	public static function start_user_on_course( $user_id, $course_id ) {
 		try {
