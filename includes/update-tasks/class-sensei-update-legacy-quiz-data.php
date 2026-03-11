@@ -19,7 +19,7 @@ class Sensei_Update_Legacy_Quiz_Data extends Sensei_Background_Job_Batch {
 	 *
 	 * @return int
 	 */
-	protected function get_batch_size() : int {
+	protected function get_batch_size(): int {
 		return 20;
 	}
 
@@ -28,7 +28,7 @@ class Sensei_Update_Legacy_Quiz_Data extends Sensei_Background_Job_Batch {
 	 *
 	 * @return bool
 	 */
-	protected function allow_multiple_instances() : bool {
+	protected function allow_multiple_instances(): bool {
 		return false;
 	}
 
@@ -39,7 +39,7 @@ class Sensei_Update_Legacy_Quiz_Data extends Sensei_Background_Job_Batch {
 	 *
 	 * @return bool Returns true if there is more to do.
 	 */
-	protected function run_batch( int $offset ) : bool {
+	protected function run_batch( int $offset ): bool {
 		$answer_comments = $this->get_legacy_answers();
 		$run_again       = count( $answer_comments ) === $this->get_batch_size();
 
@@ -55,14 +55,20 @@ class Sensei_Update_Legacy_Quiz_Data extends Sensei_Background_Job_Batch {
 			$user_id      = (int) $comment->user_id;
 			$quiz_id      = (int) get_post_meta( $question_id, '_quiz_id', true );
 			$points       = get_comment_meta( $comment_id, 'user_grade', true );
-			$submission   = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
-			$answer       = Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer_value );
+			try {
+				$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+				$answer     = Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer_value );
 
-			if ( is_numeric( $points ) ) {
-				$feedback = get_comment_meta( $comment_id, 'answer_note', true );
-				$feedback = false === $feedback ? null : $feedback;
+				if ( is_numeric( $points ) ) {
+					$feedback = get_comment_meta( $comment_id, 'answer_note', true );
+					$feedback = false === $feedback ? null : $feedback;
 
-				Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, (int) $points, $feedback );
+					Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, (int) $points, $feedback );
+				}
+			} catch ( \RuntimeException $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Background task needs to log failures.
+				error_log( 'Sensei: ' . $e->getMessage() );
+				continue;
 			}
 
 			wp_delete_comment( $comment ); // Soft delete.
@@ -76,7 +82,7 @@ class Sensei_Update_Legacy_Quiz_Data extends Sensei_Background_Job_Batch {
 	 *
 	 * @return array An array of comments holding the legacy answers.
 	 */
-	protected function get_legacy_answers() : array {
+	protected function get_legacy_answers(): array {
 		$comments = Sensei_Utils::sensei_check_for_activity(
 			array(
 				'type'   => 'sensei_user_answer',
