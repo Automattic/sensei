@@ -91,6 +91,21 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_progress( $progress ) );
 	}
 
+	public function testCreate_InsertFails_ThrowsRuntimeException(): void {
+		/* Arrange. */
+		$wpdb             = $this->createMock( wpdb::class );
+		$wpdb->last_error = 'Duplicate entry';
+		$wpdb
+			->method( 'insert' )
+			->willReturn( false );
+		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$this->expectException( \RuntimeException::class );
+		$this->expectExceptionMessage( 'Failed to create quiz progress: Duplicate entry' );
+		$repository->create( 1, 2 );
+	}
+
 	public function testGet_NotFound_ReturnsNull(): void {
 		/* Arrange. */
 		$wpdb = $this->createMock( wpdb::class );
