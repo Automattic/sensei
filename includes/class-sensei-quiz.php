@@ -426,8 +426,8 @@ class Sensei_Quiz {
 		Sensei()->quiz_grade_repository->delete_all( $submission );
 		Sensei()->quiz_answer_repository->delete_all( $submission );
 
-		// Note: A mid-loop failure may leave partial answers saved. A user retry will
-		// delete_all and re-insert, which is the correct recovery path.
+		// If a create() fails partway through, some answers will already be saved.
+		// On retry, the delete_all() calls above clear old data before re-inserting.
 		try {
 			foreach ( $prepared_answers as $question_id => $answer ) {
 				Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
@@ -1155,8 +1155,8 @@ class Sensei_Quiz {
 			$answers_map[ $answer->get_question_id() ] = $answer;
 		}
 
-		// Note: A mid-loop failure may leave partial grades saved. A retry will
-		// delete_all and re-insert, which is the correct recovery path.
+		// If a create() fails partway through, some grades will already be saved.
+		// On retry, grade_repository->delete_all() is called before re-grading.
 		try {
 			foreach ( $quiz_grades as $question_id => $points ) {
 				$answer = $answers_map[ $question_id ];
