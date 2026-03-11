@@ -103,7 +103,8 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		);
 
 		if ( false === $result ) {
-			throw new \RuntimeException( esc_html( sprintf( 'Failed to create quiz submission for quiz %d, user %d: %s', $quiz_id, $user_id, $this->wpdb->last_error ) ) );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for logging, not display.
+			throw new \RuntimeException( sprintf( 'Failed to create quiz submission for quiz %d, user %d: %s', $quiz_id, $user_id, $this->wpdb->last_error ) );
 		}
 
 		$submission = new Tables_Based_Submission(

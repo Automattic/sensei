@@ -120,7 +120,8 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		);
 
 		if ( false === $result ) {
-			throw new \RuntimeException( esc_html( sprintf( 'Failed to create quiz grade for answer %d, question %d: %s', $answer_id, $question_id, $this->wpdb->last_error ) ) );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for logging, not display.
+			throw new \RuntimeException( sprintf( 'Failed to create quiz grade for answer %d, question %d: %s', $answer_id, $question_id, $this->wpdb->last_error ) );
 		}
 
 		$grade = new Tables_Based_Grade(

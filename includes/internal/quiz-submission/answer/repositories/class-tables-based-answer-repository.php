@@ -117,7 +117,8 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		);
 
 		if ( false === $result ) {
-			throw new \RuntimeException( esc_html( sprintf( 'Failed to create quiz answer for submission %d, question %d: %s', $submission_id, $question_id, $this->wpdb->last_error ) ) );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for logging, not display.
+			throw new \RuntimeException( sprintf( 'Failed to create quiz answer for submission %d, question %d: %s', $submission_id, $question_id, $this->wpdb->last_error ) );
 		}
 
 		$answer = new Tables_Based_Answer(

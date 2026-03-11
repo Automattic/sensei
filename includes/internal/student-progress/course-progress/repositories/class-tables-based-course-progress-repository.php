@@ -108,7 +108,8 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			]
 		);
 		if ( false === $result ) {
-			throw new \RuntimeException( esc_html( sprintf( 'Failed to create course progress for course %d, user %d: %s', $course_id, $user_id, $this->wpdb->last_error ) ) );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for logging, not display.
+			throw new \RuntimeException( sprintf( 'Failed to create course progress for course %d, user %d: %s', $course_id, $user_id, $this->wpdb->last_error ) );
 		}
 		$id = (int) $this->wpdb->insert_id;
 
