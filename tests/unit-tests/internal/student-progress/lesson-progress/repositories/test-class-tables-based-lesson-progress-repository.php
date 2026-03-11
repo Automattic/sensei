@@ -103,7 +103,7 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		/* Expect & Act. */
 		$this->expectException( \RuntimeException::class );
-		$this->expectExceptionMessage( 'Failed to create lesson progress: Duplicate entry' );
+		$this->expectExceptionMessage( 'Failed to create lesson progress for lesson 1, user 2: Duplicate entry' );
 		$repository->create( 1, 2 );
 	}
 

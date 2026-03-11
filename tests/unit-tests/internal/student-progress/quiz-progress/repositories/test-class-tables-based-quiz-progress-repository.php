@@ -102,7 +102,7 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		/* Expect & Act. */
 		$this->expectException( \RuntimeException::class );
-		$this->expectExceptionMessage( 'Failed to create quiz progress: Duplicate entry' );
+		$this->expectExceptionMessage( 'Failed to create quiz progress for quiz 1, user 2: Duplicate entry' );
 		$repository->create( 1, 2 );
 	}
 

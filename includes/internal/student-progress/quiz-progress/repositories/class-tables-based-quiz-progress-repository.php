@@ -107,7 +107,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			]
 		);
 		if ( false === $result ) {
-			throw new \RuntimeException( esc_html( 'Failed to create quiz progress: ' . $this->wpdb->last_error ) );
+			throw new \RuntimeException( esc_html( sprintf( 'Failed to create quiz progress for quiz %d, user %d: %s', $quiz_id, $user_id, $this->wpdb->last_error ) ) );
 		}
 		$id = (int) $this->wpdb->insert_id;
 

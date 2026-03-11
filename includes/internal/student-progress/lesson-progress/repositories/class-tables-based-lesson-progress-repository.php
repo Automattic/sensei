@@ -109,7 +109,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			]
 		);
 		if ( false === $result ) {
-			throw new \RuntimeException( esc_html( 'Failed to create lesson progress: ' . $this->wpdb->last_error ) );
+			throw new \RuntimeException( esc_html( sprintf( 'Failed to create lesson progress for lesson %d, user %d: %s', $lesson_id, $user_id, $this->wpdb->last_error ) ) );
 		}
 		$id = (int) $this->wpdb->insert_id;
 
