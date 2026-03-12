@@ -106,7 +106,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( 1, $result['in-progress'] );
-		$this->assertSame( 0, $result['complete'] );
+		$this->assertArrayNotHasKey( 'complete', $result );
 	}
 
 	public function testCountStatuses_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
