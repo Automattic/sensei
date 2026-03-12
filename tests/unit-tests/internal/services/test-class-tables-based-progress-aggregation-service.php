@@ -36,6 +36,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$wpdb  = $GLOBALS['wpdb'];
 		$table = $wpdb->prefix . 'sensei_lms_progress';
 		$now   = current_time( 'mysql' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper inserting directly into custom table.
 		$wpdb->insert(
 			$table,
 			[
@@ -150,7 +151,10 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 		$quiz_id   = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_id, 'meta_input' => [ '_quiz_lesson' => $lesson_id ] ]
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
 		);
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
@@ -212,7 +216,10 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 		$quiz_id   = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_id, 'meta_input' => [ '_quiz_lesson' => $lesson_id ] ]
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
 		);
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
