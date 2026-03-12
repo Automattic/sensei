@@ -377,6 +377,57 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTe
 		$repository->find( $args );
 	}
 
+	public function testSave_WhenTablesCompleteAndCommentAlreadyComplete_StillCallsCompleteOnComment(): void {
+		/* Arrange. */
+		$date_mock = new \DateTimeImmutable( '2020-01-01' );
+
+		// Create a lesson with quiz questions meta so Comments_Based_Lesson_Progress::complete()
+		// sets the status to 'passed' instead of 'complete'.
+		$lesson_id = $this->factory->post->create(
+			array( 'post_type' => 'lesson' )
+		);
+		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
+
+		// Tables-based progress has status 'complete'.
+		$tables_based_progress = new Tables_Based_Lesson_Progress( 3, $lesson_id, 2, 'complete', $date_mock, $date_mock, $date_mock, $date_mock );
+
+		// Comments-based progress also has raw status 'complete'.
+		// Since get_status() normalizes 'complete' to 'complete', both statuses match.
+		// Before the fix, the sync would be skipped, and the comment would keep 'complete'
+		// instead of being updated to 'passed'.
+		$comments_based_progress = new Comments_Based_Lesson_Progress( 4, $lesson_id, 2, 'complete', $date_mock, $date_mock, $date_mock, $date_mock );
+
+		$comments_based_repository = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
+		$comments_based_repository
+			->method( 'get' )
+			->with( $lesson_id, 2 )
+			->willReturn( $comments_based_progress );
+
+		$tables_based_repository = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
+
+		$repository = new Table_Reading_Aggregate_Lesson_Progress_Repository( $comments_based_repository, $tables_based_repository );
+
+		/* Act. */
+		$comments_based_repository
+			->expects( $this->once() )
+			->method( 'save' )
+			->with(
+				$this->callback(
+					function ( Lesson_Progress_Interface $progress ) {
+						// Use reflection to get the raw underlying status,
+						// since get_status() normalizes 'passed' to 'complete'.
+						$reflection_class    = new \ReflectionClass( Comments_Based_Lesson_Progress::class );
+						$reflection_property = $reflection_class->getProperty( 'status' );
+						$reflection_property->setAccessible( true );
+						$raw_status = $reflection_property->getValue( $progress );
+
+						return 'passed' === $raw_status;
+					}
+				)
+			);
+		$repository->save( $tables_based_progress );
+	}
+
 	public function testFind_Never_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );

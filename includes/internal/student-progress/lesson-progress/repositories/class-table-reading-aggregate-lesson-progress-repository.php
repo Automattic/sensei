@@ -97,16 +97,16 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 			);
 		}
 
-		// If the status of the lesson progress is different from the status of the comments based lesson progress,
-		// update the comments based lesson progress to match the status of the lesson progress.
-		// We can't just use the status of the lesson progress because the comments based lesson lesson_progress
-		// has a different underlying set of statuses.
-		if ( $lesson_progress->get_status() !== $comments_based_progress->get_status() ) {
-			if ( $lesson_progress->is_complete() ) {
-				$comments_based_progress->complete();
-			} else {
-				$comments_based_progress->start();
-			}
+		// Always sync the status from the tables-based progress to the comments-based progress.
+		// We can't just use the status of the lesson progress because the comments based lesson progress
+		// has a different underlying set of statuses (e.g. 'passed' for quizzed lessons).
+		// We must always call complete() or start() rather than comparing normalized statuses,
+		// because Comments_Based_Lesson_Progress::get_status() normalizes 'passed' to 'complete',
+		// which would cause the comparison to short-circuit and skip the sync.
+		if ( $lesson_progress->is_complete() ) {
+			$comments_based_progress->complete();
+		} else {
+			$comments_based_progress->start();
 		}
 
 		// Use reflection to get underlying status value.
