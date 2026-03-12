@@ -140,6 +140,107 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $result['in-progress'] );
 	}
 
+	public function testCountStatuses_LessonWithQuiz_UsesQuizStatusInsteadOfLessonStatus(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[ 'post_parent' => $lesson_id, 'meta_input' => [ '_quiz_lesson' => $lesson_id ] ]
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'graded', $lesson_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'    => 'lesson',
+				'post_id' => $lesson_id,
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['graded'] );
+		$this->assertArrayNotHasKey( 'complete', $result, 'Quiz status should replace lesson status, not add to it.' );
+	}
+
+	public function testCountStatuses_LessonWithoutQuiz_ReturnsOnlyLessonStatuses(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'    => 'lesson',
+				'post_id' => $lesson_id,
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['in-progress'] );
+		$this->assertArrayNotHasKey( 'graded', $result );
+		$this->assertArrayNotHasKey( 'passed', $result );
+	}
+
+	public function testCountStatuses_LessonWithMultipleQuizStatuses_CountsAll(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$user3     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[ 'post_parent' => $lesson_id, 'meta_input' => [ '_quiz_lesson' => $lesson_id ] ]
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $quiz_id, $user1, 'quiz', 'graded', $lesson_id );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $quiz_id, $user2, 'quiz', 'passed', $lesson_id );
+		$this->insert_progress( $lesson_id, $user3, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $quiz_id, $user3, 'quiz', 'ungraded', $lesson_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'    => 'lesson',
+				'post_id' => $lesson_id,
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['graded'] );
+		$this->assertSame( 1, $result['passed'] );
+		$this->assertSame( 1, $result['ungraded'] );
+		$this->assertArrayNotHasKey( 'complete', $result );
+		$this->assertArrayNotHasKey( 'in-progress', $result );
+	}
+
 	public function testCountStatuses_WithIncludeStatusesOverride_KeepsExcludedUsersForOverrideStatuses(): void {
 		/* Arrange. */
 		global $wpdb;
