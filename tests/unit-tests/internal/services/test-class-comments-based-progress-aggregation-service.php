@@ -23,6 +23,29 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$this->sensei_factory = new \Sensei_Factory();
 	}
 
+	/**
+	 * Insert a quiz submission row directly into the HPPS quiz submissions table.
+	 *
+	 * @param int $quiz_id The quiz post ID.
+	 * @param int $user_id The user ID.
+	 */
+	private function insert_quiz_submission( int $quiz_id, int $user_id ): void {
+		$wpdb  = $GLOBALS['wpdb'];
+		$table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
+		$now   = current_time( 'mysql' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper inserting directly into custom table.
+		$wpdb->insert(
+			$table,
+			[
+				'quiz_id'    => $quiz_id,
+				'user_id'    => $user_id,
+				'created_at' => $now,
+				'updated_at' => $now,
+			],
+			[ '%d', '%d', '%s', '%s' ]
+		);
+	}
+
 	public function testCountStatuses_LessonType_ReturnsStatusCounts(): void {
 		/* Arrange. */
 		global $wpdb;
@@ -109,6 +132,76 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		/* Assert. */
 		$this->assertSame( 1, $result['in-progress'] );
+	}
+
+	public function testCountStatuses_LessonWithQuizStatusAndSubmission_UsesQuizStatus(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
+		$this->insert_quiz_submission( $quiz_id, $user_id );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'    => 'lesson',
+				'post_id' => $lesson_id,
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['passed'] );
+		$this->assertArrayNotHasKey( 'complete', $result );
+	}
+
+	public function testCountStatuses_LessonWithQuizStatusButNoSubmission_ReclassifiesAsComplete(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		// Comment says 'passed' but no quiz submission exists.
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'    => 'lesson',
+				'post_id' => $lesson_id,
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['complete'], 'Quiz status without submission should be reclassified as complete.' );
+		$this->assertArrayNotHasKey( 'passed', $result, 'Quiz status without submission should not count as graded.' );
 	}
 
 	public function testCountStatuses_WithIncludeStatusesOverride_KeepsExcludedUsersForOverrideStatuses(): void {
