@@ -68,12 +68,10 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	}
 
 	/**
-	 * Count lesson statuses, falling back to 'complete' for quiz statuses without a submission.
+	 * Count lesson statuses.
 	 *
-	 * Lesson comments may have quiz-derived statuses (passed, graded, failed) even when no
-	 * quiz submission exists (e.g. quiz answers were lost or quiz was added after completion).
-	 * This method uses CASE to reclassify those as 'complete' so that lessons without actual
-	 * quiz data are not counted in the Graded bucket.
+	 * In comments-based storage, lesson comment statuses are set at the time of
+	 * grading, so they can be counted directly without reclassification.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -81,20 +79,10 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 * @return array Associative array of status => count.
 	 */
 	private function count_lesson_statuses( array $args ): array {
-		$wpdb              = $this->wpdb;
-		$submissions_table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
+		$wpdb = $this->wpdb;
 
-		$quiz_statuses = "'passed', 'graded', 'failed'";
-
-		// Use CASE to reclassify quiz statuses as 'complete' when no quiz submission exists.
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix. Status literals are hardcoded.
-		$query = "SELECT CASE WHEN c.comment_approved IN ( {$quiz_statuses} )";
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query .= " AND NOT EXISTS ( SELECT 1 FROM {$submissions_table} qs";
-		$query .= " INNER JOIN {$wpdb->postmeta} pm ON qs.quiz_id = pm.meta_value AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
-		$query .= ' WHERE pm.post_id = c.comment_post_ID AND qs.user_id = c.user_id )';
-		$query .= " THEN 'complete' ELSE c.comment_approved END AS effective_status, COUNT( * ) AS total";
-		$query .= $wpdb->prepare( " FROM {$wpdb->comments} c WHERE c.comment_type = %s", 'sensei_lesson_status' );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb.
+		$query = $wpdb->prepare( "SELECT c.comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} c WHERE c.comment_type = %s", 'sensei_lesson_status' );
 
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
@@ -104,14 +92,14 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			$query .= $args['query'];
 		}
 
-		$query .= ' GROUP BY effective_status';
+		$query .= ' GROUP BY c.comment_approved';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
 
 		$counts = [];
 		foreach ( $results as $row ) {
-			$counts[ $row['effective_status'] ] = (int) $row['total'];
+			$counts[ $row['comment_approved'] ] = (int) $row['total'];
 		}
 
 		return $counts;
