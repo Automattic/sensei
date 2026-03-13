@@ -56,15 +56,15 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 		$wpdb = $this->wpdb;
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are from wpdb.
-		$lessons_query = "SELECT cm.comment_post_id lesson_id, MAX(cm.comment_date_gmt) as comment_date_gmt
-			FROM {$wpdb->comments} cm
-			WHERE cm.comment_approved IN ('complete', 'passed', 'graded')
-			AND cm.comment_type = 'sensei_lesson_status'
-			GROUP BY cm.comment_post_id";
+		$lessons_query = "SELECT c.comment_post_id lesson_id, MAX(c.comment_date_gmt) as comment_date_gmt
+			FROM {$wpdb->comments} c
+			WHERE c.comment_approved IN ('complete', 'passed', 'graded')
+			AND c.comment_type = 'sensei_lesson_status'
+			GROUP BY c.comment_post_id";
 
-		$course_query = "SELECT DISTINCT pm.meta_value AS course_id, cm.comment_date_gmt
-		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) cm
-		ON cm.lesson_id = pm.post_id
+		$course_query = "SELECT pm.meta_value AS course_id, MAX(lq.comment_date_gmt) AS comment_date_gmt
+		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) lq
+		ON lq.lesson_id = pm.post_id
 		AND pm.meta_key = '_lesson_course'
 		GROUP BY pm.meta_value
 		";

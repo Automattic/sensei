@@ -69,15 +69,15 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		$wpdb = $this->wpdb;
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are constructed from wpdb prefix.
-		$lessons_query = "SELECT lp.post_id AS lesson_id, MAX(lp.updated_at) AS last_activity_date
-			FROM {$progress_table} lp
-			WHERE lp.type = 'lesson'
-			AND lp.status IN ('complete', 'passed', 'graded')
-			GROUP BY lp.post_id";
+		$lessons_query = "SELECT p.post_id AS lesson_id, MAX(p.updated_at) AS last_activity_date
+			FROM {$progress_table} p
+			WHERE p.type = 'lesson'
+			AND p.status IN ('complete', 'passed', 'graded')
+			GROUP BY p.post_id";
 
-		$course_query = "SELECT DISTINCT pm.meta_value AS course_id, lp.last_activity_date
+		$course_query = "SELECT pm.meta_value AS course_id, MAX(lq.last_activity_date) AS last_activity_date
 			FROM {$wpdb->postmeta} pm
-			JOIN ({$lessons_query}) lp ON lp.lesson_id = pm.post_id
+			JOIN ({$lessons_query}) lq ON lq.lesson_id = pm.post_id
 			AND pm.meta_key = '_lesson_course'
 			GROUP BY pm.meta_value";
 
