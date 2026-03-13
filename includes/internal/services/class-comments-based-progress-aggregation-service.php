@@ -91,8 +91,8 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$query = "SELECT CASE WHEN c.comment_approved IN ( {$quiz_statuses} )";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " AND NOT EXISTS ( SELECT 1 FROM {$submissions_table} qs";
-		$query .= " INNER JOIN {$wpdb->postmeta} pm ON pm.post_id = c.comment_post_ID AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
-		$query .= ' WHERE qs.quiz_id = pm.meta_value AND qs.user_id = c.user_id )';
+		$query .= " INNER JOIN {$wpdb->postmeta} pm ON qs.quiz_id = pm.meta_value AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
+		$query .= ' WHERE pm.post_id = c.comment_post_ID AND qs.user_id = c.user_id )';
 		$query .= " THEN 'complete' ELSE c.comment_approved END AS effective_status, COUNT( * ) AS total";
 		$query .= $wpdb->prepare( " FROM {$wpdb->comments} c WHERE c.comment_type = %s", 'sensei_lesson_status' );
 
