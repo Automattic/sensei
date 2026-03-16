@@ -133,6 +133,65 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertArrayNotHasKey( 'complete', $result );
 	}
 
+	public function testCountStatuses_WithPostInArray_FiltersToSpecifiedPosts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson1   = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$lesson2   = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$this->insert_progress( $lesson1, $user_id, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $lesson2, $user_id, 'lesson', 'complete', $course_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'     => 'lesson',
+				'post__in' => [ $lesson1 ],
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['complete'] );
+	}
+
+	public function testCountStatuses_WithUserIdArray_FiltersToSpecifiedUsers(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete', $course_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'    => 'lesson',
+				'post_id' => $lesson_id,
+				'user_id' => [ $user1 ],
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['complete'] );
+	}
+
 	public function testCountStatuses_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
 		/* Arrange. */
 		global $wpdb;

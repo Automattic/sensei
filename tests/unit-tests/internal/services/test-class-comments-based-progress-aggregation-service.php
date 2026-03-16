@@ -137,6 +137,65 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$this->assertSame( 1, $result['passed'] );
 	}
 
+	public function testCountStatuses_WithPostInArray_FiltersToSpecifiedPosts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson1   = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$lesson2   = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson1, 'complete' );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson2, 'complete' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'     => 'lesson',
+				'post__in' => [ $lesson1 ],
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['complete'] );
+	}
+
+	public function testCountStatuses_WithUserIdArray_FiltersToSpecifiedUsers(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'complete' );
+		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'complete' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'    => 'lesson',
+				'post_id' => $lesson_id,
+				'user_id' => [ $user1 ],
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['complete'] );
+	}
+
 	public function testCountStatuses_WithIncludeStatusesOverride_KeepsExcludedUsersForOverrideStatuses(): void {
 		/* Arrange. */
 		global $wpdb;
