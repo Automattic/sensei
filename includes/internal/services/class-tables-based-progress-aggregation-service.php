@@ -76,7 +76,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			return $this->count_lesson_statuses_with_quiz( $args );
 		}
 
-		return $this->count_progress_statuses( $args );
+		return $this->count_course_statuses( $args );
 	}
 
 	/**
@@ -101,10 +101,9 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$submissions_table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query  = "SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT(*) AS total FROM {$table} p";
+		$query  = "SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
 		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status != 'trash'";
 		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
-		$query .= " AND EXISTS ( SELECT 1 FROM {$wpdb->postmeta} hq WHERE hq.post_id = p.post_id AND hq.meta_key = '_quiz_has_questions' AND hq.meta_value = '1' )";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
 		$query .= " AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )";
@@ -129,14 +128,14 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
-	 * Count progress records grouped by status.
+	 * Count course statuses.
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @param array $args Query arguments (see count_statuses).
 	 * @return array Associative array of status => count.
 	 */
-	private function count_progress_statuses( array $args ): array {
+	private function count_course_statuses( array $args ): array {
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
 
