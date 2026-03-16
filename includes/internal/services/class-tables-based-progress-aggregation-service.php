@@ -70,6 +70,14 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @return array Associative array of status => count.
 	 */
 	public function count_statuses( array $args ): array {
+		if ( ! empty( $args['query'] ) ) {
+			_doing_it_wrong(
+				__METHOD__,
+				'The "query" argument is not supported with tables-based progress storage. Use "exclude_user_login_prefixes" and "include_statuses_override" instead.',
+				'$$next-version$$'
+			);
+		}
+
 		// For lesson queries, use the quiz status when available (graded, passed, etc.)
 		// since lesson progress only stores 'in-progress' and 'complete'.
 		if ( 'lesson' === $args['type'] ) {
@@ -196,7 +204,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	private function build_user_filter_clause( array $args ): string {
 		$wpdb = $this->wpdb;
 
-		if ( isset( $args['user_id'] ) && is_array( $args['user_id'] ) ) {
+		if ( ! empty( $args['user_id'] ) && is_array( $args['user_id'] ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['user_id'] ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
 			return $wpdb->prepare( " AND p.user_id IN ( $placeholders )", $args['user_id'] );
@@ -254,6 +262,11 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @return int[] Matching user IDs.
 	 */
 	private function get_user_ids_by_login_prefixes( array $prefixes ): array {
+		$prefixes = array_filter( $prefixes );
+		if ( empty( $prefixes ) ) {
+			return [];
+		}
+
 		$wpdb = $this->wpdb;
 
 		$like_clauses = [];

@@ -122,7 +122,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	private function build_user_filter_clause( array $args ): string {
 		$wpdb = $this->wpdb;
 
-		if ( isset( $args['user_id'] ) && is_array( $args['user_id'] ) ) {
+		if ( ! empty( $args['user_id'] ) && is_array( $args['user_id'] ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['user_id'] ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
 			return $wpdb->prepare( " AND user_id IN ( $placeholders )", $args['user_id'] );
@@ -148,9 +148,14 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			return '';
 		}
 
+		$prefixes = array_filter( $args['exclude_user_login_prefixes'] );
+		if ( empty( $prefixes ) ) {
+			return '';
+		}
+
 		$wpdb             = $this->wpdb;
 		$not_like_clauses = [];
-		foreach ( $args['exclude_user_login_prefixes'] as $prefix ) {
+		foreach ( $prefixes as $prefix ) {
 			$escaped_prefix     = $wpdb->esc_like( $prefix );
 			$not_like_clauses[] = $wpdb->prepare( 'comment_author NOT LIKE %s', $escaped_prefix . '%' );
 		}
