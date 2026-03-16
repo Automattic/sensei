@@ -68,12 +68,14 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 
 		$wpdb = $this->wpdb;
 
+		// For each lesson, find the most recent completion date across all students.
 		$lessons_query = "SELECT p.post_id AS lesson_id, MAX(p.updated_at) AS last_activity_date
 			FROM {$progress_table} p
 			WHERE p.type = 'lesson'
-			AND p.status IN ('complete', 'passed', 'graded')
+			AND p.status = 'complete'
 			GROUP BY p.post_id";
 
+		// Map lessons to courses via postmeta, then take the most recent completion date across all lessons per course.
 		$course_query = "SELECT pm.meta_value AS course_id, MAX(lq.last_activity_date) AS last_activity_date
 			FROM {$wpdb->postmeta} pm
 			JOIN ({$lessons_query}) lq ON lq.lesson_id = pm.post_id
@@ -82,6 +84,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 
 		$clauses['fields'] .= ', la.last_activity_date AS last_activity_date';
 		$clauses['join']   .= " LEFT JOIN ({$course_query}) AS la ON la.course_id = {$wpdb->posts}.ID";
+
 		return $clauses;
 	}
 
@@ -106,6 +109,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		$clauses['join']    .= " AND cp.type = 'course'";
 		$clauses['join']    .= " AND cp.status = 'complete'";
 		$clauses['groupby'] .= " {$this->wpdb->posts}.ID";
+
 		return $clauses;
 	}
 

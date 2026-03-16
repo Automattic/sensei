@@ -70,6 +70,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 
 		$clauses['fields'] .= ', la.comment_date_gmt AS last_activity_date';
 		$clauses['join']   .= " LEFT JOIN ({$course_query}) AS la ON la.course_id = {$wpdb->posts}.ID";
+
 		return $clauses;
 	}
 
