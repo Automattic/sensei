@@ -60,29 +60,11 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 * @return array Associative array of status => count.
 	 */
 	public function count_statuses( array $args ): array {
-		if ( 'lesson' === $args['type'] ) {
-			return $this->count_lesson_statuses( $args );
-		}
-
-		return $this->count_generic_statuses( $args );
-	}
-
-	/**
-	 * Count lesson statuses.
-	 *
-	 * In comments-based storage, lesson comment statuses are set at the time of
-	 * grading, so they can be counted directly without reclassification.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Query arguments (see count_statuses).
-	 * @return array Associative array of status => count.
-	 */
-	private function count_lesson_statuses( array $args ): array {
-		$wpdb = $this->wpdb;
+		$wpdb         = $this->wpdb;
+		$comment_type = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb.
-		$query = $wpdb->prepare( "SELECT c.comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} c WHERE c.comment_type = %s", 'sensei_lesson_status' );
+		$query = $wpdb->prepare( "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s", $comment_type );
 
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
@@ -92,42 +74,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			$query .= $args['query'];
 		}
 
-		$query .= ' GROUP BY c.comment_approved';
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
-		$results = (array) $wpdb->get_results( $query, ARRAY_A );
-
-		$counts = [];
-		foreach ( $results as $row ) {
-			$counts[ $row['comment_approved'] ] = (int) $row['total'];
-		}
-
-		return $counts;
-	}
-
-	/**
-	 * Count progress records grouped by status for non-lesson types.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Query arguments (see count_statuses).
-	 * @return array Associative array of status => count.
-	 */
-	private function count_generic_statuses( array $args ): array {
-		$wpdb = $this->wpdb;
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb.
-		$query = $wpdb->prepare( "SELECT c.comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} c WHERE c.comment_type = %s", 'sensei_course_status' );
-
-		$query .= $this->build_post_filter_clause( $args );
-		$query .= $this->build_user_filter_clause( $args );
-		$query .= $this->build_user_exclusion_clause( $args );
-
-		if ( isset( $args['query'] ) ) {
-			$query .= $args['query'];
-		}
-
-		$query .= ' GROUP BY c.comment_approved';
+		$query .= ' GROUP BY comment_approved';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
@@ -154,11 +101,11 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		if ( ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			return $wpdb->prepare( " AND c.comment_post_ID IN ( $placeholders )", $args['post__in'] );
+			return $wpdb->prepare( " AND comment_post_ID IN ( $placeholders )", $args['post__in'] );
 		}
 
 		if ( ! empty( $args['post_id'] ) ) {
-			return $wpdb->prepare( ' AND c.comment_post_ID = %d', $args['post_id'] );
+			return $wpdb->prepare( ' AND comment_post_ID = %d', $args['post_id'] );
 		}
 
 		return '';
@@ -178,11 +125,11 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		if ( isset( $args['user_id'] ) && is_array( $args['user_id'] ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['user_id'] ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			return $wpdb->prepare( " AND c.user_id IN ( $placeholders )", $args['user_id'] );
+			return $wpdb->prepare( " AND user_id IN ( $placeholders )", $args['user_id'] );
 		}
 
 		if ( ! empty( $args['user_id'] ) ) {
-			return $wpdb->prepare( ' AND c.user_id = %d', $args['user_id'] );
+			return $wpdb->prepare( ' AND user_id = %d', $args['user_id'] );
 		}
 
 		return '';
@@ -205,7 +152,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$not_like_clauses = [];
 		foreach ( $args['exclude_user_login_prefixes'] as $prefix ) {
 			$escaped_prefix     = $wpdb->esc_like( $prefix );
-			$not_like_clauses[] = $wpdb->prepare( 'c.comment_author NOT LIKE %s', $escaped_prefix . '%' );
+			$not_like_clauses[] = $wpdb->prepare( 'comment_author NOT LIKE %s', $escaped_prefix . '%' );
 		}
 
 		$exclusion_sql = '( ' . implode( ' AND ', $not_like_clauses ) . ' )';
@@ -213,7 +160,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		if ( ! empty( $args['include_statuses_override'] ) ) {
 			$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			$override_sql = $wpdb->prepare( "c.comment_approved IN ( $status_placeholders )", $args['include_statuses_override'] );
+			$override_sql = $wpdb->prepare( "comment_approved IN ( $status_placeholders )", $args['include_statuses_override'] );
 			return " AND ( $exclusion_sql OR $override_sql )";
 		}
 
