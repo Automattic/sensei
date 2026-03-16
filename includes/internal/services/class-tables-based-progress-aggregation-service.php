@@ -78,6 +78,10 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			);
 		}
 
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			return array();
+		}
+
 		// For lesson queries, use the quiz status when available (graded, passed, etc.)
 		// since lesson progress only stores 'in-progress' and 'complete'.
 		if ( 'lesson' === $args['type'] ) {

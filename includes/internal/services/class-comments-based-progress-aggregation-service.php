@@ -60,6 +60,10 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 * @return array Associative array of status => count.
 	 */
 	public function count_statuses( array $args ): array {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			return array();
+		}
+
 		$wpdb         = $this->wpdb;
 		$comment_type = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
 
