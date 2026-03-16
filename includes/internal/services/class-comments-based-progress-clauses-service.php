@@ -115,7 +115,6 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	public function filter_courses_by_last_activity( array $clauses, string $from = '', string $to = '' ): array {
 		$wpdb = $this->wpdb;
 
-		// Filter by start date.
 		if ( $from ) {
 			$clauses['where'] .= $wpdb->prepare(
 				' AND la.comment_date_gmt >= %s',
@@ -123,7 +122,6 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 			);
 		}
 
-		// Filter by end date.
 		if ( $to ) {
 			$clauses['where'] .= $wpdb->prepare(
 				' AND la.comment_date_gmt <= %s',

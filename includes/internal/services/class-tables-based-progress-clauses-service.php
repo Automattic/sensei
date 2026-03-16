@@ -128,7 +128,6 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	public function filter_courses_by_last_activity( array $clauses, string $from = '', string $to = '' ): array {
 		$wpdb = $this->wpdb;
 
-		// Filter by start date.
 		if ( $from ) {
 			$clauses['where'] .= $wpdb->prepare(
 				' AND la.last_activity_date >= %s',
@@ -136,7 +135,6 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 			);
 		}
 
-		// Filter by end date.
 		if ( $to ) {
 			$clauses['where'] .= $wpdb->prepare(
 				' AND la.last_activity_date <= %s',

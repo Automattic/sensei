@@ -1,4 +1,7 @@
 <?php
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -19,15 +22,24 @@ class Sensei_Grading {
 	public $page_slug;
 
 	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface|null
+	 */
+	private ?Progress_Aggregation_Service_Interface $aggregation_service = null;
+
+	/**
 	 * Constructor
 	 *
 	 * @since  1.3.0
 	 *
-	 * @param $file
+	 * @param string                                      $file                The main plugin file path.
+	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service The progress aggregation service.
 	 */
-	public function __construct( $file ) {
-		$this->file      = $file;
-		$this->page_slug = 'sensei_grading';
+	public function __construct( $file, ?Progress_Aggregation_Service_Interface $aggregation_service = null ) {
+		$this->aggregation_service = $aggregation_service;
+		$this->file                = $file;
+		$this->page_slug           = 'sensei_grading';
 
 		// Admin functions
 		if ( is_admin() ) {
@@ -562,9 +574,10 @@ class Sensei_Grading {
 		$counts    = wp_cache_get( $cache_key, 'counts' );
 
 		if ( false === $counts ) {
-			$factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory();
-			$service = $factory->create_aggregation_service();
-			$counts  = $service->count_statuses( $args );
+			if ( null === $this->aggregation_service ) {
+				$this->aggregation_service = ( new Progress_Query_Service_Factory() )->create_aggregation_service();
+			}
+			$counts = $this->aggregation_service->count_statuses( $args );
 			wp_cache_set( $cache_key, $counts, 'counts' );
 		}
 
