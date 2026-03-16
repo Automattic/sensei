@@ -76,8 +76,8 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['in-progress'] );
-		$this->assertArrayNotHasKey( 'complete', $result );
+		$this->assertSame( 1, $result['in-progress'], 'Expected filtered post to have in-progress status.' );
+		$this->assertArrayNotHasKey( 'complete', $result, 'Excluded post status should not appear.' );
 	}
 
 	public function testCountStatuses_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
@@ -94,7 +94,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		);
 
 		\Sensei_Utils::update_lesson_status( $regular_user, $lesson_id, 'in-progress' );
-		\Sensei_Utils::update_lesson_status( $guest_user, $lesson_id, 'in-progress' );
+		\Sensei_Utils::update_lesson_status( $guest_user, $lesson_id, 'complete' );
 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -108,7 +108,8 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['in-progress'] );
+		$this->assertSame( 1, $result['in-progress'], 'Expected regular user to have in-progress status.' );
+		$this->assertArrayNotHasKey( 'complete', $result, 'Excluded guest user status should not appear.' );
 	}
 
 	public function testCountStatuses_LessonWithQuizStatus_CountsDirectly(): void {
@@ -151,7 +152,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		);
 
 		\Sensei_Utils::update_lesson_status( $user_id, $lesson1, 'complete' );
-		\Sensei_Utils::update_lesson_status( $user_id, $lesson2, 'complete' );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson2, 'in-progress' );
 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -164,7 +165,8 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['complete'] );
+		$this->assertSame( 1, $result['complete'], 'Expected filtered post to have complete status.' );
+		$this->assertArrayNotHasKey( 'in-progress', $result, 'Excluded post status should not appear.' );
 	}
 
 	public function testCountStatuses_WithUserIdArray_FiltersToSpecifiedUsers(): void {
@@ -179,7 +181,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		);
 
 		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'complete' );
-		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'complete' );
+		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'in-progress' );
 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -193,7 +195,8 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['complete'] );
+		$this->assertSame( 1, $result['complete'], 'Expected filtered user to have complete status.' );
+		$this->assertArrayNotHasKey( 'in-progress', $result, 'Excluded user status should not appear.' );
 	}
 
 	public function testCountStatuses_WithIncludeStatusesOverride_KeepsExcludedUsersForOverrideStatuses(): void {
@@ -225,7 +228,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['in-progress'] );
-		$this->assertSame( 1, $result['ungraded'] );
+		$this->assertSame( 1, $result['in-progress'], 'Regular user status should be counted.' );
+		$this->assertSame( 1, $result['ungraded'], 'Excluded user with override status should still be counted.' );
 	}
 }

@@ -129,8 +129,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['in-progress'] );
-		$this->assertArrayNotHasKey( 'complete', $result );
+		$this->assertSame( 1, $result['in-progress'], 'Expected filtered post to have in-progress status.' );
+		$this->assertArrayNotHasKey( 'complete', $result, 'Excluded post status should not appear.' );
 	}
 
 	public function testCountStatuses_WithPostInArray_FiltersToSpecifiedPosts(): void {
@@ -147,7 +147,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		$this->insert_progress( $lesson1, $user_id, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $lesson2, $user_id, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $lesson2, $user_id, 'lesson', 'in-progress', $course_id );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -160,7 +160,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['complete'] );
+		$this->assertSame( 1, $result['complete'], 'Expected filtered post to have complete status.' );
+		$this->assertArrayNotHasKey( 'in-progress', $result, 'Excluded post status should not appear.' );
 	}
 
 	public function testCountStatuses_WithUserIdArray_FiltersToSpecifiedUsers(): void {
@@ -175,7 +176,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -189,7 +190,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['complete'] );
+		$this->assertSame( 1, $result['complete'], 'Expected filtered user to have complete status.' );
+		$this->assertArrayNotHasKey( 'in-progress', $result, 'Excluded user status should not appear.' );
 	}
 
 	public function testCountStatuses_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
@@ -206,7 +208,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		$this->insert_progress( $lesson_id, $regular_user, 'lesson', 'in-progress', $course_id );
-		$this->insert_progress( $lesson_id, $guest_user, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson_id, $guest_user, 'lesson', 'complete', $course_id );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -220,7 +222,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['in-progress'] );
+		$this->assertSame( 1, $result['in-progress'], 'Expected regular user to have in-progress status.' );
+		$this->assertArrayNotHasKey( 'complete', $result, 'Excluded guest user status should not appear.' );
 	}
 
 	public function testCountStatuses_LessonWithQuiz_UsesQuizStatusInsteadOfLessonStatus(): void {
@@ -283,9 +286,9 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['in-progress'] );
-		$this->assertArrayNotHasKey( 'graded', $result );
-		$this->assertArrayNotHasKey( 'passed', $result );
+		$this->assertSame( 1, $result['in-progress'], 'Expected lesson without quiz to have in-progress status.' );
+		$this->assertArrayNotHasKey( 'graded', $result, 'Quiz status should not appear for lesson without quiz.' );
+		$this->assertArrayNotHasKey( 'passed', $result, 'Quiz status should not appear for lesson without quiz.' );
 	}
 
 	public function testCountStatuses_LessonWithMultipleQuizStatuses_CountsAll(): void {
@@ -329,11 +332,11 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['graded'] );
-		$this->assertSame( 1, $result['passed'] );
-		$this->assertSame( 1, $result['ungraded'] );
-		$this->assertArrayNotHasKey( 'complete', $result );
-		$this->assertArrayNotHasKey( 'in-progress', $result );
+		$this->assertSame( 1, $result['graded'], 'Expected one graded quiz status.' );
+		$this->assertSame( 1, $result['passed'], 'Expected one passed quiz status.' );
+		$this->assertSame( 1, $result['ungraded'], 'Expected one ungraded quiz status.' );
+		$this->assertArrayNotHasKey( 'complete', $result, 'Raw lesson status should not appear when quiz status exists.' );
+		$this->assertArrayNotHasKey( 'in-progress', $result, 'Raw lesson status should not appear when quiz status exists.' );
 	}
 
 	public function testCountStatuses_WithIncludeStatusesOverride_KeepsExcludedUsersForOverrideStatuses(): void {
@@ -365,8 +368,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['in-progress'] );
-		$this->assertSame( 1, $result['ungraded'] );
+		$this->assertSame( 1, $result['in-progress'], 'Regular user status should be counted.' );
+		$this->assertSame( 1, $result['ungraded'], 'Excluded user with override status should still be counted.' );
 	}
 
 	public function testCountStatuses_LessonWithQuizButNoSubmission_UsesLessonStatus(): void {
@@ -451,8 +454,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['in-progress'] );
-		$this->assertSame( 1, $result['complete'] );
+		$this->assertSame( 1, $result['in-progress'], 'Expected one in-progress course.' );
+		$this->assertSame( 1, $result['complete'], 'Expected one complete course.' );
 	}
 
 	public function testCountStatuses_TrashedCourse_ExcludedFromCounts(): void {
@@ -464,7 +467,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$course2 = $this->sensei_factory->course->create();
 
 		$this->insert_progress( $course1, $user_id, 'course', 'complete' );
-		$this->insert_progress( $course2, $user_id, 'course', 'complete' );
+		$this->insert_progress( $course2, $user_id, 'course', 'in-progress' );
 
 		wp_trash_post( $course2 );
 
@@ -478,7 +481,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['complete'] );
+		$this->assertSame( 1, $result['complete'], 'Non-trashed course should be counted.' );
+		$this->assertArrayNotHasKey( 'in-progress', $result, 'Trashed course status should not appear.' );
 	}
 
 	public function testCountStatuses_TrashedLesson_ExcludedFromCounts(): void {
@@ -495,7 +499,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		$this->insert_progress( $lesson1, $user_id, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $lesson2, $user_id, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $lesson2, $user_id, 'lesson', 'in-progress', $course_id );
 
 		wp_trash_post( $lesson2 );
 
@@ -509,6 +513,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['complete'] );
+		$this->assertSame( 1, $result['complete'], 'Non-trashed lesson should be counted.' );
+		$this->assertArrayNotHasKey( 'in-progress', $result, 'Trashed lesson status should not appear.' );
 	}
 }
