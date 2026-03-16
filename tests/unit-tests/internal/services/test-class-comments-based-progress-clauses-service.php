@@ -1,0 +1,172 @@
+<?php
+
+namespace SenseiTest\Internal\Services;
+
+use Sensei\Internal\Services\Comments_Based_Progress_Clauses_Service;
+
+/**
+ * Class Comments_Based_Progress_Clauses_Service_Test.
+ *
+ * @covers \Sensei\Internal\Services\Comments_Based_Progress_Clauses_Service
+ */
+class Comments_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
+
+	/**
+	 * Get empty clauses array for testing.
+	 *
+	 * @return array
+	 */
+	private function get_empty_clauses(): array {
+		return [
+			'fields'   => '',
+			'join'     => '',
+			'where'    => '',
+			'groupby'  => '',
+			'orderby'  => '',
+			'distinct' => '',
+			'limits'   => '',
+		];
+	}
+
+	public function testAddLastActivityToCourseClauses_WhenCalled_AddsLastActivityDateField(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_last_activity_to_courses_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'last_activity_date', $clauses['fields'] );
+	}
+
+	public function testAddLastActivityToCourseClauses_WhenCalled_AddsLeftJoinWithCommentsSubquery(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_last_activity_to_courses_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'] );
+		$this->assertStringContainsString( $wpdb->comments, $clauses['join'] );
+	}
+
+	public function testAddDaysToCompletionToCourseClauses_WhenCalled_AddsDaysToCompletionField(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_days_to_completion_to_courses_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'days_to_completion', $clauses['fields'] );
+	}
+
+	public function testAddDaysToCompletionToCourseClauses_WhenCalled_AddsCountOfCompletionsField(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_days_to_completion_to_courses_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'count_of_completions', $clauses['fields'] );
+	}
+
+	public function testAddDaysToCompletionToCourseClauses_WhenCalled_AddsLeftJoin(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_days_to_completion_to_courses_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'] );
+	}
+
+	public function testAddDaysToCompletionToCourseClauses_WhenCalled_AddsGroupBy(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_days_to_completion_to_courses_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertNotEmpty( $clauses['groupby'] );
+	}
+
+	public function testFilterCoursesByLastActivity_WithFromDate_AddsWhereClause(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->filter_courses_by_last_activity( $clauses, '2026-01-01', '' );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'last_activity_date >=', $clauses['where'] );
+	}
+
+	public function testFilterCoursesByLastActivity_WithToDate_AddsWhereClause(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->filter_courses_by_last_activity( $clauses, '', '2026-12-31' );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'last_activity_date <=', $clauses['where'] );
+	}
+
+	public function testFilterCoursesByLastActivity_WithBothDates_AddsBothConditions(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->filter_courses_by_last_activity( $clauses, '2026-01-01', '2026-12-31' );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'last_activity_date >=', $clauses['where'] );
+		$this->assertStringContainsString( 'last_activity_date <=', $clauses['where'] );
+	}
+
+	public function testFilterCoursesByLastActivity_WithNoDate_LeavesWhereUnchanged(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->filter_courses_by_last_activity( $clauses, '', '' );
+
+		/* Assert. */
+		$this->assertSame( '', $clauses['where'] );
+	}
+}
