@@ -55,7 +55,6 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	public function add_last_activity_to_courses_clauses( array $clauses ): array {
 		$wpdb = $this->wpdb;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are from wpdb.
 		$lessons_query = "SELECT c.comment_post_id lesson_id, MAX(c.comment_date_gmt) as comment_date_gmt
 			FROM {$wpdb->comments} c
 			WHERE c.comment_approved IN ('complete', 'passed', 'graded')
@@ -71,8 +70,6 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 
 		$clauses['fields'] .= ', la.comment_date_gmt AS last_activity_date';
 		$clauses['join']   .= " LEFT JOIN ({$course_query}) AS la ON la.course_id = {$wpdb->posts}.ID";
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-
 		return $clauses;
 	}
 
@@ -90,7 +87,6 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	public function add_days_to_completion_to_courses_clauses( array $clauses ): array {
 		$wpdb = $this->wpdb;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are from wpdb.
 		// Get the number of days to complete a course: `days to complete = complete date - start date + 1`.
 		$clauses['fields'] .= ", SUM(  ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) AS days_to_completion";
 		// We consider the course as completed if there is a comment and corresponding meta for it.
@@ -98,11 +94,9 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 		$clauses['join']    .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
 		$clauses['join']    .= " AND {$wpdb->comments}.comment_type IN ('sensei_course_status')";
 		$clauses['join']    .= " AND {$wpdb->comments}.comment_approved IN ( 'complete' )";
-		$clauses['join']    .= " AND {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
 		$clauses['join']    .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
 		$clauses['join']    .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
 		$clauses['groupby'] .= " {$wpdb->posts}.ID";
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return $clauses;
 	}

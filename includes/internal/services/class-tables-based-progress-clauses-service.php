@@ -68,7 +68,6 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 
 		$wpdb = $this->wpdb;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are constructed from wpdb prefix.
 		$lessons_query = "SELECT p.post_id AS lesson_id, MAX(p.updated_at) AS last_activity_date
 			FROM {$progress_table} p
 			WHERE p.type = 'lesson'
@@ -83,8 +82,6 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 
 		$clauses['fields'] .= ', la.last_activity_date AS last_activity_date';
 		$clauses['join']   .= " LEFT JOIN ({$course_query}) AS la ON la.course_id = {$wpdb->posts}.ID";
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-
 		return $clauses;
 	}
 
@@ -103,15 +100,12 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	public function add_days_to_completion_to_courses_clauses( array $clauses ): array {
 		$progress_table = $this->get_progress_table_name();
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is constructed from wpdb prefix.
 		$clauses['fields']  .= ', SUM( ABS( DATEDIFF( cp.completed_at, cp.started_at ) ) + 1 ) AS days_to_completion';
 		$clauses['fields']  .= ', COUNT(cp.id) AS count_of_completions';
 		$clauses['join']    .= " LEFT JOIN {$progress_table} cp ON cp.post_id = {$this->wpdb->posts}.ID";
 		$clauses['join']    .= " AND cp.type = 'course'";
 		$clauses['join']    .= " AND cp.status = 'complete'";
 		$clauses['groupby'] .= " {$this->wpdb->posts}.ID";
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-
 		return $clauses;
 	}
 
