@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Progress_Query_Service_Factory.
  *
- * Factory that returns the correct Progress_Clauses_Service_Interface implementation
+ * Factory that returns the correct progress service implementations (clauses and aggregation)
  * based on the current progress storage settings.
  *
  * @internal

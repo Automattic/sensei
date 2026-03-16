@@ -46,6 +46,9 @@ interface Progress_Clauses_Service_Interface {
 	/**
 	 * Modify WP_Query clauses to filter courses by last activity date range.
 	 *
+	 * Note: `add_last_activity_to_courses_clauses` must be applied first, as this
+	 * method references the `la` alias it creates.
+	 *
 	 * @since $$next-version$$
 	 *
 	 * @param array  $clauses Associative array of the clauses for the query.

@@ -535,12 +535,11 @@ class Sensei_Grading {
 	}
 
 	/**
-	 * Count the various statuses for Course or Lesson
-	 * Very similar to get_comment_count()
+	 * Count the various statuses for Course or Lesson.
 	 *
 	 * @since  1.7.0
 	 * @param  array $args (default: array())
-	 * @return object
+	 * @return array
 	 */
 	public function count_statuses( $args = array() ) {
 		/**

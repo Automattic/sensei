@@ -69,6 +69,8 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		$wpdb = $this->wpdb;
 
 		// For each lesson, find the most recent completion date across all students.
+		// In HPPS, quiz-derived statuses (passed, graded) live on separate quiz progress
+		// rows, so only lesson status 'complete' is needed here.
 		$lessons_query = "SELECT p.post_id AS lesson_id, MAX(p.updated_at) AS last_activity_date
 			FROM {$progress_table} p
 			WHERE p.type = 'lesson'
