@@ -347,6 +347,81 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertArrayNotHasKey( 'passed', $result, 'Quiz progress without submission should not count as graded.' );
 	}
 
+	public function testCountStatuses_CourseType_ReturnsStatusCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+
+		$this->insert_progress( $course_id, $user_id, 'course', 'in-progress' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'    => 'course',
+				'post_id' => $course_id,
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['in-progress'] );
+	}
+
+	public function testCountStatuses_CourseWithMultipleStatuses_CountsAll(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+
+		$this->insert_progress( $course_id, $user1, 'course', 'in-progress' );
+		$this->insert_progress( $course_id, $user2, 'course', 'complete' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'    => 'course',
+				'post_id' => $course_id,
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['in-progress'] );
+		$this->assertSame( 1, $result['complete'] );
+	}
+
+	public function testCountStatuses_TrashedCourse_ExcludedFromCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id = $this->sensei_factory->user->create();
+		$course1 = $this->sensei_factory->course->create();
+		$course2 = $this->sensei_factory->course->create();
+
+		$this->insert_progress( $course1, $user_id, 'course', 'complete' );
+		$this->insert_progress( $course2, $user_id, 'course', 'complete' );
+
+		wp_trash_post( $course2 );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type' => 'course',
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['complete'] );
+	}
+
 	public function testCountStatuses_TrashedLesson_ExcludedFromCounts(): void {
 		/* Arrange. */
 		global $wpdb;
