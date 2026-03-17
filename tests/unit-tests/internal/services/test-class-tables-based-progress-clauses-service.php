@@ -40,6 +40,7 @@ class Tables_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertStringContainsString( 'last_activity_date', $clauses['fields'], 'Expected last_activity_date in fields clause.' );
 		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'], 'Expected LEFT JOIN in join clause.' );
+		$this->assertStringContainsString( $wpdb->prefix . 'sensei_lms_progress', $clauses['join'], 'Expected progress table in join clause.' );
 	}
 
 	public function testAddDaysToCompletionToCourseClauses_WhenCalled_AddsDaysCountJoinAndGroupBy(): void {
@@ -85,6 +86,21 @@ class Tables_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertStringContainsString( 'last_activity_date <=', $clauses['where'] );
+	}
+
+	public function testFilterCoursesByLastActivity_WithBothDates_AddsBothConditions(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Tables_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->filter_courses_by_last_activity( $clauses, '2026-01-01', '2026-12-31' );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'last_activity_date >=', $clauses['where'], 'Expected from-date condition in where clause.' );
+		$this->assertStringContainsString( 'last_activity_date <=', $clauses['where'], 'Expected to-date condition in where clause.' );
 	}
 
 	public function testFilterCoursesByLastActivity_WithNoDate_LeavesWhereUnchanged(): void {
