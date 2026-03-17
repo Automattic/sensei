@@ -170,10 +170,15 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/admin/class-sensei-learners-main.php">
-    <ArgumentTypeCoercion occurrences="3">
+    <ArgumentTypeCoercion occurrences="4">
       <code>$item</code>
       <code>$item</code>
       <code>$user_activity</code>
+      <code>array(
+				'total_items' =&gt; $total_items,
+				'total_pages' =&gt; $total_pages,
+				'per_page'    =&gt; $per_page,
+			)</code>
     </ArgumentTypeCoercion>
     <DocblockTypeContradiction occurrences="3">
       <code>! $item</code>
