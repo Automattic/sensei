@@ -118,6 +118,7 @@ class Parent_Post_Id_Migration_Test extends \WP_UnitTestCase {
 		$user_id   = $this->factory->user->create();
 
 		// Insert with parent_post_id already set to a different value.
+		$this->assertNotEquals( 99999, $course_id, 'Test precondition: course_id must differ from the dummy parent_post_id.' );
 		$this->insert_progress_row( $lesson_id, $user_id, 'lesson', 99999 );
 
 		/* Act. */

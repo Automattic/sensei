@@ -46,7 +46,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$expected = 0;
 
 		/* Act. */
-		$actual = $this->migration->run( $dry_run = false ); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
+		$actual = $this->migration->run( false );
 
 		/* Assert. */
 		$this->assertEquals( $expected, $actual );
@@ -68,7 +68,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
 
 		/* Act. */
-		$this->migration->run( $dry_run = false ); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
+		$this->migration->run( false );
 
 		/* Assert. */
 		global $wpdb;
@@ -111,7 +111,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
 
 		/* Act. */
-		$this->migration->run( $dry_run = false ); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
+		$this->migration->run( false );
 
 		/* Assert. */
 		$actual_rows = $this->get_table_based_progress();
@@ -282,7 +282,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
 
 		/* Act. */
-		$this->migration->run( $dry_run = false ); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
+		$this->migration->run( false );
 
 		/* Assert. */
 		global $wpdb;
