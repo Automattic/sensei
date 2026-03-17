@@ -53,8 +53,8 @@ class Comments_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$clauses = $service->add_last_activity_to_courses_clauses( $clauses );
 
 		/* Assert. */
-		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'] );
-		$this->assertStringContainsString( $wpdb->comments, $clauses['join'] );
+		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'], 'Expected LEFT JOIN in join clause.' );
+		$this->assertStringContainsString( $wpdb->comments, $clauses['join'], 'Expected comments table in join clause.' );
 	}
 
 	public function testAddDaysToCompletionToCourseClauses_WhenCalled_AddsDaysToCompletionField(): void {
@@ -152,8 +152,8 @@ class Comments_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$clauses = $service->filter_courses_by_last_activity( $clauses, '2026-01-01', '2026-12-31' );
 
 		/* Assert. */
-		$this->assertStringContainsString( 'comment_date_gmt >=', $clauses['where'] );
-		$this->assertStringContainsString( 'comment_date_gmt <=', $clauses['where'] );
+		$this->assertStringContainsString( 'comment_date_gmt >=', $clauses['where'], 'Expected from-date condition in where clause.' );
+		$this->assertStringContainsString( 'comment_date_gmt <=', $clauses['where'], 'Expected to-date condition in where clause.' );
 	}
 
 	public function testFilterCoursesByLastActivity_WithNoDate_LeavesWhereUnchanged(): void {

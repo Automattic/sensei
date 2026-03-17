@@ -92,8 +92,8 @@ class Tables_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$clauses = $service->add_last_activity_to_courses_clauses( $clauses );
 
 		/* Assert. */
-		$this->assertStringContainsString( 'last_activity_date', $clauses['fields'] );
-		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'] );
+		$this->assertStringContainsString( 'last_activity_date', $clauses['fields'], 'Expected last_activity_date in fields clause.' );
+		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'], 'Expected LEFT JOIN in join clause.' );
 	}
 
 	public function testAddDaysToCompletionToCourseClauses_WithCompletedCourse_AddsDaysAndCount(): void {
@@ -112,10 +112,10 @@ class Tables_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$clauses = $service->add_days_to_completion_to_courses_clauses( $clauses );
 
 		/* Assert. */
-		$this->assertStringContainsString( 'days_to_completion', $clauses['fields'] );
-		$this->assertStringContainsString( 'count_of_completions', $clauses['fields'] );
-		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'] );
-		$this->assertNotEmpty( $clauses['groupby'] );
+		$this->assertStringContainsString( 'days_to_completion', $clauses['fields'], 'Expected days_to_completion in fields clause.' );
+		$this->assertStringContainsString( 'count_of_completions', $clauses['fields'], 'Expected count_of_completions in fields clause.' );
+		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'], 'Expected LEFT JOIN in join clause.' );
+		$this->assertNotEmpty( $clauses['groupby'], 'Expected non-empty groupby clause.' );
 	}
 
 	public function testFilterCoursesByLastActivity_WithFromDate_AddsWhereClause(): void {
