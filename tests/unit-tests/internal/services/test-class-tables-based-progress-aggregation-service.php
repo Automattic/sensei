@@ -33,24 +33,27 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 	 * @param int|null    $parent_post_id The parent post ID.
 	 */
 	private function insert_progress( int $post_id, int $user_id, string $type, string $status, ?int $parent_post_id = null ): void {
-		$wpdb  = $GLOBALS['wpdb'];
-		$table = $wpdb->prefix . 'sensei_lms_progress';
-		$now   = current_time( 'mysql' );
+		$wpdb   = $GLOBALS['wpdb'];
+		$table  = $wpdb->prefix . 'sensei_lms_progress';
+		$now    = current_time( 'mysql' );
+		$data   = [
+			'post_id'    => $post_id,
+			'user_id'    => $user_id,
+			'type'       => $type,
+			'status'     => $status,
+			'started_at' => $now,
+			'created_at' => $now,
+			'updated_at' => $now,
+		];
+		$format = [ '%d', '%d', '%s', '%s', '%s', '%s', '%s' ];
+
+		if ( null !== $parent_post_id ) {
+			$data['parent_post_id'] = $parent_post_id;
+			$format[]               = '%d';
+		}
+
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper inserting directly into custom table.
-		$wpdb->insert(
-			$table,
-			[
-				'post_id'        => $post_id,
-				'user_id'        => $user_id,
-				'parent_post_id' => $parent_post_id,
-				'type'           => $type,
-				'status'         => $status,
-				'started_at'     => $now,
-				'created_at'     => $now,
-				'updated_at'     => $now,
-			],
-			[ '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s' ]
-		);
+		$wpdb->insert( $table, $data, $format );
 	}
 
 	/**
