@@ -40,8 +40,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		/* Act. */
 		$result = $service->count_statuses(
 			[
-				'type'    => 'lesson',
-				'post_id' => $lesson_id,
+				'type' => 'lesson',
 			]
 		);
 
@@ -102,7 +101,6 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$result = $service->count_statuses(
 			[
 				'type'                        => 'lesson',
-				'post_id'                     => $lesson_id,
 				'exclude_user_login_prefixes' => [ 'sensei_guest_' ],
 			]
 		);
@@ -129,8 +127,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		/* Act. */
 		$result = $service->count_statuses(
 			[
-				'type'    => 'lesson',
-				'post_id' => $lesson_id,
+				'type' => 'lesson',
 			]
 		);
 
@@ -189,7 +186,6 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$result = $service->count_statuses(
 			[
 				'type'    => 'lesson',
-				'post_id' => $lesson_id,
 				'user_id' => [ $user1 ],
 			]
 		);
@@ -221,7 +217,6 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$result = $service->count_statuses(
 			[
 				'type'                        => 'lesson',
-				'post_id'                     => $lesson_id,
 				'exclude_user_login_prefixes' => [ 'sensei_guest_' ],
 				'include_statuses_override'   => [ 'ungraded' ],
 			]

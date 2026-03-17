@@ -93,8 +93,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->count_statuses(
 			[
-				'type'    => 'lesson',
-				'post_id' => $lesson_id,
+				'type' => 'lesson',
 			]
 		);
 
@@ -216,7 +215,6 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$result = $service->count_statuses(
 			[
 				'type'                        => 'lesson',
-				'post_id'                     => $lesson_id,
 				'exclude_user_login_prefixes' => [ 'sensei_guest_' ],
 			]
 		);
@@ -253,8 +251,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->count_statuses(
 			[
-				'type'    => 'lesson',
-				'post_id' => $lesson_id,
+				'type' => 'lesson',
 			]
 		);
 
@@ -280,8 +277,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->count_statuses(
 			[
-				'type'    => 'lesson',
-				'post_id' => $lesson_id,
+				'type' => 'lesson',
 			]
 		);
 
@@ -326,8 +322,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->count_statuses(
 			[
-				'type'    => 'lesson',
-				'post_id' => $lesson_id,
+				'type' => 'lesson',
 			]
 		);
 
@@ -361,7 +356,6 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$result = $service->count_statuses(
 			[
 				'type'                        => 'lesson',
-				'post_id'                     => $lesson_id,
 				'exclude_user_login_prefixes' => [ 'sensei_guest_' ],
 				'include_statuses_override'   => [ 'ungraded' ],
 			]
@@ -399,8 +393,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->count_statuses(
 			[
-				'type'    => 'lesson',
-				'post_id' => $lesson_id,
+				'type' => 'lesson',
 			]
 		);
 
@@ -423,8 +416,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->count_statuses(
 			[
-				'type'    => 'course',
-				'post_id' => $course_id,
+				'type' => 'course',
 			]
 		);
 
@@ -448,8 +440,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->count_statuses(
 			[
-				'type'    => 'course',
-				'post_id' => $course_id,
+				'type' => 'course',
 			]
 		);
 
