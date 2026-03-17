@@ -31,12 +31,13 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 *
 	 * @internal
 	 *
-	 * @param int $quiz_id Quiz identifier.
-	 * @param int $user_id User identifier.
+	 * @param int      $quiz_id Quiz identifier.
+	 * @param int      $user_id User identifier.
+	 * @param int|null $parent_post_id The parent post ID (unused in comments-based storage).
 	 * @return Quiz_Progress_Interface
 	 * @throws \RuntimeException When the quiz progress doesn't exist. In this implementation we re-use lesson progress.
 	 */
-	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
+	public function create( int $quiz_id, int $user_id, ?int $parent_post_id = null ): Quiz_Progress_Interface {
 		/**
 		 * Filter quiz id for quiz progress creation.
 		 *
