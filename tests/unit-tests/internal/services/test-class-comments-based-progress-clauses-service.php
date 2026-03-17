@@ -124,7 +124,7 @@ class Comments_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$clauses = $service->filter_courses_by_last_activity( $clauses, '2026-01-01', '' );
 
 		/* Assert. */
-		$this->assertStringContainsString( 'last_activity_date >=', $clauses['where'] );
+		$this->assertStringContainsString( 'comment_date_gmt >=', $clauses['where'] );
 	}
 
 	public function testFilterCoursesByLastActivity_WithToDate_AddsWhereClause(): void {
@@ -138,7 +138,7 @@ class Comments_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$clauses = $service->filter_courses_by_last_activity( $clauses, '', '2026-12-31' );
 
 		/* Assert. */
-		$this->assertStringContainsString( 'last_activity_date <=', $clauses['where'] );
+		$this->assertStringContainsString( 'comment_date_gmt <=', $clauses['where'] );
 	}
 
 	public function testFilterCoursesByLastActivity_WithBothDates_AddsBothConditions(): void {
@@ -152,8 +152,8 @@ class Comments_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$clauses = $service->filter_courses_by_last_activity( $clauses, '2026-01-01', '2026-12-31' );
 
 		/* Assert. */
-		$this->assertStringContainsString( 'last_activity_date >=', $clauses['where'] );
-		$this->assertStringContainsString( 'last_activity_date <=', $clauses['where'] );
+		$this->assertStringContainsString( 'comment_date_gmt >=', $clauses['where'] );
+		$this->assertStringContainsString( 'comment_date_gmt <=', $clauses['where'] );
 	}
 
 	public function testFilterCoursesByLastActivity_WithNoDate_LeavesWhereUnchanged(): void {
