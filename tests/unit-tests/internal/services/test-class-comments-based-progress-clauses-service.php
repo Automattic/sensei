@@ -28,7 +28,7 @@ class Comments_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		];
 	}
 
-	public function testAddLastActivityToCourseClauses_WhenCalled_AddsLastActivityDateField(): void {
+	public function testAddLastActivityToCourseClauses_WhenCalled_AddsLastActivityDateAndJoin(): void {
 		/* Arrange. */
 		global $wpdb;
 
@@ -39,25 +39,12 @@ class Comments_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$clauses = $service->add_last_activity_to_courses_clauses( $clauses );
 
 		/* Assert. */
-		$this->assertStringContainsString( 'last_activity_date', $clauses['fields'] );
-	}
-
-	public function testAddLastActivityToCourseClauses_WhenCalled_AddsLeftJoinWithCommentsSubquery(): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
-		$clauses = $this->get_empty_clauses();
-
-		/* Act. */
-		$clauses = $service->add_last_activity_to_courses_clauses( $clauses );
-
-		/* Assert. */
+		$this->assertStringContainsString( 'last_activity_date', $clauses['fields'], 'Expected last_activity_date in fields clause.' );
 		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'], 'Expected LEFT JOIN in join clause.' );
 		$this->assertStringContainsString( $wpdb->comments, $clauses['join'], 'Expected comments table in join clause.' );
 	}
 
-	public function testAddDaysToCompletionToCourseClauses_WhenCalled_AddsDaysToCompletionField(): void {
+	public function testAddDaysToCompletionToCourseClauses_WhenCalled_AddsDaysCountJoinAndGroupBy(): void {
 		/* Arrange. */
 		global $wpdb;
 
@@ -68,49 +55,10 @@ class Comments_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$clauses = $service->add_days_to_completion_to_courses_clauses( $clauses );
 
 		/* Assert. */
-		$this->assertStringContainsString( 'days_to_completion', $clauses['fields'] );
-	}
-
-	public function testAddDaysToCompletionToCourseClauses_WhenCalled_AddsCountOfCompletionsField(): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
-		$clauses = $this->get_empty_clauses();
-
-		/* Act. */
-		$clauses = $service->add_days_to_completion_to_courses_clauses( $clauses );
-
-		/* Assert. */
-		$this->assertStringContainsString( 'count_of_completions', $clauses['fields'] );
-	}
-
-	public function testAddDaysToCompletionToCourseClauses_WhenCalled_AddsLeftJoin(): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
-		$clauses = $this->get_empty_clauses();
-
-		/* Act. */
-		$clauses = $service->add_days_to_completion_to_courses_clauses( $clauses );
-
-		/* Assert. */
-		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'] );
-	}
-
-	public function testAddDaysToCompletionToCourseClauses_WhenCalled_AddsGroupBy(): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
-		$clauses = $this->get_empty_clauses();
-
-		/* Act. */
-		$clauses = $service->add_days_to_completion_to_courses_clauses( $clauses );
-
-		/* Assert. */
-		$this->assertNotEmpty( $clauses['groupby'] );
+		$this->assertStringContainsString( 'days_to_completion', $clauses['fields'], 'Expected days_to_completion in fields clause.' );
+		$this->assertStringContainsString( 'count_of_completions', $clauses['fields'], 'Expected count_of_completions in fields clause.' );
+		$this->assertStringContainsString( 'LEFT JOIN', $clauses['join'], 'Expected LEFT JOIN in join clause.' );
+		$this->assertNotEmpty( $clauses['groupby'], 'Expected non-empty groupby clause.' );
 	}
 
 	public function testFilterCoursesByLastActivity_WithFromDate_AddsWhereClause(): void {
