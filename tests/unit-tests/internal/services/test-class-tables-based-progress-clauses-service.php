@@ -116,4 +116,35 @@ class Tables_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( '', $clauses['where'] );
 	}
+
+	public function testAddLastActivityToLessonsClauses_WhenCalled_AddsLastActivityDateField(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Tables_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_last_activity_to_lessons_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'last_activity_date', $clauses['fields'], 'Expected last_activity_date in fields clause.' );
+		$this->assertStringContainsString( $wpdb->prefix . 'sensei_lms_progress', $clauses['fields'], 'Expected progress table in fields clause.' );
+	}
+
+	public function testAddDaysToCompleteToLessonsClauses_WhenCalled_AddsDaysToCompleteField(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Tables_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_days_to_completion_to_lessons_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'days_to_complete', $clauses['fields'], 'Expected days_to_complete in fields clause.' );
+		$this->assertStringContainsString( $wpdb->prefix . 'sensei_lms_progress', $clauses['fields'], 'Expected progress table in fields clause.' );
+		$this->assertStringContainsString( 'COALESCE', $clauses['fields'], 'Expected COALESCE for quiz status in fields clause.' );
+	}
 }

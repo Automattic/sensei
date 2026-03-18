@@ -144,4 +144,56 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 
 		return $clauses;
 	}
+
+	/**
+	 * Modify WP_Query clauses to add last activity date to lesson posts.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_last_activity_to_lessons_clauses( array $clauses ): array {
+		$progress_table = $this->get_progress_table_name();
+
+		// In HPPS, lesson progress rows only store 'in-progress' and 'complete'.
+		// Quiz-derived statuses (passed, graded) live on separate quiz progress rows,
+		// so only lesson status 'complete' is needed here.
+		$clauses['fields'] .= ", (
+			SELECT MAX(p.completed_at)
+			FROM {$progress_table} p
+			WHERE p.post_id = {$this->wpdb->posts}.ID
+			AND p.type = 'lesson'
+			AND p.status = 'complete'
+		) AS last_activity_date";
+
+		return $clauses;
+	}
+
+	/**
+	 * Modify WP_Query clauses to add days-to-complete data to lesson posts.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_days_to_completion_to_lessons_clauses( array $clauses ): array {
+		$progress_table    = $this->get_progress_table_name();
+		$submissions_table = $this->wpdb->prefix . 'sensei_lms_quiz_submissions';
+
+		$clauses['fields'] .= ', (SELECT SUM( ABS( DATEDIFF( p.completed_at, p.started_at ) ) + 1 )';
+		$clauses['fields'] .= " FROM {$progress_table} p";
+		$clauses['fields'] .= " LEFT JOIN {$this->wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$clauses['fields'] .= " LEFT JOIN {$progress_table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
+		$clauses['fields'] .= " AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )";
+		$clauses['fields'] .= " WHERE p.post_id = {$this->wpdb->posts}.ID";
+		$clauses['fields'] .= " AND p.type = 'lesson'";
+		$completed          = "'" . implode( "','", Grading_Item::COMPLETED_STATUSES ) . "'";
+		$clauses['fields'] .= " AND COALESCE( q.status, p.status ) IN ( $completed )";
+		$clauses['fields'] .= ') as days_to_complete';
+
+		return $clauses;
+	}
 }
