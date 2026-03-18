@@ -41,4 +41,19 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return array Associative array of status => count.
 	 */
 	public function count_statuses( array $args ): array;
+
+	/**
+	 * Get aggregate totals for a set of lessons.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Array of lesson post IDs.
+	 * @return array {
+	 *     @type int $unique_student_count   Number of distinct students.
+	 *     @type int $lesson_start_count     Number of lesson starts.
+	 *     @type int $lesson_completed_count Number of completed lessons.
+	 *     @type int $days_to_complete_sum   Sum of days to complete.
+	 * }
+	 */
+	public function get_lesson_totals( array $lesson_ids ): array;
 }

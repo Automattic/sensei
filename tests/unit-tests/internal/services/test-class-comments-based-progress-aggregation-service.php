@@ -195,6 +195,49 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$this->assertArrayNotHasKey( 'in-progress', $result, 'Excluded user status should not appear.' );
 	}
 
+	public function testGetLessonTotals_WithCompletedLessons_ReturnsCorrectAggregates(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$start_date = current_time( 'mysql' );
+		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'complete', [ 'start' => $start_date ] );
+		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'in-progress', [ 'start' => $start_date ] );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 2, $result['unique_student_count'], 'Expected two distinct students.' );
+		$this->assertSame( 2, $result['lesson_start_count'], 'Expected two lesson starts.' );
+		$this->assertSame( 1, $result['lesson_completed_count'], 'Expected one completed lesson.' );
+		$this->assertGreaterThanOrEqual( 1, $result['days_to_complete_sum'], 'Expected at least one day to complete.' );
+	}
+
+	public function testGetLessonTotals_WithEmptyLessonIds_ReturnsZeros(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [] );
+
+		/* Assert. */
+		$this->assertSame( 0, $result['unique_student_count'] );
+		$this->assertSame( 0, $result['lesson_start_count'] );
+		$this->assertSame( 0, $result['lesson_completed_count'] );
+		$this->assertSame( 0, $result['days_to_complete_sum'] );
+	}
+
 	public function testCountStatuses_WithIncludeStatusesOverride_KeepsExcludedUsersForOverrideStatuses(): void {
 		/* Arrange. */
 		global $wpdb;

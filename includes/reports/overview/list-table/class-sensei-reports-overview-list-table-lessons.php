@@ -5,6 +5,10 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Grading_Item;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -23,15 +27,25 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	private $course;
 
 	/**
-	 * Constructor
+	 * The progress aggregation service.
 	 *
-	 * @param Sensei_Course                                   $course Sensei course related services.
-	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
+	 * @var Progress_Aggregation_Service_Interface
 	 */
-	public function __construct( Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider ) {
+	private Progress_Aggregation_Service_Interface $aggregation_service;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Sensei_Course                                   $course              Sensei course related services.
+	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider       Report data provider.
+	 * @param Progress_Aggregation_Service_Interface|null     $aggregation_service The progress aggregation service.
+	 */
+	public function __construct( Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, ?Progress_Aggregation_Service_Interface $aggregation_service = null ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'lessons', $data_provider );
-		$this->course = $course;
+		$this->course              = $course;
+		$this->aggregation_service = $aggregation_service
+			?? ( new Progress_Query_Service_Factory() )->create_aggregation_service();
 
 		add_filter( 'sensei_analysis_overview_columns', array( $this, 'add_totals_to_report_column_headers' ) );
 	}
@@ -161,41 +175,28 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	 * @throws Exception If date-time conversion fails.
 	 */
 	protected function get_row_data( $item ) {
-		// Get Learners (i.e. those who have started).
-		$lesson_args = array(
-			'post_id' => $item->ID,
-			'type'    => 'sensei_lesson_status',
-			'status'  => 'any',
-		);
-		/**
-		 * Filter the lesson learners activity arguments for the Course Analysis list table.
-		 *
-		 * @hook sensei_analysis_lesson_learners
-		 *
-		 * @param {array}  $lesson_args The lesson learners activity arguments.
-		 * @param {object} $item The current item.
-		 * @return {array} The lesson learners activity arguments.
-		 */
-		$lesson_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item ) );
+		if ( has_filter( 'sensei_analysis_lesson_learners' ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_hook handles its own output.
+			_deprecated_hook( 'sensei_analysis_lesson_learners', '$$next-version$$', '', __( 'This filter is no longer used. Lesson counts now use the progress aggregation service.', 'sensei-lms' ) );
+		}
+		if ( has_filter( 'sensei_analysis_lesson_completions' ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_hook handles its own output.
+			_deprecated_hook( 'sensei_analysis_lesson_completions', '$$next-version$$', '', __( 'This filter is no longer used. Lesson counts now use the progress aggregation service.', 'sensei-lms' ) );
+		}
 
-		// Get Course Completions.
-		$lesson_args = array(
-			'post_id' => $item->ID,
-			'type'    => 'sensei_lesson_status',
-			'status'  => array( 'complete', 'graded', 'passed', 'failed', 'ungraded' ),
-			'count'   => true,
+		$status_counts = $this->aggregation_service->count_statuses(
+			[
+				'type'    => 'lesson',
+				'post_id' => $item->ID,
+			]
 		);
 
-		/**
-		 * Filter the lesson completions activity arguments.
-		 *
-		 * @hook sensei_analysis_lesson_completions
-		 *
-		 * @param {array}  $lesson_args The lesson completions activity arguments.
-		 * @param {object} $item The current item.
-		 * @return {array} The lesson completions activity arguments.
-		 */
-		$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
+		$lesson_students    = array_sum( $status_counts );
+		$lesson_completions = 0;
+		foreach ( Grading_Item::COMPLETED_STATUSES as $status ) {
+			$lesson_completions += $status_counts[ $status ] ?? 0;
+		}
+
 		// Taking the ceiling value for the average.
 		$average_completion_days = $lesson_completions > 0 ? ceil( $item->days_to_complete / $lesson_completions ) : __( 'N/A', 'sensei-lms' );
 
@@ -323,8 +324,6 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	 * @return object Object containing the required totals for column header.
 	 */
 	private function get_totals_for_lesson_report_column_headers( int $course_id ) {
-		global $wpdb;
-
 		// Add search filter to query arguments.
 		$query_args = [];
 		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for searching.
@@ -332,34 +331,21 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$query_args['s'] = esc_html( $_GET['s'] );
 		}
-		$lessons    = $this->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids', $query_args );
-		$lesson_ids = '0';
+		$lessons = $this->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids', $query_args );
 
 		$lesson_count = count( $lessons );
-		if ( 0 < $lesson_count ) {
-			$lesson_ids = implode( ',', $lessons );
-		};
 
 		$default_args  = array(
 			'fields' => 'ids',
 		);
 		$modules       = wp_get_object_terms( $lessons, 'module', $default_args );
 		$modules_count = is_countable( $modules ) ? count( $modules ) : 0;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		$lesson_completion_info                      = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT COUNT(DISTINCT(lesson_students.user_id)) unique_student_count
-			, COUNT(lesson_students.comment_id) lesson_start_count
-			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), 1, 0)) lesson_completed_count
-			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
-			FROM $wpdb->comments lesson_students
-			LEFT JOIN $wpdb->commentmeta lesson_start ON lesson_start.comment_id = lesson_students.comment_id
-			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( $lesson_ids )", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				'%Y-%m-%d %H:%i:%s'
-			)
-		);
-		$lesson_completion_info->lesson_count        = $lesson_count;
-		$lesson_completion_info->unique_module_count = $modules_count;
-		return $lesson_completion_info;
+
+		$totals = $this->aggregation_service->get_lesson_totals( array_map( 'intval', $lessons ) );
+
+		$result                      = (object) $totals;
+		$result->lesson_count        = $lesson_count;
+		$result->unique_module_count = $modules_count;
+		return $result;
 	}
 }
