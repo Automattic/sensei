@@ -6,6 +6,8 @@ use Sensei\Internal\Services\Comments_Based_Grading_Listing_Service;
 use Sensei\Internal\Services\Grading_Item;
 
 /**
+ * Class Comments_Based_Grading_Listing_Service_Test.
+ *
  * @covers \Sensei\Internal\Services\Comments_Based_Grading_Listing_Service
  */
 class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
@@ -15,6 +17,26 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 		$this->sensei_factory = new \Sensei_Factory();
+	}
+
+	/**
+	 * Build default query args for get_lesson_progress_items.
+	 *
+	 * @param array $overrides Args to override.
+	 * @return array
+	 */
+	private function get_default_args( array $overrides = [] ): array {
+		return array_merge(
+			[
+				'type'    => 'sensei_lesson_status',
+				'number'  => 10,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'DESC',
+				'status'  => 'any',
+			],
+			$overrides
+		);
 	}
 
 	public function testGetLessonProgressItems_WithLessonStatus_ReturnsGradingItems(): void {
@@ -30,7 +52,7 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'post_id' => $lesson_id ]
+			$this->get_default_args( [ 'post_id' => $lesson_id ] )
 		);
 
 		/* Assert. */
@@ -44,9 +66,9 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 	public function testGetLessonProgressItems_WithGradedStatus_ReturnsGradeValue(): void {
 		/* Arrange. */
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
+		$user_id    = $this->sensei_factory->user->create();
+		$course_id  = $this->sensei_factory->course->create();
+		$lesson_id  = $this->sensei_factory->lesson->create(
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 		$comment_id = \Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'graded' );
@@ -56,7 +78,7 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'post_id' => $lesson_id ]
+			$this->get_default_args( [ 'post_id' => $lesson_id ] )
 		);
 
 		/* Assert. */
@@ -78,7 +100,12 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'ungraded', 'post_id' => $lesson_id ]
+			$this->get_default_args(
+				[
+					'status'  => 'ungraded',
+					'post_id' => $lesson_id,
+				]
+			)
 		);
 
 		/* Assert. */
@@ -99,7 +126,7 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'post_id' => $lesson_id ]
+			$this->get_default_args( [ 'post_id' => $lesson_id ] )
 		);
 
 		/* Assert. */
@@ -119,7 +146,12 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 100, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'post_id' => $lesson_id ]
+			$this->get_default_args(
+				[
+					'offset'  => 100,
+					'post_id' => $lesson_id,
+				]
+			)
 		);
 
 		/* Assert. */
@@ -142,7 +174,12 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 2, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'post_id' => $lesson_id ]
+			$this->get_default_args(
+				[
+					'number'  => 2,
+					'post_id' => $lesson_id,
+				]
+			)
 		);
 
 		/* Assert. */

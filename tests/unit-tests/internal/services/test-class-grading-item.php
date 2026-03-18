@@ -5,6 +5,8 @@ namespace SenseiTest\Internal\Services;
 use Sensei\Internal\Services\Grading_Item;
 
 /**
+ * Class Grading_Item_Test.
+ *
  * @covers \Sensei\Internal\Services\Grading_Item
  */
 class Grading_Item_Test extends \WP_UnitTestCase {

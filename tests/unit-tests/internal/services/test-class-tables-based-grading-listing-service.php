@@ -6,6 +6,8 @@ use Sensei\Internal\Services\Tables_Based_Grading_Listing_Service;
 use Sensei\Internal\Services\Grading_Item;
 
 /**
+ * Class Tables_Based_Grading_Listing_Service_Test.
+ *
  * @covers \Sensei\Internal\Services\Tables_Based_Grading_Listing_Service
  */
 class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
@@ -17,32 +19,81 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->sensei_factory = new \Sensei_Factory();
 	}
 
+	/**
+	 * Insert a progress row directly into the HPPS progress table.
+	 *
+	 * @param int      $post_id        The post ID.
+	 * @param int      $user_id        The user ID.
+	 * @param string   $type           The progress type.
+	 * @param string   $status         The progress status.
+	 * @param int|null $parent_post_id The parent post ID.
+	 */
 	private function insert_progress( int $post_id, int $user_id, string $type, string $status, ?int $parent_post_id = null ): void {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_progress';
 		$now    = current_time( 'mysql' );
-		$data   = [ 'post_id' => $post_id, 'user_id' => $user_id, 'type' => $type, 'status' => $status, 'started_at' => $now, 'created_at' => $now, 'updated_at' => $now ];
+		$data   = [
+			'post_id'    => $post_id,
+			'user_id'    => $user_id,
+			'type'       => $type,
+			'status'     => $status,
+			'started_at' => $now,
+			'created_at' => $now,
+			'updated_at' => $now,
+		];
 		$format = [ '%d', '%d', '%s', '%s', '%s', '%s', '%s' ];
 		if ( null !== $parent_post_id ) {
 			$data['parent_post_id'] = $parent_post_id;
 			$format[]               = '%d';
 		}
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
 		$wpdb->insert( $table, $data, $format );
 	}
 
+	/**
+	 * Insert a quiz submission row.
+	 *
+	 * @param int      $quiz_id     The quiz post ID.
+	 * @param int      $user_id     The user ID.
+	 * @param int|null $final_grade The final grade.
+	 */
 	private function insert_quiz_submission( int $quiz_id, int $user_id, ?int $final_grade = null ): void {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_quiz_submissions';
 		$now    = current_time( 'mysql' );
-		$data   = [ 'quiz_id' => $quiz_id, 'user_id' => $user_id, 'created_at' => $now, 'updated_at' => $now ];
+		$data   = [
+			'quiz_id'    => $quiz_id,
+			'user_id'    => $user_id,
+			'created_at' => $now,
+			'updated_at' => $now,
+		];
 		$format = [ '%d', '%d', '%s', '%s' ];
 		if ( null !== $final_grade ) {
 			$data['final_grade'] = $final_grade;
 			$format[]            = '%d';
 		}
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
 		$wpdb->insert( $table, $data, $format );
+	}
+
+	/**
+	 * Build default query args for get_lesson_progress_items.
+	 *
+	 * @param array $overrides Args to override.
+	 * @return array
+	 */
+	private function get_default_args( array $overrides = [] ): array {
+		return array_merge(
+			[
+				'type'    => 'sensei_lesson_status',
+				'number'  => 10,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'DESC',
+				'status'  => 'any',
+			],
+			$overrides
+		);
 	}
 
 	public function testGetLessonProgressItems_WithLessonStatus_ReturnsGradingItems(): void {
@@ -50,14 +101,16 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
 
 		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'post_id' => $lesson_id ]
+			$this->get_default_args( [ 'post_id' => $lesson_id ] )
 		);
 
 		/* Assert. */
@@ -74,8 +127,15 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
-		$quiz_id   = $this->sensei_factory->quiz->create( [ 'post_parent' => $lesson_id, 'meta_input' => [ '_quiz_lesson' => $lesson_id ] ] );
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
 		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
@@ -85,7 +145,7 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'post_id' => $lesson_id ]
+			$this->get_default_args( [ 'post_id' => $lesson_id ] )
 		);
 
 		/* Assert. */
@@ -98,14 +158,16 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
 
 		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'post_id' => $lesson_id ]
+			$this->get_default_args( [ 'post_id' => $lesson_id ] )
 		);
 
 		/* Assert. */
@@ -117,9 +179,15 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
-		$lesson1   = $this->sensei_factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
-		$lesson2   = $this->sensei_factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
-		$lesson3   = $this->sensei_factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$lesson1   = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$lesson2   = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$lesson3   = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
 		$this->insert_progress( $lesson1, $user_id, 'lesson', 'in-progress', $course_id );
 		$this->insert_progress( $lesson2, $user_id, 'lesson', 'complete', $course_id );
 		$this->insert_progress( $lesson3, $user_id, 'lesson', 'in-progress', $course_id );
@@ -128,12 +196,17 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'post__in' => [ $lesson1, $lesson2 ] ]
+			$this->get_default_args( [ 'post__in' => [ $lesson1, $lesson2 ] ] )
 		);
 
 		/* Assert. */
 		$this->assertSame( 2, $result['total_count'], 'Expected two items for the two filtered lessons.' );
-		$returned_lesson_ids = array_map( function ( $item ) { return $item->lesson_id; }, $result['items'] );
+		$returned_lesson_ids = array_map(
+			function ( $item ) {
+				return $item->lesson_id;
+			},
+			$result['items']
+		);
 		$this->assertContains( $lesson1, $returned_lesson_ids, 'Expected lesson1 in results.' );
 		$this->assertContains( $lesson2, $returned_lesson_ids, 'Expected lesson2 in results.' );
 		$this->assertNotContains( $lesson3, $returned_lesson_ids, 'Expected lesson3 excluded from results.' );
@@ -144,14 +217,21 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
 
 		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 100, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'post_id' => $lesson_id ]
+			$this->get_default_args(
+				[
+					'offset'  => 100,
+					'post_id' => $lesson_id,
+				]
+			)
 		);
 
 		/* Assert. */
@@ -166,11 +246,18 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$user2     = $this->sensei_factory->user->create();
 		$user3     = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
 		$this->insert_progress( $lesson_id, $user1, 'lesson', 'in-progress', $course_id );
 		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete', $course_id );
 
-		$quiz_id = $this->sensei_factory->quiz->create( [ 'post_parent' => $lesson_id, 'meta_input' => [ '_quiz_lesson' => $lesson_id ] ] );
+		$quiz_id = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 		$this->insert_progress( $lesson_id, $user3, 'lesson', 'complete', $course_id );
 		$this->insert_progress( $quiz_id, $user3, 'quiz', 'graded', $lesson_id );
@@ -180,12 +267,22 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => [ 'in-progress', 'complete' ], 'post_id' => $lesson_id ]
+			$this->get_default_args(
+				[
+					'status'  => [ 'in-progress', 'complete' ],
+					'post_id' => $lesson_id,
+				]
+			)
 		);
 
 		/* Assert. */
 		$this->assertSame( 2, $result['total_count'], 'Expected two items matching in-progress or complete.' );
-		$statuses = array_map( function ( $item ) { return $item->status; }, $result['items'] );
+		$statuses = array_map(
+			function ( $item ) {
+				return $item->status;
+			},
+			$result['items']
+		);
 		$this->assertNotContains( 'graded', $statuses, 'Graded status should be excluded.' );
 	}
 
@@ -195,7 +292,9 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$user1     = $this->sensei_factory->user->create();
 		$user2     = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
 		$this->insert_progress( $lesson_id, $user1, 'lesson', 'in-progress', $course_id );
 		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete', $course_id );
 
@@ -203,7 +302,12 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'in-progress', 'post_id' => $lesson_id ]
+			$this->get_default_args(
+				[
+					'status'  => 'in-progress',
+					'post_id' => $lesson_id,
+				]
+			)
 		);
 
 		/* Assert. */
@@ -215,7 +319,9 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		global $wpdb;
 		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
 		for ( $i = 0; $i < 3; $i++ ) {
 			$user_id = $this->sensei_factory->user->create();
 			$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
@@ -225,7 +331,12 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 2, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'post_id' => $lesson_id ]
+			$this->get_default_args(
+				[
+					'number'  => 2,
+					'post_id' => $lesson_id,
+				]
+			)
 		);
 
 		/* Assert. */
@@ -239,7 +350,9 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$user1     = $this->sensei_factory->user->create();
 		$user2     = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
 		$this->insert_progress( $lesson_id, $user1, 'lesson', 'in-progress', $course_id );
 		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete', $course_id );
 
@@ -247,7 +360,7 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_progress_items(
-			[ 'type' => 'sensei_lesson_status', 'number' => 10, 'offset' => 0, 'orderby' => '', 'order' => 'DESC', 'status' => 'any', 'user_id' => $user1 ]
+			$this->get_default_args( [ 'user_id' => $user1 ] )
 		);
 
 		/* Assert. */
