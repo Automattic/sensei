@@ -125,6 +125,10 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
+		// Only let quiz status override lesson status when a quiz submission exists,
+		// matching the pattern in count_lesson_statuses_with_quiz().
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$query .= " AND EXISTS ( SELECT 1 FROM {$submissions_table} qs2 WHERE qs2.quiz_id = q.post_id AND qs2.user_id = q.user_id )";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";
 		$query .= " WHERE p.type = 'lesson'";
