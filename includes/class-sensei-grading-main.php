@@ -3,6 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+use Sensei\Internal\Services\Grading_Listing_Service_Interface;
+use Sensei\Internal\Services\Grading_Item;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+
 /**
  * Admin Grading Overview Data Table in Sensei.
  *
@@ -20,11 +24,21 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	public $page_slug = 'sensei_grading';
 
 	/**
+	 * The grading listing service.
+	 *
+	 * @var Grading_Listing_Service_Interface
+	 */
+	private Grading_Listing_Service_Interface $grading_listing_service;
+
+	/**
 	 * Constructor
 	 *
 	 * @since  1.3.0
+	 *
+	 * @param array|null                             $args                    Constructor arguments.
+	 * @param Grading_Listing_Service_Interface|null $grading_listing_service The grading listing service.
 	 */
-	public function __construct( $args = null ) {
+	public function __construct( $args = null, ?Grading_Listing_Service_Interface $grading_listing_service = null ) {
 
 		$defaults = array(
 			'course_id' => 0,
@@ -43,6 +57,9 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		if ( ! empty( $args['view'] ) && in_array( $args['view'], array( 'in-progress', 'graded', 'ungraded', 'all' ) ) ) {
 			$this->view = $args['view'];
 		}
+
+		$this->grading_listing_service = $grading_listing_service
+			?? ( new Progress_Query_Service_Factory() )->create_grading_listing_service();
 
 		// Load Parent token into constructor
 		parent::__construct( 'grading_main' );
@@ -237,30 +254,9 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		 */
 		$activity_args = apply_filters( 'sensei_grading_filter_statuses', $activity_args );
 
-		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
-		$total_statuses = Sensei_Utils::sensei_check_for_activity(
-			array_merge(
-				$activity_args,
-				array(
-					'count'  => true,
-					'offset' => 0,
-					'number' => 0,
-				)
-			)
-		);
-
-		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
-		if ( $total_statuses < $activity_args['offset'] ) {
-			$new_paged               = floor( $total_statuses / $activity_args['number'] );
-			$activity_args['offset'] = $new_paged * $activity_args['number'];
-		}
-		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-		// Need to always return an array, even with only 1 item
-		if ( ! is_array( $statuses ) ) {
-			$statuses = array( $statuses );
-		}
-		$this->total_items = $total_statuses;
-		$this->items       = $statuses;
+		$result            = $this->grading_listing_service->get_lesson_progress_items( $activity_args );
+		$this->total_items = $result['total_count'];
+		$this->items       = $result['items'];
 
 		$total_items = $this->total_items;
 		$total_pages = ceil( $total_items / $per_page );
@@ -277,25 +273,31 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 * Generates content for a single row of the table, overriding parent
 	 *
 	 * @since  1.7.0
-	 * @param object $item The current item
+	 * @param Grading_Item $item The current item.
 	 */
 	protected function get_row_data( $item ) {
-		global $wp_version;
+		$status    = $item->status;
+		$user_id   = $item->user_id;
+		$lesson_id = $item->lesson_id;
+		$updated   = $item->updated_at;
+		$grade_val = $item->grade;
+
+		$grade_display = ( null !== $grade_val ? $grade_val : '' ) . '%';
 
 		$grade = '';
-		if ( 'complete' == $item->comment_approved ) {
+		if ( 'complete' == $status ) {
 			$status_html = '<span class="graded">' . esc_html__( 'Completed', 'sensei-lms' ) . '</span>';
 			$grade       = __( 'No Grade', 'sensei-lms' );
-		} elseif ( 'graded' == $item->comment_approved ) {
+		} elseif ( 'graded' == $status ) {
 			$status_html = '<span class="graded">' . esc_html__( 'Graded', 'sensei-lms' ) . '</span>';
-			$grade       = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
-		} elseif ( 'passed' == $item->comment_approved ) {
+			$grade       = $grade_display;
+		} elseif ( 'passed' == $status ) {
 			$status_html = '<span class="passed">' . esc_html__( 'Passed', 'sensei-lms' ) . '</span>';
-			$grade       = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
-		} elseif ( 'failed' == $item->comment_approved ) {
+			$grade       = $grade_display;
+		} elseif ( 'failed' == $status ) {
 			$status_html = '<span class="failed">' . esc_html__( 'Failed', 'sensei-lms' ) . '</span>';
-			$grade       = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
-		} elseif ( 'ungraded' == $item->comment_approved ) {
+			$grade       = $grade_display;
+		} elseif ( 'ungraded' == $status ) {
 			$status_html = '<span class="ungraded">' . esc_html__( 'Ungraded', 'sensei-lms' ) . '</span>';
 			$grade       = __( 'N/A', 'sensei-lms' );
 		} else {
@@ -303,20 +305,20 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			$grade       = __( 'N/A', 'sensei-lms' );
 		}
 
-		$title = Sensei_Learner::get_full_name( $item->user_id );
+		$title = Sensei_Learner::get_full_name( $user_id );
 
-		$quiz_id   = Sensei()->lesson->lesson_quizzes( $item->comment_post_ID, 'any' );
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id, 'any' );
 		$quiz_link = add_query_arg(
 			array(
 				'page'    => $this->page_slug,
-				'user'    => $item->user_id,
+				'user'    => $user_id,
 				'quiz_id' => $quiz_id,
 			),
 			admin_url( 'admin.php' )
 		);
 
 		$grade_link = '';
-		switch ( $item->comment_approved ) {
+		switch ( $status ) {
 			case 'ungraded':
 				$grade_link = '<a class="button-primary button" href="' . esc_url( $quiz_link ) . '">' . esc_html__( 'Grade quiz', 'sensei-lms' ) . '</a>';
 				break;
@@ -328,7 +330,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				break;
 		}
 
-		$course_id    = get_post_meta( $item->comment_post_ID, '_lesson_course', true );
+		$course_id    = get_post_meta( $lesson_id, '_lesson_course', true );
 		$course_title = '';
 
 		if ( ! empty( $course_id ) ) {
@@ -347,11 +349,11 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			add_query_arg(
 				array(
 					'page'      => $this->page_slug,
-					'lesson_id' => $item->comment_post_ID,
+					'lesson_id' => $lesson_id,
 				),
 				admin_url( 'admin.php' )
 			)
-		) . '">' . esc_html( get_the_title( $item->comment_post_ID ) ) . '</a>';
+		) . '">' . esc_html( get_the_title( $lesson_id ) ) . '</a>';
 
 		/**
 		 * Filter columns data for the Grading list table.
@@ -359,7 +361,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		 * @hook sensei_grading_main_column_data
 		 *
 		 * @param {array}  $column_data Column data for a row.
-		 * @param {object} $item Activity comment object.
+		 * @param {Grading_Item} $item Grading item for the row.
 		 * @param {int}    $course_id The course ID.
 		 * @return {array} Filtered column data.
 		 */
@@ -370,14 +372,14 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 					add_query_arg(
 						array(
 							'page'    => $this->page_slug,
-							'user_id' => $item->user_id,
+							'user_id' => $user_id,
 						),
 						admin_url( 'admin.php' )
 					)
 				) . '">' . esc_html( $title ) . '</a></strong>',
 				'course'      => $course_title,
 				'lesson'      => $lesson_title,
-				'updated'     => $item->comment_date,
+				'updated'     => $updated,
 				'user_status' => $status_html,
 				'user_grade'  => $grade,
 				'action'      => $grade_link,
