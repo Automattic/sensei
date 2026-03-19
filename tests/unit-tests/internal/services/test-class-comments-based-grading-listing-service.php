@@ -56,12 +56,13 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['total_count'] );
-		$this->assertCount( 1, $result['items'] );
-		$this->assertInstanceOf( Grading_Item::class, $result['items'][0] );
-		$this->assertSame( 'in-progress', $result['items'][0]->status );
-		$this->assertSame( $user_id, $result['items'][0]->user_id );
-		$this->assertSame( $lesson_id, $result['items'][0]->lesson_id );
+		$this->assertSame( 1, $result['total_count'], 'Expected exactly one result.' );
+		$this->assertCount( 1, $result['items'], 'Expected exactly one item.' );
+		$this->assertInstanceOf( Grading_Item::class, $result['items'][0], 'Expected a Grading_Item instance.' );
+		$this->assertSame( 'in-progress', $result['items'][0]->status, 'Expected in-progress status.' );
+		$this->assertSame( $user_id, $result['items'][0]->user_id, 'Expected matching user ID.' );
+		$this->assertSame( $lesson_id, $result['items'][0]->lesson_id, 'Expected matching lesson ID.' );
+		$this->assertNull( $result['items'][0]->grade, 'Expected null grade for non-graded item.' );
 	}
 
 	public function testGetLessonProgressItems_WithGradedStatus_ReturnsGradeValue(): void {
@@ -111,26 +112,6 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 1, $result['total_count'] );
 		$this->assertSame( 'ungraded', $result['items'][0]->status );
-	}
-
-	public function testGetLessonProgressItems_WithNoGrade_ReturnsNullGrade(): void {
-		/* Arrange. */
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
-		);
-		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
-
-		$service = new Comments_Based_Grading_Listing_Service();
-
-		/* Act. */
-		$result = $service->get_lesson_progress_items(
-			$this->get_default_args( [ 'post_id' => $lesson_id ] )
-		);
-
-		/* Assert. */
-		$this->assertNull( $result['items'][0]->grade, 'Expected null grade for non-graded item.' );
 	}
 
 	public function testGetLessonProgressItems_WithOffsetBeyondTotal_CorrectsPagination(): void {
