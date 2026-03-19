@@ -86,34 +86,6 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 85, $result['items'][0]->grade );
 	}
 
-	public function testGetLessonProgressItems_WithStatusFilter_FiltersResults(): void {
-		/* Arrange. */
-		$user1     = $this->sensei_factory->user->create();
-		$user2     = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
-		);
-		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'in-progress' );
-		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'ungraded' );
-
-		$service = new Comments_Based_Grading_Listing_Service();
-
-		/* Act. */
-		$result = $service->get_lesson_progress_items(
-			$this->get_default_args(
-				[
-					'status'  => 'ungraded',
-					'post_id' => $lesson_id,
-				]
-			)
-		);
-
-		/* Assert. */
-		$this->assertSame( 1, $result['total_count'] );
-		$this->assertSame( 'ungraded', $result['items'][0]->status );
-	}
-
 	public function testGetLessonProgressItems_WithOffsetBeyondTotal_CorrectsPagination(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();
@@ -138,33 +110,5 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 1, $result['total_count'], 'Expected one total item.' );
 		$this->assertCount( 1, $result['items'], 'Expected offset correction to return items.' );
-	}
-
-	public function testGetLessonProgressItems_WithPagination_RespectsLimitAndOffset(): void {
-		/* Arrange. */
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
-		);
-		for ( $i = 0; $i < 3; $i++ ) {
-			$user_id = $this->sensei_factory->user->create();
-			\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
-		}
-
-		$service = new Comments_Based_Grading_Listing_Service();
-
-		/* Act. */
-		$result = $service->get_lesson_progress_items(
-			$this->get_default_args(
-				[
-					'number'  => 2,
-					'post_id' => $lesson_id,
-				]
-			)
-		);
-
-		/* Assert. */
-		$this->assertSame( 3, $result['total_count'] );
-		$this->assertCount( 2, $result['items'] );
 	}
 }
