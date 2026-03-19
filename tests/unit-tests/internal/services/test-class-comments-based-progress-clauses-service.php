@@ -134,7 +134,7 @@ class Comments_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$this->assertStringContainsString( 'sensei_lesson_status', $clauses['fields'], 'Expected lesson status comment type in fields clause.' );
 	}
 
-	public function testAddDaysToCompleteToLessonsClauses_WhenCalled_AddsDaysToCompleteField(): void {
+	public function testAddDaysToCompletionToLessonsClauses_WhenCalled_AddsDaysToCompleteField(): void {
 		/* Arrange. */
 		global $wpdb;
 

@@ -132,7 +132,7 @@ class Tables_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$this->assertStringContainsString( $wpdb->prefix . 'sensei_lms_progress', $clauses['fields'], 'Expected progress table in fields clause.' );
 	}
 
-	public function testAddDaysToCompleteToLessonsClauses_WhenCalled_AddsDaysToCompleteField(): void {
+	public function testAddDaysToCompletionToLessonsClauses_WhenCalled_AddsDaysToCompleteField(): void {
 		/* Arrange. */
 		global $wpdb;
 
