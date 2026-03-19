@@ -222,6 +222,75 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$this->assertGreaterThanOrEqual( 1, $result['days_to_complete_sum'], 'Expected at least one day to complete.' );
 	}
 
+	public function testGetLessonTotals_WithUngradedStatus_DoesNotCountAsCompleted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$start_date = current_time( 'mysql' );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded', [ 'start' => $start_date ] );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 0, $result['lesson_completed_count'], 'Ungraded status should NOT count as completed.' );
+		$this->assertSame( 0, $result['days_to_complete_sum'], 'Ungraded status should not contribute to days to complete.' );
+	}
+
+	public function testGetLessonTotals_WithFailedStatus_DoesNotCountAsCompleted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$start_date = current_time( 'mysql' );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'failed', [ 'start' => $start_date ] );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 0, $result['lesson_completed_count'], 'Failed status should NOT count as completed.' );
+		$this->assertSame( 0, $result['days_to_complete_sum'], 'Failed status should not contribute to days to complete.' );
+	}
+
+	public function testGetLessonTotals_WithPassedStatus_IncludesDaysToComplete(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$start_date = gmdate( 'Y-m-d H:i:s', strtotime( '-3 days' ) );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed', [ 'start' => $start_date ] );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['lesson_completed_count'], 'Passed status should count as completed.' );
+		$this->assertSame( 4, $result['days_to_complete_sum'], 'Expected 4 days (3 day difference + 1).' );
+	}
+
 	public function testGetLessonTotals_WithEmptyLessonIds_ReturnsZeros(): void {
 		/* Arrange. */
 		global $wpdb;

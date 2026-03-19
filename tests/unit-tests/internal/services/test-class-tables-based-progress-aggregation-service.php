@@ -32,6 +32,32 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 	 * @param string      $status         The progress status.
 	 * @param int|null    $parent_post_id The parent post ID.
 	 */
+	private function insert_progress_with_dates( int $post_id, int $user_id, string $type, string $status, ?int $parent_post_id, string $started_at, string $completed_at ): void {
+		$wpdb  = $GLOBALS['wpdb'];
+		$table = $wpdb->prefix . 'sensei_lms_progress';
+		$now   = current_time( 'mysql' );
+		$data  = [
+			'post_id'      => $post_id,
+			'user_id'      => $user_id,
+			'type'         => $type,
+			'status'       => $status,
+			'started_at'   => $started_at,
+			'completed_at' => $completed_at,
+			'created_at'   => $now,
+			'updated_at'   => $now,
+		];
+
+		$format = [ '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s' ];
+
+		if ( null !== $parent_post_id ) {
+			$data['parent_post_id'] = $parent_post_id;
+			$format[]               = '%d';
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper inserting directly into custom table.
+		$wpdb->insert( $table, $data, $format );
+	}
+
 	private function insert_progress( int $post_id, int $user_id, string $type, string $status, ?int $parent_post_id = null, ?string $completed_at = null ): void {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_progress';
@@ -434,6 +460,104 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $result['unique_student_count'], 'Expected one student.' );
 		$this->assertSame( 1, $result['lesson_start_count'], 'Expected one lesson start.' );
 		$this->assertSame( 0, $result['lesson_completed_count'], 'In-progress quiz status should NOT count as completed.' );
+	}
+
+	public function testGetLessonTotals_WithUngradedQuizStatus_DoesNotCountAsCompleted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		// Lesson is in-progress, quiz is ungraded (submitted but not yet graded).
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded', $lesson_id );
+		$this->insert_quiz_submission( $quiz_id, $user_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 0, $result['lesson_completed_count'], 'Ungraded quiz status should NOT count as completed.' );
+		$this->assertSame( 0, $result['days_to_complete_sum'], 'Ungraded quiz should not contribute to days to complete.' );
+	}
+
+	public function testGetLessonTotals_WithFailedQuizStatus_DoesNotCountAsCompleted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		// Lesson is in-progress, quiz is failed (pass required, student didn't pass).
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'failed', $lesson_id );
+		$this->insert_quiz_submission( $quiz_id, $user_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 0, $result['lesson_completed_count'], 'Failed quiz status should NOT count as completed.' );
+		$this->assertSame( 0, $result['days_to_complete_sum'], 'Failed quiz should not contribute to days to complete.' );
+	}
+
+	public function testGetLessonTotals_WithPassedQuiz_IncludesDaysToComplete(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		// Started 3 days ago, completed today.
+		$started_at   = gmdate( 'Y-m-d H:i:s', strtotime( '-3 days' ) );
+		$completed_at = current_time( 'mysql' );
+		$this->insert_progress_with_dates( $lesson_id, $user_id, 'lesson', 'complete', $course_id, $started_at, $completed_at );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
+		$this->insert_quiz_submission( $quiz_id, $user_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['lesson_completed_count'], 'Passed quiz should count as completed.' );
+		$this->assertSame( 4, $result['days_to_complete_sum'], 'Expected 4 days (3 day difference + 1).' );
 	}
 
 	public function testGetLessonTotals_WithEmptyLessonIds_ReturnsZeros(): void {
