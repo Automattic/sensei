@@ -206,7 +206,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$start_date = gmdate( 'Y-m-d H:i:s', strtotime( '-2 days' ) );
+		$start_date = wp_date( 'Y-m-d H:i:s', strtotime( '-2 days' ) );
 		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'complete', [ 'start' => $start_date ] );
 		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'in-progress', [ 'start' => $start_date ] );
 
@@ -278,7 +278,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$start_date = gmdate( 'Y-m-d H:i:s', strtotime( '-3 days' ) );
+		$start_date = wp_date( 'Y-m-d H:i:s', strtotime( '-3 days' ) );
 		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed', [ 'start' => $start_date ] );
 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );

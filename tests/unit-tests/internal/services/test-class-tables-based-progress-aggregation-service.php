@@ -379,8 +379,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$started_at   = gmdate( 'Y-m-d H:i:s', strtotime( '-2 days' ) );
-		$completed_at = current_time( 'mysql' );
+		$started_at   = '2024-01-01 10:00:00';
+		$completed_at = '2024-01-03 10:00:00';
 		$this->insert_progress_with_dates( $lesson_id, $user1, 'lesson', 'complete', $course_id, $started_at, $completed_at );
 		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
 
@@ -512,9 +512,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
-		// Started 3 days ago, completed today.
-		$started_at   = gmdate( 'Y-m-d H:i:s', strtotime( '-3 days' ) );
-		$completed_at = current_time( 'mysql' );
+		$started_at   = '2024-01-01 10:00:00';
+		$completed_at = '2024-01-04 10:00:00';
 		$this->insert_progress_with_dates( $lesson_id, $user_id, 'lesson', 'complete', $course_id, $started_at, $completed_at );
 		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
 		$this->insert_quiz_submission( $quiz_id, $user_id );
