@@ -282,7 +282,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$updated   = $item->updated_at;
 		$grade_val = $item->grade;
 
-		$grade_display = ( null !== $grade_val ? $grade_val : '' ) . '%';
+		$grade_display = null !== $grade_val ? $grade_val . '%' : __( 'N/A', 'sensei-lms' );
 
 		$grade = '';
 		if ( 'complete' == $status ) {
