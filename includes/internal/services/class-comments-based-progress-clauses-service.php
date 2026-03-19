@@ -163,15 +163,15 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_days_to_completion_to_lessons_clauses( array $clauses ): array {
-		$wpdb = $this->wpdb;
+		$wpdb           = $this->wpdb;
+		$has_completion = "'" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "'";
 
 		$clauses['fields'] .= ", (SELECT SUM( ABS( DATEDIFF( STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date )) + 1 ) as days_to_complete";
 		$clauses['fields'] .= " FROM {$wpdb->comments}";
 		$clauses['fields'] .= " INNER JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
 		$clauses['fields'] .= " WHERE {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
 		$clauses['fields'] .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
-		$completed          = "'" . implode( "','", Grading_Item::COMPLETED_STATUSES ) . "'";
-		$clauses['fields'] .= " AND {$wpdb->comments}.comment_approved IN ( $completed )";
+		$clauses['fields'] .= " AND {$wpdb->comments}.comment_approved IN ( $has_completion )";
 		$clauses['fields'] .= " AND {$wpdb->commentmeta}.meta_key = 'start') as days_to_complete";
 
 		return $clauses;

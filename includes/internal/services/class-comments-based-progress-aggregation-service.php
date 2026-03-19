@@ -111,16 +111,17 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			return $defaults;
 		}
 
-		$wpdb         = $this->wpdb;
-		$placeholders = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
-		$completed    = "'" . implode( "','", Grading_Item::COMPLETED_STATUSES ) . "'";
+		$wpdb           = $this->wpdb;
+		$placeholders   = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+		$completed      = "'" . implode( "','", Grading_Item::COMPLETED_STATUSES ) . "'";
+		$has_completion = "'" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "'";
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb. Placeholders created dynamically. Date format string uses literal %s for MySQL STR_TO_DATE.
 		$query = $wpdb->prepare(
 			"SELECT COUNT(DISTINCT(lesson_students.user_id)) unique_student_count
 			, COUNT(lesson_students.comment_id) lesson_start_count
 			, SUM(IF(lesson_students.comment_approved IN ($completed), 1, 0)) lesson_completed_count
-			, SUM(IF(lesson_students.comment_approved IN ($completed), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
+			, SUM(IF(lesson_students.comment_approved IN ($has_completion), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
 			FROM {$wpdb->comments} lesson_students
 			LEFT JOIN {$wpdb->commentmeta} lesson_start ON lesson_start.comment_id = lesson_students.comment_id
 			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( $placeholders )",

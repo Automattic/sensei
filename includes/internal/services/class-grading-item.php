@@ -34,6 +34,19 @@ class Grading_Item {
 	public const COMPLETED_STATUSES = [ 'complete', 'graded', 'passed', 'failed', 'ungraded' ];
 
 	/**
+	 * Statuses that indicate a lesson has a valid completion date.
+	 *
+	 * Unlike COMPLETED_STATUSES, this excludes 'failed' and 'ungraded' because
+	 * those statuses do not have a completion date set in the data model.
+	 * Used for days-to-complete calculations where a reliable date is required.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string[]
+	 */
+	public const STATUSES_WITH_COMPLETION_DATE = [ 'complete', 'graded', 'passed' ];
+
+	/**
 	 * The progress status. For HPPS tables-based storage, this is the
 	 * effective status coalesced from quiz progress when available.
 	 * For comments-based storage, this is the raw comment_approved value.

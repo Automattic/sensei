@@ -19,6 +19,14 @@ class Grading_Item_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	public function testStatusesWithCompletionDate_ContainsExpectedValues(): void {
+		/* Assert. */
+		$this->assertSame(
+			[ 'complete', 'graded', 'passed' ],
+			Grading_Item::STATUSES_WITH_COMPLETION_DATE
+		);
+	}
+
 	public function testGet_WithCommentApproved_ReturnsStatus(): void {
 		/* Arrange. */
 		$item = new Grading_Item( 'passed', 1, 100, '2026-01-01', 85 );

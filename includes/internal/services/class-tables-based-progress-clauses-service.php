@@ -190,8 +190,8 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		$clauses['fields'] .= " AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )";
 		$clauses['fields'] .= " WHERE p.post_id = {$this->wpdb->posts}.ID";
 		$clauses['fields'] .= " AND p.type = 'lesson'";
-		$completed          = "'" . implode( "','", Grading_Item::COMPLETED_STATUSES ) . "'";
-		$clauses['fields'] .= " AND COALESCE( q.status, p.status ) IN ( $completed )";
+		$has_completion     = "'" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "'";
+		$clauses['fields'] .= " AND COALESCE( q.status, p.status ) IN ( $has_completion )";
 		$clauses['fields'] .= ') as days_to_complete';
 
 		return $clauses;
