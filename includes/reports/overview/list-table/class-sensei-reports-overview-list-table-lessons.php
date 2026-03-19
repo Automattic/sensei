@@ -193,7 +193,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 
 		$lesson_students    = array_sum( $status_counts );
 		$lesson_completions = 0;
-		foreach ( Grading_Item::COMPLETED_STATUSES as $status ) {
+		foreach ( Grading_Item::STATUSES_WITH_COMPLETION_DATE as $status ) {
 			$lesson_completions += $status_counts[ $status ] ?? 0;
 		}
 
