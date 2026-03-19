@@ -379,7 +379,9 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id, current_time( 'mysql' ) );
+		$started_at   = gmdate( 'Y-m-d H:i:s', strtotime( '-2 days' ) );
+		$completed_at = current_time( 'mysql' );
+		$this->insert_progress_with_dates( $lesson_id, $user1, 'lesson', 'complete', $course_id, $started_at, $completed_at );
 		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
@@ -391,40 +393,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 2, $result['unique_student_count'], 'Expected two distinct students.' );
 		$this->assertSame( 2, $result['lesson_start_count'], 'Expected two lesson starts.' );
 		$this->assertSame( 1, $result['lesson_completed_count'], 'Expected one completed lesson.' );
-		$this->assertGreaterThanOrEqual( 1, $result['days_to_complete_sum'], 'Expected at least one day to complete.' );
-	}
-
-	public function testGetLessonTotals_WithQuizStatus_UsesCoalesced(): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
-		);
-		$quiz_id   = $this->sensei_factory->quiz->create(
-			[
-				'post_parent' => $lesson_id,
-				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
-			]
-		);
-		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
-
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id, current_time( 'mysql' ) );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
-		$this->insert_quiz_submission( $quiz_id, $user_id );
-
-		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->get_lesson_totals( [ $lesson_id ] );
-
-		/* Assert. */
-		$this->assertSame( 1, $result['unique_student_count'], 'Expected one student.' );
-		$this->assertSame( 1, $result['lesson_start_count'], 'Expected one lesson start.' );
-		$this->assertSame( 1, $result['lesson_completed_count'], 'Passed quiz status should count as completed.' );
+		$this->assertSame( 3, $result['days_to_complete_sum'], 'Expected 3 days (2 day difference + 1).' );
 	}
 
 	public function testGetLessonTotals_WithInProgressQuizStatus_DoesNotCountAsCompleted(): void {

@@ -206,7 +206,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$start_date = current_time( 'mysql' );
+		$start_date = gmdate( 'Y-m-d H:i:s', strtotime( '-2 days' ) );
 		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'complete', [ 'start' => $start_date ] );
 		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'in-progress', [ 'start' => $start_date ] );
 
@@ -219,7 +219,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$this->assertSame( 2, $result['unique_student_count'], 'Expected two distinct students.' );
 		$this->assertSame( 2, $result['lesson_start_count'], 'Expected two lesson starts.' );
 		$this->assertSame( 1, $result['lesson_completed_count'], 'Expected one completed lesson.' );
-		$this->assertGreaterThanOrEqual( 1, $result['days_to_complete_sum'], 'Expected at least one day to complete.' );
+		$this->assertSame( 3, $result['days_to_complete_sum'], 'Expected 3 days (2 day difference + 1).' );
 	}
 
 	public function testGetLessonTotals_WithUngradedStatus_DoesNotCountAsCompleted(): void {
