@@ -70,9 +70,9 @@ class Grading_Item {
 	/**
 	 * The grade percentage, or null if not graded.
 	 *
-	 * @var int|null
+	 * @var float|null
 	 */
-	public ?int $grade;
+	public ?float $grade;
 
 	/**
 	 * Mapping of legacy WP_Comment property names to Grading_Item properties.
@@ -90,13 +90,13 @@ class Grading_Item {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param string   $status     The progress status.
-	 * @param int      $user_id    The user ID.
-	 * @param int      $lesson_id  The lesson post ID.
-	 * @param string   $updated_at The date string of the last update.
-	 * @param int|null $grade      The grade percentage, or null if not graded.
+	 * @param string     $status     The progress status.
+	 * @param int        $user_id    The user ID.
+	 * @param int        $lesson_id  The lesson post ID.
+	 * @param string     $updated_at The date string of the last update.
+	 * @param float|null $grade      The grade percentage, or null if not graded.
 	 */
-	public function __construct( string $status, int $user_id, int $lesson_id, string $updated_at, ?int $grade ) {
+	public function __construct( string $status, int $user_id, int $lesson_id, string $updated_at, ?float $grade ) {
 		$this->status     = $status;
 		$this->user_id    = $user_id;
 		$this->lesson_id  = $lesson_id;
