@@ -245,14 +245,16 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	private function build_post_filter_clause( array $args ): string {
 		$wpdb = $this->wpdb;
 
+		// Prefer post_id (single lesson filter) over post__in (course lessons)
+		// so that counts reflect the specific lesson when both are set.
+		if ( ! empty( $args['post_id'] ) ) {
+			return $wpdb->prepare( ' AND p.post_id = %d', $args['post_id'] );
+		}
+
 		if ( ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
 			return $wpdb->prepare( " AND p.post_id IN ( $placeholders )", $args['post__in'] );
-		}
-
-		if ( ! empty( $args['post_id'] ) ) {
-			return $wpdb->prepare( ' AND p.post_id = %d', $args['post_id'] );
 		}
 
 		return '';
