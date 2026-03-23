@@ -25,11 +25,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Grading_Item {
 
 	/**
-	 * Statuses that indicate a lesson has been completed with a valid completion date.
+	 * All statuses that indicate a lesson is no longer in progress.
+	 *
+	 * Used for "Completed" counts and completion rate in reports.
+	 * Includes 'failed' and 'ungraded' because the student has finished
+	 * the lesson activity even if they did not pass.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string[]
+	 */
+	public const COMPLETED_STATUSES = [ 'complete', 'graded', 'passed', 'failed', 'ungraded' ];
+
+	/**
+	 * Statuses that have a valid completion date in the data model.
 	 *
 	 * Excludes 'failed' and 'ungraded' because those statuses do not have a
-	 * completion date set in the data model. Used for lesson completion counts
-	 * and days-to-complete calculations in reports.
+	 * completion date set. Used as the divisor for days-to-complete calculations.
 	 *
 	 * @since $$next-version$$
 	 *

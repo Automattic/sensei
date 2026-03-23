@@ -393,6 +393,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 2, $result['unique_student_count'], 'Expected two distinct students.' );
 		$this->assertSame( 2, $result['lesson_start_count'], 'Expected two lesson starts.' );
 		$this->assertSame( 1, $result['lesson_completed_count'], 'Expected one completed lesson.' );
+		$this->assertSame( 1, $result['days_to_complete_count'], 'Expected one lesson with completion date.' );
 		$this->assertSame( 3, $result['days_to_complete_sum'], 'Expected 3 days (2 day difference + 1).' );
 	}
 
@@ -431,7 +432,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0, $result['lesson_completed_count'], 'In-progress quiz status should NOT count as completed.' );
 	}
 
-	public function testGetLessonTotals_WithUngradedQuizStatus_DoesNotCountAsCompleted(): void {
+	public function testGetLessonTotals_WithUngradedQuizStatus_CountsAsCompletedButNotDaysToComplete(): void {
 		/* Arrange. */
 		global $wpdb;
 
@@ -459,11 +460,12 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$result = $service->get_lesson_totals( [ $lesson_id ] );
 
 		/* Assert. */
-		$this->assertSame( 0, $result['lesson_completed_count'], 'Ungraded quiz status should NOT count as completed.' );
+		$this->assertSame( 1, $result['lesson_completed_count'], 'Ungraded quiz status should count as completed.' );
+		$this->assertSame( 0, $result['days_to_complete_count'], 'Ungraded quiz should not have a completion date.' );
 		$this->assertSame( 0, $result['days_to_complete_sum'], 'Ungraded quiz should not contribute to days to complete.' );
 	}
 
-	public function testGetLessonTotals_WithFailedQuizStatus_DoesNotCountAsCompleted(): void {
+	public function testGetLessonTotals_WithFailedQuizStatus_CountsAsCompletedButNotDaysToComplete(): void {
 		/* Arrange. */
 		global $wpdb;
 
@@ -491,7 +493,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$result = $service->get_lesson_totals( [ $lesson_id ] );
 
 		/* Assert. */
-		$this->assertSame( 0, $result['lesson_completed_count'], 'Failed quiz status should NOT count as completed.' );
+		$this->assertSame( 1, $result['lesson_completed_count'], 'Failed quiz status should count as completed.' );
+		$this->assertSame( 0, $result['days_to_complete_count'], 'Failed quiz should not have a completion date.' );
 		$this->assertSame( 0, $result['days_to_complete_sum'], 'Failed quiz should not contribute to days to complete.' );
 	}
 
@@ -525,6 +528,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( 1, $result['lesson_completed_count'], 'Passed quiz should count as completed.' );
+		$this->assertSame( 1, $result['days_to_complete_count'], 'Passed quiz should have a completion date.' );
 		$this->assertSame( 4, $result['days_to_complete_sum'], 'Expected 4 days (3 day difference + 1).' );
 	}
 
@@ -541,6 +545,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0, $result['unique_student_count'] );
 		$this->assertSame( 0, $result['lesson_start_count'] );
 		$this->assertSame( 0, $result['lesson_completed_count'] );
+		$this->assertSame( 0, $result['days_to_complete_count'] );
 		$this->assertSame( 0, $result['days_to_complete_sum'] );
 	}
 
@@ -608,7 +613,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['complete'], 'Quiz progress without submission should fall back to lesson status.' );
+		$this->assertArrayNotHasKey( 'complete', $result, 'Completed lesson with quiz but no submission should be excluded.' );
 		$this->assertArrayNotHasKey( 'passed', $result, 'Quiz progress without submission should not count as graded.' );
 	}
 

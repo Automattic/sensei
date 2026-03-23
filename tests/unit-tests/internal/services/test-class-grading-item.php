@@ -11,6 +11,14 @@ use Sensei\Internal\Services\Grading_Item;
  */
 class Grading_Item_Test extends \WP_UnitTestCase {
 
+	public function testCompletedStatuses_ContainsExpectedValues(): void {
+		/* Assert. */
+		$this->assertSame(
+			[ 'complete', 'graded', 'passed', 'failed', 'ungraded' ],
+			Grading_Item::COMPLETED_STATUSES
+		);
+	}
+
 	public function testStatusesWithCompletionDate_ContainsExpectedValues(): void {
 		/* Assert. */
 		$this->assertSame(

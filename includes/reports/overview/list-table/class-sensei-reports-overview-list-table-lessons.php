@@ -117,8 +117,8 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 		$column_value_map['completions']        = $total_counts->lesson_completed_count > 0 && $total_counts->lesson_count > 0
 			? ceil( $total_counts->lesson_completed_count / $total_counts->lesson_count )
 			: 0;
-		$column_value_map['days_to_completion'] = $total_counts->lesson_completed_count > 0
-			? ceil( $total_counts->days_to_complete_sum / $total_counts->lesson_completed_count )
+		$column_value_map['days_to_completion'] = $total_counts->days_to_complete_count > 0
+			? ceil( $total_counts->days_to_complete_sum / $total_counts->days_to_complete_count )
 			: __( 'N/A', 'sensei-lms' );
 		$column_value_map['completion_rate']    = $total_counts->lesson_start_count > 0
 			? Sensei_Utils::quotient_as_absolute_rounded_percentage( $total_counts->lesson_completed_count, $total_counts->lesson_start_count ) . '%'
@@ -193,12 +193,19 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 
 		$lesson_students    = array_sum( $status_counts );
 		$lesson_completions = 0;
-		foreach ( Grading_Item::STATUSES_WITH_COMPLETION_DATE as $status ) {
+		foreach ( Grading_Item::COMPLETED_STATUSES as $status ) {
 			$lesson_completions += $status_counts[ $status ] ?? 0;
 		}
 
+		// Days-to-complete can only be averaged over statuses that have a
+		// completion date (excludes failed/ungraded).
+		$days_divisor = 0;
+		foreach ( Grading_Item::STATUSES_WITH_COMPLETION_DATE as $status ) {
+			$days_divisor += $status_counts[ $status ] ?? 0;
+		}
+
 		// Taking the ceiling value for the average.
-		$average_completion_days = $lesson_completions > 0 ? ceil( $item->days_to_complete / $lesson_completions ) : __( 'N/A', 'sensei-lms' );
+		$average_completion_days = $days_divisor > 0 ? ceil( $item->days_to_complete / $days_divisor ) : __( 'N/A', 'sensei-lms' );
 
 		// Output lesson data.
 		if ( $this->csv_output ) {

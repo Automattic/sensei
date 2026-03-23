@@ -97,13 +97,14 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @since $$next-version$$
 	 *
 	 * @param int[] $lesson_ids Array of lesson post IDs.
-	 * @return array Associative array with keys: unique_student_count, lesson_start_count, lesson_completed_count, days_to_complete_sum.
+	 * @return array Associative array with keys: unique_student_count, lesson_start_count, lesson_completed_count, days_to_complete_count, days_to_complete_sum.
 	 */
 	public function get_lesson_totals( array $lesson_ids ): array {
 		$defaults = [
 			'unique_student_count'   => 0,
 			'lesson_start_count'     => 0,
 			'lesson_completed_count' => 0,
+			'days_to_complete_count' => 0,
 			'days_to_complete_sum'   => 0,
 		];
 
@@ -115,13 +116,15 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
 		$placeholders      = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+		$completed         = "('" . implode( "','", Grading_Item::COMPLETED_STATUSES ) . "')";
 		$has_completion    = "('" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "')";
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb prefix. Placeholders and status list created dynamically.
 		$query = $wpdb->prepare(
 			"SELECT COUNT(DISTINCT p.user_id) AS unique_student_count
 			, COUNT(*) AS lesson_start_count
-			, SUM(IF(COALESCE( q.status, p.status ) IN $has_completion, 1, 0)) AS lesson_completed_count
+			, SUM(IF(COALESCE( q.status, p.status ) IN $completed, 1, 0)) AS lesson_completed_count
+			, SUM(IF(COALESCE( q.status, p.status ) IN $has_completion, 1, 0)) AS days_to_complete_count
 			, SUM(IF(COALESCE( q.status, p.status ) IN $has_completion, ABS( DATEDIFF( p.completed_at, p.started_at ) ) + 1, 0)) AS days_to_complete_sum
 			FROM {$table} p
 			LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0
@@ -143,6 +146,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			'unique_student_count'   => (int) $row->unique_student_count,
 			'lesson_start_count'     => (int) $row->lesson_start_count,
 			'lesson_completed_count' => (int) $row->lesson_completed_count,
+			'days_to_complete_count' => (int) $row->days_to_complete_count,
 			'days_to_complete_sum'   => (int) $row->days_to_complete_sum,
 		];
 	}

@@ -51,7 +51,8 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return array {
 	 *     @type int $unique_student_count   Number of distinct students.
 	 *     @type int $lesson_start_count     Number of lesson starts.
-	 *     @type int $lesson_completed_count Number of completed lessons.
+	 *     @type int $lesson_completed_count Number of completed lessons (all non-in-progress statuses).
+	 *     @type int $days_to_complete_count Number of lessons with a valid completion date.
 	 *     @type int $days_to_complete_sum   Sum of days to complete.
 	 * }
 	 */
