@@ -76,7 +76,7 @@ class Comments_Based_Grading_Listing_Service implements Grading_Listing_Service_
 				(int) $comment->user_id,
 				(int) $comment->comment_post_ID,
 				$comment->comment_date,
-				'' !== $grade_value ? (int) $grade_value : null
+				'' !== $grade_value ? (float) $grade_value : null
 			);
 		}
 
