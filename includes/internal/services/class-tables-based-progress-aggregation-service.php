@@ -183,9 +183,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";
 
 		$query .= $wpdb->prepare( ' WHERE p.type = %s', 'lesson' );
-		// Exclude lessons where a quiz exists but the student never submitted it
-		// and the lesson is already complete — there is nothing to grade.
-		$query .= " AND NOT ( pm.meta_value IS NOT NULL AND qs.id IS NULL AND p.status = 'complete' )";
+		$query .= $this->build_unsubmitted_quiz_exclusion_clause( $args );
 
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
@@ -319,6 +317,28 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
 		return $wpdb->prepare( " AND p.user_id NOT IN ( $id_placeholders )", $excluded_user_ids );
+	}
+
+	/**
+	 * Build SQL clause for excluding completed lessons with no quiz submission.
+	 *
+	 * When enabled, excludes lessons where a quiz exists but the student never
+	 * submitted it and the lesson is already complete — there is nothing to grade.
+	 * Used by the Grading page; the Reports page passes false to include all students.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Query arguments.
+	 * @return string SQL clause.
+	 */
+	private function build_unsubmitted_quiz_exclusion_clause( array $args ): string {
+		$exclude = $args['exclude_unsubmitted_quiz_completions'] ?? false;
+
+		if ( ! $exclude ) {
+			return '';
+		}
+
+		return " AND NOT ( pm.meta_value IS NOT NULL AND qs.id IS NULL AND p.status = 'complete' )";
 	}
 
 	/**

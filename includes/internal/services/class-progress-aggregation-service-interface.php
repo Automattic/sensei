@@ -35,8 +35,9 @@ interface Progress_Aggregation_Service_Interface {
 	 *     @type array     $post__in                     Restrict to specific post IDs.
 	 *     @type int       $post_id                      Restrict to a single post ID.
 	 *     @type int|array $user_id                      Restrict to specific user IDs.
-	 *     @type string[]  $exclude_user_login_prefixes  User login prefixes to exclude.
-	 *     @type string[]  $include_statuses_override    Statuses that bypass user exclusion.
+	 *     @type string[]  $exclude_user_login_prefixes           User login prefixes to exclude.
+	 *     @type string[]  $include_statuses_override             Statuses that bypass user exclusion.
+	 *     @type bool      $exclude_unsubmitted_quiz_completions Exclude completed lessons with no quiz submission (default: false).
 	 * }
 	 * @return array Associative array of status => count.
 	 */
