@@ -97,7 +97,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 				(int) $row->user_id,
 				(int) $row->post_id,
 				get_date_from_gmt( $row->updated_at ),
-				null !== $row->final_grade ? (int) $row->final_grade : null
+				null !== $row->final_grade ? (float) $row->final_grade : null
 			);
 		}
 
@@ -132,6 +132,10 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";
 		$query .= " WHERE p.type = 'lesson'";
+		// Exclude lessons where a quiz exists but the student never submitted it
+		// and the lesson is already complete — there is nothing to grade.
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$query .= " AND NOT ( pm.meta_value IS NOT NULL AND qs.id IS NULL AND p.status = 'complete' )";
 
 		$query .= $this->build_post_filter( $args );
 		$query .= $this->build_user_filter( $args );
