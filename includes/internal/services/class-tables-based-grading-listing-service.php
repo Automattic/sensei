@@ -96,7 +96,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 				$row->effective_status,
 				(int) $row->user_id,
 				(int) $row->post_id,
-				$row->updated_at,
+				get_date_from_gmt( $row->updated_at ),
 				null !== $row->final_grade ? (int) $row->final_grade : null
 			);
 		}
