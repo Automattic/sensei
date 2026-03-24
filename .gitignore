@@ -5,7 +5,6 @@
 .worktrees
 .phpunit.result.cache
 .wp-env.override.json
-.wp-env.tests.override.json
 assets/dist
 build
 diffs
