@@ -41,4 +41,16 @@ interface Grading_Listing_Service_Interface {
 	 * @return array{ items: Grading_Item[], total_count: int }
 	 */
 	public function get_lesson_progress_items( array $args ): array;
+
+	/**
+	 * Get cached per-status counts from the most recent query.
+	 *
+	 * Returns null if counts are not available (e.g. comments-based
+	 * implementation, or if get_lesson_progress_items has not been called yet).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return array<string, int>|null Associative array of status => count, or null.
+	 */
+	public function get_status_counts(): ?array;
 }

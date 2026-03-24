@@ -30,6 +30,13 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	private \wpdb $wpdb;
 
 	/**
+	 * Cached per-status counts from the most recent query.
+	 *
+	 * @var array<string, int>|null
+	 */
+	private ?array $status_counts = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since $$next-version$$
@@ -64,14 +71,35 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
 
-		// Build the base query with JOINs for quiz status coalescing and
-		// grade retrieval, plus any post/user/status filters.
-		$base_query = $this->build_base_query( $table, $submissions_table, $args );
+		// Build the base query WITHOUT status filter for per-status counts.
+		// This produces counts for all tabs (All/Ungraded/Graded/In Progress)
+		// in a single query.
+		$count_args           = $args;
+		$count_args['status'] = 'any';
+		$count_base_query     = $this->build_base_query( $table, $submissions_table, $count_args );
 
-		// Get total count by wrapping the filtered base query in a COUNT(*).
-		$count_query = "SELECT COUNT(*) FROM ( $base_query ) AS counted";
+		// Get per-status counts from a single GROUP BY query.
+		$status_count_query = "SELECT effective_status, COUNT(*) AS total FROM ( $count_base_query ) AS counted GROUP BY effective_status";
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared via build_base_query. Caching handled by callers.
-		$total_count = (int) $wpdb->get_var( $count_query );
+		$status_rows = (array) $wpdb->get_results( $status_count_query, ARRAY_A );
+
+		$this->status_counts = [];
+		foreach ( $status_rows as $row ) {
+			$this->status_counts[ $row['effective_status'] ] = (int) $row['total'];
+		}
+
+		// Derive total_count from status counts.
+		if ( empty( $args['status'] ) || 'any' === $args['status'] ) {
+			$total_count = array_sum( $this->status_counts );
+		} else {
+			$total_count = 0;
+			foreach ( (array) $args['status'] as $s ) {
+				$total_count += $this->status_counts[ $s ] ?? 0;
+			}
+		}
+
+		// Build the full base query WITH status filter for the paginated listing.
+		$base_query = $this->build_base_query( $table, $submissions_table, $args );
 
 		// If the requested offset is beyond the total (e.g. in case a search
 		// threw off the pagination), snap back to the last valid page.
@@ -207,6 +235,20 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		$placeholders = implode( ', ', array_fill( 0, count( $statuses ), '%s' ) );
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		return $wpdb->prepare( " AND COALESCE( CASE WHEN qs.id IS NOT NULL THEN q.status END, p.status ) IN ( $placeholders )", $statuses );
+	}
+
+	/**
+	 * Get cached per-status counts from the most recent query.
+	 *
+	 * Returns null if counts are not available (e.g. if
+	 * get_lesson_progress_items has not been called yet).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return array<string, int>|null Associative array of status => count, or null.
+	 */
+	public function get_status_counts(): ?array {
+		return $this->status_counts;
 	}
 
 	/**

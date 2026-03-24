@@ -4583,6 +4583,9 @@
       <code>$row-&gt;updated_at</code>
       <code>$row-&gt;user_id</code>
     </PossiblyInvalidPropertyFetch>
+    <UndefinedConstant occurrences="1">
+      <code>ARRAY_A</code>
+    </UndefinedConstant>
   </file>
   <file src="includes/internal/services/class-tables-based-progress-aggregation-service.php">
     <PossiblyInvalidPropertyFetch occurrences="5">

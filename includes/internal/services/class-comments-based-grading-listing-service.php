@@ -105,4 +105,17 @@ class Comments_Based_Grading_Listing_Service implements Grading_Listing_Service_
 			'total_count' => (int) $total_count,
 		];
 	}
+
+	/**
+	 * Get cached per-status counts.
+	 *
+	 * Not supported by comments-based implementation.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return array<string, int>|null Always null for comments-based storage.
+	 */
+	public function get_status_counts(): ?array {
+		return null;
+	}
 }
