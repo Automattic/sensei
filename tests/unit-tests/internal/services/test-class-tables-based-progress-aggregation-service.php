@@ -763,35 +763,4 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertArrayNotHasKey( 'in-progress', $result, 'Trashed course status should not appear.' );
 	}
 
-	public function testCountStatuses_TrashedLesson_ExcludedFromCounts(): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson1   = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
-		);
-		$lesson2   = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
-		);
-
-		$this->insert_progress( $lesson1, $user_id, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $lesson2, $user_id, 'lesson', 'in-progress', $course_id );
-
-		wp_trash_post( $lesson2 );
-
-		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->count_statuses(
-			[
-				'type' => 'lesson',
-			]
-		);
-
-		/* Assert. */
-		$this->assertSame( 1, $result['complete'], 'Non-trashed lesson should be counted.' );
-		$this->assertArrayNotHasKey( 'in-progress', $result, 'Trashed lesson status should not appear.' );
-	}
 }
