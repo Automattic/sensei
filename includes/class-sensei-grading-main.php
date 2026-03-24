@@ -569,7 +569,23 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		 */
 		$count_args = apply_filters( 'sensei_grading_count_statuses', $count_args );
 
-		$counts = Sensei()->grading->count_statuses( $count_args );
+		// Use cached per-status counts from prepare_items() when available,
+		// avoiding a second full-table scan with the same JOINs.
+		$cached_counts = $this->grading_listing_service->get_status_counts();
+		if ( null !== $cached_counts ) {
+			// Ensure all expected statuses exist with 0 defaults, matching
+			// the shape that count_statuses() returns.
+			$defaults = array_fill_keys(
+				array( 'graded', 'ungraded', 'passed', 'failed', 'in-progress', 'complete' ),
+				0
+			);
+			$counts   = array_merge( $defaults, $cached_counts );
+
+			/** This filter is documented in includes/class-sensei-grading.php */
+			$counts = apply_filters( 'sensei_count_statuses', $counts, 'sensei_lesson_status' );
+		} else {
+			$counts = Sensei()->grading->count_statuses( $count_args );
+		}
 
 		$inprogress_lessons_count = $counts['in-progress'];
 		$ungraded_lessons_count   = $counts['ungraded'];
