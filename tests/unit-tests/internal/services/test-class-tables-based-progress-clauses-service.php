@@ -147,4 +147,32 @@ class Tables_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		$this->assertStringContainsString( $wpdb->prefix . 'sensei_lms_progress', $clauses['fields'], 'Expected progress table in fields clause.' );
 		$this->assertStringContainsString( 'COALESCE', $clauses['fields'], 'Expected COALESCE for quiz status in fields clause.' );
 	}
+
+	public function testAddDaysToCompletionToLessonsClauses_WhenCalled_ConvertsUtcToLocalTime(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Tables_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_days_to_completion_to_lessons_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'CONVERT_TZ', $clauses['fields'], 'Expected CONVERT_TZ for UTC to local time conversion.' );
+	}
+
+	public function testAddDaysToCompletionToCoursesClauses_WhenCalled_ConvertsUtcToLocalTime(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Tables_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_days_to_completion_to_courses_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'CONVERT_TZ', $clauses['fields'], 'Expected CONVERT_TZ for UTC to local time conversion.' );
+	}
 }

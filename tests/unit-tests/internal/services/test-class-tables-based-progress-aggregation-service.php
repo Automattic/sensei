@@ -549,6 +549,41 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0, $result['days_to_complete_sum'] );
 	}
 
+	public function testGetLessonTotals_WithUtcDatesNearMidnight_ConvertsToLocalTimeBeforeDatediff(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		// Set site timezone to UTC-5 (e.g. America/New_York EST).
+		$original_offset   = get_option( 'gmt_offset' );
+		$original_timezone = get_option( 'timezone_string' );
+		update_option( 'gmt_offset', -5 );
+		update_option( 'timezone_string', '' );
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		// UTC dates span two days (Jan 1 05:00 → Jan 2 04:00),
+		// but in UTC-5 they're same day (Jan 1 00:00 → Jan 1 23:00).
+		$started_at   = '2024-01-01 05:00:00';
+		$completed_at = '2024-01-02 04:00:00';
+		$this->insert_progress_with_dates( $lesson_id, $user_id, 'lesson', 'complete', $course_id, $started_at, $completed_at );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['days_to_complete_sum'], 'UTC dates spanning midnight should be 1 day in local time (UTC-5).' );
+
+		/* Cleanup. */
+		update_option( 'gmt_offset', $original_offset );
+		update_option( 'timezone_string', $original_timezone );
+	}
+
 	public function testCountStatuses_WithIncludeStatusesOverride_KeepsExcludedUsersForOverrideStatuses(): void {
 		/* Arrange. */
 		global $wpdb;
