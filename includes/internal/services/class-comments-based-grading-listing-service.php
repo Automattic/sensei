@@ -31,6 +31,24 @@ class Comments_Based_Grading_Listing_Service implements Grading_Listing_Service_
 	 * @return array{ items: Grading_Item[], total_count: int }
 	 */
 	public function get_lesson_progress_items( array $args ): array {
+		// Add a SQL-level filter to exclude lessons where a quiz exists but
+		// the student has no quiz answers — there is nothing to grade.
+		// This covers both 'complete' (never submitted) and orphaned
+		// 'passed'/'graded'/'failed' records with no answer data.
+		// In-progress students are kept since they haven't submitted yet.
+		$exclusion_filter = function ( $clauses ) {
+			global $wpdb;
+			$clauses['where'] .= " AND NOT ( {$wpdb->comments}.comment_approved != 'in-progress'"
+				. " AND EXISTS ( SELECT 1 FROM {$wpdb->postmeta} pm"
+				. " WHERE pm.post_id = {$wpdb->comments}.comment_post_ID"
+				. " AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0 )"
+				. " AND NOT EXISTS ( SELECT 1 FROM {$wpdb->commentmeta} cm"
+				. " WHERE cm.comment_id = {$wpdb->comments}.comment_ID"
+				. " AND cm.meta_key = 'quiz_answers' ) )";
+			return $clauses;
+		};
+		add_filter( 'comments_clauses', $exclusion_filter );
+
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so run
 		// a separate count query first with no limit/offset.
 		$total_count = \Sensei_Utils::sensei_check_for_activity(
@@ -54,6 +72,8 @@ class Comments_Based_Grading_Listing_Service implements Grading_Listing_Service_
 		}
 
 		$statuses = \Sensei_Utils::sensei_check_for_activity( $args, true );
+
+		remove_filter( 'comments_clauses', $exclusion_filter );
 
 		// sensei_check_for_activity returns a single object when there is
 		// exactly one result — normalize to an array.
