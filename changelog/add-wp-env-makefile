@@ -1,0 +1,4 @@
+Significance: patch
+Type: added
+
+Add Makefile with wp-env targets and WordPress version switching for local development.
