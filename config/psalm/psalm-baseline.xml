@@ -4561,7 +4561,8 @@
     </InvalidScalarArgument>
   </file>
   <file src="includes/internal/services/class-comments-based-progress-aggregation-service.php">
-    <PossiblyInvalidPropertyFetch occurrences="4">
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$row-&gt;days_to_complete_count</code>
       <code>$row-&gt;days_to_complete_sum</code>
       <code>$row-&gt;lesson_completed_count</code>
       <code>$row-&gt;lesson_start_count</code>
@@ -4584,7 +4585,8 @@
     </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/internal/services/class-tables-based-progress-aggregation-service.php">
-    <PossiblyInvalidPropertyFetch occurrences="4">
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$row-&gt;days_to_complete_count</code>
       <code>$row-&gt;days_to_complete_sum</code>
       <code>$row-&gt;lesson_completed_count</code>
       <code>$row-&gt;lesson_start_count</code>

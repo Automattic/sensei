@@ -36,7 +36,7 @@ class Comments_Based_Grading_Listing_Service implements Grading_Listing_Service_
 		// This covers both 'complete' (never submitted) and orphaned
 		// 'passed'/'graded'/'failed' records with no answer data.
 		// In-progress students are kept since they haven't submitted yet.
-		$exclusion_filter = function ( $clauses ) {
+		$exclusion_filter = function ( array $clauses ): array {
 			global $wpdb;
 			$clauses['where'] .= " AND NOT ( {$wpdb->comments}.comment_approved != 'in-progress'"
 				. " AND EXISTS ( SELECT 1 FROM {$wpdb->postmeta} pm"
