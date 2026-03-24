@@ -83,7 +83,7 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 85, $result['items'][0]->grade );
+		$this->assertSame( 85.0, $result['items'][0]->grade );
 	}
 
 	public function testGetLessonProgressItems_WithOffsetBeyondTotal_CorrectsPagination(): void {

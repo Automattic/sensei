@@ -151,10 +151,10 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( 'passed', $result['items'][0]->status, 'Quiz status should override lesson status.' );
-		$this->assertSame( 90, $result['items'][0]->grade, 'Expected grade from quiz submission.' );
+		$this->assertSame( 90.0, $result['items'][0]->grade, 'Expected grade from quiz submission.' );
 	}
 
-	public function testGetLessonProgressItems_WithQuizProgressButNoSubmission_UsesLessonStatus(): void {
+	public function testGetLessonProgressItems_WithQuizProgressButNoSubmission_ExcludedFromResults(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -170,7 +170,7 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
-		// Quiz progress exists but no quiz submission.
+		// Quiz progress exists but no quiz submission — nothing to grade.
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
 		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
 
@@ -182,7 +182,8 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 'complete', $result['items'][0]->status, 'Quiz progress without submission should fall back to lesson status.' );
+		$this->assertSame( 0, $result['total_count'], 'Completed lesson with quiz but no submission should be excluded.' );
+		$this->assertEmpty( $result['items'], 'No items should be returned.' );
 	}
 
 	public function testGetLessonProgressItems_WithPostInFilter_ReturnsMatchingLessons(): void {
@@ -260,16 +261,20 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$lesson_id = $this->sensei_factory->lesson->create(
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
-		$this->insert_progress( $lesson_id, $user1, 'lesson', 'in-progress', $course_id );
-		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete', $course_id );
-
-		$quiz_id = $this->sensei_factory->quiz->create(
+		$quiz_id   = $this->sensei_factory->quiz->create(
 			[
 				'post_parent' => $lesson_id,
 				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
 			]
 		);
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'in-progress', $course_id );
+		// User2 completed and submitted the quiz so is not excluded.
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $quiz_id, $user2, 'quiz', 'complete', $lesson_id );
+		$this->insert_quiz_submission( $quiz_id, $user2 );
+
 		$this->insert_progress( $lesson_id, $user3, 'lesson', 'complete', $course_id );
 		$this->insert_progress( $quiz_id, $user3, 'quiz', 'graded', $lesson_id );
 		$this->insert_quiz_submission( $quiz_id, $user3 );
