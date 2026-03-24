@@ -2,11 +2,11 @@
 	"core": null,
 	"plugins": [ "." ],
 	"themes": ["Automattic/themes/course#trunk"],
+	"port": 8889,
 	"config": {
 		"WP_DEBUG": true,
 		"WP_DEBUG_LOG": true,
 		"WP_ENVIRONMENT_TYPE": "development"
 	},
-	"port": 8888,
 	"testsEnvironment": false
 }
