@@ -42,24 +42,6 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	}
 
 	/**
-	 * Get the site's UTC offset in '+HH:MM' / '-HH:MM' format for CONVERT_TZ.
-	 *
-	 * Uses a numeric offset so that MySQL timezone tables are not required.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @return string UTC offset string, e.g. '+05:00' or '-05:00'.
-	 */
-	private function get_utc_offset_string(): string {
-		$offset  = (float) get_option( 'gmt_offset' );
-		$hours   = (int) $offset;
-		$minutes = abs( (int) ( ( $offset - $hours ) * 60 ) );
-		$sign    = $offset < 0 ? '-' : '+';
-
-		return sprintf( '%s%02d:%02d', $sign, abs( $hours ), $minutes );
-	}
-
-	/**
 	 * Get the progress table name.
 	 *
 	 * @since $$next-version$$
@@ -122,7 +104,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	 */
 	public function add_days_to_completion_to_courses_clauses( array $clauses ): array {
 		$progress_table = $this->get_progress_table_name();
-		$utc_offset     = $this->get_utc_offset_string();
+		$utc_offset     = Grading_Item::get_utc_offset_string();
 
 		$clauses['fields']  .= ", SUM( ABS( DATEDIFF( CONVERT_TZ( cp.completed_at, '+00:00', '$utc_offset' ), CONVERT_TZ( cp.started_at, '+00:00', '$utc_offset' ) ) ) + 1 ) AS days_to_completion";
 		$clauses['fields']  .= ', COUNT(cp.id) AS count_of_completions';
@@ -200,7 +182,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	public function add_days_to_completion_to_lessons_clauses( array $clauses ): array {
 		$progress_table    = $this->get_progress_table_name();
 		$submissions_table = $this->wpdb->prefix . 'sensei_lms_quiz_submissions';
-		$utc_offset        = $this->get_utc_offset_string();
+		$utc_offset        = Grading_Item::get_utc_offset_string();
 
 		$clauses['fields'] .= ", (SELECT SUM( ABS( DATEDIFF( CONVERT_TZ( p.completed_at, '+00:00', '$utc_offset' ), CONVERT_TZ( p.started_at, '+00:00', '$utc_offset' ) ) ) + 1 )";
 		$clauses['fields'] .= " FROM {$progress_table} p";

@@ -42,24 +42,6 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
-	 * Get the site's UTC offset in '+HH:MM' / '-HH:MM' format for CONVERT_TZ.
-	 *
-	 * Uses a numeric offset so that MySQL timezone tables are not required.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @return string UTC offset string, e.g. '+05:00' or '-05:00'.
-	 */
-	private function get_utc_offset_string(): string {
-		$offset  = (float) get_option( 'gmt_offset' );
-		$hours   = (int) $offset;
-		$minutes = abs( (int) ( ( $offset - $hours ) * 60 ) );
-		$sign    = $offset < 0 ? '-' : '+';
-
-		return sprintf( '%s%02d:%02d', $sign, abs( $hours ), $minutes );
-	}
-
-	/**
 	 * Get the progress table name.
 	 *
 	 * @since $$next-version$$
@@ -136,7 +118,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$placeholders      = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
 		$completed         = "('" . implode( "','", Grading_Item::COMPLETED_STATUSES ) . "')";
 		$has_completion    = "('" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "')";
-		$utc_offset        = $this->get_utc_offset_string();
+		$utc_offset        = Grading_Item::get_utc_offset_string();
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb prefix. Placeholders and status list created dynamically.
 		$query = $wpdb->prepare(

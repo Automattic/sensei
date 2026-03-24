@@ -50,6 +50,24 @@ class Grading_Item {
 	public const STATUSES_WITH_COMPLETION_DATE = [ 'complete', 'graded', 'passed' ];
 
 	/**
+	 * Get the site's UTC offset in '+HH:MM' / '-HH:MM' format for CONVERT_TZ.
+	 *
+	 * Uses a numeric offset so that MySQL timezone tables are not required.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string UTC offset string, e.g. '+05:00' or '-05:00'.
+	 */
+	public static function get_utc_offset_string(): string {
+		$offset  = (float) get_option( 'gmt_offset' );
+		$hours   = (int) $offset;
+		$minutes = abs( (int) ( ( $offset - $hours ) * 60 ) );
+		$sign    = $offset < 0 ? '-' : '+';
+
+		return sprintf( '%s%02d:%02d', $sign, abs( $hours ), $minutes );
+	}
+
+	/**
 	 * The progress status. For HPPS tables-based storage, this is the
 	 * effective status coalesced from quiz progress when available.
 	 * For comments-based storage, this is the raw comment_approved value.
