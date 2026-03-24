@@ -679,7 +679,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->count_statuses(
 			[
-				'type' => 'lesson',
+				'type'                                 => 'lesson',
 				'exclude_unsubmitted_quiz_completions' => true,
 			]
 		);
