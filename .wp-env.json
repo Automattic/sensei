@@ -7,6 +7,5 @@
 		"WP_DEBUG_LOG": true,
 		"WP_ENVIRONMENT_TYPE": "development"
 	},
-	"port": 8888,
-	"testsEnvironment": false
+	"port": 8888
 }
