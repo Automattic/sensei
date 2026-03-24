@@ -2,7 +2,7 @@
 
 PLUGIN_NAME := sensei-lms
 WP_ENV := COMPOSE_PROJECT_NAME=$(PLUGIN_NAME) npx @wordpress/env
-NODE_MIN_VERSION := 20
+NODE_MIN_VERSION := 22
 WP ?= latest
 PHP ?=
 
