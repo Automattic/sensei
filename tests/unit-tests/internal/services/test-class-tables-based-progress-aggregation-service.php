@@ -762,5 +762,4 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $result['complete'], 'Non-trashed course should be counted.' );
 		$this->assertArrayNotHasKey( 'in-progress', $result, 'Trashed course status should not appear.' );
 	}
-
 }

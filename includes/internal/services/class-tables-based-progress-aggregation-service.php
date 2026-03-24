@@ -186,7 +186,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
-		$query .= $this->build_user_exclusion_clause( $args, "COALESCE( CASE WHEN qs.id IS NOT NULL THEN q.status END, p.status )" );
+		$query .= $this->build_user_exclusion_clause( $args, 'COALESCE( CASE WHEN qs.id IS NOT NULL THEN q.status END, p.status )' );
 
 		$query .= ' GROUP BY effective_status';
 
