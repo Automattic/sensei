@@ -383,4 +383,82 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $result['total_count'] );
 		$this->assertSame( $user1, $result['items'][0]->user_id );
 	}
+
+	public function testGetStatusCounts_AfterGetLessonProgressItems_ReturnsPerStatusCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		// User1: in-progress lesson (no quiz interaction).
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'in-progress', $course_id );
+
+		// User2: completed lesson with passed quiz.
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $quiz_id, $user2, 'quiz', 'passed', $lesson_id );
+		$this->insert_quiz_submission( $quiz_id, $user2, 85 );
+
+		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
+
+		/* Act. */
+		$service->get_lesson_progress_items(
+			$this->get_default_args( [ 'post_id' => $lesson_id ] )
+		);
+		$counts = $service->get_status_counts();
+
+		/* Assert. */
+		$this->assertIsArray( $counts, 'Expected an array of status counts.' );
+		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Expected 1 in-progress.' );
+		$this->assertSame( 1, $counts['passed'] ?? 0, 'Expected 1 passed (coalesced from quiz).' );
+	}
+
+	public function testGetStatusCounts_BeforeGetLessonProgressItems_ReturnsNull(): void {
+		/* Arrange. */
+		global $wpdb;
+		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
+
+		/* Act & Assert. */
+		$this->assertNull( $service->get_status_counts(), 'Expected null before any query.' );
+	}
+
+	public function testGetStatusCounts_WithStatusFilter_ReturnsAllStatuses(): void {
+		/* Arrange. */
+		global $wpdb;
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete', $course_id );
+
+		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
+
+		/* Act -- query with status filter for in-progress only. */
+		$service->get_lesson_progress_items(
+			$this->get_default_args(
+				[
+					'status'  => 'in-progress',
+					'post_id' => $lesson_id,
+				]
+			)
+		);
+		$counts = $service->get_status_counts();
+
+		/* Assert -- counts should include ALL statuses, not just in-progress. */
+		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Expected 1 in-progress.' );
+		$this->assertSame( 1, $counts['complete'] ?? 0, 'Expected 1 complete even though status filter was in-progress.' );
+	}
 }
