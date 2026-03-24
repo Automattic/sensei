@@ -1,0 +1,4 @@
+Significance: patch
+Type: performance
+
+Internal: Add database index to speed up Grading page queries.
