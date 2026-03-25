@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix Course Reports Last Activity showing an arbitrary date instead of the most recent activity date across all lessons.
