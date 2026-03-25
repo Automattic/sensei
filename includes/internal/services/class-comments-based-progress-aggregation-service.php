@@ -61,6 +61,11 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 */
 	public function count_statuses( array $args ): array {
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			_doing_it_wrong(
+				__METHOD__,
+				'The "type" argument must be "course" or "lesson".',
+				'$$next-version$$'
+			);
 			return array();
 		}
 
@@ -73,6 +78,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
 		$query .= $this->build_user_exclusion_clause( $args );
+		$query .= $this->build_unsubmitted_quiz_exclusion_clause( $args );
 
 		if ( isset( $args['query'] ) ) {
 			$query .= $args['query'];
@@ -92,6 +98,62 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	}
 
 	/**
+	 * Get aggregate totals for a set of lessons.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Array of lesson post IDs.
+	 * @return array Associative array with keys: unique_student_count, lesson_start_count, lesson_completed_count, days_to_complete_count, days_to_complete_sum.
+	 */
+	public function get_lesson_totals( array $lesson_ids ): array {
+		$defaults = [
+			'unique_student_count'   => 0,
+			'lesson_start_count'     => 0,
+			'lesson_completed_count' => 0,
+			'days_to_complete_count' => 0,
+			'days_to_complete_sum'   => 0,
+		];
+
+		if ( empty( $lesson_ids ) ) {
+			return $defaults;
+		}
+
+		$wpdb           = $this->wpdb;
+		$placeholders   = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+		$completed      = "'" . implode( "','", Grading_Item::COMPLETED_STATUSES ) . "'";
+		$has_completion = "'" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "'";
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb. Placeholders created dynamically. Date format string uses literal %s for MySQL STR_TO_DATE.
+		$query = $wpdb->prepare(
+			"SELECT COUNT(DISTINCT(lesson_students.user_id)) unique_student_count
+			, COUNT(lesson_students.comment_id) lesson_start_count
+			, SUM(IF(lesson_students.comment_approved IN ($completed), 1, 0)) lesson_completed_count
+			, SUM(IF(lesson_students.comment_approved IN ($has_completion), 1, 0)) days_to_complete_count
+			, SUM(IF(lesson_students.comment_approved IN ($has_completion), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
+			FROM {$wpdb->comments} lesson_students
+			LEFT JOIN {$wpdb->commentmeta} lesson_start ON lesson_start.comment_id = lesson_students.comment_id
+			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( $placeholders )",
+			array_merge( [ '%Y-%m-%d %H:%i:%s' ], $lesson_ids )
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$row = $wpdb->get_row( $query );
+
+		if ( ! $row ) {
+			return $defaults;
+		}
+
+		return [
+			'unique_student_count'   => (int) $row->unique_student_count,
+			'lesson_start_count'     => (int) $row->lesson_start_count,
+			'lesson_completed_count' => (int) $row->lesson_completed_count,
+			'days_to_complete_count' => (int) $row->days_to_complete_count,
+			'days_to_complete_sum'   => (int) $row->days_to_complete_sum,
+		];
+	}
+
+	/**
 	 * Build SQL clause for filtering by post ID(s).
 	 *
 	 * @since $$next-version$$
@@ -102,14 +164,16 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	private function build_post_filter_clause( array $args ): string {
 		$wpdb = $this->wpdb;
 
+		// Prefer post_id (single lesson filter) over post__in (course lessons)
+		// so that counts reflect the specific lesson when both are set.
+		if ( ! empty( $args['post_id'] ) ) {
+			return $wpdb->prepare( ' AND comment_post_ID = %d', $args['post_id'] );
+		}
+
 		if ( ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
 			return $wpdb->prepare( " AND comment_post_ID IN ( $placeholders )", $args['post__in'] );
-		}
-
-		if ( ! empty( $args['post_id'] ) ) {
-			return $wpdb->prepare( ' AND comment_post_ID = %d', $args['post_id'] );
 		}
 
 		return '';
@@ -174,5 +238,37 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		}
 
 		return " AND $exclusion_sql";
+	}
+
+	/**
+	 * Build SQL clause for excluding completed lessons with no quiz submission.
+	 *
+	 * When enabled, excludes lessons where a quiz exists but the student has
+	 * no quiz answers — there is nothing to grade. This covers both 'complete'
+	 * (never submitted) and orphaned 'passed'/'graded'/'failed' records with
+	 * no answer data.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Query arguments.
+	 * @return string SQL clause.
+	 */
+	private function build_unsubmitted_quiz_exclusion_clause( array $args ): string {
+		$exclude = $args['exclude_unsubmitted_quiz_completions'] ?? false;
+
+		if ( ! $exclude ) {
+			return '';
+		}
+
+		$wpdb = $this->wpdb;
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
+		return " AND NOT ( comment_approved != 'in-progress'"
+			. " AND EXISTS ( SELECT 1 FROM {$wpdb->postmeta} pm"
+			. " WHERE pm.post_id = {$wpdb->comments}.comment_post_ID"
+			. " AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0 )"
+			. " AND NOT EXISTS ( SELECT 1 FROM {$wpdb->commentmeta} cm"
+			. " WHERE cm.comment_id = {$wpdb->comments}.comment_ID"
+			. " AND cm.meta_key = 'quiz_answers' ) )";
 	}
 }

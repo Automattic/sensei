@@ -117,4 +117,36 @@ class Comments_Based_Progress_Clauses_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( '', $clauses['where'] );
 	}
+
+	public function testAddLastActivityToLessonsClauses_WhenCalled_AddsLastActivityDateField(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_last_activity_to_lessons_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'last_activity_date', $clauses['fields'], 'Expected last_activity_date in fields clause.' );
+		$this->assertStringContainsString( $wpdb->comments, $clauses['fields'], 'Expected comments table in fields clause.' );
+		$this->assertStringContainsString( 'sensei_lesson_status', $clauses['fields'], 'Expected lesson status comment type in fields clause.' );
+	}
+
+	public function testAddDaysToCompletionToLessonsClauses_WhenCalled_AddsDaysToCompleteField(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Clauses_Service( $wpdb );
+		$clauses = $this->get_empty_clauses();
+
+		/* Act. */
+		$clauses = $service->add_days_to_completion_to_lessons_clauses( $clauses );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'days_to_complete', $clauses['fields'], 'Expected days_to_complete in fields clause.' );
+		$this->assertStringContainsString( $wpdb->comments, $clauses['fields'], 'Expected comments table in fields clause.' );
+		$this->assertStringContainsString( $wpdb->commentmeta, $clauses['fields'], 'Expected commentmeta table in fields clause.' );
+	}
 }

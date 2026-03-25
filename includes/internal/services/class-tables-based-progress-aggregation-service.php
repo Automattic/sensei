@@ -79,16 +79,83 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		}
 
 		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			_doing_it_wrong(
+				__METHOD__,
+				'The "type" argument must be "course" or "lesson".',
+				'$$next-version$$'
+			);
 			return array();
 		}
 
-		// For lesson queries, use the quiz status when available (graded, passed, etc.)
-		// since lesson progress only stores 'in-progress' and 'complete'.
+		// Delegate to a quiz-aware method; see its docblock for rationale.
 		if ( 'lesson' === $args['type'] ) {
 			return $this->count_lesson_statuses_with_quiz( $args );
 		}
 
 		return $this->count_course_statuses( $args );
+	}
+
+	/**
+	 * Get aggregate totals for a set of lessons.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Array of lesson post IDs.
+	 * @return array Associative array with keys: unique_student_count, lesson_start_count, lesson_completed_count, days_to_complete_count, days_to_complete_sum.
+	 */
+	public function get_lesson_totals( array $lesson_ids ): array {
+		$defaults = [
+			'unique_student_count'   => 0,
+			'lesson_start_count'     => 0,
+			'lesson_completed_count' => 0,
+			'days_to_complete_count' => 0,
+			'days_to_complete_sum'   => 0,
+		];
+
+		if ( empty( $lesson_ids ) ) {
+			return $defaults;
+		}
+
+		$wpdb              = $this->wpdb;
+		$table             = $this->get_progress_table_name();
+		$submissions_table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
+		$placeholders      = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+		$completed         = "('" . implode( "','", Grading_Item::COMPLETED_STATUSES ) . "')";
+		$has_completion    = "('" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "')";
+		$utc_offset        = Utils::get_utc_offset_string();
+
+		// Plain COALESCE suffices here because quiz rows are already filtered
+		// by submission existence in the JOIN condition (AND EXISTS ...).
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb prefix. Placeholders and status list created dynamically.
+		$query = $wpdb->prepare(
+			"SELECT COUNT(DISTINCT p.user_id) AS unique_student_count
+			, COUNT(*) AS lesson_start_count
+			, SUM(IF(COALESCE( q.status, p.status ) IN $completed, 1, 0)) AS lesson_completed_count
+			, SUM(IF(COALESCE( q.status, p.status ) IN $has_completion, 1, 0)) AS days_to_complete_count
+			, SUM(IF(COALESCE( q.status, p.status ) IN $has_completion, ABS( DATEDIFF( CONVERT_TZ( p.completed_at, '+00:00', '$utc_offset' ), CONVERT_TZ( p.started_at, '+00:00', '$utc_offset' ) ) ) + 1, 0)) AS days_to_complete_sum
+			FROM {$table} p
+			LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0
+			LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
+				AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )
+			WHERE p.type = 'lesson' AND p.post_id IN ( $placeholders )",
+			$lesson_ids
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$row = $wpdb->get_row( $query );
+
+		if ( ! $row ) {
+			return $defaults;
+		}
+
+		return [
+			'unique_student_count'   => (int) $row->unique_student_count,
+			'lesson_start_count'     => (int) $row->lesson_start_count,
+			'lesson_completed_count' => (int) $row->lesson_completed_count,
+			'days_to_complete_count' => (int) $row->days_to_complete_count,
+			'days_to_complete_sum'   => (int) $row->days_to_complete_sum,
+		];
 	}
 
 	/**
@@ -99,8 +166,9 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * This mirrors the comments-based behavior where a single comment per lesson
 	 * stores the quiz-derived status directly.
 	 *
-	 * Uses COALESCE(quiz.status, lesson.status) so the quiz status takes
-	 * precedence when it exists.
+	 * Uses COALESCE(CASE WHEN qs.id IS NOT NULL THEN q.status END, p.status)
+	 * so quiz status takes precedence only when a quiz submission exists;
+	 * otherwise falls back to lesson status.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -113,18 +181,19 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$submissions_table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query  = "SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
-		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status != 'trash'";
+		$query  = "SELECT COALESCE( CASE WHEN qs.id IS NOT NULL THEN q.status END, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
 		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
-		$query .= " AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )";
 
 		$query .= $wpdb->prepare( ' WHERE p.type = %s', 'lesson' );
+		$query .= $this->build_unsubmitted_quiz_exclusion_clause( $args );
 
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
-		$query .= $this->build_user_exclusion_clause( $args, 'COALESCE( q.status, p.status )' );
+		$query .= $this->build_user_exclusion_clause( $args, 'COALESCE( CASE WHEN qs.id IS NOT NULL THEN q.status END, p.status )' );
 
 		$query .= ' GROUP BY effective_status';
 
@@ -184,14 +253,16 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	private function build_post_filter_clause( array $args ): string {
 		$wpdb = $this->wpdb;
 
+		// Prefer post_id (single lesson filter) over post__in (course lessons)
+		// so that counts reflect the specific lesson when both are set.
+		if ( ! empty( $args['post_id'] ) ) {
+			return $wpdb->prepare( ' AND p.post_id = %d', $args['post_id'] );
+		}
+
 		if ( ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
 			return $wpdb->prepare( " AND p.post_id IN ( $placeholders )", $args['post__in'] );
-		}
-
-		if ( ! empty( $args['post_id'] ) ) {
-			return $wpdb->prepare( ' AND p.post_id = %d', $args['post_id'] );
 		}
 
 		return '';
@@ -231,57 +302,28 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @return string SQL clause.
 	 */
 	private function build_user_exclusion_clause( array $args, string $status_column = 'p.status' ): string {
-		if ( empty( $args['exclude_user_login_prefixes'] ) ) {
-			return '';
-		}
-
-		$wpdb              = $this->wpdb;
-		$excluded_user_ids = $this->get_user_ids_by_login_prefixes( $args['exclude_user_login_prefixes'] );
-
-		if ( empty( $excluded_user_ids ) ) {
-			return '';
-		}
-
-		$id_placeholders = implode( ', ', array_fill( 0, count( $excluded_user_ids ), '%d' ) );
-
-		if ( ! empty( $args['include_statuses_override'] ) ) {
-			$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders and column expression created dynamically.
-			return $wpdb->prepare( " AND ( p.user_id NOT IN ( $id_placeholders ) OR $status_column IN ( $status_placeholders ) )", array_merge( $excluded_user_ids, $args['include_statuses_override'] ) );
-		}
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-		return $wpdb->prepare( " AND p.user_id NOT IN ( $id_placeholders )", $excluded_user_ids );
+		return Utils::build_user_exclusion_clause( $this->wpdb, $args, $status_column );
 	}
 
 	/**
-	 * Get user IDs whose login matches any of the given prefixes.
+	 * Build SQL clause for excluding completed lessons with no quiz submission.
 	 *
-	 * Runs as a separate query to avoid JOINing wp_users, which may
-	 * be on a different database in some environments.
+	 * When enabled, excludes lessons where a quiz exists but the student never
+	 * submitted it and the lesson is already complete — there is nothing to grade.
+	 * Used by the Grading page; the Reports page passes false to include all students.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param string[] $prefixes User login prefixes to match.
-	 * @return int[] Matching user IDs.
+	 * @param array $args Query arguments.
+	 * @return string SQL clause.
 	 */
-	private function get_user_ids_by_login_prefixes( array $prefixes ): array {
-		$prefixes = array_filter( $prefixes );
-		if ( empty( $prefixes ) ) {
-			return [];
+	private function build_unsubmitted_quiz_exclusion_clause( array $args ): string {
+		$exclude = $args['exclude_unsubmitted_quiz_completions'] ?? false;
+
+		if ( ! $exclude ) {
+			return '';
 		}
 
-		$wpdb = $this->wpdb;
-
-		$like_clauses = [];
-		foreach ( $prefixes as $prefix ) {
-			$escaped_prefix = $wpdb->esc_like( $prefix );
-			$like_clauses[] = $wpdb->prepare( 'user_login LIKE %s', $escaped_prefix . '%' );
-		}
-
-		$where = implode( ' OR ', $like_clauses );
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic WHERE built from prepared clauses. Caching handled by callers.
-		return array_map( 'intval', $wpdb->get_col( "SELECT ID FROM {$wpdb->users} WHERE $where" ) );
+		return " AND NOT ( pm.meta_value IS NOT NULL AND qs.id IS NULL AND p.status = 'complete' )";
 	}
 }
