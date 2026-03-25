@@ -35,6 +35,8 @@ define write_override
 			WP_CORE="\"https://wordpress.org/wordpress-$$WP_VAL.zip\""; \
 		elif [ "$$WP_VAL" != "latest" ]; then \
 			WP_CORE="\"WordPress/WordPress#$$WP_VAL-branch\""; \
+		else \
+			echo "Error: Unrecognised WP value '$$WP_VAL'"; exit 1; \
 		fi; \
 		( \
 			printf '{\n'; \
@@ -54,7 +56,7 @@ define write_override
 endef
 
 ## Development environment
-install: ## Install dependencies (requires Node 20+)
+install: ## Install dependencies (requires Node 22+)
 	$(check_node)
 	npm install
 
@@ -86,11 +88,12 @@ shell: ## Open a shell in the WordPress container
 	$(WP_ENV) run cli bash
 
 wp: ## Run a wp-cli command (CMD="plugin list")
+	@[ -n "$(CMD)" ] || { echo "Error: CMD is required. Example: make wp CMD=\"plugin list\""; exit 1; }
 	$(WP_ENV) run cli wp $(CMD)
 
 ## Testing
 test-php: ## Run PHPUnit tests via wp-env (requires: make up)
-	$(WP_ENV) run --env-cwd='wp-content/plugins/sensei' tests-cli vendor/bin/phpunit -c phpunit.xml
+	$(WP_ENV) run tests-cli --env-cwd='wp-content/plugins/sensei' vendor/bin/phpunit -c phpunit.xml
 
 ## Code quality
 lint: ## Run PHP CodeSniffer
@@ -100,7 +103,6 @@ lint: ## Run PHP CodeSniffer
 build: ## Build plugin zip via wp-env (requires: make up)
 	npm run build:assets
 	rm -f assets/dist/css/jquery-ui.js
-	$(WP_ENV) run cli --env-cwd=wp-content/plugins/sensei composer install
 	$(WP_ENV) run cli --env-cwd=wp-content/plugins/sensei composer install --no-dev --prefer-dist --optimize-autoloader --no-scripts
 	npm run archive
 
