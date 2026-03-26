@@ -116,7 +116,7 @@ class Utils {
 		$where = implode( ' OR ', $like_clauses );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic WHERE built from prepared clauses. Caching handled by callers.
-		$result = $wpdb->get_col( "SELECT ID FROM {$wpdb->users} WHERE $where" );
+		$result = (array) $wpdb->get_col( "SELECT ID FROM {$wpdb->users} WHERE $where" );
 		self::log_query_error( $wpdb, 'User ID lookup by login prefix' );
 
 		return array_map( 'intval', $result );

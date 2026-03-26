@@ -73,19 +73,20 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		};
 		add_filter( 'sensei_count_statuses_args', $restrict_filter );
 
-		$this->login_as_admin();
-		$service      = new \Sensei\Internal\Services\Tables_Based_Grading_Listing_Service( $wpdb );
-		$grading_main = new Sensei_Grading_Main( [ 'view' => 'all' ], $service );
+		try {
+			$this->login_as_admin();
+			$service      = new \Sensei\Internal\Services\Tables_Based_Grading_Listing_Service( $wpdb );
+			$grading_main = new Sensei_Grading_Main( [ 'view' => 'all' ], $service );
 
-		/* Act. */
-		$grading_main->prepare_items();
+			/* Act. */
+			$grading_main->prepare_items();
 
-		/* Assert. */
-		$this->assertCount( 1, $grading_main->items, 'Listing should only show items for the allowed lesson.' );
-		$this->assertSame( $lesson_ids[0], $grading_main->items[0]->lesson_id, 'Listing item should be for the restricted lesson.' );
-
-		/* Clean up. */
-		remove_filter( 'sensei_count_statuses_args', $restrict_filter );
+			/* Assert. */
+			$this->assertCount( 1, $grading_main->items, 'Listing should only show items for the allowed lesson.' );
+			$this->assertSame( $lesson_ids[0], $grading_main->items[0]->lesson_id, 'Listing item should be for the restricted lesson.' );
+		} finally {
+			remove_filter( 'sensei_count_statuses_args', $restrict_filter );
+		}
 	}
 
 	/**
