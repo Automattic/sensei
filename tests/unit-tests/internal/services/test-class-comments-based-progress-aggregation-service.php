@@ -375,5 +375,4 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		/* Assert. */
 		$this->assertSame( 1, $result['complete'], 'Completed lesson with quiz but no answers should be included by default.' );
 	}
-
 }

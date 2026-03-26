@@ -238,18 +238,4 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 
 		return " AND $exclusion_sql";
 	}
-
-	/**
-	 * Build SQL clause for excluding completed lessons with no quiz submission.
-	 *
-	 * When enabled, excludes lessons where a quiz exists but the student has
-	 * no quiz answers — there is nothing to grade. This covers both 'complete'
-	 * (never submitted) and orphaned 'passed'/'graded'/'failed' records with
-	 * no answer data.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Query arguments.
-	 * @return string SQL clause.
-	 */
 }
