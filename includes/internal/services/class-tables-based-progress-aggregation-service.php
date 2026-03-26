@@ -144,6 +144,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$row = $wpdb->get_row( $query );
+		Utils::log_query_error( $wpdb, 'Tables-based lesson totals' );
 
 		if ( ! $row ) {
 			return $defaults;
@@ -197,6 +198,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based lesson status counts' );
 
 		$counts = [];
 		foreach ( $results as $row ) {
@@ -231,6 +233,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based course status counts' );
 
 		$counts = [];
 		foreach ( $results as $row ) {

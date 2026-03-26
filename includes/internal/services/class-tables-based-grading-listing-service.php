@@ -80,6 +80,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		$status_count_query = "SELECT effective_status, COUNT(*) AS total FROM ( $count_base_query ) AS counted GROUP BY effective_status";
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared via build_base_query. Caching handled by callers.
 		$status_rows = (array) $wpdb->get_results( $status_count_query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Grading listing status counts' );
 
 		$this->status_counts = [];
 		foreach ( $status_rows as $row ) {
@@ -115,6 +116,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared via build_base_query. Caching handled by callers.
 		$rows = (array) $wpdb->get_results( $items_query );
+		Utils::log_query_error( $wpdb, 'Grading listing items' );
 
 		$items = [];
 		foreach ( $rows as $row ) {
