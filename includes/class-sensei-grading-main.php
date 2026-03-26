@@ -538,8 +538,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		// Setup counters.
 		$count_args = array(
-			'type'                                 => 'lesson',
-			'exclude_unsubmitted_quiz_completions' => true,
+			'type' => 'lesson',
 		);
 		$query_args = array(
 			'page' => $this->page_slug,

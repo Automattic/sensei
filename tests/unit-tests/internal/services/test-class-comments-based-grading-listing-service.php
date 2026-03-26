@@ -86,36 +86,6 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 85.0, $result['items'][0]->grade );
 	}
 
-	public function testGetLessonProgressItems_WithQuizButNoAnswers_ExcludedFromResults(): void {
-		/* Arrange. */
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
-		);
-		$quiz_id   = $this->sensei_factory->quiz->create(
-			[
-				'post_parent' => $lesson_id,
-				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
-			]
-		);
-		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-
-		// Complete lesson with quiz but no quiz_answers meta — nothing to grade.
-		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'complete' );
-
-		$service = new Comments_Based_Grading_Listing_Service();
-
-		/* Act. */
-		$result = $service->get_lesson_progress_items(
-			$this->get_default_args( [ 'post_id' => $lesson_id ] )
-		);
-
-		/* Assert. */
-		$this->assertSame( 0, $result['total_count'], 'Completed lesson with quiz but no answers should be excluded.' );
-		$this->assertEmpty( $result['items'], 'No items should be returned.' );
-	}
-
 	public function testGetLessonProgressItems_WithStatusFilter_FiltersResults(): void {
 		/* Arrange. */
 		$user1     = $this->sensei_factory->user->create();

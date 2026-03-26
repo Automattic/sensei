@@ -78,7 +78,6 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
 		$query .= $this->build_user_exclusion_clause( $args );
-		$query .= $this->build_unsubmitted_quiz_exclusion_clause( $args );
 
 		if ( isset( $args['query'] ) ) {
 			$query .= $args['query'];
@@ -253,22 +252,4 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
 	 */
-	private function build_unsubmitted_quiz_exclusion_clause( array $args ): string {
-		$exclude = $args['exclude_unsubmitted_quiz_completions'] ?? false;
-
-		if ( ! $exclude ) {
-			return '';
-		}
-
-		$wpdb = $this->wpdb;
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
-		return " AND NOT ( comment_approved != 'in-progress'"
-			. " AND EXISTS ( SELECT 1 FROM {$wpdb->postmeta} pm"
-			. " WHERE pm.post_id = {$wpdb->comments}.comment_post_ID"
-			. " AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0 )"
-			. " AND NOT EXISTS ( SELECT 1 FROM {$wpdb->commentmeta} cm"
-			. " WHERE cm.comment_id = {$wpdb->comments}.comment_ID"
-			. " AND cm.meta_key = 'quiz_answers' ) )";
-	}
 }

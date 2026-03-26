@@ -616,7 +616,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $result['ungraded'], 'Excluded user with override status should still be counted.' );
 	}
 
-	public function testCountStatuses_LessonWithQuizButNoSubmission_IncludedByDefault(): void {
+	public function testCountStatuses_LessonWithQuizButNoSubmission_UsesQuizStatus(): void {
 		/* Arrange. */
 		global $wpdb;
 
@@ -648,45 +648,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['complete'], 'Completed lesson with quiz but no submission should be included by default.' );
-		$this->assertArrayNotHasKey( 'passed', $result, 'Quiz progress without submission should not count as graded.' );
-	}
-
-	public function testCountStatuses_LessonWithQuizButNoSubmission_ExcludedWhenFlagSet(): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
-		);
-		$quiz_id   = $this->sensei_factory->quiz->create(
-			[
-				'post_parent' => $lesson_id,
-				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
-			]
-		);
-		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
-
-		// Quiz progress exists but no quiz submission (e.g. migration phantom or lost data).
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
-
-		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->count_statuses(
-			[
-				'type'                                 => 'lesson',
-				'exclude_unsubmitted_quiz_completions' => true,
-			]
-		);
-
-		/* Assert. */
-		$this->assertArrayNotHasKey( 'complete', $result, 'Completed lesson with quiz but no submission should be excluded when flag is set.' );
-		$this->assertArrayNotHasKey( 'passed', $result, 'Quiz progress without submission should not count as graded.' );
+		$this->assertSame( 1, $result['passed'], 'Quiz progress status should take precedence over lesson status.' );
+		$this->assertArrayNotHasKey( 'complete', $result, 'Lesson status should not appear when quiz progress exists.' );
 	}
 
 	public function testCountStatuses_CourseType_ReturnsStatusCounts(): void {

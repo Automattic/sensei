@@ -166,9 +166,8 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * This mirrors the comments-based behavior where a single comment per lesson
 	 * stores the quiz-derived status directly.
 	 *
-	 * Uses COALESCE(CASE WHEN qs.id IS NOT NULL THEN q.status END, p.status)
-	 * so quiz status takes precedence only when a quiz submission exists;
-	 * otherwise falls back to lesson status.
+	 * Uses COALESCE(q.status, p.status) so quiz progress status takes
+	 * precedence when it exists; otherwise falls back to lesson status.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -181,7 +180,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$submissions_table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query  = "SELECT COALESCE( CASE WHEN qs.id IS NOT NULL THEN q.status END, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
+		$query  = "SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
 		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";
@@ -189,11 +188,10 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
 
 		$query .= $wpdb->prepare( ' WHERE p.type = %s', 'lesson' );
-		$query .= $this->build_unsubmitted_quiz_exclusion_clause( $args );
 
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
-		$query .= $this->build_user_exclusion_clause( $args, 'COALESCE( CASE WHEN qs.id IS NOT NULL THEN q.status END, p.status )' );
+		$query .= $this->build_user_exclusion_clause( $args, 'COALESCE( q.status, p.status )' );
 
 		$query .= ' GROUP BY effective_status';
 
@@ -317,13 +315,4 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
 	 */
-	private function build_unsubmitted_quiz_exclusion_clause( array $args ): string {
-		$exclude = $args['exclude_unsubmitted_quiz_completions'] ?? false;
-
-		if ( ! $exclude ) {
-			return '';
-		}
-
-		return " AND NOT ( pm.meta_value IS NOT NULL AND qs.id IS NULL AND p.status = 'complete' )";
-	}
 }

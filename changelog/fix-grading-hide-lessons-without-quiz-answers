@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Hide lessons with no quiz answers from the Grading page, including completed lessons where the student never submitted the quiz and orphaned records with quiz-derived statuses but no answer data.
