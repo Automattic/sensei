@@ -103,9 +103,9 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		// threw off the pagination), snap back to the last valid page.
 		$offset = $args['offset'] ?? 0;
 		$number = $args['number'] ?? 10;
-		if ( $number > 0 && $total_count < $offset ) {
-			$new_paged = floor( $total_count / $number );
-			$offset    = $new_paged * $number;
+		if ( $number > 0 && $total_count > 0 && $offset >= $total_count ) {
+			$last_page = max( 0, ceil( $total_count / $number ) - 1 );
+			$offset    = (int) ( $last_page * $number );
 		}
 
 		// Append ordering and pagination to the base query for the items fetch.

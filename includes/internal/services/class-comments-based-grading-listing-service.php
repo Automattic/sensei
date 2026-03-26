@@ -48,9 +48,9 @@ class Comments_Based_Grading_Listing_Service implements Grading_Listing_Service_
 		// threw off the pagination), snap back to the last valid page.
 		$offset = $args['offset'] ?? 0;
 		$number = $args['number'] ?? 10;
-		if ( $number > 0 && $total_count < $offset ) {
-			$new_paged      = floor( $total_count / $number );
-			$args['offset'] = $new_paged * $number;
+		if ( $number > 0 && $total_count > 0 && $offset >= $total_count ) {
+			$last_page      = max( 0, (int) ceil( $total_count / $number ) - 1 );
+			$args['offset'] = $last_page * $number;
 		}
 
 		$statuses = \Sensei_Utils::sensei_check_for_activity( $args, true );

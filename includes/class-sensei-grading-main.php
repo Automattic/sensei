@@ -606,8 +606,11 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		// Use cached per-status counts from prepare_items() when available,
 		// avoiding a second full-table scan with the same JOINs.
-		$cached_counts = $this->grading_listing_service->get_status_counts();
-		if ( null !== $cached_counts ) {
+		// Skip the cache if a plugin is filtering $count_args, since the
+		// cached counts would not reflect those modifications.
+		$has_count_filter = has_filter( 'sensei_grading_count_statuses' ) || has_filter( 'sensei_grading_count_statues' );
+		$cached_counts    = $this->grading_listing_service->get_status_counts();
+		if ( null !== $cached_counts && ! $has_count_filter ) {
 			// Ensure all expected statuses exist with 0 defaults, matching
 			// the shape that count_statuses() returns.
 			$defaults = array_fill_keys(
