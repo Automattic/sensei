@@ -5,6 +5,8 @@
  * @package sensei
  */
 
+use Sensei\Internal\Migration\Migration_Job_Scheduler;
+
 /**
  * Tests for the class `Sensei_Updates`.
  *
@@ -22,6 +24,20 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	protected $factory;
 
 	/**
+	 * Original migration scheduler, saved before backfill tests.
+	 *
+	 * @var Migration_Job_Scheduler|null
+	 */
+	private $original_scheduler;
+
+	/**
+	 * Original sync setting, saved before backfill tests.
+	 *
+	 * @var mixed
+	 */
+	private $original_sync;
+
+	/**
 	 * Setup function.
 	 */
 	public function setUp(): void {
@@ -32,6 +48,21 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 		self::restoreShimScheduler();
 
 		$this->factory = new Sensei_Factory();
+	}
+
+	/**
+	 * Teardown function.
+	 */
+	public function tearDown(): void {
+		if ( null !== $this->original_scheduler ) {
+			Sensei()->migration_scheduler = $this->original_scheduler;
+			Sensei()->settings->settings['experimental_progress_storage_synchronization'] = $this->original_sync;
+			$this->original_scheduler = null;
+			$this->original_sync      = null;
+			delete_option( Migration_Job_Scheduler::STATUS_OPTION_NAME );
+		}
+
+		parent::tearDown();
 	}
 
 	/**
@@ -217,5 +248,127 @@ END;
 				'question_category_id' => 0,
 			]
 		);
+	}
+
+	/**
+	 * Test that new installs skip the parent_post_id backfill.
+	 */
+	public function testBackfillParentPostId_NewInstall_Skipped() {
+		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
+		$scheduler->expects( $this->never() )
+			->method( 'schedule_job_by_name' );
+
+		$this->set_backfill_test_context( $scheduler, true );
+		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_COMPLETE );
+
+		$updates = new Sensei_Updates( null, true, false );
+		$updates->run_updates();
+	}
+
+	/**
+	 * Test that upgrades without HPPS sync enabled skip the backfill.
+	 */
+	public function testBackfillParentPostId_SyncDisabled_Skipped() {
+		$scheduler = $this->createMock( Migration_Job_Scheduler::class );
+		$scheduler->expects( $this->never() )
+			->method( 'schedule_job_by_name' );
+
+		$this->set_backfill_test_context( $scheduler, false );
+		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_COMPLETE );
+
+		$updates = new Sensei_Updates( '4.25.0', false, true );
+		$updates->run_updates();
+	}
+
+	/**
+	 * Test that upgrades where previous migration is not complete skip the backfill.
+	 */
+	public function testBackfillParentPostId_MigrationNotComplete_Skipped() {
+		$scheduler = $this->getMockBuilder( Migration_Job_Scheduler::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'is_complete', 'schedule_job_by_name' ] )
+			->getMock();
+		$scheduler->expects( $this->once() )
+			->method( 'is_complete' )
+			->willReturn( false );
+		$scheduler->expects( $this->never() )
+			->method( 'schedule_job_by_name' );
+
+		$this->set_backfill_test_context( $scheduler, true );
+
+		$updates = new Sensei_Updates( '4.25.0', false, true );
+		$updates->run_updates();
+	}
+
+	/**
+	 * Test that the backfill job is scheduled and status is reset when all conditions are met.
+	 */
+	public function testBackfillParentPostId_AllConditionsMet_SchedulesJob() {
+		$scheduler = $this->getMockBuilder( Migration_Job_Scheduler::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'is_complete', 'schedule_job_by_name' ] )
+			->getMock();
+		$scheduler->expects( $this->once() )
+			->method( 'is_complete' )
+			->willReturn( true );
+		$scheduler->expects( $this->once() )
+			->method( 'schedule_job_by_name' )
+			->with( 'parent_post_id_migration' );
+
+		$this->set_backfill_test_context( $scheduler, true );
+		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_COMPLETE );
+
+		$updates = new Sensei_Updates( '4.25.0', false, true );
+		$updates->run_updates();
+
+		$this->assertEquals(
+			Migration_Job_Scheduler::STATUS_NOT_STARTED,
+			get_option( Migration_Job_Scheduler::STATUS_OPTION_NAME ),
+			'Migration status should be reset to NOT_STARTED after scheduling.'
+		);
+	}
+
+	/**
+	 * Test that status is not reset when scheduling fails.
+	 */
+	public function testBackfillParentPostId_SchedulingFails_StatusNotReset() {
+		$scheduler = $this->getMockBuilder( Migration_Job_Scheduler::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'is_complete', 'schedule_job_by_name' ] )
+			->getMock();
+		$scheduler->expects( $this->once() )
+			->method( 'is_complete' )
+			->willReturn( true );
+		$scheduler->expects( $this->once() )
+			->method( 'schedule_job_by_name' )
+			->willThrowException( new \RuntimeException( 'Unknown job: parent_post_id_migration' ) );
+
+		$this->set_backfill_test_context( $scheduler, true );
+		update_option( Migration_Job_Scheduler::STATUS_OPTION_NAME, Migration_Job_Scheduler::STATUS_COMPLETE );
+
+		$updates = new Sensei_Updates( '4.25.0', false, true );
+		$updates->run_updates();
+
+		$this->assertEquals(
+			Migration_Job_Scheduler::STATUS_COMPLETE,
+			get_option( Migration_Job_Scheduler::STATUS_OPTION_NAME ),
+			'Migration status should remain COMPLETE when scheduling fails.'
+		);
+	}
+
+	/**
+	 * Set up the migration scheduler mock and sync setting for backfill tests.
+	 *
+	 * Saves originals so tearDown() can restore them automatically.
+	 *
+	 * @param Migration_Job_Scheduler|\PHPUnit\Framework\MockObject\MockObject $scheduler The mock scheduler.
+	 * @param bool                                                              $sync_enabled Whether sync is enabled.
+	 */
+	private function set_backfill_test_context( $scheduler, bool $sync_enabled ): void {
+		$this->original_scheduler = Sensei()->migration_scheduler;
+		$this->original_sync      = Sensei()->settings->settings['experimental_progress_storage_synchronization'] ?? false;
+
+		Sensei()->migration_scheduler = $scheduler;
+		Sensei()->settings->settings['experimental_progress_storage_synchronization'] = $sync_enabled;
 	}
 }
