@@ -7,6 +7,9 @@
 
 namespace Sensei\Internal\Services;
 
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -71,10 +74,12 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		// For each lesson, find the most recent completion date across all students.
 		// In HPPS, quiz-derived statuses (passed, graded) live on separate quiz progress
 		// rows, so only lesson status 'complete' is needed here.
+		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
+
 		$lessons_query = "SELECT p.post_id AS lesson_id, MAX(p.updated_at) AS last_activity_date
 			FROM {$progress_table} p
 			WHERE p.type = 'lesson'
-			AND p.status = 'complete'
+			AND p.status = '{$complete}'
 			GROUP BY p.post_id";
 
 		// Map lessons to courses via postmeta, then take the most recent completion date across all lessons per course.
@@ -109,7 +114,8 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		$clauses['fields']  .= ', COUNT(cp.id) AS count_of_completions';
 		$clauses['join']    .= " LEFT JOIN {$progress_table} cp ON cp.post_id = {$this->wpdb->posts}.ID";
 		$clauses['join']    .= " AND cp.type = 'course'";
-		$clauses['join']    .= " AND cp.status = 'complete'";
+		$complete            = Course_Progress_Interface::STATUS_COMPLETE;
+		$clauses['join']    .= " AND cp.status = '{$complete}'";
 		$clauses['groupby'] .= " {$this->wpdb->posts}.ID";
 
 		return $clauses;
