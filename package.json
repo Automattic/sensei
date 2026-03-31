@@ -74,7 +74,7 @@
     "@wordpress/babel-preset-default": "8.11.0",
     "@wordpress/dependency-extraction-webpack-plugin": "3.5.0",
     "@wordpress/e2e-test-utils": "wp-6.7",
-    "@wordpress/env": "11.2.0",
+    "@wordpress/env": "wp-6.7",
     "@wordpress/eslint-plugin": "wp-6.7",
     "@wordpress/jest-preset-default": "wp-6.7",
     "@wordpress/postcss-themes": "wp-6.7",

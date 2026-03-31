@@ -8,7 +8,6 @@
 namespace Sensei\Internal\Migration;
 
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
-use Sensei\Internal\Migration\Migrations\Parent_Post_Id_Migration;
 use Sensei\Internal\Migration\Migrations\Quiz_Migration;
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 use Sensei\Internal\Services\Progress_Storage_Settings;
@@ -220,25 +219,6 @@ class Migration_Job_Scheduler {
 	}
 
 	/**
-	 * Schedule a specific job by name.
-	 *
-	 * @internal
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param string $job_name The job name.
-	 * @throws \RuntimeException If the job is not registered.
-	 */
-	public function schedule_job_by_name( string $job_name ): void {
-		if ( ! isset( $this->jobs[ $job_name ] ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are not rendered as HTML.
-			throw new \RuntimeException( sprintf( 'Unknown job: %s', $job_name ) );
-		}
-
-		$this->schedule_job( $this->jobs[ $job_name ] );
-	}
-
-	/**
 	 * Schedule a job.
 	 *
 	 * @param Migration_Job $job The migration job.
@@ -398,8 +378,6 @@ class Migration_Job_Scheduler {
 		delete_option( self::ERRORS_OPTION_NAME );
 		delete_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME );
 		delete_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME );
-		delete_option( Parent_Post_Id_Migration::LAST_ID_OPTION_NAME );
-		delete_option( Parent_Post_Id_Migration::LESSONS_COMPLETE_OPTION_NAME );
 		delete_option( self::RETRY_COUNT_OPTION_NAME );
 	}
 

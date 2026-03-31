@@ -57,7 +57,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		 *
 		 * @param int $read_batch_size The read batch size.
 		 */
-		$this->read_batch_size = max( 1, (int) apply_filters( 'sensei_migration_student_progress_read_batch_size', $read_batch_size ) );
+		$this->read_batch_size = (int) apply_filters( 'sensei_migration_student_progress_read_batch_size', $read_batch_size );
 
 		/**
 		 * Filter the insert batch size for student progress migration.
@@ -66,7 +66,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		 *
 		 * @param int $insert_batch_size The insert batch size.
 		 */
-		$this->insert_batch_size = max( 1, (int) apply_filters( 'sensei_migration_student_progress_insert_batch_size', $insert_batch_size ) );
+		$this->insert_batch_size = (int) apply_filters( 'sensei_migration_student_progress_insert_batch_size', $insert_batch_size );
 	}
 
 	/**
@@ -198,9 +198,8 @@ class Student_Progress_Migration extends Migration_Abstract {
 			// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 			$post_meta_query = $wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT * FROM {$wpdb->postmeta} WHERE  meta_key IN ( %s, %s, %s ) AND post_id IN ( {$placeholders} )",
+				"SELECT * FROM {$wpdb->postmeta} WHERE  meta_key IN ( %s, %s ) AND post_id IN ( {$placeholders} )",
 				'_lesson_quiz',
-				'_lesson_course',
 				'_wp_trash_meta_comments_status',
 				...$ids
 			);
@@ -370,13 +369,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 			}
 		}
 
-		$course_id = isset( $meta['_lesson_course'] ) ? (int) $meta['_lesson_course'] : null;
-
 		$rows = array(
 			array(
 				'post_id'        => (int) $comment->comment_post_ID,
 				'user_id'        => (int) $comment->user_id,
-				'parent_post_id' => $course_id ? $course_id : null,
+				'parent_post_id' => null,
 				'type'           => 'lesson',
 				'status'         => $lesson_status,
 				'started_at'     => $started_at,
@@ -412,12 +409,10 @@ class Student_Progress_Migration extends Migration_Abstract {
 				$quiz_status = Quiz_Progress_Interface::STATUS_PASSED;
 			}
 
-			// comment_post_ID is the lesson ID (comment is on the lesson post), which is the quiz's parent.
-			$parent_lesson_id = (int) $comment->comment_post_ID;
-			$rows[]           = array(
+			$rows[] = array(
 				'post_id'        => (int) $quiz_id,
 				'user_id'        => (int) $comment->user_id,
-				'parent_post_id' => $parent_lesson_id ? $parent_lesson_id : null,
+				'parent_post_id' => null,
 				'type'           => 'quiz',
 				'status'         => $quiz_status,
 				'started_at'     => $started_at,

@@ -7,8 +7,6 @@
 
 namespace Sensei\Internal\Services;
 
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -303,29 +301,5 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 */
 	private function build_user_exclusion_clause( array $args, string $status_column = 'p.status' ): string {
 		return Utils::build_user_exclusion_clause( $this->wpdb, $args, $status_column );
-	}
-
-	/**
-	 * Build SQL clause for excluding completed lessons with no quiz submission.
-	 *
-	 * When enabled, excludes lessons where a quiz exists but the student never
-	 * submitted it and the lesson is already complete — there is nothing to grade.
-	 * Used by the Grading page; the Reports page passes false to include all students.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Query arguments.
-	 * @return string SQL clause.
-	 */
-	private function build_unsubmitted_quiz_exclusion_clause( array $args ): string {
-		$exclude = $args['exclude_unsubmitted_quiz_completions'] ?? false;
-
-		if ( ! $exclude ) {
-			return '';
-		}
-
-		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
-
-		return " AND NOT ( pm.meta_value IS NOT NULL AND qs.id IS NULL AND p.status = '{$complete}' )";
 	}
 }
