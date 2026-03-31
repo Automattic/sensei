@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Services;
 
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -324,6 +326,8 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			return '';
 		}
 
-		return " AND NOT ( pm.meta_value IS NOT NULL AND qs.id IS NULL AND p.status = 'complete' )";
+		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
+
+		return " AND NOT ( pm.meta_value IS NOT NULL AND qs.id IS NULL AND p.status = '$complete' )";
 	}
 }
