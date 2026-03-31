@@ -302,5 +302,4 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	private function build_user_exclusion_clause( array $args, string $status_column = 'p.status' ): string {
 		return Utils::build_user_exclusion_clause( $this->wpdb, $args, $status_column );
 	}
-
 }
