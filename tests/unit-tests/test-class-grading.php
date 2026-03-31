@@ -2,6 +2,7 @@
 
 class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_HPPS_Helpers;
 
 	/**
 	 * Setup function
@@ -36,6 +37,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Grading::grading_admin_menu
 	 */
 	public function testGradingAdminMenuTitleWithoutIndicator() {
+		if ( self::is_hpps_tables_mode() ) {
+			$this->enable_hpps_tables_repository();
+		}
+
 		$user_id    = $this->factory->user->create();
 		$course_id  = $this->factory->course->create();
 		$lesson_ids = $this->factory->lesson->create_many( 5 );
@@ -44,11 +49,27 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			add_post_meta( $lesson_id, '_lesson_course', $course_id );
 		}
 
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[0], 'passed' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[1], 'in-progress' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[2], 'failed' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'complete' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
+		// Lessons with quizzes: passed, failed, graded (none ungraded).
+		$lessons_with_quizzes = [
+			$lesson_ids[0] => 'pass',
+			$lesson_ids[2] => 'fail',
+			$lesson_ids[4] => 'grade',
+		];
+		foreach ( $lessons_with_quizzes as $lesson_id => $status ) {
+			$quiz_id = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+			update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+			$qp = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+			$qp->{$status}();
+			Sensei()->quiz_progress_repository->save( $qp );
+		}
+
+		// Lessons without quizzes: in-progress, complete.
+		Sensei()->lesson_progress_repository->create( $lesson_ids[1], $user_id );
+		$lp = Sensei()->lesson_progress_repository->create( $lesson_ids[3], $user_id );
+		$lp->complete();
+		Sensei()->lesson_progress_repository->save( $lp );
 
 		$this->login_as_admin();
 		Sensei()->grading->grading_admin_menu();
@@ -59,6 +80,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		// Clean up the submenu.
 		unset( $submenu['sensei'] );
+
+		if ( self::is_hpps_tables_mode() ) {
+			$this->reset_hpps_repository();
+		}
 	}
 
 	/**
@@ -67,6 +92,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Grading::grading_admin_menu
 	 */
 	public function testGradingAdminMenuTitleWithIndicator() {
+		if ( self::is_hpps_tables_mode() ) {
+			$this->enable_hpps_tables_repository();
+		}
+
 		$user_id    = $this->factory->user->create();
 		$course_id  = $this->factory->course->create();
 		$lesson_ids = $this->factory->lesson->create_many( 5 );
@@ -75,11 +104,16 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			add_post_meta( $lesson_id, '_lesson_course', $course_id, true );
 		}
 
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[0], 'passed' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[1], 'ungraded' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[2], 'failed' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'ungraded' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
+		$statuses = [ 'pass', 'ungrade', 'fail', 'ungrade', 'grade' ];
+		foreach ( $lesson_ids as $index => $lesson_id ) {
+			$quiz_id = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+			update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+			$qp = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+			$qp->{$statuses[ $index ]}();
+			Sensei()->quiz_progress_repository->save( $qp );
+		}
 
 		$this->login_as_admin();
 		Sensei()->grading->grading_admin_menu();
@@ -90,6 +124,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		// Clean up the submenu.
 		unset( $submenu['sensei'] );
+
+		if ( self::is_hpps_tables_mode() ) {
+			$this->reset_hpps_repository();
+		}
 	}
 
 	/**

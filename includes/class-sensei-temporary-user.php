@@ -100,7 +100,6 @@ class Sensei_Temporary_User {
 			",
 			$query->query_where
 		);
-
 	}
 
 	/**
@@ -187,10 +186,18 @@ class Sensei_Temporary_User {
 	 * @return array
 	 */
 	public static function filter_count_statuses( array $args ) {
+		$args['exclude_user_login_prefixes'] = array_merge(
+			$args['exclude_user_login_prefixes'] ?? array(),
+			array(
+				Sensei_Guest_User::LOGIN_PREFIX,
+				Sensei_Preview_User::LOGIN_PREFIX,
+			)
+		);
 
-		$args['query'] = ( $args['query'] ?? '' ) . " AND ( ( comment_author NOT LIKE '" . Sensei_Guest_User::LOGIN_PREFIX . "%'
-			AND comment_author NOT LIKE '" . Sensei_Preview_User::LOGIN_PREFIX . "%' ) OR comment_approved = 'ungraded')
-			";
+		$args['include_statuses_override'] = array_merge(
+			$args['include_statuses_override'] ?? array(),
+			array( 'ungraded' )
+		);
 
 		return $args;
 	}
@@ -215,7 +222,7 @@ class Sensei_Temporary_User {
 
 		return array_filter(
 			$comments,
-			function( $comment ) {
+			function ( $comment ) {
 				return in_array( $comment->comment_approved, [ 'ungraded' ], true ) || ! self::is_temporary_user( $comment->user_id );
 			}
 		);
@@ -278,5 +285,4 @@ class Sensei_Temporary_User {
 		$roles = get_userdata( $user_id )->roles ?? [];
 		return in_array( Sensei_Guest_User::ROLE, $roles, true ) || in_array( Sensei_Preview_User::ROLE, $roles, true );
 	}
-
 }

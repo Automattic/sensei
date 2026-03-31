@@ -1,4 +1,9 @@
 <?php
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -19,15 +24,24 @@ class Sensei_Grading {
 	public $page_slug;
 
 	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface|null
+	 */
+	private ?Progress_Aggregation_Service_Interface $aggregation_service = null;
+
+	/**
 	 * Constructor
 	 *
 	 * @since  1.3.0
 	 *
-	 * @param $file
+	 * @param string                                      $file                The main plugin file path.
+	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service The progress aggregation service.
 	 */
-	public function __construct( $file ) {
-		$this->file      = $file;
-		$this->page_slug = 'sensei_grading';
+	public function __construct( $file, ?Progress_Aggregation_Service_Interface $aggregation_service = null ) {
+		$this->aggregation_service = $aggregation_service;
+		$this->file                = $file;
+		$this->page_slug           = 'sensei_grading';
 
 		// Admin functions
 		if ( is_admin() ) {
@@ -535,16 +549,13 @@ class Sensei_Grading {
 	}
 
 	/**
-	 * Count the various statuses for Course or Lesson
-	 * Very similar to get_comment_count()
+	 * Count the various statuses for Course or Lesson.
 	 *
 	 * @since  1.7.0
 	 * @param  array $args (default: array())
-	 * @return object
+	 * @return array
 	 */
 	public function count_statuses( $args = array() ) {
-		global  $wpdb;
-
 		/**
 		 * Filter fires inside Sensei_Grading::count_statuses
 		 *
@@ -559,72 +570,41 @@ class Sensei_Grading {
 		 */
 		$args = apply_filters( 'sensei_count_statuses_args', $args );
 
-		if ( 'course' === $args['type'] ) {
-			$type = 'sensei_course_status';
-		} else {
-			$type = 'sensei_lesson_status';
-		}
+		$type = $args['type'] ?? 'lesson';
 
 		$cache_key = 'sensei-statuses-' . md5( wp_json_encode( $args ) );
+		$counts    = wp_cache_get( $cache_key, 'counts' );
 
-		$query = $wpdb->prepare( "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s ", $type );
-
-		// Restrict to specific posts.
-		if ( isset( $args['post__in'] ) && ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
-			$post__in_placeholder = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			$query .= $wpdb->prepare( " AND comment_post_ID IN ( $post__in_placeholder )", $args['post__in'] );
-		} elseif ( ! empty( $args['post_id'] ) ) {
-			$query .= $wpdb->prepare( ' AND comment_post_ID = %d', $args['post_id'] );
-		}
-		// Restrict to specific users.
-		if ( isset( $args['user_id'] ) && is_array( $args['user_id'] ) ) {
-			$user_id_placeholder = implode( ', ', array_fill( 0, count( $args['user_id'] ), '%d' ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			$query .= $wpdb->prepare( " AND user_id IN ( $user_id_placeholder )", $args['user_id'] );
-		} elseif ( ! empty( $args['user_id'] ) ) {
-			$query .= $wpdb->prepare( ' AND user_id = %d', $args['user_id'] );
-		}
-		// Restrict to specific users.
-		if ( isset( $args['query'] ) ) {
-			$query .= $args['query'];
-		}
-		$query .= ' GROUP BY comment_approved';
-
-		$counts = wp_cache_get( $cache_key, 'counts' );
 		if ( false === $counts ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- SQL prepared in advance.
-			$results = (array) $wpdb->get_results( $query, ARRAY_A );
-			$counts  = array_fill_keys( $this->get_stati( $type ), 0 );
-
-			foreach ( $results as $row ) {
-				$counts[ $row['comment_approved'] ] = $row['total'];
+			if ( null === $this->aggregation_service ) {
+				$this->aggregation_service = ( new Progress_Query_Service_Factory() )->create_aggregation_service();
 			}
+			$counts = $this->aggregation_service->count_statuses( $args );
 			wp_cache_set( $cache_key, $counts, 'counts' );
 		}
 
-		if ( ! isset( $counts['graded'] ) ) {
-			$counts['graded'] = 0;
+		// Ensure all expected statuses exist with 0 defaults.
+		$defaults = array_fill_keys( $this->get_stati( $type ), 0 );
+		$counts   = array_merge( $defaults, $counts );
+
+		// Also ensure these specific keys always exist.
+		foreach ( array(
+			Quiz_Progress_Interface::STATUS_GRADED,
+			Quiz_Progress_Interface::STATUS_UNGRADED,
+			Quiz_Progress_Interface::STATUS_PASSED,
+			Quiz_Progress_Interface::STATUS_FAILED,
+			Lesson_Progress_Interface::STATUS_IN_PROGRESS,
+			Lesson_Progress_Interface::STATUS_COMPLETE,
+		) as $status ) {
+			if ( ! isset( $counts[ $status ] ) ) {
+				$counts[ $status ] = 0;
+			}
 		}
 
-		if ( ! isset( $counts['ungraded'] ) ) {
-			$counts['ungraded'] = 0;
-		}
-
-		if ( ! isset( $counts['passed'] ) ) {
-			$counts['passed'] = 0;
-		}
-
-		if ( ! isset( $counts['failed'] ) ) {
-			$counts['failed'] = 0;
-		}
-
-		if ( ! isset( $counts['in-progress'] ) ) {
-			$counts['in-progress'] = 0;
-		}
-
-		if ( ! isset( $counts['complete'] ) ) {
-			$counts['complete'] = 0;
+		if ( 'course' === $type ) {
+			$comment_type = 'sensei_course_status';
+		} else {
+			$comment_type = 'sensei_lesson_status';
 		}
 
 		/**
@@ -636,7 +616,7 @@ class Sensei_Grading {
 		 * @param {string} $type Type of status to count: sensei_course_status or sensei_lesson_status.
 		 * @return {array} Filtered counts.
 		 */
-		return apply_filters( 'sensei_count_statuses', $counts, $type );
+		return apply_filters( 'sensei_count_statuses', $counts, $comment_type );
 	}
 
 	/**
