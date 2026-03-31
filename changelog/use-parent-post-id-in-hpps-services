@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Internal: Use parent_post_id column instead of postmeta joins in HPPS tables-based services.
