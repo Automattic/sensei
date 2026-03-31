@@ -195,6 +195,123 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$this->assertArrayNotHasKey( 'in-progress', $result, 'Excluded user status should not appear.' );
 	}
 
+	public function testGetLessonTotals_WithCompletedLessons_ReturnsCorrectAggregates(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$start_date = wp_date( 'Y-m-d H:i:s', strtotime( '-2 days' ) );
+		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'complete', [ 'start' => $start_date ] );
+		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'in-progress', [ 'start' => $start_date ] );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 2, $result['unique_student_count'], 'Expected two distinct students.' );
+		$this->assertSame( 2, $result['lesson_start_count'], 'Expected two lesson starts.' );
+		$this->assertSame( 1, $result['lesson_completed_count'], 'Expected one completed lesson.' );
+		$this->assertSame( 1, $result['days_to_complete_count'], 'Expected one lesson with completion date.' );
+		$this->assertSame( 3, $result['days_to_complete_sum'], 'Expected 3 days (2 day difference + 1).' );
+	}
+
+	public function testGetLessonTotals_WithUngradedStatus_CountsAsCompletedButNotDaysToComplete(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$start_date = current_time( 'mysql' );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded', [ 'start' => $start_date ] );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['lesson_completed_count'], 'Ungraded status should count as completed.' );
+		$this->assertSame( 0, $result['days_to_complete_count'], 'Ungraded status should not have a completion date.' );
+		$this->assertSame( 0, $result['days_to_complete_sum'], 'Ungraded status should not contribute to days to complete.' );
+	}
+
+	public function testGetLessonTotals_WithFailedStatus_CountsAsCompletedButNotDaysToComplete(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$start_date = current_time( 'mysql' );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'failed', [ 'start' => $start_date ] );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['lesson_completed_count'], 'Failed status should count as completed.' );
+		$this->assertSame( 0, $result['days_to_complete_count'], 'Failed status should not have a completion date.' );
+		$this->assertSame( 0, $result['days_to_complete_sum'], 'Failed status should not contribute to days to complete.' );
+	}
+
+	public function testGetLessonTotals_WithPassedStatus_IncludesDaysToComplete(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$start_date = wp_date( 'Y-m-d H:i:s', strtotime( '-3 days' ) );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed', [ 'start' => $start_date ] );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['lesson_completed_count'], 'Passed status should count as completed.' );
+		$this->assertSame( 1, $result['days_to_complete_count'], 'Passed status should have a completion date.' );
+		$this->assertSame( 4, $result['days_to_complete_sum'], 'Expected 4 days (3 day difference + 1).' );
+	}
+
+	public function testGetLessonTotals_WithEmptyLessonIds_ReturnsZeros(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [] );
+
+		/* Assert. */
+		$this->assertSame( 0, $result['unique_student_count'] );
+		$this->assertSame( 0, $result['lesson_start_count'] );
+		$this->assertSame( 0, $result['lesson_completed_count'] );
+		$this->assertSame( 0, $result['days_to_complete_count'] );
+		$this->assertSame( 0, $result['days_to_complete_sum'] );
+	}
+
 	public function testCountStatuses_WithIncludeStatusesOverride_KeepsExcludedUsersForOverrideStatuses(): void {
 		/* Arrange. */
 		global $wpdb;
@@ -225,5 +342,103 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		/* Assert. */
 		$this->assertSame( 1, $result['in-progress'], 'Regular user status should be counted.' );
 		$this->assertSame( 1, $result['ungraded'], 'Excluded user with override status should still be counted.' );
+	}
+
+	public function testCountStatuses_LessonWithQuizButNoAnswers_IncludedByDefault(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'complete' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type' => 'lesson',
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['complete'], 'Completed lesson with quiz but no answers should be included by default.' );
+	}
+
+	public function testCountStatuses_LessonWithQuizButNoAnswers_ExcludedWhenFlagSet(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'complete' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'                                 => 'lesson',
+				'exclude_unsubmitted_quiz_completions' => true,
+			]
+		);
+
+		/* Assert. */
+		$this->assertArrayNotHasKey( 'complete', $result, 'Completed lesson with quiz but no answers should be excluded when flag is set.' );
+	}
+
+	public function testCountStatuses_InProgressWithQuizButNoAnswers_NotExcludedWhenFlagSet(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			[
+				'type'                                 => 'lesson',
+				'exclude_unsubmitted_quiz_completions' => true,
+			]
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['in-progress'], 'In-progress lesson should not be excluded even when flag is set.' );
 	}
 }

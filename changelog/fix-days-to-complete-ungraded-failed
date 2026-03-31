@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix Days to Completion calculation in Reports to exclude lessons with ungraded or failed quizzes, which do not have a valid completion date.

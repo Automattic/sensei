@@ -71,7 +71,11 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 
 		$wpdb = $this->wpdb;
 
-		// For each lesson, find the most recent completion date across all students.
+		// For each lesson, find the most recent activity date across all students.
+		// Uses updated_at (not completed_at) because it captures the latest
+		// modification to the progress row, which better represents "last activity"
+		// at the course level. The lesson-level query uses completed_at because
+		// it specifically tracks completion dates for individual lessons.
 		// In HPPS, quiz-derived statuses (passed, graded) live on separate quiz progress
 		// rows, so only lesson status 'complete' is needed here.
 		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
@@ -109,8 +113,9 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	 */
 	public function add_days_to_completion_to_courses_clauses( array $clauses ): array {
 		$progress_table = $this->get_progress_table_name();
+		$utc_offset     = Utils::get_utc_offset_string();
 
-		$clauses['fields']  .= ', SUM( ABS( DATEDIFF( cp.completed_at, cp.started_at ) ) + 1 ) AS days_to_completion';
+		$clauses['fields']  .= ", SUM( ABS( DATEDIFF( CONVERT_TZ( cp.completed_at, '+00:00', '$utc_offset' ), CONVERT_TZ( cp.started_at, '+00:00', '$utc_offset' ) ) ) + 1 ) AS days_to_completion";
 		$clauses['fields']  .= ', COUNT(cp.id) AS count_of_completions';
 		$clauses['join']    .= " LEFT JOIN {$progress_table} cp ON cp.post_id = {$this->wpdb->posts}.ID";
 		$clauses['join']    .= " AND cp.type = 'course'";
@@ -147,6 +152,61 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 				$to
 			);
 		}
+
+		return $clauses;
+	}
+
+	/**
+	 * Modify WP_Query clauses to add last activity date to lesson posts.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_last_activity_to_lessons_clauses( array $clauses ): array {
+		$progress_table = $this->get_progress_table_name();
+
+		// In HPPS, lesson progress rows only store 'in-progress' and 'complete'.
+		// Quiz-derived statuses (passed, graded) live on separate quiz progress rows,
+		// so only lesson status 'complete' is needed here.
+		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
+
+		$clauses['fields'] .= ", (
+			SELECT MAX(p.completed_at)
+			FROM {$progress_table} p
+			WHERE p.post_id = {$this->wpdb->posts}.ID
+			AND p.type = 'lesson'
+			AND p.status = '{$complete}'
+		) AS last_activity_date";
+
+		return $clauses;
+	}
+
+	/**
+	 * Modify WP_Query clauses to add days-to-complete data to lesson posts.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_days_to_completion_to_lessons_clauses( array $clauses ): array {
+		$progress_table    = $this->get_progress_table_name();
+		$submissions_table = $this->wpdb->prefix . 'sensei_lms_quiz_submissions';
+		$utc_offset        = Utils::get_utc_offset_string();
+
+		$clauses['fields'] .= ", (SELECT SUM( ABS( DATEDIFF( CONVERT_TZ( p.completed_at, '+00:00', '$utc_offset' ), CONVERT_TZ( p.started_at, '+00:00', '$utc_offset' ) ) ) + 1 )";
+		$clauses['fields'] .= " FROM {$progress_table} p";
+		$clauses['fields'] .= " LEFT JOIN {$this->wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$clauses['fields'] .= " LEFT JOIN {$progress_table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
+		$clauses['fields'] .= " AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )";
+		$clauses['fields'] .= " WHERE p.post_id = {$this->wpdb->posts}.ID";
+		$clauses['fields'] .= " AND p.type = 'lesson'";
+		$has_completion     = "'" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "'";
+		$clauses['fields'] .= " AND COALESCE( q.status, p.status ) IN ( $has_completion )";
+		$clauses['fields'] .= ') as days_to_complete';
 
 		return $clauses;
 	}

@@ -1620,6 +1620,14 @@
   </file>
   <file src="includes/class-sensei-grading-main.php">
     <ArgumentTypeCoercion occurrences="1"/>
+    <InvalidArrayAccess occurrences="6">
+      <code>$counts['complete']</code>
+      <code>$counts['failed']</code>
+      <code>$counts['graded']</code>
+      <code>$counts['in-progress']</code>
+      <code>$counts['passed']</code>
+      <code>$counts['ungraded']</code>
+    </InvalidArrayAccess>
     <MissingParamType occurrences="1">
       <code>$args</code>
     </MissingParamType>
@@ -4549,11 +4557,25 @@
     </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/internal/services/class-comments-based-progress-aggregation-service.php">
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$row-&gt;days_to_complete_count</code>
+      <code>$row-&gt;days_to_complete_sum</code>
+      <code>$row-&gt;lesson_completed_count</code>
+      <code>$row-&gt;lesson_start_count</code>
+      <code>$row-&gt;unique_student_count</code>
+    </PossiblyInvalidPropertyFetch>
     <UndefinedConstant occurrences="1">
       <code>ARRAY_A</code>
     </UndefinedConstant>
   </file>
   <file src="includes/internal/services/class-tables-based-progress-aggregation-service.php">
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$row-&gt;days_to_complete_count</code>
+      <code>$row-&gt;days_to_complete_sum</code>
+      <code>$row-&gt;lesson_completed_count</code>
+      <code>$row-&gt;lesson_start_count</code>
+      <code>$row-&gt;unique_student_count</code>
+    </PossiblyInvalidPropertyFetch>
     <UndefinedConstant occurrences="2">
       <code>ARRAY_A</code>
     </UndefinedConstant>
@@ -4827,7 +4849,8 @@
     <InvalidArgument occurrences="1">
       <code>$lessons</code>
     </InvalidArgument>
-    <InvalidScalarArgument occurrences="1">
+    <InvalidScalarArgument occurrences="2">
+      <code>$lesson_students</code>
       <code>$value</code>
     </InvalidScalarArgument>
     <PossibleRawObjectIteration occurrences="1">

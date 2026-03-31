@@ -57,4 +57,24 @@ interface Progress_Clauses_Service_Interface {
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function filter_courses_by_last_activity( array $clauses, string $from = '', string $to = '' ): array;
+
+	/**
+	 * Modify WP_Query clauses to add last activity date to lesson posts.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_last_activity_to_lessons_clauses( array $clauses ): array;
+
+	/**
+	 * Modify WP_Query clauses to add days-to-complete data to lesson posts.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_days_to_completion_to_lessons_clauses( array $clauses ): array;
 }

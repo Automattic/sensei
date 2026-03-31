@@ -5,6 +5,9 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+use Sensei\Internal\Services\Progress_Clauses_Service_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -29,12 +32,22 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	private $course;
 
 	/**
-	 * Constructor
+	 * The progress clauses service.
 	 *
-	 * @param Sensei_Course $course Sensei course related services.
+	 * @var Progress_Clauses_Service_Interface
 	 */
-	public function __construct( Sensei_Course $course ) {
-		$this->course = $course;
+	private Progress_Clauses_Service_Interface $progress_clauses_service;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Sensei_Course                           $course                   Sensei course related services.
+	 * @param Progress_Clauses_Service_Interface|null $progress_clauses_service The progress clauses service.
+	 */
+	public function __construct( Sensei_Course $course, ?Progress_Clauses_Service_Interface $progress_clauses_service = null ) {
+		$this->course                   = $course;
+		$this->progress_clauses_service = $progress_clauses_service
+			?? ( new Progress_Query_Service_Factory() )->create_clauses_service();
 	}
 
 	/**
@@ -108,17 +121,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_days_to_complete_to_lessons_query( array $clauses ): array {
-		global $wpdb;
-
-		$clauses['fields'] .= ", (SELECT SUM( ABS( DATEDIFF( STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date )) + 1 ) as days_to_complete";
-		$clauses['fields'] .= " FROM {$wpdb->comments}";
-		$clauses['fields'] .= " INNER JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
-		$clauses['fields'] .= " WHERE {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
-		$clauses['fields'] .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
-		$clauses['fields'] .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed', 'ungraded' )";
-		$clauses['fields'] .= " AND {$wpdb->commentmeta}.meta_key = 'start') as days_to_complete";
-
-		return $clauses;
+		return $this->progress_clauses_service->add_days_to_completion_to_lessons_clauses( $clauses );
 	}
 
 	/**
@@ -132,17 +135,6 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_last_activity_to_lessons_query( array $clauses ): array {
-		global $wpdb;
-
-		$clauses['fields'] .= ", (
-			SELECT MAX({$wpdb->comments}.comment_date_gmt)
-			FROM {$wpdb->comments}
-			WHERE {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID
-			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
-			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
-		) AS last_activity_date";
-
-		return $clauses;
+		return $this->progress_clauses_service->add_last_activity_to_lessons_clauses( $clauses );
 	}
 }
