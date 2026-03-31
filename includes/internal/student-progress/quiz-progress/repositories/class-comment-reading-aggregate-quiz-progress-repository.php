@@ -56,13 +56,14 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 	 *
 	 * @internal
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
+	 * @param int      $quiz_id The quiz ID.
+	 * @param int      $user_id The user ID.
+	 * @param int|null $parent_post_id The parent post ID (lesson ID for quizzes).
 	 * @return Quiz_Progress_Interface The quiz progress.
 	 */
-	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
-		$this->tables_based_repository->create( $quiz_id, $user_id );
-		return $this->comments_based_repository->create( $quiz_id, $user_id );
+	public function create( int $quiz_id, int $user_id, ?int $parent_post_id = null ): Quiz_Progress_Interface {
+		$this->tables_based_repository->create( $quiz_id, $user_id, $parent_post_id );
+		return $this->comments_based_repository->create( $quiz_id, $user_id, $parent_post_id );
 	}
 
 	/**
