@@ -176,15 +176,12 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @return array Associative array of status => count.
 	 */
 	private function count_lesson_statuses_with_quiz( array $args ): array {
-		$wpdb              = $this->wpdb;
-		$table             = $this->get_progress_table_name();
-		$submissions_table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query  = "SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
 		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
 
