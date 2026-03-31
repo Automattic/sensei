@@ -32,6 +32,64 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that prepare_items() applies sensei_count_statuses_args
+	 * restrictions to listing rows for tables-based storage.
+	 *
+	 * @covers Sensei_Grading_Main::prepare_items
+	 */
+	public function testPrepareItems_TablesBasedWithCountStatusesArgsRestriction_RestrictsListingRows(): void {
+		/* Arrange. */
+		global $wpdb;
+		$user_id    = $this->factory->user->create();
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = $this->factory->lesson->create_many(
+			2,
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$table = $wpdb->prefix . 'sensei_lms_progress';
+		$now   = current_time( 'mysql' );
+		foreach ( $lesson_ids as $lid ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
+			$wpdb->insert(
+				$table,
+				[
+					'post_id'    => $lid,
+					'user_id'    => $user_id,
+					'type'       => 'lesson',
+					'status'     => 'in-progress',
+					'started_at' => $now,
+					'created_at' => $now,
+					'updated_at' => $now,
+				],
+				[ '%d', '%d', '%s', '%s', '%s', '%s', '%s' ]
+			);
+		}
+
+		// Simulate teacher restriction: only allow the first lesson.
+		$restrict_filter = function ( $args ) use ( $lesson_ids ) {
+			$args['post__in'] = [ $lesson_ids[0] ];
+			return $args;
+		};
+		add_filter( 'sensei_count_statuses_args', $restrict_filter );
+
+		try {
+			$this->login_as_admin();
+			$service      = new \Sensei\Internal\Services\Tables_Based_Grading_Listing_Service( $wpdb );
+			$grading_main = new Sensei_Grading_Main( [ 'view' => 'all' ], $service );
+
+			/* Act. */
+			$grading_main->prepare_items();
+
+			/* Assert. */
+			$this->assertCount( 1, $grading_main->items, 'Listing should only show items for the allowed lesson.' );
+			$this->assertSame( $lesson_ids[0], $grading_main->items[0]->lesson_id, 'Listing item should be for the restricted lesson.' );
+		} finally {
+			remove_filter( 'sensei_count_statuses_args', $restrict_filter );
+		}
+	}
+
+	/**
 	 * Tests that the ungraded quiz count is not displayed in the Grading menu.
 	 *
 	 * @covers Sensei_Grading::grading_admin_menu

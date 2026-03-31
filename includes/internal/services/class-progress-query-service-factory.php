@@ -44,6 +44,23 @@ class Progress_Query_Service_Factory {
 	}
 
 	/**
+	 * Create a Grading_Listing_Service_Interface instance.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return Grading_Listing_Service_Interface The grading listing service.
+	 */
+	public function create_grading_listing_service(): Grading_Listing_Service_Interface {
+		global $wpdb;
+
+		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
+			return new Tables_Based_Grading_Listing_Service( $wpdb );
+		}
+
+		return new Comments_Based_Grading_Listing_Service();
+	}
+
+	/**
 	 * Create a Progress_Aggregation_Service_Interface instance.
 	 *
 	 * Returns a tables-based implementation when HPPS is enabled and the tables

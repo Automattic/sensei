@@ -37,7 +37,6 @@ interface Progress_Aggregation_Service_Interface {
 	 *     @type int|array $user_id                      Restrict to specific user IDs.
 	 *     @type string[]  $exclude_user_login_prefixes           User login prefixes to exclude.
 	 *     @type string[]  $include_statuses_override             Statuses that bypass user exclusion.
-	 *     @type bool      $exclude_unsubmitted_quiz_completions Exclude completed lessons with no quiz submission (default: false).
 	 * }
 	 * @return array Associative array of status => count.
 	 */
@@ -52,7 +51,7 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return array {
 	 *     @type int $unique_student_count   Number of distinct students.
 	 *     @type int $lesson_start_count     Number of lesson starts.
-	 *     @type int $lesson_completed_count Number of completed lessons (all non-in-progress statuses).
+	 *     @type int $lesson_completed_count Number of lessons with a finished status (complete, graded, passed, failed, or ungraded).
 	 *     @type int $days_to_complete_count Number of lessons with a valid completion date.
 	 *     @type int $days_to_complete_sum   Sum of days to complete.
 	 * }

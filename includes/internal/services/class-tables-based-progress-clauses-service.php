@@ -86,7 +86,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 			AND p.status = '{$complete}'
 			GROUP BY p.post_id";
 
-		// Map lessons to courses via postmeta, then take the most recent completion date across all lessons per course.
+		// Map lessons to courses via postmeta, then take the most recent activity date across all lessons per course.
 		$course_query = "SELECT pm.meta_value AS course_id, MAX(lq.last_activity_date) AS last_activity_date
 			FROM {$wpdb->postmeta} pm
 			JOIN ({$lessons_query}) lq ON lq.lesson_id = pm.post_id

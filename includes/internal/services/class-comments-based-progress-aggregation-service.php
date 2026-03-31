@@ -7,8 +7,6 @@
 
 namespace Sensei\Internal\Services;
 
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -80,7 +78,6 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
 		$query .= $this->build_user_exclusion_clause( $args );
-		$query .= $this->build_unsubmitted_quiz_exclusion_clause( $args );
 
 		if ( isset( $args['query'] ) ) {
 			$query .= $args['query'];
@@ -90,6 +87,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Comments-based status counts' );
 
 		$counts = [];
 		foreach ( $results as $row ) {
@@ -141,6 +139,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$row = $wpdb->get_row( $query );
+		Utils::log_query_error( $wpdb, 'Comments-based lesson totals' );
 
 		if ( ! $row ) {
 			return $defaults;
@@ -240,39 +239,5 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		}
 
 		return " AND $exclusion_sql";
-	}
-
-	/**
-	 * Build SQL clause for excluding completed lessons with no quiz submission.
-	 *
-	 * When enabled, excludes lessons where a quiz exists but the student has
-	 * no quiz answers — there is nothing to grade. This covers both 'complete'
-	 * (never submitted) and orphaned 'passed'/'graded'/'failed' records with
-	 * no answer data.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Query arguments.
-	 * @return string SQL clause.
-	 */
-	private function build_unsubmitted_quiz_exclusion_clause( array $args ): string {
-		$exclude = $args['exclude_unsubmitted_quiz_completions'] ?? false;
-
-		if ( ! $exclude ) {
-			return '';
-		}
-
-		$wpdb = $this->wpdb;
-
-		$in_progress = Lesson_Progress_Interface::STATUS_IN_PROGRESS;
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
-		return " AND NOT ( comment_approved != '{$in_progress}'"
-			. " AND EXISTS ( SELECT 1 FROM {$wpdb->postmeta} pm"
-			. " WHERE pm.post_id = {$wpdb->comments}.comment_post_ID"
-			. " AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0 )"
-			. " AND NOT EXISTS ( SELECT 1 FROM {$wpdb->commentmeta} cm"
-			. " WHERE cm.comment_id = {$wpdb->comments}.comment_ID"
-			. " AND cm.meta_key = 'quiz_answers' ) )";
 	}
 }

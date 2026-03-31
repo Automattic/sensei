@@ -557,9 +557,10 @@ class Sensei_Grading {
 	 */
 	public function count_statuses( $args = array() ) {
 		/**
-		 * Filter fires inside Sensei_Grading::count_statuses
+		 * Filter the arguments used to count progress statuses.
 		 *
-		 * Alter the post_in array to determine which posts the comment query should be limited to.
+		 * Alter the query arguments (post restrictions, user exclusions) used
+		 * to count progress statuses on the Grading page.
 		 *
 		 * @since 1.8.0
 		 *

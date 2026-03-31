@@ -75,6 +75,21 @@ class Utils {
 	}
 
 	/**
+	 * Log a database query error if one occurred.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param \wpdb  $wpdb    WordPress database object.
+	 * @param string $context Description of the query for debugging.
+	 */
+	public static function log_query_error( \wpdb $wpdb, string $context ): void {
+		if ( ! empty( $wpdb->last_error ) ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Intentional debug logging for query failures.
+			error_log( 'Sensei: ' . $context . ' query failed: ' . $wpdb->last_error );
+		}
+	}
+
+	/**
 	 * Get user IDs whose login matches any of the given prefixes.
 	 *
 	 * Runs as a separate query to avoid JOINing wp_users, which may
@@ -101,6 +116,9 @@ class Utils {
 		$where = implode( ' OR ', $like_clauses );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic WHERE built from prepared clauses. Caching handled by callers.
-		return array_map( 'intval', $wpdb->get_col( "SELECT ID FROM {$wpdb->users} WHERE $where" ) );
+		$result = (array) $wpdb->get_col( "SELECT ID FROM {$wpdb->users} WHERE $where" );
+		self::log_query_error( $wpdb, 'User ID lookup by login prefix' );
+
+		return array_map( 'intval', $result );
 	}
 }
