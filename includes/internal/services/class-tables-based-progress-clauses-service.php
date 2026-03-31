@@ -177,7 +177,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 			FROM {$progress_table} p
 			WHERE p.post_id = {$this->wpdb->posts}.ID
 			AND p.type = 'lesson'
-			AND p.status = '$complete'
+			AND p.status = '{$complete}'
 		) AS last_activity_date";
 
 		return $clauses;

@@ -267,7 +267,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$in_progress = Lesson_Progress_Interface::STATUS_IN_PROGRESS;
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
-		return " AND NOT ( comment_approved != '$in_progress'"
+		return " AND NOT ( comment_approved != '{$in_progress}'"
 			. " AND EXISTS ( SELECT 1 FROM {$wpdb->postmeta} pm"
 			. " WHERE pm.post_id = {$wpdb->comments}.comment_post_ID"
 			. " AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0 )"

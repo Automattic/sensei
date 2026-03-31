@@ -160,7 +160,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 			SELECT MAX({$wpdb->comments}.comment_date_gmt)
 			FROM {$wpdb->comments}
 			WHERE {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID
-			AND {$wpdb->comments}.comment_approved IN ('$complete', '$passed', '$graded')
+			AND {$wpdb->comments}.comment_approved IN ('{$complete}', '{$passed}', '{$graded}')
 			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
 		) AS last_activity_date";
 

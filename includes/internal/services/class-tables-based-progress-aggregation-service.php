@@ -328,6 +328,6 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 
 		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
 
-		return " AND NOT ( pm.meta_value IS NOT NULL AND qs.id IS NULL AND p.status = '$complete' )";
+		return " AND NOT ( pm.meta_value IS NOT NULL AND qs.id IS NULL AND p.status = '{$complete}' )";
 	}
 }
