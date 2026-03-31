@@ -74,11 +74,9 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		// Count all statuses in a single query for the All/Ungraded/Graded/In Progress tabs.
 		$count_args           = $args;
 		$count_args['status'] = 'any';
-		$count_base_query     = $this->build_base_query( $table, $submissions_table, $count_args );
-
 		// Get per-status counts from a single GROUP BY query.
-		$status_count_query = "SELECT effective_status, COUNT(*) AS total FROM ( $count_base_query ) AS counted GROUP BY effective_status";
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared via build_base_query. Caching handled by callers.
+		$status_count_query = $this->build_count_query( $table, $submissions_table, $count_args );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared via build_count_query. Caching handled by callers.
 		$status_rows = (array) $wpdb->get_results( $status_count_query, ARRAY_A );
 		Utils::log_query_error( $wpdb, 'Grading listing status counts' );
 
@@ -164,6 +162,38 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		$query .= $this->build_user_filter( $args );
 		$query .= $this->build_user_exclusion_filter( $args );
 		$query .= $this->build_status_filter( $args );
+
+		return $query;
+	}
+
+	/**
+	 * Build a per-status count query using the same JOINs/filters as the base query.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $table             Progress table name.
+	 * @param string $submissions_table Quiz submissions table name.
+	 * @param array  $args              Query arguments.
+	 * @return string SQL query.
+	 */
+	private function build_count_query( string $table, string $submissions_table, array $args ): string {
+		$wpdb = $this->wpdb;
+
+		$query  = 'SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT(*) AS total';
+		$query .= " FROM {$table} p";
+		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
+		$query .= " WHERE p.type = 'lesson'";
+
+		$query .= $this->build_post_filter( $args );
+		$query .= $this->build_user_filter( $args );
+		$query .= $this->build_user_exclusion_filter( $args );
+		$query .= $this->build_status_filter( $args );
+
+		$query .= ' GROUP BY effective_status';
 
 		return $query;
 	}
