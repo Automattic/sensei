@@ -951,7 +951,7 @@ class Sensei_Quiz {
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id, Sensei_Utils::get_lesson_course_id( $lesson_id ) );
 		}
 
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
@@ -2426,7 +2426,7 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$quiz_progress_repository->create( $quiz_id, $user_id );
+		$quiz_progress_repository->create( $quiz_id, $user_id, Sensei_Utils::get_quiz_lesson_id( $quiz_id ) );
 	}
 
 	/**
