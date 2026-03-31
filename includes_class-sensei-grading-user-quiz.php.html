@@ -148,15 +148,8 @@ class Sensei_Grading_User_Quiz {
 			&lt;div class="clear">&lt;/div>&lt;br/>
 			&lt;?php
 
-			$lesson_status_id = Sensei_Utils::sensei_get_activity_value(
-				array(
-					'post_id' => $this->lesson_id,
-					'user_id' => $this->user_id,
-					'type'    => 'sensei_lesson_status',
-					'field'   => 'comment_ID',
-				)
-			);
-			$user_quiz_grade  = get_comment_meta( $lesson_status_id, 'grade', true );
+			$submission      = Sensei()->quiz_submission_repository->get( $this->quiz_id, $this->user_id );
+			$user_quiz_grade = $submission ? $submission->get_final_grade() : '';
 
 			foreach ( $questions as $question ) {
 				$question_id = $question->ID;

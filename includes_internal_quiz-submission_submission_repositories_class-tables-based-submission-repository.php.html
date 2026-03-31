@@ -276,7 +276,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 
 		$query = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			"SELECT question_id FROM {$quiz_answers_table} WHERE submission_id = %d",
+			"SELECT question_id FROM {$quiz_answers_table} WHERE submission_id = %d ORDER BY id ASC",
 			$submission_id
 		);
 
