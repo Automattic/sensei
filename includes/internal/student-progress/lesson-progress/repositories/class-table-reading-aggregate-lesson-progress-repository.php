@@ -48,13 +48,14 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 	/**
 	 * Creates a new lesson progress.
 	 *
-	 * @param int $lesson_id The lesson ID.
-	 * @param int $user_id   The user ID.
+	 * @param int      $lesson_id The lesson ID.
+	 * @param int      $user_id   The user ID.
+	 * @param int|null $parent_post_id The parent post ID (course ID for lessons).
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
-	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
-		$this->comments_based_repository->create( $lesson_id, $user_id );
-		return $this->tables_based_repository->create( $lesson_id, $user_id );
+	public function create( int $lesson_id, int $user_id, ?int $parent_post_id = null ): Lesson_Progress_Interface {
+		$this->comments_based_repository->create( $lesson_id, $user_id, $parent_post_id );
+		return $this->tables_based_repository->create( $lesson_id, $user_id, $parent_post_id );
 	}
 
 	/**

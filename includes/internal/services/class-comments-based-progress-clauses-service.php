@@ -7,6 +7,10 @@
 
 namespace Sensei\Internal\Services;
 
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -55,9 +59,13 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	public function add_last_activity_to_courses_clauses( array $clauses ): array {
 		$wpdb = $this->wpdb;
 
+		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
+		$passed   = Quiz_Progress_Interface::STATUS_PASSED;
+		$graded   = Quiz_Progress_Interface::STATUS_GRADED;
+
 		$lessons_query = "SELECT c.comment_post_id lesson_id, MAX(c.comment_date_gmt) as comment_date_gmt
 			FROM {$wpdb->comments} c
-			WHERE c.comment_approved IN ('complete', 'passed', 'graded')
+			WHERE c.comment_approved IN ('{$complete}', '{$passed}', '{$graded}')
 			AND c.comment_type = 'sensei_lesson_status'
 			GROUP BY c.comment_post_id";
 
@@ -94,7 +102,8 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 		$clauses['fields']  .= ", COUNT({$wpdb->commentmeta}.comment_id) AS count_of_completions";
 		$clauses['join']    .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
 		$clauses['join']    .= " AND {$wpdb->comments}.comment_type IN ('sensei_course_status')";
-		$clauses['join']    .= " AND {$wpdb->comments}.comment_approved IN ( 'complete' )";
+		$complete            = Course_Progress_Interface::STATUS_COMPLETE;
+		$clauses['join']    .= " AND {$wpdb->comments}.comment_approved IN ( '{$complete}' )";
 		$clauses['join']    .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
 		$clauses['join']    .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
 		$clauses['groupby'] .= " {$wpdb->posts}.ID";
@@ -143,11 +152,15 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	public function add_last_activity_to_lessons_clauses( array $clauses ): array {
 		$wpdb = $this->wpdb;
 
+		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
+		$passed   = Quiz_Progress_Interface::STATUS_PASSED;
+		$graded   = Quiz_Progress_Interface::STATUS_GRADED;
+
 		$clauses['fields'] .= ", (
 			SELECT MAX({$wpdb->comments}.comment_date_gmt)
 			FROM {$wpdb->comments}
 			WHERE {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID
-			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
+			AND {$wpdb->comments}.comment_approved IN ('{$complete}', '{$passed}', '{$graded}')
 			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
 		) AS last_activity_date";
 

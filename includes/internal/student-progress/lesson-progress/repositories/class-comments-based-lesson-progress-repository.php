@@ -33,13 +33,14 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 *
 	 * @internal
 	 *
-	 * @param int $lesson_id The lesson ID.
-	 * @param int $user_id The user ID.
+	 * @param int      $lesson_id The lesson ID.
+	 * @param int      $user_id The user ID.
+	 * @param int|null $parent_post_id The parent post ID (unused in comments-based storage).
 	 *
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 * @throws RuntimeException When the lesson progress could not be created.
 	 */
-	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
+	public function create( int $lesson_id, int $user_id, ?int $parent_post_id = null ): Lesson_Progress_Interface {
 		/**
 		 * Filter lesson id for lesson progress creation.
 		 *

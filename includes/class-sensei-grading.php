@@ -1,6 +1,8 @@
 <?php
 use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -587,7 +589,14 @@ class Sensei_Grading {
 		$counts   = array_merge( $defaults, $counts );
 
 		// Also ensure these specific keys always exist.
-		foreach ( array( 'graded', 'ungraded', 'passed', 'failed', 'in-progress', 'complete' ) as $status ) {
+		foreach ( array(
+			Quiz_Progress_Interface::STATUS_GRADED,
+			Quiz_Progress_Interface::STATUS_UNGRADED,
+			Quiz_Progress_Interface::STATUS_PASSED,
+			Quiz_Progress_Interface::STATUS_FAILED,
+			Lesson_Progress_Interface::STATUS_IN_PROGRESS,
+			Lesson_Progress_Interface::STATUS_COMPLETE,
+		) as $status ) {
 			if ( ! isset( $counts[ $status ] ) ) {
 				$counts[ $status ] = 0;
 			}
@@ -815,7 +824,7 @@ class Sensei_Grading {
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $quiz_lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id );
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id, Sensei_Utils::get_lesson_course_id( (int) $quiz_lesson_id ) );
 		}
 
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );

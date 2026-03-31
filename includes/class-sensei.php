@@ -14,6 +14,7 @@ use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Migration\Migration_Job;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Migration\Migrations\Quiz_Migration;
+use Sensei\Internal\Migration\Migrations\Parent_Post_Id_Migration;
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
@@ -876,6 +877,9 @@ class Sensei_Main {
 		);
 		$this->migration_scheduler->register_job(
 			new Migration_Job( 'quiz_migration', new Quiz_Migration() )
+		);
+		$this->migration_scheduler->register_job(
+			new Migration_Job( 'parent_post_id_migration', new Parent_Post_Id_Migration() )
 		);
 	}
 
