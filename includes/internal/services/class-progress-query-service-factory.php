@@ -81,6 +81,23 @@ class Progress_Query_Service_Factory {
 	}
 
 	/**
+	 * Create an Analysis_Listing_Service_Interface instance.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return Analysis_Listing_Service_Interface The analysis listing service.
+	 */
+	public function create_analysis_listing_service(): Analysis_Listing_Service_Interface {
+		global $wpdb;
+
+		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
+			return new Tables_Based_Analysis_Listing_Service( $wpdb );
+		}
+
+		return new Comments_Based_Analysis_Listing_Service( $wpdb );
+	}
+
+	/**
 	 * Create a Progress_Aggregation_Service_Interface instance.
 	 *
 	 * Returns a tables-based implementation when HPPS is enabled and the tables

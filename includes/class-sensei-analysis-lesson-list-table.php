@@ -3,6 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+use Sensei\Internal\Services\Analysis_Item;
+use Sensei\Internal\Services\Analysis_Listing_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+
 /**
  * Admin Analysis Lesson Data Table in Sensei.
  *
@@ -18,14 +22,25 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	public $page_slug;
 
 	/**
+	 * The analysis listing service.
+	 *
+	 * @var Analysis_Listing_Service_Interface
+	 */
+	private Analysis_Listing_Service_Interface $analysis_listing_service;
+
+	/**
 	 * Constructor
 	 *
 	 * @since  1.2.0
+	 *
+	 * @param int                                     $lesson_id                Lesson ID.
+	 * @param Analysis_Listing_Service_Interface|null  $analysis_listing_service Analysis listing service.
 	 */
-	public function __construct( $lesson_id = 0 ) {
-		$this->lesson_id = intval( $lesson_id );
-		$this->course_id = intval( get_post_meta( $this->lesson_id, '_lesson_course', true ) );
-		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
+	public function __construct( $lesson_id = 0, ?Analysis_Listing_Service_Interface $analysis_listing_service = null ) {
+		$this->lesson_id                = intval( $lesson_id );
+		$this->course_id                = intval( get_post_meta( $this->lesson_id, '_lesson_course', true ) );
+		$this->page_slug                = Sensei_Analysis::PAGE_SLUG;
+		$this->analysis_listing_service = $analysis_listing_service ?? ( new Progress_Query_Service_Factory() )->create_analysis_listing_service();
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_lesson' );
@@ -223,30 +238,58 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 * Generates the overall array for a single item in the display
 	 *
 	 * @since  1.7.0
-	 * @param object $item The current item
+	 * @param object $item The current item (Analysis_Item or WP_Comment).
 	 */
 	protected function get_row_data( $item ) {
-		$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
-		$user_end_date   = $item->comment_date;
+		if ( $item instanceof Analysis_Item ) {
+			$user_start_date = $item->started_at ?? '';
+			$user_end_date   = $item->completed_at ?? '';
+			$item_status     = $item->status;
+			$item_grade      = $item->grade;
 
-		$grade = null;
-		if ( 'complete' == $item->comment_approved ) {
-			$status = __( 'Completed', 'sensei-lms' );
-			$grade  = __( 'No Grade', 'sensei-lms' );
-		} elseif ( 'graded' == $item->comment_approved ) {
-			$status = __( 'Graded', 'sensei-lms' );
-			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
-		} elseif ( 'passed' == $item->comment_approved ) {
-			$status = __( 'Passed', 'sensei-lms' );
-			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
-		} elseif ( 'failed' == $item->comment_approved ) {
-			$status = __( 'Failed', 'sensei-lms' );
-			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
-		} elseif ( 'ungraded' == $item->comment_approved ) {
-			$status = __( 'Ungraded', 'sensei-lms' );
+			$grade = null;
+			if ( 'complete' === $item_status ) {
+				$status = __( 'Completed', 'sensei-lms' );
+				$grade  = __( 'No Grade', 'sensei-lms' );
+			} elseif ( 'graded' === $item_status ) {
+				$status = __( 'Graded', 'sensei-lms' );
+				$grade  = $item_grade;
+			} elseif ( 'passed' === $item_status ) {
+				$status = __( 'Passed', 'sensei-lms' );
+				$grade  = $item_grade;
+			} elseif ( 'failed' === $item_status ) {
+				$status = __( 'Failed', 'sensei-lms' );
+				$grade  = $item_grade;
+			} elseif ( 'ungraded' === $item_status ) {
+				$status = __( 'Ungraded', 'sensei-lms' );
+			} else {
+				$status        = __( 'In Progress', 'sensei-lms' );
+				$user_end_date = '';
+			}
 		} else {
-			$status        = __( 'In Progress', 'sensei-lms' );
-			$user_end_date = '';
+			$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
+			$user_end_date   = $item->comment_date;
+			$item_status     = $item->comment_approved;
+
+			$grade = null;
+			if ( 'complete' == $item_status ) {
+				$status = __( 'Completed', 'sensei-lms' );
+				$grade  = __( 'No Grade', 'sensei-lms' );
+			} elseif ( 'graded' == $item_status ) {
+				$status = __( 'Graded', 'sensei-lms' );
+				$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
+			} elseif ( 'passed' == $item_status ) {
+				$status = __( 'Passed', 'sensei-lms' );
+				$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
+			} elseif ( 'failed' == $item_status ) {
+				$status = __( 'Failed', 'sensei-lms' );
+				$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
+			} elseif ( 'ungraded' == $item_status ) {
+				$status = __( 'Ungraded', 'sensei-lms' );
+			} else {
+				$status        = __( 'In Progress', 'sensei-lms' );
+				$user_end_date = '';
+			}
 		}
 
 		// Output users data
@@ -263,7 +306,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 			);
 
 			$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';
-			$status    = sprintf( '<span class="%s">%s</span>', esc_attr( $item->comment_approved ), esc_html( $status ) );
+			$status    = sprintf( '<span class="%s">%s</span>', esc_attr( $item_status ), esc_html( $status ) );
 			if ( is_numeric( $grade ) ) {
 				$grade .= '%';
 			}
@@ -299,71 +342,21 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 */
 	private function get_lesson_statuses( $args ) {
 
-		$activity_args = array(
-			'post_id' => $this->lesson_id,
-			'type'    => 'sensei_lesson_status',
-			'number'  => $args['number'],
-			'offset'  => $args['offset'],
-			'orderby' => $args['orderby'],
-			'order'   => $args['order'],
-			'status'  => 'any',
-		);
-
-		// Searching users on statuses requires sub-selecting the statuses by user_ids
+		$service_args = [
+			'lesson_id' => $this->lesson_id,
+			'per_page'  => $args['number'],
+			'offset'    => $args['offset'],
+			'orderby'   => $args['orderby'],
+			'order'     => $args['order'],
+		];
 		if ( $this->search ) {
-			$user_args = array(
-				'search' => '*' . $this->search . '*',
-				'fields' => 'ID',
-			);
-			/**
-			 * Filter the user arguments used to search for users
-			 *
-			 * @hook sensei_analysis_lesson_search_users
-			 *
-			 * @param {array} $user_args The arguments to find users.
-			 * @return {array} The array of user argument.
-			 */
-			$user_args = apply_filters( 'sensei_analysis_lesson_search_users', $user_args );
-			if ( ! empty( $user_args ) ) {
-				$learners_search = new WP_User_Query( $user_args );
-				// Store for reuse on counts
-				$activity_args['user_id'] = (array) $learners_search->get_results();
-			}
+			$service_args['search'] = $this->search;
 		}
 
-		/**
-		 * Filter the arguments used to search for activity
-		 *
-		 * @hook sensei_analysis_lesson_filter_statuses
-		 *
-		 * @param {array} $activity_args The arguments to find activity.
-		 * @return {array} The array of activity argument.
-		 */
-		$activity_args = apply_filters( 'sensei_analysis_lesson_filter_statuses', $activity_args );
+		$result            = $this->analysis_listing_service->get_lesson_students( $service_args );
+		$this->total_items = $result['total_count'];
 
-		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
-		$this->total_items = Sensei_Utils::sensei_check_for_activity(
-			array_merge(
-				$activity_args,
-				array(
-					'count'  => true,
-					'offset' => 0,
-					'number' => 0,
-				)
-			)
-		);
-
-		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
-		if ( $this->total_items < $activity_args['offset'] ) {
-			$new_paged               = floor( $this->total_items / $activity_args['number'] );
-			$activity_args['offset'] = $new_paged * $activity_args['number'];
-		}
-		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-		// Need to always return an array, even with only 1 item
-		if ( ! is_array( $statuses ) ) {
-			$statuses = array( $statuses );
-		}
-		return $statuses;
+		return $result['items'];
 	}
 
 	/**
