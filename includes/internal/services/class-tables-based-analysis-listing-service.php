@@ -83,9 +83,9 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 
 		if ( ! empty( $args['search'] ) ) {
 			$search_like = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
-			$where .= $wpdb->prepare(
-				" AND p.user_id IN ( SELECT ID FROM {$wpdb->users} WHERE display_name LIKE %s OR user_login LIKE %s OR user_email LIKE %s )",
+			$where      .= $wpdb->prepare(
+				' AND p.user_id IN ( SELECT ID FROM %i WHERE display_name LIKE %s OR user_login LIKE %s OR user_email LIKE %s )',
+				$wpdb->users,
 				$search_like,
 				$search_like,
 				$search_like
@@ -93,8 +93,8 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		}
 
 		// Count query.
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic SQL built from prepared clauses.
-		$total_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} p {$where}" );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
+		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . " {$where}" );
 		Utils::log_query_error( $wpdb, 'Analysis lesson students count' );
 
 		// Snap offset back if beyond total.
@@ -106,17 +106,21 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$order_clause = $this->build_lesson_order_clause( $args );
 		$limit_clause = $per_page > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $per_page, $offset ) : '';
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic SQL built from prepared clauses. Caching handled by callers.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
 		$rows = (array) $wpdb->get_results(
-			'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
-			. " FROM {$table} p"
-			. " LEFT JOIN {$table} q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'"
-			. " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id"
+			$wpdb->prepare(
+				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
+				. ' FROM %i p'
+				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
+				. ' LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id',
+				$table,
+				$table,
+				$submissions_table
+			)
 			. " {$where}"
 			. " {$order_clause}"
 			. " {$limit_clause}"
 		);
-		// phpcs:enable
 		Utils::log_query_error( $wpdb, 'Analysis lesson students items' );
 
 		$items = array();
@@ -158,9 +162,9 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 
 		if ( ! empty( $args['search'] ) ) {
 			$search_like = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
-			$where .= $wpdb->prepare(
-				" AND p.user_id IN ( SELECT ID FROM {$wpdb->users} WHERE display_name LIKE %s OR user_login LIKE %s OR user_email LIKE %s )",
+			$where      .= $wpdb->prepare(
+				' AND p.user_id IN ( SELECT ID FROM %i WHERE display_name LIKE %s OR user_login LIKE %s OR user_email LIKE %s )',
+				$wpdb->users,
 				$search_like,
 				$search_like,
 				$search_like
@@ -168,8 +172,8 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		}
 
 		// Count query.
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic SQL built from prepared clauses.
-		$total_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} p {$where}" );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
+		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . " {$where}" );
 		Utils::log_query_error( $wpdb, 'Analysis course students count' );
 
 		// Snap offset back if beyond total.
@@ -184,26 +188,28 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		// Get total lesson count for percent calculation.
 		$total_lessons = $this->get_course_lesson_count( $course_id );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic SQL built from prepared clauses. Caching handled by callers.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at,'
 				. ' COALESCE('
-				. "   ( SELECT COUNT(*) FROM {$table} lp"
-				. "     LEFT JOIN {$table} lq ON lq.parent_post_id = lp.post_id AND lq.user_id = lp.user_id AND lq.type = 'quiz'"
-				. "     WHERE lp.parent_post_id = p.post_id AND lp.user_id = p.user_id AND lp.type = 'lesson'"
-				. "     AND COALESCE( lq.status, lp.status ) IN ( 'complete', 'graded', 'passed', 'failed', 'ungraded' )"
+				. '   ( SELECT COUNT(*) FROM %i lp'
+				. '     LEFT JOIN %i lq ON lq.parent_post_id = lp.post_id AND lq.user_id = lp.user_id AND lq.type = \'quiz\''
+				. '     WHERE lp.parent_post_id = p.post_id AND lp.user_id = p.user_id AND lp.type = \'lesson\''
+				. '     AND COALESCE( lq.status, lp.status ) IN ( \'complete\', \'graded\', \'passed\', \'failed\', \'ungraded\' )'
 				. '   ) * 100.0 / NULLIF( %d, 0 ),'
 				. '   0'
 				. ' ) AS percent'
-				. " FROM {$table} p"
-				. " {$where}"
-				. " {$order_clause}"
-				. " {$limit_clause}",
-				$total_lessons
+				. ' FROM %i p',
+				$table,
+				$table,
+				$total_lessons,
+				$table
 			)
+			. " {$where}"
+			. " {$order_clause}"
+			. " {$limit_clause}"
 		);
-		// phpcs:enable
 		Utils::log_query_error( $wpdb, 'Analysis course students items' );
 
 		$items = array();
@@ -245,20 +251,22 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 			return array();
 		}
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic SQL built from prepared clauses. Caching handled by callers.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status,'
 				. ' p.started_at, p.completed_at, qs.final_grade AS grade'
-				. " FROM {$table} p"
-				. " LEFT JOIN {$table} q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'"
-				. " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id"
-				. " WHERE p.parent_post_id = %d AND p.user_id = %d AND p.type = 'lesson'",
+				. ' FROM %i p'
+				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
+				. ' LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id'
+				. ' WHERE p.parent_post_id = %d AND p.user_id = %d AND p.type = \'lesson\'',
+				$table,
+				$table,
+				$submissions_table,
 				$course_id,
 				$user_id
 			)
 		);
-		// phpcs:enable
 		Utils::log_query_error( $wpdb, 'Analysis user lesson progress' );
 
 		// Index by post_id for easy lookup.
@@ -308,8 +316,8 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$where = $wpdb->prepare( 'WHERE p.user_id = %d AND p.type = %s', $user_id, 'course' );
 
 		// Count query.
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic SQL built from prepared clauses.
-		$total_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} p {$where}" );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
+		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . " {$where}" );
 		Utils::log_query_error( $wpdb, 'Analysis user courses count' );
 
 		// Snap offset back if beyond total.
@@ -321,15 +329,17 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$order_clause = $this->build_course_order_clause( $args );
 		$limit_clause = $per_page > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $per_page, $offset ) : '';
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic SQL built from prepared clauses. Caching handled by callers.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
 		$rows = (array) $wpdb->get_results(
-			'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at'
-			. " FROM {$table} p"
+			$wpdb->prepare(
+				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at'
+				. ' FROM %i p',
+				$table
+			)
 			. " {$where}"
 			. " {$order_clause}"
 			. " {$limit_clause}"
 		);
-		// phpcs:enable
 		Utils::log_query_error( $wpdb, 'Analysis user courses items' );
 
 		$items = array();
@@ -339,19 +349,20 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 
 			$percent = 0;
 			if ( $total_lessons > 0 ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic SQL. Caching handled by callers.
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
 				$completed_lessons = (int) $wpdb->get_var(
 					$wpdb->prepare(
-						"SELECT COUNT(*) FROM {$table} lp"
-						. " LEFT JOIN {$table} lq ON lq.parent_post_id = lp.post_id AND lq.user_id = lp.user_id AND lq.type = 'quiz'"
-						. " WHERE lp.parent_post_id = %d AND lp.user_id = %d AND lp.type = 'lesson'"
-						. " AND COALESCE( lq.status, lp.status ) IN ( 'complete', 'graded', 'passed', 'failed', 'ungraded' )",
+						'SELECT COUNT(*) FROM %i lp'
+						. ' LEFT JOIN %i lq ON lq.parent_post_id = lp.post_id AND lq.user_id = lp.user_id AND lq.type = \'quiz\''
+						. ' WHERE lp.parent_post_id = %d AND lp.user_id = %d AND lp.type = \'lesson\''
+						. ' AND COALESCE( lq.status, lp.status ) IN ( \'complete\', \'graded\', \'passed\', \'failed\', \'ungraded\' )',
+						$table,
+						$table,
 						$course_id,
 						$user_id
 					)
 				);
-				// phpcs:enable
-				$percent = round( $completed_lessons * 100.0 / $total_lessons, 0 );
+				$percent           = round( $completed_lessons * 100.0 / $total_lessons, 0 );
 			}
 
 			$items[] = new Analysis_Item(
@@ -384,22 +395,24 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Dynamic SQL. Caching handled by callers.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id AS lesson_id,'
 				. ' COUNT( DISTINCT p.user_id ) AS student_count,'
-				. " COUNT( DISTINCT CASE WHEN COALESCE( q.status, p.status ) IN ( 'complete', 'graded', 'passed', 'failed' ) THEN p.user_id END ) AS completion_count,"
+				. ' COUNT( DISTINCT CASE WHEN COALESCE( q.status, p.status ) IN ( \'complete\', \'graded\', \'passed\', \'failed\' ) THEN p.user_id END ) AS completion_count,'
 				. ' AVG( qs.final_grade ) AS average_grade'
-				. " FROM {$table} p"
-				. " LEFT JOIN {$table} q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'"
-				. " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id"
-				. " WHERE p.parent_post_id = %d AND p.type = 'lesson'"
+				. ' FROM %i p'
+				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
+				. ' LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id'
+				. ' WHERE p.parent_post_id = %d AND p.type = \'lesson\''
 				. ' GROUP BY p.post_id',
+				$table,
+				$table,
+				$submissions_table,
 				$course_id
 			)
 		);
-		// phpcs:enable
 		Utils::log_query_error( $wpdb, 'Analysis lesson aggregates' );
 
 		$aggregates = array();
