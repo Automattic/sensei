@@ -544,8 +544,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					$learner_progress    = $progress_repository->get( $post_id, $user_activity->user_id );
 				}
 				$learner_started_at = $learner_progress ? $learner_progress->get_started_at() : null;
-				$date_started       = $learner_started_at ? $learner_started_at->format( 'Y-m-d H:i:s' ) : '';
-				$date_input   = '<input class="edit-date-date-picker" data-name="start-date" type="text" value="' . esc_attr( $date_started ) . '">';
+				$date_started       = $learner_started_at ? wp_date( 'Y-m-d H:i:s', $learner_started_at->getTimestamp(), wp_timezone() ) : '';
+				$date_input         = '<input class="edit-date-date-picker" data-name="start-date" type="text" value="' . esc_attr( $date_started ) . '">';
 
 				/**
 				 * Filter sensei_learners_main_column_data

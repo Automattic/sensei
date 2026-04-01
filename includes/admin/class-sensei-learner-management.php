@@ -480,7 +480,7 @@ class Sensei_Learner_Management {
 		}
 
 		if ( ! empty( $_POST['data']['user_id'] ) && is_numeric( $_POST['data']['user_id'] ) ) {
-			$user_id = (int) sanitize_key( $_POST['data']['user_id'] );
+			$user_id = absint( wp_unslash( $_POST['data']['user_id'] ) );
 		} else {
 			exit( '' );
 		}
@@ -533,9 +533,12 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		$progress->set_started_at( $date );
+		$utc_date       = $date->setTimezone( new \DateTimeZone( 'UTC' ) );
+		$old_started_at = $progress->get_started_at();
+		$progress->set_started_at( $utc_date );
 		$repository->save( $progress );
 
+		$updated        = ( null === $old_started_at || $old_started_at->getTimestamp() !== $utc_date->getTimestamp() );
 		$formatted_date = $date->format( 'Y-m-d H:i:s' );
 
 		/**
@@ -545,12 +548,13 @@ class Sensei_Learner_Management {
 		 *
 		 * @hook sensei_learners_learner_updated
 		 *
-		 * @param {bool}   $updated  A flag indicating if there was an update in the learner row.
-		 * @param {int}    $post_id  Lesson or course id.
-		 * @param {int}    $user_id  The user id of the learner.
+		 * @param {bool}   $updated    A flag indicating if there was an update in the learner row.
+		 * @param {int}    $post_id    Lesson or course id.
+		 * @param {int}    $comment_id Deprecated. Always 0. Previously the comment id tracking learner progress.
+		 * @param {int}    $user_id    The user id of the learner. Since $$next-version$$.
 		 * @return {bool} False if there were no updates.
 		 */
-		$updated = apply_filters( 'sensei_learners_learner_updated', true, $post_id, $user_id );
+		$updated = apply_filters( 'sensei_learners_learner_updated', $updated, $post_id, 0, $user_id );
 
 		if ( false === $updated ) {
 			exit( '' );
