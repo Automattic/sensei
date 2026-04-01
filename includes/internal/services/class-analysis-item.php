@@ -18,8 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * difference between comment-based and table-based storage so that
  * the analysis UI code can work with a uniform interface.
  *
- * @internal
- *
  * @since $$next-version$$
  */
 class Analysis_Item {

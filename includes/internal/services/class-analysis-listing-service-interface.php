@@ -67,7 +67,7 @@ interface Analysis_Listing_Service_Interface {
 	 *
 	 * @param int $course_id Course post ID.
 	 * @param int $user_id   User ID.
-	 * @return Analysis_Item[] One item per lesson.
+	 * @return array<int, Analysis_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
 	 */
 	public function get_user_lesson_progress( int $course_id, int $user_id ): array;
 

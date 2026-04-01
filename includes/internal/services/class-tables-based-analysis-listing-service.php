@@ -107,6 +107,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$limit_clause = $per_page > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $per_page, $offset ) : '';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
+		/** @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
@@ -197,6 +198,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$total_lessons = $this->get_course_lesson_count( $course_id );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
+		/** @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at,'
@@ -246,7 +248,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 	 *
 	 * @param int $course_id Course post ID.
 	 * @param int $user_id   User ID.
-	 * @return Analysis_Item[] One item per lesson, keyed by lesson ID. Null values for lessons with no progress.
+	 * @return array<int, Analysis_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
 	 */
 	public function get_user_lesson_progress( int $course_id, int $user_id ): array {
 		$wpdb              = $this->wpdb;
@@ -260,6 +262,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
+		/** @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status,'
@@ -285,6 +288,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 
 		$items = array();
 		foreach ( $lessons as $lesson_id ) {
+			$lesson_id = (int) $lesson_id;
 			if ( ! isset( $progress_map[ $lesson_id ] ) ) {
 				$items[ $lesson_id ] = null;
 				continue;
@@ -347,6 +351,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$limit_clause = $per_page > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $per_page, $offset ) : '';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
+		/** @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at'
@@ -413,6 +418,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$submissions_table = $this->get_quiz_submissions_table_name();
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
+		/** @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id AS lesson_id,'
@@ -478,6 +484,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 			'completed'    => 'p.completed_at',
 		);
 
+		/** @var string $column */
 		$column = esc_sql( $orderby_map[ $orderby ] ?? 'p.started_at' );
 
 		return " ORDER BY {$column} {$order}";
@@ -501,6 +508,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 			'completed'    => 'p.completed_at',
 		);
 
+		/** @var string $column */
 		$column = esc_sql( $orderby_map[ $orderby ] ?? 'p.started_at' );
 
 		return " ORDER BY {$column} {$order}";

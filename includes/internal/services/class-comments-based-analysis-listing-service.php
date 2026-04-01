@@ -97,8 +97,8 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 				continue;
 			}
 
-			$start_date = get_comment_meta( $comment->comment_ID, 'start', true );
-			$grade_raw  = get_comment_meta( $comment->comment_ID, 'grade', true );
+			$start_date = get_comment_meta( (int) $comment->comment_ID, 'start', true );
+			$grade_raw  = get_comment_meta( (int) $comment->comment_ID, 'grade', true );
 
 			$items[] = new Analysis_Item(
 				(int) $comment->comment_post_ID,
@@ -199,8 +199,8 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 				continue;
 			}
 
-			$start_date  = get_comment_meta( $comment->comment_ID, 'start', true );
-			$percent_raw = get_comment_meta( $comment->comment_ID, 'percent', true );
+			$start_date  = get_comment_meta( (int) $comment->comment_ID, 'start', true );
+			$percent_raw = get_comment_meta( (int) $comment->comment_ID, 'percent', true );
 
 			$items[] = new Analysis_Item(
 				(int) $comment->comment_post_ID,
@@ -226,13 +226,14 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 	 *
 	 * @param int $course_id Course post ID.
 	 * @param int $user_id   User ID.
-	 * @return Analysis_Item[] One item per lesson.
+	 * @return array<int, Analysis_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
 	 */
 	public function get_user_lesson_progress( int $course_id, int $user_id ): array {
 		$lessons = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 
 		$items = array();
 		foreach ( $lessons as $lesson_id ) {
+			$lesson_id     = (int) $lesson_id;
 			$lesson_args   = array(
 				'post_id' => $lesson_id,
 				'user_id' => $user_id,
@@ -246,8 +247,8 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 				continue;
 			}
 
-			$start_date = get_comment_meta( $lesson_status->comment_ID, 'start', true );
-			$grade_raw  = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
+			$start_date = get_comment_meta( (int) $lesson_status->comment_ID, 'start', true );
+			$grade_raw  = get_comment_meta( (int) $lesson_status->comment_ID, 'grade', true );
 
 			$items[ $lesson_id ] = new Analysis_Item(
 				(int) $lesson_status->comment_post_ID,
@@ -314,8 +315,8 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 				continue;
 			}
 
-			$start_date  = get_comment_meta( $comment->comment_ID, 'start', true );
-			$percent_raw = get_comment_meta( $comment->comment_ID, 'percent', true );
+			$start_date  = get_comment_meta( (int) $comment->comment_ID, 'start', true );
+			$percent_raw = get_comment_meta( (int) $comment->comment_ID, 'percent', true );
 
 			$items[] = new Analysis_Item(
 				(int) $comment->comment_post_ID,
@@ -368,7 +369,7 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 
 			// Average grade.
 			$average_grade = null;
-			if ( false !== \Sensei_Lesson::lesson_quiz_has_questions( $lesson_id ) ) {
+			if ( false !== \Sensei_Lesson::lesson_quiz_has_questions( (int) $lesson_id ) ) {
 				$grade_args = array(
 					'post_id'  => $lesson_id,
 					'type'     => 'sensei_lesson_status',
@@ -379,13 +380,15 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 				$lesson_grades = \Sensei_Utils::sensei_check_for_activity( $grade_args, true );
 				remove_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 
-				$grade_count   = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
-				$grade_total   = ! empty( $lesson_grades->meta_sum ) ? (float) $lesson_grades->meta_sum : 0;
-				$average_grade = \Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
+				if ( is_object( $lesson_grades ) ) {
+					$grade_count   = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
+					$grade_total   = ! empty( $lesson_grades->meta_sum ) ? (float) $lesson_grades->meta_sum : 0;
+					$average_grade = \Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
+				}
 			}
 
-			$aggregates[ $lesson_id ] = array(
-				'lesson_id'        => $lesson_id,
+			$aggregates[ (int) $lesson_id ] = array(
+				'lesson_id'        => (int) $lesson_id,
 				'student_count'    => (int) $student_count,
 				'completion_count' => (int) $completion_count,
 				'average_grade'    => $average_grade,

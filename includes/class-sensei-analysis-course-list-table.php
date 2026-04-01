@@ -512,7 +512,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$user_start_date = $user_end_date = $status_class = $grade = '';
 
 		// Check if we have cached progress from the service.
-		if ( isset( $this->user_lesson_progress ) && isset( $this->user_lesson_progress[ $item->ID ] ) ) {
+		if ( isset( $this->user_lesson_progress ) && array_key_exists( $item->ID, $this->user_lesson_progress ) ) {
 			$analysis_item = $this->user_lesson_progress[ $item->ID ];
 
 			if ( null !== $analysis_item ) {
