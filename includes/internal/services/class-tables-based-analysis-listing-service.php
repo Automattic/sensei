@@ -106,8 +106,8 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$order_clause = $this->build_lesson_order_clause( $args );
 		$limit_clause = $per_page > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $per_page, $offset ) : '';
 
+				/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
-		/** Query result rows. @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
@@ -197,8 +197,8 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		// Get total lesson count for percent calculation.
 		$total_lessons = $this->get_course_lesson_count( $course_id );
 
+				/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
-		/** Query result rows. @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at,'
@@ -261,8 +261,8 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 			return array();
 		}
 
+				/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
-		/** Query result rows. @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status,'
@@ -350,8 +350,8 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$order_clause = $this->build_course_order_clause( $args );
 		$limit_clause = $per_page > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $per_page, $offset ) : '';
 
+				/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
-		/** Query result rows. @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at'
@@ -417,8 +417,8 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
 
+				/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
-		/** Query result rows. @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id AS lesson_id,'

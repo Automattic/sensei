@@ -34,7 +34,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 * @since  1.2.0
 	 *
 	 * @param int                                     $lesson_id                Lesson ID.
-	 * @param Analysis_Listing_Service_Interface|null  $analysis_listing_service Analysis listing service.
+	 * @param Analysis_Listing_Service_Interface|null $analysis_listing_service Analysis listing service.
 	 */
 	public function __construct( $lesson_id = 0, ?Analysis_Listing_Service_Interface $analysis_listing_service = null ) {
 		$this->lesson_id                = intval( $lesson_id );
@@ -342,13 +342,13 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 */
 	private function get_lesson_statuses( $args ) {
 
-		$service_args = [
+		$service_args = array(
 			'lesson_id' => $this->lesson_id,
 			'per_page'  => $args['number'],
 			'offset'    => $args['offset'],
 			'orderby'   => $args['orderby'],
 			'order'     => $args['order'],
-		];
+		);
 		if ( $this->search ) {
 			$service_args['search'] = $this->search;
 		}
@@ -456,7 +456,6 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$text = __( 'Search Students', 'sensei-lms' );
 
 		return $text;
-
 	}
 }
 

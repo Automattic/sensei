@@ -86,7 +86,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 *
 	 * @param int                                     $course_id                Course ID.
 	 * @param int                                     $user_id                  User ID.
-	 * @param Analysis_Listing_Service_Interface|null  $analysis_listing_service Analysis listing service.
+	 * @param Analysis_Listing_Service_Interface|null $analysis_listing_service Analysis listing service.
 	 *
 	 * @since  1.2.0
 	 */
@@ -637,8 +637,8 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 * @return array Column data.
 	 */
 	private function get_lesson_overview_row_data( $item ) {
-		$lesson_students    = 0;
-		$lesson_completions = 0;
+		$lesson_students      = 0;
+		$lesson_completions   = 0;
 		$lesson_average_grade = __( 'N/A', 'sensei-lms' );
 
 		if ( isset( $this->lesson_aggregates_cache[ $item->ID ] ) ) {
@@ -752,13 +752,13 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 */
 	private function get_course_statuses( $args ) {
 
-		$service_args = [
+		$service_args = array(
 			'course_id' => $this->course_id,
 			'per_page'  => $args['number'],
 			'offset'    => $args['offset'],
 			'orderby'   => $args['orderby'],
 			'order'     => $args['order'],
-		];
+		);
 		if ( $this->search ) {
 			$service_args['search'] = $this->search;
 		}
@@ -1063,30 +1063,30 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			return $args;
 		}
 
-		$meta_query_conditions = [];
+		$meta_query_conditions = array();
 
 		if ( $date_from ) {
-			$meta_query_conditions[] = [
+			$meta_query_conditions[] = array(
 				'key'     => 'start',
 				'value'   => $date_from,
 				'compare' => '>=',
 				'type'    => 'DATE',
-			];
+			);
 		}
 
 		if ( $date_to ) {
-			$meta_query_conditions[] = [
+			$meta_query_conditions[] = array(
 				'key'     => 'start',
 				'value'   => $date_to,
 				'compare' => '<=',
 				'type'    => 'DATE',
-			];
+			);
 		}
 
-		$args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+		$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			'relation' => 'AND',
 			$meta_query_conditions,
-		];
+		);
 
 		return $args;
 	}

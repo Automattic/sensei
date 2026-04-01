@@ -33,7 +33,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @since  1.2.0
 	 *
 	 * @param int                                     $user_id                  User ID.
-	 * @param Analysis_Listing_Service_Interface|null  $analysis_listing_service Analysis listing service.
+	 * @param Analysis_Listing_Service_Interface|null $analysis_listing_service Analysis listing service.
 	 */
 	public function __construct( $user_id = 0, ?Analysis_Listing_Service_Interface $analysis_listing_service = null ) {
 		$this->user_id                  = intval( $user_id );
@@ -246,8 +246,8 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			$item_post_id      = $item->post_id;
 
 			if ( 'complete' === $item_status ) {
-				$status       = __( 'Completed', 'sensei-lms' );
-				$status_class = 'graded';
+				$status          = __( 'Completed', 'sensei-lms' );
+				$status_class    = 'graded';
 				$course_end_date = $item->completed_at ?? '';
 			} else {
 				$status       = __( 'In Progress', 'sensei-lms' );
@@ -262,8 +262,8 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			$item_post_id      = $item->comment_post_ID;
 
 			if ( 'complete' == $item_status ) {
-				$status       = __( 'Completed', 'sensei-lms' );
-				$status_class = 'graded';
+				$status          = __( 'Completed', 'sensei-lms' );
+				$status_class    = 'graded';
 				$course_end_date = $item->comment_date;
 			} else {
 				$status       = __( 'In Progress', 'sensei-lms' );
@@ -317,13 +317,13 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 */
 	private function get_course_statuses( $args ) {
 
-		$service_args = [
+		$service_args = array(
 			'user_id'  => $this->user_id,
 			'per_page' => isset( $args['number'] ) ? $args['number'] : 0,
 			'offset'   => isset( $args['offset'] ) ? $args['offset'] : 0,
 			'orderby'  => $args['orderby'],
 			'order'    => $args['order'],
-		];
+		);
 
 		if ( ! current_user_can( 'manage_sensei' ) ) {
 			$service_args['post_author'] = get_current_user_id();
@@ -428,7 +428,6 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	public function search_button( $text = '' ) {
 		return __( 'Search Courses', 'sensei-lms' );
 	}
-
 }
 
 /**
