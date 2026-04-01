@@ -47,12 +47,14 @@ interface Analysis_Listing_Service_Interface {
 	 * @param array $args {
 	 *     Arguments for the query.
 	 *
-	 *     @type int    $course_id Course post ID. Required.
-	 *     @type int    $per_page  Items per page.
-	 *     @type int    $offset    Pagination offset.
-	 *     @type string $orderby   Order by field.
-	 *     @type string $order     ASC or DESC.
-	 *     @type string $search    Search term for user name.
+	 *     @type int    $course_id       Course post ID. Required.
+	 *     @type int    $per_page        Items per page.
+	 *     @type int    $offset          Pagination offset.
+	 *     @type string $orderby         Order by field.
+	 *     @type string $order           ASC or DESC.
+	 *     @type string $search          Search term for user name.
+	 *     @type string $start_date_from Filter by start date >= this value (UTC datetime string).
+	 *     @type string $start_date_to   Filter by start date <= this value (UTC datetime string).
 	 * }
 	 * @return array{ items: Analysis_Item[], total_count: int }
 	 */
@@ -77,11 +79,12 @@ interface Analysis_Listing_Service_Interface {
 	 * @param array $args {
 	 *     Arguments for the query.
 	 *
-	 *     @type int    $user_id   User ID. Required.
-	 *     @type int    $per_page  Items per page.
-	 *     @type int    $offset    Pagination offset.
-	 *     @type string $orderby   Order by field.
-	 *     @type string $order     ASC or DESC.
+	 *     @type int    $user_id     User ID. Required.
+	 *     @type int    $per_page    Items per page.
+	 *     @type int    $offset      Pagination offset.
+	 *     @type string $orderby     Order by field.
+	 *     @type string $order       ASC or DESC.
+	 *     @type int    $post_author Restrict to courses authored by this user ID.
 	 * }
 	 * @return array{ items: Analysis_Item[], total_count: int }
 	 */

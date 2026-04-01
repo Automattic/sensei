@@ -325,6 +325,20 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			'order'    => $args['order'],
 		];
 
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			$service_args['post_author'] = get_current_user_id();
+		}
+
+		/**
+		 * Filter the service args for the user profile statuses.
+		 *
+		 * @hook sensei_analysis_user_profile_filter_statuses
+		 *
+		 * @param {array} $service_args The array of service args.
+		 * @return {array} The filtered array of service args.
+		 */
+		$service_args = apply_filters( 'sensei_analysis_user_profile_filter_statuses', $service_args );
+
 		$result            = $this->analysis_listing_service->get_user_courses( $service_args );
 		$this->total_items = $result['total_count'];
 

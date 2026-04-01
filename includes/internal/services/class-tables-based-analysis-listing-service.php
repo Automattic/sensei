@@ -171,6 +171,14 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 			);
 		}
 
+		// Apply start date range filter.
+		if ( ! empty( $args['start_date_from'] ) ) {
+			$where .= $wpdb->prepare( ' AND p.started_at >= %s', $args['start_date_from'] );
+		}
+		if ( ! empty( $args['start_date_to'] ) ) {
+			$where .= $wpdb->prepare( ' AND p.started_at <= %s', $args['start_date_to'] );
+		}
+
 		// Count query.
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
 		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . " {$where}" );
@@ -314,6 +322,15 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$offset   = (int) ( $args['offset'] ?? 0 );
 
 		$where = $wpdb->prepare( 'WHERE p.user_id = %d AND p.type = %s', $user_id, 'course' );
+
+		// Restrict to courses authored by a specific user.
+		if ( ! empty( $args['post_author'] ) ) {
+			$where .= $wpdb->prepare(
+				' AND p.post_id IN ( SELECT ID FROM %i WHERE post_author = %d )',
+				$wpdb->posts,
+				(int) $args['post_author']
+			);
+		}
 
 		// Count query.
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.

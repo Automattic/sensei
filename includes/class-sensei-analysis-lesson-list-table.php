@@ -353,6 +353,17 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 			$service_args['search'] = $this->search;
 		}
 
+		/**
+		 * Filter the service args for lesson statuses in the Lesson Analysis list table.
+		 *
+		 * @hook sensei_analysis_lesson_statuses_service_args
+		 *
+		 * @param {array} $service_args The array of service args.
+		 * @param {array} $args         The original query arguments.
+		 * @return {array} The filtered array of service args.
+		 */
+		$service_args = apply_filters( 'sensei_analysis_lesson_statuses_service_args', $service_args, $args );
+
 		$result            = $this->analysis_listing_service->get_lesson_students( $service_args );
 		$this->total_items = $result['total_count'];
 

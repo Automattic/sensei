@@ -146,6 +146,31 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 			$activity_args['user_id'] = (array) $learners_search->get_results();
 		}
 
+		// Apply start date range filter.
+		$meta_query_conditions = array();
+		if ( ! empty( $args['start_date_from'] ) ) {
+			$meta_query_conditions[] = array(
+				'key'     => 'start',
+				'value'   => $args['start_date_from'],
+				'compare' => '>=',
+				'type'    => 'DATE',
+			);
+		}
+		if ( ! empty( $args['start_date_to'] ) ) {
+			$meta_query_conditions[] = array(
+				'key'     => 'start',
+				'value'   => $args['start_date_to'],
+				'compare' => '<=',
+				'type'    => 'DATE',
+			);
+		}
+		if ( ! empty( $meta_query_conditions ) ) {
+			$activity_args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Required for date range filtering.
+				'relation' => 'AND',
+				$meta_query_conditions,
+			);
+		}
+
 		$total_count = \Sensei_Utils::sensei_check_for_activity(
 			array_merge(
 				$activity_args,
@@ -257,6 +282,10 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 			'status'  => 'any',
 		);
 
+		if ( ! empty( $args['post_author'] ) ) {
+			$activity_args['post_author'] = (int) $args['post_author'];
+		}
+
 		$total_count = \Sensei_Utils::sensei_check_for_activity(
 			array_merge(
 				$activity_args,
@@ -355,7 +384,7 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 				$average_grade = \Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
 			}
 
-			$aggregates[] = array(
+			$aggregates[ $lesson_id ] = array(
 				'lesson_id'        => $lesson_id,
 				'student_count'    => (int) $student_count,
 				'completion_count' => (int) $completion_count,

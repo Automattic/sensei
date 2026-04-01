@@ -542,6 +542,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 					$status_class = 'ungraded';
 				} elseif ( 'in-progress' === $item_status ) {
 					$status        = __( 'In Progress', 'sensei-lms' );
+					$status_class  = 'in-progress';
 					$user_end_date = '';
 				}
 			}
@@ -760,6 +761,15 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		];
 		if ( $this->search ) {
 			$service_args['search'] = $this->search;
+		}
+
+		$start_date_from = $this->get_start_date_and_time();
+		$start_date_to   = $this->get_end_date_and_time();
+		if ( $start_date_from ) {
+			$service_args['start_date_from'] = $start_date_from;
+		}
+		if ( $start_date_to ) {
+			$service_args['start_date_to'] = $start_date_to;
 		}
 
 		$result            = $this->analysis_listing_service->get_course_students( $service_args );
