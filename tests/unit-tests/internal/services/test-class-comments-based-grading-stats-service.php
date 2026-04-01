@@ -174,6 +174,123 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result );
 	}
 
+	/**
+	 * Tests that get_grade_totals only includes graded, passed, and failed statuses.
+	 */
+	public function testGetGradeTotals_WithMixedStatuses_OnlyCountsGradedPassedFailed(): void {
+		global $wpdb;
+		$user_id = $this->sensei_factory->user->create();
+
+		// These should be included.
+		$lesson_1 = $this->sensei_factory->lesson->create();
+		$lesson_2 = $this->sensei_factory->lesson->create();
+		$lesson_3 = $this->sensei_factory->lesson->create();
+		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
+		$this->create_lesson_status_with_grade( $lesson_2, $user_id, 'passed', 90 );
+		$this->create_lesson_status_with_grade( $lesson_3, $user_id, 'failed', 40 );
+
+		// This should be excluded: 'complete' status with grade meta.
+		$lesson_4   = $this->sensei_factory->lesson->create();
+		$comment_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $lesson_4,
+				'user_id'          => $user_id,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => 'complete',
+				'comment_content'  => '',
+			)
+		);
+		update_comment_meta( $comment_id, 'grade', 100 );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals();
+
+		$this->assertSame( 3, $result['count'] );
+		$this->assertSame( 210.0, $result['sum'] ); // 80 + 90 + 40.
+	}
+
+	/**
+	 * Tests that get_courses_average_grade returns the average of per-course averages.
+	 */
+	public function testGetCoursesAverageGrade_WithMultipleCourses_ReturnsAverageOfAverages(): void {
+		global $wpdb;
+		$user_id  = $this->sensei_factory->user->create();
+		$course_1 = $this->sensei_factory->course->create();
+		$course_2 = $this->sensei_factory->course->create();
+		$lesson_1 = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'      => $course_1,
+					'_quiz_has_questions' => 1,
+				),
+			)
+		);
+		$lesson_2 = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'      => $course_1,
+					'_quiz_has_questions' => 1,
+				),
+			)
+		);
+		$lesson_3 = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'      => $course_2,
+					'_quiz_has_questions' => 1,
+				),
+			)
+		);
+
+		// Course 1: grades 80, 60 -> avg 70.
+		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
+		$this->create_lesson_status_with_grade( $lesson_2, $user_id, 'passed', 60 );
+		// Course 2: grade 90 -> avg 90.
+		$this->create_lesson_status_with_grade( $lesson_3, $user_id, 'failed', 90 );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_courses_average_grade();
+
+		// Average of averages: (70 + 90) / 2 = 80.
+		$this->assertSame( 80.0, $result );
+	}
+
+	/**
+	 * Tests that get_courses_average_grade excludes lessons without quizzes.
+	 */
+	public function testGetCoursesAverageGrade_WithLessonWithoutQuiz_ExcludesFromAverage(): void {
+		global $wpdb;
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+
+		// Lesson with quiz.
+		$lesson_1 = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'      => $course_id,
+					'_quiz_has_questions' => 1,
+				),
+			)
+		);
+		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
+
+		// Lesson without quiz (no _quiz_has_questions meta).
+		$lesson_2 = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_id,
+				),
+			)
+		);
+		$this->create_lesson_status_with_grade( $lesson_2, $user_id, 'graded', 40 );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_courses_average_grade();
+
+		// Only the lesson with quiz should be included.
+		$this->assertSame( 80.0, $result );
+	}
+
 	public function testGetUsersAverageGrade_WithNoUserIds_ReturnsZero(): void {
 		global $wpdb;
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );

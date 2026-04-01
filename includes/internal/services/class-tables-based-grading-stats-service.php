@@ -161,7 +161,11 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$result = $wpdb->get_row( $query );
 		Utils::log_query_error( $wpdb, 'Tables-based courses average grade' );
 
-		return floatval( $result->courses_average ?? 0 );
+		if ( ! $result ) {
+			return 0.0;
+		}
+
+		return floatval( $result->courses_average );
 	}
 
 	/**
