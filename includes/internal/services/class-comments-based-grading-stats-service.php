@@ -58,8 +58,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	public function get_grade_totals( array $args = array() ): array {
 		$wpdb = $this->wpdb;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
-		$query = "SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum FROM {$wpdb->comments} c INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id WHERE c.comment_type = 'sensei_lesson_status' AND cm.meta_key = 'grade'";
+		$query = $wpdb->prepare( "SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum FROM %i c INNER JOIN %i cm ON c.comment_ID = cm.comment_id WHERE c.comment_type = 'sensei_lesson_status' AND cm.meta_key = 'grade'", $wpdb->comments, $wpdb->commentmeta );
 
 		$query .= $this->build_user_filter( $args );
 		$query .= $this->build_post_filter( $args );
@@ -109,27 +108,32 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		 *   - Be associated with a course.
 		 *   - Have quiz questions.
 		 */
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names from wpdb. Dynamic filter prepared above. Caching handled by callers.
-		$result = $wpdb->get_row(
+		$query  = $wpdb->prepare(
 			"SELECT AVG(course_average) AS courses_average
 			FROM (
 				SELECT AVG(cm.meta_value) AS course_average
-				FROM {$wpdb->comments} c
-				INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
-				INNER JOIN {$wpdb->postmeta} course ON c.comment_post_ID = course.post_id
-				INNER JOIN {$wpdb->postmeta} has_questions ON c.comment_post_ID = has_questions.post_id
-				INNER JOIN {$wpdb->posts} p ON p.ID = course.meta_value
+				FROM %i c
+				INNER JOIN %i cm ON c.comment_ID = cm.comment_id
+				INNER JOIN %i course ON c.comment_post_ID = course.post_id
+				INNER JOIN %i has_questions ON c.comment_post_ID = has_questions.post_id
+				INNER JOIN %i p ON p.ID = course.meta_value
 				WHERE c.comment_type = 'sensei_lesson_status'
 					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
 					AND cm.meta_key = 'grade'
 					AND course.meta_key = '_lesson_course'
 					AND course.meta_value <> ''
-					AND has_questions.meta_key = '_quiz_has_questions'
-					{$course_filter}
-				GROUP BY course.meta_value
-			) averages_by_course"
+					AND has_questions.meta_key = '_quiz_has_questions'",
+			$wpdb->comments,
+			$wpdb->commentmeta,
+			$wpdb->postmeta,
+			$wpdb->postmeta,
+			$wpdb->posts
 		);
-		// phpcs:enable
+		$query .= $course_filter;
+		$query .= ' GROUP BY course.meta_value ) averages_by_course';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared above. Caching handled by callers.
+		$result = $wpdb->get_row( $query );
 		Utils::log_query_error( $wpdb, 'Comments-based courses average grade' );
 
 		return floatval( $result->courses_average ?? 0 );
@@ -151,16 +155,16 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		$wpdb         = $this->wpdb;
 		$placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%d' ) );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Placeholders created dynamically. Caching handled by callers.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Placeholders created dynamically. Caching handled by callers.
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT SUM( cm.meta_value ) AS grade_sum, COUNT( * ) AS grade_count
-				FROM {$wpdb->comments} c
-				INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
+				FROM %i c
+				INNER JOIN %i cm ON c.comment_ID = cm.comment_id
 				WHERE c.comment_type = 'sensei_lesson_status'
 					AND cm.meta_key = 'grade'
 					AND c.user_id IN ( $placeholders )",
-				$user_ids
+				array_merge( array( $wpdb->comments, $wpdb->commentmeta ), $user_ids )
 			)
 		);
 		// phpcs:enable
