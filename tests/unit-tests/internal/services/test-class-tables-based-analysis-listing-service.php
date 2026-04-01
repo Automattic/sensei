@@ -164,7 +164,9 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetCourseStudents_WithCourseProgress_ReturnsAnalysisItems.
+	 * Tests that get_course_students returns analysis items for course progress.
+	 *
+	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_course_students
 	 */
 	public function testGetCourseStudents_WithCourseProgress_ReturnsAnalysisItems(): void {
 		/* Arrange. */
@@ -196,7 +198,9 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetUserLessonProgress_ReturnsProgressKeyedByLessonId.
+	 * Tests that get_user_lesson_progress returns progress keyed by lesson ID.
+	 *
+	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_user_lesson_progress
 	 */
 	public function testGetUserLessonProgress_ReturnsProgressKeyedByLessonId(): void {
 		/* Arrange. */
@@ -220,7 +224,9 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetUserLessonProgress_WithNoProgress_ReturnsNullForLesson.
+	 * Tests that get_user_lesson_progress returns null for a lesson with no progress.
+	 *
+	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_user_lesson_progress
 	 */
 	public function testGetUserLessonProgress_WithNoProgress_ReturnsNullForLesson(): void {
 		/* Arrange. */
@@ -242,7 +248,9 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetUserCourses_WithCourseProgress_ReturnsAnalysisItems.
+	 * Tests that get_user_courses returns analysis items for course progress.
+	 *
+	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_user_courses
 	 */
 	public function testGetUserCourses_WithCourseProgress_ReturnsAnalysisItems(): void {
 		/* Arrange. */
@@ -270,7 +278,9 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetLessonAggregates_ReturnsAggregateStats.
+	 * Tests that get_lesson_aggregates returns aggregate stats.
+	 *
+	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_lesson_aggregates
 	 */
 	public function testGetLessonAggregates_ReturnsAggregateStats(): void {
 		/* Arrange. */
@@ -307,7 +317,9 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetLessonStudents_WithOffsetBeyondTotal_CorrectsPagination.
+	 * Tests that get_lesson_students corrects pagination when offset exceeds total.
+	 *
+	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_lesson_students
 	 */
 	public function testGetLessonStudents_WithOffsetBeyondTotal_CorrectsPagination(): void {
 		/* Arrange. */
