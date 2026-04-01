@@ -64,6 +64,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		$query .= $this->build_post_filter( $args );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		/** @var object|null $row */
 		$row = $wpdb->get_row( $query );
 		Utils::log_query_error( $wpdb, 'Comments-based grade totals' );
 
@@ -133,6 +134,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		$query .= ' GROUP BY course.meta_value ) averages_by_course';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared above. Caching handled by callers.
+		/** @var object|null $result */
 		$result = $wpdb->get_row( $query );
 		Utils::log_query_error( $wpdb, 'Comments-based courses average grade' );
 
@@ -156,6 +158,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		$placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%d' ) );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Placeholders created dynamically. Caching handled by callers.
+		/** @var object|null $row */
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT SUM( cm.meta_value ) AS grade_sum, COUNT( * ) AS grade_count

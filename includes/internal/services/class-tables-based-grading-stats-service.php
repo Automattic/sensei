@@ -94,6 +94,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$query .= $this->build_post_filter( $args );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		/** @var object|null $row */
 		$row = $wpdb->get_row( $query );
 		Utils::log_query_error( $wpdb, 'Tables-based grade totals' );
 
@@ -156,6 +157,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$query .= ' GROUP BY p.parent_post_id ) averages_by_course';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared above. Caching handled by callers.
+		/** @var object|null $result */
 		$result = $wpdb->get_row( $query );
 		Utils::log_query_error( $wpdb, 'Tables-based courses average grade' );
 
@@ -181,6 +183,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$placeholders      = implode( ', ', array_fill( 0, count( $user_ids ), '%d' ) );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Placeholders created dynamically. Caching handled by callers.
+		/** @var object|null $row */
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT SUM( qs.final_grade ) AS grade_sum, COUNT( * ) AS grade_count
