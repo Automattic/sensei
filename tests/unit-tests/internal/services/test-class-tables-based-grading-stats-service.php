@@ -1,4 +1,9 @@
 <?php
+/**
+ * Tests for grading stats service.
+ *
+ * @package sensei-tests
+ */
 
 namespace SenseiTest\Internal\Services;
 
@@ -11,8 +16,16 @@ use Sensei\Internal\Services\Tables_Based_Grading_Stats_Service;
  */
 class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
+	/**
+	 * Service instance.
+	 *
+	 * @var mixed
+	 */
 	private $sensei_factory;
 
+	/**
+	 * Test setUp.
+	 */
 	public function setUp(): void {
 		parent::setUp();
 		$this->sensei_factory = new \Sensei_Factory();
@@ -91,6 +104,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->insert_quiz_submission( $quiz_id, $user_id, $grade );
 	}
 
+	/**
+	 * Test testGetGradeTotals_WithNoData_ReturnsZeros.
+	 */
 	public function testGetGradeTotals_WithNoData_ReturnsZeros(): void {
 		global $wpdb;
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
@@ -101,6 +117,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0.0, $result['sum'] );
 	}
 
+	/**
+	 * Test testGetGradeTotals_WithGradedLesson_ReturnsCountAndSum.
+	 */
 	public function testGetGradeTotals_WithGradedLesson_ReturnsCountAndSum(): void {
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -121,6 +140,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result['sum'] );
 	}
 
+	/**
+	 * Test testGetGradeTotals_WithUserIdFilter_ReturnsFilteredResults.
+	 */
 	public function testGetGradeTotals_WithUserIdFilter_ReturnsFilteredResults(): void {
 		global $wpdb;
 		$user_1    = $this->sensei_factory->user->create();
@@ -143,6 +165,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result['sum'] );
 	}
 
+	/**
+	 * Test testGetGradeTotals_WithLessonIdFilter_ReturnsFilteredResults.
+	 */
 	public function testGetGradeTotals_WithLessonIdFilter_ReturnsFilteredResults(): void {
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -170,6 +195,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result['sum'] );
 	}
 
+	/**
+	 * Test testGetGradeTotals_WithPostInFilter_ReturnsFilteredResults.
+	 */
 	public function testGetGradeTotals_WithPostInFilter_ReturnsFilteredResults(): void {
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -204,6 +232,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 140.0, $result['sum'] );
 	}
 
+	/**
+	 * Test testGetGradeTotals_WithNullFinalGrade_ExcludesFromResults.
+	 */
 	public function testGetGradeTotals_WithNullFinalGrade_ExcludesFromResults(): void {
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -226,6 +257,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0, $result['count'] );
 	}
 
+	/**
+	 * Test testGetCoursesAverageGrade_WithNoData_ReturnsZero.
+	 */
 	public function testGetCoursesAverageGrade_WithNoData_ReturnsZero(): void {
 		global $wpdb;
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
@@ -235,6 +269,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0.0, $result );
 	}
 
+	/**
+	 * Test testGetCoursesAverageGrade_WithGradedLessons_ReturnsAverage.
+	 */
 	public function testGetCoursesAverageGrade_WithGradedLessons_ReturnsAverage(): void {
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -254,6 +291,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result );
 	}
 
+	/**
+	 * Test testGetCoursesAverageGrade_WithCourseIdsFilter_ReturnsFilteredAverage.
+	 */
 	public function testGetCoursesAverageGrade_WithCourseIdsFilter_ReturnsFilteredAverage(): void {
 		global $wpdb;
 		$user_id  = $this->sensei_factory->user->create();
@@ -281,6 +321,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result );
 	}
 
+	/**
+	 * Test testGetCoursesAverageGrade_WithMultipleCourses_ReturnsAverageOfAverages.
+	 */
 	public function testGetCoursesAverageGrade_WithMultipleCourses_ReturnsAverageOfAverages(): void {
 		global $wpdb;
 		$user_id  = $this->sensei_factory->user->create();
@@ -390,6 +433,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result );
 	}
 
+	/**
+	 * Test testGetUsersAverageGrade_WithNoUserIds_ReturnsZero.
+	 */
 	public function testGetUsersAverageGrade_WithNoUserIds_ReturnsZero(): void {
 		global $wpdb;
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
@@ -399,6 +445,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0.0, $result );
 	}
 
+	/**
+	 * Test testGetUsersAverageGrade_WithUserIds_ReturnsAverage.
+	 */
 	public function testGetUsersAverageGrade_WithUserIds_ReturnsAverage(): void {
 		global $wpdb;
 		$user_1    = $this->sensei_factory->user->create();
@@ -420,6 +469,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 70.0, $result );
 	}
 
+	/**
+	 * Test testGetUsersAverageGrade_FilteredBySpecificUser_ReturnsUserAverage.
+	 */
 	public function testGetUsersAverageGrade_FilteredBySpecificUser_ReturnsUserAverage(): void {
 		global $wpdb;
 		$user_1    = $this->sensei_factory->user->create();
