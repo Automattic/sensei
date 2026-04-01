@@ -31,7 +31,7 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_progress';
 		$now    = current_time( 'mysql' );
-		$data   = [
+		$data   = array(
 			'post_id'    => $post_id,
 			'user_id'    => $user_id,
 			'type'       => $type,
@@ -39,8 +39,8 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 			'started_at' => $now,
 			'created_at' => $now,
 			'updated_at' => $now,
-		];
-		$format = [ '%d', '%d', '%s', '%s', '%s', '%s', '%s' ];
+		);
+		$format = array( '%d', '%d', '%s', '%s', '%s', '%s', '%s' );
 		if ( null !== $parent_post_id ) {
 			$data['parent_post_id'] = $parent_post_id;
 			$format[]               = '%d';
@@ -60,13 +60,13 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_quiz_submissions';
 		$now    = current_time( 'mysql' );
-		$data   = [
+		$data   = array(
 			'quiz_id'    => $quiz_id,
 			'user_id'    => $user_id,
 			'created_at' => $now,
 			'updated_at' => $now,
-		];
-		$format = [ '%d', '%d', '%s', '%s' ];
+		);
+		$format = array( '%d', '%d', '%s', '%s' );
 		if ( null !== $final_grade ) {
 			$data['final_grade'] = $final_grade;
 			$format[]            = '%d';
@@ -106,10 +106,10 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_id   = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_id ]
+			array( 'post_parent' => $lesson_id )
 		);
 
 		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_id, $course_id, 'graded', 80 );
@@ -127,17 +127,17 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$user_2    = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_id   = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_id ]
+			array( 'post_parent' => $lesson_id )
 		);
 
 		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_1, $course_id, 'graded', 80 );
 		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_2, $course_id, 'graded', 60 );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals( [ 'user_id' => $user_1 ] );
+		$result  = $service->get_grade_totals( array( 'user_id' => $user_1 ) );
 
 		$this->assertSame( 1, $result['count'] );
 		$this->assertSame( 80.0, $result['sum'] );
@@ -148,23 +148,23 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_1  = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_1    = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_1 ]
+			array( 'post_parent' => $lesson_1 )
 		);
 		$lesson_2  = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_2    = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_2 ]
+			array( 'post_parent' => $lesson_2 )
 		);
 
 		$this->create_graded_lesson( $lesson_1, $quiz_1, $user_id, $course_id, 'graded', 80 );
 		$this->create_graded_lesson( $lesson_2, $quiz_2, $user_id, $course_id, 'graded', 60 );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals( [ 'lesson_id' => $lesson_1 ] );
+		$result  = $service->get_grade_totals( array( 'lesson_id' => $lesson_1 ) );
 
 		$this->assertSame( 1, $result['count'] );
 		$this->assertSame( 80.0, $result['sum'] );
@@ -175,22 +175,22 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_1  = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_1    = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_1 ]
+			array( 'post_parent' => $lesson_1 )
 		);
 		$lesson_2  = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_2    = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_2 ]
+			array( 'post_parent' => $lesson_2 )
 		);
 		$lesson_3  = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_3    = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_3 ]
+			array( 'post_parent' => $lesson_3 )
 		);
 
 		$this->create_graded_lesson( $lesson_1, $quiz_1, $user_id, $course_id, 'graded', 80 );
@@ -198,7 +198,7 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->create_graded_lesson( $lesson_3, $quiz_3, $user_id, $course_id, 'graded', 40 );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals( [ 'post__in' => [ $lesson_1, $lesson_2 ] ] );
+		$result  = $service->get_grade_totals( array( 'post__in' => array( $lesson_1, $lesson_2 ) ) );
 
 		$this->assertSame( 2, $result['count'] );
 		$this->assertSame( 140.0, $result['sum'] );
@@ -209,10 +209,10 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_id   = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_id ]
+			array( 'post_parent' => $lesson_id )
 		);
 
 		// Lesson progress exists but quiz submission has no grade.
@@ -240,10 +240,10 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_id   = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_id ]
+			array( 'post_parent' => $lesson_id )
 		);
 
 		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_id, $course_id, 'graded', 80 );
@@ -256,47 +256,47 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
 	public function testGetCoursesAverageGrade_WithCourseIdsFilter_ReturnsFilteredAverage(): void {
 		global $wpdb;
-		$user_id   = $this->sensei_factory->user->create();
-		$course_1  = $this->sensei_factory->course->create();
-		$course_2  = $this->sensei_factory->course->create();
-		$lesson_1  = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_1 ] ]
+		$user_id  = $this->sensei_factory->user->create();
+		$course_1 = $this->sensei_factory->course->create();
+		$course_2 = $this->sensei_factory->course->create();
+		$lesson_1 = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_1 ) )
 		);
-		$quiz_1    = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_1 ]
+		$quiz_1   = $this->sensei_factory->quiz->create(
+			array( 'post_parent' => $lesson_1 )
 		);
-		$lesson_2  = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_2 ] ]
+		$lesson_2 = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_2 ) )
 		);
-		$quiz_2    = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_2 ]
+		$quiz_2   = $this->sensei_factory->quiz->create(
+			array( 'post_parent' => $lesson_2 )
 		);
 
 		$this->create_graded_lesson( $lesson_1, $quiz_1, $user_id, $course_1, 'graded', 80 );
 		$this->create_graded_lesson( $lesson_2, $quiz_2, $user_id, $course_2, 'graded', 60 );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_courses_average_grade( [ $course_1 ] );
+		$result  = $service->get_courses_average_grade( array( $course_1 ) );
 
 		$this->assertSame( 80.0, $result );
 	}
 
 	public function testGetCoursesAverageGrade_WithMultipleCourses_ReturnsAverageOfAverages(): void {
 		global $wpdb;
-		$user_id   = $this->sensei_factory->user->create();
-		$course_1  = $this->sensei_factory->course->create();
-		$course_2  = $this->sensei_factory->course->create();
-		$lesson_1  = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_1 ] ]
+		$user_id  = $this->sensei_factory->user->create();
+		$course_1 = $this->sensei_factory->course->create();
+		$course_2 = $this->sensei_factory->course->create();
+		$lesson_1 = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_1 ) )
 		);
-		$quiz_1    = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_1 ]
+		$quiz_1   = $this->sensei_factory->quiz->create(
+			array( 'post_parent' => $lesson_1 )
 		);
-		$lesson_2  = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_2 ] ]
+		$lesson_2 = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_2 ) )
 		);
-		$quiz_2    = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_2 ]
+		$quiz_2   = $this->sensei_factory->quiz->create(
+			array( 'post_parent' => $lesson_2 )
 		);
 
 		// Course 1: grade 80, Course 2: grade 60. Average of averages = (80 + 60) / 2 = 70.
@@ -313,7 +313,7 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
 
-		$result = $service->get_users_average_grade( [] );
+		$result = $service->get_users_average_grade( array() );
 
 		$this->assertSame( 0.0, $result );
 	}
@@ -324,17 +324,17 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$user_2    = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_id   = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_id ]
+			array( 'post_parent' => $lesson_id )
 		);
 
 		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_1, $course_id, 'graded', 80 );
 		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_2, $course_id, 'graded', 60 );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_users_average_grade( [ $user_1, $user_2 ] );
+		$result  = $service->get_users_average_grade( array( $user_1, $user_2 ) );
 
 		$this->assertSame( 70.0, $result );
 	}
@@ -345,17 +345,17 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$user_2    = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_id   = $this->sensei_factory->quiz->create(
-			[ 'post_parent' => $lesson_id ]
+			array( 'post_parent' => $lesson_id )
 		);
 
 		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_1, $course_id, 'graded', 80 );
 		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_2, $course_id, 'graded', 60 );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_users_average_grade( [ $user_1 ] );
+		$result  = $service->get_users_average_grade( array( $user_1 ) );
 
 		$this->assertSame( 80.0, $result );
 	}

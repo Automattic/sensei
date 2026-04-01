@@ -28,13 +28,13 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	 */
 	private function create_lesson_status_with_grade( int $lesson_id, int $user_id, string $status, int $grade ): void {
 		$comment_id = wp_insert_comment(
-			[
+			array(
 				'comment_post_ID'  => $lesson_id,
 				'user_id'          => $user_id,
 				'comment_type'     => 'sensei_lesson_status',
 				'comment_approved' => $status,
 				'comment_content'  => '',
-			]
+			)
 		);
 		update_comment_meta( $comment_id, 'grade', $grade );
 	}
@@ -73,7 +73,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->create_lesson_status_with_grade( $lesson_id, $user_2, 'graded', 60 );
 
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals( [ 'user_id' => $user_1 ] );
+		$result  = $service->get_grade_totals( array( 'user_id' => $user_1 ) );
 
 		$this->assertSame( 1, $result['count'] );
 		$this->assertSame( 80.0, $result['sum'] );
@@ -81,15 +81,15 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
 	public function testGetGradeTotals_WithLessonIdFilter_ReturnsFilteredResults(): void {
 		global $wpdb;
-		$user_id    = $this->sensei_factory->user->create();
-		$lesson_1   = $this->sensei_factory->lesson->create();
-		$lesson_2   = $this->sensei_factory->lesson->create();
+		$user_id  = $this->sensei_factory->user->create();
+		$lesson_1 = $this->sensei_factory->lesson->create();
+		$lesson_2 = $this->sensei_factory->lesson->create();
 
 		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
 		$this->create_lesson_status_with_grade( $lesson_2, $user_id, 'graded', 60 );
 
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals( [ 'lesson_id' => $lesson_1 ] );
+		$result  = $service->get_grade_totals( array( 'lesson_id' => $lesson_1 ) );
 
 		$this->assertSame( 1, $result['count'] );
 		$this->assertSame( 80.0, $result['sum'] );
@@ -97,17 +97,17 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
 	public function testGetGradeTotals_WithPostInFilter_ReturnsFilteredResults(): void {
 		global $wpdb;
-		$user_id    = $this->sensei_factory->user->create();
-		$lesson_1   = $this->sensei_factory->lesson->create();
-		$lesson_2   = $this->sensei_factory->lesson->create();
-		$lesson_3   = $this->sensei_factory->lesson->create();
+		$user_id  = $this->sensei_factory->user->create();
+		$lesson_1 = $this->sensei_factory->lesson->create();
+		$lesson_2 = $this->sensei_factory->lesson->create();
+		$lesson_3 = $this->sensei_factory->lesson->create();
 
 		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
 		$this->create_lesson_status_with_grade( $lesson_2, $user_id, 'graded', 60 );
 		$this->create_lesson_status_with_grade( $lesson_3, $user_id, 'graded', 40 );
 
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals( [ 'post__in' => [ $lesson_1, $lesson_2 ] ] );
+		$result  = $service->get_grade_totals( array( 'post__in' => array( $lesson_1, $lesson_2 ) ) );
 
 		$this->assertSame( 2, $result['count'] );
 		$this->assertSame( 140.0, $result['sum'] );
@@ -124,15 +124,15 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
 	public function testGetCoursesAverageGrade_WithGradedLessons_ReturnsAverage(): void {
 		global $wpdb;
-		$user_id    = $this->sensei_factory->user->create();
-		$course_id  = $this->sensei_factory->course->create();
-		$lesson_id  = $this->sensei_factory->lesson->create(
-			[
-				'meta_input' => [
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
 					'_lesson_course'      => $course_id,
 					'_quiz_has_questions' => 1,
-				],
-			]
+				),
+			)
 		);
 
 		$this->create_lesson_status_with_grade( $lesson_id, $user_id, 'graded', 80 );
@@ -145,31 +145,31 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
 	public function testGetCoursesAverageGrade_WithCourseIdsFilter_ReturnsFilteredAverage(): void {
 		global $wpdb;
-		$user_id     = $this->sensei_factory->user->create();
-		$course_1    = $this->sensei_factory->course->create();
-		$course_2    = $this->sensei_factory->course->create();
-		$lesson_1    = $this->sensei_factory->lesson->create(
-			[
-				'meta_input' => [
+		$user_id  = $this->sensei_factory->user->create();
+		$course_1 = $this->sensei_factory->course->create();
+		$course_2 = $this->sensei_factory->course->create();
+		$lesson_1 = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
 					'_lesson_course'      => $course_1,
 					'_quiz_has_questions' => 1,
-				],
-			]
+				),
+			)
 		);
-		$lesson_2    = $this->sensei_factory->lesson->create(
-			[
-				'meta_input' => [
+		$lesson_2 = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
 					'_lesson_course'      => $course_2,
 					'_quiz_has_questions' => 1,
-				],
-			]
+				),
+			)
 		);
 
 		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
 		$this->create_lesson_status_with_grade( $lesson_2, $user_id, 'graded', 60 );
 
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_courses_average_grade( [ $course_1 ] );
+		$result  = $service->get_courses_average_grade( array( $course_1 ) );
 
 		$this->assertSame( 80.0, $result );
 	}
@@ -178,37 +178,37 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
 
-		$result = $service->get_users_average_grade( [] );
+		$result = $service->get_users_average_grade( array() );
 
 		$this->assertSame( 0.0, $result );
 	}
 
 	public function testGetUsersAverageGrade_WithUserIds_ReturnsAverage(): void {
 		global $wpdb;
-		$user_1     = $this->sensei_factory->user->create();
-		$user_2     = $this->sensei_factory->user->create();
-		$lesson_id  = $this->sensei_factory->lesson->create();
+		$user_1    = $this->sensei_factory->user->create();
+		$user_2    = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
 
 		$this->create_lesson_status_with_grade( $lesson_id, $user_1, 'graded', 80 );
 		$this->create_lesson_status_with_grade( $lesson_id, $user_2, 'graded', 60 );
 
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_users_average_grade( [ $user_1, $user_2 ] );
+		$result  = $service->get_users_average_grade( array( $user_1, $user_2 ) );
 
 		$this->assertSame( 70.0, $result );
 	}
 
 	public function testGetUsersAverageGrade_FilteredBySpecificUser_ReturnsUserAverage(): void {
 		global $wpdb;
-		$user_1     = $this->sensei_factory->user->create();
-		$user_2     = $this->sensei_factory->user->create();
-		$lesson_id  = $this->sensei_factory->lesson->create();
+		$user_1    = $this->sensei_factory->user->create();
+		$user_2    = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
 
 		$this->create_lesson_status_with_grade( $lesson_id, $user_1, 'graded', 80 );
 		$this->create_lesson_status_with_grade( $lesson_id, $user_2, 'graded', 60 );
 
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_users_average_grade( [ $user_1 ] );
+		$result  = $service->get_users_average_grade( array( $user_1 ) );
 
 		$this->assertSame( 80.0, $result );
 	}
