@@ -50,6 +50,9 @@ class Tables_Based_Course_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( $completed_at, $progress->get_completed_at() );
 	}
 
+	/**
+	 * Tests that set_started_at correctly updates the started_at value.
+	 */
 	public function testGetStartedAt_WhenSetStartedAtCalled_ReturnsSameStartedAt(): void {
 		/* Arrange. */
 		$started_at = new \DateTimeImmutable( '2023-06-15 10:30:00' );
