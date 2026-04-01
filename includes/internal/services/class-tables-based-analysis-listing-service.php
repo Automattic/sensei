@@ -107,7 +107,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$limit_clause = $per_page > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $per_page, $offset ) : '';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
-		/** @var object[] $rows */
+		/** Query result rows. @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
@@ -198,7 +198,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$total_lessons = $this->get_course_lesson_count( $course_id );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
-		/** @var object[] $rows */
+		/** Query result rows. @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at,'
@@ -262,7 +262,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
-		/** @var object[] $rows */
+		/** Query result rows. @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status,'
@@ -351,7 +351,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$limit_clause = $per_page > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $per_page, $offset ) : '';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
-		/** @var object[] $rows */
+		/** Query result rows. @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at'
@@ -418,7 +418,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		$submissions_table = $this->get_quiz_submissions_table_name();
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
-		/** @var object[] $rows */
+		/** Query result rows. @var object[] $rows */
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id AS lesson_id,'
@@ -484,7 +484,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 			'completed'    => 'p.completed_at',
 		);
 
-		/** @var string $column */
+		/** Sanitized column name. @var string $column */
 		$column = esc_sql( $orderby_map[ $orderby ] ?? 'p.started_at' );
 
 		return " ORDER BY {$column} {$order}";
@@ -508,7 +508,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 			'completed'    => 'p.completed_at',
 		);
 
-		/** @var string $column */
+		/** Sanitized column name. @var string $column */
 		$column = esc_sql( $orderby_map[ $orderby ] ?? 'p.started_at' );
 
 		return " ORDER BY {$column} {$order}";
