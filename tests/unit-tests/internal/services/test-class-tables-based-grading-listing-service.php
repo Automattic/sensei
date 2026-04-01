@@ -537,4 +537,35 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Expected 1 in-progress.' );
 		$this->assertSame( 1, $counts['complete'] ?? 0, 'Expected 1 complete even though status filter was in-progress.' );
 	}
+
+	public function testGetLessonProgressItems_WithoutLessonQuizMeta_UsesParentPostId(): void {
+		/* Arrange. */
+		global $wpdb;
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
+		);
+		// Deliberately NOT setting _lesson_quiz postmeta.
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
+		$this->insert_quiz_submission( $quiz_id, $user_id, 85 );
+
+		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_progress_items(
+			$this->get_default_args( [ 'post_id' => $lesson_id ] )
+		);
+
+		/* Assert. */
+		$this->assertSame( 'passed', $result['items'][0]->status, 'Quiz status should be used via parent_post_id without _lesson_quiz meta.' );
+		$this->assertSame( 85.0, $result['items'][0]->grade, 'Grade should be available via parent_post_id join.' );
+	}
 }

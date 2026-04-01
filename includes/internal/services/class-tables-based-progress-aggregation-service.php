@@ -134,8 +134,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			, SUM(IF(COALESCE( q.status, p.status ) IN $has_completion, 1, 0)) AS days_to_complete_count
 			, SUM(IF(COALESCE( q.status, p.status ) IN $has_completion, ABS( DATEDIFF( CONVERT_TZ( p.completed_at, '+00:00', '$utc_offset' ), CONVERT_TZ( p.started_at, '+00:00', '$utc_offset' ) ) ) + 1, 0)) AS days_to_complete_sum
 			FROM {$table} p
-			LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0
-			LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
+			LEFT JOIN {$table} q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'
 				AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )
 			WHERE p.type = 'lesson' AND p.post_id IN ( $placeholders )",
 			$lesson_ids
@@ -180,10 +179,9 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$table = $this->get_progress_table_name();
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query  = "SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
-		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
+		$query = "SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
+		$query .= " LEFT JOIN {$table} q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'";
 
 		$query .= $wpdb->prepare( ' WHERE p.type = %s', 'lesson' );
 
