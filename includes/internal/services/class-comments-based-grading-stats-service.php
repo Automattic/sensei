@@ -58,7 +58,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	public function get_grade_totals( array $args = array() ): array {
 		$wpdb = $this->wpdb;
 
-		$query = $wpdb->prepare( "SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum FROM %i c INNER JOIN %i cm ON c.comment_ID = cm.comment_id WHERE c.comment_type = 'sensei_lesson_status' AND cm.meta_key = 'grade'", $wpdb->comments, $wpdb->commentmeta );
+		$query = $wpdb->prepare( "SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum FROM %i c INNER JOIN %i cm ON c.comment_ID = cm.comment_id WHERE c.comment_type = 'sensei_lesson_status' AND c.comment_approved IN ( 'graded', 'passed', 'failed' ) AND cm.meta_key = 'grade'", $wpdb->comments, $wpdb->commentmeta );
 
 		$query .= $this->build_user_filter( $args );
 		$query .= $this->build_post_filter( $args );
@@ -162,6 +162,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 				FROM %i c
 				INNER JOIN %i cm ON c.comment_ID = cm.comment_id
 				WHERE c.comment_type = 'sensei_lesson_status'
+					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
 					AND cm.meta_key = 'grade'
 					AND c.user_id IN ( $placeholders )",
 				array_merge( array( $wpdb->comments, $wpdb->commentmeta ), $user_ids )

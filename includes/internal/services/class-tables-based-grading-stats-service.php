@@ -145,7 +145,9 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 				INNER JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id
 				WHERE p.type = 'lesson'
 					AND COALESCE( q.status, p.status ) IN ( 'graded', 'passed', 'failed' )
-					AND qs.final_grade IS NOT NULL",
+					AND qs.final_grade IS NOT NULL
+					AND p.parent_post_id IS NOT NULL
+					AND p.parent_post_id != 0",
 			$table,
 			$table,
 			$submissions_table
