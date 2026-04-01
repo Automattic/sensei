@@ -479,19 +479,17 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		if ( ! empty( $_POST['data']['comment_id'] ) && is_numeric( $_POST['data']['comment_id'] ) ) {
-			$comment_id = (int) sanitize_key( $_POST['data']['comment_id'] );
+		if ( ! empty( $_POST['data']['user_id'] ) && is_numeric( $_POST['data']['user_id'] ) ) {
+			$user_id = (int) sanitize_key( $_POST['data']['user_id'] );
 		} else {
 			exit( '' );
 		}
 
-		$comment = get_comment( $comment_id );
+		$post_type = get_post_type( $post_id );
 
-		if ( empty( $comment ) ) {
+		if ( ! in_array( $post_type, array( 'course', 'lesson' ), true ) ) {
 			exit( '' );
 		}
-
-		$post_type = get_post_type( $post_id );
 
 		if ( 'lesson' === $post_type ) {
 			$can_edit_date = $this->can_user_manage_students( (int) Sensei()->lesson->get_course_id( $post_id ), intval( $post->post_author ) );
@@ -513,20 +511,32 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		$date_started = get_comment_meta( $comment_id, 'start', true );
-
 		$expected_date_format = 'Y-m-d H:i:s';
 		if ( false === strpos( $date_string, ' ' ) ) {
 			$expected_date_format = 'Y-m-d';
 		}
 
-		$date = DateTimeImmutable::createFromFormat( $expected_date_format, $date_string );
+		$date = DateTimeImmutable::createFromFormat( $expected_date_format, $date_string, wp_timezone() );
 		if ( false === $date ) {
 			exit( '' );
 		}
 
-		$formatted_date = gmdate( 'Y-m-d H:i:s', $date->getTimestamp() );
-		$updated        = (bool) update_comment_meta( $comment_id, 'start', $formatted_date, $date_started );
+		if ( 'course' === $post_type ) {
+			$repository = Sensei()->course_progress_repository_factory->create();
+			$progress   = $repository->get( $post_id, $user_id );
+		} else {
+			$repository = Sensei()->lesson_progress_repository_factory->create();
+			$progress   = $repository->get( $post_id, $user_id );
+		}
+
+		if ( ! $progress ) {
+			exit( '' );
+		}
+
+		$progress->set_started_at( $date );
+		$repository->save( $progress );
+
+		$formatted_date = $date->format( 'Y-m-d H:i:s' );
 
 		/**
 		 * Filter sensei_learners_learner_updated
@@ -535,12 +545,12 @@ class Sensei_Learner_Management {
 		 *
 		 * @hook sensei_learners_learner_updated
 		 *
-		 * @param {bool} $updated    A flag indicating if there was an update in the learner row.
-		 * @param {int}  $post_id    Lesson or course id.
-		 * @param {int}  $comment_id The comment id which tracks the progress of the learner.
+		 * @param {bool}   $updated  A flag indicating if there was an update in the learner row.
+		 * @param {int}    $post_id  Lesson or course id.
+		 * @param {int}    $user_id  The user id of the learner.
 		 * @return {bool} False if there were no updates.
 		 */
-		$updated = apply_filters( 'sensei_learners_learner_updated', $updated, $post_id, $comment_id );
+		$updated = apply_filters( 'sensei_learners_learner_updated', true, $post_id, $user_id );
 
 		if ( false === $updated ) {
 			exit( '' );
