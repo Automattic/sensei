@@ -72,8 +72,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		// For each course, find the most recent lesson activity date across all students.
 		// Uses updated_at (not completed_at) because it captures the latest
 		// modification to the progress row, which better represents "last activity"
-		// at the course level. The lesson-level query uses completed_at because
-		// it specifically tracks completion dates for individual lessons.
+		// at the course level.
 		// In HPPS, quiz-derived statuses (passed, graded) live on separate quiz progress
 		// rows, so only lesson status 'complete' is needed here.
 		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
@@ -159,6 +158,9 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	public function add_last_activity_to_lessons_clauses( array $clauses ): array {
 		$progress_table = $this->get_progress_table_name();
 
+		// Uses completed_at (not updated_at) because it specifically tracks completion
+		// dates for individual lessons. The course-level query uses updated_at instead
+		// because it better represents "last activity" across all lessons.
 		// In HPPS, lesson progress rows only store 'in-progress' and 'complete'.
 		// Quiz-derived statuses (passed, graded) live on separate quiz progress rows,
 		// so only lesson status 'complete' is needed here.
