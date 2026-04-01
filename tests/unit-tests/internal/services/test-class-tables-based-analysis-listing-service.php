@@ -1,4 +1,9 @@
 <?php
+/**
+ * File containing tests for the Tables_Based_Analysis_Listing_Service class.
+ *
+ * @package sensei-tests
+ */
 
 namespace SenseiTest\Internal\Services;
 
@@ -12,8 +17,16 @@ use Sensei\Internal\Services\Analysis_Item;
  */
 class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 
+	/**
+	 * Sensei factory.
+	 *
+	 * @var \Sensei_Factory
+	 */
 	private $sensei_factory;
 
+	/**
+	 * Set up the test.
+	 */
 	public function setUp(): void {
 		parent::setUp();
 		$this->sensei_factory = new \Sensei_Factory();
@@ -32,17 +45,17 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_progress';
 		$now    = current_time( 'mysql', true );
-		$data   = [
+		$data   = array(
 			'post_id'      => $post_id,
 			'user_id'      => $user_id,
 			'type'         => $type,
 			'status'       => $status,
 			'started_at'   => $now,
-			'completed_at' => in_array( $status, [ 'complete', 'graded', 'passed' ], true ) ? $now : null,
+			'completed_at' => in_array( $status, array( 'complete', 'graded', 'passed' ), true ) ? $now : null,
 			'created_at'   => $now,
 			'updated_at'   => $now,
-		];
-		$format = [ '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s' ];
+		);
+		$format = array( '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s' );
 		if ( null !== $parent_post_id ) {
 			$data['parent_post_id'] = $parent_post_id;
 			$format[]               = '%d';
@@ -62,13 +75,13 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_quiz_submissions';
 		$now    = current_time( 'mysql' );
-		$data   = [
+		$data   = array(
 			'quiz_id'    => $quiz_id,
 			'user_id'    => $user_id,
 			'created_at' => $now,
 			'updated_at' => $now,
-		];
-		$format = [ '%d', '%d', '%s', '%s' ];
+		);
+		$format = array( '%d', '%d', '%s', '%s' );
 		if ( null !== $final_grade ) {
 			$data['final_grade'] = $final_grade;
 			$format[]            = '%d';
@@ -77,20 +90,31 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$wpdb->insert( $table, $data, $format );
 	}
 
+	/**
+	 * Tests that get_lesson_students returns analysis items for lesson progress.
+	 *
+	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_lesson_students
+	 */
 	public function testGetLessonStudents_WithLessonProgress_ReturnsAnalysisItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
 
 		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_lesson_students( [ 'lesson_id' => $lesson_id, 'per_page' => 10, 'offset' => 0 ] );
+		$result = $service->get_lesson_students(
+			array(
+				'lesson_id' => $lesson_id,
+				'per_page'  => 10,
+				'offset'    => 0,
+			)
+		);
 
 		/* Assert. */
 		$this->assertSame( 1, $result['total_count'] );
@@ -100,19 +124,24 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( $user_id, $result['items'][0]->user_id );
 	}
 
+	/**
+	 * Tests that get_lesson_students uses the coalesced quiz status when available.
+	 *
+	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_lesson_students
+	 */
 	public function testGetLessonStudents_WithQuizStatus_UsesCoalescedStatus(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_id   = $this->sensei_factory->quiz->create(
-			[
+			array(
 				'post_parent' => $lesson_id,
-				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
-			]
+				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
+			)
 		);
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
 		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
@@ -121,20 +150,29 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_lesson_students( [ 'lesson_id' => $lesson_id, 'per_page' => 10, 'offset' => 0 ] );
+		$result = $service->get_lesson_students(
+			array(
+				'lesson_id' => $lesson_id,
+				'per_page'  => 10,
+				'offset'    => 0,
+			)
+		);
 
 		/* Assert. */
 		$this->assertSame( 'passed', $result['items'][0]->status );
 		$this->assertSame( 90.0, $result['items'][0]->grade );
 	}
 
+	/**
+	 * Test testGetCourseStudents_WithCourseProgress_ReturnsAnalysisItems.
+	 */
 	public function testGetCourseStudents_WithCourseProgress_ReturnsAnalysisItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$this->insert_progress( $course_id, $user_id, 'course', 'in-progress' );
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
@@ -142,7 +180,13 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_course_students( [ 'course_id' => $course_id, 'per_page' => 10, 'offset' => 0 ] );
+		$result = $service->get_course_students(
+			array(
+				'course_id' => $course_id,
+				'per_page'  => 10,
+				'offset'    => 0,
+			)
+		);
 
 		/* Assert. */
 		$this->assertSame( 1, $result['total_count'] );
@@ -151,13 +195,16 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertNotNull( $result['items'][0]->percent );
 	}
 
+	/**
+	 * Test testGetUserLessonProgress_ReturnsProgressKeyedByLessonId.
+	 */
 	public function testGetUserLessonProgress_ReturnsProgressKeyedByLessonId(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
 
@@ -172,13 +219,16 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 'complete', $result[ $lesson_id ]->status );
 	}
 
+	/**
+	 * Test testGetUserLessonProgress_WithNoProgress_ReturnsNullForLesson.
+	 */
 	public function testGetUserLessonProgress_WithNoProgress_ReturnsNullForLesson(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 
 		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
@@ -191,6 +241,9 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertNull( $result[ $lesson_id ] );
 	}
 
+	/**
+	 * Test testGetUserCourses_WithCourseProgress_ReturnsAnalysisItems.
+	 */
 	public function testGetUserCourses_WithCourseProgress_ReturnsAnalysisItems(): void {
 		/* Arrange. */
 		global $wpdb;
@@ -201,7 +254,13 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_user_courses( [ 'user_id' => $user_id, 'per_page' => 10, 'offset' => 0 ] );
+		$result = $service->get_user_courses(
+			array(
+				'user_id'  => $user_id,
+				'per_page' => 10,
+				'offset'   => 0,
+			)
+		);
 
 		/* Assert. */
 		$this->assertSame( 1, $result['total_count'] );
@@ -210,6 +269,9 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( $user_id, $result['items'][0]->user_id );
 	}
 
+	/**
+	 * Test testGetLessonAggregates_ReturnsAggregateStats.
+	 */
 	public function testGetLessonAggregates_ReturnsAggregateStats(): void {
 		/* Arrange. */
 		global $wpdb;
@@ -217,13 +279,13 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$user2     = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$quiz_id   = $this->sensei_factory->quiz->create(
-			[
+			array(
 				'post_parent' => $lesson_id,
-				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
-			]
+				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
+			)
 		);
 
 		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
@@ -244,13 +306,16 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result[ $lesson_id ]['average_grade'] );
 	}
 
+	/**
+	 * Test testGetLessonStudents_WithOffsetBeyondTotal_CorrectsPagination.
+	 */
 	public function testGetLessonStudents_WithOffsetBeyondTotal_CorrectsPagination(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
 
@@ -258,11 +323,11 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		$result = $service->get_lesson_students(
-			[
+			array(
 				'lesson_id' => $lesson_id,
 				'per_page'  => 10,
 				'offset'    => 100,
-			]
+			)
 		);
 
 		/* Assert. */
