@@ -82,6 +82,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 			FROM {$progress_table} p
 			WHERE p.type = 'lesson'
 			AND p.status = '{$complete}'
+			AND p.parent_post_id IS NOT NULL
 			GROUP BY p.parent_post_id";
 
 		$clauses['fields'] .= ', la.last_activity_date AS last_activity_date';
