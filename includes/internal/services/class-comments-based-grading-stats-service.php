@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Services;
 
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -42,6 +44,22 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	}
 
 	/**
+	 * Get the SQL IN clause for graded quiz statuses.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string SQL fragment like "( 'graded', 'passed', 'failed' )".
+	 */
+	private function get_graded_statuses_sql(): string {
+		return sprintf(
+			"( '%s', '%s', '%s' )",
+			Quiz_Progress_Interface::STATUS_GRADED,
+			Quiz_Progress_Interface::STATUS_PASSED,
+			Quiz_Progress_Interface::STATUS_FAILED
+		);
+	}
+
+	/**
 	 * Get grade count and sum, with optional filters.
 	 *
 	 * @since $$next-version$$
@@ -58,12 +76,13 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	public function get_grade_totals( array $args = array() ): array {
 		$wpdb = $this->wpdb;
 
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Statuses are from constants, not user input.
 		$query = $wpdb->prepare(
 			"SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum
 			FROM %i c
 			INNER JOIN %i cm ON c.comment_ID = cm.comment_id
 			WHERE c.comment_type = 'sensei_lesson_status'
-				AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
+				AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
 				AND cm.meta_key = 'grade'
 				AND EXISTS (
 					SELECT 1 FROM %i cm2
@@ -74,6 +93,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 			$wpdb->commentmeta,
 			$wpdb->commentmeta
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 		$query .= $this->build_user_filter( $args );
 		$query .= $this->build_post_filter( $args );
@@ -124,6 +144,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		 *   - Be associated with a course.
 		 *   - Have quiz answers (excludes auto-passed students who never took the quiz).
 		 */
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Statuses are from constants, not user input.
 		$query  = $wpdb->prepare(
 			"SELECT AVG(course_average) AS courses_average
 			FROM (
@@ -133,7 +154,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 				INNER JOIN %i course ON c.comment_post_ID = course.post_id
 				INNER JOIN %i p ON p.ID = course.meta_value
 				WHERE c.comment_type = 'sensei_lesson_status'
-					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
+					AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
 					AND cm.meta_key = 'grade'
 					AND course.meta_key = '_lesson_course'
 					AND course.meta_value <> ''
@@ -148,6 +169,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 			$wpdb->posts,
 			$wpdb->commentmeta
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 		$query .= $course_filter;
 		$query .= ' GROUP BY course.meta_value ) averages_by_course';
 
@@ -179,7 +201,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		$wpdb         = $this->wpdb;
 		$placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%d' ) );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Placeholders created dynamically. Caching handled by callers.
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants. Placeholders created dynamically. Caching handled by callers.
 		/** Query result row. @var object|null $row */
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -187,7 +209,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 				FROM %i c
 				INNER JOIN %i cm ON c.comment_ID = cm.comment_id
 				WHERE c.comment_type = 'sensei_lesson_status'
-					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
+					AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
 					AND cm.meta_key = 'grade'
 					AND EXISTS (
 						SELECT 1 FROM %i cm2
