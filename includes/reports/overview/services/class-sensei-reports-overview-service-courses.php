@@ -108,7 +108,9 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0;
 		}
 
-		$this->grading_stats_service ??= ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+		if ( null === $this->grading_stats_service ) {
+			$this->grading_stats_service = ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+		}
 
 		return $this->grading_stats_service->get_courses_average_grade( $course_ids );
 	}

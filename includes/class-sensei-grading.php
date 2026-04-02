@@ -25,32 +25,14 @@ class Sensei_Grading {
 	public $page_slug;
 
 	/**
-	 * The progress aggregation service.
-	 *
-	 * @var Progress_Aggregation_Service_Interface|null
-	 */
-	private ?Progress_Aggregation_Service_Interface $aggregation_service = null;
-
-	/**
-	 * The grading stats service.
-	 *
-	 * @var Grading_Stats_Service_Interface|null
-	 */
-	private ?Grading_Stats_Service_Interface $grading_stats_service = null;
-
-	/**
 	 * Constructor
 	 *
 	 * @since  1.3.0
 	 *
-	 * @param string                                      $file                   The main plugin file path.
-	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service    The progress aggregation service.
-	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service  The grading stats service.
+	 * @param string $file The main plugin file path.
 	 */
-	public function __construct( $file, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
-		$this->aggregation_service   = $aggregation_service;
-		$this->grading_stats_service = $grading_stats_service;
-		$this->file                  = $file;
+	public function __construct( $file ) {
+		$this->file      = $file;
 		$this->page_slug             = 'sensei_grading';
 
 		// Admin functions
@@ -97,6 +79,36 @@ class Sensei_Grading {
 	 */
 	public function get_name() {
 		return __( 'Grading', 'sensei-lms' );
+	}
+
+	/**
+	 * Get the shared progress aggregation service instance.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return Progress_Aggregation_Service_Interface
+	 */
+	private static function get_aggregation_service(): Progress_Aggregation_Service_Interface {
+		static $service = null;
+		if ( null === $service ) {
+			$service = ( new Progress_Query_Service_Factory() )->create_aggregation_service();
+		}
+		return $service;
+	}
+
+	/**
+	 * Get the shared grading stats service instance.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return Grading_Stats_Service_Interface
+	 */
+	private static function get_grading_stats_service(): Grading_Stats_Service_Interface {
+		static $service = null;
+		if ( null === $service ) {
+			$service = ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+		}
+		return $service;
 	}
 
 	/**
@@ -585,10 +597,7 @@ class Sensei_Grading {
 		$counts    = wp_cache_get( $cache_key, 'counts' );
 
 		if ( false === $counts ) {
-			if ( null === $this->aggregation_service ) {
-				$this->aggregation_service = ( new Progress_Query_Service_Factory() )->create_aggregation_service();
-			}
-			$counts = $this->aggregation_service->count_statuses( $args );
+			$counts = self::get_aggregation_service()->count_statuses( $args );
 			wp_cache_set( $cache_key, $counts, 'counts' );
 		}
 
@@ -1264,12 +1273,7 @@ class Sensei_Grading {
 	 * @return int $number_of_graded_lessons
 	 */
 	public static function get_graded_lessons_count() {
-		static $service = null;
-		if ( null === $service ) {
-			$service = ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
-		}
-
-		return $service->get_grade_totals()['count'];
+		return self::get_grading_stats_service()->get_grade_totals()['count'];
 	}
 
 	/**
@@ -1279,12 +1283,7 @@ class Sensei_Grading {
 	 * @return int $sum_of_all_grades
 	 */
 	public static function get_graded_lessons_sum() {
-		static $service = null;
-		if ( null === $service ) {
-			$service = ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
-		}
-
-		return (int) $service->get_grade_totals()['sum'];
+		return (int) self::get_grading_stats_service()->get_grade_totals()['sum'];
 	}
 
 	/**
@@ -1295,9 +1294,7 @@ class Sensei_Grading {
 	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
 	 */
 	public function get_graded_lessons_average_grade() {
-		$this->grading_stats_service ??= ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
-
-		$totals = $this->grading_stats_service->get_grade_totals();
+		$totals = self::get_grading_stats_service()->get_grade_totals();
 
 		if ( 0 === $totals['count'] ) {
 			return 0;
@@ -1314,12 +1311,7 @@ class Sensei_Grading {
 	 * @return int
 	 */
 	public static function get_user_graded_lessons_sum( $user_id ) {
-		static $service = null;
-		if ( null === $service ) {
-			$service = ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
-		}
-
-		return (int) $service->get_grade_totals( array( 'user_id' => $user_id ) )['sum'];
+		return (int) self::get_grading_stats_service()->get_grade_totals( array( 'user_id' => $user_id ) )['sum'];
 	}
 
 	/**
@@ -1331,12 +1323,7 @@ class Sensei_Grading {
 	 * @return int
 	 */
 	public static function get_lessons_users_grades_sum( $lesson_id ) {
-		static $service = null;
-		if ( null === $service ) {
-			$service = ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
-		}
-
-		return (int) $service->get_grade_totals( array( 'lesson_id' => $lesson_id ) )['sum'];
+		return (int) self::get_grading_stats_service()->get_grade_totals( array( 'lesson_id' => $lesson_id ) )['sum'];
 	}
 
 	/**
@@ -1348,17 +1335,12 @@ class Sensei_Grading {
 	 * @return int
 	 */
 	public static function get_course_users_grades_sum( $course_id ) {
-		static $service = null;
-		if ( null === $service ) {
-			$service = ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
-		}
-
 		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 		if ( ! $lesson_ids ) {
 			return 0;
 		}
 
-		return (int) $service->get_grade_totals( array( 'post__in' => $lesson_ids ) )['sum'];
+		return (int) self::get_grading_stats_service()->get_grade_totals( array( 'post__in' => $lesson_ids ) )['sum'];
 	}
 
 	/**
@@ -1370,9 +1352,7 @@ class Sensei_Grading {
 	 * @return double Average grade of all courses.
 	 */
 	public function get_courses_average_grade() {
-		$this->grading_stats_service ??= ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
-
-		return $this->grading_stats_service->get_courses_average_grade();
+		return self::get_grading_stats_service()->get_courses_average_grade();
 	}
 }
 

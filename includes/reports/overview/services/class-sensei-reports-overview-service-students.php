@@ -49,7 +49,9 @@ class Sensei_Reports_Overview_Service_Students {
 			return 0;
 		}
 
-		$this->grading_stats_service ??= ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+		if ( null === $this->grading_stats_service ) {
+			$this->grading_stats_service = ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+		}
 
 		return ceil( $this->grading_stats_service->get_users_average_grade( $user_ids ) );
 	}
