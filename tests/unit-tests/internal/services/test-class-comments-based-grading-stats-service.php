@@ -167,7 +167,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 			array(
 				'meta_input' => array(
 					'_lesson_course'      => $course_id,
-					'_quiz_has_questions' => 1,
+
 				),
 			)
 		);
@@ -192,7 +192,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 			array(
 				'meta_input' => array(
 					'_lesson_course'      => $course_1,
-					'_quiz_has_questions' => 1,
+
 				),
 			)
 		);
@@ -200,7 +200,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 			array(
 				'meta_input' => array(
 					'_lesson_course'      => $course_2,
-					'_quiz_has_questions' => 1,
+
 				),
 			)
 		);
@@ -261,7 +261,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 			array(
 				'meta_input' => array(
 					'_lesson_course'      => $course_1,
-					'_quiz_has_questions' => 1,
+
 				),
 			)
 		);
@@ -269,7 +269,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 			array(
 				'meta_input' => array(
 					'_lesson_course'      => $course_1,
-					'_quiz_has_questions' => 1,
+
 				),
 			)
 		);
@@ -277,7 +277,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 			array(
 				'meta_input' => array(
 					'_lesson_course'      => $course_2,
-					'_quiz_has_questions' => 1,
+
 				),
 			)
 		);
@@ -308,7 +308,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 			array(
 				'meta_input' => array(
 					'_lesson_course'      => $course_id,
-					'_quiz_has_questions' => 1,
+
 				),
 			)
 		);
