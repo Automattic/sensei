@@ -133,7 +133,6 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 
 		/**
 		 * Uses parent_post_id on lesson progress rows as the course ID.
-		 * A quiz progress row existing (type='quiz') proves the lesson has a quiz.
 		 * The subquery computes AVG grade per course; the outer query averages those.
 		 */
 		$query  = $wpdb->prepare(
@@ -144,7 +143,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 				INNER JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'
 				INNER JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id
 				WHERE p.type = 'lesson'
-					AND COALESCE( q.status, p.status ) IN ( 'graded', 'passed', 'failed' )
+					AND q.status IN ( 'graded', 'passed', 'failed' )
 					AND qs.final_grade IS NOT NULL
 					AND p.parent_post_id IS NOT NULL
 					AND p.parent_post_id != 0",
@@ -190,14 +189,13 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT SUM( qs.final_grade ) AS grade_sum, COUNT( * ) AS grade_count
-				FROM %i p
-				LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'
-				LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id
-				WHERE p.type = 'lesson'
-					AND COALESCE( q.status, p.status ) IN ( 'graded', 'passed', 'failed' )
+				FROM %i q
+				INNER JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
+				WHERE q.type = 'quiz'
+					AND q.status IN ( 'graded', 'passed', 'failed' )
 					AND qs.final_grade IS NOT NULL
-					AND p.user_id IN ( $placeholders )",
-				array_merge( array( $table, $table, $submissions_table ), $user_ids )
+					AND q.user_id IN ( $placeholders )",
+				array_merge( array( $table, $submissions_table ), $user_ids )
 			)
 		);
 		// phpcs:enable

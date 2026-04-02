@@ -122,7 +122,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		 *   - Have a status of 'graded', 'passed' or 'failed'.
 		 *   - Have grade data.
 		 *   - Be associated with a course.
-		 *   - Have quiz questions.
+		 *   - Have quiz answers (excludes auto-passed students who never took the quiz).
 		 */
 		$query  = $wpdb->prepare(
 			"SELECT AVG(course_average) AS courses_average
@@ -131,22 +131,19 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 				FROM %i c
 				INNER JOIN %i cm ON c.comment_ID = cm.comment_id
 				INNER JOIN %i course ON c.comment_post_ID = course.post_id
-				INNER JOIN %i has_questions ON c.comment_post_ID = has_questions.post_id
 				INNER JOIN %i p ON p.ID = course.meta_value
 				WHERE c.comment_type = 'sensei_lesson_status'
 					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
 					AND cm.meta_key = 'grade'
 					AND course.meta_key = '_lesson_course'
 					AND course.meta_value <> ''
-					AND has_questions.meta_key = '_quiz_has_questions'
-						AND EXISTS (
-							SELECT 1 FROM %i cm2
-							WHERE cm2.comment_id = c.comment_ID
-								AND cm2.meta_key = 'quiz_answers'
-						)",
+					AND EXISTS (
+						SELECT 1 FROM %i cm2
+						WHERE cm2.comment_id = c.comment_ID
+							AND cm2.meta_key = 'quiz_answers'
+					)",
 			$wpdb->comments,
 			$wpdb->commentmeta,
-			$wpdb->postmeta,
 			$wpdb->postmeta,
 			$wpdb->posts,
 			$wpdb->commentmeta
