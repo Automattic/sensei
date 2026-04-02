@@ -58,7 +58,22 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	public function get_grade_totals( array $args = array() ): array {
 		$wpdb = $this->wpdb;
 
-		$query = $wpdb->prepare( "SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum FROM %i c INNER JOIN %i cm ON c.comment_ID = cm.comment_id WHERE c.comment_type = 'sensei_lesson_status' AND c.comment_approved IN ( 'graded', 'passed', 'failed' ) AND cm.meta_key = 'grade'", $wpdb->comments, $wpdb->commentmeta );
+		$query = $wpdb->prepare(
+			"SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum
+			FROM %i c
+			INNER JOIN %i cm ON c.comment_ID = cm.comment_id
+			WHERE c.comment_type = 'sensei_lesson_status'
+				AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
+				AND cm.meta_key = 'grade'
+				AND EXISTS (
+					SELECT 1 FROM %i cm2
+					WHERE cm2.comment_id = c.comment_ID
+						AND cm2.meta_key = 'quiz_answers'
+				)",
+			$wpdb->comments,
+			$wpdb->commentmeta,
+			$wpdb->commentmeta
+		);
 
 		$query .= $this->build_user_filter( $args );
 		$query .= $this->build_post_filter( $args );
@@ -123,12 +138,18 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 					AND cm.meta_key = 'grade'
 					AND course.meta_key = '_lesson_course'
 					AND course.meta_value <> ''
-					AND has_questions.meta_key = '_quiz_has_questions'",
+					AND has_questions.meta_key = '_quiz_has_questions'
+						AND EXISTS (
+							SELECT 1 FROM %i cm2
+							WHERE cm2.comment_id = c.comment_ID
+								AND cm2.meta_key = 'quiz_answers'
+						)",
 			$wpdb->comments,
 			$wpdb->commentmeta,
 			$wpdb->postmeta,
 			$wpdb->postmeta,
-			$wpdb->posts
+			$wpdb->posts,
+			$wpdb->commentmeta
 		);
 		$query .= $course_filter;
 		$query .= ' GROUP BY course.meta_value ) averages_by_course';
@@ -171,8 +192,13 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 				WHERE c.comment_type = 'sensei_lesson_status'
 					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
 					AND cm.meta_key = 'grade'
+					AND EXISTS (
+						SELECT 1 FROM %i cm2
+						WHERE cm2.comment_id = c.comment_ID
+							AND cm2.meta_key = 'quiz_answers'
+					)
 					AND c.user_id IN ( $placeholders )",
-				array_merge( array( $wpdb->comments, $wpdb->commentmeta ), $user_ids )
+				array_merge( array( $wpdb->comments, $wpdb->commentmeta, $wpdb->commentmeta ), $user_ids )
 			)
 		);
 		// phpcs:enable

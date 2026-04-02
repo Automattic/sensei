@@ -50,6 +50,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 			)
 		);
 		update_comment_meta( $comment_id, 'grade', $grade );
+		update_comment_meta( $comment_id, 'quiz_answers', 'a:1:{i:0;s:1:"1";}' );
 	}
 
 	/**

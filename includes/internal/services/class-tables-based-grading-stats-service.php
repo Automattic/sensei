@@ -83,11 +83,10 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$submissions_table = $this->get_submissions_table_name();
 
 		$query  = 'SELECT COUNT(*) AS count, COALESCE( SUM( qs.final_grade ), 0 ) AS sum';
-		$query .= $wpdb->prepare( ' FROM %i p', $table );
-		$query .= $wpdb->prepare( " LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'", $table );
-		$query .= $wpdb->prepare( ' LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id', $submissions_table );
-		$query .= " WHERE p.type = 'lesson'";
-		$query .= " AND COALESCE( q.status, p.status ) IN ( 'graded', 'passed', 'failed' )";
+		$query .= $wpdb->prepare( ' FROM %i q', $table );
+		$query .= $wpdb->prepare( ' INNER JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id', $submissions_table );
+		$query .= " WHERE q.type = 'quiz'";
+		$query .= " AND q.status IN ( 'graded', 'passed', 'failed' )";
 		$query .= ' AND qs.final_grade IS NOT NULL';
 
 		$query .= $this->build_user_filter( $args );
@@ -221,7 +220,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	 */
 	private function build_user_filter( array $args ): string {
 		if ( ! empty( $args['user_id'] ) ) {
-			return $this->wpdb->prepare( ' AND p.user_id = %d', $args['user_id'] );
+			return $this->wpdb->prepare( ' AND q.user_id = %d', $args['user_id'] );
 		}
 
 		return '';
@@ -239,13 +238,13 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$wpdb = $this->wpdb;
 
 		if ( ! empty( $args['lesson_id'] ) ) {
-			return $wpdb->prepare( ' AND p.post_id = %d', $args['lesson_id'] );
+			return $wpdb->prepare( ' AND q.parent_post_id = %d', $args['lesson_id'] );
 		}
 
 		if ( ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			return $wpdb->prepare( " AND p.post_id IN ( $placeholders )", $args['post__in'] );
+			return $wpdb->prepare( " AND q.parent_post_id IN ( $placeholders )", $args['post__in'] );
 		}
 
 		return '';
