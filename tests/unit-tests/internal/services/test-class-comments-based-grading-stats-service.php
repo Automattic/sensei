@@ -37,7 +37,8 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	 * @param int    $lesson_id Lesson post ID.
 	 * @param int    $user_id   User ID.
 	 * @param string $status    Comment status (e.g. 'graded', 'passed', 'failed').
-	 * @param int    $grade     The grade value.
+	 * @param int    $grade            The grade value.
+	 * @param bool   $has_quiz_answers Whether to add quiz_answers meta.
 	 */
 	private function create_lesson_status_with_grade( int $lesson_id, int $user_id, string $status, int $grade, bool $has_quiz_answers = true ): void {
 		$comment_id = wp_insert_comment(
@@ -166,7 +167,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$lesson_id = $this->sensei_factory->lesson->create(
 			array(
 				'meta_input' => array(
-					'_lesson_course'      => $course_id,
+					'_lesson_course' => $course_id,
 
 				),
 			)
@@ -191,7 +192,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$lesson_1 = $this->sensei_factory->lesson->create(
 			array(
 				'meta_input' => array(
-					'_lesson_course'      => $course_1,
+					'_lesson_course' => $course_1,
 
 				),
 			)
@@ -199,7 +200,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$lesson_2 = $this->sensei_factory->lesson->create(
 			array(
 				'meta_input' => array(
-					'_lesson_course'      => $course_2,
+					'_lesson_course' => $course_2,
 
 				),
 			)
@@ -260,7 +261,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$lesson_1 = $this->sensei_factory->lesson->create(
 			array(
 				'meta_input' => array(
-					'_lesson_course'      => $course_1,
+					'_lesson_course' => $course_1,
 
 				),
 			)
@@ -268,7 +269,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$lesson_2 = $this->sensei_factory->lesson->create(
 			array(
 				'meta_input' => array(
-					'_lesson_course'      => $course_1,
+					'_lesson_course' => $course_1,
 
 				),
 			)
@@ -276,7 +277,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$lesson_3 = $this->sensei_factory->lesson->create(
 			array(
 				'meta_input' => array(
-					'_lesson_course'      => $course_2,
+					'_lesson_course' => $course_2,
 
 				),
 			)
@@ -296,25 +297,24 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_courses_average_grade excludes lessons without quizzes.
+	 * Tests that get_courses_average_grade excludes auto-passed students with no quiz answers.
 	 */
-	public function testGetCoursesAverageGrade_WithLessonWithoutQuiz_ExcludesFromAverage(): void {
+	public function testGetCoursesAverageGrade_WithNoQuizAnswers_ExcludesFromAverage(): void {
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 
-		// Lesson with quiz.
+		// Lesson with quiz answers.
 		$lesson_1 = $this->sensei_factory->lesson->create(
 			array(
 				'meta_input' => array(
-					'_lesson_course'      => $course_id,
-
+					'_lesson_course' => $course_id,
 				),
 			)
 		);
 		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
 
-		// Lesson without quiz (no quiz answers).
+		// Lesson with grade but no quiz_answers meta (auto-passed).
 		$lesson_2 = $this->sensei_factory->lesson->create(
 			array(
 				'meta_input' => array(
@@ -327,7 +327,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
 		$result  = $service->get_courses_average_grade();
 
-		// Only the lesson with quiz should be included.
+		// Only the lesson with quiz answers should be included.
 		$this->assertSame( 80.0, $result );
 	}
 
