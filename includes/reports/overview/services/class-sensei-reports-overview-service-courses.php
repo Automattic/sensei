@@ -5,7 +5,6 @@
  * @package sensei
  */
 
-use Sensei\Internal\Services\Grading_Stats_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,22 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.4.1
  */
 class Sensei_Reports_Overview_Service_Courses {
-
-	/**
-	 * The grading stats service.
-	 *
-	 * @var Grading_Stats_Service_Interface|null
-	 */
-	private ?Grading_Stats_Service_Interface $grading_stats_service = null;
-
-	/**
-	 * Constructor
-	 *
-	 * @param Grading_Stats_Service_Interface|null $grading_stats_service The grading stats service.
-	 */
-	public function __construct( ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
-		$this->grading_stats_service = $grading_stats_service;
-	}
 
 	/**
 	 * Get total average progress value for courses.
@@ -108,11 +91,7 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0;
 		}
 
-		if ( null === $this->grading_stats_service ) {
-			$this->grading_stats_service = ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
-		}
-
-		return $this->grading_stats_service->get_courses_average_grade( $course_ids );
+		return ( new Progress_Query_Service_Factory() )->create_grading_stats_service()->get_courses_average_grade( $course_ids );
 	}
 
 	/**
