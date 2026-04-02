@@ -33,7 +33,7 @@ class Sensei_Grading {
 	 */
 	public function __construct( $file ) {
 		$this->file      = $file;
-		$this->page_slug             = 'sensei_grading';
+		$this->page_slug = 'sensei_grading';
 
 		// Admin functions
 		if ( is_admin() ) {

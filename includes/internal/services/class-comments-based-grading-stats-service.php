@@ -145,7 +145,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		 *   - Have quiz answers (excludes auto-passed students who never took the quiz).
 		 */
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Statuses are from constants, not user input.
-		$query  = $wpdb->prepare(
+		$query = $wpdb->prepare(
 			"SELECT AVG(course_average) AS courses_average
 			FROM (
 				SELECT AVG(cm.meta_value) AS course_average
