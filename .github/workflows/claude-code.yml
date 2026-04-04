@@ -23,6 +23,33 @@ jobs:
       pull-requests: write
       issues: write
     steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm/
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+      - uses: actions/cache@v4
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Install PHP dependencies
+        uses: ./.github/actions/install-php
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build:assets
+
+      - name: Start wp-env
+        run: npm run wp-env start
+
       - uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -48,12 +75,21 @@ jobs:
             - Run `vendor/bin/psalm --no-cache --diff` and fix any errors.
             - Do not skip or suppress warnings without justification.
 
-            ## 6. Test
+            ## 6. Unit Test
             - Run the relevant test suite to verify the fix and check for regressions.
             - For PHP: `vendor/bin/phpunit`
             - All tests must pass before proceeding.
 
-            ## 7. Self-Review
+            ## 7. WordPress Integration Test
+            - A wp-env instance is already running with Sensei activated.
+            - Use WP-CLI to verify your changes work in a real WordPress environment:
+              - `npx wp-env run cli wp sensei ...` for Sensei-specific commands
+              - `npx wp-env run cli wp option get ...`, `wp post list`, etc. for general checks
+              - `npx wp-env run cli wp eval '...'` to run PHP snippets that exercise your fix
+            - Verify the plugin activates without errors: `npx wp-env run cli wp plugin list`
+            - Check for PHP fatal errors in the log: `npx wp-env run cli wp eval "echo file_get_contents('/var/www/html/wp-content/debug.log');"` (if debug.log exists)
+
+            ## 8. Self-Review
             - Review your own diff for:
               - Security issues (SQL injection, XSS, CSRF, improper escaping)
               - Edge cases and error handling
@@ -61,10 +97,10 @@ jobs:
               - Backward compatibility
             - If you find issues, fix them before proceeding.
 
-            ## 8. Changelog
+            ## 9. Changelog
             - Run `npm run changelog` to add a changelog entry for the change.
 
-            ## 9. Open PR
+            ## 10. Open PR
             - Write a clear PR title and description explaining what was changed and why.
             - Reference the issue number (e.g., "Fixes #1234").
             - Include a test plan describing how to manually verify the fix.
