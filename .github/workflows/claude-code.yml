@@ -106,8 +106,19 @@ jobs:
             - Include a test plan describing how to manually verify the fix.
             - Do not include automated test instructions in the test plan.
 
+            ## When You Cannot Complete the Fix
+            If you fail at any step or are not confident in the fix, you MUST:
+            1. Comment on the issue with:
+               - **Step where you stopped** (e.g., "Stopped at step 6: Unit Test")
+               - **What you tried** — your approach and any iterations
+               - **Error output** — the actual lint errors, test failures, PHP fatals, etc.
+               - **Why you stopped** — what blocked you (ambiguous requirements, cascading failures, etc.)
+               - **Suggested next steps** — what a human developer should look at
+               - **Link to the Actions run** for full logs
+            2. Add the `claude-failed` label to the issue so the team can filter for issues that need human attention.
+            Do NOT open a PR if tests are failing or you are unsure the fix is correct.
+
             ## Important
             - NEVER push directly to trunk. Always work on a feature branch and open a PR.
-            - If at any step you are not confident the fix is correct, comment on the issue with your analysis and proposed approach instead of opening a PR.
             - Never force-push or modify git history.
             - Follow all conventions in CLAUDE.md.
