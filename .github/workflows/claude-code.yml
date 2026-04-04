@@ -27,3 +27,50 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           model: claude-sonnet-4-6
+          custom_instructions: |
+            When working on GitHub issues, follow this process strictly:
+
+            ## 1. Analyze
+            - Read the issue carefully. Identify affected files and understand the root cause.
+            - If the issue is unclear or lacks enough detail to proceed, comment asking for clarification instead of guessing.
+
+            ## 2. Branch
+            - Create a feature branch from trunk named after the issue (e.g., fix/issue-1234-description).
+
+            ## 3. Test First
+            - Write or update tests that capture the expected behavior before implementing the fix.
+
+            ## 4. Implement
+            - Make the minimal change needed to fix the issue. Do not refactor unrelated code.
+
+            ## 5. Lint
+            - Run `npm run lint-php` and fix any violations.
+            - Run `vendor/bin/psalm --no-cache --diff` and fix any errors.
+            - Do not skip or suppress warnings without justification.
+
+            ## 6. Test
+            - Run the relevant test suite to verify the fix and check for regressions.
+            - For PHP: `vendor/bin/phpunit`
+            - All tests must pass before proceeding.
+
+            ## 7. Self-Review
+            - Review your own diff for:
+              - Security issues (SQL injection, XSS, CSRF, improper escaping)
+              - Edge cases and error handling
+              - Performance implications
+              - Backward compatibility
+            - If you find issues, fix them before proceeding.
+
+            ## 8. Changelog
+            - Run `npm run changelog` to add a changelog entry for the change.
+
+            ## 9. Open PR
+            - Write a clear PR title and description explaining what was changed and why.
+            - Reference the issue number (e.g., "Fixes #1234").
+            - Include a test plan describing how to manually verify the fix.
+            - Do not include automated test instructions in the test plan.
+
+            ## Important
+            - If at any step you are not confident the fix is correct, comment on the issue with your analysis and proposed approach instead of opening a PR.
+            - Never force-push or modify git history.
+            - Follow all conventions in CLAUDE.md.
