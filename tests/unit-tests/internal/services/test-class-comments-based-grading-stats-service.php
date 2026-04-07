@@ -146,6 +146,35 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Test testGetGradeTotals_WithCombinedFilters_AppliesAllFilters.
+	 */
+	public function testGetGradeTotals_WithCombinedFilters_AppliesAllFilters(): void {
+		global $wpdb;
+		$user_1   = $this->sensei_factory->user->create();
+		$user_2   = $this->sensei_factory->user->create();
+		$lesson_1 = $this->sensei_factory->lesson->create();
+		$lesson_2 = $this->sensei_factory->lesson->create();
+
+		// User 1: grade 80 on lesson 1, grade 70 on lesson 2.
+		$this->create_lesson_status_with_grade( $lesson_1, $user_1, 'graded', 80 );
+		$this->create_lesson_status_with_grade( $lesson_2, $user_1, 'graded', 70 );
+		// User 2: grade 60 on lesson 1.
+		$this->create_lesson_status_with_grade( $lesson_1, $user_2, 'graded', 60 );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals(
+			array(
+				'user_id'   => $user_1,
+				'lesson_id' => $lesson_1,
+			)
+		);
+
+		// Only user 1's grade on lesson 1 should match.
+		$this->assertSame( 1, $result['count'], 'Combined user_id and lesson_id filter should match exactly one row.' );
+		$this->assertSame( 80.0, $result['sum'], 'Combined user_id and lesson_id filter should sum only user 1 on lesson 1.' );
+	}
+
+	/**
 	 * Test testGetCoursesAverageGrade_WithNoData_ReturnsZero.
 	 */
 	public function testGetCoursesAverageGrade_WithNoData_ReturnsZero(): void {
