@@ -65,8 +65,8 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
 		$result = $service->get_grade_totals();
 
-		$this->assertSame( 0, $result['count'] );
-		$this->assertSame( 0.0, $result['sum'] );
+		$this->assertSame( 0, $result['count'], 'Count should be 0 when no data exists.' );
+		$this->assertSame( 0.0, $result['sum'], 'Sum should be 0.0 when no data exists.' );
 	}
 
 	/**
@@ -82,8 +82,8 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
 		$result  = $service->get_grade_totals();
 
-		$this->assertSame( 1, $result['count'] );
-		$this->assertSame( 80.0, $result['sum'] );
+		$this->assertSame( 1, $result['count'], 'Count should be 1 for a single graded lesson.' );
+		$this->assertSame( 80.0, $result['sum'], 'Sum should equal the single grade value.' );
 	}
 
 	/**
@@ -101,8 +101,8 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
 		$result  = $service->get_grade_totals( array( 'user_id' => $user_1 ) );
 
-		$this->assertSame( 1, $result['count'] );
-		$this->assertSame( 80.0, $result['sum'] );
+		$this->assertSame( 1, $result['count'], 'user_id filter should match exactly user 1.' );
+		$this->assertSame( 80.0, $result['sum'], 'user_id filter should sum only user 1 grades.' );
 	}
 
 	/**
@@ -120,8 +120,8 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
 		$result  = $service->get_grade_totals( array( 'lesson_id' => $lesson_1 ) );
 
-		$this->assertSame( 1, $result['count'] );
-		$this->assertSame( 80.0, $result['sum'] );
+		$this->assertSame( 1, $result['count'], 'lesson_id filter should match exactly lesson 1.' );
+		$this->assertSame( 80.0, $result['sum'], 'lesson_id filter should sum only lesson 1 grades.' );
 	}
 
 	/**
@@ -141,8 +141,8 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
 		$result  = $service->get_grade_totals( array( 'post__in' => array( $lesson_1, $lesson_2 ) ) );
 
-		$this->assertSame( 2, $result['count'] );
-		$this->assertSame( 140.0, $result['sum'] );
+		$this->assertSame( 2, $result['count'], 'post__in filter should match the two specified lessons.' );
+		$this->assertSame( 140.0, $result['sum'], 'post__in filter should sum only the specified lessons.' );
 	}
 
 	/**
@@ -275,8 +275,8 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
 		$result  = $service->get_grade_totals();
 
-		$this->assertSame( 3, $result['count'] );
-		$this->assertSame( 210.0, $result['sum'] ); // 80 + 90 + 40.
+		$this->assertSame( 3, $result['count'], 'Only graded/passed/failed statuses should be counted.' );
+		$this->assertSame( 210.0, $result['sum'], 'Sum should only include graded/passed/failed grades (80 + 90 + 40).' );
 	}
 
 	/**
