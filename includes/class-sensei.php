@@ -30,6 +30,7 @@ use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progres
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\Lesson_Course_Sync_Handler;
 use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
@@ -819,6 +820,11 @@ class Sensei_Main {
 		( new Quiz_Deleted_Handler( $this->quiz_progress_repository ) )->init();
 		( new User_Deleted_Handler( $this->course_progress_repository, $this->lesson_progress_repository, $this->quiz_progress_repository ) )->init();
 
+		// Keep parent_post_id on lesson progress rows in sync with the lesson's _lesson_course postmeta.
+		if ( $tables_feature_enabled ) {
+			( new Lesson_Course_Sync_Handler( $GLOBALS['wpdb'] ) )->init();
+		}
+
 		// Cron for periodically cleaning guest user related data.
 		Sensei_Temporary_User_Cleaner::instance()->init();
 
@@ -846,7 +852,7 @@ class Sensei_Main {
 		 * @return {bool} Whether to enable feature.
 		 */
 		if ( apply_filters( 'sensei_email_mailpoet_feature', true ) ) {
-			add_action( 'mailpoet_initialized', [ $this, 'initialize_mailpoet' ] );
+			add_action( 'mailpoet_initialized', array( $this, 'initialize_mailpoet' ) );
 		}
 	}
 
