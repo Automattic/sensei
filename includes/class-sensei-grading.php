@@ -82,33 +82,25 @@ class Sensei_Grading {
 	}
 
 	/**
-	 * Get the shared progress aggregation service instance.
+	 * Get the progress aggregation service instance.
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @return Progress_Aggregation_Service_Interface
 	 */
 	private static function get_aggregation_service(): Progress_Aggregation_Service_Interface {
-		static $service = null;
-		if ( null === $service ) {
-			$service = ( new Progress_Query_Service_Factory() )->create_aggregation_service();
-		}
-		return $service;
+		return ( new Progress_Query_Service_Factory() )->create_aggregation_service();
 	}
 
 	/**
-	 * Get the shared grading stats service instance.
+	 * Get the grading stats service instance.
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @return Grading_Stats_Service_Interface
 	 */
 	private static function get_grading_stats_service(): Grading_Stats_Service_Interface {
-		static $service = null;
-		if ( null === $service ) {
-			$service = ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
-		}
-		return $service;
+		return ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
 	}
 
 	/**
