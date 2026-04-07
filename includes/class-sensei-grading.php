@@ -1267,20 +1267,20 @@ class Sensei_Grading {
 	}
 
 	/**
-	 * Counts the lessons that have been graded manually and automatically
+	 * Counts the lessons that have been graded manually and automatically.
 	 *
 	 * @since 1.9.0
-	 * @return int $number_of_graded_lessons
+	 * @return int Number of graded lessons.
 	 */
 	public static function get_graded_lessons_count() {
 		return self::get_grading_stats_service()->get_grade_totals()['count'];
 	}
 
 	/**
-	 * Add together all the graded lesson grades
+	 * Add together all the graded lesson grades.
 	 *
 	 * @since 1.9.0
-	 * @return int $sum_of_all_grades
+	 * @return int Sum of all graded lesson grades.
 	 */
 	public static function get_graded_lessons_sum() {
 		return (int) self::get_grading_stats_service()->get_grade_totals()['sum'];
@@ -1291,13 +1291,13 @@ class Sensei_Grading {
 	 *
 	 * @since 4.2.0
 	 * @access public
-	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
+	 * @return float Average value of all the graded lessons in all the courses.
 	 */
 	public function get_graded_lessons_average_grade() {
 		$totals = self::get_grading_stats_service()->get_grade_totals();
 
 		if ( 0 === $totals['count'] ) {
-			return 0;
+			return 0.0;
 		}
 
 		return $totals['sum'] / $totals['count'];
