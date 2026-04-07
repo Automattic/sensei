@@ -1,0 +1,4 @@
+Significance: minor
+Type: added
+
+Sync the HPPS progress table's course association when a lesson is moved between courses.
