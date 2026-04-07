@@ -35,13 +35,13 @@ interface Grading_Stats_Service_Interface {
 	 *     @type int   $lesson_id Filter by lesson (post_id).
 	 *     @type int[] $post__in  Filter by lesson IDs.
 	 * }
-	 * @return array { count: int, sum: float }
+	 * @return array{count: int, sum: float}
 	 */
 	public function get_grade_totals( array $args = array() ): array;
 
 	/**
 	 * Average grade across courses (AVG of per-course AVGs).
-	 * Only includes lessons with quizzes that have been graded.
+	 * Only includes student attempts where the quiz was actually submitted.
 	 *
 	 * @since $$next-version$$
 	 *

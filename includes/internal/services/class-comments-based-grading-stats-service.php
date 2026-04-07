@@ -71,11 +71,14 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	 *     @type int   $lesson_id Filter by lesson (post_id).
 	 *     @type int[] $post__in  Filter by lesson IDs.
 	 * }
-	 * @return array { count: int, sum: float }
+	 * @return array{count: int, sum: float}
 	 */
 	public function get_grade_totals( array $args = array() ): array {
 		$wpdb = $this->wpdb;
 
+		// The quiz_answers EXISTS check restricts results to attempts where the
+		// student actually submitted answers. This excludes auto-passed students
+		// whose lesson was marked passed without ever taking the quiz.
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Statuses are from constants, not user input.
 		$query = $wpdb->prepare(
 			"SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum
@@ -118,7 +121,8 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 
 	/**
 	 * Average grade across courses (AVG of per-course AVGs).
-	 * Only includes lessons with quizzes that have been graded.
+	 * Only includes student attempts where the quiz was actually submitted
+	 * (enforced via the quiz_answers EXISTS check).
 	 *
 	 * @since $$next-version$$
 	 *
@@ -201,6 +205,9 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		$wpdb         = $this->wpdb;
 		$placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%d' ) );
 
+		// The quiz_answers EXISTS check restricts results to attempts where the
+		// student actually submitted answers. This excludes auto-passed students
+		// whose lesson was marked passed without ever taking the quiz.
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants. Placeholders created dynamically. Caching handled by callers.
 		/** Query result row. @var object|null $row */
 		$row = $wpdb->get_row(
@@ -223,7 +230,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		// phpcs:enable
 		Utils::log_query_error( $wpdb, 'Comments-based users average grade' );
 
-		if ( ! $row || ! $row->grade_count || '0' === $row->grade_count ) {
+		if ( ! $row || ! $row->grade_count ) {
 			return 0.0;
 		}
 

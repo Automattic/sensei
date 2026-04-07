@@ -93,7 +93,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	 *     @type int   $lesson_id Filter by lesson (post_id).
 	 *     @type int[] $post__in  Filter by lesson IDs.
 	 * }
-	 * @return array { count: int, sum: float }
+	 * @return array{count: int, sum: float}
 	 */
 	public function get_grade_totals( array $args = array() ): array {
 		$wpdb              = $this->wpdb;
@@ -130,7 +130,8 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 
 	/**
 	 * Average grade across courses (AVG of per-course AVGs).
-	 * Only includes lessons with quizzes that have been graded.
+	 * Only includes student attempts where the quiz was actually submitted
+	 * (enforced via INNER JOIN on the quiz submissions table and final_grade IS NOT NULL).
 	 *
 	 * @since $$next-version$$
 	 *
@@ -221,7 +222,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		// phpcs:enable
 		Utils::log_query_error( $wpdb, 'Tables-based users average grade' );
 
-		if ( ! $row || ! $row->grade_count || '0' === $row->grade_count ) {
+		if ( ! $row || ! $row->grade_count ) {
 			return 0.0;
 		}
 
