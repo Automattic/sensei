@@ -268,6 +268,32 @@ class Lesson_Course_Sync_Handler_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests the full add → update → delete lifecycle end-to-end via the WP meta API,
+	 * locking in that all three registered hooks are wired correctly.
+	 */
+	public function testHandleMeta_FullLifecycle_AddUpdateDelete(): void {
+		/* Arrange. */
+		global $wpdb;
+		$lesson_id = $this->factory->lesson->create();
+		$row       = $this->insert_progress_row( $lesson_id, 11, 0 );
+
+		$handler = new Lesson_Course_Sync_Handler( $wpdb );
+		$handler->init();
+
+		/* Act + Assert: add. */
+		add_post_meta( $lesson_id, '_lesson_course', 100, true );
+		self::assertSame( 100, $this->get_parent_post_id( $row ), 'add_post_meta should set parent_post_id to the new course.' );
+
+		/* Act + Assert: update. */
+		update_post_meta( $lesson_id, '_lesson_course', 200 );
+		self::assertSame( 200, $this->get_parent_post_id( $row ), 'update_post_meta should set parent_post_id to the new course.' );
+
+		/* Act + Assert: delete. */
+		delete_post_meta( $lesson_id, '_lesson_course' );
+		$this->assertParentPostIdIsSqlNull( $row );
+	}
+
+	/**
 	 * Data provider for invalid meta values.
 	 *
 	 * @return array<string, array{mixed}>
