@@ -160,7 +160,7 @@ class Lesson_Course_Sync_Handler_Test extends \WP_UnitTestCase {
 		$handler->handle_meta_change( 1, $lesson_id, '_lesson_course', $meta_value );
 
 		/* Assert. */
-		self::assertNull( $this->get_parent_post_id( $row ) );
+		$this->assertParentPostIdIsSqlNull( $row );
 	}
 
 	/**
@@ -217,7 +217,7 @@ class Lesson_Course_Sync_Handler_Test extends \WP_UnitTestCase {
 		$handler->handle_meta_delete( array( 1 ), $lesson_id, '_lesson_course' );
 
 		/* Assert. */
-		self::assertNull( $this->get_parent_post_id( $row ) );
+		$this->assertParentPostIdIsSqlNull( $row );
 	}
 
 	/**
@@ -260,7 +260,7 @@ class Lesson_Course_Sync_Handler_Test extends \WP_UnitTestCase {
 		delete_post_meta( $lesson_id, '_lesson_course' );
 
 		/* Assert. */
-		self::assertNull( $this->get_parent_post_id( $row ) );
+		$this->assertParentPostIdIsSqlNull( $row );
 
 		remove_action( 'added_post_meta', array( $handler, 'handle_meta_change' ), 10 );
 		remove_action( 'updated_post_meta', array( $handler, 'handle_meta_change' ), 10 );
@@ -323,5 +323,22 @@ class Lesson_Course_Sync_Handler_Test extends \WP_UnitTestCase {
 			)
 		);
 		return null === $value ? null : (int) $value;
+	}
+
+	/**
+	 * Assert that a row's parent_post_id is SQL NULL (not 0 or empty string).
+	 *
+	 * @param int $row_id Row ID.
+	 */
+	private function assertParentPostIdIsSqlNull( int $row_id ): void {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$matches = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$wpdb->prefix}sensei_lms_progress WHERE id = %d AND parent_post_id IS NULL",
+				$row_id
+			)
+		);
+		self::assertSame( 1, $matches );
 	}
 }
