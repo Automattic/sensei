@@ -63,6 +63,7 @@ use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progres
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\Lesson_Course_Sync_Handler;
 use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
@@ -851,6 +852,11 @@ class Sensei_Main {
 		( new Lesson_Deleted_Handler( $this->lesson_progress_repository ) )->init();
 		( new Quiz_Deleted_Handler( $this->quiz_progress_repository ) )->init();
 		( new User_Deleted_Handler( $this->course_progress_repository, $this->lesson_progress_repository, $this->quiz_progress_repository ) )->init();
+
+		// Keep parent_post_id on lesson progress rows in sync with the lesson's _lesson_course postmeta.
+		if ( $tables_feature_enabled ) {
+			( new Lesson_Course_Sync_Handler( $GLOBALS['wpdb'] ) )->init();
+		}
 
 		// Cron for periodically cleaning guest user related data.
 		Sensei_Temporary_User_Cleaner::instance()->init();
