@@ -83,42 +83,25 @@ class Lesson_Course_Sync_Handler_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that updating _lesson_course on a non-lesson post does not touch progress rows.
+	 * Tests that updating one lesson's course leaves other lessons' progress rows alone,
+	 * even when they currently share the same parent_post_id.
 	 */
-	public function testHandleMetaChange_NonLessonPost_DoesNotUpdateRows(): void {
+	public function testHandleMetaChange_OtherLessonRows_AreNotTouched(): void {
 		/* Arrange. */
 		global $wpdb;
-		$course_id  = $this->factory->course->create();
-		$lesson_id  = $this->factory->lesson->create();
-		$old_course = 100;
-		$row        = $this->insert_progress_row( $lesson_id, 11, $old_course );
+		$lesson_a = $this->factory->lesson->create();
+		$lesson_b = $this->factory->lesson->create();
+		$row_a    = $this->insert_progress_row( $lesson_a, 11, 100 );
+		$row_b    = $this->insert_progress_row( $lesson_b, 11, 100 );
 
 		$handler = new Lesson_Course_Sync_Handler( $wpdb );
 
 		/* Act. */
-		$handler->handle_meta_change( 1, $course_id, '_lesson_course', 999 );
+		$handler->handle_meta_change( 1, $lesson_a, '_lesson_course', 200 );
 
 		/* Assert. */
-		self::assertSame( $old_course, $this->get_parent_post_id( $row ) );
-	}
-
-	/**
-	 * Tests that updates to unrelated meta keys do not touch progress rows.
-	 */
-	public function testHandleMetaChange_UnrelatedMetaKey_DoesNotUpdateRows(): void {
-		/* Arrange. */
-		global $wpdb;
-		$lesson_id  = $this->factory->lesson->create();
-		$old_course = 100;
-		$row        = $this->insert_progress_row( $lesson_id, 11, $old_course );
-
-		$handler = new Lesson_Course_Sync_Handler( $wpdb );
-
-		/* Act. */
-		$handler->handle_meta_change( 1, $lesson_id, '_some_other_meta', 999 );
-
-		/* Assert. */
-		self::assertSame( $old_course, $this->get_parent_post_id( $row ) );
+		self::assertSame( 200, $this->get_parent_post_id( $row_a ), 'Lesson A row should be updated.' );
+		self::assertSame( 100, $this->get_parent_post_id( $row_b ), 'Lesson B row sharing the old course should be untouched.' );
 	}
 
 	/**
@@ -159,9 +142,13 @@ class Lesson_Course_Sync_Handler_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that a zero/invalid course value clears parent_post_id to NULL.
+	 * Tests that a zero, non-numeric, or non-scalar course value clears parent_post_id to NULL.
+	 *
+	 * @dataProvider provideInvalidMetaValues
+	 *
+	 * @param mixed $meta_value Bogus meta value coming from the hook.
 	 */
-	public function testHandleMetaChange_ZeroOrInvalidValue_SetsParentPostIdToNull(): void {
+	public function testHandleMetaChange_InvalidValue_SetsParentPostIdToNull( $meta_value ): void {
 		/* Arrange. */
 		global $wpdb;
 		$lesson_id = $this->factory->lesson->create();
@@ -170,10 +157,49 @@ class Lesson_Course_Sync_Handler_Test extends \WP_UnitTestCase {
 		$handler = new Lesson_Course_Sync_Handler( $wpdb );
 
 		/* Act. */
-		$handler->handle_meta_change( 1, $lesson_id, '_lesson_course', 0 );
+		$handler->handle_meta_change( 1, $lesson_id, '_lesson_course', $meta_value );
 
 		/* Assert. */
 		self::assertNull( $this->get_parent_post_id( $row ) );
+	}
+
+	/**
+	 * Tests that updates to unrelated meta keys do not touch progress rows.
+	 */
+	public function testHandleMetaChange_UnrelatedMetaKey_DoesNotUpdateRows(): void {
+		/* Arrange. */
+		global $wpdb;
+		$lesson_id  = $this->factory->lesson->create();
+		$old_course = 100;
+		$row        = $this->insert_progress_row( $lesson_id, 11, $old_course );
+
+		$handler = new Lesson_Course_Sync_Handler( $wpdb );
+
+		/* Act. */
+		$handler->handle_meta_change( 1, $lesson_id, '_some_other_meta', 999 );
+
+		/* Assert. */
+		self::assertSame( $old_course, $this->get_parent_post_id( $row ) );
+	}
+
+	/**
+	 * Tests that updating _lesson_course on a non-lesson post does not touch progress rows.
+	 */
+	public function testHandleMetaChange_NonLessonPost_DoesNotUpdateRows(): void {
+		/* Arrange. */
+		global $wpdb;
+		$course_id  = $this->factory->course->create();
+		$lesson_id  = $this->factory->lesson->create();
+		$old_course = 100;
+		$row        = $this->insert_progress_row( $lesson_id, 11, $old_course );
+
+		$handler = new Lesson_Course_Sync_Handler( $wpdb );
+
+		/* Act. */
+		$handler->handle_meta_change( 1, $course_id, '_lesson_course', 200 );
+
+		/* Assert. */
+		self::assertSame( $old_course, $this->get_parent_post_id( $row ) );
 	}
 
 	/**
@@ -218,6 +244,44 @@ class Lesson_Course_Sync_Handler_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that calling delete_post_meta() triggers the registered hook end-to-end.
+	 */
+	public function testHandleMetaDelete_TriggersFromDeletePostMeta_ClearsRow(): void {
+		/* Arrange. */
+		global $wpdb;
+		$lesson_id = $this->factory->lesson->create();
+		update_post_meta( $lesson_id, '_lesson_course', 100 );
+		$row = $this->insert_progress_row( $lesson_id, 11, 100 );
+
+		$handler = new Lesson_Course_Sync_Handler( $wpdb );
+		$handler->init();
+
+		/* Act. */
+		delete_post_meta( $lesson_id, '_lesson_course' );
+
+		/* Assert. */
+		self::assertNull( $this->get_parent_post_id( $row ) );
+
+		remove_action( 'added_post_meta', array( $handler, 'handle_meta_change' ), 10 );
+		remove_action( 'updated_post_meta', array( $handler, 'handle_meta_change' ), 10 );
+		remove_action( 'deleted_post_meta', array( $handler, 'handle_meta_delete' ), 10 );
+	}
+
+	/**
+	 * Data provider for invalid meta values.
+	 *
+	 * @return array<string, array{mixed}>
+	 */
+	public function provideInvalidMetaValues(): array {
+		return array(
+			'zero int'        => array( 0 ),
+			'negative int'    => array( -1 ),
+			'non-numeric str' => array( 'not-a-number' ),
+			'array'           => array( array( 100 ) ),
+		);
+	}
+
+	/**
 	 * Insert a lesson progress row and return its ID.
 	 *
 	 * @param int $lesson_id Lesson ID (post_id column).
@@ -251,7 +315,7 @@ class Lesson_Course_Sync_Handler_Test extends \WP_UnitTestCase {
 	 */
 	private function get_parent_post_id( int $row_id ): ?int {
 		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$value = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT parent_post_id FROM {$wpdb->prefix}sensei_lms_progress WHERE id = %d",

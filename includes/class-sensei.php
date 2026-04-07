@@ -852,7 +852,7 @@ class Sensei_Main {
 		 * @return {bool} Whether to enable feature.
 		 */
 		if ( apply_filters( 'sensei_email_mailpoet_feature', true ) ) {
-			add_action( 'mailpoet_initialized', array( $this, 'initialize_mailpoet' ) );
+			add_action( 'mailpoet_initialized', [ $this, 'initialize_mailpoet' ] );
 		}
 	}
 

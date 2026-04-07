@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Student_Progress\Services;
 
+use Sensei\Internal\Services\Utils;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -52,9 +53,9 @@ class Lesson_Course_Sync_Handler {
 	 * Adds hooks.
 	 */
 	public function init(): void {
-		add_action( 'added_post_meta', array( $this, 'handle_meta_change' ), 10, 4 );
-		add_action( 'updated_post_meta', array( $this, 'handle_meta_change' ), 10, 4 );
-		add_action( 'deleted_post_meta', array( $this, 'handle_meta_delete' ), 10, 3 );
+		add_action( 'added_post_meta', [ $this, 'handle_meta_change' ], 10, 4 );
+		add_action( 'updated_post_meta', [ $this, 'handle_meta_change' ], 10, 4 );
+		add_action( 'deleted_post_meta', [ $this, 'handle_meta_delete' ], 10, 3 );
 	}
 
 	/**
@@ -70,7 +71,7 @@ class Lesson_Course_Sync_Handler {
 			return;
 		}
 
-		$course_id = (int) $meta_value;
+		$course_id = is_scalar( $meta_value ) ? (int) $meta_value : 0;
 		$this->update_parent_post_id( $object_id, $course_id > 0 ? $course_id : null );
 	}
 
@@ -111,19 +112,22 @@ class Lesson_Course_Sync_Handler {
 	 * @param int|null $parent_post_id New course ID, or null to clear.
 	 */
 	private function update_parent_post_id( int $lesson_id, ?int $parent_post_id ): void {
-		if ( $lesson_id <= 0 ) {
-			return;
-		}
-
-		$this->wpdb->update(
+		$result = $this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			array( 'parent_post_id' => $parent_post_id ),
 			array(
 				'post_id' => $lesson_id,
 				'type'    => 'lesson',
 			),
-			null === $parent_post_id ? null : array( '%d' ),
+			array( '%d' ),
 			array( '%d', '%s' )
 		);
+
+		if ( false === $result ) {
+			Utils::log_query_error(
+				$this->wpdb,
+				sprintf( 'Lesson_Course_Sync_Handler::update_parent_post_id lesson_id=%d parent_post_id=%s', $lesson_id, null === $parent_post_id ? 'NULL' : (string) $parent_post_id )
+			);
+		}
 	}
 }
