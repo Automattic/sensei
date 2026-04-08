@@ -84,16 +84,16 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * Constructor
 	 *
-	 * @param int                                     $course_id                Course ID.
-	 * @param int                                     $user_id                  User ID.
-	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Analysis listing service.
+	 * @param int                                    $course_id               Course ID.
+	 * @param int                                    $user_id                 User ID.
+	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Reports listing service.
 	 *
 	 * @since  1.2.0
 	 */
 	public function __construct( $course_id = 0, $user_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null ) {
-		$this->course_id                = (int) $course_id;
-		$this->user_id                  = (int) $user_id;
-		$this->page_slug                = Sensei_Analysis::PAGE_SLUG;
+		$this->course_id               = (int) $course_id;
+		$this->user_id                 = (int) $user_id;
+		$this->page_slug               = Sensei_Analysis::PAGE_SLUG;
 		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'user', 'lesson' ) ) ) {

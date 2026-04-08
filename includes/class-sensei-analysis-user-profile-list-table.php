@@ -32,12 +32,12 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 *
 	 * @since  1.2.0
 	 *
-	 * @param int                                     $user_id                  User ID.
-	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Analysis listing service.
+	 * @param int                                    $user_id                 User ID.
+	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Reports listing service.
 	 */
 	public function __construct( $user_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null ) {
-		$this->user_id                  = intval( $user_id );
-		$this->page_slug                = Sensei_Analysis::PAGE_SLUG;
+		$this->user_id                 = intval( $user_id );
+		$this->page_slug               = Sensei_Analysis::PAGE_SLUG;
 		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
 
 		// Load Parent token into constructor

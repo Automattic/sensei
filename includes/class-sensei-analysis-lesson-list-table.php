@@ -33,13 +33,13 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 *
 	 * @since  1.2.0
 	 *
-	 * @param int                                     $lesson_id                Lesson ID.
-	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Analysis listing service.
+	 * @param int                                    $lesson_id               Lesson ID.
+	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Reports listing service.
 	 */
 	public function __construct( $lesson_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null ) {
-		$this->lesson_id                = intval( $lesson_id );
-		$this->course_id                = intval( get_post_meta( $this->lesson_id, '_lesson_course', true ) );
-		$this->page_slug                = Sensei_Analysis::PAGE_SLUG;
+		$this->lesson_id               = intval( $lesson_id );
+		$this->course_id               = intval( get_post_meta( $this->lesson_id, '_lesson_course', true ) );
+		$this->page_slug               = Sensei_Analysis::PAGE_SLUG;
 		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
 
 		// Load Parent token into constructor
