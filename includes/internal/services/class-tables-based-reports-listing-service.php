@@ -43,8 +43,6 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	/**
 	 * Get the progress table name.
 	 *
-	 * @since $$next-version$$
-	 *
 	 * @return string
 	 */
 	private function get_progress_table_name(): string {
@@ -53,8 +51,6 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 
 	/**
 	 * Get the quiz submissions table name.
-	 *
-	 * @since $$next-version$$
 	 *
 	 * @return string
 	 */
@@ -75,39 +71,24 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
 
-		$lesson_id = (int) $args['lesson_id'];
-		$per_page  = (int) ( $args['per_page'] ?? 0 );
-		$offset    = (int) ( $args['offset'] ?? 0 );
+		$where = " WHERE p.type = 'lesson'" . $this->build_filters( $args );
 
-		$where = $wpdb->prepare( 'WHERE p.post_id = %d AND p.type = %s', $lesson_id, 'lesson' );
-
-		if ( ! empty( $args['search'] ) ) {
-			$search_like = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$where      .= $wpdb->prepare(
-				' AND p.user_id IN ( SELECT ID FROM %i WHERE display_name LIKE %s OR user_login LIKE %s OR user_email LIKE %s )',
-				$wpdb->users,
-				$search_like,
-				$search_like,
-				$search_like
-			);
-		}
-
-		// Count query.
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
-		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . " {$where}" );
+		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . $where );
 		Utils::log_query_error( $wpdb, 'Reports lesson students count' );
 
-		// Snap offset back if beyond total.
-		if ( $per_page > 0 && $total_count > 0 && $offset >= $total_count ) {
-			$last_page = max( 0, (int) ceil( $total_count / $per_page ) - 1 );
-			$offset    = $last_page * $per_page;
+		$number = (int) ( $args['number'] ?? 0 );
+		$offset = (int) ( $args['offset'] ?? 0 );
+		if ( $number > 0 && $total_count > 0 && $offset >= $total_count ) {
+			$last_page = max( 0, (int) ceil( $total_count / $number ) - 1 );
+			$offset    = $last_page * $number;
 		}
 
-		$order_clause = $this->build_lesson_order_clause( $args );
-		$limit_clause = $per_page > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $per_page, $offset ) : '';
+		$order_clause = $this->build_order_clause( $args );
+		$limit_clause = $number > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $number, $offset ) : '';
 
-				/** Query result rows. @var object[] $rows */
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
+		/** Query result rows. @var object[] $rows */
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
@@ -118,9 +99,9 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				$table,
 				$submissions_table
 			)
-			. " {$where}"
-			. " {$order_clause}"
-			. " {$limit_clause}"
+			. $where
+			. $order_clause
+			. $limit_clause
 		);
 		Utils::log_query_error( $wpdb, 'Reports lesson students items' );
 
@@ -155,50 +136,26 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
 
-		$course_id = (int) $args['course_id'];
-		$per_page  = (int) ( $args['per_page'] ?? 0 );
-		$offset    = (int) ( $args['offset'] ?? 0 );
+		$course_id = (int) ( $args['post_id'] ?? 0 );
+		$where     = " WHERE p.type = 'course'" . $this->build_filters( $args );
 
-		$where = $wpdb->prepare( 'WHERE p.post_id = %d AND p.type = %s', $course_id, 'course' );
-
-		if ( ! empty( $args['search'] ) ) {
-			$search_like = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$where      .= $wpdb->prepare(
-				' AND p.user_id IN ( SELECT ID FROM %i WHERE display_name LIKE %s OR user_login LIKE %s OR user_email LIKE %s )',
-				$wpdb->users,
-				$search_like,
-				$search_like,
-				$search_like
-			);
-		}
-
-		// Apply start date range filter.
-		if ( ! empty( $args['start_date_from'] ) ) {
-			$where .= $wpdb->prepare( ' AND p.started_at >= %s', $args['start_date_from'] );
-		}
-		if ( ! empty( $args['start_date_to'] ) ) {
-			$where .= $wpdb->prepare( ' AND p.started_at <= %s', $args['start_date_to'] );
-		}
-
-		// Count query.
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
-		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . " {$where}" );
+		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . $where );
 		Utils::log_query_error( $wpdb, 'Reports course students count' );
 
-		// Snap offset back if beyond total.
-		if ( $per_page > 0 && $total_count > 0 && $offset >= $total_count ) {
-			$last_page = max( 0, (int) ceil( $total_count / $per_page ) - 1 );
-			$offset    = $last_page * $per_page;
+		$number = (int) ( $args['number'] ?? 0 );
+		$offset = (int) ( $args['offset'] ?? 0 );
+		if ( $number > 0 && $total_count > 0 && $offset >= $total_count ) {
+			$last_page = max( 0, (int) ceil( $total_count / $number ) - 1 );
+			$offset    = $last_page * $number;
 		}
 
-		$order_clause = $this->build_course_order_clause( $args );
-		$limit_clause = $per_page > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $per_page, $offset ) : '';
-
-		// Get total lesson count for percent calculation.
+		$order_clause  = $this->build_order_clause( $args );
+		$limit_clause  = $number > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $number, $offset ) : '';
 		$total_lessons = $this->get_course_lesson_count( $course_id );
 
-				/** Query result rows. @var object[] $rows */
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
+		/** Query result rows. @var object[] $rows */
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at,'
@@ -216,9 +173,9 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				$total_lessons,
 				$table
 			)
-			. " {$where}"
-			. " {$order_clause}"
-			. " {$limit_clause}"
+			. $where
+			. $order_clause
+			. $limit_clause
 		);
 		Utils::log_query_error( $wpdb, 'Reports course students items' );
 
@@ -248,7 +205,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	 *
 	 * @param int $course_id Course post ID.
 	 * @param int $user_id   User ID.
-	 * @return array<int, Reports_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
+	 * @return array<int, Reports_Item|null>
 	 */
 	public function get_user_lesson_progress( int $course_id, int $user_id ): array {
 		$wpdb              = $this->wpdb;
@@ -256,12 +213,11 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$submissions_table = $this->get_quiz_submissions_table_name();
 
 		$lessons = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
-
 		if ( empty( $lessons ) ) {
 			return array();
 		}
 
-				/** Query result rows. @var object[] $rows */
+		/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
@@ -280,7 +236,6 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		);
 		Utils::log_query_error( $wpdb, 'Reports user lesson progress' );
 
-		// Index by post_id for easy lookup.
 		$progress_map = array();
 		foreach ( $rows as $row ) {
 			$progress_map[ (int) $row->post_id ] = $row;
@@ -321,13 +276,9 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
 
-		$user_id  = (int) $args['user_id'];
-		$per_page = (int) ( $args['per_page'] ?? 0 );
-		$offset   = (int) ( $args['offset'] ?? 0 );
+		$user_id = (int) ( $args['user_id'] ?? 0 );
+		$where   = " WHERE p.type = 'course'" . $this->build_filters( $args );
 
-		$where = $wpdb->prepare( 'WHERE p.user_id = %d AND p.type = %s', $user_id, 'course' );
-
-		// Restrict to courses authored by a specific user.
 		if ( ! empty( $args['post_author'] ) ) {
 			$where .= $wpdb->prepare(
 				' AND p.post_id IN ( SELECT ID FROM %i WHERE post_author = %d )',
@@ -336,31 +287,30 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			);
 		}
 
-		// Count query.
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
-		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . " {$where}" );
+		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . $where );
 		Utils::log_query_error( $wpdb, 'Reports user courses count' );
 
-		// Snap offset back if beyond total.
-		if ( $per_page > 0 && $total_count > 0 && $offset >= $total_count ) {
-			$last_page = max( 0, (int) ceil( $total_count / $per_page ) - 1 );
-			$offset    = $last_page * $per_page;
+		$number = (int) ( $args['number'] ?? 0 );
+		$offset = (int) ( $args['offset'] ?? 0 );
+		if ( $number > 0 && $total_count > 0 && $offset >= $total_count ) {
+			$last_page = max( 0, (int) ceil( $total_count / $number ) - 1 );
+			$offset    = $last_page * $number;
 		}
 
-		$order_clause = $this->build_course_order_clause( $args );
-		$limit_clause = $per_page > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $per_page, $offset ) : '';
+		$order_clause = $this->build_order_clause( $args );
+		$limit_clause = $number > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $number, $offset ) : '';
 
-				/** Query result rows. @var object[] $rows */
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where, $order_clause, $limit_clause are built from $wpdb->prepare() or sanitized values.
+		/** Query result rows. @var object[] $rows */
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at'
-				. ' FROM %i p',
+				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at FROM %i p',
 				$table
 			)
-			. " {$where}"
-			. " {$order_clause}"
-			. " {$limit_clause}"
+			. $where
+			. $order_clause
+			. $limit_clause
 		);
 		Utils::log_query_error( $wpdb, 'Reports user courses items' );
 
@@ -410,14 +360,14 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	 * @since $$next-version$$
 	 *
 	 * @param int $course_id Course post ID.
-	 * @return array[] Array of associative arrays with keys: lesson_id, student_count, completion_count, average_grade.
+	 * @return array[]
 	 */
 	public function get_lesson_aggregates( int $course_id ): array {
 		$wpdb              = $this->wpdb;
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
 
-				/** Query result rows. @var object[] $rows */
+		/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
@@ -454,12 +404,95 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	}
 
 	/**
+	 * Translate the activity-args shape into shared SQL WHERE clauses.
+	 *
+	 * Applies post_id, user_id, status, and the meta_query entry with key 'start'
+	 * (used by the course list table for start-date range filtering).
+	 *
+	 * @param array $args Activity args.
+	 * @return string SQL clauses, each prefixed with ' AND '.
+	 */
+	private function build_filters( array $args ): string {
+		$wpdb = $this->wpdb;
+		$sql  = '';
+
+		if ( ! empty( $args['post_id'] ) ) {
+			$sql .= $wpdb->prepare( ' AND p.post_id = %d', (int) $args['post_id'] );
+		}
+
+		if ( isset( $args['user_id'] ) && '' !== $args['user_id'] && array() !== $args['user_id'] ) {
+			if ( is_array( $args['user_id'] ) ) {
+				$ids = array_map( 'intval', $args['user_id'] );
+				if ( empty( $ids ) ) {
+					// Force empty result.
+					$sql .= ' AND 1 = 0';
+				} else {
+					$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+					$sql .= $wpdb->prepare( " AND p.user_id IN ( $placeholders )", $ids );
+				}
+			} else {
+				$sql .= $wpdb->prepare( ' AND p.user_id = %d', (int) $args['user_id'] );
+			}
+		}
+
+		if ( ! empty( $args['status'] ) && 'any' !== $args['status'] ) {
+			$statuses = array_map( 'strval', (array) $args['status'] );
+			if ( ! empty( $statuses ) ) {
+				$placeholders = implode( ', ', array_fill( 0, count( $statuses ), '%s' ) );
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				$sql .= $wpdb->prepare( " AND p.status IN ( $placeholders )", $statuses );
+			}
+		}
+
+		$sql .= $this->build_start_date_filter( $args );
+
+		return $sql;
+	}
+
+	/**
+	 * Translate a meta_query entry with key 'start' into started_at SQL.
+	 *
+	 * The course list table passes start-date range filters via meta_query
+	 * (to remain compatible with the comments-based path). For tables-based
+	 * storage the equivalent column is p.started_at.
+	 *
+	 * @param array $args Activity args.
+	 * @return string SQL clause.
+	 */
+	private function build_start_date_filter( array $args ): string {
+		if ( empty( $args['meta_query'] ) || ! is_array( $args['meta_query'] ) ) {
+			return '';
+		}
+
+		$wpdb = $this->wpdb;
+		$sql  = '';
+
+		foreach ( $args['meta_query'] as $outer ) {
+			if ( ! is_array( $outer ) ) {
+				continue;
+			}
+			foreach ( $outer as $clause ) {
+				if ( ! is_array( $clause ) || ( $clause['key'] ?? '' ) !== 'start' ) {
+					continue;
+				}
+				$compare = $clause['compare'] ?? '=';
+				$value   = $clause['value'] ?? '';
+				if ( in_array( $compare, array( '>=', '<=', '>', '<', '=' ), true ) && '' !== $value ) {
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $compare whitelisted above.
+					$sql .= $wpdb->prepare( " AND p.started_at {$compare} %s", $value );
+				}
+			}
+		}
+
+		return $sql;
+	}
+
+	/**
 	 * Get the total number of lessons in a course.
 	 *
-	 * @since $$next-version$$
-	 *
 	 * @param int $course_id Course post ID.
-	 * @return int Total lesson count.
+	 * @return int
 	 */
 	private function get_course_lesson_count( int $course_id ): int {
 		$lessons = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
@@ -467,38 +500,12 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	}
 
 	/**
-	 * Build ORDER BY clause for lesson queries.
-	 *
-	 * @since $$next-version$$
+	 * Build ORDER BY clause.
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL ORDER BY clause.
 	 */
-	private function build_lesson_order_clause( array $args ): string {
-		$order   = isset( $args['order'] ) && 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
-		$orderby = $args['orderby'] ?? '';
-
-		$orderby_map = array(
-			'comment_date' => 'p.completed_at',
-			'started'      => 'p.started_at',
-			'completed'    => 'p.completed_at',
-		);
-
-		/** Sanitized column name. @var string $column */
-		$column = esc_sql( $orderby_map[ $orderby ] ?? 'p.started_at' );
-
-		return " ORDER BY {$column} {$order}";
-	}
-
-	/**
-	 * Build ORDER BY clause for course queries.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Query arguments.
-	 * @return string SQL ORDER BY clause.
-	 */
-	private function build_course_order_clause( array $args ): string {
+	private function build_order_clause( array $args ): string {
 		$order   = isset( $args['order'] ) && 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
 		$orderby = $args['orderby'] ?? '';
 

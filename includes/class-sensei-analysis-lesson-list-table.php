@@ -342,29 +342,48 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 */
 	private function get_lesson_statuses( $args ) {
 
-		$service_args = array(
-			'lesson_id' => $this->lesson_id,
-			'per_page'  => $args['number'],
-			'offset'    => $args['offset'],
-			'orderby'   => $args['orderby'],
-			'order'     => $args['order'],
+		$activity_args = array(
+			'post_id' => $this->lesson_id,
+			'type'    => 'sensei_lesson_status',
+			'number'  => $args['number'],
+			'offset'  => $args['offset'],
+			'orderby' => $args['orderby'],
+			'order'   => $args['order'],
+			'status'  => 'any',
 		);
+
+		// Searching users on statuses requires sub-selecting the statuses by user_ids.
 		if ( $this->search ) {
-			$service_args['search'] = $this->search;
+			$user_args = array(
+				'search' => '*' . $this->search . '*',
+				'fields' => 'ID',
+			);
+			/**
+			 * Filter the user arguments used to search for users.
+			 *
+			 * @hook sensei_analysis_lesson_search_users
+			 *
+			 * @param {array} $user_args The arguments to find users.
+			 * @return {array} The array of user argument.
+			 */
+			$user_args = apply_filters( 'sensei_analysis_lesson_search_users', $user_args );
+			if ( ! empty( $user_args ) ) {
+				$learners_search          = new WP_User_Query( $user_args );
+				$activity_args['user_id'] = (array) $learners_search->get_results();
+			}
 		}
 
 		/**
-		 * Filter the service args for lesson statuses in the Lesson Analysis list table.
+		 * Filter the arguments used to search for activity.
 		 *
-		 * @hook sensei_analysis_lesson_statuses_service_args
+		 * @hook sensei_analysis_lesson_filter_statuses
 		 *
-		 * @param {array} $service_args The array of service args.
-		 * @param {array} $args         The original query arguments.
-		 * @return {array} The filtered array of service args.
+		 * @param {array} $activity_args The arguments to find activity.
+		 * @return {array} The array of activity argument.
 		 */
-		$service_args = apply_filters( 'sensei_analysis_lesson_statuses_service_args', $service_args, $args );
+		$activity_args = apply_filters( 'sensei_analysis_lesson_filter_statuses', $activity_args );
 
-		$result            = $this->reports_listing_service->get_lesson_students( $service_args );
+		$result            = $this->reports_listing_service->get_lesson_students( $activity_args );
 		$this->total_items = $result['total_count'];
 
 		return $result['items'];

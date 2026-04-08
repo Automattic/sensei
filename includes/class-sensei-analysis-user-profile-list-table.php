@@ -317,29 +317,31 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 */
 	private function get_course_statuses( $args ) {
 
-		$service_args = array(
-			'user_id'  => $this->user_id,
-			'per_page' => isset( $args['number'] ) ? $args['number'] : 0,
-			'offset'   => isset( $args['offset'] ) ? $args['offset'] : 0,
-			'orderby'  => $args['orderby'],
-			'order'    => $args['order'],
+		$activity_args = array(
+			'user_id' => $this->user_id,
+			'type'    => 'sensei_course_status',
+			'number'  => isset( $args['number'] ) ? $args['number'] : 0,
+			'offset'  => isset( $args['offset'] ) ? $args['offset'] : 0,
+			'orderby' => $args['orderby'],
+			'order'   => $args['order'],
+			'status'  => 'any',
 		);
 
 		if ( ! current_user_can( 'manage_sensei' ) ) {
-			$service_args['post_author'] = get_current_user_id();
+			$activity_args['post_author'] = get_current_user_id();
 		}
 
 		/**
-		 * Filter the service args for the user profile statuses.
+		 * Filter the activity args for the user profile statuses.
 		 *
 		 * @hook sensei_analysis_user_profile_filter_statuses
 		 *
-		 * @param {array} $service_args The array of service args.
-		 * @return {array} The filtered array of service args.
+		 * @param {array} $activity_args The array of activity args.
+		 * @return {array} The filtered array of activity args.
 		 */
-		$service_args = apply_filters( 'sensei_analysis_user_profile_filter_statuses', $service_args );
+		$activity_args = apply_filters( 'sensei_analysis_user_profile_filter_statuses', $activity_args );
 
-		$result            = $this->reports_listing_service->get_user_courses( $service_args );
+		$result            = $this->reports_listing_service->get_user_courses( $activity_args );
 		$this->total_items = $result['total_count'];
 
 		return $result['items'];

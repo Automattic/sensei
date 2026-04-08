@@ -110,9 +110,11 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->get_lesson_students(
 			array(
-				'lesson_id' => $lesson_id,
-				'per_page'  => 10,
-				'offset'    => 0,
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'number'  => 10,
+				'offset'  => 0,
+				'status'  => 'any',
 			)
 		);
 
@@ -152,9 +154,11 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->get_lesson_students(
 			array(
-				'lesson_id' => $lesson_id,
-				'per_page'  => 10,
-				'offset'    => 0,
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'number'  => 10,
+				'offset'  => 0,
+				'status'  => 'any',
 			)
 		);
 
@@ -184,9 +188,11 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->get_course_students(
 			array(
-				'course_id' => $course_id,
-				'per_page'  => 10,
-				'offset'    => 0,
+				'post_id' => $course_id,
+				'type'    => 'sensei_course_status',
+				'number'  => 10,
+				'offset'  => 0,
+				'status'  => 'any',
 			)
 		);
 
@@ -264,9 +270,11 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->get_user_courses(
 			array(
-				'user_id'  => $user_id,
-				'per_page' => 10,
-				'offset'   => 0,
+				'user_id' => $user_id,
+				'type'    => 'sensei_course_status',
+				'number'  => 10,
+				'offset'  => 0,
+				'status'  => 'any',
 			)
 		);
 
@@ -336,9 +344,11 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->get_lesson_students(
 			array(
-				'lesson_id' => $lesson_id,
-				'per_page'  => 10,
-				'offset'    => 100,
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'number'  => 10,
+				'offset'  => 100,
+				'status'  => 'any',
 			)
 		);
 

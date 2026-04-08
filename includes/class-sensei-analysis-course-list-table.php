@@ -752,27 +752,49 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 */
 	private function get_course_statuses( $args ) {
 
-		$service_args = array(
-			'course_id' => $this->course_id,
-			'per_page'  => $args['number'],
-			'offset'    => $args['offset'],
-			'orderby'   => $args['orderby'],
-			'order'     => $args['order'],
+		$activity_args = array(
+			'post_id' => $this->course_id,
+			'type'    => 'sensei_course_status',
+			'number'  => $args['number'],
+			'offset'  => $args['offset'],
+			'orderby' => $args['orderby'],
+			'order'   => $args['order'],
+			'status'  => 'any',
 		);
+		$activity_args = $this->add_filter_by_start_date( $activity_args );
+
+		// Searching users on statuses requires sub-selecting the statuses by user_ids.
 		if ( $this->search ) {
-			$service_args['search'] = $this->search;
+			$user_args = array(
+				'search' => '*' . $this->search . '*',
+				'fields' => 'ID',
+			);
+			/**
+			 * Filter the user arguments for the Course Analysis list table.
+			 *
+			 * @hook sensei_analysis_course_search_users
+			 *
+			 * @param {array} $user_args The user arguments.
+			 * @return {array} The user arguments.
+			 */
+			$user_args = apply_filters( 'sensei_analysis_course_search_users', $user_args );
+			if ( ! empty( $user_args ) ) {
+				$learners_search          = new WP_User_Query( $user_args );
+				$activity_args['user_id'] = (array) $learners_search->get_results();
+			}
 		}
 
-		$start_date_from = $this->get_start_date_and_time();
-		$start_date_to   = $this->get_end_date_and_time();
-		if ( $start_date_from ) {
-			$service_args['start_date_from'] = $start_date_from;
-		}
-		if ( $start_date_to ) {
-			$service_args['start_date_to'] = $start_date_to;
-		}
+		/**
+		 * Filter the course activity arguments for the Course Analysis list table.
+		 *
+		 * @hook sensei_analysis_course_filter_statuses
+		 *
+		 * @param {array} $activity_args The course statuses arguments.
+		 * @return {array} The course statuses arguments.
+		 */
+		$activity_args = apply_filters( 'sensei_analysis_course_filter_statuses', $activity_args );
 
-		$result            = $this->reports_listing_service->get_course_students( $service_args );
+		$result            = $this->reports_listing_service->get_course_students( $activity_args );
 		$this->total_items = $result['total_count'];
 
 		return $result['items'];

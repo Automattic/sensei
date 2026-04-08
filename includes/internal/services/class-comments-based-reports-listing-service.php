@@ -23,24 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_Interface {
 
 	/**
-	 * WordPress database object.
-	 *
-	 * @var \wpdb
-	 */
-	private \wpdb $wpdb;
-
-	/**
-	 * Constructor.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param \wpdb $wpdb WordPress database object.
-	 */
-	public function __construct( \wpdb $wpdb ) {
-		$this->wpdb = $wpdb;
-	}
-
-	/**
 	 * Get paginated users' progress on a specific lesson.
 	 *
 	 * @since $$next-version$$
@@ -49,72 +31,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_lesson_students( array $args ): array {
-		$activity_args = array(
-			'post_id' => $args['lesson_id'],
-			'type'    => 'sensei_lesson_status',
-			'number'  => $args['per_page'] ?? 0,
-			'offset'  => $args['offset'] ?? 0,
-			'orderby' => $args['orderby'] ?? '',
-			'order'   => $args['order'] ?? 'ASC',
-			'status'  => 'any',
-		);
-
-		if ( ! empty( $args['search'] ) ) {
-			$user_args       = array(
-				'search' => '*' . $args['search'] . '*',
-				'fields' => 'ID',
-			);
-			$learners_search = new \WP_User_Query( $user_args );
-
-			$activity_args['user_id'] = (array) $learners_search->get_results();
-		}
-
-		$total_count = \Sensei_Utils::sensei_check_for_activity(
-			array_merge(
-				$activity_args,
-				array(
-					'count'  => true,
-					'offset' => 0,
-					'number' => 0,
-				)
-			)
-		);
-
-		if ( (int) $total_count > 0 && $activity_args['offset'] >= (int) $total_count ) {
-			$number                  = $activity_args['number'] ? $activity_args['number'] : 1;
-			$new_paged               = floor( (int) $total_count / $number );
-			$activity_args['offset'] = (int) ( $new_paged * $number );
-		}
-
-		$statuses = \Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-		if ( ! is_array( $statuses ) ) {
-			$statuses = array( $statuses );
-		}
-
-		$items = array();
-		foreach ( $statuses as $comment ) {
-			if ( ! $comment instanceof \WP_Comment ) {
-				continue;
-			}
-
-			$start_date = get_comment_meta( (int) $comment->comment_ID, 'start', true );
-			$grade_raw  = get_comment_meta( (int) $comment->comment_ID, 'grade', true );
-
-			$items[] = new Reports_Item(
-				(int) $comment->comment_post_ID,
-				(int) $comment->user_id,
-				$comment->comment_approved,
-				$start_date ? $start_date : null,
-				$comment->comment_date ? $comment->comment_date : null,
-				'' !== $grade_raw ? (float) $grade_raw : null,
-				null
-			);
-		}
-
-		return array(
-			'items'       => $items,
-			'total_count' => (int) $total_count,
-		);
+		return $this->query_activity( $args, 'grade' );
 	}
 
 	/**
@@ -126,97 +43,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_course_students( array $args ): array {
-		$activity_args = array(
-			'post_id' => $args['course_id'],
-			'type'    => 'sensei_course_status',
-			'number'  => $args['per_page'] ?? 0,
-			'offset'  => $args['offset'] ?? 0,
-			'orderby' => $args['orderby'] ?? '',
-			'order'   => $args['order'] ?? 'ASC',
-			'status'  => 'any',
-		);
-
-		if ( ! empty( $args['search'] ) ) {
-			$user_args       = array(
-				'search' => '*' . $args['search'] . '*',
-				'fields' => 'ID',
-			);
-			$learners_search = new \WP_User_Query( $user_args );
-
-			$activity_args['user_id'] = (array) $learners_search->get_results();
-		}
-
-		// Apply start date range filter.
-		$meta_query_conditions = array();
-		if ( ! empty( $args['start_date_from'] ) ) {
-			$meta_query_conditions[] = array(
-				'key'     => 'start',
-				'value'   => $args['start_date_from'],
-				'compare' => '>=',
-				'type'    => 'DATE',
-			);
-		}
-		if ( ! empty( $args['start_date_to'] ) ) {
-			$meta_query_conditions[] = array(
-				'key'     => 'start',
-				'value'   => $args['start_date_to'],
-				'compare' => '<=',
-				'type'    => 'DATE',
-			);
-		}
-		if ( ! empty( $meta_query_conditions ) ) {
-			$activity_args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Required for date range filtering.
-				'relation' => 'AND',
-				$meta_query_conditions,
-			);
-		}
-
-		$total_count = \Sensei_Utils::sensei_check_for_activity(
-			array_merge(
-				$activity_args,
-				array(
-					'count'  => true,
-					'offset' => 0,
-					'number' => 0,
-				)
-			)
-		);
-
-		if ( (int) $total_count > 0 && $activity_args['offset'] >= (int) $total_count ) {
-			$number                  = $activity_args['number'] ? $activity_args['number'] : 1;
-			$new_paged               = floor( (int) $total_count / $number );
-			$activity_args['offset'] = (int) ( $new_paged * $number );
-		}
-
-		$statuses = \Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-		if ( ! is_array( $statuses ) ) {
-			$statuses = array( $statuses );
-		}
-
-		$items = array();
-		foreach ( $statuses as $comment ) {
-			if ( ! $comment instanceof \WP_Comment ) {
-				continue;
-			}
-
-			$start_date  = get_comment_meta( (int) $comment->comment_ID, 'start', true );
-			$percent_raw = get_comment_meta( (int) $comment->comment_ID, 'percent', true );
-
-			$items[] = new Reports_Item(
-				(int) $comment->comment_post_ID,
-				(int) $comment->user_id,
-				$comment->comment_approved,
-				$start_date ? $start_date : null,
-				$comment->comment_date ? $comment->comment_date : null,
-				null,
-				'' !== $percent_raw ? (float) $percent_raw : null
-			);
-		}
-
-		return array(
-			'items'       => $items,
-			'total_count' => (int) $total_count,
-		);
+		return $this->query_activity( $args, 'percent' );
 	}
 
 	/**
@@ -226,7 +53,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 *
 	 * @param int $course_id Course post ID.
 	 * @param int $user_id   User ID.
-	 * @return array<int, Reports_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
+	 * @return array<int, Reports_Item|null>
 	 */
 	public function get_user_lesson_progress( int $course_id, int $user_id ): array {
 		$lessons = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
@@ -234,31 +61,22 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 		$items = array();
 		foreach ( $lessons as $lesson_id ) {
 			$lesson_id     = (int) $lesson_id;
-			$lesson_args   = array(
-				'post_id' => $lesson_id,
-				'user_id' => $user_id,
-				'type'    => 'sensei_lesson_status',
-				'status'  => 'any',
+			$lesson_status = \Sensei_Utils::sensei_check_for_activity(
+				array(
+					'post_id' => $lesson_id,
+					'user_id' => $user_id,
+					'type'    => 'sensei_lesson_status',
+					'status'  => 'any',
+				),
+				true
 			);
-			$lesson_status = \Sensei_Utils::sensei_check_for_activity( $lesson_args, true );
 
 			if ( empty( $lesson_status ) || ! $lesson_status instanceof \WP_Comment ) {
 				$items[ $lesson_id ] = null;
 				continue;
 			}
 
-			$start_date = get_comment_meta( (int) $lesson_status->comment_ID, 'start', true );
-			$grade_raw  = get_comment_meta( (int) $lesson_status->comment_ID, 'grade', true );
-
-			$items[ $lesson_id ] = new Reports_Item(
-				(int) $lesson_status->comment_post_ID,
-				(int) $lesson_status->user_id,
-				$lesson_status->comment_approved,
-				$start_date ? $start_date : null,
-				$lesson_status->comment_date ? $lesson_status->comment_date : null,
-				'' !== $grade_raw ? (float) $grade_raw : null,
-				null
-			);
+			$items[ $lesson_id ] = $this->item_from_comment( $lesson_status, 'grade' );
 		}
 
 		return $items;
@@ -273,66 +91,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_user_courses( array $args ): array {
-		$activity_args = array(
-			'user_id' => $args['user_id'],
-			'type'    => 'sensei_course_status',
-			'number'  => $args['per_page'] ?? 0,
-			'offset'  => $args['offset'] ?? 0,
-			'orderby' => $args['orderby'] ?? '',
-			'order'   => $args['order'] ?? 'ASC',
-			'status'  => 'any',
-		);
-
-		if ( ! empty( $args['post_author'] ) ) {
-			$activity_args['post_author'] = (int) $args['post_author'];
-		}
-
-		$total_count = \Sensei_Utils::sensei_check_for_activity(
-			array_merge(
-				$activity_args,
-				array(
-					'count'  => true,
-					'offset' => 0,
-					'number' => 0,
-				)
-			)
-		);
-
-		if ( (int) $total_count > 0 && $activity_args['offset'] >= (int) $total_count ) {
-			$number                  = $activity_args['number'] ? $activity_args['number'] : 1;
-			$new_paged               = floor( (int) $total_count / $number );
-			$activity_args['offset'] = (int) ( $new_paged * $number );
-		}
-
-		$statuses = \Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-		if ( ! is_array( $statuses ) ) {
-			$statuses = array( $statuses );
-		}
-
-		$items = array();
-		foreach ( $statuses as $comment ) {
-			if ( ! $comment instanceof \WP_Comment ) {
-				continue;
-			}
-
-			$start_date  = get_comment_meta( (int) $comment->comment_ID, 'start', true );
-			$percent_raw = get_comment_meta( (int) $comment->comment_ID, 'percent', true );
-
-			$items[] = new Reports_Item(
-				(int) $comment->comment_post_ID,
-				(int) $comment->user_id,
-				$comment->comment_approved,
-				$start_date ? $start_date : null,
-				$comment->comment_date ? $comment->comment_date : null,
-				null,
-				'' !== $percent_raw ? (float) $percent_raw : null
-			);
-		}
-
-		return array(
-			'items'       => $items,
-			'total_count' => (int) $total_count,
-		);
+		return $this->query_activity( $args, 'percent' );
 	}
 
 	/**
@@ -341,14 +100,13 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * @since $$next-version$$
 	 *
 	 * @param int $course_id Course post ID.
-	 * @return array[] Array of associative arrays with keys: lesson_id, student_count, completion_count, average_grade.
+	 * @return array[]
 	 */
 	public function get_lesson_aggregates( int $course_id ): array {
 		$lessons = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 
 		$aggregates = array();
 		foreach ( $lessons as $lesson_id ) {
-			// Count all students.
 			$student_count = \Sensei_Utils::sensei_check_for_activity(
 				array(
 					'post_id' => $lesson_id,
@@ -357,7 +115,6 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 				)
 			);
 
-			// Count completions.
 			$completion_count = \Sensei_Utils::sensei_check_for_activity(
 				array(
 					'post_id' => $lesson_id,
@@ -367,7 +124,6 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 				)
 			);
 
-			// Average grade.
 			$average_grade = null;
 			if ( false !== \Sensei_Lesson::lesson_quiz_has_questions( (int) $lesson_id ) ) {
 				$grade_args = array(
@@ -396,5 +152,81 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 		}
 
 		return $aggregates;
+	}
+
+	/**
+	 * Run a paginated activity query and map results to Reports_Item objects.
+	 *
+	 * @param array  $args      Activity args (see interface).
+	 * @param string $meta_kind Numeric meta field to read: 'grade' or 'percent'.
+	 * @return array{ items: Reports_Item[], total_count: int }
+	 */
+	private function query_activity( array $args, string $meta_kind ): array {
+		$total_count = \Sensei_Utils::sensei_check_for_activity(
+			array_merge(
+				$args,
+				array(
+					'count'  => true,
+					'offset' => 0,
+					'number' => 0,
+				)
+			)
+		);
+
+		$offset = $args['offset'] ?? 0;
+		$number = $args['number'] ?? 0;
+		if ( $number > 0 && (int) $total_count > 0 && $offset >= (int) $total_count ) {
+			$last_page      = max( 0, (int) ceil( $total_count / $number ) - 1 );
+			$args['offset'] = $last_page * $number;
+		}
+
+		$statuses = \Sensei_Utils::sensei_check_for_activity( $args, true );
+		if ( ! is_array( $statuses ) ) {
+			$statuses = array( $statuses );
+		}
+
+		$items = array();
+		foreach ( $statuses as $comment ) {
+			if ( ! $comment instanceof \WP_Comment ) {
+				continue;
+			}
+			$items[] = $this->item_from_comment( $comment, $meta_kind );
+		}
+
+		return array(
+			'items'       => $items,
+			'total_count' => (int) $total_count,
+		);
+	}
+
+	/**
+	 * Build a Reports_Item from a WP_Comment row.
+	 *
+	 * @param \WP_Comment $comment   The activity comment.
+	 * @param string      $meta_kind Numeric meta field to read: 'grade' or 'percent'.
+	 * @return Reports_Item
+	 */
+	private function item_from_comment( \WP_Comment $comment, string $meta_kind ): Reports_Item {
+		$start_date = get_comment_meta( (int) $comment->comment_ID, 'start', true );
+		$grade      = null;
+		$percent    = null;
+
+		if ( 'grade' === $meta_kind ) {
+			$grade_raw = get_comment_meta( (int) $comment->comment_ID, 'grade', true );
+			$grade     = '' !== $grade_raw ? (float) $grade_raw : null;
+		} else {
+			$percent_raw = get_comment_meta( (int) $comment->comment_ID, 'percent', true );
+			$percent     = '' !== $percent_raw ? (float) $percent_raw : null;
+		}
+
+		return new Reports_Item(
+			(int) $comment->comment_post_ID,
+			(int) $comment->user_id,
+			$comment->comment_approved,
+			$start_date ? $start_date : null,
+			$comment->comment_date ? $comment->comment_date : null,
+			$grade,
+			$percent
+		);
 	}
 }

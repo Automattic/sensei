@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Interface Reports_Listing_Service_Interface.
  *
+ * The paginated methods accept comments-API-shaped activity arguments so that
+ * existing `sensei_analysis_*` filters can continue to modify the query in the
+ * same way they do for the legacy comments-based path.
+ *
  * @internal
  *
  * @since $$next-version$$
@@ -26,14 +30,16 @@ interface Reports_Listing_Service_Interface {
 	 * @since $$next-version$$
 	 *
 	 * @param array $args {
-	 *     Arguments for the query.
+	 *     Comments-API-shaped activity arguments.
 	 *
-	 *     @type int    $lesson_id Lesson post ID. Required.
-	 *     @type int    $per_page  Items per page.
-	 *     @type int    $offset    Pagination offset.
-	 *     @type string $orderby   Order by field.
-	 *     @type string $order     ASC or DESC.
-	 *     @type string $search    Search term for user name.
+	 *     @type int          $post_id Lesson post ID.
+	 *     @type string       $type    Activity type (expected: 'sensei_lesson_status').
+	 *     @type int          $number  Items per page.
+	 *     @type int          $offset  Pagination offset.
+	 *     @type string       $orderby Order by field.
+	 *     @type string       $order   ASC or DESC.
+	 *     @type string|array $status  Status filter ('any' for all).
+	 *     @type int|int[]    $user_id Restrict to specific user(s).
 	 * }
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
@@ -45,16 +51,17 @@ interface Reports_Listing_Service_Interface {
 	 * @since $$next-version$$
 	 *
 	 * @param array $args {
-	 *     Arguments for the query.
+	 *     Comments-API-shaped activity arguments.
 	 *
-	 *     @type int    $course_id       Course post ID. Required.
-	 *     @type int    $per_page        Items per page.
-	 *     @type int    $offset          Pagination offset.
-	 *     @type string $orderby         Order by field.
-	 *     @type string $order           ASC or DESC.
-	 *     @type string $search          Search term for user name.
-	 *     @type string $start_date_from Filter by start date >= this value (UTC datetime string).
-	 *     @type string $start_date_to   Filter by start date <= this value (UTC datetime string).
+	 *     @type int          $post_id    Course post ID.
+	 *     @type string       $type       Activity type (expected: 'sensei_course_status').
+	 *     @type int          $number     Items per page.
+	 *     @type int          $offset     Pagination offset.
+	 *     @type string       $orderby    Order by field.
+	 *     @type string       $order      ASC or DESC.
+	 *     @type string|array $status     Status filter ('any' for all).
+	 *     @type int|int[]    $user_id    Restrict to specific user(s).
+	 *     @type array        $meta_query Meta query (used for start-date range filter with key 'start').
 	 * }
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
@@ -77,14 +84,16 @@ interface Reports_Listing_Service_Interface {
 	 * @since $$next-version$$
 	 *
 	 * @param array $args {
-	 *     Arguments for the query.
+	 *     Comments-API-shaped activity arguments.
 	 *
-	 *     @type int    $user_id     User ID. Required.
-	 *     @type int    $per_page    Items per page.
-	 *     @type int    $offset      Pagination offset.
-	 *     @type string $orderby     Order by field.
-	 *     @type string $order       ASC or DESC.
-	 *     @type int    $post_author Restrict to courses authored by this user ID.
+	 *     @type int          $user_id     User ID.
+	 *     @type string       $type        Activity type (expected: 'sensei_course_status').
+	 *     @type int          $number      Items per page.
+	 *     @type int          $offset      Pagination offset.
+	 *     @type string       $orderby     Order by field.
+	 *     @type string       $order       ASC or DESC.
+	 *     @type string|array $status      Status filter ('any' for all).
+	 *     @type int          $post_author Restrict to courses authored by this user ID.
 	 * }
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */

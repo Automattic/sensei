@@ -73,14 +73,16 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 		$this->create_lesson_status( $lesson_id, $user_id, 'in-progress' );
 
-		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service();
 
 		/* Act. */
 		$result = $service->get_lesson_students(
 			array(
-				'lesson_id' => $lesson_id,
-				'per_page'  => 10,
-				'offset'    => 0,
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'number'  => 10,
+				'offset'  => 0,
+				'status'  => 'any',
 			)
 		);
 
@@ -104,14 +106,16 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$course_id = $this->sensei_factory->course->create();
 		$this->create_course_status( $course_id, $user_id, 'in-progress' );
 
-		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service();
 
 		/* Act. */
 		$result = $service->get_course_students(
 			array(
-				'course_id' => $course_id,
-				'per_page'  => 10,
-				'offset'    => 0,
+				'post_id' => $course_id,
+				'type'    => 'sensei_course_status',
+				'number'  => 10,
+				'offset'  => 0,
+				'status'  => 'any',
 			)
 		);
 
@@ -134,14 +138,16 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$course_id = $this->sensei_factory->course->create();
 		$this->create_course_status( $course_id, $user_id, 'in-progress' );
 
-		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service();
 
 		/* Act. */
 		$result = $service->get_user_courses(
 			array(
-				'user_id'  => $user_id,
-				'per_page' => 10,
-				'offset'   => 0,
+				'user_id' => $user_id,
+				'type'    => 'sensei_course_status',
+				'number'  => 10,
+				'offset'  => 0,
+				'status'  => 'any',
 			)
 		);
 
@@ -166,7 +172,7 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 		$this->create_lesson_status( $lesson_id, $user_id, 'complete' );
 
-		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service();
 
 		/* Act. */
 		$result = $service->get_user_lesson_progress( $course_id, $user_id );
@@ -191,7 +197,7 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 
-		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service();
 
 		/* Act. */
 		$result = $service->get_user_lesson_progress( $course_id, $user_id );
@@ -219,7 +225,7 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->create_lesson_status( $lesson_id, $user1, 'complete' );
 		$this->create_lesson_status( $lesson_id, $user2, 'in-progress' );
 
-		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service();
 
 		/* Act. */
 		$result = $service->get_lesson_aggregates( $course_id );

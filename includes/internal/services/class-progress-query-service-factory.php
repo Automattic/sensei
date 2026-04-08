@@ -94,7 +94,7 @@ class Progress_Query_Service_Factory {
 			return new Tables_Based_Reports_Listing_Service( $wpdb );
 		}
 
-		return new Comments_Based_Reports_Listing_Service( $wpdb );
+		return new Comments_Based_Reports_Listing_Service();
 	}
 
 	/**
