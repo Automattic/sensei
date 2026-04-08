@@ -91,11 +91,11 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_lesson_students returns analysis items for lesson progress.
+	 * Tests that get_lesson_students returns reports items for lesson progress.
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_students
 	 */
-	public function testGetLessonStudents_WithLessonProgress_ReturnsAnalysisItems(): void {
+	public function testGetLessonStudents_WithLessonProgress_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -164,11 +164,11 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_course_students returns analysis items for course progress.
+	 * Tests that get_course_students returns reports items for course progress.
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_course_students
 	 */
-	public function testGetCourseStudents_WithCourseProgress_ReturnsAnalysisItems(): void {
+	public function testGetCourseStudents_WithCourseProgress_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -248,11 +248,11 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_user_courses returns analysis items for course progress.
+	 * Tests that get_user_courses returns reports items for course progress.
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_courses
 	 */
-	public function testGetUserCourses_WithCourseProgress_ReturnsAnalysisItems(): void {
+	public function testGetUserCourses_WithCourseProgress_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();

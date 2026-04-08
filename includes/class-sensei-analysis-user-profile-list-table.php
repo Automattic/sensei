@@ -21,7 +21,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	public $page_slug;
 
 	/**
-	 * The analysis listing service.
+	 * The reports listing service.
 	 *
 	 * @var Reports_Listing_Service_Interface
 	 */

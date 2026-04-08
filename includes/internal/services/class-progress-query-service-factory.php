@@ -81,7 +81,7 @@ class Progress_Query_Service_Factory {
 	}
 
 	/**
-	 * Create an Reports_Listing_Service_Interface instance.
+	 * Create a Reports_Listing_Service_Interface instance.
 	 *
 	 * @since $$next-version$$
 	 *

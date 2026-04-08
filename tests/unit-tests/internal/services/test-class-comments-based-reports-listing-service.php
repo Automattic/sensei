@@ -59,11 +59,11 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_lesson_students returns analysis items for a lesson with status.
+	 * Tests that get_lesson_students returns reports items for a lesson with status.
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_lesson_students
 	 */
-	public function testGetLessonStudents_WithLessonStatus_ReturnsAnalysisItems(): void {
+	public function testGetLessonStudents_WithLessonStatus_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -93,11 +93,11 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_course_students returns analysis items for a course with status.
+	 * Tests that get_course_students returns reports items for a course with status.
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_course_students
 	 */
-	public function testGetCourseStudents_WithCourseStatus_ReturnsAnalysisItems(): void {
+	public function testGetCourseStudents_WithCourseStatus_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -123,11 +123,11 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_user_courses returns analysis items for a user with course status.
+	 * Tests that get_user_courses returns reports items for a user with course status.
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_courses
 	 */
-	public function testGetUserCourses_WithCourseStatus_ReturnsAnalysisItems(): void {
+	public function testGetUserCourses_WithCourseStatus_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();

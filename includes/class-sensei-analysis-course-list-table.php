@@ -61,7 +61,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	public $view = 'lesson';
 
 	/**
-	 * The analysis listing service.
+	 * The reports listing service.
 	 *
 	 * @var Reports_Listing_Service_Interface
 	 */
