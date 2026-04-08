@@ -1,21 +1,21 @@
 <?php
 /**
- * File containing tests for the Tables_Based_Analysis_Listing_Service class.
+ * File containing tests for the Tables_Based_Reports_Listing_Service class.
  *
  * @package sensei-tests
  */
 
 namespace SenseiTest\Internal\Services;
 
-use Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service;
-use Sensei\Internal\Services\Analysis_Item;
+use Sensei\Internal\Services\Tables_Based_Reports_Listing_Service;
+use Sensei\Internal\Services\Reports_Item;
 
 /**
- * Class Tables_Based_Analysis_Listing_Service_Test.
+ * Class Tables_Based_Reports_Listing_Service_Test.
  *
- * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service
+ * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service
  */
-class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
+class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 
 	/**
 	 * Sensei factory.
@@ -93,7 +93,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that get_lesson_students returns analysis items for lesson progress.
 	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_lesson_students
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_students
 	 */
 	public function testGetLessonStudents_WithLessonProgress_ReturnsAnalysisItems(): void {
 		/* Arrange. */
@@ -105,7 +105,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
 
-		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_lesson_students(
@@ -119,7 +119,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 1, $result['total_count'] );
 		$this->assertCount( 1, $result['items'] );
-		$this->assertInstanceOf( Analysis_Item::class, $result['items'][0] );
+		$this->assertInstanceOf( Reports_Item::class, $result['items'][0] );
 		$this->assertSame( 'in-progress', $result['items'][0]->status );
 		$this->assertSame( $user_id, $result['items'][0]->user_id );
 	}
@@ -127,7 +127,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that get_lesson_students uses the coalesced quiz status when available.
 	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_lesson_students
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_students
 	 */
 	public function testGetLessonStudents_WithQuizStatus_UsesCoalescedStatus(): void {
 		/* Arrange. */
@@ -147,7 +147,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
 		$this->insert_quiz_submission( $quiz_id, $user_id, 90 );
 
-		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_lesson_students(
@@ -166,7 +166,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that get_course_students returns analysis items for course progress.
 	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_course_students
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_course_students
 	 */
 	public function testGetCourseStudents_WithCourseProgress_ReturnsAnalysisItems(): void {
 		/* Arrange. */
@@ -179,7 +179,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->insert_progress( $course_id, $user_id, 'course', 'in-progress' );
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
 
-		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_course_students(
@@ -200,7 +200,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that get_user_lesson_progress returns progress keyed by lesson ID.
 	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_user_lesson_progress
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
 	public function testGetUserLessonProgress_ReturnsProgressKeyedByLessonId(): void {
 		/* Arrange. */
@@ -212,21 +212,21 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
 
-		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_user_lesson_progress( $course_id, $user_id );
 
 		/* Assert. */
 		$this->assertArrayHasKey( $lesson_id, $result );
-		$this->assertInstanceOf( Analysis_Item::class, $result[ $lesson_id ] );
+		$this->assertInstanceOf( Reports_Item::class, $result[ $lesson_id ] );
 		$this->assertSame( 'complete', $result[ $lesson_id ]->status );
 	}
 
 	/**
 	 * Tests that get_user_lesson_progress returns null for a lesson with no progress.
 	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_user_lesson_progress
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
 	public function testGetUserLessonProgress_WithNoProgress_ReturnsNullForLesson(): void {
 		/* Arrange. */
@@ -237,7 +237,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 
-		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_user_lesson_progress( $course_id, $user_id );
@@ -250,7 +250,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that get_user_courses returns analysis items for course progress.
 	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_user_courses
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_courses
 	 */
 	public function testGetUserCourses_WithCourseProgress_ReturnsAnalysisItems(): void {
 		/* Arrange. */
@@ -259,7 +259,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$course_id = $this->sensei_factory->course->create();
 		$this->insert_progress( $course_id, $user_id, 'course', 'in-progress' );
 
-		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_user_courses(
@@ -280,7 +280,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that get_lesson_aggregates returns aggregate stats.
 	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_lesson_aggregates
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_aggregates
 	 */
 	public function testGetLessonAggregates_ReturnsAggregateStats(): void {
 		/* Arrange. */
@@ -304,7 +304,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 
 		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
 
-		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_lesson_aggregates( $course_id );
@@ -319,7 +319,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that get_lesson_students corrects pagination when offset exceeds total.
 	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Analysis_Listing_Service::get_lesson_students
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_students
 	 */
 	public function testGetLessonStudents_WithOffsetBeyondTotal_CorrectsPagination(): void {
 		/* Arrange. */
@@ -331,7 +331,7 @@ class Tables_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
 
-		$service = new Tables_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_lesson_students(

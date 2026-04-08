@@ -1,21 +1,21 @@
 <?php
 /**
- * File containing tests for the Comments_Based_Analysis_Listing_Service class.
+ * File containing tests for the Comments_Based_Reports_Listing_Service class.
  *
  * @package sensei-tests
  */
 
 namespace SenseiTest\Internal\Services;
 
-use Sensei\Internal\Services\Comments_Based_Analysis_Listing_Service;
-use Sensei\Internal\Services\Analysis_Item;
+use Sensei\Internal\Services\Comments_Based_Reports_Listing_Service;
+use Sensei\Internal\Services\Reports_Item;
 
 /**
- * Class Comments_Based_Analysis_Listing_Service_Test.
+ * Class Comments_Based_Reports_Listing_Service_Test.
  *
- * @covers \Sensei\Internal\Services\Comments_Based_Analysis_Listing_Service
+ * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service
  */
-class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
+class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 
 	/**
 	 * Sensei factory.
@@ -61,7 +61,7 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that get_lesson_students returns analysis items for a lesson with status.
 	 *
-	 * @covers \Sensei\Internal\Services\Comments_Based_Analysis_Listing_Service::get_lesson_students
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_lesson_students
 	 */
 	public function testGetLessonStudents_WithLessonStatus_ReturnsAnalysisItems(): void {
 		/* Arrange. */
@@ -73,7 +73,7 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 		$this->create_lesson_status( $lesson_id, $user_id, 'in-progress' );
 
-		$service = new Comments_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_lesson_students(
@@ -87,7 +87,7 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 1, $result['total_count'] );
 		$this->assertCount( 1, $result['items'] );
-		$this->assertInstanceOf( Analysis_Item::class, $result['items'][0] );
+		$this->assertInstanceOf( Reports_Item::class, $result['items'][0] );
 		$this->assertSame( 'in-progress', $result['items'][0]->status );
 		$this->assertSame( $user_id, $result['items'][0]->user_id );
 	}
@@ -95,7 +95,7 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that get_course_students returns analysis items for a course with status.
 	 *
-	 * @covers \Sensei\Internal\Services\Comments_Based_Analysis_Listing_Service::get_course_students
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_course_students
 	 */
 	public function testGetCourseStudents_WithCourseStatus_ReturnsAnalysisItems(): void {
 		/* Arrange. */
@@ -104,7 +104,7 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$course_id = $this->sensei_factory->course->create();
 		$this->create_course_status( $course_id, $user_id, 'in-progress' );
 
-		$service = new Comments_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_course_students(
@@ -118,14 +118,14 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 1, $result['total_count'] );
 		$this->assertCount( 1, $result['items'] );
-		$this->assertInstanceOf( Analysis_Item::class, $result['items'][0] );
+		$this->assertInstanceOf( Reports_Item::class, $result['items'][0] );
 		$this->assertSame( $user_id, $result['items'][0]->user_id );
 	}
 
 	/**
 	 * Tests that get_user_courses returns analysis items for a user with course status.
 	 *
-	 * @covers \Sensei\Internal\Services\Comments_Based_Analysis_Listing_Service::get_user_courses
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_courses
 	 */
 	public function testGetUserCourses_WithCourseStatus_ReturnsAnalysisItems(): void {
 		/* Arrange. */
@@ -134,7 +134,7 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$course_id = $this->sensei_factory->course->create();
 		$this->create_course_status( $course_id, $user_id, 'in-progress' );
 
-		$service = new Comments_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_user_courses(
@@ -154,7 +154,7 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that get_user_lesson_progress returns progress keyed by lesson ID.
 	 *
-	 * @covers \Sensei\Internal\Services\Comments_Based_Analysis_Listing_Service::get_user_lesson_progress
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
 	public function testGetUserLessonProgress_WithLessonStatus_ReturnsProgressKeyedByLessonId(): void {
 		/* Arrange. */
@@ -166,21 +166,21 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 		$this->create_lesson_status( $lesson_id, $user_id, 'complete' );
 
-		$service = new Comments_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_user_lesson_progress( $course_id, $user_id );
 
 		/* Assert. */
 		$this->assertArrayHasKey( $lesson_id, $result );
-		$this->assertInstanceOf( Analysis_Item::class, $result[ $lesson_id ] );
+		$this->assertInstanceOf( Reports_Item::class, $result[ $lesson_id ] );
 		$this->assertSame( 'complete', $result[ $lesson_id ]->status );
 	}
 
 	/**
 	 * Tests that get_user_lesson_progress returns null for a lesson with no progress.
 	 *
-	 * @covers \Sensei\Internal\Services\Comments_Based_Analysis_Listing_Service::get_user_lesson_progress
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
 	public function testGetUserLessonProgress_WithNoProgress_ReturnsNullForLesson(): void {
 		/* Arrange. */
@@ -191,7 +191,7 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 
-		$service = new Comments_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_user_lesson_progress( $course_id, $user_id );
@@ -204,7 +204,7 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Tests that get_lesson_aggregates returns aggregate stats for student progress.
 	 *
-	 * @covers \Sensei\Internal\Services\Comments_Based_Analysis_Listing_Service::get_lesson_aggregates
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_lesson_aggregates
 	 */
 	public function testGetLessonAggregates_WithStudentProgress_ReturnsAggregateStats(): void {
 		/* Arrange. */
@@ -219,7 +219,7 @@ class Comments_Based_Analysis_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->create_lesson_status( $lesson_id, $user1, 'complete' );
 		$this->create_lesson_status( $lesson_id, $user2, 'in-progress' );
 
-		$service = new Comments_Based_Analysis_Listing_Service( $wpdb );
+		$service = new Comments_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
 		$result = $service->get_lesson_aggregates( $course_id );

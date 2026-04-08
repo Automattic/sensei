@@ -3,8 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-use Sensei\Internal\Services\Analysis_Item;
-use Sensei\Internal\Services\Analysis_Listing_Service_Interface;
+use Sensei\Internal\Services\Reports_Item;
+use Sensei\Internal\Services\Reports_Listing_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 
 /**
@@ -63,14 +63,14 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * The analysis listing service.
 	 *
-	 * @var Analysis_Listing_Service_Interface
+	 * @var Reports_Listing_Service_Interface
 	 */
-	private Analysis_Listing_Service_Interface $analysis_listing_service;
+	private Reports_Listing_Service_Interface $reports_listing_service;
 
 	/**
 	 * Cached user lesson progress keyed by lesson ID.
 	 *
-	 * @var array<int, Analysis_Item|null>|null
+	 * @var array<int, Reports_Item|null>|null
 	 */
 	private ?array $user_lesson_progress = null;
 
@@ -86,15 +86,15 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 *
 	 * @param int                                     $course_id                Course ID.
 	 * @param int                                     $user_id                  User ID.
-	 * @param Analysis_Listing_Service_Interface|null $analysis_listing_service Analysis listing service.
+	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Analysis listing service.
 	 *
 	 * @since  1.2.0
 	 */
-	public function __construct( $course_id = 0, $user_id = 0, ?Analysis_Listing_Service_Interface $analysis_listing_service = null ) {
+	public function __construct( $course_id = 0, $user_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null ) {
 		$this->course_id                = (int) $course_id;
 		$this->user_id                  = (int) $user_id;
 		$this->page_slug                = Sensei_Analysis::PAGE_SLUG;
-		$this->analysis_listing_service = $analysis_listing_service ?? ( new Progress_Query_Service_Factory() )->create_analysis_listing_service();
+		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'user', 'lesson' ) ) ) {
 			$this->view = $_GET['view'];
@@ -426,11 +426,11 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param object $item The current item (Analysis_Item or WP_Comment).
+	 * @param object $item The current item (Reports_Item or WP_Comment).
 	 * @return array Column data.
 	 */
 	private function get_user_view_row_data( $item ) {
-		if ( $item instanceof Analysis_Item ) {
+		if ( $item instanceof Reports_Item ) {
 			$user_start_date = $item->started_at ?? '';
 			$user_end_date   = $item->completed_at ?? '';
 			$item_status     = $item->status;
@@ -513,13 +513,13 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
 		// Check if we have cached progress from the service.
 		if ( isset( $this->user_lesson_progress ) && array_key_exists( $item->ID, $this->user_lesson_progress ) ) {
-			$analysis_item = $this->user_lesson_progress[ $item->ID ];
+			$reports_item = $this->user_lesson_progress[ $item->ID ];
 
-			if ( null !== $analysis_item ) {
-				$user_start_date = $analysis_item->started_at ?? '';
-				$user_end_date   = $analysis_item->completed_at ?? '';
-				$item_status     = $analysis_item->status;
-				$item_grade      = $analysis_item->grade;
+			if ( null !== $reports_item ) {
+				$user_start_date = $reports_item->started_at ?? '';
+				$user_end_date   = $reports_item->completed_at ?? '';
+				$item_status     = $reports_item->status;
+				$item_grade      = $reports_item->grade;
 
 				if ( 'complete' === $item_status ) {
 					$status       = __( 'Completed', 'sensei-lms' );
@@ -772,7 +772,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			$service_args['start_date_to'] = $start_date_to;
 		}
 
-		$result            = $this->analysis_listing_service->get_course_students( $service_args );
+		$result            = $this->reports_listing_service->get_course_students( $service_args );
 		$this->total_items = $result['total_count'];
 
 		return $result['items'];
@@ -831,9 +831,9 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 */
 	private function preload_lesson_data(): void {
 		if ( $this->user_id ) {
-			$this->user_lesson_progress = $this->analysis_listing_service->get_user_lesson_progress( $this->course_id, $this->user_id );
+			$this->user_lesson_progress = $this->reports_listing_service->get_user_lesson_progress( $this->course_id, $this->user_id );
 		} else {
-			$this->lesson_aggregates_cache = $this->analysis_listing_service->get_lesson_aggregates( $this->course_id );
+			$this->lesson_aggregates_cache = $this->reports_listing_service->get_lesson_aggregates( $this->course_id );
 		}
 	}
 

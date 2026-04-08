@@ -3,8 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-use Sensei\Internal\Services\Analysis_Item;
-use Sensei\Internal\Services\Analysis_Listing_Service_Interface;
+use Sensei\Internal\Services\Reports_Item;
+use Sensei\Internal\Services\Reports_Listing_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 
 /**
@@ -24,9 +24,9 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	/**
 	 * The analysis listing service.
 	 *
-	 * @var Analysis_Listing_Service_Interface
+	 * @var Reports_Listing_Service_Interface
 	 */
-	private Analysis_Listing_Service_Interface $analysis_listing_service;
+	private Reports_Listing_Service_Interface $reports_listing_service;
 
 	/**
 	 * Constructor
@@ -34,13 +34,13 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 * @since  1.2.0
 	 *
 	 * @param int                                     $lesson_id                Lesson ID.
-	 * @param Analysis_Listing_Service_Interface|null $analysis_listing_service Analysis listing service.
+	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Analysis listing service.
 	 */
-	public function __construct( $lesson_id = 0, ?Analysis_Listing_Service_Interface $analysis_listing_service = null ) {
+	public function __construct( $lesson_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null ) {
 		$this->lesson_id                = intval( $lesson_id );
 		$this->course_id                = intval( get_post_meta( $this->lesson_id, '_lesson_course', true ) );
 		$this->page_slug                = Sensei_Analysis::PAGE_SLUG;
-		$this->analysis_listing_service = $analysis_listing_service ?? ( new Progress_Query_Service_Factory() )->create_analysis_listing_service();
+		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_lesson' );
@@ -238,10 +238,10 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 * Generates the overall array for a single item in the display
 	 *
 	 * @since  1.7.0
-	 * @param object $item The current item (Analysis_Item or WP_Comment).
+	 * @param object $item The current item (Reports_Item or WP_Comment).
 	 */
 	protected function get_row_data( $item ) {
-		if ( $item instanceof Analysis_Item ) {
+		if ( $item instanceof Reports_Item ) {
 			$user_start_date = $item->started_at ?? '';
 			$user_end_date   = $item->completed_at ?? '';
 			$item_status     = $item->status;
@@ -364,7 +364,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		 */
 		$service_args = apply_filters( 'sensei_analysis_lesson_statuses_service_args', $service_args, $args );
 
-		$result            = $this->analysis_listing_service->get_lesson_students( $service_args );
+		$result            = $this->reports_listing_service->get_lesson_students( $service_args );
 		$this->total_items = $result['total_count'];
 
 		return $result['items'];

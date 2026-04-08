@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Tables_Based_Analysis_Listing_Service class.
+ * File containing the Tables_Based_Reports_Listing_Service class.
  *
  * @package sensei
  */
@@ -12,15 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Tables_Based_Analysis_Listing_Service.
+ * Class Tables_Based_Reports_Listing_Service.
  *
- * Tables-based (HPPS) implementation of the Analysis_Listing_Service_Interface.
+ * Tables-based (HPPS) implementation of the Reports_Listing_Service_Interface.
  *
  * @internal
  *
  * @since $$next-version$$
  */
-class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_Interface {
+class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_Interface {
 
 	/**
 	 * WordPress database object.
@@ -68,7 +68,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 	 * @since $$next-version$$
 	 *
 	 * @param array $args Arguments for the query (see interface).
-	 * @return array{ items: Analysis_Item[], total_count: int }
+	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_lesson_students( array $args ): array {
 		$wpdb              = $this->wpdb;
@@ -95,7 +95,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		// Count query.
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
 		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . " {$where}" );
-		Utils::log_query_error( $wpdb, 'Analysis lesson students count' );
+		Utils::log_query_error( $wpdb, 'Reports lesson students count' );
 
 		// Snap offset back if beyond total.
 		if ( $per_page > 0 && $total_count > 0 && $offset >= $total_count ) {
@@ -122,11 +122,11 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 			. " {$order_clause}"
 			. " {$limit_clause}"
 		);
-		Utils::log_query_error( $wpdb, 'Analysis lesson students items' );
+		Utils::log_query_error( $wpdb, 'Reports lesson students items' );
 
 		$items = array();
 		foreach ( $rows as $row ) {
-			$items[] = new Analysis_Item(
+			$items[] = new Reports_Item(
 				(int) $row->post_id,
 				(int) $row->user_id,
 				$row->effective_status,
@@ -149,7 +149,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 	 * @since $$next-version$$
 	 *
 	 * @param array $args Arguments for the query (see interface).
-	 * @return array{ items: Analysis_Item[], total_count: int }
+	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_course_students( array $args ): array {
 		$wpdb  = $this->wpdb;
@@ -183,7 +183,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		// Count query.
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
 		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . " {$where}" );
-		Utils::log_query_error( $wpdb, 'Analysis course students count' );
+		Utils::log_query_error( $wpdb, 'Reports course students count' );
 
 		// Snap offset back if beyond total.
 		if ( $per_page > 0 && $total_count > 0 && $offset >= $total_count ) {
@@ -220,11 +220,11 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 			. " {$order_clause}"
 			. " {$limit_clause}"
 		);
-		Utils::log_query_error( $wpdb, 'Analysis course students items' );
+		Utils::log_query_error( $wpdb, 'Reports course students items' );
 
 		$items = array();
 		foreach ( $rows as $row ) {
-			$items[] = new Analysis_Item(
+			$items[] = new Reports_Item(
 				(int) $row->post_id,
 				(int) $row->user_id,
 				$row->status,
@@ -248,7 +248,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 	 *
 	 * @param int $course_id Course post ID.
 	 * @param int $user_id   User ID.
-	 * @return array<int, Analysis_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
+	 * @return array<int, Reports_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
 	 */
 	public function get_user_lesson_progress( int $course_id, int $user_id ): array {
 		$wpdb              = $this->wpdb;
@@ -278,7 +278,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 				$user_id
 			)
 		);
-		Utils::log_query_error( $wpdb, 'Analysis user lesson progress' );
+		Utils::log_query_error( $wpdb, 'Reports user lesson progress' );
 
 		// Index by post_id for easy lookup.
 		$progress_map = array();
@@ -295,7 +295,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 			}
 
 			$row                 = $progress_map[ $lesson_id ];
-			$items[ $lesson_id ] = new Analysis_Item(
+			$items[ $lesson_id ] = new Reports_Item(
 				(int) $row->post_id,
 				(int) $row->user_id,
 				$row->effective_status,
@@ -315,7 +315,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 	 * @since $$next-version$$
 	 *
 	 * @param array $args Arguments for the query (see interface).
-	 * @return array{ items: Analysis_Item[], total_count: int }
+	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_user_courses( array $args ): array {
 		$wpdb  = $this->wpdb;
@@ -339,7 +339,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 		// Count query.
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
 		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . " {$where}" );
-		Utils::log_query_error( $wpdb, 'Analysis user courses count' );
+		Utils::log_query_error( $wpdb, 'Reports user courses count' );
 
 		// Snap offset back if beyond total.
 		if ( $per_page > 0 && $total_count > 0 && $offset >= $total_count ) {
@@ -362,7 +362,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 			. " {$order_clause}"
 			. " {$limit_clause}"
 		);
-		Utils::log_query_error( $wpdb, 'Analysis user courses items' );
+		Utils::log_query_error( $wpdb, 'Reports user courses items' );
 
 		$items = array();
 		foreach ( $rows as $row ) {
@@ -387,7 +387,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 				$percent           = round( $completed_lessons * 100.0 / $total_lessons, 0 );
 			}
 
-			$items[] = new Analysis_Item(
+			$items[] = new Reports_Item(
 				$course_id,
 				(int) $row->user_id,
 				$row->status,
@@ -436,7 +436,7 @@ class Tables_Based_Analysis_Listing_Service implements Analysis_Listing_Service_
 				$course_id
 			)
 		);
-		Utils::log_query_error( $wpdb, 'Analysis lesson aggregates' );
+		Utils::log_query_error( $wpdb, 'Reports lesson aggregates' );
 
 		$aggregates = array();
 		foreach ( $rows as $row ) {

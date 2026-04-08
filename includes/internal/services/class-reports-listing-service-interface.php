@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Analysis_Listing_Service_Interface interface.
+ * File containing the Reports_Listing_Service_Interface interface.
  *
  * @package sensei
  */
@@ -12,13 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Interface Analysis_Listing_Service_Interface.
+ * Interface Reports_Listing_Service_Interface.
  *
  * @internal
  *
  * @since $$next-version$$
  */
-interface Analysis_Listing_Service_Interface {
+interface Reports_Listing_Service_Interface {
 
 	/**
 	 * Get paginated users' progress on a specific lesson.
@@ -35,7 +35,7 @@ interface Analysis_Listing_Service_Interface {
 	 *     @type string $order     ASC or DESC.
 	 *     @type string $search    Search term for user name.
 	 * }
-	 * @return array{ items: Analysis_Item[], total_count: int }
+	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_lesson_students( array $args ): array;
 
@@ -56,7 +56,7 @@ interface Analysis_Listing_Service_Interface {
 	 *     @type string $start_date_from Filter by start date >= this value (UTC datetime string).
 	 *     @type string $start_date_to   Filter by start date <= this value (UTC datetime string).
 	 * }
-	 * @return array{ items: Analysis_Item[], total_count: int }
+	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_course_students( array $args ): array;
 
@@ -67,7 +67,7 @@ interface Analysis_Listing_Service_Interface {
 	 *
 	 * @param int $course_id Course post ID.
 	 * @param int $user_id   User ID.
-	 * @return array<int, Analysis_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
+	 * @return array<int, Reports_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
 	 */
 	public function get_user_lesson_progress( int $course_id, int $user_id ): array;
 
@@ -86,7 +86,7 @@ interface Analysis_Listing_Service_Interface {
 	 *     @type string $order       ASC or DESC.
 	 *     @type int    $post_author Restrict to courses authored by this user ID.
 	 * }
-	 * @return array{ items: Analysis_Item[], total_count: int }
+	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_user_courses( array $args ): array;
 

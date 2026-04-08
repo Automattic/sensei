@@ -4563,7 +4563,7 @@
       <code>ARRAY_A</code>
     </UndefinedConstant>
   </file>
-  <file src="includes/internal/services/class-tables-based-analysis-listing-service.php">
+  <file src="includes/internal/services/class-tables-based-reports-listing-service.php">
     <PossiblyInvalidCast occurrences="2">
       <code>$column</code>
       <code>$column</code>

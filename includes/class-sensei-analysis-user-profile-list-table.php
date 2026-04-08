@@ -3,8 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-use Sensei\Internal\Services\Analysis_Item;
-use Sensei\Internal\Services\Analysis_Listing_Service_Interface;
+use Sensei\Internal\Services\Reports_Item;
+use Sensei\Internal\Services\Reports_Listing_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 
 /**
@@ -23,9 +23,9 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	/**
 	 * The analysis listing service.
 	 *
-	 * @var Analysis_Listing_Service_Interface
+	 * @var Reports_Listing_Service_Interface
 	 */
-	private Analysis_Listing_Service_Interface $analysis_listing_service;
+	private Reports_Listing_Service_Interface $reports_listing_service;
 
 	/**
 	 * Constructor
@@ -33,12 +33,12 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @since  1.2.0
 	 *
 	 * @param int                                     $user_id                  User ID.
-	 * @param Analysis_Listing_Service_Interface|null $analysis_listing_service Analysis listing service.
+	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Analysis listing service.
 	 */
-	public function __construct( $user_id = 0, ?Analysis_Listing_Service_Interface $analysis_listing_service = null ) {
+	public function __construct( $user_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null ) {
 		$this->user_id                  = intval( $user_id );
 		$this->page_slug                = Sensei_Analysis::PAGE_SLUG;
-		$this->analysis_listing_service = $analysis_listing_service ?? ( new Progress_Query_Service_Factory() )->create_analysis_listing_service();
+		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_user_profile' );
@@ -234,10 +234,10 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * Generates the overall array for a single item in the display
 	 *
 	 * @since  1.7.0
-	 * @param object $item The current item (Analysis_Item or WP_Comment).
+	 * @param object $item The current item (Reports_Item or WP_Comment).
 	 */
 	protected function get_row_data( $item ) {
-		if ( $item instanceof Analysis_Item ) {
+		if ( $item instanceof Reports_Item ) {
 			$course_title      = get_the_title( $item->post_id );
 			$course_percent    = $item->percent;
 			$course_start_date = $item->started_at ?? '';
@@ -339,7 +339,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		 */
 		$service_args = apply_filters( 'sensei_analysis_user_profile_filter_statuses', $service_args );
 
-		$result            = $this->analysis_listing_service->get_user_courses( $service_args );
+		$result            = $this->reports_listing_service->get_user_courses( $service_args );
 		$this->total_items = $result['total_count'];
 
 		return $result['items'];

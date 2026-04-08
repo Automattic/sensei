@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Comments_Based_Analysis_Listing_Service class.
+ * File containing the Comments_Based_Reports_Listing_Service class.
  *
  * @package sensei
  */
@@ -12,15 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Comments_Based_Analysis_Listing_Service.
+ * Class Comments_Based_Reports_Listing_Service.
  *
- * Comments-based implementation of the Analysis_Listing_Service_Interface.
+ * Comments-based implementation of the Reports_Listing_Service_Interface.
  *
  * @internal
  *
  * @since $$next-version$$
  */
-class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Service_Interface {
+class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_Interface {
 
 	/**
 	 * WordPress database object.
@@ -46,7 +46,7 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 	 * @since $$next-version$$
 	 *
 	 * @param array $args Arguments for the query (see interface).
-	 * @return array{ items: Analysis_Item[], total_count: int }
+	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_lesson_students( array $args ): array {
 		$activity_args = array(
@@ -100,7 +100,7 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 			$start_date = get_comment_meta( (int) $comment->comment_ID, 'start', true );
 			$grade_raw  = get_comment_meta( (int) $comment->comment_ID, 'grade', true );
 
-			$items[] = new Analysis_Item(
+			$items[] = new Reports_Item(
 				(int) $comment->comment_post_ID,
 				(int) $comment->user_id,
 				$comment->comment_approved,
@@ -123,7 +123,7 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 	 * @since $$next-version$$
 	 *
 	 * @param array $args Arguments for the query (see interface).
-	 * @return array{ items: Analysis_Item[], total_count: int }
+	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_course_students( array $args ): array {
 		$activity_args = array(
@@ -202,7 +202,7 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 			$start_date  = get_comment_meta( (int) $comment->comment_ID, 'start', true );
 			$percent_raw = get_comment_meta( (int) $comment->comment_ID, 'percent', true );
 
-			$items[] = new Analysis_Item(
+			$items[] = new Reports_Item(
 				(int) $comment->comment_post_ID,
 				(int) $comment->user_id,
 				$comment->comment_approved,
@@ -226,7 +226,7 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 	 *
 	 * @param int $course_id Course post ID.
 	 * @param int $user_id   User ID.
-	 * @return array<int, Analysis_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
+	 * @return array<int, Reports_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
 	 */
 	public function get_user_lesson_progress( int $course_id, int $user_id ): array {
 		$lessons = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
@@ -250,7 +250,7 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 			$start_date = get_comment_meta( (int) $lesson_status->comment_ID, 'start', true );
 			$grade_raw  = get_comment_meta( (int) $lesson_status->comment_ID, 'grade', true );
 
-			$items[ $lesson_id ] = new Analysis_Item(
+			$items[ $lesson_id ] = new Reports_Item(
 				(int) $lesson_status->comment_post_ID,
 				(int) $lesson_status->user_id,
 				$lesson_status->comment_approved,
@@ -270,7 +270,7 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 	 * @since $$next-version$$
 	 *
 	 * @param array $args Arguments for the query (see interface).
-	 * @return array{ items: Analysis_Item[], total_count: int }
+	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_user_courses( array $args ): array {
 		$activity_args = array(
@@ -318,7 +318,7 @@ class Comments_Based_Analysis_Listing_Service implements Analysis_Listing_Servic
 			$start_date  = get_comment_meta( (int) $comment->comment_ID, 'start', true );
 			$percent_raw = get_comment_meta( (int) $comment->comment_ID, 'percent', true );
 
-			$items[] = new Analysis_Item(
+			$items[] = new Reports_Item(
 				(int) $comment->comment_post_ID,
 				(int) $comment->user_id,
 				$comment->comment_approved,

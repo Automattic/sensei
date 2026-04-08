@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Analysis_Item class.
+ * File containing the Reports_Item class.
  *
  * @package sensei
  */
@@ -12,15 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Analysis_Item.
+ * Class Reports_Item.
  *
- * Value object representing a single analysis row. Abstracts away the
+ * Value object representing a single report row. Abstracts away the
  * difference between comment-based and table-based storage so that
- * the analysis UI code can work with a uniform interface.
+ * the report UI code can work with a uniform interface.
  *
  * @since $$next-version$$
  */
-class Analysis_Item {
+class Reports_Item {
 
 	/**
 	 * The post ID (lesson or course).
@@ -72,7 +72,7 @@ class Analysis_Item {
 	public ?float $percent;
 
 	/**
-	 * Mapping of legacy WP_Comment property names to Analysis_Item properties.
+	 * Mapping of legacy WP_Comment property names to Reports_Item properties.
 	 *
 	 * @var array<string, string>
 	 */
@@ -116,13 +116,13 @@ class Analysis_Item {
 	/**
 	 * Provide backward-compatible access to legacy WP_Comment property names.
 	 *
-	 * This allows third-party code that hooks into analysis column data filters
+	 * This allows third-party code that hooks into report column data filters
 	 * and reads WP_Comment properties to continue working with deprecation notices.
 	 *
 	 * Supported legacy properties: comment_approved, comment_post_ID, comment_date.
 	 * Other WP_Comment properties (e.g. comment_ID) are not mapped and will
-	 * trigger a _doing_it_wrong notice, since analysis data is now carried
-	 * directly on the Analysis_Item object.
+	 * trigger a _doing_it_wrong notice, since report data is now carried
+	 * directly on the Reports_Item object.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -133,11 +133,11 @@ class Analysis_Item {
 		if ( isset( self::LEGACY_PROPERTY_MAP[ $key ] ) ) {
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_argument handles its own output.
 			_deprecated_argument(
-				'Analysis_Item::$' . $key,
+				'Reports_Item::$' . $key,
 				'$$next-version$$',
 				sprintf(
 					/* translators: 1: old property name, 2: new property name */
-					'Accessing Analysis_Item via legacy WP_Comment property "%1$s" is deprecated. Use "%2$s" instead.',
+					'Accessing Reports_Item via legacy WP_Comment property "%1$s" is deprecated. Use "%2$s" instead.',
 					$key,
 					self::LEGACY_PROPERTY_MAP[ $key ]
 				)
@@ -149,10 +149,10 @@ class Analysis_Item {
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- _doing_it_wrong handles its own output.
 		_doing_it_wrong(
-			'Analysis_Item::$' . $key,
+			'Reports_Item::$' . $key,
 			sprintf(
 				/* translators: %s: property name */
-				'Property "%s" does not exist on Analysis_Item. The analysis list table no longer uses WP_Comment objects.',
+				'Property "%s" does not exist on Reports_Item. The report list table no longer uses WP_Comment objects.',
 				$key
 			),
 			'$$next-version$$'
