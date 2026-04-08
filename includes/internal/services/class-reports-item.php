@@ -7,6 +7,9 @@
 
 namespace Sensei\Internal\Services;
 
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -21,6 +24,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 class Reports_Item {
+
+	/**
+	 * Statuses counted as completed for report listing calculations
+	 * (course progress percentage and per-lesson completion counts).
+	 *
+	 * Excludes 'ungraded' because those lessons are blocked on the admin.
+	 *
+	 * @var string[]
+	 */
+	public const COMPLETED_STATUSES = array(
+		Lesson_Progress_Interface::STATUS_COMPLETE,
+		Quiz_Progress_Interface::STATUS_GRADED,
+		Quiz_Progress_Interface::STATUS_PASSED,
+		Quiz_Progress_Interface::STATUS_FAILED,
+	);
 
 	/**
 	 * The post ID (lesson or course).

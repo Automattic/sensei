@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Services;
 
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -119,7 +121,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 				array(
 					'post_id' => $lesson_id,
 					'type'    => 'sensei_lesson_status',
-					'status'  => array( 'complete', 'graded', 'passed', 'failed' ),
+					'status'  => Reports_Item::COMPLETED_STATUSES,
 					'count'   => true,
 				)
 			);
@@ -129,7 +131,11 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 				$grade_args = array(
 					'post_id'  => $lesson_id,
 					'type'     => 'sensei_lesson_status',
-					'status'   => array( 'graded', 'passed', 'failed' ),
+					'status'   => array(
+						Quiz_Progress_Interface::STATUS_GRADED,
+						Quiz_Progress_Interface::STATUS_PASSED,
+						Quiz_Progress_Interface::STATUS_FAILED,
+					),
 					'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Required for grade aggregation.
 				);
 				add_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
