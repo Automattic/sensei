@@ -234,41 +234,23 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * Generates the overall array for a single item in the display
 	 *
 	 * @since  1.7.0
-	 * @param object $item The current item (Reports_Item or WP_Comment).
+	 * @param Reports_Item $item The current item.
 	 */
 	protected function get_row_data( $item ) {
-		if ( $item instanceof Reports_Item ) {
-			$course_title      = get_the_title( $item->post_id );
-			$course_percent    = $item->percent;
-			$course_start_date = $item->started_at ?? '';
-			$course_end_date   = '';
-			$item_status       = $item->status;
-			$item_post_id      = $item->post_id;
+		$course_title      = get_the_title( $item->post_id );
+		$course_percent    = $item->percent;
+		$course_start_date = $item->started_at ?? '';
+		$course_end_date   = '';
+		$item_status       = $item->status;
+		$item_post_id      = $item->post_id;
 
-			if ( 'complete' === $item_status ) {
-				$status          = __( 'Completed', 'sensei-lms' );
-				$status_class    = 'graded';
-				$course_end_date = $item->completed_at ?? '';
-			} else {
-				$status       = __( 'In Progress', 'sensei-lms' );
-				$status_class = 'in-progress';
-			}
+		if ( 'complete' === $item_status ) {
+			$status          = __( 'Completed', 'sensei-lms' );
+			$status_class    = 'graded';
+			$course_end_date = $item->completed_at ?? '';
 		} else {
-			$course_title      = get_the_title( $item->comment_post_ID );
-			$course_percent    = get_comment_meta( $item->comment_ID, 'percent', true );
-			$course_start_date = get_comment_meta( $item->comment_ID, 'start', true );
-			$course_end_date   = '';
-			$item_status       = $item->comment_approved;
-			$item_post_id      = $item->comment_post_ID;
-
-			if ( 'complete' == $item_status ) {
-				$status          = __( 'Completed', 'sensei-lms' );
-				$status_class    = 'graded';
-				$course_end_date = $item->comment_date;
-			} else {
-				$status       = __( 'In Progress', 'sensei-lms' );
-				$status_class = 'in-progress';
-			}
+			$status       = __( 'In Progress', 'sensei-lms' );
+			$status_class = 'in-progress';
 		}
 
 		// Output users data

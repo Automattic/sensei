@@ -238,58 +238,32 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 * Generates the overall array for a single item in the display
 	 *
 	 * @since  1.7.0
-	 * @param object $item The current item (Reports_Item or WP_Comment).
+	 * @param Reports_Item $item The current item.
 	 */
 	protected function get_row_data( $item ) {
-		if ( $item instanceof Reports_Item ) {
-			$user_start_date = $item->started_at ?? '';
-			$user_end_date   = $item->completed_at ?? '';
-			$item_status     = $item->status;
-			$item_grade      = $item->grade;
+		$user_start_date = $item->started_at ?? '';
+		$user_end_date   = $item->completed_at ?? '';
+		$item_status     = $item->status;
+		$item_grade      = $item->grade;
 
-			$grade = null;
-			if ( 'complete' === $item_status ) {
-				$status = __( 'Completed', 'sensei-lms' );
-				$grade  = __( 'No Grade', 'sensei-lms' );
-			} elseif ( 'graded' === $item_status ) {
-				$status = __( 'Graded', 'sensei-lms' );
-				$grade  = $item_grade;
-			} elseif ( 'passed' === $item_status ) {
-				$status = __( 'Passed', 'sensei-lms' );
-				$grade  = $item_grade;
-			} elseif ( 'failed' === $item_status ) {
-				$status = __( 'Failed', 'sensei-lms' );
-				$grade  = $item_grade;
-			} elseif ( 'ungraded' === $item_status ) {
-				$status = __( 'Ungraded', 'sensei-lms' );
-			} else {
-				$status        = __( 'In Progress', 'sensei-lms' );
-				$user_end_date = '';
-			}
+		$grade = null;
+		if ( 'complete' === $item_status ) {
+			$status = __( 'Completed', 'sensei-lms' );
+			$grade  = __( 'No Grade', 'sensei-lms' );
+		} elseif ( 'graded' === $item_status ) {
+			$status = __( 'Graded', 'sensei-lms' );
+			$grade  = $item_grade;
+		} elseif ( 'passed' === $item_status ) {
+			$status = __( 'Passed', 'sensei-lms' );
+			$grade  = $item_grade;
+		} elseif ( 'failed' === $item_status ) {
+			$status = __( 'Failed', 'sensei-lms' );
+			$grade  = $item_grade;
+		} elseif ( 'ungraded' === $item_status ) {
+			$status = __( 'Ungraded', 'sensei-lms' );
 		} else {
-			$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
-			$user_end_date   = $item->comment_date;
-			$item_status     = $item->comment_approved;
-
-			$grade = null;
-			if ( 'complete' == $item_status ) {
-				$status = __( 'Completed', 'sensei-lms' );
-				$grade  = __( 'No Grade', 'sensei-lms' );
-			} elseif ( 'graded' == $item_status ) {
-				$status = __( 'Graded', 'sensei-lms' );
-				$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
-			} elseif ( 'passed' == $item_status ) {
-				$status = __( 'Passed', 'sensei-lms' );
-				$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
-			} elseif ( 'failed' == $item_status ) {
-				$status = __( 'Failed', 'sensei-lms' );
-				$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
-			} elseif ( 'ungraded' == $item_status ) {
-				$status = __( 'Ungraded', 'sensei-lms' );
-			} else {
-				$status        = __( 'In Progress', 'sensei-lms' );
-				$user_end_date = '';
-			}
+			$status        = __( 'In Progress', 'sensei-lms' );
+			$user_end_date = '';
 		}
 
 		// Output users data

@@ -426,40 +426,23 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param object $item The current item (Reports_Item or WP_Comment).
+	 * @param object $item The current item (Reports_Item from get_course_statuses).
 	 * @return array Column data.
 	 */
 	private function get_user_view_row_data( $item ) {
-		if ( $item instanceof Reports_Item ) {
-			$user_start_date = $item->started_at ?? '';
-			$user_end_date   = $item->completed_at ?? '';
-			$item_status     = $item->status;
-			$course_percent  = $item->percent;
-			$item_user_id    = $item->user_id;
+		$user_start_date = $item->started_at ?? '';
+		$user_end_date   = $item->completed_at ?? '';
+		$item_status     = $item->status;
+		$course_percent  = $item->percent;
+		$item_user_id    = $item->user_id;
 
-			if ( 'complete' === $item_status ) {
-				$status       = __( 'Completed', 'sensei-lms' );
-				$status_class = 'graded';
-			} else {
-				$status        = __( 'In Progress', 'sensei-lms' );
-				$status_class  = 'in-progress';
-				$user_end_date = '';
-			}
+		if ( 'complete' === $item_status ) {
+			$status       = __( 'Completed', 'sensei-lms' );
+			$status_class = 'graded';
 		} else {
-			$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
-			$user_end_date   = $item->comment_date;
-			$item_status     = $item->comment_approved;
-			$item_user_id    = $item->user_id;
-
-			if ( 'complete' == $item_status ) {
-				$status       = __( 'Completed', 'sensei-lms' );
-				$status_class = 'graded';
-			} else {
-				$status        = __( 'In Progress', 'sensei-lms' );
-				$status_class  = 'in-progress';
-				$user_end_date = '';
-			}
-			$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
+			$status        = __( 'In Progress', 'sensei-lms' );
+			$status_class  = 'in-progress';
+			$user_end_date = '';
 		}
 
 		// User data.
