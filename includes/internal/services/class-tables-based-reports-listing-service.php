@@ -71,21 +71,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
 
-		$where = " WHERE p.type = 'lesson'" . $this->build_filters( $args );
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
-		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . $where );
-		Utils::log_query_error( $wpdb, 'Reports lesson students count' );
-
-		$number = (int) ( $args['number'] ?? 0 );
-		$offset = (int) ( $args['offset'] ?? 0 );
-		if ( $number > 0 && $total_count > 0 && $offset >= $total_count ) {
-			$last_page = max( 0, (int) ceil( $total_count / $number ) - 1 );
-			$offset    = $last_page * $number;
-		}
-
-		$order_clause = $this->build_order_clause( $args );
-		$limit_clause = $number > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $number, $offset ) : '';
+		$where      = " WHERE p.type = 'lesson'" . $this->build_filters( $args );
+		$pagination = $this->build_pagination( $where, $args );
 
 		/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values.
@@ -100,8 +87,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				$submissions_table
 			)
 			. $where
-			. $order_clause
-			. $limit_clause
+			. $pagination['order_clause']
+			. $pagination['limit_clause']
 		);
 		Utils::log_query_error( $wpdb, 'Reports lesson students items' );
 
@@ -120,7 +107,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 
 		return array(
 			'items'       => $items,
-			'total_count' => $total_count,
+			'total_count' => $pagination['total_count'],
 		);
 	}
 
@@ -136,22 +123,9 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
 
-		$course_id = (int) ( $args['post_id'] ?? 0 );
-		$where     = " WHERE p.type = 'course'" . $this->build_filters( $args );
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
-		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . $where );
-		Utils::log_query_error( $wpdb, 'Reports course students count' );
-
-		$number = (int) ( $args['number'] ?? 0 );
-		$offset = (int) ( $args['offset'] ?? 0 );
-		if ( $number > 0 && $total_count > 0 && $offset >= $total_count ) {
-			$last_page = max( 0, (int) ceil( $total_count / $number ) - 1 );
-			$offset    = $last_page * $number;
-		}
-
-		$order_clause  = $this->build_order_clause( $args );
-		$limit_clause  = $number > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $number, $offset ) : '';
+		$course_id     = (int) ( $args['post_id'] ?? 0 );
+		$where         = " WHERE p.type = 'course'" . $this->build_filters( $args );
+		$pagination    = $this->build_pagination( $where, $args );
 		$total_lessons = $this->get_course_lesson_count( $course_id );
 		$completed_sql = $this->completed_statuses_sql();
 
@@ -176,8 +150,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				$table
 			)
 			. $where
-			. $order_clause
-			. $limit_clause
+			. $pagination['order_clause']
+			. $pagination['limit_clause']
 		);
 		Utils::log_query_error( $wpdb, 'Reports course students items' );
 
@@ -196,7 +170,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 
 		return array(
 			'items'       => $items,
-			'total_count' => $total_count,
+			'total_count' => $pagination['total_count'],
 		);
 	}
 
@@ -272,19 +246,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			);
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
-		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . $where );
-		Utils::log_query_error( $wpdb, 'Reports user courses count' );
-
-		$number = (int) ( $args['number'] ?? 0 );
-		$offset = (int) ( $args['offset'] ?? 0 );
-		if ( $number > 0 && $total_count > 0 && $offset >= $total_count ) {
-			$last_page = max( 0, (int) ceil( $total_count / $number ) - 1 );
-			$offset    = $last_page * $number;
-		}
-
-		$order_clause = $this->build_order_clause( $args );
-		$limit_clause = $number > 0 ? $wpdb->prepare( ' LIMIT %d OFFSET %d', $number, $offset ) : '';
+		$pagination = $this->build_pagination( $where, $args );
 
 		/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values.
@@ -294,8 +256,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				$table
 			)
 			. $where
-			. $order_clause
-			. $limit_clause
+			. $pagination['order_clause']
+			. $pagination['limit_clause']
 		);
 		Utils::log_query_error( $wpdb, 'Reports user courses items' );
 
@@ -337,7 +299,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 
 		return array(
 			'items'       => $items,
-			'total_count' => $total_count,
+			'total_count' => $pagination['total_count'],
 		);
 	}
 
@@ -390,6 +352,35 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		}
 
 		return $aggregates;
+	}
+
+	/**
+	 * Run the count query, snap the offset if it exceeds the total, and build
+	 * ORDER BY / LIMIT clauses. Shared by all paginated query methods.
+	 *
+	 * @param string $where SQL WHERE clause (already prepared).
+	 * @param array  $args  Activity args containing number, offset, orderby, order.
+	 * @return array{ total_count: int, order_clause: string, limit_clause: string }
+	 */
+	private function build_pagination( string $where, array $args ): array {
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
+		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . $where );
+
+		$number = (int) ( $args['number'] ?? 0 );
+		$offset = (int) ( $args['offset'] ?? 0 );
+		if ( $number > 0 && $total_count > 0 && $offset >= $total_count ) {
+			$last_page = max( 0, (int) ceil( $total_count / $number ) - 1 );
+			$offset    = $last_page * $number;
+		}
+
+		return array(
+			'total_count'  => $total_count,
+			'order_clause' => $this->build_order_clause( $args ),
+			'limit_clause' => $number > 0 ? (string) $wpdb->prepare( ' LIMIT %d OFFSET %d', $number, $offset ) : '',
+		);
 	}
 
 	/**
