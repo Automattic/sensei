@@ -329,47 +329,97 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	}
 
 	/**
-	 * Get aggregate stats for a single lesson.
+	 * Count students with activity on a lesson.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int $lesson_id Lesson post ID.
-	 * @return array{ student_count: int, completion_count: int, average_grade: float|null }
+	 * @param array $args Arguments for the query (see interface).
+	 * @return int
 	 */
-	public function get_lesson_aggregate( int $lesson_id ): array {
+	public function get_lesson_student_count( array $args ): int {
+		$wpdb    = $this->wpdb;
+		$table   = $this->get_progress_table_name();
+		$post_id = (int) ( $args['post_id'] ?? 0 );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
+		$count = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT( DISTINCT p.user_id ) FROM %i p WHERE p.post_id = %d AND p.type = \'lesson\'',
+				$table,
+				$post_id
+			)
+		);
+		Utils::log_query_error( $wpdb, 'Reports lesson student count' );
+
+		return (int) $count;
+	}
+
+	/**
+	 * Count students who completed a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Arguments for the query (see interface).
+	 * @return int
+	 */
+	public function get_lesson_completion_count( array $args ): int {
+		$wpdb          = $this->wpdb;
+		$table         = $this->get_progress_table_name();
+		$post_id       = (int) ( $args['post_id'] ?? 0 );
+		$completed_sql = $this->completed_statuses_sql();
+
+		// Count students whose effective status (quiz status when available,
+		// lesson status otherwise) is in the completed set.
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $completed_sql is derived from a class constant.
+		$count = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT( DISTINCT p.user_id )'
+				. ' FROM %i p'
+				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
+				. ' WHERE p.post_id = %d AND p.type = \'lesson\''
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $completed_sql is derived from a class constant.
+				. " AND ( q.status IN ( {$completed_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$completed_sql} ) ) )",
+				$table,
+				$table,
+				$post_id
+			)
+		);
+		Utils::log_query_error( $wpdb, 'Reports lesson completion count' );
+
+		return (int) $count;
+	}
+
+	/**
+	 * Get the average quiz grade for a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Arguments for the query (see interface).
+	 * @return float|null
+	 */
+	public function get_lesson_average_grade( array $args ): ?float {
 		$wpdb              = $this->wpdb;
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
-		$completed_sql     = $this->completed_statuses_sql();
+		$post_id           = (int) ( $args['post_id'] ?? 0 );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $completed_sql is derived from a class constant.
-		$row = $wpdb->get_row(
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
+		$avg = $wpdb->get_var(
 			$wpdb->prepare(
-				// Aggregate stats for one lesson: student count, completion count,
-				// and average quiz grade. Uses the same quiz-aware JOIN pattern.
-				'SELECT COUNT( DISTINCT p.user_id ) AS student_count,'
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $completed_sql is derived from a class constant.
-				. " COUNT( DISTINCT CASE WHEN COALESCE( q.status, p.status ) IN ( {$completed_sql} ) THEN p.user_id END ) AS completion_count,"
-				. ' AVG( qs.final_grade ) AS average_grade'
+				'SELECT AVG( qs.final_grade )'
 				. ' FROM %i p'
 				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
 				. ' LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id'
-				. ' WHERE p.post_id = %d AND p.type = \'lesson\'',
+				. ' WHERE p.post_id = %d AND p.type = \'lesson\' AND qs.final_grade IS NOT NULL',
 				$table,
 				$table,
 				$submissions_table,
-				$lesson_id
+				$post_id
 			)
 		);
-		Utils::log_query_error( $wpdb, 'Reports lesson aggregate' );
+		Utils::log_query_error( $wpdb, 'Reports lesson average grade' );
 
-		$avg_grade = ( $row && null !== $row->average_grade ) ? round( (float) $row->average_grade, 2 ) : null;
-
-		return array(
-			'student_count'    => $row ? (int) $row->student_count : 0,
-			'completion_count' => $row ? (int) $row->completion_count : 0,
-			'average_grade'    => $avg_grade,
-		);
+		return null !== $avg ? round( (float) $avg, 2 ) : null;
 	}
 
 	/**

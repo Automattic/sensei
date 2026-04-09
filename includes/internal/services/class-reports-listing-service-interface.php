@@ -99,12 +99,32 @@ interface Reports_Listing_Service_Interface {
 	public function get_user_courses( array $args ): array;
 
 	/**
-	 * Get aggregate stats for a single lesson (student count, completion count, average grade).
+	 * Count students with activity on a lesson.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int $lesson_id Lesson post ID.
-	 * @return array{ student_count: int, completion_count: int, average_grade: float|null }
+	 * @param array $args Comments-API-shaped activity arguments.
+	 * @return int
 	 */
-	public function get_lesson_aggregate( int $lesson_id ): array;
+	public function get_lesson_student_count( array $args ): int;
+
+	/**
+	 * Count students who completed a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Comments-API-shaped activity arguments.
+	 * @return int
+	 */
+	public function get_lesson_completion_count( array $args ): int;
+
+	/**
+	 * Get the average quiz grade for a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Comments-API-shaped activity arguments (should include meta_key 'grade').
+	 * @return float|null Null when no graded submissions exist.
+	 */
+	public function get_lesson_average_grade( array $args ): ?float;
 }

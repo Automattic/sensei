@@ -570,10 +570,67 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 * @return array Column data.
 	 */
 	private function get_lesson_overview_row_data( $item ) {
-		$agg                  = $this->reports_listing_service->get_lesson_aggregate( $item->ID );
-		$lesson_students      = $agg['student_count'];
-		$lesson_completions   = $agg['completion_count'];
-		$lesson_average_grade = null !== $agg['average_grade'] ? $agg['average_grade'] : __( 'N/A', 'sensei-lms' );
+		$lesson_args = array(
+			'post_id' => $item->ID,
+			'type'    => 'sensei_lesson_status',
+			'status'  => 'any',
+		);
+		/**
+		 * Filter the lesson learners activity arguments for the Course Analysis list table.
+		 *
+		 * @hook sensei_analysis_lesson_learners
+		 *
+		 * @param {array}  $lesson_args The lesson learners activity arguments.
+		 * @param {object} $item The current item.
+		 * @return {array} The lesson learners activity arguments.
+		 */
+		$lesson_students = $this->reports_listing_service->get_lesson_student_count(
+			apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item )
+		);
+
+		$completion_args = array(
+			'post_id' => $item->ID,
+			'type'    => 'sensei_lesson_status',
+			'status'  => Reports_Item::COMPLETED_STATUSES,
+			'count'   => true,
+		);
+		/**
+		 * Filter the lesson completions activity arguments for the Course Analysis list table.
+		 *
+		 * @hook sensei_analysis_lesson_completions
+		 *
+		 * @param {array}  $completion_args The lesson completions activity arguments.
+		 * @param {object} $item The current item.
+		 * @return {array} The lesson completions activity arguments.
+		 */
+		$lesson_completions = $this->reports_listing_service->get_lesson_completion_count(
+			apply_filters( 'sensei_analysis_lesson_completions', $completion_args, $item )
+		);
+
+		$lesson_average_grade = __( 'N/A', 'sensei-lms' );
+		if ( false !== Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
+			$grade_args = array(
+				'post_id'  => $item->ID,
+				'type'     => 'sensei_lesson_status',
+				'status'   => array( 'graded', 'passed', 'failed' ),
+				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Required for grade aggregation.
+			);
+			/**
+			 * Filter the lesson grades activity arguments for the Course Analysis list table.
+			 *
+			 * @hook sensei_analysis_lesson_grades
+			 *
+			 * @param {array}  $grade_args The lesson grades activity arguments.
+			 * @param {object} $item The current item.
+			 * @return {array} The lesson grades activity arguments.
+			 */
+			$avg = $this->reports_listing_service->get_lesson_average_grade(
+				apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item )
+			);
+			if ( null !== $avg ) {
+				$lesson_average_grade = $avg;
+			}
+		}
 
 		// Output lesson data
 		if ( $this->csv_output ) {

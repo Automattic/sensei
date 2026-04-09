@@ -298,15 +298,79 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_lesson_aggregate returns aggregate stats for a single lesson.
+	 * Tests that get_lesson_student_count returns count of all students.
 	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_aggregate
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_student_count
 	 */
-	public function testGetLessonAggregate_ReturnsAggregateStats(): void {
+	public function testGetLessonStudentCount_ReturnsCount(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user1     = $this->sensei_factory->user->create();
 		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
+
+		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_student_count(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 2, $result, 'Student count should include all statuses.' );
+	}
+
+	/**
+	 * Tests that get_lesson_completion_count returns count of completed students.
+	 *
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_completion_count
+	 */
+	public function testGetLessonCompletionCount_ReturnsCompletedOnly(): void {
+		/* Arrange. */
+		global $wpdb;
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
+
+		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_completion_count(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => array( 'complete', 'graded', 'passed', 'failed' ),
+				'count'   => true,
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result, 'Completion count should only include completed statuses.' );
+	}
+
+	/**
+	 * Tests that get_lesson_average_grade returns the average grade.
+	 *
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_average_grade
+	 */
+	public function testGetLessonAverageGrade_ReturnsAverage(): void {
+		/* Arrange. */
+		global $wpdb;
+		$user1     = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
@@ -317,22 +381,24 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
 			)
 		);
-
 		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
 		$this->insert_progress( $quiz_id, $user1, 'quiz', 'passed', $lesson_id );
 		$this->insert_quiz_submission( $quiz_id, $user1, 80 );
 
-		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
-
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_lesson_aggregate( $lesson_id );
+		$result = $service->get_lesson_average_grade(
+			array(
+				'post_id'  => $lesson_id,
+				'type'     => 'sensei_lesson_status',
+				'status'   => array( 'graded', 'passed', 'failed' ),
+				'meta_key' => 'grade',
+			)
+		);
 
 		/* Assert. */
-		$this->assertSame( 2, $result['student_count'], 'Student count should include all statuses.' );
-		$this->assertSame( 1, $result['completion_count'], 'Completion count should only include completed statuses.' );
-		$this->assertSame( 80.0, $result['average_grade'], 'Average grade should reflect quiz submission.' );
+		$this->assertSame( 80.0, $result, 'Average grade should reflect quiz submission.' );
 	}
 
 	/**

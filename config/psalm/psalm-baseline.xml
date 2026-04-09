@@ -4561,13 +4561,11 @@
       <code>$column</code>
       <code>$column</code>
     </PossiblyInvalidCast>
-    <PossiblyInvalidPropertyFetch occurrences="22">
-      <code>$row-&gt;average_grade</code>
+    <PossiblyInvalidPropertyFetch occurrences="19">
       <code>$row-&gt;completed_at</code>
       <code>$row-&gt;completed_at</code>
       <code>$row-&gt;completed_at</code>
       <code>$row-&gt;completed_at</code>
-      <code>$row-&gt;completion_count</code>
       <code>$row-&gt;effective_status</code>
       <code>$row-&gt;effective_status</code>
       <code>$row-&gt;grade</code>
@@ -4584,7 +4582,6 @@
       <code>$row-&gt;started_at</code>
       <code>$row-&gt;status</code>
       <code>$row-&gt;status</code>
-      <code>$row-&gt;student_count</code>
       <code>$row-&gt;user_id</code>
       <code>$row-&gt;user_id</code>
       <code>$row-&gt;user_id</code>

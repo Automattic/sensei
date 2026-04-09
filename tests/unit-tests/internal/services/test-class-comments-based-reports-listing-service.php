@@ -218,11 +218,11 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_lesson_aggregate returns aggregate stats for student progress.
+	 * Tests that get_lesson_student_count returns count of all students.
 	 *
-	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_lesson_aggregate
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_lesson_student_count
 	 */
-	public function testGetLessonAggregate_WithStudentProgress_ReturnsAggregateStats(): void {
+	public function testGetLessonStudentCount_WithStudentProgress_ReturnsCount(): void {
 		/* Arrange. */
 		$user1     = $this->sensei_factory->user->create();
 		$user2     = $this->sensei_factory->user->create();
@@ -237,10 +237,48 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$service = new Comments_Based_Reports_Listing_Service();
 
 		/* Act. */
-		$result = $service->get_lesson_aggregate( $lesson_id );
+		$result = $service->get_lesson_student_count(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			)
+		);
 
 		/* Assert. */
-		$this->assertSame( 2, $result['student_count'], 'Student count should include all statuses.' );
-		$this->assertSame( 1, $result['completion_count'], 'Completion count should only include completed statuses.' );
+		$this->assertSame( 2, $result, 'Student count should include all statuses.' );
+	}
+
+	/**
+	 * Tests that get_lesson_completion_count returns count of completed students only.
+	 *
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_lesson_completion_count
+	 */
+	public function testGetLessonCompletionCount_WithStudentProgress_ReturnsCompletedOnly(): void {
+		/* Arrange. */
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+
+		$this->create_lesson_status( $lesson_id, $user1, 'complete' );
+		$this->create_lesson_status( $lesson_id, $user2, 'in-progress' );
+
+		$service = new Comments_Based_Reports_Listing_Service();
+
+		/* Act. */
+		$result = $service->get_lesson_completion_count(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => array( 'complete', 'graded', 'passed', 'failed' ),
+				'count'   => true,
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result, 'Completion count should only include completed statuses.' );
 	}
 }

@@ -79,59 +79,50 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	}
 
 	/**
-	 * Get aggregate stats for a single lesson.
+	 * Count students with activity on a lesson.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int $lesson_id Lesson post ID.
-	 * @return array{ student_count: int, completion_count: int, average_grade: float|null }
+	 * @param array $args Arguments for the query (see interface).
+	 * @return int
 	 */
-	public function get_lesson_aggregate( int $lesson_id ): array {
-		$student_count = \Sensei_Utils::sensei_check_for_activity(
-			array(
-				'post_id' => $lesson_id,
-				'type'    => 'sensei_lesson_status',
-				'status'  => 'any',
-			)
-		);
+	public function get_lesson_student_count( array $args ): int {
+		return (int) \Sensei_Utils::sensei_check_for_activity( $args );
+	}
 
-		$completion_count = \Sensei_Utils::sensei_check_for_activity(
-			array(
-				'post_id' => $lesson_id,
-				'type'    => 'sensei_lesson_status',
-				'status'  => Reports_Item::COMPLETED_STATUSES,
-				'count'   => true,
-			)
-		);
+	/**
+	 * Count students who completed a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Arguments for the query (see interface).
+	 * @return int
+	 */
+	public function get_lesson_completion_count( array $args ): int {
+		return (int) \Sensei_Utils::sensei_check_for_activity( $args );
+	}
 
-		$average_grade = null;
-		if ( false !== \Sensei_Lesson::lesson_quiz_has_questions( $lesson_id ) ) {
-			$grade_args = array(
-				'post_id'  => $lesson_id,
-				'type'     => 'sensei_lesson_status',
-				'status'   => array(
-					Quiz_Progress_Interface::STATUS_GRADED,
-					Quiz_Progress_Interface::STATUS_PASSED,
-					Quiz_Progress_Interface::STATUS_FAILED,
-				),
-				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Required for grade aggregation.
-			);
-			add_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-			$lesson_grades = \Sensei_Utils::sensei_check_for_activity( $grade_args, true );
-			remove_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
+	/**
+	 * Get the average quiz grade for a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Arguments for the query (see interface).
+	 * @return float|null
+	 */
+	public function get_lesson_average_grade( array $args ): ?float {
+		add_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
+		$lesson_grades = \Sensei_Utils::sensei_check_for_activity( $args, true );
+		remove_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 
-			if ( is_object( $lesson_grades ) ) {
-				$grade_count   = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
-				$grade_total   = ! empty( $lesson_grades->meta_sum ) ? (float) $lesson_grades->meta_sum : 0;
-				$average_grade = \Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
-			}
+		if ( ! is_object( $lesson_grades ) ) {
+			return null;
 		}
 
-		return array(
-			'student_count'    => (int) $student_count,
-			'completion_count' => (int) $completion_count,
-			'average_grade'    => $average_grade,
-		);
+		$grade_count = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
+		$grade_total = ! empty( $lesson_grades->meta_sum ) ? (float) $lesson_grades->meta_sum : 0;
+
+		return \Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
 	}
 
 	/**
