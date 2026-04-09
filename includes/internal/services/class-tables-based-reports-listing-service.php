@@ -248,11 +248,31 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 
 		$pagination = $this->build_pagination( $where, $args );
 
+		$completed_sql = $this->completed_statuses_sql();
+
 		/** Query result rows. @var object[] $rows */
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values; $completed_sql is derived from a class constant.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at FROM %i p',
+				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at,'
+				. ' COALESCE('
+				. '   ( SELECT COUNT(*) FROM %i lp'
+				. '     LEFT JOIN %i lq ON lq.parent_post_id = lp.post_id AND lq.user_id = lp.user_id AND lq.type = \'quiz\''
+				. '     WHERE lp.parent_post_id = p.post_id AND lp.user_id = p.user_id AND lp.type = \'lesson\''
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $completed_sql is derived from a class constant.
+				. "     AND COALESCE( lq.status, lp.status ) IN ( {$completed_sql} )"
+				. '   ) * 100.0 / NULLIF('
+				. '     ( SELECT COUNT(*) FROM %i pm'
+				. '       INNER JOIN %i lpost ON lpost.ID = pm.post_id AND lpost.post_status IN ( \'publish\', \'private\' )'
+				. '       WHERE pm.meta_key = \'_lesson_course\' AND pm.meta_value = p.post_id'
+				. '     ), 0 ),'
+				. '   0'
+				. ' ) AS percent'
+				. ' FROM %i p',
+				$table,
+				$table,
+				$wpdb->postmeta,
+				$wpdb->posts,
 				$table
 			)
 			. $where
@@ -261,39 +281,17 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		);
 		Utils::log_query_error( $wpdb, 'Reports user courses items' );
 
-		$items         = array();
-		$completed_sql = $this->completed_statuses_sql();
+		$items = array();
+		/** Query result row. @var object $row */
 		foreach ( $rows as $row ) {
-			$course_id     = (int) $row->post_id;
-			$total_lessons = $this->get_course_lesson_count( $course_id );
-
-			$percent = 0;
-			if ( $total_lessons > 0 ) {
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $completed_sql is derived from a class constant. Caching handled by callers.
-				$completed_lessons = (int) $wpdb->get_var(
-					$wpdb->prepare(
-						'SELECT COUNT(*) FROM %i lp'
-						. ' LEFT JOIN %i lq ON lq.parent_post_id = lp.post_id AND lq.user_id = lp.user_id AND lq.type = \'quiz\''
-						. ' WHERE lp.parent_post_id = %d AND lp.user_id = %d AND lp.type = \'lesson\''
-						// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $completed_sql is derived from a class constant.
-						. " AND COALESCE( lq.status, lp.status ) IN ( {$completed_sql} )",
-						$table,
-						$table,
-						$course_id,
-						$user_id
-					)
-				);
-				$percent = round( $completed_lessons * 100.0 / $total_lessons, 0 );
-			}
-
 			$items[] = new Reports_Item(
-				$course_id,
+				(int) $row->post_id,
 				(int) $row->user_id,
 				$row->status,
 				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
 				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 				null,
-				(float) $percent
+				null !== $row->percent ? round( (float) $row->percent, 0 ) : null
 			);
 		}
 
