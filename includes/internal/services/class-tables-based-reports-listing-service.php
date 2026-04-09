@@ -286,9 +286,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. "   AND ( lq.status IN ( {$completed_sql} ) OR ( lq.post_id IS NULL AND lp.status IN ( {$completed_sql} ) ) )"
 				. '   GROUP BY lp.parent_post_id'
 				. ' ) completed ON completed.course_id = p.post_id'
-				// Derived table: count total published/private lessons per course.
-				// Uses wp_postmeta because lessons store their course ID in _lesson_course
-				// meta, not in post_parent.
+				// Derived table: count total published/private lessons per course
+				// via the _lesson_course postmeta that maps each lesson to its course.
 				. ' LEFT JOIN ('
 				. '   SELECT pm.meta_value AS course_id, COUNT(*) AS cnt'
 				. '   FROM %i pm'
