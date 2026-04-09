@@ -79,6 +79,10 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
+				// Fetch each student's lesson progress with their effective quiz/lesson status and grade.
+				// Join quiz progress (q) to get the quiz-aware status via COALESCE: if a quiz
+				// exists for this lesson, its status takes precedence over the lesson status.
+				// Join quiz submissions (qs) to get the final_grade when available.
 				'SELECT p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
 				. ' FROM %i p'
 				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
@@ -134,9 +138,15 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values; $completed_sql is derived from a class constant.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
+				// Fetch each student's course progress with a computed percent column.
+				// percent = (completed lessons / total lessons) * 100.
+				// The total_lessons denominator is pre-computed in PHP since all rows share the same course.
 				'SELECT p.user_id, p.status, p.started_at, p.completed_at,'
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( %d, 0 ), 0 ) AS percent'
 				. ' FROM %i p'
+				// Derived table: count completed lessons per student in this course.
+				// A lesson counts as completed if its effective status (quiz status when
+				// a quiz exists, lesson status otherwise) is in the completed set.
 				. ' LEFT JOIN ('
 				. '   SELECT lp.user_id, COUNT(*) AS cnt'
 				. '   FROM %i lp'
@@ -196,6 +206,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
+				// Fetch one lesson's progress for one user, with quiz-aware effective status.
+				// Same JOIN pattern as get_lesson_students but for a single row.
 				'SELECT COALESCE( q.status, p.status ) AS effective_status,'
 				. ' p.started_at, p.completed_at, qs.final_grade AS grade'
 				. ' FROM %i p'
@@ -257,9 +269,14 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values; $completed_sql is derived from a class constant.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
+				// Fetch each course's progress for this user with a computed percent column.
+				// percent = (completed lessons / total lessons) * 100.
 				'SELECT p.post_id, p.status, p.started_at, p.completed_at,'
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( total.cnt, 0 ), 0 ) AS percent'
 				. ' FROM %i p'
+				// Derived table: count completed lessons per course for this user.
+				// Uses the same effective-status logic as get_course_students (quiz status
+				// takes precedence when a quiz exists for the lesson).
 				. ' LEFT JOIN ('
 				. '   SELECT lp.parent_post_id AS course_id, COUNT(*) AS cnt'
 				. '   FROM %i lp'
@@ -269,6 +286,9 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. "   AND ( lq.status IN ( {$completed_sql} ) OR ( lq.post_id IS NULL AND lp.status IN ( {$completed_sql} ) ) )"
 				. '   GROUP BY lp.parent_post_id'
 				. ' ) completed ON completed.course_id = p.post_id'
+				// Derived table: count total published/private lessons per course.
+				// Uses wp_postmeta because lessons store their course ID in _lesson_course
+				// meta, not in post_parent.
 				. ' LEFT JOIN ('
 				. '   SELECT pm.meta_value AS course_id, COUNT(*) AS cnt'
 				. '   FROM %i pm'
@@ -327,6 +347,12 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $completed_sql is derived from a class constant. Caching handled by callers.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
+				// Aggregate per-lesson stats for a course overview: how many students
+				// started each lesson, how many completed it, and the average quiz grade.
+				// Uses the same quiz-aware JOIN pattern as the other queries.
+				// completion_count uses the effective status (quiz overrides lesson).
+				// average_grade comes from quiz_submissions.final_grade (NULL for
+				// lessons without graded quizzes).
 				'SELECT p.post_id AS lesson_id,'
 				. ' COUNT( DISTINCT p.user_id ) AS student_count,'
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $completed_sql is derived from a class constant.
