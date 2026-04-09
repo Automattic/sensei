@@ -68,13 +68,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	private Reports_Listing_Service_Interface $reports_listing_service;
 
 	/**
-	 * Cached user lesson progress keyed by lesson ID.
-	 *
-	 * @var array<int, Reports_Item|null>|null
-	 */
-	private ?array $user_lesson_progress = null;
-
-	/**
 	 * Cached lesson aggregates keyed by lesson ID.
 	 *
 	 * @var array<int, array>|null
@@ -492,11 +485,24 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$status          = __( 'Not started', 'sensei-lms' );
 		$user_start_date = $user_end_date = $status_class = $grade = '';
 
-		if ( ! isset( $this->user_lesson_progress ) ) {
-			$this->user_lesson_progress = $this->reports_listing_service->get_user_lesson_progress( $this->course_id, $this->user_id );
-		}
-
-		$reports_item = $this->user_lesson_progress[ $item->ID ] ?? null;
+		$lesson_args = array(
+			'post_id' => $item->ID,
+			'user_id' => $this->user_id,
+			'type'    => 'sensei_lesson_status',
+			'status'  => 'any',
+		);
+		/**
+		 * Filter the lesson status arguments for the Course Analysis list table.
+		 *
+		 * @hook sensei_analysis_course_user_lesson
+		 *
+		 * @param {array}  $lesson_args The lesson status arguments.
+		 * @param {object} $item The current item.
+		 * @param {int}    $user_id The user ID.
+		 * @return {array} The lesson status arguments.
+		 */
+		$lesson_args  = apply_filters( 'sensei_analysis_course_user_lesson', $lesson_args, $item, $this->user_id );
+		$reports_item = $this->reports_listing_service->get_user_lesson_progress( $lesson_args );
 
 		if ( null !== $reports_item ) {
 			$user_start_date = $reports_item->started_at ?? '';

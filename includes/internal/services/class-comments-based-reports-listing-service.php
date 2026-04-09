@@ -53,35 +53,17 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int $course_id Course post ID.
-	 * @param int $user_id   User ID.
-	 * @return array<int, Reports_Item|null>
+	 * @param array $args Arguments for the query (see interface).
+	 * @return Reports_Item|null
 	 */
-	public function get_user_lesson_progress( int $course_id, int $user_id ): array {
-		$lessons = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
+	public function get_user_lesson_progress( array $args ): ?Reports_Item {
+		$lesson_status = \Sensei_Utils::sensei_check_for_activity( $args, true );
 
-		$items = array();
-		foreach ( $lessons as $lesson_id ) {
-			$lesson_id     = (int) $lesson_id;
-			$lesson_status = \Sensei_Utils::sensei_check_for_activity(
-				array(
-					'post_id' => $lesson_id,
-					'user_id' => $user_id,
-					'type'    => 'sensei_lesson_status',
-					'status'  => 'any',
-				),
-				true
-			);
-
-			if ( empty( $lesson_status ) || ! $lesson_status instanceof \WP_Comment ) {
-				$items[ $lesson_id ] = null;
-				continue;
-			}
-
-			$items[ $lesson_id ] = $this->item_from_comment( $lesson_status, 'grade' );
+		if ( empty( $lesson_status ) || ! $lesson_status instanceof \WP_Comment ) {
+			return null;
 		}
 
-		return $items;
+		return $this->item_from_comment( $lesson_status, 'grade' );
 	}
 
 	/**

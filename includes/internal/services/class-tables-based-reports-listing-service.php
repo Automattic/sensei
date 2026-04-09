@@ -201,69 +201,52 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	}
 
 	/**
-	 * Get lesson progress for one user in a course.
+	 * Get a single lesson's progress for one user.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int $course_id Course post ID.
-	 * @param int $user_id   User ID.
-	 * @return array<int, Reports_Item|null>
+	 * @param array $args Arguments for the query (see interface).
+	 * @return Reports_Item|null
 	 */
-	public function get_user_lesson_progress( int $course_id, int $user_id ): array {
+	public function get_user_lesson_progress( array $args ): ?Reports_Item {
 		$wpdb              = $this->wpdb;
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
 
-		$lessons = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
-		if ( empty( $lessons ) ) {
-			return array();
-		}
+		$post_id = (int) ( $args['post_id'] ?? 0 );
+		$user_id = (int) ( $args['user_id'] ?? 0 );
 
-		/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
-		$rows = (array) $wpdb->get_results(
+		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status,'
 				. ' p.started_at, p.completed_at, qs.final_grade AS grade'
 				. ' FROM %i p'
 				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
 				. ' LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id'
-				. ' WHERE p.parent_post_id = %d AND p.user_id = %d AND p.type = \'lesson\'',
+				. ' WHERE p.post_id = %d AND p.user_id = %d AND p.type = \'lesson\'',
 				$table,
 				$table,
 				$submissions_table,
-				$course_id,
+				$post_id,
 				$user_id
 			)
 		);
 		Utils::log_query_error( $wpdb, 'Reports user lesson progress' );
 
-		$progress_map = array();
-		foreach ( $rows as $row ) {
-			$progress_map[ (int) $row->post_id ] = $row;
+		if ( ! $row ) {
+			return null;
 		}
 
-		$items = array();
-		foreach ( $lessons as $lesson_id ) {
-			$lesson_id = (int) $lesson_id;
-			if ( ! isset( $progress_map[ $lesson_id ] ) ) {
-				$items[ $lesson_id ] = null;
-				continue;
-			}
-
-			$row                 = $progress_map[ $lesson_id ];
-			$items[ $lesson_id ] = new Reports_Item(
-				(int) $row->post_id,
-				(int) $row->user_id,
-				$row->effective_status,
-				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
-				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
-				null !== $row->grade ? (float) $row->grade : null,
-				null
-			);
-		}
-
-		return $items;
+		return new Reports_Item(
+			(int) $row->post_id,
+			(int) $row->user_id,
+			$row->effective_status,
+			$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
+			$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
+			null !== $row->grade ? (float) $row->grade : null,
+			null
+		);
 	}
 
 	/**

@@ -204,11 +204,11 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_user_lesson_progress returns progress keyed by lesson ID.
+	 * Tests that get_user_lesson_progress returns a Reports_Item for lesson progress.
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_ReturnsProgressKeyedByLessonId(): void {
+	public function testGetUserLessonProgress_WithProgress_ReturnsReportsItem(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -221,12 +221,18 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_user_lesson_progress( $course_id, $user_id );
+		$result = $service->get_user_lesson_progress(
+			array(
+				'post_id' => $lesson_id,
+				'user_id' => $user_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			)
+		);
 
 		/* Assert. */
-		$this->assertArrayHasKey( $lesson_id, $result );
-		$this->assertInstanceOf( Reports_Item::class, $result[ $lesson_id ] );
-		$this->assertSame( 'complete', $result[ $lesson_id ]->status );
+		$this->assertInstanceOf( Reports_Item::class, $result );
+		$this->assertSame( 'complete', $result->status );
 	}
 
 	/**
@@ -234,7 +240,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_WithNoProgress_ReturnsNullForLesson(): void {
+	public function testGetUserLessonProgress_WithNoProgress_ReturnsNull(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -246,11 +252,17 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_user_lesson_progress( $course_id, $user_id );
+		$result = $service->get_user_lesson_progress(
+			array(
+				'post_id' => $lesson_id,
+				'user_id' => $user_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			)
+		);
 
 		/* Assert. */
-		$this->assertArrayHasKey( $lesson_id, $result );
-		$this->assertNull( $result[ $lesson_id ] );
+		$this->assertNull( $result );
 	}
 
 	/**

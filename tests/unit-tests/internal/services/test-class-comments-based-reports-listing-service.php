@@ -158,13 +158,12 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_user_lesson_progress returns progress keyed by lesson ID.
+	 * Tests that get_user_lesson_progress returns a Reports_Item for a lesson with status.
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_WithLessonStatus_ReturnsProgressKeyedByLessonId(): void {
+	public function testGetUserLessonProgress_WithLessonStatus_ReturnsReportsItem(): void {
 		/* Arrange. */
-		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
@@ -175,12 +174,18 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$service = new Comments_Based_Reports_Listing_Service();
 
 		/* Act. */
-		$result = $service->get_user_lesson_progress( $course_id, $user_id );
+		$result = $service->get_user_lesson_progress(
+			array(
+				'post_id' => $lesson_id,
+				'user_id' => $user_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			)
+		);
 
 		/* Assert. */
-		$this->assertArrayHasKey( $lesson_id, $result );
-		$this->assertInstanceOf( Reports_Item::class, $result[ $lesson_id ] );
-		$this->assertSame( 'complete', $result[ $lesson_id ]->status );
+		$this->assertInstanceOf( Reports_Item::class, $result );
+		$this->assertSame( 'complete', $result->status );
 	}
 
 	/**
@@ -188,9 +193,8 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_WithNoProgress_ReturnsNullForLesson(): void {
+	public function testGetUserLessonProgress_WithNoProgress_ReturnsNull(): void {
 		/* Arrange. */
-		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
@@ -200,11 +204,17 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$service = new Comments_Based_Reports_Listing_Service();
 
 		/* Act. */
-		$result = $service->get_user_lesson_progress( $course_id, $user_id );
+		$result = $service->get_user_lesson_progress(
+			array(
+				'post_id' => $lesson_id,
+				'user_id' => $user_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			)
+		);
 
 		/* Assert. */
-		$this->assertArrayHasKey( $lesson_id, $result );
-		$this->assertNull( $result[ $lesson_id ] );
+		$this->assertNull( $result );
 	}
 
 	/**

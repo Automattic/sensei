@@ -68,15 +68,14 @@ interface Reports_Listing_Service_Interface {
 	public function get_course_students( array $args ): array;
 
 	/**
-	 * Get lesson progress for one user in a course.
+	 * Get a single lesson's progress for one user.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int $course_id Course post ID.
-	 * @param int $user_id   User ID.
-	 * @return array<int, Reports_Item|null> One item per lesson, keyed by lesson ID. Null for lessons with no progress.
+	 * @param array $args Comments-API-shaped activity arguments (post_id, user_id, type, status).
+	 * @return Reports_Item|null Null when the user has no progress on this lesson.
 	 */
-	public function get_user_lesson_progress( int $course_id, int $user_id ): array;
+	public function get_user_lesson_progress( array $args ): ?Reports_Item;
 
 	/**
 	 * Get paginated course progress for a specific user.
