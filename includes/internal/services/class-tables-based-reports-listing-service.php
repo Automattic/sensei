@@ -219,7 +219,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status,'
+				'SELECT COALESCE( q.status, p.status ) AS effective_status,'
 				. ' p.started_at, p.completed_at, qs.final_grade AS grade'
 				. ' FROM %i p'
 				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
@@ -239,8 +239,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		}
 
 		return new Reports_Item(
-			(int) $row->post_id,
-			(int) $row->user_id,
+			$post_id,
+			$user_id,
 			$row->effective_status,
 			$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
 			$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
