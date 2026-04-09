@@ -307,7 +307,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			case 'lesson':
 			default:
 				$this->items = $this->get_lessons( $args );
-				$this->preload_lesson_data();
 				break;
 		}
 
@@ -382,7 +381,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			default:
 				$args['number'] = -1;
 				$this->items    = $this->get_lessons( $args );
-				$this->preload_lesson_data();
 
 				break;
 		}
@@ -494,88 +492,41 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$status          = __( 'Not started', 'sensei-lms' );
 		$user_start_date = $user_end_date = $status_class = $grade = '';
 
-		// Check if we have cached progress from the service.
-		if ( isset( $this->user_lesson_progress ) && array_key_exists( $item->ID, $this->user_lesson_progress ) ) {
-			$reports_item = $this->user_lesson_progress[ $item->ID ];
+		if ( ! isset( $this->user_lesson_progress ) ) {
+			$this->user_lesson_progress = $this->reports_listing_service->get_user_lesson_progress( $this->course_id, $this->user_id );
+		}
 
-			if ( null !== $reports_item ) {
-				$user_start_date = $reports_item->started_at ?? '';
-				$user_end_date   = $reports_item->completed_at ?? '';
-				$item_status     = $reports_item->status;
-				$item_grade      = $reports_item->grade;
+		$reports_item = $this->user_lesson_progress[ $item->ID ] ?? null;
 
-				if ( 'complete' === $item_status ) {
-					$status       = __( 'Completed', 'sensei-lms' );
-					$status_class = 'graded';
-					$grade        = __( 'No Grade', 'sensei-lms' );
-				} elseif ( 'graded' === $item_status ) {
-					$status       = __( 'Graded', 'sensei-lms' );
-					$status_class = 'graded';
-					$grade        = $item_grade;
-				} elseif ( 'passed' === $item_status ) {
-					$status       = __( 'Passed', 'sensei-lms' );
-					$status_class = 'graded';
-					$grade        = $item_grade;
-				} elseif ( 'failed' === $item_status ) {
-					$status       = __( 'Failed', 'sensei-lms' );
-					$status_class = 'failed';
-					$grade        = $item_grade;
-				} elseif ( 'ungraded' === $item_status ) {
-					$status       = __( 'Ungraded', 'sensei-lms' );
-					$status_class = 'ungraded';
-				} elseif ( 'in-progress' === $item_status ) {
-					$status        = __( 'In Progress', 'sensei-lms' );
-					$status_class  = 'in-progress';
-					$user_end_date = '';
-				}
-			}
-		} else {
-			// Fallback to comments-based approach.
-			$lesson_args = array(
-				'post_id' => $item->ID,
-				'user_id' => $this->user_id,
-				'type'    => 'sensei_lesson_status',
-				'status'  => 'any',
-			);
-			/**
-			 * Filter the lesson status arguments for the Course Analysis list table.
-			 *
-			 * @hook sensei_analysis_course_user_lesson
-			 *
-			 * @param {array}  $lesson_args The lesson status arguments.
-			 * @param {object} $item The current item.
-			 * @param {int}    $user_id The user ID.
-			 * @return {array} The lesson status arguments.
-			 */
-			$lesson_status = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_user_lesson', $lesson_args, $item, $this->user_id ), true );
+		if ( null !== $reports_item ) {
+			$user_start_date = $reports_item->started_at ?? '';
+			$user_end_date   = $reports_item->completed_at ?? '';
+			$item_status     = $reports_item->status;
+			$item_grade      = $reports_item->grade;
 
-			if ( ! empty( $lesson_status ) ) {
-				$user_start_date = get_comment_meta( $lesson_status->comment_ID, 'start', true );
-				$user_end_date   = $lesson_status->comment_date;
-
-				if ( 'complete' == $lesson_status->comment_approved ) {
-					$status       = __( 'Completed', 'sensei-lms' );
-					$status_class = 'graded';
-					$grade        = __( 'No Grade', 'sensei-lms' );
-				} elseif ( 'graded' == $lesson_status->comment_approved ) {
-					$status       = __( 'Graded', 'sensei-lms' );
-					$status_class = 'graded';
-					$grade        = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
-				} elseif ( 'passed' == $lesson_status->comment_approved ) {
-					$status       = __( 'Passed', 'sensei-lms' );
-					$status_class = 'graded';
-					$grade        = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
-				} elseif ( 'failed' == $lesson_status->comment_approved ) {
-					$status       = __( 'Failed', 'sensei-lms' );
-					$status_class = 'failed';
-					$grade        = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
-				} elseif ( 'ungraded' == $lesson_status->comment_approved ) {
-					$status       = __( 'Ungraded', 'sensei-lms' );
-					$status_class = 'ungraded';
-				} elseif ( 'in-progress' == $lesson_status->comment_approved ) {
-					$status        = __( 'In Progress', 'sensei-lms' );
-					$user_end_date = '';
-				}
+			if ( 'complete' === $item_status ) {
+				$status       = __( 'Completed', 'sensei-lms' );
+				$status_class = 'graded';
+				$grade        = __( 'No Grade', 'sensei-lms' );
+			} elseif ( 'graded' === $item_status ) {
+				$status       = __( 'Graded', 'sensei-lms' );
+				$status_class = 'graded';
+				$grade        = $item_grade;
+			} elseif ( 'passed' === $item_status ) {
+				$status       = __( 'Passed', 'sensei-lms' );
+				$status_class = 'graded';
+				$grade        = $item_grade;
+			} elseif ( 'failed' === $item_status ) {
+				$status       = __( 'Failed', 'sensei-lms' );
+				$status_class = 'failed';
+				$grade        = $item_grade;
+			} elseif ( 'ungraded' === $item_status ) {
+				$status       = __( 'Ungraded', 'sensei-lms' );
+				$status_class = 'ungraded';
+			} elseif ( 'in-progress' === $item_status ) {
+				$status        = __( 'In Progress', 'sensei-lms' );
+				$status_class  = 'in-progress';
+				$user_end_date = '';
 			}
 		}
 
@@ -624,6 +575,10 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$lesson_completions   = 0;
 		$lesson_average_grade = __( 'N/A', 'sensei-lms' );
 
+		if ( ! isset( $this->lesson_aggregates_cache ) ) {
+			$this->lesson_aggregates_cache = $this->reports_listing_service->get_lesson_aggregates( $this->course_id );
+		}
+
 		if ( isset( $this->lesson_aggregates_cache[ $item->ID ] ) ) {
 			$agg                = $this->lesson_aggregates_cache[ $item->ID ];
 			$lesson_students    = $agg['student_count'];
@@ -631,68 +586,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
 			if ( null !== $agg['average_grade'] ) {
 				$lesson_average_grade = $agg['average_grade'];
-			} elseif ( false !== Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
-				// Has questions but no grades yet — keep N/A.
-				$lesson_average_grade = __( 'N/A', 'sensei-lms' );
-			}
-		} else {
-			// Fallback to comments-based approach.
-			$lesson_args = array(
-				'post_id' => $item->ID,
-				'type'    => 'sensei_lesson_status',
-				'status'  => 'any',
-			);
-			/**
-			 * Filter the lesson learners activity arguments for the Course Analysis list table.
-			 *
-			 * @hook sensei_analysis_lesson_learners
-			 *
-			 * @param {array}  $lesson_args The lesson learners activity arguments.
-			 * @param {object} $item The current item.
-			 * @return {array} The lesson learners activity arguments.
-			 */
-			$lesson_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item ) );
-
-			$lesson_args = array(
-				'post_id' => $item->ID,
-				'type'    => 'sensei_lesson_status',
-				'status'  => array( 'complete', 'graded', 'passed', 'failed' ),
-				'count'   => true,
-			);
-			/**
-			 * Filter the lesson completions activity arguments for the Course Analysis list table.
-			 *
-			 * @hook sensei_analysis_lesson_completions
-			 *
-			 * @param {array}  $lesson_args The lesson completions activity arguments.
-			 * @param {object} $item The current item.
-			 * @return {array} The lesson completions activity arguments.
-			 */
-			$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
-
-			if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
-				$grade_args = array(
-					'post_id'  => $item->ID,
-					'type'     => 'sensei_lesson_status',
-					'status'   => array( 'graded', 'passed', 'failed' ),
-					'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Required for grade aggregation.
-				);
-				add_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-				/**
-				 * Filter the lesson grades activity arguments for the Course Analysis list table.
-				 *
-				 * @hook sensei_analysis_lesson_grades
-				 *
-				 * @param {array}  $grade_args The lesson grades activity arguments.
-				 * @param {object} $item The current item.
-				 * @return {array} The lesson grades activity arguments.
-				 */
-				$lesson_grades = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true );
-				remove_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-
-				$grade_count          = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
-				$grade_total          = ! empty( $lesson_grades->meta_sum ) ? floatval( $lesson_grades->meta_sum ) : 0;
-				$lesson_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
 			}
 		}
 
@@ -824,22 +717,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$this->total_items = $lessons_query->found_posts;
 
 		return $lessons_query->posts;
-	}
-
-	/**
-	 * Pre-load lesson data from the analysis listing service.
-	 *
-	 * For the user-lesson view, batch-loads all lesson progress for the user.
-	 * For the lesson overview, batch-loads aggregate stats for the course.
-	 *
-	 * @since $$next-version$$
-	 */
-	private function preload_lesson_data(): void {
-		if ( $this->user_id ) {
-			$this->user_lesson_progress = $this->reports_listing_service->get_user_lesson_progress( $this->course_id, $this->user_id );
-		} else {
-			$this->lesson_aggregates_cache = $this->reports_listing_service->get_lesson_aggregates( $this->course_id );
-		}
 	}
 
 	/**
