@@ -70,6 +70,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$wpdb              = $this->wpdb;
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
+		$post_id           = (int) ( $args['post_id'] ?? 0 );
 
 		$where      = " WHERE p.type = 'lesson'" . $this->build_filters( $args );
 		$pagination = $this->build_pagination( $where, $args );
@@ -78,7 +79,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT p.post_id, p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
+				'SELECT p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
 				. ' FROM %i p'
 				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
 				. ' LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id',
@@ -95,7 +96,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$items = array();
 		foreach ( $rows as $row ) {
 			$items[] = new Reports_Item(
-				(int) $row->post_id,
+				$post_id,
 				(int) $row->user_id,
 				$row->effective_status,
 				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
@@ -133,7 +134,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values; $completed_sql is derived from a class constant.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at,'
+				'SELECT p.user_id, p.status, p.started_at, p.completed_at,'
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( %d, 0 ), 0 ) AS percent'
 				. ' FROM %i p'
 				. ' LEFT JOIN ('
@@ -160,7 +161,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$items = array();
 		foreach ( $rows as $row ) {
 			$items[] = new Reports_Item(
-				(int) $row->post_id,
+				$course_id,
 				(int) $row->user_id,
 				$row->status,
 				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
@@ -256,7 +257,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values; $completed_sql is derived from a class constant.
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at,'
+				'SELECT p.post_id, p.status, p.started_at, p.completed_at,'
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( total.cnt, 0 ), 0 ) AS percent'
 				. ' FROM %i p'
 				. ' LEFT JOIN ('
@@ -293,7 +294,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		foreach ( $rows as $row ) {
 			$items[] = new Reports_Item(
 				(int) $row->post_id,
-				(int) $row->user_id,
+				$user_id,
 				$row->status,
 				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
 				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,

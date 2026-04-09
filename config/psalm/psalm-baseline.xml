@@ -4561,7 +4561,7 @@
       <code>$column</code>
       <code>$column</code>
     </PossiblyInvalidCast>
-    <PossiblyInvalidPropertyFetch occurrences="26">
+    <PossiblyInvalidPropertyFetch occurrences="23">
       <code>$row-&gt;average_grade</code>
       <code>$row-&gt;completed_at</code>
       <code>$row-&gt;completed_at</code>
