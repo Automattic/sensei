@@ -915,13 +915,6 @@
   </file>
   <file src="includes/class-sensei-analysis-course-list-table.php">
     <ArgumentTypeCoercion occurrences="1"/>
-    <InvalidPropertyFetch occurrences="5">
-      <code>$lesson_grades-&gt;meta_sum</code>
-      <code>$lesson_grades-&gt;total</code>
-      <code>$lesson_status-&gt;comment_ID</code>
-      <code>$lesson_status-&gt;comment_approved</code>
-      <code>$lesson_status-&gt;comment_date</code>
-    </InvalidPropertyFetch>
     <InvalidReturnStatement occurrences="1">
       <code>$data</code>
     </InvalidReturnStatement>
@@ -4564,11 +4557,11 @@
     </UndefinedConstant>
   </file>
   <file src="includes/internal/services/class-tables-based-reports-listing-service.php">
-    <PossiblyInvalidCast occurrences="2">
+    <PossiblyInvalidCast occurrences="1">
       <code>$column</code>
       <code>$column</code>
     </PossiblyInvalidCast>
-    <PossiblyInvalidPropertyFetch occurrences="28">
+    <PossiblyInvalidPropertyFetch occurrences="26">
       <code>$row-&gt;average_grade</code>
       <code>$row-&gt;completed_at</code>
       <code>$row-&gt;completed_at</code>

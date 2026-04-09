@@ -134,20 +134,22 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at,'
-				. ' COALESCE('
-				. '   ( SELECT COUNT(*) FROM %i lp'
-				. '     LEFT JOIN %i lq ON lq.parent_post_id = lp.post_id AND lq.user_id = lp.user_id AND lq.type = \'quiz\''
-				. '     WHERE lp.parent_post_id = p.post_id AND lp.user_id = p.user_id AND lp.type = \'lesson\''
+				. ' COALESCE( completed.cnt * 100.0 / NULLIF( %d, 0 ), 0 ) AS percent'
+				. ' FROM %i p'
+				. ' LEFT JOIN ('
+				. '   SELECT lp.user_id, COUNT(*) AS cnt'
+				. '   FROM %i lp'
+				. '   LEFT JOIN %i lq ON lq.parent_post_id = lp.post_id AND lq.user_id = lp.user_id AND lq.type = \'quiz\''
+				. '   WHERE lp.parent_post_id = %d AND lp.type = \'lesson\''
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $completed_sql is derived from a class constant.
-				. "     AND COALESCE( lq.status, lp.status ) IN ( {$completed_sql} )"
-				. '   ) * 100.0 / NULLIF( %d, 0 ),'
-				. '   0'
-				. ' ) AS percent'
-				. ' FROM %i p',
-				$table,
-				$table,
+				. "   AND ( lq.status IN ( {$completed_sql} ) OR ( lq.post_id IS NULL AND lp.status IN ( {$completed_sql} ) ) )"
+				. '   GROUP BY lp.user_id'
+				. ' ) completed ON completed.user_id = p.user_id',
 				$total_lessons,
-				$table
+				$table,
+				$table,
+				$table,
+				$course_id
 			)
 			. $where
 			. $pagination['order_clause']
@@ -255,25 +257,30 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT p.post_id, p.user_id, p.status, p.started_at, p.completed_at,'
-				. ' COALESCE('
-				. '   ( SELECT COUNT(*) FROM %i lp'
-				. '     LEFT JOIN %i lq ON lq.parent_post_id = lp.post_id AND lq.user_id = lp.user_id AND lq.type = \'quiz\''
-				. '     WHERE lp.parent_post_id = p.post_id AND lp.user_id = p.user_id AND lp.type = \'lesson\''
+				. ' COALESCE( completed.cnt * 100.0 / NULLIF( total.cnt, 0 ), 0 ) AS percent'
+				. ' FROM %i p'
+				. ' LEFT JOIN ('
+				. '   SELECT lp.parent_post_id AS course_id, COUNT(*) AS cnt'
+				. '   FROM %i lp'
+				. '   LEFT JOIN %i lq ON lq.parent_post_id = lp.post_id AND lq.user_id = lp.user_id AND lq.type = \'quiz\''
+				. '   WHERE lp.type = \'lesson\' AND lp.user_id = %d'
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $completed_sql is derived from a class constant.
-				. "     AND COALESCE( lq.status, lp.status ) IN ( {$completed_sql} )"
-				. '   ) * 100.0 / NULLIF('
-				. '     ( SELECT COUNT(*) FROM %i pm'
-				. '       INNER JOIN %i lpost ON lpost.ID = pm.post_id AND lpost.post_status IN ( \'publish\', \'private\' )'
-				. '       WHERE pm.meta_key = \'_lesson_course\' AND pm.meta_value = p.post_id'
-				. '     ), 0 ),'
-				. '   0'
-				. ' ) AS percent'
-				. ' FROM %i p',
+				. "   AND ( lq.status IN ( {$completed_sql} ) OR ( lq.post_id IS NULL AND lp.status IN ( {$completed_sql} ) ) )"
+				. '   GROUP BY lp.parent_post_id'
+				. ' ) completed ON completed.course_id = p.post_id'
+				. ' LEFT JOIN ('
+				. '   SELECT pm.meta_value AS course_id, COUNT(*) AS cnt'
+				. '   FROM %i pm'
+				. '   INNER JOIN %i lpost ON lpost.ID = pm.post_id AND lpost.post_status IN ( \'publish\', \'private\' )'
+				. '   WHERE pm.meta_key = \'_lesson_course\''
+				. '   GROUP BY pm.meta_value'
+				. ' ) total ON total.course_id = p.post_id',
 				$table,
 				$table,
+				$table,
+				$user_id,
 				$wpdb->postmeta,
-				$wpdb->posts,
-				$table
+				$wpdb->posts
 			)
 			. $where
 			. $pagination['order_clause']
