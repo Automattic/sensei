@@ -99,12 +99,12 @@ interface Reports_Listing_Service_Interface {
 	public function get_user_courses( array $args ): array;
 
 	/**
-	 * Get per-lesson aggregate stats for a course overview.
+	 * Get aggregate stats for a single lesson (student count, completion count, average grade).
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int $course_id Course post ID.
-	 * @return array[] Array of associative arrays with keys: lesson_id, student_count, completion_count, average_grade.
+	 * @param int $lesson_id Lesson post ID.
+	 * @return array{ student_count: int, completion_count: int, average_grade: float|null }
 	 */
-	public function get_lesson_aggregates( int $course_id ): array;
+	public function get_lesson_aggregate( int $lesson_id ): array;
 }

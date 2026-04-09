@@ -4561,7 +4561,7 @@
       <code>$column</code>
       <code>$column</code>
     </PossiblyInvalidCast>
-    <PossiblyInvalidPropertyFetch occurrences="23">
+    <PossiblyInvalidPropertyFetch occurrences="22">
       <code>$row-&gt;average_grade</code>
       <code>$row-&gt;completed_at</code>
       <code>$row-&gt;completed_at</code>
@@ -4572,7 +4572,6 @@
       <code>$row-&gt;effective_status</code>
       <code>$row-&gt;grade</code>
       <code>$row-&gt;grade</code>
-      <code>$row-&gt;lesson_id</code>
       <code>$row-&gt;percent</code>
       <code>$row-&gt;post_id</code>
       <code>$row-&gt;post_id</code>

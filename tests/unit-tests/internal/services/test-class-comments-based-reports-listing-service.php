@@ -218,13 +218,12 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_lesson_aggregates returns aggregate stats for student progress.
+	 * Tests that get_lesson_aggregate returns aggregate stats for student progress.
 	 *
-	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_lesson_aggregates
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_lesson_aggregate
 	 */
-	public function testGetLessonAggregates_WithStudentProgress_ReturnsAggregateStats(): void {
+	public function testGetLessonAggregate_WithStudentProgress_ReturnsAggregateStats(): void {
 		/* Arrange. */
-		global $wpdb;
 		$user1     = $this->sensei_factory->user->create();
 		$user2     = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -238,19 +237,10 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$service = new Comments_Based_Reports_Listing_Service();
 
 		/* Act. */
-		$result = $service->get_lesson_aggregates( $course_id );
+		$result = $service->get_lesson_aggregate( $lesson_id );
 
 		/* Assert. */
-		$this->assertNotEmpty( $result );
-		$found = false;
-		foreach ( $result as $agg ) {
-			if ( $agg['lesson_id'] === $lesson_id ) {
-				$found = true;
-				$this->assertSame( 2, $agg['student_count'] );
-				$this->assertSame( 1, $agg['completion_count'] );
-				break;
-			}
-		}
-		$this->assertTrue( $found, 'Expected to find aggregates for the lesson.' );
+		$this->assertSame( 2, $result['student_count'], 'Student count should include all statuses.' );
+		$this->assertSame( 1, $result['completion_count'], 'Completion count should only include completed statuses.' );
 	}
 }

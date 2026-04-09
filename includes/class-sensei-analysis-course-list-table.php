@@ -68,13 +68,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	private Reports_Listing_Service_Interface $reports_listing_service;
 
 	/**
-	 * Cached lesson aggregates keyed by lesson ID.
-	 *
-	 * @var array<int, array>|null
-	 */
-	private ?array $lesson_aggregates_cache = null;
-
-	/**
 	 * Constructor
 	 *
 	 * @param int                                    $course_id               Course ID.
@@ -577,23 +570,10 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 * @return array Column data.
 	 */
 	private function get_lesson_overview_row_data( $item ) {
-		$lesson_students      = 0;
-		$lesson_completions   = 0;
-		$lesson_average_grade = __( 'N/A', 'sensei-lms' );
-
-		if ( ! isset( $this->lesson_aggregates_cache ) ) {
-			$this->lesson_aggregates_cache = $this->reports_listing_service->get_lesson_aggregates( $this->course_id );
-		}
-
-		if ( isset( $this->lesson_aggregates_cache[ $item->ID ] ) ) {
-			$agg                = $this->lesson_aggregates_cache[ $item->ID ];
-			$lesson_students    = $agg['student_count'];
-			$lesson_completions = $agg['completion_count'];
-
-			if ( null !== $agg['average_grade'] ) {
-				$lesson_average_grade = $agg['average_grade'];
-			}
-		}
+		$agg                  = $this->reports_listing_service->get_lesson_aggregate( $item->ID );
+		$lesson_students      = $agg['student_count'];
+		$lesson_completions   = $agg['completion_count'];
+		$lesson_average_grade = null !== $agg['average_grade'] ? $agg['average_grade'] : __( 'N/A', 'sensei-lms' );
 
 		// Output lesson data
 		if ( $this->csv_output ) {

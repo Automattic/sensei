@@ -298,11 +298,11 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get_lesson_aggregates returns aggregate stats.
+	 * Tests that get_lesson_aggregate returns aggregate stats for a single lesson.
 	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_aggregates
+	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_aggregate
 	 */
-	public function testGetLessonAggregates_ReturnsAggregateStats(): void {
+	public function testGetLessonAggregate_ReturnsAggregateStats(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user1     = $this->sensei_factory->user->create();
@@ -327,13 +327,12 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_lesson_aggregates( $course_id );
+		$result = $service->get_lesson_aggregate( $lesson_id );
 
 		/* Assert. */
-		$this->assertArrayHasKey( $lesson_id, $result );
-		$this->assertSame( 2, $result[ $lesson_id ]['student_count'] );
-		$this->assertSame( 1, $result[ $lesson_id ]['completion_count'] );
-		$this->assertSame( 80.0, $result[ $lesson_id ]['average_grade'] );
+		$this->assertSame( 2, $result['student_count'], 'Student count should include all statuses.' );
+		$this->assertSame( 1, $result['completion_count'], 'Completion count should only include completed statuses.' );
+		$this->assertSame( 80.0, $result['average_grade'], 'Average grade should reflect quiz submission.' );
 	}
 
 	/**

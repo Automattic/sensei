@@ -79,67 +79,59 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	}
 
 	/**
-	 * Get per-lesson aggregate stats for a course overview.
+	 * Get aggregate stats for a single lesson.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int $course_id Course post ID.
-	 * @return array[]
+	 * @param int $lesson_id Lesson post ID.
+	 * @return array{ student_count: int, completion_count: int, average_grade: float|null }
 	 */
-	public function get_lesson_aggregates( int $course_id ): array {
-		$lessons = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
+	public function get_lesson_aggregate( int $lesson_id ): array {
+		$student_count = \Sensei_Utils::sensei_check_for_activity(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			)
+		);
 
-		$aggregates = array();
-		foreach ( $lessons as $lesson_id ) {
-			$student_count = \Sensei_Utils::sensei_check_for_activity(
-				array(
-					'post_id' => $lesson_id,
-					'type'    => 'sensei_lesson_status',
-					'status'  => 'any',
-				)
+		$completion_count = \Sensei_Utils::sensei_check_for_activity(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => Reports_Item::COMPLETED_STATUSES,
+				'count'   => true,
+			)
+		);
+
+		$average_grade = null;
+		if ( false !== \Sensei_Lesson::lesson_quiz_has_questions( $lesson_id ) ) {
+			$grade_args = array(
+				'post_id'  => $lesson_id,
+				'type'     => 'sensei_lesson_status',
+				'status'   => array(
+					Quiz_Progress_Interface::STATUS_GRADED,
+					Quiz_Progress_Interface::STATUS_PASSED,
+					Quiz_Progress_Interface::STATUS_FAILED,
+				),
+				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Required for grade aggregation.
 			);
+			add_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
+			$lesson_grades = \Sensei_Utils::sensei_check_for_activity( $grade_args, true );
+			remove_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 
-			$completion_count = \Sensei_Utils::sensei_check_for_activity(
-				array(
-					'post_id' => $lesson_id,
-					'type'    => 'sensei_lesson_status',
-					'status'  => Reports_Item::COMPLETED_STATUSES,
-					'count'   => true,
-				)
-			);
-
-			$average_grade = null;
-			if ( false !== \Sensei_Lesson::lesson_quiz_has_questions( (int) $lesson_id ) ) {
-				$grade_args = array(
-					'post_id'  => $lesson_id,
-					'type'     => 'sensei_lesson_status',
-					'status'   => array(
-						Quiz_Progress_Interface::STATUS_GRADED,
-						Quiz_Progress_Interface::STATUS_PASSED,
-						Quiz_Progress_Interface::STATUS_FAILED,
-					),
-					'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Required for grade aggregation.
-				);
-				add_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-				$lesson_grades = \Sensei_Utils::sensei_check_for_activity( $grade_args, true );
-				remove_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-
-				if ( is_object( $lesson_grades ) ) {
-					$grade_count   = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
-					$grade_total   = ! empty( $lesson_grades->meta_sum ) ? (float) $lesson_grades->meta_sum : 0;
-					$average_grade = \Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
-				}
+			if ( is_object( $lesson_grades ) ) {
+				$grade_count   = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
+				$grade_total   = ! empty( $lesson_grades->meta_sum ) ? (float) $lesson_grades->meta_sum : 0;
+				$average_grade = \Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
 			}
-
-			$aggregates[ (int) $lesson_id ] = array(
-				'lesson_id'        => (int) $lesson_id,
-				'student_count'    => (int) $student_count,
-				'completion_count' => (int) $completion_count,
-				'average_grade'    => $average_grade,
-			);
 		}
 
-		return $aggregates;
+		return array(
+			'student_count'    => (int) $student_count,
+			'completion_count' => (int) $completion_count,
+			'average_grade'    => $average_grade,
+		);
 	}
 
 	/**
