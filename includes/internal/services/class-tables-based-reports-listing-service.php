@@ -102,7 +102,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			$items[] = new Reports_Item(
 				$post_id,
 				(int) $row->user_id,
-				$row->effective_status,
+				$row->effective_status ?? 'in-progress',
 				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
 				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 				null !== $row->grade ? (float) $row->grade : null,
@@ -173,7 +173,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			$items[] = new Reports_Item(
 				$course_id,
 				(int) $row->user_id,
-				$row->status,
+				$row->status ?? 'in-progress',
 				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
 				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 				null,
@@ -230,7 +230,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		return new Reports_Item(
 			$post_id,
 			$user_id,
-			$row->effective_status,
+			$row->effective_status ?? 'in-progress',
 			$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
 			$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 			null !== $row->grade ? (float) $row->grade : null,
@@ -314,7 +314,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			$items[] = new Reports_Item(
 				(int) $row->post_id,
 				$user_id,
-				$row->status,
+				$row->status ?? 'in-progress',
 				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
 				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 				null,
@@ -443,6 +443,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
 		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . $where );
+		Utils::log_query_error( $wpdb, 'Reports pagination count' );
 
 		$number = (int) ( $args['number'] ?? 0 );
 		$offset = (int) ( $args['offset'] ?? 0 );
@@ -544,13 +545,6 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	}
 
 	/**
-	 * Build a comma-separated, SQL-quoted list of statuses considered completed,
-	 * derived from Grading_Item::COMPLETED_STATUSES. Values are class constants,
-	 * not user input.
-	 *
-	 * @return string
-	 */
-	/**
 	 * Build a SQL-safe quoted status list from $args['status'].
 	 *
 	 * @param array $args Activity args containing a 'status' key.
@@ -558,6 +552,9 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	 */
 	private function statuses_sql( array $args ): string {
 		$raw = (array) ( $args['status'] ?? array() );
+		if ( empty( $raw ) ) {
+			return "'__none__'";
+		}
 		// Values originate from class constants (Reports_Item::COMPLETED_STATUSES
 		// or Quiz_Progress_Interface status constants), not user input.
 		$escaped = array();
