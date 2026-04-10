@@ -2818,6 +2818,10 @@
     <DocblockTypeContradiction occurrences="1">
       <code>0</code>
     </DocblockTypeContradiction>
+    <DuplicateArrayKey occurrences="2">
+      <code>$published_quiz_ids</code>
+      <code>$published_quiz_ids</code>
+    </DuplicateArrayKey>
     <InvalidArgument occurrences="9">
       <code>$key</code>
       <code>$published_quiz_ids</code>
