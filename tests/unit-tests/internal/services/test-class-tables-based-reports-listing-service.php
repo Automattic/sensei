@@ -119,11 +119,11 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['total_count'] );
-		$this->assertCount( 1, $result['items'] );
-		$this->assertInstanceOf( Reports_Item::class, $result['items'][0] );
-		$this->assertSame( 'in-progress', $result['items'][0]->status );
-		$this->assertSame( $user_id, $result['items'][0]->user_id );
+		$this->assertSame( 1, $result['total_count'], 'Total count should be 1.' );
+		$this->assertCount( 1, $result['items'], 'Should return exactly one item.' );
+		$this->assertInstanceOf( Reports_Item::class, $result['items'][0], 'Item should be a Reports_Item.' );
+		$this->assertSame( 'in-progress', $result['items'][0]->status, 'Status should be in-progress.' );
+		$this->assertSame( $user_id, $result['items'][0]->user_id, 'User ID should match.' );
 	}
 
 	/**
@@ -163,8 +163,8 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 'passed', $result['items'][0]->status );
-		$this->assertSame( 90.0, $result['items'][0]->grade );
+		$this->assertSame( 'passed', $result['items'][0]->status, 'Status should be the coalesced quiz status.' );
+		$this->assertSame( 90.0, $result['items'][0]->grade, 'Grade should come from quiz submission.' );
 	}
 
 	/**
@@ -197,10 +197,10 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['total_count'] );
-		$this->assertCount( 1, $result['items'] );
-		$this->assertSame( $user_id, $result['items'][0]->user_id );
-		$this->assertNotNull( $result['items'][0]->percent );
+		$this->assertSame( 1, $result['total_count'], 'Total count should be 1.' );
+		$this->assertCount( 1, $result['items'], 'Should return exactly one item.' );
+		$this->assertSame( $user_id, $result['items'][0]->user_id, 'User ID should match.' );
+		$this->assertNotNull( $result['items'][0]->percent, 'Percent should be computed.' );
 	}
 
 	/**
@@ -231,8 +231,8 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertInstanceOf( Reports_Item::class, $result );
-		$this->assertSame( 'complete', $result->status );
+		$this->assertInstanceOf( Reports_Item::class, $result, 'Should return a Reports_Item.' );
+		$this->assertSame( 'complete', $result->status, 'Status should be complete.' );
 	}
 
 	/**
@@ -291,10 +291,10 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['total_count'] );
-		$this->assertCount( 1, $result['items'] );
-		$this->assertSame( $course_id, $result['items'][0]->post_id );
-		$this->assertSame( $user_id, $result['items'][0]->user_id );
+		$this->assertSame( 1, $result['total_count'], 'Total count should be 1.' );
+		$this->assertCount( 1, $result['items'], 'Should return exactly one item.' );
+		$this->assertSame( $course_id, $result['items'][0]->post_id, 'Post ID should match the course.' );
+		$this->assertSame( $user_id, $result['items'][0]->user_id, 'User ID should match.' );
 	}
 
 	/**
@@ -430,7 +430,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['total_count'] );
-		$this->assertCount( 1, $result['items'] );
+		$this->assertSame( 1, $result['total_count'], 'Total count should still reflect the actual total.' );
+		$this->assertCount( 1, $result['items'], 'Should snap offset to last page and return items.' );
 	}
 }

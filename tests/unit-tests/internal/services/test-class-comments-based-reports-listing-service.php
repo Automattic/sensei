@@ -65,7 +65,6 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 */
 	public function testGetLessonStudents_WithLessonStatus_ReturnsReportsItems(): void {
 		/* Arrange. */
-		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
@@ -87,11 +86,11 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['total_count'] );
-		$this->assertCount( 1, $result['items'] );
-		$this->assertInstanceOf( Reports_Item::class, $result['items'][0] );
-		$this->assertSame( 'in-progress', $result['items'][0]->status );
-		$this->assertSame( $user_id, $result['items'][0]->user_id );
+		$this->assertSame( 1, $result['total_count'], 'Total count should be 1.' );
+		$this->assertCount( 1, $result['items'], 'Should return exactly one item.' );
+		$this->assertInstanceOf( Reports_Item::class, $result['items'][0], 'Item should be a Reports_Item.' );
+		$this->assertSame( 'in-progress', $result['items'][0]->status, 'Status should be in-progress.' );
+		$this->assertSame( $user_id, $result['items'][0]->user_id, 'User ID should match.' );
 	}
 
 	/**
@@ -101,7 +100,6 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 */
 	public function testGetCourseStudents_WithCourseStatus_ReturnsReportsItems(): void {
 		/* Arrange. */
-		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$this->create_course_status( $course_id, $user_id, 'in-progress' );
@@ -120,10 +118,10 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['total_count'] );
-		$this->assertCount( 1, $result['items'] );
-		$this->assertInstanceOf( Reports_Item::class, $result['items'][0] );
-		$this->assertSame( $user_id, $result['items'][0]->user_id );
+		$this->assertSame( 1, $result['total_count'], 'Total count should be 1.' );
+		$this->assertCount( 1, $result['items'], 'Should return exactly one item.' );
+		$this->assertInstanceOf( Reports_Item::class, $result['items'][0], 'Item should be a Reports_Item.' );
+		$this->assertSame( $user_id, $result['items'][0]->user_id, 'User ID should match.' );
 	}
 
 	/**
@@ -133,7 +131,6 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 */
 	public function testGetUserCourses_WithCourseStatus_ReturnsReportsItems(): void {
 		/* Arrange. */
-		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$this->create_course_status( $course_id, $user_id, 'in-progress' );
@@ -152,9 +149,9 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertSame( 1, $result['total_count'] );
-		$this->assertCount( 1, $result['items'] );
-		$this->assertSame( $course_id, $result['items'][0]->post_id );
+		$this->assertSame( 1, $result['total_count'], 'Total count should be 1.' );
+		$this->assertCount( 1, $result['items'], 'Should return exactly one item.' );
+		$this->assertSame( $course_id, $result['items'][0]->post_id, 'Post ID should match the course.' );
 	}
 
 	/**
@@ -184,8 +181,8 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertInstanceOf( Reports_Item::class, $result );
-		$this->assertSame( 'complete', $result->status );
+		$this->assertInstanceOf( Reports_Item::class, $result, 'Should return a Reports_Item.' );
+		$this->assertSame( 'complete', $result->status, 'Status should be complete.' );
 	}
 
 	/**
@@ -281,4 +278,33 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 1, $result, 'Completion count should only include completed statuses.' );
 	}
+
+	/**
+	 * Tests that get_lesson_average_grade returns null when no graded submissions exist.
+	 *
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_lesson_average_grade
+	 */
+	public function testGetLessonAverageGrade_WithNoGradedStudents_ReturnsNull(): void {
+		/* Arrange. */
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+
+		$service = new Comments_Based_Reports_Listing_Service();
+
+		/* Act. */
+		$result = $service->get_lesson_average_grade(
+			array(
+				'post_id'  => $lesson_id,
+				'type'     => 'sensei_lesson_status',
+				'status'   => array( 'graded', 'passed', 'failed' ),
+				'meta_key' => 'grade',
+			)
+		);
+
+		/* Assert. */
+		$this->assertNull( $result, 'Should return null when no graded submissions exist.' );
+	}
+
 }

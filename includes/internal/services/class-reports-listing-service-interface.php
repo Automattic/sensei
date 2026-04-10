@@ -123,7 +123,7 @@ interface Reports_Listing_Service_Interface {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Comments-API-shaped activity arguments (should include meta_key 'grade').
+	 * @param array $args Comments-API-shaped activity arguments (meta_key 'grade' is used by the comments-based implementation).
 	 * @return float|null Null when no graded submissions exist.
 	 */
 	public function get_lesson_average_grade( array $args ): ?float;
