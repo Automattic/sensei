@@ -393,7 +393,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 				'post_id'  => $lesson_id,
 				'type'     => 'sensei_lesson_status',
 				'status'   => array( 'graded', 'passed', 'failed' ),
-				'meta_key' => 'grade',
+				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Test data matching production usage.
 			)
 		);
 
