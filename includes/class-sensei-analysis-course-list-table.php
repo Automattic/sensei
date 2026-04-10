@@ -1,12 +1,12 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
-
 use Sensei\Internal\Services\Reports_Item;
 use Sensei\Internal\Services\Reports_Listing_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 /**
  * Admin Analysis Course Data Table in Sensei.

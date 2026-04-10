@@ -74,7 +74,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	private function insert_quiz_submission( int $quiz_id, int $user_id, ?int $final_grade = null ): void {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_quiz_submissions';
-		$now    = current_time( 'mysql' );
+		$now    = current_time( 'mysql', true );
 		$data   = array(
 			'quiz_id'    => $quiz_id,
 			'user_id'    => $user_id,
