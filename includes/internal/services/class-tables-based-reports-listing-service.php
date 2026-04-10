@@ -406,8 +406,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$post_id           = (int) ( $args['post_id'] ?? 0 );
 		$status_sql        = $this->statuses_sql( $args );
 
-		// Filter by the caller-provided statuses (graded, passed, failed) on the
-		// effective quiz status, then average the grade from quiz_submissions.
+		// Filter by the caller-provided statuses on the effective quiz status,
+		// then average the grade from quiz_submissions.
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $status_sql is built from escaped args.
 		$avg = $wpdb->get_var(
 			$wpdb->prepare(

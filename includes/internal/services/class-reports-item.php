@@ -29,7 +29,7 @@ class Reports_Item {
 	 * Statuses counted as completed for report listing calculations
 	 * (course progress percentage and per-lesson completion counts).
 	 *
-	 * Excludes 'ungraded' because those lessons are blocked on the admin.
+	 * Excludes 'ungraded' because those lessons are awaiting admin grading.
 	 *
 	 * @var string[]
 	 */
