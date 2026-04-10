@@ -411,7 +411,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param \Sensei\Internal\Services\Reports_Item $item The current item from get_course_statuses.
+	 * @param object $item Reports_Item from get_course_statuses.
 	 * @return array Column data.
 	 */
 	private function get_user_view_row_data( $item ) {
@@ -472,7 +472,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param \WP_Post $item The current lesson post.
+	 * @param object $item WP_Post lesson.
 	 * @return array Column data.
 	 */
 	private function get_user_lesson_view_row_data( $item ) {
@@ -567,7 +567,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param \WP_Post $item The current lesson post.
+	 * @param object $item WP_Post lesson.
 	 * @return array Column data.
 	 */
 	private function get_lesson_overview_row_data( $item ) {
