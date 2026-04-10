@@ -26,8 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Reports_Item {
 
 	/**
-	 * Statuses counted as completed for report listing calculations
-	 * (course progress percentage and per-lesson completion counts).
+	 * Statuses counted as completed for per-lesson completion counts
+	 * in report listings.
 	 *
 	 * Excludes 'ungraded' because those lessons are awaiting admin grading.
 	 *

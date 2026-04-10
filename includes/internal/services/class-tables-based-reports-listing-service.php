@@ -145,7 +145,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. ' FROM %i p'
 				// Derived table: count completed lessons per student in this course.
 				// A lesson counts as completed when its progress status is 'complete',
-				// matching how Sensei_Utils::update_percent_complete stores the percent meta.
+				// matching how Sensei_Utils::update_course_status computes the percent meta.
 				. ' LEFT JOIN ('
 				. '   SELECT lp.user_id, COUNT(*) AS cnt'
 				. '   FROM %i lp'
@@ -270,7 +270,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. ' FROM %i p'
 				// Derived table: count completed lessons per course for this user.
 				// A lesson counts as completed when its progress status is 'complete',
-				// matching how Sensei_Utils::update_percent_complete stores the percent meta.
+				// matching how Sensei_Utils::update_course_status computes the percent meta.
 				. ' LEFT JOIN ('
 				. '   SELECT lp.parent_post_id AS course_id, COUNT(*) AS cnt'
 				. '   FROM %i lp'
