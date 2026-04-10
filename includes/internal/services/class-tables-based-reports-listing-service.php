@@ -131,8 +131,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$course_id     = (int) ( $args['post_id'] ?? 0 );
 		$where         = " WHERE p.type = 'course'" . $this->build_filters( $args );
 		$pagination    = $this->build_pagination( $where, $args );
-		$total_lessons = $this->get_course_lesson_count( $course_id );
-		$completed_sql = $this->completed_statuses_sql();
+		$total_lessons = count( Sensei()->course->course_lessons( $course_id, 'any', 'ids' ) );
+		$completed_sql = $this->statuses_sql( array( 'status' => Reports_Item::COMPLETED_STATUSES ) );
 
 		/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values; $completed_sql is derived from a class constant.
@@ -263,7 +263,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 
 		$pagination = $this->build_pagination( $where, $args );
 
-		$completed_sql = $this->completed_statuses_sql();
+		$completed_sql = $this->statuses_sql( array( 'status' => Reports_Item::COMPLETED_STATUSES ) );
 
 		/** Query result rows. @var object[] $rows */
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values; $completed_sql is derived from a class constant.
@@ -340,15 +340,17 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$wpdb    = $this->wpdb;
 		$table   = $this->get_progress_table_name();
 		$post_id = (int) ( $args['post_id'] ?? 0 );
+		$status  = $args['status'] ?? 'any';
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
-		$count = $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT COUNT( DISTINCT p.user_id ) FROM %i p WHERE p.post_id = %d AND p.type = \'lesson\'',
-				$table,
-				$post_id
-			)
-		);
+		$where = $wpdb->prepare( ' WHERE p.post_id = %d AND p.type = \'lesson\'', $post_id );
+		if ( 'any' !== $status ) {
+			$status_sql = $this->statuses_sql( $args );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is built from escaped args.
+			$where .= " AND p.status IN ( {$status_sql} )";
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
+		$count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT( DISTINCT p.user_id ) FROM %i p', $table ) . $where );
 		Utils::log_query_error( $wpdb, 'Reports lesson student count' );
 
 		return (int) $count;
@@ -363,22 +365,22 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	 * @return int
 	 */
 	public function get_lesson_completion_count( array $args ): int {
-		$wpdb          = $this->wpdb;
-		$table         = $this->get_progress_table_name();
-		$post_id       = (int) ( $args['post_id'] ?? 0 );
-		$completed_sql = $this->completed_statuses_sql();
+		$wpdb       = $this->wpdb;
+		$table      = $this->get_progress_table_name();
+		$post_id    = (int) ( $args['post_id'] ?? 0 );
+		$status_sql = $this->statuses_sql( $args );
 
 		// Count students whose effective status (quiz status when available,
-		// lesson status otherwise) is in the completed set.
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $completed_sql is derived from a class constant.
+		// lesson status otherwise) is in the caller-provided set.
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $status_sql is built from escaped args.
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT( DISTINCT p.user_id )'
 				. ' FROM %i p'
 				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
 				. ' WHERE p.post_id = %d AND p.type = \'lesson\''
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $completed_sql is derived from a class constant.
-				. " AND ( q.status IN ( {$completed_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$completed_sql} ) ) )",
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is built from escaped args.
+				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
 				$table,
 				$table,
 				$post_id
@@ -402,15 +404,20 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
 		$post_id           = (int) ( $args['post_id'] ?? 0 );
+		$status_sql        = $this->statuses_sql( $args );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
+		// Filter by the caller-provided statuses (graded, passed, failed) on the
+		// effective quiz status, then average the grade from quiz_submissions.
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $status_sql is built from escaped args.
 		$avg = $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT AVG( qs.final_grade )'
 				. ' FROM %i p'
 				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
 				. ' LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id'
-				. ' WHERE p.post_id = %d AND p.type = \'lesson\' AND qs.final_grade IS NOT NULL',
+				. ' WHERE p.post_id = %d AND p.type = \'lesson\' AND qs.final_grade IS NOT NULL'
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is built from escaped args.
+				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
 				$table,
 				$table,
 				$submissions_table,
@@ -543,19 +550,21 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	 *
 	 * @return string
 	 */
-	private function completed_statuses_sql(): string {
-		return "'" . implode( "','", Reports_Item::COMPLETED_STATUSES ) . "'";
-	}
-
 	/**
-	 * Get the total number of lessons in a course.
+	 * Build a SQL-safe quoted status list from $args['status'].
 	 *
-	 * @param int $course_id Course post ID.
-	 * @return int
+	 * @param array $args Activity args containing a 'status' key.
+	 * @return string Comma-separated, single-quoted values, e.g. "'complete','graded','passed','failed'".
 	 */
-	private function get_course_lesson_count( int $course_id ): int {
-		$lessons = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
-		return count( $lessons );
+	private function statuses_sql( array $args ): string {
+		$raw = (array) ( $args['status'] ?? array() );
+		// Values originate from class constants (Reports_Item::COMPLETED_STATUSES
+		// or Quiz_Progress_Interface status constants), not user input.
+		$escaped = array();
+		foreach ( $raw as $s ) {
+			$escaped[] = $this->wpdb->prepare( '%s', (string) $s );
+		}
+		return implode( ',', $escaped );
 	}
 
 	/**
