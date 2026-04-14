@@ -100,12 +100,18 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_submissions_table_name();
 
-		$query  = 'SELECT COUNT(*) AS count, COALESCE( SUM( qs.final_grade ), 0 ) AS sum';
-		$query .= $wpdb->prepare( ' FROM %i q', $table );
-		$query .= $wpdb->prepare( ' INNER JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id', $submissions_table );
-		$query .= " WHERE q.type = 'quiz'";
-		$query .= ' AND q.status IN ' . $this->get_graded_statuses_sql();
-		$query .= ' AND qs.final_grade IS NOT NULL';
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Statuses are from constants, not user input.
+		$query = $wpdb->prepare(
+			"SELECT COUNT(*) AS count, COALESCE( SUM( qs.final_grade ), 0 ) AS sum
+			FROM %i q
+			INNER JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
+			WHERE q.type = 'quiz'
+				AND q.status IN " . $this->get_graded_statuses_sql() . '
+				AND qs.final_grade IS NOT NULL',
+			$table,
+			$submissions_table
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 		$query .= $this->build_user_filter( $args );
 		$query .= $this->build_post_filter( $args );
