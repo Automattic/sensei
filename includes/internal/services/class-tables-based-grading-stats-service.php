@@ -244,11 +244,11 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	 * @return string SQL clause.
 	 */
 	private function build_user_filter( array $args ): string {
-		if ( ! empty( $args['user_id'] ) ) {
-			return $this->wpdb->prepare( ' AND q.user_id = %d', $args['user_id'] );
+		if ( empty( $args['user_id'] ) ) {
+			return '';
 		}
 
-		return '';
+		return $this->wpdb->prepare( ' AND q.user_id = %d', $args['user_id'] );
 	}
 
 	/**
