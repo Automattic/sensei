@@ -132,8 +132,9 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	public function get_courses_average_grade( array $course_ids = array() ): float {
 		$wpdb = $this->wpdb;
 
-		$course_filter = '';
-		if ( ! empty( $course_ids ) ) {
+		if ( empty( $course_ids ) ) {
+			$course_filter = '';
+		} else {
 			$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
 			$course_filter = $wpdb->prepare( " AND course.meta_value IN ( $placeholders )", $course_ids );
@@ -264,16 +265,16 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	private function build_post_filter( array $args ): string {
 		$wpdb = $this->wpdb;
 
+		if ( empty( $args['lesson_id'] ) && ( empty( $args['post__in'] ) || ! is_array( $args['post__in'] ) ) ) {
+			return '';
+		}
+
 		if ( ! empty( $args['lesson_id'] ) ) {
 			return $wpdb->prepare( ' AND c.comment_post_ID = %d', $args['lesson_id'] );
 		}
 
-		if ( ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
-			$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			return $wpdb->prepare( " AND c.comment_post_ID IN ( $placeholders )", $args['post__in'] );
-		}
-
-		return '';
+		$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
+		return $wpdb->prepare( " AND c.comment_post_ID IN ( $placeholders )", $args['post__in'] );
 	}
 }

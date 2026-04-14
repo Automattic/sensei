@@ -149,8 +149,9 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_submissions_table_name();
 
-		$course_filter = '';
-		if ( ! empty( $course_ids ) ) {
+		if ( empty( $course_ids ) ) {
+			$course_filter = '';
+		} else {
 			$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
 			$course_filter = $wpdb->prepare( " AND p.parent_post_id IN ( $placeholders )", $course_ids );
@@ -262,16 +263,16 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	private function build_post_filter( array $args ): string {
 		$wpdb = $this->wpdb;
 
+		if ( empty( $args['lesson_id'] ) && ( empty( $args['post__in'] ) || ! is_array( $args['post__in'] ) ) ) {
+			return '';
+		}
+
 		if ( ! empty( $args['lesson_id'] ) ) {
 			return $wpdb->prepare( ' AND q.parent_post_id = %d', $args['lesson_id'] );
 		}
 
-		if ( ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
-			$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			return $wpdb->prepare( " AND q.parent_post_id IN ( $placeholders )", $args['post__in'] );
-		}
-
-		return '';
+		$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
+		return $wpdb->prepare( " AND q.parent_post_id IN ( $placeholders )", $args['post__in'] );
 	}
 }
