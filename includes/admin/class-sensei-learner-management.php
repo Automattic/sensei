@@ -549,21 +549,14 @@ class Sensei_Learner_Management {
 		/**
 		 * Filter sensei_learners_learner_updated
 		 *
-		 * This filter should return false if there was no update in the learner row.
+		 * @deprecated $$next-version$$ No replacement — this filter is no longer supported.
 		 *
-		 * @hook sensei_learners_learner_updated
-		 *
-		 * @param {bool}   $updated    A flag indicating if there was an update in the learner row.
-		 * @param {int}    $post_id    Lesson or course id.
-		 * @param {int}    $comment_id Deprecated. Always 0. Previously the comment id tracking learner progress.
-		 * @param {int}    $user_id    The user id of the learner. Since $$next-version$$.
+		 * @param {bool} $updated    A flag indicating if there was an update in the learner row.
+		 * @param {int}  $post_id    Lesson or course id.
+		 * @param {int}  $comment_id The comment id which tracks the progress of the learner.
 		 * @return {bool} False if there were no updates.
 		 */
-		$updated = apply_filters( 'sensei_learners_learner_updated', $updated, $post_id, 0, $user_id );
-
-		if ( false === $updated ) {
-			exit( '' );
-		}
+		apply_filters_deprecated( 'sensei_learners_learner_updated', array( $updated, $post_id, $progress->get_id() ), '$$next-version$$' );
 
 		exit( esc_html( $formatted_date ) );
 	}
