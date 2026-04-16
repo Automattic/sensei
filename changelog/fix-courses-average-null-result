@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix a warning in Course Reports by handling null results when calculating average course grade.
