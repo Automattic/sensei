@@ -125,7 +125,7 @@ class Sensei_Reports_Overview_Service_Courses {
 		) averages_by_course'
 		);
 
-		return null === $result ? 0.0 : floatval( $result->courses_average ?? 0.0 );
+		return floatval( $result->courses_average ?? 0.0 );
 	}
 
 	/**
@@ -137,7 +137,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @param array $course_ids Courses ids to filter by.
 	 * @return float Average days to completion, rounded to the highest integer.
 	 */
-	public function get_average_days_to_completion( array $course_ids ): float {
+	public function get_average_days_to_completion( array $course_ids ) : float {
 		if ( empty( $course_ids ) ) {
 			return 0;
 		}
@@ -170,7 +170,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 *
 	 * @return int total of enrollments
 	 */
-	public function get_total_enrollments( $course_ids ): int {
+	public function get_total_enrollments( $course_ids ):int {
 		if ( empty( $course_ids ) ) {
 			return 0;
 		}
@@ -259,4 +259,5 @@ class Sensei_Reports_Overview_Service_Courses {
 			'OBJECT_K'
 		);
 	}
+
 }

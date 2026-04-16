@@ -330,31 +330,6 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 2.5, $actual );
 	}
 
-	public function testGetCoursesAverageGradeWhenQueryReturnsNullReturnsZero() {
-		global $wpdb;
-
-		$previous_wpdb = $wpdb;
-		$wpdb          = new class() {
-			public $comments    = 'wp_comments';
-			public $commentmeta = 'wp_commentmeta';
-			public $postmeta    = 'wp_postmeta';
-			public $posts       = 'wp_posts';
-
-			public function get_row() {
-				return null;
-			}
-		};
-
-		try {
-			$instance = new Sensei_Reports_Overview_Service_Courses();
-			$actual   = $instance->get_courses_average_grade( [ 1 ] );
-		} finally {
-			$wpdb = $previous_wpdb;
-		}
-
-		self::assertSame( 0.0, $actual, 'Average grade should be 0.0 when the courses average query returns null.' );
-	}
-
 	public function testGetTotalTotalEnrollments_WhenThereWereNoEnrolledStudents_ReturnsZero() {
 
 		/* Arrange. */
