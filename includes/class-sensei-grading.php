@@ -1430,7 +1430,7 @@ class Sensei_Grading {
 			) averages_by_course"
 		);
 
-		return floatval( $result->courses_average ?? 0 );
+		return floatval( isset( $result->courses_average ) ? $result->courses_average : 0 );
 	}
 }
 
