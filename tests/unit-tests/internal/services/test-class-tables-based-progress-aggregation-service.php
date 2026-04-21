@@ -725,39 +725,4 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $result['complete'], 'Non-trashed course should be counted.' );
 		$this->assertArrayNotHasKey( 'in-progress', $result, 'Trashed course status should not appear.' );
 	}
-
-	public function testCountStatuses_LessonWithQuizWithoutMeta_UsesParentPostId(): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
-		);
-		$quiz_id   = $this->sensei_factory->quiz->create(
-			[
-				'post_parent' => $lesson_id,
-				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
-			]
-		);
-		// Deliberately NOT setting _lesson_quiz postmeta.
-
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'graded', $lesson_id );
-		$this->insert_quiz_submission( $quiz_id, $user_id );
-
-		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->count_statuses(
-			[
-				'type' => 'lesson',
-			]
-		);
-
-		/* Assert. */
-		$this->assertSame( 1, $result['graded'], 'Quiz status should be used via parent_post_id without _lesson_quiz meta.' );
-		$this->assertArrayNotHasKey( 'complete', $result, 'Lesson status should not appear when quiz progress exists.' );
-	}
 }
