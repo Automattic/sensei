@@ -26,12 +26,11 @@ interface Lesson_Progress_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int      $lesson_id The lesson ID.
-	 * @param int      $user_id The user ID.
-	 * @param int|null $parent_post_id The parent post ID (course ID for lessons).
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id The user ID.
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
-	public function create( int $lesson_id, int $user_id, ?int $parent_post_id = null ): Lesson_Progress_Interface;
+	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface;
 
 	/**
 	 * Finds a lesson progress by lesson and user.
