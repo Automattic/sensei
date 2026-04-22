@@ -833,6 +833,10 @@ class Sensei_Main {
 			$this->tour->init();
 		}
 
+		( new \Sensei\Internal\Insights\Sensei_Insights(
+			$this->feature_flags->is_enabled( \Sensei\Internal\Insights\Sensei_Insights::FEATURE_FLAG )
+		) )->init();
+
 		// MailPoet integration.
 		/**
 		 * Integrate MailPoet by adding lists for courses and groups.
