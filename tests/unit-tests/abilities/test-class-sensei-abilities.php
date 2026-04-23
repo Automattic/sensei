@@ -66,18 +66,24 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
-	public function testGetStudents_WhenCalled_ReturnsUsers() {
-		$user_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+	public function testGetStudents_WhenCalled_ReturnsEnrolledUsers() {
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create();
+		$user_id   = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
 
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-students' );
 		$this->assertNotNull( $ability, 'The sensei/get-students ability should be registered.' );
 
-		$result = $ability->execute( array() );
+		$result = $ability->execute( array( 'course' => $course_id ) );
 
 		$this->assertIsArray( $result, 'The ability should return an array result.' );
 		$ids = wp_list_pluck( $result['items'], 'id' );
-		$this->assertContains( $user_id, $ids, 'The created user should appear in the items list.' );
+		$this->assertContains( $user_id, $ids, 'The enrolled user should appear in the items list.' );
+
+		$factory->tearDown();
 	}
 
 	public function testGetStudents_WithCourseFilter_ReturnsEnrolledUsersOnly() {
@@ -101,24 +107,37 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 	}
 
 	public function testGetStudents_WithSearch_MatchesByEmail() {
-		$user_id = $this->factory->user->create(
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create();
+		$user_id   = $this->factory->user->create(
 			array(
 				'role'       => 'subscriber',
 				'user_email' => 'alice@example.com',
 			)
 		);
 
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
+
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-students' );
 
-		$result = $ability->execute( array( 'search' => 'alice@example.com' ) );
+		$result = $ability->execute(
+			array(
+				'course' => $course_id,
+				'search' => 'alice@example.com',
+			)
+		);
 		$ids    = wp_list_pluck( $result['items'], 'id' );
 
 		$this->assertContains( $user_id, $ids );
+
+		$factory->tearDown();
 	}
 
 	public function testGetStudents_Always_IncludesUserContactDetails() {
-		$user_id = $this->factory->user->create(
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create();
+		$user_id   = $this->factory->user->create(
 			array(
 				'role'         => 'subscriber',
 				'display_name' => 'Alice',
@@ -127,9 +146,16 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 			)
 		);
 
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
+
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-students' );
-		$result  = $ability->execute( array( 'search' => 'alice@example.com' ) );
+		$result  = $ability->execute(
+			array(
+				'course' => $course_id,
+				'search' => 'alice@example.com',
+			)
+		);
 
 		$this->assertNotEmpty( $result['items'], 'Searching by email should return at least one item.' );
 		$match = null;
@@ -142,5 +168,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->assertNotNull( $match, 'The created user should be present in the search results.' );
 		$this->assertSame( 'Alice', $match['display_name'], 'The item should include the display name.' );
 		$this->assertSame( 'alice@example.com', $match['user_email'], 'The item should include the email.' );
+
+		$factory->tearDown();
 	}
 }

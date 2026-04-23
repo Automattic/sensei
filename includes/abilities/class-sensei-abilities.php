@@ -177,19 +177,19 @@ class Sensei_Abilities {
 			'sensei/get-students',
 			array(
 				'label'               => __( 'Get students', 'sensei-lms' ),
-				'description'         => __( 'List Sensei students, optionally filtered by course, progress state, or search.', 'sensei-lms' ),
+				'description'         => __( 'List students enrolled in a course. Optionally filter by progress state or search.', 'sensei-lms' ),
 				'category'            => self::CATEGORY_SLUG,
 				'input_schema'        => array(
 					'type'                 => 'object',
-					'default'              => array(),
+					'required'             => array( 'course' ),
 					'properties'           => array(
 						'course'          => array(
 							'type'        => 'integer',
-							'description' => __( 'Return only students enrolled in this course ID.', 'sensei-lms' ),
+							'description' => __( 'The course ID to list enrolled students for.', 'sensei-lms' ),
 						),
 						'progress_status' => array(
 							'type'        => 'string',
-							'description' => __( 'Filter by progress state on the specified course. Requires `course`.', 'sensei-lms' ),
+							'description' => __( 'Filter by progress state on the course.', 'sensei-lms' ),
 							'enum'        => array( Course_Progress_Interface::STATUS_IN_PROGRESS, Course_Progress_Interface::STATUS_COMPLETE ),
 						),
 						'search'          => array(
@@ -340,36 +340,34 @@ class Sensei_Abilities {
 	 * @param array $input Ability input.
 	 * @return array
 	 */
-	public static function execute_get_students( $input = array() ): array {
-		$per_page = min( 100, (int) ( $input['per_page'] ?? 20 ) );
-		$page     = max( 1, (int) ( $input['page'] ?? 1 ) );
+	public static function execute_get_students( $input ): array {
+		$course_id = (int) $input['course'];
+		$per_page  = min( 100, (int) ( $input['per_page'] ?? 20 ) );
+		$page      = max( 1, (int) ( $input['page'] ?? 1 ) );
+
+		$enrolment    = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$enrolled_ids = $enrolment->get_enrolled_user_ids();
+
+		// WP_User_Query treats an empty `include` as "no restriction" and returns every user,
+		// so short-circuit here when no one is enrolled.
+		if ( empty( $enrolled_ids ) ) {
+			return array(
+				'items'       => array(),
+				'total'       => 0,
+				'total_pages' => 0,
+			);
+		}
 
 		$query_args = array(
-			'number' => $per_page,
-			'paged'  => $page,
-			'fields' => 'ID',
+			'number'  => $per_page,
+			'paged'   => $page,
+			'fields'  => 'ID',
+			'include' => $enrolled_ids,
 		);
 
 		if ( ! empty( $input['search'] ) ) {
 			$query_args['search']         = '*' . $input['search'] . '*';
 			$query_args['search_columns'] = array( 'user_login', 'user_email', 'display_name' );
-		}
-
-		if ( ! empty( $input['course'] ) ) {
-			$enrolment    = Sensei_Course_Enrolment::get_course_instance( (int) $input['course'] );
-			$enrolled_ids = $enrolment->get_enrolled_user_ids();
-
-			// WP_User_Query treats an empty `include` as "no restriction" and returns every user,
-			// so short-circuit here when no one is enrolled.
-			if ( empty( $enrolled_ids ) ) {
-				return array(
-					'items'       => array(),
-					'total'       => 0,
-					'total_pages' => 0,
-				);
-			}
-
-			$query_args['include'] = $enrolled_ids;
 		}
 
 		$user_query = new WP_User_Query( $query_args );
@@ -388,11 +386,9 @@ class Sensei_Abilities {
 				'user_email'   => $user->user_email,
 			);
 
-			if ( ! empty( $input['course'] ) ) {
-				$status = self::resolve_progress_status( (int) $user_id, (int) $input['course'] );
-				if ( null !== $status ) {
-					$item['progress_status'] = $status;
-				}
+			$status = self::resolve_progress_status( (int) $user_id, $course_id );
+			if ( null !== $status ) {
+				$item['progress_status'] = $status;
 			}
 
 			$items[] = $item;
@@ -400,7 +396,7 @@ class Sensei_Abilities {
 
 		// Progress status is per-user-per-course state that can't be joined in WP_User_Query,
 		// so filter after materializing the page.
-		if ( ! empty( $input['progress_status'] ) && ! empty( $input['course'] ) ) {
+		if ( ! empty( $input['progress_status'] ) ) {
 			$items = array_values(
 				array_filter(
 					$items,
