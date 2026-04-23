@@ -340,6 +340,8 @@ class Sensei_Abilities {
 			$enrolment    = Sensei_Course_Enrolment::get_course_instance( (int) $input['course'] );
 			$enrolled_ids = $enrolment->get_enrolled_user_ids();
 
+			// WP_User_Query treats an empty `include` as "no restriction" and returns every user,
+			// so short-circuit here when no one is enrolled.
 			if ( empty( $enrolled_ids ) ) {
 				return array(
 					'items'       => array(),
@@ -377,6 +379,8 @@ class Sensei_Abilities {
 			$items[] = $item;
 		}
 
+		// Progress status is per-user-per-course state that can't be joined in WP_User_Query,
+		// so filter after materializing the page.
 		if ( ! empty( $input['progress_status'] ) && ! empty( $input['course'] ) ) {
 			$items = array_values(
 				array_filter(
