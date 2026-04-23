@@ -6,6 +6,8 @@
  * @since $$next-version$$
  */
 
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -244,35 +246,31 @@ class Sensei_Abilities {
 			'sensei/get-students',
 			array(
 				'label'               => __( 'Get students', 'sensei-lms' ),
-				'description'         => __( 'List Sensei learners, optionally filtered by course, progress state, or search.', 'sensei-lms' ),
+				'description'         => __( 'List Sensei students, optionally filtered by course, progress state, or search.', 'sensei-lms' ),
 				'category'            => self::CATEGORY_SLUG,
 				'input_schema'        => array(
 					'type'                 => 'object',
 					'default'              => array(),
 					'properties'           => array(
-						'course'                  => array(
+						'course'          => array(
 							'type'        => 'integer',
-							'description' => __( 'Return only learners enrolled in this course ID.', 'sensei-lms' ),
+							'description' => __( 'Return only students enrolled in this course ID.', 'sensei-lms' ),
 						),
-						'progress_status'         => array(
+						'progress_status' => array(
 							'type'        => 'string',
 							'description' => __( 'Filter by progress state on the specified course. Requires `course`.', 'sensei-lms' ),
-							'enum'        => array( 'in-progress', 'completed', 'not-started' ),
+							'enum'        => array( Course_Progress_Interface::STATUS_IN_PROGRESS, Course_Progress_Interface::STATUS_COMPLETE ),
 						),
-						'has_pending_submissions' => array(
-							'type'        => 'boolean',
-							'description' => __( 'Return only learners with ungraded quiz submissions. Scoped to `course` if provided.', 'sensei-lms' ),
-						),
-						'search'                  => array(
+						'search'          => array(
 							'type'        => 'string',
 							'description' => __( 'Search by display name, login, or email.', 'sensei-lms' ),
 						),
-						'page'                    => array(
+						'page'            => array(
 							'type'    => 'integer',
 							'default' => 1,
 							'minimum' => 1,
 						),
-						'per_page'                => array(
+						'per_page'        => array(
 							'type'    => 'integer',
 							'default' => 20,
 							'minimum' => 1,
@@ -291,11 +289,10 @@ class Sensei_Abilities {
 								'properties' => array(
 									'id'              => array( 'type' => 'integer' ),
 									'display_name'    => array( 'type' => 'string' ),
-									'user_login'      => array( 'type' => 'string' ),
 									'user_email'      => array( 'type' => 'string' ),
 									'progress_status' => array(
 										'type' => 'string',
-										'enum' => array( 'in-progress', 'completed', 'not-started' ),
+										'enum' => array( Course_Progress_Interface::STATUS_IN_PROGRESS, Course_Progress_Interface::STATUS_COMPLETE ),
 									),
 								),
 							),
@@ -367,12 +364,14 @@ class Sensei_Abilities {
 			$item = array(
 				'id'           => (int) $user_id,
 				'display_name' => $user->display_name,
-				'user_login'   => $user->user_login,
 				'user_email'   => $user->user_email,
 			);
 
 			if ( ! empty( $input['course'] ) ) {
-				$item['progress_status'] = self::resolve_progress_status( (int) $user_id, (int) $input['course'] );
+				$status = self::resolve_progress_status( (int) $user_id, (int) $input['course'] );
+				if ( null !== $status ) {
+					$item['progress_status'] = $status;
+				}
 			}
 
 			$items[] = $item;
@@ -387,16 +386,6 @@ class Sensei_Abilities {
 			);
 		}
 
-		if ( ! empty( $input['has_pending_submissions'] ) ) {
-			$course_filter = ! empty( $input['course'] ) ? (int) $input['course'] : null;
-			$items         = array_values(
-				array_filter(
-					$items,
-					static fn( $item ) => self::user_has_ungraded_submissions( (int) $item['id'], $course_filter )
-				)
-			);
-		}
-
 		return array(
 			'items'       => $items,
 			'total'       => (int) $user_query->get_total(),
@@ -405,53 +394,22 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Whether a learner has any ungraded quiz submissions.
+	 * Determine a student's progress state on a course.
 	 *
-	 * @param int      $user_id   Learner user ID.
-	 * @param int|null $course_id Optional course ID to scope the check.
-	 */
-	private static function user_has_ungraded_submissions( int $user_id, ?int $course_id ): bool {
-		$lesson_query_args = array(
-			'post_type'      => 'lesson',
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
-		);
-
-		if ( $course_id ) {
-			$lesson_query_args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-				array(
-					'key'   => '_lesson_course',
-					'value' => $course_id,
-				),
-			);
-		}
-
-		$lesson_ids = get_posts( $lesson_query_args );
-
-		foreach ( $lesson_ids as $lesson_id ) {
-			$status = Sensei_Utils::user_lesson_status( (int) $lesson_id, $user_id );
-			if ( $status && 'ungraded' === $status->comment_approved ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Determine a learner's progress state on a course.
+	 * Returns null when the student has no progress record for the course
+	 * (matches Sensei's data model — there is no "not started" status).
 	 *
-	 * @param int $user_id   Learner user ID.
+	 * @param int $user_id   Student user ID.
 	 * @param int $course_id Course post ID.
 	 */
-	private static function resolve_progress_status( int $user_id, int $course_id ): string {
+	private static function resolve_progress_status( int $user_id, int $course_id ): ?string {
 		if ( Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
-			return 'completed';
+			return Course_Progress_Interface::STATUS_COMPLETE;
 		}
 		if ( Sensei_Utils::has_started_course( $course_id, $user_id ) ) {
-			return 'in-progress';
+			return Course_Progress_Interface::STATUS_IN_PROGRESS;
 		}
-		return 'not-started';
+		return null;
 	}
 
 	/**
@@ -462,7 +420,7 @@ class Sensei_Abilities {
 			'sensei/update-enrollment',
 			array(
 				'label'               => __( 'Update enrollment', 'sensei-lms' ),
-				'description'         => __( 'Enroll or remove learners on Sensei courses.', 'sensei-lms' ),
+				'description'         => __( 'Enroll or remove students on Sensei courses.', 'sensei-lms' ),
 				'category'            => self::CATEGORY_SLUG,
 				'input_schema'        => array(
 					'type'                 => 'object',

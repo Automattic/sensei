@@ -205,7 +205,6 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		}
 		$this->assertNotNull( $match );
 		$this->assertSame( 'Alice', $match['display_name'] );
-		$this->assertSame( 'alice', $match['user_login'] );
 		$this->assertSame( 'alice@example.com', $match['user_email'] );
 	}
 }
