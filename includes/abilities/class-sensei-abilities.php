@@ -62,7 +62,6 @@ class Sensei_Abilities {
 		self::register_get_courses_ability();
 		self::register_get_students_ability();
 		self::register_update_enrollment_ability();
-		self::register_grade_quiz_ability();
 	}
 
 	/**
@@ -116,60 +115,45 @@ class Sensei_Abilities {
 					'type'                 => 'object',
 					'default'              => array(),
 					'properties'           => array(
-						'ids'        => array(
-							'type'        => 'array',
-							'description' => __( 'Fetch specific courses by their IDs.', 'sensei-lms' ),
-							'items'       => array( 'type' => 'integer' ),
-						),
-						'teachers'   => array(
-							'type'        => 'array',
-							'description' => __( 'Filter by one or more teacher user IDs. Ignored for non-admin callers, who always see only their own courses.', 'sensei-lms' ),
-							'items'       => array( 'type' => 'integer' ),
-						),
-						'categories' => array(
-							'type'        => 'array',
-							'description' => __( 'Filter by course-category taxonomy slugs.', 'sensei-lms' ),
-							'items'       => array( 'type' => 'string' ),
-						),
-						'status'     => array(
+						'status'   => array(
 							'type'        => 'string',
 							'description' => __( 'Filter by post status.', 'sensei-lms' ),
 							'enum'        => array( 'publish', 'draft', 'pending', 'private', 'any' ),
 							'default'     => 'any',
 						),
-						'search'     => array(
+						'search'   => array(
 							'type'        => 'string',
 							'description' => __( 'Search course titles and content.', 'sensei-lms' ),
 						),
-						'after'      => array(
+						'after'    => array(
 							'type'        => 'string',
 							'format'      => 'date-time',
 							'description' => __( 'Only return courses created on or after this ISO 8601 date-time.', 'sensei-lms' ),
 						),
-						'before'     => array(
+						'before'   => array(
 							'type'        => 'string',
 							'format'      => 'date-time',
 							'description' => __( 'Only return courses created on or before this ISO 8601 date-time.', 'sensei-lms' ),
 						),
-						'orderby'    => array(
+						'orderby'  => array(
 							'type'        => 'string',
 							'description' => __( 'Order results by this field.', 'sensei-lms' ),
 							'enum'        => array( 'date', 'modified', 'title' ),
 							'default'     => 'date',
 						),
-						'order'      => array(
+						'order'    => array(
 							'type'        => 'string',
 							'description' => __( 'Sort direction.', 'sensei-lms' ),
 							'enum'        => array( 'asc', 'desc' ),
 							'default'     => 'desc',
 						),
-						'page'       => array(
+						'page'     => array(
 							'type'        => 'integer',
 							'description' => __( 'Page number for paginated results.', 'sensei-lms' ),
 							'default'     => 1,
 							'minimum'     => 1,
 						),
-						'per_page'   => array(
+						'per_page' => array(
 							'type'        => 'integer',
 							'description' => __( 'Number of courses to return per page (max 100).', 'sensei-lms' ),
 							'default'     => 20,
@@ -220,25 +204,8 @@ class Sensei_Abilities {
 			'order'          => strtoupper( $input['order'] ?? 'desc' ),
 		);
 
-		if ( ! empty( $input['ids'] ) ) {
-			$args['post__in'] = array_map( 'intval', $input['ids'] );
-		}
-
-		// Teachers can only see their own courses; ignore a `teachers` filter that tries to widen the scope.
 		if ( ! current_user_can( 'edit_others_courses' ) ) {
 			$args['author__in'] = array( get_current_user_id() );
-		} elseif ( ! empty( $input['teachers'] ) ) {
-			$args['author__in'] = array_map( 'intval', $input['teachers'] );
-		}
-
-		if ( ! empty( $input['categories'] ) ) {
-			$args['tax_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-				array(
-					'taxonomy' => 'course-category',
-					'field'    => 'slug',
-					'terms'    => array_map( 'sanitize_title', $input['categories'] ),
-				),
-			);
 		}
 
 		if ( ! empty( $input['search'] ) ) {
@@ -323,11 +290,6 @@ class Sensei_Abilities {
 					'type'                 => 'object',
 					'default'              => array(),
 					'properties'           => array(
-						'ids'                     => array(
-							'type'        => 'array',
-							'description' => __( 'Fetch specific learners by user ID.', 'sensei-lms' ),
-							'items'       => array( 'type' => 'integer' ),
-						),
 						'course'                  => array(
 							'type'        => 'integer',
 							'description' => __( 'Return only learners enrolled in this course ID.', 'sensei-lms' ),
@@ -412,10 +374,6 @@ class Sensei_Abilities {
 			'fields' => 'ID',
 		);
 
-		if ( ! empty( $input['ids'] ) ) {
-			$query_args['include'] = array_map( 'intval', $input['ids'] );
-		}
-
 		if ( ! empty( $input['search'] ) ) {
 			$query_args['search']         = '*' . esc_attr( $input['search'] ) . '*';
 			$query_args['search_columns'] = array( 'user_login', 'user_email', 'display_name' );
@@ -433,9 +391,7 @@ class Sensei_Abilities {
 				);
 			}
 
-			$query_args['include'] = ! empty( $query_args['include'] )
-				? array_intersect( $query_args['include'], $enrolled_ids )
-				: $enrolled_ids;
+			$query_args['include'] = $enrolled_ids;
 		}
 
 		$user_query = new WP_User_Query( $query_args );
@@ -636,110 +592,5 @@ class Sensei_Abilities {
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * Register the sensei/grade-quiz ability.
-	 */
-	private static function register_grade_quiz_ability(): void {
-		wp_register_ability(
-			'sensei/grade-quiz',
-			array(
-				'label'               => __( 'Grade quiz', 'sensei-lms' ),
-				'description'         => __( 'Grade a learner\'s quiz attempt.', 'sensei-lms' ),
-				'category'            => self::CATEGORY_SLUG,
-				'input_schema'        => array(
-					'type'                 => 'object',
-					'required'             => array( 'user_id', 'quiz_id', 'grades' ),
-					'properties'           => array(
-						'user_id'  => array( 'type' => 'integer' ),
-						'quiz_id'  => array( 'type' => 'integer' ),
-						'grades'   => array(
-							'type'        => 'array',
-							'description' => __( 'Per-question grades. Each entry identifies a question and its awarded score.', 'sensei-lms' ),
-							'minItems'    => 1,
-							'items'       => array(
-								'type'                 => 'object',
-								'required'             => array( 'question_id', 'score' ),
-								'properties'           => array(
-									'question_id' => array( 'type' => 'integer' ),
-									'score'       => array( 'type' => 'number' ),
-								),
-								'additionalProperties' => false,
-							),
-						),
-						'feedback' => array(
-							'type'                 => 'object',
-							'description'          => __( 'Optional feedback keyed by question ID.', 'sensei-lms' ),
-							'additionalProperties' => array( 'type' => 'string' ),
-						),
-					),
-					'additionalProperties' => false,
-				),
-				'execute_callback'    => array( __CLASS__, 'execute_grade_quiz' ),
-				'permission_callback' => array( __CLASS__, 'can_grade_quiz' ),
-				'meta'                => array(
-					'annotations'  => array(
-						'readonly'    => false,
-						'destructive' => false,
-						'idempotent'  => true,
-					),
-					'show_in_rest' => true,
-				),
-			)
-		);
-	}
-
-	/**
-	 * Execute sensei/grade-quiz.
-	 *
-	 * @param array $input Ability input.
-	 * @return array
-	 */
-	public static function execute_grade_quiz( $input ): array {
-		$user_id = (int) $input['user_id'];
-		$quiz_id = (int) $input['quiz_id'];
-		$grades  = $input['grades'];
-
-		$grade_map = array();
-		foreach ( $grades as $entry ) {
-			$grade_map[ (int) $entry['question_id'] ] = (float) $entry['score'];
-		}
-
-		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
-
-		Sensei()->quiz->set_user_grades( $grade_map, $lesson_id, $user_id );
-
-		if ( ! empty( $input['feedback'] ) ) {
-			Sensei()->quiz->save_user_answers_feedback( $input['feedback'], $lesson_id, $user_id );
-		}
-
-		$total = array_sum( $grade_map );
-		Sensei_Utils::sensei_grade_quiz( $quiz_id, $total, $user_id );
-
-		return array(
-			'quiz_id'     => $quiz_id,
-			'user_id'     => $user_id,
-			'final_grade' => $total,
-			'passed'      => Sensei_Quiz::is_quiz_completed( $quiz_id, $user_id ),
-		);
-	}
-
-	/**
-	 * Permission check: user can grade the referenced quiz.
-	 *
-	 * @param array $input Ability input.
-	 */
-	public static function can_grade_quiz( $input = array() ): bool {
-		if ( empty( $input['quiz_id'] ) ) {
-			return false;
-		}
-		$lesson_id = (int) get_post_meta( (int) $input['quiz_id'], '_quiz_lesson', true );
-		if ( ! $lesson_id ) {
-			return current_user_can( 'manage_sensei_grades' );
-		}
-		$lesson = get_post( $lesson_id );
-		return $lesson && current_user_can( 'edit_lessons' )
-			&& ( current_user_can( 'manage_sensei_grades' ) || get_current_user_id() === (int) $lesson->post_author );
 	}
 }

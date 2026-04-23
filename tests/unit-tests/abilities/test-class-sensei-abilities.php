@@ -40,23 +40,6 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
-	public function testGetCourses_WithIdsFilter_ReturnsOnlyMatchingCourses() {
-		$factory  = new Sensei_Factory();
-		$course_a = $factory->course->create();
-		$course_b = $factory->course->create();
-
-		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-courses' );
-
-		$result     = $ability->execute( array( 'ids' => array( $course_a ) ) );
-		$course_ids = wp_list_pluck( $result['items'], 'id' );
-
-		$this->assertContains( $course_a, $course_ids );
-		$this->assertNotContains( $course_b, $course_ids );
-
-		$factory->tearDown();
-	}
-
 	public function testGetCourses_WhenUserLacksCapability_ReturnsFalseFromPermission() {
 		wp_set_current_user( 0 );
 		$ability = wp_get_ability( 'sensei/get-courses' );
@@ -74,31 +57,11 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		wp_set_current_user( $teacher_a );
 		$ability = wp_get_ability( 'sensei/get-courses' );
 
-		$result     = $ability->execute( array( 'teachers' => array( $teacher_b ) ) );
+		$result     = $ability->execute( array() );
 		$course_ids = wp_list_pluck( $result['items'], 'id' );
 
 		$this->assertContains( $own_course, $course_ids );
 		$this->assertNotContains( $other_course, $course_ids );
-
-		$factory->tearDown();
-	}
-
-	public function testGetCourses_WithCategoriesFilter_NarrowsByTaxonomy() {
-		$factory  = new Sensei_Factory();
-		$course_a = $factory->course->create();
-		$course_b = $factory->course->create();
-
-		$term = wp_insert_term( 'Yoga', 'course-category', array( 'slug' => 'yoga' ) );
-		wp_set_object_terms( $course_a, array( $term['term_id'] ), 'course-category' );
-
-		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-courses' );
-
-		$result     = $ability->execute( array( 'categories' => array( 'yoga' ) ) );
-		$course_ids = wp_list_pluck( $result['items'], 'id' );
-
-		$this->assertContains( $course_a, $course_ids );
-		$this->assertNotContains( $course_b, $course_ids );
 
 		$factory->tearDown();
 	}
@@ -198,45 +161,6 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
-	public function testGradeQuiz_WhenCalled_ReturnsFinalGrade() {
-		$factory     = new Sensei_Factory();
-		$course_id   = $factory->course->create();
-		$lesson_id   = $factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
-		$quiz_id     = $factory->quiz->create(
-			array(
-				'post_parent' => $lesson_id,
-				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
-			)
-		);
-		$question_id = $factory->question->create( array( 'meta_input' => array( '_quiz_id' => $quiz_id ) ) );
-		$user_id     = $this->factory->user->create( array( 'role' => 'subscriber' ) );
-
-		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
-		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-
-		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/grade-quiz' );
-
-		$result = $ability->execute(
-			array(
-				'user_id' => $user_id,
-				'quiz_id' => $quiz_id,
-				'grades'  => array(
-					array(
-						'question_id' => $question_id,
-						'score'       => 5,
-					),
-				),
-			)
-		);
-
-		$this->assertIsArray( $result );
-		$this->assertArrayHasKey( 'final_grade', $result );
-		$this->assertSame( 5.0, (float) $result['final_grade'] );
-
-		$factory->tearDown();
-	}
-
 	public function testUpdateEnrollment_WhenUserCannotEditCourse_FailsPermission() {
 		$factory   = new Sensei_Factory();
 		$course_id = $factory->course->create();
@@ -269,13 +193,19 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-students' );
-		$result  = $ability->execute( array( 'ids' => array( $user_id ) ) );
+		$result  = $ability->execute( array( 'search' => 'alice@example.com' ) );
 
 		$this->assertNotEmpty( $result['items'] );
-		$item = $result['items'][0];
-		$this->assertSame( $user_id, $item['id'] );
-		$this->assertSame( 'Alice', $item['display_name'] );
-		$this->assertSame( 'alice', $item['user_login'] );
-		$this->assertSame( 'alice@example.com', $item['user_email'] );
+		$match = null;
+		foreach ( $result['items'] as $item ) {
+			if ( (int) $item['id'] === (int) $user_id ) {
+				$match = $item;
+				break;
+			}
+		}
+		$this->assertNotNull( $match );
+		$this->assertSame( 'Alice', $match['display_name'] );
+		$this->assertSame( 'alice', $match['user_login'] );
+		$this->assertSame( 'alice@example.com', $match['user_email'] );
 	}
 }
