@@ -29,13 +29,13 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-courses' );
-		$this->assertNotNull( $ability );
+		$this->assertNotNull( $ability, 'The sensei/get-courses ability should be registered.' );
 
 		$result = $ability->execute( array() );
 
-		$this->assertIsArray( $result );
+		$this->assertIsArray( $result, 'The ability should return an array result.' );
 		$course_ids = wp_list_pluck( $result['items'], 'id' );
-		$this->assertContains( $course_id, $course_ids );
+		$this->assertContains( $course_id, $course_ids, 'The created course should appear in the items list.' );
 
 		$factory->tearDown();
 	}
@@ -60,8 +60,8 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$result     = $ability->execute( array() );
 		$course_ids = wp_list_pluck( $result['items'], 'id' );
 
-		$this->assertContains( $own_course, $course_ids );
-		$this->assertNotContains( $other_course, $course_ids );
+		$this->assertContains( $own_course, $course_ids, "The teacher's own course should be returned." );
+		$this->assertNotContains( $other_course, $course_ids, "Another teacher's course should not be returned." );
 
 		$factory->tearDown();
 	}
@@ -71,13 +71,13 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-students' );
-		$this->assertNotNull( $ability );
+		$this->assertNotNull( $ability, 'The sensei/get-students ability should be registered.' );
 
 		$result = $ability->execute( array() );
 
-		$this->assertIsArray( $result );
+		$this->assertIsArray( $result, 'The ability should return an array result.' );
 		$ids = wp_list_pluck( $result['items'], 'id' );
-		$this->assertContains( $user_id, $ids );
+		$this->assertContains( $user_id, $ids, 'The created user should appear in the items list.' );
 	}
 
 	public function testGetStudents_WithCourseFilter_ReturnsEnrolledUsersOnly() {
@@ -94,8 +94,8 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$result = $ability->execute( array( 'course' => $course_id ) );
 		$ids    = wp_list_pluck( $result['items'], 'id' );
 
-		$this->assertContains( $enrolled, $ids );
-		$this->assertNotContains( $not_enr, $ids );
+		$this->assertContains( $enrolled, $ids, 'The enrolled user should be in the result.' );
+		$this->assertNotContains( $not_enr, $ids, 'A user not enrolled in the course should not be in the result.' );
 
 		$factory->tearDown();
 	}
@@ -131,7 +131,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$ability = wp_get_ability( 'sensei/get-students' );
 		$result  = $ability->execute( array( 'search' => 'alice@example.com' ) );
 
-		$this->assertNotEmpty( $result['items'] );
+		$this->assertNotEmpty( $result['items'], 'Searching by email should return at least one item.' );
 		$match = null;
 		foreach ( $result['items'] as $item ) {
 			if ( (int) $item['id'] === (int) $user_id ) {
@@ -139,8 +139,8 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 				break;
 			}
 		}
-		$this->assertNotNull( $match );
-		$this->assertSame( 'Alice', $match['display_name'] );
-		$this->assertSame( 'alice@example.com', $match['user_email'] );
+		$this->assertNotNull( $match, 'The created user should be present in the search results.' );
+		$this->assertSame( 'Alice', $match['display_name'], 'The item should include the display name.' );
+		$this->assertSame( 'alice@example.com', $match['user_email'], 'The item should include the email.' );
 	}
 }
