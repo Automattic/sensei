@@ -102,4 +102,77 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 		$factory->tearDown();
 	}
+
+	public function testGetStudents_WhenCalled_ReturnsUsers() {
+		$user_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-students' );
+		$this->assertNotNull( $ability );
+
+		$result = $ability->execute( array() );
+
+		$this->assertIsArray( $result );
+		$ids = wp_list_pluck( $result['items'], 'id' );
+		$this->assertContains( $user_id, $ids );
+	}
+
+	public function testGetStudents_WithCourseFilter_ReturnsEnrolledUsersOnly() {
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create();
+		$enrolled  = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$not_enr   = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $enrolled, $course_id );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-students' );
+
+		$result = $ability->execute( array( 'course' => $course_id ) );
+		$ids    = wp_list_pluck( $result['items'], 'id' );
+
+		$this->assertContains( $enrolled, $ids );
+		$this->assertNotContains( $not_enr, $ids );
+
+		$factory->tearDown();
+	}
+
+	public function testGetStudents_WithSearch_MatchesByEmail() {
+		$user_id = $this->factory->user->create(
+			array(
+				'role'       => 'subscriber',
+				'user_email' => 'alice@example.com',
+			)
+		);
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-students' );
+
+		$result = $ability->execute( array( 'search' => 'alice@example.com' ) );
+		$ids    = wp_list_pluck( $result['items'], 'id' );
+
+		$this->assertContains( $user_id, $ids );
+	}
+
+	public function testGetStudents_Always_IncludesUserContactDetails() {
+		$user_id = $this->factory->user->create(
+			array(
+				'role'         => 'subscriber',
+				'display_name' => 'Alice',
+				'user_login'   => 'alice',
+				'user_email'   => 'alice@example.com',
+			)
+		);
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-students' );
+		$result  = $ability->execute( array( 'ids' => array( $user_id ) ) );
+
+		$this->assertNotEmpty( $result['items'] );
+		$item = $result['items'][0];
+		$this->assertSame( $user_id, $item['id'] );
+		$this->assertSame( 'Alice', $item['display_name'] );
+		$this->assertSame( 'alice', $item['user_login'] );
+		$this->assertSame( 'alice@example.com', $item['user_email'] );
+	}
 }
