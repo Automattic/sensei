@@ -88,7 +88,6 @@ class Sensei_Abilities {
 						'type'       => 'object',
 						'properties' => array(
 							'id'   => array( 'type' => 'integer' ),
-							'slug' => array( 'type' => 'string' ),
 							'name' => array( 'type' => 'string' ),
 						),
 					),
@@ -203,7 +202,6 @@ class Sensei_Abilities {
 				foreach ( $terms as $term ) {
 					$categories[] = array(
 						'id'   => (int) $term->term_id,
-						'slug' => $term->slug,
 						'name' => $term->name,
 					);
 				}
