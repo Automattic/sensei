@@ -38,6 +38,8 @@ class Sensei_Abilities {
 
 	/**
 	 * Register the Sensei ability category.
+	 *
+	 * @access private
 	 */
 	public static function register_category(): void {
 		if ( ! function_exists( 'wp_register_ability_category' ) ) {
@@ -55,6 +57,8 @@ class Sensei_Abilities {
 
 	/**
 	 * Register all Sensei abilities.
+	 *
+	 * @access private
 	 */
 	public static function register_abilities(): void {
 		if ( ! function_exists( 'wp_register_ability' ) ) {
@@ -168,6 +172,8 @@ class Sensei_Abilities {
 	/**
 	 * Execute sensei/get-courses.
 	 *
+	 * @access private
+	 *
 	 * @param array $input Ability input.
 	 * @return array
 	 */
@@ -232,6 +238,8 @@ class Sensei_Abilities {
 
 	/**
 	 * Permission check: user can edit courses.
+	 *
+	 * @access private
 	 */
 	public static function can_edit_courses(): bool {
 		return current_user_can( 'edit_courses' );
@@ -316,6 +324,8 @@ class Sensei_Abilities {
 
 	/**
 	 * Execute sensei/get-students.
+	 *
+	 * @access private
 	 *
 	 * @param array $input Ability input.
 	 * @return array
