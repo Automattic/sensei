@@ -7,6 +7,14 @@
 class Sensei_Abilities_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 
+	public function setUp(): void {
+		parent::setUp();
+
+		if ( ! function_exists( 'wp_get_ability' ) ) {
+			$this->markTestSkipped( 'The WordPress Abilities API (WP 6.9+) is not available.' );
+		}
+	}
+
 	public function testInit_Always_RegistersCategoryHook() {
 		Sensei_Abilities::init();
 
