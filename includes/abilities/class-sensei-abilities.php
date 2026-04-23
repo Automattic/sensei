@@ -332,7 +332,7 @@ class Sensei_Abilities {
 		);
 
 		if ( ! empty( $input['search'] ) ) {
-			$query_args['search']         = '*' . esc_attr( $input['search'] ) . '*';
+			$query_args['search']         = '*' . $input['search'] . '*';
 			$query_args['search_columns'] = array( 'user_login', 'user_email', 'display_name' );
 		}
 
