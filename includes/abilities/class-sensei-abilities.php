@@ -80,7 +80,6 @@ class Sensei_Abilities {
 					'properties' => array(
 						'id'           => array( 'type' => 'integer' ),
 						'display_name' => array( 'type' => 'string' ),
-						'user_login'   => array( 'type' => 'string' ),
 					),
 				),
 				'categories'  => array(
@@ -218,7 +217,6 @@ class Sensei_Abilities {
 				'teacher'     => array(
 					'id'           => (int) $post->post_author,
 					'display_name' => $teacher ? $teacher->display_name : '',
-					'user_login'   => $teacher ? $teacher->user_login : '',
 				),
 				'categories'  => $categories,
 				'created_at'  => mysql_to_rfc3339( $post->post_date_gmt ),
