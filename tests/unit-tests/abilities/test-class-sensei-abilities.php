@@ -198,6 +198,45 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
+	public function testGradeQuiz_WhenCalled_ReturnsFinalGrade() {
+		$factory     = new Sensei_Factory();
+		$course_id   = $factory->course->create();
+		$lesson_id   = $factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$quiz_id     = $factory->quiz->create(
+			array(
+				'post_parent' => $lesson_id,
+				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
+			)
+		);
+		$question_id = $factory->question->create( array( 'meta_input' => array( '_quiz_id' => $quiz_id ) ) );
+		$user_id     = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/grade-quiz' );
+
+		$result = $ability->execute(
+			array(
+				'user_id' => $user_id,
+				'quiz_id' => $quiz_id,
+				'grades'  => array(
+					array(
+						'question_id' => $question_id,
+						'score'       => 5,
+					),
+				),
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertArrayHasKey( 'final_grade', $result );
+		$this->assertSame( 5.0, (float) $result['final_grade'] );
+
+		$factory->tearDown();
+	}
+
 	public function testUpdateEnrollment_WhenUserCannotEditCourse_FailsPermission() {
 		$factory   = new Sensei_Factory();
 		$course_id = $factory->course->create();

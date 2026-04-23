@@ -62,6 +62,7 @@ class Sensei_Abilities {
 		self::register_get_courses_ability();
 		self::register_get_students_ability();
 		self::register_update_enrollment_ability();
+		self::register_grade_quiz_ability();
 	}
 
 	/**
@@ -635,5 +636,110 @@ class Sensei_Abilities {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Register the sensei/grade-quiz ability.
+	 */
+	private static function register_grade_quiz_ability(): void {
+		wp_register_ability(
+			'sensei/grade-quiz',
+			array(
+				'label'               => __( 'Grade quiz', 'sensei-lms' ),
+				'description'         => __( 'Grade a learner\'s quiz attempt.', 'sensei-lms' ),
+				'category'            => self::CATEGORY_SLUG,
+				'input_schema'        => array(
+					'type'                 => 'object',
+					'required'             => array( 'user_id', 'quiz_id', 'grades' ),
+					'properties'           => array(
+						'user_id'  => array( 'type' => 'integer' ),
+						'quiz_id'  => array( 'type' => 'integer' ),
+						'grades'   => array(
+							'type'        => 'array',
+							'description' => __( 'Per-question grades. Each entry identifies a question and its awarded score.', 'sensei-lms' ),
+							'minItems'    => 1,
+							'items'       => array(
+								'type'                 => 'object',
+								'required'             => array( 'question_id', 'score' ),
+								'properties'           => array(
+									'question_id' => array( 'type' => 'integer' ),
+									'score'       => array( 'type' => 'number' ),
+								),
+								'additionalProperties' => false,
+							),
+						),
+						'feedback' => array(
+							'type'                 => 'object',
+							'description'          => __( 'Optional feedback keyed by question ID.', 'sensei-lms' ),
+							'additionalProperties' => array( 'type' => 'string' ),
+						),
+					),
+					'additionalProperties' => false,
+				),
+				'execute_callback'    => array( __CLASS__, 'execute_grade_quiz' ),
+				'permission_callback' => array( __CLASS__, 'can_grade_quiz' ),
+				'meta'                => array(
+					'annotations'  => array(
+						'readonly'    => false,
+						'destructive' => false,
+						'idempotent'  => true,
+					),
+					'show_in_rest' => true,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Execute sensei/grade-quiz.
+	 *
+	 * @param array $input Ability input.
+	 * @return array
+	 */
+	public static function execute_grade_quiz( $input ): array {
+		$user_id = (int) $input['user_id'];
+		$quiz_id = (int) $input['quiz_id'];
+		$grades  = $input['grades'];
+
+		$grade_map = array();
+		foreach ( $grades as $entry ) {
+			$grade_map[ (int) $entry['question_id'] ] = (float) $entry['score'];
+		}
+
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
+
+		Sensei()->quiz->set_user_grades( $grade_map, $lesson_id, $user_id );
+
+		if ( ! empty( $input['feedback'] ) ) {
+			Sensei()->quiz->save_user_answers_feedback( $input['feedback'], $lesson_id, $user_id );
+		}
+
+		$total = array_sum( $grade_map );
+		Sensei_Utils::sensei_grade_quiz( $quiz_id, $total, $user_id );
+
+		return array(
+			'quiz_id'     => $quiz_id,
+			'user_id'     => $user_id,
+			'final_grade' => $total,
+			'passed'      => Sensei_Quiz::is_quiz_completed( $quiz_id, $user_id ),
+		);
+	}
+
+	/**
+	 * Permission check: user can grade the referenced quiz.
+	 *
+	 * @param array $input Ability input.
+	 */
+	public static function can_grade_quiz( $input = array() ): bool {
+		if ( empty( $input['quiz_id'] ) ) {
+			return false;
+		}
+		$lesson_id = (int) get_post_meta( (int) $input['quiz_id'], '_quiz_lesson', true );
+		if ( ! $lesson_id ) {
+			return current_user_can( 'manage_sensei_grades' );
+		}
+		$lesson = get_post( $lesson_id );
+		return $lesson && current_user_can( 'edit_lessons' )
+			&& ( current_user_can( 'manage_sensei_grades' ) || get_current_user_id() === (int) $lesson->post_author );
 	}
 }
