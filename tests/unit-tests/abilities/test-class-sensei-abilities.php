@@ -117,6 +117,70 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->assertContains( $user_id, $ids );
 	}
 
+	public function testUpdateEnrollment_WithEnrollAction_EnrollsUsers() {
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create();
+		$user_id   = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/update-enrollment' );
+
+		$ability->execute(
+			array(
+				'course_ids' => array( $course_id ),
+				'user_ids'   => array( $user_id ),
+				'action'     => 'enroll',
+			)
+		);
+
+		$this->assertTrue( Sensei_Course_Enrolment::get_course_instance( $course_id )->is_enrolled( $user_id ) );
+
+		$factory->tearDown();
+	}
+
+	public function testUpdateEnrollment_WithRemoveAction_RemovesUsers() {
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create();
+		$user_id   = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/update-enrollment' );
+
+		$ability->execute(
+			array(
+				'course_ids' => array( $course_id ),
+				'user_ids'   => array( $user_id ),
+				'action'     => 'remove',
+			)
+		);
+
+		$this->assertFalse( Sensei_Course_Enrolment::get_course_instance( $course_id )->is_enrolled( $user_id ) );
+
+		$factory->tearDown();
+	}
+
+	public function testUpdateEnrollment_WhenUserCannotEditCourse_FailsPermission() {
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create();
+
+		wp_set_current_user( 0 );
+		$ability = wp_get_ability( 'sensei/update-enrollment' );
+
+		$this->assertFalse(
+			$ability->check_permissions(
+				array(
+					'course_ids' => array( $course_id ),
+					'user_ids'   => array( 1 ),
+					'action'     => 'enroll',
+				)
+			)
+		);
+
+		$factory->tearDown();
+	}
+
 	public function testGetStudents_Always_IncludesUserContactDetails() {
 		$user_id = $this->factory->user->create(
 			array(
