@@ -181,18 +181,24 @@ class Sensei_Abilities {
 				'title'       => array( 'type' => 'string' ),
 				'status'      => array( 'type' => 'string' ),
 				'url'         => array( 'type' => 'string' ),
-				'course'      => array(
-					'type'       => 'object',
-					'properties' => array(
-						'id'    => array( 'type' => 'integer' ),
-						'title' => array( 'type' => 'string' ),
+				'courses'     => array(
+					'type'  => 'array',
+					'items' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'id'    => array( 'type' => 'integer' ),
+							'title' => array( 'type' => 'string' ),
+						),
 					),
 				),
-				'module'      => array(
-					'type'       => 'object',
-					'properties' => array(
-						'id'   => array( 'type' => 'integer' ),
-						'name' => array( 'type' => 'string' ),
+				'modules'     => array(
+					'type'  => 'array',
+					'items' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'id'   => array( 'type' => 'integer' ),
+							'name' => array( 'type' => 'string' ),
+						),
 					),
 				),
 				'created_at'  => array(
@@ -484,25 +490,29 @@ class Sensei_Abilities {
 				'modified_at' => mysql_to_rfc3339( $post->post_modified_gmt ),
 			);
 
-			$course_id = (int) Sensei()->lesson->get_course_id( $post->ID );
+			// Courses and modules are returned as arrays even though a lesson currently
+			// maps to at most one of each; the data model is moving toward multi-assignment.
+			$item['courses'] = array();
+			$course_id       = (int) Sensei()->lesson->get_course_id( $post->ID );
 			if ( $course_id ) {
 				$course = get_post( $course_id );
 				if ( $course instanceof WP_Post ) {
-					$item['course'] = array(
+					$item['courses'][] = array(
 						'id'    => $course_id,
 						'title' => $course->post_title,
 					);
 				}
 			}
 
-			// A lesson belongs to at most one module.
-			$modules = wp_get_post_terms( $post->ID, 'module' );
-			if ( is_array( $modules ) && ! empty( $modules ) ) {
-				$module         = $modules[0];
-				$item['module'] = array(
-					'id'   => (int) $module->term_id,
-					'name' => $module->name,
-				);
+			$item['modules'] = array();
+			$module_terms    = wp_get_post_terms( $post->ID, 'module' );
+			if ( is_array( $module_terms ) ) {
+				foreach ( $module_terms as $term ) {
+					$item['modules'][] = array(
+						'id'   => (int) $term->term_id,
+						'name' => $term->name,
+					);
+				}
 			}
 
 			$items[] = $item;
