@@ -98,10 +98,6 @@ class Sensei_Abilities {
 						),
 					),
 				),
-				'created_at'  => array(
-					'type'   => 'string',
-					'format' => 'date-time',
-				),
 				'modified_at' => array(
 					'type'   => 'string',
 					'format' => 'date-time',
@@ -200,10 +196,6 @@ class Sensei_Abilities {
 							'name' => array( 'type' => 'string' ),
 						),
 					),
-				),
-				'created_at'  => array(
-					'type'   => 'string',
-					'format' => 'date-time',
 				),
 				'modified_at' => array(
 					'type'   => 'string',
@@ -428,7 +420,6 @@ class Sensei_Abilities {
 					'display_name' => $teacher ? $teacher->display_name : '',
 				),
 				'categories'  => $categories,
-				'created_at'  => mysql_to_rfc3339( $post->post_date_gmt ),
 				'modified_at' => mysql_to_rfc3339( $post->post_modified_gmt ),
 			);
 		}
@@ -486,7 +477,6 @@ class Sensei_Abilities {
 				'title'       => $post->post_title,
 				'status'      => $post->post_status,
 				'url'         => (string) get_permalink( $post->ID ),
-				'created_at'  => mysql_to_rfc3339( $post->post_date_gmt ),
 				'modified_at' => mysql_to_rfc3339( $post->post_modified_gmt ),
 			);
 
