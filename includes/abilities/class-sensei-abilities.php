@@ -125,28 +125,6 @@ class Sensei_Abilities {
 							'type'        => 'string',
 							'description' => __( 'Search course titles and content.', 'sensei-lms' ),
 						),
-						'after'    => array(
-							'type'        => 'string',
-							'format'      => 'date-time',
-							'description' => __( 'Only return courses created on or after this ISO 8601 date-time.', 'sensei-lms' ),
-						),
-						'before'   => array(
-							'type'        => 'string',
-							'format'      => 'date-time',
-							'description' => __( 'Only return courses created on or before this ISO 8601 date-time.', 'sensei-lms' ),
-						),
-						'orderby'  => array(
-							'type'        => 'string',
-							'description' => __( 'Order results by this field.', 'sensei-lms' ),
-							'enum'        => array( 'date', 'modified', 'title' ),
-							'default'     => 'date',
-						),
-						'order'    => array(
-							'type'        => 'string',
-							'description' => __( 'Sort direction.', 'sensei-lms' ),
-							'enum'        => array( 'asc', 'desc' ),
-							'default'     => 'desc',
-						),
 						'page'     => array(
 							'type'        => 'integer',
 							'description' => __( 'Page number for paginated results.', 'sensei-lms' ),
@@ -200,8 +178,6 @@ class Sensei_Abilities {
 			'post_status'    => $input['status'] ?? 'any',
 			'posts_per_page' => min( 100, (int) ( $input['per_page'] ?? 20 ) ),
 			'paged'          => max( 1, (int) ( $input['page'] ?? 1 ) ),
-			'orderby'        => $input['orderby'] ?? 'date',
-			'order'          => strtoupper( $input['order'] ?? 'desc' ),
 		);
 
 		if ( ! current_user_can( 'edit_others_courses' ) ) {
@@ -210,18 +186,6 @@ class Sensei_Abilities {
 
 		if ( ! empty( $input['search'] ) ) {
 			$args['s'] = $input['search'];
-		}
-
-		if ( ! empty( $input['after'] ) || ! empty( $input['before'] ) ) {
-			$date_query = array();
-			if ( ! empty( $input['after'] ) ) {
-				$date_query['after'] = $input['after'];
-			}
-			if ( ! empty( $input['before'] ) ) {
-				$date_query['before'] = $input['before'];
-			}
-			$date_query['inclusive'] = true;
-			$args['date_query']      = array( $date_query );
 		}
 
 		$query = new WP_Query( $args );
