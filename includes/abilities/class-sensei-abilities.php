@@ -61,6 +61,7 @@ class Sensei_Abilities {
 
 		self::register_get_courses_ability();
 		self::register_get_students_ability();
+		self::register_update_enrollment_ability();
 	}
 
 	/**
@@ -534,5 +535,105 @@ class Sensei_Abilities {
 			return 'in-progress';
 		}
 		return 'not-started';
+	}
+
+	/**
+	 * Register the sensei/update-enrollment ability.
+	 */
+	private static function register_update_enrollment_ability(): void {
+		wp_register_ability(
+			'sensei/update-enrollment',
+			array(
+				'label'               => __( 'Update enrollment', 'sensei-lms' ),
+				'description'         => __( 'Enroll or remove learners on Sensei courses.', 'sensei-lms' ),
+				'category'            => self::CATEGORY_SLUG,
+				'input_schema'        => array(
+					'type'                 => 'object',
+					'required'             => array( 'course_ids', 'user_ids', 'action' ),
+					'properties'           => array(
+						'course_ids' => array(
+							'type'        => 'array',
+							'description' => __( 'One or more course IDs to modify enrollment on.', 'sensei-lms' ),
+							'items'       => array( 'type' => 'integer' ),
+							'minItems'    => 1,
+						),
+						'user_ids'   => array(
+							'type'        => 'array',
+							'description' => __( 'One or more user IDs to enroll or remove.', 'sensei-lms' ),
+							'items'       => array( 'type' => 'integer' ),
+							'minItems'    => 1,
+						),
+						'action'     => array(
+							'type'        => 'string',
+							'description' => __( 'Whether to enroll or remove the listed users.', 'sensei-lms' ),
+							'enum'        => array( 'enroll', 'remove' ),
+						),
+					),
+					'additionalProperties' => false,
+				),
+				'execute_callback'    => array( __CLASS__, 'execute_update_enrollment' ),
+				'permission_callback' => array( __CLASS__, 'can_edit_courses_from_input' ),
+				'meta'                => array(
+					'annotations'  => array(
+						'readonly'    => false,
+						'destructive' => true,
+						'idempotent'  => true,
+					),
+					'show_in_rest' => true,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Execute sensei/update-enrollment.
+	 *
+	 * @param array $input Ability input.
+	 * @return array
+	 */
+	public static function execute_update_enrollment( $input ): array {
+		$course_ids = array_map( 'intval', $input['course_ids'] );
+		$user_ids   = array_map( 'intval', $input['user_ids'] );
+		$action     = $input['action'];
+
+		$controller = new Sensei_REST_API_Course_Students_Controller( 'sensei-internal/v1' );
+		$request    = new WP_REST_Request( 'enroll' === $action ? 'POST' : 'DELETE', '' );
+		$request->set_param( 'course_ids', $course_ids );
+		$request->set_param( 'student_ids', $user_ids );
+
+		$response = 'enroll' === $action
+			? $controller->batch_create_items( $request )
+			: $controller->batch_remove_items( $request );
+
+		return array(
+			'course_ids' => $course_ids,
+			'action'     => $action,
+			'results'    => $response->get_data(),
+		);
+	}
+
+	/**
+	 * Permission check: user can edit every course in the input.
+	 *
+	 * @param array $input Ability input.
+	 */
+	public static function can_edit_courses_from_input( $input = array() ): bool {
+		if ( empty( $input['course_ids'] ) || ! is_array( $input['course_ids'] ) ) {
+			return false;
+		}
+		$post_type = get_post_type_object( 'course' );
+		if ( ! $post_type ) {
+			return false;
+		}
+		foreach ( $input['course_ids'] as $course_id ) {
+			$course = get_post( (int) $course_id );
+			if ( ! $course || 'course' !== $course->post_type ) {
+				return false;
+			}
+			if ( ! current_user_can( $post_type->cap->edit_post, (int) $course_id ) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
