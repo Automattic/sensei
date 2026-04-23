@@ -170,82 +170,6 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Execute sensei/get-courses.
-	 *
-	 * @access private
-	 *
-	 * @param array $input Ability input.
-	 * @return array
-	 */
-	public static function execute_get_courses( $input = array() ): array {
-		$args = array(
-			'post_type'      => 'course',
-			'post_status'    => $input['status'] ?? 'any',
-			'posts_per_page' => min( 100, (int) ( $input['per_page'] ?? 20 ) ),
-			'paged'          => max( 1, (int) ( $input['page'] ?? 1 ) ),
-		);
-
-		if ( ! current_user_can( 'edit_others_courses' ) ) {
-			$args['author__in'] = array( get_current_user_id() );
-		}
-
-		if ( ! empty( $input['search'] ) ) {
-			$args['s'] = $input['search'];
-		}
-
-		$query = new WP_Query( $args );
-
-		$items = array();
-		foreach ( $query->posts as $post ) {
-			if ( ! $post instanceof WP_Post ) {
-				continue;
-			}
-
-			$teacher = get_userdata( (int) $post->post_author );
-
-			$terms      = get_the_terms( $post->ID, 'course-category' );
-			$categories = array();
-			if ( is_array( $terms ) ) {
-				foreach ( $terms as $term ) {
-					$categories[] = array(
-						'id'   => (int) $term->term_id,
-						'name' => $term->name,
-					);
-				}
-			}
-
-			$items[] = array(
-				'id'          => $post->ID,
-				'title'       => $post->post_title,
-				'status'      => $post->post_status,
-				'url'         => (string) get_permalink( $post->ID ),
-				'teacher'     => array(
-					'id'           => (int) $post->post_author,
-					'display_name' => $teacher ? $teacher->display_name : '',
-				),
-				'categories'  => $categories,
-				'created_at'  => mysql_to_rfc3339( $post->post_date_gmt ),
-				'modified_at' => mysql_to_rfc3339( $post->post_modified_gmt ),
-			);
-		}
-
-		return array(
-			'items'       => $items,
-			'total'       => (int) $query->found_posts,
-			'total_pages' => (int) $query->max_num_pages,
-		);
-	}
-
-	/**
-	 * Permission check: user can edit courses.
-	 *
-	 * @access private
-	 */
-	public static function can_edit_courses(): bool {
-		return current_user_can( 'edit_courses' );
-	}
-
-	/**
 	 * Register the sensei/get-students ability.
 	 */
 	private static function register_get_students_ability(): void {
@@ -309,7 +233,7 @@ class Sensei_Abilities {
 					),
 				),
 				'execute_callback'    => array( __CLASS__, 'execute_get_students' ),
-				'permission_callback' => array( __CLASS__, 'can_edit_courses' ),
+				'permission_callback' => array( __CLASS__, 'can_manage_grades' ),
 				'meta'                => array(
 					'annotations'  => array(
 						'readonly'    => true,
@@ -319,6 +243,92 @@ class Sensei_Abilities {
 					'show_in_rest' => true,
 				),
 			)
+		);
+	}
+
+	/**
+	 * Determine a student's progress state on a course.
+	 *
+	 * Returns null when the student has no progress record for the course
+	 * (matches Sensei's data model — there is no "not started" status).
+	 *
+	 * @param int $user_id   Student user ID.
+	 * @param int $course_id Course post ID.
+	 */
+	private static function resolve_progress_status( int $user_id, int $course_id ): ?string {
+		if ( Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
+			return Course_Progress_Interface::STATUS_COMPLETE;
+		}
+		if ( Sensei_Utils::has_started_course( $course_id, $user_id ) ) {
+			return Course_Progress_Interface::STATUS_IN_PROGRESS;
+		}
+		return null;
+	}
+
+	/**
+	 * Execute sensei/get-courses.
+	 *
+	 * @access private
+	 *
+	 * @param array $input Ability input.
+	 * @return array
+	 */
+	public static function execute_get_courses( $input = array() ): array {
+		$args = array(
+			'post_type'      => 'course',
+			'post_status'    => $input['status'] ?? 'any',
+			'posts_per_page' => min( 100, (int) ( $input['per_page'] ?? 20 ) ),
+			'paged'          => max( 1, (int) ( $input['page'] ?? 1 ) ),
+		);
+
+		if ( ! current_user_can( 'edit_others_courses' ) ) {
+			$args['author__in'] = array( get_current_user_id() );
+		}
+
+		if ( ! empty( $input['search'] ) ) {
+			$args['s'] = $input['search'];
+		}
+
+		$query = new WP_Query( $args );
+
+		$items = array();
+		foreach ( $query->posts as $post ) {
+			if ( ! $post instanceof WP_Post ) {
+				continue;
+			}
+
+			$teacher = get_userdata( (int) $post->post_author );
+
+			$terms      = get_the_terms( $post->ID, 'course-category' );
+			$categories = array();
+			if ( is_array( $terms ) ) {
+				foreach ( $terms as $term ) {
+					$categories[] = array(
+						'id'   => (int) $term->term_id,
+						'name' => $term->name,
+					);
+				}
+			}
+
+			$items[] = array(
+				'id'          => $post->ID,
+				'title'       => $post->post_title,
+				'status'      => $post->post_status,
+				'url'         => (string) get_permalink( $post->ID ),
+				'teacher'     => array(
+					'id'           => (int) $post->post_author,
+					'display_name' => $teacher ? $teacher->display_name : '',
+				),
+				'categories'  => $categories,
+				'created_at'  => mysql_to_rfc3339( $post->post_date_gmt ),
+				'modified_at' => mysql_to_rfc3339( $post->post_modified_gmt ),
+			);
+		}
+
+		return array(
+			'items'       => $items,
+			'total'       => (int) $query->found_posts,
+			'total_pages' => (int) $query->max_num_pages,
 		);
 	}
 
@@ -407,21 +417,24 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Determine a student's progress state on a course.
+	 * Permission check: user can edit courses.
 	 *
-	 * Returns null when the student has no progress record for the course
-	 * (matches Sensei's data model — there is no "not started" status).
+	 * Mirrors the Courses admin screen capability.
 	 *
-	 * @param int $user_id   Student user ID.
-	 * @param int $course_id Course post ID.
+	 * @access private
 	 */
-	private static function resolve_progress_status( int $user_id, int $course_id ): ?string {
-		if ( Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
-			return Course_Progress_Interface::STATUS_COMPLETE;
-		}
-		if ( Sensei_Utils::has_started_course( $course_id, $user_id ) ) {
-			return Course_Progress_Interface::STATUS_IN_PROGRESS;
-		}
-		return null;
+	public static function can_edit_courses(): bool {
+		return current_user_can( 'edit_courses' );
+	}
+
+	/**
+	 * Permission check: user can manage grades.
+	 *
+	 * Mirrors the Students admin screen capability.
+	 *
+	 * @access private
+	 */
+	public static function can_manage_grades(): bool {
+		return current_user_can( 'manage_sensei_grades' );
 	}
 }
