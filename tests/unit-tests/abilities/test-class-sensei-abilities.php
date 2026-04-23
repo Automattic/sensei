@@ -66,6 +66,68 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
+	public function testGetLessons_WhenCalled_ReturnsLessons() {
+		$factory   = new Sensei_Factory();
+		$lesson_id = $factory->lesson->create( array( 'post_title' => 'Alpha' ) );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-lessons' );
+		$this->assertNotNull( $ability, 'The sensei/get-lessons ability should be registered.' );
+
+		$result = $ability->execute( array() );
+
+		$this->assertIsArray( $result, 'The ability should return an array result.' );
+		$lesson_ids = wp_list_pluck( $result['items'], 'id' );
+		$this->assertContains( $lesson_id, $lesson_ids, 'The created lesson should appear in the items list.' );
+
+		$factory->tearDown();
+	}
+
+	public function testGetLessons_WhenUserLacksCapability_ReturnsFalseFromPermission() {
+		wp_set_current_user( 0 );
+		$ability = wp_get_ability( 'sensei/get-lessons' );
+
+		$this->assertFalse( $ability->check_permissions( array() ) );
+	}
+
+	public function testGetLessons_WhenCallerIsTeacher_ReturnsOnlyOwnLessons() {
+		$factory      = new Sensei_Factory();
+		$teacher_a    = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$teacher_b    = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$own_lesson   = $factory->lesson->create( array( 'post_author' => $teacher_a ) );
+		$other_lesson = $factory->lesson->create( array( 'post_author' => $teacher_b ) );
+
+		wp_set_current_user( $teacher_a );
+		$ability = wp_get_ability( 'sensei/get-lessons' );
+
+		$result     = $ability->execute( array() );
+		$lesson_ids = wp_list_pluck( $result['items'], 'id' );
+
+		$this->assertContains( $own_lesson, $lesson_ids, "The teacher's own lesson should be returned." );
+		$this->assertNotContains( $other_lesson, $lesson_ids, "Another teacher's lesson should not be returned." );
+
+		$factory->tearDown();
+	}
+
+	public function testGetLessons_WithCourseFilter_ReturnsLessonsInCourse() {
+		$factory     = new Sensei_Factory();
+		$course_x    = $factory->course->create();
+		$course_y    = $factory->course->create();
+		$lesson_in_x = $factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_x ) ) );
+		$lesson_in_y = $factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_y ) ) );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-lessons' );
+
+		$result     = $ability->execute( array( 'course' => $course_x ) );
+		$lesson_ids = wp_list_pluck( $result['items'], 'id' );
+
+		$this->assertContains( $lesson_in_x, $lesson_ids, 'The lesson assigned to the filtered course should be returned.' );
+		$this->assertNotContains( $lesson_in_y, $lesson_ids, 'A lesson in a different course should not be returned.' );
+
+		$factory->tearDown();
+	}
+
 	public function testGetStudents_WhenCalled_ReturnsEnrolledUsers() {
 		$factory   = new Sensei_Factory();
 		$course_id = $factory->course->create();

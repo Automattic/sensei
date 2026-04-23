@@ -66,6 +66,7 @@ class Sensei_Abilities {
 		}
 
 		self::register_get_courses_ability();
+		self::register_get_lessons_ability();
 		self::register_get_students_ability();
 	}
 
@@ -157,6 +158,107 @@ class Sensei_Abilities {
 				),
 				'execute_callback'    => array( __CLASS__, 'execute_get_courses' ),
 				'permission_callback' => array( __CLASS__, 'can_edit_courses' ),
+				'meta'                => array(
+					'annotations'  => array(
+						'readonly'    => true,
+						'destructive' => false,
+						'idempotent'  => true,
+					),
+					'show_in_rest' => true,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Register the sensei/get-lessons ability.
+	 */
+	private static function register_get_lessons_ability(): void {
+		$lesson_item_schema = array(
+			'type'       => 'object',
+			'properties' => array(
+				'id'          => array( 'type' => 'integer' ),
+				'title'       => array( 'type' => 'string' ),
+				'status'      => array( 'type' => 'string' ),
+				'url'         => array( 'type' => 'string' ),
+				'course'      => array(
+					'type'       => 'object',
+					'properties' => array(
+						'id'    => array( 'type' => 'integer' ),
+						'title' => array( 'type' => 'string' ),
+					),
+				),
+				'module'      => array(
+					'type'       => 'object',
+					'properties' => array(
+						'id'   => array( 'type' => 'integer' ),
+						'name' => array( 'type' => 'string' ),
+					),
+				),
+				'created_at'  => array(
+					'type'   => 'string',
+					'format' => 'date-time',
+				),
+				'modified_at' => array(
+					'type'   => 'string',
+					'format' => 'date-time',
+				),
+			),
+		);
+
+		wp_register_ability(
+			'sensei/get-lessons',
+			array(
+				'label'               => __( 'Get lessons', 'sensei-lms' ),
+				'description'         => __( 'List Sensei lessons. Teachers see only their own.', 'sensei-lms' ),
+				'category'            => self::CATEGORY_SLUG,
+				'input_schema'        => array(
+					'type'                 => 'object',
+					'default'              => array(),
+					'properties'           => array(
+						'course'   => array(
+							'type'        => 'integer',
+							'description' => __( 'Return only lessons in this course ID.', 'sensei-lms' ),
+						),
+						'status'   => array(
+							'type'        => 'string',
+							'description' => __( 'Filter by post status.', 'sensei-lms' ),
+							'enum'        => array( 'publish', 'draft', 'pending', 'private', 'any' ),
+							'default'     => 'any',
+						),
+						'search'   => array(
+							'type'        => 'string',
+							'description' => __( 'Search lesson titles and content.', 'sensei-lms' ),
+						),
+						'page'     => array(
+							'type'        => 'integer',
+							'description' => __( 'Page number for paginated results.', 'sensei-lms' ),
+							'default'     => 1,
+							'minimum'     => 1,
+						),
+						'per_page' => array(
+							'type'        => 'integer',
+							'description' => __( 'Number of lessons to return per page (max 100).', 'sensei-lms' ),
+							'default'     => 20,
+							'minimum'     => 1,
+							'maximum'     => 100,
+						),
+					),
+					'additionalProperties' => false,
+				),
+				'output_schema'       => array(
+					'type'       => 'object',
+					'properties' => array(
+						'items'       => array(
+							'type'  => 'array',
+							'items' => $lesson_item_schema,
+						),
+						'total'       => array( 'type' => 'integer' ),
+						'total_pages' => array( 'type' => 'integer' ),
+					),
+				),
+				'execute_callback'    => array( __CLASS__, 'execute_get_lessons' ),
+				'permission_callback' => array( __CLASS__, 'can_edit_lessons' ),
 				'meta'                => array(
 					'annotations'  => array(
 						'readonly'    => true,
@@ -333,6 +435,87 @@ class Sensei_Abilities {
 	}
 
 	/**
+	 * Execute sensei/get-lessons.
+	 *
+	 * @access private
+	 *
+	 * @param array $input Ability input.
+	 * @return array
+	 */
+	public static function execute_get_lessons( $input = array() ): array {
+		$args = array(
+			'post_type'      => 'lesson',
+			'post_status'    => $input['status'] ?? 'any',
+			'posts_per_page' => min( 100, (int) ( $input['per_page'] ?? 20 ) ),
+			'paged'          => max( 1, (int) ( $input['page'] ?? 1 ) ),
+		);
+
+		if ( ! current_user_can( 'edit_others_lessons' ) ) {
+			$args['author__in'] = array( get_current_user_id() );
+		}
+
+		if ( ! empty( $input['course'] ) ) {
+			$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				array(
+					'key'   => '_lesson_course',
+					'value' => (int) $input['course'],
+				),
+			);
+		}
+
+		if ( ! empty( $input['search'] ) ) {
+			$args['s'] = $input['search'];
+		}
+
+		$query = new WP_Query( $args );
+
+		$items = array();
+		foreach ( $query->posts as $post ) {
+			if ( ! $post instanceof WP_Post ) {
+				continue;
+			}
+
+			$item = array(
+				'id'          => $post->ID,
+				'title'       => $post->post_title,
+				'status'      => $post->post_status,
+				'url'         => (string) get_permalink( $post->ID ),
+				'created_at'  => mysql_to_rfc3339( $post->post_date_gmt ),
+				'modified_at' => mysql_to_rfc3339( $post->post_modified_gmt ),
+			);
+
+			$course_id = (int) Sensei()->lesson->get_course_id( $post->ID );
+			if ( $course_id ) {
+				$course = get_post( $course_id );
+				if ( $course instanceof WP_Post ) {
+					$item['course'] = array(
+						'id'    => $course_id,
+						'title' => $course->post_title,
+					);
+				}
+			}
+
+			// A lesson belongs to at most one module.
+			$modules = wp_get_post_terms( $post->ID, 'module' );
+			if ( is_array( $modules ) && ! empty( $modules ) ) {
+				$module         = $modules[0];
+				$item['module'] = array(
+					'id'   => (int) $module->term_id,
+					'name' => $module->name,
+				);
+			}
+
+			$items[] = $item;
+		}
+
+		return array(
+			'items'       => $items,
+			'total'       => (int) $query->found_posts,
+			'total_pages' => (int) $query->max_num_pages,
+		);
+	}
+
+	/**
 	 * Execute sensei/get-students.
 	 *
 	 * @access private
@@ -421,6 +604,17 @@ class Sensei_Abilities {
 	 */
 	public static function can_edit_courses(): bool {
 		return current_user_can( 'edit_courses' );
+	}
+
+	/**
+	 * Permission check: user can edit lessons.
+	 *
+	 * Mirrors the Lessons admin screen capability.
+	 *
+	 * @access private
+	 */
+	public static function can_edit_lessons(): bool {
+		return current_user_can( 'edit_lessons' );
 	}
 
 	/**
