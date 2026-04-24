@@ -338,14 +338,13 @@ class Sensei_Abilities {
 		$question_item_schema = array(
 			'type'       => 'object',
 			'properties' => array(
-				'id'          => array( 'type' => 'integer' ),
-				'title'       => array( 'type' => 'string' ),
-				'description' => array( 'type' => 'string' ),
-				'type'        => array(
+				'id'    => array( 'type' => 'integer' ),
+				'title' => array( 'type' => 'string' ),
+				'type'  => array(
 					'type'        => 'string',
 					'description' => __( 'Question type slug from the question-type taxonomy (e.g. multiple-choice, boolean, gap-fill). Extensions may register additional slugs. Pool placeholders use the synthetic slug category-question.', 'sensei-lms' ),
 				),
-				'grade'       => array(
+				'grade' => array(
 					'type'        => 'integer',
 					'description' => __( 'Points awarded for a correct answer. Absent on category-question placeholders.', 'sensei-lms' ),
 				),
@@ -807,11 +806,10 @@ class Sensei_Abilities {
 		}
 
 		return array(
-			'id'          => (int) $question->ID,
-			'title'       => $question->post_title,
-			'description' => $question->post_content,
-			'type'        => $type,
-			'grade'       => (int) Sensei()->question->get_question_grade( $question->ID ),
+			'id'    => (int) $question->ID,
+			'title' => $question->post_title,
+			'type'  => $type,
+			'grade' => (int) Sensei()->question->get_question_grade( $question->ID ),
 		);
 	}
 
