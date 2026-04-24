@@ -833,6 +833,11 @@ class Sensei_Abilities {
 		// Progress status isn't a column WP_User_Query can join against, so narrow
 		// the enrolled set before paginating — otherwise `total` and `total_pages`
 		// would reflect the unfiltered cohort while `items` is the filtered page.
+		// This is O(enrolled) per request: each learner requires two progress-store
+		// lookups. Fine for typical courses; noticeably slow on courses with
+		// thousands of enrolled students. Pushing the filter down would need a
+		// direct HPPS progress-table query, which we're deferring until it's a
+		// hotspot.
 		if ( ! empty( $input['progress_status'] ) ) {
 			$target_status = $input['progress_status'];
 			$enrolled_ids  = array_values(
