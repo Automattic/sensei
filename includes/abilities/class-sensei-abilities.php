@@ -821,16 +821,23 @@ class Sensei_Abilities {
 	 * @access private
 	 *
 	 * @param array $input Ability input.
-	 * @return array
+	 * @return array|WP_Error
 	 */
-	public static function execute_get_students( $input ): array {
+	public static function execute_get_students( $input ) {
 		$course_id   = (int) $input['course'];
+		$course_post = get_post( $course_id );
+		if ( ! $course_post instanceof WP_Post || 'course' !== $course_post->post_type ) {
+			return new WP_Error(
+				'sensei_course_not_found',
+				__( 'No course exists with the given ID.', 'sensei-lms' )
+			);
+		}
+
 		$per_page    = min( 100, (int) ( $input['per_page'] ?? 20 ) );
 		$page        = max( 1, (int) ( $input['page'] ?? 1 ) );
-		$course_post = get_post( $course_id );
 		$course_echo = array(
 			'id'    => $course_id,
-			'title' => $course_post instanceof WP_Post ? $course_post->post_title : '',
+			'title' => $course_post->post_title,
 		);
 
 		$enrolment    = Sensei_Course_Enrolment::get_course_instance( $course_id );

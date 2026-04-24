@@ -550,6 +550,76 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
+	public function testGetStudents_WhenCourseDoesNotExist_ReturnsFalseFromPermission() {
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-students' );
+
+		$this->assertFalse( $ability->check_permissions( array( 'course' => 999999 ) ) );
+	}
+
+	public function testGetStudents_WhenCourseIdIsNotACourse_ReturnsErrorWhenExecutedDirectly() {
+		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+
+		$result = Sensei_Abilities::execute_get_students( array( 'course' => $page_id ) );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'sensei_course_not_found', $result->get_error_code() );
+	}
+
+	public function testGetStudents_WhenNoOneIsEnrolled_ReturnsEmptyEnvelope() {
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create();
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-students' );
+
+		$result = $ability->execute( array( 'course' => $course_id ) );
+
+		$this->assertSame( 0, $result['total'], 'Empty course should report zero students.' );
+		$this->assertSame( 0, $result['total_pages'] );
+		$this->assertSame( array(), $result['items'], 'Items should be empty, not the full user list.' );
+
+		$factory->tearDown();
+	}
+
+	public function testGetStudents_WithProgressFilterAndPagination_KeepsTotalAlignedWithItems() {
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create();
+
+		$completed_ids = array();
+		for ( $i = 0; $i < 3; $i++ ) {
+			$user_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+			Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
+			Sensei_Utils::user_start_course( $user_id, $course_id );
+			Sensei_Utils::update_course_status( $user_id, $course_id, \Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface::STATUS_COMPLETE );
+			$completed_ids[] = $user_id;
+		}
+		for ( $i = 0; $i < 2; $i++ ) {
+			$user_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+			Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
+			Sensei_Utils::user_start_course( $user_id, $course_id );
+		}
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-students' );
+
+		$result = $ability->execute(
+			array(
+				'course'          => $course_id,
+				'progress_status' => \Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface::STATUS_COMPLETE,
+				'per_page'        => 2,
+				'page'            => 2,
+			)
+		);
+
+		$this->assertSame( 3, $result['total'], 'Total should reflect the filtered cohort.' );
+		$this->assertSame( 2, $result['total_pages'], 'Total pages should reflect ceil(3/2).' );
+		$this->assertCount( 1, $result['items'], 'Page 2 of the filtered cohort should have one item.' );
+		$this->assertContains( (int) $result['items'][0]['id'], $completed_ids, 'The returned student should be one of the completed cohort.' );
+
+		$factory->tearDown();
+	}
+
 	public function testGetStudents_Always_EchoesCourseInEnvelope() {
 		$factory   = new Sensei_Factory();
 		$course_id = $factory->course->create( array( 'post_title' => 'Brewing 101' ) );
