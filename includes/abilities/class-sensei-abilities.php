@@ -68,6 +68,7 @@ class Sensei_Abilities {
 		self::register_get_courses_ability();
 		self::register_get_lessons_ability();
 		self::register_get_quiz_ability();
+		self::register_get_questions_ability();
 		self::register_get_students_ability();
 	}
 
@@ -312,6 +313,105 @@ class Sensei_Abilities {
 				),
 				'execute_callback'    => array( __CLASS__, 'execute_get_quiz' ),
 				'permission_callback' => array( __CLASS__, 'can_edit_quiz_lesson' ),
+				'meta'                => array(
+					'annotations'  => array(
+						'readonly'    => true,
+						'destructive' => false,
+						'idempotent'  => true,
+					),
+					'show_in_rest' => true,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Register the sensei/get-questions ability.
+	 */
+	private static function register_get_questions_ability(): void {
+		$question_item_schema = array(
+			'type'       => 'object',
+			'properties' => array(
+				'id'          => array( 'type' => 'integer' ),
+				'title'       => array( 'type' => 'string' ),
+				'description' => array( 'type' => 'string' ),
+				'type'        => array( 'type' => 'string' ),
+				'grade'       => array( 'type' => 'integer' ),
+				'categories'  => array(
+					'type'  => 'array',
+					'items' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'id'   => array( 'type' => 'integer' ),
+							'name' => array( 'type' => 'string' ),
+						),
+					),
+				),
+				'shared'      => array( 'type' => 'boolean' ),
+				'media'       => array(
+					'type'       => 'object',
+					'properties' => array(
+						'id'  => array( 'type' => 'integer' ),
+						'url' => array( 'type' => 'string' ),
+					),
+				),
+			),
+		);
+
+		wp_register_ability(
+			'sensei/get-questions',
+			array(
+				'label'               => __( 'Get questions', 'sensei-lms' ),
+				'description'         => __( 'List the questions on a Sensei quiz.', 'sensei-lms' ),
+				'category'            => self::CATEGORY_SLUG,
+				'input_schema'        => array(
+					'type'                 => 'object',
+					'required'             => array( 'quiz' ),
+					'properties'           => array(
+						'quiz'     => array(
+							'type'        => 'integer',
+							'description' => __( 'The quiz ID whose questions to fetch.', 'sensei-lms' ),
+						),
+						'page'     => array(
+							'type'    => 'integer',
+							'default' => 1,
+							'minimum' => 1,
+						),
+						'per_page' => array(
+							'type'    => 'integer',
+							'default' => 20,
+							'minimum' => 1,
+							'maximum' => 100,
+						),
+					),
+					'additionalProperties' => false,
+				),
+				'output_schema'       => array(
+					'type'       => 'object',
+					'properties' => array(
+						'quiz'        => array(
+							'type'       => 'object',
+							'properties' => array(
+								'id'     => array( 'type' => 'integer' ),
+								'lesson' => array(
+									'type'       => 'object',
+									'properties' => array(
+										'id'    => array( 'type' => 'integer' ),
+										'title' => array( 'type' => 'string' ),
+									),
+								),
+							),
+						),
+						'items'       => array(
+							'type'  => 'array',
+							'items' => $question_item_schema,
+						),
+						'total'       => array( 'type' => 'integer' ),
+						'total_pages' => array( 'type' => 'integer' ),
+					),
+				),
+				'execute_callback'    => array( __CLASS__, 'execute_get_questions' ),
+				'permission_callback' => array( __CLASS__, 'can_read_quiz_questions' ),
 				'meta'                => array(
 					'annotations'  => array(
 						'readonly'    => true,
@@ -620,6 +720,139 @@ class Sensei_Abilities {
 	}
 
 	/**
+	 * Execute sensei/get-questions.
+	 *
+	 * @access private
+	 *
+	 * @param array $input Ability input.
+	 * @return array|WP_Error
+	 */
+	public static function execute_get_questions( $input ) {
+		$quiz_id   = (int) $input['quiz'];
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
+		$lesson    = $lesson_id ? get_post( $lesson_id ) : null;
+
+		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
+			return new WP_Error(
+				'sensei_quiz_not_found',
+				__( 'No quiz exists with the given ID.', 'sensei-lms' )
+			);
+		}
+
+		$per_page = min( 100, (int) ( $input['per_page'] ?? 20 ) );
+		$page     = max( 1, (int) ( $input['page'] ?? 1 ) );
+
+		$questions   = Sensei()->quiz->get_questions( $quiz_id );
+		$total       = count( $questions );
+		$total_pages = $per_page > 0 ? (int) ceil( $total / $per_page ) : 0;
+		$page_slice  = array_slice( $questions, ( $page - 1 ) * $per_page, $per_page );
+
+		$items = array();
+		foreach ( $page_slice as $question ) {
+			if ( ! $question instanceof WP_Post ) {
+				continue;
+			}
+
+			$items[] = self::prepare_question_item( $question );
+		}
+
+		return array(
+			'quiz'        => array(
+				'id'     => $quiz_id,
+				'lesson' => array(
+					'id'    => $lesson_id,
+					'title' => $lesson->post_title,
+				),
+			),
+			'items'       => $items,
+			'total'       => $total,
+			'total_pages' => $total_pages,
+		);
+	}
+
+	/**
+	 * Shape a single question post for the get-questions response.
+	 *
+	 * Category questions ("pick N from category X") don't have a title, so emit
+	 * them with a distinct type so agents can tell they're placeholders rather
+	 * than assume questions went missing.
+	 *
+	 * @param WP_Post $question Question or multiple_question post.
+	 */
+	private static function prepare_question_item( WP_Post $question ): array {
+		if ( 'multiple_question' === $question->post_type ) {
+			$category_id = (int) get_post_meta( $question->ID, 'category', true );
+			$number      = (int) get_post_meta( $question->ID, 'number', true );
+			$category    = $category_id ? get_term( $category_id, 'question-category' ) : null;
+			$cat_name    = ( $category instanceof WP_Term ) ? $category->name : '';
+
+			return array(
+				'id'         => (int) $question->ID,
+				'title'      => sprintf(
+					/* translators: 1: number of questions, 2: category name. */
+					_n( '%1$d question from %2$s', '%1$d questions from %2$s', $number, 'sensei-lms' ),
+					$number,
+					$cat_name
+				),
+				'type'       => 'category-question',
+				'grade'      => 0,
+				'categories' => $category instanceof WP_Term
+					? array(
+						array(
+							'id'   => (int) $category->term_id,
+							'name' => $category->name,
+						),
+					)
+					: array(),
+				'shared'     => false,
+			);
+		}
+
+		$type_terms = wp_get_post_terms( $question->ID, 'question-type' );
+		$type       = '';
+		if ( is_array( $type_terms ) && ! empty( $type_terms ) ) {
+			$type = $type_terms[0]->slug;
+		}
+
+		$category_terms = wp_get_post_terms( $question->ID, 'question-category' );
+		$categories     = array();
+		if ( is_array( $category_terms ) ) {
+			foreach ( $category_terms as $term ) {
+				$categories[] = array(
+					'id'   => (int) $term->term_id,
+					'name' => $term->name,
+				);
+			}
+		}
+
+		$quiz_meta = get_post_meta( $question->ID, '_quiz_id', false );
+		$shared    = is_array( $quiz_meta ) && count( $quiz_meta ) > 1;
+
+		$item = array(
+			'id'          => (int) $question->ID,
+			'title'       => $question->post_title,
+			'description' => $question->post_content,
+			'type'        => $type,
+			'grade'       => (int) Sensei()->question->get_question_grade( $question->ID ),
+			'categories'  => $categories,
+			'shared'      => $shared,
+		);
+
+		$media_id = (int) get_post_meta( $question->ID, '_question_media', true );
+		if ( $media_id ) {
+			$media_url = wp_get_attachment_url( $media_id );
+			if ( $media_url ) {
+				$item['media'] = array(
+					'id'  => $media_id,
+					'url' => $media_url,
+				);
+			}
+		}
+
+		return $item;
+	}
+
+	/**
 	 * Execute sensei/get-students.
 	 *
 	 * @access private
@@ -745,6 +978,36 @@ class Sensei_Abilities {
 		}
 		$lesson = get_post( (int) $input['lesson'] );
 		if ( ! $lesson || 'lesson' !== $lesson->post_type ) {
+			return false;
+		}
+		$post_type = get_post_type_object( 'lesson' );
+		if ( ! $post_type ) {
+			return false;
+		}
+		return current_user_can( $post_type->cap->edit_post, $lesson->ID )
+			|| current_user_can( 'manage_options' );
+	}
+
+	/**
+	 * Permission check: user can read the questions on a given quiz.
+	 *
+	 * Gates on `edit_post` of the quiz's parent lesson (teachers only see their
+	 * own) with a `manage_options` fallback.
+	 *
+	 * @access private
+	 *
+	 * @param array $input Ability input.
+	 */
+	public static function can_read_quiz_questions( $input = array() ): bool {
+		if ( empty( $input['quiz'] ) ) {
+			return false;
+		}
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( (int) $input['quiz'] );
+		if ( ! $lesson_id ) {
+			return false;
+		}
+		$lesson = get_post( $lesson_id );
+		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
 			return false;
 		}
 		$post_type = get_post_type_object( 'lesson' );

@@ -55,6 +55,52 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->assertFalse( $ability->check_permissions( array() ) );
 	}
 
+	public function testGetCourses_Always_IncludesLessonCount() {
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create();
+		$factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-courses' );
+		$result  = $ability->execute( array() );
+
+		$match = null;
+		foreach ( $result['items'] as $item ) {
+			if ( (int) $item['id'] === (int) $course_id ) {
+				$match = $item;
+				break;
+			}
+		}
+		$this->assertNotNull( $match, 'The course should be present in the results.' );
+		$this->assertSame( 2, $match['lesson_count'], 'lesson_count should reflect lessons assigned to the course.' );
+
+		$factory->tearDown();
+	}
+
+	public function testGetCourses_Always_IncludesEnrolledCount() {
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create();
+		$user_id   = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-courses' );
+		$result  = $ability->execute( array() );
+
+		$match = null;
+		foreach ( $result['items'] as $item ) {
+			if ( (int) $item['id'] === (int) $course_id ) {
+				$match = $item;
+				break;
+			}
+		}
+		$this->assertNotNull( $match, 'The course should be present in the results.' );
+		$this->assertSame( 1, $match['enrolled_count'], 'enrolled_count should reflect the number of enrolled learners.' );
+
+		$factory->tearDown();
+	}
+
 	public function testGetCourses_WhenCallerIsTeacher_ReturnsOnlyOwnCourses() {
 		$factory      = new Sensei_Factory();
 		$teacher_a    = $this->factory->user->create( array( 'role' => 'teacher' ) );
@@ -198,6 +244,95 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
+	public function testGetQuestions_WhenCalled_ReturnsQuestionsInOrder() {
+		$factory   = new Sensei_Factory();
+		$lesson_id = $factory->lesson->create();
+		$quiz_id   = $factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$factory->question->create_many(
+			3,
+			array(
+				'quiz_id'       => $quiz_id,
+				'question_type' => 'multiple-choice',
+			)
+		);
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-questions' );
+		$this->assertNotNull( $ability, 'The sensei/get-questions ability should be registered.' );
+
+		$result = $ability->execute( array( 'quiz' => $quiz_id ) );
+
+		$this->assertIsArray( $result, 'The ability should return an array result.' );
+		$this->assertCount( 3, $result['items'], 'All three questions should be returned.' );
+		$this->assertSame( 3, $result['total'] );
+
+		$factory->tearDown();
+	}
+
+	public function testGetQuestions_WhenCalled_IncludesQuestionTypeAndGrade() {
+		$factory   = new Sensei_Factory();
+		$lesson_id = $factory->lesson->create();
+		$quiz_id   = $factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$factory->question->create(
+			array(
+				'quiz_id'        => $quiz_id,
+				'question_type'  => 'boolean',
+				'question_grade' => 5,
+			)
+		);
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-questions' );
+		$result  = $ability->execute( array( 'quiz' => $quiz_id ) );
+
+		$this->assertNotEmpty( $result['items'], 'The quiz should have at least one question.' );
+		$first = $result['items'][0];
+		$this->assertSame( 'boolean', $first['type'], 'The question type slug should be emitted.' );
+		$this->assertSame( 5, $first['grade'], 'The question grade should be emitted as an integer.' );
+
+		$factory->tearDown();
+	}
+
+	public function testGetQuestions_WhenUserCannotEditLesson_ReturnsFalseFromPermission() {
+		$factory   = new Sensei_Factory();
+		$teacher_a = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$teacher_b = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$lesson_id = $factory->lesson->create( array( 'post_author' => $teacher_b ) );
+		$quiz_id   = $factory->maybe_create_quiz_for_lesson( $lesson_id );
+
+		wp_set_current_user( $teacher_a );
+		$ability = wp_get_ability( 'sensei/get-questions' );
+
+		$this->assertFalse( $ability->check_permissions( array( 'quiz' => $quiz_id ) ) );
+
+		$factory->tearDown();
+	}
+
+	public function testGetQuestions_WhenQuizHasNoLesson_ReturnsFalseFromPermission() {
+		$orphan_quiz = $this->factory->post->create( array( 'post_type' => 'quiz' ) );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-questions' );
+
+		$this->assertFalse( $ability->check_permissions( array( 'quiz' => $orphan_quiz ) ) );
+	}
+
+	public function testGetQuestions_Always_EchoesQuizInEnvelope() {
+		$factory   = new Sensei_Factory();
+		$lesson_id = $factory->lesson->create( array( 'post_title' => 'Stretching' ) );
+		$quiz_id   = $factory->maybe_create_quiz_for_lesson( $lesson_id );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-questions' );
+		$result  = $ability->execute( array( 'quiz' => $quiz_id ) );
+
+		$this->assertSame( $quiz_id, $result['quiz']['id'], 'The quiz id should be echoed.' );
+		$this->assertSame( $lesson_id, $result['quiz']['lesson']['id'], 'The parent lesson id should be echoed.' );
+		$this->assertSame( 'Stretching', $result['quiz']['lesson']['title'], 'The parent lesson title should be echoed.' );
+
+		$factory->tearDown();
+	}
+
 	public function testGetStudents_WhenCalled_ReturnsEnrolledUsers() {
 		$factory   = new Sensei_Factory();
 		$course_id = $factory->course->create();
@@ -300,6 +435,21 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->assertNotNull( $match, 'The created user should be present in the search results.' );
 		$this->assertSame( 'Alice', $match['display_name'], 'The item should include the display name.' );
 		$this->assertSame( 'alice@example.com', $match['user_email'], 'The item should include the email.' );
+
+		$factory->tearDown();
+	}
+
+	public function testGetStudents_Always_EchoesCourseInEnvelope() {
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create( array( 'post_title' => 'Brewing 101' ) );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-students' );
+		$result  = $ability->execute( array( 'course' => $course_id ) );
+
+		$this->assertArrayHasKey( 'course', $result, 'The response should carry a top-level course echo.' );
+		$this->assertSame( $course_id, $result['course']['id'], 'The echoed course id should match the input.' );
+		$this->assertSame( 'Brewing 101', $result['course']['title'], 'The echoed course title should match the course post.' );
 
 		$factory->tearDown();
 	}
