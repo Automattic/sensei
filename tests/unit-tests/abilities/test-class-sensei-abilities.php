@@ -299,6 +299,8 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-questions' );
 
+		$expected_ids = wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' );
+
 		$result = $ability->execute(
 			array(
 				'quiz'     => $quiz_id,
@@ -309,7 +311,11 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 		$this->assertSame( 5, $result['total'], 'total should reflect the full question set.' );
 		$this->assertSame( 3, $result['total_pages'], 'total_pages should reflect ceil(5/2).' );
-		$this->assertCount( 2, $result['items'], 'page 2 with per_page=2 should return two items.' );
+		$this->assertSame(
+			array_slice( $expected_ids, 2, 2 ),
+			wp_list_pluck( $result['items'], 'id' ),
+			'Page 2 should contain the 3rd and 4th questions in ability order.'
+		);
 
 		$factory->tearDown();
 	}
@@ -367,6 +373,8 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->assertSame( 'category-question', $match['type'], 'Placeholders should use the synthetic type slug.' );
 		$this->assertStringContainsString( 'Geography', $match['title'], 'Synthesized title should name the pool category.' );
 		$this->assertStringContainsString( '3', $match['title'], 'Synthesized title should name the pool size.' );
+		$this->assertArrayNotHasKey( 'grade', $match, 'Placeholders should omit the grade field.' );
+		$this->assertArrayNotHasKey( 'description', $match, 'Placeholders should omit the description field.' );
 
 		$factory->tearDown();
 	}
