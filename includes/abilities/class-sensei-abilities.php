@@ -413,7 +413,7 @@ class Sensei_Abilities {
 					),
 				),
 				'execute_callback'    => array( __CLASS__, 'execute_get_questions' ),
-				'permission_callback' => array( __CLASS__, 'can_read_quiz_questions' ),
+				'permission_callback' => array( __CLASS__, 'can_edit_quiz_questions' ),
 				'meta'                => array(
 					'annotations'  => array(
 						'readonly'    => true,
@@ -955,7 +955,7 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Permission check: user can read the questions on a given quiz.
+	 * Permission check: user can edit the questions on a given quiz.
 	 *
 	 * Gates on `edit_post` of the quiz's parent lesson (teachers only see their
 	 * own) with a `manage_options` fallback.
@@ -964,7 +964,7 @@ class Sensei_Abilities {
 	 *
 	 * @param array $input Ability input.
 	 */
-	public static function can_read_quiz_questions( $input = array() ): bool {
+	public static function can_edit_quiz_questions( $input = array() ): bool {
 		if ( empty( $input['quiz'] ) ) {
 			return false;
 		}
