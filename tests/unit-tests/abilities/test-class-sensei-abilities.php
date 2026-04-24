@@ -466,6 +466,36 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
+	public function testGetStudents_WithProgressStatusFilter_ReportsTotalFromFilteredSet() {
+		$factory      = new Sensei_Factory();
+		$course_id    = $factory->course->create();
+		$completed_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$in_progress  = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $completed_id, $course_id );
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $in_progress, $course_id );
+
+		Sensei_Utils::user_start_course( $completed_id, $course_id );
+		Sensei_Utils::update_course_status( $completed_id, $course_id, \Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface::STATUS_COMPLETE );
+		Sensei_Utils::user_start_course( $in_progress, $course_id );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-students' );
+
+		$result = $ability->execute(
+			array(
+				'course'          => $course_id,
+				'progress_status' => \Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface::STATUS_COMPLETE,
+			)
+		);
+
+		$this->assertSame( 1, $result['total'], 'total should reflect only the filtered cohort.' );
+		$this->assertCount( 1, $result['items'], 'items should match the filtered total.' );
+		$this->assertSame( $completed_id, (int) $result['items'][0]['id'] );
+
+		$factory->tearDown();
+	}
+
 	public function testGetStudents_Always_EchoesCourseInEnvelope() {
 		$factory   = new Sensei_Factory();
 		$course_id = $factory->course->create( array( 'post_title' => 'Brewing 101' ) );

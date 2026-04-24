@@ -839,8 +839,21 @@ class Sensei_Abilities {
 		$enrolment    = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$enrolled_ids = $enrolment->get_enrolled_user_ids();
 
+		// Progress status isn't a column WP_User_Query can join against, so narrow
+		// the enrolled set before paginating — otherwise `total` and `total_pages`
+		// would reflect the unfiltered cohort while `items` is the filtered page.
+		if ( ! empty( $input['progress_status'] ) ) {
+			$target_status = $input['progress_status'];
+			$enrolled_ids  = array_values(
+				array_filter(
+					$enrolled_ids,
+					static fn( $user_id ) => self::resolve_progress_status( (int) $user_id, $course_id ) === $target_status
+				)
+			);
+		}
+
 		// WP_User_Query treats an empty `include` as "no restriction" and returns every user,
-		// so short-circuit here when no one is enrolled.
+		// so short-circuit here when no one matches.
 		if ( empty( $enrolled_ids ) ) {
 			return array(
 				'course'      => $course_echo,
@@ -884,17 +897,6 @@ class Sensei_Abilities {
 			}
 
 			$items[] = $item;
-		}
-
-		// Progress status is per-user-per-course state that can't be joined in WP_User_Query,
-		// so filter after materializing the page.
-		if ( ! empty( $input['progress_status'] ) ) {
-			$items = array_values(
-				array_filter(
-					$items,
-					static fn( $item ) => ( $item['progress_status'] ?? null ) === $input['progress_status']
-				)
-			);
 		}
 
 		return array(
