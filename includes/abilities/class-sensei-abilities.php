@@ -313,7 +313,7 @@ class Sensei_Abilities {
 						),
 						'auto_grade'    => array(
 							'type'        => 'boolean',
-							'description' => __( 'Whether the quiz is graded automatically when all questions support it.', 'sensei-lms' ),
+							'description' => __( 'Whether the quiz is configured for automatic grading. Questions that can\'t be auto-graded (e.g. file uploads) still require manual review.', 'sensei-lms' ),
 						),
 					),
 				),
