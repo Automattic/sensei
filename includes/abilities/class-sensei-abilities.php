@@ -78,18 +78,18 @@ class Sensei_Abilities {
 		$course_item_schema = array(
 			'type'       => 'object',
 			'properties' => array(
-				'id'          => array( 'type' => 'integer' ),
-				'title'       => array( 'type' => 'string' ),
-				'status'      => array( 'type' => 'string' ),
-				'url'         => array( 'type' => 'string' ),
-				'teacher'     => array(
+				'id'             => array( 'type' => 'integer' ),
+				'title'          => array( 'type' => 'string' ),
+				'status'         => array( 'type' => 'string' ),
+				'link'           => array( 'type' => 'string' ),
+				'teacher'        => array(
 					'type'       => 'object',
 					'properties' => array(
 						'id'           => array( 'type' => 'integer' ),
 						'display_name' => array( 'type' => 'string' ),
 					),
 				),
-				'categories'  => array(
+				'categories'     => array(
 					'type'  => 'array',
 					'items' => array(
 						'type'       => 'object',
@@ -99,7 +99,9 @@ class Sensei_Abilities {
 						),
 					),
 				),
-				'modified_at' => array(
+				'lesson_count'   => array( 'type' => 'integer' ),
+				'enrolled_count' => array( 'type' => 'integer' ),
+				'modified_gmt'   => array(
 					'type'   => 'string',
 					'format' => 'date-time',
 				),
@@ -174,11 +176,11 @@ class Sensei_Abilities {
 		$lesson_item_schema = array(
 			'type'       => 'object',
 			'properties' => array(
-				'id'          => array( 'type' => 'integer' ),
-				'title'       => array( 'type' => 'string' ),
-				'status'      => array( 'type' => 'string' ),
-				'url'         => array( 'type' => 'string' ),
-				'courses'     => array(
+				'id'           => array( 'type' => 'integer' ),
+				'title'        => array( 'type' => 'string' ),
+				'status'       => array( 'type' => 'string' ),
+				'link'         => array( 'type' => 'string' ),
+				'courses'      => array(
 					'type'  => 'array',
 					'items' => array(
 						'type'       => 'object',
@@ -188,7 +190,7 @@ class Sensei_Abilities {
 						),
 					),
 				),
-				'modules'     => array(
+				'modules'      => array(
 					'type'  => 'array',
 					'items' => array(
 						'type'       => 'object',
@@ -198,7 +200,7 @@ class Sensei_Abilities {
 						),
 					),
 				),
-				'modified_at' => array(
+				'modified_gmt' => array(
 					'type'   => 'string',
 					'format' => 'date-time',
 				),
@@ -366,6 +368,13 @@ class Sensei_Abilities {
 				'output_schema'       => array(
 					'type'       => 'object',
 					'properties' => array(
+						'course'      => array(
+							'type'       => 'object',
+							'properties' => array(
+								'id'    => array( 'type' => 'integer' ),
+								'title' => array( 'type' => 'string' ),
+							),
+						),
 						'items'       => array(
 							'type'  => 'array',
 							'items' => array(
@@ -464,16 +473,18 @@ class Sensei_Abilities {
 			}
 
 			$items[] = array(
-				'id'          => $post->ID,
-				'title'       => $post->post_title,
-				'status'      => $post->post_status,
-				'url'         => (string) get_permalink( $post->ID ),
-				'teacher'     => array(
+				'id'             => $post->ID,
+				'title'          => $post->post_title,
+				'status'         => $post->post_status,
+				'link'           => (string) get_permalink( $post->ID ),
+				'teacher'        => array(
 					'id'           => (int) $post->post_author,
 					'display_name' => $teacher ? $teacher->display_name : '',
 				),
-				'categories'  => $categories,
-				'modified_at' => mysql_to_rfc3339( $post->post_modified_gmt ),
+				'categories'     => $categories,
+				'lesson_count'   => (int) Sensei()->course->course_lesson_count( $post->ID ),
+				'enrolled_count' => count( Sensei_Course_Enrolment::get_course_instance( $post->ID )->get_enrolled_user_ids() ),
+				'modified_gmt'   => mysql_to_rfc3339( $post->post_modified_gmt ),
 			);
 		}
 
@@ -526,11 +537,11 @@ class Sensei_Abilities {
 			}
 
 			$item = array(
-				'id'          => $post->ID,
-				'title'       => $post->post_title,
-				'status'      => $post->post_status,
-				'url'         => (string) get_permalink( $post->ID ),
-				'modified_at' => mysql_to_rfc3339( $post->post_modified_gmt ),
+				'id'           => $post->ID,
+				'title'        => $post->post_title,
+				'status'       => $post->post_status,
+				'link'         => (string) get_permalink( $post->ID ),
+				'modified_gmt' => mysql_to_rfc3339( $post->post_modified_gmt ),
 			);
 
 			// Courses and modules are returned as arrays even though a lesson currently
@@ -617,9 +628,14 @@ class Sensei_Abilities {
 	 * @return array
 	 */
 	public static function execute_get_students( $input ): array {
-		$course_id = (int) $input['course'];
-		$per_page  = min( 100, (int) ( $input['per_page'] ?? 20 ) );
-		$page      = max( 1, (int) ( $input['page'] ?? 1 ) );
+		$course_id   = (int) $input['course'];
+		$per_page    = min( 100, (int) ( $input['per_page'] ?? 20 ) );
+		$page        = max( 1, (int) ( $input['page'] ?? 1 ) );
+		$course_post = get_post( $course_id );
+		$course_echo = array(
+			'id'    => $course_id,
+			'title' => $course_post instanceof WP_Post ? $course_post->post_title : '',
+		);
 
 		$enrolment    = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$enrolled_ids = $enrolment->get_enrolled_user_ids();
@@ -628,6 +644,7 @@ class Sensei_Abilities {
 		// so short-circuit here when no one is enrolled.
 		if ( empty( $enrolled_ids ) ) {
 			return array(
+				'course'      => $course_echo,
 				'items'       => array(),
 				'total'       => 0,
 				'total_pages' => 0,
@@ -682,6 +699,7 @@ class Sensei_Abilities {
 		}
 
 		return array(
+			'course'      => $course_echo,
 			'items'       => $items,
 			'total'       => (int) $user_query->get_total(),
 			'total_pages' => $per_page > 0 ? (int) ceil( $user_query->get_total() / $per_page ) : 0,
