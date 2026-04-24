@@ -538,7 +538,7 @@ class Sensei_Abilities {
 		$args = array(
 			'post_type'      => 'course',
 			'post_status'    => $input['status'] ?? 'any',
-			'posts_per_page' => min( 100, (int) ( $input['per_page'] ?? 20 ) ),
+			'posts_per_page' => min( 100, max( 1, (int) ( $input['per_page'] ?? 20 ) ) ),
 			'paged'          => max( 1, (int) ( $input['page'] ?? 1 ) ),
 		);
 
@@ -604,7 +604,7 @@ class Sensei_Abilities {
 		$args = array(
 			'post_type'      => 'lesson',
 			'post_status'    => $input['status'] ?? 'any',
-			'posts_per_page' => min( 100, (int) ( $input['per_page'] ?? 20 ) ),
+			'posts_per_page' => min( 100, max( 1, (int) ( $input['per_page'] ?? 20 ) ) ),
 			'paged'          => max( 1, (int) ( $input['page'] ?? 1 ) ),
 		);
 
@@ -736,7 +736,7 @@ class Sensei_Abilities {
 			);
 		}
 
-		$per_page = min( 100, (int) ( $input['per_page'] ?? 20 ) );
+		$per_page = min( 100, max( 1, (int) ( $input['per_page'] ?? 20 ) ) );
 		$page     = max( 1, (int) ( $input['page'] ?? 1 ) );
 
 		$questions   = Sensei()->quiz->get_questions( $quiz_id );
@@ -833,7 +833,7 @@ class Sensei_Abilities {
 			);
 		}
 
-		$per_page    = min( 100, (int) ( $input['per_page'] ?? 20 ) );
+		$per_page    = min( 100, max( 1, (int) ( $input['per_page'] ?? 20 ) ) );
 		$page        = max( 1, (int) ( $input['page'] ?? 1 ) );
 		$course_echo = array(
 			'id'    => $course_id,
@@ -996,8 +996,9 @@ class Sensei_Abilities {
 	 *
 	 * Mirrors the Students admin screen, which requires `manage_sensei_grades`
 	 * and scopes teachers to courses they author via pre_get_posts. Here we
-	 * enforce the same scoping by requiring `edit_post` on the course, with
-	 * `manage_options` as the admin fallback.
+	 * require `manage_sensei_grades` (admins receive this cap by default) and
+	 * then gate on `edit_post` of the course, with `manage_options` as the
+	 * admin fallback for the per-course check.
 	 *
 	 * @access private
 	 *
