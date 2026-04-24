@@ -439,6 +439,33 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
+	public function testGetStudents_WhenCallerIsTeacherOfOtherCourse_ReturnsFalseFromPermission() {
+		$factory      = new Sensei_Factory();
+		$teacher_a    = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$teacher_b    = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$other_course = $factory->course->create( array( 'post_author' => $teacher_b ) );
+
+		wp_set_current_user( $teacher_a );
+		$ability = wp_get_ability( 'sensei/get-students' );
+
+		$this->assertFalse( $ability->check_permissions( array( 'course' => $other_course ) ) );
+
+		$factory->tearDown();
+	}
+
+	public function testGetStudents_WhenCallerIsTeacherOfOwnCourse_ReturnsTrueFromPermission() {
+		$factory    = new Sensei_Factory();
+		$teacher    = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$own_course = $factory->course->create( array( 'post_author' => $teacher ) );
+
+		wp_set_current_user( $teacher );
+		$ability = wp_get_ability( 'sensei/get-students' );
+
+		$this->assertTrue( $ability->check_permissions( array( 'course' => $own_course ) ) );
+
+		$factory->tearDown();
+	}
+
 	public function testGetStudents_Always_EchoesCourseInEnvelope() {
 		$factory   = new Sensei_Factory();
 		$course_id = $factory->course->create( array( 'post_title' => 'Brewing 101' ) );

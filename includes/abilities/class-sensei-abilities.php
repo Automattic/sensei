@@ -1019,13 +1019,33 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Permission check: user can manage grades.
+	 * Permission check: user can read students for the given course.
 	 *
-	 * Mirrors the Students admin screen capability.
+	 * Mirrors the Students admin screen, which requires `manage_sensei_grades`
+	 * and scopes teachers to courses they author via pre_get_posts. Here we
+	 * enforce the same scoping by requiring `edit_post` on the course, with
+	 * `manage_options` as the admin fallback.
 	 *
 	 * @access private
+	 *
+	 * @param array $input Ability input.
 	 */
-	public static function can_manage_grades(): bool {
-		return current_user_can( 'manage_sensei_grades' );
+	public static function can_manage_grades( $input = array() ): bool {
+		if ( ! current_user_can( 'manage_sensei_grades' ) ) {
+			return false;
+		}
+		if ( empty( $input['course'] ) ) {
+			return false;
+		}
+		$course = get_post( (int) $input['course'] );
+		if ( ! $course instanceof WP_Post || 'course' !== $course->post_type ) {
+			return false;
+		}
+		$post_type = get_post_type_object( 'course' );
+		if ( ! $post_type ) {
+			return false;
+		}
+		return current_user_can( $post_type->cap->edit_post, $course->ID )
+			|| current_user_can( 'manage_options' );
 	}
 }
