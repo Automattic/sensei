@@ -136,6 +136,68 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
+	public function testGetQuiz_WhenCalled_ReturnsQuizSettings() {
+		$factory   = new Sensei_Factory();
+		$lesson_id = $factory->lesson->create( array( 'post_title' => 'Stretching' ) );
+		$quiz_id   = $factory->maybe_create_quiz_for_lesson( $lesson_id );
+
+		update_post_meta( $quiz_id, '_pass_required', 'on' );
+		update_post_meta( $quiz_id, '_quiz_passmark', 70 );
+		update_post_meta( $quiz_id, '_quiz_grade_type', 'auto' );
+
+		$factory->question->create_many(
+			3,
+			array(
+				'quiz_id'       => $quiz_id,
+				'question_type' => 'multiple-choice',
+			)
+		);
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-quiz' );
+		$this->assertNotNull( $ability, 'The sensei/get-quiz ability should be registered.' );
+
+		$result = $ability->execute( array( 'lesson' => $lesson_id ) );
+
+		$this->assertIsArray( $result, 'The ability should return an array result.' );
+		$this->assertSame( $quiz_id, $result['id'], 'The returned quiz ID should match the lesson\'s quiz.' );
+		$this->assertTrue( $result['pass_required'], 'pass_required should be true when _pass_required is "on".' );
+		$this->assertSame( 70, $result['quiz_passmark'], 'quiz_passmark should be sourced from _quiz_passmark.' );
+		$this->assertTrue( $result['auto_grade'], 'auto_grade should be true when _quiz_grade_type is "auto".' );
+		$this->assertSame( $lesson_id, $result['lesson']['id'], 'The lesson nesting should carry the lesson ID.' );
+		$this->assertSame( 3, $result['question_count'], 'question_count should match the number of questions on the quiz.' );
+
+		$factory->tearDown();
+	}
+
+	public function testGetQuiz_WhenLessonHasNoQuiz_ReturnsError() {
+		$factory   = new Sensei_Factory();
+		$lesson_id = $factory->lesson->create();
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-quiz' );
+
+		$result = $ability->execute( array( 'lesson' => $lesson_id ) );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+
+		$factory->tearDown();
+	}
+
+	public function testGetQuiz_WhenUserCannotEditLesson_ReturnsFalseFromPermission() {
+		$factory   = new Sensei_Factory();
+		$teacher_a = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$teacher_b = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$lesson_id = $factory->lesson->create( array( 'post_author' => $teacher_b ) );
+
+		wp_set_current_user( $teacher_a );
+		$ability = wp_get_ability( 'sensei/get-quiz' );
+
+		$this->assertFalse( $ability->check_permissions( array( 'lesson' => $lesson_id ) ) );
+
+		$factory->tearDown();
+	}
+
 	public function testGetStudents_WhenCalled_ReturnsEnrolledUsers() {
 		$factory   = new Sensei_Factory();
 		$course_id = $factory->course->create();

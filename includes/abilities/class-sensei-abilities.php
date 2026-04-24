@@ -67,6 +67,7 @@ class Sensei_Abilities {
 
 		self::register_get_courses_ability();
 		self::register_get_lessons_ability();
+		self::register_get_quiz_ability();
 		self::register_get_students_ability();
 	}
 
@@ -257,6 +258,58 @@ class Sensei_Abilities {
 				),
 				'execute_callback'    => array( __CLASS__, 'execute_get_lessons' ),
 				'permission_callback' => array( __CLASS__, 'can_edit_lessons' ),
+				'meta'                => array(
+					'annotations'  => array(
+						'readonly'    => true,
+						'destructive' => false,
+						'idempotent'  => true,
+					),
+					'show_in_rest' => true,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Register the sensei/get-quiz ability.
+	 */
+	private static function register_get_quiz_ability(): void {
+		wp_register_ability(
+			'sensei/get-quiz',
+			array(
+				'label'               => __( 'Get quiz', 'sensei-lms' ),
+				'description'         => __( 'Fetch the quiz settings for a Sensei lesson. The question roster is exposed via sensei/get-questions.', 'sensei-lms' ),
+				'category'            => self::CATEGORY_SLUG,
+				'input_schema'        => array(
+					'type'                 => 'object',
+					'required'             => array( 'lesson' ),
+					'properties'           => array(
+						'lesson' => array(
+							'type'        => 'integer',
+							'description' => __( 'The lesson ID whose quiz to fetch.', 'sensei-lms' ),
+						),
+					),
+					'additionalProperties' => false,
+				),
+				'output_schema'       => array(
+					'type'       => 'object',
+					'properties' => array(
+						'id'             => array( 'type' => 'integer' ),
+						'lesson'         => array(
+							'type'       => 'object',
+							'properties' => array(
+								'id'    => array( 'type' => 'integer' ),
+								'title' => array( 'type' => 'string' ),
+							),
+						),
+						'pass_required'  => array( 'type' => 'boolean' ),
+						'quiz_passmark'  => array( 'type' => 'integer' ),
+						'auto_grade'     => array( 'type' => 'boolean' ),
+						'question_count' => array( 'type' => 'integer' ),
+					),
+				),
+				'execute_callback'    => array( __CLASS__, 'execute_get_quiz' ),
+				'permission_callback' => array( __CLASS__, 'can_edit_quiz_lesson' ),
 				'meta'                => array(
 					'annotations'  => array(
 						'readonly'    => true,
@@ -516,6 +569,46 @@ class Sensei_Abilities {
 	}
 
 	/**
+	 * Execute sensei/get-quiz.
+	 *
+	 * @access private
+	 *
+	 * @param array $input Ability input.
+	 * @return array|WP_Error
+	 */
+	public static function execute_get_quiz( $input ) {
+		$lesson_id = (int) $input['lesson'];
+		$lesson    = get_post( $lesson_id );
+
+		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
+			return new WP_Error(
+				'sensei_lesson_not_found',
+				__( 'No lesson exists with the given ID.', 'sensei-lms' )
+			);
+		}
+
+		$quiz_id = (int) Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			return new WP_Error(
+				'sensei_quiz_not_found',
+				__( 'This lesson does not have a quiz.', 'sensei-lms' )
+			);
+		}
+
+		return array(
+			'id'             => $quiz_id,
+			'lesson'         => array(
+				'id'    => $lesson_id,
+				'title' => $lesson->post_title,
+			),
+			'pass_required'  => 'on' === get_post_meta( $quiz_id, '_pass_required', true ),
+			'quiz_passmark'  => (int) get_post_meta( $quiz_id, '_quiz_passmark', true ),
+			'auto_grade'     => 'auto' === get_post_meta( $quiz_id, '_quiz_grade_type', true ),
+			'question_count' => count( Sensei()->quiz->get_questions( $quiz_id ) ),
+		);
+	}
+
+	/**
 	 * Execute sensei/get-students.
 	 *
 	 * @access private
@@ -615,6 +708,33 @@ class Sensei_Abilities {
 	 */
 	public static function can_edit_lessons(): bool {
 		return current_user_can( 'edit_lessons' );
+	}
+
+	/**
+	 * Permission check: user can edit the specific lesson whose quiz is being requested.
+	 *
+	 * Uses the `edit_lesson` meta capability, which map_meta_cap resolves to an
+	 * ownership check for teachers (they can only reach their own lessons) and
+	 * allows admins through.
+	 *
+	 * @access private
+	 *
+	 * @param array $input Ability input.
+	 */
+	public static function can_edit_quiz_lesson( $input = array() ): bool {
+		if ( empty( $input['lesson'] ) ) {
+			return false;
+		}
+		$lesson = get_post( (int) $input['lesson'] );
+		if ( ! $lesson || 'lesson' !== $lesson->post_type ) {
+			return false;
+		}
+		$post_type = get_post_type_object( 'lesson' );
+		if ( ! $post_type ) {
+			return false;
+		}
+		return current_user_can( $post_type->cap->edit_post, $lesson->ID )
+			|| current_user_can( 'manage_options' );
 	}
 
 	/**
