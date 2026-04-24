@@ -79,18 +79,18 @@ class Sensei_Abilities {
 		$course_item_schema = array(
 			'type'       => 'object',
 			'properties' => array(
-				'id'             => array( 'type' => 'integer' ),
-				'title'          => array( 'type' => 'string' ),
-				'status'         => array( 'type' => 'string' ),
-				'link'           => array( 'type' => 'string' ),
-				'teacher'        => array(
+				'id'           => array( 'type' => 'integer' ),
+				'title'        => array( 'type' => 'string' ),
+				'status'       => array( 'type' => 'string' ),
+				'link'         => array( 'type' => 'string' ),
+				'teacher'      => array(
 					'type'       => 'object',
 					'properties' => array(
 						'id'           => array( 'type' => 'integer' ),
 						'display_name' => array( 'type' => 'string' ),
 					),
 				),
-				'categories'     => array(
+				'categories'   => array(
 					'type'  => 'array',
 					'items' => array(
 						'type'       => 'object',
@@ -100,9 +100,7 @@ class Sensei_Abilities {
 						),
 					),
 				),
-				'lesson_count'   => array( 'type' => 'integer' ),
-				'enrolled_count' => array( 'type' => 'integer' ),
-				'modified_gmt'   => array(
+				'modified_gmt' => array(
 					'type'   => 'string',
 					'format' => 'date-time',
 				),
@@ -297,29 +295,25 @@ class Sensei_Abilities {
 				'output_schema'       => array(
 					'type'       => 'object',
 					'properties' => array(
-						'id'             => array( 'type' => 'integer' ),
-						'lesson'         => array(
+						'id'            => array( 'type' => 'integer' ),
+						'lesson'        => array(
 							'type'       => 'object',
 							'properties' => array(
 								'id'    => array( 'type' => 'integer' ),
 								'title' => array( 'type' => 'string' ),
 							),
 						),
-						'pass_required'  => array(
+						'pass_required' => array(
 							'type'        => 'boolean',
 							'description' => __( 'Whether the learner must pass this quiz to complete the lesson.', 'sensei-lms' ),
 						),
-						'quiz_passmark'  => array(
+						'quiz_passmark' => array(
 							'type'        => 'integer',
 							'description' => __( 'Minimum score (as a percentage) required to pass.', 'sensei-lms' ),
 						),
-						'auto_grade'     => array(
+						'auto_grade'    => array(
 							'type'        => 'boolean',
 							'description' => __( 'Whether the quiz is graded automatically when all questions support it.', 'sensei-lms' ),
-						),
-						'question_count' => array(
-							'type'        => 'integer',
-							'description' => __( 'Total number of questions on the quiz, including category-question pool slots.', 'sensei-lms' ),
 						),
 					),
 				),
@@ -578,18 +572,16 @@ class Sensei_Abilities {
 			}
 
 			$items[] = array(
-				'id'             => $post->ID,
-				'title'          => $post->post_title,
-				'status'         => $post->post_status,
-				'link'           => (string) get_permalink( $post->ID ),
-				'teacher'        => array(
+				'id'           => $post->ID,
+				'title'        => $post->post_title,
+				'status'       => $post->post_status,
+				'link'         => (string) get_permalink( $post->ID ),
+				'teacher'      => array(
 					'id'           => (int) $post->post_author,
 					'display_name' => $teacher ? $teacher->display_name : '',
 				),
-				'categories'     => $categories,
-				'lesson_count'   => (int) Sensei()->course->course_lesson_count( $post->ID ),
-				'enrolled_count' => count( Sensei_Course_Enrolment::get_course_instance( $post->ID )->get_enrolled_user_ids() ),
-				'modified_gmt'   => mysql_to_rfc3339( $post->post_modified_gmt ),
+				'categories'   => $categories,
+				'modified_gmt' => mysql_to_rfc3339( $post->post_modified_gmt ),
 			);
 		}
 
@@ -712,15 +704,14 @@ class Sensei_Abilities {
 		}
 
 		return array(
-			'id'             => $quiz_id,
-			'lesson'         => array(
+			'id'            => $quiz_id,
+			'lesson'        => array(
 				'id'    => $lesson_id,
 				'title' => $lesson->post_title,
 			),
-			'pass_required'  => 'on' === get_post_meta( $quiz_id, '_pass_required', true ),
-			'quiz_passmark'  => (int) get_post_meta( $quiz_id, '_quiz_passmark', true ),
-			'auto_grade'     => 'auto' === get_post_meta( $quiz_id, '_quiz_grade_type', true ),
-			'question_count' => count( Sensei()->quiz->get_questions( $quiz_id ) ),
+			'pass_required' => 'on' === get_post_meta( $quiz_id, '_pass_required', true ),
+			'quiz_passmark' => (int) get_post_meta( $quiz_id, '_quiz_passmark', true ),
+			'auto_grade'    => 'auto' === get_post_meta( $quiz_id, '_quiz_grade_type', true ),
 		);
 	}
 

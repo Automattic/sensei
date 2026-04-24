@@ -55,52 +55,6 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->assertFalse( $ability->check_permissions( array() ) );
 	}
 
-	public function testGetCourses_Always_IncludesLessonCount() {
-		$factory   = new Sensei_Factory();
-		$course_id = $factory->course->create();
-		$factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
-		$factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
-
-		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-courses' );
-		$result  = $ability->execute( array() );
-
-		$match = null;
-		foreach ( $result['items'] as $item ) {
-			if ( (int) $item['id'] === (int) $course_id ) {
-				$match = $item;
-				break;
-			}
-		}
-		$this->assertNotNull( $match, 'The course should be present in the results.' );
-		$this->assertSame( 2, $match['lesson_count'], 'lesson_count should reflect lessons assigned to the course.' );
-
-		$factory->tearDown();
-	}
-
-	public function testGetCourses_Always_IncludesEnrolledCount() {
-		$factory   = new Sensei_Factory();
-		$course_id = $factory->course->create();
-		$user_id   = $this->factory->user->create( array( 'role' => 'subscriber' ) );
-		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
-
-		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-courses' );
-		$result  = $ability->execute( array() );
-
-		$match = null;
-		foreach ( $result['items'] as $item ) {
-			if ( (int) $item['id'] === (int) $course_id ) {
-				$match = $item;
-				break;
-			}
-		}
-		$this->assertNotNull( $match, 'The course should be present in the results.' );
-		$this->assertSame( 1, $match['enrolled_count'], 'enrolled_count should reflect the number of enrolled learners.' );
-
-		$factory->tearDown();
-	}
-
 	public function testGetCourses_WhenCallerIsTeacher_ReturnsOnlyOwnCourses() {
 		$factory      = new Sensei_Factory();
 		$teacher_a    = $this->factory->user->create( array( 'role' => 'teacher' ) );
@@ -191,14 +145,6 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		update_post_meta( $quiz_id, '_quiz_passmark', 70 );
 		update_post_meta( $quiz_id, '_quiz_grade_type', 'auto' );
 
-		$factory->question->create_many(
-			3,
-			array(
-				'quiz_id'       => $quiz_id,
-				'question_type' => 'multiple-choice',
-			)
-		);
-
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-quiz' );
 		$this->assertNotNull( $ability, 'The sensei/get-quiz ability should be registered.' );
@@ -211,7 +157,6 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->assertSame( 70, $result['quiz_passmark'], 'quiz_passmark should be sourced from _quiz_passmark.' );
 		$this->assertTrue( $result['auto_grade'], 'auto_grade should be true when _quiz_grade_type is "auto".' );
 		$this->assertSame( $lesson_id, $result['lesson']['id'], 'The lesson nesting should carry the lesson ID.' );
-		$this->assertSame( 3, $result['question_count'], 'question_count should match the number of questions on the quiz.' );
 
 		$factory->tearDown();
 	}
