@@ -337,24 +337,6 @@ class Sensei_Abilities {
 				'description' => array( 'type' => 'string' ),
 				'type'        => array( 'type' => 'string' ),
 				'grade'       => array( 'type' => 'integer' ),
-				'categories'  => array(
-					'type'  => 'array',
-					'items' => array(
-						'type'       => 'object',
-						'properties' => array(
-							'id'   => array( 'type' => 'integer' ),
-							'name' => array( 'type' => 'string' ),
-						),
-					),
-				),
-				'shared'      => array( 'type' => 'boolean' ),
-				'media'       => array(
-					'type'       => 'object',
-					'properties' => array(
-						'id'  => array( 'type' => 'integer' ),
-						'url' => array( 'type' => 'string' ),
-					),
-				),
 			),
 		);
 
@@ -787,24 +769,14 @@ class Sensei_Abilities {
 			$cat_name    = ( $category instanceof WP_Term ) ? $category->name : '';
 
 			return array(
-				'id'         => (int) $question->ID,
-				'title'      => sprintf(
+				'id'    => (int) $question->ID,
+				'title' => sprintf(
 					/* translators: 1: number of questions, 2: category name. */
 					_n( '%1$d question from %2$s', '%1$d questions from %2$s', $number, 'sensei-lms' ),
 					$number,
 					$cat_name
 				),
-				'type'       => 'category-question',
-				'grade'      => 0,
-				'categories' => $category instanceof WP_Term
-					? array(
-						array(
-							'id'   => (int) $category->term_id,
-							'name' => $category->name,
-						),
-					)
-					: array(),
-				'shared'     => false,
+				'type'  => 'category-question',
 			);
 		}
 
@@ -814,42 +786,13 @@ class Sensei_Abilities {
 			$type = $type_terms[0]->slug;
 		}
 
-		$category_terms = wp_get_post_terms( $question->ID, 'question-category' );
-		$categories     = array();
-		if ( is_array( $category_terms ) ) {
-			foreach ( $category_terms as $term ) {
-				$categories[] = array(
-					'id'   => (int) $term->term_id,
-					'name' => $term->name,
-				);
-			}
-		}
-
-		$quiz_meta = get_post_meta( $question->ID, '_quiz_id', false );
-		$shared    = is_array( $quiz_meta ) && count( $quiz_meta ) > 1;
-
-		$item = array(
+		return array(
 			'id'          => (int) $question->ID,
 			'title'       => $question->post_title,
 			'description' => $question->post_content,
 			'type'        => $type,
 			'grade'       => (int) Sensei()->question->get_question_grade( $question->ID ),
-			'categories'  => $categories,
-			'shared'      => $shared,
 		);
-
-		$media_id = (int) get_post_meta( $question->ID, '_question_media', true );
-		if ( $media_id ) {
-			$media_url = wp_get_attachment_url( $media_id );
-			if ( $media_url ) {
-				$item['media'] = array(
-					'id'  => $media_id,
-					'url' => $media_url,
-				);
-			}
-		}
-
-		return $item;
 	}
 
 	/**
