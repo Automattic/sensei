@@ -343,7 +343,7 @@ class Sensei_Abilities {
 				'description' => array( 'type' => 'string' ),
 				'type'        => array(
 					'type'        => 'string',
-					'description' => __( 'Question type slug: multiple-choice, boolean, gap-fill, single-line, multi-line, file-upload, or category-question for pool placeholders.', 'sensei-lms' ),
+					'description' => __( 'Question type slug from the question-type taxonomy (e.g. multiple-choice, boolean, gap-fill). Extensions may register additional slugs. Pool placeholders use the synthetic slug category-question.', 'sensei-lms' ),
 				),
 				'grade'       => array(
 					'type'        => 'integer',
@@ -781,7 +781,12 @@ class Sensei_Abilities {
 			$category_id = (int) get_post_meta( $question->ID, 'category', true );
 			$number      = (int) get_post_meta( $question->ID, 'number', true );
 			$category    = $category_id ? get_term( $category_id, 'question-category' ) : null;
-			$cat_name    = ( $category instanceof WP_Term ) ? $category->name : '';
+			// Fall back to a visible marker when the referenced category was
+			// deleted — otherwise the synthesized title reads as a broken
+			// sentence ("3 questions from ").
+			$cat_name = $category instanceof WP_Term
+				? $category->name
+				: __( '(deleted category)', 'sensei-lms' );
 
 			return array(
 				'id'    => (int) $question->ID,

@@ -284,6 +284,93 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->assertFalse( $ability->check_permissions( array( 'quiz' => $orphan_quiz ) ) );
 	}
 
+	public function testGetQuestions_WithPagination_ReturnsCorrectSlice() {
+		$factory   = new Sensei_Factory();
+		$lesson_id = $factory->lesson->create();
+		$quiz_id   = $factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$factory->question->create_many(
+			5,
+			array(
+				'quiz_id'       => $quiz_id,
+				'question_type' => 'multiple-choice',
+			)
+		);
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-questions' );
+
+		$result = $ability->execute(
+			array(
+				'quiz'     => $quiz_id,
+				'per_page' => 2,
+				'page'     => 2,
+			)
+		);
+
+		$this->assertSame( 5, $result['total'], 'total should reflect the full question set.' );
+		$this->assertSame( 3, $result['total_pages'], 'total_pages should reflect ceil(5/2).' );
+		$this->assertCount( 2, $result['items'], 'page 2 with per_page=2 should return two items.' );
+
+		$factory->tearDown();
+	}
+
+	public function testGetQuestions_WhenCallerIsTeacherOfOwnLesson_ReturnsTrueFromPermission() {
+		$factory   = new Sensei_Factory();
+		$teacher   = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$lesson_id = $factory->lesson->create( array( 'post_author' => $teacher ) );
+		$quiz_id   = $factory->maybe_create_quiz_for_lesson( $lesson_id );
+
+		wp_set_current_user( $teacher );
+		$ability = wp_get_ability( 'sensei/get-questions' );
+
+		$this->assertTrue( $ability->check_permissions( array( 'quiz' => $quiz_id ) ) );
+
+		$factory->tearDown();
+	}
+
+	public function testGetQuestions_WithCategoryQuestion_EmitsPoolPlaceholderShape() {
+		$factory     = new Sensei_Factory();
+		$lesson_id   = $factory->lesson->create();
+		$quiz_id     = $factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$category_id = $this->factory->term->create(
+			array(
+				'taxonomy' => 'question-category',
+				'name'     => 'Geography',
+			)
+		);
+		$pool_id     = $this->factory->post->create(
+			array(
+				'post_type'  => 'multiple_question',
+				'post_title' => 'Pool',
+				'meta_input' => array(
+					'category'                        => $category_id,
+					'number'                          => 3,
+					'_quiz_id'                        => $quiz_id,
+					'_quiz_question_order' . $quiz_id => $quiz_id . '0001',
+				),
+			)
+		);
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-questions' );
+
+		$result = $ability->execute( array( 'quiz' => $quiz_id ) );
+
+		$match = null;
+		foreach ( $result['items'] as $item ) {
+			if ( (int) $item['id'] === (int) $pool_id ) {
+				$match = $item;
+				break;
+			}
+		}
+		$this->assertNotNull( $match, 'The category-question placeholder should be present.' );
+		$this->assertSame( 'category-question', $match['type'], 'Placeholders should use the synthetic type slug.' );
+		$this->assertStringContainsString( 'Geography', $match['title'], 'Synthesized title should name the pool category.' );
+		$this->assertStringContainsString( '3', $match['title'], 'Synthesized title should name the pool size.' );
+
+		$factory->tearDown();
+	}
+
 	public function testGetQuestions_Always_EchoesQuizInEnvelope() {
 		$factory   = new Sensei_Factory();
 		$lesson_id = $factory->lesson->create( array( 'post_title' => 'Stretching' ) );
