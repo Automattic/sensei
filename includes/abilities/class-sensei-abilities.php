@@ -641,8 +641,9 @@ class Sensei_Abilities {
 				'modified_gmt' => mysql_to_rfc3339( $post->post_modified_gmt ),
 			);
 
-			// Courses and modules are returned as arrays even though a lesson currently
-			// maps to at most one of each; the data model is moving toward multi-assignment.
+			// Courses and modules are wrapped in arrays even though a lesson maps to
+			// only one of each in practice — keeps the shape stable if Sensei later
+			// allows multi-assignment without a schema break.
 			$item['courses'] = array();
 			$course_id       = (int) Sensei()->lesson->get_course_id( $post->ID );
 			if ( $course_id ) {
