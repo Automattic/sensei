@@ -924,12 +924,32 @@ class Sensei_Abilities {
 	/**
 	 * Permission check: user can edit lessons.
 	 *
-	 * Mirrors the Lessons admin screen capability.
+	 * Mirrors the Lessons admin screen capability. When a `course` input is
+	 * provided the caller is additionally scoped to courses they can edit, so
+	 * teachers asking about another teacher's course get a clear permission
+	 * failure instead of a silently empty list.
 	 *
 	 * @access private
+	 *
+	 * @param array $input Ability input.
 	 */
-	public static function can_edit_lessons(): bool {
-		return current_user_can( 'edit_lessons' );
+	public static function can_edit_lessons( $input = array() ): bool {
+		if ( ! current_user_can( 'edit_lessons' ) ) {
+			return false;
+		}
+		if ( empty( $input['course'] ) ) {
+			return true;
+		}
+		$course = get_post( (int) $input['course'] );
+		if ( ! $course instanceof WP_Post || 'course' !== $course->post_type ) {
+			return false;
+		}
+		$post_type = get_post_type_object( 'course' );
+		if ( ! $post_type ) {
+			return false;
+		}
+		return current_user_can( $post_type->cap->edit_post, $course->ID )
+			|| current_user_can( 'manage_options' );
 	}
 
 	/**
