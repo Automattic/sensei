@@ -241,7 +241,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$ability = wp_get_ability( 'sensei/get-questions' );
 		$this->assertNotNull( $ability, 'The sensei/get-questions ability should be registered.' );
 
-		$result = $ability->execute( array( 'quiz' => $quiz_id ) );
+		$result = $ability->execute( array( 'lesson' => $lesson_id ) );
 
 		$this->assertIsArray( $result, 'The ability should return an array result.' );
 		$this->assertCount( 3, $result['items'], 'All three questions should be returned.' );
@@ -264,7 +264,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-questions' );
-		$result  = $ability->execute( array( 'quiz' => $quiz_id ) );
+		$result  = $ability->execute( array( 'lesson' => $lesson_id ) );
 
 		$this->assertNotEmpty( $result['items'], 'The quiz should have at least one question.' );
 		$first = $result['items'][0];
@@ -279,23 +279,28 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$teacher_a = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		$teacher_b = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		$lesson_id = $factory->lesson->create( array( 'post_author' => $teacher_b ) );
-		$quiz_id   = $factory->maybe_create_quiz_for_lesson( $lesson_id );
 
 		wp_set_current_user( $teacher_a );
 		$ability = wp_get_ability( 'sensei/get-questions' );
 
-		$this->assertFalse( $ability->check_permissions( array( 'quiz' => $quiz_id ) ) );
+		$this->assertFalse( $ability->check_permissions( array( 'lesson' => $lesson_id ) ) );
 
 		$factory->tearDown();
 	}
 
-	public function testGetQuestions_WhenQuizHasNoLesson_ReturnsFalseFromPermission() {
-		$orphan_quiz = $this->factory->post->create( array( 'post_type' => 'quiz' ) );
+	public function testGetQuestions_WhenLessonHasNoQuiz_ReturnsError() {
+		$factory   = new Sensei_Factory();
+		$lesson_id = $factory->lesson->create();
 
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-questions' );
 
-		$this->assertFalse( $ability->check_permissions( array( 'quiz' => $orphan_quiz ) ) );
+		$result = $ability->execute( array( 'lesson' => $lesson_id ) );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'sensei_quiz_not_found', $result->get_error_code() );
+
+		$factory->tearDown();
 	}
 
 	public function testGetQuestions_WithPagination_ReturnsCorrectSlice() {
@@ -317,7 +322,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 		$result = $ability->execute(
 			array(
-				'quiz'     => $quiz_id,
+				'lesson'   => $lesson_id,
 				'per_page' => 2,
 				'page'     => 2,
 			)
@@ -338,12 +343,11 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory   = new Sensei_Factory();
 		$teacher   = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		$lesson_id = $factory->lesson->create( array( 'post_author' => $teacher ) );
-		$quiz_id   = $factory->maybe_create_quiz_for_lesson( $lesson_id );
 
 		wp_set_current_user( $teacher );
 		$ability = wp_get_ability( 'sensei/get-questions' );
 
-		$this->assertTrue( $ability->check_permissions( array( 'quiz' => $quiz_id ) ) );
+		$this->assertTrue( $ability->check_permissions( array( 'lesson' => $lesson_id ) ) );
 
 		$factory->tearDown();
 	}
@@ -374,7 +378,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-questions' );
 
-		$result = $ability->execute( array( 'quiz' => $quiz_id ) );
+		$result = $ability->execute( array( 'lesson' => $lesson_id ) );
 
 		$match = null;
 		foreach ( $result['items'] as $item ) {
@@ -393,18 +397,17 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
-	public function testGetQuestions_Always_EchoesQuizInEnvelope() {
+	public function testGetQuestions_Always_EchoesLessonInEnvelope() {
 		$factory   = new Sensei_Factory();
 		$lesson_id = $factory->lesson->create( array( 'post_title' => 'Stretching' ) );
-		$quiz_id   = $factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$factory->maybe_create_quiz_for_lesson( $lesson_id );
 
 		$this->login_as_admin();
 		$ability = wp_get_ability( 'sensei/get-questions' );
-		$result  = $ability->execute( array( 'quiz' => $quiz_id ) );
+		$result  = $ability->execute( array( 'lesson' => $lesson_id ) );
 
-		$this->assertSame( $quiz_id, $result['quiz']['id'], 'The quiz id should be echoed.' );
-		$this->assertSame( $lesson_id, $result['quiz']['lesson']['id'], 'The parent lesson id should be echoed.' );
-		$this->assertSame( 'Stretching', $result['quiz']['lesson']['title'], 'The parent lesson title should be echoed.' );
+		$this->assertSame( $lesson_id, $result['lesson']['id'], 'The lesson id should be echoed.' );
+		$this->assertSame( 'Stretching', $result['lesson']['title'], 'The lesson title should be echoed.' );
 
 		$factory->tearDown();
 	}

@@ -355,15 +355,15 @@ class Sensei_Abilities {
 			'sensei/get-questions',
 			array(
 				'label'               => __( 'Get questions', 'sensei-lms' ),
-				'description'         => __( 'List the questions on a Sensei quiz.', 'sensei-lms' ),
+				'description'         => __( 'List the questions on a Sensei lesson\'s quiz.', 'sensei-lms' ),
 				'category'            => self::CATEGORY_SLUG,
 				'input_schema'        => array(
 					'type'                 => 'object',
-					'required'             => array( 'quiz' ),
+					'required'             => array( 'lesson' ),
 					'properties'           => array(
-						'quiz'     => array(
+						'lesson'   => array(
 							'type'        => 'integer',
-							'description' => __( 'The quiz ID whose questions to fetch.', 'sensei-lms' ),
+							'description' => __( 'The lesson ID whose quiz questions to fetch.', 'sensei-lms' ),
 						),
 						'page'     => array(
 							'type'        => 'integer',
@@ -384,17 +384,11 @@ class Sensei_Abilities {
 				'output_schema'       => array(
 					'type'       => 'object',
 					'properties' => array(
-						'quiz'        => array(
+						'lesson'      => array(
 							'type'       => 'object',
 							'properties' => array(
-								'id'     => array( 'type' => 'integer' ),
-								'lesson' => array(
-									'type'       => 'object',
-									'properties' => array(
-										'id'    => array( 'type' => 'integer' ),
-										'title' => array( 'type' => 'string' ),
-									),
-								),
+								'id'    => array( 'type' => 'integer' ),
+								'title' => array( 'type' => 'string' ),
 							),
 						),
 						'items'       => array(
@@ -406,7 +400,7 @@ class Sensei_Abilities {
 					),
 				),
 				'execute_callback'    => array( __CLASS__, 'execute_get_questions' ),
-				'permission_callback' => array( __CLASS__, 'can_edit_quiz_questions' ),
+				'permission_callback' => array( __CLASS__, 'can_edit_quiz_lesson' ),
 				'meta'                => array(
 					'annotations'  => array(
 						'readonly'    => true,
@@ -724,14 +718,21 @@ class Sensei_Abilities {
 	 * @return array|WP_Error
 	 */
 	public static function execute_get_questions( $input ) {
-		$quiz_id   = (int) $input['quiz'];
-		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
-		$lesson    = $lesson_id ? get_post( $lesson_id ) : null;
+		$lesson_id = (int) $input['lesson'];
+		$lesson    = get_post( $lesson_id );
 
 		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
 			return new WP_Error(
+				'sensei_lesson_not_found',
+				__( 'No lesson exists with the given ID.', 'sensei-lms' )
+			);
+		}
+
+		$quiz_id = (int) Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			return new WP_Error(
 				'sensei_quiz_not_found',
-				__( 'No quiz exists with the given ID.', 'sensei-lms' )
+				__( 'This lesson does not have a quiz.', 'sensei-lms' )
 			);
 		}
 
@@ -753,12 +754,9 @@ class Sensei_Abilities {
 		}
 
 		return array(
-			'quiz'        => array(
-				'id'     => $quiz_id,
-				'lesson' => array(
-					'id'    => $lesson_id,
-					'title' => $lesson->post_title,
-				),
+			'lesson'      => array(
+				'id'    => $lesson_id,
+				'title' => $lesson->post_title,
 			),
 			'items'       => $items,
 			'total'       => $total,
@@ -969,36 +967,6 @@ class Sensei_Abilities {
 		}
 		$lesson = get_post( (int) $input['lesson'] );
 		if ( ! $lesson || 'lesson' !== $lesson->post_type ) {
-			return false;
-		}
-		$post_type = get_post_type_object( 'lesson' );
-		if ( ! $post_type ) {
-			return false;
-		}
-		return current_user_can( $post_type->cap->edit_post, $lesson->ID )
-			|| current_user_can( 'manage_options' );
-	}
-
-	/**
-	 * Permission check: user can edit the questions on a given quiz.
-	 *
-	 * Gates on `edit_post` of the quiz's parent lesson (teachers only see their
-	 * own) with a `manage_options` fallback.
-	 *
-	 * @access private
-	 *
-	 * @param array $input Ability input.
-	 */
-	public static function can_edit_quiz_questions( $input = array() ): bool {
-		if ( empty( $input['quiz'] ) ) {
-			return false;
-		}
-		$lesson_id = (int) Sensei()->quiz->get_lesson_id( (int) $input['quiz'] );
-		if ( ! $lesson_id ) {
-			return false;
-		}
-		$lesson = get_post( $lesson_id );
-		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
 			return false;
 		}
 		$post_type = get_post_type_object( 'lesson' );
