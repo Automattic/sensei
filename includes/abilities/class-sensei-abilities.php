@@ -449,10 +449,16 @@ class Sensei_Abilities {
 	 * @param int $course_id Course post ID.
 	 */
 	private static function resolve_progress_status( int $user_id, int $course_id ): ?string {
-		if ( Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
+		$progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
+		if ( ! $progress ) {
+			return null;
+		}
+
+		$status = $progress->get_status();
+		if ( Course_Progress_Interface::STATUS_COMPLETE === $status ) {
 			return Course_Progress_Interface::STATUS_COMPLETE;
 		}
-		if ( Sensei_Utils::has_started_course( $course_id, $user_id ) ) {
+		if ( Course_Progress_Interface::STATUS_IN_PROGRESS === $status ) {
 			return Course_Progress_Interface::STATUS_IN_PROGRESS;
 		}
 		return null;
@@ -697,16 +703,10 @@ class Sensei_Abilities {
 			);
 		}
 
-		$type_terms = wp_get_post_terms( $question->ID, 'question-type' );
-		$type       = '';
-		if ( is_array( $type_terms ) && ! empty( $type_terms ) ) {
-			$type = $type_terms[0]->slug;
-		}
-
 		return array(
 			'id'    => (int) $question->ID,
 			'title' => $question->post_title,
-			'type'  => $type,
+			'type'  => Sensei()->question->get_question_type( $question->ID ),
 			'grade' => (int) Sensei()->question->get_question_grade( $question->ID ),
 		);
 	}
