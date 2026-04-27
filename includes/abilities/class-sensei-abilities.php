@@ -641,7 +641,7 @@ class Sensei_Abilities {
 
 		$questions   = Sensei()->quiz->get_questions( $quiz_id );
 		$total       = count( $questions );
-		$total_pages = $per_page > 0 ? (int) ceil( $total / $per_page ) : 0;
+		$total_pages = (int) ceil( $total / $per_page );
 		$page_slice  = array_slice( $questions, ( $page - 1 ) * $per_page, $per_page );
 
 		$items = array();
@@ -804,7 +804,7 @@ class Sensei_Abilities {
 			'course'      => $course_echo,
 			'items'       => $items,
 			'total'       => (int) $user_query->get_total(),
-			'total_pages' => $per_page > 0 ? (int) ceil( $user_query->get_total() / $per_page ) : 0,
+			'total_pages' => (int) ceil( $user_query->get_total() / $per_page ),
 		);
 	}
 
