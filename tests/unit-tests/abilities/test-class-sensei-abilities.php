@@ -277,6 +277,15 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
+	public function testGetQuestions_WhenLessonIdIsNotALesson_ReturnsFalseFromPermission() {
+		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-questions' );
+
+		$this->assertFalse( $ability->check_permissions( array( 'lesson' => $page_id ) ) );
+	}
+
 	public function testGetQuestions_WithCategoryQuestion_EmitsPoolPlaceholderShape() {
 		$factory     = new Sensei_Factory();
 		$lesson_id   = $factory->lesson->create();
