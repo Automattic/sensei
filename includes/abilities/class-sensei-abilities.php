@@ -75,7 +75,7 @@ class Sensei_Abilities {
 	 * Register the sensei/get-courses ability.
 	 */
 	private static function register_get_courses_ability(): void {
-		$course_item_schema = array(
+		$course_output_item_schema = array(
 			'type'       => 'object',
 			'properties' => array(
 				'id'           => array( 'type' => 'integer' ),
@@ -147,7 +147,7 @@ class Sensei_Abilities {
 					'properties' => array(
 						'items'       => array(
 							'type'  => 'array',
-							'items' => $course_item_schema,
+							'items' => $course_output_item_schema,
 						),
 						'total'       => array( 'type' => 'integer' ),
 						'total_pages' => array( 'type' => 'integer' ),
@@ -171,7 +171,7 @@ class Sensei_Abilities {
 	 * Register the sensei/get-lessons ability.
 	 */
 	private static function register_get_lessons_ability(): void {
-		$lesson_item_schema = array(
+		$lesson_output_item_schema = array(
 			'type'       => 'object',
 			'properties' => array(
 				'id'           => array( 'type' => 'integer' ),
@@ -250,7 +250,7 @@ class Sensei_Abilities {
 					'properties' => array(
 						'items'       => array(
 							'type'  => 'array',
-							'items' => $lesson_item_schema,
+							'items' => $lesson_output_item_schema,
 						),
 						'total'       => array( 'type' => 'integer' ),
 						'total_pages' => array( 'type' => 'integer' ),
@@ -274,7 +274,7 @@ class Sensei_Abilities {
 	 * Register the sensei/get-questions ability.
 	 */
 	private static function register_get_questions_ability(): void {
-		$question_item_schema = array(
+		$question_output_item_schema = array(
 			'type'       => 'object',
 			'properties' => array(
 				'id'    => array( 'type' => 'integer' ),
@@ -332,7 +332,7 @@ class Sensei_Abilities {
 						),
 						'items'       => array(
 							'type'  => 'array',
-							'items' => $question_item_schema,
+							'items' => $question_output_item_schema,
 						),
 						'total'       => array( 'type' => 'integer' ),
 						'total_pages' => array( 'type' => 'integer' ),
