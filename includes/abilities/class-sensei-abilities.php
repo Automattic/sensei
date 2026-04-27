@@ -450,18 +450,8 @@ class Sensei_Abilities {
 	 */
 	private static function resolve_progress_status( int $user_id, int $course_id ): ?string {
 		$progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
-		if ( ! $progress ) {
-			return null;
-		}
 
-		$status = $progress->get_status();
-		if ( Course_Progress_Interface::STATUS_COMPLETE === $status ) {
-			return Course_Progress_Interface::STATUS_COMPLETE;
-		}
-		if ( Course_Progress_Interface::STATUS_IN_PROGRESS === $status ) {
-			return Course_Progress_Interface::STATUS_IN_PROGRESS;
-		}
-		return null;
+		return $progress ? $progress->get_status() : null;
 	}
 
 	/**
