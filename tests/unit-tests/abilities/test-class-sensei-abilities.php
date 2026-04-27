@@ -228,6 +228,15 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
+	public function testGetQuestions_WhenLessonIdIsNotALesson_ReturnsErrorWhenExecutedDirectly() {
+		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+
+		$result = Sensei_Abilities::execute_get_questions( array( 'lesson' => $page_id ) );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'sensei_lesson_not_found', $result->get_error_code() );
+	}
+
 	public function testGetQuestions_WithPagination_ReturnsCorrectSlice() {
 		$factory   = new Sensei_Factory();
 		$lesson_id = $factory->lesson->create();
@@ -514,6 +523,26 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$ability = wp_get_ability( 'sensei/get-students' );
 
 		$this->assertFalse( $ability->check_permissions( array( 'course' => 999999 ) ) );
+	}
+
+	public function testGetStudents_WhenCallerLacksManageGradesCap_ReturnsFalseFromPermission() {
+		$factory    = new Sensei_Factory();
+		$course_id  = $factory->course->create();
+		$subscriber = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+
+		wp_set_current_user( $subscriber );
+		$ability = wp_get_ability( 'sensei/get-students' );
+
+		$this->assertFalse( $ability->check_permissions( array( 'course' => $course_id ) ) );
+
+		$factory->tearDown();
+	}
+
+	public function testGetStudents_WhenCourseInputMissing_ReturnsFalseFromPermission() {
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/get-students' );
+
+		$this->assertFalse( $ability->check_permissions( array() ) );
 	}
 
 	public function testGetStudents_WhenCourseIdIsNotACourse_ReturnsErrorWhenExecutedDirectly() {
