@@ -65,16 +65,16 @@ class Sensei_Abilities {
 			return;
 		}
 
-		self::register_get_courses_ability();
-		self::register_get_lessons_ability();
-		self::register_get_questions_ability();
-		self::register_get_students_ability();
+		self::register_courses_list_ability();
+		self::register_lessons_list_ability();
+		self::register_questions_list_ability();
+		self::register_students_list_ability();
 	}
 
 	/**
-	 * Register the sensei/get-courses ability.
+	 * Register the sensei/courses-list ability.
 	 */
-	private static function register_get_courses_ability(): void {
+	private static function register_courses_list_ability(): void {
 		$course_output_item_schema = array(
 			'type'       => 'object',
 			'properties' => array(
@@ -107,9 +107,9 @@ class Sensei_Abilities {
 		);
 
 		wp_register_ability(
-			'sensei/get-courses',
+			'sensei/courses-list',
 			array(
-				'label'               => __( 'Get courses', 'sensei-lms' ),
+				'label'               => __( 'List courses', 'sensei-lms' ),
 				'description'         => __( 'List Sensei courses. Teachers see only their own.', 'sensei-lms' ),
 				'category'            => self::CATEGORY_SLUG,
 				'input_schema'        => array(
@@ -153,7 +153,7 @@ class Sensei_Abilities {
 						'total_pages' => array( 'type' => 'integer' ),
 					),
 				),
-				'execute_callback'    => array( __CLASS__, 'execute_get_courses' ),
+				'execute_callback'    => array( __CLASS__, 'execute_courses_list' ),
 				'permission_callback' => array( __CLASS__, 'can_edit_courses' ),
 				'meta'                => array(
 					'annotations'  => array(
@@ -171,9 +171,9 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Register the sensei/get-lessons ability.
+	 * Register the sensei/lessons-list ability.
 	 */
-	private static function register_get_lessons_ability(): void {
+	private static function register_lessons_list_ability(): void {
 		$lesson_output_item_schema = array(
 			'type'       => 'object',
 			'properties' => array(
@@ -209,9 +209,9 @@ class Sensei_Abilities {
 		);
 
 		wp_register_ability(
-			'sensei/get-lessons',
+			'sensei/lessons-list',
 			array(
-				'label'               => __( 'Get lessons', 'sensei-lms' ),
+				'label'               => __( 'List lessons', 'sensei-lms' ),
 				'description'         => __( 'List Sensei lessons. Teachers see only their own.', 'sensei-lms' ),
 				'category'            => self::CATEGORY_SLUG,
 				'input_schema'        => array(
@@ -259,7 +259,7 @@ class Sensei_Abilities {
 						'total_pages' => array( 'type' => 'integer' ),
 					),
 				),
-				'execute_callback'    => array( __CLASS__, 'execute_get_lessons' ),
+				'execute_callback'    => array( __CLASS__, 'execute_lessons_list' ),
 				'permission_callback' => array( __CLASS__, 'can_edit_lessons' ),
 				'meta'                => array(
 					'annotations'  => array(
@@ -277,9 +277,9 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Register the sensei/get-questions ability.
+	 * Register the sensei/questions-list ability.
 	 */
-	private static function register_get_questions_ability(): void {
+	private static function register_questions_list_ability(): void {
 		$question_output_item_schema = array(
 			'type'       => 'object',
 			'properties' => array(
@@ -297,9 +297,9 @@ class Sensei_Abilities {
 		);
 
 		wp_register_ability(
-			'sensei/get-questions',
+			'sensei/questions-list',
 			array(
-				'label'               => __( 'Get questions', 'sensei-lms' ),
+				'label'               => __( 'List questions', 'sensei-lms' ),
 				'description'         => __( 'List the questions on a Sensei lesson\'s quiz.', 'sensei-lms' ),
 				'category'            => self::CATEGORY_SLUG,
 				'input_schema'        => array(
@@ -344,7 +344,7 @@ class Sensei_Abilities {
 						'total_pages' => array( 'type' => 'integer' ),
 					),
 				),
-				'execute_callback'    => array( __CLASS__, 'execute_get_questions' ),
+				'execute_callback'    => array( __CLASS__, 'execute_questions_list' ),
 				'permission_callback' => array( __CLASS__, 'can_edit_quiz_lesson' ),
 				'meta'                => array(
 					'annotations'  => array(
@@ -362,13 +362,13 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Register the sensei/get-students ability.
+	 * Register the sensei/students-list ability.
 	 */
-	private static function register_get_students_ability(): void {
+	private static function register_students_list_ability(): void {
 		wp_register_ability(
-			'sensei/get-students',
+			'sensei/students-list',
 			array(
-				'label'               => __( 'Get students', 'sensei-lms' ),
+				'label'               => __( 'List students', 'sensei-lms' ),
 				'description'         => __( 'List students enrolled in a course. Optionally filter by progress state or search.', 'sensei-lms' ),
 				'category'            => self::CATEGORY_SLUG,
 				'input_schema'        => array(
@@ -434,7 +434,7 @@ class Sensei_Abilities {
 						'total_pages' => array( 'type' => 'integer' ),
 					),
 				),
-				'execute_callback'    => array( __CLASS__, 'execute_get_students' ),
+				'execute_callback'    => array( __CLASS__, 'execute_students_list' ),
 				'permission_callback' => array( __CLASS__, 'can_manage_grades' ),
 				'meta'                => array(
 					'annotations'  => array(
@@ -467,14 +467,14 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Execute sensei/get-courses.
+	 * Execute sensei/courses-list.
 	 *
 	 * @access private
 	 *
 	 * @param array $input Ability input.
 	 * @return array
 	 */
-	public static function execute_get_courses( $input = array() ): array {
+	public static function execute_courses_list( $input = array() ): array {
 		$args = array(
 			'post_type'      => 'course',
 			'post_status'    => $input['status'] ?? 'any',
@@ -533,14 +533,14 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Execute sensei/get-lessons.
+	 * Execute sensei/lessons-list.
 	 *
 	 * @access private
 	 *
 	 * @param array $input Ability input.
 	 * @return array
 	 */
-	public static function execute_get_lessons( $input = array() ): array {
+	public static function execute_lessons_list( $input = array() ): array {
 		$args = array(
 			'post_type'      => 'lesson',
 			'post_status'    => $input['status'] ?? 'any',
@@ -618,14 +618,14 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Execute sensei/get-questions.
+	 * Execute sensei/questions-list.
 	 *
 	 * @access private
 	 *
 	 * @param array $input Ability input.
 	 * @return array|WP_Error
 	 */
-	public static function execute_get_questions( $input ) {
+	public static function execute_questions_list( $input ) {
 		$lesson_id = (int) $input['lesson'];
 		$lesson    = get_post( $lesson_id );
 
@@ -673,7 +673,7 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Shape a single question post for the get-questions response.
+	 * Shape a single question post for the questions-list response.
 	 *
 	 * Category questions ("pick N from category X") don't have a title, so emit
 	 * them with a distinct type so agents can tell they're placeholders rather
@@ -714,14 +714,14 @@ class Sensei_Abilities {
 	}
 
 	/**
-	 * Execute sensei/get-students.
+	 * Execute sensei/students-list.
 	 *
 	 * @access private
 	 *
 	 * @param array $input Ability input.
 	 * @return array|WP_Error
 	 */
-	public static function execute_get_students( $input ) {
+	public static function execute_students_list( $input ) {
 		$course_id   = (int) $input['course'];
 		$course_post = get_post( $course_id );
 		if ( ! $course_post instanceof WP_Post || 'course' !== $course_post->post_type ) {

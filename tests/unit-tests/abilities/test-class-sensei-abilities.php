@@ -36,8 +36,8 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$course_id = $factory->course->create( array( 'post_title' => 'Alpha' ) );
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-courses' );
-		$this->assertNotNull( $ability, 'The sensei/get-courses ability should be registered.' );
+		$ability = wp_get_ability( 'sensei/courses-list' );
+		$this->assertNotNull( $ability, 'The sensei/courses-list ability should be registered.' );
 
 		$result = $ability->execute( array() );
 
@@ -50,7 +50,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 	public function testGetCourses_WhenUserLacksCapability_ReturnsFalseFromPermission() {
 		wp_set_current_user( 0 );
-		$ability = wp_get_ability( 'sensei/get-courses' );
+		$ability = wp_get_ability( 'sensei/courses-list' );
 
 		$this->assertFalse( $ability->check_permissions( array() ) );
 	}
@@ -63,7 +63,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$other_course = $factory->course->create( array( 'post_author' => $teacher_b ) );
 
 		wp_set_current_user( $teacher_a );
-		$ability = wp_get_ability( 'sensei/get-courses' );
+		$ability = wp_get_ability( 'sensei/courses-list' );
 
 		$result     = $ability->execute( array() );
 		$course_ids = wp_list_pluck( $result['items'], 'id' );
@@ -79,8 +79,8 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$lesson_id = $factory->lesson->create( array( 'post_title' => 'Alpha' ) );
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-lessons' );
-		$this->assertNotNull( $ability, 'The sensei/get-lessons ability should be registered.' );
+		$ability = wp_get_ability( 'sensei/lessons-list' );
+		$this->assertNotNull( $ability, 'The sensei/lessons-list ability should be registered.' );
 
 		$result = $ability->execute( array() );
 
@@ -93,7 +93,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 	public function testGetLessons_WhenUserLacksCapability_ReturnsFalseFromPermission() {
 		wp_set_current_user( 0 );
-		$ability = wp_get_ability( 'sensei/get-lessons' );
+		$ability = wp_get_ability( 'sensei/lessons-list' );
 
 		$this->assertFalse( $ability->check_permissions( array() ) );
 	}
@@ -106,7 +106,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$other_lesson = $factory->lesson->create( array( 'post_author' => $teacher_b ) );
 
 		wp_set_current_user( $teacher_a );
-		$ability = wp_get_ability( 'sensei/get-lessons' );
+		$ability = wp_get_ability( 'sensei/lessons-list' );
 
 		$result     = $ability->execute( array() );
 		$lesson_ids = wp_list_pluck( $result['items'], 'id' );
@@ -124,7 +124,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$other_course = $factory->course->create( array( 'post_author' => $teacher_b ) );
 
 		wp_set_current_user( $teacher_a );
-		$ability = wp_get_ability( 'sensei/get-lessons' );
+		$ability = wp_get_ability( 'sensei/lessons-list' );
 
 		$this->assertFalse( $ability->check_permissions( array( 'course' => $other_course ) ) );
 
@@ -139,7 +139,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$lesson_in_y = $factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_y ) ) );
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-lessons' );
+		$ability = wp_get_ability( 'sensei/lessons-list' );
 
 		$result     = $ability->execute( array( 'course' => $course_x ) );
 		$lesson_ids = wp_list_pluck( $result['items'], 'id' );
@@ -163,8 +163,8 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		);
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-questions' );
-		$this->assertNotNull( $ability, 'The sensei/get-questions ability should be registered.' );
+		$ability = wp_get_ability( 'sensei/questions-list' );
+		$this->assertNotNull( $ability, 'The sensei/questions-list ability should be registered.' );
 
 		$result = $ability->execute( array( 'lesson' => $lesson_id ) );
 
@@ -188,7 +188,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		);
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-questions' );
+		$ability = wp_get_ability( 'sensei/questions-list' );
 		$result  = $ability->execute( array( 'lesson' => $lesson_id ) );
 
 		$this->assertNotEmpty( $result['items'], 'The quiz should have at least one question.' );
@@ -206,7 +206,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$lesson_id = $factory->lesson->create( array( 'post_author' => $teacher_b ) );
 
 		wp_set_current_user( $teacher_a );
-		$ability = wp_get_ability( 'sensei/get-questions' );
+		$ability = wp_get_ability( 'sensei/questions-list' );
 
 		$this->assertFalse( $ability->check_permissions( array( 'lesson' => $lesson_id ) ) );
 
@@ -218,7 +218,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$lesson_id = $factory->lesson->create();
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-questions' );
+		$ability = wp_get_ability( 'sensei/questions-list' );
 
 		$result = $ability->execute( array( 'lesson' => $lesson_id ) );
 
@@ -231,7 +231,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 	public function testGetQuestions_WhenLessonIdIsNotALesson_ReturnsErrorWhenExecutedDirectly() {
 		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
 
-		$result = Sensei_Abilities::execute_get_questions( array( 'lesson' => $page_id ) );
+		$result = Sensei_Abilities::execute_questions_list( array( 'lesson' => $page_id ) );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertSame( 'sensei_lesson_not_found', $result->get_error_code() );
@@ -250,7 +250,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		);
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-questions' );
+		$ability = wp_get_ability( 'sensei/questions-list' );
 
 		$expected_ids = wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' );
 
@@ -279,7 +279,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$lesson_id = $factory->lesson->create( array( 'post_author' => $teacher ) );
 
 		wp_set_current_user( $teacher );
-		$ability = wp_get_ability( 'sensei/get-questions' );
+		$ability = wp_get_ability( 'sensei/questions-list' );
 
 		$this->assertTrue( $ability->check_permissions( array( 'lesson' => $lesson_id ) ) );
 
@@ -290,7 +290,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-questions' );
+		$ability = wp_get_ability( 'sensei/questions-list' );
 
 		$this->assertFalse( $ability->check_permissions( array( 'lesson' => $page_id ) ) );
 	}
@@ -319,7 +319,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		);
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-questions' );
+		$ability = wp_get_ability( 'sensei/questions-list' );
 
 		$result = $ability->execute( array( 'lesson' => $lesson_id ) );
 
@@ -346,7 +346,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->maybe_create_quiz_for_lesson( $lesson_id );
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-questions' );
+		$ability = wp_get_ability( 'sensei/questions-list' );
 		$result  = $ability->execute( array( 'lesson' => $lesson_id ) );
 
 		$this->assertSame( $lesson_id, $result['lesson']['id'], 'The lesson id should be echoed.' );
@@ -363,8 +363,8 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-students' );
-		$this->assertNotNull( $ability, 'The sensei/get-students ability should be registered.' );
+		$ability = wp_get_ability( 'sensei/students-list' );
+		$this->assertNotNull( $ability, 'The sensei/students-list ability should be registered.' );
 
 		$result = $ability->execute( array( 'course' => $course_id ) );
 
@@ -384,7 +384,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $enrolled, $course_id );
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 
 		$result = $ability->execute( array( 'course' => $course_id ) );
 		$ids    = wp_list_pluck( $result['items'], 'id' );
@@ -408,7 +408,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 
 		$result = $ability->execute(
 			array(
@@ -438,7 +438,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 		$result  = $ability->execute(
 			array(
 				'course' => $course_id,
@@ -468,7 +468,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$other_course = $factory->course->create( array( 'post_author' => $teacher_b ) );
 
 		wp_set_current_user( $teacher_a );
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 
 		$this->assertFalse( $ability->check_permissions( array( 'course' => $other_course ) ) );
 
@@ -481,7 +481,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$own_course = $factory->course->create( array( 'post_author' => $teacher ) );
 
 		wp_set_current_user( $teacher );
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 
 		$this->assertTrue( $ability->check_permissions( array( 'course' => $own_course ) ) );
 
@@ -502,7 +502,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		Sensei_Utils::user_start_course( $in_progress, $course_id );
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 
 		$result = $ability->execute(
 			array(
@@ -520,7 +520,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 	public function testGetStudents_WhenCourseDoesNotExist_ReturnsFalseFromPermission() {
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 
 		$this->assertFalse( $ability->check_permissions( array( 'course' => 999999 ) ) );
 	}
@@ -531,7 +531,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$subscriber = $this->factory->user->create( array( 'role' => 'subscriber' ) );
 
 		wp_set_current_user( $subscriber );
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 
 		$this->assertFalse( $ability->check_permissions( array( 'course' => $course_id ) ) );
 
@@ -540,7 +540,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 	public function testGetStudents_WhenCourseInputMissing_ReturnsFalseFromPermission() {
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 
 		$this->assertFalse( $ability->check_permissions( array() ) );
 	}
@@ -548,7 +548,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 	public function testGetStudents_WhenCourseIdIsNotACourse_ReturnsErrorWhenExecutedDirectly() {
 		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
 
-		$result = Sensei_Abilities::execute_get_students( array( 'course' => $page_id ) );
+		$result = Sensei_Abilities::execute_students_list( array( 'course' => $page_id ) );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertSame( 'sensei_course_not_found', $result->get_error_code() );
@@ -559,7 +559,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$course_id = $factory->course->create();
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 
 		$result = $ability->execute( array( 'course' => $course_id ) );
 
@@ -589,7 +589,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		}
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 
 		$result = $ability->execute(
 			array(
@@ -613,7 +613,7 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$course_id = $factory->course->create( array( 'post_title' => 'Brewing 101' ) );
 
 		$this->login_as_admin();
-		$ability = wp_get_ability( 'sensei/get-students' );
+		$ability = wp_get_ability( 'sensei/students-list' );
 		$result  = $ability->execute( array( 'course' => $course_id ) );
 
 		$this->assertArrayHasKey( 'course', $result, 'The response should carry a top-level course echo.' );
