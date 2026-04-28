@@ -5,7 +5,7 @@ When working on GitHub issues, follow this process strictly:
 - If the issue is unclear or lacks enough detail to proceed, comment asking for clarification instead of guessing.
 
 ## 2. Branch
-- Create a feature branch from trunk named after the issue (e.g., `fix/issue-1234-description`). The action's configured `branch_prefix` is `fix/`, so use that prefix consistently.
+- Create a branch from trunk with a short, descriptive name (e.g., `fix/null-courses-average-grade`, `fix/lesson-status-sync`). The action's configured `branch_prefix` is `fix/`, so use that prefix consistently. Do not include the issue number in the branch name.
 
 ## 3. Test First
 - Write or update tests that capture the expected behavior before implementing the fix.
@@ -43,7 +43,7 @@ When working on GitHub issues, follow this process strictly:
 
 ## 9. Changelog
 - For any **user-facing** change (bug fix, behavior change, new feature), run `make changelog` to add an entry. This is required by AGENTS.md before opening a PR.
-- For purely internal changes (refactors with no user-visible effect, test-only changes), a changelog entry is not required — note this in the PR description.
+- For purely internal changes (refactors with no user-visible effect, test-only changes), skip the changelog and apply the `No Changelog` label to the PR after opening it: `gh pr edit <PR_NUMBER> --add-label "No Changelog"`.
 
 ## 10. Open PR
 - Write a clear PR title and description explaining what was changed and why.
