@@ -1,0 +1,66 @@
+name: Claude Code
+
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issues' && github.event.label.name == 'claude') ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude') && github.event.comment.user.type != 'Bot' &&
+        (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude') && github.event.comment.user.type != 'Bot' &&
+        (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body || '', '@claude') && github.event.review.user.type != 'Bot' &&
+        (github.event.review.author_association == 'MEMBER' || github.event.review.author_association == 'OWNER'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
+      cancel-in-progress: true
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm/
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+
+      - name: Install PHP dependencies
+        uses: ./.github/actions/install-php
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Load Claude system prompt
+        id: prompt
+        run: echo "APPEND_SYSTEM_PROMPT<<PROMPT_EOF" >> "$GITHUB_ENV" && cat .github/claude-system-prompt.md >> "$GITHUB_ENV" && echo "PROMPT_EOF" >> "$GITHUB_ENV"
+
+      - uses: anthropics/claude-code-action@11a9dadd198803a0cea6bd53da3e0e8a762fc6ea  # v1.0.108
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          label_trigger: claude
+          branch_prefix: fix/
+          additional_permissions: |
+            actions: read
+          claude_args: |
+            --model claude-sonnet-4-6
+            --max-turns 50
+            --disallowedTools "Bash(gh pr merge:*)"
