@@ -14,9 +14,9 @@ jobs:
   claude:
     if: |
       (github.event_name == 'issues' && github.event.label.name == 'claude') ||
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review' && contains(github.event.review.body || '', '@claude'))
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude') && github.event.comment.user.type != 'Bot') ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude') && github.event.comment.user.type != 'Bot') ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body || '', '@claude') && github.event.review.user.type != 'Bot')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     concurrency:
