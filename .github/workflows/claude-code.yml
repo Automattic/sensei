@@ -60,6 +60,10 @@ jobs:
           branch_prefix: fix/
           additional_permissions: |
             actions: read
+          prompt: |
+            You were triggered on a ${{ github.event_name }} event in ${{ github.repository }}.
+            Issue/PR number: ${{ github.event.issue.number || github.event.pull_request.number }}.
+            Read it with `gh issue view` or `gh pr view` and follow the system prompt instructions.
           claude_args: |
             --model claude-sonnet-4-6
             --max-turns 50
