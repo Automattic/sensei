@@ -116,16 +116,16 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		foreach ( $lessons_with_quizzes as $lesson_id => $status ) {
 			$quiz_id = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 			update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id, $course_id );
+			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 			Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
-			$qp = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id, $lesson_id );
+			$qp = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
 			$qp->{$status}();
 			Sensei()->quiz_progress_repository->save( $qp );
 		}
 
 		// Lessons without quizzes: in-progress, complete.
-		Sensei()->lesson_progress_repository->create( $lesson_ids[1], $user_id, $course_id );
-		$lp = Sensei()->lesson_progress_repository->create( $lesson_ids[3], $user_id, $course_id );
+		Sensei()->lesson_progress_repository->create( $lesson_ids[1], $user_id );
+		$lp = Sensei()->lesson_progress_repository->create( $lesson_ids[3], $user_id );
 		$lp->complete();
 		Sensei()->lesson_progress_repository->save( $lp );
 
@@ -166,9 +166,9 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		foreach ( $lesson_ids as $index => $lesson_id ) {
 			$quiz_id = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 			update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id, $course_id );
+			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 			Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
-			$qp = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id, $lesson_id );
+			$qp = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
 			$qp->{$statuses[ $index ]}();
 			Sensei()->quiz_progress_repository->save( $qp );
 		}
@@ -287,6 +287,15 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 */
 	public function testGetGradedLessonsAverageGradeNoGrades() {
 		$this->assertEquals( 0, Sensei()->grading->get_graded_lessons_average_grade() );
+	}
+
+	/**
+	 * Test that courses average grade returns zero when there are no courses with graded quizzes.
+	 *
+	 * @covers Sensei_Grading::get_courses_average_grade
+	 */
+	public function testGetCoursesAverageGrade_WhenNoCourses_ReturnsZero() {
+		$this->assertSame( 0.0, Sensei()->grading->get_courses_average_grade(), 'Average grade should be zero when there are no courses with graded quizzes.' );
 	}
 
 	/**

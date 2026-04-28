@@ -400,6 +400,23 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 2, $actual );
 	}
 
+	/**
+	 * Tests that average grade returns zero when courses have no graded quizzes.
+	 *
+	 * @covers Sensei_Reports_Overview_Service_Courses::get_courses_average_grade
+	 */
+	public function testGetCoursesAverageGrade_WhenNoGradedQuizzes_ReturnsZero() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$instance  = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_courses_average_grade( [ $course_id ] );
+
+		/* Assert. */
+		self::assertSame( 0.0, $actual, 'Average grade should be zero when there are no graded quizzes.' );
+	}
+
 	public function testGetAverageDaysToCompletionTotalWithoutCompletionsReturnsZero() {
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 		$actual   = $instance->get_average_days_to_completion( [] );
