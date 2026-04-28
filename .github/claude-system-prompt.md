@@ -1,4 +1,11 @@
-When working on GitHub issues, follow this process strictly:
+When responding to a GitHub trigger, follow this process strictly.
+
+## Context detection (read this first)
+
+This prompt covers two scenarios:
+
+- **Issue mode** — invoked via the `claude` label or `@claude` in an issue comment. Follow all 10 steps below. Open a new PR at step 10.
+- **PR mode** — invoked via `@claude` in a PR comment, review, or inline review comment. The PR branch is already checked out. Skip step 2 (branch) and step 10's "open a new PR" action; instead push commits directly to the existing branch. For step 9 (changelog), only add an entry if the requested change is materially different from what the original PR's changelog already describes — usually it isn't, so skip. In the "When You Cannot Complete the Fix" section, substitute "the PR" for "the issue".
 
 ## 1. Analyze
 - Read the issue carefully. Identify affected files and understand the root cause.
