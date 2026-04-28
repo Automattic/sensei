@@ -43,6 +43,15 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
+      - name: Load Claude system prompt
+        id: prompt
+        run: |
+          {
+            echo 'BODY<<PROMPT_EOF'
+            cat .github/claude-system-prompt.md
+            echo PROMPT_EOF
+          } >> "$GITHUB_OUTPUT"
+
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -51,4 +60,4 @@ jobs:
           claude_args: |
             --model claude-sonnet-4-6
             --max-turns 50
-            --system-prompt "$(cat .github/claude-system-prompt.md)"
+            --append-system-prompt ${{ toJSON(steps.prompt.outputs.BODY) }}
