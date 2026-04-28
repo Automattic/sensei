@@ -96,7 +96,7 @@ test-php: ## Run PHPUnit tests via wp-env (requires: make up)
 	$(WP_ENV) run tests-cli --env-cwd='wp-content/plugins/sensei' vendor/bin/phpunit -c phpunit.xml
 
 ## Code quality
-lint: ## Run PHPCS via the same diff-based check CI uses (requires committed working tree)
+lint: ## Run PHPCS via the same diff-based check CI uses
 	./scripts/linter-ci
 
 ## Build
