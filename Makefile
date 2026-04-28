@@ -100,8 +100,8 @@ test-php-filter: ## Run targeted PHPUnit tests via wp-env (FILTER="TestClass" or
 	$(WP_ENV) run tests-cli --env-cwd='wp-content/plugins/sensei' vendor/bin/phpunit -c phpunit.xml --filter $(FILTER)
 
 ## Code quality
-lint: ## Run PHP CodeSniffer
-	npm run lint-php
+lint: ## Run PHPCS via the same diff-based check CI uses
+	./scripts/linter-ci
 
 psalm: ## Run Psalm static analysis (only on changes vs main)
 	vendor/bin/psalm --no-cache --diff
