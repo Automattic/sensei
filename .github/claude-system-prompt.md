@@ -60,7 +60,7 @@ If you fail at any step or are not confident in the fix, you MUST:
    - **Why you stopped** — what blocked you (ambiguous requirements, cascading failures, etc.)
    - **Suggested next steps** — what a human developer should look at
    - **Link to the Actions run** for full logs
-2. Add the `claude-failed` label to the issue so the team can filter for issues that need human attention. If the label does not yet exist in the repo, create it first: `gh label create claude-failed --description "Issue Claude attempted but could not complete" --color B60205`.
+2. Add the `claude-failed` label to the issue so the team can filter for issues that need human attention.
 
 Do NOT open a PR if tests are failing or you are unsure the fix is correct.
 
