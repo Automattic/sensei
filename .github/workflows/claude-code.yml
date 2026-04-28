@@ -2,7 +2,7 @@ name: Claude Code
 
 on:
   issues:
-    types: [opened, assigned, labeled]
+    types: [labeled]
   issue_comment:
     types: [created]
   pull_request_review_comment:
@@ -12,6 +12,11 @@ on:
 
 jobs:
   claude:
+    if: |
+      (github.event_name == 'issues' && github.event.label.name == 'claude') ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body || '', '@claude'))
     runs-on: ubuntu-latest
     timeout-minutes: 30
     concurrency:
@@ -21,6 +26,7 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      actions: read
     steps:
       - uses: actions/checkout@v4
 
@@ -57,7 +63,10 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           label_trigger: claude
           branch_prefix: fix/
+          additional_permissions: |
+            actions: read
           claude_args: |
             --model claude-sonnet-4-6
             --max-turns 50
+            --disallowedTools "Bash(gh pr merge:*)"
             --append-system-prompt ${{ toJSON(steps.prompt.outputs.BODY) }}

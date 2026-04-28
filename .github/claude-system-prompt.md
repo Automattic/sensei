@@ -53,6 +53,8 @@ When working on GitHub issues, follow this process strictly:
 - Assign the next shipping release milestone to the PR. Find it with:
   `gh api 'repos/Automattic/sensei/milestones?state=open' --jq '.[].title' | sort -V | head -1`
   Then assign it: `gh pr edit <PR_NUMBER> --milestone "<MILESTONE_TITLE>"`.
+- After opening the PR, monitor the required status checks (Linting, Psalm, PHP Unit Tests, E2E, Changelogger). If any fail, inspect the failure with `gh run view <RUN_ID> --log-failed` and push a fix on the same branch. Do not leave the PR red.
+- Do **not** merge the PR yourself. A human reviewer must approve and merge.
 
 ## When You Cannot Complete the Fix
 If you fail at any step or are not confident in the fix, you MUST:
