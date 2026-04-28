@@ -67,4 +67,5 @@ jobs:
           claude_args: |
             --model claude-sonnet-4-6
             --max-turns 50
+            --permission-mode bypassPermissions
             --disallowedTools "Bash(gh pr merge:*)" "Bash(git push --force*)" "Bash(git push -f*)" "Bash(gh release:*)" "Bash(npm publish:*)" "Bash(gh repo delete:*)"
