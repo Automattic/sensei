@@ -50,4 +50,5 @@ jobs:
           branch_prefix: fix/
           claude_args: |
             --model claude-sonnet-4-6
+            --max-turns 50
             --system-prompt "$(cat .github/claude-system-prompt.md)"
