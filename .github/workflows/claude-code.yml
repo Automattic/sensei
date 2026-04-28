@@ -2,7 +2,7 @@ name: Claude Code
 
 on:
   issues:
-    types: [opened, labeled]
+    types: [opened, assigned, labeled]
   issue_comment:
     types: [created]
   pull_request_review_comment:
@@ -12,14 +12,6 @@ on:
 
 jobs:
   claude:
-    if: |
-      (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'claude') ||
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude') &&
-        github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER') ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude') &&
-        github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER') ||
-      (github.event_name == 'pull_request_review' && contains(github.event.review.body || '', '@claude') &&
-        github.event.review.author_association == 'MEMBER' || github.event.review.author_association == 'OWNER')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     concurrency:
@@ -60,72 +52,8 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          model: claude-sonnet-4-6
-          custom_instructions: |
-            When working on GitHub issues, follow this process strictly:
-
-            ## 1. Analyze
-            - Read the issue carefully. Identify affected files and understand the root cause.
-            - If the issue is unclear or lacks enough detail to proceed, comment asking for clarification instead of guessing.
-
-            ## 2. Branch
-            - Create a feature branch from trunk named after the issue (e.g., fix/issue-1234-description).
-
-            ## 3. Test First
-            - Write or update tests that capture the expected behavior before implementing the fix.
-
-            ## 4. Implement
-            - Make the minimal change needed to fix the issue. Do not refactor unrelated code.
-
-            ## 5. Lint
-            - Run `npm run lint-php` and fix any violations.
-            - Run `vendor/bin/psalm --no-cache --diff` and fix any errors.
-            - Do not skip or suppress warnings without justification.
-
-            ## 6. Unit Test
-            - Run the relevant test suite to verify the fix and check for regressions.
-            - For PHP: `vendor/bin/phpunit`
-            - All tests must pass before proceeding.
-
-            ## 7. WordPress Integration Test
-            - A wp-env instance is already running with Sensei activated.
-            - Use WP-CLI to verify your changes work in a real WordPress environment:
-              - `npx wp-env run cli wp sensei ...` for Sensei-specific commands
-              - `npx wp-env run cli wp option get ...`, `wp post list`, etc. for general checks
-              - `npx wp-env run cli wp eval '...'` to run PHP snippets that exercise your fix
-            - Verify the plugin activates without errors: `npx wp-env run cli wp plugin list`
-            - Check for PHP fatal errors in the log: `npx wp-env run cli wp eval "echo file_get_contents('/var/www/html/wp-content/debug.log');"` (if debug.log exists)
-
-            ## 8. Self-Review
-            - Review your own diff for:
-              - Security issues (SQL injection, XSS, CSRF, improper escaping)
-              - Edge cases and error handling
-              - Performance implications
-              - Backward compatibility
-            - If you find issues, fix them before proceeding.
-
-            ## 9. Changelog
-            - Run `npm run changelog` to add a changelog entry for the change.
-
-            ## 10. Open PR
-            - Write a clear PR title and description explaining what was changed and why.
-            - Reference the issue number (e.g., "Fixes #1234").
-            - Include a test plan describing how to manually verify the fix.
-            - Do not include automated test instructions in the test plan.
-
-            ## When You Cannot Complete the Fix
-            If you fail at any step or are not confident in the fix, you MUST:
-            1. Comment on the issue with:
-               - **Step where you stopped** (e.g., "Stopped at step 6: Unit Test")
-               - **What you tried** — your approach and any iterations
-               - **Error output** — the actual lint errors, test failures, PHP fatals, etc.
-               - **Why you stopped** — what blocked you (ambiguous requirements, cascading failures, etc.)
-               - **Suggested next steps** — what a human developer should look at
-               - **Link to the Actions run** for full logs
-            2. Add the `claude-failed` label to the issue so the team can filter for issues that need human attention.
-            Do NOT open a PR if tests are failing or you are unsure the fix is correct.
-
-            ## Important
-            - NEVER push directly to trunk. Always work on a feature branch and open a PR.
-            - Never force-push or modify git history.
-            - Follow all conventions in CLAUDE.md.
+          label_trigger: claude
+          branch_prefix: fix/
+          claude_args: |
+            --model claude-sonnet-4-6
+            --system-prompt "$(cat .github/claude-system-prompt.md)"
