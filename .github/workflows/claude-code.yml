@@ -27,6 +27,7 @@ jobs:
       pull-requests: write
       issues: write
       actions: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -58,7 +59,7 @@ jobs:
             echo PROMPT_EOF
           } >> "$GITHUB_OUTPUT"
 
-      - uses: anthropics/claude-code-action@v1
+      - uses: anthropics/claude-code-action@11a9dadd198803a0cea6bd53da3e0e8a762fc6ea  # v1.0.108
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           label_trigger: claude
