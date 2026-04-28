@@ -2,7 +2,7 @@ See `make help` for the full list of available dev commands.
 
 ## Linting
 - **PHPCS**: Run `make lint` (the same diff-based check CI uses; requires a clean working tree). Whole-codebase scans: `./vendor/bin/phpcs`.
-- **Psalm**: Run `make psalm`. CI runs Psalm against every PHP version in `.github/workflows/psalm.yml`'s matrix; type narrowing differs between versions, so run Psalm under each of those versions before pushing — `make psalm` uses the active PHP, so for the matrix run the underlying command directly: `PATH="/opt/homebrew/opt/php@<version>/bin:$PATH" vendor/bin/psalm --no-cache --diff`.
+- **Psalm**: Run `make psalm`. This runs Psalm against every PHP version in `.github/workflows/psalm.yml`'s matrix (parsed at runtime) since type narrowing differs between versions. Requires the matching `php@<version>` brew formulae installed.
 - **Before pushing**: The pre-commit hook only lints PHP files added after 2020-01-01. CI lints all changed lines. Always run PHPCS and the full Psalm matrix on modified files before pushing to avoid CI failures.
 
 ## Conventions

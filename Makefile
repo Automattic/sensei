@@ -103,8 +103,20 @@ test-php-filter: ## Run targeted PHPUnit tests via wp-env (FILTER="TestClass" or
 lint: ## Run PHPCS via the same diff-based check CI uses
 	./scripts/linter-ci
 
-psalm: ## Run Psalm static analysis
-	vendor/bin/psalm --no-cache --diff
+psalm: ## Run Psalm static analysis under each CI PHP version (parsed from .github/workflows/psalm.yml)
+	@VERSIONS=$$(grep -E "^[[:space:]]+php:[[:space:]]*\[" .github/workflows/psalm.yml | sed -E "s/.*\[(.*)\].*/\1/; s/[',]/ /g"); \
+	if [ -z "$$VERSIONS" ]; then \
+		echo "Error: could not parse PHP matrix from .github/workflows/psalm.yml"; exit 1; \
+	fi; \
+	for v in $$VERSIONS; do \
+		BIN="/opt/homebrew/opt/php@$$v/bin"; \
+		if [ ! -x "$$BIN/php" ]; then \
+			echo "Error: PHP $$v not found at $$BIN. Install with: brew install php@$$v"; \
+			exit 1; \
+		fi; \
+		echo "==> Psalm on PHP $$v"; \
+		PATH="$$BIN:$$PATH" vendor/bin/psalm --no-cache --diff || exit $$?; \
+	done
 
 ## Changelog
 changelog: ## Add a changelog entry

@@ -51,12 +51,7 @@ jobs:
 
       - name: Load Claude system prompt
         id: prompt
-        run: |
-          {
-            echo 'BODY<<PROMPT_EOF'
-            cat .github/claude-system-prompt.md
-            echo PROMPT_EOF
-          } >> "$GITHUB_OUTPUT"
+        run: echo "APPEND_SYSTEM_PROMPT<<PROMPT_EOF" >> "$GITHUB_ENV" && cat .github/claude-system-prompt.md >> "$GITHUB_ENV" && echo "PROMPT_EOF" >> "$GITHUB_ENV"
 
       - uses: anthropics/claude-code-action@11a9dadd198803a0cea6bd53da3e0e8a762fc6ea  # v1.0.108
         with:
@@ -69,4 +64,3 @@ jobs:
             --model claude-sonnet-4-6
             --max-turns 50
             --disallowedTools "Bash(gh pr merge:*)"
-            --append-system-prompt ${{ toJSON(steps.prompt.outputs.BODY) }}
