@@ -15,12 +15,12 @@ When working on GitHub issues, follow this process strictly:
 
 ## 5. Lint
 - Run `make lint` and fix any violations on **all modified files** (not just new ones — the pre-commit hook only checks new files, but CI lints every changed line).
-- Run `vendor/bin/psalm --no-cache --diff` and fix any errors.
+- Run `make psalm` and fix any errors.
 - Do not skip or suppress warnings without justification.
 
 ## 6. Unit Test
 - PHP tests need wp-env running. Start it once if you haven't already: `make up`.
-- Targeted iteration (fast): `npx wp-env run --env-cwd='wp-content/plugins/sensei' tests-cli vendor/bin/phpunit -c phpunit.xml --filter <TestClass or method>`
+- Targeted iteration (fast): `make test-php-filter FILTER="<TestClass or TestClass::method>"`
 - Full suite (run once before opening the PR): `make test-php`
 - All tests must pass before proceeding.
 
@@ -42,7 +42,7 @@ When working on GitHub issues, follow this process strictly:
 - If you find issues, fix them before proceeding.
 
 ## 9. Changelog
-- For any **user-facing** change (bug fix, behavior change, new feature), run `npm run changelog` to add an entry. This is required by AGENTS.md before opening a PR.
+- For any **user-facing** change (bug fix, behavior change, new feature), run `make changelog` to add an entry. This is required by AGENTS.md before opening a PR.
 - For purely internal changes (refactors with no user-visible effect, test-only changes), a changelog entry is not required — note this in the PR description.
 
 ## 10. Open PR
