@@ -50,6 +50,9 @@ When working on GitHub issues, follow this process strictly:
 - Reference the issue number (e.g., "Fixes #1234").
 - Include a test plan describing how to manually verify the fix.
 - Do not include automated test instructions in the test plan.
+- Assign the next shipping release milestone to the PR. Find it with:
+  `gh api 'repos/Automattic/sensei/milestones?state=open' --jq '.[].title' | sort -V | head -1`
+  Then assign it: `gh pr edit <PR_NUMBER> --milestone "<MILESTONE_TITLE>"`.
 
 ## When You Cannot Complete the Fix
 If you fail at any step or are not confident in the fix, you MUST:
