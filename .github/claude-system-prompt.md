@@ -14,24 +14,24 @@ When working on GitHub issues, follow this process strictly:
 - Make the minimal change needed to fix the issue. Do not refactor unrelated code.
 
 ## 5. Lint
-- Run `npm run lint-php` and fix any violations on **all modified files** (not just new ones — the pre-commit hook only checks new files, but CI lints every changed line).
+- Run `make lint` and fix any violations on **all modified files** (not just new ones — the pre-commit hook only checks new files, but CI lints every changed line).
 - Run `vendor/bin/psalm --no-cache --diff` and fix any errors.
 - Do not skip or suppress warnings without justification.
 
 ## 6. Unit Test
-- Run PHP tests inside wp-env (the local `vendor/bin/phpunit` will fail without a configured DB):
-  - Full suite: `npm run test-php:wp-env`
-  - Targeted iteration: `npx wp-env run --env-cwd='wp-content/plugins/sensei' tests-cli vendor/bin/phpunit -c phpunit.xml --filter <TestClass or method>`
-- Run targeted tests while iterating to save time, then run the full suite once before opening the PR.
+- PHP tests need wp-env running. Start it once if you haven't already: `make up`.
+- Targeted iteration (fast): `npx wp-env run --env-cwd='wp-content/plugins/sensei' tests-cli vendor/bin/phpunit -c phpunit.xml --filter <TestClass or method>`
+- Full suite (run once before opening the PR): `make test-php`
 - All tests must pass before proceeding.
 
 ## 7. WordPress Integration Test
-- A wp-env instance is already running with Sensei activated.
+- If wp-env isn't running yet, start it: `make up`.
 - Use WP-CLI to verify your changes work in a real WordPress environment:
-  - `npx wp-env run cli wp sensei ...` for Sensei-specific commands
-  - `npx wp-env run cli wp option get ...`, `wp post list`, etc. for general checks
-  - `npx wp-env run cli wp eval '...'` to run PHP snippets that exercise your fix
-- Verify the plugin activates without errors: `npx wp-env run cli wp plugin list`
+  - `make wp CMD="sensei ..."` for Sensei-specific commands
+  - `make wp CMD="option get ..."`, `make wp CMD="post list"`, etc. for general checks
+  - `make wp CMD="eval '...'"` to run PHP snippets that exercise your fix
+- Verify the plugin activates without errors: `make wp CMD="plugin list"`
+- See `make help` for the full list of available targets.
 
 ## 8. Self-Review
 - Review your own diff for:
