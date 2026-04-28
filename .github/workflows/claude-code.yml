@@ -43,12 +43,6 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
-      - name: Build assets
-        run: npm run build:assets
-
-      - name: Start wp-env
-        run: npm run wp-env start
-
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
