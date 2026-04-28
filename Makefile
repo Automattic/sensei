@@ -97,13 +97,13 @@ test-php: ## Run PHPUnit tests via wp-env (requires: make up)
 
 test-php-filter: ## Run targeted PHPUnit tests via wp-env (FILTER="TestClass" or FILTER="TestClass::method")
 	@[ -n "$(FILTER)" ] || { echo "Error: FILTER is required. Example: make test-php-filter FILTER=\"Sensei_Quiz_Test\""; exit 1; }
-	$(WP_ENV) run tests-cli --env-cwd='wp-content/plugins/sensei' vendor/bin/phpunit -c phpunit.xml --filter $(FILTER)
+	$(WP_ENV) run tests-cli --env-cwd='wp-content/plugins/sensei' vendor/bin/phpunit -c phpunit.xml --filter '$(FILTER)'
 
 ## Code quality
 lint: ## Run PHPCS via the same diff-based check CI uses
 	./scripts/linter-ci
 
-psalm: ## Run Psalm static analysis (only on changes vs main)
+psalm: ## Run Psalm static analysis
 	vendor/bin/psalm --no-cache --diff
 
 ## Changelog

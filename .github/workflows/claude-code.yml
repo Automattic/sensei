@@ -39,10 +39,6 @@ jobs:
         with:
           path: ~/.npm/
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-      - uses: actions/cache@v4
-        with:
-          path: node_modules/
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
 
       - name: Install PHP dependencies
         uses: ./.github/actions/install-php
