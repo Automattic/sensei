@@ -373,6 +373,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
+		global $wpdb;
 
 		switch ( $this->view ) {
 			case 'user':
@@ -527,7 +528,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				}
 				// Display lessons for this Course regardless of users
 				else {
-					global $wpdb;
 					// Get Learners (i.e. those who have started)
 					$lesson_args = array(
 						'post_id' => $item->ID,
