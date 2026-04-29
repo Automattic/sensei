@@ -75,4 +75,4 @@ jobs:
             --max-budget-usd 5.00
             --permission-mode acceptEdits
             --allowedTools "Read,Glob,Grep,Edit,Write,Bash(make *),Bash(npm ci),Bash(npm run *),Bash(composer install*),Bash(git diff*),Bash(git log*),Bash(git show*),Bash(git status*),Bash(git add *),Bash(git commit *),Bash(git push origin*),Bash(git push -u origin*),Bash(git checkout *),Bash(git switch *),Bash(git branch *),Bash(git fetch*),Bash(git rev-parse*),Bash(gh api *),Bash(gh pr *),Bash(gh issue *),Bash(gh run *),Bash(gh label *)"
-            --disallowedTools "Bash(gh pr merge:*)" "Bash(git push --force*)" "Bash(git push -f*)" "Bash(git push --mirror*)" "Bash(git push --delete*)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)"
+            --disallowedTools "Bash(gh pr merge:*)" "Bash(gh pr close:*)" "Bash(gh issue close:*)" "Bash(gh label delete:*)" "Bash(gh run delete:*)" "Bash(gh run cancel:*)" "Bash(git push --force*)" "Bash(git push -f*)" "Bash(git push --mirror*)" "Bash(git push --delete*)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)"
