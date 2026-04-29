@@ -49,6 +49,11 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
+      - name: Configure git for Claude commits
+        run: |
+          git config --global user.name "claude[bot]"
+          git config --global user.email "claude[bot]@users.noreply.github.com"
+
       - name: Load Claude system prompt
         id: prompt
         run: echo "APPEND_SYSTEM_PROMPT<<PROMPT_EOF" >> "$GITHUB_ENV" && cat .github/claude-system-prompt.md >> "$GITHUB_ENV" && echo "PROMPT_EOF" >> "$GITHUB_ENV"
