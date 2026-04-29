@@ -565,29 +565,23 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 					$lesson_average_grade = __( 'N/A', 'sensei-lms' );
 
 					if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
-						// Get Percent Complete
-						$grade_args = array(
-							'post_id'  => $item->ID,
-							'type'     => 'sensei_lesson_status',
-							'status'   => array( 'graded', 'passed', 'failed' ),
-							'meta_key' => 'grade',
+						global $wpdb;
+						// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- WP 6.4 changed WP_Comment_Query to use get_col(), which discards extra columns returned by the comments_clauses filter.
+						$avg = $wpdb->get_var(
+							$wpdb->prepare(
+								"SELECT AVG(cm.meta_value)
+								 FROM {$wpdb->comments} c
+								 INNER JOIN {$wpdb->commentmeta} cm
+								   ON cm.comment_id = c.comment_ID AND cm.meta_key = 'grade'
+								 WHERE c.comment_post_ID = %d
+								   AND c.comment_type = 'sensei_lesson_status'
+								   AND c.comment_approved IN ('graded', 'passed', 'failed')",
+								$item->ID
+							)
 						);
-						add_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-						/**
-						 * Filter the lesson grades activity arguments for the Course Analysis list table.
-						 *
-						 * @hook sensei_analysis_lesson_grades
-						 *
-						 * @param {array}  $grade_args The lesson grades activity arguments.
-						 * @param {object} $item The current item.
-						 * @return {array} The lesson grades activity arguments.
-						 */
-						$lesson_grades = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true );
-						remove_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-
-						$grade_count          = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
-						$grade_total          = ! empty( $lesson_grades->meta_sum ) ? floatval( $lesson_grades->meta_sum ) : 0;
-						$lesson_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
+						if ( null !== $avg ) {
+							$lesson_average_grade = Sensei_Utils::as_absolute_rounded_number( $avg, 2 );
+						}
 					}
 					// Output lesson data
 					if ( $this->csv_output ) {
