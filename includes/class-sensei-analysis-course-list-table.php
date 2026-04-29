@@ -527,6 +527,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				}
 				// Display lessons for this Course regardless of users
 				else {
+					global $wpdb;
 					// Get Learners (i.e. those who have started)
 					$lesson_args = array(
 						'post_id' => $item->ID,
@@ -565,7 +566,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 					$lesson_average_grade = __( 'N/A', 'sensei-lms' );
 
 					if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
-						global $wpdb;
 						// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- WP 6.4 changed WP_Comment_Query to use get_col(), which discards extra columns returned by the comments_clauses filter.
 						$avg = $wpdb->get_var(
 							$wpdb->prepare(
