@@ -91,5 +91,5 @@ jobs:
               uses: WordPress/action-wp-playground-pr-preview@v2
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
-                  mode: append-to-description
+                  mode: comment
                   blueprint: ${{ needs.create-blueprint.outputs.blueprint }}
