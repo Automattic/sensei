@@ -1,11 +1,11 @@
-When responding to a GitHub trigger, follow this process strictly.
+When responding to a GitHub trigger, follow this process strictly. The action runs with limited turns; be efficient.
 
 ## Context detection (read this first)
 
 This prompt covers two scenarios:
 
-- **Issue mode** — invoked via the `claude` label or `@claude` in an issue comment. Follow all 10 steps below. Open a new PR at step 10.
-- **PR mode** — invoked via `@claude` in a PR comment, review, or inline review comment. The PR branch is already checked out. Skip step 2 (branch) and step 10's "open a new PR" action; instead push commits directly to the existing branch. For step 9 (changelog), only add an entry if the requested change is materially different from what the original PR's changelog already describes — usually it isn't, so skip. In the "When You Cannot Complete the Fix" section, substitute "the PR" for "the issue".
+- **Issue mode** — invoked via the `claude` label or `@claude` in an issue comment. Follow all 9 steps below. Open a new PR at step 9.
+- **PR mode** — invoked via `@claude` in a PR comment, review, or inline review comment. The PR branch is already checked out. Skip step 2 (branch) and step 9's "open a new PR" action; instead push commits directly to the existing branch. For step 8 (changelog), only add an entry if the requested change is materially different from what the original PR's changelog already describes — usually it isn't, so skip. In the "When You Cannot Complete the Fix" section, substitute "the PR" for "the issue".
 
 ## 1. Analyze
 - Read the issue carefully. Identify affected files and understand the root cause.
@@ -20,60 +20,57 @@ This prompt covers two scenarios:
 ## 4. Implement
 - Make the minimal change needed to fix the issue. Do not refactor unrelated code.
 
-## 5. Lint
+## 5. Lint and static analysis
 - Run `make lint` and fix any violations on **all modified files** (not just new ones — the pre-commit hook only checks new files, but CI lints every changed line).
-- Run `make psalm` and fix any errors.
-- Do not skip or suppress warnings without justification.
+- Run `vendor/bin/psalm --no-cache --diff` and fix any errors. (`make psalm` loops the full PHP-version matrix and is too slow here; CI also runs the matrix on the PR. A single-version run catches the vast majority of issues.)
 
-## 6. Unit Test
-- PHP tests need wp-env running. Start it once if you haven't already: `make up`.
-- Targeted iteration (fast): `make test-php-filter FILTER="<TestClass or TestClass::method>"`
-- Full suite (run once before opening the PR): `make test-php`
-- All tests must pass before proceeding.
+## 6. Test
+- The workflow has already provisioned PHP, MySQL, and the WordPress test library — no `make up` / wp-env needed. Run PHPUnit directly:
+  - `vendor/bin/phpunit -c phpunit.xml --filter "<TestClass>"`
+- Use a **class-level filter** (e.g., `Sensei_Foo_Test`), not a single method, so adjacent tests in the modified class catch local regressions.
+- If your change touches a shared helper or class used elsewhere, also run the test classes for the consumers.
+- Do **not** run the full suite — CI runs it on the PR. If the full suite fails on the PR, a follow-up `@claude` run will address it.
+- All targeted tests must pass before proceeding.
 
-## 7. WordPress Integration Test
-- If wp-env isn't running yet, start it: `make up`.
-- Use WP-CLI to verify your changes work in a real WordPress environment:
-  - `make wp CMD="sensei ..."` for Sensei-specific commands
-  - `make wp CMD="option get ..."`, `make wp CMD="post list"`, etc. for general checks
-  - `make wp CMD="eval '...'"` to run PHP snippets that exercise your fix
-- Verify the plugin activates without errors: `make wp CMD="plugin list"`
-- See `make help` for the full list of available targets.
+## 7. Self-Review
+- Quickly check your diff for: security issues (SQL injection, XSS, improper escaping), obvious edge cases, and backward compatibility. Fix anything you find.
 
-## 8. Self-Review
-- Review your own diff for:
-  - Security issues (SQL injection, XSS, CSRF, improper escaping)
-  - Edge cases and error handling
-  - Performance implications
-  - Backward compatibility
-- If you find issues, fix them before proceeding.
+## 8. Changelog
+- For any **user-facing** change, add a changelog entry by writing a file directly to `changelog/<short-slug>` (no extension). Format:
+  ```
+  Significance: patch
+  Type: fixed
 
-## 9. Changelog
-- For any **user-facing** change (bug fix, behavior change, new feature), run `make changelog` to add an entry. This is required by AGENTS.md before opening a PR.
-- For purely internal changes (refactors with no user-visible effect, test-only changes), skip the changelog and apply the `No Changelog` label to the PR after opening it: `gh pr edit <PR_NUMBER> --add-label "No Changelog"`.
+  Short user-facing description.
+  ```
+  - `Significance`: `patch`, `minor`, or `major`.
+  - `Type`: one of `security`, `added`, `changed`, `deprecated`, `removed`, `fixed`, `development`.
+- Do **not** run `make changelog` (it's interactive and will hang).
+- For purely internal changes (refactors, test-only), skip the file and apply the `No Changelog` label to the PR after opening: `gh pr edit <PR_NUMBER> --add-label "No Changelog"`.
 
-## 10. Open PR
-- Write a clear PR title and description explaining what was changed and why.
-- Reference the issue number (e.g., "Fixes #1234").
-- Include a test plan describing how to manually verify the fix.
-- Do not include automated test instructions in the test plan.
-- Assign the next shipping release milestone to the PR. Find it with:
-  `gh api 'repos/Automattic/sensei/milestones?state=open' --jq '.[].title' | sort -V | head -1`
-  Then assign it: `gh pr edit <PR_NUMBER> --milestone "<MILESTONE_TITLE>"`.
-- After opening the PR, monitor the required status checks (Linting, Psalm, PHP Unit Tests, E2E, Changelogger). If any fail, inspect the failure with `gh run view <RUN_ID> --log-failed` and push a fix on the same branch. Do not leave the PR red.
-- Do **not** merge the PR yourself. A human reviewer must approve and merge.
+## 9. Open PR
+- Commit and push: `git add` the changed files, `git commit`, `git push -u origin <branch>`.
+- Open the PR with `gh pr create`:
+  - Clear title and description explaining what changed and why.
+  - Reference the issue (e.g., "Fixes #1234").
+  - Include a manual test plan. Do not include automated test instructions.
+- Assign the next shipping milestone:
+  - Find it: `gh api 'repos/Automattic/sensei/milestones?state=open' --jq '.[].title' | sort -V | head -1`
+  - Assign it: `gh pr edit <PR_NUMBER> --milestone "<MILESTONE_TITLE>"`
+- Stop here. Do not poll CI. The lint, psalm, and targeted tests you ran locally cover most failures, but the full PHPUnit suite, the multi-version Psalm matrix, and E2E (Playwright) only run on the PR. If any of those fail, a human will re-trigger with `@claude` and you'll address it then.
+- Do **not** merge the PR yourself.
 
 ## When You Cannot Complete the Fix
 If you fail at any step or are not confident in the fix, you MUST:
 1. Comment on the issue with:
-   - **Step where you stopped** (e.g., "Stopped at step 6: Unit Test")
+   - **Step where you stopped** (e.g., "Stopped at step 6: Test")
    - **What you tried** — your approach and any iterations
    - **Error output** — the actual lint errors, test failures, PHP fatals, etc.
-   - **Why you stopped** — what blocked you (ambiguous requirements, cascading failures, etc.)
+   - **Why you stopped** — what blocked you
    - **Suggested next steps** — what a human developer should look at
    - **Link to the Actions run** for full logs
-2. Add the `claude-failed` label to the issue so the team can filter for issues that need human attention.
+2. Add the `claude-failed` label to the issue.
 
 Do NOT open a PR if tests are failing or you are unsure the fix is correct.
 
-Follow all other conventions documented in CLAUDE.md and AGENTS.md.
+Follow all other conventions documented in CLAUDE.md and AGENTS.md. Where AGENTS.md prescribes broader local checks for human contributors (e.g., the full Psalm matrix, full PHPUnit suite), this prompt's narrower scope wins for Claude runs — CI catches what's skipped.
