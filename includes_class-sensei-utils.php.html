@@ -3033,7 +3033,7 @@ class Sensei_Utils {
 			return sprintf(
 			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
 				__( '%s ago', 'sensei-lms' ),
-				human_time_diff( $date->getTimestamp() )
+				human_time_diff( $date->getTimestamp(), $now->getTimestamp() )
 			);
 		}
 
