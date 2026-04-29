@@ -384,8 +384,9 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
-		\Sensei_Utils::update_lesson_status( $user_id, $published_id, 'in-progress' );
+		$start_date = current_time( 'mysql' );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress', [ 'start' => $start_date ] );
+		\Sensei_Utils::update_lesson_status( $user_id, $published_id, 'in-progress', [ 'start' => $start_date ] );
 
 		wp_trash_post( $lesson_id );
 
