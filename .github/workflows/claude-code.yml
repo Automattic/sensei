@@ -31,6 +31,14 @@ jobs:
       issues: write
       actions: read
       id-token: write
+    services:
+      database:
+        image: mysql:5.6
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
       - uses: actions/checkout@v4
 
@@ -43,11 +51,19 @@ jobs:
           path: ~/.npm/
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
 
+      - name: Install SVN
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
       - name: Install PHP dependencies
         uses: ./.github/actions/install-php
+        with:
+          extensions: mysql
 
       - name: Install JS dependencies
         run: npm ci
+
+      - name: Set up WordPress test environment
+        run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
 
       - name: Configure git for Claude commits
         run: |
@@ -71,8 +87,8 @@ jobs:
             Read it with `gh issue view` or `gh pr view` and follow the system prompt instructions.
           claude_args: |
             --model claude-sonnet-4-6
-            --max-turns 50
+            --max-turns 100
             --max-budget-usd 5.00
             --permission-mode acceptEdits
-            --allowedTools "Read,Glob,Grep,Edit,Write,Bash(make *),Bash(npm ci),Bash(npm run *),Bash(composer install*),Bash(git diff*),Bash(git log*),Bash(git show*),Bash(git status*),Bash(git add *),Bash(git commit *),Bash(git push origin*),Bash(git push -u origin*),Bash(git checkout *),Bash(git switch *),Bash(git branch *),Bash(git fetch*),Bash(git rev-parse*),Bash(gh api *),Bash(gh pr *),Bash(gh issue *),Bash(gh run *),Bash(gh label *)"
+            --allowedTools "Read,Glob,Grep,Edit,Write,Bash(make *),Bash(npm ci),Bash(npm run *),Bash(composer install*),Bash(vendor/bin/phpunit*),Bash(vendor/bin/psalm*),Bash(git diff*),Bash(git log*),Bash(git show*),Bash(git status*),Bash(git add *),Bash(git commit *),Bash(git push origin*),Bash(git push -u origin*),Bash(git checkout *),Bash(git switch *),Bash(git branch *),Bash(git fetch*),Bash(git rev-parse*),Bash(gh api *),Bash(gh pr *),Bash(gh issue *),Bash(gh run *),Bash(gh label *)"
             --disallowedTools "Bash(gh pr merge:*)" "Bash(gh pr close:*)" "Bash(gh issue close:*)" "Bash(gh label delete:*)" "Bash(gh run delete:*)" "Bash(gh run cancel:*)" "Bash(git push --force*)" "Bash(git push -f*)" "Bash(git push --mirror*)" "Bash(git push --delete*)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)"

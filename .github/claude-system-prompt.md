@@ -20,13 +20,16 @@ This prompt covers two scenarios:
 ## 4. Implement
 - Make the minimal change needed to fix the issue. Do not refactor unrelated code.
 
-## 5. Lint
+## 5. Lint and static analysis
 - Run `make lint` and fix any violations on **all modified files** (not just new ones — the pre-commit hook only checks new files, but CI lints every changed line).
-- Skip `make psalm` here; the Psalm matrix runs on the PR. If it fails on the PR, push a fix.
+- Run `vendor/bin/psalm --no-cache --diff` and fix any errors. (`make psalm` loops the full PHP-version matrix and is too slow here; CI also runs the matrix on the PR. A single-version run catches the vast majority of issues.)
 
 ## 6. Test
-- PHP tests need wp-env running. Start it once: `make up`.
-- Run the tests relevant to your change with `make test-php-filter FILTER="<TestClass or TestClass::method>"`. Do **not** run the full suite — CI runs it on the PR.
+- The workflow has already provisioned PHP, MySQL, and the WordPress test library — no `make up` / wp-env needed. Run PHPUnit directly:
+  - `vendor/bin/phpunit -c phpunit.xml --filter "<TestClass>"`
+- Use a **class-level filter** (e.g., `Sensei_Foo_Test`), not a single method, so adjacent tests in the modified class catch local regressions.
+- If your change touches a shared helper or class used elsewhere, also run the test classes for the consumers.
+- Do **not** run the full suite — CI runs it on the PR.
 - All targeted tests must pass before proceeding.
 
 ## 7. Self-Review
@@ -54,7 +57,7 @@ This prompt covers two scenarios:
 - Assign the next shipping milestone:
   - Find it: `gh api 'repos/Automattic/sensei/milestones?state=open' --jq '.[].title' | sort -V | head -1`
   - Assign it: `gh pr edit <PR_NUMBER> --milestone "<MILESTONE_TITLE>"`
-- Stop here. Do not poll CI. If checks fail later, a human will re-trigger with `@claude` and you'll address it then.
+- Stop here. Do not poll CI. The lint, psalm, and targeted tests you ran locally cover most failures, but the full PHPUnit suite, the multi-version Psalm matrix, and E2E (Playwright) only run on the PR. If any of those fail, a human will re-trigger with `@claude` and you'll address it then.
 - Do **not** merge the PR yourself.
 
 ## When You Cannot Complete the Fix
