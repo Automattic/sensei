@@ -45,10 +45,6 @@ jobs:
                   commit-sha: ${{ github.sha }}
                   artifacts-to-keep: '2'
                   release-tag: 'ci-playground-artifacts'
-            - name: Ensure release is published (not draft)
-              env:
-                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: gh release edit ci-playground-artifacts --repo ${{ github.repository }} --draft=false
 
     create-blueprint:
         name: Create Playground Blueprint
