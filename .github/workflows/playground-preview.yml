@@ -43,8 +43,11 @@ jobs:
                   artifact-filename: sensei-lms.zip
                   pr-number: ${{ github.event.pull_request.number }}
                   commit-sha: ${{ github.sha }}
-                  artifacts-to-keep: '2'
                   release-tag: 'ci-playground-artifacts'
+                  # Upstream cleanup sorts assets by `.created_at` but the
+                  # GitHub API returns `createdAt`, so it deletes by filename
+                  # order — which can wipe the asset just uploaded.
+                  cleanup-enabled: 'false'
 
     create-blueprint:
         name: Create Playground Blueprint
