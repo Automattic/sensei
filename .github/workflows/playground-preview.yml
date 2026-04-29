@@ -1,0 +1,20 @@
+name: Playground PR Preview
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened, edited]
+
+jobs:
+    preview:
+        name: Post Playground Preview
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            pull-requests: write
+        steps:
+            - name: Post Playground Preview Button
+              uses: WordPress/action-wp-playground-pr-preview@v2
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  mode: comment
+                  plugin-path: .
