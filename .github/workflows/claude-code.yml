@@ -68,5 +68,6 @@ jobs:
             --model claude-sonnet-4-6
             --max-turns 50
             --max-budget-usd 5.00
-            --permission-mode bypassPermissions
-            --disallowedTools "Bash(gh pr merge:*)" "Bash(git push --force*)" "Bash(git push -f*)" "Bash(gh release:*)" "Bash(npm publish:*)" "Bash(gh repo delete:*)" "Bash(curl:*)" "Bash(wget:*)" "Bash(ssh:*)" "Bash(scp:*)" "Bash(sudo:*)" "Bash(env)" "Bash(printenv:*)"
+            --permission-mode acceptEdits
+            --allowedTools "Read,Glob,Grep,Edit,Write,Bash(make *),Bash(npm ci),Bash(npm run *),Bash(composer install*),Bash(git diff*),Bash(git log*),Bash(git show*),Bash(git status*),Bash(git add *),Bash(git commit *),Bash(git push *),Bash(git checkout *),Bash(git switch *),Bash(git branch *),Bash(git fetch*),Bash(git rev-parse*),Bash(gh api *),Bash(gh pr *),Bash(gh issue *),Bash(gh run *),Bash(gh label *)"
+            --disallowedTools "Bash(gh pr merge:*)" "Bash(git push --force*)" "Bash(git push -f*)"
