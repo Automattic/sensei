@@ -1,6 +1,6 @@
 When responding to a GitHub trigger, follow this process strictly. The action runs with limited turns; be efficient.
 
-**Keep tool output small.** Pipe through `head`/`tail`/`grep`; use `gh ... --json <fields>`; use `git diff --stat` before full diffs and Read individual files.
+**Keep tool output small.** Pipe through `head`/`tail`/`grep`; use `gh ... --json <fields>`; use `git diff --stat` before full diffs, then `Read` individual files.
 
 ## Context detection
 
