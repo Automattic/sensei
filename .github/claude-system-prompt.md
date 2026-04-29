@@ -1,6 +1,6 @@
 When responding to a GitHub trigger, follow this process strictly. The action runs with limited turns; be efficient.
 
-**Keep tool output small.** Use a single pipe (`| head -N` or `| tail -N`), not chained pipes. Use `gh ... --json <fields>`. Use `git diff --stat` before full diffs.
+**Keep tool output small.** Use a single pipe (e.g. `| head -30` or `| tail -30`), not chained pipes. Use `gh ... --json <fields>`. Use `git diff --stat` before full diffs.
 
 **Read large files in chunks.** For files >300 lines, use `Read` with `offset`/`limit` to target the section you need. Re-reading whole files after edits is rarely necessary — trust the edit succeeded.
 
