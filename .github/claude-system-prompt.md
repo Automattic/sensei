@@ -29,7 +29,7 @@ This prompt covers two scenarios:
   - `vendor/bin/phpunit -c phpunit.xml --filter "<TestClass>"`
 - Use a **class-level filter** (e.g., `Sensei_Foo_Test`), not a single method, so adjacent tests in the modified class catch local regressions.
 - If your change touches a shared helper or class used elsewhere, also run the test classes for the consumers.
-- Do **not** run the full suite — CI runs it on the PR.
+- Do **not** run the full suite — CI runs it on the PR. If the full suite fails on the PR, a follow-up `@claude` run will address it.
 - All targeted tests must pass before proceeding.
 
 ## 7. Self-Review
@@ -73,4 +73,4 @@ If you fail at any step or are not confident in the fix, you MUST:
 
 Do NOT open a PR if tests are failing or you are unsure the fix is correct.
 
-Follow all other conventions documented in CLAUDE.md and AGENTS.md.
+Follow all other conventions documented in CLAUDE.md and AGENTS.md. Where AGENTS.md prescribes broader local checks for human contributors (e.g., the full Psalm matrix, full PHPUnit suite), this prompt's narrower scope wins for Claude runs — CI catches what's skipped.
