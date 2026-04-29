@@ -151,6 +151,39 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertNull( $service->get_status_counts(), 'Comments-based service should always return null.' );
 	}
 
+	public function testGetLessonProgressItems_WithTrashedLesson_ExcludesFromResults(): void {
+		/* Arrange. */
+		$user_id      = $this->sensei_factory->user->create();
+		$course_id    = $this->sensei_factory->course->create();
+		$lesson_id    = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$published_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
+		\Sensei_Utils::update_lesson_status( $user_id, $published_id, 'in-progress' );
+
+		wp_trash_post( $lesson_id );
+
+		$service = new Comments_Based_Grading_Listing_Service();
+
+		/* Act. */
+		$result = $service->get_lesson_progress_items( $this->get_default_args() );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['total_count'], 'Trashed lesson progress should be excluded from total count.' );
+		$returned_lesson_ids = array_map(
+			function ( $item ) {
+				return $item->lesson_id;
+			},
+			$result['items']
+		);
+		$this->assertNotContains( $lesson_id, $returned_lesson_ids, 'Trashed lesson should not appear in items.' );
+		$this->assertContains( $published_id, $returned_lesson_ids, 'Published lesson should appear in items.' );
+	}
+
 	public function testGetLessonProgressItems_WithOffsetBeyondTotal_CorrectsPagination(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();

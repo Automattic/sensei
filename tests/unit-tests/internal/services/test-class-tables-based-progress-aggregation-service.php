@@ -465,6 +465,61 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0, $result['days_to_complete_sum'], 'Ungraded quiz should not contribute to days to complete.' );
 	}
 
+	public function testCountStatuses_WithTrashedLesson_ExcludesFromCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id      = $this->sensei_factory->user->create();
+		$course_id    = $this->sensei_factory->course->create();
+		$lesson_id    = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$published_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $published_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		wp_trash_post( $lesson_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses( [ 'type' => 'lesson' ] );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['in-progress'] ?? 0, 'Trashed lesson progress should be excluded from counts.' );
+	}
+
+	public function testGetLessonTotals_WithTrashedLesson_ExcludesFromTotals(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id      = $this->sensei_factory->user->create();
+		$course_id    = $this->sensei_factory->course->create();
+		$lesson_id    = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$published_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $published_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		wp_trash_post( $lesson_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id, $published_id ] );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['unique_student_count'], 'Trashed lesson progress should not count towards unique students.' );
+		$this->assertSame( 1, $result['lesson_start_count'], 'Trashed lesson progress should not count towards lesson starts.' );
+	}
+
 	public function testGetLessonTotals_WithFailedQuizStatus_CountsAsCompletedButNotDaysToComplete(): void {
 		/* Arrange. */
 		global $wpdb;
