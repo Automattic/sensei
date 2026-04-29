@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Grading page: exclude progress rows for trashed lessons from the listing and tab counts.
