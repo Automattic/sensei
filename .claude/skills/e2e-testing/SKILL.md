@@ -26,7 +26,7 @@ The most common surfaces ranked by what a Sensei change typically touches:
 | Tools | `/wp-admin/admin.php?page=sensei-tools` | Diagnostic / repair actions |
 | Reports | `/wp-admin/admin.php?page=sensei_reports` | Analytics output, filters |
 | Students (Learners) | `/wp-admin/admin.php?page=sensei_learners` | Enrollment management, learner search |
-| Grading | `/wp-admin/edit.php?post_type=lesson&page=sensei_grading` | Manual grading list, filters, status counts |
+| Grading | `/wp-admin/admin.php?page=sensei_grading` | Manual grading list, filters, status counts |
 | Courses CPT | `/wp-admin/edit.php?post_type=course` | Course list table, columns, filters |
 | Lessons CPT | `/wp-admin/edit.php?post_type=lesson` | Lesson list table, columns |
 | Modules taxonomy | `/wp-admin/edit-tags.php?taxonomy=module&post_type=course` | Module CRUD |

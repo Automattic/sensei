@@ -19,7 +19,7 @@
 - WordPress / PHP version overrides: write a `.wp-env.override.json` such as `{ "core": "WordPress/WordPress#6.8-branch", "phpVersion": "8.3" }` before `npx wp-env start --update`.
 
 ## Building
-- Avoid `npm run build` directly on the host: `humbug/php-scoper@0.15.0` ships an old `symfony/console` whose `HelperSet::getIterator()` is incompatible with PHP 8.1+ return-type checks. Build via wp-env instead:
+- Avoid `npm run build` directly on the host: the pinned `humbug/php-scoper` ships an old `symfony/console` whose `HelperSet::getIterator()` is incompatible with PHP 8.1+ return-type checks. Build via wp-env instead:
   ```
   npm run build:assets
   rm -f assets/dist/css/jquery-ui.js
