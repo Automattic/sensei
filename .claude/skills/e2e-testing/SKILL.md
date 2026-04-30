@@ -63,15 +63,22 @@ If empty, run `make up` and wait ~30–60s on a warm Docker daemon (longer on a 
 
 ### 3. Seed enough test data
 
-wp-env starts empty. For most flows you'll need at least one published course with one lesson. Quick seed:
+wp-env starts empty. For most flows you'll need at least one published course with one lesson and one quiz. Quick seed:
 
 ```bash
 make wp CMD="post create --post_type=course --post_title='Sensei E2E' --post_status=publish --porcelain"
 # capture COURSE_ID
 make wp CMD="post create --post_type=lesson --post_title='Lesson 1' --post_status=publish --post_parent=COURSE_ID --porcelain"
+# capture LESSON_ID
+make wp CMD="post create --post_type=quiz --post_title='Quiz 1' --post_status=publish --post_parent=LESSON_ID --porcelain"
+# capture QUIZ_ID, then link the quiz to the lesson
+make wp CMD="post meta add LESSON_ID _lesson_quiz QUIZ_ID"
+make wp CMD="post create --post_type=question --post_title='Q1' --post_status=publish --porcelain"
+# capture QUESTION_ID
+make wp CMD="post meta add QUESTION_ID _quiz_id QUIZ_ID"
 ```
 
-For quiz/grading flows you'll also need a quiz attached to the lesson with at least one question. Bare `wp post create` doesn't set up the quiz structure (questions, settings, lesson↔quiz linkage), so for those flows mirror the factories in `tests/e2e-playwright/factories/`.
+The bare question above has no `question-type` taxonomy term or `_question_right_answer` meta, so it renders but isn't gradable. For take-quiz / grading flows that exercise correctness, mirror the factories in `tests/e2e-playwright/factories/` (or `tests/framework/factories/` for PHPUnit fixtures).
 
 ### 4. Drive the surfaces
 
