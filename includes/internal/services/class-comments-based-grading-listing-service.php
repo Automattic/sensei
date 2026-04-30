@@ -31,6 +31,12 @@ class Comments_Based_Grading_Listing_Service implements Grading_Listing_Service_
 	 * @return array{ items: Grading_Item[], total_count: int }
 	 */
 	public function get_lesson_progress_items( array $args ): array {
+		// Exclude progress for non-published lessons. Matches the hardcoded
+		// `post_status = 'publish'` filter used by count_statuses, get_lesson_totals,
+		// and the tables-based grading listing — keep these in sync to avoid header/
+		// row count drift.
+		$args['post_status'] = 'publish';
+
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so run
 		// a separate count query first with no limit/offset.
 		$total_count = \Sensei_Utils::sensei_check_for_activity(

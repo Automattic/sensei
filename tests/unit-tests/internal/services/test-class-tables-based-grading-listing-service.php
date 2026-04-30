@@ -508,6 +508,42 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Expected cached counts to also exclude the preview user.' );
 	}
 
+	public function testGetLessonProgressItems_WithTrashedLesson_ExcludesFromResults(): void {
+		/* Arrange. */
+		global $wpdb;
+		$user_id      = $this->sensei_factory->user->create();
+		$course_id    = $this->sensei_factory->course->create();
+		$lesson_id    = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$published_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $published_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		wp_trash_post( $lesson_id );
+
+		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_progress_items( $this->get_default_args() );
+		$counts = $service->get_status_counts();
+
+		/* Assert. */
+		$this->assertSame( 1, $result['total_count'], 'Trashed lesson progress should be excluded from total count.' );
+		$returned_lesson_ids = array_map(
+			function ( $item ) {
+				return $item->lesson_id;
+			},
+			$result['items']
+		);
+		$this->assertNotContains( $lesson_id, $returned_lesson_ids, 'Trashed lesson should not appear in items.' );
+		$this->assertContains( $published_id, $returned_lesson_ids, 'Published lesson should appear in items.' );
+		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Status counts should also exclude trashed lesson.' );
+	}
+
 	public function testGetStatusCounts_WithStatusFilter_ReturnsAllStatuses(): void {
 		/* Arrange. */
 		global $wpdb;

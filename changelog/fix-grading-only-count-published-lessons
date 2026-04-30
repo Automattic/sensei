@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Grading and Reports: only count progress on published lessons; exclude trashed, draft, scheduled, and private lessons from listings and counts.

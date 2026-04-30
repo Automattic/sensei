@@ -344,6 +344,62 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$this->assertSame( 1, $result['ungraded'], 'Excluded user with override status should still be counted.' );
 	}
 
+	public function testCountStatuses_WithTrashedLesson_ExcludesFromCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id      = $this->sensei_factory->user->create();
+		$course_id    = $this->sensei_factory->course->create();
+		$lesson_id    = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$published_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
+		\Sensei_Utils::update_lesson_status( $user_id, $published_id, 'in-progress' );
+
+		wp_trash_post( $lesson_id );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses( [ 'type' => 'lesson' ] );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['in-progress'] ?? 0, 'Trashed lesson progress should be excluded from counts.' );
+	}
+
+	public function testGetLessonTotals_WithTrashedLesson_ExcludesFromTotals(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id      = $this->sensei_factory->user->create();
+		$course_id    = $this->sensei_factory->course->create();
+		$lesson_id    = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$published_id = $this->sensei_factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$start_date = current_time( 'mysql' );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress', [ 'start' => $start_date ] );
+		\Sensei_Utils::update_lesson_status( $user_id, $published_id, 'in-progress', [ 'start' => $start_date ] );
+
+		wp_trash_post( $lesson_id );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( [ $lesson_id, $published_id ] );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['unique_student_count'], 'Trashed lesson progress should not count towards unique students.' );
+		$this->assertSame( 1, $result['lesson_start_count'], 'Trashed lesson progress should not count towards lesson starts.' );
+	}
+
 	public function testCountStatuses_LessonWithQuizButNoAnswers_IncludedByDefault(): void {
 		/* Arrange. */
 		global $wpdb;
