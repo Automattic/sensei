@@ -9,10 +9,10 @@ This skill verifies that a change actually behaves correctly from a user's persp
 
 ## Prerequisites
 
-- wp-env is running (`npx wp-env start --update`). The dev site listens on `http://localhost:8888` (admin: `admin` / `password` — wp-env defaults).
+- `make up` is running. The wp-env dev site listens on `http://localhost:8888` (admin: `admin` / `password` — wp-env defaults).
 - The active theme is `course` (`Automattic/themes/course`, pinned in `.wp-env.json`). All frontend verification should run against it.
 - Chrome DevTools MCP tools (`mcp__chrome-devtools__*`) are available.
-- For PHP changes that touch built assets, run `npm run build:assets` first. For changes that affect the scoped vendor tree, follow the build sequence in `AGENTS.md` (Building section).
+- For PHP changes that touch built assets, run `npm run build:assets` first. For changes that affect the scoped vendor tree, run `make build`.
 
 ## Sensei surface map
 
@@ -59,16 +59,16 @@ Heuristics:
 curl -sI http://localhost:8888 | head -1
 ```
 
-If empty, run `npx wp-env start --update` and wait ~30–60s on a warm Docker daemon (longer on a cold start).
+If empty, run `make up` and wait ~30–60s on a warm Docker daemon (longer on a cold start).
 
 ### 3. Seed enough test data
 
 wp-env starts empty. For most flows you'll need at least one published course with one lesson and one quiz. Quick seed:
 
 ```bash
-npx wp-env run cli wp post create --post_type=course --post_title='Sensei E2E' --post_status=publish --porcelain
+make wp CMD="post create --post_type=course --post_title='Sensei E2E' --post_status=publish --porcelain"
 # capture COURSE_ID
-npx wp-env run cli wp post create --post_type=lesson --post_title='Lesson 1' --post_status=publish --post_parent=COURSE_ID --porcelain
+make wp CMD="post create --post_type=lesson --post_title='Lesson 1' --post_status=publish --post_parent=COURSE_ID --porcelain"
 ```
 
 For richer fixtures, mirror the factories in `tests/e2e-playwright/factories/`.
@@ -107,16 +107,16 @@ Reference saved screenshots in the PR description if useful.
 
 - **Action Scheduler-driven side effects don't fire on click.** Sensei queues many flows (course completion emails, lesson progress recalc, enrollment recalculation, retroactive enrolment recalc) via Action Scheduler. The action runs on the next WP-Cron tick, not on the request that scheduled it. To force a sweep:
   ```bash
-  npx wp-env run cli wp action-scheduler run
+  make wp CMD="action-scheduler run"
   ```
 - **Course theme not active.** If the frontend looks unstyled, confirm:
   ```bash
-  npx wp-env run cli wp theme list --status=active
+  make wp CMD="theme list --status=active"
   ```
-  The active theme should be `course`. Re-activate with `npx wp-env run cli wp theme activate course`.
+  The active theme should be `course`. Re-activate with `make wp CMD="theme activate course"`.
 - **Stale built assets.** wp-env mounts the plugin live, but JS/CSS in `assets/dist/` need a rebuild after source changes: `npm run build:assets`. The browser may also need a hard reload.
 - **Comment-meta vs. tables drift on grading.** When verifying grading flows, check both the listing page (counts/filters) and the per-quiz "Review Grade" detail page; the two query paths can diverge during HPPS migrations.
-- **Empty Reports.** Reports require at least one enrolled student with progress. Create a second wp-env user (`npx wp-env run cli wp user create student student@example.com --role=subscriber`) and enroll them programmatically before verifying reports.
+- **Empty Reports.** Reports require at least one enrolled student with progress. Create a second wp-env user (`make wp CMD="user create student student@example.com --role=subscriber"`) and enroll them programmatically before verifying reports.
 
 ## When to skip this skill
 
