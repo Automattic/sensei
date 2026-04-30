@@ -63,7 +63,7 @@ If empty, run `make up` and wait ~30–60s on a warm Docker daemon (longer on a 
 
 ### 3. Seed enough test data
 
-wp-env starts empty. For most flows you'll need at least one published course with one lesson and one quiz. Quick seed:
+wp-env starts empty. For most flows you'll need at least one published course with one lesson. Quick seed:
 
 ```bash
 make wp CMD="post create --post_type=course --post_title='Sensei E2E' --post_status=publish --porcelain"
@@ -71,7 +71,7 @@ make wp CMD="post create --post_type=course --post_title='Sensei E2E' --post_sta
 make wp CMD="post create --post_type=lesson --post_title='Lesson 1' --post_status=publish --post_parent=COURSE_ID --porcelain"
 ```
 
-For richer fixtures, mirror the factories in `tests/e2e-playwright/factories/`.
+For quiz/grading flows you'll also need a quiz attached to the lesson with at least one question. Bare `wp post create` doesn't set up the quiz structure (questions, settings, lesson↔quiz linkage), so for those flows mirror the factories in `tests/e2e-playwright/factories/`.
 
 ### 4. Drive the surfaces
 

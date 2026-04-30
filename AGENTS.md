@@ -21,6 +21,7 @@ See `make help` for the full list of available dev commands.
 ## Building
 - `make build` produces the plugin zip via wp-env, which sidesteps host PHP version issues.
 - Avoid running `npm run build` directly on the host: the pinned `humbug/php-scoper` ships an old `symfony/console` whose `HelperSet::getIterator()` is incompatible with PHP 8.1+ return-type checks. Either use `make build` or prefix `PATH` with a PHP 7.4 binary.
+- On a fresh checkout, run `make install-php` before `make build`. The build runs `composer install --no-dev --no-scripts`, which skips the `post-autoload-dump` hook that generates the scoped vendor tree at `vendor/sensei-lms/third-party-libs/` (consumed at runtime, e.g. `Sensei\ThirdParty\Pelago\Emogrifier\CssInliner`). `make install-php` runs the full composer install with scripts and populates that tree.
 - `make build` runs `composer install --no-dev` inside the container, which strips all dev dependencies (`vendor/bin/phpunit`, `vendor/bin/psalm`, etc.). After a build, restore dev tooling before running tests or static analysis with `make install-php`.
 
 ## Testing
