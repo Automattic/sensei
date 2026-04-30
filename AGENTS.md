@@ -11,7 +11,7 @@
 ## Development environment
 - Run all dev commands inside the wp-env Docker sandbox rather than against any host WordPress install — this keeps mistakes off shared/local state.
 - Use the Node version pinned in `.nvmrc`.
-- Ensure Docker Desktop (or Colima) is running before starting wp-env; verify with `docker info`.
+- Ensure Docker Desktop (or Colima) is running before starting wp-env; verify with `docker info`. If it isn't running, start it first (`open -a Docker` on macOS, `colima start` on Colima, `sudo systemctl start docker` on Linux) and wait until `docker info` succeeds.
 - Start the env: `npx wp-env start --update`.
 - Stop the env: `npx wp-env stop`. Wipe and recreate from scratch: `npx wp-env destroy`.
 - Open a shell in the WordPress container: `npx wp-env run cli bash`.
