@@ -73,7 +73,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$comment_type = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
-		$query = $wpdb->prepare( "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status != 'trash' WHERE comment_type = %s", $comment_type );
+		$query = $wpdb->prepare( "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status = 'publish' WHERE comment_type = %s", $comment_type );
 
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
