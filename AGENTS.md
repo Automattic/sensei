@@ -21,7 +21,7 @@ See `make help` for the full list of available dev commands.
 ## Building
 - `make build` produces the plugin zip via wp-env, which sidesteps host PHP version issues.
 - Avoid running `npm run build` directly on the host: the pinned `humbug/php-scoper` ships an old `symfony/console` whose `HelperSet::getIterator()` is incompatible with PHP 8.1+ return-type checks. Either use `make build` or prefix `PATH` with a PHP 7.4 binary.
-- `make build` runs `composer install --no-dev` inside the container, which strips dev dependencies (including `vendor/bin/phpunit`). After a build, restore dev tooling before running PHPUnit with `make install-php`.
+- `make build` runs `composer install --no-dev` inside the container, which strips all dev dependencies (`vendor/bin/phpunit`, `vendor/bin/psalm`, etc.). After a build, restore dev tooling before running tests or static analysis with `make install-php`.
 
 ## Testing
 - **Test-driven development**: Follow a TDD approach for new behavior and bug fixes — write a failing test that captures the desired behavior first, then implement until it passes. This applies to PHPUnit, JS unit, and (where practical) Playwright suites.
