@@ -16,6 +16,10 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	const CONTENT_TYPES_STATE_KEY = 'content_types';
 	const SELECTIONS_STATE_KEY    = 'selections';
 	const RESOLVED_IDS_STATE_KEY  = 'resolved_ids';
+	const MODE_STATE_KEY          = 'mode';
+
+	const MODE_BY_COURSE    = 'by_course';
+	const MODE_BY_FILE_TYPE = 'by_file_type';
 
 	/**
 	 * The array of the export tasks.
@@ -125,6 +129,39 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	}
 
 	/**
+	 * Set the export mode.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $mode One of MODE_BY_COURSE or MODE_BY_FILE_TYPE.
+	 */
+	public function set_mode( $mode ) {
+		if ( ! in_array( $mode, array( self::MODE_BY_COURSE, self::MODE_BY_FILE_TYPE ), true ) ) {
+			$mode = self::MODE_BY_FILE_TYPE;
+		}
+		$this->set_state( self::MODE_STATE_KEY, $mode );
+	}
+
+	/**
+	 * Get the export mode.
+	 *
+	 * Defaults to MODE_BY_FILE_TYPE for jobs that predate the mode field
+	 * so existing-job behaviour matches the historical "literal types"
+	 * shape (no cascade unless explicitly configured).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string
+	 */
+	public function get_mode() {
+		$mode = $this->get_state( self::MODE_STATE_KEY );
+		if ( ! in_array( $mode, array( self::MODE_BY_COURSE, self::MODE_BY_FILE_TYPE ), true ) ) {
+			return self::MODE_BY_FILE_TYPE;
+		}
+		return $mode;
+	}
+
+	/**
 	 * Set the per-type item selections to be exported.
 	 *
 	 * Each value is an array of post IDs. An empty array means "export all of that type".
@@ -183,6 +220,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 */
 	public function resolve_export_ids() {
 		$selections = $this->get_selections();
+		$mode       = $this->get_mode();
 
 		$course_ids   = $selections['course'];
 		$lesson_ids   = $selections['lesson'];
@@ -192,31 +230,41 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 		$has_lesson_selection   = ! empty( $lesson_ids );
 		$has_question_selection = ! empty( $question_ids );
 
-		// Cascade: courses → lessons.
-		if ( $has_course_selection ) {
-			$cascaded_lessons = $this->get_lessons_for_courses( $course_ids );
-			if ( $has_lesson_selection ) {
-				$lesson_ids = array_values( array_unique( array_merge( $lesson_ids, $cascaded_lessons ) ) );
-			} else {
-				$lesson_ids = $cascaded_lessons;
+		if ( self::MODE_BY_COURSE === $mode ) {
+			// Cascade: courses → lessons.
+			if ( $has_course_selection ) {
+				$cascaded_lessons = $this->get_lessons_for_courses( $course_ids );
+				if ( $has_lesson_selection ) {
+					$lesson_ids = array_values( array_unique( array_merge( $lesson_ids, $cascaded_lessons ) ) );
+				} else {
+					$lesson_ids = $cascaded_lessons;
+				}
 			}
-		}
 
-		// Cascade: lessons (explicit + cascaded) → questions.
-		if ( $has_course_selection || $has_lesson_selection ) {
-			$cascaded_questions = $this->get_questions_for_lessons( $lesson_ids );
-			if ( $has_question_selection ) {
-				$question_ids = array_values( array_unique( array_merge( $question_ids, $cascaded_questions ) ) );
-			} else {
-				$question_ids = $cascaded_questions;
+			// Cascade: lessons (explicit + cascaded) → questions.
+			if ( $has_course_selection || $has_lesson_selection ) {
+				$cascaded_questions = $this->get_questions_for_lessons( $lesson_ids );
+				if ( $has_question_selection ) {
+					$question_ids = array_values( array_unique( array_merge( $question_ids, $cascaded_questions ) ) );
+				} else {
+					$question_ids = $cascaded_questions;
+				}
 			}
-		}
 
-		$resolved = array(
-			'course'   => $has_course_selection ? $course_ids : array(),
-			'lesson'   => ( $has_course_selection || $has_lesson_selection ) ? $lesson_ids : array(),
-			'question' => ( $has_course_selection || $has_lesson_selection || $has_question_selection ) ? $question_ids : array(),
-		);
+			$resolved = array(
+				'course'   => $has_course_selection ? $course_ids : array(),
+				'lesson'   => ( $has_course_selection || $has_lesson_selection ) ? $lesson_ids : array(),
+				'question' => ( $has_course_selection || $has_lesson_selection || $has_question_selection ) ? $question_ids : array(),
+			);
+		} else {
+			// MODE_BY_FILE_TYPE: literal interpretation. Each CSV contains
+			// exactly the items the user picked for it; no cross-type cascade.
+			$resolved = array(
+				'course'   => $has_course_selection ? $course_ids : array(),
+				'lesson'   => $has_lesson_selection ? $lesson_ids : array(),
+				'question' => $has_question_selection ? $question_ids : array(),
+			);
+		}
 
 		$this->set_state( self::RESOLVED_IDS_STATE_KEY, $resolved );
 	}

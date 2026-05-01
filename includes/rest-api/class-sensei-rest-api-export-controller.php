@@ -73,6 +73,7 @@ class Sensei_REST_API_Export_Controller extends Sensei_REST_API_Data_Port_Contro
 
 		if ( $job && $job->is_ready() && ! $job->is_started() ) {
 			$job->set_content_types( $params['content_types'] );
+			$job->set_mode( $params['mode'] ?? Sensei_Export_Job::MODE_BY_FILE_TYPE );
 			$job->set_selections( $this->sanitize_selections( $params['selections'] ?? array() ) );
 			$job->resolve_export_ids();
 			$job->persist();
