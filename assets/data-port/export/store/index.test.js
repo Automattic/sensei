@@ -135,7 +135,10 @@ describe( 'Export store', () => {
 		expect( apiFetch ).toHaveBeenNthCalledWith( 2, {
 			path: '/sensei-internal/v1/export/5/start',
 			method: 'POST',
-			data: { content_types: [ 'lesson', 'course' ] },
+			data: {
+				content_types: [ 'lesson', 'course' ],
+				mode: 'by_file_type',
+			},
 		} );
 
 		expect( registry.select( EXPORT_STORE ).getJob() ).toEqual( {
@@ -151,11 +154,15 @@ describe( 'Export store', () => {
 			.mockReturnValueOnce( { id: 9, status: { status: 'complete' } } );
 
 		store.dispatch(
-			actions.start( [ 'course' ], {
-				course: [ 12, 34 ],
-				lesson: [],
-				question: [ 7 ],
-			} )
+			actions.start(
+				[ 'course' ],
+				{
+					course: [ 12, 34 ],
+					lesson: [],
+					question: [ 7 ],
+				},
+				'by_course'
+			)
 		);
 
 		expect( apiFetch ).toHaveBeenNthCalledWith( 2, {
@@ -163,6 +170,7 @@ describe( 'Export store', () => {
 			method: 'POST',
 			data: {
 				content_types: [ 'course' ],
+				mode: 'by_course',
 				selections: {
 					course: [ 12, 34 ],
 					question: [ 7 ],
@@ -188,7 +196,7 @@ describe( 'Export store', () => {
 		expect( apiFetch ).toHaveBeenNthCalledWith( 2, {
 			path: '/sensei-internal/v1/export/11/start',
 			method: 'POST',
-			data: { content_types: [ 'course' ] },
+			data: { content_types: [ 'course' ], mode: 'by_file_type' },
 		} );
 	} );
 

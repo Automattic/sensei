@@ -75,13 +75,18 @@ const pollIfPending = function* ( job ) {
  * @access public
  * @param {string[]} types      Content types.
  * @param {Object}   selections Per-type ID arrays (course/lesson/question).
+ * @param {string}   mode       Export mode ('by_course' or 'by_file_type').
  */
-export const start = function* ( types, selections = {} ) {
+export const start = function* (
+	types,
+	selections = {},
+	mode = 'by_file_type'
+) {
 	yield setJob( {
 		status: 'creating',
 	} );
 	yield createJob();
-	const job = yield startJob( types, selections );
+	const job = yield startJob( types, selections, mode );
 	yield pollIfPending( job );
 };
 
@@ -240,9 +245,10 @@ const createJob = function* () {
  *
  * @param {string[]} types      Content types to export.
  * @param {Object}   selections Per-type ID arrays.
+ * @param {string}   mode       Export mode ('by_course' or 'by_file_type').
  */
-const startJob = function* ( types, selections = {} ) {
-	const data = { content_types: types };
+const startJob = function* ( types, selections = {}, mode = 'by_file_type' ) {
+	const data = { content_types: types, mode };
 	const trimmed = Object.fromEntries(
 		Object.entries( selections ).filter(
 			( [ , ids ] ) => Array.isArray( ids ) && ids.length > 0
@@ -263,7 +269,7 @@ const startJob = function* ( types, selections = {} ) {
 		.map( ( typeSingular ) => typeSingular + 's' )
 		.join( ',' );
 
-	window.sensei_log_event( 'export_continue_click', { type } );
+	window.sensei_log_event( 'export_continue_click', { type, mode } );
 
 	yield updateJob( job );
 	return job;

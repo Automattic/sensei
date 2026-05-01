@@ -172,7 +172,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	/**
 	 * Runs a data port job if it's not currently running.
 	 *
-	 * @param Sensei_Data_Port_Job $job
+	 * @param Sensei_Data_Port_Job $job The data port job to run.
 	 */
 	public function run_data_port_job( $job ) {
 		$job_running = get_transient( self::OPTION_RUNNING_JOB );
@@ -183,7 +183,6 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		} else {
 			Sensei_Scheduler::instance()->schedule_job( $job );
 		}
-
 	}
 
 	/**
@@ -330,7 +329,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		}
 
 		$plural_content_types = array_map(
-			function( $type ) {
+			function ( $type ) {
 				return $type . 's';
 			},
 			$job->get_content_types()
@@ -342,6 +341,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 			'export_complete',
 			[
 				'type' => implode( ',', $plural_content_types ),
+				'mode' => $job->get_mode(),
 			]
 		);
 	}
