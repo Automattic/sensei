@@ -1,13 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { useEffect, useMemo, useState } from '@wordpress/element';
-import {
-	Button,
-	CheckboxControl,
-	Spinner,
-	TextControl,
-} from '@wordpress/components';
+import { useEffect, useState } from '@wordpress/element';
+import { Button, FormTokenField } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
@@ -22,10 +17,30 @@ const REST_BASE_BY_TYPE = {
 	question: 'questions',
 };
 
-const PER_PAGE = 20;
+const SUGGESTION_LIMIT = 20;
 
 /**
- * Item picker for a single content type. Empty selection = export all.
+ * Build a unique label for a post. When two posts share a title we
+ * disambiguate with the post ID so FormTokenField (which works on
+ * strings) can map labels back to IDs unambiguously.
+ *
+ * @param {Object}   item Post item ({ id, title }).
+ * @param {Object[]} pool Items in the same context to check for collisions.
+ * @return {string} Display label for the token.
+ */
+const buildLabel = ( item, pool ) => {
+	const title = item.title?.rendered || item.title?.raw || '';
+	const collides = pool.some(
+		( other ) =>
+			other.id !== item.id &&
+			( other.title?.rendered || other.title?.raw || '' ) === title
+	);
+	const safeTitle = title || __( '(no title)', 'sensei-lms' );
+	return collides || ! title ? `${ safeTitle } (#${ item.id })` : safeTitle;
+};
+
+/**
+ * FormTokenField-based item picker for a single content type.
  *
  * @param {Object}   props
  * @param {string}   props.type        Content type ('course', 'lesson', 'question').
@@ -33,173 +48,119 @@ const PER_PAGE = 20;
  * @param {Function} props.onChange    Called with the next ID array.
  */
 const ExportTypeItemPicker = ( { type, selectedIds, onChange } ) => {
-	const [ search, setSearch ] = useState( '' );
-	const [ debouncedSearch, setDebouncedSearch ] = useState( '' );
-	const [ items, setItems ] = useState( [] );
-	const [ page, setPage ] = useState( 1 );
-	const [ totalPages, setTotalPages ] = useState( 1 );
-	const [ isLoading, setIsLoading ] = useState( false );
-	const [ error, setError ] = useState( null );
-
-	const selectedSet = useMemo(
-		() => new Set( selectedIds ),
-		[ selectedIds ]
-	);
+	const [ inputValue, setInputValue ] = useState( '' );
+	const [ debouncedInput, setDebouncedInput ] = useState( '' );
+	const [ suggestionItems, setSuggestionItems ] = useState( [] );
+	const [ selectedItems, setSelectedItems ] = useState( [] );
 
 	useEffect( () => {
-		const handle = setTimeout( () => {
-			setDebouncedSearch( search );
-			setPage( 1 );
-		}, 300 );
+		const handle = setTimeout( () => setDebouncedInput( inputValue ), 300 );
 		return () => clearTimeout( handle );
-	}, [ search ] );
+	}, [ inputValue ] );
 
 	useEffect( () => {
 		let cancelled = false;
-		setIsLoading( true );
-		setError( null );
-
 		const params = new URLSearchParams( {
-			per_page: String( PER_PAGE ),
-			page: String( page ),
+			per_page: String( SUGGESTION_LIMIT ),
 			status: 'any',
 			_fields: 'id,title',
 			context: 'edit',
 		} );
-		if ( debouncedSearch ) {
-			params.set( 'search', debouncedSearch );
+		if ( debouncedInput ) {
+			params.set( 'search', debouncedInput );
 		}
 
 		apiFetch( {
 			path: `/wp/v2/${
 				REST_BASE_BY_TYPE[ type ]
 			}?${ params.toString() }`,
-			parse: false,
 		} )
-			.then( async ( response ) => {
-				const totalPagesHeader =
-					response.headers.get( 'X-WP-TotalPages' ) || '1';
-				const data = await response.json();
-				if ( cancelled ) {
-					return;
-				}
-				setItems( data );
-				setTotalPages(
-					Math.max( 1, parseInt( totalPagesHeader, 10 ) )
-				);
-			} )
-			.catch( ( err ) => {
+			.then( ( items ) => {
 				if ( ! cancelled ) {
-					setError(
-						err.message ||
-							__( 'Failed to load items.', 'sensei-lms' )
-					);
+					setSuggestionItems( items );
 				}
 			} )
-			.finally( () => {
+			.catch( () => {
 				if ( ! cancelled ) {
-					setIsLoading( false );
+					setSuggestionItems( [] );
 				}
 			} );
 
 		return () => {
 			cancelled = true;
 		};
-	}, [ type, page, debouncedSearch ] );
+	}, [ type, debouncedInput ] );
 
-	const toggleId = ( id, isChecked ) => {
-		if ( isChecked ) {
-			onChange( Array.from( new Set( [ ...selectedIds, id ] ) ) );
-		} else {
-			onChange( selectedIds.filter( ( existing ) => existing !== id ) );
+	const knownItemsById = new Map();
+	[ ...selectedItems, ...suggestionItems ].forEach( ( item ) => {
+		knownItemsById.set( item.id, item );
+	} );
+	const knownItemsPool = Array.from( knownItemsById.values() );
+
+	const tokenForId = ( id ) => {
+		const item = knownItemsById.get( id );
+		if ( ! item ) {
+			return `#${ id }`;
 		}
+		return buildLabel( item, knownItemsPool );
+	};
+
+	const tokenValues = selectedIds.map( tokenForId );
+
+	const suggestions = suggestionItems
+		.filter( ( item ) => ! selectedIds.includes( item.id ) )
+		.map( ( item ) => buildLabel( item, knownItemsPool ) );
+
+	const onTokensChange = ( tokens ) => {
+		const labelToId = new Map();
+		knownItemsPool.forEach( ( item ) =>
+			labelToId.set( buildLabel( item, knownItemsPool ), item.id )
+		);
+
+		const nextIds = [];
+		const nextSelectedItems = [];
+		const seen = new Set();
+
+		tokens.forEach( ( token ) => {
+			const label = typeof token === 'string' ? token : token?.value;
+			if ( ! label || seen.has( label ) ) {
+				return;
+			}
+			seen.add( label );
+
+			const id = labelToId.get( label );
+			if ( ! id ) {
+				return;
+			}
+			nextIds.push( id );
+			const item = knownItemsById.get( id );
+			if ( item ) {
+				nextSelectedItems.push( item );
+			}
+		} );
+
+		setSelectedItems( nextSelectedItems );
+		onChange( nextIds );
 	};
 
 	return (
 		<div className="sensei-export__item-picker">
-			<h3 className="sensei-export__item-picker__heading">
-				{ postTypeLabels[ type ] }
-			</h3>
+			<FormTokenField
+				label={ postTypeLabels[ type ] }
+				value={ tokenValues }
+				suggestions={ suggestions }
+				onInputChange={ setInputValue }
+				onChange={ onTokensChange }
+				__experimentalExpandOnFocus
+				__experimentalShowHowTo={ false }
+				placeholder={ __( 'Search to add items…', 'sensei-lms' ) }
+			/>
 			<p className="sensei-export__item-picker__hint">
 				{ __(
-					'Leave empty to export all. Selecting items also exports their lessons and questions where applicable.',
+					'Leave empty to export all of this type. Selecting items also exports their lessons and questions where applicable.',
 					'sensei-lms'
 				) }
 			</p>
-			<TextControl
-				label={ __( 'Search', 'sensei-lms' ) }
-				value={ search }
-				onChange={ setSearch }
-			/>
-			{ error && (
-				<p className="sensei-export__item-picker__error">{ error }</p>
-			) }
-			{ isLoading ? (
-				<Spinner />
-			) : (
-				<ul className="sensei-export__item-picker__list">
-					{ items.length === 0 && (
-						<li className="sensei-export__item-picker__empty">
-							{ __( 'No items found.', 'sensei-lms' ) }
-						</li>
-					) }
-					{ items.map( ( item ) => (
-						<li key={ item.id }>
-							<CheckboxControl
-								label={
-									item.title.rendered ||
-									item.title.raw ||
-									`#${ item.id }`
-								}
-								checked={ selectedSet.has( item.id ) }
-								onChange={ ( isChecked ) =>
-									toggleId( item.id, isChecked )
-								}
-							/>
-						</li>
-					) ) }
-				</ul>
-			) }
-			{ totalPages > 1 && (
-				<div className="sensei-export__item-picker__pagination">
-					<Button
-						isSecondary
-						disabled={ page <= 1 || isLoading }
-						onClick={ () => setPage( page - 1 ) }
-					>
-						{ __( 'Previous', 'sensei-lms' ) }
-					</Button>
-					<span>
-						{
-							/* translators: %1$d current page; %2$d total pages. */
-							__( 'Page %1$d of %2$d', 'sensei-lms' )
-								.replace( '%1$d', page )
-								.replace( '%2$d', totalPages )
-						}
-					</span>
-					<Button
-						isSecondary
-						disabled={ page >= totalPages || isLoading }
-						onClick={ () => setPage( page + 1 ) }
-					>
-						{ __( 'Next', 'sensei-lms' ) }
-					</Button>
-				</div>
-			) }
-			{ selectedIds.length > 0 && (
-				<p className="sensei-export__item-picker__selected-count">
-					{
-						/* translators: %d is the number of selected items. */
-						__( '%d selected', 'sensei-lms' ).replace(
-							'%d',
-							selectedIds.length
-						)
-					}{ ' ' }
-					<Button isLink onClick={ () => onChange( [] ) }>
-						{ __( 'Clear selection', 'sensei-lms' ) }
-					</Button>
-				</p>
-			) }
 		</div>
 	);
 };

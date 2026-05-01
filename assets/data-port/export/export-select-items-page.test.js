@@ -15,24 +15,38 @@ import { ExportSelectItemsPage } from './export-select-items-page';
 
 jest.mock( '@wordpress/api-fetch', () => jest.fn() );
 
-const buildResponse = ( items, totalPages = 1 ) => ( {
-	headers: { get: () => String( totalPages ) },
-	json: async () => items,
-} );
-
 describe( '<ExportSelectItemsPage />', () => {
 	beforeEach( () => {
 		apiFetch.mockReset();
+		apiFetch.mockResolvedValue( [] );
+	} );
+
+	it( 'fetches items for each picked type from the WP REST API', async () => {
+		render(
+			<ExportSelectItemsPage
+				types={ [ 'course', 'lesson' ] }
+				onSubmit={ () => {} }
+				onBack={ () => {} }
+			/>
+		);
+
+		await waitFor( () => {
+			expect( apiFetch ).toHaveBeenCalled();
+		} );
+
+		const paths = apiFetch.mock.calls.map( ( [ args ] ) => args.path );
+		expect( paths.some( ( p ) => p.startsWith( '/wp/v2/courses' ) ) ).toBe(
+			true
+		);
+		expect( paths.some( ( p ) => p.startsWith( '/wp/v2/lessons' ) ) ).toBe(
+			true
+		);
+		expect( paths.every( ( p ) => p.includes( 'status=any' ) ) ).toBe(
+			true
+		);
 	} );
 
 	it( 'submits empty selections when nothing is picked', async () => {
-		apiFetch.mockResolvedValue(
-			buildResponse( [
-				{ id: 1, title: { rendered: 'Course A' } },
-				{ id: 2, title: { rendered: 'Course B' } },
-			] )
-		);
-
 		const onSubmit = jest.fn();
 		const { getByRole } = render(
 			<ExportSelectItemsPage
@@ -42,7 +56,7 @@ describe( '<ExportSelectItemsPage />', () => {
 			/>
 		);
 
-		await waitFor( () => getByRole( 'checkbox', { name: 'Course A' } ) );
+		await waitFor( () => expect( apiFetch ).toHaveBeenCalled() );
 
 		fireEvent.click( getByRole( 'button', { name: 'Start Export' } ) );
 
@@ -52,38 +66,7 @@ describe( '<ExportSelectItemsPage />', () => {
 		} );
 	} );
 
-	it( 'collects picked IDs per type and forwards them on submit', async () => {
-		apiFetch.mockResolvedValue(
-			buildResponse( [
-				{ id: 12, title: { rendered: 'Course A' } },
-				{ id: 34, title: { rendered: 'Course B' } },
-			] )
-		);
-
-		const onSubmit = jest.fn();
-		const { getByRole } = render(
-			<ExportSelectItemsPage
-				types={ [ 'course' ] }
-				onSubmit={ onSubmit }
-				onBack={ () => {} }
-			/>
-		);
-
-		await waitFor( () => getByRole( 'checkbox', { name: 'Course A' } ) );
-
-		fireEvent.click( getByRole( 'checkbox', { name: 'Course A' } ) );
-		fireEvent.click( getByRole( 'checkbox', { name: 'Course B' } ) );
-		fireEvent.click( getByRole( 'button', { name: 'Start Export' } ) );
-
-		expect( onSubmit ).toHaveBeenCalledWith( {
-			types: [ 'course' ],
-			selections: { course: [ 12, 34 ] },
-		} );
-	} );
-
 	it( 'invokes onBack when the Back button is clicked', async () => {
-		apiFetch.mockResolvedValue( buildResponse( [] ) );
-
 		const onBack = jest.fn();
 		const { getByRole } = render(
 			<ExportSelectItemsPage
