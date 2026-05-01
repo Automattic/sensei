@@ -114,6 +114,7 @@ class Sensei_Export_Job_Test extends WP_UnitTestCase {
 
 		$job = Sensei_Export_Job::create( 'res-cascade-course', 0 );
 		$job->set_selections( array( 'course' => array( $course_id ) ) );
+		$job->set_mode( Sensei_Export_Job::MODE_BY_COURSE );
 		$job->resolve_export_ids();
 
 		$this->assertSame( array( $course_id ), $job->get_resolved_ids( 'course' ), 'Selected course should be in resolved list.' );
@@ -144,6 +145,7 @@ class Sensei_Export_Job_Test extends WP_UnitTestCase {
 
 		$job = Sensei_Export_Job::create( 'res-cascade-lesson', 0 );
 		$job->set_selections( array( 'lesson' => array( $lesson_id ) ) );
+		$job->set_mode( Sensei_Export_Job::MODE_BY_COURSE );
 		$job->resolve_export_ids();
 
 		$this->assertSame( array(), $job->get_resolved_ids( 'course' ), 'Course resolved list should remain empty when only lessons are selected.' );
@@ -163,6 +165,7 @@ class Sensei_Export_Job_Test extends WP_UnitTestCase {
 
 		$job = Sensei_Export_Job::create( 'res-questions-only', 0 );
 		$job->set_selections( array( 'question' => $question_ids ) );
+		$job->set_mode( Sensei_Export_Job::MODE_BY_COURSE );
 		$job->resolve_export_ids();
 
 		$this->assertSame( array(), $job->get_resolved_ids( 'course' ), 'Course resolved list should be empty.' );
@@ -172,6 +175,59 @@ class Sensei_Export_Job_Test extends WP_UnitTestCase {
 		sort( $resolved_questions );
 		sort( $question_ids );
 		$this->assertSame( $question_ids, $resolved_questions, 'Selected questions should be in resolved list.' );
+	}
+
+	/**
+	 * In MODE_BY_FILE_TYPE, picking specific courses does NOT cascade to lessons or questions.
+	 */
+	public function testResolveExportIdsByFileTypeDoesNotCascade() {
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		add_post_meta( $lesson_id, '_lesson_course', $course_id );
+
+		$question_ids = $this->factory->question->create_many( 2 );
+		$quiz_id      = $this->factory->quiz->create( array( 'post_parent' => $lesson_id ) );
+		add_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		foreach ( $question_ids as $i => $qid ) {
+			add_post_meta( $qid, '_quiz_id', $quiz_id );
+			add_post_meta( $qid, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $i );
+		}
+
+		$job = Sensei_Export_Job::create( 'res-by-file-type', 0 );
+		$job->set_selections( array( 'course' => array( $course_id ) ) );
+		$job->set_mode( Sensei_Export_Job::MODE_BY_FILE_TYPE );
+		$job->resolve_export_ids();
+
+		$this->assertSame( array( $course_id ), $job->get_resolved_ids( 'course' ), 'Course resolved list should contain the picked course.' );
+		$this->assertSame( array(), $job->get_resolved_ids( 'lesson' ), 'Lesson resolved list should be empty (no cascade in by_file_type mode).' );
+		$this->assertSame( array(), $job->get_resolved_ids( 'question' ), 'Question resolved list should be empty (no cascade in by_file_type mode).' );
+	}
+
+	/**
+	 * Mode defaults to MODE_BY_FILE_TYPE when unset, preserving literal interpretation.
+	 */
+	public function testGetModeDefaultsToByFileType() {
+		$job = Sensei_Export_Job::create( 'mode-default', 0 );
+
+		$this->assertSame(
+			Sensei_Export_Job::MODE_BY_FILE_TYPE,
+			$job->get_mode(),
+			'Unset mode should default to MODE_BY_FILE_TYPE.'
+		);
+	}
+
+	/**
+	 * Invalid mode values are coerced to MODE_BY_FILE_TYPE.
+	 */
+	public function testSetModeRejectsInvalidValues() {
+		$job = Sensei_Export_Job::create( 'mode-invalid', 0 );
+		$job->set_mode( 'not_a_real_mode' );
+
+		$this->assertSame(
+			Sensei_Export_Job::MODE_BY_FILE_TYPE,
+			$job->get_mode(),
+			'Invalid mode values should fall back to MODE_BY_FILE_TYPE.'
+		);
 	}
 
 	/**
@@ -189,6 +245,7 @@ class Sensei_Export_Job_Test extends WP_UnitTestCase {
 				'lesson' => array( $lesson_id ),
 			)
 		);
+		$job->set_mode( Sensei_Export_Job::MODE_BY_COURSE );
 		$job->resolve_export_ids();
 
 		$this->assertSame(
