@@ -131,7 +131,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $selections Per-type ID arrays keyed by 'course', 'lesson', 'question'.
+	 * @param mixed $selections Expected shape: per-type ID arrays keyed by 'course', 'lesson', 'question'. Any other value is treated as empty.
 	 */
 	public function set_selections( $selections ) {
 		if ( ! is_array( $selections ) ) {
