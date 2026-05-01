@@ -144,6 +144,54 @@ describe( 'Export store', () => {
 		} );
 	} );
 
+	it( 'sends per-type selections in the start payload when provided', () => {
+		mockActiveJob( null );
+		apiFetch
+			.mockReturnValueOnce( { id: 9, status: { status: 'setup' } } )
+			.mockReturnValueOnce( { id: 9, status: { status: 'complete' } } );
+
+		store.dispatch(
+			actions.start( [ 'course' ], {
+				course: [ 12, 34 ],
+				lesson: [],
+				question: [ 7 ],
+			} )
+		);
+
+		expect( apiFetch ).toHaveBeenNthCalledWith( 2, {
+			path: '/sensei-internal/v1/export/9/start',
+			method: 'POST',
+			data: {
+				content_types: [ 'course' ],
+				selections: {
+					course: [ 12, 34 ],
+					question: [ 7 ],
+				},
+			},
+		} );
+	} );
+
+	it( 'omits selections from the start payload when none are picked', () => {
+		mockActiveJob( null );
+		apiFetch
+			.mockReturnValueOnce( { id: 11, status: { status: 'setup' } } )
+			.mockReturnValueOnce( { id: 11, status: { status: 'complete' } } );
+
+		store.dispatch(
+			actions.start( [ 'course' ], {
+				course: [],
+				lesson: [],
+				question: [],
+			} )
+		);
+
+		expect( apiFetch ).toHaveBeenNthCalledWith( 2, {
+			path: '/sensei-internal/v1/export/11/start',
+			method: 'POST',
+			data: { content_types: [ 'course' ] },
+		} );
+	} );
+
 	it( 'deletes job', async () => {
 		jest.useFakeTimers();
 
