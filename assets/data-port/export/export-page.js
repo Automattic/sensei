@@ -10,8 +10,9 @@ import { __ } from '@wordpress/i18n';
 import { useSenseiColorTheme } from '../../react-hooks/use-sensei-color-theme';
 import { Notice } from '@wordpress/components';
 import { ExportProgressPage } from './export-progress-page';
-import { ExportSelectContentPage } from './export-select-content-page';
-import { ExportSelectItemsPage } from './export-select-items-page';
+import { ExportModePickerPage } from './export-mode-picker-page';
+import { ExportByCoursePage } from './export-by-course-page';
+import { ExportByFileTypePage } from './export-by-file-type-page';
 
 /**
  * Export page.
@@ -26,26 +27,31 @@ import { ExportSelectItemsPage } from './export-select-items-page';
 export const ExportPage = ( { job, error, start, reset, cancel } ) => {
 	useSenseiColorTheme();
 
-	const [ selectedTypes, setSelectedTypes ] = useState( null );
+	const [ mode, setMode ] = useState( null );
+
+	const onSubmit = ( { types, selections, mode: chosenMode } ) =>
+		start( types, selections, chosenMode );
 
 	const renderSetupStep = () => {
-		if ( selectedTypes === null ) {
+		if ( mode === null ) {
+			return <ExportModePickerPage onPickMode={ setMode } />;
+		}
+
+		if ( mode === 'by_course' ) {
 			return (
-				<ExportSelectContentPage
-					onSubmit={ ( types ) => setSelectedTypes( types ) }
+				<ExportByCoursePage
 					job={ job }
+					onSubmit={ onSubmit }
+					onBack={ () => setMode( null ) }
 				/>
 			);
 		}
 
 		return (
-			<ExportSelectItemsPage
-				types={ selectedTypes }
+			<ExportByFileTypePage
 				job={ job }
-				onSubmit={ ( { types, selections } ) =>
-					start( types, selections )
-				}
-				onBack={ () => setSelectedTypes( null ) }
+				onSubmit={ onSubmit }
+				onBack={ () => setMode( null ) }
 			/>
 		);
 	};

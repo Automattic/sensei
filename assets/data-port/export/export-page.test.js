@@ -9,11 +9,11 @@ import { render } from '@testing-library/react';
 import { ExportPage } from './export-page';
 
 describe( '<ExportPage />', () => {
-	it( 'shows content selection screen if no job is in progress', () => {
+	it( 'shows the mode picker when no job is in progress', () => {
 		const { queryByText } = render( <ExportPage job={ null } /> );
 
 		expect(
-			queryByText( 'Which type of content would you like to export?' )
+			queryByText( 'How would you like to export your content?' )
 		).toBeTruthy();
 	} );
 
