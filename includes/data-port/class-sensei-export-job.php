@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	const CONTENT_TYPES_STATE_KEY = 'content_types';
+	const SELECTIONS_STATE_KEY    = 'selections';
 
 	/**
 	 * The array of the export tasks.
@@ -123,6 +124,50 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	}
 
 	/**
+	 * Set the per-type item selections to be exported.
+	 *
+	 * Each value is an array of post IDs. An empty array for a type
+	 * means "export all of that type".
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $selections Per-type ID arrays keyed by 'course', 'lesson', 'question'.
+	 */
+	public function set_selections( $selections ) {
+		$normalized = array();
+		foreach ( array( 'course', 'lesson', 'question' ) as $type ) {
+			if ( isset( $selections[ $type ] ) && is_array( $selections[ $type ] ) ) {
+				$normalized[ $type ] = array_values( array_unique( array_map( 'intval', $selections[ $type ] ) ) );
+			} else {
+				$normalized[ $type ] = array();
+			}
+		}
+
+		$this->set_state( self::SELECTIONS_STATE_KEY, $normalized );
+	}
+
+	/**
+	 * Get the post IDs the given content type should be restricted to.
+	 *
+	 * Empty array means "export all of that type".
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $type Content type ('course', 'lesson', 'question').
+	 *
+	 * @return int[]
+	 */
+	public function get_selection( $type ) {
+		$selections = $this->get_state( self::SELECTIONS_STATE_KEY );
+
+		if ( ! is_array( $selections ) || empty( $selections[ $type ] ) ) {
+			return array();
+		}
+
+		return $selections[ $type ];
+	}
+
+	/**
 	 * Type order in the logs.
 	 *
 	 * @return array
@@ -130,5 +175,4 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	public function get_log_type_order() {
 		return [ 'course', 'lesson', 'question' ];
 	}
-
 }

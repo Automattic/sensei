@@ -48,7 +48,7 @@ class Sensei_REST_API_Export_Controller extends Sensei_REST_API_Data_Port_Contro
 	 *
 	 * Request body should contain a list of selected content types.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request The REST request.
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
@@ -73,10 +73,40 @@ class Sensei_REST_API_Export_Controller extends Sensei_REST_API_Data_Port_Contro
 
 		if ( $job && $job->is_ready() && ! $job->is_started() ) {
 			$job->set_content_types( $params['content_types'] );
+			$job->set_selections( $this->sanitize_selections( $params['selections'] ?? array() ) );
 			$job->persist();
 		}
 
 		return parent::request_post_start_job( $request );
 	}
 
+	/**
+	 * Sanitize the per-type item selections from the request payload.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param mixed $selections Raw selections value from the request.
+	 *
+	 * @return array Per-type ID arrays keyed by 'course', 'lesson', 'question'.
+	 */
+	private function sanitize_selections( $selections ) {
+		if ( ! is_array( $selections ) ) {
+			return array();
+		}
+
+		$sanitized = array();
+		foreach ( array( 'course', 'lesson', 'question' ) as $type ) {
+			if ( ! isset( $selections[ $type ] ) || ! is_array( $selections[ $type ] ) ) {
+				$sanitized[ $type ] = array();
+				continue;
+			}
+
+			$ids = array_map( 'absint', $selections[ $type ] );
+			$ids = array_values( array_filter( $ids ) );
+
+			$sanitized[ $type ] = array_values( array_unique( $ids ) );
+		}
+
+		return $sanitized;
+	}
 }
