@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -10,6 +11,7 @@ import { useSenseiColorTheme } from '../../react-hooks/use-sensei-color-theme';
 import { Notice } from '@wordpress/components';
 import { ExportProgressPage } from './export-progress-page';
 import { ExportSelectContentPage } from './export-select-content-page';
+import { ExportSelectItemsPage } from './export-select-items-page';
 
 /**
  * Export page.
@@ -23,6 +25,30 @@ import { ExportSelectContentPage } from './export-select-content-page';
  */
 export const ExportPage = ( { job, error, start, reset, cancel } ) => {
 	useSenseiColorTheme();
+
+	const [ selectedTypes, setSelectedTypes ] = useState( null );
+
+	const renderSetupStep = () => {
+		if ( selectedTypes === null ) {
+			return (
+				<ExportSelectContentPage
+					onSubmit={ ( types ) => setSelectedTypes( types ) }
+					job={ job }
+				/>
+			);
+		}
+
+		return (
+			<ExportSelectItemsPage
+				types={ selectedTypes }
+				job={ job }
+				onSubmit={ ( { types, selections } ) =>
+					start( types, selections )
+				}
+				onBack={ () => setSelectedTypes( null ) }
+			/>
+		);
+	};
 
 	return (
 		<div className="sensei-page-export">
@@ -47,7 +73,7 @@ export const ExportPage = ( { job, error, start, reset, cancel } ) => {
 				{ job && 'creating' !== job.status ? (
 					<ExportProgressPage { ...{ job, reset, cancel } } />
 				) : (
-					<ExportSelectContentPage onSubmit={ start } job={ job } />
+					renderSetupStep()
 				) }
 			</section>
 		</div>
