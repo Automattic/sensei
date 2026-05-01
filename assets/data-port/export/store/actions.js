@@ -73,14 +73,15 @@ const pollIfPending = function* ( job ) {
  * Start an export.
  *
  * @access public
- * @param {string[]} types Content types.
+ * @param {string[]} types      Content types.
+ * @param {Object}   selections Per-type ID arrays (course/lesson/question).
  */
-export const start = function* ( types ) {
+export const start = function* ( types, selections = {} ) {
 	yield setJob( {
 		status: 'creating',
 	} );
 	yield createJob();
-	const job = yield startJob( types );
+	const job = yield startJob( types, selections );
 	yield pollIfPending( job );
 };
 
@@ -237,13 +238,24 @@ const createJob = function* () {
 /**
  * Request to start job.
  *
- * @param {string[]} types Content types to export.
+ * @param {string[]} types      Content types to export.
+ * @param {Object}   selections Per-type ID arrays.
  */
-const startJob = function* ( types ) {
+const startJob = function* ( types, selections = {} ) {
+	const data = { content_types: types };
+	const trimmed = Object.fromEntries(
+		Object.entries( selections ).filter(
+			( [ , ids ] ) => Array.isArray( ids ) && ids.length > 0
+		)
+	);
+	if ( Object.keys( trimmed ).length > 0 ) {
+		data.selections = trimmed;
+	}
+
 	const job = yield sendJobRequest( {
 		endpoint: 'start',
 		method: 'POST',
-		data: { content_types: types },
+		data,
 	} );
 
 	// Log when users start an export.
