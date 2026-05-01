@@ -17,6 +17,7 @@ const ROWS = [
 		label: __( 'Courses', 'sensei-lms' ),
 		restBase: 'courses',
 		placeholder: __( 'Search to limit to specific courses…', 'sensei-lms' ),
+		filterAriaLabel: __( 'Filter courses to export', 'sensei-lms' ),
 		summaryAll: ( total ) => {
 			if ( total === 0 ) {
 				return __( 'No courses', 'sensei-lms' );
@@ -34,7 +35,12 @@ const ROWS = [
 		summaryCountOf: ( count, total ) =>
 			sprintf(
 				/* translators: 1: number of selected courses, 2: total courses. */
-				__( '%1$d of %2$d courses', 'sensei-lms' ),
+				_n(
+					'%1$d of %2$d course',
+					'%1$d of %2$d courses',
+					total,
+					'sensei-lms'
+				),
 				count,
 				total
 			),
@@ -51,6 +57,7 @@ const ROWS = [
 		label: __( 'Lessons', 'sensei-lms' ),
 		restBase: 'lessons',
 		placeholder: __( 'Search to limit to specific lessons…', 'sensei-lms' ),
+		filterAriaLabel: __( 'Filter lessons to export', 'sensei-lms' ),
 		summaryAll: ( total ) => {
 			if ( total === 0 ) {
 				return __( 'No lessons', 'sensei-lms' );
@@ -68,7 +75,12 @@ const ROWS = [
 		summaryCountOf: ( count, total ) =>
 			sprintf(
 				/* translators: 1: number of selected lessons, 2: total lessons. */
-				__( '%1$d of %2$d lessons', 'sensei-lms' ),
+				_n(
+					'%1$d of %2$d lesson',
+					'%1$d of %2$d lessons',
+					total,
+					'sensei-lms'
+				),
 				count,
 				total
 			),
@@ -88,6 +100,7 @@ const ROWS = [
 			'Search to limit to specific questions…',
 			'sensei-lms'
 		),
+		filterAriaLabel: __( 'Filter questions to export', 'sensei-lms' ),
 		summaryAll: ( total ) => {
 			if ( total === 0 ) {
 				return __( 'No questions', 'sensei-lms' );
@@ -110,7 +123,12 @@ const ROWS = [
 		summaryCountOf: ( count, total ) =>
 			sprintf(
 				/* translators: 1: number of selected questions, 2: total questions. */
-				__( '%1$d of %2$d questions', 'sensei-lms' ),
+				_n(
+					'%1$d of %2$d question',
+					'%1$d of %2$d questions',
+					total,
+					'sensei-lms'
+				),
 				count,
 				total
 			),
@@ -226,7 +244,7 @@ export const ExportSelectContentPage = ( { job, onSubmit } ) => {
 			<p className="sensei-export__select-content__label">
 				{ __( 'Choose what to export.', 'sensei-lms' ) }
 			</p>
-			{ ROWS.map( ( { type, label, placeholder } ) => (
+			{ ROWS.map( ( { type, label, placeholder, filterAriaLabel } ) => (
 				<div
 					key={ type }
 					className="sensei-export__select-content__row"
@@ -245,7 +263,7 @@ export const ExportSelectContentPage = ( { job, onSubmit } ) => {
 					{ enabled[ type ] && (
 						<PostTokenField
 							type={ type }
-							label=""
+							ariaLabel={ filterAriaLabel }
 							placeholder={ placeholder }
 							selectedIds={ selections[ type ] }
 							onChange={ ( ids ) =>

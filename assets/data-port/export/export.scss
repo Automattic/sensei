@@ -27,15 +27,21 @@
 				margin-bottom: 0;
 			}
 		}
-
-		.components-checkbox-control__input-container + label {
-			font-size: 15px;
-			font-weight: 600;
-		}
 	}
 
-	.components-form-token-field__label:empty {
-		display: none;
+	// Visually hide the per-row FormTokenField label — the row's CheckboxControl
+	// is the visible heading; the label exists only to give screen readers a name
+	// for the input.
+	.sensei-export__select-content__row .components-form-token-field__label {
+		border: 0;
+		clip: rect(1px, 1px, 1px, 1px);
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		padding: 0;
+		position: absolute;
+		width: 1px;
+		word-wrap: normal !important;
 	}
 
 	.sensei-export__summary {

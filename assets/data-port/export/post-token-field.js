@@ -43,14 +43,14 @@ const buildLabel = ( item, pool ) => {
  *
  * @param {Object}   props
  * @param {string}   props.type        Content type ('course', 'lesson', 'question').
- * @param {string}   props.label       Label shown above the field.
+ * @param {string}   props.ariaLabel   Accessible name for the field (no visible label is rendered).
  * @param {string}   props.placeholder Placeholder text inside the field.
  * @param {number[]} props.selectedIds Currently-selected post IDs.
  * @param {Function} props.onChange    Called with the next ID array.
  */
 export const PostTokenField = ( {
 	type,
-	label,
+	ariaLabel,
 	placeholder,
 	selectedIds,
 	onChange,
@@ -152,7 +152,7 @@ export const PostTokenField = ( {
 
 	return (
 		<FormTokenField
-			label={ label }
+			label={ ariaLabel }
 			value={ tokenValues }
 			suggestions={ suggestions }
 			onInputChange={ setInputValue }

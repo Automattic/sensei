@@ -134,13 +134,21 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 * @param array $selections Per-type ID arrays keyed by 'course', 'lesson', 'question'.
 	 */
 	public function set_selections( $selections ) {
+		if ( ! is_array( $selections ) ) {
+			$selections = array();
+		}
+
 		$normalized = array();
 		foreach ( array( 'course', 'lesson', 'question' ) as $type ) {
-			if ( isset( $selections[ $type ] ) && is_array( $selections[ $type ] ) ) {
-				$normalized[ $type ] = array_values( array_unique( array_map( 'intval', $selections[ $type ] ) ) );
-			} else {
+			if ( ! isset( $selections[ $type ] ) || ! is_array( $selections[ $type ] ) ) {
 				$normalized[ $type ] = array();
+				continue;
 			}
+
+			$ids = array_map( 'absint', $selections[ $type ] );
+			$ids = array_values( array_filter( $ids ) );
+
+			$normalized[ $type ] = array_values( array_unique( $ids ) );
 		}
 
 		$this->set_state( self::SELECTIONS_STATE_KEY, $normalized );
