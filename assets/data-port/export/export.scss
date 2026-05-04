@@ -1,18 +1,9 @@
 .sensei-page-export {
-
 	.sensei-data-port-step__body {
 		padding-top: 28px;
 	}
 
-	.sensei-data-port-step__footer {
-		display: flex;
-		gap: 12px;
-		margin-top: 28px;
-		padding-bottom: 28px;
-	}
-
 	.sensei-export__select-content {
-
 		&__label {
 			margin: 0 0 32px;
 		}
@@ -26,22 +17,22 @@
 			&:last-of-type {
 				margin-bottom: 0;
 			}
-		}
-	}
 
-	// Visually hide the per-row FormTokenField label — the row's CheckboxControl
-	// is the visible heading; the label exists only to give screen readers a name
-	// for the input.
-	.sensei-export__select-content__row .components-form-token-field__label {
-		border: 0;
-		clip: rect(1px, 1px, 1px, 1px);
-		height: 1px;
-		margin: -1px;
-		overflow: hidden;
-		padding: 0;
-		position: absolute;
-		width: 1px;
-		word-wrap: normal !important;
+			// Visually hide the per-row FormTokenField label — the row's CheckboxControl
+			// is the visible heading; the label exists only to give screen readers a name
+			// for the input.
+			.components-form-token-field__label {
+				border: 0;
+				clip: rect(1px, 1px, 1px, 1px);
+				height: 1px;
+				margin: -1px;
+				overflow: hidden;
+				padding: 0;
+				position: absolute;
+				width: 1px;
+				word-wrap: normal !important;
+			}
+		}
 	}
 
 	.sensei-export__summary {
@@ -71,5 +62,12 @@
 				color: #757575;
 			}
 		}
+	}
+
+	.sensei-data-port-step__footer {
+		display: flex;
+		gap: 12px;
+		margin-top: 28px;
+		padding-bottom: 28px;
 	}
 }
