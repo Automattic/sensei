@@ -760,6 +760,8 @@ class Sensei_Main {
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
+		Sensei_Abilities::init();
+
 		// Student progress repositories.
 		$tables_feature_enabled = isset( $this->settings->settings['experimental_progress_storage'] )
 			&& ( true === $this->settings->settings['experimental_progress_storage'] );
