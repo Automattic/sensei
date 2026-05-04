@@ -97,7 +97,6 @@ abstract class Sensei_Export_Task extends Sensei_Data_Port_Task implements Sense
 			$selection = $job->get_selection( $type );
 			if ( ! empty( $selection ) ) {
 				$query_args['post__in'] = $selection;
-				$query_args['orderby']  = 'post__in';
 			}
 		}
 
