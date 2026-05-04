@@ -48,9 +48,7 @@ export const ExportPage = ( { job, error, start, reset, cancel } ) => {
 					<ExportProgressPage { ...{ job, reset, cancel } } />
 				) : (
 					<ExportSelectContentPage
-						onSubmit={ ( { types, selections } ) =>
-							start( types, selections )
-						}
+						onSubmit={ ( selections ) => start( selections ) }
 						job={ job }
 					/>
 				) }

@@ -125,7 +125,7 @@ describe( 'Export store', () => {
 			.mockReturnValueOnce( { id: 5, status: { status: 'setup' } } )
 			.mockReturnValueOnce( { id: 5, status: { status: 'complete' } } );
 
-		store.dispatch( actions.start( [ 'lesson', 'course' ] ) );
+		store.dispatch( actions.start( { lesson: [], course: [] } ) );
 
 		expect( apiFetch ).toHaveBeenNthCalledWith( 1, {
 			path: '/sensei-internal/v1/export',
@@ -135,7 +135,7 @@ describe( 'Export store', () => {
 		expect( apiFetch ).toHaveBeenNthCalledWith( 2, {
 			path: '/sensei-internal/v1/export/5/start',
 			method: 'POST',
-			data: { content_types: [ 'lesson', 'course' ] },
+			data: { selections: { lesson: [], course: [] } },
 		} );
 
 		expect( registry.select( EXPORT_STORE ).getJob() ).toEqual( {
@@ -144,14 +144,14 @@ describe( 'Export store', () => {
 		} );
 	} );
 
-	it( 'sends per-type selections in the start payload when provided', () => {
+	it( 'sends per-type selections in the start payload', () => {
 		mockActiveJob( null );
 		apiFetch
 			.mockReturnValueOnce( { id: 9, status: { status: 'setup' } } )
 			.mockReturnValueOnce( { id: 9, status: { status: 'complete' } } );
 
 		store.dispatch(
-			actions.start( [ 'course', 'lesson', 'question' ], {
+			actions.start( {
 				course: [ 12, 34 ],
 				lesson: [],
 				question: [ 7 ],
@@ -162,33 +162,12 @@ describe( 'Export store', () => {
 			path: '/sensei-internal/v1/export/9/start',
 			method: 'POST',
 			data: {
-				content_types: [ 'course', 'lesson', 'question' ],
 				selections: {
 					course: [ 12, 34 ],
+					lesson: [],
 					question: [ 7 ],
 				},
 			},
-		} );
-	} );
-
-	it( 'omits selections from the start payload when none are picked', () => {
-		mockActiveJob( null );
-		apiFetch
-			.mockReturnValueOnce( { id: 11, status: { status: 'setup' } } )
-			.mockReturnValueOnce( { id: 11, status: { status: 'complete' } } );
-
-		store.dispatch(
-			actions.start( [ 'course', 'lesson', 'question' ], {
-				course: [],
-				lesson: [],
-				question: [],
-			} )
-		);
-
-		expect( apiFetch ).toHaveBeenNthCalledWith( 2, {
-			path: '/sensei-internal/v1/export/11/start',
-			method: 'POST',
-			data: { content_types: [ 'course', 'lesson', 'question' ] },
 		} );
 	} );
 

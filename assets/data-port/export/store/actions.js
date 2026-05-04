@@ -73,15 +73,14 @@ const pollIfPending = function* ( job ) {
  * Start an export.
  *
  * @access public
- * @param {string[]} types      Content types.
- * @param {Object}   selections Per-type ID arrays (course/lesson/question).
+ * @param {Object} selections Per-type ID arrays keyed by content type. Key presence determines inclusion; an empty array value means "export all items of that type".
  */
-export const start = function* ( types, selections = {} ) {
+export const start = function* ( selections ) {
 	yield setJob( {
 		status: 'creating',
 	} );
 	yield createJob();
-	const job = yield startJob( types, selections );
+	const job = yield startJob( selections );
 	yield pollIfPending( job );
 };
 
@@ -238,29 +237,19 @@ const createJob = function* () {
 /**
  * Request to start job.
  *
- * @param {string[]} types      Content types to export.
- * @param {Object}   selections Per-type ID arrays.
+ * @param {Object} selections Per-type ID arrays keyed by content type. Key presence determines inclusion; an empty array value means "export all items of that type".
  */
-const startJob = function* ( types, selections = {} ) {
-	const data = { content_types: types };
-	const trimmed = Object.fromEntries(
-		Object.entries( selections ).filter(
-			( [ , ids ] ) => Array.isArray( ids ) && ids.length > 0
-		)
-	);
-	if ( Object.keys( trimmed ).length > 0 ) {
-		data.selections = trimmed;
-	}
-
+const startJob = function* ( selections ) {
 	const job = yield sendJobRequest( {
 		endpoint: 'start',
 		method: 'POST',
-		data,
+		data: { selections },
 	} );
 
 	// Log when users start an export.
-	const type = types
+	const type = Object.keys( selections )
 		.map( ( typeSingular ) => typeSingular + 's' )
+		.sort()
 		.join( ',' );
 
 	window.sensei_log_event( 'export_continue_click', { type } );

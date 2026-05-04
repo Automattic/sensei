@@ -13,8 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class represents a data export job.
  */
 class Sensei_Export_Job extends Sensei_Data_Port_Job {
-	const CONTENT_TYPES_STATE_KEY = 'content_types';
-	const SELECTIONS_STATE_KEY    = 'selections';
+	const SELECTIONS_STATE_KEY = 'selections';
 
 	/**
 	 * The array of the export tasks.
@@ -106,28 +105,23 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	}
 
 	/**
-	 * Set the content types to be exported.
-	 *
-	 * @param string[] $content_types Content types.
-	 */
-	public function set_content_types( $content_types ) {
-		$this->set_state( self::CONTENT_TYPES_STATE_KEY, $content_types );
-	}
-
-	/**
 	 * Get the content types to be exported.
+	 *
+	 * Derived from the keys of the persisted selections.
 	 *
 	 * @return array
 	 */
 	public function get_content_types() {
-		return $this->get_state( self::CONTENT_TYPES_STATE_KEY );
+		return array_keys( $this->get_selections_state() );
 	}
 
 	/**
 	 * Set the per-type item selections to be exported.
 	 *
-	 * Each value is an array of post IDs. An empty array for a type
-	 * means "export all of that type".
+	 * Each entry's key is the content type ('course', 'lesson', 'question').
+	 * The value is an array of post IDs to restrict the export to, or an empty
+	 * array to export every item of that type. Types absent from the input are
+	 * skipped entirely (no CSV is produced for them).
 	 *
 	 * @since $$next-version$$
 	 *
@@ -140,8 +134,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 
 		$normalized = array();
 		foreach ( array( 'course', 'lesson', 'question' ) as $type ) {
-			if ( ! isset( $selections[ $type ] ) || ! is_array( $selections[ $type ] ) ) {
-				$normalized[ $type ] = array();
+			if ( ! array_key_exists( $type, $selections ) || ! is_array( $selections[ $type ] ) ) {
 				continue;
 			}
 
@@ -166,13 +159,37 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 * @return int[]
 	 */
 	public function get_selection( $type ) {
-		$selections = $this->get_state( self::SELECTIONS_STATE_KEY );
+		$selections = $this->get_selections_state();
 
-		if ( ! is_array( $selections ) || empty( $selections[ $type ] ) ) {
+		if ( ! array_key_exists( $type, $selections ) ) {
 			return array();
 		}
 
 		return $selections[ $type ];
+	}
+
+	/**
+	 * Read the persisted selections, translating the legacy storage shape if needed.
+	 *
+	 * Pre-partial-export jobs persisted a flat list of type names under the
+	 * 'content_types' key (e.g. [ 'course', 'lesson' ]). That shape maps
+	 * losslessly onto the current per-type-filter shape with empty filters,
+	 * since those jobs always exported every item of each enabled type.
+	 *
+	 * @return array<string, int[]>
+	 */
+	private function get_selections_state() {
+		$state = $this->get_state( self::SELECTIONS_STATE_KEY );
+		if ( is_array( $state ) ) {
+			return $state;
+		}
+
+		$legacy = $this->get_state( 'content_types' );
+		if ( is_array( $legacy ) && ! empty( $legacy ) ) {
+			return array_fill_keys( $legacy, array() );
+		}
+
+		return array();
 	}
 
 	/**

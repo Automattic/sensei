@@ -32,8 +32,9 @@ describe( '<ExportSelectContentPage />', () => {
 		fireEvent.click( getByRole( 'button', { name: 'Start Export' } ) );
 
 		expect( onSubmit ).toHaveBeenCalledWith( {
-			types: [ 'course', 'lesson', 'question' ],
-			selections: { course: [], lesson: [], question: [] },
+			course: [],
+			lesson: [],
+			question: [],
 		} );
 	} );
 
@@ -52,8 +53,8 @@ describe( '<ExportSelectContentPage />', () => {
 		fireEvent.click( getByRole( 'button', { name: 'Start Export' } ) );
 
 		expect( onSubmit ).toHaveBeenCalledWith( {
-			types: [ 'course', 'question' ],
-			selections: { course: [], question: [] },
+			course: [],
+			question: [],
 		} );
 	} );
 

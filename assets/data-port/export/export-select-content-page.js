@@ -173,7 +173,7 @@ const summaryFor = ( { row, included, count, total } ) => {
  *
  * @param {Object}   props
  * @param {Object}   props.job      Current job state (from the export store).
- * @param {Function} props.onSubmit Called with ({ types, selections }).
+ * @param {Function} props.onSubmit Called with the per-type selections object.
  */
 export const ExportSelectContentPage = ( { job, onSubmit } ) => {
 	const [ enabled, setEnabled ] = useState( {
@@ -228,16 +228,15 @@ export const ExportSelectContentPage = ( { job, onSubmit } ) => {
 	const canSubmit = enabledTypes.length > 0 && ! isLoading;
 
 	const submit = () =>
-		onSubmit( {
-			types: enabledTypes,
-			selections: enabledTypes.reduce(
+		onSubmit(
+			enabledTypes.reduce(
 				( acc, type ) => ( {
 					...acc,
 					[ type ]: selections[ type ],
 				} ),
 				{}
-			),
-		} );
+			)
+		);
 
 	return (
 		<div className="sensei-data-port-step__body">
