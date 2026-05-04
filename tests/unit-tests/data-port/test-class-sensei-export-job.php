@@ -42,7 +42,7 @@ class Sensei_Export_Job_Test extends WP_UnitTestCase {
 	/**
 	 * Selections payload normalisation: missing types default to empty arrays.
 	 */
-	public function testSetSelectionsNormalizesMissingTypesToEmptyArrays() {
+	public function testSetSelections_MissingType_DefaultsToEmpty() {
 		$job = Sensei_Export_Job::create( 'sel-1', 0 );
 
 		$job->set_selections( array( 'course' => array( 1, 2, 3 ) ) );
@@ -55,7 +55,7 @@ class Sensei_Export_Job_Test extends WP_UnitTestCase {
 	/**
 	 * Selections payload normalisation: dedupes and casts to int.
 	 */
-	public function testSetSelectionsDedupesAndCastsIds() {
+	public function testSetSelections_DuplicateAndStringIds_DedupedAndCastToInt() {
 		$job = Sensei_Export_Job::create( 'sel-2', 0 );
 
 		$job->set_selections(
@@ -73,7 +73,7 @@ class Sensei_Export_Job_Test extends WP_UnitTestCase {
 	/**
 	 * Default state: every type returns an empty selection (export all).
 	 */
-	public function testGetSelectionDefaultsToEmptyForAllTypes() {
+	public function testGetSelection_NoSelectionsSet_ReturnsEmptyForAllTypes() {
 		$job = Sensei_Export_Job::create( 'sel-default', 0 );
 
 		self::assertSame( array(), $job->get_selection( 'course' ), 'Default course selection should be empty.' );
