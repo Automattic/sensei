@@ -180,7 +180,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 */
 	private function get_selections_state() {
 		$state = $this->get_state( self::SELECTIONS_STATE_KEY );
-		if ( is_array( $state ) ) {
+		if ( is_array( $state ) && ! empty( $state ) ) {
 			return $state;
 		}
 
