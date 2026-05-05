@@ -48,36 +48,99 @@ class Sensei_REST_API_Export_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests job starts for the given content types.
+	 * A request with a `selections` payload starts the job and the chosen
+	 * types are reflected in the job's state.
 	 */
-	public function testStartJob() {
+	public function testStartJob_SelectionsPayload_StartsJobWithChosenTypes() {
+		$job_id = $this->create_persisted_export_job();
 
-		$job = Sensei_Data_Port_Manager::instance()->create_export_job( get_current_user_id() );
-		$job->persist();
-		$job_id = $job->get_job_id();
-		Sensei_Data_Port_Manager::instance()->persist();
+		$response = $this->dispatch_start( $job_id, array( 'selections' => array( 'course' => array() ) ) );
 
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/export/' . $job_id . '/start' );
-		$request->set_header( 'content-type', 'application/json' );
-		$request->set_body( wp_json_encode( [ 'content_types' => [ 'course' ] ] ) );
-		$response = $this->server->dispatch( $request );
+		self::assertSame( 200, $response->get_status(), 'Endpoint should return 200 for a valid selections payload.' );
 
-		$this->assertEquals( $response->get_status(), 200 );
+		$job = $this->reload_active_export_job();
 
-		Sensei_Data_Port_Manager::instance()->persist();
-
-		$job = Sensei_Data_Port_Manager::instance()->get_active_job( Sensei_Export_Job::class, get_current_user_id() );
-
-		$expected_tasks = [ 'course' ];
+		$expected_tasks = array( 'course' );
 		if ( class_exists( 'ZipArchive' ) ) {
 			$expected_tasks[] = 'package';
 		}
 
-		$this->assertEquals( $job->get_state( 'content_types' ), [ 'course' ] );
-		$this->assertEquals( array_keys( $job->get_tasks() ), $expected_tasks );
+		self::assertSame( array( 'course' ), $job->get_content_types(), 'Content types should derive from the selections keys.' );
+		self::assertSame( $expected_tasks, array_keys( $job->get_tasks() ), 'Task list should match the chosen types plus the package task.' );
 
-		$data = $response->get_data();
-		$this->assertResultValidJob( $data );
+		$this->assertResultValidJob( $response->get_data() );
+	}
 
+	/**
+	 * Per-type post IDs supplied in the payload are persisted on the job so
+	 * the export can restrict its query later.
+	 */
+	public function testStartJob_SelectionsWithPostIds_PersistsSelectionOnJob() {
+		$job_id = $this->create_persisted_export_job();
+
+		$response = $this->dispatch_start(
+			$job_id,
+			array(
+				'selections' => array(
+					'course' => array( 42, 99 ),
+				),
+			)
+		);
+
+		self::assertSame( 200, $response->get_status(), 'Endpoint should return 200 for a valid selections payload.' );
+
+		$job = $this->reload_active_export_job();
+		self::assertSame( array( 42, 99 ), $job->get_selection( 'course' ), 'Course IDs from the payload should round-trip onto the job.' );
+	}
+
+	/**
+	 * A request without a `selections` field is rejected.
+	 */
+	public function testStartJob_MissingSelections_Returns400() {
+		$job_id = $this->create_persisted_export_job();
+
+		$response = $this->dispatch_start( $job_id, array() );
+
+		self::assertSame( 400, $response->get_status(), 'Missing selections should return a 400.' );
+	}
+
+	/**
+	 * Create and persist an export job for the current user, returning its id.
+	 *
+	 * @return string
+	 */
+	private function create_persisted_export_job() {
+		$job = Sensei_Data_Port_Manager::instance()->create_export_job( get_current_user_id() );
+		$job->persist();
+		Sensei_Data_Port_Manager::instance()->persist();
+
+		return $job->get_job_id();
+	}
+
+	/**
+	 * Dispatch a JSON POST to the /export/{job_id}/start endpoint.
+	 *
+	 * @param string $job_id The job id.
+	 * @param array  $body   The JSON payload.
+	 *
+	 * @return WP_REST_Response
+	 */
+	private function dispatch_start( $job_id, array $body ) {
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/export/' . $job_id . '/start' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( $body ) );
+
+		return $this->server->dispatch( $request );
+	}
+
+	/**
+	 * Persist the data port manager and return the freshly-loaded active job.
+	 *
+	 * @return Sensei_Export_Job
+	 */
+	private function reload_active_export_job() {
+		Sensei_Data_Port_Manager::instance()->persist();
+
+		return Sensei_Data_Port_Manager::instance()->get_active_job( Sensei_Export_Job::class, get_current_user_id() );
 	}
 }
