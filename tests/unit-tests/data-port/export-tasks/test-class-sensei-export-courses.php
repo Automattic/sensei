@@ -55,45 +55,6 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A selection that references a post that no longer exists exports the
-	 * remaining posts and logs a notice naming the missing IDs.
-	 */
-	public function testExport_JobSelectionContainsDeletedId_LogsMissingId() {
-		$existing = $this->factory->course->create();
-		$deleted  = $this->factory->course->create();
-		wp_delete_post( $deleted, true );
-
-		$job = Sensei_Export_Job::create( 'sel-missing', 0 );
-		$job->set_selections( array( 'course' => array( $existing, $deleted ) ) );
-
-		$task = new Sensei_Export_Courses( $job );
-		$task->run();
-
-		$logs            = $job->get_logs();
-		$missing_entries = array_values(
-			array_filter(
-				$logs,
-				function ( $entry ) {
-					return isset( $entry['data']['code'] ) &&
-						'sensei_export_missing_selection_ids' === $entry['data']['code'];
-				}
-			)
-		);
-
-		self::assertCount( 1, $missing_entries, 'A single notice should be logged for the deleted ID.' );
-		self::assertStringContainsString(
-			(string) $deleted,
-			$missing_entries[0]['message'],
-			'The log message should name the deleted post ID.'
-		);
-		self::assertStringNotContainsString(
-			(string) $existing,
-			$missing_entries[0]['message'],
-			'The log message should not flag posts that still exist.'
-		);
-	}
-
-	/**
 	 * A selection larger than one batch (batch_size = 30) must still come out
 	 * fully, exactly once each, after the task runs to completion across
 	 * multiple iterations.

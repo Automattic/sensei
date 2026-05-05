@@ -92,8 +92,7 @@ abstract class Sensei_Export_Task extends Sensei_Data_Port_Task implements Sense
 			'orderby'        => 'ID',
 		];
 
-		$selection = array();
-		$job       = $this->get_job();
+		$job = $this->get_job();
 		if ( $job instanceof Sensei_Export_Job ) {
 			$selection = $job->get_selection( $type );
 			if ( ! empty( $selection ) ) {
@@ -106,52 +105,6 @@ abstract class Sensei_Export_Task extends Sensei_Data_Port_Task implements Sense
 		$this->total_posts = $this->query->found_posts > 0 ? $this->query->found_posts : $this->completed_posts;
 
 		$this->file = get_attached_file( $files[ $type ] );
-
-		// Once per task, surface any IDs in the selection that don't resolve to
-		// an exportable post (deleted, trashed, or wrong post type). Without
-		// this the task would just produce a CSV with fewer rows than expected
-		// and no clue why.
-		if ( 0 === $this->completed_posts && ! empty( $selection ) ) {
-			$this->log_missing_selection_ids( $type, $selection );
-		}
-	}
-
-	/**
-	 * Log a notice naming any selected post IDs that don't match a current,
-	 * exportable post for the given type.
-	 *
-	 * @param string $type      Content type ('course', 'lesson', 'question').
-	 * @param int[]  $selection The selected IDs as persisted on the job.
-	 */
-	private function log_missing_selection_ids( $type, array $selection ) {
-		$existing_ids = get_posts(
-			array(
-				'post_type'      => $type,
-				'post_status'    => 'any',
-				'post__in'       => $selection,
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-			)
-		);
-
-		$missing = array_values( array_diff( $selection, array_map( 'intval', $existing_ids ) ) );
-		if ( empty( $missing ) ) {
-			return;
-		}
-
-		$this->get_job()->add_log_entry(
-			sprintf(
-				/* translators: 1: content type slug; 2: comma-separated list of post IDs. */
-				__( 'Skipped %1$s IDs that no longer match an exportable post: %2$s.', 'sensei-lms' ),
-				$type,
-				implode( ', ', $missing )
-			),
-			Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
-			array(
-				'type' => $type,
-				'code' => 'sensei_export_missing_selection_ids',
-			)
-		);
 	}
 
 	/**
