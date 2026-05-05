@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 
 /**
  * WordPress dependencies
@@ -33,6 +33,13 @@ const renderField = ( props = {} ) =>
 	);
 
 describe( '<PostTokenField />', () => {
+	beforeAll( () => {
+		// FormTokenField calls scrollIntoView on the auto-selected suggestion;
+		// jsdom doesn't implement it.
+		// eslint-disable-next-line no-undef
+		Element.prototype.scrollIntoView = jest.fn();
+	} );
+
 	beforeEach( () => {
 		apiFetch.mockReset();
 		apiFetch.mockResolvedValue( [] );
@@ -56,30 +63,27 @@ describe( '<PostTokenField />', () => {
 		expect( await findByText( 'Course A' ) ).toBeTruthy();
 	} );
 
-	it( 'still renders a selected token after a later fetch returns different items', async () => {
+	it( 'still renders a selected token after a search returns different items', async () => {
 		// First fetch: contains the selected item. Subsequent fetches don't.
 		apiFetch.mockResolvedValueOnce( [ itemFor( 7, 'Course A' ) ] );
 		apiFetch.mockResolvedValue( [ itemFor( 99, 'Course B' ) ] );
 
-		const { findByText, rerender, queryByText } = renderField( {
+		const { findByText, getByRole, queryByText } = renderField( {
 			selectedIds: [ 7 ],
 		} );
 
 		expect( await findByText( 'Course A' ) ).toBeTruthy();
 
-		// Force a re-render by changing a prop the fetch effect depends on.
-		// The cache must hold on to id 7 even though the new fetch doesn't
-		// include it.
-		rerender(
-			<PostTokenField
-				type="course"
-				ariaLabel="Filter courses to export"
-				placeholder="Search…"
-				selectedIds={ [ 7 ] }
-				onChange={ () => {} }
-			/>
-		);
+		// Type into the field. The debounce useEffect pushes the value into
+		// debouncedInput 300ms later, which re-fires the fetch.
+		fireEvent.change( getByRole( 'combobox' ), {
+			target: { value: 'B' },
+		} );
 
-		await waitFor( () => expect( queryByText( 'Course A' ) ).toBeTruthy() );
+		await waitFor( () => expect( apiFetch ).toHaveBeenCalledTimes( 2 ) );
+
+		// The cache holds id 7 even though the new fetch didn't return it,
+		// so the token's title is still on screen.
+		expect( queryByText( 'Course A' ) ).toBeTruthy();
 	} );
 } );
