@@ -184,6 +184,7 @@ export const PostTokenField = ( {
 			__experimentalExpandOnFocus
 			__experimentalAutoSelectFirstMatch
 			__experimentalShowHowTo={ false }
+			__next40pxDefaultSize
 			placeholder={ placeholder }
 		/>
 	);
