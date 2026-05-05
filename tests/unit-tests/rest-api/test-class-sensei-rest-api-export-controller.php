@@ -125,6 +125,26 @@ class Sensei_REST_API_Export_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
+	 * A `selections` payload that mixes a valid key with an unknown one is
+	 * rejected outright rather than silently dropping the bad key.
+	 */
+	public function testStartJob_SelectionsWithMixedValidAndUnknownKeys_Returns400() {
+		$job_id = $this->create_persisted_export_job();
+
+		$response = $this->dispatch_start(
+			$job_id,
+			array(
+				'selections' => array(
+					'course' => array(),
+					'foo'    => array( 1 ),
+				),
+			)
+		);
+
+		self::assertSame( 400, $response->get_status(), 'Mixed valid/unknown keys should be rejected.' );
+	}
+
+	/**
 	 * Create and persist an export job for the current user, returning its id.
 	 *
 	 * @return string
