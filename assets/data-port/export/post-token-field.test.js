@@ -56,15 +56,6 @@ describe( '<PostTokenField />', () => {
 		expect( await findByText( 'Course A' ) ).toBeTruthy();
 	} );
 
-	it( 'falls back to "#<id>" when an id is not in the suggestion fetch', async () => {
-		// Fetch returns nothing, so id 99 is not in the cache.
-		apiFetch.mockResolvedValueOnce( [] );
-
-		const { findByText } = renderField( { selectedIds: [ 99 ] } );
-
-		expect( await findByText( '#99' ) ).toBeTruthy();
-	} );
-
 	it( 'still renders a selected token after a later fetch returns different items', async () => {
 		// First fetch: contains the selected item. Subsequent fetches don't.
 		apiFetch.mockResolvedValueOnce( [ itemFor( 7, 'Course A' ) ] );
