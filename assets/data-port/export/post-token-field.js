@@ -23,13 +23,13 @@ const titleOf = ( item ) =>
  * disambiguate with the post ID so FormTokenField (which works on
  * strings) can map labels back to IDs unambiguously.
  *
- * @param {Object}   item Post item ({ id, title }).
- * @param {Object[]} pool Items in the same context to check for collisions.
+ * @param {Object}   item       Post item ({ id, title }).
+ * @param {Object[]} knownItems Items in the same context to check for collisions.
  * @return {string} Display label for the token.
  */
-const buildLabel = ( item, pool ) => {
+const buildLabel = ( item, knownItems ) => {
 	const title = titleOf( item );
-	const collides = pool.some(
+	const collides = knownItems.some(
 		( other ) => other.id !== item.id && titleOf( other ) === title
 	);
 	const safeTitle = title || __( '(no title)', 'sensei-lms' );
@@ -57,8 +57,8 @@ export const PostTokenField = ( {
 } ) => {
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ debouncedInput, setDebouncedInput ] = useState( '' );
-	const [ suggestionItems, setSuggestionItems ] = useState( [] );
-	const [ selectedItems, setSelectedItems ] = useState( [] );
+	const [ itemsById, setItemsById ] = useState( () => new Map() );
+	const [ suggestionIds, setSuggestionIds ] = useState( [] );
 
 	useEffect( () => {
 		const handle = setTimeout( () => setDebouncedInput( inputValue ), 300 );
@@ -83,13 +83,19 @@ export const PostTokenField = ( {
 			}?${ params.toString() }`,
 		} )
 			.then( ( items ) => {
-				if ( ! cancelled ) {
-					setSuggestionItems( items );
+				if ( cancelled ) {
+					return;
 				}
+				setItemsById( ( current ) => {
+					const next = new Map( current );
+					items.forEach( ( item ) => next.set( item.id, item ) );
+					return next;
+				} );
+				setSuggestionIds( items.map( ( item ) => item.id ) );
 			} )
 			.catch( () => {
 				if ( ! cancelled ) {
-					setSuggestionItems( [] );
+					setSuggestionIds( [] );
 				}
 			} );
 
@@ -98,34 +104,25 @@ export const PostTokenField = ( {
 		};
 	}, [ type, debouncedInput ] );
 
-	const knownItemsById = new Map();
-	[ ...selectedItems, ...suggestionItems ].forEach( ( item ) => {
-		knownItemsById.set( item.id, item );
-	} );
-	const knownItemsPool = Array.from( knownItemsById.values() );
+	const knownItems = Array.from( itemsById.values() );
 
 	const tokenForId = ( id ) => {
-		const item = knownItemsById.get( id );
+		const item = itemsById.get( id );
 		if ( ! item ) {
 			return `#${ id }`;
 		}
-		return buildLabel( item, knownItemsPool );
+		return buildLabel( item, knownItems );
 	};
 
 	const tokenValues = selectedIds.map( tokenForId );
 
-	const suggestions = suggestionItems
-		.filter( ( item ) => ! selectedIds.includes( item.id ) )
-		.map( ( item ) => buildLabel( item, knownItemsPool ) );
-
 	const onTokensChange = ( tokens ) => {
 		const labelToId = new Map();
-		knownItemsPool.forEach( ( item ) =>
-			labelToId.set( buildLabel( item, knownItemsPool ), item.id )
+		knownItems.forEach( ( item ) =>
+			labelToId.set( buildLabel( item, knownItems ), item.id )
 		);
 
 		const nextIds = [];
-		const nextSelectedItems = [];
 		const seen = new Set();
 
 		tokens.forEach( ( token ) => {
@@ -136,19 +133,17 @@ export const PostTokenField = ( {
 			seen.add( tokenLabel );
 
 			const id = labelToId.get( tokenLabel );
-			if ( ! id ) {
-				return;
-			}
-			nextIds.push( id );
-			const item = knownItemsById.get( id );
-			if ( item ) {
-				nextSelectedItems.push( item );
+			if ( id ) {
+				nextIds.push( id );
 			}
 		} );
 
-		setSelectedItems( nextSelectedItems );
 		onChange( nextIds );
 	};
+
+	const suggestions = suggestionIds
+		.filter( ( id ) => ! selectedIds.includes( id ) )
+		.map( ( id ) => buildLabel( itemsById.get( id ), knownItems ) );
 
 	return (
 		<FormTokenField
