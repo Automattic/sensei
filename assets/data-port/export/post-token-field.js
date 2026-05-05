@@ -100,10 +100,18 @@ export const PostTokenField = ( {
 				} );
 				setSuggestionIds( items.map( ( item ) => item.id ) );
 			} )
-			.catch( () => {
-				if ( ! cancelled ) {
-					setSuggestionIds( [] );
+			.catch( ( error ) => {
+				if ( cancelled ) {
+					return;
 				}
+				setSuggestionIds( [] );
+				// Suggestions failing leaves the dropdown empty, which is
+				// indistinguishable from "no matches" for the user. Surface
+				// the underlying reason for the developer console at least.
+				window.console?.warn(
+					`[sensei export] failed to fetch ${ type } suggestions`,
+					error
+				);
 			} );
 
 		return () => {

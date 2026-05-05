@@ -91,8 +91,14 @@ export const ExportSelectContentPage = ( { job, onSubmit } ) => {
 						[ type ]: total,
 					} ) );
 				} )
-				.catch( () => {
-					/* leave total as null; summary falls back to "All <type>" */
+				.catch( ( error ) => {
+					// Totals are cosmetic — the summary falls back to the
+					// bare type label — but log the underlying reason so a
+					// real REST regression doesn't go unnoticed indefinitely.
+					window.console?.warn(
+						`[sensei export] failed to fetch ${ type } total`,
+						error
+					);
 				} );
 		} );
 		return () => {
