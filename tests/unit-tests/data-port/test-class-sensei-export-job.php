@@ -88,6 +88,22 @@ class Sensei_Export_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The deprecated set_content_types() shim delegates to set_selections() so
+	 * external integrations that built on the pre-partial-export API still work.
+	 *
+	 * @expectedDeprecated Sensei_Export_Job::set_content_types
+	 */
+	public function testSetContentTypes_DeprecatedShim_DelegatesToSetSelections() {
+		$job = Sensei_Export_Job::create( 'sel-deprecated', 0 );
+
+		$job->set_content_types( array( 'course', 'lesson' ) );
+
+		self::assertSame( array( 'course', 'lesson' ), $job->get_content_types(), 'Content types should reflect what was passed to the shim.' );
+		self::assertSame( array(), $job->get_selection( 'course' ), 'Course selection should default to empty (export-all).' );
+		self::assertSame( array(), $job->get_selection( 'lesson' ), 'Lesson selection should default to empty (export-all).' );
+	}
+
+	/**
 	 * Default state: nothing has been set, so no types are included.
 	 */
 	public function testGetSelection_NoSelectionsSet_ReturnsEmptyForAllTypes() {
