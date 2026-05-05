@@ -55,6 +55,26 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A selection larger than one batch (batch_size = 30) must still come out
+	 * fully, exactly once each, after the task runs to completion across
+	 * multiple iterations.
+	 */
+	public function testExport_JobSelectionLargerThanBatchSize_ExportsAllSelectedPostsAcrossBatches() {
+		$selected = $this->factory->course->create_many( 35 );
+
+		$result = $this->export_to_completion( array( 'course' => $selected ) );
+		$rows   = array_values( array_filter( $result ) );
+
+		self::assertCount( 35, $rows, 'Every selected course should be exported across batches.' );
+
+		$exported_ids = array_map( 'intval', array_column( $rows, 'id' ) );
+		sort( $exported_ids );
+		sort( $selected );
+
+		self::assertSame( $selected, $exported_ids, 'Exported course IDs should match the selection (no duplicates, no drops).' );
+	}
+
+	/**
 	 * Test that course categories are exported correctly.
 	 */
 	public function testCategoriesSerialized() {
