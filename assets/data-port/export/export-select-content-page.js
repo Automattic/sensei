@@ -28,12 +28,15 @@ const summaryFor = ( { row, included, count, total } ) => {
 	if ( ! included ) {
 		return i18n.skipped;
 	}
+	// No filter applied: describe the full set. `total === null` means the
+	// count fetch failed or hasn't returned yet — fall back to the bare label.
 	if ( count === 0 ) {
 		if ( total === null ) return i18n.unknownTotal;
 		if ( total === 0 ) return i18n.none;
 		if ( total === 1 ) return i18n.one;
 		return i18n.all( total );
 	}
+	// Filter applied: show "N selected" or "N of M" when the total is known.
 	return total === null ? i18n.count( count ) : i18n.countOf( count, total );
 };
 
@@ -64,6 +67,9 @@ export const ExportSelectContentPage = ( { job, onSubmit } ) => {
 		question: null,
 	} );
 
+	// Fetch the total count for each content type so the summary can show
+	// "All N courses" instead of just "All courses". `parse: false` gives us
+	// access to the raw response so we can read the X-WP-Total header.
 	useEffect( () => {
 		let cancelled = false;
 		ROWS.forEach( ( { type, restBase } ) => {
@@ -72,6 +78,7 @@ export const ExportSelectContentPage = ( { job, onSubmit } ) => {
 				parse: false,
 			} )
 				.then( ( response ) => {
+					// Guard against setting state after unmount.
 					if ( cancelled ) {
 						return;
 					}
@@ -94,11 +101,16 @@ export const ExportSelectContentPage = ( { job, onSubmit } ) => {
 	}, [] );
 
 	const isLoading = job && 'creating' === job.status;
+	// Preserve ROWS order so the wire payload (and analytics) is deterministic
+	// regardless of the order the user toggled checkboxes.
 	const enabledTypes = ROWS.filter( ( { type } ) => enabled[ type ] ).map(
 		( { type } ) => type
 	);
 	const canSubmit = enabledTypes.length > 0 && ! isLoading;
 
+	// Build a selections object containing only enabled types. The presence of
+	// a key marks the type as enabled; an empty array means "no filter — export
+	// every item of this type."
 	const submit = () =>
 		onSubmit(
 			enabledTypes.reduce(
