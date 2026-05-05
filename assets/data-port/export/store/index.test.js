@@ -121,6 +121,7 @@ describe( 'Export store', () => {
 
 	it( 'creates and starts a job', () => {
 		mockActiveJob( null );
+		window.sensei_log_event.mockClear();
 		apiFetch
 			.mockReturnValueOnce( { id: 5, status: { status: 'setup' } } )
 			.mockReturnValueOnce( { id: 5, status: { status: 'complete' } } );
@@ -138,6 +139,12 @@ describe( 'Export store', () => {
 			data: { selections: { lesson: [], course: [] } },
 		} );
 
+		// Analytics: keys pluralised and sorted, joined with commas.
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'export_continue_click',
+			{ type: 'courses,lessons' }
+		);
+
 		expect( registry.select( EXPORT_STORE ).getJob() ).toEqual( {
 			id: 5,
 			status: 'complete',
@@ -146,6 +153,7 @@ describe( 'Export store', () => {
 
 	it( 'sends per-type selections in the start payload', () => {
 		mockActiveJob( null );
+		window.sensei_log_event.mockClear();
 		apiFetch
 			.mockReturnValueOnce( { id: 9, status: { status: 'setup' } } )
 			.mockReturnValueOnce( { id: 9, status: { status: 'complete' } } );
@@ -169,6 +177,13 @@ describe( 'Export store', () => {
 				},
 			},
 		} );
+
+		// Analytics ignores per-type counts; it just summarises which types
+		// were enabled.
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'export_continue_click',
+			{ type: 'courses,lessons,questions' }
+		);
 	} );
 
 	it( 'surfaces server errors from createJob and skips the start request', () => {
