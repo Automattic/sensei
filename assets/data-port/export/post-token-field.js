@@ -159,7 +159,7 @@ export const PostTokenField = ( {
 			onChange={ onTokensChange }
 			__experimentalExpandOnFocus
 			__experimentalAutoSelectFirstMatch
-			__experimentalShowHowTo={ false }
+			help=""
 			placeholder={ placeholder }
 		/>
 	);
