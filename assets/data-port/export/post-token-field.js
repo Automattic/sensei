@@ -175,7 +175,7 @@ export const PostTokenField = ( {
 			onChange={ onTokensChange }
 			__experimentalExpandOnFocus
 			__experimentalAutoSelectFirstMatch
-			help=""
+			__experimentalShowHowTo={ false }
 			placeholder={ placeholder }
 		/>
 	);
