@@ -120,14 +120,10 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 *
 	 * @deprecated $$next-version$$ Use {@see Sensei_Export_Job::set_selections()} instead.
 	 *
-	 * @param array $content_types Content types to include in the export.
+	 * @param string[] $content_types Content types to include in the export.
 	 */
 	public function set_content_types( $content_types ) {
 		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Export_Job::set_selections' );
-
-		if ( ! is_array( $content_types ) ) {
-			$content_types = array();
-		}
 
 		$this->set_selections( array_fill_keys( $content_types, array() ) );
 	}
