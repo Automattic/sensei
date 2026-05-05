@@ -60,11 +60,7 @@ class Sensei_REST_API_Export_Controller extends Sensei_REST_API_Data_Port_Contro
 		$params = $request->get_json_params();
 
 		if ( empty( $params['selections'] ) || ! is_array( $params['selections'] ) ) {
-			return new WP_Error(
-				'sensei_export_no_content_types',
-				__( 'No content types selected.', 'sensei-lms' ),
-				array( 'status' => 400 )
-			);
+			return $this->no_selections_error();
 		}
 
 		/**
@@ -76,9 +72,31 @@ class Sensei_REST_API_Export_Controller extends Sensei_REST_API_Data_Port_Contro
 
 		if ( $job && $job->is_ready() && ! $job->is_started() ) {
 			$job->set_selections( $params['selections'] );
+
+			// `set_selections()` drops unknown keys and non-array values, so a
+			// payload like `{ "courses": [1] }` (typo, plural) survives the
+			// is_array() check above but normalises to nothing. Re-check that
+			// at least one supported type ended up enabled before persisting.
+			if ( empty( $job->get_content_types() ) ) {
+				return $this->no_selections_error();
+			}
+
 			$job->persist();
 		}
 
 		return parent::request_post_start_job( $request );
+	}
+
+	/**
+	 * Build the WP_Error returned when a start request has no usable selections.
+	 *
+	 * @return WP_Error
+	 */
+	private function no_selections_error() {
+		return new WP_Error(
+			'sensei_export_no_content_types',
+			__( 'No content types selected.', 'sensei-lms' ),
+			array( 'status' => 400 )
+		);
 	}
 }

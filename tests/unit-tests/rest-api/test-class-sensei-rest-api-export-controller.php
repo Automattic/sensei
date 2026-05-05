@@ -105,6 +105,26 @@ class Sensei_REST_API_Export_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
+	 * A `selections` payload whose keys are all unknown (e.g. typos) normalises
+	 * to no enabled types and is rejected with 400 instead of starting a no-op
+	 * export.
+	 */
+	public function testStartJob_SelectionsWithOnlyUnknownKeys_Returns400() {
+		$job_id = $this->create_persisted_export_job();
+
+		$response = $this->dispatch_start(
+			$job_id,
+			array(
+				'selections' => array(
+					'courses' => array( 1 ),
+				),
+			)
+		);
+
+		self::assertSame( 400, $response->get_status(), 'Unknown selection keys should be rejected with a 400.' );
+	}
+
+	/**
 	 * Create and persist an export job for the current user, returning its id.
 	 *
 	 * @return string
