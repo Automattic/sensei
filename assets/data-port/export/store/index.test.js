@@ -171,6 +171,30 @@ describe( 'Export store', () => {
 		} );
 	} );
 
+	it( 'surfaces server errors from createJob and skips the start request', () => {
+		mockActiveJob( null );
+		apiFetch.mockImplementationOnce( () => {
+			throw {
+				code: 'sensei_export_create_failed',
+				message: 'Server said no',
+			};
+		} );
+
+		store.dispatch( actions.start( { course: [] } ) );
+
+		// Only the create request was attempted — start was skipped.
+		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+		expect( apiFetch ).toHaveBeenCalledWith( {
+			path: '/sensei-internal/v1/export',
+			method: 'POST',
+		} );
+
+		// The actual server error is preserved, not overwritten by "No job ID".
+		expect( registry.select( EXPORT_STORE ).getError() ).toBe(
+			'Server said no'
+		);
+	} );
+
 	it( 'deletes job', async () => {
 		jest.useFakeTimers();
 

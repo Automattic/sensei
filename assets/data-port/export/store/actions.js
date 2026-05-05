@@ -80,6 +80,15 @@ export const start = function* ( selections ) {
 		status: 'creating',
 	} );
 	yield createJob();
+
+	// If creating the job failed, sendRequest already called setError with the
+	// real server message. Bail before startJob so we don't overwrite it with
+	// the generic "No job ID" path inside sendJobRequest.
+	const jobId = yield getJobId();
+	if ( ! jobId ) {
+		return;
+	}
+
 	const job = yield startJob( selections );
 	yield pollIfPending( job );
 };
@@ -231,7 +240,12 @@ const createJob = function* () {
 		method: 'POST',
 	} );
 
-	yield setJob( job );
+	// On failure, sendRequest swallowed the throw and called setError; leave
+	// the existing 'creating' job state in place so the UI's loading/error
+	// notice shows up against a stable shape instead of `undefined`.
+	if ( job ) {
+		yield setJob( job );
+	}
 };
 
 /**
