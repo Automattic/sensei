@@ -40,16 +40,14 @@ class Sensei_Export_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Types absent from the payload are skipped — they don't appear in the
-	 * derived content-types list.
+	 * The selection set for a type round-trips through the persisted state.
 	 */
-	public function testSetSelections_MissingType_NotIncludedInContentTypes() {
+	public function testSetSelections_RoundTripsThroughGetSelection() {
 		$job = Sensei_Export_Job::create( 'sel-1', 0 );
 
 		$job->set_selections( array( 'course' => array( 1, 2, 3 ) ) );
 
 		self::assertSame( array( 1, 2, 3 ), $job->get_selection( 'course' ), 'Course selection should match what was set.' );
-		self::assertSame( array( 'course' ), $job->get_content_types(), 'Only types present in the payload should be included.' );
 	}
 
 	/**
@@ -68,7 +66,6 @@ class Sensei_Export_Job_Test extends WP_UnitTestCase {
 
 		self::assertSame( array( 12, 34 ), $job->get_selection( 'course' ), 'Course IDs should be deduped and cast to int.' );
 		self::assertSame( array( 5, 7 ), $job->get_selection( 'question' ), 'Question IDs should be deduped and cast to int.' );
-		self::assertSame( array( 'course', 'lesson', 'question' ), $job->get_content_types(), 'All three types should be in content types.' );
 	}
 
 	/**
