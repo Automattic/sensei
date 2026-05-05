@@ -32,10 +32,20 @@ trait Sensei_Export_Task_Tests {
 	/**
 	 * Run the export job and read back the created CSV.
 	 *
+	 * @param array $selections Optional per-type selections to apply before
+	 *                          running the task. Keys are content types
+	 *                          ('course', 'lesson', 'question'); values are
+	 *                          arrays of post IDs to restrict the export to.
+	 *
 	 * @return array The exported data as read from the CSV file.
 	 */
-	public function export() {
-		$job               = Sensei_Export_Job::create( 'test', 0 );
+	public function export( array $selections = array() ) {
+		$job = Sensei_Export_Job::create( 'test', 0 );
+
+		if ( ! empty( $selections ) ) {
+			$job->set_selections( $selections );
+		}
+
 		$export_task_class = $this->get_task_class();
 		$task              = new $export_task_class( $job );
 		$task->run();
