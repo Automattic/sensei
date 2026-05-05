@@ -138,7 +138,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param mixed $selections Expected shape: per-type ID arrays keyed by 'course', 'lesson', 'question'. Any other value is treated as empty.
+	 * @param mixed $selections Expected shape: per-type ID arrays keyed by 'course', 'lesson', 'question'. A non-array argument is replaced with an empty selection set; unknown keys and per-type values that aren't arrays are silently dropped during normalisation.
 	 */
 	public function set_selections( $selections ) {
 		if ( ! is_array( $selections ) ) {
