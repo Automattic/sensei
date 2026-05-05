@@ -15,6 +15,7 @@ const REST_BASE_BY_TYPE = {
 
 const SUGGESTION_LIMIT = 20;
 
+// `title.rendered` in `view` context, `title.raw` in `edit` — accept either.
 const titleOf = ( item ) =>
 	decodeEntities( item.title?.rendered || item.title?.raw || '' );
 
@@ -57,14 +58,20 @@ export const PostTokenField = ( {
 } ) => {
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ debouncedInput, setDebouncedInput ] = useState( '' );
+	// Persistent cache of every fetched post, keyed by id. The cache outlives
+	// any one search so a token's title survives when the item drops out of
+	// the latest suggestion list.
 	const [ itemsById, setItemsById ] = useState( () => new Map() );
 	const [ suggestionIds, setSuggestionIds ] = useState( [] );
 
+	// Debounce the search input so we don't fire a REST request per keystroke.
 	useEffect( () => {
 		const handle = setTimeout( () => setDebouncedInput( inputValue ), 300 );
 		return () => clearTimeout( handle );
 	}, [ inputValue ] );
 
+	// `cancelled` guards against an older request resolving after a newer one
+	// and clobbering its result.
 	useEffect( () => {
 		let cancelled = false;
 		const params = new URLSearchParams( {
@@ -106,6 +113,8 @@ export const PostTokenField = ( {
 
 	const knownItems = Array.from( itemsById.values() );
 
+	// Fall back to "#<id>" when an id isn't in the cache yet — e.g. the page
+	// mounted with pre-selected ids we haven't fetched titles for.
 	const tokenForId = ( id ) => {
 		const item = itemsById.get( id );
 		if ( ! item ) {
@@ -116,7 +125,11 @@ export const PostTokenField = ( {
 
 	const tokenValues = selectedIds.map( tokenForId );
 
+	// FormTokenField gives us back labels (the displayed strings), not ids.
+	// Convert that label list back into the id list our parent expects.
 	const onTokensChange = ( tokens ) => {
+		// Build a label → id index from every cached item, using the same
+		// `buildLabel` rules so the strings here match what the field renders.
 		const labelToId = new Map();
 		knownItems.forEach( ( item ) =>
 			labelToId.set( buildLabel( item, knownItems ), item.id )
@@ -126,12 +139,19 @@ export const PostTokenField = ( {
 		const seen = new Set();
 
 		tokens.forEach( ( token ) => {
+			// Tokens come in as either a plain string or a `{ value }` object,
+			// depending on FormTokenField internals — normalize to a string.
 			const tokenLabel = typeof token === 'string' ? token : token?.value;
+
+			// Skip empties and duplicates (the field allows the same string
+			// to appear twice; we don't want the same post twice).
 			if ( ! tokenLabel || seen.has( tokenLabel ) ) {
 				return;
 			}
 			seen.add( tokenLabel );
 
+			// If the label doesn't resolve to an id it's free text the user
+			// typed but didn't pick from suggestions — silently drop it.
 			const id = labelToId.get( tokenLabel );
 			if ( id ) {
 				nextIds.push( id );
@@ -141,6 +161,7 @@ export const PostTokenField = ( {
 		onChange( nextIds );
 	};
 
+	// Drop already-selected ids and render the rest as labels for the dropdown.
 	const suggestions = suggestionIds
 		.filter( ( id ) => ! selectedIds.includes( id ) )
 		.map( ( id ) => buildLabel( itemsById.get( id ), knownItems ) );
