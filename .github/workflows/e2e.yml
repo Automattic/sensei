@@ -34,7 +34,7 @@ jobs:
               id: node-modules-cache
               with:
                   path: node_modules/
-                  key: ${{ runner.os }}-${{ steps.node-version.outputs.version }}-node-modules-${{ hashFiles('package-lock.json') }}
+                  key: ${{ runner.os }}-${{ runner.arch }}-${{ steps.node-version.outputs.version }}-node-modules-${{ hashFiles('package-lock.json') }}
 
             - name: Install PHP dependencies
               uses: ./.github/actions/install-php
