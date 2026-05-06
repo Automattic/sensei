@@ -8,7 +8,7 @@ concurrency:
     # Hardcoded prefix because github.workflow resolves to the caller's name
     # when invoked via workflow_call, which would put every reusable workflow
     # called from trunk.yml in the same group and cancel each other.
-    group: plugin-build-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+    group: plugin-build-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.sha }}
     cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
