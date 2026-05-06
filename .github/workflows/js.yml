@@ -22,10 +22,12 @@ jobs:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
             - uses: actions/cache@v4
+              id: node-modules-cache
               with:
                   path: node_modules/
                   key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
             - name: Install JS dependencies
+              if: steps.node-modules-cache.outputs.cache-hit != 'true'
               run: npm ci
             - name: Lint JS
               run: npm run lint-js
@@ -45,10 +47,12 @@ jobs:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
             - uses: actions/cache@v4
+              id: node-modules-cache
               with:
                   path: node_modules/
                   key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
             - name: Install JS dependencies
+              if: steps.node-modules-cache.outputs.cache-hit != 'true'
               run: npm ci
             - name: Lint JS
               run: npm run lint-types
@@ -68,7 +72,13 @@ jobs:
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-node-
+            - uses: actions/cache@v4
+              id: node-modules-cache
+              with:
+                  path: node_modules/
+                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
             - name: Install JS dependencies
+              if: steps.node-modules-cache.outputs.cache-hit != 'true'
               run: npm ci
             - name: Test JS
               env:
