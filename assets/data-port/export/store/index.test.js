@@ -208,6 +208,10 @@ describe( 'Export store', () => {
 		expect( registry.select( EXPORT_STORE ).getError() ).toBe(
 			'Server said no'
 		);
+
+		// The synthetic 'creating' job is cleared so Start Export becomes
+		// clickable again instead of being stuck in a loading state.
+		expect( registry.select( EXPORT_STORE ).getJob() ).toBeUndefined();
 	} );
 
 	it( 'deletes job', async () => {

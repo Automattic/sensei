@@ -45,6 +45,7 @@ const setJob = ( job ) => ( { type: 'SET_JOB', job } );
 const updateJob = ( job ) => ( { type: 'UPDATE_JOB', job } );
 
 const getJobId = () => select( EXPORT_STORE, 'getJobId' );
+const getError = () => select( EXPORT_STORE, 'getError' );
 
 /**
  * Set error.
@@ -240,11 +241,18 @@ const createJob = function* () {
 		method: 'POST',
 	} );
 
-	// On failure, sendRequest swallowed the throw and called setError; leave
-	// the existing 'creating' job state in place so the UI's loading/error
-	// notice shows up against a stable shape instead of `undefined`.
 	if ( job ) {
 		yield setJob( job );
+		return;
+	}
+
+	// sendRequest swallowed the throw and called setError. Clear the
+	// 'creating' synthetic job so the setup screen exits its loading state,
+	// then re-apply the error since clearJob wipes the whole store.
+	const error = yield getError();
+	yield clearJob();
+	if ( error ) {
+		yield setError( error );
 	}
 };
 
