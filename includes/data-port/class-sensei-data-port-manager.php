@@ -179,11 +179,12 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		if ( ! $job_running ) {
 			set_transient( self::OPTION_RUNNING_JOB, true, 120 );
 			Sensei_Scheduler::instance()->run( $job );
+			// Persist now so the next action in the same AS claim sees fresh state.
+			$job->persist();
 			delete_transient( self::OPTION_RUNNING_JOB );
 		} else {
 			Sensei_Scheduler::instance()->schedule_job( $job );
 		}
-
 	}
 
 	/**

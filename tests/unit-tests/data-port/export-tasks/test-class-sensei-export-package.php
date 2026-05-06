@@ -61,5 +61,4 @@ class Sensei_Export_Package_Tests extends WP_UnitTestCase {
 			$this->assertTrue( in_array( $filename, $filenames, true ), "Zip should have included the file {$filename}" );
 		}
 	}
-
 }
