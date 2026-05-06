@@ -2,7 +2,11 @@ name: Playground PR Preview
 
 on:
     pull_request:
-        types: [opened, synchronize, reopened, edited]
+        types: [opened, synchronize, reopened]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref }}
+    cancel-in-progress: true
 
 jobs:
     build:

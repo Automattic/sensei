@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, milestoned, demilestoned]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   check-milestone:
     name: Check Milestone
