@@ -43,11 +43,13 @@ const buildLabel = ( item, knownItems ) => {
  * post IDs to the parent via onChange.
  *
  * @param {Object}   props
- * @param {string}   props.type        Content type ('course', 'lesson', 'question').
- * @param {string}   props.ariaLabel   Accessible name for the field (no visible label is rendered).
- * @param {string}   props.placeholder Placeholder text inside the field.
- * @param {number[]} props.selectedIds Currently-selected post IDs.
- * @param {Function} props.onChange    Called with the next ID array.
+ * @param {string}   props.type           Content type ('course', 'lesson', 'question').
+ * @param {string}   props.ariaLabel      Accessible name for the field (no visible label is rendered).
+ * @param {string}   props.placeholder    Placeholder text inside the field.
+ * @param {number[]} props.selectedIds    Currently-selected post IDs.
+ * @param {Function} props.onChange       Called with the next ID array.
+ * @param {Map}      props.cachedItems    Parent-owned id→item cache for this type.
+ * @param {Function} props.onItemsFetched Called with the array of items returned by each suggestion fetch so the parent can merge them into its cache.
  */
 export const PostTokenField = ( {
 	type,
@@ -55,13 +57,11 @@ export const PostTokenField = ( {
 	placeholder,
 	selectedIds,
 	onChange,
+	cachedItems,
+	onItemsFetched,
 } ) => {
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ debouncedInput, setDebouncedInput ] = useState( '' );
-	// Persistent cache of every fetched post, keyed by id. The cache outlives
-	// any one search so a token's title survives when the item drops out of
-	// the latest suggestion list.
-	const [ itemsById, setItemsById ] = useState( () => new Map() );
 	const [ suggestionIds, setSuggestionIds ] = useState( [] );
 
 	// Debounce the search input so we don't fire a REST request per keystroke.
@@ -93,11 +93,7 @@ export const PostTokenField = ( {
 				if ( cancelled ) {
 					return;
 				}
-				setItemsById( ( current ) => {
-					const next = new Map( current );
-					items.forEach( ( item ) => next.set( item.id, item ) );
-					return next;
-				} );
+				onItemsFetched( items );
 				setSuggestionIds( items.map( ( item ) => item.id ) );
 			} )
 			.catch( ( error ) => {
@@ -117,14 +113,18 @@ export const PostTokenField = ( {
 		return () => {
 			cancelled = true;
 		};
+		// `onItemsFetched` is intentionally excluded; including it would re-run
+		// the effect on every parent render whenever the parent recreates the
+		// callback inline. The effect only needs to re-fire on type/search.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ type, debouncedInput ] );
 
-	const knownItems = Array.from( itemsById.values() );
+	const knownItems = Array.from( cachedItems.values() );
 
 	// Fall back to "#<id>" when an id isn't in the cache yet — e.g. the page
 	// mounted with pre-selected ids we haven't fetched titles for.
 	const tokenForId = ( id ) => {
-		const item = itemsById.get( id );
+		const item = cachedItems.get( id );
 		if ( ! item ) {
 			return `#${ id }`;
 		}
@@ -172,7 +172,7 @@ export const PostTokenField = ( {
 	// Drop already-selected ids and render the rest as labels for the dropdown.
 	const suggestions = suggestionIds
 		.filter( ( id ) => ! selectedIds.includes( id ) )
-		.map( ( id ) => buildLabel( itemsById.get( id ), knownItems ) );
+		.map( ( id ) => buildLabel( cachedItems.get( id ), knownItems ) );
 
 	return (
 		<FormTokenField

@@ -6,6 +6,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 /**
  * WordPress dependencies
  */
+import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
@@ -20,17 +21,37 @@ const itemFor = ( id, title ) => ( {
 	title: { rendered: title },
 } );
 
-const renderField = ( props = {} ) =>
-	render(
+// Mirrors the parent's cache-merging behaviour so the tests exercise the
+// real interaction between the field and its cache owner.
+const useItemsCache = () => {
+	const [ cachedItems, setCachedItems ] = useState( () => new Map() );
+	const onItemsFetched = ( items ) => {
+		setCachedItems( ( current ) => {
+			const next = new Map( current );
+			items.forEach( ( item ) => next.set( item.id, item ) );
+			return next;
+		} );
+	};
+	return [ cachedItems, onItemsFetched ];
+};
+
+const Harness = ( props ) => {
+	const [ cachedItems, onItemsFetched ] = useItemsCache();
+	return (
 		<PostTokenField
 			type="course"
 			ariaLabel="Filter courses to export"
 			placeholder="Search…"
 			selectedIds={ [] }
 			onChange={ () => {} }
+			cachedItems={ cachedItems }
+			onItemsFetched={ onItemsFetched }
 			{ ...props }
 		/>
 	);
+};
+
+const renderField = ( props = {} ) => render( <Harness { ...props } /> );
 
 describe( '<PostTokenField />', () => {
 	beforeAll( () => {
@@ -85,5 +106,52 @@ describe( '<PostTokenField />', () => {
 		// The cache holds id 7 even though the new fetch didn't return it,
 		// so the token's title is still on screen.
 		expect( queryByText( 'Course A' ) ).toBeTruthy();
+	} );
+
+	it( 'keeps a selected token labelled after the field unmounts and remounts', async () => {
+		// First and second mount both fetch suggestions. The second mount's
+		// fetch deliberately does not include the selected id, so the only
+		// way the title can survive is if the cache outlived the unmount.
+		apiFetch.mockResolvedValueOnce( [ itemFor( 7, 'Course A' ) ] );
+		apiFetch.mockResolvedValue( [ itemFor( 99, 'Course B' ) ] );
+
+		// Drive the field through a parent that can hide and re-show it
+		// (the same shape as ExportSelectContentPage's checkbox-gated row).
+		const Toggleable = () => {
+			const [ cachedItems, onItemsFetched ] = useItemsCache();
+			const [ visible, setVisible ] = useState( true );
+			return (
+				<>
+					<button onClick={ () => setVisible( ( v ) => ! v ) }>
+						toggle
+					</button>
+					{ visible && (
+						<PostTokenField
+							type="course"
+							ariaLabel="Filter courses to export"
+							placeholder="Search…"
+							selectedIds={ [ 7 ] }
+							onChange={ () => {} }
+							cachedItems={ cachedItems }
+							onItemsFetched={ onItemsFetched }
+						/>
+					) }
+				</>
+			);
+		};
+
+		const { findByText, getByText, queryByText } = render( <Toggleable /> );
+
+		expect( await findByText( 'Course A' ) ).toBeTruthy();
+
+		fireEvent.click( getByText( 'toggle' ) );
+		expect( queryByText( 'Course A' ) ).toBeNull();
+
+		fireEvent.click( getByText( 'toggle' ) );
+
+		// The remount fetch returned only Course B, but the parent-owned cache
+		// still has id 7's title — so the token reads "Course A", not "#7".
+		expect( await findByText( 'Course A' ) ).toBeTruthy();
+		expect( queryByText( '#7' ) ).toBeNull();
 	} );
 } );

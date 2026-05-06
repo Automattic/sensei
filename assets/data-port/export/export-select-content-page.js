@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useEffect, useState } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import { Button, CheckboxControl } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
@@ -66,6 +66,19 @@ export const ExportSelectContentPage = ( { job, onSubmit } ) => {
 		lesson: null,
 		question: null,
 	} );
+	const [ itemsByType, setItemsByType ] = useState( {
+		course: new Map(),
+		lesson: new Map(),
+		question: new Map(),
+	} );
+
+	const cacheItems = useCallback( ( type, items ) => {
+		setItemsByType( ( current ) => {
+			const next = new Map( current[ type ] );
+			items.forEach( ( item ) => next.set( item.id, item ) );
+			return { ...current, [ type ]: next };
+		} );
+	}, [] );
 
 	// Fetch the total count for each content type so the summary can show
 	// "All N courses" instead of just "All courses". `parse: false` gives us
@@ -160,6 +173,10 @@ export const ExportSelectContentPage = ( { job, onSubmit } ) => {
 									...current,
 									[ type ]: ids,
 								} ) )
+							}
+							cachedItems={ itemsByType[ type ] }
+							onItemsFetched={ ( items ) =>
+								cacheItems( type, items )
 							}
 						/>
 					) }
