@@ -3,6 +3,10 @@ name: WordPress Dependencies Report
 on:
     pull_request:
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref }}
+    cancel-in-progress: true
+
 jobs:
     build-trunk:
         runs-on: ubuntu-latest
@@ -58,7 +62,6 @@ jobs:
             -   uses: actions/setup-node@v4
                 with:
                     node-version-file: '.nvmrc'
-            -   uses: actions/checkout@v4
             -   name: Get npm cache directory
                 id: npm-cache
                 run: |
