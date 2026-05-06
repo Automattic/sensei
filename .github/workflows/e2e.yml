@@ -22,19 +22,25 @@ jobs:
               with:
                   node-version-file: '.nvmrc'
 
+            - name: Get Node.js version
+              id: node-version
+              run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
+
             - uses: actions/cache@v4
               with:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
             - uses: actions/cache@v4
+              id: node-modules-cache
               with:
                   path: node_modules/
-                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+                  key: ${{ runner.os }}-${{ runner.arch }}-${{ steps.node-version.outputs.version }}-node-modules-${{ hashFiles('package-lock.json') }}
 
             - name: Install PHP dependencies
               uses: ./.github/actions/install-php
 
             - name: Install JS dependencies
+              if: steps.node-modules-cache.outputs.cache-hit != 'true'
               run: npm ci
 
             - name: Build assets
