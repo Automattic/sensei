@@ -138,6 +138,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 			)
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		Utils::log_query_error( $wpdb, 'Comments-based lesson average grade' );
 
 		return null !== $avg ? round( (float) $avg, 2 ) : null;
 	}

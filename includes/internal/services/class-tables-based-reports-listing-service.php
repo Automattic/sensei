@@ -385,6 +385,10 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	/**
 	 * Get the average quiz grade for a lesson.
 	 *
+	 * Only `post_id` and `status` from $args are honored; `type` and `meta_key` are ignored
+	 * because the tables schema queries `sensei_lms_progress` + `sensei_lms_quiz_submissions`
+	 * directly rather than commentmeta.
+	 *
 	 * @since $$next-version$$
 	 *
 	 * @param array $args Arguments for the query (see interface).
