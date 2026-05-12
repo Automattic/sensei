@@ -140,15 +140,17 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				// Fetch each student's course progress with a computed percent column.
 				// percent = (completed lessons / total lessons) * 100.
 				// The total_lessons denominator is pre-computed in PHP since all rows share the same course.
+				// Fetch each student's course progress with a computed percent column.
+				// percent = (completed lessons / total lessons) * 100.
+				// The total_lessons denominator is pre-computed in PHP since all rows share the same course.
 				'SELECT p.user_id, p.status, p.started_at, p.completed_at,'
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( %d, 0 ), 0 ) AS percent'
 				. ' FROM %i p'
-				// Derived table: count completed lessons per student in this course.
-				// A lesson counts as completed when its progress status is 'complete',
-				// matching how Sensei_Utils::update_course_status computes the percent meta.
+				// Derived table: count completed published lessons per student in this course.
 				. ' LEFT JOIN ('
 				. '   SELECT lp.user_id, COUNT(*) AS cnt'
 				. '   FROM %i lp'
+				. '   INNER JOIN %i lpost ON lpost.ID = lp.post_id AND lpost.post_status = \'publish\''
 				. '   WHERE lp.parent_post_id = %d AND lp.type = \'lesson\''
 				. '   AND lp.status = \'complete\''
 				. '   GROUP BY lp.user_id'
@@ -156,6 +158,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				$total_lessons,
 				$table,
 				$table,
+				$wpdb->posts,
 				$course_id
 			)
 			. $where
@@ -268,12 +271,11 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				'SELECT p.post_id, p.status, p.started_at, p.completed_at,'
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( total.cnt, 0 ), 0 ) AS percent'
 				. ' FROM %i p'
-				// Derived table: count completed lessons per course for this user.
-				// A lesson counts as completed when its progress status is 'complete',
-				// matching how Sensei_Utils::update_course_status computes the percent meta.
+				// Derived table: count completed published lessons per course for this user.
 				. ' LEFT JOIN ('
 				. '   SELECT lp.parent_post_id AS course_id, COUNT(*) AS cnt'
 				. '   FROM %i lp'
+				. '   INNER JOIN %i lpost ON lpost.ID = lp.post_id AND lpost.post_status = \'publish\''
 				. '   WHERE lp.type = \'lesson\' AND lp.user_id = %d'
 				. '   AND lp.status = \'complete\''
 				. '   GROUP BY lp.parent_post_id'
@@ -289,6 +291,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. ' ) total ON total.course_id = p.post_id',
 				$table,
 				$table,
+				$wpdb->posts,
 				$user_id,
 				$wpdb->postmeta,
 				$wpdb->posts
