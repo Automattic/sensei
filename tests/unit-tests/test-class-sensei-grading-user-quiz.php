@@ -24,7 +24,7 @@ class Sensei_Grading_User_Quiz_Test extends WP_UnitTestCase {
 
 		$actual = $method->invoke( null, $quiz_grade_type, $grade_type, $user_question_grade );
 
-		$this->assertSame( $expected, $actual, sprintf( 'Expected class "%s" for quiz_grade_type="%s", grade_type="%s", user_question_grade=%s.', $expected, $quiz_grade_type, $grade_type, var_export( $user_question_grade, true ) ) );
+		$this->assertSame( $expected, $actual, "Expected class '{$expected}' for quiz_grade_type='{$quiz_grade_type}', grade_type='{$grade_type}'." );
 	}
 
 	/**
@@ -34,21 +34,16 @@ class Sensei_Grading_User_Quiz_Test extends WP_UnitTestCase {
 	 */
 	public function provider_get_question_graded_class() {
 		return array(
-			// Auto-graded quiz with auto-grade question types.
-			'auto quiz, auto-grade question, wrong answer (grade=0)'    => array( 'auto', 'auto-grade', 0, 'user_wrong' ),
-			'auto quiz, auto-grade question, correct answer (grade=1)'  => array( 'auto', 'auto-grade', 1, 'user_right' ),
-			'auto quiz, auto-grade question, correct answer (grade=5)'  => array( 'auto', 'auto-grade', 5, 'user_right' ),
-			'auto quiz, auto-grade question, not yet graded (false)'    => array( 'auto', 'auto-grade', false, 'ungraded' ),
-
-			// Auto-graded quiz with manual-grade question types (e.g., essay in an auto quiz).
-			'auto quiz, manual-grade question, grade=0'                 => array( 'auto', 'manual-grade', 0, 'user_wrong' ),
-			'auto quiz, manual-grade question, grade=3'                 => array( 'auto', 'manual-grade', 3, 'user_right' ),
-			'auto quiz, manual-grade question, not yet graded (false)'  => array( 'auto', 'manual-grade', false, 'ungraded' ),
-
-			// Manual quiz (all question types become manual-grade).
-			'manual quiz, manual-grade question, grade=0'               => array( 'manual', 'manual-grade', 0, 'user_wrong' ),
-			'manual quiz, manual-grade question, grade=2'               => array( 'manual', 'manual-grade', 2, 'user_right' ),
-			'manual quiz, manual-grade question, not yet graded (false)' => array( 'manual', 'manual-grade', false, 'ungraded' ),
+			'auto, auto-grade, wrong'       => array( 'auto', 'auto-grade', 0, 'user_wrong' ),
+			'auto, auto-grade, right'       => array( 'auto', 'auto-grade', 1, 'user_right' ),
+			'auto, auto-grade, partial'     => array( 'auto', 'auto-grade', 5, 'user_right' ),
+			'auto, auto-grade, pending'     => array( 'auto', 'auto-grade', false, 'ungraded' ),
+			'auto, manual-grade, wrong'     => array( 'auto', 'manual-grade', 0, 'user_wrong' ),
+			'auto, manual-grade, right'     => array( 'auto', 'manual-grade', 3, 'user_right' ),
+			'auto, manual-grade, pending'   => array( 'auto', 'manual-grade', false, 'ungraded' ),
+			'manual, manual-grade, wrong'   => array( 'manual', 'manual-grade', 0, 'user_wrong' ),
+			'manual, manual-grade, right'   => array( 'manual', 'manual-grade', 2, 'user_right' ),
+			'manual, manual-grade, pending' => array( 'manual', 'manual-grade', false, 'ungraded' ),
 		);
 	}
 }
