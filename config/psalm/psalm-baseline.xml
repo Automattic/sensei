@@ -4667,7 +4667,9 @@
     </PossiblyInvalidIterator>
   </file>
   <file src="includes/internal/student-progress/quiz-progress/repositories/class-table-reading-aggregate-quiz-progress-repository.php">
-    <InvalidScalarArgument occurrences="2">
+    <InvalidScalarArgument occurrences="4">
+      <code>$lesson_id</code>
+      <code>$lesson_id</code>
       <code>$lesson_id</code>
       <code>$lesson_id</code>
     </InvalidScalarArgument>
