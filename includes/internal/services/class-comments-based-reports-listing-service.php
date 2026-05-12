@@ -111,18 +111,35 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * @return float|null
 	 */
 	public function get_lesson_average_grade( array $args ): ?float {
-		add_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-		$lesson_grades = \Sensei_Utils::sensei_check_for_activity( $args, true );
-		remove_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
+		global $wpdb;
 
-		if ( ! is_object( $lesson_grades ) ) {
+		$post_id  = (int) ( $args['post_id'] ?? 0 );
+		$type     = (string) ( $args['type'] ?? 'sensei_lesson_status' );
+		$meta_key = (string) ( $args['meta_key'] ?? 'grade' );
+		$statuses = isset( $args['status'] ) ? (array) $args['status'] : array( 'graded', 'passed', 'failed' );
+
+		if ( $post_id <= 0 || empty( $statuses ) ) {
 			return null;
 		}
 
-		$grade_count = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
-		$grade_total = ! empty( $lesson_grades->meta_sum ) ? (float) $lesson_grades->meta_sum : 0;
+		$status_placeholders = implode( ',', array_fill( 0, count( $statuses ), '%s' ) );
 
-		return \Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $status_placeholders is a list of %s; WP 6.4 changed WP_Comment_Query to use get_col(), so a comments_clauses-based aggregate is unreliable.
+		$avg = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT AVG(cm.meta_value)
+				 FROM {$wpdb->comments} c
+				 INNER JOIN {$wpdb->commentmeta} cm
+				   ON cm.comment_id = c.comment_ID AND cm.meta_key = %s
+				 WHERE c.comment_post_ID = %d
+				   AND c.comment_type = %s
+				   AND c.comment_approved IN ( {$status_placeholders} )",
+				array_merge( array( $meta_key, $post_id, $type ), $statuses )
+			)
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		return null !== $avg ? round( (float) $avg, 2 ) : null;
 	}
 
 	/**

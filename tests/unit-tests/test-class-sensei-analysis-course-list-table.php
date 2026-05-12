@@ -6,6 +6,8 @@
  * @covers Sensei_Analysis_Course_List_Table
  */
 class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
+
 	private static $initial_hook_suffix;
 
 	/**
@@ -136,6 +138,8 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 	}
 
 	public function testGenerateReport_LessonViewWithGradedStudents_ReturnsCorrectAverageGrade() {
+		$this->skip_in_hpps_mode( 'Inserts raw comment-based lesson grades; incompatible with HPPS tables mode.' );
+
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 		$lesson_id = $this->factory->lesson->create(
