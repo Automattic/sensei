@@ -116,7 +116,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 		$post_id  = (int) ( $args['post_id'] ?? 0 );
 		$type     = (string) ( $args['type'] ?? 'sensei_lesson_status' );
 		$meta_key = (string) ( $args['meta_key'] ?? 'grade' );
-		$statuses = isset( $args['status'] ) ? (array) $args['status'] : array( 'graded', 'passed', 'failed' );
+		$statuses = isset( $args['status'] ) ? (array) $args['status'] : array();
 
 		if ( $post_id <= 0 || empty( $statuses ) ) {
 			return null;
