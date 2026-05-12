@@ -451,8 +451,9 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[2], $user_ids[1], 'passed' );
 
 		// Assign a grade to each lesson for each student.
-		$this->assignGrade( $comment_ids[0], '10' );
-		$this->assignGrade( $comment_ids[1], '50' );
+		// Lesson 0 has no quiz, so no quiz_answers.
+		$this->assignGrade( $comment_ids[0], '10', false );
+		$this->assignGrade( $comment_ids[1], '50', false );
 		$this->assignGrade( $comment_ids[2], '100' );
 		$this->assignGrade( $comment_ids[3], '35' );
 		$this->assignGrade( $comment_ids[4], '70' );
@@ -754,7 +755,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 * @param int    $comment_id Comment ID.
 	 * @param string $grade      Grade.
 	 */
-	private function assignGrade( $comment_id, $grade ) {
+	private function assignGrade( $comment_id, $grade, $has_quiz_answers = true ) {
 		add_comment_meta( $comment_id, 'grade', $grade );
+		if ( '' !== $grade && $has_quiz_answers ) {
+			add_comment_meta( $comment_id, 'quiz_answers', 'a:1:{i:0;s:1:"1";}' );
+		}
 	}
 }

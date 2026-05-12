@@ -170,15 +170,9 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/admin/class-sensei-learners-main.php">
-    <ArgumentTypeCoercion occurrences="4">
-      <code>$item</code>
+    <ArgumentTypeCoercion occurrences="3">
       <code>$item</code>
       <code>$user_activity</code>
-      <code>array(
-				'total_items' =&gt; $total_items,
-				'total_pages' =&gt; $total_pages,
-				'per_page'    =&gt; $per_page,
-			)</code>
     </ArgumentTypeCoercion>
     <DocblockTypeContradiction occurrences="3">
       <code>! $item</code>
@@ -1653,9 +1647,8 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/class-sensei-grading-user-quiz.php">
-    <InvalidScalarArgument occurrences="9">
+    <InvalidScalarArgument occurrences="8">
       <code>$attachment_id</code>
-      <code>$lesson_status_id</code>
       <code>$question_grade_total</code>
       <code>$quiz_grade</code>
       <code>$quiz_grade</code>
@@ -2837,10 +2830,6 @@
     <DocblockTypeContradiction occurrences="1">
       <code>0</code>
     </DocblockTypeContradiction>
-    <DuplicateArrayKey occurrences="2">
-      <code>$published_quiz_ids</code>
-      <code>$published_quiz_ids</code>
-    </DuplicateArrayKey>
     <InvalidArgument occurrences="9">
       <code>$key</code>
       <code>$published_quiz_ids</code>
@@ -2850,8 +2839,6 @@
       <code>$published_quiz_ids</code>
       <code>$published_quiz_ids</code>
       <code>$published_quiz_ids</code>
-      <code>'module'</code>
-      <code>'module'</code>
       <code>'module'</code>
     </InvalidArgument>
     <InvalidArrayOffset occurrences="2">
@@ -4560,6 +4547,15 @@
       <code>$comment-&gt;comment_ID</code>
     </InvalidScalarArgument>
   </file>
+  <file src="includes/internal/services/class-comments-based-grading-stats-service.php">
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$result-&gt;courses_average</code>
+      <code>$row-&gt;count</code>
+      <code>$row-&gt;grade_count</code>
+      <code>$row-&gt;grade_sum</code>
+      <code>$row-&gt;sum</code>
+    </PossiblyInvalidPropertyFetch>
+  </file>
   <file src="includes/internal/services/class-comments-based-progress-aggregation-service.php">
     <PossiblyInvalidPropertyFetch occurrences="5">
       <code>$row-&gt;days_to_complete_count</code>
@@ -4587,6 +4583,15 @@
       <code>ARRAY_A</code>
     </UndefinedConstant>
   </file>
+  <file src="includes/internal/services/class-tables-based-grading-stats-service.php">
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$result-&gt;courses_average</code>
+      <code>$row-&gt;count</code>
+      <code>$row-&gt;grade_count</code>
+      <code>$row-&gt;grade_sum</code>
+      <code>$row-&gt;sum</code>
+    </PossiblyInvalidPropertyFetch>
+  </file>
   <file src="includes/internal/services/class-tables-based-progress-aggregation-service.php">
     <PossiblyInvalidPropertyFetch occurrences="5">
       <code>$row-&gt;days_to_complete_count</code>
@@ -4596,6 +4601,7 @@
       <code>$row-&gt;unique_student_count</code>
     </PossiblyInvalidPropertyFetch>
     <UndefinedConstant occurrences="2">
+      <code>ARRAY_A</code>
       <code>ARRAY_A</code>
     </UndefinedConstant>
   </file>
