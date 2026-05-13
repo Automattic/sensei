@@ -74,16 +74,8 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		// Count all statuses in a single query for the All/Ungraded/Graded/In Progress tabs.
 		$count_args           = $args;
 		$count_args['status'] = 'any';
-		// Get per-status counts from a single GROUP BY query.
-		$status_count_query = $this->build_count_query( $table, $submissions_table, $count_args );
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared via build_count_query. Caching handled by callers.
-		$status_rows = (array) $wpdb->get_results( $status_count_query, ARRAY_A );
-		Utils::log_query_error( $wpdb, 'Grading listing status counts' );
 
-		$this->status_counts = [];
-		foreach ( $status_rows as $row ) {
-			$this->status_counts[ $row['effective_status'] ] = (int) $row['total'];
-		}
+		$this->status_counts = $this->fetch_status_counts( $table, $submissions_table, $count_args );
 
 		// Derive total_count from status counts.
 		if ( empty( $args['status'] ) || 'any' === $args['status'] ) {
@@ -131,6 +123,67 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 			'items'       => $items,
 			'total_count' => $total_count,
 		];
+	}
+
+	/**
+	 * Fetch per-status counts, going through the persistent cache when possible.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $table             Progress table name.
+	 * @param string $submissions_table Quiz submissions table name.
+	 * @param array  $count_args        Count query arguments.
+	 * @return array<string, int> Associative array of status => count.
+	 */
+	private function fetch_status_counts( string $table, string $submissions_table, array $count_args ): array {
+		$wpdb      = $this->wpdb;
+		$cache_key = $this->get_status_counts_cache_key( $count_args );
+		$cached    = get_transient( $cache_key );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$status_count_query = $this->build_count_query( $table, $submissions_table, $count_args );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared via build_count_query.
+		$status_rows = (array) $wpdb->get_results( $status_count_query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Grading listing status counts' );
+
+		$counts = [];
+		foreach ( $status_rows as $row ) {
+			$counts[ $row['effective_status'] ] = (int) $row['total'];
+		}
+
+		set_transient( $cache_key, $counts, 300 );
+
+		return $counts;
+	}
+
+	/**
+	 * Build a versioned cache key for the per-status counts query.
+	 *
+	 * The version token is bumped by Grading_Listing_Cache_Invalidator whenever
+	 * a quiz grade or lesson status write happens, so cached entries effectively
+	 * disappear without needing to know every variant key.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $count_args Count query arguments.
+	 * @return string Transient key.
+	 */
+	private function get_status_counts_cache_key( array $count_args ): string {
+		$key_args = array_intersect_key(
+			$count_args,
+			array_flip( array( 'post_id', 'post__in', 'user_id', 'exclude_user_login_prefixes', 'include_statuses_override' ) )
+		);
+		ksort( $key_args );
+
+		$payload = wp_json_encode( $key_args );
+		if ( false === $payload ) {
+			$payload = '';
+		}
+
+		return 'sensei_grading_listing_count_' . Grading_Listing_Cache_Invalidator::get_version() . '_' . md5( $payload );
 	}
 
 	/**

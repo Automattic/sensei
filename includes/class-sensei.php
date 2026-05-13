@@ -21,6 +21,7 @@ use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Services\Grading_Listing_Cache_Invalidator;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
@@ -819,6 +820,9 @@ class Sensei_Main {
 		( new Lesson_Deleted_Handler( $this->lesson_progress_repository ) )->init();
 		( new Quiz_Deleted_Handler( $this->quiz_progress_repository ) )->init();
 		( new User_Deleted_Handler( $this->course_progress_repository, $this->lesson_progress_repository, $this->quiz_progress_repository ) )->init();
+
+		// Invalidate the cached Grading listing tab counts when a quiz is graded or a lesson status changes.
+		( new Grading_Listing_Cache_Invalidator() )->init();
 
 		// Cron for periodically cleaning guest user related data.
 		Sensei_Temporary_User_Cleaner::instance()->init();

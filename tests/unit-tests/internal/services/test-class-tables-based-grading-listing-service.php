@@ -573,4 +573,57 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Expected 1 in-progress.' );
 		$this->assertSame( 1, $counts['complete'] ?? 0, 'Expected 1 complete even though status filter was in-progress.' );
 	}
+
+	public function testGetLessonProgressItems_CalledTwice_UsesCachedStatusCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
+		$service->get_lesson_progress_items( $this->get_default_args( array( 'post_id' => $lesson_id ) ) );
+
+		// Mutate the underlying data without going through Sensei write paths,
+		// so the cache is not invalidated. The cached counts should still be returned.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Test helper.
+		$wpdb->query( "UPDATE {$wpdb->prefix}sensei_lms_progress SET status='complete' WHERE type='lesson'" );
+
+		/* Act. */
+		$service->get_lesson_progress_items( $this->get_default_args( array( 'post_id' => $lesson_id ) ) );
+		$counts = $service->get_status_counts();
+
+		/* Assert. */
+		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Cached status counts should be returned on the second call.' );
+		$this->assertArrayNotHasKey( 'complete', $counts, 'Updated status should not appear because the cache is not yet invalidated.' );
+	}
+
+	public function testGetLessonProgressItems_AfterCacheInvalidation_RefreshesStatusCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
+		$service->get_lesson_progress_items( $this->get_default_args( array( 'post_id' => $lesson_id ) ) );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Test helper.
+		$wpdb->query( "UPDATE {$wpdb->prefix}sensei_lms_progress SET status='complete' WHERE type='lesson'" );
+
+		( new \Sensei\Internal\Services\Grading_Listing_Cache_Invalidator() )->bump_version();
+
+		/* Act. */
+		$service->get_lesson_progress_items( $this->get_default_args( array( 'post_id' => $lesson_id ) ) );
+		$counts = $service->get_status_counts();
+
+		/* Assert. */
+		$this->assertSame( 1, $counts['complete'] ?? 0, 'After invalidation the refreshed status counts should be returned.' );
+	}
 }

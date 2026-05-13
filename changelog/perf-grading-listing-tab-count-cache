@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Cache the tables-based Grading listing tab counts to keep the Grading page fast on repeat loads.
