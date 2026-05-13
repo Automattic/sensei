@@ -915,13 +915,6 @@
   </file>
   <file src="includes/class-sensei-analysis-course-list-table.php">
     <ArgumentTypeCoercion occurrences="1"/>
-    <InvalidPropertyFetch occurrences="5">
-      <code>$lesson_grades-&gt;meta_sum</code>
-      <code>$lesson_grades-&gt;total</code>
-      <code>$lesson_status-&gt;comment_ID</code>
-      <code>$lesson_status-&gt;comment_approved</code>
-      <code>$lesson_status-&gt;comment_date</code>
-    </InvalidPropertyFetch>
     <InvalidReturnStatement occurrences="1">
       <code>$data</code>
     </InvalidReturnStatement>
@@ -938,9 +931,6 @@
       <code>$search</code>
       <code>$search</code>
     </PossiblyFalsePropertyAssignmentValue>
-    <PossiblyUndefinedVariable occurrences="1">
-      <code>$user_email</code>
-    </PossiblyUndefinedVariable>
     <PropertyNotSetInConstructor occurrences="12">
       <code>$total_lessons</code>
       <code>$user_ids</code>
@@ -967,9 +957,8 @@
     <InvalidReturnType occurrences="1">
       <code>data</code>
     </InvalidReturnType>
-    <MissingParamType occurrences="4">
+    <MissingParamType occurrences="3">
       <code>$args</code>
-      <code>$lesson_id</code>
       <code>$report</code>
       <code>$text</code>
     </MissingParamType>
@@ -1075,11 +1064,10 @@
     <InvalidReturnType occurrences="1">
       <code>data</code>
     </InvalidReturnType>
-    <MissingParamType occurrences="4">
+    <MissingParamType occurrences="3">
       <code>$args</code>
       <code>$report</code>
       <code>$text</code>
-      <code>$user_id</code>
     </MissingParamType>
     <MissingPropertyType occurrences="2">
       <code>$page_slug</code>
@@ -2830,6 +2818,10 @@
     <DocblockTypeContradiction occurrences="1">
       <code>0</code>
     </DocblockTypeContradiction>
+    <DuplicateArrayKey occurrences="2">
+      <code>$published_quiz_ids</code>
+      <code>$published_quiz_ids</code>
+    </DuplicateArrayKey>
     <InvalidArgument occurrences="9">
       <code>$key</code>
       <code>$published_quiz_ids</code>
@@ -4567,6 +4559,38 @@
     <UndefinedConstant occurrences="1">
       <code>ARRAY_A</code>
     </UndefinedConstant>
+  </file>
+  <file src="includes/internal/services/class-tables-based-reports-listing-service.php">
+    <PossiblyInvalidCast occurrences="1">
+      <code>$column</code>
+      <code>$column</code>
+    </PossiblyInvalidCast>
+    <PossiblyInvalidPropertyFetch occurrences="19">
+      <code>$row-&gt;completed_at</code>
+      <code>$row-&gt;completed_at</code>
+      <code>$row-&gt;completed_at</code>
+      <code>$row-&gt;completed_at</code>
+      <code>$row-&gt;effective_status</code>
+      <code>$row-&gt;effective_status</code>
+      <code>$row-&gt;grade</code>
+      <code>$row-&gt;grade</code>
+      <code>$row-&gt;percent</code>
+      <code>$row-&gt;post_id</code>
+      <code>$row-&gt;post_id</code>
+      <code>$row-&gt;post_id</code>
+      <code>$row-&gt;post_id</code>
+      <code>$row-&gt;post_id</code>
+      <code>$row-&gt;started_at</code>
+      <code>$row-&gt;started_at</code>
+      <code>$row-&gt;started_at</code>
+      <code>$row-&gt;started_at</code>
+      <code>$row-&gt;status</code>
+      <code>$row-&gt;status</code>
+      <code>$row-&gt;user_id</code>
+      <code>$row-&gt;user_id</code>
+      <code>$row-&gt;user_id</code>
+      <code>$row-&gt;user_id</code>
+    </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/internal/services/class-tables-based-grading-listing-service.php">
     <PossiblyInvalidCast occurrences="1">
