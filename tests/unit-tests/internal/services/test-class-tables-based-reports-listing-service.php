@@ -145,6 +145,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
 			)
 		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
 		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
 		$this->insert_quiz_submission( $quiz_id, $user_id, 90 );
@@ -381,6 +382,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
 			)
 		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
 		$this->insert_progress( $quiz_id, $user1, 'quiz', 'passed', $lesson_id );
 		$this->insert_quiz_submission( $quiz_id, $user1, 80 );

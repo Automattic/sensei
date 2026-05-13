@@ -85,9 +85,11 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				// Join quiz submissions (qs) to get the final_grade when available.
 				'SELECT p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
 				. ' FROM %i p'
-				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
-				. ' LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id',
+				. ' LEFT JOIN %i pm ON pm.post_id = p.post_id AND pm.meta_key = \'_lesson_quiz\' AND pm.meta_value > 0'
+				. ' LEFT JOIN %i q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = \'quiz\''
+				. ' LEFT JOIN %i qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id',
 				$table,
+				$wpdb->postmeta,
 				$table,
 				$submissions_table
 			)
@@ -140,9 +142,6 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				// Fetch each student's course progress with a computed percent column.
 				// percent = (completed lessons / total lessons) * 100.
 				// The total_lessons denominator is pre-computed in PHP since all rows share the same course.
-				// Fetch each student's course progress with a computed percent column.
-				// percent = (completed lessons / total lessons) * 100.
-				// The total_lessons denominator is pre-computed in PHP since all rows share the same course.
 				'SELECT p.user_id, p.status, p.started_at, p.completed_at,'
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( %d, 0 ), 0 ) AS percent'
 				. ' FROM %i p'
@@ -150,16 +149,17 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. ' LEFT JOIN ('
 				. '   SELECT lp.user_id, COUNT(*) AS cnt'
 				. '   FROM %i lp'
+				. '   INNER JOIN %i pm ON pm.post_id = lp.post_id AND pm.meta_key = \'_lesson_course\' AND pm.meta_value = %d'
 				. '   INNER JOIN %i lpost ON lpost.ID = lp.post_id AND lpost.post_status = \'publish\''
-				. '   WHERE lp.parent_post_id = %d AND lp.type = \'lesson\''
-				. '   AND lp.status = \'complete\''
+				. '   WHERE lp.type = \'lesson\' AND lp.status = \'complete\''
 				. '   GROUP BY lp.user_id'
 				. ' ) completed ON completed.user_id = p.user_id',
 				$total_lessons,
 				$table,
 				$table,
-				$wpdb->posts,
-				$course_id
+				$wpdb->postmeta,
+				$course_id,
+				$wpdb->posts
 			)
 			. $where
 			. $pagination['order_clause']
@@ -210,10 +210,12 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				'SELECT COALESCE( q.status, p.status ) AS effective_status,'
 				. ' p.started_at, p.completed_at, qs.final_grade AS grade'
 				. ' FROM %i p'
-				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
-				. ' LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id'
+				. ' LEFT JOIN %i pm ON pm.post_id = p.post_id AND pm.meta_key = \'_lesson_quiz\' AND pm.meta_value > 0'
+				. ' LEFT JOIN %i q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = \'quiz\''
+				. ' LEFT JOIN %i qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id'
 				. ' WHERE p.post_id = %d AND p.user_id = %d AND p.type = \'lesson\'',
 				$table,
+				$wpdb->postmeta,
 				$table,
 				$submissions_table,
 				$post_id,
@@ -272,13 +274,15 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( total.cnt, 0 ), 0 ) AS percent'
 				. ' FROM %i p'
 				// Derived table: count completed published lessons per course for this user.
+				// Lessons are mapped to courses via the _lesson_course postmeta.
 				. ' LEFT JOIN ('
-				. '   SELECT lp.parent_post_id AS course_id, COUNT(*) AS cnt'
+				. '   SELECT pm.meta_value AS course_id, COUNT(*) AS cnt'
 				. '   FROM %i lp'
+				. '   INNER JOIN %i pm ON pm.post_id = lp.post_id AND pm.meta_key = \'_lesson_course\''
 				. '   INNER JOIN %i lpost ON lpost.ID = lp.post_id AND lpost.post_status = \'publish\''
 				. '   WHERE lp.type = \'lesson\' AND lp.user_id = %d'
 				. '   AND lp.status = \'complete\''
-				. '   GROUP BY lp.parent_post_id'
+				. '   GROUP BY pm.meta_value'
 				. ' ) completed ON completed.course_id = p.post_id'
 				// Derived table: count total published lessons per course
 				// via the _lesson_course postmeta that maps each lesson to its course.
@@ -291,6 +295,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. ' ) total ON total.course_id = p.post_id',
 				$table,
 				$table,
+				$wpdb->postmeta,
 				$wpdb->posts,
 				$user_id,
 				$wpdb->postmeta,
@@ -371,11 +376,13 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			$wpdb->prepare(
 				'SELECT COUNT( DISTINCT p.user_id )'
 				. ' FROM %i p'
-				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
+				. ' LEFT JOIN %i pm ON pm.post_id = p.post_id AND pm.meta_key = \'_lesson_quiz\' AND pm.meta_value > 0'
+				. ' LEFT JOIN %i q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = \'quiz\''
 				. ' WHERE p.post_id = %d AND p.type = \'lesson\''
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is built from escaped args.
 				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
 				$table,
+				$wpdb->postmeta,
 				$table,
 				$post_id
 			)
@@ -411,12 +418,14 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			$wpdb->prepare(
 				'SELECT AVG( qs.final_grade )'
 				. ' FROM %i p'
-				. ' LEFT JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = \'quiz\''
-				. ' LEFT JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id'
+				. ' LEFT JOIN %i pm ON pm.post_id = p.post_id AND pm.meta_key = \'_lesson_quiz\' AND pm.meta_value > 0'
+				. ' LEFT JOIN %i q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = \'quiz\''
+				. ' LEFT JOIN %i qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id'
 				. ' WHERE p.post_id = %d AND p.type = \'lesson\' AND qs.final_grade IS NOT NULL'
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is built from escaped args.
 				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
 				$table,
+				$wpdb->postmeta,
 				$table,
 				$submissions_table,
 				$post_id
