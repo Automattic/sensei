@@ -111,10 +111,10 @@ class Sensei_Grading {
 	 */
 	public function grading_admin_menu() {
 		$indicator_html = '';
-		$grading_counts = Sensei()->grading->count_statuses( array( 'type' => 'lesson' ) );
+		$ungraded_count = $this->count_ungraded_quizzes();
 
-		if ( intval( $grading_counts['ungraded'] ) > 0 ) {
-			$indicator_html = ' <span class="awaiting-mod">' . esc_html( $grading_counts['ungraded'] ) . '</span>';
+		if ( $ungraded_count > 0 ) {
+			$indicator_html = ' <span class="awaiting-mod">' . esc_html( (string) $ungraded_count ) . '</span>';
 		}
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
@@ -627,6 +627,30 @@ class Sensei_Grading {
 		 * @return {array} Filtered counts.
 		 */
 		return apply_filters( 'sensei_count_statuses', $counts, $comment_type );
+	}
+
+	/**
+	 * Count ungraded quiz submissions for published lessons.
+	 *
+	 * Cheap query used by the Grading admin-menu badge, which only needs the
+	 * ungraded total rather than the full per-status breakdown.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return int Number of ungraded quiz submissions for published lessons.
+	 */
+	public function count_ungraded_quizzes(): int {
+		$cache_key = 'sensei-ungraded-quizzes';
+		$cached    = wp_cache_get( $cache_key, 'counts' );
+
+		if ( false !== $cached ) {
+			return (int) $cached;
+		}
+
+		$count = self::get_aggregation_service()->count_ungraded_quizzes();
+		wp_cache_set( $cache_key, $count, 'counts' );
+
+		return $count;
 	}
 
 	/**

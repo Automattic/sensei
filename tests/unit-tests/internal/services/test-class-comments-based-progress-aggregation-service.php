@@ -431,4 +431,71 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		/* Assert. */
 		$this->assertSame( 1, $result['complete'], 'Completed lesson with quiz but no answers should be included by default.' );
 	}
+
+	public function testCountUngradedQuizzes_NoUngradedComments_ReturnsZero(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result );
+	}
+
+	public function testCountUngradedQuizzes_OneUngradedComment_ReturnsOne(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 1, $result );
+	}
+
+	public function testCountUngradedQuizzes_NonUngradedStatuses_NotCounted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'graded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result, 'Graded lesson should not be counted as ungraded.' );
+	}
+
+	public function testCountUngradedQuizzes_UnpublishedLesson_NotCounted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create( array( 'post_status' => 'draft' ) );
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result, 'Ungraded lesson on unpublished post should not be counted.' );
+	}
 }

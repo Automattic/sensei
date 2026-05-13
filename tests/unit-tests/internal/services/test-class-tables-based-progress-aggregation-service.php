@@ -780,4 +780,104 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $result['complete'], 'Non-trashed course should be counted.' );
 		$this->assertArrayNotHasKey( 'in-progress', $result, 'Trashed course status should not appear.' );
 	}
+
+	public function testCountUngradedQuizzes_NoUngradedQuizzes_ReturnsZero(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result );
+	}
+
+	public function testCountUngradedQuizzes_OneUngradedQuiz_ReturnsOne(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			array(
+				'post_parent' => $lesson_id,
+				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
+			)
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded', $lesson_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 1, $result );
+	}
+
+	public function testCountUngradedQuizzes_NonUngradedStatuses_NotCounted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			array(
+				'post_parent' => $lesson_id,
+				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
+			)
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'graded', $lesson_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result, 'Graded quiz should not be counted as ungraded.' );
+	}
+
+	public function testCountUngradedQuizzes_UnpublishedLesson_NotCounted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array(
+				'post_status' => 'draft',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			array(
+				'post_parent' => $lesson_id,
+				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
+			)
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded', $lesson_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result, 'Ungraded quiz on unpublished lesson should not be counted.' );
+	}
 }

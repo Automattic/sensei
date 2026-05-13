@@ -156,6 +156,28 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	}
 
 	/**
+	 * Count ungraded quiz submissions whose lesson is published.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return int Number of ungraded quiz submissions for published lessons.
+	 */
+	public function count_ungraded_quizzes(): int {
+		$wpdb = $this->wpdb;
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb. comment_type/comment_approved values are constants.
+		$query = "SELECT COUNT(*) FROM {$wpdb->comments}
+			INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status = 'publish'
+			WHERE {$wpdb->comments}.comment_type = 'sensei_lesson_status' AND {$wpdb->comments}.comment_approved = 'ungraded'";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL built from literals only. Caching handled by callers.
+		$count = (int) $wpdb->get_var( $query );
+		Utils::log_query_error( $wpdb, 'Comments-based ungraded quizzes count' );
+
+		return $count;
+	}
+
+	/**
 	 * Build SQL clause for filtering by post ID(s).
 	 *
 	 * @since $$next-version$$
