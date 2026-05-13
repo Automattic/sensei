@@ -269,7 +269,7 @@ class Sensei_Grading_User_Quiz {
 					$user_question_grade = 0;
 					$graded_count++;
 				} else {
-					$graded_class = self::get_question_graded_class( $quiz_grade_type, $grade_type, $user_question_grade );
+					$graded_class = self::get_question_graded_class( $quiz_grade_type, $user_question_grade );
 
 					if ( 'user_right' === $graded_class ) {
 						$user_quiz_grade_total += $user_question_grade;
@@ -414,11 +414,10 @@ class Sensei_Grading_User_Quiz {
 	 * @since $$next-version$$
 	 *
 	 * @param string $quiz_grade_type     Quiz grading mode: 'auto' or 'manual'.
-	 * @param string $grade_type          Question grading mode: 'auto-grade' or 'manual-grade'.
 	 * @param mixed  $user_question_grade Stored grade value, or false if not yet graded.
 	 * @return string 'user_right', 'user_wrong', or 'ungraded'.
 	 */
-	private static function get_question_graded_class( $quiz_grade_type, $grade_type, $user_question_grade ) {
+	private static function get_question_graded_class( $quiz_grade_type, $user_question_grade ) {
 		if ( intval( $user_question_grade ) > 0 ) {
 			return 'user_right';
 		}
