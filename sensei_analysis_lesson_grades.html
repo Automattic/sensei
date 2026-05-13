@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_do_link_to_module - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_analysis_lesson_grades - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_do_link_to_module</h1>
+	<h1 class="page-title">Filter: sensei_analysis_lesson_grades</h1>
 	
 
 	
@@ -43,14 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_do_link_to_module">apply_filters( 'sensei_do_link_to_module', <span class="signature">$do_link_to_module, $module, $link_to_current )</span><span class="type-signature"> &rarr; {bool}</span></h4>
+    <h4 class="name" id="sensei_analysis_lesson_grades">apply_filters( 'sensei_analysis_lesson_grades', <span class="signature">$grade_args, $item )</span><span class="type-signature"> &rarr; {array}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Determine if a particular module should be linked to.</p>
+    <p>Filter the lesson grades activity arguments for the Course Analysis list table.</p>
 </div>
 
 
@@ -84,13 +84,13 @@
 
         <tr>
             
-                <td class="name"><code>$do_link_to_module</code></td>
+                <td class="name"><code>$grade_args</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">bool</span>
+<span class="param-type">array</span>
 
 
             
@@ -100,20 +100,20 @@
 
             
 
-            <td class="description last"><p>True if module should be linked to.</p></td>
+            <td class="description last"><p>The lesson grades activity arguments.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>$module</code></td>
+                <td class="name"><code>$item</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">WP_Term</span>
+<span class="param-type">object</span>
 
 
             
@@ -123,30 +123,7 @@
 
             
 
-            <td class="description last"><p>Module to check if it should be linked to.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>$link_to_current</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Allow for linking to the currently displayed module.</p></td>
+            <td class="description last"><p>The current item.</p></td>
         </tr>
 
     
@@ -162,9 +139,6 @@
 
     
 
-    
-    <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>1.10.0</li></ul></dd>
     
 
     
@@ -190,7 +164,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-modules.php.html">includes/class-sensei-modules.php</a>, <a href="includes_class-sensei-modules.php.html#line811">line 811</a>
+        <a href="includes_class-sensei-analysis-course-list-table.php.html">includes/class-sensei-analysis-course-list-table.php</a>, <a href="includes_class-sensei-analysis-course-list-table.php.html#line623">line 623</a>
     </li></ul></dd>
     
 
@@ -217,7 +191,7 @@
 
         
 <div class="param-desc">
-    <p>Filtered value of $do_link_to_module.</p>
+    <p>The lesson grades activity arguments.</p>
 </div>
 
 
@@ -228,7 +202,7 @@
     </dt>
     <dd>
         
-<span class="param-type">bool</span>
+<span class="param-type">array</span>
 
 
     </dd>
