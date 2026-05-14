@@ -481,7 +481,43 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$this->assertSame( 0, $result, 'Graded lesson should not be counted as ungraded.' );
 	}
 
-	public function testCountUngradedQuizzes_UnpublishedLesson_NotCounted(): void {
+	public function testCountUngradedQuizzes_TrashedLesson_NotCounted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create( array( 'post_status' => 'trash' ) );
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result, 'Ungraded lesson on trashed post should not be counted.' );
+	}
+
+	public function testCountUngradedQuizzes_PrivateLesson_Counted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create( array( 'post_status' => 'private' ) );
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 1, $result, 'Ungraded lesson on private post should be counted.' );
+	}
+
+	public function testCountUngradedQuizzes_DraftLesson_NotCounted(): void {
 		/* Arrange. */
 		global $wpdb;
 
@@ -496,6 +532,6 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$result = $service->count_ungraded_quizzes();
 
 		/* Assert. */
-		$this->assertSame( 0, $result, 'Ungraded lesson on unpublished post should not be counted.' );
+		$this->assertSame( 0, $result, 'Ungraded lesson on draft post should not be counted.' );
 	}
 }

@@ -59,11 +59,11 @@ interface Progress_Aggregation_Service_Interface {
 	public function get_lesson_totals( array $lesson_ids ): array;
 
 	/**
-	 * Count ungraded quiz submissions whose lesson is published.
+	 * Count ungraded quiz submissions whose lesson is publicly available.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @return int Number of ungraded quiz submissions for published lessons.
+	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
 	 */
 	public function count_ungraded_quizzes(): int;
 }

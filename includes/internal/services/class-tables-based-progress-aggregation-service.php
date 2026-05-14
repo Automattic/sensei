@@ -161,15 +161,11 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
-	 * Count ungraded quiz submissions whose lesson is published.
-	 *
-	 * In HPPS, the 'ungraded' status lives on quiz progress rows directly. The
-	 * lesson↔quiz map is taken from `_lesson_quiz` postmeta so the published
-	 * lesson check matches the semantics of `count_statuses( type=lesson )`.
+	 * Count ungraded quiz submissions whose lesson is publicly available.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @return int Number of ungraded quiz submissions for published lessons.
+	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
 	 */
 	public function count_ungraded_quizzes(): int {
 		$wpdb  = $this->wpdb;
@@ -178,7 +174,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix; status/type values are constants.
 		$query = "SELECT COUNT(*) FROM {$table} p
 			INNER JOIN {$wpdb->postmeta} pm ON pm.meta_key = '_lesson_quiz' AND pm.meta_value = p.post_id
-			INNER JOIN {$wpdb->posts} lesson_post ON lesson_post.ID = pm.post_id AND lesson_post.post_status = 'publish'
+			INNER JOIN {$wpdb->posts} lesson_post ON lesson_post.ID = pm.post_id AND lesson_post.post_status IN ( 'publish', 'private' )
 			WHERE p.type = 'quiz' AND p.status = 'ungraded'";
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL built from literals only. Caching handled by callers.

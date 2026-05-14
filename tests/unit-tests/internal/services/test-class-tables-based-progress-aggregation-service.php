@@ -840,7 +840,59 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0, $result, 'Graded quiz should not be counted as ungraded.' );
 	}
 
-	public function testCountUngradedQuizzes_UnpublishedLesson_NotCounted(): void {
+	public function testCountUngradedQuizzes_TrashedLesson_NotCounted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array(
+				'post_status' => 'trash',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create();
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result, 'Ungraded quiz on trashed lesson should not be counted.' );
+	}
+
+	public function testCountUngradedQuizzes_PrivateLesson_Counted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array(
+				'post_status' => 'private',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create();
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 1, $result, 'Ungraded quiz on private lesson should be counted.' );
+	}
+
+	public function testCountUngradedQuizzes_DraftLesson_NotCounted(): void {
 		/* Arrange. */
 		global $wpdb;
 
@@ -863,6 +915,6 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$result = $service->count_ungraded_quizzes();
 
 		/* Assert. */
-		$this->assertSame( 0, $result, 'Ungraded quiz on unpublished lesson should not be counted.' );
+		$this->assertSame( 0, $result, 'Ungraded quiz on draft lesson should not be counted.' );
 	}
 }
