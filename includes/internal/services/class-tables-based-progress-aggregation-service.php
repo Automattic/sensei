@@ -185,7 +185,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			$query .= $wpdb->prepare( " AND lesson_post.ID IN ( $placeholders )", $args['post__in'] );
 		}
 
-		$query .= Utils::build_user_exclusion_clause( $wpdb, $args, 'p.status' );
+		$query .= $this->build_user_exclusion_clause( $args );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL built from literals only.
 		$count = (int) $wpdb->get_var( $query );
