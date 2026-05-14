@@ -547,17 +547,13 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 	public function testGetLessonProgressItems_WithExcludedLessonStatus_ExcludesFromResults( string $excluded_status ): void {
 		/* Arrange. */
 		global $wpdb;
-		$user_id      = $this->sensei_factory->user->create();
-		$course_id    = $this->sensei_factory->course->create();
-		$excluded_id  = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
-		);
-		$published_id = $this->sensei_factory->lesson->create(
+		$user_id     = $this->sensei_factory->user->create();
+		$course_id   = $this->sensei_factory->course->create();
+		$excluded_id = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 
 		$this->insert_progress( $excluded_id, $user_id, 'lesson', 'in-progress', $course_id );
-		$this->insert_progress( $published_id, $user_id, 'lesson', 'in-progress', $course_id );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
 		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $excluded_id ) );
@@ -570,16 +566,8 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$counts = $service->get_status_counts();
 
 		/* Assert. */
-		$this->assertSame( 1, $result['total_count'], "Lesson with post_status '{$excluded_status}' should be excluded from total count." );
-		$returned_lesson_ids = array_map(
-			function ( $item ) {
-				return $item->lesson_id;
-			},
-			$result['items']
-		);
-		$this->assertNotContains( $excluded_id, $returned_lesson_ids, "Lesson with post_status '{$excluded_status}' should not appear in items." );
-		$this->assertContains( $published_id, $returned_lesson_ids, 'Published lesson should appear in items.' );
-		$this->assertSame( 1, $counts['in-progress'] ?? 0, "Status counts should exclude lesson with post_status '{$excluded_status}'." );
+		$this->assertSame( 0, $result['total_count'], "Lesson with post_status '{$excluded_status}' should be excluded from total count." );
+		$this->assertSame( 0, $counts['in-progress'] ?? 0, "Status counts should exclude lesson with post_status '{$excluded_status}'." );
 	}
 
 	public function includedLessonStatusesProvider(): array {

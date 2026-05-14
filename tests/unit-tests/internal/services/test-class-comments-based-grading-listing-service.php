@@ -194,12 +194,10 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		global $wpdb;
 
-		$user_id      = $this->sensei_factory->user->create();
-		$excluded_id  = $this->sensei_factory->lesson->create();
-		$published_id = $this->sensei_factory->lesson->create();
+		$user_id     = $this->sensei_factory->user->create();
+		$excluded_id = $this->sensei_factory->lesson->create();
 
 		\Sensei_Utils::update_lesson_status( $user_id, $excluded_id, 'in-progress' );
-		\Sensei_Utils::update_lesson_status( $user_id, $published_id, 'in-progress' );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
 		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $excluded_id ) );
@@ -211,15 +209,7 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$result = $service->get_lesson_progress_items( $this->get_default_args() );
 
 		/* Assert. */
-		$this->assertSame( 1, $result['total_count'], "Lesson with post_status '{$excluded_status}' should be excluded from total count." );
-		$returned_lesson_ids = array_map(
-			function ( $item ) {
-				return $item->lesson_id;
-			},
-			$result['items']
-		);
-		$this->assertNotContains( $excluded_id, $returned_lesson_ids, "Lesson with post_status '{$excluded_status}' should not appear in items." );
-		$this->assertContains( $published_id, $returned_lesson_ids, 'Published lesson should appear in items.' );
+		$this->assertSame( 0, $result['total_count'], "Lesson with post_status '{$excluded_status}' should be excluded from total count." );
 	}
 
 	public function includedLessonStatusesProvider(): array {

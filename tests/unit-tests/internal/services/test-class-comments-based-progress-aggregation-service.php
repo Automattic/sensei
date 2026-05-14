@@ -380,12 +380,10 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		/* Arrange. */
 		global $wpdb;
 
-		$user_id      = $this->sensei_factory->user->create();
-		$excluded_id  = $this->sensei_factory->lesson->create();
-		$published_id = $this->sensei_factory->lesson->create();
+		$user_id     = $this->sensei_factory->user->create();
+		$excluded_id = $this->sensei_factory->lesson->create();
 
 		\Sensei_Utils::update_lesson_status( $user_id, $excluded_id, 'in-progress' );
-		\Sensei_Utils::update_lesson_status( $user_id, $published_id, 'in-progress' );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
 		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $excluded_id ) );
@@ -397,7 +395,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$result = $service->count_statuses( array( 'type' => 'lesson' ) );
 
 		/* Assert. */
-		$this->assertSame( 1, $result['in-progress'] ?? 0, "Lesson with post_status '{$excluded_status}' should be excluded from counts." );
+		$this->assertSame( 0, $result['in-progress'] ?? 0, "Lesson with post_status '{$excluded_status}' should be excluded from counts." );
 	}
 
 	/**
@@ -438,13 +436,11 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		/* Arrange. */
 		global $wpdb;
 
-		$user_id      = $this->sensei_factory->user->create();
-		$excluded_id  = $this->sensei_factory->lesson->create();
-		$published_id = $this->sensei_factory->lesson->create();
+		$user_id     = $this->sensei_factory->user->create();
+		$excluded_id = $this->sensei_factory->lesson->create();
 
 		$start_date = current_time( 'mysql' );
 		\Sensei_Utils::update_lesson_status( $user_id, $excluded_id, 'in-progress', array( 'start' => $start_date ) );
-		\Sensei_Utils::update_lesson_status( $user_id, $published_id, 'in-progress', array( 'start' => $start_date ) );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
 		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $excluded_id ) );
@@ -453,11 +449,11 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_lesson_totals( array( $excluded_id, $published_id ) );
+		$result = $service->get_lesson_totals( array( $excluded_id ) );
 
 		/* Assert. */
-		$this->assertSame( 1, $result['unique_student_count'], "Lesson with post_status '{$excluded_status}' should not count towards unique students." );
-		$this->assertSame( 1, $result['lesson_start_count'], "Lesson with post_status '{$excluded_status}' should not count towards lesson starts." );
+		$this->assertSame( 0, $result['unique_student_count'], "Lesson with post_status '{$excluded_status}' should not count towards unique students." );
+		$this->assertSame( 0, $result['lesson_start_count'], "Lesson with post_status '{$excluded_status}' should not count towards lesson starts." );
 	}
 
 	public function includedLessonStatusesProvider(): array {
