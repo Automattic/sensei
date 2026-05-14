@@ -469,4 +469,148 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		/* Assert. */
 		$this->assertSame( 1, $result['complete'], 'Completed lesson with quiz but no answers should be included by default.' );
 	}
+
+	public function testCountUngradedQuizzes_NoUngradedComments_ReturnsZero(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result );
+	}
+
+	public function testCountUngradedQuizzes_OneUngradedComment_ReturnsOne(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 1, $result );
+	}
+
+	public function testCountUngradedQuizzes_NonUngradedStatuses_NotCounted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'graded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result, 'Graded lesson should not be counted as ungraded.' );
+	}
+
+	public function testCountUngradedQuizzes_TrashedLesson_NotCounted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create( array( 'post_status' => 'trash' ) );
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result, 'Ungraded lesson on trashed post should not be counted.' );
+	}
+
+	public function testCountUngradedQuizzes_PrivateLesson_Counted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create( array( 'post_status' => 'private' ) );
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 1, $result, 'Ungraded lesson on private post should be counted.' );
+	}
+
+	public function testCountUngradedQuizzes_DraftLesson_NotCounted(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create( array( 'post_status' => 'draft' ) );
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes();
+
+		/* Assert. */
+		$this->assertSame( 0, $result, 'Ungraded lesson on draft post should not be counted.' );
+	}
+
+	public function testCountUngradedQuizzes_WithPostInFilter_RestrictsToLessons(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1    = $this->sensei_factory->user->create();
+		$user2    = $this->sensei_factory->user->create();
+		$lesson_a = $this->sensei_factory->lesson->create();
+		$lesson_b = $this->sensei_factory->lesson->create();
+
+		// Lesson A: 1 ungraded. Lesson B: 2 ungraded.
+		\Sensei_Utils::update_lesson_status( $user1, $lesson_a, 'ungraded' );
+		\Sensei_Utils::update_lesson_status( $user1, $lesson_b, 'ungraded' );
+		\Sensei_Utils::update_lesson_status( $user2, $lesson_b, 'ungraded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act & Assert. */
+		$this->assertSame( 1, $service->count_ungraded_quizzes( array( 'post__in' => array( $lesson_a ) ) ), 'post__in=[A] should count only lesson A ungraded.' );
+		$this->assertSame( 2, $service->count_ungraded_quizzes( array( 'post__in' => array( $lesson_b ) ) ), 'post__in=[B] should count only lesson B ungraded.' );
+	}
+
+	public function testCountUngradedQuizzes_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$regular_user = $this->sensei_factory->user->create();
+		$guest_user   = $this->sensei_factory->user->create(
+			array( 'user_login' => 'sensei_guest_42' )
+		);
+		$lesson_id    = $this->sensei_factory->lesson->create();
+
+		\Sensei_Utils::update_lesson_status( $regular_user, $lesson_id, 'ungraded' );
+		\Sensei_Utils::update_lesson_status( $guest_user, $lesson_id, 'ungraded' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act & Assert. */
+		$this->assertSame( 1, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'sensei_guest_' ) ) ), 'Matching prefix should exclude the guest user.' );
+		$this->assertSame( 2, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'no_match_' ) ) ), 'Non-matching prefix should leave both users counted.' );
+	}
 }

@@ -945,31 +945,37 @@ AND comments.comment_type = 'sensei_course_status'";
 			return $args;
 		}
 
-		// get the teachers courses
-		// the query is already filtered to only the teacher
-		$courses = Sensei()->course->get_all_courses();
+		$courses = get_posts(
+			array(
+				'post_type'        => 'course',
+				'post_status'      => 'any',
+				'posts_per_page'   => -1,
+				'author'           => get_current_user_id(),
+				'fields'           => 'ids',
+				'suppress_filters' => false,
+			)
+		);
 
-		if ( empty( $courses ) || ! is_array( $courses ) ) {
+		// post__in => array( 0 ) forces an IN ( 0 ) clause that matches no
+		// rows. An empty array is skipped by the SQL builder and would count
+		// all ungraded quizzes site-wide.
+		if ( empty( $courses ) ) {
+			$args['post__in'] = array( 0 );
 			return $args;
 		}
 
-		// setup the lessons quizzes  to limit the grading totals to
 		$quiz_scope = array();
-		foreach ( $courses as $course ) {
-
-			$course_lessons = Sensei()->course->course_lessons( $course->ID );
+		foreach ( $courses as $course_id ) {
+			$course_lessons = Sensei()->course->course_lessons( $course_id );
 
 			if ( ! empty( $course_lessons ) && is_array( $course_lessons ) ) {
-
 				foreach ( $course_lessons as $lesson ) {
-
 					array_push( $quiz_scope, $lesson->ID );
-
 				}
 			}
 		}
 
-		$args['post__in'] = $quiz_scope;
+		$args['post__in'] = empty( $quiz_scope ) ? array( 0 ) : $quiz_scope;
 
 		return $args;
 	}
