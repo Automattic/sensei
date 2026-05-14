@@ -950,17 +950,17 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		global $wpdb;
 
-		$user1       = $this->sensei_factory->user->create();
-		$user2       = $this->sensei_factory->user->create();
-		$course_id   = $this->sensei_factory->course->create();
-		$lesson_a    = $this->sensei_factory->lesson->create(
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_a  = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
-		$lesson_b    = $this->sensei_factory->lesson->create(
+		$lesson_b  = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
-		$quiz_a_id   = $this->sensei_factory->quiz->create();
-		$quiz_b_id   = $this->sensei_factory->quiz->create();
+		$quiz_a_id = $this->sensei_factory->quiz->create();
+		$quiz_b_id = $this->sensei_factory->quiz->create();
 		update_post_meta( $lesson_a, '_lesson_quiz', $quiz_a_id );
 		update_post_meta( $lesson_b, '_lesson_quiz', $quiz_b_id );
 
