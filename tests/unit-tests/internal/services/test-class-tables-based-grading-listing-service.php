@@ -508,22 +508,25 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Expected cached counts to also exclude the preview user.' );
 	}
 
-	public function testGetLessonProgressItems_WithTrashedLesson_ExcludesFromResults(): void {
+	/**
+	 * Verifies lessons with an "included" post_status are surfaced.
+	 *
+	 * @dataProvider includedLessonStatusesProvider
+	 */
+	public function testGetLessonProgressItems_WithIncludedLessonStatus_IncludesInResults( string $included_status ): void {
 		/* Arrange. */
 		global $wpdb;
-		$user_id      = $this->sensei_factory->user->create();
-		$course_id    = $this->sensei_factory->course->create();
-		$lesson_id    = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
-		);
-		$published_id = $this->sensei_factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
-		$this->insert_progress( $published_id, $user_id, 'lesson', 'in-progress', $course_id );
 
-		wp_trash_post( $lesson_id );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
+		$wpdb->update( $wpdb->posts, array( 'post_status' => $included_status ), array( 'ID' => $lesson_id ) );
+		clean_post_cache( $lesson_id );
 
 		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
 
@@ -532,41 +535,68 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$counts = $service->get_status_counts();
 
 		/* Assert. */
-		$this->assertSame( 1, $result['total_count'], 'Trashed lesson progress should be excluded from total count.' );
+		$this->assertSame( 1, $result['total_count'], "Lesson with post_status '{$included_status}' should be included in total count." );
+		$this->assertSame( 1, $counts['in-progress'] ?? 0, "Status counts should include lesson with post_status '{$included_status}'." );
+	}
+
+	/**
+	 * Verifies lessons with an "excluded" post_status are skipped.
+	 *
+	 * @dataProvider excludedLessonStatusesProvider
+	 */
+	public function testGetLessonProgressItems_WithExcludedLessonStatus_ExcludesFromResults( string $excluded_status ): void {
+		/* Arrange. */
+		global $wpdb;
+		$user_id      = $this->sensei_factory->user->create();
+		$course_id    = $this->sensei_factory->course->create();
+		$excluded_id  = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$published_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+
+		$this->insert_progress( $excluded_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $published_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
+		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $excluded_id ) );
+		clean_post_cache( $excluded_id );
+
+		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_progress_items( $this->get_default_args() );
+		$counts = $service->get_status_counts();
+
+		/* Assert. */
+		$this->assertSame( 1, $result['total_count'], "Lesson with post_status '{$excluded_status}' should be excluded from total count." );
 		$returned_lesson_ids = array_map(
 			function ( $item ) {
 				return $item->lesson_id;
 			},
 			$result['items']
 		);
-		$this->assertNotContains( $lesson_id, $returned_lesson_ids, 'Trashed lesson should not appear in items.' );
+		$this->assertNotContains( $excluded_id, $returned_lesson_ids, "Lesson with post_status '{$excluded_status}' should not appear in items." );
 		$this->assertContains( $published_id, $returned_lesson_ids, 'Published lesson should appear in items.' );
-		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Status counts should also exclude trashed lesson.' );
+		$this->assertSame( 1, $counts['in-progress'] ?? 0, "Status counts should exclude lesson with post_status '{$excluded_status}'." );
 	}
 
-	public function testGetLessonProgressItems_WithPrivateLesson_IncludesInResults(): void {
-		/* Arrange. */
-		global $wpdb;
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			array(
-				'post_status' => 'private',
-				'meta_input'  => array( '_lesson_course' => $course_id ),
-			)
+	public function includedLessonStatusesProvider(): array {
+		return array(
+			'publish' => array( 'publish' ),
+			'private' => array( 'private' ),
 		);
+	}
 
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
-
-		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->get_lesson_progress_items( $this->get_default_args() );
-		$counts = $service->get_status_counts();
-
-		/* Assert. */
-		$this->assertSame( 1, $result['total_count'], 'Private lesson should be included in total count.' );
-		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Status counts should include private lesson.' );
+	public function excludedLessonStatusesProvider(): array {
+		return array(
+			'draft'      => array( 'draft' ),
+			'pending'    => array( 'pending' ),
+			'future'     => array( 'future' ),
+			'auto-draft' => array( 'auto-draft' ),
+			'trash'      => array( 'trash' ),
+		);
 	}
 
 	public function testGetStatusCounts_WithStatusFilter_ReturnsAllStatuses(): void {
