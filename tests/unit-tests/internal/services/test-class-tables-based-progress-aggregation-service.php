@@ -451,7 +451,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		// Lesson is in-progress, quiz is ungraded (submitted but not yet graded).
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded', $lesson_id );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded' );
 		$this->insert_quiz_submission( $quiz_id, $user_id );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
@@ -806,7 +806,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$quiz_id   = $this->sensei_factory->quiz->create();
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded', $lesson_id );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -829,7 +829,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$quiz_id   = $this->sensei_factory->quiz->create();
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'graded', $lesson_id );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'graded' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -855,7 +855,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$quiz_id   = $this->sensei_factory->quiz->create();
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded', $lesson_id );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
