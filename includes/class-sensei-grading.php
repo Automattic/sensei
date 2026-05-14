@@ -111,7 +111,10 @@ class Sensei_Grading {
 	 */
 	public function grading_admin_menu() {
 		$indicator_html = '';
-		$ungraded_count = self::get_aggregation_service()->count_ungraded_quizzes();
+
+		/** This filter is documented in includes/class-sensei-grading.php */
+		$args           = apply_filters( 'sensei_count_statuses_args', array( 'type' => 'lesson' ) );
+		$ungraded_count = self::get_aggregation_service()->count_ungraded_quizzes( $args );
 
 		if ( $ungraded_count > 0 ) {
 			$indicator_html = ' <span class="awaiting-mod">' . esc_html( (string) $ungraded_count ) . '</span>';

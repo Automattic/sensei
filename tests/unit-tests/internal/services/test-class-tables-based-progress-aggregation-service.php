@@ -945,4 +945,66 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 0, $result, 'Ungraded quiz on draft lesson should not be counted.' );
 	}
+
+	public function testCountUngradedQuizzes_WithPostInFilter_RestrictsToLessons(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id     = $this->sensei_factory->user->create();
+		$course_id   = $this->sensei_factory->course->create();
+		$lesson_in   = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$lesson_out  = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$quiz_in_id  = $this->sensei_factory->quiz->create();
+		$quiz_out_id = $this->sensei_factory->quiz->create();
+		update_post_meta( $lesson_in, '_lesson_quiz', $quiz_in_id );
+		update_post_meta( $lesson_out, '_lesson_quiz', $quiz_out_id );
+
+		$this->insert_progress( $lesson_in, $user_id, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_in_id, $user_id, 'quiz', 'ungraded' );
+		$this->insert_progress( $lesson_out, $user_id, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_out_id, $user_id, 'quiz', 'ungraded' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes( array( 'post__in' => array( $lesson_in ) ) );
+
+		/* Assert. */
+		$this->assertSame( 1, $result, 'Only ungraded quizzes for lessons in post__in should be counted.' );
+	}
+
+	public function testCountUngradedQuizzes_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$regular_user = $this->sensei_factory->user->create();
+		$guest_user   = $this->sensei_factory->user->create(
+			array( 'user_login' => 'sensei_guest_42' )
+		);
+		$course_id    = $this->sensei_factory->course->create();
+		$lesson_id    = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$quiz_id      = $this->sensei_factory->quiz->create();
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		$this->insert_progress( $lesson_id, $regular_user, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_id, $regular_user, 'quiz', 'ungraded' );
+		$this->insert_progress( $lesson_id, $guest_user, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_id, $guest_user, 'quiz', 'ungraded' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_ungraded_quizzes(
+			array( 'exclude_user_login_prefixes' => array( 'sensei_guest_' ) )
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result, 'Guest user ungraded quiz should be excluded.' );
+	}
 }
