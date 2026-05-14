@@ -632,25 +632,12 @@ class Sensei_Grading {
 	/**
 	 * Count ungraded quiz submissions for published lessons.
 	 *
-	 * Cheap query used by the Grading admin-menu badge, which only needs the
-	 * ungraded total rather than the full per-status breakdown.
-	 *
 	 * @since $$next-version$$
 	 *
 	 * @return int Number of ungraded quiz submissions for published lessons.
 	 */
 	public function count_ungraded_quizzes(): int {
-		$cache_key = 'sensei-ungraded-quizzes';
-		$cached    = wp_cache_get( $cache_key, 'counts' );
-
-		if ( false !== $cached ) {
-			return (int) $cached;
-		}
-
-		$count = self::get_aggregation_service()->count_ungraded_quizzes();
-		wp_cache_set( $cache_key, $count, 'counts' );
-
-		return $count;
+		return self::get_aggregation_service()->count_ungraded_quizzes();
 	}
 
 	/**
