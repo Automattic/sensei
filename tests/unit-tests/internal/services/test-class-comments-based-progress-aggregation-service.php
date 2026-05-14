@@ -539,20 +539,21 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		/* Arrange. */
 		global $wpdb;
 
-		$user_id    = $this->sensei_factory->user->create();
-		$lesson_in  = $this->sensei_factory->lesson->create();
-		$lesson_out = $this->sensei_factory->lesson->create();
+		$user1    = $this->sensei_factory->user->create();
+		$user2    = $this->sensei_factory->user->create();
+		$lesson_a = $this->sensei_factory->lesson->create();
+		$lesson_b = $this->sensei_factory->lesson->create();
 
-		\Sensei_Utils::update_lesson_status( $user_id, $lesson_in, 'ungraded' );
-		\Sensei_Utils::update_lesson_status( $user_id, $lesson_out, 'ungraded' );
+		// Lesson A: 1 ungraded. Lesson B: 2 ungraded.
+		\Sensei_Utils::update_lesson_status( $user1, $lesson_a, 'ungraded' );
+		\Sensei_Utils::update_lesson_status( $user1, $lesson_b, 'ungraded' );
+		\Sensei_Utils::update_lesson_status( $user2, $lesson_b, 'ungraded' );
 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
 
-		/* Act. */
-		$result = $service->count_ungraded_quizzes( array( 'post__in' => array( $lesson_in ) ) );
-
-		/* Assert. */
-		$this->assertSame( 1, $result, 'Only ungraded lessons in post__in should be counted.' );
+		/* Act & Assert. */
+		$this->assertSame( 1, $service->count_ungraded_quizzes( array( 'post__in' => array( $lesson_a ) ) ), 'post__in=[A] should count only lesson A ungraded.' );
+		$this->assertSame( 2, $service->count_ungraded_quizzes( array( 'post__in' => array( $lesson_b ) ) ), 'post__in=[B] should count only lesson B ungraded.' );
 	}
 
 	public function testCountUngradedQuizzes_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
@@ -570,12 +571,8 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
 
-		/* Act. */
-		$result = $service->count_ungraded_quizzes(
-			array( 'exclude_user_login_prefixes' => array( 'sensei_guest_' ) )
-		);
-
-		/* Assert. */
-		$this->assertSame( 1, $result, 'Guest user ungraded lesson should be excluded.' );
+		/* Act & Assert. */
+		$this->assertSame( 1, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'sensei_guest_' ) ) ), 'Matching prefix should exclude the guest user.' );
+		$this->assertSame( 2, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'no_match_' ) ) ), 'Non-matching prefix should leave both users counted.' );
 	}
 }

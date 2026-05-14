@@ -950,31 +950,33 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		global $wpdb;
 
-		$user_id     = $this->sensei_factory->user->create();
+		$user1       = $this->sensei_factory->user->create();
+		$user2       = $this->sensei_factory->user->create();
 		$course_id   = $this->sensei_factory->course->create();
-		$lesson_in   = $this->sensei_factory->lesson->create(
+		$lesson_a    = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
-		$lesson_out  = $this->sensei_factory->lesson->create(
+		$lesson_b    = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
-		$quiz_in_id  = $this->sensei_factory->quiz->create();
-		$quiz_out_id = $this->sensei_factory->quiz->create();
-		update_post_meta( $lesson_in, '_lesson_quiz', $quiz_in_id );
-		update_post_meta( $lesson_out, '_lesson_quiz', $quiz_out_id );
+		$quiz_a_id   = $this->sensei_factory->quiz->create();
+		$quiz_b_id   = $this->sensei_factory->quiz->create();
+		update_post_meta( $lesson_a, '_lesson_quiz', $quiz_a_id );
+		update_post_meta( $lesson_b, '_lesson_quiz', $quiz_b_id );
 
-		$this->insert_progress( $lesson_in, $user_id, 'lesson', 'in-progress' );
-		$this->insert_progress( $quiz_in_id, $user_id, 'quiz', 'ungraded' );
-		$this->insert_progress( $lesson_out, $user_id, 'lesson', 'in-progress' );
-		$this->insert_progress( $quiz_out_id, $user_id, 'quiz', 'ungraded' );
+		// Lesson A: 1 ungraded quiz. Lesson B: 2 ungraded quizzes.
+		$this->insert_progress( $lesson_a, $user1, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_a_id, $user1, 'quiz', 'ungraded' );
+		$this->insert_progress( $lesson_b, $user1, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_b_id, $user1, 'quiz', 'ungraded' );
+		$this->insert_progress( $lesson_b, $user2, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_b_id, $user2, 'quiz', 'ungraded' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
-		/* Act. */
-		$result = $service->count_ungraded_quizzes( array( 'post__in' => array( $lesson_in ) ) );
-
-		/* Assert. */
-		$this->assertSame( 1, $result, 'Only ungraded quizzes for lessons in post__in should be counted.' );
+		/* Act & Assert. */
+		$this->assertSame( 1, $service->count_ungraded_quizzes( array( 'post__in' => array( $lesson_a ) ) ), 'post__in=[A] should count only lesson A ungraded quizzes.' );
+		$this->assertSame( 2, $service->count_ungraded_quizzes( array( 'post__in' => array( $lesson_b ) ) ), 'post__in=[B] should count only lesson B ungraded quizzes.' );
 	}
 
 	public function testCountUngradedQuizzes_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
@@ -999,12 +1001,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
-		/* Act. */
-		$result = $service->count_ungraded_quizzes(
-			array( 'exclude_user_login_prefixes' => array( 'sensei_guest_' ) )
-		);
-
-		/* Assert. */
-		$this->assertSame( 1, $result, 'Guest user ungraded quiz should be excluded.' );
+		/* Act & Assert. */
+		$this->assertSame( 1, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'sensei_guest_' ) ) ), 'Matching prefix should exclude the guest user.' );
+		$this->assertSame( 2, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'no_match_' ) ) ), 'Non-matching prefix should leave both users counted.' );
 	}
 }
