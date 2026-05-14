@@ -803,12 +803,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$lesson_id = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
-		$quiz_id   = $this->sensei_factory->quiz->create(
-			array(
-				'post_parent' => $lesson_id,
-				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
-			)
-		);
+		$quiz_id   = $this->sensei_factory->quiz->create();
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
 		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded', $lesson_id );
@@ -831,12 +826,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$lesson_id = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
-		$quiz_id   = $this->sensei_factory->quiz->create(
-			array(
-				'post_parent' => $lesson_id,
-				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
-			)
-		);
+		$quiz_id   = $this->sensei_factory->quiz->create();
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
 		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'graded', $lesson_id );
@@ -862,12 +852,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 				'meta_input'  => array( '_lesson_course' => $course_id ),
 			)
 		);
-		$quiz_id   = $this->sensei_factory->quiz->create(
-			array(
-				'post_parent' => $lesson_id,
-				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
-			)
-		);
+		$quiz_id   = $this->sensei_factory->quiz->create();
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
 		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded', $lesson_id );
