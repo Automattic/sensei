@@ -184,6 +184,29 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertContains( $published_id, $returned_lesson_ids, 'Published lesson should appear in items.' );
 	}
 
+	public function testGetLessonProgressItems_WithPrivateLesson_IncludesInResults(): void {
+		/* Arrange. */
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create( array( 'post_status' => 'private' ) );
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
+
+		$service = new Comments_Based_Grading_Listing_Service();
+
+		/* Act. */
+		$result = $service->get_lesson_progress_items( $this->get_default_args() );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['total_count'], 'Private lesson should be included in total count.' );
+		$returned_lesson_ids = array_map(
+			function ( $item ) {
+				return $item->lesson_id;
+			},
+			$result['items']
+		);
+		$this->assertContains( $lesson_id, $returned_lesson_ids, 'Private lesson should appear in items.' );
+	}
+
 	public function testGetLessonProgressItems_WithOffsetBeyondTotal_CorrectsPagination(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();

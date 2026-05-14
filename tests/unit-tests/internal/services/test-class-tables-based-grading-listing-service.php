@@ -544,6 +544,31 @@ class Tables_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Status counts should also exclude trashed lesson.' );
 	}
 
+	public function testGetLessonProgressItems_WithPrivateLesson_IncludesInResults(): void {
+		/* Arrange. */
+		global $wpdb;
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array(
+				'post_status' => 'private',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		$service = new Tables_Based_Grading_Listing_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_progress_items( $this->get_default_args() );
+		$counts = $service->get_status_counts();
+
+		/* Assert. */
+		$this->assertSame( 1, $result['total_count'], 'Private lesson should be included in total count.' );
+		$this->assertSame( 1, $counts['in-progress'] ?? 0, 'Status counts should include private lesson.' );
+	}
+
 	public function testGetStatusCounts_WithStatusFilter_ReturnsAllStatuses(): void {
 		/* Arrange. */
 		global $wpdb;

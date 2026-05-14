@@ -492,6 +492,55 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 1, $result['in-progress'] ?? 0, 'Trashed lesson progress should be excluded from counts.' );
 	}
 
+	public function testCountStatuses_WithPrivateLesson_IncludesInCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array(
+				'post_status' => 'private',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses( array( 'type' => 'lesson' ) );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['in-progress'] ?? 0, 'Private lesson progress should be included in counts.' );
+	}
+
+	public function testGetLessonTotals_WithPrivateLesson_IncludesInTotals(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array(
+				'post_status' => 'private',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( array( $lesson_id ) );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['unique_student_count'], 'Private lesson progress should count towards unique students.' );
+		$this->assertSame( 1, $result['lesson_start_count'], 'Private lesson progress should count towards lesson starts.' );
+	}
+
 	public function testGetLessonTotals_WithTrashedLesson_ExcludesFromTotals(): void {
 		/* Arrange. */
 		global $wpdb;
