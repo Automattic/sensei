@@ -161,6 +161,40 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
+	 * Count ungraded quiz submissions whose lesson is publicly available.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Optional restrictions; see interface.
+	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
+	 */
+	public function count_ungraded_quizzes( array $args = array() ): int {
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix; status/type values are constants.
+		$query = "SELECT COUNT(*) FROM {$table} p
+			INNER JOIN {$wpdb->postmeta} pm ON pm.meta_key = '_lesson_quiz' AND pm.meta_value = p.post_id
+			INNER JOIN {$wpdb->posts} lesson_post ON lesson_post.ID = pm.post_id AND lesson_post.post_status IN ( 'publish', 'private' )
+			INNER JOIN {$table} lp ON lp.post_id = pm.post_id AND lp.user_id = p.user_id AND lp.type = 'lesson'
+			WHERE p.type = 'quiz' AND p.status = 'ungraded'";
+
+		if ( ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
+			$query .= $wpdb->prepare( " AND lesson_post.ID IN ( $placeholders )", $args['post__in'] );
+		}
+
+		$query .= $this->build_user_exclusion_clause( $args );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL built from literals only.
+		$count = (int) $wpdb->get_var( $query );
+		Utils::log_query_error( $wpdb, 'Tables-based ungraded quizzes count' );
+
+		return $count;
+	}
+
+	/**
 	 * Count lesson statuses using quiz status when a quiz exists.
 	 *
 	 * In HPPS, lesson progress rows only store 'in-progress' and 'complete',

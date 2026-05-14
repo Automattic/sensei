@@ -57,4 +57,19 @@ interface Progress_Aggregation_Service_Interface {
 	 * }
 	 */
 	public function get_lesson_totals( array $lesson_ids ): array;
+
+	/**
+	 * Count ungraded quiz submissions whose lesson is publicly available.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args {
+	 *     Optional restrictions.
+	 *
+	 *     @type int[]    $post__in                     Restrict to these lesson IDs.
+	 *     @type string[] $exclude_user_login_prefixes  Exclude users whose login starts with any of these prefixes.
+	 * }
+	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
+	 */
+	public function count_ungraded_quizzes( array $args = array() ): int;
 }
