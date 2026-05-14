@@ -61,10 +61,6 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count ungraded quiz submissions whose lesson is published.
 	 *
-	 * Dedicated lightweight query for the Grading admin-menu badge, which only
-	 * needs the ungraded count. Avoids the full per-status aggregation that
-	 * the badge previously triggered on every admin pageload.
-	 *
 	 * @since $$next-version$$
 	 *
 	 * @return int Number of ungraded quiz submissions for published lessons.
