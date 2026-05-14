@@ -111,7 +111,7 @@ class Sensei_Grading {
 	 */
 	public function grading_admin_menu() {
 		$indicator_html = '';
-		$ungraded_count = $this->count_ungraded_quizzes();
+		$ungraded_count = self::get_aggregation_service()->count_ungraded_quizzes();
 
 		if ( $ungraded_count > 0 ) {
 			$indicator_html = ' <span class="awaiting-mod">' . esc_html( (string) $ungraded_count ) . '</span>';
@@ -627,17 +627,6 @@ class Sensei_Grading {
 		 * @return {array} Filtered counts.
 		 */
 		return apply_filters( 'sensei_count_statuses', $counts, $comment_type );
-	}
-
-	/**
-	 * Count ungraded quiz submissions for published lessons.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @return int Number of ungraded quiz submissions for published lessons.
-	 */
-	public function count_ungraded_quizzes(): int {
-		return self::get_aggregation_service()->count_ungraded_quizzes();
 	}
 
 	/**
