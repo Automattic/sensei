@@ -1,4 +1,4 @@
 Significance: patch
-Type: tweak
+Type: changed
 
 Speed up admin pages by replacing the Grading menu badge query with a cheaper dedicated ungraded count.
