@@ -149,7 +149,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		$query  = 'SELECT p.post_id, p.user_id, p.updated_at, COALESCE( q.status, p.status ) AS effective_status, qs.final_grade';
 		$query .= " FROM {$table} p";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
-		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status = 'publish'";
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )";
 		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";
@@ -184,7 +184,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		$query  = 'SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT(*) AS total';
 		$query .= " FROM {$table} p";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
-		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status = 'publish'";
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )";
 		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";

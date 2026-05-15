@@ -73,7 +73,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$comment_type = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
-		$query = $wpdb->prepare( "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status = 'publish' WHERE comment_type = %s", $comment_type );
+		$query = $wpdb->prepare( "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status IN ( 'publish', 'private' ) WHERE comment_type = %s", $comment_type );
 
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
@@ -131,7 +131,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			, SUM(IF(lesson_students.comment_approved IN ($has_completion), 1, 0)) days_to_complete_count
 			, SUM(IF(lesson_students.comment_approved IN ($has_completion), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
 			FROM {$wpdb->comments} lesson_students
-			INNER JOIN {$wpdb->posts} post ON post.ID = lesson_students.comment_post_ID AND post.post_status = 'publish'
+			INNER JOIN {$wpdb->posts} post ON post.ID = lesson_students.comment_post_ID AND post.post_status IN ( 'publish', 'private' )
 			LEFT JOIN {$wpdb->commentmeta} lesson_start ON lesson_start.comment_id = lesson_students.comment_id
 			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( $placeholders )",
 			array_merge( [ '%Y-%m-%d %H:%i:%s' ], $lesson_ids )
