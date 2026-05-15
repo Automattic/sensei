@@ -73,7 +73,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$comment_type = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
-		$query = $wpdb->prepare( "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status = 'publish' WHERE comment_type = %s", $comment_type );
+		$query = $wpdb->prepare( "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status IN ( 'publish', 'private' ) WHERE comment_type = %s", $comment_type );
 
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
@@ -131,7 +131,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			, SUM(IF(lesson_students.comment_approved IN ($has_completion), 1, 0)) days_to_complete_count
 			, SUM(IF(lesson_students.comment_approved IN ($has_completion), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
 			FROM {$wpdb->comments} lesson_students
-			INNER JOIN {$wpdb->posts} post ON post.ID = lesson_students.comment_post_ID AND post.post_status = 'publish'
+			INNER JOIN {$wpdb->posts} post ON post.ID = lesson_students.comment_post_ID AND post.post_status IN ( 'publish', 'private' )
 			LEFT JOIN {$wpdb->commentmeta} lesson_start ON lesson_start.comment_id = lesson_students.comment_id
 			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( $placeholders )",
 			array_merge( [ '%Y-%m-%d %H:%i:%s' ], $lesson_ids )
@@ -153,6 +153,37 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			'days_to_complete_count' => (int) $row->days_to_complete_count,
 			'days_to_complete_sum'   => (int) $row->days_to_complete_sum,
 		];
+	}
+
+	/**
+	 * Count ungraded quiz submissions whose lesson is publicly available.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Optional restrictions; see interface.
+	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
+	 */
+	public function count_ungraded_quizzes( array $args = array() ): int {
+		$wpdb = $this->wpdb;
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb. comment_type/comment_approved values are constants.
+		$query = "SELECT COUNT(*) FROM {$wpdb->comments}
+			INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status IN ( 'publish', 'private' )
+			WHERE {$wpdb->comments}.comment_type = 'sensei_lesson_status' AND {$wpdb->comments}.comment_approved = 'ungraded'";
+
+		if ( ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
+			$query .= $wpdb->prepare( " AND {$wpdb->comments}.comment_post_ID IN ( $placeholders )", $args['post__in'] );
+		}
+
+		$query .= $this->build_user_exclusion_clause( $args );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL built from literals only.
+		$count = (int) $wpdb->get_var( $query );
+		Utils::log_query_error( $wpdb, 'Comments-based ungraded quizzes count' );
+
+		return $count;
 	}
 
 	/**

@@ -111,10 +111,13 @@ class Sensei_Grading {
 	 */
 	public function grading_admin_menu() {
 		$indicator_html = '';
-		$grading_counts = Sensei()->grading->count_statuses( array( 'type' => 'lesson' ) );
 
-		if ( intval( $grading_counts['ungraded'] ) > 0 ) {
-			$indicator_html = ' <span class="awaiting-mod">' . esc_html( $grading_counts['ungraded'] ) . '</span>';
+		/** This filter is documented in includes/class-sensei-grading.php */
+		$args           = apply_filters( 'sensei_count_statuses_args', array( 'type' => 'lesson' ) );
+		$ungraded_count = self::get_aggregation_service()->count_ungraded_quizzes( $args );
+
+		if ( $ungraded_count > 0 ) {
+			$indicator_html = ' <span class="awaiting-mod">' . esc_html( (string) $ungraded_count ) . '</span>';
 		}
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
@@ -743,7 +746,7 @@ class Sensei_Grading {
 				'order'            => 'ASC',
 				'meta_key'         => '_lesson_course',
 				'meta_value'       => $course_id,
-				'post_status'      => 'publish',
+				'post_status'      => array( 'publish', 'private' ),
 				'suppress_filters' => 0,
 				'fields'           => 'ids',
 			);
