@@ -369,6 +369,66 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Verifies lessons with an "included" post_status are surfaced.
+	 *
+	 * @dataProvider includedLessonStatusesProvider
+	 */
+	public function testCountStatuses_WithIncludedLessonStatus_IncludesInCounts( string $included_status ): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
+		$wpdb->update( $wpdb->posts, array( 'post_status' => $included_status ), array( 'ID' => $lesson_id ) );
+		clean_post_cache( $lesson_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses( array( 'type' => 'lesson' ) );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['in-progress'] ?? 0, "Lesson with post_status '{$included_status}' should be included in counts." );
+	}
+
+	/**
+	 * Verifies lessons with an "excluded" post_status are skipped.
+	 *
+	 * @dataProvider excludedLessonStatusesProvider
+	 */
+	public function testCountStatuses_WithExcludedLessonStatus_ExcludesFromCounts( string $excluded_status ): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id     = $this->sensei_factory->user->create();
+		$course_id   = $this->sensei_factory->course->create();
+		$excluded_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+
+		$this->insert_progress( $excluded_id, $user_id, 'lesson', 'in-progress', $course_id );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
+		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $excluded_id ) );
+		clean_post_cache( $excluded_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses( array( 'type' => 'lesson' ) );
+
+		/* Assert. */
+		$this->assertSame( 0, $result['in-progress'] ?? 0, "Lesson with post_status '{$excluded_status}' should be excluded from counts." );
+	}
+
+	/**
 	 * Verifies totals across all aggregate fields for lessons with an "included" post_status.
 	 *
 	 * @dataProvider includedLessonStatusesProvider
@@ -474,104 +534,6 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0, $result['days_to_complete_sum'], 'Ungraded quiz should not contribute to days to complete.' );
 	}
 
-	/**
-	 * Verifies lessons with an "included" post_status are surfaced.
-	 *
-	 * @dataProvider includedLessonStatusesProvider
-	 */
-	public function testCountStatuses_WithIncludedLessonStatus_IncludesInCounts( string $included_status ): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
-		);
-
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
-		$wpdb->update( $wpdb->posts, array( 'post_status' => $included_status ), array( 'ID' => $lesson_id ) );
-		clean_post_cache( $lesson_id );
-
-		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->count_statuses( array( 'type' => 'lesson' ) );
-
-		/* Assert. */
-		$this->assertSame( 1, $result['in-progress'] ?? 0, "Lesson with post_status '{$included_status}' should be included in counts." );
-	}
-
-	/**
-	 * Verifies lessons with an "excluded" post_status are skipped.
-	 *
-	 * @dataProvider excludedLessonStatusesProvider
-	 */
-	public function testCountStatuses_WithExcludedLessonStatus_ExcludesFromCounts( string $excluded_status ): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$user_id     = $this->sensei_factory->user->create();
-		$course_id   = $this->sensei_factory->course->create();
-		$excluded_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
-		);
-
-		$this->insert_progress( $excluded_id, $user_id, 'lesson', 'in-progress', $course_id );
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
-		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $excluded_id ) );
-		clean_post_cache( $excluded_id );
-
-		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->count_statuses( array( 'type' => 'lesson' ) );
-
-		/* Assert. */
-		$this->assertSame( 0, $result['in-progress'] ?? 0, "Lesson with post_status '{$excluded_status}' should be excluded from counts." );
-	}
-
-	/**
-	 * Verifies lessons with an "excluded" post_status are skipped from totals.
-	 *
-	 * @dataProvider excludedLessonStatusesProvider
-	 */
-	public function testGetLessonTotals_WithExcludedLessonStatus_ReturnsZeros( string $excluded_status ): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$user1     = $this->sensei_factory->user->create();
-		$user2     = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
-		);
-
-		$started_at   = '2024-01-01 10:00:00';
-		$completed_at = '2024-01-03 10:00:00';
-		$this->insert_progress_with_dates( $lesson_id, $user1, 'lesson', 'complete', $course_id, $started_at, $completed_at );
-		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
-		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $lesson_id ) );
-		clean_post_cache( $lesson_id );
-
-		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->get_lesson_totals( array( $lesson_id ) );
-
-		/* Assert. */
-		$this->assertSame( 0, $result['unique_student_count'], "Lesson with post_status '{$excluded_status}' should not count towards unique students." );
-		$this->assertSame( 0, $result['lesson_start_count'], "Lesson with post_status '{$excluded_status}' should not count towards lesson starts." );
-		$this->assertSame( 0, $result['lesson_completed_count'], "Lesson with post_status '{$excluded_status}' should not count towards completions." );
-		$this->assertSame( 0, $result['days_to_complete_count'], "Lesson with post_status '{$excluded_status}' should not have a completion date." );
-		$this->assertSame( 0, $result['days_to_complete_sum'], "Lesson with post_status '{$excluded_status}' should not contribute to days to complete." );
-	}
-
 	public function includedLessonStatusesProvider(): array {
 		return array(
 			'publish' => array( 'publish' ),
@@ -671,6 +633,44 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0, $result['lesson_completed_count'] );
 		$this->assertSame( 0, $result['days_to_complete_count'] );
 		$this->assertSame( 0, $result['days_to_complete_sum'] );
+	}
+
+	/**
+	 * Verifies lessons with an "excluded" post_status are skipped from totals.
+	 *
+	 * @dataProvider excludedLessonStatusesProvider
+	 */
+	public function testGetLessonTotals_WithExcludedLessonStatus_ReturnsZeros( string $excluded_status ): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+
+		$started_at   = '2024-01-01 10:00:00';
+		$completed_at = '2024-01-03 10:00:00';
+		$this->insert_progress_with_dates( $lesson_id, $user1, 'lesson', 'complete', $course_id, $started_at, $completed_at );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
+		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $lesson_id ) );
+		clean_post_cache( $lesson_id );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_totals( array( $lesson_id ) );
+
+		/* Assert. */
+		$this->assertSame( 0, $result['unique_student_count'], "Lesson with post_status '{$excluded_status}' should not count towards unique students." );
+		$this->assertSame( 0, $result['lesson_start_count'], "Lesson with post_status '{$excluded_status}' should not count towards lesson starts." );
+		$this->assertSame( 0, $result['lesson_completed_count'], "Lesson with post_status '{$excluded_status}' should not count towards completions." );
+		$this->assertSame( 0, $result['days_to_complete_count'], "Lesson with post_status '{$excluded_status}' should not have a completion date." );
+		$this->assertSame( 0, $result['days_to_complete_sum'], "Lesson with post_status '{$excluded_status}' should not contribute to days to complete." );
 	}
 
 	public function testGetLessonTotals_WithUtcDatesNearMidnight_ConvertsToLocalTimeBeforeDatediff(): void {
