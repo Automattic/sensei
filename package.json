@@ -100,11 +100,14 @@
     "wp-hookdoc": "0.2.0"
   },
   "overrides": {
+    "basic-ftp": "5.2.1",
+    "form-data": "4.0.4",
     "prettier": "npm:wp-prettier@3.0.3",
     "react-autosize-textarea": {
       "react": "18.3.1",
       "react-dom": "18.3.1"
-    }
+    },
+    "simple-git": "3.36.0"
   },
   "scripts": {
     "archive": "composer archive --file=$npm_package_name --format=zip",
