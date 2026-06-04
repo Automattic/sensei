@@ -94,7 +94,7 @@ jobs:
                   NODE_OPTIONS: "--max_old_space_size=4096"
               run: npm run test-js
             - name: Slack Notification on Failure
-              uses: rtCamp/action-slack-notify@v2
+              uses: rtCamp/action-slack-notify@e31e87e03dd19038e411e38ae27cbad084a90661 # v2.3.3
               if: ${{ failure() && github.event_name == 'push' }}
               env:
                 SLACK_CHANNEL: ${{ secrets.SLACK_SENSEI_CHANNEL }}
