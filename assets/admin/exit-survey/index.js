@@ -11,6 +11,18 @@ import { ExitSurveyForm } from './form';
 
 ( function senseiExitSurvey() {
 	/**
+	 * Id of the container the survey is mounted into.
+	 */
+	const CONTAINER_ID = 'sensei-exit-survey-modal';
+
+	/**
+	 * The single React root for the survey, reused across opens.
+	 *
+	 * @type {?Object}
+	 */
+	let surveyRoot = null;
+
+	/**
 	 * Add exit survey modal when clicking the Deactivate link for Sensei LMS plugin.
 	 */
 	const addExitSurveyOnDeactivate = () => {
@@ -61,16 +73,21 @@ import { ExitSurveyForm } from './form';
 		 *
 		 */
 		open = () => {
-			let container = document.querySelector( '#sensei-exit-survey' );
+			let container = document.getElementById( CONTAINER_ID );
 			if ( ! container ) {
 				container = document.createElement( 'div' );
-				container.setAttribute( 'id', 'sensei-exit-survey-modal' );
+				container.setAttribute( 'id', CONTAINER_ID );
 				document.body.appendChild( container );
 			}
 
 			this.container = container;
 
-			this.root = createRoot( container );
+			// Reuse a single root so repeated opens don't mount twice
+			// into the same container.
+			if ( ! surveyRoot ) {
+				surveyRoot = createRoot( container );
+			}
+			this.root = surveyRoot;
 			this.root.render(
 				<ExitSurveyForm
 					submit={ this.submitExitSurvey }
@@ -116,6 +133,7 @@ import { ExitSurveyForm } from './form';
 		 */
 		closeAndDeactivate = () => {
 			this.root?.unmount();
+			surveyRoot = null;
 			this.container.remove();
 			window.location = this.href;
 		};
