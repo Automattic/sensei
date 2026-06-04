@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { render } from '@wordpress/element';
+import { createRoot } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -45,6 +45,7 @@ import { ExitSurveyForm } from './form';
 	class ExitSurveyModal {
 		href;
 		container;
+		root;
 
 		/**
 		 * Exit survey constructor.
@@ -69,12 +70,12 @@ import { ExitSurveyForm } from './form';
 
 			this.container = container;
 
-			render(
+			this.root = createRoot( container );
+			this.root.render(
 				<ExitSurveyForm
 					submit={ this.submitExitSurvey }
 					skip={ this.closeAndDeactivate }
-				/>,
-				container
+				/>
 			);
 		};
 
@@ -114,6 +115,7 @@ import { ExitSurveyForm } from './form';
 		 * Close survey modal and continue plugin deactivation.
 		 */
 		closeAndDeactivate = () => {
+			this.root?.unmount();
 			this.container.remove();
 			window.location = this.href;
 		};
