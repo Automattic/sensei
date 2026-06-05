@@ -17,7 +17,7 @@ jobs:
         name: Changelogger used
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6.0.2
             - uses: ./.github/actions/deepen-to-merge-base
             - uses: ./.github/actions/install-php
             - name: Check change files are touched for touched projects
