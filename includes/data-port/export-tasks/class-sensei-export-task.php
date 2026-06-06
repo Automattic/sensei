@@ -12,9 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Export content to a CSV file for the given type.
  */
-abstract class Sensei_Export_Task
-	extends Sensei_Data_Port_Task
-	implements Sensei_Data_Port_Task_Interface {
+abstract class Sensei_Export_Task extends Sensei_Data_Port_Task implements Sensei_Data_Port_Task_Interface {
 
 	const STATE_COMPLETED_POSTS = 'completed-posts';
 	const STATE_ABORTED         = 'aborted';
@@ -86,20 +84,27 @@ abstract class Sensei_Export_Task
 			$this->is_aborted = $task_state[ self::STATE_ABORTED ];
 		}
 
-		$this->query = new WP_Query(
-			[
-				'post_type'      => $type,
-				'posts_per_page' => $this->batch_size,
-				'offset'         => $this->completed_posts,
-				'post_status'    => 'any',
-				'orderby'        => 'ID',
-			]
-		);
+		$query_args = [
+			'post_type'      => $type,
+			'posts_per_page' => $this->batch_size,
+			'offset'         => $this->completed_posts,
+			'post_status'    => 'any',
+			'orderby'        => 'ID',
+		];
+
+		$job = $this->get_job();
+		if ( $job instanceof Sensei_Export_Job ) {
+			$selection = $job->get_selection( $type );
+			if ( ! empty( $selection ) ) {
+				$query_args['post__in'] = $selection;
+			}
+		}
+
+		$this->query = new WP_Query( $query_args );
 
 		$this->total_posts = $this->query->found_posts > 0 ? $this->query->found_posts : $this->completed_posts;
 
 		$this->file = get_attached_file( $files[ $type ] );
-
 	}
 
 	/**
@@ -144,7 +149,7 @@ abstract class Sensei_Export_Task
 			$serialized_posts = $this->get_serialized_post( $post );
 
 			$output_file->fputcsv( $serialized_posts );
-			$this->completed_posts++;
+			++$this->completed_posts;
 		}
 		$output_file = null;
 
@@ -168,7 +173,7 @@ abstract class Sensei_Export_Task
 		$column_keys = array_keys( $this->get_type_schema()->get_schema() );
 
 		return array_map(
-			function( $column ) use ( $columns ) {
+			function ( $column ) use ( $columns ) {
 				if ( ! isset( $columns[ $column ] ) ) {
 					return '';
 				}
@@ -208,7 +213,7 @@ abstract class Sensei_Export_Task
 	/**
 	 * Collect exported fields for the post.
 	 *
-	 * @param WP_Post $post
+	 * @param WP_Post $post The post being exported.
 	 *
 	 * @return array The columns data per key.
 	 */
@@ -252,7 +257,7 @@ abstract class Sensei_Export_Task
 	/**
 	 * Attach the file to the job.
 	 *
-	 * @param string $tmp_file
+	 * @param string $tmp_file Path to the temporary CSV file.
 	 */
 	public function add_file_to_job( $tmp_file ) {
 		$type     = $this->get_content_type();

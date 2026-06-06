@@ -59,8 +59,8 @@ class Migration_Job {
 	 * @since 4.17.0
 	 */
 	public function run(): void {
-		$rows_inserted     = $this->migration->run( false );
-		$this->is_complete = 0 === $rows_inserted;
+		$comments_processed = $this->migration->run( false );
+		$this->is_complete  = 0 === $comments_processed;
 	}
 
 	/**
@@ -101,5 +101,16 @@ class Migration_Job {
 	public function get_name(): string {
 		return $this->name;
 	}
-}
 
+	/**
+	 * Set the time budget for the migration.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param float $seconds Maximum seconds this run should take.
+	 * @return void
+	 */
+	public function set_time_budget( float $seconds ): void {
+		$this->migration->set_time_budget( $seconds );
+	}
+}

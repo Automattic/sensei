@@ -760,6 +760,8 @@ class Sensei_Main {
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
+		Sensei_Abilities::init();
+
 		// Student progress repositories.
 		$tables_feature_enabled = isset( $this->settings->settings['experimental_progress_storage'] )
 			&& ( true === $this->settings->settings['experimental_progress_storage'] );
@@ -845,10 +847,19 @@ class Sensei_Main {
 		 * @return {bool} Whether to enable feature.
 		 */
 		if ( apply_filters( 'sensei_email_mailpoet_feature', true ) ) {
-			if ( class_exists( \MailPoet\API\API::class ) ) {
-				$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
-				new Sensei\Emails\MailPoet\Main( $mailpoet_api );
-			}
+			add_action( 'mailpoet_initialized', [ $this, 'initialize_mailpoet' ] );
+		}
+	}
+
+	/**
+	 * Initialize MailPoet integration.
+	 *
+	 * @since 4.25.2
+	 */
+	public function initialize_mailpoet() {
+		if ( class_exists( \MailPoet\API\API::class ) ) {
+			$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
+			new Sensei\Emails\MailPoet\Main( $mailpoet_api );
 		}
 	}
 

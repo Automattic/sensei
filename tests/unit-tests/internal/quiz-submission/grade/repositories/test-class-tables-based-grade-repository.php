@@ -24,6 +24,10 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		wp_cache_flush();
 	}
 
 	public function testCreate_ParamsGiven_ReturnsGrade(): void {
@@ -328,6 +332,197 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$this->assertSame( $expected, $this->export_grades( $grades ) );
 
 		/* Cleanup */
+		$this->cleanup( $created );
+	}
+
+	public function testGetAll_CacheEnabled_ReturnsCachedValueOnSecondCall(): void {
+		/* Arrange. */
+		$wpdb = $this->createMock( \wpdb::class );
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_col' )
+			->willReturn( [ 1 ] );
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_results' )
+			->willReturn(
+				[
+					(object) [
+						'id'          => 1,
+						'answer_id'   => 1,
+						'question_id' => 4,
+						'points'      => 5,
+						'feedback'    => 'feedback',
+						'created_at'  => '2020-01-01 00:00:00',
+						'updated_at'  => '2020-01-01 00:00:00',
+					],
+				]
+			);
+
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+
+		/* Act - second call should use cache, not DB. */
+		$grades1 = $repository->get_all( 6 );
+		$grades2 = $repository->get_all( 6 );
+
+		/* Assert. */
+		self::assertCount( 1, $grades1, 'First call should return one grade.' );
+		self::assertCount( 1, $grades2, 'Second call should return one grade from cache.' );
+	}
+
+	public function testGetAll_CacheEnabled_CachesEmptyResult(): void {
+		/* Arrange. */
+		$wpdb = $this->createMock( \wpdb::class );
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_col' )
+			->willReturn( [] );
+		$wpdb
+			->expects( $this->never() )
+			->method( 'get_results' );
+
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+
+		/* Act - first call caches empty result, second returns from cache. */
+		$result1 = $repository->get_all( 999 );
+		$result2 = $repository->get_all( 999 );
+
+		/* Assert. */
+		self::assertEmpty( $result1, 'First call should return empty.' );
+		self::assertEmpty( $result2, 'Second call should return empty from cache.' );
+	}
+
+	public function testDeleteAll_CacheEnabled_InvalidatesCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$created = $this->create_grade_with_submission_and_answer( 4, 5, 'feedback' );
+
+		$submission_repository = new Tables_Based_Submission_Repository( $wpdb );
+		$submission            = $submission_repository->get( 1, 2 );
+
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+
+		/* Warm cache. */
+		$repository->get_all( $created['submission_id'] );
+
+		/* Act. */
+		$repository->delete_all( $submission );
+		$result = $repository->get_all( $created['submission_id'] );
+
+		/* Assert. */
+		self::assertEmpty( $result );
+
+		/* Cleanup. */
+		$this->cleanup( $created );
+	}
+
+	public function testGetAll_CacheDisabled_DoesNotCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+		$repository->get_all( 999 );
+
+		/* Assert. */
+		/* Verify no cache prefix marker was created for this group. */
+		$cache_prefix = wp_cache_get( 'sensei_quiz_grades_cache_prefix', 'sensei_quiz_grades' );
+		self::assertFalse( $cache_prefix );
+	}
+
+	public function testCreate_CacheEnabled_InvalidatesGetAllCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$created    = $this->create_grade_with_submission_and_answer( 4, 5, 'feedback' );
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+
+		/* Warm cache. */
+		$grades = $repository->get_all( $created['submission_id'] );
+		self::assertCount( 1, $grades, 'Should have one grade before create.' );
+
+		/* Act — create a new grade for the same submission. */
+		$submission = $this->createMock( Tables_Based_Submission::class );
+		$submission->method( 'get_id' )->willReturn( $created['submission_id'] );
+
+		$date = ( new \DateTimeImmutable() )->format( 'Y-m-d H:i:s' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			$wpdb->prefix . 'sensei_lms_quiz_answers',
+			[
+				'submission_id' => $created['submission_id'],
+				'question_id'   => 5,
+				'value'         => 'value2',
+				'created_at'    => $date,
+				'updated_at'    => $date,
+			],
+			[ '%d', '%d', '%s', '%s', '%s' ]
+		);
+		$answer2 = new Tables_Based_Answer( $wpdb->insert_id, $created['submission_id'], 5, 'value2', new \DateTimeImmutable(), new \DateTimeImmutable() );
+
+		$repository->create( $submission, $answer2, 5, 10, 'feedback2' );
+
+		/* Assert — get_all should return fresh data including the new grade. */
+		$fresh = $repository->get_all( $created['submission_id'] );
+		self::assertCount( 2, $fresh, 'Should have two grades after create invalidates cache.' );
+
+		/* Cleanup. */
+		$this->cleanup( $created );
+	}
+
+	public function testSaveMany_CacheEnabled_InvalidatesCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$created    = $this->create_grade_with_submission_and_answer( 4, 5, 'feedback' );
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+
+		/* Warm cache. */
+		$grades = $repository->get_all( $created['submission_id'] );
+		self::assertCount( 1, $grades, 'Should have one grade before save.' );
+		self::assertSame( 5, $grades[0]->get_points(), 'Points should be 5 before save.' );
+
+		/* Act — save_many with updated points. */
+		$submission = $this->createMock( Tables_Based_Submission::class );
+		$submission->method( 'get_id' )->willReturn( $created['submission_id'] );
+
+		$updated_grade = new Tables_Based_Grade(
+			$created['grade_id'],
+			$created['answer_id'],
+			4,
+			10,
+			'updated feedback',
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable()
+		);
+		$repository->save_many( $submission, [ $updated_grade ] );
+
+		/* Assert — get_all should return fresh data with updated points. */
+		$fresh = $repository->get_all( $created['submission_id'] );
+		self::assertCount( 1, $fresh, 'Should still have one grade after save.' );
+		self::assertSame( 10, $fresh[0]->get_points(), 'Points should be 10 after save invalidates cache.' );
+
+		/* Cleanup. */
 		$this->cleanup( $created );
 	}
 

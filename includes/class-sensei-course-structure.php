@@ -187,7 +187,9 @@ class Sensei_Course_Structure {
 			'title'          => $lesson_post->post_title,
 			'draft'          => 'draft' === $lesson_post->post_status,
 			'preview'        => Sensei_Utils::is_preview_lesson( $lesson_post->ID ),
-			'initialContent' => get_post_meta( $lesson_post->ID, '_initial_content', true ),
+			'initialContent' => current_user_can( 'edit_lesson', $lesson_post->ID )
+				? get_post_meta( $lesson_post->ID, '_initial_content', true )
+				: '',
 		];
 	}
 

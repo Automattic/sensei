@@ -2,6 +2,7 @@
 .env
 .idea
 .cache
+.worktrees
 .phpunit.result.cache
 .wp-env.override.json
 assets/dist
@@ -19,3 +20,6 @@ tests/e2e-playwright/contexts/*
 *.tsbuildinfo
 playwright-report/
 .vscode
+.worktrees/
+.claude/tmp/
+.claude/settings.local.json

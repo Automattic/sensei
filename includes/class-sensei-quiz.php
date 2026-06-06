@@ -2207,11 +2207,16 @@ class Sensei_Quiz {
 		$right_answers = get_post_meta( $question_id, '_question_right_answer', true );
 		$wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true );
 
-		// Multiple choice question is incomplete if there isn't at least one right and one wrong answer.
-		if ( ! is_array( $right_answers ) || count( $right_answers ) < 1 || ! is_array( $wrong_answers ) || count( $wrong_answers ) < 1 ) {
+		// Multiple choice question is incomplete if there isn't at least one right answer. Wrong answers are optional - it's valid to have all answers be correct.
+		if ( ! is_array( $right_answers ) || count( $right_answers ) < 1 ) {
 			return false;
 		}
-		// Wrong or right answers values can't be whitespace.
+
+		if ( ! is_array( $wrong_answers ) ) {
+			$wrong_answers = array();
+		}
+
+		// Wrong or right answer values can't be whitespace.
 		return ! count(
 			array_filter(
 				array_merge( $right_answers, $wrong_answers ),

@@ -46,9 +46,12 @@ class Sensei_REST_API_Export_Controller extends Sensei_REST_API_Data_Port_Contro
 	/**
 	 * Start an export job.
 	 *
-	 * Request body should contain a list of selected content types.
+	 * Request body should contain a `selections` object keyed by content type
+	 * ('course', 'lesson', 'question'). Each value is an array of post IDs to
+	 * restrict the export to, or an empty array for "export all of that type".
+	 * Types omitted from the object are skipped.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request The REST request.
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
@@ -56,10 +59,10 @@ class Sensei_REST_API_Export_Controller extends Sensei_REST_API_Data_Port_Contro
 
 		$params = $request->get_json_params();
 
-		if ( empty( $params['content_types'] ) ) {
+		if ( empty( $params['selections'] ) || ! is_array( $params['selections'] ) ) {
 			return new WP_Error(
 				'sensei_export_no_content_types',
-				__( 'No content types selected.', 'sensei-lms' ),
+				__( 'Please choose at least one type of content to export.', 'sensei-lms' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -72,11 +75,10 @@ class Sensei_REST_API_Export_Controller extends Sensei_REST_API_Data_Port_Contro
 		$job = $this->resolve_job( sanitize_text_field( $request->get_param( 'job_id' ) ), false );
 
 		if ( $job && $job->is_ready() && ! $job->is_started() ) {
-			$job->set_content_types( $params['content_types'] );
+			$job->set_selections( $params['selections'] );
 			$job->persist();
 		}
 
 		return parent::request_post_start_job( $request );
 	}
-
 }

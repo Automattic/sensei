@@ -719,7 +719,7 @@ class Sensei_Analysis {
 		$analysis_args = array(
 			'page' => self::PAGE_SLUG,
 		);
-		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'admin.php' ) ), esc_html( $this->get_name() ) );
+		$title         = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( $analysis_args, admin_url( 'admin.php' ) ) ), esc_html( $this->get_name() ) );
 		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
 			$url       = add_query_arg(
@@ -761,7 +761,7 @@ class Sensei_Analysis {
 		$analysis_args = array(
 			'page' => self::PAGE_SLUG,
 		);
-		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'admin.php' ) ), esc_html( $this->get_name() ) );
+		$title         = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( $analysis_args, admin_url( 'admin.php' ) ) ), esc_html( $this->get_name() ) );
 		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
 			$url       = add_query_arg(
@@ -803,7 +803,7 @@ class Sensei_Analysis {
 		$analysis_args = array(
 			'page' => self::PAGE_SLUG,
 		);
-		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'admin.php' ) ), esc_html( $this->get_name() ) );
+		$title         = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( $analysis_args, admin_url( 'admin.php' ) ) ), esc_html( $this->get_name() ) );
 		if ( isset( $_GET['lesson_id'] ) ) {
 			$lesson_id = intval( $_GET['lesson_id'] );
 			$course_id = intval( get_post_meta( $lesson_id, '_lesson_course', true ) );

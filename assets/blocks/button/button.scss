@@ -5,6 +5,7 @@
 
 	.wp-block-button__link {
 		box-sizing: border-box;
+		cursor: pointer;
 
 		&:disabled {
 			pointer-events: none;

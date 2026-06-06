@@ -106,7 +106,7 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 				'button_clicked' => 'my_button',
 				'admin_email'    => 'admin@example.org',
 				'_ut'            => $this->usage_tracking->get_prefix() . ':site_url',
-				'_ui'            => 'example.org',
+				'_ui'            => wp_parse_url( home_url(), PHP_URL_HOST ),
 				'_ul'            => '',
 				'_en'            => $this->usage_tracking->get_prefix() . '_my_event',
 				'_ts'            => '1234000',

@@ -3,6 +3,7 @@
 namespace SenseiTest\Internal\Migration;
 
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
+use Sensei\Internal\Migration\Migration_Abstract;
 use Sensei\Internal\Migration\Migration_Job;
 
 /**
@@ -95,5 +96,20 @@ class Migration_Job_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( 'student_progress_migration', $actual );
+	}
+
+	public function testSetTimeBudget_Always_DelegatesToMigration(): void {
+		/* Arrange. */
+		$migration = $this->createMock( Migration_Abstract::class );
+		$job       = new Migration_Job( 'test_job', $migration );
+
+		/* Assert. */
+		$migration
+			->expects( $this->once() )
+			->method( 'set_time_budget' )
+			->with( 25.0 );
+
+		/* Act. */
+		$job->set_time_budget( 25.0 );
 	}
 }

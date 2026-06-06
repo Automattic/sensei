@@ -22,7 +22,7 @@ use Sensei\Internal\Migration\Migration_Abstract;
  */
 class Quiz_Migration extends Migration_Abstract {
 	/**
-	 * Migration errors option name.
+	 * The name of the option that stores the last comment ID that was migrated.
 	 *
 	 * @var string
 	 */
@@ -47,8 +47,15 @@ class Quiz_Migration extends Migration_Abstract {
 	 *
 	 * @param int $batch_size The size of a batch or how many quiz submissions to migrate in a single run.
 	 */
-	public function __construct( int $batch_size = 100 ) {
-		$this->batch_size = $batch_size;
+	public function __construct( int $batch_size = 50 ) {
+		/**
+		 * Filter the batch size for quiz migration.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param int $batch_size The batch size.
+		 */
+		$this->batch_size = (int) apply_filters( 'sensei_migration_quiz_batch_size', $batch_size );
 	}
 
 	/**
@@ -67,21 +74,38 @@ class Quiz_Migration extends Migration_Abstract {
 			return 0;
 		}
 
-		$quiz_data = $this->get_quiz_data( $comments );
+		$quiz_data         = $this->get_quiz_data( $comments );
+		$processed         = 0;
+		$last_processed_id = null;
+
 		foreach ( $comments as $comment ) {
 			$submission_id = $this->insert_quiz_submission( $comment, $quiz_data );
 			if ( ! $submission_id ) {
+				$last_processed_id = $comment->comment_ID;
+				++$processed;
 				continue;
 			}
 
 			$answer_ids = $this->insert_quiz_answers( $comment, $quiz_data, $submission_id );
 			$this->insert_quiz_grades( $comment, $quiz_data, $answer_ids );
+
+			$last_processed_id = $comment->comment_ID;
+			++$processed;
+
+			if ( $this->is_time_exceeded() ) {
+				break;
+			}
 		}
 
-		$last_comment_id = end( $comments )->comment_ID;
-		update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_comment_id );
+		// Always advance the cursor to the last fully processed comment.
+		// Each comment is completely handled (submission + answers + grades)
+		// before $last_processed_id is updated, so no partial data is skipped.
+		// INSERT IGNORE ensures safe re-runs if any overlap occurs.
+		if ( $last_processed_id ) {
+			update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_processed_id );
+		}
 
-		return count( $comments );
+		return $processed;
 	}
 
 	/**

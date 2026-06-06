@@ -104,9 +104,6 @@
       <code>'WP_Post'</code>
       <code>'WP_Post'</code>
     </ArgumentTypeCoercion>
-    <DocblockTypeContradiction occurrences="1">
-      <code>false === $mysql_date</code>
-    </DocblockTypeContradiction>
     <InvalidScalarArgument occurrences="4">
       <code>$_POST['data']['comment_id']</code>
       <code>$_POST['data']['post_id']</code>
@@ -173,8 +170,7 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/admin/class-sensei-learners-main.php">
-    <ArgumentTypeCoercion occurrences="4">
-      <code>$item</code>
+    <ArgumentTypeCoercion occurrences="3">
       <code>$item</code>
       <code>$user_activity</code>
     </ArgumentTypeCoercion>
@@ -183,9 +179,6 @@
       <code>$id</code>
       <code>$item</code>
     </DocblockTypeContradiction>
-    <InvalidArgument occurrences="1">
-      <code>'course-category'</code>
-    </InvalidArgument>
     <PossiblyFalseArgument occurrences="6">
       <code>$name</code>
       <code>$post_id</code>
@@ -768,9 +761,6 @@
     </RedundantConditionGivenDocblockType>
   </file>
   <file src="includes/blocks/course-list/class-sensei-course-list-categories-filter.php">
-    <InvalidArgument occurrences="1">
-      <code>'course-category'</code>
-    </InvalidArgument>
     <MissingClosureParamType occurrences="1">
       <code>$category</code>
     </MissingClosureParamType>
@@ -925,13 +915,6 @@
   </file>
   <file src="includes/class-sensei-analysis-course-list-table.php">
     <ArgumentTypeCoercion occurrences="1"/>
-    <InvalidPropertyFetch occurrences="5">
-      <code>$lesson_grades-&gt;meta_sum</code>
-      <code>$lesson_grades-&gt;total</code>
-      <code>$lesson_status-&gt;comment_ID</code>
-      <code>$lesson_status-&gt;comment_approved</code>
-      <code>$lesson_status-&gt;comment_date</code>
-    </InvalidPropertyFetch>
     <InvalidReturnStatement occurrences="1">
       <code>$data</code>
     </InvalidReturnStatement>
@@ -948,9 +931,6 @@
       <code>$search</code>
       <code>$search</code>
     </PossiblyFalsePropertyAssignmentValue>
-    <PossiblyUndefinedVariable occurrences="1">
-      <code>$user_email</code>
-    </PossiblyUndefinedVariable>
     <PropertyNotSetInConstructor occurrences="12">
       <code>$total_lessons</code>
       <code>$user_ids</code>
@@ -977,9 +957,8 @@
     <InvalidReturnType occurrences="1">
       <code>data</code>
     </InvalidReturnType>
-    <MissingParamType occurrences="4">
+    <MissingParamType occurrences="3">
       <code>$args</code>
-      <code>$lesson_id</code>
       <code>$report</code>
       <code>$text</code>
     </MissingParamType>
@@ -1085,11 +1064,10 @@
     <InvalidReturnType occurrences="1">
       <code>data</code>
     </InvalidReturnType>
-    <MissingParamType occurrences="4">
+    <MissingParamType occurrences="3">
       <code>$args</code>
       <code>$report</code>
       <code>$text</code>
-      <code>$user_id</code>
     </MissingParamType>
     <MissingPropertyType occurrences="2">
       <code>$page_slug</code>
@@ -1401,7 +1379,7 @@
       <code>$lesson_id</code>
       <code>$output</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidPropertyFetch occurrences="21">
+    <PossiblyInvalidPropertyFetch occurrences="20">
       <code>$course_item-&gt;ID</code>
       <code>$course_item-&gt;ID</code>
       <code>$course_item-&gt;post_author</code>
@@ -1420,7 +1398,6 @@
       <code>$post_item-&gt;ID</code>
       <code>$post_item-&gt;post_title</code>
       <code>$post_item-&gt;post_title</code>
-      <code>$taxonomy_raw_obj-&gt;labels</code>
       <code>$user_info-&gt;display_name</code>
       <code>$user_info-&gt;display_name</code>
     </PossiblyInvalidPropertyFetch>
@@ -1625,17 +1602,13 @@
   </file>
   <file src="includes/class-sensei-grading-main.php">
     <ArgumentTypeCoercion occurrences="1"/>
-    <InvalidArrayAccess occurrences="6">
-      <code>$counts['complete']</code>
-      <code>$counts['failed']</code>
-      <code>$counts['graded']</code>
-      <code>$counts['in-progress']</code>
-      <code>$counts['passed']</code>
-      <code>$counts['ungraded']</code>
-    </InvalidArrayAccess>
-    <MissingParamType occurrences="1">
-      <code>$args</code>
-    </MissingParamType>
+    <InternalProperty occurrences="5">
+      <code>$item-&gt;grade</code>
+      <code>$item-&gt;lesson_id</code>
+      <code>$item-&gt;status</code>
+      <code>$item-&gt;updated_at</code>
+      <code>$item-&gt;user_id</code>
+    </InternalProperty>
     <MissingPropertyType occurrences="6">
       <code>$course_id</code>
       <code>$lesson_id</code>
@@ -1647,6 +1620,9 @@
     <PossiblyFalsePropertyAssignmentValue occurrences="1">
       <code>$search</code>
     </PossiblyFalsePropertyAssignmentValue>
+    <PossiblyNullArgument occurrences="1">
+      <code>$args</code>
+    </PossiblyNullArgument>
     <PropertyNotSetInConstructor occurrences="8">
       <code>Sensei_Grading_Main</code>
       <code>Sensei_Grading_Main</code>
@@ -1659,9 +1635,8 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/class-sensei-grading-user-quiz.php">
-    <InvalidScalarArgument occurrences="9">
+    <InvalidScalarArgument occurrences="8">
       <code>$attachment_id</code>
-      <code>$lesson_status_id</code>
       <code>$question_grade_total</code>
       <code>$quiz_grade</code>
       <code>$quiz_grade</code>
@@ -1689,10 +1664,6 @@
       <code>false</code>
       <code>false</code>
     </FalsableReturnStatement>
-    <InvalidArrayAccess occurrences="2">
-      <code>$grading_counts['ungraded']</code>
-      <code>$grading_counts['ungraded']</code>
-    </InvalidArrayAccess>
     <InvalidIterator occurrences="1">
       <code>$lesson_metadata</code>
     </InvalidIterator>
@@ -1709,9 +1680,8 @@
       <code>$quiz_lesson_id</code>
       <code>$quiz_lesson_id</code>
     </InvalidScalarArgument>
-    <MissingParamType occurrences="10">
+    <MissingParamType occurrences="9">
       <code>$course_id</code>
-      <code>$file</code>
       <code>$lesson_id</code>
       <code>$question_id</code>
       <code>$selected_course_id</code>
@@ -1748,9 +1718,6 @@
       <code>count( $lesson_metadata )</code>
       <code>count( $lesson_metadata )</code>
     </TypeDoesNotContainType>
-    <UndefinedConstant occurrences="1">
-      <code>ARRAY_A</code>
-    </UndefinedConstant>
     <UndefinedDocblockClass occurrences="1">
       <code>undefined</code>
     </UndefinedDocblockClass>
@@ -1803,9 +1770,8 @@
     </PossiblyInvalidPropertyFetch>
   </file>
   <file src="includes/class-sensei-lesson.php">
-    <ArgumentTypeCoercion occurrences="4">
+    <ArgumentTypeCoercion occurrences="3">
       <code>$qargs</code>
-      <code>$questions_array</code>
       <code>'WP_Post'</code>
       <code>'WP_User'</code>
     </ArgumentTypeCoercion>
@@ -1817,13 +1783,12 @@
       <code>empty( $block['innerBlocks'][0]['attrs']['id'] ) ? null : wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) )</code>
       <code>get_permalink( $quiz_id )</code>
     </FalsableReturnStatement>
-    <InvalidArgument occurrences="6">
+    <InvalidArgument occurrences="5">
       <code>$args</code>
       <code>$post_args</code>
       <code>$post_args</code>
       <code>$post_type_args</code>
       <code>$post_type_args</code>
-      <code>'question-category'</code>
     </InvalidArgument>
     <InvalidArrayOffset occurrences="4">
       <code>$dimensions['height']</code>
@@ -2379,9 +2344,8 @@
       <code>false</code>
       <code>false</code>
     </FalsableReturnStatement>
-    <InvalidArgument occurrences="4">
+    <InvalidArgument occurrences="3">
       <code>$qargs</code>
-      <code>'question-category'</code>
       <code>array( 'src' =&gt; $question_media_url )</code>
       <code>array( 'src' =&gt; $question_media_url )</code>
     </InvalidArgument>
@@ -2858,7 +2822,7 @@
       <code>$published_quiz_ids</code>
       <code>$published_quiz_ids</code>
     </DuplicateArrayKey>
-    <InvalidArgument occurrences="11">
+    <InvalidArgument occurrences="9">
       <code>$key</code>
       <code>$published_quiz_ids</code>
       <code>$published_quiz_ids</code>
@@ -2867,8 +2831,6 @@
       <code>$published_quiz_ids</code>
       <code>$published_quiz_ids</code>
       <code>$published_quiz_ids</code>
-      <code>'module'</code>
-      <code>'module'</code>
       <code>'module'</code>
     </InvalidArgument>
     <InvalidArrayOffset occurrences="2">
@@ -3028,10 +2990,8 @@
       <code>get_userdata( $user_id )-&gt;user_login</code>
       <code>get_userdata( $user_id )-&gt;user_login</code>
     </PossiblyInvalidPropertyFetch>
-    <PossiblyNullArgument occurrences="8">
+    <PossiblyNullArgument occurrences="6">
       <code>$lesson_quiz_id</code>
-      <code>$quiz_grade</code>
-      <code>$quiz_grade</code>
       <code>$quiz_id</code>
       <code>$quiz_id</code>
       <code>$quiz_id</code>
@@ -3170,9 +3130,6 @@
       <code>Woothemes_Sensei</code>
       <code>Woothemes_Sensei</code>
     </PropertyNotSetInConstructor>
-    <RedundantCondition occurrences="1">
-      <code>'Sensei_Modules' !== $class</code>
-    </RedundantCondition>
     <RedundantPropertyInitializationCheck occurrences="1">
       <code>isset( $this-&gt;version )</code>
     </RedundantPropertyInitializationCheck>
@@ -4577,6 +4534,101 @@
       <code>$row-&gt;user_id</code>
     </PossiblyInvalidPropertyFetch>
   </file>
+  <file src="includes/internal/services/class-comments-based-grading-listing-service.php">
+    <InvalidScalarArgument occurrences="1">
+      <code>$comment-&gt;comment_ID</code>
+    </InvalidScalarArgument>
+  </file>
+  <file src="includes/internal/services/class-comments-based-grading-stats-service.php">
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$result-&gt;courses_average</code>
+      <code>$row-&gt;count</code>
+      <code>$row-&gt;grade_count</code>
+      <code>$row-&gt;grade_sum</code>
+      <code>$row-&gt;sum</code>
+    </PossiblyInvalidPropertyFetch>
+  </file>
+  <file src="includes/internal/services/class-comments-based-progress-aggregation-service.php">
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$row-&gt;days_to_complete_count</code>
+      <code>$row-&gt;days_to_complete_sum</code>
+      <code>$row-&gt;lesson_completed_count</code>
+      <code>$row-&gt;lesson_start_count</code>
+      <code>$row-&gt;unique_student_count</code>
+    </PossiblyInvalidPropertyFetch>
+    <UndefinedConstant occurrences="1">
+      <code>ARRAY_A</code>
+    </UndefinedConstant>
+  </file>
+  <file src="includes/internal/services/class-tables-based-reports-listing-service.php">
+    <PossiblyInvalidCast occurrences="1">
+      <code>$column</code>
+      <code>$column</code>
+    </PossiblyInvalidCast>
+    <PossiblyInvalidPropertyFetch occurrences="19">
+      <code>$row-&gt;completed_at</code>
+      <code>$row-&gt;completed_at</code>
+      <code>$row-&gt;completed_at</code>
+      <code>$row-&gt;completed_at</code>
+      <code>$row-&gt;effective_status</code>
+      <code>$row-&gt;effective_status</code>
+      <code>$row-&gt;grade</code>
+      <code>$row-&gt;grade</code>
+      <code>$row-&gt;percent</code>
+      <code>$row-&gt;post_id</code>
+      <code>$row-&gt;post_id</code>
+      <code>$row-&gt;post_id</code>
+      <code>$row-&gt;post_id</code>
+      <code>$row-&gt;post_id</code>
+      <code>$row-&gt;started_at</code>
+      <code>$row-&gt;started_at</code>
+      <code>$row-&gt;started_at</code>
+      <code>$row-&gt;started_at</code>
+      <code>$row-&gt;status</code>
+      <code>$row-&gt;status</code>
+      <code>$row-&gt;user_id</code>
+      <code>$row-&gt;user_id</code>
+      <code>$row-&gt;user_id</code>
+      <code>$row-&gt;user_id</code>
+    </PossiblyInvalidPropertyFetch>
+  </file>
+  <file src="includes/internal/services/class-tables-based-grading-listing-service.php">
+    <PossiblyInvalidCast occurrences="1">
+      <code>$column</code>
+    </PossiblyInvalidCast>
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$row-&gt;effective_status</code>
+      <code>$row-&gt;final_grade</code>
+      <code>$row-&gt;post_id</code>
+      <code>$row-&gt;updated_at</code>
+      <code>$row-&gt;user_id</code>
+    </PossiblyInvalidPropertyFetch>
+    <UndefinedConstant occurrences="1">
+      <code>ARRAY_A</code>
+    </UndefinedConstant>
+  </file>
+  <file src="includes/internal/services/class-tables-based-grading-stats-service.php">
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$result-&gt;courses_average</code>
+      <code>$row-&gt;count</code>
+      <code>$row-&gt;grade_count</code>
+      <code>$row-&gt;grade_sum</code>
+      <code>$row-&gt;sum</code>
+    </PossiblyInvalidPropertyFetch>
+  </file>
+  <file src="includes/internal/services/class-tables-based-progress-aggregation-service.php">
+    <PossiblyInvalidPropertyFetch occurrences="5">
+      <code>$row-&gt;days_to_complete_count</code>
+      <code>$row-&gt;days_to_complete_sum</code>
+      <code>$row-&gt;lesson_completed_count</code>
+      <code>$row-&gt;lesson_start_count</code>
+      <code>$row-&gt;unique_student_count</code>
+    </PossiblyInvalidPropertyFetch>
+    <UndefinedConstant occurrences="2">
+      <code>ARRAY_A</code>
+      <code>ARRAY_A</code>
+    </UndefinedConstant>
+  </file>
   <file src="includes/internal/student-progress/course-progress/repositories/class-comments-based-course-progress-repository.php">
     <PossiblyNullArgument occurrences="1">
       <code>$course_progress-&gt;get_status()</code>
@@ -4846,7 +4898,8 @@
     <InvalidArgument occurrences="1">
       <code>$lessons</code>
     </InvalidArgument>
-    <InvalidScalarArgument occurrences="1">
+    <InvalidScalarArgument occurrences="2">
+      <code>$lesson_students</code>
       <code>$value</code>
     </InvalidScalarArgument>
     <PossibleRawObjectIteration occurrences="1">
@@ -5360,24 +5413,15 @@
     </UndefinedClass>
   </file>
   <file src="includes/shortcodes/class-sensei-shortcode-course-categories.php">
-    <InvalidArgument occurrences="1">
-      <code>'course-category'</code>
-    </InvalidArgument>
     <InvalidDocblockParamName occurrences="1">
       <code>$category_ids</code>
     </InvalidDocblockParamName>
-    <InvalidReturnType occurrences="1">
-      <code>mixed</code>
-    </InvalidReturnType>
     <MissingParamType occurrences="1">
       <code>$categories</code>
     </MissingParamType>
     <PossiblyInvalidOperand occurrences="1">
       <code>get_term_link( $category )</code>
     </PossiblyInvalidOperand>
-    <PossiblyInvalidPropertyAssignmentValue occurrences="1">
-      <code>get_terms( 'course-category', $args )</code>
-    </PossiblyInvalidPropertyAssignmentValue>
     <PossiblyInvalidPropertyFetch occurrences="1">
       <code>$term-&gt;term_id</code>
     </PossiblyInvalidPropertyFetch>

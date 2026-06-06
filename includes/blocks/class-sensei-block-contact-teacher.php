@@ -131,11 +131,20 @@ class Sensei_Block_Contact_Teacher {
 	 * @return string Block HTML with additional href attribute.
 	 */
 	private function add_button_attributes( $content, $href ) {
-		return preg_replace(
-			'/<a(.*)class="(.*)"(.*)>(.+)<\/a>/',
-			'<a href="' . esc_url( $href ) . '#private_message" class="sensei-contact-teacher-open $2" data-sensei-modal-open $1 $3>$4</a>',
-			$content,
-			1
+		return wp_kses(
+			preg_replace(
+				'/<a(.*)class="(.*)"(.*)>(.+)<\/a>/',
+				'<a href="' . esc_url( $href ) . '#private_message" class="sensei-contact-teacher-open $2" data-sensei-modal-open $1 $3>$4</a>',
+				$content,
+				1
+			),
+			[
+				'a' => [
+					'href'                   => [],
+					'class'                  => [],
+					'data-sensei-modal-open' => [],
+				],
+			]
 		);
 	}
 }

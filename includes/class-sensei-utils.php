@@ -2157,11 +2157,15 @@ class Sensei_Utils {
 	/**
 	 * Adjust the comment query to be faster on the database, used by Analysis admin
 	 *
-	 * @since  1.7.0
+	 * @since      1.7.0
+	 * @deprecated $$next-version$$ No longer used; the lesson average grade is now computed via a direct aggregate query.
+	 *
 	 * @param array $pieces
 	 * @return array $pieces
 	 */
 	public static function comment_total_sum_meta_value_filter( $pieces ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		global $wpdb;
 
 		$pieces['fields'] = " COUNT(*) AS total, SUM($wpdb->commentmeta.meta_value) AS meta_sum ";
@@ -3000,7 +3004,7 @@ class Sensei_Utils {
 			return sprintf(
 			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
 				__( '%s ago', 'sensei-lms' ),
-				human_time_diff( $date->getTimestamp() )
+				human_time_diff( $date->getTimestamp(), $now->getTimestamp() )
 			);
 		}
 

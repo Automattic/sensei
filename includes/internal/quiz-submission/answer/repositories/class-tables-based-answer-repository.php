@@ -9,6 +9,8 @@ namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use Sensei\Internal\Cache_Prefix;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
@@ -26,6 +28,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.16.1
  */
 class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
+	use Cache_Prefix;
+
+	/**
+	 * Cache group for quiz answers.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string
+	 */
+	private const CACHE_GROUP = 'sensei_quiz_answers';
+
 	/**
 	 * WordPress database object.
 	 *
@@ -102,7 +115,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 			]
 		);
 
-		return new Tables_Based_Answer(
+		$answer = new Tables_Based_Answer(
 			$this->wpdb->insert_id,
 			$submission_id,
 			$question_id,
@@ -110,6 +123,13 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 			$current_datetime,
 			$current_datetime
 		);
+
+		if ( $this->wpdb->insert_id && Progress_Storage_Settings::is_cache_enabled() ) {
+			$cache_submission_id = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission->get_id(), 'tables' );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $cache_submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
+		}
+
+		return $answer;
 	}
 
 	/**
@@ -135,6 +155,15 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		 */
 		$submission_id = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission_id, 'tables' );
 
+		$cache_key = $this->get_cache_key( $submission_id );
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			if ( false !== $cached ) {
+				return $cached;
+			}
+		}
+
 		$query = $this->wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			"SELECT * FROM {$this->get_table_name()} WHERE submission_id = %d",
@@ -152,6 +181,10 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 				new DateTimeImmutable( $result->created_at, new DateTimeZone( 'UTC' ) ),
 				new DateTimeImmutable( $result->updated_at, new DateTimeZone( 'UTC' ) )
 			);
+		}
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $answers, self::CACHE_GROUP );
 		}
 
 		return $answers;
@@ -187,6 +220,23 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 				'%d',
 			]
 		);
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			$cache_submission_id = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission->get_id(), 'tables' );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $cache_submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
+		}
+	}
+
+	/**
+	 * Get the cache key for quiz answers by submission.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $submission_id The submission ID.
+	 * @return string The cache key.
+	 */
+	private function get_cache_key( int $submission_id ): string {
+		return (string) $submission_id;
 	}
 
 	/**

@@ -1,0 +1,5 @@
+Significance: patch
+Type: changed
+Comment: Labels: stop recommending the use of labels with [Type] prefix
+
+

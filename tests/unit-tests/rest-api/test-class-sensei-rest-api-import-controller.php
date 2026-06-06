@@ -208,7 +208,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 					'post'       => [
 						'id'        => $course_id,
 						'title'     => 'Test Course A',
-						'edit_link' => 'http://example.org/wp-admin/post.php?post=' . $course_id . '&action=edit',
+						'edit_link' => admin_url( 'post.php?post=' . $course_id . '&action=edit' ),
 					],
 				],
 			],

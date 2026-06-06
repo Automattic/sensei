@@ -20,7 +20,7 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 	/**
 	 * A server instance that we use in tests to dispatch requests.
 	 *
-	 * @var WP_REST_Server $server
+	 * @var \WP_REST_Server $server
 	 */
 	protected $server;
 
@@ -46,6 +46,9 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+
+		global $HTTP_RAW_POST_DATA; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved -- This is used in the WP REST API to get the raw post data.
+		$HTTP_RAW_POST_DATA = null; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved
 	}
 
 	public function testGet_MetaQueryProvided_AppliesMetaQuery() {
@@ -130,5 +133,89 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertTrue( $has_compare_not_exists );
+	}
+
+	public function testLessonCourseMetaAuthCallback_WhenUserCantEditCourse_RequestIsUnauthorized() {
+		/* Arrange. */
+		$this->login_as_teacher();
+		$user_id   = get_current_user_id();
+		$course_id = $this->factory->course->create(
+			[
+				'post_author' => $user_id,
+			]
+		);
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'post_author' => $user_id,
+				'meta_input'  => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+
+		$request_body = wp_json_encode(
+			[
+				'meta' => [
+					'_lesson_course' => 111, // Simulate a course that the user can't edit.
+				],
+			]
+		);
+
+		global $HTTP_RAW_POST_DATA; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved -- This is used in the WP REST API to get the raw post data.
+		$HTTP_RAW_POST_DATA = $request_body; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved
+
+		new \Sensei_REST_API_Lessons_Controller( 'lesson' );
+
+		/* Act. */
+		$request = new WP_REST_Request( 'POST', '/wp/v2/lessons/' . $lesson_id );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( $request_body );
+
+		$response = $this->server->dispatch( $request );
+
+		/* Assert. */
+		$this->assertEquals( 403, $response->get_status() );
+	}
+
+	public function testLessonCourseMetaAuthCallback_WhenUserCanEditCourse_RequestIsAuthorized() {
+		/* Arrange. */
+		$this->login_as_teacher();
+		$user_id   = get_current_user_id();
+		$course_id = $this->factory->course->create(
+			[
+				'post_author' => $user_id,
+			]
+		);
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'post_author' => $user_id,
+				'meta_input'  => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+
+		$request_body = wp_json_encode(
+			[
+				'meta' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+
+		global $HTTP_RAW_POST_DATA; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved -- This is used in the WP REST API to get the raw post data.
+		$HTTP_RAW_POST_DATA = $request_body; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved
+
+		new \Sensei_REST_API_Lessons_Controller( 'lesson' );
+
+		/* Act. */
+		$request = new WP_REST_Request( 'POST', '/wp/v2/lessons/' . $lesson_id );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( $request_body );
+
+		$response = $this->server->dispatch( $request );
+
+		/* Assert. */
+		$this->assertEquals( 200, $response->get_status() );
 	}
 }

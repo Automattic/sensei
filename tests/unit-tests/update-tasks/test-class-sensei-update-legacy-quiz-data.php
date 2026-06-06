@@ -10,6 +10,8 @@ use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
  * @group background-jobs
  */
 class Sensei_Update_Legacy_Quiz_Data_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
+
 	/**
 	 * Sensei Factory.
 	 *
@@ -91,6 +93,8 @@ class Sensei_Update_Legacy_Quiz_Data_Test extends WP_UnitTestCase {
 	}
 
 	public function testRun_WhenHasMultipleGrades_MigratesTheGrades() {
+		$this->skip_in_hpps_mode( 'Tests legacy comment-based quiz data migration; incompatible with HPPS tables mode.' );
+
 		/* Arrange */
 		$lesson_id  = $this->factory->lesson->create();
 		$quiz_id    = $this->factory->quiz->create(

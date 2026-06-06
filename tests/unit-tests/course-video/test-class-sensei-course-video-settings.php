@@ -20,6 +20,7 @@ class Test_Sensei_Course_Video_Settings extends WP_UnitTestCase {
 
 		$result = $settings->enable_youtube_api( $iframe, $url );
 
+		$expected = str_replace( 'http://example.org', home_url(), $expected );
 		self::assertSame( $expected, $result );
 	}
 

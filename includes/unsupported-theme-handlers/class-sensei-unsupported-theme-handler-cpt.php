@@ -76,7 +76,7 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		add_filter( 'template_include', array( $this, 'force_page_template' ) );
 
 		// Disable comments if not block theme and post type is not lesson.
-		if ( ! $this->is_lesson_cpt_in_block_fse_theme() ) {
+		if ( ! $this->should_show_comments() ) {
 			Sensei_Unsupported_Theme_Handler_Utils::disable_comments();
 		}
 
@@ -121,7 +121,7 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		$content  = $renderer->render();
 
 		// Disable theme comments.
-		if ( ! $this->is_lesson_cpt_in_block_fse_theme() ) {
+		if ( ! $this->should_show_comments() ) {
 			Sensei_Unsupported_Theme_Handler_Utils::disable_comments();
 		}
 
@@ -246,5 +246,20 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 */
 	private function is_lesson_cpt_in_block_fse_theme() {
 		return 'lesson' === $this->post_type && Sensei_Utils::is_fse_theme();
+	}
+
+	/**
+	 * Determine if comments should be shown.
+	 *
+	 * Comments are only shown for lessons in block themes if the user can view
+	 * the lesson.
+	 *
+	 * @since 4.25.2
+	 *
+	 * @return bool
+	 */
+	private function should_show_comments(): bool {
+		return $this->is_lesson_cpt_in_block_fse_theme()
+			&& sensei_can_user_view_lesson( $this->post_id );
 	}
 }

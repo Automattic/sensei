@@ -91,7 +91,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'integer',
-				'auth_callback' => array( $this, 'auth_callback' ),
+				'auth_callback' => array( $this, 'lesson_course_meta_auth_callback' ),
 			)
 		);
 
@@ -205,6 +205,31 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	 */
 	public function auth_callback( $allowed, $meta_key, $post_id ) {
 		return current_user_can( 'edit_post', $post_id );
+	}
+
+	/**
+	 * Perform permissions check when editing the lesson course meta.
+	 *
+	 * @since  4.25.1
+	 * @access private
+	 *
+	 * @param bool   $allowed  True if allowed to view the meta field by default, false otherwise.
+	 * @param string $meta_key Meta key.
+	 * @param int    $post_id  Lesson ID.
+	 * @return bool Whether the user can edit the post meta.
+	 */
+	public function lesson_course_meta_auth_callback( $allowed, $meta_key, $post_id ) {
+		$data            = json_decode( WP_REST_Server::get_raw_data(), true );
+		$can_edit_lesson = current_user_can( 'edit_post', $post_id );
+
+		if ( $data && isset( $data['meta'] ) && ! empty( $data['meta'][ $meta_key ] ) ) {
+			$course_id       = (int) $data['meta'][ $meta_key ];
+			$can_edit_course = current_user_can( 'edit_course', $course_id );
+
+			return $can_edit_course && $can_edit_lesson;
+		}
+
+		return $can_edit_lesson;
 	}
 
 	/**

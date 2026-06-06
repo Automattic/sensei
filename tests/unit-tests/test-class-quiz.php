@@ -198,6 +198,43 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Testing that multiple choice questions with all correct answers are not filtered out.
+	 *
+	 * This test verifies that questions where all answer options are correct
+	 * (i.e., no wrong answers) are still considered complete and rendered on the frontend.
+	 */
+	public function testGetQuestionsFiltersIncompleteQuestionsAllCorrectAnswers() {
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+
+		// Create a question with multiple right answers and no wrong answers (all answers are correct).
+		$question_id = $this->factory->question->create(
+			[
+				'quiz_id'                => $quiz_id,
+				'question_type'          => 'multiple-choice',
+				'question_right_answers' => [ 'Answer A', 'Answer B', 'Answer C' ],
+				'question_wrong_answers' => [],
+			]
+		);
+
+		// Create a normal question with both right and wrong answers for comparison.
+		$normal_question_id = $this->factory->question->create(
+			[
+				'quiz_id'       => $quiz_id,
+				'question_type' => 'multiple-choice',
+			]
+		);
+
+		// When filtering incomplete questions, both should be included.
+		$questions_filtered = Sensei()->quiz->get_questions( $quiz_id, 'any', 'meta_value_num title', 'ASC', true );
+		$question_ids       = wp_list_pluck( $questions_filtered, 'ID' );
+
+		$this->assertContains( $question_id, $question_ids, 'Question with all correct answers should not be filtered out' );
+		$this->assertContains( $normal_question_id, $question_ids, 'Normal question should not be filtered out' );
+		$this->assertCount( 2, $questions_filtered, 'Both questions should be included when filtering' );
+	}
+
+	/**
 	 * This test Woothemes_Sensei()->quiz->save_user_answers.
 	 */
 	public function testSaveUserAnswers() {

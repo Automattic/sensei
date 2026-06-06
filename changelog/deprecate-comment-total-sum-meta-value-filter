@@ -1,0 +1,4 @@
+Significance: minor
+Type: deprecated
+
+Deprecate `Sensei_Utils::comment_total_sum_meta_value_filter()`.

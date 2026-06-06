@@ -445,7 +445,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		);
 		Sensei()->settings->set( 'course_completed_page', $page_id );
 
-		$expected = "http://example.org/?page_id={$page_id}&course_id={$course_id}";
+		$expected = home_url( "/?page_id={$page_id}&course_id={$course_id}" );
 		$actual   = Sensei_Course::get_view_results_link( $course_id );
 
 		$this->assertEquals( $expected, $actual );
@@ -464,7 +464,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			]
 		);
 
-		$expected = 'http://example.org/?course_results=a-course';
+		$expected = home_url( '/?course_results=a-course' );
 		$actual   = Sensei_Course::get_view_results_link( $course_id );
 
 		$this->assertEquals( $expected, $actual );

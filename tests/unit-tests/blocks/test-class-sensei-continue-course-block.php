@@ -104,7 +104,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		$result = $this->block->render( [], self::CONTENT );
 
-		$this->assertMatchesRegularExpression( '|<form action="http://example.org/\?course=continue-course-block" method="get".*>|', $result );
+		$this->assertMatchesRegularExpression( '|<form action="' . preg_quote( home_url( '/' ), '|' ) . '\?course=continue-course-block" method="get".*>|', $result );
 	}
 
 	public function testRender_EnrolledAndStartedLesson_ReturnsModifiedBlockContentWithLessonUrl() {
@@ -122,7 +122,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$lesson_title = get_post( $course_lesson_ids[0] )->post_name;
-		$this->assertMatchesRegularExpression( '|<form action="http://example.org/\?lesson=' . $lesson_title . '" method="get".*>|', $result );
+		$this->assertMatchesRegularExpression( '|<form action="' . preg_quote( home_url( '/' ), '|' ) . '\?lesson=' . $lesson_title . '" method="get".*>|', $result );
 	}
 
 
@@ -139,7 +139,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$course_title = $this->course->post_name;
-		$this->assertMatchesRegularExpression( '|<form action="http://example.org/\?course=' . $course_title . '" method="get".*>|', $result );
+		$this->assertMatchesRegularExpression( '|<form action="' . preg_quote( home_url( '/' ), '|' ) . '\?course=' . $course_title . '" method="get".*>|', $result );
 	}
 
 	public function testRender_WhenTheStudentDoesntHaveStartedALesson_ReturnsLinkToFirstLesson() {
@@ -157,6 +157,6 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$lesson_title = get_post( $course_lesson_ids[1] )->post_name;
-		$this->assertMatchesRegularExpression( '|<form action="http://example.org/\?lesson=' . $lesson_title . '" method="get".*>|', $result );
+		$this->assertMatchesRegularExpression( '|<form action="' . preg_quote( home_url( '/' ), '|' ) . '\?lesson=' . $lesson_title . '" method="get".*>|', $result );
 	}
 }

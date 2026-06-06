@@ -2,6 +2,7 @@
 
 class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_HPPS_Helpers;
 
 	/**
 	 * Setup function
@@ -31,11 +32,73 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that prepare_items() applies sensei_count_statuses_args
+	 * restrictions to listing rows for tables-based storage.
+	 *
+	 * @covers Sensei_Grading_Main::prepare_items
+	 */
+	public function testPrepareItems_TablesBasedWithCountStatusesArgsRestriction_RestrictsListingRows(): void {
+		/* Arrange. */
+		global $wpdb;
+		$user_id    = $this->factory->user->create();
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = $this->factory->lesson->create_many(
+			2,
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$table = $wpdb->prefix . 'sensei_lms_progress';
+		$now   = current_time( 'mysql' );
+		foreach ( $lesson_ids as $lid ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
+			$wpdb->insert(
+				$table,
+				[
+					'post_id'    => $lid,
+					'user_id'    => $user_id,
+					'type'       => 'lesson',
+					'status'     => 'in-progress',
+					'started_at' => $now,
+					'created_at' => $now,
+					'updated_at' => $now,
+				],
+				[ '%d', '%d', '%s', '%s', '%s', '%s', '%s' ]
+			);
+		}
+
+		// Simulate teacher restriction: only allow the first lesson.
+		$restrict_filter = function ( $args ) use ( $lesson_ids ) {
+			$args['post__in'] = [ $lesson_ids[0] ];
+			return $args;
+		};
+		add_filter( 'sensei_count_statuses_args', $restrict_filter );
+
+		try {
+			$this->login_as_admin();
+			$service      = new \Sensei\Internal\Services\Tables_Based_Grading_Listing_Service( $wpdb );
+			$grading_main = new Sensei_Grading_Main( [ 'view' => 'all' ], $service );
+
+			/* Act. */
+			$grading_main->prepare_items();
+
+			/* Assert. */
+			$this->assertCount( 1, $grading_main->items, 'Listing should only show items for the allowed lesson.' );
+			$this->assertSame( $lesson_ids[0], $grading_main->items[0]->lesson_id, 'Listing item should be for the restricted lesson.' );
+		} finally {
+			remove_filter( 'sensei_count_statuses_args', $restrict_filter );
+		}
+	}
+
+	/**
 	 * Tests that the ungraded quiz count is not displayed in the Grading menu.
 	 *
 	 * @covers Sensei_Grading::grading_admin_menu
 	 */
 	public function testGradingAdminMenuTitleWithoutIndicator() {
+		if ( self::is_hpps_tables_mode() ) {
+			$this->enable_hpps_tables_repository();
+		}
+
 		$user_id    = $this->factory->user->create();
 		$course_id  = $this->factory->course->create();
 		$lesson_ids = $this->factory->lesson->create_many( 5 );
@@ -44,11 +107,27 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			add_post_meta( $lesson_id, '_lesson_course', $course_id );
 		}
 
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[0], 'passed' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[1], 'in-progress' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[2], 'failed' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'complete' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
+		// Lessons with quizzes: passed, failed, graded (none ungraded).
+		$lessons_with_quizzes = [
+			$lesson_ids[0] => 'pass',
+			$lesson_ids[2] => 'fail',
+			$lesson_ids[4] => 'grade',
+		];
+		foreach ( $lessons_with_quizzes as $lesson_id => $status ) {
+			$quiz_id = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+			update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+			$qp = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+			$qp->{$status}();
+			Sensei()->quiz_progress_repository->save( $qp );
+		}
+
+		// Lessons without quizzes: in-progress, complete.
+		Sensei()->lesson_progress_repository->create( $lesson_ids[1], $user_id );
+		$lp = Sensei()->lesson_progress_repository->create( $lesson_ids[3], $user_id );
+		$lp->complete();
+		Sensei()->lesson_progress_repository->save( $lp );
 
 		$this->login_as_admin();
 		Sensei()->grading->grading_admin_menu();
@@ -59,6 +138,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		// Clean up the submenu.
 		unset( $submenu['sensei'] );
+
+		if ( self::is_hpps_tables_mode() ) {
+			$this->reset_hpps_repository();
+		}
 	}
 
 	/**
@@ -67,6 +150,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Grading::grading_admin_menu
 	 */
 	public function testGradingAdminMenuTitleWithIndicator() {
+		if ( self::is_hpps_tables_mode() ) {
+			$this->enable_hpps_tables_repository();
+		}
+
 		$user_id    = $this->factory->user->create();
 		$course_id  = $this->factory->course->create();
 		$lesson_ids = $this->factory->lesson->create_many( 5 );
@@ -75,11 +162,16 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			add_post_meta( $lesson_id, '_lesson_course', $course_id, true );
 		}
 
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[0], 'passed' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[1], 'ungraded' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[2], 'failed' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'ungraded' );
-		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
+		$statuses = [ 'pass', 'ungrade', 'fail', 'ungrade', 'grade' ];
+		foreach ( $lesson_ids as $index => $lesson_id ) {
+			$quiz_id = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+			update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+			$qp = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+			$qp->{$statuses[ $index ]}();
+			Sensei()->quiz_progress_repository->save( $qp );
+		}
 
 		$this->login_as_admin();
 		Sensei()->grading->grading_admin_menu();
@@ -90,6 +182,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		// Clean up the submenu.
 		unset( $submenu['sensei'] );
+
+		if ( self::is_hpps_tables_mode() ) {
+			$this->reset_hpps_repository();
+		}
 	}
 
 	/**
@@ -191,6 +287,15 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 */
 	public function testGetGradedLessonsAverageGradeNoGrades() {
 		$this->assertEquals( 0, Sensei()->grading->get_graded_lessons_average_grade() );
+	}
+
+	/**
+	 * Test that courses average grade returns zero when there are no courses with graded quizzes.
+	 *
+	 * @covers Sensei_Grading::get_courses_average_grade
+	 */
+	public function testGetCoursesAverageGrade_WhenNoCourses_ReturnsZero() {
+		$this->assertSame( 0.0, Sensei()->grading->get_courses_average_grade(), 'Average grade should be zero when there are no courses with graded quizzes.' );
 	}
 
 	/**
@@ -346,8 +451,9 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$comment_ids[] = $this->startStudentInLesson( $lesson_ids[2], $user_ids[1], 'passed' );
 
 		// Assign a grade to each lesson for each student.
-		$this->assignGrade( $comment_ids[0], '10' );
-		$this->assignGrade( $comment_ids[1], '50' );
+		// Lesson 0 has no quiz, so no quiz_answers.
+		$this->assignGrade( $comment_ids[0], '10', false );
+		$this->assignGrade( $comment_ids[1], '50', false );
 		$this->assignGrade( $comment_ids[2], '100' );
 		$this->assignGrade( $comment_ids[3], '35' );
 		$this->assignGrade( $comment_ids[4], '70' );
@@ -649,7 +755,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 * @param int    $comment_id Comment ID.
 	 * @param string $grade      Grade.
 	 */
-	private function assignGrade( $comment_id, $grade ) {
+	private function assignGrade( $comment_id, $grade, $has_quiz_answers = true ) {
 		add_comment_meta( $comment_id, 'grade', $grade );
+		if ( '' !== $grade && $has_quiz_answers ) {
+			add_comment_meta( $comment_id, 'quiz_answers', 'a:1:{i:0;s:1:"1";}' );
+		}
 	}
 }

@@ -25,6 +25,10 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		remove_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		wp_cache_flush();
 	}
 
 	public function testCreate_WhenCalled_InsertsToWpdb(): void {
@@ -39,10 +43,10 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 			->with(
 				'sensei_lms_quiz_submissions',
 				$this->callback(
-					function( $array ) {
-						return 1 === $array['quiz_id']
-							&& 2 === $array['user_id']
-							&& 12.34 === $array['final_grade'];
+					function ( $data ) {
+						return 1 === $data['quiz_id']
+							&& 2 === $data['user_id']
+							&& 12.34 === $data['final_grade'];
 					}
 				),
 				[
@@ -344,6 +348,114 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 			);
 
 		$repository->delete( $submission );
+	}
+
+	public function testGet_CacheEnabled_ReturnsCachedValueOnSecondCall(): void {
+		/* Arrange. */
+		$wpdb = $this->createMock( wpdb::class );
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_row' )
+			->willReturn(
+				(object) [
+					'id'          => 1,
+					'quiz_id'     => 1,
+					'user_id'     => 2,
+					'final_grade' => 12.34,
+					'created_at'  => '2022-01-01 00:00:00',
+					'updated_at'  => '2022-01-01 00:00:00',
+				]
+			);
+
+		$repository = new Tables_Based_Submission_Repository( $wpdb );
+
+		/* Act - first call hits DB, second call should use cache. */
+		$first  = $repository->get( 1, 2 );
+		$second = $repository->get( 1, 2 );
+
+		/* Assert. */
+		self::assertSame( $first->get_id(), $second->get_id() );
+	}
+
+	public function testGet_CacheEnabled_CachesNullAsNotFound(): void {
+		/* Arrange. */
+		$wpdb = $this->createMock( wpdb::class );
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$wpdb
+			->expects( $this->once() )
+			->method( 'get_row' )
+			->willReturn( null );
+
+		$repository = new Tables_Based_Submission_Repository( $wpdb );
+
+		/* Act - first call caches __not_found__, second returns null from cache. */
+		$result1 = $repository->get( 999, 999 );
+		$result2 = $repository->get( 999, 999 );
+
+		/* Assert. */
+		self::assertNull( $result1, 'First call should return null.' );
+		self::assertNull( $result2, 'Second call should return null from cache.' );
+	}
+
+	public function testSave_CacheEnabled_InvalidatesCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Submission_Repository( $wpdb );
+		$submission = $repository->create( 1, 2 );
+
+		/* Act. */
+		$submission->set_final_grade( 95.5 );
+		$repository->save( $submission );
+		$fresh = $repository->get( 1, 2 );
+
+		/* Assert. */
+		self::assertSame( 95.5, (float) $fresh->get_final_grade() );
+	}
+
+	public function testDelete_CacheEnabled_InvalidatesCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Submission_Repository( $wpdb );
+		$submission = $repository->create( 1, 2 );
+
+		/* Act. */
+		$repository->delete( $submission );
+		$result = $repository->get( 1, 2 );
+
+		/* Assert. */
+		self::assertNull( $result );
+	}
+
+	public function testGet_CacheDisabled_DoesNotCache(): void {
+		/* Arrange. */
+		global $wpdb;
+		wp_cache_flush();
+		add_filter( 'sensei_hpps_cache_enabled', '__return_false' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+
+		$repository = new Tables_Based_Submission_Repository( $wpdb );
+		$repository->create( 1, 2 );
+		$repository->get( 1, 2 );
+
+		/* Assert. */
+		/* Verify no cache prefix marker was created for this group. */
+		$cache_prefix = wp_cache_get( 'sensei_quiz_submissions_cache_prefix', 'sensei_quiz_submissions' );
+		self::assertFalse( $cache_prefix );
 	}
 
 	private function export_submission( Tables_Based_Submission $submission ): array {

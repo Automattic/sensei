@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Sensei\Internal\Cache_Prefix;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Tables_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
@@ -25,6 +27,17 @@ use wpdb;
  * @since 4.16.1
  */
 class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
+	use Cache_Prefix;
+
+	/**
+	 * Cache group for quiz grades.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string
+	 */
+	private const CACHE_GROUP = 'sensei_quiz_grades';
+
 	/**
 	 * WordPress database object.
 	 *
@@ -105,7 +118,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 			]
 		);
 
-		return new Tables_Based_Grade(
+		$grade = new Tables_Based_Grade(
 			$this->wpdb->insert_id,
 			$answer_id,
 			$question_id,
@@ -114,6 +127,13 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 			$current_date,
 			$current_date
 		);
+
+		if ( $this->wpdb->insert_id && Progress_Storage_Settings::is_cache_enabled() ) {
+			$cache_submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission->get_id(), 'tables' );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $cache_submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
+		}
+
+		return $grade;
 	}
 
 	/**
@@ -139,8 +159,21 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		 */
 		$submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission_id, 'tables' );
 
+		$cache_key = $this->get_cache_key( $submission_id );
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			$cached = wp_cache_get( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), self::CACHE_GROUP );
+			if ( false !== $cached ) {
+				return $cached;
+			}
+		}
+
 		$answer_ids = $this->get_answer_ids_by_submission_id( $submission_id );
 		if ( empty( $answer_ids ) ) {
+			if ( Progress_Storage_Settings::is_cache_enabled() ) {
+				wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), array(), self::CACHE_GROUP );
+			}
+
 			return [];
 		}
 
@@ -162,6 +195,10 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 			);
 		}
 
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			wp_cache_set( self::get_prefixed_key( $cache_key, self::CACHE_GROUP ), $grades, self::CACHE_GROUP );
+		}
+
 		return $grades;
 	}
 
@@ -176,6 +213,11 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	public function save_many( Submission_Interface $submission, array $grades ): void {
 		foreach ( $grades as $grade ) {
 			$this->save( $grade );
+		}
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			$cache_submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission->get_id(), 'tables' );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $cache_submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
@@ -209,6 +251,11 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		$delete_query = 'DELETE FROM ' . $this->get_table_name() . ' WHERE answer_id IN (' . $placeholders . ')';
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$this->wpdb->query( $this->wpdb->prepare( $delete_query, ...$answer_ids ) );
+
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
+			$cache_submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission->get_id(), 'tables' );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $cache_submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
+		}
 	}
 
 	/**
@@ -241,9 +288,22 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	}
 
 	/**
+	 * Get the cache key for quiz grades by submission.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $submission_id The submission ID.
+	 * @return string The cache key.
+	 */
+	private function get_cache_key( int $submission_id ): string {
+		return (string) $submission_id;
+	}
+
+	/**
 	 * Get all answer IDs for a submission.
 	 *
 	 * @param int $submission_id The submission ID.
+	 * @return array The answer IDs.
 	 */
 	private function get_answer_ids_by_submission_id( int $submission_id ): array {
 		$answers_query = $this->wpdb->prepare(

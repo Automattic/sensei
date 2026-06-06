@@ -87,6 +87,10 @@
 				<element value="manage_sensei_grades"/>
 				<element value="edit_course"/>
 				<element value="edit_courses"/>
+				<element value="edit_others_courses"/>
+				<element value="edit_lesson"/>
+				<element value="edit_lessons"/>
+				<element value="edit_others_lessons"/>
 				<element value="edit_published_lessons"/>
 			</property>
 		</properties>

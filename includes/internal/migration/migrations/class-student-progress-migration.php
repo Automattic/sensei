@@ -27,38 +27,46 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 *
 	 * @var string
 	 */
-	public const LARST_COMMENT_ID_OPTION_NAME = 'sensei_migrated_progress_last_comment_id';
+	public const LAST_COMMENT_ID_OPTION_NAME = 'sensei_migrated_progress_last_comment_id';
 
 	/**
-	 * The course progress data to insert.
-	 *
-	 * @var array
-	 */
-	private $progress_inserts = array();
-
-	/**
-	 * The size of a batch.
+	 * The number of comments to fetch in a single run.
 	 *
 	 * @var int
 	 */
-	private $batch_size;
+	private $read_batch_size;
 
 	/**
-	 * The number of batches to insert in a single run.
+	 * The number of rows to accumulate before flushing with a multi-row INSERT.
 	 *
 	 * @var int
 	 */
-	private $batch_count;
+	private $insert_batch_size;
 
 	/**
 	 * Constructs a new instance of the migration.
 	 *
-	 * @param int $batch_size The size of a batch (how many rows to insert in one insert query).
-	 * @param int $batch_count The number of batches to insert in a single run.
+	 * @param int $read_batch_size The number of comments to fetch in a single run.
+	 * @param int $insert_batch_size The number of rows to accumulate before flushing.
 	 */
-	public function __construct( int $batch_size = 100, int $batch_count = 10 ) {
-		$this->batch_size  = $batch_size;
-		$this->batch_count = $batch_count;
+	public function __construct( int $read_batch_size = 250, int $insert_batch_size = 50 ) {
+		/**
+		 * Filter the read batch size for student progress migration.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param int $read_batch_size The read batch size.
+		 */
+		$this->read_batch_size = (int) apply_filters( 'sensei_migration_student_progress_read_batch_size', $read_batch_size );
+
+		/**
+		 * Filter the insert batch size for student progress migration.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param int $insert_batch_size The insert batch size.
+		 */
+		$this->insert_batch_size = (int) apply_filters( 'sensei_migration_student_progress_insert_batch_size', $insert_batch_size );
 	}
 
 	/**
@@ -67,10 +75,10 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 * @since 4.16.1
 	 *
 	 * @param bool $dry_run Whether to run the migration in dry-run mode.
-	 * @return int The number of rows inserted.
+	 * @return int The number of comments processed.
 	 */
 	public function run( bool $dry_run = true ) {
-		$since_comment_id                                      = (int) get_option( self::LARST_COMMENT_ID_OPTION_NAME, 0 );
+		$since_comment_id                                      = (int) get_option( self::LAST_COMMENT_ID_OPTION_NAME, 0 );
 		[ $progress_comments, $mapped_meta, $last_comment_id ] = $this->get_comments_and_meta( $since_comment_id, $dry_run );
 
 		if ( empty( $progress_comments ) ) {
@@ -82,12 +90,44 @@ class Student_Progress_Migration extends Migration_Abstract {
 			return 0;
 		}
 
-		$this->prepare_progress_to_insert( $progress_comments, $mapped_meta );
-		$inserted_rows = $this->insert_with_batches( $dry_run );
+		$comments_processed = 0;
+		$pending_rows       = array();
+		$last_processed_id  = null;
 
-		update_option( self::LARST_COMMENT_ID_OPTION_NAME, $last_comment_id );
+		foreach ( $progress_comments as $progress_comment ) {
+			$meta = isset( $mapped_meta[ $progress_comment->comment_ID ] )
+				? $mapped_meta[ $progress_comment->comment_ID ]
+				: array();
 
-		return $inserted_rows;
+			$rows = $this->prepare_comment_rows( $progress_comment, $meta );
+
+			$pending_rows = array_merge( $pending_rows, $rows );
+			++$comments_processed;
+			$last_processed_id = $progress_comment->comment_ID;
+
+			// Flush when the buffer is full or time is running out.
+			if ( count( $pending_rows ) >= $this->insert_batch_size || $this->is_time_exceeded() ) {
+				$this->insert_comment_rows( $pending_rows, $dry_run );
+				$pending_rows = array();
+
+				if ( $this->is_time_exceeded() ) {
+					break;
+				}
+			}
+		}
+
+		// Flush any remaining rows.
+		if ( ! empty( $pending_rows ) ) {
+			$this->insert_comment_rows( $pending_rows, $dry_run );
+		}
+
+		// Always advance the cursor to the last fully processed comment.
+		// INSERT IGNORE ensures safe re-runs if any overlap occurs.
+		if ( $last_processed_id ) {
+			update_option( self::LAST_COMMENT_ID_OPTION_NAME, $last_processed_id );
+		}
+
+		return $comments_processed;
 	}
 
 	/**
@@ -100,7 +140,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 	private function get_comments_and_meta( int $after_comment_id, bool $dry_run ): array {
 		global $wpdb;
 
-		$limit = $this->batch_size * $this->batch_count;
+		$limit = $this->read_batch_size;
 
 		$comments_query = $wpdb->prepare(
 			"SELECT * FROM {$wpdb->comments} " .
@@ -120,9 +160,8 @@ class Student_Progress_Migration extends Migration_Abstract {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$progress_comments = $wpdb->get_results( $comments_query );
 
-		$comment_ids      = array();
-		$post_ids         = array();
-		$trashed_post_ids = array();
+		$comment_ids = array();
+		$post_ids    = array();
 		foreach ( $progress_comments as $progress_comment ) {
 			$comment_ids[] = $progress_comment->comment_ID;
 
@@ -209,53 +248,46 @@ class Student_Progress_Migration extends Migration_Abstract {
 
 
 	/**
-	 * Prepare the course progress data to be inserted.
+	 * Prepare the insert rows for a single comment.
 	 *
-	 * @param array $progress_comments The comments to migrate.
-	 * @param array $mapped_meta The comment meta to migrate.
+	 * @param object $progress_comment The comment to migrate.
+	 * @param array  $meta The comment meta.
+	 * @return array The rows to insert.
 	 */
-	private function prepare_progress_to_insert( $progress_comments, $mapped_meta ): void {
-		$this->progress_inserts = array();
-		foreach ( $progress_comments as $progress_comment ) {
-			$meta = isset( $mapped_meta[ $progress_comment->comment_ID ] )
-				? $mapped_meta[ $progress_comment->comment_ID ]
-				: array();
+	private function prepare_comment_rows( $progress_comment, $meta ): array {
+		// Process comments for trashed posts.
+		if ( 'post-trashed' === $progress_comment->comment_approved ) {
+			$progress_comment->comment_approved = isset( $meta['status'] )
+				? $meta['status']
+				: 'in-progress';
+		}
 
-			// Process comments for trashed posts.
-			if ( 'post-trashed' === $progress_comment->comment_approved ) {
-				$progress_comment->comment_approved = isset( $meta['status'] )
-					? $meta['status']
-					: 'in-progress';
-			}
-
-			switch ( $progress_comment->comment_type ) {
-				case 'sensei_course_status':
-					$this->prepare_course_progress_to_insert( $progress_comment, $meta );
-					break;
-				case 'sensei_lesson_status':
-					$this->prepare_lesson_progress_to_insert( $progress_comment, $meta );
-					break;
-				default:
-					$this->add_error(
-						sprintf(
-						/* translators: %s: comment type */
-							__( 'Unknown comment (id %1$d) type: %2$s', 'sensei-lms' ),
-							$progress_comment->comment_ID,
-							$progress_comment->comment_type
-						)
-					);
-
-			}
+		switch ( $progress_comment->comment_type ) {
+			case 'sensei_course_status':
+				return $this->prepare_course_progress_row( $progress_comment, $meta );
+			case 'sensei_lesson_status':
+				return $this->prepare_lesson_progress_rows( $progress_comment, $meta );
+			default:
+				$this->add_error(
+					sprintf(
+					/* translators: %s: comment type */
+						__( 'Unknown comment (id %1$d) type: %2$s', 'sensei-lms' ),
+						$progress_comment->comment_ID,
+						$progress_comment->comment_type
+					)
+				);
+				return array();
 		}
 	}
 
 	/**
-	 * Prepare the course progress data to be inserted.
+	 * Prepare the course progress row for a single comment.
 	 *
 	 * @param object $comment The comment to migrate.
-	 * @param array  $meta The comment meta to migrate.
+	 * @param array  $meta The comment meta.
+	 * @return array The rows to insert.
 	 */
-	private function prepare_course_progress_to_insert( $comment, $meta ): void {
+	private function prepare_course_progress_row( $comment, $meta ): array {
 		$course_status = 'in-progress';
 		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
 			$course_status = 'complete';
@@ -282,26 +314,29 @@ class Student_Progress_Migration extends Migration_Abstract {
 			}
 		}
 
-		$this->progress_inserts[] = [
-			'post_id'        => (int) $comment->comment_post_ID,
-			'user_id'        => (int) $comment->user_id,
-			'parent_post_id' => null,
-			'type'           => 'course',
-			'status'         => $course_status,
-			'started_at'     => $started_at,
-			'completed_at'   => $completed_at,
-			'created_at'     => $comment->comment_date_gmt,
-			'updated_at'     => $comment->comment_date_gmt,
-		];
+		return array(
+			array(
+				'post_id'        => (int) $comment->comment_post_ID,
+				'user_id'        => (int) $comment->user_id,
+				'parent_post_id' => null,
+				'type'           => 'course',
+				'status'         => $course_status,
+				'started_at'     => $started_at,
+				'completed_at'   => $completed_at,
+				'created_at'     => $comment->comment_date_gmt,
+				'updated_at'     => $comment->comment_date_gmt,
+			),
+		);
 	}
 
 	/**
-	 * Prepare the lesson progress data to be inserted.
+	 * Prepare the lesson progress rows for a single comment.
 	 *
 	 * @param object $comment The comment to migrate.
-	 * @param array  $meta The comment meta to migrate.
+	 * @param array  $meta The comment meta.
+	 * @return array The rows to insert.
 	 */
-	private function prepare_lesson_progress_to_insert( $comment, $meta ): void {
+	private function prepare_lesson_progress_rows( $comment, $meta ): array {
 		$lesson_status = 'in-progress';
 		$completed_at  = null;
 		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
@@ -334,17 +369,19 @@ class Student_Progress_Migration extends Migration_Abstract {
 			}
 		}
 
-		$this->progress_inserts[] = [
-			'post_id'        => (int) $comment->comment_post_ID,
-			'user_id'        => (int) $comment->user_id,
-			'parent_post_id' => null,
-			'type'           => 'lesson',
-			'status'         => $lesson_status,
-			'started_at'     => $started_at,
-			'completed_at'   => $completed_at,
-			'created_at'     => $comment->comment_date_gmt,
-			'updated_at'     => $comment->comment_date_gmt,
-		];
+		$rows = array(
+			array(
+				'post_id'        => (int) $comment->comment_post_ID,
+				'user_id'        => (int) $comment->user_id,
+				'parent_post_id' => null,
+				'type'           => 'lesson',
+				'status'         => $lesson_status,
+				'started_at'     => $started_at,
+				'completed_at'   => $completed_at,
+				'created_at'     => $comment->comment_date_gmt,
+				'updated_at'     => $comment->comment_date_gmt,
+			),
+		);
 
 		// In case there is a quiz associated with the lesson,
 		// we create a quiz progress entry as well.
@@ -372,7 +409,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 				$quiz_status = Quiz_Progress_Interface::STATUS_PASSED;
 			}
 
-			$this->progress_inserts[] = [
+			$rows[] = array(
 				'post_id'        => (int) $quiz_id,
 				'user_id'        => (int) $comment->user_id,
 				'parent_post_id' => null,
@@ -382,8 +419,10 @@ class Student_Progress_Migration extends Migration_Abstract {
 				'completed_at'   => $quiz_completed_at,
 				'created_at'     => $comment->comment_date_gmt,
 				'updated_at'     => $comment->comment_date_gmt,
-			];
+			);
 		}
+
+		return $rows;
 	}
 
 	/**
@@ -399,26 +438,25 @@ class Student_Progress_Migration extends Migration_Abstract {
 	}
 
 	/**
-	 * Insert the progress data in batches.
+	 * Insert the rows for a single comment.
 	 *
-	 * @param bool $dry_run Whether to run the migration in dry-run mode.
+	 * @param array $rows The rows to insert.
+	 * @param bool  $dry_run Whether to run the migration in dry-run mode.
+	 * @return int The number of rows inserted.
 	 */
-	private function insert_with_batches( bool $dry_run ): int {
-		$progress_count = count( $this->progress_inserts );
-		$inserted_rows  = 0;
-		for ( $i = 0; $i < $progress_count; $i += $this->batch_size ) {
-			$batch        = array_slice( $this->progress_inserts, $i, $this->batch_size );
-			$insert_query = $this->generate_insert_sql_for_batch( $batch );
-
-			if ( $dry_run ) {
-				echo esc_html( $insert_query . "\n" );
-				continue;
-			}
-
-			$inserted_rows += $this->db_query( $insert_query );
+	private function insert_comment_rows( array $rows, bool $dry_run ): int {
+		if ( empty( $rows ) ) {
+			return 0;
 		}
 
-		return $inserted_rows;
+		$insert_query = $this->generate_insert_sql_for_batch( $rows );
+
+		if ( $dry_run ) {
+			echo esc_html( $insert_query . "\n" );
+			return 0;
+		}
+
+		return $this->db_query( $insert_query );
 	}
 
 	/**
@@ -443,9 +481,9 @@ class Student_Progress_Migration extends Migration_Abstract {
 	/**
 	 * Generate SQL for data insertion.
 	 *
-	 * @param array $batch Data to generate queries for. Will be 'data' array returned by `$this->fetch_data_for_migration_for_ids()` method.
+	 * @param array $batch Row data to generate queries for.
 	 *
-	 * @return string Generated queries for insertion for this batch, would be of the form:
+	 * @return string Generated query for insertion for this batch, of the form:
 	 * INSERT IGNORE INTO $table_name ($columns) values
 	 *  ($value for row 1)
 	 *  ($value for row 2)
