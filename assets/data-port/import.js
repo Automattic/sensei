@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { render, useLayoutEffect } from '@wordpress/element';
+import { createRoot, useLayoutEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -59,4 +59,5 @@ const SenseiImportPage = () => {
 	);
 };
 
-render( <SenseiImportPage />, document.getElementById( 'sensei-import-page' ) );
+const root = createRoot( document.getElementById( 'sensei-import-page' ) );
+root.render( <SenseiImportPage /> );

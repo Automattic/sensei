@@ -14,15 +14,15 @@ jobs:
 
     steps:
      - name: Checkout
-       uses: actions/checkout@v4
+       uses: actions/checkout@v6.0.2
 
      - name: Setup Node
-       uses: actions/setup-node@v4
+       uses: actions/setup-node@v6
        with:
          node-version-file: '.nvmrc'
 
      - name: Wait for prior instances of the workflow to finish
-       uses: softprops/turnstyle@v1
+       uses: softprops/turnstyle@e15e934b3f69ee283ba389ea05c8886baa656d93 # v3.2.4
        env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

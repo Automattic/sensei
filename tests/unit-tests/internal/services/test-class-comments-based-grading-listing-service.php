@@ -151,6 +151,84 @@ class Comments_Based_Grading_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertNull( $service->get_status_counts(), 'Comments-based service should always return null.' );
 	}
 
+	/**
+	 * Verifies lessons with an "included" post_status appear in the listing.
+	 *
+	 * @dataProvider includedLessonStatusesProvider
+	 */
+	public function testGetLessonProgressItems_WithIncludedLessonStatus_IncludesInResults( string $included_status ): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
+		$wpdb->update( $wpdb->posts, array( 'post_status' => $included_status ), array( 'ID' => $lesson_id ) );
+		clean_post_cache( $lesson_id );
+
+		$service = new Comments_Based_Grading_Listing_Service();
+
+		/* Act. */
+		$result = $service->get_lesson_progress_items( $this->get_default_args() );
+
+		/* Assert. */
+		$this->assertSame( 1, $result['total_count'], "Lesson with post_status '{$included_status}' should be included in total count." );
+		$returned_lesson_ids = array_map(
+			function ( $item ) {
+				return $item->lesson_id;
+			},
+			$result['items']
+		);
+		$this->assertContains( $lesson_id, $returned_lesson_ids, "Lesson with post_status '{$included_status}' should appear in items." );
+	}
+
+	/**
+	 * Verifies lessons with an "excluded" post_status are omitted from the listing.
+	 *
+	 * @dataProvider excludedLessonStatusesProvider
+	 */
+	public function testGetLessonProgressItems_WithExcludedLessonStatus_ExcludesFromResults( string $excluded_status ): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id     = $this->sensei_factory->user->create();
+		$excluded_id = $this->sensei_factory->lesson->create();
+
+		\Sensei_Utils::update_lesson_status( $user_id, $excluded_id, 'in-progress' );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
+		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $excluded_id ) );
+		clean_post_cache( $excluded_id );
+
+		$service = new Comments_Based_Grading_Listing_Service();
+
+		/* Act. */
+		$result = $service->get_lesson_progress_items( $this->get_default_args() );
+
+		/* Assert. */
+		$this->assertSame( 0, $result['total_count'], "Lesson with post_status '{$excluded_status}' should be excluded from total count." );
+	}
+
+	public function includedLessonStatusesProvider(): array {
+		return array(
+			'publish' => array( 'publish' ),
+			'private' => array( 'private' ),
+		);
+	}
+
+	public function excludedLessonStatusesProvider(): array {
+		return array(
+			'draft'      => array( 'draft' ),
+			'pending'    => array( 'pending' ),
+			'future'     => array( 'future' ),
+			'auto-draft' => array( 'auto-draft' ),
+			'trash'      => array( 'trash' ),
+		);
+	}
+
 	public function testGetLessonProgressItems_WithOffsetBeyondTotal_CorrectsPagination(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();

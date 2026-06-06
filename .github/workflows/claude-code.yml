@@ -1,0 +1,100 @@
+name: Claude Code
+
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issues' && github.event.label.name == 'claude') ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude') && github.event.comment.user.type != 'Bot' &&
+        (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude') && github.event.comment.user.type != 'Bot' &&
+        (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body || '', '@claude') && github.event.review.user.type != 'Bot' &&
+        (github.event.review.author_association == 'MEMBER' || github.event.review.author_association == 'OWNER'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
+      cancel-in-progress: true
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: read
+      id-token: write
+    services:
+      database:
+        image: mysql:5.6
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up local trunk branch
+        run: git checkout -b trunk refs/remotes/origin/trunk && git checkout -
+        if: github.ref != 'refs/heads/trunk'
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+
+      - uses: actions/cache@v5
+        with:
+          path: ~/.npm/
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+
+      - name: Install SVN
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
+      - name: Install PHP dependencies
+        uses: ./.github/actions/install-php
+        with:
+          extensions: mysql
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Set up WordPress test environment
+        run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
+
+      - name: Configure git for Claude commits
+        run: |
+          git config user.name "claude[bot]"
+          git config user.email "claude[bot]@users.noreply.github.com"
+
+      - name: Load Claude system prompt
+        id: prompt
+        run: echo "APPEND_SYSTEM_PROMPT<<PROMPT_EOF" >> "$GITHUB_ENV" && cat .github/claude-system-prompt.md >> "$GITHUB_ENV" && echo "PROMPT_EOF" >> "$GITHUB_ENV"
+
+      - uses: anthropics/claude-code-action@787c5a0ce96a9a6cfb050ea0c8f4c05f2447c251  # v1.0.133
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          label_trigger: claude
+          branch_prefix: fix/
+          additional_permissions: |
+            actions: read
+          prompt: |
+            You were triggered on a ${{ github.event_name }} event in ${{ github.repository }}.
+            Issue/PR number: ${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}.
+            Read it with `gh issue view` or `gh pr view` and follow the system prompt instructions.
+          claude_args: |
+            --model claude-sonnet-4-6
+            --max-turns 100
+            --max-budget-usd 5.00
+            --permission-mode acceptEdits
+            --allowedTools "Read,Glob,Grep,Edit,Write,Bash(make *),Bash(npm ci),Bash(npm run *),Bash(composer install*),Bash(vendor/bin/phpunit*),Bash(vendor/bin/psalm*),Bash(git diff*),Bash(git log*),Bash(git show*),Bash(git status*),Bash(git add *),Bash(git commit *),Bash(git push origin*),Bash(git push -u origin*),Bash(git checkout *),Bash(git switch *),Bash(git branch *),Bash(git fetch*),Bash(git rev-parse*),Bash(gh api *),Bash(gh pr *),Bash(gh issue *),Bash(gh run *),Bash(gh label *)"
+            --disallowedTools "Bash(gh pr merge:*)" "Bash(gh pr close:*)" "Bash(gh issue close:*)" "Bash(gh label delete:*)" "Bash(gh run delete:*)" "Bash(gh run cancel:*)" "Bash(git push --force*)" "Bash(git push -f*)" "Bash(git push --mirror*)" "Bash(git push --delete*)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)"

@@ -12,9 +12,7 @@ describe( '<ExportPage />', () => {
 	it( 'shows content selection screen if no job is in progress', () => {
 		const { queryByText } = render( <ExportPage job={ null } /> );
 
-		expect(
-			queryByText( 'Which type of content would you like to export?' )
-		).toBeTruthy();
+		expect( queryByText( 'Choose what to export.' ) ).toBeTruthy();
 	} );
 
 	it( 'shows progress screen if there is a job', () => {

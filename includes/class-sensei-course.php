@@ -74,6 +74,9 @@ class Sensei_Course {
 			add_filter( 'manage_course_posts_columns', [ $this, 'add_column_headings' ], 20, 1 );
 			add_action( 'manage_course_posts_custom_column', [ $this, 'add_column_data' ], 10, 2 );
 
+			// Disable term cache priming on the Courses list table.
+			add_action( 'pre_get_posts', [ __CLASS__, 'disable_term_cache_on_course_list' ] );
+
 			// Enqueue scripts.
 			add_action( 'admin_enqueue_scripts', [ $this, 'register_admin_scripts' ] );
 		} else {
@@ -3025,6 +3028,32 @@ class Sensei_Course {
 		}
 
 		return $query;
+	}
+
+	/**
+	 * Disable term cache priming on the admin Courses list table.
+	 *
+	 * The `sensei_learner` taxonomy stores one term per enrolled user attached to each course. On large
+	 * sites the default object term cache priming loads every learner term for the listed courses at once,
+	 * which can exhaust the PHP memory limit. The list table does not need those terms, so priming is
+	 * skipped here; the remaining course taxonomies are queried lazily per row.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @access private
+	 *
+	 * @param WP_Query $query The query object.
+	 */
+	public static function disable_term_cache_on_course_list( $query ) {
+		if ( ! is_admin() || ! $query->is_main_query() ) {
+			return;
+		}
+
+		if ( 'course' !== $query->get( 'post_type' ) ) {
+			return;
+		}
+
+		$query->set( 'update_post_term_cache', false );
 	}
 
 	/**

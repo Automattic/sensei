@@ -4,20 +4,24 @@ on:
     - pull_request
     - workflow_call
 
+concurrency:
+    group: plugin-build-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.sha }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
     build:
         name: Plugin Build
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@v6.0.2
+            - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
             - name: Get npm cache directory
               id: npm-cache
               run: |
                   echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v4
+            - uses: actions/cache@v5
               with:
                   path: ${{ steps.npm-cache.outputs.dir }}
                   key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
@@ -32,7 +36,7 @@ jobs:
             - name: Decompress plugin
               run: unzip sensei-lms.zip -d sensei-lms
             - name: Store Artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
                   path: ${{ github.workspace }}/sensei-lms/
@@ -48,12 +52,12 @@ jobs:
                 php: [7.4, 8.2]
         steps:
             - name: Download Build Artifact
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
 
             - name: Setup PHP
-              uses: shivammathur/setup-php@v2
+              uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
               with:
                   php-version: ${{ matrix.php }}
                   tools: phplint

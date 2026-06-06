@@ -45,6 +45,7 @@ const setJob = ( job ) => ( { type: 'SET_JOB', job } );
 const updateJob = ( job ) => ( { type: 'UPDATE_JOB', job } );
 
 const getJobId = () => select( EXPORT_STORE, 'getJobId' );
+const getError = () => select( EXPORT_STORE, 'getError' );
 
 /**
  * Set error.
@@ -73,14 +74,23 @@ const pollIfPending = function* ( job ) {
  * Start an export.
  *
  * @access public
- * @param {string[]} types Content types.
+ * @param {Object} selections Per-type ID arrays keyed by content type. Key presence determines inclusion; an empty array value means "export all items of that type".
  */
-export const start = function* ( types ) {
+export const start = function* ( selections ) {
 	yield setJob( {
 		status: 'creating',
 	} );
 	yield createJob();
-	const job = yield startJob( types );
+
+	// If creating the job failed, sendRequest already called setError with the
+	// real server message. Bail before startJob so we don't overwrite it with
+	// the generic "No job ID" path inside sendJobRequest.
+	const jobId = yield getJobId();
+	if ( ! jobId ) {
+		return;
+	}
+
+	const job = yield startJob( selections );
 	yield pollIfPending( job );
 };
 
@@ -231,24 +241,37 @@ const createJob = function* () {
 		method: 'POST',
 	} );
 
-	yield setJob( job );
+	if ( job ) {
+		yield setJob( job );
+		return;
+	}
+
+	// sendRequest swallowed the throw and called setError. Clear the
+	// 'creating' synthetic job so the setup screen exits its loading state,
+	// then re-apply the error since clearJob wipes the whole store.
+	const error = yield getError();
+	yield clearJob();
+	if ( error ) {
+		yield setError( error );
+	}
 };
 
 /**
  * Request to start job.
  *
- * @param {string[]} types Content types to export.
+ * @param {Object} selections Per-type ID arrays keyed by content type. Key presence determines inclusion; an empty array value means "export all items of that type".
  */
-const startJob = function* ( types ) {
+const startJob = function* ( selections ) {
 	const job = yield sendJobRequest( {
 		endpoint: 'start',
 		method: 'POST',
-		data: { content_types: types },
+		data: { selections },
 	} );
 
 	// Log when users start an export.
-	const type = types
+	const type = Object.keys( selections )
 		.map( ( typeSingular ) => typeSingular + 's' )
+		.sort()
 		.join( ',' );
 
 	window.sensei_log_event( 'export_continue_click', { type } );

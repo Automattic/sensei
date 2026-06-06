@@ -890,6 +890,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			$comment_id   = $this->comment->create( $comment_args );
 
 			add_comment_meta( $comment_id, 'grade', $grade );
+			add_comment_meta( $comment_id, 'quiz_answers', 'a:1:{i:0;s:1:"1";}' );
 		}
 	}
 

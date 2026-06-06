@@ -603,7 +603,7 @@ class Sensei_Utils {
 
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id, self::get_lesson_course_id( $lesson_id ) );
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 			$has_questions   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 			if ( $complete && $has_questions ) {
 				update_comment_meta( $lesson_progress->get_id(), 'grade', 0 );
@@ -2157,11 +2157,15 @@ class Sensei_Utils {
 	/**
 	 * Adjust the comment query to be faster on the database, used by Analysis admin
 	 *
-	 * @since  1.7.0
+	 * @since      1.7.0
+	 * @deprecated $$next-version$$ No longer used; the lesson average grade is now computed via a direct aggregate query.
+	 *
 	 * @param array $pieces
 	 * @return array $pieces
 	 */
 	public static function comment_total_sum_meta_value_filter( $pieces ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		global $wpdb;
 
 		$pieces['fields'] = " COUNT(*) AS total, SUM($wpdb->commentmeta.meta_value) AS meta_sum ";
@@ -3000,7 +3004,7 @@ class Sensei_Utils {
 			return sprintf(
 			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
 				__( '%s ago', 'sensei-lms' ),
-				human_time_diff( $date->getTimestamp() )
+				human_time_diff( $date->getTimestamp(), $now->getTimestamp() )
 			);
 		}
 
@@ -3193,32 +3197,6 @@ class Sensei_Utils {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 
 		return ! empty( $screen ) && in_array( $screen->id, [ 'widgets', 'site-editor', 'customize', 'appearance_page_gutenberg-edit-site' ], true );
-	}
-
-	/**
-	 * Get the course ID for a lesson.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param int $lesson_id The lesson post ID.
-	 * @return int|null The course ID, or null if not found.
-	 */
-	public static function get_lesson_course_id( int $lesson_id ): ?int {
-		$course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
-		return $course_id ? $course_id : null;
-	}
-
-	/**
-	 * Get the lesson ID for a quiz.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param int $quiz_id The quiz post ID.
-	 * @return int|null The lesson ID, or null if not found.
-	 */
-	public static function get_quiz_lesson_id( int $quiz_id ): ?int {
-		$lesson_id = (int) get_post_meta( $quiz_id, '_quiz_lesson', true );
-		return $lesson_id ? $lesson_id : null;
 	}
 }
 

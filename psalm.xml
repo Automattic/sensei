@@ -46,6 +46,8 @@
 		<UndefinedFunction>
 			<errorLevel type="suppress">
 				<referencedFunction name="WP_CLI\Utils\format_items" />
+				<referencedFunction name="wp_register_ability" />
+				<referencedFunction name="wp_register_ability_category" />
 			</errorLevel>
 		</UndefinedFunction>
 		<InvalidScalarArgument>

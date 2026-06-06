@@ -38,6 +38,20 @@ class Sensei_Export_Lessons_Tests extends WP_UnitTestCase {
 
 
 	/**
+	 * A non-empty job selection restricts the export to the chosen post IDs.
+	 */
+	public function testExport_JobSelectionPresent_ExportsOnlySelectedPosts() {
+		$included = $this->factory->lesson->create();
+		$this->factory->lesson->create();
+
+		$result = $this->export( array( 'lesson' => array( $included ) ) );
+		$rows   = array_values( array_filter( $result ) );
+
+		self::assertCount( 1, $rows, 'Only the selected lesson should be exported.' );
+		self::assertSame( strval( $included ), $rows[0]['id'], 'Exported lesson ID should match the selection.' );
+	}
+
+	/**
 	 * Test that lesson details are exported correctly.
 	 */
 	public function testLessonContentExported() {

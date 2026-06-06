@@ -121,11 +121,12 @@ describe( 'Export store', () => {
 
 	it( 'creates and starts a job', () => {
 		mockActiveJob( null );
+		window.sensei_log_event.mockClear();
 		apiFetch
 			.mockReturnValueOnce( { id: 5, status: { status: 'setup' } } )
 			.mockReturnValueOnce( { id: 5, status: { status: 'complete' } } );
 
-		store.dispatch( actions.start( [ 'lesson', 'course' ] ) );
+		store.dispatch( actions.start( { lesson: [], course: [] } ) );
 
 		expect( apiFetch ).toHaveBeenNthCalledWith( 1, {
 			path: '/sensei-internal/v1/export',
@@ -135,13 +136,82 @@ describe( 'Export store', () => {
 		expect( apiFetch ).toHaveBeenNthCalledWith( 2, {
 			path: '/sensei-internal/v1/export/5/start',
 			method: 'POST',
-			data: { content_types: [ 'lesson', 'course' ] },
+			data: { selections: { lesson: [], course: [] } },
 		} );
+
+		// Analytics: keys pluralised and sorted, joined with commas.
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'export_continue_click',
+			{ type: 'courses,lessons' }
+		);
 
 		expect( registry.select( EXPORT_STORE ).getJob() ).toEqual( {
 			id: 5,
 			status: 'complete',
 		} );
+	} );
+
+	it( 'sends per-type selections in the start payload', () => {
+		mockActiveJob( null );
+		window.sensei_log_event.mockClear();
+		apiFetch
+			.mockReturnValueOnce( { id: 9, status: { status: 'setup' } } )
+			.mockReturnValueOnce( { id: 9, status: { status: 'complete' } } );
+
+		store.dispatch(
+			actions.start( {
+				course: [ 12, 34 ],
+				lesson: [],
+				question: [ 7 ],
+			} )
+		);
+
+		expect( apiFetch ).toHaveBeenNthCalledWith( 2, {
+			path: '/sensei-internal/v1/export/9/start',
+			method: 'POST',
+			data: {
+				selections: {
+					course: [ 12, 34 ],
+					lesson: [],
+					question: [ 7 ],
+				},
+			},
+		} );
+
+		// Analytics ignores per-type counts; it just summarises which types
+		// were enabled.
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'export_continue_click',
+			{ type: 'courses,lessons,questions' }
+		);
+	} );
+
+	it( 'surfaces server errors from createJob and skips the start request', () => {
+		mockActiveJob( null );
+		apiFetch.mockImplementationOnce( () => {
+			throw {
+				code: 'sensei_export_create_failed',
+				message: 'Server said no',
+			};
+		} );
+
+		store.dispatch( actions.start( { course: [] } ) );
+
+		// Only the create request was attempted — start was skipped.
+		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+		expect( apiFetch ).toHaveBeenCalledWith( {
+			path: '/sensei-internal/v1/export',
+			method: 'POST',
+		} );
+
+		// The actual server error is preserved, not overwritten by "No job ID".
+		expect( registry.select( EXPORT_STORE ).getError() ).toBe(
+			'Server said no'
+		);
+
+		// The synthetic 'creating' job is cleared so Start Export becomes
+		// clickable again instead of being stuck in a loading state.
+		expect( registry.select( EXPORT_STORE ).getJob() ).toBeUndefined();
 	} );
 
 	it( 'deletes job', async () => {

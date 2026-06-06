@@ -37,6 +37,20 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 	}
 
 
+	/**
+	 * A non-empty job selection restricts the export to the chosen post IDs.
+	 */
+	public function testExport_JobSelectionPresent_ExportsOnlySelectedPosts() {
+		$included = $this->factory->question->create();
+		$this->factory->question->create();
+
+		$result = $this->export( array( 'question' => array( $included ) ) );
+		$rows   = array_values( array_filter( $result ) );
+
+		self::assertCount( 1, $rows, 'Only the selected question should be exported.' );
+		self::assertSame( strval( $included ), $rows[0]['id'], 'Exported question ID should match the selection.' );
+	}
+
 	public function testQuestionDataExported() {
 
 		$this->factory->question->create(
@@ -72,7 +86,6 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 			],
 			$result[0]
 		);
-
 	}
 
 	public function testQuestionCategoriesExported() {
