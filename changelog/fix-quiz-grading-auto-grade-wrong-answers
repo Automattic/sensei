@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix quiz grading detail page showing incorrect grade when auto-graded questions are answered incorrectly.

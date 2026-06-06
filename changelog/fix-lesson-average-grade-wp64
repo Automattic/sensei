@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix average grade calculation on Reports → Courses → Lessons overview broken on WP 6.4+.

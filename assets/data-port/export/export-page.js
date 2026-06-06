@@ -47,7 +47,10 @@ export const ExportPage = ( { job, error, start, reset, cancel } ) => {
 				{ job && 'creating' !== job.status ? (
 					<ExportProgressPage { ...{ job, reset, cancel } } />
 				) : (
-					<ExportSelectContentPage onSubmit={ start } job={ job } />
+					<ExportSelectContentPage
+						onSubmit={ ( selections ) => start( selections ) }
+						job={ job }
+					/>
 				) }
 			</section>
 		</div>

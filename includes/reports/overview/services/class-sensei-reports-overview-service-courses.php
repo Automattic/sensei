@@ -5,6 +5,8 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -15,12 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.4.1
  */
 class Sensei_Reports_Overview_Service_Courses {
-
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-	}
 
 	/**
 	 * Get total average progress value for courses.
@@ -94,38 +90,8 @@ class Sensei_Reports_Overview_Service_Courses {
 		if ( empty( $course_ids ) ) {
 			return 0;
 		}
-		global $wpdb;
-		/**
-		 * The subquery calculates the average grade per course, and the outer query then calculates the
-		 * average grade of all courses. To be included in the calculation, a lesson must:
-		 *   Have a status of 'graded', 'passed' or 'failed'.
-		 *   Have grade data.
-		 *   Be associated with a course.
-		 *   Have quiz questions (checking for the existence of '_quiz_has_questions' meta is sufficient;
-		 *   if it exists its value will be 1).
-		 */
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		$result = $wpdb->get_row(
-			"SELECT AVG(course_average) as courses_average
-		FROM (
-			SELECT AVG(cm.meta_value) as course_average
-			FROM {$wpdb->comments} c
-			INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
-			INNER JOIN {$wpdb->postmeta} course ON c.comment_post_ID = course.post_id
-			INNER JOIN {$wpdb->postmeta} has_questions ON c.comment_post_ID = has_questions.post_id
-			INNER JOIN {$wpdb->posts} p ON p.ID = course.meta_value
-			WHERE c.comment_type = 'sensei_lesson_status'
-				AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
-				AND cm.meta_key = 'grade'
-				AND course.meta_key = '_lesson_course'
-				AND course.meta_value <> ''
-				AND has_questions.meta_key = '_quiz_has_questions'
-				AND course.meta_value IN ( " . implode( ',', $course_ids ) . ' ) ' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			. ' GROUP BY course.meta_value
-		) averages_by_course'
-		);
 
-		return floatval( $result->courses_average );
+		return ( new Progress_Query_Service_Factory() )->create_grading_stats_service()->get_courses_average_grade( $course_ids );
 	}
 
 	/**
@@ -137,7 +103,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @param array $course_ids Courses ids to filter by.
 	 * @return float Average days to completion, rounded to the highest integer.
 	 */
-	public function get_average_days_to_completion( array $course_ids ) : float {
+	public function get_average_days_to_completion( array $course_ids ): float {
 		if ( empty( $course_ids ) ) {
 			return 0;
 		}
@@ -170,7 +136,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 *
 	 * @return int total of enrollments
 	 */
-	public function get_total_enrollments( $course_ids ):int {
+	public function get_total_enrollments( $course_ids ): int {
 		if ( empty( $course_ids ) ) {
 			return 0;
 		}
@@ -259,5 +225,4 @@ class Sensei_Reports_Overview_Service_Courses {
 			'OBJECT_K'
 		);
 	}
-
 }

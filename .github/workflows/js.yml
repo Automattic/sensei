@@ -4,24 +4,33 @@ on:
     pull_request:
     workflow_call:
 
+concurrency:
+    group: js-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.sha }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
     lint:
         name: JS Linting
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@v6.0.2
+            - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
-            - uses: actions/cache@v4
+            - name: Get Node.js version
+              id: node-version
+              run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
+            - uses: actions/cache@v5
               with:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-            - uses: actions/cache@v4
+            - uses: actions/cache@v5
+              id: node-modules-cache
               with:
                   path: node_modules/
-                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+                  key: ${{ runner.os }}-${{ runner.arch }}-${{ steps.node-version.outputs.version }}-node-modules-${{ hashFiles('package-lock.json') }}
             - name: Install JS dependencies
+              if: steps.node-modules-cache.outputs.cache-hit != 'true'
               run: npm ci
             - name: Lint JS
               run: npm run lint-js
@@ -32,19 +41,24 @@ jobs:
         name: TypeScript Checking
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@v6.0.2
+            - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
-            - uses: actions/cache@v4
+            - name: Get Node.js version
+              id: node-version
+              run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
+            - uses: actions/cache@v5
               with:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-            - uses: actions/cache@v4
+            - uses: actions/cache@v5
+              id: node-modules-cache
               with:
                   path: node_modules/
-                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+                  key: ${{ runner.os }}-${{ runner.arch }}-${{ steps.node-version.outputs.version }}-node-modules-${{ hashFiles('package-lock.json') }}
             - name: Install JS dependencies
+              if: steps.node-modules-cache.outputs.cache-hit != 'true'
               run: npm ci
             - name: Lint JS
               run: npm run lint-types
@@ -54,24 +68,33 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             # clone the repository
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@v6.0.2
+            - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
-            - uses: actions/cache@v4
+            - name: Get Node.js version
+              id: node-version
+              run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
+            - uses: actions/cache@v5
               with:
                   path: ~/.npm
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-node-
+            - uses: actions/cache@v5
+              id: node-modules-cache
+              with:
+                  path: node_modules/
+                  key: ${{ runner.os }}-${{ runner.arch }}-${{ steps.node-version.outputs.version }}-node-modules-${{ hashFiles('package-lock.json') }}
             - name: Install JS dependencies
+              if: steps.node-modules-cache.outputs.cache-hit != 'true'
               run: npm ci
             - name: Test JS
               env:
                   NODE_OPTIONS: "--max_old_space_size=4096"
               run: npm run test-js
             - name: Slack Notification on Failure
-              uses: rtCamp/action-slack-notify@v2
+              uses: rtCamp/action-slack-notify@e31e87e03dd19038e411e38ae27cbad084a90661 # v2.3.3
               if: ${{ failure() && github.event_name == 'push' }}
               env:
                 SLACK_CHANNEL: ${{ secrets.SLACK_SENSEI_CHANNEL }}

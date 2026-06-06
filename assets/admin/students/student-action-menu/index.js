@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { DropdownMenu } from '@wordpress/components';
-import { render, useState } from '@wordpress/element';
+import { createRoot, useState } from '@wordpress/element';
 import { moreVertical } from '@wordpress/icons';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
@@ -124,13 +124,12 @@ export const StudentActionMenu = ( {
 
 Array.from( document.getElementsByClassName( 'student-action-menu' ) ).forEach(
 	( actionMenu ) => {
-		render(
+		createRoot( actionMenu ).render(
 			<StudentActionMenu
 				studentId={ actionMenu?.dataset?.userId }
 				studentName={ actionMenu?.dataset?.userName }
 				studentDisplayName={ actionMenu?.dataset?.userDisplayName }
-			/>,
-			actionMenu
+			/>
 		);
 	}
 );

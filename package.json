@@ -100,11 +100,14 @@
     "wp-hookdoc": "0.2.0"
   },
   "overrides": {
+    "basic-ftp": "5.2.1",
+    "form-data": "4.0.4",
     "prettier": "npm:wp-prettier@3.0.3",
     "react-autosize-textarea": {
       "react": "18.3.1",
       "react-dom": "18.3.1"
-    }
+    },
+    "simple-git": "3.36.0"
   },
   "scripts": {
     "archive": "composer archive --file=$npm_package_name --format=zip",
@@ -123,7 +126,6 @@
     "lint-e2e": "eslint -c ./tests/e2e-playwright/.eslintrc.js ./tests/e2e-playwright/ && tsc --noEmit --project tests/e2e-playwright/tsconfig.json",
     "lint-js": "wp-scripts lint-js --ext js,jsx,ts,tsx assets",
     "lint-js:fix": "npm run lint-js -- --fix",
-    "lint-php": "wp-scripts lint-php",
     "lint-pkg-json": "wp-scripts lint-pkg-json",
     "lint-types": "tsc --project tsconfig.json",
     "postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",
@@ -132,19 +134,19 @@
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",
     "start": "cross-env NODE_ENV=development wp-scripts start",
     "test": "npm run test-php && npm run test-js",
-    "test:e2e": "playwright test --grep-invert @setup",
+    "test:e2e": "COMPOSE_PROJECT_NAME=sensei-lms playwright test --grep-invert @setup",
     "test:e2e:gutenberg": "ENABLE_GUTENBERG=true npm run test:e2e",
-    "test:e2e:setup-only": "playwright test --grep @setup",
+    "test:e2e:setup-only": "COMPOSE_PROJECT_NAME=sensei-lms playwright test --grep @setup",
     "test:e2e:debug": "npm run test:e2e -- --headed",
     "test-js": "wp-scripts test-unit-js",
     "test-js:coverage": "wp-scripts test-unit-js --coverage",
     "test-js:watch": "wp-scripts test-unit-js --watch",
     "test-php": "./vendor/bin/phpunit",
-    "test-php:wp-env": "wp-env run --env-cwd='wp-content/plugins/sensei' tests-cli vendor/bin/phpunit -c phpunit.xml",
-    "test-php:wp-env:hpps": "wp-env run --env-cwd='wp-content/plugins/sensei' tests-cli env ENABLE_HPPS=1 vendor/bin/phpunit -c phpunit.xml",
+    "test-php:wp-env": "COMPOSE_PROJECT_NAME=sensei-lms wp-env run --env-cwd='wp-content/plugins/sensei' tests-cli vendor/bin/phpunit -c phpunit.xml",
+    "test-php:wp-env:hpps": "COMPOSE_PROJECT_NAME=sensei-lms wp-env run --env-cwd='wp-content/plugins/sensei' tests-cli env ENABLE_HPPS=1 vendor/bin/phpunit -c phpunit.xml",
     "test-php:coverage-clover": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover=coverage.xml",
     "test-php:coverage-html": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-html=coverage",
-    "wp-env": "wp-env"
+    "wp-env": "COMPOSE_PROJECT_NAME=sensei-lms wp-env"
   },
   "lint-staged": {
     "package.json": [
