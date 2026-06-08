@@ -1,4 +1,0 @@
-Significance: patch
-Type: changed
-
-Fix HPPS grading stats when progress rows do not have parent post IDs.
