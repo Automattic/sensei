@@ -105,11 +105,13 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 			"SELECT COUNT(*) AS count, COALESCE( SUM( qs.final_grade ), 0 ) AS sum
 			FROM %i q
 			INNER JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
+			INNER JOIN %i lesson_quiz ON lesson_quiz.meta_key = '_lesson_quiz' AND lesson_quiz.meta_value = q.post_id
 			WHERE q.type = 'quiz'
 				AND q.status IN " . $this->get_graded_statuses_sql() . '
 				AND qs.final_grade IS NOT NULL',
 			$table,
-			$submissions_table
+			$submissions_table,
+			$wpdb->postmeta
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
@@ -154,33 +156,35 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		} else {
 			$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			$course_filter = $wpdb->prepare( " AND p.parent_post_id IN ( $placeholders )", $course_ids );
+			$course_filter = $wpdb->prepare( " AND lesson_course.meta_value IN ( $placeholders )", $course_ids );
 		}
 
-		/**
-		 * Uses parent_post_id on lesson progress rows as the course ID.
-		 * The subquery computes AVG grade per course; the outer query averages those.
-		 */
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Statuses are from constants, not user input.
 		$query = $wpdb->prepare(
 			"SELECT AVG(course_average) AS courses_average
 			FROM (
 				SELECT AVG(qs.final_grade) AS course_average
 				FROM %i p
-				INNER JOIN %i q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'
+				INNER JOIN %i lesson_course ON lesson_course.post_id = p.post_id
+					AND lesson_course.meta_key = '_lesson_course'
+					AND lesson_course.meta_value <> ''
+				INNER JOIN %i lesson_quiz ON lesson_quiz.post_id = p.post_id
+					AND lesson_quiz.meta_key = '_lesson_quiz'
+					AND lesson_quiz.meta_value > 0
+				INNER JOIN %i q ON q.post_id = lesson_quiz.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
 				INNER JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id
 				WHERE p.type = 'lesson'
 					AND q.status IN " . $this->get_graded_statuses_sql() . '
-					AND qs.final_grade IS NOT NULL
-					AND p.parent_post_id IS NOT NULL
-					AND p.parent_post_id != 0',
+					AND qs.final_grade IS NOT NULL',
 			$table,
+			$wpdb->postmeta,
+			$wpdb->postmeta,
 			$table,
 			$submissions_table
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 		$query .= $course_filter;
-		$query .= ' GROUP BY p.parent_post_id ) averages_by_course';
+		$query .= ' GROUP BY lesson_course.meta_value ) averages_by_course';
 
 		/** Query result. @var object|null $result */
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared above. Caching handled by callers.
@@ -268,11 +272,11 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		}
 
 		if ( ! empty( $args['lesson_id'] ) ) {
-			return $wpdb->prepare( ' AND q.parent_post_id = %d', $args['lesson_id'] );
+			return $wpdb->prepare( ' AND lesson_quiz.post_id = %d', $args['lesson_id'] );
 		}
 
 		$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-		return $wpdb->prepare( " AND q.parent_post_id IN ( $placeholders )", $args['post__in'] );
+		return $wpdb->prepare( " AND lesson_quiz.post_id IN ( $placeholders )", $args['post__in'] );
 	}
 }
