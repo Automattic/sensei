@@ -26,6 +26,7 @@
 - Fix average grade calculation on Reports → Courses → Lessons overview broken on WP 6.4+. [#7961](https://github.com/Automattic/sensei/pull/7961)
 - Fix Course Reports Last Activity showing an arbitrary date instead of the most recent activity date across all lessons. [#7920](https://github.com/Automattic/sensei/pull/7920)
 - Fix Days to Completion calculation in Reports to exclude lessons with ungraded or failed quizzes, which do not have a valid completion date. [#7920](https://github.com/Automattic/sensei/pull/7920)
+- Fix a fatal TypeError in `lesson_quiz_questions()` when a lesson has no quiz. [#8000](https://github.com/Automattic/sensei/pull/8000)
 - Fix grade averages being dragged down by spurious grade=0 meta written on lesson start. [#7931](https://github.com/Automattic/sensei/pull/7931)
 - Fix Grading menu badge counting ungraded quizzes from other teachers' courses. [#7977](https://github.com/Automattic/sensei/pull/7977)
 - Fix Grading page status tab counts not updating when filtering by a specific lesson. [#7923](https://github.com/Automattic/sensei/pull/7923)
