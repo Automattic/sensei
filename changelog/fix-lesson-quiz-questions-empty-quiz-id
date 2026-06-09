@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix a fatal TypeError in `lesson_quiz_questions()` when a lesson has no quiz, triggered by usage tracking on published quiz-less lessons.
