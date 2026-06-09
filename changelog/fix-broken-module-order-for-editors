@@ -1,4 +1,0 @@
-Significance: minor
-Type: fixed
-
-Fix module order reset and module disassociation when a non-admin user (e.g. Editor) saves a lesson in a course with modules owned by another user.
