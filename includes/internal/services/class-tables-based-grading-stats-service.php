@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interface {
 
@@ -35,7 +35,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 */
@@ -46,7 +46,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	/**
 	 * Get the progress table name.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return string
 	 */
@@ -57,7 +57,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	/**
 	 * Get the quiz submissions table name.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return string
 	 */
@@ -68,7 +68,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	/**
 	 * Get the SQL IN clause for graded quiz statuses.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return string SQL fragment like "( 'graded', 'passed', 'failed' )".
 	 */
@@ -84,7 +84,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	/**
 	 * Get grade count and sum, with optional filters.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Optional filters.
@@ -141,7 +141,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	 * Only includes student attempts where the quiz was actually submitted
 	 * (enforced via INNER JOIN on the quiz submissions table and final_grade IS NOT NULL).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int[] $course_ids Optional. Filter by courses. Empty = all.
 	 * @return float
@@ -201,7 +201,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	/**
 	 * Average grade filtered by user IDs.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int[] $user_ids User IDs to include.
 	 * @return float
@@ -243,7 +243,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	/**
 	 * Build SQL clause for filtering by user ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -259,7 +259,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	/**
 	 * Build SQL clause for filtering by post ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.

@@ -32,7 +32,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	/**
 	 * Cache group for quiz submissions.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @var string
 	 */
@@ -315,7 +315,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	/**
 	 * Get the cache key for a quiz submission.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.

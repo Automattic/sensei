@@ -53,7 +53,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		/**
 		 * Filter the read batch size for student progress migration.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.0
 		 *
 		 * @param int $read_batch_size The read batch size.
 		 */
@@ -62,7 +62,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		/**
 		 * Filter the insert batch size for student progress migration.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.0
 		 *
 		 * @param int $insert_batch_size The insert batch size.
 		 */

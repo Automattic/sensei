@@ -411,7 +411,7 @@ class Sensei_Grading_User_Quiz {
 	 * Returns 'user_right' when the stored grade is positive, 'user_wrong' when a graded
 	 * quiz has recorded 0 points for the question, and 'ungraded' otherwise.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param string $quiz_grade_type     Quiz grading mode: 'auto' or 'manual'.
 	 * @param mixed  $user_question_grade Stored grade value, or false if not yet graded.

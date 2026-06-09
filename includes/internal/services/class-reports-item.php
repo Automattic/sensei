@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * difference between comment-based and table-based storage so that
  * the report UI code can work with a uniform interface.
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Reports_Item {
 
@@ -103,7 +103,7 @@ class Reports_Item {
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int         $post_id      The post ID.
 	 * @param int         $user_id      The user ID.
@@ -142,7 +142,7 @@ class Reports_Item {
 	 * trigger a _doing_it_wrong notice, since report data is now carried
 	 * directly on the Reports_Item object.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param string $key The property name.
 	 * @return mixed|null The property value, or null if not mapped.
@@ -152,7 +152,7 @@ class Reports_Item {
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_argument handles its own output.
 			_deprecated_argument(
 				'Reports_Item::$' . $key,
-				'$$next-version$$',
+				'4.26.0',
 				sprintf(
 					/* translators: 1: old property name, 2: new property name */
 					'Accessing Reports_Item via legacy WP_Comment property "%1$s" is deprecated. Use "%2$s" instead.',
@@ -173,7 +173,7 @@ class Reports_Item {
 				'Property "%s" does not exist on Reports_Item. The report list table no longer uses WP_Comment objects.',
 				$key
 			),
-			'$$next-version$$'
+			'4.26.0'
 		);
 		// phpcs:enable
 

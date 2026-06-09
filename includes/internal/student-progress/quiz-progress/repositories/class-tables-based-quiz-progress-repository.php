@@ -32,7 +32,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	/**
 	 * Cache group for quiz progress.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @var string
 	 */
@@ -490,7 +490,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	/**
 	 * Get the cache key for a quiz progress.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.

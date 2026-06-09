@@ -1,4 +1,0 @@
-Significance: minor
-Type: fixed
-
-Fix HPPS data migration to work on restricted hosting environments by replacing set_time_limit with time-budgeted batch processing and adding retry logic for failed migrations.

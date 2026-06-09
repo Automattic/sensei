@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix grade averages being dragged down by spurious grade=0 meta written on lesson start.

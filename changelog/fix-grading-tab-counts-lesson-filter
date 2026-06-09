@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix Grading page status tab counts not updating when filtering by a specific lesson.

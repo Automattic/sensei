@@ -3038,7 +3038,7 @@ class Sensei_Course {
 	 * which can exhaust the PHP memory limit. The list table does not need those terms, so priming is
 	 * skipped here; the remaining course taxonomies are queried lazily per row.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @access private
 	 *
