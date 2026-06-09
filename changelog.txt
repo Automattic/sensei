@@ -12,6 +12,7 @@
 - Integrate HPPS in grading backend. [#7923](https://github.com/Automattic/sensei/pull/7923)
 - Integrate HPPS in Lessons report. [#7920](https://github.com/Automattic/sensei/pull/7920)
 - Register Sensei with the WordPress Abilities API. [#7952](https://github.com/Automattic/sensei/pull/7952)
+- Enable the block editor Notes feature for courses and lessons. [#7998](https://github.com/Automattic/sensei/pull/7998)
 
 ### Changed
 - Add grading stats service for HPPS integration. [#7931](https://github.com/Automattic/sensei/pull/7931)
