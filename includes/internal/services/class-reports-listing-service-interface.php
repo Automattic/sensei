@@ -20,14 +20,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 interface Reports_Listing_Service_Interface {
 
 	/**
 	 * Get paginated users' progress on a specific lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Comments-API-shaped activity arguments.
@@ -48,7 +48,7 @@ interface Reports_Listing_Service_Interface {
 	/**
 	 * Get paginated users' progress on a specific course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Comments-API-shaped activity arguments.
@@ -70,7 +70,7 @@ interface Reports_Listing_Service_Interface {
 	/**
 	 * Get a single lesson's progress for one user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Comments-API-shaped activity arguments (post_id, user_id, type, status).
 	 * @return Reports_Item|null Null when the user has no progress on this lesson.
@@ -80,7 +80,7 @@ interface Reports_Listing_Service_Interface {
 	/**
 	 * Get paginated course progress for a specific user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Comments-API-shaped activity arguments.
@@ -101,7 +101,7 @@ interface Reports_Listing_Service_Interface {
 	/**
 	 * Count students with activity on a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Comments-API-shaped activity arguments.
 	 * @return int
@@ -111,7 +111,7 @@ interface Reports_Listing_Service_Interface {
 	/**
 	 * Count students who completed a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Comments-API-shaped activity arguments.
 	 * @return int
@@ -121,7 +121,7 @@ interface Reports_Listing_Service_Interface {
 	/**
 	 * Get the average quiz grade for a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Comments-API-shaped activity arguments (post_id, type, status, meta_key).
 	 * @return float|null Null when no graded submissions exist.

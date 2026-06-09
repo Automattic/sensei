@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Interface {
 
@@ -35,7 +35,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 */
@@ -46,7 +46,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	/**
 	 * Get the SQL IN clause for graded quiz statuses.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return string SQL fragment like "( 'graded', 'passed', 'failed' )".
 	 */
@@ -62,7 +62,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	/**
 	 * Get grade count and sum, with optional filters.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Optional filters.
@@ -124,7 +124,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	 * Only includes student attempts where the quiz was actually submitted
 	 * (enforced via the quiz_answers EXISTS check).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int[] $course_ids Optional. Filter by courses. Empty = all.
 	 * @return float
@@ -193,7 +193,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	/**
 	 * Average grade filtered by user IDs.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int[] $user_ids User IDs to include.
 	 * @return float
@@ -241,7 +241,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	/**
 	 * Build SQL clause for filtering by user ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -257,7 +257,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	/**
 	 * Build SQL clause for filtering by post ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.

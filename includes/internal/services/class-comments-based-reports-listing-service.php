@@ -20,14 +20,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_Interface {
 
 	/**
 	 * Get paginated users' progress on a specific lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return array{ items: Reports_Item[], total_count: int }
@@ -39,7 +39,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	/**
 	 * Get paginated users' progress on a specific course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return array{ items: Reports_Item[], total_count: int }
@@ -51,7 +51,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	/**
 	 * Get lesson progress for one user in a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return Reports_Item|null
@@ -69,7 +69,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	/**
 	 * Get paginated course progress for a specific user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return array{ items: Reports_Item[], total_count: int }
@@ -81,7 +81,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	/**
 	 * Count students with activity on a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return int
@@ -93,7 +93,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	/**
 	 * Count students who completed a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return int
@@ -105,7 +105,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	/**
 	 * Get the average quiz grade for a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return float|null

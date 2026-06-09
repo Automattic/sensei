@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_Interface {
 
@@ -32,7 +32,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 */
@@ -61,7 +61,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	/**
 	 * Get paginated users' progress on a specific lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return array{ items: Reports_Item[], total_count: int }
@@ -121,7 +121,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	/**
 	 * Get paginated users' progress on a specific course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return array{ items: Reports_Item[], total_count: int }
@@ -189,7 +189,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	/**
 	 * Get a single lesson's progress for one user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return Reports_Item|null
@@ -242,7 +242,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	/**
 	 * Get paginated course progress for a specific user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return array{ items: Reports_Item[], total_count: int }
@@ -330,7 +330,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	/**
 	 * Count students with activity on a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return int
@@ -358,7 +358,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	/**
 	 * Count students who completed a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return int
@@ -399,7 +399,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	 * because the tables schema queries `sensei_lms_progress` + `sensei_lms_quiz_submissions`
 	 * directly rather than commentmeta.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return float|null

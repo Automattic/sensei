@@ -24,7 +24,7 @@ abstract class Migration_Abstract {
 	/**
 	 * Time budget in seconds for this migration run.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 * @var float|null
 	 */
 	private $time_budget = null;
@@ -32,7 +32,7 @@ abstract class Migration_Abstract {
 	/**
 	 * Timestamp when the time budget started.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 * @var float|null
 	 */
 	private $time_budget_start = null;
@@ -51,7 +51,7 @@ abstract class Migration_Abstract {
 	/**
 	 * Set the time budget for this migration run.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param float $seconds Maximum seconds this run should take.
 	 * @return void
@@ -67,7 +67,7 @@ abstract class Migration_Abstract {
 	 * Returns true when 80% of the budget has been consumed.
 	 * Returns false if no budget has been set.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return bool
 	 */
