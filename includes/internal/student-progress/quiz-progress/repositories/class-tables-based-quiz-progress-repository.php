@@ -266,7 +266,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			],
 			[
 				'%s',
-				'%s',
+				$quiz_progress->get_started_at() ? '%s' : null,
 				$quiz_progress->get_completed_at() ? '%s' : null,
 				'%s',
 			],
