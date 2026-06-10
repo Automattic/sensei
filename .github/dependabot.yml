@@ -1,7 +1,11 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
+    # "/" covers .github/workflows + root action.yml only; the glob adds the
+    # nested composite actions (.github/actions/*/action.yml).
+    directories:
+      - "/"
+      - "/.github/actions/*"
     schedule:
       interval: "weekly"
       day: "monday"
