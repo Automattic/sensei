@@ -2,6 +2,7 @@
 
 namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories;
 
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
 
@@ -21,6 +22,38 @@ class Comments_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+	}
+
+	public function testSave_StartedAtInDifferentTimezone_StoresStartMetaInSiteTimezone(): void {
+		/* Arrange. */
+		update_option( 'timezone_string', 'America/New_York' );
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Comments_Based_Lesson_Progress_Repository();
+		$created    = $repository->create( $lesson_id, $user_id );
+
+		// A started_at instant expressed in UTC (as a cached table read would produce).
+		$started_at = new \DateTimeImmutable( '2026-06-09 19:49:33', new \DateTimeZone( 'UTC' ) );
+		$progress   = new Comments_Based_Lesson_Progress(
+			$created->get_id(),
+			$lesson_id,
+			$user_id,
+			$created->get_status(),
+			$started_at,
+			null,
+			$created->get_created_at(),
+			$created->get_updated_at()
+		);
+
+		/* Act. */
+		$repository->save( $progress );
+
+		/* Assert. */
+		self::assertSame(
+			'2026-06-09 15:49:33',
+			get_comment_meta( $created->get_id(), 'start', true ),
+			'Start meta should be stored in the site timezone, not UTC.'
+		);
 	}
 
 	public function testGet_WhenStatusFound_ReturnsLessonProgress(): void {

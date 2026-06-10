@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix student progress dates being stored in inconsistent timezones, making Date Started and Date Completed mismatch on the Students screen and in reports.
