@@ -24,7 +24,7 @@ class Comments_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
-	public function testSave_StartedAtInDifferentTimezone_StoresStartMetaInSiteTimezone(): void {
+	public function testSave_DatesInDifferentTimezone_StoresCommentDatesInSiteTimezone(): void {
 		/* Arrange. */
 		update_option( 'timezone_string', 'America/New_York' );
 		$lesson_id  = $this->factory->lesson->create();
@@ -32,15 +32,16 @@ class Comments_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository = new Comments_Based_Lesson_Progress_Repository();
 		$created    = $repository->create( $lesson_id, $user_id );
 
-		// A started_at instant expressed in UTC (as a cached table read would produce).
-		$started_at = new \DateTimeImmutable( '2026-06-09 19:49:33', new \DateTimeZone( 'UTC' ) );
-		$progress   = new Comments_Based_Lesson_Progress(
+		// Instants expressed in UTC (as a cached table read would produce).
+		$started_at   = new \DateTimeImmutable( '2026-06-09 19:49:33', new \DateTimeZone( 'UTC' ) );
+		$completed_at = new \DateTimeImmutable( '2026-06-09 19:49:44', new \DateTimeZone( 'UTC' ) );
+		$progress     = new Comments_Based_Lesson_Progress(
 			$created->get_id(),
 			$lesson_id,
 			$user_id,
-			$created->get_status(),
+			'complete',
 			$started_at,
-			null,
+			$completed_at,
 			$created->get_created_at(),
 			$created->get_updated_at()
 		);
@@ -53,6 +54,11 @@ class Comments_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 			'2026-06-09 15:49:33',
 			get_comment_meta( $created->get_id(), 'start', true ),
 			'Start meta should be stored in the site timezone, not UTC.'
+		);
+		self::assertSame(
+			'2026-06-09 15:49:44',
+			get_comment( $created->get_id() )->comment_date,
+			'Comment date should be stored in the site timezone, not UTC.'
 		);
 	}
 
