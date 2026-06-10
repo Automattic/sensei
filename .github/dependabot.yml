@@ -1,11 +1,11 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    # "/" covers .github/workflows + root action.yml only; the glob adds the
-    # nested composite actions (.github/actions/*/action.yml).
+    # Scan composite actions too — their SHA-pinned `uses:` refs need update
+    # PRs just like the workflow files do ('**' covers nested action dirs).
     directories:
       - "/"
-      - "/.github/actions/*"
+      - "/.github/actions/**"
     schedule:
       interval: "weekly"
       day: "monday"
