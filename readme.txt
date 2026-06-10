@@ -140,7 +140,7 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
-### 4.26.0 - 2026-06-09
+### 4.26.0 - 2026-06-10
 #### Security
 - Fix missing esc_url() on add_query_arg() calls in analysis nav breadcrumb links. [#7989](https://github.com/Automattic/sensei/pull/7989) 👏 @thisismyurl
 
@@ -179,6 +179,7 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Fix teachers not seeing all grading rows for their courses due to post-filter pagination mismatch. [#7923](https://github.com/Automattic/sensei/pull/7923)
 - Grading and Reports: Only count progress on published and private lessons in listings and counts. [#7979](https://github.com/Automattic/sensei/pull/7979)
 - Use quiz submission repository on grading detail page for HPPS compatibility. [#7928](https://github.com/Automattic/sensei/pull/7928)
+- Fix student progress dates being stored in inconsistent timezones when HPPS is enabled. [#8003](https://github.com/Automattic/sensei/pull/8003)
 
 ### 4.25.2 - 2025-12-16
 #### Security
