@@ -16,14 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 interface Grading_Listing_Service_Interface {
 
 	/**
 	 * Get lesson progress items for the grading listing.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Arguments for the query.
@@ -50,7 +50,7 @@ interface Grading_Listing_Service_Interface {
 	 * Returns null if counts are not available (e.g. comments-based
 	 * implementation, or if get_lesson_progress_items has not been called yet).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return array<string, int>|null Associative array of status => count, or null.
 	 */

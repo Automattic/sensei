@@ -153,9 +153,11 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	public function save( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->assert_comments_based_lesson_progress( $lesson_progress );
 
-		$metadata = [];
-		if ( $lesson_progress->get_started_at() ) {
-			$metadata['start'] = $lesson_progress->get_started_at()->format( 'Y-m-d H:i:s' );
+		$metadata   = [];
+		$started_at = $lesson_progress->get_started_at();
+		if ( $started_at ) {
+			// Comment dates are stored in the site timezone.
+			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
 
 		// We need to use internal value for status, not the one returned by the getter.
@@ -172,10 +174,12 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			$metadata
 		);
 
-		if ( $lesson_progress->is_complete() && $comment_id ) {
+		$completed_at = $lesson_progress->get_completed_at();
+		if ( $lesson_progress->is_complete() && $comment_id && $completed_at ) {
 			$comment = [
 				'comment_ID'   => $comment_id,
-				'comment_date' => $lesson_progress->get_completed_at()->format( 'Y-m-d H:i:s' ),
+				// Comment dates are stored in the site timezone.
+				'comment_date' => wp_date( 'Y-m-d H:i:s', $completed_at->getTimestamp() ),
 			];
 			wp_update_comment( $comment );
 			Sensei()->flush_comment_counts_cache( $lesson_progress->get_lesson_id() );

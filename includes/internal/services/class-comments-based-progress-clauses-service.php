@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Service_Interface {
 
@@ -37,7 +37,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb $wpdb The WordPress database object.
 	 */
@@ -51,7 +51,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	 * Joins wp_comments via wp_postmeta to find the most recent lesson completion
 	 * date for each course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
@@ -88,7 +88,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	 * Joins wp_comments and wp_commentmeta to calculate the sum of days taken
 	 * by each student to complete a course and the number of completions.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
@@ -114,7 +114,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	/**
 	 * Modify WP_Query clauses to filter courses by last activity date range.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array  $clauses Associative array of the clauses for the query.
 	 * @param string $from    Start date for filtering (empty string for no start date).
@@ -144,7 +144,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	/**
 	 * Modify WP_Query clauses to add last activity date to lesson posts.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
@@ -170,7 +170,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	/**
 	 * Modify WP_Query clauses to add days-to-complete data to lesson posts.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.

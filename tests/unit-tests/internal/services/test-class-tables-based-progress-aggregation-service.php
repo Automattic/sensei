@@ -30,9 +30,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 	 * @param int         $user_id        The user ID.
 	 * @param string      $type           The progress type ('course' or 'lesson').
 	 * @param string      $status         The progress status.
-	 * @param int|null    $parent_post_id The parent post ID.
 	 */
-	private function insert_progress_with_dates( int $post_id, int $user_id, string $type, string $status, ?int $parent_post_id, string $started_at, string $completed_at ): void {
+	private function insert_progress_with_dates( int $post_id, int $user_id, string $type, string $status, string $started_at, string $completed_at ): void {
 		$wpdb  = $GLOBALS['wpdb'];
 		$table = $wpdb->prefix . 'sensei_lms_progress';
 		$now   = current_time( 'mysql' );
@@ -49,16 +48,11 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		$format = [ '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s' ];
 
-		if ( null !== $parent_post_id ) {
-			$data['parent_post_id'] = $parent_post_id;
-			$format[]               = '%d';
-		}
-
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper inserting directly into custom table.
 		$wpdb->insert( $table, $data, $format );
 	}
 
-	private function insert_progress( int $post_id, int $user_id, string $type, string $status, ?int $parent_post_id = null, ?string $completed_at = null ): void {
+	private function insert_progress( int $post_id, int $user_id, string $type, string $status, ?string $completed_at = null ): void {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_progress';
 		$now    = current_time( 'mysql' );
@@ -72,11 +66,6 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			'updated_at' => $now,
 		];
 		$format = [ '%d', '%d', '%s', '%s', '%s', '%s', '%s' ];
-
-		if ( null !== $parent_post_id ) {
-			$data['parent_post_id'] = $parent_post_id;
-			$format[]               = '%d';
-		}
 
 		if ( null !== $completed_at ) {
 			$data['completed_at'] = $completed_at;
@@ -120,7 +109,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -148,8 +137,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$this->insert_progress( $lesson1, $user_id, 'lesson', 'in-progress', $course_id );
-		$this->insert_progress( $lesson2, $user_id, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $lesson1, $user_id, 'lesson', 'in-progress' );
+		$this->insert_progress( $lesson2, $user_id, 'lesson', 'complete' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -179,8 +168,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$this->insert_progress( $lesson1, $user_id, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $lesson2, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson1, $user_id, 'lesson', 'complete' );
+		$this->insert_progress( $lesson2, $user_id, 'lesson', 'in-progress' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -208,8 +197,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete' );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -240,8 +229,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$this->insert_progress( $lesson_id, $regular_user, 'lesson', 'in-progress', $course_id );
-		$this->insert_progress( $lesson_id, $guest_user, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $lesson_id, $regular_user, 'lesson', 'in-progress' );
+		$this->insert_progress( $lesson_id, $guest_user, 'lesson', 'complete' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -276,8 +265,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
 
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'graded', $lesson_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete' );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'graded' );
 		$this->insert_quiz_submission( $quiz_id, $user_id );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
@@ -304,7 +293,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -341,14 +330,14 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
 
-		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $quiz_id, $user1, 'quiz', 'graded', $lesson_id );
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete' );
+		$this->insert_progress( $quiz_id, $user1, 'quiz', 'graded' );
 		$this->insert_quiz_submission( $quiz_id, $user1 );
-		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $quiz_id, $user2, 'quiz', 'passed', $lesson_id );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'complete' );
+		$this->insert_progress( $quiz_id, $user2, 'quiz', 'passed' );
 		$this->insert_quiz_submission( $quiz_id, $user2 );
-		$this->insert_progress( $lesson_id, $user3, 'lesson', 'in-progress', $course_id );
-		$this->insert_progress( $quiz_id, $user3, 'quiz', 'ungraded', $lesson_id );
+		$this->insert_progress( $lesson_id, $user3, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_id, $user3, 'quiz', 'ungraded' );
 		$this->insert_quiz_submission( $quiz_id, $user3 );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
@@ -383,7 +372,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
 		$wpdb->update( $wpdb->posts, array( 'post_status' => $included_status ), array( 'ID' => $lesson_id ) );
@@ -413,7 +402,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 
-		$this->insert_progress( $excluded_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $excluded_id, $user_id, 'lesson', 'in-progress' );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
 		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $excluded_id ) );
@@ -446,8 +435,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		$started_at   = '2024-01-01 10:00:00';
 		$completed_at = '2024-01-03 10:00:00';
-		$this->insert_progress_with_dates( $lesson_id, $user1, 'lesson', 'complete', $course_id, $started_at, $completed_at );
-		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress_with_dates( $lesson_id, $user1, 'lesson', 'complete', $started_at, $completed_at );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress' );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
 		$wpdb->update( $wpdb->posts, array( 'post_status' => $included_status ), array( 'ID' => $lesson_id ) );
@@ -486,8 +475,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		// Lesson is complete but quiz is still in-progress — COALESCE should
 		// produce 'in-progress' which is NOT in the completed statuses list.
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id, current_time( 'mysql' ) );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'in-progress', $lesson_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', current_time( 'mysql' ) );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'in-progress' );
 		$this->insert_quiz_submission( $quiz_id, $user_id );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
@@ -519,7 +508,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
 		// Lesson is in-progress, quiz is ungraded (submitted but not yet graded).
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
 		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded' );
 		$this->insert_quiz_submission( $quiz_id, $user_id );
 
@@ -569,8 +558,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
 		// Lesson is in-progress, quiz is failed (pass required, student didn't pass).
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'failed', $lesson_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'failed' );
 		$this->insert_quiz_submission( $quiz_id, $user_id );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
@@ -603,8 +592,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		$started_at   = '2024-01-01 10:00:00';
 		$completed_at = '2024-01-04 10:00:00';
-		$this->insert_progress_with_dates( $lesson_id, $user_id, 'lesson', 'complete', $course_id, $started_at, $completed_at );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
+		$this->insert_progress_with_dates( $lesson_id, $user_id, 'lesson', 'complete', $started_at, $completed_at );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed' );
 		$this->insert_quiz_submission( $quiz_id, $user_id );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
@@ -653,8 +642,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		$started_at   = '2024-01-01 10:00:00';
 		$completed_at = '2024-01-03 10:00:00';
-		$this->insert_progress_with_dates( $lesson_id, $user1, 'lesson', 'complete', $course_id, $started_at, $completed_at );
-		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress_with_dates( $lesson_id, $user1, 'lesson', 'complete', $started_at, $completed_at );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress' );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
 		$wpdb->update( $wpdb->posts, array( 'post_status' => $excluded_status ), array( 'ID' => $lesson_id ) );
@@ -693,7 +682,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		// but in UTC-5 they're same day (Jan 1 00:00 → Jan 1 23:00).
 		$started_at   = '2024-01-01 05:00:00';
 		$completed_at = '2024-01-02 04:00:00';
-		$this->insert_progress_with_dates( $lesson_id, $user_id, 'lesson', 'complete', $course_id, $started_at, $completed_at );
+		$this->insert_progress_with_dates( $lesson_id, $user_id, 'lesson', 'complete', $started_at, $completed_at );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -721,8 +710,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$this->insert_progress( $lesson_id, $regular_user, 'lesson', 'in-progress', $course_id );
-		$this->insert_progress( $lesson_id, $guest_user, 'lesson', 'ungraded', $course_id );
+		$this->insert_progress( $lesson_id, $regular_user, 'lesson', 'in-progress' );
+		$this->insert_progress( $lesson_id, $guest_user, 'lesson', 'ungraded' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
@@ -759,8 +748,8 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
 
 		// Quiz progress exists but no quiz submission (e.g. migration phantom or lost data).
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete' );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed' );
 
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 

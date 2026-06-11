@@ -1,11 +1,11 @@
 
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
-Contributors: automattic, donnapep, m1r0, bogdannikolic
+Contributors: automattic, aaronfc, alexsanford1, donnapep, fjorgemota, gabrielcaires, gikaragia, imranh920, jakeom, merkushin, m1r0, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 6.7
-Tested up to: 6.9
+Requires at least: 6.8
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 4.25.2
+Stable tag: 4.26.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,47 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.26.0 - 2026-06-10
+#### Security
+- Fix missing esc_url() on add_query_arg() calls in analysis nav breadcrumb links. [#7989](https://github.com/Automattic/sensei/pull/7989) 👏 @thisismyurl
+
+#### Added
+- Add aggregation service pattern for grading queries. [#7915](https://github.com/Automattic/sensei/pull/7915)
+- Add High-Performance Progress Storage (HPPS) support to the lesson, course, and per-student course listing tables on the Reports pages. [#7932](https://github.com/Automattic/sensei/pull/7932)
+- Add object caching to HPPS repositories [#7904](https://github.com/Automattic/sensei/pull/7904)
+- Allow filtering courses, lessons, and questions by specific items when exporting. [#7968](https://github.com/Automattic/sensei/pull/7968)
+- Integrate HPPS in grading backend. [#7923](https://github.com/Automattic/sensei/pull/7923)
+- Integrate HPPS in Lessons report. [#7920](https://github.com/Automattic/sensei/pull/7920)
+- Register Sensei with the WordPress Abilities API. [#7952](https://github.com/Automattic/sensei/pull/7952)
+- Enable the block editor Notes feature for courses and lessons. [#7998](https://github.com/Automattic/sensei/pull/7998)
+
+#### Changed
+- Add grading stats service for HPPS integration. [#7931](https://github.com/Automattic/sensei/pull/7931)
+- Migrate admin React entry points to createRoot() for React 19 compatibility. [#7992](https://github.com/Automattic/sensei/pull/7992)
+- Speed up admin pages by replacing the Grading menu badge query with a cheaper dedicated ungraded count. [#7977](https://github.com/Automattic/sensei/pull/7977)
+
+#### Deprecated
+- Deprecate `Sensei_Utils::comment_total_sum_meta_value_filter()`. [#7961](https://github.com/Automattic/sensei/pull/7961)
+
+#### Fixed
+- Fix a fatal memory error on the admin Courses screen for sites with many enrolled students by skipping learner term cache priming on the course list. [#7986](https://github.com/Automattic/sensei/pull/7986)
+- Fix average grade calculation on Reports → Courses → Lessons overview broken on WP 6.4+. [#7961](https://github.com/Automattic/sensei/pull/7961)
+- Fix Course Reports Last Activity showing an arbitrary date instead of the most recent activity date across all lessons. [#7920](https://github.com/Automattic/sensei/pull/7920)
+- Fix Days to Completion calculation in Reports to exclude lessons with ungraded or failed quizzes, which do not have a valid completion date. [#7920](https://github.com/Automattic/sensei/pull/7920)
+- Fix a fatal TypeError in `lesson_quiz_questions()` when a lesson has no quiz. [#8000](https://github.com/Automattic/sensei/pull/8000)
+- Fix grade averages being dragged down by spurious grade=0 meta written on lesson start. [#7931](https://github.com/Automattic/sensei/pull/7931)
+- Fix Grading menu badge counting ungraded quizzes from other teachers' courses. [#7977](https://github.com/Automattic/sensei/pull/7977)
+- Fix Grading page status tab counts not updating when filtering by a specific lesson. [#7923](https://github.com/Automattic/sensei/pull/7923)
+- Fix HPPS data migration to work on restricted hosting environments by replacing set_time_limit with time-budgeted batch processing and adding retry logic for failed migrations. [#7899](https://github.com/Automattic/sensei/pull/7899)
+- Fix module order reset and module disassociation when a non-admin user (e.g. Editor) saves a lesson in a course with modules owned by another user. [#7910](https://github.com/Automattic/sensei/pull/7910)
+- Fix off-by-one in last activity date formatting by using the injected clock for the time diff. [#7963](https://github.com/Automattic/sensei/pull/7963)
+- Fix PHP warning when calculating the average grade for courses with no graded quizzes. [#7945](https://github.com/Automattic/sensei/pull/7945)
+- Fix quiz grading detail page showing incorrect grade when auto-graded questions are answered incorrectly. [#7976](https://github.com/Automattic/sensei/pull/7976)
+- Fix teachers not seeing all grading rows for their courses due to post-filter pagination mismatch. [#7923](https://github.com/Automattic/sensei/pull/7923)
+- Grading and Reports: Only count progress on published and private lessons in listings and counts. [#7979](https://github.com/Automattic/sensei/pull/7979)
+- Use quiz submission repository on grading detail page for HPPS compatibility. [#7928](https://github.com/Automattic/sensei/pull/7928)
+- Fix student progress dates being stored in inconsistent timezones when HPPS is enabled. [#8003](https://github.com/Automattic/sensei/pull/8003)
+
 ### 4.25.2 - 2025-12-16
 #### Security
 - Fix XSS vulnerability in the Contact Teacher block
@@ -178,35 +219,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - PHP fatal when calling array_rand on empty array [#7828](https://github.com/Automattic/sensei/pull/7828)
 - Squished radio buttons / checkboxes for multi-line quiz answers [#7820](https://github.com/Automattic/sensei/pull/7820)
 - Update button cursor on hover for improved accessibility [#7843](https://github.com/Automattic/sensei/pull/7843)
-
-### 4.25.0 - 2025-04-15
-#### Added
-- Allow editing course archive page title from the block editor [#7786](https://github.com/Automattic/sensei/pull/7786)
-- Autofocus the title input on the form render [#7802](https://github.com/Automattic/sensei/pull/7802)
-- Clear text indicator to indicate disabled status of Emails [#7752](https://github.com/Automattic/sensei/pull/7752)
-
-#### Changed
-- Update the activation logic to always enable the setup wizard on first installation [#7800](https://github.com/Automattic/sensei/pull/7800)
-- Update Sensei Pro upgrade URL to handle WordPress.com hosted sites correctly [#7790](https://github.com/Automattic/sensei/pull/7790)
-
-#### Deprecated
-- Deprecate Student Courses Block in favor of Course List block [#7764](https://github.com/Automattic/sensei/pull/7764)
-
-#### Fixed
-- Button alignment on Setup wizard notice [#7779](https://github.com/Automattic/sensei/pull/7779)
-- Course outline: Fix focus issue on lesson/module add to inner blocks [#7783](https://github.com/Automattic/sensei/pull/7783)
-- Course pattern layout: Fix Safari render issue [#7789](https://github.com/Automattic/sensei/pull/7789)
-- Fix course ordering on wordpress.com [#7799](https://github.com/Automattic/sensei/pull/7799)
-- Fix loading some translations too early [#7780](https://github.com/Automattic/sensei/pull/7780)
-- Fix plugin configure link pointing to the wrong settings URL [#7781](https://github.com/Automattic/sensei/pull/7781)
-- Fix required quiz score texts [#7793](https://github.com/Automattic/sensei/pull/7793)
-- Fix undefined property notice on WP 6.8 [#7773](https://github.com/Automattic/sensei/pull/7773)
-- Occasional error when submitting a quiz [#7755](https://github.com/Automattic/sensei/pull/7755)
-- Pattern previews: Ensure consistent background color in pattern previews by using theme color variables and fixing iframe sizing issues [#7796](https://github.com/Automattic/sensei/pull/7796)
-- Prevent storing enrolment data in memory on Students screen [#7772](https://github.com/Automattic/sensei/pull/7772)
-- Students dropdown menu being offset in the admin panel [#7695](https://github.com/Automattic/sensei/pull/7695)
-- Workflow: Update PR milestone validation supporting task re-run [#7787](https://github.com/Automattic/sensei/pull/7787)
-- Newsletter wizard form: Handle server errors [#7801](https://github.com/Automattic/sensei/pull/7801)
-
-#### Development
-- Update NodeJS and NPM versions

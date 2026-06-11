@@ -118,12 +118,12 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	/**
 	 * Set the content types to be exported.
 	 *
-	 * @deprecated $$next-version$$ Use {@see Sensei_Export_Job::set_selections()} instead.
+	 * @deprecated 4.26.0 Use {@see Sensei_Export_Job::set_selections()} instead.
 	 *
 	 * @param string[] $content_types Content types to include in the export.
 	 */
 	public function set_content_types( $content_types ) {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Export_Job::set_selections' );
+		_deprecated_function( __METHOD__, '4.26.0', 'Sensei_Export_Job::set_selections' );
 
 		$this->set_selections( array_fill_keys( $content_types, array() ) );
 	}
@@ -136,7 +136,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 * array to export every item of that type. Types absent from the input are
 	 * skipped entirely (no CSV is produced for them).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param mixed $selections Expected shape: per-type ID arrays keyed by 'course', 'lesson', 'question'. A non-array argument is replaced with an empty selection set; unknown keys and per-type values that aren't arrays are silently dropped during normalisation.
 	 */
@@ -165,7 +165,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 *
 	 * Empty array means "export all of that type".
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param string $type Content type ('course', 'lesson', 'question').
 	 *

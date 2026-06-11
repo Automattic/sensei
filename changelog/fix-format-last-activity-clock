@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix off-by-one in last activity date formatting by using the injected clock for the time diff.

@@ -1,5 +1,46 @@
 *** Changelog ***
 
+## 4.26.0 - 2026-06-10
+### Security
+- Fix missing esc_url() on add_query_arg() calls in analysis nav breadcrumb links. [#7989](https://github.com/Automattic/sensei/pull/7989) 👏 @thisismyurl
+
+### Added
+- Add aggregation service pattern for grading queries. [#7915](https://github.com/Automattic/sensei/pull/7915)
+- Add High-Performance Progress Storage (HPPS) support to the lesson, course, and per-student course listing tables on the Reports pages. [#7932](https://github.com/Automattic/sensei/pull/7932)
+- Add object caching to HPPS repositories [#7904](https://github.com/Automattic/sensei/pull/7904)
+- Allow filtering courses, lessons, and questions by specific items when exporting. [#7968](https://github.com/Automattic/sensei/pull/7968)
+- Integrate HPPS in grading backend. [#7923](https://github.com/Automattic/sensei/pull/7923)
+- Integrate HPPS in Lessons report. [#7920](https://github.com/Automattic/sensei/pull/7920)
+- Register Sensei with the WordPress Abilities API. [#7952](https://github.com/Automattic/sensei/pull/7952)
+- Enable the block editor Notes feature for courses and lessons. [#7998](https://github.com/Automattic/sensei/pull/7998)
+
+### Changed
+- Add grading stats service for HPPS integration. [#7931](https://github.com/Automattic/sensei/pull/7931)
+- Migrate admin React entry points to createRoot() for React 19 compatibility. [#7992](https://github.com/Automattic/sensei/pull/7992)
+- Speed up admin pages by replacing the Grading menu badge query with a cheaper dedicated ungraded count. [#7977](https://github.com/Automattic/sensei/pull/7977)
+
+### Deprecated
+- Deprecate `Sensei_Utils::comment_total_sum_meta_value_filter()`. [#7961](https://github.com/Automattic/sensei/pull/7961)
+
+### Fixed
+- Fix a fatal memory error on the admin Courses screen for sites with many enrolled students by skipping learner term cache priming on the course list. [#7986](https://github.com/Automattic/sensei/pull/7986)
+- Fix average grade calculation on Reports → Courses → Lessons overview broken on WP 6.4+. [#7961](https://github.com/Automattic/sensei/pull/7961)
+- Fix Course Reports Last Activity showing an arbitrary date instead of the most recent activity date across all lessons. [#7920](https://github.com/Automattic/sensei/pull/7920)
+- Fix Days to Completion calculation in Reports to exclude lessons with ungraded or failed quizzes, which do not have a valid completion date. [#7920](https://github.com/Automattic/sensei/pull/7920)
+- Fix a fatal TypeError in `lesson_quiz_questions()` when a lesson has no quiz. [#8000](https://github.com/Automattic/sensei/pull/8000)
+- Fix grade averages being dragged down by spurious grade=0 meta written on lesson start. [#7931](https://github.com/Automattic/sensei/pull/7931)
+- Fix Grading menu badge counting ungraded quizzes from other teachers' courses. [#7977](https://github.com/Automattic/sensei/pull/7977)
+- Fix Grading page status tab counts not updating when filtering by a specific lesson. [#7923](https://github.com/Automattic/sensei/pull/7923)
+- Fix HPPS data migration to work on restricted hosting environments by replacing set_time_limit with time-budgeted batch processing and adding retry logic for failed migrations. [#7899](https://github.com/Automattic/sensei/pull/7899)
+- Fix module order reset and module disassociation when a non-admin user (e.g. Editor) saves a lesson in a course with modules owned by another user. [#7910](https://github.com/Automattic/sensei/pull/7910)
+- Fix off-by-one in last activity date formatting by using the injected clock for the time diff. [#7963](https://github.com/Automattic/sensei/pull/7963)
+- Fix PHP warning when calculating the average grade for courses with no graded quizzes. [#7945](https://github.com/Automattic/sensei/pull/7945)
+- Fix quiz grading detail page showing incorrect grade when auto-graded questions are answered incorrectly. [#7976](https://github.com/Automattic/sensei/pull/7976)
+- Fix teachers not seeing all grading rows for their courses due to post-filter pagination mismatch. [#7923](https://github.com/Automattic/sensei/pull/7923)
+- Grading and Reports: Only count progress on published and private lessons in listings and counts. [#7979](https://github.com/Automattic/sensei/pull/7979)
+- Use quiz submission repository on grading detail page for HPPS compatibility. [#7928](https://github.com/Automattic/sensei/pull/7928)
+- Fix student progress dates being stored in inconsistent timezones when HPPS is enabled. [#8003](https://github.com/Automattic/sensei/pull/8003)
+
 ## 4.25.2 - 2025-12-16
 ### Security
 - Fix XSS vulnerability in the Contact Teacher block
