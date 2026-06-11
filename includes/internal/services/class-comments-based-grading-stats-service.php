@@ -79,30 +79,25 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		// The quiz_answers EXISTS check restricts results to attempts where the
 		// student actually submitted answers. This excludes auto-passed students
 		// whose lesson was marked passed without ever taking the quiz.
-		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Statuses are from constants, not user input.
-		$query = $wpdb->prepare(
+		// Table names are trusted $wpdb properties; statuses are from constants, not user input.
+		$query =
 			"SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum
-			FROM %i c
-			INNER JOIN %i cm ON c.comment_ID = cm.comment_id
+			FROM `{$wpdb->comments}` c
+			INNER JOIN `{$wpdb->commentmeta}` cm ON c.comment_ID = cm.comment_id
 			WHERE c.comment_type = 'sensei_lesson_status'
 				AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
 				AND cm.meta_key = 'grade'
 				AND EXISTS (
-					SELECT 1 FROM %i cm2
+					SELECT 1 FROM `{$wpdb->commentmeta}` cm2
 					WHERE cm2.comment_id = c.comment_ID
 						AND cm2.meta_key = 'quiz_answers'
-				)",
-			$wpdb->comments,
-			$wpdb->commentmeta,
-			$wpdb->commentmeta
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
+				)";
 
 		$query .= $this->build_user_filter( $args );
 		$query .= $this->build_post_filter( $args );
 
 		/** Query result row. @var object|null $row */
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names trusted; value filters use $wpdb->prepare(). Caching handled by callers.
 		$row = $wpdb->get_row( $query );
 		Utils::log_query_error( $wpdb, 'Comments-based grade totals' );
 
@@ -149,37 +144,30 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		 *   - Be associated with a course.
 		 *   - Have quiz answers (excludes auto-passed students who never took the quiz).
 		 */
-		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Statuses are from constants, not user input.
-		$query = $wpdb->prepare(
+		// Table names are trusted $wpdb properties; statuses are from constants, not user input.
+		$query  =
 			"SELECT AVG(course_average) AS courses_average
 			FROM (
 				SELECT AVG(cm.meta_value) AS course_average
-				FROM %i c
-				INNER JOIN %i cm ON c.comment_ID = cm.comment_id
-				INNER JOIN %i course ON c.comment_post_ID = course.post_id
-				INNER JOIN %i p ON p.ID = course.meta_value
+				FROM `{$wpdb->comments}` c
+				INNER JOIN `{$wpdb->commentmeta}` cm ON c.comment_ID = cm.comment_id
+				INNER JOIN `{$wpdb->postmeta}` course ON c.comment_post_ID = course.post_id
+				INNER JOIN `{$wpdb->posts}` p ON p.ID = course.meta_value
 				WHERE c.comment_type = 'sensei_lesson_status'
 					AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
 					AND cm.meta_key = 'grade'
 					AND course.meta_key = '_lesson_course'
 					AND course.meta_value <> ''
 					AND EXISTS (
-						SELECT 1 FROM %i cm2
+						SELECT 1 FROM `{$wpdb->commentmeta}` cm2
 						WHERE cm2.comment_id = c.comment_ID
 							AND cm2.meta_key = 'quiz_answers'
-					)",
-			$wpdb->comments,
-			$wpdb->commentmeta,
-			$wpdb->postmeta,
-			$wpdb->posts,
-			$wpdb->commentmeta
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
+					)";
 		$query .= $course_filter;
 		$query .= ' GROUP BY course.meta_value ) averages_by_course';
 
 		/** Query result. @var object|null $result */
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared above. Caching handled by callers.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names trusted; value filters use $wpdb->prepare(). Caching handled by callers.
 		$result = $wpdb->get_row( $query );
 		Utils::log_query_error( $wpdb, 'Comments-based courses average grade' );
 
@@ -214,18 +202,18 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT SUM( cm.meta_value ) AS grade_sum, COUNT( * ) AS grade_count
-				FROM %i c
-				INNER JOIN %i cm ON c.comment_ID = cm.comment_id
+				FROM `{$wpdb->comments}` c
+				INNER JOIN `{$wpdb->commentmeta}` cm ON c.comment_ID = cm.comment_id
 				WHERE c.comment_type = 'sensei_lesson_status'
 					AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
 					AND cm.meta_key = 'grade'
 					AND EXISTS (
-						SELECT 1 FROM %i cm2
+						SELECT 1 FROM `{$wpdb->commentmeta}` cm2
 						WHERE cm2.comment_id = c.comment_ID
 							AND cm2.meta_key = 'quiz_answers'
 					)
 					AND c.user_id IN ( $placeholders )",
-				array_merge( array( $wpdb->comments, $wpdb->commentmeta, $wpdb->commentmeta ), $user_ids )
+				$user_ids
 			)
 		);
 		// phpcs:enable
