@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_Service_Interface {
 
@@ -33,7 +33,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 */
@@ -44,7 +44,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Get the progress table name.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return string The progress table name.
 	 */
@@ -55,7 +55,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Count progress records grouped by status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Arguments for the query.
@@ -74,7 +74,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			_doing_it_wrong(
 				__METHOD__,
 				'The "query" argument is not supported with tables-based progress storage. Use "exclude_user_login_prefixes" and "include_statuses_override" instead.',
-				'$$next-version$$'
+				'4.26.0'
 			);
 		}
 
@@ -82,7 +82,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			_doing_it_wrong(
 				__METHOD__,
 				'The "type" argument must be "course" or "lesson".',
-				'$$next-version$$'
+				'4.26.0'
 			);
 			return array();
 		}
@@ -98,7 +98,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int[] $lesson_ids Array of lesson post IDs.
 	 * @return array Associative array with keys: unique_student_count, lesson_start_count, lesson_completed_count, days_to_complete_count, days_to_complete_sum.
@@ -163,7 +163,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Count ungraded quiz submissions whose lesson is publicly available.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Optional restrictions; see interface.
 	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
@@ -205,7 +205,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * Uses COALESCE(q.status, p.status) so quiz progress status takes
 	 * precedence when it exists; otherwise falls back to lesson status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments (see count_statuses).
 	 * @return array Associative array of status => count.
@@ -245,7 +245,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Count course statuses.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments (see count_statuses).
 	 * @return array Associative array of status => count.
@@ -280,7 +280,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Build SQL clause for filtering by post ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -306,7 +306,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Build SQL clause for filtering by user ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -330,7 +330,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Build SQL clause for excluding users by login prefix.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array  $args           Query arguments.
 	 * @param string $status_column  SQL expression for the status column (default: 'p.status').

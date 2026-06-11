@@ -1,4 +1,0 @@
-Significance: minor
-Type: added
-
-Add High-Performance Progress Storage support to the lesson, course, and per-student course listing tables on the Reports pages, including start date, status, grade, and percent complete columns.

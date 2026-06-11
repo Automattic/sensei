@@ -365,6 +365,43 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertTrue( $has );
 	}
 
+	public function testSave_SiteTimezoneDatetimes_StoresColumnsInUtc(): void {
+		/* Arrange. */
+		update_option( 'timezone_string', '' );
+		update_option( 'gmt_offset', -4 );
+
+		$wpdb       = $this->createMock( wpdb::class );
+		$progress   = new Tables_Based_Quiz_Progress(
+			1,
+			2,
+			3,
+			'complete',
+			new DateTimeImmutable( '2026-06-09 15:49:33', wp_timezone() ),
+			new DateTimeImmutable( '2026-06-09 15:49:44', wp_timezone() ),
+			new DateTimeImmutable( '2026-06-09 15:49:33', wp_timezone() ),
+			new DateTimeImmutable( '2026-06-09 15:49:33', wp_timezone() )
+		);
+		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$wpdb
+			->expects( self::once() )
+			->method( 'update' )
+			->with(
+				'sensei_lms_progress',
+				$this->callback(
+					function ( $data ) {
+						return '2026-06-09 19:49:33' === $data['started_at']
+							&& '2026-06-09 19:49:44' === $data['completed_at'];
+					}
+				),
+				self::anything(),
+				self::anything(),
+				self::anything()
+			);
+		$repository->save( $progress );
+	}
+
 	public function testSave_ProgressGiven_CallsWpdbUpdate(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );

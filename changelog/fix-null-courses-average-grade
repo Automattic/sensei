@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix PHP warning when calculating the average grade for courses with no graded quizzes.

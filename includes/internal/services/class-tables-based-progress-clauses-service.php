@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_Interface {
 
@@ -36,7 +36,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb $wpdb The WordPress database object.
 	 */
@@ -47,7 +47,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	/**
 	 * Get the progress table name.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return string The progress table name.
 	 */
@@ -61,7 +61,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	 * Joins sensei_lms_progress to find the most recent lesson activity date
 	 * for each course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
@@ -106,7 +106,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	 * to complete a course and the number of completions using started_at and
 	 * completed_at columns.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
@@ -129,7 +129,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	/**
 	 * Modify WP_Query clauses to filter courses by last activity date range.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array  $clauses Associative array of the clauses for the query.
 	 * @param string $from    Start date for filtering (empty string for no start date).
@@ -159,7 +159,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	/**
 	 * Modify WP_Query clauses to add last activity date to lesson posts.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
@@ -186,7 +186,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	/**
 	 * Modify WP_Query clauses to add days-to-complete data to lesson posts.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.

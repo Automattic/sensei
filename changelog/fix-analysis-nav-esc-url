@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Fix missing esc_url() on add_query_arg() calls in analysis nav breadcrumb links.

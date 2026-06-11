@@ -448,6 +448,18 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A lesson with no quiz yields an empty quiz ID, which should produce no questions.
+	 *
+	 * @covers Sensei_Lesson::lesson_quiz_questions()
+	 */
+	public function testLessonQuizQuestionsLessonWithNoQuizReturnsEmptyArray() {
+		$lesson_id = $this->factory->get_lesson_no_quiz();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+		$this->assertSame( array(), Sensei()->lesson->lesson_quiz_questions( $quiz_id ), 'Quiz-less lesson should return no questions.' );
+	}
+
+	/**
 	 * @covers Sensei_Lesson::maybe_start_lesson
 	 */
 	public function testMaybeStartLessonNotInLoop() {

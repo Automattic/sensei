@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Utils {
 
@@ -25,7 +25,7 @@ class Utils {
 	 *
 	 * Uses a numeric offset so that MySQL timezone tables are not required.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return string UTC offset string, e.g. '+05:00' or '-05:00'.
 	 */
@@ -44,7 +44,7 @@ class Utils {
 	 * When include_statuses_override is set, excluded users are kept
 	 * if their effective status matches one of the override statuses.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb  $wpdb          WordPress database object.
 	 * @param array  $args          Query arguments with 'exclude_user_login_prefixes' and optional 'include_statuses_override'.
@@ -77,7 +77,7 @@ class Utils {
 	/**
 	 * Log a database query error if one occurred.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb  $wpdb    WordPress database object.
 	 * @param string $context Description of the query for debugging.
@@ -95,7 +95,7 @@ class Utils {
 	 * Runs as a separate query to avoid JOINing wp_users, which may
 	 * be on a different database in some environments.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb    $wpdb     WordPress database object.
 	 * @param string[] $prefixes User login prefixes to match.

@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Progress_Query_Service_Factory {
 
@@ -29,7 +29,7 @@ class Progress_Query_Service_Factory {
 	 * Returns a tables-based implementation when HPPS is enabled and the tables
 	 * repository is active, otherwise returns a comments-based implementation.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return Progress_Clauses_Service_Interface The progress clauses service.
 	 */
@@ -46,7 +46,7 @@ class Progress_Query_Service_Factory {
 	/**
 	 * Create a Grading_Listing_Service_Interface instance.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return Grading_Listing_Service_Interface The grading listing service.
 	 */
@@ -66,7 +66,7 @@ class Progress_Query_Service_Factory {
 	 * Returns a tables-based implementation when HPPS is enabled and the tables
 	 * repository is active, otherwise returns a comments-based implementation.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return Grading_Stats_Service_Interface The grading stats service.
 	 */
@@ -83,7 +83,7 @@ class Progress_Query_Service_Factory {
 	/**
 	 * Create a Reports_Listing_Service_Interface instance.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return Reports_Listing_Service_Interface The reports listing service.
 	 */
@@ -103,7 +103,7 @@ class Progress_Query_Service_Factory {
 	 * Returns a tables-based implementation when HPPS is enabled and the tables
 	 * repository is active, otherwise returns a comments-based implementation.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return Progress_Aggregation_Service_Interface The progress aggregation service.
 	 */
