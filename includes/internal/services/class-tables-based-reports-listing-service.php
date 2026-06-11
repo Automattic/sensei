@@ -76,27 +76,23 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$pagination = $this->build_pagination( $where, $args );
 
 		/** Query result rows. @var object[] $rows */
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values.
+		// Table names are trusted $wpdb properties; value clauses use $wpdb->prepare().
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = (array) $wpdb->get_results(
-			$wpdb->prepare(
-				// Fetch each student's lesson progress with their effective quiz/lesson status and grade.
-				// Join quiz progress (q) to get the quiz-aware status via COALESCE: if a quiz
-				// exists for this lesson, its status takes precedence over the lesson status.
-				// Join quiz submissions (qs) to get the final_grade when available.
-				'SELECT p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
-				. ' FROM %i p'
-				. ' LEFT JOIN %i pm ON pm.post_id = p.post_id AND pm.meta_key = \'_lesson_quiz\' AND pm.meta_value > 0'
-				. ' LEFT JOIN %i q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = \'quiz\''
-				. ' LEFT JOIN %i qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id',
-				$table,
-				$wpdb->postmeta,
-				$table,
-				$submissions_table
-			)
+			// Fetch each student's lesson progress with their effective quiz/lesson status and grade.
+			// Join quiz progress (q) to get the quiz-aware status via COALESCE: if a quiz
+			// exists for this lesson, its status takes precedence over the lesson status.
+			// Join quiz submissions (qs) to get the final_grade when available.
+			'SELECT p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
+			. " FROM `$table` p"
+			. " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0"
+			. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
+			. " LEFT JOIN `$submissions_table` qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id"
 			. $where
 			. $pagination['order_clause']
 			. $pagination['limit_clause']
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		Utils::log_query_error( $wpdb, 'Reports lesson students items' );
 
 		$items = array();
@@ -136,7 +132,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$total_lessons = count( Sensei()->course->course_lessons( $course_id, 'publish', 'ids' ) );
 
 		/** Query result rows. @var object[] $rows */
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values.
+		// Table names are trusted $wpdb properties; value clauses use $wpdb->prepare().
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				// Fetch each student's course progress with a computed percent column.
@@ -144,27 +141,24 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				// The total_lessons denominator is pre-computed in PHP since all rows share the same course.
 				'SELECT p.user_id, p.status, p.started_at, p.completed_at,'
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( %d, 0 ), 0 ) AS percent'
-				. ' FROM %i p'
+				. " FROM `$table` p"
 				// Derived table: count completed published lessons per student in this course.
 				. ' LEFT JOIN ('
 				. '   SELECT lp.user_id, COUNT(*) AS cnt'
-				. '   FROM %i lp'
-				. '   INNER JOIN %i pm ON pm.post_id = lp.post_id AND pm.meta_key = \'_lesson_course\' AND pm.meta_value = %d'
-				. '   INNER JOIN %i lpost ON lpost.ID = lp.post_id AND lpost.post_status = \'publish\''
-				. '   WHERE lp.type = \'lesson\' AND lp.status = \'complete\''
+				. "   FROM `$table` lp"
+				. "   INNER JOIN `{$wpdb->postmeta}` pm ON pm.post_id = lp.post_id AND pm.meta_key = '_lesson_course' AND pm.meta_value = %d"
+				. "   INNER JOIN `{$wpdb->posts}` lpost ON lpost.ID = lp.post_id AND lpost.post_status = 'publish'"
+				. "   WHERE lp.type = 'lesson' AND lp.status = 'complete'"
 				. '   GROUP BY lp.user_id'
 				. ' ) completed ON completed.user_id = p.user_id',
 				$total_lessons,
-				$table,
-				$table,
-				$wpdb->postmeta,
-				$course_id,
-				$wpdb->posts
+				$course_id
 			)
 			. $where
 			. $pagination['order_clause']
 			. $pagination['limit_clause']
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		Utils::log_query_error( $wpdb, 'Reports course students items' );
 
 		$items = array();
@@ -202,26 +196,24 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$post_id = (int) ( $args['post_id'] ?? 0 );
 		$user_id = (int) ( $args['user_id'] ?? 0 );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching handled by callers.
+		// Table names are trusted $wpdb properties; value clauses use $wpdb->prepare(). Caching handled by callers.
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				// Fetch one lesson's progress for one user, with quiz-aware effective status.
 				// Same JOIN pattern as get_lesson_students but for a single row.
 				'SELECT COALESCE( q.status, p.status ) AS effective_status,'
 				. ' p.started_at, p.completed_at, qs.final_grade AS grade'
-				. ' FROM %i p'
-				. ' LEFT JOIN %i pm ON pm.post_id = p.post_id AND pm.meta_key = \'_lesson_quiz\' AND pm.meta_value > 0'
-				. ' LEFT JOIN %i q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = \'quiz\''
-				. ' LEFT JOIN %i qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id'
-				. ' WHERE p.post_id = %d AND p.user_id = %d AND p.type = \'lesson\'',
-				$table,
-				$wpdb->postmeta,
-				$table,
-				$submissions_table,
+				. " FROM `$table` p"
+				. " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0"
+				. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
+				. " LEFT JOIN `$submissions_table` qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id"
+				. " WHERE p.post_id = %d AND p.user_id = %d AND p.type = 'lesson'",
 				$post_id,
 				$user_id
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		Utils::log_query_error( $wpdb, 'Reports user lesson progress' );
 
 		if ( ! $row ) {
@@ -255,56 +247,54 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$where   = " WHERE p.type = 'course'" . $this->build_filters( $args );
 
 		if ( ! empty( $args['post_author'] ) ) {
+			// Table name is a trusted $wpdb property; value clause uses $wpdb->prepare().
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$where .= $wpdb->prepare(
-				' AND p.post_id IN ( SELECT ID FROM %i WHERE post_author = %d )',
-				$wpdb->posts,
+				" AND p.post_id IN ( SELECT ID FROM `{$wpdb->posts}` WHERE post_author = %d )",
 				(int) $args['post_author']
 			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
 
 		$pagination = $this->build_pagination( $where, $args );
 
 		/** Query result rows. @var object[] $rows */
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Clauses are built from $wpdb->prepare() or sanitized values.
+		// Table names are trusted $wpdb properties; value clauses use $wpdb->prepare().
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = (array) $wpdb->get_results(
 			$wpdb->prepare(
 				// Fetch each course's progress for this user with a computed percent column.
 				// percent = (completed lessons / total lessons) * 100.
 				'SELECT p.post_id, p.status, p.started_at, p.completed_at,'
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( total.cnt, 0 ), 0 ) AS percent'
-				. ' FROM %i p'
+				. " FROM `$table` p"
 				// Derived table: count completed published lessons per course for this user.
 				// Lessons are mapped to courses via the _lesson_course postmeta.
 				. ' LEFT JOIN ('
 				. '   SELECT pm.meta_value AS course_id, COUNT(*) AS cnt'
-				. '   FROM %i lp'
-				. '   INNER JOIN %i pm ON pm.post_id = lp.post_id AND pm.meta_key = \'_lesson_course\''
-				. '   INNER JOIN %i lpost ON lpost.ID = lp.post_id AND lpost.post_status = \'publish\''
-				. '   WHERE lp.type = \'lesson\' AND lp.user_id = %d'
-				. '   AND lp.status = \'complete\''
+				. "   FROM `$table` lp"
+				. "   INNER JOIN `{$wpdb->postmeta}` pm ON pm.post_id = lp.post_id AND pm.meta_key = '_lesson_course'"
+				. "   INNER JOIN `{$wpdb->posts}` lpost ON lpost.ID = lp.post_id AND lpost.post_status = 'publish'"
+				. "   WHERE lp.type = 'lesson' AND lp.user_id = %d"
+				. "   AND lp.status = 'complete'"
 				. '   GROUP BY pm.meta_value'
 				. ' ) completed ON completed.course_id = p.post_id'
 				// Derived table: count total published lessons per course
 				// via the _lesson_course postmeta that maps each lesson to its course.
 				. ' LEFT JOIN ('
 				. '   SELECT pm.meta_value AS course_id, COUNT(*) AS cnt'
-				. '   FROM %i pm'
-				. '   INNER JOIN %i lpost ON lpost.ID = pm.post_id AND lpost.post_status = \'publish\''
-				. '   WHERE pm.meta_key = \'_lesson_course\''
+				. "   FROM `{$wpdb->postmeta}` pm"
+				. "   INNER JOIN `{$wpdb->posts}` lpost ON lpost.ID = pm.post_id AND lpost.post_status = 'publish'"
+				. "   WHERE pm.meta_key = '_lesson_course'"
 				. '   GROUP BY pm.meta_value'
 				. ' ) total ON total.course_id = p.post_id',
-				$table,
-				$table,
-				$wpdb->postmeta,
-				$wpdb->posts,
-				$user_id,
-				$wpdb->postmeta,
-				$wpdb->posts
+				$user_id
 			)
 			. $where
 			. $pagination['order_clause']
 			. $pagination['limit_clause']
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		Utils::log_query_error( $wpdb, 'Reports user courses items' );
 
 		$items = array();
@@ -348,8 +338,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			$where .= " AND p.status IN ( {$status_sql} )";
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
-		$count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT( DISTINCT p.user_id ) FROM %i p', $table ) . $where );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is a trusted $wpdb property; $where is built from $wpdb->prepare() calls.
+		$count = $wpdb->get_var( "SELECT COUNT( DISTINCT p.user_id ) FROM `$table` p" . $where );
 		Utils::log_query_error( $wpdb, 'Reports lesson student count' );
 
 		return (int) $count;
@@ -370,23 +360,21 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$status_sql = $this->statuses_sql( $args );
 
 		// Count students whose effective status (quiz status when available,
-		// lesson status otherwise) is in the caller-provided set.
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $status_sql is built from escaped args.
+		// lesson status otherwise) is in the caller-provided set. Table names are trusted
+		// $wpdb properties and $status_sql is built from escaped args; the post_id uses a placeholder.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT( DISTINCT p.user_id )'
-				. ' FROM %i p'
-				. ' LEFT JOIN %i pm ON pm.post_id = p.post_id AND pm.meta_key = \'_lesson_quiz\' AND pm.meta_value > 0'
-				. ' LEFT JOIN %i q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = \'quiz\''
-				. ' WHERE p.post_id = %d AND p.type = \'lesson\''
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is built from escaped args.
+				. " FROM `$table` p"
+				. " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0"
+				. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
+				. " WHERE p.post_id = %d AND p.type = 'lesson'"
 				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
-				$table,
-				$wpdb->postmeta,
-				$table,
 				$post_id
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		Utils::log_query_error( $wpdb, 'Reports lesson completion count' );
 
 		return (int) $count;
@@ -412,25 +400,22 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$status_sql        = $this->statuses_sql( $args );
 
 		// Filter by the caller-provided statuses on the effective quiz status,
-		// then average the grade from quiz_submissions.
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $status_sql is built from escaped args.
+		// then average the grade from quiz_submissions. Table names are trusted $wpdb
+		// properties and $status_sql is built from escaped args; the post_id uses a placeholder.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$avg = $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT AVG( qs.final_grade )'
-				. ' FROM %i p'
-				. ' LEFT JOIN %i pm ON pm.post_id = p.post_id AND pm.meta_key = \'_lesson_quiz\' AND pm.meta_value > 0'
-				. ' LEFT JOIN %i q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = \'quiz\''
-				. ' LEFT JOIN %i qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id'
-				. ' WHERE p.post_id = %d AND p.type = \'lesson\' AND qs.final_grade IS NOT NULL'
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is built from escaped args.
+				. " FROM `$table` p"
+				. " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0"
+				. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
+				. " LEFT JOIN `$submissions_table` qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id"
+				. " WHERE p.post_id = %d AND p.type = 'lesson' AND qs.final_grade IS NOT NULL"
 				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
-				$table,
-				$wpdb->postmeta,
-				$table,
-				$submissions_table,
 				$post_id
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		Utils::log_query_error( $wpdb, 'Reports lesson average grade' );
 
 		return null !== $avg ? round( (float) $avg, 2 ) : null;
@@ -448,8 +433,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where is built from $wpdb->prepare() calls.
-		$total_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i p', $table ) . $where );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is a trusted $wpdb property; $where is built from $wpdb->prepare() calls.
+		$total_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$table` p" . $where );
 		Utils::log_query_error( $wpdb, 'Reports pagination count' );
 
 		$number = (int) ( $args['number'] ?? 0 );

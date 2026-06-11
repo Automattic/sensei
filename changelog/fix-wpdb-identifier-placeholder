@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix empty Reports and Grading statistics on hosts whose `wpdb` does not support the `%i` identifier placeholder.

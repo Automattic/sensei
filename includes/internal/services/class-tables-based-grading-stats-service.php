@@ -100,26 +100,21 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_submissions_table_name();
 
-		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Statuses are from constants, not user input.
-		$query = $wpdb->prepare(
+		// Table names are trusted (built from $wpdb->prefix); statuses are from constants, not user input.
+		$query =
 			"SELECT COUNT(*) AS count, COALESCE( SUM( qs.final_grade ), 0 ) AS sum
-			FROM %i q
-			INNER JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
-			INNER JOIN %i lesson_quiz ON lesson_quiz.meta_key = '_lesson_quiz' AND lesson_quiz.meta_value = q.post_id
+			FROM `$table` q
+			INNER JOIN `$submissions_table` qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
+			INNER JOIN `{$wpdb->postmeta}` lesson_quiz ON lesson_quiz.meta_key = '_lesson_quiz' AND lesson_quiz.meta_value = q.post_id
 			WHERE q.type = 'quiz'
 				AND q.status IN " . $this->get_graded_statuses_sql() . '
-				AND qs.final_grade IS NOT NULL',
-			$table,
-			$submissions_table,
-			$wpdb->postmeta
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
+				AND qs.final_grade IS NOT NULL';
 
 		$query .= $this->build_user_filter( $args );
 		$query .= $this->build_post_filter( $args );
 
 		/** Query result row. @var object|null $row */
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names trusted; value filters use $wpdb->prepare(). Caching handled by callers.
 		$row = $wpdb->get_row( $query );
 		Utils::log_query_error( $wpdb, 'Tables-based grade totals' );
 
@@ -159,35 +154,28 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 			$course_filter = $wpdb->prepare( " AND lesson_course.meta_value IN ( $placeholders )", $course_ids );
 		}
 
-		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Statuses are from constants, not user input.
-		$query = $wpdb->prepare(
+		// Table names are trusted (built from $wpdb->prefix); statuses are from constants, not user input.
+		$query  =
 			"SELECT AVG(course_average) AS courses_average
 			FROM (
 				SELECT AVG(qs.final_grade) AS course_average
-				FROM %i p
-				INNER JOIN %i lesson_course ON lesson_course.post_id = p.post_id
+				FROM `$table` p
+				INNER JOIN `{$wpdb->postmeta}` lesson_course ON lesson_course.post_id = p.post_id
 					AND lesson_course.meta_key = '_lesson_course'
 					AND lesson_course.meta_value <> ''
-				INNER JOIN %i lesson_quiz ON lesson_quiz.post_id = p.post_id
+				INNER JOIN `{$wpdb->postmeta}` lesson_quiz ON lesson_quiz.post_id = p.post_id
 					AND lesson_quiz.meta_key = '_lesson_quiz'
 					AND lesson_quiz.meta_value > 0
-				INNER JOIN %i q ON q.post_id = lesson_quiz.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
-				INNER JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id
+				INNER JOIN `$table` q ON q.post_id = lesson_quiz.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
+				INNER JOIN `$submissions_table` qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id
 				WHERE p.type = 'lesson'
 					AND q.status IN " . $this->get_graded_statuses_sql() . '
-					AND qs.final_grade IS NOT NULL',
-			$table,
-			$wpdb->postmeta,
-			$wpdb->postmeta,
-			$table,
-			$submissions_table
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
+					AND qs.final_grade IS NOT NULL';
 		$query .= $course_filter;
 		$query .= ' GROUP BY lesson_course.meta_value ) averages_by_course';
 
 		/** Query result. @var object|null $result */
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared above. Caching handled by callers.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names trusted; value filters use $wpdb->prepare(). Caching handled by callers.
 		$result = $wpdb->get_row( $query );
 		Utils::log_query_error( $wpdb, 'Tables-based courses average grade' );
 
@@ -221,13 +209,13 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT SUM( qs.final_grade ) AS grade_sum, COUNT( * ) AS grade_count
-				FROM %i q
-				INNER JOIN %i qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
+				FROM `$table` q
+				INNER JOIN `$submissions_table` qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
 				WHERE q.type = 'quiz'
 					AND q.status IN " . $this->get_graded_statuses_sql() . "
 					AND qs.final_grade IS NOT NULL
 					AND q.user_id IN ( $placeholders )",
-				array_merge( array( $table, $submissions_table ), $user_ids )
+				$user_ids
 			)
 		);
 		// phpcs:enable
