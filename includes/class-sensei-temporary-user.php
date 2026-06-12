@@ -239,6 +239,8 @@ class Sensei_Temporary_User {
 		// Flip to a lookup set so membership checks are O(1) per comment.
 		$temporary_user_id_set = array_flip( $temporary_user_ids );
 
+		// Keep a comment when it is ungraded (the user needs to appear in the grading
+		// list) or when it does not belong to a temporary user.
 		return array_filter(
 			$comments,
 			function ( $comment ) use ( $temporary_user_id_set ) {
