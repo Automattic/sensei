@@ -936,18 +936,24 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A secondary course query (e.g. the Course List block / Query Loop, which is not the main query)
-	 * must skip object term cache priming so the large `sensei_learner` taxonomy is not loaded into memory.
+	 * A secondary query that returns courses — whether `post_type` is `course` (e.g. the Course List
+	 * block / Query Loop) or an array that includes `course` (e.g. teacher author archives, which merge
+	 * `course` into the existing post types) — must skip object term cache priming so the large
+	 * `sensei_learner` taxonomy is not loaded into memory.
+	 *
+	 * @dataProvider data_postTypesIncludingCourse
+	 *
+	 * @param string|array $post_type The post type query var to run the secondary query with.
 	 */
-	public function testDisableTermCacheOnCourseQueries_SecondaryCourseQuery_SkipsLearnerTermPriming() {
+	public function testDisableTermCacheOnCourseQueries_PostTypeIncludesCourse_SkipsLearnerTermPriming( $post_type ) {
 		// Arrange: a course with a learner term attached, with its relationship cache cleared.
 		$relationships_group = Sensei_PostTypes::LEARNER_TAXONOMY_NAME . '_relationships';
 		$course_id           = $this->factory->course->create();
 		wp_set_object_terms( $course_id, 'user-1', Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
 		wp_cache_delete( $course_id, $relationships_group );
 
-		// Act: run a secondary (non-main) course query, mirroring the Course List block.
-		$query = new WP_Query( array( 'post_type' => 'course' ) );
+		// Act: run a secondary (non-main) query that returns courses.
+		$query = new WP_Query( array( 'post_type' => $post_type ) );
 
 		// Assert.
 		self::assertFalse( $query->is_main_query(), 'The query should be a secondary query, not the main query.' );
@@ -956,22 +962,15 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A query whose `post_type` is an array that includes `course` (e.g. teacher author archives, which
-	 * merge `course` into the existing post types) must also skip learner term cache priming.
+	 * Data source for ::testDisableTermCacheOnCourseQueries_PostTypeIncludesCourse_SkipsLearnerTermPriming
+	 *
+	 * @return array
 	 */
-	public function testDisableTermCacheOnCourseQueries_ArrayPostTypeIncludingCourse_SkipsLearnerTermPriming() {
-		// Arrange: a course with a learner term attached, with its relationship cache cleared.
-		$relationships_group = Sensei_PostTypes::LEARNER_TAXONOMY_NAME . '_relationships';
-		$course_id           = $this->factory->course->create();
-		wp_set_object_terms( $course_id, 'user-1', Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
-		wp_cache_delete( $course_id, $relationships_group );
-
-		// Act: run a secondary query mixing post types, mirroring the teacher author archive.
-		$query = new WP_Query( array( 'post_type' => array( 'post', 'course' ) ) );
-
-		// Assert.
-		self::assertFalse( $query->get( 'update_post_term_cache' ), 'Queries whose post_type array includes course should disable term cache priming.' );
-		self::assertFalse( wp_cache_get( $course_id, $relationships_group ), 'Learner term relationships should not be primed into the object cache.' );
+	public function data_postTypesIncludingCourse() {
+		return array(
+			'course post type'                => array( 'course' ),
+			'array of post types with course' => array( array( 'post', 'course' ) ),
+		);
 	}
 
 	/**
