@@ -956,6 +956,25 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A query whose `post_type` is an array that includes `course` (e.g. teacher author archives, which
+	 * merge `course` into the existing post types) must also skip learner term cache priming.
+	 */
+	public function testDisableTermCacheOnCourseQueries_ArrayPostTypeIncludingCourse_SkipsLearnerTermPriming() {
+		// Arrange: a course with a learner term attached, with its relationship cache cleared.
+		$relationships_group = Sensei_PostTypes::LEARNER_TAXONOMY_NAME . '_relationships';
+		$course_id           = $this->factory->course->create();
+		wp_set_object_terms( $course_id, 'user-1', Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
+		wp_cache_delete( $course_id, $relationships_group );
+
+		// Act: run a secondary query mixing post types, mirroring the teacher author archive.
+		$query = new WP_Query( array( 'post_type' => array( 'post', 'course' ) ) );
+
+		// Assert.
+		self::assertFalse( $query->get( 'update_post_term_cache' ), 'Queries whose post_type array includes course should disable term cache priming.' );
+		self::assertFalse( wp_cache_get( $course_id, $relationships_group ), 'Learner term relationships should not be primed into the object cache.' );
+	}
+
+	/**
 	 * Non-course queries must be left untouched so their term cache is still primed as usual.
 	 */
 	public function testDisableTermCacheOnCourseQueries_NonCourseQuery_LeavesTermPrimingEnabled() {
