@@ -236,10 +236,13 @@ class Sensei_Temporary_User {
 			return $comments;
 		}
 
+		// Flip to a lookup set so membership checks are O(1) per comment.
+		$temporary_user_id_set = array_flip( $temporary_user_ids );
+
 		return array_filter(
 			$comments,
-			function ( $comment ) use ( $temporary_user_ids ) {
-				return in_array( $comment->comment_approved, [ 'ungraded' ], true ) || ! in_array( (int) $comment->user_id, $temporary_user_ids, true );
+			function ( $comment ) use ( $temporary_user_id_set ) {
+				return in_array( $comment->comment_approved, [ 'ungraded' ], true ) || ! isset( $temporary_user_id_set[ (int) $comment->user_id ] );
 			}
 		);
 	}
