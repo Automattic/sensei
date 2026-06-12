@@ -41,7 +41,7 @@ class Tables_Based_Lesson_Progress extends Lesson_Progress_Abstract {
 				return self::STATUS_COMPLETE;
 
 			case 'failed':
-				// This may be 'completed' depending on...
+				// This may be 'complete' depending on...
 				// Get Quiz ID, this won't be needed once all Quiz meta fields are stored on the Lesson.
 				$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $this->lesson_id );
 				if ( $lesson_quiz_id ) {
