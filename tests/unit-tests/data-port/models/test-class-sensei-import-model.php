@@ -119,7 +119,9 @@ class Sensei_Import_Model_Test extends WP_UnitTestCase {
 			'test-string-no-html'    => 'Cool',
 			'favorite_int'           => 1000,
 			'favorite_float'         => 1.0003,
-			'email'                  => 'dinosaur@example.com',
+			// WP 7.1 (WP_Email_Address) validates rather than strips, so an email with
+			// invalid characters sanitizes to an empty string instead of a cleaned value.
+			'email'                  => class_exists( 'WP_Email_Address' ) ? '' : 'dinosaur@example.com',
 			'slug'                   => 'my-favorite-animal',
 			'type'                   => null,
 		];
