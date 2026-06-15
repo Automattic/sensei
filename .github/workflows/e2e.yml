@@ -16,7 +16,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
-              uses: actions/checkout@v6.0.2
+              uses: actions/checkout@v6.0.3
 
             - uses: actions/setup-node@v6
               with:
@@ -67,7 +67,7 @@ jobs:
                   retention-days: 30
                   if-no-files-found: ignore
             - name: Slack Notification on Failure
-              uses: rtCamp/action-slack-notify@e31e87e03dd19038e411e38ae27cbad084a90661 # v2.3.3
+              uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58 # v2.4.0
               if: ${{ failure() && github.event_name == 'push' }}
               env:
                 SLACK_CHANNEL: ${{ secrets.SLACK_SENSEI_CHANNEL }}
