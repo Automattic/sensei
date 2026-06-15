@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 4.26.0
+Stable tag: 4.26.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,12 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.26.1 - 2026-06-15
+#### Fixed
+- Fix a fatal memory error on front-end course listings for sites with many enrolled students. [#8007](https://github.com/Automattic/sensei/pull/8007)
+- Fix a memory-exhaustion error when filtering temporary users from activity lists on courses with many students. [#8008](https://github.com/Automattic/sensei/pull/8008)
+- Fix empty Reports and Grading statistics on hosts whose `wpdb` does not support the `%i` identifier placeholder. [#8006](https://github.com/Automattic/sensei/pull/8006)
+
 ### 4.26.0 - 2026-06-10
 #### Security
 - Fix missing esc_url() on add_query_arg() calls in analysis nav breadcrumb links. [#7989](https://github.com/Automattic/sensei/pull/7989) 👏 @thisismyurl
@@ -199,23 +205,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 #### Development
 - Add CLI command for recalculating course enrolment [#7877](https://github.com/Automattic/sensei/pull/7877)
-
-### 4.25.1 - 2025-09-18
-#### Security
-- Add authorization check when updating the lesson course relation
-- Add authorization check when updating a lesson in the course structure
-
-#### Added
-- Add support for changing text color of Course Overview block [#7826](https://github.com/Automattic/sensei/pull/7826)
-
-#### Changed
-- Cleanup deprecated teacher role capabilities [#7829](https://github.com/Automattic/sensei/pull/7829)
-- Remove teacher redirect on login [#7821](https://github.com/Automattic/sensei/pull/7821)
-
-#### Fixed
-- Fix "Calling get_class() without arguments is deprecated" PHP notice [#7815](https://github.com/Automattic/sensei/pull/7815)
-- Invalid property notice for messages [#7814](https://github.com/Automattic/sensei/pull/7814)
-- Non course-list patterns showing up in the Course List block's pattern picker [#7797](https://github.com/Automattic/sensei/pull/7797)
-- PHP fatal when calling array_rand on empty array [#7828](https://github.com/Automattic/sensei/pull/7828)
-- Squished radio buttons / checkboxes for multi-line quiz answers [#7820](https://github.com/Automattic/sensei/pull/7820)
-- Update button cursor on hover for improved accessibility [#7843](https://github.com/Automattic/sensei/pull/7843)

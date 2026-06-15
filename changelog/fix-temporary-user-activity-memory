@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix a memory-exhaustion error when filtering temporary users from activity lists on courses with many students.
