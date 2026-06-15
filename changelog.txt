@@ -1,5 +1,11 @@
 *** Changelog ***
 
+## 4.26.1 - 2026-06-15
+### Fixed
+- Fix a fatal memory error on front-end course listings for sites with many enrolled students. [#8007](https://github.com/Automattic/sensei/pull/8007)
+- Fix a memory-exhaustion error when filtering temporary users from activity lists on courses with many students. [#8008](https://github.com/Automattic/sensei/pull/8008)
+- Fix empty Reports and Grading statistics on hosts whose `wpdb` does not support the `%i` identifier placeholder. [#8006](https://github.com/Automattic/sensei/pull/8006)
+
 ## 4.26.0 - 2026-06-10
 ### Security
 - Fix missing esc_url() on add_query_arg() calls in analysis nav breadcrumb links. [#7989](https://github.com/Automattic/sensei/pull/7989) 👏 @thisismyurl
