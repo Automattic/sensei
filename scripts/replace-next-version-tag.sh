@@ -73,7 +73,10 @@ VE=$(sed 's/[&\\/]/\\&/g' <<<"$VERSION")
 cd "$BASE"
 EXIT=0
 for FILE in $(git ls-files); do
-	[ "$FILE" == "scripts/replace-next-version-tag.sh" ] && continue;
+	# Skip md files, which only document the token, and this script itself.
+	case "$FILE" in
+		*.md | scripts/replace-next-version-tag.sh ) continue ;;
+	esac
 	grep -F -q '$$next-version$$' "$FILE" 2>/dev/null || continue
 	debug "Processing $FILE"
 
