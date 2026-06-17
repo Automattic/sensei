@@ -87,5 +87,5 @@ jobs:
             --max-turns 60
             --max-budget-usd 4.00
             --permission-mode acceptEdits
-            --allowedTools "Read,Glob,Grep,Edit,Write,Bash(make *),Bash(npm ci),Bash(npm run *),Bash(composer install*),Bash(vendor/bin/phpunit*),Bash(git diff*),Bash(git log*),Bash(git show*),Bash(git status*),Bash(git grep*),Bash(git rev-parse*),Bash(git fetch*),Bash(gh issue view*),Bash(gh issue comment*),Bash(gh issue edit*),Bash(gh issue list*),Bash(gh api *),Bash(gh label list*)"
+            --allowedTools "Read,Glob,Grep,Edit,Write,Bash(make *),Bash(npm ci),Bash(npm run *),Bash(composer install*),Bash(vendor/bin/phpunit*),Bash(git diff*),Bash(git log*),Bash(git show*),Bash(git status*),Bash(git grep*),Bash(git rev-parse*),Bash(git fetch*),Bash(gh issue view*),Bash(gh issue comment*),Bash(gh issue edit*),Bash(gh issue list*),Bash(gh issue create*),Bash(gh repo view*),Bash(gh api *),Bash(gh label list*)"
             --disallowedTools "Bash(gh pr *)" "Bash(gh issue close:*)" "Bash(gh issue delete:*)" "Bash(gh label delete:*)" "Bash(gh label create:*)" "Bash(gh run delete:*)" "Bash(gh run cancel:*)" "Bash(git push*)" "Bash(git commit*)" "Bash(git add *)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)"

@@ -54,12 +54,37 @@ State the scope conclusion in the comment. If clearly out of scope, say so plain
 
 ### Sensei Pro (separate plugin)
 
-This repo is **Sensei LMS** (the free core plugin). **Sensei Pro** is a separate plugin in a different repo, and its blocks/features use the `sensei-pro/*` namespace (e.g. `sensei-pro/task-list`), live under `sensei-pro/` slugs, or reference Pro-only features (interactive blocks, advanced quiz, conditional content, WooCommerce paid courses, etc.). When a report is about a `sensei-pro` feature or bug:
+This repo is **Sensei LMS** (the free core plugin). **Sensei Pro** is a separate plugin maintained in a private repository, and its blocks/features use the `sensei-pro/*` namespace (e.g. `sensei-pro/task-list`), live under `sensei-pro/` slugs, or reference Pro-only features (interactive blocks, advanced quiz, conditional content, WooCommerce paid courses, etc.). When a report is about a Sensei Pro feature or bug:
 
 1. **Check whether the fix can land in Sensei core.** Search this repo — the trigger may be core code, a core hook/filter, or shared markup that core also emits. If core can fully resolve it (e.g. a shared template, a hook Pro relies on, or core-owned output), triage and fix it here as normal.
-2. **If it can only be fixed in Sensei Pro, stop immediately and say so — nothing more.** Do not attempt a core fix, and do **not** post scope, reproduction, evidence, affected-code, priority, or suggested-fix detail. A separate triage bot runs in the `sensei-pro` repo and will own the full triage there. Post only the short [Sensei Pro hand-off comment](#sensei-pro-hand-off-template) stating that the issue requires a fix in Sensei Pro and should be moved to that repo, then stop. Do not apply a `[Pri]` label.
+2. **If it can only be handled in Sensei Pro, do not attempt a core fix or post core triage detail publicly.** Instead, submit the report into the private Sensei Pro repo on the user's behalf (next section), then post the short public [hand-off comment](#sensei-pro-hand-off-template). Do not apply a `[Pri]` label on the public issue. The Sensei Pro repository is private and **only staff can access it**, so never ask the reporter to move or re-file it there themselves.
 
-**Never reveal code from private repositories.** `sensei-pro` (and any other Automattic-private repo) is closed-source, and issues on this repo are public. Do not quote, paste, reconstruct, paraphrase, or otherwise describe its source, file paths, function names, or internal behavior in a comment. For a Pro issue, your public output is limited to "this requires a fix in Sensei Pro" — share no analysis of how or why. If you have private source in context, treat it as entirely off-limits for anything posted publicly.
+#### Auto-submit into Sensei Pro on the user's behalf
+
+The private repo is `Automattic/sensei-pro`. **This path is for tooling only — never write it, or any private analysis, into a public comment.**
+
+1. **Branch on how the triage was invoked:**
+   - **CI (GitHub Actions):** detect with `[ -n "$GITHUB_ACTIONS" ]`. **Do not attempt cross-repo creation** — the job's `GITHUB_TOKEN` is scoped to this repo only and can't reach the private repo. Skip straight to the public hand-off comment using the **staff-follow-up wording** ("A staff member will review this and submit an internal Sensei Pro request on your behalf"), **leave `[Status] Needs Triage` in place** so the issue stays in the human triage queue, and add one line to your run summary that a staff member must file the Pro issue. Then stop.
+   - **Interactive (a staff member running locally):** confirm access with `gh repo view Automattic/sensei-pro --json viewerPermission`. If it succeeds, **proceed with cross-repo creation** (steps 2–5). If it unexpectedly fails (staff without Pro access), fall back to the same staff-follow-up behavior as the CI branch.
+2. **Build the internal issue.** Unlike the public comment, the private issue **should carry the full triage** — it's staff-only. Include:
+   - A first line attributing it: `_Submitted by staff on behalf of [reporter] who filed Automattic/sensei#<N>. Triage assisted by Claude._`
+   - The user's request/repro verbatim or summarized, your scope analysis, and (for bugs) repro outcome, likely affected area, priority, and effort.
+   - Any support-ticket reference formatted as `<number>-zen` (e.g. `11270346-zen`) — internal issue only, never the public comment.
+   - A link back to the public issue: `Automattic/sensei#<N>`.
+3. **Create it:**
+   ```bash
+   gh issue create --repo Automattic/sensei-pro \
+     --title "<concise title> (from Sensei LMS #<N>)" \
+     --body-file /tmp/pro-issue.md \
+     --label "<[Type] Bug | [Type] Enhancement>" \
+     --label "[Status] Needs Triage" \
+     --label "Customer Report"
+   ```
+   Use `[Type] Bug` for bugs, `[Type] Enhancement` for feature requests. Always add `Customer Report` (it originates from a user) and `[Status] Needs Triage`.
+4. **Capture the new issue URL** but keep it private — it goes in your run summary, never in a public comment.
+5. **Then** post the public [hand-off comment](#sensei-pro-hand-off-template) and apply the public labels (`[Type] Bug`/`[Type] Enhancement`, remove `[Status] Needs Triage`).
+
+**Never reveal the private repo or its code.** Sensei Pro (and any other Automattic-private repo) is closed-source, and issues on this repo are public. In any **public** comment: do not name the private repository, do not paste its issue links, and do not quote, reconstruct, paraphrase, or describe its source, file paths, function names, or internal behavior. The public output is limited to "this needs to be handled in Sensei Pro, and staff have submitted an internal request on the user's behalf." If you have private source in context, treat it as entirely off-limits for anything posted publicly.
 
 ---
 
@@ -148,6 +173,11 @@ Apply labels with `gh issue edit <number> --repo Automattic/sensei --add-label "
 
 **Post exactly one triage comment.** Keep it skimmable: a one-line verdict up top, details in `<details>`, concrete file references, and an explicit priority/effort line for bugs.
 
+### Conventions (apply to every comment and every internal hand-off issue)
+
+- **Attribution.** End every public triage comment, and every internal Sensei Pro hand-off issue body, with a final line: `_Triage assisted by Claude._`
+- **User ticket references.** Format support-ticket references as `<number>-zen` (e.g. `11270346-zen`), not "Zendesk ticket 11270346". These belong only in the **internal** Sensei Pro issue — never put a ticket reference in a public comment.
+
 ### Bug comment template
 
 ```markdown
@@ -181,21 +211,31 @@ Apply labels with `gh issue edit <number> --repo Automattic/sensei --add-label "
 **Estimated effort:** <High|Mid|Low> — <one-line rationale>
 
 <The minimal root-cause fix. Reference the lines above.>
+
+_Triage assisted by Claude._
 ```
 
 For **Needs More Info**, drop Evidence/Affected-code/Suggested-fix and instead list exactly which items from the [bug-report guidelines](https://senseilms.com/documentation/contribute/#submit-a-bug-report-on-github) are missing.
 
 ### Sensei Pro hand-off template
 
-Use this — and nothing more — when the issue can only be fixed in Sensei Pro. Do not add reproduction, evidence, affected code, or a suggested fix.
+Use this — and nothing more — when the issue can only be handled in Sensei Pro. Do not add reproduction, evidence, affected code, or a suggested fix, and do not name the private repository.
 
 ```markdown
-## Triage Results: 📦 Requires a fix in Sensei Pro
+## Triage Results: 📦 Handled in Sensei Pro
 
-This issue concerns Sensei Pro code, which lives in a separate repository. It can't be addressed in Sensei LMS (core) and should be **moved to the `sensei-pro` repo**, where it will be triaged there.
+This concerns Sensei Pro functionality, which is maintained separately and isn't part of Sensei LMS (core), so it can't be addressed here. **We've submitted an internal Sensei Pro request on your behalf** so the Sensei Pro team can pick it up — no further action needed from you. 🙏
+
+_Triage assisted by Claude._
 ```
 
-Then apply `[Type] Bug` (or `[Type] Enhancement`) and remove `[Status] Needs Triage`. Do not add `[Pri]` or `[Status] Triaged`.
+When auto-submit was **skipped** (CI, or staff without Pro access), change "We've submitted an internal Sensei Pro request on your behalf" to "A staff member will review this and submit an internal Sensei Pro request on your behalf."
+
+Labels:
+- **Auto-submit succeeded (interactive):** apply `[Type] Bug` (or `[Type] Enhancement`) and remove `[Status] Needs Triage`.
+- **Auto-submit skipped (CI / no access):** apply `[Type] Bug` (or `[Type] Enhancement`) but **keep `[Status] Needs Triage`** so a staff member still picks it up.
+
+In neither case add `[Pri]` or `[Status] Triaged`.
 
 ### Feature comment template
 
@@ -215,11 +255,13 @@ Then apply `[Type] Bug` (or `[Type] Enhancement`) and remove `[Status] Needs Tri
 
 ### Recommendation
 <Accept as enhancement / proposal | Decline as out of scope, suggest customization | Close as already-supported.>
+
+_Triage assisted by Claude._
 ```
 
 ## Guardrails
 
-- **Never expose private-repo code or analysis.** Comments on this repo are public. For a Sensei Pro issue, post only the [hand-off comment](#sensei-pro-hand-off-template) — do not quote, paste, reconstruct, paraphrase, or describe `sensei-pro` (or any other private Automattic repo) source, paths, function names, or internal behavior, even if that source is in your context. A separate bot triages `sensei-pro`.
+- **Never expose the private repo or its code/analysis.** Comments on this repo are public. For a Sensei Pro issue, post only the [hand-off comment](#sensei-pro-hand-off-template) — do not name the private repository, and do not quote, paste, reconstruct, paraphrase, or describe its source, paths, function names, or internal behavior, even if that source is in your context. Never ask the reporter to move or re-file the issue into the private repo; only staff can access it, so the hand-off says staff will submit an internal Sensei Pro feature request on the user's behalf.
 - One comment per run. Don't re-triage an issue already labeled `[Status] Triaged` unless asked.
 - Never close issues, never `gh label delete`, never push branches or open PRs from this skill.
 - Be honest about reproduction: distinguish a real browser repro from a code-level trace, and "could not reproduce" from "did not try."
