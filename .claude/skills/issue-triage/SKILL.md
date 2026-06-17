@@ -57,9 +57,9 @@ State the scope conclusion in the comment. If clearly out of scope, say so plain
 This repo is **Sensei LMS** (the free core plugin). **Sensei Pro** is a separate plugin in a different repo, and its blocks/features use the `sensei-pro/*` namespace (e.g. `sensei-pro/task-list`), live under `sensei-pro/` slugs, or reference Pro-only features (interactive blocks, advanced quiz, conditional content, WooCommerce paid courses, etc.). When a report is about a `sensei-pro` feature or bug:
 
 1. **Check whether the fix can land in Sensei core.** Search this repo — the trigger may be core code, a core hook/filter, or shared markup that core also emits. If core can fully resolve it (e.g. a shared template, a hook Pro relies on, or core-owned output), triage and fix it here as normal.
-2. **If it can only be fixed in Sensei Pro,** do not attempt a core fix. Add a clear note in the comment that **the issue should be moved to the `sensei-pro` repo**, recommend the `Third-Party` is *not* the right framing (it's first-party Pro, not a conflict), and stop before the core fix steps. Still complete the scope/repro analysis so the Pro team inherits a useful triage.
+2. **If it can only be fixed in Sensei Pro, stop immediately and say so — nothing more.** Do not attempt a core fix, and do **not** post scope, reproduction, evidence, affected-code, priority, or suggested-fix detail. A separate triage bot runs in the `sensei-pro` repo and will own the full triage there. Post only the short [Sensei Pro hand-off comment](#sensei-pro-hand-off-template) stating that the issue requires a fix in Sensei Pro and should be moved to that repo, then stop. Do not apply a `[Pri]` label.
 
-**Never reveal code from private repositories.** `sensei-pro` (and any other Automattic-private repo) is closed-source. Do not quote, paste, reconstruct, or paraphrase its source in a comment — issues on this repo are public. Describe affected Pro code only in general terms (block name, file/function by name, observable behavior), never its contents. If you happen to have private source in context, treat it as off-limits for anything posted publicly.
+**Never reveal code from private repositories.** `sensei-pro` (and any other Automattic-private repo) is closed-source, and issues on this repo are public. Do not quote, paste, reconstruct, paraphrase, or otherwise describe its source, file paths, function names, or internal behavior in a comment. For a Pro issue, your public output is limited to "this requires a fix in Sensei Pro" — share no analysis of how or why. If you have private source in context, treat it as entirely off-limits for anything posted publicly.
 
 ---
 
@@ -185,6 +185,18 @@ Apply labels with `gh issue edit <number> --repo Automattic/sensei --add-label "
 
 For **Needs More Info**, drop Evidence/Affected-code/Suggested-fix and instead list exactly which items from the [bug-report guidelines](https://senseilms.com/documentation/contribute/#submit-a-bug-report-on-github) are missing.
 
+### Sensei Pro hand-off template
+
+Use this — and nothing more — when the issue can only be fixed in Sensei Pro. Do not add reproduction, evidence, affected code, or a suggested fix.
+
+```markdown
+## Triage Results: 📦 Requires a fix in Sensei Pro
+
+This issue concerns Sensei Pro code, which lives in a separate repository. It can't be addressed in Sensei LMS (core) and should be **moved to the `sensei-pro` repo**, where it will be triaged there.
+```
+
+Then apply `[Type] Bug` (or `[Type] Enhancement`) and remove `[Status] Needs Triage`. Do not add `[Pri]` or `[Status] Triaged`.
+
 ### Feature comment template
 
 ```markdown
@@ -207,7 +219,7 @@ For **Needs More Info**, drop Evidence/Affected-code/Suggested-fix and instead l
 
 ## Guardrails
 
-- **Never expose private-repo code.** Comments on this repo are public. Do not quote, paste, reconstruct, or paraphrase source from `sensei-pro` or any other private Automattic repository. Refer to such code only by name and observable behavior. This applies even if the private source is available in your context.
+- **Never expose private-repo code or analysis.** Comments on this repo are public. For a Sensei Pro issue, post only the [hand-off comment](#sensei-pro-hand-off-template) — do not quote, paste, reconstruct, paraphrase, or describe `sensei-pro` (or any other private Automattic repo) source, paths, function names, or internal behavior, even if that source is in your context. A separate bot triages `sensei-pro`.
 - One comment per run. Don't re-triage an issue already labeled `[Status] Triaged` unless asked.
 - Never close issues, never `gh label delete`, never push branches or open PRs from this skill.
 - Be honest about reproduction: distinguish a real browser repro from a code-level trace, and "could not reproduce" from "did not try."
