@@ -52,6 +52,13 @@ Sensei's [support policy](https://senseilms.com/documentation/support-policy/) b
 
 State the scope conclusion in the comment. If clearly out of scope, say so plainly and stop before the reproduce/fix steps.
 
+### Sensei Pro (separate plugin)
+
+This repo is **Sensei LMS** (the free core plugin). **Sensei Pro** is a separate plugin in a different repo, and its blocks/features use the `sensei-pro/*` namespace (e.g. `sensei-pro/task-list`), live under `sensei-pro/` slugs, or reference Pro-only features (interactive blocks, advanced quiz, conditional content, WooCommerce paid courses, etc.). When a report is about a `sensei-pro` feature or bug:
+
+1. **Check whether the fix can land in Sensei core.** Search this repo — the trigger may be core code, a core hook/filter, or shared markup that core also emits. If core can fully resolve it (e.g. a shared template, a hook Pro relies on, or core-owned output), triage and fix it here as normal.
+2. **If it can only be fixed in Sensei Pro,** do not attempt a core fix. Add a clear note in the comment that **the issue should be moved to the `sensei-pro` repo**, recommend the `Third-Party` is *not* the right framing (it's first-party Pro, not a conflict), and stop before the core fix steps. Still complete the scope/repro analysis so the Pro team inherits a useful triage.
+
 ---
 
 ## Bug triage
