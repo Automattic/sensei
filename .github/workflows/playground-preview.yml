@@ -3,6 +3,12 @@ name: Playground PR Preview
 on:
     pull_request:
         types: [opened, synchronize, reopened]
+        paths-ignore:
+            - 'changelog/**'
+            - 'tests/**'
+            - 'scripts/**'
+            - '.github/**'
+            - '**/*.md'
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.head_ref }}
