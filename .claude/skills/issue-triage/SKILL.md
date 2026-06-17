@@ -59,6 +59,8 @@ This repo is **Sensei LMS** (the free core plugin). **Sensei Pro** is a separate
 1. **Check whether the fix can land in Sensei core.** Search this repo — the trigger may be core code, a core hook/filter, or shared markup that core also emits. If core can fully resolve it (e.g. a shared template, a hook Pro relies on, or core-owned output), triage and fix it here as normal.
 2. **If it can only be fixed in Sensei Pro,** do not attempt a core fix. Add a clear note in the comment that **the issue should be moved to the `sensei-pro` repo**, recommend the `Third-Party` is *not* the right framing (it's first-party Pro, not a conflict), and stop before the core fix steps. Still complete the scope/repro analysis so the Pro team inherits a useful triage.
 
+**Never reveal code from private repositories.** `sensei-pro` (and any other Automattic-private repo) is closed-source. Do not quote, paste, reconstruct, or paraphrase its source in a comment — issues on this repo are public. Describe affected Pro code only in general terms (block name, file/function by name, observable behavior), never its contents. If you happen to have private source in context, treat it as off-limits for anything posted publicly.
+
 ---
 
 ## Bug triage
@@ -205,6 +207,7 @@ For **Needs More Info**, drop Evidence/Affected-code/Suggested-fix and instead l
 
 ## Guardrails
 
+- **Never expose private-repo code.** Comments on this repo are public. Do not quote, paste, reconstruct, or paraphrase source from `sensei-pro` or any other private Automattic repository. Refer to such code only by name and observable behavior. This applies even if the private source is available in your context.
 - One comment per run. Don't re-triage an issue already labeled `[Status] Triaged` unless asked.
 - Never close issues, never `gh label delete`, never push branches or open PRs from this skill.
 - Be honest about reproduction: distinguish a real browser repro from a code-level trace, and "could not reproduce" from "did not try."
