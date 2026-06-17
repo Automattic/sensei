@@ -68,7 +68,7 @@ The private repo is `Automattic/sensei-pro`. **This path is for tooling only —
    - **Interactive (a staff member running locally):** confirm access with `gh repo view Automattic/sensei-pro --json viewerPermission`. If it succeeds, **proceed with cross-repo creation** (steps 2–5). If it unexpectedly fails (staff without Pro access), fall back to the same staff-follow-up behavior as the CI branch.
 2. **Build the internal issue.** Unlike the public comment, the private issue **should carry the full triage** — it's staff-only. Include:
    - A first line attributing it: `_Submitted by staff on behalf of [reporter] who filed Automattic/sensei#<N>. Triage assisted by Claude._`
-   - The user's request/repro verbatim or summarized, your scope analysis, and (for bugs) repro outcome, likely affected area, priority, and effort.
+   - The user's request/repro verbatim or summarized, your scope analysis, and (for bugs) repro outcome, likely affected area, priority, and effort. When the bug couldn't be exercised in the core wp-env (needs Pro/Interactive Blocks/third-party), state the outcome as **"Not reproduced in Sensei Core triage"**.
    - Any support-ticket reference formatted as `<number>-zen` (e.g. `11270346-zen`) — internal issue only, never the public comment.
    - A link back to the public issue: `Automattic/sensei#<N>`.
 3. **Create it:**
@@ -115,7 +115,7 @@ If steps are missing or non-deterministic, **do not guess**. Post a comment aski
 - **Interactive:** invoke the **e2e-testing** skill. Scope from the reported steps, seed the minimal data it describes, drive the relevant Sensei surface, capture screenshots, and watch the console. Record the exact environment (WP/PHP versions, theme) and the observed outcome.
 - **CI:** trace the code path from the reported entry point to the suspected defect. Where practical, write a failing PHPUnit test (`vendor/bin/phpunit --no-progress -c phpunit.xml --filter "<TestClass>"`) that captures the behavior. Do not commit it — it's evidence for the triage, not a PR.
 
-Classify the outcome: **Reproduced**, **Could not reproduce**, or **Inconclusive** (e.g. environment-dependent).
+Classify the outcome: **Reproduced**, **Could not reproduce**, or **Inconclusive** (e.g. environment-dependent). When the bug **can't be exercised in the core wp-env** because it requires Sensei Pro / Interactive Blocks / a third-party plugin that isn't installable here, record it with the standard phrase **"Not reproduced in Sensei Core triage"** (rather than "could not reproduce", which implies it was actually attempted in a capable environment).
 
 ### B4. Suggested fix
 
@@ -177,6 +177,7 @@ Apply labels with `gh issue edit <number> --repo Automattic/sensei --add-label "
 
 - **Attribution.** End every public triage comment, and every internal Sensei Pro hand-off issue body, with a final line: `_Triage assisted by Claude._`
 - **User ticket references.** Format support-ticket references as `<number>-zen` (e.g. `11270346-zen`), not "Zendesk ticket 11270346". These belong only in the **internal** Sensei Pro issue — never put a ticket reference in a public comment.
+- **Repro wording.** When a bug can't be exercised in the core wp-env (it needs Sensei Pro / Interactive Blocks / a third-party plugin), record the outcome as **"Not reproduced in Sensei Core triage"** — not "could not reproduce", which implies a real attempt in a capable environment.
 
 ### Bug comment template
 
