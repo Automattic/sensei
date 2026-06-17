@@ -1,0 +1,91 @@
+name: Claude Triage
+
+# Triages an issue and posts a single triage comment (no PR, no code changes).
+# Trigger: apply the `claude-triage` label to an issue, or comment `@claude triage`.
+# The fix-and-PR flow lives in claude-code.yml (triggered by the `claude` label / `@claude`).
+
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+
+jobs:
+  triage:
+    if: |
+      (github.event_name == 'issues' && github.event.label.name == 'claude-triage') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request == null && contains(github.event.comment.body, '@claude triage') && github.event.comment.user.type != 'Bot' &&
+        (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event.issue.number || github.run_id }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+      actions: read
+      id-token: write
+    services:
+      database:
+        image: mysql:5.6
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+    steps:
+      - uses: actions/checkout@v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set up local trunk branch
+        run: git checkout -b trunk refs/remotes/origin/trunk && git checkout -
+        if: github.ref != 'refs/heads/trunk'
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+
+      - uses: actions/cache@v5
+        with:
+          path: ~/.npm/
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+
+      - name: Install SVN
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
+      - name: Install PHP dependencies
+        uses: ./.github/actions/install-php
+        with:
+          extensions: mysql
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      # Enables the CI reproduction fallback in the issue-triage skill: a failing
+      # PHPUnit test that captures the reported behavior (no browser is available here).
+      - name: Set up WordPress test environment
+        run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
+
+      - uses: anthropics/claude-code-action@593d7a5c4e0073569f74772c2b7b64c30ec14707  # v1.0.141
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          label_trigger: claude-triage
+          additional_permissions: |
+            actions: read
+          prompt: |
+            You were triggered on a ${{ github.event_name }} event in ${{ github.repository }}.
+            Issue number: ${{ github.event.issue.number }}.
+            Use the `issue-triage` skill (.claude/skills/issue-triage/SKILL.md) to triage this issue
+            and post a single triage comment. This is a CI runner: there is no wp-env or browser,
+            so follow the skill's CI reproduction path (code-level trace plus, where practical, a
+            failing PHPUnit test). Do not open a PR, push code, or close the issue.
+          claude_args: |
+            --model claude-sonnet-4-6
+            --max-turns 60
+            --max-budget-usd 4.00
+            --permission-mode acceptEdits
+            --allowedTools "Read,Glob,Grep,Edit,Write,Bash(make *),Bash(npm ci),Bash(npm run *),Bash(composer install*),Bash(vendor/bin/phpunit*),Bash(git diff*),Bash(git log*),Bash(git show*),Bash(git status*),Bash(git grep*),Bash(git rev-parse*),Bash(git fetch*),Bash(gh issue view*),Bash(gh issue comment*),Bash(gh issue edit*),Bash(gh issue list*),Bash(gh api *),Bash(gh label list*)"
+            --disallowedTools "Bash(gh pr *)" "Bash(gh issue close:*)" "Bash(gh issue delete:*)" "Bash(gh label delete:*)" "Bash(gh label create:*)" "Bash(gh run delete:*)" "Bash(gh run cancel:*)" "Bash(git push*)" "Bash(git commit*)" "Bash(git add *)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)"
