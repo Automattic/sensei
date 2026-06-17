@@ -481,7 +481,7 @@ class Sensei_Lesson {
 	 * @param int      $lesson_id The lesson id.
 	 * @param int|null $course_id The course id.
 	 */
-	private function output_prerequisite_meta_box_content( int $lesson_id, int $course_id = null ) {
+	private function output_prerequisite_meta_box_content( int $lesson_id, ?int $course_id = null ) {
 		// Get all the possible prerequisite lessons.
 		$posts_array = $course_id ? $this->get_prerequisites( $lesson_id, $course_id ) : array();
 

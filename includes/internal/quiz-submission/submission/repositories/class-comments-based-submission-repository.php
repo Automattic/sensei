@@ -39,7 +39,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @return Submission_Interface The quiz submission.
 	 * @throws RuntimeException     In case the lesson status is missing.
 	 */
-	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
+	public function create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
 		 * Filters the quiz ID when quiz submission is created.
 		 *
@@ -85,7 +85,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 *
 	 * @return Submission_Interface The quiz submission.
 	 */
-	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
+	public function get_or_create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
 		 * Filters the quiz ID when quiz submission is created.
 		 *
