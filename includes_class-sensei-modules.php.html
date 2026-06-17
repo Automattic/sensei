@@ -402,7 +402,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @return string The lesson module select HTML.
 	 */
-	private function render_lesson_module_select_for_course( int $course_id = null, int $current_module_id = null ): string {
+	private function render_lesson_module_select_for_course( ?int $course_id = null, ?int $current_module_id = null ): string {
 		// Get the available modules for this lesson's course.
 		$modules = $course_id ? $this->get_course_modules( $course_id ) : [];
 
@@ -1019,7 +1019,7 @@ class Sensei_Core_Modules {
 	 *
 	 * @return bool
 	 */
-	public function can_view_module_content( WP_Term $module = null, $course_id = null, $user_id = null ) {
+	public function can_view_module_content( ?WP_Term $module = null, $course_id = null, $user_id = null ) {
 		$can_view_module_content = false;
 
 		if ( null === $module ) {
