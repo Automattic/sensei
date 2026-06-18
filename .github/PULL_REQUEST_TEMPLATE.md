@@ -34,3 +34,32 @@ Both the PR author and reviewer are responsible for ensuring the checklist is co
 - [ ] Hooks (p6rkRX-1uS-p2) and functions are documented
 - [ ] New UIs are responsive and use a [mobile-first approach](https://zellwk.com/blog/how-to-write-mobile-first-css/)
 - [ ] Code is tested on the minimum supported PHP and WordPress versions
+
+## Changelog entry
+<!-- Tick the box below to have CI create the changelog/ entry from the details here.
+Otherwise run `make changelog` locally, or apply the "No Changelog" label for internal-only changes. -->
+
+- [ ] Automatically create a changelog entry from the details below.
+
+<details>
+<summary>Changelog Entry Details</summary>
+
+#### Significance
+<!-- Choose only one -->
+- [ ] Patch - Backwards-compatible bug fixes
+- [ ] Minor - Added or deprecated functionality in a backwards-compatible manner
+- [ ] Major - Broke backwards compatibility in some way
+
+#### Type
+<!-- Choose only one -->
+- [ ] Added - Adds new functionality
+- [ ] Changed - Changes existing functionality
+- [ ] Fixed - Fixes a bug
+- [ ] Deprecated - Marks functionality as deprecated
+- [ ] Removed - Removes functionality
+- [ ] Security - Security-related change
+- [ ] Development - Development or internal task
+
+#### Message <!-- Add the changelog message here -->
+
+</details>
