@@ -36,7 +36,7 @@ Both the PR author and reviewer are responsible for ensuring the checklist is co
 - [ ] Code is tested on the minimum supported PHP and WordPress versions
 
 ## Changelog entry
-<!-- Tick the box below to have CI create the changelog/ entry from the details here.
+<!-- Tick the box below to have CI create the changelog/ entry from the details here (only available for branches in this repository; forks should run `make changelog`).
 Otherwise run `make changelog` locally, or apply the "No Changelog" label for internal-only changes. -->
 
 - [ ] Automatically create a changelog entry from the details below.
