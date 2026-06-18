@@ -99,13 +99,16 @@ jobs:
 
       - name: Commit and push the entry
         if: steps.gate.outputs.generate == 'true'
+        # HEAD_REF via env (not ${{ }} in the script) so a crafted branch name can't inject shell.
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [ -n "$(git status --porcelain changelog/)" ]; then
               git add changelog/
               git commit -m "Add changelog entry from PR description"
-              git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
+              git push origin "HEAD:$HEAD_REF"
           else
               echo "No changelog changes to commit."
           fi
