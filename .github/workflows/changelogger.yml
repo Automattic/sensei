@@ -106,7 +106,6 @@ jobs:
 
       - name: Commit and push the entry
         if: steps.gate.outputs.generate == 'true'
-        # HEAD_REF via env (not ${{ }} in the script) so a crafted branch name can't inject shell.
         env:
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
