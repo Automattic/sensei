@@ -42,7 +42,7 @@ interface Course_Progress_Interface {
 	 *
 	 * @param DateTimeInterface|null $started_at Course start date.
 	 */
-	public function start( DateTimeInterface $started_at = null ): void;
+	public function start( ?DateTimeInterface $started_at = null ): void;
 
 	/**
 	 * Set complete status and completion date.
@@ -51,7 +51,7 @@ interface Course_Progress_Interface {
 	 *
 	 * @param DateTimeInterface|null $completed_at Course completion date.
 	 */
-	public function complete( DateTimeInterface $completed_at = null ): void;
+	public function complete( ?DateTimeInterface $completed_at = null ): void;
 
 	/**
 	 * Returns the progress identifier.
