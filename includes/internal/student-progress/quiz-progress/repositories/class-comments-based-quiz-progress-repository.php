@@ -31,13 +31,12 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 *
 	 * @internal
 	 *
-	 * @param int      $quiz_id Quiz identifier.
-	 * @param int      $user_id User identifier.
-	 * @param int|null $parent_post_id The parent post ID (unused in comments-based storage).
+	 * @param int $quiz_id Quiz identifier.
+	 * @param int $user_id User identifier.
 	 * @return Quiz_Progress_Interface
 	 * @throws \RuntimeException When the quiz progress doesn't exist. In this implementation we re-use lesson progress.
 	 */
-	public function create( int $quiz_id, int $user_id, ?int $parent_post_id = null ): Quiz_Progress_Interface {
+	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		/**
 		 * Filter quiz id for quiz progress creation.
 		 *
@@ -156,10 +155,12 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->assert_comments_based_quiz_progress( $quiz_progress );
 
-		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
-		$metadata  = [];
-		if ( $quiz_progress->get_started_at() ) {
-			$metadata['start'] = $quiz_progress->get_started_at()->format( 'Y-m-d H:i:s' );
+		$lesson_id  = (int) Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
+		$metadata   = [];
+		$started_at = $quiz_progress->get_started_at();
+		if ( $started_at ) {
+			// Comment dates are stored in the site timezone.
+			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
 
 		// We need to use internal value for status, not the one returned by the getter.

@@ -32,7 +32,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	/**
 	 * Cache group for quiz grades.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @var string
 	 */
@@ -290,7 +290,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	/**
 	 * Get the cache key for quiz grades by submission.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int $submission_id The submission ID.
 	 * @return string The cache key.

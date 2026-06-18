@@ -224,7 +224,7 @@ class Sensei_PostTypes {
 	public function exclude_sitemaps_post_types( $post_types ) {
 		return array_filter(
 			$post_types,
-			function( $post_type ) {
+			function ( $post_type ) {
 				return ! in_array( $post_type->name, self::SITEMAPS_EXCLUDED_PUBLIC_POST_TYPES, true );
 			}
 		);
@@ -290,7 +290,15 @@ class Sensei_PostTypes {
 			'has_archive'           => $this->get_course_post_type_archive_slug(),
 			'hierarchical'          => false,
 			'menu_position'         => 51,
-			'supports'              => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'custom-fields' ),
+			// 'editor' uses the keyed form to enable the block editor Notes feature (WordPress 6.9+). Ignored on earlier versions.
+			'supports'              => array(
+				'title',
+				'excerpt',
+				'thumbnail',
+				'revisions',
+				'custom-fields',
+				'editor' => array( 'notes' => true ),
+			),
 			'show_in_rest'          => true,
 			'rest_base'             => 'courses',
 			'rest_controller_class' => 'WP_REST_Posts_Controller',
@@ -395,7 +403,14 @@ class Sensei_PostTypes {
 	 */
 	public function setup_lesson_post_type() {
 
-		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' );
+		// 'editor' uses the keyed form to enable the block editor Notes feature (WordPress 6.9+). Ignored on earlier versions.
+		$supports_array = array(
+			'title',
+			'excerpt',
+			'thumbnail',
+			'revisions',
+			'editor' => array( 'notes' => true ),
+		);
 		$allow_comments = false;
 		if ( isset( Sensei()->settings->settings['lesson_comments'] ) ) {
 			$allow_comments = Sensei()->settings->settings['lesson_comments'];

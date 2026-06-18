@@ -1,4 +1,8 @@
 <?php
+use Sensei\Internal\Services\Reports_Item;
+use Sensei\Internal\Services\Reports_Listing_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -18,14 +22,25 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	public $page_slug;
 
 	/**
+	 * The reports listing service.
+	 *
+	 * @var Reports_Listing_Service_Interface
+	 */
+	private Reports_Listing_Service_Interface $reports_listing_service;
+
+	/**
 	 * Constructor
 	 *
 	 * @since  1.2.0
+	 *
+	 * @param int                                    $lesson_id               Lesson ID.
+	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Reports listing service.
 	 */
-	public function __construct( $lesson_id = 0 ) {
-		$this->lesson_id = intval( $lesson_id );
-		$this->course_id = intval( get_post_meta( $this->lesson_id, '_lesson_course', true ) );
-		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
+	public function __construct( $lesson_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null ) {
+		$this->lesson_id               = intval( $lesson_id );
+		$this->course_id               = intval( get_post_meta( $this->lesson_id, '_lesson_course', true ) );
+		$this->page_slug               = Sensei_Analysis::PAGE_SLUG;
+		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_lesson' );
@@ -223,26 +238,28 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 * Generates the overall array for a single item in the display
 	 *
 	 * @since  1.7.0
-	 * @param object $item The current item
+	 * @param Reports_Item $item The current item.
 	 */
 	protected function get_row_data( $item ) {
-		$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
-		$user_end_date   = $item->comment_date;
+		$user_start_date = $item->started_at ?? '';
+		$user_end_date   = $item->completed_at ?? '';
+		$item_status     = $item->status;
+		$item_grade      = $item->grade;
 
 		$grade = null;
-		if ( 'complete' == $item->comment_approved ) {
+		if ( 'complete' === $item_status ) {
 			$status = __( 'Completed', 'sensei-lms' );
 			$grade  = __( 'No Grade', 'sensei-lms' );
-		} elseif ( 'graded' == $item->comment_approved ) {
+		} elseif ( 'graded' === $item_status ) {
 			$status = __( 'Graded', 'sensei-lms' );
-			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
-		} elseif ( 'passed' == $item->comment_approved ) {
+			$grade  = $item_grade;
+		} elseif ( 'passed' === $item_status ) {
 			$status = __( 'Passed', 'sensei-lms' );
-			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
-		} elseif ( 'failed' == $item->comment_approved ) {
+			$grade  = $item_grade;
+		} elseif ( 'failed' === $item_status ) {
 			$status = __( 'Failed', 'sensei-lms' );
-			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
-		} elseif ( 'ungraded' == $item->comment_approved ) {
+			$grade  = $item_grade;
+		} elseif ( 'ungraded' === $item_status ) {
 			$status = __( 'Ungraded', 'sensei-lms' );
 		} else {
 			$status        = __( 'In Progress', 'sensei-lms' );
@@ -263,7 +280,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 			);
 
 			$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';
-			$status    = sprintf( '<span class="%s">%s</span>', esc_attr( $item->comment_approved ), esc_html( $status ) );
+			$status    = sprintf( '<span class="%s">%s</span>', esc_attr( $item_status ), esc_html( $status ) );
 			if ( is_numeric( $grade ) ) {
 				$grade .= '%';
 			}
@@ -309,14 +326,14 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 			'status'  => 'any',
 		);
 
-		// Searching users on statuses requires sub-selecting the statuses by user_ids
+		// Searching users on statuses requires sub-selecting the statuses by user_ids.
 		if ( $this->search ) {
 			$user_args = array(
 				'search' => '*' . $this->search . '*',
 				'fields' => 'ID',
 			);
 			/**
-			 * Filter the user arguments used to search for users
+			 * Filter the user arguments used to search for users.
 			 *
 			 * @hook sensei_analysis_lesson_search_users
 			 *
@@ -325,14 +342,13 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 			 */
 			$user_args = apply_filters( 'sensei_analysis_lesson_search_users', $user_args );
 			if ( ! empty( $user_args ) ) {
-				$learners_search = new WP_User_Query( $user_args );
-				// Store for reuse on counts
+				$learners_search          = new WP_User_Query( $user_args );
 				$activity_args['user_id'] = (array) $learners_search->get_results();
 			}
 		}
 
 		/**
-		 * Filter the arguments used to search for activity
+		 * Filter the arguments used to search for activity.
 		 *
 		 * @hook sensei_analysis_lesson_filter_statuses
 		 *
@@ -341,29 +357,10 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		 */
 		$activity_args = apply_filters( 'sensei_analysis_lesson_filter_statuses', $activity_args );
 
-		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
-		$this->total_items = Sensei_Utils::sensei_check_for_activity(
-			array_merge(
-				$activity_args,
-				array(
-					'count'  => true,
-					'offset' => 0,
-					'number' => 0,
-				)
-			)
-		);
+		$result            = $this->reports_listing_service->get_lesson_students( $activity_args );
+		$this->total_items = $result['total_count'];
 
-		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
-		if ( $this->total_items < $activity_args['offset'] ) {
-			$new_paged               = floor( $this->total_items / $activity_args['number'] );
-			$activity_args['offset'] = $new_paged * $activity_args['number'];
-		}
-		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-		// Need to always return an array, even with only 1 item
-		if ( ! is_array( $statuses ) ) {
-			$statuses = array( $statuses );
-		}
-		return $statuses;
+		return $result['items'];
 	}
 
 	/**
@@ -452,7 +449,6 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$text = __( 'Search Students', 'sensei-lms' );
 
 		return $text;
-
 	}
 }
 

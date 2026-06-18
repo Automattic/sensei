@@ -6,6 +6,8 @@
  * @covers Sensei_Analysis_Course_List_Table
  */
 class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
+
 	private static $initial_hook_suffix;
 
 	/**
@@ -133,6 +135,70 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 4, count( $export_data ) ); // Header row + 3 lessons.
+	}
+
+	public function testGenerateReport_LessonViewWithGradedStudents_ReturnsCorrectAverageGrade() {
+		$this->skip_in_hpps_mode( 'Inserts raw comment-based lesson grades; incompatible with HPPS tables mode.' );
+
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'      => $course_id,
+					'_quiz_has_questions' => '1',
+				),
+			)
+		);
+
+		// Create 3 graded lesson statuses: grades 60, 80, 40 → average 60.
+		foreach ( array( 60, 80, 40 ) as $grade ) {
+			$user_id    = $this->factory->user->create();
+			$comment_id = wp_insert_comment(
+				array(
+					'user_id'          => $user_id,
+					'comment_post_ID'  => $lesson_id,
+					'comment_type'     => 'sensei_lesson_status',
+					'comment_approved' => 'graded',
+				)
+			);
+			update_comment_meta( $comment_id, 'grade', $grade );
+		}
+
+		$_GET['view'] = 'lesson';
+
+		/* Act. */
+		$table       = new Sensei_Analysis_Course_List_Table( $course_id );
+		$export_data = $table->generate_report( 'course-name-lessons-overview' );
+
+		/* Assert. */
+		// generate_report with csv_output=true returns numeric grade without '%' suffix.
+		// wp_kses_array converts the float to a string.
+		$lesson_row = $export_data[1]; // First data row after the header.
+		self::assertSame( '60', $lesson_row['average_grade'], 'Average grade should be 60.' );
+	}
+
+	public function testGenerateReport_LessonViewWithNoGradedStudents_ReturnsNAForAverageGrade() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'      => $course_id,
+					'_quiz_has_questions' => '1',
+				),
+			)
+		);
+
+		$_GET['view'] = 'lesson';
+
+		/* Act. */
+		$table       = new Sensei_Analysis_Course_List_Table( $course_id );
+		$export_data = $table->generate_report( 'course-name-lessons-overview' );
+
+		/* Assert. */
+		$lesson_row = $export_data[1]; // First data row after the header.
+		self::assertSame( __( 'N/A', 'sensei-lms' ), $lesson_row['average_grade'], 'Average grade should be N/A when no graded students.' );
 	}
 
 	public function testGenerateReport_UserView_ReturnsCorrectNumberOfRows() {

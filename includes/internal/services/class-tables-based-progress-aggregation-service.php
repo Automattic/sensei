@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_Service_Interface {
 
@@ -33,7 +33,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 */
@@ -44,7 +44,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Get the progress table name.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return string The progress table name.
 	 */
@@ -55,7 +55,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Count progress records grouped by status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Arguments for the query.
@@ -74,7 +74,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			_doing_it_wrong(
 				__METHOD__,
 				'The "query" argument is not supported with tables-based progress storage. Use "exclude_user_login_prefixes" and "include_statuses_override" instead.',
-				'$$next-version$$'
+				'4.26.0'
 			);
 		}
 
@@ -82,7 +82,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			_doing_it_wrong(
 				__METHOD__,
 				'The "type" argument must be "course" or "lesson".',
-				'$$next-version$$'
+				'4.26.0'
 			);
 			return array();
 		}
@@ -98,7 +98,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int[] $lesson_ids Array of lesson post IDs.
 	 * @return array Associative array with keys: unique_student_count, lesson_start_count, lesson_completed_count, days_to_complete_count, days_to_complete_sum.
@@ -134,7 +134,9 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			, SUM(IF(COALESCE( q.status, p.status ) IN $has_completion, 1, 0)) AS days_to_complete_count
 			, SUM(IF(COALESCE( q.status, p.status ) IN $has_completion, ABS( DATEDIFF( CONVERT_TZ( p.completed_at, '+00:00', '$utc_offset' ), CONVERT_TZ( p.started_at, '+00:00', '$utc_offset' ) ) ) + 1, 0)) AS days_to_complete_sum
 			FROM {$table} p
-			LEFT JOIN {$table} q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'
+			INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )
+			LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0
+			LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
 				AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )
 			WHERE p.type = 'lesson' AND p.post_id IN ( $placeholders )",
 			$lesson_ids
@@ -159,6 +161,40 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
+	 * Count ungraded quiz submissions whose lesson is publicly available.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @param array $args Optional restrictions; see interface.
+	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
+	 */
+	public function count_ungraded_quizzes( array $args = array() ): int {
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix; status/type values are constants.
+		$query = "SELECT COUNT(*) FROM {$table} p
+			INNER JOIN {$wpdb->postmeta} pm ON pm.meta_key = '_lesson_quiz' AND pm.meta_value = p.post_id
+			INNER JOIN {$wpdb->posts} lesson_post ON lesson_post.ID = pm.post_id AND lesson_post.post_status IN ( 'publish', 'private' )
+			INNER JOIN {$table} lp ON lp.post_id = pm.post_id AND lp.user_id = p.user_id AND lp.type = 'lesson'
+			WHERE p.type = 'quiz' AND p.status = 'ungraded'";
+
+		if ( ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $args['post__in'] ), '%d' ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
+			$query .= $wpdb->prepare( " AND lesson_post.ID IN ( $placeholders )", $args['post__in'] );
+		}
+
+		$query .= $this->build_user_exclusion_clause( $args );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL built from literals only.
+		$count = (int) $wpdb->get_var( $query );
+		Utils::log_query_error( $wpdb, 'Tables-based ungraded quizzes count' );
+
+		return $count;
+	}
+
+	/**
 	 * Count lesson statuses using quiz status when a quiz exists.
 	 *
 	 * In HPPS, lesson progress rows only store 'in-progress' and 'complete',
@@ -169,7 +205,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * Uses COALESCE(q.status, p.status) so quiz progress status takes
 	 * precedence when it exists; otherwise falls back to lesson status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments (see count_statuses).
 	 * @return array Associative array of status => count.
@@ -180,8 +216,11 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query = "SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )";
+		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query .= " LEFT JOIN {$table} q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'";
+		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
 
 		$query .= $wpdb->prepare( ' WHERE p.type = %s', 'lesson' );
 
@@ -206,7 +245,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Count course statuses.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments (see count_statuses).
 	 * @return array Associative array of status => count.
@@ -217,7 +256,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
 		$query  = "SELECT p.status, COUNT(*) AS total FROM {$table} p";
-		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status != 'trash'";
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )";
 
 		$query .= $wpdb->prepare( ' WHERE p.type = %s', $args['type'] );
 		$query .= $this->build_post_filter_clause( $args );
@@ -241,7 +280,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Build SQL clause for filtering by post ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -267,7 +306,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Build SQL clause for filtering by user ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -291,7 +330,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Build SQL clause for excluding users by login prefix.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array  $args           Query arguments.
 	 * @param string $status_column  SQL expression for the status column (default: 'p.status').

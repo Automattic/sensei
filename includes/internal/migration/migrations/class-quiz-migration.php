@@ -51,11 +51,11 @@ class Quiz_Migration extends Migration_Abstract {
 		/**
 		 * Filter the batch size for quiz migration.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.0
 		 *
 		 * @param int $batch_size The batch size.
 		 */
-		$this->batch_size = max( 1, (int) apply_filters( 'sensei_migration_quiz_batch_size', $batch_size ) );
+		$this->batch_size = (int) apply_filters( 'sensei_migration_quiz_batch_size', $batch_size );
 	}
 
 	/**

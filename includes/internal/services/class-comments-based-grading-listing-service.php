@@ -18,19 +18,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Comments_Based_Grading_Listing_Service implements Grading_Listing_Service_Interface {
 
 	/**
 	 * Get lesson progress items for the grading listing.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return array{ items: Grading_Item[], total_count: int }
 	 */
 	public function get_lesson_progress_items( array $args ): array {
+		$args['post_status'] = array( 'publish', 'private' );
+
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so run
 		// a separate count query first with no limit/offset.
 		$total_count = \Sensei_Utils::sensei_check_for_activity(
@@ -91,7 +93,7 @@ class Comments_Based_Grading_Listing_Service implements Grading_Listing_Service_
 	 *
 	 * Not supported by comments-based implementation.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return array<string, int>|null Always null for comments-based storage.
 	 */

@@ -366,6 +366,43 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertTrue( $has );
 	}
 
+	public function testSave_SiteTimezoneDatetimes_StoresColumnsInUtc(): void {
+		/* Arrange. */
+		update_option( 'timezone_string', '' );
+		update_option( 'gmt_offset', -4 );
+
+		$wpdb       = $this->createMock( wpdb::class );
+		$progress   = new Tables_Based_Lesson_Progress(
+			1,
+			2,
+			3,
+			'complete',
+			new DateTimeImmutable( '2026-06-09 15:49:33', wp_timezone() ),
+			new DateTimeImmutable( '2026-06-09 15:49:44', wp_timezone() ),
+			new DateTimeImmutable( '2026-06-09 15:49:33', wp_timezone() ),
+			new DateTimeImmutable( '2026-06-09 15:49:33', wp_timezone() )
+		);
+		$repository = new Tables_Based_Lesson_Progress_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$wpdb
+			->expects( self::once() )
+			->method( 'update' )
+			->with(
+				'sensei_lms_progress',
+				$this->callback(
+					function ( $data ) {
+						return '2026-06-09 19:49:33' === $data['started_at']
+							&& '2026-06-09 19:49:44' === $data['completed_at'];
+					}
+				),
+				self::anything(),
+				self::anything(),
+				self::anything()
+			);
+		$repository->save( $progress );
+	}
+
 	public function testSave_ProgressGiven_CallsWpdbUpdate(): void {
 		/* Arrange. */
 		$wpdb       = $this->createMock( wpdb::class );
@@ -640,32 +677,6 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( $expected, $actual );
-	}
-
-	public function testCreate_WhenParentPostIdProvided_StoresIt(): void {
-		/* Arrange. */
-		$lesson_id = $this->factory->post->create( array( 'post_type' => 'lesson' ) );
-		$course_id = $this->factory->post->create( array( 'post_type' => 'course' ) );
-		$user_id   = $this->factory->user->create();
-
-		global $wpdb;
-		$repository = new Tables_Based_Lesson_Progress_Repository( $wpdb );
-
-		/* Act. */
-		$repository->create( $lesson_id, $user_id, $course_id );
-
-		/* Assert. */
-		$table = $wpdb->prefix . 'sensei_lms_progress';
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-		$result = $wpdb->get_var(
-			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT parent_post_id FROM {$table} WHERE post_id = %d AND user_id = %d AND type = 'lesson'",
-				$lesson_id,
-				$user_id
-			)
-		);
-		$this->assertEquals( $course_id, (int) $result );
 	}
 
 	public function testFind_CacheEnabled_WarmsIndividualCaches(): void {

@@ -10,6 +10,9 @@ jobs:
   unit-php:
     uses: ./.github/workflows/php.yml
     secrets: inherit
+  psalm:
+    uses: ./.github/workflows/psalm.yml
+    secrets: inherit
   e2e:
     uses: ./.github/workflows/e2e.yml
     secrets: inherit

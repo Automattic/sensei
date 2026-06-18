@@ -38,7 +38,7 @@ class Sensei_Feature_Flags {
 			'course_outline_ai'          => true,
 			'tutor_ai'                   => true,
 			'experimental_features_ui'   => true,
-			'onboarding_tour'            => true,
+			'onboarding_tour'            => false,
 		],
 		'development' => [
 			'enrolment_provider_tooltip' => false,
@@ -46,7 +46,7 @@ class Sensei_Feature_Flags {
 			'email_customization'        => true,
 			'course_outline_ai'          => true,
 			'experimental_features_ui'   => true,
-			'onboarding_tour'            => true,
+			'onboarding_tour'            => false,
 		],
 	];
 

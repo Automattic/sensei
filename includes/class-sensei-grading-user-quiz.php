@@ -269,19 +269,12 @@ class Sensei_Grading_User_Quiz {
 					$user_question_grade = 0;
 					$graded_count++;
 				} else {
-					$user_right = intval( $user_question_grade ) > 0;
-					// The user's grade will be 0 if they answered incorrectly.
-					// Don't set a grade for questions that are part of an auto-graded quiz, but that must be manually graded.
-					$user_wrong =
-						( 'manual' === $quiz_grade_type && 0 === $user_question_grade )
-						|| ( 'auto' === $quiz_grade_type && 'manual-grade' === $grade_type && 0 === $user_question_grade );
+					$graded_class = self::get_question_graded_class( $quiz_grade_type, $user_question_grade );
 
-					if ( $user_right ) {
-						$graded_class           = 'user_right';
+					if ( 'user_right' === $graded_class ) {
 						$user_quiz_grade_total += $user_question_grade;
 						$graded_count++;
-					} elseif ( $user_wrong ) {
-						$graded_class        = 'user_wrong';
+					} elseif ( 'user_wrong' === $graded_class ) {
 						$user_question_grade = 0;
 						$graded_count++;
 					}
@@ -410,6 +403,31 @@ class Sensei_Grading_User_Quiz {
 			<div class="clear"></div>
 		</form>
 		<?php
+	}
+
+	/**
+	 * Determine the graded CSS class for a quiz question.
+	 *
+	 * Returns 'user_right' when the stored grade is positive, 'user_wrong' when a graded
+	 * quiz has recorded 0 points for the question, and 'ungraded' otherwise.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @param string $quiz_grade_type     Quiz grading mode: 'auto' or 'manual'.
+	 * @param mixed  $user_question_grade Stored grade value, or false if not yet graded.
+	 * @return string 'user_right', 'user_wrong', or 'ungraded'.
+	 */
+	private static function get_question_graded_class( $quiz_grade_type, $user_question_grade ) {
+		if ( intval( $user_question_grade ) > 0 ) {
+			return 'user_right';
+		}
+
+		$is_graded_quiz = 'manual' === $quiz_grade_type || 'auto' === $quiz_grade_type;
+		if ( $is_graded_quiz && 0 === $user_question_grade ) {
+			return 'user_wrong';
+		}
+
+		return 'ungraded';
 	}
 }
 

@@ -21,3 +21,5 @@ tests/e2e-playwright/contexts/*
 playwright-report/
 .vscode
 .worktrees/
+.claude/tmp/
+.claude/settings.local.json

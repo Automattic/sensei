@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_Interface {
 
@@ -39,7 +39,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 */
@@ -50,7 +50,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Get the progress table name.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return string
 	 */
@@ -61,7 +61,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Get lesson progress items for the grading listing.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return array{ items: Grading_Item[], total_count: int }
@@ -136,7 +136,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build the base SELECT query.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param string $table             Progress table name.
 	 * @param string $submissions_table Quiz submissions table name.
@@ -144,15 +144,20 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	 * @return string SQL query.
 	 */
 	private function build_base_query( string $table, string $submissions_table, array $args ): string {
+		$wpdb = $this->wpdb;
+
 		$query  = 'SELECT p.post_id, p.user_id, p.updated_at, COALESCE( q.status, p.status ) AS effective_status, qs.final_grade';
 		$query .= " FROM {$table} p";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )";
+		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";
 		// Quiz progress is joined without requiring a submission to exist,
 		// so that the effective_status reflects the quiz result even when
 		// the quiz_submissions row is missing (e.g. migrated data).
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query .= " LEFT JOIN {$table} q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'";
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id";
+		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
 		$query .= " WHERE p.type = 'lesson'";
 
 		$query .= $this->build_post_filter( $args );
@@ -166,7 +171,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build a per-status count query using the same JOINs/filters as the base query.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param string $table             Progress table name.
 	 * @param string $submissions_table Quiz submissions table name.
@@ -174,12 +179,17 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	 * @return string SQL query.
 	 */
 	private function build_count_query( string $table, string $submissions_table, array $args ): string {
+		$wpdb = $this->wpdb;
+
 		$query  = 'SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT(*) AS total';
 		$query .= " FROM {$table} p";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )";
+		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query .= " LEFT JOIN {$table} q ON q.parent_post_id = p.post_id AND q.user_id = p.user_id AND q.type = 'quiz'";
+		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = q.post_id AND qs.user_id = p.user_id";
+		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
 		$query .= " WHERE p.type = 'lesson'";
 
 		$query .= $this->build_post_filter( $args );
@@ -195,7 +205,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build SQL clause for filtering by post ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -219,7 +229,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build SQL clause for filtering by user ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -243,7 +253,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build SQL clause for excluding users by login prefix.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -256,7 +266,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build SQL clause for filtering by status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -280,7 +290,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	 * Returns null if counts are not available (e.g. if
 	 * get_lesson_progress_items has not been called yet).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return array<string, int>|null Associative array of status => count, or null.
 	 */
@@ -291,7 +301,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build ORDER BY clause.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL ORDER BY clause.

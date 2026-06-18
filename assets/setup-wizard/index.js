@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { useSelect, useDispatch } from '@wordpress/data';
-import { render, useLayoutEffect } from '@wordpress/element';
+import { createRoot, useLayoutEffect } from '@wordpress/element';
 import { Notice, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -110,7 +110,7 @@ const SenseiSetupWizardPage = () => {
 	);
 };
 
-render(
-	<SenseiSetupWizardPage />,
+const root = createRoot(
 	document.getElementById( 'sensei-setup-wizard-page' )
 );
+root.render( <SenseiSetupWizardPage /> );

@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { render } from '@wordpress/element';
+import { createRoot } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -10,6 +10,18 @@ import { render } from '@wordpress/element';
 import { ExitSurveyForm } from './form';
 
 ( function senseiExitSurvey() {
+	/**
+	 * Id of the container the survey is mounted into.
+	 */
+	const CONTAINER_ID = 'sensei-exit-survey-modal';
+
+	/**
+	 * The single React root for the survey, reused across opens.
+	 *
+	 * @type {?Object}
+	 */
+	let surveyRoot = null;
+
 	/**
 	 * Add exit survey modal when clicking the Deactivate link for Sensei LMS plugin.
 	 */
@@ -45,6 +57,7 @@ import { ExitSurveyForm } from './form';
 	class ExitSurveyModal {
 		href;
 		container;
+		root;
 
 		/**
 		 * Exit survey constructor.
@@ -60,21 +73,26 @@ import { ExitSurveyForm } from './form';
 		 *
 		 */
 		open = () => {
-			let container = document.querySelector( '#sensei-exit-survey' );
+			let container = document.getElementById( CONTAINER_ID );
 			if ( ! container ) {
 				container = document.createElement( 'div' );
-				container.setAttribute( 'id', 'sensei-exit-survey-modal' );
+				container.setAttribute( 'id', CONTAINER_ID );
 				document.body.appendChild( container );
 			}
 
 			this.container = container;
 
-			render(
+			// Reuse a single root so repeated opens don't mount twice
+			// into the same container.
+			if ( ! surveyRoot ) {
+				surveyRoot = createRoot( container );
+			}
+			this.root = surveyRoot;
+			this.root.render(
 				<ExitSurveyForm
 					submit={ this.submitExitSurvey }
 					skip={ this.closeAndDeactivate }
-				/>,
-				container
+				/>
 			);
 		};
 
@@ -114,6 +132,8 @@ import { ExitSurveyForm } from './form';
 		 * Close survey modal and continue plugin deactivation.
 		 */
 		closeAndDeactivate = () => {
+			this.root?.unmount();
+			surveyRoot = null;
 			this.container.remove();
 			window.location = this.href;
 		};

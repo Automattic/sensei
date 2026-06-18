@@ -1,11 +1,12 @@
 /**
  * WordPress dependencies
  */
-import { render } from '@wordpress/element';
+import { createRoot } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import Main from './main';
 
-render( <Main />, document.getElementById( 'sensei-home-page' ) );
+const root = createRoot( document.getElementById( 'sensei-home-page' ) );
+root.render( <Main /> );

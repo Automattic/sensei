@@ -19,14 +19,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 interface Progress_Aggregation_Service_Interface {
 
 	/**
 	 * Count progress records grouped by status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Arguments for the query.
@@ -45,7 +45,7 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int[] $lesson_ids Array of lesson post IDs.
 	 * @return array {
@@ -57,4 +57,19 @@ interface Progress_Aggregation_Service_Interface {
 	 * }
 	 */
 	public function get_lesson_totals( array $lesson_ids ): array;
+
+	/**
+	 * Count ungraded quiz submissions whose lesson is publicly available.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @param array $args {
+	 *     Optional restrictions.
+	 *
+	 *     @type int[]    $post__in                     Restrict to these lesson IDs.
+	 *     @type string[] $exclude_user_login_prefixes  Exclude users whose login starts with any of these prefixes.
+	 * }
+	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
+	 */
+	public function count_ungraded_quizzes( array $args = array() ): int;
 }

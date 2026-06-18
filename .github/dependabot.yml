@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    # Scan composite actions too — their SHA-pinned `uses:` refs need update
+    # PRs just like the workflow files do ('**' covers nested action dirs).
+    directories:
+      - "/"
+      - "/.github/actions/**"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    groups:
+      actions-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      actions-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+    cooldown:
+      default-days: 7

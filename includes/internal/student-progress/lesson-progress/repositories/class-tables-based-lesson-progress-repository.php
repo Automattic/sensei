@@ -33,7 +33,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	/**
 	 * Cache group for lesson progress.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @var string
 	 */
@@ -62,15 +62,12 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 *
 	 * @internal
 	 *
-	 * @param int      $lesson_id The lesson ID.
-	 * @param int      $user_id The user ID.
-	 * @param int|null $parent_post_id The parent post ID (course ID for lessons).
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id The user ID.
 	 *
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 */
-	public function create( int $lesson_id, int $user_id, ?int $parent_post_id = null ): Lesson_Progress_Interface {
-		$parent_post_id = $parent_post_id ? $parent_post_id : null;
-
+	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
 		/**
 		 * Filter lesson id for lesson progress creation.
 		 *
@@ -90,7 +87,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			[
 				'post_id'        => $lesson_id,
 				'user_id'        => $user_id,
-				'parent_post_id' => $parent_post_id,
+				'parent_post_id' => null,
 				'type'           => 'lesson',
 				'status'         => Lesson_Progress_Interface::STATUS_IN_PROGRESS,
 				'started_at'     => $current_datetime->format( $date_format ),
@@ -101,7 +98,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			[
 				'%d',
 				'%d',
-				$parent_post_id ? '%d' : null,
+				null,
 				'%s',
 				'%s',
 				'%s',
@@ -254,8 +251,9 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'status'       => $lesson_progress->get_status(),
-				'started_at'   => $lesson_progress->get_started_at() ? $lesson_progress->get_started_at()->format( $date_format ) : null,
-				'completed_at' => $lesson_progress->get_completed_at() ? $lesson_progress->get_completed_at()->format( $date_format ) : null,
+				// Table columns are stored in UTC.
+				'started_at'   => $lesson_progress->get_started_at() ? gmdate( $date_format, $lesson_progress->get_started_at()->getTimestamp() ) : null,
+				'completed_at' => $lesson_progress->get_completed_at() ? gmdate( $date_format, $lesson_progress->get_completed_at()->getTimestamp() ) : null,
 				'updated_at'   => $lesson_progress->get_updated_at()->format( $date_format ),
 			],
 			[
@@ -536,7 +534,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	/**
 	 * Get the cache key for a lesson progress.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id   The user ID.

@@ -33,14 +33,13 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 *
 	 * @internal
 	 *
-	 * @param int      $lesson_id The lesson ID.
-	 * @param int      $user_id The user ID.
-	 * @param int|null $parent_post_id The parent post ID (unused in comments-based storage).
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id The user ID.
 	 *
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 * @throws RuntimeException When the lesson progress could not be created.
 	 */
-	public function create( int $lesson_id, int $user_id, ?int $parent_post_id = null ): Lesson_Progress_Interface {
+	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
 		/**
 		 * Filter lesson id for lesson progress creation.
 		 *
@@ -154,9 +153,11 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	public function save( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->assert_comments_based_lesson_progress( $lesson_progress );
 
-		$metadata = [];
-		if ( $lesson_progress->get_started_at() ) {
-			$metadata['start'] = $lesson_progress->get_started_at()->format( 'Y-m-d H:i:s' );
+		$metadata   = [];
+		$started_at = $lesson_progress->get_started_at();
+		if ( $started_at ) {
+			// Comment dates are stored in the site timezone.
+			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
 
 		// We need to use internal value for status, not the one returned by the getter.
@@ -173,10 +174,12 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			$metadata
 		);
 
-		if ( $lesson_progress->is_complete() && $comment_id ) {
+		$completed_at = $lesson_progress->get_completed_at();
+		if ( $lesson_progress->is_complete() && $comment_id && $completed_at ) {
 			$comment = [
 				'comment_ID'   => $comment_id,
-				'comment_date' => $lesson_progress->get_completed_at()->format( 'Y-m-d H:i:s' ),
+				// Comment dates are stored in the site timezone.
+				'comment_date' => wp_date( 'Y-m-d H:i:s', $completed_at->getTimestamp() ),
 			];
 			wp_update_comment( $comment );
 			Sensei()->flush_comment_counts_cache( $lesson_progress->get_lesson_id() );

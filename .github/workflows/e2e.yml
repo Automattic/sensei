@@ -5,12 +5,9 @@ on:
 env:
     CI: true
 
-# Cancels all previous workflow runs for pull requests that have not completed.
 concurrency:
-    # The concurrency group contains the workflow name and the branch name for pull requests
-    # or the commit hash for any other events.
-    group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
-    cancel-in-progress: true
+    group: e2e-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.sha }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
     test:
@@ -19,25 +16,31 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6.0.3
 
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
 
-            - uses: actions/cache@v4
+            - name: Get Node.js version
+              id: node-version
+              run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
+
+            - uses: actions/cache@v5
               with:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-            - uses: actions/cache@v4
+            - uses: actions/cache@v5
+              id: node-modules-cache
               with:
                   path: node_modules/
-                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+                  key: ${{ runner.os }}-${{ runner.arch }}-${{ steps.node-version.outputs.version }}-node-modules-${{ hashFiles('package-lock.json') }}
 
             - name: Install PHP dependencies
               uses: ./.github/actions/install-php
 
             - name: Install JS dependencies
+              if: steps.node-modules-cache.outputs.cache-hit != 'true'
               run: npm ci
 
             - name: Build assets
@@ -56,7 +59,7 @@ jobs:
               run: CI=true npm run test:e2e
 
             - name: Archive report
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               if: failure()
               with:
                   name: playwright-report
@@ -64,7 +67,7 @@ jobs:
                   retention-days: 30
                   if-no-files-found: ignore
             - name: Slack Notification on Failure
-              uses: rtCamp/action-slack-notify@v2
+              uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58 # v2.4.0
               if: ${{ failure() && github.event_name == 'push' }}
               env:
                 SLACK_CHANNEL: ${{ secrets.SLACK_SENSEI_CHANNEL }}

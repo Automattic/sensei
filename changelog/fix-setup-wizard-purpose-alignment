@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix alignment of option descriptions in the setup wizard's purpose step.

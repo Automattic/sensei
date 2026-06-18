@@ -95,9 +95,32 @@ wp: ## Run a wp-cli command (CMD="plugin list")
 test-php: ## Run PHPUnit tests via wp-env (requires: make up)
 	$(WP_ENV) run tests-cli --env-cwd='wp-content/plugins/sensei' vendor/bin/phpunit -c phpunit.xml
 
+test-php-filter: ## Run targeted PHPUnit tests via wp-env (FILTER="TestClass" or FILTER="TestClass::method")
+	@[ -n "$(FILTER)" ] || { echo "Error: FILTER is required. Example: make test-php-filter FILTER=\"Sensei_Quiz_Test\""; exit 1; }
+	$(WP_ENV) run tests-cli --env-cwd='wp-content/plugins/sensei' vendor/bin/phpunit -c phpunit.xml --filter '$(FILTER)'
+
 ## Code quality
-lint: ## Run PHP CodeSniffer
-	npm run lint-php
+lint: ## Run PHPCS via the same diff-based check CI uses
+	./scripts/linter-ci
+
+psalm: ## Run Psalm static analysis under each CI PHP version (parsed from .github/workflows/psalm.yml)
+	@VERSIONS=$$(grep -E "^[[:space:]]+php:[[:space:]]*\[" .github/workflows/psalm.yml | sed -E "s/.*\[(.*)\].*/\1/; s/[',]/ /g"); \
+	if [ -z "$$VERSIONS" ]; then \
+		echo "Error: could not parse PHP matrix from .github/workflows/psalm.yml"; exit 1; \
+	fi; \
+	for v in $$VERSIONS; do \
+		BIN="/opt/homebrew/opt/php@$$v/bin"; \
+		if [ ! -x "$$BIN/php" ]; then \
+			echo "Error: PHP $$v not found at $$BIN. Install with: brew install php@$$v"; \
+			exit 1; \
+		fi; \
+		echo "==> Psalm on PHP $$v"; \
+		PATH="$$BIN:$$PATH" vendor/bin/psalm --no-cache --diff || exit $$?; \
+	done
+
+## Changelog
+changelog: ## Add a changelog entry
+	npm run changelog
 
 ## Build
 build: ## Build plugin zip via wp-env (requires: make up)
@@ -110,4 +133,4 @@ build: ## Build plugin zip via wp-env (requires: make up)
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: install install-php up down destroy logs shell wp test-php lint build help
+.PHONY: install install-php up down destroy logs shell wp test-php test-php-filter lint psalm changelog build help

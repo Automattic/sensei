@@ -67,7 +67,13 @@ const setupDefaultUsers = async (): Promise< void > => {
 };
 
 const createGlobalUsers = async ( users: User[] ): Promise< User[] > => {
-	return Promise.all( users.map( ( user ) => setupUser( user ) ) );
+	// Serialize: parallel `wp-env run tests-cli` invocations race on wp-env's
+	// internal state check and intermittently fail with "Environment not initialized".
+	const created: User[] = [];
+	for ( const user of users ) {
+		created.push( await setupUser( user ) );
+	}
+	return created;
 };
 
 async function setupUser( user: User ) {

@@ -234,7 +234,7 @@ class Sensei_Usage_Tracking_Data {
 				AND `meta_key`=%s
 				AND `meta_value`!=''
 				AND `meta_value`!='0'",
-				[ ...$published_quiz_ids, $meta_key ]
+				array_merge( $published_quiz_ids, array( $meta_key ) )
 			)
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
@@ -265,7 +265,7 @@ class Sensei_Usage_Tracking_Data {
 				IN ( $published_quiz_ids_placeholder )
 				AND `meta_key`=%s
 				AND `meta_value`=%s",
-				[ ...$published_quiz_ids, $meta_key, $meta_value ]
+				array_merge( $published_quiz_ids, array( $meta_key, $meta_value ) )
 			)
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
