@@ -1548,7 +1548,7 @@ class Sensei_Quiz {
 	 *
 	 * @return bool
 	 */
-	public static function is_quiz_available( int $quiz_id = null, int $user_id = null ): bool {
+	public static function is_quiz_available( ?int $quiz_id = null, ?int $user_id = null ): bool {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
@@ -1584,7 +1584,7 @@ class Sensei_Quiz {
 	 *
 	 * @return bool
 	 */
-	public static function is_quiz_completed( int $quiz_id = null, int $user_id = null ): bool {
+	public static function is_quiz_completed( ?int $quiz_id = null, ?int $user_id = null ): bool {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
@@ -1978,7 +1978,7 @@ class Sensei_Quiz {
 	 *
 	 * @return string
 	 */
-	public static function get_button_inline_styles( int $quiz_id = null ): string {
+	public static function get_button_inline_styles( ?int $quiz_id = null ): string {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 

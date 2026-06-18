@@ -169,9 +169,9 @@ class Email_Customization {
 	 * @return self
 	 */
 	public static function instance(
-		Sensei_Settings $settings = null,
-		Sensei_Assets $assets = null,
-		Lesson_Progress_Repository_Interface $lesson_progress_repository = null
+		?Sensei_Settings $settings = null,
+		?Sensei_Assets $assets = null,
+		?Lesson_Progress_Repository_Interface $lesson_progress_repository = null
 	): self {
 		if ( ! self::$instance ) {
 			self::$instance = new self(

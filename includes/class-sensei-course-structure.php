@@ -486,7 +486,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return false|int
 	 */
-	private function save_lesson( array $item, int $module_id = null ) {
+	private function save_lesson( array $item, ?int $module_id = null ) {
 		if ( $item['id'] ) {
 			$lesson_id = $this->update_lesson( $item );
 		} else {
