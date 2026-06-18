@@ -78,11 +78,17 @@ jobs:
           script: |
             const fs = require( 'node:fs' );
             const pr = context.payload.pull_request;
-            const body = pr.body || '';
+
+            // Scope parsing to the "Changelog Entry Details" section, so checked boxes elsewhere
+            // in the description (e.g. under Proposed Changes) can't be mistaken for selections.
+            const section = ( ( pr.body || '' ).match( /<summary>\s*Changelog Entry Details\s*<\/summary>([\s\S]*?)<\/details>/i ) || [] )[ 1 ];
+            if ( ! section ) {
+              throw new Error( 'Could not find the "Changelog Entry Details" section in the PR description.' );
+            }
 
             // Pick exactly one checked option from a list, or fail the job.
             const pickOne = ( regex, label ) => {
-              const matches = [ ...body.matchAll( regex ) ];
+              const matches = [ ...section.matchAll( regex ) ];
               if ( matches.length === 0 ) {
                 throw new Error( `No changelog ${ label } selected. Tick exactly one option in the PR description.` );
               }
@@ -95,7 +101,7 @@ jobs:
             const significance = pickOne( /\[(?:x|X)\] (Patch|Minor|Major)\b/gm, 'significance' );
             const type = pickOne( /\[(?:x|X)\] (Added|Changed|Fixed|Deprecated|Removed|Security|Development)\b/gm, 'type' );
 
-            const messageMatch = /#### Message ?(<!--.*?-->)?(.*?)<\/details>/gms.exec( body );
+            const messageMatch = /#### Message ?(<!--[\s\S]*?-->)?([\s\S]*)/.exec( section );
             if ( ! messageMatch ) {
               throw new Error( 'Could not find the "#### Message" block in the Changelog Entry Details.' );
             }
