@@ -26,10 +26,20 @@ jobs:
           script: |
             const pr = context.payload.pull_request;
 
-            // No entry needed if exempted by label or one is already present (e.g. `make changelog`).
+            // Exempt via the "No Changelog" label.
             if ( ( pr.labels || [] ).some( ( l ) => l.name === 'No Changelog' ) ) {
               return core.setOutput( 'generate', 'false' );
             }
+
+            // Opt-in: (re)generate from the description on every run, so edits to the
+            // section propagate even after an entry was already generated. The description
+            // is the source of truth; an unchanged description regenerates identical content
+            // and commits nothing.
+            if ( /\[(?:x|X)\] Automatically create a changelog/m.test( pr.body || '' ) ) {
+              return core.setOutput( 'generate', 'true' );
+            }
+
+            // A changelog entry is already present in this PR (e.g. from `make changelog`).
             const files = await github.paginate( github.rest.pulls.listFiles, {
               ...context.repo,
               pull_number: pr.number,
@@ -39,13 +49,10 @@ jobs:
               return core.setOutput( 'generate', 'false' );
             }
 
-            // Otherwise an entry must be auto-generated from the opt-in section.
-            if ( ! /\[(?:x|X)\] Automatically create a changelog/m.test( pr.body || '' ) ) {
-              return core.setFailed(
-                'No changelog entry found. Run `make changelog`, tick "Automatically create a changelog entry" in the PR description, or apply the "No Changelog" label.'
-              );
-            }
-            core.setOutput( 'generate', 'true' );
+            // Nothing satisfies the changelog requirement.
+            return core.setFailed(
+              'No changelog entry found. Run `make changelog`, tick "Automatically create a changelog entry" in the PR description, or apply the "No Changelog" label.'
+            );
 
       # Everything below runs only when we need to generate an entry.
       - name: Check out the PR branch
