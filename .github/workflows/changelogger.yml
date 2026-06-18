@@ -25,17 +25,19 @@ jobs:
         with:
           script: |
             const pr = context.payload.pull_request;
+            const isFork = pr.head.repo?.full_name !== pr.base.repo.full_name;
+            const optedIn = /\[(?:x|X)\] Automatically create a changelog/m.test( pr.body || '' );
 
             // Exempt via the "No Changelog" label.
             if ( ( pr.labels || [] ).some( ( l ) => l.name === 'No Changelog' ) ) {
               return core.setOutput( 'generate', 'false' );
             }
 
-            // Opt-in: (re)generate from the description on every run, so edits to the
-            // section propagate even after an entry was already generated. The description
-            // is the source of truth; an unchanged description regenerates identical content
-            // and commits nothing.
-            if ( /\[(?:x|X)\] Automatically create a changelog/m.test( pr.body || '' ) ) {
+            // Opt-in (re)generates from the description on every run, so edits to the section
+            // propagate even after an entry was generated (the description is the source of
+            // truth; an unchanged one regenerates identical content and commits nothing). Only
+            // same-repo PRs can be pushed to, so forks fall through to the existing-entry check.
+            if ( optedIn && ! isFork ) {
               return core.setOutput( 'generate', 'true' );
             }
 
@@ -49,7 +51,12 @@ jobs:
               return core.setOutput( 'generate', 'false' );
             }
 
-            // Nothing satisfies the changelog requirement.
+            // Nothing satisfies the requirement — fail with the right guidance.
+            if ( optedIn && isFork ) {
+              return core.setFailed(
+                'Auto-generation can\'t push to a forked branch. Run `make changelog` and commit the entry, or have a maintainer add it.'
+              );
+            }
             return core.setFailed(
               'No changelog entry found. Run `make changelog`, tick "Automatically create a changelog entry" in the PR description, or apply the "No Changelog" label.'
             );
