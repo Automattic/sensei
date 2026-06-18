@@ -107,6 +107,8 @@ jobs:
             // Mirror jetpack-changelogger's default filename: branch name with
             // filesystem-unsafe characters replaced by hyphens.
             const filename = pr.head.ref.replace( /[<>:"/\\|?*]/g, '-' );
+            const content = `Significance: ${ significance }\nType: ${ type }\n\n${ message }\n`;
+            fs.writeFileSync( `changelog/${ filename }`, content );
             core.info( `Wrote changelog/${ filename }.` );
 
       - name: Commit and push the entry
