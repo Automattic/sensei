@@ -80,7 +80,7 @@ jobs:
         id: prompt
         run: echo "APPEND_SYSTEM_PROMPT<<PROMPT_EOF" >> "$GITHUB_ENV" && cat .github/claude-system-prompt.md >> "$GITHUB_ENV" && echo "PROMPT_EOF" >> "$GITHUB_ENV"
 
-      - uses: anthropics/claude-code-action@593d7a5c4e0073569f74772c2b7b64c30ec14707  # v1.0.141
+      - uses: anthropics/claude-code-action@eee73e2ae5399c561de4ff038aa7b36a7aa991a7  # v1.0.143
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           label_trigger: claude
