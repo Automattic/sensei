@@ -468,7 +468,7 @@ class Sensei_Learner_Management {
 		check_ajax_referer( 'edit_date_nonce', 'security' );
 
 		if ( ! empty( $_POST['data']['post_id'] ) && is_numeric( $_POST['data']['post_id'] ) ) {
-			$post_id = (int) sanitize_key( $_POST['data']['post_id'] );
+			$post_id = absint( wp_unslash( $_POST['data']['post_id'] ) );
 		} else {
 			exit;
 		}

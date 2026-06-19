@@ -122,9 +122,10 @@ class Sensei_Learner_Management_Test extends WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$progress = Sensei()->course_progress_repository_factory->create()->get( $course_id, $student_id );
+		$progress   = Sensei()->course_progress_repository_factory->create()->get( $course_id, $student_id );
+		$saved_date = wp_date( 'Y-m-d H:i:s', $progress->get_started_at()->getTimestamp(), wp_timezone() );
 		$this->assertSame( $start_date, $response, 'Response should be the formatted start date.' );
-		$this->assertSame( $start_date, $progress->get_started_at()->format( 'Y-m-d H:i:s' ), 'Start date should be saved to the repository.' );
+		$this->assertSame( $start_date, $saved_date, 'Start date should be saved to the repository.' );
 	}
 
 	/**
@@ -156,9 +157,10 @@ class Sensei_Learner_Management_Test extends WP_UnitTestCase {
 	/**
 	 * Invokes the edit_date_started AJAX handler and returns the response body.
 	 *
-	 * The handler always terminates via wp_die(); this captures the emitted body and
-	 * fails the test if the handler returns without dying. Because of that, an empty
-	 * return value always originates from the handler (wp_die( '' )), never from the helper.
+	 * The success and no-op paths exercised by these tests terminate via wp_die(), which the
+	 * test framework throws as WPDieException; this captures the emitted body and fails the
+	 * test if the handler returns without dying. (Validation-failure paths use exit and are
+	 * not exercised here.)
 	 *
 	 * @param array $data The POST data payload.
 	 *
