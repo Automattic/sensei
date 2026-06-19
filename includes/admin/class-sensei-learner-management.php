@@ -470,25 +470,25 @@ class Sensei_Learner_Management {
 		if ( ! empty( $_POST['data']['post_id'] ) && is_numeric( $_POST['data']['post_id'] ) ) {
 			$post_id = (int) sanitize_key( $_POST['data']['post_id'] );
 		} else {
-			exit( '' );
+			wp_die();
 		}
 
 		$post = get_post( $post_id );
 
 		if ( empty( $post ) || ! is_a( $post, 'WP_Post' ) ) {
-			exit( '' );
+			wp_die();
 		}
 
 		if ( ! empty( $_POST['data']['user_id'] ) && is_numeric( $_POST['data']['user_id'] ) ) {
 			$user_id = absint( wp_unslash( $_POST['data']['user_id'] ) );
 		} else {
-			exit( '' );
+			wp_die();
 		}
 
 		$post_type = get_post_type( $post_id );
 
 		if ( ! in_array( $post_type, array( 'course', 'lesson' ), true ) ) {
-			exit( '' );
+			wp_die();
 		}
 
 		if ( 'lesson' === $post_type ) {
@@ -498,17 +498,17 @@ class Sensei_Learner_Management {
 		}
 
 		if ( ! $can_edit_date ) {
-			exit( '' );
+			wp_die();
 		}
 
 		if ( ! empty( $_POST['data']['new_dates']['start-date'] ) ) {
 			$date_string = sanitize_text_field( wp_unslash( $_POST['data']['new_dates']['start-date'] ) );
 		} else {
-			exit( '' );
+			wp_die();
 		}
 
 		if ( empty( $date_string ) ) {
-			exit( '' );
+			wp_die();
 		}
 
 		$expected_date_format = 'Y-m-d H:i:s';
@@ -518,7 +518,7 @@ class Sensei_Learner_Management {
 
 		$date = DateTimeImmutable::createFromFormat( $expected_date_format, $date_string, wp_timezone() );
 		if ( false === $date ) {
-			exit( '' );
+			wp_die();
 		}
 
 		$utc_date = $date->setTimezone( new \DateTimeZone( 'UTC' ) );
@@ -529,15 +529,11 @@ class Sensei_Learner_Management {
 
 		$progress = $repository->get( $post_id, $user_id );
 		if ( ! $progress ) {
-			exit( '' );
+			wp_die();
 		}
 
 		$old_started_at = $progress->get_started_at();
-		$progress->set_started_at( $utc_date );
-		$repository->save( $progress );
-
 		$updated        = ( null === $old_started_at || $old_started_at->getTimestamp() !== $utc_date->getTimestamp() );
-		$formatted_date = $date->format( 'Y-m-d H:i:s' );
 
 		/**
 		 * Filter sensei_learners_learner_updated
@@ -552,10 +548,13 @@ class Sensei_Learner_Management {
 		apply_filters_deprecated( 'sensei_learners_learner_updated', array( $updated, $post_id, $progress->get_id() ), '$$next-version$$' );
 
 		if ( ! $updated ) {
-			exit( '' );
+			wp_die();
 		}
 
-		exit( esc_html( $formatted_date ) );
+		$progress->set_started_at( $utc_date );
+		$repository->save( $progress );
+
+		wp_die( esc_html( $date->format( 'Y-m-d H:i:s' ) ) );
 	}
 
 	/**
