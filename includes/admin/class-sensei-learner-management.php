@@ -551,6 +551,10 @@ class Sensei_Learner_Management {
 		 */
 		apply_filters_deprecated( 'sensei_learners_learner_updated', array( $updated, $post_id, $progress->get_id() ), '$$next-version$$' );
 
+		if ( ! $updated ) {
+			exit( '' );
+		}
+
 		exit( esc_html( $formatted_date ) );
 	}
 
