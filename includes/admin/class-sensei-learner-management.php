@@ -470,25 +470,25 @@ class Sensei_Learner_Management {
 		if ( ! empty( $_POST['data']['post_id'] ) && is_numeric( $_POST['data']['post_id'] ) ) {
 			$post_id = (int) sanitize_key( $_POST['data']['post_id'] );
 		} else {
-			wp_die();
+			exit;
 		}
 
 		$post = get_post( $post_id );
 
 		if ( empty( $post ) || ! is_a( $post, 'WP_Post' ) ) {
-			wp_die();
+			exit;
 		}
 
 		if ( ! empty( $_POST['data']['user_id'] ) && is_numeric( $_POST['data']['user_id'] ) ) {
 			$user_id = absint( wp_unslash( $_POST['data']['user_id'] ) );
 		} else {
-			wp_die();
+			exit;
 		}
 
 		$post_type = get_post_type( $post_id );
 
 		if ( ! in_array( $post_type, array( 'course', 'lesson' ), true ) ) {
-			wp_die();
+			exit;
 		}
 
 		if ( 'lesson' === $post_type ) {
@@ -498,17 +498,17 @@ class Sensei_Learner_Management {
 		}
 
 		if ( ! $can_edit_date ) {
-			wp_die();
+			exit;
 		}
 
 		if ( ! empty( $_POST['data']['new_dates']['start-date'] ) ) {
 			$date_string = sanitize_text_field( wp_unslash( $_POST['data']['new_dates']['start-date'] ) );
 		} else {
-			wp_die();
+			exit;
 		}
 
 		if ( empty( $date_string ) ) {
-			wp_die();
+			exit;
 		}
 
 		$expected_date_format = 'Y-m-d H:i:s';
@@ -518,7 +518,7 @@ class Sensei_Learner_Management {
 
 		$date = DateTimeImmutable::createFromFormat( $expected_date_format, $date_string, wp_timezone() );
 		if ( false === $date ) {
-			wp_die();
+			exit;
 		}
 
 		$utc_date = $date->setTimezone( new \DateTimeZone( 'UTC' ) );
@@ -529,7 +529,7 @@ class Sensei_Learner_Management {
 
 		$progress = $repository->get( $post_id, $user_id );
 		if ( ! $progress ) {
-			wp_die();
+			exit;
 		}
 
 		$old_started_at = $progress->get_started_at();
@@ -552,6 +552,13 @@ class Sensei_Learner_Management {
 		}
 
 		$progress->set_started_at( $utc_date );
+
+		/**
+		 * The repository and progress are created from the same factory, so their types
+		 * always match, but Psalm cannot correlate the two union types.
+		 *
+		 * @psalm-suppress PossiblyInvalidArgument
+		 */
 		$repository->save( $progress );
 
 		wp_die( esc_html( $date->format( 'Y-m-d H:i:s' ) ) );
