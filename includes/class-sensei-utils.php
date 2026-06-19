@@ -1828,7 +1828,7 @@ class Sensei_Utils {
 					$quiz_progress = Sensei()->quiz_progress_repository->get( $lesson_quiz_id, $user_id );
 					if ( $quiz_progress ) {
 						$user_lesson_status = $quiz_progress->get_status();
-					} elseif ( $user_lesson_status !== 'complete' ) {
+					} elseif ( 'complete' !== $user_lesson_status ) {
 						// A lesson already marked complete is authoritative: no quiz row exists for manual
 						// completions and lessons migrated from the comments-based system.
 						return false;
