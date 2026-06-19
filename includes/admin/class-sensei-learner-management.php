@@ -532,34 +532,54 @@ class Sensei_Learner_Management {
 			exit;
 		}
 
-		$old_started_at = $progress->get_started_at();
-		$updated        = ( null === $old_started_at || $old_started_at->getTimestamp() !== $utc_date->getTimestamp() );
+		$old_started_at     = $progress->get_started_at();
+		$started_at_changed = ( null === $old_started_at || $old_started_at->getTimestamp() !== $utc_date->getTimestamp() );
+
+		if ( $started_at_changed ) {
+			$progress->set_started_at( $utc_date );
+
+			/**
+			 * The repository and progress are created from the same factory, so their types
+			 * always match, but Psalm cannot correlate the two union types.
+			 *
+			 * @psalm-suppress PossiblyInvalidArgument
+			 */
+			$repository->save( $progress );
+		}
+
+		/**
+		 * Filters whether a student row was updated on the Students screen.
+		 *
+		 * Lets extensions persist additional date changes (e.g. course access dates) when a
+		 * student's dates are edited and report whether a change occurred so the row refreshes.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @hook sensei_students_row_updated
+		 *
+		 * @param {bool}   $started_at_changed Whether the start date was changed.
+		 * @param {int}    $post_id            Course or lesson ID.
+		 * @param {int}    $user_id            Student user ID.
+		 * @param {string} $post_type          Post type ('course' or 'lesson').
+		 * @return {bool} Whether the student row was updated.
+		 */
+		$updated = (bool) apply_filters( 'sensei_students_row_updated', $started_at_changed, $post_id, $user_id, $post_type );
 
 		/**
 		 * Filter sensei_learners_learner_updated
 		 *
-		 * @deprecated $$next-version$$ No replacement — this filter is no longer supported.
+		 * @deprecated $$next-version$$ Use sensei_students_row_updated instead.
 		 *
-		 * @param {bool} $updated    A flag indicating if there was an update in the learner row.
+		 * @param {bool} $updated    A flag indicating if there was an update in the student row.
 		 * @param {int}  $post_id    Lesson or course id.
-		 * @param {int}  $comment_id The comment id which tracks the progress of the learner.
+		 * @param {int}  $comment_id The comment id which tracks the progress of the student.
 		 * @return {bool} False if there were no updates.
 		 */
-		apply_filters_deprecated( 'sensei_learners_learner_updated', array( $updated, $post_id, $progress->get_id() ), '$$next-version$$' );
+		$updated = (bool) apply_filters_deprecated( 'sensei_learners_learner_updated', array( $updated, $post_id, $progress->get_id() ), '$$next-version$$', 'sensei_students_row_updated' );
 
 		if ( ! $updated ) {
 			wp_die();
 		}
-
-		$progress->set_started_at( $utc_date );
-
-		/**
-		 * The repository and progress are created from the same factory, so their types
-		 * always match, but Psalm cannot correlate the two union types.
-		 *
-		 * @psalm-suppress PossiblyInvalidArgument
-		 */
-		$repository->save( $progress );
 
 		wp_die( esc_html( $date->format( 'Y-m-d H:i:s' ) ) );
 	}
