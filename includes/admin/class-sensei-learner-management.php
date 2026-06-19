@@ -523,25 +523,18 @@ class Sensei_Learner_Management {
 
 		$utc_date = $date->setTimezone( new \DateTimeZone( 'UTC' ) );
 
-		if ( 'course' === $post_type ) {
-			$repository = Sensei()->course_progress_repository_factory->create();
-			$progress   = $repository->get( $post_id, $user_id );
-			if ( ! $progress ) {
-				exit( '' );
-			}
-			$old_started_at = $progress->get_started_at();
-			$progress->set_started_at( $utc_date );
-			$repository->save( $progress );
-		} else {
-			$repository = Sensei()->lesson_progress_repository_factory->create();
-			$progress   = $repository->get( $post_id, $user_id );
-			if ( ! $progress ) {
-				exit( '' );
-			}
-			$old_started_at = $progress->get_started_at();
-			$progress->set_started_at( $utc_date );
-			$repository->save( $progress );
+		$repository = 'course' === $post_type
+			? Sensei()->course_progress_repository_factory->create()
+			: Sensei()->lesson_progress_repository_factory->create();
+
+		$progress = $repository->get( $post_id, $user_id );
+		if ( ! $progress ) {
+			exit( '' );
 		}
+
+		$old_started_at = $progress->get_started_at();
+		$progress->set_started_at( $utc_date );
+		$repository->save( $progress );
 
 		$updated        = ( null === $old_started_at || $old_started_at->getTimestamp() !== $utc_date->getTimestamp() );
 		$formatted_date = $date->format( 'Y-m-d H:i:s' );
