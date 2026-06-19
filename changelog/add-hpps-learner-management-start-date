@@ -1,4 +1,0 @@
-Significance: minor
-Type: changed
-
-Migrate learner management start date editing to use progress repositories instead of direct comment meta access.
