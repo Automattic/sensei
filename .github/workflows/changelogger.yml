@@ -1,27 +1,133 @@
 name: Changelogger checks
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize, labeled, unlabeled]
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited, labeled, unlabeled]
     branches-ignore:
       - 'release/**'
       - 'feature/**'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.number }}
   cancel-in-progress: true
 
 jobs:
-    changelogger_used:
-        if: ${{ !contains( github.event.pull_request.labels.*.name, 'No Changelog') }}
-        name: Changelogger used
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v6.0.2
-            - uses: ./.github/actions/deepen-to-merge-base
-            - uses: ./.github/actions/install-php
-            - name: Check change files are touched for touched projects
-              env:
-                  BASE: ${{ github.event.pull_request.base.sha }}
-                  HEAD: ${{ github.event.pull_request.head.sha }}
-              run: ./scripts/check-changelogger-use.php --debug "$BASE" "$HEAD"
+  changelogger_used:
+    name: Changelogger used
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - name: Check for a changelog entry
+        id: gate
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const isFork = pr.head.repo?.full_name !== pr.base.repo.full_name;
+            const optedIn = /\[(?:x|X)\] Automatically create a changelog/m.test( pr.body || '' );
+
+            // Exempt via the "No Changelog" label.
+            if ( ( pr.labels || [] ).some( ( l ) => l.name === 'No Changelog' ) ) {
+              return core.setOutput( 'generate', 'false' );
+            }
+
+            // Opt-in (re)generates from the description on every run, so edits to the section
+            // propagate even after an entry was generated (the description is the source of
+            // truth; an unchanged one regenerates identical content and commits nothing). Only
+            // same-repo PRs can be pushed to, so forks fall through to the existing-entry check.
+            if ( optedIn && ! isFork ) {
+              return core.setOutput( 'generate', 'true' );
+            }
+
+            // A changelog entry is already present in this PR (e.g. from `make changelog`).
+            const files = await github.paginate( github.rest.pulls.listFiles, {
+              ...context.repo,
+              pull_number: pr.number,
+              per_page: 100,
+            } );
+            if ( files.some( ( f ) => /^changelog\/[^.]/.test( f.filename ) ) ) {
+              return core.setOutput( 'generate', 'false' );
+            }
+
+            // Nothing satisfies the requirement — fail with the right guidance.
+            if ( optedIn && isFork ) {
+              return core.setFailed(
+                'Auto-generation can\'t push to a forked branch. Run `make changelog` and commit the entry, or have a maintainer add it.'
+              );
+            }
+            return core.setFailed(
+              'No changelog entry found. Run `make changelog`, tick "Automatically create a changelog entry" in the PR description, or apply the "No Changelog" label.'
+            );
+
+      # Everything below runs only when we need to generate an entry.
+      - name: Check out the PR branch
+        if: steps.gate.outputs.generate == 'true'
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Parse the structured "Changelog entry" section and write the file.
+      - name: Generate the changelog entry
+        if: steps.gate.outputs.generate == 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const fs = require( 'node:fs' );
+            const pr = context.payload.pull_request;
+
+            // Scope parsing to the "Changelog Entry Details" section, so checked boxes elsewhere
+            // in the description (e.g. under Proposed Changes) can't be mistaken for selections.
+            const section = ( ( pr.body || '' ).match( /<summary>\s*Changelog Entry Details\s*<\/summary>([\s\S]*?)<\/details>/i ) || [] )[ 1 ];
+            if ( ! section ) {
+              throw new Error( 'Could not find the "Changelog Entry Details" section in the PR description.' );
+            }
+
+            // Pick exactly one checked option from a list, or fail the job.
+            const pickOne = ( regex, label ) => {
+              const matches = [ ...section.matchAll( regex ) ];
+              if ( matches.length === 0 ) {
+                throw new Error( `No changelog ${ label } selected. Tick exactly one option in the PR description.` );
+              }
+              if ( matches.length > 1 ) {
+                throw new Error( `Multiple changelog ${ label }s selected. Tick only one option.` );
+              }
+              return matches[ 0 ][ 1 ].toLowerCase();
+            };
+
+            const significance = pickOne( /\[(?:x|X)\] (Patch|Minor|Major)\b/gm, 'significance' );
+            const type = pickOne( /\[(?:x|X)\] (Added|Changed|Fixed|Deprecated|Removed|Security|Development)\b/gm, 'type' );
+
+            const messageMatch = /#### Message ?(<!--[\s\S]*?-->)?([\s\S]*)/.exec( section );
+            if ( ! messageMatch ) {
+              throw new Error( 'Could not find the "#### Message" block in the Changelog Entry Details.' );
+            }
+            const message = messageMatch[ 2 ].trim().replace( /\r\n|\n/g, ' ' );
+            if ( ! message ) {
+              throw new Error( 'Changelog message is empty. Add a message under "#### Message".' );
+            }
+
+            // Mirror jetpack-changelogger's default filename: branch name with
+            // filesystem-unsafe characters replaced by hyphens.
+            const filename = pr.head.ref.replace( /[<>:"/\\|?*]/g, '-' );
+            const content = `Significance: ${ significance }\nType: ${ type }\n\n${ message }\n`;
+            fs.writeFileSync( `changelog/${ filename }`, content );
+            core.info( `Wrote changelog/${ filename }.` );
+
+      - name: Commit and push the entry
+        if: steps.gate.outputs.generate == 'true'
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain changelog/)" ]; then
+              git add changelog/
+              git commit -m "Add changelog entry from PR description"
+              git push origin "HEAD:$HEAD_REF"
+          else
+              echo "No changelog changes to commit."
+          fi

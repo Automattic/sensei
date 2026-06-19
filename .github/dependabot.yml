@@ -1,7 +1,11 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
+    # Scan composite actions too — their SHA-pinned `uses:` refs need update
+    # PRs just like the workflow files do ('**' covers nested action dirs).
+    directories:
+      - "/"
+      - "/.github/actions/**"
     schedule:
       interval: "weekly"
       day: "monday"

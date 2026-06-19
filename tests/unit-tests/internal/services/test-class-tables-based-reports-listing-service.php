@@ -39,9 +39,8 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 * @param int      $user_id        The user ID.
 	 * @param string   $type           The progress type.
 	 * @param string   $status         The progress status.
-	 * @param int|null $parent_post_id The parent post ID.
 	 */
-	private function insert_progress( int $post_id, int $user_id, string $type, string $status, ?int $parent_post_id = null ): void {
+	private function insert_progress( int $post_id, int $user_id, string $type, string $status ): void {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_progress';
 		$now    = current_time( 'mysql', true );
@@ -56,10 +55,6 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 			'updated_at'   => $now,
 		);
 		$format = array( '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s' );
-		if ( null !== $parent_post_id ) {
-			$data['parent_post_id'] = $parent_post_id;
-			$format[]               = '%d';
-		}
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
 		$wpdb->insert( $table, $data, $format );
 	}
@@ -103,7 +98,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$lesson_id = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
 
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
@@ -146,8 +141,8 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 			)
 		);
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed', $lesson_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete' );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed' );
 		$this->insert_quiz_submission( $quiz_id, $user_id, 90 );
 
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
@@ -182,7 +177,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
 		$this->insert_progress( $course_id, $user_id, 'course', 'in-progress' );
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete' );
 
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
@@ -217,7 +212,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$lesson_id = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete', $course_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'complete' );
 
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
@@ -312,8 +307,8 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$lesson_id = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
-		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete' );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress' );
 
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
@@ -344,8 +339,8 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$lesson_id = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
-		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete' );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress' );
 
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
@@ -383,8 +378,8 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 			)
 		);
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete', $course_id );
-		$this->insert_progress( $quiz_id, $user1, 'quiz', 'passed', $lesson_id );
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete' );
+		$this->insert_progress( $quiz_id, $user1, 'quiz', 'passed' );
 		$this->insert_quiz_submission( $quiz_id, $user1, 80 );
 
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
@@ -416,7 +411,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$lesson_id = $this->sensei_factory->lesson->create(
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress', $course_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
 
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 

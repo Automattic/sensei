@@ -1,7 +1,7 @@
 {
   "name": "sensei-lms",
   "title": "Sensei LMS",
-  "version": "4.25.2",
+  "version": "4.26.1",
   "description": "Sensei LMS",
   "author": "Automattic",
   "license": "GPL-2.0-or-later",
@@ -120,7 +120,7 @@
     "build:vendor": "cp ./node_modules/select2/dist/css/select2.min.css ./node_modules/select2/dist/js/select2.full.js ./node_modules/select2/dist/js/select2.full.min.js ./assets/vendor/select2",
     "changelog": "./vendor/bin/changelogger add",
     "format": "wp-scripts format",
-    "i18n:build": "npm run build:assets && wp i18n make-pot --exclude=build,lib,vendor,node_modules,assets/vendor --headers='{\"Last-Translator\":null,\"Language-Team\":null,\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/sensei-lms\"}' . lang/sensei-lms.pot",
+    "i18n:build": "npm run build:assets && wp i18n make-pot themes/sensei-course-theme lang/.theme.pot && wp i18n make-pot --exclude=build,lib,vendor,node_modules,assets/vendor --merge=lang/.theme.pot --headers='{\"Last-Translator\":null,\"Language-Team\":null,\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/sensei-lms\"}' . lang/sensei-lms.pot && rm lang/.theme.pot",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
     "lint-e2e": "eslint -c ./tests/e2e-playwright/.eslintrc.js ./tests/e2e-playwright/ && tsc --noEmit --project tests/e2e-playwright/tsconfig.json",

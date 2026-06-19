@@ -38,9 +38,8 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	 * @param int      $user_id        The user ID.
 	 * @param string   $type           The progress type.
 	 * @param string   $status         The progress status.
-	 * @param int|null $parent_post_id The parent post ID.
 	 */
-	private function insert_progress( int $post_id, int $user_id, string $type, string $status, ?int $parent_post_id = null ): void {
+	private function insert_progress( int $post_id, int $user_id, string $type, string $status ): void {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_progress';
 		$now    = current_time( 'mysql' );
@@ -54,10 +53,6 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 			'updated_at' => $now,
 		);
 		$format = array( '%d', '%d', '%s', '%s', '%s', '%s', '%s' );
-		if ( null !== $parent_post_id ) {
-			$data['parent_post_id'] = $parent_post_id;
-			$format[]               = '%d';
-		}
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
 		$wpdb->insert( $table, $data, $format );
 	}
@@ -99,8 +94,11 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	 * @param int    $grade      The grade value.
 	 */
 	private function create_graded_lesson( int $lesson_id, int $quiz_id, int $user_id, int $course_id, string $status, int $grade ): void {
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', $status, $course_id );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', $status, $lesson_id );
+		update_post_meta( $lesson_id, '_lesson_course', $course_id );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', $status );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', $status );
 		$this->insert_quiz_submission( $quiz_id, $user_id, $grade );
 	}
 
@@ -215,8 +213,10 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$quiz_id   = $this->sensei_factory->quiz->create();
 
 		// Lesson progress exists but quiz submission has no grade.
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'graded', $course_id );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'graded', $lesson_id );
+		update_post_meta( $lesson_id, '_lesson_course', $course_id );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'graded' );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'graded' );
 		$this->insert_quiz_submission( $quiz_id, $user_id, null );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
@@ -361,8 +361,10 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		// This should be excluded: 'in-progress' status with a grade.
 		$lesson_4 = $this->sensei_factory->lesson->create();
 		$quiz_4   = $this->sensei_factory->quiz->create();
-		$this->insert_progress( $lesson_4, $user_id, 'lesson', 'in-progress', $course_id );
-		$this->insert_progress( $quiz_4, $user_id, 'quiz', 'in-progress', $lesson_4 );
+		update_post_meta( $lesson_4, '_lesson_course', $course_id );
+		update_post_meta( $lesson_4, '_lesson_quiz', $quiz_4 );
+		$this->insert_progress( $lesson_4, $user_id, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_4, $user_id, 'quiz', 'in-progress' );
 		$this->insert_quiz_submission( $quiz_4, $user_id, 100 );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
@@ -387,7 +389,8 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
 		// Lesson without quiz: only lesson progress, no quiz progress or submission.
 		$lesson_2 = $this->sensei_factory->lesson->create();
-		$this->insert_progress( $lesson_2, $user_id, 'lesson', 'complete', $course_id );
+		update_post_meta( $lesson_2, '_lesson_course', $course_id );
+		$this->insert_progress( $lesson_2, $user_id, 'lesson', 'complete' );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
 		$result  = $service->get_courses_average_grade();

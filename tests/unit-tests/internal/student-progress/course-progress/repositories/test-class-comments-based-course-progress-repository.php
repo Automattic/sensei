@@ -2,6 +2,7 @@
 
 namespace SenseiTest\Internal\Student_Progress\Course_Progress\Repositories;
 
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
 
@@ -206,6 +207,38 @@ class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$this->expectException( \InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'Expected Comments_Based_Course_Progress, got ' . get_class( $progress ) . '.' );
 		$repository->save( $progress );
+	}
+
+	public function testSave_StartedAtInDifferentTimezone_StoresStartMetaInSiteTimezone(): void {
+		/* Arrange. */
+		update_option( 'timezone_string', 'America/New_York' );
+		$course_id  = $this->factory->course->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Comments_Based_Course_Progress_Repository();
+		$created    = $repository->create( $course_id, $user_id );
+
+		// A started_at instant expressed in UTC (as a cached table read would produce).
+		$started_at = new \DateTimeImmutable( '2026-06-09 19:49:33', new \DateTimeZone( 'UTC' ) );
+		$progress   = new Comments_Based_Course_Progress(
+			$created->get_id(),
+			$course_id,
+			$user_id,
+			$created->get_status(),
+			$started_at,
+			null,
+			$created->get_created_at(),
+			$created->get_updated_at()
+		);
+
+		/* Act. */
+		$repository->save( $progress );
+
+		/* Assert. */
+		self::assertSame(
+			'2026-06-09 15:49:33',
+			get_comment_meta( $created->get_id(), 'start', true ),
+			'Start meta should be stored in the site timezone, not UTC.'
+		);
 	}
 
 	public function testFind_ArgumentsGiven_ReturnsMatchingProgress(): void {

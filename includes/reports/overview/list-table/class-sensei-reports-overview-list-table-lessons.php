@@ -177,11 +177,11 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	protected function get_row_data( $item ) {
 		if ( has_filter( 'sensei_analysis_lesson_learners' ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_hook handles its own output.
-			_deprecated_hook( 'sensei_analysis_lesson_learners', '$$next-version$$', '', __( 'This filter is no longer used. Lesson counts now use the progress aggregation service.', 'sensei-lms' ) );
+			_deprecated_hook( 'sensei_analysis_lesson_learners', '4.26.0', '', __( 'This filter is no longer used. Lesson counts now use the progress aggregation service.', 'sensei-lms' ) );
 		}
 		if ( has_filter( 'sensei_analysis_lesson_completions' ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_hook handles its own output.
-			_deprecated_hook( 'sensei_analysis_lesson_completions', '$$next-version$$', '', __( 'This filter is no longer used. Lesson counts now use the progress aggregation service.', 'sensei-lms' ) );
+			_deprecated_hook( 'sensei_analysis_lesson_completions', '4.26.0', '', __( 'This filter is no longer used. Lesson counts now use the progress aggregation service.', 'sensei-lms' ) );
 		}
 
 		$status_counts = $this->aggregation_service->count_statuses(

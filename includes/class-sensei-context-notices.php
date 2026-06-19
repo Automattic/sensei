@@ -79,7 +79,7 @@ class Sensei_Context_Notices {
 	 * }
 	 * @param string $icon    Notice icon.
 	 */
-	public function add_notice( string $key, string $text, string $title = null, array $actions = [], $icon = null ) {
+	public function add_notice( string $key, string $text, ?string $title = null, array $actions = [], $icon = null ) {
 		$this->notices[ $key ] = [
 			'text'    => $text,
 			'title'   => $title,

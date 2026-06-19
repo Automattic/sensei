@@ -80,7 +80,7 @@ class Email_List_Table extends Sensei_List_Table {
 	 *
 	 * @param string|null $type The email type that will be listed.
 	 */
-	public function prepare_items( string $type = null ) {
+	public function prepare_items( ?string $type = null ) {
 		$per_page = $this->get_items_per_page( 'sensei_emails_per_page' );
 		$pagenum  = $this->get_pagenum();
 		$offset   = $pagenum > 1 ? $per_page * ( $pagenum - 1 ) : 0;

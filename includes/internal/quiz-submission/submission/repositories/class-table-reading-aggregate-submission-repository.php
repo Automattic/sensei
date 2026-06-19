@@ -60,7 +60,7 @@ class Table_Reading_Aggregate_Submission_Repository implements Submission_Reposi
 	 *
 	 * @return Submission_Interface The quiz submission.
 	 */
-	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
+	public function create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		$this->comments_based_repository->create( $quiz_id, $user_id, $final_grade );
 		$submission = $this->tables_based_repository->create( $quiz_id, $user_id, $final_grade );
 
@@ -78,7 +78,7 @@ class Table_Reading_Aggregate_Submission_Repository implements Submission_Reposi
 	 *
 	 * @return Submission_Interface The quiz submission.
 	 */
-	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
+	public function get_or_create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		return $this->tables_based_repository->get_or_create( $quiz_id, $user_id, $final_grade );
 	}
 

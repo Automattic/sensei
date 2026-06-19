@@ -33,7 +33,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	/**
 	 * Cache group for quiz answers.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @var string
 	 */
@@ -230,7 +230,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	/**
 	 * Get the cache key for quiz answers by submission.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int $submission_id The submission ID.
 	 * @return string The cache key.
