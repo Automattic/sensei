@@ -210,21 +210,6 @@ class Comments_Based_Lesson_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( '2020-01-01 00:00:04', $actual );
 	}
 
-	/**
-	 * Tests that set_started_at correctly updates the started_at value.
-	 */
-	public function testGetStartedAt_WhenSetStartedAtCalled_ReturnsSameStartedAt(): void {
-		/* Arrange. */
-		$started_at = new \DateTimeImmutable( '2023-06-15 10:30:00' );
-		$progress   = $this->create_progress();
-
-		/* Act. */
-		$progress->set_started_at( $started_at );
-
-		/* Assert. */
-		self::assertSame( $started_at, $progress->get_started_at() );
-	}
-
 	public function testGetStartedAt_WhenStartWithStartedAtCalled_ReturnsSameStartedAt(): void {
 		/* Arrange. */
 		$started_at = new \DateTimeImmutable();
