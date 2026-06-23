@@ -88,7 +88,7 @@ class Sensei_Grading_User_Quiz {
 	 * `target="_blank"` can open in a new tab. Content is sanitized via
 	 * `wp_kses_post()` before being passed here.
 	 *
-	 * @since  4.27.0
+	 * @since  4.26.2
 	 *
 	 * @param string $html Sanitized HTML to render inside the iframe.
 	 * @return string The iframe element HTML.
