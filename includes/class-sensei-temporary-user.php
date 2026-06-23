@@ -220,10 +220,31 @@ class Sensei_Temporary_User {
 			return $comments;
 		}
 
+		// Collect the user IDs that could be filtered out. Ungraded activity is always kept
+		// (the user shows up in the grading list), so those users don't need to be checked.
+		$user_ids = [];
+		foreach ( $comments as $comment ) {
+			if ( ! in_array( $comment->comment_approved, [ 'ungraded' ], true ) ) {
+				$user_ids[] = (int) $comment->user_id;
+			}
+		}
+
+		$temporary_user_ids = self::get_temporary_user_ids( array_unique( $user_ids ) );
+
+		// Nothing to filter out.
+		if ( empty( $temporary_user_ids ) ) {
+			return $comments;
+		}
+
+		// Flip to a lookup set so membership checks are O(1) per comment.
+		$temporary_user_id_set = array_flip( $temporary_user_ids );
+
+		// Keep a comment when it is ungraded (the user needs to appear in the grading
+		// list) or when it does not belong to a temporary user.
 		return array_filter(
 			$comments,
-			function ( $comment ) {
-				return in_array( $comment->comment_approved, [ 'ungraded' ], true ) || ! self::is_temporary_user( $comment->user_id );
+			function ( $comment ) use ( $temporary_user_id_set ) {
+				return in_array( $comment->comment_approved, [ 'ungraded' ], true ) || ! isset( $temporary_user_id_set[ (int) $comment->user_id ] );
 			}
 		);
 	}
@@ -274,15 +295,38 @@ class Sensei_Temporary_User {
 	}
 
 	/**
-	 * Check if a user is a temporary user.
+	 * Get the subset of the given user IDs that belong to temporary (guest or preview) users.
 	 *
-	 * @param int $user_id User ID.
+	 * Temporary users are identified by their login prefix in a single query. This avoids
+	 * loading a full user object (and all of its meta) for every activity comment, which can
+	 * exhaust memory on courses with many students.
 	 *
-	 * @return bool
+	 * @param int[] $user_ids User IDs to check.
+	 *
+	 * @return int[] The temporary user IDs among the given user IDs.
 	 */
-	private static function is_temporary_user( $user_id ) {
-		// Has guest role.
-		$roles = get_userdata( $user_id )->roles ?? [];
-		return in_array( Sensei_Guest_User::ROLE, $roles, true ) || in_array( Sensei_Preview_User::ROLE, $roles, true );
+	private static function get_temporary_user_ids( array $user_ids ) {
+		global $wpdb;
+
+		if ( empty( $user_ids ) ) {
+			return [];
+		}
+
+		$user_ids     = array_map( 'intval', $user_ids );
+		$placeholders = implode( ',', array_fill( 0, count( $user_ids ), '%d' ) );
+
+		$guest_prefix   = $wpdb->esc_like( Sensei_Guest_User::LOGIN_PREFIX ) . '%';
+		$preview_prefix = $wpdb->esc_like( Sensei_Preview_User::LOGIN_PREFIX ) . '%';
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Lightweight lookup; $placeholders is a list of %d placeholders created dynamically.
+		$temporary_user_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT ID FROM {$wpdb->users} WHERE ID IN ( {$placeholders} ) AND ( user_login LIKE %s OR user_login LIKE %s )",
+				array_merge( $user_ids, [ $guest_prefix, $preview_prefix ] )
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+
+		return array_map( 'intval', $temporary_user_ids );
 	}
 }

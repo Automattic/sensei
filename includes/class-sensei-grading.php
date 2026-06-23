@@ -84,7 +84,7 @@ class Sensei_Grading {
 	/**
 	 * Get the progress aggregation service instance.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return Progress_Aggregation_Service_Interface
 	 */
@@ -95,7 +95,7 @@ class Sensei_Grading {
 	/**
 	 * Get the grading stats service instance.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return Grading_Stats_Service_Interface
 	 */

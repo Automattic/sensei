@@ -105,7 +105,11 @@ const OutlineEdit = ( props ) => {
 		if ( removeCourseOutlineGeneratorUpsell ) {
 			window.location.hash = 'generate-course-outline-using-ai';
 		} else {
-			window.location.href = getSenseiProUpsellUrl( 'outline_edit' );
+			window.open(
+				getSenseiProUpsellUrl( 'outline_edit' ),
+				'_blank',
+				'noopener'
+			);
 		}
 	}, [ removeCourseOutlineGeneratorUpsell ] );
 

@@ -934,4 +934,59 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// Cleanup.
 		remove_all_filters( 'is_tax' );
 	}
+
+	/**
+	 * A secondary query that returns courses — whether `post_type` is `course` (e.g. the Course List
+	 * block / Query Loop) or an array that includes `course` (e.g. teacher author archives, which merge
+	 * `course` into the existing post types) — must skip object term cache priming so the large
+	 * `sensei_learner` taxonomy is not loaded into memory.
+	 *
+	 * @dataProvider data_postTypesIncludingCourse
+	 *
+	 * @param string|array $post_type The post type query var to run the secondary query with.
+	 */
+	public function testDisableTermCacheOnCourseQueries_PostTypeIncludesCourse_SkipsLearnerTermPriming( $post_type ) {
+		// Arrange: a course with a learner term attached, with its relationship cache cleared.
+		$relationships_group = Sensei_PostTypes::LEARNER_TAXONOMY_NAME . '_relationships';
+		$course_id           = $this->factory->course->create();
+		wp_set_object_terms( $course_id, 'user-1', Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
+		wp_cache_delete( $course_id, $relationships_group );
+
+		// Act: run a secondary (non-main) query that returns courses.
+		$query = new WP_Query( array( 'post_type' => $post_type ) );
+
+		// Assert.
+		self::assertFalse( $query->is_main_query(), 'The query should be a secondary query, not the main query.' );
+		self::assertFalse( $query->get( 'update_post_term_cache' ), 'Course queries should disable term cache priming.' );
+		self::assertFalse( wp_cache_get( $course_id, $relationships_group ), 'Learner term relationships should not be primed into the object cache.' );
+	}
+
+	/**
+	 * Data source for ::testDisableTermCacheOnCourseQueries_PostTypeIncludesCourse_SkipsLearnerTermPriming
+	 *
+	 * @return array
+	 */
+	public function data_postTypesIncludingCourse() {
+		return array(
+			'course post type'                => array( 'course' ),
+			'array of post types with course' => array( array( 'post', 'course' ) ),
+		);
+	}
+
+	/**
+	 * Non-course queries must be left untouched so their term cache is still primed as usual.
+	 */
+	public function testDisableTermCacheOnCourseQueries_NonCourseQuery_LeavesTermPrimingEnabled() {
+		// Arrange: a post with a category, with its relationship cache cleared.
+		$post_id = $this->factory->post->create();
+		wp_set_object_terms( $post_id, 'Test Category', 'category' );
+		wp_cache_delete( $post_id, 'category_relationships' );
+
+		// Act.
+		$query = new WP_Query( array( 'post_type' => 'post' ) );
+
+		// Assert.
+		self::assertNotFalse( $query->get( 'update_post_term_cache' ), 'Non-course queries should keep term cache priming enabled.' );
+		self::assertNotFalse( wp_cache_get( $post_id, 'category_relationships' ), 'Non-course queries should still prime the term cache.' );
+	}
 }

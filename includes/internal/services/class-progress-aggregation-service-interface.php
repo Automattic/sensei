@@ -19,14 +19,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 interface Progress_Aggregation_Service_Interface {
 
 	/**
 	 * Count progress records grouped by status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Arguments for the query.
@@ -45,7 +45,7 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int[] $lesson_ids Array of lesson post IDs.
 	 * @return array {
@@ -61,7 +61,7 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count ungraded quiz submissions whose lesson is publicly available.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Optional restrictions.

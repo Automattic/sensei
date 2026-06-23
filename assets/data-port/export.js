@@ -1,11 +1,12 @@
 /**
  * WordPress dependencies
  */
-import { render } from '@wordpress/element';
+import { createRoot } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import SenseiExportPage from './export/index';
 
-render( <SenseiExportPage />, document.getElementById( 'sensei-export-page' ) );
+const root = createRoot( document.getElementById( 'sensei-export-page' ) );
+root.render( <SenseiExportPage /> );

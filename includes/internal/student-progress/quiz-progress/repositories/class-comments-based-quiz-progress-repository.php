@@ -155,10 +155,12 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->assert_comments_based_quiz_progress( $quiz_progress );
 
-		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
-		$metadata  = [];
-		if ( $quiz_progress->get_started_at() ) {
-			$metadata['start'] = $quiz_progress->get_started_at()->format( 'Y-m-d H:i:s' );
+		$lesson_id  = (int) Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
+		$metadata   = [];
+		$started_at = $quiz_progress->get_started_at();
+		if ( $started_at ) {
+			// Comment dates are stored in the site timezone.
+			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
 
 		// We need to use internal value for status, not the one returned by the getter.

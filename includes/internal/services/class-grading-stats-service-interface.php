@@ -19,14 +19,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 interface Grading_Stats_Service_Interface {
 
 	/**
 	 * Get grade count and sum, with optional filters.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Optional filters.
@@ -43,7 +43,7 @@ interface Grading_Stats_Service_Interface {
 	 * Average grade across courses (AVG of per-course AVGs).
 	 * Only includes student attempts where the quiz was actually submitted.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int[] $course_ids Optional. Filter by courses. Empty = all.
 	 * @return float
@@ -53,7 +53,7 @@ interface Grading_Stats_Service_Interface {
 	/**
 	 * Average grade filtered by user IDs.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int[] $user_ids User IDs to include.
 	 * @return float

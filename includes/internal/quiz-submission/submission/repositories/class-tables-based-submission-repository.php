@@ -32,7 +32,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	/**
 	 * Cache group for quiz submissions.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @var string
 	 */
@@ -67,7 +67,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 *
 	 * @return Submission_Interface The quiz submission.
 	 */
-	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
+	public function create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
 		 * Filters the quiz ID when quiz submission is created.
 		 *
@@ -128,7 +128,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 *
 	 * @return Submission_Interface The quiz submission.
 	 */
-	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission_Interface {
+	public function get_or_create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
 		 * Filters the quiz ID when quiz submission is created.
 		 *
@@ -315,7 +315,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	/**
 	 * Get the cache key for a quiz submission.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.

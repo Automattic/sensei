@@ -12,6 +12,7 @@ When responding to a GitHub trigger, follow this process strictly. The action ru
 ## 1. Analyze
 - Read the issue. Identify affected files and root cause.
 - If unclear, comment asking for clarification instead of guessing.
+- If you cannot reproduce or confirm the reported behavior after attempting to (e.g., by writing a failing test that captures it, or tracing the code path), do not attempt a speculative fix. Comment with what you tried, ask the reporter for reproduction steps (WordPress/PHP versions, active plugins, relevant settings), add the `claude-needs-info` label, and stop.
 
 ## 2. Branch
 - Create a branch from trunk with a short, descriptive name (e.g., `fix/null-courses-average-grade`). The configured `branch_prefix` is `fix/`. Do not include the issue number.

@@ -51,7 +51,7 @@ class Quiz_Migration extends Migration_Abstract {
 		/**
 		 * Filter the batch size for quiz migration.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.0
 		 *
 		 * @param int $batch_size The batch size.
 		 */

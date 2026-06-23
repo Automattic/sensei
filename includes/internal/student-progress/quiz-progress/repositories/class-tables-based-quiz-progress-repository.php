@@ -32,7 +32,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	/**
 	 * Cache group for quiz progress.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @var string
 	 */
@@ -256,8 +256,9 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'status'       => $quiz_progress->get_status(),
-				'started_at'   => $quiz_progress->get_started_at() ? $quiz_progress->get_started_at()->format( $date_format ) : null,
-				'completed_at' => $quiz_progress->get_completed_at() ? $quiz_progress->get_completed_at()->format( $date_format ) : null,
+				// Table columns are stored in UTC.
+				'started_at'   => $quiz_progress->get_started_at() ? gmdate( $date_format, $quiz_progress->get_started_at()->getTimestamp() ) : null,
+				'completed_at' => $quiz_progress->get_completed_at() ? gmdate( $date_format, $quiz_progress->get_completed_at()->getTimestamp() ) : null,
 				'updated_at'   => $quiz_progress->get_updated_at()->format( $date_format ),
 			],
 			[
@@ -265,7 +266,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			],
 			[
 				'%s',
-				'%s',
+				$quiz_progress->get_started_at() ? '%s' : null,
 				$quiz_progress->get_completed_at() ? '%s' : null,
 				'%s',
 			],
@@ -490,7 +491,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	/**
 	 * Get the cache key for a quiz progress.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
