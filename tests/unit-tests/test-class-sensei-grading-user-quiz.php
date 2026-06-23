@@ -56,8 +56,11 @@ class Sensei_Grading_User_Quiz_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Grading_User_Quiz::render_answer_iframe
 	 */
 	public function test_answer_iframe_sandbox_includes_allow_popups() {
+		$method = new ReflectionMethod( Sensei_Grading_User_Quiz::class, 'render_answer_iframe' );
+		$method->setAccessible( true );
+
 		$html   = '<html><head><title></title></head><body><a href="http://example.com" target="_blank">View file</a></body></html>';
-		$output = Sensei_Grading_User_Quiz::render_answer_iframe( $html );
+		$output = $method->invoke( null, $html );
 
 		$this->assertStringContainsString(
 			'sandbox="allow-same-origin allow-popups"',
