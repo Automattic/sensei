@@ -19,14 +19,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 interface Progress_Clauses_Service_Interface {
 
 	/**
 	 * Modify WP_Query clauses to add last activity date to course posts.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
@@ -36,7 +36,7 @@ interface Progress_Clauses_Service_Interface {
 	/**
 	 * Modify WP_Query clauses to add days-to-completion data to course posts.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
@@ -49,7 +49,7 @@ interface Progress_Clauses_Service_Interface {
 	 * Note: `add_last_activity_to_courses_clauses` must be applied first, as this
 	 * method references the `la` alias it creates.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array  $clauses Associative array of the clauses for the query.
 	 * @param string $from    Start date for filtering (empty string for no start date).
@@ -61,7 +61,7 @@ interface Progress_Clauses_Service_Interface {
 	/**
 	 * Modify WP_Query clauses to add last activity date to lesson posts.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
@@ -71,7 +71,7 @@ interface Progress_Clauses_Service_Interface {
 	/**
 	 * Modify WP_Query clauses to add days-to-complete data to lesson posts.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.

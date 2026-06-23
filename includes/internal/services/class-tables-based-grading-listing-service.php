@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_Interface {
 
@@ -39,7 +39,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 */
@@ -50,7 +50,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Get the progress table name.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return string
 	 */
@@ -61,7 +61,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Get lesson progress items for the grading listing.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return array{ items: Grading_Item[], total_count: int }
@@ -136,7 +136,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build the base SELECT query.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param string $table             Progress table name.
 	 * @param string $submissions_table Quiz submissions table name.
@@ -171,7 +171,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build a per-status count query using the same JOINs/filters as the base query.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param string $table             Progress table name.
 	 * @param string $submissions_table Quiz submissions table name.
@@ -205,7 +205,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build SQL clause for filtering by post ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -229,7 +229,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build SQL clause for filtering by user ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -253,7 +253,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build SQL clause for excluding users by login prefix.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -266,7 +266,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build SQL clause for filtering by status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -290,7 +290,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	 * Returns null if counts are not available (e.g. if
 	 * get_lesson_progress_items has not been called yet).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @return array<string, int>|null Associative array of status => count, or null.
 	 */
@@ -301,7 +301,7 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 	/**
 	 * Build ORDER BY clause.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL ORDER BY clause.

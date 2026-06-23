@@ -124,6 +124,10 @@ class Sensei_Course {
 		// filter the course query in Sensei specific instances
 		add_filter( 'pre_get_posts', [ __CLASS__, 'course_query_filter' ] );
 
+		// Disable learner term cache priming on course queries. Runs at a late priority so it sees the
+		// final `post_type` after other `pre_get_posts` callbacks (e.g. teacher author archives) have set it.
+		add_action( 'pre_get_posts', [ __CLASS__, 'disable_term_cache_on_course_queries' ], 999 );
+
 		// attache the sorting to the course archive
 		add_action( 'sensei_archive_before_course_loop', [ 'Sensei_Course', 'course_archive_sorting' ] );
 
@@ -3025,6 +3029,32 @@ class Sensei_Course {
 		}
 
 		return $query;
+	}
+
+	/**
+	 * Disable term cache priming on course queries.
+	 *
+	 * The `sensei_learner` taxonomy stores one term per enrolled user attached to each course. On large
+	 * sites the default object term cache priming loads every learner term for the queried courses at once,
+	 * which can exhaust the PHP memory limit. This affects both the admin Courses list table and front-end
+	 * course listings such as the Query Loop / Course List block. Those listings do not need the learner
+	 * terms, so priming is skipped here; the remaining course taxonomies are queried lazily where rendered.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @access private
+	 *
+	 * @param WP_Query $query The query object.
+	 */
+	public static function disable_term_cache_on_course_queries( $query ) {
+		// `post_type` may be a single slug or an array (e.g. teacher author archives merge
+		// `course` into the existing post types), so treat any query that can return courses as one.
+		$post_types = (array) $query->get( 'post_type' );
+		if ( ! in_array( 'course', $post_types, true ) ) {
+			return;
+		}
+
+		$query->set( 'update_post_term_cache', false );
 	}
 
 	/**

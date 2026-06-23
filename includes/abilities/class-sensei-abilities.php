@@ -3,7 +3,7 @@
  * Sensei Abilities registration.
  *
  * @package sensei-lms
- * @since $$next-version$$
+ * @since 4.26.0
  */
 
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;

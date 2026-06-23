@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix teachers not seeing all grading rows for their courses due to post-filter pagination mismatch.

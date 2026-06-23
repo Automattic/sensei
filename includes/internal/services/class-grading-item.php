@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Grading_Item {
 
@@ -31,7 +31,7 @@ class Grading_Item {
 	 * Includes 'failed' and 'ungraded' because the student has finished
 	 * the lesson activity even if they did not pass.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @var string[]
 	 */
@@ -45,7 +45,7 @@ class Grading_Item {
 	 * (the lesson is not considered successfully finished).
 	 * Used as the divisor for days-to-complete calculations.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @var string[]
 	 */
@@ -102,7 +102,7 @@ class Grading_Item {
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param string     $status     The progress status.
 	 * @param int        $user_id    The user ID.
@@ -129,7 +129,7 @@ class Grading_Item {
 	 * trigger a _doing_it_wrong notice, since grade data is now carried
 	 * directly on the Grading_Item object.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param string $key The property name.
 	 * @return mixed|null The property value, or null if not mapped.
@@ -139,7 +139,7 @@ class Grading_Item {
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_argument handles its own output.
 			_deprecated_argument(
 				'Grading_Item::$' . $key,
-				'$$next-version$$',
+				'4.26.0',
 				sprintf(
 					/* translators: 1: old property name, 2: new property name */
 					'Accessing Grading_Item via legacy WP_Comment property "%1$s" is deprecated. Use "%2$s" instead.',
@@ -160,7 +160,7 @@ class Grading_Item {
 				'Property "%s" does not exist on Grading_Item. The grading list table no longer uses WP_Comment objects.',
 				$key
 			),
-			'$$next-version$$'
+			'4.26.0'
 		);
 		// phpcs:enable
 

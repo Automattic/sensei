@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.26.0
  */
 class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregation_Service_Interface {
 
@@ -33,7 +33,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 */
@@ -44,7 +44,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Count progress records grouped by status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args {
 	 *     Arguments for the query.
@@ -64,7 +64,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			_doing_it_wrong(
 				__METHOD__,
 				'The "type" argument must be "course" or "lesson".',
-				'$$next-version$$'
+				'4.26.0'
 			);
 			return array();
 		}
@@ -100,7 +100,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int[] $lesson_ids Array of lesson post IDs.
 	 * @return array Associative array with keys: unique_student_count, lesson_start_count, lesson_completed_count, days_to_complete_count, days_to_complete_sum.
@@ -158,7 +158,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Count ungraded quiz submissions whose lesson is publicly available.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Optional restrictions; see interface.
 	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
@@ -189,7 +189,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Build SQL clause for filtering by post ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -215,7 +215,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Build SQL clause for filtering by user ID(s).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.
@@ -239,7 +239,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Build SQL clause for excluding users by login prefix.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments.
 	 * @return string SQL clause.

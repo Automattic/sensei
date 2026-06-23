@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { Button } from '@wordpress/components';
-import { render, useEffect, useState } from '@wordpress/element';
+import { createRoot, useEffect, useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
@@ -145,5 +145,5 @@ export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 Array.from(
 	document.querySelectorAll( 'div.sensei-student-bulk-actions__button' )
 ).forEach( ( button ) => {
-	render( <StudentBulkActionButton />, button );
+	createRoot( button ).render( <StudentBulkActionButton /> );
 } );

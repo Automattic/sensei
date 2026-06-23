@@ -3,6 +3,14 @@ name: Playground PR Preview
 on:
     pull_request:
         types: [opened, synchronize, reopened]
+        paths-ignore:
+            - 'changelog/**'
+            - 'tests/**'
+            - 'scripts/**'
+            - '.github/**'
+            - '.claude/**'
+            - '.husky/**'
+            - '**/*.md'
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.head_ref }}
@@ -13,8 +21,8 @@ jobs:
         name: Build Plugin Artifact
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@v6.0.3
+            - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
             - name: Install JS dependencies
@@ -24,7 +32,7 @@ jobs:
             - name: Build Plugin
               run: npm run build
             - name: Upload build artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: playground-plugin-${{ github.event.pull_request.number }}-${{ github.sha }}
                   path: sensei-lms.zip
@@ -41,17 +49,13 @@ jobs:
         steps:
             - name: Expose built artifact
               id: expose
-              uses: WordPress/action-wp-playground-pr-preview/.github/actions/expose-artifact-on-public-url@v2
+              uses: WordPress/action-wp-playground-pr-preview/.github/actions/expose-artifact-on-public-url@43fc435558bc6cee69f5b214d6b8ca4f9f80c31d # v3
               with:
                   artifact-name: playground-plugin-${{ github.event.pull_request.number }}-${{ github.sha }}
                   artifact-filename: sensei-lms.zip
                   pr-number: ${{ github.event.pull_request.number }}
                   commit-sha: ${{ github.sha }}
                   release-tag: 'ci-playground-artifacts'
-                  # Upstream cleanup sorts assets by `.created_at` but the
-                  # GitHub API returns `createdAt`, so it deletes by filename
-                  # order — which can wipe the asset just uploaded.
-                  cleanup-enabled: 'false'
 
     create-blueprint:
         name: Create Playground Blueprint
@@ -62,7 +66,7 @@ jobs:
         steps:
             - name: Create blueprint with artifact URL
               id: blueprint
-              uses: actions/github-script@v7
+              uses: actions/github-script@v9.0.0
               with:
                   result-encoding: string
                   script: |
@@ -95,7 +99,7 @@ jobs:
             issues: write
         steps:
             - name: Post Playground Preview Button
-              uses: WordPress/action-wp-playground-pr-preview@v2
+              uses: WordPress/action-wp-playground-pr-preview@43fc435558bc6cee69f5b214d6b8ca4f9f80c31d # v3
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   mode: comment

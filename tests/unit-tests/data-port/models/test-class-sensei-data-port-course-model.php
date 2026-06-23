@@ -85,6 +85,10 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	 * creates a post and then updates it.
 	 */
 	public function lineData() {
+		// WP 7.1 (WP_Email_Address) validates rather than strips, so an email with
+		// invalid characters sanitizes to an empty string instead of a cleaned value.
+		$sanitized_invalid_email = class_exists( 'WP_Email_Address' ) ? '' : 'email#@host.com';
+
 		return [
 			[
 				[
@@ -111,7 +115,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Course_Schema::COLUMN_DESCRIPTION      => 'description',
 					Sensei_Data_Port_Course_Schema::COLUMN_EXCERPT          => 'excerpt',
 					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_USERNAME => 'username@',
-					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL    => 'email#@host.com',
+					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL    => $sanitized_invalid_email,
 					Sensei_Data_Port_Course_Schema::COLUMN_LESSONS          => 'id:4,id:5',
 					Sensei_Data_Port_Course_Schema::COLUMN_MODULES          => 'First,Second',
 					Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE     => 'prerequisite',
@@ -333,7 +337,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 		// Calculate the module order and compare it with the post's one.
 		$module_names           = Sensei_Data_Port_Utilities::split_list_safely( $line_data[ Sensei_Data_Port_Course_Schema::COLUMN_MODULES ], true );
 		$expected_modules_order = array_map(
-			function( $module_name ) use ( $teacher ) {
+			function ( $module_name ) use ( $teacher ) {
 				return (string) Sensei_Data_Port_Utilities::get_term( $module_name, 'module', $teacher->ID )->term_id;
 			},
 			$module_names
@@ -344,7 +348,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 		$actual_category_ids   = wp_get_object_terms( $course->ID, 'course-category', [ 'fields' => 'ids' ] );
 		$category_names        = Sensei_Data_Port_Utilities::split_list_safely( $line_data[ Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES ], true );
 		$expected_category_ids = array_map(
-			function( $module_name ) {
+			function ( $module_name ) {
 				return Sensei_Data_Port_Utilities::get_term( $module_name, 'course-category' )->term_id;
 			},
 			$category_names
@@ -427,6 +431,5 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 		$this->assertCount( 2, $logs, 'There should be two warnings created.' );
 		$this->assertStringStartsWith( 'Teacher Username is empty', $logs[0]['message'], 'The first warning should be about username being empty.' );
 		$this->assertStringStartsWith( 'The user with the supplied username has a different email', $logs[1]['message'], 'The second warning should be about email being different.' );
-
 	}
 }

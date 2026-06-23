@@ -162,4 +162,83 @@ class Sensei_Temporary_User_Test extends WP_UnitTestCase {
 
 		self::assertSame( array( 'admin@example.org', 'user1@example.com', 'user2@example.com' ), $learners );
 	}
+
+	/**
+	 * Test that activity queries for multiple users exclude temporary (guest and preview) users.
+	 *
+	 * @covers Sensei_Temporary_User::filter_sensei_activity
+	 */
+	public function test_FilterSenseiActivity_WhenListingUsers_ExcludesTemporaryUsers() {
+		/* Arrange. */
+		$user1_id   = $this->factory->user->create( [ 'user_email' => 'real1@example.com' ] );
+		$user2_id   = $this->factory->user->create( [ 'user_email' => 'real2@example.com' ] );
+		$guest_id   = $this->factory->user->create(
+			[
+				'user_login' => 'sensei_guest_filter',
+				'role'       => Sensei_Guest_User::ROLE,
+			]
+		);
+		$preview_id = $this->factory->user->create(
+			[
+				'user_login' => 'sensei_preview_filter',
+				'role'       => Sensei_Preview_User::ROLE,
+			]
+		);
+		$course_id  = $this->factory->course->create();
+
+		Sensei_Utils::update_course_status( $user1_id, $course_id );
+		Sensei_Utils::update_course_status( $user2_id, $course_id );
+		Sensei_Utils::update_course_status( $guest_id, $course_id );
+		Sensei_Utils::update_course_status( $preview_id, $course_id );
+
+		/* Act. */
+		$comments = Sensei_Utils::sensei_check_for_activity(
+			[
+				'type'    => 'sensei_course_status',
+				'post_id' => $course_id,
+			],
+			true
+		);
+		$user_ids = array_map( 'intval', wp_list_pluck( (array) $comments, 'user_id' ) );
+
+		/* Assert. */
+		$this->assertContains( $user1_id, $user_ids );
+		$this->assertContains( $user2_id, $user_ids );
+		$this->assertNotContains( $guest_id, $user_ids, 'Guest users should be excluded from activity lists.' );
+		$this->assertNotContains( $preview_id, $user_ids, 'Preview users should be excluded from activity lists.' );
+	}
+
+	/**
+	 * Test that a temporary user with ungraded activity is kept, so they appear in the grading list.
+	 *
+	 * @covers Sensei_Temporary_User::filter_sensei_activity
+	 */
+	public function test_FilterSenseiActivity_WhenTemporaryUserUngraded_KeepsUser() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create( [ 'user_email' => 'real3@example.com' ] );
+		$guest_id  = $this->factory->user->create(
+			[
+				'user_login' => 'sensei_guest_ungraded',
+				'role'       => Sensei_Guest_User::ROLE,
+			]
+		);
+		$lesson_id = $this->factory->lesson->create();
+
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
+		Sensei_Utils::update_lesson_status( $guest_id, $lesson_id, 'ungraded' );
+
+		/* Act. */
+		$comments = Sensei_Utils::sensei_check_for_activity(
+			[
+				'type'    => 'sensei_lesson_status',
+				'post_id' => $lesson_id,
+			],
+			true
+		);
+		$user_ids = array_map( 'intval', wp_list_pluck( (array) $comments, 'user_id' ) );
+
+		/* Assert. */
+		$this->assertContains( $user_id, $user_ids );
+		$this->assertContains( $guest_id, $user_ids, 'Temporary users with ungraded activity should be kept for grading.' );
+	}
 }

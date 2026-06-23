@@ -481,7 +481,7 @@ class Sensei_Lesson {
 	 * @param int      $lesson_id The lesson id.
 	 * @param int|null $course_id The course id.
 	 */
-	private function output_prerequisite_meta_box_content( int $lesson_id, int $course_id = null ) {
+	private function output_prerequisite_meta_box_content( int $lesson_id, ?int $course_id = null ) {
 		// Get all the possible prerequisite lessons.
 		$posts_array = $course_id ? $this->get_prerequisites( $lesson_id, $course_id ) : array();
 
@@ -3730,7 +3730,9 @@ class Sensei_Lesson {
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it.
-			$submission         = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			$submission         = $quiz_id && $user_id
+				? Sensei()->quiz_submission_repository->get( (int) $quiz_id, (int) $user_id )
+				: null;
 			$selected_questions = $submission
 				? Sensei()->quiz_submission_repository->get_question_ids( $submission->get_id() )
 				: array();

@@ -32,7 +32,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	/**
 	 * Cache group for course progress.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @var string
 	 */
@@ -249,8 +249,9 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'status'       => $course_progress->get_status(),
-				'started_at'   => $course_progress->get_started_at() ? $course_progress->get_started_at()->format( $date_format ) : null,
-				'completed_at' => $course_progress->get_completed_at() ? $course_progress->get_completed_at()->format( $date_format ) : null,
+				// Table columns are stored in UTC.
+				'started_at'   => $course_progress->get_started_at() ? gmdate( $date_format, $course_progress->get_started_at()->getTimestamp() ) : null,
+				'completed_at' => $course_progress->get_completed_at() ? gmdate( $date_format, $course_progress->get_completed_at()->getTimestamp() ) : null,
 				'updated_at'   => $course_progress->get_updated_at()->format( $date_format ),
 			],
 			[
@@ -482,7 +483,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	/**
 	 * Get the cache key for a course progress.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id   The user ID.

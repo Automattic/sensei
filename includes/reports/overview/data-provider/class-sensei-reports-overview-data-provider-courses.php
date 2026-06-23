@@ -49,7 +49,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param Progress_Clauses_Service_Interface|null $progress_clauses_service The progress clauses service.
 	 */

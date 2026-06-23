@@ -44,12 +44,12 @@ $checked-color: #000000;
 
 	&__purpose-children {
 		display: block;
-		padding: 5px 0 0 36px;
+		padding: 5px 0 0 32px;
 		font-size: 14px;
 		opacity: 0.6;
 
 		@media (min-width: $small-screen-break) {
-			padding-left: 32px;
+			padding-left: 24px;
 		}
 	}
 

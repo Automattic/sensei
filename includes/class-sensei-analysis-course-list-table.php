@@ -409,7 +409,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * Get row data for the "user" view (course students).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param object $item Reports_Item from get_course_statuses.
 	 * @return array Column data.
@@ -470,14 +470,17 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * Get row data for user-lesson view (one user's lessons in a course).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param object $item WP_Post lesson.
 	 * @return array Column data.
 	 */
 	private function get_user_lesson_view_row_data( $item ) {
 		$status          = __( 'Not started', 'sensei-lms' );
-		$user_start_date = $user_end_date = $status_class = $grade = '';
+		$user_start_date = '';
+		$user_end_date   = '';
+		$status_class    = '';
+		$grade           = '';
 
 		$lesson_args = array(
 			'post_id' => $item->ID,
@@ -565,7 +568,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * Get row data for lesson overview (aggregates, no specific user).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.0
 	 *
 	 * @param object $item WP_Post lesson.
 	 * @return array Column data.
