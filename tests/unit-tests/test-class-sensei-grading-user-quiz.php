@@ -43,4 +43,26 @@ class Sensei_Grading_User_Quiz_Test extends WP_UnitTestCase {
 			'unknown quiz, wrong'  => array( '', 0, 'ungraded' ),
 		);
 	}
+
+	/**
+	 * The answer iframe sandbox must include allow-popups.
+	 *
+	 * Without allow-popups, a target="_blank" link inside the sandboxed srcdoc
+	 * is silently blocked — teachers cannot open submitted file-upload answers.
+	 *
+	 * Delete-the-fix test: remove allow-popups from render_answer_iframe() and
+	 * this assertion fails because the sandbox value no longer contains the token.
+	 *
+	 * @covers Sensei_Grading_User_Quiz::render_answer_iframe
+	 */
+	public function test_answer_iframe_sandbox_includes_allow_popups() {
+		$html   = '<html><head><title></title></head><body><a href="http://example.com" target="_blank">View file</a></body></html>';
+		$output = Sensei_Grading_User_Quiz::render_answer_iframe( $html );
+
+		$this->assertStringContainsString(
+			'sandbox="allow-same-origin allow-popups"',
+			$output,
+			'Answer iframe must allow popups so target="_blank" links open for graders.'
+		);
+	}
 }
