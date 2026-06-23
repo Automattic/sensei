@@ -93,7 +93,7 @@ class Sensei_Grading_User_Quiz {
 	 * @param string $html Sanitized HTML to render inside the iframe.
 	 * @return string The iframe element HTML.
 	 */
-	public static function render_answer_iframe( string $html ): string {
+	private static function render_answer_iframe( $html ) {
 		return '<iframe class="user-answer" srcdoc="' . esc_attr( $html ) . '" sandbox="allow-same-origin allow-popups" height="auto"></iframe>';
 	}
 
