@@ -731,6 +731,62 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that grade_quiz_auto() ignores question IDs whose post type is not
+	 * 'question' (e.g. deleted posts or multiple_question containers) instead of
+	 * silently treating them as zero-grade via PHP's loose 0 == false comparison.
+	 *
+	 * Before the fix, such IDs were stored with grade `false` in the per-question
+	 * grade map, which could corrupt the grade record held by set_user_grades().
+	 * After the fix they are skipped entirely (continue), so they do not appear in
+	 * the stored per-question grades returned by get_user_grades().
+	 *
+	 * @covers Sensei_Grading::grade_quiz_auto
+	 */
+	public function testGradeQuizAuto_InvalidQuestionIdInSubmitted_IsSkippedAndNotStoredInGrades(): void {
+		/* Arrange. */
+		$user_id   = wp_create_user( 'grading_invalid_q', 'pass', 'grading_invalid_q@example.com' );
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		update_post_meta( $quiz_id, '_quiz_grade_type', 'auto' );
+
+		// One valid boolean question where 'true' is the correct answer.
+		$question_args = $this->factory->question->get_sample_question_data( 'boolean' );
+		$question_args['quiz_id']     = $quiz_id;
+		$question_args['post_author'] = get_post( $quiz_id )->post_author;
+		// Ensure the right answer is 'true' so we can submit a known correct answer.
+		$question_args['question_right_answer_boolean'] = 'true';
+		$valid_question_id = Sensei()->lesson->lesson_save_question( $question_args );
+
+		// A regular post (not a 'question' post type): get_question_grade() returns false for it.
+		$invalid_question_id = $this->factory->post->create();
+
+		wp_set_current_user( $user_id );
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		// Both IDs are submitted — the valid one answered correctly, the invalid one with anything.
+		$submitted = [
+			$valid_question_id   => 'true',
+			$invalid_question_id => 'true',
+		];
+		Sensei_Quiz::save_user_answers( $submitted, [], $lesson_id, $user_id );
+
+		/* Act. */
+		$grade = Sensei_Grading::grade_quiz_auto( $quiz_id, $submitted, 0, 'auto' );
+
+		/* Assert: grade is computed (not a WP_Error) and the invalid ID is not in stored grades. */
+		$this->assertIsNumeric( $grade, 'grade_quiz_auto() should return a numeric grade when all valid questions can be auto-graded.' );
+
+		$stored_grades = Sensei()->quiz->get_user_grades( $lesson_id, $user_id );
+		$this->assertIsArray( $stored_grades, 'get_user_grades() should return an array.' );
+		$this->assertArrayNotHasKey(
+			$invalid_question_id,
+			$stored_grades,
+			'An invalid question ID (non-\'question\' post type) must not be stored in per-question grades.'
+		);
+	}
+
+	/**
 	 * Add lesson status for a given student.
 	 *
 	 * @param int    $lesson_id Lesson ID.
