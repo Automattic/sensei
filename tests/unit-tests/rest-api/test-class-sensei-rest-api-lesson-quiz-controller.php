@@ -1114,6 +1114,52 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * Verifies that register_routes() wires isolate_lesson_quiz_response() into the
+	 * rest_pre_echo_response filter chain.
+	 *
+	 * This is the delete-the-fix test: removing the add_filter() call from
+	 * register_routes() means the callback is never registered, so Polylang-injected
+	 * fields survive apply_filters() and the assertArrayNotHasKey assertions fail.
+	 *
+	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::register_routes
+	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::isolate_lesson_quiz_response
+	 */
+	public function testRegisterRoutes_IsolationFilterIsWiredOnRestPreEchoResponse(): void {
+		// setUp() already fired do_action('rest_api_init'), which called register_routes()
+		// and should have registered isolate_lesson_quiz_response on rest_pre_echo_response.
+
+		// Simulate Polylang Pro injecting fields at a lower priority (as it does in production).
+		$polylang_stub = static function ( $result ) {
+			if ( is_array( $result ) ) {
+				$result['lang']         = 'en';
+				$result['translations'] = array( 'fr' => 2 );
+			}
+			return $result;
+		};
+		add_filter( 'rest_pre_echo_response', $polylang_stub, 10 );
+
+		$data    = array(
+			'options'       => array( 'pass_required' => false ),
+			'questions'     => array(),
+			'lesson_title'  => 'Test',
+			'lesson_status' => 'draft',
+		);
+		$request = new WP_REST_Request( 'GET', '/sensei-internal/v1/lesson-quiz/1' );
+
+		// Reproduce what WP_REST_Server::serve_request() does before serialisation:
+		// apply the rest_pre_echo_response filter chain.  Priority 10 (Polylang stub)
+		// injects fields; PHP_INT_MAX (Sensei, if registered) strips them.
+		$filtered = apply_filters( 'rest_pre_echo_response', $data, rest_get_server(), $request );
+
+		remove_filter( 'rest_pre_echo_response', $polylang_stub, 10 );
+
+		$this->assertIsArray( $filtered, 'Filtered result must be an array.' );
+		$this->assertArrayHasKey( 'options', $filtered, 'options must survive the filter chain.' );
+		$this->assertArrayNotHasKey( 'lang', $filtered, '"lang" injected by Polylang must be stripped by the registered filter.' );
+		$this->assertArrayNotHasKey( 'translations', $filtered, '"translations" injected by Polylang must be stripped by the registered filter.' );
+	}
+
+	/**
 	 * Helper method to create a lesson with a quiz.
 	 *
 	 * @param array $quiz_args The quiz args.
