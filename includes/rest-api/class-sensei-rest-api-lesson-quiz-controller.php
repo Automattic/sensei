@@ -117,7 +117,19 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			return $result;
 		}
 
-		return array_intersect_key( $result, array_flip( $this->get_quiz_response_top_level_keys() ) );
+		$allowed = array_flip( $this->get_quiz_response_top_level_keys() );
+
+		// Preserve underscore-prefixed keys added by WordPress core before this filter
+		// runs (e.g. _links from response_to_data(), _embedded for ?_embed requests).
+		// These are not Sensei-defined response fields, so they are not in the
+		// sensei_lesson_quiz_rest_response_keys filter, but they must not be stripped.
+		foreach ( array_keys( $result ) as $key ) {
+			if ( isset( $key[0] ) && '_' === $key[0] ) {
+				$allowed[ $key ] = true;
+			}
+		}
+
+		return array_intersect_key( $result, $allowed );
 	}
 
 	/**

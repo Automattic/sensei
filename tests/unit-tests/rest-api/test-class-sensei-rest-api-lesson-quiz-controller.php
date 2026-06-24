@@ -1135,6 +1135,16 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->login_as_teacher();
 		list( $lesson_id ) = $this->create_lesson_with_quiz();
 
+		// Simulate WP core adding an underscore-prefixed key (like _links from
+		// response_to_data()) at a priority lower than Polylang.
+		$wp_core_stub = static function ( $result ) {
+			if ( is_array( $result ) ) {
+				$result['_links'] = array( array( 'href' => 'http://example.com' ) );
+			}
+			return $result;
+		};
+		add_filter( 'rest_pre_echo_response', $wp_core_stub, 9 );
+
 		// Simulate Polylang Pro hooking rest_pre_echo_response at its default priority.
 		$polylang_stub = static function ( $result ) {
 			if ( is_array( $result ) ) {
@@ -1149,16 +1159,19 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$request  = new WP_REST_Request( 'GET', self::REST_ROUTE . $lesson_id );
 		$response = $this->server->dispatch( $request );
 
-		// serve_request() passes response_to_data() output through rest_pre_echo_response
-		// before json_encode().  Replicate that step to exercise the full filter chain.
-		$filtered = apply_filters( 'rest_pre_echo_response', $response->get_data(), $this->server, $request );
+		// WP_REST_Server::serve_request() calls response_to_data() before rest_pre_echo_response.
+		// Replicate both steps to exercise the exact serve_request() path.
+		$data     = rest_get_server()->response_to_data( $response, false );
+		$filtered = apply_filters( 'rest_pre_echo_response', $data, $this->server, $request );
 
 		remove_filter( 'rest_pre_echo_response', $polylang_stub, 10 );
+		remove_filter( 'rest_pre_echo_response', $wp_core_stub, 9 );
 
 		$this->assertEquals( 200, $response->get_status(), 'Endpoint must return 200.' );
 		$this->assertIsArray( $filtered, 'Serialisation data must be an array.' );
 		$this->assertArrayHasKey( 'options', $filtered, 'options must be present in the serialised response.' );
 		$this->assertArrayHasKey( 'questions', $filtered, 'questions must be present in the serialised response.' );
+		$this->assertArrayHasKey( '_links', $filtered, '_-prefixed keys (e.g. _links from WP core) must survive filtering.' );
 		$this->assertArrayNotHasKey( 'lang', $filtered, '"lang" injected by Polylang must be stripped before serialisation.' );
 		$this->assertArrayNotHasKey( 'translations', $filtered, '"translations" injected by Polylang must be stripped before serialisation.' );
 	}
