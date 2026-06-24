@@ -583,7 +583,7 @@ class Sensei_Question {
 	 *
 	 * @param int $question_id
 	 *
-	 * @return int $question_grade | bool
+	 * @return int|false
 	 */
 	public function get_question_grade( $question_id ) {
 
