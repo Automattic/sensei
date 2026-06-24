@@ -30,8 +30,12 @@
 .wp-block-sensei-lms-course-theme-lesson-actions,
 .wp-block-sensei-lms-quiz-actions {
 
-	.sensei-course-theme-lesson-actions__next-lesson.has-icon {
-		display: flex;
+	.sensei-course-theme-lesson-actions__next-lesson,
+	.sensei-course-theme-lesson-actions__prev-lesson {
+
+		&.has-icon {
+			display: flex;
+		}
 	}
 
 	@media screen and (max-width: $break-medium) {

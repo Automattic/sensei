@@ -3,6 +3,7 @@ export const ACTION_BLOCKS = [
 	'sensei-lms/button-complete-lesson',
 	'sensei-lms/button-view-quiz',
 	'sensei-lms/button-lesson-completed',
+	'sensei-lms/button-previous-lesson',
 	'sensei-lms/button-next-lesson',
 	'sensei-lms/button-reset-lesson',
 ];
@@ -12,6 +13,9 @@ export const BLOCKS_DEFAULT_ATTRIBUTES = {
 		inContainer: true,
 	},
 	'sensei-lms/button-lesson-completed': {
+		inContainer: true,
+	},
+	'sensei-lms/button-previous-lesson': {
 		inContainer: true,
 	},
 	'sensei-lms/button-next-lesson': {
@@ -35,11 +39,13 @@ export const IN_PROGRESS_PREVIEW = 'in-progress';
 
 export const PREVIEW_STATE = {
 	[ COMPLETED_PREVIEW ]: [
+		'sensei-lms/button-previous-lesson',
 		'sensei-lms/button-next-lesson',
 		'sensei-lms/button-lesson-completed',
 		'sensei-lms/button-reset-lesson',
 	],
 	[ IN_PROGRESS_PREVIEW ]: [
+		'sensei-lms/button-previous-lesson',
 		'sensei-lms/button-view-quiz',
 		'sensei-lms/button-complete-lesson',
 	],

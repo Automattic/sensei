@@ -17,10 +17,18 @@ export const lessonActionsBlock = `<!-- wp:sensei-lms/lesson-actions -->
 	</div>
 	<!-- /wp:sensei-lms/button-complete-lesson -->
 
+	<!-- wp:sensei-lms/button-previous-lesson {"inContainer":true} -->
+	<div class="wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper">
+	<div class="wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left">
+	<span class="wp-block-button__link">Previous Lesson</span>
+	</div>
+	</div>
+	<!-- /wp:sensei-lms/button-previous-lesson -->
+
 	<!-- wp:sensei-lms/button-next-lesson {"inContainer":true} -->
 	<div class="wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper">
 	<div class="wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left">
-	<button class="wp-block-button__link">Next Lesson</button>
+	<span class="wp-block-button__link">Next Lesson</span>
 	</div>
 	</div>
 	<!-- /wp:sensei-lms/button-next-lesson -->

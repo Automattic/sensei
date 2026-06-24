@@ -107,6 +107,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Conditional_Content_Block();
 		new Sensei_Lesson_Actions_Block();
 		new Sensei_Lesson_Properties_Block();
+		new Sensei_Previous_Lesson_Block();
 		new Sensei_Next_Lesson_Block();
 		new Sensei_Complete_Lesson_Block();
 		new Sensei_Lesson_Completed_Block();

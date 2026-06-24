@@ -276,6 +276,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
 
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
+
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-next-lesson -->
@@ -308,6 +312,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
 
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
@@ -802,6 +810,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
 
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
+
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-next-lesson -->
@@ -919,6 +931,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
 
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
+
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-next-lesson -->
@@ -1003,6 +1019,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
 
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
@@ -1173,6 +1193,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
 
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
+
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-next-lesson -->
@@ -1313,6 +1337,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
 
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
@@ -1607,6 +1635,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
 
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
+
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-next-lesson -->
@@ -1699,6 +1731,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
 
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
@@ -1957,6 +1993,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
 
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
+
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-next-lesson -->
@@ -2162,6 +2202,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
 
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
+
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-next-lesson -->
@@ -2246,6 +2290,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
 <!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-previous-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-prev-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-prev-lesson__wrapper""><div class=""wp-block-sensei-lms-button-prev-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Previous Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-previous-lesson -->
 
 <!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
 <div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
