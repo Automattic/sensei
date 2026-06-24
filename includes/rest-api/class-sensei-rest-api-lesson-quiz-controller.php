@@ -124,7 +124,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		// These are not Sensei-defined response fields, so they are not in the
 		// sensei_lesson_quiz_rest_response_keys filter, but they must not be stripped.
 		foreach ( array_keys( $result ) as $key ) {
-			if ( isset( $key[0] ) && '_' === $key[0] ) {
+			if ( is_string( $key ) && '_' === $key[0] ) {
 				$allowed[ $key ] = true;
 			}
 		}
