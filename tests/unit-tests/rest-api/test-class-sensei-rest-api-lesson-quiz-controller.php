@@ -1025,6 +1025,95 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * Tests that isolate_lesson_quiz_response() strips top-level fields not in
+	 * Sensei's contract from the lesson-quiz REST response, preventing Gutenberg
+	 * save loops when third-party plugins (e.g. Polylang) inject extra fields.
+	 *
+	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::isolate_lesson_quiz_response
+	 */
+	public function testIsolateLessonQuizResponse_ThirdPartyFieldsAreStripped(): void {
+		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( 'sensei-internal/v1' );
+		$server     = rest_get_server();
+		$request    = new WP_REST_Request( 'POST', '/sensei-internal/v1/lesson-quiz/1' );
+
+		// Simulate what Polylang Pro injects into REST responses via rest_pre_echo_response.
+		$result = array(
+			'options'       => array( 'pass_required' => false ),
+			'questions'     => array(),
+			'lesson_title'  => 'Test Lesson',
+			'lesson_status' => 'draft',
+			'lang'          => 'en',             // Polylang field — must be stripped.
+			'translations'  => array( 'fr' => 2 ), // Polylang field — must be stripped.
+		);
+
+		$filtered = $controller->isolate_lesson_quiz_response( $result, $server, $request );
+
+		$this->assertArrayHasKey( 'options', $filtered, 'options must be present in the filtered response.' );
+		$this->assertArrayHasKey( 'questions', $filtered, 'questions must be present in the filtered response.' );
+		$this->assertArrayHasKey( 'lesson_title', $filtered, 'lesson_title must be present in the filtered response.' );
+		$this->assertArrayHasKey( 'lesson_status', $filtered, 'lesson_status must be present in the filtered response.' );
+		$this->assertArrayNotHasKey( 'lang', $filtered, 'Third-party "lang" field must be stripped from the lesson-quiz response.' );
+		$this->assertArrayNotHasKey( 'translations', $filtered, 'Third-party "translations" field must be stripped from the lesson-quiz response.' );
+	}
+
+	/**
+	 * Tests that isolate_lesson_quiz_response() does not modify responses for
+	 * routes outside the lesson-quiz endpoint.
+	 *
+	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::isolate_lesson_quiz_response
+	 */
+	public function testIsolateLessonQuizResponse_OtherRoutesReturnedUnchanged(): void {
+		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( 'sensei-internal/v1' );
+		$server     = rest_get_server();
+		$request    = new WP_REST_Request( 'GET', '/wp/v2/lessons/1' );
+
+		$data = array(
+			'id'           => 1,
+			'lang'         => 'en',
+			'translations' => array( 'fr' => 2 ),
+		);
+
+		$filtered = $controller->isolate_lesson_quiz_response( $data, $server, $request );
+
+		$this->assertSame( $data, $filtered, 'Responses for routes outside lesson-quiz must not be modified.' );
+	}
+
+	/**
+	 * Tests that custom top-level fields declared via sensei_lesson_quiz_rest_response_keys
+	 * are preserved by isolate_lesson_quiz_response().
+	 *
+	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::isolate_lesson_quiz_response
+	 */
+	public function testIsolateLessonQuizResponse_CustomDeclaredFieldsArePreserved(): void {
+		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( 'sensei-internal/v1' );
+		$server     = rest_get_server();
+		$request    = new WP_REST_Request( 'GET', '/sensei-internal/v1/lesson-quiz/1' );
+
+		// A third-party extension declares 'custom_field' as an accepted key.
+		$add_custom_key = function ( $keys ) {
+			$keys[] = 'custom_field';
+			return $keys;
+		};
+		add_filter( 'sensei_lesson_quiz_rest_response_keys', $add_custom_key );
+
+		$result = array(
+			'options'       => array(),
+			'questions'     => array(),
+			'lesson_title'  => 'Test',
+			'lesson_status' => 'draft',
+			'custom_field'  => 'keep me',   // Declared via filter — must survive.
+			'lang'          => 'en',         // Not declared — must be stripped.
+		);
+
+		$filtered = $controller->isolate_lesson_quiz_response( $result, $server, $request );
+
+		remove_filter( 'sensei_lesson_quiz_rest_response_keys', $add_custom_key );
+
+		$this->assertArrayHasKey( 'custom_field', $filtered, 'Fields declared via sensei_lesson_quiz_rest_response_keys must be preserved.' );
+		$this->assertArrayNotHasKey( 'lang', $filtered, '"lang" must be stripped even when custom fields are declared.' );
+	}
+
+	/**
 	 * Helper method to create a lesson with a quiz.
 	 *
 	 * @param array $quiz_args The quiz args.

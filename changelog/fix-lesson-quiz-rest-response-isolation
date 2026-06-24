@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix infinite save loop in the block editor when Polylang Pro is active. Third-party plugins that inject extra fields (e.g. lang, translations) into REST responses via WordPress lifecycle filters caused Gutenberg's block-state comparison to detect phantom unsaved changes, triggering repeated save cycles. The lesson-quiz REST endpoint now strips any top-level fields not defined by Sensei before the response reaches Gutenberg.

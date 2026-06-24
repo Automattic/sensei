@@ -46,6 +46,10 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 * Register the REST API endpoints for quiz.
 	 */
 	public function register_routes() {
+		// Strip third-party injections from the response before Gutenberg reads it.
+		// Must be registered once, here, so it covers both GET and POST responses.
+		add_filter( 'rest_pre_echo_response', array( $this, 'isolate_lesson_quiz_response' ), PHP_INT_MAX, 3 );
+
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/(?P<lesson_id>[0-9]+)',
@@ -83,6 +87,64 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				),
 				'schema' => array( $this, 'get_item_schema' ),
 			)
+		);
+	}
+
+	/**
+	 * Strips fields not defined by Sensei from the lesson-quiz REST response.
+	 *
+	 * Third-party plugins (e.g. Polylang Pro) may hook into WordPress REST API
+	 * lifecycle filters and inject extra top-level fields — such as `lang` and
+	 * `translations` — into every REST response they process. When these fields
+	 * reach Gutenberg's block-state comparison the editor sees unexpected data,
+	 * marks the post dirty, and triggers another save cycle, creating an infinite
+	 * loop (see issue #7861).
+	 *
+	 * Running at PHP_INT_MAX ensures this filter removes any additions made by
+	 * earlier-priority filters before the response is serialised and sent.
+	 *
+	 * @param mixed           $result  JSON-ready response data.
+	 * @param WP_REST_Server  $server  REST server instance.
+	 * @param WP_REST_Request $request Current REST request.
+	 * @return mixed Filtered response data.
+	 */
+	public function isolate_lesson_quiz_response( $result, WP_REST_Server $server, WP_REST_Request $request ) {
+		if ( ! is_array( $result ) ) {
+			return $result;
+		}
+
+		if ( 0 !== strpos( $request->get_route(), '/' . $this->namespace . '/' . $this->rest_base . '/' ) ) {
+			return $result;
+		}
+
+		return array_intersect_key( $result, array_flip( $this->get_quiz_response_top_level_keys() ) );
+	}
+
+	/**
+	 * Returns the top-level keys Sensei defines for lesson-quiz responses.
+	 *
+	 * Add a filter on sensei_lesson_quiz_rest_response_keys when you extend the
+	 * response via sensei_rest_api_lesson_quiz_response so that your additional
+	 * fields are not stripped by isolate_lesson_quiz_response().
+	 *
+	 * @return string[]
+	 */
+	private function get_quiz_response_top_level_keys(): array {
+		/**
+		 * Declares the top-level keys accepted in a lesson-quiz REST response.
+		 *
+		 * If you add custom top-level fields via the sensei_rest_api_lesson_quiz_response
+		 * filter, add their keys here so they are not removed before the response reaches
+		 * Gutenberg.
+		 *
+		 * @hook sensei_lesson_quiz_rest_response_keys
+		 *
+		 * @param {string[]} $keys Accepted top-level response keys.
+		 * @return {string[]} Filtered list of accepted keys.
+		 */
+		return apply_filters(
+			'sensei_lesson_quiz_rest_response_keys',
+			array( 'options', 'questions', 'lesson_title', 'lesson_status' )
 		);
 	}
 
