@@ -1114,21 +1114,28 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
-	 * Verifies that register_routes() wires isolate_lesson_quiz_response() into the
-	 * rest_pre_echo_response filter chain.
+	 * Integration test: dispatches a real GET to the lesson-quiz endpoint and
+	 * verifies that third-party fields injected via rest_pre_echo_response are
+	 * stripped before the response is serialised.
 	 *
-	 * This is the delete-the-fix test: removing the add_filter() call from
-	 * register_routes() means the callback is never registered, so Polylang-injected
-	 * fields survive apply_filters() and the assertArrayNotHasKey assertions fail.
+	 * WP_REST_Server::serve_request() applies rest_pre_echo_response to the
+	 * serialisation array after dispatch() returns.  This test replicates that
+	 * step so the full filter chain — including Sensei's PHP_INT_MAX handler
+	 * registered in register_routes() — is exercised against a real response.
+	 *
+	 * Delete-the-fix: removing the add_filter() call from register_routes() means
+	 * isolate_lesson_quiz_response() is absent from the hook chain.  The priority-10
+	 * Polylang stub adds 'lang'/'translations' and nothing strips them, so the
+	 * assertArrayNotHasKey calls fail.
 	 *
 	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::register_routes
 	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::isolate_lesson_quiz_response
 	 */
-	public function testRegisterRoutes_IsolationFilterIsWiredOnRestPreEchoResponse(): void {
-		// setUp() already fired do_action('rest_api_init'), which called register_routes()
-		// and should have registered isolate_lesson_quiz_response on rest_pre_echo_response.
+	public function testGetQuizEndpoint_PolylangInjectedFieldsAreStrippedBeforeSerialization(): void {
+		$this->login_as_teacher();
+		list( $lesson_id ) = $this->create_lesson_with_quiz();
 
-		// Simulate Polylang Pro injecting fields at a lower priority (as it does in production).
+		// Simulate Polylang Pro hooking rest_pre_echo_response at its default priority.
 		$polylang_stub = static function ( $result ) {
 			if ( is_array( $result ) ) {
 				$result['lang']         = 'en';
@@ -1138,25 +1145,22 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		};
 		add_filter( 'rest_pre_echo_response', $polylang_stub, 10 );
 
-		$data    = array(
-			'options'       => array( 'pass_required' => false ),
-			'questions'     => array(),
-			'lesson_title'  => 'Test',
-			'lesson_status' => 'draft',
-		);
-		$request = new WP_REST_Request( 'GET', '/sensei-internal/v1/lesson-quiz/1' );
+		// Dispatch through the real REST server so the controller runs.
+		$request  = new WP_REST_Request( 'GET', self::REST_ROUTE . $lesson_id );
+		$response = $this->server->dispatch( $request );
 
-		// Reproduce what WP_REST_Server::serve_request() does before serialisation:
-		// apply the rest_pre_echo_response filter chain.  Priority 10 (Polylang stub)
-		// injects fields; PHP_INT_MAX (Sensei, if registered) strips them.
-		$filtered = apply_filters( 'rest_pre_echo_response', $data, rest_get_server(), $request );
+		// serve_request() passes response_to_data() output through rest_pre_echo_response
+		// before json_encode().  Replicate that step to exercise the full filter chain.
+		$filtered = apply_filters( 'rest_pre_echo_response', $response->get_data(), $this->server, $request );
 
 		remove_filter( 'rest_pre_echo_response', $polylang_stub, 10 );
 
-		$this->assertIsArray( $filtered, 'Filtered result must be an array.' );
-		$this->assertArrayHasKey( 'options', $filtered, 'options must survive the filter chain.' );
-		$this->assertArrayNotHasKey( 'lang', $filtered, '"lang" injected by Polylang must be stripped by the registered filter.' );
-		$this->assertArrayNotHasKey( 'translations', $filtered, '"translations" injected by Polylang must be stripped by the registered filter.' );
+		$this->assertEquals( 200, $response->get_status(), 'Endpoint must return 200.' );
+		$this->assertIsArray( $filtered, 'Serialisation data must be an array.' );
+		$this->assertArrayHasKey( 'options', $filtered, 'options must be present in the serialised response.' );
+		$this->assertArrayHasKey( 'questions', $filtered, 'questions must be present in the serialised response.' );
+		$this->assertArrayNotHasKey( 'lang', $filtered, '"lang" injected by Polylang must be stripped before serialisation.' );
+		$this->assertArrayNotHasKey( 'translations', $filtered, '"translations" injected by Polylang must be stripped before serialisation.' );
 	}
 
 	/**
