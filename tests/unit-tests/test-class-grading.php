@@ -254,6 +254,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test grade_gap_fill_question with regex patterns.
+	 *
 	 * @dataProvider gradeGapFillQuestions
 	 * @covers Sensei_Grading::grade_gap_fill_question
 	 * @since 1.9.18
@@ -753,11 +755,11 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		update_post_meta( $quiz_id, '_quiz_grade_type', 'auto' );
 
 		// One valid boolean question where 'true' is the correct answer (grade = 1 by default).
-		$question_args = $this->factory->question->get_sample_question_data( 'boolean' );
-		$question_args['quiz_id']     = $quiz_id;
-		$question_args['post_author'] = get_post( $quiz_id )->post_author;
+		$question_args                                  = $this->factory->question->get_sample_question_data( 'boolean' );
+		$question_args['quiz_id']                       = $quiz_id;
+		$question_args['post_author']                   = get_post( $quiz_id )->post_author;
 		$question_args['question_right_answer_boolean'] = 'true';
-		$valid_question_id = Sensei()->lesson->lesson_save_question( $question_args );
+		$valid_question_id                              = Sensei()->lesson->lesson_save_question( $question_args );
 
 		// Precondition: the valid question must exist as a 'question' post type.
 		$this->assertSame( 'question', get_post_type( $valid_question_id ), 'Precondition: valid question must be of post type "question".' );
