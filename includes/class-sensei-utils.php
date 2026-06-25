@@ -746,7 +746,7 @@ class Sensei_Utils {
 			$question_grade = 0;
 			foreach ( $questions as $question ) {
 				$question_grade = Sensei()->question->get_question_grade( $question->ID );
-				$quiz_total    += $question_grade;
+				$quiz_total    += (int) $question_grade;
 			}
 		}
 
