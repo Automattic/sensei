@@ -356,7 +356,8 @@ class Sensei_Grading_User_Quiz {
 							$html = '<html><head><title></title></head><body>' . $html . '</body></html>';
 							?>
 							<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped within render_answer_iframe().
-							echo self::render_answer_iframe( $html ); ?>
+							echo self::render_answer_iframe( $html );
+							?>
 							<?php
 						}
 						?>
