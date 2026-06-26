@@ -790,6 +790,10 @@ class Sensei_Learner {
 			wp_send_json_error( array( 'error' => esc_html__( 'Insufficient Permissions.', 'sensei-lms' ) ) );
 		}
 
+		if ( ! current_user_can( 'manage_sensei_grades' ) ) {
+			wp_send_json_error( array( 'error' => esc_html__( 'Insufficient Permissions.', 'sensei-lms' ) ) );
+		}
+
 		$user_id         = isset( $_POST['user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['user_id'] ) ) : '';
 		$learner_manager = self::instance();
 		$controller      = new Sensei_Learners_Admin_Bulk_Actions_Controller( new Sensei_Learner_Management( '' ), $learner_manager );
@@ -801,6 +805,10 @@ class Sensei_Learner {
 
 		$html_items = [];
 		foreach ( $courses as $course ) {
+			if ( ! Sensei_Abilities::can_manage_grades( array( 'course' => $course->ID ) ) ) {
+				continue;
+			}
+
 			$html_items[] = '<a href="' . esc_url( $controller->get_learner_management_course_url( $course->ID ) ) .
 							'" class="sensei-students__enrolled-course" data-course-id="' . intval( $course->ID ) . '">' .
 							esc_html( $course->post_title ) .

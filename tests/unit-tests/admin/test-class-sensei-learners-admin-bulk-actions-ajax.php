@@ -58,4 +58,90 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 			$this->assertStringContainsString( 'Course title', $item );
 		}
 	}
+
+	/**
+	 * The get_course_list action only returns courses the current user can manage.
+	 */
+	public function testGetCourseList_ExcludesCoursesTheUserCannotManage() {
+		$this->factory = new Sensei_Factory();
+		Sensei()->teacher->create_role();
+
+		$teacher_a = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$teacher_b = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$student   = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$provider  = $this->getManualEnrolmentProvider();
+
+		// Enroll the student in five courses owned by teacher B.
+		for ( $i = 1; $i <= 5; $i++ ) {
+			$course_id = $this->factory->course->create(
+				array(
+					'post_author' => $teacher_b,
+					'post_title'  => 'Teacher B Hidden Course ' . $i,
+				)
+			);
+			$provider->enrol_learner( $student, $course_id );
+		}
+
+		wp_set_current_user( $teacher_a );
+
+		$_POST['nonce']   = wp_create_nonce( 'get_course_list' );
+		$_POST['user_id'] = $student;
+
+		try {
+			$this->_handleAjax( 'get_course_list' );
+		} catch ( \WPAjaxDieContinueException $e ) {
+			unset( $e );
+		}
+
+		$response = json_decode( $this->_last_response );
+
+		$this->assertIsObject( $response );
+		$this->assertTrue( $response->success );
+		$this->assertEmpty( $response->data, 'Teacher A must not receive Teacher B courses.' );
+	}
+
+	/**
+	 * A teacher should still receive their own enrolled courses beyond the third one.
+	 */
+	public function testGetCourseList_AsTeacherForOwnCourses_ReturnsThem() {
+		$this->factory = new Sensei_Factory();
+		Sensei()->teacher->create_role();
+
+		$teacher  = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$student  = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$provider = $this->getManualEnrolmentProvider();
+
+		// Enroll the student in five courses owned by the teacher.
+		for ( $i = 1; $i <= 5; $i++ ) {
+			$course_id = $this->factory->course->create(
+				array(
+					'post_author' => $teacher,
+					'post_title'  => 'Teacher Own Course ' . $i,
+				)
+			);
+			$provider->enrol_learner( $student, $course_id );
+		}
+
+		wp_set_current_user( $teacher );
+
+		$_POST['nonce']   = wp_create_nonce( 'get_course_list' );
+		$_POST['user_id'] = $student;
+
+		try {
+			$this->_handleAjax( 'get_course_list' );
+		} catch ( \WPAjaxDieContinueException $e ) {
+			unset( $e );
+		}
+
+		$response = json_decode( $this->_last_response );
+
+		$this->assertIsObject( $response );
+		$this->assertTrue( $response->success );
+		// Five courses enrolled, first three are shown in the table, so two remain for the "More" call.
+		$this->assertCount( 2, $response->data );
+
+		foreach ( $response->data as $item ) {
+			$this->assertStringContainsString( 'Teacher Own Course', $item );
+		}
+	}
 }
