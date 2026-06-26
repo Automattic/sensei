@@ -2981,7 +2981,7 @@ class Sensei_Lesson {
 
 		if ( ! wp_verify_nonce( $nonce, 'lesson_add_multiple_questions_nonce' )
 			|| ! current_user_can( 'edit_lessons' ) ) {
-			die( esc_html( $return ) );
+			wp_die( esc_html( $return ) );
 		}
 
 		// Parse POST data
@@ -2991,6 +2991,10 @@ class Sensei_Lesson {
 
 		if ( is_array( $question_data ) ) {
 			if ( isset( $question_data['quiz_id'] ) && ( 0 < absint( $question_data['quiz_id'] ) ) ) {
+
+				if ( ! $this->user_can_edit_quiz( $question_data['quiz_id'] ) ) {
+					wp_die( '' );
+				}
 
 				$quiz_id           = intval( $question_data['quiz_id'] );
 				$question_number   = intval( $question_data['question_number'] );
@@ -3040,7 +3044,7 @@ class Sensei_Lesson {
 
 		if ( ! wp_verify_nonce( $nonce, 'lesson_remove_multiple_questions_nonce' )
 		|| ! current_user_can( 'edit_lessons' ) || ! isset( $_POST['data'] ) ) {
-			die( '' );
+			wp_die( '' );
 		}
 
 		// Parse POST data
@@ -3050,8 +3054,12 @@ class Sensei_Lesson {
 		$question_id_to_remove      = $question_data['question_id'];
 		$quiz_id_to_be_removed_from = $question_data['quiz_id'];
 
+		if ( ! $this->user_can_edit_quiz( $quiz_id_to_be_removed_from ) ) {
+			wp_die( '' );
+		}
+
 		if ( 'multiple_question' !== get_post_type( $question_id_to_remove ) ) {
-			die( '' );
+			wp_die( '' );
 		}
 
 		$found_quiz = false;
@@ -3070,7 +3078,7 @@ class Sensei_Lesson {
 			wp_delete_post( $question_id_to_remove, true );
 		}
 
-		die( $found_quiz ? 'Deleted' : '' );
+		wp_die( $found_quiz ? 'Deleted' : '' );
 	}
 
 	public function get_question_category_limit() {
@@ -3206,7 +3214,7 @@ class Sensei_Lesson {
 		if ( ! wp_verify_nonce( $nonce, 'lesson_update_grade_type_nonce' )
 		|| ! current_user_can( 'edit_lessons' ) ) {
 
-			die( '' );
+			wp_die( '' );
 
 		}
 
@@ -3214,8 +3222,13 @@ class Sensei_Lesson {
 		$data      = $_POST['data'];
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
+
+		if ( ! $this->user_can_edit_quiz( $quiz_data['quiz_id'] ) ) {
+			wp_die( '' );
+		}
+
 		update_post_meta( $quiz_data['quiz_id'], '_quiz_grade_type', $quiz_data['quiz_grade_type'] );
-		die();
+		wp_die();
 	}
 
 	public function lesson_update_question_order() {
@@ -3262,15 +3275,20 @@ class Sensei_Lesson {
 		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_random_nonce' )
 			|| ! current_user_can( 'edit_lessons' ) ) {
 
-			die( '' );
+			wp_die( '' );
 
 		}
 		// Parse POST data
 		$data      = $_POST['data'];
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
+
+		if ( ! $this->user_can_edit_quiz( $quiz_data['quiz_id'] ) ) {
+			wp_die( '' );
+		}
+
 		update_post_meta( $quiz_data['quiz_id'], '_random_question_order', $quiz_data['random_question_order'] );
-		die();
+		wp_die();
 	}
 
 	/**

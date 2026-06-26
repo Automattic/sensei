@@ -158,6 +158,7 @@ class Sensei_Unit_Tests_Bootstrap {
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/trait-sensei-data-port-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/trait-sensei-export-task-tests.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/exceptions/class-sensei-wp-redirect-exception.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/exceptions/class-sensei-lesson-quiz-editor-test-abort.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-mailpoet-api-factory.php';
 
 		// Testing setup for event logging.
