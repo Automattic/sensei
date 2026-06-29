@@ -20,11 +20,11 @@ jobs:
             - name: Get Node.js version
               id: node-version
               run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v5
+            - uses: actions/cache@v5.0.5
               with:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-            - uses: actions/cache@v5
+            - uses: actions/cache@v5.0.5
               id: node-modules-cache
               with:
                   path: node_modules/
@@ -48,11 +48,11 @@ jobs:
             - name: Get Node.js version
               id: node-version
               run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v5
+            - uses: actions/cache@v5.0.5
               with:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-            - uses: actions/cache@v5
+            - uses: actions/cache@v5.0.5
               id: node-modules-cache
               with:
                   path: node_modules/
@@ -75,13 +75,13 @@ jobs:
             - name: Get Node.js version
               id: node-version
               run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v5
+            - uses: actions/cache@v5.0.5
               with:
                   path: ~/.npm
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-node-
-            - uses: actions/cache@v5
+            - uses: actions/cache@v5.0.5
               id: node-modules-cache
               with:
                   path: node_modules/
