@@ -2,6 +2,7 @@
 
 class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_Test_Redirect_Helpers;
 	use Sensei_HPPS_Helpers;
 
 	/**
@@ -712,6 +713,162 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertEquals( 160, $sum );
+	}
+
+	/**
+	 * A teacher who cannot edit a lesson should not be able to grade its quiz; the
+	 * submission handler should bail out and leave the student's existing quiz
+	 * status untouched.
+	 *
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 */
+	public function testAdminProcessGradingSubmission_WhenTeacherLacksLessonAccess_DoesNotGrade(): void {
+		$owner         = $this->get_user_by_role( 'teacher' );
+		$other_teacher = $this->get_user_by_role( 'teacher', '_b' );
+		$student       = $this->factory->user->create();
+
+		list( $quiz_id, $lesson_id ) = $this->createOwnedPassRequiredQuiz( $owner );
+
+		// Student has passed the owner's quiz.
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $student );
+		Sensei_Utils::update_lesson_status( $student, $lesson_id, 'passed' );
+
+		// A different teacher submits a grade for the quiz.
+		$this->login_as( $other_teacher );
+		$this->setGradingSubmissionGlobals( $quiz_id, $student );
+
+		// A blocked submission returns false without redirecting; a processed one
+		// redirects. Intercept redirects so a processed submission surfaces as a
+		// clean assertion failure.
+		$this->prevent_wp_redirect();
+		$result     = null;
+		$redirected = false;
+		try {
+			$result = Sensei()->grading->admin_process_grading_submission();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirected = true;
+		}
+
+		$this->assertFalse( $redirected, 'A teacher without lesson access should not reach the redirect.' );
+		$this->assertFalse( $result, 'A teacher without access to the lesson should not be able to grade it.' );
+		$this->assertEquals(
+			'passed',
+			Sensei()->quiz_progress_repository->get( $quiz_id, $student )->get_status(),
+			"The student's quiz status should be unchanged."
+		);
+	}
+
+	/**
+	 * The teacher who owns the course must still be able to grade the quiz.
+	 * With no question grades and a pass mark of 50, the student should be failed.
+	 *
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 */
+	public function testAdminProcessGradingSubmission_WhenOwningTeacher_GradesQuiz(): void {
+		$owner   = $this->get_user_by_role( 'teacher' );
+		$student = $this->factory->user->create();
+
+		list( $quiz_id, $lesson_id ) = $this->createOwnedPassRequiredQuiz( $owner );
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $student );
+		Sensei_Utils::update_lesson_status( $student, $lesson_id, 'passed' );
+
+		$this->login_as( $owner );
+		$this->setGradingSubmissionGlobals( $quiz_id, $student );
+
+		// The handler redirects on success; intercept it so we can assert on the result.
+		$this->prevent_wp_redirect();
+		$redirected = false;
+		try {
+			Sensei()->grading->admin_process_grading_submission();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirected = true;
+		}
+
+		$this->assertTrue( $redirected, 'A successful grading submission should redirect.' );
+		$this->assertEquals(
+			'failed',
+			Sensei()->quiz_progress_repository->get( $quiz_id, $student )->get_status(),
+			'The owning teacher should be able to change the quiz status.'
+		);
+	}
+
+	/**
+	 * When the submitted quiz has no associated lesson, the handler should bail out
+	 * rather than process the grade.
+	 *
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 */
+	public function testAdminProcessGradingSubmission_WhenQuizHasNoLesson_DoesNotGrade(): void {
+		$admin   = $this->get_user_by_role( 'administrator' );
+		$student = $this->factory->user->create();
+
+		// A quiz with no parent lesson.
+		$quiz_id = $this->factory->quiz->create(
+			array(
+				'meta_input' => array(
+					'_quiz_grade_type' => 'manual',
+					'_pass_required'   => 'on',
+					'_quiz_passmark'   => 50,
+				),
+			)
+		);
+
+		$this->login_as( $admin );
+		$this->setGradingSubmissionGlobals( $quiz_id, $student );
+
+		$this->prevent_wp_redirect();
+		$result     = null;
+		$redirected = false;
+		try {
+			$result = Sensei()->grading->admin_process_grading_submission();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirected = true;
+		}
+
+		$this->assertFalse( $redirected, 'A quiz with no lesson should not be processed.' );
+		$this->assertFalse( $result, 'The handler should bail out when the quiz has no lesson.' );
+	}
+
+	/**
+	 * Creates a manual, pass-required quiz authored by (and whose lesson is authored by)
+	 * the given teacher.
+	 *
+	 * @param int $teacher_id Teacher user ID who owns the lesson and quiz.
+	 * @return array{0:int,1:int} [ $quiz_id, $lesson_id ].
+	 */
+	private function createOwnedPassRequiredQuiz( $teacher_id ): array {
+		$lesson_id = $this->factory->lesson->create( array( 'post_author' => $teacher_id ) );
+		$quiz_id   = $this->factory->quiz->create(
+			array(
+				'post_parent' => $lesson_id,
+				'post_author' => $teacher_id,
+				'meta_input'  => array(
+					'_quiz_grade_type' => 'manual',
+					'_pass_required'   => 'on',
+					'_quiz_passmark'   => 50,
+				),
+			)
+		);
+
+		return array( $quiz_id, $lesson_id );
+	}
+
+	/**
+	 * Populates the request globals the grading submission handler reads from.
+	 *
+	 * @param int $quiz_id Quiz being graded.
+	 * @param int $user_id Student whose submission is graded.
+	 */
+	private function setGradingSubmissionGlobals( $quiz_id, $user_id ): void {
+		$_GET['quiz_id']  = (string) $quiz_id;
+		$_GET['user']     = (string) $user_id;
+		$_REQUEST['user'] = (string) $user_id;
+
+		$_POST['sensei_manual_grade']             = (string) $quiz_id;
+		$_POST['_wp_sensei_manual_grading_nonce'] = wp_create_nonce( 'sensei_manual_grading' );
+		$_POST['quiz_grade_total']                = '100';
+		$_POST['all_questions_graded']            = 'yes';
 	}
 
 	/**
