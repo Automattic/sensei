@@ -18,18 +18,11 @@ import {
 	parseQuestionBlocks,
 	syncQuestionBlocks,
 	normalizeAttributes,
+	normalizeServerStructure,
+	READ_ONLY_ATTRIBUTES,
 } from './data';
 
 export const QUIZ_STORE = 'sensei/quiz-structure';
-
-const READ_ONLY_ATTRIBUTES = [
-	'categories',
-	'shared',
-	'options.studentHelp',
-	'media',
-	'categoryName',
-	'lock',
-];
 
 /**
  * Syncronize this block with quiz data.
@@ -204,16 +197,5 @@ registerStructureStore( {
 	 *
 	 * @return {Object} The modified response.
 	 */
-	setServerStructure( structure ) {
-		if ( ! structure ) {
-			return {};
-		}
-
-		return {
-			...structure,
-			questions: structure.questions.map( ( question ) =>
-				omit( question, READ_ONLY_ATTRIBUTES )
-			),
-		};
-	},
+	setServerStructure: normalizeServerStructure,
 } );
