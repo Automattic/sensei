@@ -6,7 +6,7 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { forwardRef } from '@wordpress/element';
+import { Children, forwardRef } from '@wordpress/element';
 
 /**
  * Grid component.
@@ -18,7 +18,7 @@ import { forwardRef } from '@wordpress/element';
  */
 export const Grid = ( { as: Component = 'div', className, children } ) => (
 	<Component className={ classnames( className, 'sensei-home__grid' ) }>
-		{ children }
+		{ Children.toArray( children ) }
 	</Component>
 );
 
