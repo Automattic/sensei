@@ -10,6 +10,8 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 10
+    labels:
+      - "No Changelog"
     groups:
       actions-minor-patch:
         patterns:
