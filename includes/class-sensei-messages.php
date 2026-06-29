@@ -75,7 +75,7 @@ class Sensei_Messages {
 		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
 		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
 
-		// Hide private message replies from the core comments REST API unless the user can view the message.
+		// Hide private message replies from the core comments REST API unless the user can moderate comments.
 		add_filter( 'rest_comment_query', [ $this, 'exclude_message_comments_from_rest_query' ], 10, 2 );
 		add_filter( 'rest_pre_dispatch', [ $this, 'block_unauthorized_message_comment_rest_request' ], 10, 3 );
 		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
