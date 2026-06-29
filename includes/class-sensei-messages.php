@@ -656,10 +656,11 @@ class Sensei_Messages {
 	 * @access private
 	 * @since $$next-version$$
 	 *
-	 * @param array $prepared_args The WP_Comment_Query arguments.
+	 * @param array           $prepared_args The WP_Comment_Query arguments.
+	 * @param WP_REST_Request $request       The REST request.
 	 * @return array
 	 */
-	public function exclude_message_comments_from_rest_query( $prepared_args ) {
+	public function exclude_message_comments_from_rest_query( $prepared_args, $request ) {
 		if ( current_user_can( 'moderate_comments' ) ) {
 			return $prepared_args;
 		}
