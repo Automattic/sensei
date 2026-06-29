@@ -9,17 +9,6 @@ describe( 'normalizeServerStructure', () => {
 		expect( normalizeServerStructure( null ) ).toEqual( {} );
 	} );
 
-	it( 'keeps only the editor structure fields', () => {
-		const structure = {
-			lesson_status: 'publish',
-			lesson_title: 'Lesson',
-			options: { pass_required: true },
-			questions: [ { id: 1, title: 'Q1' } ],
-		};
-
-		expect( normalizeServerStructure( structure ) ).toEqual( structure );
-	} );
-
 	it( 'strips injected top-level fields (e.g. Polylang lang/translations)', () => {
 		const structure = {
 			lesson_status: 'publish',
@@ -54,6 +43,7 @@ describe( 'normalizeServerStructure', () => {
 					shared: true,
 					categories: [ 5 ],
 					lock: true,
+					options: { grade: 1, studentHelp: 'help text' },
 				},
 			],
 		};
@@ -62,6 +52,7 @@ describe( 'normalizeServerStructure', () => {
 			{
 				id: 1,
 				title: 'Q1',
+				options: { grade: 1 },
 			}
 		);
 	} );
