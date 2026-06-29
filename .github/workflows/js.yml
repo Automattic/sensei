@@ -13,7 +13,7 @@ jobs:
         name: JS Linting
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6.0.3
+            - uses: actions/checkout@v7.0.0
             - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
@@ -41,7 +41,7 @@ jobs:
         name: TypeScript Checking
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6.0.3
+            - uses: actions/checkout@v7.0.0
             - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
@@ -68,7 +68,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             # clone the repository
-            - uses: actions/checkout@v6.0.3
+            - uses: actions/checkout@v7.0.0
             - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'

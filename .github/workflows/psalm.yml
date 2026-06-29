@@ -20,7 +20,7 @@ jobs:
                 php: ${{ github.event_name == 'pull_request' && fromJSON('["8.2"]') || fromJSON('["7.4", "8.2"]') }}
         steps:
             - name: Checkout code
-              uses: actions/checkout@v6.0.3
+              uses: actions/checkout@v7.0.0
               with:
                   fetch-depth: 0
 
