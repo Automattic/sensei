@@ -21,7 +21,7 @@ jobs:
                 id: trunk-commit
                 run: |
                     echo "commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-            -   uses: actions/cache@v5
+            -   uses: actions/cache@v5.0.5
                 id: dist-cache
                 with:
                     path: ${{ github.workspace }}/assets/dist
@@ -32,7 +32,7 @@ jobs:
                 if: steps.dist-cache.outputs.cache-hit != 'true'
                 run: |
                     echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-            -   uses: actions/cache@v5
+            -   uses: actions/cache@v5.0.5
                 if: steps.dist-cache.outputs.cache-hit != 'true'
                 with:
                     path: ${{ steps.npm-cache.outputs.dir }}
@@ -66,7 +66,7 @@ jobs:
                 id: npm-cache
                 run: |
                     echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-            -   uses: actions/cache@v5
+            -   uses: actions/cache@v5.0.5
                 with:
                     path: ${{ steps.npm-cache.outputs.dir }}
                     key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
