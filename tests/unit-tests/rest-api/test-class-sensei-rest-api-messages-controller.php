@@ -331,10 +331,10 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 	/**
 	 * Helper method to create a sensei message.
 	 *
-	 * @param string  $title The messager title.
-	 * @param string  $sender The username of the sender.
-	 * @param integer $course The course id.
-	 * @param string  $receiver The username of the receiver.
+	 * @param string      $title    The message title.
+	 * @param string      $sender   The username of the sender.
+	 * @param int|null    $course   The course ID.
+	 * @param string|null $receiver The username of the receiver.
 	 *
 	 * @return int The message id
 	 */
