@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Apply private message permissions to replies returned by the core comments REST API.

@@ -74,6 +74,10 @@ class Sensei_Messages {
 		add_action( 'pre_get_posts', array( $this, 'only_show_messages_to_owner' ) );
 		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
 		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
+
+		// Hide private message replies from the core comments REST API unless the user can view the message.
+		add_filter( 'rest_comment_query', [ $this, 'exclude_message_comments_from_rest_query' ], 10, 2 );
+		add_filter( 'rest_pre_dispatch', [ $this, 'block_unauthorized_message_comment_rest_request' ], 10, 3 );
 		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
 		add_action( 'comment_form', [ $this, 'add_nonce_to_comment_form' ] );
 
@@ -632,6 +636,103 @@ class Sensei_Messages {
 
 		// Return false if user is not allowed access
 		return false;
+	}
+
+	/**
+	 * Strip private message replies from the core comments REST collection for users who
+	 * cannot moderate comments.
+	 *
+	 * Sensei's per-message permission lives in a `user_has_cap` filter, but WordPress core's
+	 * comments controller short-circuits its read check on the `publish` post status before
+	 * that capability is consulted. The message thread itself is rendered server-side, so the
+	 * generic comments endpoint can simply omit message replies instead.
+	 *
+	 * The exclusion is applied through the `post__not_in` query var (rather than a
+	 * `comments_clauses` SQL filter) so that it is part of WP_Comment_Query's cache key:
+	 * the `comment-queries` cache is keyed on the query vars and is not user-aware, so an
+	 * SQL-level filter could let a moderator's cached result be served to an unprivileged
+	 * visitor issuing the same query.
+	 *
+	 * @access private
+	 * @since $$next-version$$
+	 *
+	 * @param array $prepared_args The WP_Comment_Query arguments.
+	 * @return array
+	 */
+	public function exclude_message_comments_from_rest_query( $prepared_args ) {
+		if ( current_user_can( 'moderate_comments' ) ) {
+			return $prepared_args;
+		}
+
+		$message_ids = $this->get_message_ids_to_exclude( $prepared_args );
+
+		if ( ! empty( $message_ids ) ) {
+			$existing                      = empty( $prepared_args['post__not_in'] ) ? array() : (array) $prepared_args['post__not_in'];
+			$prepared_args['post__not_in'] = array_values( array_unique( array_merge( $existing, $message_ids ) ) );
+		}
+
+		return $prepared_args;
+	}
+
+	/**
+	 * Get the private message ids whose comments should be hidden from a comments REST query.
+	 *
+	 * When the query targets specific posts, only those need checking — no need to enumerate
+	 * every message. Only an unscoped query (no `post` argument) requires the full list.
+	 *
+	 * @param array $prepared_args The WP_Comment_Query arguments.
+	 * @return int[]
+	 */
+	private function get_message_ids_to_exclude( $prepared_args ) {
+		$query_args = array(
+			'post_type'      => 'sensei_message',
+			'post_status'    => 'any',
+			'fields'         => 'ids',
+			'posts_per_page' => -1,
+			'no_found_rows'  => true,
+		);
+
+		// When the query targets specific posts, only those can appear in the result, so limit
+		// the lookup to them instead of listing every message.
+		if ( ! empty( $prepared_args['post__in'] ) ) {
+			$query_args['post__in'] = array_map( 'intval', (array) $prepared_args['post__in'] );
+		}
+
+		return array_map( 'intval', get_posts( $query_args ) );
+	}
+
+	/**
+	 * Deny direct reads of a private message reply (`/wp/v2/comments/<id>`) for users who
+	 * cannot moderate comments.
+	 *
+	 * @access private
+	 * @since $$next-version$$
+	 *
+	 * @param mixed           $result  Response to replace the requested version with. Null by default.
+	 * @param WP_REST_Server  $server  Server instance.
+	 * @param WP_REST_Request $request Request used to generate the response.
+	 * @return mixed
+	 */
+	public function block_unauthorized_message_comment_rest_request( $result, $server, $request ) {
+		if ( 'GET' !== $request->get_method() || ! preg_match( '#^/wp/v2/comments/(\d+)$#', $request->get_route(), $matches ) ) {
+			return $result;
+		}
+
+		if ( null !== $result || current_user_can( 'moderate_comments' ) ) {
+			return $result;
+		}
+
+		$comment = get_comment( (int) $matches[1] );
+
+		if ( ! $comment || get_post_type( $comment->comment_post_ID ) !== $this->post_type ) {
+			return $result;
+		}
+
+		return new WP_Error(
+			'rest_cannot_read',
+			__( 'Sorry, you are not allowed to read this comment.', 'sensei-lms' ),
+			array( 'status' => rest_authorization_required_code() )
+		);
 	}
 
 	/**
