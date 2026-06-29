@@ -73,17 +73,6 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 
 		$this->create_sensei_message( 'Message title', 'login' );
 
-		// Test that a teacher can see all messages when sender=all.
-		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
-		wp_set_current_user( $teacher_id );
-
-		$request = new WP_REST_Request( 'GET', '/wp/v2/sensei-messages' );
-		$request->set_param( 'sender', 'all' );
-		$response = $this->server->dispatch( $request );
-
-		$this->assertCount( 1, $response->get_data(), 'A teacher does not see exactly one message.' );
-		$this->assertEquals( 'Message title', $response->get_data()[0]['displayed_title'] );
-
 		// Test that an administrator can see all messages when sender=all.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -93,13 +82,87 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 		$response = $this->server->dispatch( $request );
 
 		$this->assertCount( 1, $response->get_data(), 'An administrator does not see exactly one message.' );
-		$this->assertEquals( 'Message title', $response->get_data()[0]['displayed_title'] );
+		$this->assertEquals( 'Message title', $response->get_data()[0]['displayed_title'], 'An administrator should see the message.' );
 
 		// Test that an administrator does not see all messages when no sender argument is supplied.
 		$request  = new WP_REST_Request( 'GET', '/wp/v2/sensei-messages' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertCount( 0, $response->get_data(), 'Messages are returned for an administrator which didn\'t create any. ' );
+	}
+
+	/**
+	 * Tests that a teacher requesting all messages can only read the threads they participate
+	 * in (as sender or receiver), and never another teacher's private messages.
+	 *
+	 * @covers Sensei_REST_API_Messages_Controller::exclude_others_comments
+	 */
+	public function testTeacherCannotAccessOtherTeachersMessagesWithSenderAll() {
+
+		$this->factory->user->create(
+			array(
+				'role'       => 'subscriber',
+				'user_login' => 'student',
+			)
+		);
+
+		$teacher_a = $this->factory->user->create(
+			array(
+				'role'       => 'teacher',
+				'user_login' => 'teacher_a',
+			)
+		);
+		$this->factory->user->create(
+			array(
+				'role'       => 'teacher',
+				'user_login' => 'teacher_b',
+			)
+		);
+
+		// The student sent a message to each teacher.
+		$this->create_sensei_message( 'For teacher A', 'student', null, 'teacher_a' );
+		$this->create_sensei_message( 'For teacher B', 'student', null, 'teacher_b' );
+
+		wp_set_current_user( $teacher_a );
+
+		$request = new WP_REST_Request( 'GET', '/wp/v2/sensei-messages' );
+		$request->set_param( 'sender', 'all' );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertCount( 1, $data, 'Teacher A should only see the message addressed to them.' );
+		$this->assertEquals( 'For teacher A', $data[0]['displayed_title'], 'Teacher A must not see messages addressed to teacher B.' );
+	}
+
+	/**
+	 * Tests that a teacher requesting all messages sees threads they received as well as threads
+	 * they sent.
+	 *
+	 * @covers Sensei_REST_API_Messages_Controller::exclude_others_comments
+	 */
+	public function testTeacherSeesOwnSentAndReceivedMessagesWithSenderAll() {
+
+		$teacher_id = $this->factory->user->create(
+			array(
+				'role'       => 'teacher',
+				'user_login' => 'teacher',
+			)
+		);
+
+		// A message the teacher received, and one the teacher sent.
+		$this->create_sensei_message( 'Received message', 'student', null, 'teacher' );
+		$this->create_sensei_message( 'Sent message', 'teacher', null, 'other' );
+
+		wp_set_current_user( $teacher_id );
+
+		$request = new WP_REST_Request( 'GET', '/wp/v2/sensei-messages' );
+		$request->set_param( 'sender', 'all' );
+		$response = $this->server->dispatch( $request );
+		$titles   = wp_list_pluck( $response->get_data(), 'displayed_title' );
+
+		$this->assertCount( 2, $titles, 'The teacher should see both their received and sent messages.' );
+		$this->assertContains( 'Received message', $titles, 'The teacher should see the message they received.' );
+		$this->assertContains( 'Sent message', $titles, 'The teacher should see the message they sent.' );
 	}
 
 	/**
@@ -271,10 +334,11 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 	 * @param string  $title The messager title.
 	 * @param string  $sender The username of the sender.
 	 * @param integer $course The course id.
+	 * @param string  $receiver The username of the receiver.
 	 *
 	 * @return int The message id
 	 */
-	private function create_sensei_message( $title, $sender, $course = null ) {
+	private function create_sensei_message( $title, $sender, $course = null, $receiver = null ) {
 		$message_args = array(
 			'post_type'   => 'sensei_message',
 			'post_status' => 'publish',
@@ -283,6 +347,10 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 				'_sender' => $sender,
 			),
 		);
+
+		if ( null !== $receiver ) {
+			$message_args['meta_input']['_receiver'] = $receiver;
+		}
 
 		if ( null !== $course ) {
 			$message_args['meta_input']['_posttype'] = 'course';
