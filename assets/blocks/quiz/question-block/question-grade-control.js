@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useMemo } from '@wordpress/element';
+import { forwardRef, useMemo } from '@wordpress/element';
 import { _n } from '@wordpress/i18n';
 /**
  * External dependencies
@@ -17,10 +17,11 @@ import NumberControl from '../../editor-components/number-control';
  *
  * @param {Object} props NumberControl props.
  */
-export const QuestionGradeControl = ( props ) => {
+export const QuestionGradeControl = forwardRef( ( props, ref ) => {
 	const id = useMemo( () => uuid(), [] );
 	return (
 		<NumberControl
+			ref={ ref }
 			id={ id }
 			min={ 0 }
 			step={ 1 }
@@ -28,4 +29,4 @@ export const QuestionGradeControl = ( props ) => {
 			suffix={ _n( 'Point', 'Points', props.value, 'sensei-lms' ) }
 		/>
 	);
-};
+} );
