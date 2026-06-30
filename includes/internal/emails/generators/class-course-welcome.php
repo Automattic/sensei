@@ -66,6 +66,14 @@ class Course_Welcome extends Email_Generators_Abstract {
 			return;
 		}
 
+		// Safeguard: don't re-welcome students who already have history in the course.
+		if (
+			\Sensei_Utils::user_completed_course( $course_id, $student_id )
+			|| ! empty( \Sensei()->course->get_completed_lesson_ids( $course_id, $student_id ) )
+		) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$original_course_id = apply_filters( 'wpml_original_element_id', null, $course_id, 'post_course' );
 
