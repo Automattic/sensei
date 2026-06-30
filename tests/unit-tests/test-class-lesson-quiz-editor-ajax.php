@@ -56,20 +56,18 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 	private function dispatch( $action ) {
 		try {
 			$this->_handleAjax( $action );
-		} catch ( WPAjaxDieContinueException $e ) {
-			unset( $e );
-		} catch ( WPAjaxDieStopException $e ) {
+		} catch ( WPDieException $e ) {
 			unset( $e );
 		}
 	}
 
 	public function testUpdateGradeType_WhenNotLessonOwner_DoesNotChangeQuiz() {
-		$attacker          = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$non_owner         = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		$owner             = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		list( , $quiz_id ) = $this->create_quiz_for_owner( $owner );
 		update_post_meta( $quiz_id, '_quiz_grade_type', 'manual' );
 
-		wp_set_current_user( $attacker );
+		wp_set_current_user( $non_owner );
 		$_POST['lesson_update_grade_type_nonce'] = wp_create_nonce( 'lesson_update_grade_type_nonce' );
 		$_POST['data']                           = "quiz_id={$quiz_id}&quiz_grade_type=auto";
 
@@ -93,12 +91,12 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 	}
 
 	public function testUpdateQuestionOrderRandom_WhenNotLessonOwner_DoesNotChangeQuiz() {
-		$attacker          = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$non_owner         = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		$owner             = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		list( , $quiz_id ) = $this->create_quiz_for_owner( $owner );
 		update_post_meta( $quiz_id, '_random_question_order', 'no' );
 
-		wp_set_current_user( $attacker );
+		wp_set_current_user( $non_owner );
 		$_POST['lesson_update_question_order_random_nonce'] = wp_create_nonce( 'lesson_update_question_order_random_nonce' );
 		$_POST['data']                                      = "quiz_id={$quiz_id}&random_question_order=yes";
 
@@ -122,12 +120,12 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 	}
 
 	public function testAddMultipleQuestions_WhenNotLessonOwner_DoesNotAddQuestionGroup() {
-		$attacker          = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$non_owner         = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		$owner             = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		list( , $quiz_id ) = $this->create_quiz_for_owner( $owner );
 		$category          = $this->factory->term->create( array( 'taxonomy' => 'question-category' ) );
 
-		wp_set_current_user( $attacker );
+		wp_set_current_user( $non_owner );
 		$_POST['lesson_add_multiple_questions_nonce'] = wp_create_nonce( 'lesson_add_multiple_questions_nonce' );
 		$_POST['data']                                = "quiz_id={$quiz_id}&question_number=2&question_category={$category}&question_count=0";
 
@@ -151,12 +149,12 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 	}
 
 	public function testRemoveMultipleQuestions_WhenNotLessonOwner_DoesNotRemoveGroup() {
-		$attacker          = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$non_owner         = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		$owner             = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		list( , $quiz_id ) = $this->create_quiz_for_owner( $owner );
 		$group             = $this->create_question_group( $quiz_id, $owner );
 
-		wp_set_current_user( $attacker );
+		wp_set_current_user( $non_owner );
 		$_POST['lesson_remove_multiple_questions_nonce'] = wp_create_nonce( 'lesson_remove_multiple_questions_nonce' );
 		$_POST['data']                                   = "question_id={$group}&quiz_id={$quiz_id}";
 
