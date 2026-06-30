@@ -212,7 +212,9 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 				'post_type'   => 'multiple_question',
 				'post_status' => 'any',
 				'fields'      => 'ids',
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Tiny dataset in a test.
 				'meta_key'    => '_quiz_id',
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Tiny dataset in a test.
 				'meta_value'  => $quiz_id,
 			)
 		);
