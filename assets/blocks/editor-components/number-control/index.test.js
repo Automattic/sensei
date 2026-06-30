@@ -4,6 +4,11 @@
 import { render, fireEvent } from '@testing-library/react';
 
 /**
+ * WordPress dependencies
+ */
+import { createRef } from '@wordpress/element';
+
+/**
  * Internal dependencies
  */
 import NumberControl from './index';
@@ -50,6 +55,15 @@ describe( '<NumberControl />', () => {
 		} );
 
 		expect( onChangeMock ).toBeCalledWith( 20 );
+	} );
+
+	it( 'Should forward the ref to the input element', () => {
+		const ref = createRef();
+		const { queryByDisplayValue } = render(
+			<NumberControl value={ 10 } ref={ ref } />
+		);
+
+		expect( ref.current ).toBe( queryByDisplayValue( '10' ) );
 	} );
 
 	it( 'Should call the change event with null when resetting', () => {
