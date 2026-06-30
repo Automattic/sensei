@@ -3030,7 +3030,7 @@ class Sensei_Lesson {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in methods that generate `$return`.
 		echo $return;
 
-		die();
+		wp_die();
 	}
 
 	public function lesson_remove_multiple_questions() {

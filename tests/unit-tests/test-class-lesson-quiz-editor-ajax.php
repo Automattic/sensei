@@ -131,9 +131,9 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 		$_POST['lesson_add_multiple_questions_nonce'] = wp_create_nonce( 'lesson_add_multiple_questions_nonce' );
 		$_POST['data']                                = "quiz_id={$quiz_id}&question_number=2&question_category={$category}&question_count=0";
 
-		$created = $this->dispatch_capturing_group_creation( 'lesson_add_multiple_questions' );
+		$this->dispatch( 'lesson_add_multiple_questions' );
 
-		$this->assertFalse( $created, 'A non-owner must not create a question group on the quiz.' );
+		$this->assertCount( 0, $this->question_groups_for_quiz( $quiz_id ), 'A non-owner must not create a question group on the quiz.' );
 	}
 
 	public function testAddMultipleQuestions_WhenLessonOwner_AddsQuestionGroup() {
@@ -145,9 +145,9 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 		$_POST['lesson_add_multiple_questions_nonce'] = wp_create_nonce( 'lesson_add_multiple_questions_nonce' );
 		$_POST['data']                                = "quiz_id={$quiz_id}&question_number=2&question_category={$category}&question_count=0";
 
-		$created = $this->dispatch_capturing_group_creation( 'lesson_add_multiple_questions' );
+		$this->dispatch( 'lesson_add_multiple_questions' );
 
-		$this->assertTrue( $created, 'The lesson owner should create a question group on the quiz.' );
+		$this->assertCount( 1, $this->question_groups_for_quiz( $quiz_id ), 'The lesson owner should create a question group on the quiz.' );
 	}
 
 	public function testRemoveMultipleQuestions_WhenNotLessonOwner_DoesNotRemoveGroup() {
@@ -201,38 +201,20 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 	}
 
 	/**
-	 * Dispatch lesson_add_multiple_questions and report whether it reached
-	 * question-group creation. A save_post hook aborts the handler the moment a
-	 * multiple_question is inserted, so the test never runs the handler's
-	 * response rendering (which echoes markup and exits the process).
+	 * Question groups (multiple_question posts) attached to a quiz.
 	 *
-	 * @param string $action Action name.
-	 * @return bool Whether a multiple_question was created.
+	 * @param int $quiz_id Quiz id.
+	 * @return int[] Group post ids.
 	 */
-	private function dispatch_capturing_group_creation( $action ) {
-		$created = false;
-		add_action(
-			'save_post_multiple_question',
-			function () use ( &$created ) {
-				$created = true;
-				throw new Sensei_Lesson_Quiz_Editor_Test_Abort();
-			},
-			1
+	private function question_groups_for_quiz( $quiz_id ) {
+		return get_posts(
+			array(
+				'post_type'   => 'multiple_question',
+				'post_status' => 'any',
+				'fields'      => 'ids',
+				'meta_key'    => '_quiz_id',
+				'meta_value'  => $quiz_id,
+			)
 		);
-
-		// Aborting mid-insert skips _handleAjax's own ob_get_clean(), so close
-		// any output buffer it left open to keep the buffer stack balanced.
-		$ob_level = ob_get_level();
-		try {
-			$this->dispatch( $action );
-		} catch ( Sensei_Lesson_Quiz_Editor_Test_Abort $e ) {
-			unset( $e );
-		} finally {
-			while ( ob_get_level() > $ob_level ) {
-				ob_end_clean();
-			}
-		}
-
-		return $created;
 	}
 }
