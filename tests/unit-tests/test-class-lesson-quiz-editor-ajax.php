@@ -14,6 +14,7 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
+		add_filter( 'pre_http_request', '__return_empty_array' );
 
 		// The handlers are only hooked under is_admin(), which was false when the
 		// Sensei_Lesson singleton was constructed at bootstrap. Register them so
@@ -25,6 +26,7 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 	}
 
 	public function tearDown(): void {
+		remove_filter( 'pre_http_request', '__return_empty_array' );
 		$this->factory->tearDown();
 		parent::tearDown();
 	}
