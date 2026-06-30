@@ -222,4 +222,71 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		remove_filter( 'sensei_email_send', $filter, 10 );
 		$factory->tearDown();
 	}
+
+	public function testWelcomeToCourseForStudent_WhenStudentAlreadyCompletedCourse_DoesNotSendEmail() {
+		/* Arrange. */
+		$factory    = new \Sensei_Factory();
+		$student_id = $factory->user->create( [ 'user_email' => 'completed@a.com' ] );
+		$course_id  = $factory->course->create();
+
+		\Sensei_Utils::update_course_status( $student_id, $course_id, 'complete' );
+
+		$email_repository = $this->createMock( Email_Repository::class );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
+
+		$generator = new Course_Welcome( $email_repository );
+
+		$actual_data = [];
+		$filter      = function ( $email, $options ) use ( &$actual_data ) {
+			$actual_data = [
+				'email'   => $email,
+				'options' => $options,
+			];
+		};
+		add_filter( 'sensei_email_send', $filter, 10, 2 );
+
+		/* Act. */
+		$generator->welcome_to_course_for_student( $student_id, $course_id );
+
+		/* Assert. */
+		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student who already completed the course.' );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_email_send', $filter, 10 );
+		$factory->tearDown();
+	}
+
+	public function testWelcomeToCourseForStudent_WhenStudentAlreadyCompletedLessonInCourse_DoesNotSendEmail() {
+		/* Arrange. */
+		$factory    = new \Sensei_Factory();
+		$student_id = $factory->user->create( [ 'user_email' => 'partway@a.com' ] );
+		$course_id  = $factory->course->create();
+		$lesson_id  = $factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+
+		\Sensei_Utils::update_lesson_status( $student_id, $lesson_id, 'complete' );
+
+		$email_repository = $this->createMock( Email_Repository::class );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
+
+		$generator = new Course_Welcome( $email_repository );
+
+		$actual_data = [];
+		$filter      = function ( $email, $options ) use ( &$actual_data ) {
+			$actual_data = [
+				'email'   => $email,
+				'options' => $options,
+			];
+		};
+		add_filter( 'sensei_email_send', $filter, 10, 2 );
+
+		/* Act. */
+		$generator->welcome_to_course_for_student( $student_id, $course_id );
+
+		/* Assert. */
+		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student with existing lesson progress in the course.' );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_email_send', $filter, 10 );
+		$factory->tearDown();
+	}
 }
