@@ -256,14 +256,14 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student who already completed the course.' );
 	}
 
-	public function testWelcomeToCourseForStudent_WhenStudentAlreadyCompletedLessonInCourse_DoesNotSendEmail() {
+	public function testWelcomeToCourseForStudent_WhenStudentAlreadyStartedLessonInCourse_DoesNotSendEmail() {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
 		$student_id = $factory->user->create( [ 'user_email' => 'partway@a.com' ] );
 		$course_id  = $factory->course->create();
 		$lesson_id  = $factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
 
-		\Sensei_Utils::update_lesson_status( $student_id, $lesson_id, 'complete' );
+		\Sensei_Utils::update_lesson_status( $student_id, $lesson_id, 'in-progress' );
 
 		$email_repository = $this->createMock( Email_Repository::class );
 		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
@@ -287,6 +287,6 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		$factory->tearDown();
 
 		/* Assert. */
-		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student with existing lesson progress in the course.' );
+		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student who already started a lesson in the course.' );
 	}
 }

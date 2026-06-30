@@ -69,7 +69,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 		// Safeguard: don't re-welcome students who already have history in the course.
 		if (
 			\Sensei_Utils::user_completed_course( $course_id, $student_id )
-			|| ! empty( \Sensei()->course->get_completed_lesson_ids( $course_id, $student_id ) )
+			|| \Sensei_Utils::user_started_lesson_count( $course_id, $student_id ) > 0
 		) {
 			return;
 		}
