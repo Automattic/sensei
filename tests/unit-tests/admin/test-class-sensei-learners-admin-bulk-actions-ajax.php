@@ -95,8 +95,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 
 		$response = json_decode( $this->_last_response );
 
-		$this->assertIsObject( $response );
-		$this->assertTrue( $response->success );
+		$this->assertIsObject( $response, 'The AJAX response should be a JSON object.' );
+		$this->assertTrue( $response->success, 'The request should succeed.' );
 		$this->assertEmpty( $response->data, 'Teacher A must not receive Teacher B courses.' );
 	}
 
@@ -135,13 +135,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 
 		$response = json_decode( $this->_last_response );
 
-		$this->assertIsObject( $response );
-		$this->assertTrue( $response->success );
+		$this->assertIsObject( $response, 'The AJAX response should be a JSON object.' );
+		$this->assertTrue( $response->success, 'The request should succeed.' );
 		// Five courses enrolled, first three are shown in the table, so two remain for the "More" call.
-		$this->assertCount( 2, $response->data );
+		$this->assertCount( 2, $response->data, 'Two courses should remain for the "More" call.' );
 
 		foreach ( $response->data as $item ) {
-			$this->assertStringContainsString( 'Teacher Own Course', $item );
+			$this->assertStringContainsString( 'Teacher Own Course', $item, 'Each returned course should belong to the teacher.' );
 		}
 	}
 
@@ -165,7 +165,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 
 		$response = json_decode( $this->_last_response );
 
-		$this->assertIsObject( $response );
+		$this->assertIsObject( $response, 'The AJAX response should be a JSON object.' );
 		$this->assertFalse( $response->success, 'A non-numeric user_id must not be queried.' );
 	}
 
@@ -217,10 +217,12 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 		}
 
 		$response = json_decode( $this->_last_response );
-		$body     = implode( "\n", $response->data );
 
-		$this->assertIsObject( $response );
-		$this->assertTrue( $response->success );
+		$this->assertIsObject( $response, 'The AJAX response should be a JSON object.' );
+		$this->assertTrue( $response->success, 'The request should succeed.' );
+
+		$body = implode( "\n", $response->data );
+
 		// Only Teacher A's two courses from the remainder; the visible three and the unmanageable remainder are excluded.
 		$this->assertCount( 2, $response->data, 'Only the manageable remaining courses should be returned.' );
 		$this->assertStringContainsString( 'Teacher A Remaining 1', $body, 'Manageable remaining course should be present.' );
