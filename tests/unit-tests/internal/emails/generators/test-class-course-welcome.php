@@ -248,12 +248,12 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$generator->welcome_to_course_for_student( $student_id, $course_id );
 
-		/* Assert. */
-		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student who already completed the course.' );
-
 		/* Cleanup. */
 		remove_filter( 'sensei_email_send', $filter, 10 );
 		$factory->tearDown();
+
+		/* Assert. */
+		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student who already completed the course.' );
 	}
 
 	public function testWelcomeToCourseForStudent_WhenStudentAlreadyCompletedLessonInCourse_DoesNotSendEmail() {
@@ -282,11 +282,11 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$generator->welcome_to_course_for_student( $student_id, $course_id );
 
-		/* Assert. */
-		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student with existing lesson progress in the course.' );
-
 		/* Cleanup. */
 		remove_filter( 'sensei_email_send', $filter, 10 );
 		$factory->tearDown();
+
+		/* Assert. */
+		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student with existing lesson progress in the course.' );
 	}
 }
