@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Add object-level authorization to the legacy quiz editor AJAX handlers so teachers can no longer modify another teacher's quiz.
+Check quiz ownership in the legacy quiz-editor actions before applying changes.
