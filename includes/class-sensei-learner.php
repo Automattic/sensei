@@ -804,15 +804,22 @@ class Sensei_Learner {
 		$base_query_args = [ 'posts_per_page' => -1 ];
 		$courses_query   = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args );
 
+		// Restrict to courses the current user can manage before dropping the three shown in the
+		// table, so the "load more" results line up with the visible (teacher-scoped) list.
+		$manageable_courses = array_values(
+			array_filter(
+				$courses_query->posts,
+				static function ( $course ) {
+					return Sensei_Abilities::can_manage_grades( array( 'course' => $course->ID ) );
+				}
+			)
+		);
+
 		// We only want to show courses after the third one in the UI.
-		$courses = array_slice( $courses_query->posts, 3 );
+		$courses = array_slice( $manageable_courses, 3 );
 
 		$html_items = [];
 		foreach ( $courses as $course ) {
-			if ( ! Sensei_Abilities::can_manage_grades( array( 'course' => $course->ID ) ) ) {
-				continue;
-			}
-
 			$html_items[] = '<a href="' . esc_url( $controller->get_learner_management_course_url( $course->ID ) ) .
 							'" class="sensei-students__enrolled-course" data-course-id="' . intval( $course->ID ) . '">' .
 							esc_html( $course->post_title ) .
