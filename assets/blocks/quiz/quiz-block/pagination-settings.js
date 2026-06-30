@@ -9,6 +9,7 @@ import {
 	ToolbarItem,
 	ToolbarGroup,
 } from '@wordpress/components';
+import { forwardRef } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
 
 /**
@@ -44,32 +45,35 @@ const onDropdownChange = ( updatePagination ) => ( value ) => {
  * @param {Object}   props.settings         Pagination settings object.
  * @param {Function} props.updatePagination Update pagination options function.
  */
-const QuestionsControl = ( { settings, updatePagination, ...props } ) => {
-	const { paginationNumber } = settings;
+const QuestionsControl = forwardRef(
+	( { settings, updatePagination, ...props }, ref ) => {
+		const { paginationNumber } = settings;
 
-	return (
-		<>
-			<NumberControl
-				label={ __( 'Number of Questions', 'sensei-lms' ) }
-				min={ 1 }
-				step={ 1 }
-				hideLabelFromVision
-				suffix={ _n(
-					'question',
-					'questions',
-					paginationNumber,
-					'sensei-lms'
-				) }
-				value={ paginationNumber }
-				onChange={ ( value ) =>
-					updatePagination( { paginationNumber: value } )
-				}
-				{ ...props }
-			/>
-			<span>{ __( 'per page', 'sensei-lms' ) }</span>
-		</>
-	);
-};
+		return (
+			<>
+				<NumberControl
+					ref={ ref }
+					label={ __( 'Number of Questions', 'sensei-lms' ) }
+					min={ 1 }
+					step={ 1 }
+					hideLabelFromVision
+					suffix={ _n(
+						'question',
+						'questions',
+						paginationNumber,
+						'sensei-lms'
+					) }
+					value={ paginationNumber }
+					onChange={ ( value ) =>
+						updatePagination( { paginationNumber: value } )
+					}
+					{ ...props }
+				/>
+				<span>{ __( 'per page', 'sensei-lms' ) }</span>
+			</>
+		);
+	}
+);
 
 /**
  * Quiz sidebar settings.
