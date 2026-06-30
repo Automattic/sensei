@@ -806,14 +806,12 @@ class Sensei_Learner {
 
 		// Restrict to courses the current user can manage before dropping the three shown in the
 		// table, so the "load more" results line up with the visible (teacher-scoped) list.
-		$manageable_courses = array_values(
-			array_filter(
-				$courses_query->posts,
-				static function ( $course ) {
-					return Sensei_Abilities::can_manage_grades( array( 'course' => $course->ID ) );
-				}
-			)
-		);
+		$manageable_courses = array();
+		foreach ( $courses_query->posts as $course ) {
+			if ( $course instanceof WP_Post && Sensei_Abilities::can_manage_grades( array( 'course' => $course->ID ) ) ) {
+				$manageable_courses[] = $course;
+			}
+		}
 
 		// We only want to show courses after the third one in the UI.
 		$courses = array_slice( $manageable_courses, 3 );
