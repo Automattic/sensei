@@ -27,6 +27,12 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 
 	public function tearDown(): void {
 		remove_filter( 'pre_http_request', '__return_empty_array' );
+
+		remove_action( 'wp_ajax_lesson_update_grade_type', array( Sensei()->lesson, 'lesson_update_grade_type' ) );
+		remove_action( 'wp_ajax_lesson_update_question_order_random', array( Sensei()->lesson, 'lesson_update_question_order_random' ) );
+		remove_action( 'wp_ajax_lesson_add_multiple_questions', array( Sensei()->lesson, 'lesson_add_multiple_questions' ) );
+		remove_action( 'wp_ajax_lesson_remove_multiple_questions', array( Sensei()->lesson, 'lesson_remove_multiple_questions' ) );
+
 		$this->factory->tearDown();
 		parent::tearDown();
 	}
