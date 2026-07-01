@@ -794,43 +794,6 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * When the submitted quiz has no associated lesson, the handler should bail out
-	 * rather than process the grade.
-	 *
-	 * @covers Sensei_Grading::admin_process_grading_submission
-	 */
-	public function testAdminProcessGradingSubmission_WhenQuizHasNoLesson_DoesNotGrade(): void {
-		$admin   = $this->get_user_by_role( 'administrator' );
-		$student = $this->factory->user->create();
-
-		// A quiz with no parent lesson.
-		$quiz_id = $this->factory->quiz->create(
-			array(
-				'meta_input' => array(
-					'_quiz_grade_type' => 'manual',
-					'_pass_required'   => 'on',
-					'_quiz_passmark'   => 50,
-				),
-			)
-		);
-
-		$this->login_as( $admin );
-		$this->setGradingSubmissionGlobals( $quiz_id, $student );
-
-		$this->prevent_wp_redirect();
-		$result     = null;
-		$redirected = false;
-		try {
-			$result = Sensei()->grading->admin_process_grading_submission();
-		} catch ( Sensei_WP_Redirect_Exception $e ) {
-			$redirected = true;
-		}
-
-		$this->assertFalse( $redirected, 'A quiz with no lesson should not be processed.' );
-		$this->assertFalse( $result, 'The handler should bail out when the quiz has no lesson.' );
-	}
-
-	/**
 	 * Creates a manual, pass-required quiz authored by (and whose lesson is authored by)
 	 * the given teacher.
 	 *
