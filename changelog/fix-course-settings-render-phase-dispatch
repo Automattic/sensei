@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix React render-phase update warning when opening Course Settings in the course editor.

@@ -7,6 +7,7 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { BaseControl, Button } from '@wordpress/components';
+import { forwardRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -24,62 +25,68 @@ import { __ } from '@wordpress/i18n';
  * @param {string}   props.suffix              Input suffix.
  * @param {boolean}  props.hideLabelFromVision Hides label.
  */
-const NumberControl = ( {
-	className,
-	id,
-	label,
-	value,
-	help,
-	allowReset = false,
-	resetLabel,
-	onChange,
-	suffix,
-	hideLabelFromVision,
-	...props
-} ) => {
-	const setValue = ( e ) => {
-		onChange( parseInt( e.target.value, 10 ) || props.min || 0 );
-	};
+const NumberControl = forwardRef(
+	(
+		{
+			className,
+			id,
+			label,
+			value,
+			help,
+			allowReset = false,
+			resetLabel,
+			onChange,
+			suffix,
+			hideLabelFromVision,
+			...props
+		},
+		ref
+	) => {
+		const setValue = ( e ) => {
+			onChange( parseInt( e.target.value, 10 ) || props.min || 0 );
+		};
 
-	return (
-		<BaseControl
-			id={ id }
-			label={ label }
-			help={ help }
-			hideLabelFromVision={ hideLabelFromVision }
-		>
-			<div className="sensei-number-control">
-				<div className="sensei-number-control__input-container">
-					<input
-						className={ classnames(
-							'sensei-number-control__input components-text-control__input',
-							className
+		return (
+			<BaseControl
+				id={ id }
+				label={ label }
+				help={ help }
+				hideLabelFromVision={ hideLabelFromVision }
+			>
+				<div className="sensei-number-control">
+					<div className="sensei-number-control__input-container">
+						<input
+							ref={ ref }
+							className={ classnames(
+								'sensei-number-control__input components-text-control__input',
+								className
+							) }
+							type="number"
+							id={ id }
+							onChange={ setValue }
+							value={ null === value ? '' : value }
+							{ ...props }
+						/>
+						{ suffix && (
+							<span className="sensei-number-control__input-suffix">
+								{ suffix }
+							</span>
 						) }
-						type="number"
-						id={ id }
-						onChange={ setValue }
-						value={ null === value ? '' : value }
-						{ ...props }
-					/>
-					{ suffix && (
-						<span className="sensei-number-control__input-suffix">
-							{ suffix }
-						</span>
+					</div>
+					{ allowReset && (
+						<Button
+							className="sensei-number-control__button"
+							isSmall
+							isSecondary
+							onClick={ () => onChange( null ) }
+						>
+							{ resetLabel || __( 'Reset', 'sensei-lms' ) }
+						</Button>
 					) }
 				</div>
-				{ allowReset && (
-					<Button
-						className="sensei-number-control__button"
-						isSmall
-						isSecondary
-						onClick={ () => onChange( null ) }
-					>
-						{ resetLabel || __( 'Reset', 'sensei-lms' ) }
-					</Button>
-				) }
-			</div>
-		</BaseControl>
-	);
-};
+			</BaseControl>
+		);
+	}
+);
 
 export default NumberControl;
