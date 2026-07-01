@@ -760,7 +760,6 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 	/**
 	 * The teacher who owns the course must still be able to grade the quiz.
-	 * With no question grades and a pass mark of 50, the student should be failed.
 	 *
 	 * @covers Sensei_Grading::admin_process_grading_submission
 	 */
@@ -768,12 +767,17 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$owner   = $this->get_user_by_role( 'teacher' );
 		$student = $this->factory->user->create();
 
+		// The quiz has a pass mark of 50 and requires a passing grade.
 		list( $quiz_id, $lesson_id ) = $this->createOwnedPassRequiredQuiz( $owner );
 
+		// The student starts out passing.
 		Sensei_Utils::sensei_start_lesson( $lesson_id, $student );
 		Sensei_Utils::update_lesson_status( $student, $lesson_id, 'passed' );
 
 		$this->login_as( $owner );
+
+		// Submit the grading with no per-question grades, so the quiz is graded 0
+		// against the pass mark of 50 and the student should end up failed.
 		$this->setGradingSubmissionGlobals( $quiz_id, $student );
 
 		// The handler redirects on success; intercept it so we can assert on the result.
@@ -789,7 +793,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$this->assertEquals(
 			'failed',
 			Sensei()->quiz_progress_repository->get( $quiz_id, $student )->get_status(),
-			'The owning teacher should be able to change the quiz status.'
+			'The owning teacher should be able to change the quiz status from passed to failed.'
 		);
 	}
 
