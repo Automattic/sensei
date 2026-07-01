@@ -82,6 +82,9 @@ export const PostTokenField = ( {
 		} );
 		if ( debouncedInput ) {
 			params.set( 'search', debouncedInput );
+			params.append( 'search_columns[]', 'post_title' );
+			// WP core rejects `orderby=relevance` without a `search`.
+			params.set( 'orderby', 'relevance' );
 		}
 
 		apiFetch( {
