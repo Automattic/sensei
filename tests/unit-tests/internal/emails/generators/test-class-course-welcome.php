@@ -289,4 +289,89 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student who already started a lesson in the course.' );
 	}
+
+	public function testWelcomeToCourseForStudent_WhenWelcomeAlreadyMarkedSent_DoesNotSendEmail() {
+		/* Arrange. */
+		$factory    = new \Sensei_Factory();
+		$student_id = $factory->user->create( array( 'user_email' => 'already-sent@a.com' ) );
+		$course_id  = $factory->course->create();
+
+		update_user_meta( $student_id, Course_Welcome::get_welcome_sent_meta_key( $course_id ), '2026-01-01 00:00:00' );
+
+		$email_repository = $this->createMock( Email_Repository::class );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) array( 'post_status' => 'publish' ) ) );
+
+		$generator = new Course_Welcome( $email_repository );
+
+		$actual_data = array();
+		$filter      = function ( $email, $options ) use ( &$actual_data ) {
+			$actual_data = array(
+				'email'   => $email,
+				'options' => $options,
+			);
+		};
+		add_filter( 'sensei_email_send', $filter, 10, 2 );
+
+		/* Act. */
+		$generator->welcome_to_course_for_student( $student_id, $course_id );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_email_send', $filter, 10 );
+		$factory->tearDown();
+
+		/* Assert. */
+		self::assertSame( array(), $actual_data, 'Welcome email should not be sent when it has already been marked as sent for the course.' );
+	}
+
+	public function testWelcomeToCourseForStudent_WhenEmailSent_MarksWelcomeAsSent() {
+		/* Arrange. */
+		$factory    = new \Sensei_Factory();
+		$student_id = $factory->user->create( array( 'user_email' => 'marks-flag@a.com' ) );
+		$course_id  = $factory->course->create();
+
+		$email_repository = $this->createMock( Email_Repository::class );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) array( 'post_status' => 'publish' ) ) );
+
+		$generator = new Course_Welcome( $email_repository );
+
+		/* Act. */
+		$generator->welcome_to_course_for_student( $student_id, $course_id );
+
+		/* Assert. */
+		$flag = get_user_meta( $student_id, Course_Welcome::get_welcome_sent_meta_key( $course_id ), true );
+		self::assertNotEmpty( $flag, 'The welcome email sent flag should be set after the email is sent.' );
+
+		/* Cleanup. */
+		$factory->tearDown();
+	}
+
+	public function testWelcomeToCourseForStudent_WhenCalledTwice_SendsEmailOnlyOnce() {
+		/* Arrange. */
+		$factory    = new \Sensei_Factory();
+		$student_id = $factory->user->create( array( 'user_email' => 'once@a.com' ) );
+		$course_id  = $factory->course->create();
+
+		$email_repository = $this->createMock( Email_Repository::class );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) array( 'post_status' => 'publish' ) ) );
+
+		$generator = new Course_Welcome( $email_repository );
+
+		$send_count = 0;
+		$filter     = function ( $email, $options ) use ( &$send_count ) {
+			$send_count++;
+		};
+		add_filter( 'sensei_email_send', $filter, 10, 2 );
+
+		/* Act. */
+		// Simulate the enrolment status changing more than once (e.g. enrol, unenrol, re-enrol).
+		$generator->welcome_to_course_for_student( $student_id, $course_id );
+		$generator->welcome_to_course_for_student( $student_id, $course_id );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_email_send', $filter, 10 );
+		$factory->tearDown();
+
+		/* Assert. */
+		self::assertSame( 1, $send_count, 'The welcome email should be sent only once even when the enrolment status changes repeatedly.' );
+	}
 }

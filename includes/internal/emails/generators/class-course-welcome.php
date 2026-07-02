@@ -34,6 +34,29 @@ class Course_Welcome extends Email_Generators_Abstract {
 	const USAGE_TRACKING_TYPE = 'learner-welcome-course';
 
 	/**
+	 * Prefix of the user meta key that flags the welcome email as already sent for a course.
+	 *
+	 * The course ID is appended to build the full key, e.g. `sensei_course_welcome_email_sent_123`.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string
+	 */
+	const META_PREFIX_WELCOME_SENT = 'sensei_course_welcome_email_sent_';
+
+	/**
+	 * Build the user meta key used to flag the welcome email as sent for a course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $course_id The course ID.
+	 * @return string The user meta key.
+	 */
+	public static function get_welcome_sent_meta_key( int $course_id ): string {
+		return self::META_PREFIX_WELCOME_SENT . $course_id;
+	}
+
+	/**
 	 * Initialize the email hooks.
 	 *
 	 * @since 4.12.0
@@ -63,6 +86,11 @@ class Course_Welcome extends Email_Generators_Abstract {
 
 		$course = get_post( $course_id );
 		if ( ! $course || 'publish' !== $course->post_status ) {
+			return;
+		}
+
+		// Never send the welcome email to the same student for the same course more than once.
+		if ( $this->has_welcome_email_been_sent( $student_id, $course_id ) ) {
 			return;
 		}
 
@@ -101,5 +129,32 @@ class Course_Welcome extends Email_Generators_Abstract {
 				],
 			]
 		);
+
+		$this->mark_welcome_email_sent( $student_id, $course_id );
+	}
+
+	/**
+	 * Check whether the welcome email has already been sent to a student for a course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $student_id The student ID.
+	 * @param int $course_id  The course ID.
+	 * @return bool Whether the welcome email has already been sent.
+	 */
+	private function has_welcome_email_been_sent( int $student_id, int $course_id ): bool {
+		return (bool) get_user_meta( $student_id, self::get_welcome_sent_meta_key( $course_id ), true );
+	}
+
+	/**
+	 * Flag the welcome email as sent to a student for a course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $student_id The student ID.
+	 * @param int $course_id  The course ID.
+	 */
+	private function mark_welcome_email_sent( int $student_id, int $course_id ): void {
+		update_user_meta( $student_id, self::get_welcome_sent_meta_key( $course_id ), gmdate( 'Y-m-d H:i:s' ) );
 	}
 }

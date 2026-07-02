@@ -544,6 +544,9 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			'_sensei_hide_menu_settings_notice',
 			'test_sensei_hide_menu_settings_notice',
 			'^sensei_hide_menu_settings_notice$',
+			'sensei_course_welcome_email_sent_',
+			'_sensei_course_welcome_email_sent_1',
+			'sensei_email_unsubscribed_',
 		);
 
 		$remove_meta_keys = array(
@@ -551,6 +554,9 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			'_module_progress_10000_10',
 			'_module_progress_8_1',
 			'sensei_hide_menu_settings_notice',
+			'sensei_course_welcome_email_sent_1',
+			'sensei_course_welcome_email_sent_10000',
+			'sensei_email_unsubscribed_course_welcome',
 		);
 
 		foreach ( array_merge( $keep_meta_keys, $remove_meta_keys ) as $meta_key ) {

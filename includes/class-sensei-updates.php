@@ -89,9 +89,24 @@ class Sensei_Updates {
 		$this->v4_12_create_default_emails();
 		$this->v4_19_2_update_legacy_quiz_data();
 		$this->v4_24_1_update_capabilities();
+		$this->v4_27_0_backfill_course_welcome_email_sent();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Enqueue job to backfill the course welcome email sent flag.
+	 *
+	 * @since $$next-version$$
+	 */
+	private function v4_27_0_backfill_course_welcome_email_sent() {
+		// Only run this if we're upgrading from a version before 4.27.0.
+		if ( ! $this->is_upgrade || version_compare( $this->current_version, '4.27.0', '>=' ) ) {
+			return;
+		}
+
+		Sensei_Scheduler::instance()->schedule_job( new Sensei_Update_Backfill_Course_Welcome_Email_Sent() );
 	}
 
 	/**
