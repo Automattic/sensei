@@ -44,7 +44,7 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	/**
 	 * An enrolled student can mark the course as complete.
 	 */
-	public function testEnrolledStudentCompletesCourse() {
+	public function testSenseiCompleteCourse_StudentEnrolled_CompletesCourse() {
 		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
 		$course_id  = $this->factory->get_course_with_lessons(
 			array(
@@ -68,7 +68,7 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	/**
 	 * A student who is not enrolled cannot mark the course as complete.
 	 */
-	public function testNonEnrolledStudentCannotCompleteCourse() {
+	public function testSenseiCompleteCourse_StudentNotEnrolled_DoesNotCompleteCourse() {
 		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
 		$course_id  = $this->factory->get_course_with_lessons(
 			array(
