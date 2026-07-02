@@ -31,6 +31,10 @@ See `make help` for the full list of available dev commands.
 - **JS unit tests**: `npm run test-js`.
 - **End-to-end (Playwright)**: `npm run test:e2e` runs headless against the wp-env stack; `npm run test:e2e:debug` runs headed. Requires `make up` to be running first. The `pretest:e2e` hook runs ESLint + `tsc` before Playwright launches — failures there appear before any test output. See `tests/e2e-playwright/README.md` for details.
 - **Ad-hoc UI verification**: After `make up`, the dev site is at `http://localhost:8888` with admin credentials `admin` / `password` (wp-env defaults). For agent-driven verification, use the `/e2e-testing` skill (`.claude/skills/e2e-testing/SKILL.md`) — it scopes from `git diff`, lists Sensei's admin/frontend surfaces, and walks the Chrome DevTools MCP through the relevant flow.
+- **Unit test conventions**: New PHPUnit tests should follow these (source: [Unit Tests Conventions](https://senseip2.wordpress.com/2022/03/17/unit-tests-conventions/), internal P2):
+  - **Arrange-Act-Assert**: Separate each test into Arrange (set up preconditions and inputs), Act (call the method under test), and Assert (verify the result), divided by blank lines. Extra blank lines within Arrange are fine for readability; mock expectations may be set immediately before Act (there is no way to set them afterward).
+  - **Naming**: Name tests `testMethodName_Conditions_Expectation` — `MethodName` is the method under test in camelCase, `Conditions` describes the input/state (past-tense verb), `Expectation` is the expected result (present-tense verb, third person). Example: `testGetQuestionType_QuestionIdGiven_ReturnsMatchingType`.
+  - **One assertion per test**: A test should fail for exactly one reason. Prefer splitting into multiple tests over multiple assertions. When multiple assertions in one test are unavoidable, pass a message as the third argument to each (see the "Test assertions" convention below).
 
 ## Linting
 - **PHPCS**: Run `make lint` (the same diff-based check CI uses; requires a clean working tree). Whole-codebase scans: `./vendor/bin/phpcs`.
