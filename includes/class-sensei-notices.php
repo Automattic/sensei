@@ -82,8 +82,6 @@ class Sensei_Notices {
 	/**
 	 *  Add a notice to the array of notices for display at a later stage.
 	 *
-	 * @since $$next-version$$ Keyed notices that have already been printed are not added again.
-	 *
 	 * @param string $content Content.
 	 * @param string $type    Defaults to alert options( alert, tick , download , info   ).
 	 * @param string $key     Notices with the same key will be overwritten.
