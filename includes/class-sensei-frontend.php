@@ -817,6 +817,11 @@ class Sensei_Frontend {
 			// Handle submit data.
 			switch ( $sanitized_submit ) {
 				case __( 'Mark as Complete', 'sensei-lms' ):
+					// Only students enrolled in the course may mark it as complete.
+					if ( ! Sensei_Course::is_user_enrolled( $sanitized_course_id, $current_user->ID ) ) {
+						break;
+					}
+
 					$course_progress = Sensei()->course_progress_repository->get( $sanitized_course_id, $current_user->ID );
 					if ( null === $course_progress ) {
 						$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
