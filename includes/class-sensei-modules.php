@@ -705,7 +705,7 @@ class Sensei_Core_Modules {
 
 		// Return nothing if term is empty
 		if ( empty( $term ) ) {
-			die();
+			wp_die();
 		}
 
 		// Set a default if none is given
@@ -715,13 +715,19 @@ class Sensei_Core_Modules {
 		$found_courses = array( '' => $default );
 
 		// Fetch results
-		$args    = array(
+		$args = array(
 			'post_type'      => 'course',
 			'post_status'    => array( 'publish', 'draft', 'future', 'private' ),
 			'posts_per_page' => -1,
 			'orderby'        => 'title',
 			's'              => $term,
 		);
+
+		// Ensure that the user either has permission to edit other's courses or is the author of the course.
+		if ( ! current_user_can( 'edit_others_courses' ) ) {
+			$args['author'] = get_current_user_id();
+		}
+
 		$courses = get_posts( $args );
 
 		// Add results to array
@@ -733,7 +739,7 @@ class Sensei_Core_Modules {
 
 		// Encode and return results for processing & selection.
 		echo wp_json_encode( $found_courses );
-		die();
+		wp_die();
 	}
 
 	public function sensei_course_preview_titles( $title, $lesson_id ) {
