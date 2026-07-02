@@ -15,8 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Backfill the "course welcome email sent" flag for existing course progress.
  *
- * Marks every existing student/course relationship as already welcomed so that
- * enabling the welcome email later never re-welcomes existing students.
+ * Marks every existing student/course relationship as already welcomed so that,
+ * once the email is enabled, a later enrolment transition never re-welcomes
+ * existing students.
  *
  * The relationships are enumerated through the resolved course progress
  * repository, so the correct backend (comments or custom tables) is used
