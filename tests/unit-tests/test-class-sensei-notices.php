@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tests for Sensei_Notices class.
  *
