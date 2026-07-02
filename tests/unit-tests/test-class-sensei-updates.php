@@ -94,27 +94,27 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that the welcome email backfill is enqueued when upgrading from before 4.27.0.
+	 * Test that the welcome email backfill is enqueued when upgrading from before 4.26.2.
 	 */
-	public function testBackfillCourseWelcomeEmailSentEnqueuedWhenComingFromBefore4270() {
+	public function testBackfillCourseWelcomeEmailSentEnqueuedWhenComingFromBefore4262() {
 		$updates = new Sensei_Updates( '4.26.1', false, true );
 		$updates->run_updates();
 
 		$job            = new Sensei_Update_Backfill_Course_Welcome_Email_Sent();
 		$next_scheduled = Sensei_Scheduler_Shim::get_next_scheduled( $job );
-		$this->assertNotFalse( $next_scheduled, 'The backfill should be enqueued when upgrading from before 4.27.0.' );
+		$this->assertNotFalse( $next_scheduled, 'The backfill should be enqueued when upgrading from before 4.26.2.' );
 	}
 
 	/**
-	 * Test that the welcome email backfill is not enqueued when already on 4.27.0 or later.
+	 * Test that the welcome email backfill is not enqueued when already on 4.26.2 or later.
 	 */
-	public function testBackfillCourseWelcomeEmailSentNotEnqueuedWhenComingFrom4270() {
-		$updates = new Sensei_Updates( '4.27.0', false, true );
+	public function testBackfillCourseWelcomeEmailSentNotEnqueuedWhenComingFrom4262() {
+		$updates = new Sensei_Updates( '4.26.2', false, true );
 		$updates->run_updates();
 
 		$job            = new Sensei_Update_Backfill_Course_Welcome_Email_Sent();
 		$next_scheduled = Sensei_Scheduler_Shim::get_next_scheduled( $job );
-		$this->assertFalse( $next_scheduled, 'The backfill should not be enqueued when already on 4.27.0.' );
+		$this->assertFalse( $next_scheduled, 'The backfill should not be enqueued when already on 4.26.2.' );
 	}
 
 	/**

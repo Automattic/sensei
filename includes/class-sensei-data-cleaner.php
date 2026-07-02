@@ -255,7 +255,7 @@ class Sensei_Data_Cleaner {
 		'^%BLOG_PREFIX%sensei_course_enrolment_[0-9]+$',
 		'^%BLOG_PREFIX%sensei_enrolment_providers_state$',
 		'^%BLOG_PREFIX%sensei_enrolment_providers_journal$',
-		'^sensei_course_welcome_email_sent_[0-9]+$',
+		'^%BLOG_PREFIX%sensei_course_welcome_email_sent_[0-9]+$',
 		'^sensei_email_unsubscribed_.+$',
 	);
 

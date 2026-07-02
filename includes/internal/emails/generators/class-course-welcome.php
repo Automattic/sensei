@@ -36,7 +36,8 @@ class Course_Welcome extends Email_Generators_Abstract {
 	/**
 	 * Prefix of the user meta key that flags the welcome email as already sent for a course.
 	 *
-	 * The course ID is appended to build the full key, e.g. `sensei_course_welcome_email_sent_123`.
+	 * The blog prefix is prepended and the course ID appended to build the full key, e.g.
+	 * `wp_sensei_course_welcome_email_sent_123`, so the flag is scoped per site on multisite.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -47,13 +48,18 @@ class Course_Welcome extends Email_Generators_Abstract {
 	/**
 	 * Build the user meta key used to flag the welcome email as sent for a course.
 	 *
+	 * The key is blog-prefixed so it stays scoped to the current site on multisite,
+	 * matching how course enrolment results are stored.
+	 *
 	 * @since $$next-version$$
 	 *
 	 * @param int $course_id The course ID.
 	 * @return string The user meta key.
 	 */
 	public static function get_welcome_sent_meta_key( int $course_id ): string {
-		return self::META_PREFIX_WELCOME_SENT . $course_id;
+		global $wpdb;
+
+		return $wpdb->get_blog_prefix() . self::META_PREFIX_WELCOME_SENT . $course_id;
 	}
 
 	/**
