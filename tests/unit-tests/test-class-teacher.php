@@ -624,7 +624,7 @@ AND comments.comment_type = 'sensei_course_status'";
 		$this->reset_hpps_repository();
 	}
 
-	public function testLimitReportDownloadToTeacher_ScopesSenseiPostTypesToTeacher() {
+	public function testLimitReportDownloadToTeacher_WhenTeacher_ScopesSenseiPostTypesOnly() {
 		$this->login_as_teacher();
 		$teacher_id = get_current_user_id();
 		set_current_screen( 'sensei-lms_page_sensei_reports' ); // is_admin_teacher() requires an admin screen.
@@ -647,7 +647,7 @@ AND comments.comment_type = 'sensei_course_status'";
 		}
 	}
 
-	public function testLimitReportDownloadToTeacher_DoesNotScopeAdmins() {
+	public function testLimitReportDownloadToTeacher_WhenAdmin_DoesNotScope() {
 		$this->login_as_admin();
 		set_current_screen( 'sensei-lms_page_sensei_reports' );
 
@@ -659,7 +659,7 @@ AND comments.comment_type = 'sensei_course_status'";
 		$this->assertSame( '', $query->get( 'author' ), 'Admins should be able to export all content.' );
 	}
 
-	public function testLimitReportDownloadToTeacher_LimitsExportedLearnersToOwnCourses() {
+	public function testLimitReportDownloadToTeacher_WhenExportingAsTeacher_LimitsLearnersToOwnCourses() {
 		// A learner enrolled in the current teacher's course.
 		$this->login_as_teacher();
 		$teacher_id  = get_current_user_id();
@@ -677,8 +677,11 @@ AND comments.comment_type = 'sensei_course_status'";
 		$this->login_as_teacher();
 		set_current_screen( 'sensei-lms_page_sensei_reports' );
 		add_action( 'pre_get_posts', array( Sensei()->teacher, 'limit_report_download_to_teacher' ) );
-		$learner_ids = Sensei()->teacher->get_learner_ids_for_courses_with_edit_permission();
-		remove_action( 'pre_get_posts', array( Sensei()->teacher, 'limit_report_download_to_teacher' ) );
+		try {
+			$learner_ids = Sensei()->teacher->get_learner_ids_for_courses_with_edit_permission();
+		} finally {
+			remove_action( 'pre_get_posts', array( Sensei()->teacher, 'limit_report_download_to_teacher' ) );
+		}
 
 		$this->assertSame( array( $own_learner ), $learner_ids, 'Only learners from the teacher-owned course should be exported.' );
 	}

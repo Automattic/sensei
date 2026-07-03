@@ -710,7 +710,7 @@ class Sensei_Teacher {
 	 * enforces the same author scoping without depending on `get_current_screen()`.
 	 *
 	 * @since $$next-version$$
-	 * @access private
+	 * @access public
 	 *
 	 * @param WP_Query $query The query.
 	 */
