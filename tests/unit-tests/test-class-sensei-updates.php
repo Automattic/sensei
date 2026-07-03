@@ -96,7 +96,7 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	/**
 	 * Test that the welcome email backfill is enqueued when upgrading from before 4.26.2.
 	 */
-	public function testBackfillCourseWelcomeEmailSentEnqueuedWhenComingFromBefore4262() {
+	public function testRunUpdates_UpgradingFromVersionBelow4262_EnqueuesWelcomeBackfill() {
 		$updates = new Sensei_Updates( '4.26.1', false, true );
 		$updates->run_updates();
 
@@ -108,7 +108,7 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	/**
 	 * Test that the welcome email backfill is not enqueued when already on 4.26.2 or later.
 	 */
-	public function testBackfillCourseWelcomeEmailSentNotEnqueuedWhenComingFrom4262() {
+	public function testRunUpdates_AlreadyOnVersion4262_DoesNotEnqueueWelcomeBackfill() {
 		$updates = new Sensei_Updates( '4.26.2', false, true );
 		$updates->run_updates();
 
@@ -120,7 +120,7 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	/**
 	 * Test that the welcome email backfill is not enqueued on fresh installs.
 	 */
-	public function testBackfillCourseWelcomeEmailSentNotEnqueuedOnNewInstalls() {
+	public function testRunUpdates_NewInstall_DoesNotEnqueueWelcomeBackfill() {
 		$updates = new Sensei_Updates( null, true, false );
 		$updates->run_updates();
 

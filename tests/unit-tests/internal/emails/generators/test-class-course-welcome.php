@@ -223,7 +223,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
-	public function testWelcomeToCourseForStudent_WhenStudentAlreadyCompletedCourse_DoesNotSendEmail() {
+	public function testWelcomeToCourseForStudent_StudentAlreadyCompletedCourse_DoesNotSendEmail() {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
 		$student_id = $factory->user->create( [ 'user_email' => 'completed@a.com' ] );
@@ -256,7 +256,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student who already completed the course.' );
 	}
 
-	public function testWelcomeToCourseForStudent_WhenStudentAlreadyStartedLessonInCourse_DoesNotSendEmail() {
+	public function testWelcomeToCourseForStudent_StudentAlreadyStartedLessonInCourse_DoesNotSendEmail() {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
 		$student_id = $factory->user->create( [ 'user_email' => 'partway@a.com' ] );
@@ -290,7 +290,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		self::assertSame( [], $actual_data, 'Welcome email should not be sent to a student who already started a lesson in the course.' );
 	}
 
-	public function testWelcomeToCourseForStudent_WhenWelcomeAlreadyMarkedSent_DoesNotSendEmail() {
+	public function testWelcomeToCourseForStudent_WelcomeAlreadyMarkedSent_DoesNotSendEmail() {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
 		$student_id = $factory->user->create( array( 'user_email' => 'already-sent@a.com' ) );
@@ -323,7 +323,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		self::assertSame( array(), $actual_data, 'Welcome email should not be sent when it has already been marked as sent for the course.' );
 	}
 
-	public function testWelcomeToCourseForStudent_WhenEmailSent_MarksWelcomeAsSent() {
+	public function testWelcomeToCourseForStudent_EmailSent_MarksWelcomeAsSent() {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
 		$student_id = $factory->user->create( array( 'user_email' => 'marks-flag@a.com' ) );
@@ -345,7 +345,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
-	public function testWelcomeToCourseForStudent_WhenCalledTwice_SendsEmailOnlyOnce() {
+	public function testWelcomeToCourseForStudent_CalledTwice_SendsEmailOnlyOnce() {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
 		$student_id = $factory->user->create( array( 'user_email' => 'once@a.com' ) );

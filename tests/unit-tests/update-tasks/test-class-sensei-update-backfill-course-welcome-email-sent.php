@@ -23,7 +23,7 @@ class Sensei_Update_Backfill_Course_Welcome_Email_Sent_Test extends WP_UnitTestC
 		$this->factory = new Sensei_Factory();
 	}
 
-	public function testRunBatch_WhenCourseProgressExists_MarksWelcomeEmailSentForEveryRelationship() {
+	public function testRunBatch_CourseProgressExists_MarksWelcomeEmailSentForEveryRelationship() {
 		$this->maybe_enable_hpps_tables_repository();
 
 		/* Arrange. */
@@ -42,7 +42,7 @@ class Sensei_Update_Backfill_Course_Welcome_Email_Sent_Test extends WP_UnitTestC
 		}
 	}
 
-	public function testRunBatch_WhenFlagAlreadySet_DoesNotOverwriteExistingValue() {
+	public function testRunBatch_FlagAlreadySet_DoesNotOverwriteExistingValue() {
 		$this->maybe_enable_hpps_tables_repository();
 
 		/* Arrange. */
