@@ -515,6 +515,11 @@ class Sensei_Quiz {
 		$current_quiz_id = $post->ID;
 		$lesson_id       = $this->get_lesson_id( $current_quiz_id );
 
+		// Bail if quiz resets are disabled for this quiz.
+		if ( ! self::is_reset_allowed( $lesson_id ) ) {
+			return;
+		}
+
 		// reset all user data
 		$this->reset_user_lesson_data( $lesson_id, get_current_user_id() );
 
