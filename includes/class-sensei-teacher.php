@@ -703,6 +703,34 @@ class Sensei_Teacher {
 
 	}
 
+	/**
+	 * Scope course, lesson and question queries to the current teacher during the Reports CSV export.
+	 *
+	 * The screen-based restrictions don't apply during the `admin_init` download, so this
+	 * enforces the same author scoping without depending on `get_current_screen()`.
+	 *
+	 * @since $$next-version$$
+	 * @access public
+	 *
+	 * @param WP_Query $query The query.
+	 */
+	public function limit_report_download_to_teacher( $query ) {
+		if ( ! $this->is_admin_teacher() ) {
+			return;
+		}
+
+		$sensei_post_types  = array( 'course', 'lesson', 'question' );
+		$queried_post_types = (array) $query->get( 'post_type' );
+
+		// Bail unless the query targets a Sensei post type. Cast to an array so a
+		// multi-post-type query still gets scoped rather than silently slipping through.
+		if ( empty( array_intersect( $queried_post_types, $sensei_post_types ) ) ) {
+			return;
+		}
+
+		$query->set( 'author', get_current_user_id() );
+	}
+
 
 	/**
 	 * Sensei_Teacher::limit_teacher_edit_screen_post_types

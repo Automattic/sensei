@@ -40,6 +40,13 @@ class Sensei_Notices {
 	protected $has_printed;
 
 	/**
+	 * Keys of notices that have already been printed during this request.
+	 *
+	 * @var array $printed_keys
+	 */
+	protected $printed_keys;
+
+	/**
 	 * The HTML allowed for message boxes.
 	 *
 	 * @var array The HTML allowed for message boxes.
@@ -53,6 +60,7 @@ class Sensei_Notices {
 		// initialize the notices variable.
 		$this->notices      = array();
 		$this->has_printed  = false;
+		$this->printed_keys = array();
 		$this->allowed_html = array_merge(
 			wp_kses_allowed_html( 'post' ),
 			array(
@@ -103,6 +111,11 @@ class Sensei_Notices {
 			return;
 		}
 
+		// Do not re-add a keyed notice that has already been printed during this request.
+		if ( ! empty( $notice['key'] ) && isset( $this->printed_keys[ $notice['key'] ] ) ) {
+			return;
+		}
+
 		// append the new notice.
 		if ( empty( $notice['key'] ) ) {
 			$this->notices[] = $notice;
@@ -125,6 +138,10 @@ class Sensei_Notices {
 		$this->maybe_load_notices();
 		if ( ! empty( $this->notices ) ) {
 			foreach ( $this->notices  as  $notice ) {
+				if ( ! empty( $notice['key'] ) ) {
+					$this->printed_keys[ $notice['key'] ] = true;
+				}
+
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in generate_notice
 				echo $this->generate_notice( $notice['type'], $notice['content'] );
 			}
