@@ -678,6 +678,7 @@ AND comments.comment_type = 'sensei_course_status'";
 		set_current_screen( 'sensei-lms_page_sensei_reports' );
 		add_action( 'pre_get_posts', array( Sensei()->teacher, 'limit_report_download_to_teacher' ) );
 		$learner_ids = Sensei()->teacher->get_learner_ids_for_courses_with_edit_permission();
+		remove_action( 'pre_get_posts', array( Sensei()->teacher, 'limit_report_download_to_teacher' ) );
 
 		$this->assertSame( array( $own_learner ), $learner_ids, 'Only learners from the teacher-owned course should be exported.' );
 	}

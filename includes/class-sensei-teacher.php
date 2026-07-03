@@ -719,9 +719,12 @@ class Sensei_Teacher {
 			return;
 		}
 
-		$sensei_post_types = array( 'course', 'lesson', 'question' );
+		$sensei_post_types  = array( 'course', 'lesson', 'question' );
+		$queried_post_types = (array) $query->get( 'post_type' );
 
-		if ( ! in_array( $query->get( 'post_type' ), $sensei_post_types, true ) ) {
+		// Bail unless the query targets a Sensei post type. Cast to an array so a
+		// multi-post-type query still gets scoped rather than silently slipping through.
+		if ( empty( array_intersect( $queried_post_types, $sensei_post_types ) ) ) {
 			return;
 		}
 
