@@ -2506,7 +2506,7 @@ class Sensei_Quiz {
 			return $block->render_contact_teacher_block( [], $button );
 		}
 
-		$prev_next_urls  = sensei_get_prev_next_lessons( $lesson_id );
+		$prev_next_urls  = sensei_get_prev_next_lessons( (int) $lesson_id );
 		$next_lesson_url = $prev_next_urls['next']['url'] ?? null;
 
 		if ( $next_lesson_url ) {
