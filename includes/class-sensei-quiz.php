@@ -515,8 +515,8 @@ class Sensei_Quiz {
 		$current_quiz_id = $post->ID;
 		$lesson_id       = $this->get_lesson_id( $current_quiz_id );
 
-		// Bail if quiz resets are disabled for this quiz.
-		if ( ! self::is_reset_allowed( $lesson_id ) ) {
+		// Bail if the quiz has no lesson, or resets are disabled for this quiz.
+		if ( ! $lesson_id || ! self::is_reset_allowed( $lesson_id ) ) {
 			return;
 		}
 
