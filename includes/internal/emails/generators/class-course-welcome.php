@@ -136,6 +136,9 @@ class Course_Welcome extends Email_Generators_Abstract {
 			]
 		);
 
+		// Flag as sent regardless of delivery outcome. Sensei's email dispatch is a
+		// fire-and-forget action, so the result is not knowable here. We favour never
+		// re-welcoming an enrolled student over guaranteeing a single delivery.
 		$this->mark_welcome_email_sent( $student_id, $course_id );
 	}
 
@@ -149,7 +152,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 * @return bool Whether the welcome email has already been sent.
 	 */
 	private function has_welcome_email_been_sent( int $student_id, int $course_id ): bool {
-		return (bool) get_user_meta( $student_id, self::get_welcome_sent_meta_key( $course_id ), true );
+		return metadata_exists( 'user', $student_id, self::get_welcome_sent_meta_key( $course_id ) );
 	}
 
 	/**
