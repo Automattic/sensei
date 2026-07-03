@@ -98,6 +98,24 @@ trait Sensei_HPPS_Helpers {
 	}
 
 	/**
+	 * Switch to the custom tables repositories only when HPPS tables mode is active.
+	 */
+	private function maybe_enable_hpps_tables_repository(): void {
+		if ( self::is_hpps_tables_mode() ) {
+			$this->enable_hpps_tables_repository();
+		}
+	}
+
+	/**
+	 * Restore the original repositories only when HPPS tables mode is active.
+	 */
+	private function maybe_reset_hpps_repository(): void {
+		if ( self::is_hpps_tables_mode() ) {
+			$this->reset_hpps_repository();
+		}
+	}
+
+	/**
 	 * Check if HPPS tables mode is enabled via the environment variable.
 	 *
 	 * @return bool
