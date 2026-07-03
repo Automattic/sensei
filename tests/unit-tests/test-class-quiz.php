@@ -732,9 +732,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$ids = $this->setup_graded_quiz_attempt( false );
 		wp_set_current_user( $ids['user_id'] );
-
-		global $post;
-		$post = get_post( $ids['quiz_id'] );
+		$this->go_to( get_permalink( $ids['quiz_id'] ) );
 
 		$_POST['quiz_reset']                        = '';
 		$_POST['woothemes_sensei_reset_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' );
@@ -747,17 +745,13 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			Sensei()->quiz->get_user_answers( $ids['lesson_id'], $ids['user_id'] ),
 			'Quiz answers should be preserved when resets are disabled for the quiz.'
 		);
-
-		unset( $_POST['quiz_reset'], $_POST['woothemes_sensei_reset_quiz_nonce'] );
 	}
 
 	public function testResetButtonClickListener_WhenResetEnabled_ResetsLessonData() {
 		/* Arrange. */
 		$ids = $this->setup_graded_quiz_attempt( true );
 		wp_set_current_user( $ids['user_id'] );
-
-		global $post;
-		$post = get_post( $ids['quiz_id'] );
+		$this->go_to( get_permalink( $ids['quiz_id'] ) );
 
 		$_POST['quiz_reset']                        = '';
 		$_POST['woothemes_sensei_reset_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' );
@@ -778,8 +772,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			Sensei()->quiz->get_user_answers( $ids['lesson_id'], $ids['user_id'] ),
 			'Quiz answers should be cleared when resets are enabled for the quiz.'
 		);
-
-		unset( $_POST['quiz_reset'], $_POST['woothemes_sensei_reset_quiz_nonce'] );
 	}
 
 	/**
