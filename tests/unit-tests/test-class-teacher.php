@@ -637,14 +637,17 @@ AND comments.comment_type = 'sensei_course_status'";
 			'post'     => '',
 		);
 
-		foreach ( $expected_author as $post_type => $expected ) {
+		$actual_author = array();
+		foreach ( array_keys( $expected_author ) as $post_type ) {
 			$query = new WP_Query();
 			$query->set( 'post_type', $post_type );
 
 			Sensei()->teacher->limit_report_download_to_teacher( $query );
 
-			$this->assertSame( $expected, $query->get( 'author' ), "Author scoping for the {$post_type} query is incorrect." );
+			$actual_author[ $post_type ] = $query->get( 'author' );
 		}
+
+		$this->assertSame( $expected_author, $actual_author, 'Only Sensei post-type queries should be scoped to the teacher.' );
 	}
 
 	public function testLimitReportDownloadToTeacher_WhenAdmin_DoesNotScope() {
@@ -674,8 +677,10 @@ AND comments.comment_type = 'sensei_course_status'";
 		Sensei_Utils::start_user_on_course( $other_learner, $other_course );
 
 		// Apply the export restriction as the first teacher and read the scoped learners.
+		// Use a non-Reports admin screen so the screen-based restriction (course_analysis_teacher_access_limit)
+		// stays inactive, as it is during the admin_init export, and only the export hook under test can scope.
 		$this->login_as_teacher();
-		set_current_screen( 'sensei-lms_page_sensei_reports' );
+		set_current_screen( 'dashboard' );
 		add_action( 'pre_get_posts', array( Sensei()->teacher, 'limit_report_download_to_teacher' ) );
 		try {
 			$learner_ids = Sensei()->teacher->get_learner_ids_for_courses_with_edit_permission();
