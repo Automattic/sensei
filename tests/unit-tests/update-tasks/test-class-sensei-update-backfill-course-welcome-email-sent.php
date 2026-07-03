@@ -1,7 +1,6 @@
 <?php
 
 use Sensei\Internal\Emails\Generators\Course_Welcome;
-use Sensei\Internal\Installer\Schema;
 
 /**
  * Tests for Sensei_Update_Backfill_Course_Welcome_Email_Sent class.
@@ -25,11 +24,16 @@ class Sensei_Update_Backfill_Course_Welcome_Email_Sent_Test extends WP_UnitTestC
 	}
 
 	public function testRunBatch_WhenCourseProgressExists_MarksWelcomeEmailSentForEveryRelationship() {
+		$this->maybe_enable_hpps_tables_repository();
+
 		/* Arrange. */
 		$relationships = $this->create_course_progress( 3 );
 
 		/* Act. */
 		$this->run_job_to_completion( 2 );
+
+		/* Cleanup. */
+		$this->maybe_reset_hpps_repository();
 
 		/* Assert. */
 		foreach ( $relationships as $relationship ) {
@@ -39,6 +43,8 @@ class Sensei_Update_Backfill_Course_Welcome_Email_Sent_Test extends WP_UnitTestC
 	}
 
 	public function testRunBatch_WhenFlagAlreadySet_DoesNotOverwriteExistingValue() {
+		$this->maybe_enable_hpps_tables_repository();
+
 		/* Arrange. */
 		$relationships = $this->create_course_progress( 2 );
 		$sentinel      = '2020-01-01 00:00:00';
@@ -52,34 +58,15 @@ class Sensei_Update_Backfill_Course_Welcome_Email_Sent_Test extends WP_UnitTestC
 		/* Act. */
 		$this->run_job_to_completion( 2 );
 
+		/* Cleanup. */
+		$this->maybe_reset_hpps_repository();
+
 		/* Assert. */
 		$preserved = get_user_meta( $relationships[0]['user_id'], Course_Welcome::get_welcome_sent_meta_key( $relationships[0]['course_id'] ), true );
 		self::assertSame( $sentinel, $preserved, 'An already-set flag should not be overwritten by the backfill.' );
 
 		$backfilled = get_user_meta( $relationships[1]['user_id'], Course_Welcome::get_welcome_sent_meta_key( $relationships[1]['course_id'] ), true );
 		self::assertNotEmpty( $backfilled, 'A missing flag should be backfilled.' );
-	}
-
-	public function testRunBatch_WhenHppsTablesModeEnabled_MarksWelcomeEmailSentForEveryRelationship() {
-		/* Arrange. */
-		$schema = new Schema( Sensei()->feature_flags );
-		$schema->create_tables();
-
-		$this->enable_hpps_tables_repository();
-
-		$relationships = $this->create_course_progress( 3 );
-
-		/* Act. */
-		$this->run_job_to_completion( 2 );
-
-		/* Assert. */
-		foreach ( $relationships as $relationship ) {
-			$flag = get_user_meta( $relationship['user_id'], Course_Welcome::get_welcome_sent_meta_key( $relationship['course_id'] ), true );
-			self::assertNotEmpty( $flag, 'Every relationship should be flagged when reading from the custom tables backend.' );
-		}
-
-		/* Cleanup. */
-		$this->reset_hpps_repository();
 	}
 
 	/**
