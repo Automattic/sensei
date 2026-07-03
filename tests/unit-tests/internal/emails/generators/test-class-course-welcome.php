@@ -357,10 +357,10 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		$generator = new Course_Welcome( $email_repository );
 
 		$send_count = 0;
-		$filter     = function ( $email, $options ) use ( &$send_count ) {
-			$send_count++;
+		$filter     = function () use ( &$send_count ) {
+			++$send_count;
 		};
-		add_filter( 'sensei_email_send', $filter, 10, 2 );
+		add_filter( 'sensei_email_send', $filter );
 
 		/* Act. */
 		// Simulate the enrolment status changing more than once (e.g. enrol, unenrol, re-enrol).
