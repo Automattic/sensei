@@ -102,7 +102,7 @@ class Sensei_Updates {
 	 */
 	private function v4_26_2_backfill_course_welcome_email_sent() {
 		// Only run this if we're upgrading from a version before 4.26.2.
-		if ( ! $this->is_upgrade || version_compare( $this->current_version, '4.26.2', '>=' ) ) {
+		if ( ! $this->is_upgrade || null === $this->current_version || version_compare( $this->current_version, '4.26.2', '>=' ) ) {
 			return;
 		}
 
