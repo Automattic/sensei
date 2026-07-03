@@ -72,8 +72,8 @@ class Sensei_Update_Backfill_Course_Welcome_Email_Sent extends Sensei_Background
 			$meta_key = Course_Welcome::get_welcome_sent_meta_key( $course_id );
 
 			// Only add the flag for relationships that don't already have it, so
-			// re-runs never overwrite the original timestamp.
-			if ( ! get_user_meta( $user_id, $meta_key, true ) ) {
+			// re-runs never overwrite an existing value.
+			if ( ! metadata_exists( 'user', $user_id, $meta_key ) ) {
 				update_user_meta( $user_id, $meta_key, gmdate( 'Y-m-d H:i:s' ) );
 			}
 		}
