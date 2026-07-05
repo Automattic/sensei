@@ -721,6 +721,9 @@ class Sensei_Main {
 
 		Sensei_Course_Pre_Publish_Panel::instance()->init();
 
+		// Command Palette.
+		Sensei_Command_Palette::instance()->init();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class.

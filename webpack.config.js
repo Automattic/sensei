@@ -91,6 +91,7 @@ const files = [
 	'blocks/email-editor.js',
 	'css/email-notifications/email-editor-style.scss',
 	'css/email-notifications/email-style.scss',
+	'admin/command-palette/index.js',
 	'admin/course-pre-publish-panel/index.js',
 	'admin/editor-wizard/index.js',
 	'admin/editor-wizard/style.scss',
