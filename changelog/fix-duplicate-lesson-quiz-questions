@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Duplicate quiz question posts when duplicating a lesson, so the original and duplicate have fully independent quizzes.

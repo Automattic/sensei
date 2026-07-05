@@ -74,9 +74,9 @@ class Lesson_Quiz_Duplicator_Test extends \WP_UnitTestCase {
 
 	public function testDuplicate_QuestionsEditedInDuplicate_DoNotAffectOriginal(): void {
 		/* Arrange */
-		$old_lesson_id = $this->factory->get_lesson_with_quiz_and_questions();
-		$old_quiz_id   = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
-		$old_questions = Sensei()->quiz->get_questions( $old_quiz_id );
+		$old_lesson_id  = $this->factory->get_lesson_with_quiz_and_questions();
+		$old_quiz_id    = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
+		$old_questions  = Sensei()->quiz->get_questions( $old_quiz_id );
 		$first_question = reset( $old_questions );
 		$original_title = $first_question->post_title;
 
@@ -104,9 +104,9 @@ class Lesson_Quiz_Duplicator_Test extends \WP_UnitTestCase {
 
 	public function testDuplicate_QuestionMetaCopiedToNewQuestions(): void {
 		/* Arrange */
-		$old_lesson_id = $this->factory->get_lesson_with_quiz_and_questions();
-		$old_quiz_id   = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
-		$old_questions = Sensei()->quiz->get_questions( $old_quiz_id );
+		$old_lesson_id  = $this->factory->get_lesson_with_quiz_and_questions();
+		$old_quiz_id    = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
+		$old_questions  = Sensei()->quiz->get_questions( $old_quiz_id );
 		$first_question = reset( $old_questions );
 		$original_grade = get_post_meta( $first_question->ID, '_question_grade', true );
 
@@ -153,10 +153,10 @@ class Lesson_Quiz_Duplicator_Test extends \WP_UnitTestCase {
 		$duplicator->duplicate( $old_lesson_id, $new_lesson_id );
 
 		/* Assert */
-		$new_quiz_id      = Sensei()->lesson->lesson_quizzes( $new_lesson_id );
-		$new_lesson       = get_post( $new_lesson_id );
-		$has_old_quiz_id  = strpos( $new_lesson->post_content, '"id":' . $old_quiz_id ) !== false;
-		$has_new_quiz_id  = strpos( $new_lesson->post_content, '"id":' . $new_quiz_id ) !== false;
+		$new_quiz_id     = Sensei()->lesson->lesson_quizzes( $new_lesson_id );
+		$new_lesson      = get_post( $new_lesson_id );
+		$has_old_quiz_id = strpos( $new_lesson->post_content, '"id":' . $old_quiz_id ) !== false;
+		$has_new_quiz_id = strpos( $new_lesson->post_content, '"id":' . $new_quiz_id ) !== false;
 
 		$this->assertFalse( $has_old_quiz_id, 'Duplicated lesson content should not reference the old quiz ID.' );
 		$this->assertTrue( $has_new_quiz_id, 'Duplicated lesson content should reference the new quiz ID.' );

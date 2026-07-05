@@ -125,9 +125,13 @@ class Lesson_Quiz_Duplicator {
 			'/<!-- wp:sensei-lms\/quiz\s+(\{[^}]*\})\s+-->/',
 			function ( $matches ) use ( $old_quiz_id, $new_quiz_id ) {
 				$attrs = json_decode( $matches[1], true );
-				if ( isset( $attrs['id'] ) && (int) $attrs['id'] === (int) $old_quiz_id ) {
+				if ( isset( $attrs['id'] ) && (int) $attrs['id'] === $old_quiz_id ) {
 					$attrs['id'] = $new_quiz_id;
-					return '<!-- wp:sensei-lms/quiz ' . wp_json_encode( $attrs ) . ' -->';
+					$json        = wp_json_encode( $attrs );
+					if ( false === $json ) {
+						return $matches[0];
+					}
+					return '<!-- wp:sensei-lms/quiz ' . $json . ' -->';
 				}
 				return $matches[0];
 			},
@@ -142,7 +146,11 @@ class Lesson_Quiz_Duplicator {
 					$attrs = json_decode( $matches[1], true );
 					if ( isset( $attrs['id'] ) && (int) $attrs['id'] === (int) $old_id ) {
 						$attrs['id'] = $new_id;
-						return '<!-- wp:sensei-lms/quiz-question ' . wp_json_encode( $attrs ) . ' -->';
+						$json        = wp_json_encode( $attrs );
+						if ( false === $json ) {
+							return $matches[0];
+						}
+						return '<!-- wp:sensei-lms/quiz-question ' . $json . ' -->';
 					}
 					return $matches[0];
 				},
