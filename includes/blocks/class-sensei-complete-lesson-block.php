@@ -23,6 +23,7 @@ class Sensei_Complete_Lesson_Block {
 			'sensei-lms/button-complete-lesson',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 			]
 		);
 	}

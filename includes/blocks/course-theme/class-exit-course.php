@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
+use Sensei_Blocks;
 
 /**
  * Exit course link, to leave Learning Mode and open the course page.
@@ -32,6 +32,7 @@ class Exit_Course {
 			'sensei-lms/exit-course',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path

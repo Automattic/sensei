@@ -22,6 +22,7 @@ class Sensei_Block_Quiz_Progress {
 			'sensei-lms/quiz-progress',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 			]
 		);
 	}
@@ -66,5 +67,4 @@ class Sensei_Block_Quiz_Progress {
 
 		return \Sensei\Blocks\Shared\Progress_Bar::render( $attributes );
 	}
-
 }

@@ -2,7 +2,9 @@
   "name": "sensei-lms/quiz-category-question",
   "title": "Category Question",
   "description": "Pull questions from a question category.",
-  "parent": [ "sensei-lms/quiz" ],
+  "parent": [
+    "sensei-lms/quiz"
+  ],
   "category": "sensei-lms",
   "textdomain": "sensei-lms",
   "supports": {
@@ -16,15 +18,16 @@
       "type": "string",
       "default": "category-question"
     },
-		"categoryName": {
-			"type": "string"
-		},
+    "categoryName": {
+      "type": "string"
+    },
     "options": {
       "type": "object",
       "default": {
-				"category": null,
-				"number": 1
+        "category": null,
+        "number": 1
       }
     }
-  }
+  },
+  "apiVersion": 3
 }

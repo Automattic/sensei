@@ -22,6 +22,7 @@ class Sensei_Continue_Course_Block {
 			'sensei-lms/button-continue-course',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 			]
 		);
 	}
@@ -36,7 +37,7 @@ class Sensei_Continue_Course_Block {
 	 *
 	 * @return string Returns a Continue button that links to the course page.
 	 */
-	public function render( array $attributes, string $content ) : string {
+	public function render( array $attributes, string $content ): string {
 		$course_id = get_the_ID();
 		$user_id   = get_current_user_id();
 

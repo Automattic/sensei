@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
+use Sensei_Blocks;
 
 /**
  * A button to toggle the sidebar in mobile view.
@@ -36,6 +36,7 @@ class Sidebar_Toggle_Button {
 			'sensei-lms/sidebar-toggle-button',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-sidebar-mobile-menu',
 			],
 			$block_json_path
@@ -51,7 +52,7 @@ class Sidebar_Toggle_Button {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes = [] ) : string {
+	public function render( array $attributes = [] ): string {
 		$icon  = \Sensei()->assets->get_icon( 'menu' );
 		$label = __( 'Toggle course navigation', 'sensei-lms' );
 

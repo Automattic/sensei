@@ -12,9 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
-use \Sensei_Utils;
-use \Sensei_Frontend;
+use Sensei_Blocks;
+use Sensei_Utils;
+use Sensei_Frontend;
 
 /**
  * Class Lesson_Video is responsible for rendering the Lesson video template block.
@@ -34,6 +34,7 @@ class Lesson_Video {
 			'sensei-lms/course-theme-lesson-video',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path
@@ -54,7 +55,7 @@ class Lesson_Video {
 		if ( ! empty( $video ) ) {
 			add_filter(
 				'body_class',
-				function( $classes ) {
+				function ( $classes ) {
 					return array_merge( $classes, [ 'sensei-video-lesson' ] );
 				}
 			);

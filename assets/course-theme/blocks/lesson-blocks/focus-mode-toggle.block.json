@@ -4,5 +4,6 @@
   "supports": {
     "align": true,
     "color": true
-  }
+  },
+  "apiVersion": 3
 }

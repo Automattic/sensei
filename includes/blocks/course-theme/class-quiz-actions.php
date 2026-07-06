@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
+use Sensei_Blocks;
 use Sensei_Quiz;
 
 /**
@@ -34,6 +34,7 @@ class Quiz_Actions {
 			'sensei-lms/quiz-actions',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path
@@ -47,7 +48,7 @@ class Quiz_Actions {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render() : string {
+	public function render(): string {
 		if ( ! sensei_can_user_view_lesson() || 'quiz' !== get_post_type() ) {
 			return '';
 		}

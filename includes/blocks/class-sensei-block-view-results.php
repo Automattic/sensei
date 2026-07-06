@@ -31,6 +31,7 @@ class Sensei_Block_View_Results {
 			'sensei-lms/button-view-results',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 			]
 		);
 	}

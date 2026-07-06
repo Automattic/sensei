@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
+use Sensei_Blocks;
 
 /**
  * Display the title of the current course for the current lesson/quiz/module.
@@ -32,6 +32,7 @@ class Course_Title {
 			'sensei-lms/course-title',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path

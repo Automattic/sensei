@@ -13,5 +13,6 @@
       "fontSize": true,
       "lineHeight": true
     }
-  }
+  },
+  "apiVersion": 3
 }

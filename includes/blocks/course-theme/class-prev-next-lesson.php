@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
+use Sensei_Blocks;
 
 /**
  * Class Prev_Next_Lesson is responsible for rendering the '< Prev Lesson | Next Lesson >' blocks.
@@ -32,6 +32,7 @@ class Prev_Next_Lesson {
 			'sensei-lms/course-theme-prev-next-lesson',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path

@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
+use Sensei_Blocks;
 
 /**
  * Support for focus mode.
@@ -31,6 +31,7 @@ class Focus_Mode {
 			'sensei-lms/focus-mode-toggle',
 			[
 				'render_callback' => [ $this, 'render_focus_mode_toggle' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path

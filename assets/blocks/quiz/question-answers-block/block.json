@@ -1,15 +1,15 @@
 {
-	"name": "sensei-lms/question-answers",
-	"apiVersion": 2,
-	"title": "Answers",
-	"description": "Question Answers.",
-	"parent": [ "sensei-lms/quiz-question" ],
-	"category": "sensei-lms",
-	"textdomain": "sensei-lms",
-	"supports": {
-		"html": false
-	},
-	"attributes": {
-
-	}
+  "name": "sensei-lms/question-answers",
+  "apiVersion": 3,
+  "title": "Answers",
+  "description": "Question Answers.",
+  "parent": [
+    "sensei-lms/quiz-question"
+  ],
+  "category": "sensei-lms",
+  "textdomain": "sensei-lms",
+  "supports": {
+    "html": false
+  },
+  "attributes": {}
 }

@@ -16,12 +16,16 @@
   ],
   "supports": {
     "html": false,
-    "align": [ "wide", "full" ]
+    "align": [
+      "wide",
+      "full"
+    ]
   },
   "attributes": {
     "condition": {
       "type": "string",
       "default": "enrolled"
     }
-  }
+  },
+  "apiVersion": 3
 }

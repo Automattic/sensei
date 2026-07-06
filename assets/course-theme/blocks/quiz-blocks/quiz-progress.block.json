@@ -15,5 +15,6 @@
       "style": true,
       "width": true
     }
-  }
+  },
+  "apiVersion": 3
 }

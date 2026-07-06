@@ -48,7 +48,10 @@ class Sensei_Learner_Messages_Button_Block {
 	public function register_block() {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/button-learner-messages',
-			[ 'render_callback' => [ $this, 'render_learner_messages_block' ] ]
+			[
+				'render_callback' => [ $this, 'render_learner_messages_block' ],
+				'api_version'     => 3,
+			]
 		);
 	}
 

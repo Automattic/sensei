@@ -9,5 +9,6 @@
       "padding": true,
       "blockGap": true
     }
-  }
+  },
+  "apiVersion": 3
 }

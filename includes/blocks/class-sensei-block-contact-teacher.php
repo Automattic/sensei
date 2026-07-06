@@ -32,6 +32,7 @@ class Sensei_Block_Contact_Teacher {
 			'sensei-lms/button-contact-teacher',
 			[
 				'render_callback' => [ $this, 'render_contact_teacher_block' ],
+				'api_version'     => 3,
 			]
 		);
 	}

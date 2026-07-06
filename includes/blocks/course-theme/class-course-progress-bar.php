@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
+use Sensei_Blocks;
 
 /**
  * Class Course_Progress_Bar is responsible for rendering the '[==========----------]' block.
@@ -32,6 +32,7 @@ class Course_Progress_Bar {
 			'sensei-lms/course-theme-course-progress-bar',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path
@@ -45,7 +46,7 @@ class Course_Progress_Bar {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render() : string {
+	public function render(): string {
 		$course_id = \Sensei_Utils::get_current_course();
 		if ( ! $course_id ) {
 			return '';

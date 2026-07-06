@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
+use Sensei_Blocks;
 use Sensei_Lesson_Properties_Block;
 
 /**
@@ -33,6 +33,7 @@ class Lesson_Properties {
 			'sensei-lms/learning-mode-lesson-properties',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path
@@ -49,7 +50,7 @@ class Lesson_Properties {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes = [], string $content = '' ) : string {
+	public function render( array $attributes = [], string $content = '' ): string {
 		return Sensei_Lesson_Properties_Block::render_content( $attributes, $content );
 	}
 }

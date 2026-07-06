@@ -23,6 +23,7 @@ class Sensei_Next_Lesson_Block {
 			'sensei-lms/button-next-lesson',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 			]
 		);
 	}
@@ -37,7 +38,7 @@ class Sensei_Next_Lesson_Block {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes, string $content ) : string {
+	public function render( array $attributes, string $content ): string {
 		$lesson = get_post();
 
 		if ( empty( $lesson ) || ! Sensei_Utils::user_completed_lesson( $lesson->ID ) ) {

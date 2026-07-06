@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
+use Sensei_Blocks;
 
 /**
  * User interface block for Learning mode layout elements.
@@ -35,6 +35,7 @@ class Ui {
 				'style'           => 'sensei-learning-mode',
 				'editorStyle'     => 'sensei-learning-mode-editor',
 				'render_callback' => [ $this, 'render' ],
+				'api_version' => 3,
 				 */
 			],
 			$block_json_path

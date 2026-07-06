@@ -12,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
-use \Sensei_Course;
-use \Sensei_Lesson;
-use \Sensei_Utils;
+use Sensei_Blocks;
+use Sensei_Course;
+use Sensei_Lesson;
+use Sensei_Utils;
 
 /**
  * Class Lesson_Actions is responsible for rendering the Lesson actions block.
@@ -37,6 +37,7 @@ class Lesson_Actions {
 			'sensei-lms/course-theme-lesson-actions',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path
@@ -96,7 +97,6 @@ class Lesson_Actions {
 				'</button>' .
 			'</div>'
 		);
-
 	}
 
 	/**
@@ -118,7 +118,6 @@ class Lesson_Actions {
 		$icon  = \Sensei()->assets->get_icon( 'arrow-right' );
 
 		return ( "<a class='wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__next-lesson is-primary has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
-
 	}
 
 	/**

@@ -23,6 +23,7 @@ class Sensei_Reset_Lesson_Block {
 			'sensei-lms/button-reset-lesson',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 			]
 		);
 	}
@@ -37,7 +38,7 @@ class Sensei_Reset_Lesson_Block {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes, string $content ) : string {
+	public function render( array $attributes, string $content ): string {
 		$lesson = get_post();
 
 		if ( empty( $lesson ) ) {
@@ -67,7 +68,7 @@ class Sensei_Reset_Lesson_Block {
 	 *
 	 * @return string The HTML to render.
 	 */
-	private function render_with_form( array $attributes, string $content ) : string {
+	private function render_with_form( array $attributes, string $content ): string {
 		wp_enqueue_script( 'sensei-stop-double-submission' );
 		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
 		$permalink = esc_url( get_permalink() );

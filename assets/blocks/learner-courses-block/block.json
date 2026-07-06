@@ -30,5 +30,6 @@
         "progressBarHeight": 14
       }
     }
-  }
+  },
+  "apiVersion": 3
 }

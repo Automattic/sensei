@@ -1,4 +1,5 @@
 module.exports = {
+	root: true,
 	extends: [ 'plugin:@wordpress/eslint-plugin/recommended', 'prettier' ],
 	env: {
 		'jest/globals': true,

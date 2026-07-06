@@ -86,5 +86,6 @@
     "borderedSelected": {
       "type": "boolean"
     }
-  }
+  },
+  "apiVersion": 3
 }

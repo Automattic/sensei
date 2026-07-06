@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
+use Sensei_Blocks;
 
 /**
  * Class Quiz_Back_To_Lesson the back to lesson block in the quiz.
@@ -32,6 +32,7 @@ class Quiz_Back_To_Lesson {
 			'sensei-lms/quiz-back-to-lesson',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path
@@ -47,7 +48,7 @@ class Quiz_Back_To_Lesson {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes = [] ) : string {
+	public function render( array $attributes = [] ): string {
 		if ( get_post_type() !== 'quiz' ) {
 			return '';
 		}

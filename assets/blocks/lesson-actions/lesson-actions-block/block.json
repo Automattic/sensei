@@ -22,5 +22,6 @@
         "sensei-lms/button-reset-lesson": true
       }
     }
-  }
+  },
+  "apiVersion": 3
 }

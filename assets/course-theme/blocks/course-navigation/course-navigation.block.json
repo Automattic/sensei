@@ -1,6 +1,6 @@
 {
   "name": "sensei-lms/course-navigation",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "category": "theme",
   "supports": {
     "align": true,
@@ -14,18 +14,18 @@
       "blockGap": true
     },
     "typography": {
-		"fontSize": true,
-		"lineHeight": true,
-		"__experimentalFontFamily": true,
-		"__experimentalFontWeight": true,
-		"__experimentalFontStyle": true,
-		"__experimentalTextTransform": true,
-		"__experimentalTextDecoration": true,
-		"__experimentalLetterSpacing": true,
-		"__experimentalDefaultControls": {
-			"fontSize": true
-		}
-	},
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontWeight": true,
+      "__experimentalFontStyle": true,
+      "__experimentalTextTransform": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true
+      }
+    },
     "__experimentalBorder": {
       "color": true,
       "radius": true,

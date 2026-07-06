@@ -23,6 +23,7 @@ class Sensei_Take_Quiz_Block {
 			'sensei-lms/button-view-quiz',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'api_version'     => 3,
 			]
 		);
 	}
@@ -37,7 +38,7 @@ class Sensei_Take_Quiz_Block {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes, string $content ) : string {
+	public function render( array $attributes, string $content ): string {
 		$lesson_id = get_the_ID();
 
 		if ( empty( $lesson_id ) || ! sensei_can_user_view_lesson( $lesson_id ) ) {

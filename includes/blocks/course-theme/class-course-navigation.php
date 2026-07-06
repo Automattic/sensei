@@ -68,6 +68,7 @@ class Course_Navigation {
 			'sensei-lms/course-navigation',
 			[
 				'render_callback' => [ $this, 'render_course_navigation' ],
+				'api_version'     => 3,
 				'style'           => 'sensei-theme-blocks',
 				'script'          => 'sensei-blocks-frontend',
 			],

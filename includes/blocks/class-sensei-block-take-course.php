@@ -29,7 +29,13 @@ class Sensei_Block_Take_Course {
 	 * @access private
 	 */
 	public function register_block() {
-		Sensei_Blocks::register_sensei_block( 'sensei-lms/button-take-course', [ 'render_callback' => [ $this, 'render_take_course_block' ] ] );
+		Sensei_Blocks::register_sensei_block(
+			'sensei-lms/button-take-course',
+			[
+				'render_callback' => [ $this, 'render_take_course_block' ],
+				'api_version'     => 3,
+			]
+		);
 	}
 
 	/**
