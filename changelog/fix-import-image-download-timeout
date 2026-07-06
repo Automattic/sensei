@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed content import stalling permanently when CSVs reference many or large remote images, by reducing the default HTTP request timeout per image from 10s to 5s so slow downloads fail fast as per-row warnings rather than causing a PHP fatal that blocks batch progress.
