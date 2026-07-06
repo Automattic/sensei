@@ -164,7 +164,8 @@ class Sensei_Data_Port_Utilities {
 			);
 		}
 
-		$upload_result = wp_upload_bits( basename( $external_url ), null, wp_remote_retrieve_body( $response ) );
+		$filename      = basename( (string) wp_parse_url( $external_url, PHP_URL_PATH ) );
+		$upload_result = wp_upload_bits( $filename, null, wp_remote_retrieve_body( $response ) );
 
 		if ( ! empty( $upload_result['error'] ) ) {
 			return new WP_Error( 'sensei_data_port_storing_file_failure', $upload_result['error'] );
