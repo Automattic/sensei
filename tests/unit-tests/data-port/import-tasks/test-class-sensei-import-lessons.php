@@ -115,16 +115,25 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 	/**
 	 * Tests that a queued thumbnail whose source resolves is set as the post's featured image.
 	 */
-	public function testHandleThumbnail_ResolvableSource_SetsThumbnailMeta() {
+	public function testHandleAttachment_ResolvableSource_SetsAttachmentMeta() {
 		$attachment_id = $this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
 		$lesson_id     = $this->factory->lesson->create();
 
 		$job    = Sensei_Import_Job::create( 'test', 0 );
 		$task   = new Sensei_Import_Lessons( $job );
-		$method = new ReflectionMethod( $task, 'handle_thumbnail' );
+		$method = new ReflectionMethod( $task, 'handle_attachment' );
 		$method->setAccessible( true );
 
-		$method->invoke( $task, [ $lesson_id, 'localfilename.png', null, 1, 'lesson' ] );
+		$method->invoke(
+			$task,
+			[
+				'post_id'     => $lesson_id,
+				'source'      => 'localfilename.png',
+				'mime_types'  => null,
+				'line_number' => 1,
+				'model_key'   => 'lesson',
+			]
+		);
 
 		$this->assertEquals( $attachment_id, (int) get_post_meta( $lesson_id, '_thumbnail_id', true ) );
 	}
@@ -133,15 +142,24 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 	 * Tests that a queued thumbnail whose source cannot be resolved leaves the post without a
 	 * featured image instead of failing.
 	 */
-	public function testHandleThumbnail_UnresolvableSource_LeavesThumbnailUnset() {
+	public function testHandleAttachment_UnresolvableSource_LeavesAttachmentUnset() {
 		$lesson_id = $this->factory->lesson->create();
 
 		$job    = Sensei_Import_Job::create( 'test', 0 );
 		$task   = new Sensei_Import_Lessons( $job );
-		$method = new ReflectionMethod( $task, 'handle_thumbnail' );
+		$method = new ReflectionMethod( $task, 'handle_attachment' );
 		$method->setAccessible( true );
 
-		$method->invoke( $task, [ $lesson_id, 'does-not-exist-in-media-library.png', null, 1, 'lesson' ] );
+		$method->invoke(
+			$task,
+			[
+				'post_id'     => $lesson_id,
+				'source'      => 'does-not-exist-in-media-library.png',
+				'mime_types'  => null,
+				'line_number' => 1,
+				'model_key'   => 'lesson',
+			]
+		);
 
 		$this->assertEmpty( get_post_meta( $lesson_id, '_thumbnail_id', true ) );
 	}

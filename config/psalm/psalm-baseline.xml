@@ -3941,7 +3941,7 @@
     </RedundantConditionGivenDocblockType>
     <UndefinedMethod occurrences="3">
       <code>add_line_warning</code>
-      <code>add_thumbnail_task</code>
+      <code>add_attachment_task</code>
       <code>set_import_id</code>
     </UndefinedMethod>
     <UnsafeInstantiation occurrences="1">
@@ -3972,6 +3972,9 @@
       <code>Sensei_Import_Question_Model</code>
       <code>Sensei_Import_Question_Model</code>
     </PropertyNotSetInConstructor>
+    <UndefinedMethod occurrences="1">
+      <code>add_attachment_task</code>
+    </UndefinedMethod>
   </file>
   <file src="includes/email-signup/class-sensei-email-signup-form.php">
     <DocblockTypeContradiction occurrences="2">

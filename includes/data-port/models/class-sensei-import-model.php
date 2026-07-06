@@ -402,7 +402,7 @@ abstract class Sensei_Import_Model {
 	 *
 	 * An external URL is downloaded in a post-process task rather than inline, so the slow,
 	 * network-bound work cannot exceed `max_execution_time` mid-batch and stall the import (see
-	 * Sensei_Import_Thumbnail_Trait). A media library reference resolves with a DB lookup only, so
+	 * Sensei_Import_Attachment_Trait). A media library reference resolves with a DB lookup only, so
 	 * it is handled inline.
 	 *
 	 * @param string $column_name  The CSV column name which has the image source.
@@ -425,7 +425,15 @@ abstract class Sensei_Import_Model {
 
 		// A URL means a remote download, so defer it to a post-process task to keep it off the line loop.
 		if ( false !== filter_var( $thumbnail, FILTER_VALIDATE_URL ) ) {
-			$this->task->add_thumbnail_task( $post_id, $thumbnail, $mime_types, $this->line_number, $this->get_model_key() );
+			$this->task->add_attachment_task(
+				array(
+					'post_id'     => $post_id,
+					'source'      => $thumbnail,
+					'mime_types'  => $mime_types,
+					'line_number' => $this->line_number,
+					'model_key'   => $this->get_model_key(),
+				)
+			);
 
 			return;
 		}

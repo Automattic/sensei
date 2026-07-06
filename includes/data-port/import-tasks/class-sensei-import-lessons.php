@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Import_Lessons extends Sensei_Import_File_Process_Task {
 	use Sensei_Import_Prerequisite_Trait;
-	use Sensei_Import_Thumbnail_Trait;
+	use Sensei_Import_Attachment_Trait;
 
 	/**
 	 * Return a unique key for the task.

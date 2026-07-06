@@ -84,11 +84,11 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	 * Tests that an external image URL is queued for download as a post-process task rather than
 	 * downloaded inline while the line is processed.
 	 */
-	public function testSyncPost_ExternalImageUrl_QueuesThumbnailTask() {
+	public function testSyncPost_ExternalImageUrl_QueuesAttachmentTask() {
 		$job  = Sensei_Import_Job::create( 'test', 0 );
 		$task = $this->getMockBuilder( Sensei_Import_Lessons::class )
 						->setConstructorArgs( [ $job ] )
-						->setMethods( [ 'add_thumbnail_task' ] )
+						->setMethods( [ 'add_attachment_task' ] )
 						->getMock();
 
 		$data = [
@@ -99,13 +99,15 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		];
 
 		$task->expects( $this->once() )
-			->method( 'add_thumbnail_task' )
+			->method( 'add_attachment_task' )
 			->with(
-				$this->isType( 'int' ),
-				$this->equalTo( 'https://example.com/image.png?fit=800%2C600&ssl=1' ),
-				$this->anything(),
-				$this->equalTo( 1 ),
-				$this->anything()
+				$this->callback(
+					function ( $args ) {
+						return is_int( $args['post_id'] )
+							&& 'https://example.com/image.png?fit=800%2C600&ssl=1' === $args['source']
+							&& 1 === $args['line_number'];
+					}
+				)
 			);
 
 		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $data, new Sensei_Data_Port_Lesson_Schema(), $task );
