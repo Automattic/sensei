@@ -423,12 +423,14 @@ abstract class Sensei_Import_Model {
 
 		$mime_types = $this->schema->get_schema()[ $column_name ]['mime_types'];
 
+		// A URL means a remote download, so defer it to a post-process task to keep it off the line loop.
 		if ( false !== filter_var( $thumbnail, FILTER_VALIDATE_URL ) ) {
 			$this->task->add_thumbnail_task( $post_id, $thumbnail, $mime_types, $this->line_number, $this->get_model_key() );
 
 			return;
 		}
 
+		// Otherwise it is a media library reference: resolve it inline (a DB lookup, no network).
 		$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $thumbnail, 0, $mime_types );
 
 		if ( $attachment_id instanceof WP_Error ) {
