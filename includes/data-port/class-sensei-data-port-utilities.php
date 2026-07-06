@@ -413,7 +413,7 @@ class Sensei_Data_Port_Utilities {
 
 		if ( $remove_quotes ) {
 			$list = array_map(
-				function ( $value ) {
+				function( $value ) {
 					return trim( $value, self::CHARS_WHITESPACE_AND_QUOTES );
 				},
 				$list
@@ -428,12 +428,12 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Replace the curly quotes with straight quotes in the string.
 	 *
-	 * @param string $str String that possibly has curly quotes.
+	 * @param string $string String that possibly has curly quotes.
 	 *
 	 * @return string
 	 */
-	public static function replace_curly_quotes( $str ) {
-		return str_replace( [ '“', '”' ], '"', $str );
+	public static function replace_curly_quotes( $string ) {
+		return str_replace( [ '“', '”' ], '"', $string );
 	}
 
 	/**
