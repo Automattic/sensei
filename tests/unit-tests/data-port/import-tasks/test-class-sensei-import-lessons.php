@@ -163,4 +163,40 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 
 		$this->assertEmpty( get_post_meta( $lesson_id, '_thumbnail_id', true ) );
 	}
+
+	/**
+	 * Tests that a post-process task is removed from the persisted state before it is handled, so a
+	 * fatal while handling it does not replay it (and stall the import) on the next run.
+	 */
+	public function testRunPostProcessTasks_TaskFatalsWhileHandled_RemovesTaskFromPersistedState() {
+		$job = Sensei_Import_Job::create( 'test', 0 );
+
+		$task = $this->getMockBuilder( Sensei_Import_Lessons::class )
+			->setConstructorArgs( array( $job ) )
+			->setMethods( array( 'handle_attachment' ) )
+			->getMock();
+		$task->method( 'handle_attachment' )
+			->willThrowException( new RuntimeException( 'simulated fatal' ) );
+
+		$add = new ReflectionMethod( $task, 'add_post_process_task' );
+		$add->setAccessible( true );
+		$add->invoke( $task, 'attachment', array( 'post_id' => 1 ) );
+		$add->invoke( $task, 'attachment', array( 'post_id' => 2 ) );
+
+		$run = new ReflectionMethod( $task, 'run_post_process_tasks' );
+		$run->setAccessible( true );
+
+		try {
+			$run->invoke( $task );
+		} catch ( RuntimeException $e ) {
+			// The simulated fatal stands in for a real mid-download timeout. The task must have
+			// already persisted the popped queue before handling, so nothing is persisted here.
+			unset( $e );
+		}
+
+		$reloaded = Sensei_Import_Job::get( $job->get_job_id() );
+		$state    = $reloaded->get_state( 'lessons' );
+
+		$this->assertCount( 1, $state['post-process-tasks']['attachment'], 'The task being handled when the fatal hit should already be removed from the persisted queue.' );
+	}
 }

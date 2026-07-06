@@ -145,10 +145,12 @@ abstract class Sensei_Import_File_Process_Task
 	/**
 	 * Execute post process tasks.
 	 *
-	 * Post-process tasks (e.g. attachment downloads) can be slow and network-bound. As well as
-	 * the fixed per-batch count, the loop stops once it approaches `max_execution_time` so an
-	 * in-flight task cannot trip a fatal mid-batch — which would prevent save_state() from running
-	 * and cause the whole batch to be replayed. The remaining tasks are picked up on the next run.
+	 * Post-process tasks (e.g. attachment downloads) can be slow and network-bound. Each task is
+	 * removed from the persisted queue before it is handled, so a task that fatals mid-handle (e.g.
+	 * a download or resize that exceeds `max_execution_time`) is skipped on the next run rather than
+	 * replayed indefinitely. On top of that, the loop runs a fixed number of tasks per batch and
+	 * stops once it approaches `max_execution_time`, so most runs finish cleanly and reschedule the
+	 * remaining tasks for the next run.
 	 */
 	private function run_post_process_tasks() {
 		$deadline  = $this->get_post_process_deadline();
@@ -168,14 +170,20 @@ abstract class Sensei_Import_File_Process_Task
 			$next_task      = $tasks[0];
 			$next_task_args = array_shift( $this->post_process_tasks[ $next_task ] );
 
+			if ( empty( $this->post_process_tasks[ $next_task ] ) ) {
+				unset( $this->post_process_tasks[ $next_task ] );
+			}
+
+			// Persist the task's removal before handling it. Handling downloads and resizes an
+			// attachment, which can exceed `max_execution_time` and fatal; persisting first means the
+			// next run skips this task rather than replaying it — and the whole batch — indefinitely.
+			$this->save_state();
+			$this->get_job()->persist();
+
 			$task_method = 'handle_' . $next_task;
 			$callback    = [ $this, $task_method ];
 
 			call_user_func( $callback, $next_task_args );
-
-			if ( empty( $this->post_process_tasks[ $next_task ] ) ) {
-				unset( $this->post_process_tasks[ $next_task ] );
-			}
 		}
 	}
 
