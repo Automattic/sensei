@@ -308,6 +308,40 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that an external media URL is queued for download as a post-process task, targeting the
+	 * `_question_media` meta, rather than downloaded inline.
+	 */
+	public function testSyncPost_ExternalMediaUrl_QueuesAttachmentTask() {
+		$job  = Sensei_Import_Job::create( 'test', 0 );
+		$task = $this->getMockBuilder( Sensei_Import_Questions::class )
+						->setConstructorArgs( [ $job ] )
+						->setMethods( [ 'add_attachment_task' ] )
+						->getMock();
+
+		$data = [
+			Sensei_Data_Port_Question_Schema::COLUMN_TITLE => 'question with remote media',
+			Sensei_Data_Port_Question_Schema::COLUMN_ANSWER => 'Right:Yes, Wrong:No',
+			Sensei_Data_Port_Question_Schema::COLUMN_TYPE  => 'multiple-choice',
+			Sensei_Data_Port_Question_Schema::COLUMN_MEDIA => 'https://example.com/media.png?fit=800%2C600&ssl=1',
+		];
+
+		$task->expects( $this->once() )
+			->method( 'add_attachment_task' )
+			->with(
+				$this->callback(
+					function ( $args ) {
+						return 'https://example.com/media.png?fit=800%2C600&ssl=1' === $args['source']
+							&& '_question_media' === $args['meta_key'];
+					}
+				)
+			);
+
+		$model = Sensei_Import_Question_Model::from_source_array( 1, $data, new Sensei_Data_Port_Question_Schema(), $task );
+
+		$model->sync_post();
+	}
+
+	/**
 	 * Check to make sure multiple choice with no answer throws error.
 	 */
 	public function testMultipleChoiceNoAnswer() {
