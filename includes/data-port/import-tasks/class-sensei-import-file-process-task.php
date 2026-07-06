@@ -151,14 +151,18 @@ abstract class Sensei_Import_File_Process_Task
 	 * and cause the whole batch to be replayed. The remaining tasks are picked up on the next run.
 	 */
 	private function run_post_process_tasks() {
-		$deadline = $this->get_post_process_deadline();
+		$deadline  = $this->get_post_process_deadline();
+		$processed = 0;
 
 		$post_process_batch_left = self::POST_PROCESS_BATCH_SIZE;
 		while ( $post_process_batch_left > 0 && ! empty( $this->post_process_tasks ) ) {
-			if ( $deadline && microtime( true ) >= $deadline ) {
+			// Always run at least one task per batch so a limit too small to fit the budget still
+			// makes forward progress rather than rescheduling with nothing done.
+			if ( $processed > 0 && $deadline && microtime( true ) >= $deadline ) {
 				break;
 			}
 
+			++$processed;
 			$post_process_batch_left--;
 			$tasks          = array_keys( $this->post_process_tasks );
 			$next_task      = $tasks[0];
@@ -178,8 +182,10 @@ abstract class Sensei_Import_File_Process_Task
 	/**
 	 * Wall-clock time after which the current post-process batch should stop and reschedule.
 	 *
-	 * Returns 0 when there is no execution time limit (e.g. WP-CLI runs with `max_execution_time`
-	 * of 0), in which case the batch runs to its count limit.
+	 * The budget is sized so that one in-flight download (up to the configured request timeout)
+	 * plus save_state() can still finish before `max_execution_time` is reached, and is never
+	 * larger than the limit itself. Returns 0 when there is no execution time limit (e.g. WP-CLI
+	 * runs with `max_execution_time` of 0), in which case the batch runs to its count limit.
 	 *
 	 * @return float The deadline as a Unix timestamp with microseconds, or 0 for no limit.
 	 */
@@ -187,14 +193,17 @@ abstract class Sensei_Import_File_Process_Task
 		$max_execution_time = (int) ini_get( 'max_execution_time' );
 
 		if ( $max_execution_time <= 0 ) {
-			return 0;
+			return 0.0;
 		}
 
-		// Use a fraction of the limit so an in-flight download (up to its own timeout) plus
-		// save_state() still complete comfortably before the limit is reached.
-		$budget = max( 5, (int) floor( $max_execution_time * 0.6 ) );
+		/** This filter is documented in includes/data-port/class-sensei-data-port-utilities.php */
+		$request_timeout = (float) apply_filters( 'sensei_import_attachment_request_timeout', 10 );
 
-		return microtime( true ) + $budget;
+		// Leave headroom for one in-flight download plus save_state(); when the limit is too small
+		// to fit that, fall back to "now" so the batch runs exactly one task per run (see loop).
+		$budget = $max_execution_time - $request_timeout - 1;
+
+		return $budget > 0 ? microtime( true ) + $budget : microtime( true );
 	}
 
 	/**

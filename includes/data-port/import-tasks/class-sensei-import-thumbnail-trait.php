@@ -57,19 +57,23 @@ trait Sensei_Import_Thumbnail_Trait {
 
 		$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $source, 0, $mime_types );
 
-		if ( is_wp_error( $attachment_id ) ) {
-			$this->get_job()->add_line_warning(
-				$model_key,
-				$line_number,
-				$attachment_id->get_error_message(),
-				array(
-					'line'        => $line_number,
-					'type'        => $model_key,
-					'post_id'     => $post_id,
-					'entry_title' => get_the_title( $post_id ),
-					'code'        => $attachment_id->get_error_code(),
-				)
-			);
+		if ( $attachment_id instanceof WP_Error ) {
+			$job = $this->get_job();
+
+			if ( $job instanceof Sensei_Import_Job ) {
+				$job->add_line_warning(
+					$model_key,
+					$line_number,
+					$attachment_id->get_error_message(),
+					array(
+						'line'        => $line_number,
+						'type'        => $model_key,
+						'post_id'     => $post_id,
+						'entry_title' => get_the_title( $post_id ),
+						'code'        => $attachment_id->get_error_code(),
+					)
+				);
+			}
 
 			return;
 		}

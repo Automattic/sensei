@@ -431,7 +431,7 @@ abstract class Sensei_Import_Model {
 
 		$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $thumbnail, 0, $mime_types );
 
-		if ( is_wp_error( $attachment_id ) ) {
+		if ( $attachment_id instanceof WP_Error ) {
 			$this->add_line_warning(
 				$attachment_id->get_error_message(),
 				array( 'code' => $attachment_id->get_error_code() )

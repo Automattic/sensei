@@ -3939,8 +3939,9 @@
       <code>! empty( $import_id ) &amp;&amp; $this-&gt;task</code>
       <code>$this-&gt;task</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedMethod occurrences="2">
+    <UndefinedMethod occurrences="3">
       <code>add_line_warning</code>
+      <code>add_thumbnail_task</code>
       <code>set_import_id</code>
     </UndefinedMethod>
     <UnsafeInstantiation occurrences="1">
