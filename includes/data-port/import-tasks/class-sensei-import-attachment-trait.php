@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * This trait contains shared methods for downloading a post's image/media as a post-process task.
+ * This trait contains shared methods for downloading a post's attachment as a post-process task.
  *
- * Downloading a remote image is a slow, network-bound operation. Running it inline while a line is
+ * Downloading a remote file is a slow, network-bound operation. Running it inline while a line is
  * processed means a batch of lines can exceed `max_execution_time` mid-loop, fatal, and be replayed
  * from the start indefinitely. Deferring the download to a post-process task keeps line processing
  * network-free and lets the throttled, time-bounded post-process batch own the slow work.
@@ -22,13 +22,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Sensei_Import_Attachment_Trait {
 	/**
-	 * Queue an image/media download as a post-process task.
+	 * Queue an attachment download as a post-process task.
 	 *
 	 * @param array $args {
 	 *     Task arguments.
 	 *
 	 *     @type int    $post_id     The post to set the resolved attachment on.
-	 *     @type string $source      The image source (URL or media library filename).
+	 *     @type string $source      The attachment source (URL or media library filename).
 	 *     @type array  $mime_types  Allowed mime types for the attachment.
 	 *     @type int    $line_number Line number, for logging.
 	 *     @type string $model_key   Model key, for logging.
@@ -41,9 +41,9 @@ trait Sensei_Import_Attachment_Trait {
 	}
 
 	/**
-	 * Handle a queued image/media download.
+	 * Handle a queued attachment download.
 	 *
-	 * A failed or unreachable image is recorded as a per-line warning and the post keeps its
+	 * A failed or unreachable attachment is recorded as a per-line warning and the post keeps its
 	 * existing (or empty) value — it never fails the import.
 	 *
 	 * @param array $task Task arguments as passed to add_attachment_task().

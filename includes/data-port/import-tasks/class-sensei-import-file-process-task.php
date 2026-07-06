@@ -145,7 +145,7 @@ abstract class Sensei_Import_File_Process_Task
 	/**
 	 * Execute post process tasks.
 	 *
-	 * Post-process tasks (e.g. featured image downloads) can be slow and network-bound. As well as
+	 * Post-process tasks (e.g. attachment downloads) can be slow and network-bound. As well as
 	 * the fixed per-batch count, the loop stops once it approaches `max_execution_time` so an
 	 * in-flight task cannot trip a fatal mid-batch — which would prevent save_state() from running
 	 * and cause the whole batch to be replayed. The remaining tasks are picked up on the next run.
