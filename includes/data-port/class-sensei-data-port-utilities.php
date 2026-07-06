@@ -164,10 +164,7 @@ class Sensei_Data_Port_Utilities {
 			);
 		}
 
-		$filename = basename( wp_parse_url( $external_url, PHP_URL_PATH ) );
-		if ( '' === $filename ) {
-			$filename = 'import-' . md5( $external_url );
-		}
+		$filename      = basename( (string) wp_parse_url( $external_url, PHP_URL_PATH ) );
 		$upload_result = wp_upload_bits( $filename, null, wp_remote_retrieve_body( $response ) );
 
 		if ( ! empty( $upload_result['error'] ) ) {

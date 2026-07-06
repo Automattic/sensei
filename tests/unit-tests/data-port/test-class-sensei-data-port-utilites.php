@@ -465,7 +465,7 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 
 		$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $external_url );
 
-		$this->assertTrue( is_int( $attachment_id ), 'Expected an attachment ID integer, got: ' . print_r( $attachment_id, true ) );
+		$this->assertIsInt( $attachment_id, 'Expected an attachment ID integer.' );
 
 		$attachment = get_post( $attachment_id );
 		$this->assertEquals( 'attachment', $attachment->post_type, 'Post type should be attachment.' );
