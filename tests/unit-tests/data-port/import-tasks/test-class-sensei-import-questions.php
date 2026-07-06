@@ -43,7 +43,7 @@ class Sensei_Import_Questions_Tests extends WP_UnitTestCase {
 			[
 				'post_id'     => $question_id,
 				'source'      => 'localfilename.png',
-				'mime_types'  => null,
+				'mime_types'  => array( 'png' => 'image/png' ),
 				'line_number' => 1,
 				'model_key'   => 'question',
 				'meta_key'    => '_question_media', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Post-process task argument, not a query.

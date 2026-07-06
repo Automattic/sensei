@@ -129,7 +129,7 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 			[
 				'post_id'     => $lesson_id,
 				'source'      => 'localfilename.png',
-				'mime_types'  => null,
+				'mime_types'  => array( 'png' => 'image/png' ),
 				'line_number' => 1,
 				'model_key'   => 'lesson',
 			]
@@ -155,7 +155,7 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 			[
 				'post_id'     => $lesson_id,
 				'source'      => 'does-not-exist-in-media-library.png',
-				'mime_types'  => null,
+				'mime_types'  => array( 'png' => 'image/png' ),
 				'line_number' => 1,
 				'model_key'   => 'lesson',
 			]

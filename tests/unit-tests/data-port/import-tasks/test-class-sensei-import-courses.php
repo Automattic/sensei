@@ -130,7 +130,7 @@ class Sensei_Import_Courses_Tests extends WP_UnitTestCase {
 			[
 				'post_id'     => $course_id,
 				'source'      => 'localfilename.png',
-				'mime_types'  => null,
+				'mime_types'  => array( 'png' => 'image/png' ),
 				'line_number' => 1,
 				'model_key'   => 'course',
 			]
