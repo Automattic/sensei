@@ -6,6 +6,7 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
+import { useBlockProps } from '@wordpress/block-editor';
 import { Icon, check, chevronRight } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -62,7 +63,11 @@ export const LessonEdit = ( props ) => {
 		postStatus = __( 'Draft', 'sensei-lms' );
 	}
 
-	const wrapperStyles = {
+	// Block API version 3 requires `useBlockProps()` on the outermost
+	// element for the editor to recognize/select this block (e.g. the
+	// `aria-label="Block: Lesson"` wrapper attribute), and no longer
+	// auto-merges `className`/`attributes.className` into `props.className`.
+	const blockProps = useBlockProps( {
 		className: classnames(
 			className,
 			backgroundColor?.class,
@@ -76,7 +81,7 @@ export const LessonEdit = ( props ) => {
 			backgroundColor: backgroundColor?.color,
 			color: textColor?.color,
 		},
-	};
+	} );
 
 	const inputContainerClasses = classnames(
 		'wp-block-sensei-lms-course-outline-lesson__input-container',
@@ -89,7 +94,7 @@ export const LessonEdit = ( props ) => {
 	return (
 		<>
 			<LessonSettings { ...props } { ...lessonStatus } />
-			<div { ...wrapperStyles } data-lesson-id={ id }>
+			<div { ...blockProps } data-lesson-id={ id }>
 				<Icon
 					icon={ check }
 					className="wp-block-sensei-lms-course-outline-lesson__status"

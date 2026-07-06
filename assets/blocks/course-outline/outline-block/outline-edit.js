@@ -4,6 +4,7 @@
 import {
 	InnerBlocks,
 	store as blockEditorStore,
+	useBlockProps,
 } from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -50,6 +51,11 @@ export const OutlineAttributesContext = createContext();
  */
 const OutlineEdit = ( props ) => {
 	const { clientId, className, attributes, setAttributes } = props;
+
+	// Block API version 3 requires `useBlockProps()` on the outermost
+	// element for the editor to recognize/select this block (e.g. the
+	// `aria-label="Block: Course Outline"` wrapper attribute).
+	const blockProps = useBlockProps();
 
 	const { loadStructure } = useDispatch( COURSE_STORE );
 
@@ -114,7 +120,7 @@ const OutlineEdit = ( props ) => {
 	}, [ removeCourseOutlineGeneratorUpsell ] );
 
 	return (
-		<div>
+		<div { ...blockProps }>
 			{ isEmpty ? (
 				<OutlinePlaceholder
 					addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
@@ -126,7 +132,7 @@ const OutlineEdit = ( props ) => {
 					value={ {
 						outlineAttributes: attributes,
 						outlineSetAttributes: setAttributes,
-						outlineClassName: className,
+						outlineClassName: blockProps.className,
 					} }
 				>
 					<OutlineSettings { ...props } />

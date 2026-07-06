@@ -7,6 +7,7 @@ import type { Locator, Page } from '@playwright/test';
  * Internal dependencies
  */
 import PostType from '@e2e/pages/admin/post-type';
+import { getEditorCanvas } from '@e2e/helpers/editor';
 
 class WizardModal {
 	private readonly base: Locator;
@@ -58,12 +59,14 @@ class CourseOutline {
 	public readonly moduleBlock: ModuleBlock;
 
 	constructor( page: Page ) {
-		this.outline = page
+		// Block content renders inside the editor canvas iframe.
+		this.outline = getEditorCanvas( page )
 			.locator( '[aria-label="Block: Course Outline"]' )
 			.first();
 		this.addModuleOrLessonButton = this.outline.locator(
 			'[aria-label="Add Module or Lesson"]'
 		);
+		// The dropdown menu it opens is portalled to the top-level document.
 		this.addModuleButton = page.locator(
 			'button[role="menuitem"]:has-text("Module")'
 		);

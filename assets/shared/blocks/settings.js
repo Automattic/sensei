@@ -101,13 +101,19 @@ export const ColorSettings = ( { colorSettings, props } ) => {
  * Apply default style class if no style is selected.
  * Adds is-style-default to the className property.
  *
+ * Reads the style class from `attributes.className`, the block's own
+ * persisted attribute, rather than `props.className`: since Block API
+ * version 2+ no longer auto-injects a computed `className` prop into
+ * `edit`/`save`, `props.className` can't be relied on to reflect the
+ * selected block style.
+ *
  * @param {string} defaultStyleName Default style name.
  */
 export const withDefaultBlockStyle =
 	( defaultStyleName = 'default' ) =>
 	( Component ) =>
 	( props ) => {
-		let { className } = props;
+		let className = props.attributes?.className ?? props.className;
 
 		const extraProps = {};
 

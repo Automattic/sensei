@@ -6,7 +6,7 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -44,6 +44,11 @@ const LessonActionsEdit = ( props ) => {
 		setAttributes,
 		attributes: { toggledBlocks },
 	} = props;
+	// Block API version 3 requires `useBlockProps()` on the outermost
+	// element for the editor to recognize/select this block, and no
+	// longer auto-merges `className`/`attributes.className` into
+	// `props.className`.
+	const blockProps = useBlockProps();
 	const [ previewState, onPreviewChange ] =
 		usePreviewState( IN_PROGRESS_PREVIEW );
 	const { isSiteEditor } = useSelect( ( select ) => {
@@ -91,7 +96,9 @@ const LessonActionsEdit = ( props ) => {
 				toggleBlocks={ toggleBlocks }
 			/>
 			<div
+				{ ...blockProps }
 				className={ classnames(
+					blockProps.className,
 					className,
 					`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`,
 					`wp-block-sensei-lms-lesson-actions__${ quizStateClass }`,

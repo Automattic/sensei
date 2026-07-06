@@ -12,7 +12,11 @@ import { createBlock } from '@wordpress/blocks';
 import { useState } from '@wordpress/element';
 import { Icon, image } from '@wordpress/icons';
 import { Button } from '@wordpress/components';
-import { store as blockEditorStore, Warning } from '@wordpress/block-editor';
+import {
+	store as blockEditorStore,
+	useBlockProps,
+	Warning,
+} from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -143,6 +147,12 @@ const LearnerCoursesEdit = ( {
 	attributes: { options },
 	setAttributes,
 } ) => {
+	// Block API version 3 requires `useBlockProps()` on the outermost
+	// element for the editor to recognize/select this block, and no
+	// longer auto-merges `className`/`attributes.className` into
+	// `props.className`.
+	const blockProps = useBlockProps( { className } );
+
 	const [ filter, setFilter ] = useState( 'all' );
 
 	const filterHandler = ( filterValue ) => ( e ) => {
@@ -245,11 +255,20 @@ const LearnerCoursesEdit = ( {
 		);
 	};
 
+	// `blockProps.style` is excluded: this component computes its own
+	// CSS custom-property styles, and `useBlockProps()` is only used here
+	// for identity/selection attributes (aria-label, data-block, etc.)
+	// plus the merged className.
+	// eslint-disable-next-line no-unused-vars
+	const { style: unusedBlockPropsStyle, ...blockPropsWithoutStyle } =
+		blockProps;
+
 	return (
 		<>
 			<StylesWrapper
+				{ ...blockPropsWithoutStyle }
 				tagName="section"
-				className={ className }
+				className={ blockProps.className }
 				variables={ {
 					primaryColor: options.primaryColor,
 					accentColor: options.accentColor,

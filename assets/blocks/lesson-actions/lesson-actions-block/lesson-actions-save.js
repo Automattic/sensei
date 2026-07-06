@@ -1,14 +1,21 @@
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 
-const LessonActionsSave = ( { className } ) => (
-	<div className={ className }>
-		<div className="sensei-buttons-container">
-			<InnerBlocks.Content />
+// Block API version 3 no longer auto-merges the default block classname
+// and `attributes.className` into the saved markup; `useBlockProps.save()`
+// is required to restore it.
+const LessonActionsSave = () => {
+	const blockProps = useBlockProps.save();
+
+	return (
+		<div { ...blockProps }>
+			<div className="sensei-buttons-container">
+				<InnerBlocks.Content />
+			</div>
 		</div>
-	</div>
-);
+	);
+};
 
 export default LessonActionsSave;

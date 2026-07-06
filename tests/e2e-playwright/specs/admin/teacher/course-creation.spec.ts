@@ -7,6 +7,7 @@ import { expect, test } from '@playwright/test';
 import CoursesPage from '@e2e/pages/admin/courses';
 import Dashboard from '@e2e/pages/admin/dashboard';
 import { teacherRole } from '@e2e/helpers/context';
+import { getEditorCanvas } from '@e2e/helpers/editor';
 
 const { describe, use } = test;
 
@@ -42,7 +43,9 @@ describe( 'Create Courses', () => {
 
 		await wizardModal.finishWithDefaultLayout();
 
-		await page
+		// The Course Outline block's placeholder renders inside the editor
+		// canvas iframe (all Sensei blocks are now Block API version 3).
+		await getEditorCanvas( page )
 			.getByRole( 'button', { name: 'Start with blank' } )
 			.dispatchEvent( 'click' );
 

@@ -27,7 +27,12 @@ const ButtonEdit = ( props ) => {
 	const buttonProps = getButtonProps( { ...props, colors } );
 
 	return (
-		<div { ...getButtonWrapperProps( props ) }>
+		<div
+			{ ...getButtonWrapperProps( {
+				...props,
+				blockName: props.name,
+			} ) }
+		>
 			{ isReadonly ? (
 				<div { ...buttonProps }>{ props.text }</div>
 			) : (

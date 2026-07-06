@@ -26,6 +26,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 		/>
 	),
 	withColors: () => ( Component ) => Component,
+	useBlockProps: ( props ) => props ?? {},
 } ) );
 
 jest.mock( '../../../shared/blocks/single-line-input', () => ( props ) => (

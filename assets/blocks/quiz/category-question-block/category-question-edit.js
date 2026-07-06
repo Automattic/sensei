@@ -3,6 +3,7 @@
  */
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
+import { useBlockProps } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -38,6 +39,16 @@ const CategoryQuestionEdit = ( props ) => {
 	const questionNumber = useQuestionNumber( clientId );
 	const [ , getCategoryTermById ] = useQuestionCategories();
 
+	// Block API version 3 requires `useBlockProps()` on the outermost
+	// element for the editor to recognize/select this block, and no
+	// longer auto-merges `className`/`attributes.className` into
+	// `props.className`.
+	const blockProps = useBlockProps( {
+		className: `sensei-lms-question-block sensei-lms-category-question-block ${
+			! category ? 'is-draft' : ''
+		}`,
+	} );
+
 	const range =
 		! number || 1 === number
 			? questionNumber
@@ -62,11 +73,7 @@ const CategoryQuestionEdit = ( props ) => {
 	return (
 		<>
 			<CategoryQuestionSettings { ...props } />
-			<div
-				className={ `sensei-lms-question-block sensei-lms-category-question-block ${
-					! category ? 'is-draft' : ''
-				}` }
-			>
+			<div { ...blockProps }>
 				{ questionIndex }
 				<h2 className="sensei-lms-question-block__title">
 					{ categoryName ? (

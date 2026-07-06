@@ -37,7 +37,13 @@ const ButtonSave = ( { attributes, className, tagName, blockName } ) => {
 	}
 
 	const content = (
-		<div { ...getButtonWrapperProps( { className, attributes } ) }>
+		<div
+			{ ...getButtonWrapperProps( {
+				className,
+				attributes,
+				blockName,
+			} ) }
+		>
 			<RichText.Content
 				{ ...getButtonProps( { attributes } ) }
 				tagName={ buttonTagName }

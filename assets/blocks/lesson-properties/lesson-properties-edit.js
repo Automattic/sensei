@@ -8,7 +8,7 @@ import classnames from 'classnames';
  */
 import { useCallback } from '@wordpress/element';
 import { useEntityProp } from '@wordpress/core-data';
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, Notice } from '@wordpress/components';
 import { __, _n } from '@wordpress/i18n';
 
@@ -22,6 +22,12 @@ const courseThemeEnabled = window?.sensei?.courseThemeEnabled || false;
 
 const LessonPropertiesEdit = ( props ) => {
 	const { className } = props;
+
+	// Block API version 3 requires `useBlockProps()` on the outermost
+	// element for the editor to recognize/select this block, and no
+	// longer auto-merges `className`/`attributes.className` into
+	// `props.className`.
+	const blockProps = useBlockProps( { className } );
 
 	const [ meta, setMeta ] = useEntityProp( 'postType', 'lesson', 'meta' );
 	const { _lesson_complexity: difficulty = '', _lesson_length: length = 10 } =
@@ -84,14 +90,19 @@ const LessonPropertiesEdit = ( props ) => {
 			) }
 
 			{ courseThemeEnabled ? (
-				<Notice status="warning" isDismissible={ false }>
-					{ __(
-						'Since Learning Mode is activated, use this block to add the properties to each lesson and make sure your Lesson template contains the Lesson Properties block.',
-						'sensei-lms'
-					) }
-				</Notice>
+				// `Notice` doesn't forward arbitrary props to its root
+				// element, so `useBlockProps()` is applied to a wrapping
+				// element instead.
+				<div { ...blockProps }>
+					<Notice status="warning" isDismissible={ false }>
+						{ __(
+							'Since Learning Mode is activated, use this block to add the properties to each lesson and make sure your Lesson template contains the Lesson Properties block.',
+							'sensei-lms'
+						) }
+					</Notice>
+				</div>
 			) : (
-				<div className={ className }>
+				<div { ...blockProps }>
 					<span
 						className={ classnames(
 							'wp-block-sensei-lms-lesson-properties__length',

@@ -7,6 +7,7 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { compose } from '@wordpress/compose';
+import { useBlockProps } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -107,8 +108,14 @@ const CourseResultsEdit = ( props ) => {
 		attributes: { moduleBorder },
 	} = props;
 
+	// Block API version 3 requires `useBlockProps()` on the outermost
+	// element for the editor to recognize/select this block, and no
+	// longer auto-merges `className`/`attributes.className` into
+	// `props.className`.
+	const blockProps = useBlockProps( { className } );
+
 	const styleRegex = /is-style-(\w+)/;
-	const style = className.match( styleRegex )?.[ 1 ];
+	const style = blockProps.className.match( styleRegex )?.[ 1 ];
 
 	// Header styles.
 	const headerStyles = {
@@ -133,7 +140,10 @@ const CourseResultsEdit = ( props ) => {
 	return (
 		<>
 			<CourseResultsSettings { ...props } />
-			<section className={ className } style={ styleVars }>
+			<section
+				{ ...blockProps }
+				style={ { ...blockProps.style, ...styleVars } }
+			>
 				<div className="wp-block-sensei-lms-course-results__grade">
 					<span className="wp-block-sensei-lms-course-results__grade-label">
 						{ __( 'Your Total Grade', 'sensei-lms' ) }
