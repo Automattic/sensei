@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Exclude guest and preview users from the enrollment counts on Reports > Courses.

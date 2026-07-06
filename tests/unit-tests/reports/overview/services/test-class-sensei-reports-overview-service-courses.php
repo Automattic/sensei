@@ -243,6 +243,39 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * Tests that guest and preview user enrollments do not skew the average progress denominator.
+	 *
+	 * @covers Sensei_Reports_Overview_Service_Courses::get_total_average_progress
+	 */
+	public function testTotalAverageProgress_WhenGuestOrPreviewUsersAreEnrolled_ExcludesThemFromCalculation() {
+		// Create a course with 1 lesson.
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$regular_user_id = $this->factory->user->create();
+		$guest_user_id   = $this->factory->user->create( [ 'user_login' => Sensei_Guest_User::LOGIN_PREFIX . '11111111_1' ] );
+		$preview_user_id = $this->factory->user->create( [ 'user_login' => Sensei_Preview_User::LOGIN_PREFIX . '22222222_1_1' ] );
+
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		// Complete the lesson with the regular user.
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $regular_user_id, true );
+
+		// Enroll guest and preview users without completing the lesson.
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $guest_user_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $preview_user_id );
+
+		/* Assert. */
+		$this->assertEquals(
+			100,
+			$service->get_total_average_progress( [ $course_id ] ),
+			'Average progress should be based on the regular student only.'
+		);
+	}
+
 
 	public function testGetAverageDaysToCompletionWhenOneCourseExistsReturnsMatchingValue() {
 		$user1_id  = $this->factory->user->create();
@@ -398,6 +431,31 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 2, $actual );
+	}
+
+	public function testGetTotalEnrollments_WhenGuestOrPreviewUsersAreEnrolled_ExcludesThemFromCount() {
+
+		/* Arrange */
+		$regular_user_id = $this->factory->user->create();
+		$guest_user_id   = $this->factory->user->create( [ 'user_login' => Sensei_Guest_User::LOGIN_PREFIX . '11111111_1' ] );
+		$preview_user_id = $this->factory->user->create( [ 'user_login' => Sensei_Preview_User::LOGIN_PREFIX . '22222222_1_1' ] );
+
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $regular_user_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $guest_user_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $preview_user_id );
+
+		$instance = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_total_enrollments( [ $course_id ] );
+
+		/* Assert. */
+		self::assertSame( 1, $actual, 'Guest and preview user enrollments should not be counted.' );
 	}
 
 	/**
