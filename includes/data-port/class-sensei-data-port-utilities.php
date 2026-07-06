@@ -164,7 +164,11 @@ class Sensei_Data_Port_Utilities {
 			);
 		}
 
-		$upload_result = wp_upload_bits( basename( $external_url ), null, wp_remote_retrieve_body( $response ) );
+		$filename = basename( wp_parse_url( $external_url, PHP_URL_PATH ) );
+		if ( '' === $filename ) {
+			$filename = 'import-' . md5( $external_url );
+		}
+		$upload_result = wp_upload_bits( $filename, null, wp_remote_retrieve_body( $response ) );
 
 		if ( ! empty( $upload_result['error'] ) ) {
 			return new WP_Error( 'sensei_data_port_storing_file_failure', $upload_result['error'] );
@@ -412,7 +416,7 @@ class Sensei_Data_Port_Utilities {
 
 		if ( $remove_quotes ) {
 			$list = array_map(
-				function( $value ) {
+				function ( $value ) {
 					return trim( $value, self::CHARS_WHITESPACE_AND_QUOTES );
 				},
 				$list
@@ -427,12 +431,12 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Replace the curly quotes with straight quotes in the string.
 	 *
-	 * @param string $string String that possibly has curly quotes.
+	 * @param string $str String that possibly has curly quotes.
 	 *
 	 * @return string
 	 */
-	public static function replace_curly_quotes( $string ) {
-		return str_replace( [ '“', '”' ], '"', $string );
+	public static function replace_curly_quotes( $str ) {
+		return str_replace( [ '”', '”' ], '”', $str );
 	}
 
 	/**

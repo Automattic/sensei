@@ -446,6 +446,33 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that a file is uploaded and an attachment is created when the URL contains a query string.
+	 */
+	public function testGetAttachmentFromSource_QueryStringUrl_CreatesAttachment() {
+		tests_add_filter(
+			'pre_http_request',
+			function () {
+				return array(
+					'body'     => 'random content',
+					'response' => array(
+						'code' => 200,
+					),
+				);
+			}
+		);
+
+		$external_url = 'https://i0.wp.com/example.com/Operating-Independently.png?fit=2560%2C1440&ssl=1';
+
+		$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $external_url );
+
+		$this->assertTrue( is_int( $attachment_id ), 'Expected an attachment ID integer, got: ' . print_r( $attachment_id, true ) );
+
+		$attachment = get_post( $attachment_id );
+		$this->assertEquals( 'attachment', $attachment->post_type, 'Post type should be attachment.' );
+		$this->assertEquals( md5( $external_url ), get_post_meta( $attachment_id, '_sensei_attachment_source_key', true ), 'Source key meta should match md5 of URL.' );
+	}
+
+	/**
 	 * Tests that a file is uploaded and an attachment is created if the HTTP call is successful.
 	 */
 	public function testAttachmentIsCreatedWhenHTTPCallSuccessful() {
