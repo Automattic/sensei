@@ -111,4 +111,22 @@ class Sensei_Import_Courses_Tests extends WP_UnitTestCase {
 		$this->assertTrue( isset( $logs[0] ), 'A log entry should have been written' );
 		$this->assertEquals( 'Unable to set the prerequisite to "slug:a-missing-course"', $logs[0]['message'], 'Log entry should warn users when they try to set a prereq to the same object' );
 	}
+
+	/**
+	 * Tests that the thumbnail post-process handler is wired into the courses task and sets the
+	 * featured image when the source resolves.
+	 */
+	public function testHandleThumbnail_ResolvableSource_SetsThumbnailMeta() {
+		$attachment_id = $this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
+		$course_id     = $this->factory->course->create();
+
+		$job    = Sensei_Import_Job::create( 'test', 0 );
+		$task   = new Sensei_Import_Courses( $job );
+		$method = new ReflectionMethod( $task, 'handle_thumbnail' );
+		$method->setAccessible( true );
+
+		$method->invoke( $task, [ $course_id, 'localfilename.png', null, 1, 'course' ] );
+
+		$this->assertEquals( $attachment_id, (int) get_post_meta( $course_id, '_thumbnail_id', true ) );
+	}
 }
