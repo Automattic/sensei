@@ -436,7 +436,7 @@ class Sensei_Data_Port_Utilities {
 	 * @return string
 	 */
 	public static function replace_curly_quotes( $str ) {
-		return str_replace( [ '”', '”' ], '”', $str );
+		return str_replace( [ '“', '”' ], '"', $str );
 	}
 
 	/**
