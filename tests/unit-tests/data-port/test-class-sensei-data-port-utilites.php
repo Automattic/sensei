@@ -342,6 +342,54 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that the HTTP timeout used for remote attachment requests defaults to 5 seconds.
+	 */
+	public function testAttachmentCreationUsesDefaultTimeout() {
+		$captured_args = null;
+
+		tests_add_filter(
+			'pre_http_request',
+			function ( $preempt, $args ) use ( &$captured_args ) {
+				$captured_args = $args;
+
+				return new WP_Error( 'error_code', 'An HTTP error' );
+			},
+			10,
+			2
+		);
+
+		Sensei_Data_Port_Utilities::get_attachment_from_source( 'http://anexternalurl.com/files/new-image.png' );
+
+		$this->assertEquals( 5, $captured_args['timeout'], 'Default HTTP timeout should be 5 seconds to reduce risk of exceeding max_execution_time across a batch.' );
+	}
+
+	/**
+	 * Tests that the HTTP timeout for remote attachment requests is filterable.
+	 */
+	public function testAttachmentCreationTimeoutIsFilterable() {
+		$captured_args = null;
+
+		tests_add_filter(
+			'pre_http_request',
+			function ( $preempt, $args ) use ( &$captured_args ) {
+				$captured_args = $args;
+
+				return new WP_Error( 'error_code', 'An HTTP error' );
+			},
+			10,
+			2
+		);
+
+		tests_add_filter( 'sensei_import_attachment_request_timeout', function () {
+			return 15;
+		} );
+
+		Sensei_Data_Port_Utilities::get_attachment_from_source( 'http://anexternalurl.com/files/new-image.png' );
+
+		$this->assertEquals( 15, $captured_args['timeout'], 'HTTP timeout should be overridable via the sensei_import_attachment_request_timeout filter.' );
+	}
+
+	/**
 	 * Tests that an error is returned if the HTTP call to get the file fails.
 	 */
 	public function testAttachmentCreationFailsWhenHTTPCallFails() {
