@@ -427,12 +427,12 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Replace the curly quotes with straight quotes in the string.
 	 *
-	 * @param string $str String that possibly has curly quotes.
+	 * @param string $string String that possibly has curly quotes.
 	 *
 	 * @return string
 	 */
-	public static function replace_curly_quotes( $str ) {
-		return str_replace( [ '”', '”' ], '”', $str );
+	public static function replace_curly_quotes( $string ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.stringFound -- Parameter name matches the content it handles.
+		return str_replace( [ '“', '”' ], '"', $string );
 	}
 
 	/**

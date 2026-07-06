@@ -380,9 +380,12 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 			2
 		);
 
-		tests_add_filter( 'sensei_import_attachment_request_timeout', function () {
-			return 15;
-		} );
+		tests_add_filter(
+			'sensei_import_attachment_request_timeout',
+			function () {
+				return 15;
+			}
+		);
 
 		Sensei_Data_Port_Utilities::get_attachment_from_source( 'http://anexternalurl.com/files/new-image.png' );
 
