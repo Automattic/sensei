@@ -144,10 +144,21 @@ abstract class Sensei_Import_File_Process_Task
 
 	/**
 	 * Execute post process tasks.
+	 *
+	 * Post-process tasks (e.g. featured image downloads) can be slow and network-bound. As well as
+	 * the fixed per-batch count, the loop stops once it approaches `max_execution_time` so an
+	 * in-flight task cannot trip a fatal mid-batch — which would prevent save_state() from running
+	 * and cause the whole batch to be replayed. The remaining tasks are picked up on the next run.
 	 */
 	private function run_post_process_tasks() {
+		$deadline = $this->get_post_process_deadline();
+
 		$post_process_batch_left = self::POST_PROCESS_BATCH_SIZE;
 		while ( $post_process_batch_left > 0 && ! empty( $this->post_process_tasks ) ) {
+			if ( $deadline && microtime( true ) >= $deadline ) {
+				break;
+			}
+
 			$post_process_batch_left--;
 			$tasks          = array_keys( $this->post_process_tasks );
 			$next_task      = $tasks[0];
@@ -162,6 +173,28 @@ abstract class Sensei_Import_File_Process_Task
 				unset( $this->post_process_tasks[ $next_task ] );
 			}
 		}
+	}
+
+	/**
+	 * Wall-clock time after which the current post-process batch should stop and reschedule.
+	 *
+	 * Returns 0 when there is no execution time limit (e.g. WP-CLI runs with `max_execution_time`
+	 * of 0), in which case the batch runs to its count limit.
+	 *
+	 * @return float The deadline as a Unix timestamp with microseconds, or 0 for no limit.
+	 */
+	private function get_post_process_deadline() {
+		$max_execution_time = (int) ini_get( 'max_execution_time' );
+
+		if ( $max_execution_time <= 0 ) {
+			return 0;
+		}
+
+		// Use a fraction of the limit so an in-flight download (up to its own timeout) plus
+		// save_state() still complete comfortably before the limit is reached.
+		$budget = max( 5, (int) floor( $max_execution_time * 0.6 ) );
+
+		return microtime( true ) + $budget;
 	}
 
 	/**

@@ -400,31 +400,47 @@ abstract class Sensei_Import_Model {
 	 * Adds a thumbnail to a post. The source of the thumbnail can be either a filename from the media library or an
 	 * external URL.
 	 *
-	 * @param string $column_name  The CSV column name which has the image source.
+	 * An external URL is downloaded in a post-process task rather than inline, so the slow,
+	 * network-bound work cannot exceed `max_execution_time` mid-batch and stall the import (see
+	 * Sensei_Import_Thumbnail_Trait). A media library reference resolves with a DB lookup only, so
+	 * it is handled inline.
 	 *
-	 * @return bool|WP_Error  True on success, WP_Error on failure.
+	 * @param string $column_name  The CSV column name which has the image source.
 	 */
 	protected function add_thumbnail_to_post( $column_name ) {
 		$post_id   = $this->get_post_id();
 		$thumbnail = $this->get_value( $column_name );
 
 		if ( null === $thumbnail ) {
-			return true;
+			return;
 		}
 
 		if ( '' === $thumbnail ) {
 			delete_post_meta( $post_id, '_thumbnail_id' );
-		} else {
-			$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $thumbnail, 0, $this->schema->get_schema()[ $column_name ]['mime_types'] );
 
-			if ( is_wp_error( $attachment_id ) ) {
-				return $attachment_id;
-			}
-
-			update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
+			return;
 		}
 
-		return true;
+		$mime_types = $this->schema->get_schema()[ $column_name ]['mime_types'];
+
+		if ( false !== filter_var( $thumbnail, FILTER_VALIDATE_URL ) ) {
+			$this->task->add_thumbnail_task( $post_id, $thumbnail, $mime_types, $this->line_number, $this->get_model_key() );
+
+			return;
+		}
+
+		$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $thumbnail, 0, $mime_types );
+
+		if ( is_wp_error( $attachment_id ) ) {
+			$this->add_line_warning(
+				$attachment_id->get_error_message(),
+				array( 'code' => $attachment_id->get_error_code() )
+			);
+
+			return;
+		}
+
+		update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
 	}
 
 	/**

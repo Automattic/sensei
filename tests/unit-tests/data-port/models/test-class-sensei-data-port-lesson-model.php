@@ -81,6 +81,39 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that an external image URL is queued for download as a post-process task rather than
+	 * downloaded inline while the line is processed.
+	 */
+	public function testSyncPost_ExternalImageUrl_QueuesThumbnailTask() {
+		$job  = Sensei_Import_Job::create( 'test', 0 );
+		$task = $this->getMockBuilder( Sensei_Import_Lessons::class )
+						->setConstructorArgs( [ $job ] )
+						->setMethods( [ 'add_thumbnail_task' ] )
+						->getMock();
+
+		$data = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_ID    => '1234',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'lesson with remote image',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG  => 'lesson-with-remote-image',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE => 'https://example.com/image.png?fit=800%2C600&ssl=1',
+		];
+
+		$task->expects( $this->once() )
+			->method( 'add_thumbnail_task' )
+			->with(
+				$this->isType( 'int' ),
+				$this->equalTo( 'https://example.com/image.png?fit=800%2C600&ssl=1' ),
+				$this->anything(),
+				$this->equalTo( 1 ),
+				$this->anything()
+			);
+
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $data, new Sensei_Data_Port_Lesson_Schema(), $task );
+
+		$model->sync_post();
+	}
+
+	/**
 	 * Returns an array with the data used by the tests. Each element is an array of line input data and expected
 	 * output following the format of Sensei_Data_Port_Lesson_Model::data.
 	 *

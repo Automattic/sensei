@@ -90,15 +90,7 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		$this->set_post_id( $post_id );
 		$this->store_import_id();
 
-		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Course_Schema::COLUMN_IMAGE );
-		if ( $result instanceof WP_Error ) {
-			$this->add_line_warning(
-				$result->get_error_message(),
-				[
-					'code' => $result->get_error_code(),
-				]
-			);
-		}
+		$this->add_thumbnail_to_post( Sensei_Data_Port_Course_Schema::COLUMN_IMAGE );
 
 		$prerequisite = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE );
 		if ( $prerequisite ) {
