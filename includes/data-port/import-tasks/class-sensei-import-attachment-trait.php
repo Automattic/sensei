@@ -27,13 +27,13 @@ trait Sensei_Import_Attachment_Trait {
 	 * @param array $args {
 	 *     Task arguments.
 	 *
-	 *     @type int    $post_id     The post to set the resolved attachment on.
-	 *     @type string $source      The attachment source (URL or media library filename).
-	 *     @type array  $mime_types  Allowed mime types for the attachment.
-	 *     @type int    $line_number Line number, for logging.
-	 *     @type string $model_key   Model key, for logging.
-	 *     @type string $meta_key    Optional. Meta key to store the resolved attachment id in. Default '_thumbnail_id'.
-	 *     @type int    $parent_id   Optional. Attachment parent post id. Default 0 (unattached).
+	 *     @type int        $post_id     The post to set the resolved attachment on.
+	 *     @type string     $source      The attachment source (URL or media library filename).
+	 *     @type array|null $mime_types  Allowed mime types for the attachment, or null to allow any.
+	 *     @type int        $line_number Line number, for logging.
+	 *     @type string     $model_key   Model key, for logging.
+	 *     @type string     $meta_key    Optional. Meta key to store the resolved attachment id in. Default '_thumbnail_id'.
+	 *     @type int        $parent_id   Optional. Attachment parent post id. Default 0 (unattached).
 	 * }
 	 */
 	public function add_attachment_task( array $args ) {

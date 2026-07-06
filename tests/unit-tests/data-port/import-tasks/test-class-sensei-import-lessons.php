@@ -178,10 +178,8 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 		$task->method( 'handle_attachment' )
 			->willThrowException( new RuntimeException( 'simulated fatal' ) );
 
-		$add = new ReflectionMethod( $task, 'add_post_process_task' );
-		$add->setAccessible( true );
-		$add->invoke( $task, 'attachment', array( 'post_id' => 1 ) );
-		$add->invoke( $task, 'attachment', array( 'post_id' => 2 ) );
+		$task->add_post_process_task( 'attachment', array( 'post_id' => 1 ) );
+		$task->add_post_process_task( 'attachment', array( 'post_id' => 2 ) );
 
 		$run = new ReflectionMethod( $task, 'run_post_process_tasks' );
 		$run->setAccessible( true );

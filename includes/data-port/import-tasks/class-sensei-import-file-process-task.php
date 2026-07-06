@@ -12,9 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * This task reads a CSV file and imports the entities that are included in each line.
  */
-abstract class Sensei_Import_File_Process_Task
-	extends Sensei_Data_Port_Task
-	implements Sensei_Data_Port_Task_Interface {
+abstract class Sensei_Import_File_Process_Task extends Sensei_Data_Port_Task implements Sensei_Data_Port_Task_Interface {
 
 	const STATE_COMPLETED_LINES    = 'completed-lines';
 	const STATE_POST_PROCESS_TASKS = 'post-process-tasks';
@@ -114,7 +112,7 @@ abstract class Sensei_Import_File_Process_Task
 			$current_line = $this->completed_lines;
 
 			foreach ( $lines as $line_data ) {
-				$current_line++;
+				++$current_line;
 
 				$this->process_line( $current_line + 1, $line_data );
 			}
@@ -165,7 +163,7 @@ abstract class Sensei_Import_File_Process_Task
 			}
 
 			++$processed;
-			$post_process_batch_left--;
+			--$post_process_batch_left;
 			$tasks          = array_keys( $this->post_process_tasks );
 			$next_task      = $tasks[0];
 			$next_task_args = array_shift( $this->post_process_tasks[ $next_task ] );
