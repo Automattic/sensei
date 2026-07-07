@@ -76,6 +76,18 @@ describe( '<PostTokenField />', () => {
 		);
 	} );
 
+	it( 'does not request relevance ordering when there is no search term', async () => {
+		renderField( { type: 'lesson' } );
+
+		await waitFor( () => expect( apiFetch ).toHaveBeenCalled() );
+
+		// WP core rejects `orderby=relevance` without a `search` param, so the
+		// initial (empty-search) fetch must fall back to the default ordering.
+		expect( apiFetch.mock.calls[ 0 ][ 0 ].path ).not.toContain(
+			'orderby=relevance'
+		);
+	} );
+
 	it( 'renders pre-selected ids as their titles once the fetch resolves', async () => {
 		apiFetch.mockResolvedValueOnce( [ itemFor( 42, 'Course A' ) ] );
 

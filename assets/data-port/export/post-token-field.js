@@ -13,7 +13,7 @@ const REST_BASE_BY_TYPE = {
 	question: 'questions',
 };
 
-const SUGGESTION_LIMIT = 20;
+const SUGGESTION_LIMIT = 100;
 
 // `title.rendered` in `view` context, `title.raw` in `edit` — accept either.
 const titleOf = ( item ) =>
@@ -82,6 +82,9 @@ export const PostTokenField = ( {
 		} );
 		if ( debouncedInput ) {
 			params.set( 'search', debouncedInput );
+			params.append( 'search_columns[]', 'post_title' );
+			// WP core rejects `orderby=relevance` without a `search`.
+			params.set( 'orderby', 'relevance' );
 		}
 
 		apiFetch( {
