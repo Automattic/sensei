@@ -282,6 +282,26 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A 'private' status must survive import. The exporter writes the raw
+	 * post_status, so without 'private' in the status pattern an export then
+	 * import round-trip silently drops private lessons. Regression guard for #8067.
+	 */
+	public function testPrivateStatusIsAccepted() {
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$model = Sensei_Import_Lesson_Model::from_source_array(
+			1,
+			[ Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS => 'private' ],
+			new Sensei_Data_Port_Lesson_Schema(),
+			$task
+		);
+
+		$this->assertEquals(
+			'private',
+			$model->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS )
+		);
+	}
+
+	/**
 	 * Tests creating a lesson and updating all its values.
 	 */
 	public function testLessonIsInsertedAndUpdated() {

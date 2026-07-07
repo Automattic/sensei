@@ -68,7 +68,7 @@ class Sensei_Data_Port_Question_Schema extends Sensei_Data_Port_Schema {
 			self::COLUMN_STATUS          => [
 				'type'    => 'string',
 				'default' => 'draft',
-				'pattern' => '/^(publish|pending|draft|)$/',
+				'pattern' => '/^(publish|pending|private|draft|)$/',
 			],
 			self::COLUMN_TYPE            => [
 				'type'    => 'string',

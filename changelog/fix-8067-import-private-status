@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Preserve the private status when importing lessons and questions so an export then import round-trip no longer drops private content.

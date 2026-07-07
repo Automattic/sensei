@@ -268,6 +268,24 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A 'private' status must survive import. The exporter writes the raw
+	 * post_status, so without 'private' in the status pattern an export then
+	 * import round-trip silently drops private questions. Regression guard for #8067.
+	 */
+	public function testPrivateStatusIsAccepted() {
+		$model = Sensei_Import_Question_Model::from_source_array(
+			1,
+			[ Sensei_Data_Port_Question_Schema::COLUMN_STATUS => 'private' ],
+			new Sensei_Data_Port_Question_Schema()
+		);
+
+		$this->assertEquals(
+			'private',
+			$model->get_value( Sensei_Data_Port_Question_Schema::COLUMN_STATUS )
+		);
+	}
+
+	/**
 	 * Check to make sure post is fully created.
 	 */
 	public function testValidFullPostCreated() {
