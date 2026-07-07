@@ -15,6 +15,17 @@ abstract class Sensei_Data_Port_Schema {
 	const COLUMN_SLUG = 'slug';
 
 	/**
+	 * Post statuses supported by the data port. Export coerces any other status to
+	 * `draft`, and import only accepts these; keeping both sides in sync avoids a
+	 * status being emitted that the importer would reject.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string[]
+	 */
+	const SUPPORTED_POST_STATUSES = array( 'publish', 'draft', 'pending', 'private' );
+
+	/**
 	 * Get the schema for the data type.
 	 *
 	 * @return array {

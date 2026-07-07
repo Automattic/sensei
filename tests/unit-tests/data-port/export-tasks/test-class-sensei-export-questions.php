@@ -51,6 +51,21 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 		self::assertSame( strval( $included ), $rows[0]['id'], 'Exported question ID should match the selection.' );
 	}
 
+	/**
+	 * A question whose status is outside the supported set is exported as `draft`.
+	 */
+	public function testGetPostFields_QuestionStatusUnsupported_ExportsAsDraft() {
+		global $wpdb;
+		$question_id = $this->factory->question->create();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Forcing an unsupported status directly is the most reliable way to set it up.
+		$wpdb->update( $wpdb->posts, array( 'post_status' => 'future' ), array( 'ID' => $question_id ) );
+		clean_post_cache( $question_id );
+
+		$result = $this->export();
+
+		self::assertSame( 'draft', $result[0]['status'] );
+	}
+
 	public function testQuestionDataExported() {
 
 		$this->factory->question->create(

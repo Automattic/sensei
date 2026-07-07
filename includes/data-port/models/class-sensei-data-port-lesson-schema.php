@@ -65,7 +65,7 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 			self::COLUMN_STATUS         => [
 				'type'    => 'string',
 				'default' => 'draft',
-				'pattern' => '/^(publish|pending|private|draft|)$/',
+				'pattern' => '/^(' . implode( '|', self::SUPPORTED_POST_STATUSES ) . '|)$/',
 			],
 			self::COLUMN_MODULE         => [
 				'type' => 'string',
