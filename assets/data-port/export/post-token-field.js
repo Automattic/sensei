@@ -13,7 +13,7 @@ const REST_BASE_BY_TYPE = {
 	question: 'questions',
 };
 
-const SUGGESTION_LIMIT = 20;
+const SUGGESTION_LIMIT = 100;
 
 // `title.rendered` in `view` context, `title.raw` in `edit` — accept either.
 const titleOf = ( item ) =>
