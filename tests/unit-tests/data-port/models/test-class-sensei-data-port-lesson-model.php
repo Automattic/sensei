@@ -707,4 +707,35 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$this->assertEquals( $quiz_ids[0] . '000' . 3, get_post_meta( $question_ids['burgers'], '_quiz_question_order' . $quiz_ids[0], true ) );
 		$this->assertEquals( $quiz_ids[0] . '000' . 1, get_post_meta( $question_ids['pizza'], '_quiz_question_order' . $quiz_ids[0], true ) );
 	}
+
+	/**
+	 * Test that a lesson with status=private passes validation and is created with the private status.
+	 */
+	public function testSyncPost_PrivateStatusGiven_CreatesLessonWithPrivateStatus() {
+		$task = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$data = array(
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Private Lesson',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'private-lesson',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS => 'private',
+		);
+
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $data, new Sensei_Data_Port_Lesson_Schema(), $task );
+
+		$this->assertTrue( $model->is_valid(), 'Lesson model with private status should be valid.' );
+
+		$result = $model->sync_post();
+		$this->assertTrue( $result, 'Lesson with private status should be created successfully.' );
+
+		$post = get_posts(
+			array(
+				'post_type'      => 'lesson',
+				'post_name__in'  => array( 'private-lesson' ),
+				'posts_per_page' => 1,
+				'post_status'    => 'private',
+			)
+		);
+
+		$this->assertNotEmpty( $post, 'Private lesson should exist.' );
+		$this->assertEquals( 'private', $post[0]->post_status, 'Lesson post status should be private.' );
+	}
 }

@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix import rejecting lessons and questions with a `private` status exported from another site.
