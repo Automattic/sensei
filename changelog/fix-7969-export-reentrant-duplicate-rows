@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Prevent the exporter from appending duplicate rows when the first batch runs again before its progress offset is persisted.
