@@ -495,10 +495,10 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 		wp_set_current_user( $teacher_id );
 
 		$data = array(
-			Sensei_Data_Port_Question_Schema::COLUMN_TITLE  => 'Private Question',
-			Sensei_Data_Port_Question_Schema::COLUMN_SLUG   => 'private-question',
+			Sensei_Data_Port_Question_Schema::COLUMN_TITLE => 'Private Question',
+			Sensei_Data_Port_Question_Schema::COLUMN_SLUG  => 'private-question',
 			Sensei_Data_Port_Question_Schema::COLUMN_STATUS => 'private',
-			Sensei_Data_Port_Question_Schema::COLUMN_TYPE   => 'multiple-choice',
+			Sensei_Data_Port_Question_Schema::COLUMN_TYPE  => 'multiple-choice',
 			Sensei_Data_Port_Question_Schema::COLUMN_ANSWER => 'Right:Yes, Wrong:No',
 		);
 
