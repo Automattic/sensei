@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_get_question_template_data - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_students_row_updated - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_get_question_template_data</h1>
+	<h1 class="page-title">Filter: sensei_students_row_updated</h1>
 	
 
 	
@@ -43,15 +43,16 @@
 
     
 
-    <h4 class="name" id="sensei_get_question_template_data">apply_filters( 'sensei_get_question_template_data', <span class="signature">$data, $question_id, $quiz_id )</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id="sensei_students_row_updated">apply_filters( 'sensei_students_row_updated', <span class="signature">$started_at_changed, $post_id, $user_id, $post_type )</span><span class="type-signature"> &rarr; {bool}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter the question template data. This filter fires in
-the get_template_data function.</p>
+    <p>Filters whether a student row was updated on the Students screen.</p>
+<p>Lets extensions persist additional date changes (e.g. course access dates) when a
+student's dates are edited and report whether a change occurred so the row refreshes.</p>
 </div>
 
 
@@ -85,13 +86,13 @@ the get_template_data function.</p>
 
         <tr>
             
-                <td class="name"><code>$data</code></td>
+                <td class="name"><code>$started_at_changed</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">bool</span>
 
 
             
@@ -101,14 +102,14 @@ the get_template_data function.</p>
 
             
 
-            <td class="description last"><p>Question data.</p></td>
+            <td class="description last"><p>Whether the start date was changed.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>$question_id</code></td>
+                <td class="name"><code>$post_id</code></td>
             
 
             <td class="type">
@@ -124,14 +125,14 @@ the get_template_data function.</p>
 
             
 
-            <td class="description last"><p>Question ID.</p></td>
+            <td class="description last"><p>Course or lesson ID.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>$quiz_id</code></td>
+                <td class="name"><code>$user_id</code></td>
             
 
             <td class="type">
@@ -147,7 +148,30 @@ the get_template_data function.</p>
 
             
 
-            <td class="description last"><p>Quiz ID.</p></td>
+            <td class="description last"><p>Student user ID.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$post_type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Post type ('course' or 'lesson').</p></td>
         </tr>
 
     
@@ -165,7 +189,7 @@ the get_template_data function.</p>
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>1.9.0</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -191,7 +215,7 @@ the get_template_data function.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-question.php.html">includes/class-sensei-question.php</a>, <a href="includes_class-sensei-question.php.html#line1278">line 1278</a>
+        <a href="includes_admin_class-sensei-learner-management.php.html">includes/admin/class-sensei-learner-management.php</a>, <a href="includes_admin_class-sensei-learner-management.php.html#line550">line 550</a>
     </li></ul></dd>
     
 
@@ -218,7 +242,7 @@ the get_template_data function.</p>
 
         
 <div class="param-desc">
-    <p>Question data.</p>
+    <p>Whether the student row was updated.</p>
 </div>
 
 
@@ -229,7 +253,7 @@ the get_template_data function.</p>
     </dt>
     <dd>
         
-<span class="param-type">array</span>
+<span class="param-type">bool</span>
 
 
     </dd>
