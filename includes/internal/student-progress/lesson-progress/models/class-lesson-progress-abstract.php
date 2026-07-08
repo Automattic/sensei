@@ -228,6 +228,19 @@ abstract class Lesson_Progress_Abstract implements Lesson_Progress_Interface {
 	}
 
 	/**
+	 * Set the lesson start date.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param DateTimeInterface $started_at The start date.
+	 */
+	public function set_started_at( DateTimeInterface $started_at ): void {
+		$this->started_at = $started_at;
+	}
+
+	/**
 	 * Set lesson progress updated date.
 	 *
 	 * @internal

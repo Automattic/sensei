@@ -220,6 +220,19 @@ abstract class Course_Progress_Abstract implements Course_Progress_Interface {
 	}
 
 	/**
+	 * Set the course start date.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param DateTimeInterface $started_at Course start date.
+	 */
+	public function set_started_at( DateTimeInterface $started_at ): void {
+		$this->started_at = $started_at;
+	}
+
+	/**
 	 * Set the course progress updated date.
 	 *
 	 * @internal
