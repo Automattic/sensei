@@ -52,6 +52,22 @@ class Sensei_Export_Lessons_Tests extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A lesson whose status is outside the supported set is exported as `draft`.
+	 */
+	public function testGetPostFields_LessonStatusUnsupported_ExportsAsDraft() {
+		$this->factory->lesson->create_and_get(
+			array(
+				'post_status' => 'future',
+				'post_date'   => '2099-01-01 00:00:00',
+			)
+		);
+
+		$result = $this->export();
+
+		self::assertSame( 'draft', $result[0]['status'] );
+	}
+
+	/**
 	 * Test that lesson details are exported correctly.
 	 */
 	public function testLessonContentExported() {

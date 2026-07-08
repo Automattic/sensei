@@ -94,6 +94,42 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that the welcome email backfill is enqueued when upgrading from before 4.26.2.
+	 */
+	public function testRunUpdates_UpgradingFromVersionBelow4262_EnqueuesWelcomeBackfill() {
+		$updates = new Sensei_Updates( '4.26.1', false, true );
+		$updates->run_updates();
+
+		$job            = new Sensei_Update_Backfill_Course_Welcome_Email_Sent();
+		$next_scheduled = Sensei_Scheduler_Shim::get_next_scheduled( $job );
+		$this->assertNotFalse( $next_scheduled, 'The backfill should be enqueued when upgrading from before 4.26.2.' );
+	}
+
+	/**
+	 * Test that the welcome email backfill is not enqueued when already on 4.26.2 or later.
+	 */
+	public function testRunUpdates_AlreadyOnVersion4262_DoesNotEnqueueWelcomeBackfill() {
+		$updates = new Sensei_Updates( '4.26.2', false, true );
+		$updates->run_updates();
+
+		$job            = new Sensei_Update_Backfill_Course_Welcome_Email_Sent();
+		$next_scheduled = Sensei_Scheduler_Shim::get_next_scheduled( $job );
+		$this->assertFalse( $next_scheduled, 'The backfill should not be enqueued when already on 4.26.2.' );
+	}
+
+	/**
+	 * Test that the welcome email backfill is not enqueued on fresh installs.
+	 */
+	public function testRunUpdates_NewInstall_DoesNotEnqueueWelcomeBackfill() {
+		$updates = new Sensei_Updates( null, true, false );
+		$updates->run_updates();
+
+		$job            = new Sensei_Update_Backfill_Course_Welcome_Email_Sent();
+		$next_scheduled = Sensei_Scheduler_Shim::get_next_scheduled( $job );
+		$this->assertFalse( $next_scheduled, 'The backfill should not be enqueued on new installs.' );
+	}
+
+	/**
 	 * Test to make sure changelog parser generally works.
 	 */
 	public function testChangelogParser() {

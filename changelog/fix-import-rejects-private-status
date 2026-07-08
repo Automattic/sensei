@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix export and import dropping private lessons and questions.

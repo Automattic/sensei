@@ -623,4 +623,71 @@ AND comments.comment_type = 'sensei_course_status'";
 		// Reset.
 		$this->reset_hpps_repository();
 	}
+
+	public function testLimitReportDownloadToTeacher_WhenTeacher_ScopesSenseiPostTypesOnly() {
+		$this->login_as_teacher();
+		$teacher_id = get_current_user_id();
+		set_current_screen( 'sensei-lms_page_sensei_reports' ); // is_admin_teacher() requires an admin screen.
+
+		// Course, lesson and question queries are scoped to the teacher; other post types are untouched.
+		$expected_author = array(
+			'course'   => $teacher_id,
+			'lesson'   => $teacher_id,
+			'question' => $teacher_id,
+			'post'     => '',
+		);
+
+		$actual_author = array();
+		foreach ( array_keys( $expected_author ) as $post_type ) {
+			$query = new WP_Query();
+			$query->set( 'post_type', $post_type );
+
+			Sensei()->teacher->limit_report_download_to_teacher( $query );
+
+			$actual_author[ $post_type ] = $query->get( 'author' );
+		}
+
+		$this->assertSame( $expected_author, $actual_author, 'Only Sensei post-type queries should be scoped to the teacher.' );
+	}
+
+	public function testLimitReportDownloadToTeacher_WhenAdmin_DoesNotScope() {
+		$this->login_as_admin();
+		set_current_screen( 'sensei-lms_page_sensei_reports' );
+
+		$query = new WP_Query();
+		$query->set( 'post_type', 'course' );
+
+		Sensei()->teacher->limit_report_download_to_teacher( $query );
+
+		$this->assertSame( '', $query->get( 'author' ), 'Admins should be able to export all content.' );
+	}
+
+	public function testLimitReportDownloadToTeacher_WhenExportingAsTeacher_LimitsLearnersToOwnCourses() {
+		// A learner enrolled in the current teacher's course.
+		$this->login_as_teacher();
+		$teacher_id  = get_current_user_id();
+		$own_course  = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$own_learner = $this->factory->user->create();
+		Sensei_Utils::start_user_on_course( $own_learner, $own_course );
+
+		// A learner enrolled in a different teacher's course.
+		$this->login_as_teacher_b();
+		$other_course  = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$other_learner = $this->factory->user->create();
+		Sensei_Utils::start_user_on_course( $other_learner, $other_course );
+
+		// Apply the export restriction as the first teacher and read the scoped learners.
+		// Use a non-Reports admin screen so the screen-based restriction (course_analysis_teacher_access_limit)
+		// stays inactive, as it is during the admin_init export, and only the export hook under test can scope.
+		$this->login_as_teacher();
+		set_current_screen( 'dashboard' );
+		add_action( 'pre_get_posts', array( Sensei()->teacher, 'limit_report_download_to_teacher' ) );
+		try {
+			$learner_ids = Sensei()->teacher->get_learner_ids_for_courses_with_edit_permission();
+		} finally {
+			remove_action( 'pre_get_posts', array( Sensei()->teacher, 'limit_report_download_to_teacher' ) );
+		}
+
+		$this->assertSame( array( $own_learner ), $learner_ids, 'Only learners from the teacher-owned course should be exported.' );
+	}
 }

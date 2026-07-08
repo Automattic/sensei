@@ -152,14 +152,29 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @return array The modified query args.
 	 */
 	public function exclude_others_comments( $args, $request ) {
-		if (
-			'all' === $request->get_param( 'sender' ) &&
-			( current_user_can( 'moderate_comments' ) || current_user_can( 'read_private_sensei_messages' ) )
-		) {
+		$current_user = wp_get_current_user();
+
+		if ( 'all' === $request->get_param( 'sender' ) ) {
+			// Site administrators may read every message thread.
+			if ( current_user_can( 'manage_options' ) ) {
+				return $args;
+			}
+
+			// Everyone else (e.g. a teacher) sees the messages they sent or received.
+			$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				'relation' => 'OR',
+				array(
+					'key'   => '_sender',
+					'value' => $current_user->user_login,
+				),
+				array(
+					'key'   => '_receiver',
+					'value' => $current_user->user_login,
+				),
+			);
+
 			return $args;
 		}
-
-		$current_user = wp_get_current_user();
 
 		$args['meta_key']   = '_sender'; // phpcs:ignore  Slow query ok.
 		$args['meta_value'] = $current_user->user_login; // phpcs:ignore Slow query ok.

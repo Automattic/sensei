@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Prevent the Welcome to Course email from being sent more than once to the same student for the same course.

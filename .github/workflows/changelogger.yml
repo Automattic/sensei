@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Check for a changelog entry
         id: gate
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const pr = context.payload.pull_request;
@@ -64,7 +64,7 @@ jobs:
       # Everything below runs only when we need to generate an entry.
       - name: Check out the PR branch
         if: steps.gate.outputs.generate == 'true'
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -73,7 +73,7 @@ jobs:
       # Parse the structured "Changelog entry" section and write the file.
       - name: Generate the changelog entry
         if: steps.gate.outputs.generate == 'true'
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const fs = require( 'node:fs' );

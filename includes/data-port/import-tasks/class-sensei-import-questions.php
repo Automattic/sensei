@@ -16,6 +16,8 @@ class Sensei_Import_Questions
 	extends Sensei_Import_File_Process_Task
 	implements Sensei_Data_Port_Task_Interface {
 
+	use Sensei_Import_Attachment_Trait;
+
 	/**
 	 * Return a unique key for the task.
 	 *

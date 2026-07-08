@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix duplicate frontend notices when the same keyed notice is added multiple times on classic themes.
