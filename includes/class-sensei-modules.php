@@ -1644,6 +1644,7 @@ class Sensei_Core_Modules {
 		unset( $columns['posts'] );
 
 		$columns['lessons'] = __( 'Lessons', 'sensei-lms' );
+		$columns['courses'] = __( 'Course(s)', 'sensei-lms' );
 
 		return $columns;
 	}
@@ -1681,6 +1682,23 @@ class Sensei_Core_Modules {
 				$lessons           = get_posts( $args );
 				$total_lessons     = count( $lessons );
 				$column_data       = '<a href="' . admin_url( 'edit.php?module=' . urlencode( $module->slug ) . '&post_type=lesson' ) . '">' . intval( $total_lessons ) . '</a>';
+				break;
+
+			case 'courses':
+				$args['post_type']   = 'course';
+				$args['post_status'] = array( 'publish', 'draft', 'future', 'private' );
+				$courses             = get_posts( $args );
+
+				$course_links = array();
+				foreach ( $courses as $course ) {
+					$course_links[] = sprintf(
+						'<a href="%1$s">%2$s</a>',
+						esc_url( get_edit_post_link( $course->ID, 'raw' ) ),
+						esc_html( $course->post_title )
+					);
+				}
+
+				$column_data = implode( ', ', $course_links );
 				break;
 		}
 
