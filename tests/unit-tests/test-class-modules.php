@@ -205,6 +205,8 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure the courses column lists all courses a module is assigned to.
+	 *
 	 * @covers Sensei_Core_Modules::taxonomy_column_content
 	 */
 	public function testTaxonomyColumnContent_CoursesColumnGiven_ReturnsLinkedCourseNames() {
@@ -222,6 +224,8 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure the courses column is empty when a module has no assigned courses.
+	 *
 	 * @covers Sensei_Core_Modules::taxonomy_column_content
 	 */
 	public function testTaxonomyColumnContent_CoursesColumnGivenModuleWithNoCourses_ReturnsEmptyString() {

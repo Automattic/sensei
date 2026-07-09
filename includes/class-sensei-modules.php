@@ -1691,9 +1691,19 @@ class Sensei_Core_Modules {
 
 				$course_links = array();
 				foreach ( $courses as $course ) {
+					if ( ! $course instanceof WP_Post ) {
+						continue;
+					}
+
+					$edit_link = get_edit_post_link( $course->ID, 'raw' );
+
+					if ( null === $edit_link ) {
+						continue;
+					}
+
 					$course_links[] = sprintf(
 						'<a href="%1$s">%2$s</a>',
-						esc_url( get_edit_post_link( $course->ID, 'raw' ) ),
+						esc_url( $edit_link ),
 						esc_html( $course->post_title )
 					);
 				}
