@@ -59,6 +59,7 @@ const QuizSettings = ( {
 		failedShowAnswerFeedback,
 		failedShowCorrectAnswers,
 		failedIndicateIncorrect,
+		passedShowCorrectAnswers,
 		buttonTextColor,
 		buttonBackgroundColor,
 		pagination,
@@ -198,6 +199,35 @@ const QuizSettings = ( {
 											) }
 											label={ __(
 												'Show “Answer Feedback” text.',
+												'sensei-lms'
+											) }
+										/>
+									</div>
+								</PanelRow>
+								<PanelRow>
+									<div>
+										<BaseControl
+											id="sensei-lms-quiz-block-passed-feedback-options"
+											className="sensei-lms-subsection-control"
+											help={ __(
+												'What students see when reviewing their quiz after grading.',
+												'sensei-lms'
+											) }
+										>
+											<h3>
+												{ __(
+													'If student passes quiz',
+													'sensei-lms'
+												) }
+											</h3>
+										</BaseControl>
+										<ToggleControl
+											checked={ passedShowCorrectAnswers }
+											onChange={ createChangeHandler(
+												'passedShowCorrectAnswers'
+											) }
+											label={ __(
+												'Show correct answers.',
 												'sensei-lms'
 											) }
 										/>

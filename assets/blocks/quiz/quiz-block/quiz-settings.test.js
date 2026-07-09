@@ -212,6 +212,47 @@ describe( '<QuizSettings />', () => {
 		expect( mockOpenGeneralSidebar ).toBeCalledTimes( 1 );
 	} );
 
+	it( 'Should render separate "Show correct answers" toggles for the failed and passed sections', () => {
+		const { queryAllByLabelText } = render(
+			<QuizSettings
+				attributes={ {
+					options: {
+						...defaultOptions,
+						failedShowCorrectAnswers: false,
+						passedShowCorrectAnswers: true,
+					},
+				} }
+			/>
+		);
+
+		const toggles = queryAllByLabelText( 'Show correct answers.' );
+		expect( toggles ).toHaveLength( 2 );
+		expect( toggles[ 0 ].checked ).toEqual( false );
+		expect( toggles[ 1 ].checked ).toEqual( true );
+	} );
+
+	it( 'Should call setAttributes when changing the passed-quiz "Show correct answers" toggle', () => {
+		const options = {
+			...defaultOptions,
+			passedShowCorrectAnswers: true,
+		};
+		const { queryAllByLabelText } = render(
+			<QuizSettings
+				attributes={ { options } }
+				setAttributes={ mockSetAttributes }
+			/>
+		);
+
+		fireEvent.click( queryAllByLabelText( 'Show correct answers.' )[ 1 ] );
+
+		expect( mockSetAttributes ).toBeCalledWith( {
+			options: {
+				...options,
+				passedShowCorrectAnswers: false,
+			},
+		} );
+	} );
+
 	it( 'Should hide the number of questions when the random question order is disabled', () => {
 		const { queryByLabelText } = render(
 			<QuizSettings

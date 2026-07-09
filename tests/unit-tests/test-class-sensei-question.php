@@ -65,6 +65,47 @@ class Sensei_Question_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<div class="sensei-lms-question__answer-feedback__answer-notes">', $output );
 	}
 
+	public function testTheAnswerFeedback_WhenStudentPassesAndPassedShowCorrectAnswersIsNo_HidesCorrectAnswer() {
+		/* Arrange */
+		$this->login_as_student();
+
+		$question_id = $this->create_graded_quiz_with_metas_including_one_question_and_return_question_id(
+			[
+				'_pass_required'               => 'on',
+				'_quiz_passmark'                => '0',
+				'_passed_show_correct_answers' => 'no',
+			]
+		);
+
+		/* Act */
+		ob_start();
+		Sensei_Question::the_answer_feedback( $question_id );
+		$output = ob_get_clean();
+
+		/* Assert */
+		$this->assertStringNotContainsString( '<div class="sensei-lms-question__answer-feedback__correct-answer">', $output );
+	}
+
+	public function testTheAnswerFeedback_WhenStudentPassesAndPassedShowCorrectAnswersIsUnset_ShowsCorrectAnswer() {
+		/* Arrange */
+		$this->login_as_student();
+
+		$question_id = $this->create_graded_quiz_with_metas_including_one_question_and_return_question_id(
+			[
+				'_pass_required' => 'on',
+				'_quiz_passmark' => '0',
+			]
+		);
+
+		/* Act */
+		ob_start();
+		Sensei_Question::the_answer_feedback( $question_id );
+		$output = ob_get_clean();
+
+		/* Assert */
+		$this->assertStringContainsString( '<div class="sensei-lms-question__answer-feedback__correct-answer">', $output );
+	}
+
 	private function create_graded_quiz_with_metas_including_one_question_and_return_question_id( $metas ) {
 		// Create a quiz with a question.
 		$lesson_id   = $this->factory->lesson->create();

@@ -940,7 +940,9 @@ class Sensei_Question {
 
 		// Explicit gradual feedback options.
 		$indicate_incorrect   = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_indicate_incorrect', $default );
-		$show_correct_answers = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_show_correct_answers', $default );
+		$show_correct_answers = $succeeded
+			? Sensei_Quiz::get_option( $lesson_id, 'passed_show_correct_answers', true )
+			: Sensei_Quiz::get_option( $lesson_id, 'failed_show_correct_answers', $default );
 		$show_feedback_notes  = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_show_answer_feedback', $default );
 
 		/**
