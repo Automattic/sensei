@@ -72,7 +72,7 @@ class Sensei_Question_Test extends WP_UnitTestCase {
 		$question_id = $this->create_graded_quiz_with_metas_including_one_question_and_return_question_id(
 			[
 				'_pass_required'               => 'on',
-				'_quiz_passmark'                => '0',
+				'_quiz_passmark'               => '0',
 				'_passed_show_correct_answers' => 'no',
 			]
 		);

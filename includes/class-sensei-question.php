@@ -1113,7 +1113,7 @@ class Sensei_Question {
 
 		$quiz_id            = $sensei_question_loop['quiz_id'];
 		$question_item      = $sensei_question_loop['current_question'];
-		$lesson_id          = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$lesson_id          = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
 
