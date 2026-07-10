@@ -1,0 +1,53 @@
+{
+  "skill_name": "pull-request",
+  "notes": "Draft-phase evals: run the skill up to the push gate (it stops before gh pr create) inside an isolated fixture worktree that has the current PR template synced in. Subagents must NOT push or open a real PR. Graders check the title and the filled PR body against the current template order: Resolves # -> Proposed Changes -> Screenshots(if visual) -> Testing Instructions -> New/Updated Hooks(if any) -> Deprecated Code(if any) -> Changelog entry.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "bugfix",
+      "prompt": "Open a PR for this branch.",
+      "expected_output": "Imperative title, no conventional-commit prefix. Body in template order. Proposed Changes leads with the problem/user impact (breadcrumb had no course link), not a file list. Testing Instructions = checkbox list of manual steps, NO automated-test-run steps. Empty Hooks/Deprecated removed. Changelog auto box ticked; for this fix/ branch the significance leans Patch/Fixed. Resolves # blank. Stops before push.",
+      "assertions": [
+        "Title imperative, no conventional-commit prefix",
+        "Body follows the current template order",
+        "Proposed Changes leads with the problem/user impact, not a file/mechanics list",
+        "Testing Instructions is a checkbox list of manual steps",
+        "Testing Instructions has NO automated-test-run step",
+        "Empty New/Updated Hooks and Deprecated Code sections removed",
+        "Screenshots section handled sensibly (kept with a Before/After placeholder if judged visual, else removed — never left as a bare '*')",
+        "Changelog auto box ticked; significance leans Patch/Fixed for this fix/ branch",
+        "Resolves # left blank (no guessed issue)",
+        "Does NOT push or gh pr create"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "feature",
+      "prompt": "Can you put up a pull request for the work on this branch?",
+      "expected_output": "Title describing the new profile-badges setting. Body in template order. Proposed Changes leads with the capability/impact. Testing Instructions checkboxes (enable setting, view profile), no test-run steps. Empty Hooks/Deprecated removed. Changelog auto box ticked, Minor/Added. Stops before push.",
+      "assertions": [
+        "Body follows the current template order",
+        "Proposed Changes leads with the new capability/impact, not a file list",
+        "Testing Instructions is a checkbox list of manual steps, no test-run steps",
+        "Empty New/Updated Hooks and Deprecated Code sections removed",
+        "Screenshots section handled sensibly (not left as a bare '*')",
+        "Changelog auto box ticked with Significance Minor and Type Added",
+        "Does NOT push or gh pr create"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "test-only",
+      "prompt": "Create a pull request for this branch please.",
+      "expected_output": "Recognizes the change is test-only/internal. Body in template order. Screenshots and Hooks/Deprecated removed (non-visual, no hooks). Changelog auto box left UNticked; recommends the 'No Changelog' label. Testing Instructions notes no manual surface (no test-run steps). Stops before push.",
+      "assertions": [
+        "Recognizes the change is internal/test-only",
+        "Changelog auto box left unticked; recommends the 'No Changelog' label",
+        "Testing Instructions does NOT instruct running tests",
+        "Empty New/Updated Hooks, Deprecated Code, and Screenshots sections removed",
+        "Still produces a title and a template-shaped body",
+        "Does NOT push or gh pr create"
+      ]
+    }
+  ]
+}
