@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Limit the modules course search to courses the current user is allowed to edit.

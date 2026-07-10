@@ -362,6 +362,10 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
 		$property->setAccessible( true );
 		$property->setValue( Sensei()->notices, false );
+
+		$property = new ReflectionProperty( 'Sensei_Notices', 'printed_keys' );
+		$property->setAccessible( true );
+		$property->setValue( Sensei()->notices, array() );
 	}
 
 	/**

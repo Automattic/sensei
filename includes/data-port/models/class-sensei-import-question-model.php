@@ -187,7 +187,12 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	/**
 	 * Get the question media value.
 	 *
-	 * @return null|string
+	 * An external URL is downloaded in a post-process task rather than inline, so the slow,
+	 * network-bound work cannot exceed `max_execution_time` mid-batch and stall the import; in that
+	 * case null is returned and `_question_media` is set later by the post-process handler. A media
+	 * library reference resolves with a DB lookup only, so it is handled inline.
+	 *
+	 * @return int|string|WP_Error|null
 	 */
 	private function get_question_media_value() {
 		$column_name = Sensei_Data_Port_Question_Schema::COLUMN_MEDIA;
@@ -201,7 +206,27 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 			return '';
 		}
 
-		return Sensei_Data_Port_Utilities::get_attachment_from_source( $value, $this->get_post_id(), $this->schema->get_schema()[ $column_name ]['mime_types'] );
+		$mime_types = $this->schema->get_schema()[ $column_name ]['mime_types'];
+
+		// A URL means a remote download, so defer it to a post-process task to keep it off the line loop.
+		if ( false !== filter_var( $value, FILTER_VALIDATE_URL ) ) {
+			$this->task->add_attachment_task(
+				array(
+					'post_id'     => $this->get_post_id(),
+					'source'      => $value,
+					'mime_types'  => $mime_types,
+					'line_number' => $this->line_number,
+					'model_key'   => $this->get_model_key(),
+					'meta_key'    => '_question_media', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Post-process task argument, not a query.
+					'parent_id'   => $this->get_post_id(),
+				)
+			);
+
+			return null;
+		}
+
+		// Otherwise it is a media library reference: resolve it inline (a DB lookup, no network).
+		return Sensei_Data_Port_Utilities::get_attachment_from_source( $value, $this->get_post_id(), $mime_types );
 	}
 
 	/**

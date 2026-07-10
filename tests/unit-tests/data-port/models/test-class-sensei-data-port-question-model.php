@@ -308,6 +308,40 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that an external media URL is queued for download as a post-process task, targeting the
+	 * `_question_media` meta, rather than downloaded inline.
+	 */
+	public function testSyncPost_ExternalMediaUrl_QueuesAttachmentTask() {
+		$job  = Sensei_Import_Job::create( 'test', 0 );
+		$task = $this->getMockBuilder( Sensei_Import_Questions::class )
+						->setConstructorArgs( [ $job ] )
+						->setMethods( [ 'add_attachment_task' ] )
+						->getMock();
+
+		$data = [
+			Sensei_Data_Port_Question_Schema::COLUMN_TITLE => 'question with remote media',
+			Sensei_Data_Port_Question_Schema::COLUMN_ANSWER => 'Right:Yes, Wrong:No',
+			Sensei_Data_Port_Question_Schema::COLUMN_TYPE  => 'multiple-choice',
+			Sensei_Data_Port_Question_Schema::COLUMN_MEDIA => 'https://example.com/media.png?fit=800%2C600&ssl=1',
+		];
+
+		$task->expects( $this->once() )
+			->method( 'add_attachment_task' )
+			->with(
+				$this->callback(
+					function ( $args ) {
+						return 'https://example.com/media.png?fit=800%2C600&ssl=1' === $args['source']
+							&& '_question_media' === $args['meta_key'];
+					}
+				)
+			);
+
+		$model = Sensei_Import_Question_Model::from_source_array( 1, $data, new Sensei_Data_Port_Question_Schema(), $task );
+
+		$model->sync_post();
+	}
+
+	/**
 	 * Check to make sure multiple choice with no answer throws error.
 	 */
 	public function testMultipleChoiceNoAnswer() {
@@ -451,5 +485,34 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( null, get_post_meta( $post->ID, '_answer_order', true ) );
 		$this->assertTrue( has_term( 'single-line', Sensei_Data_Port_Question_Schema::TAXONOMY_QUESTION_TYPE, $post->ID ), 'Expected the question type to be correct' );
+	}
+
+	/**
+	 * Test that a question with status=private passes validation and is created with the private status.
+	 */
+	public function testSyncPost_PrivateStatusGiven_CreatesQuestionWithPrivateStatus() {
+		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		wp_set_current_user( $teacher_id );
+
+		$data = array(
+			Sensei_Data_Port_Question_Schema::COLUMN_TITLE => 'Private Question',
+			Sensei_Data_Port_Question_Schema::COLUMN_SLUG  => 'private-question',
+			Sensei_Data_Port_Question_Schema::COLUMN_STATUS => 'private',
+			Sensei_Data_Port_Question_Schema::COLUMN_TYPE  => 'multiple-choice',
+			Sensei_Data_Port_Question_Schema::COLUMN_ANSWER => 'Right:Yes, Wrong:No',
+		);
+
+		$task  = new Sensei_Import_Questions( Sensei_Import_Job::create( 'test', 0 ) );
+		$model = Sensei_Import_Question_Model::from_source_array( 1, $data, new Sensei_Data_Port_Question_Schema(), $task );
+
+		$this->assertTrue( $model->is_valid(), 'Question model with private status should be valid.' );
+
+		$result = $model->sync_post();
+		$this->assertTrue( $result, 'Question with private status should be created successfully.' );
+
+		$post = get_post( $model->get_post_id() );
+
+		$this->assertNotNull( $post, 'Private question post should exist.' );
+		$this->assertEquals( 'private', $post->post_status, 'Question post status should be private.' );
 	}
 }

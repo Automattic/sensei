@@ -12,9 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * This task reads a CSV file and imports the entities that are included in each line.
  */
-abstract class Sensei_Import_File_Process_Task
-	extends Sensei_Data_Port_Task
-	implements Sensei_Data_Port_Task_Interface {
+abstract class Sensei_Import_File_Process_Task extends Sensei_Data_Port_Task implements Sensei_Data_Port_Task_Interface {
 
 	const STATE_COMPLETED_LINES    = 'completed-lines';
 	const STATE_POST_PROCESS_TASKS = 'post-process-tasks';
@@ -114,7 +112,7 @@ abstract class Sensei_Import_File_Process_Task
 			$current_line = $this->completed_lines;
 
 			foreach ( $lines as $line_data ) {
-				$current_line++;
+				++$current_line;
 
 				$this->process_line( $current_line + 1, $line_data );
 			}
@@ -144,24 +142,74 @@ abstract class Sensei_Import_File_Process_Task
 
 	/**
 	 * Execute post process tasks.
+	 *
+	 * Post-process tasks (e.g. attachment downloads) can be slow and network-bound. Each task is
+	 * removed from the persisted queue before it is handled, so a task that fatals mid-handle (e.g.
+	 * a download or resize that exceeds `max_execution_time`) is skipped on the next run rather than
+	 * replayed indefinitely. On top of that, the loop runs a fixed number of tasks per batch and
+	 * stops once it approaches `max_execution_time`, so most runs finish cleanly and reschedule the
+	 * remaining tasks for the next run.
 	 */
 	private function run_post_process_tasks() {
+		$deadline  = $this->get_post_process_deadline();
+		$processed = 0;
+
 		$post_process_batch_left = self::POST_PROCESS_BATCH_SIZE;
 		while ( $post_process_batch_left > 0 && ! empty( $this->post_process_tasks ) ) {
-			$post_process_batch_left--;
+			// Always run at least one task per batch so a limit too small to fit the budget still
+			// makes forward progress rather than rescheduling with nothing done.
+			if ( $processed > 0 && $deadline && microtime( true ) >= $deadline ) {
+				break;
+			}
+
+			++$processed;
+			--$post_process_batch_left;
 			$tasks          = array_keys( $this->post_process_tasks );
 			$next_task      = $tasks[0];
 			$next_task_args = array_shift( $this->post_process_tasks[ $next_task ] );
+
+			if ( empty( $this->post_process_tasks[ $next_task ] ) ) {
+				unset( $this->post_process_tasks[ $next_task ] );
+			}
+
+			// Persist the task's removal before handling it. Handling downloads and resizes an
+			// attachment, which can exceed `max_execution_time` and fatal; persisting first means the
+			// next run skips this task rather than replaying it — and the whole batch — indefinitely.
+			$this->save_state();
+			$this->get_job()->persist();
 
 			$task_method = 'handle_' . $next_task;
 			$callback    = [ $this, $task_method ];
 
 			call_user_func( $callback, $next_task_args );
-
-			if ( empty( $this->post_process_tasks[ $next_task ] ) ) {
-				unset( $this->post_process_tasks[ $next_task ] );
-			}
 		}
+	}
+
+	/**
+	 * Wall-clock time after which the current post-process batch should stop and reschedule.
+	 *
+	 * The budget is sized so that one in-flight download (up to the configured request timeout)
+	 * plus save_state() can still finish before `max_execution_time` is reached, and is never
+	 * larger than the limit itself. Returns 0 when there is no execution time limit (e.g. WP-CLI
+	 * runs with `max_execution_time` of 0), in which case the batch runs to its count limit.
+	 *
+	 * @return float The deadline as a Unix timestamp with microseconds, or 0 for no limit.
+	 */
+	private function get_post_process_deadline() {
+		$max_execution_time = (int) ini_get( 'max_execution_time' );
+
+		if ( $max_execution_time <= 0 ) {
+			return 0.0;
+		}
+
+		/** This filter is documented in includes/data-port/class-sensei-data-port-utilities.php */
+		$request_timeout = (float) apply_filters( 'sensei_import_attachment_request_timeout', 10 );
+
+		// Leave headroom for one in-flight download plus save_state(); when the limit is too small
+		// to fit that, fall back to "now" so the batch runs exactly one task per run (see loop).
+		$budget = $max_execution_time - $request_timeout - 1;
+
+		return $budget > 0 ? microtime( true ) + $budget : microtime( true );
 	}
 
 	/**

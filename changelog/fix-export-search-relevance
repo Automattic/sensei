@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix export content search missing matching lessons/courses/questions.

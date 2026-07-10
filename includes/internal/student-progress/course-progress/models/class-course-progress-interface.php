@@ -126,6 +126,17 @@ interface Course_Progress_Interface {
 	public function get_created_at(): DateTimeInterface;
 
 	/**
+	 * Set the course start date.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param DateTimeInterface $started_at Course start date.
+	 */
+	public function set_started_at( DateTimeInterface $started_at ): void;
+
+	/**
 	 * Set the course progress updated date.
 	 *
 	 * @internal

@@ -16,6 +16,7 @@ import {
 } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { dispatch, useSelect } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { Slot } from '@wordpress/components';
 
 /**
@@ -100,7 +101,11 @@ export const SenseiSettingsDocumentSidebar = () => {
 			`${ pluginDocumentHandle }/${ pluginDocumentHandle }`
 		);
 	} );
-	if ( isSenseiEditorPanelOpen ) {
+	useEffect( () => {
+		if ( ! isSenseiEditorPanelOpen ) {
+			return;
+		}
+
 		const toggleEditorPanelOpened = dispatch( editorStore )
 			.toggleEditorPanelOpened
 			? dispatch( editorStore ).toggleEditorPanelOpened
@@ -114,7 +119,8 @@ export const SenseiSettingsDocumentSidebar = () => {
 		toggleEditorPanelOpened(
 			`${ pluginDocumentHandle }/${ pluginDocumentHandle }`
 		);
-	}
+	}, [ isSenseiEditorPanelOpen ] );
+
 	return (
 		<PluginDocumentSettingPanel
 			name={ pluginDocumentHandle }

@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix an infinite save loop when editing a lesson with a quiz block while a plugin (e.g. Polylang) injects extra fields into the REST response.

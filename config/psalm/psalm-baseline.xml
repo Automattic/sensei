@@ -3939,8 +3939,9 @@
       <code>! empty( $import_id ) &amp;&amp; $this-&gt;task</code>
       <code>$this-&gt;task</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedMethod occurrences="2">
+    <UndefinedMethod occurrences="3">
       <code>add_line_warning</code>
+      <code>add_attachment_task</code>
       <code>set_import_id</code>
     </UndefinedMethod>
     <UnsafeInstantiation occurrences="1">
@@ -3971,6 +3972,9 @@
       <code>Sensei_Import_Question_Model</code>
       <code>Sensei_Import_Question_Model</code>
     </PropertyNotSetInConstructor>
+    <UndefinedMethod occurrences="1">
+      <code>add_attachment_task</code>
+    </UndefinedMethod>
   </file>
   <file src="includes/email-signup/class-sensei-email-signup-form.php">
     <DocblockTypeContradiction occurrences="2">

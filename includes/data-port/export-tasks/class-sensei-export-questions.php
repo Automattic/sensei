@@ -59,7 +59,7 @@ class Sensei_Export_Questions
 				Schema::COLUMN_TITLE           => $post->post_title,
 				Schema::COLUMN_SLUG            => $post->post_name,
 				Schema::COLUMN_DESCRIPTION     => $post->post_content,
-				Schema::COLUMN_STATUS          => $post->post_status,
+				Schema::COLUMN_STATUS          => in_array( $post->post_status, Schema::SUPPORTED_POST_STATUSES, true ) ? $post->post_status : 'draft',
 				Schema::COLUMN_TYPE            => $question_type,
 				Schema::COLUMN_GRADE           => $grade,
 				Schema::COLUMN_RANDOM_ORDER    => 'multiple-choice' === $question_type && 'yes' === $meta['_random_order'] ? 1 : 0,

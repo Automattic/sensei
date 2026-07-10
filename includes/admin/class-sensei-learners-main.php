@@ -536,8 +536,16 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					$actions[] = $edit_start_date_form;
 				}
 
-				$date_started = get_comment_meta( $user_activity->comment_ID, 'start', true );
-				$date_input   = '<input class="edit-date-date-picker" data-name="start-date" type="text" value="' . esc_attr( $date_started ) . '">';
+				$student_progress = null;
+				if ( $post_id ) {
+					$progress_repository = 'course' === $post_type
+						? Sensei()->course_progress_repository_factory->create()
+						: Sensei()->lesson_progress_repository_factory->create();
+					$student_progress    = $progress_repository->get( (int) $post_id, $user_activity->user_id );
+				}
+				$student_started_at = $student_progress ? $student_progress->get_started_at() : null;
+				$date_started       = $student_started_at ? (string) wp_date( 'Y-m-d H:i:s', $student_started_at->getTimestamp() ) : '';
+				$date_input         = '<input class="edit-date-date-picker" data-name="start-date" type="text" value="' . esc_attr( $date_started ) . '">';
 
 				/**
 				 * Filter sensei_learners_main_column_data

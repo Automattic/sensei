@@ -13,18 +13,18 @@ jobs:
         name: JS Linting
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6.0.3
+            - uses: actions/checkout@v7.0.0
             - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
             - name: Get Node.js version
               id: node-version
               run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v5
+            - uses: actions/cache@v6.1.0
               with:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-            - uses: actions/cache@v5
+            - uses: actions/cache@v6.1.0
               id: node-modules-cache
               with:
                   path: node_modules/
@@ -41,18 +41,18 @@ jobs:
         name: TypeScript Checking
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6.0.3
+            - uses: actions/checkout@v7.0.0
             - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
             - name: Get Node.js version
               id: node-version
               run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v5
+            - uses: actions/cache@v6.1.0
               with:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-            - uses: actions/cache@v5
+            - uses: actions/cache@v6.1.0
               id: node-modules-cache
               with:
                   path: node_modules/
@@ -68,20 +68,20 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             # clone the repository
-            - uses: actions/checkout@v6.0.3
+            - uses: actions/checkout@v7.0.0
             - uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
             - name: Get Node.js version
               id: node-version
               run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v5
+            - uses: actions/cache@v6.1.0
               with:
                   path: ~/.npm
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-node-
-            - uses: actions/cache@v5
+            - uses: actions/cache@v6.1.0
               id: node-modules-cache
               with:
                   path: node_modules/
