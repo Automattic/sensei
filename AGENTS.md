@@ -5,7 +5,7 @@ See `make help` for the full list of available dev commands.
 - `assets/` — JS/CSS source, blocks, and built artifacts under `assets/dist/`.
 - `tests/unit-tests/` — PHPUnit suite.
 - `tests/e2e-playwright/` — Playwright end-to-end suite (see "End-to-end" below).
-- `changelog/` — per-PR changelog entries (added via `make changelog`).
+- `changelog/` — per-PR changelog entries (created from the PR description's changelog checkbox, or via `make changelog`; see Conventions).
 - `config/scoper.inc.php` — php-scoper config used during the build.
 - `scripts/linter-ci` — the diff-based PHPCS runner used by `make lint` and CI.
 - `.github/workflows/` — CI definitions; PR previews are built by `playground-preview.yml`.
@@ -39,10 +39,15 @@ See `make help` for the full list of available dev commands.
 ## Linting
 - **PHPCS**: Run `make lint` (the same diff-based check CI uses; requires a clean working tree). Whole-codebase scans: `./vendor/bin/phpcs`.
 - **Psalm**: Run `make psalm`. This runs Psalm against every PHP version in `.github/workflows/psalm.yml`'s matrix (parsed at runtime) since type narrowing differs between versions. Requires the matching `php@<version>` brew formulae installed.
+- **JS / CSS / types**: `npm run lint-js` (ESLint on `assets`), `npm run lint-css` (stylelint on SCSS), `npm run lint-types` (tsc). Each JS/CSS one has a `:fix` variant.
 - **Before pushing**: The pre-commit hook only lints PHP files added after 2020-01-01. CI lints all changed lines. Always run PHPCS and the full Psalm matrix on modified files before pushing to avoid CI failures.
 
 ## Conventions
-- **Changelogs**: Every user-facing change MUST have a changelog entry before opening a PR. Run `make changelog` (entries stored in `changelog/`). For purely internal changes (refactors, test-only changes), apply the `No Changelog` label to the PR instead.
-- **PR milestones**: Every PR MUST have a milestone or CI (`pr-validation.yml`) fails. Assign the next shipping milestone after opening: find it with `gh api 'repos/Automattic/sensei/milestones?state=open' --jq '.[].title' | sort -V | head -1`, then assign it. `gh pr edit --milestone` errors on the projects-classic GraphQL deprecation; use the REST fallback `gh api -X PATCH repos/Automattic/sensei/issues/<PR_NUMBER> -F milestone=<MILESTONE_NUMBER>` instead.
+- **Changelogs**: Every user-facing change MUST have a changelog entry. Prefer ticking **"Automatically create a changelog entry"** in the PR description (fill Significance/Type/Message; CI writes the `changelog/` file). Fall back to `make changelog` only when the checkbox can't be used — forks (CI can't push to a forked branch), or if you'd rather commit the entry yourself; don't do both. For purely internal changes (refactors, test-only), apply the `No Changelog` label instead.
+- **PR milestones**: Every PR MUST have a milestone or CI (`pr-validation.yml`) fails. The `pull-request` skill assigns the next shipping milestone when it opens a PR.
 - **Version placeholders in docblocks**: Never hardcode a release number in `@since` tags for new code. Use `@since $$next-version$$` — release tooling replaces the placeholder on version bump.
 - **Array syntax**: Use the long form `array( ... )` in new PHP code, per the [WordPress PHP coding standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/#declaring-arrays). Sensei's `phpcs.xml.dist` excludes the short-array disallow sniff, so `[ ... ]` won't fail lint, but new code should follow the upstream standard anyway. Do not mass-convert existing code.
+- **Coding standards**: Follow the WordPress coding standards for the language you're touching — [PHP](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/), [JavaScript](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/), [CSS](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/css/), [HTML](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/html/). See **Linting** above for the enforcing commands; HTML has no linter, so apply that standard by hand.
+- **Naming conventions**: Follow Sensei's naming conventions (internal P2: P6rkRX-4oA-p2). Use "student", not "learner", in new identifiers and user-facing strings.
+- **Documenting hooks and functions**: Document new or updated actions/filters and public functions with docblocks (params, return, `@since` per the version-placeholder rule above). When a change adds or updates a hook, describe it and apply the `Hooks` label; when it deprecates code, name the replacement and apply the `Deprecation` label.
+- **Minimum supported versions**: Test changes against the minimum supported PHP (7.4) and WordPress (6.8), not only the latest — use the `make up WP=… PHP=…` override (see Development environment) before pushing anything version-sensitive.

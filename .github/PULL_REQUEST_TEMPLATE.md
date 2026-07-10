@@ -3,15 +3,18 @@ Resolves #
 ## Proposed Changes
 *
 
-## Testing Instructions
-<!--
-Add as many details as possible to help others reproduce the issue and test the changes.
-"Before / After" screenshots can also be very helpful when the change is visual.
--->
+## Screenshots
+<!-- For visual changes, fill the Before/After table below. For net-new UI with no "before", drop the table and paste a single screenshot or short video. Remove this whole section if the change has no visual surface. -->
 
-1.
-2.
-3.
+| Before | After |
+| --- | --- |
+|  |  |
+
+## Testing Instructions
+<!-- List the manual steps a reviewer follows to verify the change; they tick each as they test. Replace the placeholders below. -->
+
+- [ ] Step 1
+- [ ] Step 2
 
 ## New/Updated Hooks
 <!-- Add the following only if there are new/updated actions or filters. Please provide a brief description of what they do and any arguments they may take. Be sure to also add the "Hooks" label to this PR. -->
@@ -22,18 +25,6 @@ Add as many details as possible to help others reproduce the issue and test the 
 <!-- Add the following only if there is any code that is being deprecated. Please list the replacement function or hook that should be called instead, if applicable. Be sure to also add the "Deprecation" label to this PR. -->
 
 *
-
-## Pre-Merge Checklist
-<!-- Complete applicable items on this checklist **before** merging. Items that are not applicable can be left unchecked.
-
-Both the PR author and reviewer are responsible for ensuring the checklist is completed. -->
-- [ ] PR title and description contain sufficient detail and accurately describe the changes
-- [ ] Adheres to coding standards ([PHP](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/), [JavaScript](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/), [CSS](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/css/), [HTML](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/html/))
-- [ ] All strings are translatable (without concatenation, handles plurals)
-- [ ] Follows our naming conventions (P6rkRX-4oA-p2)
-- [ ] Hooks (p6rkRX-1uS-p2) and functions are documented
-- [ ] New UIs are responsive and use a [mobile-first approach](https://zellwk.com/blog/how-to-write-mobile-first-css/)
-- [ ] Code is tested on the minimum supported PHP and WordPress versions
 
 ## Changelog entry
 <!-- Tick the box below to have CI create the changelog/ entry from the details here (only available for branches in this repository; forks should run `make changelog`).
@@ -46,9 +37,9 @@ Otherwise run `make changelog` locally, or apply the "No Changelog" label for in
 
 #### Significance
 <!-- Choose only one -->
-- [ ] Patch - Backwards-compatible bug fixes
-- [ ] Minor - Added or deprecated functionality in a backwards-compatible manner
-- [ ] Major - Broke backwards compatibility in some way
+- [ ] Patch - Backward-compatible bug fixes
+- [ ] Minor - Add or deprecate functionality in a backward-compatible manner
+- [ ] Major - Incompatible or breaking API changes
 
 #### Type
 <!-- Choose only one -->
