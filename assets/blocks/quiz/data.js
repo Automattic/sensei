@@ -16,6 +16,49 @@ import categoryQuestionBlock from './category-question-block';
 import { mapKeys, mapValues, isObject, omit } from 'lodash';
 
 /**
+ * Question attributes that are derived from the server and must not be sent
+ * back as editable structure.
+ *
+ * @type {string[]}
+ */
+export const READ_ONLY_ATTRIBUTES = [
+	'categories',
+	'shared',
+	'options.studentHelp',
+	'media',
+	'categoryName',
+	'lock',
+];
+
+/**
+ * Normalize a quiz REST response into the structure the editor tracks.
+ *
+ * Only the fields that make up the editor's structure are kept. Other plugins
+ * (e.g. Polylang) may inject extra top-level fields such as `lang` and
+ * `translations` into the REST response; including them here would make the
+ * structure comparison detect a permanent diff and trigger an infinite save
+ * loop.
+ *
+ * @param {Object} structure The quiz response.
+ *
+ * @return {Object} The normalized structure.
+ */
+export function normalizeServerStructure( structure ) {
+	if ( ! structure ) {
+		return {};
+	}
+
+	return {
+		lesson_status: structure.lesson_status,
+		lesson_title: structure.lesson_title,
+		options: structure.options,
+		questions: ( structure.questions || [] ).map( ( question ) =>
+			omit( question, READ_ONLY_ATTRIBUTES )
+		),
+	};
+}
+
+/**
  * Quiz settings and questions data.
  *
  * @typedef {Object} QuizStructure
