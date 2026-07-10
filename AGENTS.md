@@ -5,7 +5,7 @@ See `make help` for the full list of available dev commands.
 - `assets/` — JS/CSS source, blocks, and built artifacts under `assets/dist/`.
 - `tests/unit-tests/` — PHPUnit suite.
 - `tests/e2e-playwright/` — Playwright end-to-end suite (see "End-to-end" below).
-- `changelog/` — per-PR changelog entries (added via `make changelog`).
+- `changelog/` — per-PR changelog entries (created from the PR description's changelog checkbox, or via `make changelog`; see Conventions).
 - `config/scoper.inc.php` — php-scoper config used during the build.
 - `scripts/linter-ci` — the diff-based PHPCS runner used by `make lint` and CI.
 - `.github/workflows/` — CI definitions; PR previews are built by `playground-preview.yml`.

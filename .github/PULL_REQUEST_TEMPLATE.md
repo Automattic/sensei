@@ -11,10 +11,10 @@ Resolves #
 |  |  |
 
 ## Testing Instructions
-<!-- Add as many details as possible to help others reproduce the issue and test the changes. -->
+<!-- List the manual steps a reviewer follows to verify the change; they tick each as they test. Replace the placeholders below. -->
 
-- [ ]
-- [ ]
+- [ ] Step 1
+- [ ] Step 2
 
 ## New/Updated Hooks
 <!-- Add the following only if there are new/updated actions or filters. Please provide a brief description of what they do and any arguments they may take. Be sure to also add the "Hooks" label to this PR. -->
