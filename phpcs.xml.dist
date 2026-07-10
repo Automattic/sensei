@@ -21,29 +21,12 @@
 
 	<!-- Rules -->
 	<rule ref="PHPCompatibilityWP"/>
-	<rule ref="WordPress">
-		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
-	</rule>
+	<rule ref="WordPress" />
 	<rule ref="WordPress-Docs" />
 	<rule ref="WordPress-Extra" />
 
 	<rule ref="WordPress.Security.ValidatedSanitizedInput" />
 	<rule ref="WordPress.DB.DirectDatabaseQuery" />
-
-	<!-- Array Syntax (disabled until we transition to short-array) -->
-<!--
-	<rule ref="Generic.Arrays.DisallowLongArraySyntax">
-		<include-pattern>/sensei-lms.php</include-pattern>
-		<include-pattern>/uninstall.php</include-pattern>
-		<include-pattern>/includes/class-sensei-dependency-checker.php</include-pattern>
-	</rule>
-
-	<rule ref="Universal.Arrays.DisallowShortArraySyntax">
-		<include-pattern>/sensei-lms.php</include-pattern>
-		<include-pattern>/uninstall.php</include-pattern>
-		<include-pattern>/includes/class-sensei-dependency-checker.php</include-pattern>
-	</rule>
--->
 
 	<!-- Temporary Rule Exclusions -->
 	<rule ref="VariableAnalysis">
