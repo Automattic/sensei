@@ -282,6 +282,25 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A wrong answer to an autogradable question must be recorded as a numeric zero grade,
+	 * not boolean false. Storing false makes get_user_question_grade() report the question as
+	 * "not graded" on the Review Grade screen, so a wrong answer renders as ungraded and the
+	 * displayed total is inflated.
+	 *
+	 * @covers Sensei_Grading::grade_question_auto
+	 */
+	public function testGradeQuestionAuto_WrongMultipleChoiceAnswerGiven_ReturnsZeroGrade(): void {
+		/* Arrange. */
+		$question_id = $this->getTestQuestion( 'multiple-choice' );
+
+		/* Act. */
+		$grade = Sensei_Grading::grade_question_auto( $question_id, 'multiple-choice', 'wrong1', 0 );
+
+		/* Assert. */
+		$this->assertSame( 0, $grade );
+	}
+
+	/**
 	 * Test that courses average grade is calculated correctly when there are no grades.
 	 *
 	 * @covers Sensei_Grading::get_courses_average_grade
