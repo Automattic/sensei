@@ -73,7 +73,6 @@ Fill each section from the diff. Guidance per section:
 
 - **`Resolves #`** — fill it in as `Resolves #<n>` only if the user gave an issue
   number or one appears in the commit messages (`git log trunk..HEAD` from step 2).
-  Don't expect it in the branch name — Sensei branches don't carry issue numbers.
   If there's no issue, **remove this line entirely** — a bare `Resolves #` is
   noise. Never guess a number.
 - **`## Proposed Changes`** — the reviewer-facing summary. Lead with the
