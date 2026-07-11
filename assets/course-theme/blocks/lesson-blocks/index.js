@@ -198,9 +198,13 @@ export default [
 			'Display Sensei notices about the current lesson or quiz.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function NoticesEdit() {
+			const blockProps = useBlockProps( {
+				className:
+					'sensei-course-theme__frame sensei-lms-notice sensei-course-theme-lesson-quiz-notice',
+			} );
 			return (
-				<div className="sensei-course-theme__frame sensei-lms-notice sensei-course-theme-lesson-quiz-notice">
+				<div { ...blockProps }>
 					<div className="sensei-course-theme-lesson-quiz-notice__content">
 						{ __( 'Notice', 'sensei-lms' ) }
 					</div>
