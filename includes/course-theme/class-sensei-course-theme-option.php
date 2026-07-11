@@ -158,6 +158,30 @@ class Sensei_Course_Theme_Option {
 	}
 
 	/**
+	 * Check if the Learning Mode compatibility styles should load.
+	 *
+	 * These opinionated styles override the theme's fonts, type scale, and
+	 * colors so Learning Mode looks consistent. Block themes inherit their
+	 * own styles from theme.json, so they don't need the overrides. Themes
+	 * that opt in via 'sensei-learning-mode' support are also skipped.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return bool
+	 */
+	public static function should_load_learning_mode_compat() {
+		if ( current_theme_supports( 'sensei-learning-mode' ) ) {
+			return false;
+		}
+
+		if ( Sensei_Utils::is_fse_theme() ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Check if the given course has Learning Mode enabled or not.
 	 *
 	 * @param int $course_id Course ID.
