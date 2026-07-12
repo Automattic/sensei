@@ -210,6 +210,8 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Core_Modules::taxonomy_column_content
 	 */
 	public function testTaxonomyColumnContent_CoursesColumnGiven_ReturnsLinkedCourseNames() {
+		$this->login_as_admin();
+
 		$module_id = $this->factory->module->create();
 		$course_1  = $this->factory->course->create_and_get();
 		$course_2  = $this->factory->course->create_and_get();
