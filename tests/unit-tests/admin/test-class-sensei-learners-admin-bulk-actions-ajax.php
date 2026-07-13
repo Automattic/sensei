@@ -7,16 +7,6 @@
 class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 
-	public function setUp(): void {
-		parent::setUp();
-		add_filter( 'pre_http_request', '__return_empty_array' );
-	}
-
-	public function tearDown(): void {
-		remove_filter( 'pre_http_request', '__return_empty_array' );
-		parent::tearDown();
-	}
-
 	/**
 	 * Gets the manual enrolment manager.
 	 *
