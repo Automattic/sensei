@@ -168,12 +168,10 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
-	 * Restrict read access to a message's participants.
+	 * Restrict message reads to participants and privileged users.
 	 *
-	 * WordPress core's comments controller decides whether a comment is readable by calling
-	 * this method on the post's REST controller. The parent treats any `publish` post as
-	 * readable, which would expose private message replies; gate it on message participation
-	 * (sender / receiver) or a privileged capability so replies stay private.
+	 * Core's comments controller calls this to decide whether a message reply is readable, so
+	 * gating it here keeps private replies from leaking through the comments REST API.
 	 *
 	 * @param WP_Post $post Post object.
 	 * @return bool Whether the post can be read.
