@@ -92,6 +92,7 @@
 				<element value="edit_lessons"/>
 				<element value="edit_others_lessons"/>
 				<element value="edit_published_lessons"/>
+				<element value="read_private_sensei_messages"/>
 			</property>
 		</properties>
 	</rule>
