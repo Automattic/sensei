@@ -874,7 +874,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$user_id   = wp_create_user( 'grading_invalid_q', 'pass', 'grading_invalid_q@example.com' );
 		$lesson_id = $this->factory->lesson->create();
-		$quiz_id   = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$quiz_id   = $this->factory->quiz->create( array( 'post_parent' => $lesson_id ) );
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 		update_post_meta( $quiz_id, '_quiz_grade_type', 'auto' );
 
@@ -897,11 +897,11 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 
 		// Both IDs are submitted — the valid one answered correctly, the invalid one with anything.
-		$submitted = [
+		$submitted = array(
 			$valid_question_id   => 'true',
 			$invalid_question_id => 'true',
-		];
-		Sensei_Quiz::save_user_answers( $submitted, [], $lesson_id, $user_id );
+		);
+		Sensei_Quiz::save_user_answers( $submitted, array(), $lesson_id, $user_id );
 
 		/* Act. */
 		$grade = Sensei_Grading::grade_quiz_auto( $quiz_id, $submitted, 0, 'auto' );
