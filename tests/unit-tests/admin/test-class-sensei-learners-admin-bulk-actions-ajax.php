@@ -156,16 +156,17 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 	}
 
 	/**
-	 * A non-numeric user_id is rejected before any learner query runs.
+	 * A user without the manage_sensei_grades capability is denied.
 	 */
-	public function testGetCourseList_WhenUserIdNotNumeric_ReturnsError() {
+	public function testGetCourseList_WhenUserLacksManageGradesCap_ReturnsError() {
 		$this->factory = new Sensei_Factory();
 
-		$admin = $this->factory->user->create( array( 'role' => 'administrator' ) );
-		wp_set_current_user( $admin );
+		$subscriber = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$student    = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		wp_set_current_user( $subscriber );
 
 		$_POST['nonce']   = wp_create_nonce( 'get_course_list' );
-		$_POST['user_id'] = 'foo';
+		$_POST['user_id'] = $student;
 
 		try {
 			$this->_handleAjax( 'get_course_list' );
@@ -176,7 +177,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 		$response = json_decode( $this->_last_response );
 
 		$this->assertIsObject( $response, 'The AJAX response should be a JSON object.' );
-		$this->assertFalse( $response->success, 'A non-numeric user_id must not be queried.' );
+		$this->assertFalse( $response->success, 'A user without manage_sensei_grades must be denied.' );
 	}
 
 	/**
