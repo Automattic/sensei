@@ -46,6 +46,21 @@ class Course_Welcome extends Email_Generators_Abstract {
 	const META_PREFIX_WELCOME_SENT = 'sensei_course_welcome_email_sent_';
 
 	/**
+	 * Value stored in the welcome-sent flag when the upgrade backfill grandfathered a student
+	 * instead of this code dispatching the email. It makes no claim about actual delivery —
+	 * the student may have been welcomed before this flag existed, or never.
+	 *
+	 * A recorded dispatch stores a timestamp instead, so integrations can tell an assumed flag
+	 * apart from a real dispatch (e.g. to still deliver a welcome whose access period had not
+	 * started when the backfill ran).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string
+	 */
+	const WELCOME_ASSUMED = 'assumed';
+
+	/**
 	 * Build the user meta key used to flag the welcome email as sent for a course.
 	 *
 	 * The key is blog-prefixed so it stays scoped to the current site on multisite,
@@ -74,6 +89,9 @@ class Course_Welcome extends Email_Generators_Abstract {
 
 		// Send welcome email on the day the student gets access to the course.
 		$this->maybe_add_action( 'sensei_pro_course_access_start_student_email_send', [ $this, 'welcome_to_course_for_student' ], 10, 2 );
+
+		// Flag the welcome email as sent only once it has actually been dispatched.
+		$this->maybe_add_action( 'sensei_email_sent', array( $this, 'mark_welcome_email_sent_on_dispatch' ), 10, 3 );
 	}
 
 	/**
@@ -135,11 +153,37 @@ class Course_Welcome extends Email_Generators_Abstract {
 				],
 			]
 		);
+	}
 
-		// Flag as sent regardless of delivery outcome. Sensei's email dispatch is a
-		// fire-and-forget action, so the result is not knowable here. We favour never
-		// re-welcoming an enrolled student over guaranteeing a single delivery.
-		$this->mark_welcome_email_sent( $student_id, $course_id );
+	/**
+	 * Flag the welcome email as sent once it has actually been dispatched.
+	 *
+	 * Hooked on `sensei_email_sent`, which only fires when the email passed the
+	 * `sensei_send_emails` gate. Marking here rather than at send-attempt time avoids
+	 * flagging suppressed emails as sent (e.g. when access to the course has not started
+	 * yet), which would otherwise block the deferred welcome from being delivered later.
+	 *
+	 * @internal
+	 *
+	 * @access private
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $email_name  The email identifier.
+	 * @param string $recipient   The recipient email address.
+	 * @param array  $replacement The per-recipient replacement values.
+	 */
+	public function mark_welcome_email_sent_on_dispatch( $email_name, $recipient, $replacement ) {
+		if ( self::IDENTIFIER_NAME !== $email_name ) {
+			return;
+		}
+
+		$student_id = isset( $replacement['student:id'] ) ? (int) $replacement['student:id'] : 0;
+		$course_id  = isset( $replacement['course:id'] ) ? (int) $replacement['course:id'] : 0;
+
+		if ( $student_id && $course_id ) {
+			$this->mark_welcome_email_sent( $student_id, $course_id );
+		}
 	}
 
 	/**

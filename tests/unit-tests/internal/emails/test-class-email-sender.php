@@ -472,4 +472,94 @@ class Email_Sender_Test extends \WP_UnitTestCase {
 		self::assertStringContainsString( 'From: Test Blog <admin@example.org>', $last_email->header );
 	}
 
+	public function testSendEmail_WhenEmailIsSent_FiresSenseiEmailSentAction() {
+		/* Arrange. */
+		$fired    = array();
+		$callback = function ( $email_name, $recipient, $replacement ) use ( &$fired ) {
+			$fired[] = array(
+				'email_name'  => $email_name,
+				'recipient'   => $recipient,
+				'replacement' => $replacement,
+			);
+		};
+		add_action( 'sensei_email_sent', $callback, 10, 3 );
+
+		/* Act. */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			array(
+				'a@a.test' => array(
+					'student:displayname' => 'Test Student',
+				),
+			),
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Cleanup. */
+		remove_action( 'sensei_email_sent', $callback, 10 );
+
+		/* Assert. */
+		self::assertCount( 1, $fired, 'The sensei_email_sent action should fire once per dispatched recipient.' );
+		self::assertSame( 'student_starts_course', $fired[0]['email_name'], 'The action should receive the email identifier.' );
+		self::assertSame( 'a@a.test', $fired[0]['recipient'], 'The action should receive the recipient address.' );
+		self::assertSame( array( 'student:displayname' => 'Test Student' ), $fired[0]['replacement'], 'The action should receive the recipient replacements.' );
+	}
+
+	public function testSendEmail_WhenWpMailReturnsFalse_DoesNotFireSenseiEmailSentAction() {
+		/* Arrange. */
+		add_filter( 'pre_wp_mail', '__return_false' );
+
+		$fired    = 0;
+		$callback = function () use ( &$fired ) {
+			++$fired;
+		};
+		add_action( 'sensei_email_sent', $callback );
+
+		/* Act. */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			array(
+				'a@a.test' => array(
+					'student:displayname' => 'Test Student',
+				),
+			),
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Cleanup. */
+		remove_filter( 'pre_wp_mail', '__return_false' );
+		remove_action( 'sensei_email_sent', $callback );
+
+		/* Assert. */
+		self::assertSame( 0, $fired, 'The sensei_email_sent action must not fire when wp_mail() fails.' );
+	}
+
+	public function testSendEmail_WhenSendIsSuppressed_DoesNotFireSenseiEmailSentAction() {
+		/* Arrange. */
+		add_filter( 'sensei_send_emails', '__return_false' );
+
+		$fired    = 0;
+		$callback = function () use ( &$fired ) {
+			++$fired;
+		};
+		add_action( 'sensei_email_sent', $callback );
+
+		/* Act. */
+		$this->email_sender->send_email(
+			'student_starts_course',
+			array(
+				'a@a.test' => array(
+					'student:displayname' => 'Test Student',
+				),
+			),
+			self::USAGE_TRACKING_TYPE
+		);
+
+		/* Cleanup. */
+		remove_filter( 'sensei_send_emails', '__return_false' );
+		remove_action( 'sensei_email_sent', $callback );
+
+		/* Assert. */
+		self::assertSame( 0, $fired, 'The sensei_email_sent action must not fire when the send is suppressed.' );
+	}
 }

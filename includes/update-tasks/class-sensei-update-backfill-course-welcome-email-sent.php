@@ -72,9 +72,11 @@ class Sensei_Update_Backfill_Course_Welcome_Email_Sent extends Sensei_Background
 			$meta_key = Course_Welcome::get_welcome_sent_meta_key( $course_id );
 
 			// Only add the flag for relationships that don't already have it, so
-			// re-runs never overwrite an existing value.
+			// re-runs never overwrite an existing value. The backfill stores the "assumed"
+			// sentinel (not a timestamp) so a grandfathered flag stays distinguishable from a
+			// recorded dispatch — it makes no claim about whether an email was ever delivered.
 			if ( ! metadata_exists( 'user', $user_id, $meta_key ) ) {
-				update_user_meta( $user_id, $meta_key, gmdate( 'Y-m-d H:i:s' ) );
+				update_user_meta( $user_id, $meta_key, Course_Welcome::WELCOME_ASSUMED );
 			}
 		}
 

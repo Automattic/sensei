@@ -126,13 +126,32 @@ class Email_Sender {
 			 * For documentation of the filter check class-sensei-emails.php file.
 			 */
 			if ( apply_filters( 'sensei_send_emails', true, $recipient, $subject, $message, $email_name, $replacement ) ) {
-				wp_mail(
+				$sent = wp_mail(
 					$recipient,
 					$subject,
 					$message,
 					$this->get_email_headers()
 				);
 				sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
+
+				if ( $sent ) {
+					/**
+					 * Fires after a Sensei email has been successfully handed off for a recipient.
+					 *
+					 * Fires only when the email passed the `sensei_send_emails` gate and `wp_mail()`
+					 * returned true, so listeners can react to real sends rather than attempts that
+					 * were suppressed or failed at the mailer.
+					 *
+					 * @since $$next-version$$
+					 *
+					 * @hook  sensei_email_sent
+					 *
+					 * @param {string} $email_name  The email identifier (e.g. 'course_welcome').
+					 * @param {string} $recipient   The recipient email address.
+					 * @param {array}  $replacement The per-recipient replacement values.
+					 */
+					do_action( 'sensei_email_sent', $email_name, $recipient, $replacement );
+				}
 			}
 		}
 

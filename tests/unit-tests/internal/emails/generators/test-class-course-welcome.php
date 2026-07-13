@@ -72,11 +72,14 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		do_action( 'sensei_course_enrolment_status_changed', 1, 1 );
 		do_action( 'sensei_pro_course_access_start_student_email_send', 1, 1 );
+		do_action( 'sensei_email_sent', 'course_welcome', 'test@a.com', array() );
 
 		$priority_for_immediate_start = has_action( 'sensei_course_enrolment_status_changed', [ $generator, 'welcome_to_course_for_student' ] );
 		$priority_for_access_start    = has_action( 'sensei_pro_course_access_start_student_email_send', [ $generator, 'welcome_to_course_for_student' ] );
+		$priority_for_mark_on_sent    = has_action( 'sensei_email_sent', array( $generator, 'mark_welcome_email_sent_on_dispatch' ) );
 		self::assertSame( 10, $priority_for_immediate_start );
 		self::assertSame( 10, $priority_for_access_start );
+		self::assertSame( 10, $priority_for_mark_on_sent );
 	}
 
 	public function testWelcomeToCourseForStudent_WhenCalled_CallsSenseiEmailSendFilterWithMatchingArguments() {
@@ -323,10 +326,10 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		self::assertSame( array(), $actual_data, 'Welcome email should not be sent when it has already been marked as sent for the course.' );
 	}
 
-	public function testWelcomeToCourseForStudent_EmailSent_MarksWelcomeAsSent() {
+	public function testWelcomeToCourseForStudent_WhenCalled_DoesNotMarkWelcomeSentByItself() {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
-		$student_id = $factory->user->create( array( 'user_email' => 'marks-flag@a.com' ) );
+		$student_id = $factory->user->create( array( 'user_email' => 'attempt-only@a.com' ) );
 		$course_id  = $factory->course->create();
 
 		$email_repository = $this->createMock( Email_Repository::class );
@@ -335,11 +338,68 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		$generator = new Course_Welcome( $email_repository );
 
 		/* Act. */
+		// A send attempt alone must not flag the email as sent; the flag is only written once
+		// the email has actually been dispatched (via the sensei_email_sent action). Otherwise a
+		// suppressed send (e.g. access not started) would block the deferred welcome.
 		$generator->welcome_to_course_for_student( $student_id, $course_id );
 
 		/* Assert. */
 		$flag = get_user_meta( $student_id, Course_Welcome::get_welcome_sent_meta_key( $course_id ), true );
-		self::assertNotEmpty( $flag, 'The welcome email sent flag should be set after the email is sent.' );
+		self::assertEmpty( $flag, 'The welcome email sent flag should not be set on a send attempt alone.' );
+
+		/* Cleanup. */
+		$factory->tearDown();
+	}
+
+	public function testMarkWelcomeEmailSentOnDispatch_ForCourseWelcome_MarksWelcomeAsSent() {
+		/* Arrange. */
+		$factory    = new \Sensei_Factory();
+		$student_id = $factory->user->create( array( 'user_email' => 'dispatched@a.com' ) );
+		$course_id  = $factory->course->create();
+
+		$email_repository = $this->createMock( Email_Repository::class );
+		$generator        = new Course_Welcome( $email_repository );
+
+		/* Act. */
+		$generator->mark_welcome_email_sent_on_dispatch(
+			'course_welcome',
+			'dispatched@a.com',
+			array(
+				'student:id' => $student_id,
+				'course:id'  => $course_id,
+			)
+		);
+
+		/* Assert. */
+		$flag = get_user_meta( $student_id, Course_Welcome::get_welcome_sent_meta_key( $course_id ), true );
+		self::assertNotEmpty( $flag, 'The welcome email sent flag should be set once the email has been dispatched.' );
+
+		/* Cleanup. */
+		$factory->tearDown();
+	}
+
+	public function testMarkWelcomeEmailSentOnDispatch_ForOtherEmail_DoesNotMark() {
+		/* Arrange. */
+		$factory    = new \Sensei_Factory();
+		$student_id = $factory->user->create( array( 'user_email' => 'other-email@a.com' ) );
+		$course_id  = $factory->course->create();
+
+		$email_repository = $this->createMock( Email_Repository::class );
+		$generator        = new Course_Welcome( $email_repository );
+
+		/* Act. */
+		$generator->mark_welcome_email_sent_on_dispatch(
+			'some_other_email',
+			'other-email@a.com',
+			array(
+				'student:id' => $student_id,
+				'course:id'  => $course_id,
+			)
+		);
+
+		/* Assert. */
+		$flag = get_user_meta( $student_id, Course_Welcome::get_welcome_sent_meta_key( $course_id ), true );
+		self::assertEmpty( $flag, 'The welcome email sent flag should not be set for a different email identifier.' );
 
 		/* Cleanup. */
 		$factory->tearDown();
@@ -364,7 +424,17 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 
 		/* Act. */
 		// Simulate the enrolment status changing more than once (e.g. enrol, unenrol, re-enrol).
+		// The first attempt is dispatched (the sender fires sensei_email_sent, which flags it),
+		// so the second attempt must be skipped by the already-sent guard.
 		$generator->welcome_to_course_for_student( $student_id, $course_id );
+		$generator->mark_welcome_email_sent_on_dispatch(
+			'course_welcome',
+			'once@a.com',
+			array(
+				'student:id' => $student_id,
+				'course:id'  => $course_id,
+			)
+		);
 		$generator->welcome_to_course_for_student( $student_id, $course_id );
 
 		/* Cleanup. */

@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Only flag the Welcome to Course email as sent once it has actually been dispatched, so a welcome that is deferred until course access starts is still delivered.
