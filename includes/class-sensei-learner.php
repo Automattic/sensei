@@ -808,7 +808,7 @@ class Sensei_Learner {
 		// table, so the "load more" results line up with the visible (teacher-scoped) list.
 		$manageable_courses = array();
 		foreach ( $courses_query->posts as $course ) {
-			if ( $course instanceof WP_Post && Sensei_Abilities::can_manage_grades( array( 'course' => $course->ID ) ) ) {
+			if ( $course instanceof WP_Post && Sensei_Course::can_current_user_edit_course( $course->ID ) ) {
 				$manageable_courses[] = $course;
 			}
 		}
