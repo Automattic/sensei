@@ -8,6 +8,21 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 	use Sensei_Course_Enrolment_Test_Helpers;
 
 	/**
+	 * _handleAjax() fires admin_init, which runs WordPress's core/plugin/theme update
+	 * checks (requests to api.wordpress.org). Block them so the bootstrap's
+	 * prevent_requests guard doesn't fail these tests.
+	 */
+	public function setUp(): void {
+		parent::setUp();
+		add_filter( 'pre_http_request', '__return_empty_array' );
+	}
+
+	public function tearDown(): void {
+		remove_filter( 'pre_http_request', '__return_empty_array' );
+		parent::tearDown();
+	}
+
+	/**
 	 * Gets the manual enrolment manager.
 	 *
 	 * @return false|Sensei_Course_Manual_Enrolment_Provider
