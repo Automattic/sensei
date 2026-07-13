@@ -168,6 +168,53 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
+	 * Restrict read access to a message's participants.
+	 *
+	 * WordPress core's comments controller decides whether a comment is readable by calling
+	 * this method on the post's REST controller. The parent treats any `publish` post as
+	 * readable, which would expose private message replies; gate it on message participation
+	 * (sender / receiver) or a privileged capability so replies stay private.
+	 *
+	 * @param WP_Post $post Post object.
+	 * @return bool Whether the post can be read.
+	 */
+	public function check_read_permission( $post ) {
+		if ( ! $this->current_user_can_read_message( $post ) ) {
+			return false;
+		}
+
+		return parent::check_read_permission( $post );
+	}
+
+	/**
+	 * Whether the current user may read a private message: its sender, its receiver, or a
+	 * privileged user who can moderate/read private messages.
+	 *
+	 * @param WP_Post $post Message post object.
+	 * @return bool
+	 */
+	private function current_user_can_read_message( $post ) {
+		if (
+			current_user_can( 'manage_options' )
+			|| current_user_can( 'moderate_comments' )
+			|| current_user_can( 'read_private_sensei_messages' )
+		) {
+			return true;
+		}
+
+		$user = wp_get_current_user();
+		if ( ! $user->ID ) {
+			return false;
+		}
+
+		$sender   = get_post_meta( $post->ID, '_sender', true );
+		$receiver = get_post_meta( $post->ID, '_receiver', true );
+
+		return ( $sender && $sender === $user->user_login )
+			|| ( $receiver && $receiver === $user->user_login );
+	}
+
+	/**
 	 * Checks if the logged-in user can access the message.
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
