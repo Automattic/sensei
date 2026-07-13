@@ -6,8 +6,8 @@
  */
 
 /**
- * Integration tests asserting that approved replies on a private sensei_message are not exposed
- * through WordPress core's public comments REST API to users who cannot moderate comments.
+ * Asserts that approved replies on a private sensei_message are not exposed through
+ * WordPress core's comments REST API to users who cannot read the message.
  */
 class Sensei_Message_Comments_REST_Tests extends WP_Test_REST_TestCase {
 
