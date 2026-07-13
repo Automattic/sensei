@@ -1,6 +1,6 @@
 <?php
 /**
- * Sensei REST API: private message replies must not leak through the core comments endpoint.
+ * Sensei REST API: private message replies stay restricted to participants on the core comments endpoint.
  *
  * @package sensei-lms
  */
