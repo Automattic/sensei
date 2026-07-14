@@ -175,7 +175,9 @@ class Sensei_Core_Modules {
 	public function set_module_author_on_creation( $term_id ) {
 		$user_id = get_current_user_id();
 
-		if ( $user_id ) {
+		// Mirror update_module_teacher_meta(): admin-owned modules are left
+		// author-less and resolved through the get_term_author() fallback.
+		if ( $user_id && ! user_can( $user_id, 'manage_options' ) ) {
 			update_term_meta( $term_id, 'module_author', $user_id );
 		}
 	}
