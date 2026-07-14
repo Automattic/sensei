@@ -297,4 +297,92 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertSame( absint( get_term_meta( $module['term_id'], 'module_author', true ) ), wp_get_current_user()->ID, 'Module teacher ID meta not set to the updated Author ID' );
 	}
+
+	public function testModuleAdminList_WhenViewedByTeacher_ExcludesOtherUsersModules() {
+		/* Arrange */
+		set_current_screen( 'edit-module' );
+
+		$teacher_a  = $this->get_user_by_role( 'teacher' );
+		$admin_id   = $this->get_user_by_role( 'administrator' );
+		$own_module = wp_insert_term( 'Teacher A Module', 'module', array( 'slug' => 'teacher-a-module' ) );
+		update_term_meta( $own_module['term_id'], 'module_author', $teacher_a );
+		$admin_module = wp_insert_term( 'Admin Module', 'module', array( 'slug' => 'admin-module' ) );
+		update_term_meta( $admin_module['term_id'], 'module_author', $admin_id );
+
+		$this->login_as( $teacher_a );
+
+		/* Act */
+		$names = wp_list_pluck(
+			get_terms(
+				array(
+					'taxonomy'   => 'module',
+					'hide_empty' => false,
+				)
+			),
+			'name'
+		);
+
+		/* Assert */
+		self::assertContains( 'Teacher A Module', $names, 'The teacher should see their own module.' );
+		self::assertNotContains( 'Admin Module', $names, 'The teacher should not see another user\'s module in the admin list.' );
+
+		set_current_screen( 'front' );
+	}
+
+	public function testEditAndDeleteTermCaps_WhenTeacherDoesNotOwnModule_AreDenied() {
+		/* Arrange */
+		$teacher_a = $this->get_user_by_role( 'teacher' );
+		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
+		update_term_meta( $module['term_id'], 'module_author', $teacher_a );
+
+		$this->login_as_teacher_b();
+
+		/* Act & Assert */
+		self::assertFalse(
+			current_user_can( 'edit_term', $module['term_id'] ),
+			'A teacher should not be able to edit a module owned by another user.'
+		);
+		self::assertFalse(
+			current_user_can( 'delete_term', $module['term_id'] ),
+			'A teacher should not be able to delete a module owned by another user.'
+		);
+	}
+
+	public function testEditAndDeleteTermCaps_WhenTeacherOwnsModule_AreAllowed() {
+		/* Arrange */
+		$teacher_a = $this->get_user_by_role( 'teacher' );
+		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
+		update_term_meta( $module['term_id'], 'module_author', $teacher_a );
+
+		$this->login_as_teacher();
+
+		/* Act & Assert */
+		self::assertTrue(
+			current_user_can( 'edit_term', $module['term_id'] ),
+			'A teacher should be able to edit a module they own.'
+		);
+		self::assertTrue(
+			current_user_can( 'delete_term', $module['term_id'] ),
+			'A teacher should be able to delete a module they own.'
+		);
+	}
+
+	public function testEditAndDeleteTermCaps_WhenAdminDoesNotOwnModule_AreAllowed() {
+		/* Arrange */
+		$teacher_a = $this->get_user_by_role( 'teacher' );
+		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
+		update_term_meta( $module['term_id'], 'module_author', $teacher_a );
+
+		$this->login_as_admin();
+
+		/* Act & Assert */
+		self::assertTrue(
+			current_user_can( 'edit_term', $module['term_id'] ),
+			'An administrator should be able to edit any module.'
+		);
+		self::assertTrue(
+			current_user_can( 'delete_term', $module['term_id'] ),
+			'An administrator should be able to delete any module.'
+		);
+	}
 }

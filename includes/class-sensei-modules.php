@@ -28,6 +28,9 @@ class Sensei_Core_Modules {
 		// setup taxonomy
 		add_action( 'init', array( $this, 'setup_modules_taxonomy' ), 10 );
 
+		// Restrict editing and deleting modules to their owner.
+		add_filter( 'map_meta_cap', array( $this, 'restrict_module_term_management' ), 10, 4 );
+
 		// Manage lesson meta boxes for taxonomy
 		add_action( 'add_meta_boxes', array( $this, 'modules_metaboxes' ), 20, 2 );
 
@@ -2219,6 +2222,49 @@ class Sensei_Core_Modules {
 
 		register_taxonomy( 'module', array( 'course', 'lesson' ), $args );
 
+	}
+
+	/**
+	 * Restrict editing and deleting a module to its owner.
+	 *
+	 * The module taxonomy grants the `manage_modules` capability to teachers so
+	 * they can manage their own modules. WordPress maps the `edit_term` and
+	 * `delete_term` meta capabilities to that primitive capability without any
+	 * ownership consideration, which would otherwise let a teacher edit or delete
+	 * modules belonging to administrators or other teachers. Limit those
+	 * operations to the module's owner; administrators are unaffected.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param string[] $caps    The mapped primitive capabilities.
+	 * @param string   $cap     The meta capability being checked.
+	 * @param int      $user_id The user ID the check is for.
+	 * @param array    $args    Context for the check; $args[0] is the term ID.
+	 *
+	 * @return string[] The filtered capabilities.
+	 */
+	public function restrict_module_term_management( $caps, $cap, $user_id, $args ) {
+		if ( ( 'edit_term' !== $cap && 'delete_term' !== $cap ) || empty( $args[0] ) ) {
+			return $caps;
+		}
+
+		$term = get_term( $args[0] );
+		if ( ! $term instanceof WP_Term || 'module' !== $term->taxonomy ) {
+			return $caps;
+		}
+
+		// Administrators can manage every module.
+		if ( user_can( $user_id, 'manage_options' ) ) {
+			return $caps;
+		}
+
+		$author = self::get_term_author( $term->slug );
+		if ( (int) $author->ID !== (int) $user_id ) {
+			$caps[] = 'do_not_allow';
+		}
+
+		return $caps;
 	}
 
 	/**
