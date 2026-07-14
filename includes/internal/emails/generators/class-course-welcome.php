@@ -46,13 +46,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	const META_PREFIX_WELCOME_SENT = 'sensei_course_welcome_email_sent_';
 
 	/**
-	 * Value stored in the welcome-sent flag when the upgrade backfill grandfathered a student
-	 * instead of this code dispatching the email. It makes no claim about actual delivery —
-	 * the student may have been welcomed before this flag existed, or never.
-	 *
-	 * A recorded dispatch stores a timestamp instead, so integrations can tell an assumed flag
-	 * apart from a real dispatch (e.g. to still deliver a welcome whose access period had not
-	 * started when the backfill ran).
+	 * Welcome-sent flag value written by the upgrade backfill, not a real dispatch. A real dispatch stores a timestamp, so integrations can tell the two apart.
 	 *
 	 * @since $$next-version$$
 	 *
