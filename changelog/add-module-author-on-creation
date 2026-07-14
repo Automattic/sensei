@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Record the creator as a module's author when the module is created.

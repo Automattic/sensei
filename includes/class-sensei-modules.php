@@ -108,6 +108,9 @@ class Sensei_Core_Modules {
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 
+		// Record the creator as the module author on creation.
+		add_action( 'created_' . $this->taxonomy, array( $this, 'set_module_author_on_creation' ) );
+
 		// Update module teacher meta when added to course.
 		add_action( 'added_term_relationship', [ $this, 'add_teacher_id_in_module_meta_when_added_to_course' ], 10, 3 );
 
@@ -159,6 +162,25 @@ class Sensei_Core_Modules {
 		$course = get_post( $object_id );
 
 		self::update_module_teacher_meta( $tt_id, $course->post_author );
+	}
+
+	/**
+	 * Record the creator as the module author when a module is created.
+	 *
+	 * Without this, a module created without a course assignment has no author
+	 * and is treated as owned by the site admin, hiding it from its creator.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param int $term_id The new module's term ID.
+	 */
+	public function set_module_author_on_creation( $term_id ) {
+		$user_id = get_current_user_id();
+
+		if ( $user_id ) {
+			update_term_meta( $term_id, 'module_author', $user_id );
+		}
 	}
 
 	/**

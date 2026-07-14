@@ -297,4 +297,23 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertSame( absint( get_term_meta( $module['term_id'], 'module_author', true ) ), wp_get_current_user()->ID, 'Module teacher ID meta not set to the updated Author ID' );
 	}
+
+	public function testModuleCreation_WhenCreatedByTeacher_SetsThemAsAuthorSoTheyOwnIt() {
+		/* Arrange */
+		$this->login_as_teacher();
+
+		/* Act */
+		$module = wp_insert_term( 'Standalone Module', 'module', array( 'slug' => 'standalone-module' ) );
+
+		/* Assert */
+		self::assertSame(
+			get_current_user_id(),
+			(int) get_term_meta( $module['term_id'], 'module_author', true ),
+			'Creating a module should record the creator as its author.'
+		);
+		self::assertTrue(
+			current_user_can( 'edit_term', $module['term_id'] ),
+			'The creator should be able to edit their new module.'
+		);
+	}
 }
