@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Limit editing, deleting, and course assignment of a module to the module's owner.

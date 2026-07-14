@@ -645,14 +645,17 @@ class Sensei_Core_Modules {
 		);
 		$courses = get_posts( $args );
 
-		// Remove module from existing courses
+		// Remove module from existing courses the current user is allowed to edit.
 		if ( isset( $courses ) && is_array( $courses ) ) {
 			foreach ( $courses as $course ) {
+				if ( ! current_user_can( 'edit_post', $course->ID ) ) {
+					continue;
+				}
 				wp_remove_object_terms( $course->ID, (int) $module_id, $this->taxonomy );
 			}
 		}
 
-		// Add module to selected courses
+		// Add module to selected courses the current user is allowed to edit.
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_POST['module_courses'] ) && ! empty( $_POST['module_courses'] ) ) {
 
@@ -661,7 +664,13 @@ class Sensei_Core_Modules {
 
 			foreach ( $course_ids as $course_id ) {
 
-				wp_set_object_terms( absint( $course_id ), $module_id, $this->taxonomy, true );
+				$course_id = absint( $course_id );
+
+				if ( ! $course_id || ! current_user_can( 'edit_post', $course_id ) ) {
+					continue;
+				}
+
+				wp_set_object_terms( $course_id, $module_id, $this->taxonomy, true );
 
 			}
 		}

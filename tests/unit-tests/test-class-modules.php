@@ -385,4 +385,93 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 			'An administrator should be able to delete any module.'
 		);
 	}
+
+	public function testSaveModuleCourse_WhenTeacherAssignsModuleToCourseTheyCannotEdit_DoesNotAttach() {
+		/* Arrange */
+		$admin_id     = $this->get_user_by_role( 'administrator' );
+		$admin_course = $this->factory->course->create( array( 'post_author' => $admin_id ) );
+
+		$this->login_as_teacher();
+		$module = wp_insert_term( 'Teacher Module', 'module', array( 'slug' => 'teacher-module' ) );
+
+		/* Act */
+		$_POST['module_courses'] = array( $admin_course );
+		Sensei()->modules->save_module_course( $module['term_id'] );
+		unset( $_POST['module_courses'] );
+
+		/* Assert */
+		$module_terms = wp_get_object_terms( $admin_course, 'module', array( 'fields' => 'ids' ) );
+		self::assertNotContains(
+			$module['term_id'],
+			$module_terms,
+			'A teacher should not be able to attach a module to a course they cannot edit.'
+		);
+	}
+
+	public function testSaveModuleCourse_WhenTeacherRemovesModuleFromCourseTheyCannotEdit_DoesNotDetach() {
+		/* Arrange */
+		$admin_id     = $this->get_user_by_role( 'administrator' );
+		$admin_course = $this->factory->course->create( array( 'post_author' => $admin_id ) );
+
+		$this->login_as_teacher();
+		$module = wp_insert_term( 'Teacher Module', 'module', array( 'slug' => 'teacher-module' ) );
+
+		$this->login_as_admin();
+		wp_set_object_terms( $admin_course, array( $module['term_id'] ), 'module' );
+
+		/* Act */
+		$this->login_as_teacher();
+		$_POST['module_courses'] = array();
+		Sensei()->modules->save_module_course( $module['term_id'] );
+		unset( $_POST['module_courses'] );
+
+		/* Assert */
+		$module_terms = wp_get_object_terms( $admin_course, 'module', array( 'fields' => 'ids' ) );
+		self::assertContains(
+			$module['term_id'],
+			$module_terms,
+			'A teacher should not be able to detach a module from a course they cannot edit.'
+		);
+	}
+
+	public function testSaveModuleCourse_WhenTeacherAssignsModuleToCourseTheyOwn_Attaches() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$own_course = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$module     = wp_insert_term( 'Teacher Module', 'module', array( 'slug' => 'teacher-module' ) );
+
+		/* Act */
+		$_POST['module_courses'] = array( $own_course );
+		Sensei()->modules->save_module_course( $module['term_id'] );
+		unset( $_POST['module_courses'] );
+
+		/* Assert */
+		$module_terms = wp_get_object_terms( $own_course, 'module', array( 'fields' => 'ids' ) );
+		self::assertContains(
+			$module['term_id'],
+			$module_terms,
+			'A teacher should be able to attach a module to a course they own.'
+		);
+	}
+
+	public function testSaveModuleCourse_WhenTeacherRemovesModuleFromCourseTheyOwn_Detaches() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$own_course = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$module     = wp_insert_term( 'Teacher Module', 'module', array( 'slug' => 'teacher-module' ) );
+		wp_set_object_terms( $own_course, array( $module['term_id'] ), 'module' );
+
+		/* Act */
+		$_POST['module_courses'] = array();
+		Sensei()->modules->save_module_course( $module['term_id'] );
+		unset( $_POST['module_courses'] );
+
+		/* Assert */
+		$module_terms = wp_get_object_terms( $own_course, 'module', array( 'fields' => 'ids' ) );
+		self::assertNotContains(
+			$module['term_id'],
+			$module_terms,
+			'A teacher should be able to detach a module from a course they own.'
+		);
+	}
 }
