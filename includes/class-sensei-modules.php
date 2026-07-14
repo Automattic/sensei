@@ -167,9 +167,6 @@ class Sensei_Core_Modules {
 	/**
 	 * Record the creator as the module author when a module is created.
 	 *
-	 * Without this, a module created without a course assignment has no author
-	 * and is treated as owned by the site admin, hiding it from its creator.
-	 *
 	 * @since $$next-version$$
 	 * @access private
 	 *
