@@ -521,7 +521,7 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		$this->assertEquals( "Slug custom-slug exists and is being used in $course_title course", $response_admin->get_data()['message'] );
 	}
 
-	public function testCourseStructure_whenAnotherUserTriesUsingExistingSlugNotUsedInCourse_IsAllowedOnlyForAdmin() {
+	public function testCourseStructure_whenReusingSlugOfAnotherTeachersModuleNotUsedInCourse_IsAllowedOnlyForAdmin() {
 		/* Arrange */
 
 		// Save a course and update a module with custom slug for a teacher.
@@ -576,6 +576,40 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		$endpoint = new Sensei_REST_API_Course_Structure_Controller( '' );
 		$this->assertEquals( $response_admin->get_status(), 200 );
 		$this->assertMeetsSchema( $endpoint->get_schema(), $response_admin->get_data() );
+	}
+
+	public function testCourseStructure_whenReusingSlugOfOwnModuleNotUsedInCourse_IsAllowed() {
+		/* Arrange */
+		$this->login_as_teacher();
+
+		$course = $this->factory->get_course_with_lessons(
+			array(
+				'module_count'   => 1,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+
+		// Insert a module owned by the same teacher, not used in any course.
+		wp_insert_term(
+			'Cats will take over',
+			'module',
+			array(
+				'description' => 'Test.',
+				'slug'        => 'custom-slug',
+			)
+		);
+
+		$structure            = Sensei_Course_Structure::instance( $course['course_id'] )->get( 'edit' );
+		$structure[0]['slug'] = 'custom-slug';
+
+		/* Act */
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course['course_id'] );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+		$response = $this->server->dispatch( $request );
+
+		/* Assert */
+		self::assertEquals( 200, $response->get_status(), 'A teacher should be able to reuse the slug of a standalone module they own.' );
 	}
 
 	public function testCourseStructure_whenCustomSlugModuleInUseByAnotherCourseBySameTeacher_DoesNotLetChangeTheTeacherOfOneCourse() {
