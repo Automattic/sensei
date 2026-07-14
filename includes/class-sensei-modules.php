@@ -540,9 +540,7 @@ class Sensei_Core_Modules {
 				</option>
 			<?php } ?>
 		</select>
-		<span
-			class="description"><?php echo esc_html__( 'Search for and select the courses that this module will belong to.', 'sensei-lms' ); ?>
-		</span>
+		<p class="description"><?php echo esc_html__( 'Search for and select the courses that this module will belong to.', 'sensei-lms' ); ?></p>
 		<?php
 	}
 
