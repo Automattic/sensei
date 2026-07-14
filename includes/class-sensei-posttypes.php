@@ -1229,7 +1229,7 @@ class Sensei_PostTypes {
 			'sensei',
 			__( 'Modules', 'sensei-lms' ),
 			__( 'Modules', 'sensei-lms' ),
-			'manage_categories',
+			'manage_modules',
 			'edit-tags.php?taxonomy=module&post_type=course'
 		);
 

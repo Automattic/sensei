@@ -75,6 +75,7 @@
 				<element value="edit_lessons"/>
 				<element value="edit_others_lessons"/>
 				<element value="edit_published_lessons"/>
+				<element value="manage_modules"/>
 			</property>
 		</properties>
 	</rule>
