@@ -535,7 +535,8 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 			]
 		);
 
-		// Insert a module that is not used in any course.
+		// Insert a module owned by a different teacher, not used in any course.
+		$this->login_as_teacher_b();
 		wp_insert_term(
 			'Cats will take over',
 			'module',
@@ -544,6 +545,10 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 				'slug'        => 'custom-slug',
 			)
 		);
+
+		// Switch back to the course's teacher to attempt reusing the slug.
+		$this->login_as_teacher();
+
 		$course_structure_a = Sensei_Course_Structure::instance( $course['course_id'] );
 
 		$structure = $course_structure_a->get( 'edit' );
