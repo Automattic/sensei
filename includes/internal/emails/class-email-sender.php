@@ -136,11 +136,8 @@ class Email_Sender {
 
 				if ( $sent ) {
 					/**
-					 * Fires after a Sensei email has been successfully handed off for a recipient.
-					 *
-					 * Fires only when the email passed the `sensei_send_emails` gate and `wp_mail()`
-					 * returned true, so listeners can react to real sends rather than attempts that
-					 * were suppressed or failed at the mailer.
+					 * Fires after `wp_mail()` sends a Sensei email to a recipient, so listeners
+					 * can react to real sends rather than suppressed or failed attempts.
 					 *
 					 * @since $$next-version$$
 					 *

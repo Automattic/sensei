@@ -150,12 +150,10 @@ class Course_Welcome extends Email_Generators_Abstract {
 	}
 
 	/**
-	 * Flag the welcome email as sent once it has actually been dispatched.
+	 * Flag the welcome email as sent, hooked on `sensei_email_sent`.
 	 *
-	 * Hooked on `sensei_email_sent`, which only fires when the email passed the
-	 * `sensei_send_emails` gate. Marking here rather than at send-attempt time avoids
-	 * flagging suppressed emails as sent (e.g. when access to the course has not started
-	 * yet), which would otherwise block the deferred welcome from being delivered later.
+	 * That hook only fires on actual dispatch, so a suppressed email (e.g. course
+	 * access has not started yet) is not flagged and can still be delivered later.
 	 *
 	 * @internal
 	 *
