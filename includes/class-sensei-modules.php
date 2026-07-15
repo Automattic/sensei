@@ -2258,7 +2258,7 @@ class Sensei_Core_Modules {
 			return $caps;
 		}
 
-		$term = get_term( $args[0] );
+		$term = get_term( $args[0], 'module' );
 		if ( ! $term instanceof WP_Term || 'module' !== $term->taxonomy ) {
 			return $caps;
 		}
