@@ -75,7 +75,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		do_action( 'sensei_email_sent', 'course_welcome', 'test@a.com', array() );
 
 		$priority_for_immediate_start = has_action( 'sensei_course_enrolment_status_changed', [ $generator, 'welcome_to_course_for_student' ] );
-		$priority_for_access_start    = has_action( 'sensei_pro_course_access_start_student_email_send', [ $generator, 'welcome_to_course_for_student' ] );
+		$priority_for_access_start    = has_action( 'sensei_pro_course_access_start_student_email_send', [ $generator, 'welcome_to_course_on_access_start' ] );
 		$priority_for_mark_on_sent    = has_action( 'sensei_email_sent', array( $generator, 'mark_welcome_email_sent_on_dispatch' ) );
 		self::assertSame( 10, $priority_for_immediate_start );
 		self::assertSame( 10, $priority_for_access_start );
@@ -291,6 +291,73 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( array(), $actual_data, 'Welcome email should not be sent to a student who already started a lesson in the course.' );
+	}
+
+	public function testWelcomeToCourseOnAccessStart_StudentOnlyStartedLessonInCourse_SendsEmail() {
+		/* Arrange. */
+		$factory    = new \Sensei_Factory();
+		$student_id = $factory->user->create( array( 'user_email' => 'access-start-partway@a.com' ) );
+		$course_id  = $factory->course->create();
+		$lesson_id  = $factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+
+		\Sensei_Utils::update_lesson_status( $student_id, $lesson_id, 'in-progress' );
+
+		$email_repository = $this->createMock( Email_Repository::class );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) array( 'post_status' => 'publish' ) ) );
+
+		$generator = new Course_Welcome( $email_repository );
+
+		$actual_data = array();
+		$filter      = function ( $email, $options ) use ( &$actual_data ) {
+			$actual_data = array(
+				'email'   => $email,
+				'options' => $options,
+			);
+		};
+		add_filter( 'sensei_email_send', $filter, 10, 2 );
+
+		/* Act. */
+		$generator->welcome_to_course_on_access_start( $student_id, $course_id );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_email_send', $filter, 10 );
+		$factory->tearDown();
+
+		/* Assert. */
+		self::assertNotSame( array(), $actual_data, 'Opening a lesson marks it in-progress even before access starts, so it must not stop the deferred welcome email.' );
+	}
+
+	public function testWelcomeToCourseOnAccessStart_StudentAlreadyCompletedCourse_DoesNotSendEmail() {
+		/* Arrange. */
+		$factory    = new \Sensei_Factory();
+		$student_id = $factory->user->create( array( 'user_email' => 'access-start-completed@a.com' ) );
+		$course_id  = $factory->course->create();
+
+		\Sensei_Utils::update_course_status( $student_id, $course_id, 'complete' );
+
+		$email_repository = $this->createMock( Email_Repository::class );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) array( 'post_status' => 'publish' ) ) );
+
+		$generator = new Course_Welcome( $email_repository );
+
+		$actual_data = array();
+		$filter      = function ( $email, $options ) use ( &$actual_data ) {
+			$actual_data = array(
+				'email'   => $email,
+				'options' => $options,
+			);
+		};
+		add_filter( 'sensei_email_send', $filter, 10, 2 );
+
+		/* Act. */
+		$generator->welcome_to_course_on_access_start( $student_id, $course_id );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_email_send', $filter, 10 );
+		$factory->tearDown();
+
+		/* Assert. */
+		self::assertSame( array(), $actual_data, 'Completing a course proves earlier access, so a completed student should not be re-welcomed when a new access period starts.' );
 	}
 
 	public function testWelcomeToCourseForStudent_WelcomeAlreadyMarkedSent_DoesNotSendEmail() {
