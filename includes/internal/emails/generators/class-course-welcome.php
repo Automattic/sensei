@@ -46,6 +46,15 @@ class Course_Welcome extends Email_Generators_Abstract {
 	const META_PREFIX_WELCOME_SENT = 'sensei_course_welcome_email_sent_';
 
 	/**
+	 * Welcome-sent flag value written by the upgrade backfill, not a real dispatch. A real dispatch stores a timestamp, so integrations can tell the two apart.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string
+	 */
+	const WELCOME_ASSUMED = 'assumed';
+
+	/**
 	 * Build the user meta key used to flag the welcome email as sent for a course.
 	 *
 	 * The key is blog-prefixed so it stays scoped to the current site on multisite,
@@ -70,10 +79,13 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		$this->maybe_add_action( 'sensei_course_enrolment_status_changed', [ $this, 'welcome_to_course_for_student' ], 10, 3 );
+		$this->maybe_add_action( 'sensei_course_enrolment_status_changed', array( $this, 'welcome_to_course_for_student' ), 10, 3 );
 
 		// Send welcome email on the day the student gets access to the course.
-		$this->maybe_add_action( 'sensei_pro_course_access_start_student_email_send', [ $this, 'welcome_to_course_for_student' ], 10, 2 );
+		$this->maybe_add_action( 'sensei_pro_course_access_start_student_email_send', array( $this, 'welcome_to_course_on_access_start' ), 10, 2 );
+
+		// Flag the welcome email as sent only once it has actually been dispatched.
+		$this->maybe_add_action( 'sensei_email_sent', array( $this, 'mark_welcome_email_sent_on_dispatch' ), 10, 3 );
 	}
 
 	/**
@@ -90,6 +102,37 @@ class Course_Welcome extends Email_Generators_Abstract {
 			return;
 		}
 
+		$this->maybe_send_welcome_email( (int) $student_id, (int) $course_id, true );
+	}
+
+	/**
+	 * Send email to student on the day their access period starts.
+	 *
+	 * Access had not started until now, so lesson progress cannot mean the student was
+	 * previously active — opening a locked lesson is enough to record it. Only completing
+	 * the course proves earlier access.
+	 *
+	 * @access private
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $student_id The student ID.
+	 * @param int $course_id  The course ID.
+	 */
+	public function welcome_to_course_on_access_start( $student_id, $course_id ) {
+		$this->maybe_send_welcome_email( (int) $student_id, (int) $course_id, false );
+	}
+
+	/**
+	 * Send the welcome email to a student for a course, if it is warranted.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int  $student_id            The student ID.
+	 * @param int  $course_id             The course ID.
+	 * @param bool $started_lessons_count Whether started lessons disqualify the student.
+	 */
+	private function maybe_send_welcome_email( int $student_id, int $course_id, bool $started_lessons_count ): void {
 		$course = get_post( $course_id );
 		if ( ! $course || 'publish' !== $course->post_status ) {
 			return;
@@ -103,7 +146,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 		// Safeguard: don't re-welcome students who already have history in the course.
 		if (
 			\Sensei_Utils::user_completed_course( $course_id, $student_id )
-			|| \Sensei_Utils::user_started_lesson_count( $course_id, $student_id ) > 0
+			|| ( $started_lessons_count && \Sensei_Utils::user_started_lesson_count( $course_id, $student_id ) > 0 )
 		) {
 			return;
 		}
@@ -123,8 +166,8 @@ class Course_Welcome extends Email_Generators_Abstract {
 		$course_url = get_permalink( $course_id );
 
 		$this->send_email_action(
-			[
-				$recipient => [
+			array(
+				$recipient => array(
 					'teacher:id'          => $teacher->ID,
 					'teacher:displayname' => $teacher->display_name,
 					'student:id'          => $student->ID,
@@ -132,14 +175,38 @@ class Course_Welcome extends Email_Generators_Abstract {
 					'course:id'           => $course->ID,
 					'course:name'         => $course->post_title,
 					'course:url'          => $course_url,
-				],
-			]
+				),
+			)
 		);
+	}
 
-		// Flag as sent regardless of delivery outcome. Sensei's email dispatch is a
-		// fire-and-forget action, so the result is not knowable here. We favour never
-		// re-welcoming an enrolled student over guaranteeing a single delivery.
-		$this->mark_welcome_email_sent( $student_id, $course_id );
+	/**
+	 * Flag the welcome email as sent, hooked on `sensei_email_sent`.
+	 *
+	 * That hook only fires on actual dispatch, so a suppressed email (e.g. course
+	 * access has not started yet) is not flagged and can still be delivered later.
+	 *
+	 * @internal
+	 *
+	 * @access private
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $email_name  The email identifier.
+	 * @param string $recipient   The recipient email address.
+	 * @param array  $replacement The per-recipient replacement values.
+	 */
+	public function mark_welcome_email_sent_on_dispatch( $email_name, $recipient, $replacement ) {
+		if ( self::IDENTIFIER_NAME !== $email_name ) {
+			return;
+		}
+
+		$student_id = isset( $replacement['student:id'] ) ? (int) $replacement['student:id'] : 0;
+		$course_id  = isset( $replacement['course:id'] ) ? (int) $replacement['course:id'] : 0;
+
+		if ( $student_id && $course_id ) {
+			$this->mark_welcome_email_sent( $student_id, $course_id );
+		}
 	}
 
 	/**
