@@ -2269,7 +2269,7 @@ class Sensei_Core_Modules {
 		}
 
 		$author = self::get_term_author( $term->slug );
-		if ( ! $author instanceof WP_User || (int) $author->ID !== (int) $user_id ) {
+		if ( (int) $author->ID !== (int) $user_id ) {
 			$caps[] = 'do_not_allow';
 		}
 
