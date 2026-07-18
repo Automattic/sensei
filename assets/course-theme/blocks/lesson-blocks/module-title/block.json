@@ -3,7 +3,9 @@
     "category": "theme",
     "apiVersion": 2,
     "attributes": {
-        "className": "some-className"
+        "className": {
+            "type": "string"
+        }
     },
     "supports": {
         "align": true,
