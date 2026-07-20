@@ -58,6 +58,21 @@ trait Quiz_Translation_Helper {
 		update_post_meta( $translated_quiz_id, '_quiz_lesson', $quiz_lesson_id );
 		update_post_meta( $quiz_lesson_id, '_lesson_quiz', $translated_quiz_id );
 
+		// Sync the quiz title and slug from the translated lesson. The copy above
+		// carries the master lesson's title, and Sensei_Quiz::update_after_lesson_change
+		// cannot repair it in translation contexts because its quiz lookup is
+		// filtered to the current language.
+		$quiz_lesson = get_post( $quiz_lesson_id );
+		if ( $quiz_lesson ) {
+			wp_update_post(
+				array(
+					'ID'         => $translated_quiz_id,
+					'post_title' => $quiz_lesson->post_title,
+					'post_name'  => $quiz_lesson->post_name,
+				)
+			);
+		}
+
 		update_post_meta( $quiz_lesson_id, '_quiz_has_questions', count( $questions ) > 0 );
 
 		// Add relationship between quiz and questions.
