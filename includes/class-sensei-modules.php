@@ -648,7 +648,7 @@ class Sensei_Core_Modules {
 		// Remove module from existing courses the current user is allowed to edit.
 		if ( isset( $courses ) && is_array( $courses ) ) {
 			foreach ( $courses as $course ) {
-				if ( ! current_user_can( 'edit_post', $course->ID ) ) {
+				if ( ! Sensei_Course::can_current_user_edit_course( $course->ID ) ) {
 					continue;
 				}
 				wp_remove_object_terms( $course->ID, (int) $module_id, $this->taxonomy );
@@ -666,7 +666,7 @@ class Sensei_Core_Modules {
 
 				$course_id = absint( $course_id );
 
-				if ( ! $course_id || ! current_user_can( 'edit_post', $course_id ) ) {
+				if ( ! $course_id || ! Sensei_Course::can_current_user_edit_course( $course_id ) ) {
 					continue;
 				}
 
