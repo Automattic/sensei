@@ -298,7 +298,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$this->assertSame( absint( get_term_meta( $module['term_id'], 'module_author', true ) ), wp_get_current_user()->ID, 'Module teacher ID meta not set to the updated Author ID' );
 	}
 
-	public function testModuleAdminList_WhenViewedByTeacher_ExcludesOtherUsersModules() {
+	public function testFilterModuleTerms_WhenViewedByTeacher_ExcludesOtherUsersModules() {
 		/* Arrange */
 		set_current_screen( 'edit-module' );
 
@@ -329,7 +329,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		set_current_screen( 'front' );
 	}
 
-	public function testEditAndDeleteTermCaps_WhenTeacherDoesNotOwnModule_AreDenied() {
+	public function testRestrictModuleTermManagement_WhenTeacherDoesNotOwnModule_DeniesEditAndDelete() {
 		/* Arrange */
 		$teacher_a = $this->get_user_by_role( 'teacher' );
 		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
@@ -348,7 +348,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		);
 	}
 
-	public function testEditAndDeleteTermCaps_WhenTeacherOwnsModule_AreAllowed() {
+	public function testRestrictModuleTermManagement_WhenTeacherOwnsModule_AllowsEditAndDelete() {
 		/* Arrange */
 		$teacher_a = $this->get_user_by_role( 'teacher' );
 		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
@@ -367,7 +367,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		);
 	}
 
-	public function testEditAndDeleteTermCaps_WhenAdminDoesNotOwnModule_AreAllowed() {
+	public function testRestrictModuleTermManagement_WhenAdminDoesNotOwnModule_AllowsEditAndDelete() {
 		/* Arrange */
 		$teacher_a = $this->get_user_by_role( 'teacher' );
 		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
@@ -386,7 +386,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		);
 	}
 
-	public function testEditAndDeleteTermCaps_WhenEditorDoesNotOwnModule_AreAllowed() {
+	public function testRestrictModuleTermManagement_WhenEditorDoesNotOwnModule_AllowsEditAndDelete() {
 		/* Arrange */
 		$teacher_a = $this->get_user_by_role( 'teacher' );
 		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
