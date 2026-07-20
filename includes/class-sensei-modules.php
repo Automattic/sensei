@@ -2270,7 +2270,7 @@ class Sensei_Core_Modules {
 		}
 
 		$author = self::get_term_author( $term->slug );
-		if ( (int) $author->ID !== (int) $user_id ) {
+		if ( ! $author instanceof WP_User || (int) $author->ID !== (int) $user_id ) {
 			$caps[] = 'do_not_allow';
 		}
 
@@ -2397,7 +2397,7 @@ class Sensei_Core_Modules {
 	 * @since 1.8.0
 	 *
 	 * @param $slug
-	 * @return WP_User $author if no author is found or invalid term is passed the admin user will be returned.
+	 * @return WP_User|false $author if no author is found or invalid term is passed the admin user will be returned, or `false` when no admin user can be resolved either.
 	 */
 	public static function get_term_author( $slug = '' ) {
 
@@ -2718,7 +2718,7 @@ class Sensei_Core_Modules {
 
 			$author = self::get_term_author( $term->slug );
 
-			if ( $user_id == $author->ID ) {
+			if ( $author instanceof WP_User && (int) $user_id === (int) $author->ID ) {
 				// add the term to the teachers terms
 				$users_terms[] = $term;
 			}
@@ -2783,7 +2783,7 @@ class Sensei_Core_Modules {
 
 			$author = self::get_term_author( $term->slug );
 
-			if ( ! user_can( $author, 'manage_options' ) && isset( $term->name ) ) {
+			if ( $author instanceof WP_User && ! user_can( $author, 'manage_options' ) ) {
 				$term->name = $term->name . ' (' . $author->display_name . ') ';
 			}
 
