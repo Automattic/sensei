@@ -432,7 +432,6 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$admin_id     = $this->get_user_by_role( 'administrator' );
 		$admin_course = $this->factory->course->create( array( 'post_author' => $admin_id ) );
 
-		$this->login_as_teacher();
 		$module = wp_insert_term( 'Teacher Module', 'module', array( 'slug' => 'teacher-module' ) );
 
 		$this->login_as_admin();
