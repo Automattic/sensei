@@ -2241,7 +2241,8 @@ class Sensei_Core_Modules {
 	 * `delete_term` meta capabilities to that primitive capability without any
 	 * ownership consideration, which would otherwise let a teacher edit or delete
 	 * modules belonging to administrators or other teachers. Limit those
-	 * operations to the module's owner; administrators are unaffected.
+	 * operations to the module's owner; users who can edit others' courses
+	 * (editors and administrators) are unaffected.
 	 *
 	 * @since $$next-version$$
 	 * @access private
@@ -2263,8 +2264,8 @@ class Sensei_Core_Modules {
 			return $caps;
 		}
 
-		// Administrators can manage every module.
-		if ( user_can( $user_id, 'manage_options' ) ) {
+		// Editors and administrators can manage every module.
+		if ( user_can( $user_id, 'edit_others_courses' ) ) {
 			return $caps;
 		}
 

@@ -386,6 +386,25 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		);
 	}
 
+	public function testEditAndDeleteTermCaps_WhenEditorDoesNotOwnModule_AreAllowed() {
+		/* Arrange */
+		$teacher_a = $this->get_user_by_role( 'teacher' );
+		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
+		update_term_meta( $module['term_id'], 'module_author', $teacher_a );
+
+		$this->login_as_editor();
+
+		/* Act & Assert */
+		self::assertTrue(
+			current_user_can( 'edit_term', $module['term_id'] ),
+			'An editor should be able to edit any module.'
+		);
+		self::assertTrue(
+			current_user_can( 'delete_term', $module['term_id'] ),
+			'An editor should be able to delete any module.'
+		);
+	}
+
 	public function testSaveModuleCourse_WhenTeacherAssignsModuleToCourseTheyCannotEdit_DoesNotAttach() {
 		/* Arrange */
 		$admin_id     = $this->get_user_by_role( 'administrator' );
