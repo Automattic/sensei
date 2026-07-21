@@ -61,7 +61,7 @@ trait Quiz_Translation_Helper {
 		// The quiz copy keeps the source-language title and core's title sync
 		// never runs for translation saves; derive it from the translated lesson.
 		$quiz_lesson = $quiz_lesson_id ? get_post( $quiz_lesson_id ) : null;
-		if ( $quiz_lesson ) {
+		if ( $quiz_lesson instanceof \WP_Post ) {
 			wp_update_post(
 				array(
 					'ID'         => $translated_quiz_id,
