@@ -177,6 +177,8 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		$lesson_translation->update_lesson_translations_on_lesson_translation_created( $translated_lesson_id );
 
 		/* Assert. */
-		$this->assertSame( 'Lección 1', get_post( $translated_quiz_id )->post_title, 'The translated quiz title should be synced from the translated lesson.' );
+		$translated_quiz = get_post( $translated_quiz_id );
+		$this->assertSame( 'Lección 1', $translated_quiz->post_title, 'The translated quiz title should be synced from the translated lesson.' );
+		$this->assertSame( 'leccion-1', $translated_quiz->post_name, 'The translated quiz slug should be synced from the translated lesson.' );
 	}
 }
