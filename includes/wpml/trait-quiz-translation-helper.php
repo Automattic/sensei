@@ -58,10 +58,8 @@ trait Quiz_Translation_Helper {
 		update_post_meta( $translated_quiz_id, '_quiz_lesson', $quiz_lesson_id );
 		update_post_meta( $quiz_lesson_id, '_lesson_quiz', $translated_quiz_id );
 
-		// The quiz copy above keeps the source lesson's title. Core's title sync
-		// (Sensei_Quiz::update_after_lesson_change) never repairs it: it only acts
-		// on classic-editor form saves ($_POST sniff), and even then its quiz
-		// lookup is language-filtered — both dead ends in translation contexts.
+		// The quiz copy keeps the source-language title and core's title sync
+		// never runs for translation saves; derive it from the translated lesson.
 		$quiz_lesson = $quiz_lesson_id ? get_post( $quiz_lesson_id ) : null;
 		if ( $quiz_lesson ) {
 			wp_update_post(
