@@ -107,7 +107,7 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( 8, $actual );
 	}
 
-	public function testUpdateLessonTranslationsOnLessonTranslationCreated_QuizTranslationCreated_SyncsQuizTitleFromTranslatedLesson() {
+	public function testUpdateLessonTranslationsOnLessonTranslationCreated_QuizNotYetTranslated_SyncsQuizTitleFromTranslatedLesson() {
 		/* Arrange. */
 		$course_with_lessons = $this->factory->get_course_with_lessons(
 			array(
