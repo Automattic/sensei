@@ -22,6 +22,59 @@ trait Question_Translation_Helper {
 	use WPML_API;
 
 	/**
+	 * Translated lessons whose question sync is waiting for WPML to write the
+	 * translated lesson content.
+	 *
+	 * @var array<int, bool>
+	 */
+	private $lessons_pending_question_sync = array();
+
+	/**
+	 * Defer the question sync until WPML writes the translated lesson content.
+	 *
+	 * When the translation-completed hook fires for a block-based lesson the
+	 * translated content does not exist yet; WPML assembles and writes it later
+	 * in the same request. Mark the lesson so the sync runs when that write
+	 * happens.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Translated lesson ID.
+	 */
+	private function defer_question_translations_update( $lesson_id ) {
+		$this->lessons_pending_question_sync[ (int) $lesson_id ] = true;
+	}
+
+	/**
+	 * Run the deferred question sync once the translated lesson content lands.
+	 *
+	 * Hooked to `wp_after_insert_post`, which fires once a post is fully written
+	 * (content, meta, and terms). Only acts on lessons marked by
+	 * defer_question_translations_update(), and only once the write carries
+	 * content.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param \WP_Post $post    Post object as written.
+	 */
+	public function update_question_translations_on_lesson_content_written( $post_id, $post ) {
+		if ( empty( $this->lessons_pending_question_sync[ $post_id ] ) ) {
+			return;
+		}
+
+		if ( '' === $post->post_content ) {
+			return;
+		}
+
+		unset( $this->lessons_pending_question_sync[ $post_id ] );
+
+		$this->update_question_translations_from_lesson( $post_id );
+	}
+
+	/**
 	 * Update question translations from lesson.
 	 *
 	 * @param int $lesson_id Lesson ID.
@@ -51,31 +104,66 @@ trait Question_Translation_Helper {
 			return;
 		}
 
-		foreach ( $blocks as $block ) {
-			if ( 'sensei-lms/question-block' !== $block['blockName'] ) {
-				continue;
-			}
-
+		foreach ( $this->find_question_blocks( $blocks ) as $block ) {
 			$question_id = $block['attrs']['id'] ?? 0;
 			if ( empty( $question_id ) ) {
 				continue;
 			}
 
-			$question_block = render_block( $block );
-
 			$question_id = $this->get_object_id( $question_id, 'question', false, $details['language_code'] );
-
 			if ( empty( $question_id ) ) {
 				continue;
 			}
 
-			// Update question content.
-			wp_update_post(
-				array(
-					'ID'           => (int) $question_id,
-					'post_content' => $question_block,
-				)
-			);
+			// The translated title lives in the block attribute.
+			if ( ! empty( $block['attrs']['title'] ) ) {
+				wp_update_post(
+					array(
+						'ID'         => (int) $question_id,
+						'post_title' => (string) $block['attrs']['title'],
+					)
+				);
+			}
+
+			// The translated answers live in the block, split into correct and incorrect.
+			$answers = $block['attrs']['answer']['answers'] ?? array();
+			if ( ! empty( $answers ) ) {
+				$right_answers = array();
+				$wrong_answers = array();
+				foreach ( $answers as $answer ) {
+					if ( ! isset( $answer['label'] ) ) {
+						continue;
+					}
+					if ( ! empty( $answer['correct'] ) ) {
+						$right_answers[] = $answer['label'];
+					} else {
+						$wrong_answers[] = $answer['label'];
+					}
+				}
+				update_post_meta( $question_id, '_question_right_answer', $right_answers );
+				update_post_meta( $question_id, '_question_wrong_answers', $wrong_answers );
+			}
 		}
+	}
+
+	/**
+	 * Collect quiz-question blocks at any nesting depth. They are nested inside
+	 * the quiz block in the lesson content.
+	 *
+	 * @param array $blocks Parsed blocks.
+	 * @return array Question blocks.
+	 */
+	private function find_question_blocks( $blocks ) {
+		$question_blocks = array();
+		foreach ( $blocks as $block ) {
+			if ( 'sensei-lms/quiz-question' === ( $block['blockName'] ?? null ) ) {
+				$question_blocks[] = $block;
+				continue;
+			}
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$question_blocks = array_merge( $question_blocks, $this->find_question_blocks( $block['innerBlocks'] ) );
+			}
+		}
+		return $question_blocks;
 	}
 }
