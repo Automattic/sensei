@@ -154,6 +154,13 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 			)
 		);
 
+		/* Clean up. */
+		remove_all_filters( 'wpml_element_language_details' );
+		remove_all_filters( 'wpml_object_id' );
+		remove_all_filters( 'wpml_copy_post_to_language' );
+		remove_action( 'wpml_pro_translation_completed', array( $lesson_translation, 'update_lesson_translations_on_lesson_translation_created' ) );
+		remove_action( 'wp_after_insert_post', array( $lesson_translation, 'update_question_translations_on_lesson_content_written' ) );
+
 		/* Assert. */
 		$translated_question = get_post( $translated_question_id );
 		$this->assertSame( 'Pregunta', $translated_question->post_title, 'The translated question title should be updated from the lesson content.' );
