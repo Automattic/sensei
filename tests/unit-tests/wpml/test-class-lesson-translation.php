@@ -121,7 +121,8 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		$master_question_id = \Sensei()->quiz->get_questions( $master_quiz_id )[0]->ID;
 
 		// WPML creates the translated posts empty at the start of a delivery; the
-		// question begins as a copy that still holds the source-language strings.
+		// question begins as a copy that still holds the source-language strings
+		// and answer order.
 		$translated_lesson_id   = $this->factory->lesson->create( array( 'post_content' => '' ) );
 		$translated_quiz_id     = $this->factory->quiz->create();
 		$translated_question_id = $this->factory->post->create(
@@ -129,6 +130,11 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 				'post_type'  => 'question',
 				'post_title' => 'Question',
 			)
+		);
+		update_post_meta(
+			$translated_question_id,
+			'_answer_order',
+			\Sensei()->lesson->get_answer_id( 'yes' ) . ',' . \Sensei()->lesson->get_answer_id( 'no' )
 		);
 
 		$this->simulate_wpml_translation(
@@ -166,6 +172,7 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( 'Pregunta', $translated_question->post_title, 'The translated question title should be updated from the lesson content.' );
 		$this->assertSame( array( 'sí' ), get_post_meta( $translated_question_id, '_question_right_answer', true ), 'The right answer should be updated from the lesson content.' );
 		$this->assertSame( array( 'no' ), get_post_meta( $translated_question_id, '_question_wrong_answers', true ), 'The wrong answers should be updated from the lesson content.' );
+		$this->assertSame( \Sensei()->lesson->get_answer_id( 'sí' ) . ',' . \Sensei()->lesson->get_answer_id( 'no' ), get_post_meta( $translated_question_id, '_answer_order', true ), 'The answer order should be recomputed from the translated labels in block order.' );
 	}
 
 	/**
