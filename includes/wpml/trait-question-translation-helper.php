@@ -125,11 +125,15 @@ trait Question_Translation_Helper {
 				);
 			}
 
-			// The translated answers live in the block, split into correct and incorrect.
+			// The translated answers live in the block, split into correct and
+			// incorrect. Recompute the answer order (the md5 of each label, in
+			// block order) and the counts so they match the translated labels,
+			// mirroring how the editor stores them.
 			$answers = $block['attrs']['answer']['answers'] ?? array();
 			if ( ! empty( $answers ) ) {
 				$right_answers = array();
 				$wrong_answers = array();
+				$answer_order  = array();
 				foreach ( $answers as $answer ) {
 					if ( ! isset( $answer['label'] ) ) {
 						continue;
@@ -139,9 +143,13 @@ trait Question_Translation_Helper {
 					} else {
 						$wrong_answers[] = $answer['label'];
 					}
+					$answer_order[] = \Sensei()->lesson->get_answer_id( $answer['label'] );
 				}
 				update_post_meta( $question_id, '_question_right_answer', $right_answers );
 				update_post_meta( $question_id, '_question_wrong_answers', $wrong_answers );
+				update_post_meta( $question_id, '_answer_order', implode( ',', $answer_order ) );
+				update_post_meta( $question_id, '_right_answer_count', count( $right_answers ) );
+				update_post_meta( $question_id, '_wrong_answer_count', count( $wrong_answers ) );
 			}
 		}
 	}
