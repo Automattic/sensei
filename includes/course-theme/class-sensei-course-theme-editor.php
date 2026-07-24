@@ -52,12 +52,12 @@ class Sensei_Course_Theme_Editor {
 	 * Initializes the Course Theme Editor.
 	 */
 	public function init() {
-		add_action( 'setup_theme', [ $this, 'maybe_add_site_editor_hooks' ], 1 );
-		add_action( 'setup_theme', [ $this, 'maybe_override_lesson_theme' ], 1 );
-		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ] );
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_site_editor_assets' ] );
+		add_action( 'setup_theme', array( $this, 'maybe_add_site_editor_hooks' ), 1 );
+		add_action( 'setup_theme', array( $this, 'maybe_override_lesson_theme' ), 1 );
+		add_action( 'rest_api_init', array( $this, 'maybe_add_site_editor_hooks' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_site_editor_assets' ) );
 
-		add_action( 'admin_menu', [ $this, 'add_admin_menu_site_editor_item' ], 20 );
+		add_action( 'admin_menu', array( $this, 'add_admin_menu_site_editor_item' ), 20 );
 	}
 
 	/**
@@ -96,6 +96,9 @@ class Sensei_Course_Theme_Editor {
 
 		if ( $this->lesson_has_learning_mode( get_post( $post_id ) ) ) {
 			$this->add_editor_styles();
+
+			// Enqueue Learning Mode template blocks so they're available when "Show Template" is enabled.
+			add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_learning_mode_assets' ) );
 
 			if ( Sensei_Course_Theme_Option::should_override_theme() ) {
 				Sensei_Course_Theme::instance()->override_theme();
@@ -141,12 +144,12 @@ class Sensei_Course_Theme_Editor {
 
 		register_theme_directory( Sensei()->plugin_path() . 'themes' );
 
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_site_editor_assets' ] );
-		add_action( 'admin_init', [ $this, 'add_editor_styles' ] );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_site_editor_assets' ) );
+		add_action( 'admin_init', array( $this, 'add_editor_styles' ) );
 
 		if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
 			$this->substitute_theme_cache();
-			add_filter( 'theme_file_path', [ $this, 'override_theme_block_template_file' ], 10, 2 );
+			add_filter( 'theme_file_path', array( $this, 'override_theme_block_template_file' ), 10, 2 );
 		}
 	}
 
@@ -207,15 +210,25 @@ class Sensei_Course_Theme_Editor {
 	public function enqueue_site_editor_assets() {
 
 		if ( $this->is_site_editor() ) {
-			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/index.js', [ 'sensei-shared-blocks' ] );
-			Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
-			Sensei()->assets->enqueue_style( 'sensei-learning-mode-editor' );
-			Sensei()->assets->enqueue( 'sensei-email-editor-style', 'css/email-notifications/email-editor-style.css' );
-
-			Sensei_Course_Theme::instance()->enqueue_fonts();
-
-			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'course-theme/course-theme.editor.js' );
+			$this->enqueue_learning_mode_assets();
 		}
+	}
+
+	/**
+	 * Enqueue Learning Mode template blocks and styles.
+	 * Used both in the site editor and in the lesson/quiz post editor when Learning Mode is enabled.
+	 *
+	 * @access private
+	 */
+	public function enqueue_learning_mode_assets() {
+		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/index.js', array( 'sensei-shared-blocks' ) );
+		Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
+		Sensei()->assets->enqueue_style( 'sensei-learning-mode-editor' );
+		Sensei()->assets->enqueue( 'sensei-email-editor-style', 'css/email-notifications/email-editor-style.css' );
+
+		Sensei_Course_Theme::instance()->enqueue_fonts();
+
+		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'course-theme/course-theme.editor.js' );
 	}
 
 	/**
@@ -259,6 +272,6 @@ class Sensei_Course_Theme_Editor {
 
 		$screen = get_current_screen();
 
-		return ! empty( $screen ) && in_array( $screen->id, [ 'widgets', 'site-editor', 'customize', 'appearance_page_gutenberg-edit-site' ], true );
+		return ! empty( $screen ) && in_array( $screen->id, array( 'widgets', 'site-editor', 'customize', 'appearance_page_gutenberg-edit-site' ), true );
 	}
 }

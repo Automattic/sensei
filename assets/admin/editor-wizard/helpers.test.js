@@ -4,9 +4,16 @@
 import { render, fireEvent, act } from '@testing-library/react';
 
 /**
+ * WordPress dependencies
+ */
+import { useSelect } from '@wordpress/data';
+
+/**
  * Internal dependencies
  */
 import { replacePlaceholders, useWizardOpenState } from './helpers';
+
+jest.mock( '@wordpress/data' );
 
 describe( 'replacePlaceholders', () => {
 	const replaces = {
@@ -92,6 +99,10 @@ describe( 'useWizardOpenState', () => {
 		jest.useFakeTimers();
 	} );
 
+	beforeEach( () => {
+		useSelect.mockReturnValue( { isEditingTemplate: false } );
+	} );
+
 	it( 'Should start open when no other modal is open', () => {
 		const { queryByText } = render( <TestComponent /> );
 
@@ -125,6 +136,18 @@ describe( 'useWizardOpenState', () => {
 		fireEvent.click( queryByText( 'done' ) );
 
 		// Initializes initial state.
+		act( () => {
+			jest.runOnlyPendingTimers();
+		} );
+
+		expect( queryByText( 'closed' ) ).toBeTruthy();
+	} );
+
+	it( 'Should remain closed when editing template', () => {
+		useSelect.mockReturnValue( { isEditingTemplate: true } );
+
+		const { queryByText } = render( <TestComponent /> );
+
 		act( () => {
 			jest.runOnlyPendingTimers();
 		} );

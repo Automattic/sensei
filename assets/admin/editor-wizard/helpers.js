@@ -86,15 +86,24 @@ export const useWizardOpenState = () => {
 	const [ open, setOpen ] = useState( false );
 	const [ done, setDone ] = useState( false );
 	const hasOpenModal = useObserveOpenModal( ! done );
+	const { isEditingTemplate } = useSelect( ( select ) => {
+		const editorSelect = select( editorStore );
+		const renderingMode = editorSelect?.getRenderingMode?.();
+		return {
+			isEditingTemplate: renderingMode
+				? 'post-only' !== renderingMode
+				: Boolean( editorSelect?.isEditingTemplate?.() ),
+		};
+	} );
 
 	useLayoutEffect( () => {
-		if ( done ) {
+		if ( done || isEditingTemplate ) {
 			setOpen( false );
 		} else if ( false === hasOpenModal ) {
 			// If no modal is open, it's time to open.
 			setOpen( true );
 		}
-	}, [ done, hasOpenModal ] );
+	}, [ done, hasOpenModal, isEditingTemplate ] );
 
 	return [ open, setDone ];
 };

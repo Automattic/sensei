@@ -90,14 +90,33 @@ class Sensei_Course_Theme_Templates {
 	}
 
 	/**
-	 * Add block template supports in admin.
+	 * Add block template supports in admin, but only when the lesson or quiz has Learning Mode enabled.
 	 *
 	 * @access private
 	 */
 	public function maybe_add_theme_supports() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Argument cast to int and used for comparison.
-		if ( isset( $_GET['post'] ) && in_array( get_post_type( (int) $_GET['post'] ), [ 'lesson', 'quiz' ], true ) ) {
-			add_theme_support( 'block-templates' );
+		if ( ! isset( $_GET['post'] ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Argument cast to int.
+		$post_id   = (int) $_GET['post'];
+		$post_type = get_post_type( $post_id );
+
+		if ( 'lesson' === $post_type ) {
+			$course_id = Sensei()->lesson->get_course_id( $post_id );
+			if ( $course_id && Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+				add_theme_support( 'block-templates' );
+			}
+		} elseif ( 'quiz' === $post_type ) {
+			$lesson_id = Sensei()->quiz->get_lesson_id( $post_id );
+			if ( $lesson_id ) {
+				$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+				if ( $course_id && Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+					add_theme_support( 'block-templates' );
+				}
+			}
 		}
 	}
 

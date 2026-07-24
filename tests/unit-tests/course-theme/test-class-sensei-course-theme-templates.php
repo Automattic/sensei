@@ -28,6 +28,70 @@ class Sensei_Course_Theme_Templates_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 	}
 
+	public function tearDown(): void {
+		parent::tearDown();
+		unset( $_GET['post'] );
+		remove_theme_support( 'block-templates' );
+	}
+
+	public function testMaybeAddThemeSupports_LessonWithoutLearningMode_DoesNotAddBlockTemplates(): void {
+		/* Arrange */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$_GET['post'] = $lesson_id;
+
+		/* Act */
+		Sensei_Course_Theme_Templates::instance()->maybe_add_theme_supports();
+
+		/* Assert */
+		$this->assertFalse( current_theme_supports( 'block-templates' ) );
+	}
+
+	public function testMaybeAddThemeSupports_LessonWithLearningMode_AddsBlockTemplates(): void {
+		/* Arrange */
+		$course_id = $this->factory->course->create();
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+		$lesson_id = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$_GET['post'] = $lesson_id;
+
+		/* Act */
+		Sensei_Course_Theme_Templates::instance()->maybe_add_theme_supports();
+
+		/* Assert */
+		$this->assertTrue( current_theme_supports( 'block-templates' ) );
+	}
+
+	public function testMaybeAddThemeSupports_QuizWithoutLearningMode_DoesNotAddBlockTemplates(): void {
+		/* Arrange */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$quiz      = $this->factory->quiz->create_and_get( [ 'post_parent' => $lesson_id ] );
+		update_post_meta( $quiz->ID, '_quiz_lesson', $lesson_id );
+		$_GET['post'] = $quiz->ID;
+
+		/* Act */
+		Sensei_Course_Theme_Templates::instance()->maybe_add_theme_supports();
+
+		/* Assert */
+		$this->assertFalse( current_theme_supports( 'block-templates' ) );
+	}
+
+	public function testMaybeAddThemeSupports_QuizWithLearningMode_AddsBlockTemplates(): void {
+		/* Arrange */
+		$course_id = $this->factory->course->create();
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+		$lesson_id = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$quiz      = $this->factory->quiz->create_and_get( [ 'post_parent' => $lesson_id ] );
+		update_post_meta( $quiz->ID, '_quiz_lesson', $lesson_id );
+		$_GET['post'] = $quiz->ID;
+
+		/* Act */
+		Sensei_Course_Theme_Templates::instance()->maybe_add_theme_supports();
+
+		/* Assert */
+		$this->assertTrue( current_theme_supports( 'block-templates' ) );
+	}
+
 	public function testSenseiCourseThemeTemplates_WhenClassInitialized_PatternCreationFunctionIsAttachedWithInit() {
 		/* Arrange */
 		$registry = \WP_Block_Patterns_Registry::get_instance();
