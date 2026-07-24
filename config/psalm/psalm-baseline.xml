@@ -1761,9 +1761,7 @@
     <InvalidScalarArgument occurrences="1">
       <code>$user_id</code>
     </InvalidScalarArgument>
-    <PossiblyInvalidPropertyFetch occurrences="5">
-      <code>$course-&gt;ID</code>
-      <code>$course-&gt;post_title</code>
+    <PossiblyInvalidPropertyFetch occurrences="3">
       <code>$user-&gt;display_name</code>
       <code>$user-&gt;first_name</code>
       <code>$user-&gt;last_name</code>
