@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed "Show Template" editor setting breaking Sensei block loading and layout selection.
