@@ -98,7 +98,7 @@ class Sensei_Updates {
 	/**
 	 * Enqueue job to backfill the course welcome email sent flag.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 */
 	private function v4_26_2_backfill_course_welcome_email_sent() {
 		// Only run this if we're upgrading from a version before 4.26.2.

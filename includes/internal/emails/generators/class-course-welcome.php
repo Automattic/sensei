@@ -39,7 +39,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 * The blog prefix is prepended and the course ID appended to build the full key, e.g.
 	 * `wp_sensei_course_welcome_email_sent_123`, so the flag is scoped per site on multisite.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 *
 	 * @var string
 	 */
@@ -48,7 +48,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	/**
 	 * Welcome-sent flag value written by the upgrade backfill, not a real dispatch. A real dispatch stores a timestamp, so integrations can tell the two apart.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 *
 	 * @var string
 	 */
@@ -60,7 +60,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 * The key is blog-prefixed so it stays scoped to the current site on multisite,
 	 * matching how course enrolment results are stored.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 *
 	 * @param int $course_id The course ID.
 	 * @return string The user meta key.
@@ -114,7 +114,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 *
 	 * @access private
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 *
 	 * @param int $student_id The student ID.
 	 * @param int $course_id  The course ID.
@@ -126,7 +126,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	/**
 	 * Send the welcome email to a student for a course, if it is warranted.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 *
 	 * @param int  $student_id            The student ID.
 	 * @param int  $course_id             The course ID.
@@ -190,7 +190,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 *
 	 * @access private
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 *
 	 * @param string $email_name  The email identifier.
 	 * @param string $recipient   The recipient email address.
@@ -212,7 +212,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	/**
 	 * Check whether the welcome email has already been sent to a student for a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 *
 	 * @param int $student_id The student ID.
 	 * @param int $course_id  The course ID.
@@ -225,7 +225,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	/**
 	 * Flag the welcome email as sent to a student for a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 *
 	 * @param int $student_id The student ID.
 	 * @param int $course_id  The course ID.
