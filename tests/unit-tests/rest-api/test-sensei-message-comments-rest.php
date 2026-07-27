@@ -165,16 +165,34 @@ class Sensei_Message_Comments_REST_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * A comment moderator reading a reply by comment id must get the reply.
+	 * An administrator reading a reply by comment id must get the reply.
 	 */
-	public function testCheckReadPermission_ModeratorRequestedMessageCommentById_ReturnsComment() {
+	public function testCheckReadPermission_AdminRequestedMessageCommentById_ReturnsComment() {
 		$admin = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin );
 		$request = new WP_REST_Request( 'GET', '/wp/v2/comments/' . $this->reply_id );
 
 		$response = $this->server->dispatch( $request );
 
-		$this->assertSame( $this->reply_id, $response->get_data()['id'], 'A moderator must still read the message reply.' );
+		$this->assertSame( $this->reply_id, $response->get_data()['id'], 'An administrator must still read the message reply.' );
+	}
+
+	/**
+	 * A teacher who is not a participant of the message must be denied a reply by comment id.
+	 */
+	public function testCheckReadPermission_NonParticipantTeacherRequestedMessageCommentById_ReturnsForbidden() {
+		$teacher = $this->factory->user->create(
+			array(
+				'role'       => 'teacher',
+				'user_login' => 'other_teacher_login',
+			)
+		);
+		wp_set_current_user( $teacher );
+		$request = new WP_REST_Request( 'GET', '/wp/v2/comments/' . $this->reply_id );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 403, $response->get_status(), 'A teacher who is not a participant must be denied the message reply.' );
 	}
 
 	/**
@@ -191,9 +209,9 @@ class Sensei_Message_Comments_REST_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * A comment moderator querying a message's comments must get the reply.
+	 * An administrator querying a message's comments must get the reply.
 	 */
-	public function testCheckReadPermission_ModeratorRequestedMessageComments_ReturnsComment() {
+	public function testCheckReadPermission_AdminRequestedMessageComments_ReturnsComment() {
 		$admin = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin );
 		$request = new WP_REST_Request( 'GET', '/wp/v2/comments' );
@@ -201,7 +219,7 @@ class Sensei_Message_Comments_REST_Tests extends WP_Test_REST_TestCase {
 
 		$response = $this->server->dispatch( $request );
 
-		$this->assertCount( 1, $response->get_data(), 'A comment moderator must still see message replies.' );
+		$this->assertCount( 1, $response->get_data(), 'An administrator must still see message replies.' );
 	}
 
 	/**

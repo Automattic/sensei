@@ -168,7 +168,7 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
-	 * Restrict message reads to participants and privileged users.
+	 * Restrict message reads to participants and administrators.
 	 *
 	 * Core's comments controller calls this to decide whether a message reply is readable, so
 	 * gating it here keeps private replies restricted to a message's participants.
@@ -185,24 +185,24 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
-	 * Whether the current user may read a private message: its sender, its receiver, or a
-	 * privileged user who can moderate/read private messages.
+	 * Whether the current user may read a private message: its sender, its receiver, or an
+	 * administrator. Mirrors the checks used by get_item_permissions_check().
 	 *
 	 * @param WP_Post $post Message post object.
 	 * @return bool
 	 */
 	private function current_user_can_read_message( $post ) {
-		if (
-			current_user_can( 'manage_options' )
-			|| current_user_can( 'moderate_comments' )
-			|| current_user_can( 'read_private_sensei_messages' )
-		) {
+		if ( current_user_can( 'manage_options' ) ) {
 			return true;
 		}
 
 		$user = wp_get_current_user();
 		if ( ! $user->ID ) {
 			return false;
+		}
+
+		if ( $user->ID === (int) $post->post_author ) {
+			return true;
 		}
 
 		$sender   = get_post_meta( $post->ID, '_sender', true );
