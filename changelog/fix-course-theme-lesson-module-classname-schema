@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fixed PHP Fatal TypeError on PHP 8.x caused by malformed `className` attribute definition in the Module Title block.

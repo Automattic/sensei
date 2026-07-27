@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix React ref warning in the quiz block toolbar by forwarding refs through the number controls.

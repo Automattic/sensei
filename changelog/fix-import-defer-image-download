@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fixed content import stalling permanently when CSVs reference many or large remote media files.
