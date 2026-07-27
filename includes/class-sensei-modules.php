@@ -2242,7 +2242,7 @@ class Sensei_Core_Modules {
 	 * operations to the module's owner; users who can edit others' courses
 	 * (editors and administrators) are unaffected.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 * @access private
 	 *
 	 * @param string[] $caps    The mapped primitive capabilities.

@@ -232,7 +232,7 @@ abstract class Lesson_Progress_Abstract implements Lesson_Progress_Interface {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 *
 	 * @param DateTimeInterface $started_at The start date.
 	 */

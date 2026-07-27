@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Check quiz ownership in the legacy quiz-editor actions before applying changes.

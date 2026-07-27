@@ -1,4 +1,0 @@
-Significance: minor
-Type: changed
-
-Migrate student start date editing to use progress repositories instead of direct comment meta access.

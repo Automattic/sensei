@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix translated quiz titles keeping the original-language title when using WPML.
