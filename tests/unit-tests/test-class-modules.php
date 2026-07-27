@@ -297,4 +297,199 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertSame( absint( get_term_meta( $module['term_id'], 'module_author', true ) ), wp_get_current_user()->ID, 'Module teacher ID meta not set to the updated Author ID' );
 	}
+
+	public function testFilterModuleTerms_WhenViewedByTeacher_ExcludesOtherUsersModules() {
+		/* Arrange */
+		set_current_screen( 'edit-module' );
+
+		$teacher_a  = $this->get_user_by_role( 'teacher' );
+		$admin_id   = $this->get_user_by_role( 'administrator' );
+		$own_module = wp_insert_term( 'Teacher A Module', 'module', array( 'slug' => 'teacher-a-module' ) );
+		update_term_meta( $own_module['term_id'], 'module_author', $teacher_a );
+		$admin_module = wp_insert_term( 'Admin Module', 'module', array( 'slug' => 'admin-module' ) );
+		update_term_meta( $admin_module['term_id'], 'module_author', $admin_id );
+
+		$this->login_as( $teacher_a );
+
+		/* Act */
+		$names = wp_list_pluck(
+			get_terms(
+				array(
+					'taxonomy'   => 'module',
+					'hide_empty' => false,
+				)
+			),
+			'name'
+		);
+
+		/* Assert */
+		self::assertContains( 'Teacher A Module', $names, 'The teacher should see their own module.' );
+		self::assertNotContains( 'Admin Module', $names, 'The teacher should not see another user\'s module in the admin list.' );
+
+		set_current_screen( 'front' );
+	}
+
+	public function testRestrictModuleTermManagement_WhenTeacherDoesNotOwnModule_DeniesEditAndDelete() {
+		/* Arrange */
+		$teacher_a = $this->get_user_by_role( 'teacher' );
+		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
+		update_term_meta( $module['term_id'], 'module_author', $teacher_a );
+
+		$this->login_as_teacher_b();
+
+		/* Act & Assert */
+		self::assertFalse(
+			current_user_can( 'edit_term', $module['term_id'] ),
+			'A teacher should not be able to edit a module owned by another user.'
+		);
+		self::assertFalse(
+			current_user_can( 'delete_term', $module['term_id'] ),
+			'A teacher should not be able to delete a module owned by another user.'
+		);
+	}
+
+	public function testRestrictModuleTermManagement_WhenTeacherOwnsModule_AllowsEditAndDelete() {
+		/* Arrange */
+		$teacher_a = $this->get_user_by_role( 'teacher' );
+		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
+		update_term_meta( $module['term_id'], 'module_author', $teacher_a );
+
+		$this->login_as_teacher();
+
+		/* Act & Assert */
+		self::assertTrue(
+			current_user_can( 'edit_term', $module['term_id'] ),
+			'A teacher should be able to edit a module they own.'
+		);
+		self::assertTrue(
+			current_user_can( 'delete_term', $module['term_id'] ),
+			'A teacher should be able to delete a module they own.'
+		);
+	}
+
+	public function testRestrictModuleTermManagement_WhenAdminDoesNotOwnModule_AllowsEditAndDelete() {
+		/* Arrange */
+		$teacher_a = $this->get_user_by_role( 'teacher' );
+		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
+		update_term_meta( $module['term_id'], 'module_author', $teacher_a );
+
+		$this->login_as_admin();
+
+		/* Act & Assert */
+		self::assertTrue(
+			current_user_can( 'edit_term', $module['term_id'] ),
+			'An administrator should be able to edit any module.'
+		);
+		self::assertTrue(
+			current_user_can( 'delete_term', $module['term_id'] ),
+			'An administrator should be able to delete any module.'
+		);
+	}
+
+	public function testRestrictModuleTermManagement_WhenEditorDoesNotOwnModule_AllowsEditAndDelete() {
+		/* Arrange */
+		$teacher_a = $this->get_user_by_role( 'teacher' );
+		$module    = wp_insert_term( 'Owned by A', 'module', array( 'slug' => 'owned-by-a' ) );
+		update_term_meta( $module['term_id'], 'module_author', $teacher_a );
+
+		$this->login_as_editor();
+
+		/* Act & Assert */
+		self::assertTrue(
+			current_user_can( 'edit_term', $module['term_id'] ),
+			'An editor should be able to edit any module.'
+		);
+		self::assertTrue(
+			current_user_can( 'delete_term', $module['term_id'] ),
+			'An editor should be able to delete any module.'
+		);
+	}
+
+	public function testSaveModuleCourse_WhenTeacherAssignsModuleToCourseTheyCannotEdit_DoesNotAttach() {
+		/* Arrange */
+		$admin_id     = $this->get_user_by_role( 'administrator' );
+		$admin_course = $this->factory->course->create( array( 'post_author' => $admin_id ) );
+
+		$this->login_as_teacher();
+		$module = wp_insert_term( 'Teacher Module', 'module', array( 'slug' => 'teacher-module' ) );
+
+		/* Act */
+		$_POST['module_courses'] = array( $admin_course );
+		Sensei()->modules->save_module_course( $module['term_id'] );
+		unset( $_POST['module_courses'] );
+
+		/* Assert */
+		$module_terms = wp_get_object_terms( $admin_course, 'module', array( 'fields' => 'ids' ) );
+		self::assertNotContains(
+			$module['term_id'],
+			$module_terms,
+			'A teacher should not be able to attach a module to a course they cannot edit.'
+		);
+	}
+
+	public function testSaveModuleCourse_WhenTeacherRemovesModuleFromCourseTheyCannotEdit_DoesNotDetach() {
+		/* Arrange */
+		$admin_id     = $this->get_user_by_role( 'administrator' );
+		$admin_course = $this->factory->course->create( array( 'post_author' => $admin_id ) );
+
+		$module = wp_insert_term( 'Teacher Module', 'module', array( 'slug' => 'teacher-module' ) );
+
+		$this->login_as_admin();
+		wp_set_object_terms( $admin_course, array( $module['term_id'] ), 'module' );
+
+		/* Act */
+		$this->login_as_teacher();
+		$_POST['module_courses'] = array();
+		Sensei()->modules->save_module_course( $module['term_id'] );
+		unset( $_POST['module_courses'] );
+
+		/* Assert */
+		$module_terms = wp_get_object_terms( $admin_course, 'module', array( 'fields' => 'ids' ) );
+		self::assertContains(
+			$module['term_id'],
+			$module_terms,
+			'A teacher should not be able to detach a module from a course they cannot edit.'
+		);
+	}
+
+	public function testSaveModuleCourse_WhenTeacherAssignsModuleToCourseTheyOwn_Attaches() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$own_course = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$module     = wp_insert_term( 'Teacher Module', 'module', array( 'slug' => 'teacher-module' ) );
+
+		/* Act */
+		$_POST['module_courses'] = array( $own_course );
+		Sensei()->modules->save_module_course( $module['term_id'] );
+		unset( $_POST['module_courses'] );
+
+		/* Assert */
+		$module_terms = wp_get_object_terms( $own_course, 'module', array( 'fields' => 'ids' ) );
+		self::assertContains(
+			$module['term_id'],
+			$module_terms,
+			'A teacher should be able to attach a module to a course they own.'
+		);
+	}
+
+	public function testSaveModuleCourse_WhenTeacherRemovesModuleFromCourseTheyOwn_Detaches() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$own_course = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$module     = wp_insert_term( 'Teacher Module', 'module', array( 'slug' => 'teacher-module' ) );
+		wp_set_object_terms( $own_course, array( $module['term_id'] ), 'module' );
+
+		/* Act */
+		$_POST['module_courses'] = array();
+		Sensei()->modules->save_module_course( $module['term_id'] );
+		unset( $_POST['module_courses'] );
+
+		/* Assert */
+		$module_terms = wp_get_object_terms( $own_course, 'module', array( 'fields' => 'ids' ) );
+		self::assertNotContains(
+			$module['term_id'],
+			$module_terms,
+			'A teacher should be able to detach a module from a course they own.'
+		);
+	}
 }
