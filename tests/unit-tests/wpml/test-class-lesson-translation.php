@@ -106,4 +106,79 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		$actual = count( array_unique( $created_duplicates ) );
 		$this->assertSame( 8, $actual );
 	}
+
+	public function testUpdateLessonTranslationsOnLessonTranslationCreated_QuizNotYetTranslated_SyncsQuizTitleFromTranslatedLesson() {
+		/* Arrange. */
+		$course_with_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 1,
+			)
+		);
+		$master_lesson_id    = $course_with_lessons['lesson_ids'][0];
+		$master_quiz_id      = $course_with_lessons['quiz_ids'][0];
+
+		$translated_lesson_id = $this->factory->lesson->create(
+			array(
+				'post_title' => 'Lección 1',
+				'post_name'  => 'leccion-1',
+			)
+		);
+		// The quiz translation is a verbatim copy of the master, so it carries the master's title.
+		$translated_quiz_id     = $this->factory->quiz->create( array( 'post_title' => 'Lesson 1' ) );
+		$translated_question_id = $this->factory->post->create( array( 'post_type' => 'question' ) );
+
+		add_filter(
+			'wpml_element_language_details',
+			function () {
+				return array(
+					'language_code'        => 'es',
+					'source_language_code' => 'en',
+				);
+			},
+			10,
+			0
+		);
+
+		add_filter(
+			'wpml_object_id',
+			function ( $object_id, $element_type ) use ( $translated_lesson_id, $master_lesson_id ) {
+				if ( 'lesson' === $element_type && $translated_lesson_id === $object_id ) {
+					return $master_lesson_id;
+				}
+				if ( 'lesson' === $element_type && $master_lesson_id === $object_id ) {
+					return $translated_lesson_id;
+				}
+				return 0;
+			},
+			10,
+			2
+		);
+
+		add_filter(
+			'wpml_copy_post_to_language',
+			function ( $post_id ) use ( $master_quiz_id, $translated_quiz_id, $translated_question_id ) {
+				return $master_quiz_id === $post_id ? $translated_quiz_id : $translated_question_id;
+			}
+		);
+
+		add_filter(
+			'wpml_post_duplicates',
+			function () {
+				return array();
+			},
+			10,
+			0
+		);
+
+		$lesson_translation = new Lesson_Translation();
+
+		/* Act. */
+		$lesson_translation->update_lesson_translations_on_lesson_translation_created( $translated_lesson_id );
+
+		/* Assert. */
+		$translated_quiz = get_post( $translated_quiz_id );
+		$this->assertSame( 'Lección 1', $translated_quiz->post_title, 'The translated quiz title should be synced from the translated lesson.' );
+		$this->assertSame( 'leccion-1', $translated_quiz->post_name, 'The translated quiz slug should be synced from the translated lesson.' );
+	}
 }
