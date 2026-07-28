@@ -343,7 +343,13 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		$title = Sensei_Learner::get_full_name( $user_id );
 
-		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id, 'any' );
+		// Resolve the quiz from the lesson meta rather than a post query:
+		// language plugins (e.g. WPML) filter post queries to the current admin
+		// language, which can differ from the lesson's and return nothing.
+		$quiz_id = (int) get_post_meta( $lesson_id, '_lesson_quiz', true );
+		if ( ! $quiz_id || 'quiz' !== get_post_type( $quiz_id ) ) {
+			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id, 'any' );
+		}
 		$quiz_link = add_query_arg(
 			array(
 				'page'    => $this->page_slug,
