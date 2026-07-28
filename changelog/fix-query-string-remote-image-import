@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix remote featured images with query-string URLs failing to import.

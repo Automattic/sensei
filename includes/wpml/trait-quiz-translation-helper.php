@@ -58,6 +58,19 @@ trait Quiz_Translation_Helper {
 		update_post_meta( $translated_quiz_id, '_quiz_lesson', $quiz_lesson_id );
 		update_post_meta( $quiz_lesson_id, '_lesson_quiz', $translated_quiz_id );
 
+		// The quiz copy keeps the source-language title and core's title sync
+		// never runs for translation saves; derive it from the translated lesson.
+		$quiz_lesson = $quiz_lesson_id ? get_post( $quiz_lesson_id ) : null;
+		if ( $quiz_lesson instanceof \WP_Post ) {
+			wp_update_post(
+				array(
+					'ID'         => $translated_quiz_id,
+					'post_title' => $quiz_lesson->post_title,
+					'post_name'  => $quiz_lesson->post_name,
+				)
+			);
+		}
+
 		update_post_meta( $quiz_lesson_id, '_quiz_has_questions', count( $questions ) > 0 );
 
 		// Add relationship between quiz and questions.

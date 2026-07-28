@@ -2,7 +2,7 @@
 /**
  * File containing the class Sensei_Update_Backfill_Course_Welcome_Email_Sent.
  *
- * @since $$next-version$$
+ * @since 4.26.2
  * @package sensei
  */
 
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * repository, so the correct backend (comments or custom tables) is used
  * regardless of whether HPPS is enabled.
  *
- * @since $$next-version$$
+ * @since 4.26.2
  */
 class Sensei_Update_Backfill_Course_Welcome_Email_Sent extends Sensei_Background_Job_Batch {
 	/**
