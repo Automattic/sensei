@@ -586,7 +586,7 @@ class Sensei_Learner_Management {
 		 * Lets extensions persist additional date changes (e.g. course access dates) when a
 		 * student's dates are edited and report whether a change occurred so the row refreshes.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.2
 		 *
 		 * @hook sensei_students_row_updated
 		 *
@@ -601,14 +601,14 @@ class Sensei_Learner_Management {
 		/**
 		 * Filter sensei_learners_learner_updated
 		 *
-		 * @deprecated $$next-version$$ Use sensei_students_row_updated instead.
+		 * @deprecated 4.26.2 Use sensei_students_row_updated instead.
 		 *
 		 * @param {bool} $updated    A flag indicating if there was an update in the student row.
 		 * @param {int}  $post_id    Lesson or course id.
 		 * @param {int}  $comment_id The comment id which tracks the progress of the student.
 		 * @return {bool} False if there were no updates.
 		 */
-		$updated = (bool) apply_filters_deprecated( 'sensei_learners_learner_updated', array( $updated, $post_id, $progress->get_id() ), '$$next-version$$', 'sensei_students_row_updated' );
+		$updated = (bool) apply_filters_deprecated( 'sensei_learners_learner_updated', array( $updated, $post_id, $progress->get_id() ), '4.26.2', 'sensei_students_row_updated' );
 
 		if ( ! $updated ) {
 			wp_die();
