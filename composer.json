@@ -17,7 +17,7 @@
 		"sirbrillig/phpcs-variable-analysis": "2.11.16",
 		"symfony/polyfill-php80": "1.16.0",
 		"vimeo/psalm": "4.22.0",
-		"wp-coding-standards/wpcs": "3.0.1",
+		"wp-coding-standards/wpcs": "3.4.1",
 		"yoast/phpunit-polyfills": "2.0.0"
 	},
 	"minimum-stability": "dev",
