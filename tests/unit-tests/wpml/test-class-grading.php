@@ -6,6 +6,24 @@ use Sensei\Internal\Services\Grading_Item;
 use Sensei\WPML\Grading;
 
 class Grading_Test extends \WP_UnitTestCase {
+	/**
+	 * Sensei Factory.
+	 *
+	 * @var \Sensei_Factory
+	 */
+	protected $factory;
+
+	public function set_up(): void {
+		parent::set_up();
+		$this->factory = new \Sensei_Factory();
+	}
+
+	public function tear_down(): void {
+		remove_all_filters( 'wpml_current_language' );
+		remove_all_filters( 'wpml_object_id' );
+		parent::tear_down();
+		$this->factory->tearDown();
+	}
 
 	public function testInit_WhenCalled_AddsFilters() {
 		/* Arrange. */
@@ -57,10 +75,22 @@ class Grading_Test extends \WP_UnitTestCase {
 		$this->assertStringContainsString( 'Curso ES', $actual['course'] );
 	}
 
+	public function testTranslateRowTitles_CourseTranslationExists_KeepsOriginalCourseIdInLink() {
+		/* Arrange. */
+		list( $column_data, $item, $course_id ) = $this->arrange_row_with_translations();
+
+		$grading = new Grading();
+
+		/* Act. */
+		$actual = $grading->translate_row_titles( $column_data, $item, $course_id );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'course_id=' . $course_id, $actual['course'] );
+	}
+
 	public function testTranslateRowTitles_NoTranslationExists_ReturnsColumnDataUnchanged() {
 		/* Arrange. */
-		$factory   = new \Sensei_Factory();
-		$lesson_id = $factory->lesson->create( array( 'post_title' => 'Lesson EN' ) );
+		$lesson_id = $this->factory->lesson->create( array( 'post_title' => 'Lesson EN' ) );
 
 		add_filter(
 			'wpml_current_language',
@@ -94,12 +124,10 @@ class Grading_Test extends \WP_UnitTestCase {
 	 * @return array{0: array, 1: Grading_Item, 2: int} Column data, item, and course ID.
 	 */
 	private function arrange_row_with_translations() {
-		$factory = new \Sensei_Factory();
-
-		$lesson_en = $factory->lesson->create( array( 'post_title' => 'Lesson EN' ) );
-		$lesson_es = $factory->lesson->create( array( 'post_title' => 'Lección ES' ) );
-		$course_en = $factory->course->create( array( 'post_title' => 'Course EN' ) );
-		$course_es = $factory->course->create( array( 'post_title' => 'Curso ES' ) );
+		$lesson_en = $this->factory->lesson->create( array( 'post_title' => 'Lesson EN' ) );
+		$lesson_es = $this->factory->lesson->create( array( 'post_title' => 'Lección ES' ) );
+		$course_en = $this->factory->course->create( array( 'post_title' => 'Course EN' ) );
+		$course_es = $this->factory->course->create( array( 'post_title' => 'Curso ES' ) );
 
 		add_filter(
 			'wpml_current_language',
