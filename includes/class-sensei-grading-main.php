@@ -348,7 +348,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		if ( ! $quiz_id || 'quiz' !== get_post_type( $quiz_id ) ) {
 			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id, 'any' );
 		}
-		
+
 		$quiz_link = add_query_arg(
 			array(
 				'page'    => $this->page_slug,
