@@ -34,7 +34,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 	/**
 	 * Tests that the Grade link keeps the quiz ID even when quiz post queries
-	 * are filtered to another language, as WPML does in a secondary admin language.
+	 * are filtered to another language, as multilingual plugins do in a
+	 * secondary admin language.
 	 *
 	 * @covers Sensei_Grading_Main::get_row_data
 	 */
@@ -45,7 +46,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$quiz_id   = $this->factory->quiz->create( array( 'post_parent' => $lesson_id ) );
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
-		// Simulate WPML filtering quiz post queries to a different admin language.
+		// Simulate a multilingual plugin filtering quiz post queries to another language.
 		$language_filter = function ( $where, $query ) {
 			if ( 'quiz' === $query->get( 'post_type' ) ) {
 				$where .= ' AND 1=0';
