@@ -5447,7 +5447,7 @@ msgstr ""
 #. translators: Placeholder is the docs link.
 #: includes/class-sensei-settings.php:418
 #, php-format
-msgid "The <a href=\"%s\" target=\"_blank\">page</a> to use to display the courses that a user is currently taking as well as the courses a user has complete."
+msgid "The <a href=\"%s\" target=\"_blank\">page</a> to use to display the courses that a user is currently taking as well as the courses a user has completed."
 msgstr ""
 
 #: includes/class-sensei-settings.php:429
