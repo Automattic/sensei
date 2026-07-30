@@ -178,6 +178,19 @@ class Question_Display_Test extends \WP_UnitTestCase {
 		$this->assertSame( $question_data, $actual, 'On an answer-list size mismatch the whole question should render as taken.' );
 	}
 
+	public function testTranslateTemplateData_TranslationForMultipleChoiceExists_KeepsAnswerListsShape() {
+		/* Arrange. */
+		list( $question_data, $taken_question_id ) = $this->arrange_loader_output_with_translation();
+
+		$question_display = new Question_Display();
+
+		/* Act. */
+		$actual = $question_display->translate_template_data( $question_data, $taken_question_id );
+
+		/* Assert. */
+		$this->assertSame( array( 'Green', 'Blue' ), $actual['question_wrong_answers'], 'The loader-merged wrong list should be translated in place, keeping its shape.' );
+	}
+
 	public function testTranslateTemplateData_NoTranslationExists_ReturnsQuestionDataUnchanged() {
 		/* Arrange. */
 		list( $question_data, $taken_question_id ) = $this->arrange_loader_output_with_translation();

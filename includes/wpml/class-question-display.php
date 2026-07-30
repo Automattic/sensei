@@ -299,9 +299,34 @@ class Question_Display {
 		}
 
 		$question_data['answer_options']         = $translated_options;
-		$question_data['question_right_answer']  = get_post_meta( $display_question_id, '_question_right_answer', true );
-		$question_data['question_wrong_answers'] = $display_wrong;
+		$question_data['question_right_answer']  = $this->translate_answer_labels( $question_data['question_right_answer'] ?? '', $label_map );
+		$question_data['question_wrong_answers'] = $this->translate_answer_labels( $question_data['question_wrong_answers'] ?? array(), $label_map );
 
 		return $question_data;
+	}
+
+	/**
+	 * Translate answer labels through the label map, keeping the value's shape.
+	 *
+	 * The type loaders reshape these fields (the right answer gets merged into
+	 * the wrong list to build the options), so the existing values are mapped
+	 * in place rather than replaced with the translation's raw meta. Labels
+	 * missing from the map are kept as they are.
+	 *
+	 * @param string|array $labels    Label or list of labels, as the loaders left them.
+	 * @param array        $label_map As-taken label => display-language label.
+	 * @return string|array
+	 */
+	private function translate_answer_labels( $labels, $label_map ) {
+		if ( is_array( $labels ) ) {
+			$translated_labels = array();
+			foreach ( $labels as $key => $label ) {
+				$translated_labels[ $key ] = $label_map[ $label ] ?? $label;
+			}
+
+			return $translated_labels;
+		}
+
+		return $label_map[ $labels ] ?? $labels;
 	}
 }
