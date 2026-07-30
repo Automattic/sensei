@@ -717,9 +717,13 @@ class Sensei_Question {
 		 * @param {int} $question_id Question ID.
 		 * @return {int} Question ID to render the description from.
 		 */
-		$question_id = apply_filters( 'sensei_the_question_description_question_id', $question_id );
+		$question_id = (int) apply_filters( 'sensei_the_question_description_question_id', $question_id );
 
-		$question             = get_post( $question_id );
+		$question = $question_id > 0 ? get_post( $question_id ) : null;
+		if ( ! $question ) {
+			return '';
+		}
+
 		$question_description = $question->post_content;
 
 		if ( has_blocks( $question_description ) ) {
