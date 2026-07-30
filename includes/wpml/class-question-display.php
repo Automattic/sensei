@@ -135,8 +135,9 @@ class Question_Display {
 	/**
 	 * Render the question description from the current-language question.
 	 *
-	 * Runs whenever a question description is rendered. Without a translation,
-	 * the question renders its own description, exactly like core.
+	 * Runs whenever a question description is rendered on the frontend. In
+	 * wp-admin (the grading screen renders descriptions too), or without a
+	 * translation, the question renders its own description, exactly like core.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -146,6 +147,10 @@ class Question_Display {
 	 * @return int
 	 */
 	public function translate_question_description_id( $question_id ) {
+		if ( is_admin() ) {
+			return $question_id;
+		}
+
 		$display_question_id = $this->get_display_question_id( (int) $question_id );
 
 		return $display_question_id ? $display_question_id : (int) $question_id;

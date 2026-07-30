@@ -108,6 +108,26 @@ class Question_Display_Test extends \WP_UnitTestCase {
 		$this->assertStringContainsString( 'EN description', $description );
 	}
 
+	public function testTranslateQuestionDescriptionId_InAdminContext_ReturnsQuestionIdUnchanged() {
+		/* Arrange. */
+		list( $taken_question_id, $display_question_id ) = $this->create_question_pair();
+		$this->simulate_wpml_viewer_on_en( $taken_question_id, $display_question_id );
+
+		set_current_screen( 'edit-post' );
+
+		$question_display = new Question_Display();
+		$question_display->init();
+
+		/* Act. */
+		$question_id = apply_filters( 'sensei_the_question_description_question_id', $taken_question_id );
+
+		/* Clean up. */
+		unset( $GLOBALS['current_screen'] );
+
+		/* Assert. */
+		$this->assertSame( $taken_question_id, $question_id, 'The grading screen should keep rendering the as-taken description.' );
+	}
+
 	public function testTranslateCorrectAnswerMessage_TranslationForMultipleChoiceExists_ShowsViewerLanguageRightAnswer() {
 		/* Arrange. */
 		list( $taken_question_id, $display_question_id ) = $this->create_question_pair();
