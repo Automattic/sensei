@@ -35,9 +35,78 @@ class Question_Display {
 		// order in as-taken space, where stored answers match; this class only
 		// swaps what is displayed.
 		add_filter( 'sensei_get_question_template_data', array( $this, 'translate_template_data' ), 15, 2 );
-		// The question heading is rendered from get_the_title(), outside the
-		// template data.
+		// The question heading is rendered from get_the_title(), outside the template data.
 		add_filter( 'the_title', array( $this, 'translate_question_title' ), 10, 2 );
+		// The description renderer has no filter carrying the question ID; swap
+		// the renderer itself right before a quiz renders its questions.
+		add_action( 'sensei_single_quiz_questions_before', array( $this, 'replace_question_description_renderer' ) );
+		// The "Right Answer:" reveal shown on failed questions.
+		add_filter( 'sensei_question_answer_message_correct_answer', array( $this, 'translate_correct_answer_message' ), 10, 3 );
+	}
+
+	/**
+	 * Show the "Right Answer:" reveal in the current language.
+	 *
+	 * Gap fill stays as taken on purpose: the right answer only makes sense
+	 * against the gap in its own language.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param string|false $correct_answer Correct answer message, or false when hidden.
+	 * @param int          $lesson_id      Lesson ID.
+	 * @param int          $question_id    Question ID the row was built from (as taken).
+	 * @return string|false
+	 */
+	public function translate_correct_answer_message( $correct_answer, $lesson_id, $question_id ) {
+		if ( ! $correct_answer ) {
+			return $correct_answer;
+		}
+
+		if ( 'gap-fill' === Sensei()->question->get_question_type( $question_id ) ) {
+			return $correct_answer;
+		}
+
+		$display_question_id = $this->get_display_question_id( (int) $question_id );
+		if ( ! $display_question_id ) {
+			return $correct_answer;
+		}
+
+		return \Sensei_Question::get_correct_answer( $display_question_id );
+	}
+
+	/**
+	 * Take over the question-description renderer on the frontend.
+	 *
+	 * Only when the core renderer is found where expected: otherwise leave it
+	 * alone rather than risk rendering the description twice.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 */
+	public function replace_question_description_renderer() {
+		if ( ! remove_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_description' ), 20 ) ) {
+			return;
+		}
+
+		add_action( 'sensei_quiz_question_inside_before', array( $this, 'render_question_description' ), 20 );
+	}
+
+	/**
+	 * Render the question description from the current-language question.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param int $question_id Question ID the row was built from (as taken).
+	 */
+	public function render_question_description( $question_id ) {
+		$display_question_id = $this->get_display_question_id( (int) $question_id );
+
+		\Sensei_Question::the_question_description( $display_question_id ? $display_question_id : $question_id );
 	}
 
 	/**
@@ -56,22 +125,33 @@ class Question_Display {
 			return $title;
 		}
 
+		$display_question_id = $this->get_display_question_id( (int) $post_id );
+		if ( ! $display_question_id ) {
+			return $title;
+		}
+
+		return get_post( $display_question_id )->post_title;
+	}
+
+	/**
+	 * Resolve the current-language twin of a question.
+	 *
+	 * @param int $question_id Question ID.
+	 * @return int Twin question ID, or 0 when there is nothing to translate to
+	 *             (no multilingual plugin, no translation, or same question).
+	 */
+	private function get_display_question_id( $question_id ) {
 		$current_language = $this->get_current_language();
 		if ( ! $current_language ) {
-			return $title;
+			return 0;
 		}
 
-		$display_question_id = $this->get_object_id( (int) $post_id, 'question', true, $current_language );
-		if ( ! $display_question_id || (int) $post_id === $display_question_id ) {
-			return $title;
+		$display_question_id = $this->get_object_id( $question_id, 'question', true, $current_language );
+		if ( ! $display_question_id || $question_id === $display_question_id || ! get_post( $display_question_id ) ) {
+			return 0;
 		}
 
-		$display_question = get_post( $display_question_id );
-		if ( ! $display_question ) {
-			return $title;
-		}
-
-		return $display_question->post_title;
+		return $display_question_id;
 	}
 
 	/**
@@ -88,20 +168,12 @@ class Question_Display {
 	 * @return array
 	 */
 	public function translate_template_data( $question_data, $question_id ) {
-		$current_language = $this->get_current_language();
-		if ( ! $current_language ) {
-			return $question_data;
-		}
-
-		$display_question_id = $this->get_object_id( (int) $question_id, 'question', true, $current_language );
-		if ( ! $display_question_id || (int) $question_id === $display_question_id ) {
+		$display_question_id = $this->get_display_question_id( (int) $question_id );
+		if ( ! $display_question_id ) {
 			return $question_data;
 		}
 
 		$display_question = get_post( $display_question_id );
-		if ( ! $display_question ) {
-			return $question_data;
-		}
 
 		$question_data['title']   = $display_question->post_title;
 		$question_data['content'] = $display_question->post_content;
@@ -115,13 +187,8 @@ class Question_Display {
 	 *
 	 * Multilingual plugins translate option labels in place, never reordering
 	 * them or moving them between the right and wrong lists, so same list + same
-	 * position is the same answer. All-or-nothing: on any mismatch (list size,
-	 * unknown label) the data is returned untouched and the question renders as
-	 * taken.
-	 *
-	 * The as-taken lists are read from the question's own meta: the type loaders
-	 * mutate the ones in the template data (the right answer is merged into the
-	 * wrong list to build the options).
+	 * position is the same answer. On any mismatch (list size, unknown label)
+	 * the data is returned untouched and the question renders as taken.
 	 *
 	 * @param array $question_data       Question template data, as left by the type loaders.
 	 * @param int   $question_id         As-taken question ID.

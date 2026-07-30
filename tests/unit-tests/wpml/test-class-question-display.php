@@ -76,6 +76,70 @@ class Question_Display_Test extends \WP_UnitTestCase {
 		$this->assertSame( '¿De qué color es el cielo?', $title );
 	}
 
+	public function testRenderQuestionDescription_ViewerLanguageDiffersFromTakenQuestion_ShowsViewerLanguageDescription() {
+		/* Arrange. */
+		list( $taken_question_id, $display_question_id ) = $this->create_question_pair();
+
+		wp_update_post(
+			array(
+				'ID'           => $taken_question_id,
+				'post_content' => '<!-- wp:sensei-lms/question-description --><p>Descripción ES</p><!-- /wp:sensei-lms/question-description -->',
+			)
+		);
+		wp_update_post(
+			array(
+				'ID'           => $display_question_id,
+				'post_content' => '<!-- wp:sensei-lms/question-description --><p>EN description</p><!-- /wp:sensei-lms/question-description -->',
+			)
+		);
+
+		$this->simulate_wpml_viewer_on_en( $taken_question_id, $display_question_id );
+
+		// Minimal question loop state for the core title callback on the same action.
+		global $sensei_question_loop;
+		$sensei_question_loop = array(
+			'current_page'     => 1,
+			'posts_per_page'   => 1,
+			'current'          => 0,
+			'current_question' => get_post( $taken_question_id ),
+			'quiz_id'          => $this->factory->quiz->create(),
+		);
+
+		$question_display = new Question_Display();
+		$question_display->init();
+		$question_display->replace_question_description_renderer();
+
+		/* Act. */
+		ob_start();
+		do_action( 'sensei_quiz_question_inside_before', $taken_question_id );
+		$html = ob_get_clean();
+
+		/* Clean up. */
+		$sensei_question_loop = null;
+
+		/* Assert. */
+		$this->assertStringContainsString( 'EN description', $html );
+	}
+
+	public function testTranslateCorrectAnswerMessage_TranslationForMultipleChoiceExists_ShowsViewerLanguageRightAnswer() {
+		/* Arrange. */
+		list( $taken_question_id, $display_question_id ) = $this->create_question_pair();
+
+		wp_set_object_terms( $taken_question_id, 'multiple-choice', 'question-type' );
+		wp_set_object_terms( $display_question_id, 'multiple-choice', 'question-type' );
+
+		$this->simulate_wpml_viewer_on_en( $taken_question_id, $display_question_id );
+
+		$question_display = new Question_Display();
+		$question_display->init();
+
+		/* Act. */
+		$message = apply_filters( 'sensei_question_answer_message_correct_answer', 'Azul', 0, $taken_question_id, 0, false );
+
+		/* Assert. */
+		$this->assertSame( 'Blue', $message );
+	}
+
 	public function testTranslateTemplateData_TranslationForMultipleChoiceExists_ShowsViewerLanguageOptionLabels() {
 		/* Arrange. */
 		list( $taken_question_id, $quiz_id ) = $this->arrange_real_taken_multiple_choice_with_translation();
