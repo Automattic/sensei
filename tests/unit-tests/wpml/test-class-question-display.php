@@ -39,6 +39,8 @@ class Question_Display_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals( 15, has_filter( 'sensei_get_question_template_data', array( $question_display, 'translate_template_data' ) ), 'The template data filter should be added after the type loaders.' );
 		$this->assertEquals( 10, has_filter( 'the_title', array( $question_display, 'translate_question_title' ) ), 'The title filter should be added.' );
+		$this->assertEquals( 10, has_filter( 'sensei_question_answer_message_correct_answer', array( $question_display, 'translate_correct_answer_message' ) ), 'The right-answer reveal filter should be added.' );
+		$this->assertEquals( 10, has_filter( 'sensei_question_answer_notes', array( $question_display, 'translate_answer_notes' ) ), 'The answer notes filter should be added.' );
 	}
 
 	public function testTranslateQuestionTitle_ViewerLanguageDiffersFromTakenQuestion_ShowsViewerLanguageTitle() {
@@ -138,6 +140,44 @@ class Question_Display_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( 'Blue', $message );
+	}
+
+	public function testTranslateAnswerNotes_NotesMatchTakenQuestionGenericFeedback_ShowsViewerLanguageFeedback() {
+		/* Arrange. */
+		list( $taken_question_id, $display_question_id ) = $this->create_question_pair();
+
+		update_post_meta( $taken_question_id, '_answer_feedback', 'Feedback ES' );
+		update_post_meta( $display_question_id, '_answer_feedback', 'Feedback EN' );
+
+		$this->simulate_wpml_viewer_on_en( $taken_question_id, $display_question_id );
+
+		$question_display = new Question_Display();
+		$question_display->init();
+
+		/* Act. */
+		$notes = apply_filters( 'sensei_question_answer_notes', 'Feedback ES', $taken_question_id, 0 );
+
+		/* Assert. */
+		$this->assertSame( 'Feedback EN', $notes );
+	}
+
+	public function testTranslateAnswerNotes_NotesAreTeacherFeedback_ReturnsNotesUnchanged() {
+		/* Arrange. */
+		list( $taken_question_id, $display_question_id ) = $this->create_question_pair();
+
+		update_post_meta( $taken_question_id, '_answer_feedback', 'Feedback ES' );
+		update_post_meta( $display_question_id, '_answer_feedback', 'Feedback EN' );
+
+		$this->simulate_wpml_viewer_on_en( $taken_question_id, $display_question_id );
+
+		$question_display = new Question_Display();
+		$question_display->init();
+
+		/* Act. */
+		$notes = apply_filters( 'sensei_question_answer_notes', 'Muy buen razonamiento, Ana.', $taken_question_id, 0 );
+
+		/* Assert. */
+		$this->assertSame( 'Muy buen razonamiento, Ana.', $notes, 'Per-student feedback written by the teacher should be shown as written.' );
 	}
 
 	public function testTranslateTemplateData_TranslationForMultipleChoiceExists_ShowsViewerLanguageOptionLabels() {

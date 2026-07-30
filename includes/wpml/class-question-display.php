@@ -42,6 +42,59 @@ class Question_Display {
 		add_action( 'sensei_single_quiz_questions_before', array( $this, 'replace_question_description_renderer' ) );
 		// The "Right Answer:" reveal shown on failed questions.
 		add_filter( 'sensei_question_answer_message_correct_answer', array( $this, 'translate_correct_answer_message' ), 10, 3 );
+		// The feedback text shown under Correct/Incorrect.
+		add_filter( 'sensei_question_answer_notes', array( $this, 'translate_answer_notes' ), 10, 2 );
+	}
+
+	/**
+	 * Show the question-authored answer feedback in the current language.
+	 *
+	 * The notes can also be per-student feedback written by the teacher while
+	 * grading; that has no translation and is shown as written. The two are
+	 * told apart by matching the notes against the taken question's own
+	 * feedback sources.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param string|false $answer_notes Answer notes.
+	 * @param int          $question_id  Question ID the row was built from (as taken).
+	 * @return string|false
+	 */
+	public function translate_answer_notes( $answer_notes, $question_id ) {
+		if ( ! $answer_notes || ! is_string( $answer_notes ) ) {
+			return $answer_notes;
+		}
+
+		$display_question_id = $this->get_display_question_id( (int) $question_id );
+		if ( ! $display_question_id ) {
+			return $answer_notes;
+		}
+
+		$sources = array(
+			array(
+				\Sensei_Quiz::get_correct_answer_feedback( $question_id ),
+				\Sensei_Quiz::get_correct_answer_feedback( $display_question_id ),
+			),
+			array(
+				\Sensei_Quiz::get_incorrect_answer_feedback( $question_id ),
+				\Sensei_Quiz::get_incorrect_answer_feedback( $display_question_id ),
+			),
+			array(
+				get_post_meta( $question_id, '_answer_feedback', true ),
+				get_post_meta( $display_question_id, '_answer_feedback', true ),
+			),
+		);
+
+		foreach ( $sources as $source ) {
+			list( $taken_feedback, $display_feedback ) = $source;
+			if ( $taken_feedback && $answer_notes === $taken_feedback && $display_feedback ) {
+				return $display_feedback;
+			}
+		}
+
+		return $answer_notes;
 	}
 
 	/**
