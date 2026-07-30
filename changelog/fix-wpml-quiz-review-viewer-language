@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed the quiz results page showing questions in the language the quiz was taken in instead of the viewer's language on multilingual sites.
