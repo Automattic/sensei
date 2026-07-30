@@ -63,7 +63,7 @@ class Question_Display {
 	 * @return string|false
 	 */
 	public function translate_answer_notes( $answer_notes, $question_id ) {
-		if ( ! $answer_notes || ! is_string( $answer_notes ) ) {
+		if ( ! is_string( $answer_notes ) || '' === $answer_notes ) {
 			return $answer_notes;
 		}
 
