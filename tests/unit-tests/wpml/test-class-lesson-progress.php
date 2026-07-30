@@ -20,6 +20,7 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 		$this->assertEquals( 10, has_filter( 'sensei_lesson_progress_has_lesson_id', array( $lesson_progress, 'translate_lesson_id' ) ) );
 		$this->assertEquals( 10, has_filter( 'sensei_lesson_progress_delete_for_lesson_lesson_id', array( $lesson_progress, 'translate_lesson_id' ) ) );
 		$this->assertEquals( 10, has_filter( 'sensei_lesson_progress_find_lesson_id', array( $lesson_progress, 'translate_lesson_id' ) ) );
+		$this->assertEquals( 10, has_filter( 'sensei_quiz_user_data_cache_lesson_id', array( $lesson_progress, 'translate_lesson_id' ) ) );
 	}
 
 	public function testTranslateLessonId_WhenCalled_ReturnsMatchingValue() {
