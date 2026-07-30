@@ -115,14 +115,24 @@ trait Question_Translation_Helper {
 				continue;
 			}
 
+			$question_updates = array();
+
 			// The translated title lives in the block attribute.
 			if ( ! empty( $block['attrs']['title'] ) ) {
-				wp_update_post(
-					array(
-						'ID'         => (int) $question_id,
-						'post_title' => (string) $block['attrs']['title'],
-					)
-				);
+				$question_updates['post_title'] = (string) $block['attrs']['title'];
+			}
+
+			// A question post stores the question block's whole inner content
+			// (description, answers, and feedback blocks), mirroring how the
+			// editor saves it (see getBlockContent in the quiz editor and the
+			// REST question helpers).
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$question_updates['post_content'] = implode( '', array_map( 'serialize_block', $block['innerBlocks'] ) );
+			}
+
+			if ( $question_updates ) {
+				$question_updates['ID'] = (int) $question_id;
+				wp_update_post( $question_updates );
 			}
 
 			// The translated answers live in the block, split into correct and

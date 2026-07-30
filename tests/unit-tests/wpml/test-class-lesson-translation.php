@@ -248,6 +248,8 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( array( 'sí' ), get_post_meta( $translated_question_id, '_question_right_answer', true ), 'The right answer should be updated from the lesson content.' );
 		$this->assertSame( array( 'no' ), get_post_meta( $translated_question_id, '_question_wrong_answers', true ), 'The wrong answers should be updated from the lesson content.' );
 		$this->assertSame( \Sensei()->lesson->get_answer_id( 'sí' ) . ',' . \Sensei()->lesson->get_answer_id( 'no' ), get_post_meta( $translated_question_id, '_answer_order', true ), 'The answer order should be recomputed from the translated labels in block order.' );
+		$this->assertStringContainsString( 'Descripción ES', $translated_question->post_content, 'The question description should be updated from the lesson content.' );
+		$this->assertStringContainsString( 'Feedback correcto ES', \Sensei_Quiz::get_correct_answer_feedback( $translated_question_id ), 'The question feedback blocks should be updated from the lesson content.' );
 	}
 
 	/**
@@ -313,6 +315,12 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 	private function translated_lesson_content( $source_question_id ) {
 		return '<!-- wp:sensei-lms/quiz -->' . "\n" .
 			'<!-- wp:sensei-lms/quiz-question {"id":' . $source_question_id . ',"title":"Pregunta","answer":{"answers":[{"label":"sí","correct":true},{"label":"no","correct":false}]},"options":{"grade":1}} -->' . "\n" .
+			'<!-- wp:sensei-lms/question-description -->' . "\n" .
+			'<p>Descripción ES</p>' . "\n" .
+			'<!-- /wp:sensei-lms/question-description -->' . "\n" .
+			'<!-- wp:sensei-lms/quiz-question-feedback-correct -->' . "\n" .
+			'<p>Feedback correcto ES</p>' . "\n" .
+			'<!-- /wp:sensei-lms/quiz-question-feedback-correct -->' . "\n" .
 			'<!-- /wp:sensei-lms/quiz-question -->' . "\n" .
 			'<!-- /wp:sensei-lms/quiz -->';
 	}
