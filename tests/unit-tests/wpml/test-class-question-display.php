@@ -274,10 +274,10 @@ class Question_Display_Test extends \WP_UnitTestCase {
 
 	/**
 	 * Create a real ES multiple choice (taxonomy, metas, and answer order, so the
-	 * type loader runs on it), an EN twin question, and WPML simulated with the
+	 * type loader runs on it), an EN translation, and WPML simulated with the
 	 * viewer on EN.
 	 *
-	 * The ES question shows "Verde" (wrong) then "Azul" (right); the EN twin has
+	 * The ES question shows "Verde" (wrong) then "Azul" (right); the EN translation has
 	 * "Green"/"Blue" in the same buckets and positions.
 	 *
 	 * @return array{0: int, 1: int} As-taken question ID and quiz ID.
@@ -328,7 +328,7 @@ class Question_Display_Test extends \WP_UnitTestCase {
 	/**
 	 * Build the template data of an ES-taken multiple choice as the type loader
 	 * leaves it (as-taken labels, selection and order already resolved), with an
-	 * EN twin question and WPML simulated with the viewer on EN.
+	 * EN translation and WPML simulated with the viewer on EN.
 	 *
 	 * The student picked "Azul" (right answer, second position).
 	 *
@@ -394,7 +394,7 @@ class Question_Display_Test extends \WP_UnitTestCase {
 
 	/**
 	 * Register the WPML simulation filters: viewer on EN, ES question mapped to
-	 * its EN twin.
+	 * its EN translation.
 	 *
 	 * @param int $taken_question_id   As-taken (ES) question ID.
 	 * @param int $display_question_id Display (EN) question ID.
@@ -421,5 +421,4 @@ class Question_Display_Test extends \WP_UnitTestCase {
 			2
 		);
 	}
-
 }

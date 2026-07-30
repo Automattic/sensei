@@ -31,9 +31,8 @@ class Question_Display {
 	 * Init hooks.
 	 */
 	public function init() {
-		// After the question-type loaders (priority 10): they compute selection and
-		// order in as-taken space, where stored answers match; this class only
-		// swaps what is displayed.
+		// Run after the question-type loaders (priority 10), so the student's
+		// selection is already resolved when the labels get translated.
 		add_filter( 'sensei_get_question_template_data', array( $this, 'translate_template_data' ), 15, 2 );
 		// The question heading is rendered from get_the_title(), outside the template data.
 		add_filter( 'the_title', array( $this, 'translate_question_title' ), 10, 2 );
@@ -49,10 +48,12 @@ class Question_Display {
 	/**
 	 * Show the question-authored answer feedback in the current language.
 	 *
-	 * The notes can also be per-student feedback written by the teacher while
-	 * grading; that has no translation and is shown as written. The two are
-	 * told apart by matching the notes against the taken question's own
-	 * feedback sources.
+	 * Runs when the feedback box of a graded question is rendered on the quiz
+	 * page. If the notes are the question's own feedback (the correct/incorrect
+	 * feedback blocks or the answer feedback field), it swaps them for the
+	 * translation's version. Notes written by the teacher for this student
+	 * while grading have no translation and are shown as written; they are
+	 * told apart because they match none of the question's feedback sources.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -100,8 +101,10 @@ class Question_Display {
 	/**
 	 * Show the "Right Answer:" reveal in the current language.
 	 *
-	 * Gap fill stays as taken on purpose: the right answer only makes sense
-	 * against the gap in its own language.
+	 * Runs when the feedback box of a failed question reveals the right answer
+	 * on the quiz page. It rebuilds the message from the question's
+	 * translation. Gap fill stays as taken on purpose: the right answer only
+	 * makes sense against the gap in its own language.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -132,7 +135,9 @@ class Question_Display {
 	/**
 	 * Take over the question-description renderer on the frontend.
 	 *
-	 * Only when the core renderer is found where expected: otherwise leave it
+	 * Runs right before a quiz renders its questions: it unhooks the core
+	 * renderer and puts render_question_description() in its place. Only when
+	 * the core renderer is found where expected: otherwise it leaves everything
 	 * alone rather than risk rendering the description twice.
 	 *
 	 * @since $$next-version$$
@@ -150,6 +155,10 @@ class Question_Display {
 	/**
 	 * Render the question description from the current-language question.
 	 *
+	 * Runs in each question's header in place of the core renderer. It renders
+	 * the translation's description; without a translation it renders the
+	 * question's own, exactly like core.
+	 *
 	 * @since $$next-version$$
 	 *
 	 * @internal
@@ -164,6 +173,10 @@ class Question_Display {
 
 	/**
 	 * Show a question's title in the current language on the frontend.
+	 *
+	 * Runs whenever a question title is fetched on the frontend (the quiz page
+	 * heading among others). In wp-admin, or without a translation, the title
+	 * is returned unchanged.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -187,11 +200,13 @@ class Question_Display {
 	}
 
 	/**
-	 * Resolve the current-language twin of a question.
+	 * Get the ID of the question's translation in the current language.
 	 *
 	 * @param int $question_id Question ID.
-	 * @return int Twin question ID, or 0 when there is nothing to translate to
-	 *             (no multilingual plugin, no translation, or same question).
+	 * @return int Translated question ID, or 0 when the question should render
+	 *             as is: no multilingual plugin is active, the question has no
+	 *             translation in the current language, or it already is the
+	 *             current-language version.
 	 */
 	private function get_display_question_id( $question_id ) {
 		$current_language = $this->get_current_language();
@@ -208,9 +223,14 @@ class Question_Display {
 	}
 
 	/**
-	 * Swap a question's template data for the current-language translation.
+	 * Show a question of a completed quiz in the current language.
 	 *
-	 * Display only: stored answers and grades are never modified.
+	 * Runs every time a question is rendered on the quiz page, after the type
+	 * loaders have built its template data. On a completed quiz it replaces the
+	 * title, content, and option labels with the ones from the question's
+	 * translation. While the quiz is open, or when the options cannot be
+	 * mapped, the question renders as taken. Display only: stored answers and
+	 * grades are never modified.
 	 *
 	 * @since $$next-version$$
 	 *
