@@ -1074,9 +1074,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Testing $woothemes->quiz->get_user_grades.
-	 */
-	/**
 	 * Tests that stored grades survive quiz post queries being filtered
 	 * to another language by a multilingual plugin.
 	 *
@@ -1194,11 +1191,14 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$cache_lesson_filter = function () use ( $cache_lesson_id ) {
 			return $cache_lesson_id;
 		};
-		add_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
+		add_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter, 10, 0 );
 
 		return array( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter );
 	}
 
+	/**
+	 * Testing $woothemes->quiz->get_user_grades.
+	 */
 	public function testGetUserGrades() {
 
 		// Setup the data needed for the assertions in this test.
