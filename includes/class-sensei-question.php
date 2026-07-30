@@ -701,12 +701,23 @@ class Sensei_Question {
 	}
 
 	/**
-	 * Tech the question description
+	 * Get the question description.
 	 *
 	 * @param $question_id
 	 * @return string
 	 */
 	public static function get_the_question_description( $question_id ) {
+		/**
+		 * Filter the question whose description is rendered.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @hook sensei_the_question_description_question_id
+		 *
+		 * @param {int} $question_id Question ID.
+		 * @return {int} Question ID to render the description from.
+		 */
+		$question_id = apply_filters( 'sensei_the_question_description_question_id', $question_id );
 
 		$question             = get_post( $question_id );
 		$question_description = $question->post_content;

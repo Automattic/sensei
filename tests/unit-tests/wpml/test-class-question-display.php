@@ -39,6 +39,7 @@ class Question_Display_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals( 15, has_filter( 'sensei_get_question_template_data', array( $question_display, 'translate_template_data' ) ), 'The template data filter should be added after the type loaders.' );
 		$this->assertEquals( 10, has_filter( 'the_title', array( $question_display, 'translate_question_title' ) ), 'The title filter should be added.' );
+		$this->assertEquals( 10, has_filter( 'sensei_the_question_description_question_id', array( $question_display, 'translate_question_description_id' ) ), 'The description question filter should be added.' );
 		$this->assertEquals( 10, has_filter( 'sensei_question_answer_message_correct_answer', array( $question_display, 'translate_correct_answer_message' ) ), 'The right-answer reveal filter should be added.' );
 		$this->assertEquals( 10, has_filter( 'sensei_question_answer_notes', array( $question_display, 'translate_answer_notes' ) ), 'The answer notes filter should be added.' );
 	}
@@ -78,7 +79,7 @@ class Question_Display_Test extends \WP_UnitTestCase {
 		$this->assertSame( '¿De qué color es el cielo?', $title );
 	}
 
-	public function testRenderQuestionDescription_ViewerLanguageDiffersFromTakenQuestion_ShowsViewerLanguageDescription() {
+	public function testTranslateQuestionDescriptionId_ViewerLanguageDiffersFromTakenQuestion_ShowsViewerLanguageDescription() {
 		/* Arrange. */
 		list( $taken_question_id, $display_question_id ) = $this->create_question_pair();
 
@@ -97,30 +98,14 @@ class Question_Display_Test extends \WP_UnitTestCase {
 
 		$this->simulate_wpml_viewer_on_en( $taken_question_id, $display_question_id );
 
-		// Minimal question loop state for the core title callback on the same action.
-		global $sensei_question_loop;
-		$sensei_question_loop = array(
-			'current_page'     => 1,
-			'posts_per_page'   => 1,
-			'current'          => 0,
-			'current_question' => get_post( $taken_question_id ),
-			'quiz_id'          => $this->factory->quiz->create(),
-		);
-
 		$question_display = new Question_Display();
 		$question_display->init();
-		$question_display->replace_question_description_renderer();
 
 		/* Act. */
-		ob_start();
-		do_action( 'sensei_quiz_question_inside_before', $taken_question_id );
-		$html = ob_get_clean();
-
-		/* Clean up. */
-		$sensei_question_loop = null;
+		$description = \Sensei_Question::get_the_question_description( $taken_question_id );
 
 		/* Assert. */
-		$this->assertStringContainsString( 'EN description', $html );
+		$this->assertStringContainsString( 'EN description', $description );
 	}
 
 	public function testTranslateCorrectAnswerMessage_TranslationForMultipleChoiceExists_ShowsViewerLanguageRightAnswer() {

@@ -36,9 +36,9 @@ class Question_Display {
 		add_filter( 'sensei_get_question_template_data', array( $this, 'translate_template_data' ), 15, 2 );
 		// The question heading is rendered from get_the_title(), outside the template data.
 		add_filter( 'the_title', array( $this, 'translate_question_title' ), 10, 2 );
-		// The description renderer has no filter carrying the question ID; swap
-		// the renderer itself right before a quiz renders its questions.
-		add_action( 'sensei_single_quiz_questions_before', array( $this, 'replace_question_description_renderer' ) );
+		// The description renderer asks through this filter which question to
+		// read from.
+		add_filter( 'sensei_the_question_description_question_id', array( $this, 'translate_question_description_id' ) );
 		// The "Right Answer:" reveal shown on failed questions.
 		add_filter( 'sensei_question_answer_message_correct_answer', array( $this, 'translate_correct_answer_message' ), 10, 3 );
 		// The feedback text shown under Correct/Incorrect.
@@ -133,42 +133,22 @@ class Question_Display {
 	}
 
 	/**
-	 * Take over the question-description renderer on the frontend.
-	 *
-	 * Runs right before a quiz renders its questions: it unhooks the core
-	 * renderer and puts render_question_description() in its place. Only when
-	 * the core renderer is found where expected: otherwise it leaves everything
-	 * alone rather than risk rendering the description twice.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @internal
-	 */
-	public function replace_question_description_renderer() {
-		if ( ! remove_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_description' ), 20 ) ) {
-			return;
-		}
-
-		add_action( 'sensei_quiz_question_inside_before', array( $this, 'render_question_description' ), 20 );
-	}
-
-	/**
 	 * Render the question description from the current-language question.
 	 *
-	 * Runs in each question's header in place of the core renderer. It renders
-	 * the translation's description; without a translation it renders the
-	 * question's own, exactly like core.
+	 * Runs whenever a question description is rendered. Without a translation,
+	 * the question renders its own description, exactly like core.
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @internal
 	 *
-	 * @param int $question_id Question ID the row was built from (as taken).
+	 * @param int $question_id Question ID the description would render from (as taken).
+	 * @return int
 	 */
-	public function render_question_description( $question_id ) {
+	public function translate_question_description_id( $question_id ) {
 		$display_question_id = $this->get_display_question_id( (int) $question_id );
 
-		\Sensei_Question::the_question_description( $display_question_id ? $display_question_id : $question_id );
+		return $display_question_id ? $display_question_id : (int) $question_id;
 	}
 
 	/**
