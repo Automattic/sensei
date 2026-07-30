@@ -181,7 +181,9 @@ class Question_Display {
 			return $title;
 		}
 
-		return get_post( $display_question_id )->post_title;
+		$display_question = get_post( $display_question_id );
+
+		return $display_question ? $display_question->post_title : $title;
 	}
 
 	/**
