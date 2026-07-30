@@ -142,6 +142,52 @@ class Question_Display_Test extends \WP_UnitTestCase {
 		$this->assertSame( 'Blue', $message );
 	}
 
+	public function testTranslateTemplateData_QuizNotCompleted_ReturnsQuestionDataUnchanged() {
+		/* Arrange. */
+		list( $question_data, $taken_question_id ) = $this->arrange_loader_output_with_translation();
+
+		// The viewer's quiz is still open: the options are live form values.
+		$question_data['quiz_is_completed'] = false;
+
+		$question_display = new Question_Display();
+
+		/* Act. */
+		$actual = $question_display->translate_template_data( $question_data, $taken_question_id );
+
+		/* Assert. */
+		$this->assertSame( $question_data, $actual );
+	}
+
+	public function testTranslateTemplateData_AnswerListsSizesDiffer_ReturnsQuestionDataUnchanged() {
+		/* Arrange. */
+		list( $question_data, $taken_question_id ) = $this->arrange_loader_output_with_translation();
+
+		update_post_meta( $taken_question_id, '_question_wrong_answers', array( 'Verde', 'Rojo' ) );
+
+		$question_display = new Question_Display();
+
+		/* Act. */
+		$actual = $question_display->translate_template_data( $question_data, $taken_question_id );
+
+		/* Assert. */
+		$this->assertSame( $question_data, $actual, 'On an answer-list size mismatch the whole question should render as taken.' );
+	}
+
+	public function testTranslateTemplateData_NoTranslationExists_ReturnsQuestionDataUnchanged() {
+		/* Arrange. */
+		list( $question_data, $taken_question_id ) = $this->arrange_loader_output_with_translation();
+
+		remove_all_filters( 'wpml_object_id' );
+
+		$question_display = new Question_Display();
+
+		/* Act. */
+		$actual = $question_display->translate_template_data( $question_data, $taken_question_id );
+
+		/* Assert. */
+		$this->assertSame( $question_data, $actual );
+	}
+
 	public function testTranslateAnswerNotes_NotesMatchTakenQuestionGenericFeedback_ShowsViewerLanguageFeedback() {
 		/* Arrange. */
 		list( $taken_question_id, $display_question_id ) = $this->create_question_pair();
@@ -215,16 +261,15 @@ class Question_Display_Test extends \WP_UnitTestCase {
 
 	public function testTranslateTemplateData_ViewerLanguageDiffersFromTakenQuestion_ShowsViewerLanguageTitle() {
 		/* Arrange. */
-		list( $taken_question_id, $quiz_id ) = $this->arrange_taken_question_with_translation();
+		list( $question_data, $taken_question_id ) = $this->arrange_loader_output_with_translation();
 
 		$question_display = new Question_Display();
-		$question_display->init();
 
 		/* Act. */
-		$question_data = \Sensei_Question::get_template_data( $taken_question_id, $quiz_id );
+		$actual = $question_display->translate_template_data( $question_data, $taken_question_id );
 
 		/* Assert. */
-		$this->assertSame( 'Is the sky blue?', $question_data['title'] );
+		$this->assertSame( 'What color is the sky?', $actual['title'] );
 	}
 
 	/**
@@ -249,7 +294,35 @@ class Question_Display_Test extends \WP_UnitTestCase {
 
 		$this->simulate_wpml_viewer_on_en( $taken_question_id, $display_question_id );
 
-		return array( $taken_question_id, $this->factory->quiz->create() );
+		$course_with_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 1,
+			)
+		);
+		$quiz_id             = $course_with_lessons['quiz_ids'][0];
+		$this->complete_quiz_for_current_user( $quiz_id, $course_with_lessons['lesson_ids'][0] );
+
+		return array( $taken_question_id, $quiz_id );
+	}
+
+	/**
+	 * Mark the quiz as submitted (awaiting grading) for a fresh logged-in
+	 * student, so the template data renders in review mode.
+	 *
+	 * @param int $quiz_id   Quiz ID.
+	 * @param int $lesson_id Lesson the quiz belongs to.
+	 */
+	private function complete_quiz_for_current_user( $quiz_id, $lesson_id ) {
+		$user_id = $this->factory->user->create();
+		wp_set_current_user( $user_id );
+
+		// The comments-based quiz progress piggybacks on the lesson progress.
+		\Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+
+		$progress = \Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+		$progress->ungrade();
+		\Sensei()->quiz_progress_repository->save( $progress );
 	}
 
 	/**
@@ -270,6 +343,7 @@ class Question_Display_Test extends \WP_UnitTestCase {
 			'ID'                     => $taken_question_id,
 			'title'                  => '¿De qué color es el cielo?',
 			'content'                => '',
+			'quiz_is_completed'      => true,
 			'question_right_answer'  => 'Azul',
 			// The type loader merges the right answer into the wrong list.
 			'question_wrong_answers' => array( 'Verde', 'Azul' ),
@@ -348,42 +422,4 @@ class Question_Display_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	/**
-	 * Create an EN course whose quiz question has an ES twin, simulate WPML with
-	 * the viewer on EN, and return the as-taken (ES) question and the quiz.
-	 *
-	 * The scenario mirrors a student who took the quiz in ES and now views the
-	 * results with the site in EN: the page loop passes the stored ES question
-	 * to the template data builder.
-	 *
-	 * @return array{0: int, 1: int} As-taken question ID and quiz ID.
-	 */
-	private function arrange_taken_question_with_translation() {
-		$course_with_lessons = $this->factory->get_course_with_lessons(
-			array(
-				'lesson_count'   => 1,
-				'question_count' => 1,
-			)
-		);
-
-		$quiz_id             = $course_with_lessons['quiz_ids'][0];
-		$display_question_id = \Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
-		wp_update_post(
-			array(
-				'ID'         => $display_question_id,
-				'post_title' => 'Is the sky blue?',
-			)
-		);
-
-		$taken_question_id = $this->factory->post->create(
-			array(
-				'post_type'  => 'question',
-				'post_title' => '¿El cielo es azul?',
-			)
-		);
-
-		$this->simulate_wpml_viewer_on_en( $taken_question_id, $display_question_id );
-
-		return array( $taken_question_id, $quiz_id );
-	}
 }

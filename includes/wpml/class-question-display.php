@@ -221,17 +221,32 @@ class Question_Display {
 	 * @return array
 	 */
 	public function translate_template_data( $question_data, $question_id ) {
+		// Only translate once the quiz is completed (review mode). While it is
+		// open, the option labels are live form values: translating them would
+		// make the form submit display-language labels against the as-taken
+		// questions and corrupt the stored answers.
+		if ( empty( $question_data['quiz_is_completed'] ) ) {
+			return $question_data;
+		}
+
 		$display_question_id = $this->get_display_question_id( (int) $question_id );
 		if ( ! $display_question_id ) {
 			return $question_data;
 		}
 
+		// All-or-nothing per question: if this is a choice question and its
+		// options cannot be mapped, render the whole question as taken.
+		$translated = $this->translate_answer_options( $question_data, (int) $question_id, $display_question_id );
+		if ( null === $translated ) {
+			return $question_data;
+		}
+
 		$display_question = get_post( $display_question_id );
 
-		$question_data['title']   = $display_question->post_title;
-		$question_data['content'] = $display_question->post_content;
+		$translated['title']   = $display_question->post_title;
+		$translated['content'] = $display_question->post_content;
 
-		return $this->translate_answer_options( $question_data, (int) $question_id, $display_question_id );
+		return $translated;
 	}
 
 	/**
@@ -240,13 +255,14 @@ class Question_Display {
 	 *
 	 * Multilingual plugins translate option labels in place, never reordering
 	 * them or moving them between the right and wrong lists, so same list + same
-	 * position is the same answer. On any mismatch (list size, unknown label)
-	 * the data is returned untouched and the question renders as taken.
+	 * position is the same answer.
 	 *
 	 * @param array $question_data       Question template data, as left by the type loaders.
 	 * @param int   $question_id         As-taken question ID.
 	 * @param int   $display_question_id Current-language question ID.
-	 * @return array
+	 * @return array|null Translated data; the data untouched for questions
+	 *                    without options; null when options exist but cannot be
+	 *                    mapped (list size or label mismatch).
 	 */
 	private function translate_answer_options( $question_data, $question_id, $display_question_id ) {
 		if ( empty( $question_data['answer_options'] ) ) {
@@ -259,7 +275,7 @@ class Question_Display {
 		$display_wrong = (array) get_post_meta( $display_question_id, '_question_wrong_answers', true );
 
 		if ( count( $taken_right ) !== count( $display_right ) || count( $taken_wrong ) !== count( $display_wrong ) ) {
-			return $question_data;
+			return null;
 		}
 
 		$label_map = array_merge(
@@ -270,7 +286,7 @@ class Question_Display {
 		$translated_options = array();
 		foreach ( $question_data['answer_options'] as $key => $option ) {
 			if ( ! isset( $option['answer'], $label_map[ $option['answer'] ] ) ) {
-				return $question_data;
+				return null;
 			}
 
 			$option['answer']           = $label_map[ $option['answer'] ];
