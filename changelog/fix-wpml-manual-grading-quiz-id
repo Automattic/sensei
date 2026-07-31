@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed manual grading losing the per-question grades and feedback when the admin uses a secondary language on multilingual sites.
