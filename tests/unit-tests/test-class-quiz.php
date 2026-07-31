@@ -1074,6 +1074,82 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that grading persists the per-question grades when quiz post
+	 * queries are filtered to another language by a multilingual plugin.
+	 *
+	 * @covers Sensei_Quiz::set_user_grades
+	 */
+	public function testSetUserGrades_QuizQueryFilteredToAnotherLanguage_PersistsTheGrades() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $submission, $language_filter ) = $this->arrange_submission_with_filtered_quiz_queries();
+
+		/* Act. */
+		Sensei()->quiz->set_user_grades( array( $question_id => 1 ), $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$points_map = array();
+		foreach ( Sensei()->quiz_grade_repository->get_all( $submission->get_id() ) as $grade ) {
+			$points_map[ $grade->get_question_id() ] = $grade->get_points();
+		}
+		$this->assertSame( array( $question_id => 1 ), $points_map, 'The per-question grades should persist when quiz queries are language filtered.' );
+	}
+
+	/**
+	 * Tests that grading persists the answers feedback when quiz post
+	 * queries are filtered to another language by a multilingual plugin.
+	 *
+	 * @covers Sensei_Quiz::save_user_answers_feedback
+	 */
+	public function testSaveUserAnswersFeedback_QuizQueryFilteredToAnotherLanguage_PersistsTheFeedback() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $submission, $language_filter ) = $this->arrange_submission_with_filtered_quiz_queries();
+
+		Sensei()->quiz->set_user_grades( array( $question_id => 1 ), $lesson_id, $user_id );
+
+		/* Act. */
+		Sensei()->quiz->save_user_answers_feedback( array( $question_id => 'Great work' ), $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$feedback_map = array();
+		foreach ( Sensei()->quiz_grade_repository->get_all( $submission->get_id() ) as $grade ) {
+			$feedback_map[ $grade->get_question_id() ] = $grade->get_feedback();
+		}
+		$this->assertSame( array( $question_id => base64_encode( 'Great work' ) ), $feedback_map, 'The answers feedback should persist when quiz queries are language filtered.' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the stored format.
+	}
+
+	/**
+	 * Create a lesson with a quiz, a user with a submission and one answer, and
+	 * register a filter that hides quiz posts from queries, the way multilingual
+	 * plugins filter them to another language.
+	 *
+	 * @return array{0: int, 1: int, 2: int, 3: object, 4: callable} User, lesson,
+	 *         question, submission, and the registered filter.
+	 */
+	private function arrange_submission_with_filtered_quiz_queries() {
+		$user_id     = $this->factory->user->create();
+		$lesson_id   = $this->factory->get_random_lesson_id();
+		$quiz_id     = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id );
+		Sensei()->quiz_answer_repository->create( $submission, $question_id, 'Answer' );
+
+		$language_filter = function ( $where, $query ) {
+			if ( 'quiz' === $query->get( 'post_type' ) ) {
+				$where .= ' AND 1=0';
+			}
+			return $where;
+		};
+		add_filter( 'posts_where', $language_filter, 10, 2 );
+
+		return array( $user_id, $lesson_id, $question_id, $submission, $language_filter );
+	}
+
+	/**
 	 * Tests that stored grades survive quiz post queries being filtered
 	 * to another language by a multilingual plugin.
 	 *
