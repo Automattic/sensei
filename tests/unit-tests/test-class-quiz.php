@@ -1081,7 +1081,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 */
 	public function testSetUserGrades_QuizQueryFilteredToAnotherLanguage_PersistsTheGrades() {
 		/* Arrange. */
-		list( $user_id, $lesson_id, $question_id, $submission, $language_filter ) = $this->arrange_submission_with_filtered_quiz_queries();
+		list( $user_id, $lesson_id, $question_id, $submission, $answer, $language_filter ) = $this->arrange_submission_with_filtered_quiz_queries();
 
 		/* Act. */
 		Sensei()->quiz->set_user_grades( array( $question_id => 1 ), $lesson_id, $user_id );
@@ -1103,9 +1103,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 */
 	public function testSaveUserAnswersFeedback_QuizQueryFilteredToAnotherLanguage_PersistsTheFeedback() {
 		/* Arrange. */
-		list( $user_id, $lesson_id, $question_id, $submission, $language_filter ) = $this->arrange_submission_with_filtered_quiz_queries();
+		list( $user_id, $lesson_id, $question_id, $submission, $answer, $language_filter ) = $this->arrange_submission_with_filtered_quiz_queries();
 
-		Sensei()->quiz->set_user_grades( array( $question_id => 1 ), $lesson_id, $user_id );
+		Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, 1 );
 
 		/* Act. */
 		Sensei()->quiz->save_user_answers_feedback( array( $question_id => 'Great work' ), $lesson_id, $user_id );
@@ -1124,8 +1124,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * register a filter that hides quiz posts from queries, the way multilingual
 	 * plugins filter them to another language.
 	 *
-	 * @return array{0: int, 1: int, 2: int, 3: object, 4: callable} User, lesson,
-	 *         question, submission, and the registered filter.
+	 * @return array{0: int, 1: int, 2: int, 3: object, 4: object, 5: callable} User, lesson,
+	 *         question, submission, answer, and the registered filter.
 	 */
 	private function arrange_submission_with_filtered_quiz_queries() {
 		$user_id     = $this->factory->user->create();
@@ -1136,7 +1136,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id );
-		Sensei()->quiz_answer_repository->create( $submission, $question_id, 'Answer' );
+		$answer     = Sensei()->quiz_answer_repository->create( $submission, $question_id, 'Answer' );
 
 		$language_filter = function ( $where, $query ) {
 			if ( 'quiz' === $query->get( 'post_type' ) ) {
@@ -1146,7 +1146,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		};
 		add_filter( 'posts_where', $language_filter, 10, 2 );
 
-		return array( $user_id, $lesson_id, $question_id, $submission, $language_filter );
+		return array( $user_id, $lesson_id, $question_id, $submission, $answer, $language_filter );
 	}
 
 	/**
