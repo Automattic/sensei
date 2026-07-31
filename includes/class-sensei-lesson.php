@@ -3650,6 +3650,27 @@ class Sensei_Lesson {
 		return $quiz_id;
 	}
 
+	/**
+	 * Get the quiz ID for a lesson.
+	 *
+	 * Resolves the quiz from the lesson meta first: post queries can be
+	 * filtered by plugins and miss the quiz.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 *
+	 * @return int|null Quiz ID, or null when the lesson has no quiz.
+	 */
+	public function get_quiz_id( $lesson_id ) {
+		$quiz_id = (int) get_post_meta( $lesson_id, '_lesson_quiz', true );
+		if ( ! $quiz_id || 'quiz' !== get_post_type( $quiz_id ) ) {
+			$quiz_id = $this->lesson_quizzes( $lesson_id );
+		}
+
+		return $quiz_id;
+	}
+
 
 	/**
 	 * Get quiz permalink.

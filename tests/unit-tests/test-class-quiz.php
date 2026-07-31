@@ -1076,6 +1076,42 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	/**
 	 * Testing $woothemes->quiz->get_user_grades.
 	 */
+	/**
+	 * Tests that stored grades survive quiz post queries being filtered
+	 * to another language by a multilingual plugin.
+	 *
+	 * @covers Sensei_Quiz::get_user_grades
+	 */
+	public function testGetUserGrades_QuizQueryFilteredToAnotherLanguage_ReturnsStoredGrades() {
+		/* Arrange. */
+		$user_id     = $this->factory->user->create();
+		$lesson_id   = $this->factory->get_random_lesson_id();
+		$quiz_id     = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id );
+		$answer     = Sensei()->quiz_answer_repository->create( $submission, $question_id, 'Answer' );
+		Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, 1 );
+
+		// Simulate a multilingual plugin filtering quiz post queries to another language.
+		$language_filter = function ( $where, $query ) {
+			if ( 'quiz' === $query->get( 'post_type' ) ) {
+				$where .= ' AND 1=0';
+			}
+			return $where;
+		};
+		add_filter( 'posts_where', $language_filter, 10, 2 );
+
+		/* Act. */
+		$grades = Sensei()->quiz->get_user_grades( $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertSame( array( $question_id => 1 ), $grades, 'Stored grades should survive language-filtered quiz queries.' );
+	}
+
 	public function testGetUserGrades() {
 
 		// Setup the data needed for the assertions in this test.

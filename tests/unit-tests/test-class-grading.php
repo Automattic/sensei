@@ -33,6 +33,42 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that the Grade link keeps the quiz ID even when quiz post queries
+	 * are filtered to another language, as multilingual plugins do in a
+	 * secondary admin language.
+	 *
+	 * @covers Sensei_Grading_Main::get_row_data
+	 */
+	public function testGetRowData_QuizQueryFilteredToAnotherLanguage_BuildsGradeLinkWithQuizId(): void {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create( array( 'post_parent' => $lesson_id ) );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		// Simulate a multilingual plugin filtering quiz post queries to another language.
+		$language_filter = function ( $where, $query ) {
+			if ( 'quiz' === $query->get( 'post_type' ) ) {
+				$where .= ' AND 1=0';
+			}
+			return $where;
+		};
+		add_filter( 'posts_where', $language_filter, 10, 2 );
+
+		$grading_main = new Sensei_Grading_Main( array( 'view' => 'ungraded' ) );
+		$item         = new \Sensei\Internal\Services\Grading_Item( 'ungraded', $user_id, $lesson_id, current_time( 'mysql' ), null );
+
+		/* Act. */
+		$method = new ReflectionMethod( Sensei_Grading_Main::class, 'get_row_data' );
+		$method->setAccessible( true );
+		$row = $method->invoke( $grading_main, $item );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertStringContainsString( 'quiz_id=' . $quiz_id, $row['action'], 'The Grade link should carry the quiz ID even when quiz queries are language filtered.' );
+	}
+
+	/**
 	 * Tests that prepare_items() applies sensei_count_statuses_args
 	 * restrictions to listing rows for tables-based storage.
 	 *
