@@ -1159,11 +1159,7 @@ class Sensei_Quiz {
 			$user_id = get_current_user_id();
 		}
 
-		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
-		$quiz_id = (int) get_post_meta( $lesson_id, '_lesson_quiz', true );
-		if ( ! $quiz_id || 'quiz' !== get_post_type( $quiz_id ) ) {
-			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		}
+		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
 
 		if (
 			! intval( $lesson_id ) > 0
