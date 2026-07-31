@@ -1201,7 +1201,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Clean up & Assert. */
 		remove_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
-		$this->assertSame( array( $question_id => base64_encode( 'Answer' ) ), get_transient( 'sensei_answers_' . $user_id . '_' . $cache_lesson_id ), 'The answers cache should be keyed by the filtered lesson ID.' );
+		$this->assertSame( array( $question_id => base64_encode( 'Answer' ) ), get_transient( 'sensei_answers_' . $user_id . '_' . $cache_lesson_id ), 'The answers cache should be keyed by the filtered lesson ID.' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the cache's stored format.
 	}
 
 	/**
@@ -1213,7 +1213,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		list( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter ) = $this->arrange_lesson_with_filtered_cache_lesson();
 
-		set_transient( 'sensei_answers_' . $user_id . '_' . $cache_lesson_id, array( $question_id => base64_encode( 'Answer' ) ) );
+		set_transient( 'sensei_answers_' . $user_id . '_' . $cache_lesson_id, array( $question_id => base64_encode( 'Answer' ) ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the cache's stored format.
 
 		/* Act. */
 		$answers = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
@@ -1237,7 +1237,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Clean up & Assert. */
 		remove_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
-		$this->assertSame( array( $question_id => base64_encode( 'Feedback' ) ), get_transient( 'sensei_answers_feedback_' . $user_id . '_' . $cache_lesson_id ), 'The feedback cache should be keyed by the filtered lesson ID.' );
+		$this->assertSame( array( $question_id => base64_encode( 'Feedback' ) ), get_transient( 'sensei_answers_feedback_' . $user_id . '_' . $cache_lesson_id ), 'The feedback cache should be keyed by the filtered lesson ID.' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the cache's stored format.
 	}
 
 	/**
@@ -1249,7 +1249,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		list( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter ) = $this->arrange_lesson_with_filtered_cache_lesson();
 
-		set_transient( 'sensei_answers_feedback_' . $user_id . '_' . $cache_lesson_id, array( $question_id => base64_encode( 'Feedback' ) ) );
+		set_transient( 'sensei_answers_feedback_' . $user_id . '_' . $cache_lesson_id, array( $question_id => base64_encode( 'Feedback' ) ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the cache's stored format.
 
 		/* Act. */
 		$feedback = Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id );
