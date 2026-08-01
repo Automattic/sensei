@@ -165,19 +165,38 @@ class Course_Welcome extends Email_Generators_Abstract {
 		$recipient  = stripslashes( $student->user_email );
 		$course_url = get_permalink( $course_id );
 
+		$first_lesson_id = $this->get_first_lesson_id( $course_id );
+
 		$this->send_email_action(
 			array(
 				$recipient => array(
-					'teacher:id'          => $teacher->ID,
-					'teacher:displayname' => $teacher->display_name,
-					'student:id'          => $student->ID,
-					'student:displayname' => $student->display_name,
-					'course:id'           => $course->ID,
-					'course:name'         => $course->post_title,
-					'course:url'          => $course_url,
+					'teacher:id'              => $teacher->ID,
+					'teacher:displayname'     => $teacher->display_name,
+					'student:id'              => $student->ID,
+					'student:displayname'     => $student->display_name,
+					'course:id'               => $course->ID,
+					'course:name'             => $course->post_title,
+					'course:url'              => $course_url,
+					'course:first_lesson_url' => $first_lesson_id ? esc_url( get_permalink( $first_lesson_id ) ) : $course_url,
 				),
 			)
 		);
+	}
+
+	/**
+	 * Get the ID of the first published lesson in a course.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $course_id The course ID.
+	 * @return int The first lesson ID, or 0 if the course has no published lessons.
+	 */
+	private function get_first_lesson_id( int $course_id ): int {
+		$lessons = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+
+		return is_array( $lessons ) && $lessons ? (int) $lessons[0] : 0;
 	}
 
 	/**

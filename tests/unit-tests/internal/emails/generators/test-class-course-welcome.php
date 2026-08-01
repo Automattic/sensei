@@ -102,6 +102,11 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 				'post_author' => $teacher_id,
 			]
 		);
+		$lesson_id  = $factory->lesson->create(
+			[
+				'meta_input' => [ '_lesson_course' => $course_id ],
+			]
+		);
 
 		$email_repository = $this->createMock( Email_Repository::class );
 		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
@@ -125,19 +130,69 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 			'email'   => 'course_welcome',
 			'options' => [
 				'test@a.com' => [
-					'teacher:id'          => $teacher_id,
-					'teacher:displayname' => 'Test Teacher',
-					'student:id'          => $student_id,
-					'student:displayname' => 'Test Student',
-					'course:id'           => $course_id,
-					'course:name'         => '“Course with Special Characters…?”',
-					'course:url'          => esc_url(
+					'teacher:id'              => $teacher_id,
+					'teacher:displayname'     => 'Test Teacher',
+					'student:id'              => $student_id,
+					'student:displayname'     => 'Test Student',
+					'course:id'               => $course_id,
+					'course:name'             => '“Course with Special Characters…?”',
+					'course:url'              => esc_url(
 						get_permalink( $course_id )
+					),
+					'course:first_lesson_url' => esc_url(
+						get_permalink( $lesson_id )
 					),
 				],
 			],
 		];
 		self::assertSame( $expected, $actual_data );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_email_send', $filter, 10 );
+		$factory->tearDown();
+	}
+
+	public function testWelcomeToCourseForStudent_WhenCalledForCourseWithoutLessons_CallsSenseiEmailSendFilterWithCourseUrlPlaceholder() {
+		/* Arrange. */
+		$factory    = new \Sensei_Factory();
+		$student_id = $factory->user->create(
+			[
+				'display_name' => 'Test Student',
+				'user_email'   => 'test@a.com',
+			]
+		);
+		$teacher_id = $factory->user->create(
+			[
+				'display_name' => 'Test Teacher',
+			]
+		);
+		$course_id  = $factory->course->create(
+			[
+				'post_title'  => 'Course without Lessons',
+				'post_author' => $teacher_id,
+			]
+		);
+
+		$email_repository = $this->createMock( Email_Repository::class );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
+
+		$generator = new Course_Welcome( $email_repository );
+
+		$actual_data = [];
+		$filter      = function ( $email, $options ) use ( &$actual_data ) {
+			$actual_data = [
+				'email'   => $email,
+				'options' => $options,
+			];
+		};
+		add_filter( 'sensei_email_send', $filter, 10, 2 );
+
+		/* Act. */
+		$generator->welcome_to_course_for_student( $student_id, $course_id );
+
+		/* Assert. */
+		$actual_first_lesson_url = $actual_data['options']['test@a.com']['course:first_lesson_url'];
+		self::assertSame( esc_url( get_permalink( $course_id ) ), $actual_first_lesson_url, 'First lesson url should fall back to the course url when the course has no lessons.' );
 
 		/* Cleanup. */
 		remove_filter( 'sensei_email_send', $filter, 10 );
