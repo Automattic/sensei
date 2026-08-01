@@ -186,6 +186,9 @@ class Course_Welcome extends Email_Generators_Abstract {
 	/**
 	 * Get the ID of the first published lesson in a course.
 	 *
+	 * Follows the lesson order saved on the course page (`_lesson_order`) when
+	 * present, falling back to the course_lessons order.
+	 *
 	 * @internal
 	 *
 	 * @since $$next-version$$
@@ -195,8 +198,22 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 */
 	private function get_first_lesson_id( int $course_id ): int {
 		$lessons = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+		if ( ! is_array( $lessons ) || ! $lessons ) {
+			return 0;
+		}
 
-		return is_array( $lessons ) && $lessons ? (int) $lessons[0] : 0;
+		$lesson_order = get_post_meta( $course_id, '_lesson_order', true );
+		if ( $lesson_order ) {
+			$ordered_ids = array_map( 'intval', explode( ',', $lesson_order ) );
+
+			foreach ( $ordered_ids as $lesson_id ) {
+				if ( in_array( $lesson_id, $lessons, true ) ) {
+					return $lesson_id;
+				}
+			}
+		}
+
+		return (int) $lessons[0];
 	}
 
 	/**

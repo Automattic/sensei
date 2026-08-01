@@ -199,6 +199,70 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
+	public function testWelcomeToCourseForStudent_WhenCourseHasCustomLessonOrder_CallsSenseiEmailSendFilterWithFirstLessonFromThatOrder() {
+		/* Arrange. */
+		$factory    = new \Sensei_Factory();
+		$student_id = $factory->user->create(
+			[
+				'display_name' => 'Test Student',
+				'user_email'   => 'test@a.com',
+			]
+		);
+		$teacher_id = $factory->user->create(
+			[
+				'display_name' => 'Test Teacher',
+			]
+		);
+		$course_id = $factory->course->create(
+			[
+				'post_title'  => 'Course with Custom Order',
+				'post_author' => $teacher_id,
+			]
+		);
+
+		// Lessons created out of the desired display order, so pub date would put lesson A first.
+		$lesson_a = $factory->lesson->create(
+			[
+				'post_title'  => 'Lesson A',
+				'meta_input'  => [ '_lesson_course' => $course_id ],
+				'post_date'   => '2020-01-01 00:00:00',
+			]
+		);
+		$lesson_b = $factory->lesson->create(
+			[
+				'post_title'  => 'Lesson B',
+				'meta_input'  => [ '_lesson_course' => $course_id ],
+				'post_date'   => '2020-01-02 00:00:00',
+			]
+		);
+		update_post_meta( $course_id, '_lesson_order', $lesson_b . ',' . $lesson_a );
+
+		$email_repository = $this->createMock( Email_Repository::class );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
+
+		$generator = new Course_Welcome( $email_repository );
+
+		$actual_data = [];
+		$filter      = function ( $email, $options ) use ( &$actual_data ) {
+			$actual_data = [
+				'email'   => $email,
+				'options' => $options,
+			];
+		};
+		add_filter( 'sensei_email_send', $filter, 10, 2 );
+
+		/* Act. */
+		$generator->welcome_to_course_for_student( $student_id, $course_id );
+
+		/* Assert. */
+		$actual_first_lesson_url = $actual_data['options']['test@a.com']['course:first_lesson_url'];
+		self::assertSame( esc_url( get_permalink( $lesson_b ) ), $actual_first_lesson_url, 'First lesson url should follow the course custom lesson order.' );
+
+		/* Cleanup. */
+		remove_filter( 'sensei_email_send', $filter, 10 );
+		$factory->tearDown();
+	}
+
 	public function testWelcomeToCourseForStudent_WhenCalledForWPMLCopy_CallsEmailSendActionOnlyForTheRealCourse() {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
