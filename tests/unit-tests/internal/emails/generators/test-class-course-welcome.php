@@ -268,7 +268,10 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 					'student:displayname' => 'Test Student',
 					'course:id'           => $course_id,
 					'course:name'         => '“Course with Special Characters…?”',
-					'course:url'          => esc_url(
+					'course:url'              => esc_url(
+						get_permalink( $course_id )
+					),
+					'course:first_lesson_url' => esc_url(
 						get_permalink( $course_id )
 					),
 				],
