@@ -653,8 +653,8 @@ class Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		// Process quiz
-		$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
+		$lesson_quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
 
 		// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
 		self::sensei_delete_quiz_answers( $lesson_quiz_id, $user_id );
