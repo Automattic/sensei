@@ -2049,7 +2049,8 @@ class Sensei_Quiz {
 	 */
 	public static function get_user_quiz_grade( int $lesson_id, int $user_id ): float {
 
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
+		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
 		if ( ! $quiz_id ) {
 			return 0;
 		}
@@ -2075,7 +2076,8 @@ class Sensei_Quiz {
 	 */
 	public static function is_reset_allowed( $lesson_id ) {
 
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
+		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
 
 		$reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
 		// backwards compatibility.

@@ -1199,6 +1199,28 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that the user's quiz grade is returned when a plugin filter hides the quiz
+	 * from post queries, as multilingual plugins do when the quiz belongs to another
+	 * language.
+	 *
+	 * @covers Sensei_Quiz::get_user_quiz_grade
+	 */
+	public function testGetUserQuizGrade_QuizHiddenFromPostQueries_ReturnsTheGrade() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $submission, $answer, $language_filter ) = $this->arrange_submission_with_filtered_quiz_queries();
+
+		$submission->set_final_grade( 80 );
+		Sensei()->quiz_submission_repository->save( $submission );
+
+		/* Act. */
+		$grade = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertSame( 80.0, $grade, 'The quiz grade should be returned when the quiz is hidden from post queries.' );
+	}
+
+	/**
 	 * Create a lesson with a quiz, a user with a submission and one answer, and
 	 * register a filter that hides quiz posts from queries, the way multilingual
 	 * plugins filter them to another language.

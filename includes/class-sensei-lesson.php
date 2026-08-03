@@ -3710,7 +3710,8 @@ class Sensei_Lesson {
 	 * @return bool Whether quiz is submitted.
 	 */
 	public function is_quiz_submitted( int $lesson_id, int $user_id ): bool {
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
+		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
 		if ( ! $quiz_id ) {
 			return false;
 		}
