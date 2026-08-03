@@ -1179,6 +1179,26 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that the pass-required setting is returned when a plugin filter hides the quiz
+	 * from post queries, as multilingual plugins do when the quiz belongs to another
+	 * language.
+	 *
+	 * @covers Sensei_Quiz::is_pass_required
+	 */
+	public function testIsPassRequired_QuizHiddenFromPostQueries_ReturnsTheStoredSetting() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $submission, $answer, $language_filter ) = $this->arrange_submission_with_filtered_quiz_queries();
+		update_post_meta( $submission->get_quiz_id(), '_pass_required', 'on' );
+
+		/* Act. */
+		$pass_required = Sensei_Quiz::is_pass_required( $lesson_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertTrue( $pass_required, 'The stored pass-required setting should be returned when the quiz is hidden from post queries.' );
+	}
+
+	/**
 	 * Create a lesson with a quiz, a user with a submission and one answer, and
 	 * register a filter that hides quiz posts from queries, the way multilingual
 	 * plugins filter them to another language.

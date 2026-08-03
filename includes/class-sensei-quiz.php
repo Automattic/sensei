@@ -2120,7 +2120,8 @@ class Sensei_Quiz {
 	 */
 	public static function is_pass_required( $lesson_id ) {
 
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
+		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
 
 		$reset_allowed = get_post_meta( $quiz_id, '_pass_required', true );
 		// backwards compatibility.

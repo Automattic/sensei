@@ -3688,7 +3688,8 @@ class Sensei_Lesson {
 			return null;
 		}
 
-		$quiz_id = $this->lesson_quizzes( $lesson->ID );
+		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
+		$quiz_id = $this->get_quiz_id( $lesson->ID );
 
 		if ( ! $quiz_id || ! self::lesson_quiz_has_questions( $lesson->ID ) ) {
 			return null;
@@ -5237,8 +5238,8 @@ class Sensei_Lesson {
 	 * @return bool
 	 */
 	public function lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) {
-		// Lesson quizzes
-		$quiz_id = $this->lesson_quizzes( $lesson_id );
+		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
+		$quiz_id = $this->get_quiz_id( $lesson_id );
 		if ( empty( $quiz_id ) ) {
 			return false;
 		}

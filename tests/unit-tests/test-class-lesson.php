@@ -1800,4 +1800,64 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		);
 		self::assertSame( $expected, $actual );
 	}
+
+	/**
+	 * Tests that the quiz permalink is returned when a plugin filter hides the quiz from post
+	 * queries, as multilingual plugins do when the quiz belongs to another language.
+	 *
+	 * @covers Sensei_Lesson::get_quiz_permalink
+	 */
+	public function testGetQuizPermalink_QuizHiddenFromPostQueries_ReturnsThePermalink() {
+		/* Arrange. */
+		$lesson_id = $this->factory->get_random_lesson_id();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
+
+		$language_filter = function ( $where, $query ) {
+			if ( 'quiz' === $query->get( 'post_type' ) ) {
+				$where .= ' AND 1=0';
+			}
+			return $where;
+		};
+		add_filter( 'posts_where', $language_filter, 10, 2 );
+
+		/* Act. */
+		$permalink = Sensei()->lesson->get_quiz_permalink( $lesson_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertSame( get_permalink( $quiz_id ), $permalink, 'The quiz permalink should be returned when the quiz is hidden from post queries.' );
+	}
+
+	/**
+	 * Tests that the pass-required check honors the stored setting when a plugin filter
+	 * hides the quiz from post queries, as multilingual plugins do when the quiz belongs
+	 * to another language.
+	 *
+	 * @covers Sensei_Lesson::lesson_has_quiz_with_questions_and_pass_required
+	 */
+	public function testLessonHasQuizWithQuestionsAndPassRequired_QuizHiddenFromPostQueries_ReturnsTrue() {
+		/* Arrange. */
+		$lesson_id = $this->factory->get_random_lesson_id();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
+		update_post_meta( $quiz_id, '_pass_required', 'on' );
+
+		$language_filter = function ( $where, $query ) {
+			if ( 'quiz' === $query->get( 'post_type' ) ) {
+				$where .= ' AND 1=0';
+			}
+			return $where;
+		};
+		add_filter( 'posts_where', $language_filter, 10, 2 );
+
+		/* Act. */
+		$pass_required = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertTrue( $pass_required, 'The stored pass-required setting should be honored when the quiz is hidden from post queries.' );
+	}
 }
