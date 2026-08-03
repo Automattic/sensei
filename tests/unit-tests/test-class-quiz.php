@@ -1120,6 +1120,45 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that the user answers are returned when a plugin filter hides the quiz from post
+	 * queries, as multilingual plugins do when the quiz belongs to another language.
+	 *
+	 * @covers Sensei_Quiz::get_user_answers
+	 */
+	public function testGetUserAnswers_QuizHiddenFromPostQueries_ReturnsTheAnswers() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $submission, $answer, $language_filter ) = $this->arrange_submission_with_filtered_quiz_queries();
+
+		/* Act. */
+		$user_answers = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertSame( array( $question_id => 'Answer' ), $user_answers, 'The user answers should be returned when the quiz is hidden from post queries.' );
+	}
+
+	/**
+	 * Tests that the answers feedback is returned when a plugin filter hides the quiz from post
+	 * queries, as multilingual plugins do when the quiz belongs to another language.
+	 *
+	 * @covers Sensei_Quiz::get_user_answers_feedback
+	 */
+	public function testGetUserAnswersFeedback_QuizHiddenFromPostQueries_ReturnsTheFeedback() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $submission, $answer, $language_filter ) = $this->arrange_submission_with_filtered_quiz_queries();
+
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the stored format.
+		Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, 1, base64_encode( 'Great work' ) );
+
+		/* Act. */
+		$feedback = Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertSame( array( $question_id => 'Great work' ), $feedback, 'The answers feedback should be returned when the quiz is hidden from post queries.' );
+	}
+
+	/**
 	 * Create a lesson with a quiz, a user with a submission and one answer, and
 	 * register a filter that hides quiz posts from queries, the way multilingual
 	 * plugins filter them to another language.
@@ -1136,7 +1175,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id );
-		$answer     = Sensei()->quiz_answer_repository->create( $submission, $question_id, 'Answer' );
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the stored format.
+		$answer     = Sensei()->quiz_answer_repository->create( $submission, $question_id, base64_encode( 'Answer' ) );
 
 		$language_filter = function ( $where, $query ) {
 			if ( 'quiz' === $query->get( 'post_type' ) ) {

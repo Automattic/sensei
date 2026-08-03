@@ -457,7 +457,8 @@ class Sensei_Quiz {
 		if ( ! empty( $transient_cached_answers ) ) {
 			$encoded_answers_map = $transient_cached_answers;
 		} else {
-			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+			// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
+			$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
 			if ( ! $quiz_id ) {
 				return false;
 			}
@@ -1367,7 +1368,8 @@ class Sensei_Quiz {
 
 		// get the data if nothing was stored in the transient
 		if ( ! $encoded_feedback ) {
-			$quiz_id    = (int) Sensei()->lesson->lesson_quizzes( $lesson_id );
+			// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
+			$quiz_id    = (int) Sensei()->lesson->get_quiz_id( $lesson_id );
 			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 			if ( ! $submission ) {
 				return false;
