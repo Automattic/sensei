@@ -1159,6 +1159,26 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that resetting a lesson deletes the quiz submission when a plugin filter hides
+	 * the quiz from post queries, as multilingual plugins do when the quiz belongs to
+	 * another language.
+	 *
+	 * @covers Sensei_Quiz::reset_user_lesson_data
+	 */
+	public function testResetUserLessonData_QuizHiddenFromPostQueries_DeletesTheQuizSubmission() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $submission, $answer, $language_filter ) = $this->arrange_submission_with_filtered_quiz_queries();
+		$quiz_id = $submission->get_quiz_id();
+
+		/* Act. */
+		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'The quiz submission should be deleted when the quiz is hidden from post queries.' );
+	}
+
+	/**
 	 * Create a lesson with a quiz, a user with a submission and one answer, and
 	 * register a filter that hides quiz posts from queries, the way multilingual
 	 * plugins filter them to another language.

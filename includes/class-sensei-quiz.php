@@ -849,8 +849,8 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		// Get the lesson quiz.
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
+		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
 
 		// Check if the user has started the lesson or quiz.
 		$need_reset_data          = false;
