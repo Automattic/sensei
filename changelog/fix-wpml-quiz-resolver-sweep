@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed quiz answers, grades, resets, and lesson quiz surfaces breaking when the admin uses a secondary language or the lesson is translated on multilingual sites.
