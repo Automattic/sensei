@@ -3671,25 +3671,26 @@ class Sensei_Lesson {
 	private function get_quiz_from_meta( $lesson_id, $post_status, $fields ) {
 		$quiz_id = (int) get_post_meta( $lesson_id, '_lesson_quiz', true );
 
-		// An empty ID would make get_post() return the post being rendered.
-		$quiz = $quiz_id ? get_post( $quiz_id ) : null;
-
-		if ( ! $quiz || 'quiz' !== $quiz->post_type ) {
+		if ( ! $quiz_id ) {
 			return null;
 		}
 
-		if ( 'any' === $post_status ) {
-			// The query's 'any' status covers every status except these.
-			$matches_status = ! in_array( $quiz->post_status, array( 'trash', 'auto-draft' ), true );
-		} else {
-			$matches_status = in_array( $quiz->post_status, (array) $post_status, true );
-		}
+		// The quiz is looked up by ID instead of returned straight from the meta because the
+		// caller can ask for specific post statuses and for a different fields format, and the
+		// query is what applies them. Filters are suppressed here: they are what hid the quiz
+		// from the query above.
+		$posts_array = get_posts(
+			array(
+				'p'                => $quiz_id,
+				'post_type'        => 'quiz',
+				'posts_per_page'   => 1,
+				'post_status'      => $post_status,
+				'fields'           => $fields,
+				'suppress_filters' => true,
+			)
+		);
 
-		if ( ! $matches_status ) {
-			return null;
-		}
-
-		return 'ids' === $fields ? $quiz->ID : $quiz;
+		return array_shift( $posts_array );
 	}
 
 	/**

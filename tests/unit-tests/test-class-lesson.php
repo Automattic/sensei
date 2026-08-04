@@ -1930,6 +1930,36 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that the lesson-meta fallback recognises the 'any' post status in every form the
+	 * query accepts, not only as a plain string.
+	 *
+	 * @dataProvider providerLessonQuizzes_HiddenQuizWithAnyStatusForm_ReturnsTheQuizId
+	 *
+	 * @covers Sensei_Lesson::lesson_quizzes
+	 *
+	 * @param string|array $post_status The post status to request.
+	 */
+	public function testLessonQuizzes_HiddenQuizWithAnyStatusForm_ReturnsTheQuizId( $post_status ) {
+		/* Arrange. */
+		list( $lesson_id, $quiz_id, $language_filter ) = $this->arrange_lesson_with_hidden_quiz();
+
+		/* Act. */
+		$resolved_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id, $post_status );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertSame( $quiz_id, $resolved_quiz_id, 'The quiz should be resolved whichever form of the any post status is requested.' );
+	}
+
+	public function providerLessonQuizzes_HiddenQuizWithAnyStatusForm_ReturnsTheQuizId(): array {
+		return array(
+			'string'          => array( 'any' ),
+			'array'           => array( array( 'any' ) ),
+			'comma separated' => array( 'any,publish' ),
+		);
+	}
+
+	/**
 	 * Tests that the lesson-meta fallback does not return a trashed quiz, mirroring the
 	 * post query, which excludes trashed posts even for the 'any' post status.
 	 *
