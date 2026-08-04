@@ -1131,8 +1131,7 @@ class Sensei_Quiz {
 			$user_id = get_current_user_id();
 		}
 
-		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
-		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		// make sure the parameters are valid before continuing
 		if (
@@ -1284,8 +1283,7 @@ class Sensei_Quiz {
 	 */
 	public function save_user_answers_feedback( $answers_feedback, $lesson_id, $user_id = 0 ) {
 
-		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
-		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		// make sure the parameters are valid before continuing
 		if (
