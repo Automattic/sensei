@@ -3662,9 +3662,9 @@ class Sensei_Lesson {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int          $lesson_id   The lesson id.
-	 * @param string|array $post_status The post status.
-	 * @param string       $fields      The fields to return.
+	 * @param int             $lesson_id   The lesson id.
+	 * @param string|string[] $post_status The post status.
+	 * @param string          $fields      The fields to return.
 	 *
 	 * @return int|WP_Post|null The quiz, or null when the meta has no quiz matching the post status.
 	 */
