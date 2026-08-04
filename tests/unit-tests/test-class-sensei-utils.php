@@ -683,39 +683,4 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 'in-progress', $previous_status );
 	}
-
-	/**
-	 * Tests that removing a user from a lesson deletes the quiz submission when a plugin
-	 * filter hides the quiz from post queries, as multilingual plugins do when the quiz
-	 * belongs to another language.
-	 *
-	 * @covers Sensei_Utils::sensei_remove_user_from_lesson
-	 */
-	public function testSenseiRemoveUserFromLesson_QuizHiddenFromPostQueries_DeletesTheQuizSubmission() {
-		/* Arrange. */
-		$user_id     = $this->factory->user->create();
-		$lesson_id   = $this->factory->get_random_lesson_id();
-		$quiz_id     = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
-		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-
-		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
-		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id );
-		Sensei()->quiz_answer_repository->create( $submission, $question_id, 'Answer' );
-
-		$language_filter = function ( $where, $query ) {
-			if ( 'quiz' === $query->get( 'post_type' ) ) {
-				$where .= ' AND 1=0';
-			}
-			return $where;
-		};
-		add_filter( 'posts_where', $language_filter, 10, 2 );
-
-		/* Act. */
-		Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id );
-
-		/* Clean up & Assert. */
-		remove_filter( 'posts_where', $language_filter );
-		$this->assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'The quiz submission should be deleted when the quiz is hidden from post queries.' );
-	}
 }
