@@ -1800,4 +1800,176 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		);
 		self::assertSame( $expected, $actual );
 	}
+
+	/**
+	 * Tests that the quiz permalink is returned when a plugin filter hides the quiz from post
+	 * queries, as multilingual plugins do when the quiz belongs to another language.
+	 *
+	 * @covers Sensei_Lesson::get_quiz_permalink
+	 */
+	public function testGetQuizPermalink_QuizHiddenFromPostQueries_ReturnsThePermalink() {
+		/* Arrange. */
+		list( $lesson_id, $quiz_id, $language_filter ) = $this->arrange_lesson_with_hidden_quiz();
+
+		/* Act. */
+		$permalink = Sensei()->lesson->get_quiz_permalink( $lesson_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertSame( get_permalink( $quiz_id ), $permalink, 'The quiz permalink should be returned when the quiz is hidden from post queries.' );
+	}
+
+	/**
+	 * Tests that the pass-required check honors the stored setting when a plugin filter
+	 * hides the quiz from post queries, as multilingual plugins do when the quiz belongs
+	 * to another language.
+	 *
+	 * @covers Sensei_Lesson::lesson_has_quiz_with_questions_and_pass_required
+	 */
+	public function testLessonHasQuizWithQuestionsAndPassRequired_QuizHiddenFromPostQueries_ReturnsTrue() {
+		/* Arrange. */
+		list( $lesson_id, $quiz_id, $language_filter ) = $this->arrange_lesson_with_hidden_quiz();
+
+		update_post_meta( $quiz_id, '_pass_required', 'on' );
+
+		/* Act. */
+		$pass_required = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertTrue( $pass_required, 'The stored pass-required setting should be honored when the quiz is hidden from post queries.' );
+	}
+
+	/**
+	 * Tests that a submitted quiz is reported as submitted when a plugin filter hides
+	 * the quiz from post queries, as multilingual plugins do when the quiz belongs to
+	 * another language.
+	 *
+	 * @covers Sensei_Lesson::is_quiz_submitted
+	 */
+	public function testIsQuizSubmitted_QuizHiddenFromPostQueries_ReturnsTrue() {
+		/* Arrange. */
+		list( $lesson_id, $quiz_id, $language_filter ) = $this->arrange_lesson_with_hidden_quiz();
+
+		$user_id = $this->factory->user->create();
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+		$quiz_progress = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+		$quiz_progress->pass();
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
+
+		/* Act. */
+		$is_submitted = Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertTrue( $is_submitted, 'A submitted quiz should be reported as submitted when the quiz is hidden from post queries.' );
+	}
+
+	/**
+	 * Tests that the queried quiz wins over the one stored in the lesson meta, so the
+	 * meta is only a fallback for when the query finds nothing.
+	 *
+	 * @covers Sensei_Lesson::lesson_quizzes
+	 */
+	public function testLessonQuizzes_MetaPointingToAnotherQuiz_ReturnsTheQueriedQuizId() {
+		/* Arrange. */
+		$lesson_id      = $this->factory->get_random_lesson_id();
+		$quiz_id        = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$another_lesson = $this->factory->get_random_lesson_id();
+		update_post_meta( $lesson_id, '_lesson_quiz', Sensei()->lesson->lesson_quizzes( $another_lesson ) );
+
+		/* Act. */
+		$resolved_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+		/* Assert. */
+		$this->assertSame( $quiz_id, $resolved_quiz_id, 'The quiz found by the query should be returned, not the one in the lesson meta.' );
+	}
+
+	/**
+	 * Tests that the lesson's quiz is resolved from the lesson meta when a plugin filter
+	 * hides it from post queries, as multilingual plugins do when the quiz belongs to
+	 * another language.
+	 *
+	 * @covers Sensei_Lesson::lesson_quizzes
+	 */
+	public function testLessonQuizzes_QuizHiddenFromPostQueries_ReturnsTheQuizId() {
+		/* Arrange. */
+		list( $lesson_id, $quiz_id, $language_filter ) = $this->arrange_lesson_with_hidden_quiz();
+
+		/* Act. */
+		$resolved_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertSame( $quiz_id, $resolved_quiz_id, 'The quiz should be resolved from the lesson meta when it is hidden from post queries.' );
+	}
+
+	/**
+	 * Tests that the lesson-meta fallback honors the requested post status when a plugin
+	 * filter hides the quiz from post queries.
+	 *
+	 * @covers Sensei_Lesson::lesson_quizzes
+	 */
+	public function testLessonQuizzes_HiddenQuizNotInRequestedStatus_ReturnsNull() {
+		/* Arrange. */
+		list( $lesson_id, $quiz_id, $language_filter ) = $this->arrange_lesson_with_hidden_quiz();
+
+		wp_update_post(
+			array(
+				'ID'          => $quiz_id,
+				'post_status' => 'draft',
+			)
+		);
+
+		/* Act. */
+		$resolved_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id, 'publish' );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertEmpty( $resolved_quiz_id, 'The fallback should not return a quiz that is not in the requested post status.' );
+	}
+
+	/**
+	 * Tests that the lesson-meta fallback does not return a trashed quiz, mirroring the
+	 * post query, which excludes trashed posts even for the 'any' post status.
+	 *
+	 * @covers Sensei_Lesson::lesson_quizzes
+	 */
+	public function testLessonQuizzes_HiddenTrashedQuiz_ReturnsNull() {
+		/* Arrange. */
+		list( $lesson_id, $quiz_id, $language_filter ) = $this->arrange_lesson_with_hidden_quiz();
+
+		wp_trash_post( $quiz_id );
+
+		/* Act. */
+		$resolved_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertEmpty( $resolved_quiz_id, 'The fallback should not return a trashed quiz.' );
+	}
+
+	/**
+	 * Create a lesson whose quiz is wired through the lesson meta, and register a filter
+	 * that hides quiz posts from queries, the way multilingual plugins filter them to
+	 * another language.
+	 *
+	 * @return array{0: int, 1: int, 2: callable} Lesson, quiz, and the registered filter.
+	 */
+	private function arrange_lesson_with_hidden_quiz() {
+		$lesson_id = $this->factory->get_random_lesson_id();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
+
+		$language_filter = function ( $where, $query ) {
+			if ( 'quiz' === $query->get( 'post_type' ) ) {
+				$where .= ' AND 1=0';
+			}
+			return $where;
+		};
+		add_filter( 'posts_where', $language_filter, 10, 2 );
+
+		return array( $lesson_id, $quiz_id, $language_filter );
+	}
 }

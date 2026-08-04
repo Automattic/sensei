@@ -3624,6 +3624,8 @@ class Sensei_Lesson {
 	 *
 	 * @access public
 	 *
+	 * @since $$next-version$$ Falls back to the `_lesson_quiz` lesson meta when the post query returns nothing.
+	 *
 	 * @param int    $lesson_id   The lesson id (default: 0).
 	 * @param string $post_status The post status (default: 'any').
 	 * @param string $fields      The fields to return (default: 'ids').
@@ -3647,7 +3649,47 @@ class Sensei_Lesson {
 		$posts_array = get_posts( $post_args );
 		$quiz_id     = array_shift( $posts_array );
 
+		if ( ! $quiz_id ) {
+			// Post queries can be filtered by plugins and miss the quiz.
+			$quiz_id = $this->get_quiz_from_meta( $lesson_id, $post_status, $fields );
+		}
+
 		return $quiz_id;
+	}
+
+	/**
+	 * Get a lesson's quiz from the lesson meta, matching what the post query returns.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int          $lesson_id   The lesson id.
+	 * @param string|array $post_status The post status.
+	 * @param string       $fields      The fields to return.
+	 *
+	 * @return int|WP_Post|null The quiz, or null when the meta has no quiz matching the post status.
+	 */
+	private function get_quiz_from_meta( $lesson_id, $post_status, $fields ) {
+		$quiz_id = (int) get_post_meta( $lesson_id, '_lesson_quiz', true );
+
+		// An empty ID would make get_post() return the post being rendered.
+		$quiz = $quiz_id ? get_post( $quiz_id ) : null;
+
+		if ( ! $quiz || 'quiz' !== $quiz->post_type ) {
+			return null;
+		}
+
+		if ( 'any' === $post_status ) {
+			// The query's 'any' status covers every status except these.
+			$matches_status = ! in_array( $quiz->post_status, array( 'trash', 'auto-draft' ), true );
+		} else {
+			$matches_status = in_array( $quiz->post_status, (array) $post_status, true );
+		}
+
+		if ( ! $matches_status ) {
+			return null;
+		}
+
+		return 'ids' === $fields ? $quiz->ID : $quiz;
 	}
 
 	/**
