@@ -704,11 +704,13 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$lesson_id = $created['lesson_ids'][0];
 		$quiz_id   = $created['quiz_ids'][0];
 
+		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
+
 		// The quiz progress piggybacks on the lesson progress, and the submission is only readable once it has an answer.
 		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 		Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
 		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id, 80 );
-		Sensei()->quiz_answer_repository->create( $submission, Sensei()->quiz->get_questions( $quiz_id )[0]->ID, 'Answer' );
+		Sensei()->quiz_answer_repository->create( $submission, $question_id, base64_encode( 'Answer' ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the stored format.
 
 		$language_filter = function ( $where, $query ) {
 			if ( 'quiz' === $query->get( 'post_type' ) ) {
