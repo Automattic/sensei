@@ -1237,8 +1237,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id );
-		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the stored format.
-		$answer     = Sensei()->quiz_answer_repository->create( $submission, $question_id, base64_encode( 'Answer' ) );
+		$answer     = Sensei()->quiz_answer_repository->create( $submission, $question_id, base64_encode( 'Answer' ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the stored format.
 
 		$language_filter = function ( $where, $query ) {
 			if ( 'quiz' === $query->get( 'post_type' ) ) {

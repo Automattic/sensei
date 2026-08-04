@@ -59,9 +59,9 @@ class Sensei_Course_Theme_Quiz {
 	 * @access private
 	 */
 	private function maybe_add_quiz_results_notice() {
+		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
 		$actions   = [];
 		$lesson_id = Sensei_Utils::get_current_lesson();
-		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
 		$quiz_id   = Sensei()->lesson->get_quiz_id( $lesson_id );
 		$user_id   = get_current_user_id();
 

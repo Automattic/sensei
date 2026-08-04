@@ -101,8 +101,8 @@ class Sensei_Course_Theme_Lesson {
 			return;
 		}
 
-		$notices       = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' );
 		// Resolve the quiz from the lesson meta: post queries can be filtered by plugins and miss the quiz.
+		$notices       = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' );
 		$quiz_id       = Sensei()->lesson->get_quiz_id( $lesson_id );
 		$user_answers  = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
 		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
