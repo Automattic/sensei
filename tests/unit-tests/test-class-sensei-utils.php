@@ -693,9 +693,9 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	 */
 	public function testSenseiRemoveUserFromLesson_QuizHiddenFromPostQueries_DeletesTheQuizSubmission() {
 		/* Arrange. */
-		$user_id   = $this->factory->user->create();
-		$lesson_id = $this->factory->get_random_lesson_id();
-		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$user_id     = $this->factory->user->create();
+		$lesson_id   = $this->factory->get_random_lesson_id();
+		$quiz_id     = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 

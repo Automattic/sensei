@@ -1809,18 +1809,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	 */
 	public function testGetQuizPermalink_QuizHiddenFromPostQueries_ReturnsThePermalink() {
 		/* Arrange. */
-		$lesson_id = $this->factory->get_random_lesson_id();
-		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
-
-		$language_filter = function ( $where, $query ) {
-			if ( 'quiz' === $query->get( 'post_type' ) ) {
-				$where .= ' AND 1=0';
-			}
-			return $where;
-		};
-		add_filter( 'posts_where', $language_filter, 10, 2 );
+		list( $lesson_id, $quiz_id, $language_filter ) = $this->arrange_lesson_with_hidden_quiz();
 
 		/* Act. */
 		$permalink = Sensei()->lesson->get_quiz_permalink( $lesson_id );
@@ -1839,19 +1828,9 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	 */
 	public function testLessonHasQuizWithQuestionsAndPassRequired_QuizHiddenFromPostQueries_ReturnsTrue() {
 		/* Arrange. */
-		$lesson_id = $this->factory->get_random_lesson_id();
-		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
-		update_post_meta( $quiz_id, '_pass_required', 'on' );
+		list( $lesson_id, $quiz_id, $language_filter ) = $this->arrange_lesson_with_hidden_quiz();
 
-		$language_filter = function ( $where, $query ) {
-			if ( 'quiz' === $query->get( 'post_type' ) ) {
-				$where .= ' AND 1=0';
-			}
-			return $where;
-		};
-		add_filter( 'posts_where', $language_filter, 10, 2 );
+		update_post_meta( $quiz_id, '_pass_required', 'on' );
 
 		/* Act. */
 		$pass_required = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
@@ -1870,15 +1849,34 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	 */
 	public function testIsQuizSubmitted_QuizHiddenFromPostQueries_ReturnsTrue() {
 		/* Arrange. */
-		$user_id   = $this->factory->user->create();
-		$lesson_id = $this->factory->get_random_lesson_id();
-		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		list( $lesson_id, $quiz_id, $language_filter ) = $this->arrange_lesson_with_hidden_quiz();
 
+		$user_id = $this->factory->user->create();
 		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 		$quiz_progress = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
 		$quiz_progress->pass();
 		Sensei()->quiz_progress_repository->save( $quiz_progress );
+
+		/* Act. */
+		$is_submitted = Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertTrue( $is_submitted, 'A submitted quiz should be reported as submitted when the quiz is hidden from post queries.' );
+	}
+
+	/**
+	 * Create a lesson whose quiz is wired through the lesson meta, and register a filter
+	 * that hides quiz posts from queries, the way multilingual plugins filter them to
+	 * another language.
+	 *
+	 * @return array{0: int, 1: int, 2: callable} Lesson, quiz, and the registered filter.
+	 */
+	private function arrange_lesson_with_hidden_quiz() {
+		$lesson_id = $this->factory->get_random_lesson_id();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		update_post_meta( $lesson_id, '_quiz_has_questions', 1 );
 
 		$language_filter = function ( $where, $query ) {
 			if ( 'quiz' === $query->get( 'post_type' ) ) {
@@ -1888,11 +1886,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		};
 		add_filter( 'posts_where', $language_filter, 10, 2 );
 
-		/* Act. */
-		$is_submitted = Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id );
-
-		/* Clean up & Assert. */
-		remove_filter( 'posts_where', $language_filter );
-		$this->assertTrue( $is_submitted, 'A submitted quiz should be reported as submitted when the quiz is hidden from post queries.' );
+		return array( $lesson_id, $quiz_id, $language_filter );
 	}
 }
