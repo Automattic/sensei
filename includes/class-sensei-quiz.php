@@ -1159,7 +1159,7 @@ class Sensei_Quiz {
 			$user_id = get_current_user_id();
 		}
 
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
 
 		if (
 			! intval( $lesson_id ) > 0

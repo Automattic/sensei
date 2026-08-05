@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Ensure quiz resets are only allowed when retakes are enabled for the quiz.

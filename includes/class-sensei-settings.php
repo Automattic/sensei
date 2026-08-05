@@ -415,7 +415,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'name'        => __( 'My Courses Page', 'sensei-lms' ),
 			'description' => sprintf(
 				// translators: Placeholder is the docs link.
-				__( 'The <a href="%s" target="_blank">page</a> to use to display the courses that a user is currently taking as well as the courses a user has complete.', 'sensei-lms' ),
+				__( 'The <a href="%s" target="_blank">page</a> to use to display the courses that a user is currently taking as well as the courses a user has completed.', 'sensei-lms' ),
 				'https://senseilms.com/documentation/sensei-pages/#my-courses'
 			),
 			'type'        => 'select',

@@ -28,6 +28,9 @@ class Sensei_Core_Modules {
 		// setup taxonomy
 		add_action( 'init', array( $this, 'setup_modules_taxonomy' ), 10 );
 
+		// Restrict editing and deleting modules to their owner.
+		add_filter( 'map_meta_cap', array( $this, 'restrict_module_term_management' ), 10, 4 );
+
 		// Manage lesson meta boxes for taxonomy
 		add_action( 'add_meta_boxes', array( $this, 'modules_metaboxes' ), 20, 2 );
 
@@ -540,9 +543,7 @@ class Sensei_Core_Modules {
 				</option>
 			<?php } ?>
 		</select>
-		<span
-			class="description"><?php echo esc_html__( 'Search for and select the courses that this module will belong to.', 'sensei-lms' ); ?>
-		</span>
+		<p class="description"><?php echo esc_html__( 'Search for and select the courses that this module will belong to.', 'sensei-lms' ); ?></p>
 		<?php
 	}
 
@@ -642,14 +643,17 @@ class Sensei_Core_Modules {
 		);
 		$courses = get_posts( $args );
 
-		// Remove module from existing courses
+		// Remove module from existing courses the current user is allowed to edit.
 		if ( isset( $courses ) && is_array( $courses ) ) {
 			foreach ( $courses as $course ) {
+				if ( ! Sensei_Course::can_current_user_edit_course( $course->ID ) ) {
+					continue;
+				}
 				wp_remove_object_terms( $course->ID, (int) $module_id, $this->taxonomy );
 			}
 		}
 
-		// Add module to selected courses
+		// Add module to selected courses the current user is allowed to edit.
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_POST['module_courses'] ) && ! empty( $_POST['module_courses'] ) ) {
 
@@ -658,7 +662,13 @@ class Sensei_Core_Modules {
 
 			foreach ( $course_ids as $course_id ) {
 
-				wp_set_object_terms( absint( $course_id ), $module_id, $this->taxonomy, true );
+				$course_id = absint( $course_id );
+
+				if ( ! $course_id || ! Sensei_Course::can_current_user_edit_course( $course_id ) ) {
+					continue;
+				}
+
+				wp_set_object_terms( $course_id, $module_id, $this->taxonomy, true );
 
 			}
 		}
@@ -2250,6 +2260,50 @@ class Sensei_Core_Modules {
 	}
 
 	/**
+	 * Restrict editing and deleting a module to its owner.
+	 *
+	 * The module taxonomy grants the `manage_modules` capability to teachers so
+	 * they can manage their own modules. WordPress maps the `edit_term` and
+	 * `delete_term` meta capabilities to that primitive capability without any
+	 * ownership consideration, which would otherwise let a teacher edit or delete
+	 * modules belonging to administrators or other teachers. Limit those
+	 * operations to the module's owner; users who can edit others' courses
+	 * (editors and administrators) are unaffected.
+	 *
+	 * @since 4.26.2
+	 * @access private
+	 *
+	 * @param string[] $caps    The mapped primitive capabilities.
+	 * @param string   $cap     The meta capability being checked.
+	 * @param int      $user_id The user ID the check is for.
+	 * @param array    $args    Context for the check; $args[0] is the term ID.
+	 *
+	 * @return string[] The filtered capabilities.
+	 */
+	public function restrict_module_term_management( $caps, $cap, $user_id, $args ) {
+		if ( ( 'edit_term' !== $cap && 'delete_term' !== $cap ) || empty( $args[0] ) ) {
+			return $caps;
+		}
+
+		$term = get_term( $args[0], 'module' );
+		if ( ! $term instanceof WP_Term ) {
+			return $caps;
+		}
+
+		// Editors and administrators can manage every module.
+		if ( user_can( $user_id, 'edit_others_courses' ) ) {
+			return $caps;
+		}
+
+		$author = self::get_term_author( $term->slug );
+		if ( ! $author instanceof WP_User || (int) $author->ID !== (int) $user_id ) {
+			$caps[] = 'do_not_allow';
+		}
+
+		return $caps;
+	}
+
+	/**
 	 * When the wants to edit the lesson modules redirect them to the course modules.
 	 *
 	 * This function is hooked into the admin_menu
@@ -2369,7 +2423,7 @@ class Sensei_Core_Modules {
 	 * @since 1.8.0
 	 *
 	 * @param $slug
-	 * @return WP_User $author if no author is found or invalid term is passed the admin user will be returned.
+	 * @return WP_User|false $author if no author is found or invalid term is passed the admin user will be returned, or `false` when no admin user can be resolved either.
 	 */
 	public static function get_term_author( $slug = '' ) {
 
@@ -2690,7 +2744,7 @@ class Sensei_Core_Modules {
 
 			$author = self::get_term_author( $term->slug );
 
-			if ( $user_id == $author->ID ) {
+			if ( $author instanceof WP_User && (int) $user_id === (int) $author->ID ) {
 				// add the term to the teachers terms
 				$users_terms[] = $term;
 			}
@@ -2755,7 +2809,7 @@ class Sensei_Core_Modules {
 
 			$author = self::get_term_author( $term->slug );
 
-			if ( ! user_can( $author, 'manage_options' ) && isset( $term->name ) ) {
+			if ( $author instanceof WP_User && ! user_can( $author, 'manage_options' ) ) {
 				$term->name = $term->name . ' (' . $author->display_name . ') ';
 			}
 

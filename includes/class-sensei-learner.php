@@ -790,14 +790,31 @@ class Sensei_Learner {
 			wp_send_json_error( array( 'error' => esc_html__( 'Insufficient Permissions.', 'sensei-lms' ) ) );
 		}
 
-		$user_id         = isset( $_POST['user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['user_id'] ) ) : '';
+		if ( ! current_user_can( 'manage_sensei_grades' ) ) {
+			wp_send_json_error( array( 'error' => esc_html__( 'Insufficient Permissions.', 'sensei-lms' ) ) );
+		}
+
+		$user_id = isset( $_POST['user_id'] ) ? absint( wp_unslash( $_POST['user_id'] ) ) : 0;
+		if ( ! $user_id ) {
+			wp_send_json_error( array( 'error' => esc_html__( 'Invalid request.', 'sensei-lms' ) ) );
+		}
+
 		$learner_manager = self::instance();
 		$controller      = new Sensei_Learners_Admin_Bulk_Actions_Controller( new Sensei_Learner_Management( '' ), $learner_manager );
 		$base_query_args = [ 'posts_per_page' => -1 ];
 		$courses_query   = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args );
 
+		// Restrict to courses the current user can manage before dropping the three shown in the
+		// table, so the "load more" results line up with the visible (teacher-scoped) list.
+		$manageable_courses = array();
+		foreach ( $courses_query->posts as $course ) {
+			if ( $course instanceof WP_Post && Sensei_Course::can_current_user_edit_course( $course->ID ) ) {
+				$manageable_courses[] = $course;
+			}
+		}
+
 		// We only want to show courses after the third one in the UI.
-		$courses = array_slice( $courses_query->posts, 3 );
+		$courses = array_slice( $manageable_courses, 3 );
 
 		$html_items = [];
 		foreach ( $courses as $course ) {
