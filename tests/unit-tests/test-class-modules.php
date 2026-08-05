@@ -221,8 +221,9 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 		$column_output = Sensei()->modules->taxonomy_column_content( '', 'courses', $module_id );
 
-		$this->assertStringContainsString( $course_1->post_title, $column_output, 'The first course link should be present.' );
-		$this->assertStringContainsString( $course_2->post_title, $column_output, 'The second course link should be present.' );
+		foreach ( array( $course_1, $course_2 ) as $course ) {
+			$this->assertStringContainsString( $course->post_title, $column_output, 'The course link should be present.' );
+		}
 	}
 
 	/**
