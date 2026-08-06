@@ -73,7 +73,6 @@ Suffix with `_Abstract` and `_Interface` respectively: `Migration_Abstract`, `Co
 - Segments are camelCase:
   - Filter: `sensei.setupWizard.welcomeTitle`.
   - Action: `sensei.videoProgression.videoEnded`.
-- A segment naming a component keeps the component's PascalCase name: `sensei.QuizAppender.controls`.
 - Do not abbreviate unnecessarily; do not build hook names programmatically.
 
 ### Block directory structure
