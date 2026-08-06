@@ -3624,11 +3624,13 @@ class Sensei_Lesson {
 	 *
 	 * @access public
 	 *
+	 * @since $$next-version$$ Applies the `sensei_lesson_quiz_fallback` filter when the post query returns nothing.
+	 *
 	 * @param int    $lesson_id   The lesson id (default: 0).
 	 * @param string $post_status The post status (default: 'any').
 	 * @param string $fields      The fields to return (default: 'ids').
 	 *
-	 * @return int|null $quiz_id
+	 * @return int|WP_Post|null $quiz_id
 	 */
 	public function lesson_quizzes( $lesson_id = 0, $post_status = 'any', $fields = 'ids' ) {
 
@@ -3646,6 +3648,28 @@ class Sensei_Lesson {
 		);
 		$posts_array = get_posts( $post_args );
 		$quiz_id     = array_shift( $posts_array );
+
+		if ( ! $quiz_id ) {
+			/**
+			 * Resolve a lesson's quiz when the post query finds none.
+			 *
+			 * The query above can be filtered by plugins (for example by language) and miss the
+			 * lesson's quiz. Integrations can resolve the quiz through another source here. The
+			 * returned quiz must honor the requested post status and fields format.
+			 *
+			 * @since $$next-version$$
+			 *
+			 * @hook sensei_lesson_quiz_fallback
+			 *
+			 * @param {int|WP_Post|null} $quiz_id     The resolved quiz, or null when the lesson has none.
+			 * @param {int}              $lesson_id   The lesson ID.
+			 * @param {string|string[]}  $post_status The requested post status.
+			 * @param {string}           $fields      The requested fields format.
+			 *
+			 * @return {int|WP_Post|null} The resolved quiz.
+			 */
+			$quiz_id = apply_filters( 'sensei_lesson_quiz_fallback', null, $lesson_id, $post_status, $fields );
+		}
 
 		return $quiz_id;
 	}
