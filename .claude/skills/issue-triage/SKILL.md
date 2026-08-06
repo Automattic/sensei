@@ -1,6 +1,6 @@
 ---
 name: issue-triage
-description: Triage a Sensei LMS GitHub bug report and post a triage comment directly on it. Confirms the report is a bug, checks for duplicates across open and closed issues, checks it against the Sensei support policy and existing code, reproduces the bug in a browser via the e2e-testing skill, and posts a structured verdict (scope, duplicates, evidence, likely affected code, priority, effort, suggested fix). Bugs only — enhancements, proposals, and questions are left for humans. Use when asked to triage a Sensei issue or when invoked on a `claude-triage` trigger.
+description: Triage a Sensei LMS GitHub bug report and post a triage comment directly on it. Confirms the report is a bug, checks for duplicates across open and closed issues, checks it against the Sensei support policy and existing code, reproduces the bug in a browser via the e2e-testing skill, and posts a structured verdict (scope, duplicates, evidence, likely affected code, priority, effort, suggested fix). Bugs only — enhancements, proposals, and questions are left for humans. Use when asked to triage a Sensei issue or when invoked on an `@claude-triage` trigger.
 ---
 
 # Sensei Issue Triage
@@ -14,7 +14,9 @@ Produce a single, well-structured triage comment on a Sensei LMS bug report. Thi
 Running this skill posts public comments and applies labels on `Automattic/sensei` under the project's name, and it spends API budget. **Only Automattic staff may invoke it on demand.** `.github/workflows/claude-triage.yml` enforces that the same way `claude-code.yml` gates `@claude`:
 
 - **Autonomous run** — a newly opened issue carrying `[Type] Bug` triages automatically, whoever opened it. Community bug reports get triaged as they land; no membership check applies.
-- **Manual run** — an `@claude-triage` comment only starts a run when the commenter's `author_association` is `MEMBER` or `OWNER`, i.e. a member of the Automattic org that owns this repo. The `claude-triage` label relies on GitHub's permission model instead: the event payload carries no `author_association` for the person who applied the label, and applying one requires triage or write access on the repo.
+- **Manual run** — an `@claude-triage` comment only starts a run when the commenter's `author_association` is `MEMBER` or `OWNER`, i.e. a member of the Automattic org that owns this repo. This is the only on-demand path.
+
+There is deliberately **no label trigger**. A `labeled` event carries no `author_association` for the person who applied the label, so it could not be restricted to staff — anyone with triage or write access, including outside collaborators, could have started a run.
 
 Interactively, you are already running as a staff member. Do not add triggers or instructions that let a non-Automattician invoke a triage run on demand.
 
@@ -184,7 +186,7 @@ Write the comment body to a temp file and post it (avoids shell-quoting issues w
 gh issue comment <number> --repo Automattic/sensei --body-file /tmp/triage.md
 ```
 
-Apply labels with `gh issue edit <number> --repo Automattic/sensei --add-label "<label>" --remove-label "[Status] Needs Triage"`. When the run was started by the `claude-triage` label, remove that label too so the trigger doesn't linger.
+Apply labels with `gh issue edit <number> --repo Automattic/sensei --add-label "<label>" --remove-label "[Status] Needs Triage"`.
 
 **Post exactly one triage comment.** Keep it skimmable: a one-line verdict up top, details in `<details>`, concrete file references, and an explicit priority/effort line.
 

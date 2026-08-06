@@ -10,13 +10,14 @@ name: Claude Triage
 #   - Autonomously when a new bug report is opened (the bug-report template
 #     applies `[Type] Bug` at creation). Open to everyone: community reports
 #     get triaged as soon as they land.
-#   - On demand when an Automattician adds the `claude-triage` label, or
-#     comments `@claude-triage`. Manual invocation is staff-only, gated the same
-#     way claude-code.yml gates `@claude`: `author_association` of MEMBER or
-#     OWNER, i.e. a member of the Automattic org that owns this repo. The label
-#     trigger has no author_association to check (the payload carries the issue
-#     author's, not the labeler's), so it relies on GitHub's own permission
-#     model — applying a label requires triage or write access on the repo.
+#   - On demand when an Automattician comments `@claude-triage`. Staff-only,
+#     gated the same way claude-code.yml gates `@claude`: `author_association`
+#     of MEMBER or OWNER, i.e. a member of the Automattic org that owns repo.
+#
+# There is deliberately no label trigger. A `labeled` event carries no
+# author_association for the person who applied the label (only the issue
+# author's), so it could not be gated to staff — anyone with triage or write
+# access, including outside collaborators, could have started a run.
 #
 # Enhancements, proposals, and questions are intentionally left for humans.
 # The job `if` skips enhancement/proposal-labeled issues on open, and the skill
@@ -29,7 +30,7 @@ name: Claude Triage
 
 on:
   issues:
-    types: [opened, labeled]
+    types: [opened]
   issue_comment:
     types: [created]
 
@@ -40,8 +41,6 @@ jobs:
         contains(github.event.issue.labels.*.name, '[Type] Bug') &&
         !contains(github.event.issue.labels.*.name, '[Type] Enhancement') &&
         !contains(github.event.issue.labels.*.name, '[Type] Proposal')) ||
-      (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'claude-triage' &&
-        github.event.sender.type != 'Bot') ||
       (github.event_name == 'issue_comment' && github.event.issue.pull_request == null &&
         contains(github.event.comment.body, '@claude-triage') && github.event.comment.user.type != 'Bot' &&
         (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER'))
@@ -128,10 +127,9 @@ jobs:
       - name: Create the screenshot directory
         run: mkdir -p .claude/tmp/screenshots
 
-      # No `label_trigger` here, unlike claude-code.yml: this workflow also runs
-      # on `issues: opened`, where the claude-triage label is absent by
-      # definition, and a label_trigger the event doesn't match can make the
-      # action no-op. The job `if` above is the only trigger gate.
+      # No `label_trigger` here, unlike claude-code.yml: this workflow has no
+      # label trigger at all, and a label_trigger the event can never match
+      # risks making the action no-op. The job `if` above is the only gate.
       - uses: anthropics/claude-code-action@be7b93b1907a4abad570368f3c74b6fe3807510b  # v1.0.183
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -148,8 +146,7 @@ jobs:
 
             IMPORTANT — bugs only. Apply the skill's bug gate first (the `[Type] Bug` label or GitHub's native issue type `Bug`). If the report is an enhancement, proposal, feature request, or question, DO NOT triage it: post nothing, change no labels, and stop — those are left for humans.
 
-            For a bug: post exactly one triage comment and apply the appropriate labels. When done, if the `claude-triage` label is present, remove it with:
-            gh issue edit ${{ github.event.issue.number }} --repo ${{ github.repository }} --remove-label "claude-triage"
+            For a bug: post exactly one triage comment and apply the appropriate labels.
             Never edit plugin source, push branches, or open a PR. Writes are limited to scratch files under /tmp and .claude/tmp/.
           claude_args: |
             --model claude-sonnet-4-6
