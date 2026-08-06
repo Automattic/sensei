@@ -14,7 +14,7 @@ Produce a single, well-structured triage comment on a Sensei LMS bug report. Thi
 Running this skill posts public comments and applies labels on `Automattic/sensei` under the project's name, and it spends API budget. **Only Automattic staff may invoke it on demand.** `.github/workflows/claude-triage.yml` enforces that the same way `claude-code.yml` gates `@claude`:
 
 - **Autonomous run** — a newly opened issue carrying `[Type] Bug` triages automatically, whoever opened it. Community bug reports get triaged as they land; no membership check applies.
-- **Manual run** — an `@claude triage` comment only starts a run when the commenter's `author_association` is `MEMBER` or `OWNER`, i.e. a member of the Automattic org that owns this repo. The `claude-triage` label relies on GitHub's permission model instead: the event payload carries no `author_association` for the person who applied the label, and applying one requires triage or write access on the repo.
+- **Manual run** — an `@claude-triage` comment only starts a run when the commenter's `author_association` is `MEMBER` or `OWNER`, i.e. a member of the Automattic org that owns this repo. The `claude-triage` label relies on GitHub's permission model instead: the event payload carries no `author_association` for the person who applied the label, and applying one requires triage or write access on the repo.
 
 Interactively, you are already running as a staff member. Do not add triggers or instructions that let a non-Automattician invoke a triage run on demand.
 
