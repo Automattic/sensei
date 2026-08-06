@@ -70,10 +70,10 @@ Suffix with `_Abstract` and `_Interface` respectively: `Migration_Abstract`, `Co
 ### Hooks
 
 - Dotted segments: the `sensei` root, then the context, then the thing.
-- Segments are camelCase, except one naming a component, which keeps the component's PascalCase name:
+- Segments are camelCase:
   - Filter: `sensei.setupWizard.welcomeTitle`.
   - Action: `sensei.videoProgression.videoEnded`.
-  - Component: `sensei.QuizAppender.controls`.
+- A segment naming a component keeps the component's PascalCase name: `sensei.QuizAppender.controls`.
 - Do not abbreviate unnecessarily; do not build hook names programmatically.
 
 ### Block directory structure
