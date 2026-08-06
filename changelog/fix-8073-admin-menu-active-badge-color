@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Restore the visible background pill on the admin menu count badge when its menu item is the active one.
