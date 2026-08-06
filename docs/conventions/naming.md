@@ -69,11 +69,12 @@ Suffix with `_Abstract` and `_Interface` respectively: `Migration_Abstract`, `Co
 
 ### Hooks
 
-- Dotted segments: the `sensei` root, then the context, then the thing.
-- Segments are camelCase:
-  - Filter: `sensei.setupWizard.welcomeTitle`.
-  - Action: `sensei.videoProgression.videoEnded`.
-- Do not abbreviate unnecessarily; do not build hook names programmatically.
+- Use lowercase letters.
+- Hook names take the form:
+  - Filter — `<pluginName>.<screenOrFunctionalArea>.<optionalContext>.<dataToFilter>`. For example, `sensei.setupWizard.welcomeTitle`.
+  - Action — `<pluginName>.<screenOrFunctionalArea>.<optionalVerb>.<element>`. For example, `sensei.courseOutline.clickHandler`.
+- Do not abbreviate unnecessarily. Let hook names be unambiguous and self-documenting.
+- Do not programmatically create hook names. They should be hardcoded so they are easily searchable in the code base.
 
 ### Block directory structure
 
