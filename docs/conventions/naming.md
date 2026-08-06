@@ -69,10 +69,9 @@ Suffix with `_Abstract` and `_Interface` respectively: `Migration_Abstract`, `Co
 
 ### Hooks
 
-- Lowercase.
-- Dotted, camelCase segments:
+- Dotted segments, camelCase — PascalCase when a segment names a component, as core does in `editor.BlockEdit`:
   - Filter: `sensei.setupWizard.welcomeTitle`.
-  - Action: `sensei.courseOutline.clickHandler`.
+  - Action: `sensei.videoProgression.videoEnded`.
 - Do not abbreviate unnecessarily; do not build hook names programmatically.
 
 ### Block directory structure
