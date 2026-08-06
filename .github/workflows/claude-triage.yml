@@ -7,9 +7,12 @@ name: Claude Triage
 # fix-and-PR flow lives in claude-code.yml (the `claude` label / `@claude`).
 #
 # Triggers:
-#   - Autonomously when a new bug report is opened (the bug-report template
-#     applies `[Type] Bug` at creation). Open to everyone: community reports
-#     get triaged as soon as they land.
+#   - Autonomously when a new bug report is opened, identified by either the
+#     `[Type] Bug` label (which the bug-report template applies at creation) or
+#     GitHub's native issue type set to `Bug`. Open to everyone: community
+#     reports get triaged as soon as they land. Note there is no `typed`
+#     trigger — see the note on labels below, which applies equally to setting
+#     the type on an existing issue.
 #   - On demand when an Automattician comments `@claude-triage`. Staff-only,
 #     gated the same way claude-code.yml gates `@claude`: `author_association`
 #     of MEMBER or OWNER, i.e. a member of the Automattic org that owns repo.
@@ -38,7 +41,7 @@ jobs:
   triage:
     if: |
       (github.event_name == 'issues' && github.event.action == 'opened' && github.event.issue.user.type != 'Bot' &&
-        contains(github.event.issue.labels.*.name, '[Type] Bug') &&
+        (contains(github.event.issue.labels.*.name, '[Type] Bug') || github.event.issue.type.name == 'Bug') &&
         !contains(github.event.issue.labels.*.name, '[Type] Enhancement') &&
         !contains(github.event.issue.labels.*.name, '[Type] Proposal')) ||
       (github.event_name == 'issue_comment' && github.event.issue.pull_request == null &&
