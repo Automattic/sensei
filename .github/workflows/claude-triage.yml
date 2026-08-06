@@ -58,7 +58,7 @@ jobs:
       actions: read
       id-token: write
     steps:
-      - uses: actions/checkout@v6.0.3
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
@@ -66,11 +66,11 @@ jobs:
         run: git checkout -b trunk refs/remotes/origin/trunk && git checkout -
         if: github.ref != 'refs/heads/trunk'
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: '.nvmrc'
 
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6.1.0
         with:
           path: ~/.npm/
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
@@ -128,10 +128,13 @@ jobs:
       - name: Create the screenshot directory
         run: mkdir -p .claude/tmp/screenshots
 
-      - uses: anthropics/claude-code-action@593d7a5c4e0073569f74772c2b7b64c30ec14707  # v1.0.141
+      # No `label_trigger` here, unlike claude-code.yml: this workflow also runs
+      # on `issues: opened`, where the claude-triage label is absent by
+      # definition, and a label_trigger the event doesn't match can make the
+      # action no-op. The job `if` above is the only trigger gate.
+      - uses: anthropics/claude-code-action@be7b93b1907a4abad570368f3c74b6fe3807510b  # v1.0.183
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          label_trigger: claude-triage
           additional_permissions: |
             actions: read
           prompt: |
