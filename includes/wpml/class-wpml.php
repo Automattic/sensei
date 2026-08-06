@@ -26,6 +26,7 @@ class WPML {
 		( new Course_Translation() )->init();
 		( new Custom_Fields() )->init();
 		( new Email() )->init();
+		( new Grading() )->init();
 		( new Language_Details() )->init();
 		( new Lesson_Progress() )->init();
 		( new Lesson_Translation() )->init();

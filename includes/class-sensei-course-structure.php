@@ -152,8 +152,8 @@ class Sensei_Course_Structure {
 			'id'          => $module_term->term_id,
 			'title'       => $module_term->name,
 			'description' => $module_term->description,
-			'teacher'     => user_can( $author, 'manage_options' ) ? '' : $author->display_name,
-			'teacherId'   => $author->ID,
+			'teacher'     => $author instanceof WP_User && ! user_can( $author, 'manage_options' ) ? $author->display_name : '',
+			'teacherId'   => $author instanceof WP_User ? $author->ID : 0,
 			'lastTitle'   => $module_term->name,
 			'slug'        => $module_term->slug === $default_slug ? '' : $module_term->slug,
 			'lessons'     => [],
@@ -486,7 +486,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return false|int
 	 */
-	private function save_lesson( array $item, int $module_id = null ) {
+	private function save_lesson( array $item, ?int $module_id = null ) {
 		if ( $item['id'] ) {
 			$lesson_id = $this->update_lesson( $item );
 		} else {
@@ -830,7 +830,8 @@ class Sensei_Course_Structure {
 					);
 				}
 
-				if ( Sensei_Core_Modules::get_term_author( $item['slug'] )->ID !== wp_get_current_user()->ID &&
+				$term_author = Sensei_Core_Modules::get_term_author( $item['slug'] );
+				if ( ( ! $term_author instanceof WP_User || wp_get_current_user()->ID !== $term_author->ID ) &&
 					! current_user_can( 'manage_options' ) &&
 					get_term_by( 'slug', $item['slug'], 'module' )
 				) {

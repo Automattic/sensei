@@ -515,6 +515,11 @@ class Sensei_Quiz {
 		$current_quiz_id = $post->ID;
 		$lesson_id       = $this->get_lesson_id( $current_quiz_id );
 
+		// Bail if the quiz has no lesson, or resets are disabled for this quiz.
+		if ( ! $lesson_id || ! self::is_reset_allowed( $lesson_id ) ) {
+			return;
+		}
+
 		// reset all user data
 		$this->reset_user_lesson_data( $lesson_id, get_current_user_id() );
 
@@ -1154,7 +1159,7 @@ class Sensei_Quiz {
 			$user_id = get_current_user_id();
 		}
 
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
 
 		if (
 			! intval( $lesson_id ) > 0
@@ -1548,7 +1553,7 @@ class Sensei_Quiz {
 	 *
 	 * @return bool
 	 */
-	public static function is_quiz_available( int $quiz_id = null, int $user_id = null ): bool {
+	public static function is_quiz_available( ?int $quiz_id = null, ?int $user_id = null ): bool {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
@@ -1584,7 +1589,7 @@ class Sensei_Quiz {
 	 *
 	 * @return bool
 	 */
-	public static function is_quiz_completed( int $quiz_id = null, int $user_id = null ): bool {
+	public static function is_quiz_completed( ?int $quiz_id = null, ?int $user_id = null ): bool {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
@@ -1978,7 +1983,7 @@ class Sensei_Quiz {
 	 *
 	 * @return string
 	 */
-	public static function get_button_inline_styles( int $quiz_id = null ): string {
+	public static function get_button_inline_styles( ?int $quiz_id = null ): string {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 
@@ -2501,7 +2506,7 @@ class Sensei_Quiz {
 			return $block->render_contact_teacher_block( [], $button );
 		}
 
-		$prev_next_urls  = sensei_get_prev_next_lessons( $lesson_id );
+		$prev_next_urls  = sensei_get_prev_next_lessons( (int) $lesson_id );
 		$next_lesson_url = $prev_next_urls['next']['url'] ?? null;
 
 		if ( $next_lesson_url ) {

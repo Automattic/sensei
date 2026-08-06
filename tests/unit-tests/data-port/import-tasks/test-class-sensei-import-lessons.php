@@ -111,4 +111,90 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 		$this->assertTrue( isset( $logs[0] ), 'A log entry should have been written' );
 		$this->assertEquals( 'Unable to set the prerequisite to "slug:a-missing-lesson"', $logs[0]['message'], 'Log entry should warn users when they try to set a prereq to the same object' );
 	}
+
+	/**
+	 * Tests that a queued thumbnail whose source resolves is set as the post's featured image.
+	 */
+	public function testHandleAttachment_ResolvableSource_SetsAttachmentMeta() {
+		$attachment_id = $this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
+		$lesson_id     = $this->factory->lesson->create();
+
+		$job    = Sensei_Import_Job::create( 'test', 0 );
+		$task   = new Sensei_Import_Lessons( $job );
+		$method = new ReflectionMethod( $task, 'handle_attachment' );
+		$method->setAccessible( true );
+
+		$method->invoke(
+			$task,
+			[
+				'post_id'     => $lesson_id,
+				'source'      => 'localfilename.png',
+				'mime_types'  => array( 'png' => 'image/png' ),
+				'line_number' => 1,
+				'model_key'   => 'lesson',
+			]
+		);
+
+		$this->assertEquals( $attachment_id, (int) get_post_meta( $lesson_id, '_thumbnail_id', true ) );
+	}
+
+	/**
+	 * Tests that a queued thumbnail whose source cannot be resolved leaves the post without a
+	 * featured image instead of failing.
+	 */
+	public function testHandleAttachment_UnresolvableSource_LeavesAttachmentUnset() {
+		$lesson_id = $this->factory->lesson->create();
+
+		$job    = Sensei_Import_Job::create( 'test', 0 );
+		$task   = new Sensei_Import_Lessons( $job );
+		$method = new ReflectionMethod( $task, 'handle_attachment' );
+		$method->setAccessible( true );
+
+		$method->invoke(
+			$task,
+			[
+				'post_id'     => $lesson_id,
+				'source'      => 'does-not-exist-in-media-library.png',
+				'mime_types'  => array( 'png' => 'image/png' ),
+				'line_number' => 1,
+				'model_key'   => 'lesson',
+			]
+		);
+
+		$this->assertEmpty( get_post_meta( $lesson_id, '_thumbnail_id', true ) );
+	}
+
+	/**
+	 * Tests that a post-process task is removed from the persisted state before it is handled, so a
+	 * fatal while handling it does not replay it (and stall the import) on the next run.
+	 */
+	public function testRunPostProcessTasks_TaskFatalsWhileHandled_RemovesTaskFromPersistedState() {
+		$job = Sensei_Import_Job::create( 'test', 0 );
+
+		$task = $this->getMockBuilder( Sensei_Import_Lessons::class )
+			->setConstructorArgs( array( $job ) )
+			->setMethods( array( 'handle_attachment' ) )
+			->getMock();
+		$task->method( 'handle_attachment' )
+			->willThrowException( new RuntimeException( 'simulated fatal' ) );
+
+		$task->add_post_process_task( 'attachment', array( 'post_id' => 1 ) );
+		$task->add_post_process_task( 'attachment', array( 'post_id' => 2 ) );
+
+		$run = new ReflectionMethod( $task, 'run_post_process_tasks' );
+		$run->setAccessible( true );
+
+		try {
+			$run->invoke( $task );
+		} catch ( RuntimeException $e ) {
+			// The simulated fatal stands in for a real mid-download timeout. The task must have
+			// already persisted the popped queue before handling, so nothing is persisted here.
+			unset( $e );
+		}
+
+		$reloaded = Sensei_Import_Job::get( $job->get_job_id() );
+		$state    = $reloaded->get_state( 'lessons' );
+
+		$this->assertCount( 1, $state['post-process-tasks']['attachment'], 'The task being handled when the fatal hit should already be removed from the persisted queue.' );
+	}
 }

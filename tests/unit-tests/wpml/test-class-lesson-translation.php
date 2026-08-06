@@ -106,4 +106,214 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		$actual = count( array_unique( $created_duplicates ) );
 		$this->assertSame( 8, $actual );
 	}
+
+	public function testUpdateLessonTranslationsOnLessonTranslationCreated_QuizNotYetTranslated_SyncsQuizTitleFromTranslatedLesson() {
+		/* Arrange. */
+		$course_with_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 1,
+			)
+		);
+		$master_lesson_id    = $course_with_lessons['lesson_ids'][0];
+		$master_quiz_id      = $course_with_lessons['quiz_ids'][0];
+
+		$translated_lesson_id = $this->factory->lesson->create(
+			array(
+				'post_title' => 'Lección 1',
+				'post_name'  => 'leccion-1',
+			)
+		);
+		// The quiz translation is a verbatim copy of the master, so it carries the master's title.
+		$translated_quiz_id     = $this->factory->quiz->create( array( 'post_title' => 'Lesson 1' ) );
+		$translated_question_id = $this->factory->post->create( array( 'post_type' => 'question' ) );
+
+		add_filter(
+			'wpml_element_language_details',
+			function () {
+				return array(
+					'language_code'        => 'es',
+					'source_language_code' => 'en',
+				);
+			},
+			10,
+			0
+		);
+
+		add_filter(
+			'wpml_object_id',
+			function ( $object_id, $element_type ) use ( $translated_lesson_id, $master_lesson_id ) {
+				if ( 'lesson' === $element_type && $translated_lesson_id === $object_id ) {
+					return $master_lesson_id;
+				}
+				if ( 'lesson' === $element_type && $master_lesson_id === $object_id ) {
+					return $translated_lesson_id;
+				}
+				return 0;
+			},
+			10,
+			2
+		);
+
+		add_filter(
+			'wpml_copy_post_to_language',
+			function ( $post_id ) use ( $master_quiz_id, $translated_quiz_id, $translated_question_id ) {
+				return $master_quiz_id === $post_id ? $translated_quiz_id : $translated_question_id;
+			}
+		);
+
+		add_filter(
+			'wpml_post_duplicates',
+			function () {
+				return array();
+			},
+			10,
+			0
+		);
+
+		$lesson_translation = new Lesson_Translation();
+
+		/* Act. */
+		$lesson_translation->update_lesson_translations_on_lesson_translation_created( $translated_lesson_id );
+
+		/* Assert. */
+		$translated_quiz = get_post( $translated_quiz_id );
+		$this->assertSame( 'Lección 1', $translated_quiz->post_title, 'The translated quiz title should be synced from the translated lesson.' );
+		$this->assertSame( 'leccion-1', $translated_quiz->post_name, 'The translated quiz slug should be synced from the translated lesson.' );
+	}
+
+	public function testUpdateLessonTranslationsOnLessonTranslationCreated_TranslatedContentWrittenAfterCreation_UpdatesTranslatedQuestion() {
+		/* Arrange. */
+		$course_with_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 1,
+			)
+		);
+
+		$master_lesson_id   = $course_with_lessons['lesson_ids'][0];
+		$master_quiz_id     = $course_with_lessons['quiz_ids'][0];
+		$master_question_id = \Sensei()->quiz->get_questions( $master_quiz_id )[0]->ID;
+
+		// WPML creates the translated posts empty at the start of a delivery; the
+		// question begins as a copy that still holds the source-language strings
+		// and answer order.
+		$translated_lesson_id   = $this->factory->lesson->create( array( 'post_content' => '' ) );
+		$translated_quiz_id     = $this->factory->quiz->create();
+		$translated_question_id = $this->factory->post->create(
+			array(
+				'post_type'  => 'question',
+				'post_title' => 'Question',
+			)
+		);
+		update_post_meta(
+			$translated_question_id,
+			'_answer_order',
+			\Sensei()->lesson->get_answer_id( 'yes' ) . ',' . \Sensei()->lesson->get_answer_id( 'no' )
+		);
+
+		$this->simulate_wpml_translation(
+			$master_lesson_id,
+			$translated_lesson_id,
+			$master_quiz_id,
+			$translated_quiz_id,
+			$master_question_id,
+			$translated_question_id
+		);
+
+		$lesson_translation = new Lesson_Translation();
+		$lesson_translation->init();
+
+		/* Act. */
+		// WPML fires the completion hook while the lesson is still empty, then
+		// writes the translated block content later in the same request.
+		$lesson_translation->update_lesson_translations_on_lesson_translation_created( $translated_lesson_id );
+		wp_update_post(
+			array(
+				'ID'           => $translated_lesson_id,
+				'post_content' => $this->translated_lesson_content( $master_question_id ),
+			)
+		);
+
+		/* Clean up. */
+		remove_all_filters( 'wpml_element_language_details' );
+		remove_all_filters( 'wpml_object_id' );
+		remove_all_filters( 'wpml_copy_post_to_language' );
+		remove_action( 'wpml_pro_translation_completed', array( $lesson_translation, 'update_lesson_translations_on_lesson_translation_created' ) );
+		remove_action( 'wp_after_insert_post', array( $lesson_translation, 'update_question_translations_on_lesson_content_written' ) );
+
+		/* Assert. */
+		$translated_question = get_post( $translated_question_id );
+		$this->assertSame( 'Pregunta', $translated_question->post_title, 'The translated question title should be updated from the lesson content.' );
+		$this->assertSame( array( 'sí' ), get_post_meta( $translated_question_id, '_question_right_answer', true ), 'The right answer should be updated from the lesson content.' );
+		$this->assertSame( array( 'no' ), get_post_meta( $translated_question_id, '_question_wrong_answers', true ), 'The wrong answers should be updated from the lesson content.' );
+		$this->assertSame( \Sensei()->lesson->get_answer_id( 'sí' ) . ',' . \Sensei()->lesson->get_answer_id( 'no' ), get_post_meta( $translated_question_id, '_answer_order', true ), 'The answer order should be recomputed from the translated labels in block order.' );
+	}
+
+	/**
+	 * Register the WPML hooks that stand in for a real lesson translation: the
+	 * language details, the source/translation id map, and quiz duplication.
+	 *
+	 * @param int $source_lesson_id       Source (original language) lesson ID.
+	 * @param int $translated_lesson_id   Translated lesson ID.
+	 * @param int $source_quiz_id         Source quiz ID.
+	 * @param int $translated_quiz_id     Translated quiz ID.
+	 * @param int $source_question_id     Source question ID.
+	 * @param int $translated_question_id Translated question ID.
+	 */
+	private function simulate_wpml_translation( $source_lesson_id, $translated_lesson_id, $source_quiz_id, $translated_quiz_id, $source_question_id, $translated_question_id ) {
+		add_filter(
+			'wpml_element_language_details',
+			function () {
+				return array(
+					'language_code'        => 'es',
+					'source_language_code' => 'en',
+				);
+			},
+			10,
+			0
+		);
+
+		// Map a post to its counterpart in the other language, per element type.
+		add_filter(
+			'wpml_object_id',
+			function ( $object_id, $element_type ) use ( $source_lesson_id, $translated_lesson_id, $source_question_id, $translated_question_id ) {
+				$map = array(
+					'lesson'   => array(
+						$translated_lesson_id => $source_lesson_id,
+						$source_lesson_id     => $translated_lesson_id,
+					),
+					'question' => array(
+						$source_question_id => $translated_question_id,
+					),
+				);
+				return $map[ $element_type ][ $object_id ] ?? 0;
+			},
+			10,
+			2
+		);
+
+		// Duplicating the quiz (or a question) into Spanish returns the
+		// translated post created for the test instead of making a new one.
+		add_filter(
+			'wpml_copy_post_to_language',
+			function ( $post_id ) use ( $source_quiz_id, $translated_quiz_id, $translated_question_id ) {
+				return $source_quiz_id === $post_id ? $translated_quiz_id : $translated_question_id;
+			}
+		);
+	}
+
+	/**
+	 * Translated lesson content: a quiz holding one translated question. The
+	 * question block still references the source-language question id.
+	 *
+	 * @param int $source_question_id Source question ID referenced by the block.
+	 * @return string Serialized block content.
+	 */
+	private function translated_lesson_content( $source_question_id ) {
+		return '<!-- wp:sensei-lms/quiz -->' . "\n" .
+			'<!-- wp:sensei-lms/quiz-question {"id":' . $source_question_id . ',"title":"Pregunta","answer":{"answers":[{"label":"sí","correct":true},{"label":"no","correct":false}]},"options":{"grade":1}} -->' . "\n" .
+			'<!-- /wp:sensei-lms/quiz-question -->' . "\n" .
+			'<!-- /wp:sensei-lms/quiz -->';
+	}
 }

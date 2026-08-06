@@ -3,6 +3,14 @@ name: Playground PR Preview
 on:
     pull_request:
         types: [opened, synchronize, reopened]
+        paths-ignore:
+            - 'changelog/**'
+            - 'tests/**'
+            - 'scripts/**'
+            - '.github/**'
+            - '.claude/**'
+            - '.husky/**'
+            - '**/*.md'
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.head_ref }}
@@ -13,8 +21,8 @@ jobs:
         name: Build Plugin Artifact
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6.0.3
-            - uses: actions/setup-node@v6
+            - uses: actions/checkout@v7.0.1
+            - uses: actions/setup-node@v7
               with:
                   node-version-file: '.nvmrc'
             - name: Install JS dependencies
@@ -58,7 +66,7 @@ jobs:
         steps:
             - name: Create blueprint with artifact URL
               id: blueprint
-              uses: actions/github-script@v9
+              uses: actions/github-script@v9.0.0
               with:
                   result-encoding: string
                   script: |

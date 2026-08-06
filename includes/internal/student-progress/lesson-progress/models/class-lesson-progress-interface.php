@@ -135,6 +135,17 @@ interface Lesson_Progress_Interface {
 	public function get_updated_at(): DateTimeInterface;
 
 	/**
+	 * Set the lesson start date.
+	 *
+	 * @internal
+	 *
+	 * @since 4.26.2
+	 *
+	 * @param DateTimeInterface $started_at The start date.
+	 */
+	public function set_started_at( DateTimeInterface $started_at ): void;
+
+	/**
 	 * Set lesson progress updated date.
 	 *
 	 * @internal

@@ -32,6 +32,8 @@ class Lesson_Translation {
 	public function init() {
 		// Update lesson properties on lesson translation created in UI.
 		add_action( 'wpml_pro_translation_completed', array( $this, 'update_lesson_translations_on_lesson_translation_created' ) );
+		// Run the deferred question sync when WPML writes the translated lesson content.
+		add_action( 'wp_after_insert_post', array( $this, 'update_question_translations_on_lesson_content_written' ), 10, 2 );
 	}
 
 	/**
@@ -64,6 +66,6 @@ class Lesson_Translation {
 
 		$this->update_translated_lesson_properties( $new_lesson_id, $master_lesson_id );
 		$this->update_quiz_translations( $master_lesson_id, $details['language_code'] );
-		$this->update_question_translations_from_lesson( $new_lesson_id );
+		$this->defer_question_translations_update( $new_lesson_id );
 	}
 }

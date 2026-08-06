@@ -832,14 +832,17 @@ table.wp_list_table_sensei_learner_admins {
 .sensei-grading-filters__reset-button {
 	width: 200px;
 	margin-bottom: 10px;
+	box-sizing: border-box;
+	text-align: center;
 
-	&.disabled {
-		margin-bottom: 10px;
+	// Match the 30px height of the filter dropdowns next to it.
+	.wrap & {
+		min-height: 30px;
+		line-height: 28px;
 	}
 
 	@media screen and (min-width: 782px) {
 		width: auto;
-		margin-bottom: auto;
 	}
 }
 

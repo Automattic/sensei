@@ -468,30 +468,28 @@ class Sensei_Learner_Management {
 		check_ajax_referer( 'edit_date_nonce', 'security' );
 
 		if ( ! empty( $_POST['data']['post_id'] ) && is_numeric( $_POST['data']['post_id'] ) ) {
-			$post_id = (int) sanitize_key( $_POST['data']['post_id'] );
+			$post_id = absint( wp_unslash( $_POST['data']['post_id'] ) );
 		} else {
-			exit( '' );
+			exit;
 		}
 
 		$post = get_post( $post_id );
 
 		if ( empty( $post ) || ! is_a( $post, 'WP_Post' ) ) {
-			exit( '' );
+			exit;
 		}
 
-		if ( ! empty( $_POST['data']['comment_id'] ) && is_numeric( $_POST['data']['comment_id'] ) ) {
-			$comment_id = (int) sanitize_key( $_POST['data']['comment_id'] );
+		if ( ! empty( $_POST['data']['user_id'] ) && is_numeric( $_POST['data']['user_id'] ) ) {
+			$user_id = absint( wp_unslash( $_POST['data']['user_id'] ) );
 		} else {
-			exit( '' );
-		}
-
-		$comment = get_comment( $comment_id );
-
-		if ( empty( $comment ) ) {
-			exit( '' );
+			exit;
 		}
 
 		$post_type = get_post_type( $post_id );
+
+		if ( ! in_array( $post_type, array( 'course', 'lesson' ), true ) ) {
+			exit;
+		}
 
 		if ( 'lesson' === $post_type ) {
 			$can_edit_date = $this->can_user_manage_students( (int) Sensei()->lesson->get_course_id( $post_id ), intval( $post->post_author ) );
@@ -500,53 +498,90 @@ class Sensei_Learner_Management {
 		}
 
 		if ( ! $can_edit_date ) {
-			exit( '' );
+			exit;
 		}
 
 		if ( ! empty( $_POST['data']['new_dates']['start-date'] ) ) {
 			$date_string = sanitize_text_field( wp_unslash( $_POST['data']['new_dates']['start-date'] ) );
 		} else {
-			exit( '' );
+			exit;
 		}
 
 		if ( empty( $date_string ) ) {
-			exit( '' );
+			exit;
 		}
-
-		$date_started = get_comment_meta( $comment_id, 'start', true );
 
 		$expected_date_format = 'Y-m-d H:i:s';
 		if ( false === strpos( $date_string, ' ' ) ) {
 			$expected_date_format = 'Y-m-d';
 		}
 
-		$date = DateTimeImmutable::createFromFormat( $expected_date_format, $date_string );
+		$date = DateTimeImmutable::createFromFormat( $expected_date_format, $date_string, wp_timezone() );
 		if ( false === $date ) {
-			exit( '' );
+			exit;
 		}
 
-		$formatted_date = gmdate( 'Y-m-d H:i:s', $date->getTimestamp() );
-		$updated        = (bool) update_comment_meta( $comment_id, 'start', $formatted_date, $date_started );
+		$utc_date = $date->setTimezone( new \DateTimeZone( 'UTC' ) );
+
+		$repository = 'course' === $post_type
+			? Sensei()->course_progress_repository_factory->create()
+			: Sensei()->lesson_progress_repository_factory->create();
+
+		$progress = $repository->get( $post_id, $user_id );
+		if ( ! $progress ) {
+			exit;
+		}
+
+		$old_started_at     = $progress->get_started_at();
+		$started_at_changed = ( null === $old_started_at || $old_started_at->getTimestamp() !== $utc_date->getTimestamp() );
+
+		if ( $started_at_changed ) {
+			$progress->set_started_at( $utc_date );
+
+			/**
+			 * The repository and progress are created from the same factory, so their types
+			 * always match, but Psalm cannot correlate the two union types.
+			 *
+			 * @psalm-suppress PossiblyInvalidArgument
+			 */
+			$repository->save( $progress );
+		}
+
+		/**
+		 * Filters whether a student row was updated on the Students screen.
+		 *
+		 * Lets extensions persist additional date changes (e.g. course access dates) when a
+		 * student's dates are edited and report whether a change occurred so the row refreshes.
+		 *
+		 * @since 4.26.2
+		 *
+		 * @hook sensei_students_row_updated
+		 *
+		 * @param {bool}   $started_at_changed Whether the start date was changed.
+		 * @param {int}    $post_id            Course or lesson ID.
+		 * @param {int}    $user_id            Student user ID.
+		 * @param {string} $post_type          Post type ('course' or 'lesson').
+		 * @return {bool} Whether the student row was updated.
+		 */
+		$updated = (bool) apply_filters( 'sensei_students_row_updated', $started_at_changed, $post_id, $user_id, $post_type );
 
 		/**
 		 * Filter sensei_learners_learner_updated
 		 *
-		 * This filter should return false if there was no update in the learner row.
+		 * @deprecated 4.26.2 Use sensei_students_row_updated instead.
 		 *
-		 * @hook sensei_learners_learner_updated
-		 *
-		 * @param {bool} $updated    A flag indicating if there was an update in the learner row.
+		 * @param {bool} $updated    A flag indicating if there was an update in the student row.
 		 * @param {int}  $post_id    Lesson or course id.
-		 * @param {int}  $comment_id The comment id which tracks the progress of the learner.
+		 * @param {int}  $comment_id The comment id which tracks the progress of the student.
 		 * @return {bool} False if there were no updates.
 		 */
-		$updated = apply_filters( 'sensei_learners_learner_updated', $updated, $post_id, $comment_id );
+		$updated = (bool) apply_filters_deprecated( 'sensei_learners_learner_updated', array( $updated, $post_id, $progress->get_id() ), '4.26.2', 'sensei_students_row_updated' );
 
-		if ( false === $updated ) {
-			exit( '' );
+		if ( ! $updated ) {
+			wp_die();
 		}
 
-		exit( esc_html( $formatted_date ) );
+		wp_die( esc_html( $date->format( 'Y-m-d H:i:s' ) ) );
 	}
 
 	/**

@@ -698,6 +698,83 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Set up a user with a graded quiz attempt for reset listener tests.
+	 *
+	 * @param bool $reset_enabled Whether quiz resets are enabled for the quiz.
+	 *
+	 * @return array {
+	 *     @type int $user_id
+	 *     @type int $lesson_id
+	 *     @type int $quiz_id
+	 * }
+	 */
+	private function setup_graded_quiz_attempt( $reset_enabled ) {
+		$lesson_id = $this->factory->get_random_lesson_id();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		update_post_meta( $quiz_id, '_enable_quiz_reset', $reset_enabled ? 'on' : '' );
+
+		$user_id = $this->factory->user->create();
+
+		$user_quiz_answers = $this->factory->generate_user_quiz_answers( $quiz_id );
+		$user_quiz_grades  = $this->factory->generate_user_quiz_grades( $user_quiz_answers );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		Sensei()->quiz->save_user_answers( $user_quiz_answers, array(), $lesson_id, $user_id );
+		Sensei()->quiz->set_user_grades( $user_quiz_grades, $lesson_id, $user_id );
+
+		return array(
+			'user_id'   => $user_id,
+			'lesson_id' => $lesson_id,
+			'quiz_id'   => $quiz_id,
+		);
+	}
+
+	public function testResetButtonClickListener_WhenResetDisabled_DoesNotResetLessonData() {
+		/* Arrange. */
+		$ids = $this->setup_graded_quiz_attempt( false );
+		wp_set_current_user( $ids['user_id'] );
+		$this->go_to( get_permalink( $ids['quiz_id'] ) );
+
+		$_POST['quiz_reset']                        = '';
+		$_POST['woothemes_sensei_reset_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' );
+
+		/* Act. */
+		Sensei()->quiz->reset_button_click_listener();
+
+		/* Assert. */
+		$this->assertNotEmpty(
+			Sensei()->quiz->get_user_answers( $ids['lesson_id'], $ids['user_id'] ),
+			'Quiz answers should be preserved when resets are disabled for the quiz.'
+		);
+	}
+
+	public function testResetButtonClickListener_WhenResetEnabled_ResetsLessonData() {
+		/* Arrange. */
+		$ids = $this->setup_graded_quiz_attempt( true );
+		wp_set_current_user( $ids['user_id'] );
+		$this->go_to( get_permalink( $ids['quiz_id'] ) );
+
+		$_POST['quiz_reset']                        = '';
+		$_POST['woothemes_sensei_reset_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' );
+
+		$this->prevent_wp_redirect();
+
+		/* Act. */
+		try {
+			Sensei()->quiz->reset_button_click_listener();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			// The listener redirects and exits after a successful reset.
+			$redirected = true;
+		}
+
+		/* Assert. */
+		$this->assertTrue( $redirected ?? false, 'The listener should redirect after a successful reset.' );
+		$this->assertEmpty(
+			Sensei()->quiz->get_user_answers( $ids['lesson_id'], $ids['user_id'] ),
+			'Quiz answers should be cleared when resets are enabled for the quiz.'
+		);
+	}
+
+	/**
 	 * This tests Woothemes_Sensei()->quiz->prepare_form_submitted_answers.
 	 */
 	public function testPrepareFormSubmittedAnswers() {
@@ -999,6 +1076,42 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	/**
 	 * Testing $woothemes->quiz->get_user_grades.
 	 */
+	/**
+	 * Tests that stored grades survive quiz post queries being filtered
+	 * to another language by a multilingual plugin.
+	 *
+	 * @covers Sensei_Quiz::get_user_grades
+	 */
+	public function testGetUserGrades_QuizQueryFilteredToAnotherLanguage_ReturnsStoredGrades() {
+		/* Arrange. */
+		$user_id     = $this->factory->user->create();
+		$lesson_id   = $this->factory->get_random_lesson_id();
+		$quiz_id     = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id );
+		$answer     = Sensei()->quiz_answer_repository->create( $submission, $question_id, 'Answer' );
+		Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, 1 );
+
+		// Simulate a multilingual plugin filtering quiz post queries to another language.
+		$language_filter = function ( $where, $query ) {
+			if ( 'quiz' === $query->get( 'post_type' ) ) {
+				$where .= ' AND 1=0';
+			}
+			return $where;
+		};
+		add_filter( 'posts_where', $language_filter, 10, 2 );
+
+		/* Act. */
+		$grades = Sensei()->quiz->get_user_grades( $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertSame( array( $question_id => 1 ), $grades, 'Stored grades should survive language-filtered quiz queries.' );
+	}
+
 	public function testGetUserGrades() {
 
 		// Setup the data needed for the assertions in this test.
