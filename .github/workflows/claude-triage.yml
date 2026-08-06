@@ -1,40 +1,62 @@
 name: Claude Triage
 
-# Triages an issue and posts a single triage comment (no PR, no code changes).
-# Trigger: apply the `claude-triage` label to an issue, or comment `@claude triage`.
-# The fix-and-PR flow lives in claude-code.yml (triggered by the `claude` label / `@claude`).
+# Triage-only companion to claude-code.yml. It runs the issue-triage skill:
+# confirm the report is a bug, check for duplicates, check scope against the
+# support policy, reproduce in a real browser, and post a single triage comment
+# plus labels. It never edits source, pushes branches, or opens PRs — the
+# fix-and-PR flow lives in claude-code.yml (the `claude` label / `@claude`).
+#
+# Triggers:
+#   - Autonomously when a new bug report is opened (the bug-report template
+#     applies `[Type] Bug` at creation). Open to everyone: community reports
+#     get triaged as soon as they land.
+#   - On demand when an Automattician adds the `claude-triage` label, or
+#     comments `@claude triage`. Manual invocation is staff-only, gated the same
+#     way claude-code.yml gates `@claude`: `author_association` of MEMBER or
+#     OWNER, i.e. a member of the Automattic org that owns this repo. The label
+#     trigger has no author_association to check (the payload carries the issue
+#     author's, not the labeler's), so it relies on GitHub's own permission
+#     model — applying a label requires triage or write access on the repo.
+#
+# Enhancements, proposals, and questions are intentionally left for humans.
+# The job `if` skips enhancement/proposal-labeled issues on open, and the skill
+# bails out silently — no comment, no label changes — if it classifies the
+# report as anything other than a bug.
+#
+# Unlike claude-code.yml this job boots the full wp-env stack and wires up
+# Chrome DevTools MCP, because the skill reproduces bugs in a browser via the
+# e2e-testing skill rather than by tracing code.
 
 on:
   issues:
-    types: [labeled]
+    types: [opened, labeled]
   issue_comment:
     types: [created]
 
 jobs:
   triage:
     if: |
-      (github.event_name == 'issues' && github.event.label.name == 'claude-triage') ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request == null && contains(github.event.comment.body, '@claude triage') && github.event.comment.user.type != 'Bot' &&
+      (github.event_name == 'issues' && github.event.action == 'opened' && github.event.issue.user.type != 'Bot' &&
+        contains(github.event.issue.labels.*.name, '[Type] Bug') &&
+        !contains(github.event.issue.labels.*.name, '[Type] Enhancement') &&
+        !contains(github.event.issue.labels.*.name, '[Type] Proposal')) ||
+      (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'claude-triage' &&
+        github.event.sender.type != 'Bot') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request == null &&
+        contains(github.event.comment.body, '@claude triage') && github.event.comment.user.type != 'Bot' &&
         (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER'))
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # wp-env boot + composer install + asset build is ~8 minutes before Claude
+    # even starts, hence the generous ceiling.
+    timeout-minutes: 40
     concurrency:
-      group: ${{ github.workflow }}-${{ github.event.issue.number || github.run_id }}
+      group: ${{ github.workflow }}-${{ github.event.issue.number }}
       cancel-in-progress: true
     permissions:
       contents: read
       issues: write
-      pull-requests: read
       actions: read
       id-token: write
-    services:
-      database:
-        image: mysql:5.6
-        env:
-          MYSQL_ROOT_PASSWORD: root
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
       - uses: actions/checkout@v6.0.3
         with:
@@ -53,21 +75,58 @@ jobs:
           path: ~/.npm/
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
 
-      - name: Install SVN
-        run: sudo apt-get update && sudo apt-get install -y subversion
-
-      - name: Install PHP dependencies
-        uses: ./.github/actions/install-php
-        with:
-          extensions: mysql
-
       - name: Install JS dependencies
         run: npm ci
 
-      # Enables the CI reproduction fallback in the issue-triage skill: a failing
-      # PHPUnit test that captures the reported behavior (no browser is available here).
-      - name: Set up WordPress test environment
-        run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
+      # Boots the same wp-env stack developers use: site on :8888, admin/password,
+      # `course` theme, per .wp-env.json. Docker is preinstalled on ubuntu runners.
+      - name: Start wp-env
+        run: make up
+
+      # composer install *with* scripts, inside the container. Populates the
+      # scoped vendor tree (vendor/sensei-lms/third-party-libs/) that Sensei
+      # loads at runtime — without it the site fatals on some paths.
+      - name: Install PHP dependencies in wp-env
+        run: make install-php
+
+      # Admin/frontend JS and CSS live in assets/dist/, which isn't committed.
+      # Skipping this leaves the UI unstyled and scriptless, which would make
+      # any browser reproduction meaningless.
+      - name: Build assets
+        run: npm run build:assets
+
+      - name: Wait for the dev site
+        run: |
+          for _ in $(seq 1 36); do
+            if curl -sSf -o /dev/null http://localhost:8888; then
+              echo "wp-env is reachable at http://localhost:8888"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::wp-env did not become reachable at http://localhost:8888 within 3 minutes."
+          exit 1
+
+      - name: Report Chrome version
+        run: google-chrome --version || echo "::warning::Google Chrome not found on the runner; the browser reproduction step will fail."
+
+      # The server must be named `chrome-devtools` so its tools resolve to
+      # mcp__chrome-devtools__*, which is what the e2e-testing skill drives.
+      - name: Configure Chrome DevTools MCP
+        run: |
+          cat > /tmp/mcp-chrome.json <<'JSON'
+          {
+            "mcpServers": {
+              "chrome-devtools": {
+                "command": "npx",
+                "args": ["-y", "chrome-devtools-mcp@1.6.0", "--headless", "--isolated"]
+              }
+            }
+          }
+          JSON
+
+      - name: Create the screenshot directory
+        run: mkdir -p .claude/tmp/screenshots
 
       - uses: anthropics/claude-code-action@593d7a5c4e0073569f74772c2b7b64c30ec14707  # v1.0.141
         with:
@@ -76,16 +135,36 @@ jobs:
           additional_permissions: |
             actions: read
           prompt: |
-            You were triggered on a ${{ github.event_name }} event in ${{ github.repository }}.
-            Issue number: ${{ github.event.issue.number }}.
-            Use the `issue-triage` skill (.claude/skills/issue-triage/SKILL.md) to triage this issue
-            and post a single triage comment. This is a CI runner: there is no wp-env or browser,
-            so follow the skill's CI reproduction path (code-level trace plus, where practical, a
-            failing PHPUnit test). Do not open a PR, push code, or close the issue.
+            You were triggered on issue #${{ github.event.issue.number }} in ${{ github.repository }} (event: ${{ github.event_name }}/${{ github.event.action }}).
+            Read and follow `.claude/skills/issue-triage/SKILL.md` to triage that issue.
+
+            You are in the skill's CI operating environment, but a real browser IS available here:
+            - wp-env is already running at http://localhost:8888 (admin / password), with the `course` theme active and assets built. Do NOT run `make up` or `make down` — the workflow owns that lifecycle. Verify with `curl -sI http://localhost:8888`.
+            - Chrome DevTools MCP (`mcp__chrome-devtools__*`) is wired up. Reproduce the bug in the browser via the e2e-testing skill (`.claude/skills/e2e-testing/SKILL.md`) and save screenshots under `.claude/tmp/screenshots/` — they are uploaded as a run artifact you can point reviewers at.
+            - PHPUnit is available inside wp-env via `make test-php-filter FILTER="<TestClass>"` as additional evidence, not as a substitute for the browser check.
+
+            IMPORTANT — bugs only. Apply the skill's bug gate first (the `[Type] Bug` label or GitHub's native issue type `Bug`). If the report is an enhancement, proposal, feature request, or question, DO NOT triage it: post nothing, change no labels, and stop — those are left for humans.
+
+            For a bug: post exactly one triage comment and apply the appropriate labels. When done, if the `claude-triage` label is present, remove it with:
+            gh issue edit ${{ github.event.issue.number }} --repo ${{ github.repository }} --remove-label "claude-triage"
+            Never edit plugin source, push branches, or open a PR. Writes are limited to scratch files under /tmp and .claude/tmp/.
           claude_args: |
             --model claude-sonnet-4-6
-            --max-turns 60
+            --max-turns 80
             --max-budget-usd 4.00
-            --permission-mode acceptEdits
-            --allowedTools "Read,Glob,Grep,Edit,Write,Bash(make *),Bash(npm ci),Bash(npm run *),Bash(composer install*),Bash(vendor/bin/phpunit*),Bash(git diff*),Bash(git log*),Bash(git show*),Bash(git status*),Bash(git grep*),Bash(git rev-parse*),Bash(git fetch*),Bash(gh issue view*),Bash(gh issue comment*),Bash(gh issue edit*),Bash(gh issue list*),Bash(gh issue create*),Bash(gh repo view*),Bash(gh api *),Bash(gh label list*)"
-            --disallowedTools "Bash(gh pr *)" "Bash(gh issue close:*)" "Bash(gh issue delete:*)" "Bash(gh label delete:*)" "Bash(gh label create:*)" "Bash(gh run delete:*)" "Bash(gh run cancel:*)" "Bash(git push*)" "Bash(git commit*)" "Bash(git add *)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)"
+            --mcp-config /tmp/mcp-chrome.json
+            --allowedTools "Read,Glob,Grep,Write,mcp__chrome-devtools,Bash(make wp *),Bash(make test-php-filter*),Bash(npm run build:assets),Bash(curl -sI http://localhost:8888*),Bash(curl -sSf http://localhost:8888*),Bash(mkdir -p .claude/tmp*),Bash(git grep*),Bash(git log*),Bash(git show*),Bash(git diff*),Bash(git status*),Bash(git rev-parse*),Bash(gh issue view*),Bash(gh issue comment*),Bash(gh issue edit*),Bash(gh issue list*),Bash(gh issue create*),Bash(gh search issues*),Bash(gh repo view*),Bash(gh api *),Bash(gh label list*)"
+            --disallowedTools "Edit" "Bash(gh pr *)" "Bash(gh issue close:*)" "Bash(gh issue delete:*)" "Bash(gh label delete:*)" "Bash(gh label create:*)" "Bash(gh run delete:*)" "Bash(gh run cancel:*)" "Bash(git push*)" "Bash(git commit*)" "Bash(git add *)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)"
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: triage-screenshots-${{ github.event.issue.number }}
+          path: .claude/tmp/screenshots/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Stop wp-env
+        if: always()
+        run: make down
