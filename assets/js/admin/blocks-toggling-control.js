@@ -97,12 +97,11 @@ export const startBlocksTogglingControl = ( postType ) => {
 	 * Toggle metaboxes if a replacement block is present or not.
 	 */
 	const toggleLegacyMetaboxes = () => {
+		const blocks = editorSelector.getEditorBlocks();
+
 		Object.entries( metaboxReplacements[ postType ] ).forEach(
 			( [ metaboxName, blockDeps ] ) => {
-				const enable = ! hasSomeBlocks(
-					blockDeps,
-					editorSelector.getEditorBlocks()
-				);
+				const enable = ! hasSomeBlocks( blockDeps, blocks );
 				if ( enable !== isEditorPanelEnabled( metaboxName ) ) {
 					toggleEditorPanelEnabled( metaboxName );
 				}

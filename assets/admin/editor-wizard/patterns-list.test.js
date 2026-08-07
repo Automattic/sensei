@@ -72,11 +72,9 @@ describe( '<PatternsList />', () => {
 		] );
 		const onChoose = jest.fn();
 
-		const { queryByText } = render(
-			<PatternsList onChoose={ onChoose } />
-		);
+		const { getByText } = render( <PatternsList onChoose={ onChoose } /> );
 
-		fireEvent.click( queryByText( 'Default Course' ) );
+		fireEvent.click( getByText( 'Default Course' ) );
 
 		expect( getBlockPatterns ).toHaveBeenCalled();
 		expect( onChoose ).toHaveBeenCalledWith(
