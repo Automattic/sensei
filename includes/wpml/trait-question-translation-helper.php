@@ -123,9 +123,8 @@ trait Question_Translation_Helper {
 			}
 
 			// A question post stores the question block's whole inner content
-			// (description, answers, and feedback blocks), mirroring how the
-			// editor saves it (see getBlockContent in the quiz editor and the
-			// REST question helpers).
+			// (description, answers, and feedback blocks), mirroring how the editor saves it
+			// (see getBlockContent in the quiz editor and the REST question helpers).
 			if ( ! empty( $block['innerBlocks'] ) ) {
 				$question_updates['post_content'] = implode( '', array_map( 'serialize_block', $block['innerBlocks'] ) );
 			}
