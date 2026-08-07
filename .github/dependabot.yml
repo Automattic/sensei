@@ -1,5 +1,38 @@
 version: 2
 updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "No Changelog"
+    groups:
+      wordpress-packages:
+        patterns:
+          - "@wordpress/*"
+      react-packages:
+        patterns:
+          - "react"
+          - "react-dom"
+      development-minor-patch:
+        dependency-type: "development"
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      production-minor-patch:
+        dependency-type: "production"
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    cooldown:
+      default-days: 7
+
   - package-ecosystem: "github-actions"
     # Scan composite actions too — their SHA-pinned `uses:` refs need update
     # PRs just like the workflow files do ('**' covers nested action dirs).
