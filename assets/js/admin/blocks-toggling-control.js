@@ -3,7 +3,6 @@
  */
 import { select, dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as editPostStore } from '@wordpress/edit-post';
 import { store as editorStore } from '@wordpress/editor';
 
@@ -42,7 +41,6 @@ const metaboxReplacements = {
 };
 
 // WordPress data.
-const blockEditorSelector = select( blockEditorStore );
 const editorSelector = select( editorStore );
 const editorDispatcher = dispatch( editorStore );
 const editPostSelector = select( editPostStore );
@@ -57,6 +55,21 @@ const toggleEditorPanelEnabled = editorDispatcher.toggleEditorPanelEnabled
 	: editPostDispatcher.toggleEditorPanelEnabled;
 
 /**
+ * Check whether a block tree contains at least one of the given block types.
+ *
+ * @param {string[]} blocksToFind Block types to find.
+ * @param {Object[]} blocks       Blocks to search.
+ *
+ * @return {boolean} Whether the block tree contains a matching block.
+ */
+export const hasSomeBlocks = ( blocksToFind, blocks = [] ) =>
+	blocks.some(
+		( block ) =>
+			blocksToFind.includes( block.name ) ||
+			hasSomeBlocks( blocksToFind, block.innerBlocks ?? [] )
+	);
+
+/**
  * Start blocks toggling control.
  * It controls the metaboxes and a notice if the page will
  * render differently (legacy template or blocks) after
@@ -65,7 +78,7 @@ const toggleEditorPanelEnabled = editorDispatcher.toggleEditorPanelEnabled
  * @param {string} postType Current post type.
  */
 export const startBlocksTogglingControl = ( postType ) => {
-	if ( ! blockEditorSelector ) {
+	if ( ! editorSelector ) {
 		return;
 	}
 
@@ -75,7 +88,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 
 	editorLifecycle( {
 		subscribeListener: () => {
-			const newBlocks = blockEditorSelector.getBlocks();
+			const newBlocks = editorSelector.getEditorBlocks();
 
 			// Check if blocks were changed.
 			if ( newBlocks !== lastBlocks ) {
@@ -90,7 +103,10 @@ export const startBlocksTogglingControl = ( postType ) => {
 	 * Check whether it has Sensei blocks.
 	 */
 	const hasSenseiBlocks = () =>
-		hasSomeBlocks( Object.values( SENSEI_BLOCKS[ postType ] ) );
+		hasSomeBlocks(
+			Object.values( SENSEI_BLOCKS[ postType ] ),
+			editorSelector.getEditorBlocks()
+		);
 
 	/**
 	 * Toggle metaboxes if a replacement block is present or not.
@@ -98,7 +114,10 @@ export const startBlocksTogglingControl = ( postType ) => {
 	const toggleLegacyMetaboxes = () => {
 		Object.entries( metaboxReplacements[ postType ] ).forEach(
 			( [ metaboxName, blockDeps ] ) => {
-				const enable = ! hasSomeBlocks( blockDeps );
+				const enable = ! hasSomeBlocks(
+					blockDeps,
+					editorSelector.getEditorBlocks()
+				);
 				if ( enable !== isEditorPanelEnabled( metaboxName ) ) {
 					toggleEditorPanelEnabled( metaboxName );
 				}
@@ -146,8 +165,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 					actions: [
 						{
 							label: __( 'Learn more', 'sensei-lms' ),
-							url:
-								'https://senseilms.com/documentation/course-page-blocks/',
+							url: 'https://senseilms.com/documentation/course-page-blocks/',
 						},
 					],
 				}
@@ -155,16 +173,6 @@ export const startBlocksTogglingControl = ( postType ) => {
 		}
 	};
 
-	/**
-	 * Check whether it has at least one block.
-	 *
-	 * @param {string[]} blocks Blocks to check.
-	 *
-	 * @return {boolean} Whether it has at least one block.
-	 */
-	const hasSomeBlocks = ( blocks ) =>
-		blocks.some(
-			( blockName ) =>
-				blockEditorSelector.getGlobalBlockCount( blockName ) > 0
-		);
+	toggleLegacyMetaboxes();
+	toggleLegacyOrBlocksNotice();
 };
