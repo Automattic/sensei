@@ -1,12 +1,31 @@
 /**
  * External dependencies
  */
-import { render, fireEvent, act } from '@testing-library/react';
+import { render, renderHook, fireEvent, act } from '@testing-library/react';
+
+/**
+ * WordPress dependencies
+ */
+import { parse } from '@wordpress/blocks';
+import { store as coreStore } from '@wordpress/core-data';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 
 /**
  * Internal dependencies
  */
-import { replacePlaceholders, useWizardOpenState } from './helpers';
+import {
+	getSenseiPatterns,
+	replacePlaceholders,
+	useSetDefaultPattern,
+	useWizardOpenState,
+} from './helpers';
+
+jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/blocks', () => ( {
+	...jest.requireActual( '@wordpress/blocks' ),
+	parse: jest.fn(),
+} ) );
 
 describe( 'replacePlaceholders', () => {
 	const replaces = {
@@ -73,6 +92,108 @@ describe( 'replacePlaceholders', () => {
 		const newBlocks = replacePlaceholders( blocks, replaces );
 
 		expect( newBlocks ).toEqual( expectedBlocks );
+	} );
+} );
+
+describe( 'getSenseiPatterns', () => {
+	beforeEach( () => {
+		parse.mockReset();
+	} );
+
+	it( 'Should filter Sensei patterns and parse serialized content', () => {
+		const parsedBlocks = [
+			{
+				name: 'core/paragraph',
+				attributes: { content: 'Course content' },
+			},
+		];
+		parse.mockReturnValue( [
+			{
+				name: 'core/paragraph',
+				attributes: { content: 'Course content' },
+			},
+		] );
+		const patterns = getSenseiPatterns( [
+			{
+				name: 'sensei-lms/course-default',
+				blockTypes: [ 'sensei-lms/post-content' ],
+				content: '<!-- wp:paragraph {"content":"Course content"} /-->',
+			},
+			{
+				name: 'core/query-standard-posts',
+				blockTypes: [ 'core/query' ],
+				content: '<!-- wp:query /-->',
+			},
+		] );
+
+		expect( patterns ).toHaveLength( 1 );
+		expect( patterns[ 0 ].name ).toBe( 'sensei-lms/course-default' );
+		expect( patterns[ 0 ].blocks ).toEqual( parsedBlocks );
+		expect( parse ).toHaveBeenCalledWith(
+			'<!-- wp:paragraph {"content":"Course content"} /-->',
+			{ __unstableSkipMigrationLogs: true }
+		);
+	} );
+
+	it( 'Should prefer the first version of a duplicate pattern', () => {
+		const editorBlocks = [ { name: 'core/paragraph' } ];
+		const patterns = getSenseiPatterns( [
+			{
+				name: 'sensei-lms/course-default',
+				blockTypes: [ 'sensei-lms/post-content' ],
+				blocks: editorBlocks,
+			},
+			{
+				name: 'sensei-lms/course-default',
+				blockTypes: [ 'sensei-lms/post-content' ],
+				content: '<!-- wp:paragraph /-->',
+			},
+		] );
+
+		expect( patterns ).toHaveLength( 1 );
+		expect( patterns[ 0 ].blocks ).toBe( editorBlocks );
+		expect( parse ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'useSetDefaultPattern', () => {
+	it( 'Should use the post type template when setting the default pattern', () => {
+		const blocks = [ { name: 'core/paragraph', attributes: {} } ];
+		parse.mockReturnValue( blocks );
+		const resetEditorBlocks = jest.fn();
+		const getBlockPatterns = jest.fn( () => [
+			{
+				name: 'sensei-lms/course-default',
+				blockTypes: [ 'sensei-lms/post-content' ],
+				content: '<!-- wp:paragraph /-->',
+			},
+		] );
+		const getCurrentPostType = jest.fn( () => 'course' );
+		const getEditorSettings = jest.fn( () => ( {} ) );
+		const getPostType = jest.fn( () => ( {
+			template: [
+				[ 'core/pattern', { slug: 'sensei-lms/course-default' } ],
+			],
+		} ) );
+		useSelect.mockImplementation( ( callback ) =>
+			callback( ( store ) => {
+				if ( coreStore === store ) {
+					return { getBlockPatterns, getPostType };
+				}
+
+				if ( editorStore === store ) {
+					return { getCurrentPostType, getEditorSettings };
+				}
+			} )
+		);
+		useDispatch.mockReturnValue( { resetEditorBlocks } );
+		const { result } = renderHook( () => useSetDefaultPattern( {} ) );
+
+		result.current();
+
+		expect( resetEditorBlocks ).toHaveBeenCalledWith( [
+			expect.objectContaining( { name: 'core/paragraph' } ),
+		] );
 	} );
 } );
 
