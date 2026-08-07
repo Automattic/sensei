@@ -35,7 +35,7 @@ class Question_Display {
 		// The question heading is rendered from get_the_title(), outside the template data.
 		add_filter( 'the_title', array( $this, 'translate_question_title' ), 10, 2 );
 		// The description renderer asks through this filter which question to read from.
-		add_filter( 'sensei_question_description_post_id', array( $this, 'translate_question_description_id' ) );
+		add_filter( 'sensei_question_description_question_id', array( $this, 'translate_question_description_id' ) );
 		// The "Right Answer:" reveal shown on failed questions.
 		add_filter( 'sensei_question_answer_message_correct_answer', array( $this, 'translate_correct_answer_message' ), 10, 3 );
 		// The feedback text shown under Correct/Incorrect.

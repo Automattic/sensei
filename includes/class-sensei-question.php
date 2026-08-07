@@ -712,12 +712,12 @@ class Sensei_Question {
 		 *
 		 * @since $$next-version$$
 		 *
-		 * @hook sensei_question_description_post_id
+		 * @hook sensei_question_description_question_id
 		 *
 		 * @param {int} $question_id Question ID.
 		 * @return {int} Question ID to render the description from.
 		 */
-		$question_id = (int) apply_filters( 'sensei_question_description_post_id', $question_id );
+		$question_id = (int) apply_filters( 'sensei_question_description_question_id', $question_id );
 
 		$question = $question_id > 0 ? get_post( $question_id ) : null;
 		if ( ! $question ) {
