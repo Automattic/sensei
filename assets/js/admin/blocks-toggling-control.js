@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { select, dispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 import { store as editPostStore } from '@wordpress/edit-post';
 import { store as editorStore } from '@wordpress/editor';
 
@@ -71,9 +70,7 @@ export const hasSomeBlocks = ( blocksToFind, blocks = [] ) =>
 
 /**
  * Start blocks toggling control.
- * It controls the metaboxes and a notice if the page will
- * render differently (legacy template or blocks) after
- * saving the post.
+ * It controls the metaboxes based on the blocks in the editor.
  *
  * @param {string} postType Current post type.
  */
@@ -81,8 +78,6 @@ export const startBlocksTogglingControl = ( postType ) => {
 	if ( ! editorSelector ) {
 		return;
 	}
-
-	const { createWarningNotice, removeNotice } = dispatch( 'core/notices' );
 
 	let lastBlocks;
 
@@ -94,19 +89,9 @@ export const startBlocksTogglingControl = ( postType ) => {
 			if ( newBlocks !== lastBlocks ) {
 				lastBlocks = newBlocks;
 				toggleLegacyMetaboxes();
-				toggleLegacyOrBlocksNotice();
 			}
 		},
 	} );
-
-	/**
-	 * Check whether it has Sensei blocks.
-	 */
-	const hasSenseiBlocks = () =>
-		hasSomeBlocks(
-			Object.values( SENSEI_BLOCKS[ postType ] ),
-			editorSelector.getEditorBlocks()
-		);
 
 	/**
 	 * Toggle metaboxes if a replacement block is present or not.
@@ -143,36 +128,5 @@ export const startBlocksTogglingControl = ( postType ) => {
 			} );
 	};
 
-	/**
-	 * Show a warning notice when changing to a state where it
-	 * will start using the legacy template or the blocks.
-	 */
-	const toggleLegacyOrBlocksNotice = () => {
-		const withSenseiBlocks = hasSenseiBlocks();
-		const courseThemeEnabled = window?.sensei?.courseThemeEnabled;
-
-		if ( withSenseiBlocks || courseThemeEnabled ) {
-			removeNotice( 'sensei-using-template' );
-		} else {
-			createWarningNotice(
-				__(
-					"It looks like this course page doesn't have any Sensei blocks. This means that content will be handled by custom templates.",
-					'sensei-lms'
-				),
-				{
-					id: 'sensei-using-template',
-					isDismissible: true,
-					actions: [
-						{
-							label: __( 'Learn more', 'sensei-lms' ),
-							url: 'https://senseilms.com/documentation/course-page-blocks/',
-						},
-					],
-				}
-			);
-		}
-	};
-
 	toggleLegacyMetaboxes();
-	toggleLegacyOrBlocksNotice();
 };
