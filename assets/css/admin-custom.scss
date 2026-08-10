@@ -226,13 +226,13 @@ div.question_boolean_fields {
 
 /* Students */
 .sensei-lms_page_sensei_learners {
-	#add_learner_search {
-		min-width: 300px;
+	#add_learner_search + .select2-container {
+		max-width: 300px;
 	}
 
 	@media only screen and (min-width: 768px) {
-		#add_learner_search {
-			min-width: 500px;
+		#add_learner_search + .select2-container {
+			max-width: 500px;
 		}
 	}
 
