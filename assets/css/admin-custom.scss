@@ -236,12 +236,32 @@ div.question_boolean_fields {
 		}
 	}
 
+	.add-student-form-container {
+		label {
+			display: block;
+		}
+
+		input.select2-search__field {
+			padding: 0;
+		}
+	}
+
+	.select2-selection__rendered li {
+		margin-bottom: 0;
+	}
+
 	.postbox {
 		padding: 1em 0 0 1em;
 
 		.inside {
 			padding: 0;
 		}
+	}
+
+	#add_learner_submit[disabled] {
+		background-color: #037ABA !important;
+		color: #66AFD6 !important;
+		border-color: #037ABA !important;
 	}
 
 	.sensei-students__subheading {
