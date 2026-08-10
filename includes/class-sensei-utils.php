@@ -322,7 +322,8 @@ class Sensei_Utils {
 	public static function sensei_text_editor( $content = '', $editor_id = 'senseitexteditor', $input_name = '' ) {
 
 		// Callers pass a stored answer straight through, and that is null while the question is unanswered.
-		$content = (string) $content;
+		// Only null is normalised, so any other unexpected type still fails loudly.
+		$content = $content ?? '';
 
 		if ( ! $input_name ) {
 			$input_name = $editor_id;
