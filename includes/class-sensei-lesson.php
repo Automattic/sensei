@@ -3630,7 +3630,7 @@ class Sensei_Lesson {
 	 * @param string $post_status The post status (default: 'any').
 	 * @param string $fields      The fields to return (default: 'ids').
 	 *
-	 * @return int|WP_Post|null $quiz_id
+	 * @return int|null $quiz_id
 	 */
 	public function lesson_quizzes( $lesson_id = 0, $post_status = 'any', $fields = 'ids' ) {
 
