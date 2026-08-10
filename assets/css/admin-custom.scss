@@ -251,11 +251,17 @@ div.question_boolean_fields {
 	}
 
 	.postbox {
-		padding: 1em 0 0 1em;
+		padding: 1em 1em 0;
 
 		.inside {
 			padding: 0;
 		}
+	}
+
+	#add_learner_submit {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	#add_learner_submit[disabled] {
