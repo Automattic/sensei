@@ -683,4 +683,29 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 'in-progress', $previous_status );
 	}
+
+	public function testSenseiTextEditor_NullContentGiven_DoesNotTriggerADeprecation(): void {
+		/* Arrange. */
+		$deprecations = array();
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- The deprecation is only observable through an error handler.
+		set_error_handler(
+			function ( $errno, $errstr ) use ( &$deprecations ) {
+				$deprecations[] = $errstr;
+				return true;
+			},
+			E_DEPRECATED
+		);
+
+		/* Act. */
+		try {
+			ob_start();
+			Sensei_Utils::sensei_text_editor( null, 'testeditor', 'testeditor' );
+		} finally {
+			ob_end_clean();
+			restore_error_handler();
+		}
+
+		/* Assert. */
+		$this->assertSame( array(), $deprecations );
+	}
 }
