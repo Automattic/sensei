@@ -146,16 +146,6 @@ div.question_boolean_fields {
 	margin: 3px;
 }
 
-#add_learner_search {
-	min-width: 300px;
-}
-
-@media only screen and (min-width: 768px) {
-	#add_learner_search {
-		min-width: 500px;
-	}
-}
-
 .post-type-lesson .inline-edit-col-right .inline-edit-col {
 	border: none !important;
 	padding-left: 2em !important;
@@ -234,20 +224,45 @@ div.question_boolean_fields {
 	}
 }
 
-.sensei-students__subheading {
-	a {
-		color: $text_primary;
-		text-decoration: none;
+/* Students */
+.sensei-lms_page_sensei_learners {
+	#add_learner_search {
+		min-width: 300px;
 	}
-}
 
-.sensei-students__call-to-action {
-	display: flex;
-	flex-flow: column;
-	margin: 20px auto;
+	@media only screen and (min-width: 768px) {
+		#add_learner_search {
+			min-width: 500px;
+		}
+	}
 
-	div {
-		margin: 8px auto;
+	.postbox {
+		padding: 1em 0 0 1em;
+
+		.inside {
+			padding: 0;
+		}
+	}
+
+	.sensei-students__subheading {
+		a {
+			color: $text_primary;
+			text-decoration: none;
+		}
+	}
+
+	.sensei-students__call-to-action {
+		display: flex;
+		flex-flow: column;
+		margin: 20px auto;
+
+		div {
+			margin: 8px auto;
+		}
+	}
+
+	.sensei-students__enrolled-course {
+		display: block;
 	}
 }
 
@@ -368,10 +383,6 @@ a.sensei-custom-navigation__info {
 	white-space: nowrap;
 	border-radius: 10px;
 	background-color: #91e7c5;
-}
-
-.sensei-students__enrolled-course {
-	display: block;
 }
 
 .sensei-plugin-document-setting-panel .components-panel__body-toggle.components-button .components-panel__arrow {
