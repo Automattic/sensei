@@ -321,8 +321,7 @@ class Sensei_Utils {
 	 */
 	public static function sensei_text_editor( $content = '', $editor_id = 'senseitexteditor', $input_name = '' ) {
 
-		// Callers pass a stored answer straight through, and that is null while the question is unanswered.
-		// Only null is normalised, so any other unexpected type still fails loudly.
+		// Normalise the null of an unsaved answer, which raises a PHP 8.1+ deprecation in wp_editor().
 		$content = $content ?? '';
 
 		if ( ! $input_name ) {
