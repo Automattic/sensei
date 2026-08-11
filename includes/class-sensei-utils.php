@@ -314,12 +314,15 @@ class Sensei_Utils {
 	/**
 	 * Load the WordPress rich text editor
 	 *
-	 * @param  string $content    Initial content for editor
-	 * @param  string $editor_id  ID of editor (only lower case characters - no spaces, underscores, hyphens, etc.)
-	 * @param  string $input_name Name for text area form element
+	 * @param  string|null $content    Initial content for editor. Null is treated as empty.
+	 * @param  string      $editor_id  ID of editor (only lower case characters - no spaces, underscores, hyphens, etc.)
+	 * @param  string      $input_name Name for text area form element
 	 * @return void
 	 */
 	public static function sensei_text_editor( $content = '', $editor_id = 'senseitexteditor', $input_name = '' ) {
+
+		// Normalise the null of an unsaved answer, which raises a PHP 8.1+ deprecation in wp_editor().
+		$content = $content ?? '';
 
 		if ( ! $input_name ) {
 			$input_name = $editor_id;

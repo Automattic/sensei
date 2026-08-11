@@ -39,7 +39,7 @@ class Question_Display_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals( 15, has_filter( 'sensei_get_question_template_data', array( $question_display, 'translate_template_data' ) ), 'The template data filter should be added after the type loaders.' );
 		$this->assertEquals( 10, has_filter( 'the_title', array( $question_display, 'translate_question_title' ) ), 'The title filter should be added.' );
-		$this->assertEquals( 10, has_filter( 'sensei_the_question_description_question_id', array( $question_display, 'translate_question_description_id' ) ), 'The description question filter should be added.' );
+		$this->assertEquals( 10, has_filter( 'sensei_question_description_question_id', array( $question_display, 'translate_question_description_id' ) ), 'The description question filter should be added.' );
 		$this->assertEquals( 10, has_filter( 'sensei_question_answer_message_correct_answer', array( $question_display, 'translate_correct_answer_message' ) ), 'The right-answer reveal filter should be added.' );
 		$this->assertEquals( 10, has_filter( 'sensei_question_answer_notes', array( $question_display, 'translate_answer_notes' ) ), 'The answer notes filter should be added.' );
 	}
@@ -119,7 +119,7 @@ class Question_Display_Test extends \WP_UnitTestCase {
 		$question_display->init();
 
 		/* Act. */
-		$question_id = apply_filters( 'sensei_the_question_description_question_id', $taken_question_id );
+		$question_id = apply_filters( 'sensei_question_description_question_id', $taken_question_id );
 
 		/* Clean up. */
 		unset( $GLOBALS['current_screen'] );

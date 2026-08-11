@@ -1,16 +1,17 @@
 /**
  * WordPress dependencies
  */
-import {
-	store as blockEditorStore,
-	BlockPreview,
-} from '@wordpress/block-editor';
-import { useSelect } from '@wordpress/data';
+import { BlockPreview } from '@wordpress/block-editor';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { ENTER, SPACE } from '@wordpress/keycodes';
 import { getBlockType, getBlockFromExample } from '@wordpress/blocks';
 import { useCallback } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { useSenseiPatterns } from './helpers';
 
 /**
  * It returns events to fire the click event on click, pressing enter, and pressing space.
@@ -92,15 +93,7 @@ const NoPatternsWarning = () => {
  * @param {Function} props.onChoose          Callback on choosing a pattern.
  */
 const PatternsList = ( { patternsToExclude = [], onChoose } ) => {
-	const { patterns } = useSelect( ( select ) => ( {
-		patterns:
-			select( blockEditorStore )?.getPatternsByBlockTypes(
-				'sensei-lms/post-content'
-			) ||
-			select( blockEditorStore ).__experimentalGetPatternsByBlockTypes(
-				'sensei-lms/post-content'
-			),
-	} ) );
+	const patterns = useSenseiPatterns();
 
 	const patternFilter = useCallback(
 		( { name, categories } ) => {
