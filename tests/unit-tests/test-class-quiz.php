@@ -1122,7 +1122,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei()->quiz->set_user_grades( array( $question_id => 1 ), $lesson_id, $user_id );
 
 		/* Clean up & Assert. */
-		remove_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
 		$this->assertSame( array( $question_id => 1 ), get_transient( 'quiz_grades_' . $user_id . '_' . $cache_lesson_id ), 'The grades cache should be keyed by the filtered lesson ID.' );
 	}
 
@@ -1141,7 +1141,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$grades = Sensei()->quiz->get_user_grades( $lesson_id, $user_id );
 
 		/* Clean up & Assert. */
-		remove_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
 		$this->assertSame( array( $question_id => 1 ), $grades, 'The grades cache should be read from the filtered lesson ID key.' );
 	}
 
@@ -1162,7 +1162,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
 		/* Clean up. */
-		remove_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
 
 		/* Assert. */
 		$this->assertFalse( get_transient( 'sensei_answers_' . $user_id . '_' . $cache_lesson_id ), 'The answers cache under the filtered lesson ID should be deleted.' );
@@ -1183,7 +1183,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei()->quiz->set_user_grades( array( $question_id => 1 ), $lesson_id, $user_id );
 
 		/* Clean up & Assert. */
-		remove_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
 		$this->assertSame( $lesson_id, $received->lesson_id, 'The filter should receive the lesson ID the operation ran with.' );
 	}
 
@@ -1200,7 +1200,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei_Quiz::save_user_answers( array( $question_id => 'Answer' ), array(), $lesson_id, $user_id );
 
 		/* Clean up & Assert. */
-		remove_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
 		$this->assertSame( array( $question_id => base64_encode( 'Answer' ) ), get_transient( 'sensei_answers_' . $user_id . '_' . $cache_lesson_id ), 'The answers cache should be keyed by the filtered lesson ID.' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the cache's stored format.
 	}
 
@@ -1219,7 +1219,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$answers = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
 
 		/* Clean up & Assert. */
-		remove_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
 		$this->assertSame( array( $question_id => 'Answer' ), $answers, 'The answers cache should be read from the filtered lesson ID key.' );
 	}
 
@@ -1236,7 +1236,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei()->quiz->save_user_answers_feedback( array( $question_id => 'Feedback' ), $lesson_id, $user_id );
 
 		/* Clean up & Assert. */
-		remove_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
 		$this->assertSame( array( $question_id => base64_encode( 'Feedback' ) ), get_transient( 'sensei_answers_feedback_' . $user_id . '_' . $cache_lesson_id ), 'The feedback cache should be keyed by the filtered lesson ID.' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the cache's stored format.
 	}
 
@@ -1255,7 +1255,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$feedback = Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id );
 
 		/* Clean up & Assert. */
-		remove_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
 		$this->assertSame( array( $question_id => 'Feedback' ), $feedback, 'The feedback cache should be read from the filtered lesson ID key.' );
 	}
 
@@ -1284,7 +1284,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			$received->lesson_id = $filtered_lesson_id;
 			return $cache_lesson_id;
 		};
-		add_filter( 'sensei_quiz_user_data_cache_lesson_id', $cache_lesson_filter );
+		add_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
 
 		return array( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter, $received );
 	}

@@ -33,7 +33,7 @@ class Lesson_Progress {
 		add_filter( 'sensei_lesson_progress_has_lesson_id', array( $this, 'translate_lesson_id' ) );
 		add_filter( 'sensei_lesson_progress_delete_for_lesson_lesson_id', array( $this, 'translate_lesson_id' ) );
 		add_filter( 'sensei_lesson_progress_find_lesson_id', array( $this, 'translate_lesson_id' ) );
-		add_filter( 'sensei_quiz_user_data_cache_lesson_id', array( $this, 'translate_lesson_id' ) );
+		add_filter( 'sensei_quiz_cache_key_lesson_id', array( $this, 'translate_lesson_id' ) );
 	}
 
 	/**
