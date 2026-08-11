@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_analysis_overview_columns_sortable - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_question_description_question_id - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_analysis_overview_columns_sortable</h1>
+	<h1 class="page-title">Filter: sensei_question_description_question_id</h1>
 	
 
 	
@@ -43,14 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_analysis_overview_columns_sortable">apply_filters( 'sensei_analysis_overview_columns_sortable', <span class="signature">$columns, $this )</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id="sensei_question_description_question_id">apply_filters( 'sensei_question_description_question_id', <span class="signature">$question_id )</span><span class="type-signature"> &rarr; {int}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter the sortable columns that are going to be used in the Analysis Overview list table.</p>
+    <p>Filter the question whose description is rendered.</p>
 </div>
 
 
@@ -84,13 +84,13 @@
 
         <tr>
             
-                <td class="name"><code>$columns</code></td>
+                <td class="name"><code>$question_id</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">int</span>
 
 
             
@@ -100,30 +100,7 @@
 
             
 
-            <td class="description last"><p>Array of sortable columns for the report table.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>$this</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Sensei_Analysis_Overview_List_Table</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Current instance of the list table.</p></td>
+            <td class="description last"><p>Question ID.</p></td>
         </tr>
 
     
@@ -139,6 +116,9 @@
 
     
 
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -164,7 +144,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-analysis-overview-list-table.php.html">includes/class-sensei-analysis-overview-list-table.php</a>, <a href="includes_class-sensei-analysis-overview-list-table.php.html#line258">line 258</a>
+        <a href="includes_class-sensei-question.php.html">includes/class-sensei-question.php</a>, <a href="includes_class-sensei-question.php.html#line710">line 710</a>
     </li></ul></dd>
     
 
@@ -191,7 +171,7 @@
 
         
 <div class="param-desc">
-    <p>Filtered array of sortable columns for the report table.</p>
+    <p>Question ID to render the description from.</p>
 </div>
 
 
@@ -202,598 +182,7 @@
     </dt>
     <dd>
         
-<span class="param-type">array</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-    
-    </div>
-
-    
-</article>
-
-</section>
-
-
-
-
-
-
-
-<section>
-
-<header>
-    <h2></h2>
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    <h4 class="name" id="sensei_analysis_overview_columns_sortable">apply_filters( 'sensei_analysis_overview_columns_sortable', <span class="signature">$columns, $this )</span><span class="type-signature"> &rarr; {array}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Filter the sortable columns for the courses overview report.</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>$columns</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The sortable columns for the courses overview report.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>$this</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Sensei_Reports_Overview_List_Table_Courses</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The current instance of the class.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_reports_overview_list-table_class-sensei-reports-overview-list-table-courses.php.html">includes/reports/overview/list-table/class-sensei-reports-overview-list-table-courses.php</a>, <a href="includes_reports_overview_list-table_class-sensei-reports-overview-list-table-courses.php.html#line173">line 173</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>The filtered sortable columns.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">array</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-    
-    </div>
-
-    
-</article>
-
-</section>
-
-
-
-
-
-
-
-<section>
-
-<header>
-    <h2></h2>
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    <h4 class="name" id="sensei_analysis_overview_columns_sortable">apply_filters( 'sensei_analysis_overview_columns_sortable', <span class="signature">$columns, $this )</span><span class="type-signature"> &rarr; {array}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Filter the sortable columns for the lesson report.</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>$columns</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The array of sortable columns to use with the table.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>$this</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Sensei_Reports_Overview_List_Table_Lessons</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The current instance of the class.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_reports_overview_list-table_class-sensei-reports-overview-list-table-lessons.php.html">includes/reports/overview/list-table/class-sensei-reports-overview-list-table-lessons.php</a>, <a href="includes_reports_overview_list-table_class-sensei-reports-overview-list-table-lessons.php.html#line155">line 155</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>The array of sortable columns to use with the table.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">array</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-    
-    </div>
-
-    
-</article>
-
-</section>
-
-
-
-
-
-
-
-<section>
-
-<header>
-    <h2></h2>
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    <h4 class="name" id="sensei_analysis_overview_columns_sortable">apply_filters( 'sensei_analysis_overview_columns_sortable', <span class="signature">$columns, $this )</span><span class="type-signature"> &rarr; {array}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Filter the sortable columns that are going to be used in the table.</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>$columns</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The array of columns to use with the table.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>$this</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Sensei_Reports_Overview_List_Table_Students</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The current instance of the class.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_reports_overview_list-table_class-sensei-reports-overview-list-table-students.php.html">includes/reports/overview/list-table/class-sensei-reports-overview-list-table-students.php</a>, <a href="includes_reports_overview_list-table_class-sensei-reports-overview-list-table-students.php.html#line145">line 145</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Filtered columns.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">array</span>
+<span class="param-type">int</span>
 
 
     </dd>
