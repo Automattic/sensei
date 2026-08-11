@@ -59,10 +59,6 @@ class Sensei_REST_API_Internal {
 			new Sensei_REST_API_Course_Utils_Controller( $this->namespace ),
 		];
 
-		if ( Sensei()->tour ) {
-			$this->controllers[] = new Sensei\Admin\Tour\Sensei_REST_API_Tour_Controller( $this->namespace, Sensei()->tour );
-		}
-
 		foreach ( $this->controllers as $controller ) {
 			$controller->register_routes();
 		}
