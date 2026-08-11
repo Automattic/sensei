@@ -5,6 +5,7 @@
  * @package sensei
  */
 
+use Sensei\Admin\Tour\Sensei_Tour;
 use Sensei\Clock\Clock;
 use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
@@ -430,6 +431,15 @@ class Sensei_Main {
 	public $clock;
 
 	/**
+	 * Sensei Tour compatibility API.
+	 *
+	 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+	 *
+	 * @var Sensei_Tour|null
+	 */
+	public $tour;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @since  1.0.0
@@ -818,6 +828,12 @@ class Sensei_Main {
 		$email_customization_enabled = $this->feature_flags->is_enabled( 'email_customization' );
 		if ( $email_customization_enabled ) {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
+		}
+
+		$this->tour = null;
+		if ( $this->feature_flags->is_enabled( 'onboarding_tour' ) ) {
+			$this->tour = Sensei_Tour::instance();
+			$this->tour->init();
 		}
 
 		// MailPoet integration.

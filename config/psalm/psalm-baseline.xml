@@ -310,6 +310,11 @@
       <code>$final_template_path</code>
     </PossiblyNullArgument>
   </file>
+  <file src="includes/admin/class-sensei-tour.php">
+    <DeprecatedMethod occurrences="1">
+      <code>get_tour_completion_status</code>
+    </DeprecatedMethod>
+  </file>
   <file src="includes/admin/class-sensei-tools.php">
     <DocblockTypeContradiction occurrences="2">
       <code>! self::$instance</code>
@@ -3040,10 +3045,21 @@
     </MissingPropertyType>
   </file>
   <file src="includes/class-sensei.php">
-    <DeprecatedMethod occurrences="2">
+    <DeprecatedClass occurrences="2">
+      <code>Sensei_Tour::instance()</code>
+      <code>Sensei_Tour|null</code>
+    </DeprecatedClass>
+    <DeprecatedMethod occurrences="4">
+      <code>Sensei_Tour::instance()</code>
       <code>course_exists</code>
+      <code>init</code>
       <code>register_plugin_version</code>
     </DeprecatedMethod>
+    <DeprecatedProperty occurrences="3">
+      <code>$this-&gt;tour</code>
+      <code>$this-&gt;tour</code>
+      <code>$this-&gt;tour</code>
+    </DeprecatedProperty>
     <DocblockTypeContradiction occurrences="2">
       <code>empty( $comment_counts )</code>
       <code>is_null( self::$_instance )</code>
@@ -5128,6 +5144,16 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-internal.php">
+    <DeprecatedClass occurrences="1">
+      <code>new Sensei\Admin\Tour\Sensei_REST_API_Tour_Controller( $this-&gt;namespace, Sensei()-&gt;tour )</code>
+    </DeprecatedClass>
+    <DeprecatedMethod occurrences="1">
+      <code>register_routes</code>
+    </DeprecatedMethod>
+    <DeprecatedProperty occurrences="2">
+      <code>Sensei()-&gt;tour</code>
+      <code>Sensei()-&gt;tour</code>
+    </DeprecatedProperty>
     <PossiblyNullArgument occurrences="1">
       <code>Sensei()-&gt;tour</code>
     </PossiblyNullArgument>
@@ -5377,6 +5403,18 @@
     </PossiblyInvalidPropertyFetch>
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Theme_Controller</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="includes/rest-api/class-sensei-rest-api-tour-controller.php">
+    <DeprecatedClass occurrences="2">
+      <code>Sensei_Tour</code>
+      <code>Sensei_Tour</code>
+    </DeprecatedClass>
+    <DeprecatedMethod occurrences="1">
+      <code>set_tour_completion_status</code>
+    </DeprecatedMethod>
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>Sensei_REST_API_Tour_Controller</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/sensei-functions.php">

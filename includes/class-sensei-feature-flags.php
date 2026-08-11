@@ -38,6 +38,7 @@ class Sensei_Feature_Flags {
 			'course_outline_ai'          => true,
 			'tutor_ai'                   => true,
 			'experimental_features_ui'   => true,
+			'onboarding_tour'            => false,
 		],
 		'development' => [
 			'enrolment_provider_tooltip' => false,
@@ -45,6 +46,7 @@ class Sensei_Feature_Flags {
 			'email_customization'        => true,
 			'course_outline_ai'          => true,
 			'experimental_features_ui'   => true,
+			'onboarding_tour'            => false,
 		],
 	];
 
@@ -128,6 +130,10 @@ class Sensei_Feature_Flags {
 		}
 
 		$full_feature_name = 'sensei_feature_flag_' . $feature;
+		if ( 'onboarding_tour' === $feature && has_filter( $full_feature_name ) ) {
+			_deprecated_hook( $full_feature_name, '$$next-version$$' );
+		}
+
 		if ( ! isset( $this->feature_flags[ $feature ] ) ) {
 			$feature_define                  = strtoupper( $full_feature_name );
 			$value                           = defined( $feature_define ) ? (bool) constant( $feature_define ) : $default_feature_flags[ $feature ];
