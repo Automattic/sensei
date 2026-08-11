@@ -131,6 +131,7 @@ class Sensei_Feature_Flags {
 
 		$full_feature_name = 'sensei_feature_flag_' . $feature;
 		if ( 'onboarding_tour' === $feature && has_filter( $full_feature_name ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_hook handles its own output.
 			_deprecated_hook( $full_feature_name, '$$next-version$$' );
 		}
 
