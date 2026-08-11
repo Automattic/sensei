@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Source: includes/internal/emails/class-email-customization.php - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_quiz_cache_key_lesson_id - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,255 +21,186 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Source: includes/internal/emails/class-email-customization.php</h1>
+	<h1 class="page-title">Filter: sensei_quiz_cache_key_lesson_id</h1>
 	
 
 	
+
+
+
+
+<section>
+
+<header>
+    <h2></h2>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="sensei_quiz_cache_key_lesson_id">apply_filters( 'sensei_quiz_cache_key_lesson_id', <span class="signature">$lesson_id )</span><span class="type-signature"> &rarr; {int}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Filter the lesson ID that keys a user's cached quiz data.</p>
+<p>The cached answers, grades, and feedback build their keys through
+this filter, on reads, writes, and invalidations.</p>
+</div>
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>$lesson_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Lesson ID.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="includes_class-sensei-quiz.php.html">includes/class-sensei-quiz.php</a>, <a href="includes_class-sensei-quiz.php.html#line811">line 811</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Lesson ID to key the cache by.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">int</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>&lt;?php
-/**
- * File containing the Email_Customization class.
- *
- * @package sensei
- */
+    </div>
 
-namespace Sensei\Internal\Emails;
+    
+</article>
 
-use Sensei_Assets;
-use Sensei_Settings;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
-/**
- * Class Email_Customization
- *
- * @internal
- *
- * @since 4.12.0
- */
-class Email_Customization {
-
-	/**
-	 * Class instance.
-	 *
-	 * @var self
-	 */
-	private static $instance;
-
-	/**
-	 * Email post type.
-	 *
-	 * @var Email_Post_Type
-	 */
-	private $post_type;
-
-	/**
-	 * Email blocks configurations.
-	 *
-	 * @var Email_Blocks
-	 */
-	private $blocks;
-
-	/**
-	 * Settings_Menu instance.
-	 *
-	 * @var Settings_Menu
-	 */
-	private $settings_menu;
-
-	/**
-	 * Email_Settings_Tab instance.
-	 *
-	 * @var Email_Settings_Tab
-	 */
-	private $settings_tab;
-
-	/**
-	 * Email_Sender instance.
-	 *
-	 * @var Email_Sender
-	 */
-	private $email_sender;
-
-	/**
-	 * Email_Generator instance.
-	 *
-	 * @var Email_Generator
-	 */
-	private $email_generator;
-
-	/**
-	 * Email_List_Table_Actions instance.
-	 *
-	 * @var Email_List_Table_Actions
-	 */
-	private $list_table_actions;
-
-	/**
-	 * Recreate_Emails_Tool instance.
-	 *
-	 * @var Recreate_Emails_Tool
-	 */
-	private $recreate_emails_tool;
-
-	/**
-	 * Email_Patterns instance.
-	 *
-	 * @var Email_Patterns
-	 */
-	public $patterns;
-
-	/**
-	 * Email_Preview instance.
-	 *
-	 * @var Email_Preview
-	 */
-	private $preview;
-
-	/**
-	 * Email_Repository instance.
-	 *
-	 * @var Email_Repository
-	 */
-	public $repository;
-
-	/**
-	 * Email_User_Profile_Settings instance.
-	 *
-	 * @var Email_User_Profile_Settings
-	 */
-	public $profile_settings;
-
-	/**
-	 * Email_Subscription instance.
-	 *
-	 * @var Email_Subscription
-	 */
-	public $subscription;
-
-	/**
-	 * Email_Repository instance.
-	 *
-	 * @var Email_Page_Template
-	 */
-	private $page_template;
-
-	/**
-	 * Email_Customization constructor.
-	 *
-	 * Prevents other instances from being created outside of `self::instance()`.
-	 *
-	 * @param Sensei_Settings                      $settings Sensei_Settings instance.
-	 * @param Sensei_Assets                        $assets Sensei_Assets instance.
-	 * @param Lesson_Progress_Repository_Interface $lesson_progress_repository Lesson_Progress_Repository_Interface instance.
-	 */
-	private function __construct( Sensei_Settings $settings, Sensei_Assets $assets, Lesson_Progress_Repository_Interface $lesson_progress_repository ) {
-		$this->repository           = new Email_Repository();
-		$template_repository        = new Email_Page_Template_Repository();
-		$this->patterns             = new Email_Patterns();
-		$this->post_type            = Email_Post_Type::instance();
-		$this->settings_menu        = new Settings_Menu();
-		$this->settings_tab         = new Email_Settings_Tab( $settings );
-		$this->blocks               = new Email_Blocks();
-		$this->email_sender         = new Email_Sender( $this->repository, $settings, $this->patterns );
-		$this->email_generator      = new Email_Generator( $this->repository, $lesson_progress_repository );
-		$this->list_table_actions   = new Email_List_Table_Actions();
-		$this->preview              = new Email_Preview( $this->email_sender, $assets );
-		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $this->repository, $template_repository );
-		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
-		$this->page_template        = new Email_Page_Template( $template_repository );
-		$this->subscription         = new Email_Subscription();
-		$this->profile_settings     = new Email_User_Profile_Settings( $this->repository, $this->subscription );
-	}
-
-	/**
-	 * Get the singleton instance.
-	 *
-	 * @internal
-	 *
-	 * @param Sensei_Settings|null                      $settings Sensei_Settings instance.
-	 * @param Sensei_Assets|null                        $assets Sensei_Assets instance.
-	 * @param Lesson_Progress_Repository_Interface|null $lesson_progress_repository Lesson_Progress_Repository_Interface instance.
-	 *
-	 * @return self
-	 */
-	public static function instance(
-		?Sensei_Settings $settings = null,
-		?Sensei_Assets $assets = null,
-		?Lesson_Progress_Repository_Interface $lesson_progress_repository = null
-	): self {
-		if ( ! self::$instance ) {
-			self::$instance = new self(
-				$settings ?? Sensei()->settings,
-				$assets ?? Sensei()->assets,
-				$lesson_progress_repository ?? Sensei()->lesson_progress_repository
-			);
-		}
-
-		return self::$instance;
-	}
-
-	/**
-	 * Initialize the class and add hooks.
-	 *
-	 * @internal
-	 */
-	public function init(): void {
-		$this->post_type->init();
-		$this->settings_menu->init();
-		$this->settings_tab->init();
-		$this->blocks->init();
-		$this->email_sender->init();
-		$this->email_generator->init();
-		$this->list_table_actions->init();
-		$this->recreate_emails_tool->init();
-		$this->patterns->init();
-		$this->preview->init();
-		$this->page_template->init();
-		$this->subscription->init();
-		$this->profile_settings->init();
-
-		add_action( 'init', [ $this, 'disable_legacy_emails' ] );
-	}
-
-	/**
-	 * Disable legacy emails.
-	 *
-	 * @access private
-	 */
-	public function disable_legacy_emails() {
-		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'teacher_completed_course' ] );
-		remove_action( 'sensei_user_course_start', [ Sensei()->emails, 'teacher_started_course' ] );
-		remove_action( 'sensei_user_quiz_submitted', [ Sensei()->emails, 'teacher_quiz_submitted' ] );
-		remove_action( 'sensei_course_status_updated', [ Sensei()->emails, 'learner_completed_course' ] );
-		remove_action( 'sensei_course_new_teacher_assigned', [ Sensei()->teacher, 'teacher_course_assigned_notification' ] );
-		remove_action( 'sensei_user_lesson_end', [ Sensei()->emails, 'teacher_completed_lesson' ] );
-		remove_action( 'sensei_user_quiz_grade', [ Sensei()->emails, 'learner_graded_quiz' ] );
-		remove_action( 'sensei_private_message_reply', [ Sensei()->emails, 'new_message_reply' ] );
-		remove_action( 'sensei_new_private_message', [ Sensei()->emails, 'teacher_new_message' ] );
-		remove_action( 'transition_post_status', [ Sensei()->teacher, 'notify_admin_teacher_course_creation' ] );
-
-		/**
-		 * Action done after disabling legacy emails.
-		 *
-		 * @since 4.12.0
-		 *
-		 * @hook sensei_disable_legacy_emails
-		 */
-		do_action( 'sensei_disable_legacy_emails' );
-	}
-}
-</code></pre>
-        </article>
-    </section>
+</section>
 
 
 
