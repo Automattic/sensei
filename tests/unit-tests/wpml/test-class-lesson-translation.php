@@ -292,7 +292,9 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 			array( '2024-01-11 10:00:00', '2024-01-12 10:00:00' ),
 			true
 		);
-		// Lessons that only exist in the translated course, created before the translated counterparts.
+		// Lessons that only exist in the translated course. Their dates are
+		// earlier than the translated counterparts', so without the sync the
+		// date fallback would list them first.
 		$orphan_lesson_ids     = $this->create_course_lessons(
 			$translated_course_id,
 			array( '2024-02-11 10:00:00', '2024-02-12 10:00:00' ),

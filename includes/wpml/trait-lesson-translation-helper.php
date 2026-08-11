@@ -103,7 +103,7 @@ trait Lesson_Translation_Helper {
 		}
 
 		$new_course_id = $this->get_object_id( $master_course_id, 'course', false, $details['language_code'] );
-		if ( ! $new_course_id ) {
+		if ( ! $new_course_id || $new_course_id === $master_course_id ) {
 			return;
 		}
 
