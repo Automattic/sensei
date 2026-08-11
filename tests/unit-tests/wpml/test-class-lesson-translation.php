@@ -485,11 +485,12 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 
 		add_filter(
 			'wpml_object_id',
-			function ( $object_id ) use ( $map ) {
-				return $map[ $object_id ] ?? 0;
+			function ( $object_id, $element_type ) use ( $map ) {
+				$counterpart_id = $map[ $object_id ] ?? 0;
+				return $counterpart_id && get_post_type( $counterpart_id ) === $element_type ? $counterpart_id : 0;
 			},
 			10,
-			1
+			2
 		);
 	}
 
