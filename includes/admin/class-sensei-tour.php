@@ -69,7 +69,19 @@ class Sensei_Tour {
 	 * @param string $hook The current admin page.
 	 */
 	public function enqueue_admin_scripts( $hook ) {
+		$post_type    = get_post_type();
 		$tour_loaders = array();
+
+		if (
+			in_array( $post_type, array( 'course', 'lesson' ), true ) &&
+			in_array( $hook, array( 'post-new.php', 'post.php' ), true )
+		) {
+			$handle                  = "sensei-$post_type-tour";
+			$tour_loaders[ $handle ] = array(
+				'minimum_install_version' => '4.22.0',
+				'callback'                => $this->get_course_lesson_tour_enqueue_callback( $post_type, $handle ),
+			);
+		}
 
 		if ( has_filter( 'sensei_tour_loaders' ) ) {
 			_deprecated_hook( 'sensei_tour_loaders', '$$next-version$$' );
@@ -89,9 +101,11 @@ class Sensei_Tour {
 		 */
 		$tour_loaders = apply_filters( 'sensei_tour_loaders', $tour_loaders );
 
+		$incomplete_tours = array();
+
 		foreach ( $tour_loaders as $handle => $tour_loader ) {
 			$install_version = \Sensei()->install_version ?? '';
-			$install_version = $install_version ? $install_version : '';
+			$install_version = $install_version ? $install_version : ''; // In case the value is false, null coalescing won't work.
 			$minimum_version = $tour_loader['minimum_install_version'] ?? false;
 
 			if ( $minimum_version && ! version_compare( $install_version, $minimum_version, '>=' ) ) {
@@ -115,9 +129,13 @@ class Sensei_Tour {
 			 */
 			$is_tour_complete = apply_filters( 'sensei_tour_is_complete', $this->get_tour_completion_status( $handle, get_current_user_id() ), $handle );
 
-			if ( ! $is_tour_complete && is_callable( $tour_loader['callback'] ?? null ) ) {
-				call_user_func( $tour_loader['callback'], $hook );
+			if ( ! $is_tour_complete ) {
+				$incomplete_tours[ $handle ] = $tour_loader;
 			}
+		}
+
+		foreach ( $incomplete_tours as $tour_loader ) {
+			is_callable( $tour_loader['callback'] ) && call_user_func( $tour_loader['callback'], $hook );
 		}
 	}
 

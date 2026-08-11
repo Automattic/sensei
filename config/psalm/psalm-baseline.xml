@@ -311,7 +311,8 @@
     </PossiblyNullArgument>
   </file>
   <file src="includes/admin/class-sensei-tour.php">
-    <DeprecatedMethod occurrences="1">
+    <DeprecatedMethod occurrences="2">
+      <code>get_course_lesson_tour_enqueue_callback</code>
       <code>get_tour_completion_status</code>
     </DeprecatedMethod>
   </file>
