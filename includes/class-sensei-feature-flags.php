@@ -130,15 +130,15 @@ class Sensei_Feature_Flags {
 		}
 
 		$full_feature_name = 'sensei_feature_flag_' . $feature;
-		if ( 'onboarding_tour' === $feature && has_filter( $full_feature_name ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_hook handles its own output.
-			_deprecated_hook( $full_feature_name, '$$next-version$$' );
-		}
-
 		if ( ! isset( $this->feature_flags[ $feature ] ) ) {
 			$feature_define                  = strtoupper( $full_feature_name );
 			$value                           = defined( $feature_define ) ? (bool) constant( $feature_define ) : $default_feature_flags[ $feature ];
 			$this->feature_flags[ $feature ] = $value;
+		}
+
+		if ( 'onboarding_tour' === $feature ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Feature flag hooks use the prefixed name constructed above.
+			return (bool) apply_filters_deprecated( $full_feature_name, array( $this->feature_flags[ $feature ] ), '$$next-version$$' );
 		}
 
 		return (bool) apply_filters( $full_feature_name, $this->feature_flags[ $feature ] );

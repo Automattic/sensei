@@ -83,10 +83,6 @@ class Sensei_Tour {
 			);
 		}
 
-		if ( has_filter( 'sensei_tour_loaders' ) ) {
-			_deprecated_hook( 'sensei_tour_loaders', '$$next-version$$' );
-		}
-
 		/**
 		 * Filters the tour loaders.
 		 *
@@ -99,7 +95,7 @@ class Sensei_Tour {
 		 *
 		 * @return {array} Filtered tour loaders.
 		 */
-		$tour_loaders = apply_filters( 'sensei_tour_loaders', $tour_loaders );
+		$tour_loaders = apply_filters_deprecated( 'sensei_tour_loaders', array( $tour_loaders ), '$$next-version$$' );
 
 		$incomplete_tours = array();
 
@@ -111,8 +107,6 @@ class Sensei_Tour {
 			if ( $minimum_version && ! version_compare( $install_version, $minimum_version, '>=' ) ) {
 				continue;
 			}
-
-			_deprecated_hook( 'sensei_tour_is_complete', '$$next-version$$' );
 
 			/**
 			 * Filters the tour completion status.
@@ -127,7 +121,11 @@ class Sensei_Tour {
 			 *
 			 * @return {bool} Filtered tour completion status.
 			 */
-			$is_tour_complete = apply_filters( 'sensei_tour_is_complete', $this->get_tour_completion_status( $handle, get_current_user_id() ), $handle );
+			$is_tour_complete = apply_filters_deprecated(
+				'sensei_tour_is_complete',
+				array( $this->get_tour_completion_status( $handle, get_current_user_id() ), $handle ),
+				'$$next-version$$'
+			);
 
 			if ( ! $is_tour_complete ) {
 				$incomplete_tours[ $handle ] = $tour_loader;
