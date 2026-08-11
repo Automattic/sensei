@@ -8,6 +8,29 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "No Changelog"
+    ignore:
+      - dependency-name: "@wordpress/api-fetch"
+      - dependency-name: "@wordpress/base-styles"
+      - dependency-name: "@wordpress/block-editor"
+      - dependency-name: "@wordpress/blocks"
+      - dependency-name: "@wordpress/components"
+      - dependency-name: "@wordpress/compose"
+      - dependency-name: "@wordpress/core-data"
+      - dependency-name: "@wordpress/data"
+      - dependency-name: "@wordpress/data-controls"
+      - dependency-name: "@wordpress/dom-ready"
+      - dependency-name: "@wordpress/edit-post"
+      - dependency-name: "@wordpress/editor"
+      - dependency-name: "@wordpress/element"
+      - dependency-name: "@wordpress/escape-html"
+      - dependency-name: "@wordpress/hooks"
+      - dependency-name: "@wordpress/html-entities"
+      - dependency-name: "@wordpress/i18n"
+      - dependency-name: "@wordpress/icons"
+      - dependency-name: "@wordpress/keycodes"
+      - dependency-name: "@wordpress/plugins"
+      - dependency-name: "@wordpress/token-list"
+      - dependency-name: "@wordpress/url"
     groups:
       wordpress-packages:
         patterns:
