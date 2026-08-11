@@ -77,6 +77,10 @@ class Course_Translation {
 
 			$translations = $this->get_post_duplicates( $lesson_id );
 			foreach ( $translations as $language_code => $translated_lesson_id ) {
+				if ( empty( $this->get_element_language_details( (int) $translated_lesson_id, 'lesson' ) ) ) {
+					continue;
+				}
+
 				$this->update_lesson_course( (int) $translated_lesson_id, $new_course_id );
 				$this->set_module_taxonomies( (int) $translated_lesson_id, $lesson_id, array( 'language_code' => $language_code ) );
 				$duplicate_languages[ $language_code ] = true;
