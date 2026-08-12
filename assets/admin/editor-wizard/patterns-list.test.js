@@ -17,7 +17,11 @@ import { store as editorStore } from '@wordpress/editor';
  */
 import PatternsList from './patterns-list';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 jest.mock( '@wordpress/block-editor', () => ( {
 	...jest.requireActual( '@wordpress/block-editor' ),
 	BlockPreview: () => null,

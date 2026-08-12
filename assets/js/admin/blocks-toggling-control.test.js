@@ -3,10 +3,12 @@
  */
 import { hasSomeBlocks } from './blocks-toggling-control';
 
-jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn( () => ( {} ) ),
-	select: jest.fn( () => ( {} ) ),
-} ) );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../tests/mocks/wordpress-data' )( {
+		dispatch: jest.fn( () => new Proxy( {}, { get: () => jest.fn() } ) ),
+		select: jest.fn( () => new Proxy( {}, { get: () => jest.fn() } ) ),
+	} )
+);
 
 describe( 'hasSomeBlocks', () => {
 	it( 'Should find a matching nested block', () => {

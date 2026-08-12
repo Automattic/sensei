@@ -36,7 +36,12 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	PanelColorSettings: () => null,
 } ) );
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+		useDispatch: jest.fn(),
+	} )
+);
 
 describe( '<QuizSettings />', () => {
 	afterEach( () => {
