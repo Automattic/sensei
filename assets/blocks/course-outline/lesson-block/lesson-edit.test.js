@@ -14,7 +14,12 @@ import { createBlock } from '@wordpress/blocks';
  */
 import { LessonEdit } from './lesson-edit';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useDispatch: jest.fn(),
+		select: jest.fn(),
+	} )
+);
 
 jest.mock( '@wordpress/blocks' );
 jest.mock( '../../../shared/blocks/settings', () => ( {

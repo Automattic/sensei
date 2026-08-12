@@ -13,7 +13,11 @@ import { useSelect } from '@wordpress/data';
  */
 import useSelectWithDebounce from './use-select-with-debounce';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 
 describe( 'useSelectWithDebounce', () => {
 	it( 'Should change the deps to call useSelect after timer only', () => {

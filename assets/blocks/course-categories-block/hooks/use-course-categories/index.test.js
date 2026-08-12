@@ -14,7 +14,11 @@ import { useEntityProp } from '@wordpress/core-data';
 import useCourseCategories from '.';
 import { waitFor } from '@testing-library/dom';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 jest.mock( '@wordpress/core-data' );
 
 describe( 'user-course-categories', () => {

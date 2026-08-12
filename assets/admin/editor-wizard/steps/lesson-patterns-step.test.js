@@ -17,7 +17,11 @@ import { useSelect } from '@wordpress/data';
 import LessonPatternsStep from './lesson-patterns-step';
 import PatternsStep from './patterns-step';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 jest.mock( './patterns-step' );
 
 const mockFunction = jest.fn();
