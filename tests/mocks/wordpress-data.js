@@ -18,6 +18,8 @@ module.exports = ( mocks = {} ) => {
 
 	return new Proxy( actual, {
 		get: ( target, prop ) =>
-			prop in mocks ? mocks[ prop ] : target[ prop ],
+			Object.prototype.hasOwnProperty.call( mocks, prop )
+				? mocks[ prop ]
+				: target[ prop ],
 	} );
 };
