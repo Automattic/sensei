@@ -21,7 +21,12 @@ import {
 	useWizardOpenState,
 } from './helpers';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../tests/mocks/wordpress-data' )( {
+		useDispatch: jest.fn(),
+		useSelect: jest.fn(),
+	} )
+);
 jest.mock( '@wordpress/blocks', () => ( {
 	...jest.requireActual( '@wordpress/blocks' ),
 	parse: jest.fn(),
