@@ -87,7 +87,7 @@
     "jest-environment-jsdom": "29.7.0",
     "jest-when": "3.7.0",
     "jsdoc": "3.6.7",
-    "lint-staged": "10.2.11",
+    "lint-staged": "17.3.0",
     "mkdirp": "0.5.5",
     "nock": "13.2.4",
     "postcss-color-function": "4.1.0",
