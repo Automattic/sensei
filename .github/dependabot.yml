@@ -8,6 +8,8 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "No Changelog"
+    # These are updated manually, as a set, when the minimum supported
+    # WordPress version changes.
     ignore:
       - dependency-name: "@wordpress/api-fetch"
       - dependency-name: "@wordpress/base-styles"
