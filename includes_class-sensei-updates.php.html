@@ -607,7 +607,8 @@ class Sensei_Updates {
 			return isset( $methods[ $name ]['default'] ) ? $methods[ $name ]['default'] : null;
 		}
 
-		throw new BadMethodCallException( sprintf( 'Sensei_Updates::%s method does not exist' ) );
+		// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are not rendered.
+		throw new BadMethodCallException( sprintf( 'Sensei_Updates::%s method does not exist', $name ) );
 	}
 
 	/**
