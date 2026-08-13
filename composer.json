@@ -18,7 +18,7 @@
 		"symfony/polyfill-php80": "1.37.0",
 		"vimeo/psalm": "5.26.1",
 		"wp-coding-standards/wpcs": "3.4.1",
-		"yoast/phpunit-polyfills": "2.0.0"
+		"yoast/phpunit-polyfills": "4.0.0"
 	},
 	"minimum-stability": "dev",
 	"prefer-stable": true,
