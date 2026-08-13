@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0555a1eb487f99adea9535cb31072725",
+    "content-hash": "6c2a32718286f60437c225c97346892c",
     "packages": [
         {
             "name": "woocommerce/action-scheduler",
@@ -205,27 +205,27 @@
         },
         {
             "name": "automattic/jetpack-changelogger",
-            "version": "v3.3.5",
+            "version": "v6.0.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Automattic/jetpack-changelogger.git",
-                "reference": "4fd8e4fde85d45d87219aef1ccbd87ea5ad8999e"
+                "reference": "61e1f2af86527a3c9b8f078f2b27a8bad6ae8386"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Automattic/jetpack-changelogger/zipball/4fd8e4fde85d45d87219aef1ccbd87ea5ad8999e",
-                "reference": "4fd8e4fde85d45d87219aef1ccbd87ea5ad8999e",
+                "url": "https://api.github.com/repos/Automattic/jetpack-changelogger/zipball/61e1f2af86527a3c9b8f078f2b27a8bad6ae8386",
+                "reference": "61e1f2af86527a3c9b8f078f2b27a8bad6ae8386",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6",
-                "symfony/console": "^3.4 || ^5.2 || ^6.0",
-                "symfony/process": "^3.4 || ^5.2 || ^6.0",
-                "wikimedia/at-ease": "^1.2 || ^2.0"
+                "composer-runtime-api": "^2.2.0",
+                "php": ">=7.2.5",
+                "symfony/console": "^5.4 || ^6.4 || ^7.1",
+                "symfony/process": "^5.4 || ^6.4 || ^7.1"
             },
             "require-dev": {
-                "wikimedia/testing-access-wrapper": "^1.0 || ^2.0",
-                "yoast/phpunit-polyfills": "1.0.4"
+                "wikimedia/testing-access-wrapper": "^1.0 || ^2.0 || ^3.0 || ^4.0",
+                "yoast/phpunit-polyfills": "^4.0.0"
             },
             "bin": [
                 "bin/changelogger"
@@ -233,15 +233,20 @@
             "type": "project",
             "extra": {
                 "autotagger": true,
-                "branch-alias": {
-                    "dev-trunk": "3.3.x-dev"
-                },
                 "mirror-repo": "Automattic/jetpack-changelogger",
-                "version-constants": {
-                    "::VERSION": "src/Application.php"
+                "branch-alias": {
+                    "dev-trunk": "6.0.x-dev"
                 },
                 "changelogger": {
                     "link-template": "https://github.com/Automattic/jetpack-changelogger/compare/${old}...${new}"
+                },
+                "dependencies": {
+                    "test-only": [
+                        "packages/phpunit-select-config"
+                    ]
+                },
+                "version-constants": {
+                    "::VERSION": "src/Application.php"
                 }
             },
             "autoload": {
@@ -262,9 +267,9 @@
                 "keepachangelog"
             ],
             "support": {
-                "source": "https://github.com/Automattic/jetpack-changelogger/tree/v3.3.5"
+                "source": "https://github.com/Automattic/jetpack-changelogger/tree/v6.0.17"
             },
-            "time": "2023-06-26T19:00:24+00:00"
+            "time": "2026-06-15T12:14:58+00:00"
         },
         {
             "name": "bamarni/composer-bin-plugin",
@@ -5698,61 +5703,6 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.12.1"
             },
             "time": "2025-10-29T15:56:20+00:00"
-        },
-        {
-            "name": "wikimedia/at-ease",
-            "version": "v2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/wikimedia/at-ease.git",
-                "reference": "e8ebaa7bb7c8a8395481a05f6dc4deaceab11c33"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/at-ease/zipball/e8ebaa7bb7c8a8395481a05f6dc4deaceab11c33",
-                "reference": "e8ebaa7bb7c8a8395481a05f6dc4deaceab11c33",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.2.9"
-            },
-            "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "35.0.0",
-                "mediawiki/minus-x": "1.1.1",
-                "ockcyp/covers-validator": "1.3.3",
-                "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0",
-                "phpunit/phpunit": "^8.5"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/Wikimedia/Functions.php"
-                ],
-                "psr-4": {
-                    "Wikimedia\\AtEase\\": "src/Wikimedia/AtEase/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Tim Starling",
-                    "email": "tstarling@wikimedia.org"
-                },
-                {
-                    "name": "MediaWiki developers",
-                    "email": "wikitech-l@lists.wikimedia.org"
-                }
-            ],
-            "description": "Safe replacement to @ for suppressing warnings.",
-            "homepage": "https://www.mediawiki.org/wiki/at-ease",
-            "support": {
-                "source": "https://github.com/wikimedia/at-ease/tree/v2.1.0"
-            },
-            "time": "2021-02-27T15:53:37+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",

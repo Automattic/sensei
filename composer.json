@@ -6,7 +6,7 @@
 	},
 	"require-dev": {
 		"php": "^7.4 || ^8",
-		"automattic/jetpack-changelogger": "3.3.5",
+		"automattic/jetpack-changelogger": "6.0.17",
 		"bamarni/composer-bin-plugin": "1.9.1",
 		"dms/phpunit-arraysubset-asserts": "0.5.0",
 		"humbug/php-scoper": "0.17.0",
