@@ -44,6 +44,17 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that calls to unknown methods include the method name in the exception.
+	 */
+	public function testCall_UnknownMethodGiven_ThrowsExceptionWithMethodName() {
+		$updates = new Sensei_Updates( '4.26.2', false, false );
+
+		$this->expectExceptionMessage( 'Sensei_Updates::unknown_method method does not exist' );
+
+		$updates->unknown_method();
+	}
+
+	/**
 	 * Test to make sure question update fix is enqueued when coming from 3.8.0.
 	 */
 	public function testFixQuestionsEnqueuedWhenComingFrom38() {
