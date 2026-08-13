@@ -66,6 +66,10 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "No Changelog"
+    ignore:
+      - dependency-name: "php-stubs/wordpress-stubs"
+        update-types:
+          - "version-update:semver-major"
     groups:
       composer-development-minor-patch:
         dependency-type: "development"
