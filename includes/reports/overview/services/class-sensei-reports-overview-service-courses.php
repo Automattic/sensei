@@ -5,6 +5,8 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,6 +19,31 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.4.1
  */
 class Sensei_Reports_Overview_Service_Courses {
+
+	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface
+	 */
+	private Progress_Aggregation_Service_Interface $aggregation_service;
+
+	/**
+	 * The grading stats service.
+	 *
+	 * @var Grading_Stats_Service_Interface
+	 */
+	private Grading_Stats_Service_Interface $grading_stats_service;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service The progress aggregation service.
+	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service The grading stats service.
+	 */
+	public function __construct( ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
+		$this->aggregation_service   = $aggregation_service ?? ( new Progress_Query_Service_Factory() )->create_aggregation_service();
+		$this->grading_stats_service = $grading_stats_service ?? ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+	}
 
 	/**
 	 * Get total average progress value for courses.
@@ -121,7 +148,7 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0;
 		}
 
-		return ( new Progress_Query_Service_Factory() )->create_grading_stats_service()->get_courses_average_grade( $course_ids );
+		return $this->grading_stats_service->get_courses_average_grade( $course_ids );
 	}
 
 	/**
@@ -138,9 +165,7 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0;
 		}
 
-		return ( new Progress_Query_Service_Factory() )
-			->create_aggregation_service()
-			->get_courses_average_days_to_completion( $course_ids );
+		return $this->aggregation_service->get_courses_average_days_to_completion( $course_ids );
 	}
 
 
@@ -182,9 +207,7 @@ class Sensei_Reports_Overview_Service_Courses {
 			return array();
 		}
 
-		$counts = ( new Progress_Query_Service_Factory() )
-			->create_aggregation_service()
-			->get_lesson_completion_counts( $lesson_ids );
+		$counts = $this->aggregation_service->get_lesson_completion_counts( $lesson_ids );
 
 		$result = array();
 		foreach ( $counts as $lesson_id => $completion_count ) {
@@ -232,14 +255,12 @@ class Sensei_Reports_Overview_Service_Courses {
 			return array();
 		}
 
-		$by_post = ( new Progress_Query_Service_Factory() )
-			->create_aggregation_service()
-			->count_statuses_by_post(
-				array(
-					'type'     => 'course',
-					'post__in' => $course_ids,
-				)
-			);
+		$by_post = $this->aggregation_service->count_statuses_by_post(
+			array(
+				'type'     => 'course',
+				'post__in' => $course_ids,
+			)
+		);
 
 		$result = array();
 		foreach ( $by_post as $course_id => $statuses ) {
