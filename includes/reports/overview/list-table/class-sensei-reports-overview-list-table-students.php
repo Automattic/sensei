@@ -33,6 +33,13 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	private $course_counts_by_user = array();
 
 	/**
+	 * Per-user grade totals cache for the current page.
+	 *
+	 * @var array<int, array{count:int, sum:float}>
+	 */
+	private $grade_totals_by_user = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
@@ -49,6 +56,9 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		}
 		if ( has_filter( 'sensei_analysis_user_courses_ended' ) ) {
 			_deprecated_hook( 'sensei_analysis_user_courses_ended', '$$next-version$$' );
+		}
+		if ( has_filter( 'sensei_analysis_user_lesson_grades' ) ) {
+			_deprecated_hook( 'sensei_analysis_user_lesson_grades', '$$next-version$$' );
 		}
 	}
 
@@ -83,6 +93,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		);
 
 		$this->course_counts_by_user = array();
+		$this->grade_totals_by_user  = array();
 		if ( empty( $user_ids ) ) {
 			return;
 		}
@@ -103,6 +114,10 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 				'completed' => $statuses['complete'] ?? 0,
 			);
 		}
+
+		$this->grade_totals_by_user = ( new Progress_Query_Service_Factory() )
+			->create_grading_stats_service()
+			->get_grade_totals_by_user( $user_ids );
 	}
 
 	/**
@@ -236,25 +251,13 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$user_courses_started = $counts['started'];
 		$user_courses_ended   = $counts['completed'];
 
-		// Get Quiz Grades.
-		$grade_args = array(
-			'user_id'  => $item->ID,
-			'type'     => 'sensei_lesson_status',
-			'status'   => 'any',
-			'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Filtering graded only.
+		// Get Quiz Grades from the primed per-page cache.
+		$grade_totals       = $this->grade_totals_by_user[ (int) $item->ID ] ?? array(
+			'count' => 0,
+			'sum'   => 0,
 		);
-
-		/**
-		 * Filter user progress query arguments for lessons: find graded lessons.
-		 *
-		 * @hook sensei_analysis_user_lesson_grades
-		 *
-		 * @param {array} $grade_args Array of query arguments for graded user lessons.
-		 * @param {WP_User} $item Current user object.
-		 * @return {array} Filtered array of query arguments for graded user lessons.
-		 */
-		$grade_count        = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), false );
-		$grade_total        = Sensei_Grading::get_user_graded_lessons_sum( $item->ID );
+		$grade_count        = $grade_totals['count'];
+		$grade_total        = $grade_totals['sum'];
 		$user_average_grade = 0;
 
 		if ( $grade_total > 0 && $grade_count > 0 ) {
