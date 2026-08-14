@@ -153,7 +153,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 
 		$user_ids = $this->get_all_item_ids();
 		if ( $user_ids ) {
-			// Get total value for Courses Completed and Courses Started columns in users table.
+			// Header totals for the Completed Courses and Active Courses (started - completed) columns.
 			$counts                  = $this->aggregation_service->count_statuses(
 				array(
 					'type'    => 'course',
