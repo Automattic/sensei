@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 
 /**
@@ -60,20 +62,38 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	private $average_progress_by_course = array();
 
 	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface
+	 */
+	private Progress_Aggregation_Service_Interface $aggregation_service;
+
+	/**
+	 * The grading stats service.
+	 *
+	 * @var Grading_Stats_Service_Interface
+	 */
+	private Grading_Stats_Service_Interface $grading_stats_service;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Sensei_Grading                                  $grading Sensei grading related services.
 	 * @param Sensei_Course                                   $course Sensei course related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
 	 * @param Sensei_Reports_Overview_Service_Courses         $reports_overview_service_courses reports courses service.
+	 * @param Progress_Aggregation_Service_Interface|null     $aggregation_service The progress aggregation service.
+	 * @param Grading_Stats_Service_Interface|null            $grading_stats_service The grading stats service.
 	 */
-	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Courses $reports_overview_service_courses ) {
+	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Courses $reports_overview_service_courses, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'courses', $data_provider );
 
 		$this->grading                          = $grading;
 		$this->course                           = $course;
 		$this->reports_overview_service_courses = $reports_overview_service_courses;
+		$this->aggregation_service              = $aggregation_service ?? ( new Progress_Query_Service_Factory() )->create_aggregation_service();
+		$this->grading_stats_service            = $grading_stats_service ?? ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
 
 		if ( has_filter( 'sensei_analysis_course_percentage' ) ) {
 			_deprecated_hook( 'sensei_analysis_course_percentage', '$$next-version$$' );
@@ -122,18 +142,14 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			return;
 		}
 
-		$this->grade_totals_by_course = ( new Progress_Query_Service_Factory() )
-			->create_grading_stats_service()
-			->get_grade_totals_by_course( $course_ids );
+		$this->grade_totals_by_course = $this->grading_stats_service->get_grade_totals_by_course( $course_ids );
 
-		$completion_counts_by_course = ( new Progress_Query_Service_Factory() )
-			->create_aggregation_service()
-			->count_statuses_by_post(
-				array(
-					'type'     => 'course',
-					'post__in' => $course_ids,
-				)
-			);
+		$completion_counts_by_course = $this->aggregation_service->count_statuses_by_post(
+			array(
+				'type'     => 'course',
+				'post__in' => $course_ids,
+			)
+		);
 
 		foreach ( $completion_counts_by_course as $course_id => $statuses ) {
 			$this->completions_by_course[ (int) $course_id ] = $statuses['complete'] ?? 0;
@@ -155,14 +171,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$all_course_ids   = $this->get_all_item_ids();
 		$total_completion = 0;
 		if ( ! empty( $all_course_ids ) ) {
-			$counts           = ( new Progress_Query_Service_Factory() )
-				->create_aggregation_service()
-				->count_statuses(
-					array(
-						'type'     => 'course',
-						'post__in' => $all_course_ids,
-					)
-				);
+			$counts           = $this->aggregation_service->count_statuses(
+				array(
+					'type'     => 'course',
+					'post__in' => $all_course_ids,
+				)
+			);
 			$total_completion = $counts['complete'] ?? 0;
 		}
 
