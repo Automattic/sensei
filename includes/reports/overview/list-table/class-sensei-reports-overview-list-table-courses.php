@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+
 /**
  * Courses overview list table class.
  *
@@ -67,13 +69,15 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$all_course_ids   = $this->get_all_item_ids();
 		$total_completion = 0;
 		if ( ! empty( $all_course_ids ) ) {
-			$total_completion = Sensei_Utils::sensei_check_for_activity(
-				array(
-					'type'     => 'sensei_course_status',
-					'status'   => 'complete',
-					'post__in' => $all_course_ids,
-				)
-			);
+			$counts           = ( new Progress_Query_Service_Factory() )
+				->create_aggregation_service()
+				->count_statuses(
+					array(
+						'type'     => 'course',
+						'post__in' => $all_course_ids,
+					)
+				);
+			$total_completion = $counts['complete'] ?? 0;
 		}
 
 		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress( $all_course_ids );
@@ -250,7 +254,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 
 		// Output course data.
 		$course_title   = apply_filters( 'the_title', $item->post_title, $item->ID ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
-		$total_enrolled = $this->reports_overview_service_courses->get_total_enrollments( [ $item->ID ] );
+		$total_enrolled = $this->reports_overview_service_courses->get_total_enrollments( array( $item->ID ) );
 
 		if ( ! $this->csv_output ) {
 			$url = add_query_arg(
@@ -379,9 +383,9 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 * @return array
 	 */
 	protected function get_additional_filters(): array {
-		return [
+		return array(
 			'last_activity_date_from' => $this->get_start_date_and_time(),
 			'last_activity_date_to'   => $this->get_end_date_and_time(),
-		];
+		);
 	}
 }

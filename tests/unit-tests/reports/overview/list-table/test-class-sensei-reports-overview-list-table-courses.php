@@ -6,6 +6,7 @@
  * @covers Sensei_Reports_Overview_List_Table_Courses
  */
 class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
 
 	private static $initial_hook_suffix;
 
@@ -53,7 +54,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$course        = $this->createMock( Sensei_Course::class );
 		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
-		$data_provider->method( 'get_items' )->willReturn( [ $course_id ] );
+		$data_provider->method( 'get_items' )->willReturn( array( $course_id ) );
 		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
 		$service->method( 'get_courses_average_grade' )->willReturn( 2 );
 
@@ -70,7 +71,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$actual = $list_table->get_columns();
 
 		/* Assert. */
-		$expected = [
+		$expected = array(
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
 			'enrolled'           => 'Enrolled (0)',
@@ -79,17 +80,24 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
 			'days_to_completion' => 'Days to Completion (0)',
-		];
+		);
 
 		self::assertSame( $expected, $actual );
 	}
 
 	public function testGetColumns_CompletionsFound_ReturnsMatchingArray() {
 		/* Arrange. */
+		if ( self::is_hpps_tables_mode() ) {
+			$this->enable_hpps_tables_repository();
+		}
+
 		$user_id = $this->factory->user->create();
 
 		$course_id = $this->factory->course->create();
-		Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+
+		$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+		$course_progress->complete();
+		Sensei()->course_progress_repository->save( $course_progress );
 
 		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
 		$service->method( 'get_courses_average_grade' )->willReturn( 2 );
@@ -98,7 +106,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$course = $this->createMock( Sensei_Course::class );
 
 		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
-		$data_provider->method( 'get_items' )->willReturn( [ $course_id ] );
+		$data_provider->method( 'get_items' )->willReturn( array( $course_id ) );
 
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
@@ -111,7 +119,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$actual = $list_table->get_columns();
 
 		/* Assert. */
-		$expected = [
+		$expected = array(
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
 			'enrolled'           => 'Enrolled (4)',
@@ -120,9 +128,13 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
 			'days_to_completion' => 'Days to Completion (0)',
-		];
+		);
 
 		self::assertSame( $expected, $actual );
+
+		if ( self::is_hpps_tables_mode() ) {
+			$this->reset_hpps_repository();
+		}
 	}
 
 	public function testGetSortableColumns_WhenCalled_ReturnsMatchingArray() {
@@ -138,10 +150,10 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$actual = $list_table->get_sortable_columns();
 
 		/* Assert. */
-		$expected = [
-			'title'       => [ 'title', false ],
-			'completions' => [ 'count_of_completions', false ],
-		];
+		$expected = array(
+			'title'       => array( 'title', false ),
+			'completions' => array( 'count_of_completions', false ),
+		);
 		self::assertSame( $expected, $actual );
 	}
 

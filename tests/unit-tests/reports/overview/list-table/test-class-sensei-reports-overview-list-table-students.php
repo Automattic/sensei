@@ -6,6 +6,7 @@
  * @covers Sensei_Reports_Overview_List_Table_Students
  */
 class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
 
 	/**
 	 * Factory for setting up testing data.
@@ -34,18 +35,25 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 
 	public function testGetColumns_WithGradingAndCompletions_ReturnsColumnsWithCorrectTotals() {
 		/* Arrange. */
+		if ( self::is_hpps_tables_mode() ) {
+			$this->enable_hpps_tables_repository();
+		}
+
 		$user_id             = $this->factory->user->create();
 		$active_course_id    = $this->factory->course->create();
 		$completed_course_id = $this->factory->course->create();
 
-		Sensei_Utils::update_course_status( $user_id, $active_course_id, 'in-progress' );
-		Sensei_Utils::update_course_status( $user_id, $completed_course_id, 'complete' );
+		Sensei()->course_progress_repository->save( Sensei()->course_progress_repository->create( $active_course_id, $user_id ) );
+
+		$completed_course_progress = Sensei()->course_progress_repository->create( $completed_course_id, $user_id );
+		$completed_course_progress->complete();
+		Sensei()->course_progress_repository->save( $completed_course_progress );
 
 		$student_service = $this->createMock( Sensei_Reports_Overview_Service_Students::class );
 		$student_service->method( 'get_graded_lessons_average_grade' )->willReturn( 50 );
 
 		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
-		$data_provider->method( 'get_items' )->willReturn( [ $user_id ] );
+		$data_provider->method( 'get_items' )->willReturn( array( $user_id ) );
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$data_provider,
 			$student_service
@@ -55,7 +63,7 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		$actual = $list_table->get_columns();
 
 		/* Assert. */
-		$expected = [
+		$expected = array(
 			'title'             => 'Student (1)',
 			'email'             => 'Email',
 			'date_registered'   => 'Date Registered',
@@ -63,9 +71,13 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 			'active_courses'    => 'Active Courses (1)',
 			'completed_courses' => 'Completed Courses (1)',
 			'average_grade'     => 'Average Grade (50%)',
-		];
+		);
 
 		self::assertSame( $expected, $actual );
+
+		if ( self::is_hpps_tables_mode() ) {
+			$this->reset_hpps_repository();
+		}
 	}
 
 	public function testGetSortableColumns_WhenCalled_ReturnsMatchingArray() {
@@ -79,12 +91,12 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		$actual = $list_table->get_sortable_columns();
 
 		/* Assert. */
-		$expected = [
-			'title'           => [ 'display_name', false ],
-			'email'           => [ 'user_email', false ],
-			'date_registered' => [ 'user_registered', false ],
-			'last_activity'   => [ 'last_activity_date', false ],
-		];
+		$expected = array(
+			'title'           => array( 'display_name', false ),
+			'email'           => array( 'user_email', false ),
+			'date_registered' => array( 'user_registered', false ),
+			'last_activity'   => array( 'last_activity_date', false ),
+		);
 		self::assertSame( $expected, $actual );
 	}
 

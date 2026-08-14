@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+
 /**
  * Students overview list table class.
  *
@@ -53,23 +55,17 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 
 		$user_ids = $this->get_all_item_ids();
 		if ( $user_ids ) {
-			// Get total value for Courses Completed column in users table.
-			$total_completed_courses = Sensei_Utils::sensei_check_for_activity(
-				[
-					'user_id' => $user_ids,
-					'type'    => 'sensei_course_status',
-					'status'  => 'complete',
-				]
-			);
-
-			// Get the number of the courses that users have started.
-			$total_courses_started = Sensei_Utils::sensei_check_for_activity(
-				[
-					'user_id' => $user_ids,
-					'type'    => 'sensei_course_status',
-					'status'  => 'any',
-				]
-			);
+			// Get total value for Courses Completed and Courses Started columns in users table.
+			$counts                  = ( new Progress_Query_Service_Factory() )
+				->create_aggregation_service()
+				->count_statuses(
+					array(
+						'type'    => 'course',
+						'user_id' => $user_ids,
+					)
+				);
+			$total_completed_courses = $counts['complete'] ?? 0;
+			$total_courses_started   = array_sum( $counts );
 
 			// Get total average students grade.
 			$total_average_grade = $this->reports_overview_service_students->get_graded_lessons_average_grade( $user_ids );
@@ -123,12 +119,12 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 * @return array The array of columns to use with the table
 	 */
 	public function get_sortable_columns() {
-		$columns = [
+		$columns = array(
 			'title'           => array( 'display_name', false ),
 			'email'           => array( 'user_email', false ),
 			'date_registered' => array( 'user_registered', false ),
 			'last_activity'   => array( 'last_activity_date', false ),
-		];
+		);
 
 		// Backwards compatible filter name, moving forward should have single filter name.
 		/**
@@ -289,10 +285,10 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 * @return array
 	 */
 	protected function get_additional_filters(): array {
-		return [
+		return array(
 			'last_activity_date_from' => $this->get_start_date_and_time(),
 			'last_activity_date_to'   => $this->get_end_date_and_time(),
-		];
+		);
 	}
 
 	/**
