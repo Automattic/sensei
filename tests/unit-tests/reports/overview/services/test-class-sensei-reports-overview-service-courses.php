@@ -6,6 +6,7 @@
  * @covers Sensei_Reports_Overview_Service_Courses
  */
 class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
 
 	private static $initial_hook_suffix;
 
@@ -68,6 +69,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 
 		$service = new Sensei_Reports_Overview_Service_Courses();
 
+		$this->maybe_enable_hpps_tables_repository();
+
 		// Complete lesson 1 and lesson 2 with user_1.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
 		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_1, true );
@@ -82,6 +85,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 			$service->get_total_average_progress( [ $course_id ] ),
 			'Find totals of lessons completed single course.'
 		);
+
+		$this->maybe_reset_hpps_repository();
 	}
 
 	/**
@@ -115,6 +120,9 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id_2 ] ]
 		);
 		$service  = new Sensei_Reports_Overview_Service_Courses();
+
+		$this->maybe_enable_hpps_tables_repository();
+
 		// Complete lesson 1 and lesson 2 with user_1.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
 		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_1, true );
@@ -136,6 +144,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 			$service->get_total_average_progress( [ $course_id_1, $course_id_2 ] ),
 			'Find totals of lessons completed multiple courses.'
 		);
+
+		$this->maybe_reset_hpps_repository();
 	}
 
 
@@ -161,6 +171,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		);
 		$service  = new Sensei_Reports_Overview_Service_Courses();
 
+		$this->maybe_enable_hpps_tables_repository();
+
 		// Enroll student 2 to the course and lessons, but don't complete the lessons.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
 		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_2 );
@@ -171,6 +183,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 			$service->get_total_average_progress( [ $course_id_1 ] ),
 			'Find average progress total is 0 when no lesson is completed'
 		);
+
+		$this->maybe_reset_hpps_repository();
 	}
 
 
@@ -224,6 +238,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		);
 		$service  = new Sensei_Reports_Overview_Service_Courses();
 
+		$this->maybe_enable_hpps_tables_repository();
+
 		// Complete lesson 1 and lesson 2 with user_1.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
 		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_1, true );
@@ -241,8 +257,39 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 			$service->get_total_average_progress( [ $course_id_1, $course_id_2 ] ),
 			'Find totals of lessons completed single course.'
 		);
+
+		$this->maybe_reset_hpps_repository();
 	}
 
+	/**
+	 * Seed a completed course status with fixed start/completion dates, using
+	 * whichever storage backend is active for the current test run so that the
+	 * seeded fixture is readable by the aggregation service under test.
+	 *
+	 * @param int    $course_id    Course ID.
+	 * @param int    $user_id      User ID.
+	 * @param string $started_at   Start date/time string (site-local).
+	 * @param string $completed_at Completion date/time string (site-local).
+	 */
+	private function seed_course_completion_with_dates( int $course_id, int $user_id, string $started_at, string $completed_at ): void {
+		if ( self::is_hpps_tables_mode() ) {
+			$timezone        = wp_timezone();
+			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+			$course_progress->start( new DateTimeImmutable( $started_at, $timezone ) );
+			$course_progress->complete( new DateTimeImmutable( $completed_at, $timezone ) );
+			Sensei()->course_progress_repository->save( $course_progress );
+			return;
+		}
+
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		wp_update_comment(
+			array(
+				'comment_ID'   => $comment_id,
+				'comment_date' => $completed_at,
+			)
+		);
+		update_comment_meta( $comment_id, 'start', $started_at );
+	}
 
 	public function testGetAverageDaysToCompletionWhenOneCourseExistsReturnsMatchingValue() {
 		$user1_id  = $this->factory->user->create();
@@ -250,32 +297,11 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$user3_id  = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
 
-		$comment1_id = Sensei_Utils::update_course_status( $user1_id, $course_id, 'complete' );
-		wp_update_comment(
-			[
-				'comment_ID'   => $comment1_id,
-				'comment_date' => '2022-01-07 00:00:00',
-			]
-		);
-		update_comment_meta( $comment1_id, 'start', '2022-01-01 00:00:01' );
+		$this->maybe_enable_hpps_tables_repository();
 
-		$comment2_id = Sensei_Utils::update_course_status( $user2_id, $course_id, 'complete' );
-		wp_update_comment(
-			[
-				'comment_ID'   => $comment2_id,
-				'comment_date' => '2022-01-10 00:00:00',
-			]
-		);
-		update_comment_meta( $comment2_id, 'start', '2022-01-01 00:00:01' );
-
-		$comment3_id = Sensei_Utils::update_course_status( $user3_id, $course_id, 'complete' );
-		wp_update_comment(
-			[
-				'comment_ID'   => $comment3_id,
-				'comment_date' => '2022-01-30 00:00:00',
-			]
-		);
-		update_comment_meta( $comment3_id, 'start', '2022-01-01 00:00:01' );
+		$this->seed_course_completion_with_dates( $course_id, $user1_id, '2022-01-01 00:00:01', '2022-01-07 00:00:00' );
+		$this->seed_course_completion_with_dates( $course_id, $user2_id, '2022-01-01 00:00:01', '2022-01-10 00:00:00' );
+		$this->seed_course_completion_with_dates( $course_id, $user3_id, '2022-01-01 00:00:01', '2022-01-30 00:00:00' );
 
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 		$actual   = $instance->get_average_days_to_completion( [ $course_id ] );
@@ -286,6 +312,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		// As these completions are for the single course:
 		// ceil(7 + 10 + 30/ 3)  = 16 days.
 		self::assertSame( 16.0, $actual );
+
+		$this->maybe_reset_hpps_repository();
 	}
 
 	public function testGetAverageDaysToCompletionWhenMoreThanOneCourseExistReturnsMatchingValue() {
@@ -294,32 +322,11 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$course1_id = $this->factory->course->create();
 		$course2_id = $this->factory->course->create();
 
-		$comment1_id = Sensei_Utils::update_course_status( $user1_id, $course1_id, 'complete' );
-		wp_update_comment(
-			[
-				'comment_ID'   => $comment1_id,
-				'comment_date' => '2022-03-11 23:29:06',
-			]
-		);
-		update_comment_meta( $comment1_id, 'start', '2022-03-11 23:27:51' );
+		$this->maybe_enable_hpps_tables_repository();
 
-		$comment2_id = Sensei_Utils::update_course_status( $user2_id, $course1_id, 'complete' );
-		wp_update_comment(
-			[
-				'comment_ID'   => $comment2_id,
-				'comment_date' => '2022-03-14 21:34:37',
-			]
-		);
-		update_comment_meta( $comment2_id, 'start', '2022-03-14 21:34:27' );
-
-		$comment3_id = Sensei_Utils::update_course_status( $user1_id, $course2_id, 'complete' );
-		wp_update_comment(
-			[
-				'comment_ID'   => $comment3_id,
-				'comment_date' => '2022-03-12 00:22:37',
-			]
-		);
-		update_comment_meta( $comment3_id, 'start', '2022-03-09 00:22:34' );
+		$this->seed_course_completion_with_dates( $course1_id, $user1_id, '2022-03-11 23:27:51', '2022-03-11 23:29:06' );
+		$this->seed_course_completion_with_dates( $course1_id, $user2_id, '2022-03-14 21:34:27', '2022-03-14 21:34:37' );
+		$this->seed_course_completion_with_dates( $course2_id, $user1_id, '2022-03-09 00:22:34', '2022-03-12 00:22:37' );
 
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 		$actual   = $instance->get_average_days_to_completion( [ $course1_id, $course2_id ] );
@@ -328,6 +335,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		// Average for the second course: 4 / 1 = 4.
 		// Total: (1 + 4) / 2 = 2.5.
 		self::assertSame( 2.5, $actual );
+
+		$this->maybe_reset_hpps_repository();
 	}
 
 	public function testGetTotalTotalEnrollments_WhenThereWereNoEnrolledStudents_ReturnsZero() {
@@ -356,6 +365,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course2_id ] ]
 		);
 
+		$this->maybe_enable_hpps_tables_repository();
+
 		// Enroll student 2 to the course and lessons, but don't complete the lessons.
 		Sensei_Utils::sensei_start_lesson( $lesson_course_1, $user1_id );
 		Sensei_Utils::sensei_start_lesson( $lesson_course_2, $user1_id );
@@ -367,6 +378,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 2, $actual );
+
+		$this->maybe_reset_hpps_repository();
 	}
 
 
@@ -387,6 +400,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course2_id ] ]
 		);
 
+		$this->maybe_enable_hpps_tables_repository();
+
 		// Enroll student 2 to the course and lessons, but don't complete the lessons.
 		Sensei_Utils::sensei_start_lesson( $lesson_course_1, $user1_id );
 		Sensei_Utils::sensei_start_lesson( $lesson_course_2, $user2_id );
@@ -398,6 +413,8 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 2, $actual );
+
+		$this->maybe_reset_hpps_repository();
 	}
 
 	/**
