@@ -440,4 +440,82 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 
 		self::assertSame( 0.0, $actual );
 	}
+
+	/**
+	 * Tests that get_average_progress_per_course returns the correct percentage
+	 * per course, and that get_total_average_progress still returns the same
+	 * value as its per-course average when averaged manually.
+	 *
+	 * @covers Sensei_Reports_Overview_Service_Courses::get_average_progress_per_course
+	 */
+	public function testGetAverageProgressPerCourse_WhenCalledWithMultipleCourses_ReturnsMatchingPerCoursePercentages() {
+		/* Arrange. */
+		$course_id_1 = $this->factory->course->create();
+		$course_id_2 = $this->factory->course->create();
+
+		$user_id_1 = $this->factory->user->create();
+		$user_id_2 = $this->factory->user->create();
+
+		$lesson_1 = $this->factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id_1 ) )
+		);
+		$lesson_2 = $this->factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id_1 ) )
+		);
+		$lesson_3 = $this->factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id_2 ) )
+		);
+		$lesson_4 = $this->factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id_2 ) )
+		);
+
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		$this->maybe_enable_hpps_tables_repository();
+
+		// Course 1: user_1 completes both lessons, user_2 completes none (50% progress).
+		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
+		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_1, true );
+		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
+		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_2 );
+
+		// Course 2: user_1 completes lesson_3 only (25% progress across both students).
+		Sensei_Utils::sensei_start_lesson( $lesson_3, $user_id_1, true );
+		Sensei_Utils::sensei_start_lesson( $lesson_4, $user_id_1 );
+		Sensei_Utils::sensei_start_lesson( $lesson_3, $user_id_2 );
+		Sensei_Utils::sensei_start_lesson( $lesson_4, $user_id_2 );
+
+		/* Act. */
+		$actual = $service->get_average_progress_per_course( array( $course_id_1, $course_id_2 ) );
+
+		/* Assert. */
+		self::assertSame( 50.0, $actual[ $course_id_1 ], 'Course 1 average progress should be 50%.' );
+		self::assertSame( 25.0, $actual[ $course_id_2 ], 'Course 2 average progress should be 25%.' );
+
+		// get_total_average_progress should equal the ceil'd average of the per-course values.
+		self::assertSame(
+			(float) ceil( array_sum( $actual ) / 2 ),
+			$service->get_total_average_progress( array( $course_id_1, $course_id_2 ) ),
+			'Total average progress should equal the average of the per-course values.'
+		);
+
+		$this->maybe_reset_hpps_repository();
+	}
+
+	/**
+	 * Tests that get_average_progress_per_course returns an empty array when
+	 * no course ids are given.
+	 *
+	 * @covers Sensei_Reports_Overview_Service_Courses::get_average_progress_per_course
+	 */
+	public function testGetAverageProgressPerCourse_WhenNoCourseIds_ReturnsEmptyArray() {
+		/* Arrange. */
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_average_progress_per_course( array() );
+
+		/* Assert. */
+		self::assertSame( array(), $actual );
+	}
 }
