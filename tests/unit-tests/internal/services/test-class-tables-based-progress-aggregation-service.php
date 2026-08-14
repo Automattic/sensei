@@ -1108,4 +1108,200 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( array(), $result );
 	}
+
+	public function testCountStatusesByPost_CourseType_ReturnsCountsGroupedByPost(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1      = $this->sensei_factory->user->create();
+		$user2      = $this->sensei_factory->user->create();
+		$course_id1 = $this->sensei_factory->course->create();
+		$course_id2 = $this->sensei_factory->course->create();
+
+		$this->insert_progress( $course_id1, $user1, 'course', 'complete' );
+		$this->insert_progress( $course_id1, $user2, 'course', 'in-progress' );
+		$this->insert_progress( $course_id2, $user1, 'course', 'in-progress' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_post(
+			array(
+				'type'     => 'course',
+				'post__in' => array( $course_id1, $course_id2 ),
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result[ $course_id1 ]['complete'] );
+		$this->assertSame( 1, $result[ $course_id1 ]['in-progress'] );
+		$this->assertSame( 1, $result[ $course_id2 ]['in-progress'] );
+		$this->assertArrayNotHasKey( 'complete', $result[ $course_id2 ] );
+	}
+
+	public function testCountStatusesByPost_InvalidType_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$this->setExpectedIncorrectUsage( 'Sensei\Internal\Services\Tables_Based_Progress_Aggregation_Service::count_statuses_by_post' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_post( array( 'type' => 'invalid' ) );
+
+		/* Assert. */
+		$this->assertSame( array(), $result );
+	}
+
+	public function testGetLessonCompletionCounts_ReturnsCorrectPerLessonCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+
+		$ungraded_lesson = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$complete_lesson = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$progress_lesson = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+
+		$this->insert_progress( $ungraded_lesson, $user1, 'lesson', 'ungraded' );
+		$this->insert_progress( $complete_lesson, $user1, 'lesson', 'complete' );
+		$this->insert_progress( $complete_lesson, $user2, 'lesson', 'complete' );
+		$this->insert_progress( $progress_lesson, $user1, 'lesson', 'in-progress' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_completion_counts( array( $ungraded_lesson, $complete_lesson, $progress_lesson ) );
+
+		/* Assert. */
+		$this->assertSame( 1, $result[ $ungraded_lesson ], 'Ungraded lesson status should be counted as a completion.' );
+		$this->assertSame( 2, $result[ $complete_lesson ], 'Both completions for the complete lesson should be counted.' );
+		$this->assertArrayNotHasKey( $progress_lesson, $result, 'In-progress lesson should not be counted as a completion.' );
+	}
+
+	public function testGetLessonCompletionCounts_LessonWithQuiz_UsesQuizStatus(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$quiz_id   = $this->sensei_factory->quiz->create(
+			array(
+				'post_parent' => $lesson_id,
+				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
+			)
+		);
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		// Lesson row is only in-progress, but quiz progress is 'ungraded' — the
+		// effective (quiz-aware) status should be counted as a completion.
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'ungraded' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_completion_counts( array( $lesson_id ) );
+
+		/* Assert. */
+		$this->assertSame( 1, $result[ $lesson_id ], 'Quiz-derived ungraded status should be counted as a completion.' );
+	}
+
+	public function testGetLessonCompletionCounts_WithEmptyLessonIds_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_completion_counts( array() );
+
+		/* Assert. */
+		$this->assertSame( array(), $result );
+	}
+
+	public function testGetCoursesAverageDaysToCompletion_ReturnsCorrectAverage(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1      = $this->sensei_factory->user->create();
+		$user2      = $this->sensei_factory->user->create();
+		$course_id1 = $this->sensei_factory->course->create();
+		$course_id2 = $this->sensei_factory->course->create();
+
+		$this->insert_progress_with_dates( $course_id1, $user1, 'course', 'complete', '2022-03-11 23:27:51', '2022-03-11 23:29:06' );
+		$this->insert_progress_with_dates( $course_id1, $user2, 'course', 'complete', '2022-03-14 21:34:27', '2022-03-14 21:34:37' );
+		$this->insert_progress_with_dates( $course_id2, $user1, 'course', 'complete', '2022-03-09 00:22:34', '2022-03-12 00:22:37' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_courses_average_days_to_completion( array( $course_id1, $course_id2 ) );
+
+		/* Assert. */
+		// Course 1 average: (1 + 1) / 2 = 1. Course 2 average: 4 / 1 = 4. Total: (1 + 4) / 2 = 2.5.
+		$this->assertSame( 2.5, $result );
+	}
+
+	public function testGetCoursesAverageDaysToCompletion_WithUtcDatesNearMidnight_ConvertsToLocalTimeBeforeDatediff(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		// Set site timezone to UTC-5 (e.g. America/New_York EST).
+		$original_offset   = get_option( 'gmt_offset' );
+		$original_timezone = get_option( 'timezone_string' );
+		update_option( 'gmt_offset', -5 );
+		update_option( 'timezone_string', '' );
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+
+		// UTC dates span two days (Jan 1 05:00 -> Jan 2 04:00), so a naive
+		// DATEDIFF on the raw UTC columns would compute 1 day difference (+1 = 2 days).
+		// In local time (UTC-5) they fall on the same day (Jan 1 00:00 -> Jan 1 23:00),
+		// which the comments-based implementation would report as 1 day, since
+		// comment_date/commentmeta 'start' are already stored in site-local time.
+		$started_at   = '2024-01-01 05:00:00';
+		$completed_at = '2024-01-02 04:00:00';
+		$this->insert_progress_with_dates( $course_id, $user_id, 'course', 'complete', $started_at, $completed_at );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_courses_average_days_to_completion( array( $course_id ) );
+
+		/* Assert. */
+		// This pins parity with the comments-based implementation, which would
+		// compute 1 day for the equivalent site-local timestamps.
+		$this->assertSame( 1.0, $result, 'UTC dates spanning midnight should be converted to local time (1 day) before DATEDIFF, matching the comments-based implementation.' );
+
+		/* Cleanup. */
+		update_option( 'gmt_offset', $original_offset );
+		update_option( 'timezone_string', $original_timezone );
+	}
+
+	public function testGetCoursesAverageDaysToCompletion_WithEmptyCourseIds_ReturnsZero(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_courses_average_days_to_completion( array() );
+
+		/* Assert. */
+		$this->assertSame( 0.0, $result );
+	}
 }
