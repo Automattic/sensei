@@ -96,6 +96,44 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
+	 * Count progress records grouped by user and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Same shape as count_statuses(); 'type' and 'user_id' honored.
+	 * @return array<int, array<string, int>> Map of user_id => [ status => count ].
+	 */
+	public function count_statuses_by_user( array $args ): array {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
+			return array();
+		}
+
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
+		$query  = "SELECT p.user_id, p.status, COUNT(*) AS total FROM {$table} p";
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )";
+		$query .= $wpdb->prepare( ' WHERE p.type = %s', $args['type'] );
+		$query .= $this->build_post_filter_clause( $args );
+		$query .= $this->build_user_filter_clause( $args );
+		$query .= $this->build_user_exclusion_clause( $args );
+		$query .= ' GROUP BY p.user_id, p.status';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based status counts by user' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['user_id'] ][ $row['status'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
 	 * @since 4.26.0
@@ -104,13 +142,13 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @return array Associative array with keys: unique_student_count, lesson_start_count, lesson_completed_count, days_to_complete_count, days_to_complete_sum.
 	 */
 	public function get_lesson_totals( array $lesson_ids ): array {
-		$defaults = [
+		$defaults = array(
 			'unique_student_count'   => 0,
 			'lesson_start_count'     => 0,
 			'lesson_completed_count' => 0,
 			'days_to_complete_count' => 0,
 			'days_to_complete_sum'   => 0,
-		];
+		);
 
 		if ( empty( $lesson_ids ) ) {
 			return $defaults;
@@ -151,13 +189,13 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			return $defaults;
 		}
 
-		return [
+		return array(
 			'unique_student_count'   => (int) $row->unique_student_count,
 			'lesson_start_count'     => (int) $row->lesson_start_count,
 			'lesson_completed_count' => (int) $row->lesson_completed_count,
 			'days_to_complete_count' => (int) $row->days_to_complete_count,
 			'days_to_complete_sum'   => (int) $row->days_to_complete_sum,
-		];
+		);
 	}
 
 	/**
@@ -234,7 +272,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
 		Utils::log_query_error( $wpdb, 'Tables-based lesson status counts' );
 
-		$counts = [];
+		$counts = array();
 		foreach ( $results as $row ) {
 			$counts[ $row['effective_status'] ] = (int) $row['total'];
 		}
@@ -269,7 +307,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
 		Utils::log_query_error( $wpdb, 'Tables-based course status counts' );
 
-		$counts = [];
+		$counts = array();
 		foreach ( $results as $row ) {
 			$counts[ $row['status'] ] = (int) $row['total'];
 		}
