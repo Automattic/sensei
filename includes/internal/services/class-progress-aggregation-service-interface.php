@@ -43,6 +43,16 @@ interface Progress_Aggregation_Service_Interface {
 	public function count_statuses( array $args ): array;
 
 	/**
+	 * Count progress records grouped by user and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Same shape as count_statuses(); 'type' and 'user_id' honored.
+	 * @return array<int, array<string, int>> Map of user_id => [ status => count ].
+	 */
+	public function count_statuses_by_user( array $args ): array;
+
+	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
 	 * @since 4.26.0
