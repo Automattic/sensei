@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Reports Overview students last activity now reads HPPS progress tables when tables-based storage is enabled

@@ -5,6 +5,8 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Progress_Storage_Settings;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -205,14 +207,29 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 
 		$query->query_fields .= ', last_activity_date';
 
-		$query->query_from .= "
-			LEFT JOIN (
-				SELECT {$wpdb->comments}.user_id, MAX({$wpdb->comments}.comment_date_gmt) AS last_activity_date
-				FROM {$wpdb->comments}
-				WHERE {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
-				AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-				GROUP BY {$wpdb->comments}.user_id
-			) AS l ON {$wpdb->users}.ID = l.user_id";
+		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
+			$progress_table = $wpdb->prefix . 'sensei_lms_progress';
+
+			$query->query_from .= "
+				LEFT JOIN (
+					SELECT p.user_id, MAX(COALESCE(q.completed_at, p.completed_at)) AS last_activity_date
+					FROM {$progress_table} p
+					LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0
+					LEFT JOIN {$progress_table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
+					WHERE p.type = 'lesson'
+					AND COALESCE(q.status, p.status) IN ('complete', 'passed', 'graded')
+					GROUP BY p.user_id
+				) AS l ON {$wpdb->users}.ID = l.user_id";
+		} else {
+			$query->query_from .= "
+				LEFT JOIN (
+					SELECT {$wpdb->comments}.user_id, MAX({$wpdb->comments}.comment_date_gmt) AS last_activity_date
+					FROM {$wpdb->comments}
+					WHERE {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
+					AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
+					GROUP BY {$wpdb->comments}.user_id
+				) AS l ON {$wpdb->users}.ID = l.user_id";
+		}
 	}
 
 	/**
