@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Reports Overview courses per-row completions and progress now read HPPS progress tables
