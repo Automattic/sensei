@@ -89,9 +89,45 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
 		Utils::log_query_error( $wpdb, 'Comments-based status counts' );
 
-		$counts = [];
+		$counts = array();
 		foreach ( $results as $row ) {
 			$counts[ $row['comment_approved'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
+	 * Count progress records grouped by user and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Same shape as count_statuses(); 'type' and 'user_id' honored.
+	 * @return array<int, array<string, int>> Map of user_id => [ status => count ].
+	 */
+	public function count_statuses_by_user( array $args ): array {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
+			return array();
+		}
+
+		$wpdb         = $this->wpdb;
+		$comment_type = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
+		$query  = $wpdb->prepare( "SELECT user_id, comment_approved, COUNT(*) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status IN ( 'publish', 'private' ) WHERE comment_type = %s", $comment_type );
+		$query .= $this->build_post_filter_clause( $args );
+		$query .= $this->build_user_filter_clause( $args );
+		$query .= $this->build_user_exclusion_clause( $args );
+		$query .= ' GROUP BY user_id, comment_approved';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Comments-based status counts by user' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['user_id'] ][ $row['comment_approved'] ] = (int) $row['total'];
 		}
 
 		return $counts;
@@ -106,13 +142,13 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 * @return array Associative array with keys: unique_student_count, lesson_start_count, lesson_completed_count, days_to_complete_count, days_to_complete_sum.
 	 */
 	public function get_lesson_totals( array $lesson_ids ): array {
-		$defaults = [
+		$defaults = array(
 			'unique_student_count'   => 0,
 			'lesson_start_count'     => 0,
 			'lesson_completed_count' => 0,
 			'days_to_complete_count' => 0,
 			'days_to_complete_sum'   => 0,
-		];
+		);
 
 		if ( empty( $lesson_ids ) ) {
 			return $defaults;
@@ -134,7 +170,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			INNER JOIN {$wpdb->posts} post ON post.ID = lesson_students.comment_post_ID AND post.post_status IN ( 'publish', 'private' )
 			LEFT JOIN {$wpdb->commentmeta} lesson_start ON lesson_start.comment_id = lesson_students.comment_id
 			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( $placeholders )",
-			array_merge( [ '%Y-%m-%d %H:%i:%s' ], $lesson_ids )
+			array_merge( array( '%Y-%m-%d %H:%i:%s' ), $lesson_ids )
 		);
 		// phpcs:enable
 
@@ -146,13 +182,13 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			return $defaults;
 		}
 
-		return [
+		return array(
 			'unique_student_count'   => (int) $row->unique_student_count,
 			'lesson_start_count'     => (int) $row->lesson_start_count,
 			'lesson_completed_count' => (int) $row->lesson_completed_count,
 			'days_to_complete_count' => (int) $row->days_to_complete_count,
 			'days_to_complete_sum'   => (int) $row->days_to_complete_sum,
-		];
+		);
 	}
 
 	/**
@@ -255,7 +291,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		}
 
 		$wpdb             = $this->wpdb;
-		$not_like_clauses = [];
+		$not_like_clauses = array();
 		foreach ( $prefixes as $prefix ) {
 			$escaped_prefix     = $wpdb->esc_like( $prefix );
 			$not_like_clauses[] = $wpdb->prepare( 'comment_author NOT LIKE %s', $escaped_prefix . '%' );
