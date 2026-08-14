@@ -316,6 +316,190 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
+	 * Count progress records grouped by post and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Same shape as count_statuses(); 'type' and 'post__in' honored.
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	public function count_statuses_by_post( array $args ): array {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
+			return array();
+		}
+
+		if ( 'lesson' === $args['type'] ) {
+			return $this->count_lesson_statuses_with_quiz_by_post( $args );
+		}
+
+		return $this->count_course_statuses_by_post( $args );
+	}
+
+	/**
+	 * Count completed lesson progress per lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs.
+	 * @return array<int, int> Map of lesson_id => completion count.
+	 */
+	public function get_lesson_completion_counts( array $lesson_ids ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
+		$wpdb         = $this->wpdb;
+		$table        = $this->get_progress_table_name();
+		$placeholders = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb prefix. Placeholders created dynamically.
+		$query = $wpdb->prepare(
+			"SELECT p.post_id AS lesson_id, COUNT(*) AS completion_count
+			FROM {$table} p
+			LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0
+			LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
+			WHERE p.type = 'lesson'
+			AND p.post_id IN ( $placeholders )
+			AND COALESCE( q.status, p.status ) IN ('graded', 'ungraded', 'passed', 'failed', 'complete')
+			GROUP BY p.post_id",
+			$lesson_ids
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based lesson completion counts' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['lesson_id'] ] = (int) $row['completion_count'];
+		}
+
+		return $counts;
+	}
+
+	/**
+	 * Average days-to-completion across the given courses (AVG of per-course averages).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @return float
+	 */
+	public function get_courses_average_days_to_completion( array $course_ids ): float {
+		if ( empty( $course_ids ) ) {
+			return 0.0;
+		}
+
+		$wpdb         = $this->wpdb;
+		$table        = $this->get_progress_table_name();
+		$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
+		$utc_offset   = Utils::get_utc_offset_string();
+
+		// Convert to site-local time before DATEDIFF so results match the comments-based
+		// implementation, which reads already-local comment_date / commentmeta 'start' values.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table name from wpdb prefix. Placeholders created dynamically.
+		$query = $wpdb->prepare(
+			"SELECT AVG( aggregated.days_to_completion )
+			FROM (
+				SELECT CEIL( SUM( ABS( DATEDIFF( CONVERT_TZ( p.completed_at, '+00:00', '$utc_offset' ), CONVERT_TZ( p.started_at, '+00:00', '$utc_offset' ) ) ) + 1 ) / COUNT(*) ) AS days_to_completion
+				FROM {$table} p
+				WHERE p.type = 'course'
+					AND p.status = 'complete'
+					AND p.post_id IN ( $placeholders )
+				GROUP BY p.post_id
+			) AS aggregated",
+			$course_ids
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$result = $wpdb->get_var( $query );
+		Utils::log_query_error( $wpdb, 'Tables-based courses average days to completion' );
+
+		return (float) $result;
+	}
+
+	/**
+	 * Count course progress grouped by post and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Query arguments (see count_statuses).
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	private function count_course_statuses_by_post( array $args ): array {
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
+		$query  = "SELECT p.post_id, p.status, COUNT(*) AS total FROM {$table} p";
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )";
+
+		$query .= $wpdb->prepare( ' WHERE p.type = %s', $args['type'] );
+		$query .= $this->build_post_filter_clause( $args );
+		$query .= $this->build_user_filter_clause( $args );
+		$query .= $this->build_user_exclusion_clause( $args );
+
+		$query .= ' GROUP BY p.post_id, p.status';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based course status counts by post' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['post_id'] ][ $row['status'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
+	 * Count lesson statuses grouped by post, using quiz status when a quiz exists.
+	 *
+	 * See count_lesson_statuses_with_quiz() for the rationale behind using
+	 * COALESCE(q.status, p.status).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Query arguments (see count_statuses).
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	private function count_lesson_statuses_with_quiz_by_post( array $args ): array {
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$query = "SELECT p.post_id, COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )";
+		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
+
+		$query .= $wpdb->prepare( ' WHERE p.type = %s', 'lesson' );
+
+		$query .= $this->build_post_filter_clause( $args );
+		$query .= $this->build_user_filter_clause( $args );
+		$query .= $this->build_user_exclusion_clause( $args, 'COALESCE( q.status, p.status )' );
+
+		$query .= ' GROUP BY p.post_id, effective_status';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based lesson status counts by post' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['post_id'] ][ $row['effective_status'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
 	 * Build SQL clause for filtering by post ID(s).
 	 *
 	 * @since 4.26.0

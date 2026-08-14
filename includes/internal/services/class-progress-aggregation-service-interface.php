@@ -82,4 +82,34 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
 	 */
 	public function count_ungraded_quizzes( array $args = array() ): int;
+
+	/**
+	 * Count progress records grouped by post and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Same shape as count_statuses(); 'type' and 'post__in' honored.
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	public function count_statuses_by_post( array $args ): array;
+
+	/**
+	 * Count completed lesson progress per lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs.
+	 * @return array<int, int> Map of lesson_id => completion count.
+	 */
+	public function get_lesson_completion_counts( array $lesson_ids ): array;
+
+	/**
+	 * Average days-to-completion across the given courses (AVG of per-course averages).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @return float
+	 */
+	public function get_courses_average_days_to_completion( array $course_ids ): float;
 }
