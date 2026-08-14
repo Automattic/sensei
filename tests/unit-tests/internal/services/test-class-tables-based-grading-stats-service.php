@@ -450,4 +450,96 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
 		$this->assertSame( 80.0, $result );
 	}
+
+	/**
+	 * Test testGetGradeTotalsByUser_WithNoUserIds_ReturnsEmptyArray.
+	 */
+	public function testGetGradeTotalsByUser_WithNoUserIds_ReturnsEmptyArray(): void {
+		global $wpdb;
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+
+		$result = $service->get_grade_totals_by_user( array() );
+
+		$this->assertSame( array(), $result );
+	}
+
+	/**
+	 * Test testGetGradeTotalsByUser_WithMultipleGrades_GroupsByUser.
+	 */
+	public function testGetGradeTotalsByUser_WithMultipleGrades_GroupsByUser(): void {
+		global $wpdb;
+		$user      = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_1  = $this->sensei_factory->lesson->create();
+		$quiz_1    = $this->sensei_factory->quiz->create();
+		$lesson_2  = $this->sensei_factory->lesson->create();
+		$quiz_2    = $this->sensei_factory->quiz->create();
+
+		$this->create_graded_lesson( $lesson_1, $quiz_1, $user, $course_id, 'graded', 80 );
+		$this->create_graded_lesson( $lesson_2, $quiz_2, $user, $course_id, 'graded', 60 );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals_by_user( array( $user ) );
+
+		$this->assertSame( 2, $result[ $user ]['count'] );
+		$this->assertSame( 140.0, $result[ $user ]['sum'] );
+	}
+
+	/**
+	 * Test testGetGradeTotalsByUser_WithMultipleUsers_ReturnsSeparateTotals.
+	 */
+	public function testGetGradeTotalsByUser_WithMultipleUsers_ReturnsSeparateTotals(): void {
+		global $wpdb;
+		$user_1    = $this->sensei_factory->user->create();
+		$user_2    = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+		$quiz_id   = $this->sensei_factory->quiz->create();
+
+		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_1, $course_id, 'graded', 80 );
+		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_2, $course_id, 'graded', 60 );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals_by_user( array( $user_1, $user_2 ) );
+
+		$this->assertSame( 1, $result[ $user_1 ]['count'] );
+		$this->assertSame( 80.0, $result[ $user_1 ]['sum'] );
+		$this->assertSame( 1, $result[ $user_2 ]['count'] );
+		$this->assertSame( 60.0, $result[ $user_2 ]['sum'] );
+	}
+
+	/**
+	 * Test testGetGradeTotalsByUser_WithLessonWithoutSubmission_ExcludesFromTotals.
+	 *
+	 * Pins parity with the comments-based implementation: a lesson that was
+	 * auto-passed (no quiz submission) must not be counted, mirroring how the
+	 * comments-based implementation excludes lessons without quiz_answers.
+	 */
+	public function testGetGradeTotalsByUser_WithLessonWithoutSubmission_ExcludesFromTotals(): void {
+		global $wpdb;
+		$user      = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_1  = $this->sensei_factory->lesson->create();
+		$quiz_1    = $this->sensei_factory->quiz->create();
+		$lesson_2  = $this->sensei_factory->lesson->create();
+		$quiz_2    = $this->sensei_factory->quiz->create();
+
+		// Graded lesson with a quiz submission.
+		$this->create_graded_lesson( $lesson_1, $quiz_1, $user, $course_id, 'graded', 80 );
+		$this->create_graded_lesson( $lesson_2, $quiz_2, $user, $course_id, 'graded', 60 );
+
+		// Auto-passed lesson: progress marked graded, but no quiz submission row.
+		$lesson_3 = $this->sensei_factory->lesson->create();
+		$quiz_3   = $this->sensei_factory->quiz->create();
+		update_post_meta( $lesson_3, '_lesson_course', $course_id );
+		update_post_meta( $lesson_3, '_lesson_quiz', $quiz_3 );
+		$this->insert_progress( $lesson_3, $user, 'lesson', 'graded' );
+		$this->insert_progress( $quiz_3, $user, 'quiz', 'graded' );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals_by_user( array( $user ) );
+
+		$this->assertSame( 2, $result[ $user ]['count'], 'Auto-passed lesson without a submission should be excluded.' );
+		$this->assertSame( 140.0, $result[ $user ]['sum'] );
+	}
 }
