@@ -164,8 +164,12 @@ class Course_Welcome extends Email_Generators_Abstract {
 		$teacher    = new \WP_User( $teacher_id );
 		$recipient  = stripslashes( $student->user_email );
 		$course_url = get_permalink( $course_id );
+		if ( ! $course_url ) {
+			$course_url = '';
+		}
 
-		$first_lesson_id = $this->get_first_lesson_id( $course_id );
+		$first_lesson_id  = $this->get_first_lesson_id( $course_id );
+		$first_lesson_url = $first_lesson_id ? get_permalink( $first_lesson_id ) : '';
 
 		$this->send_email_action(
 			array(
@@ -177,7 +181,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 					'course:id'               => $course->ID,
 					'course:name'             => $course->post_title,
 					'course:url'              => $course_url,
-					'course:first_lesson_url' => $first_lesson_id ? esc_url( get_permalink( $first_lesson_id ) ) : $course_url,
+					'course:first_lesson_url' => $first_lesson_url ? esc_url( $first_lesson_url ) : $course_url,
 				),
 			)
 		);
@@ -198,7 +202,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 */
 	private function get_first_lesson_id( int $course_id ): int {
 		$lessons = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
-		if ( ! is_array( $lessons ) || ! $lessons ) {
+		if ( empty( $lessons ) ) {
 			return 0;
 		}
 
@@ -213,7 +217,9 @@ class Course_Welcome extends Email_Generators_Abstract {
 			}
 		}
 
-		return (int) $lessons[0];
+		$first_lesson = $lessons[0];
+
+		return $first_lesson instanceof \WP_Post ? $first_lesson->ID : (int) $first_lesson;
 	}
 
 	/**

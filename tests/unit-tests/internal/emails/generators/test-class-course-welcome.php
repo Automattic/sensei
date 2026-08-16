@@ -27,7 +27,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 
 	public function testIsEmailActive_EmailNotPublished_ReturnsFalse() {
 		/* Arrange. */
-		$email = new \WP_Post( (object) [ 'post_status' => 'draft' ] );
+		$email = new \WP_Post( (object) array( 'post_status' => 'draft' ) );
 
 		$email_repository = $this->createMock( Email_Repository::class );
 		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( $email );
@@ -43,7 +43,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 
 	public function testIsEmailActive_PublishedEmailFound_ReturnsTrue() {
 		/* Arrange. */
-		$email = new \WP_Post( (object) [ 'post_status' => 'publish' ] );
+		$email = new \WP_Post( (object) array( 'post_status' => 'publish' ) );
 
 		$email_repository = $this->createMock( Email_Repository::class );
 		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( $email );
@@ -59,7 +59,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 
 	public function testInit_WhenCalled_AddsHooksForInitializingIndividualEmails() {
 		/* Arrange. */
-		$email = new \WP_Post( (object) [ 'post_status' => 'publish' ] );
+		$email = new \WP_Post( (object) array( 'post_status' => 'publish' ) );
 
 		$email_repository = $this->createMock( Email_Repository::class );
 		$generator        = new Course_Welcome( $email_repository );
@@ -74,8 +74,8 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		do_action( 'sensei_pro_course_access_start_student_email_send', 1, 1 );
 		do_action( 'sensei_email_sent', 'course_welcome', 'test@a.com', array() );
 
-		$priority_for_immediate_start = has_action( 'sensei_course_enrolment_status_changed', [ $generator, 'welcome_to_course_for_student' ] );
-		$priority_for_access_start    = has_action( 'sensei_pro_course_access_start_student_email_send', [ $generator, 'welcome_to_course_on_access_start' ] );
+		$priority_for_immediate_start = has_action( 'sensei_course_enrolment_status_changed', array( $generator, 'welcome_to_course_for_student' ) );
+		$priority_for_access_start    = has_action( 'sensei_pro_course_access_start_student_email_send', array( $generator, 'welcome_to_course_on_access_start' ) );
 		$priority_for_mark_on_sent    = has_action( 'sensei_email_sent', array( $generator, 'mark_welcome_email_sent_on_dispatch' ) );
 		self::assertSame( 10, $priority_for_immediate_start );
 		self::assertSame( 10, $priority_for_access_start );
@@ -86,39 +86,39 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
 		$student_id = $factory->user->create(
-			[
+			array(
 				'display_name' => 'Test Student',
 				'user_email'   => 'test@a.com',
-			]
+			)
 		);
 		$teacher_id = $factory->user->create(
-			[
+			array(
 				'display_name' => 'Test Teacher',
-			]
+			)
 		);
 		$course_id  = $factory->course->create(
-			[
+			array(
 				'post_title'  => '“Course with Special Characters…?”',
 				'post_author' => $teacher_id,
-			]
+			)
 		);
 		$lesson_id  = $factory->lesson->create(
-			[
-				'meta_input' => [ '_lesson_course' => $course_id ],
-			]
+			array(
+				'meta_input' => array( '_lesson_course' => $course_id ),
+			)
 		);
 
 		$email_repository = $this->createMock( Email_Repository::class );
-		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) array( 'post_status' => 'publish' ) ) );
 
 		$generator = new Course_Welcome( $email_repository );
 
-		$actual_data = [];
+		$actual_data = array();
 		$filter      = function ( $email, $options ) use ( &$actual_data ) {
-			$actual_data = [
+			$actual_data = array(
 				'email'   => $email,
 				'options' => $options,
-			];
+			);
 		};
 		add_filter( 'sensei_email_send', $filter, 10, 2 );
 
@@ -126,10 +126,10 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		$generator->welcome_to_course_for_student( $student_id, $course_id );
 
 		/* Assert. */
-		$expected = [
+		$expected = array(
 			'email'   => 'course_welcome',
-			'options' => [
-				'test@a.com' => [
+			'options' => array(
+				'test@a.com' => array(
 					'teacher:id'              => $teacher_id,
 					'teacher:displayname'     => 'Test Teacher',
 					'student:id'              => $student_id,
@@ -142,9 +142,9 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 					'course:first_lesson_url' => esc_url(
 						get_permalink( $lesson_id )
 					),
-				],
-			],
-		];
+				),
+			),
+		);
 		self::assertSame( $expected, $actual_data );
 
 		/* Cleanup. */
@@ -156,34 +156,34 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
 		$student_id = $factory->user->create(
-			[
+			array(
 				'display_name' => 'Test Student',
 				'user_email'   => 'test@a.com',
-			]
+			)
 		);
 		$teacher_id = $factory->user->create(
-			[
+			array(
 				'display_name' => 'Test Teacher',
-			]
+			)
 		);
 		$course_id  = $factory->course->create(
-			[
+			array(
 				'post_title'  => 'Course without Lessons',
 				'post_author' => $teacher_id,
-			]
+			)
 		);
 
 		$email_repository = $this->createMock( Email_Repository::class );
-		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) array( 'post_status' => 'publish' ) ) );
 
 		$generator = new Course_Welcome( $email_repository );
 
-		$actual_data = [];
+		$actual_data = array();
 		$filter      = function ( $email, $options ) use ( &$actual_data ) {
-			$actual_data = [
+			$actual_data = array(
 				'email'   => $email,
 				'options' => $options,
-			];
+			);
 		};
 		add_filter( 'sensei_email_send', $filter, 10, 2 );
 
@@ -203,51 +203,51 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
 		$student_id = $factory->user->create(
-			[
+			array(
 				'display_name' => 'Test Student',
 				'user_email'   => 'test@a.com',
-			]
+			)
 		);
 		$teacher_id = $factory->user->create(
-			[
+			array(
 				'display_name' => 'Test Teacher',
-			]
+			)
 		);
-		$course_id = $factory->course->create(
-			[
+		$course_id  = $factory->course->create(
+			array(
 				'post_title'  => 'Course with Custom Order',
 				'post_author' => $teacher_id,
-			]
+			)
 		);
 
 		// Lessons created out of the desired display order, so pub date would put lesson A first.
 		$lesson_a = $factory->lesson->create(
-			[
-				'post_title'  => 'Lesson A',
-				'meta_input'  => [ '_lesson_course' => $course_id ],
-				'post_date'   => '2020-01-01 00:00:00',
-			]
+			array(
+				'post_title' => 'Lesson A',
+				'meta_input' => array( '_lesson_course' => $course_id ),
+				'post_date'  => '2020-01-01 00:00:00',
+			)
 		);
 		$lesson_b = $factory->lesson->create(
-			[
-				'post_title'  => 'Lesson B',
-				'meta_input'  => [ '_lesson_course' => $course_id ],
-				'post_date'   => '2020-01-02 00:00:00',
-			]
+			array(
+				'post_title' => 'Lesson B',
+				'meta_input' => array( '_lesson_course' => $course_id ),
+				'post_date'  => '2020-01-02 00:00:00',
+			)
 		);
 		update_post_meta( $course_id, '_lesson_order', $lesson_b . ',' . $lesson_a );
 
 		$email_repository = $this->createMock( Email_Repository::class );
-		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) array( 'post_status' => 'publish' ) ) );
 
 		$generator = new Course_Welcome( $email_repository );
 
-		$actual_data = [];
+		$actual_data = array();
 		$filter      = function ( $email, $options ) use ( &$actual_data ) {
-			$actual_data = [
+			$actual_data = array(
 				'email'   => $email,
 				'options' => $options,
-			];
+			);
 		};
 		add_filter( 'sensei_email_send', $filter, 10, 2 );
 
@@ -267,41 +267,41 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$factory    = new \Sensei_Factory();
 		$student_id = $factory->user->create(
-			[
+			array(
 				'display_name' => 'Test Student',
 				'user_email'   => 'test@a.com',
-			]
+			)
 		);
 		$teacher_id = $factory->user->create(
-			[
+			array(
 				'display_name' => 'Test Teacher',
-			]
+			)
 		);
 		$course_id  = $factory->course->create(
-			[
+			array(
 				'post_title'  => '“Course with Special Characters…?”',
 				'post_author' => $teacher_id,
-			]
+			)
 		);
 
 		$course_id_translated = $factory->course->create(
-			[
+			array(
 				'post_title'  => '“Course with Special Characters…? Translated”',
 				'post_author' => $teacher_id,
-			]
+			)
 		);
 
 		$email_repository = $this->createMock( Email_Repository::class );
-		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
+		$email_repository->method( 'get' )->with( 'course_welcome' )->willReturn( new \WP_Post( (object) array( 'post_status' => 'publish' ) ) );
 
 		$generator = new Course_Welcome( $email_repository );
 
-		$actual_data = [];
+		$actual_data = array();
 		$filter      = function ( $email, $options ) use ( &$actual_data ) {
-			$actual_data = [
+			$actual_data = array(
 				'email'   => $email,
 				'options' => $options,
-			];
+			);
 		};
 		add_filter( 'sensei_email_send', $filter, 10, 2 );
 
@@ -322,25 +322,25 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		$generator->welcome_to_course_for_student( $student_id, $course_id_translated );
 
 		/* Assert. */
-		$expected = [
+		$expected = array(
 			'email'   => 'course_welcome',
-			'options' => [
-				'test@a.com' => [
-					'teacher:id'          => $teacher_id,
-					'teacher:displayname' => 'Test Teacher',
-					'student:id'          => $student_id,
-					'student:displayname' => 'Test Student',
-					'course:id'           => $course_id,
-					'course:name'         => '“Course with Special Characters…?”',
+			'options' => array(
+				'test@a.com' => array(
+					'teacher:id'              => $teacher_id,
+					'teacher:displayname'     => 'Test Teacher',
+					'student:id'              => $student_id,
+					'student:displayname'     => 'Test Student',
+					'course:id'               => $course_id,
+					'course:name'             => '“Course with Special Characters…?”',
 					'course:url'              => esc_url(
 						get_permalink( $course_id )
 					),
 					'course:first_lesson_url' => esc_url(
 						get_permalink( $course_id )
 					),
-				],
-			],
-		];
+				),
+			),
+		);
 		self::assertSame( $expected, $actual_data );
 
 		/* Cleanup. */
