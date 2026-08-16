@@ -14,7 +14,11 @@ import { useSelect } from '@wordpress/data';
  */
 import Lessons from './lessons';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 jest.mock( './use-add-existing-lessons' );
 
 describe( '<Lessons />', () => {

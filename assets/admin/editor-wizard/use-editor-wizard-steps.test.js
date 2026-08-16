@@ -13,7 +13,11 @@ import CoursePatternsStep from './steps/course-patterns-step';
 import LessonDetailsStep from './steps/lesson-details-step';
 import LessonPatternsStep from './steps/lesson-patterns-step';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 
 describe( 'useEditorWizardSteps()', () => {
 	it( 'Should have all the course steps when the post type is course and Sensei Pro is not installed', () => {

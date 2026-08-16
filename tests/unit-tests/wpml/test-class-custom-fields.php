@@ -36,17 +36,17 @@ class Custom_Fields_Test extends \WP_UnitTestCase {
 		};
 		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 0 );
 
-		$object_id_fitler = function () {
+		$object_id_filter = function () {
 			return 4;
 		};
-		add_filter( 'wpml_object_id', $object_id_fitler, 10, 0 );
+		add_filter( 'wpml_object_id', $object_id_filter, 10, 0 );
 
 		/* Act. */
 		$actual = $custom_fields->update_course_prerequisite_before_copied( 1, 2, 3, '_course_prerequisite' );
 
 		/* Clean up & Assert. */
 		remove_filter( 'wpml_element_language_code', $language_code_filter );
-		remove_filter( 'wpml_object_id', $object_id_fitler );
+		remove_filter( 'wpml_object_id', $object_id_filter );
 		$this->assertSame( 4, $actual );
 	}
 
@@ -59,17 +59,17 @@ class Custom_Fields_Test extends \WP_UnitTestCase {
 		};
 		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 0 );
 
-		$object_id_fitler = function () {
+		$object_id_filter = function () {
 			return 4;
 		};
-		add_filter( 'wpml_object_id', $object_id_fitler, 10, 0 );
+		add_filter( 'wpml_object_id', $object_id_filter, 10, 0 );
 
 		/* Act. */
 		$actual = $custom_fields->update_lesson_course_before_copied( 1, 2, 3, '_lesson_course' );
 
 		/* Clean up & Assert. */
 		remove_filter( 'wpml_element_language_code', $language_code_filter );
-		remove_filter( 'wpml_object_id', $object_id_fitler );
+		remove_filter( 'wpml_object_id', $object_id_filter );
 
 		$this->assertSame( 4, $actual );
 	}
@@ -86,17 +86,41 @@ class Custom_Fields_Test extends \WP_UnitTestCase {
 		};
 		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 0 );
 
-		$object_id_fitler = function () {
+		$object_id_filter = function () {
 			return 4;
 		};
-		add_filter( 'wpml_object_id', $object_id_fitler, 10, 0 );
+		add_filter( 'wpml_object_id', $object_id_filter, 10, 0 );
 
 		/* Act. */
 		$actual = $custom_fields->update_quiz_id_before_copied( 1, $old_quistion_id, $new_question_id, '_quiz_id' );
 
 		/* Clean up & Assert. */
 		remove_filter( 'wpml_element_language_code', $language_code_filter );
-		remove_filter( 'wpml_object_id', $object_id_fitler );
+		remove_filter( 'wpml_object_id', $object_id_filter );
+
+		$this->assertSame( 4, $actual );
+	}
+
+	public function testUpdateLessonPrerequisiteBeforeCopied_WhenCalled_ReturnsMatchingPrerequisiteForNewLesson() {
+		/* Arrange. */
+		$custom_fields = new Custom_Fields();
+
+		$language_code_filter = function () {
+			return 'a';
+		};
+		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 0 );
+
+		$object_id_filter = function () {
+			return 4;
+		};
+		add_filter( 'wpml_object_id', $object_id_filter, 10, 0 );
+
+		/* Act. */
+		$actual = $custom_fields->update_lesson_prerequisite_before_copied( 1, 2, 3, '_lesson_prerequisite' );
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_element_language_code', $language_code_filter );
+		remove_filter( 'wpml_object_id', $object_id_filter );
 
 		$this->assertSame( 4, $actual );
 	}
@@ -110,17 +134,17 @@ class Custom_Fields_Test extends \WP_UnitTestCase {
 		};
 		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 0 );
 
-		$object_id_fitler = function () {
+		$object_id_filter = function () {
 			return 4;
 		};
-		add_filter( 'wpml_object_id', $object_id_fitler, 10, 0 );
+		add_filter( 'wpml_object_id', $object_id_filter, 10, 0 );
 
 		/* Act. */
 		$actual = $custom_fields->update_course_woocommerce_product_before_copied( 1, 2, 3, '_course_woocommerce_product' );
 
 		/* Clean up & Assert. */
 		remove_filter( 'wpml_element_language_code', $language_code_filter );
-		remove_filter( 'wpml_object_id', $object_id_fitler );
+		remove_filter( 'wpml_object_id', $object_id_filter );
 
 		$this->assertSame( 4, $actual );
 	}

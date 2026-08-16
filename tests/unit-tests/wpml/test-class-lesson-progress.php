@@ -5,6 +5,24 @@ namespace SenseiTest\WPML;
 use Sensei\WPML\Lesson_Progress;
 
 class Lesson_Progress_Test extends \WP_UnitTestCase {
+	/**
+	 * Sensei Factory.
+	 *
+	 * @var \Sensei_Factory
+	 */
+	protected $factory;
+
+	public function set_up(): void {
+		parent::set_up();
+		$this->factory = new \Sensei_Factory();
+	}
+
+	public function tear_down(): void {
+		remove_all_filters( 'wpml_element_language_details' );
+		remove_all_filters( 'wpml_object_id' );
+		parent::tear_down();
+		$this->factory->tearDown();
+	}
 
 	public function testInit_WhenCalled_AddsFilters() {
 		/* Arrange. */
@@ -20,6 +38,49 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 		$this->assertEquals( 10, has_filter( 'sensei_lesson_progress_has_lesson_id', array( $lesson_progress, 'translate_lesson_id' ) ) );
 		$this->assertEquals( 10, has_filter( 'sensei_lesson_progress_delete_for_lesson_lesson_id', array( $lesson_progress, 'translate_lesson_id' ) ) );
 		$this->assertEquals( 10, has_filter( 'sensei_lesson_progress_find_lesson_id', array( $lesson_progress, 'translate_lesson_id' ) ) );
+		$this->assertEquals( 10, has_filter( 'sensei_quiz_cache_key_lesson_id', array( $lesson_progress, 'translate_lesson_id' ) ) );
+	}
+
+	public function testTranslateLessonId_QuizCacheReadWithTranslatedLesson_ReadsTheOriginalLessonKey() {
+		/* Arrange. */
+		$user_id              = $this->factory->user->create();
+		$original_lesson_id   = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$this->factory->quiz->create( array( 'post_parent' => $translated_lesson_id ) );
+
+		add_filter(
+			'wpml_element_language_details',
+			function () {
+				return array(
+					'source_language_code' => 'en',
+					'language_code'        => 'es',
+				);
+			},
+			10,
+			0
+		);
+
+		add_filter(
+			'wpml_object_id',
+			function ( $object_id, $type ) use ( $translated_lesson_id, $original_lesson_id ) {
+				if ( 'lesson' === $type && $translated_lesson_id === $object_id ) {
+					return $original_lesson_id;
+				}
+				return $object_id;
+			},
+			10,
+			2
+		);
+
+		( new Lesson_Progress() )->init();
+
+		set_transient( 'quiz_grades_' . $user_id . '_' . $original_lesson_id, array( 99 => 1 ) );
+
+		/* Act. */
+		$grades = Sensei()->quiz->get_user_grades( $translated_lesson_id, $user_id );
+
+		/* Assert. */
+		$this->assertSame( array( 99 => 1 ), $grades, 'Reading with the translated lesson should hit the original lesson cache key.' );
 	}
 
 	public function testTranslateLessonId_WhenCalled_ReturnsMatchingValue() {
