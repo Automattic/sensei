@@ -211,12 +211,7 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	 * Block themes should inherit their own styles and skip the compatibility styles.
 	 */
 	public function testShouldLoadLearningModeCompat_WhenBlockTheme_ReturnsFalse() {
-		$theme_directory = get_template_directory() . '/block-templates';
-		$index_file      = $theme_directory . '/index.html';
-
-		if ( ! is_dir( $theme_directory ) ) {
-			mkdir( $theme_directory );
-		}
+		$index_file = get_template_directory() . '/block-templates/index.html';
 
 		$this->create_index_file( $index_file );
 
@@ -224,7 +219,6 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 
 		$this->assertFalse( $result, 'Compat styles should be skipped for block themes.' );
 
-		unlink( $index_file );
-		rmdir( $theme_directory );
+		$this->remove_index_file( $index_file );
 	}
 }
