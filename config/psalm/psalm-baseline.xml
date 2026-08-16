@@ -4416,6 +4416,10 @@
     <PossiblyNullPropertyAssignmentValue>
       <code><![CDATA[$task]]></code>
     </PossiblyNullPropertyAssignmentValue>
+    <DocblockTypeContradiction>
+      <code><![CDATA[! $this->task]]></code>
+      <code><![CDATA[! $this->task]]></code>
+    </DocblockTypeContradiction>
     <PropertyNotSetInConstructor>
       <code><![CDATA[$data]]></code>
       <code><![CDATA[$default_author]]></code>
@@ -4425,14 +4429,19 @@
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$task]]></code>
     </PropertyNotSetInConstructor>
+    <RedundantCast>
+      <code><![CDATA[(string) $existing]]></code>
+    </RedundantCast>
     <RedundantConditionGivenDocblockType>
       <code><![CDATA[! empty( $import_id ) && $this->task]]></code>
       <code><![CDATA[$this->task]]></code>
       <code><![CDATA[null !== $value]]></code>
+      <code><![CDATA['' !== $import_id && $this->task]]></code>
     </RedundantConditionGivenDocblockType>
     <UndefinedMethod>
       <code><![CDATA[add_attachment_task]]></code>
       <code><![CDATA[add_line_warning]]></code>
+      <code><![CDATA[get_import_id]]></code>
       <code><![CDATA[set_import_id]]></code>
     </UndefinedMethod>
     <UnsafeInstantiation>
