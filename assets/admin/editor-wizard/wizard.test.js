@@ -17,7 +17,11 @@ import Wizard from './wizard';
 const SOME_DUMMY_CONTENT = 'SOME_DUMMY_CONTENT';
 const SOME_DUMMY_ACTIONS = 'SOME_DUMMY_ACTIONS';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 
 describe( '<Wizard />', () => {
 	beforeEach( () => {

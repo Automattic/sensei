@@ -14,7 +14,11 @@ import '@testing-library/jest-dom';
  */
 import CourseUpgradeStep from './course-upgrade-step';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 
 const DUMMY_ROUNDED_PRICE_WITH_CENTS = '$130.00';
 const DUMMY_ROUNDED_PRICE = '$130';

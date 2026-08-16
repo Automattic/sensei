@@ -1074,9 +1074,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Testing $woothemes->quiz->get_user_grades.
-	 */
-	/**
 	 * Tests that stored grades survive quiz post queries being filtered
 	 * to another language by a multilingual plugin.
 	 *
@@ -1112,6 +1109,189 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertSame( array( $question_id => 1 ), $grades, 'Stored grades should survive language-filtered quiz queries.' );
 	}
 
+	/**
+	 * Tests that the grades cache is written under the filtered lesson ID.
+	 *
+	 * @covers Sensei_Quiz::set_user_grades
+	 */
+	public function testSetUserGrades_CacheLessonIdFiltered_WritesTheFilteredKey() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter ) = $this->arrange_lesson_with_filtered_cache_lesson();
+
+		/* Act. */
+		Sensei()->quiz->set_user_grades( array( $question_id => 1 ), $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
+		$this->assertSame( array( $question_id => 1 ), get_transient( 'quiz_grades_' . $user_id . '_' . $cache_lesson_id ), 'The grades cache should be keyed by the filtered lesson ID.' );
+	}
+
+	/**
+	 * Tests that the grades cache is read under the filtered lesson ID.
+	 *
+	 * @covers Sensei_Quiz::get_user_grades
+	 */
+	public function testGetUserGrades_CacheLessonIdFiltered_ReadsTheFilteredKey() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter ) = $this->arrange_lesson_with_filtered_cache_lesson();
+
+		set_transient( 'quiz_grades_' . $user_id . '_' . $cache_lesson_id, array( $question_id => 1 ) );
+
+		/* Act. */
+		$grades = Sensei()->quiz->get_user_grades( $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
+		$this->assertSame( array( $question_id => 1 ), $grades, 'The grades cache should be read from the filtered lesson ID key.' );
+	}
+
+	/**
+	 * Tests that the reset deletes the cached quiz data under the filtered lesson ID.
+	 *
+	 * @covers Sensei_Quiz::reset_user_lesson_data
+	 */
+	public function testResetUserLessonData_CacheLessonIdFiltered_DeletesTheFilteredKeys() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter ) = $this->arrange_lesson_with_filtered_cache_lesson();
+
+		set_transient( 'sensei_answers_' . $user_id . '_' . $cache_lesson_id, 'stale' );
+		set_transient( 'quiz_grades_' . $user_id . '_' . $cache_lesson_id, 'stale' );
+		set_transient( 'sensei_answers_feedback_' . $user_id . '_' . $cache_lesson_id, 'stale' );
+
+		/* Act. */
+		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+
+		/* Clean up. */
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
+
+		/* Assert. */
+		$this->assertFalse( get_transient( 'sensei_answers_' . $user_id . '_' . $cache_lesson_id ), 'The answers cache under the filtered lesson ID should be deleted.' );
+		$this->assertFalse( get_transient( 'quiz_grades_' . $user_id . '_' . $cache_lesson_id ), 'The grades cache under the filtered lesson ID should be deleted.' );
+		$this->assertFalse( get_transient( 'sensei_answers_feedback_' . $user_id . '_' . $cache_lesson_id ), 'The feedback cache under the filtered lesson ID should be deleted.' );
+	}
+
+	/**
+	 * Tests that the ambient lesson ID is passed to the cache key filter.
+	 *
+	 * @covers Sensei_Quiz::set_user_grades
+	 */
+	public function testSetUserGrades_CacheLessonIdFiltered_PassesTheLessonIdToTheFilter() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter, $received ) = $this->arrange_lesson_with_filtered_cache_lesson();
+
+		/* Act. */
+		Sensei()->quiz->set_user_grades( array( $question_id => 1 ), $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
+		$this->assertSame( $lesson_id, $received->lesson_id, 'The filter should receive the lesson ID the operation ran with.' );
+	}
+
+	/**
+	 * Tests that the answers cache is written under the filtered lesson ID.
+	 *
+	 * @covers Sensei_Quiz::save_user_answers
+	 */
+	public function testSaveUserAnswers_CacheLessonIdFiltered_WritesTheFilteredKey() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter ) = $this->arrange_lesson_with_filtered_cache_lesson();
+
+		/* Act. */
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Answer' ), array(), $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
+		$this->assertSame( array( $question_id => base64_encode( 'Answer' ) ), get_transient( 'sensei_answers_' . $user_id . '_' . $cache_lesson_id ), 'The answers cache should be keyed by the filtered lesson ID.' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the cache's stored format.
+	}
+
+	/**
+	 * Tests that the answers cache is read under the filtered lesson ID.
+	 *
+	 * @covers Sensei_Quiz::get_user_answers
+	 */
+	public function testGetUserAnswers_CacheLessonIdFiltered_ReadsTheFilteredKey() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter ) = $this->arrange_lesson_with_filtered_cache_lesson();
+
+		set_transient( 'sensei_answers_' . $user_id . '_' . $cache_lesson_id, array( $question_id => base64_encode( 'Answer' ) ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the cache's stored format.
+
+		/* Act. */
+		$answers = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
+		$this->assertSame( array( $question_id => 'Answer' ), $answers, 'The answers cache should be read from the filtered lesson ID key.' );
+	}
+
+	/**
+	 * Tests that the feedback cache is written under the filtered lesson ID.
+	 *
+	 * @covers Sensei_Quiz::save_user_answers_feedback
+	 */
+	public function testSaveUserAnswersFeedback_CacheLessonIdFiltered_WritesTheFilteredKey() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter ) = $this->arrange_lesson_with_filtered_cache_lesson();
+
+		/* Act. */
+		Sensei()->quiz->save_user_answers_feedback( array( $question_id => 'Feedback' ), $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
+		$this->assertSame( array( $question_id => base64_encode( 'Feedback' ) ), get_transient( 'sensei_answers_feedback_' . $user_id . '_' . $cache_lesson_id ), 'The feedback cache should be keyed by the filtered lesson ID.' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the cache's stored format.
+	}
+
+	/**
+	 * Tests that the feedback cache is read under the filtered lesson ID.
+	 *
+	 * @covers Sensei_Quiz::get_user_answers_feedback
+	 */
+	public function testGetUserAnswersFeedback_CacheLessonIdFiltered_ReadsTheFilteredKey() {
+		/* Arrange. */
+		list( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter ) = $this->arrange_lesson_with_filtered_cache_lesson();
+
+		set_transient( 'sensei_answers_feedback_' . $user_id . '_' . $cache_lesson_id, array( $question_id => base64_encode( 'Feedback' ) ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the cache's stored format.
+
+		/* Act. */
+		$feedback = Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
+		$this->assertSame( array( $question_id => 'Feedback' ), $feedback, 'The feedback cache should be read from the filtered lesson ID key.' );
+	}
+
+	/**
+	 * Create a lesson with a quiz, a user with a submission and one answer, and
+	 * register a filter mapping the quiz data cache keys to another lesson ID.
+	 *
+	 * @return array{0: int, 1: int, 2: int, 3: int, 4: callable, 5: stdClass} User, lesson,
+	 *         question, cache lesson ID, the registered filter, and a holder
+	 *         whose lesson_id records what the filter received.
+	 */
+	private function arrange_lesson_with_filtered_cache_lesson() {
+		$user_id     = $this->factory->user->create();
+		$lesson_id   = $this->factory->get_random_lesson_id();
+		$quiz_id     = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
+
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id );
+		$answer     = Sensei()->quiz_answer_repository->create( $submission, $question_id, 'Answer' );
+		Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, 1 );
+
+		$cache_lesson_id     = $this->factory->lesson->create();
+		$received            = new stdClass();
+		$cache_lesson_filter = function ( $filtered_lesson_id ) use ( $cache_lesson_id, $received ) {
+			$received->lesson_id = $filtered_lesson_id;
+			return $cache_lesson_id;
+		};
+		add_filter( 'sensei_quiz_cache_key_lesson_id', $cache_lesson_filter );
+
+		return array( $user_id, $lesson_id, $question_id, $cache_lesson_id, $cache_lesson_filter, $received );
+	}
+
+	/**
+	 * Testing $woothemes->quiz->get_user_grades.
+	 */
 	public function testGetUserGrades() {
 
 		// Setup the data needed for the assertions in this test.

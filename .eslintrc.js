@@ -6,6 +6,11 @@ module.exports = {
 	globals: {
 		wp: true,
 	},
+	settings: {
+		'import/resolver': {
+			typescript: true,
+		},
+	},
 	rules: {
 		'@wordpress/dependency-group': 'warn',
 		'@wordpress/i18n-text-domain': [

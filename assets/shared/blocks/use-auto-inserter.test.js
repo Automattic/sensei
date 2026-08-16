@@ -13,7 +13,12 @@ import { useDispatch, useSelect } from '@wordpress/data';
  */
 import { useAutoInserter } from './use-auto-inserter';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+		useDispatch: jest.fn(),
+	} )
+);
 jest.mock( '@wordpress/blocks' );
 
 describe( 'useAutoInserter', () => {

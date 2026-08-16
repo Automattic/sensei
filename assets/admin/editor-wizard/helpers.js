@@ -2,8 +2,14 @@
  * WordPress dependencies
  */
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
-import { store as blockEditorStore } from '@wordpress/block-editor';
+import {
+	useEffect,
+	useLayoutEffect,
+	useMemo,
+	useState,
+} from '@wordpress/element';
+import { parse } from '@wordpress/blocks';
+import { store as coreStore } from '@wordpress/core-data';
 import { store as editorStore } from '@wordpress/editor';
 import { applyFilters } from '@wordpress/hooks';
 
@@ -11,6 +17,65 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies
  */
 import { EXTENSIONS_STORE } from '../../extensions/store';
+
+const SENSEI_POST_CONTENT_BLOCK_TYPE = 'sensei-lms/post-content';
+
+/**
+ * Filter and prepare the patterns used by the Sensei editor wizard.
+ *
+ * @param {Object[]} patterns Block patterns.
+ *
+ * @return {Object[]} Sensei block patterns with parsed blocks.
+ */
+export const getSenseiPatterns = ( patterns = [] ) =>
+	patterns
+		.filter( ( { blockTypes } ) =>
+			blockTypes?.includes( SENSEI_POST_CONTENT_BLOCK_TYPE )
+		)
+		// A pattern can appear in both editor settings and the REST response.
+		.filter(
+			( pattern, index, allPatterns ) =>
+				index ===
+				allPatterns.findIndex(
+					( candidate ) => candidate.name === pattern.name
+				)
+		)
+		.map( ( pattern ) => ( {
+			...pattern,
+			// REST patterns contain markup, while editor patterns may already have parsed blocks.
+			blocks:
+				pattern.blocks ||
+				parse( pattern.content || '', {
+					__unstableSkipMigrationLogs: true,
+				} ),
+		} ) );
+
+/**
+ * Get the Sensei patterns without filtering them through the active editor canvas.
+ *
+ * @return {Object[]} Sensei block patterns with parsed blocks.
+ */
+export const useSenseiPatterns = () => {
+	const { editorPatterns, registeredPatterns } = useSelect( ( select ) => {
+		const editorSettings = select( editorStore ).getEditorSettings() || {};
+
+		return {
+			// Include client-added patterns that may not be registered on the server.
+			editorPatterns:
+				editorSettings.__experimentalAdditionalBlockPatterns ||
+				editorSettings.__experimentalBlockPatterns ||
+				[],
+			// Unlike the block editor selector, core data does not apply the active canvas's insertion rules.
+			registeredPatterns: select( coreStore ).getBlockPatterns() || [],
+		};
+	}, [] );
+
+	return useMemo(
+		// Put editor patterns first so client-side versions win during deduplication.
+		() => getSenseiPatterns( [ ...editorPatterns, ...registeredPatterns ] ),
+		[ editorPatterns, registeredPatterns ]
+	);
+};
 
 /**
  * Update blocks content, replacing the placeholders with a content.
@@ -100,6 +165,19 @@ export const useWizardOpenState = () => {
 };
 
 /**
+ * Hook to replace the blocks belonging to the current post.
+ *
+ * @return {Function} Function to replace the current post blocks.
+ */
+export const useSetPostBlocks = () => {
+	const { resetEditorBlocks } = useDispatch( editorStore );
+
+	return ( blocks ) => {
+		resetEditorBlocks( blocks );
+	};
+};
+
+/**
  * Hook to set the default post pattern with replaced content.
  *
  * @param {Object} replaces Object containing content to be replaced. The keys are the block classNames to find. The values are the content to be replaced.
@@ -107,19 +185,15 @@ export const useWizardOpenState = () => {
  * @return {Function} Function to set the default pattern.
  */
 export const useSetDefaultPattern = ( replaces ) => {
-	const { patterns } = useSelect( ( select ) => ( {
-		patterns:
-			select( blockEditorStore )?.getPatternsByBlockTypes(
-				'sensei-lms/post-content'
-			) ||
-			select( blockEditorStore ).__experimentalGetPatternsByBlockTypes(
-				'sensei-lms/post-content'
-			),
-	} ) );
-	const { template } = useSelect( ( select ) => ( {
-		template: select( blockEditorStore ).getTemplate(),
-	} ) );
-	const { resetBlocks } = useDispatch( blockEditorStore );
+	const patterns = useSenseiPatterns();
+	const { template } = useSelect( ( select ) => {
+		const postType = select( editorStore ).getCurrentPostType();
+
+		return {
+			template: select( coreStore ).getPostType( postType )?.template,
+		};
+	} );
+	const setPostBlocks = useSetPostBlocks();
 
 	// Get the default pattern based on what's set in the template.
 	const pattern = patterns.find(
@@ -133,7 +207,7 @@ export const useSetDefaultPattern = ( replaces ) => {
 		}
 
 		const replacedBlocks = replacePlaceholders( pattern.blocks, replaces );
-		resetBlocks( replacedBlocks );
+		setPostBlocks( replacedBlocks );
 	};
 };
 

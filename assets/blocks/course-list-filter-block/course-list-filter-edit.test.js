@@ -36,7 +36,11 @@ const categories = [
 	},
 ];
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 
 describe( 'CourseListFilterBlockEdit', () => {
 	it( 'should render the dropdown for category filter', () => {

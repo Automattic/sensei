@@ -12,7 +12,12 @@ import { useSelect, useDispatch } from '@wordpress/data';
  * Internal dependencies
  */
 import { ModuleEdit } from './module-edit';
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+		useDispatch: jest.fn(),
+	} )
+);
 
 jest.mock( '@wordpress/block-editor', () => ( {
 	InspectorControls: () => null,
