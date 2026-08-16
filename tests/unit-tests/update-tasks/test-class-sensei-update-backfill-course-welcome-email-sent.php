@@ -38,7 +38,7 @@ class Sensei_Update_Backfill_Course_Welcome_Email_Sent_Test extends WP_UnitTestC
 		/* Assert. */
 		foreach ( $relationships as $relationship ) {
 			$flag = get_user_meta( $relationship['user_id'], Course_Welcome::get_welcome_sent_meta_key( $relationship['course_id'] ), true );
-			self::assertNotEmpty( $flag, 'Every existing course progress relationship should be flagged as welcomed.' );
+			self::assertSame( Course_Welcome::WELCOME_ASSUMED, $flag, 'Every existing course progress relationship should be flagged with the sentinel.' );
 		}
 	}
 

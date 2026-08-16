@@ -13,7 +13,11 @@ import { useSelect } from '@wordpress/data';
  */
 import { StudentActionMenu } from './index';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 
 const studentName = 'johndoe';
 const studentDisplayName = 'John Doe';

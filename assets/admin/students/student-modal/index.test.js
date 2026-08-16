@@ -35,7 +35,11 @@ const courses = [
 	},
 ];
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 
 const students = [ 1, 2, 3 ];
 const studentName = 'testname';

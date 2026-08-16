@@ -17,7 +17,12 @@ import { useQuizStructure } from '../quiz-store';
 import QuizSettings from './quiz-settings';
 import QuizValidationResult from './quiz-validation';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useDispatch: jest.fn(),
+		useSelect: jest.fn(),
+	} )
+);
 jest.mock( './use-update-quiz-has-questions-meta' );
 jest.mock( './quiz-validation' );
 jest.mock( '../quiz-store' );

@@ -56,7 +56,7 @@ export const setDefaultPreferences = async (
 		...userPreference.initialState,
 		origins: [
 			{
-				origin: '/',
+				origin: 'http://localhost:8889',
 				localStorage: [
 					{
 						name: userPreference.key,

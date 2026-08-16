@@ -1,5 +1,93 @@
 version: 2
 updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "No Changelog"
+    # These are updated manually, as a set, when the minimum supported
+    # WordPress version changes.
+    ignore:
+      - dependency-name: "@wordpress/api-fetch"
+      - dependency-name: "@wordpress/base-styles"
+      - dependency-name: "@wordpress/block-editor"
+      - dependency-name: "@wordpress/blocks"
+      - dependency-name: "@wordpress/components"
+      - dependency-name: "@wordpress/compose"
+      - dependency-name: "@wordpress/core-data"
+      - dependency-name: "@wordpress/data"
+      - dependency-name: "@wordpress/data-controls"
+      - dependency-name: "@wordpress/dom-ready"
+      - dependency-name: "@wordpress/edit-post"
+      - dependency-name: "@wordpress/editor"
+      - dependency-name: "@wordpress/element"
+      - dependency-name: "@wordpress/escape-html"
+      - dependency-name: "@wordpress/hooks"
+      - dependency-name: "@wordpress/html-entities"
+      - dependency-name: "@wordpress/i18n"
+      - dependency-name: "@wordpress/icons"
+      - dependency-name: "@wordpress/keycodes"
+      - dependency-name: "@wordpress/plugins"
+      - dependency-name: "@wordpress/token-list"
+      - dependency-name: "@wordpress/url"
+    groups:
+      wordpress-packages:
+        patterns:
+          - "@wordpress/*"
+      react-packages:
+        patterns:
+          - "react"
+          - "react-dom"
+      development-minor-patch:
+        dependency-type: "development"
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      production-minor-patch:
+        dependency-type: "production"
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    open-pull-requests-limit: 5
+    labels:
+      - "No Changelog"
+    ignore:
+      - dependency-name: "php-stubs/wordpress-stubs"
+        update-types:
+          - "version-update:semver-major"
+    groups:
+      composer-development-minor-patch:
+        dependency-type: "development"
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      composer-production-minor-patch:
+        dependency-type: "production"
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    cooldown:
+      default-days: 7
+
   - package-ecosystem: "github-actions"
     # Scan composite actions too — their SHA-pinned `uses:` refs need update
     # PRs just like the workflow files do ('**' covers nested action dirs).
@@ -8,7 +96,7 @@ updates:
       - "/.github/actions/**"
     schedule:
       interval: "weekly"
-      day: "monday"
+      day: "friday"
     open-pull-requests-limit: 10
     labels:
       - "No Changelog"

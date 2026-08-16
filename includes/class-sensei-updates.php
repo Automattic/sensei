@@ -98,7 +98,7 @@ class Sensei_Updates {
 	/**
 	 * Enqueue job to backfill the course welcome email sent flag.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 */
 	private function v4_26_2_backfill_course_welcome_email_sent() {
 		// Only run this if we're upgrading from a version before 4.26.2.
@@ -574,7 +574,8 @@ class Sensei_Updates {
 			return isset( $methods[ $name ]['default'] ) ? $methods[ $name ]['default'] : null;
 		}
 
-		throw new BadMethodCallException( sprintf( 'Sensei_Updates::%s method does not exist' ) );
+		// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are not rendered.
+		throw new BadMethodCallException( sprintf( 'Sensei_Updates::%s method does not exist', $name ) );
 	}
 
 	/**

@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix PHP 8.4 deprecation warnings for implicitly-nullable parameters by declaring explicit nullable types.

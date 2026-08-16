@@ -19,7 +19,7 @@ abstract class Sensei_Data_Port_Schema {
 	 * `draft`, and import only accepts these; keeping both sides in sync avoids a
 	 * status being emitted that the importer would reject.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 *
 	 * @var string[]
 	 */

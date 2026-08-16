@@ -709,7 +709,7 @@ class Sensei_Teacher {
 	 * The screen-based restrictions don't apply during the `admin_init` download, so this
 	 * enforces the same author scoping without depending on `get_current_screen()`.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.2
 	 * @access public
 	 *
 	 * @param WP_Query $query The query.
