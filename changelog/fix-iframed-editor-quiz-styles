@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Fixed spacing and styling of quiz question options in the editor on WordPress 7.1.
+Fixed spacing and styling of quiz question options when using the iframed block editor.
