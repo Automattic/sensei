@@ -191,7 +191,6 @@ class Sensei_Course_Theme_Templates {
 			'origin'         => 'theme',
 			'is_custom'      => false,
 			'has_theme_file' => true,
-			'modified'       => null,
 			'status'         => 'publish',
 		];
 
@@ -315,12 +314,13 @@ class Sensei_Course_Theme_Templates {
 
 		foreach ( $this->file_templates as $name => $template ) {
 
-			$db_template     = $db_templates[ $name ] ?? null;
-			$template_object = (object) $template;
+			$db_template = $db_templates[ $name ] ?? null;
 
 			if ( ! empty( $db_template ) ) {
 				$template_object = $this->build_template_from_post( $db_template );
 			} else {
+				$template_object = $this->build_default_template( $template );
+
 				// Prefill the template contents from their content files.
 				if ( ! empty( $template['content'] ) && file_exists( $template['content'] ) ) {
 
@@ -348,8 +348,6 @@ class Sensei_Course_Theme_Templates {
 						$template_object->content .= Template_Style::serialize_block( $css );
 					}
 				}
-				$template_object->wp_id  = null;
-				$template_object->author = null;
 			}
 
 			$templates[ $name ] = $template_object;
@@ -444,6 +442,29 @@ class Sensei_Course_Theme_Templates {
 		list( , $slug ) = explode( '//', $id );
 
 		return $templates[ $slug ] ?? $template;
+	}
+
+	/**
+	 * Build a default (uncustomized) template object from its field list.
+	 *
+	 * Uses a real WP_Block_Template so every field WordPress expects a template
+	 * to have is present, including fields WordPress adds in future releases.
+	 *
+	 * @param array $fields The template field list.
+	 *
+	 * @return WP_Block_Template
+	 */
+	private function build_default_template( $fields ) {
+		$template = new WP_Block_Template();
+
+		foreach ( $fields as $key => $value ) {
+			$template->$key = $value;
+		}
+
+		$template->wp_id  = null;
+		$template->author = null;
+
+		return $template;
 	}
 
 	/**
