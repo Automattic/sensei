@@ -346,11 +346,14 @@ class Sensei_Course_Theme_Templates {
 	 * @return array
 	 */
 	private function remove_registered_placeholders( $templates ) {
-		return array_filter(
-			$templates,
-			function ( $template ) {
-				return ! ( 'plugin' === $template->source && in_array( $template->slug, array( self::LESSON_SLUG, self::QUIZ_SLUG ), true ) );
-			}
+		// array_values() reindexes so REST still encodes the result as an array, not an object.
+		return array_values(
+			array_filter(
+				$templates,
+				function ( $template ) {
+					return ! ( 'plugin' === $template->source && in_array( $template->slug, array( self::LESSON_SLUG, self::QUIZ_SLUG ), true ) );
+				}
+			)
 		);
 	}
 
