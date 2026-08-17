@@ -55,27 +55,6 @@ class Email_Page_Template {
 		add_filter( 'pre_get_block_file_template', [ $this, 'get_from_file' ], 10, 3 );
 		add_filter( 'get_block_templates', [ $this, 'add_email_template' ], 10, 3 );
 		add_filter( 'get_block_template', [ $this, 'get_template' ], 10, 3 );
-		add_action( 'init', array( $this, 'register_email_block_template' ) );
-	}
-
-	/**
-	 * Register the email template as a plugin template.
-	 *
-	 * This is what makes the Site Editor list it under the "Sensei LMS" group.
-	 * The registration is a placeholder only.
-	 *
-	 * @internal
-	 *
-	 * @since $$next-version$$
-	 */
-	public function register_email_block_template(): void {
-		register_block_template(
-			dirname( plugin_basename( SENSEI_LMS_PLUGIN_FILE ) ) . '//' . self::SLUG,
-			array(
-				'post_types' => array( Email_Post_Type::POST_TYPE ),
-				'content'    => '',
-			)
-		);
 	}
 
 	/**
@@ -134,14 +113,6 @@ class Email_Page_Template {
 	 * @return WP_Block_Template The original or the email template.
 	 */
 	public function add_email_template( $query_result, $query, $template_type ) {
-		// Drop the placeholder; the real template is added below.
-		$query_result = array_filter(
-			$query_result,
-			function ( $template ) {
-				return ! ( 'plugin' === $template->source && self::SLUG === $template->slug );
-			}
-		);
-
 		if ( ! \Sensei_Course_Theme_Editor::is_site_editor_request() ) {
 			return $query_result;
 		}
