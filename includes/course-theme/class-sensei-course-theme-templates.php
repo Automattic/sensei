@@ -92,7 +92,7 @@ class Sensei_Course_Theme_Templates {
 	 * @since $$next-version$$
 	 */
 	public function register_block_templates() {
-		$namespace = dirname( plugin_basename( SENSEI_LMS_PLUGIN_FILE ) );
+		$namespace = basename( dirname( SENSEI_LMS_PLUGIN_FILE ) );
 
 		// The slug is the post type, which is how the customized template is keyed in the database.
 		foreach ( array( self::LESSON_SLUG, self::QUIZ_SLUG ) as $slug ) {
@@ -408,7 +408,7 @@ class Sensei_Course_Theme_Templates {
 
 			// Mark as plugin templates so the Site Editor groups them under "Sensei LMS".
 			$template_object->origin = 'plugin';
-			$template_object->plugin = dirname( plugin_basename( SENSEI_LMS_PLUGIN_FILE ) );
+			$template_object->plugin = basename( dirname( SENSEI_LMS_PLUGIN_FILE ) );
 
 			$templates[ $name ] = $template_object;
 		}

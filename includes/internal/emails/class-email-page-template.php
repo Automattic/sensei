@@ -141,7 +141,7 @@ class Email_Page_Template {
 
 		// Mark as a plugin template so the Site Editor groups it under "Sensei LMS".
 		$template->origin = 'plugin';
-		$template->plugin = dirname( plugin_basename( SENSEI_LMS_PLUGIN_FILE ) );
+		$template->plugin = basename( dirname( SENSEI_LMS_PLUGIN_FILE ) );
 
 		$query_result[] = $template;
 
