@@ -790,7 +790,7 @@ class Sensei_Learner_Management {
 			wp_send_json( $found_users );
 		}
 
-		$term = isset( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
+		$term = isset( $_GET['term'] ) && is_string( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
 
 		if ( empty( $term ) ) {
 			die();
