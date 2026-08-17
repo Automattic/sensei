@@ -22,7 +22,7 @@ class Email_Page_Template {
 
 
 	public const THEME         = 'sensei-email';
-	public const SLUG          = 'single-sensei_email';
+	public const SLUG          = 'single-' . Email_Post_Type::POST_TYPE;
 	public const ID            = self::THEME . '//' . self::SLUG;
 	public const TEMPLATE_PATH = 'block-templates/email-template.php';
 
@@ -55,6 +55,27 @@ class Email_Page_Template {
 		add_filter( 'pre_get_block_file_template', [ $this, 'get_from_file' ], 10, 3 );
 		add_filter( 'get_block_templates', [ $this, 'add_email_template' ], 10, 3 );
 		add_filter( 'get_block_template', [ $this, 'get_template' ], 10, 3 );
+		add_action( 'init', array( $this, 'register_email_block_template' ) );
+	}
+
+	/**
+	 * Register the email template as a plugin template.
+	 *
+	 * This is what makes the Site Editor list it under the "Sensei LMS" group.
+	 * The registration is a placeholder only.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 */
+	public function register_email_block_template(): void {
+		register_block_template(
+			dirname( plugin_basename( SENSEI_LMS_PLUGIN_FILE ) ) . '//' . self::SLUG,
+			array(
+				'post_types' => array( Email_Post_Type::POST_TYPE ),
+				'content'    => '',
+			)
+		);
 	}
 
 	/**
@@ -113,6 +134,14 @@ class Email_Page_Template {
 	 * @return WP_Block_Template The original or the email template.
 	 */
 	public function add_email_template( $query_result, $query, $template_type ) {
+		// Drop the placeholder; the real template is added below.
+		$query_result = array_filter(
+			$query_result,
+			function ( $template ) {
+				return ! ( 'plugin' === $template->source && self::SLUG === $template->slug );
+			}
+		);
+
 		if ( ! \Sensei_Course_Theme_Editor::is_site_editor_request() ) {
 			return $query_result;
 		}
@@ -137,11 +166,13 @@ class Email_Page_Template {
 
 		$from_db = $this->repository->get( self::ID );
 
-		if ( ! empty( $from_db ) ) {
-			$query_result[] = $from_db;
-		} else {  // Use the PHP email template.
-			$query_result[] = $this->repository->get_from_file( self::TEMPLATE_PATH, self::ID );
-		}
+		$template = ! empty( $from_db ) ? $from_db : $this->repository->get_from_file( self::TEMPLATE_PATH, self::ID );
+
+		// Mark as a plugin template so the Site Editor groups it under "Sensei LMS".
+		$template->origin = 'plugin';
+		$template->plugin = dirname( plugin_basename( SENSEI_LMS_PLUGIN_FILE ) );
+
+		$query_result[] = $template;
 
 		return $query_result;
 	}
