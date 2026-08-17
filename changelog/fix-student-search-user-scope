@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Restrict the Students search to student accounts and stop returning email addresses.
