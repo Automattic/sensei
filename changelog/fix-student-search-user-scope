@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Restrict the Students search to student accounts and stop returning email addresses.
+Scope the Students management user search to student accounts.
