@@ -774,20 +774,35 @@ class Sensei_Learner_Management {
 
 	/**
 	 * Searches for a Learner by name or username.
+	 *
+	 * The search is used to manually enrol students, so it requires the grades
+	 * capability and, for users who cannot manage all of Sensei, it is limited to
+	 * student-only accounts and never exposes email addresses.
 	 */
 	public function json_search_users() {
 
 		check_ajax_referer( 'search-users', 'security' );
 
-		$term = sanitize_text_field( stripslashes( $_GET['term'] ) );
+		$default     = isset( $_GET['default'] ) ? $_GET['default'] : __( 'None', 'sensei-lms' );
+		$found_users = array( '' => $default );
+
+		if ( ! current_user_can( 'manage_sensei_grades' ) ) {
+			wp_send_json( $found_users );
+		}
+
+		$term = isset( $_GET['term'] ) ? sanitize_text_field( stripslashes( $_GET['term'] ) ) : '';
 
 		if ( empty( $term ) ) {
 			die();
 		}
 
-		$default = isset( $_GET['default'] ) ? $_GET['default'] : __( 'None', 'sensei-lms' );
+		// Users who can manage all of Sensei may search everyone, including by email.
+		$can_manage_all = current_user_can( 'manage_sensei' );
+		$search_columns = array( 'ID', 'user_login', 'user_nicename', 'user_firstname', 'user_lastname' );
 
-		$found_users = array( '' => $default );
+		if ( $can_manage_all ) {
+			$search_columns[] = 'user_email';
+		}
 
 		$users_query = new WP_User_Query(
 			apply_filters(
@@ -796,7 +811,7 @@ class Sensei_Learner_Management {
 					'fields'         => 'all',
 					'orderby'        => 'display_name',
 					'search'         => '*' . $term . '*',
-					'search_columns' => array( 'ID', 'user_login', 'user_email', 'user_nicename', 'user_firstname', 'user_lastname' ),
+					'search_columns' => $search_columns,
 				),
 				$term
 			)
@@ -806,6 +821,12 @@ class Sensei_Learner_Management {
 
 		if ( $users ) {
 			foreach ( $users as $user ) {
+				// Restrict non-admins to student-only accounts so teachers cannot
+				// enumerate administrators, editors, or other teachers.
+				if ( ! $can_manage_all && ( user_can( $user->ID, 'edit_posts' ) || user_can( $user->ID, 'manage_sensei_grades' ) ) ) {
+					continue;
+				}
+
 				$full_name = Sensei_Learner::get_full_name( $user->ID );
 
 				if ( trim( $user->display_name ) === trim( $full_name ) ) {
@@ -818,7 +839,7 @@ class Sensei_Learner_Management {
 
 				}
 
-				$found_users[ $user->ID ] = $name . ' (#' . $user->ID . ' - ' . sanitize_email( $user->user_email ) . ')';
+				$found_users[ $user->ID ] = $name . ' (#' . $user->ID . ')';
 			}
 		}
 
