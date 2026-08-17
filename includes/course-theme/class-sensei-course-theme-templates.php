@@ -93,16 +93,21 @@ class Sensei_Course_Theme_Templates {
 	 */
 	public function register_block_templates() {
 		$namespace = basename( dirname( SENSEI_LMS_PLUGIN_FILE ) );
+		$registry  = WP_Block_Templates_Registry::get_instance();
 
 		// The slug is the post type, which is how the customized template is keyed in the database.
 		foreach ( array( self::LESSON_SLUG, self::QUIZ_SLUG ) as $slug ) {
-			register_block_template(
-				$namespace . '//' . $slug,
-				array(
-					'post_types' => array( $slug ),
-					'content'    => '',
-				)
-			);
+			$name = $namespace . '//' . $slug;
+
+			if ( ! $registry->is_registered( $name ) ) {
+				register_block_template(
+					$name,
+					array(
+						'post_types' => array( $slug ),
+						'content'    => '',
+					)
+				);
+			}
 		}
 	}
 
