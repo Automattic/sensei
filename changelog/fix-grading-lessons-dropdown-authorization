@@ -1,0 +1,3 @@
+Significance: patch
+Type: security
+Comment: Require the grading capability on the lessons dropdown AJAX endpoint and scope it to the caller's own lessons so private lesson titles are not exposed
