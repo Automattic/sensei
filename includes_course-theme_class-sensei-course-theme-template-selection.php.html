@@ -252,12 +252,10 @@ class Sensei_Course_Theme_Template_Selection {
 	 * @param boolean $update Whether this was an update of the existing post or not.
 	 */
 	public function maybe_set_block_template_name( $post_id, $post, $update ) {
+		// Only the lesson and quiz wp_template posts get the template name suffix.
 		if (
-			// We set the template name meta only for wp_template post types.
 			'wp_template' !== $post->post_type ||
-
-			// We set the template name meta only for templates for lesson and quiz posts.
-			! in_array( $post->post_name, [ 'lesson', 'quiz' ], true )
+			! in_array( $post->post_name, array( Sensei_Course_Theme_Templates::LESSON_SLUG, Sensei_Course_Theme_Templates::QUIZ_SLUG ), true )
 		) {
 			return;
 		}
@@ -290,7 +288,7 @@ class Sensei_Course_Theme_Template_Selection {
 
 		// Check each lm template and append a template name postfix if they don't have it.
 		foreach ( $db_templates as $db_template ) {
-			if ( in_array( $db_template->post_name, [ 'lesson', 'quiz' ], true ) ) {
+			if ( in_array( $db_template->post_name, array( Sensei_Course_Theme_Templates::LESSON_SLUG, Sensei_Course_Theme_Templates::QUIZ_SLUG ), true ) ) {
 				$db_template->post_name = $db_template->post_name . self::TEMPLATE_NAME_SEPERATOR . self::DEFAULT_TEMPLATE_NAME;
 				wp_update_post( $db_template );
 			}
