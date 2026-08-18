@@ -1,4 +1,4 @@
 Significance: patch
-Type: fixed
+Type: security
 
 Remove the admin notice that exposed the administration email address to non-administrators
