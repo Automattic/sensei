@@ -130,7 +130,7 @@ class Sensei_Learner_Management_Test extends WP_UnitTestCase {
 		$_POST['add_complete_lesson'] = 'yes';
 
 		/* Act. */
-		$this->invoke_add_new_learners();
+		$this->learner_management->add_new_learners();
 
 		/* Assert. */
 		$this->assertFalse(
@@ -141,28 +141,6 @@ class Sensei_Learner_Management_Test extends WP_UnitTestCase {
 			Sensei_Course::is_user_enrolled( $foreign_course_id, $victim_id ),
 			'Student must not be enrolled into a foreign teacher\'s course.'
 		);
-	}
-
-	/**
-	 * Invokes add_new_learners(), swallowing the redirect the success path performs.
-	 *
-	 * The mutating path ends in wp_safe_redirect() followed by exit; a wp_redirect filter that
-	 * throws lets the test intercept it before exit terminates the run, while the early-return
-	 * guard paths simply do nothing. Either way the security invariants can then be asserted.
-	 */
-	private function invoke_add_new_learners(): void {
-		$throw = static function () {
-			throw new \Exception( 'redirected' );
-		};
-		add_filter( 'wp_redirect', $throw );
-
-		try {
-			$this->learner_management->add_new_learners();
-		} catch ( \Exception $e ) {
-			unset( $e ); // Redirect intercepted; expected on the mutating path.
-		} finally {
-			remove_filter( 'wp_redirect', $throw );
-		}
 	}
 
 	/**
