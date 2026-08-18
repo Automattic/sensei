@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Fixed course and lesson block colors not matching the theme in the iframed post editor.
+WordPress 7.1 Compatibility: Course and lesson block colors match the theme in the iframed post editor.
