@@ -139,6 +139,10 @@ class Email_Page_Template {
 
 		$template = ! empty( $from_db ) ? $from_db : $this->repository->get_from_file( self::TEMPLATE_PATH, self::ID );
 
+		if ( empty( $template ) ) {
+			return $query_result;
+		}
+
 		// Mark as a plugin template so the Site Editor groups it under "Sensei LMS".
 		$template->origin = 'plugin';
 		$template->plugin = basename( dirname( SENSEI_LMS_PLUGIN_FILE ) );
