@@ -109,14 +109,14 @@ class Sensei_Learner_Management_Test extends WP_UnitTestCase {
 		$attacker_id = $this->factory->user->create();
 		$victim_id   = $this->factory->user->create();
 
-		$own_course_id   = $this->factory->course->create( [ 'post_author' => $attacker_id ] );
-		$other_course_id = $this->factory->course->create( [ 'post_author' => $this->factory->user->create() ] );
+		$own_course_id   = $this->factory->course->create( array( 'post_author' => $attacker_id ) );
+		$other_course_id = $this->factory->course->create( array( 'post_author' => $this->factory->user->create() ) );
 		$other_lesson_id = $this->factory->lesson->create(
-			[
-				'meta_input' => [
+			array(
+				'meta_input' => array(
 					'_lesson_course' => $other_course_id,
-				],
-			]
+				),
+			)
 		);
 
 		wp_set_current_user( $attacker_id );
@@ -124,7 +124,7 @@ class Sensei_Learner_Management_Test extends WP_UnitTestCase {
 		$_POST['add_learner_submit']  = 'some_value';
 		$_POST['add_learner_nonce']   = wp_create_nonce( 'add_learner_to_sensei' );
 		$_POST['add_post_type']       = 'lesson';
-		$_POST['add_user_id']         = [ $victim_id ];
+		$_POST['add_user_id']         = array( $victim_id );
 		$_POST['add_course_id']       = $own_course_id;
 		$_POST['add_lesson_id']       = $other_lesson_id;
 		$_POST['add_complete_lesson'] = 'yes';
