@@ -1743,9 +1743,10 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Previously warned admins when the administration email did not belong to an
-	 * administrator user. The notice exposed the administration email address to any
-	 * user who could load wp-admin, so it is no longer displayed.
+	 * Previously rendered a dashboard notice when the administration email did not
+	 * belong to an administrator user. The notice ran on `admin_notices` without a
+	 * capability check, so it exposed the administration email address to any user
+	 * who could load wp-admin. It is no longer displayed.
 	 *
 	 * @deprecated $$next-version$$
 	 */
