@@ -2387,10 +2387,13 @@ class Sensei_Core_Modules {
 	}
 
 	/**
-	 * Looks at a term slug and figures out
-	 * which author created the slug. The author was
-	 * appended when the user saved the module term in the course edit
-	 * screen.
+	 * Looks at a term slug and figures out which author created the slug. The author
+	 * was appended when the user saved the module term in the course edit screen.
+	 *
+	 * Modules created outside a teacher's account have no recorded owner, so an
+	 * administrator is returned as a stand-in for "global" ownership. This does not
+	 * identify who created the module; callers only need any administrator to treat
+	 * the module as global rather than owned by a specific teacher.
 	 *
 	 * @since 1.8.0
 	 *
@@ -2401,7 +2404,6 @@ class Sensei_Core_Modules {
 
 		$term_owner = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
 
-		// Fallaback in case the admin email does not match a user, otherwise it shows warnings.
 		if ( ! $term_owner ) {
 			$site_admins = get_super_admins();
 
