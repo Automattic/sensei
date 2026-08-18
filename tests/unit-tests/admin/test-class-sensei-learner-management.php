@@ -99,6 +99,73 @@ class Sensei_Learner_Management_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that a teacher cannot enrol a student into a foreign lesson by pairing their own
+	 * authored course id with another teacher's lesson id.
+	 *
+	 * @covers Sensei_Learner_Management::add_new_learners
+	 */
+	public function testAddNewLearners_OwnCourseWithForeignLessonGiven_DoesNotEnrolStudentInForeignLesson() {
+		/* Arrange. */
+		$attacker_id = $this->factory->user->create();
+		$victim_id   = $this->factory->user->create();
+
+		$own_course_id     = $this->factory->course->create( [ 'post_author' => $attacker_id ] );
+		$foreign_course_id = $this->factory->course->create( [ 'post_author' => $this->factory->user->create() ] );
+		$foreign_lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $foreign_course_id,
+				],
+			]
+		);
+
+		wp_set_current_user( $attacker_id );
+
+		$_POST['add_learner_submit']  = 'some_value';
+		$_POST['add_learner_nonce']   = wp_create_nonce( 'add_learner_to_sensei' );
+		$_POST['add_post_type']       = 'lesson';
+		$_POST['add_user_id']         = [ $victim_id ];
+		$_POST['add_course_id']       = $own_course_id;
+		$_POST['add_lesson_id']       = $foreign_lesson_id;
+		$_POST['add_complete_lesson'] = 'yes';
+
+		/* Act. */
+		$this->invoke_add_new_learners();
+
+		/* Assert. */
+		$this->assertFalse(
+			Sensei_Utils::user_started_lesson( $foreign_lesson_id, $victim_id ),
+			'Student must not be started on a foreign teacher\'s lesson.'
+		);
+		$this->assertFalse(
+			Sensei_Course::is_user_enrolled( $foreign_course_id, $victim_id ),
+			'Student must not be enrolled into a foreign teacher\'s course.'
+		);
+	}
+
+	/**
+	 * Invokes add_new_learners(), swallowing the redirect the success path performs.
+	 *
+	 * The mutating path ends in wp_safe_redirect() followed by exit; a wp_redirect filter that
+	 * throws lets the test intercept it before exit terminates the run, while the early-return
+	 * guard paths simply do nothing. Either way the security invariants can then be asserted.
+	 */
+	private function invoke_add_new_learners(): void {
+		$throw = static function () {
+			throw new \Exception( 'redirected' );
+		};
+		add_filter( 'wp_redirect', $throw );
+
+		try {
+			$this->learner_management->add_new_learners();
+		} catch ( \Exception $e ) {
+			unset( $e ); // Redirect intercepted; expected on the mutating path.
+		} finally {
+			remove_filter( 'wp_redirect', $throw );
+		}
+	}
+
+	/**
 	 * Tests that a valid start date edit is saved to the progress repository.
 	 *
 	 * @covers Sensei_Learner_Management::edit_date_started

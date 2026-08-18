@@ -878,6 +878,12 @@ class Sensei_Learner_Management {
 			return $result;
 		}
 
+		// A lesson can only be managed through the course it belongs to. Reject a lesson id
+		// that is not part of the authorized course so its owner's boundary is not bypassed.
+		if ( 'lesson' === $post_type && $course_id !== intval( get_post_meta( $lesson_id, '_lesson_course', true ) ) ) {
+			return $result;
+		}
+
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
 		foreach ( $user_ids as $user_id ) {
