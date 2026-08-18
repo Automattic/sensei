@@ -14,7 +14,18 @@ import { useSelect } from '@wordpress/data';
  */
 import { hexToRGB } from '../shared/helpers/colors';
 
-const { getComputedStyle } = window;
+/**
+ * Resolve the document to probe against.
+ *
+ * When the editor is iframed, the theme's styles live inside the canvas iframe
+ * document, so probe there. Fall back to the outer document when there is no
+ * iframe.
+ *
+ * @return {Document} The document to probe against.
+ */
+const getProbeDocument = () =>
+	document.querySelector( 'iframe[name="editor-canvas"]' )?.contentDocument ||
+	document;
 
 /**
  * Get color object by probe.
@@ -59,15 +70,17 @@ export const useColorsByProbe = () => {
  * @return {Object} Probe default styles.
  */
 export const getProbeStyles = memoize( () => {
+	const probeDocument = getProbeDocument();
+
 	// Create temporary probe elements.
-	const editorStylesWrapperDiv = document.createElement( 'div' );
+	const editorStylesWrapperDiv = probeDocument.createElement( 'div' );
 	editorStylesWrapperDiv.className =
 		'editor-styles-wrapper sensei-probe-element';
 
-	const blockButtonDiv = document.createElement( 'div' );
+	const blockButtonDiv = probeDocument.createElement( 'div' );
 	blockButtonDiv.className = 'wp-block-button';
 
-	const buttonLinkDiv = document.createElement( 'div' );
+	const buttonLinkDiv = probeDocument.createElement( 'div' );
 	buttonLinkDiv.className = 'wp-block-button__link';
 	buttonLinkDiv.textContent = 'Probe';
 
@@ -78,16 +91,17 @@ export const getProbeStyles = memoize( () => {
 	// Add probe to the screen.
 	blockButtonDiv.appendChild( buttonLinkDiv );
 	editorStylesWrapperDiv.appendChild( blockButtonDiv );
-	document.body.appendChild( editorStylesWrapperDiv );
+	probeDocument.body.appendChild( editorStylesWrapperDiv );
 
 	// Save styles.
+	const { getComputedStyle } = probeDocument.defaultView;
 	const styles = {
 		primaryColor: getComputedStyle( buttonLinkDiv ).backgroundColor,
 		primaryContrastColor: getComputedStyle( buttonLinkDiv ).color,
 	};
 
 	// Remove probe.
-	document.body.removeChild( editorStylesWrapperDiv );
+	probeDocument.body.removeChild( editorStylesWrapperDiv );
 
 	return styles;
 } );
