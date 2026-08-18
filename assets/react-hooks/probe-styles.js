@@ -64,8 +64,8 @@ export const useColorsByProbe = () => {
 /**
  * Get probe styles (memoized per document).
  *
- * It adds elements to the DOM as a probe, and get the computed styles
- * the default expected properties. The result is memoized by the probed
+ * It adds probe elements to the DOM and reads their computed styles to
+ * determine the theme's default colors. The result is memoized by the probed
  * document so that a call made before the editor canvas iframe exists does not
  * cache the outer document's values for the iframed document.
  *
