@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix lessons appearing out of order in translated courses when a new lesson is translated with WPML, and attach WPML lesson duplicates to the translated course.
