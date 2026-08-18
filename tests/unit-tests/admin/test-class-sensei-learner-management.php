@@ -99,22 +99,22 @@ class Sensei_Learner_Management_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that a teacher cannot enrol a student into a foreign lesson by pairing their own
-	 * authored course id with another teacher's lesson id.
+	 * Tests that a teacher cannot enrol a student into a lesson that belongs to another course by
+	 * pairing their own authorized course id with that lesson id.
 	 *
 	 * @covers Sensei_Learner_Management::add_new_learners
 	 */
-	public function testAddNewLearners_OwnCourseWithForeignLessonGiven_DoesNotEnrolStudentInForeignLesson() {
+	public function testAddNewLearners_LessonBelongsToAnotherCourse_DoesNotEnrolStudent() {
 		/* Arrange. */
 		$attacker_id = $this->factory->user->create();
 		$victim_id   = $this->factory->user->create();
 
-		$own_course_id     = $this->factory->course->create( [ 'post_author' => $attacker_id ] );
-		$foreign_course_id = $this->factory->course->create( [ 'post_author' => $this->factory->user->create() ] );
-		$foreign_lesson_id = $this->factory->lesson->create(
+		$own_course_id   = $this->factory->course->create( [ 'post_author' => $attacker_id ] );
+		$other_course_id = $this->factory->course->create( [ 'post_author' => $this->factory->user->create() ] );
+		$other_lesson_id = $this->factory->lesson->create(
 			[
 				'meta_input' => [
-					'_lesson_course' => $foreign_course_id,
+					'_lesson_course' => $other_course_id,
 				],
 			]
 		);
@@ -126,7 +126,7 @@ class Sensei_Learner_Management_Test extends WP_UnitTestCase {
 		$_POST['add_post_type']       = 'lesson';
 		$_POST['add_user_id']         = [ $victim_id ];
 		$_POST['add_course_id']       = $own_course_id;
-		$_POST['add_lesson_id']       = $foreign_lesson_id;
+		$_POST['add_lesson_id']       = $other_lesson_id;
 		$_POST['add_complete_lesson'] = 'yes';
 
 		/* Act. */
@@ -134,12 +134,12 @@ class Sensei_Learner_Management_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertFalse(
-			Sensei_Utils::user_started_lesson( $foreign_lesson_id, $victim_id ),
-			'Student must not be started on a foreign teacher\'s lesson.'
+			Sensei_Utils::user_started_lesson( $other_lesson_id, $victim_id ),
+			'Student must not be started on a lesson that belongs to another course.'
 		);
 		$this->assertFalse(
-			Sensei_Course::is_user_enrolled( $foreign_course_id, $victim_id ),
-			'Student must not be enrolled into a foreign teacher\'s course.'
+			Sensei_Course::is_user_enrolled( $other_course_id, $victim_id ),
+			'Student must not be enrolled into another course.'
 		);
 	}
 
