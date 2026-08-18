@@ -143,4 +143,54 @@ class Sensei_Learner_Management_AJAX_Test extends WP_Ajax_UnitTestCase {
 		/* Assert. */
 		$this->assertEmpty( array_filter( array_keys( $response ), 'is_numeric' ) );
 	}
+
+	/**
+	 * An admin keeps the full search, including matching users by email.
+	 *
+	 * @covers Sensei_Learner_Management::json_search_users
+	 */
+	public function testJsonSearchUsers_AdminSearchedByEmail_ReturnsMatchingAdministrator() {
+		/* Arrange. */
+		$admin_id  = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$target_id = self::factory()->user->create(
+			array(
+				'role'       => 'administrator',
+				'user_login' => 'other_admin',
+				'user_email' => 'searchme_byemail@example.com',
+			)
+		);
+
+		wp_set_current_user( $admin_id );
+
+		/* Act. */
+		$response = $this->do_search( 'searchme_byemail' );
+
+		/* Assert. */
+		$this->assertArrayHasKey( $target_id, $response );
+	}
+
+	/**
+	 * The user search must not expose email addresses, not even for admins.
+	 *
+	 * @covers Sensei_Learner_Management::json_search_users
+	 */
+	public function testJsonSearchUsers_AdminSearchedForMatchingStudent_OmitsEmailFromLabel() {
+		/* Arrange. */
+		$admin_id   = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$student_id = self::factory()->user->create(
+			array(
+				'role'       => 'subscriber',
+				'user_login' => 'searchme_labelstudent',
+				'user_email' => 'searchme_labelstudent@example.com',
+			)
+		);
+
+		wp_set_current_user( $admin_id );
+
+		/* Act. */
+		$response = $this->do_search( 'searchme_labelstudent' );
+
+		/* Assert. */
+		$this->assertStringNotContainsString( 'searchme_labelstudent@example.com', $response[ $student_id ] ?? '' );
+	}
 }
