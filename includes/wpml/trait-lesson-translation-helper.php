@@ -128,18 +128,16 @@ trait Lesson_Translation_Helper {
 	private function sync_course_lesson_order( $master_course_id, $new_course_id, $language_code ) {
 		// Translations of the master course's lessons, in the master's order.
 		$lesson_ids = array();
-		foreach ( Sensei()->course->course_lessons( $master_course_id, 'any', 'ids' ) as $master_lesson_id ) {
-			$translated_lesson_id = $this->get_object_id( (int) $master_lesson_id, 'lesson', false, $language_code );
-			if ( $translated_lesson_id && $translated_lesson_id !== (int) $master_lesson_id ) {
+		foreach ( array_map( 'intval', Sensei()->course->course_lessons( $master_course_id, 'any', 'ids' ) ) as $master_lesson_id ) {
+			$translated_lesson_id = $this->get_object_id( $master_lesson_id, 'lesson', false, $language_code );
+			if ( $translated_lesson_id && $translated_lesson_id !== $master_lesson_id ) {
 				$lesson_ids[] = (int) $translated_lesson_id;
 			}
 		}
 
 		// Lessons of the translated course with no counterpart in the master
 		// course keep their current relative order, after the mirrored ones.
-		foreach ( Sensei()->course->course_lessons( $new_course_id, 'any', 'ids' ) as $translated_lesson_id ) {
-			$lesson_ids[] = (int) $translated_lesson_id;
-		}
+		$lesson_ids = array_merge( $lesson_ids, array_map( 'intval', Sensei()->course->course_lessons( $new_course_id, 'any', 'ids' ) ) );
 
 		foreach ( array_values( array_unique( $lesson_ids ) ) as $index => $lesson_id ) {
 			update_post_meta( $lesson_id, '_order_' . $new_course_id, $index + 1 );
