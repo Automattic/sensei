@@ -1744,9 +1744,7 @@ class Sensei_Admin {
 
 	/**
 	 * Previously rendered a dashboard notice when the administration email did not
-	 * belong to an administrator user. The notice ran on `admin_notices` without a
-	 * capability check, so it exposed the administration email address to any user
-	 * who could load wp-admin. It is no longer displayed.
+	 * belong to an administrator user.
 	 *
 	 * @deprecated $$next-version$$
 	 */
