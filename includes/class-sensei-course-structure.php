@@ -831,7 +831,8 @@ class Sensei_Course_Structure {
 				}
 
 				$term_author = Sensei_Core_Modules::get_term_author( $item['slug'] );
-				if ( ( ! $term_author instanceof WP_User || wp_get_current_user()->ID !== $term_author->ID ) &&
+				if ( $term_author instanceof WP_User &&
+					wp_get_current_user()->ID !== $term_author->ID &&
 					! current_user_can( 'manage_options' ) &&
 					get_term_by( 'slug', $item['slug'], 'module' )
 				) {
