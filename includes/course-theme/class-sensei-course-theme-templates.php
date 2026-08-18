@@ -25,6 +25,12 @@ class Sensei_Course_Theme_Templates {
 	const THEME_PREFIX = Sensei_Course_Theme::THEME_NAME;
 
 	/**
+	 * Learning Mode template slugs.
+	 */
+	const LESSON_SLUG = 'lesson';
+	const QUIZ_SLUG   = 'quiz';
+
+	/**
 	 * Instance of class.
 	 *
 	 * @var self
@@ -71,7 +77,38 @@ class Sensei_Course_Theme_Templates {
 		add_filter( 'theme_lesson_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
 		add_filter( 'theme_quiz_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
 		add_action( 'init', [ $this, 'load_course_theme_patterns' ] );
+		add_action( 'init', array( $this, 'register_block_templates' ) );
 
+	}
+
+	/**
+	 * Register the Learning Mode templates as plugin templates.
+	 *
+	 * This is what makes the Site Editor list them under their own "Sensei LMS" group.
+	 * The registrations are placeholders only.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 */
+	public function register_block_templates() {
+		$namespace = basename( dirname( SENSEI_LMS_PLUGIN_FILE ) );
+		$registry  = WP_Block_Templates_Registry::get_instance();
+
+		// The slug is the post type, which is how the customized template is keyed in the database.
+		foreach ( array( self::LESSON_SLUG, self::QUIZ_SLUG ) as $slug ) {
+			$name = $namespace . '//' . $slug;
+
+			if ( ! $registry->is_registered( $name ) ) {
+				register_block_template(
+					$name,
+					array(
+						'post_types' => array( $slug ),
+						'content'    => '',
+					)
+				);
+			}
+		}
 	}
 
 
@@ -96,7 +133,7 @@ class Sensei_Course_Theme_Templates {
 	 */
 	public function maybe_add_theme_supports() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Argument cast to int and used for comparison.
-		if ( isset( $_GET['post'] ) && in_array( get_post_type( (int) $_GET['post'] ), [ 'lesson', 'quiz' ], true ) ) {
+		if ( isset( $_GET['post'] ) && in_array( get_post_type( (int) $_GET['post'] ), array( self::LESSON_SLUG, self::QUIZ_SLUG ), true ) ) {
 			add_theme_support( 'block-templates' );
 		}
 	}
@@ -139,11 +176,11 @@ class Sensei_Course_Theme_Templates {
 		}
 
 		if ( $this->should_use_quiz_template() ) {
-			return array_merge( [ 'quiz', 'lesson' ], $templates );
+			return array_merge( array( self::QUIZ_SLUG, self::LESSON_SLUG ), $templates );
 		}
 
-		if ( ! in_array( 'lesson', $templates, true ) ) {
-			return array_merge( [ 'lesson' ], $templates );
+		if ( ! in_array( self::LESSON_SLUG, $templates, true ) ) {
+			return array_merge( array( self::LESSON_SLUG ), $templates );
 		}
 
 		return $templates;
@@ -165,7 +202,7 @@ class Sensei_Course_Theme_Templates {
 
 		$has_submitted_quiz = $progress && $progress->is_quiz_submitted();
 
-		if ( 'quiz' !== $post->post_type || $has_submitted_quiz ) {
+		if ( self::QUIZ_SLUG !== $post->post_type || $has_submitted_quiz ) {
 			return false;
 		}
 
@@ -195,27 +232,27 @@ class Sensei_Course_Theme_Templates {
 		];
 
 		$this->file_templates = [
-			'lesson' => array_merge(
+			self::LESSON_SLUG => array_merge(
 				$common_options,
 				[
 					// translators: %1$s is the block template name.
 					'title'       => sprintf( __( 'Lesson (Learning Mode - %1$s)', 'sensei-lms' ), $title ),
 					'description' => __( 'Displays course content.', 'sensei-lms' ),
-					'slug'        => 'lesson',
-					'id'          => self::THEME_PREFIX . '//lesson',
-					'content'     => $template->content['lesson'],
+					'slug'        => self::LESSON_SLUG,
+					'id'          => self::THEME_PREFIX . '//' . self::LESSON_SLUG,
+					'content'     => $template->content[ self::LESSON_SLUG ],
 					'styles'      => $template->styles,
 				]
 			),
-			'quiz'   => array_merge(
+			self::QUIZ_SLUG   => array_merge(
 				$common_options,
 				[
 					// translators: %1$s is the block template name.
 					'title'       => sprintf( __( 'Quiz (Learning Mode - %1$s)', 'sensei-lms' ), $title ),
 					'description' => __( 'Displays a lesson quiz.', 'sensei-lms' ),
-					'slug'        => 'quiz',
-					'id'          => self::THEME_PREFIX . '//quiz',
-					'content'     => $template->content['quiz'],
+					'slug'        => self::QUIZ_SLUG,
+					'id'          => self::THEME_PREFIX . '//' . self::QUIZ_SLUG,
+					'content'     => $template->content[ self::QUIZ_SLUG ],
 					'styles'      => $template->styles,
 				]
 			),
@@ -246,8 +283,9 @@ class Sensei_Course_Theme_Templates {
 			return $templates;
 		}
 
+		// Post editor with Learning Mode off: hide the lesson template, placeholder included.
 		if ( $this->should_hide_lesson_template( $query['post_type'] ?? null ) ) {
-			return $templates;
+			return $this->remove_registered_placeholders( $templates );
 		}
 
 		$slugs = $query['slug__in'] ?? $query['post_type'] ?? null;
@@ -255,7 +293,7 @@ class Sensei_Course_Theme_Templates {
 			$slugs = [ $slugs ];
 		}
 
-		$supported_template_types = [ 'lesson', 'quiz' ];
+		$supported_template_types = array( self::LESSON_SLUG, self::QUIZ_SLUG );
 
 		$is_site_editor_request   = Sensei_Course_Theme_Editor::is_site_editor_request();
 		$is_course_theme_override = ! empty( $query['theme'] ) && ( Sensei_Course_Theme::THEME_NAME === $query['theme'] );
@@ -272,8 +310,12 @@ class Sensei_Course_Theme_Templates {
 		);
 
 		if ( ! $is_site_editor && ! $is_supported_template ) {
+			// Keep the placeholders here: WordPress builds the group switcher from this list.
 			return $templates;
 		}
+
+		// Drop the placeholders; Sensei's real templates are injected below.
+		$templates = $this->remove_registered_placeholders( $templates );
 
 		// Remove the default lesson template for course theme.
 		$templates = $this->filter_single_lesson_template_in_learning_mode( $templates, wp_get_theme()->get( 'Name' ) );
@@ -295,10 +337,29 @@ class Sensei_Course_Theme_Templates {
 
 		// Return the lesson template as the default when there are no theme templates in the site editor.
 		if ( $is_site_editor && empty( $templates ) ) {
-			return [ $course_theme_templates['lesson'] ];
+			return array( $course_theme_templates[ self::LESSON_SLUG ] );
 		}
 
 		return $templates;
+	}
+
+	/**
+	 * Remove the placeholder copies of the Learning Mode templates.
+	 *
+	 * @param array $templates The block templates.
+	 *
+	 * @return array
+	 */
+	private function remove_registered_placeholders( $templates ) {
+		// array_values() reindexes so REST still encodes the result as an array, not an object.
+		return array_values(
+			array_filter(
+				$templates,
+				function ( $template ) {
+					return ! ( 'plugin' === $template->source && in_array( $template->slug, array( self::LESSON_SLUG, self::QUIZ_SLUG ), true ) );
+				}
+			)
+		);
 	}
 
 	/**
@@ -349,6 +410,10 @@ class Sensei_Course_Theme_Templates {
 					}
 				}
 			}
+
+			// Mark as plugin templates so the Site Editor groups them under "Sensei LMS".
+			$template_object->origin = 'plugin';
+			$template_object->plugin = basename( dirname( SENSEI_LMS_PLUGIN_FILE ) );
 
 			$templates[ $name ] = $template_object;
 		}
@@ -513,7 +578,7 @@ class Sensei_Course_Theme_Templates {
 	 * @return bool True if template should be hidden.
 	 */
 	private function should_hide_lesson_template( $post_type ) {
-		if ( defined( 'REST_REQUEST' ) && REST_REQUEST && 'lesson' === $post_type ) {
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST && self::LESSON_SLUG === $post_type ) {
 
 			$referer = isset( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : '';
 
