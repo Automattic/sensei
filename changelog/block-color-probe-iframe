@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed course and lesson block colors not matching the theme in the iframed post editor.
