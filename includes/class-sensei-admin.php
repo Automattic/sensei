@@ -81,8 +81,6 @@ class Sensei_Admin {
 
 		// Add notices to WP dashboard
 		add_action( 'admin_notices', array( $this, 'theme_compatibility_notices' ) );
-		// warn users in case admin_email is not a real WP_User
-		add_action( 'admin_notices', array( $this, 'notify_if_admin_email_not_real_admin_user' ) );
 
 		// remove a course from course order when trashed
 		add_action( 'transition_post_status', array( $this, 'remove_trashed_course_from_course_order' ) );
@@ -1744,35 +1742,15 @@ class Sensei_Admin {
 		}
 	}
 
+	/**
+	 * Previously warned admins when the administration email did not belong to an
+	 * administrator user. The notice exposed the administration email address to any
+	 * user who could load wp-admin, so it is no longer displayed.
+	 *
+	 * @deprecated $$next-version$$
+	 */
 	public function notify_if_admin_email_not_real_admin_user() {
-		$maybe_admin = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
-
-		if ( false === $maybe_admin || false === user_can( $maybe_admin, 'manage_options' ) ) {
-			$general_settings_url         = '<a href="' . esc_url( admin_url( 'options-general.php' ) ) . '">' . esc_html__( 'Settings > General', 'sensei-lms' ) . '</a>';
-			$add_new_user_url             = '<a href="' . esc_url( admin_url( 'user-new.php' ) ) . '">' . esc_html__( 'add a new Administrator', 'sensei-lms' ) . '</a>';
-			$existing_administrators_link = '<a href="' . esc_url( admin_url( 'users.php?role=administrator' ) ) . '">' . esc_html__( 'existing Administrator', 'sensei-lms' ) . '</a>';
-			$current_setting              = get_bloginfo( 'admin_email' );
-
-			/*
-			 * translators: The %s placeholders are as follows:
-			 *
-			 * - A link to the General Settings page with the translated text "Settings > General".
-			 * - A link to add an admin user with the translated text "add a new Administrator".
-			 * - The current admin email address from the Settings.
-			 * - A link to view the existing admin users, with the translated text "existing Administrator".
-			 */
-			$warning = __( 'To prevent issues with Sensei LMS module names, your Email Address in %1$s should also belong to an Administrator user. You can either %2$s with the email address %3$s, or change that email address to match the email of an %4$s.', 'sensei-lms' );
-
-			?>
-			<div id="message" class="error sensei-message sensei-connect">
-				<p>
-					<strong>
-						<?php printf( esc_html( $warning ), wp_kses_post( $general_settings_url ), wp_kses_post( $add_new_user_url ), esc_html( $current_setting ), wp_kses_post( $existing_administrators_link ) ); ?>
-					</strong>
-				</p>
-			</div>
-			<?php
-		}
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 	}
 
 	/**
