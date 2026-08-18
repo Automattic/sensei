@@ -62,46 +62,51 @@ export const useColorsByProbe = () => {
 };
 
 /**
- * Get probe styles (memoized).
+ * Get probe styles (memoized per document).
  *
  * It adds elements to the DOM as a probe, and get the computed styles
- * the default expected properties.
+ * the default expected properties. The result is memoized by the probed
+ * document so that a call made before the editor canvas iframe exists does not
+ * cache the outer document's values for the iframed document.
+ *
+ * @param {Document} probeDocument The document to probe against.
  *
  * @return {Object} Probe default styles.
  */
-export const getProbeStyles = memoize( () => {
-	const probeDocument = getProbeDocument();
+export const getProbeStyles = memoize(
+	( probeDocument = getProbeDocument() ) => {
+		// Create temporary probe elements.
+		const editorStylesWrapperDiv = probeDocument.createElement( 'div' );
+		editorStylesWrapperDiv.className =
+			'editor-styles-wrapper sensei-probe-element';
 
-	// Create temporary probe elements.
-	const editorStylesWrapperDiv = probeDocument.createElement( 'div' );
-	editorStylesWrapperDiv.className =
-		'editor-styles-wrapper sensei-probe-element';
+		const blockButtonDiv = probeDocument.createElement( 'div' );
+		blockButtonDiv.className = 'wp-block-button';
 
-	const blockButtonDiv = probeDocument.createElement( 'div' );
-	blockButtonDiv.className = 'wp-block-button';
+		const buttonLinkDiv = probeDocument.createElement( 'div' );
+		buttonLinkDiv.className = 'wp-block-button__link';
+		buttonLinkDiv.textContent = 'Probe';
 
-	const buttonLinkDiv = probeDocument.createElement( 'div' );
-	buttonLinkDiv.className = 'wp-block-button__link';
-	buttonLinkDiv.textContent = 'Probe';
+		// Set probe position outside the screen to be hidden.
+		editorStylesWrapperDiv.style.position = 'fixed';
+		editorStylesWrapperDiv.style.top = '-100vh';
 
-	// Set probe position outside the screen to be hidden.
-	editorStylesWrapperDiv.style.position = 'fixed';
-	editorStylesWrapperDiv.style.top = '-100vh';
+		// Add probe to the screen.
+		blockButtonDiv.appendChild( buttonLinkDiv );
+		editorStylesWrapperDiv.appendChild( blockButtonDiv );
+		probeDocument.body.appendChild( editorStylesWrapperDiv );
 
-	// Add probe to the screen.
-	blockButtonDiv.appendChild( buttonLinkDiv );
-	editorStylesWrapperDiv.appendChild( blockButtonDiv );
-	probeDocument.body.appendChild( editorStylesWrapperDiv );
+		// Save styles, reading through the probed document's own window.
+		const { getComputedStyle } = probeDocument.defaultView || window;
+		const styles = {
+			primaryColor: getComputedStyle( buttonLinkDiv ).backgroundColor,
+			primaryContrastColor: getComputedStyle( buttonLinkDiv ).color,
+		};
 
-	// Save styles.
-	const { getComputedStyle } = probeDocument.defaultView;
-	const styles = {
-		primaryColor: getComputedStyle( buttonLinkDiv ).backgroundColor,
-		primaryContrastColor: getComputedStyle( buttonLinkDiv ).color,
-	};
+		// Remove probe.
+		probeDocument.body.removeChild( editorStylesWrapperDiv );
 
-	// Remove probe.
-	probeDocument.body.removeChild( editorStylesWrapperDiv );
-
-	return styles;
-} );
+		return styles;
+	},
+	( probeDocument = getProbeDocument() ) => probeDocument
+);

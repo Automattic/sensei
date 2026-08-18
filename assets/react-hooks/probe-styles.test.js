@@ -59,4 +59,30 @@ describe( 'getProbeStyles', () => {
 			'rgb(249, 249, 249)'
 		);
 	} );
+
+	it( 'Should not reuse the outer document result once the iframe appears', () => {
+		// Probe before the canvas iframe exists; caches the outer document.
+		const outerStyle = document.createElement( 'style' );
+		outerStyle.appendChild(
+			document.createTextNode( `.wp-block-button__link {
+				background-color: rgb(1, 1, 1);
+				color: rgb(2, 2, 2);
+			}` )
+		);
+		document.head.appendChild( outerStyle );
+
+		expect( getProbeStyles().primaryColor ).toEqual( 'rgb(1, 1, 1)' );
+
+		// The iframe mounts later; the probe must not return the cached outer value.
+		const iframe = document.createElement( 'iframe' );
+		iframe.name = 'editor-canvas';
+		document.body.appendChild( iframe );
+
+		iframe.contentDocument.head.innerHTML = `<style>.wp-block-button__link {
+			background-color: rgb(17, 17, 17);
+			color: rgb(249, 249, 249);
+		}</style>`;
+
+		expect( getProbeStyles().primaryColor ).toEqual( 'rgb(17, 17, 17)' );
+	} );
 } );
