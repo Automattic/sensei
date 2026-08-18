@@ -35,6 +35,8 @@ class Lesson_Translation {
 		// Run the deferred question sync when WPML writes the translated lesson content.
 		add_action( 'wp_after_insert_post', array( $this, 'update_question_translations_on_lesson_content_written' ), 10, 2 );
 		// Attach lesson duplicates to the translated course.
+		// "icl_make_duplicate" is WPML-internal but the WPML team confirmed it's safe to rely on.
+		// It also fires on duplicate refresh, so the handler must stay idempotent.
 		add_action( 'icl_make_duplicate', array( $this, 'update_lesson_properties_on_lesson_duplicated' ), 10, 4 );
 	}
 
