@@ -783,7 +783,7 @@ class Sensei_Learner_Management {
 
 		check_ajax_referer( 'search-users', 'security' );
 
-		$default     = isset( $_GET['default'] ) ? $_GET['default'] : __( 'None', 'sensei-lms' );
+		$default     = isset( $_GET['default'] ) && is_string( $_GET['default'] ) ? sanitize_text_field( wp_unslash( $_GET['default'] ) ) : __( 'None', 'sensei-lms' );
 		$found_users = array( '' => $default );
 
 		if ( ! current_user_can( 'manage_sensei_grades' ) ) {

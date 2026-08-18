@@ -72,6 +72,30 @@ class Sensei_Learner_Management_AJAX_Test extends WP_Ajax_UnitTestCase {
 	}
 
 	/**
+	 * A teacher must not be able to see other teachers through the user search.
+	 *
+	 * @covers Sensei_Learner_Management::json_search_users
+	 */
+	public function testJsonSearchUsers_TeacherSearchedForMatchingTeacher_ExcludesTeacherFromResults() {
+		/* Arrange. */
+		$teacher_id = self::factory()->user->create( array( 'role' => 'teacher' ) );
+		$target_id  = self::factory()->user->create(
+			array(
+				'role'       => 'teacher',
+				'user_login' => 'searchme_teacher',
+			)
+		);
+
+		wp_set_current_user( $teacher_id );
+
+		/* Act. */
+		$response = $this->do_search( 'searchme' );
+
+		/* Assert. */
+		$this->assertArrayNotHasKey( $target_id, $response );
+	}
+
+	/**
 	 * The user search must not expose email addresses.
 	 *
 	 * @covers Sensei_Learner_Management::json_search_users
