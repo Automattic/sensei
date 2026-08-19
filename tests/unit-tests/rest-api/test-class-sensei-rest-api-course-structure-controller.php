@@ -564,7 +564,7 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 
 		// Another teacher will not be able to use that custom slug owned by another user or teacher.
 		$this->assertEquals( $response_teacher->get_status(), 400 );
-		$this->assertEquals( 'A module with the slug custom-slug is already owned by another teacher', $response_teacher->get_data()['message'] );
+		$this->assertEquals( 'A module with the slug custom-slug is already owned by another teacher.', $response_teacher->get_data()['message'] );
 
 		// Admin should be able to use that custom slug as the module is not being by any course.
 		$endpoint = new Sensei_REST_API_Course_Structure_Controller( '' );

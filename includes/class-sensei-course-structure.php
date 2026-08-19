@@ -839,7 +839,7 @@ class Sensei_Course_Structure {
 						'module_belongs_to_another_user',
 						sprintf(
 						/* translators: Placeholder is the module slug. */
-							__( 'A module with the slug %s is already owned by another teacher', 'sensei-lms' ),
+							__( 'A module with the slug %s is already owned by another teacher.', 'sensei-lms' ),
 							$item['slug']
 						)
 					);
