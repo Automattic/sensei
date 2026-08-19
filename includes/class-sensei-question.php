@@ -710,7 +710,7 @@ class Sensei_Question {
 		/**
 		 * Filter the question whose description is rendered.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.3
 		 *
 		 * @hook sensei_question_description_question_id
 		 *

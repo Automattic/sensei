@@ -433,7 +433,7 @@ class Sensei_Main {
 	/**
 	 * Sensei Tour compatibility API.
 	 *
-	 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+	 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 	 *
 	 * @var Sensei_Tour|null
 	 */
