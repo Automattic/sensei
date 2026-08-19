@@ -1,3 +1,0 @@
-Significance: patch
-Type: security
-Comment: Restrict adding a student to a lesson so it is only allowed through the lesson's own course

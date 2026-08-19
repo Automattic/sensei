@@ -1746,10 +1746,10 @@ class Sensei_Admin {
 	 * Previously rendered a dashboard notice when the administration email did not
 	 * belong to an administrator user.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.26.3
 	 */
 	public function notify_if_admin_email_not_real_admin_user() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.26.3' );
 	}
 
 	/**
