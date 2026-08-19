@@ -2393,7 +2393,9 @@ class Sensei_Core_Modules {
 	 * Modules created outside a teacher's account have no recorded owner, so an
 	 * administrator is returned as a stand-in for "global" ownership. This does not
 	 * identify who created the module; callers only need any administrator to treat
-	 * the module as global rather than owned by a specific teacher.
+	 * the module as global rather than owned by a specific teacher. When no
+	 * administrator can be resolved either (the admin email and `site_admins` do not
+	 * map to real users), `false` is returned.
 	 *
 	 * @since 1.8.0
 	 *

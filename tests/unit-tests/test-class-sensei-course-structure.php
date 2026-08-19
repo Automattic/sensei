@@ -901,26 +901,33 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		);
 		// Make the owner unresolvable: the meta points at a missing user and no admin
 		// account can be found by email or super admin login.
+		$previous_admin_email = get_site_option( 'admin_email' );
+		$previous_site_admins = get_site_option( 'site_admins' );
 		update_term_meta( $module_id, 'module_author', 999999 );
 		update_site_option( 'admin_email', 'non-existant-user-mail@abc.com' );
 		update_site_option( 'site_admins', array( 'a-login-with-no-user' ) );
 
-		$this->login_as_teacher();
-		$course_id     = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
-		$new_structure = array(
-			array(
-				'type'      => 'module',
-				'id'        => $module_id,
-				'title'     => 'Introduction',
-				'slug'      => 'introduction',
-				'teacherId' => 0,
-				'lessons'   => array(),
-			),
-		);
+		try {
+			$this->login_as_teacher();
+			$course_id     = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+			$new_structure = array(
+				array(
+					'type'      => 'module',
+					'id'        => $module_id,
+					'title'     => 'Introduction',
+					'slug'      => 'introduction',
+					'teacherId' => 0,
+					'lessons'   => array(),
+				),
+			);
 
-		$save_result = Sensei_Course_Structure::instance( $course_id )->save( $new_structure );
+			$save_result = Sensei_Course_Structure::instance( $course_id )->save( $new_structure );
 
-		$this->assertNotWPError( $save_result );
+			$this->assertNotWPError( $save_result );
+		} finally {
+			update_site_option( 'admin_email', $previous_admin_email );
+			update_site_option( 'site_admins', $previous_site_admins );
+		}
 	}
 
 	/**
