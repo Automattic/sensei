@@ -245,7 +245,7 @@ jQuery( document ).ready( function ( $ ) {
 	$learnerSearchSelect.select2( {
 		minimumInputLength: 3,
 		placeholder: window.woo_learners_general_data.selectplaceholder,
-		width: '300px',
+		width: '100%',
 		ajax: {
 			// in wp-admin ajaxurl is supplied by WordPress and is available globaly
 			url: window.ajaxurl,

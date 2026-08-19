@@ -248,6 +248,262 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( array( 'sí' ), get_post_meta( $translated_question_id, '_question_right_answer', true ), 'The right answer should be updated from the lesson content.' );
 		$this->assertSame( array( 'no' ), get_post_meta( $translated_question_id, '_question_wrong_answers', true ), 'The wrong answers should be updated from the lesson content.' );
 		$this->assertSame( \Sensei()->lesson->get_answer_id( 'sí' ) . ',' . \Sensei()->lesson->get_answer_id( 'no' ), get_post_meta( $translated_question_id, '_answer_order', true ), 'The answer order should be recomputed from the translated labels in block order.' );
+		$this->assertStringContainsString( 'Descripción ES', $translated_question->post_content, 'The question description should be updated from the lesson content.' );
+		$this->assertStringContainsString( 'Feedback correcto ES', \Sensei_Quiz::get_correct_answer_feedback( $translated_question_id ), 'The question feedback blocks should be updated from the lesson content.' );
+	}
+
+	public function testUpdateLessonTranslationsOnLessonTranslationCreated_TranslatedLessonsWithoutOrderMetaGiven_PlacesNewTranslationLast() {
+		/* Arrange. */
+		$master_course_id     = $this->factory->course->create();
+		$translated_course_id = $this->factory->course->create();
+
+		$master_lesson_ids = $this->create_course_lessons(
+			$master_course_id,
+			array( '2024-01-11 10:00:00', '2024-01-12 10:00:00', '2024-01-13 10:00:00', '2024-01-14 10:00:00' ),
+			true
+		);
+		// Lessons translated before the order sync existed carry no order meta.
+		$translated_lesson_ids = $this->create_course_lessons(
+			$translated_course_id,
+			array( '2024-02-11 10:00:00', '2024-02-12 10:00:00', '2024-02-13 10:00:00', '2024-02-14 10:00:00' ),
+			false
+		);
+		$new_lesson_id         = $translated_lesson_ids[3];
+
+		$this->simulate_wpml_language_pair(
+			array_combine( $master_lesson_ids, $translated_lesson_ids ) + array( $master_course_id => $translated_course_id )
+		);
+
+		$lesson_translation = new Lesson_Translation();
+
+		/* Act. */
+		$lesson_translation->update_lesson_translations_on_lesson_translation_created( $new_lesson_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_language_pair_filters();
+		$this->assertSame( $translated_lesson_ids, Sensei()->course->course_lessons( $translated_course_id, 'any', 'ids' ) );
+	}
+
+	public function testUpdateLessonTranslationsOnLessonTranslationCreated_LessonsWithoutMasterCounterpartGiven_KeepsThemLastInRelativeOrder() {
+		/* Arrange. */
+		$master_course_id     = $this->factory->course->create();
+		$translated_course_id = $this->factory->course->create();
+
+		$master_lesson_ids = $this->create_course_lessons(
+			$master_course_id,
+			array( '2024-01-11 10:00:00', '2024-01-12 10:00:00' ),
+			true
+		);
+		// Lessons that only exist in the translated course. Their dates are
+		// earlier than the translated counterparts', so without the sync the
+		// date fallback would list them first.
+		$orphan_lesson_ids     = $this->create_course_lessons(
+			$translated_course_id,
+			array( '2024-02-11 10:00:00', '2024-02-12 10:00:00' ),
+			false
+		);
+		$translated_lesson_ids = $this->create_course_lessons(
+			$translated_course_id,
+			array( '2024-02-13 10:00:00', '2024-02-14 10:00:00' ),
+			false
+		);
+		$new_lesson_id         = $translated_lesson_ids[1];
+
+		$this->simulate_wpml_language_pair(
+			array_combine( $master_lesson_ids, $translated_lesson_ids ) + array( $master_course_id => $translated_course_id )
+		);
+
+		$lesson_translation = new Lesson_Translation();
+
+		/* Act. */
+		$lesson_translation->update_lesson_translations_on_lesson_translation_created( $new_lesson_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_language_pair_filters();
+		$this->assertSame(
+			array_merge( $translated_lesson_ids, $orphan_lesson_ids ),
+			Sensei()->course->course_lessons( $translated_course_id, 'any', 'ids' )
+		);
+	}
+
+	public function testUpdateLessonPropertiesOnLessonDuplicated_DuplicatedLessonGiven_AttachesItToTranslatedCourse() {
+		/* Arrange. */
+		$master_course_id     = $this->factory->course->create();
+		$translated_course_id = $this->factory->course->create();
+
+		$master_lesson_ids    = $this->create_course_lessons( $master_course_id, array( '2024-01-11 10:00:00' ), true );
+		$duplicated_lesson_id = $this->create_lesson_duplicate( $master_lesson_ids[0], $master_course_id );
+
+		$this->simulate_wpml_language_pair(
+			array(
+				$master_lesson_ids[0] => $duplicated_lesson_id,
+				$master_course_id     => $translated_course_id,
+			)
+		);
+
+		$lesson_translation = new Lesson_Translation();
+
+		/* Act. */
+		$lesson_translation->update_lesson_properties_on_lesson_duplicated( $master_lesson_ids[0], 'es', array(), $duplicated_lesson_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_language_pair_filters();
+		$this->assertSame( $translated_course_id, (int) get_post_meta( $duplicated_lesson_id, '_lesson_course', true ) );
+	}
+
+	public function testUpdateLessonPropertiesOnLessonDuplicated_TranslatedLessonsWithoutOrderMetaGiven_PlacesDuplicateLast() {
+		/* Arrange. */
+		$master_course_id     = $this->factory->course->create();
+		$translated_course_id = $this->factory->course->create();
+
+		$master_lesson_ids = $this->create_course_lessons(
+			$master_course_id,
+			array( '2024-01-11 10:00:00', '2024-01-12 10:00:00', '2024-01-13 10:00:00', '2024-01-14 10:00:00' ),
+			true
+		);
+		// Lessons translated before the order sync existed carry no order meta.
+		$translated_lesson_ids = $this->create_course_lessons(
+			$translated_course_id,
+			array( '2024-02-11 10:00:00', '2024-02-12 10:00:00', '2024-02-13 10:00:00' ),
+			false
+		);
+		$duplicated_lesson_id  = $this->create_lesson_duplicate( $master_lesson_ids[3], $master_course_id );
+
+		$this->simulate_wpml_language_pair(
+			array_combine( $master_lesson_ids, array_merge( $translated_lesson_ids, array( $duplicated_lesson_id ) ) )
+			+ array( $master_course_id => $translated_course_id )
+		);
+
+		$lesson_translation = new Lesson_Translation();
+
+		/* Act. */
+		$lesson_translation->update_lesson_properties_on_lesson_duplicated( $master_lesson_ids[3], 'es', array(), $duplicated_lesson_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_language_pair_filters();
+		$this->assertSame(
+			array_merge( $translated_lesson_ids, array( $duplicated_lesson_id ) ),
+			Sensei()->course->course_lessons( $translated_course_id, 'any', 'ids' )
+		);
+	}
+
+	public function testUpdateLessonPropertiesOnLessonDuplicated_CourseWithoutTranslationGiven_KeepsMasterCourse() {
+		/* Arrange. */
+		$master_course_id     = $this->factory->course->create();
+		$master_lesson_ids    = $this->create_course_lessons( $master_course_id, array( '2024-01-11 10:00:00' ), true );
+		$duplicated_lesson_id = $this->create_lesson_duplicate( $master_lesson_ids[0], $master_course_id );
+
+		$this->simulate_wpml_language_pair(
+			array( $master_lesson_ids[0] => $duplicated_lesson_id )
+		);
+
+		$lesson_translation = new Lesson_Translation();
+
+		/* Act. */
+		$lesson_translation->update_lesson_properties_on_lesson_duplicated( $master_lesson_ids[0], 'es', array(), $duplicated_lesson_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_language_pair_filters();
+		$this->assertSame( $master_course_id, (int) get_post_meta( $duplicated_lesson_id, '_lesson_course', true ) );
+	}
+
+	/**
+	 * Create lessons attached to a course, one per post date, in the given order.
+	 *
+	 * @param int      $course_id  Course the lessons belong to.
+	 * @param string[] $post_dates One lesson is created per date.
+	 * @param bool     $set_order  Whether to write the 1-based `_order_{course_id}` meta.
+	 *
+	 * @return int[] Lesson IDs, in the order given.
+	 */
+	private function create_course_lessons( $course_id, $post_dates, $set_order ) {
+		$lesson_ids = array();
+		foreach ( $post_dates as $index => $post_date ) {
+			$lesson_id = $this->factory->lesson->create(
+				array(
+					'post_date'  => $post_date,
+					'meta_input' => array( '_lesson_course' => $course_id ),
+				)
+			);
+
+			if ( $set_order ) {
+				update_post_meta( $lesson_id, '_order_' . $course_id, $index + 1 );
+			}
+
+			$lesson_ids[] = $lesson_id;
+		}
+
+		return $lesson_ids;
+	}
+
+	/**
+	 * Create a lesson the way WPML's duplicate flow leaves it: custom fields
+	 * copied verbatim from the master, so it points at the master course and
+	 * carries the master course's order meta key.
+	 *
+	 * @param int $master_lesson_id Master lesson ID.
+	 * @param int $master_course_id Master course ID.
+	 *
+	 * @return int Duplicated lesson ID.
+	 */
+	private function create_lesson_duplicate( $master_lesson_id, $master_course_id ) {
+		$duplicated_lesson_id = $this->factory->lesson->create(
+			array(
+				'post_date'  => '2024-02-14 10:00:00',
+				'meta_input' => array( '_lesson_course' => $master_course_id ),
+			)
+		);
+		update_post_meta(
+			$duplicated_lesson_id,
+			'_order_' . $master_course_id,
+			(int) get_post_meta( $master_lesson_id, '_order_' . $master_course_id, true )
+		);
+
+		return $duplicated_lesson_id;
+	}
+
+	/**
+	 * Stand in for WPML: fixed es/en language details, and a wpml_object_id
+	 * map resolving each post to its counterpart in the other language.
+	 *
+	 * @param array $counterparts Map of post ID to counterpart post ID (registered in both directions).
+	 */
+	private function simulate_wpml_language_pair( $counterparts ) {
+		add_filter(
+			'wpml_element_language_details',
+			function () {
+				return array(
+					'language_code'        => 'es',
+					'source_language_code' => 'en',
+				);
+			},
+			10,
+			0
+		);
+
+		$map = array();
+		foreach ( $counterparts as $original_id => $counterpart_id ) {
+			$map[ $original_id ]    = $counterpart_id;
+			$map[ $counterpart_id ] = $original_id;
+		}
+
+		add_filter(
+			'wpml_object_id',
+			function ( $object_id, $element_type ) use ( $map ) {
+				$counterpart_id = $map[ $object_id ] ?? 0;
+				return $counterpart_id && get_post_type( $counterpart_id ) === $element_type ? $counterpart_id : 0;
+			},
+			10,
+			2
+		);
+	}
+
+	/**
+	 * Remove the filters registered by simulate_wpml_language_pair().
+	 */
+	private function remove_wpml_language_pair_filters() {
+		remove_all_filters( 'wpml_element_language_details' );
+		remove_all_filters( 'wpml_object_id' );
 	}
 
 	/**
@@ -313,6 +569,12 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 	private function translated_lesson_content( $source_question_id ) {
 		return '<!-- wp:sensei-lms/quiz -->' . "\n" .
 			'<!-- wp:sensei-lms/quiz-question {"id":' . $source_question_id . ',"title":"Pregunta","answer":{"answers":[{"label":"sí","correct":true},{"label":"no","correct":false}]},"options":{"grade":1}} -->' . "\n" .
+			'<!-- wp:sensei-lms/question-description -->' . "\n" .
+			'<p>Descripción ES</p>' . "\n" .
+			'<!-- /wp:sensei-lms/question-description -->' . "\n" .
+			'<!-- wp:sensei-lms/quiz-question-feedback-correct -->' . "\n" .
+			'<p>Feedback correcto ES</p>' . "\n" .
+			'<!-- /wp:sensei-lms/quiz-question-feedback-correct -->' . "\n" .
 			'<!-- /wp:sensei-lms/quiz-question -->' . "\n" .
 			'<!-- /wp:sensei-lms/quiz -->';
 	}

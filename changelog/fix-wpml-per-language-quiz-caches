@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed quiz results and grading showing a previous attempt's grades after a retake from another language on multilingual sites.

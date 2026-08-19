@@ -25,7 +25,7 @@ $sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei
 if ( $sensei_is_quiz_view_only_mode ) {
 	?>
 	<div class="wp-block-sensei-lms-question-answers__answer">
-		<?php echo wp_kses_post( $question_data['user_answer_entry'] ); ?>
+		<?php echo wp_kses_post( $question_data['user_answer_entry'] ?? '' ); ?>
 	</div>
 	<?php
 } else {

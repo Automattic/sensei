@@ -28,7 +28,11 @@ const courses = [
 	},
 ];
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 
 describe( '<CourseList />', () => {
 	beforeAll( () => {

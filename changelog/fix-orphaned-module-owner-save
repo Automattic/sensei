@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix a false "already owned by another teacher" error that blocked saving a course containing a module without a resolvable owner.

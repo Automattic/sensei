@@ -817,21 +817,21 @@ class Sensei_Course_Structure {
 			$item['lessons']     = [];
 
 			if ( $item['slug'] ) {
-				$course_name = Sensei_Teacher::is_module_in_use_by_different_course_and_teacher( $item['slug'], $this->course_id, absint( $raw_item['teacherId'] ) );
-				if ( $course_name ) {
+				$in_use_in_other_course = Sensei_Teacher::is_module_in_use_by_different_course_and_teacher( $item['slug'], $this->course_id, absint( $raw_item['teacherId'] ) );
+				if ( $in_use_in_other_course ) {
 					return new WP_Error(
 						'module_in_use_in_different_course_by_different_teacher',
 						sprintf(
-						/* translators: Placeholder 1 is the module slug and 2 is course name. */
-							__( 'Slug %1$s exists and is being used in %2$s course', 'sensei-lms' ),
-							$item['slug'],
-							$course_name
+						/* translators: Placeholder is the module slug. */
+							__( 'Slug %s exists and is being used in another course.', 'sensei-lms' ),
+							$item['slug']
 						)
 					);
 				}
 
 				$term_author = Sensei_Core_Modules::get_term_author( $item['slug'] );
-				if ( ( ! $term_author instanceof WP_User || wp_get_current_user()->ID !== $term_author->ID ) &&
+				if ( $term_author instanceof WP_User &&
+					wp_get_current_user()->ID !== $term_author->ID &&
 					! current_user_can( 'manage_options' ) &&
 					get_term_by( 'slug', $item['slug'], 'module' )
 				) {
@@ -839,7 +839,7 @@ class Sensei_Course_Structure {
 						'module_belongs_to_another_user',
 						sprintf(
 						/* translators: Placeholder is the module slug. */
-							__( 'A module with the slug %s is already owned by another teacher', 'sensei-lms' ),
+							__( 'A module with the slug %s is already owned by another teacher.', 'sensei-lms' ),
 							$item['slug']
 						)
 					);

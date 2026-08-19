@@ -14,7 +14,12 @@ import { useDispatch, useSelect } from '@wordpress/data';
  */
 import LessonDetailsStep from './lesson-details-step';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useDispatch: jest.fn(),
+		useSelect: jest.fn(),
+	} )
+);
 jest.mock( '@wordpress/editor' );
 
 const ANY_PLUGIN_URL = 'https://some-url/';

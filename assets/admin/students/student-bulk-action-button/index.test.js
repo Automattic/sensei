@@ -13,7 +13,11 @@ import { useSelect } from '@wordpress/data';
  */
 import { StudentBulkActionButton } from './index';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+	} )
+);
 
 /**
  *  Create a custom screen selector that ignores text inside html tags like hello <strong> world</strong>
