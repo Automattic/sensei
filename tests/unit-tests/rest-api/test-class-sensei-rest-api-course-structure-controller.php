@@ -474,7 +474,6 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 				'question_count' => 0,
 			]
 		);
-		$course_title = get_post( $course_a['course_id'] )->post_title;
 
 		$course_structure_a = Sensei_Course_Structure::instance( $course_a['course_id'] );
 
@@ -514,11 +513,11 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 
 		// Teacher gets restricted.
 		$this->assertEquals( $response_teacher_b->get_status(), 400 );
-		$this->assertEquals( "Slug custom-slug exists and is being used in $course_title course", $response_teacher_b->get_data()['message'] );
+		$this->assertEquals( 'Slug custom-slug exists and is being used in another course.', $response_teacher_b->get_data()['message'] );
 
 		// Admin gets restricted.
 		$this->assertEquals( $response_admin->get_status(), 400 );
-		$this->assertEquals( "Slug custom-slug exists and is being used in $course_title course", $response_admin->get_data()['message'] );
+		$this->assertEquals( 'Slug custom-slug exists and is being used in another course.', $response_admin->get_data()['message'] );
 	}
 
 	public function testCourseStructure_whenAnotherUserTriesUsingExistingSlugNotUsedInCourse_IsAllowedOnlyForAdmin() {
