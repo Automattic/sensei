@@ -887,6 +887,88 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A teacher must be able to save a course containing a module whose owner cannot
+	 * be resolved, instead of being blocked with a false "belongs to another teacher"
+	 * error.
+	 */
+	public function testSave_TeacherSavesModuleWithUnresolvableOwner_DoesNotReturnError() {
+		$module_id = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Introduction',
+				'slug'     => 'introduction',
+			)
+		);
+		// Make the owner unresolvable: the meta points at a missing user and no admin
+		// account can be found by email or super admin login.
+		$previous_admin_email = get_site_option( 'admin_email' );
+		$previous_site_admins = get_site_option( 'site_admins' );
+		update_term_meta( $module_id, 'module_author', 999999 );
+		update_site_option( 'admin_email', 'non-existant-user-mail@abc.com' );
+		update_site_option( 'site_admins', array( 'a-login-with-no-user' ) );
+
+		try {
+			$this->login_as_teacher();
+			$course_id     = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+			$new_structure = array(
+				array(
+					'type'      => 'module',
+					'id'        => $module_id,
+					'title'     => 'Introduction',
+					'slug'      => 'introduction',
+					'lastTitle' => 'Introduction',
+					'teacherId' => 0,
+					'lessons'   => array(),
+				),
+			);
+
+			$save_result = Sensei_Course_Structure::instance( $course_id )->save( $new_structure );
+
+			$this->assertNotWPError( $save_result );
+		} finally {
+			update_site_option( 'admin_email', $previous_admin_email );
+			update_site_option( 'site_admins', $previous_site_admins );
+		}
+	}
+
+	/**
+	 * A teacher must not be able to take over a module owned by another teacher by
+	 * referencing it by id in their own course.
+	 */
+	public function testSave_TeacherReferencesModuleOwnedByAnotherTeacher_ReturnsError() {
+		$this->login_as_teacher();
+		$teacher_a_id = get_current_user_id();
+		$module_id    = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'A Secret Module',
+				'slug'     => 'a-secret-module',
+			)
+		);
+		update_term_meta( $module_id, 'module_author', $teacher_a_id );
+
+		$this->login_as_teacher_b();
+		$course_id     = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$new_structure = array(
+			array(
+				'type'      => 'module',
+				'id'        => $module_id,
+				'title'     => 'Hijacked',
+				'slug'      => 'a-secret-module',
+				'teacherId' => get_current_user_id(),
+				'lessons'   => array(),
+			),
+		);
+
+		$save_result = Sensei_Course_Structure::instance( $course_id )->save( $new_structure );
+
+		$this->assertSame(
+			'module_belongs_to_another_user',
+			is_wp_error( $save_result ) ? $save_result->get_error_code() : null
+		);
+	}
+
+	/**
 	 * Make sure we can properly reorder modules.
 	 */
 	public function testSaveReorderModules() {
