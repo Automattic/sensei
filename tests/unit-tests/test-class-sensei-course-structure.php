@@ -969,6 +969,41 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A teacher must not delete another teacher's unused module by referencing
+	 * its term ID in their own course-structure save.
+	 */
+	public function testSave_ModuleIdOwnedByAnotherTeacherGiven_DoesNotDeleteThatModule() {
+		$teacher_a_id     = $this->get_user_by_role( 'teacher' );
+		$victim_module_id = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Victim Module',
+				'slug'     => $teacher_a_id . '-victim-module',
+			)
+		);
+		add_term_meta( $victim_module_id, 'module_author', $teacher_a_id, true );
+
+		$this->login_as_teacher_b();
+		$course_id     = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$new_structure = array(
+			array(
+				'type'      => 'module',
+				'id'        => $victim_module_id,
+				'title'     => 'Fresh Module',
+				'lastTitle' => 'Fresh Module',
+				'slug'      => get_current_user_id() . '-fresh-module',
+				'teacherId' => get_current_user_id(),
+				'lessons'   => array(),
+			),
+		);
+
+		$saved = Sensei_Course_Structure::instance( $course_id )->save( $new_structure );
+
+		$this->assertTrue( $saved, 'The crafted structure should save successfully.' );
+		$this->assertInstanceOf( WP_Term::class, get_term( $victim_module_id, 'module' ), "Teacher A's module should not be deleted." );
+	}
+
+	/**
 	 * Make sure we can properly reorder modules.
 	 */
 	public function testSaveReorderModules() {
