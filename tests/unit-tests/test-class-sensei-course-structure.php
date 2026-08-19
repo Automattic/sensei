@@ -916,6 +916,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 					'id'        => $module_id,
 					'title'     => 'Introduction',
 					'slug'      => 'introduction',
+					'lastTitle' => 'Introduction',
 					'teacherId' => 0,
 					'lessons'   => array(),
 				),
