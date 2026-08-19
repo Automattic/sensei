@@ -467,7 +467,7 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		// Save a course and update a module with custom slug for a teacher.
 		$this->login_as_teacher();
 
-		$course_a     = $this->factory->get_course_with_lessons(
+		$course_a = $this->factory->get_course_with_lessons(
 			[
 				'module_count'   => 1,
 				'lesson_count'   => 1,
