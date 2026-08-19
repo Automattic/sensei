@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix PHP 8.1 deprecation notices rendered into the quiz page for unanswered Multi Line questions.

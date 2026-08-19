@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-WordPress 7.1 Compatibility: Fix a PHP notice logged by Learning Mode templates.

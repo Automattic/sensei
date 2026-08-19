@@ -1,5 +1,30 @@
 *** Changelog ***
 
+## 4.26.3 - 2026-08-20
+### Security
+- Scope the Students management user search to student accounts. [#8174](https://github.com/Automattic/sensei/pull/8174)
+
+### Removed
+- Remove the course and lesson editor tours. [#8150](https://github.com/Automattic/sensei/pull/8150)
+
+### Fixed
+- Fix a false "already owned by another teacher" error that blocked saving a course containing a module without a resolvable owner. [#8180](https://github.com/Automattic/sensei/pull/8180)
+- Fix course layouts and Sensei blocks not loading when Show template is enabled. [#8139](https://github.com/Automattic/sensei/pull/8139)
+- Fix quiz results and grading showing a previous attempt's grades after a retake from another language on multilingual sites. [#8125](https://github.com/Automattic/sensei/pull/8125)
+- Fix spacing and styling of quiz question options when using the iframed block editor. [#8172](https://github.com/Automattic/sensei/pull/8172)
+- Fix the Grading screen Grade button and row titles when the admin uses a secondary language on multilingual sites. [#8121](https://github.com/Automattic/sensei/pull/8121)
+- Fix the quiz results page showing questions in the language the quiz was taken in instead of the viewer's language on multilingual sites. [#8124](https://github.com/Automattic/sensei/pull/8124)
+- Fix lesson prerequisites pointing to the original-language lesson on WPML-translated lessons. [#8132](https://github.com/Automattic/sensei/pull/8132)
+- Fix lessons appearing out of order in translated courses when a new lesson is translated with WPML, and attach WPML lesson duplicates to the translated course. [#8149](https://github.com/Automattic/sensei/pull/8149)
+- Fix PHP 8.1 deprecation notices rendered into the quiz page for unanswered Multi Line questions. [#8146](https://github.com/Automattic/sensei/pull/8146)
+- Fix quiz question titles and answers not being translated on WPML-translated lessons. [#8100](https://github.com/Automattic/sensei/pull/8100)
+- Fix the Add Student form layout on the Students page. [#8147](https://github.com/Automattic/sensei/pull/8147)
+- Fix the misaligned Reset filter button on the Grading screen. [#8122](https://github.com/Automattic/sensei/pull/8122)
+- Fix typo in My Courses Page setting description [#8106](https://github.com/Automattic/sensei/pull/8106)
+- WordPress 7.1 Compatibility: Course and lesson block colors match the theme in the iframed post editor. [#8179](https://github.com/Automattic/sensei/pull/8179)
+- WordPress 7.1 Compatibility: Fix a PHP notice logged by Learning Mode templates. [#8179](https://github.com/Automattic/sensei/pull/8179)
+- WordPress 7.1 Compatibility: Learning Mode and email templates appear in their own group in the Site Editor. [#8179](https://github.com/Automattic/sensei/pull/8179)
+
 ## 4.26.2 - 2026-07-29
 ### Security
 - Align the sensei-messages REST endpoint results with documented message visibility. [#8032](https://github.com/Automattic/sensei/pull/8032)
@@ -22,9 +47,9 @@
 - Fix alignment of option descriptions in the setup wizard's purpose step. [#8013](https://github.com/Automattic/sensei/pull/8013)
 - Fix an infinite save loop when editing a lesson with a quiz block while a plugin (e.g. Polylang) injects extra fields into the REST response. [#8036](https://github.com/Automattic/sensei/pull/8036)
 - Fix duplicate frontend notices when the same keyed notice is added multiple times on classic themes. [#8051](https://github.com/Automattic/sensei/pull/8051)
-- Fixed content import stalling permanently when CSVs reference many or large remote media files. [#8064](https://github.com/Automattic/sensei/pull/8064)
-- Fixed PHP Fatal TypeError on PHP 8.x caused by malformed `className` attribute definition in the Module Title block. [#8093](https://github.com/Automattic/sensei/pull/8093)
-- Fixed the position of the Course(s) field description on the module add and edit screens. [#8090](https://github.com/Automattic/sensei/pull/8090)
+- Fix content import stalling permanently when CSVs reference many or large remote media files. [#8064](https://github.com/Automattic/sensei/pull/8064)
+- Fix PHP Fatal TypeError on PHP 8.x caused by malformed `className` attribute definition in the Module Title block. [#8093](https://github.com/Automattic/sensei/pull/8093)
+- Fix the position of the Course(s) field description on the module add and edit screens. [#8090](https://github.com/Automattic/sensei/pull/8090)
 - Fix export and import dropping private lessons and questions. [#8068](https://github.com/Automattic/sensei/pull/8068)
 - Fix export content search missing matching lessons/courses/questions. [#8048](https://github.com/Automattic/sensei/pull/8048)
 - Fix PHP 8.4 deprecation warnings for implicitly-nullable parameters by declaring explicit nullable types. [#8021](https://github.com/Automattic/sensei/pull/8021)
@@ -33,7 +58,6 @@
 - Fix remote featured images with query-string URLs failing to import. [#8063](https://github.com/Automattic/sensei/pull/8063)
 - Fix translated quiz titles keeping the original-language title when using WPML. [#8096](https://github.com/Automattic/sensei/pull/8096)
 - Prevent the Welcome to Course email from being sent more than once to the same student for the same course. [#8046](https://github.com/Automattic/sensei/pull/8046)
-
 
 ## 4.26.1 - 2026-06-15
 ### Fixed
