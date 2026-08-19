@@ -143,6 +143,10 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 ### 4.26.3 - 2026-08-20
 #### Security
 - Scope the Students management user search to student accounts. [#8174](https://github.com/Automattic/sensei/pull/8174)
+- Require the grading capability on the lessons dropdown AJAX endpoint and scope it to the caller's own lessons.
+- Restrict adding a student to a lesson so it is only allowed through the lesson's own course.
+- Prevent a teacher from deleting another teacher's unused module.
+- Remove the admin notice that exposed the administration email address to non-administrators.
 
 #### Removed
 - Remove the course and lesson editor tours. [#8150](https://github.com/Automattic/sensei/pull/8150)
