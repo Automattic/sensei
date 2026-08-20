@@ -140,7 +140,7 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
-### 4.26.3 - 2026-08-21
+### 4.26.3 - 2026-08-20
 #### Security
 - Scope the Students management user search to student accounts. [#8174](https://github.com/Automattic/sensei/pull/8174)
 - Require the grading capability on the lessons dropdown AJAX endpoint and scope it to the caller's own lessons.
