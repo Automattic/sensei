@@ -800,7 +800,7 @@ class Sensei_Quiz {
 	/**
 	 * Build the cache key for a user's quiz data on a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @param string $prefix    Cache prefix.
 	 * @param int    $user_id   User ID.
@@ -814,7 +814,7 @@ class Sensei_Quiz {
 		 * The cached answers, grades, and feedback build their keys through
 		 * this filter, on reads, writes, and invalidations.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.3
 		 *
 		 * @hook sensei_quiz_cache_key_lesson_id
 		 *

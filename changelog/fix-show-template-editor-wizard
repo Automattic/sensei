@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix course layouts and Sensei blocks not loading when Show template is enabled.

@@ -80,7 +80,7 @@ class Lesson_Translation {
 	 * duplicate attached to the master course and carrying the master course's
 	 * order meta key, so it never shows up in the translated course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *

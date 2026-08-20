@@ -89,7 +89,7 @@ class Sensei_Course_Theme_Templates {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 */
 	public function register_block_templates() {
 		$namespace = basename( dirname( SENSEI_LMS_PLUGIN_FILE ) );
