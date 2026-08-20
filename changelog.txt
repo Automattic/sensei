@@ -1,6 +1,6 @@
 *** Changelog ***
 
-## 4.26.3 - 2026-08-21
+## 4.26.3 - 2026-08-20
 ### Security
 - Scope the Students management user search to student accounts. [#8174](https://github.com/Automattic/sensei/pull/8174)
 - Require the grading capability on the lessons dropdown AJAX endpoint and scope it to the caller's own lessons.
@@ -24,7 +24,7 @@
 - Fix quiz question titles and answers not being translated on WPML-translated lessons. [#8100](https://github.com/Automattic/sensei/pull/8100)
 - Fix the Add Student form layout on the Students page. [#8147](https://github.com/Automattic/sensei/pull/8147)
 - Fix the misaligned Reset filter button on the Grading screen. [#8122](https://github.com/Automattic/sensei/pull/8122)
-- Fix typo in My Courses Page setting description [#8106](https://github.com/Automattic/sensei/pull/8106)
+- Fix typo in My Courses Page setting description [#8106](https://github.com/Automattic/sensei/pull/8106) 👏 @Hashim1999164
 - WordPress 7.1 Compatibility: Course and lesson block colors match the theme in the iframed post editor. [#8179](https://github.com/Automattic/sensei/pull/8179)
 - WordPress 7.1 Compatibility: Fix a PHP notice logged by Learning Mode templates. [#8179](https://github.com/Automattic/sensei/pull/8179)
 - WordPress 7.1 Compatibility: Learning Mode and email templates appear in their own group in the Site Editor. [#8179](https://github.com/Automattic/sensei/pull/8179)
