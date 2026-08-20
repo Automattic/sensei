@@ -905,8 +905,8 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$previous_blog_admin_email = get_option( 'admin_email' );
 		$previous_site_admins      = get_site_option( 'site_admins' );
 		update_term_meta( $module_id, 'module_author', 999999 );
-		update_site_option( 'admin_email', 'non-existant-user-mail@abc.com' );
-		update_option( 'admin_email', 'non-existant-user-mail@abc.com' );
+		update_site_option( 'admin_email', 'non-existent-user-mail@example.com' );
+		update_option( 'admin_email', 'non-existent-user-mail@example.com' );
 		update_site_option( 'site_admins', array( 'a-login-with-no-user' ) );
 
 		try {
