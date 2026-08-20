@@ -42,9 +42,7 @@ describe( 'Create Courses', () => {
 
 		await wizardModal.finishWithDefaultLayout();
 
-		await page
-			.getByRole( 'button', { name: 'Start with blank' } )
-			.dispatchEvent( 'click' );
+		await coursesPage.startWithBlankButton.dispatchEvent( 'click' );
 
 		await coursesPage.saveDraft();
 
