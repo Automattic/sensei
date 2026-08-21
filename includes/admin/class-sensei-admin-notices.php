@@ -255,7 +255,7 @@ class Sensei_Admin_Notices {
 			<?php
 			echo '<div class="sensei-notice__content">';
 			if ( ! empty( $notice['icon'] ) ) {
-				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_icon() escapes its own dynamic parts.
 				echo Sensei()->assets->get_icon( $notice['icon'], 'sensei-notice__icon' );
 			}
 			echo '<div>';
@@ -280,6 +280,7 @@ class Sensei_Admin_Notices {
 						wp_enqueue_script( 'sensei-dismiss-notices' );
 						$extra_attrs = ' data-sensei-notice-tasks="' . esc_attr( wp_json_encode( $action['tasks'] ) ) . '"';
 					}
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $extra_attrs is assembled from esc_attr()'d values above; other parts escaped inline.
 					echo '<a href="' . esc_url( $action['url'] ) . '" target="' . esc_attr( $action['target'] ?? '_self' ) . '" rel="noopener noreferrer" class="button ' . esc_attr( $button_class ) . '"' . $extra_attrs . '>';
 					echo esc_html( $action['label'] );
 					echo '</a>';
