@@ -97,8 +97,8 @@ trait Sensei_Reports_Helper_Date_Range_Trait {
 
 				return $user_timezone;
 			} catch ( Exception $e ) {
-				// Invalid timezone requested; fall back to the site's timezone.
-				return wp_timezone_string();
+				// Invalid timezone requested; fall through to the site timezone below.
+				unset( $e );
 			}
 		}
 

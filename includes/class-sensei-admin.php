@@ -1773,7 +1773,9 @@ class Sensei_Admin {
 			$properties = json_decode( $properties, true );
 		}
 
-		$properties = is_array( $properties ) ? map_deep( $properties, 'sanitize_text_field' ) : array();
+		// Sanitize string values only, preserving the JSON-decoded scalar types (int/float/bool/null)
+		// so logged event properties keep the same types and values they had before sanitization.
+		$properties = is_array( $properties ) ? $this->sanitize_event_properties( $properties ) : array();
 
 		// Set the source to js-event.
 		add_filter(
@@ -1785,6 +1787,30 @@ class Sensei_Admin {
 
 		sensei_log_event( $event_name, $properties );
 		// phpcs:enable WordPress.Security.NonceVerification
+	}
+
+	/**
+	 * Recursively sanitize the string values of an event property array.
+	 *
+	 * Non-string scalar values (int, float, bool, null) are returned untouched so the
+	 * logged event keeps the types produced by json_decode(), rather than coercing them
+	 * to strings the way map_deep( ..., 'sanitize_text_field' ) would.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $properties Decoded event properties.
+	 * @return array The properties with their string values sanitized.
+	 */
+	private function sanitize_event_properties( array $properties ): array {
+		foreach ( $properties as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$properties[ $key ] = $this->sanitize_event_properties( $value );
+			} elseif ( is_string( $value ) ) {
+				$properties[ $key ] = sanitize_text_field( $value );
+			}
+		}
+
+		return $properties;
 	}
 
 	/**

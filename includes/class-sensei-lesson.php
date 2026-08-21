@@ -2427,7 +2427,7 @@ class Sensei_Lesson {
 		$data        = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$answer_data = array();
 		parse_str( $data, $answer_data );
-		$answer    = $answer_data['answer_value'];
+		$answer    = $answer_data['answer_value'] ?? '';
 		$answer_id = $this->get_answer_id( $answer );
 		echo esc_html( $answer_id );
 		die();
