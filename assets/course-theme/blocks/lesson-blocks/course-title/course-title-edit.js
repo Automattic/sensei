@@ -2,11 +2,56 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useBlockProps } from '@wordpress/block-editor';
+import { Platform } from '@wordpress/element';
+import {
+	BlockControls,
+	RichText,
+	useBlockProps,
+	HeadingLevelDropdown,
+	useBlockEditingMode,
+} from '@wordpress/block-editor';
 
-export const CourseTitleEdit = () => {
-	const blockProps = useBlockProps();
+export const CourseTitleEdit = ( {
+	attributes,
+	setAttributes,
+	mergeBlocks,
+	onReplace,
+	style,
+} ) => {
+	const { content, level, levelOptions, className, placeholder } = attributes;
+	const tagName = 'h' + level;
+	const blockProps = useBlockProps( {
+		className,
+		style,
+	} );
+	const blockEditingMode = useBlockEditingMode();
 
-	// Todo: Add the heading level selection, similar to this https://github.com/WordPress/gutenberg/blob/trunk/packages/block-library/src/site-title/edit/index.js#L98-L103.
-	return <h2 { ...blockProps }>{ __( 'Course Title', 'sensei-lms' ) }</h2>;
+	return (
+		<>
+			{ blockEditingMode === 'default' && (
+				<BlockControls group="block">
+					<HeadingLevelDropdown
+						value={ level }
+						options={ levelOptions }
+						onChange={ ( newLevel ) =>
+							setAttributes( { level: newLevel } )
+						}
+					/>
+				</BlockControls>
+			) }
+			<RichText
+				identifier="content"
+				tagName={ tagName }
+				value={ content }
+				onMerge={ mergeBlocks }
+				onReplace={ onReplace }
+				onRemove={ () => onReplace( [] ) }
+				placeholder={
+					placeholder || __( 'Course Title', 'sensei-lms' )
+				}
+				{ ...( Platform.isNative && { deleteEnter: true } ) } // setup RichText on native mobile to delete the "Enter" key as it's handled by the JS/RN side
+				{ ...blockProps }
+			/>
+		</>
+	);
 };
