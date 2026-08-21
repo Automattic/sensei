@@ -1524,8 +1524,9 @@ class Sensei_Frontend {
 				}
 
 				// get setup the rest of the creds array.
-				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Password must not be altered by sanitization.
-				$creds['user_password'] = wp_unslash( $_REQUEST['pwd'] );
+				// Pass the password to WordPress slashed and unsanitized to match wp-login.php; altering it breaks the hash check.
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+				$creds['user_password'] = $_REQUEST['pwd'];
 				$creds['remember']      = isset( $_REQUEST['rememberme'] ) ? true : false;
 
 				// attempt logging in with the given details.
@@ -1614,8 +1615,9 @@ class Sensei_Frontend {
 		// retreive form variables.
 		$new_user_name  = sanitize_user( wp_unslash( $_POST['sensei_reg_username'] ) );
 		$new_user_email = sanitize_email( wp_unslash( $_POST['sensei_reg_email'] ) );
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Password must not be altered by sanitization.
-		$new_user_password = wp_unslash( $_POST['sensei_reg_password'] );
+		// Pass the password to WordPress slashed and unsanitized to match wp-login.php; altering it breaks the hash check.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$new_user_password = $_POST['sensei_reg_password'];
 
 		// Check the username.
 		$username_error_notice = '';
