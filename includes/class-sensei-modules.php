@@ -477,7 +477,7 @@ class Sensei_Core_Modules {
 
 		// Verify post type and nonce
 		if ( ( get_post_type( $post ) != 'lesson' ) || ! isset( $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ] )
-			|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( is_array( $nonce_value = $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ] ) ? '' : $nonce_value ) ), plugin_basename( $this->file ) ) ) {
+			|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ] ) ), plugin_basename( $this->file ) ) ) {
 			return $post_id;
 		}
 
@@ -495,8 +495,8 @@ class Sensei_Core_Modules {
 		// Get module and course IDs
 		$lesson_module_id_key = 'lesson_module';
 		$lesson_course_id_key = 'lesson_course';
-		$module_id            = isset( $_POST[ $lesson_module_id_key ] ) ? sanitize_text_field( wp_unslash( is_array( $_POST[ $lesson_module_id_key ] ) ? '' : $_POST[ $lesson_module_id_key ] ) ) : '';
-		$course_id            = isset( $_POST[ $lesson_course_id_key ] ) ? sanitize_text_field( wp_unslash( is_array( $_POST[ $lesson_course_id_key ] ) ? '' : $_POST[ $lesson_course_id_key ] ) ) : '';
+		$module_id            = isset( $_POST[ $lesson_module_id_key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $lesson_module_id_key ] ) ) : '';
+		$course_id            = isset( $_POST[ $lesson_course_id_key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $lesson_course_id_key ] ) ) : '';
 
 		// Set the module on the lesson
 		$lesson_modules = new Sensei_Core_Lesson_Modules( $post_id );
@@ -686,7 +686,7 @@ class Sensei_Core_Modules {
 		$module           = get_term( $module_id );
 		$event_properties = [
 			// phpcs:ignore WordPress.Security.NonceVerification
-			'page'      => isset( $_REQUEST['from_page'] ) ? sanitize_text_field( wp_unslash( is_array( $_REQUEST['from_page'] ) ? '' : $_REQUEST['from_page'] ) ) : '',
+			'page'      => isset( $_REQUEST['from_page'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['from_page'] ) ) : '',
 			'parent_id' => -1,
 		];
 
@@ -711,7 +711,7 @@ class Sensei_Core_Modules {
 		header( 'Content-Type: application/json; charset=utf-8' );
 
 		// Get user input
-		$term = isset( $_GET['term'] ) ? sanitize_text_field( wp_unslash( is_array( $_GET['term'] ) ? '' : $_GET['term'] ) ) : '';
+		$term = isset( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
 		$term = urldecode( $term );
 
 		// Return nothing if term is empty
@@ -720,7 +720,7 @@ class Sensei_Core_Modules {
 		}
 
 		// Set a default if none is given
-		$default = isset( $_GET['default'] ) ? sanitize_text_field( wp_unslash( is_array( $_GET['default'] ) ? '' : $_GET['default'] ) ) : __( 'No course', 'sensei-lms' );
+		$default = isset( $_GET['default'] ) ? sanitize_text_field( wp_unslash( $_GET['default'] ) ) : __( 'No course', 'sensei-lms' );
 
 		// Set up array of results
 		$found_courses = array( '' => $default );
@@ -2514,12 +2514,12 @@ class Sensei_Core_Modules {
 	 */
 	public static function add_new_module_term() {
 
-		if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( is_array( $_POST['security'] ) ? '' : $_POST['security'] ) ), '_ajax_nonce-add-module' ) ) {
+		if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['security'] ) ), '_ajax_nonce-add-module' ) ) {
 			wp_send_json_error( array( 'error' => 'wrong security nonce' ) );
 		}
 
 		// get the term an create the new term storing infomration
-		$term_name = isset( $_POST['newTerm'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['newTerm'] ) ? '' : $_POST['newTerm'] ) ) : '';
+		$term_name = isset( $_POST['newTerm'] ) ? sanitize_text_field( wp_unslash( $_POST['newTerm'] ) ) : '';
 
 		if ( current_user_can( 'manage_options' ) ) {
 
@@ -2531,7 +2531,7 @@ class Sensei_Core_Modules {
 
 		}
 
-		$course_id = isset( $_POST['course_id'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['course_id'] ) ? '' : $_POST['course_id'] ) ) : '';
+		$course_id = isset( $_POST['course_id'] ) ? sanitize_text_field( wp_unslash( $_POST['course_id'] ) ) : '';
 
 		// save the term. wp_insert_term() unslashes internally, so re-slash to preserve any backslashes in the name.
 		$slug = wp_insert_term( wp_slash( $term_name ), 'module', array( 'slug' => $term_slug ) );

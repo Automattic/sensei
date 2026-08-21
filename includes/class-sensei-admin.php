@@ -1103,8 +1103,8 @@ class Sensei_Admin {
 		check_admin_referer( 'order_courses' );
 
 		$ordered = null;
-		if ( isset( $_POST['course-order'] ) && 0 < strlen( sanitize_text_field( wp_unslash( is_array( $_POST['course-order'] ) ? '' : $_POST['course-order'] ) ) ) ) {
-			$ordered = $this->save_course_order( sanitize_text_field( wp_unslash( is_array( $_POST['course-order'] ) ? '' : $_POST['course-order'] ) ) );
+		if ( isset( $_POST['course-order'] ) && 0 < strlen( sanitize_text_field( wp_unslash( $_POST['course-order'] ) ) ) ) {
+			$ordered = $this->save_course_order( sanitize_text_field( wp_unslash( $_POST['course-order'] ) ) );
 		}
 
 		wp_redirect(
@@ -1690,7 +1690,7 @@ class Sensei_Admin {
 	public function theme_compatibility_notices() {
 
 		if ( isset( $_GET['sensei_hide_notice'] ) ) {
-			switch ( sanitize_text_field( wp_unslash( is_array( $_GET['sensei_hide_notice'] ) ? '' : $_GET['sensei_hide_notice'] ) ) ) {
+			switch ( sanitize_text_field( wp_unslash( $_GET['sensei_hide_notice'] ) ) ) {
 				case 'menu_settings':
 					add_user_meta( get_current_user_id(), 'sensei_hide_menu_settings_notice', true );
 					break;
@@ -1764,7 +1764,7 @@ class Sensei_Admin {
 			wp_die();
 		}
 
-		$event_name = sanitize_text_field( wp_unslash( is_array( $_REQUEST['event_name'] ) ? '' : $_REQUEST['event_name'] ) );
+		$event_name = sanitize_text_field( wp_unslash( $_REQUEST['event_name'] ) );
 		// $_REQUEST['properties'] is a JSON string or array; sanitized via map_deep() after decoding below.
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$properties = isset( $_REQUEST['properties'] ) ? wp_unslash( $_REQUEST['properties'] ) : array();

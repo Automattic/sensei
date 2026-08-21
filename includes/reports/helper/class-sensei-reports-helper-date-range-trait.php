@@ -20,7 +20,7 @@ trait Sensei_Reports_Helper_Date_Range_Trait {
 	 */
 	protected function get_start_date_filter_value(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only report filter.
-		$start_date = isset( $_GET['start_date'] ) ? sanitize_text_field( wp_unslash( is_array( $_GET['start_date'] ) ? '' : $_GET['start_date'] ) ) : '';
+		$start_date = isset( $_GET['start_date'] ) ? sanitize_text_field( wp_unslash( $_GET['start_date'] ) ) : '';
 
 		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : '';
 	}
@@ -54,7 +54,7 @@ trait Sensei_Reports_Helper_Date_Range_Trait {
 	 */
 	protected function get_end_date_filter_value(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only report filter.
-		$end_date = isset( $_GET['end_date'] ) ? sanitize_text_field( wp_unslash( is_array( $_GET['end_date'] ) ? '' : $_GET['end_date'] ) ) : '';
+		$end_date = isset( $_GET['end_date'] ) ? sanitize_text_field( wp_unslash( $_GET['end_date'] ) ) : '';
 
 		return DateTime::createFromFormat( 'Y-m-d', $end_date ) ? $end_date : '';
 	}
@@ -88,7 +88,7 @@ trait Sensei_Reports_Helper_Date_Range_Trait {
 	 */
 	protected function get_timezone(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only report filter.
-		$user_timezone = isset( $_GET['timezone'] ) ? sanitize_text_field( wp_unslash( is_array( $_GET['timezone'] ) ? '' : $_GET['timezone'] ) ) : '';
+		$user_timezone = isset( $_GET['timezone'] ) ? sanitize_text_field( wp_unslash( $_GET['timezone'] ) ) : '';
 
 		if ( $user_timezone ) {
 			try {
