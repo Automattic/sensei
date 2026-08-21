@@ -1,4 +1,5 @@
 {
+	"apiVersion": 3,
 	"name": "sensei-lms/course-results",
 	"title": "Course Results",
 	"description": "Show course results to students on the course completion page.",

@@ -1,7 +1,7 @@
 {
 	"name": "sensei-lms/exit-course",
 	"category": "theme",
-	"apiVersion": 2,
+	"apiVersion": 3,
 	"supports": {
 		"align": true,
 		"color": {
