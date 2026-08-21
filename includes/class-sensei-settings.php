@@ -1073,7 +1073,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 */
 	public function log_settings_update( $old_value, $value ) {
 		// Only process user-initiated settings updates.
-		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && ! defined( 'REST_REQUEST' ) && 'options' === get_current_screen()->id ) ) {
+		if ( ! ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] && ! defined( 'REST_REQUEST' ) && 'options' === get_current_screen()->id ) ) {
 			return;
 		}
 

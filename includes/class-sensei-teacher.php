@@ -1528,7 +1528,7 @@ AND comments.comment_type = 'sensei_course_status'";
 		$users_who_can_edit_courses = get_users( $user_query_args );
 
 		// Create the select element with the given users who can edit course
-		$selected       = isset( $_GET['course_teacher'] ) ? $_GET['course_teacher'] : '';
+		$selected       = isset( $_GET['course_teacher'] ) ? absint( $_GET['course_teacher'] ) : '';
 		$course_options = '';
 		foreach ( $users_who_can_edit_courses as $user ) {
 			$course_options .= '<option value="' . esc_attr( $user->ID ) . '" ' . selected( $selected, $user->ID, false ) . '>' . esc_html( $user->display_name ) . '</option>';
@@ -1568,7 +1568,7 @@ AND comments.comment_type = 'sensei_course_status'";
 		if ( ! is_admin() && 'course' != $typenow || ! current_user_can( 'manage_sensei' ) ) {
 			return $query;
 		}
-		$course_teacher = isset( $_GET['course_teacher'] ) ? $_GET['course_teacher'] : '';
+		$course_teacher = isset( $_GET['course_teacher'] ) ? absint( $_GET['course_teacher'] ) : '';
 
 		if ( empty( $course_teacher ) ) {
 			return $query;

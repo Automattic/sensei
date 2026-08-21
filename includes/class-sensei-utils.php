@@ -912,11 +912,11 @@ class Sensei_Utils {
 	 * @return array $return_array ordered data
 	 */
 	public static function array_sort_reorder( $return_array ) {
-		if ( isset( $_GET['orderby'] ) && '' != esc_html( $_GET['orderby'] ) ) {
+		if ( isset( $_GET['orderby'] ) && '' != sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) ) {
 			$sort_key = '';
 			if ( '' != $sort_key ) {
 					self::sort_array_by_key( $return_array, $sort_key );
-				if ( isset( $_GET['order'] ) && 'desc' == esc_html( $_GET['order'] ) ) {
+				if ( isset( $_GET['order'] ) && 'desc' == sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) {
 					$return_array = array_reverse( $return_array, true );
 				}
 			}

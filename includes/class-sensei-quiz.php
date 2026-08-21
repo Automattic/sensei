@@ -1560,7 +1560,7 @@ class Sensei_Quiz {
 
 		$lesson = get_post( $lesson_id );
 
-		if ( is_singular( 'quiz' ) && ! $has_questions && $_SERVER['REQUEST_URI'] !== "/lesson/$lesson->post_name" ) {
+		if ( is_singular( 'quiz' ) && ! $has_questions && isset( $_SERVER['REQUEST_URI'] ) && sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) !== "/lesson/$lesson->post_name" ) {
 
 			wp_redirect( get_permalink( $lesson->ID ), 301 );
 			exit;
