@@ -1167,7 +1167,7 @@ class Sensei_Frontend {
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_password"><?php esc_html_e( 'Password', 'sensei-lms' ); ?> <span class="required">*</span></label>
-							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" value="<?php echo ( ! empty( $_POST['sensei_reg_password'] ) ) ? esc_attr( sanitize_text_field( wp_unslash( is_array( $_POST['sensei_reg_password'] ) ? '' : $_POST['sensei_reg_password'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification ?>" />
+							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" />
 						</p>
 
 						<!-- Spam Trap -->

@@ -2066,7 +2066,8 @@ class Sensei_Lesson {
 		}
 
 		// Parse POST data
-		$data          = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data          = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$question_data = array();
 		parse_str( $data, $question_data );
 
@@ -2411,7 +2412,8 @@ class Sensei_Lesson {
 			}
 			wp_die();
 		}
-		$answer    = sanitize_text_field( wp_unslash( is_array( $_GET['answer_value'] ) ? '' : $_GET['answer_value'] ) );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Value is only md5-hashed for lookup, never stored or output; it must match the raw answer text hashed by every other get_answer_id() caller.
+		$answer    = wp_unslash( is_array( $_GET['answer_value'] ) ? '' : $_GET['answer_value'] );
 		$answer_id = $this->get_answer_id( $answer );
 		echo esc_html( $answer_id );
 		wp_die();
@@ -2421,8 +2423,8 @@ class Sensei_Lesson {
 	 * Deprecated version of question_get_answer_id() to use as a fallback.
 	 */
 	private function deprecated_question_get_answer_id() {
-		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
-		$data        = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- No modifications are made here. URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data        = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$answer_data = array();
 		parse_str( $data, $answer_data );
 		$answer    = $answer_data['answer_value'];
@@ -2926,7 +2928,8 @@ class Sensei_Lesson {
 		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that
 		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed.
 		// So first restore the original unslashed apostrophes by removing those slashes.
-		$data = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		// Then parse the string to an array (note that parse_str automatically urldecodes all the variables).
 		$question_data = array();
 		parse_str( $data, $question_data );
@@ -2985,7 +2988,8 @@ class Sensei_Lesson {
 		}
 
 		// Parse POST data
-		$data          = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data          = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$question_data = array();
 		parse_str( $data, $question_data );
 
@@ -3049,7 +3053,8 @@ class Sensei_Lesson {
 
 		// Parse POST data
 		$question_data = array();
-		parse_str( sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ), $question_data );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		parse_str( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ), $question_data );
 
 		$question_id_to_remove      = $question_data['question_id'];
 		$quiz_id_to_be_removed_from = $question_data['quiz_id'];
@@ -3119,8 +3124,8 @@ class Sensei_Lesson {
 		$return = 1;
 
 		// Parse POST data
-		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
-		$data     = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- No modifications are made here. URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data     = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$cat_data = array();
 		parse_str( $data, $cat_data );
 
@@ -3151,7 +3156,8 @@ class Sensei_Lesson {
 		}
 
 		// Parse POST data
-		$data          = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data          = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$question_data = array();
 		parse_str( $data, $question_data );
 
@@ -3219,7 +3225,8 @@ class Sensei_Lesson {
 		}
 
 		// Parse POST data
-		$data      = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data      = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
 
@@ -3245,7 +3252,8 @@ class Sensei_Lesson {
 		}
 
 		// Parse POST data
-		$data      = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data      = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
 
@@ -3279,7 +3287,8 @@ class Sensei_Lesson {
 
 		}
 		// Parse POST data
-		$data      = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data      = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
 

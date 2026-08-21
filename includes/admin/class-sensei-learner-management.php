@@ -440,7 +440,8 @@ class Sensei_Learner_Management {
 		check_ajax_referer( 'course_category_nonce', 'security' );
 
 		// Parse POST data.
-		$data        = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data        = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$course_data = array();
 		parse_str( $data, $course_data );
 
@@ -593,7 +594,8 @@ class Sensei_Learner_Management {
 		check_ajax_referer( 'modify_user_post_nonce', 'security' );
 
 		// Parse POST data.
-		$data        = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data        = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$action_data = array();
 		parse_str( $data, $action_data );
 

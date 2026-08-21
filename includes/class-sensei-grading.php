@@ -719,8 +719,8 @@ class Sensei_Grading {
 	 */
 	private function deprecated_get_lessons_dropdown() {
 		// Parse POST data
-		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
-		$data        = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- No modifications are made here. URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data        = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$course_data = array();
 		parse_str( $data, $course_data );
 
@@ -997,8 +997,8 @@ class Sensei_Grading {
 	 */
 	private function deprecated_get_redirect_url() {
 		// Parse POST data
-		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
-		$data        = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- No modifications are made here. URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data        = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$lesson_data = array();
 		parse_str( $data, $lesson_data );
 

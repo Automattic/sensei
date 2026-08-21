@@ -91,7 +91,15 @@ trait Sensei_Reports_Helper_Date_Range_Trait {
 		$user_timezone = isset( $_GET['timezone'] ) ? sanitize_text_field( wp_unslash( is_array( $_GET['timezone'] ) ? '' : $_GET['timezone'] ) ) : '';
 
 		if ( $user_timezone ) {
-			return $user_timezone;
+			try {
+				// Validate the requested timezone; accepts IANA identifiers and UTC offsets, rejects anything else.
+				new DateTimeZone( $user_timezone );
+
+				return $user_timezone;
+			} catch ( Exception $e ) {
+				// Invalid timezone requested; fall back to the site's timezone.
+				return wp_timezone_string();
+			}
 		}
 
 		return wp_timezone_string();
