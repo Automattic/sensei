@@ -1767,13 +1767,13 @@ class Sensei_Admin {
 		$event_name = sanitize_text_field( wp_unslash( $_REQUEST['event_name'] ) );
 		// $_REQUEST['properties'] is a JSON string or array; sanitized via map_deep() after decoding below.
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$properties = isset( $_REQUEST['properties'] ) ? wp_unslash( $_REQUEST['properties'] ) : [];
+		$properties = isset( $_REQUEST['properties'] ) ? wp_unslash( $_REQUEST['properties'] ) : array();
 
 		if ( is_string( $properties ) ) {
 			$properties = json_decode( $properties, true );
 		}
 
-		$properties = is_array( $properties ) ? map_deep( $properties, 'sanitize_text_field' ) : [];
+		$properties = is_array( $properties ) ? map_deep( $properties, 'sanitize_text_field' ) : array();
 
 		// Set the source to js-event.
 		add_filter(
