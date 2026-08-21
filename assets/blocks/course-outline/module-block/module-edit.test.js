@@ -30,6 +30,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 			} }
 		/>
 	),
+	useBlockProps: ( props ) => ( { ...props } ),
 	withColors: () => ( Component ) => Component,
 } ) );
 
