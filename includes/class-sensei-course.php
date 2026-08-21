@@ -1000,7 +1000,7 @@ class Sensei_Course {
 		global $post;
 
 		/* Verify the nonce before proceeding. */
-		if ( ( get_post_type() != $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_noonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_noonce' ], plugin_basename( __FILE__ ) ) ) {
+		if ( ( get_post_type() != $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_noonce' ] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST[ 'woo_' . $this->token . '_noonce' ] ) ), plugin_basename( __FILE__ ) ) ) {
 			return;
 		}
 
@@ -1012,7 +1012,7 @@ class Sensei_Course {
 			return $post_id;
 		}
 
-		if ( 'page' == $_POST['post_type'] ) {
+		if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
 			if ( ! current_user_can( 'edit_page', $post_id ) ) {
 				return $post_id;
 			}
@@ -1048,8 +1048,8 @@ class Sensei_Course {
 		$meta_key = '_' . $post_key;
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'course_video_embed' == $post_key ) {
-			// phpcs:ignore WordPress.Security.NonceVerification
-			$new_meta_value = ( isset( $_POST[ $post_key ] ) ) ? $_POST[ $post_key ] : '';
+			// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by Sensei_Wp_Kses::maybe_sanitize() below.
+			$new_meta_value = ( isset( $_POST[ $post_key ] ) ) ? wp_unslash( $_POST[ $post_key ] ) : '';
 			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, self::$allowed_html );
 		} else {
 			// phpcs:ignore WordPress.Security.NonceVerification
@@ -1057,7 +1057,7 @@ class Sensei_Course {
 				return;
 			}
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$new_meta_value = sanitize_html_class( $_POST[ $post_key ] );
+			$new_meta_value = sanitize_html_class( wp_unslash( $_POST[ $post_key ] ) );
 		}
 
 		/**
@@ -2081,7 +2081,7 @@ class Sensei_Course {
 
 				$current_page = 1;
 				if ( isset( $_GET['active_page'] ) && 0 < intval( $_GET['active_page'] ) ) {
-					$current_page = $_GET['active_page'];
+					$current_page = absint( $_GET['active_page'] );
 				}
 
 				$active_html .= '<nav class="pagination woo-pagination">';
@@ -2193,7 +2193,7 @@ class Sensei_Course {
 
 				$current_page = 1;
 				if ( isset( $_GET['completed_page'] ) && 0 < intval( $_GET['completed_page'] ) ) {
-					$current_page = $_GET['completed_page'];
+					$current_page = absint( $_GET['completed_page'] );
 				}
 
 				$complete_html .= '<nav class="pagination woo-pagination">';
@@ -2722,7 +2722,7 @@ class Sensei_Course {
 	public function save_course_notification_meta_box( $course_id ) {
 
 		if ( ! isset( $_POST['_sensei_course_notification'] )
-			|| ! wp_verify_nonce( $_POST['_sensei_course_notification'], 'update-course-notification-setting' ) ) {
+			|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_sensei_course_notification'] ) ), 'update-course-notification-setting' ) ) {
 			return;
 		}
 
@@ -3172,7 +3172,7 @@ class Sensei_Course {
 		$selected = 'default';
 		if ( isset( $_REQUEST['course-orderby'] ) && in_array( $selected, array_keys( $course_order_by_options ), true ) ) {
 
-			$selected = sanitize_text_field( $_REQUEST['course-orderby'] );
+			$selected = sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) );
 
 		}
 
@@ -3245,7 +3245,7 @@ class Sensei_Course {
 		<ul class="sensei-course-filters clearfix" >
 			<?php
 
-			$active_course_filter = isset( $_GET['course_filter'] ) ? sanitize_text_field( $_GET['course_filter'] ) : 'all';
+			$active_course_filter = isset( $_GET['course_filter'] ) ? sanitize_text_field( wp_unslash( $_GET['course_filter'] ) ) : 'all';
 
 			foreach ( $filters as $filter ) {
 
