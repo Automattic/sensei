@@ -141,21 +141,21 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		// Handle orderby
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( sanitize_text_field( wp_unslash( $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) {
-				$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			if ( array_key_exists( sensei_request_text( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
+				$orderby = sensei_request_text( $_GET['orderby'] );
 			}
 		}
 
 		// Handle order
 		$order = 'DESC';
 		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
+			$order = ( 'ASC' == strtoupper( sensei_request_text( $_GET['order'] ) ) ) ? 'ASC' : 'DESC';
 		}
 
 		// Handle search
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
-			$search = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+			$search = sensei_request_text( $_GET['s'] );
 		}
 		$this->search = $search;
 

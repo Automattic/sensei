@@ -1000,7 +1000,7 @@ class Sensei_Course {
 		global $post;
 
 		/* Verify the nonce before proceeding. */
-		if ( ( get_post_type() != $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_noonce' ] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST[ 'woo_' . $this->token . '_noonce' ] ) ), plugin_basename( __FILE__ ) ) ) {
+		if ( ( get_post_type() != $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_noonce' ] ) || ! wp_verify_nonce( sensei_request_text( $_POST[ 'woo_' . $this->token . '_noonce' ] ), plugin_basename( __FILE__ ) ) ) {
 			return;
 		}
 
@@ -1058,7 +1058,7 @@ class Sensei_Course {
 				return;
 			}
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$new_meta_value = sanitize_html_class( wp_unslash( $_POST[ $post_key ] ) );
+			$new_meta_value = sanitize_html_class( wp_unslash( is_array( $_POST[ $post_key ] ) ? '' : $_POST[ $post_key ] ) );
 		}
 
 		/**
@@ -2723,7 +2723,7 @@ class Sensei_Course {
 	public function save_course_notification_meta_box( $course_id ) {
 
 		if ( ! isset( $_POST['_sensei_course_notification'] )
-			|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_sensei_course_notification'] ) ), 'update-course-notification-setting' ) ) {
+			|| ! wp_verify_nonce( sensei_request_text( $_POST['_sensei_course_notification'] ), 'update-course-notification-setting' ) ) {
 			return;
 		}
 
@@ -3173,7 +3173,7 @@ class Sensei_Course {
 		$selected = 'default';
 		if ( isset( $_REQUEST['course-orderby'] ) && in_array( $selected, array_keys( $course_order_by_options ), true ) ) {
 
-			$selected = sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) );
+			$selected = sensei_request_text( $_REQUEST['course-orderby'] );
 
 		}
 
@@ -3248,7 +3248,7 @@ class Sensei_Course {
 			<?php
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only archive filter.
-			$active_course_filter = isset( $_GET['course_filter'] ) ? sanitize_text_field( wp_unslash( $_GET['course_filter'] ) ) : 'all';
+			$active_course_filter = isset( $_GET['course_filter'] ) ? sensei_request_text( $_GET['course_filter'] ) : 'all';
 
 			foreach ( $filters as $filter ) {
 
@@ -3334,7 +3334,7 @@ class Sensei_Course {
 		if ( isset( $_GET['student_course_filter'] ) && $query->is_main_query() && is_user_logged_in() ) {
 			$learner_manager = Sensei_Learner::instance();
 			$user_id         = get_current_user_id();
-			$selected_option = sanitize_text_field( wp_unslash( $_GET['student_course_filter'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+			$selected_option = sensei_request_text( $_GET['student_course_filter'] ); // phpcs:ignore WordPress.Security.NonceVerification
 			$args            = [
 				'posts_per_page' => -1,
 				'fields'         => 'ids',
@@ -3372,7 +3372,7 @@ class Sensei_Course {
 		_deprecated_function( __METHOD__, '3.15.0' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only archive sort.
-		if ( isset( $_REQUEST['course-orderby'] ) && 'title' === sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) )
+		if ( isset( $_REQUEST['course-orderby'] ) && 'title' === sensei_request_text( $_REQUEST['course-orderby'] )
 			&& 'course' === $query->get( 'post_type' ) && $query->is_main_query() ) {
 			// Setup the order by title for this query.
 			$query->set( 'orderby', 'title' );
@@ -3408,7 +3408,7 @@ class Sensei_Course {
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_REQUEST['course-orderby'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$request_orderby = sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) );
+			$request_orderby = sensei_request_text( $_REQUEST['course-orderby'] );
 			switch ( $request_orderby ) {
 				case 'title':
 					$orderby = 'title';

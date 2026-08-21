@@ -692,12 +692,12 @@ class Sensei_Lesson {
 			}
 		}
 
-		$new_pass_required     = isset( $_POST['pass_required'] ) ? sanitize_text_field( wp_unslash( $_POST['pass_required'] ) ) : null;
-		$new_pass_percentage   = isset( $_POST['quiz_passmark'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_passmark'] ) ) : null;
-		$new_enable_quiz_reset = isset( $_POST['enable_quiz_reset'] ) ? sanitize_text_field( wp_unslash( $_POST['enable_quiz_reset'] ) ) : null;
-		$show_questions        = isset( $_POST['show_questions'] ) ? sanitize_text_field( wp_unslash( $_POST['show_questions'] ) ) : null;
-		$random_question_order = isset( $_POST['random_question_order'] ) ? sanitize_text_field( wp_unslash( $_POST['random_question_order'] ) ) : null;
-		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_grade_type'] ) ) : null;
+		$new_pass_required     = isset( $_POST['pass_required'] ) ? sensei_request_text( $_POST['pass_required'] ) : null;
+		$new_pass_percentage   = isset( $_POST['quiz_passmark'] ) ? sensei_request_text( $_POST['quiz_passmark'] ) : null;
+		$new_enable_quiz_reset = isset( $_POST['enable_quiz_reset'] ) ? sensei_request_text( $_POST['enable_quiz_reset'] ) : null;
+		$show_questions        = isset( $_POST['show_questions'] ) ? sensei_request_text( $_POST['show_questions'] ) : null;
+		$random_question_order = isset( $_POST['random_question_order'] ) ? sensei_request_text( $_POST['random_question_order'] ) : null;
+		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sensei_request_text( $_POST['quiz_grade_type'] ) : null;
 
 		$new_settings = array(
 			'pass_required'         => $new_pass_required,
@@ -925,7 +925,7 @@ class Sensei_Lesson {
 		}
 
 		// Verify the nonce before proceeding.
-		if ( ( 'lesson' != get_post_type( $post_id ) ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST[ 'woo_' . $this->token . '_nonce' ] ) ), 'sensei-save-post-meta' ) ) {
+		if ( ( 'lesson' != get_post_type( $post_id ) ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( sensei_request_text( $_POST[ 'woo_' . $this->token . '_nonce' ] ), 'sensei-save-post-meta' ) ) {
 			if ( isset( $post->ID ) ) {
 				return $post->ID;
 			} else {
@@ -1083,7 +1083,7 @@ class Sensei_Lesson {
 		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
 		if ( isset( $_POST[ $field['id'] ] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
-			$value = sanitize_text_field( wp_unslash( $_POST[ $field['id'] ] ) );
+			$value = sensei_request_text( $_POST[ $field['id'] ] );
 		}
 
 		return $value;
@@ -2058,7 +2058,7 @@ class Sensei_Lesson {
 		$nonce = '';
 		if ( isset( $_POST['filter_existing_questions_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = sanitize_text_field( wp_unslash( $_POST['filter_existing_questions_nonce'] ) );
+			$nonce = sensei_request_text( $_POST['filter_existing_questions_nonce'] );
 		}
 
 		if ( ! wp_verify_nonce( $nonce, 'filter_existing_questions_nonce' ) ) {
@@ -2915,7 +2915,7 @@ class Sensei_Lesson {
 		// Add nonce security to the request.
 		if ( isset( $_POST['lesson_update_question_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = sanitize_text_field( wp_unslash( $_POST['lesson_update_question_nonce'] ) );
+			$nonce = sensei_request_text( $_POST['lesson_update_question_nonce'] );
 		}
 		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_nonce' )
 			|| ! current_user_can( 'edit_questions' ) ) {
@@ -2979,7 +2979,7 @@ class Sensei_Lesson {
 		$nonce = '';
 		if ( isset( $_POST['lesson_add_multiple_questions_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = sanitize_text_field( wp_unslash( $_POST['lesson_add_multiple_questions_nonce'] ) );
+			$nonce = sensei_request_text( $_POST['lesson_add_multiple_questions_nonce'] );
 		}
 
 		if ( ! wp_verify_nonce( $nonce, 'lesson_add_multiple_questions_nonce' )
@@ -3043,7 +3043,7 @@ class Sensei_Lesson {
 		$nonce = '';
 		if ( isset( $_POST['lesson_remove_multiple_questions_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = sanitize_text_field( wp_unslash( $_POST['lesson_remove_multiple_questions_nonce'] ) );
+			$nonce = sensei_request_text( $_POST['lesson_remove_multiple_questions_nonce'] );
 		}
 
 		if ( ! wp_verify_nonce( $nonce, 'lesson_remove_multiple_questions_nonce' )
@@ -3147,7 +3147,7 @@ class Sensei_Lesson {
 		$nonce = '';
 		if ( isset( $_POST['lesson_add_existing_questions_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = sanitize_text_field( wp_unslash( $_POST['lesson_add_existing_questions_nonce'] ) );
+			$nonce = sensei_request_text( $_POST['lesson_add_existing_questions_nonce'] );
 		}
 
 		if ( ! wp_verify_nonce( $nonce, 'lesson_add_existing_questions_nonce' )
@@ -3213,7 +3213,7 @@ class Sensei_Lesson {
 		if ( isset( $_POST['lesson_update_grade_type_nonce'] ) ) {
 
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = sanitize_text_field( wp_unslash( $_POST['lesson_update_grade_type_nonce'] ) );
+			$nonce = sensei_request_text( $_POST['lesson_update_grade_type_nonce'] );
 
 		}
 
@@ -3243,7 +3243,7 @@ class Sensei_Lesson {
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_question_order_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = sanitize_text_field( wp_unslash( $_POST['lesson_update_question_order_nonce'] ) );
+			$nonce = sensei_request_text( $_POST['lesson_update_question_order_nonce'] );
 		}
 
 		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_nonce' )
@@ -3278,7 +3278,7 @@ class Sensei_Lesson {
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_question_order_random_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = sanitize_text_field( wp_unslash( $_POST['lesson_update_question_order_random_nonce'] ) );
+			$nonce = sensei_request_text( $_POST['lesson_update_question_order_random_nonce'] );
 		}
 		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_random_nonce' )
 			|| ! current_user_can( 'edit_lessons' ) ) {

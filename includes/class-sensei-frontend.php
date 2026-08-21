@@ -699,7 +699,7 @@ class Sensei_Frontend {
 			return;
 		}
 
-		if ( ! isset( $_POST['woothemes_sensei_complete_lesson_noonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woothemes_sensei_complete_lesson_noonce'] ) ), 'woothemes_sensei_complete_lesson_noonce' ) ) {
+		if ( ! isset( $_POST['woothemes_sensei_complete_lesson_noonce'] ) || ! wp_verify_nonce( sensei_request_text( $_POST['woothemes_sensei_complete_lesson_noonce'] ), 'woothemes_sensei_complete_lesson_noonce' ) ) {
 			return;
 		}
 
@@ -710,7 +710,7 @@ class Sensei_Frontend {
 		}
 
 		// Handle Quiz Completion.
-		$sanitized_submit = sanitize_text_field( wp_unslash( $_POST['quiz_action'] ) );
+		$sanitized_submit = sensei_request_text( $_POST['quiz_action'] );
 
 		switch ( $sanitized_submit ) {
 			case 'lesson-complete':
@@ -812,9 +812,9 @@ class Sensei_Frontend {
 	public function sensei_complete_course() {
 		global $current_user;
 
-		if ( isset( $_POST['course_complete'], $_POST['woothemes_sensei_complete_course_noonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woothemes_sensei_complete_course_noonce'] ) ), 'woothemes_sensei_complete_course_noonce' ) ) {
+		if ( isset( $_POST['course_complete'], $_POST['woothemes_sensei_complete_course_noonce'] ) && wp_verify_nonce( sensei_request_text( $_POST['woothemes_sensei_complete_course_noonce'] ), 'woothemes_sensei_complete_course_noonce' ) ) {
 
-			$sanitized_submit    = sanitize_text_field( wp_unslash( $_POST['course_complete'] ) );
+			$sanitized_submit    = sensei_request_text( $_POST['course_complete'] );
 			$sanitized_course_id = isset( $_POST['course_complete_id'] ) ? absint( wp_unslash( $_POST['course_complete_id'] ) ) : 0;
 			// Handle submit data.
 			switch ( $sanitized_submit ) {
@@ -1157,12 +1157,12 @@ class Sensei_Frontend {
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_username"><?php esc_html_e( 'Username', 'sensei-lms' ); ?> <span class="required">*</span></label>
-							<input type="text" class="input-text" name="sensei_reg_username" id="sensei_reg_username" value="<?php echo ( ! empty( $_POST['sensei_reg_username'] ) ) ? esc_attr( sanitize_text_field( wp_unslash( $_POST['sensei_reg_username'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification ?>" />
+							<input type="text" class="input-text" name="sensei_reg_username" id="sensei_reg_username" value="<?php echo ( ! empty( $_POST['sensei_reg_username'] ) ) ? esc_attr( sensei_request_text( $_POST['sensei_reg_username'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification ?>" />
 						</p>
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_email"><?php esc_html_e( 'Email address', 'sensei-lms' ); ?> <span class="required">*</span></label>
-							<input type="email" class="input-text" name="sensei_reg_email" id="sensei_reg_email" value="<?php echo ( ! empty( $_POST['sensei_reg_email'] ) ) ? esc_attr( sanitize_text_field( wp_unslash( $_POST['sensei_reg_email'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification ?>" />
+							<input type="email" class="input-text" name="sensei_reg_email" id="sensei_reg_email" value="<?php echo ( ! empty( $_POST['sensei_reg_email'] ) ) ? esc_attr( sensei_request_text( $_POST['sensei_reg_email'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification ?>" />
 						</p>
 
 						<p class="form-row form-row-wide">
@@ -1478,12 +1478,12 @@ class Sensei_Frontend {
 		if ( isset( $_REQUEST['form'] ) && 'sensei-login' == $_REQUEST['form'] ) {
 
 			// Validate the login request nonce.
-			if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'sensei-login' ) ) {
+			if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sensei_request_text( $_REQUEST['_wpnonce'] ), 'sensei-login' ) ) {
 				return;
 			}
 
 			// get the page where the sensei log form is located.
-			$referrer = isset( $_REQUEST['_wp_http_referer'] ) ? esc_url_raw( wp_unslash( $_REQUEST['_wp_http_referer'] ) ) : '';
+			$referrer = isset( $_REQUEST['_wp_http_referer'] ) ? esc_url_raw( wp_unslash( is_array( $_REQUEST['_wp_http_referer'] ) ? '' : $_REQUEST['_wp_http_referer'] ) ) : '';
 
 			if ( ( isset( $_REQUEST['log'] ) && ! empty( $_REQUEST['log'] ) )
 				 && ( isset( $_REQUEST['pwd'] ) && ! empty( $_REQUEST['pwd'] ) ) ) {
@@ -1492,8 +1492,8 @@ class Sensei_Frontend {
 				$creds = array();
 
 				// check if the requests login is an email address.
-				if ( is_email( trim( sanitize_text_field( wp_unslash( $_REQUEST['log'] ) ) ) ) ) {
-					$login = sanitize_email( wp_unslash( $_REQUEST['log'] ) );
+				if ( is_email( trim( sensei_request_text( $_REQUEST['log'] ) ) ) ) {
+					$login = sanitize_email( wp_unslash( is_array( $_REQUEST['log'] ) ? '' : $_REQUEST['log'] ) );
 
 					// Occasionally a user's username IS an email,
 					// but they have changed their actual email, so check for this case.
@@ -1519,7 +1519,7 @@ class Sensei_Frontend {
 				} else {
 
 					// process this as a default username login.
-					$creds['user_login'] = sanitize_text_field( wp_unslash( $_REQUEST['log'] ) );
+					$creds['user_login'] = sensei_request_text( $_REQUEST['log'] );
 
 				}
 
@@ -1601,7 +1601,7 @@ class Sensei_Frontend {
 		}
 
 		// Validate the registration request nonce.
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'sensei-register' ) ) {
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sensei_request_text( $_POST['_wpnonce'] ), 'sensei-register' ) ) {
 			return;
 		}
 
@@ -1613,8 +1613,8 @@ class Sensei_Frontend {
 		}
 
 		// retreive form variables.
-		$new_user_name  = sanitize_user( wp_unslash( $_POST['sensei_reg_username'] ) );
-		$new_user_email = sanitize_email( wp_unslash( $_POST['sensei_reg_email'] ) );
+		$new_user_name  = sanitize_user( wp_unslash( is_array( $_POST['sensei_reg_username'] ) ? '' : $_POST['sensei_reg_username'] ) );
+		$new_user_email = sanitize_email( wp_unslash( is_array( $_POST['sensei_reg_email'] ) ? '' : $_POST['sensei_reg_email'] ) );
 		// Pass the password to WordPress slashed and unsanitized to match wp-login.php; altering it breaks the hash check.
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$new_user_password = $_POST['sensei_reg_password'];

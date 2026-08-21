@@ -731,7 +731,7 @@ class Sensei_Admin_Notices {
 		check_ajax_referer( self::DISMISS_NOTICE_NONCE_ACTION, 'nonce' );
 
 		$notices   = $this->get_notices();
-		$notice_id = isset( $_POST['notice'] ) ? sanitize_text_field( wp_unslash( $_POST['notice'] ) ) : false;
+		$notice_id = isset( $_POST['notice'] ) ? sensei_request_text( $_POST['notice'] ) : false;
 		if ( ! $notice_id || ! isset( $notices[ $notice_id ] ) ) {
 			return;
 		}

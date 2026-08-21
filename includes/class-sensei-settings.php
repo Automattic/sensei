@@ -1046,7 +1046,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 */
 	public function flush_rewrite_rules_on_update() {
 		$nonce_action = $this->token . '-options';
-		$nonce_value  = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ?? '' ) );
+		$nonce_value  = sensei_request_text( $_POST['_wpnonce'] ?? '' );
 		if ( ! wp_verify_nonce( $nonce_value, $nonce_action ) ) {
 			return;
 		}
@@ -1583,7 +1583,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Marks the given section as visited.
 	 */
 	public function mark_section_as_visited() {
-		if ( isset( $_POST['nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'sensei-mark-settings-section-visited' ) ) {
+		if ( isset( $_POST['nonce'] ) && wp_verify_nonce( sensei_request_text( $_POST['nonce'] ), 'sensei-mark-settings-section-visited' ) ) {
 			if ( isset( $_POST['section_id'] ) ) {
 				$section_id = sanitize_key( $_POST['section_id'] );
 				$visited    = get_option( self::VISITED_SECTIONS_OPTION_KEY, [] );

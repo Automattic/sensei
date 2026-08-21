@@ -376,8 +376,8 @@ class Sensei_Learner_Management {
 	 * @since  1.6.0
 	 */
 	public function learners_default_nav() {
-		$course_id = (int) sanitize_text_field( wp_unslash( $_GET['course_id'] ?? 0 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$lesson_id = (int) sanitize_text_field( wp_unslash( $_GET['lesson_id'] ?? 0 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$course_id = (int) sensei_request_text( $_GET['course_id'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$lesson_id = (int) sensei_request_text( $_GET['lesson_id'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( 0 < $course_id && 0 < $lesson_id ) {
 			$back_url = add_query_arg(
@@ -503,7 +503,7 @@ class Sensei_Learner_Management {
 		}
 
 		if ( ! empty( $_POST['data']['new_dates']['start-date'] ) ) {
-			$date_string = sanitize_text_field( wp_unslash( $_POST['data']['new_dates']['start-date'] ) );
+			$date_string = sensei_request_text( $_POST['data']['new_dates']['start-date'] );
 		} else {
 			exit;
 		}
@@ -673,7 +673,7 @@ class Sensei_Learner_Management {
 		$redirect_url = remove_query_arg( [ 'learner_action', '_wpnonce', 'user_id' ] );
 
 		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce checked below.
-		$learner_action = sanitize_text_field( wp_unslash( $_GET['learner_action'] ) );
+		$learner_action = sensei_request_text( $_GET['learner_action'] );
 		if ( ! in_array( $learner_action, [ 'enrol', 'restore_enrollment', 'withdraw' ], true ) ) {
 			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			exit;
@@ -785,14 +785,14 @@ class Sensei_Learner_Management {
 
 		check_ajax_referer( 'search-users', 'security' );
 
-		$default     = isset( $_GET['default'] ) && is_string( $_GET['default'] ) ? sanitize_text_field( wp_unslash( $_GET['default'] ) ) : __( 'None', 'sensei-lms' );
+		$default     = isset( $_GET['default'] ) && is_string( $_GET['default'] ) ? sensei_request_text( $_GET['default'] ) : __( 'None', 'sensei-lms' );
 		$found_users = array( '' => $default );
 
 		if ( ! current_user_can( 'manage_sensei_grades' ) ) {
 			wp_send_json( $found_users );
 		}
 
-		$term = isset( $_GET['term'] ) && is_string( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
+		$term = isset( $_GET['term'] ) && is_string( $_GET['term'] ) ? sensei_request_text( $_GET['term'] ) : '';
 
 		if ( empty( $term ) ) {
 			die();
@@ -861,7 +861,7 @@ class Sensei_Learner_Management {
 			return $result;
 		}
 
-		if ( ! isset( $_POST['add_learner_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['add_learner_nonce'] ) ), 'add_learner_to_sensei' ) ) {
+		if ( ! isset( $_POST['add_learner_nonce'] ) || ! wp_verify_nonce( sensei_request_text( $_POST['add_learner_nonce'] ), 'add_learner_to_sensei' ) ) {
 			return $result;
 		}
 
@@ -869,7 +869,7 @@ class Sensei_Learner_Management {
 			return $result;
 		}
 
-		$post_type = sanitize_text_field( wp_unslash( $_POST['add_post_type'] ) );
+		$post_type = sensei_request_text( $_POST['add_post_type'] );
 		$user_ids  = array_map( 'intval', $_POST['add_user_id'] );
 		$course_id = intval( $_POST['add_course_id'] );
 		$lesson_id = intval( $_POST['add_lesson_id'] );
@@ -962,7 +962,7 @@ class Sensei_Learner_Management {
 	 */
 	public function add_learner_notices() {
 		if ( isset( $_GET['page'] ) && $this->page_slug === $_GET['page'] && isset( $_GET['message'] ) && '' !== $_GET['message'] ) {
-			$message = sanitize_text_field( wp_unslash( $_GET['message'] ) );
+			$message = sensei_request_text( $_GET['message'] );
 			$notice  = false;
 
 			switch ( $message ) {

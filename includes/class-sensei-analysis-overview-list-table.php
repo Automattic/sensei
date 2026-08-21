@@ -281,7 +281,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! empty( $_GET['orderby'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			$orderby = sensei_request_text( $_GET['orderby'] );
 		}
 
 		// Handle order.
@@ -289,7 +289,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! empty( $_GET['order'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification,Universal.Operators.StrictComparisons.LooseComparison
-			$order = ( 'ASC' == strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
+			$order = ( 'ASC' == strtoupper( sensei_request_text( $_GET['order'] ) ) ) ? 'ASC' : 'DESC';
 		}
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
@@ -322,7 +322,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_GET['s'] ) && ! empty( $_GET['s'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$args['search'] = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+			$args['search'] = sensei_request_text( $_GET['s'] );
 		}
 
 		switch ( $this->type ) {
@@ -368,7 +368,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! empty( $_GET['orderby'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			$orderby = sensei_request_text( $_GET['orderby'] );
 		}
 
 		// Handle order.
@@ -376,7 +376,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['order'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification,Universal.Operators.StrictComparisons.LooseComparison,WordPress.Security.NonceVerification.Recommended
-			$order = ( 'ASC' == strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
+			$order = ( 'ASC' == strtoupper( sensei_request_text( $_GET['order'] ) ) ) ? 'ASC' : 'DESC';
 		}
 
 		$args = array(
@@ -390,7 +390,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['s'] ) && ! empty( $_GET['s'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$args['search'] = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+			$args['search'] = sensei_request_text( $_GET['s'] );
 		}
 
 		switch ( $this->type ) {
@@ -1474,7 +1474,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$default = gmdate( 'Y-m-d', strtotime( '-30 days' ) );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only report filter.
-		$start_date = isset( $_GET['start_date'] ) ? sanitize_text_field( wp_unslash( $_GET['start_date'] ) ) : $default;
+		$start_date = isset( $_GET['start_date'] ) ? sensei_request_text( $_GET['start_date'] ) : $default;
 
 		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : '';
 	}
@@ -1503,7 +1503,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 */
 	private function get_end_date_filter_value(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only report filter.
-		$end_date = isset( $_GET['end_date'] ) ? sanitize_text_field( wp_unslash( $_GET['end_date'] ) ) : '';
+		$end_date = isset( $_GET['end_date'] ) ? sensei_request_text( $_GET['end_date'] ) : '';
 
 		return DateTime::createFromFormat( 'Y-m-d', $end_date ) ? $end_date : '';
 	}

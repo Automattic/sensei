@@ -257,7 +257,7 @@ class Sensei_Grading {
 			$user_id = intval( $_GET['user_id'] );
 		}
 		if ( ! empty( $_GET['view'] ) ) {
-			$view = sanitize_text_field( wp_unslash( $_GET['view'] ) );
+			$view = sensei_request_text( $_GET['view'] );
 		}
 
 		$sensei_grading_overview = new Sensei_Grading_Main( compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
@@ -796,7 +796,7 @@ class Sensei_Grading {
 
 		if ( ! isset( $_POST['sensei_manual_grade'] )
 			|| ! isset( $_POST['_wp_sensei_manual_grading_nonce'] )
-			|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wp_sensei_manual_grading_nonce'] ) ), 'sensei_manual_grading' )
+			|| ! wp_verify_nonce( sensei_request_text( $_POST['_wp_sensei_manual_grading_nonce'] ), 'sensei_manual_grading' )
 			|| ! isset( $_GET['quiz_id'] )
 			|| $_GET['quiz_id'] != $_POST['sensei_manual_grade'] ) {
 
@@ -849,7 +849,7 @@ class Sensei_Grading {
 			$question_feedback = '';
 			if ( isset( $_POST['questions_feedback'][ $question_id ] ) ) {
 
-				$question_feedback = wp_kses_post( wp_unslash( $_POST['questions_feedback'][ $question_id ] ) );
+				$question_feedback = wp_kses_post( wp_unslash( is_array( $_POST['questions_feedback'][ $question_id ] ) ? '' : $_POST['questions_feedback'][ $question_id ] ) );
 
 			}
 			$all_answers_feedback[ $question_id ] = $question_feedback;
@@ -932,13 +932,13 @@ class Sensei_Grading {
 
 		}
 
-		if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( sanitize_text_field( wp_unslash( $_POST['sensei_grade_next_learner'] ) ) ) > 0 ) {
+		if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( sensei_request_text( $_POST['sensei_grade_next_learner'] ) ) > 0 ) {
 
 			$load_url = add_query_arg( array( 'message' => 'graded' ) );
 
 		} elseif ( isset( $_POST['_wp_http_referer'] ) ) {
 
-			$load_url = add_query_arg( array( 'message' => 'graded' ), esc_url_raw( wp_unslash( $_POST['_wp_http_referer'] ) ) );
+			$load_url = add_query_arg( array( 'message' => 'graded' ), esc_url_raw( wp_unslash( is_array( $_POST['_wp_http_referer'] ) ? '' : $_POST['_wp_http_referer'] ) ) );
 
 		} else {
 
@@ -968,7 +968,7 @@ class Sensei_Grading {
 		// Get data.
 		$course_id    = intval( $_GET['course_id'] );
 		$lesson_id    = intval( $_GET['lesson_id'] );
-		$grading_view = ( isset( $_GET['view'] ) && '' !== $_GET['view'] ) ? sanitize_text_field( wp_unslash( $_GET['view'] ) ) : 'ungraded';
+		$grading_view = ( isset( $_GET['view'] ) && '' !== $_GET['view'] ) ? sensei_request_text( $_GET['view'] ) : 'ungraded';
 
 		if ( 0 < $lesson_id && 0 < $course_id ) {
 			echo esc_url_raw(
@@ -1029,8 +1029,8 @@ class Sensei_Grading {
 	}
 
 	public function add_grading_notices() {
-		$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : false;
-		$message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : false;
+		$page    = isset( $_GET['page'] ) ? sensei_request_text( $_GET['page'] ) : false;
+		$message = isset( $_GET['message'] ) ? sensei_request_text( $_GET['message'] ) : false;
 
 		if (
 			$page

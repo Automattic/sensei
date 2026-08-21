@@ -25,7 +25,26 @@
 	<rule ref="WordPress-Docs" />
 	<rule ref="WordPress-Extra" />
 
-	<rule ref="WordPress.Security.ValidatedSanitizedInput" />
+	<!--
+		sensei_request_text() unslashes and sanitizes a request value in a single call.
+		Register it with both sniffs that consult the sanitizing-function list:
+		ValidatedSanitizedInput (so the value counts as unslashed + sanitized) and
+		NonceVerification (so a sanitized read is treated like any other sanitized read).
+	-->
+	<rule ref="WordPress.Security.ValidatedSanitizedInput">
+		<properties>
+			<property name="customUnslashingSanitizingFunctions" type="array">
+				<element value="sensei_request_text"/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.Security.NonceVerification">
+		<properties>
+			<property name="customUnslashingSanitizingFunctions" type="array">
+				<element value="sensei_request_text"/>
+			</property>
+		</properties>
+	</rule>
 	<rule ref="WordPress.DB.DirectDatabaseQuery" />
 
 	<!-- Temporary Rule Exclusions -->

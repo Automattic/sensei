@@ -639,7 +639,7 @@ class Sensei_Quiz {
 
 		// Redirect to the target page.
 		wp_safe_redirect(
-			add_query_arg( [ 'bypass_server_cache' => uniqid() ], sanitize_text_field( wp_unslash( $_POST['quiz_target_page'] ) ) )
+			add_query_arg( [ 'bypass_server_cache' => uniqid() ], sensei_request_text( $_POST['quiz_target_page'] ) )
 		);
 		exit;
 
