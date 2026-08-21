@@ -849,7 +849,7 @@ class Sensei_Grading {
 			$question_feedback = '';
 			if ( isset( $_POST['questions_feedback'][ $question_id ] ) ) {
 
-				$question_feedback = sanitize_textarea_field( wp_unslash( $_POST['questions_feedback'][ $question_id ] ) );
+				$question_feedback = wp_kses_post( wp_unslash( $_POST['questions_feedback'][ $question_id ] ) );
 
 			}
 			$all_answers_feedback[ $question_id ] = $question_feedback;
