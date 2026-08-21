@@ -84,7 +84,7 @@
     "eslint-import-resolver-typescript": "4.4.5",
     "gettext-parser": "4.0.4",
     "husky": "6.0.0",
-    "jest-environment-jsdom": "29.7.0",
+    "jest-environment-jsdom": "30.4.1",
     "jest-when": "3.7.0",
     "jsdoc": "3.6.7",
     "lint-staged": "17.3.0",

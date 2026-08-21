@@ -30,7 +30,7 @@ describe( '<FirstCourse />', () => {
 		expect( queryByText( 'SITE_TITLE' ) ).toBeTruthy();
 		expect( queryByText( 'COURSE_TITLE' ) ).toBeTruthy();
 		expect( siteImage ).toEqual( 'SITE_IMAGE' );
-		expect( courseImage ).toEqual( `url(COURSE_IMAGE)` );
+		expect( courseImage ).toEqual( 'url("COURSE_IMAGE")' );
 	} );
 
 	it( 'Should render the first course with placeholders', () => {
