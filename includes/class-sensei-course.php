@@ -1048,8 +1048,9 @@ class Sensei_Course {
 		$meta_key = '_' . $post_key;
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'course_video_embed' == $post_key ) {
-			// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by Sensei_Wp_Kses::maybe_sanitize() below.
-			$new_meta_value = ( isset( $_POST[ $post_key ] ) ) ? wp_unslash( $_POST[ $post_key ] ) : '';
+			// Passed slashed to update_post_meta() below, which unslashes internally; sanitized by Sensei_Wp_Kses::maybe_sanitize().
+			// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$new_meta_value = ( isset( $_POST[ $post_key ] ) ) ? $_POST[ $post_key ] : '';
 			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, self::$allowed_html );
 		} else {
 			// phpcs:ignore WordPress.Security.NonceVerification

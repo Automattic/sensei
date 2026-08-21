@@ -2533,8 +2533,8 @@ class Sensei_Core_Modules {
 
 		$course_id = isset( $_POST['course_id'] ) ? sanitize_text_field( wp_unslash( $_POST['course_id'] ) ) : '';
 
-		// save the term
-		$slug = wp_insert_term( $term_name, 'module', array( 'slug' => $term_slug ) );
+		// save the term. wp_insert_term() unslashes internally, so re-slash to preserve any backslashes in the name.
+		$slug = wp_insert_term( wp_slash( $term_name ), 'module', array( 'slug' => $term_slug ) );
 
 		// send error for all errors except term exits
 		if ( is_wp_error( $slug ) ) {
