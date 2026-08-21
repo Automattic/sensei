@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Enforce lesson edit permissions when saving the course structure
