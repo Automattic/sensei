@@ -76,7 +76,7 @@
     "@wordpress/jest-preset-default": "12.8.1",
     "@wordpress/postcss-themes": "6.8.1",
     "@wordpress/prettier-config": "4.8.1",
-    "@wordpress/scripts": "30.0.6",
+    "@wordpress/scripts": "34.1.0",
     "comment-parser": "1.4.8",
     "copy-webpack-plugin": "10.2.0",
     "cross-env": "7.0.2",
