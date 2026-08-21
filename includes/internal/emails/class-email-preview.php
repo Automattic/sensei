@@ -82,6 +82,7 @@ class Email_Preview {
 		} else {
 			$this->render_page();
 		}
+		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
 	/**
