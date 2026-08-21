@@ -16,7 +16,7 @@
 	<exclude-pattern type="relative">^tmp/*</exclude-pattern>
 
 	<!-- Configs -->
-	<config name="minimum_wp_version" value="6.2" />
+	<config name="minimum_wp_version" value="6.9" />
 	<config name="testVersion" value="7.4-"/>
 
 	<!-- Rules -->
