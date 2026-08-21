@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { Locator, Page } from '@playwright/test';
+import type { FrameLocator, Locator, Page } from '@playwright/test';
 
 /**
  * Internal dependencies
@@ -57,8 +57,8 @@ class CourseOutline {
 	public readonly addModuleButton: Locator;
 	public readonly moduleBlock: ModuleBlock;
 
-	constructor( page: Page ) {
-		this.outline = page
+	constructor( page: Page, canvas: FrameLocator ) {
+		this.outline = canvas
 			.locator( '[aria-label="Block: Course Outline"]' )
 			.first();
 		this.addModuleOrLessonButton = this.outline.locator(
@@ -84,6 +84,7 @@ export default class CoursesPage extends PostType {
 	public readonly confirmPublishButton: Locator;
 	public readonly viewPreviewLink: Locator;
 	public readonly courseOutlineBlock: CourseOutline;
+	public readonly startWithBlankButton: Locator;
 
 	constructor( page: Page ) {
 		super( page, 'course' );
@@ -96,7 +97,13 @@ export default class CoursesPage extends PostType {
 			{ hasText: /^New Course$/ }
 		);
 
-		this.courseOutlineBlock = new CourseOutline( page );
+		const canvas = page.frameLocator( '[name="editor-canvas"]' );
+
+		this.startWithBlankButton = canvas.getByRole( 'button', {
+			name: 'Start with blank',
+		} );
+
+		this.courseOutlineBlock = new CourseOutline( page, canvas );
 
 		this.publishButton = page.locator(
 			'[aria-label="Editor top bar"] >> text=Publish'

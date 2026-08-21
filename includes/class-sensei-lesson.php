@@ -3656,7 +3656,7 @@ class Sensei_Lesson {
 	 * Resolves the quiz from the lesson meta first: post queries can be
 	 * filtered by plugins and miss the quiz.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 *

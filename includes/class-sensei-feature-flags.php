@@ -138,7 +138,7 @@ class Sensei_Feature_Flags {
 
 		if ( 'onboarding_tour' === $feature ) {
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Feature flag hooks use the prefixed name constructed above.
-			return (bool) apply_filters_deprecated( $full_feature_name, array( $this->feature_flags[ $feature ] ), '$$next-version$$' );
+			return (bool) apply_filters_deprecated( $full_feature_name, array( $this->feature_flags[ $feature ] ), '4.26.3' );
 		}
 
 		return (bool) apply_filters( $full_feature_name, $this->feature_flags[ $feature ] );
