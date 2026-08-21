@@ -84,7 +84,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'user', 'lesson' ) ) ) {
-			$this->view = sanitize_text_field( wp_unslash( $_GET['view'] ) );
+			$this->view = sanitize_text_field( wp_unslash( is_array( $_GET['view'] ) ? '' : $_GET['view'] ) );
 		}
 
 		// Viewing a single Learner always sets the view to Lessons
@@ -239,15 +239,15 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		// Handle orderby (needs work)
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( sanitize_text_field( wp_unslash( $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) {
-				$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			if ( array_key_exists( sanitize_text_field( wp_unslash( is_array( $_GET['orderby'] ) ? '' : $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) {
+				$orderby = sanitize_text_field( wp_unslash( is_array( $_GET['orderby'] ) ? '' : $_GET['orderby'] ) );
 			}
 		}
 
 		// Handle order
 		$order = 'ASC';
 		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
+			$order = ( 'ASC' == strtoupper( sanitize_text_field( wp_unslash( is_array( $_GET['order'] ) ? '' : $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
 		}
 
 		// Handle search, need 4.1 version of WP to be able to restrict statuses to known post_ids
@@ -323,21 +323,21 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		// Handle orderby
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( sanitize_text_field( wp_unslash( $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) {
-				$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			if ( array_key_exists( sanitize_text_field( wp_unslash( is_array( $_GET['orderby'] ) ? '' : $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) {
+				$orderby = sanitize_text_field( wp_unslash( is_array( $_GET['orderby'] ) ? '' : $_GET['orderby'] ) );
 			}
 		}
 
 		// Handle order
 		$order = 'ASC';
 		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
+			$order = ( 'ASC' == strtoupper( sanitize_text_field( wp_unslash( is_array( $_GET['order'] ) ? '' : $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
 		}
 
 		// Handle search
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
-			$search = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+			$search = sanitize_text_field( wp_unslash( is_array( $_GET['s'] ) ? '' : $_GET['s'] ) );
 		}
 		$this->search = $search;
 
@@ -1031,7 +1031,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 */
 	private function get_search_value(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
-		return isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+		return isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( is_array( $_GET['s'] ) ? '' : $_GET['s'] ) ) : '';
 	}
 }
 

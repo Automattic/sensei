@@ -440,7 +440,7 @@ class Sensei_Learner_Management {
 		check_ajax_referer( 'course_category_nonce', 'security' );
 
 		// Parse POST data.
-		$data        = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( $_POST['data'] ) ) : '';
+		$data        = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
 		$course_data = array();
 		parse_str( $data, $course_data );
 
@@ -593,7 +593,7 @@ class Sensei_Learner_Management {
 		check_ajax_referer( 'modify_user_post_nonce', 'security' );
 
 		// Parse POST data.
-		$data        = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( $_POST['data'] ) ) : '';
+		$data        = isset( $_POST['data'] ) ? sanitize_text_field( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) ) : '';
 		$action_data = array();
 		parse_str( $data, $action_data );
 
@@ -859,7 +859,7 @@ class Sensei_Learner_Management {
 			return $result;
 		}
 
-		if ( ! isset( $_POST['add_learner_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['add_learner_nonce'] ) ), 'add_learner_to_sensei' ) ) {
+		if ( ! isset( $_POST['add_learner_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( is_array( $_POST['add_learner_nonce'] ) ? '' : $_POST['add_learner_nonce'] ) ), 'add_learner_to_sensei' ) ) {
 			return $result;
 		}
 
@@ -867,7 +867,7 @@ class Sensei_Learner_Management {
 			return $result;
 		}
 
-		$post_type = sanitize_text_field( wp_unslash( $_POST['add_post_type'] ) );
+		$post_type = sanitize_text_field( wp_unslash( is_array( $_POST['add_post_type'] ) ? '' : $_POST['add_post_type'] ) );
 		$user_ids  = array_map( 'intval', $_POST['add_user_id'] );
 		$course_id = intval( $_POST['add_course_id'] );
 		$lesson_id = intval( $_POST['add_lesson_id'] );

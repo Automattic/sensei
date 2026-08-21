@@ -112,21 +112,21 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		// Handle orderby (needs work)
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( sanitize_text_field( wp_unslash( $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) {
-				$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			if ( array_key_exists( sanitize_text_field( wp_unslash( is_array( $_GET['orderby'] ) ? '' : $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) {
+				$orderby = sanitize_text_field( wp_unslash( is_array( $_GET['orderby'] ) ? '' : $_GET['orderby'] ) );
 			}
 		}
 
 		// Handle order
 		$order = 'ASC';
 		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
+			$order = ( 'ASC' == strtoupper( sanitize_text_field( wp_unslash( is_array( $_GET['order'] ) ? '' : $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
 		}
 
 		// Handle search, need 4.1 version of WP to be able to restrict statuses to known post_ids
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
-			$search = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+			$search = sanitize_text_field( wp_unslash( is_array( $_GET['s'] ) ? '' : $_GET['s'] ) );
 		}
 		$this->search = $search;
 
@@ -186,21 +186,21 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		// Handle orderby
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( sanitize_text_field( wp_unslash( $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) {
-				$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			if ( array_key_exists( sanitize_text_field( wp_unslash( is_array( $_GET['orderby'] ) ? '' : $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) {
+				$orderby = sanitize_text_field( wp_unslash( is_array( $_GET['orderby'] ) ? '' : $_GET['orderby'] ) );
 			}
 		}
 
 		// Handle order
 		$order = 'ASC';
 		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
+			$order = ( 'ASC' == strtoupper( sanitize_text_field( wp_unslash( is_array( $_GET['order'] ) ? '' : $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
 		}
 
 		// Handle search
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
-			$search = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+			$search = sanitize_text_field( wp_unslash( is_array( $_GET['s'] ) ? '' : $_GET['s'] ) );
 		}
 		$this->search = $search;
 

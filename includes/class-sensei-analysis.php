@@ -852,7 +852,7 @@ class Sensei_Analysis {
 	public function report_download_page() {
 		// Check if is a report
 		if ( ! empty( $_GET['sensei_report_download'] ) ) {
-			$report = sanitize_text_field( wp_unslash( $_GET['sensei_report_download'] ) );
+			$report = sanitize_text_field( wp_unslash( is_array( $_GET['sensei_report_download'] ) ? '' : $_GET['sensei_report_download'] ) );
 
 			// Simple verification to ensure intent, Note that a Nonce is per user, so the URL can't be shared
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
@@ -885,7 +885,7 @@ class Sensei_Analysis {
 			if ( isset( $_GET['user_id'] ) ) {
 				$user_id = intval( $_GET['user_id'] );
 			}
-			$type = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( $_GET['view'] ) ) : false;
+			$type = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( is_array( $_GET['view'] ) ? '' : $_GET['view'] ) ) : false;
 
 			$this->check_course_lesson( $course_id, $lesson_id, $user_id );
 
@@ -919,7 +919,7 @@ class Sensei_Analysis {
 			} else {
 				// Overview of all Learners, all Courses, or all Lessons
 				$sensei_analysis_report_object = $this->load_report_object( 'Overview', $type );
-				$event_properties['view']      = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( $_GET['view'] ) ) : '';
+				$event_properties['view']      = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( is_array( $_GET['view'] ) ? '' : $_GET['view'] ) ) : '';
 			}
 
 			// Handle the headers
