@@ -643,7 +643,7 @@ class Sensei_Admin {
 			wp_die( esc_html( sprintf( __( 'Please supply a %1$s ID.', 'sensei-lms' ) ), $post_type ) );
 		}
 
-		$post_id = $_GET['post'];
+		$post_id = absint( $_GET['post'] );
 		$post    = get_post( $post_id );
 		if ( ! in_array( get_post_type( $post_id ), array( 'lesson', 'course' ), true ) ) {
 			wp_die( esc_html__( 'Invalid post type. Can duplicate only lessons and courses', 'sensei-lms' ) );
@@ -721,7 +721,7 @@ class Sensei_Admin {
 			);
 			$courses = get_posts( $args );
 
-			$selected       = isset( $_GET['lesson_course'] ) ? $_GET['lesson_course'] : '';
+			$selected       = isset( $_GET['lesson_course'] ) ? absint( $_GET['lesson_course'] ) : '';
 			$course_options = '';
 			foreach ( $courses as $course ) {
 				$course_options .= '<option value="' . esc_attr( $course->ID ) . '" ' . selected( $selected, $course->ID, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>';
@@ -757,7 +757,7 @@ class Sensei_Admin {
 		global $typenow;
 
 		if ( is_admin() && 'lesson' == $typenow ) {
-			$lesson_course = isset( $_GET['lesson_course'] ) ? $_GET['lesson_course'] : '';
+			$lesson_course = isset( $_GET['lesson_course'] ) ? absint( $_GET['lesson_course'] ) : '';
 
 			if ( $lesson_course ) {
 				$request['meta_key']     = '_lesson_course';
@@ -1103,8 +1103,8 @@ class Sensei_Admin {
 		check_admin_referer( 'order_courses' );
 
 		$ordered = null;
-		if ( isset( $_POST['course-order'] ) && 0 < strlen( $_POST['course-order'] ) ) {
-			$ordered = $this->save_course_order( esc_attr( $_POST['course-order'] ) );
+		if ( isset( $_POST['course-order'] ) && 0 < strlen( sanitize_text_field( wp_unslash( $_POST['course-order'] ) ) ) ) {
+			$ordered = $this->save_course_order( sanitize_text_field( wp_unslash( $_POST['course-order'] ) ) );
 		}
 
 		wp_redirect(
@@ -1137,7 +1137,7 @@ class Sensei_Admin {
 
 								$html = '';
 
-								if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
+								if ( isset( $_GET['ordered'] ) && '' !== $_GET['ordered'] ) {
 									$html .= '<div class="updated fade">' . "\n";
 									$html .= '<p>' . esc_html__( 'The course order has been saved.', 'sensei-lms' ) . '</p>' . "\n";
 									$html .= '</div>' . "\n";
@@ -1690,7 +1690,7 @@ class Sensei_Admin {
 	public function theme_compatibility_notices() {
 
 		if ( isset( $_GET['sensei_hide_notice'] ) ) {
-			switch ( esc_attr( $_GET['sensei_hide_notice'] ) ) {
+			switch ( sanitize_text_field( wp_unslash( $_GET['sensei_hide_notice'] ) ) ) {
 				case 'menu_settings':
 					add_user_meta( get_current_user_id(), 'sensei_hide_menu_settings_notice', true );
 					break;
@@ -1764,12 +1764,16 @@ class Sensei_Admin {
 			wp_die();
 		}
 
-		$event_name = $_REQUEST['event_name'];
-		$properties = isset( $_REQUEST['properties'] ) ? $_REQUEST['properties'] : [];
+		$event_name = sanitize_text_field( wp_unslash( $_REQUEST['event_name'] ) );
+		// $_REQUEST['properties'] is a JSON string or array; sanitized via map_deep() after decoding below.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$properties = isset( $_REQUEST['properties'] ) ? wp_unslash( $_REQUEST['properties'] ) : [];
 
 		if ( is_string( $properties ) ) {
-			$properties = json_decode( stripslashes( $properties ), true );
+			$properties = json_decode( $properties, true );
 		}
+
+		$properties = is_array( $properties ) ? map_deep( $properties, 'sanitize_text_field' ) : [];
 
 		// Set the source to js-event.
 		add_filter(
