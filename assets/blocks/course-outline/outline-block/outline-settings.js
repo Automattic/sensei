@@ -16,9 +16,12 @@ import { useSharedModuleStyles } from './use-shared-module-styles';
  * @param {Object} props Block props.
  */
 const OutlineSettings = ( props ) => {
-	const { attributes, setAttributes } = props;
+	const { attributes, setAttributes, outlineClassName } = props;
 
-	const { moduleBorder, setModuleBorder } = useSharedModuleStyles( props );
+	const { moduleBorder, setModuleBorder } = useSharedModuleStyles( {
+		...props,
+		className: outlineClassName,
+	} );
 
 	return (
 		<InspectorControls>

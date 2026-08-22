@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { useSelect } from '@wordpress/data';
-import { RichText } from '@wordpress/block-editor';
+import { RichText, useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -26,8 +26,10 @@ const ButtonEdit = ( props ) => {
 	const isReadonly = undefined !== props.text;
 	const buttonProps = getButtonProps( { ...props, colors } );
 
+	const blockProps = useBlockProps( getButtonWrapperProps( props ) );
+
 	return (
-		<div { ...getButtonWrapperProps( props ) }>
+		<div { ...blockProps }>
 			{ isReadonly ? (
 				<div { ...buttonProps }>{ props.text }</div>
 			) : (

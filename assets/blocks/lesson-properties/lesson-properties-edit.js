@@ -8,7 +8,7 @@ import classnames from 'classnames';
  */
 import { useCallback } from '@wordpress/element';
 import { useEntityProp } from '@wordpress/core-data';
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, Notice } from '@wordpress/components';
 import { __, _n } from '@wordpress/i18n';
 
@@ -20,8 +20,8 @@ import { DIFFICULTIES } from './constants';
 
 const courseThemeEnabled = window?.sensei?.courseThemeEnabled || false;
 
-const LessonPropertiesEdit = ( props ) => {
-	const { className } = props;
+const LessonPropertiesEdit = () => {
+	const blockProps = useBlockProps();
 
 	const [ meta, setMeta ] = useEntityProp( 'postType', 'lesson', 'meta' );
 	const { _lesson_complexity: difficulty = '', _lesson_length: length = 10 } =
@@ -91,7 +91,7 @@ const LessonPropertiesEdit = ( props ) => {
 					) }
 				</Notice>
 			) : (
-				<div className={ className }>
+				<div { ...blockProps }>
 					<span
 						className={ classnames(
 							'wp-block-sensei-lms-lesson-properties__length',

@@ -6,7 +6,7 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -31,7 +31,6 @@ const courseThemeEnabled = window?.sensei?.courseThemeEnabled || false;
  * Edit lesson actions block component.
  *
  * @param {Object}   props
- * @param {string}   props.className                Custom class name.
  * @param {string}   props.clientId                 Block ID.
  * @param {Function} props.setAttributes            Block set attributes function.
  * @param {Object}   props.attributes               Block attributes.
@@ -39,7 +38,6 @@ const courseThemeEnabled = window?.sensei?.courseThemeEnabled || false;
  */
 const LessonActionsEdit = ( props ) => {
 	const {
-		className,
 		clientId,
 		setAttributes,
 		attributes: { toggledBlocks },
@@ -74,6 +72,15 @@ const LessonActionsEdit = ( props ) => {
 		: 'not-allowed';
 	const isInSiteEditorClass = isSiteEditor ? 'site-editor' : 'lesson-editor';
 
+	const blockProps = useBlockProps( {
+		className: classnames(
+			`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`,
+			`wp-block-sensei-lms-lesson-actions__${ quizStateClass }`,
+			`wp-block-sensei-lms-lesson-actions__complete_lessons-${ completeLessonAllowedClass }`,
+			`wp-block-sensei-lms-lesson-actions__preview-${ isInSiteEditorClass }`
+		),
+	} );
+
 	if ( courseThemeEnabled ) {
 		return null;
 	}
@@ -90,15 +97,7 @@ const LessonActionsEdit = ( props ) => {
 				onPreviewChange={ onPreviewChange }
 				toggleBlocks={ toggleBlocks }
 			/>
-			<div
-				className={ classnames(
-					className,
-					`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`,
-					`wp-block-sensei-lms-lesson-actions__${ quizStateClass }`,
-					`wp-block-sensei-lms-lesson-actions__complete_lessons-${ completeLessonAllowedClass }`,
-					`wp-block-sensei-lms-lesson-actions__preview-${ isInSiteEditorClass }`
-				) }
-			>
+			<div { ...blockProps }>
 				<div className="sensei-buttons-container">
 					<InnerBlocks
 						allowedBlocks={ ACTION_BLOCKS }

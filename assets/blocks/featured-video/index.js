@@ -3,7 +3,7 @@
  */
 import { useRef, useEffect } from '@wordpress/element';
 import { createBlock } from '@wordpress/blocks';
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
@@ -32,7 +32,7 @@ export default {
 			},
 		],
 	},
-	edit: function EditBlock( { className, clientId } ) {
+	edit: function EditBlock( { clientId } ) {
 		const { replaceInnerBlocks, moveBlockToPosition } =
 			useDispatch( 'core/block-editor' );
 		const innerBlockCount = useSelect(
@@ -78,7 +78,7 @@ export default {
 		] );
 
 		return (
-			<div className={ className }>
+			<div { ...useBlockProps() }>
 				{
 					<InnerBlocks
 						allowedBlocks={ ALLOWED_BLOCKS }
