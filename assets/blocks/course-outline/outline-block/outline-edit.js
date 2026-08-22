@@ -134,7 +134,10 @@ const OutlineEdit = ( props ) => {
 						outlineClassName: blockProps.className,
 					} }
 				>
-					<OutlineSettings { ...props } />
+					<OutlineSettings
+						{ ...props }
+						outlineClassName={ blockProps.className }
+					/>
 
 					<section>
 						<InnerBlocks
