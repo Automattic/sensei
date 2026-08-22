@@ -120,9 +120,11 @@ export const ModuleEdit = ( props ) => {
 		className: classnames( {
 			'wp-block-sensei-lms-course-outline-module-bordered': bordered,
 		} ),
-		style: {
-			borderColor: borderColorValue || defaultBorderColor?.color,
-		},
+		style: bordered
+			? {
+					borderColor: borderColorValue || defaultBorderColor?.color,
+			  }
+			: undefined,
 	} );
 
 	const styleRegex = /is-style-(\w+)/;
