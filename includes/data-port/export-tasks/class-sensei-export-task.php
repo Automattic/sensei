@@ -121,7 +121,16 @@ abstract class Sensei_Export_Task extends Sensei_Data_Port_Task implements Sense
 				throw new Exception( 'Missing output file' );
 			}
 
-			$output_file = new SplFileObject( $this->file, 'a' );
+			$is_first_batch = 0 === $this->completed_posts;
+			$output_file    = new SplFileObject( $this->file, $is_first_batch ? 'w' : 'a' );
+
+			if ( $is_first_batch ) {
+				// Truncate and rewrite the header on the first batch so a re-entrant
+				// first run (e.g. a scheduler retry before the completed-posts offset
+				// was persisted) rewrites the file instead of appending rows it may
+				// have already written.
+				$output_file->fputcsv( $this->get_header_row() );
+			}
 		} catch ( Exception $e ) {
 			$this->is_aborted = true;
 
@@ -190,17 +199,23 @@ abstract class Sensei_Export_Task extends Sensei_Data_Port_Task implements Sense
 	 * @return string Temporary filename.
 	 */
 	private function create_csv_file() {
-		$columns = $this->get_type_schema()->get_schema();
-		$headers = array_map( 'ucwords', array_keys( $columns ) );
-
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
 		$filename = wp_tempnam( 'sensei-export-csv-' . $this->get_content_type() );
 		$file     = new SplFileObject( $filename, 'w' );
-		$file->fputcsv( $headers );
+		$file->fputcsv( $this->get_header_row() );
 		$file = null;
 
 		return $filename;
+	}
+
+	/**
+	 * Get the CSV header row for this content type.
+	 *
+	 * @return string[] The column headers.
+	 */
+	private function get_header_row() {
+		return array_map( 'ucwords', array_keys( $this->get_type_schema()->get_schema() ) );
 	}
 
 	/**

@@ -68,6 +68,32 @@ class Sensei_Export_Lessons_Tests extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A re-entrant first batch must not duplicate rows. If the completed-posts
+	 * offset is not advanced before the batch runs again (for example a
+	 * scheduler retry), the export must rewrite the file rather than append the
+	 * same rows a second time. Regression guard for #7969.
+	 */
+	public function testExport_FirstBatchRerunsWithoutAdvancing_DoesNotDuplicateRows() {
+		$this->factory->lesson->create();
+		$this->factory->lesson->create();
+
+		$job   = Sensei_Export_Job::create( 'test', 0 );
+		$class = $this->get_task_class();
+
+		// First batch writes its rows and records the completed-posts offset.
+		( new $class( $job ) )->run();
+
+		$type = ( new $class( $job ) )->get_content_type();
+
+		// Simulate the batch running again before the offset was persisted.
+		$job->set_state( $type, array( Sensei_Export_Task::STATE_COMPLETED_POSTS => 0 ) );
+		( new $class( $job ) )->run();
+
+		$rows = array_values( array_filter( self::read_csv( $job->get_file_path( $type ) ) ) );
+		$this->assertCount( 2, $rows, 'A re-entrant first batch should not duplicate exported rows.' );
+	}
+
+	/**
 	 * Test that lesson details are exported correctly.
 	 */
 	public function testLessonContentExported() {
