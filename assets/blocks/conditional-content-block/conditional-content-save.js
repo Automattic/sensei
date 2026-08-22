@@ -1,15 +1,10 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 
-const ConditionalContentSave = ( { className } ) => (
-	<div className={ classnames( 'wp-block-group', className ) }>
+const ConditionalContentSave = () => (
+	<div { ...useBlockProps.save( { className: 'wp-block-group' } ) }>
 		<div className="wp-block-group__inner-container">
 			<InnerBlocks.Content />
 		</div>
