@@ -555,7 +555,7 @@ function sensei_has_translation_or_is_english( $text ) {
  * Intended for values read from the request superglobals ($_GET/$_POST/$_REQUEST),
  * which WordPress slashes and which may arrive as arrays. Arrays are treated as
  * empty so the return value is always a string: callers expecting a single value
- * get one, and array input (typically malformed or malicious) is discarded.
+ * get one, and array input is discarded.
  *
  * Do not use for data that is not slashed by WordPress (e.g. database or option
  * values), since it runs wp_unslash() on the input.
