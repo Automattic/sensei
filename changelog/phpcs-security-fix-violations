@@ -1,4 +1,4 @@
 Significance: patch
-Type: security
+Type: changed
 
-Hardened handling of request input across the admin and frontend.
+Made request-input handling consistent across the admin and frontend.
