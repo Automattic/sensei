@@ -1765,7 +1765,7 @@ class Sensei_Admin {
 		}
 
 		$event_name = sensei_request_text( $_REQUEST['event_name'] );
-		// $_REQUEST['properties'] is a JSON string or array; sanitized via map_deep() after decoding below.
+		// $_REQUEST['properties'] is a JSON string or array; string values are sanitized via sanitize_event_properties() after decoding below.
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$properties = isset( $_REQUEST['properties'] ) ? wp_unslash( $_REQUEST['properties'] ) : array();
 
