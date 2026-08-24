@@ -20,7 +20,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 ## Development environment
 - Run all dev commands inside the `make up` (wp-env) sandbox rather than against any host WordPress install — this keeps mistakes off shared/local state.
 - Use the Node version pinned in `.nvmrc`.
-- Ensure Docker Desktop (or Colima) is running before `make up`; verify with `docker info`. If it isn't running, start it without asking — this is a routine local action, not a user-facing change. Use `open -a Docker` on macOS or `sudo systemctl start docker` on Linux, then wait until `docker info` succeeds.
+- Ensure Docker Desktop is running before `make up`; verify with `docker info`. If it isn't running, start it without asking — this is a routine local action, not a user-facing change. Use `open -a Docker` on macOS or `sudo systemctl start docker` on Linux, then wait until `docker info` succeeds.
 - `make up` boots the wp-env Docker stack; `make down` stops it; `make destroy` wipes containers and data for a clean slate.
 - `make shell` opens a shell inside the WordPress container; `make wp CMD="..."` runs wp-cli commands against it.
 - Override the WordPress or PHP version with `make up WP=6.8 PHP=8.3` (writes a transient `.wp-env.override.json`).
