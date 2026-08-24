@@ -82,9 +82,9 @@ class Sensei_Notices {
 	/**
 	 *  Add a notice to the array of notices for display at a later stage.
 	 *
-	 * @param string $content Content.
-	 * @param string $type    Defaults to alert options( alert, tick , download , info   ).
-	 * @param string $key     Notices with the same key will be overwritten.
+	 * @param string      $content Content.
+	 * @param string      $type    Defaults to alert options( alert, tick , download , info   ).
+	 * @param string|null $key     Notices with the same key will be overwritten.
 	 *
 	 * @return void
 	 */

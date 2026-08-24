@@ -77,10 +77,10 @@ abstract class Sensei_Import_Model {
 	/**
 	 * Set up item from an array.
 	 *
-	 * @param int                             $line_number Line number.
-	 * @param array                           $data        Data to restore item from.
-	 * @param Sensei_Data_Port_Schema         $schema      The schema for the item.
-	 * @param Sensei_Import_File_Process_Task $task        The import task.
+	 * @param int                                  $line_number Line number.
+	 * @param array                                $data        Data to restore item from.
+	 * @param Sensei_Data_Port_Schema              $schema      The schema for the item.
+	 * @param Sensei_Import_File_Process_Task|null $task        The import task.
 	 *
 	 * @return static
 	 */

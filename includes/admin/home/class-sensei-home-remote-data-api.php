@@ -54,7 +54,7 @@ class Sensei_Home_Remote_Data_API {
 	/**
 	 * Fetch data from SenseiLMS.com.
 	 *
-	 * @param int $max_age Maximum age of the cached data in seconds. Max is 1 day (in seconds).
+	 * @param int|null $max_age Maximum age of the cached data in seconds. Max is 1 day (in seconds).
 	 *
 	 * @return array|\WP_Error
 	 */
