@@ -712,6 +712,7 @@ class Sensei_Core_Modules {
 
 		// Get user input
 		// Decode before sanitizing: sanitize_text_field() strips percent-encoded octets, so it must run after urldecode().
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized with sanitize_text_field() after urldecode(); the sniff cannot trace sanitization through urldecode().
 		$term = isset( $_GET['term'] ) ? sanitize_text_field( urldecode( wp_unslash( is_array( $_GET['term'] ) ? '' : $_GET['term'] ) ) ) : '';
 
 		// Return nothing if term is empty
